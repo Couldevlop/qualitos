@@ -45,7 +45,7 @@ class NcPhotoServiceTest {
     @BeforeEach
     void setup() {
         storage = new InMemoryObjectStorage();
-        service = new NcPhotoService(photoRepo, ncRepo, storageProvider);
+        service = new NcPhotoService(photoRepo, ncRepo, storageProvider, viewAll -> Optional.empty());
         TenantContext.setTenantId(TENANT.toString());
     }
 
@@ -267,6 +267,7 @@ class NcPhotoServiceTest {
         storage.put(key, "image/png", PNG);
         NcPhoto p = photo(TENANT, NC_ID, key);
         p.setId(photoId);
+        when(ncRepo.findByIdAndTenantId(NC_ID, TENANT)).thenReturn(Optional.of(nc(TENANT, NcStatus.OPEN)));
         when(photoRepo.findByIdAndTenantIdAndNcId(photoId, TENANT, NC_ID)).thenReturn(Optional.of(p));
 
         service.delete(NC_ID, photoId);
@@ -279,9 +280,22 @@ class NcPhotoServiceTest {
     void delete_photoOfOtherTenant_404() {
         when(storageProvider.getIfAvailable()).thenReturn(storage);
         UUID photoId = UUID.randomUUID();
+        when(ncRepo.findByIdAndTenantId(NC_ID, TENANT)).thenReturn(Optional.of(nc(TENANT, NcStatus.OPEN)));
         when(photoRepo.findByIdAndTenantIdAndNcId(photoId, TENANT, NC_ID)).thenReturn(Optional.empty());
         assertThatThrownBy(() -> service.delete(NC_ID, photoId))
                 .isInstanceOf(NcPhotoNotFoundException.class);
+        verify(photoRepo, never()).delete(any());
+    }
+
+    @Test
+    void lesPhotosDUneNcHorsDePorteeNExistentPas() {
+        // ADR 0081 : sans « voir toutes les NC », celles d'un autre déclarant répondent 404.
+        service = new NcPhotoService(photoRepo, ncRepo, storageProvider, viewAll -> Optional.of(UUID.randomUUID()));
+        when(storageProvider.getIfAvailable()).thenReturn(storage);
+        when(ncRepo.findByIdAndTenantId(NC_ID, TENANT)).thenReturn(Optional.of(nc(TENANT, NcStatus.OPEN)));
+
+        assertThatThrownBy(() -> service.list(NC_ID)).isInstanceOf(NcNotFoundException.class);
+        assertThatThrownBy(() -> service.delete(NC_ID, UUID.randomUUID())).isInstanceOf(NcNotFoundException.class);
         verify(photoRepo, never()).delete(any());
     }
 

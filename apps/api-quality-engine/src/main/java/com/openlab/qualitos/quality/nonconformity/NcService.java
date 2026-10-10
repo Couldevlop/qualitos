@@ -1,5 +1,6 @@
 package com.openlab.qualitos.quality.nonconformity;
 
+import com.openlab.qualitos.quality.authz.application.RecordScope;
 import com.openlab.qualitos.quality.capa.CapaCase;
 import com.openlab.qualitos.quality.capa.CapaCaseRepository;
 import com.openlab.qualitos.quality.capa.CapaCriticity;
@@ -22,7 +23,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.time.ZoneOffset;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Function;
 
 /**
  * Module Non-Conformités (§4.3) : saisie terrain, workflow de traitement et
@@ -35,12 +38,15 @@ public class NcService {
     private final NonConformityRepository repository;
     private final CapaCaseRepository capaCaseRepository;
     private final ApplicationEventPublisher events;
+    /** Sans « voir toutes les NC », on ne voit que celles qu'on a déclarées (ADR 0081). */
+    private final RecordScope scope;
 
     public NcService(NonConformityRepository repository, CapaCaseRepository capaCaseRepository,
-                     ApplicationEventPublisher events) {
+                     ApplicationEventPublisher events, RecordScope scope) {
         this.repository = repository;
         this.capaCaseRepository = capaCaseRepository;
         this.events = events;
+        this.scope = scope;
     }
 
     /**
@@ -54,6 +60,7 @@ public class NcService {
     public Page<NcDto.Response> findAll(NcStatus status, NcSeverity severity, NcCategory category,
                                         NcOrigin origin, UUID productId, Pageable pageable) {
         UUID tenantId = requireTenantId();
+        Optional<UUID> seulement = NcScope.restriction(scope);
         Specification<NonConformity> spec = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
             // Le tenant vient du jeton et n'est jamais optionnel (§18.2 #2).
@@ -65,6 +72,7 @@ public class NcService {
             // Filtré en base avec le tenant, jamais après coup en Java : trier une
             // page déjà découpée donnerait des pages incomplètes.
             if (productId != null) predicates.add(cb.equal(root.get("productId"), productId));
+            seulement.ifPresent(moi -> predicates.add(cb.equal(root.get("reporterId"), moi)));
             return cb.and(predicates.toArray(new Predicate[0]));
         };
         return repository.findAll(spec, pageable).map(this::toResponse);
@@ -291,7 +299,10 @@ public class NcService {
 
     private NonConformity load(UUID id) {
         UUID tenantId = requireTenantId();
+        // Hors de portée, la fiche n'existe pas : ni lecture ni action (ADR 0081).
+        Optional<UUID> seulement = NcScope.restriction(scope);
         return repository.findByIdAndTenantId(id, tenantId)
+                .filter(nc -> NcScope.sees(seulement, nc))
                 .orElseThrow(() -> new NcNotFoundException(id));
     }
 
@@ -329,6 +340,10 @@ public class NcService {
     @Transactional(readOnly = true)
     public NcDto.NcStatistics statistics(NcOrigin origin) {
         UUID tenantId = requireTenantId();
+        Optional<UUID> seulement = NcScope.restriction(scope);
+        if (seulement.isPresent()) {
+            return statisticsOf(tenantId, origin, seulement.get());
+        }
         return new NcDto.NcStatistics(
                 tenantId,
                 origin,
@@ -342,6 +357,25 @@ public class NcService {
                 compte(tenantId, origin, NcStatus.CLOSED),
                 compte(tenantId, origin, NcStatus.CANCELLED),
                 compte(tenantId, origin, NcStatus.REJECTED));
+    }
+
+    /**
+     * Les tuiles comptent le même périmètre que le tableau (ADR 0081) : sans
+     * « voir toutes les NC », seulement celles que l'utilisateur a déclarées.
+     */
+    private NcDto.NcStatistics statisticsOf(UUID tenantId, NcOrigin origin, UUID moi) {
+        Function<NcStatus, Long> compter = status -> repository.count((root, query, cb) -> {
+            List<Predicate> p = new ArrayList<>();
+            p.add(cb.equal(root.get("tenantId"), tenantId));
+            p.add(cb.equal(root.get("reporterId"), moi));
+            if (origin != null) p.add(cb.equal(root.get("origin"), origin));
+            if (status != null) p.add(cb.equal(root.get("status"), status));
+            return cb.and(p.toArray(new Predicate[0]));
+        });
+        return new NcDto.NcStatistics(tenantId, origin, compter.apply(null),
+                compter.apply(NcStatus.OPEN), compter.apply(NcStatus.UNDER_ANALYSIS),
+                compter.apply(NcStatus.ACTION_DEFINED), compter.apply(NcStatus.RESOLVED),
+                compter.apply(NcStatus.CLOSED), compter.apply(NcStatus.CANCELLED), compter.apply(NcStatus.REJECTED));
     }
 
     /** Un statut, dans le périmètre demandé. */

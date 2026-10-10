@@ -7,12 +7,13 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router, provideRouter } from '@angular/router';
 
 import { environment } from '../../../../../environments/environment';
-import { AuthService } from '../../../../core/auth/auth.service';
+import { AuthzService } from '../../../../core/authz/authz.service';
 import { SharedModule } from '../../../../shared/shared.module';
 import { UiModule } from '../../../../shared/ui/ui.module';
 import { OpportunityView, RiskView } from '../../risk-register.types';
 import { opportunite, risque } from '../../testing/risk-register.fixtures';
 import { RegisterComponent } from './register.component';
+import { of } from 'rxjs';
 
 /**
  * Le registre : deux onglets reliés, recherche, filtres, tri par cotation,
@@ -47,7 +48,8 @@ describe('RegisterComponent', () => {
         provideHttpClientTesting(),
         provideRouter([]),
         { provide: ActivatedRoute, useValue: { snapshot: { data: { tab } } } },
-        { provide: AuthService, useValue: { hasAnyRole: (a: string[]) => a.some(r => roles.includes(r)) } }
+        // Les droits livrés : risk.manage et opportunity.manage vont au pilotage qualité.
+        { provide: AuthzService, useValue: { can: () => of(roles.some(r => ['QUALITY_MANAGER', 'DIRECTOR_QUALITY', 'QUALITY_DIRECTOR', 'ADMIN_TENANT', 'SUPER_ADMIN'].includes(r))) } }
       ]
     }).compileComponents();
     http = TestBed.inject(HttpTestingController);

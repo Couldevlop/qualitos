@@ -6,7 +6,9 @@ import { UiModule } from '../../shared/ui/ui.module';
 import { DocumentsCreateDialogComponent } from './pages/documents-create-dialog/documents-create-dialog.component';
 import { DocumentsDetailComponent } from './pages/documents-detail/documents-detail.component';
 import { DocumentsEditDialogComponent } from './pages/documents-edit-dialog/documents-edit-dialog.component';
+import { DocumentCircuitComponent } from './components/document-circuit/document-circuit.component';
 import { DocumentsListComponent } from './pages/documents-list/documents-list.component';
+import { DocumentsRejectDialogComponent } from './pages/documents-reject-dialog/documents-reject-dialog.component';
 import { DocumentsVersionDialogComponent } from './pages/documents-version-dialog/documents-version-dialog.component';
 
 const routes: Routes = [
@@ -20,7 +22,9 @@ const routes: Routes = [
     DocumentsDetailComponent,
     DocumentsCreateDialogComponent,
     DocumentsEditDialogComponent,
-    DocumentsVersionDialogComponent
+    DocumentsVersionDialogComponent,
+    DocumentsRejectDialogComponent,
+    DocumentCircuitComponent
   ],
   imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
 })

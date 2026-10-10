@@ -33,11 +33,15 @@ public final class DocumentDto {
             Boolean mandatoryRead
     ) {}
 
+    /**
+     * {@code authorId} n'est plus cru : l'auteur est l'utilisateur du jeton
+     * (ADR 0080). Un identifiant différent est refusé (403) ; absent, il est déduit.
+     */
     public record CreateVersionRequest(
             String content,
             String contentUri,
             String changeNote,
-            @NotNull UUID authorId
+            UUID authorId
     ) {}
 
     public record UpdateVersionRequest(
@@ -46,9 +50,23 @@ public final class DocumentDto {
             String changeNote
     ) {}
 
-    public record ApprovalRequest(@NotNull UUID approverId) {}
+    /**
+     * L'approbateur est l'utilisateur du jeton (ADR 0080) ; le champ n'est gardé
+     * que pour vérifier qu'il concorde. Le commentaire accompagne une étape de
+     * circuit.
+     */
+    public record ApprovalRequest(UUID approverId, @Size(max = 1000) String comment) {
 
-    public record AcknowledgeRequest(@NotNull UUID userId) {}
+        public ApprovalRequest(UUID approverId) {
+            this(approverId, null);
+        }
+    }
+
+    /** Un refus se motive : la version revient en brouillon et l'auteur lit pourquoi. */
+    public record RejectionRequest(@NotBlank @Size(max = 1000) String reason) {}
+
+    /** Celui qui acquitte est l'utilisateur du jeton (ADR 0080) : nul n'acquitte pour un autre. */
+    public record AcknowledgeRequest(UUID userId) {}
 
     public record DocumentResponse(
             UUID id,
@@ -81,7 +99,10 @@ public final class DocumentDto {
             Instant publishedAt,
             String blockchainTxHash,
             Instant createdAt,
-            Instant updatedAt
+            Instant updatedAt,
+            UUID rejectedBy,
+            Instant rejectedAt,
+            String rejectionReason
     ) {}
 
     public record AcknowledgmentResponse(

@@ -13,6 +13,7 @@ import { SharedModule } from '../../../../shared/shared.module';
 import { UiModule } from '../../../../shared/ui/ui.module';
 import { NcPage, NcResponse, NcStatistics } from '../../nc.types';
 import { NcListComponent } from './nc-list.component';
+import { AuthzService } from '../../../../core/authz/authz.service';
 
 describe('NcListComponent', () => {
   let component: NcListComponent;
@@ -23,6 +24,8 @@ describe('NcListComponent', () => {
       declarations: [NcListComponent],
       imports: [SharedModule, UiModule, NoopAnimationsModule],
       providers: [
+        // Tous les droits : ces bancs testent l'écran, pas la matrice (ADR 0078).
+        { provide: AuthzService, useValue: { can: () => of(true) } },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
         provideRouter([])
@@ -120,6 +123,8 @@ describe('NcListComponent — chargement, filtres et pagination', () => {
       declarations: [NcListComponent],
       imports: [SharedModule, UiModule, NoopAnimationsModule],
       providers: [
+        // Tous les droits : ces bancs testent l'écran, pas la matrice (ADR 0078).
+        { provide: AuthzService, useValue: { can: () => of(true) } },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
         provideRouter([]),

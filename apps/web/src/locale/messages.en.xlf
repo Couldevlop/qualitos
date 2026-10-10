@@ -192,6 +192,194 @@
         <source>L'inscription a échoué.</source>
         <target state="translated">Enrollment failed.</target>
       </trans-unit>
+      <trans-unit id="nav.admin-clients" datatype="html">
+        <source>Clients</source>
+        <target state="translated">Customers</target>
+      </trans-unit>
+      <trans-unit id="admin.credential.title" datatype="html">
+        <source>Transmettez ces identifiants</source>
+        <target state="translated">Pass on these credentials</target>
+      </trans-unit>
+      <trans-unit id="admin.credential.help" datatype="html">
+        <source>Le mot de passe provisoire n'apparaîtra plus. Il devra être changé à la première connexion.</source>
+        <target state="translated">The temporary password will not be shown again. It must be changed at first sign-in.</target>
+      </trans-unit>
+      <trans-unit id="admin.credential.login" datatype="html">
+        <source>Identifiant</source>
+        <target state="translated">Login</target>
+      </trans-unit>
+      <trans-unit id="admin.credential.password" datatype="html">
+        <source>Mot de passe provisoire</source>
+        <target state="translated">Temporary password</target>
+      </trans-unit>
+      <trans-unit id="admin.credential.copy" datatype="html">
+        <source>Copier</source>
+        <target state="translated">Copy</target>
+      </trans-unit>
+      <trans-unit id="admin.credential.copied" datatype="html">
+        <source>Copié</source>
+        <target state="translated">Copied</target>
+      </trans-unit>
+      <trans-unit id="admin.credential.done" datatype="html">
+        <source>C'est transmis</source>
+        <target state="translated">Done, passed on</target>
+      </trans-unit>
+      <trans-unit id="admin.credential.sent-title" datatype="html">
+        <source>Invitation envoyée</source>
+        <target state="translated">Invitation sent</target>
+      </trans-unit>
+      <trans-unit id="admin.credential.sent-help" datatype="html">
+        <source><x id="EMAIL"/> reçoit un lien pour choisir son mot de passe.</source>
+        <target state="translated"><x id="EMAIL"/> receives a link to choose a password.</target>
+      </trans-unit>
+      <trans-unit id="admin.team.invite" datatype="html">
+        <source>Inviter un membre</source>
+        <target state="translated">Invite a member</target>
+      </trans-unit>
+      <trans-unit id="admin.team.invite-title" datatype="html">
+        <source>Nouveau membre</source>
+        <target state="translated">New member</target>
+      </trans-unit>
+      <trans-unit id="admin.team.invite-email" datatype="html">
+        <source>Adresse e-mail</source>
+        <target state="translated">Email address</target>
+      </trans-unit>
+      <trans-unit id="admin.team.invite-email-invalid" datatype="html">
+        <source>Une adresse e-mail valide est attendue.</source>
+        <target state="translated">A valid email address is expected.</target>
+      </trans-unit>
+      <trans-unit id="admin.team.invite-first-name" datatype="html">
+        <source>Prénom (facultatif)</source>
+        <target state="translated">First name (optional)</target>
+      </trans-unit>
+      <trans-unit id="admin.team.invite-last-name" datatype="html">
+        <source>Nom (facultatif)</source>
+        <target state="translated">Last name (optional)</target>
+      </trans-unit>
+      <trans-unit id="admin.team.invite-roles" datatype="html">
+        <source>Rôles de son compte</source>
+        <target state="translated">Account roles</target>
+      </trans-unit>
+      <trans-unit id="admin.team.invite-send" datatype="html">
+        <source>Créer son compte</source>
+        <target state="translated">Create their account</target>
+      </trans-unit>
+      <trans-unit id="admin.team.invite-failed" datatype="html">
+        <source>L'invitation a échoué.</source>
+        <target state="translated">The invitation failed.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.title" datatype="html">
+        <source>Clients</source>
+        <target state="translated">Customers</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.subtitle" datatype="html">
+        <source>Chaque organisation qui utilise QualitOS : son offre, ses modules, son administrateur.</source>
+        <target state="translated">Every organisation using QualitOS: its plan, its modules, its administrator.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.new" datatype="html">
+        <source>Nouveau client</source>
+        <target state="translated">New customer</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.wizard-title" datatype="html">
+        <source>Nouveau client</source>
+        <target state="translated">New customer</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.step-company" datatype="html">
+        <source>Entreprise</source>
+        <target state="translated">Company</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.step-modules" datatype="html">
+        <source>Modules</source>
+        <target state="translated">Modules</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.step-admin" datatype="html">
+        <source>Administrateur</source>
+        <target state="translated">Administrator</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.name" datatype="html">
+        <source>Nom de l'organisation</source>
+        <target state="translated">Organisation name</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.name-placeholder" datatype="html">
+        <source>Hôpital Saint-Jean</source>
+        <target state="translated">Saint John Hospital</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.slug" datatype="html">
+        <source>Identifiant</source>
+        <target state="translated">Identifier</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.slug-hint" datatype="html">
+        <source>Minuscules, chiffres et tirets ; il ne change plus.</source>
+        <target state="translated">Lowercase, digits and hyphens; it cannot change later.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.slug-invalid" datatype="html">
+        <source>3 à 63 caractères : minuscules, chiffres et tirets.</source>
+        <target state="translated">3 to 63 characters: lowercase, digits and hyphens.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.plan" datatype="html">
+        <source>Offre</source>
+        <target state="translated">Plan</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.next" datatype="html">
+        <source>Continuer</source>
+        <target state="translated">Continue</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.back" datatype="html">
+        <source>Retour</source>
+        <target state="translated">Back</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.modules-help" datatype="html">
+        <source>Cochez ce que l'organisation utilisera. Ce dont un module a besoin se coche avec lui ; le socle est inclus d'office.</source>
+        <target state="translated">Tick what the organisation will use. What a module needs is ticked with it; the core is always included.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.catalog-failed" datatype="html">
+        <source>Le catalogue des modules ne répond pas : le client peut être créé sans module, à compléter ensuite.</source>
+        <target state="translated">The module catalogue is not responding: the customer can be created without modules and completed later.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.core" datatype="html">
+        <source>Socle</source>
+        <target state="translated">Core</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.required-by" datatype="html">
+        <source>Requis par <x id="modules"/></source>
+        <target state="translated">Required by <x id="modules"/></target>
+      </trans-unit>
+      <trans-unit id="admin.clients.admin-help" datatype="html">
+        <source>Son compte est créé maintenant ; il invitera ensuite son équipe et réglera ses droits.</source>
+        <target state="translated">Their account is created now; they will then invite their team and set its permissions.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.modules-count" datatype="html">
+        <source><x id="COUNT"/> module(s) choisi(s)</source>
+        <target state="translated"><x id="COUNT"/> module(s) selected</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.create" datatype="html">
+        <source>Créer le client</source>
+        <target state="translated">Create the customer</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.create-failed" datatype="html">
+        <source>La création du client a échoué.</source>
+        <target state="translated">Creating the customer failed.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.created" datatype="html">
+        <source>Client créé :</source>
+        <target state="translated">Customer created:</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.modules-failed" datatype="html">
+        <source>Certains modules n'ont pas été ouverts : reprenez-les depuis la console des modules du client.</source>
+        <target state="translated">Some modules were not opened: retry them from the customer modules console.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.load-failed" datatype="html">
+        <source>La liste des clients n'a pas pu être chargée.</source>
+        <target state="translated">The customer list could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.inactive" datatype="html">
+        <source>Désactivé</source>
+        <target state="translated">Deactivated</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.empty" datatype="html">
+        <source>Aucun client pour l'instant : créez le premier.</source>
+        <target state="translated">No customer yet: create the first one.</target>
+      </trans-unit>
       <trans-unit id="admin.api-keys.cancel" datatype="html">
         <source>Annuler</source>
         <target state="translated">Cancel</target>
@@ -5162,6 +5350,326 @@ Customer portal</target>
         <source>Videz le champ pour ne plus envoyer de rappel par courriel.</source>
         <target state="translated">Clear the field to stop sending email reminders.</target>
       </trans-unit>
+      <trans-unit id="nav.admin-roles" datatype="html">
+        <source>Rôles et droits</source>
+        <target state="translated">Roles and permissions</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.authz-manage" datatype="html">
+        <source>Administrer les rôles et les droits</source>
+        <target state="translated">Manage roles and permissions</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.capa-create" datatype="html">
+        <source>Ouvrir un dossier CAPA</source>
+        <target state="translated">Open a CAPA case</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.capa-edit" datatype="html">
+        <source>Modifier et démarrer un dossier</source>
+        <target state="translated">Edit and start a case</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.capa-resolve" datatype="html">
+        <source>Résoudre un dossier</source>
+        <target state="translated">Resolve a case</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.capa-reject" datatype="html">
+        <source>Rejeter un dossier</source>
+        <target state="translated">Reject a case</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.capa-verify" datatype="html">
+        <source>Vérifier l'efficacité</source>
+        <target state="translated">Verify effectiveness</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.capa-delete" datatype="html">
+        <source>Supprimer un dossier</source>
+        <target state="translated">Delete a case</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.capa-action-manage" datatype="html">
+        <source>Ajouter et retirer des actions</source>
+        <target state="translated">Add and remove actions</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.capa-action-update" datatype="html">
+        <source>Faire avancer une action</source>
+        <target state="translated">Progress an action</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.nc-create" datatype="html">
+        <source>Déclarer une non-conformité</source>
+        <target state="translated">Report a nonconformity</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.nc-edit" datatype="html">
+        <source>Modifier une non-conformité</source>
+        <target state="translated">Edit a nonconformity</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.nc-photo" datatype="html">
+        <source>Ajouter des photos</source>
+        <target state="translated">Add photos</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.nc-process" datatype="html">
+        <source>Analyser et résoudre</source>
+        <target state="translated">Analyse and resolve</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.nc-close" datatype="html">
+        <source>Clôturer</source>
+        <target state="translated">Close</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.nc-reject" datatype="html">
+        <source>Annuler ou rejeter</source>
+        <target state="translated">Cancel or reject</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.nc-escalate" datatype="html">
+        <source>Poser une action corrective</source>
+        <target state="translated">Raise a corrective action</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.document-edit" datatype="html">
+        <source>Rédiger et archiver</source>
+        <target state="translated">Write and archive</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.document-submit" datatype="html">
+        <source>Soumettre à revue</source>
+        <target state="translated">Submit for review</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.document-approve" datatype="html">
+        <source>Approuver</source>
+        <target state="translated">Approve</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.document-publish" datatype="html">
+        <source>Publier</source>
+        <target state="translated">Publish</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.document-acknowledge" datatype="html">
+        <source>Acquitter une lecture</source>
+        <target state="translated">Acknowledge reading</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.risk-manage" datatype="html">
+        <source>Tenir le registre des risques</source>
+        <target state="translated">Maintain the risk register</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.opportunity-manage" datatype="html">
+        <source>Tenir le registre des opportunités</source>
+        <target state="translated">Maintain the opportunity register</target>
+      </trans-unit>
+      <trans-unit id="authz.module.admin" datatype="html">
+        <source>Administration</source>
+        <target state="translated">Administration</target>
+      </trans-unit>
+      <trans-unit id="authz.module.capa" datatype="html">
+        <source>CAPA</source>
+        <target state="translated">CAPA</target>
+      </trans-unit>
+      <trans-unit id="authz.module.nc" datatype="html">
+        <source>Non-conformités</source>
+        <target state="translated">Nonconformities</target>
+      </trans-unit>
+      <trans-unit id="authz.module.document" datatype="html">
+        <source>Documents</source>
+        <target state="translated">Documents</target>
+      </trans-unit>
+      <trans-unit id="authz.module.risk" datatype="html">
+        <source>Risques et opportunités</source>
+        <target state="translated">Risks and opportunities</target>
+      </trans-unit>
+      <trans-unit id="authz.role.admin-tenant" datatype="html">
+        <source>Administrateur</source>
+        <target state="translated">Administrator</target>
+      </trans-unit>
+      <trans-unit id="authz.role.quality-director" datatype="html">
+        <source>Directeur qualité</source>
+        <target state="translated">Quality director</target>
+      </trans-unit>
+      <trans-unit id="authz.role.quality-manager" datatype="html">
+        <source>Manager qualité</source>
+        <target state="translated">Quality manager</target>
+      </trans-unit>
+      <trans-unit id="authz.role.auditor" datatype="html">
+        <source>Auditeur</source>
+        <target state="translated">Auditor</target>
+      </trans-unit>
+      <trans-unit id="authz.role.user" datatype="html">
+        <source>Utilisateur</source>
+        <target state="translated">User</target>
+      </trans-unit>
+      <trans-unit id="authz.role.external-auditor" datatype="html">
+        <source>Auditeur externe</source>
+        <target state="translated">External auditor</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.title" datatype="html">
+        <source>Rôles et droits</source>
+        <target state="translated">Roles and permissions</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.subtitle" datatype="html">
+        <source>Ce que chaque rôle peut faire, et qui le porte. Glissez un membre sur un rôle pour le lui donner.</source>
+        <target state="translated">What each role can do, and who holds it. Drag a member onto a role to give it to them.</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.new-role" datatype="html">
+        <source>Nouveau rôle</source>
+        <target state="translated">New role</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.load-failed" datatype="html">
+        <source>Les droits n'ont pas pu être chargés.</source>
+        <target state="translated">The permissions could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.failed" datatype="html">
+        <source>L'opération sur les droits a échoué.</source>
+        <target state="translated">The permissions operation failed.</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.role-name" datatype="html">
+        <source>Nom du rôle</source>
+        <target state="translated">Role name</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.role-name-placeholder" datatype="html">
+        <source>Pilote de site</source>
+        <target state="translated">Site lead</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.role-code" datatype="html">
+        <source>Code</source>
+        <target state="translated">Code</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.role-code-hint" datatype="html">
+        <source>Lettres, chiffres et _ ; il ne change plus ensuite.</source>
+        <target state="translated">Letters, digits and _; it cannot change later.</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.role-code-invalid" datatype="html">
+        <source>Lettres, chiffres et _, en commençant par une lettre.</source>
+        <target state="translated">Letters, digits and _, starting with a letter.</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.role-description" datatype="html">
+        <source>Description (facultatif)</source>
+        <target state="translated">Description (optional)</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.create" datatype="html">
+        <source>Créer le rôle</source>
+        <target state="translated">Create the role</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.created" datatype="html">
+        <source>Rôle créé : cochez maintenant ses droits.</source>
+        <target state="translated">Role created: now tick its permissions.</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.team" datatype="html">
+        <source>Équipe</source>
+        <target state="translated">Team</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.team-help" datatype="html">
+        <source>Glissez une carte sur une colonne, ou ouvrez son menu.</source>
+        <target state="translated">Drag a card onto a column, or open its menu.</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.team-failed" datatype="html">
+        <source>L'annuaire de l'équipe ne répond pas : la matrice reste modifiable, l'attribution attendra.</source>
+        <target state="translated">The team directory is not responding: the matrix can still be edited, assignment will have to wait.</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.team-empty" datatype="html">
+        <source>Aucun membre actif pour l'instant.</source>
+        <target state="translated">No active member yet.</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.account-roles-only" datatype="html">
+        <source>Rôles de son compte seulement</source>
+        <target state="translated">Account roles only</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.assign" datatype="html">
+        <source>Attribuer un rôle</source>
+        <target state="translated">Assign a role</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.assigned" datatype="html">
+        <source><x id="member"/> a désormais le rôle <x id="role"/>.</source>
+        <target state="translated"><x id="member"/> now has the <x id="role"/> role.</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.unassigned" datatype="html">
+        <source><x id="member"/> n'a plus le rôle <x id="role"/>.</source>
+        <target state="translated"><x id="member"/> no longer has the <x id="role"/> role.</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.unassign-aria" datatype="html">
+        <source>Retirer le rôle <x id="role"/> à <x id="member"/></source>
+        <target state="translated">Remove the <x id="role"/> role from <x id="member"/></target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.grid" datatype="html">
+        <source>Matrice des droits</source>
+        <target state="translated">Permission matrix</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.actions" datatype="html">
+        <source>Actions</source>
+        <target state="translated">Actions</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.role-menu" datatype="html">
+        <source>Options du rôle</source>
+        <target state="translated">Role options</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.reset" datatype="html">
+        <source>Rétablir</source>
+        <target state="translated">Restore</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.custom" datatype="html">
+        <source>Sur mesure</source>
+        <target state="translated">Custom</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.customized" datatype="html">
+        <source>Réglé</source>
+        <target state="translated">Adjusted</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.delivered" datatype="html">
+        <source>Droits livrés</source>
+        <target state="translated">Default permissions</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.granted-count" datatype="html">
+        <source><x id="COUNT"/> actions</source>
+        <target state="translated"><x id="COUNT"/> actions</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.drop-here" datatype="html">
+        <source>Déposer ici</source>
+        <target state="translated">Drop here</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.locked" datatype="html">
+        <source>L'administrateur garde toujours ce droit : sans lui, plus personne ne pourrait rétablir les autres.</source>
+        <target state="translated">The administrator always keeps this permission: without it, no one could restore the others.</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.pending" datatype="html">
+        <source>Rôles modifiés : <x id="COUNT"/></source>
+        <target state="translated">Roles changed: <x id="COUNT"/></target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.discard" datatype="html">
+        <source>Annuler les changements</source>
+        <target state="translated">Discard changes</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.saved" datatype="html">
+        <source>Droits enregistrés.</source>
+        <target state="translated">Permissions saved.</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.reset-title" datatype="html">
+        <source>Rendre au rôle <x id="role"/> ses droits d'origine ?</source>
+        <target state="translated">Restore the default permissions of the <x id="role"/> role?</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.reset-message" datatype="html">
+        <source>Les droits livrés par la plateforme remplacent vos réglages. Ses membres le gardent.</source>
+        <target state="translated">The platform defaults replace your adjustments. Its members keep the role.</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.delete-title" datatype="html">
+        <source>Supprimer le rôle <x id="role"/> ?</source>
+        <target state="translated">Delete the <x id="role"/> role?</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.delete-message" datatype="html">
+        <source>Ses membres perdent les droits qu'il leur donnait. La suppression est tracée dans le journal d'audit.</source>
+        <target state="translated">Its members lose the permissions it gave them. The deletion is recorded in the audit log.</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.capa-view-all" datatype="html">
+        <source>Voir tous les dossiers (sinon : ceux qui le concernent)</source>
+        <target state="translated">See all cases (otherwise: those that concern them)</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.nc-view-all" datatype="html">
+        <source>Voir toutes les non-conformités (sinon : celles qu'il a déclarées)</source>
+        <target state="translated">See all nonconformities (otherwise: those they reported)</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.risk-view-all" datatype="html">
+        <source>Voir tout le registre (sinon : ce qu'il a inscrit)</source>
+        <target state="translated">See the whole register (otherwise: what they entered)</target>
+      </trans-unit>
+      <trans-unit id="capa.list.scope" datatype="html">
+        <source>Vous voyez les dossiers que vous pilotez, que vous vérifiez, ou dont une action vous est confiée.</source>
+        <target state="translated">You see the cases you lead, verify, or hold an action on.</target>
+      </trans-unit>
+      <trans-unit id="nc.list.scope" datatype="html">
+        <source>Vous voyez les non-conformités que vous avez déclarées.</source>
+        <target state="translated">You see the nonconformities you reported.</target>
+      </trans-unit>
+      <trans-unit id="rr.scope" datatype="html">
+        <source>Vous voyez les risques et opportunités que vous avez inscrits.</source>
+        <target state="translated">You see the risks and opportunities you entered.</target>
+      </trans-unit>
       <trans-unit id="calibration.col-due" datatype="html">
         <source>Prochaine calibration</source>
         <target state="translated">Next calibration</target>
@@ -6097,6 +6605,254 @@ Customer portal</target>
       <trans-unit id="capa.verification.instructions-placeholder" datatype="html">
         <source>Ce qu'il faut vérifier, et comment : échantillon, délai, critère d'acceptation…</source>
         <target state="translated">What to verify, and how: sample, lead time, acceptance criterion…</target>
+      </trans-unit>
+      <trans-unit id="nav.admin-circuits" datatype="html">
+        <source>Circuits de validation</source>
+        <target state="translated">Approval workflows</target>
+      </trans-unit>
+      <trans-unit id="circuits.title" datatype="html">
+        <source>Circuits de validation</source>
+        <target state="translated">Approval workflows</target>
+      </trans-unit>
+      <trans-unit id="circuits.subtitle" datatype="html">
+        <source>Qui approuve, et dans quel ordre. Glissez un rôle sur le parcours pour ajouter une étape ; glissez une étape pour la déplacer.</source>
+        <target state="translated">Who approves, and in what order. Drag a role onto the path to add a step; drag a step to move it.</target>
+      </trans-unit>
+      <trans-unit id="circuits.load-failed" datatype="html">
+        <source>Le circuit n'a pas pu être chargé.</source>
+        <target state="translated">The workflow could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="circuits.palette" datatype="html">
+        <source>Rôles qui approuvent</source>
+        <target state="translated">Roles that approve</target>
+      </trans-unit>
+      <trans-unit id="circuits.palette-help" datatype="html">
+        <source>Glissez un rôle sur le parcours, ou utilisez son bouton +.</source>
+        <target state="translated">Drag a role onto the path, or use its + button.</target>
+      </trans-unit>
+      <trans-unit id="circuits.add-aria" datatype="html">
+        <source>Ajouter une étape tenue par <x id="role"/></source>
+        <target state="translated">Add a step held by <x id="role"/></target>
+      </trans-unit>
+      <trans-unit id="circuits.no-approver" datatype="html">
+        <source>Aucun rôle n'a le droit d'approuver un document.</source>
+        <target state="translated">No role is allowed to approve a document.</target>
+      </trans-unit>
+      <trans-unit id="circuits.others" datatype="html">
+        <source>Sans le droit d'approuver</source>
+        <target state="translated">Without the right to approve</target>
+      </trans-unit>
+      <trans-unit id="circuits.grant-link" datatype="html">
+        <source>Leur donner ce droit dans « Rôles et droits »</source>
+        <target state="translated">Grant them this right in “Roles and rights”</target>
+      </trans-unit>
+      <trans-unit id="circuits.subject.document-version" datatype="html">
+        <source>Versions de document</source>
+        <target state="translated">Document versions</target>
+      </trans-unit>
+      <trans-unit id="circuits.start" datatype="html">
+        <source>Soumise à revue</source>
+        <target state="translated">Submitted for review</target>
+      </trans-unit>
+      <trans-unit id="circuits.start-help" datatype="html">
+        <source>par son auteur, qui ne l'approuvera jamais lui-même</source>
+        <target state="translated">by its author, who will never approve it themselves</target>
+      </trans-unit>
+      <trans-unit id="circuits.steps" datatype="html">
+        <source>Étapes du circuit</source>
+        <target state="translated">Workflow steps</target>
+      </trans-unit>
+      <trans-unit id="circuits.step-name" datatype="html">
+        <source>Nom de l'étape</source>
+        <target state="translated">Step name</target>
+      </trans-unit>
+      <trans-unit id="circuits.step-name-required" datatype="html">
+        <source>Donnez un nom à l'étape.</source>
+        <target state="translated">Give the step a name.</target>
+      </trans-unit>
+      <trans-unit id="circuits.step-role" datatype="html">
+        <source>Qui approuve</source>
+        <target state="translated">Who approves</target>
+      </trans-unit>
+      <trans-unit id="circuits.fewer" datatype="html">
+        <source>Une approbation de moins</source>
+        <target state="translated">One approval fewer</target>
+      </trans-unit>
+      <trans-unit id="circuits.more" datatype="html">
+        <source>Une approbation de plus</source>
+        <target state="translated">One approval more</target>
+      </trans-unit>
+      <trans-unit id="circuits.approvals-needed" datatype="html">
+        <source>approbation(s) distincte(s)</source>
+        <target state="translated">distinct approval(s)</target>
+      </trans-unit>
+      <trans-unit id="circuits.orphan" datatype="html">
+        <source>Ce rôle n'a plus le droit d'approuver : choisissez-en un autre.</source>
+        <target state="translated">This role can no longer approve: choose another one.</target>
+      </trans-unit>
+      <trans-unit id="circuits.up" datatype="html">
+        <source>Monter l'étape</source>
+        <target state="translated">Move step up</target>
+      </trans-unit>
+      <trans-unit id="circuits.down" datatype="html">
+        <source>Descendre l'étape</source>
+        <target state="translated">Move step down</target>
+      </trans-unit>
+      <trans-unit id="circuits.remove" datatype="html">
+        <source>Retirer l'étape</source>
+        <target state="translated">Remove step</target>
+      </trans-unit>
+      <trans-unit id="circuits.empty" datatype="html">
+        <source>Aucun circuit : une seule approbation suffit. Déposez un rôle ici pour créer la première étape.</source>
+        <target state="translated">No workflow: a single approval is enough. Drop a role here to create the first step.</target>
+      </trans-unit>
+      <trans-unit id="circuits.full" datatype="html">
+        <source>Un circuit compte au plus <x id="MAX"/> étapes.</source>
+        <target state="translated">A workflow has at most <x id="MAX"/> steps.</target>
+      </trans-unit>
+      <trans-unit id="circuits.end" datatype="html">
+        <source>Approuvée</source>
+        <target state="translated">Approved</target>
+      </trans-unit>
+      <trans-unit id="circuits.end-help" datatype="html">
+        <source>prête à publier. Un refus, à n'importe quelle étape, la renvoie en brouillon avec sa raison.</source>
+        <target state="translated">ready to publish. A rejection at any step sends it back to draft with its reason.</target>
+      </trans-unit>
+      <trans-unit id="circuits.note" datatype="html">
+        <source>Une même personne ne décide qu'une fois par circuit. Les versions déjà soumises gardent le circuit de leur soumission.</source>
+        <target state="translated">The same person decides only once per workflow. Versions already submitted keep the workflow of their submission.</target>
+      </trans-unit>
+      <trans-unit id="circuits.pending" datatype="html">
+        <source>Circuit modifié</source>
+        <target state="translated">Workflow changed</target>
+      </trans-unit>
+      <trans-unit id="circuits.pending-invalid" datatype="html">
+        <source>Chaque étape doit porter un nom</source>
+        <target state="translated">Every step needs a name</target>
+      </trans-unit>
+      <trans-unit id="circuits.saved" datatype="html">
+        <source>Circuit enregistré. Les prochaines soumissions le suivront.</source>
+        <target state="translated">Workflow saved. Upcoming submissions will follow it.</target>
+      </trans-unit>
+      <trans-unit id="circuits.cleared" datatype="html">
+        <source>Circuit retiré : une seule approbation suffit de nouveau.</source>
+        <target state="translated">Workflow removed: a single approval is enough again.</target>
+      </trans-unit>
+      <trans-unit id="circuits.failed" datatype="html">
+        <source>L'opération sur le circuit a échoué.</source>
+        <target state="translated">The workflow operation failed.</target>
+      </trans-unit>
+      <trans-unit id="circuits.summary.none" datatype="html">
+        <source>Aujourd'hui, une seule approbation suffit, par toute personne qui a le droit d'approuver.</source>
+        <target state="translated">Today, a single approval is enough, by anyone allowed to approve.</target>
+      </trans-unit>
+      <trans-unit id="circuits.summary.lead" datatype="html">
+        <source>Une version soumise est approuvée par <x id="steps"/>.</source>
+        <target state="translated">A submitted version is approved by <x id="steps"/>.</target>
+      </trans-unit>
+      <trans-unit id="circuits.summary.then" datatype="html">
+        <source>, puis </source>
+        <target state="translated">, then </target>
+      </trans-unit>
+      <trans-unit id="circuits.summary.one" datatype="html">
+        <source>une personne « <x id="role"/> »</source>
+        <target state="translated">one “<x id="role"/>”</target>
+      </trans-unit>
+      <trans-unit id="circuits.summary.many" datatype="html">
+        <source><x id="count"/> personnes « <x id="role"/> »</source>
+        <target state="translated"><x id="count"/> “<x id="role"/>”</target>
+      </trans-unit>
+      <trans-unit id="documents.detail.reject-tooltip" datatype="html">
+        <source>Refuser</source>
+        <target state="translated">Reject</target>
+      </trans-unit>
+      <trans-unit id="documents.detail.step-approved" datatype="html">
+        <source>Votre approbation est enregistrée : la validation continue.</source>
+        <target state="translated">Your approval is recorded: the review continues.</target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.title" datatype="html">
+        <source>Validation de la version v<x id="NUMBER"/></source>
+        <target state="translated">Approval of version v<x id="NUMBER"/></target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.turn-yours" datatype="html">
+        <source>C'est à vous : approuvez ou refusez cette étape.</source>
+        <target state="translated">Your turn: approve or reject this step.</target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.turn-decided" datatype="html">
+        <source>Vous avez décidé : une autre personne doit valider la suite.</source>
+        <target state="translated">You have decided: someone else must approve what comes next.</target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.turn-author" datatype="html">
+        <source>Vous en êtes l'auteur : d'autres la valident.</source>
+        <target state="translated">You are its author: others approve it.</target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.turn-waiting" datatype="html">
+        <source>En attente de : <x id="ROLE"/>.</source>
+        <target state="translated">Waiting for: <x id="ROLE"/>.</target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.simple" datatype="html">
+        <source>Approbation simple : une personne ayant le droit d'approuver suffit.</source>
+        <target state="translated">Simple approval: one person allowed to approve is enough.</target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.failed" datatype="html">
+        <source>L'avancement de la validation n'a pas pu être lu.</source>
+        <target state="translated">The approval progress could not be read.</target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.count" datatype="html">
+        <source><x id="DONE"/> sur <x id="NEEDED"/></source>
+        <target state="translated"><x id="DONE"/> of <x id="NEEDED"/></target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.you" datatype="html">
+        <source>Vous</source>
+        <target state="translated">You</target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.someone" datatype="html">
+        <source>Un membre</source>
+        <target state="translated">A member</target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.rejected" datatype="html">
+        <source>Version v<x id="NUMBER"/> refusée le <x id="DATE"/></source>
+        <target state="translated">Version v<x id="NUMBER"/> rejected on <x id="DATE"/></target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.rejected-next" datatype="html">
+        <source>Corrigez-la, puis soumettez-la de nouveau : le circuit repartira de la première étape.</source>
+        <target state="translated">Correct it, then submit it again: the workflow will restart from the first step.</target>
+      </trans-unit>
+      <trans-unit id="documents.reject.title" datatype="html">
+        <source>Refuser la version v<x id="number"/></source>
+        <target state="translated">Reject version v<x id="number"/></target>
+      </trans-unit>
+      <trans-unit id="documents.reject.subtitle" datatype="html">
+        <source>La version revient en brouillon. Son auteur lira votre raison, la corrigera et la soumettra de nouveau.</source>
+        <target state="translated">The version goes back to draft. Its author will read your reason, correct it and submit it again.</target>
+      </trans-unit>
+      <trans-unit id="documents.reject.blocked" datatype="html">
+        <source>Écrivez la raison du refus.</source>
+        <target state="translated">Write the reason for the rejection.</target>
+      </trans-unit>
+      <trans-unit id="documents.reject.submit" datatype="html">
+        <source>Refuser</source>
+        <target state="translated">Reject</target>
+      </trans-unit>
+      <trans-unit id="documents.reject.reason" datatype="html">
+        <source>Raison du refus</source>
+        <target state="translated">Reason for rejection</target>
+      </trans-unit>
+      <trans-unit id="documents.reject.reason-placeholder" datatype="html">
+        <source>Ce qui manque, ce qui est à corriger</source>
+        <target state="translated">What is missing, what needs correcting</target>
+      </trans-unit>
+      <trans-unit id="documents.reject.reason-required" datatype="html">
+        <source>Un refus se motive.</source>
+        <target state="translated">A rejection needs a reason.</target>
+      </trans-unit>
+      <trans-unit id="documents.reject.done" datatype="html">
+        <source>Version refusée : elle revient en brouillon chez son auteur.</source>
+        <target state="translated">Version rejected: it goes back to its author as a draft.</target>
+      </trans-unit>
+      <trans-unit id="documents.reject.failed" datatype="html">
+        <source>Refus impossible.</source>
+        <target state="translated">Rejection failed.</target>
       </trans-unit>
       <trans-unit id="nav.complaints-nlp" datatype="html">
         <source>Réclamations IA</source>
@@ -9149,6 +9905,142 @@ Customer portal</target>
       <trans-unit id="docreview.err.generic" datatype="html">
         <source>Échec de l'opération (HTTP <x id="status"/>).</source>
         <target state="translated">Operation failed (HTTP <x id="status"/>).</target>
+      </trans-unit>
+      <trans-unit id="nav.admin-license" datatype="html">
+        <source>Licence</source>
+        <target state="translated">License</target>
+      </trans-unit>
+      <trans-unit id="license.title" datatype="html">
+        <source>Licence</source>
+        <target state="translated">License</target>
+      </trans-unit>
+      <trans-unit id="license.subtitle" datatype="html">
+        <source>Ce que couvre la licence de cette installation, et jusqu'à quand.</source>
+        <target state="translated">What this installation's license covers, and until when.</target>
+      </trans-unit>
+      <trans-unit id="license.saas" datatype="html">
+        <source>Cette installation est la plateforme QualitOS de l'éditeur : la licence ne s'y applique pas.</source>
+        <target state="translated">This installation is the vendor's QualitOS platform: the license does not apply here.</target>
+      </trans-unit>
+      <trans-unit id="license.until" datatype="html">
+        <source>Valable jusqu'au</source>
+        <target state="translated">Valid until</target>
+      </trans-unit>
+      <trans-unit id="license.grace-until" datatype="html">
+        <source>Délai de grâce jusqu'au</source>
+        <target state="translated">Grace period until</target>
+      </trans-unit>
+      <trans-unit id="license.tier" datatype="html">
+        <source>Palier</source>
+        <target state="translated">Tier</target>
+      </trans-unit>
+      <trans-unit id="license.reference" datatype="html">
+        <source>Référence</source>
+        <target state="translated">Reference</target>
+      </trans-unit>
+      <trans-unit id="license.users" datatype="html">
+        <source>Utilisateurs</source>
+        <target state="translated">Users</target>
+      </trans-unit>
+      <trans-unit id="license.users-count" datatype="html">
+        <source><x id="ACTIVE"/> comptes actifs sur <x id="MAX"/></source>
+        <target state="translated"><x id="ACTIVE"/> active accounts out of <x id="MAX"/></target>
+      </trans-unit>
+      <trans-unit id="license.users-gauge" datatype="html">
+        <source>Places utilisées</source>
+        <target state="translated">Seats used</target>
+      </trans-unit>
+      <trans-unit id="license.users-help" datatype="html">
+        <source>Désactiver un compte libère une place.</source>
+        <target state="translated">Deactivating an account frees a seat.</target>
+      </trans-unit>
+      <trans-unit id="license.users-unlimited" datatype="html">
+        <source>Nombre d'utilisateurs illimité.</source>
+        <target state="translated">Unlimited number of users.</target>
+      </trans-unit>
+      <trans-unit id="license.modules" datatype="html">
+        <source>Modules ouverts</source>
+        <target state="translated">Modules included</target>
+      </trans-unit>
+      <trans-unit id="license.modules-all" datatype="html">
+        <source>Tous les modules de QualitOS.</source>
+        <target state="translated">All QualitOS modules.</target>
+      </trans-unit>
+      <trans-unit id="license.modules-help" datatype="html">
+        <source>Les modules du socle (PDCA, CAPA, documents, audits…) sont toujours ouverts.</source>
+        <target state="translated">Core modules (PDCA, CAPA, documents, audits…) are always included.</target>
+      </trans-unit>
+      <trans-unit id="license.renew" datatype="html">
+        <source>Renouveler</source>
+        <target state="translated">Renew</target>
+      </trans-unit>
+      <trans-unit id="license.renew-help" datatype="html">
+        <source>Votre prestataire remplace le fichier de licence de l'installation. La nouvelle licence est prise en compte en moins d'une minute, sans redémarrage ni interruption.</source>
+        <target state="translated">Your provider replaces the installation's license file. The new license takes effect within a minute, with no restart or interruption.</target>
+      </trans-unit>
+      <trans-unit id="license.read-only-help" datatype="html">
+        <source>Sans licence valable, l'installation passe en lecture seule : vos enregistrements restent consultables et exportables.</source>
+        <target state="translated">Without a valid license, the installation becomes read-only: your records remain viewable and exportable.</target>
+      </trans-unit>
+      <trans-unit id="license.status.valid" datatype="html">
+        <source>Valide</source>
+        <target state="translated">Valid</target>
+      </trans-unit>
+      <trans-unit id="license.status.grace" datatype="html">
+        <source>Échue — délai de grâce</source>
+        <target state="translated">Expired — grace period</target>
+      </trans-unit>
+      <trans-unit id="license.status.expired" datatype="html">
+        <source>Échue — lecture seule</source>
+        <target state="translated">Expired — read-only</target>
+      </trans-unit>
+      <trans-unit id="license.status.not-yet" datatype="html">
+        <source>Pas encore en vigueur</source>
+        <target state="translated">Not yet in effect</target>
+      </trans-unit>
+      <trans-unit id="license.status.invalid" datatype="html">
+        <source>Non vérifiée</source>
+        <target state="translated">Not verified</target>
+      </trans-unit>
+      <trans-unit id="license.status.missing" datatype="html">
+        <source>Absente</source>
+        <target state="translated">Missing</target>
+      </trans-unit>
+      <trans-unit id="license.status.not-required" datatype="html">
+        <source>Sans objet</source>
+        <target state="translated">Not applicable</target>
+      </trans-unit>
+      <trans-unit id="license.banner.details" datatype="html">
+        <source>Voir la licence</source>
+        <target state="translated">View license</target>
+      </trans-unit>
+      <trans-unit id="license.banner.read-only-tail" datatype="html">
+        <source>Vos données restent consultables et exportables.</source>
+        <target state="translated">Your data remains viewable and exportable.</target>
+      </trans-unit>
+      <trans-unit id="license.banner.expires-soon" datatype="html">
+        <source>La licence expire le <x id="date"/> : pensez à la renouveler.</source>
+        <target state="translated">The license expires on <x id="date"/>: remember to renew it.</target>
+      </trans-unit>
+      <trans-unit id="license.banner.grace" datatype="html">
+        <source>La licence a expiré le <x id="date"/>. Tout fonctionne jusqu'au <x id="grace"/> ; renouvelez-la avant cette date.</source>
+        <target state="translated">The license expired on <x id="date"/>. Everything works until <x id="grace"/>; renew it before then.</target>
+      </trans-unit>
+      <trans-unit id="license.banner.expired" datatype="html">
+        <source>Licence expirée : l'installation est en lecture seule.</source>
+        <target state="translated">License expired: the installation is read-only.</target>
+      </trans-unit>
+      <trans-unit id="license.banner.not-yet" datatype="html">
+        <source>La licence n'est pas encore en vigueur : l'installation est en lecture seule.</source>
+        <target state="translated">The license is not yet in effect: the installation is read-only.</target>
+      </trans-unit>
+      <trans-unit id="license.banner.missing" datatype="html">
+        <source>Aucune licence installée : l'installation est en lecture seule.</source>
+        <target state="translated">No license installed: the installation is read-only.</target>
+      </trans-unit>
+      <trans-unit id="license.banner.invalid" datatype="html">
+        <source>La licence n'a pas pu être vérifiée : l'installation est en lecture seule.</source>
+        <target state="translated">The license could not be verified: the installation is read-only.</target>
       </trans-unit>
       <trans-unit id="nav.cinq-pourquoi" datatype="html">
         <source>5 Pourquoi</source>
@@ -21561,8 +22453,8 @@ declared income
         <target state="translated">Create a CAPA action</target>
       </trans-unit>
       <trans-unit id="rr.action.capa-help" datatype="html">
-        <source>Un dossier CAPA préventif est ouvert dans le module CAPA, à votre nom, avec la criticité du niveau brut du risque. Il apparaîtra dans le tableau « Traitement » de la fiche.</source>
-        <target state="translated">A preventive CAPA case is opened in the CAPA module, in your name, with the criticality of the gross risk level. It will appear in the “Treatment” table of the record.</target>
+        <source>Un dossier CAPA est ouvert dans le module CAPA, avec la criticité du niveau brut du risque. Il porte cette action, confiée au responsable désigné, et apparaîtra dans le tableau « Traitement » de la fiche.</source>
+        <target state="translated">A CAPA case is opened in the CAPA module, with the criticality of the gross risk level. It carries this action, assigned to the designated owner, and will appear in the “Treatment” table of the record.</target>
       </trans-unit>
       <trans-unit id="rr.action.open-capa" datatype="html">
         <source>Ouvrir le dossier CAPA</source>
@@ -21891,6 +22783,454 @@ declared income
       <trans-unit id="rr.event.capa-opened" datatype="html">
         <source>Action CAPA ouverte : <x id="title"/></source>
         <target state="translated">CAPA action opened: <x id="title"/></target>
+      </trans-unit>
+      <trans-unit id="nav.smi" datatype="html">
+        <source>Tableau de bord SMI</source>
+        <target state="translated">IMS dashboard</target>
+      </trans-unit>
+      <trans-unit id="rr.action.kind" datatype="html">
+        <source>Nature de l'action</source>
+        <target state="translated">Type of action</target>
+      </trans-unit>
+      <trans-unit id="rr.action.kind-short" datatype="html">
+        <source>Nature</source>
+        <target state="translated">Type</target>
+      </trans-unit>
+      <trans-unit id="rr.action.kind-hint" datatype="html">
+        <source>Préventive : l'écart ne s'est pas encore produit. Corrective : il s'est déjà produit, on en supprime la cause.</source>
+        <target state="translated">Preventive: the deviation has not occurred yet. Corrective: it has already occurred, and its cause is removed.</target>
+      </trans-unit>
+      <trans-unit id="rr.action.assignee" datatype="html">
+        <source>Responsable de l'action</source>
+        <target state="translated">Action owner</target>
+      </trans-unit>
+      <trans-unit id="rr.action.assignee-short" datatype="html">
+        <source>Responsable</source>
+        <target state="translated">Owner</target>
+      </trans-unit>
+      <trans-unit id="rr.capa-kind.preventive" datatype="html">
+        <source>Préventive</source>
+        <target state="translated">Preventive</target>
+      </trans-unit>
+      <trans-unit id="rr.capa-kind.corrective" datatype="html">
+        <source>Corrective</source>
+        <target state="translated">Corrective</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.single-action" datatype="html">
+        <source>Action</source>
+        <target state="translated">Action</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.single-action-assignee" datatype="html">
+        <source>Responsable</source>
+        <target state="translated">Owner</target>
+      </trans-unit>
+      <trans-unit id="smi.eyebrow" datatype="html">
+        <source>Pilotage</source>
+        <target state="translated">Steering</target>
+      </trans-unit>
+      <trans-unit id="smi.title" datatype="html">
+        <source>Système de Management Intégré</source>
+        <target state="translated">Integrated Management System</target>
+      </trans-unit>
+      <trans-unit id="smi.subtitle" datatype="html">
+        <source>Vue consolidée : une preuve compte pour toutes les normes qu'elle couvre.</source>
+        <target state="translated">Consolidated view: one piece of evidence counts for every standard it covers.</target>
+      </trans-unit>
+      <trans-unit id="smi.filter" datatype="html">
+        <source>Filtrer par norme</source>
+        <target state="translated">Filter by standard</target>
+      </trans-unit>
+      <trans-unit id="smi.filter-all" datatype="html">
+        <source>Tous</source>
+        <target state="translated">All</target>
+      </trans-unit>
+      <trans-unit id="smi.load-failed" datatype="html">
+        <source>Le tableau de bord SMI n'a pas pu être chargé.</source>
+        <target state="translated">The IMS dashboard could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="smi.kpis" datatype="html">
+        <source>Indicateurs clés</source>
+        <target state="translated">Key indicators</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.compliance" datatype="html">
+        <source>Conformité globale</source>
+        <target state="translated">Overall compliance</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.no-standard" datatype="html">
+        <source>Aucune norme adoptée.</source>
+        <target state="translated">No standard adopted.</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.adopt" datatype="html">
+        <source>Adopter une norme</source>
+        <target state="translated">Adopt a standard</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.overdue" datatype="html">
+        <source>Actions en retard</source>
+        <target state="translated">Overdue actions</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.overdue-critical" datatype="html">
+        <source>dont <x id="CRITICAL"/> critiques</source>
+        <target state="translated">including <x id="CRITICAL"/> critical</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.major-risks" datatype="html">
+        <source>Risques majeurs ouverts</source>
+        <target state="translated">Open major risks</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.major-risks-detail" datatype="html">
+        <source><x id="CRITICAL"/> critiques · <x id="HIGH"/> élevés (niveau ≥ 10)</source>
+        <target state="translated"><x id="CRITICAL"/> critical · <x id="HIGH"/> high (level ≥ 10)</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.next-audit" datatype="html">
+        <source>Prochain audit</source>
+        <target state="translated">Next audit</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.in-days" datatype="html">
+        <source>dans <x id="DAYS"/> j</source>
+        <target state="translated">in <x id="DAYS"/> d</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.no-audit" datatype="html">
+        <source>Aucun audit planifié.</source>
+        <target state="translated">No audit planned.</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.plan-audit" datatype="html">
+        <source>Planifier</source>
+        <target state="translated">Plan one</target>
+      </trans-unit>
+      <trans-unit id="smi.by-standard" datatype="html">
+        <source>Conformité par référentiel</source>
+        <target state="translated">Compliance by standard</target>
+      </trans-unit>
+      <trans-unit id="smi.by-standard-note" datatype="html">
+        <source>Une même preuve (procédure, audit, action) est comptée pour tous les référentiels concernés.</source>
+        <target state="translated">A single piece of evidence (procedure, audit, action) counts for every standard concerned.</target>
+      </trans-unit>
+      <trans-unit id="smi.see-matrix" datatype="html">
+        <source>Voir la matrice des exigences</source>
+        <target state="translated">See the requirements matrix</target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.title" datatype="html">
+        <source>Matrice des risques · <x id="OPEN"/> risques ouverts</source>
+        <target state="translated">Risk matrix · <x id="OPEN"/> open risks</target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.view" datatype="html">
+        <source>Cotation affichée</source>
+        <target state="translated">Displayed rating</target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.grid" datatype="html">
+        <source>Matrice gravité × probabilité</source>
+        <target state="translated">Severity × probability matrix</target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.cell-label" datatype="html">
+        <source>Gravité <x id="severity"/> × probabilité <x id="probability"/> : <x id="count"/> risque(s), niveau <x id="level"/></source>
+        <target state="translated">Severity <x id="severity"/> × probability <x id="probability"/>: <x id="count"/> risk(s), level <x id="level"/></target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.residual-missing" datatype="html">
+        <source><x id="MISSING"/> risque(s) sans cotation résiduelle visée n'apparaissent pas.</source>
+        <target state="translated"><x id="MISSING"/> risk(s) without a target residual rating are not shown.</target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.legend" datatype="html">
+        <source>Légende des niveaux</source>
+        <target state="translated">Level legend</target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.low" datatype="html">
+        <source>Faible 1–4</source>
+        <target state="translated">Low 1–4</target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.medium" datatype="html">
+        <source>Moyen 5–9</source>
+        <target state="translated">Medium 5–9</target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.high" datatype="html">
+        <source>Élevé 10–14</source>
+        <target state="translated">High 10–14</target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.critical" datatype="html">
+        <source>Critique 15–25</source>
+        <target state="translated">Critical 15–25</target>
+      </trans-unit>
+      <trans-unit id="smi.week.title" datatype="html">
+        <source>À traiter cette semaine</source>
+        <target state="translated">To handle this week</target>
+      </trans-unit>
+      <trans-unit id="smi.week.empty" datatype="html">
+        <source>Rien d'échu ni d'attendu d'ici sept jours.</source>
+        <target state="translated">Nothing overdue or due within seven days.</target>
+      </trans-unit>
+      <trans-unit id="smi.requirements.title" datatype="html">
+        <source>Matrice des exigences · une preuve, plusieurs référentiels</source>
+        <target state="translated">Requirements matrix · one piece of evidence, several standards</target>
+      </trans-unit>
+      <trans-unit id="smi.requirements.teaser" datatype="html">
+        <source>Chapitres communs 4 à 10, croisés avec chaque norme adoptée : couvert, partiel ou en écart.</source>
+        <target state="translated">Common clauses 4 to 10, crossed with each adopted standard: covered, partial or gap.</target>
+      </trans-unit>
+      <trans-unit id="smi.upcoming.capa-action" datatype="html">
+        <source>Action CAPA</source>
+        <target state="translated">CAPA action</target>
+      </trans-unit>
+      <trans-unit id="smi.upcoming.calibration" datatype="html">
+        <source>Étalonnage</source>
+        <target state="translated">Calibration</target>
+      </trans-unit>
+      <trans-unit id="smi.upcoming.change" datatype="html">
+        <source>Validation de changement</source>
+        <target state="translated">Change approval</target>
+      </trans-unit>
+      <trans-unit id="smi.upcoming.risk-review" datatype="html">
+        <source>Revue de risque</source>
+        <target state="translated">Risk review</target>
+      </trans-unit>
+      <trans-unit id="smi.upcoming.audit" datatype="html">
+        <source>Audit</source>
+        <target state="translated">Audit</target>
+      </trans-unit>
+      <trans-unit id="smi.due.overdue" datatype="html">
+        <source>Échu</source>
+        <target state="translated">Overdue</target>
+      </trans-unit>
+      <trans-unit id="smi.due.today" datatype="html">
+        <source>Aujourd'hui</source>
+        <target state="translated">Today</target>
+      </trans-unit>
+      <trans-unit id="smi.due.in-days" datatype="html">
+        <source>J-<x id="days"/></source>
+        <target state="translated">D-<x id="days"/></target>
+      </trans-unit>
+      <trans-unit id="smi.chapter.4" datatype="html">
+        <source>Contexte de l'organisme</source>
+        <target state="translated">Context of the organization</target>
+      </trans-unit>
+      <trans-unit id="smi.chapter.5" datatype="html">
+        <source>Leadership et politique</source>
+        <target state="translated">Leadership and policy</target>
+      </trans-unit>
+      <trans-unit id="smi.chapter.6" datatype="html">
+        <source>Risques, objectifs, exigences légales</source>
+        <target state="translated">Risks, objectives, legal requirements</target>
+      </trans-unit>
+      <trans-unit id="smi.chapter.7" datatype="html">
+        <source>Ressources, compétences, documents</source>
+        <target state="translated">Resources, competence, documents</target>
+      </trans-unit>
+      <trans-unit id="smi.chapter.8" datatype="html">
+        <source>Réalisation opérationnelle</source>
+        <target state="translated">Operation</target>
+      </trans-unit>
+      <trans-unit id="smi.chapter.9" datatype="html">
+        <source>Évaluation des performances</source>
+        <target state="translated">Performance evaluation</target>
+      </trans-unit>
+      <trans-unit id="smi.chapter.10" datatype="html">
+        <source>Amélioration</source>
+        <target state="translated">Improvement</target>
+      </trans-unit>
+      <trans-unit id="smi.module.process-map" datatype="html">
+        <source>Cartographie</source>
+        <target state="translated">Process map</target>
+      </trans-unit>
+      <trans-unit id="smi.module.risk-register" datatype="html">
+        <source>Risques</source>
+        <target state="translated">Risks</target>
+      </trans-unit>
+      <trans-unit id="smi.module.documents" datatype="html">
+        <source>GED</source>
+        <target state="translated">Documents</target>
+      </trans-unit>
+      <trans-unit id="smi.module.policy" datatype="html">
+        <source>Politique</source>
+        <target state="translated">Policy</target>
+      </trans-unit>
+      <trans-unit id="smi.module.objectives" datatype="html">
+        <source>Objectifs</source>
+        <target state="translated">Objectives</target>
+      </trans-unit>
+      <trans-unit id="smi.module.training" datatype="html">
+        <source>Compétences</source>
+        <target state="translated">Competence</target>
+      </trans-unit>
+      <trans-unit id="smi.module.calibration" datatype="html">
+        <source>Métrologie</source>
+        <target state="translated">Metrology</target>
+      </trans-unit>
+      <trans-unit id="smi.module.apqp" datatype="html">
+        <source>APQP</source>
+        <target state="translated">APQP</target>
+      </trans-unit>
+      <trans-unit id="smi.module.spc" datatype="html">
+        <source>SPC</source>
+        <target state="translated">SPC</target>
+      </trans-unit>
+      <trans-unit id="smi.module.changes" datatype="html">
+        <source>MOC</source>
+        <target state="translated">MOC</target>
+      </trans-unit>
+      <trans-unit id="smi.module.audits" datatype="html">
+        <source>Audits</source>
+        <target state="translated">Audits</target>
+      </trans-unit>
+      <trans-unit id="smi.module.kpi" datatype="html">
+        <source>Indicateurs</source>
+        <target state="translated">KPIs</target>
+      </trans-unit>
+      <trans-unit id="smi.module.management-review" datatype="html">
+        <source>Revue</source>
+        <target state="translated">Review</target>
+      </trans-unit>
+      <trans-unit id="smi.module.nc" datatype="html">
+        <source>NC</source>
+        <target state="translated">NC</target>
+      </trans-unit>
+      <trans-unit id="smi.module.capa" datatype="html">
+        <source>CAPA</source>
+        <target state="translated">CAPA</target>
+      </trans-unit>
+      <trans-unit id="smi.coverage.covered" datatype="html">
+        <source>Couvert</source>
+        <target state="translated">Covered</target>
+      </trans-unit>
+      <trans-unit id="smi.coverage.partial" datatype="html">
+        <source>Partiel</source>
+        <target state="translated">Partial</target>
+      </trans-unit>
+      <trans-unit id="smi.coverage.gap" datatype="html">
+        <source>Écart</source>
+        <target state="translated">Gap</target>
+      </trans-unit>
+      <trans-unit id="smi.coverage.not-applicable" datatype="html">
+        <source>Sans objet</source>
+        <target state="translated">Not applicable</target>
+      </trans-unit>
+      <trans-unit id="smi.crumb" datatype="html">
+        <source>Tableau de bord SMI</source>
+        <target state="translated">IMS dashboard</target>
+      </trans-unit>
+      <trans-unit id="smi.crumb-matrix" datatype="html">
+        <source>Matrice des risques</source>
+        <target state="translated">Risk matrix</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.crumb" datatype="html">
+        <source>Gravité <x id="severity"/> × probabilité <x id="probability"/></source>
+        <target state="translated">Severity <x id="severity"/> × probability <x id="probability"/></target>
+      </trans-unit>
+      <trans-unit id="smi.cell.title" datatype="html">
+        <source><x id="count"/> risque(s) · niveau <x id="level"/> (<x id="score"/>)</source>
+        <target state="translated"><x id="count"/> risk(s) · <x id="level"/> level (<x id="score"/>)</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.filter-site" datatype="html">
+        <source>Filtrer par site</source>
+        <target state="translated">Filter by site</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.all-sites" datatype="html">
+        <source>Tous sites</source>
+        <target state="translated">All sites</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.failed" datatype="html">
+        <source>Les risques n'ont pas pu être chargés.</source>
+        <target state="translated">The risks could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.col-actions" datatype="html">
+        <source>Actions</source>
+        <target state="translated">Actions</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.capa-count" datatype="html">
+        <source><x id="COUNT"/> en cours</source>
+        <target state="translated"><x id="COUNT"/> in progress</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.empty" datatype="html">
+        <source>Aucun risque ouvert dans cette case.</source>
+        <target state="translated">No open risk in this cell.</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.detail" datatype="html">
+        <source>Détail</source>
+        <target state="translated">Detail</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.gross" datatype="html">
+        <source>Cotation brute</source>
+        <target state="translated">Gross rating</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.linked-actions" datatype="html">
+        <source>Actions liées</source>
+        <target state="translated">Linked actions</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.open-risk" datatype="html">
+        <source>Ouvrir la fiche risque</source>
+        <target state="translated">Open the risk record</target>
+      </trans-unit>
+      <trans-unit id="smi.req.subtitle" datatype="html">
+        <source>Les chapitres communs à toutes les normes de système de management, croisés avec chaque norme adoptée.</source>
+        <target state="translated">The clauses shared by all management system standards, crossed with each adopted standard.</target>
+      </trans-unit>
+      <trans-unit id="smi.req.crumb" datatype="html">
+        <source>Matrice des exigences</source>
+        <target state="translated">Requirements matrix</target>
+      </trans-unit>
+      <trans-unit id="smi.req.failed" datatype="html">
+        <source>La matrice des exigences n'a pas pu être chargée.</source>
+        <target state="translated">The requirements matrix could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="smi.req.col-chapter" datatype="html">
+        <source>Chapitre commun (HLS)</source>
+        <target state="translated">Common clause (HLS)</target>
+      </trans-unit>
+      <trans-unit id="smi.req.col-module" datatype="html">
+        <source>Module QualitOS</source>
+        <target state="translated">QualitOS module</target>
+      </trans-unit>
+      <trans-unit id="smi.req.cell-label" datatype="html">
+        <source><x id="standard"/>, chapitre <x id="chapter"/> : <x id="status"/>, <x id="covered"/> sur <x id="total"/></source>
+        <target state="translated"><x id="standard"/>, clause <x id="chapter"/>: <x id="status"/>, <x id="covered"/> of <x id="total"/></target>
+      </trans-unit>
+      <trans-unit id="smi.req.legend" datatype="html">
+        <source>Légende :</source>
+        <target state="translated">Legend:</target>
+      </trans-unit>
+      <trans-unit id="smi.req.legend-covered" datatype="html">
+        <source>couvert : toutes les exigences du chapitre sont prouvées</source>
+        <target state="translated">covered: every requirement of the clause is evidenced</target>
+      </trans-unit>
+      <trans-unit id="smi.req.legend-partial" datatype="html">
+        <source>partiel : une partie seulement</source>
+        <target state="translated">partial: only some of them</target>
+      </trans-unit>
+      <trans-unit id="smi.req.legend-gap" datatype="html">
+        <source>écart : aucune preuve</source>
+        <target state="translated">gap: no evidence</target>
+      </trans-unit>
+      <trans-unit id="smi.req.detail-chapter" datatype="html">
+        <source>Détail · chapitre <x id="CHAPTER"/></source>
+        <target state="translated">Detail · clause <x id="CHAPTER"/></target>
+      </trans-unit>
+      <trans-unit id="smi.req.detail-count" datatype="html">
+        <source><x id="COVERED"/> exigence(s) prouvée(s) sur <x id="TOTAL"/>.</source>
+        <target state="translated"><x id="COVERED"/> requirement(s) evidenced out of <x id="TOTAL"/>.</target>
+      </trans-unit>
+      <trans-unit id="smi.req.detail-missing" datatype="html">
+        <source>Clauses à prouver</source>
+        <target state="translated">Clauses to evidence</target>
+      </trans-unit>
+      <trans-unit id="smi.req.detail-failed" datatype="html">
+        <source>Le détail des clauses n'a pas pu être chargé.</source>
+        <target state="translated">The clause details could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="smi.req.complete" datatype="html">
+        <source>Compléter les preuves</source>
+        <target state="translated">Add evidence</target>
+      </trans-unit>
+      <trans-unit id="smi.req.reuse" datatype="html">
+        <source>Une preuve rattachée à une exigence commune compte pour toutes les normes qui partagent ce chapitre.</source>
+        <target state="translated">Evidence linked to a common requirement counts for every standard sharing this clause.</target>
+      </trans-unit>
+      <trans-unit id="smi.req.all-covered" datatype="html">
+        <source>Tout est couvert : choisissez une case pour en voir le détail.</source>
+        <target state="translated">Everything is covered: choose a cell to see its detail.</target>
+      </trans-unit>
+      <trans-unit id="smi.req.capa-title" datatype="html">
+        <source><x id="status"/> <x id="standard"/> · <x id="chapter"/> <x id="title"/></source>
+        <target state="translated"><x id="status"/> <x id="standard"/> · <x id="chapter"/> <x id="title"/></target>
+      </trans-unit>
+      <trans-unit id="smi.req.capa-description" datatype="html">
+        <source><x id="covered"/> exigence(s) prouvée(s) sur <x id="total"/> au chapitre <x id="chapter"/> de <x id="standard"/>.</source>
+        <target state="translated"><x id="covered"/> requirement(s) evidenced out of <x id="total"/> in clause <x id="chapter"/> of <x id="standard"/>.</target>
       </trans-unit>
       <trans-unit id="standards-extras.actions" datatype="html">
         <source>Actions</source>

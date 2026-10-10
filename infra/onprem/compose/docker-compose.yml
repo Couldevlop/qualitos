@@ -1,0 +1,293 @@
+# QualitOS — mode léger : un serveur seul, sans Kubernetes (ADR 0084).
+#
+# NE PAS lancer à la main : `qualitos-compose.sh` prépare le dossier de
+# l'installation (.env aux secrets générés une fois, realm, certificat, licence)
+# puis démarre les services dans le bon ordre. Ce fichier y est copié.
+#
+# Les variables d'environnement des services sont celles que le chart Helm rend
+# en édition on-premise : un banc (infra/onprem/tests) les compare, pour que le
+# mode léger ne dérive jamais de l'installation Kubernetes.
+#
+# Durcissement : chaque conteneur tourne sans privilège supplémentaire
+# (no-new-privileges, capacités retirées), système de fichiers en lecture seule
+# là où l'image le permet. Rien n'est publié vers l'extérieur sauf le proxy
+# (443, et 80 pour la seule redirection) ; Keycloak écoute aussi sur la boucle
+# locale du serveur, pour que l'installateur le configure sans passer par le proxy.
+
+name: qualitos
+
+x-durci: &durci
+  restart: unless-stopped
+  security_opt: ["no-new-privileges:true"]
+  cap_drop: ["ALL"]
+  logging:
+    driver: json-file
+    options: { max-size: "20m", max-file: "5" }
+
+x-spring: &spring
+  <<: *durci
+  read_only: true
+  tmpfs: ["/tmp"]
+
+services:
+
+  # ---------------------------------------------------------------- données --
+
+  postgres:
+    <<: *durci
+    image: ${QOS_IMG_POSTGRES}
+    # postgres a besoin de quelques capacités pour gérer ses fichiers au démarrage.
+    cap_add: ["CHOWN", "DAC_OVERRIDE", "FOWNER", "SETGID", "SETUID"]
+    environment:
+      POSTGRES_USER: qualitos
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: postgres
+      NLQ_RO_PASSWORD: ${NLQ_RO_PASSWORD}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      # Le script d'initialisation est celui du manifeste Kubernetes, extrait à
+      # l'installation : une seule source pour les deux modes.
+      - ./postgres-init.sh:/docker-entrypoint-initdb.d/init.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U qualitos -d postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+
+  keycloak:
+    <<: *durci
+    image: ${QOS_IMG_KEYCLOAK}
+    command: ["start", "--import-realm"]
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+      KC_DB_USERNAME: qualitos
+      KC_DB_PASSWORD: ${POSTGRES_PASSWORD}
+      KC_PROXY_HEADERS: xforwarded
+      KC_HTTP_ENABLED: "true"
+      KC_HOSTNAME: https://${QOS_HOST}/auth
+      KC_HTTP_RELATIVE_PATH: /auth
+      KC_HEALTH_ENABLED: "true"
+      KC_METRICS_ENABLED: "true"
+      KC_CACHE: local
+    volumes:
+      - ./realm:/opt/keycloak/data/import:ro
+    ports:
+      # Boucle locale seulement : l'installateur configure Keycloak d'ici.
+      - "127.0.0.1:${QOS_KEYCLOAK_ADMIN_PORT:-18080}:8080"
+    depends_on:
+      postgres: { condition: service_healthy }
+    healthcheck:
+      # L'image n'a ni curl ni wget : une requête HTTP à la main, en bash.
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/localhost/9000 && printf 'GET /auth/health/ready HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3 && grep -q '\"UP\"' <&3"]
+      interval: 15s
+      timeout: 10s
+      retries: 40
+      start_period: 60s
+
+  minio:
+    <<: *durci
+    image: ${QOS_IMG_MINIO}
+    command: ["server", "/data", "--console-address", ":9001"]
+    environment:
+      MINIO_ROOT_USER: qualitos
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    volumes:
+      - minio-data:/data
+
+  # Crée le bucket des pièces jointes et le compte applicatif RESTREINT (lecture,
+  # écriture, suppression d'objets dans ce seul bucket). Même script que le Job
+  # Kubernetes minio-init. S'exécute puis s'arrête.
+  minio-init:
+    image: ${QOS_IMG_MC}
+    restart: "no"
+    security_opt: ["no-new-privileges:true"]
+    cap_drop: ["ALL"]
+    depends_on: [minio]
+    environment:
+      MINIO_ROOT_USER: qualitos
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      STORAGE_S3_ACCESS_KEY: qualitos-engine
+      STORAGE_S3_SECRET_KEY: ${STORAGE_S3_SECRET_KEY}
+    volumes:
+      - ./minio-init.sh:/minio-init.sh:ro
+    entrypoint: ["/bin/sh", "/minio-init.sh"]
+
+  qdrant:
+    <<: *durci
+    image: ${QOS_IMG_QDRANT}
+    environment:
+      QDRANT__STORAGE__SNAPSHOTS_PATH: /qdrant/storage/snapshots
+    volumes:
+      - qdrant-data:/qdrant/storage
+
+  # Modèle de langage local — profil « ollama » : activé quand le site n'a pas de
+  # serveur d'IA (QOS_OLLAMA_URL vide). Les données ne quittent pas le serveur.
+  ollama:
+    <<: *durci
+    image: ${QOS_IMG_OLLAMA}
+    profiles: ["ollama"]
+    environment:
+      OLLAMA_MODELS: /models
+      HOME: /models
+      OLLAMA_HOST: 0.0.0.0:11434
+      OLLAMA_MAX_LOADED_MODELS: "1"
+    volumes:
+      - ollama-models:/models
+
+  # ------------------------------------------------------------ application --
+
+  api-core:
+    <<: *spring
+    image: ${QOS_REGISTRY}/api-core:${QOS_VERSION}
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      KEYCLOAK_URL: https://${QOS_HOST}/auth
+      KEYCLOAK_REALM: qualitos
+      KEYCLOAK_ISSUER_URI: https://${QOS_HOST}/auth/realms/qualitos
+      DB_URL: jdbc:postgresql://postgres:5432/qualitos_core
+      DB_USER: qualitos
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      IDENTITY_KEYCLOAK_URL: http://keycloak:8080/auth
+      KEYCLOAK_PROVISIONER_SECRET: ${KEYCLOAK_PROVISIONER_SECRET}
+      QUALITOS_EDITION: onprem
+      QUALITOS_LICENSE_FILE: /etc/qualitos/license/license.lic
+      QUALITY_ENGINE_BASE_URL: http://api-quality-engine:8082
+    volumes:
+      # Le DOSSIER, pas le fichier : remplacer la licence se voit sans redémarrage.
+      - ./license:/etc/qualitos/license:ro
+    extra_hosts:
+      # Les services valident l'émetteur des jetons par l'URL publique : ils la
+      # joignent par le proxy du serveur même, sans dépendre du DNS du site.
+      - "${QOS_HOST}:host-gateway"
+    depends_on:
+      postgres: { condition: service_healthy }
+      keycloak: { condition: service_healthy }
+
+  api-quality-engine:
+    <<: *spring
+    image: ${QOS_REGISTRY}/api-quality-engine:${QOS_VERSION}
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      KEYCLOAK_URL: https://${QOS_HOST}/auth
+      KEYCLOAK_REALM: qualitos
+      KEYCLOAK_ISSUER_URI: https://${QOS_HOST}/auth/realms/qualitos
+      AI_AUTH_MODE: bearer
+      AI_CLIENT_ID: api-quality-engine-ai
+      AI_CLIENT_SECRET: ${AI_CLIENT_SECRET}
+      AI_SERVICE_URL: http://ai-service:8085
+      AI_TOKEN_URI: http://keycloak:8080/auth/realms/qualitos/protocol/openid-connect/token
+      DB_URL: jdbc:postgresql://postgres:5432/qualitos_quality
+      DB_USER: qualitos
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      QUALITOS_EDITION: onprem
+      QUALITOS_KAFKA_ENABLED: "false"
+      QUALITOS_LICENSE_FILE: /etc/qualitos/license/license.lic
+      STORAGE_S3_BUCKET: qualitos-evidence
+      STORAGE_S3_ENABLED: "true"
+      STORAGE_S3_ENDPOINT: http://minio:9000
+      STORAGE_S3_PUBLIC_ENDPOINT: https://${QOS_HOST}
+      STORAGE_S3_ACCESS_KEY: qualitos-engine
+      STORAGE_S3_SECRET_KEY: ${STORAGE_S3_SECRET_KEY}
+    volumes:
+      - ./license:/etc/qualitos/license:ro
+    extra_hosts:
+      - "${QOS_HOST}:host-gateway"
+    depends_on:
+      postgres: { condition: service_healthy }
+      keycloak: { condition: service_healthy }
+      minio-init: { condition: service_completed_successfully }
+
+  api-iot-hub:
+    <<: *spring
+    image: ${QOS_REGISTRY}/api-iot-hub:${QOS_VERSION}
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      KEYCLOAK_URL: https://${QOS_HOST}/auth
+      KEYCLOAK_REALM: qualitos
+      KEYCLOAK_ISSUER_URI: https://${QOS_HOST}/auth/realms/qualitos
+      IOT_DB_URL: jdbc:postgresql://postgres:5432/qualitos_iot
+      IOT_DB_USERNAME: qualitos
+      IOT_DB_PASSWORD: ${POSTGRES_PASSWORD}
+      QUALITY_ENGINE_BASE_URL: http://api-quality-engine:8082
+    extra_hosts:
+      - "${QOS_HOST}:host-gateway"
+    depends_on:
+      postgres: { condition: service_healthy }
+
+  ai-service:
+    <<: *durci
+    image: ${QOS_REGISTRY}/ai-service:${QOS_VERSION}
+    read_only: true
+    tmpfs: ["/tmp"]
+    environment:
+      AI_DEFAULT_PROVIDER: ollama
+      EMBEDDINGS_MODEL: bge-m3
+      EMBEDDINGS_PROVIDER: ollama
+      KEYCLOAK_AUDIENCE: qualitos-ai
+      KEYCLOAK_ISSUER: https://${QOS_HOST}/auth/realms/qualitos
+      OLLAMA_BASE_URL: ${QOS_OLLAMA_BASE_URL}
+      OLLAMA_MODEL: ${QOS_OLLAMA_MODEL}
+      OLLAMA_TIMEOUT_S: "240"
+      QDRANT_URL: http://qdrant:6333
+      QOS_AI_ALLOWED_HOSTS: ${QOS_OLLAMA_HOSTNAME}
+      QOS_DEV_AUTH: "0"
+      QOS_ENV: prod
+      TRUSTED_SERVICE_AZP: api-quality-engine-ai
+      NLQ_READONLY_DSN: postgresql://qualitos_nlq_ro:${NLQ_RO_PASSWORD}@postgres:5432/qualitos_quality
+    extra_hosts:
+      - "${QOS_HOST}:host-gateway"
+    depends_on:
+      postgres: { condition: service_healthy }
+
+  web:
+    <<: *durci
+    image: ${QOS_REGISTRY}/web:${QOS_VERSION}
+    # nginx écrit sa configuration finale (envsubst) et ses caches au démarrage.
+    read_only: true
+    tmpfs: ["/etc/nginx/conf.d", "/var/cache/nginx", "/tmp"]
+    environment:
+      QOS_API_BASE_URL: https://${QOS_HOST}
+      QOS_CONNECT_SRC: "'self' https://${QOS_HOST}"
+      QOS_KEYCLOAK_CLIENT_ID: qualitos-web
+      QOS_KEYCLOAK_ISSUER: https://${QOS_HOST}/auth/realms/qualitos
+
+  # ------------------------------------------------------------ entrée --
+
+  # Le proxy : TLS, routes (les mêmes que l'ingress Kubernetes), en-têtes durcis
+  # des pièces jointes. Seul service publié vers l'extérieur.
+  proxy:
+    <<: *durci
+    image: ${QOS_IMG_NGINX}
+    cap_add: ["NET_BIND_SERVICE", "CHOWN", "SETGID", "SETUID"]
+    ports:
+      - "443:443"
+      - "80:80"
+    volumes:
+      - ./proxy.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./tls:/etc/qualitos/tls:ro
+    depends_on: [web, api-core, api-quality-engine, keycloak]
+
+  # Vidage quotidien de toutes les bases, 14 jours gardés — même règle que le
+  # CronJob Kubernetes. Le dossier des vidages est sur le disque du serveur :
+  # le recopier ailleurs (QOS_BACKUP_DIR sur un montage distant) reste à faire
+  # par le site, et le guide le dit.
+  backup:
+    <<: *durci
+    image: ${QOS_IMG_POSTGRES}
+    environment:
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - ${QOS_BACKUP_DIR:-./sauvegardes}:/backups
+      - ./backup.sh:/backup.sh:ro
+    entrypoint: ["/bin/sh", "/backup.sh"]
+    depends_on:
+      postgres: { condition: service_healthy }
+
+volumes:
+  postgres-data:
+  minio-data:
+  qdrant-data:
+  ollama-models:

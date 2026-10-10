@@ -24,6 +24,8 @@
     <modules>
         <module>libs/industry-commons</module>
         <module>libs/security-commons-crypto</module>
+        <!-- Édition et licence on-premise (ADR 0082) : vérifiée hors ligne. -->
+        <module>libs/licensing</module>
         <!-- JAR Keycloak SPI (déployé dans /opt/keycloak/providers/) — module sœur,
              jamais une dépendance des services Spring. Validé par le réacteur
              (placeholder COPY requis dans les Dockerfiles core/engine/iot). -->

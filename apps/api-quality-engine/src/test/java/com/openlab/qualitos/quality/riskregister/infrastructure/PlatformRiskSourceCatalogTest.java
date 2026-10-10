@@ -50,7 +50,7 @@ class PlatformRiskSourceCatalogTest {
         ncs = mock(NonConformityRepository.class);
         findings = mock(AuditFindingRepository.class);
         changes = mock(ChangeRequestRepository.class);
-        catalog = new PlatformRiskSourceCatalog(items, projects, ncs, findings, changes);
+        catalog = new PlatformRiskSourceCatalog(items, projects, ncs, findings, changes, viewAll -> Optional.empty());
     }
 
     FmeaItem ligne(int s, int o, int d, ActionPriority ap) {

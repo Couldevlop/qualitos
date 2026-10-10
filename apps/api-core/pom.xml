@@ -16,6 +16,12 @@
     <description>Core API — Authentication, Multi-tenancy, RBAC, Tenant management</description>
 
     <dependencies>
+        <!-- Édition (SaaS / on-premise) et licence vérifiée hors ligne (ADR 0082). -->
+        <dependency>
+            <groupId>com.openlab.qualitos</groupId>
+            <artifactId>licensing</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
         <!-- Spring Boot Web -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

@@ -6,6 +6,7 @@ import com.openlab.qualitos.quality.riskregister.domain.OpportunityStatus;
 import com.openlab.qualitos.quality.riskregister.domain.RegisterOrigin;
 import com.openlab.qualitos.quality.riskregister.domain.RegisterRequirement;
 import com.openlab.qualitos.quality.riskregister.domain.RegisterType;
+import com.openlab.qualitos.quality.riskregister.domain.RiskCapaKind;
 import com.openlab.qualitos.quality.riskregister.domain.RiskDecision;
 import com.openlab.qualitos.quality.riskregister.domain.RiskStatus;
 import jakarta.validation.constraints.Max;
@@ -74,7 +75,9 @@ public final class RiskRegisterWebDto {
     public record CapaRequest(
             @NotBlank @Size(max = 255) String title,
             @Size(max = 4000) String description,
-            LocalDate dueDate) {}
+            @NotNull RiskCapaKind kind,
+            @NotBlank @Size(max = 255) String assignee,
+            @NotNull LocalDate dueDate) {}
 
     public record ActionRequest(
             @NotBlank @Size(max = 255) String title,

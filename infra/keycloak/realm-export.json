@@ -141,6 +141,22 @@
       "publicClient": false,
       "standardFlowEnabled": false,
       "serviceAccountsEnabled": false
+    },
+    {
+      "clientId": "qualitos-provisioner",
+      "name": "Creation et reglage des comptes (api-core)",
+      "description": "client_credentials ; compte de service limite a manage-users, view-users, query-users (ADR 0079). Secret genere au deploiement, jamais ici (SS18.2-3).",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "bearerOnly": false,
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "attributes": {
+        "access.token.lifespan": "300"
+      }
     }
   ],
   "users": [
@@ -219,6 +235,18 @@
         "quality_manager",
         "user"
       ]
+    },
+    {
+      "username": "service-account-qualitos-provisioner",
+      "enabled": true,
+      "serviceAccountClientId": "qualitos-provisioner",
+      "clientRoles": {
+        "realm-management": [
+          "manage-users",
+          "view-users",
+          "query-users"
+        ]
+      }
     }
   ],
   "authenticationFlows": [

@@ -343,12 +343,12 @@ TRANSLATIONS = {
         'Créer une action CAPA', 'Create a CAPA action', 'Crear una acción CAPA',
         'إنشاء إجراء CAPA', 'CAPAアクションを作成', '创建 CAPA 措施'),
     'rr.action.capa-help': (
-        'Un dossier CAPA préventif est ouvert dans le module CAPA, à votre nom, avec la criticité du niveau brut du risque. Il apparaîtra dans le tableau « Traitement » de la fiche.',
-        'A preventive CAPA case is opened in the CAPA module, in your name, with the criticality of the gross risk level. It will appear in the “Treatment” table of the record.',
-        'Se abre un expediente CAPA preventivo en el módulo CAPA, a su nombre, con la criticidad del nivel bruto del riesgo. Aparecerá en la tabla «Tratamiento» del registro.',
-        'يُفتح ملف CAPA وقائي في وحدة CAPA باسمك، بدرجة حرجية مساوية للمستوى الإجمالي للخطر. وسيظهر في جدول «المعالجة» في السجل.',
-        'CAPAモジュールで、あなたの名前で予防的CAPAケースが開始され、リスクの固有レベルに応じた重要度が設定されます。記録の「対応」表に表示されます。',
-        '将在 CAPA 模块中以您的名义开启一个预防性 CAPA 案例，其关键度取风险的固有等级。它将显示在记录的“处理”表中。'),
+        'Un dossier CAPA est ouvert dans le module CAPA, avec la criticité du niveau brut du risque. Il porte cette action, confiée au responsable désigné, et apparaîtra dans le tableau « Traitement » de la fiche.',
+        'A CAPA case is opened in the CAPA module, with the criticality of the gross risk level. It carries this action, assigned to the designated owner, and will appear in the “Treatment” table of the record.',
+        'Se abre un expediente CAPA en el módulo CAPA, con la criticidad del nivel bruto del riesgo. Lleva esta acción, asignada al responsable designado, y aparecerá en la tabla «Tratamiento» del registro.',
+        'يُفتح ملف CAPA في وحدة CAPA بدرجة حرجية مساوية للمستوى الإجمالي للخطر. ويحمل هذا الإجراء المسند إلى المسؤول المعيّن، وسيظهر في جدول «المعالجة» في السجل.',
+        'CAPAモジュールでCAPAケースが開始され、リスクの固有レベルに応じた重要度が設定されます。このアクションは指定された責任者に割り当てられ、記録の「対応」表に表示されます。',
+        '将在 CAPA 模块中开启一个 CAPA 案例，其关键度取风险的固有等级。该案例承载此措施并指派给指定负责人，并将显示在记录的“处理”表中。'),
     'rr.action.open-capa': (
         'Ouvrir le dossier CAPA', 'Open the CAPA case', 'Abrir el expediente CAPA',
         'فتح ملف CAPA', 'CAPAケースを開く', '打开 CAPA 案例'),

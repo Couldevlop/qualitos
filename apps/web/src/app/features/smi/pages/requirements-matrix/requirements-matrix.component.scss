@@ -1,0 +1,222 @@
+// La matrice des exigences : le tableau à gauche, le détail de la case à droite.
+@use '../../smi.shared' as smi;
+
+:host {
+  display: block;
+}
+
+@include smi.carte;
+@include smi.tableau;
+
+.echec {
+  display: flex;
+  align-items: center;
+  gap: var(--qos-space-2);
+  color: var(--qos-danger-fg);
+}
+
+.vide-page {
+  color: var(--qos-fg-secondary);
+
+  a {
+    margin-left: var(--qos-space-2);
+    color: var(--qos-fg-link);
+  }
+}
+
+.grille {
+  display: grid;
+  grid-template-columns: minmax(0, 2.4fr) minmax(16rem, 1fr);
+  gap: var(--qos-space-4);
+  align-items: start;
+
+  @media (max-width: 1100px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.carte--tableau {
+  padding: 0;
+  overflow: hidden;
+
+  .tableau {
+    border: 0;
+    box-shadow: none;
+    border-radius: 0;
+  }
+}
+
+.chapitre {
+  font-weight: var(--qos-fw-regular);
+  color: var(--qos-fg-primary);
+  min-width: 13rem;
+}
+
+.modules {
+  color: var(--qos-fg-secondary);
+  white-space: nowrap;
+}
+
+.sans-objet {
+  color: var(--qos-fg-tertiary);
+}
+
+// Une case : une marque (rond plein, rond creux, carré) ET un mot — la forme
+// et le texte portent l'état, la couleur ne fait que le souligner.
+.etat {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  margin: -4px -8px;
+  border: 1px solid transparent;
+  border-radius: var(--qos-radius-sm);
+  background: none;
+  font: inherit;
+  font-size: var(--qos-fs-sm);
+  font-weight: var(--qos-fw-semibold);
+  color: var(--qos-fg-primary);
+  cursor: pointer;
+  white-space: nowrap;
+
+  &:hover {
+    background: var(--qos-bg-hover);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--qos-border-focus);
+    outline-offset: 1px;
+  }
+
+  &--choisi {
+    background: var(--qos-accent-bg-soft);
+    border-color: color-mix(in srgb, var(--qos-accent-bg) 35%, transparent);
+  }
+
+  &--PARTIAL {
+    color: var(--qos-chain-2);
+  }
+
+  &--GAP {
+    color: var(--qos-danger-fg);
+  }
+}
+
+.etat__marque {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--qos-accent-bg);
+
+  .etat--PARTIAL &,
+  &--PARTIAL {
+    background: transparent;
+    border: 2px solid var(--qos-chain-2);
+  }
+
+  .etat--GAP &,
+  &--GAP {
+    border-radius: 2px;
+    background: var(--qos-danger-fg);
+  }
+
+  &--COVERED {
+    background: var(--qos-accent-bg);
+  }
+}
+
+.legende {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--qos-space-2) var(--qos-space-4);
+  margin: 0;
+  padding: var(--qos-space-3) var(--qos-space-4);
+  border-top: 1px solid var(--qos-border-subtle);
+  font-size: var(--qos-fs-xs);
+  color: var(--qos-fg-secondary);
+
+  &__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+}
+
+// ---------- détail ----------
+
+.detail {
+  position: sticky;
+  top: var(--qos-space-4);
+
+  &__surtitre {
+    margin: 0 0 var(--qos-space-1);
+    font-size: var(--qos-fs-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--qos-fg-tertiary);
+  }
+
+  &__titre {
+    margin: 0 0 var(--qos-space-3);
+    font-size: var(--qos-fs-lg);
+    font-weight: var(--qos-fw-semibold);
+    color: var(--qos-fg-primary);
+  }
+
+  &__texte {
+    margin: 0 0 var(--qos-space-4);
+    font-size: var(--qos-fs-sm);
+    line-height: 1.5;
+    color: var(--qos-fg-secondary);
+  }
+
+  &__sous-titre {
+    margin: 0 0 var(--qos-space-2);
+    font-size: var(--qos-fs-sm);
+    font-weight: var(--qos-fw-semibold);
+    color: var(--qos-fg-primary);
+  }
+
+  &__boutons {
+    display: flex;
+    flex-direction: column;
+    gap: var(--qos-space-2);
+    margin-top: var(--qos-space-5);
+  }
+}
+
+.clauses {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: var(--qos-fs-sm);
+
+  li {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: var(--qos-space-2);
+    padding: var(--qos-space-2) 0;
+    border-top: 1px solid var(--qos-border-subtle);
+  }
+
+  &__titre {
+    color: var(--qos-fg-primary);
+    overflow-wrap: anywhere;
+  }
+
+  &__compte {
+    color: var(--qos-fg-tertiary);
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.aide {
+  margin: var(--qos-space-4) 0 0;
+  font-size: var(--qos-fs-xs);
+  color: var(--qos-fg-tertiary);
+  line-height: 1.5;
+}

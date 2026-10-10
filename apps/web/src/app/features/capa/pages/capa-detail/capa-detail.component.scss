@@ -326,3 +326,42 @@
   font-size: 13px;
   color: var(--qos-text-muted, #6b7280);
 }
+
+// Dossier issu d'un risque : son action, seule, sans le tableau d'édition.
+.action-unique {
+  &__ligne {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--qos-space-4);
+    flex-wrap: wrap;
+    padding: var(--qos-space-3) 0;
+
+    & + & {
+      border-top: 1px solid var(--qos-border-subtle);
+    }
+  }
+
+  &__titre {
+    margin: 0 0 var(--qos-space-2);
+    font-weight: var(--qos-fw-semibold);
+    color: var(--qos-fg-primary);
+  }
+
+  &__champs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+    gap: var(--qos-space-3) var(--qos-space-6);
+    margin: 0;
+
+    dt {
+      font-size: var(--qos-fs-xs);
+      color: var(--qos-fg-tertiary);
+    }
+
+    dd {
+      margin: 0;
+      color: var(--qos-fg-primary);
+    }
+  }
+}

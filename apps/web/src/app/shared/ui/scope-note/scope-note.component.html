@@ -1,0 +1,4 @@
+<p class="note" role="note" *ngIf="(seesAll$ | async) === false" data-test="scope-note">
+  <mat-icon aria-hidden="true">filter_alt</mat-icon>
+  <span><ng-content></ng-content></span>
+</p>

@@ -1,0 +1,27 @@
+<qos-form-dialog
+  [title]="title"
+  i18n-subtitle="@@documents.reject.subtitle"
+  subtitle="La version revient en brouillon. Son auteur lira votre raison, la corrigera et la soumettra de nouveau."
+  [formGroup]="form"
+  [submitting]="submitting"
+  [submitDisabled]="form.invalid"
+  i18n-blockedReason="@@documents.reject.blocked"
+  blockedReason="Écrivez la raison du refus."
+  i18n-submitLabel="@@documents.reject.submit"
+  submitLabel="Refuser"
+  submitIcon="undo"
+  submitColor="warn"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@documents.reject.reason">Raison du refus</mat-label>
+    <textarea matInput formControlName="reason" rows="5" required cdkFocusInitial
+              [attr.maxlength]="reasonMax" data-test="raison"
+              i18n-placeholder="@@documents.reject.reason-placeholder"
+              placeholder="Ce qui manque, ce qui est à corriger"></textarea>
+    <mat-hint align="end">{{ form.controls.reason.value.length }} / {{ reasonMax }}</mat-hint>
+    <mat-error i18n="@@documents.reject.reason-required">Un refus se motive.</mat-error>
+  </mat-form-field>
+
+</qos-form-dialog>

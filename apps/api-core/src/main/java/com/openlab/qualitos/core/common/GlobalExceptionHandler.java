@@ -7,6 +7,9 @@ import com.openlab.qualitos.core.tenant.TenantAlreadyExistsException;
 import com.openlab.qualitos.core.tenant.TenantNotFoundException;
 import com.openlab.qualitos.core.user.UserAlreadyExistsException;
 import com.openlab.qualitos.core.user.UserNotFoundException;
+import com.openlab.qualitos.core.identity.InvalidRoleException;
+import com.openlab.qualitos.core.identity.IdentityProviderException;
+import com.openlab.qualitos.core.identity.AccountAlreadyExistsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -47,11 +50,78 @@ public class GlobalExceptionHandler {
         return problem;
     }
 
+    @ExceptionHandler(AccountAlreadyExistsException.class)
+    public ProblemDetail handleAccountExists(AccountAlreadyExistsException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/account-conflict"));
+        problem.setTitle("Account Already Exists");
+        problem.setProperty("field", "email");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(InvalidRoleException.class)
+    public ProblemDetail handleInvalidRole(InvalidRoleException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/invalid-role"));
+        problem.setTitle("Invalid Role");
+        problem.setProperty("field", "roles");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    /**
+     * 502 : le fournisseur d'identité a refusé ou ne répond pas. Le détail
+     * technique va au journal ; la réponse ne dit que ce que l'appelant peut
+     * faire de l'erreur.
+     */
+    @ExceptionHandler(IdentityProviderException.class)
+    public ProblemDetail handleIdentityProvider(IdentityProviderException ex) {
+        log.error("identity.provider.failed message={}", ex.getMessage());
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_GATEWAY, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/identity-provider"));
+        problem.setTitle("Identity Provider Unavailable");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
     @ExceptionHandler(UserNotFoundException.class)
     public ProblemDetail handleUserNotFound(UserNotFoundException ex) {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/user-not-found"));
         problem.setTitle("User Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    /** 404 : la console éditeur n'existe pas dans une installation on-premise (ADR 0082). */
+    @ExceptionHandler(com.openlab.qualitos.core.edition.EditionExceptions.NotInThisEdition.class)
+    public ProblemDetail handleNotInThisEdition(com.openlab.qualitos.core.edition.EditionExceptions.NotInThisEdition ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/not-in-this-edition"));
+        problem.setTitle("Not In This Edition");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    /** 403 : l'installation on-premise est en lecture seule faute de licence valable. */
+    @ExceptionHandler(com.openlab.qualitos.core.edition.EditionExceptions.LicenseReadOnly.class)
+    public ProblemDetail handleLicenseReadOnly(com.openlab.qualitos.core.edition.EditionExceptions.LicenseReadOnly ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/license-read-only"));
+        problem.setTitle("License Read Only");
+        problem.setProperty("licenseStatus", ex.getStatus().name());
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    /** 409 : le plafond d'utilisateurs actifs de la licence est atteint. */
+    @ExceptionHandler(com.openlab.qualitos.core.edition.EditionExceptions.MemberLimitReached.class)
+    public ProblemDetail handleMemberLimit(com.openlab.qualitos.core.edition.EditionExceptions.MemberLimitReached ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/license-member-limit"));
+        problem.setTitle("License Member Limit");
+        problem.setProperty("limit", ex.getLimit());
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }

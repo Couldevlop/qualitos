@@ -6,7 +6,7 @@
 
   <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
 
-  <p class="avis" *ngIf="!editable" role="note" data-test="lecture-seule" i18n="@@rr.form.read-only">
+  <p class="avis" *ngIf="rightsKnown && !editable" role="note" data-test="lecture-seule" i18n="@@rr.form.read-only">
     Votre profil permet de consulter le registre, pas de l'alimenter. Un responsable qualité peut créer cette fiche.
   </p>
 
@@ -94,13 +94,17 @@
         <div class="deux" *ngIf="isRisk">
           <mat-form-field appearance="outline">
             <mat-label i18n="@@rr.form.cause">Cause</mat-label>
-            <textarea matInput formControlName="cause" rows="3" maxlength="4000" data-test="cause"
+            <textarea matInput formControlName="cause" rows="3" maxlength="4000" data-test="cause" required
                       [placeholder]="causePlaceholder"></textarea>
+            <mat-error *ngIf="form.get('cause')?.hasError('required')" i18n="@@rr.form.required">Champ obligatoire.</mat-error>
+            <mat-error *ngIf="serverError('cause') as e">{{ e }}</mat-error>
           </mat-form-field>
           <mat-form-field appearance="outline">
             <mat-label i18n="@@rr.form.effect">Effet</mat-label>
-            <textarea matInput formControlName="effect" rows="3" maxlength="4000" data-test="effet"
+            <textarea matInput formControlName="effect" rows="3" maxlength="4000" data-test="effet" required
                       [placeholder]="effectPlaceholder"></textarea>
+            <mat-error *ngIf="form.get('effect')?.hasError('required')" i18n="@@rr.form.required">Champ obligatoire.</mat-error>
+            <mat-error *ngIf="serverError('effect') as e">{{ e }}</mat-error>
           </mat-form-field>
         </div>
         <div class="deux" *ngIf="!isRisk">

@@ -32,7 +32,7 @@ class RiskTest {
     }
 
     static RiskDetails avecResiduelle(int g, int p, Integer rg, Integer rp) {
-        return new RiskDetails(ident(), null, null, g, p, rg, rp, RiskDecision.REDUCE,
+        return new RiskDetails(ident(), "Usure buse", "Soudure non conforme", g, p, rg, rp, RiskDecision.REDUCE,
                 RiskStatus.IN_TREATMENT, LocalDate.of(2027, 1, 15), "Cpk > 1,33 sur trois mois");
     }
 
@@ -70,7 +70,7 @@ class RiskTest {
 
     @Test
     void uneNoteAbsenteEstRefusee() {
-        RiskDetails sansNote = new RiskDetails(ident(), null, null, null, 3, null, null, null, null, null, null);
+        RiskDetails sansNote = new RiskDetails(ident(), "Usure buse", "Soudure non conforme", null, 3, null, null, null, null, null, null);
         assertThatThrownBy(() -> Risk.create(TENANT, "R-001", sansNote, AUTEUR, T0))
                 .extracting("field").isEqualTo("grossSeverity");
     }
@@ -125,7 +125,7 @@ class RiskTest {
     @Test
     void retirerLaResiduelleSeTrace() {
         Risk r = Risk.create(TENANT, "R-001", avecResiduelle(4, 3, 4, 2), AUTEUR, T0);
-        RiskDetails sans = new RiskDetails(ident(), null, null, 4, 3, null, null, RiskDecision.REDUCE,
+        RiskDetails sans = new RiskDetails(ident(), "Usure buse", "Soudure non conforme", 4, 3, null, null, RiskDecision.REDUCE,
                 RiskStatus.IN_TREATMENT, null, null);
 
         assertThat(r.revise(sans, T1)).containsExactly(
@@ -152,8 +152,24 @@ class RiskTest {
     }
 
     @Test
+    void laCauseEtLEffetSontObligatoires() {
+        RiskDetails sansCause = new RiskDetails(ident(), "  ", "Soudure non conforme", 3, 3,
+                null, null, null, null, null, null);
+        RiskDetails sansEffet = new RiskDetails(ident(), "Usure buse", null, 3, 3,
+                null, null, null, null, null, null);
+        assertThatThrownBy(() -> Risk.create(TENANT, "R-001", sansCause, AUTEUR, T0))
+                .extracting("field").isEqualTo("cause");
+        assertThatThrownBy(() -> Risk.create(TENANT, "R-001", sansEffet, AUTEUR, T0))
+                .extracting("field").isEqualTo("effect");
+
+        Risk r = Risk.create(TENANT, "R-001", details(3, 3), AUTEUR, T0);
+        assertThatThrownBy(() -> r.revise(sansEffet, T1)).extracting("field").isEqualTo("effect");
+        assertThat(r.getEffect()).isEqualTo("Soudure non conforme");
+    }
+
+    @Test
     void uneCauseTropLongueEstRefusee() {
-        RiskDetails longue = new RiskDetails(ident(), "x".repeat(Risk.CAUSE_MAX + 1), null, 3, 3,
+        RiskDetails longue = new RiskDetails(ident(), "x".repeat(Risk.CAUSE_MAX + 1), "Soudure non conforme", 3, 3,
                 null, null, null, null, null, null);
         assertThatThrownBy(() -> Risk.create(TENANT, "R-001", longue, AUTEUR, T0))
                 .extracting("field").isEqualTo("cause");

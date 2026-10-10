@@ -162,6 +162,8 @@ import com.openlab.qualitos.quality.apqp.ApqpProjectNotFoundException;
 import com.openlab.qualitos.quality.apqp.ApqpReorderException;
 import com.openlab.qualitos.quality.costofquality.domain.CoqNotFoundException;
 import com.openlab.qualitos.quality.costofquality.domain.CoqValidationException;
+import com.openlab.qualitos.quality.authz.domain.AuthzNotFoundException;
+import com.openlab.qualitos.quality.authz.domain.AuthzValidationException;
 import com.openlab.qualitos.quality.riskregister.domain.RegisterNotFoundException;
 import com.openlab.qualitos.quality.riskregister.domain.RegisterValidationException;
 import com.openlab.qualitos.quality.ideas.domain.IdeaNotFoundException;
@@ -528,6 +530,74 @@ public class GlobalExceptionHandler {
         problem.setType(URI.create("https://qualitos.io/errors/coq-invalid"));
         problem.setTitle("Invalid Cost Of Quality Line");
         problem.setProperty("field", ex.getField());
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(AuthzNotFoundException.class)
+    public ProblemDetail handleAuthzNotFound(AuthzNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/authz-role-not-found"));
+        problem.setTitle("Role Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    /** 422 : rôle ou attribution incohérents (code pris, action inconnue, administrateur privé d'administrer). */
+    @ExceptionHandler(AuthzValidationException.class)
+    public ProblemDetail handleAuthzValidation(AuthzValidationException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/authz-invalid"));
+        problem.setTitle("Invalid Role Or Assignment");
+        problem.setProperty("field", ex.getField());
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    /**
+     * Circuits de validation (ADR 0080) : 422 circuit mal formé, 404 type d'objet
+     * inconnu, 403 étape qui revient à un autre rôle, 409 état qui ne permet pas
+     * la décision (auteur, déjà décidé, circuit terminé).
+     */
+    @ExceptionHandler(com.openlab.qualitos.quality.circuit.domain.CircuitException.class)
+    public ProblemDetail handleCircuit(com.openlab.qualitos.quality.circuit.domain.CircuitException ex) {
+        HttpStatus status = switch (ex.getReason()) {
+            case INVALID -> HttpStatus.UNPROCESSABLE_ENTITY;
+            case UNKNOWN_SUBJECT -> HttpStatus.NOT_FOUND;
+            case NOT_YOUR_STEP -> HttpStatus.FORBIDDEN;
+            case NOT_IN_PROGRESS, AUTHOR_CANNOT_DECIDE, ALREADY_DECIDED -> HttpStatus.CONFLICT;
+        };
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(status, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/circuit-"
+                + ex.getReason().name().toLowerCase(java.util.Locale.ROOT).replace('_', '-')));
+        problem.setTitle("Approval Circuit");
+        problem.setProperty("reason", ex.getReason().name());
+        problem.setProperty("field", ex.getField());
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    /**
+     * 403 : l'installation on-premise est en lecture seule faute de licence
+     * valable (ADR 0082). La raison est montrée à l'administrateur.
+     */
+    @ExceptionHandler(com.openlab.qualitos.quality.edition.LicenseReadOnlyException.class)
+    public ProblemDetail handleLicenseReadOnly(com.openlab.qualitos.quality.edition.LicenseReadOnlyException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/license-read-only"));
+        problem.setTitle("License Read Only");
+        problem.setProperty("licenseStatus", ex.getStatus().name());
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    /** 409 : l'objet a changé entre la lecture et l'écriture (deux décisions au même instant). */
+    @ExceptionHandler(org.springframework.dao.OptimisticLockingFailureException.class)
+    public ProblemDetail handleOptimisticLock(org.springframework.dao.OptimisticLockingFailureException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT,
+                "Cet élément vient d'être modifié par quelqu'un d'autre : rechargez puis recommencez.");
+        problem.setType(URI.create("https://qualitos.io/errors/concurrent-update"));
+        problem.setTitle("Concurrent Update");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }

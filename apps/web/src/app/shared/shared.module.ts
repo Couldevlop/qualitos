@@ -22,6 +22,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 
 import { ConfirmDialogComponent } from './ui/confirm-dialog/confirm-dialog.component';
+import { CanDirective } from '../core/authz/can.directive';
 
 const MATERIAL = [
   MatButtonModule, MatCardModule, MatCheckboxModule, MatChipsModule, MatDialogModule,
@@ -35,13 +36,13 @@ const MATERIAL = [
  * largement utilisées dans les features. Inclus une seule fois par feature
  * via son `imports`.
  *
- * Composants partagés (ConfirmDialogComponent) sont déclarés ici pour être
+ * Composants partagés (ConfirmDialogComponent, directive *qosCan) sont déclarés ici pour être
  * disponibles dans tout feature qui importe SharedModule.
  */
 @NgModule({
-  declarations: [ConfirmDialogComponent],
+  declarations: [ConfirmDialogComponent, CanDirective],
   imports: [CommonModule, ...MATERIAL],
-  exports: [CommonModule, ReactiveFormsModule, RouterModule, ConfirmDialogComponent,
+  exports: [CommonModule, ReactiveFormsModule, RouterModule, ConfirmDialogComponent, CanDirective,
             IconNoTranslateModule, ...MATERIAL]
 })
 export class SharedModule {}

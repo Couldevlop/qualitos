@@ -3,8 +3,10 @@ package com.openlab.qualitos.quality.riskregister.infrastructure;
 import com.openlab.qualitos.quality.audit.AuditFinding;
 import com.openlab.qualitos.quality.audit.AuditFindingRepository;
 import com.openlab.qualitos.quality.audit.FindingType;
+import com.openlab.qualitos.quality.authz.application.RecordScope;
 import com.openlab.qualitos.quality.change.ChangeRequest;
 import com.openlab.qualitos.quality.change.ChangeRequestRepository;
+import com.openlab.qualitos.quality.nonconformity.NcScope;
 import com.openlab.qualitos.quality.nonconformity.NonConformity;
 import com.openlab.qualitos.quality.nonconformity.NonConformityRepository;
 import com.openlab.qualitos.quality.risk.ActionPriority;
@@ -40,15 +42,19 @@ public class PlatformRiskSourceCatalog implements RiskSourceCatalog {
     private final NonConformityRepository nonConformities;
     private final AuditFindingRepository auditFindings;
     private final ChangeRequestRepository changes;
+    /** Une NC hors de portée ne propose pas de brouillon de risque (ADR 0081). */
+    private final RecordScope scope;
 
     public PlatformRiskSourceCatalog(FmeaItemRepository fmeaItems, FmeaProjectRepository fmeaProjects,
                                      NonConformityRepository nonConformities,
-                                     AuditFindingRepository auditFindings, ChangeRequestRepository changes) {
+                                     AuditFindingRepository auditFindings, ChangeRequestRepository changes,
+                                     RecordScope scope) {
         this.fmeaItems = fmeaItems;
         this.fmeaProjects = fmeaProjects;
         this.nonConformities = nonConformities;
         this.auditFindings = auditFindings;
         this.changes = changes;
+        this.scope = scope;
     }
 
     @Override
@@ -98,7 +104,9 @@ public class PlatformRiskSourceCatalog implements RiskSourceCatalog {
 
     /** Une non-conformité : la gravité suit la sienne, la probabilité reste à coter. */
     private Optional<SourceDraft> nonConformite(UUID tenant, UUID ncId) {
-        return nonConformities.findByIdAndTenantId(ncId, tenant).map((NonConformity nc) -> new SourceDraft(
+        return nonConformities.findByIdAndTenantId(ncId, tenant)
+                .filter(nc -> NcScope.sees(NcScope.restriction(scope), nc))
+                .map((NonConformity nc) -> new SourceDraft(
                 borne(nc.getReference(), REF_MAX),
                 borne(nc.getTitle(), TITLE_MAX),
                 borne(nc.getRootCause(), TEXT_MAX),

@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import { TenantUser, TenantUserPage } from './admin.types';
+import { InviteRequest, InviteResponse, TenantUser, TenantUserPage } from './admin.types';
 
 /**
  * Habilitations de l'équipe du tenant (§16).
@@ -41,6 +41,14 @@ export class TenantTeamService {
    */
   setRoles(userId: string, roles: string[], active: boolean): Observable<TenantUser> {
     return this.http.put<TenantUser>(`${this.endpoint}/${userId}`, { roles, active });
+  }
+
+  /**
+   * Invite un membre : son compte de connexion est créé dans l'organisation du
+   * jeton (ADR 0079). Le mot de passe provisoire éventuel n'est rendu qu'ici.
+   */
+  invite(input: InviteRequest): Observable<InviteResponse> {
+    return this.http.post<InviteResponse>(`${this.endpoint}/invite`, input);
   }
 
   /** Retire l'accès sans supprimer l'historique (désactivation, pas effacement). */

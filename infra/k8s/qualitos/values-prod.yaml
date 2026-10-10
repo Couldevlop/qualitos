@@ -111,6 +111,9 @@ services:
     replicas: 2
     env:
       QUALITY_ENGINE_BASE_URL: http://api-quality-engine.qualitos.svc.cluster.local:8082
+      # Comptes de connexion (ADR 0079) : API d'administration Keycloak en interne.
+      IDENTITY_KEYCLOAK_URL: http://keycloak.qualitos.svc.cluster.local:8080/auth
+    extraSecretRefs: [qualitos-api-core-identity]
   api-quality-engine:
     replicas: 2
     # Mode bearer OBLIGATOIRE : l'ai-service valide reellement les jetons, et

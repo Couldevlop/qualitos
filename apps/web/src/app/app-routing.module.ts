@@ -44,6 +44,11 @@ const routes: Routes = [
           .then(m => m.CostOfQualityModule)
       },
       {
+        // Tableau de bord du système de management intégré (docs/Tableau de bord SMI.pptx).
+        path: 'smi',
+        loadChildren: () => import('./features/smi/smi.module').then(m => m.SmiModule)
+      },
+      {
         path: 'risques',
         loadChildren: () => import('./features/risk-register/risk-register.module')
           .then(m => m.RiskRegisterModule)

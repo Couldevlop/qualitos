@@ -1,5 +1,6 @@
 package com.openlab.qualitos.quality.nonconformity;
 
+import com.openlab.qualitos.quality.authz.application.RecordScope;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.common.TenantContext;
 import com.openlab.qualitos.quality.nonconformity.storage.ObjectStorage;
@@ -12,6 +13,7 @@ import java.net.URL;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -41,13 +43,17 @@ public class NcPhotoService {
     private final NcPhotoRepository photoRepository;
     private final NonConformityRepository ncRepository;
     private final ObjectProvider<ObjectStorage> storageProvider;
+    /** Les photos d'une NC hors de portée n'existent pas (ADR 0081). */
+    private final RecordScope scope;
 
     public NcPhotoService(NcPhotoRepository photoRepository,
                           NonConformityRepository ncRepository,
-                          ObjectProvider<ObjectStorage> storageProvider) {
+                          ObjectProvider<ObjectStorage> storageProvider,
+                          RecordScope scope) {
         this.photoRepository = photoRepository;
         this.ncRepository = ncRepository;
         this.storageProvider = storageProvider;
+        this.scope = scope;
     }
 
     public NcPhotoDto.Response upload(UUID ncId, String contentType, String originalFilename, byte[] content) {
@@ -114,6 +120,7 @@ public class NcPhotoService {
     public void delete(UUID ncId, UUID photoId) {
         UUID tenantId = requireTenantId();
         ObjectStorage storage = requireStorage();
+        loadNc(ncId, tenantId);
         NcPhoto photo = photoRepository.findByIdAndTenantIdAndNcId(photoId, tenantId, ncId)
                 .orElseThrow(() -> new NcPhotoNotFoundException(photoId));
         // BUG #5 (symétrique) — On supprime d'abord la ligne, puis l'objet. Si le delete
@@ -127,7 +134,9 @@ public class NcPhotoService {
     // --- helpers ---
 
     private NonConformity loadNc(UUID ncId, UUID tenantId) {
+        Optional<UUID> seulement = NcScope.restriction(scope);
         return ncRepository.findByIdAndTenantId(ncId, tenantId)
+                .filter(nc -> NcScope.sees(seulement, nc))
                 .orElseThrow(() -> new NcNotFoundException(ncId));
     }
 

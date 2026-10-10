@@ -55,6 +55,8 @@
               <tr>
                 <th scope="col" i18n="@@rr.detail.action">Action</th>
                 <th scope="col" i18n="@@rr.action.title">Intitulé</th>
+                <th scope="col" i18n="@@rr.action.kind-short">Nature</th>
+                <th scope="col" i18n="@@rr.action.assignee-short">Responsable</th>
                 <th scope="col" i18n="@@rr.col.due">Échéance</th>
                 <th scope="col" i18n="@@rr.col.status">Statut</th>
               </tr>
@@ -63,6 +65,8 @@
               <tr *ngFor="let c of s.capas; trackBy: trackById">
                 <td><a [routerLink]="['/capa', c.id]">CAPA</a></td>
                 <td>{{ c.title }}</td>
+                <td>{{ capaKindText(c.kind) }}</td>
+                <td>{{ c.assignee || '—' }}</td>
                 <td>{{ c.dueDate ? (c.dueDate | date: 'mediumDate') : '—' }}</td>
                 <td>{{ capaStatusText(c.status) }}</td>
               </tr>

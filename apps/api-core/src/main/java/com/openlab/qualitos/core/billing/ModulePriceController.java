@@ -1,5 +1,6 @@
 package com.openlab.qualitos.core.billing;
 
+import com.openlab.qualitos.core.edition.SaasOnly;
 import com.openlab.qualitos.core.common.CurrentUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -45,6 +46,7 @@ import java.util.UUID;
 @RequestMapping("/api/v1/admin/module-prices")
 @PreAuthorize("hasRole('SUPER_ADMIN')")
 @Tag(name = "Module Prices", description = "Module pricing catalog — Super Admin only")
+@SaasOnly
 public class ModulePriceController {
 
     private final ModulePriceService modulePriceService;

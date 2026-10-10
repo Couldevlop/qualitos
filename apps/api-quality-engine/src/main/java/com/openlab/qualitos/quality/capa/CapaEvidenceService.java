@@ -3,6 +3,7 @@ package com.openlab.qualitos.quality.capa;
 import com.openlab.qualitos.quality.auditlog.ActorType;
 import com.openlab.qualitos.quality.auditlog.AuditEventDto;
 import com.openlab.qualitos.quality.auditlog.AuditEventService;
+import com.openlab.qualitos.quality.authz.application.RecordScope;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.common.TenantContext;
 import com.openlab.qualitos.quality.nonconformity.storage.ObjectStorage;
@@ -16,6 +17,7 @@ import java.time.Duration;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -91,17 +93,21 @@ public class CapaEvidenceService {
     private final CapaActionRepository actionRepository;
     private final ObjectProvider<ObjectStorage> storageProvider;
     private final AuditEventService auditEvents;
+    /** Les preuves d'un dossier hors de portée n'existent pas (ADR 0081). */
+    private final RecordScope scope;
 
     public CapaEvidenceService(CapaEvidenceRepository evidenceRepository,
                                CapaCaseRepository caseRepository,
                                CapaActionRepository actionRepository,
                                ObjectProvider<ObjectStorage> storageProvider,
-                               AuditEventService auditEvents) {
+                               AuditEventService auditEvents,
+                               RecordScope scope) {
         this.evidenceRepository = evidenceRepository;
         this.caseRepository = caseRepository;
         this.actionRepository = actionRepository;
         this.storageProvider = storageProvider;
         this.auditEvents = auditEvents;
+        this.scope = scope;
     }
 
     /** Dépôt d'une pièce au niveau du DOSSIER (ADR 0050). */
@@ -326,7 +332,9 @@ public class CapaEvidenceService {
     // --- garde-fous ----------------------------------------------------------
 
     private CapaCase loadCase(UUID capaId, UUID tenantId) {
+        Optional<UUID> seulement = CapaScope.restriction(scope);
         return caseRepository.findByIdAndTenantId(capaId, tenantId)
+                .filter(c -> CapaScope.sees(seulement, c))
                 .orElseThrow(() -> new CapaNotFoundException(capaId));
     }
 

@@ -2,6 +2,9 @@ package com.openlab.qualitos.quality.riskregister.infrastructure;
 
 import com.openlab.qualitos.quality.auditlog.AuditEventDto;
 import com.openlab.qualitos.quality.auditlog.AuditEventService;
+import com.openlab.qualitos.quality.capa.CapaAction;
+import com.openlab.qualitos.quality.capa.CapaActionStatus;
+import com.openlab.qualitos.quality.capa.CapaActionType;
 import com.openlab.qualitos.quality.capa.CapaCase;
 import com.openlab.qualitos.quality.capa.CapaCaseRepository;
 import com.openlab.qualitos.quality.capa.CapaCriticity;
@@ -23,6 +26,7 @@ import com.openlab.qualitos.quality.riskregister.domain.RegisterNotFoundExceptio
 import com.openlab.qualitos.quality.riskregister.domain.RegisterOrigin;
 import com.openlab.qualitos.quality.riskregister.domain.RegisterRequirement;
 import com.openlab.qualitos.quality.riskregister.domain.RegisterType;
+import com.openlab.qualitos.quality.riskregister.domain.RiskCapaKind;
 import com.openlab.qualitos.quality.riskregister.domain.Risk;
 import com.openlab.qualitos.quality.riskregister.domain.RiskDetails;
 import org.junit.jupiter.api.Test;
@@ -296,7 +300,7 @@ class RegisterInfrastructureTest {
                 new Identification("Titre libre", RegisterType.QUALITY, "P", null, "Mme Diallo", null, null, null),
                 null, null, null, 3, 3, null, null, null), ACTEUR, T0);
         OpportunityAction a = OpportunityAction.open(TENANT, UUID.randomUUID(), 2, "Action libre", null, null, T0);
-        Risk sansResiduelle = Risk.create(TENANT, "R-002", new RiskDetails(ident(), null, null, 2, 2, null, null,
+        Risk sansResiduelle = Risk.create(TENANT, "R-002", new RiskDetails(ident(), "Usure buse", "Soudure non conforme", 2, 2, null, null,
                 null, null, null, null), ACTEUR, T0);
 
         publisher.opportunityRecorded(o, ACTEUR);
@@ -317,7 +321,7 @@ class RegisterInfrastructureTest {
     // ---------- pont CAPA ----------
 
     @Test
-    void laCapaOuverteEstPreventiveDeSourceRisqueEtDeLaCriticiteDuNiveauBrut() {
+    void laCapaOuverteEstDeLaNatureChoisieDeSourceRisqueEtPorteSonAction() {
         CapaService capaService = mock(CapaService.class);
         CapaCaseRepository capaCases = mock(CapaCaseRepository.class);
         UUID capaId = UUID.randomUUID();
@@ -326,21 +330,45 @@ class RegisterInfrastructureTest {
                 null, LocalDate.of(2026, 12, 1), null, null, null, null, null, null, null, null, T0, T0,
                 List.of(), null, List.of());
         when(capaService.createCase(any())).thenReturn(reponse);
+        when(capaService.addAction(eq(capaId), any())).thenReturn(new CapaDto.ActionResponse(UUID.randomUUID(),
+                capaId, "Carte SPC", "desc", CapaActionStatus.PENDING, CapaActionType.CORRECTIVE, null,
+                "A. Diallo", LocalDate.of(2026, 10, 1), LocalDate.of(2026, 12, 1), null, T0, T0));
         Risk r = risque(UUID.randomUUID());
 
         RiskCapaGateway.LinkedCapa capa = new CapaRiskGateway(capaService, capaCases)
-                .open(r, "Carte SPC", "desc", LocalDate.of(2026, 12, 1), ACTEUR);
+                .open(r, "Carte SPC", "desc", RiskCapaKind.CORRECTIVE, "A. Diallo", LocalDate.of(2026, 12, 1),
+                        ACTEUR);
 
         ArgumentCaptor<CapaDto.CreateCaseRequest> captor = ArgumentCaptor.forClass(CapaDto.CreateCaseRequest.class);
         verify(capaService).createCase(captor.capture());
         CapaDto.CreateCaseRequest demande = captor.getValue();
-        assertThat(demande.type()).isEqualTo(CapaType.PREVENTIVE);
+        assertThat(demande.type()).isEqualTo(CapaType.CORRECTIVE);
+        assertThat(demande.dueDate()).isEqualTo(LocalDate.of(2026, 12, 1));
         assertThat(demande.sourceType()).isEqualTo(CapaSourceType.RISK);
         assertThat(demande.sourceRef()).isEqualTo("R-014");
         assertThat(demande.criticity()).isEqualTo(CapaCriticity.HIGH);
         assertThat(demande.ownerId()).isEqualTo(ACTEUR);
         assertThat(capa.id()).isEqualTo(capaId);
         assertThat(capa.status()).isEqualTo("OPEN");
+        assertThat(capa.kind()).isEqualTo(RiskCapaKind.CORRECTIVE);
+        assertThat(capa.assignee()).isEqualTo("A. Diallo");
+
+        // Le dossier naît avec SON action : même nature, même échéance, confiée au responsable.
+        ArgumentCaptor<CapaDto.ActionRequest> action = ArgumentCaptor.forClass(CapaDto.ActionRequest.class);
+        verify(capaService).addAction(eq(capaId), action.capture());
+        assertThat(action.getValue().title()).isEqualTo("Carte SPC");
+        assertThat(action.getValue().actionType()).isEqualTo(CapaActionType.CORRECTIVE);
+        assertThat(action.getValue().assigneeName()).isEqualTo("A. Diallo");
+        assertThat(action.getValue().dueDate()).isEqualTo(LocalDate.of(2026, 12, 1));
+    }
+
+    @Test
+    void uneCapaPreventiveDonneUnDossierEtUneActionPreventives() {
+        assertThat(CapaRiskGateway.typeDossier(RiskCapaKind.PREVENTIVE)).isEqualTo(CapaType.PREVENTIVE);
+        assertThat(CapaRiskGateway.typeAction(RiskCapaKind.PREVENTIVE)).isEqualTo(CapaActionType.PREVENTIVE);
+        assertThat(CapaRiskGateway.nature(CapaType.CORRECTIVE)).isEqualTo(RiskCapaKind.CORRECTIVE);
+        // Les dossiers ouverts avant le choix étaient tous préventifs.
+        assertThat(CapaRiskGateway.nature(CapaType.PREVENTIVE)).isEqualTo(RiskCapaKind.PREVENTIVE);
     }
 
     @Test
@@ -350,6 +378,12 @@ class RegisterInfrastructureTest {
         c.setId(UUID.randomUUID());
         c.setTitle("Carte SPC");
         c.setStatus(CapaStatus.IN_PROGRESS);
+        c.setType(CapaType.CORRECTIVE);
+        CapaAction sansNom = new CapaAction();
+        sansNom.setAssigneeName(" ");
+        CapaAction nommee = new CapaAction();
+        nommee.setAssigneeName("A. Diallo");
+        c.getActions().addAll(List.of(sansNom, nommee));
         when(capaCases.findByTenantIdAndSourceTypeAndSourceRefOrderByCreatedAtAsc(TENANT, CapaSourceType.RISK, "R-014"))
                 .thenReturn(List.of(c));
 
@@ -359,6 +393,8 @@ class RegisterInfrastructureTest {
         assertThat(liees).singleElement().satisfies(l -> {
             assertThat(l.title()).isEqualTo("Carte SPC");
             assertThat(l.status()).isEqualTo("IN_PROGRESS");
+            assertThat(l.kind()).isEqualTo(RiskCapaKind.CORRECTIVE);
+            assertThat(l.assignee()).isEqualTo("A. Diallo");
         });
     }
 
@@ -367,7 +403,7 @@ class RegisterInfrastructureTest {
         assertThat(List.of(1, 5, 10, 15).stream().map(score -> {
             int g = score == 1 ? 1 : score == 5 ? 5 : score == 10 ? 5 : 5;
             int p = score == 1 ? 1 : score == 5 ? 1 : score == 10 ? 2 : 3;
-            Risk r = Risk.create(TENANT, "R-1", new RiskDetails(ident(), null, null, g, p, null, null, null, null,
+            Risk r = Risk.create(TENANT, "R-1", new RiskDetails(ident(), "Usure buse", "Soudure non conforme", g, p, null, null, null, null,
                     null, null), ACTEUR, T0);
             return CapaRiskGateway.criticite(r);
         }).toList()).containsExactly(CapaCriticity.LOW, CapaCriticity.MEDIUM, CapaCriticity.HIGH,

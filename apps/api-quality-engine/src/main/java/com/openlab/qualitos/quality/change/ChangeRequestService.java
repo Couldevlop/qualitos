@@ -1,5 +1,7 @@
 package com.openlab.qualitos.quality.change;
 
+import org.springframework.security.access.AccessDeniedException;
+import com.openlab.qualitos.quality.common.CurrentUser;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.common.TenantContext;
 import org.springframework.data.domain.Page;
@@ -206,10 +208,14 @@ public class ChangeRequestService {
         if (req.decision() == ApprovalDecision.PENDING) {
             throw new ChangeStateException("Cannot record a PENDING decision");
         }
+        // Seul l'approbateur désigné décide, et pour lui-même (ADR 0080).
+        UUID acteur = CurrentUser.requireUserId();
+        if (req.approverUserId() != null && !req.approverUserId().equals(acteur)) {
+            throw new AccessDeniedException("Deciding on behalf of another approver is not allowed");
+        }
         ChangeApproval a = approvalRepo
-                .findByChangeIdAndApproverUserId(changeId, req.approverUserId())
-                .orElseThrow(() -> new ChangeChildNotFoundException(
-                        "Approval", req.approverUserId()));
+                .findByChangeIdAndApproverUserId(changeId, acteur)
+                .orElseThrow(() -> new ChangeChildNotFoundException("Approval", acteur));
         if (a.getDecision() != ApprovalDecision.PENDING) {
             throw new ChangeStateException(
                     "Approver already decided: " + a.getDecision());

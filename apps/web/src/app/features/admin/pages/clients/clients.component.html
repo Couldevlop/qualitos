@@ -1,0 +1,149 @@
+<div class="qos-page">
+  <qos-page-header
+    title="Clients" i18n-title="@@admin.clients.title"
+    subtitle="Chaque organisation qui utilise QualitOS : son offre, ses modules, son administrateur."
+    i18n-subtitle="@@admin.clients.subtitle">
+    <ng-container qosActions>
+      <button mat-flat-button color="primary" type="button" (click)="openWizard()" [disabled]="wizard"
+              data-test="nouveau-client">
+        <mat-icon>add_business</mat-icon>
+        <span i18n="@@admin.clients.new">Nouveau client</span>
+      </button>
+    </ng-container>
+  </qos-page-header>
+
+  <!-- ===== Résultat de la création ===== -->
+  <section class="resultat" *ngIf="result as r" data-test="resultat">
+    <p class="resultat__titre">
+      <span i18n="@@admin.clients.created">Client créé :</span> <strong>{{ r.tenant.name }}</strong>
+    </p>
+    <ul class="resultat__modules" *ngIf="r.modules.length">
+      <li *ngFor="let m of r.modules; trackBy: trackByCode" [class.resultat__echec]="!m.activated">
+        <mat-icon aria-hidden="true">{{ m.activated ? 'check_circle' : 'error' }}</mat-icon>
+        <span>{{ moduleName(m.code) }}</span>
+        <span class="resultat__raison" *ngIf="!m.activated">{{ m.message }}</span>
+      </li>
+    </ul>
+    <p class="resultat__alerte" *ngIf="failedModules" role="alert" i18n="@@admin.clients.modules-failed">
+      Certains modules n'ont pas été ouverts : reprenez-les depuis la console des modules du client.
+    </p>
+    <qos-credential-reveal [email]="r.admin.email" [password]="r.temporaryPassword"
+                           [invitationSent]="r.invitationSent" (closed)="result = null"></qos-credential-reveal>
+  </section>
+
+  <!-- ===== Assistant : trois étapes ===== -->
+  <section class="assistant" *ngIf="wizard" data-test="assistant" aria-labelledby="assistant-titre">
+    <h2 class="assistant__titre" id="assistant-titre" i18n="@@admin.clients.wizard-title">Nouveau client</h2>
+    <ol class="etapes">
+      <li [class.etapes__active]="step === 1" [class.etapes__faite]="step > 1" [attr.aria-current]="step === 1 ? 'step' : null">
+        <span class="etapes__num" aria-hidden="true">1</span><span i18n="@@admin.clients.step-company">Entreprise</span>
+      </li>
+      <li [class.etapes__active]="step === 2" [class.etapes__faite]="step > 2" [attr.aria-current]="step === 2 ? 'step' : null">
+        <span class="etapes__num" aria-hidden="true">2</span><span i18n="@@admin.clients.step-modules">Modules</span>
+      </li>
+      <li [class.etapes__active]="step === 3" [attr.aria-current]="step === 3 ? 'step' : null">
+        <span class="etapes__num" aria-hidden="true">3</span><span i18n="@@admin.clients.step-admin">Administrateur</span>
+      </li>
+    </ol>
+
+    <!-- 1. Entreprise -->
+    <form *ngIf="step === 1" [formGroup]="companyForm" (ngSubmit)="next()" class="assistant__champs" novalidate>
+      <mat-form-field appearance="outline" class="large">
+        <mat-label i18n="@@admin.clients.name">Nom de l'organisation</mat-label>
+        <input matInput formControlName="name" (input)="suggestSlug()" data-test="client-nom"
+               i18n-placeholder="@@admin.clients.name-placeholder" placeholder="Hôpital Saint-Jean">
+        <mat-error *ngIf="companyForm.controls.name.hasError('required')" i18n="@@rr.form.required">Champ obligatoire.</mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label i18n="@@admin.clients.slug">Identifiant</mat-label>
+        <input matInput formControlName="slug" data-test="client-slug">
+        <mat-hint i18n="@@admin.clients.slug-hint">Minuscules, chiffres et tirets ; il ne change plus.</mat-hint>
+        <mat-error *ngIf="companyForm.controls.slug.invalid" i18n="@@admin.clients.slug-invalid">3 à 63 caractères : minuscules, chiffres et tirets.</mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label i18n="@@admin.clients.plan">Offre</mat-label>
+        <mat-select formControlName="plan" data-test="client-offre">
+          <mat-option *ngFor="let p of plans" [value]="p">{{ p }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <div class="assistant__boutons">
+        <button mat-stroked-button type="button" (click)="closeWizard()" i18n="@@common.cancel">Annuler</button>
+        <button mat-flat-button color="primary" type="submit" data-test="suivant" i18n="@@admin.clients.next">Continuer</button>
+      </div>
+    </form>
+
+    <!-- 2. Modules -->
+    <div *ngIf="step === 2">
+      <p class="assistant__aide" i18n="@@admin.clients.modules-help">Cochez ce que l'organisation utilisera. Ce dont un module a besoin se coche avec lui ; le socle est inclus d'office.</p>
+      <p class="assistant__alerte" *ngIf="catalogFailed" role="alert" i18n="@@admin.clients.catalog-failed">Le catalogue des modules ne répond pas : le client peut être créé sans module, à compléter ensuite.</p>
+      <div class="familles">
+        <fieldset class="famille" *ngFor="let f of families; trackBy: trackByFamily">
+          <legend>{{ f.category }}</legend>
+          <button type="button" *ngFor="let m of f.modules; trackBy: trackByCode" class="module"
+                  [class.module--on]="isSelected(m)" [class.module--socle]="m.coreModule"
+                  [attr.aria-pressed]="isSelected(m)" [disabled]="m.coreModule"
+                  [matTooltip]="requiredBy(m).length ? requiredText(m) : ''"
+                  (click)="toggle(m)" [attr.data-test]="'module-' + m.code">
+            <mat-icon aria-hidden="true">{{ isSelected(m) ? 'check_box' : 'check_box_outline_blank' }}</mat-icon>
+            <span class="module__nom">{{ m.name }}</span>
+            <span class="module__note" *ngIf="m.coreModule" i18n="@@admin.clients.core">Socle</span>
+          </button>
+        </fieldset>
+      </div>
+      <div class="assistant__boutons">
+        <button mat-stroked-button type="button" (click)="back()" i18n="@@admin.clients.back">Retour</button>
+        <button mat-flat-button color="primary" type="button" (click)="next()" data-test="suivant" i18n="@@admin.clients.next">Continuer</button>
+      </div>
+    </div>
+
+    <!-- 3. Administrateur -->
+    <form *ngIf="step === 3" [formGroup]="adminForm" (ngSubmit)="create()" novalidate>
+      <p class="assistant__aide" i18n="@@admin.clients.admin-help">Son compte est créé maintenant ; il invitera ensuite son équipe et réglera ses droits.</p>
+      <div class="assistant__champs">
+        <mat-form-field appearance="outline" class="large">
+          <mat-label i18n="@@admin.team.invite-email">Adresse e-mail</mat-label>
+          <input matInput type="email" formControlName="email" autocomplete="off" data-test="admin-email">
+          <mat-error *ngIf="adminForm.controls.email.invalid" i18n="@@admin.team.invite-email-invalid">Une adresse e-mail valide est attendue.</mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label i18n="@@admin.team.invite-first-name">Prénom (facultatif)</mat-label>
+          <input matInput formControlName="firstName" autocomplete="off">
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label i18n="@@admin.team.invite-last-name">Nom (facultatif)</mat-label>
+          <input matInput formControlName="lastName" autocomplete="off">
+        </mat-form-field>
+      </div>
+      <p class="recap">
+        <strong>{{ companyForm.controls.name.value }}</strong> · {{ companyForm.controls.plan.value }} ·
+        <span i18n="@@admin.clients.modules-count">{{ selected.size // i18n(ph="count") }} module(s) choisi(s)</span>
+      </p>
+      <div class="assistant__boutons">
+        <button mat-stroked-button type="button" (click)="back()" i18n="@@admin.clients.back">Retour</button>
+        <button mat-flat-button color="primary" type="submit" [disabled]="creating" data-test="creer"
+                i18n="@@admin.clients.create">Créer le client</button>
+      </div>
+    </form>
+  </section>
+
+  <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+  <p class="echec" *ngIf="failed" role="alert">
+    <span i18n="@@admin.clients.load-failed">La liste des clients n'a pas pu être chargée.</span>
+    <button mat-button type="button" (click)="charger()" i18n="@@common.retry">Réessayer</button>
+  </p>
+
+  <!-- ===== Les clients ===== -->
+  <ul class="clients" *ngIf="!loading && !failed" data-test="clients">
+    <li *ngFor="let c of clients; trackBy: trackById" class="client" [class.client--inactif]="!c.active">
+      <span class="client__monogramme" aria-hidden="true">{{ c.name.charAt(0) }}</span>
+      <span class="client__texte">
+        <span class="client__nom">{{ c.name }}</span>
+        <span class="client__slug">{{ c.slug }}</span>
+      </span>
+      <span class="client__offre">{{ c.plan }}</span>
+      <span class="client__etat" *ngIf="!c.active" i18n="@@admin.clients.inactive">Désactivé</span>
+      <span class="client__date">{{ c.createdAt | date: 'mediumDate' }}</span>
+    </li>
+    <li class="clients__vide" *ngIf="!clients.length" i18n="@@admin.clients.empty">Aucun client pour l'instant : créez le premier.</li>
+  </ul>
+</div>

@@ -68,6 +68,21 @@ describe('DocumentsService (mock mode)', () => {
       });
   });
 
+  it('un refus renvoie la version en brouillon, raison gardée', (done) => {
+    service.create({ code: 'R', title: 'Refus', type: 'POLICY', ownerId: 'u', mandatoryRead: false })
+      .subscribe(d => {
+        const v = d.versions[0];
+        service.submit(d.id, v.id).subscribe(() => {
+          service.reject(d.id, v.id, 'Incomplet').subscribe(r => {
+            expect(r.status).toBe('DRAFT');
+            expect(r.rejectionReason).toBe('Incomplet');
+            expect(r.rejectedAt).toBeTruthy();
+            service.reject('doc-1', 'inconnue', 'x').subscribe(() => done());
+          });
+        });
+      });
+  });
+
   it('archive sets ARCHIVED status', (done) => {
     service.archive('doc-3').subscribe(d => {
       expect(d.status).toBe('ARCHIVED');
@@ -328,6 +343,14 @@ describe('DocumentsService (API réelle)', () => {
     expect(req.request.method).toBe('PATCH');
     expect(req.request.body).toEqual({ approverId: 'mgr' });
     req.flush(version({ status: 'APPROVED', approvedBy: 'mgr' }));
+  });
+
+  it('refuse une version en revue avec sa raison (ADR 0080)', () => {
+    service.reject('d1', 'v1', 'Section 4 incomplète').subscribe(v => expect(v.status).toBe('DRAFT'));
+    const req = http.expectOne(`${base}/d1/versions/v1/reject`);
+    expect(req.request.method).toBe('PATCH');
+    expect(req.request.body).toEqual({ reason: 'Section 4 incomplète' });
+    req.flush(version({ status: 'DRAFT', rejectionReason: 'Section 4 incomplète' }));
   });
 
   it('publie une version approuvée', () => {

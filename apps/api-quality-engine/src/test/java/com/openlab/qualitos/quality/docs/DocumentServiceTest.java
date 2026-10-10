@@ -1,7 +1,12 @@
 package com.openlab.qualitos.quality.docs;
 
+import com.openlab.qualitos.quality.circuit.application.ApprovalCircuits;
+import com.openlab.qualitos.quality.circuit.application.CircuitDto;
+import com.openlab.qualitos.quality.circuit.domain.CircuitSubject;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.common.TenantContext;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,6 +34,8 @@ class DocumentServiceTest {
     @Mock DocumentRepository docRepo;
     @Mock DocumentVersionRepository versionRepo;
     @Mock DocumentAcknowledgmentRepository ackRepo;
+    /** Sans réglage, Mockito rend Optional.empty() : l'approbation simple d'avant. */
+    @Mock ApprovalCircuits circuits;
     @InjectMocks DocumentService service;
 
     static final UUID TENANT = UUID.randomUUID();
@@ -37,8 +44,14 @@ class DocumentServiceTest {
     static final UUID APPROVER = UUID.randomUUID();
     static final UUID USER = UUID.randomUUID();
 
-    @BeforeEach void ctx() { TenantContext.setTenantId(TENANT.toString()); }
-    @AfterEach  void clr() { TenantContext.clear(); }
+    /** L'utilisateur du jeton : c'est lui qui rédige, approuve, acquitte (ADR 0080). */
+    static void connecte(UUID user) {
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(user.toString(), "n/a", List.of()));
+    }
+
+    @BeforeEach void ctx() { TenantContext.setTenantId(TENANT.toString()); connecte(OWNER); }
+    @AfterEach  void clr() { TenantContext.clear(); SecurityContextHolder.clearContext(); }
 
     // --- create ---
     @Test
@@ -174,6 +187,7 @@ class DocumentServiceTest {
             x.setId(UUID.randomUUID());
             return x;
         });
+        connecte(AUTHOR);
         DocumentDto.VersionResponse r = service.createVersion(d.getId(),
                 new DocumentDto.CreateVersionRequest("nouveau", null, "change", AUTHOR));
         assertThat(r.versionNumber()).isEqualTo(2);
@@ -185,6 +199,7 @@ class DocumentServiceTest {
     void createVersion_archivedDoc_throws() {
         Document d = doc(TENANT, DocumentStatus.ARCHIVED);
         when(docRepo.findByIdAndTenantId(d.getId(), TENANT)).thenReturn(Optional.of(d));
+        connecte(AUTHOR);
         assertThatThrownBy(() -> service.createVersion(d.getId(),
                 new DocumentDto.CreateVersionRequest("x", null, null, AUTHOR)))
                 .isInstanceOf(DocumentStateException.class);
@@ -195,6 +210,7 @@ class DocumentServiceTest {
         Document d = doc(TENANT, DocumentStatus.ACTIVE);
         d.getVersions().add(ver(d, 1, VersionStatus.DRAFT));
         when(docRepo.findByIdAndTenantId(d.getId(), TENANT)).thenReturn(Optional.of(d));
+        connecte(AUTHOR);
         assertThatThrownBy(() -> service.createVersion(d.getId(),
                 new DocumentDto.CreateVersionRequest("x", null, null, AUTHOR)))
                 .isInstanceOf(DocumentStateException.class);
@@ -268,6 +284,7 @@ class DocumentServiceTest {
         when(docRepo.findByIdAndTenantId(d.getId(), TENANT)).thenReturn(Optional.of(d));
         when(versionRepo.findByIdAndDocumentId(v.getId(), d.getId())).thenReturn(Optional.of(v));
         when(versionRepo.save(v)).thenReturn(v);
+        connecte(APPROVER);
         service.approveVersion(d.getId(), v.getId(), new DocumentDto.ApprovalRequest(APPROVER));
         assertThat(v.getStatus()).isEqualTo(VersionStatus.APPROVED);
         assertThat(v.getApprovedBy()).isEqualTo(APPROVER);
@@ -281,6 +298,7 @@ class DocumentServiceTest {
         v.setAuthorId(AUTHOR);
         when(docRepo.findByIdAndTenantId(d.getId(), TENANT)).thenReturn(Optional.of(d));
         when(versionRepo.findByIdAndDocumentId(v.getId(), d.getId())).thenReturn(Optional.of(v));
+        connecte(AUTHOR);
         assertThatThrownBy(() -> service.approveVersion(d.getId(), v.getId(),
                 new DocumentDto.ApprovalRequest(AUTHOR)))
                 .isInstanceOf(DocumentStateException.class)
@@ -293,8 +311,115 @@ class DocumentServiceTest {
         DocumentVersion v = ver(d, 1, VersionStatus.DRAFT);
         when(docRepo.findByIdAndTenantId(d.getId(), TENANT)).thenReturn(Optional.of(d));
         when(versionRepo.findByIdAndDocumentId(v.getId(), d.getId())).thenReturn(Optional.of(v));
+        connecte(APPROVER);
         assertThatThrownBy(() -> service.approveVersion(d.getId(), v.getId(),
                 new DocumentDto.ApprovalRequest(APPROVER)))
+                .isInstanceOf(DocumentStateException.class);
+    }
+
+    // --- circuits de validation (ADR 0080) ---
+
+    static CircuitDto.RunView passage(UUID versionId, String status) {
+        return new CircuitDto.RunView(UUID.randomUUID(), "document-version", versionId, status, 0,
+                List.of(), List.of(), Instant.now(), null);
+    }
+
+    @Test
+    void submitForReview_startsTheCircuit_withTheAuthor() {
+        Document d = doc(TENANT, DocumentStatus.ACTIVE);
+        DocumentVersion v = ver(d, 1, VersionStatus.DRAFT);
+        v.setAuthorId(AUTHOR);
+        when(docRepo.findByIdAndTenantId(d.getId(), TENANT)).thenReturn(Optional.of(d));
+        when(versionRepo.findByIdAndDocumentId(v.getId(), d.getId())).thenReturn(Optional.of(v));
+        when(versionRepo.save(v)).thenReturn(v);
+
+        service.submitForReview(d.getId(), v.getId());
+
+        verify(circuits).start(CircuitSubject.DOCUMENT_VERSION, v.getId(), AUTHOR);
+    }
+
+    @Test
+    void approveVersion_circuitStillRunning_staysInReview() {
+        Document d = doc(TENANT, DocumentStatus.ACTIVE);
+        DocumentVersion v = ver(d, 1, VersionStatus.IN_REVIEW);
+        v.setAuthorId(AUTHOR);
+        when(docRepo.findByIdAndTenantId(d.getId(), TENANT)).thenReturn(Optional.of(d));
+        when(versionRepo.findByIdAndDocumentId(v.getId(), d.getId())).thenReturn(Optional.of(v));
+        when(circuits.decide(CircuitSubject.DOCUMENT_VERSION, v.getId(), true, "vu"))
+                .thenReturn(Optional.of(passage(v.getId(), "IN_PROGRESS")));
+        connecte(APPROVER);
+
+        DocumentDto.VersionResponse r = service.approveVersion(d.getId(), v.getId(),
+                new DocumentDto.ApprovalRequest(null, "vu"));
+
+        assertThat(r.status()).isEqualTo(VersionStatus.IN_REVIEW);
+        assertThat(v.getApprovedBy()).isNull();
+        verify(versionRepo, never()).save(any());
+    }
+
+    @Test
+    void approveVersion_lastStepOfTheCircuit_approves() {
+        Document d = doc(TENANT, DocumentStatus.ACTIVE);
+        DocumentVersion v = ver(d, 1, VersionStatus.IN_REVIEW);
+        v.setAuthorId(AUTHOR);
+        when(docRepo.findByIdAndTenantId(d.getId(), TENANT)).thenReturn(Optional.of(d));
+        when(versionRepo.findByIdAndDocumentId(v.getId(), d.getId())).thenReturn(Optional.of(v));
+        when(versionRepo.save(v)).thenReturn(v);
+        when(circuits.decide(CircuitSubject.DOCUMENT_VERSION, v.getId(), true, null))
+                .thenReturn(Optional.of(passage(v.getId(), "APPROVED")));
+        connecte(APPROVER);
+
+        service.approveVersion(d.getId(), v.getId(), new DocumentDto.ApprovalRequest(null));
+
+        assertThat(v.getStatus()).isEqualTo(VersionStatus.APPROVED);
+        assertThat(v.getApprovedBy()).isEqualTo(APPROVER);
+    }
+
+    @Test
+    void rejectVersion_backToDraft_withTheReason_andTellsTheCircuit() {
+        Document d = doc(TENANT, DocumentStatus.ACTIVE);
+        DocumentVersion v = ver(d, 1, VersionStatus.IN_REVIEW);
+        v.setAuthorId(AUTHOR);
+        when(docRepo.findByIdAndTenantId(d.getId(), TENANT)).thenReturn(Optional.of(d));
+        when(versionRepo.findByIdAndDocumentId(v.getId(), d.getId())).thenReturn(Optional.of(v));
+        when(versionRepo.save(v)).thenReturn(v);
+        connecte(APPROVER);
+
+        DocumentDto.VersionResponse r = service.rejectVersion(d.getId(), v.getId(),
+                new DocumentDto.RejectionRequest("  Section 4 incomplète  "));
+
+        assertThat(r.status()).isEqualTo(VersionStatus.DRAFT);
+        assertThat(r.rejectedBy()).isEqualTo(APPROVER);
+        assertThat(r.rejectedAt()).isNotNull();
+        assertThat(r.rejectionReason()).isEqualTo("Section 4 incomplète");
+        verify(circuits).decide(CircuitSubject.DOCUMENT_VERSION, v.getId(), false, "Section 4 incomplète");
+    }
+
+    @Test
+    void rejectVersion_byTheAuthor_refused() {
+        Document d = doc(TENANT, DocumentStatus.ACTIVE);
+        DocumentVersion v = ver(d, 1, VersionStatus.IN_REVIEW);
+        v.setAuthorId(AUTHOR);
+        when(docRepo.findByIdAndTenantId(d.getId(), TENANT)).thenReturn(Optional.of(d));
+        when(versionRepo.findByIdAndDocumentId(v.getId(), d.getId())).thenReturn(Optional.of(v));
+        connecte(AUTHOR);
+
+        assertThatThrownBy(() -> service.rejectVersion(d.getId(), v.getId(),
+                new DocumentDto.RejectionRequest("non")))
+                .isInstanceOf(DocumentStateException.class);
+        verifyNoInteractions(circuits);
+    }
+
+    @Test
+    void rejectVersion_notInReview_refused() {
+        Document d = doc(TENANT, DocumentStatus.ACTIVE);
+        DocumentVersion v = ver(d, 1, VersionStatus.DRAFT);
+        when(docRepo.findByIdAndTenantId(d.getId(), TENANT)).thenReturn(Optional.of(d));
+        when(versionRepo.findByIdAndDocumentId(v.getId(), d.getId())).thenReturn(Optional.of(v));
+        connecte(APPROVER);
+
+        assertThatThrownBy(() -> service.rejectVersion(d.getId(), v.getId(),
+                new DocumentDto.RejectionRequest("non")))
                 .isInstanceOf(DocumentStateException.class);
     }
 
@@ -364,6 +489,7 @@ class DocumentServiceTest {
             a.setAcknowledgedAt(Instant.now());
             return a;
         });
+        connecte(USER);
         DocumentDto.AcknowledgmentResponse r = service.acknowledge(d.getId(), v.getId(),
                 new DocumentDto.AcknowledgeRequest(USER));
         assertThat(r.userId()).isEqualTo(USER);
@@ -387,6 +513,7 @@ class DocumentServiceTest {
         when(ackRepo.findByVersionIdAndUserId(v.getId(), USER)).thenReturn(Optional.of(existing));
         when(ackRepo.save(existing)).thenReturn(existing);
 
+        connecte(USER);
         DocumentDto.AcknowledgmentResponse r = service.acknowledge(d.getId(), v.getId(),
                 new DocumentDto.AcknowledgeRequest(USER));
         assertThat(r.id()).isEqualTo(existing.getId());
@@ -399,6 +526,7 @@ class DocumentServiceTest {
         DocumentVersion v = ver(d, 1, VersionStatus.DRAFT);
         when(docRepo.findByIdAndTenantId(d.getId(), TENANT)).thenReturn(Optional.of(d));
         when(versionRepo.findByIdAndDocumentId(v.getId(), d.getId())).thenReturn(Optional.of(v));
+        connecte(USER);
         assertThatThrownBy(() -> service.acknowledge(d.getId(), v.getId(),
                 new DocumentDto.AcknowledgeRequest(USER)))
                 .isInstanceOf(DocumentStateException.class);
@@ -411,6 +539,7 @@ class DocumentServiceTest {
         DocumentVersion v = ver(d, 1, VersionStatus.PUBLISHED);
         when(docRepo.findByIdAndTenantId(d.getId(), TENANT)).thenReturn(Optional.of(d));
         when(versionRepo.findByIdAndDocumentId(v.getId(), d.getId())).thenReturn(Optional.of(v));
+        connecte(USER);
         assertThatThrownBy(() -> service.acknowledge(d.getId(), v.getId(),
                 new DocumentDto.AcknowledgeRequest(USER)))
                 .isInstanceOf(DocumentStateException.class)
@@ -469,5 +598,41 @@ class DocumentServiceTest {
         v.setCreatedAt(Instant.now());
         v.setUpdatedAt(Instant.now());
         return v;
+    }
+
+    // ---------- ADR 0080 : on n'agit pas au nom d'un autre ----------
+
+    @Test
+    void approuverOuAcquitterAuNomDUnAutreEstRefuse() {
+        Document d = doc(TENANT, DocumentStatus.ACTIVE);
+        d.setMandatoryRead(true);
+        DocumentVersion v = ver(d, 1, VersionStatus.IN_REVIEW);
+        v.setAuthorId(AUTHOR);
+        when(docRepo.findByIdAndTenantId(d.getId(), TENANT)).thenReturn(Optional.of(d));
+        when(versionRepo.findByIdAndDocumentId(v.getId(), d.getId())).thenReturn(Optional.of(v));
+
+        connecte(USER);
+        assertThatThrownBy(() -> service.approveVersion(d.getId(), v.getId(), new DocumentDto.ApprovalRequest(APPROVER)))
+                .isInstanceOf(org.springframework.security.access.AccessDeniedException.class);
+        assertThat(v.getStatus()).isEqualTo(VersionStatus.IN_REVIEW);
+
+        v.setStatus(VersionStatus.PUBLISHED);
+        assertThatThrownBy(() -> service.acknowledge(d.getId(), v.getId(), new DocumentDto.AcknowledgeRequest(OWNER)))
+                .isInstanceOf(org.springframework.security.access.AccessDeniedException.class);
+    }
+
+    @Test
+    void sansIdentifiantDansLeCorpsLApprobateurEstCeluiDuJeton() {
+        Document d = doc(TENANT, DocumentStatus.ACTIVE);
+        DocumentVersion v = ver(d, 1, VersionStatus.IN_REVIEW);
+        v.setAuthorId(AUTHOR);
+        when(docRepo.findByIdAndTenantId(d.getId(), TENANT)).thenReturn(Optional.of(d));
+        when(versionRepo.findByIdAndDocumentId(v.getId(), d.getId())).thenReturn(Optional.of(v));
+        when(versionRepo.save(v)).thenReturn(v);
+
+        connecte(APPROVER);
+        service.approveVersion(d.getId(), v.getId(), null);
+
+        assertThat(v.getApprovedBy()).isEqualTo(APPROVER);
     }
 }

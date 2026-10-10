@@ -578,7 +578,7 @@
 }
 
 ::ng-deep .qos-notification--unread {
-  border-left-color: var(--qos-accent-fg);
+  border-left-color: var(--qos-accent-bg);
   background: var(--qos-bg-subtle);
 }
 
@@ -592,7 +592,7 @@
 ::ng-deep .qos-notification__icon[data-type='SUCCESS'] { color: var(--qos-success-fg); }
 ::ng-deep .qos-notification__icon[data-type='WARNING'] { color: var(--qos-warn-fg); }
 ::ng-deep .qos-notification__icon[data-type='ALERT']   { color: var(--qos-danger-fg); }
-::ng-deep .qos-notification__icon[data-type='INFO']    { color: var(--qos-accent-fg); }
+::ng-deep .qos-notification__icon[data-type='INFO']    { color: var(--qos-accent-fg-soft); }
 
 ::ng-deep .qos-notification__text {
   display: flex;

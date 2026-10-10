@@ -5,7 +5,7 @@ import { TestBed } from '@angular/core/testing';
 import { environment } from '../../../environments/environment';
 import { csvCell } from './risk-register.csv';
 import {
-  OPPORTUNITY_ORIGINS, actionStatusLabel, capaStatusLabel, eventText, levelOf, opportunityLevelLabel,
+  OPPORTUNITY_ORIGINS, actionStatusLabel, capaKindLabel, capaStatusLabel, eventText, levelOf, opportunityLevelLabel,
   originLabel, ratingText, requirementLabel, riskLevelLabel, typeLabel
 } from './risk-register.labels';
 import { RiskRegisterService } from './risk-register.service';
@@ -32,6 +32,8 @@ describe('risk-register — libellés, CSV et service', () => {
     expect(capaStatusLabel('RESOLVED')).toBe('Résolue');
     expect(capaStatusLabel('NOUVEAU')).toBe('NOUVEAU');
     expect(capaStatusLabel(null)).toBe('—');
+    expect(capaKindLabel('CORRECTIVE')).toBe('Corrective');
+    expect(capaKindLabel(null)).toBe('—');
     expect(actionStatusLabel('DONE')).toBe('Terminée');
     expect(requirementLabel('IATF_16949_6_1_2')).toBe('IATF 16949 · 6.1.2');
     expect(requirementLabel('X' as never)).toBe('X');
@@ -84,7 +86,7 @@ describe('risk-register — libellés, CSV et service', () => {
     service.risk('a/b').subscribe();
     service.createRisk({} as never).subscribe();
     service.reviseRisk('r1', {} as never).subscribe();
-    service.openCapa('r1', { title: 't' }).subscribe();
+    service.openCapa('r1', { title: 't', kind: 'PREVENTIVE', assignee: 'A', dueDate: '2026-12-01' }).subscribe();
     service.draft('FMEA', 'i1').subscribe();
     service.opportunities().subscribe();
     service.opportunity('o1').subscribe();

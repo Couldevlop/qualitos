@@ -2,6 +2,7 @@ package com.openlab.qualitos.quality.riskregister.infrastructure;
 
 import com.openlab.qualitos.quality.audit.AuditFindingRepository;
 import com.openlab.qualitos.quality.auditlog.AuditEventService;
+import com.openlab.qualitos.quality.authz.application.RecordScope;
 import com.openlab.qualitos.quality.change.ChangeRequestRepository;
 import com.openlab.qualitos.quality.nonconformity.NonConformityRepository;
 import com.openlab.qualitos.quality.risk.FmeaItemRepository;
@@ -37,6 +38,7 @@ public class RiskRegisterBeanConfiguration {
                                                    AuditFindingRepository auditFindings,
                                                    ChangeRequestRepository changes,
                                                    AuditEventService auditEvents,
+                                                   RecordScope scope,
                                                    Clock clock) {
         return new RiskRegisterService(
                 new RegisterRepositoryAdapters.Risks(risks),
@@ -44,8 +46,8 @@ public class RiskRegisterBeanConfiguration {
                 new RegisterRepositoryAdapters.Actions(actions),
                 new RegisterRepositoryAdapters.Events(events),
                 new CapaRiskGateway(capaService, capaCases),
-                new PlatformRiskSourceCatalog(fmeaItems, fmeaProjects, nonConformities, auditFindings, changes),
-                new JwtRegisterContext(),
+                new PlatformRiskSourceCatalog(fmeaItems, fmeaProjects, nonConformities, auditFindings, changes, scope),
+                new JwtRegisterContext(scope),
                 new AuditLogRegisterPublisher(auditEvents),
                 clock);
     }

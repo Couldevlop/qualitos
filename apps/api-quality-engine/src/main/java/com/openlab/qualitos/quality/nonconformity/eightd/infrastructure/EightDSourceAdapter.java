@@ -1,5 +1,6 @@
 package com.openlab.qualitos.quality.nonconformity.eightd.infrastructure;
 
+import com.openlab.qualitos.quality.authz.application.RecordScope;
 import com.openlab.qualitos.quality.capa.CapaAction;
 import com.openlab.qualitos.quality.capa.CapaCase;
 import com.openlab.qualitos.quality.capa.CapaCaseRepository;
@@ -15,6 +16,7 @@ import com.openlab.qualitos.quality.ishikawa.IshikawaDiagram;
 import com.openlab.qualitos.quality.ishikawa.IshikawaDiagramRepository;
 import com.openlab.qualitos.quality.nonconformity.NcNotFoundException;
 import com.openlab.qualitos.quality.nonconformity.NcPhotoRepository;
+import com.openlab.qualitos.quality.nonconformity.NcScope;
 import com.openlab.qualitos.quality.nonconformity.NonConformity;
 import com.openlab.qualitos.quality.nonconformity.NonConformityRepository;
 import com.openlab.qualitos.quality.nonconformity.eightd.application.EightDSourcePort;
@@ -57,6 +59,8 @@ public class EightDSourceAdapter implements EightDSourcePort {
     private final CapaEvidenceRepository capaEvidences;
     private final FmeaItemRepository fmeaItems;
     private final ControlPlanRepository controlPlans;
+    /** Le 8D d'une NC hors de portée n'existe pas (ADR 0081). */
+    private final RecordScope scope;
 
     public EightDSourceAdapter(NonConformityRepository ncs,
                                NcPhotoRepository photos,
@@ -66,7 +70,8 @@ public class EightDSourceAdapter implements EightDSourcePort {
                                CapaCaseRepository capas,
                                CapaEvidenceRepository capaEvidences,
                                FmeaItemRepository fmeaItems,
-                               ControlPlanRepository controlPlans) {
+                               ControlPlanRepository controlPlans,
+                               RecordScope scope) {
         this.ncs = ncs;
         this.photos = photos;
         this.ishikawas = ishikawas;
@@ -76,12 +81,14 @@ public class EightDSourceAdapter implements EightDSourcePort {
         this.capaEvidences = capaEvidences;
         this.fmeaItems = fmeaItems;
         this.controlPlans = controlPlans;
+        this.scope = scope;
     }
 
     @Override
     @Transactional(readOnly = true)
     public EightDSources collect(UUID tenantId, UUID ncId) {
         NonConformity nc = ncs.findByIdAndTenantId(ncId, tenantId)
+                .filter(n -> NcScope.sees(NcScope.restriction(scope), n))
                 .orElseThrow(() -> new NcNotFoundException(ncId));
 
         return new EightDSources(

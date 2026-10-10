@@ -260,11 +260,21 @@ mat-icon.material-symbols-outlined {
   font-size: var(--qos-fs-sm);
 }
 
-/* ---- Tabs : indicateur accent profond, libellés sobres. ---- */
+/* ---- Tabs : indicateur accent profond, libellés sobres. ----
+ * TOUS les états du libellé sont fixés, pas seulement l'actif au repos. Un
+ * onglet qu'on vient de cliquer a le FOCUS, et sous la souris il est SURVOLÉ :
+ * Material prend alors ses propres couleurs (--mat-sys-on-surface, le quasi-noir
+ * du thème clair d'origine). En thème sombre, le nom de l'onglet où l'on se
+ * trouve disparaissait donc — noir sur fond sombre — dès qu'on y entrait. */
 .mat-mdc-tab,
 .mat-mdc-tab-link {
   --mat-tab-active-label-text-color: var(--qos-fg-primary);
+  --mat-tab-active-focus-label-text-color: var(--qos-fg-primary);
+  --mat-tab-active-hover-label-text-color: var(--qos-fg-primary);
   --mat-tab-inactive-label-text-color: var(--qos-fg-tertiary);
+  --mat-tab-inactive-focus-label-text-color: var(--qos-fg-secondary);
+  --mat-tab-inactive-hover-label-text-color: var(--qos-fg-secondary);
+  --mat-tab-inactive-ripple-color: var(--qos-accent-bg-soft);
   --mat-tab-active-ripple-color: var(--qos-accent-bg-soft);
   letter-spacing: 0;
   font-weight: var(--qos-fw-medium);

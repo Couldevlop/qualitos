@@ -2,6 +2,7 @@ package com.openlab.qualitos.quality.capa;
 
 import com.openlab.qualitos.quality.aigateway.AiCompletionResult;
 import com.openlab.qualitos.quality.aigateway.AiGatewayClient;
+import com.openlab.qualitos.quality.authz.application.RecordScope;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.common.TenantContext;
 import org.junit.jupiter.api.AfterEach;
@@ -37,6 +38,8 @@ class CapaServiceTest {
     @Mock CapaLifecycleJournal journal;
     @Mock com.openlab.qualitos.quality.nonconformity.NonConformityRepository ncRepo;
     @Mock CapaEvidenceRepository evidenceRepo;
+    /** Sans réglage, Mockito rend Optional.empty() : l'utilisateur voit tout (ADR 0081). */
+    @Mock RecordScope scope;
     @InjectMocks CapaService service;
 
     static final UUID TENANT = UUID.randomUUID();

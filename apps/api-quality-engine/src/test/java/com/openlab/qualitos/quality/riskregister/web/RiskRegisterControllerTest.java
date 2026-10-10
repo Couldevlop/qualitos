@@ -9,6 +9,7 @@ import com.openlab.qualitos.quality.riskregister.domain.RegisterOrigin;
 import com.openlab.qualitos.quality.riskregister.domain.RegisterRequirement;
 import com.openlab.qualitos.quality.riskregister.domain.RegisterType;
 import com.openlab.qualitos.quality.riskregister.domain.RegisterValidationException;
+import com.openlab.qualitos.quality.riskregister.domain.RiskCapaKind;
 import com.openlab.qualitos.quality.riskregister.domain.RiskDecision;
 import com.openlab.qualitos.quality.riskregister.domain.RiskLevel;
 import com.openlab.qualitos.quality.riskregister.domain.RiskStatus;
@@ -67,6 +68,8 @@ class RiskRegisterControllerTest {
             + "\"process\":\"Production\",\"owner\":\"M. Kone\",\"origin\":\"FMEA\","
             + "\"grossSeverity\":4,\"grossProbability\":3,\"decision\":\"REDUCE\","
             + "\"requirements\":[\"ISO_9001_6_1\",\"IATF_16949_6_1_2\"]}";
+    static final String CORPS_CAPA = "{\"title\":\"Carte SPC\",\"kind\":\"PREVENTIVE\","
+            + "\"assignee\":\"A. Diallo\",\"dueDate\":\"2026-12-01\"}";
 
     static final String CORPS_OPP = "{\"title\":\"Automatiser SPC\",\"type\":\"QUALITY\","
             + "\"process\":\"Production\",\"owner\":\"Mme Diallo\",\"gain\":4,\"feasibility\":4}";
@@ -84,7 +87,7 @@ class RiskRegisterControllerTest {
         when(service.risks()).thenReturn(List.of(vue()));
         when(service.risk(RISQUE)).thenReturn(new RiskRegisterDto.RiskSheet(vue(),
                 List.of(new RiskRegisterDto.CapaView(UUID.randomUUID(), "Carte SPC", LocalDate.of(2026, 11, 1),
-                        "IN_PROGRESS")), List.of()));
+                        "IN_PROGRESS", RiskCapaKind.PREVENTIVE, "A. Diallo")), List.of()));
         when(service.opportunities()).thenReturn(List.of());
         when(service.suggestions()).thenReturn(new RiskRegisterDto.Suggestions(List.of("Production"),
                 List.of(), List.of()));
@@ -129,7 +132,7 @@ class RiskRegisterControllerTest {
         mockMvc.perform(put(BASE + "/risks/" + RISQUE).with(csrf())
                 .contentType(MediaType.APPLICATION_JSON).content(CORPS_RISQUE)).andExpect(status().isForbidden());
         mockMvc.perform(post(BASE + "/risks/" + RISQUE + "/capa").with(csrf())
-                .contentType(MediaType.APPLICATION_JSON).content("{\"title\":\"x\"}")).andExpect(status().isForbidden());
+                .contentType(MediaType.APPLICATION_JSON).content(CORPS_CAPA)).andExpect(status().isForbidden());
         mockMvc.perform(post(BASE + "/opportunities").with(csrf())
                 .contentType(MediaType.APPLICATION_JSON).content(CORPS_OPP)).andExpect(status().isForbidden());
         mockMvc.perform(put(BASE + "/opportunities/" + OPP).with(csrf())
@@ -205,7 +208,7 @@ class RiskRegisterControllerTest {
     @WithMockUser(roles = "QUALITY_MANAGER")
     void ouvrirUneCapaEtGererLesActions() throws Exception {
         when(service.openCapa(eq(RISQUE), any())).thenReturn(new RiskRegisterDto.CapaView(UUID.randomUUID(),
-                "Carte SPC", null, "OPEN"));
+                "Carte SPC", LocalDate.of(2026, 12, 1), "OPEN", RiskCapaKind.CORRECTIVE, "A. Diallo"));
         when(service.addAction(eq(OPP), any())).thenReturn(new RiskRegisterDto.ActionView(ACTION, 3, "Chiffrer",
                 null, OpportunityActionStatus.TO_START));
         when(service.reviseAction(eq(OPP), eq(ACTION), any())).thenReturn(new RiskRegisterDto.ActionView(ACTION, 3,
@@ -213,9 +216,16 @@ class RiskRegisterControllerTest {
 
         mockMvc.perform(post(BASE + "/risks/" + RISQUE + "/capa").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"title\":\"Carte SPC\",\"dueDate\":\"2026-12-01\"}"))
+                        .content(CORPS_CAPA))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.status").value("OPEN"));
+                .andExpect(jsonPath("$.status").value("OPEN"))
+                .andExpect(jsonPath("$.kind").value("CORRECTIVE"))
+                .andExpect(jsonPath("$.assignee").value("A. Diallo"));
+        // Nature, responsable et échéance sont exigés dès la frontière HTTP.
+        mockMvc.perform(post(BASE + "/risks/" + RISQUE + "/capa").with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\":\"Carte SPC\",\"dueDate\":\"2026-12-01\"}"))
+                .andExpect(status().isBadRequest());
         mockMvc.perform(post(BASE + "/risks/" + RISQUE + "/capa").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON).content("{\"title\":\" \"}"))
                 .andExpect(status().isBadRequest());

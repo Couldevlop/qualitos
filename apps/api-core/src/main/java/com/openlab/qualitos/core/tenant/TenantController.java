@@ -1,5 +1,6 @@
 package com.openlab.qualitos.core.tenant;
 
+import com.openlab.qualitos.core.edition.SaasOnly;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -23,12 +24,28 @@ import java.util.UUID;
 @RequestMapping("/api/v1/tenants")
 @PreAuthorize("hasRole('SUPER_ADMIN')")
 @Tag(name = "Tenants", description = "Tenant management — Super Admin only")
+@SaasOnly
 public class TenantController {
 
     private final TenantService tenantService;
+    private final TenantOnboardingService onboarding;
 
-    public TenantController(TenantService tenantService) {
+    public TenantController(TenantService tenantService, TenantOnboardingService onboarding) {
         this.tenantService = tenantService;
+        this.onboarding = onboarding;
+    }
+
+    /**
+     * Crée un client de bout en bout : l'entreprise, le compte de son premier
+     * administrateur, ses modules. Le mot de passe provisoire n'est rendu qu'ici.
+     */
+    @PostMapping("/onboard")
+    @Operation(summary = "Onboard a tenant: company, first administrator account, modules")
+    public ResponseEntity<OnboardingDto.Response> onboardTenant(@Valid @RequestBody OnboardingDto.Request request) {
+        OnboardingDto.Response created = onboarding.onboard(request);
+        URI location = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/api/v1/tenants/{id}").buildAndExpand(created.tenant().id()).toUri();
+        return ResponseEntity.created(location).header("Cache-Control", "no-store").body(created);
     }
 
     @GetMapping

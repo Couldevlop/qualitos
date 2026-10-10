@@ -639,6 +639,18 @@ export class CapaDetailComponent implements OnInit {
     return CapaDetailComponent.ACTION_FLOW[s];
   }
 
+  /**
+   * Vrai pour un dossier ouvert depuis le registre des risques ET qui porte son
+   * action : il s'affiche réduit à elle, sans ajout ni suggestion.
+   */
+  isSingleActionCase(c: CapaCaseResponse): boolean {
+    return c.sourceType === 'RISK' && c.actions.length > 0;
+  }
+
+  trackActionById(_i: number, a: CapaActionResponse): string {
+    return a.id;
+  }
+
   /** Une action est avançable si elle n'est pas DONE et que la CAPA n'est pas terminale. */
   canAdvanceAction(a: CapaActionResponse, caseStatus: CapaStatus): boolean {
     return a.status !== 'DONE' && !this.isTerminal(caseStatus) && !this.acting$.value;

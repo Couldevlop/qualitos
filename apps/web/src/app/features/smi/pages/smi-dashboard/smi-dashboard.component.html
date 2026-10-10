@@ -1,0 +1,177 @@
+<div class="qos-page">
+  <qos-page-header
+    eyebrow="Pilotage" i18n-eyebrow="@@smi.eyebrow"
+    title="Système de Management Intégré" i18n-title="@@smi.title"
+    subtitle="Vue consolidée : une preuve compte pour toutes les normes qu'elle couvre."
+    i18n-subtitle="@@smi.subtitle">
+  </qos-page-header>
+
+  <!-- Filtre de norme : « Tous », puis chaque norme adoptée. -->
+  <div class="normes" role="group" i18n-aria-label="@@smi.filter" aria-label="Filtrer par norme"
+       *ngIf="data && data.standards.length">
+    <button type="button" class="norme" [class.norme--active]="!standard" [attr.aria-pressed]="!standard"
+            (click)="selectStandard(null)" data-test="norme-tous" i18n="@@smi.filter-all">Tous</button>
+    <button type="button" class="norme" *ngFor="let s of data.standards; trackBy: trackByCode"
+            [class.norme--active]="standard === s.code" [attr.aria-pressed]="standard === s.code"
+            (click)="selectStandard(s.code)" [attr.data-test]="'norme-' + s.code">{{ s.name }}</button>
+  </div>
+
+  <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+
+  <p class="echec" *ngIf="error" role="alert">
+    <span>{{ error }}</span>
+    <button mat-button type="button" (click)="reload()" i18n="@@common.retry">Réessayer</button>
+  </p>
+
+  <ng-container *ngIf="data as d">
+    <!-- ===== Quatre indicateurs ===== -->
+    <section class="indicateurs" i18n-aria-label="@@smi.kpis" aria-label="Indicateurs clés">
+      <article class="carte indicateur" data-test="kpi-conformite">
+        <h2 class="indicateur__titre" i18n="@@smi.kpi.compliance">Conformité globale</h2>
+        <ng-container *ngIf="d.compliance?.global !== null && d.compliance?.global !== undefined; else sansConformite">
+          <p class="indicateur__valeur">{{ d.compliance!.global }}&nbsp;%</p>
+          <div class="piste" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+               [attr.aria-valuenow]="d.compliance!.global"
+               i18n-aria-label="@@smi.kpi.compliance" aria-label="Conformité globale">
+            <div class="piste__plein" [style.width.%]="barWidth(d.compliance!.global)"></div>
+          </div>
+        </ng-container>
+        <ng-template #sansConformite>
+          <p class="indicateur__valeur indicateur__valeur--vide">—</p>
+          <p class="indicateur__note">
+            <span i18n="@@smi.kpi.no-standard">Aucune norme adoptée.</span>
+            <a routerLink="/standards" i18n="@@smi.kpi.adopt">Adopter une norme</a>
+          </p>
+        </ng-template>
+      </article>
+
+      <a class="carte indicateur indicateur--lien" routerLink="/capa" data-test="kpi-actions">
+        <h2 class="indicateur__titre" i18n="@@smi.kpi.overdue">Actions en retard</h2>
+        <p class="indicateur__valeur">{{ d.overdueActions.total }}</p>
+        <p class="indicateur__note" [class.indicateur__note--alerte]="d.overdueActions.critical > 0"
+           i18n="@@smi.kpi.overdue-critical">dont {{ d.overdueActions.critical // i18n(ph="critical") }} critiques</p>
+      </a>
+
+      <a class="carte indicateur indicateur--lien" routerLink="/risques" data-test="kpi-risques">
+        <h2 class="indicateur__titre" i18n="@@smi.kpi.major-risks">Risques majeurs ouverts</h2>
+        <p class="indicateur__valeur">{{ d.majorRisks.total }}</p>
+        <p class="indicateur__note" i18n="@@smi.kpi.major-risks-detail">{{ d.majorRisks.critical // i18n(ph="critical") }} critiques · {{ d.majorRisks.high // i18n(ph="high") }} élevés (niveau ≥ 10)</p>
+      </a>
+
+      <article class="carte indicateur" data-test="kpi-audit">
+        <h2 class="indicateur__titre" i18n="@@smi.kpi.next-audit">Prochain audit</h2>
+        <ng-container *ngIf="d.nextAudit as a; else sansAudit">
+          <a class="indicateur__audit" [routerLink]="['/audits', a.id]">{{ a.title }}</a>
+          <p class="indicateur__note">
+            {{ a.scheduledOn | date: 'mediumDate' }}
+            <ng-container *ngIf="a.standard"> · {{ a.standard }}</ng-container>
+            · <span i18n="@@smi.kpi.in-days">dans {{ a.daysUntil // i18n(ph="days") }} j</span>
+          </p>
+        </ng-container>
+        <ng-template #sansAudit>
+          <p class="indicateur__valeur indicateur__valeur--vide">—</p>
+          <p class="indicateur__note">
+            <span i18n="@@smi.kpi.no-audit">Aucun audit planifié.</span>
+            <a routerLink="/audits/planning" i18n="@@smi.kpi.plan-audit">Planifier</a>
+          </p>
+        </ng-template>
+      </article>
+    </section>
+
+    <!-- ===== Trois blocs ===== -->
+    <div class="blocs">
+      <!-- Conformité par norme -->
+      <section class="carte" data-test="conformite-normes">
+        <h2 class="carte__titre" i18n="@@smi.by-standard">Conformité par référentiel</h2>
+        <ul class="barres" *ngIf="d.compliance?.perStandard?.length; else aucuneNorme">
+          <li *ngFor="let b of d.compliance!.perStandard; trackBy: trackByCode" class="barre"
+              [class.barre--choisie]="standard === b.code">
+            <div class="barre__entete">
+              <span class="barre__nom">{{ b.name }}</span>
+              <span class="barre__score">{{ b.score }}&nbsp;%</span>
+            </div>
+            <div class="piste" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+                 [attr.aria-valuenow]="b.score" [attr.aria-label]="b.name">
+              <div class="piste__plein" [style.width.%]="barWidth(b.score)"></div>
+            </div>
+          </li>
+        </ul>
+        <ng-template #aucuneNorme><p class="vide" i18n="@@smi.kpi.no-standard">Aucune norme adoptée.</p></ng-template>
+        <p class="aide">
+          <span i18n="@@smi.by-standard-note">Une même preuve (procédure, audit, action) est comptée pour tous les référentiels concernés.</span>
+          <a routerLink="/smi/exigences" i18n="@@smi.see-matrix">Voir la matrice des exigences</a>
+        </p>
+      </section>
+
+      <!-- Matrice des risques -->
+      <section class="carte" data-test="matrice-risques">
+        <div class="carte__entete">
+          <h2 class="carte__titre" i18n="@@smi.matrix.title">Matrice des risques · {{ d.riskMatrix.open // i18n(ph="open") }} risques ouverts</h2>
+          <mat-button-toggle-group [value]="ratingView" (change)="setView($event.value)" hideSingleSelectionIndicator
+                                   class="bascule" i18n-aria-label="@@smi.matrix.view" aria-label="Cotation affichée">
+            <mat-button-toggle value="gross" data-test="vue-brute" i18n="@@rr.gross">Brut</mat-button-toggle>
+            <mat-button-toggle value="residual" data-test="vue-residuelle" i18n="@@rr.residual">Résiduel</mat-button-toggle>
+          </mat-button-toggle-group>
+        </div>
+
+        <div class="matrice" role="group" i18n-aria-label="@@smi.matrix.grid" aria-label="Matrice gravité × probabilité">
+          <span class="matrice__axe matrice__axe--g" aria-hidden="true" i18n="@@rr.severity">Gravité</span>
+          <div class="matrice__corps">
+            <div class="matrice__ligne" *ngFor="let ligne of grid">
+              <span class="matrice__graduation" aria-hidden="true">{{ ligne[0].severity }}</span>
+              <a *ngFor="let c of ligne" class="case niveau--{{ c.level }}"
+                 [class.case--vide]="c.count === 0"
+                 [routerLink]="['/smi', 'risques']" [queryParams]="cellQuery(c)"
+                 [attr.aria-label]="cellLabel(c)" [attr.data-test]="'case-' + c.severity + '-' + c.probability">
+                {{ c.count }}
+              </a>
+            </div>
+            <div class="matrice__ligne matrice__ligne--axe" aria-hidden="true">
+              <span class="matrice__graduation"></span>
+              <span class="matrice__graduation matrice__graduation--p" *ngFor="let p of probabilities">{{ p }}</span>
+            </div>
+            <span class="matrice__axe matrice__axe--p" aria-hidden="true" i18n="@@rr.probability">Probabilité</span>
+          </div>
+        </div>
+
+        <p class="aide" *ngIf="ratingView === 'residual' && placed < d.riskMatrix.open" data-test="hors-residuelle"
+           i18n="@@smi.matrix.residual-missing">{{ d.riskMatrix.open - placed // i18n(ph="missing") }} risque(s) sans cotation résiduelle visée n'apparaissent pas.</p>
+        <ul class="legende" i18n-aria-label="@@smi.matrix.legend" aria-label="Légende des niveaux">
+          <li><span class="pastille niveau--LOW" aria-hidden="true"></span><span i18n="@@smi.matrix.low">Faible 1–4</span></li>
+          <li><span class="pastille niveau--MEDIUM" aria-hidden="true"></span><span i18n="@@smi.matrix.medium">Moyen 5–9</span></li>
+          <li><span class="pastille niveau--HIGH" aria-hidden="true"></span><span i18n="@@smi.matrix.high">Élevé 10–14</span></li>
+          <li><span class="pastille niveau--CRITICAL" aria-hidden="true"></span><span i18n="@@smi.matrix.critical">Critique 15–25</span></li>
+        </ul>
+      </section>
+
+      <!-- À traiter cette semaine -->
+      <section class="carte" data-test="semaine">
+        <h2 class="carte__titre" i18n="@@smi.week.title">À traiter cette semaine</h2>
+        <ul class="semaine" *ngIf="d.thisWeek.length; else rienCetteSemaine">
+          <li *ngFor="let u of d.thisWeek; trackBy: trackByUpcoming">
+            <a class="semaine__ligne" [routerLink]="upcomingRoute(u)">
+              <span class="semaine__texte">
+                <span class="semaine__titre">{{ u.title }}</span>
+                <span class="semaine__type">{{ upcomingText(u.kind) }}<ng-container *ngIf="u.reference"> · {{ u.reference }}</ng-container></span>
+              </span>
+              <span class="echeance" [class.echeance--echue]="u.daysLeft < 0"
+                    [class.echeance--proche]="u.daysLeft >= 0 && u.daysLeft <= 2">{{ due(u.daysLeft) }}</span>
+            </a>
+          </li>
+        </ul>
+        <ng-template #rienCetteSemaine>
+          <p class="vide" i18n="@@smi.week.empty">Rien d'échu ni d'attendu d'ici sept jours.</p>
+        </ng-template>
+      </section>
+    </div>
+
+    <!-- Le passage vers la matrice des exigences, bien visible en bas de page. -->
+    <a class="passage" routerLink="/smi/exigences" data-test="lien-exigences">
+      <span class="passage__texte">
+        <span class="passage__titre" i18n="@@smi.requirements.title">Matrice des exigences · une preuve, plusieurs référentiels</span>
+        <span class="passage__sous-titre" i18n="@@smi.requirements.teaser">Chapitres communs 4 à 10, croisés avec chaque norme adoptée : couvert, partiel ou en écart.</span>
+      </span>
+      <mat-icon aria-hidden="true">arrow_forward</mat-icon>
+    </a>
+  </ng-container>
+</div>

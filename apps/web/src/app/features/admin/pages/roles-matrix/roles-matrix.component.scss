@@ -1,0 +1,461 @@
+// Rôles et droits : un tableau de commutateurs. Chaque rôle a sa teinte, tirée
+// des jetons du design system (thèmes clair et sombre), qui relie sa colonne
+// aux pastilles de ses membres. C'est la seule couleur de la page : tout le
+// reste est neutre.
+
+:host {
+  display: block;
+
+  // Six teintes de rôle, dérivées des séries de graphes du design system.
+  --role-0: var(--qos-chart-1);
+  --role-1: var(--qos-chart-2);
+  --role-2: var(--qos-chart-5);
+  --role-3: var(--qos-chain-2);
+  --role-4: var(--qos-chart-4);
+  --role-5: var(--qos-chart-3);
+}
+
+@for $i from 0 through 5 {
+  .teinte-#{$i} {
+    --teinte: var(--role-#{$i});
+  }
+
+  .point--#{$i} {
+    background: var(--role-#{$i});
+  }
+}
+
+.echec {
+  display: flex;
+  align-items: center;
+  gap: var(--qos-space-2);
+  color: var(--qos-danger-fg);
+}
+
+// ---------- création d'un rôle ----------
+
+.creation {
+  display: grid;
+  grid-template-columns: minmax(12rem, 1fr) minmax(10rem, 14rem) minmax(12rem, 1.4fr) auto;
+  gap: var(--qos-space-3);
+  align-items: start;
+  margin-bottom: var(--qos-space-5);
+  padding: var(--qos-space-4) var(--qos-space-5);
+  border-radius: var(--qos-radius-lg);
+  background: var(--qos-bg-elevated);
+  border: 1px dashed var(--qos-border-default);
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+
+  &__boutons {
+    display: flex;
+    gap: var(--qos-space-2);
+    padding-top: var(--qos-space-2);
+  }
+}
+
+// ---------- plateau : vivier + matrice ----------
+
+.plateau {
+  display: grid;
+  grid-template-columns: 17rem minmax(0, 1fr);
+  gap: var(--qos-space-5);
+  align-items: start;
+  padding-bottom: 5rem; // la barre d'enregistrement ne recouvre jamais la dernière ligne
+
+  @media (max-width: 1000px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ---------- vivier ----------
+
+.vivier {
+  position: sticky;
+  top: var(--qos-space-4);
+  padding: var(--qos-space-4);
+  border-radius: var(--qos-radius-lg);
+  background: var(--qos-bg-sunken);
+
+  @media (max-width: 1000px) {
+    position: static;
+  }
+
+  &__titre {
+    margin: 0;
+    font-size: var(--qos-fs-md);
+    font-weight: var(--qos-fw-semibold);
+    color: var(--qos-fg-primary);
+  }
+
+  &__aide,
+  &__vide {
+    margin: var(--qos-space-1) 0 var(--qos-space-3);
+    font-size: var(--qos-fs-xs);
+    color: var(--qos-fg-secondary);
+  }
+
+  &__liste {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--qos-space-2);
+    max-height: 70vh;
+    overflow-y: auto;
+
+    @media (max-width: 1000px) {
+      flex-direction: row;
+      overflow-x: auto;
+      max-height: none;
+    }
+  }
+}
+
+.membre {
+  display: flex;
+  align-items: center;
+  gap: var(--qos-space-2);
+  padding: var(--qos-space-2) var(--qos-space-1) var(--qos-space-2) var(--qos-space-2);
+  border-radius: var(--qos-radius-md);
+  background: var(--qos-bg-elevated);
+  border: 1px solid var(--qos-border-subtle);
+  cursor: grab;
+  min-width: 0;
+
+  @media (max-width: 1000px) {
+    min-width: 15rem;
+  }
+
+  &:active {
+    cursor: grabbing;
+  }
+
+  &__texte {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__nom {
+    font-size: var(--qos-fs-sm);
+    color: var(--qos-fg-primary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__roles {
+    font-size: var(--qos-fs-xs);
+    color: var(--qos-fg-secondary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    &--vide {
+      color: var(--qos-fg-tertiary);
+    }
+  }
+
+  &--apercu {
+    gap: var(--qos-space-2);
+    padding: var(--qos-space-2) var(--qos-space-3);
+    font-size: var(--qos-fs-sm);
+    box-shadow: var(--qos-shadow-lg);
+    border-color: var(--qos-border-default);
+  }
+}
+
+// La carte déplacée laisse une place visible dans le vivier, et la colonne visée s'éclaire.
+.cdk-drag-placeholder {
+  opacity: 0.35;
+}
+
+.cdk-drag-animating {
+  transition: transform 180ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+// ---------- pastilles (initiales) ----------
+
+.pastille {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  font-size: var(--qos-fs-xs);
+  font-weight: var(--qos-fw-semibold);
+  background: var(--teinte, var(--qos-accent-bg));
+  color: var(--qos-fg-inverse);
+  box-shadow: 0 0 0 2px var(--qos-bg-elevated);
+
+  &--neutre {
+    background: var(--qos-fg-secondary);
+  }
+
+  &__retirer {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    width: 1.1rem;
+    height: 1.1rem;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-radius: 50%;
+    padding: 0;
+    background: var(--qos-fg-primary);
+    color: var(--qos-bg-elevated);
+    font-size: 12px;
+    line-height: 1;
+    cursor: pointer;
+
+    &:focus-visible {
+      display: inline-flex;
+      outline: 2px solid var(--qos-border-focus);
+    }
+  }
+
+  &:hover &__retirer,
+  &:focus-within &__retirer {
+    display: inline-flex;
+  }
+}
+
+.point {
+  display: inline-block;
+  width: 0.6rem;
+  height: 0.6rem;
+  margin-right: var(--qos-space-2);
+  border-radius: 50%;
+}
+
+// ---------- matrice ----------
+
+.matrice {
+  overflow-x: auto;
+  border-radius: var(--qos-radius-lg);
+  background: var(--qos-bg-elevated);
+  border: 1px solid var(--qos-border-subtle);
+  box-shadow: var(--qos-shadow-sm);
+}
+
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+  min-width: 100%;
+}
+
+.coin {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  min-width: 16rem;
+  padding: var(--qos-space-4);
+  text-align: left;
+  vertical-align: bottom;
+  background: var(--qos-bg-elevated);
+  font-size: var(--qos-fs-xs);
+  font-weight: var(--qos-fw-medium);
+  color: var(--qos-fg-tertiary);
+  border-bottom: 1px solid var(--qos-border-subtle);
+}
+
+.role {
+  min-width: 9.5rem;
+  padding: var(--qos-space-3);
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--qos-border-subtle);
+  // Le liseré haut porte la teinte du rôle ; il s'épaissit quand le rôle change.
+  border-top: 3px solid var(--teinte);
+  background: color-mix(in srgb, var(--teinte) 6%, var(--qos-bg-elevated));
+
+  &--modifie {
+    border-top-width: 6px;
+  }
+
+  &__entete {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--qos-space-1);
+  }
+
+  &__nom {
+    font-size: var(--qos-fs-sm);
+    font-weight: var(--qos-fw-semibold);
+    color: var(--qos-fg-primary);
+    line-height: 1.3;
+    padding-top: 4px;
+  }
+
+  &__menu {
+    margin: -6px -6px 0 0;
+  }
+
+  &__statut {
+    display: block;
+    margin: 2px 0 var(--qos-space-2);
+    font-size: var(--qos-fs-xs);
+    font-weight: var(--qos-fw-regular);
+    color: var(--qos-fg-secondary);
+  }
+
+  &__depot {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    min-height: 2.6rem;
+    padding: 4px;
+    border-radius: var(--qos-radius-md);
+    border: 1px dashed color-mix(in srgb, var(--teinte) 45%, transparent);
+    transition: background 120ms ease, border-color 120ms ease;
+
+    &.cdk-drop-list-receiving {
+      border-style: solid;
+      border-color: var(--teinte);
+    }
+
+    &.cdk-drop-list-dragging {
+      background: color-mix(in srgb, var(--teinte) 16%, transparent);
+    }
+
+    // Une carte déposée ne reste pas dans la colonne : la pastille la remplace.
+    .membre {
+      display: none;
+    }
+  }
+
+  &__deposer {
+    align-self: center;
+    padding: 0 var(--qos-space-1);
+    font-size: var(--qos-fs-xs);
+    font-weight: var(--qos-fw-regular);
+    color: var(--qos-fg-tertiary);
+  }
+}
+
+.module th {
+  position: sticky;
+  left: 0;
+  padding: var(--qos-space-4) var(--qos-space-4) var(--qos-space-2);
+  text-align: left;
+  font-size: var(--qos-fs-sm);
+  font-weight: var(--qos-fw-semibold);
+  color: var(--qos-fg-primary);
+  background: var(--qos-bg-elevated);
+}
+
+.action {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  padding: var(--qos-space-2) var(--qos-space-4);
+  text-align: left;
+  font-size: var(--qos-fs-sm);
+  font-weight: var(--qos-fw-regular);
+  color: var(--qos-fg-secondary);
+  background: var(--qos-bg-elevated);
+  border-top: 1px solid var(--qos-border-subtle);
+}
+
+.cellule {
+  padding: var(--qos-space-1) var(--qos-space-3);
+  text-align: center;
+  border-top: 1px solid var(--qos-border-subtle);
+  background: color-mix(in srgb, var(--teinte) 3%, var(--qos-bg-elevated));
+}
+
+// L'interrupteur : vide quand l'action est refusée, plein de la teinte du rôle quand elle est accordée.
+.interrupteur {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border-radius: var(--qos-radius-sm);
+  border: 1.5px solid var(--qos-border-default);
+  background: transparent;
+  color: var(--qos-fg-inverse);
+  cursor: pointer;
+  transition: background 100ms ease, border-color 100ms ease, transform 100ms ease;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+
+  &:hover:not(:disabled) {
+    border-color: var(--teinte);
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.92);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--qos-border-focus);
+    outline-offset: 2px;
+  }
+
+  &--on {
+    background: var(--teinte);
+    border-color: var(--teinte);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.75;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .interrupteur,
+  .role__depot,
+  .cdk-drag-animating {
+    transition: none;
+  }
+}
+
+// ---------- barre d'enregistrement ----------
+
+.barre {
+  position: sticky;
+  bottom: var(--qos-space-4);
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--qos-space-4);
+  flex-wrap: wrap;
+  max-width: 44rem;
+  margin: 0 auto;
+  padding: var(--qos-space-3) var(--qos-space-3) var(--qos-space-3) var(--qos-space-5);
+  border-radius: var(--qos-radius-pill);
+  background: var(--qos-fg-primary);
+  color: var(--qos-bg-elevated);
+  box-shadow: var(--qos-shadow-lg);
+  font-size: var(--qos-fs-sm);
+  font-weight: var(--qos-fw-medium);
+
+  &__boutons {
+    display: flex;
+    gap: var(--qos-space-2);
+  }
+
+  .mat-mdc-outlined-button:not(:disabled) {
+    color: var(--qos-bg-elevated);
+    border-color: color-mix(in srgb, var(--qos-bg-elevated) 45%, transparent);
+  }
+}

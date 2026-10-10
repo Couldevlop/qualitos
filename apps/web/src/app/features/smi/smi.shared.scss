@@ -1,0 +1,97 @@
+// Les briques communes aux écrans du SMI : la carte, et la rampe des niveaux
+// de risque de la matrice. Les teintes sont dérivées des jetons du design
+// system (color-mix) pour suivre les thèmes clair et sombre ; le niveau est
+// toujours aussi écrit (légende, nom accessible de chaque case) — la couleur
+// seule ne suffit pas (WCAG 1.4.1).
+
+@mixin carte {
+  .carte {
+    padding: var(--qos-space-5);
+    border-radius: var(--qos-radius-lg);
+    background: var(--qos-bg-elevated);
+    border: 1px solid var(--qos-border-subtle);
+    box-shadow: var(--qos-shadow-xs);
+    min-width: 0;
+
+    &__titre {
+      margin: 0 0 var(--qos-space-4);
+      font-size: var(--qos-fs-md, 16px);
+      font-weight: var(--qos-fw-semibold);
+      color: var(--qos-fg-primary);
+      line-height: 1.35;
+    }
+  }
+}
+
+@mixin niveaux {
+  .niveau--LOW {
+    background: var(--qos-accent-bg-soft);
+    color: var(--qos-accent-fg-soft);
+  }
+
+  .niveau--MEDIUM {
+    background: color-mix(in srgb, var(--qos-chart-3) 30%, var(--qos-bg-elevated));
+    color: var(--qos-fg-primary);
+  }
+
+  .niveau--HIGH {
+    background: color-mix(in srgb, var(--qos-chain-2) 45%, var(--qos-bg-elevated));
+    color: var(--qos-fg-primary);
+  }
+
+  .niveau--CRITICAL {
+    background: var(--qos-danger-fg);
+    color: var(--qos-fg-inverse);
+  }
+}
+
+// Le tableau dense à en-tête sombre, comme le registre et la maquette.
+@mixin tableau {
+  .tableau {
+    overflow-x: auto;
+    border-radius: var(--qos-radius-lg);
+    background: var(--qos-bg-elevated);
+    box-shadow: var(--qos-shadow-sm);
+    border: 1px solid var(--qos-border-subtle);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--qos-fs-sm);
+  }
+
+  thead th {
+    text-align: left;
+    padding: var(--qos-space-3) var(--qos-space-4);
+    background: var(--qos-fg-primary);
+    color: var(--qos-fg-inverse);
+    font-size: var(--qos-fs-xs);
+    font-weight: var(--qos-fw-semibold);
+    white-space: nowrap;
+  }
+
+  tbody td,
+  tbody th {
+    padding: var(--qos-space-3) var(--qos-space-4);
+    border-top: 1px solid var(--qos-border-subtle);
+    vertical-align: middle;
+    text-align: left;
+  }
+
+  .ref {
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--qos-fg-secondary);
+    white-space: nowrap;
+  }
+
+  .vide {
+    color: var(--qos-fg-tertiary);
+  }
+
+  .aucun {
+    text-align: center;
+    padding: var(--qos-space-8);
+    color: var(--qos-fg-secondary);
+  }
+}

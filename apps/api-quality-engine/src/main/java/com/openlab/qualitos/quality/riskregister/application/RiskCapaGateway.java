@@ -1,6 +1,7 @@
 package com.openlab.qualitos.quality.riskregister.application;
 
 import com.openlab.qualitos.quality.riskregister.domain.Risk;
+import com.openlab.qualitos.quality.riskregister.domain.RiskCapaKind;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -16,10 +17,16 @@ import java.util.UUID;
  */
 public interface RiskCapaGateway {
 
-    LinkedCapa open(Risk risk, String title, String description, LocalDate dueDate, UUID ownerId);
+    /**
+     * Ouvre le dossier ET son action : le dossier issu d'un risque porte une
+     * seule action, celle qu'on décide ici, confiée à {@code assignee}.
+     */
+    LinkedCapa open(Risk risk, String title, String description, RiskCapaKind kind, String assignee,
+                    LocalDate dueDate, UUID ownerId);
 
     List<LinkedCapa> linkedTo(Risk risk);
 
     /** Un dossier CAPA réduit à ce que le tableau « Traitement » montre. */
-    record LinkedCapa(UUID id, String title, LocalDate dueDate, String status) {}
+    record LinkedCapa(UUID id, String title, LocalDate dueDate, String status, RiskCapaKind kind,
+                      String assignee) {}
 }

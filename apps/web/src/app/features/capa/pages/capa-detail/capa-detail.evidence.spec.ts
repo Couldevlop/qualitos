@@ -15,6 +15,7 @@ import {
   CapaRevisionImpactComponent
 } from '../capa-revision-impact/capa-revision-impact.component';
 import { ProductsService } from '../../../products/products.service';
+import { AuthzService } from '../../../../core/authz/authz.service';
 
 /**
  * Preuves jointes au dossier CAPA (§4.2, ISO 9001 §10.2).
@@ -79,6 +80,8 @@ describe('CapaDetailComponent — preuves du dossier', () => {
       imports: [SharedModule, UiModule, NoopAnimationsModule],
       providers: [
         { provide: CapaService, useValue: capa },
+        // Tous les droits : ces bancs testent la fiche, pas la matrice (ADR 0078).
+        { provide: AuthzService, useValue: { can: () => of(true) } },
         // L'encart d'impact vit dans la fiche : sans ce doublon, il irait
         // chercher un HttpClient que ce banc de test ne fournit pas.
         { provide: ProductsService, useValue: { revisionRequestsForTrigger: () => of([]) } },

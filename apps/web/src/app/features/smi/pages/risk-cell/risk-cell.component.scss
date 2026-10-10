@@ -1,0 +1,165 @@
+// « Risques d'une case » : la liste à gauche, le détail à droite, comme la maquette.
+@use '../../smi.shared' as smi;
+
+:host {
+  display: block;
+}
+
+@include smi.carte;
+@include smi.tableau;
+
+.filtres {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--qos-space-3);
+  margin-bottom: var(--qos-space-4);
+
+  &__liste {
+    width: 11rem;
+  }
+}
+
+.echec {
+  display: flex;
+  align-items: center;
+  gap: var(--qos-space-2);
+  color: var(--qos-danger-fg);
+}
+
+.grille {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(16rem, 1fr);
+  gap: var(--qos-space-4);
+  align-items: start;
+
+  @media (max-width: 1000px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ligne {
+  cursor: pointer;
+
+  &:hover {
+    background: var(--qos-bg-hover);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--qos-border-focus);
+    outline-offset: -2px;
+  }
+
+  &--choisie {
+    background: var(--qos-accent-bg-soft);
+
+    &:hover {
+      background: var(--qos-accent-bg-soft);
+    }
+  }
+}
+
+.intitule {
+  min-width: 12rem;
+  color: var(--qos-fg-primary);
+}
+
+.etiquette {
+  display: inline-flex;
+  padding: 2px 8px;
+  border-radius: var(--qos-radius-pill);
+  background: var(--qos-bg-sunken);
+  border: 1px solid var(--qos-border-subtle);
+  font-size: var(--qos-fs-xs);
+  font-weight: var(--qos-fw-semibold);
+  color: var(--qos-fg-secondary);
+  white-space: nowrap;
+}
+
+.detail {
+  position: sticky;
+  top: var(--qos-space-4);
+
+  &__surtitre {
+    margin: 0 0 var(--qos-space-1);
+    font-size: var(--qos-fs-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--qos-fg-tertiary);
+  }
+
+  &__titre {
+    margin: 0 0 var(--qos-space-4);
+    font-size: var(--qos-fs-lg);
+    font-weight: var(--qos-fw-semibold);
+    color: var(--qos-fg-primary);
+  }
+
+  &__boutons {
+    display: flex;
+    flex-direction: column;
+    gap: var(--qos-space-2);
+    margin-top: var(--qos-space-5);
+  }
+}
+
+.boites {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--qos-space-3);
+  margin-bottom: var(--qos-space-4);
+}
+
+.boite {
+  display: flex;
+  flex-direction: column;
+  gap: var(--qos-space-1);
+  padding: var(--qos-space-3);
+  border-radius: var(--qos-radius-md);
+  border: 1px solid var(--qos-border-subtle);
+
+  &__titre {
+    font-size: var(--qos-fs-xs);
+    color: var(--qos-fg-tertiary);
+  }
+
+  &__calcul {
+    font-size: var(--qos-fs-lg);
+    font-weight: var(--qos-fw-semibold);
+    font-variant-numeric: tabular-nums;
+    color: var(--qos-fg-primary);
+  }
+}
+
+.champs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--qos-space-2);
+  margin: 0;
+  font-size: var(--qos-fs-sm);
+
+  div {
+    display: flex;
+    gap: var(--qos-space-2);
+  }
+
+  dt {
+    color: var(--qos-fg-secondary);
+    white-space: nowrap;
+
+    &::after {
+      content: ' :';
+    }
+  }
+
+  dd {
+    margin: 0;
+    color: var(--qos-fg-primary);
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  a {
+    color: var(--qos-fg-link);
+  }
+}

@@ -192,6 +192,194 @@
         <source>L'inscription a échoué.</source>
         <target state="translated">受講登録に失敗しました。</target>
       </trans-unit>
+      <trans-unit id="nav.admin-clients" datatype="html">
+        <source>Clients</source>
+        <target state="translated">顧客</target>
+      </trans-unit>
+      <trans-unit id="admin.credential.title" datatype="html">
+        <source>Transmettez ces identifiants</source>
+        <target state="translated">このログイン情報を伝えてください</target>
+      </trans-unit>
+      <trans-unit id="admin.credential.help" datatype="html">
+        <source>Le mot de passe provisoire n'apparaîtra plus. Il devra être changé à la première connexion.</source>
+        <target state="translated">仮パスワードは再表示されません。初回ログイン時に変更が必要です。</target>
+      </trans-unit>
+      <trans-unit id="admin.credential.login" datatype="html">
+        <source>Identifiant</source>
+        <target state="translated">ログインID</target>
+      </trans-unit>
+      <trans-unit id="admin.credential.password" datatype="html">
+        <source>Mot de passe provisoire</source>
+        <target state="translated">仮パスワード</target>
+      </trans-unit>
+      <trans-unit id="admin.credential.copy" datatype="html">
+        <source>Copier</source>
+        <target state="translated">コピー</target>
+      </trans-unit>
+      <trans-unit id="admin.credential.copied" datatype="html">
+        <source>Copié</source>
+        <target state="translated">コピーしました</target>
+      </trans-unit>
+      <trans-unit id="admin.credential.done" datatype="html">
+        <source>C'est transmis</source>
+        <target state="translated">伝えました</target>
+      </trans-unit>
+      <trans-unit id="admin.credential.sent-title" datatype="html">
+        <source>Invitation envoyée</source>
+        <target state="translated">招待を送信しました</target>
+      </trans-unit>
+      <trans-unit id="admin.credential.sent-help" datatype="html">
+        <source><x id="EMAIL"/> reçoit un lien pour choisir son mot de passe.</source>
+        <target state="translated"><x id="EMAIL"/> にパスワード設定用のリンクが届きます。</target>
+      </trans-unit>
+      <trans-unit id="admin.team.invite" datatype="html">
+        <source>Inviter un membre</source>
+        <target state="translated">メンバーを招待</target>
+      </trans-unit>
+      <trans-unit id="admin.team.invite-title" datatype="html">
+        <source>Nouveau membre</source>
+        <target state="translated">新しいメンバー</target>
+      </trans-unit>
+      <trans-unit id="admin.team.invite-email" datatype="html">
+        <source>Adresse e-mail</source>
+        <target state="translated">メールアドレス</target>
+      </trans-unit>
+      <trans-unit id="admin.team.invite-email-invalid" datatype="html">
+        <source>Une adresse e-mail valide est attendue.</source>
+        <target state="translated">有効なメールアドレスを入力してください。</target>
+      </trans-unit>
+      <trans-unit id="admin.team.invite-first-name" datatype="html">
+        <source>Prénom (facultatif)</source>
+        <target state="translated">名（任意）</target>
+      </trans-unit>
+      <trans-unit id="admin.team.invite-last-name" datatype="html">
+        <source>Nom (facultatif)</source>
+        <target state="translated">姓（任意）</target>
+      </trans-unit>
+      <trans-unit id="admin.team.invite-roles" datatype="html">
+        <source>Rôles de son compte</source>
+        <target state="translated">アカウントのロール</target>
+      </trans-unit>
+      <trans-unit id="admin.team.invite-send" datatype="html">
+        <source>Créer son compte</source>
+        <target state="translated">アカウントを作成</target>
+      </trans-unit>
+      <trans-unit id="admin.team.invite-failed" datatype="html">
+        <source>L'invitation a échoué.</source>
+        <target state="translated">招待に失敗しました。</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.title" datatype="html">
+        <source>Clients</source>
+        <target state="translated">顧客</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.subtitle" datatype="html">
+        <source>Chaque organisation qui utilise QualitOS : son offre, ses modules, son administrateur.</source>
+        <target state="translated">QualitOS を利用する各組織：プラン、モジュール、管理者。</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.new" datatype="html">
+        <source>Nouveau client</source>
+        <target state="translated">新しい顧客</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.wizard-title" datatype="html">
+        <source>Nouveau client</source>
+        <target state="translated">新しい顧客</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.step-company" datatype="html">
+        <source>Entreprise</source>
+        <target state="translated">組織</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.step-modules" datatype="html">
+        <source>Modules</source>
+        <target state="translated">モジュール</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.step-admin" datatype="html">
+        <source>Administrateur</source>
+        <target state="translated">管理者</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.name" datatype="html">
+        <source>Nom de l'organisation</source>
+        <target state="translated">組織名</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.name-placeholder" datatype="html">
+        <source>Hôpital Saint-Jean</source>
+        <target state="translated">聖ヨハネ病院</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.slug" datatype="html">
+        <source>Identifiant</source>
+        <target state="translated">識別子</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.slug-hint" datatype="html">
+        <source>Minuscules, chiffres et tirets ; il ne change plus.</source>
+        <target state="translated">小文字、数字、ハイフン。後から変更できません。</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.slug-invalid" datatype="html">
+        <source>3 à 63 caractères : minuscules, chiffres et tirets.</source>
+        <target state="translated">3〜63文字：小文字、数字、ハイフン。</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.plan" datatype="html">
+        <source>Offre</source>
+        <target state="translated">プラン</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.next" datatype="html">
+        <source>Continuer</source>
+        <target state="translated">次へ</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.back" datatype="html">
+        <source>Retour</source>
+        <target state="translated">戻る</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.modules-help" datatype="html">
+        <source>Cochez ce que l'organisation utilisera. Ce dont un module a besoin se coche avec lui ; le socle est inclus d'office.</source>
+        <target state="translated">組織が使うものをチェックします。モジュールに必要なものは一緒にチェックされ、基盤は常に含まれます。</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.catalog-failed" datatype="html">
+        <source>Le catalogue des modules ne répond pas : le client peut être créé sans module, à compléter ensuite.</source>
+        <target state="translated">モジュールカタログが応答しません。モジュールなしで顧客を作成し、後で追加できます。</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.core" datatype="html">
+        <source>Socle</source>
+        <target state="translated">基盤</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.required-by" datatype="html">
+        <source>Requis par <x id="modules"/></source>
+        <target state="translated"><x id="modules"/> が必要とします</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.admin-help" datatype="html">
+        <source>Son compte est créé maintenant ; il invitera ensuite son équipe et réglera ses droits.</source>
+        <target state="translated">アカウントは今作成されます。その後、チームを招待し権限を設定します。</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.modules-count" datatype="html">
+        <source><x id="COUNT"/> module(s) choisi(s)</source>
+        <target state="translated"><x id="COUNT"/> 件のモジュールを選択</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.create" datatype="html">
+        <source>Créer le client</source>
+        <target state="translated">顧客を作成</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.create-failed" datatype="html">
+        <source>La création du client a échoué.</source>
+        <target state="translated">顧客の作成に失敗しました。</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.created" datatype="html">
+        <source>Client créé :</source>
+        <target state="translated">顧客を作成しました：</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.modules-failed" datatype="html">
+        <source>Certains modules n'ont pas été ouverts : reprenez-les depuis la console des modules du client.</source>
+        <target state="translated">一部のモジュールが開けませんでした。顧客のモジュール画面から再試行してください。</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.load-failed" datatype="html">
+        <source>La liste des clients n'a pas pu être chargée.</source>
+        <target state="translated">顧客一覧を読み込めませんでした。</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.inactive" datatype="html">
+        <source>Désactivé</source>
+        <target state="translated">無効</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.empty" datatype="html">
+        <source>Aucun client pour l'instant : créez le premier.</source>
+        <target state="translated">まだ顧客はいません。最初の顧客を作成しましょう。</target>
+      </trans-unit>
       <trans-unit id="admin.api-keys.cancel" datatype="html">
         <source>Annuler</source>
         <target state="translated">キャンセル</target>
@@ -5162,6 +5350,326 @@ Portail clients</source>
         <source>Videz le champ pour ne plus envoyer de rappel par courriel.</source>
         <target state="translated">メール通知を止めるには、この欄を空にしてください。</target>
       </trans-unit>
+      <trans-unit id="nav.admin-roles" datatype="html">
+        <source>Rôles et droits</source>
+        <target state="translated">ロールと権限</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.authz-manage" datatype="html">
+        <source>Administrer les rôles et les droits</source>
+        <target state="translated">ロールと権限を管理</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.capa-create" datatype="html">
+        <source>Ouvrir un dossier CAPA</source>
+        <target state="translated">CAPAケースを開始</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.capa-edit" datatype="html">
+        <source>Modifier et démarrer un dossier</source>
+        <target state="translated">ケースの編集と開始</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.capa-resolve" datatype="html">
+        <source>Résoudre un dossier</source>
+        <target state="translated">ケースを解決</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.capa-reject" datatype="html">
+        <source>Rejeter un dossier</source>
+        <target state="translated">ケースを却下</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.capa-verify" datatype="html">
+        <source>Vérifier l'efficacité</source>
+        <target state="translated">有効性を検証</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.capa-delete" datatype="html">
+        <source>Supprimer un dossier</source>
+        <target state="translated">ケースを削除</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.capa-action-manage" datatype="html">
+        <source>Ajouter et retirer des actions</source>
+        <target state="translated">アクションの追加と削除</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.capa-action-update" datatype="html">
+        <source>Faire avancer une action</source>
+        <target state="translated">アクションを進める</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.nc-create" datatype="html">
+        <source>Déclarer une non-conformité</source>
+        <target state="translated">不適合を報告</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.nc-edit" datatype="html">
+        <source>Modifier une non-conformité</source>
+        <target state="translated">不適合を編集</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.nc-photo" datatype="html">
+        <source>Ajouter des photos</source>
+        <target state="translated">写真を追加</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.nc-process" datatype="html">
+        <source>Analyser et résoudre</source>
+        <target state="translated">分析と解決</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.nc-close" datatype="html">
+        <source>Clôturer</source>
+        <target state="translated">クローズ</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.nc-reject" datatype="html">
+        <source>Annuler ou rejeter</source>
+        <target state="translated">取消または却下</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.nc-escalate" datatype="html">
+        <source>Poser une action corrective</source>
+        <target state="translated">是正処置を起こす</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.document-edit" datatype="html">
+        <source>Rédiger et archiver</source>
+        <target state="translated">作成とアーカイブ</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.document-submit" datatype="html">
+        <source>Soumettre à revue</source>
+        <target state="translated">レビューに提出</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.document-approve" datatype="html">
+        <source>Approuver</source>
+        <target state="translated">承認</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.document-publish" datatype="html">
+        <source>Publier</source>
+        <target state="translated">公開</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.document-acknowledge" datatype="html">
+        <source>Acquitter une lecture</source>
+        <target state="translated">閲読を確認</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.risk-manage" datatype="html">
+        <source>Tenir le registre des risques</source>
+        <target state="translated">リスク登録簿を管理</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.opportunity-manage" datatype="html">
+        <source>Tenir le registre des opportunités</source>
+        <target state="translated">機会登録簿を管理</target>
+      </trans-unit>
+      <trans-unit id="authz.module.admin" datatype="html">
+        <source>Administration</source>
+        <target state="translated">管理</target>
+      </trans-unit>
+      <trans-unit id="authz.module.capa" datatype="html">
+        <source>CAPA</source>
+        <target state="translated">CAPA</target>
+      </trans-unit>
+      <trans-unit id="authz.module.nc" datatype="html">
+        <source>Non-conformités</source>
+        <target state="translated">不適合</target>
+      </trans-unit>
+      <trans-unit id="authz.module.document" datatype="html">
+        <source>Documents</source>
+        <target state="translated">文書</target>
+      </trans-unit>
+      <trans-unit id="authz.module.risk" datatype="html">
+        <source>Risques et opportunités</source>
+        <target state="translated">リスクと機会</target>
+      </trans-unit>
+      <trans-unit id="authz.role.admin-tenant" datatype="html">
+        <source>Administrateur</source>
+        <target state="translated">管理者</target>
+      </trans-unit>
+      <trans-unit id="authz.role.quality-director" datatype="html">
+        <source>Directeur qualité</source>
+        <target state="translated">品質責任者</target>
+      </trans-unit>
+      <trans-unit id="authz.role.quality-manager" datatype="html">
+        <source>Manager qualité</source>
+        <target state="translated">品質マネージャー</target>
+      </trans-unit>
+      <trans-unit id="authz.role.auditor" datatype="html">
+        <source>Auditeur</source>
+        <target state="translated">監査員</target>
+      </trans-unit>
+      <trans-unit id="authz.role.user" datatype="html">
+        <source>Utilisateur</source>
+        <target state="translated">ユーザー</target>
+      </trans-unit>
+      <trans-unit id="authz.role.external-auditor" datatype="html">
+        <source>Auditeur externe</source>
+        <target state="translated">外部監査員</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.title" datatype="html">
+        <source>Rôles et droits</source>
+        <target state="translated">ロールと権限</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.subtitle" datatype="html">
+        <source>Ce que chaque rôle peut faire, et qui le porte. Glissez un membre sur un rôle pour le lui donner.</source>
+        <target state="translated">各ロールができることと、その担当者。メンバーをロールにドラッグして付与します。</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.new-role" datatype="html">
+        <source>Nouveau rôle</source>
+        <target state="translated">新しいロール</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.load-failed" datatype="html">
+        <source>Les droits n'ont pas pu être chargés.</source>
+        <target state="translated">権限を読み込めませんでした。</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.failed" datatype="html">
+        <source>L'opération sur les droits a échoué.</source>
+        <target state="translated">権限の操作に失敗しました。</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.role-name" datatype="html">
+        <source>Nom du rôle</source>
+        <target state="translated">ロール名</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.role-name-placeholder" datatype="html">
+        <source>Pilote de site</source>
+        <target state="translated">拠点リーダー</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.role-code" datatype="html">
+        <source>Code</source>
+        <target state="translated">コード</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.role-code-hint" datatype="html">
+        <source>Lettres, chiffres et _ ; il ne change plus ensuite.</source>
+        <target state="translated">英字、数字、_。後から変更できません。</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.role-code-invalid" datatype="html">
+        <source>Lettres, chiffres et _, en commençant par une lettre.</source>
+        <target state="translated">英字で始まる英字、数字、_。</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.role-description" datatype="html">
+        <source>Description (facultatif)</source>
+        <target state="translated">説明（任意）</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.create" datatype="html">
+        <source>Créer le rôle</source>
+        <target state="translated">ロールを作成</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.created" datatype="html">
+        <source>Rôle créé : cochez maintenant ses droits.</source>
+        <target state="translated">ロールを作成しました。権限をチェックしてください。</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.team" datatype="html">
+        <source>Équipe</source>
+        <target state="translated">チーム</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.team-help" datatype="html">
+        <source>Glissez une carte sur une colonne, ou ouvrez son menu.</source>
+        <target state="translated">カードを列にドラッグするか、メニューを開きます。</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.team-failed" datatype="html">
+        <source>L'annuaire de l'équipe ne répond pas : la matrice reste modifiable, l'attribution attendra.</source>
+        <target state="translated">チームの名簿が応答しません。マトリクスは編集できますが、割り当ては後になります。</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.team-empty" datatype="html">
+        <source>Aucun membre actif pour l'instant.</source>
+        <target state="translated">アクティブなメンバーはまだいません。</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.account-roles-only" datatype="html">
+        <source>Rôles de son compte seulement</source>
+        <target state="translated">アカウントのロールのみ</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.assign" datatype="html">
+        <source>Attribuer un rôle</source>
+        <target state="translated">ロールを割り当て</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.assigned" datatype="html">
+        <source><x id="member"/> a désormais le rôle <x id="role"/>.</source>
+        <target state="translated"><x id="member"/> に <x id="role"/> ロールを付与しました。</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.unassigned" datatype="html">
+        <source><x id="member"/> n'a plus le rôle <x id="role"/>.</source>
+        <target state="translated"><x id="member"/> から <x id="role"/> ロールを外しました。</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.unassign-aria" datatype="html">
+        <source>Retirer le rôle <x id="role"/> à <x id="member"/></source>
+        <target state="translated"><x id="member"/> から <x id="role"/> ロールを外す</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.grid" datatype="html">
+        <source>Matrice des droits</source>
+        <target state="translated">権限マトリクス</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.actions" datatype="html">
+        <source>Actions</source>
+        <target state="translated">アクション</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.role-menu" datatype="html">
+        <source>Options du rôle</source>
+        <target state="translated">ロールのオプション</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.reset" datatype="html">
+        <source>Rétablir</source>
+        <target state="translated">元に戻す</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.custom" datatype="html">
+        <source>Sur mesure</source>
+        <target state="translated">カスタム</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.customized" datatype="html">
+        <source>Réglé</source>
+        <target state="translated">調整済み</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.delivered" datatype="html">
+        <source>Droits livrés</source>
+        <target state="translated">既定の権限</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.granted-count" datatype="html">
+        <source><x id="COUNT"/> actions</source>
+        <target state="translated"><x id="COUNT"/> 件のアクション</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.drop-here" datatype="html">
+        <source>Déposer ici</source>
+        <target state="translated">ここにドロップ</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.locked" datatype="html">
+        <source>L'administrateur garde toujours ce droit : sans lui, plus personne ne pourrait rétablir les autres.</source>
+        <target state="translated">管理者は常にこの権限を保持します。これがないと、他の権限を誰も元に戻せません。</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.pending" datatype="html">
+        <source>Rôles modifiés : <x id="COUNT"/></source>
+        <target state="translated">変更したロール：<x id="COUNT"/></target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.discard" datatype="html">
+        <source>Annuler les changements</source>
+        <target state="translated">変更を破棄</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.saved" datatype="html">
+        <source>Droits enregistrés.</source>
+        <target state="translated">権限を保存しました。</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.reset-title" datatype="html">
+        <source>Rendre au rôle <x id="role"/> ses droits d'origine ?</source>
+        <target state="translated"><x id="role"/> ロールの権限を既定に戻しますか？</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.reset-message" datatype="html">
+        <source>Les droits livrés par la plateforme remplacent vos réglages. Ses membres le gardent.</source>
+        <target state="translated">プラットフォームの既定権限が調整内容を置き換えます。メンバーはロールを保持します。</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.delete-title" datatype="html">
+        <source>Supprimer le rôle <x id="role"/> ?</source>
+        <target state="translated"><x id="role"/> ロールを削除しますか？</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.delete-message" datatype="html">
+        <source>Ses membres perdent les droits qu'il leur donnait. La suppression est tracée dans le journal d'audit.</source>
+        <target state="translated">メンバーはこのロールの権限を失います。削除は監査ログに記録されます。</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.capa-view-all" datatype="html">
+        <source>Voir tous les dossiers (sinon : ceux qui le concernent)</source>
+        <target state="translated">すべてのケースを表示（それ以外は関係するもののみ）</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.nc-view-all" datatype="html">
+        <source>Voir toutes les non-conformités (sinon : celles qu'il a déclarées)</source>
+        <target state="translated">すべての不適合を表示（それ以外は自分が報告したもののみ）</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.risk-view-all" datatype="html">
+        <source>Voir tout le registre (sinon : ce qu'il a inscrit)</source>
+        <target state="translated">登録簿全体を表示（それ以外は自分が登録したもののみ）</target>
+      </trans-unit>
+      <trans-unit id="capa.list.scope" datatype="html">
+        <source>Vous voyez les dossiers que vous pilotez, que vous vérifiez, ou dont une action vous est confiée.</source>
+        <target state="translated">担当・検証しているケース、またはアクションを任されたケースが表示されます。</target>
+      </trans-unit>
+      <trans-unit id="nc.list.scope" datatype="html">
+        <source>Vous voyez les non-conformités que vous avez déclarées.</source>
+        <target state="translated">あなたが報告した不適合が表示されます。</target>
+      </trans-unit>
+      <trans-unit id="rr.scope" datatype="html">
+        <source>Vous voyez les risques et opportunités que vous avez inscrits.</source>
+        <target state="translated">あなたが登録したリスクと機会が表示されます。</target>
+      </trans-unit>
       <trans-unit id="calibration.col-due" datatype="html">
         <source>Prochaine calibration</source>
         <target state="translated">次回校正</target>
@@ -6097,6 +6605,254 @@ Portail clients</source>
       <trans-unit id="capa.verification.instructions-placeholder" datatype="html">
         <source>Ce qu'il faut vérifier, et comment : échantillon, délai, critère d'acceptation…</source>
         <target state="translated">何を、どう検証するか：サンプル、期限、合否基準など</target>
+      </trans-unit>
+      <trans-unit id="nav.admin-circuits" datatype="html">
+        <source>Circuits de validation</source>
+        <target state="translated">承認ワークフロー</target>
+      </trans-unit>
+      <trans-unit id="circuits.title" datatype="html">
+        <source>Circuits de validation</source>
+        <target state="translated">承認ワークフロー</target>
+      </trans-unit>
+      <trans-unit id="circuits.subtitle" datatype="html">
+        <source>Qui approuve, et dans quel ordre. Glissez un rôle sur le parcours pour ajouter une étape ; glissez une étape pour la déplacer.</source>
+        <target state="translated">誰がどの順序で承認するか。役割をパスにドラッグしてステップを追加し、ステップをドラッグして移動します。</target>
+      </trans-unit>
+      <trans-unit id="circuits.load-failed" datatype="html">
+        <source>Le circuit n'a pas pu être chargé.</source>
+        <target state="translated">ワークフローを読み込めませんでした。</target>
+      </trans-unit>
+      <trans-unit id="circuits.palette" datatype="html">
+        <source>Rôles qui approuvent</source>
+        <target state="translated">承認できる役割</target>
+      </trans-unit>
+      <trans-unit id="circuits.palette-help" datatype="html">
+        <source>Glissez un rôle sur le parcours, ou utilisez son bouton +.</source>
+        <target state="translated">役割をパスにドラッグするか、＋ボタンを使います。</target>
+      </trans-unit>
+      <trans-unit id="circuits.add-aria" datatype="html">
+        <source>Ajouter une étape tenue par <x id="role"/></source>
+        <target state="translated"><x id="role"/> が担当するステップを追加</target>
+      </trans-unit>
+      <trans-unit id="circuits.no-approver" datatype="html">
+        <source>Aucun rôle n'a le droit d'approuver un document.</source>
+        <target state="translated">文書を承認できる役割がありません。</target>
+      </trans-unit>
+      <trans-unit id="circuits.others" datatype="html">
+        <source>Sans le droit d'approuver</source>
+        <target state="translated">承認権限なし</target>
+      </trans-unit>
+      <trans-unit id="circuits.grant-link" datatype="html">
+        <source>Leur donner ce droit dans « Rôles et droits »</source>
+        <target state="translated">「役割と権限」でこの権限を付与</target>
+      </trans-unit>
+      <trans-unit id="circuits.subject.document-version" datatype="html">
+        <source>Versions de document</source>
+        <target state="translated">文書のバージョン</target>
+      </trans-unit>
+      <trans-unit id="circuits.start" datatype="html">
+        <source>Soumise à revue</source>
+        <target state="translated">レビューに提出</target>
+      </trans-unit>
+      <trans-unit id="circuits.start-help" datatype="html">
+        <source>par son auteur, qui ne l'approuvera jamais lui-même</source>
+        <target state="translated">作成者による提出（作成者自身は承認できません）</target>
+      </trans-unit>
+      <trans-unit id="circuits.steps" datatype="html">
+        <source>Étapes du circuit</source>
+        <target state="translated">ワークフローのステップ</target>
+      </trans-unit>
+      <trans-unit id="circuits.step-name" datatype="html">
+        <source>Nom de l'étape</source>
+        <target state="translated">ステップ名</target>
+      </trans-unit>
+      <trans-unit id="circuits.step-name-required" datatype="html">
+        <source>Donnez un nom à l'étape.</source>
+        <target state="translated">ステップに名前を付けてください。</target>
+      </trans-unit>
+      <trans-unit id="circuits.step-role" datatype="html">
+        <source>Qui approuve</source>
+        <target state="translated">承認者</target>
+      </trans-unit>
+      <trans-unit id="circuits.fewer" datatype="html">
+        <source>Une approbation de moins</source>
+        <target state="translated">承認を1件減らす</target>
+      </trans-unit>
+      <trans-unit id="circuits.more" datatype="html">
+        <source>Une approbation de plus</source>
+        <target state="translated">承認を1件増やす</target>
+      </trans-unit>
+      <trans-unit id="circuits.approvals-needed" datatype="html">
+        <source>approbation(s) distincte(s)</source>
+        <target state="translated">件の個別承認</target>
+      </trans-unit>
+      <trans-unit id="circuits.orphan" datatype="html">
+        <source>Ce rôle n'a plus le droit d'approuver : choisissez-en un autre.</source>
+        <target state="translated">この役割は承認できなくなりました。別の役割を選んでください。</target>
+      </trans-unit>
+      <trans-unit id="circuits.up" datatype="html">
+        <source>Monter l'étape</source>
+        <target state="translated">ステップを上へ</target>
+      </trans-unit>
+      <trans-unit id="circuits.down" datatype="html">
+        <source>Descendre l'étape</source>
+        <target state="translated">ステップを下へ</target>
+      </trans-unit>
+      <trans-unit id="circuits.remove" datatype="html">
+        <source>Retirer l'étape</source>
+        <target state="translated">ステップを削除</target>
+      </trans-unit>
+      <trans-unit id="circuits.empty" datatype="html">
+        <source>Aucun circuit : une seule approbation suffit. Déposez un rôle ici pour créer la première étape.</source>
+        <target state="translated">ワークフローなし：承認は1件で足ります。ここに役割をドロップして最初のステップを作成します。</target>
+      </trans-unit>
+      <trans-unit id="circuits.full" datatype="html">
+        <source>Un circuit compte au plus <x id="MAX"/> étapes.</source>
+        <target state="translated">ワークフローのステップは最大 <x id="MAX"/> 件です。</target>
+      </trans-unit>
+      <trans-unit id="circuits.end" datatype="html">
+        <source>Approuvée</source>
+        <target state="translated">承認済み</target>
+      </trans-unit>
+      <trans-unit id="circuits.end-help" datatype="html">
+        <source>prête à publier. Un refus, à n'importe quelle étape, la renvoie en brouillon avec sa raison.</source>
+        <target state="translated">公開準備完了。どのステップで却下されても、理由とともに下書きに戻ります。</target>
+      </trans-unit>
+      <trans-unit id="circuits.note" datatype="html">
+        <source>Une même personne ne décide qu'une fois par circuit. Les versions déjà soumises gardent le circuit de leur soumission.</source>
+        <target state="translated">同じ人が判断できるのはワークフローごとに1回だけです。提出済みのバージョンは提出時のワークフローを保持します。</target>
+      </trans-unit>
+      <trans-unit id="circuits.pending" datatype="html">
+        <source>Circuit modifié</source>
+        <target state="translated">ワークフローが変更されました</target>
+      </trans-unit>
+      <trans-unit id="circuits.pending-invalid" datatype="html">
+        <source>Chaque étape doit porter un nom</source>
+        <target state="translated">すべてのステップに名前が必要です</target>
+      </trans-unit>
+      <trans-unit id="circuits.saved" datatype="html">
+        <source>Circuit enregistré. Les prochaines soumissions le suivront.</source>
+        <target state="translated">ワークフローを保存しました。今後の提出はこれに従います。</target>
+      </trans-unit>
+      <trans-unit id="circuits.cleared" datatype="html">
+        <source>Circuit retiré : une seule approbation suffit de nouveau.</source>
+        <target state="translated">ワークフローを削除しました。再び承認1件で足ります。</target>
+      </trans-unit>
+      <trans-unit id="circuits.failed" datatype="html">
+        <source>L'opération sur le circuit a échoué.</source>
+        <target state="translated">ワークフローの操作に失敗しました。</target>
+      </trans-unit>
+      <trans-unit id="circuits.summary.none" datatype="html">
+        <source>Aujourd'hui, une seule approbation suffit, par toute personne qui a le droit d'approuver.</source>
+        <target state="translated">現在は、承認権限を持つ人による承認1件で足ります。</target>
+      </trans-unit>
+      <trans-unit id="circuits.summary.lead" datatype="html">
+        <source>Une version soumise est approuvée par <x id="steps"/>.</source>
+        <target state="translated">提出されたバージョンは <x id="steps"/> によって承認されます。</target>
+      </trans-unit>
+      <trans-unit id="circuits.summary.then" datatype="html">
+        <source>, puis </source>
+        <target state="translated">、次に</target>
+      </trans-unit>
+      <trans-unit id="circuits.summary.one" datatype="html">
+        <source>une personne « <x id="role"/> »</source>
+        <target state="translated">「<x id="role"/>」1名</target>
+      </trans-unit>
+      <trans-unit id="circuits.summary.many" datatype="html">
+        <source><x id="count"/> personnes « <x id="role"/> »</source>
+        <target state="translated">「<x id="role"/>」<x id="count"/>名</target>
+      </trans-unit>
+      <trans-unit id="documents.detail.reject-tooltip" datatype="html">
+        <source>Refuser</source>
+        <target state="translated">却下</target>
+      </trans-unit>
+      <trans-unit id="documents.detail.step-approved" datatype="html">
+        <source>Votre approbation est enregistrée : la validation continue.</source>
+        <target state="translated">承認を記録しました。レビューは続きます。</target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.title" datatype="html">
+        <source>Validation de la version v<x id="NUMBER"/></source>
+        <target state="translated">バージョン v<x id="NUMBER"/> の承認</target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.turn-yours" datatype="html">
+        <source>C'est à vous : approuvez ou refusez cette étape.</source>
+        <target state="translated">あなたの番です。このステップを承認または却下してください。</target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.turn-decided" datatype="html">
+        <source>Vous avez décidé : une autre personne doit valider la suite.</source>
+        <target state="translated">判断済みです。続きは別の人が承認します。</target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.turn-author" datatype="html">
+        <source>Vous en êtes l'auteur : d'autres la valident.</source>
+        <target state="translated">あなたは作成者です。承認は他の人が行います。</target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.turn-waiting" datatype="html">
+        <source>En attente de : <x id="ROLE"/>.</source>
+        <target state="translated">待機中：<x id="ROLE"/></target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.simple" datatype="html">
+        <source>Approbation simple : une personne ayant le droit d'approuver suffit.</source>
+        <target state="translated">シンプル承認：承認権限を持つ1名で足ります。</target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.failed" datatype="html">
+        <source>L'avancement de la validation n'a pas pu être lu.</source>
+        <target state="translated">承認の進捗を読み込めませんでした。</target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.count" datatype="html">
+        <source><x id="DONE"/> sur <x id="NEEDED"/></source>
+        <target state="translated"><x id="NEEDED"/> 件中 <x id="DONE"/> 件</target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.you" datatype="html">
+        <source>Vous</source>
+        <target state="translated">あなた</target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.someone" datatype="html">
+        <source>Un membre</source>
+        <target state="translated">メンバー</target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.rejected" datatype="html">
+        <source>Version v<x id="NUMBER"/> refusée le <x id="DATE"/></source>
+        <target state="translated">バージョン v<x id="NUMBER"/> は <x id="DATE"/> に却下されました</target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.rejected-next" datatype="html">
+        <source>Corrigez-la, puis soumettez-la de nouveau : le circuit repartira de la première étape.</source>
+        <target state="translated">修正して再提出してください。ワークフローは最初のステップからやり直しになります。</target>
+      </trans-unit>
+      <trans-unit id="documents.reject.title" datatype="html">
+        <source>Refuser la version v<x id="number"/></source>
+        <target state="translated">バージョン v<x id="number"/> を却下</target>
+      </trans-unit>
+      <trans-unit id="documents.reject.subtitle" datatype="html">
+        <source>La version revient en brouillon. Son auteur lira votre raison, la corrigera et la soumettra de nouveau.</source>
+        <target state="translated">バージョンは下書きに戻ります。作成者が理由を読み、修正して再提出します。</target>
+      </trans-unit>
+      <trans-unit id="documents.reject.blocked" datatype="html">
+        <source>Écrivez la raison du refus.</source>
+        <target state="translated">却下の理由を書いてください。</target>
+      </trans-unit>
+      <trans-unit id="documents.reject.submit" datatype="html">
+        <source>Refuser</source>
+        <target state="translated">却下</target>
+      </trans-unit>
+      <trans-unit id="documents.reject.reason" datatype="html">
+        <source>Raison du refus</source>
+        <target state="translated">却下の理由</target>
+      </trans-unit>
+      <trans-unit id="documents.reject.reason-placeholder" datatype="html">
+        <source>Ce qui manque, ce qui est à corriger</source>
+        <target state="translated">不足している点、修正が必要な点</target>
+      </trans-unit>
+      <trans-unit id="documents.reject.reason-required" datatype="html">
+        <source>Un refus se motive.</source>
+        <target state="translated">却下には理由が必要です。</target>
+      </trans-unit>
+      <trans-unit id="documents.reject.done" datatype="html">
+        <source>Version refusée : elle revient en brouillon chez son auteur.</source>
+        <target state="translated">バージョンを却下しました。下書きとして作成者に戻ります。</target>
+      </trans-unit>
+      <trans-unit id="documents.reject.failed" datatype="html">
+        <source>Refus impossible.</source>
+        <target state="translated">却下できませんでした。</target>
       </trans-unit>
       <trans-unit id="nav.complaints-nlp" datatype="html">
         <source>Réclamations IA</source>
@@ -9149,6 +9905,142 @@ Portail clients</source>
       <trans-unit id="docreview.err.generic" datatype="html">
         <source>Échec de l'opération (HTTP <x id="status"/>).</source>
         <target state="translated">操作に失敗しました（HTTP <x id="status"/>）。</target>
+      </trans-unit>
+      <trans-unit id="nav.admin-license" datatype="html">
+        <source>Licence</source>
+        <target state="translated">ライセンス</target>
+      </trans-unit>
+      <trans-unit id="license.title" datatype="html">
+        <source>Licence</source>
+        <target state="translated">ライセンス</target>
+      </trans-unit>
+      <trans-unit id="license.subtitle" datatype="html">
+        <source>Ce que couvre la licence de cette installation, et jusqu'à quand.</source>
+        <target state="translated">このインストールのライセンスの対象と有効期限。</target>
+      </trans-unit>
+      <trans-unit id="license.saas" datatype="html">
+        <source>Cette installation est la plateforme QualitOS de l'éditeur : la licence ne s'y applique pas.</source>
+        <target state="translated">このインストールは提供元の QualitOS プラットフォームです。ライセンスは適用されません。</target>
+      </trans-unit>
+      <trans-unit id="license.until" datatype="html">
+        <source>Valable jusqu'au</source>
+        <target state="translated">有効期限</target>
+      </trans-unit>
+      <trans-unit id="license.grace-until" datatype="html">
+        <source>Délai de grâce jusqu'au</source>
+        <target state="translated">猶予期間の終了</target>
+      </trans-unit>
+      <trans-unit id="license.tier" datatype="html">
+        <source>Palier</source>
+        <target state="translated">プラン</target>
+      </trans-unit>
+      <trans-unit id="license.reference" datatype="html">
+        <source>Référence</source>
+        <target state="translated">参照番号</target>
+      </trans-unit>
+      <trans-unit id="license.users" datatype="html">
+        <source>Utilisateurs</source>
+        <target state="translated">ユーザー</target>
+      </trans-unit>
+      <trans-unit id="license.users-count" datatype="html">
+        <source><x id="ACTIVE"/> comptes actifs sur <x id="MAX"/></source>
+        <target state="translated">有効なアカウント <x id="ACTIVE"/> / <x id="MAX"/></target>
+      </trans-unit>
+      <trans-unit id="license.users-gauge" datatype="html">
+        <source>Places utilisées</source>
+        <target state="translated">使用中の席数</target>
+      </trans-unit>
+      <trans-unit id="license.users-help" datatype="html">
+        <source>Désactiver un compte libère une place.</source>
+        <target state="translated">アカウントを無効にすると席が空きます。</target>
+      </trans-unit>
+      <trans-unit id="license.users-unlimited" datatype="html">
+        <source>Nombre d'utilisateurs illimité.</source>
+        <target state="translated">ユーザー数無制限。</target>
+      </trans-unit>
+      <trans-unit id="license.modules" datatype="html">
+        <source>Modules ouverts</source>
+        <target state="translated">利用可能なモジュール</target>
+      </trans-unit>
+      <trans-unit id="license.modules-all" datatype="html">
+        <source>Tous les modules de QualitOS.</source>
+        <target state="translated">QualitOS のすべてのモジュール。</target>
+      </trans-unit>
+      <trans-unit id="license.modules-help" datatype="html">
+        <source>Les modules du socle (PDCA, CAPA, documents, audits…) sont toujours ouverts.</source>
+        <target state="translated">基本モジュール（PDCA、CAPA、文書、監査など）は常に利用できます。</target>
+      </trans-unit>
+      <trans-unit id="license.renew" datatype="html">
+        <source>Renouveler</source>
+        <target state="translated">更新</target>
+      </trans-unit>
+      <trans-unit id="license.renew-help" datatype="html">
+        <source>Votre prestataire remplace le fichier de licence de l'installation. La nouvelle licence est prise en compte en moins d'une minute, sans redémarrage ni interruption.</source>
+        <target state="translated">プロバイダーがインストールのライセンスファイルを差し替えます。新しいライセンスは再起動や中断なしに 1 分以内に反映されます。</target>
+      </trans-unit>
+      <trans-unit id="license.read-only-help" datatype="html">
+        <source>Sans licence valable, l'installation passe en lecture seule : vos enregistrements restent consultables et exportables.</source>
+        <target state="translated">有効なライセンスがない場合、読み取り専用になります。記録の閲覧とエクスポートは引き続き可能です。</target>
+      </trans-unit>
+      <trans-unit id="license.status.valid" datatype="html">
+        <source>Valide</source>
+        <target state="translated">有効</target>
+      </trans-unit>
+      <trans-unit id="license.status.grace" datatype="html">
+        <source>Échue — délai de grâce</source>
+        <target state="translated">期限切れ — 猶予期間中</target>
+      </trans-unit>
+      <trans-unit id="license.status.expired" datatype="html">
+        <source>Échue — lecture seule</source>
+        <target state="translated">期限切れ — 読み取り専用</target>
+      </trans-unit>
+      <trans-unit id="license.status.not-yet" datatype="html">
+        <source>Pas encore en vigueur</source>
+        <target state="translated">まだ有効ではありません</target>
+      </trans-unit>
+      <trans-unit id="license.status.invalid" datatype="html">
+        <source>Non vérifiée</source>
+        <target state="translated">未検証</target>
+      </trans-unit>
+      <trans-unit id="license.status.missing" datatype="html">
+        <source>Absente</source>
+        <target state="translated">未インストール</target>
+      </trans-unit>
+      <trans-unit id="license.status.not-required" datatype="html">
+        <source>Sans objet</source>
+        <target state="translated">対象外</target>
+      </trans-unit>
+      <trans-unit id="license.banner.details" datatype="html">
+        <source>Voir la licence</source>
+        <target state="translated">ライセンスを表示</target>
+      </trans-unit>
+      <trans-unit id="license.banner.read-only-tail" datatype="html">
+        <source>Vos données restent consultables et exportables.</source>
+        <target state="translated">データは引き続き閲覧・エクスポートできます。</target>
+      </trans-unit>
+      <trans-unit id="license.banner.expires-soon" datatype="html">
+        <source>La licence expire le <x id="date"/> : pensez à la renouveler.</source>
+        <target state="translated">ライセンスは <x id="date"/> に期限切れになります。更新をお忘れなく。</target>
+      </trans-unit>
+      <trans-unit id="license.banner.grace" datatype="html">
+        <source>La licence a expiré le <x id="date"/>. Tout fonctionne jusqu'au <x id="grace"/> ; renouvelez-la avant cette date.</source>
+        <target state="translated">ライセンスは <x id="date"/> に期限切れになりました。<x id="grace"/> まではすべて利用できます。それまでに更新してください。</target>
+      </trans-unit>
+      <trans-unit id="license.banner.expired" datatype="html">
+        <source>Licence expirée : l'installation est en lecture seule.</source>
+        <target state="translated">ライセンス期限切れ：読み取り専用です。</target>
+      </trans-unit>
+      <trans-unit id="license.banner.not-yet" datatype="html">
+        <source>La licence n'est pas encore en vigueur : l'installation est en lecture seule.</source>
+        <target state="translated">ライセンスはまだ有効ではありません：読み取り専用です。</target>
+      </trans-unit>
+      <trans-unit id="license.banner.missing" datatype="html">
+        <source>Aucune licence installée : l'installation est en lecture seule.</source>
+        <target state="translated">ライセンスがインストールされていません：読み取り専用です。</target>
+      </trans-unit>
+      <trans-unit id="license.banner.invalid" datatype="html">
+        <source>La licence n'a pas pu être vérifiée : l'installation est en lecture seule.</source>
+        <target state="translated">ライセンスを検証できませんでした：読み取り専用です。</target>
       </trans-unit>
       <trans-unit id="nav.cinq-pourquoi" datatype="html">
         <source>5 Pourquoi</source>
@@ -21560,8 +22452,8 @@ historique 12 mois</source>
         <target state="translated">CAPAアクションを作成</target>
       </trans-unit>
       <trans-unit id="rr.action.capa-help" datatype="html">
-        <source>Un dossier CAPA préventif est ouvert dans le module CAPA, à votre nom, avec la criticité du niveau brut du risque. Il apparaîtra dans le tableau « Traitement » de la fiche.</source>
-        <target state="translated">CAPAモジュールで、あなたの名前で予防的CAPAケースが開始され、リスクの固有レベルに応じた重要度が設定されます。記録の「対応」表に表示されます。</target>
+        <source>Un dossier CAPA est ouvert dans le module CAPA, avec la criticité du niveau brut du risque. Il porte cette action, confiée au responsable désigné, et apparaîtra dans le tableau « Traitement » de la fiche.</source>
+        <target state="translated">CAPAモジュールでCAPAケースが開始され、リスクの固有レベルに応じた重要度が設定されます。このアクションは指定された責任者に割り当てられ、記録の「対応」表に表示されます。</target>
       </trans-unit>
       <trans-unit id="rr.action.open-capa" datatype="html">
         <source>Ouvrir le dossier CAPA</source>
@@ -21890,6 +22782,454 @@ historique 12 mois</source>
       <trans-unit id="rr.event.capa-opened" datatype="html">
         <source>Action CAPA ouverte : <x id="title"/></source>
         <target state="translated">CAPAアクションを開始：<x id="title"/></target>
+      </trans-unit>
+      <trans-unit id="nav.smi" datatype="html">
+        <source>Tableau de bord SMI</source>
+        <target state="translated">統合マネジメントシステム ダッシュボード</target>
+      </trans-unit>
+      <trans-unit id="rr.action.kind" datatype="html">
+        <source>Nature de l'action</source>
+        <target state="translated">アクションの種類</target>
+      </trans-unit>
+      <trans-unit id="rr.action.kind-short" datatype="html">
+        <source>Nature</source>
+        <target state="translated">種類</target>
+      </trans-unit>
+      <trans-unit id="rr.action.kind-hint" datatype="html">
+        <source>Préventive : l'écart ne s'est pas encore produit. Corrective : il s'est déjà produit, on en supprime la cause.</source>
+        <target state="translated">予防：逸脱はまだ発生していない。是正：既に発生しており、その原因を取り除く。</target>
+      </trans-unit>
+      <trans-unit id="rr.action.assignee" datatype="html">
+        <source>Responsable de l'action</source>
+        <target state="translated">アクション責任者</target>
+      </trans-unit>
+      <trans-unit id="rr.action.assignee-short" datatype="html">
+        <source>Responsable</source>
+        <target state="translated">責任者</target>
+      </trans-unit>
+      <trans-unit id="rr.capa-kind.preventive" datatype="html">
+        <source>Préventive</source>
+        <target state="translated">予防</target>
+      </trans-unit>
+      <trans-unit id="rr.capa-kind.corrective" datatype="html">
+        <source>Corrective</source>
+        <target state="translated">是正</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.single-action" datatype="html">
+        <source>Action</source>
+        <target state="translated">アクション</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.single-action-assignee" datatype="html">
+        <source>Responsable</source>
+        <target state="translated">責任者</target>
+      </trans-unit>
+      <trans-unit id="smi.eyebrow" datatype="html">
+        <source>Pilotage</source>
+        <target state="translated">運営管理</target>
+      </trans-unit>
+      <trans-unit id="smi.title" datatype="html">
+        <source>Système de Management Intégré</source>
+        <target state="translated">統合マネジメントシステム</target>
+      </trans-unit>
+      <trans-unit id="smi.subtitle" datatype="html">
+        <source>Vue consolidée : une preuve compte pour toutes les normes qu'elle couvre.</source>
+        <target state="translated">統合ビュー：1つの証拠は、それが対象とするすべての規格に有効です。</target>
+      </trans-unit>
+      <trans-unit id="smi.filter" datatype="html">
+        <source>Filtrer par norme</source>
+        <target state="translated">規格で絞り込み</target>
+      </trans-unit>
+      <trans-unit id="smi.filter-all" datatype="html">
+        <source>Tous</source>
+        <target state="translated">すべて</target>
+      </trans-unit>
+      <trans-unit id="smi.load-failed" datatype="html">
+        <source>Le tableau de bord SMI n'a pas pu être chargé.</source>
+        <target state="translated">統合マネジメントシステムのダッシュボードを読み込めませんでした。</target>
+      </trans-unit>
+      <trans-unit id="smi.kpis" datatype="html">
+        <source>Indicateurs clés</source>
+        <target state="translated">主要指標</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.compliance" datatype="html">
+        <source>Conformité globale</source>
+        <target state="translated">総合適合率</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.no-standard" datatype="html">
+        <source>Aucune norme adoptée.</source>
+        <target state="translated">採用された規格はありません。</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.adopt" datatype="html">
+        <source>Adopter une norme</source>
+        <target state="translated">規格を採用</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.overdue" datatype="html">
+        <source>Actions en retard</source>
+        <target state="translated">期限超過のアクション</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.overdue-critical" datatype="html">
+        <source>dont <x id="CRITICAL"/> critiques</source>
+        <target state="translated">うち重大 <x id="CRITICAL"/> 件</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.major-risks" datatype="html">
+        <source>Risques majeurs ouverts</source>
+        <target state="translated">未解決の重大リスク</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.major-risks-detail" datatype="html">
+        <source><x id="CRITICAL"/> critiques · <x id="HIGH"/> élevés (niveau ≥ 10)</source>
+        <target state="translated">重大 <x id="CRITICAL"/> · 高 <x id="HIGH"/>（レベル ≥ 10）</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.next-audit" datatype="html">
+        <source>Prochain audit</source>
+        <target state="translated">次回監査</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.in-days" datatype="html">
+        <source>dans <x id="DAYS"/> j</source>
+        <target state="translated"><x id="DAYS"/> 日後</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.no-audit" datatype="html">
+        <source>Aucun audit planifié.</source>
+        <target state="translated">計画された監査はありません。</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.plan-audit" datatype="html">
+        <source>Planifier</source>
+        <target state="translated">計画する</target>
+      </trans-unit>
+      <trans-unit id="smi.by-standard" datatype="html">
+        <source>Conformité par référentiel</source>
+        <target state="translated">規格別の適合率</target>
+      </trans-unit>
+      <trans-unit id="smi.by-standard-note" datatype="html">
+        <source>Une même preuve (procédure, audit, action) est comptée pour tous les référentiels concernés.</source>
+        <target state="translated">同じ証拠（手順、監査、アクション）が関係するすべての規格に有効です。</target>
+      </trans-unit>
+      <trans-unit id="smi.see-matrix" datatype="html">
+        <source>Voir la matrice des exigences</source>
+        <target state="translated">要求事項マトリクスを見る</target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.title" datatype="html">
+        <source>Matrice des risques · <x id="OPEN"/> risques ouverts</source>
+        <target state="translated">リスクマトリクス · 未解決 <x id="OPEN"/> 件</target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.view" datatype="html">
+        <source>Cotation affichée</source>
+        <target state="translated">表示する評価</target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.grid" datatype="html">
+        <source>Matrice gravité × probabilité</source>
+        <target state="translated">重大度 × 発生確率マトリクス</target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.cell-label" datatype="html">
+        <source>Gravité <x id="severity"/> × probabilité <x id="probability"/> : <x id="count"/> risque(s), niveau <x id="level"/></source>
+        <target state="translated">重大度 <x id="severity"/> × 発生確率 <x id="probability"/>：リスク <x id="count"/> 件、レベル <x id="level"/></target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.residual-missing" datatype="html">
+        <source><x id="MISSING"/> risque(s) sans cotation résiduelle visée n'apparaissent pas.</source>
+        <target state="translated">目標残留評価のないリスク <x id="MISSING"/> 件は表示されません。</target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.legend" datatype="html">
+        <source>Légende des niveaux</source>
+        <target state="translated">レベルの凡例</target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.low" datatype="html">
+        <source>Faible 1–4</source>
+        <target state="translated">低 1–4</target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.medium" datatype="html">
+        <source>Moyen 5–9</source>
+        <target state="translated">中 5–9</target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.high" datatype="html">
+        <source>Élevé 10–14</source>
+        <target state="translated">高 10–14</target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.critical" datatype="html">
+        <source>Critique 15–25</source>
+        <target state="translated">重大 15–25</target>
+      </trans-unit>
+      <trans-unit id="smi.week.title" datatype="html">
+        <source>À traiter cette semaine</source>
+        <target state="translated">今週の対応事項</target>
+      </trans-unit>
+      <trans-unit id="smi.week.empty" datatype="html">
+        <source>Rien d'échu ni d'attendu d'ici sept jours.</source>
+        <target state="translated">期限超過も7日以内の期限もありません。</target>
+      </trans-unit>
+      <trans-unit id="smi.requirements.title" datatype="html">
+        <source>Matrice des exigences · une preuve, plusieurs référentiels</source>
+        <target state="translated">要求事項マトリクス · 1つの証拠で複数の規格</target>
+      </trans-unit>
+      <trans-unit id="smi.requirements.teaser" datatype="html">
+        <source>Chapitres communs 4 à 10, croisés avec chaque norme adoptée : couvert, partiel ou en écart.</source>
+        <target state="translated">共通の箇条 4〜10 と採用した各規格の対照：適合、部分的、ギャップ。</target>
+      </trans-unit>
+      <trans-unit id="smi.upcoming.capa-action" datatype="html">
+        <source>Action CAPA</source>
+        <target state="translated">CAPAアクション</target>
+      </trans-unit>
+      <trans-unit id="smi.upcoming.calibration" datatype="html">
+        <source>Étalonnage</source>
+        <target state="translated">校正</target>
+      </trans-unit>
+      <trans-unit id="smi.upcoming.change" datatype="html">
+        <source>Validation de changement</source>
+        <target state="translated">変更承認</target>
+      </trans-unit>
+      <trans-unit id="smi.upcoming.risk-review" datatype="html">
+        <source>Revue de risque</source>
+        <target state="translated">リスクレビュー</target>
+      </trans-unit>
+      <trans-unit id="smi.upcoming.audit" datatype="html">
+        <source>Audit</source>
+        <target state="translated">監査</target>
+      </trans-unit>
+      <trans-unit id="smi.due.overdue" datatype="html">
+        <source>Échu</source>
+        <target state="translated">期限超過</target>
+      </trans-unit>
+      <trans-unit id="smi.due.today" datatype="html">
+        <source>Aujourd'hui</source>
+        <target state="translated">今日</target>
+      </trans-unit>
+      <trans-unit id="smi.due.in-days" datatype="html">
+        <source>J-<x id="days"/></source>
+        <target state="translated">残り<x id="days"/>日</target>
+      </trans-unit>
+      <trans-unit id="smi.chapter.4" datatype="html">
+        <source>Contexte de l'organisme</source>
+        <target state="translated">組織の状況</target>
+      </trans-unit>
+      <trans-unit id="smi.chapter.5" datatype="html">
+        <source>Leadership et politique</source>
+        <target state="translated">リーダーシップと方針</target>
+      </trans-unit>
+      <trans-unit id="smi.chapter.6" datatype="html">
+        <source>Risques, objectifs, exigences légales</source>
+        <target state="translated">リスク、目標、法的要求事項</target>
+      </trans-unit>
+      <trans-unit id="smi.chapter.7" datatype="html">
+        <source>Ressources, compétences, documents</source>
+        <target state="translated">資源、力量、文書</target>
+      </trans-unit>
+      <trans-unit id="smi.chapter.8" datatype="html">
+        <source>Réalisation opérationnelle</source>
+        <target state="translated">運用</target>
+      </trans-unit>
+      <trans-unit id="smi.chapter.9" datatype="html">
+        <source>Évaluation des performances</source>
+        <target state="translated">パフォーマンス評価</target>
+      </trans-unit>
+      <trans-unit id="smi.chapter.10" datatype="html">
+        <source>Amélioration</source>
+        <target state="translated">改善</target>
+      </trans-unit>
+      <trans-unit id="smi.module.process-map" datatype="html">
+        <source>Cartographie</source>
+        <target state="translated">プロセスマップ</target>
+      </trans-unit>
+      <trans-unit id="smi.module.risk-register" datatype="html">
+        <source>Risques</source>
+        <target state="translated">リスク</target>
+      </trans-unit>
+      <trans-unit id="smi.module.documents" datatype="html">
+        <source>GED</source>
+        <target state="translated">文書管理</target>
+      </trans-unit>
+      <trans-unit id="smi.module.policy" datatype="html">
+        <source>Politique</source>
+        <target state="translated">方針</target>
+      </trans-unit>
+      <trans-unit id="smi.module.objectives" datatype="html">
+        <source>Objectifs</source>
+        <target state="translated">目標</target>
+      </trans-unit>
+      <trans-unit id="smi.module.training" datatype="html">
+        <source>Compétences</source>
+        <target state="translated">力量</target>
+      </trans-unit>
+      <trans-unit id="smi.module.calibration" datatype="html">
+        <source>Métrologie</source>
+        <target state="translated">計測管理</target>
+      </trans-unit>
+      <trans-unit id="smi.module.apqp" datatype="html">
+        <source>APQP</source>
+        <target state="translated">APQP</target>
+      </trans-unit>
+      <trans-unit id="smi.module.spc" datatype="html">
+        <source>SPC</source>
+        <target state="translated">SPC</target>
+      </trans-unit>
+      <trans-unit id="smi.module.changes" datatype="html">
+        <source>MOC</source>
+        <target state="translated">変更管理</target>
+      </trans-unit>
+      <trans-unit id="smi.module.audits" datatype="html">
+        <source>Audits</source>
+        <target state="translated">監査</target>
+      </trans-unit>
+      <trans-unit id="smi.module.kpi" datatype="html">
+        <source>Indicateurs</source>
+        <target state="translated">指標</target>
+      </trans-unit>
+      <trans-unit id="smi.module.management-review" datatype="html">
+        <source>Revue</source>
+        <target state="translated">レビュー</target>
+      </trans-unit>
+      <trans-unit id="smi.module.nc" datatype="html">
+        <source>NC</source>
+        <target state="translated">不適合</target>
+      </trans-unit>
+      <trans-unit id="smi.module.capa" datatype="html">
+        <source>CAPA</source>
+        <target state="translated">CAPA</target>
+      </trans-unit>
+      <trans-unit id="smi.coverage.covered" datatype="html">
+        <source>Couvert</source>
+        <target state="translated">適合</target>
+      </trans-unit>
+      <trans-unit id="smi.coverage.partial" datatype="html">
+        <source>Partiel</source>
+        <target state="translated">部分的</target>
+      </trans-unit>
+      <trans-unit id="smi.coverage.gap" datatype="html">
+        <source>Écart</source>
+        <target state="translated">ギャップ</target>
+      </trans-unit>
+      <trans-unit id="smi.coverage.not-applicable" datatype="html">
+        <source>Sans objet</source>
+        <target state="translated">該当なし</target>
+      </trans-unit>
+      <trans-unit id="smi.crumb" datatype="html">
+        <source>Tableau de bord SMI</source>
+        <target state="translated">統合MS ダッシュボード</target>
+      </trans-unit>
+      <trans-unit id="smi.crumb-matrix" datatype="html">
+        <source>Matrice des risques</source>
+        <target state="translated">リスクマトリクス</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.crumb" datatype="html">
+        <source>Gravité <x id="severity"/> × probabilité <x id="probability"/></source>
+        <target state="translated">重大度 <x id="severity"/> × 発生確率 <x id="probability"/></target>
+      </trans-unit>
+      <trans-unit id="smi.cell.title" datatype="html">
+        <source><x id="count"/> risque(s) · niveau <x id="level"/> (<x id="score"/>)</source>
+        <target state="translated">リスク <x id="count"/> 件 · レベル <x id="level"/>（<x id="score"/>）</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.filter-site" datatype="html">
+        <source>Filtrer par site</source>
+        <target state="translated">拠点で絞り込み</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.all-sites" datatype="html">
+        <source>Tous sites</source>
+        <target state="translated">すべての拠点</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.failed" datatype="html">
+        <source>Les risques n'ont pas pu être chargés.</source>
+        <target state="translated">リスクを読み込めませんでした。</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.col-actions" datatype="html">
+        <source>Actions</source>
+        <target state="translated">アクション</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.capa-count" datatype="html">
+        <source><x id="COUNT"/> en cours</source>
+        <target state="translated">進行中 <x id="COUNT"/></target>
+      </trans-unit>
+      <trans-unit id="smi.cell.empty" datatype="html">
+        <source>Aucun risque ouvert dans cette case.</source>
+        <target state="translated">このセルに未解決のリスクはありません。</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.detail" datatype="html">
+        <source>Détail</source>
+        <target state="translated">詳細</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.gross" datatype="html">
+        <source>Cotation brute</source>
+        <target state="translated">固有評価</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.linked-actions" datatype="html">
+        <source>Actions liées</source>
+        <target state="translated">関連アクション</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.open-risk" datatype="html">
+        <source>Ouvrir la fiche risque</source>
+        <target state="translated">リスク記録を開く</target>
+      </trans-unit>
+      <trans-unit id="smi.req.subtitle" datatype="html">
+        <source>Les chapitres communs à toutes les normes de système de management, croisés avec chaque norme adoptée.</source>
+        <target state="translated">すべてのマネジメントシステム規格に共通する箇条と、採用した各規格との対照。</target>
+      </trans-unit>
+      <trans-unit id="smi.req.crumb" datatype="html">
+        <source>Matrice des exigences</source>
+        <target state="translated">要求事項マトリクス</target>
+      </trans-unit>
+      <trans-unit id="smi.req.failed" datatype="html">
+        <source>La matrice des exigences n'a pas pu être chargée.</source>
+        <target state="translated">要求事項マトリクスを読み込めませんでした。</target>
+      </trans-unit>
+      <trans-unit id="smi.req.col-chapter" datatype="html">
+        <source>Chapitre commun (HLS)</source>
+        <target state="translated">共通箇条（HLS）</target>
+      </trans-unit>
+      <trans-unit id="smi.req.col-module" datatype="html">
+        <source>Module QualitOS</source>
+        <target state="translated">QualitOS モジュール</target>
+      </trans-unit>
+      <trans-unit id="smi.req.cell-label" datatype="html">
+        <source><x id="standard"/>, chapitre <x id="chapter"/> : <x id="status"/>, <x id="covered"/> sur <x id="total"/></source>
+        <target state="translated"><x id="standard"/>、箇条 <x id="chapter"/>：<x id="status"/>、<x id="total"/> 中 <x id="covered"/></target>
+      </trans-unit>
+      <trans-unit id="smi.req.legend" datatype="html">
+        <source>Légende :</source>
+        <target state="translated">凡例：</target>
+      </trans-unit>
+      <trans-unit id="smi.req.legend-covered" datatype="html">
+        <source>couvert : toutes les exigences du chapitre sont prouvées</source>
+        <target state="translated">適合：箇条のすべての要求事項に証拠がある</target>
+      </trans-unit>
+      <trans-unit id="smi.req.legend-partial" datatype="html">
+        <source>partiel : une partie seulement</source>
+        <target state="translated">部分的：一部のみ</target>
+      </trans-unit>
+      <trans-unit id="smi.req.legend-gap" datatype="html">
+        <source>écart : aucune preuve</source>
+        <target state="translated">ギャップ：証拠なし</target>
+      </trans-unit>
+      <trans-unit id="smi.req.detail-chapter" datatype="html">
+        <source>Détail · chapitre <x id="CHAPTER"/></source>
+        <target state="translated">詳細 · 箇条 <x id="CHAPTER"/></target>
+      </trans-unit>
+      <trans-unit id="smi.req.detail-count" datatype="html">
+        <source><x id="COVERED"/> exigence(s) prouvée(s) sur <x id="TOTAL"/>.</source>
+        <target state="translated"><x id="TOTAL"/> 件中 <x id="COVERED"/> 件の要求事項に証拠あり。</target>
+      </trans-unit>
+      <trans-unit id="smi.req.detail-missing" datatype="html">
+        <source>Clauses à prouver</source>
+        <target state="translated">証拠が必要な細分箇条</target>
+      </trans-unit>
+      <trans-unit id="smi.req.detail-failed" datatype="html">
+        <source>Le détail des clauses n'a pas pu être chargé.</source>
+        <target state="translated">細分箇条の詳細を読み込めませんでした。</target>
+      </trans-unit>
+      <trans-unit id="smi.req.complete" datatype="html">
+        <source>Compléter les preuves</source>
+        <target state="translated">証拠を追加</target>
+      </trans-unit>
+      <trans-unit id="smi.req.reuse" datatype="html">
+        <source>Une preuve rattachée à une exigence commune compte pour toutes les normes qui partagent ce chapitre.</source>
+        <target state="translated">共通の要求事項に紐づく証拠は、この箇条を共有するすべての規格に有効です。</target>
+      </trans-unit>
+      <trans-unit id="smi.req.all-covered" datatype="html">
+        <source>Tout est couvert : choisissez une case pour en voir le détail.</source>
+        <target state="translated">すべて適合しています。セルを選んで詳細を表示してください。</target>
+      </trans-unit>
+      <trans-unit id="smi.req.capa-title" datatype="html">
+        <source><x id="status"/> <x id="standard"/> · <x id="chapter"/> <x id="title"/></source>
+        <target state="translated"><x id="status"/> <x id="standard"/> · <x id="chapter"/> <x id="title"/></target>
+      </trans-unit>
+      <trans-unit id="smi.req.capa-description" datatype="html">
+        <source><x id="covered"/> exigence(s) prouvée(s) sur <x id="total"/> au chapitre <x id="chapter"/> de <x id="standard"/>.</source>
+        <target state="translated"><x id="standard"/> の箇条 <x id="chapter"/>：<x id="total"/> 件中 <x id="covered"/> 件の要求事項に証拠あり。</target>
       </trans-unit>
       <trans-unit id="standards-extras.actions" datatype="html">
         <source>Actions</source>

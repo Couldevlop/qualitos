@@ -55,6 +55,16 @@ public class DocumentVersion {
     @Column(name = "approved_at")
     private Instant approvedAt;
 
+    /** Le dernier refus : qui, quand, pourquoi (la version est revenue en brouillon). */
+    @Column(name = "rejected_by")
+    private UUID rejectedBy;
+
+    @Column(name = "rejected_at")
+    private Instant rejectedAt;
+
+    @Column(name = "rejection_reason", length = 1000)
+    private String rejectionReason;
+
     @Column(name = "published_at")
     private Instant publishedAt;
 

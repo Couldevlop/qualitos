@@ -19,6 +19,7 @@ import com.openlab.qualitos.quality.riskregister.domain.RiskStatus;
 
 import java.time.Clock;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.EnumSet;
@@ -26,6 +27,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
@@ -47,6 +49,7 @@ public class RiskRegisterService {
     static final String OPPORTUNITY_PREFIX = "O-";
     static final int CAPA_TITLE_MAX = 255;
     static final int CAPA_DESCRIPTION_MAX = 4000;
+    static final int CAPA_ASSIGNEE_MAX = 255;
 
     private final RegisterRepositories.Risks risks;
     private final RegisterRepositories.Opportunities opportunities;
@@ -81,7 +84,9 @@ public class RiskRegisterService {
     /** Le registre entier, par référence. Quelques centaines de lignes au plus par client. */
     public List<RiskRegisterDto.RiskView> risks() {
         UUID tenant = context.requireTenantId();
+        Optional<UUID> seulement = context.visibleOnlyTo();
         return risks.findByTenant(tenant).stream()
+                .filter(r -> voit(seulement, r.getCreatedBy()))
                 .sorted(Comparator.comparing(Risk::getReference))
                 .map(RiskRegisterService::vue)
                 .toList();
@@ -151,12 +156,25 @@ public class RiskRegisterService {
         }
         String titre = texte("title", commande.title(), CAPA_TITLE_MAX, true);
         String description = texte("description", commande.description(), CAPA_DESCRIPTION_MAX, false);
+        if (commande.kind() == null) {
+            throw new RegisterValidationException("kind", "Choisissez une action corrective ou préventive.");
+        }
+        String responsable = texte("assignee", commande.assignee(), CAPA_ASSIGNEE_MAX, true);
+        if (commande.dueDate() == null) {
+            throw new RegisterValidationException("dueDate", "L'échéance est obligatoire.");
+        }
+        // Une échéance déjà passée ferait naître le dossier en retard : c'est
+        // une erreur de saisie, pas une décision.
+        if (commande.dueDate().isBefore(LocalDate.ofInstant(clock.instant(), clock.getZone()))) {
+            throw new RegisterValidationException("dueDate", "L'échéance ne peut pas être passée.");
+        }
 
-        RiskCapaGateway.LinkedCapa capa = capas.open(risque, titre, description, commande.dueDate(), acteur);
+        RiskCapaGateway.LinkedCapa capa = capas.open(risque, titre, description, commande.kind(),
+                responsable, commande.dueDate(), acteur);
         tracer(tenant, RegisterItemKind.RISK, risque.getId(), RegisterEventType.ACTION_OPENED, null,
                 null, titre, acteur, clock.instant());
         audit.riskCapaOpened(risque, capa.id(), acteur);
-        return new RiskRegisterDto.CapaView(capa.id(), capa.title(), capa.dueDate(), capa.status());
+        return toView(capa);
     }
 
     /**
@@ -166,7 +184,9 @@ public class RiskRegisterService {
     public RiskRegisterDto.RiskDraft draft(RegisterOrigin origin, UUID sourceId) {
         UUID tenant = context.requireTenantId();
         RiskSourceCatalog.SourceDraft src = source(origin, tenant, sourceId);
+        Optional<UUID> seulement = context.visibleOnlyTo();
         List<RiskRegisterDto.RiskLink> existants = risks.findBySource(tenant, origin, sourceId).stream()
+                .filter(r -> voit(seulement, r.getCreatedBy()))
                 .sorted(Comparator.comparing(Risk::getReference))
                 .map(r -> new RiskRegisterDto.RiskLink(r.getId(), r.getReference()))
                 .toList();
@@ -179,7 +199,9 @@ public class RiskRegisterService {
 
     public List<RiskRegisterDto.OpportunityView> opportunities() {
         UUID tenant = context.requireTenantId();
+        Optional<UUID> seulement = context.visibleOnlyTo();
         return opportunities.findByTenant(tenant).stream()
+                .filter(o -> voit(seulement, o.getCreatedBy()))
                 .sorted(Comparator.comparing(Opportunity::getReference))
                 .map(RiskRegisterService::vue)
                 .toList();
@@ -281,7 +303,7 @@ public class RiskRegisterService {
 
     private RiskRegisterDto.RiskSheet fiche(Risk risque, UUID tenant) {
         List<RiskRegisterDto.CapaView> liees = capas.linkedTo(risque).stream()
-                .map(c -> new RiskRegisterDto.CapaView(c.id(), c.title(), c.dueDate(), c.status()))
+                .map(RiskRegisterService::toView)
                 .toList();
         return new RiskRegisterDto.RiskSheet(vue(risque), liees,
                 suivi(tenant, RegisterItemKind.RISK, risque.getId()));
@@ -325,13 +347,26 @@ public class RiskRegisterService {
     }
 
     private Risk chargerRisque(UUID id, UUID tenant) {
+        Optional<UUID> seulement = context.visibleOnlyTo();
         return risks.findByIdAndTenant(id, tenant)
+                .filter(r -> voit(seulement, r.getCreatedBy()))
                 .orElseThrow(() -> new RegisterNotFoundException("Risk", id));
     }
 
     private Opportunity chargerOpportunite(UUID id, UUID tenant) {
+        Optional<UUID> seulement = context.visibleOnlyTo();
         return opportunities.findByIdAndTenant(id, tenant)
+                .filter(o -> voit(seulement, o.getCreatedBy()))
                 .orElseThrow(() -> new RegisterNotFoundException("Opportunity", id));
+    }
+
+    /**
+     * Hors de portée, une fiche n'existe pas : ni lecture ni action (ADR 0081).
+     * Concerne celui qui l'a inscrite ; le « propriétaire » d'une fiche est un nom
+     * libre, pas un compte, et ne peut pas servir à cela.
+     */
+    private static boolean voit(Optional<UUID> seulement, UUID inscritPar) {
+        return seulement.map(moi -> moi.equals(inscritPar)).orElse(true);
     }
 
     /** Une action d'une AUTRE opportunité répond 404 : l'adresse est fausse, quel que soit le client. */
@@ -488,5 +523,9 @@ public class RiskRegisterService {
     static RiskRegisterDto.ActionView vue(OpportunityAction a) {
         return new RiskRegisterDto.ActionView(a.getId(), a.getNumber(), a.getTitle(), a.getDueDate(),
                 a.getStatus());
+    }
+
+    private static RiskRegisterDto.CapaView toView(RiskCapaGateway.LinkedCapa c) {
+        return new RiskRegisterDto.CapaView(c.id(), c.title(), c.dueDate(), c.status(), c.kind(), c.assignee());
     }
 }

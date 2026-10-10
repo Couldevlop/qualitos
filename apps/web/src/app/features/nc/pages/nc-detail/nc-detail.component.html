@@ -17,19 +17,21 @@
 
     <ng-container *ngIf="nc$ | async as n">
       <div class="actions" *ngIf="n">
-        <button mat-stroked-button (click)="cancel()"
+        <button mat-stroked-button (click)="cancel()" *qosCan="'nc.reject'"
                 [disabled]="(acting$ | async) || !canCancel(n.status)"
                 i18n-matTooltip="@@nc.detail.cancel-tooltip" matTooltip="Annuler la NC">
           <mat-icon>cancel</mat-icon> <span i18n="@@common.cancel">Annuler</span>
         </button>
         <!-- Rejeter : sur une reclamation seulement, et tant qu'elle n'a pas recu
              de reponse. Le serveur tient la meme garde. -->
+        <ng-container *qosCan="'nc.reject'">
         <button mat-stroked-button (click)="openReject(n)" *ngIf="canReject(n)"
                 data-test="rejeter" [disabled]="acting$ | async"
                 i18n-matTooltip="@@nc.detail.reject-tooltip"
                 matTooltip="Écarter la réclamation, motif à l'appui">
           <mat-icon>block</mat-icon> <span i18n="@@nc.detail.reject">Rejeter</span>
         </button>
+        </ng-container>
         <!-- « Ajouter une action » et non « Escalader CAPA » : ce qu'on veut
              poser ici, c'est l'action qu'on a decidee, pas un dossier abstrait.
              Le dossier CAPA reste la structure qui la porte -- il se cree tout
@@ -38,7 +40,7 @@
 
              Plus barre non plus quand la NC porte deja une CAPA : on ajoute une
              DEUXIEME action, un troisieme, autant que le traitement en demande. -->
-        <button mat-stroked-button (click)="addAction(n)" data-test="ajouter-action"
+        <button mat-stroked-button (click)="addAction(n)" data-test="ajouter-action" *qosCan="'nc.escalate'"
                 [disabled]="(acting$ | async) || !canEscalate(n.status)"
                 i18n-matTooltip="@@nc.detail.add-action-tooltip"
                 matTooltip="Poser une action corrective sur cette non-conformité">
@@ -86,22 +88,22 @@
           <mat-icon>shield</mat-icon>
           <span i18n="@@rr.create-risk">Créer un risque</span>
         </a>
-        <button mat-stroked-button color="primary" (click)="startAnalysis()"
+        <button mat-stroked-button color="primary" (click)="startAnalysis()" *qosCan="'nc.process'"
                 [disabled]="(acting$ | async) || !canStartAnalysis(n.status)"
                 i18n-matTooltip="@@nc.detail.start-analysis-tooltip" matTooltip="Démarrer l'analyse">
           <mat-icon>search</mat-icon> <span i18n="@@nc.detail.start-analysis">Analyser</span>
         </button>
-        <button mat-stroked-button color="primary" (click)="defineAction()"
+        <button mat-stroked-button color="primary" (click)="defineAction()" *qosCan="'nc.process'"
                 [disabled]="(acting$ | async) || !canDefineAction(n.status)"
                 i18n-matTooltip="@@nc.detail.define-action-tooltip" matTooltip="Définir l'action">
           <mat-icon>checklist</mat-icon> <span i18n="@@nc.detail.define-action">Définir action</span>
         </button>
-        <button mat-flat-button color="primary" (click)="openResolve(n)"
+        <button mat-flat-button color="primary" (click)="openResolve(n)" *qosCan="'nc.process'"
                 [disabled]="(acting$ | async) || !canResolve(n.status)"
                 i18n-matTooltip="@@nc.detail.resolve-tooltip" matTooltip="Résoudre la NC">
           <mat-icon>task_alt</mat-icon> <span i18n="@@nc.detail.resolve">Résoudre</span>
         </button>
-        <button mat-flat-button color="primary" (click)="close()"
+        <button mat-flat-button color="primary" (click)="close()" *qosCan="'nc.close'"
                 [disabled]="(acting$ | async) || !canClose(n.status)"
                 i18n-matTooltip="@@nc.detail.close-tooltip" matTooltip="Clôturer la NC">
           <mat-icon>lock</mat-icon> <span i18n="@@nc.detail.close">Clôturer</span>
@@ -198,7 +200,7 @@
 
           <ng-container *ngIf="canAddPhoto(n.status)">
             <!-- Bouton d'ajout : caméra mobile (capture) ou galerie. Online-only. -->
-            <button mat-flat-button color="primary" type="button"
+            <button mat-flat-button color="primary" type="button" *qosCan="'nc.photo'"
                     class="add-photo-btn"
                     (click)="triggerFilePicker(fileInput)"
                     [disabled]="(uploading$ | async) || (storageDisabled$ | async) || !(online$ | async)"
@@ -239,7 +241,7 @@
                      [attr.aria-label]="p.originalFilename">
                     <img [src]="p.url" [alt]="p.originalFilename" loading="lazy" />
                   </a>
-                  <button mat-icon-button class="delete-thumb" type="button"
+                  <button mat-icon-button class="delete-thumb" type="button" *qosCan="'nc.edit'"
                           (click)="deletePhoto(p)"
                           [disabled]="(deletingId$ | async) === p.id"
                           i18n-matTooltip="@@nc.photos.delete-tooltip"

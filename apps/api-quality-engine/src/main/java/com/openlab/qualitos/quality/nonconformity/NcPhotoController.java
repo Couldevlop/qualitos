@@ -1,5 +1,7 @@
 package com.openlab.qualitos.quality.nonconformity;
 
+import com.openlab.qualitos.quality.authz.domain.Permission;
+import com.openlab.qualitos.quality.authz.web.RequiresPermission;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +27,7 @@ public class NcPhotoController {
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @RequiresPermission(Permission.NC_PHOTO)
     @ResponseStatus(HttpStatus.CREATED)
     public NcPhotoDto.Response upload(@PathVariable UUID id,
                                       @RequestParam("file") MultipartFile file) throws IOException {
@@ -40,6 +43,7 @@ public class NcPhotoController {
     }
 
     @DeleteMapping("/{photoId}")
+    @RequiresPermission(Permission.NC_EDIT)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable UUID id, @PathVariable UUID photoId) {
         service.delete(id, photoId);

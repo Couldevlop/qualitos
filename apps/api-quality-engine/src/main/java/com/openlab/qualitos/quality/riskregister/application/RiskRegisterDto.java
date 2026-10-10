@@ -8,6 +8,7 @@ import com.openlab.qualitos.quality.riskregister.domain.RegisterEventType;
 import com.openlab.qualitos.quality.riskregister.domain.RegisterOrigin;
 import com.openlab.qualitos.quality.riskregister.domain.RegisterRequirement;
 import com.openlab.qualitos.quality.riskregister.domain.RegisterType;
+import com.openlab.qualitos.quality.riskregister.domain.RiskCapaKind;
 import com.openlab.qualitos.quality.riskregister.domain.RiskDecision;
 import com.openlab.qualitos.quality.riskregister.domain.RiskLevel;
 import com.openlab.qualitos.quality.riskregister.domain.RiskStatus;
@@ -39,7 +40,9 @@ public final class RiskRegisterDto {
     /** La fiche d'un risque : la ligne, ses CAPA liées, son suivi. */
     public record RiskSheet(RiskView risk, List<CapaView> capas, List<EventView> events) {}
 
-    public record CapaView(UUID id, String title, LocalDate dueDate, String status) {}
+    /** Une CAPA liée : sa nature et son responsable d'action, que la fiche montre. */
+    public record CapaView(UUID id, String title, LocalDate dueDate, String status,
+                           RiskCapaKind kind, String assignee) {}
 
     public record OpportunityView(
             UUID id, String reference, String title, RegisterType type, String process, String site,
@@ -89,7 +92,8 @@ public final class RiskRegisterDto {
             OpportunityStatus status, List<RegisterRequirement> requirements,
             String benefitCriterion) {}
 
-    public record CapaCommand(String title, String description, LocalDate dueDate) {}
+    public record CapaCommand(String title, String description, RiskCapaKind kind, String assignee,
+                              LocalDate dueDate) {}
 
     public record ActionCommand(String title, LocalDate dueDate, OpportunityActionStatus status) {}
 }

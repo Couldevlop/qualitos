@@ -8,11 +8,56 @@
         L'autorisation est appliquée par le serveur — cet écran ne fait qu'en donner la clé.
       </p>
     </div>
-    <button mat-stroked-button type="button" (click)="reload()" [disabled]="loading">
-      <mat-icon aria-hidden="true">refresh</mat-icon>
-      <span i18n="@@common.refresh">Actualiser</span>
-    </button>
+    <div class="team-actions">
+      <button mat-stroked-button type="button" (click)="reload()" [disabled]="loading">
+        <mat-icon aria-hidden="true">refresh</mat-icon>
+        <span i18n="@@common.refresh">Actualiser</span>
+      </button>
+      <button mat-flat-button color="primary" type="button" (click)="openInvite()" [disabled]="inviting"
+              data-test="inviter">
+        <mat-icon aria-hidden="true">person_add</mat-icon>
+        <span i18n="@@admin.team.invite">Inviter un membre</span>
+      </button>
+    </div>
   </header>
+
+  <!-- Inviter : le compte de connexion est créé dans l'organisation, avec ses rôles. -->
+  <form class="team-invite" *ngIf="inviting" [formGroup]="inviteForm" (ngSubmit)="sendInvite()" novalidate
+        data-test="form-invitation">
+    <h2 class="team-invite__titre" i18n="@@admin.team.invite-title">Nouveau membre</h2>
+    <div class="team-invite__champs">
+      <mat-form-field appearance="outline">
+        <mat-label i18n="@@admin.team.invite-email">Adresse e-mail</mat-label>
+        <input matInput type="email" formControlName="email" autocomplete="off" data-test="invite-email">
+        <mat-error *ngIf="inviteForm.controls.email.invalid" i18n="@@admin.team.invite-email-invalid">Une adresse e-mail valide est attendue.</mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label i18n="@@admin.team.invite-first-name">Prénom (facultatif)</mat-label>
+        <input matInput formControlName="firstName" autocomplete="off">
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label i18n="@@admin.team.invite-last-name">Nom (facultatif)</mat-label>
+        <input matInput formControlName="lastName" autocomplete="off">
+      </mat-form-field>
+    </div>
+    <p class="team-invite__legende" id="invite-roles" i18n="@@admin.team.invite-roles">Rôles de son compte</p>
+    <div class="team-roles" role="group" aria-labelledby="invite-roles">
+      <button *ngFor="let role of assignableRoles" type="button" class="team-role"
+              [class.is-granted]="inviteRoles.has(role)" [attr.aria-pressed]="inviteRoles.has(role)"
+              (click)="toggleInviteRole(role)" [attr.data-test]="'invite-role-' + role">
+        {{ roleLabel(role) }}
+      </button>
+    </div>
+    <p class="team-invite__erreur" *ngIf="inviteRoles.size === 0" role="alert" i18n="@@admin.team.needs-a-role">Un membre doit conserver au moins un rôle.</p>
+    <div class="team-invite__boutons">
+      <button mat-stroked-button type="button" (click)="inviting = false" i18n="@@common.cancel">Annuler</button>
+      <button mat-flat-button color="primary" type="submit" [disabled]="sending" data-test="invite-envoyer"
+              i18n="@@admin.team.invite-send">Créer son compte</button>
+    </div>
+  </form>
+
+  <qos-credential-reveal *ngIf="invited as i" [email]="i.user.email" [password]="i.temporaryPassword"
+                         [invitationSent]="i.invitationSent" (closed)="invited = null"></qos-credential-reveal>
 
   <mat-form-field appearance="outline" class="team-search" subscriptSizing="dynamic">
     <mat-icon matPrefix aria-hidden="true">search</mat-icon>

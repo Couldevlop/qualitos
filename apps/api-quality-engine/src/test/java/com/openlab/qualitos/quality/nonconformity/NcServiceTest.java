@@ -1,5 +1,6 @@
 package com.openlab.qualitos.quality.nonconformity;
 
+import com.openlab.qualitos.quality.authz.application.RecordScope;
 import com.openlab.qualitos.quality.capa.CapaCase;
 import com.openlab.qualitos.quality.capa.CapaCaseRepository;
 import com.openlab.qualitos.quality.capa.CapaCriticity;
@@ -37,6 +38,8 @@ class NcServiceTest {
     @Mock NonConformityRepository repo;
     @Mock CapaCaseRepository capaRepo;
     @Mock org.springframework.context.ApplicationEventPublisher events;
+    /** Sans réglage, Mockito rend Optional.empty() : l'utilisateur voit tout (ADR 0081). */
+    @Mock RecordScope scope;
     @InjectMocks NcService service;
 
     static final UUID TENANT = UUID.randomUUID();

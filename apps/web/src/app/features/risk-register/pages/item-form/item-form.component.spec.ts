@@ -6,12 +6,13 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router, convertToParamMap, provideRouter } from '@angular/router';
 
 import { environment } from '../../../../../environments/environment';
-import { AuthService } from '../../../../core/auth/auth.service';
+import { AuthzService } from '../../../../core/authz/authz.service';
 import { SharedModule } from '../../../../shared/shared.module';
 import { UiModule } from '../../../../shared/ui/ui.module';
 import { RiskDraft } from '../../risk-register.types';
 import { opportunite, risque } from '../../testing/risk-register.fixtures';
 import { ItemFormComponent } from './item-form.component';
+import { of } from 'rxjs';
 
 /**
  * Le formulaire : création (directe ou depuis un objet source), modification,
@@ -52,7 +53,8 @@ describe('ItemFormComponent', () => {
             }
           }
         },
-        { provide: AuthService, useValue: { hasAnyRole: (a: string[]) => a.some(r => roles.includes(r)) } }
+        // Les droits livrés : risk.manage et opportunity.manage vont au pilotage qualité.
+        { provide: AuthzService, useValue: { can: () => of(roles.some(r => ['QUALITY_MANAGER', 'DIRECTOR_QUALITY', 'QUALITY_DIRECTOR', 'ADMIN_TENANT', 'SUPER_ADMIN'].includes(r))) } }
       ]
     }).compileComponents();
     http = TestBed.inject(HttpTestingController);
@@ -65,7 +67,9 @@ describe('ItemFormComponent', () => {
   }
 
   function remplir(): void {
-    component.form.patchValue({ title: '  Dérive soudure ', process: 'Production', owner: 'M. Kone' });
+    component.form.patchValue({
+      title: '  Dérive soudure ', process: 'Production', owner: 'M. Kone', cause: 'Buse usée', effect: 'Fuite'
+    });
   }
 
   afterEach(() => http.verify());
@@ -89,6 +93,19 @@ describe('ItemFormComponent', () => {
     expect(req.request.body.reference).toBeUndefined();
     req.flush(risque({ id: 'nouveau-id' }));
     expect(router.navigate).toHaveBeenCalledWith(['/risques', 'nouveau-id']);
+  });
+
+  it('un risque sans cause ni effet ne part pas', async () => {
+    await setup();
+    remplir();
+    component.form.patchValue({ cause: '', effect: '' });
+    fixture.detectChanges();
+
+    component.submit();
+
+    http.expectNone(`${endpoint}/risks`);
+    expect(component.form.get('cause')!.hasError('required')).toBeTrue();
+    expect(component.form.get('effect')!.hasError('required')).toBeTrue();
   });
 
   it('montre le niveau avant l’enregistrement, mêmes seuils que le serveur', async () => {

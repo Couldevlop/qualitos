@@ -34,6 +34,8 @@ public class ModuleActivationService {
     private final ActorProvider actorProvider;
     private final ModuleActivationEventPublisher events;
     private final Clock clock;
+    /** La licence on-premise, ou {@link ModuleLicense#NONE} en SaaS (ADR 0082). */
+    private final ModuleLicense license;
 
     @org.springframework.beans.factory.annotation.Autowired
     public ModuleActivationService(ModuleActivationRepository repo,
@@ -51,6 +53,17 @@ public class ModuleActivationService {
                                    ActorProvider actorProvider,
                                    ModuleActivationEventPublisher events,
                                    Clock clock) {
+        this(repo, tenantProvider, tierProvider, actorProvider, events, clock, ModuleLicense.NONE);
+    }
+
+    public ModuleActivationService(ModuleActivationRepository repo,
+                                   TenantProvider tenantProvider,
+                                   TenantTierProvider tierProvider,
+                                   ActorProvider actorProvider,
+                                   ModuleActivationEventPublisher events,
+                                   Clock clock,
+                                   ModuleLicense license) {
+        this.license = license;
         this.repo = repo;
         this.tenantProvider = tenantProvider;
         this.tierProvider = tierProvider;
@@ -300,6 +313,9 @@ public class ModuleActivationService {
      */
     public boolean isEnabled(String moduleCode) {
         UUID tenantId = tenantProvider.requireTenantId();
+        if (license.governs()) {
+            return availableModuleCodes(tenantId).contains(moduleCode);
+        }
         return repo.findOpenByTenantIdAndCode(tenantId, moduleCode)
                 .map(ModuleActivation::isEnabled)
                 .orElseGet(() -> ModuleCatalog.find(moduleCode)
@@ -352,13 +368,17 @@ public class ModuleActivationService {
     private Set<String> availableModuleCodes(UUID tenantId) {
         Set<String> enabled = new java.util.LinkedHashSet<>();
         for (ModuleCatalogEntry entry : ModuleCatalog.all()) {
-            if (entry.coreModule()) {
+            // En on-premise, la licence ouvre d'office ce qu'elle couvre (ADR 0082).
+            if (entry.coreModule() || (license.governs() && license.allows(entry.code()))) {
                 enabled.add(entry.code());
             }
         }
         for (ModuleActivation activation : currentDecisionPerModule(tenantId)) {
             if (activation.isEnabled()) {
-                enabled.add(activation.getModuleCode());
+                // Une activation hors licence ne rouvre rien.
+                if (license.allows(activation.getModuleCode())) {
+                    enabled.add(activation.getModuleCode());
+                }
             } else {
                 // Une activation explicitement fermée l'emporte : c'est une
                 // décision, pas une absence.
@@ -432,6 +452,10 @@ public class ModuleActivationService {
     }
 
     private void ensureTierAllowed(UUID tenantId, ModuleCatalogEntry entry) {
+        if (!license.allows(entry.code())) {
+            throw new ModuleActivationStateException(
+                    "Module not covered by the license: " + entry.code());
+        }
         BillingTier current = tierProvider.currentTier(tenantId);
         if (current.compareTo(entry.minimumTier()) < 0) {
             throw new ModuleActivationStateException(
