@@ -33,6 +33,15 @@ public final class RlsSchema {
     private static final Pattern ROLE_NAME = Pattern.compile("[a-z_][a-z0-9_]{0,62}");
     private static final String CURRENT = "NULLIF(current_setting('" + SETTING + "', true), '')";
 
+    private static final String CREATE_ROLE =
+            "CREATE ROLE %I WITH LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOBYPASSRLS PASSWORD %L";
+    private static final String ALTER_ROLE =
+            "ALTER ROLE %I WITH LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOBYPASSRLS PASSWORD %L";
+    private static final String ENABLE_RLS = "ALTER TABLE %I ENABLE ROW LEVEL SECURITY";
+    private static final String DISABLE_RLS = "ALTER TABLE %I DISABLE ROW LEVEL SECURITY";
+    private static final String[] FORMAT = {
+        "SELECT format(?)", "SELECT format(?, ?)", "SELECT format(?, ?, ?)"};
+
     private RlsSchema() {
     }
 
@@ -51,32 +60,21 @@ public final class RlsSchema {
                 exists = rs.next();
             }
         }
-        // Le mot de passe passe par format(%L) côté serveur : jamais concaténé ici.
-        String verb = exists ? "ALTER" : "CREATE";
-        String ddl;
-        try (PreparedStatement ps = owner.prepareStatement(
-                "SELECT format('" + verb + " ROLE %I WITH LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOBYPASSRLS PASSWORD %L', ?, ?)")) {
-            ps.setString(1, role);
-            ps.setString(2, password);
-            try (ResultSet rs = ps.executeQuery()) {
-                rs.next();
-                ddl = rs.getString(1);
-            }
-        }
-        try (Statement st = owner.createStatement()) {
-            st.execute(ddl);
-            String r = quoteIdent(owner, role);
-            st.execute("GRANT CONNECT ON DATABASE " + quoteIdent(owner, currentDatabase(owner)) + " TO " + r);
-            st.execute("GRANT USAGE ON SCHEMA public TO " + r);
-            st.execute("GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO " + r);
-            st.execute("GRANT USAGE, SELECT, UPDATE ON ALL SEQUENCES IN SCHEMA public TO " + r);
-            st.execute("GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA public TO " + r);
-            // L'historique des migrations n'appartient qu'au propriétaire.
-            try (ResultSet rs = st.executeQuery("SELECT to_regclass('public.flyway_schema_history') IS NOT NULL")) {
-                rs.next();
-                if (rs.getBoolean(1)) {
-                    st.execute("REVOKE ALL ON public.flyway_schema_history FROM " + r);
-                }
+        // Chaque instruction est construite PAR POSTGRESQL (format, %I pour les
+        // noms, %L pour les valeurs) à partir d'un gabarit constant : aucun nom
+        // ni mot de passe n'est jamais concaténé dans du SQL ici.
+        ddl(owner, exists ? ALTER_ROLE : CREATE_ROLE, role, password);
+        ddl(owner, "GRANT CONNECT ON DATABASE %I TO %I", currentDatabase(owner), role);
+        ddl(owner, "GRANT USAGE ON SCHEMA public TO %I", role);
+        ddl(owner, "GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO %I", role);
+        ddl(owner, "GRANT USAGE, SELECT, UPDATE ON ALL SEQUENCES IN SCHEMA public TO %I", role);
+        ddl(owner, "GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA public TO %I", role);
+        // L'historique des migrations n'appartient qu'au propriétaire.
+        try (Statement st = owner.createStatement();
+             ResultSet rs = st.executeQuery("SELECT to_regclass('public.flyway_schema_history') IS NOT NULL")) {
+            rs.next();
+            if (rs.getBoolean(1)) {
+                ddl(owner, "REVOKE ALL ON public.flyway_schema_history FROM %I", role);
             }
         }
     }
@@ -100,22 +98,49 @@ public final class RlsSchema {
             }
         }
         List<String> done = new ArrayList<>();
-        try (Statement st = owner.createStatement()) {
-            for (String[] t : tables) {
-                String cast = castFor(t[1]);
-                if (cast == null) {
-                    continue; // type inattendu : on ne devine pas
-                }
-                String table = quoteIdent(owner, t[0]);
-                String predicate = CURRENT + " IS NULL OR tenant_id IS NULL OR tenant_id = " + CURRENT + cast;
-                st.execute("DROP POLICY IF EXISTS " + POLICY + " ON " + table);
-                st.execute("CREATE POLICY " + POLICY + " ON " + table
-                        + " USING (" + predicate + ") WITH CHECK (" + predicate + ")");
-                st.execute("ALTER TABLE " + table + (enabled ? " ENABLE" : " DISABLE") + " ROW LEVEL SECURITY");
-                done.add(t[0]);
+        for (String[] t : tables) {
+            String create = policyFor(t[1]);
+            if (create == null) {
+                continue; // type inattendu : on ne devine pas
             }
+            ddl(owner, "DROP POLICY IF EXISTS " + POLICY + " ON %I", t[0]);
+            ddl(owner, create, t[0]);
+            ddl(owner, enabled ? ENABLE_RLS : DISABLE_RLS, t[0]);
+            done.add(t[0]);
         }
         return done;
+    }
+
+    /** Le gabarit de création de la politique selon le type de {@code tenant_id}. */
+    static String policyFor(String type) {
+        String cast = castFor(type);
+        if (cast == null) {
+            return null;
+        }
+        String predicate = CURRENT + " IS NULL OR tenant_id IS NULL OR tenant_id = " + CURRENT + cast;
+        return "CREATE POLICY " + POLICY + " ON %I USING (" + predicate + ") WITH CHECK (" + predicate + ")";
+    }
+
+    /**
+     * Exécute une instruction que PostgreSQL construit lui-même depuis un gabarit
+     * constant ({@code format}) et ses arguments liés : noms échappés par %I,
+     * valeurs par %L.
+     */
+    private static void ddl(Connection c, String template, String... args) throws SQLException {
+        String sql;
+        try (PreparedStatement ps = c.prepareStatement(FORMAT[args.length])) {
+            ps.setString(1, template);
+            for (int i = 0; i < args.length; i++) {
+                ps.setString(i + 2, args[i]);
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                rs.next();
+                sql = rs.getString(1);
+            }
+        }
+        try (Statement st = c.createStatement()) {
+            st.execute(sql);
+        }
     }
 
     static String castFor(String type) {
@@ -130,16 +155,6 @@ public final class RlsSchema {
         try (Statement st = c.createStatement(); ResultSet rs = st.executeQuery("SELECT current_database()")) {
             rs.next();
             return rs.getString(1);
-        }
-    }
-
-    private static String quoteIdent(Connection c, String ident) throws SQLException {
-        try (PreparedStatement ps = c.prepareStatement("SELECT quote_ident(?)")) {
-            ps.setString(1, ident);
-            try (ResultSet rs = ps.executeQuery()) {
-                rs.next();
-                return rs.getString(1);
-            }
         }
     }
 }

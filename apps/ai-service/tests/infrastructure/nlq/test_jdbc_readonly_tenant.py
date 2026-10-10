@@ -1,8 +1,6 @@
 """Le client passé à la base avant chaque requête NLQ (ADR 0086)."""
 from __future__ import annotations
 
-from contextlib import contextmanager
-
 import pytest
 
 from domain.model.errors import ProviderUnavailableError
