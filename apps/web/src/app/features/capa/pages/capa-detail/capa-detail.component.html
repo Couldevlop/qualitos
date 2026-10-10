@@ -168,16 +168,23 @@
       </mat-card>
 
       <!-- Un dossier ouvert depuis un risque EST son action : elle a été décidée
-           à l'ouverture (nature, responsable, échéance). Ni ajout, ni
+           à l'ouverture (nature, responsable, échéance). Ni liste, ni ajout, ni
            suggestion IA ici — seulement la faire avancer. Un ancien dossier de
-           risque sans action garde le bloc complet, sans quoi il ne pourrait
-           jamais être clôturé. -->
+           risque encore sans action propose de définir la sienne, une fois. -->
       <mat-card class="action-unique" *ngIf="isSingleActionCase(c); else blocActions"
                 data-test="action-unique">
         <mat-card-header>
           <mat-card-title i18n="@@capa.detail.single-action">Action</mat-card-title>
         </mat-card-header>
         <mat-card-content>
+          <div class="action-unique__vide" *ngIf="c.actions.length === 0" data-test="action-unique-vide">
+            <p i18n="@@capa.detail.single-action-missing">L'action de ce risque n'a pas encore été définie.</p>
+            <button mat-flat-button color="primary" type="button" *qosCan="'capa.action.manage'"
+                    (click)="openAddAction()" [disabled]="isTerminal(c.status)"
+                    data-test="definir-action">
+              <span i18n="@@capa.detail.single-action-define">Définir l'action</span>
+            </button>
+          </div>
           <div class="action-unique__ligne" *ngFor="let a of c.actions; trackBy: trackActionById">
             <div class="action-unique__texte">
               <p class="action-unique__titre">{{ a.title }}</p>

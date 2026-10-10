@@ -22820,6 +22820,14 @@ historique 12 mois</source>
         <source>Action</source>
         <target state="translated">الإجراء</target>
       </trans-unit>
+      <trans-unit id="capa.detail.single-action-missing" datatype="html">
+        <source>L'action de ce risque n'a pas encore été définie.</source>
+        <target state="translated">لم يتم تحديد إجراء هذا الخطر بعد.</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.single-action-define" datatype="html">
+        <source>Définir l'action</source>
+        <target state="translated">تحديد الإجراء</target>
+      </trans-unit>
       <trans-unit id="capa.detail.single-action-assignee" datatype="html">
         <source>Responsable</source>
         <target state="translated">المسؤول</target>

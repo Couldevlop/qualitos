@@ -514,6 +514,31 @@ class CapaServiceTest {
     }
 
     @Test
+    void addAction_risqueAyantDejaSonAction_refuse() {
+        CapaCase c = capa(TENANT, CapaStatus.OPEN);
+        c.setSourceType(CapaSourceType.RISK);
+        c.getActions().add(new CapaAction());
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        CapaDto.ActionRequest req = new CapaDto.ActionRequest(
+                "deuxieme", null, null, null, null, null, null, null);
+        assertThatThrownBy(() -> service.addAction(c.getId(), req))
+                .isInstanceOf(CapaStateException.class)
+                .hasMessageContaining("single action");
+        verify(actionRepo, never()).save(any());
+    }
+
+    @Test
+    void addAction_ancienRisqueSansAction_recoitLaSienne() {
+        CapaCase c = capa(TENANT, CapaStatus.OPEN);
+        c.setSourceType(CapaSourceType.RISK);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(actionRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+        CapaDto.ActionRequest req = new CapaDto.ActionRequest(
+                "unique", null, null, null, null, null, null, null);
+        assertThat(service.addAction(c.getId(), req).title()).isEqualTo("unique");
+    }
+
+    @Test
     void addAction_explicitStatus_used() {
         CapaCase c = capa(TENANT, CapaStatus.IN_PROGRESS);
         when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));

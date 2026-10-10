@@ -22820,6 +22820,14 @@ declared income
         <source>Action</source>
         <target state="translated">Action</target>
       </trans-unit>
+      <trans-unit id="capa.detail.single-action-missing" datatype="html">
+        <source>L'action de ce risque n'a pas encore été définie.</source>
+        <target state="translated">No action has been defined for this risk yet.</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.single-action-define" datatype="html">
+        <source>Définir l'action</source>
+        <target state="translated">Define the action</target>
+      </trans-unit>
       <trans-unit id="capa.detail.single-action-assignee" datatype="html">
         <source>Responsable</source>
         <target state="translated">Owner</target>

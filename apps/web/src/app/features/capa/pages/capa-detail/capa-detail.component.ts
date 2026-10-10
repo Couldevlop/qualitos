@@ -640,11 +640,14 @@ export class CapaDetailComponent implements OnInit {
   }
 
   /**
-   * Vrai pour un dossier ouvert depuis le registre des risques ET qui porte son
-   * action : il s'affiche réduit à elle, sans ajout ni suggestion.
+   * Vrai pour TOUT dossier ouvert depuis le registre des risques : il s'affiche
+   * réduit à son action unique, sans liste, sans « Ajouter une action » ni
+   * suggestion IA. Un ancien dossier encore sans action propose seulement de
+   * définir la sienne (sinon il ne serait jamais clôturable) ; le serveur
+   * refuse une deuxième action.
    */
   isSingleActionCase(c: CapaCaseResponse): boolean {
-    return c.sourceType === 'RISK' && c.actions.length > 0;
+    return c.sourceType === 'RISK';
   }
 
   trackActionById(_i: number, a: CapaActionResponse): string {

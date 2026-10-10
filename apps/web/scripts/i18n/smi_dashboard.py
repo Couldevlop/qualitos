@@ -34,6 +34,8 @@ TRANSLATIONS = {
 
     # ---------- fiche CAPA : action unique d'un dossier issu d'un risque ----------
     'capa.detail.single-action': ('Action', 'Action', 'Acción', 'الإجراء', 'アクション', '措施'),
+    'capa.detail.single-action-missing': ("L'action de ce risque n'a pas encore été définie.", 'No action has been defined for this risk yet.', 'Todavía no se ha definido la acción de este riesgo.', 'لم يتم تحديد إجراء هذا الخطر بعد.', 'このリスクの処置はまだ定義されていません。', '尚未为此风险定义措施。'),
+    'capa.detail.single-action-define': ("Définir l'action", 'Define the action', 'Definir la acción', 'تحديد الإجراء', '処置を定義する', '定义措施'),
     'capa.detail.single-action-assignee': ('Responsable', 'Owner', 'Responsable', 'المسؤول', '責任者', '负责人'),
 
     # ---------- tableau de bord ----------

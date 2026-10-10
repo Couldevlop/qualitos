@@ -556,12 +556,25 @@ describe('CapaDetailComponent — tableau des actions', () => {
     expect((fixture.nativeElement as HTMLElement).querySelector('[data-test="avancer-action"]')).toBeNull();
   });
 
-  it('un ancien dossier de risque sans action garde le bloc complet, pour pouvoir être clôturé', () => {
+  it('un ancien dossier de risque sans action ne montre pas le bloc Actions : seulement de quoi définir la sienne', () => {
     setup(dossier({ sourceType: 'RISK', actions: [] }));
     const el = fixture.nativeElement as HTMLElement;
-    expect(el.querySelector('[data-test="action-unique"]')).toBeNull();
-    expect(el.querySelector('.actions-card')).not.toBeNull();
+    expect(el.querySelector('[data-test="action-unique"]')).not.toBeNull();
+    expect(el.querySelector('.actions-card')).toBeNull();
+    expect(el.textContent).not.toContain('Ajouter une action');
+    expect(el.querySelector('[data-test="action-unique-vide"]')).not.toBeNull();
+    const openSpy = spyOn(component, 'openAddAction');
+    (el.querySelector('[data-test="definir-action"]') as HTMLButtonElement).click();
+    expect(openSpy).toHaveBeenCalled();
+    expect(component.isSingleActionCase(dossier({ sourceType: 'RISK', actions: [] }))).toBeTrue();
     expect(component.isSingleActionCase(dossier())).toBeFalse();
     expect(component.trackActionById(0, action())).toBe(ACTION_ID);
+  });
+
+  it('un dossier de risque pourvu de son action n’offre plus de quoi en définir une', () => {
+    setup(dossier({ sourceType: 'RISK', actions: [action()] }));
+    const el = fixture.nativeElement as HTMLElement;
+    expect(el.querySelector('[data-test="action-unique-vide"]')).toBeNull();
+    expect(el.querySelector('[data-test="definir-action"]')).toBeNull();
   });
 });
