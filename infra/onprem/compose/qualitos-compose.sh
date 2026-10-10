@@ -7,6 +7,9 @@
 #   ./infra/onprem/compose/qualitos-compose.sh sauvegarder qualitos.conf
 #   ./infra/onprem/compose/qualitos-compose.sh etat     qualitos.conf
 #
+# Site sans Internet : QOS_BUNDLE=<dossier du paquet hors ligne> (ADR 0085). Le
+# paquet est vérifié (signature de l'éditeur, empreintes) avant tout chargement.
+#
 # Même qualitos.conf que l'installation Kubernetes : seuls QOS_TLS_CERT et
 # QOS_TLS_KEY (le certificat en fichiers) et QOS_COMPOSE_DIR (où vit
 # l'installation, /opt/qualitos par défaut) lui sont propres.
@@ -51,6 +54,9 @@ abs() { case "$1" in /*) printf '%s' "$1" ;; '') printf '' ;; *) printf '%s/%s' 
 : "${QOS_OLLAMA_URL:=}"
 : "${QOS_OLLAMA_MODEL:=hf.co/OpenLLM-France/Lucie-7B-Instruct-v1.1-gguf:Q4_K_M}"
 : "${QOS_KEYCLOAK_ADMIN_PORT:=18080}"
+: "${QOS_BUNDLE:=}"
+BUNDLE="$(abs "$QOS_BUNDLE")"
+BUNDLE_PUB="$ONPREM/bundle/editeur-paquet.pub"
 LICENSE_FILE="$(abs "${QOS_LICENSE_FILE:-}")"
 TLS_CERT="$(abs "${QOS_TLS_CERT:-}")"
 TLS_KEY="$(abs "${QOS_TLS_KEY:-}")"
@@ -139,6 +145,14 @@ verifier() {
       *) ko "QOS_LDAP_URL doit commencer par ldap:// ou ldaps://" ;; esac
   fi
 
+  if [ -n "$BUNDLE" ]; then
+    if qos_bundle_verify "$BUNDLE" "$BUNDLE_PUB"; then ok "paquet hors ligne $(cat "$BUNDLE/VERSION") : signature et empreintes vérifiées"
+    else ko "paquet hors ligne refusé : $BUNDLE"; fi
+    if [ -n "${VERSION:-}" ] && [ -f "$BUNDLE/VERSION" ] && [ "$(cat "$BUNDLE/VERSION")" != "${VERSION#v}" ]; then
+      ko "le paquet porte la version $(cat "$BUNDLE/VERSION"), pas ${VERSION#v}"
+    fi
+  fi
+
   echo
   if [ "$ERRORS" -gt 0 ]; then
     echo "$ERRORS prérequis manquant(s) : rien n'a été modifié. Corrigez puis relancez." >&2
@@ -199,7 +213,15 @@ installer() {
   env_set QOS_OLLAMA_BASE_URL "$ollama_url"
   env_set QOS_OLLAMA_MODEL "$QOS_OLLAMA_MODEL"
   env_set QOS_OLLAMA_HOSTNAME "$(printf '%s' "$ollama_url" | sed -E 's#^[a-z]+://##; s#[:/].*$##')"
-  if [ -z "$QOS_OLLAMA_URL" ]; then env_set COMPOSE_PROFILES ollama; else env_set COMPOSE_PROFILES ""; fi
+  local profiles=""
+  [ -n "$QOS_OLLAMA_URL" ] || profiles="ollama"
+  if [ -n "${QOS_BACKUP_S3_URL:-}" ]; then
+    profiles="${profiles:+$profiles,}hors-site"
+    env_set QOS_BACKUP_S3_URL "$QOS_BACKUP_S3_URL"
+    env_set QOS_BACKUP_S3_ACCESS_KEY "${QOS_BACKUP_S3_ACCESS_KEY:?QOS_BACKUP_S3_ACCESS_KEY requis avec QOS_BACKUP_S3_URL}"
+    env_set QOS_BACKUP_S3_SECRET_KEY "${QOS_BACKUP_S3_SECRET_KEY:?QOS_BACKUP_S3_SECRET_KEY requis avec QOS_BACKUP_S3_URL}"
+  fi
+  env_set COMPOSE_PROFILES "$profiles"
   ok "secrets et réglages (.env, lisible par root seulement)"
 
   say "2/7 Fichiers de l'installation"
@@ -219,6 +241,14 @@ installer() {
     printf 'if [ "${1:-}" = une-fois ]; then (vider); exit $?; fi\n'
     printf 'while true; do (vider) || echo "ECHEC du vidage du $(date -u +%%F)"; sleep 86400; done\n'
   } > "$DIR/backup.sh"
+  {
+    printf '#!/bin/sh\n# Copie hors serveur : le script du CronJob Kubernetes backup-offsite, chaque jour.\n'
+    printf 'copier() {\n'
+    python3 "$HERE/extract-script.py" "$DEPS/61-backup-offsite.yaml" '^kind: CronJob' '^\s+- \|' | sed 's/^/  /'
+    printf '}\n'
+    printf 'if [ "${1:-}" = une-fois ]; then (copier); exit $?; fi\n'
+    printf 'while true; do (copier) || echo "ECHEC de la copie hors serveur du $(date -u +%%F)"; sleep 86400; done\n'
+  } > "$DIR/backup-offsite.sh"
   install -m 0644 "$TLS_CERT" "$DIR/tls/tls.crt"
   install -m 0600 "$TLS_KEY" "$DIR/tls/tls.key"
   install_license
@@ -240,8 +270,10 @@ installer() {
   fi
 
   say "3/7 Images"
-  if [ "${QOS_COMPOSE_PULL:-true}" = true ]; then dc pull --quiet; ok "images à jour"
-  else ok "images déjà chargées (paquet hors ligne)"; fi
+  if [ -n "$BUNDLE" ]; then
+    qos_bundle_load "$BUNDLE" >/dev/null; ok "images chargées depuis le paquet hors ligne"
+  elif [ "${QOS_COMPOSE_PULL:-true}" = true ]; then dc pull --quiet; ok "images à jour"
+  else ok "images déjà chargées"; fi
 
   say "4/7 Données et identité"
   dc up -d postgres keycloak minio qdrant
@@ -254,7 +286,12 @@ installer() {
 
   say "6/7 Application"
   dc up -d --remove-orphans
-  if [ -z "$QOS_OLLAMA_URL" ]; then
+  if [ -z "$QOS_OLLAMA_URL" ] && [ -f "$BUNDLE/models/ollama-models.tar.gz" ]; then
+    dc exec -T ollama tar --no-same-owner -C /models -xzf - < "$BUNDLE/models/ollama-models.tar.gz" \
+      && ok "modèles d'IA posés depuis le paquet" || warn "modèles d'IA du paquet non posés"
+  elif [ -z "$QOS_OLLAMA_URL" ] && [ -n "$BUNDLE" ]; then
+    warn "paquet sans modèles d'IA (--modeles) : les fonctions d'IA resteront indisponibles"
+  elif [ -z "$QOS_OLLAMA_URL" ]; then
     dc exec -d ollama ollama pull "$QOS_OLLAMA_MODEL" >/dev/null 2>&1 || true
     dc exec -d ollama ollama pull bge-m3 >/dev/null 2>&1 || true
     ok "modèles d'IA : téléchargement en arrière-plan (dc logs -f ollama)"
@@ -381,6 +418,11 @@ case "$CMD" in
     echo "Licence de « $(qos_license_customer "$LICENSE_FILE") » installée."
     echo "Prise en compte en moins d'une minute, sans redémarrage (Administration › Licence)."
     ;;
-  sauvegarder) dc exec -T backup sh /backup.sh une-fois ;;
+  sauvegarder)
+    dc exec -T backup sh /backup.sh une-fois
+    if dc ps --status running --services 2>/dev/null | grep -q '^backup-offsite$'; then
+      dc exec -T backup-offsite sh /backup-offsite.sh une-fois
+    fi
+    ;;
   etat) dc ps ;;
 esac

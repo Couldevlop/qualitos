@@ -104,7 +104,7 @@ jobs:
       - name: ShellCheck
         run: |
           shellcheck --version
-          shellcheck -x -S warning infra/onprem/*.sh infra/onprem/compose/*.sh infra/onprem/tests/run-tests.sh infra/k8s/deploy.sh infra/k8s/deps/render-realm.sh
+          shellcheck -x -S warning infra/onprem/*.sh infra/onprem/compose/*.sh infra/onprem/bundle/*.sh infra/onprem/tests/run-tests.sh infra/k8s/deploy.sh infra/k8s/deps/render-realm.sh
 
       - name: Bancs des scripts (faux cluster)
         run: bash infra/onprem/tests/run-tests.sh
@@ -133,13 +133,13 @@ jobs:
           # Le rendu on-premise de l'étape précédente sert de référence (ADR 0084).
           python3 infra/onprem/tests/compose_parity.py /tmp/onprem.yaml infra/onprem/compose/docker-compose.yml
           cd infra/onprem/compose
-          touch postgres-init.sh minio-init.sh backup.sh proxy.conf
+          touch postgres-init.sh minio-init.sh backup.sh backup-offsite.sh proxy.conf
           for v in POSTGRES_PASSWORD NLQ_RO_PASSWORD KEYCLOAK_ADMIN_PASSWORD MINIO_ROOT_PASSWORD \
                    STORAGE_S3_SECRET_KEY AI_CLIENT_SECRET KEYCLOAK_PROVISIONER_SECRET QOS_OLLAMA_BASE_URL \
                    QOS_OLLAMA_MODEL QOS_OLLAMA_HOSTNAME QOS_IMG_POSTGRES QOS_IMG_KEYCLOAK QOS_IMG_QDRANT \
                    QOS_IMG_OLLAMA QOS_IMG_MINIO QOS_IMG_MC QOS_IMG_NGINX; do echo "$v=x"; done > ci.env
           printf 'QOS_HOST=q.example.local\nQOS_REGISTRY=r.example.local\nQOS_VERSION=0\n' >> ci.env
-          docker compose --env-file ci.env --profile ollama config --quiet
+          docker compose --env-file ci.env --profile ollama --profile hors-site config --quiet
 
   sast-semgrep:
     name: SAST (Semgrep)

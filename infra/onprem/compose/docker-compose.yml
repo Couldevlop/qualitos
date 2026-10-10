@@ -286,6 +286,29 @@ services:
     depends_on:
       postgres: { condition: service_healthy }
 
+  # Copie HORS DU SERVEUR des vidages et des pièces jointes, chaque jour (profil
+  # « hors-site », activé quand QOS_BACKUP_S3_URL est renseigné). Le script est
+  # celui du CronJob Kubernetes backup-offsite, extrait à l'installation (ADR 0085).
+  backup-offsite:
+    <<: *durci
+    image: ${QOS_IMG_MC}
+    profiles: ["hors-site"]
+    read_only: true
+    tmpfs: ["/tmp"]
+    environment:
+      MC_CONFIG_DIR: /tmp/.mc
+      MINIO_URL: http://minio:9000
+      MINIO_ROOT_USER: qualitos
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      QOS_BACKUP_S3_URL: ${QOS_BACKUP_S3_URL:-}
+      QOS_BACKUP_S3_ACCESS_KEY: ${QOS_BACKUP_S3_ACCESS_KEY:-}
+      QOS_BACKUP_S3_SECRET_KEY: ${QOS_BACKUP_S3_SECRET_KEY:-}
+    volumes:
+      - ${QOS_BACKUP_DIR:-./sauvegardes}:/backups:ro
+      - ./backup-offsite.sh:/backup-offsite.sh:ro
+    entrypoint: ["/bin/sh", "/backup-offsite.sh"]
+    depends_on: [minio, backup]
+
 volumes:
   postgres-data:
   minio-data:

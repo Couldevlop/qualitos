@@ -94,3 +94,75 @@ qos_license_customer() {
   printf '%s' "$payload" | base64 -d 2>/dev/null | grep -o '"customer"[[:space:]]*:[[:space:]]*"[^"]*"' \
     | sed 's/.*"\([^"]*\)"$/\1/'
 }
+
+# ---------------------------------------------------------------------------
+# Paquet hors ligne (ADR 0085). Un dossier :
+#   images.txt       une ligne par image : « app <ref> » ou « tiers <ref> »
+#   images/*.tar.gz  les images (docker save | gzip), dans l'ordre d'images.txt
+#   models/          facultatif : ollama-models.tar.gz, les modèles d'IA
+#   SHA256SUMS       l'empreinte de CHAQUE fichier du paquet
+#   SHA256SUMS.sig   signature Ed25519 de SHA256SUMS par l'éditeur (base64)
+# Rien n'est chargé avant que la signature ET toutes les empreintes soient
+# vérifiées : un paquet altéré en route ne doit rien poser chez le client.
+
+# Vérifie un paquet contre la clé publique épinglée. Code de retour non nul et
+# message sur stderr au premier défaut.
+qos_bundle_verify() {
+  local dir="$1" pub="$2" raw line path
+  [ -f "$dir/SHA256SUMS" ] && [ -f "$dir/SHA256SUMS.sig" ] \
+    || { echo "paquet incomplet : SHA256SUMS ou sa signature manque ($dir)" >&2; return 1; }
+  raw="$(mktemp)"
+  if ! openssl base64 -d -A -in "$dir/SHA256SUMS.sig" -out "$raw" 2>/dev/null \
+     || ! openssl pkeyutl -verify -pubin -inkey "$pub" -rawin -in "$dir/SHA256SUMS" -sigfile "$raw" >/dev/null 2>&1; then
+    rm -f "$raw"
+    echo "signature du paquet INVALIDE : il ne vient pas de l'éditeur, ou a été modifié" >&2
+    return 1
+  fi
+  rm -f "$raw"
+  # Des chemins relatifs, sans remontée : une liste signée ne doit pas pouvoir
+  # désigner un fichier hors du paquet.
+  while IFS= read -r line || [ -n "$line" ]; do
+    path="${line#*  }"
+    case "$path" in /*|*..*|'') echo "chemin refusé dans SHA256SUMS : $path" >&2; return 1 ;; esac
+  done < "$dir/SHA256SUMS"
+  (cd "$dir" && sha256sum --quiet --strict -c SHA256SUMS) >/dev/null 2>&1 \
+    || { echo "empreinte invalide : un fichier du paquet est altéré ou manque" >&2; return 1; }
+  # Tout fichier du paquet doit être signé : un fichier ajouté après coup
+  # (modèles, image) serait sinon chargé sans que rien ne le couvre.
+  local extra
+  extra="$(cd "$dir" && find . -type f ! -name 'SHA256SUMS' ! -name 'SHA256SUMS.sig' | sed 's#^\./##' | LC_ALL=C sort \
+    | LC_ALL=C comm -23 - <(sed 's/^[0-9a-f]*  //' SHA256SUMS | LC_ALL=C sort))"
+  [ -z "$extra" ] || { printf 'fichier non couvert par la signature : %s\n' "$extra" >&2; return 1; }
+  grep -q '  images.txt$' "$dir/SHA256SUMS" && grep -q '  VERSION$' "$dir/SHA256SUMS" \
+    || { echo "images.txt ou VERSION n'est pas couvert par la signature" >&2; return 1; }
+}
+
+# Référence qu'une image du paquet doit porter chez le client : le registre du
+# site pour les images de QualitOS, le miroir (même règle qu'au déploiement)
+# pour les images tierces.
+qos_bundle_target() {
+  local kind="$1" ref="$2" name
+  if [ "$kind" = app ]; then
+    name="${ref##*/}"
+    printf '%s/%s' "${QOS_REGISTRY%/}" "$name"
+  else
+    qos_mirror_ref "$ref" "${QOS_MIRROR_REGISTRY:-}"
+  fi
+}
+
+# Charge les images d'un paquet VÉRIFIÉ dans le Docker local et les nomme comme
+# le site les attend ; avec « push », les pousse aussi vers le registre du site.
+qos_bundle_load() {
+  local dir="$1" mode="${2:-}" kind ref file target i=0
+  while read -r kind ref; do
+    [ -n "$kind" ] || continue
+    i=$((i + 1))
+    file="$(printf '%s/images/%03d.tar.gz' "$dir" "$i")"
+    [ -f "$file" ] || { echo "image manquante dans le paquet : $ref" >&2; return 1; }
+    gzip -dc "$file" | docker load >/dev/null || { echo "chargement refusé : $ref" >&2; return 1; }
+    target="$(qos_bundle_target "$kind" "$ref")"
+    [ "$target" = "$ref" ] || docker tag "$ref" "$target"
+    if [ "$mode" = push ]; then docker push --quiet "$target" >/dev/null || { echo "envoi refusé : $target" >&2; return 1; }; fi
+    printf '  %s\n' "$target"
+  done < "$dir/images.txt"
+}

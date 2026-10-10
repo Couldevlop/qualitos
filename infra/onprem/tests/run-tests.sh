@@ -225,6 +225,9 @@ QOS_MIRROR_REGISTRY=reg.acme.local/miroir
 QOS_STORAGE_CLASS=ceph-rbd
 QOS_TLS_MODE=secret
 QOS_OLLAMA_MODEL=mistral:7b
+QOS_BACKUP_S3_URL=https://s3.acme.local/sauvegardes/qualitos
+QOS_BACKUP_S3_ACCESS_KEY=cle-acces
+QOS_BACKUP_S3_SECRET_KEY=xxxx-xxxx-xxxx
 CONF
 DEPLOY_OUT="$(PATH="$WORK/bin:$PATH" PYTHONIOENCODING=utf-8 bash "$ROOT/infra/k8s/deploy.sh" onprem v1.2.3 "$WORK/deploy.conf" 2>&1)"; RC=$?
 check "le déploiement va au bout" eq "$RC" 0
@@ -238,6 +241,7 @@ check "classe de stockage du site"         contains "$APPLIED" "storageClassName
 check "plus de local-path"                 lacks "$APPLIED" "storageClassName: local-path"
 check "Ollama dans le cluster"             contains "$APPLIED" "name: ollama-models"
 check "modèle du site"                     contains "$APPLIED" "ollama pull 'mistral:7b'"
+check "copie hors serveur programmée"      contains "$APPLIED" "name: backup-offsite"
 check "pas l'Ollama de l'hôte SaaS"        lacks "$APPLIED" "10.42.0.1"
 check "hôte de Keycloak"                   contains "$APPLIED" "https://q.acme.local/auth"
 check "licence posée en secret"            contains "$(cat "$WORK/actions.txt" 2>/dev/null)" "license-secret"
@@ -263,6 +267,7 @@ check "images publiques, sans miroir"      contains "$APPLIED" "image: postgres:
 check "stockage local-path"                contains "$APPLIED" "storageClassName: local-path"
 check "Ollama de l'hôte"                   contains "$APPLIED" "10.42.0.1"
 check "pas d'Ollama dans le cluster"       lacks "$APPLIED" "name: ollama-models"
+check "pas de copie hors serveur sans destination" lacks "$APPLIED" "name: backup-offsite"
 check "pas de licence"                     lacks "$(cat "$WORK/actions.txt" 2>/dev/null)" "license-secret"
 HELM_ARGS="$(cat "$WORK/helm-args.txt" 2>/dev/null)"
 check "release qualitos-preprod"           contains "$HELM_ARGS" "upgrade --install qualitos-preprod "
@@ -390,6 +395,79 @@ check "IA du site : pas d'Ollama local"    contains "$ENVF" "COMPOSE_PROFILES="
 check "IA du site : adresse"               contains "$ENVF" "QOS_OLLAMA_BASE_URL=http://ia.acme.local:11434"
 check "IA du site : hôte autorisé"         contains "$ENVF" "QOS_OLLAMA_HOSTNAME=ia.acme.local"
 check "IA du site : un seul profil"        eq "$(grep -c '^COMPOSE_PROFILES=' "$WORK/opt/.env")" 1
+
+# ---------------------------------------------------------------------------
+echo "paquet hors ligne"
+check "image QualitOS vers le registre du site" eq "$(QOS_REGISTRY=reg.acme.local/qualitos qos_bundle_target app ghcr.io/couldevlop/qualitos/api-core:1.2.3)" reg.acme.local/qualitos/api-core:1.2.3
+check "image tierce vers le miroir"          eq "$(QOS_MIRROR_REGISTRY=reg.acme.local/miroir qos_bundle_target tiers postgres:17-alpine)" reg.acme.local/miroir/library/postgres:17-alpine
+# Signer en Ed25519 brut exige OpenSSL 3 (-rawin). Un poste plus ancien saute ces
+# vérifications ; la CI, elle, les exige.
+if openssl pkeyutl -help 2>&1 | grep -q -- '-rawin'; then
+  B="$WORK/paquet"; mkdir -p "$B/images" "$B/models"
+  (cd "$WORK" && openssl genpkey -algorithm ed25519 -out pk.key && openssl pkey -in pk.key -pubout -out pk.pub \
+    && openssl genpkey -algorithm ed25519 -out autre-pk.key) >/dev/null 2>&1
+  printf 'app ghcr.io/couldevlop/qualitos/api-core:1.2.3\ntiers postgres:17-alpine\n' > "$B/images.txt"
+  printf 'image1' | gzip > "$B/images/001.tar.gz"; printf 'image2' | gzip > "$B/images/002.tar.gz"
+  printf 'modeles' | gzip > "$B/models/ollama-models.tar.gz"
+  echo 1.2.3 > "$B/VERSION"
+  signer() {  # <paquet> <clé>
+    (cd "$1" && find . -type f ! -name 'SHA256SUMS*' | sed 's#^\./##' | LC_ALL=C sort | while IFS= read -r f; do sha256sum "$f"; done > SHA256SUMS)
+    (cd "$WORK" && openssl pkeyutl -sign -inkey "$(basename "$2")" -rawin -in "paquet/SHA256SUMS" | openssl base64 -A > "paquet/SHA256SUMS.sig")
+  }
+  signer "$B" "$WORK/pk.key"
+  check "paquet intègre accepté"               qos_bundle_verify "$B" "$WORK/pk.pub"
+  cp -r "$B" "$WORK/paquet-ok"
+  printf 'tiers evil/image:1\n' >> "$B/images.txt"
+  check "liste d'images altérée : refus"       bash -c ". '$ONPREM/lib.sh'; ! qos_bundle_verify '$B' '$WORK/pk.pub' 2>/dev/null"
+  rm -rf "$B"; cp -r "$WORK/paquet-ok" "$B"; signer "$B" "$WORK/autre-pk.key"
+  check "signé par une autre clé : refus"      bash -c ". '$ONPREM/lib.sh'; ! qos_bundle_verify '$B' '$WORK/pk.pub' 2>/dev/null"
+  rm -rf "$B"; cp -r "$WORK/paquet-ok" "$B"; printf 'ajout' > "$B/models/ajout.tar.gz"
+  check "fichier ajouté après signature : refus" bash -c ". '$ONPREM/lib.sh'; ! qos_bundle_verify '$B' '$WORK/pk.pub' 2>/dev/null"
+  rm -rf "$B"; cp -r "$WORK/paquet-ok" "$B"; rm "$B/SHA256SUMS.sig"
+  check "sans signature : refus"               bash -c ". '$ONPREM/lib.sh'; ! qos_bundle_verify '$B' '$WORK/pk.pub' 2>/dev/null"
+  rm -rf "$B"; cp -r "$WORK/paquet-ok" "$B"
+  printf '%s  ../../etc/passwd\n' "$(printf x | sha256sum | cut -d' ' -f1)" >> "$B/SHA256SUMS"
+  (cd "$WORK" && openssl pkeyutl -sign -inkey pk.key -rawin -in paquet/SHA256SUMS | openssl base64 -A > paquet/SHA256SUMS.sig)
+  check "chemin hors du paquet : refus"        bash -c ". '$ONPREM/lib.sh'; ! qos_bundle_verify '$B' '$WORK/pk.pub' 2>/dev/null"
+  rm -rf "$B"; cp -r "$WORK/paquet-ok" "$B"
+  : > "$WORK/docker.log"
+  LOADED="$(DOCKER_LOG="$WORK/docker.log" PATH="$WORK/cbin:$PATH" QOS_REGISTRY=reg.acme.local/qualitos \
+    QOS_MIRROR_REGISTRY=reg.acme.local/miroir bash -c ". '$ONPREM/lib.sh'; qos_bundle_load '$B' push")"
+  LOG="$(cat "$WORK/docker.log")"
+  check "images chargées"                      eq "$(grep -c '^load' "$WORK/docker.log")" 2
+  check "renommées pour le site"               contains "$LOG" "tag ghcr.io/couldevlop/qualitos/api-core:1.2.3 reg.acme.local/qualitos/api-core:1.2.3"
+  check "poussées vers le registre du site"    contains "$LOG" "push --quiet reg.acme.local/miroir/library/postgres:17-alpine"
+  check "liste des images posées"              contains "$LOADED" "reg.acme.local/qualitos/api-core:1.2.3"
+  # Le mode léger avec le paquet : rien n'est tiré d'Internet, modèles posés.
+  # Une copie des scripts dont la clé épinglée est celle du banc : la vraie clé
+  # de l'éditeur ne signe jamais rien ici.
+  mkdir -p "$WORK/depot" && cp -r "$ROOT/infra" "$WORK/depot/" && cp "$WORK/pk.pub" "$WORK/depot/infra/onprem/bundle/editeur-paquet.pub"
+  : > "$WORK/docker.log"
+  OUT="$(QOS_BUNDLE="$B" DOCKER_LOG="$WORK/docker.log" PATH="$WORK/cbin:$PATH" PYTHONIOENCODING=utf-8     bash "$WORK/depot/infra/onprem/compose/qualitos-compose.sh" installer "$WORK/leger.conf" v1.2.3 2>&1)"; RC=$?
+  check "mode léger hors ligne : va au bout"   eq "$RC" 0
+  [ "$RC" = 0 ] || printf '%s\n' "$OUT" | tail -15 >&2
+  LOG="$(cat "$WORK/docker.log")"
+  check "hors ligne : aucun pull"              lacks "$LOG" " pull"
+  check "hors ligne : images du paquet"        contains "$LOG" "load"
+  OUT="$(QOS_BUNDLE="$B" leger verifier "$WORK/leger.conf")"
+  check "paquet signé par une clé inconnue du dépôt : refus" contains "$OUT" "paquet hors ligne refusé"
+else
+  [ -z "${CI:-}" ] || { FAIL=$((FAIL + 1)); echo "  ÉCHEC OpenSSL 3 requis en CI pour le paquet hors ligne" >&2; }
+  echo "  (signature Ed25519 : OpenSSL 3 absent de ce poste, vérifications sautées)"
+fi
+
+# ---------------------------------------------------------------------------
+echo "copie hors serveur (mode léger)"
+OFFSITE="$($EXTRACT "$ROOT/infra/k8s/deps/61-backup-offsite.yaml" '^kind: CronJob' '^\s+- \|')"
+check "script de copie : syntaxe"            sh -n <(printf '%s\n' "$OFFSITE")
+check "copie sans suppression distante"      lacks "$OFFSITE" "--remove"
+check "destination en clair refusée"         contains "$OFFSITE" "non chiffrée"
+sed '/^QOS_OLLAMA_URL=/d' "$WORK/leger.conf" > "$WORK/leger-s3.conf"
+printf 'QOS_BACKUP_S3_URL=https://s3.acme.local/b/q\nQOS_BACKUP_S3_ACCESS_KEY=a\nQOS_BACKUP_S3_SECRET_KEY=xxxx-xxxx-xxxx\n' >> "$WORK/leger-s3.conf"
+OUT="$(leger installer "$WORK/leger-s3.conf" v1.2.4)"; RC=$?
+check "avec destination : va au bout"        eq "$RC" 0
+check "profils IA et hors-site"              contains "$(cat "$WORK/opt/.env")" "COMPOSE_PROFILES=ollama,hors-site"
+check "script de copie posé"                 sh -n "$WORK/opt/backup-offsite.sh"
 
 echo
 echo "$PASS réussi(s), $FAIL échec(s)"
