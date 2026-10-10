@@ -141,6 +141,25 @@ jobs:
           printf 'QOS_HOST=q.example.local\nQOS_REGISTRY=r.example.local\nQOS_VERSION=0\n' >> ci.env
           docker compose --env-file ci.env --profile ollama --profile hors-site config --quiet
 
+  spring-exposure-guard:
+    name: Composants Spring exposés
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      # Garde de l'exception .trivyignore du 2026-10-10 (CVE-2026-47884,
+      # CVE-2026-47890) : elle ne tient que tant que ni vue XSLT ni flux SSE
+      # n'existe dans les services Java.
+      - name: Ni vue XSLT ni flux SSE
+        run: |
+          if grep -rnE "XsltView|SseEmitter|ServerSentEvent|TEXT_EVENT_STREAM|text/event-stream" \
+               --include=*.java apps libs; then
+            echo "::error::vue XSLT ou flux SSE introduit : l'exception Trivy de Spring 6.2.19 (CVE-2026-47884/47890) ne tient plus — migrer vers Spring Boot 4 ou retirer ce code"
+            exit 1
+          fi
+
   sast-semgrep:
     name: SAST (Semgrep)
     runs-on: ubuntu-latest
