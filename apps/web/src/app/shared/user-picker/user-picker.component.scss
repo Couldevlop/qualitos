@@ -1,0 +1,78 @@
+// Un champ de formulaire comme les autres : il prend la largeur que lui donne
+// son conteneur, et ne se distingue que par la liste qu'il ouvre.
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.picker {
+  width: 100%;
+}
+
+.picker__lead {
+  color: var(--qos-fg-tertiary);
+  margin-inline: var(--qos-space-2) var(--qos-space-1);
+}
+
+.picker__hint--warn {
+  color: var(--qos-warn-fg);
+}
+
+// Les propositions vivent dans un calque (overlay) hors de l'hôte : les styles
+// scopés du composant y parviennent par ::ng-deep, limités à la classe du panneau.
+::ng-deep .qos-user-picker-panel {
+  .picker__status {
+    font-size: var(--qos-fs-sm);
+    color: var(--qos-fg-secondary);
+  }
+
+  .picker__status--error {
+    color: var(--qos-danger-fg);
+  }
+
+  .option {
+    display: flex;
+    align-items: center;
+    gap: var(--qos-space-3);
+    min-width: 0;
+    padding-block: var(--qos-space-1);
+  }
+
+  .option__avatar {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: var(--qos-radius-pill);
+    background: var(--qos-accent-bg-soft);
+    color: var(--qos-accent-fg-soft);
+    font-size: var(--qos-fs-xs);
+    font-weight: var(--qos-fw-semibold);
+    text-transform: uppercase;
+  }
+
+  .option__text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    line-height: var(--qos-lh-snug);
+  }
+
+  .option__name {
+    color: var(--qos-fg-primary);
+    font-weight: var(--qos-fw-semibold);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .option__email {
+    color: var(--qos-fg-secondary);
+    font-size: var(--qos-fs-xs);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
