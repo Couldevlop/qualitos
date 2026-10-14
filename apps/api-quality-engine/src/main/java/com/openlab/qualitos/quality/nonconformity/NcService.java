@@ -1,12 +1,9 @@
 package com.openlab.qualitos.quality.nonconformity;
 
 import com.openlab.qualitos.quality.authz.application.RecordScope;
-import com.openlab.qualitos.quality.capa.CapaCase;
-import com.openlab.qualitos.quality.capa.CapaCaseRepository;
-import com.openlab.qualitos.quality.capa.CapaCriticity;
+import com.openlab.qualitos.quality.capa.CapaDto;
+import com.openlab.qualitos.quality.capa.CapaService;
 import com.openlab.qualitos.quality.capa.CapaSourceType;
-import com.openlab.qualitos.quality.capa.CapaStatus;
-import com.openlab.qualitos.quality.capa.CapaType;
 import com.openlab.qualitos.quality.common.CurrentUser;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.common.TenantContext;
@@ -36,15 +33,20 @@ import java.util.function.Function;
 public class NcService {
 
     private final NonConformityRepository repository;
-    private final CapaCaseRepository capaCaseRepository;
+    /**
+     * Ouverture du dossier CAPA par le module CAPA lui-même (ADR 0088) : le
+     * dossier naît avec son action, son journal et ses notifications, comme
+     * depuis n'importe quel autre écran.
+     */
+    private final CapaService capaService;
     private final ApplicationEventPublisher events;
     /** Sans « voir toutes les NC », on ne voit que celles qu'on a déclarées (ADR 0081). */
     private final RecordScope scope;
 
-    public NcService(NonConformityRepository repository, CapaCaseRepository capaCaseRepository,
+    public NcService(NonConformityRepository repository, CapaService capaService,
                      ApplicationEventPublisher events, RecordScope scope) {
         this.repository = repository;
-        this.capaCaseRepository = capaCaseRepository;
+        this.capaService = capaService;
         this.events = events;
         this.scope = scope;
     }
@@ -250,40 +252,25 @@ public class NcService {
     }
 
     /**
-     * Escalade la NC en CAPA (§4.3) : crée un CapaCase lié (sourceType = NON_CONFORMITY,
-     * sourceRef = référence NC), pose capa_case_id. Ne change pas le statut de la NC.
-     * Idempotent : une 2e escalade est refusée.
+     * Ouvre la CAPA de cette NC (§4.3, ADR 0088) : le dossier ET son action
+     * unique, saisis dans la fenêtre commune, puis pose {@code capa_case_id}.
+     *
+     * <p>La source n'est pas lue dans le corps : c'est cette NC, par sa
+     * référence. Ne change pas le statut de la NC. Une seconde ouverture est
+     * refusée — une NC a une CAPA, qui porte une action.
      */
-    public NcDto.Response escalateToCapa(UUID id, NcDto.EscalateRequest request) {
-        UUID tenantId = requireTenantId();
+    public NcDto.Response escalateToCapa(UUID id, CapaDto.OpenCaseRequest request) {
         NonConformity nc = load(id);
         if (nc.getCapaCaseId() != null) {
             throw new NcStateException("Non-conformity already escalated to CAPA " + nc.getCapaCaseId());
         }
-        CapaCase capa = new CapaCase();
-        capa.setTenantId(tenantId);
-        capa.setTitle(nc.getTitle());
-        capa.setDescription(nc.getDescription());
-        capa.setType(CapaType.CORRECTIVE);
-        capa.setCriticity(mapCriticity(nc.getSeverity()));
-        capa.setStatus(CapaStatus.OPEN);
-        capa.setSourceType(CapaSourceType.NON_CONFORMITY);
-        capa.setSourceRef(nc.getReference());
-        capa.setOwnerId(request.ownerId());
-        CapaCase saved = capaCaseRepository.save(capa);
-        nc.setCapaCaseId(saved.getId());
+        CapaDto.CaseResponse capa = capaService.openCase(
+                request, CapaSourceType.NON_CONFORMITY, nc.getReference());
+        nc.setCapaCaseId(capa.id());
         return toResponse(repository.save(nc));
     }
 
     // --- helpers ---
-
-    private static CapaCriticity mapCriticity(NcSeverity severity) {
-        return switch (severity) {
-            case MINOR -> CapaCriticity.LOW;
-            case MAJOR -> CapaCriticity.HIGH;
-            case CRITICAL -> CapaCriticity.CRITICAL;
-        };
-    }
 
     /** NC-{année}-{séquence par tenant}, avec garde anti-collision. */
     private String generateReference(UUID tenantId) {

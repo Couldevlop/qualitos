@@ -69,7 +69,8 @@ class RiskRegisterControllerTest {
             + "\"grossSeverity\":4,\"grossProbability\":3,\"decision\":\"REDUCE\","
             + "\"requirements\":[\"ISO_9001_6_1\",\"IATF_16949_6_1_2\"]}";
     static final String CORPS_CAPA = "{\"title\":\"Carte SPC\",\"kind\":\"PREVENTIVE\","
-            + "\"assignee\":\"A. Diallo\",\"dueDate\":\"2026-12-01\"}";
+            + "\"ownerId\":\"6f1c2a4e-1f0b-4c47-9d0e-2b8f3a6c7d11\",\"ownerName\":\"A. Diallo\","
+            + "\"dueDate\":\"2026-12-01\"}";
 
     static final String CORPS_OPP = "{\"title\":\"Automatiser SPC\",\"type\":\"QUALITY\","
             + "\"process\":\"Production\",\"owner\":\"Mme Diallo\",\"gain\":4,\"feasibility\":4}";
@@ -225,6 +226,12 @@ class RiskRegisterControllerTest {
         mockMvc.perform(post(BASE + "/risks/" + RISQUE + "/capa").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"title\":\"Carte SPC\",\"dueDate\":\"2026-12-01\"}"))
+                .andExpect(status().isBadRequest());
+        // Un responsable tapé en clair, sans compte de l'annuaire, ne suffit plus (ADR 0088).
+        mockMvc.perform(post(BASE + "/risks/" + RISQUE + "/capa").with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\":\"Carte SPC\",\"kind\":\"PREVENTIVE\","
+                                + "\"ownerName\":\"A. Diallo\",\"dueDate\":\"2026-12-01\"}"))
                 .andExpect(status().isBadRequest());
         mockMvc.perform(post(BASE + "/risks/" + RISQUE + "/capa").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON).content("{\"title\":\" \"}"))

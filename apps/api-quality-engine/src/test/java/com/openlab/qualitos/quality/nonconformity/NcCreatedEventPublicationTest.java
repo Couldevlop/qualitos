@@ -1,6 +1,6 @@
 package com.openlab.qualitos.quality.nonconformity;
 
-import com.openlab.qualitos.quality.capa.CapaCaseRepository;
+import com.openlab.qualitos.quality.capa.CapaService;
 import com.openlab.qualitos.quality.common.TenantContext;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -52,7 +52,7 @@ class NcCreatedEventPublicationTest {
     void setUp() {
         repo = mock(NonConformityRepository.class);
         events = mock(ApplicationEventPublisher.class);
-        service = new NcService(repo, mock(CapaCaseRepository.class), events, viewAll -> Optional.empty());
+        service = new NcService(repo, mock(CapaService.class), events, viewAll -> Optional.empty());
         TenantContext.setTenantId(CONTEXT_TENANT.toString());
     }
 

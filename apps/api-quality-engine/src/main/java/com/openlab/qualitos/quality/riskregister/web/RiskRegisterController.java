@@ -94,7 +94,7 @@ public class RiskRegisterController {
     public RiskRegisterDto.CapaView openCapa(@PathVariable UUID id,
                                              @Valid @RequestBody RiskRegisterWebDto.CapaRequest r) {
         return service.openCapa(id, new RiskRegisterDto.CapaCommand(r.title(), r.description(), r.kind(),
-                r.assignee(), r.dueDate()));
+                r.ownerId(), r.ownerName(), r.dueDate()));
     }
 
     /**
