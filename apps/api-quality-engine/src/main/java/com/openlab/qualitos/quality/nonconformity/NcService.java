@@ -260,7 +260,9 @@ public class NcService {
      * refusée — une NC a une CAPA, qui porte une action.
      */
     public NcDto.Response escalateToCapa(UUID id, CapaDto.OpenCaseRequest request) {
-        NonConformity nc = load(id);
+        // Sous verrou : un double clic ou deux onglets ne doivent pas ouvrir deux
+        // dossiers dont le second écraserait le lien du premier.
+        NonConformity nc = loadForUpdate(id);
         if (nc.getCapaCaseId() != null) {
             throw new NcStateException("Non-conformity already escalated to CAPA " + nc.getCapaCaseId());
         }
@@ -282,6 +284,14 @@ public class NcService {
             next++;
         } while (repository.existsByTenantIdAndReference(tenantId, reference));
         return reference;
+    }
+
+    private NonConformity loadForUpdate(UUID id) {
+        UUID tenantId = requireTenantId();
+        Optional<UUID> seulement = NcScope.restriction(scope);
+        return repository.findForUpdateByIdAndTenantId(id, tenantId)
+                .filter(nc -> NcScope.sees(seulement, nc))
+                .orElseThrow(() -> new NcNotFoundException(id));
     }
 
     private NonConformity load(UUID id) {

@@ -54,7 +54,7 @@ public class AuditFindingCapaService {
         if (plan.getStatus() == AuditStatus.CANCELLED) {
             throw new AuditStateException("A cancelled audit opens no CAPA");
         }
-        AuditFinding finding = findingRepository.findByIdAndPlanId(findingId, planId)
+        AuditFinding finding = findingRepository.findForUpdateByIdAndPlanId(findingId, planId)
                 .orElseThrow(() -> new AuditFindingNotFoundException(findingId));
         if (!NON_CONFORMING.contains(finding.getType())) {
             throw new AuditStateException("Only a non-conforming finding opens a CAPA");

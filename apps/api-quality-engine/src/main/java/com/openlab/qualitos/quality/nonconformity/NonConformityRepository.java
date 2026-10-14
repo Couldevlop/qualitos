@@ -2,7 +2,9 @@ package com.openlab.qualitos.quality.nonconformity;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.util.Collection;
@@ -51,6 +53,10 @@ public interface NonConformityRepository
     long countByTenantIdAndOriginAndStatus(UUID tenantId, NcOrigin origin, NcStatus status);
 
     Optional<NonConformity> findByIdAndTenantId(UUID id, UUID tenantId);
+
+    /** La NC sous verrou d'écriture : deux ouvertures de CAPA simultanées ne créent pas deux dossiers. */
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    Optional<NonConformity> findForUpdateByIdAndTenantId(UUID id, UUID tenantId);
 
     /** Vrai si la référence générée est déjà prise pour ce tenant (collision improbable). */
     boolean existsByTenantIdAndReference(UUID tenantId, String reference);

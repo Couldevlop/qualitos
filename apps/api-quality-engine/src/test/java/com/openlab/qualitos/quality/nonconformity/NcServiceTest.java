@@ -322,7 +322,7 @@ class NcServiceTest {
     @Test
     void escalate_ouvreLaCapaEtSonAction_parLeModuleCapa_etLie_sansToucherAuStatut() {
         NonConformity n = nc(TENANT, NcStatus.UNDER_ANALYSIS);
-        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+        when(repo.findForUpdateByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
         UUID capaId = UUID.randomUUID();
         CapaDto.OpenCaseRequest demande = openReq();
         CapaDto.CaseResponse ouvert = new CapaDto.CaseResponse(capaId, TENANT, "t", null, CapaType.CORRECTIVE,
@@ -344,7 +344,7 @@ class NcServiceTest {
     void escalate_secondTime_idempotent_refused() {
         NonConformity n = nc(TENANT, NcStatus.UNDER_ANALYSIS);
         n.setCapaCaseId(UUID.randomUUID());
-        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+        when(repo.findForUpdateByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
         assertThatThrownBy(() -> service.escalateToCapa(n.getId(), openReq()))
                 .isInstanceOf(NcStateException.class)
                 .hasMessageContaining("already escalated");

@@ -219,7 +219,7 @@ public class MocService {
     public MocDto.Detail submit(UUID id) {
         UUID tenantId = MocSettingsService.requireTenantId();
         UUID acteur = CurrentUser.requireUserId();
-        ChangeRequest c = load(tenantId, id);
+        ChangeRequest c = loadForUpdate(tenantId, id);
         exigerConducteur(c);
         exiger(c, ChangeRequestStatus.IN_ANALYSIS, "moc.not-in-analysis",
                 "Seule une demande en analyse se soumet à validation.");
@@ -276,7 +276,7 @@ public class MocService {
     public MocDto.Detail decide(UUID id, UUID validationId, MocDto.DecisionForm form) {
         UUID tenantId = MocSettingsService.requireTenantId();
         UUID acteur = CurrentUser.requireUserId();
-        ChangeRequest c = load(tenantId, id);
+        ChangeRequest c = loadForUpdate(tenantId, id);
         exiger(c, ChangeRequestStatus.IN_VALIDATION, "moc.not-in-validation",
                 "Seule une demande en validation reçoit des décisions.");
         ChangeValidation v = validationRepo.findByTenantIdAndChangeIdOrderByOrdinalAsc(tenantId, id).stream()
@@ -338,7 +338,7 @@ public class MocService {
     @Transactional
     public MocDto.Detail reopen(UUID id) {
         UUID tenantId = MocSettingsService.requireTenantId();
-        ChangeRequest c = load(tenantId, id);
+        ChangeRequest c = loadForUpdate(tenantId, id);
         exigerConducteur(c);
         exiger(c, ChangeRequestStatus.REJECTED, "moc.not-rejected", "Seule une demande rejetée se rouvre.");
         MocSettings s = settings.load(tenantId);
@@ -530,6 +530,11 @@ public class MocService {
         if (c.getStatus() != attendu) {
             throw MocException.conflict(code, message + " (statut : " + c.getStatus() + ")");
         }
+    }
+
+    private ChangeRequest loadForUpdate(UUID tenantId, UUID id) {
+        return requestRepo.findForUpdateByIdAndTenantId(id, tenantId)
+                .orElseThrow(() -> new ChangeRequestNotFoundException(id));
     }
 
     private ChangeRequest load(UUID tenantId, UUID id) {

@@ -4,6 +4,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 import { AuthzService } from '../../../../core/authz/authz.service';
 import { mocClassificationLabel, mocErrorMessage, mocStatusLabel } from '../../moc.labels';
@@ -135,9 +136,13 @@ export class MocComponent implements OnInit {
 
   // ---------- demande sélectionnée ----------
 
+  /** La lecture en cours : un clic sur une autre demande l'annule, sa réponse tardive ne s'affichera pas. */
+  private detailSub?: Subscription;
+
   private loadDetail(id: string): void {
     this.detailLoading = true;
-    this.service.get(id).subscribe({
+    this.detailSub?.unsubscribe();
+    this.detailSub = this.service.get(id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: d => {
         this.detail = d;
         this.detailLoading = false;

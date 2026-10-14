@@ -47,7 +47,7 @@ class AuditFindingCapaServiceTest {
         AuditFinding premier = finding(plan, FindingType.OBSERVATION);
         AuditFinding second = finding(plan, FindingType.MAJOR_NC);
         when(plans.findByIdAndTenantId(plan.getId(), TENANT)).thenReturn(Optional.of(plan));
-        when(findings.findByIdAndPlanId(second.getId(), plan.getId())).thenReturn(Optional.of(second));
+        when(findings.findForUpdateByIdAndPlanId(second.getId(), plan.getId())).thenReturn(Optional.of(second));
         UUID capaId = UUID.randomUUID();
         CapaDto.CaseResponse ouvert = new CapaDto.CaseResponse(capaId, TENANT, "t", null, CapaType.CORRECTIVE,
                 CapaCriticity.HIGH, com.openlab.qualitos.quality.capa.CapaStatus.OPEN, CapaSourceType.AUDIT,
@@ -86,7 +86,7 @@ class AuditFindingCapaServiceTest {
         AuditPlan plan = plan(AuditStatus.IN_PROGRESS, "AUD-1");
         AuditFinding obs = finding(plan, FindingType.OPPORTUNITY);
         when(plans.findByIdAndTenantId(plan.getId(), TENANT)).thenReturn(Optional.of(plan));
-        when(findings.findByIdAndPlanId(obs.getId(), plan.getId())).thenReturn(Optional.of(obs));
+        when(findings.findForUpdateByIdAndPlanId(obs.getId(), plan.getId())).thenReturn(Optional.of(obs));
 
         assertThatThrownBy(() -> service.open(plan.getId(), obs.getId(), demande()))
                 .isInstanceOf(AuditStateException.class)
@@ -100,7 +100,7 @@ class AuditFindingCapaServiceTest {
         AuditFinding f = finding(plan, FindingType.MINOR_NC);
         f.setCapaId(UUID.randomUUID());
         when(plans.findByIdAndTenantId(plan.getId(), TENANT)).thenReturn(Optional.of(plan));
-        when(findings.findByIdAndPlanId(f.getId(), plan.getId())).thenReturn(Optional.of(f));
+        when(findings.findForUpdateByIdAndPlanId(f.getId(), plan.getId())).thenReturn(Optional.of(f));
 
         assertThatThrownBy(() -> service.open(plan.getId(), f.getId(), demande()))
                 .isInstanceOf(AuditStateException.class)
@@ -128,7 +128,7 @@ class AuditFindingCapaServiceTest {
         AuditPlan plan = plan(AuditStatus.IN_PROGRESS, "AUD-1");
         UUID findingId = UUID.randomUUID();
         when(plans.findByIdAndTenantId(plan.getId(), TENANT)).thenReturn(Optional.of(plan));
-        when(findings.findByIdAndPlanId(findingId, plan.getId())).thenReturn(Optional.empty());
+        when(findings.findForUpdateByIdAndPlanId(findingId, plan.getId())).thenReturn(Optional.empty());
         assertThatThrownBy(() -> service.open(plan.getId(), findingId, demande()))
                 .isInstanceOf(AuditFindingNotFoundException.class);
         verifyNoInteractions(capaService);

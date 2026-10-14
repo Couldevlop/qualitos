@@ -4,7 +4,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, convertToParamMap, ParamMap, provideRouter, Router } from '@angular/router';
-import { BehaviorSubject, of, throwError } from 'rxjs';
+import { BehaviorSubject, Subject, of, throwError } from 'rxjs';
 
 import { AuthzService } from '../../../../core/authz/authz.service';
 import { SharedModule } from '../../../../shared/shared.module';
@@ -70,6 +70,16 @@ describe('MocComponent', () => {
     expect(active?.getAttribute('aria-current')).toBe('true');
     expect(active?.textContent).toContain('MOC-2026-013');
     expect(hote().querySelector('qos-moc-detail')).not.toBeNull();
+  });
+
+  it('un clic rapide sur une autre demande : la réponse tardive de la première ne s’affiche pas', async () => {
+    await setup('c2');
+    const lente = new Subject<ReturnType<typeof demande>>();
+    service.get.and.callFake(i => i === 'c1' ? lente.asObservable() : of(demande({ id: i })));
+    params.next(convertToParamMap({ id: 'c1' }));
+    params.next(convertToParamMap({ id: 'c3' }));
+    lente.next(demande({ id: 'c1' }));
+    expect(component.detail?.id).toBe('c3');
   });
 
   it('filtre par statut et offre « À valider par moi »', async () => {
