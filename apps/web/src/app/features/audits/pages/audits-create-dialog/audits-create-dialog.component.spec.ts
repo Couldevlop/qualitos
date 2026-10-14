@@ -5,6 +5,8 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { of, throwError } from 'rxjs';
 
 import { AuthService, AuthUser } from '../../../../core/auth/auth.service';
+import { TenantTeamService } from '../../../admin/tenant-team.service';
+import { TenantUser } from '../../../admin/admin.types';
 import { SharedModule } from '../../../../shared/shared.module';
 import { UiModule } from '../../../../shared/ui/ui.module';
 import { AuditsService } from '../../audits.service';
@@ -14,9 +16,9 @@ import { AuditsCreateDialogComponent } from './audits-create-dialog.component';
 /**
  * Création d'un plan d'audit (§4.4).
  *
- * L'auditeur pilote est pris dans le JWT et jamais saisi (§18.2 #2) : un plan
- * d'audit dont le pilote serait déclaré par l'appelant n'aurait aucune valeur
- * probatoire.
+ * L'auditeur responsable se CHOISIT dans l'annuaire, l'utilisateur connecté
+ * par défaut. Il était recopié en silence depuis la session, puis affiché comme
+ * un identifiant que personne ne savait relire.
  */
 describe('AuditsCreateDialogComponent', () => {
   let fixture: ComponentFixture<AuditsCreateDialogComponent>;
@@ -25,6 +27,12 @@ describe('AuditsCreateDialogComponent', () => {
   let dialogRef: jasmine.SpyObj<MatDialogRef<AuditsCreateDialogComponent>>;
   let snack: jasmine.SpyObj<MatSnackBar>;
   let session: AuthUser | null;
+  let team: jasmine.SpyObj<TenantTeamService>;
+
+  const membre = (over: Partial<TenantUser>): TenantUser => ({
+    id: 'internal-' + (over.keycloakId ?? 'x'), tenantId: 't1', keycloakId: 'x', email: 'x@exemple.test',
+    roles: ['auditor'], active: true, createdAt: '', updatedAt: '', ...over
+  });
 
   const created = { id: 'a-9', title: 'Audit' } as AuditPlanResponse;
 
@@ -35,6 +43,15 @@ describe('AuditsCreateDialogComponent', () => {
     dialogRef = jasmine.createSpyObj<MatDialogRef<AuditsCreateDialogComponent>>(
       'MatDialogRef', ['close']);
     snack = jasmine.createSpyObj<MatSnackBar>('MatSnackBar', ['open']);
+    team = jasmine.createSpyObj<TenantTeamService>('TenantTeamService', ['list']);
+    team.list.and.returnValue(of({
+      content: [
+        membre({ keycloakId: 'u1', email: 'demo@exemple.test' }),
+        membre({ keycloakId: 'u2', email: 'bruno@exemple.test' }),
+        membre({ keycloakId: 'u3', email: 'parti@exemple.test', active: false })
+      ],
+      totalElements: 3, totalPages: 1, number: 0, size: 200
+    }));
 
     await TestBed.configureTestingModule({
       declarations: [AuditsCreateDialogComponent],
@@ -43,7 +60,8 @@ describe('AuditsCreateDialogComponent', () => {
         { provide: AuditsService, useValue: svc },
         { provide: MatDialogRef, useValue: dialogRef },
         { provide: MatSnackBar, useValue: snack },
-        { provide: AuthService, useValue: { snapshot: () => session } }
+        { provide: AuthService, useValue: { snapshot: () => session } },
+        { provide: TenantTeamService, useValue: team }
       ]
     }).compileComponents();
 
@@ -118,10 +136,28 @@ describe('AuditsCreateDialogComponent', () => {
       // (cf. « omet les champs facultatifs laissés vides ») et disparaît à la
       // sérialisation JSON. Le serveur ne voit donc aucun destinataire.
       reminderEmail: undefined,
-      leadAuditorId: 'u1'
+      leadAuditorId: 'u1',
+      leadAuditorName: 'Demo'
     });
     expect(dialogRef.close).toHaveBeenCalledWith(created);
     expect(component.submitting).toBeFalse();
+  });
+
+  it('propose soi-même en tête puis les membres actifs, soi-même par défaut', () => {
+    expect(component.leadAuditors.map(o => o.id)).toEqual(['u1', 'u2']);
+    expect(component.leadAuditors[0].label).toContain('Demo');
+    expect(component.form.getRawValue().leadAuditorId).toBe('u1');
+    expect(component.directoryUnavailable).toBeFalse();
+  });
+
+  it('confie l\'audit à un collègue choisi, avec son nom', () => {
+    component.form.patchValue({ title: 'Audit', leadAuditorId: 'u2' });
+
+    component.submit();
+
+    expect(svc.createPlan).toHaveBeenCalledWith(jasmine.objectContaining({
+      leadAuditorId: 'u2', leadAuditorName: 'bruno@exemple.test'
+    }));
   });
 
   it('nettoie le destinataire du rappel comme les autres champs', () => {
@@ -158,15 +194,21 @@ describe('AuditsCreateDialogComponent', () => {
 
   // ---- Cas dégradés -----------------------------------------------------------------
 
-  it('refuse de créer sans session et le dit, plutôt que d\'inventer un pilote', () => {
-    session = null;
-    component.form.patchValue({ title: 'Audit' });
+  it('refuse de créer sans auditeur responsable, plutôt que d\'en inventer un', () => {
+    component.form.patchValue({ title: 'Audit', leadAuditorId: '' });
 
     component.submit();
 
     expect(svc.createPlan).not.toHaveBeenCalled();
-    expect(snack.open).toHaveBeenCalled();
     expect(component.submitting).toBeFalse();
+  });
+
+  it('annuaire indisponible : seul soi-même est proposé, et l\'écran le dit', () => {
+    team.list.and.returnValue(throwError(() => ({ status: 403 })));
+    component.ngOnInit();
+
+    expect(component.leadAuditors.map(o => o.id)).toEqual(['u1']);
+    expect(component.directoryUnavailable).toBeTrue();
   });
 
   it('laisse le dialogue ouvert et explique quand le serveur refuse', () => {

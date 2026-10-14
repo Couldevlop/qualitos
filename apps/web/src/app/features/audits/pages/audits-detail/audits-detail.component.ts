@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
 import { catchError, finalize, shareReplay, switchMap, tap } from 'rxjs/operators';
 
+import { AuthService } from '../../../../core/auth/auth.service';
 import { deferredView } from '../../../../core/rx/deferred-view';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../../../shared/ui/confirm-dialog/confirm-dialog.component';
@@ -18,6 +19,7 @@ import {
   AuditsFindingDialogData
 } from '../audits-finding-dialog/audits-finding-dialog.component';
 import { AuditPlanResponse, AuditStatus, ChecklistItemResponse } from '../../audits.types';
+import { leadAuditorDisplay } from '../../lead-auditor';
 import {
   ChecklistFromStandardDialogComponent,
   ChecklistFromStandardDialogData
@@ -52,7 +54,8 @@ export class AuditsDetailComponent implements OnInit {
   private readonly errorState$ = new BehaviorSubject<string | null>(null);
   readonly error$ = deferredView(this.errorState$);
   acting$ = new BehaviorSubject<boolean>(false);
-  generating = false;
+  /** Rapport émis : il verrouille les documents de l'audit. */
+  reportIssued = false;
 
   private planId = '';
   private readonly reload$ = new BehaviorSubject<void>(undefined);
@@ -63,7 +66,8 @@ export class AuditsDetailComponent implements OnInit {
     private readonly router: Router,
     private readonly audits: AuditsService,
     private readonly dialog: MatDialog,
-    private readonly snack: MatSnackBar
+    private readonly snack: MatSnackBar,
+    private readonly auth: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -215,33 +219,61 @@ export class AuditsDetailComponent implements OnInit {
   complete(): void { this.transition('complete'); }
   cancel(): void { this.transition('cancel'); }
 
-  /** Libellé du bouton selon qu'un rapport existe déjà. */
-  reportButtonLabel(hasSummary: boolean): string {
-    return hasSummary
-      ? $localize`:@@audits.detail.regenerate-report:Régénérer le rapport (IA)`
-      : $localize`:@@audits.detail.generate-report:Générer le rapport (IA)`;
+  /** L'auditeur responsable, par son nom — jamais l'identifiant de son compte. */
+  leadAuditorLabel(p: AuditPlanResponse): string {
+    return leadAuditorDisplay(p, this.auth.snapshot());
   }
 
-  /** Génère le rapport d'audit par LLM (ANO-012, §1.4/§4.4) et recharge le détail. */
-  generateReport(): void {
-    if (this.generating) return;
-    this.generating = true;
-    this.audits.generateReport(this.planId)
-      .pipe(finalize(() => (this.generating = false)))
-      .subscribe({
-        next: () => {
-          this.snack.open($localize`:@@audits.detail.report-generated:Rapport d'audit généré.`, $localize`:@@common.ok:OK`, { duration: 2500 });
-          this.reload$.next();
-        },
-        error: err => {
-          // eslint-disable-next-line no-console
-          console.warn('[audits-detail] generateReport failed', err?.status, err?.error?.title);
-          this.snack.open(
-            safeErrorMessage(err, $localize`:@@audits.detail.report-error:Génération du rapport indisponible (service IA).`),
-            $localize`:@@common.close:Fermer`, { duration: 4000 }
-          );
-        }
-      });
+  /**
+   * Pourquoi « Ajouter un constat » est barré, s'il l'est.
+   *
+   * Le serveur n'accepte un constat que pendant l'audit (IN_PROGRESS). Le bouton
+   * restait actif sur un audit PLANIFIÉ — l'état de tout audit qui vient d'être
+   * créé — et le refus revenait en « État incompatible — rechargez la page »,
+   * qu'aucun rechargement ne levait. La règle est désormais dite à l'écran, avec
+   * le geste qui la lève.
+   */
+  findingBlocker(p: AuditPlanResponse): string | null {
+    switch (p.status) {
+      case 'IN_PROGRESS':
+        return null;
+      case 'PLANNED':
+        return p.checklist?.length
+          ? $localize`:@@audits.detail.finding-blocked-planned:Les constats se relèvent pendant l'audit : démarrez-le pour en ajouter.`
+          : $localize`:@@audits.detail.finding-blocked-no-checklist:Les constats se relèvent pendant l'audit. Ajoutez d'abord une question à la checklist, puis démarrez l'audit.`;
+      case 'COMPLETED':
+        return $localize`:@@audits.detail.finding-blocked-completed:Audit clôturé : plus aucun constat ne peut être ajouté.`;
+      default:
+        return $localize`:@@audits.detail.finding-blocked-cancelled:Audit annulé : plus aucun constat ne peut être ajouté.`;
+    }
+  }
+
+  /** Le démarrage exige au moins une question : le serveur refuse sinon. */
+  startBlocker(p: AuditPlanResponse): string | null {
+    if (p.status !== 'PLANNED') return null;
+    return p.checklist?.length
+      ? null
+      : $localize`:@@audits.detail.start-blocked:Ajoutez au moins une question à la checklist pour démarrer l'audit.`;
+  }
+
+  /** Raison du verrou des documents : audit annulé ou rapport émis. */
+  documentsLockReason(p: AuditPlanResponse): string | null {
+    if (p.status === 'CANCELLED') {
+      return $localize`:@@audits.detail.documents-locked-cancelled:Audit annulé : ses documents ne se modifient plus.`;
+    }
+    return this.reportIssued
+      ? $localize`:@@audits.detail.documents-locked-issued:Rapport émis : les documents de l'audit sont figés avec lui.`
+      : null;
+  }
+
+  /**
+   * Le panneau du rapport annonce son état après un chargement. Différé d'une
+   * microtâche : l'annonce peut tomber pendant la détection de changements du
+   * parent, et modifier une liaison à ce moment-là lèverait NG0100.
+   */
+  onReportIssued(issued: boolean): void {
+    if (issued === this.reportIssued) return;
+    queueMicrotask(() => (this.reportIssued = issued));
   }
 
   private transition(action: 'start' | 'complete' | 'cancel'): void {

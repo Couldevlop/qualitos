@@ -49,7 +49,6 @@ describe('AuditsService', () => {
   const findingReq = (over: Partial<AddFindingRequest> = {}): AddFindingRequest => ({
     type: 'MINOR_NC',
     description: 'Procédure documentée non à jour.',
-    raisedBy: 'u1',
     ...over
   });
 
@@ -326,6 +325,52 @@ describe('AuditsService', () => {
       expect(filtered.request.params.get('type')).toBe('INTERNAL');
       expect(filtered.request.params.get('horizonDays')).toBe('30');
       filtered.flush([]);
+    });
+
+    it('n\'envoie jamais l\'auteur d\'un constat : le serveur le lit dans le jeton', () => {
+      service.addFinding('p1', findingReq()).subscribe();
+      const post = http.expectOne(`${BASE}/p1/findings`);
+      expect(post.request.method).toBe('POST');
+      expect('raisedBy' in post.request.body).toBeFalse();
+      post.flush({} as FindingResponse);
+    });
+
+    it('lit, enregistre et émet le rapport sur les routes dédiées', () => {
+      service.getReport('p1').subscribe();
+      const get = http.expectOne(`${BASE}/p1/report`);
+      expect(get.request.method).toBe('GET');
+      get.flush({});
+
+      service.saveReportDraft('p1', {
+        summary: 'S', strengths: null, improvements: null, conclusion: 'FAVORABLE'
+      }).subscribe();
+      const put = http.expectOne(`${BASE}/p1/report`);
+      expect(put.request.method).toBe('PUT');
+      expect(put.request.body.conclusion).toBe('FAVORABLE');
+      put.flush({});
+
+      service.issueReport('p1').subscribe();
+      const issue = http.expectOne(`${BASE}/p1/report/issue`);
+      expect(issue.request.method).toBe('POST');
+      issue.flush({});
+    });
+
+    it('joint un document en multipart, le liste et le retire', () => {
+      const file = new File(['%PDF-1.7'], 'convocation.pdf', { type: 'application/pdf' });
+      service.uploadDocument('p1', file).subscribe();
+      const post = http.expectOne(`${BASE}/p1/documents`);
+      expect(post.request.method).toBe('POST');
+      expect(post.request.body instanceof FormData).toBeTrue();
+      expect((post.request.body as FormData).get('file')).toBeTruthy();
+      post.flush({});
+
+      service.listDocuments('p1').subscribe();
+      http.expectOne(`${BASE}/p1/documents`).flush([]);
+
+      service.deleteDocument('p1', 'd1').subscribe();
+      const del = http.expectOne(`${BASE}/p1/documents/d1`);
+      expect(del.request.method).toBe('DELETE');
+      del.flush(null);
     });
 
     it('transmet le destinataire du rappel tel quel à la création', () => {
