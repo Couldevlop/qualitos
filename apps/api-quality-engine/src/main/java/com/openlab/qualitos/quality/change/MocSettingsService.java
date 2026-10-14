@@ -101,7 +101,7 @@ public class MocSettingsService {
         Map<UUID, List<ValidationRole.RoleHolder>> titulaires = new HashMap<>();
         for (MocRoleHolderRow h : holderRepo.findByTenantIdOrderByOrdinalAsc(tenantId)) {
             titulaires.computeIfAbsent(h.getRoleId(), k -> new ArrayList<>())
-                    .add(new ValidationRole.RoleHolder(h.getUserId(), h.getUserLabel()));
+                    .add(new ValidationRole.RoleHolder(h.getUserId(), h.getUserLabel(), h.getUserEmail()));
         }
         List<ValidationRole> vr = roles.stream().map(r -> new ValidationRole(r.getId(), r.getLabel(),
                 requiredFor(r), titulaires.getOrDefault(r.getId(), List.of()))).toList();
@@ -127,7 +127,7 @@ public class MocSettingsService {
                 form.reminderDays(),
                 form.roles().stream().map(r -> new ValidationRole(r.id(), r.label().strip(),
                         r.requiredFor(), r.holders().stream()
-                        .map(h -> new ValidationRole.RoleHolder(h.userId(), h.label().strip())).toList()))
+                        .map(h -> new ValidationRole.RoleHolder(h.userId(), h.label().strip(), h.email())).toList()))
                         .toList()).validated();
 
         Map<UUID, MocValidationRoleRow> existants = roleRepo.findByTenantIdOrderByOrdinalAsc(tenantId).stream()
@@ -245,6 +245,7 @@ public class MocSettingsService {
                 hr.setRoleId(row.getId());
                 hr.setUserId(h.userId());
                 hr.setUserLabel(h.label());
+                hr.setUserEmail(h.email());
                 hr.setOrdinal(rang++);
                 holderRepo.save(hr);
             }
@@ -312,7 +313,7 @@ public class MocSettingsService {
         return new MocDto.SettingsView(s.thresholds().major(), s.thresholds().critical(), s.reminderDays(), poids,
                 s.roles().stream().map(r -> new MocDto.RoleView(r.id(), r.label(),
                         r.requiredFor().isEmpty() ? Set.of() : EnumSet.copyOf(r.requiredFor()),
-                        r.holders().stream().map(h -> new MocDto.HolderView(h.userId(), h.label())).toList()))
+                        r.holders().stream().map(h -> new MocDto.HolderView(h.userId(), h.label(), h.email())).toList()))
                         .toList());
     }
 

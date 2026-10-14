@@ -53,8 +53,11 @@ public class MocNotifier {
         this.clock = clock;
     }
 
-    /** Une personne à prévenir pour une demande : son adresse d'annuaire et les rôles qui la concernent. */
-    public record Recipient(UUID userId, String label, List<String> roles) {}
+    /**
+     * Une personne à prévenir pour une demande : son adresse d'annuaire ({@code null}
+     * si inconnue — la cloche seule la prévient) et les rôles qui la concernent.
+     */
+    public record Recipient(UUID userId, String address, List<String> roles) {}
 
     /**
      * Regroupe les titulaires de plusieurs rôles en destinataires uniques, le
@@ -68,7 +71,7 @@ public class MocNotifier {
                     continue;
                 }
                 Recipient r = parPersonne.computeIfAbsent(h.userId(),
-                        id -> new Recipient(id, h.label(), new ArrayList<>()));
+                        id -> new Recipient(id, h.mailAddress(), new ArrayList<>()));
                 if (!r.roles().contains(role)) {
                     r.roles().add(role);
                 }
@@ -137,7 +140,7 @@ public class MocNotifier {
 
     private void send(ChangeRequest c, Recipient r, NotificationType type, String title, String body) {
         inApp(c, r.userId(), type, title, body);
-        mail(r.label(), title, body + "\n\n" + link(c));
+        mail(r.address(), title, body + "\n\n" + link(c));
     }
 
     private void inApp(ChangeRequest c, UUID userId, NotificationType type, String title, String body) {

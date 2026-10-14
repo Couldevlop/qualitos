@@ -143,4 +143,24 @@ class MocNotifierTest {
         notifier.awaitingValidation(c, List.of(new MocNotifier.Recipient(JEAN, "jean@acme.test", List.of("HSE"))));
         verify(notifications, times(3)).save(any());
     }
+    @Test
+    void leCourrielPartAAdresseDuTitulaireEtNonASonNom() {
+        Map<String, List<ValidationRole.RoleHolder>> roles = new LinkedHashMap<>();
+        roles.put("HSE", List.of(
+                new ValidationRole.RoleHolder(JEAN, "Jean Dupont", "jean@acme.test"),
+                // Nommé avant que l'adresse ait sa colonne : son libellé EST l'adresse.
+                new ValidationRole.RoleHolder(MARIE, "marie@acme.test", null),
+                // Un nom sans adresse : la cloche seule le prévient.
+                new ValidationRole.RoleHolder(UUID.randomUUID(), "Paul Sans Adresse", "  ")));
+
+        List<MocNotifier.Recipient> dest = MocNotifier.recipients(roles, DEMANDEUR);
+        assertThat(dest).extracting(MocNotifier.Recipient::address)
+                .containsExactly("jean@acme.test", "marie@acme.test", null);
+
+        notifier.awaitingValidation(c, dest);
+        verify(notifications, times(3)).save(any());
+        verify(mailer).send(eq("jean@acme.test"), anyString(), anyString());
+        verify(mailer).send(eq("marie@acme.test"), anyString(), anyString());
+        verify(mailer, times(2)).send(anyString(), anyString(), anyString());
+    }
 }

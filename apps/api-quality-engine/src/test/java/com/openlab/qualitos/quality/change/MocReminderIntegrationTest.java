@@ -96,9 +96,9 @@ class MocReminderIntegrationTest {
         for (ImpactDomain d : ImpactDomain.values()) poids.put(d, 1);
         settings.replace(new MocDto.SettingsForm(25, 50, delai, poids, List.of(
                 new MocDto.RoleForm(null, "Chef de service", EnumSet.of(MINOR, MAJOR, CRITICAL),
-                        List.of(new MocDto.HolderForm(chef, "chef@acme.test"))),
+                        List.of(new MocDto.HolderForm(chef, "chef@acme.test", null))),
                 new MocDto.RoleForm(null, "HSE", EnumSet.of(MINOR, MAJOR, CRITICAL),
-                        List.of(new MocDto.HolderForm(hse, "hse@acme.test"))))));
+                        List.of(new MocDto.HolderForm(hse, "hse@acme.test", null))))));
         connecte(demandeur);
         MocDto.Detail d = service.create(new MocDto.RequestForm("Four", ChangeRequestType.PERMANENT,
                 null, null, null, null));

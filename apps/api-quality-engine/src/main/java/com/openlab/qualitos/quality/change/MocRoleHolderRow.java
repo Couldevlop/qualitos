@@ -27,6 +27,10 @@ public class MocRoleHolderRow {
     @Column(name = "user_label", nullable = false, length = 200)
     private String userLabel;
 
+    /** Adresse du titulaire, pour le courriel ; nulle pour un titulaire nommé avant la colonne. */
+    @Column(name = "user_email", length = 320)
+    private String userEmail;
+
     @Column(nullable = false)
     private int ordinal;
 
@@ -40,6 +44,8 @@ public class MocRoleHolderRow {
     public void setUserId(UUID userId) { this.userId = userId; }
     public String getUserLabel() { return userLabel; }
     public void setUserLabel(String userLabel) { this.userLabel = userLabel; }
+    public String getUserEmail() { return userEmail; }
+    public void setUserEmail(String userEmail) { this.userEmail = userEmail; }
     public int getOrdinal() { return ordinal; }
     public void setOrdinal(int ordinal) { this.ordinal = ordinal; }
 }

@@ -119,7 +119,7 @@ class MocFlowIntegrationTest {
     static MocDto.RoleForm role(UUID id, String label, Set<MocClassification> requis, UUID... titulaires) {
         List<MocDto.HolderForm> h = new ArrayList<>();
         for (UUID t : titulaires) {
-            h.add(new MocDto.HolderForm(t, t.toString().substring(0, 8) + "@acme.test"));
+            h.add(new MocDto.HolderForm(t, t.toString().substring(0, 8) + "@acme.test", null));
         }
         return new MocDto.RoleForm(id, label, requis, h);
     }
@@ -502,7 +502,7 @@ class MocFlowIntegrationTest {
         connecte(admin, "Admin");
         MocDto.SettingsView apres = settings.replace(new MocDto.SettingsForm(50, 80, 5, w,
                 avant.roles().stream().map(r -> new MocDto.RoleForm(r.id(), r.label(), r.requiredFor(),
-                        r.holders().stream().map(h -> new MocDto.HolderForm(h.userId(), h.label())).toList()))
+                        r.holders().stream().map(h -> new MocDto.HolderForm(h.userId(), h.label(), h.email())).toList()))
                         .toList()));
         assertThat(apres.reminderDays()).isEqualTo(5);
         assertThat(apres.weights()).containsEntry(PRODUCTION, 0);
@@ -555,15 +555,20 @@ class MocFlowIntegrationTest {
         connecte(admin, "Admin");
         List<MocDto.RoleForm> roles = formes(s).stream().map(r -> r.label().equals("Directeur de site")
                 ? new MocDto.RoleForm(r.id(), "Direction du site", r.requiredFor(),
-                List.of(new MocDto.HolderForm(remplacant, "nouveau@acme.test")))
+                List.of(new MocDto.HolderForm(remplacant, "Nadia Nouveau", "nouveau@acme.test")))
                 : r).toList();
-        settings.replace(new MocDto.SettingsForm(25, 50, 3, poids(1), roles));
+        MocDto.SettingsView apres = settings.replace(new MocDto.SettingsForm(25, 50, 3, poids(1), roles));
+        // Le nom de l'annuaire s'affiche ; l'adresse, recopiée à côté, sert au courriel.
+        assertThat(apres.roles()).filteredOn(r -> r.label().equals("Direction du site")).singleElement()
+                .satisfies(r -> assertThat(r.holders()).containsExactly(
+                        new MocDto.HolderView(remplacant, "Nadia Nouveau", "nouveau@acme.test")));
 
         @SuppressWarnings("unchecked")
         ArgumentCaptor<Collection<MocNotifier.Recipient>> dest = ArgumentCaptor.forClass(Collection.class);
         verify(notifier).awaitingValidation(any(), dest.capture());
         assertThat(dest.getValue()).singleElement().satisfies(r -> {
             assertThat(r.userId()).isEqualTo(remplacant);
+            assertThat(r.address()).isEqualTo("nouveau@acme.test");
             // Le libellé figé à la soumission, pas le nouveau nom du rôle.
             assertThat(r.roles()).containsExactly("Directeur de site");
         });
@@ -607,6 +612,6 @@ class MocFlowIntegrationTest {
 
     private static List<MocDto.RoleForm> formes(MocDto.SettingsView s) {
         return s.roles().stream().map(r -> new MocDto.RoleForm(r.id(), r.label(), r.requiredFor(),
-                r.holders().stream().map(h -> new MocDto.HolderForm(h.userId(), h.label())).toList())).toList();
+                r.holders().stream().map(h -> new MocDto.HolderForm(h.userId(), h.label(), h.email())).toList())).toList();
     }
 }

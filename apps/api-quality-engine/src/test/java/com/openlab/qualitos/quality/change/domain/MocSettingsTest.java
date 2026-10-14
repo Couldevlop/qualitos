@@ -105,6 +105,15 @@ class MocSettingsTest {
         assertThatThrownBy(() -> avec(List.of(role("HSE", EnumSet.of(MINOR, MAJOR, CRITICAL),
                 new ValidationRole.RoleHolder(UUID.randomUUID(), " ")))).validated())
                 .isInstanceOf(MocException.class);
+        assertThatThrownBy(() -> avec(List.of(role("HSE", EnumSet.of(MINOR, MAJOR, CRITICAL),
+                new ValidationRole.RoleHolder(UUID.randomUUID(), "Jean Dupont", "pas-une-adresse")))).validated())
+                .isInstanceOf(MocException.class);
+        assertThatThrownBy(() -> avec(List.of(role("HSE", EnumSet.of(MINOR, MAJOR, CRITICAL),
+                new ValidationRole.RoleHolder(UUID.randomUUID(), "Jean Dupont", "j@" + "x".repeat(320))))).validated())
+                .isInstanceOf(MocException.class);
+        assertThat(avec(List.of(role("HSE", EnumSet.of(MINOR, MAJOR, CRITICAL),
+                new ValidationRole.RoleHolder(UUID.randomUUID(), "Jean Dupont", "jean@acme.test")))).validated()
+                .roles().get(0).holders().get(0).email()).isEqualTo("jean@acme.test");
         ValidationRole.RoleHolder[] vingtEtUn = new ValidationRole.RoleHolder[21];
         for (int i = 0; i < 21; i++) {
             vingtEtUn[i] = new ValidationRole.RoleHolder(UUID.randomUUID(), "u" + i + "@acme.test");

@@ -5,6 +5,7 @@ import com.openlab.qualitos.quality.change.domain.ImpactLevel;
 import com.openlab.qualitos.quality.change.domain.MocClassification;
 import com.openlab.qualitos.quality.change.domain.MocHistoryEvent;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -93,7 +94,8 @@ public final class MocDto {
 
     public record RoleView(UUID id, String label, Set<MocClassification> requiredFor, List<HolderView> holders) {}
 
-    public record HolderView(UUID userId, String label) {}
+    /** {@code email} : l'adresse du titulaire, nulle pour un titulaire nommé avant qu'elle soit recopiée. */
+    public record HolderView(UUID userId, String label, String email) {}
 
     public record SettingsForm(
             @NotNull @Min(1) @Max(99) Integer majorThreshold,
@@ -110,5 +112,10 @@ public final class MocDto {
             @NotNull @Size(max = 20) List<@NotNull @Valid HolderForm> holders
     ) {}
 
-    public record HolderForm(@NotNull UUID userId, @NotBlank @Size(max = 200) String label) {}
+    /**
+     * Un titulaire choisi dans l'annuaire (ADR 0091) : son compte, son nom et
+     * son adresse, recopiés. L'adresse est facultative (titulaires nommés avant).
+     */
+    public record HolderForm(@NotNull UUID userId, @NotBlank @Size(max = 200) String label,
+                             @Email @Size(max = 320) String email) {}
 }

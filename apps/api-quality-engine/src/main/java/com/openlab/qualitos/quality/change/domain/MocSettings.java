@@ -103,6 +103,10 @@ public record MocSettings(MocThresholds thresholds, MocWeights weights, int remi
             if (l.isEmpty() || l.length() > ValidationRole.RoleHolder.LABEL_MAX) {
                 throw MocException.invalid("moc.settings.holder", "Un titulaire doit être un membre de l'annuaire.");
             }
+            if (h.email() != null
+                    && (h.email().length() > ValidationRole.RoleHolder.EMAIL_MAX || !h.email().contains("@"))) {
+                throw MocException.invalid("moc.settings.holder", "Un titulaire doit être un membre de l'annuaire.");
+            }
             if (!vus.add(h.userId())) {
                 throw new MocException(MocException.Kind.INVALID, "moc.settings.holder-duplicate",
                         "Une même personne est nommée deux fois au rôle " + label + ".", Map.of("role", label));

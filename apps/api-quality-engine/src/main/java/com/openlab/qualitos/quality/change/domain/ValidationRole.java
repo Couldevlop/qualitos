@@ -40,10 +40,33 @@ public record ValidationRole(UUID id, String label, Set<MocClassification> requi
      * Un titulaire de l'annuaire du client.
      *
      * @param userId l'identifiant de connexion (le {@code sub} du jeton)
-     * @param label  ce que l'annuaire en montre (l'adresse), recopié pour l'affichage
+     * @param label  ce que l'annuaire en montre (son nom), recopié pour l'affichage ;
+     *               une adresse pour les titulaires nommés avant que le nom soit lisible
+     * @param email  son adresse, pour le courriel ; {@code null} si inconnue
      */
-    public record RoleHolder(UUID userId, String label) {
+    public record RoleHolder(UUID userId, String label, String email) {
 
         public static final int LABEL_MAX = 200;
+        public static final int EMAIL_MAX = 320;
+
+        public RoleHolder {
+            email = email == null || email.isBlank() ? null : email.strip();
+        }
+
+        /** Un titulaire sans adresse connue. */
+        public RoleHolder(UUID userId, String label) {
+            this(userId, label, null);
+        }
+
+        /**
+         * L'adresse où écrire : la sienne, ou le libellé quand c'en est une
+         * (titulaire nommé avant que l'adresse ait sa colonne) ; sinon aucune.
+         */
+        public String mailAddress() {
+            if (email != null) {
+                return email;
+            }
+            return label != null && label.contains("@") ? label : null;
+        }
     }
 }
