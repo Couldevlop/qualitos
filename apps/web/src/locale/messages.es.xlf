@@ -22841,8 +22841,8 @@ historial de 12 meses</target>
         <target state="translated">Sistema de Gestión Integrado</target>
       </trans-unit>
       <trans-unit id="smi.subtitle" datatype="html">
-        <source>Vue consolidée : une preuve compte pour toutes les normes qu'elle couvre.</source>
-        <target state="translated">Vista consolidada: una evidencia cuenta para todas las normas que cubre.</target>
+        <source>Vue consolidée de toutes les normes adoptées : conformité, risques, audits et échéances.</source>
+        <target state="translated">Vista consolidada de todas las normas adoptadas: conformidad, riesgos, auditorías y plazos.</target>
       </trans-unit>
       <trans-unit id="smi.filter" datatype="html">
         <source>Filtrer par norme</source>
@@ -22867,10 +22867,6 @@ historial de 12 meses</target>
       <trans-unit id="smi.kpi.no-standard" datatype="html">
         <source>Aucune norme adoptée.</source>
         <target state="translated">Ninguna norma adoptada.</target>
-      </trans-unit>
-      <trans-unit id="smi.kpi.adopt" datatype="html">
-        <source>Adopter une norme</source>
-        <target state="translated">Adoptar una norma</target>
       </trans-unit>
       <trans-unit id="smi.kpi.overdue" datatype="html">
         <source>Actions en retard</source>
@@ -22907,10 +22903,6 @@ historial de 12 meses</target>
       <trans-unit id="smi.by-standard" datatype="html">
         <source>Conformité par référentiel</source>
         <target state="translated">Conformidad por norma</target>
-      </trans-unit>
-      <trans-unit id="smi.by-standard-note" datatype="html">
-        <source>Une même preuve (procédure, audit, action) est comptée pour tous les référentiels concernés.</source>
-        <target state="translated">Una misma evidencia (procedimiento, auditoría, acción) cuenta para todas las normas afectadas.</target>
       </trans-unit>
       <trans-unit id="smi.see-matrix" datatype="html">
         <source>Voir la matrice des exigences</source>
@@ -22965,8 +22957,8 @@ historial de 12 meses</target>
         <target state="translated">Nada vencido ni previsto en los próximos siete días.</target>
       </trans-unit>
       <trans-unit id="smi.requirements.title" datatype="html">
-        <source>Matrice des exigences · une preuve, plusieurs référentiels</source>
-        <target state="translated">Matriz de requisitos · una evidencia, varias normas</target>
+        <source>Matrice des exigences · chapitres communs × normes</source>
+        <target state="translated">Matriz de requisitos · capítulos comunes × normas</target>
       </trans-unit>
       <trans-unit id="smi.requirements.teaser" datatype="html">
         <source>Chapitres communs 4 à 10, croisés avec chaque norme adoptée : couvert, partiel ou en écart.</source>
@@ -23223,10 +23215,6 @@ historial de 12 meses</target>
       <trans-unit id="smi.req.complete" datatype="html">
         <source>Compléter les preuves</source>
         <target state="translated">Completar las evidencias</target>
-      </trans-unit>
-      <trans-unit id="smi.req.reuse" datatype="html">
-        <source>Une preuve rattachée à une exigence commune compte pour toutes les normes qui partagent ce chapitre.</source>
-        <target state="translated">Una evidencia vinculada a un requisito común cuenta para todas las normas que comparten este capítulo.</target>
       </trans-unit>
       <trans-unit id="smi.req.all-covered" datatype="html">
         <source>Tout est couvert : choisissez une case pour en voir le détail.</source>

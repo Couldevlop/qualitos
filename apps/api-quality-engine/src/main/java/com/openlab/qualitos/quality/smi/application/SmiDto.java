@@ -64,7 +64,7 @@ public final class SmiDto {
 
     // ---------- matrice des exigences ----------
 
-    /** Chapitres communs × normes adoptées : une preuve, plusieurs référentiels. */
+    /** Chapitres communs × normes adoptées, chaque norme couverte par ses propres preuves. */
     public record RequirementsMatrix(List<StandardRef> standards, List<ChapterRow> rows) {}
 
     public record ChapterRow(String chapter, List<String> modules, List<Cell> cells) {}

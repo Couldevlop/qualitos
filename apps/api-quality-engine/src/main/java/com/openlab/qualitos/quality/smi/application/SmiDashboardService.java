@@ -25,7 +25,9 @@ import java.util.stream.Collectors;
  * <p>Une page qui répond à « où en est-on, toutes normes confondues ? » :
  * conformité par norme, actions en retard, risques majeurs et leur matrice,
  * prochain audit, échéances de la semaine — puis la matrice des exigences, qui
- * montre qu'une même preuve compte pour plusieurs normes (§8.9).
+ * croise les chapitres communs avec chaque norme (§8.9). Chaque norme y est
+ * couverte par SES preuves : la mutualisation entre normes n'existe pas encore
+ * (ADR 0090).
  *
  * <p>Le filtre « une norme » restreint ce qui se rattache à une norme : la
  * conformité, les risques (par les exigences qu'ils couvrent), les audits (par

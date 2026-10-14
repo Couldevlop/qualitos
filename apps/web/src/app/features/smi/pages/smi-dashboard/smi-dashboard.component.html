@@ -2,7 +2,7 @@
   <qos-page-header
     eyebrow="Pilotage" i18n-eyebrow="@@smi.eyebrow"
     title="Système de Management Intégré" i18n-title="@@smi.title"
-    subtitle="Vue consolidée : une preuve compte pour toutes les normes qu'elle couvre."
+    subtitle="Vue consolidée de toutes les normes adoptées : conformité, risques, audits et échéances."
     i18n-subtitle="@@smi.subtitle">
   </qos-page-header>
 
@@ -110,7 +110,6 @@
         </ul>
         <ng-template #aucuneNorme><p class="vide" i18n="@@smi.kpi.no-standard">Aucune norme adoptée.</p></ng-template>
         <p class="aide">
-          <span i18n="@@smi.by-standard-note">Une même preuve (procédure, audit, action) est comptée pour tous les référentiels concernés.</span>
           <a routerLink="/smi/exigences" i18n="@@smi.see-matrix">Voir la matrice des exigences</a>
         </p>
       </section>
@@ -180,7 +179,7 @@
     <!-- Le passage vers la matrice des exigences, bien visible en bas de page. -->
     <a class="passage" routerLink="/smi/exigences" data-test="lien-exigences">
       <span class="passage__texte">
-        <span class="passage__titre" i18n="@@smi.requirements.title">Matrice des exigences · une preuve, plusieurs référentiels</span>
+        <span class="passage__titre" i18n="@@smi.requirements.title">Matrice des exigences · chapitres communs × normes</span>
         <span class="passage__sous-titre" i18n="@@smi.requirements.teaser">Chapitres communs 4 à 10, croisés avec chaque norme adoptée : couvert, partiel ou en écart.</span>
       </span>
       <mat-icon aria-hidden="true">arrow_forward</mat-icon>

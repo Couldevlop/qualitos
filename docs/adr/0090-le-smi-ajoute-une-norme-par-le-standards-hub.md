@@ -113,14 +113,20 @@ comme administrateur vivent à un seul endroit côté web
 - ✅ **Le Standards Hub suit la même règle** (décision 5 ci-dessous) : l'API
   globale d'adoption, jusque-là ouverte à tout authentifié, est réservée à
   l'administrateur du client.
-- ⚠ **La mutualisation des preuves n'existe pas encore.** `computeAlignment` ne
-  compte que les preuves rattachées à l'adoption elle-même ; la table
-  `norm_clause_mapping` (V53) et le module `ims` ne servent qu'à la matrice de
-  co-couverture des clauses. Une preuve posée sur l'ISO 9001 §5.2 ne couvre donc
-  pas l'ISO 14001 §5.2, alors que l'écran SMI l'affirme (« Une même preuve…
-  est comptée pour tous les référentiels concernés »). À traiter par une
-  décision propre : propager à l'alignement les preuves des clauses
-  `EQUIVALENT`, et le dire dans le Standards Hub comme dans le SMI.
+- ⚠ **La mutualisation des preuves est un chantier ultérieur, et l'écran ne la
+  promet plus.** `computeAlignment` ne compte que les preuves rattachées à
+  l'adoption elle-même ; la table `norm_clause_mapping` (V53) et le module `ims`
+  ne servent qu'à la matrice de co-couverture des clauses. Une preuve posée sur
+  l'ISO 9001 §5.2 ne couvre donc pas l'ISO 14001 §5.2. Le SMI l'affirmait
+  pourtant à quatre endroits (sous-titre du tableau de bord, note de la
+  conformité par référentiel, aide du détail de la matrice, et le titre « une
+  preuve, plusieurs référentiels ») : ces phrases sont retirées ou réécrites,
+  avec leurs traductions. La matrice dit désormais ce qu'elle mesure : chaque
+  norme couverte par SES preuves. Le jour où l'alignement propagera les preuves
+  des clauses `EQUIVALENT`, une décision propre le dira — dans le Standards Hub
+  comme dans le SMI — et l'écran pourra le promettre. (L'écran « IMS » du
+  module `standards-extras`, hors SMI, emploie encore une formulation voisine
+  sur sa matrice de co-couverture.)
 
 ## Vérifications
 

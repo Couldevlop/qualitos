@@ -22841,8 +22841,8 @@ historique 12 mois</source>
         <target state="translated">综合管理体系</target>
       </trans-unit>
       <trans-unit id="smi.subtitle" datatype="html">
-        <source>Vue consolidée : une preuve compte pour toutes les normes qu'elle couvre.</source>
-        <target state="translated">综合视图：一项证据适用于其覆盖的所有标准。</target>
+        <source>Vue consolidée de toutes les normes adoptées : conformité, risques, audits et échéances.</source>
+        <target state="translated">所有已采用标准的综合视图：符合率、风险、审核与期限。</target>
       </trans-unit>
       <trans-unit id="smi.filter" datatype="html">
         <source>Filtrer par norme</source>
@@ -22867,10 +22867,6 @@ historique 12 mois</source>
       <trans-unit id="smi.kpi.no-standard" datatype="html">
         <source>Aucune norme adoptée.</source>
         <target state="translated">尚未采用任何标准。</target>
-      </trans-unit>
-      <trans-unit id="smi.kpi.adopt" datatype="html">
-        <source>Adopter une norme</source>
-        <target state="translated">采用标准</target>
       </trans-unit>
       <trans-unit id="smi.kpi.overdue" datatype="html">
         <source>Actions en retard</source>
@@ -22907,10 +22903,6 @@ historique 12 mois</source>
       <trans-unit id="smi.by-standard" datatype="html">
         <source>Conformité par référentiel</source>
         <target state="translated">按标准的符合率</target>
-      </trans-unit>
-      <trans-unit id="smi.by-standard-note" datatype="html">
-        <source>Une même preuve (procédure, audit, action) est comptée pour tous les référentiels concernés.</source>
-        <target state="translated">同一证据（程序、审核、措施）适用于所有相关标准。</target>
       </trans-unit>
       <trans-unit id="smi.see-matrix" datatype="html">
         <source>Voir la matrice des exigences</source>
@@ -22965,8 +22957,8 @@ historique 12 mois</source>
         <target state="translated">没有逾期项，也没有七天内到期的事项。</target>
       </trans-unit>
       <trans-unit id="smi.requirements.title" datatype="html">
-        <source>Matrice des exigences · une preuve, plusieurs référentiels</source>
-        <target state="translated">要求矩阵 · 一项证据，多项标准</target>
+        <source>Matrice des exigences · chapitres communs × normes</source>
+        <target state="translated">要求矩阵 · 通用章节 × 标准</target>
       </trans-unit>
       <trans-unit id="smi.requirements.teaser" datatype="html">
         <source>Chapitres communs 4 à 10, croisés avec chaque norme adoptée : couvert, partiel ou en écart.</source>
@@ -23223,10 +23215,6 @@ historique 12 mois</source>
       <trans-unit id="smi.req.complete" datatype="html">
         <source>Compléter les preuves</source>
         <target state="translated">补充证据</target>
-      </trans-unit>
-      <trans-unit id="smi.req.reuse" datatype="html">
-        <source>Une preuve rattachée à une exigence commune compte pour toutes les normes qui partagent ce chapitre.</source>
-        <target state="translated">关联到通用要求的证据，适用于共享该章节的所有标准。</target>
       </trans-unit>
       <trans-unit id="smi.req.all-covered" datatype="html">
         <source>Tout est couvert : choisissez une case pour en voir le détail.</source>

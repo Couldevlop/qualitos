@@ -22841,8 +22841,8 @@ historique 12 mois</source>
         <target state="translated">نظام الإدارة المتكامل</target>
       </trans-unit>
       <trans-unit id="smi.subtitle" datatype="html">
-        <source>Vue consolidée : une preuve compte pour toutes les normes qu'elle couvre.</source>
-        <target state="translated">عرض موحّد: يُحتسب الدليل لكل المعايير التي يغطيها.</target>
+        <source>Vue consolidée de toutes les normes adoptées : conformité, risques, audits et échéances.</source>
+        <target state="translated">عرض موحّد لكل المعايير المعتمدة: الامتثال والمخاطر والتدقيقات والمواعيد.</target>
       </trans-unit>
       <trans-unit id="smi.filter" datatype="html">
         <source>Filtrer par norme</source>
@@ -22867,10 +22867,6 @@ historique 12 mois</source>
       <trans-unit id="smi.kpi.no-standard" datatype="html">
         <source>Aucune norme adoptée.</source>
         <target state="translated">لم يُعتمد أي معيار.</target>
-      </trans-unit>
-      <trans-unit id="smi.kpi.adopt" datatype="html">
-        <source>Adopter une norme</source>
-        <target state="translated">اعتماد معيار</target>
       </trans-unit>
       <trans-unit id="smi.kpi.overdue" datatype="html">
         <source>Actions en retard</source>
@@ -22907,10 +22903,6 @@ historique 12 mois</source>
       <trans-unit id="smi.by-standard" datatype="html">
         <source>Conformité par référentiel</source>
         <target state="translated">الامتثال حسب المرجع</target>
-      </trans-unit>
-      <trans-unit id="smi.by-standard-note" datatype="html">
-        <source>Une même preuve (procédure, audit, action) est comptée pour tous les référentiels concernés.</source>
-        <target state="translated">يُحتسب الدليل الواحد (إجراء موثّق، تدقيق، إجراء تصحيحي) لكل المراجع المعنية.</target>
       </trans-unit>
       <trans-unit id="smi.see-matrix" datatype="html">
         <source>Voir la matrice des exigences</source>
@@ -22965,8 +22957,8 @@ historique 12 mois</source>
         <target state="translated">لا شيء متأخر أو مستحق خلال سبعة أيام.</target>
       </trans-unit>
       <trans-unit id="smi.requirements.title" datatype="html">
-        <source>Matrice des exigences · une preuve, plusieurs référentiels</source>
-        <target state="translated">مصفوفة المتطلبات · دليل واحد لعدة مراجع</target>
+        <source>Matrice des exigences · chapitres communs × normes</source>
+        <target state="translated">مصفوفة المتطلبات · الفصول المشتركة × المعايير</target>
       </trans-unit>
       <trans-unit id="smi.requirements.teaser" datatype="html">
         <source>Chapitres communs 4 à 10, croisés avec chaque norme adoptée : couvert, partiel ou en écart.</source>
@@ -23223,10 +23215,6 @@ historique 12 mois</source>
       <trans-unit id="smi.req.complete" datatype="html">
         <source>Compléter les preuves</source>
         <target state="translated">استكمال الأدلة</target>
-      </trans-unit>
-      <trans-unit id="smi.req.reuse" datatype="html">
-        <source>Une preuve rattachée à une exigence commune compte pour toutes les normes qui partagent ce chapitre.</source>
-        <target state="translated">الدليل المرتبط بمتطلب مشترك يُحتسب لكل المعايير التي تشترك في هذا الفصل.</target>
       </trans-unit>
       <trans-unit id="smi.req.all-covered" datatype="html">
         <source>Tout est couvert : choisissez une case pour en voir le détail.</source>

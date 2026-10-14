@@ -18,12 +18,13 @@ export interface SelectedCell {
 }
 
 /**
- * La matrice des exigences : « une preuve, plusieurs référentiels » (§8.9).
+ * La matrice des exigences : chapitres communs × normes adoptées (§8.9).
  *
  * <p>Les chapitres communs de la structure-cadre (4 à 10) en lignes, chaque
  * norme adoptée en colonne, et le module de QualitOS où se fabriquent les
  * preuves. Une case dit si le chapitre est couvert, partiel ou en écart pour
- * la norme ; la choisir ouvre le détail — les clauses encore à prouver, lues
+ * la norme, d'après les preuves rattachées à CETTE norme — une preuve ne vaut
+ * pas encore pour les autres normes qui partagent le chapitre (ADR 0090) ; la choisir ouvre le détail — les clauses encore à prouver, lues
  * dans l'alignement de la norme — et deux suites : compléter les preuves dans
  * le Standards Hub, ou ouvrir une action CAPA.
  *
