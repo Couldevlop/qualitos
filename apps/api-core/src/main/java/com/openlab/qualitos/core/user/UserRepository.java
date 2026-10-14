@@ -36,7 +36,7 @@ public interface UserRepository extends JpaRepository<AppUser, UUID> {
      * @param pattern motif LIKE déjà échappé avec {@code !} (voir {@code SearchText})
      */
     @Query(value = """
-            select new com.openlab.qualitos.core.user.DirectoryRow(u.id, u.displayName, u.email, u.active)
+            select new com.openlab.qualitos.core.user.DirectoryRow(u.id, u.keycloakId, u.displayName, u.email, u.active)
             from AppUser u
             where u.tenantId = :tenantId and u.active = true
               and u.searchKey like :pattern escape '!'
@@ -53,9 +53,22 @@ public interface UserRepository extends JpaRepository<AppUser, UUID> {
 
     /** Un membre du client, actif ou non, pour afficher le nom d'un responsable passé. */
     @Query("""
-            select new com.openlab.qualitos.core.user.DirectoryRow(u.id, u.displayName, u.email, u.active)
+            select new com.openlab.qualitos.core.user.DirectoryRow(u.id, u.keycloakId, u.displayName, u.email, u.active)
             from AppUser u
             where u.id = :id and u.tenantId = :tenantId
             """)
     Optional<DirectoryRow> findDirectoryRow(@Param("tenantId") UUID tenantId, @Param("id") UUID id);
+
+    /**
+     * Un membre du client par son compte de connexion ({@code sub} du jeton) :
+     * l'identifiant que portent tous les enregistrements qualité (pilote CAPA,
+     * auditeur responsable, décideur d'un changement).
+     */
+    @Query("""
+            select new com.openlab.qualitos.core.user.DirectoryRow(u.id, u.keycloakId, u.displayName, u.email, u.active)
+            from AppUser u
+            where u.keycloakId = :accountId and u.tenantId = :tenantId
+            """)
+    Optional<DirectoryRow> findDirectoryRowByAccount(@Param("tenantId") UUID tenantId,
+                                                     @Param("accountId") String accountId);
 }

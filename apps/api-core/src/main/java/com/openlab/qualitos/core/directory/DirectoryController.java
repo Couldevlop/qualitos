@@ -27,7 +27,7 @@ import java.util.UUID;
  * partagé.
  */
 @RestController
-@RequestMapping("/api/v1/directory/users")
+@RequestMapping("/api/v1/directory")
 @PreAuthorize("isAuthenticated()")
 @Tag(name = "Directory", description = "Restricted read-only directory of the current tenant's active members")
 public class DirectoryController {
@@ -38,7 +38,7 @@ public class DirectoryController {
         this.directory = directory;
     }
 
-    @GetMapping
+    @GetMapping("/users")
     @Operation(summary = "Search active members of the current tenant by name or e-mail (accent and case insensitive)")
     public ResponseEntity<DirectoryDto.Page> search(
             @Parameter(description = "Text contained in the name or e-mail, 100 characters max")
@@ -52,11 +52,24 @@ public class DirectoryController {
                 .body(directory.search(DirectoryQuery.of(q, page, size)));
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/users/{id}")
     @Operation(summary = "Name of a member of the current tenant (404 when absent from this tenant)")
     public ResponseEntity<DirectoryDto.Entry> get(@PathVariable UUID id) {
         return ResponseEntity.ok()
                 .cacheControl(CacheControl.noStore())
                 .body(directory.get(id));
+    }
+
+    /**
+     * Lecture par compte de connexion ({@code sub} du jeton) : l'identité que
+     * portent les enregistrements qualité. C'est elle qu'un écran résout pour
+     * afficher le nom d'un responsable.
+     */
+    @GetMapping("/accounts/{accountId}")
+    @Operation(summary = "Member of the current tenant by login account id (JWT sub); 404 when absent from this tenant")
+    public ResponseEntity<DirectoryDto.Entry> getByAccount(@PathVariable UUID accountId) {
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.noStore())
+                .body(directory.getByAccount(accountId));
     }
 }

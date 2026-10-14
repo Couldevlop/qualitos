@@ -31,8 +31,12 @@ let nextId = 0;
  * changement… (ADR 0091).
  *
  * <p>Champ de formulaire à part entière (`ControlValueAccessor`) : sa valeur est
- * l'IDENTIFIANT de la personne, ou `null`. L'écran, lui, ne montre que des noms —
- * jamais un identifiant, y compris quand la personne n'est plus dans l'annuaire.
+ * le COMPTE DE CONNEXION de la personne (`accountId`, le `sub` du jeton), ou
+ * `null`. C'est l'identité que portent les dossiers qualité (pilote CAPA,
+ * auditeur responsable, décideur d'un changement) et `AuthService` : comparer
+ * « est-ce moi ? » reste une simple égalité. L'écran, lui, ne montre que des
+ * noms — jamais un identifiant, y compris quand la personne n'est plus dans
+ * l'annuaire.
  *
  * <pre>
  *   &lt;qos-user-picker formControlName="ownerId" label="Responsable" required
@@ -59,7 +63,7 @@ export class UserPickerComponent implements ControlValueAccessor, OnInit, OnDest
   /** Aide sous le champ, facultative. */
   @Input() hint = '';
   @Input({ transform: booleanAttribute }) required = false;
-  /** Personnes à ne pas proposer (ex. : le responsable, quand on choisit son vérificateur). */
+  /** Comptes (`accountId`) à ne pas proposer (ex. : le responsable, quand on choisit son vérificateur). */
   @Input() excludeIds: readonly string[] = [];
   /** Nombre de propositions affichées (borné à 50 par le serveur). */
   @Input() pageSize = 20;
@@ -125,7 +129,7 @@ export class UserPickerComponent implements ControlValueAccessor, OnInit, OnDest
     typeof value === 'string' ? value : value?.displayName ?? '';
 
   trackById(_: number, user: DirectoryUser): string {
-    return user.id;
+    return user.accountId;
   }
 
   onSelected(event: MatAutocompleteSelectedEvent): void {
@@ -165,23 +169,23 @@ export class UserPickerComponent implements ControlValueAccessor, OnInit, OnDest
 
   // ---------- ControlValueAccessor ----------
 
-  writeValue(id: string | null | undefined): void {
+  writeValue(accountId: string | null | undefined): void {
     this.resolveSub?.unsubscribe();
     this.unknownSelection = false;
-    if (!id) {
+    if (!accountId) {
       this.selected = null;
       this.resolving = false;
       this.text.setValue('', { emitEvent: false });
       this.cdr.markForCheck();
       return;
     }
-    if (this.selected?.id === id) {
+    if (this.selected?.accountId === accountId) {
       return;
     }
     this.selected = null;
     this.resolving = true;
     this.text.setValue('', { emitEvent: false });
-    this.resolveSub = this.directory.get(id).subscribe({
+    this.resolveSub = this.directory.getByAccount(accountId).subscribe({
       next: user => {
         this.selected = user;
         this.resolving = false;
@@ -220,7 +224,7 @@ export class UserPickerComponent implements ControlValueAccessor, OnInit, OnDest
   private choose(user: DirectoryUser | null): void {
     this.selected = user;
     this.unknownSelection = false;
-    this.onChange(user ? user.id : null);
+    this.onChange(user ? user.accountId : null);
     this.onTouched();
     this.userSelected.emit(user);
     this.cdr.markForCheck();
@@ -239,7 +243,7 @@ export class UserPickerComponent implements ControlValueAccessor, OnInit, OnDest
       return;
     }
     const excluded = new Set(this.excludeIds);
-    this.options = page.content.filter(u => !excluded.has(u.id));
+    this.options = page.content.filter(u => !excluded.has(u.accountId));
     this.hiddenCount = Math.max(0, page.totalElements - page.content.length);
     const count = this.options.length;
     this.liveMessage = count === 0

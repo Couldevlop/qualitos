@@ -24,9 +24,9 @@ class HostComponent {
 
 describe('UserPickerComponent', () => {
 
-  const ALICE: DirectoryUser = { id: '11111111-1111-4111-8111-111111111111', displayName: 'Alice Durand', email: 'alice@acme.com', active: true };
-  const BOB: DirectoryUser = { id: '22222222-2222-4222-8222-222222222222', displayName: 'bob@acme.com', email: 'bob@acme.com', active: true };
-  const ANCIEN: DirectoryUser = { id: '33333333-3333-4333-8333-333333333333', displayName: 'Paul Ancien', email: 'paul@acme.com', active: false };
+  const ALICE: DirectoryUser = { id: '11111111-1111-4111-8111-111111111111', accountId: 'aaaaaaaa-1111-4111-8111-111111111111', displayName: 'Alice Durand', email: 'alice@acme.com', active: true };
+  const BOB: DirectoryUser = { id: '22222222-2222-4222-8222-222222222222', accountId: 'bbbbbbbb-2222-4222-8222-222222222222', displayName: 'bob@acme.com', email: 'bob@acme.com', active: true };
+  const ANCIEN: DirectoryUser = { id: '33333333-3333-4333-8333-333333333333', accountId: 'cccccccc-3333-4333-8333-333333333333', displayName: 'Paul Ancien', email: 'paul@acme.com', active: false };
 
   const page = (content: DirectoryUser[], total = content.length): DirectoryPage =>
     ({ content, page: 0, size: 20, totalElements: total, totalPages: 1 });
@@ -37,11 +37,11 @@ describe('UserPickerComponent', () => {
   let overlay: OverlayContainer;
 
   beforeEach(async () => {
-    directory = jasmine.createSpyObj<DirectoryService>('DirectoryService', ['search', 'get']);
+    directory = jasmine.createSpyObj<DirectoryService>('DirectoryService', ['search', 'getByAccount']);
     directory.search.and.returnValue(of(page([ALICE, BOB])));
-    directory.get.and.callFake((id: string) =>
-      [ALICE, BOB, ANCIEN].some(u => u.id === id)
-        ? of([ALICE, BOB, ANCIEN].find(u => u.id === id)!)
+    directory.getByAccount.and.callFake((accountId: string) =>
+      [ALICE, BOB, ANCIEN].some(u => u.accountId === accountId)
+        ? of([ALICE, BOB, ANCIEN].find(u => u.accountId === accountId)!)
         : throwError(() => ({ status: 404 })));
 
     await TestBed.configureTestingModule({
@@ -80,10 +80,11 @@ describe('UserPickerComponent', () => {
   }
 
   it('affiche le nom de la personne déjà choisie, jamais son identifiant', async () => {
-    host.ctrl.setValue(ALICE.id);
+    host.ctrl.setValue(ALICE.accountId);
     await settle();
-    expect(directory.get).toHaveBeenCalledWith(ALICE.id);
+    expect(directory.getByAccount).toHaveBeenCalledWith(ALICE.accountId);
     expect(input().value).toBe('Alice Durand');
+    expect(root().textContent).not.toContain(ALICE.accountId);
     expect(root().textContent).not.toContain(ALICE.id);
   });
 
@@ -98,7 +99,7 @@ describe('UserPickerComponent', () => {
   });
 
   it('signale un ancien membre', async () => {
-    host.ctrl.setValue(ANCIEN.id);
+    host.ctrl.setValue(ANCIEN.accountId);
     await settle();
     expect(input().value).toBe('Paul Ancien');
     expect(root().querySelector('[data-test="user-picker-former"]')).not.toBeNull();
@@ -121,7 +122,7 @@ describe('UserPickerComponent', () => {
     options()[0].click();
     fixture.detectChanges();
     flush();
-    expect(host.ctrl.value).toBe(ALICE.id);
+    expect(host.ctrl.value).toBe(ALICE.accountId);
     expect(host.picked).toEqual([ALICE]);
     expect(input().value).toBe('Alice Durand');
   }));
@@ -140,7 +141,7 @@ describe('UserPickerComponent', () => {
   }));
 
   it('écarte les personnes exclues', fakeAsync(() => {
-    host.exclude = [ALICE.id];
+    host.exclude = [ALICE.accountId];
     fixture.detectChanges();
     type('a');
     expect(options().map(o => o.textContent)).not.toContain(jasmine.stringContaining('Alice'));
@@ -173,13 +174,13 @@ describe('UserPickerComponent', () => {
   }));
 
   it('pas de saisie libre : un texte quelconque redevient la personne choisie', async () => {
-    host.ctrl.setValue(ALICE.id);
+    host.ctrl.setValue(ALICE.accountId);
     await settle();
     picker().text.setValue('n’importe quoi');
     picker().reconcile();
     await settle();
     expect(input().value).toBe('Alice Durand');
-    expect(host.ctrl.value).toBe(ALICE.id);
+    expect(host.ctrl.value).toBe(ALICE.accountId);
   });
 
   it('pas de saisie libre : sans personne choisie, le texte est effacé sans rien signaler', async () => {
@@ -199,7 +200,7 @@ describe('UserPickerComponent', () => {
   });
 
   it('ne réconcilie pas tant que la liste est ouverte', fakeAsync(() => {
-    host.ctrl.setValue(ALICE.id);
+    host.ctrl.setValue(ALICE.accountId);
     fixture.detectChanges();
     flush();
     type('xyz');
@@ -212,17 +213,17 @@ describe('UserPickerComponent', () => {
   }));
 
   it('rappeler la même valeur ne relit pas l’annuaire', () => {
-    host.ctrl.setValue(ALICE.id);
+    host.ctrl.setValue(ALICE.accountId);
     fixture.detectChanges();
-    host.ctrl.setValue(ALICE.id);
-    expect(directory.get).toHaveBeenCalledTimes(1);
+    host.ctrl.setValue(ALICE.accountId);
+    expect(directory.getByAccount).toHaveBeenCalledTimes(1);
   });
 
   it('affiche un texte, une personne ou rien', () => {
     expect(picker().displayWith('ali')).toBe('ali');
     expect(picker().displayWith(ALICE)).toBe('Alice Durand');
     expect(picker().displayWith(null)).toBe('');
-    expect(picker().trackById(0, ALICE)).toBe(ALICE.id);
+    expect(picker().trackById(0, ALICE)).toBe(ALICE.accountId);
   });
 
   it('un second focus ne relance pas la recherche', fakeAsync(() => {
@@ -235,7 +236,7 @@ describe('UserPickerComponent', () => {
   }));
 
   it('au premier focus après un choix, cherche sans terme', fakeAsync(() => {
-    host.ctrl.setValue(ALICE.id);
+    host.ctrl.setValue(ALICE.accountId);
     fixture.detectChanges();
     flush();
     picker().onFocus();
@@ -245,7 +246,7 @@ describe('UserPickerComponent', () => {
   }));
 
   it('vider le texte efface le choix', () => {
-    host.ctrl.setValue(ALICE.id);
+    host.ctrl.setValue(ALICE.accountId);
     fixture.detectChanges();
     picker().text.setValue('');
     picker().reconcile();
@@ -255,7 +256,7 @@ describe('UserPickerComponent', () => {
   });
 
   it('le bouton de retrait vide la valeur et porte un nom accessible', () => {
-    host.ctrl.setValue(ALICE.id);
+    host.ctrl.setValue(ALICE.accountId);
     fixture.detectChanges();
     const clear = root().querySelector('[data-test="user-picker-clear"]') as HTMLButtonElement;
     expect(clear.getAttribute('aria-label')).toBeTruthy();
@@ -276,7 +277,7 @@ describe('UserPickerComponent', () => {
   });
 
   it('remettre la valeur à null vide le champ', () => {
-    host.ctrl.setValue(ALICE.id);
+    host.ctrl.setValue(ALICE.accountId);
     fixture.detectChanges();
     host.ctrl.setValue(null);
     fixture.detectChanges();

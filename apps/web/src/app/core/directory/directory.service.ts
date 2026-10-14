@@ -17,11 +17,13 @@ export const DIRECTORY_CACHE_TTL_MS = 60_000;
 export const DIRECTORY_CACHE_MAX = 500;
 
 /** Personnes fictives du mode démonstration sans serveur. */
+// La première est l'utilisateur fictif d'`AuthService` en démonstration : son
+// compte est le même, pour que « est-ce moi ? » réponde oui.
 const DEMO_PEOPLE: DirectoryUser[] = [
-  { id: '00000000-0000-4000-8000-000000000001', displayName: 'Camille Bernard', email: 'camille.bernard@demo.qualitos.io', active: true },
-  { id: '00000000-0000-4000-8000-000000000002', displayName: 'Élodie Martin', email: 'elodie.martin@demo.qualitos.io', active: true },
-  { id: '00000000-0000-4000-8000-000000000003', displayName: 'Karim Haddad', email: 'karim.haddad@demo.qualitos.io', active: true },
-  { id: '00000000-0000-4000-8000-000000000004', displayName: 'Sophie Laurent', email: 'sophie.laurent@demo.qualitos.io', active: true }
+  { id: '00000000-0000-4000-8000-000000000001', accountId: '00000000-0000-0000-0000-000000000001', displayName: 'Camille Bernard', email: 'camille.bernard@demo.qualitos.io', active: true },
+  { id: '00000000-0000-4000-8000-000000000002', accountId: '00000000-0000-0000-0000-000000000002', displayName: 'Élodie Martin', email: 'elodie.martin@demo.qualitos.io', active: true },
+  { id: '00000000-0000-4000-8000-000000000003', accountId: '00000000-0000-0000-0000-000000000003', displayName: 'Karim Haddad', email: 'karim.haddad@demo.qualitos.io', active: true },
+  { id: '00000000-0000-4000-8000-000000000004', accountId: '00000000-0000-0000-0000-000000000004', displayName: 'Sophie Laurent', email: 'sophie.laurent@demo.qualitos.io', active: true }
 ];
 
 /** Même forme de comparaison que le serveur : sans accents, minuscules, espaces resserrés. */
@@ -37,17 +39,24 @@ export function normalizeSearch(text: string): string {
  * réservé aux administrateurs. Le client vient du jeton côté serveur : aucune
  * méthode ne le prend en paramètre.
  *
- * <p>`get(id)` garde le nom quelques instants : une liste de vingt dossiers au
- * même responsable ne fait qu'un appel. Les résultats d'une recherche
- * alimentent ce cache.
+ * <p>L'identité de référence est `accountId` (compte de connexion, `sub` du
+ * jeton) : c'est elle que portent les dossiers qualité, donc `getByAccount`
+ * est la lecture des écrans. `get(id)` (identifiant interne) reste pour
+ * compatibilité.
+ *
+ * <p>Les deux lectures gardent le nom quelques instants : une liste de vingt
+ * dossiers au même responsable ne fait qu'un appel. Les résultats d'une
+ * recherche alimentent ce cache.
  */
 @Injectable({ providedIn: 'root' })
 export class DirectoryService {
 
   // Chemin servi par api-core : l'ingress et le proxy on-premise routent
   // `/api/v1/directory` vers lui, le reste de `/api` vers le moteur qualité.
-  private readonly endpoint = `${environment.apiBaseUrl}/api/v1/directory/users`;
-  private readonly byId = new Map<string, { expires: number; user$: Observable<DirectoryUser> }>();
+  private readonly base = `${environment.apiBaseUrl}/api/v1/directory`;
+  private readonly endpoint = `${this.base}/users`;
+  /** Clés `id:<id>` et `account:<accountId>` : un seul plafond pour les deux lectures. */
+  private readonly cache = new Map<string, { expires: number; user$: Observable<DirectoryUser> }>();
 
   constructor(private readonly http: HttpClient) {}
 
@@ -70,28 +79,48 @@ export class DirectoryService {
     return this.http.get<DirectoryPage>(this.endpoint, { params }).pipe(tap(p => this.remember(p.content)));
   }
 
-  /** Une personne du client, active ou non ; erreur 404 si elle n'en fait pas partie. */
+  /**
+   * Une personne du client par son compte de connexion (identité de référence),
+   * active ou non ; erreur 404 si elle n'en fait pas partie.
+   */
+  getByAccount(accountId: string): Observable<DirectoryUser> {
+    return this.cached(`account:${accountId}`, () => this.fetchByAccount(accountId));
+  }
+
+  /** Une personne du client par son identifiant interne (compatibilité). */
   get(id: string): Observable<DirectoryUser> {
-    const now = Date.now();
-    const hit = this.byId.get(id);
-    if (hit && hit.expires > now) {
-      return hit.user$;
-    }
-    const user$ = this.fetch(id).pipe(
-      catchError(err => {
-        // Un échec ne se met pas en cache : le prochain affichage réessaie.
-        this.byId.delete(id);
-        return throwError(() => err);
-      }),
-      shareReplay({ bufferSize: 1, refCount: false })
-    );
-    this.store(id, user$, now);
-    return user$;
+    return this.cached(`id:${id}`, () => this.fetch(id));
   }
 
   /** Oublie les noms gardés (changement de session, de client). */
   clearCache(): void {
-    this.byId.clear();
+    this.cache.clear();
+  }
+
+  private cached(key: string, load: () => Observable<DirectoryUser>): Observable<DirectoryUser> {
+    const now = Date.now();
+    const hit = this.cache.get(key);
+    if (hit && hit.expires > now) {
+      return hit.user$;
+    }
+    const user$ = load().pipe(
+      catchError(err => {
+        // Un échec ne se met pas en cache : le prochain affichage réessaie.
+        this.cache.delete(key);
+        return throwError(() => err);
+      }),
+      shareReplay({ bufferSize: 1, refCount: false })
+    );
+    this.store(key, user$, now);
+    return user$;
+  }
+
+  private fetchByAccount(accountId: string): Observable<DirectoryUser> {
+    if (environment.useMockApi) {
+      const person = DEMO_PEOPLE.find(p => p.accountId === accountId);
+      return person ? of(person) : throwError(() => ({ status: 404 }));
+    }
+    return this.http.get<DirectoryUser>(`${this.base}/accounts/${encodeURIComponent(accountId)}`);
   }
 
   private fetch(id: string): Observable<DirectoryUser> {
@@ -105,16 +134,17 @@ export class DirectoryService {
   private remember(users: DirectoryUser[]): void {
     const now = Date.now();
     for (const u of users) {
-      this.store(u.id, of(u), now);
+      this.store(`id:${u.id}`, of(u), now);
+      this.store(`account:${u.accountId}`, of(u), now);
     }
   }
 
-  private store(id: string, user$: Observable<DirectoryUser>, now: number): void {
-    this.byId.delete(id);
-    this.byId.set(id, { expires: now + DIRECTORY_CACHE_TTL_MS, user$ });
-    while (this.byId.size > DIRECTORY_CACHE_MAX) {
-      const oldest = this.byId.keys().next().value as string;
-      this.byId.delete(oldest);
+  private store(key: string, user$: Observable<DirectoryUser>, now: number): void {
+    this.cache.delete(key);
+    this.cache.set(key, { expires: now + DIRECTORY_CACHE_TTL_MS, user$ });
+    while (this.cache.size > DIRECTORY_CACHE_MAX) {
+      const oldest = this.cache.keys().next().value as string;
+      this.cache.delete(oldest);
     }
   }
 

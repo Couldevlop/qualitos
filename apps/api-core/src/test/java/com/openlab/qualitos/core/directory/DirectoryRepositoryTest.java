@@ -147,6 +147,35 @@ class DirectoryRepositoryTest {
     }
 
     @Test
+    @DisplayName("chaque entrée porte le compte de connexion du membre")
+    void entriesCarryAccountId() {
+        assertThat(directory.search(DirectoryQuery.of("muller", 0, 50)).content())
+                .extracting(DirectoryDto.Entry::accountId)
+                .containsExactly(elodie.getKeycloakId());
+    }
+
+    @Test
+    @DisplayName("lecture par compte : un ancien membre du client garde son nom")
+    void getsFormerMemberByAccount() {
+        DirectoryDto.Entry entry = directory.getByAccount(UUID.fromString(ancien.getKeycloakId()));
+
+        assertThat(entry.id()).isEqualTo(ancien.getId());
+        assertThat(entry.displayName()).isEqualTo("Élodie Ancienne");
+        assertThat(entry.active()).isFalse();
+    }
+
+    @Test
+    @DisplayName("lecture par compte d'un autre client : même 404 qu'un compte inconnu")
+    void foreignAccountIsIndistinguishableFromUnknown() {
+        assertThatThrownBy(() -> directory.getByAccount(UUID.fromString(concurrent.getKeycloakId())))
+                .isInstanceOf(DirectoryEntryNotFoundException.class)
+                .hasMessage("Directory entry not found");
+        assertThatThrownBy(() -> directory.getByAccount(UUID.randomUUID()))
+                .isInstanceOf(DirectoryEntryNotFoundException.class)
+                .hasMessage("Directory entry not found");
+    }
+
+    @Test
     @DisplayName("la clé de recherche suit un changement de nom")
     void searchKeyFollowsRename() {
         bruno.setDisplayName("Bruno Lefèvre");

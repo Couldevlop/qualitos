@@ -9,4 +9,4 @@ import java.util.UUID;
  * (collection lue d'emblée), une requête de plus par ligne pour des données que
  * l'annuaire ne doit de toute façon pas rendre.
  */
-public record DirectoryRow(UUID id, String displayName, String email, boolean active) {}
+public record DirectoryRow(UUID id, String accountId, String displayName, String email, boolean active) {}

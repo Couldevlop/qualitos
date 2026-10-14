@@ -27,7 +27,8 @@ utilisateur authentifié du client.
 
 ### 1. Une surface dédiée, distincte de la gestion
 
-`GET /api/v1/directory/users?q=&page=&size=` et
+`GET /api/v1/directory/users?q=&page=&size=`,
+`GET /api/v1/directory/accounts/{accountId}` et
 `GET /api/v1/directory/users/{id}`, servis par api-core. Les droits de
 `/api/v1/users` ne changent pas. Toute autre méthode sur `/api/v1/directory/**`
 est refusée par la configuration de sécurité (`denyAll`), pas seulement faute
@@ -35,7 +36,18 @@ de contrôleur : élargir cette surface doit se voir dans `SecurityConfig`.
 
 ### 2. Un contrat pauvre, et pourquoi l'adresse en fait partie
 
-Réponse : `{ id, displayName, email, active }`.
+Réponse : `{ id, accountId, displayName, email, active }`.
+
+- **`accountId`, identité de référence** : le compte de connexion (`sub` du
+  jeton, `AppUser.keycloakId`). Tout le moteur qualité identifie les personnes
+  ainsi — `CurrentUser.userId()`, pilote CAPA, auditeur responsable, décideur
+  d'un changement — et le front aussi (`AuthService.snapshot().userId`). Ce
+  n'est pas un secret : il est écrit dans chacun de ces dossiers. Un écran qui
+  désigne ou affiche un responsable lit et écrit `accountId`, et résout un nom
+  par `GET /accounts/{accountId}`.
+- **`id`** : identifiant interne d'api-core, gardé pour compatibilité. Il ne
+  correspond à rien côté moteur ; s'en servir comme valeur d'un responsable
+  casserait toute comparaison « est-ce moi / suis-je titulaire ».
 
 - **Jamais** : rôles, client, identifiant de compte de connexion, statut
   d'invitation, dates de création ou de connexion.
@@ -44,8 +56,8 @@ Réponse : `{ id, displayName, email, active }`.
   industriel —, et aucun autre champ restreint ne les départage. C'est
   l'adresse professionnelle, déjà connue des collègues ; c'est aussi le seul
   libellé des membres enregistrés avant cette décision (point 3).
-- **`active`** : la recherche ne rend que des membres actifs, mais la lecture
-  par identifiant rend aussi un ancien membre, pour afficher le responsable
+- **`active`** : la recherche ne rend que des membres actifs, mais les
+  lectures par compte et par identifiant rendent aussi un ancien membre, pour afficher le responsable
   d'un dossier passé au lieu d'un identifiant ou d'un vide. L'indicateur
   permet de le signaler (« ancien membre »).
 
@@ -89,8 +101,9 @@ centaines à quelques milliers de lignes.
 Le client vient du jeton (`TenantContext`) et est passé **explicitement** à
 chaque requête, en plus du filtre Hibernate et de la RLS — une lecture par
 identifiant échappe au filtre Hibernate. Un jeton sans client, ou un client
-illisible : 401. Un identifiant d'un autre client répond le même 404, au même
-message neutre, qu'un identifiant inexistant.
+illisible : 401. Un compte ou un identifiant d'un autre client répond le même
+404, au même message neutre, qu'un compte inexistant ; un compte qui n'est pas
+un UUID : 400.
 
 ### 6. Débit
 
@@ -109,12 +122,15 @@ partait au moteur qualité, qui répond 404.
 
 ### 8. La brique côté écran
 
-- `DirectoryService` (`core/directory`) : `search(q, size, page)` et
-  `get(id)`, ce dernier gardé 60 s par identifiant (500 entrées au plus,
-  alimenté aussi par les recherches, un échec n'est pas gardé). Mode
-  démonstration sans serveur : quelques personnes fictives.
+- `DirectoryService` (`core/directory`) : `search(q, size, page)`,
+  `getByAccount(accountId)` et `get(id)` ; les deux lectures sont gardées 60 s
+  (500 entrées au plus, alimentées aussi par les recherches, un échec n'est
+  pas gardé). Mode démonstration sans serveur : quelques personnes fictives,
+  dont la première porte le compte de l'utilisateur fictif d'`AuthService`
+  (`00000000-0000-0000-0000-000000000001`).
 - `qos-user-picker` (`shared/user-picker`, `UserPickerModule`) : champ de
-  formulaire (`ControlValueAccessor`) dont la valeur est l'identifiant ;
+  formulaire (`ControlValueAccessor`) dont la valeur est l'**`accountId`**
+  (résolu en nom par `getByAccount`) ; `excludeIds` porte sur des comptes ;
   autocomplétion Material, frappe temporisée, pas de saisie libre, noms et
   adresses affichés, jamais d'identifiant — y compris pour une personne sortie
   de l'annuaire. Les modules audits, CAPA et changements l'importent ; ils ne
@@ -139,9 +155,10 @@ partait au moteur qualité, qui répond 404.
 - `DirectoryControllerTest` : un utilisateur sans rôle d'administration lit
   l'annuaire ; seuls les champs restreints sortent ; bornes de pagination et
   validation du terme (400 sans reflet) ; écritures refusées ; 401 sans jeton
-  ou sans client ; 404 neutre.
+  ou sans client ; 404 neutre ; `accountId` exposé, lecture par compte.
 - `DirectoryRepositoryTest` (base H2) : membres inactifs exclus, autre client
-  invisible en recherche comme par identifiant, recherche insensible aux
+  invisible en recherche, par identifiant et par compte, ancien membre lu
+  par compte, recherche insensible aux
   accents et à la casse, jokers pris à la lettre, tri, pagination, clé suivant
   un renommage.
 - `AppUserDirectoryOnPostgresTest` : V8 sur un vrai PostgreSQL (valeur par
