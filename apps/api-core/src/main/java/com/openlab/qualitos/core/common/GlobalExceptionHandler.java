@@ -94,6 +94,17 @@ public class GlobalExceptionHandler {
         return problem;
     }
 
+    /** 404 identique que la personne n'existe pas ou soit d'un autre client (ADR 0091). */
+    @ExceptionHandler(com.openlab.qualitos.core.directory.DirectoryEntryNotFoundException.class)
+    public ProblemDetail handleDirectoryEntryNotFound(
+            com.openlab.qualitos.core.directory.DirectoryEntryNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/directory-entry-not-found"));
+        problem.setTitle("Directory Entry Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
     /** 404 : la console éditeur n'existe pas dans une installation on-premise (ADR 0082). */
     @ExceptionHandler(com.openlab.qualitos.core.edition.EditionExceptions.NotInThisEdition.class)
     public ProblemDetail handleNotInThisEdition(com.openlab.qualitos.core.edition.EditionExceptions.NotInThisEdition ex) {

@@ -9842,6 +9842,58 @@ Portail clients</source>
         <source>Suppression refusée.</source>
         <target state="translated">删除被拒绝。</target>
       </trans-unit>
+      <trans-unit id="directory.picker.label" datatype="html">
+        <source>Personne</source>
+        <target state="translated">人员</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.placeholder" datatype="html">
+        <source>Rechercher par nom ou adresse</source>
+        <target state="translated">按姓名或邮箱搜索</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.clear" datatype="html">
+        <source>Retirer la personne choisie</source>
+        <target state="translated">移除所选人员</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.loading" datatype="html">
+        <source>Recherche…</source>
+        <target state="translated">正在搜索…</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.error" datatype="html">
+        <source>Annuaire indisponible pour le moment. Réessayez dans un instant.</source>
+        <target state="translated">目录暂时不可用，请稍后重试。</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.empty" datatype="html">
+        <source>Aucune personne ne correspond.</source>
+        <target state="translated">没有匹配的人员。</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.more" datatype="html">
+        <source><x id="COUNT"/> autres résultats : précisez la recherche.</source>
+        <target state="translated">还有 <x id="COUNT"/> 条结果：请细化搜索。</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.resolving" datatype="html">
+        <source>Chargement du nom…</source>
+        <target state="translated">正在加载姓名…</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.unknown" datatype="html">
+        <source>Cette personne ne fait plus partie de l'annuaire.</source>
+        <target state="translated">此人已不在目录中。</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.former" datatype="html">
+        <source>Ancien membre de l'organisation.</source>
+        <target state="translated">组织的前成员。</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.live-error" datatype="html">
+        <source>Annuaire indisponible</source>
+        <target state="translated">目录不可用</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.live-none" datatype="html">
+        <source>Aucune personne trouvée</source>
+        <target state="translated">未找到任何人员</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.live-count" datatype="html">
+        <source><x id="COUNT"/> personne(s) proposée(s)</source>
+        <target state="translated">建议人员 <x id="COUNT"/> 名</target>
+      </trans-unit>
       <trans-unit id="nav.doc-gen-ia" datatype="html">
         <source>Génération doc IA</source>
         <target state="translated">AI 文档生成</target>

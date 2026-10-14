@@ -373,6 +373,11 @@ class UserServiceTest {
             assertThat(r.user().tenantId()).isEqualTo(TENANT_ID);
             assertThat(r.temporaryPassword()).isEqualTo("xxxx-xxxx-xxxx");
             assertThat(r.invitationSent()).isFalse();
+
+            // Le nom saisi à l'invitation devient le nom affiché dans l'annuaire (ADR 0091).
+            ArgumentCaptor<AppUser> membre = ArgumentCaptor.forClass(AppUser.class);
+            verify(userRepository).saveAndFlush(membre.capture());
+            assertThat(membre.getValue().getDisplayName()).isEqualTo("Bob Martin");
         }
 
         @Test

@@ -63,6 +63,7 @@ public class TenantOnboardingService {
                         .tenantId(h.tenant.id())
                         .keycloakId(h.account.accountId())
                         .email(r.admin().email().strip())
+                        .displayName(AppUser.displayNameOf(r.admin().firstName(), r.admin().lastName()))
                         .roles(Set.of(PlatformRoles.TENANT_ADMIN))
                         .active(true)
                         .build()));

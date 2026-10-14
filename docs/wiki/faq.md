@@ -90,6 +90,15 @@ les NC similaires pour révéler des familles de problèmes à traiter à la rac
 QualitOS est conçu multilingue. Les langues effectivement disponibles dépendent du déploiement de
 votre organisation ; renseignez-vous auprès de votre Admin Tenant.
 
+### 16. Comment désigner un responsable si je ne suis pas administrateur ?
+
+Les champs « Responsable », « Auditeur », « Vérificateur »… cherchent dans l'**annuaire** de votre
+organisation : tapez quelques lettres du nom ou de l'adresse (accents et majuscules ignorés) et
+choisissez la personne proposée. Tout membre connecté peut le faire, sans droit d'administration.
+L'annuaire ne montre que le **nom** et l'**adresse professionnelle** des membres actifs de votre
+organisation — jamais leurs rôles ni l'état de leur compte. Une personne qui a quitté l'organisation
+n'est plus proposée, mais son nom reste affiché sur les dossiers qu'elle portait.
+
 ---
 
 *Une question manque ? Signalez-la à votre référent qualité pour enrichir cette FAQ.*

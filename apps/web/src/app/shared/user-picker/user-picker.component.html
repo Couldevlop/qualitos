@@ -1,0 +1,68 @@
+<mat-form-field class="picker" subscriptSizing="dynamic">
+  <mat-label>{{ label }}</mat-label>
+  <mat-icon matPrefix aria-hidden="true" class="picker__lead">person_search</mat-icon>
+  <input matInput
+         type="text"
+         [id]="inputId"
+         [formControl]="text"
+         [matAutocomplete]="auto"
+         [placeholder]="placeholder"
+         [required]="required"
+         autocomplete="off"
+         spellcheck="false"
+         data-test="user-picker-input"
+         (focus)="onFocus()"
+         (blur)="reconcile()">
+  <button mat-icon-button
+          matSuffix
+          type="button"
+          *ngIf="(selected || unknownSelection) && !disabled"
+          (click)="clear()"
+          data-test="user-picker-clear"
+          i18n-aria-label="@@directory.picker.clear"
+          aria-label="Retirer la personne choisie">
+    <mat-icon aria-hidden="true">close</mat-icon>
+  </button>
+
+  <mat-autocomplete #auto="matAutocomplete"
+                    class="qos-user-picker-panel"
+                    [displayWith]="displayWith"
+                    (optionSelected)="onSelected($event)"
+                    (closed)="reconcile()">
+    <mat-option *ngIf="state === 'loading'" disabled class="picker__status" data-test="user-picker-loading">
+      <span i18n="@@directory.picker.loading">Recherche…</span>
+    </mat-option>
+    <mat-option *ngIf="state === 'error'" disabled class="picker__status picker__status--error" data-test="user-picker-error">
+      <span i18n="@@directory.picker.error">Annuaire indisponible pour le moment. Réessayez dans un instant.</span>
+    </mat-option>
+    <mat-option *ngIf="state === 'ready' && options.length === 0" disabled class="picker__status" data-test="user-picker-empty">
+      <span i18n="@@directory.picker.empty">Aucune personne ne correspond.</span>
+    </mat-option>
+    <ng-container *ngIf="state === 'ready'">
+      <mat-option *ngFor="let user of options; trackBy: trackById" [value]="user" data-test="user-picker-option">
+        <span class="option">
+          <span class="option__avatar" aria-hidden="true">{{ user.displayName.charAt(0) }}</span>
+          <span class="option__text">
+            <span class="option__name">{{ user.displayName }}</span>
+            <span class="option__email" *ngIf="user.email !== user.displayName">{{ user.email }}</span>
+          </span>
+        </span>
+      </mat-option>
+      <mat-option *ngIf="hiddenCount > 0" disabled class="picker__status" data-test="user-picker-more">
+        <span i18n="@@directory.picker.more">{{ hiddenCount // i18n(ph="COUNT") }} autres résultats : précisez la recherche.</span>
+      </mat-option>
+    </ng-container>
+  </mat-autocomplete>
+
+  <mat-hint *ngIf="resolving" data-test="user-picker-resolving">
+    <span i18n="@@directory.picker.resolving">Chargement du nom…</span>
+  </mat-hint>
+  <mat-hint *ngIf="unknownSelection" class="picker__hint--warn" data-test="user-picker-unknown">
+    <span i18n="@@directory.picker.unknown">Cette personne ne fait plus partie de l'annuaire.</span>
+  </mat-hint>
+  <mat-hint *ngIf="selected && !selected.active" data-test="user-picker-former">
+    <span i18n="@@directory.picker.former">Ancien membre de l'organisation.</span>
+  </mat-hint>
+  <mat-hint *ngIf="hint && !resolving && !unknownSelection && !(selected && !selected.active)">{{ hint }}</mat-hint>
+</mat-form-field>
+<span class="cdk-visually-hidden" aria-live="polite" aria-atomic="true">{{ liveMessage }}</span>
