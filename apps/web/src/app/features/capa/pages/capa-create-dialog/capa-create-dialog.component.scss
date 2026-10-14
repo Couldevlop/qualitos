@@ -1,28 +1,61 @@
-.create-form {
+/* La source, quand on vient d'une section : une étiquette, pas un champ —
+   elle se lit, elle ne se modifie pas. */
+.source-verrouillee {
   display: flex;
-  flex-direction: column;
-  min-width: 540px;
-  max-width: 620px;
+  align-items: center;
+  gap: var(--qos-space-2, 8px);
+  margin-bottom: var(--qos-space-4, 16px);
+  padding: var(--qos-space-2, 8px) var(--qos-space-3, 12px);
+  border: 1px solid var(--qos-border, rgba(0, 0, 0, 0.12));
+  border-radius: var(--qos-radius-md, 10px);
+  background: var(--qos-bg-subtle, rgba(0, 0, 0, 0.03));
+  font-size: var(--qos-fs-sm, 13px);
+  color: var(--qos-fg-primary, inherit);
+
+  mat-icon { color: var(--qos-fg-tertiary, #6b7280); flex: none; }
+
+  &__label {
+    margin-right: var(--qos-space-1, 4px);
+    color: var(--qos-fg-secondary, #6b7280);
+  }
 }
 
-mat-dialog-content { padding-top: 8px; }
+.nature {
+  margin-bottom: var(--qos-space-3, 12px);
 
-.hint {
-  margin: 0 0 16px;
-  color: var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.6));
-  font-size: 13px;
+  &__titre {
+    display: block;
+    margin-bottom: var(--qos-space-1, 4px);
+    font-size: var(--qos-fs-sm, 13px);
+    font-weight: var(--qos-fw-medium, 500);
+    color: var(--qos-fg-primary, inherit);
+  }
+
+  &__choix {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--qos-space-4, 16px);
+  }
+}
+
+.aide {
+  margin: 0 0 var(--qos-space-4, 16px);
+  font-size: var(--qos-fs-sm, 13px);
   line-height: 1.5;
+  color: var(--qos-fg-secondary, #6b7280);
 }
 
 .full { width: 100%; }
 
 .row {
   display: flex;
+  flex-wrap: wrap;
   gap: 12px;
 }
 
+/* Deux colonnes sur grand écran, une seule sur téléphone (saisie terrain). */
 .col {
-  flex: 1;
+  flex: 1 1 220px;
   min-width: 0;
 }
 

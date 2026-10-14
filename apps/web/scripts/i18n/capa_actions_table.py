@@ -6,10 +6,6 @@ id: (fr, en, es, ar, ja, zh)
 
 TRANSLATIONS = {
     # --- colonnes -----------------------------------------------------------
-    'capa.detail.col-decided-on': (
-        'Date', 'Date', 'Fecha', 'التاريخ', '日付', '日期'),
-    'capa.detail.col-assignee': (
-        'Responsable', 'Owner', 'Responsable', 'المسؤول', '担当者', '负责人'),
     'capa.detail.col-evidence': (
         'Preuve', 'Evidence', 'Prueba', 'الدليل', '証拠', '证据'),
 
@@ -22,16 +18,6 @@ TRANSLATIONS = {
         'Faite', 'Done', 'Hecha', 'منجزة', '完了', '已完成'),
 
     # --- édition en ligne ----------------------------------------------------
-    'capa.detail.edit-title-label': (
-        "Libellé de l'action", 'Action label', 'Título de la acción',
-        'عنوان الإجراء', '対策の名称', '措施名称'),
-    'capa.detail.action-updated': (
-        'Action modifiée.', 'Action updated.', 'Acción modificada.',
-        'تم تعديل الإجراء.', '対策を更新しました。', '措施已修改。'),
-    'capa.detail.action-update-error': (
-        'Modification impossible.', 'Could not update the action.',
-        'No se pudo modificar.', 'تعذّر التعديل.',
-        '更新できませんでした。', '无法修改。'),
 
     # --- preuve rattachée à une action --------------------------------------
     'capa.action-evidence.attach': (
@@ -56,13 +42,6 @@ TRANSLATIONS = {
         'إزالة دليل الإجراء: {$title}',
         '対策の証拠を削除：{$title}',
         '移除措施的证据：{$title}'),
-    'capa.detail.edit-action-aria': (
-        "Modifier l'action : {$title}",
-        'Edit the action: {$title}',
-        'Modificar la acción: {$title}',
-        'تعديل الإجراء: {$title}',
-        '対策を編集：{$title}',
-        '修改措施：{$title}'),
     'capa.action-evidence.remove-tooltip': (
         'Retirer la preuve de cette action', "Remove this action's evidence",
         'Quitar la prueba de esta acción', 'إزالة دليل هذا الإجراء',
@@ -99,20 +78,4 @@ TRANSLATIONS = {
         '该措施已不存在 — 请重新加载档案。'),
 
     # --- boîte de dialogue d'ajout d'action ---------------------------------
-    'capa.action.decided-on': (
-        'Date de décision', 'Decision date', 'Fecha de decisión',
-        'تاريخ القرار', '決定日', '决定日期'),
-    'capa.action.decided-on-hint': (
-        "Le jour où l'action a été décidée (comité, revue), pas celui de sa saisie.",
-        'The day the action was decided (committee, review), not the day it was entered.',
-        'El día en que se decidió la acción (comité, revisión), no el de su registro.',
-        'اليوم الذي تقرّر فيه الإجراء (لجنة، مراجعة)، لا يوم إدخاله.',
-        '対策が決定された日（委員会・レビュー）であり、入力日ではありません。',
-        '措施被决定的那一天（委员会、评审），而非录入之日。'),
-    'capa.action.assignee-name': (
-        'Responsable (optionnel)', 'Owner (optional)', 'Responsable (opcional)',
-        'المسؤول (اختياري)', '担当者（任意）', '负责人（可选）'),
-    'capa.action.assignee-name-placeholder': (
-        'Ex. : Amina Dridi', 'e.g. Amina Dridi', 'Ej.: Amina Dridi',
-        'مثال: أمينة الدريدي', '例：Amina Dridi', '例：Amina Dridi'),
 }

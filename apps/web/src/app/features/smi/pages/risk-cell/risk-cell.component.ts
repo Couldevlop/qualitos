@@ -211,7 +211,7 @@ export class RiskCellComponent implements OnInit, OnDestroy {
     const r = this.selected?.risk;
     if (!r || !this.editable || this.busy) return;
     this.busy = true;
-    this.capaOpener.open({ id: r.id, reference: r.reference, owner: r.owner }).subscribe({
+    this.capaOpener.open(r).subscribe({
       next: capa => {
         this.busy = false;
         if (!capa) return;

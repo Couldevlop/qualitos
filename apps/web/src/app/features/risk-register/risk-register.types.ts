@@ -68,7 +68,7 @@ export interface CapaLink {
   dueDate: string | null;
   status: string;
   kind: CapaKind;
-  /** Le responsable de l'action ; absent sur un dossier ouvert avant qu'on le désigne. */
+  /** Le nom du pilote du dossier ; absent sur un dossier ouvert avant qu'on le désigne. */
   assignee: string | null;
 }
 
@@ -192,11 +192,17 @@ export interface OpportunityRequest {
   benefitCriterion?: string | null;
 }
 
+/**
+ * Ce que la fenêtre de création CAPA commune envoie depuis un risque (ADR 0088).
+ * Le responsable est un compte de l'annuaire, qui pilote le dossier ; la
+ * criticité découle de la cotation brute du risque, côté serveur.
+ */
 export interface CapaRequest {
   title: string;
   description?: string | null;
   kind: CapaKind;
-  assignee: string;
+  ownerId: string;
+  ownerName?: string | null;
   dueDate: string;
 }
 

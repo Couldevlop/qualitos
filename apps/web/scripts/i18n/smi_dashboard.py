@@ -14,27 +14,13 @@ TRANSLATIONS = {
         'لوحة نظام الإدارة المتكامل', '統合マネジメントシステム ダッシュボード', '综合管理体系仪表板'),
 
     # ---------- registre : action CAPA d'un risque ----------
-    'rr.action.kind': (
-        "Nature de l'action", 'Type of action', 'Naturaleza de la acción',
-        'طبيعة الإجراء', 'アクションの種類', '措施性质'),
     'rr.action.kind-short': ('Nature', 'Type', 'Naturaleza', 'الطبيعة', '種類', '性质'),
-    'rr.action.kind-hint': (
-        "Préventive : l'écart ne s'est pas encore produit. Corrective : il s'est déjà produit, on en supprime la cause.",
-        'Preventive: the deviation has not occurred yet. Corrective: it has already occurred, and its cause is removed.',
-        'Preventiva: la desviación aún no se ha producido. Correctiva: ya se ha producido y se elimina su causa.',
-        'وقائي: لم يقع الانحراف بعد. تصحيحي: وقع بالفعل ويُزال سببه.',
-        '予防：逸脱はまだ発生していない。是正：既に発生しており、その原因を取り除く。',
-        '预防：偏差尚未发生。纠正：偏差已经发生，需消除其原因。'),
-    'rr.action.assignee': (
-        "Responsable de l'action", 'Action owner', 'Responsable de la acción',
-        'مسؤول الإجراء', 'アクション責任者', '措施负责人'),
     'rr.action.assignee-short': ('Responsable', 'Owner', 'Responsable', 'المسؤول', '責任者', '负责人'),
     'rr.capa-kind.preventive': ('Préventive', 'Preventive', 'Preventiva', 'وقائي', '予防', '预防'),
     'rr.capa-kind.corrective': ('Corrective', 'Corrective', 'Correctiva', 'تصحيحي', '是正', '纠正'),
 
     # ---------- fiche CAPA : action unique d'un dossier issu d'un risque ----------
     'capa.detail.single-action': ('Action', 'Action', 'Acción', 'الإجراء', 'アクション', '措施'),
-    'capa.detail.single-action-missing': ("L'action de ce risque n'a pas encore été définie.", 'No action has been defined for this risk yet.', 'Todavía no se ha definido la acción de este riesgo.', 'لم يتم تحديد إجراء هذا الخطر بعد.', 'このリスクの処置はまだ定義されていません。', '尚未为此风险定义措施。'),
     'capa.detail.single-action-define': ("Définir l'action", 'Define the action', 'Definir la acción', 'تحديد الإجراء', '処置を定義する', '定义措施'),
     'capa.detail.single-action-assignee': ('Responsable', 'Owner', 'Responsable', 'المسؤول', '責任者', '负责人'),
 

@@ -7,24 +7,6 @@
   flex-wrap: wrap;
 }
 
-/* Suggestions d'actions par l'IA */
-.ia-btn { margin-left: 8px; }
-.suggest-box {
-  margin: 0 0 14px; padding: 12px 14px; border-radius: 10px;
-  border: 1px solid #d1c4e9; background: linear-gradient(180deg, #fbfaff, #f4f1fc);
-}
-.suggest-head { display: flex; align-items: center; gap: 8px;
-  mat-icon { color: #5c35b8; }
-  .suggest-title { font-weight: 600; font-size: 14px; }
-  .spacer { flex: 1; }
-}
-.suggest-loading { display: flex; align-items: center; gap: 10px; padding: 10px 2px; color: #6a4caf; font-size: 13px; }
-.suggest-list { list-style: none; margin: 6px 0 0; padding: 0;
-  li { display: flex; align-items: center; gap: 12px; padding: 8px 4px; border-top: 1px solid #ece7f6; }
-}
-.sug-label { flex: 1; font-size: 14px; color: #37474f; }
-.sug-add { flex: 0 0 auto; }
-
 .title-block { display: flex; align-items: flex-start; gap: 4px; }
 .title-block h1 { margin: 0; font-size: 22px; font-weight: 600; line-height: 1.3; max-width: 760px; }
 .title-block .eyebrow {
@@ -40,7 +22,7 @@
 .state-row { display: flex; align-items: center; gap: 12px; padding: 16px; }
 .state-row.error { color: var(--mat-sys-error, #b3261e); }
 
-.info-card, .actions-card { margin-bottom: 16px; }
+.info-card, .action-unique { margin-bottom: 16px; }
 
 .info-grid {
   display: grid;
@@ -66,15 +48,6 @@
   font-size: 14px;
   line-height: 1.5;
 }
-
-.actions-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-bottom: 16px;
-}
-
-.actions-table { width: 100%; }
 
 .empty {
   padding: 24px;
@@ -140,24 +113,6 @@
   li + li { margin-top: 4px; }
 }
 
-/* Nature de l'action. L'endiguement se DISTINGUE visuellement : c'est le seul
-   des trois qui ne traite pas la cause, et c'est ce que la colonne existe pour
-   faire voir. Les deux autres restent sobres pour ne pas bruiter le tableau. */
-.action-type {
-  display: inline-block;
-  padding: 2px 8px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 600;
-  white-space: nowrap;
-  background: var(--qos-bg-sunken);
-  color: var(--qos-fg-secondary);
-
-  &--containment {
-    background: var(--qos-warn-bg-soft);
-    color: var(--qos-warn-fg);
-  }
-}
 .effectiveness-prompt {
   margin: 0 0 12px;
   display: flex;
@@ -183,27 +138,8 @@
 .crit-critical { background: #b71c1c; color: #fff; }
 
 /* ANO-011 — avancement des actions */
-.actions-table .action-done { color: var(--qos-success, #16a34a); vertical-align: middle; }
+.action-done { color: var(--qos-success, #16a34a); vertical-align: middle; }
 
-/* --- Tableau des actions (ADR 0052) -------------------------------------------
-   Huit colonnes ne tiennent pas sur un portable : le débordement est confié à un
-   conteneur dédié plutôt qu'au corps de page, sinon c'est toute la fiche qui
-   glisse latéralement et l'en-tête sort de l'écran avec elle. */
-.actions-table-scroll {
-  overflow-x: auto;
-  /* Le champ d'édition et son étiquette flottante dépassent la hauteur d'une
-     ligne : sans marge, la première ligne éditée se ferait rogner par le haut. */
-  padding-top: 4px;
-}
-
-.actions-table { min-width: 940px; }
-
-.actions-table td,
-.actions-table th { white-space: nowrap; }
-
-/* Le libellé et l'écart d'origine sont les seuls textes libres : eux respirent
-   et se tronquent proprement, le reste tient en un mot. */
-.actions-table td:first-child,
 /* L'ecart d'origine s'affiche desormais dans l'encart « Source » de l'en-tete,
    a la suite du type et de la reference : il se met a la ligne plutot que d'etre
    coupe, un titre de NC tronque ne designant plus rien. */
@@ -222,20 +158,7 @@
 
 .muted { color: var(--qos-text-muted, #6b7280); }
 
-/* La ligne en cours d'édition se distingue franchement : sans repère, on corrige
-   la ligne d'à côté. */
-.actions-table tr.row-editing td {
-  background: var(--qos-surface-accent, #f5f3ff);
-}
-
-.row-actions { display: flex; align-items: center; gap: 8px; }
-
-/* Les champs en ligne restent à la hauteur d'une cellule : un mat-form-field
-   par défaut fait deux fois la hauteur d'une ligne de tableau. */
-.inline-field { width: 220px; font-size: 13px; }
-.inline-field--title { width: 320px; }
-
-/* --- Colonne « Preuve » ------------------------------------------------------- */
+/* --- Preuve de l'action (ADR 0052) -------------------------------------------- */
 .action-evidence {
   display: inline-flex;
   align-items: center;
@@ -327,7 +250,7 @@
   color: var(--qos-text-muted, #6b7280);
 }
 
-// Dossier issu d'un risque : son action, seule, sans le tableau d'édition.
+// Une CAPA, son action (ADR 0088) : lue et avancée, jamais une liste à remplir.
 .action-unique__vide {
   display: flex;
   align-items: center;

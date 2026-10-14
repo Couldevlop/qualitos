@@ -138,10 +138,13 @@ public class RiskRegisterService {
     }
 
     /**
-     * Ouvre un dossier CAPA préventif sur ce risque.
+     * Ouvre un dossier CAPA sur ce risque, avec son action unique (ADR 0088).
      *
-     * <p>Le porteur est celui qui l'ouvre : c'est lui qu'on sait joindre. Un
-     * risque clos n'en ouvre plus — il n'y a plus rien à traiter.
+     * <p>Le pilote du dossier est le responsable choisi dans l'annuaire du
+     * client, et non plus celui qui clique : c'est à lui que l'action est
+     * confiée, c'est lui qu'on relancera. Celui qui clique reste l'auteur de
+     * l'ouverture dans l'historique du registre et la piste d'audit. Un risque
+     * clos n'en ouvre plus — il n'y a plus rien à traiter.
      */
     public RiskRegisterDto.CapaView openCapa(UUID riskId, RiskRegisterDto.CapaCommand commande) {
         UUID tenant = context.requireTenantId();
@@ -159,7 +162,10 @@ public class RiskRegisterService {
         if (commande.kind() == null) {
             throw new RegisterValidationException("kind", "Choisissez une action corrective ou préventive.");
         }
-        String responsable = texte("assignee", commande.assignee(), CAPA_ASSIGNEE_MAX, true);
+        if (commande.ownerId() == null) {
+            throw new RegisterValidationException("ownerId", "Choisissez le responsable de l'action.");
+        }
+        String responsable = texte("ownerName", commande.ownerName(), CAPA_ASSIGNEE_MAX, false);
         if (commande.dueDate() == null) {
             throw new RegisterValidationException("dueDate", "L'échéance est obligatoire.");
         }
@@ -170,7 +176,7 @@ public class RiskRegisterService {
         }
 
         RiskCapaGateway.LinkedCapa capa = capas.open(risque, titre, description, commande.kind(),
-                responsable, commande.dueDate(), acteur);
+                commande.ownerId(), responsable, commande.dueDate());
         tracer(tenant, RegisterItemKind.RISK, risque.getId(), RegisterEventType.ACTION_OPENED, null,
                 null, titre, acteur, clock.instant());
         audit.riskCapaOpened(risque, capa.id(), acteur);

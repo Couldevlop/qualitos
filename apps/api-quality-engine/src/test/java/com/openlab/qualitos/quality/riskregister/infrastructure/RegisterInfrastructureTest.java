@@ -325,47 +325,54 @@ class RegisterInfrastructureTest {
         CapaService capaService = mock(CapaService.class);
         CapaCaseRepository capaCases = mock(CapaCaseRepository.class);
         UUID capaId = UUID.randomUUID();
+        UUID pilote = UUID.randomUUID();
         CapaDto.CaseResponse reponse = new CapaDto.CaseResponse(capaId, TENANT, "Carte SPC", "desc",
-                CapaType.PREVENTIVE, CapaCriticity.HIGH, CapaStatus.OPEN, CapaSourceType.RISK, "R-014", ACTEUR,
-                null, LocalDate.of(2026, 12, 1), null, null, null, null, null, null, null, null, T0, T0,
-                List.of(), null, List.of());
-        when(capaService.createCase(any())).thenReturn(reponse);
-        when(capaService.addAction(eq(capaId), any())).thenReturn(new CapaDto.ActionResponse(UUID.randomUUID(),
-                capaId, "Carte SPC", "desc", CapaActionStatus.PENDING, CapaActionType.CORRECTIVE, null,
-                "A. Diallo", LocalDate.of(2026, 10, 1), LocalDate.of(2026, 12, 1), null, T0, T0));
+                CapaType.CORRECTIVE, CapaCriticity.HIGH, CapaStatus.OPEN, CapaSourceType.RISK, "R-014", pilote,
+                "A. Diallo", null, LocalDate.of(2026, 12, 1), null, null, null, null, null, null, null, null,
+                T0, T0, List.of(), null, List.of());
+        when(capaService.openCase(any(), eq(CapaSourceType.RISK), eq("R-014"))).thenReturn(reponse);
         Risk r = risque(UUID.randomUUID());
 
         RiskCapaGateway.LinkedCapa capa = new CapaRiskGateway(capaService, capaCases)
-                .open(r, "Carte SPC", "desc", RiskCapaKind.CORRECTIVE, "A. Diallo", LocalDate.of(2026, 12, 1),
-                        ACTEUR);
+                .open(r, "Carte SPC", "desc", RiskCapaKind.CORRECTIVE, pilote, "A. Diallo",
+                        LocalDate.of(2026, 12, 1));
 
-        ArgumentCaptor<CapaDto.CreateCaseRequest> captor = ArgumentCaptor.forClass(CapaDto.CreateCaseRequest.class);
-        verify(capaService).createCase(captor.capture());
-        CapaDto.CreateCaseRequest demande = captor.getValue();
+        // Une seule ouverture : le dossier ET son action, en une écriture (ADR 0088).
+        ArgumentCaptor<CapaDto.OpenCaseRequest> captor = ArgumentCaptor.forClass(CapaDto.OpenCaseRequest.class);
+        verify(capaService).openCase(captor.capture(), eq(CapaSourceType.RISK), eq("R-014"));
+        verify(capaService, never()).createCase(any());
+        verify(capaService, never()).addAction(any(), any());
+        CapaDto.OpenCaseRequest demande = captor.getValue();
+        assertThat(demande.title()).isEqualTo("Carte SPC");
         assertThat(demande.type()).isEqualTo(CapaType.CORRECTIVE);
         assertThat(demande.dueDate()).isEqualTo(LocalDate.of(2026, 12, 1));
-        assertThat(demande.sourceType()).isEqualTo(CapaSourceType.RISK);
-        assertThat(demande.sourceRef()).isEqualTo("R-014");
         assertThat(demande.criticity()).isEqualTo(CapaCriticity.HIGH);
-        assertThat(demande.ownerId()).isEqualTo(ACTEUR);
+        // Le pilote est le responsable désigné, et son nom part avec lui.
+        assertThat(demande.ownerId()).isEqualTo(pilote);
+        assertThat(demande.ownerName()).isEqualTo("A. Diallo");
         assertThat(capa.id()).isEqualTo(capaId);
         assertThat(capa.status()).isEqualTo("OPEN");
         assertThat(capa.kind()).isEqualTo(RiskCapaKind.CORRECTIVE);
         assertThat(capa.assignee()).isEqualTo("A. Diallo");
-
-        // Le dossier naît avec SON action : même nature, même échéance, confiée au responsable.
-        ArgumentCaptor<CapaDto.ActionRequest> action = ArgumentCaptor.forClass(CapaDto.ActionRequest.class);
-        verify(capaService).addAction(eq(capaId), action.capture());
-        assertThat(action.getValue().title()).isEqualTo("Carte SPC");
-        assertThat(action.getValue().actionType()).isEqualTo(CapaActionType.CORRECTIVE);
-        assertThat(action.getValue().assigneeName()).isEqualTo("A. Diallo");
-        assertThat(action.getValue().dueDate()).isEqualTo(LocalDate.of(2026, 12, 1));
     }
 
     @Test
-    void uneCapaPreventiveDonneUnDossierEtUneActionPreventives() {
+    void lePiloteNommeDuDossierPrimeSurLeResponsableDeLAction() {
+        CapaCase c = new CapaCase();
+        c.setOwnerName("b.martin@client.test");
+        CapaAction a = new CapaAction();
+        a.setAssigneeName("A. Diallo");
+        c.getActions().add(a);
+        assertThat(CapaRiskGateway.responsable(c)).isEqualTo("b.martin@client.test");
+        c.setOwnerName("  ");
+        assertThat(CapaRiskGateway.responsable(c)).isEqualTo("A. Diallo");
+        c.getActions().clear();
+        assertThat(CapaRiskGateway.responsable(c)).isNull();
+    }
+
+    @Test
+    void uneCapaPreventiveDonneUnDossierPreventif() {
         assertThat(CapaRiskGateway.typeDossier(RiskCapaKind.PREVENTIVE)).isEqualTo(CapaType.PREVENTIVE);
-        assertThat(CapaRiskGateway.typeAction(RiskCapaKind.PREVENTIVE)).isEqualTo(CapaActionType.PREVENTIVE);
         assertThat(CapaRiskGateway.nature(CapaType.CORRECTIVE)).isEqualTo(RiskCapaKind.CORRECTIVE);
         // Les dossiers ouverts avant le choix étaient tous préventifs.
         assertThat(CapaRiskGateway.nature(CapaType.PREVENTIVE)).isEqualTo(RiskCapaKind.PREVENTIVE);

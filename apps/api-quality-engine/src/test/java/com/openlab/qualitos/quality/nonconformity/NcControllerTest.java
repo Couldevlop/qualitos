@@ -266,7 +266,8 @@ class NcControllerTest {
         when(service.escalateToCapa(eq(NC), any())).thenReturn(resp(NcStatus.UNDER_ANALYSIS));
         mockMvc.perform(post("/api/v1/nc/{id}/escalate-capa", NC).with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"ownerId\":\"" + OWNER + "\"}"))
+                        .content("{\"title\":\"Reprendre le réglage\",\"type\":\"CORRECTIVE\",\"criticity\":\"HIGH\","
+                                + "\"ownerId\":\"" + OWNER + "\",\"dueDate\":\"" + java.time.LocalDate.now().plusDays(5) + "\"}"))
                 .andExpect(status().isOk());
     }
 
@@ -274,7 +275,7 @@ class NcControllerTest {
     void escalate_missingOwner_returns400() throws Exception {
         mockMvc.perform(post("/api/v1/nc/{id}/escalate-capa", NC).with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{}"))
+                        .content("{\"title\":\"t\",\"type\":\"CORRECTIVE\",\"criticity\":\"HIGH\"}"))
                 .andExpect(status().isBadRequest());
     }
 
@@ -283,7 +284,8 @@ class NcControllerTest {
         when(service.escalateToCapa(eq(NC), any())).thenThrow(new NcStateException("already escalated"));
         mockMvc.perform(post("/api/v1/nc/{id}/escalate-capa", NC).with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"ownerId\":\"" + OWNER + "\"}"))
+                        .content("{\"title\":\"Reprendre le réglage\",\"type\":\"CORRECTIVE\",\"criticity\":\"HIGH\","
+                                + "\"ownerId\":\"" + OWNER + "\",\"dueDate\":\"" + java.time.LocalDate.now().plusDays(5) + "\"}"))
                 .andExpect(status().isConflict());
     }
 

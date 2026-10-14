@@ -1,10 +1,11 @@
 package com.openlab.qualitos.quality.nonconformity;
 
 import com.openlab.qualitos.quality.authz.application.RecordScope;
-import com.openlab.qualitos.quality.capa.CapaCase;
-import com.openlab.qualitos.quality.capa.CapaCaseRepository;
 import com.openlab.qualitos.quality.capa.CapaCriticity;
+import com.openlab.qualitos.quality.capa.CapaDto;
+import com.openlab.qualitos.quality.capa.CapaService;
 import com.openlab.qualitos.quality.capa.CapaSourceType;
+import com.openlab.qualitos.quality.capa.CapaType;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.common.TenantContext;
 import org.junit.jupiter.api.AfterEach;
@@ -36,7 +37,7 @@ import static org.mockito.Mockito.*;
 class NcServiceTest {
 
     @Mock NonConformityRepository repo;
-    @Mock CapaCaseRepository capaRepo;
+    @Mock CapaService capaService;
     @Mock org.springframework.context.ApplicationEventPublisher events;
     /** Sans réglage, Mockito rend Optional.empty() : l'utilisateur voit tout (ADR 0081). */
     @Mock RecordScope scope;
@@ -319,43 +320,24 @@ class NcServiceTest {
 
     // --- escalateToCapa ---
     @Test
-    void escalate_createsCapa_andLinks_keepsNcStatus() {
+    void escalate_ouvreLaCapaEtSonAction_parLeModuleCapa_etLie_sansToucherAuStatut() {
         NonConformity n = nc(TENANT, NcStatus.UNDER_ANALYSIS);
-        n.setSeverity(NcSeverity.CRITICAL);
         when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
         UUID capaId = UUID.randomUUID();
-        when(capaRepo.save(any())).thenAnswer(inv -> {
-            CapaCase c = inv.getArgument(0);
-            c.setId(capaId);
-            return c;
-        });
+        CapaDto.OpenCaseRequest demande = openReq();
+        CapaDto.CaseResponse ouvert = new CapaDto.CaseResponse(capaId, TENANT, "t", null, CapaType.CORRECTIVE,
+                CapaCriticity.HIGH, com.openlab.qualitos.quality.capa.CapaStatus.OPEN,
+                CapaSourceType.NON_CONFORMITY, n.getReference(), OWNER, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, java.util.List.of(), null, java.util.List.of());
+        when(capaService.openCase(demande, CapaSourceType.NON_CONFORMITY, n.getReference())).thenReturn(ouvert);
         when(repo.save(n)).thenReturn(n);
 
-        NcDto.Response r = service.escalateToCapa(n.getId(), new NcDto.EscalateRequest(OWNER));
+        NcDto.Response r = service.escalateToCapa(n.getId(), demande);
 
-        ArgumentCaptor<CapaCase> cap = ArgumentCaptor.forClass(CapaCase.class);
-        verify(capaRepo).save(cap.capture());
-        assertThat(cap.getValue().getSourceType()).isEqualTo(CapaSourceType.NON_CONFORMITY);
-        assertThat(cap.getValue().getSourceRef()).isEqualTo(n.getReference());
-        assertThat(cap.getValue().getOwnerId()).isEqualTo(OWNER);
-        assertThat(cap.getValue().getCriticity()).isEqualTo(CapaCriticity.CRITICAL);
+        // La source est la NC elle-même : sa référence, jamais un champ du corps.
+        verify(capaService).openCase(demande, CapaSourceType.NON_CONFORMITY, n.getReference());
         assertThat(r.capaCaseId()).isEqualTo(capaId);
         assertThat(n.getStatus()).isEqualTo(NcStatus.UNDER_ANALYSIS); // inchangé
-    }
-
-    @Test
-    void escalate_mapsMinorToLow() {
-        NonConformity n = nc(TENANT, NcStatus.OPEN);
-        n.setSeverity(NcSeverity.MINOR);
-        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
-        when(capaRepo.save(any())).thenAnswer(inv -> { ((CapaCase) inv.getArgument(0)).setId(UUID.randomUUID()); return inv.getArgument(0); });
-        when(repo.save(n)).thenReturn(n);
-
-        service.escalateToCapa(n.getId(), new NcDto.EscalateRequest(OWNER));
-
-        ArgumentCaptor<CapaCase> cap = ArgumentCaptor.forClass(CapaCase.class);
-        verify(capaRepo).save(cap.capture());
-        assertThat(cap.getValue().getCriticity()).isEqualTo(CapaCriticity.LOW);
     }
 
     @Test
@@ -363,10 +345,16 @@ class NcServiceTest {
         NonConformity n = nc(TENANT, NcStatus.UNDER_ANALYSIS);
         n.setCapaCaseId(UUID.randomUUID());
         when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
-        assertThatThrownBy(() -> service.escalateToCapa(n.getId(), new NcDto.EscalateRequest(OWNER)))
+        assertThatThrownBy(() -> service.escalateToCapa(n.getId(), openReq()))
                 .isInstanceOf(NcStateException.class)
                 .hasMessageContaining("already escalated");
-        verify(capaRepo, never()).save(any());
+        verifyNoInteractions(capaService);
+    }
+
+    private static CapaDto.OpenCaseRequest openReq() {
+        return new CapaDto.OpenCaseRequest("Reprendre le réglage", null, CapaType.CORRECTIVE,
+                CapaCriticity.HIGH, null, null, OWNER, "a.diallo@client.test",
+                java.time.LocalDate.now().plusDays(7));
     }
 
     // --- rejet d'une réclamation externe ---

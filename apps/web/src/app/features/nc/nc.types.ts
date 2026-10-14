@@ -1,3 +1,4 @@
+import { OpenCapaRequest } from '../capa/capa.types';
 import { SpringPage } from '../pdca/pdca.types';
 
 export type NcCategory =
@@ -187,9 +188,12 @@ export interface StartAnalysisNcRequest {
   rootCause?: string;
 }
 
-export interface EscalateCapaNcRequest {
-  ownerId: string;
-}
+/**
+ * Ce que la fenêtre de création CAPA commune envoie pour ouvrir la CAPA d'une
+ * NC (ADR 0088) : le dossier et son action unique. La source est la NC — le
+ * serveur la fixe, elle n'est pas lue dans le corps.
+ */
+export type EscalateCapaNcRequest = OpenCapaRequest;
 
 /**
  * Dénombrements par statut, affichés en tuiles au-dessus d'une liste de NC.

@@ -18,6 +18,9 @@ import { IshikawaDiagramResponse } from '../../../ishikawa/ishikawa.types';
 import { NcService } from '../../nc.service';
 import { NcPhoto, NcResponse, NcStatus, VisionAnalysis } from '../../nc.types';
 import { NcDetailComponent } from './nc-detail.component';
+import {
+  CapaCreateDialogComponent, CapaCreateDialogData
+} from '../../../capa/pages/capa-create-dialog/capa-create-dialog.component';
 import { AuthzService } from '../../../../core/authz/authz.service';
 
 function buildFiveWhys(overrides: Partial<FiveWhysAnalysis> = {}): FiveWhysAnalysis {
@@ -560,94 +563,107 @@ describe('NcDetailComponent — workflow et escalade CAPA', () => {
     expect(svc.cancel).not.toHaveBeenCalled();
   });
 
-  // « Ajouter une action » remplace « Escalader CAPA ». Le dossier CAPA n'est
-  // plus ce qu'on demande a l'utilisateur : il se cree en chemin s'il manque,
-  // et le formulaire qui s'ouvre est CELUI de la CAPA, pas un jumeau.
+  // « Créer une CAPA » ouvre LA fenêtre commune (ADR 0088), source verrouillée
+  // sur la NC : le dossier, son action unique et le lien partent d'une écriture.
 
-  it('ouvre directement le formulaire d’action quand la NC porte deja une CAPA', () => {
+  const DEMANDE = {
+    title: 'Bavure', type: 'CORRECTIVE' as const, criticity: 'HIGH' as const,
+    ownerId: 'kc-1', ownerName: 'a@b.c', dueDate: '2099-01-01'
+  };
+
+  /** La doublure de la fenêtre rejoue la validation par la route fournie, ou se ferme sans rien. */
+  function fenetre(demande: typeof DEMANDE | undefined): jasmine.Spy {
+    return spyOn(TestBed.inject(MatDialog), 'open').and.callFake(
+      ((_c: unknown, config: { data: CapaCreateDialogData }) => ({
+        afterClosed: () => (demande ? config.data.open!(demande) : of(undefined))
+      })) as never);
+  }
+
+  it('ouvre la fenêtre commune, source verrouillée sur la NC, criticité tirée de la gravité', () => {
     setup();
-    const openSpy = spyOn(TestBed.inject(MatDialog), 'open')
-      .and.returnValue({ afterClosed: () => of({ id: 'act-1' }) } as never);
+    svc.escalateToCapa.and.returnValue(of(buildNc({ capaCaseId: 'capa-9' })));
+    const openSpy = fenetre(DEMANDE);
 
-    component.addAction(buildNc({ capaCaseId: 'capa-1' }));
+    component.openCapa(buildNc({ id: UUID, reference: 'NC-2026-1001', title: 'Bavure', severity: 'CRITICAL',
+      capaCaseId: undefined }));
 
-    // Aucun dossier cree : il existe deja. Une escalade de plus en aurait
-    // ouvert un second, et la NC en porte un seul.
-    expect(svc.escalateToCapa).not.toHaveBeenCalled();
-    // `askVerification` : depuis une NC, le dossier vient peut-etre d'etre cree
-    // et personne n'a vu son formulaire d'edition -- la question de la
-    // verification ne serait jamais posee sur ce chemin.
-    expect(openSpy.calls.mostRecent().args[1]?.data)
-      .toEqual({ caseId: 'capa-1', askVerification: true });
-    // Une action ajoutee change la fiche : on la relit.
+    expect(openSpy.calls.mostRecent().args[0]).toBe(CapaCreateDialogComponent);
+    const data = openSpy.calls.mostRecent().args[1]!.data as CapaCreateDialogData;
+    expect(data.source).toEqual({ type: 'NON_CONFORMITY', reference: 'NC-2026-1001' });
+    expect(data.prefill).toEqual(jasmine.objectContaining({ title: 'Bavure', type: 'CORRECTIVE', criticity: 'CRITICAL' }));
+    // Le dossier part par la route de la NC, qui le rattache.
+    expect(svc.escalateToCapa).toHaveBeenCalledWith(UUID, DEMANDE);
     expect(svc.getNc).toHaveBeenCalledTimes(1);
   });
 
-  it('cree le dossier puis enchaine sur le formulaire quand la NC n’en a pas', () => {
-    setup();
-    svc.escalateToCapa.and.returnValue(of(buildNc({ capaCaseId: 'capa-9' })));
-    const openSpy = spyOn(TestBed.inject(MatDialog), 'open')
-      .and.returnValue({ afterClosed: () => of({ id: 'act-1' }) } as never);
-
-    component.addAction(buildNc({ capaCaseId: undefined }));
-
-    expect(svc.escalateToCapa).toHaveBeenCalledWith(UUID, { ownerId: 'u1' });
-    // Le formulaire s'ouvre sur le dossier QUI VIENT D'ETRE CREE : l'ouvrir sur
-    // l'ancien identifiant (absent) ecrirait l'action dans le vide.
-    expect(openSpy.calls.mostRecent().args[1]?.data)
-      .toEqual({ caseId: 'capa-9', askVerification: true });
+  it('propose la criticité selon la gravité de l\'écart', () => {
+    expect(NcDetailComponent.criticityOf('MINOR')).toBe('LOW');
+    expect(NcDetailComponent.criticityOf('MAJOR')).toBe('HIGH');
+    expect(NcDetailComponent.criticityOf('CRITICAL')).toBe('CRITICAL');
   });
 
-  it('ne referme pas la boucle quand le serveur ne rend aucun identifiant', () => {
+  it('ouvre la CAPA existante au lieu d\'en proposer une seconde', () => {
     setup();
-    // Le serveur accepte mais ne dit pas ou : on le DIT, plutot que d'ouvrir un
-    // formulaire qui echouerait a l'enregistrement.
-    svc.escalateToCapa.and.returnValue(of(buildNc({ capaCaseId: undefined })));
     const openSpy = spyOn(TestBed.inject(MatDialog), 'open');
-    const snackSpy = spyOn(TestBed.inject(MatSnackBar), 'open');
 
-    component.addAction(buildNc({ capaCaseId: undefined }));
-
-    expect(openSpy).not.toHaveBeenCalled();
-    expect(snackSpy).toHaveBeenCalled();
-  });
-
-  it('refuse d’agir sans session plutot que de creer une CAPA sans pilote', () => {
-    setup();
-    currentUser = null;
-    const openSpy = spyOn(TestBed.inject(MatDialog), 'open');
-    const snackSpy = spyOn(TestBed.inject(MatSnackBar), 'open');
-
-    component.addAction(buildNc({ capaCaseId: undefined }));
+    component.openCapa(buildNc({ capaCaseId: 'capa-1' }));
 
     expect(openSpy).not.toHaveBeenCalled();
     expect(svc.escalateToCapa).not.toHaveBeenCalled();
-    expect(snackSpy).toHaveBeenCalled();
+    expect(router.navigate).toHaveBeenCalledWith(['/capa', 'capa-1']);
   });
 
-  it('ne recharge pas la fiche quand le formulaire est referme sans rien ajouter', () => {
+  it('signale une réponse sans lien plutôt que d\'annoncer un dossier introuvable', (done) => {
     setup();
-    spyOn(TestBed.inject(MatDialog), 'open')
-      .and.returnValue({ afterClosed: () => of(undefined) } as never);
+    svc.escalateToCapa.and.returnValue(of(buildNc({ capaCaseId: undefined })));
+    let data: CapaCreateDialogData | undefined;
+    spyOn(TestBed.inject(MatDialog), 'open').and.callFake(((_c: unknown, config: { data: CapaCreateDialogData }) => {
+      data = config.data;
+      return { afterClosed: () => of(undefined) };
+    }) as never);
 
-    component.addAction(buildNc({ capaCaseId: 'capa-1' }));
+    component.openCapa(buildNc({ capaCaseId: undefined }));
+    data!.open!(DEMANDE).subscribe({
+      next: () => fail('pas de lien, pas de dossier annoncé'),
+      error: () => done()
+    });
+  });
 
-    // Annoncer une action que l'utilisateur n'a pas creee serait un mensonge,
-    // et relire la fiche pour rien fait clignoter l'ecran.
+  it('ne recharge pas la fiche quand la fenêtre est refermée sans rien créer', () => {
+    setup();
+    fenetre(undefined);
+
+    component.openCapa(buildNc({ capaCaseId: undefined }));
+
+    expect(svc.escalateToCapa).not.toHaveBeenCalled();
     expect(svc.getNc).not.toHaveBeenCalled();
   });
 
-  it('signale l’echec de creation du dossier et rearme les actions', () => {
+  it('ne fait rien pendant qu\'une autre action est en vol', () => {
     setup();
-    const snackSpy = spyOn(TestBed.inject(MatSnackBar), 'open');
-    svc.escalateToCapa.and.returnValue(throwError(() => new HttpErrorResponse({ status: 500 })));
+    const openSpy = spyOn(TestBed.inject(MatDialog), 'open');
+    component.acting$.next(true);
 
-    component.addAction(buildNc({ capaCaseId: undefined }));
+    component.openCapa(buildNc({ capaCaseId: undefined }));
 
-    expect(snackSpy).toHaveBeenCalledWith(
-      'Erreur serveur — réessayez dans un instant.', 'OK', { duration: 4000 });
-    expect(component.acting$.value).toBeFalse();
-    expect(svc.getNc).not.toHaveBeenCalled();
+    expect(openSpy).not.toHaveBeenCalled();
+  });
+
+  it('montre « Créer une CAPA » sans CAPA, « Voir la CAPA » sinon', () => {
+    setup(buildNc({ capaCaseId: undefined }));
+    fixture.detectChanges();
+    const el = fixture.nativeElement as HTMLElement;
+    expect(el.querySelector('[data-test="creer-capa"]')).not.toBeNull();
+    expect(el.querySelector('[data-test="voir-capa"]')).toBeNull();
+  });
+
+  it('montre le lien vers la CAPA, jamais son identifiant brut', () => {
+    setup(buildNc({ capaCaseId: '99999999-9999-9999-9999-999999999999' }));
+    fixture.detectChanges();
+    const el = fixture.nativeElement as HTMLElement;
+    expect(el.querySelector('[data-test="voir-capa"]')).not.toBeNull();
+    expect(el.querySelector('[data-test="creer-capa"]')).toBeNull();
+    expect(el.textContent).not.toContain('99999999-9999');
   });
 
   it('ouvre le dialogue de résolution sur la NC courante et recharge après résolution', () => {

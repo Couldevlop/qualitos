@@ -197,7 +197,7 @@ class SpcServiceTest {
         return new CapaDto.CaseResponse(
                 id, TENANT, "SPC hors contrôle — KPI OEE", "desc",
                 CapaType.CORRECTIVE, CapaCriticity.HIGH, CapaStatus.OPEN,
-                CapaSourceType.SPC_ALERT, "kpi:" + KPI, UUID.randomUUID(),
+                CapaSourceType.SPC_ALERT, "kpi:" + KPI, UUID.randomUUID(), null,
                 null, null, null, null, null, null,
                 null, null, null, null,
                 now, now, List.of(), null, List.of());

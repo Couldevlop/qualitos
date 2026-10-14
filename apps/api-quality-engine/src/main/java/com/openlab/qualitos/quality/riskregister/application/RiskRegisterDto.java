@@ -92,8 +92,9 @@ public final class RiskRegisterDto {
             OpportunityStatus status, List<RegisterRequirement> requirements,
             String benefitCriterion) {}
 
-    public record CapaCommand(String title, String description, RiskCapaKind kind, String assignee,
-                              LocalDate dueDate) {}
+    /** Le responsable est un compte de l'annuaire, qui devient le pilote du dossier (ADR 0088). */
+    public record CapaCommand(String title, String description, RiskCapaKind kind, UUID ownerId,
+                              String ownerName, LocalDate dueDate) {}
 
     public record ActionCommand(String title, LocalDate dueDate, OpportunityActionStatus status) {}
 }

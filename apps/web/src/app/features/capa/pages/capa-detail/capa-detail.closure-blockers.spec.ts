@@ -15,6 +15,7 @@ import {
 } from '../capa-revision-impact/capa-revision-impact.component';
 import { ProductsService } from '../../../products/products.service';
 import { AuthzService } from '../../../../core/authz/authz.service';
+import { CapaDirectoryService } from '../../capa-directory.service';
 
 /**
  * Ce qui s'oppose à la clôture, DIT avant le clic (§4.2).
@@ -62,7 +63,7 @@ describe('CapaDetailComponent — motifs de blocage de la clôture', () => {
     capa = jasmine.createSpyObj<CapaService>('CapaService',
       ['getCase', 'listEvidences', 'uploadEvidence', 'deleteEvidence',
        'listActionEvidences', 'uploadActionEvidence', 'deleteActionEvidence',
-       'updateAction', 'addAction', 'deleteCase', 'suggestActions',
+       'updateAction', 'addAction', 'deleteCase',
        'verifyEffectiveness', 'startCase', 'resolveCase', 'rejectCase']);
     capa.listEvidences.and.returnValue(of([]));
     capa.listActionEvidences.and.returnValue(of([]));
@@ -73,6 +74,7 @@ describe('CapaDetailComponent — motifs de blocage de la clôture', () => {
       imports: [SharedModule, UiModule, NoopAnimationsModule],
       providers: [
         { provide: CapaService, useValue: capa },
+        { provide: CapaDirectoryService, useValue: { choices: () => of({ members: [], available: true }) } },
         // Tous les droits : ces bancs testent la fiche, pas la matrice (ADR 0078).
         { provide: AuthzService, useValue: { can: () => of(true) } },
         // L'encart d'impact vit dans la fiche : sans ce doublon, il irait
@@ -189,13 +191,12 @@ describe('CapaDetailComponent — motifs de blocage de la clôture', () => {
 
   // --- nature des actions ---------------------------------------------------
 
-  it('affiche la nature de chaque action et distingue l\'endiguement', () => {
+  it('affiche la nature de l\'action, endiguement compris', () => {
     setup([]);
 
-    const cell = (fixture.nativeElement as HTMLElement).querySelector('.action-type');
-    expect(cell).not.toBeNull();
-    expect(cell!.textContent!.trim()).toBe('Endiguement');
-    expect(cell!.classList).toContain('action-type--containment');
+    const carte = (fixture.nativeElement as HTMLElement).querySelector('[data-test="action-unique"]');
+    expect(carte).not.toBeNull();
+    expect(carte!.textContent).toContain('Endiguement');
   });
 
   it('retombe sur le code brut pour une nature inconnue', () => {

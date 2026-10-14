@@ -18,11 +18,12 @@ import java.util.UUID;
 public interface RiskCapaGateway {
 
     /**
-     * Ouvre le dossier ET son action : le dossier issu d'un risque porte une
-     * seule action, celle qu'on décide ici, confiée à {@code assignee}.
+     * Ouvre le dossier ET son action : une CAPA porte une seule action, celle
+     * qu'on décide ici, confiée au compte {@code ownerId} de l'annuaire, qui
+     * pilote aussi le dossier (ADR 0088).
      */
-    LinkedCapa open(Risk risk, String title, String description, RiskCapaKind kind, String assignee,
-                    LocalDate dueDate, UUID ownerId);
+    LinkedCapa open(Risk risk, String title, String description, RiskCapaKind kind, UUID ownerId,
+                    String ownerName, LocalDate dueDate);
 
     List<LinkedCapa> linkedTo(Risk risk);
 

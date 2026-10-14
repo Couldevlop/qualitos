@@ -3,7 +3,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../../shared/shared.module';
-import { CapaActionDialogModule } from '../capa/capa-action-dialog.module';
+import { CapaCreateDialogModule } from '../capa/capa-create-dialog.module';
 import { UiModule } from '../../shared/ui/ui.module';
 import { NcCreateDialogComponent } from './pages/nc-create-dialog/nc-create-dialog.component';
 import { NcDetailComponent } from './pages/nc-detail/nc-detail.component';
@@ -40,10 +40,10 @@ const routes: Routes = [
   // MatRadioModule n'est pas réexporté par SharedModule : le choix du mode de
   // défaillance a besoin de boutons radio, un pour chaque suggestion et un pour
   // « aucun ne correspond ».
-  // `CapaActionDialogModule` : « Ajouter une action » sur une NC ouvre LE MEME
-  // formulaire que dans une CAPA. On importe ce module minuscule et non
-  // `CapaModule`, qui aurait greffe les routes /capa sous /nc.
-  imports: [SharedModule, UiModule, MatRadioModule, CapaActionDialogModule,
+  // `CapaCreateDialogModule` : « Créer une CAPA » sur une NC ouvre LA fenetre
+  // commune (ADR 0088). On importe ce module minuscule et non `CapaModule`, qui
+  // aurait greffe les routes /capa sous /nc.
+  imports: [SharedModule, UiModule, MatRadioModule, CapaCreateDialogModule,
             RouterModule.forChild(routes)]
 })
 export class NcModule {}

@@ -99,7 +99,10 @@ export class CapaEditDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.equipe.list(0, 200).subscribe({
-      next: page => (this.membres = page.content.filter(m => m.active)),
+      // Le compte de CONNEXION (`keycloakId`, le `sub` du jeton) et non l'identifiant
+      // interne de l'annuaire : c'est lui que le moteur rapproche de l'utilisateur
+      // courant pour lui montrer les dossiers qui le concernent (ADR 0081, 0088).
+      next: page => (this.membres = page.content.filter(m => m.active && !!m.keycloakId)),
       error: () => this.annuaireState$.next(true)
     });
   }
@@ -198,7 +201,7 @@ export class CapaEditDialogComponent implements OnInit {
   /** Le libellé du membre, tel qu'il sera figé dans le dossier. */
   private nomDu(id: string | null): string | undefined {
     if (!id) return undefined;
-    return this.membres.find(m => m.id === id)?.email;
+    return this.membres.find(m => m.keycloakId === id)?.email;
   }
 
   cancel(): void { this.dialogRef.close(); }

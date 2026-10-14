@@ -20,9 +20,11 @@ import {
   ChecklistResponseRequest,
   CreateAuditPlanRequest,
   CreateChecklistItemRequest,
+  FindingCapaResponse,
   FindingResponse,
   UpdateAuditPlanRequest
 } from './audits.types';
+import { OpenCapaRequest } from '../capa/capa.types';
 
 @Injectable({ providedIn: 'root' })
 export class AuditsService {
@@ -348,6 +350,22 @@ export class AuditsService {
       return of(this.mockStore[0]).pipe(delay(120));
     }
     return this.http.patch<AuditPlanResponse>(`${this.endpoint}/${id}/${pathSegment}`, {});
+  }
+
+  /**
+   * Ouvre la CAPA d'un constat non conforme (ADR 0088) : le dossier, son action
+   * unique et le lien au constat, en une écriture côté serveur. En ligne
+   * seulement — un dossier CAPA ne se crée pas dans la file hors-ligne.
+   */
+  openFindingCapa(planId: string, findingId: string, input: OpenCapaRequest): Observable<FindingCapaResponse> {
+    if (environment.useMockApi) {
+      const plan = this.mockStore.find(p => p.id === planId);
+      const finding = plan?.findings?.find(f => f.id === findingId);
+      const capaId = 'capa-' + Math.random().toString(36).slice(2, 9);
+      if (finding) finding.capaId = capaId;
+      return of({ findingId, capaId, sourceRef: plan?.reference ?? '' }).pipe(delay(150));
+    }
+    return this.http.post<FindingCapaResponse>(`${this.endpoint}/${planId}/findings/${findingId}/capa`, input);
   }
 
   // ---- offline (file d'attente + réponses optimistes) -------------------------

@@ -53,6 +53,16 @@ public class CapaCase {
     @Column(name = "owner_id", nullable = false)
     private UUID ownerId;
 
+    /**
+     * Le libellé du pilote, recopié depuis l'annuaire à sa désignation (ADR 0088).
+     *
+     * <p>Même raison que pour le vérificateur : un compte désactivé ne doit pas
+     * effacer le nom de qui pilotait le dossier. Nul sur les dossiers ouverts
+     * avant cette colonne, ou par un automate qui ne connaît pas de nom.
+     */
+    @Column(name = "owner_name", length = 255)
+    private String ownerName;
+
     /** Lien optionnel vers la cause Ishikawa identifiée comme racine. */
     @Column(name = "root_cause_id")
     private UUID rootCauseId;

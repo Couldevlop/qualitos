@@ -38,6 +38,13 @@ export interface FindingResponse {
   pendingSync?: boolean;
 }
 
+/** La CAPA ouverte sur un constat (ADR 0088), et la référence qu'elle en porte. */
+export interface FindingCapaResponse {
+  findingId: string;
+  capaId: string;
+  sourceRef: string;
+}
+
 export interface AuditPlanResponse {
   id: string;
   /** Désignation citable — `AUD-2026-0001`. Immuable une fois attribuée. */

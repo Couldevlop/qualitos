@@ -62,8 +62,9 @@ describe('CapaEditDialogComponent', () => {
    * un banc qui l'ignore ne teste pas le composant reel.
    */
   function repondreAnnuaire(membres: Partial<TenantUser>[] = [
-    { id: 'u-verif', email: 'controle@exemple.fr', active: true },
-    { id: 'u-parti', email: 'parti@exemple.fr', active: false }
+    { id: 'db-verif', keycloakId: 'u-verif', email: 'controle@exemple.fr', active: true },
+    { id: 'db-parti', keycloakId: 'u-parti', email: 'parti@exemple.fr', active: false },
+    { id: 'db-sans-compte', email: 'sanscompte@exemple.fr', active: true }
   ]): void {
     const req = http.expectOne(r => r.url.endsWith('/api/v1/users'));
     req.flush({ content: membres, totalElements: membres.length,

@@ -51,6 +51,8 @@ class RiskRegisterServiceTest {
     static final UUID TENANT_A = UUID.randomUUID();
     static final UUID TENANT_B = UUID.randomUUID();
     static final UUID ACTEUR = UUID.randomUUID();
+    /** Le responsable choisi dans l'annuaire : distinct de qui clique (ADR 0088). */
+    static final UUID PILOTE = UUID.randomUUID();
     static final Instant MAINTENANT = Instant.parse("2026-10-01T09:00:00Z");
 
     FakeRisks risks;
@@ -204,7 +206,7 @@ class RiskRegisterServiceTest {
 
         RiskRegisterDto.CapaView capa = service.openCapa(id,
                 new RiskRegisterDto.CapaCommand("  Carte SPC sur le cordon ", " ", RiskCapaKind.CORRECTIVE,
-                        "  A. Diallo ", LocalDate.of(2026, 12, 1)));
+                        PILOTE, "  A. Diallo ", LocalDate.of(2026, 12, 1)));
 
         assertThat(capa.title()).isEqualTo("Carte SPC sur le cordon");
         assertThat(capa.kind()).isEqualTo(RiskCapaKind.CORRECTIVE);
@@ -215,7 +217,8 @@ class RiskRegisterServiceTest {
             assertThat(o.kind()).isEqualTo(RiskCapaKind.CORRECTIVE);
             assertThat(o.assignee()).isEqualTo("A. Diallo");
             assertThat(o.due()).isEqualTo(LocalDate.of(2026, 12, 1));
-            assertThat(o.owner()).isEqualTo(ACTEUR);
+            // Le pilote est le responsable choisi, pas celui qui clique (ADR 0088).
+            assertThat(o.owner()).isEqualTo(PILOTE).isNotEqualTo(ACTEUR);
             assertThat(o.risk().getReference()).isEqualTo("R-001");
         });
         assertThat(events.all.get(events.all.size() - 1)).satisfies(e -> {
@@ -244,7 +247,7 @@ class RiskRegisterServiceTest {
                 .extracting("field").isEqualTo("title");
         assertThatThrownBy(() -> service.openCapa(id, null)).extracting("field").isEqualTo("title");
         assertThatThrownBy(() -> service.openCapa(id, new RiskRegisterDto.CapaCommand("t",
-                "d".repeat(RiskRegisterService.CAPA_DESCRIPTION_MAX + 1), RiskCapaKind.PREVENTIVE, "A",
+                "d".repeat(RiskRegisterService.CAPA_DESCRIPTION_MAX + 1), RiskCapaKind.PREVENTIVE, PILOTE, "A",
                 LocalDate.of(2026, 12, 1))))
                 .extracting("field").isEqualTo("description");
         verify(audit, never()).riskCapaOpened(any(), any(), any());
@@ -256,30 +259,32 @@ class RiskRegisterServiceTest {
         LocalDate demain = LocalDate.ofInstant(MAINTENANT, ZoneOffset.UTC).plusDays(1);
 
         assertThatThrownBy(() -> service.openCapa(id,
-                new RiskRegisterDto.CapaCommand("t", null, null, "A", demain)))
+                new RiskRegisterDto.CapaCommand("t", null, null, PILOTE, "A", demain)))
                 .extracting("field").isEqualTo("kind");
         assertThatThrownBy(() -> service.openCapa(id,
-                new RiskRegisterDto.CapaCommand("t", null, RiskCapaKind.PREVENTIVE, "  ", demain)))
-                .extracting("field").isEqualTo("assignee");
+                new RiskRegisterDto.CapaCommand("t", null, RiskCapaKind.PREVENTIVE, null, "A", demain)))
+                .extracting("field").isEqualTo("ownerId");
         assertThatThrownBy(() -> service.openCapa(id,
-                new RiskRegisterDto.CapaCommand("t", null, RiskCapaKind.PREVENTIVE, "A", null)))
+                new RiskRegisterDto.CapaCommand("t", null, RiskCapaKind.PREVENTIVE, PILOTE, "A", null)))
                 .extracting("field").isEqualTo("dueDate");
         assertThatThrownBy(() -> service.openCapa(id,
-                new RiskRegisterDto.CapaCommand("t", null, RiskCapaKind.PREVENTIVE, "A", demain.minusDays(2))))
+                new RiskRegisterDto.CapaCommand("t", null, RiskCapaKind.PREVENTIVE, PILOTE, "A",
+                        demain.minusDays(2))))
                 .extracting("field").isEqualTo("dueDate");
         assertThatThrownBy(() -> service.openCapa(id, new RiskRegisterDto.CapaCommand("t", null,
-                RiskCapaKind.PREVENTIVE, "x".repeat(RiskRegisterService.CAPA_ASSIGNEE_MAX + 1), demain)))
-                .extracting("field").isEqualTo("assignee");
+                RiskCapaKind.PREVENTIVE, PILOTE, "x".repeat(RiskRegisterService.CAPA_ASSIGNEE_MAX + 1), demain)))
+                .extracting("field").isEqualTo("ownerName");
         assertThat(capas.ouvertes).isEmpty();
 
-        // Le jour même est accepté : l'échéance n'est pas encore passée.
-        service.openCapa(id, new RiskRegisterDto.CapaCommand("t", null, RiskCapaKind.PREVENTIVE, "A",
+        // Le jour même est accepté : l'échéance n'est pas encore passée. Le
+        // libellé est facultatif : un compte de l'annuaire sans nom reste désigné.
+        service.openCapa(id, new RiskRegisterDto.CapaCommand("t", null, RiskCapaKind.PREVENTIVE, PILOTE, "  ",
                 demain.minusDays(1)));
-        assertThat(capas.ouvertes).hasSize(1);
+        assertThat(capas.ouvertes).singleElement().satisfies(o -> assertThat(o.assignee()).isNull());
     }
 
     private static RiskRegisterDto.CapaCommand capa(String titre) {
-        return new RiskRegisterDto.CapaCommand(titre, null, RiskCapaKind.PREVENTIVE, "A. Diallo",
+        return new RiskRegisterDto.CapaCommand(titre, null, RiskCapaKind.PREVENTIVE, PILOTE, "A. Diallo",
                 LocalDate.of(2026, 12, 1));
     }
 
@@ -694,8 +699,8 @@ class RiskRegisterServiceTest {
         }
     }
 
-    record Ouverture(Risk risk, String title, String description, RiskCapaKind kind, String assignee,
-                     LocalDate due, UUID owner) {}
+    record Ouverture(Risk risk, String title, String description, RiskCapaKind kind, UUID owner,
+                     String assignee, LocalDate due) {}
 
     static final class FakeCapas implements RiskCapaGateway {
         final List<Ouverture> ouvertes = new ArrayList<>();
@@ -703,8 +708,8 @@ class RiskRegisterServiceTest {
 
         @Override
         public LinkedCapa open(Risk risk, String title, String description, RiskCapaKind kind,
-                               String assignee, LocalDate dueDate, UUID ownerId) {
-            ouvertes.add(new Ouverture(risk, title, description, kind, assignee, dueDate, ownerId));
+                               UUID ownerId, String assignee, LocalDate dueDate) {
+            ouvertes.add(new Ouverture(risk, title, description, kind, ownerId, assignee, dueDate));
             LinkedCapa capa = new LinkedCapa(UUID.randomUUID(), title, dueDate, "OPEN", kind, assignee);
             lies.add(capa);
             return capa;

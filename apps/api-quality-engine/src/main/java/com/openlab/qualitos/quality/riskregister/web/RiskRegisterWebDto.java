@@ -72,11 +72,20 @@ public final class RiskRegisterWebDto {
             @Size(max = 10) List<RegisterRequirement> requirements,
             @Size(max = 1000) String benefitCriterion) {}
 
+    /**
+     * Ce que la fenêtre de création CAPA commune envoie depuis un risque (ADR 0088).
+     *
+     * <p>Le responsable est un compte de l'annuaire du client — son identifiant
+     * et son libellé recopié —, et non plus un nom tapé : il devient le pilote
+     * du dossier. La criticité n'y figure pas, elle découle de la cotation brute
+     * du risque.
+     */
     public record CapaRequest(
             @NotBlank @Size(max = 255) String title,
             @Size(max = 4000) String description,
             @NotNull RiskCapaKind kind,
-            @NotBlank @Size(max = 255) String assignee,
+            @NotNull UUID ownerId,
+            @Size(max = 255) String ownerName,
             @NotNull LocalDate dueDate) {}
 
     public record ActionRequest(

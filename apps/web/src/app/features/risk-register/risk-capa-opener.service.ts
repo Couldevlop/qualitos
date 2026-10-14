@@ -1,29 +1,31 @@
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Observable, of } from 'rxjs';
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import {
-  ActionDialogComponent, ActionDialogData, ActionDialogResult
-} from './pages/action-dialog/action-dialog.component';
+  CapaCreateDialogComponent, CapaCreateDialogData, CapaOpened
+} from '../capa/pages/capa-create-dialog/capa-create-dialog.component';
 import { RiskRegisterService } from './risk-register.service';
-import { CapaLink } from './risk-register.types';
+import { CapaLink, RiskView } from './risk-register.types';
 
-/** Ce qu'il faut d'un risque pour lui ouvrir une action CAPA. */
-export interface RiskForCapa {
-  id: string;
-  reference: string;
-  owner: string;
+/** Ce qu'il faut d'un risque pour lui ouvrir une CAPA. */
+export type RiskForCapa = Pick<RiskView, 'id' | 'reference' | 'title' | 'owner' | 'grossLevel'>;
+
+/** Ce que la fenêtre rend quand la CAPA vient d'un risque : le lien, pour la fiche. */
+interface RiskCapaOpened extends CapaOpened {
+  link: CapaLink;
 }
 
 /**
- * « Créer une action CAPA » depuis un risque, d'où qu'on le clique : la fiche
- * du risque, ou le panneau d'une case de la matrice du tableau de bord SMI.
+ * « Créer une CAPA » depuis un risque, d'où qu'on le clique : la fiche du
+ * risque, ou le panneau d'une case de la matrice du tableau de bord SMI.
  *
- * <p>La fenêtre propose le propriétaire du risque comme responsable, et les
- * noms déjà employés au registre ; si ces suggestions ne viennent pas, la
- * fenêtre s'ouvre quand même — elles aident, elles ne conditionnent rien.
- * Rend le dossier ouvert, ou `null` si l'utilisateur a renoncé.
+ * <p>LA fenêtre de création commune (ADR 0088), source verrouillée sur le
+ * risque, criticité issue de sa cotation brute. Le propriétaire du risque est
+ * proposé comme responsable s'il se retrouve dans l'annuaire ; le responsable
+ * choisi pilote le dossier — et non plus celui qui clique.
+ * Rend le lien du dossier ouvert, ou `null` si l'utilisateur a renoncé.
  */
 @Injectable({ providedIn: 'root' })
 export class RiskCapaOpener {
@@ -34,20 +36,29 @@ export class RiskCapaOpener {
   ) {}
 
   open(risk: RiskForCapa): Observable<CapaLink | null> {
-    return this.service.suggestions().pipe(
-      map(s => s.owners),
-      catchError(() => of([] as string[])),
-      switchMap(assignees => this.dialog.open<ActionDialogComponent, ActionDialogData, ActionDialogResult>(
-        ActionDialogComponent, {
-          data: { mode: 'capa', reference: risk.reference, assignee: risk.owner, assignees },
-          panelClass: 'qos-dialog-panel', restoreFocus: true
-        }).afterClosed()),
-      switchMap(result => result && result.kind && result.assignee && result.dueDate
-        ? this.service.openCapa(risk.id, {
-          title: result.title, description: result.description, kind: result.kind,
-          assignee: result.assignee, dueDate: result.dueDate
-        })
-        : of(null))
+    const data: CapaCreateDialogData = {
+      source: { type: 'RISK', reference: risk.reference },
+      lockCriticity: true,
+      prefill: {
+        title: risk.title,
+        type: 'PREVENTIVE',
+        criticity: risk.grossLevel,
+        ownerHint: risk.owner
+      },
+      open: request => this.service.openCapa(risk.id, {
+        title: request.title,
+        description: request.description ?? null,
+        kind: request.type,
+        ownerId: request.ownerId,
+        ownerName: request.ownerName ?? null,
+        dueDate: request.dueDate
+      }).pipe(map((link): RiskCapaOpened => ({ capaId: link.id, link })))
+    };
+    return this.dialog.open<CapaCreateDialogComponent, CapaCreateDialogData, CapaOpened>(
+      CapaCreateDialogComponent, {
+        data, panelClass: 'qos-dialog-panel', autoFocus: 'first-tabbable', restoreFocus: true
+      }).afterClosed().pipe(
+      map(opened => (opened ? (opened as RiskCapaOpened).link ?? null : null))
     );
   }
 }
