@@ -58,9 +58,11 @@ server {
 
   location /auth/ { proxy_pass $keycloak; }
 
-  # Socle : comptes, édition et licence, console éditeur (absente en on-premise).
-  location /api/v1/tenants { proxy_pass $core; }
-  location /api/v1/users   { proxy_pass $core; }
+  # Socle : comptes, annuaire (ADR 0091), édition et licence, console éditeur
+  # (absente en on-premise).
+  location /api/v1/tenants   { proxy_pass $core; }
+  location /api/v1/users     { proxy_pass $core; }
+  location /api/v1/directory { proxy_pass $core; }
   location /api/v1/edition { proxy_pass $core; }
   location /api/v1/admin   { proxy_pass $core; }
   location /api/v1/iot     { proxy_pass $iot; }
