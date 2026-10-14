@@ -1,11 +1,13 @@
 package com.openlab.qualitos.quality.audit;
 
+import com.openlab.qualitos.quality.common.MethodSecurityTestConfig;
 import com.openlab.qualitos.quality.common.StepUpGuard;
 import com.openlab.qualitos.quality.common.StepUpRequiredException;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -29,6 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @Tag("web")
 @WebMvcTest(controllers = AuditReportController.class)
+@Import(MethodSecurityTestConfig.class)
 class AuditReportControllerTest {
 
     @Autowired MockMvc mockMvc;
@@ -78,7 +81,7 @@ class AuditReportControllerTest {
                 .andExpect(status().isConflict());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void emission_200_apresSecondFacteur() throws Exception {
         when(service.issue(PLAN)).thenReturn(view(AuditReportStatus.ISSUED));
         mockMvc.perform(post("/api/v1/audits/plans/{id}/report/issue", PLAN).with(csrf()))
@@ -87,7 +90,7 @@ class AuditReportControllerTest {
         verify(stepUp).require(any());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void emission_sansSecondFacteur_403_etRienNEstEmis() throws Exception {
         doThrow(new StepUpRequiredException("émettre un rapport d'audit")).when(stepUp).require(any());
         mockMvc.perform(post("/api/v1/audits/plans/{id}/report/issue", PLAN).with(csrf()))
@@ -95,12 +98,19 @@ class AuditReportControllerTest {
         verifyNoInteractions(service);
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "DIRECTOR_QUALITY")
     void emission_incomplete_422() throws Exception {
         when(service.issue(PLAN)).thenThrow(new AuditReportIncompleteException("no summary"));
         mockMvc.perform(post("/api/v1/audits/plans/{id}/report/issue", PLAN).with(csrf()))
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(jsonPath("$.type").value("https://qualitos.io/errors/audit-report-incomplete"));
+    }
+
+    @Test @WithMockUser(roles = "USER")
+    void emission_parUnRoleDeTerrain_403_etRienNEstEmis() throws Exception {
+        mockMvc.perform(post("/api/v1/audits/plans/{id}/report/issue", PLAN).with(csrf()))
+                .andExpect(status().isForbidden());
+        verifyNoInteractions(service, stepUp);
     }
 
     @Test

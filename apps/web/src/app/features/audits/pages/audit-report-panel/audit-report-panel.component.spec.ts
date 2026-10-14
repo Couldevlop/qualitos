@@ -9,7 +9,7 @@ import { AuthService } from '../../../../core/auth/auth.service';
 import { SharedModule } from '../../../../shared/shared.module';
 import { AuditsService } from '../../audits.service';
 import { AuditPlanResponse, AuditReport, AuditStatus } from '../../audits.types';
-import { AuditReportPanelComponent } from './audit-report-panel.component';
+import { AuditReportPanelComponent, ISSUE_ROLES } from './audit-report-panel.component';
 
 /**
  * Section « Rapport » : brouillon, puis émission qui fige.
@@ -58,7 +58,8 @@ describe('AuditReportPanelComponent', () => {
     snackAction = new Subject<void>();
     snack = jasmine.createSpyObj<MatSnackBar>('MatSnackBar', ['open']);
     snack.open.and.returnValue({ onAction: () => snackAction.asObservable() } as never);
-    auth = jasmine.createSpyObj<AuthService>('AuthService', ['stepUp', 'snapshot']);
+    auth = jasmine.createSpyObj<AuthService>('AuthService', ['stepUp', 'snapshot', 'hasAnyRole']);
+    auth.hasAnyRole.and.returnValue(true);
 
     await TestBed.configureTestingModule({
       declarations: [AuditReportPanelComponent],
@@ -94,6 +95,14 @@ describe('AuditReportPanelComponent', () => {
   it('audit clôturé sans conclusion : la raison le dit', () => {
     show(plan('COMPLETED'), report({ summary: 'S' }));
     expect(component.issueBlocker).toContain('conclusion');
+  });
+
+  it('rôle de terrain : émission barrée, la raison renvoie au pilotage qualité', () => {
+    auth.hasAnyRole.and.returnValue(false);
+    show(plan('COMPLETED'), report({ summary: 'S', conclusion: 'FAVORABLE' }));
+    expect(component.issueBlocker).toContain('pilotage qualité');
+    expect((el('emettre') as HTMLButtonElement).disabled).toBeTrue();
+    expect(auth.hasAnyRole).toHaveBeenCalledWith(ISSUE_ROLES);
   });
 
   it('audit clôturé et rapport complet : émission possible', () => {

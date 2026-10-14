@@ -451,6 +451,14 @@ public class AuditService {
         }
         AuditFinding f = findingRepository.findByIdAndPlanId(findingId, planId)
                 .orElseThrow(() -> new AuditFindingNotFoundException(findingId));
+        // Le rapport émis a figé les chiffres des constats sous son empreinte :
+        // requalifier ou réécrire un constat après coup le contredirait. Seul le
+        // rattachement d'une CAPA reste possible, il ne change pas le constat.
+        boolean retouche = req.type() != null || req.description() != null
+                || req.clauseRef() != null || req.photoUrl() != null;
+        if (retouche && reportRepository.existsByPlanIdAndStatus(planId, AuditReportStatus.ISSUED)) {
+            throw new AuditStateException("Cannot modify a finding once the audit report is issued");
+        }
         if (req.type() != null) f.setType(req.type());
         if (req.description() != null) f.setDescription(req.description());
         if (req.clauseRef() != null) f.setClauseRef(req.clauseRef());

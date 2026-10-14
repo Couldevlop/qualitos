@@ -5558,6 +5558,10 @@ Portail clients</source>
         <source>Le rapport s'émet une fois l'audit clôturé. Vous pouvez déjà rédiger le brouillon.</source>
         <target state="translated">يصدر التقرير بعد إغلاق التدقيق. يمكنك كتابة المسودة منذ الآن.</target>
       </trans-unit>
+      <trans-unit id="audits.report.blocker-role" datatype="html">
+        <source>L'émission du rapport revient au pilotage qualité (manager ou directeur qualité).</source>
+        <target state="translated">إصدار التقرير من صلاحيات إدارة الجودة (مدير الجودة أو مديرها العام).</target>
+      </trans-unit>
       <trans-unit id="audits.report.blocker-summary" datatype="html">
         <source>Rédigez la synthèse (ou générez-la) avant d'émettre.</source>
         <target state="translated">اكتب الملخّص (أو أنشئه) قبل الإصدار.</target>

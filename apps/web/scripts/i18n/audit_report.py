@@ -252,6 +252,13 @@ TRANSLATIONS = {
         'يصدر التقرير بعد إغلاق التدقيق. يمكنك كتابة المسودة منذ الآن.',
         '報告書は監査終了後に発行します。下書きは今から作成できます。',
         '报告在审核关闭后发布。您现在即可撰写草稿。'),
+    'audits.report.blocker-role': (
+        "L'émission du rapport revient au pilotage qualité (manager ou directeur qualité).",
+        'Issuing the report is up to quality management (quality manager or director).',
+        'La emisión del informe corresponde a la dirección de calidad (responsable o director de calidad).',
+        'إصدار التقرير من صلاحيات إدارة الجودة (مدير الجودة أو مديرها العام).',
+        '報告書の発行は品質管理部門（品質マネージャーまたは品質部長）が行います。',
+        '报告的发布由质量管理层（质量经理或质量总监）负责。'),
     'audits.report.blocker-summary': (
         "Rédigez la synthèse (ou générez-la) avant d'émettre.",
         'Write (or generate) the summary before issuing.',

@@ -14,6 +14,10 @@ import {
 import { AuditsService } from '../../audits.service';
 import { AuditConclusion, AuditPlanResponse, AuditReport } from '../../audits.types';
 
+/** Les rôles admis à émettre, ceux que le serveur exige (`AuditReportController`). */
+export const ISSUE_ROLES: readonly string[] =
+  ['QUALITY_MANAGER', 'DIRECTOR_QUALITY', 'QUALITY_DIRECTOR', 'ADMIN_TENANT', 'SUPER_ADMIN'];
+
 /**
  * Section « Rapport » d'un audit (§4.4, ISO 19011 §6.5).
  *
@@ -107,6 +111,9 @@ export class AuditReportPanelComponent implements OnChanges {
    */
   get issueBlocker(): string | null {
     if (this.issued || !this.report) return null;
+    if (!this.auth.hasAnyRole(ISSUE_ROLES)) {
+      return $localize`:@@audits.report.blocker-role:L'émission du rapport revient au pilotage qualité (manager ou directeur qualité).`;
+    }
     if (this.plan.status === 'CANCELLED') {
       return $localize`:@@audits.report.blocker-cancelled:Un audit annulé n'a pas de rapport.`;
     }

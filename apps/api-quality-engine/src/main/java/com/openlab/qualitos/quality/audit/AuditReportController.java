@@ -2,6 +2,7 @@ package com.openlab.qualitos.quality.audit;
 
 import com.openlab.qualitos.quality.common.StepUpGuard;
 import jakarta.validation.Valid;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -17,6 +18,13 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/audits/plans/{id}/report")
 public class AuditReportController {
+
+    /**
+     * Émettre rend le rapport opposable : c'est un acte de pilotage, pas de
+     * terrain (§16). Mêmes rôles que l'émission d'un rapport 8D.
+     */
+    private static final String ROLES_EMISSION =
+            "hasAnyRole('QUALITY_MANAGER','DIRECTOR_QUALITY','ADMIN_TENANT','SUPER_ADMIN')";
 
     private final AuditReportService service;
     private final StepUpGuard stepUp;
@@ -44,6 +52,7 @@ public class AuditReportController {
      * l'exige, et un intercepteur mal configuré ne peut pas l'éteindre en silence.
      */
     @PostMapping("/issue")
+    @PreAuthorize(ROLES_EMISSION)
     public AuditReportDto.View issue(@PathVariable UUID id) {
         stepUp.require("émettre un rapport d'audit");
         return service.issue(id);

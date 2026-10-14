@@ -571,6 +571,33 @@ class AuditServiceTest {
     }
 
     @Test
+    void updateFinding_rapportEmis_refuseDeRequalifier() {
+        AuditPlan p = plan(TENANT, AuditStatus.COMPLETED);
+        AuditFinding f = finding(p, FindingType.MAJOR_NC);
+        when(planRepo.findByIdAndTenantId(p.getId(), TENANT)).thenReturn(Optional.of(p));
+        when(findingRepo.findByIdAndPlanId(f.getId(), p.getId())).thenReturn(Optional.of(f));
+        when(reportRepo.existsByPlanIdAndStatus(p.getId(), AuditReportStatus.ISSUED)).thenReturn(true);
+        assertThatThrownBy(() -> service.updateFinding(p.getId(), f.getId(),
+                new AuditDto.UpdateFindingRequest(FindingType.OBSERVATION, null, null, null, null)))
+                .isInstanceOf(AuditStateException.class);
+        assertThat(f.getType()).isEqualTo(FindingType.MAJOR_NC);
+        verify(findingRepo, never()).save(any());
+    }
+
+    @Test
+    void updateFinding_rapportEmis_rattacherUneCapaResteAdmis() {
+        AuditPlan p = plan(TENANT, AuditStatus.COMPLETED);
+        AuditFinding f = finding(p, FindingType.MAJOR_NC);
+        UUID capa = UUID.randomUUID();
+        when(planRepo.findByIdAndTenantId(p.getId(), TENANT)).thenReturn(Optional.of(p));
+        when(findingRepo.findByIdAndPlanId(f.getId(), p.getId())).thenReturn(Optional.of(f));
+        when(findingRepo.save(f)).thenReturn(f);
+        service.updateFinding(p.getId(), f.getId(),
+                new AuditDto.UpdateFindingRequest(null, null, null, null, capa));
+        assertThat(f.getCapaId()).isEqualTo(capa);
+    }
+
+    @Test
     void updateFinding_notFound_throws() {
         AuditPlan p = plan(TENANT, AuditStatus.IN_PROGRESS);
         UUID fid = UUID.randomUUID();
