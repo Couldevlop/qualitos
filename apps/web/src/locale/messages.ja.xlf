@@ -22840,8 +22840,8 @@ historique 12 mois</source>
         <target state="translated">統合マネジメントシステム</target>
       </trans-unit>
       <trans-unit id="smi.subtitle" datatype="html">
-        <source>Vue consolidée : une preuve compte pour toutes les normes qu'elle couvre.</source>
-        <target state="translated">統合ビュー：1つの証拠は、それが対象とするすべての規格に有効です。</target>
+        <source>Vue consolidée de toutes les normes adoptées : conformité, risques, audits et échéances.</source>
+        <target state="translated">採用したすべての規格の統合ビュー：適合率、リスク、監査、期限。</target>
       </trans-unit>
       <trans-unit id="smi.filter" datatype="html">
         <source>Filtrer par norme</source>
@@ -22866,10 +22866,6 @@ historique 12 mois</source>
       <trans-unit id="smi.kpi.no-standard" datatype="html">
         <source>Aucune norme adoptée.</source>
         <target state="translated">採用された規格はありません。</target>
-      </trans-unit>
-      <trans-unit id="smi.kpi.adopt" datatype="html">
-        <source>Adopter une norme</source>
-        <target state="translated">規格を採用</target>
       </trans-unit>
       <trans-unit id="smi.kpi.overdue" datatype="html">
         <source>Actions en retard</source>
@@ -22906,10 +22902,6 @@ historique 12 mois</source>
       <trans-unit id="smi.by-standard" datatype="html">
         <source>Conformité par référentiel</source>
         <target state="translated">規格別の適合率</target>
-      </trans-unit>
-      <trans-unit id="smi.by-standard-note" datatype="html">
-        <source>Une même preuve (procédure, audit, action) est comptée pour tous les référentiels concernés.</source>
-        <target state="translated">同じ証拠（手順、監査、アクション）が関係するすべての規格に有効です。</target>
       </trans-unit>
       <trans-unit id="smi.see-matrix" datatype="html">
         <source>Voir la matrice des exigences</source>
@@ -22964,8 +22956,8 @@ historique 12 mois</source>
         <target state="translated">期限超過も7日以内の期限もありません。</target>
       </trans-unit>
       <trans-unit id="smi.requirements.title" datatype="html">
-        <source>Matrice des exigences · une preuve, plusieurs référentiels</source>
-        <target state="translated">要求事項マトリクス · 1つの証拠で複数の規格</target>
+        <source>Matrice des exigences · chapitres communs × normes</source>
+        <target state="translated">要求事項マトリクス · 共通箇条 × 規格</target>
       </trans-unit>
       <trans-unit id="smi.requirements.teaser" datatype="html">
         <source>Chapitres communs 4 à 10, croisés avec chaque norme adoptée : couvert, partiel ou en écart.</source>
@@ -23223,10 +23215,6 @@ historique 12 mois</source>
         <source>Compléter les preuves</source>
         <target state="translated">証拠を追加</target>
       </trans-unit>
-      <trans-unit id="smi.req.reuse" datatype="html">
-        <source>Une preuve rattachée à une exigence commune compte pour toutes les normes qui partagent ce chapitre.</source>
-        <target state="translated">共通の要求事項に紐づく証拠は、この箇条を共有するすべての規格に有効です。</target>
-      </trans-unit>
       <trans-unit id="smi.req.all-covered" datatype="html">
         <source>Tout est couvert : choisissez une case pour en voir le détail.</source>
         <target state="translated">すべて適合しています。セルを選んで詳細を表示してください。</target>
@@ -23238,6 +23226,90 @@ historique 12 mois</source>
       <trans-unit id="smi.req.capa-description" datatype="html">
         <source><x id="covered"/> exigence(s) prouvée(s) sur <x id="total"/> au chapitre <x id="chapter"/> de <x id="standard"/>.</source>
         <target state="translated"><x id="standard"/> の箇条 <x id="chapter"/>：<x id="total"/> 件中 <x id="covered"/> 件の要求事項に証拠あり。</target>
+      </trans-unit>
+      <trans-unit id="smi.add.open" datatype="html">
+        <source>Ajouter une norme</source>
+        <target state="translated">規格を追加</target>
+      </trans-unit>
+      <trans-unit id="smi.add.admin-only" datatype="html">
+        <source>L'administrateur de votre organisation ajoute les normes.</source>
+        <target state="translated">規格の追加は組織の管理者が行います。</target>
+      </trans-unit>
+      <trans-unit id="standards.list.no-adoption" datatype="html">
+        <source>Aucune adoption.</source>
+        <target state="translated">採用はありません。</target>
+      </trans-unit>
+      <trans-unit id="smi.add.title" datatype="html">
+        <source>Ajouter une norme au SMI</source>
+        <target state="translated">統合マネジメントシステムに規格を追加</target>
+      </trans-unit>
+      <trans-unit id="smi.add.subtitle" datatype="html">
+        <source>Les normes de système de management partagent les chapitres 4 à 10 : elles se pilotent dans le même tableau de bord et la même matrice des exigences.</source>
+        <target state="translated">マネジメントシステム規格は箇条4〜10を共有します。同じダッシュボードと同じ要求事項マトリクスで管理されます。</target>
+      </trans-unit>
+      <trans-unit id="smi.add.loading" datatype="html">
+        <source>Chargement des normes du catalogue</source>
+        <target state="translated">カタログの規格を読み込み中</target>
+      </trans-unit>
+      <trans-unit id="smi.add.load-failed" datatype="html">
+        <source>Les normes du catalogue n'ont pas pu être chargées.</source>
+        <target state="translated">カタログの規格を読み込めませんでした。</target>
+      </trans-unit>
+      <trans-unit id="smi.add.none" datatype="html">
+        <source>Toutes les normes de système de management du catalogue sont déjà adoptées.</source>
+        <target state="translated">カタログのマネジメントシステム規格はすべて採用済みです。</target>
+      </trans-unit>
+      <trans-unit id="smi.add.suggested" datatype="html">
+        <source>Suggérées pour votre SMI</source>
+        <target state="translated">あなたの統合マネジメントシステムへのおすすめ</target>
+      </trans-unit>
+      <trans-unit id="smi.add.others" datatype="html">
+        <source>Autres normes de système de management</source>
+        <target state="translated">その他のマネジメントシステム規格</target>
+      </trans-unit>
+      <trans-unit id="smi.add.all" datatype="html">
+        <source>Normes de système de management</source>
+        <target state="translated">マネジメントシステム規格</target>
+      </trans-unit>
+      <trans-unit id="smi.add.suggested-badge" datatype="html">
+        <source>Suggérée</source>
+        <target state="translated">おすすめ</target>
+      </trans-unit>
+      <trans-unit id="smi.add.shared-with" datatype="html">
+        <source>Rattachée à <x id="standards"/></source>
+        <target state="translated"><x id="standards"/> と関連</target>
+      </trans-unit>
+      <trans-unit id="smi.add.hint" datatype="html">
+        <source>L'adoption crée la feuille de route de certification dans le Standards Hub ; les preuves s'y rattachent ensuite, exigence par exigence.</source>
+        <target state="translated">採用すると Standards Hub に認証ロードマップが作成され、その後、要求事項ごとに証拠を紐づけます。</target>
+      </trans-unit>
+      <trans-unit id="smi.add.submit" datatype="html">
+        <source>Ajouter</source>
+        <target state="translated">追加</target>
+      </trans-unit>
+      <trans-unit id="smi.add.blocked" datatype="html">
+        <source>Choisissez la norme à ajouter.</source>
+        <target state="translated">追加する規格を選択してください。</target>
+      </trans-unit>
+      <trans-unit id="smi.add.conflict" datatype="html">
+        <source>Cette norme est déjà adoptée par votre organisation.</source>
+        <target state="translated">この規格は既に組織で採用されています。</target>
+      </trans-unit>
+      <trans-unit id="smi.add.forbidden" datatype="html">
+        <source>Seul l'administrateur de votre organisation peut ajouter une norme.</source>
+        <target state="translated">規格を追加できるのは組織の管理者のみです。</target>
+      </trans-unit>
+      <trans-unit id="smi.add.not-found" datatype="html">
+        <source>Cette norme n'est pas une norme de système de management du catalogue.</source>
+        <target state="translated">この規格はカタログのマネジメントシステム規格ではありません。</target>
+      </trans-unit>
+      <trans-unit id="smi.add.failed" datatype="html">
+        <source>La norme n'a pas pu être ajoutée.</source>
+        <target state="translated">規格を追加できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="smi.add.done" datatype="html">
+        <source><x id="standard"/> ajoutée au SMI — feuille de route de certification créée.</source>
+        <target state="translated"><x id="standard"/> を統合マネジメントシステムに追加しました — 認証ロードマップを作成しました。</target>
       </trans-unit>
       <trans-unit id="standards-extras.actions" datatype="html">
         <source>Actions</source>

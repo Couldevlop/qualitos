@@ -3,11 +3,15 @@ package com.openlab.qualitos.quality.standards;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.openlab.qualitos.quality.common.MethodSecurityTestConfig;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
@@ -26,12 +30,14 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import org.junit.jupiter.api.Tag;
 
 @Tag("web")
 @WebMvcTest(controllers = StandardsController.class)
+@Import(MethodSecurityTestConfig.class)
 class StandardsControllerTest {
 
     @Autowired MockMvc mockMvc;
@@ -101,7 +107,7 @@ class StandardsControllerTest {
         mockMvc.perform(get("/api/v1/standards/adoptions")).andExpect(status().isOk());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "ADMIN_TENANT")
     void adopt_returns201() throws Exception {
         when(service.adopt(any())).thenReturn(adoptionResp(AdoptionStatus.PLANNING));
         StandardsDto.AdoptRequest req = new StandardsDto.AdoptRequest(STD, "scope", null, LEAD, "AFNOR");
@@ -111,7 +117,7 @@ class StandardsControllerTest {
                 .andExpect(status().isCreated());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "ADMIN_TENANT")
     void adopt_missingStandardId_returns400() throws Exception {
         mockMvc.perform(post("/api/v1/standards/adoptions").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -119,7 +125,7 @@ class StandardsControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "ADMIN_TENANT")
     void adopt_alreadyAdopted_returns409() throws Exception {
         when(service.adopt(any())).thenThrow(new AdoptionConflictException("dup"));
         StandardsDto.AdoptRequest req = new StandardsDto.AdoptRequest(STD, null, null, null, null);
@@ -127,6 +133,53 @@ class StandardsControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(om.writeValueAsString(req)))
                 .andExpect(status().isConflict());
+    }
+
+    // ---------- paramétrage des adoptions : administrateur du client seulement (ADR 0090) ----------
+
+    @ParameterizedTest
+    @ValueSource(strings = {"QUALITY_MANAGER", "QUALITY_DIRECTOR", "DIRECTOR_QUALITY", "AUDITOR", "USER",
+            "EXTERNAL_AUDITOR", "SUPER_ADMIN"})
+    void parametrerUneAdoptionEstRefuseAuxAutresRolesAvantLaLectureDuCorps(String role) throws Exception {
+        mockMvc.perform(post("/api/v1/standards/adoptions").with(user("u").roles(role)).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(om.writeValueAsString(new StandardsDto.AdoptRequest(STD, null, null, null, null))))
+                .andExpect(status().isForbidden());
+        // Corps malformé : toujours 403, le refus ne dépend pas de ce qu'on envoie.
+        mockMvc.perform(post("/api/v1/standards/adoptions").with(user("u").roles(role)).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON).content("{\"standardId\":"))
+                .andExpect(status().isForbidden());
+        mockMvc.perform(patch("/api/v1/standards/adoptions/{id}", ADO).with(user("u").roles(role)).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON).content("{\"scopeDescription\":\"x\"}"))
+                .andExpect(status().isForbidden());
+        mockMvc.perform(patch("/api/v1/standards/adoptions/{id}/withdraw", ADO).with(user("u").roles(role))
+                        .with(csrf()))
+                .andExpect(status().isForbidden());
+        mockMvc.perform(delete("/api/v1/standards/adoptions/{id}", ADO).with(user("u").roles(role)).with(csrf()))
+                .andExpect(status().isForbidden());
+        verify(service, never()).adopt(any());
+        verify(service, never()).updateAdoption(any(), any());
+        verify(service, never()).withdraw(any());
+        verify(service, never()).deleteAdoption(any());
+    }
+
+    /** Les noms que le rôle administrateur a portés (ADR 0020) valent le rôle. */
+    @ParameterizedTest
+    @ValueSource(strings = {"ADMIN", "TENANT_ADMIN"})
+    void lesAliasDeLAdministrateurAdoptent(String alias) throws Exception {
+        when(service.adopt(any())).thenReturn(adoptionResp(AdoptionStatus.PLANNING));
+        mockMvc.perform(post("/api/v1/standards/adoptions").with(user("a").roles(alias)).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(om.writeValueAsString(new StandardsDto.AdoptRequest(STD, null, null, null, null))))
+                .andExpect(status().isCreated());
+    }
+
+    /** Piloter la certification n'est pas paramétrer : démarrer reste ouvert au manager qualité. */
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
+    void lePilotageDeLaCertificationResteOuvert() throws Exception {
+        when(service.startProgress(ADO)).thenReturn(adoptionResp(AdoptionStatus.IN_PROGRESS));
+        mockMvc.perform(patch("/api/v1/standards/adoptions/{id}/start", ADO).with(csrf()))
+                .andExpect(status().isOk());
     }
 
     @Test @WithMockUser
@@ -142,7 +195,7 @@ class StandardsControllerTest {
                 .andExpect(status().isNotFound());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "ADMIN_TENANT")
     void update_success() throws Exception {
         when(service.updateAdoption(eq(ADO), any())).thenReturn(adoptionResp(AdoptionStatus.IN_PROGRESS));
         mockMvc.perform(patch("/api/v1/standards/adoptions/{id}", ADO).with(csrf())
@@ -190,21 +243,21 @@ class StandardsControllerTest {
                 .andExpect(status().isOk());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "ADMIN_TENANT")
     void withdraw_success() throws Exception {
         when(service.withdraw(ADO)).thenReturn(adoptionResp(AdoptionStatus.WITHDRAWN));
         mockMvc.perform(patch("/api/v1/standards/adoptions/{id}/withdraw", ADO).with(csrf()))
                 .andExpect(status().isOk());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "ADMIN_TENANT")
     void delete_success() throws Exception {
         doNothing().when(service).deleteAdoption(ADO);
         mockMvc.perform(delete("/api/v1/standards/adoptions/{id}", ADO).with(csrf()))
                 .andExpect(status().isNoContent());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "ADMIN_TENANT")
     void delete_certified_returns409() throws Exception {
         doThrow(new AdoptionStateException("c")).when(service).deleteAdoption(ADO);
         mockMvc.perform(delete("/api/v1/standards/adoptions/{id}", ADO).with(csrf()))
@@ -273,7 +326,7 @@ class StandardsControllerTest {
                 .andExpect(jsonPath("$.overallScore").value(75.0));
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "ADMIN_TENANT")
     void adopt_missingTenant_returns403() throws Exception {
         when(service.adopt(any())).thenThrow(new MissingTenantContextException());
         StandardsDto.AdoptRequest req = new StandardsDto.AdoptRequest(STD, null, null, null, null);

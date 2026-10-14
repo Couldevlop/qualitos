@@ -4,6 +4,7 @@ import com.openlab.qualitos.quality.smi.domain.CoverageStatus;
 import com.openlab.qualitos.quality.smi.domain.Deadline;
 import com.openlab.qualitos.quality.smi.domain.HlsChapter;
 import com.openlab.qualitos.quality.smi.domain.RiskGrid;
+import com.openlab.qualitos.quality.smi.domain.StandardOrder;
 import com.openlab.qualitos.quality.smi.domain.StandardScope;
 
 import java.time.Clock;
@@ -24,7 +25,9 @@ import java.util.stream.Collectors;
  * <p>Une page qui répond à « où en est-on, toutes normes confondues ? » :
  * conformité par norme, actions en retard, risques majeurs et leur matrice,
  * prochain audit, échéances de la semaine — puis la matrice des exigences, qui
- * montre qu'une même preuve compte pour plusieurs normes (§8.9).
+ * croise les chapitres communs avec chaque norme (§8.9). Chaque norme y est
+ * couverte par SES preuves : la mutualisation entre normes n'existe pas encore
+ * (ADR 0090).
  *
  * <p>Le filtre « une norme » restreint ce qui se rattache à une norme : la
  * conformité, les risques (par les exigences qu'ils couvrent), les audits (par
@@ -118,9 +121,10 @@ public class SmiDashboardService {
 
     // ---------- blocs ----------
 
+    /** Rangées dans l'ordre naturel : ISO 9001, puis ISO 14001, puis ISO 45001. */
     private List<SmiPorts.AdoptedStandard> adopted() {
         return standards.adopted().stream()
-                .sorted(Comparator.comparing(SmiPorts.AdoptedStandard::code))
+                .sorted(Comparator.comparing(SmiPorts.AdoptedStandard::code, StandardOrder.BY_CODE))
                 .limit(MAX_STANDARDS)
                 .toList();
     }

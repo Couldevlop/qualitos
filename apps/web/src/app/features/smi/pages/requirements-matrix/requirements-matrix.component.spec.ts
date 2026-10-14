@@ -3,12 +3,14 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
+import { of } from 'rxjs';
 
 import { environment } from '../../../../../environments/environment';
 import { SharedModule } from '../../../../shared/shared.module';
 import { UiModule } from '../../../../shared/ui/ui.module';
 import { AlignmentReport } from '../../../standards/standards.types';
 import { chapterLabel, coverageLabel, moduleLabel } from '../../smi.labels';
+import { SmiStandardsOpener } from '../../smi-standards-opener.service';
 import { RequirementsMatrix } from '../../smi.types';
 import { RequirementsMatrixComponent } from './requirements-matrix.component';
 
@@ -57,13 +59,18 @@ describe('RequirementsMatrixComponent', () => {
     ]
   };
 
+  let opener: jasmine.SpyObj<SmiStandardsOpener>;
+
   beforeEach(async () => {
     prevMock = environment.useMockApi;
     environment.useMockApi = false;
+    opener = jasmine.createSpyObj<SmiStandardsOpener>('SmiStandardsOpener', ['canAdd', 'open']);
+    opener.canAdd.and.returnValue(false);
     await TestBed.configureTestingModule({
       declarations: [RequirementsMatrixComponent],
       imports: [SharedModule, UiModule, NoopAnimationsModule],
-      providers: [provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting(), provideRouter([])]
+      providers: [provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting(), provideRouter([]),
+        { provide: SmiStandardsOpener, useValue: opener }]
     }).compileComponents();
     http = TestBed.inject(HttpTestingController);
     fixture = TestBed.createComponent(RequirementsMatrixComponent);
@@ -158,6 +165,69 @@ describe('RequirementsMatrixComponent', () => {
     component.charger();
     http.expectOne(endpoint).flush({ standards: [], rows: [] });
     expect(component.error).toBeNull();
+  });
+
+  // ---------- ISO 9001 et ISO 14001 côte à côte ----------
+
+  const MATRICE_9001_14001: RequirementsMatrix = {
+    standards: [
+      { adoptionId: 'a9001', code: 'iso-9001', name: 'ISO 9001:2015 — Systèmes de management de la qualité' },
+      { adoptionId: 'a14001', code: 'iso-14001', name: 'ISO 14001:2015 — Systèmes de management environnemental' }
+    ],
+    rows: [
+      { chapter: '6', modules: ['RISK_REGISTER', 'OBJECTIVES'], cells: [
+        { standardCode: 'iso-9001', status: 'COVERED', covered: 5, total: 5, sectionTitle: 'Planification' },
+        { standardCode: 'iso-14001', status: 'PARTIAL', covered: 2, total: 4, sectionTitle: 'Planification' }
+      ] }
+    ]
+  };
+
+  it('chaque norme a sa colonne, sous son nom court, et sa couverture par chapitre', () => {
+    http.expectOne(endpoint).flush(MATRICE_9001_14001);
+    http.expectOne(`${environment.apiBaseUrl}/api/v1/standards/adoptions/a14001/alignment`)
+      .flush({ ...ALIGNEMENT_45001, tenantStandardId: 'a14001', standardCode: 'iso-14001' });
+    fixture.detectChanges();
+
+    const entetes = Array.from(hote().querySelectorAll('thead th')).map(th => th.textContent!.trim());
+    expect(entetes).toEqual(['Chapitre commun (HLS)', 'ISO 9001:2015', 'ISO 14001:2015', 'Module QualitOS']);
+    expect(hote().querySelector('[data-test="case-6-iso-14001"]')!.getAttribute('aria-label'))
+      .toContain('2 sur 4');
+    expect(component.selected!.standard.code).toBe('iso-14001');
+    expect(component.capaQuery['titre']).toContain('ISO 14001:2015');
+    expect(component.capaQuery['titre']).not.toContain('environnemental');
+  });
+
+  it('sans le rôle d’administrateur, pas d’ajout : le paramétrage revient à l’administrateur', () => {
+    http.expectOne(endpoint).flush({ standards: [], rows: [] });
+    fixture.detectChanges();
+    expect(hote().querySelector('[data-test="ajouter-norme"]')).toBeNull();
+    expect(hote().querySelector('[data-test="aucune-norme"]')!.textContent).toContain('administrateur');
+  });
+
+  it('l’administrateur ajoute une norme : la matrice se recharge avec sa colonne', () => {
+    opener.canAdd.and.returnValue(true);
+    fixture = TestBed.createComponent(RequirementsMatrixComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+    // Deux composants montés : chacun a lu la matrice une fois.
+    http.match(endpoint).forEach(r => r.flush(MATRICE));
+    http.match(`${environment.apiBaseUrl}/api/v1/standards/adoptions/a45001/alignment`)
+      .forEach(r => r.flush(ALIGNEMENT_45001));
+    fixture.detectChanges();
+
+    opener.open.and.returnValue(of({ adoptionId: 'a14001', code: 'iso-14001', name: 'ISO 14001:2015' }));
+    (hote().querySelector('[data-test="ajouter-norme"]') as HTMLButtonElement).click();
+
+    expect(opener.open).toHaveBeenCalled();
+    http.expectOne(endpoint).flush(MATRICE_9001_14001);
+    http.expectOne(`${environment.apiBaseUrl}/api/v1/standards/adoptions/a14001/alignment`)
+      .flush({ ...ALIGNEMENT_45001, tenantStandardId: 'a14001', standardCode: 'iso-14001' });
+    expect(component.matrix!.standards.map(s => s.code)).toEqual(['iso-9001', 'iso-14001']);
+
+    // Fermer la fenêtre sans rien ajouter ne recharge rien.
+    opener.open.and.returnValue(of(undefined));
+    component.addStandard();
+    http.expectNone(endpoint);
   });
 
   it('libellés : chapitre, module et état inconnus restent lisibles', () => {

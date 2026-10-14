@@ -7,13 +7,15 @@ import com.openlab.qualitos.quality.capa.CapaActionRepository;
 import com.openlab.qualitos.quality.change.ChangeRequestRepository;
 import com.openlab.qualitos.quality.riskregister.application.RiskRegisterService;
 import com.openlab.qualitos.quality.smi.application.SmiDashboardService;
+import com.openlab.qualitos.quality.smi.application.SmiStandardsService;
+import com.openlab.qualitos.quality.standards.StandardRepository;
 import com.openlab.qualitos.quality.standards.StandardsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.time.Clock;
 
-/** Câblage du tableau de bord SMI : un service sans Spring, des adaptateurs vers chaque module. */
+/** Câblage du SMI : des services sans Spring, des adaptateurs vers chaque module. */
 @Configuration
 public class SmiBeanConfiguration {
 
@@ -34,5 +36,13 @@ public class SmiBeanConfiguration {
                 new SmiAdapters.Audits(audits),
                 new SmiAdapters.Deadlines(calibrationPlans, calibrationEquipments, changes),
                 clock);
+    }
+
+    /** L'ajout d'une norme au SMI : le catalogue des normes, l'adoption du Standards Hub. */
+    @Bean
+    public SmiStandardsService smiStandardsService(StandardsService standards, StandardRepository catalog) {
+        return new SmiStandardsService(
+                new SmiAdapters.Standards(standards),
+                new SmiAdapters.Catalog(catalog, standards));
     }
 }

@@ -12,8 +12,9 @@ import java.util.UUID;
  *
  * <p>Le SMI n'a pas de données à lui : il RELIT celles des modules qui les
  * produisent — Standards Hub, CAPA, registre des risques, audits, calibration,
- * changements. Chaque port est une lecture, dans le client du jeton ; aucun
- * n'écrit. Les adaptateurs passent par les services des modules quand ils
+ * changements. Chaque port est une lecture, dans le client du jeton — sauf
+ * l'adoption d'une norme ({@link Catalog#adopt}), qui délègue au Standards Hub
+ * plutôt que d'inventer un second mécanisme. Les adaptateurs passent par les services des modules quand ils
  * existent, pour hériter de leurs règles (cloisonnement, visibilité).
  */
 public final class SmiPorts {
@@ -34,6 +35,31 @@ public final class SmiPorts {
 
     /** Un chapitre d'une norme : combien d'exigences, combien prouvées. */
     public record SectionCoverage(String code, String title, int covered, int total) {}
+
+    /**
+     * Les normes de système de management du catalogue, et leur adoption.
+     *
+     * <p>La seule écriture du SMI, et elle n'est pas à lui : {@link #adopt}
+     * délègue au Standards Hub, qui crée l'adoption et sa feuille de route
+     * comme si le client avait adopté la norme depuis le catalogue.
+     */
+    public interface Catalog {
+
+        /** Normes de système de management certifiables (famille HLS), publiées par la plateforme. */
+        List<CatalogStandard> managementSystems();
+
+        /** @return l'adoption créée */
+        AdoptedStandard adopt(UUID standardId);
+    }
+
+    /**
+     * Une norme du catalogue.
+     *
+     * @param relatedCodes les normes que le catalogue lui associe ({@code related_norm_codes})
+     * @param adopted vrai si le client en a déjà une adoption, quel qu'en soit l'état
+     */
+    public record CatalogStandard(UUID standardId, String code, String name, String version,
+                                  List<String> relatedCodes, boolean adopted) {}
 
     /** Les actions CAPA : celles en retard, celles à mener bientôt. */
     public interface Actions {

@@ -1,0 +1,61 @@
+<qos-form-dialog
+  i18n-title="@@smi.add.title"
+  title="Ajouter une norme au SMI"
+  i18n-subtitle="@@smi.add.subtitle"
+  subtitle="Les normes de système de management partagent les chapitres 4 à 10 : elles se pilotent dans le même tableau de bord et la même matrice des exigences."
+  [formGroup]="form"
+  [submitting]="submitting"
+  [submitDisabled]="form.invalid || loading || !!loadError"
+  [blockedReason]="blockedReason"
+  i18n-submitLabel="@@smi.add.submit"
+  submitLabel="Ajouter"
+  submitIcon="add"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
+
+  <mat-progress-bar *ngIf="loading" mode="indeterminate"
+                    i18n-aria-label="@@smi.add.loading" aria-label="Chargement des normes du catalogue"></mat-progress-bar>
+
+  <p class="echec" *ngIf="loadError" role="alert" data-test="add-load-error">
+    <span>{{ loadError }}</span>
+    <button mat-button type="button" (click)="charger()" i18n="@@common.retry">Réessayer</button>
+  </p>
+
+  <p class="vide" *ngIf="!loading && !loadError && !candidates.length" data-test="add-none"
+     i18n="@@smi.add.none">Toutes les normes de système de management du catalogue sont déjà adoptées.</p>
+
+  <ng-container *ngIf="!loading && !loadError && candidates.length">
+    <fieldset class="groupe" *ngIf="suggestions.length">
+      <legend class="groupe__titre" i18n="@@smi.add.suggested">Suggérées pour votre SMI</legend>
+      <ng-container *ngTemplateOutlet="liste; context: { $implicit: suggestions }"></ng-container>
+    </fieldset>
+
+    <fieldset class="groupe" *ngIf="others.length">
+      <legend class="groupe__titre" *ngIf="suggestions.length" i18n="@@smi.add.others">Autres normes de système de management</legend>
+      <legend class="groupe__titre" *ngIf="!suggestions.length" i18n="@@smi.add.all">Normes de système de management</legend>
+      <ng-container *ngTemplateOutlet="liste; context: { $implicit: others }"></ng-container>
+    </fieldset>
+  </ng-container>
+
+  <ng-template #liste let-items>
+    <div class="options">
+      <label *ngFor="let c of items; trackBy: trackById" class="option"
+             [class.option--choisie]="form.controls.standardId.value === c.standardId"
+             [attr.data-test]="'option-' + c.code">
+        <input type="radio" class="option__radio" formControlName="standardId" [value]="c.standardId"
+               [attr.aria-describedby]="'desc-' + c.standardId">
+        <span class="option__texte">
+          <span class="option__entete">
+            <span class="option__nom">{{ shortName(c) }}</span>
+            <span class="pastille" *ngIf="c.suggested" i18n="@@smi.add.suggested-badge">Suggérée</span>
+          </span>
+          <span class="option__titre" [id]="'desc-' + c.standardId">{{ c.name }}</span>
+          <span class="option__lien" *ngIf="c.sharedWith.length">{{ sharedText(c) }}</span>
+        </span>
+      </label>
+    </div>
+  </ng-template>
+
+  <p class="echec" *ngIf="submitError" role="alert" data-test="add-error">{{ submitError }}</p>
+  <p class="aide" i18n="@@smi.add.hint">L'adoption crée la feuille de route de certification dans le Standards Hub ; les preuves s'y rattachent ensuite, exigence par exigence.</p>
+</qos-form-dialog>

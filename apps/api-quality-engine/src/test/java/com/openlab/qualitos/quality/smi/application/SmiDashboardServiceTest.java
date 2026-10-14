@@ -57,12 +57,13 @@ class SmiDashboardServiceTest {
     }
 
     @Test
-    void sansFiltreLaConformiteGlobaleEstLaMoyenneDesNormesRangeesParCode() {
+    void sansFiltreLaConformiteGlobaleEstLaMoyenneDesNormesRangeesDansLOrdreNaturel() {
         SmiDto.Dashboard d = service.dashboard(null);
 
         assertThat(d.selected()).isNull();
-        assertThat(d.standards()).extracting(SmiDto.StandardRef::code).containsExactly("iso-45001", "iso-9001");
-        assertThat(d.compliance().perStandard()).extracting(SmiDto.StandardScore::score).containsExactly(79, 91);
+        // ISO 9001 avant ISO 45001 : les numéros se comparent par leur valeur, pas comme du texte.
+        assertThat(d.standards()).extracting(SmiDto.StandardRef::code).containsExactly("iso-9001", "iso-45001");
+        assertThat(d.compliance().perStandard()).extracting(SmiDto.StandardScore::score).containsExactly(91, 79);
         assertThat(d.compliance().global()).isEqualTo(85);
     }
 
@@ -189,23 +190,95 @@ class SmiDashboardServiceTest {
     void laMatriceDesExigencesCroiseLesChapitresCommunsEtLesNormes() {
         SmiDto.RequirementsMatrix m = service.requirementsMatrix();
 
-        assertThat(m.standards()).extracting(SmiDto.StandardRef::code).containsExactly("iso-45001", "iso-9001");
+        assertThat(m.standards()).extracting(SmiDto.StandardRef::code).containsExactly("iso-9001", "iso-45001");
         assertThat(m.rows()).extracting(SmiDto.ChapterRow::chapter)
                 .containsExactly("4", "5", "6", "7", "8", "9", "10");
 
         SmiDto.ChapterRow contexte = m.rows().get(0);
         assertThat(contexte.modules()).isNotEmpty();
         assertThat(contexte.cells()).extracting(SmiDto.Cell::status)
-                .containsExactly(CoverageStatus.NOT_APPLICABLE, CoverageStatus.COVERED);
+                .containsExactly(CoverageStatus.COVERED, CoverageStatus.NOT_APPLICABLE);
 
         SmiDto.ChapterRow planification = m.rows().get(2);
         assertThat(planification.cells()).extracting(SmiDto.Cell::status)
-                .containsExactly(CoverageStatus.GAP, CoverageStatus.PARTIAL);
-        assertThat(planification.cells().get(1)).satisfies(c -> {
+                .containsExactly(CoverageStatus.PARTIAL, CoverageStatus.GAP);
+        assertThat(planification.cells().get(0)).satisfies(c -> {
             assertThat(c.covered()).isEqualTo(1);
             assertThat(c.total()).isEqualTo(4);
             assertThat(c.sectionTitle()).isEqualTo("Planification");
         });
+    }
+
+    /**
+     * Un SMI 9001 + 14001, avec les chapitres tels que le catalogue les livre
+     * (V10/V57 pour la 9001, V14/V59 pour la 14001 : sections « 4 » à « 10 »).
+     * Les deux normes se lisent côte à côte, chacune avec SES couvertures.
+     */
+    @Test
+    void neufMilleEtQuatorzeMilleSePilotentCoteACote() {
+        UUID a14001 = UUID.randomUUID();
+        standards.adoptees.clear();
+        standards.alignements.clear();
+        standards.adoptees.add(new SmiPorts.AdoptedStandard(a14001, "iso-14001", "ISO 14001:2015 — SME"));
+        standards.adoptees.add(new SmiPorts.AdoptedStandard(A9001, "iso-9001", "ISO 9001:2015 — SMQ"));
+        standards.alignements.put(A9001, new SmiPorts.Alignment(57.1, List.of(
+                new SmiPorts.SectionCoverage("4", "Contexte de l'organisme", 5, 5),
+                new SmiPorts.SectionCoverage("5", "Leadership", 4, 4),
+                new SmiPorts.SectionCoverage("6", "Planification", 2, 5),
+                new SmiPorts.SectionCoverage("7", "Support", 5, 9),
+                new SmiPorts.SectionCoverage("8", "Réalisation des activités opérationnelles", 4, 11),
+                new SmiPorts.SectionCoverage("9", "Évaluation des performances", 3, 5),
+                new SmiPorts.SectionCoverage("10", "Amélioration", 1, 3))));
+        standards.alignements.put(a14001, new SmiPorts.Alignment(9.5, List.of(
+                new SmiPorts.SectionCoverage("4", "Contexte de l'organisme", 0, 2),
+                new SmiPorts.SectionCoverage("5", "Leadership", 0, 2),
+                new SmiPorts.SectionCoverage("6", "Planification", 2, 4),
+                new SmiPorts.SectionCoverage("7", "Support", 0, 3),
+                new SmiPorts.SectionCoverage("8", "Réalisation des activités opérationnelles", 0, 2),
+                new SmiPorts.SectionCoverage("9", "Évaluation des performances", 0, 4),
+                new SmiPorts.SectionCoverage("10", "Amélioration", 0, 2))));
+        risques.add(risque("R-ENV", 4, 4, null, null, "CRITICAL", List.of("ISO_14001_6_1"), null));
+        risques.add(risque("R-QUA", 3, 4, null, null, "HIGH", List.of("ISO_9001_6_1"), null));
+        audits.add(new SmiPorts.PlannedAudit(UUID.randomUUID(), "AUD-E", "Audit SME", "INTERNAL",
+                "ISO 14001:2015", AUJOURDHUI.plusDays(15)));
+        audits.add(new SmiPorts.PlannedAudit(UUID.randomUUID(), "AUD-Q", "Audit SMQ", "INTERNAL",
+                "ISO 9001:2015", AUJOURDHUI.plusDays(5)));
+
+        // Tous : les deux normes, la 9001 d'abord, la conformité globale est leur moyenne.
+        SmiDto.Dashboard tous = service.dashboard(null);
+        assertThat(tous.standards()).extracting(SmiDto.StandardRef::code).containsExactly("iso-9001", "iso-14001");
+        assertThat(tous.compliance().perStandard()).extracting(SmiDto.StandardScore::code, SmiDto.StandardScore::score)
+                .containsExactly(org.assertj.core.groups.Tuple.tuple("iso-9001", 57),
+                        org.assertj.core.groups.Tuple.tuple("iso-14001", 10));
+        assertThat(tous.compliance().global()).isEqualTo(34);
+        assertThat(tous.riskMatrix().open()).isEqualTo(2);
+        assertThat(tous.nextAudit().reference()).isEqualTo("AUD-Q");
+
+        // Filtre 14001 : sa conformité, ses risques, son audit.
+        SmiDto.Dashboard env = service.dashboard("iso-14001");
+        assertThat(env.selected()).isEqualTo("iso-14001");
+        assertThat(env.compliance().global()).isEqualTo(10);
+        assertThat(env.compliance().perStandard()).hasSize(2);
+        assertThat(env.riskMatrix().open()).isEqualTo(1);
+        assertThat(env.majorRisks()).isEqualTo(new SmiDto.MajorRisks(1, 1, 0));
+        assertThat(env.nextAudit().reference()).isEqualTo("AUD-E");
+
+        // Matrice : chaque chapitre commun porte une case par norme, avec la couverture de CETTE norme.
+        SmiDto.RequirementsMatrix m = service.requirementsMatrix();
+        assertThat(m.standards()).extracting(SmiDto.StandardRef::code).containsExactly("iso-9001", "iso-14001");
+        assertThat(m.rows()).allSatisfy(r -> {
+            assertThat(r.cells()).extracting(SmiDto.Cell::standardCode).containsExactly("iso-9001", "iso-14001");
+            assertThat(r.cells()).noneMatch(c -> c.status() == CoverageStatus.NOT_APPLICABLE);
+        });
+        assertThat(m.rows()).extracting(r -> r.cells().get(1).status()).containsExactly(
+                CoverageStatus.GAP, CoverageStatus.GAP, CoverageStatus.PARTIAL, CoverageStatus.GAP,
+                CoverageStatus.GAP, CoverageStatus.GAP, CoverageStatus.GAP);
+        assertThat(m.rows()).extracting(r -> r.cells().get(0).status()).containsExactly(
+                CoverageStatus.COVERED, CoverageStatus.COVERED, CoverageStatus.PARTIAL, CoverageStatus.PARTIAL,
+                CoverageStatus.PARTIAL, CoverageStatus.PARTIAL, CoverageStatus.PARTIAL);
+        SmiDto.Cell planif14001 = m.rows().get(2).cells().get(1);
+        assertThat(planif14001.covered()).isEqualTo(2);
+        assertThat(planif14001.total()).isEqualTo(4);
     }
 
     // ---------- doublures ----------

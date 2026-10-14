@@ -5,7 +5,8 @@ import { safeErrorMessage } from '../../../../core/http/error-message';
 import { PageBreadcrumb } from '../../../../shared/ui/page-header/page-header.component';
 import { StandardsService } from '../../../standards/standards.service';
 import { ClauseAlignment } from '../../../standards/standards.types';
-import { chapterLabel, coverageLabel, moduleLabel } from '../../smi.labels';
+import { chapterLabel, coverageLabel, moduleLabel, standardShortName } from '../../smi.labels';
+import { SmiStandardsOpener } from '../../smi-standards-opener.service';
 import { SmiService } from '../../smi.service';
 import { ChapterRow, CoverageStatus, MatrixCell, RequirementsMatrix, StandardRef } from '../../smi.types';
 
@@ -17,14 +18,18 @@ export interface SelectedCell {
 }
 
 /**
- * La matrice des exigences : « une preuve, plusieurs référentiels » (§8.9).
+ * La matrice des exigences : chapitres communs × normes adoptées (§8.9).
  *
  * <p>Les chapitres communs de la structure-cadre (4 à 10) en lignes, chaque
  * norme adoptée en colonne, et le module de QualitOS où se fabriquent les
  * preuves. Une case dit si le chapitre est couvert, partiel ou en écart pour
- * la norme ; la choisir ouvre le détail — les clauses encore à prouver, lues
+ * la norme, d'après les preuves rattachées à CETTE norme — une preuve ne vaut
+ * pas encore pour les autres normes qui partagent le chapitre (ADR 0090) ; la choisir ouvre le détail — les clauses encore à prouver, lues
  * dans l'alignement de la norme — et deux suites : compléter les preuves dans
  * le Standards Hub, ou ouvrir une action CAPA.
+ *
+ * <p>L'administrateur du client y ajoute une norme (ISO 14001 à côté d'ISO
+ * 9001) : la matrice se recharge avec sa colonne.
  */
 @Component({
   selector: 'qos-smi-requirements-matrix',
@@ -44,12 +49,18 @@ export class RequirementsMatrixComponent implements OnInit, OnDestroy {
   gapsLoading = false;
   gapsFailed = false;
 
+  /** L'administrateur du client paramètre les normes du SMI ; les autres le consultent. */
+  readonly canAddStandard: boolean;
+
   private gapsSub?: Subscription;
 
   constructor(
     private readonly service: SmiService,
-    private readonly standards: StandardsService
-  ) {}
+    private readonly standards: StandardsService,
+    private readonly opener: SmiStandardsOpener
+  ) {
+    this.canAddStandard = opener.canAdd();
+  }
 
   ngOnInit(): void {
     this.charger();
@@ -66,6 +77,9 @@ export class RequirementsMatrixComponent implements OnInit, OnDestroy {
       next: m => {
         this.matrix = m;
         this.loading = false;
+        // Une norme ajoutée décale les colonnes : la case choisie se recalcule sur la nouvelle matrice.
+        this.selected = null;
+        this.gaps = [];
         this.selectFirstGap();
       },
       error: err => {
@@ -74,6 +88,18 @@ export class RequirementsMatrixComponent implements OnInit, OnDestroy {
           $localize`:@@smi.req.failed:La matrice des exigences n'a pas pu être chargée.`);
       }
     });
+  }
+
+  /** Ajoute une norme ; la matrice se recharge avec sa colonne. */
+  addStandard(): void {
+    this.opener.open().subscribe(ref => {
+      if (ref) this.charger();
+    });
+  }
+
+  /** « ISO 14001:2015 » : deux titres complets côte à côte ne tiennent pas en tête de colonne. */
+  shortName(s: StandardRef): string {
+    return standardShortName(s.name, s.code);
   }
 
   /** À l'ouverture, le détail montre le premier écart (sinon le premier partiel) : c'est là qu'il faut agir. */
@@ -125,9 +151,9 @@ export class RequirementsMatrixComponent implements OnInit, OnDestroy {
     const chapitre = chapterLabel(s.row.chapter);
     return {
       nouveau: '1',
-      titre: $localize`:@@smi.req.capa-title:${coverageLabel(s.cell.status)}:status: ${s.standard.name}:standard: · ${s.row.chapter}:chapter: ${chapitre}:title:`,
+      titre: $localize`:@@smi.req.capa-title:${coverageLabel(s.cell.status)}:status: ${this.shortName(s.standard)}:standard: · ${s.row.chapter}:chapter: ${chapitre}:title:`,
       ref: `${s.standard.code} §${s.row.chapter}`,
-      description: $localize`:@@smi.req.capa-description:${s.cell.covered}:covered: exigence(s) prouvée(s) sur ${s.cell.total}:total: au chapitre ${s.row.chapter}:chapter: de ${s.standard.name}:standard:.`
+      description: $localize`:@@smi.req.capa-description:${s.cell.covered}:covered: exigence(s) prouvée(s) sur ${s.cell.total}:total: au chapitre ${s.row.chapter}:chapter: de ${this.shortName(s.standard)}:standard:.`
     };
   }
 
