@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../../shared/shared.module';
 import { UiModule } from '../../shared/ui/ui.module';
+import { CapaCreateDialogModule } from '../capa/capa-create-dialog.module';
 import { AuditsChecklistDialogComponent } from './pages/audits-checklist-dialog/audits-checklist-dialog.component';
 import { AuditsCreateDialogComponent } from './pages/audits-create-dialog/audits-create-dialog.component';
 import { AuditsDetailComponent } from './pages/audits-detail/audits-detail.component';
@@ -33,6 +34,7 @@ const routes: Routes = [
     AuditsFindingDialogComponent,
     ChecklistFromStandardDialogComponent
   ],
-  imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
+  // CapaCreateDialogModule : « Créer une CAPA » sur un constat ouvre LA fenêtre commune (ADR 0088).
+  imports: [SharedModule, UiModule, CapaCreateDialogModule, RouterModule.forChild(routes)]
 })
 export class AuditsModule {}

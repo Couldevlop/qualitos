@@ -62,7 +62,7 @@
              le bouton d'envoi du dialogue — basculerait au milieu de la passe.
              Le validateur est posé par le composant, depuis le flux différé. -->
         <mat-select formControlName="verificationAssigneeId" data-test="verification-qui">
-          <mat-option *ngFor="let membre of membres" [value]="membre.id">
+          <mat-option *ngFor="let membre of membres" [value]="membre.keycloakId">
             {{ membre.email }}
           </mat-option>
         </mat-select>

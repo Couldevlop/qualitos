@@ -8,10 +8,12 @@ import { of, throwError } from 'rxjs';
 
 import { SharedModule } from '../../../../shared/shared.module';
 import { UiModule } from '../../../../shared/ui/ui.module';
+import { CapaDirectoryService, DirectoryChoices } from '../../capa-directory.service';
 import { CapaService } from '../../capa.service';
 import {
-  CapaActionResponse, CapaCaseResponse, CapaEvidence, CapaStatus
+  CapaActionResponse, CapaCaseResponse, CapaEvidence, CapaSourceType
 } from '../../capa.types';
+import { CapaCreateDialogComponent, CapaCreateDialogData } from '../capa-create-dialog/capa-create-dialog.component';
 import { CapaDetailComponent } from './capa-detail.component';
 import {
   CapaRevisionImpactComponent
@@ -20,16 +22,15 @@ import { ProductsService } from '../../../products/products.service';
 import { AuthzService } from '../../../../core/authz/authz.service';
 
 /**
- * Tableau des actions d'une fiche CAPA (§4.2, ADR 0052).
+ * L'action unique d'une fiche CAPA (ADR 0088, ADR 0052 pour la preuve).
  *
- * Ce qui se teste ici n'est pas « la colonne s'affiche-t-elle » — c'est que
- * chaque colonne dit ce qu'elle prétend dire, et qu'elle se tait quand elle
- * n'a rien à dire plutôt que d'inventer : la date est celle de la DÉCISION et
- * jamais celle de la saisie, le responsable est un nom et non un identifiant,
- * la non-conformité vient du dossier, et l'édition en ligne ne peut ni vider un
- * libellé ni se perdre au clavier.
+ * Une CAPA EST son action, quelle que soit sa source : la fiche la montre et la
+ * fait avancer, sans liste à remplir, sans « Ajouter une action » ni
+ * suggestion. Un dossier sans action propose de définir la sienne dans LA
+ * fenêtre de création ; un ancien dossier à plusieurs actions les montre
+ * toutes, sans permettre d'en ajouter. Le pilote se lit par son nom.
  */
-describe('CapaDetailComponent — tableau des actions', () => {
+describe('CapaDetailComponent — action unique', () => {
 
   const CASE_ID = '55555555-5555-5555-5555-555555555555';
   const ACTION_ID = 'a1111111-1111-1111-1111-111111111111';
@@ -39,6 +40,7 @@ describe('CapaDetailComponent — tableau des actions', () => {
   let capa: jasmine.SpyObj<CapaService>;
   let snack: jasmine.SpyObj<MatSnackBar>;
   let dialog: jasmine.SpyObj<MatDialog>;
+  let annuaire: DirectoryChoices;
 
   const action = (over: Partial<CapaActionResponse> = {}): CapaActionResponse => ({
     id: ACTION_ID, capaId: CASE_ID, title: 'Réviser le plan de contrôle réception',
@@ -47,7 +49,8 @@ describe('CapaDetailComponent — tableau des actions', () => {
 
   const dossier = (over: Partial<CapaCaseResponse> = {}): CapaCaseResponse => ({
     id: CASE_ID, tenantId: 't1', title: 'Étiquetage manquant', type: 'CORRECTIVE',
-    criticity: 'HIGH', status: 'IN_PROGRESS', sourceType: 'NON_CONFORMITY', ownerId: 'u1',
+    criticity: 'HIGH', status: 'IN_PROGRESS', sourceType: 'NON_CONFORMITY',
+    ownerId: '9c1f2b7e-0000-4000-8000-000000000000',
     createdAt: '2026-08-01T00:00:00Z', updatedAt: '2026-08-01T00:00:00Z',
     actions: [action()], ...over
   });
@@ -67,28 +70,12 @@ describe('CapaDetailComponent — tableau des actions', () => {
     fixture.detectChanges();
   }
 
-  function texte(): string {
-    return (fixture.nativeElement as HTMLElement).textContent ?? '';
+  function hote(): HTMLElement {
+    return fixture.nativeElement as HTMLElement;
   }
 
-  function cellules(): string[] {
-    return Array.from((fixture.nativeElement as HTMLElement)
-      .querySelectorAll('.actions-table tbody td'))
-      .map(td => (td.textContent ?? '').trim());
-  }
-
-  /**
-   * Cellule d'une colonne NOMMÉE de la première ligne.
-   *
-   * Les index positionnels ont coûté une demi-douzaine de faux échecs le jour où
-   * une colonne s'est insérée au milieu du tableau : chaque assertion pointait
-   * alors sa voisine, et le test accusait la colonne qu'il ne testait pas.
-   * Le nom, lui, ne bouge pas quand l'ordre change.
-   */
-  function cellule(colonne: string): string {
-    const index = component.actionColumns.indexOf(colonne);
-    expect(index).withContext(`colonne inconnue : ${colonne}`).toBeGreaterThanOrEqual(0);
-    return cellules()[index];
+  function carte(): string {
+    return hote().querySelector('[data-test="action-unique"]')?.textContent ?? '';
   }
 
   function fichier(): Event {
@@ -102,12 +89,13 @@ describe('CapaDetailComponent — tableau des actions', () => {
     capa = jasmine.createSpyObj<CapaService>('CapaService',
       ['getCase', 'listEvidences', 'uploadEvidence', 'deleteEvidence',
        'listActionEvidences', 'uploadActionEvidence', 'deleteActionEvidence',
-       'updateAction']);
+       'updateAction', 'addAction']);
     capa.listEvidences.and.returnValue(of([]));
     capa.listActionEvidences.and.returnValue(of([]));
     snack = jasmine.createSpyObj<MatSnackBar>('MatSnackBar', ['open']);
     dialog = jasmine.createSpyObj<MatDialog>('MatDialog', ['open']);
     dialog.open.and.returnValue({ afterClosed: () => of(true) } as never);
+    annuaire = { members: [], available: true };
 
     TestBed.resetTestingModule();
     await TestBed.configureTestingModule({
@@ -115,6 +103,7 @@ describe('CapaDetailComponent — tableau des actions', () => {
       imports: [SharedModule, UiModule, NoopAnimationsModule],
       providers: [
         { provide: CapaService, useValue: capa },
+        { provide: CapaDirectoryService, useValue: { choices: () => of(annuaire) } },
         // Tous les droits : ces bancs testent la fiche, pas la matrice (ADR 0078).
         { provide: AuthzService, useValue: { can: () => of(true) } },
         // L'encart d'impact vit dans la fiche : sans ce doublon, il irait
@@ -128,114 +117,156 @@ describe('CapaDetailComponent — tableau des actions', () => {
     }).compileComponents();
   });
 
-  // --- structure du tableau -----------------------------------------------
+  // --- une action, quelle que soit la source --------------------------------
 
-  it('porte les colonnes attendues, dans l\'ordre de lecture d\'un auditeur', () => {
+  const sources: CapaSourceType[] = ['NON_CONFORMITY', 'AUDIT', 'RISK', 'COMPLAINT', 'INTERNAL', 'SPC_ALERT'];
+  sources.forEach(source => {
+    it(`montre l'action seule, sans liste ni ajout ni suggestion — source ${source}`, () => {
+      setup(dossier({
+        sourceType: source,
+        actions: [action({ assigneeName: 'A. Diallo', dueDate: '2026-12-01', actionType: 'PREVENTIVE' })]
+      }));
+
+      expect(hote().querySelector('[data-test="action-unique"]')).not.toBeNull();
+      expect(hote().querySelector('.actions-card')).toBeNull();
+      expect(hote().querySelector('.actions-table')).toBeNull();
+      expect(hote().querySelector('.ia-btn')).toBeNull();
+      expect(hote().textContent).not.toContain('Ajouter une action');
+      expect(hote().textContent).not.toContain('Suggérer');
+      expect(carte()).toContain('Réviser le plan de contrôle réception');
+      expect(carte()).toContain('A. Diallo');
+      expect(carte()).toContain('Préventive');
+      expect(hote().querySelector('[data-test="definir-action"]')).toBeNull();
+    });
+  });
+
+  it('fait avancer l\'action sans renvoyer son libellé', () => {
     setup();
+    capa.updateAction.and.returnValue(of(action({ status: 'IN_PROGRESS' })));
 
-    // La NATURE suit immédiatement le libellé : c'est la première question que
-    // pose un auditeur devant une action — a-t-elle contenu, ou corrigé ?
-    expect(component.actionColumns).toEqual([
-      'title', 'actionType', 'decidedOn', 'assignee',
-      'evidence', 'status', 'dueDate', 'rowActions'
-    ]);
-    const entetes = Array.from((fixture.nativeElement as HTMLElement)
-      .querySelectorAll('.actions-table th')).map(th => (th.textContent ?? '').trim());
-    expect(entetes).toContain('Action');
-    expect(entetes).toContain('Nature');
-    expect(entetes).toContain('Date');
-    expect(entetes).toContain('Responsable');
-    expect(entetes).toContain('Preuve');
+    (hote().querySelector('[data-test="avancer-action"]') as HTMLButtonElement).click();
+
+    // Renvoyer le libellé écraserait une correction faite entre-temps ailleurs.
+    expect(capa.updateAction).toHaveBeenCalledWith(CASE_ID, ACTION_ID, { status: 'IN_PROGRESS' });
+    expect(snack.open).toHaveBeenCalled();
   });
 
-  // --- colonne « Date » : la DÉCISION, pas la saisie -----------------------
-
-  it('affiche la date de décision, pas la date de création', () => {
-    setup(dossier({
-      actions: [action({
-        decidedOn: '2026-03-12',
-        // Créée trois semaines après le comité : si la colonne affichait
-        // createdAt, elle daterait la décision d'avril.
-        completedAt: '2026-04-02T09:00:00Z'
-      })]
-    }));
-
-    expect(cellule('decidedOn')).toContain('2026');
-    expect(cellule('decidedOn')).toContain('12');
-    expect(cellule('decidedOn')).not.toContain('avr');
+  it('une action terminée n\'offre plus de bouton d\'avancement', () => {
+    setup(dossier({ actions: [action({ status: 'DONE', completedAt: '2026-08-02T00:00:00Z' })] }));
+    expect(hote().querySelector('[data-test="avancer-action"]')).toBeNull();
+    expect(carte()).toContain('Faite');
   });
 
-  it('n\'invente pas de date quand l\'action est antérieure à cette colonne', () => {
-    setup(dossier({ actions: [action({ decidedOn: undefined })] }));
-
-    // Recopier la date de création fabriquerait une décision jamais enregistrée.
-    expect(cellule('decidedOn')).toBe('—');
+  it('ne fait pas avancer une action déjà faite', () => {
+    setup();
+    component.advanceAction(action({ status: 'DONE' }));
+    expect(capa.updateAction).not.toHaveBeenCalled();
+    expect(component.nextActionStatus('DONE')).toBeNull();
   });
 
-  // --- colonne « Responsable » : un nom, jamais un identifiant -------------
-
-  it('affiche le NOM du porteur', () => {
-    setup(dossier({ actions: [action({ assigneeName: 'Amina Dridi', assigneeId: 'u-42' })] }));
-
-    expect(cellule('assignee')).toBe('Amina Dridi');
+  it('nomme les statuts en toutes lettres plutôt qu\'en constantes serveur', () => {
+    setup(dossier({ actions: [action({ status: 'IN_PROGRESS' })] }));
+    expect(carte()).toContain('En cours');
+    expect(carte()).not.toContain('IN_PROGRESS');
+    expect(component.actionStatusLabel('PENDING')).toBe('À faire');
   });
 
-  it('ne retombe pas sur l\'identifiant quand le nom manque', () => {
+  it('ne retombe pas sur un identifiant quand le nom du responsable manque', () => {
     setup(dossier({ actions: [action({ assigneeId: '9c1f2b7e-0000-4000-8000-000000000000' })] }));
-
-    // Un UUID dans une colonne « Responsable » n'apprend rien à personne.
-    expect(cellule('assignee')).toBe('—');
-    expect(texte()).not.toContain('9c1f2b7e');
+    expect(carte()).toContain('—');
+    expect(hote().textContent).not.toContain('9c1f2b7e');
   });
 
-  // --- l'écart d'origine : dans l'en-tête, plus dans chaque ligne ----------
+  // --- un dossier sans action -----------------------------------------------
 
-  it('ne répète plus l\'écart d\'origine sur chaque ligne d\'action', () => {
+  it('un dossier sans action propose de définir la sienne, dans la fenêtre commune', () => {
+    const vide = dossier({ sourceType: 'SPC_ALERT', type: 'PREVENTIVE', dueDate: '2099-01-01', actions: [] });
+    setup(vide);
+    capa.getCase.calls.reset();
+
+    expect(hote().querySelector('[data-test="action-unique-vide"]')).not.toBeNull();
+    (hote().querySelector('[data-test="definir-action"]') as HTMLButtonElement).click();
+
+    expect(dialog.open).toHaveBeenCalledWith(CapaCreateDialogComponent, jasmine.anything());
+    const data = dialog.open.calls.mostRecent().args[1]!.data as CapaCreateDialogData;
+    expect(data.mode).toBe('define-action');
+    expect(data.caseId).toBe(CASE_ID);
+    expect(data.prefill).toEqual(jasmine.objectContaining({
+      title: 'Étiquetage manquant', type: 'PREVENTIVE', dueDate: '2099-01-01'
+    }));
+    expect(capa.getCase).toHaveBeenCalled();
+  });
+
+  it('un ancien dossier d\'endiguement propose une action corrective, pas un endiguement', () => {
+    setup(dossier({ type: 'CONTAINMENT', actions: [] }));
+    component.openDefineAction(dossier({ type: 'CONTAINMENT', actions: [] }));
+    const data = dialog.open.calls.mostRecent().args[1]!.data as CapaCreateDialogData;
+    expect(data.prefill?.type).toBe('CORRECTIVE');
+  });
+
+  it('ne propose pas de définir l\'action d\'un dossier clos', () => {
+    setup(dossier({ status: 'CLOSED', actions: [] }));
+    expect((hote().querySelector('[data-test="definir-action"]') as HTMLButtonElement).disabled).toBeTrue();
+  });
+
+  // --- les anciens dossiers à plusieurs actions -----------------------------
+
+  it('montre toutes les actions d\'un ancien dossier, en lecture et avancement, sans en ajouter', () => {
     setup(dossier({
-      sourceNonConformity: {
-        id: 'nc-1', reference: 'NC-2026-0018', title: 'Étiquetage lot 4471 illisible'
-      }
+      actions: [action(), action({ id: 'a2', title: 'Former les opérateurs', status: 'DONE' })]
     }));
 
-    // La NC est celle du DOSSIER : identique sur toutes les lignes, elle
-    // occupait une colonne entière pour répéter la même chose et repoussait
-    // les colonnes qui, elles, varient d'une action à l'autre.
-    expect(component.actionColumns).not.toContain('nonConformity');
-    const entetes = Array.from((fixture.nativeElement as HTMLElement)
-      .querySelectorAll('.actions-table th')).map(th => (th.textContent ?? '').trim());
-    expect(entetes).not.toContain('Non-conformité');
+    expect(hote().querySelectorAll('[data-test="action-ligne"]').length).toBe(2);
+    expect(carte()).toContain('Actions (2)');
+    expect(carte()).toContain('Former les opérateurs');
+    expect(hote().querySelectorAll('[data-test="avancer-action"]').length).toBe(1);
+    expect(hote().querySelector('[data-test="definir-action"]')).toBeNull();
+    expect(component.trackActionById(0, action())).toBe(ACTION_ID);
+  });
+
+  // --- le pilote, par son nom ------------------------------------------------
+
+  it('nomme le pilote par le nom recopié à sa désignation', () => {
+    setup(dossier({ ownerName: 'amina.dridi@client.test' }));
+    expect(hote().querySelector('[data-test="capa-pilote"]')?.textContent?.trim()).toBe('amina.dridi@client.test');
+  });
+
+  it('nomme le pilote d\'un ancien dossier par l\'annuaire, jamais par son identifiant', () => {
+    annuaire = { members: [{ userId: '9c1f2b7e-0000-4000-8000-000000000000', label: 'karim@client.test' }], available: true };
+    setup(dossier());
+    expect(hote().querySelector('[data-test="capa-pilote"]')?.textContent?.trim()).toBe('karim@client.test');
+  });
+
+  it('affiche « — » plutôt qu\'un identifiant quand le pilote est inconnu', () => {
+    setup(dossier());
+    expect(hote().querySelector('[data-test="capa-pilote"]')?.textContent?.trim()).toBe('—');
+    expect(hote().textContent).not.toContain('9c1f2b7e');
+  });
+
+  it('dit la source en toutes lettres', () => {
+    setup(dossier({ sourceType: 'RISK', sourceRef: 'R-014' }));
+    const info = hote().querySelector('.info-card')?.textContent ?? '';
+    expect(info).toContain('Risque');
+    expect(info).toContain('R-014');
+    expect(info).not.toContain('RISK');
   });
 
   it('garde l\'écart d\'origine visible, une fois, dans l\'en-tête du dossier', () => {
     setup(dossier({
-      sourceNonConformity: {
-        id: 'nc-1', reference: 'NC-2026-0018', title: 'Étiquetage lot 4471 illisible'
-      }
+      sourceNonConformity: { id: 'nc-1', reference: 'NC-2026-0018', title: 'Étiquetage lot 4471 illisible' }
     }));
-
-    // Retirer la colonne ne doit pas faire disparaître l'information : elle
-    // remonte là où elle n'a besoin d'être écrite qu'une fois.
-    const info = (fixture.nativeElement as HTMLElement).querySelector('.info-card');
+    const info = hote().querySelector('.info-card');
     expect(info?.textContent).toContain('Étiquetage lot 4471 illisible');
   });
 
-  it('reste muet quand le dossier ne procède d\'aucun écart', () => {
-    setup(dossier({ sourceType: 'AUDIT', sourceNonConformity: undefined }));
+  // --- la preuve de l'action (ADR 0052) --------------------------------------
 
-    const info = (fixture.nativeElement as HTMLElement).querySelector('.info-card');
-    expect(info?.textContent).toContain('AUDIT');
-  });
-
-  // --- colonne « Preuve » --------------------------------------------------
-
-  it('range la pièce dans la ligne de son action', () => {
+  it('range la pièce sous son action', () => {
     capa.listActionEvidences.and.returnValue(of([preuveAction()]));
-
     setup();
 
     expect(component.actionEvidence(ACTION_ID)?.originalFilename).toBe('constat.pdf');
-    const lien = (fixture.nativeElement as HTMLElement)
-      .querySelector('.action-evidence') as HTMLAnchorElement;
+    const lien = hote().querySelector('.action-evidence') as HTMLAnchorElement;
     expect(lien.textContent).toContain('constat.pdf');
     // Une URL signée pointe hors application : sans noopener, la page ouverte
     // garde une prise sur la nôtre.
@@ -245,19 +276,15 @@ describe('CapaDetailComponent — tableau des actions', () => {
 
   it('propose de joindre quand l\'action n\'a pas encore de preuve', () => {
     setup();
-
     expect(component.canAttachActionEvidence(ACTION_ID, 'IN_PROGRESS')).toBeTrue();
-    expect((fixture.nativeElement as HTMLElement).querySelector('.attach-btn')).not.toBeNull();
+    expect(hote().querySelector('.attach-btn')).not.toBeNull();
   });
 
-  it('dépose la pièce sur l\'action visée et non sur la dernière ligne rendue', () => {
-    setup(dossier({
-      actions: [action(), action({ id: 'a2', title: 'Former les opérateurs' })]
-    }));
+  it('dépose la pièce sur l\'action visée', () => {
+    setup(dossier({ actions: [action(), action({ id: 'a2', title: 'Former les opérateurs' })] }));
     capa.uploadActionEvidence.and.returnValue(of(preuveAction()));
 
-    const input = document.createElement('input');
-    component.triggerActionEvidencePicker(input, ACTION_ID);
+    component.triggerActionEvidencePicker(document.createElement('input'), ACTION_ID);
     component.onActionEvidenceSelected(fichier());
 
     expect(capa.uploadActionEvidence).toHaveBeenCalledWith(CASE_ID, ACTION_ID, jasmine.any(File));
@@ -267,68 +294,56 @@ describe('CapaDetailComponent — tableau des actions', () => {
 
   it('ne tente rien si aucun fichier n\'est choisi', () => {
     setup();
-
-    const input = document.createElement('input');
-    component.triggerActionEvidencePicker(input, ACTION_ID);
+    component.triggerActionEvidencePicker(document.createElement('input'), ACTION_ID);
     component.onActionEvidenceSelected({ target: document.createElement('input') } as unknown as Event);
-
     expect(capa.uploadActionEvidence).not.toHaveBeenCalled();
   });
 
-  it('distingue les refus de dépôt : trop lourd, format, action déjà pourvue', () => {
+  it('distingue les refus de dépôt : trop lourd, format, action déjà pourvue, action disparue', () => {
     setup();
     const messages: string[] = [];
     snack.open.and.callFake((m: string) => { messages.push(m); return {} as never; });
 
-    [413, 400, 409].forEach(status => {
-      capa.uploadActionEvidence.and.returnValue(
-        throwError(() => new HttpErrorResponse({ status })));
-      const input = document.createElement('input');
-      component.triggerActionEvidencePicker(input, ACTION_ID);
+    [413, 400, 409, 404].forEach(status => {
+      capa.uploadActionEvidence.and.returnValue(throwError(() => new HttpErrorResponse({ status })));
+      component.triggerActionEvidencePicker(document.createElement('input'), ACTION_ID);
       component.onActionEvidenceSelected(fichier());
     });
 
     expect(messages[0]).toContain('10 Mo');
     expect(messages[1]).toContain('Format refusé');
     expect(messages[2]).toContain('déjà sa preuve');
-    expect(new Set(messages).size).toBe(3);
+    expect(messages[3]).toContain('n\'existe plus');
+    expect(new Set(messages).size).toBe(4);
   });
 
-  it('annonce le stockage coupé au lieu d\'un tableau sans preuve', () => {
+  it('annonce le stockage coupé au lieu de proposer un dépôt voué au refus', () => {
     capa.listActionEvidences.and.returnValue(throwError(() => new HttpErrorResponse({
       status: 503, error: { type: 'https://qualitos.io/errors/storage-disabled' }
     })));
-
     setup();
-
     expect(component.evidenceStorageDisabled$.value).toBeTrue();
-    // Proposer « Joindre » alors que rien ne peut être déposé enverrait
-    // l'utilisateur droit dans un refus.
     expect(component.canAttachActionEvidence(ACTION_ID, 'IN_PROGRESS')).toBeFalse();
   });
 
   it('retire la pièce de l\'action après confirmation', () => {
     capa.listActionEvidences.and.returnValue(of([preuveAction()]));
     capa.deleteActionEvidence.and.returnValue(of(void 0));
-
     setup();
+
     component.removeActionEvidence(ACTION_ID, preuveAction());
 
-    expect(dialog.open).toHaveBeenCalled();
     expect(capa.deleteActionEvidence).toHaveBeenCalledWith(CASE_ID, ACTION_ID, 'evd-a1');
     expect(component.actionEvidence(ACTION_ID)).toBeUndefined();
   });
 
   it('garde la pièce quand le retrait échoue, et le dit', () => {
     capa.listActionEvidences.and.returnValue(of([preuveAction()]));
-    capa.deleteActionEvidence.and.returnValue(
-      throwError(() => new HttpErrorResponse({ status: 409 })));
-
+    capa.deleteActionEvidence.and.returnValue(throwError(() => new HttpErrorResponse({ status: 409 })));
     setup();
+
     component.removeActionEvidence(ACTION_ID, preuveAction());
 
-    // Retirer la ligne d'écran alors que le serveur a refusé ferait croire à
-    // une preuve disparue.
     expect(component.actionEvidence(ACTION_ID)).toBeTruthy();
     expect(snack.open).toHaveBeenCalled();
     expect(component.busyEvidenceActionId$.value).toBeNull();
@@ -337,244 +352,39 @@ describe('CapaDetailComponent — tableau des actions', () => {
   it('ne retire rien quand la confirmation est refusée', () => {
     capa.listActionEvidences.and.returnValue(of([preuveAction()]));
     dialog.open.and.returnValue({ afterClosed: () => of(false) } as never);
-
     setup();
+
     component.removeActionEvidence(ACTION_ID, preuveAction());
 
     expect(capa.deleteActionEvidence).not.toHaveBeenCalled();
-    expect(component.actionEvidence(ACTION_ID)).toBeTruthy();
   });
 
-  it('ignore un second geste tant que la cellule travaille', () => {
+  it('ignore un second geste tant que la preuve travaille', () => {
     setup();
     component.busyEvidenceActionId$.next(ACTION_ID);
-
     const input = document.createElement('input');
     spyOn(input, 'click');
+
     component.triggerActionEvidencePicker(input, ACTION_ID);
     component.removeActionEvidence(ACTION_ID, preuveAction());
 
-    // Deux dépôts concurrents sur la même action buteraient sur la borne « une
-    // pièce » et laisseraient l'utilisateur devant un refus qu'il n'a pas causé.
     expect(input.click).not.toHaveBeenCalled();
     expect(dialog.open).not.toHaveBeenCalled();
     expect(component.canAttachActionEvidence(ACTION_ID, 'IN_PROGRESS')).toBeFalse();
   });
 
-  it('ne rouvre pas une édition ni n\'en démarre une pendant l\'enregistrement', () => {
-    setup();
-    component.savingEdit = true;
-
-    component.startEdit(action());
-    expect(component.isEditing(ACTION_ID)).toBeFalse();
-
-    component.savingEdit = false;
-    component.startEdit(action());
-    component.savingEdit = true;
-    component.cancelEdit();
-    // Annuler pendant l'écriture laisserait une requête sans destinataire.
-    expect(component.isEditing(ACTION_ID)).toBeTrue();
-    component.savingEdit = false;
-  });
-
-  it('ne fait pas avancer une action déjà faite', () => {
-    setup();
-
-    component.advanceAction(action({ status: 'DONE' }));
-
-    expect(capa.updateAction).not.toHaveBeenCalled();
-    expect(component.nextActionStatus('DONE')).toBeNull();
-  });
-
-  it('verrouille la colonne sur un dossier clos', () => {
+  it('verrouille la preuve sur un dossier clos, sans la cacher', () => {
     capa.listActionEvidences.and.returnValue(of([preuveAction()]));
-
     setup(dossier({ status: 'CLOSED' }));
 
     expect(component.canAttachActionEvidence(ACTION_ID, 'CLOSED')).toBeFalse();
-    // La pièce reste consultable : c'est elle qui explique la clôture.
-    expect((fixture.nativeElement as HTMLElement).querySelector('.action-evidence')).not.toBeNull();
-    expect((fixture.nativeElement as HTMLElement).querySelector('.evidence-remove')).toBeNull();
+    expect(hote().querySelector('.action-evidence')).not.toBeNull();
+    expect(hote().querySelector('.evidence-remove')).toBeNull();
   });
 
-  // --- édition en ligne ----------------------------------------------------
-
-  it('bascule la ligne en édition sans ouvrir de dialogue', () => {
+  it('nomme l\'action visée dans les libellés d\'accessibilité', () => {
     setup();
-
-    component.startEdit(action());
-    fixture.detectChanges();
-
-    expect(dialog.open).not.toHaveBeenCalled();
-    expect(component.isEditing(ACTION_ID)).toBeTrue();
-    const champ = (fixture.nativeElement as HTMLElement)
-      .querySelector('.inline-field--title input') as HTMLInputElement;
-    expect(champ).not.toBeNull();
-    expect(champ.value).toBe('Réviser le plan de contrôle réception');
-    // Le focus suit l'édition : sinon l'utilisateur au clavier se retrouve sur
-    // un bouton disparu, et repart en tête de document.
-    expect(document.activeElement).toBe(champ);
-  });
-
-  it('n\'envoie que les champs édités — date de décision et porteur restent intouchés', () => {
-    setup();
-    capa.updateAction.and.returnValue(of(action()));
-
-    component.startEdit(action({ assigneeName: 'Amina Dridi', decidedOn: '2026-03-12' }));
-    component.editForm.setValue({ title: '  Libellé corrigé  ', status: 'DONE', actionType: 'CORRECTIVE' });
-    component.saveEdit();
-
-    expect(capa.updateAction).toHaveBeenCalledWith(CASE_ID, ACTION_ID, {
-      title: 'Libellé corrigé', status: 'DONE', actionType: 'CORRECTIVE'
-    });
-    expect(component.isEditing(ACTION_ID)).toBeFalse();
-  });
-
-  it('refuse d\'enregistrer un libellé vide, sans appeler le serveur', () => {
-    setup();
-
-    component.startEdit(action());
-    component.editForm.setValue({ title: '   ', status: 'PENDING', actionType: 'CORRECTIVE' });
-    component.saveEdit();
-
-    // Required + trim côté formulaire : un espace ne doit pas devenir le
-    // libellé d'une action dans un dossier d'audit.
-    expect(capa.updateAction).not.toHaveBeenCalled();
-    expect(component.isEditing(ACTION_ID)).toBeTrue();
-  });
-
-  it('annule sans rien écrire', () => {
-    setup();
-
-    component.startEdit(action());
-    component.editForm.setValue({ title: 'saisie abandonnée', status: 'DONE', actionType: 'CORRECTIVE' });
-    component.cancelEdit();
-
-    expect(capa.updateAction).not.toHaveBeenCalled();
-    expect(component.isEditing(ACTION_ID)).toBeFalse();
-  });
-
-  it('se pilote au clavier : Échap annule, Entrée enregistre', () => {
-    setup();
-    capa.updateAction.and.returnValue(of(action()));
-
-    component.startEdit(action());
-    component.onEditKeydown(new KeyboardEvent('keydown', { key: 'Escape' }));
-    expect(component.isEditing(ACTION_ID)).toBeFalse();
-    expect(capa.updateAction).not.toHaveBeenCalled();
-
-    component.startEdit(action());
-    component.onEditKeydown(new KeyboardEvent('keydown', { key: 'Enter' }));
-    expect(capa.updateAction).toHaveBeenCalled();
-  });
-
-  it('laisse passer les autres touches — on tape dans le champ', () => {
-    setup();
-
-    component.startEdit(action());
-    component.onEditKeydown(new KeyboardEvent('keydown', { key: 'a' }));
-
-    expect(component.isEditing(ACTION_ID)).toBeTrue();
-    expect(capa.updateAction).not.toHaveBeenCalled();
-  });
-
-  it('n\'enregistre rien quand aucune ligne n\'est en édition', () => {
-    setup();
-
-    component.saveEdit();
-
-    expect(capa.updateAction).not.toHaveBeenCalled();
-  });
-
-  it('laisse la ligne ouverte quand l\'enregistrement échoue', () => {
-    setup();
-    capa.updateAction.and.returnValue(throwError(() => new HttpErrorResponse({ status: 400 })));
-
-    component.startEdit(action());
-    component.editForm.setValue({ title: 'Libellé corrigé', status: 'DONE', actionType: 'CORRECTIVE' });
-    component.saveEdit();
-
-    // Refermer effacerait la saisie que l'utilisateur doit justement corriger.
-    expect(component.isEditing(ACTION_ID)).toBeTrue();
-    expect(component.savingEdit).toBeFalse();
-    expect(snack.open).toHaveBeenCalled();
-  });
-
-  it('ferme l\'édition sur un dossier clos', () => {
-    setup(dossier({ status: 'CLOSED' }));
-
-    expect(component.canEditAction('CLOSED')).toBeFalse();
-    const bouton = (fixture.nativeElement as HTMLElement)
-      .querySelector('.edit-btn') as HTMLButtonElement;
-    expect(bouton.disabled).toBeTrue();
-  });
-
-  // --- avancement ----------------------------------------------------------
-
-  it('fait avancer une action sans renvoyer son libellé', () => {
-    setup();
-    capa.updateAction.and.returnValue(of(action({ status: 'IN_PROGRESS' })));
-
-    component.advanceAction(action());
-
-    // Renvoyer le libellé écraserait une correction faite entre-temps ailleurs.
-    expect(capa.updateAction).toHaveBeenCalledWith(CASE_ID, ACTION_ID, { status: 'IN_PROGRESS' });
-  });
-
-  it('nomme les statuts en toutes lettres plutôt qu\'en constantes serveur', () => {
-    setup(dossier({ actions: [action({ status: 'IN_PROGRESS' })] }));
-
-    // La colonne de statut du TABLEAU : la constante brute reste ailleurs sur
-    // la fiche (badge d'état du dossier), ce n'est pas ce qu'on juge ici.
-    expect(cellule('status')).toBe('En cours');
-    expect(cellule('status')).not.toContain('IN_PROGRESS');
-  });
-  // --- dossier ouvert depuis un risque ------------------------------------
-
-  it('un dossier issu d’un risque montre son action seule, sans ajout ni suggestion IA', () => {
-    setup(dossier({
-      sourceType: 'RISK', sourceRef: 'R-014', type: 'PREVENTIVE',
-      actions: [action({ actionType: 'PREVENTIVE', assigneeName: 'A. Diallo', dueDate: '2026-12-01' })]
-    }));
-    const el = fixture.nativeElement as HTMLElement;
-
-    expect(el.querySelector('[data-test="action-unique"]')).not.toBeNull();
-    expect(el.querySelector('.actions-card')).toBeNull();
-    expect(texte()).not.toContain('Ajouter une action');
-    expect(el.querySelector('.ia-btn')).toBeNull();
-    const carte = el.querySelector('[data-test="action-unique"]')!.textContent!;
-    expect(carte).toContain('Réviser le plan de contrôle réception');
-    expect(carte).toContain('A. Diallo');
-
-    capa.updateAction.and.returnValue(of(action({ status: 'IN_PROGRESS' })));
-    (el.querySelector('[data-test="avancer-action"]') as HTMLButtonElement).click();
-    expect(capa.updateAction).toHaveBeenCalledWith(CASE_ID, ACTION_ID, { status: 'IN_PROGRESS' });
-  });
-
-  it('une action terminée n’offre plus de bouton d’avancement', () => {
-    setup(dossier({ sourceType: 'RISK', actions: [action({ status: 'DONE' })] }));
-    expect((fixture.nativeElement as HTMLElement).querySelector('[data-test="avancer-action"]')).toBeNull();
-  });
-
-  it('un ancien dossier de risque sans action ne montre pas le bloc Actions : seulement de quoi définir la sienne', () => {
-    setup(dossier({ sourceType: 'RISK', actions: [] }));
-    const el = fixture.nativeElement as HTMLElement;
-    expect(el.querySelector('[data-test="action-unique"]')).not.toBeNull();
-    expect(el.querySelector('.actions-card')).toBeNull();
-    expect(el.textContent).not.toContain('Ajouter une action');
-    expect(el.querySelector('[data-test="action-unique-vide"]')).not.toBeNull();
-    const openSpy = spyOn(component, 'openAddAction');
-    (el.querySelector('[data-test="definir-action"]') as HTMLButtonElement).click();
-    expect(openSpy).toHaveBeenCalled();
-    expect(component.isSingleActionCase(dossier({ sourceType: 'RISK', actions: [] }))).toBeTrue();
-    expect(component.isSingleActionCase(dossier())).toBeFalse();
-    expect(component.trackActionById(0, action())).toBe(ACTION_ID);
-  });
-
-  it('un dossier de risque pourvu de son action n’offre plus de quoi en définir une', () => {
-    setup(dossier({ sourceType: 'RISK', actions: [action()] }));
-    const el = fixture.nativeElement as HTMLElement;
-    expect(el.querySelector('[data-test="action-unique-vide"]')).toBeNull();
-    expect(el.querySelector('[data-test="definir-action"]')).toBeNull();
+    expect(component.attachEvidenceAria('Former')).toContain('Former');
+    expect(component.removeEvidenceAria('Former')).toContain('Former');
   });
 });

@@ -8,11 +8,12 @@ import { catchError, finalize, map, shareReplay, startWith, switchMap, tap } fro
 
 import { deferredView } from '../../../../core/rx/deferred-view';
 import { safeErrorMessage } from '../../../../core/http/error-message';
-import { capaTypeLabel } from '../../capa.labels';
+import { CapaDirectoryService, DirectoryMember } from '../../capa-directory.service';
+import { capaOwnerLabel, capaTypeLabel } from '../../capa.labels';
 import { CapaService } from '../../capa.service';
 import { CapaCaseResponse, CapaCriticity, CapaPage, CapaStatus } from '../../capa.types';
 import {
-  CapaCreateDialogComponent, CapaCreatePrefill
+  CapaCreateDialogComponent, CapaCreateDialogData, CapaCreatePrefill, CapaOpened
 } from '../capa-create-dialog/capa-create-dialog.component';
 
 const PAGE_SIZE_OPTIONS = [10, 20, 50, 100];
@@ -29,7 +30,10 @@ const EMPTY_PAGE = { content: [], totalElements: 0, totalPages: 0, number: 0, si
 })
 export class CapaListComponent implements OnInit {
 
-  readonly displayedColumns = ['title', 'type', 'criticity', 'status', 'dueDate'];
+  readonly displayedColumns = ['title', 'type', 'criticity', 'status', 'owner', 'dueDate'];
+
+  /** Les membres connus, pour nommer le pilote des dossiers qui ne portent pas son nom. */
+  private members: DirectoryMember[] = [];
   readonly statusFilter = new FormControl<CapaStatus | ''>('');
   readonly statuses: CapaStatus[] = ['OPEN', 'IN_PROGRESS', 'RESOLVED', 'CLOSED', 'REJECTED'];
 
@@ -51,12 +55,14 @@ export class CapaListComponent implements OnInit {
     private readonly svc: CapaService,
     private readonly dialog: MatDialog,
     private readonly router: Router,
+    private readonly directory: CapaDirectoryService,
     // Facultatif : la liste s'ouvre aussi hors routeur (bancs de test).
     @Optional() private readonly route?: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
     this.openCreateFromLink();
+    this.directory.choices().subscribe(c => (this.members = c.members));
     this.cases$ = combineLatest([
       this.statusFilter.valueChanges.pipe(startWith(this.statusFilter.value)),
       this.page$,
@@ -92,12 +98,13 @@ export class CapaListComponent implements OnInit {
   }
 
   openCreate(prefill?: CapaCreatePrefill): void {
-    const ref = this.dialog.open(CapaCreateDialogComponent, {
-      autoFocus: 'first-tabbable',
-      restoreFocus: true,
-      panelClass: 'qos-dialog-panel',
-      data: prefill ?? null
-    });
+    const ref = this.dialog.open<CapaCreateDialogComponent, CapaCreateDialogData, CapaOpened>(
+      CapaCreateDialogComponent, {
+        autoFocus: 'first-tabbable',
+        restoreFocus: true,
+        panelClass: 'qos-dialog-panel',
+        data: { prefill }
+      });
     ref.afterClosed().subscribe(created => {
       if (created) {
         this.pageIndex = 0;
@@ -135,6 +142,9 @@ export class CapaListComponent implements OnInit {
   }
 
   statusBadge(s: CapaStatus): string { return 'badge badge-' + s.toLowerCase(); }
+
+  /** Le nom du pilote, jamais son identifiant (ADR 0088). */
+  ownerLabel(c: CapaCaseResponse): string { return capaOwnerLabel(c, this.members); }
 
   /** Libellé lisible du type de dossier ; la colonne affichait l'énumération brute. */
   caseTypeLabel(type: string): string { return capaTypeLabel(type); }

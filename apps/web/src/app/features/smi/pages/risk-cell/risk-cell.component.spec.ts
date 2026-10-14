@@ -155,7 +155,7 @@ describe('RiskCellComponent', () => {
 
     (hote().querySelector('[data-test="creer-capa"]') as HTMLButtonElement).click();
 
-    expect(opener.open).toHaveBeenCalledWith({ id: 'r1', reference: 'R-014', owner: 'M. Kone' });
+    expect(opener.open).toHaveBeenCalledWith(jasmine.objectContaining({ id: 'r1', reference: 'R-014', owner: 'M. Kone' }));
     http.expectOne(`${endpoint}/risks/r1`).flush(fiche(REGISTRE[0]));
     expect(component.busy).toBeFalse();
 

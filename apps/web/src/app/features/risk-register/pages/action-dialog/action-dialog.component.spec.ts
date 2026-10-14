@@ -1,11 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatRadioModule } from '@angular/material/radio';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 import { SharedModule } from '../../../../shared/shared.module';
-import { ActionDialogComponent, ActionDialogData, localIsoDate } from './action-dialog.component';
+import { ActionDialogComponent, ActionDialogData } from './action-dialog.component';
 
 describe('ActionDialogComponent', () => {
 
@@ -17,7 +15,7 @@ describe('ActionDialogComponent', () => {
     ref = jasmine.createSpyObj('MatDialogRef', ['close']);
     await TestBed.resetTestingModule().configureTestingModule({
       declarations: [ActionDialogComponent],
-      imports: [SharedModule, MatAutocompleteModule, MatRadioModule, NoopAnimationsModule],
+      imports: [SharedModule, NoopAnimationsModule],
       providers: [
         { provide: MatDialogRef, useValue: ref },
         { provide: MAT_DIALOG_DATA, useValue: data }
@@ -28,57 +26,32 @@ describe('ActionDialogComponent', () => {
     fixture.detectChanges();
   }
 
-  it('en mode CAPA : nature, responsable, description, pas de statut ; rend une saisie rognée', async () => {
-    await setup({ mode: 'capa', reference: 'R-014', assignee: 'M. Kone', assignees: ['M. Kone', 'A. Diallo'] });
+  it('en création : intitulé, échéance et statut ; rend une saisie rognée', async () => {
+    await setup({ mode: 'action', reference: 'O-003' });
     const el = fixture.nativeElement as HTMLElement;
-    expect(el.querySelector('[data-test="action-description"]')).not.toBeNull();
-    expect(el.querySelector('[data-test="action-nature"]')).not.toBeNull();
-    expect(el.querySelector('[data-test="action-statut"]')).toBeNull();
-    expect(el.textContent).toContain('R-014');
-    expect(component.form.controls.assignee.value).toBe('M. Kone');
-    expect(component.form.controls.kind.value).toBe('PREVENTIVE');
+    expect(component.isEdit).toBeFalse();
+    expect(el.textContent).toContain('O-003');
+    expect(el.querySelector('[data-test="action-statut"]')).not.toBeNull();
 
-    component.form.patchValue({
-      title: '  Carte SPC ', description: ' ', dueDate: '2026-12-01', kind: 'CORRECTIVE', assignee: ' A. Diallo '
-    });
+    component.form.patchValue({ title: '  Chiffrer le gain ', dueDate: '2026-12-01' });
     component.submit();
-    expect(ref.close).toHaveBeenCalledWith({
-      title: 'Carte SPC', description: null, dueDate: '2026-12-01', status: 'TO_START',
-      kind: 'CORRECTIVE', assignee: 'A. Diallo'
-    });
-  });
-
-  it('en mode CAPA : responsable et échéance sont obligatoires', async () => {
-    await setup({ mode: 'capa', reference: 'R-014' });
-    component.form.patchValue({ title: 'Carte SPC' });
-    component.submit();
-    expect(ref.close).not.toHaveBeenCalled();
-    expect(component.form.controls.assignee.hasError('required')).toBeTrue();
-    expect(component.form.controls.dueDate.hasError('required')).toBeTrue();
-
-    component.form.patchValue({ assignee: 'A. Diallo', dueDate: '2026-12-01' });
-    component.submit();
-    expect(ref.close).toHaveBeenCalled();
-  });
-
-  it('propose les noms déjà employés qui contiennent la saisie', async () => {
-    await setup({ mode: 'capa', reference: 'R-014', assignees: ['M. Kone', 'A. Diallo', 'B. Kone'] });
-    component.form.controls.assignee.setValue('kone');
-    expect(component.assigneeOptions).toEqual(['M. Kone', 'B. Kone']);
-    expect(localIsoDate(new Date(2026, 0, 5))).toBe('2026-01-05');
+    expect(ref.close).toHaveBeenCalledWith({ title: 'Chiffrer le gain', dueDate: '2026-12-01', status: 'TO_START' });
   });
 
   it('en modification d’une action : préremplie, avec son statut', async () => {
     await setup({ mode: 'action', reference: 'O-003', number: 3, title: 'Chiffrer', dueDate: null, status: 'IN_PROGRESS' });
     expect(component.isEdit).toBeTrue();
-    expect(component.isCapa).toBeFalse();
     expect((fixture.nativeElement as HTMLElement).textContent).toContain('ACT-3');
     component.submit();
-    expect(ref.close).toHaveBeenCalledWith({
-      title: 'Chiffrer', description: null, dueDate: null, status: 'IN_PROGRESS', kind: null, assignee: null
-    });
-    // Hors CAPA, ni responsable ni échéance ne sont exigés.
-    expect(component.form.controls.dueDate.hasError('required')).toBeFalse();
+    expect(ref.close).toHaveBeenCalledWith({ title: 'Chiffrer', dueDate: null, status: 'IN_PROGRESS' });
+  });
+
+  it('n’ouvre plus de CAPA : ni nature, ni responsable, ni description (ADR 0088)', async () => {
+    await setup({ mode: 'action', reference: 'O-003' });
+    const el = fixture.nativeElement as HTMLElement;
+    expect(el.querySelector('[data-test="action-nature"]')).toBeNull();
+    expect(el.querySelector('[data-test="action-responsable"]')).toBeNull();
+    expect(el.querySelector('[data-test="action-description"]')).toBeNull();
   });
 
   it('sans intitulé, ne ferme pas', async () => {

@@ -1,19 +1,27 @@
 <qos-form-dialog
-  i18n-title="@@capa.create.title"
-  title="Nouveau cas CAPA"
-  i18n-subtitle="@@capa.create.subtitle"
-  subtitle="Crée un cas correctif ou préventif. Les actions seront ajoutées ensuite et l'efficacité vérifiée à la clôture."
+  [title]="dialogTitle"
+  i18n-subtitle="@@capa.open.subtitle"
+  subtitle="Une CAPA porte une action : ce qu'on va faire, qui en répond et pour quand. On la fait avancer jusqu'à la vérification d'efficacité."
   [formGroup]="form"
   [submitting]="submitting"
-  [submitDisabled]="form.invalid"
-  i18n-submitLabel="@@common.create"
-  submitLabel="Créer"
+  [submitDisabled]="form.invalid || loadingMembers"
+  [submitLabel]="submitLabel"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
+  <!-- La source, quand on vient d'une section : dite et verrouillée. C'est
+       l'écran d'origine qui rattache le dossier, pas une saisie libre. -->
+  <div class="source-verrouillee" *ngIf="sourceLocked" data-test="source-verrouillee">
+    <mat-icon aria-hidden="true">link</mat-icon>
+    <span>
+      <span class="source-verrouillee__label" i18n="@@capa.create.source">Source</span>
+      <strong>{{ sourceLabel }}</strong> · {{ data.source?.reference }}
+    </span>
+  </div>
+
   <mat-form-field appearance="outline" class="full">
-    <mat-label i18n="@@common.title">Titre</mat-label>
-    <input matInput formControlName="title" maxlength="255" required
+    <mat-label i18n="@@capa.open.title-label">Intitulé de l'action</mat-label>
+    <input matInput formControlName="title" maxlength="255" required data-test="capa-intitule"
            i18n-placeholder="@@capa.create.title-placeholder"
            placeholder="Ex. : Recalibration robot soudure cobot-3">
     <mat-error *ngIf="form.controls.title.hasError('required')" i18n="@@capa.create.title-required">Le titre est requis.</mat-error>
@@ -22,93 +30,124 @@
 
   <mat-form-field appearance="outline" class="full">
     <mat-label i18n="@@common.description-optional">Description (optionnel)</mat-label>
-    <textarea matInput formControlName="description" rows="3"
-              i18n-placeholder="@@capa.create.description-placeholder"
-              placeholder="Contexte, impact, observations…"></textarea>
+    <textarea matInput formControlName="description" rows="3" maxlength="4000" data-test="capa-description"
+              i18n-placeholder="@@capa.open.description-placeholder"
+              placeholder="Méthode, ressources, critère de fin…"></textarea>
   </mat-form-field>
 
-  <div class="row">
-    <mat-form-field appearance="outline" class="col">
-      <mat-label i18n="@@common.type">Type</mat-label>
-      <mat-select formControlName="type">
-        <mat-option *ngFor="let t of types" [value]="t.value">{{ t.label }}</mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <mat-form-field appearance="outline" class="col">
-      <mat-label i18n="@@capa.create.criticity">Criticité</mat-label>
-      <mat-select formControlName="criticity">
-        <mat-option *ngFor="let c of criticities" [value]="c">{{ c }}</mat-option>
-      </mat-select>
-    </mat-form-field>
+  <!-- Nature : corrective quand l'écart s'est produit, préventive quand il
+       menace. L'endiguement seul n'est pas proposé : il arrête l'effet sans
+       supprimer la cause, et un dossier qui ne porterait que lui ne se
+       clôturerait jamais (ISO 9001 §10.2). -->
+  <div class="nature">
+    <span class="nature__titre" id="capa-open-nature" i18n="@@capa.open.nature">Nature</span>
+    <mat-radio-group formControlName="type" class="nature__choix" aria-labelledby="capa-open-nature"
+                     data-test="capa-nature">
+      <mat-radio-button *ngFor="let n of natures" [value]="n.value">{{ n.label }}</mat-radio-button>
+    </mat-radio-group>
   </div>
 
   <div class="row">
     <mat-form-field appearance="outline" class="col">
-      <mat-label i18n="@@capa.create.source">Source</mat-label>
-      <mat-select formControlName="sourceType">
-        <mat-option *ngFor="let s of sourceTypes" [value]="s.value">{{ s.label }}</mat-option>
+      <mat-label i18n="@@capa.open.owner">Responsable</mat-label>
+      <mat-select formControlName="assigneeId" required data-test="capa-responsable">
+        <mat-option *ngFor="let m of members" [value]="m.userId">{{ m.label }}</mat-option>
       </mat-select>
+      <mat-hint *ngIf="loadingMembers" i18n="@@capa.open.owner-loading">Lecture de l'annuaire…</mat-hint>
+      <mat-error *ngIf="form.controls.assigneeId.hasError('required')" i18n="@@capa.open.owner-required">Choisis le responsable de l'action.</mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="col">
+      <mat-label i18n="@@capa.open.due-date">Échéance</mat-label>
+      <input matInput formControlName="dueDate" type="date" required [attr.min]="today" data-test="capa-echeance">
+      <mat-error *ngIf="form.controls.dueDate.hasError('required')" i18n="@@capa.open.due-date-required">L'échéance est obligatoire.</mat-error>
+      <mat-error *ngIf="form.controls.dueDate.hasError('past')" i18n="@@capa.open.due-date-past">L'échéance ne peut pas être passée.</mat-error>
+    </mat-form-field>
+  </div>
+
+  <!-- Le responsable pilote le dossier. Quand l'annuaire n'est pas lisible
+       (réservé aux administrateurs), on se propose soi-même et on le dit. -->
+  <p class="aide" *ngIf="!loadingMembers && !directoryAvailable" role="status" data-test="annuaire-indisponible"
+     i18n="@@capa.open.directory-down">
+    L'annuaire de l'organisation n'est pas accessible avec tes droits : tu peux te désigner toi-même.
+    Pour confier l'action à un collègue, demande à un administrateur, ou réaffecte-la ensuite.
+  </p>
+  <p class="aide" *ngIf="unmatchedOwnerHint as hint" data-test="proprietaire-non-trouve"
+     i18n="@@capa.open.owner-hint-unmatched">
+    Propriétaire indiqué : {{ hint }} — introuvable dans l'annuaire, choisis son compte dans la liste.
+  </p>
+
+  <ng-container *ngIf="!isDefineAction">
+    <div class="row">
+      <mat-form-field appearance="outline" class="col">
+        <mat-label i18n="@@capa.create.criticity">Criticité</mat-label>
+        <mat-select formControlName="criticity" data-test="capa-criticite">
+          <mat-option *ngFor="let c of criticities" [value]="c.value">{{ c.label }}</mat-option>
+        </mat-select>
+        <mat-hint *ngIf="data.lockCriticity" i18n="@@capa.open.criticity-locked">Issue de la cotation du risque.</mat-hint>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="col" *ngIf="!sourceLocked">
+        <mat-label i18n="@@capa.create.source">Source</mat-label>
+        <mat-select formControlName="sourceType" data-test="capa-source">
+          <mat-option *ngFor="let s of sourceTypes" [value]="s.value">{{ s.label }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline" class="full" *ngIf="!sourceLocked">
       <mat-label i18n="@@capa.create.source-ref">Référence source (optionnel)</mat-label>
       <input matInput formControlName="sourceRef" maxlength="255"
              i18n-placeholder="@@capa.create.source-ref-placeholder"
              placeholder="Ex. : NC-2026-018">
     </mat-form-field>
-  </div>
 
-  <mat-form-field appearance="outline" class="full">
-    <mat-label i18n="@@capa.create.due-date">Échéance (optionnel)</mat-label>
-    <input matInput formControlName="dueDate" type="date">
-  </mat-form-field>
+    <!-- Les pièces sont retenues ici et déposées une fois le dossier créé : ce qui
+         a déclenché l'ouverture (photo du défaut, relevé, courriel client) se perd
+         si l'on doit revenir le chercher plus tard. -->
+    <div class="attachments">
+      <div class="attachments__head">
+        <span class="attachments__title" i18n="@@capa.create.attachments">Pièces jointes (optionnel)</span>
+        <span class="attachments__count" *ngIf="attachments.length">
+          {{ attachments.length }} / {{ maxEvidences }}
+        </span>
+      </div>
+      <p class="attachments__hint" i18n="@@capa.create.attachments-hint">
+        Ce qui documente l'écart dès l'ouverture : photo, relevé, courriel.
+        PDF, image, Word ou Excel, 10 Mo par pièce.
+      </p>
 
-  <!-- Les pièces sont retenues ici et déposées une fois le dossier créé : ce qui
-       a déclenché l'ouverture (photo du défaut, relevé, courriel client) se perd
-       si l'on doit revenir le chercher plus tard. -->
-  <div class="attachments">
-    <div class="attachments__head">
-      <span class="attachments__title" i18n="@@capa.create.attachments">Pièces jointes (optionnel)</span>
-      <span class="attachments__count" *ngIf="attachments.length">
-        {{ attachments.length }} / {{ maxEvidences }}
-      </span>
+      <ul class="attachments__list" *ngIf="attachments.length">
+        <li class="attachment" *ngFor="let f of attachments">
+          <mat-icon class="attachment__icon" aria-hidden="true">description</mat-icon>
+          <span class="attachment__name">{{ f.name }}</span>
+          <span class="attachment__size">{{ formatSize(f.size) }}</span>
+          <button mat-icon-button color="warn" type="button"
+                  [disabled]="submitting"
+                  (click)="removeAttachment(f)"
+                  i18n-matTooltip="@@capa.create.attachment-remove-tooltip" matTooltip="Retirer ce fichier"
+                  [attr.aria-label]="removeAttachmentAria(f.name)">
+            <mat-icon>close</mat-icon>
+          </button>
+        </li>
+      </ul>
+
+      <input type="file" class="hidden-file" #evidenceInput multiple
+             [accept]="acceptedTypes"
+             (change)="onFilesSelected($event)"
+             aria-hidden="true" tabindex="-1">
+      <button mat-stroked-button color="primary" type="button" class="attachments__add"
+              [disabled]="submitting || attachments.length >= maxEvidences"
+              (click)="evidenceInput.click()">
+        <mat-icon aria-hidden="true">attach_file</mat-icon>
+        <span i18n="@@capa.create.attachment-add">Ajouter un fichier</span>
+      </button>
+
+      <p class="attachments__progress" *ngIf="submitting && attachments.length" role="status">
+        <ng-container i18n="@@capa.create.attachment-progress">Dépôt des pièces</ng-container>
+        {{ uploaded }} / {{ attachments.length }}
+      </p>
     </div>
-    <p class="attachments__hint" i18n="@@capa.create.attachments-hint">
-      Ce qui documente l'écart dès l'ouverture : photo, relevé, courriel.
-      PDF, image, Word ou Excel, 10 Mo par pièce.
-    </p>
-
-    <ul class="attachments__list" *ngIf="attachments.length">
-      <li class="attachment" *ngFor="let f of attachments">
-        <mat-icon class="attachment__icon" aria-hidden="true">description</mat-icon>
-        <span class="attachment__name">{{ f.name }}</span>
-        <span class="attachment__size">{{ formatSize(f.size) }}</span>
-        <button mat-icon-button color="warn" type="button"
-                [disabled]="submitting"
-                (click)="removeAttachment(f)"
-                i18n-matTooltip="@@capa.create.attachment-remove-tooltip" matTooltip="Retirer ce fichier"
-                [attr.aria-label]="'Retirer ' + f.name">
-          <mat-icon>close</mat-icon>
-        </button>
-      </li>
-    </ul>
-
-    <input type="file" class="hidden-file" #evidenceInput multiple
-           [accept]="acceptedTypes"
-           (change)="onFilesSelected($event)"
-           aria-hidden="true" tabindex="-1">
-    <button mat-stroked-button color="primary" type="button" class="attachments__add"
-            [disabled]="submitting || attachments.length >= maxEvidences"
-            (click)="evidenceInput.click()">
-      <mat-icon aria-hidden="true">attach_file</mat-icon>
-      <span i18n="@@capa.create.attachment-add">Ajouter un fichier</span>
-    </button>
-
-    <p class="attachments__progress" *ngIf="submitting && attachments.length" role="status">
-      <ng-container i18n="@@capa.create.attachment-progress">Dépôt des pièces</ng-container>
-      {{ uploaded }} / {{ attachments.length }}
-    </p>
-  </div>
+  </ng-container>
 
 </qos-form-dialog>

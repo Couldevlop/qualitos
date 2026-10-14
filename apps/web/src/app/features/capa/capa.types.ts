@@ -10,7 +10,9 @@ export type CapaType = 'CONTAINMENT' | 'CORRECTIVE' | 'PREVENTIVE';
 export type CapaCriticity = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
 export type CapaStatus = 'OPEN' | 'IN_PROGRESS' | 'RESOLVED' | 'CLOSED' | 'REJECTED';
 // RISK : dossier ouvert depuis une fiche du registre des risques (sourceRef = R-xxx).
-export type CapaSourceType = 'NON_CONFORMITY' | 'AUDIT' | 'COMPLAINT' | 'INTERNAL' | 'IOT_ALERT' | 'RISK' | 'OTHER';
+// SPC_ALERT et ANOMALY : dossiers ouverts par un automate (carte de contrôle, détection d'anomalie).
+export type CapaSourceType = 'NON_CONFORMITY' | 'AUDIT' | 'COMPLAINT' | 'INTERNAL' | 'IOT_ALERT'
+  | 'SPC_ALERT' | 'ANOMALY' | 'RISK' | 'OTHER';
 
 /**
  * Nature d'une action (§4.2, ISO 9001 §10.2, 8D étape D3).
@@ -67,6 +69,12 @@ export interface CapaCaseResponse {
   sourceType: CapaSourceType;
   sourceRef?: string;
   ownerId: string;
+  /**
+   * Libellé du pilote, recopié de l'annuaire à sa désignation (ADR 0088).
+   * Absent sur les dossiers antérieurs ou ouverts par un automate : l'écran
+   * le résout alors par l'annuaire, ou affiche « — » — jamais un identifiant.
+   */
+  ownerName?: string;
   rootCauseId?: string;
   dueDate?: string;
   resolvedAt?: string;
@@ -120,15 +128,26 @@ export type ClosureBlockerCode =
 
 export type CapaPage = SpringPage<CapaCaseResponse>;
 
-export interface CreateCapaCaseRequest {
+/**
+ * Ce que remplit la fenêtre de création CAPA, d'où qu'on l'ouvre (ADR 0088) :
+ * le dossier ET son action unique. Le responsable est un compte de l'annuaire,
+ * qui pilote le dossier.
+ *
+ * `sourceType` et `sourceRef` ne servent qu'à la création libre depuis la
+ * liste : ouverte depuis une NC, un constat ou un risque, c'est le serveur qui
+ * fixe la source.
+ */
+export interface OpenCapaRequest {
   title: string;
   description?: string;
-  type: CapaType;
+  /** Corrective ou préventive : un dossier qui ne ferait qu'endiguer ne se clôturerait jamais. */
+  type: Exclude<CapaType, 'CONTAINMENT'>;
   criticity: CapaCriticity;
-  sourceType: CapaSourceType;
+  sourceType?: CapaSourceType;
   sourceRef?: string;
   ownerId: string;
-  dueDate?: string;
+  ownerName?: string;
+  dueDate: string;
 }
 
 export type CapaActionStatus = 'PENDING' | 'IN_PROGRESS' | 'DONE';
@@ -162,12 +181,6 @@ export interface UpdateCapaActionRequest {
   assigneeName?: string;
   decidedOn?: string;
   dueDate?: string;
-}
-
-/** Action corrective/préventive suggérée par l'IA (à valider/ajouter). §4.2 */
-export interface SuggestedAction {
-  title: string;
-  description?: string;
 }
 
 /**

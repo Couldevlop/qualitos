@@ -6182,14 +6182,6 @@ Portail clients</source>
         <source>Réformé</source>
         <target state="translated">مُستبعَد</target>
       </trans-unit>
-      <trans-unit id="capa.detail.col-decided-on" datatype="html">
-        <source>Date</source>
-        <target state="translated">التاريخ</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.col-assignee" datatype="html">
-        <source>Responsable</source>
-        <target state="translated">المسؤول</target>
-      </trans-unit>
       <trans-unit id="capa.detail.col-evidence" datatype="html">
         <source>Preuve</source>
         <target state="translated">الدليل</target>
@@ -6206,18 +6198,6 @@ Portail clients</source>
         <source>Faite</source>
         <target state="translated">منجزة</target>
       </trans-unit>
-      <trans-unit id="capa.detail.edit-title-label" datatype="html">
-        <source>Libellé de l'action</source>
-        <target state="translated">عنوان الإجراء</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.action-updated" datatype="html">
-        <source>Action modifiée.</source>
-        <target state="translated">تم تعديل الإجراء.</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.action-update-error" datatype="html">
-        <source>Modification impossible.</source>
-        <target state="translated">تعذّر التعديل.</target>
-      </trans-unit>
       <trans-unit id="capa.action-evidence.attach" datatype="html">
         <source>Joindre</source>
         <target state="translated">إرفاق</target>
@@ -6233,10 +6213,6 @@ Portail clients</source>
       <trans-unit id="capa.action-evidence.remove-aria" datatype="html">
         <source>Retirer la preuve de l'action : <x id="title"/></source>
         <target state="translated">إزالة دليل الإجراء: <x id="title"/></target>
-      </trans-unit>
-      <trans-unit id="capa.detail.edit-action-aria" datatype="html">
-        <source>Modifier l'action : <x id="title"/></source>
-        <target state="translated">تعديل الإجراء: <x id="title"/></target>
       </trans-unit>
       <trans-unit id="capa.action-evidence.remove-tooltip" datatype="html">
         <source>Retirer la preuve de cette action</source>
@@ -6258,22 +6234,6 @@ Portail clients</source>
         <source>Cette action n'existe plus — recharge la fiche.</source>
         <target state="translated">لم يعد هذا الإجراء موجوداً — أعد تحميل الملف.</target>
       </trans-unit>
-      <trans-unit id="capa.action.decided-on" datatype="html">
-        <source>Date de décision</source>
-        <target state="translated">تاريخ القرار</target>
-      </trans-unit>
-      <trans-unit id="capa.action.decided-on-hint" datatype="html">
-        <source>Le jour où l'action a été décidée (comité, revue), pas celui de sa saisie.</source>
-        <target state="translated">اليوم الذي تقرّر فيه الإجراء (لجنة، مراجعة)، لا يوم إدخاله.</target>
-      </trans-unit>
-      <trans-unit id="capa.action.assignee-name" datatype="html">
-        <source>Responsable (optionnel)</source>
-        <target state="translated">المسؤول (اختياري)</target>
-      </trans-unit>
-      <trans-unit id="capa.action.assignee-name-placeholder" datatype="html">
-        <source>Ex. : Amina Dridi</source>
-        <target state="translated">مثال: أمينة الدريدي</target>
-      </trans-unit>
       <trans-unit id="capa.action-type.containment" datatype="html">
         <source>Endiguement</source>
         <target state="translated">احتواء</target>
@@ -6286,21 +6246,9 @@ Portail clients</source>
         <source>Préventive</source>
         <target state="translated">وقائي</target>
       </trans-unit>
-      <trans-unit id="capa.detail.col-action-type" datatype="html">
-        <source>Nature</source>
-        <target state="translated">الطبيعة</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.edit-action-type-label" datatype="html">
-        <source>Nature</source>
-        <target state="translated">الطبيعة</target>
-      </trans-unit>
       <trans-unit id="capa.action.action-type" datatype="html">
         <source>Nature de l'action</source>
         <target state="translated">طبيعة الإجراء</target>
-      </trans-unit>
-      <trans-unit id="capa.action.action-type-hint" datatype="html">
-        <source>L'endiguement arrête l'effet (trier un lot, arrêter une ligne) ; la correction supprime la cause.</source>
-        <target state="translated">الاحتواء يوقف الأثر (فرز دفعة، إيقاف خط)؛ أما التصحيح فيزيل السبب.</target>
       </trans-unit>
       <trans-unit id="capa.detail.blockers-title" datatype="html">
         <source>Ce dossier ne peut pas encore être clôturé</source>
@@ -6317,10 +6265,6 @@ Portail clients</source>
       <trans-unit id="capa.blocker.actions-many" datatype="html">
         <source><x id="count"/> actions restent à terminer.</source>
         <target state="translated">يتبقّى <x id="count"/> إجراءات لإتمامها.</target>
-      </trans-unit>
-      <trans-unit id="capa.blocker.containment-only" datatype="html">
-        <source>Le dossier ne porte que des mesures d'endiguement : elles arrêtent l'effet sans supprimer la cause. Ajoutez une action corrective ou préventive.</source>
-        <target state="translated">لا يتضمّن الملف سوى تدابير احتواء: فهي توقف الأثر دون إزالة السبب. أضف إجراءً تصحيحياً أو وقائياً.</target>
       </trans-unit>
       <trans-unit id="capa.blocker.nc-one" datatype="html">
         <source>1 non-conformité liée est encore ouverte.</source>
@@ -6561,6 +6505,166 @@ Portail clients</source>
       <trans-unit id="capa.evidence.storage-disabled" datatype="html">
         <source>Le stockage des pièces jointes est désactivé sur cet environnement : aucune preuve ne peut y être déposée ni relue.</source>
         <target state="translated">تخزين المرفقات معطّل في هذه البيئة: لا يمكن إيداع أي دليل ولا الاطّلاع عليه.</target>
+      </trans-unit>
+      <trans-unit id="capa.open.title" datatype="html">
+        <source>Nouvelle CAPA</source>
+        <target state="translated">إجراء تصحيحي/وقائي جديد</target>
+      </trans-unit>
+      <trans-unit id="capa.open.define-title" datatype="html">
+        <source>Définir l'action</source>
+        <target state="translated">تحديد الإجراء</target>
+      </trans-unit>
+      <trans-unit id="capa.open.submit" datatype="html">
+        <source>Créer la CAPA</source>
+        <target state="translated">إنشاء الإجراء</target>
+      </trans-unit>
+      <trans-unit id="capa.open.define-submit" datatype="html">
+        <source>Enregistrer l'action</source>
+        <target state="translated">حفظ الإجراء</target>
+      </trans-unit>
+      <trans-unit id="capa.open.subtitle" datatype="html">
+        <source>Une CAPA porte une action : ce qu'on va faire, qui en répond et pour quand. On la fait avancer jusqu'à la vérification d'efficacité.</source>
+        <target state="translated">يتضمن كل إجراء تصحيحي/وقائي إجراءً واحدًا: ما الذي سيُنفَّذ، ومن المسؤول، وبحلول متى. ويُتابَع حتى التحقق من الفعالية.</target>
+      </trans-unit>
+      <trans-unit id="capa.open.title-label" datatype="html">
+        <source>Intitulé de l'action</source>
+        <target state="translated">عنوان الإجراء</target>
+      </trans-unit>
+      <trans-unit id="capa.open.description-placeholder" datatype="html">
+        <source>Méthode, ressources, critère de fin…</source>
+        <target state="translated">الطريقة، الموارد، معيار الإنجاز…</target>
+      </trans-unit>
+      <trans-unit id="capa.open.nature" datatype="html">
+        <source>Nature</source>
+        <target state="translated">الطبيعة</target>
+      </trans-unit>
+      <trans-unit id="capa.open.owner" datatype="html">
+        <source>Responsable</source>
+        <target state="translated">المسؤول</target>
+      </trans-unit>
+      <trans-unit id="capa.open.owner-loading" datatype="html">
+        <source>Lecture de l'annuaire…</source>
+        <target state="translated">جارٍ قراءة الدليل…</target>
+      </trans-unit>
+      <trans-unit id="capa.open.owner-required" datatype="html">
+        <source>Choisis le responsable de l'action.</source>
+        <target state="translated">اختر المسؤول عن الإجراء.</target>
+      </trans-unit>
+      <trans-unit id="capa.open.due-date" datatype="html">
+        <source>Échéance</source>
+        <target state="translated">تاريخ الاستحقاق</target>
+      </trans-unit>
+      <trans-unit id="capa.open.due-date-required" datatype="html">
+        <source>L'échéance est obligatoire.</source>
+        <target state="translated">تاريخ الاستحقاق إلزامي.</target>
+      </trans-unit>
+      <trans-unit id="capa.open.due-date-past" datatype="html">
+        <source>L'échéance ne peut pas être passée.</source>
+        <target state="translated">لا يمكن أن يكون تاريخ الاستحقاق في الماضي.</target>
+      </trans-unit>
+      <trans-unit id="capa.open.directory-down" datatype="html">
+        <source>L'annuaire de l'organisation n'est pas accessible avec tes droits : tu peux te désigner toi-même. Pour confier l'action à un collègue, demande à un administrateur, ou réaffecte-la ensuite.</source>
+        <target state="translated">دليل المؤسسة غير متاح بصلاحياتك: يمكنك تعيين نفسك. لإسناد الإجراء إلى زميل، اطلب ذلك من مسؤول، أو أعد إسناده لاحقًا.</target>
+      </trans-unit>
+      <trans-unit id="capa.open.owner-hint-unmatched" datatype="html">
+        <source>Propriétaire indiqué : <x id="INTERPOLATION"/> — introuvable dans l'annuaire, choisis son compte dans la liste.</source>
+        <target state="translated">المالك المذكور: <x id="INTERPOLATION"/> — غير موجود في الدليل، اختر حسابه من القائمة.</target>
+      </trans-unit>
+      <trans-unit id="capa.open.criticity-low" datatype="html">
+        <source>Faible</source>
+        <target state="translated">منخفضة</target>
+      </trans-unit>
+      <trans-unit id="capa.open.criticity-medium" datatype="html">
+        <source>Moyenne</source>
+        <target state="translated">متوسطة</target>
+      </trans-unit>
+      <trans-unit id="capa.open.criticity-high" datatype="html">
+        <source>Élevée</source>
+        <target state="translated">مرتفعة</target>
+      </trans-unit>
+      <trans-unit id="capa.open.criticity-critical" datatype="html">
+        <source>Critique</source>
+        <target state="translated">حرجة</target>
+      </trans-unit>
+      <trans-unit id="capa.open.criticity-locked" datatype="html">
+        <source>Issue de la cotation du risque.</source>
+        <target state="translated">مستمدة من تقييم الخطر.</target>
+      </trans-unit>
+      <trans-unit id="capa.open.attachment-remove-aria" datatype="html">
+        <source>Retirer <x id="name"/></source>
+        <target state="translated">إزالة <x id="name"/></target>
+      </trans-unit>
+      <trans-unit id="capa.open.success" datatype="html">
+        <source>CAPA créée.</source>
+        <target state="translated">تم إنشاء الإجراء.</target>
+      </trans-unit>
+      <trans-unit id="capa.open.success-with-evidence" datatype="html">
+        <source>CAPA créée, pièces jointes déposées.</source>
+        <target state="translated">تم إنشاء الإجراء ورفع المرفقات.</target>
+      </trans-unit>
+      <trans-unit id="capa.open.success-partial-evidence" datatype="html">
+        <source>CAPA créée, mais des pièces n'ont pas pu être déposées — reprends-les depuis la fiche.</source>
+        <target state="translated">تم إنشاء الإجراء، لكن تعذّر رفع بعض المرفقات — أعد إضافتها من البطاقة.</target>
+      </trans-unit>
+      <trans-unit id="capa.open.action-defined" datatype="html">
+        <source>Action définie.</source>
+        <target state="translated">تم تحديد الإجراء.</target>
+      </trans-unit>
+      <trans-unit id="capa.source.spc-alert" datatype="html">
+        <source>Carte de contrôle</source>
+        <target state="translated">مخطط التحكم</target>
+      </trans-unit>
+      <trans-unit id="capa.source.anomaly" datatype="html">
+        <source>Anomalie détectée</source>
+        <target state="translated">شذوذ مكتشف</target>
+      </trans-unit>
+      <trans-unit id="capa.source.risk" datatype="html">
+        <source>Risque</source>
+        <target state="translated">خطر</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.legacy-actions" datatype="html">
+        <source>Actions (<x id="INTERPOLATION"/>)</source>
+        <target state="translated">الإجراءات (<x id="INTERPOLATION"/>)</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.action-missing" datatype="html">
+        <source>L'action de ce dossier n'a pas encore été définie : sans elle, il ne pourra pas être clôturé.</source>
+        <target state="translated">لم يُحدَّد إجراء هذا الملف بعد: من دونه لا يمكن إغلاقه.</target>
+      </trans-unit>
+      <trans-unit id="capa.blocker.containment-only-single" datatype="html">
+        <source>Le dossier ne porte qu'une mesure d'endiguement : elle arrête l'effet sans supprimer la cause. Ouvrez une CAPA corrective pour traiter la cause.</source>
+        <target state="translated">لا يتضمن الملف سوى إجراء احتواء: يوقف الأثر دون إزالة السبب. افتح إجراءً تصحيحيًا لمعالجة السبب.</target>
+      </trans-unit>
+      <trans-unit id="capa.list.col-owner" datatype="html">
+        <source>Pilote</source>
+        <target state="translated">المسؤول</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.create-capa" datatype="html">
+        <source>Créer une CAPA</source>
+        <target state="translated">إنشاء إجراء تصحيحي/وقائي</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.create-capa-tooltip" datatype="html">
+        <source>Ouvrir la CAPA qui traite cette non-conformité</source>
+        <target state="translated">فتح الإجراء الذي يعالج عدم المطابقة هذا</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.open-capa" datatype="html">
+        <source>Voir la CAPA</source>
+        <target state="translated">عرض الإجراء</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.capa-link-open" datatype="html">
+        <source>Ouvrir le dossier</source>
+        <target state="translated">فتح الملف</target>
+      </trans-unit>
+      <trans-unit id="audits.detail.create-capa" datatype="html">
+        <source>Créer une CAPA</source>
+        <target state="translated">إنشاء إجراء تصحيحي/وقائي</target>
+      </trans-unit>
+      <trans-unit id="audits.detail.open-capa" datatype="html">
+        <source>Voir la CAPA</source>
+        <target state="translated">عرض الإجراء</target>
+      </trans-unit>
+      <trans-unit id="audits.detail.finding-capa-ref" datatype="html">
+        <source><x id="audit"/> / constat <x id="rank"/></source>
+        <target state="translated"><x id="audit"/> / الملاحظة <x id="rank"/></target>
       </trans-unit>
       <trans-unit id="common.yes" datatype="html">
         <source>Oui</source>
@@ -8641,14 +8745,6 @@ Portail clients</source>
       <trans-unit id="capa.create.evidence-limit" datatype="html">
         <source>Dix pièces au maximum par dossier.</source>
         <target state="translated">عشرة ملفات كحد أقصى لكل ملف تصحيحي.</target>
-      </trans-unit>
-      <trans-unit id="capa.create.success-with-evidence" datatype="html">
-        <source>Cas CAPA créé, pièces jointes déposées.</source>
-        <target state="translated">تم إنشاء ملف CAPA ورفع المرفقات.</target>
-      </trans-unit>
-      <trans-unit id="capa.create.success-partial-evidence" datatype="html">
-        <source>Cas CAPA créé, mais des pièces n'ont pas pu être déposées — reprends-les depuis la fiche.</source>
-        <target state="translated">تم إنشاء ملف CAPA، لكن تعذّر رفع بعض المرفقات — أعد إضافتها من البطاقة.</target>
       </trans-unit>
       <trans-unit id="nc.list.col-reporter" datatype="html">
         <source>Détecté par</source>
@@ -16716,22 +16812,6 @@ historique 12 mois</source>
         <source>La non-conformité sera marquée comme annulée. Cette décision est traçable.</source>
         <target state="translated">سيتم وضع علامة على عدم المطابقة بأنها ملغاة. هذا القرار قابل للتتبّع.</target>
       </trans-unit>
-      <trans-unit id="nc.detail.add-action" datatype="html">
-        <source>Ajouter une action</source>
-        <target state="translated">إضافة إجراء</target>
-      </trans-unit>
-      <trans-unit id="nc.detail.add-action-tooltip" datatype="html">
-        <source>Poser une action corrective sur cette non-conformité</source>
-        <target state="translated">تسجيل إجراء تصحيحي على عدم المطابقة هذه</target>
-      </trans-unit>
-      <trans-unit id="nc.detail.add-action-no-case" datatype="html">
-        <source>Dossier créé, mais introuvable pour y ajouter l'action. Ouvrez-le depuis la CAPA.</source>
-        <target state="translated">تم إنشاء الملف، لكن تعذر العثور عليه لإضافة الإجراء. افتحه من CAPA.</target>
-      </trans-unit>
-      <trans-unit id="nc.detail.escalate-error" datatype="html">
-        <source>Erreur lors de l'escalade.</source>
-        <target state="translated">خطأ أثناء التصعيد.</target>
-      </trans-unit>
       <trans-unit id="nc.detail.transition-success" datatype="html">
         <source>Statut mis à jour.</source>
         <target state="translated">تم تحديث الحالة.</target>
@@ -20552,10 +20632,6 @@ historique 12 mois</source>
         <source>Audit annulé.</source>
         <target state="translated">تم إلغاء التدقيق.</target>
       </trans-unit>
-      <trans-unit id="audits.detail.capa-label" datatype="html">
-        <source>CAPA :</source>
-        <target state="translated">CAPA:</target>
-      </trans-unit>
       <trans-unit id="audits.detail.checklist-count" datatype="html">
         <source>Checklist (<x id="INTERPOLATION"/>)</source>
         <target state="translated">قائمة التحقّق (<x id="INTERPOLATION"/>)</target>
@@ -20912,53 +20988,9 @@ historique 12 mois</source>
         <source>Surveillance</source>
         <target state="translated">المراقبة</target>
       </trans-unit>
-      <trans-unit id="capa.action.added" datatype="html">
-        <source>Action ajoutée.</source>
-        <target state="translated">تمت إضافة الإجراء.</target>
-      </trans-unit>
-      <trans-unit id="capa.action.description-placeholder" datatype="html">
-        <source>Méthode, ressources nécessaires, critère de fin…</source>
-        <target state="translated">الطريقة، الموارد اللازمة، معيار الإنجاز…</target>
-      </trans-unit>
-      <trans-unit id="capa.action.due-date" datatype="html">
-        <source>Échéance (optionnel)</source>
-        <target state="translated">تاريخ الاستحقاق (اختياري)</target>
-      </trans-unit>
-      <trans-unit id="capa.action.verification-hint" datatype="html">
-        <source>Une vérification est-elle exigée sur ce dossier ? Il faut trancher : répondre « non » est une décision, qui se lit.</source>
-        <target state="translated">هل يُشترط التحقق في هذا الملف؟ يجب الحسم: الإجابة بـ«لا» قرار، وهو مُسجَّل.</target>
-      </trans-unit>
-      <trans-unit id="capa.action.subtitle" datatype="html">
-        <source>Définis l'action concrète à mener pour résoudre ce cas.</source>
-        <target state="translated">حدّد الإجراء الملموس الذي يجب اتخاذه لحلّ هذه الحالة.</target>
-      </trans-unit>
-      <trans-unit id="capa.action.title" datatype="html">
-        <source>Ajouter une action</source>
-        <target state="translated">إضافة إجراء</target>
-      </trans-unit>
-      <trans-unit id="capa.action.title-label" datatype="html">
-        <source>Titre de l'action</source>
-        <target state="translated">عنوان الإجراء</target>
-      </trans-unit>
-      <trans-unit id="capa.action.title-placeholder" datatype="html">
-        <source>Ex. : Recalibrer la sonde de température hebdo</source>
-        <target state="translated">مثال: إعادة معايرة مجسّ الحرارة أسبوعيًا</target>
-      </trans-unit>
-      <trans-unit id="capa.action.title-required" datatype="html">
-        <source>Le titre est requis.</source>
-        <target state="translated">العنوان مطلوب.</target>
-      </trans-unit>
       <trans-unit id="capa.create.criticity" datatype="html">
         <source>Criticité</source>
         <target state="translated">الحرجية</target>
-      </trans-unit>
-      <trans-unit id="capa.create.description-placeholder" datatype="html">
-        <source>Contexte, impact, observations…</source>
-        <target state="translated">السياق، الأثر، الملاحظات…</target>
-      </trans-unit>
-      <trans-unit id="capa.create.due-date" datatype="html">
-        <source>Échéance (optionnel)</source>
-        <target state="translated">تاريخ الاستحقاق (اختياري)</target>
       </trans-unit>
       <trans-unit id="capa.create.source" datatype="html">
         <source>Source</source>
@@ -20972,18 +21004,6 @@ historique 12 mois</source>
         <source>Ex. : NC-2026-018</source>
         <target state="translated">مثال: NC-2026-018</target>
       </trans-unit>
-      <trans-unit id="capa.create.subtitle" datatype="html">
-        <source>Crée un cas correctif ou préventif. Les actions seront ajoutées ensuite et l'efficacité vérifiée à la clôture.</source>
-        <target state="translated">أنشئ حالة تصحيحية أو وقائية. ستُضاف الإجراءات لاحقًا ويُتحقّق من الفعّالية عند الإغلاق.</target>
-      </trans-unit>
-      <trans-unit id="capa.create.success" datatype="html">
-        <source>Cas CAPA créé.</source>
-        <target state="translated">تم إنشاء حالة CAPA.</target>
-      </trans-unit>
-      <trans-unit id="capa.create.title" datatype="html">
-        <source>Nouveau cas CAPA</source>
-        <target state="translated">حالة CAPA جديدة</target>
-      </trans-unit>
       <trans-unit id="capa.create.title-placeholder" datatype="html">
         <source>Ex. : Recalibration robot soudure cobot-3</source>
         <target state="translated">مثال: إعادة معايرة روبوت اللحام cobot-3</target>
@@ -20991,26 +21011,6 @@ historique 12 mois</source>
       <trans-unit id="capa.create.title-required" datatype="html">
         <source>Le titre est requis.</source>
         <target state="translated">العنوان مطلوب.</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.action-added" datatype="html">
-        <source>Action ajoutée à la CAPA.</source>
-        <target state="translated">تمت إضافة الإجراء إلى CAPA.</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.actions-count" datatype="html">
-        <source>Actions (<x id="INTERPOLATION"/>)</source>
-        <target state="translated">الإجراءات (<x id="INTERPOLATION"/>)</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.actions-empty" datatype="html">
-        <source>Aucune action. Clique sur</source>
-        <target state="translated">لا توجد إجراءات. انقر على</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.add-action" datatype="html">
-        <source>Ajouter une action</source>
-        <target state="translated">إضافة إجراء</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.analysing" datatype="html">
-        <source>Analyse…</source>
-        <target state="translated">جارٍ التحليل…</target>
       </trans-unit>
       <trans-unit id="capa.detail.back-tooltip" datatype="html">
         <source>Retour à la liste</source>
@@ -21032,17 +21032,9 @@ historique 12 mois</source>
         <source>Cas démarré.</source>
         <target state="translated">بدأت الحالة.</target>
       </trans-unit>
-      <trans-unit id="capa.detail.col-action" datatype="html">
-        <source>Action</source>
-        <target state="translated">الإجراء</target>
-      </trans-unit>
       <trans-unit id="capa.detail.col-completed" datatype="html">
         <source>Complétée</source>
         <target state="translated">مكتملة</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.col-advance" datatype="html">
-        <source>Avancement</source>
-        <target state="translated">التقدم</target>
       </trans-unit>
       <trans-unit id="capa.detail.action-start" datatype="html">
         <source>Démarrer</source>
@@ -21063,10 +21055,6 @@ historique 12 mois</source>
       <trans-unit id="capa.detail.action-done-tooltip" datatype="html">
         <source>Action terminée</source>
         <target state="translated">اكتمل الإجراء</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.col-due-date" datatype="html">
-        <source>Échéance</source>
-        <target state="translated">تاريخ الاستحقاق</target>
       </trans-unit>
       <trans-unit id="capa.detail.confirm-effective-message" datatype="html">
         <source>Tu confirmes que les actions ont eu l'effet attendu. Le cas sera clôturé (CLOSED).</source>
@@ -21140,26 +21128,6 @@ historique 12 mois</source>
         <source>CAPA · Corrective &amp; Preventive Actions</source>
         <target state="translated">CAPA · Corrective &amp; Preventive Actions</target>
       </trans-unit>
-      <trans-unit id="capa.detail.generating" datatype="html">
-        <source>Génération des actions… (peut prendre ~1 min sur CPU)</source>
-        <target state="translated">جارٍ توليد الإجراءات… (قد يستغرق نحو دقيقة على وحدة المعالجة المركزية)</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.generating-aria" datatype="html">
-        <source>Génération des actions en cours</source>
-        <target state="translated">جارٍ توليد الإجراءات</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.hide" datatype="html">
-        <source>Masquer</source>
-        <target state="translated">إخفاء</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.hide-suggestions" datatype="html">
-        <source>Masquer les suggestions</source>
-        <target state="translated">إخفاء الاقتراحات</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.no-suggestion" datatype="html">
-        <source>Aucune action exploitable — précisez le problème.</source>
-        <target state="translated">لا يوجد إجراء قابل للاستخدام — يُرجى توضيح المشكلة.</target>
-      </trans-unit>
       <trans-unit id="capa.detail.not-effective" datatype="html">
         <source>Non efficace</source>
         <target state="translated">غير فعّال</target>
@@ -21207,26 +21175,6 @@ historique 12 mois</source>
       <trans-unit id="capa.detail.start-tooltip" datatype="html">
         <source>Démarrer le traitement</source>
         <target state="translated">بدء المعالجة</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.suggest" datatype="html">
-        <source>Suggérer (IA)</source>
-        <target state="translated">اقتراح (الذكاء الاصطناعي)</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.suggest-tooltip" datatype="html">
-        <source>Suggérer des actions par l'IA</source>
-        <target state="translated">اقتراح إجراءات بواسطة الذكاء الاصطناعي</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.suggestion-unavailable" datatype="html">
-        <source>Suggestion IA indisponible (ai-service / Ollama).</source>
-        <target state="translated">اقتراح الذكاء الاصطناعي غير متاح (ai-service / Ollama).</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.suggestions-region" datatype="html">
-        <source>Actions suggérées par l'IA</source>
-        <target state="translated">إجراءات مقترحة من الذكاء الاصطناعي</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.suggestions-title" datatype="html">
-        <source>Actions suggérées par l'IA</source>
-        <target state="translated">إجراءات مقترحة من الذكاء الاصطناعي</target>
       </trans-unit>
       <trans-unit id="capa.detail.transition-error" datatype="html">
         <source>Erreur lors de la transition.</source>
@@ -22444,21 +22392,9 @@ historique 12 mois</source>
         <source>Intitulé</source>
         <target state="translated">العنوان</target>
       </trans-unit>
-      <trans-unit id="rr.action.description" datatype="html">
-        <source>Description (facultatif)</source>
-        <target state="translated">الوصف (اختياري)</target>
-      </trans-unit>
       <trans-unit id="rr.action.capa-title" datatype="html">
         <source>Créer une action CAPA</source>
         <target state="translated">إنشاء إجراء CAPA</target>
-      </trans-unit>
-      <trans-unit id="rr.action.capa-help" datatype="html">
-        <source>Un dossier CAPA est ouvert dans le module CAPA, avec la criticité du niveau brut du risque. Il porte cette action, confiée au responsable désigné, et apparaîtra dans le tableau « Traitement » de la fiche.</source>
-        <target state="translated">يُفتح ملف CAPA في وحدة CAPA بدرجة حرجية مساوية للمستوى الإجمالي للخطر. ويحمل هذا الإجراء المسند إلى المسؤول المعيّن، وسيظهر في جدول «المعالجة» في السجل.</target>
-      </trans-unit>
-      <trans-unit id="rr.action.open-capa" datatype="html">
-        <source>Ouvrir le dossier CAPA</source>
-        <target state="translated">فتح ملف CAPA</target>
       </trans-unit>
       <trans-unit id="rr.action-status.to-start" datatype="html">
         <source>À démarrer</source>
@@ -22788,21 +22724,9 @@ historique 12 mois</source>
         <source>Tableau de bord SMI</source>
         <target state="translated">لوحة نظام الإدارة المتكامل</target>
       </trans-unit>
-      <trans-unit id="rr.action.kind" datatype="html">
-        <source>Nature de l'action</source>
-        <target state="translated">طبيعة الإجراء</target>
-      </trans-unit>
       <trans-unit id="rr.action.kind-short" datatype="html">
         <source>Nature</source>
         <target state="translated">الطبيعة</target>
-      </trans-unit>
-      <trans-unit id="rr.action.kind-hint" datatype="html">
-        <source>Préventive : l'écart ne s'est pas encore produit. Corrective : il s'est déjà produit, on en supprime la cause.</source>
-        <target state="translated">وقائي: لم يقع الانحراف بعد. تصحيحي: وقع بالفعل ويُزال سببه.</target>
-      </trans-unit>
-      <trans-unit id="rr.action.assignee" datatype="html">
-        <source>Responsable de l'action</source>
-        <target state="translated">مسؤول الإجراء</target>
       </trans-unit>
       <trans-unit id="rr.action.assignee-short" datatype="html">
         <source>Responsable</source>
@@ -22819,10 +22743,6 @@ historique 12 mois</source>
       <trans-unit id="capa.detail.single-action" datatype="html">
         <source>Action</source>
         <target state="translated">الإجراء</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.single-action-missing" datatype="html">
-        <source>L'action de ce risque n'a pas encore été définie.</source>
-        <target state="translated">لم يتم تحديد إجراء هذا الخطر بعد.</target>
       </trans-unit>
       <trans-unit id="capa.detail.single-action-define" datatype="html">
         <source>Définir l'action</source>

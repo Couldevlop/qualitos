@@ -4,9 +4,8 @@ import { MatRadioModule } from '@angular/material/radio';
 import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../../shared/shared.module';
-import { CapaActionDialogModule } from './capa-action-dialog.module';
+import { CapaCreateDialogModule } from './capa-create-dialog.module';
 import { UiModule } from '../../shared/ui/ui.module';
-import { CapaCreateDialogComponent } from './pages/capa-create-dialog/capa-create-dialog.component';
 import { CapaDetailComponent } from './pages/capa-detail/capa-detail.component';
 import {
   CapaEffectivenessComponent
@@ -29,7 +28,6 @@ const routes: Routes = [
   declarations: [
     CapaListComponent,
     CapaDetailComponent,
-    CapaCreateDialogComponent,
     CapaEditDialogComponent,
     CapaRevisionImpactComponent,
     CapaEffectivenessComponent
@@ -40,9 +38,9 @@ const routes: Routes = [
   // exigée : oui / non » est une question fermée a deux reponses, ou un groupe de
   // boutons radio dit mieux qu'une case a cocher qu'AUCUNE des deux n'est cochee
   // tant que la question n'a pas ete tranchee.
-  // `CapaActionDialogModule` : le formulaire d'action est partage avec la fiche
-  // de non-conformite, qui l'ouvre directement. Il est donc declare a part.
+  // `CapaCreateDialogModule` : la fenetre de creation est partagee avec toutes
+  // les sections qui ouvrent une CAPA (ADR 0088). Elle est donc declaree a part.
   imports: [SharedModule, UiModule, MatButtonToggleModule, MatRadioModule,
-            CapaActionDialogModule, RouterModule.forChild(routes)]
+            CapaCreateDialogModule, RouterModule.forChild(routes)]
 })
 export class CapaModule {}

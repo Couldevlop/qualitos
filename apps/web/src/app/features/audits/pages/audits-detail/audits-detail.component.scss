@@ -124,3 +124,14 @@
   font-size: var(--qos-fs-xs);
   color: var(--qos-fg-link);
 }
+
+/* CAPA d'un constat (ADR 0088) : lien quand elle existe, bouton discret sinon. */
+.voir-capa {
+  font-size: var(--qos-fs-xs);
+  color: var(--qos-fg-link);
+}
+
+.creer-capa {
+  align-self: flex-start;
+  margin-top: var(--qos-space-1);
+}

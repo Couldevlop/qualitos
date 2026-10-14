@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
-import { catchError, finalize, shareReplay, switchMap, tap } from 'rxjs/operators';
+import { catchError, finalize, map, shareReplay, switchMap, tap } from 'rxjs/operators';
 
 import { deferredView } from '../../../../core/rx/deferred-view';
 import { safeErrorMessage } from '../../../../core/http/error-message';
@@ -17,7 +17,10 @@ import {
   AuditsFindingDialogComponent,
   AuditsFindingDialogData
 } from '../audits-finding-dialog/audits-finding-dialog.component';
-import { AuditPlanResponse, AuditStatus, ChecklistItemResponse } from '../../audits.types';
+import { AuditPlanResponse, AuditStatus, ChecklistItemResponse, FindingResponse } from '../../audits.types';
+import {
+  CapaCreateDialogComponent, CapaCreateDialogData, CapaOpened
+} from '../../../capa/pages/capa-create-dialog/capa-create-dialog.component';
 import {
   ChecklistFromStandardDialogComponent,
   ChecklistFromStandardDialogData
@@ -282,5 +285,36 @@ export class AuditsDetailComponent implements OnInit {
     if (s >= 85) return 'score score-high';
     if (s >= 70) return 'score score-mid';
     return 'score score-low';
+  }
+
+  // ---- CAPA d'un constat (ADR 0088) ------------------------------------------
+
+  /** Un écart sans CAPA appelle le bouton ; une observation ou une piste, non. */
+  canOpenFindingCapa(f: FindingResponse): boolean {
+    return (f.type === 'MINOR_NC' || f.type === 'MAJOR_NC') && !f.capaId && !f.pendingSync;
+  }
+
+  /**
+   * Ouvre LA fenêtre de création CAPA, source verrouillée sur ce constat : le
+   * serveur crée le dossier, son action unique et le lien au constat d'une
+   * seule écriture. La référence affichée est celle que l'auditeur cite.
+   */
+  openFindingCapa(p: AuditPlanResponse, f: FindingResponse): void {
+    const rang = (p.findings ?? []).findIndex(x => x.id === f.id) + 1;
+    const reference = $localize`:@@audits.detail.finding-capa-ref:${p.reference}:audit: / constat ${rang}:rank:`;
+    const data: CapaCreateDialogData = {
+      source: { type: 'AUDIT', reference },
+      prefill: {
+        title: f.description.slice(0, 255),
+        description: f.clauseRef ? `${p.title} — ${f.clauseRef}` : p.title,
+        type: 'CORRECTIVE',
+        criticity: f.type === 'MAJOR_NC' ? 'HIGH' : 'MEDIUM'
+      },
+      open: request => this.audits.openFindingCapa(p.id, f.id, request)
+        .pipe(map(r => ({ capaId: r.capaId })))
+    };
+    this.dialog.open<CapaCreateDialogComponent, CapaCreateDialogData, CapaOpened>(CapaCreateDialogComponent, {
+      data, autoFocus: 'first-tabbable', restoreFocus: true, panelClass: 'qos-dialog-panel'
+    }).afterClosed().subscribe(opened => { if (opened) this.reload$.next(); });
   }
 }

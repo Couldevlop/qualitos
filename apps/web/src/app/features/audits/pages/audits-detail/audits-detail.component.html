@@ -204,7 +204,17 @@
               <td mat-cell *matCellDef="let f">
                 <div class="cell">
                   <strong>{{ f.description }}</strong>
-                  <small *ngIf="f.capaId"><span i18n="@@audits.detail.capa-label">CAPA :</span> {{ f.capaId }}</small>
+                  <!-- La CAPA du constat, par un lien et non par son identifiant ; un
+                       écart sans CAPA ouvre LA fenêtre commune (ADR 0088). -->
+                  <a *ngIf="f.capaId" class="voir-capa" data-test="voir-capa"
+                     [routerLink]="['/capa', f.capaId]" i18n="@@audits.detail.open-capa">Voir la CAPA</a>
+                  <ng-container *qosCan="'capa.create'">
+                    <button mat-stroked-button type="button" class="creer-capa" data-test="creer-capa"
+                            *ngIf="canOpenFindingCapa(f)" (click)="openFindingCapa(p, f)">
+                      <mat-icon aria-hidden="true">engineering</mat-icon>
+                      <span i18n="@@audits.detail.create-capa">Créer une CAPA</span>
+                    </button>
+                  </ng-container>
                   <!-- Un écart ou une observation peut révéler un risque ; un constat
                        de conformité, non. Le serveur relit le constat via son plan. -->
                   <a *ngIf="f.type === 'MINOR_NC' || f.type === 'MAJOR_NC' || f.type === 'OBSERVATION'"

@@ -14,6 +14,7 @@ import { UiModule } from '../../../../shared/ui/ui.module';
 import { CapaCaseResponse } from '../../capa.types';
 import { CapaListComponent } from './capa-list.component';
 import { AuthzService } from '../../../../core/authz/authz.service';
+import { CapaDirectoryService } from '../../capa-directory.service';
 
 describe('CapaListComponent', () => {
   let component: CapaListComponent;
@@ -30,7 +31,8 @@ describe('CapaListComponent', () => {
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
         provideRouter([]),
-        { provide: AuthzService, useValue: { can: () => of(true) } }
+        { provide: AuthzService, useValue: { can: () => of(true) } },
+        { provide: CapaDirectoryService, useValue: { choices: () => of({ members: [{ userId: 'kc-1', label: 'karim@client.test' }], available: true }) } }
       ]
     }).compileComponents();
     fixture = TestBed.createComponent(CapaListComponent);
@@ -50,7 +52,18 @@ describe('CapaListComponent', () => {
   });
 
   it('declares the expected displayed columns', () => {
-    expect(component.displayedColumns).toEqual(['title', 'type', 'criticity', 'status', 'dueDate']);
+    expect(component.displayedColumns).toEqual(['title', 'type', 'criticity', 'status', 'owner', 'dueDate']);
+  });
+
+  it('nomme le pilote, jamais par son identifiant (ADR 0088)', () => {
+    fixture.detectChanges();
+    const base = {
+      id: 'c', tenantId: 't', title: 't', type: 'CORRECTIVE', criticity: 'LOW', status: 'OPEN',
+      sourceType: 'INTERNAL', createdAt: '', updatedAt: '', actions: [] as CapaCaseResponse['actions']
+    } satisfies Omit<CapaCaseResponse, 'ownerId'>;
+    expect(component.ownerLabel({ ...base, ownerId: 'kc-x', ownerName: 'amina@client.test' })).toBe('amina@client.test');
+    expect(component.ownerLabel({ ...base, ownerId: 'kc-1' })).toBe('karim@client.test');
+    expect(component.ownerLabel({ ...base, ownerId: '9c1f2b7e-0000-4000-8000-000000000000' })).toBe('—');
   });
 
   it('computes badge classes from status and criticity', () => {
@@ -116,7 +129,8 @@ describe('CapaListComponent (chargement API)', () => {
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
         provideRouter([]),
-        { provide: AuthzService, useValue: { can: () => of(true) } }
+        { provide: AuthzService, useValue: { can: () => of(true) } },
+        { provide: CapaDirectoryService, useValue: { choices: () => of({ members: [{ userId: 'kc-1', label: 'karim@client.test' }], available: true }) } }
       ]
     }).compileComponents();
     fixture = TestBed.createComponent(CapaListComponent);
@@ -246,6 +260,7 @@ describe('CapaListComponent — création ouverte par un lien', () => {
         provideHttpClientTesting(),
         provideRouter([]),
         { provide: AuthzService, useValue: { can: () => of(true) } },
+        { provide: CapaDirectoryService, useValue: { choices: () => of({ members: [{ userId: 'kc-1', label: 'karim@client.test' }], available: true }) } },
         { provide: MatDialog, useValue: dialog },
         { provide: ActivatedRoute, useValue: { snapshot: { queryParamMap: convertToParamMap({
           nouveau: '1', titre: 'Écart ISO 45001 · 6', ref: 'iso-45001 §6', description: 'x'.repeat(5000)
@@ -259,7 +274,7 @@ describe('CapaListComponent — création ouverte par un lien', () => {
     fixture.componentInstance.ngOnInit();
     await Promise.resolve();
 
-    const data = dialog.open.calls.mostRecent().args[1]!.data as { title: string; sourceRef: string; description: string };
+    const data = (dialog.open.calls.mostRecent().args[1]!.data as { prefill: { title: string; sourceRef: string; description: string } }).prefill;
     expect(data.title).toBe('Écart ISO 45001 · 6');
     expect(data.sourceRef).toBe('iso-45001 §6');
     expect(data.description.length).toBe(4000);
@@ -276,6 +291,7 @@ describe('CapaListComponent — création ouverte par un lien', () => {
         provideHttpClientTesting(),
         provideRouter([]),
         { provide: AuthzService, useValue: { can: () => of(true) } },
+        { provide: CapaDirectoryService, useValue: { choices: () => of({ members: [{ userId: 'kc-1', label: 'karim@client.test' }], available: true }) } },
         { provide: MatDialog, useValue: dialog },
         { provide: ActivatedRoute, useValue: { snapshot: { queryParamMap: convertToParamMap({}) } } }
       ]
