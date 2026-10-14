@@ -1,0 +1,132 @@
+// « Ajouter une norme au SMI » : une liste de choix sobre, en cartes, dans les
+// jetons du design system (thèmes clair et sombre). Le choix est un vrai bouton
+// radio : clavier (flèches) et lecteur d'écran natifs.
+
+:host {
+  display: block;
+}
+
+.groupe {
+  margin: 0 0 var(--qos-space-5);
+  padding: 0;
+  border: 0;
+  min-width: 0;
+
+  &__titre {
+    padding: 0;
+    margin-bottom: var(--qos-space-2);
+    font-size: var(--qos-fs-xs);
+    font-weight: var(--qos-fw-semibold);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--qos-fg-tertiary);
+  }
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--qos-space-2);
+  width: min(560px, 100%);
+}
+
+.option {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--qos-space-3);
+  padding: var(--qos-space-3) var(--qos-space-4);
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: var(--qos-radius-md);
+  background: var(--qos-bg-elevated);
+  cursor: pointer;
+  transition: border-color 120ms ease, background-color 120ms ease;
+
+  &:hover {
+    background: var(--qos-bg-hover);
+  }
+
+  &:focus-within {
+    outline: 2px solid var(--qos-border-focus);
+    outline-offset: 2px;
+  }
+
+  &--choisie {
+    border-color: var(--qos-accent-bg);
+    background: var(--qos-accent-bg-soft);
+
+    &:hover {
+      background: var(--qos-accent-bg-soft);
+    }
+  }
+
+  &__radio {
+    flex: none;
+    width: 18px;
+    height: 18px;
+    margin: 2px 0 0;
+    accent-color: var(--qos-accent-bg);
+    cursor: pointer;
+  }
+
+  &__texte {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  &__entete {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--qos-space-2);
+  }
+
+  &__nom {
+    font-weight: var(--qos-fw-semibold);
+    color: var(--qos-fg-primary);
+  }
+
+  &__titre {
+    font-size: var(--qos-fs-sm);
+    color: var(--qos-fg-secondary);
+    line-height: 1.45;
+  }
+
+  &__lien {
+    font-size: var(--qos-fs-xs);
+    color: var(--qos-fg-tertiary);
+  }
+}
+
+// Sur l'accent atténué : --qos-accent-fg-soft (--qos-accent-fg est le texte SUR l'accent plein).
+.pastille {
+  padding: 1px 8px;
+  border-radius: var(--qos-radius-pill);
+  font-size: var(--qos-fs-xs);
+  font-weight: var(--qos-fw-medium);
+  background: var(--qos-accent-bg-soft);
+  color: var(--qos-accent-fg-soft);
+  border: 1px solid color-mix(in srgb, var(--qos-accent-bg) 35%, transparent);
+}
+
+.vide {
+  margin: 0 0 var(--qos-space-4);
+  color: var(--qos-fg-tertiary);
+}
+
+.echec {
+  display: flex;
+  align-items: center;
+  gap: var(--qos-space-2);
+  margin: 0 0 var(--qos-space-3);
+  color: var(--qos-danger-fg);
+}
+
+.aide {
+  margin: 0;
+  max-width: 560px;
+  font-size: var(--qos-fs-sm);
+  color: var(--qos-fg-secondary);
+  line-height: 1.5;
+}

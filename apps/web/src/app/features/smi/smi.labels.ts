@@ -66,6 +66,22 @@ export function upcomingLink(kind: UpcomingKind, id: string): string[] {
   }
 }
 
+/**
+ * Le nom court d'une norme : « ISO 14001:2015 » plutôt que le titre complet
+ * du catalogue (« ISO 14001:2015 — Systèmes de management environnemental —
+ * Exigences… »). Côte à côte, deux titres complets ne tiennent ni dans un
+ * filtre ni dans une colonne ; le titre complet reste le nom accessible.
+ */
+export function standardShortName(name: string | null | undefined, code: string): string {
+  const court = (name ?? '').split(/\s+[—–]\s+/)[0].trim();
+  return court || standardCodeLabel(code);
+}
+
+/** « ISO 9001 » pour `iso-9001` : un code de norme lisible, quand seul le code est connu. */
+export function standardCodeLabel(code: string): string {
+  return code.toUpperCase().replace(/-(?=\d)/, ' ');
+}
+
 /** « Échu », « Aujourd'hui », « J-3 » : l'urgence d'une échéance en un mot. */
 export function dueText(daysLeft: number): string {
   if (daysLeft < 0) return $localize`:@@smi.due.overdue:Échu`;

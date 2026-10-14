@@ -6,7 +6,8 @@ import { catchError, distinctUntilChanged, map, switchMap, tap } from 'rxjs/oper
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { levelOf, riskLevelLabel } from '../../../risk-register/risk-register.labels';
 import { RiskLevel } from '../../../risk-register/risk-register.types';
-import { dueText, upcomingLabel, upcomingLink } from '../../smi.labels';
+import { dueText, standardShortName, upcomingLabel, upcomingLink } from '../../smi.labels';
+import { SmiStandardsOpener } from '../../smi-standards-opener.service';
 import { SmiService } from '../../smi.service';
 import { RatingView, SmiDashboard, Upcoming } from '../../smi.types';
 
@@ -29,6 +30,10 @@ export interface GridCell {
  *
  * <p>Le filtre de norme vit dans l'adresse (`?norme=iso-9001`) : un lien
  * partagé ouvre la même vue.
+ *
+ * <p>« Ajouter une norme » (administrateur du client) adopte une norme de
+ * système de management — ISO 14001 à côté d'ISO 9001 — sans quitter le SMI ;
+ * le tableau se recharge sur « Tous », les deux normes côte à côte.
  */
 @Component({
   selector: 'qos-smi-dashboard',
@@ -50,6 +55,8 @@ export class SmiDashboardComponent implements OnInit, OnDestroy {
   placed = 0;
   loading = false;
   error: string | null = null;
+  /** L'administrateur du client paramètre les normes du SMI ; les autres le consultent. */
+  readonly canAddStandard: boolean;
 
   private readonly retry$ = new Subject<void>();
   private sub?: Subscription;
@@ -57,8 +64,11 @@ export class SmiDashboardComponent implements OnInit, OnDestroy {
   constructor(
     private readonly service: SmiService,
     private readonly route: ActivatedRoute,
-    private readonly router: Router
-  ) {}
+    private readonly router: Router,
+    private readonly opener: SmiStandardsOpener
+  ) {
+    this.canAddStandard = opener.canAdd();
+  }
 
   ngOnInit(): void {
     const norme$ = this.route.queryParamMap.pipe(map(q => q.get('norme') || null), distinctUntilChanged());
@@ -93,6 +103,23 @@ export class SmiDashboardComponent implements OnInit, OnDestroy {
 
   reload(): void {
     this.retry$.next();
+  }
+
+  /** Ajoute une norme, puis montre toutes les normes côte à côte. */
+  addStandard(): void {
+    this.opener.open().subscribe(ref => {
+      if (!ref) return;
+      if (this.standard) {
+        this.selectStandard(null);
+      } else {
+        this.reload();
+      }
+    });
+  }
+
+  /** « ISO 14001:2015 » : le titre complet ne tient pas dans un filtre ni une barre. */
+  shortName(s: { name: string; code: string }): string {
+    return standardShortName(s.name, s.code);
   }
 
   setView(view: RatingView): void {

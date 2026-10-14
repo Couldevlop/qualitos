@@ -6,14 +6,22 @@
     i18n-subtitle="@@smi.subtitle">
   </qos-page-header>
 
-  <!-- Filtre de norme : « Tous », puis chaque norme adoptée. -->
-  <div class="normes" role="group" i18n-aria-label="@@smi.filter" aria-label="Filtrer par norme"
-       *ngIf="data && data.standards.length">
-    <button type="button" class="norme" [class.norme--active]="!standard" [attr.aria-pressed]="!standard"
-            (click)="selectStandard(null)" data-test="norme-tous" i18n="@@smi.filter-all">Tous</button>
-    <button type="button" class="norme" *ngFor="let s of data.standards; trackBy: trackByCode"
-            [class.norme--active]="standard === s.code" [attr.aria-pressed]="standard === s.code"
-            (click)="selectStandard(s.code)" [attr.data-test]="'norme-' + s.code">{{ s.name }}</button>
+  <!-- Filtre de norme : « Tous », puis chaque norme adoptée ; l'administrateur y ajoute une norme. -->
+  <div class="barre-normes" *ngIf="data && (data.standards.length || canAddStandard)">
+    <div class="normes" role="group" i18n-aria-label="@@smi.filter" aria-label="Filtrer par norme"
+         *ngIf="data.standards.length">
+      <button type="button" class="norme" [class.norme--active]="!standard" [attr.aria-pressed]="!standard"
+              (click)="selectStandard(null)" data-test="norme-tous" i18n="@@smi.filter-all">Tous</button>
+      <button type="button" class="norme" *ngFor="let s of data.standards; trackBy: trackByCode"
+              [class.norme--active]="standard === s.code" [attr.aria-pressed]="standard === s.code"
+              [attr.title]="s.name" (click)="selectStandard(s.code)"
+              [attr.data-test]="'norme-' + s.code">{{ shortName(s) }}</button>
+    </div>
+    <button mat-stroked-button type="button" class="ajout-norme" *ngIf="canAddStandard"
+            (click)="addStandard()" data-test="ajouter-norme">
+      <mat-icon aria-hidden="true">add</mat-icon>
+      <span i18n="@@smi.add.open">Ajouter une norme</span>
+    </button>
   </div>
 
   <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
@@ -40,7 +48,11 @@
           <p class="indicateur__valeur indicateur__valeur--vide">—</p>
           <p class="indicateur__note">
             <span i18n="@@smi.kpi.no-standard">Aucune norme adoptée.</span>
-            <a routerLink="/standards" i18n="@@smi.kpi.adopt">Adopter une norme</a>
+            <button type="button" class="lien-bouton" *ngIf="canAddStandard; else adoptionHub"
+                    (click)="addStandard()" data-test="kpi-ajouter-norme" i18n="@@smi.add.open">Ajouter une norme</button>
+            <ng-template #adoptionHub>
+              <span i18n="@@smi.add.admin-only">L'administrateur de votre organisation ajoute les normes.</span>
+            </ng-template>
           </p>
         </ng-template>
       </article>
@@ -87,7 +99,7 @@
           <li *ngFor="let b of d.compliance!.perStandard; trackBy: trackByCode" class="barre"
               [class.barre--choisie]="standard === b.code">
             <div class="barre__entete">
-              <span class="barre__nom">{{ b.name }}</span>
+              <span class="barre__nom" [attr.title]="b.name">{{ shortName(b) }}</span>
               <span class="barre__score">{{ b.score }}&nbsp;%</span>
             </div>
             <div class="piste" role="progressbar" aria-valuemin="0" aria-valuemax="100"
