@@ -11,17 +11,38 @@ préparation de certification), de consigner les **constats** (findings) et de p
 ## Parcours pas à pas
 
 1. **Ouvrir** `/audits` : la liste des audits planifiés et réalisés.
-2. **Créer / programmer un audit** : périmètre, référentiel visé, date, et — facultatif —
-   l'adresse à prévenir avant l'échéance (voir *Planning et rappels* ci-dessous).
+2. **Créer / programmer un audit** : périmètre, référentiel visé, **auditeur responsable**,
+   date, et — facultatif — l'adresse à prévenir avant l'échéance (voir *Planning et
+   rappels* ci-dessous). L'auditeur responsable est celui qui conduit l'audit et signe
+   le rapport : il se choisit dans l'annuaire de votre organisation, **vous par défaut**.
+   Si vos droits ne permettent pas de lire l'annuaire, l'audit vous est confié et l'écran
+   le signale. Son nom est enregistré avec l'audit et s'affiche sur la fiche.
    L'audit reçoit à sa création une **référence** de la forme `AUD-2026-0001` : c'est
    par elle qu'on le cite en revue de direction, dans une convocation ou devant un
    organisme certificateur. Elle est propre à votre organisation, repart à `0001`
    chaque année, et **ne change jamais** — contrairement au titre, qui se corrige.
 3. **Suivre les échéances** sur `/audits/planning` (menu *Qualité opérationnelle ›
    Planning audits*).
-4. **Conduire l'audit** : parcourir la checklist, consigner les constats et leur criticité.
-5. **Générer le rapport** d'audit, qui peut être signé et ancré pour en garantir l'intégrité.
-6. **Traiter les écarts** : chaque constat peut donner lieu à une [CAPA](capa.md) ou une
+4. **Conduire l'audit** : ajouter au moins une question à la checklist, **démarrer**
+   l'audit, puis répondre aux questions et consigner les constats et leur criticité.
+   Un constat ne se relève que **pendant** l'audit : tant qu'il est planifié, le bouton
+   *Ajouter un constat* est grisé, la raison est écrite juste en dessous, avec un bouton
+   *Démarrer l'audit*. L'auteur du constat est l'utilisateur connecté.
+5. **Rédiger et émettre le rapport** (section *Rapport*, sous les constats) : synthèse
+   — que l'IA peut proposer, à relire —, points forts, axes d'amélioration et conclusion
+   (*certification recommandée / avec réserves / non recommandée* pour un audit de
+   certification ; *favorable / avec réserves / défavorable* sinon). Les chiffres clés
+   (constats par type, taux de conformité) se calculent tout seuls. Le brouillon se
+   retouche à volonté ; **Émettre le rapport** n'est possible qu'une fois l'audit
+   clôturé, demande votre code à usage unique, et **fige** le rapport : texte,
+   conclusion, chiffres, date et émetteur. L'émission et l'empreinte du contenu sont
+   inscrites au journal d'audit.
+6. **Joindre des documents** (section *Documents*, bouton *Ajouter un document*) :
+   convocation, plan d'audit, photos, relevés… PDF, image, Word, Excel ou PowerPoint,
+   10 Mo par fichier, 20 documents par audit. Un clic sur le nom ouvre le fichier.
+   Le retrait demande confirmation et reste tracé ; il est réservé au manager qualité
+   et aux administrateurs. Une fois le rapport émis, les documents sont figés avec lui.
+7. **Traiter les écarts** : chaque constat peut donner lieu à une [CAPA](capa.md) ou une
    [non-conformité](non-conformites.md).
 
 ## Planning et rappels

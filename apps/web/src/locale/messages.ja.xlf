@@ -5350,6 +5350,294 @@ Portail clients</source>
         <source>Videz le champ pour ne plus envoyer de rappel par courriel.</source>
         <target state="translated">メール通知を止めるには、この欄を空にしてください。</target>
       </trans-unit>
+      <trans-unit id="audits.lead-auditor" datatype="html">
+        <source>Auditeur responsable</source>
+        <target state="translated">主任監査員</target>
+      </trans-unit>
+      <trans-unit id="audits.lead-auditor.hint" datatype="html">
+        <source>Celui ou celle qui conduit l'audit et signe le rapport. Par défaut : vous.</source>
+        <target state="translated">監査を主導し報告書に署名する人。既定ではあなたです。</target>
+      </trans-unit>
+      <trans-unit id="audits.lead-auditor.hint-edit" datatype="html">
+        <source>Celui ou celle qui conduit l'audit et signe le rapport.</source>
+        <target state="translated">監査を主導し報告書に署名する人。</target>
+      </trans-unit>
+      <trans-unit id="audits.lead-auditor.directory-down" datatype="html">
+        <source>L'annuaire de l'organisation n'est pas accessible avec vos droits : l'audit vous est confié.</source>
+        <target state="translated">権限により組織のディレクトリを参照できないため、監査はあなたに割り当てられます。</target>
+      </trans-unit>
+      <trans-unit id="audits.lead-auditor.directory-down-edit" datatype="html">
+        <source>L'annuaire de l'organisation n'est pas accessible avec vos droits : seuls vous et l'auditeur actuel sont proposés.</source>
+        <target state="translated">権限により組織のディレクトリを参照できないため、あなたと現在の監査員のみが表示されます。</target>
+      </trans-unit>
+      <trans-unit id="audits.lead-auditor.required" datatype="html">
+        <source>Désignez l'auditeur responsable.</source>
+        <target state="translated">主任監査員を選択してください。</target>
+      </trans-unit>
+      <trans-unit id="audits.lead-auditor.me" datatype="html">
+        <source><x id="name"/> (vous)</source>
+        <target state="translated"><x id="name"/>（あなた）</target>
+      </trans-unit>
+      <trans-unit id="audits.lead-auditor.unknown" datatype="html">
+        <source>Membre de l'organisation (nom non enregistré)</source>
+        <target state="translated">組織のメンバー（氏名未登録）</target>
+      </trans-unit>
+      <trans-unit id="audits.detail.finding-blocked-planned" datatype="html">
+        <source>Les constats se relèvent pendant l'audit : démarrez-le pour en ajouter.</source>
+        <target state="translated">所見は監査中に記録します。追加するには監査を開始してください。</target>
+      </trans-unit>
+      <trans-unit id="audits.detail.finding-blocked-no-checklist" datatype="html">
+        <source>Les constats se relèvent pendant l'audit. Ajoutez d'abord une question à la checklist, puis démarrez l'audit.</source>
+        <target state="translated">所見は監査中に記録します。まずチェックリストに質問を追加し、監査を開始してください。</target>
+      </trans-unit>
+      <trans-unit id="audits.detail.finding-blocked-completed" datatype="html">
+        <source>Audit clôturé : plus aucun constat ne peut être ajouté.</source>
+        <target state="translated">監査は終了しました。所見はこれ以上追加できません。</target>
+      </trans-unit>
+      <trans-unit id="audits.detail.finding-blocked-cancelled" datatype="html">
+        <source>Audit annulé : plus aucun constat ne peut être ajouté.</source>
+        <target state="translated">監査は中止されました。所見はこれ以上追加できません。</target>
+      </trans-unit>
+      <trans-unit id="audits.detail.start-audit" datatype="html">
+        <source>Démarrer l'audit</source>
+        <target state="translated">監査を開始</target>
+      </trans-unit>
+      <trans-unit id="audits.detail.start-blocked" datatype="html">
+        <source>Ajoutez au moins une question à la checklist pour démarrer l'audit.</source>
+        <target state="translated">監査を開始するには、チェックリストに質問を1つ以上追加してください。</target>
+      </trans-unit>
+      <trans-unit id="audits.finding.not-in-progress" datatype="html">
+        <source>Un constat se relève pendant l'audit : démarrez l'audit pour en ajouter.</source>
+        <target state="translated">所見は監査中に記録します。追加するには監査を開始してください。</target>
+      </trans-unit>
+      <trans-unit id="audits.detail.documents-locked-cancelled" datatype="html">
+        <source>Audit annulé : ses documents ne se modifient plus.</source>
+        <target state="translated">監査は中止されました。文書は変更できません。</target>
+      </trans-unit>
+      <trans-unit id="audits.detail.documents-locked-issued" datatype="html">
+        <source>Rapport émis : les documents de l'audit sont figés avec lui.</source>
+        <target state="translated">報告書が発行されました。監査の文書も確定されています。</target>
+      </trans-unit>
+      <trans-unit id="audits.report.title" datatype="html">
+        <source>Rapport</source>
+        <target state="translated">報告書</target>
+      </trans-unit>
+      <trans-unit id="audits.report.state-draft" datatype="html">
+        <source>Brouillon</source>
+        <target state="translated">下書き</target>
+      </trans-unit>
+      <trans-unit id="audits.report.state-issued" datatype="html">
+        <source>Émis</source>
+        <target state="translated">発行済み</target>
+      </trans-unit>
+      <trans-unit id="audits.report.figures-aria" datatype="html">
+        <source>Chiffres clés du rapport</source>
+        <target state="translated">報告書の主要数値</target>
+      </trans-unit>
+      <trans-unit id="audits.report.figures-total" datatype="html">
+        <source>Constats</source>
+        <target state="translated">所見</target>
+      </trans-unit>
+      <trans-unit id="audits.report.figures-score" datatype="html">
+        <source>Taux de conformité</source>
+        <target state="translated">適合率</target>
+      </trans-unit>
+      <trans-unit id="audits.report.issued-line" datatype="html">
+        <source>Émis le <x id="INTERPOLATION"/> par <x id="INTERPOLATION_1"/></source>
+        <target state="translated"><x id="INTERPOLATION"/> に <x id="INTERPOLATION_1"/> が発行</target>
+      </trans-unit>
+      <trans-unit id="audits.report.fingerprint-tooltip" datatype="html">
+        <source>Empreinte SHA-256 du contenu émis, inscrite au journal d'audit</source>
+        <target state="translated">発行内容の SHA-256 フィンガープリント（監査証跡に記録）</target>
+      </trans-unit>
+      <trans-unit id="audits.report.summary" datatype="html">
+        <source>Synthèse et conclusion rédigée</source>
+        <target state="translated">総括と結論（記述）</target>
+      </trans-unit>
+      <trans-unit id="audits.report.summary-placeholder" datatype="html">
+        <source>Contexte, périmètre couvert, appréciation d'ensemble du système…</source>
+        <target state="translated">背景、対象範囲、システム全体の評価…</target>
+      </trans-unit>
+      <trans-unit id="audits.report.generate" datatype="html">
+        <source>Proposer par IA</source>
+        <target state="translated">AI で下書き</target>
+      </trans-unit>
+      <trans-unit id="audits.report.generated" datatype="html">
+        <source>Synthèse générée : relisez-la avant d'émettre.</source>
+        <target state="translated">総括を生成しました。発行前に確認してください。</target>
+      </trans-unit>
+      <trans-unit id="audits.report.strengths" datatype="html">
+        <source>Points forts</source>
+        <target state="translated">強み</target>
+      </trans-unit>
+      <trans-unit id="audits.report.improvements" datatype="html">
+        <source>Axes d'amélioration</source>
+        <target state="translated">改善の余地</target>
+      </trans-unit>
+      <trans-unit id="audits.report.conclusion" datatype="html">
+        <source>Conclusion / recommandation</source>
+        <target state="translated">結論／推奨</target>
+      </trans-unit>
+      <trans-unit id="audits.report.conclusion.favorable" datatype="html">
+        <source>Favorable — système conforme</source>
+        <target state="translated">良好 — システムは適合</target>
+      </trans-unit>
+      <trans-unit id="audits.report.conclusion.reservations" datatype="html">
+        <source>Favorable avec réserves</source>
+        <target state="translated">条件付きで良好</target>
+      </trans-unit>
+      <trans-unit id="audits.report.conclusion.unfavorable" datatype="html">
+        <source>Défavorable — système non conforme</source>
+        <target state="translated">不良 — システムは不適合</target>
+      </trans-unit>
+      <trans-unit id="audits.report.conclusion.cert-favorable" datatype="html">
+        <source>Certification recommandée</source>
+        <target state="translated">認証を推奨</target>
+      </trans-unit>
+      <trans-unit id="audits.report.conclusion.cert-reservations" datatype="html">
+        <source>Certification recommandée avec réserves</source>
+        <target state="translated">条件付きで認証を推奨</target>
+      </trans-unit>
+      <trans-unit id="audits.report.conclusion.cert-unfavorable" datatype="html">
+        <source>Certification non recommandée</source>
+        <target state="translated">認証を推奨しない</target>
+      </trans-unit>
+      <trans-unit id="audits.report.save-draft" datatype="html">
+        <source>Enregistrer le brouillon</source>
+        <target state="translated">下書きを保存</target>
+      </trans-unit>
+      <trans-unit id="audits.report.issue" datatype="html">
+        <source>Émettre le rapport</source>
+        <target state="translated">報告書を発行</target>
+      </trans-unit>
+      <trans-unit id="audits.report.issue-confirm-title" datatype="html">
+        <source>Émettre le rapport ?</source>
+        <target state="translated">報告書を発行しますか？</target>
+      </trans-unit>
+      <trans-unit id="audits.report.issue-confirm-message" datatype="html">
+        <source>Le rapport sera figé — texte, conclusion et chiffres clés — et l'émission inscrite au journal d'audit. Il ne pourra plus être modifié, ni les documents de l'audit.</source>
+        <target state="translated">報告書（本文・結論・主要数値）は確定され、発行は監査証跡に記録されます。以後、報告書も監査文書も変更できません。</target>
+      </trans-unit>
+      <trans-unit id="audits.report.issued-msg" datatype="html">
+        <source>Rapport émis.</source>
+        <target state="translated">報告書を発行しました。</target>
+      </trans-unit>
+      <trans-unit id="audits.report.saved" datatype="html">
+        <source>Brouillon du rapport enregistré.</source>
+        <target state="translated">報告書の下書きを保存しました。</target>
+      </trans-unit>
+      <trans-unit id="audits.report.save-error" datatype="html">
+        <source>Le brouillon n'a pas pu être enregistré.</source>
+        <target state="translated">下書きを保存できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="audits.report.issue-error" datatype="html">
+        <source>Le rapport n'a pas pu être émis.</source>
+        <target state="translated">報告書を発行できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="audits.report.load-error" datatype="html">
+        <source>Le rapport n'a pas pu être chargé.</source>
+        <target state="translated">報告書を読み込めませんでした。</target>
+      </trans-unit>
+      <trans-unit id="audits.report.conflict" datatype="html">
+        <source>Le rapport ne peut plus être modifié dans l'état actuel de l'audit — rechargez pour voir son état.</source>
+        <target state="translated">現在の監査状態では報告書を変更できません。再読み込みして状態を確認してください。</target>
+      </trans-unit>
+      <trans-unit id="audits.report.incomplete" datatype="html">
+        <source>Le rapport est incomplet : synthèse et conclusion sont requises.</source>
+        <target state="translated">報告書が不完全です。総括と結論が必要です。</target>
+      </trans-unit>
+      <trans-unit id="audits.report.step-up" datatype="html">
+        <source>L'émission du rapport exige votre code à usage unique.</source>
+        <target state="translated">報告書の発行にはワンタイムコードが必要です。</target>
+      </trans-unit>
+      <trans-unit id="audits.report.blocker-cancelled" datatype="html">
+        <source>Un audit annulé n'a pas de rapport.</source>
+        <target state="translated">中止された監査には報告書がありません。</target>
+      </trans-unit>
+      <trans-unit id="audits.report.blocker-not-completed" datatype="html">
+        <source>Le rapport s'émet une fois l'audit clôturé. Vous pouvez déjà rédiger le brouillon.</source>
+        <target state="translated">報告書は監査終了後に発行します。下書きは今から作成できます。</target>
+      </trans-unit>
+      <trans-unit id="audits.report.blocker-summary" datatype="html">
+        <source>Rédigez la synthèse (ou générez-la) avant d'émettre.</source>
+        <target state="translated">発行前に総括を記述（または生成）してください。</target>
+      </trans-unit>
+      <trans-unit id="audits.report.blocker-conclusion" datatype="html">
+        <source>Choisissez la conclusion avant d'émettre.</source>
+        <target state="translated">発行前に結論を選択してください。</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.title" datatype="html">
+        <source>Documents (<x id="INTERPOLATION"/>)</source>
+        <target state="translated">文書（<x id="INTERPOLATION"/>）</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.add" datatype="html">
+        <source>Ajouter un document</source>
+        <target state="translated">文書を追加</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.added" datatype="html">
+        <source>Document ajouté à l'audit.</source>
+        <target state="translated">文書を監査に追加しました。</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.empty" datatype="html">
+        <source>Aucun document. Joignez la convocation, le plan d'audit, des photos ou des relevés.</source>
+        <target state="translated">文書はありません。通知、監査計画、写真、記録を添付してください。</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.limits" datatype="html">
+        <source>PDF, image, Word, Excel ou PowerPoint — 10 Mo par fichier, 20 documents par audit.</source>
+        <target state="translated">PDF、画像、Word、Excel、PowerPoint — 1 ファイル 10 MB、監査あたり 20 文書まで。</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.too-large" datatype="html">
+        <source>Fichier trop lourd : 10 Mo au plus.</source>
+        <target state="translated">ファイルが大きすぎます（最大 10 MB）。</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.unnamed" datatype="html">
+        <source>document sans nom</source>
+        <target state="translated">名前のない文書</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.delete-title" datatype="html">
+        <source>Retirer ce document ?</source>
+        <target state="translated">この文書を削除しますか？</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.delete-message" datatype="html">
+        <source>« <x id="name"/> » sera retiré de l'audit. Le retrait est inscrit au journal d'audit.</source>
+        <target state="translated">「<x id="name"/>」を監査から削除します。削除は監査証跡に記録されます。</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.delete" datatype="html">
+        <source>Retirer</source>
+        <target state="translated">削除</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.delete-tooltip" datatype="html">
+        <source>Retirer le document</source>
+        <target state="translated">文書を削除</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.remove-aria" datatype="html">
+        <source>Retirer le document <x id="name"/></source>
+        <target state="translated">文書 <x id="name"/> を削除</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.storage-off" datatype="html">
+        <source>Le stockage des documents est désactivé sur cet environnement.</source>
+        <target state="translated">この環境では文書ストレージが無効です。</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.load-error" datatype="html">
+        <source>Les documents n'ont pas pu être chargés.</source>
+        <target state="translated">文書を読み込めませんでした。</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.invalid" datatype="html">
+        <source>Fichier refusé : type non admis ou contenu qui ne correspond pas à son extension.</source>
+        <target state="translated">ファイルが拒否されました：許可されていない形式、または拡張子と内容が一致しません。</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.limit" datatype="html">
+        <source>Limite atteinte : 10 Mo par fichier, 20 documents et 50 Mo par audit.</source>
+        <target state="translated">上限に達しました：1 ファイル 10 MB、監査あたり 20 文書・50 MB まで。</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.locked" datatype="html">
+        <source>Les documents de cet audit sont verrouillés (audit annulé ou rapport émis).</source>
+        <target state="translated">この監査の文書はロックされています（監査中止または報告書発行済み）。</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.error" datatype="html">
+        <source>L'opération sur le document a échoué.</source>
+        <target state="translated">文書の操作に失敗しました。</target>
+      </trans-unit>
       <trans-unit id="nav.admin-roles" datatype="html">
         <source>Rôles et droits</source>
         <target state="translated">ロールと権限</target>
