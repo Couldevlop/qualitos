@@ -23247,6 +23247,10 @@ historique 12 mois</source>
         <source>L'administrateur de votre organisation ajoute les normes.</source>
         <target state="translated">規格の追加は組織の管理者が行います。</target>
       </trans-unit>
+      <trans-unit id="standards.list.no-adoption" datatype="html">
+        <source>Aucune adoption.</source>
+        <target state="translated">採用はありません。</target>
+      </trans-unit>
       <trans-unit id="smi.add.title" datatype="html">
         <source>Ajouter une norme au SMI</source>
         <target state="translated">統合マネジメントシステムに規格を追加</target>

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Libellés de l'ajout d'une norme au SMI (ISO 14001 à côté d'ISO 9001, §8.9) :
-le bouton, la fenêtre de choix, ses refus, et l'annonce de la norme ajoutée.
+le bouton, la fenêtre de choix, ses refus, et l'annonce de la norme ajoutée ;
+et, dans le Standards Hub, ce que lit qui n'est pas administrateur (ADR 0090).
 
 Placeholders : `${x}:nom:` côté TS s'écrit {$nom} (casse conservée) ;
 `{{ x // i18n(ph="nom") }}` côté gabarit s'écrit {$NOM} (extrait en majuscules).
@@ -18,6 +19,10 @@ TRANSLATIONS = {
         'يضيف مسؤول مؤسستك المعايير.',
         '規格の追加は組織の管理者が行います。',
         '标准由贵组织的管理员添加。'),
+
+    # Standards Hub : sans bouton « Adopter » pour qui n'est pas administrateur.
+    'standards.list.no-adoption': (
+        'Aucune adoption.', 'No adoption.', 'Ninguna adopción.', 'لا يوجد اعتماد.', '採用はありません。', '暂无采用。'),
 
     # ---------- fenêtre ----------
     'smi.add.title': (

@@ -23248,6 +23248,10 @@ historial de 12 meses</target>
         <source>L'administrateur de votre organisation ajoute les normes.</source>
         <target state="translated">El administrador de su organización añade las normas.</target>
       </trans-unit>
+      <trans-unit id="standards.list.no-adoption" datatype="html">
+        <source>Aucune adoption.</source>
+        <target state="translated">Ninguna adopción.</target>
+      </trans-unit>
       <trans-unit id="smi.add.title" datatype="html">
         <source>Ajouter une norme au SMI</source>
         <target state="translated">Añadir una norma al SGI</target>

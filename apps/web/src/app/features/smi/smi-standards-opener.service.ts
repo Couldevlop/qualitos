@@ -5,15 +5,10 @@ import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
 import { AuthService } from '../../core/auth/auth.service';
+import { TENANT_ADMIN_ROLES } from '../../core/auth/tenant-admin';
 import { AddStandardDialogComponent } from './pages/add-standard-dialog/add-standard-dialog.component';
 import { standardShortName } from './smi.labels';
 import { StandardRef } from './smi.types';
-
-/**
- * Les rôles du jeton qui valent « administrateur du client », alias compris
- * (ADR 0020) : exactement ceux qu'exige le serveur.
- */
-export const TENANT_ADMIN_ROLES = ['admin_tenant', 'admin', 'tenant_admin'];
 
 /**
  * Ouvre « Ajouter une norme au SMI » depuis le tableau de bord ou la matrice.

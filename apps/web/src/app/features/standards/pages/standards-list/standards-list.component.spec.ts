@@ -6,6 +6,8 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { provideRouter, Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
 
+import { AuthService } from '../../../../core/auth/auth.service';
+import { TENANT_ADMIN_ROLES } from '../../../../core/auth/tenant-admin';
 import { SharedModule } from '../../../../shared/shared.module';
 import { UiModule } from '../../../../shared/ui/ui.module';
 import { StandardsService } from '../../standards.service';
@@ -28,18 +30,23 @@ describe('StandardsListComponent', () => {
   let component: StandardsListComponent;
   let fixture: ComponentFixture<StandardsListComponent>;
   let svc: jasmine.SpyObj<StandardsService>;
+  let auth: jasmine.SpyObj<AuthService>;
 
   beforeEach(async () => {
     svc = jasmine.createSpyObj<StandardsService>('StandardsService',
       ['listCatalog', 'listAdoptions', 'adopt']);
     svc.listCatalog.and.returnValue(of(page([summary()]) as StandardsPage));
     svc.listAdoptions.and.returnValue(of(page<AdoptionResponse>([]) as AdoptionsPage));
+    // Par défaut l'administrateur du client : c'est lui qui adopte (ADR 0090).
+    auth = jasmine.createSpyObj<AuthService>('AuthService', ['hasAnyRole']);
+    auth.hasAnyRole.and.returnValue(true);
 
     await TestBed.configureTestingModule({
       declarations: [StandardsListComponent],
       imports: [SharedModule, UiModule, NoopAnimationsModule],
       providers: [
         { provide: StandardsService, useValue: svc },
+        { provide: AuthService, useValue: auth },
         provideRouter([])
       ]
     }).compileComponents();
@@ -169,5 +176,32 @@ describe('StandardsListComponent', () => {
     component.createFromProcedure();
 
     expect(svc.listCatalog).not.toHaveBeenCalled();
+  });
+  // ---- Adopter : l'administrateur du client seulement (ADR 0090) ----------------
+
+  it('l’administrateur du client voit « Adopter » sur chaque norme', () => {
+    fixture.detectChanges();
+    const el = fixture.nativeElement as HTMLElement;
+    expect(auth.hasAnyRole).toHaveBeenCalledWith(TENANT_ADMIN_ROLES);
+    expect(component.canAdopt).toBeTrue();
+    expect(el.querySelector('[data-test="adopter-ISO 9001"]')).not.toBeNull();
+    expect(el.querySelector('[data-test="catalog-admin-only"]')).toBeNull();
+    expect(el.querySelector('[data-test="adoption-admin-only"]')).toBeNull();
+  });
+
+  it('les autres rôles ne voient pas « Adopter », et lisent pourquoi', () => {
+    auth.hasAnyRole.and.returnValue(false);
+    fixture = TestBed.createComponent(StandardsListComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+
+    const el = fixture.nativeElement as HTMLElement;
+    expect(component.canAdopt).toBeFalse();
+    expect(el.querySelector('[data-test="adopter-ISO 9001"]')).toBeNull();
+    expect(el.querySelector('[data-test="catalog-admin-only"]')!.textContent)
+      .toContain('L\'administrateur de votre organisation ajoute les normes.');
+    expect(el.querySelector('[data-test="adoption-admin-only"]')!.textContent).toContain('administrateur');
+    // Le catalogue reste consultable.
+    expect(el.querySelectorAll('tr.mat-mdc-row, tr[mat-row]').length).toBeGreaterThan(0);
   });
 });

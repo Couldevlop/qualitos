@@ -5,7 +5,8 @@ import { of } from 'rxjs';
 
 import { AuthService } from '../../core/auth/auth.service';
 import { AddStandardDialogComponent } from './pages/add-standard-dialog/add-standard-dialog.component';
-import { SmiStandardsOpener, TENANT_ADMIN_ROLES } from './smi-standards-opener.service';
+import { TENANT_ADMIN_ROLES } from '../../core/auth/tenant-admin';
+import { SmiStandardsOpener } from './smi-standards-opener.service';
 import { StandardRef } from './smi.types';
 
 describe('SmiStandardsOpener', () => {

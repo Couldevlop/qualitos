@@ -10,6 +10,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,6 +19,16 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/standards")
 public class StandardsController {
+
+    /**
+     * Adopter une norme, en changer le périmètre, l'abandonner ou la supprimer
+     * sont des PARAMÉTRAGES : ils reviennent à l'administrateur du client, et à
+     * lui seul (ADR 0090). Décidé sur le jeton, donc avant la lecture du corps
+     * (ADR 0065). Les alias sont ceux du rôle système ADMIN_TENANT (ADR 0020).
+     * Le pilotage de la certification (démarrer, certifier, surveillance), les
+     * preuves et la feuille de route restent ouverts aux authentifiés.
+     */
+    static final String TENANT_ADMIN = "hasAnyRole('ADMIN_TENANT','ADMIN','TENANT_ADMIN')";
 
     private final StandardsService service;
     private final CertificationDossierService dossierService;
@@ -67,6 +78,7 @@ public class StandardsController {
     }
 
     @PostMapping("/adoptions")
+    @PreAuthorize(TENANT_ADMIN)
     @ResponseStatus(HttpStatus.CREATED)
     public StandardsDto.AdoptionResponse adopt(@Valid @RequestBody StandardsDto.AdoptRequest request) {
         return service.adopt(request);
@@ -78,6 +90,7 @@ public class StandardsController {
     }
 
     @PatchMapping("/adoptions/{id}")
+    @PreAuthorize(TENANT_ADMIN)
     public StandardsDto.AdoptionResponse update(@PathVariable UUID id,
                                                 @Valid @RequestBody StandardsDto.UpdateAdoptionRequest request) {
         return service.updateAdoption(id, request);
@@ -100,11 +113,13 @@ public class StandardsController {
     }
 
     @PatchMapping("/adoptions/{id}/withdraw")
+    @PreAuthorize(TENANT_ADMIN)
     public StandardsDto.AdoptionResponse withdraw(@PathVariable UUID id) {
         return service.withdraw(id);
     }
 
     @DeleteMapping("/adoptions/{id}")
+    @PreAuthorize(TENANT_ADMIN)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable UUID id) {
         service.deleteAdoption(id);

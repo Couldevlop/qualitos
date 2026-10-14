@@ -21,9 +21,15 @@
       <tr mat-row *matRowDef="let row; columns: adoptCols;"
           class="clickable" (click)="open(row)"></tr>
     </table>
-    <p class="empty" *ngIf="(adoptions$ | async)?.length === 0" i18n="@@standards.list.adoptions-empty">
-      Aucune adoption. Adoptez une norme du catalogue ci-dessous pour démarrer un dossier de certification.
-    </p>
+    <ng-container *ngIf="(adoptions$ | async)?.length === 0">
+      <p class="empty" *ngIf="canAdopt" i18n="@@standards.list.adoptions-empty">
+        Aucune adoption. Adoptez une norme du catalogue ci-dessous pour démarrer un dossier de certification.
+      </p>
+      <p class="empty" *ngIf="!canAdopt" data-test="adoption-admin-only">
+        <span i18n="@@standards.list.no-adoption">Aucune adoption.</span>
+        <span i18n="@@smi.add.admin-only">L'administrateur de votre organisation ajoute les normes.</span>
+      </p>
+    </ng-container>
   </mat-card>
 
   <mat-card class="section-card">
@@ -46,6 +52,8 @@
         </button>
       </div>
     </div>
+    <p class="admin-only" *ngIf="!canAdopt" data-test="catalog-admin-only"
+       i18n="@@smi.add.admin-only">L'administrateur de votre organisation ajoute les normes.</p>
     <table mat-table [dataSource]="(catalog$ | async) ?? []" class="t">
       <ng-container matColumnDef="code"><th mat-header-cell *matHeaderCellDef i18n="@@standards.list.col-code">Code</th>
         <td mat-cell *matCellDef="let s">
@@ -62,7 +70,8 @@
         <td mat-cell *matCellDef="let s">{{ s.recertificationCycleMonths ? s.recertificationCycleMonths + ' mois' : '—' }}</td></ng-container>
       <ng-container matColumnDef="actions"><th mat-header-cell *matHeaderCellDef></th>
         <td mat-cell *matCellDef="let s">
-          <button mat-stroked-button color="primary" (click)="adopt(s)" [disabled]="adopting === s.id">
+          <button mat-stroked-button color="primary" *ngIf="canAdopt" (click)="adopt(s)"
+                  [disabled]="adopting === s.id" [attr.data-test]="'adopter-' + s.code">
             <span *ngIf="adopting === s.id">…</span>
             <span *ngIf="adopting !== s.id" i18n="@@standards.list.adopt">Adopter →</span>
           </button></td></ng-container>

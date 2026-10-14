@@ -5,6 +5,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 
+import { AuthService } from '../../../../core/auth/auth.service';
+import { TENANT_ADMIN_ROLES } from '../../../../core/auth/tenant-admin';
 import { ProcedureCreateDialogComponent } from '../procedure-create-dialog/procedure-create-dialog.component';
 import { StandardsService } from '../../standards.service';
 import { AdoptionResponse, StandardSummary } from '../../standards.types';
@@ -26,6 +28,12 @@ export class StandardsListComponent implements OnInit {
   catalog$!: Observable<StandardSummary[]>;
   adoptions$!: Observable<AdoptionResponse[]>;
   adopting?: string;
+  /**
+   * Adopter une norme est un paramétrage : seul l'administrateur du client le
+   * fait (ADR 0090). Les autres ne voient pas le bouton — le serveur, seul
+   * juge, les refuserait en 403.
+   */
+  readonly canAdopt: boolean;
 
   /**
    * Le catalogue mêle désormais soixante normes livrées et les quelques
@@ -38,8 +46,11 @@ export class StandardsListComponent implements OnInit {
     private readonly svc: StandardsService,
     private readonly router: Router,
     private readonly dialog: MatDialog,
-    private readonly snack: MatSnackBar
-  ) {}
+    private readonly snack: MatSnackBar,
+    auth: AuthService
+  ) {
+    this.canAdopt = auth.hasAnyRole(TENANT_ADMIN_ROLES);
+  }
 
   ngOnInit(): void {
     this.load();

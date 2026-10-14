@@ -23248,6 +23248,10 @@ historique 12 mois</source>
         <source>L'administrateur de votre organisation ajoute les normes.</source>
         <target state="translated">标准由贵组织的管理员添加。</target>
       </trans-unit>
+      <trans-unit id="standards.list.no-adoption" datatype="html">
+        <source>Aucune adoption.</source>
+        <target state="translated">暂无采用。</target>
+      </trans-unit>
       <trans-unit id="smi.add.title" datatype="html">
         <source>Ajouter une norme au SMI</source>
         <target state="translated">向综合管理体系添加标准</target>

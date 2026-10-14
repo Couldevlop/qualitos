@@ -75,17 +75,44 @@ Les normes se rangent par l'ordre naturel de leur code (`StandardOrder`) : ISO
 avant le tiret long) et garde le titre complet en infobulle et en nom
 accessible.
 
+### 5. Le paramétrage des adoptions du Standards Hub, au même régime
+
+`POST /api/v1/standards/adoptions` n'était protégée ni par `SecurityConfig` ni par
+`@PreAuthorize` : un simple utilisateur pouvait adopter une norme. Les écritures
+de PARAMÉTRAGE d'une adoption de `StandardsController` portent désormais la
+même règle que le SMI (`ADMIN_TENANT` et ses alias, avant lecture du corps) :
+
+| Point d'entrée | Rôle |
+| --- | --- |
+| `POST /adoptions` — adopter | administrateur du client |
+| `PATCH /adoptions/{id}` — périmètre, date cible, auditeur, organisme | administrateur du client |
+| `PATCH /adoptions/{id}/withdraw` — abandonner | administrateur du client |
+| `DELETE /adoptions/{id}` — supprimer | administrateur du client (la règle DELETE générique admettait aussi le manager qualité) |
+
+Restent ouverts aux authentifiés, parce qu'ils PILOTENT la certification sans
+la paramétrer : `start`, `certify`, `surveillance`, les preuves, la feuille de
+route, le dossier, l'audit blanc et le storyboard.
+
+Appelants internes de `StandardsService.adopt` : le seul est l'adaptateur du SMI,
+déjà réservé à l'administrateur. Aucun onboarding, pack sectoriel, marketplace ni
+script (`scripts/donnees-demo.py` n'adopte rien ; l'adoption de démonstration
+vient de la migration V63) n'appelle l'API ; un appel de service interne n'est de
+toute façon pas concerné par l'autorisation HTTP.
+
+Dans le Standards Hub, le bouton « Adopter » n'est montré qu'à l'administrateur ;
+les autres lisent la même phrase que dans le SMI. Les rôles du jeton reconnus
+comme administrateur vivent à un seul endroit côté web
+(`core/auth/tenant-admin.ts`).
+
 ## Conséquences
 
 - ✅ Depuis `/smi` ou `/smi/exigences`, l'administrateur ajoute l'ISO 14001 en deux
   clics ; le tableau se recharge sur « Tous », les deux normes côte à côte, et la
   matrice gagne sa colonne.
 - ✅ Aucune donnée de référence à corriger : pas de migration (V141 non utilisée).
-- ⚠ **L'API globale d'adoption reste ouverte à tout authentifié** :
-  `POST /api/v1/standards/adoptions` n'est protégée ni par `SecurityConfig` ni par
-  `@PreAuthorize` — un simple utilisateur peut adopter une norme depuis le
-  Standards Hub. Hors du périmètre de ce changement ; à aligner sur la règle
-  produit dans un lot dédié (avec les autres écritures du Standards Hub).
+- ✅ **Le Standards Hub suit la même règle** (décision 5 ci-dessous) : l'API
+  globale d'adoption, jusque-là ouverte à tout authentifié, est réservée à
+  l'administrateur du client.
 - ⚠ **La mutualisation des preuves n'existe pas encore.** `computeAlignment` ne
   compte que les preuves rattachées à l'adoption elle-même ; la table
   `norm_clause_mapping` (V53) et le module `ims` ne servent qu'à la matrice de
@@ -105,4 +132,7 @@ accessible.
 - `SmiStandardsControllerTest` — 201/200 pour l'administrateur et ses alias ;
   403 pour les sept autres rôles, corps valide ou malformé ; 400, 404, 409.
 - `SmiAdaptersTest` — filtre du catalogue, adoption déléguée au Standards Hub.
+- `StandardsControllerTest` — adopter, modifier, abandonner, supprimer : 403 pour
+  les sept autres rôles (corps valide ou malformé), 201/200/204 pour
+  l'administrateur et ses alias ; `start` reste ouvert au manager qualité.
 - Specs Karma : fenêtre d'ajout, ouvreur, tableau de bord et matrice à deux normes.

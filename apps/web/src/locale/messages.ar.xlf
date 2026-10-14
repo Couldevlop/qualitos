@@ -23248,6 +23248,10 @@ historique 12 mois</source>
         <source>L'administrateur de votre organisation ajoute les normes.</source>
         <target state="translated">يضيف مسؤول مؤسستك المعايير.</target>
       </trans-unit>
+      <trans-unit id="standards.list.no-adoption" datatype="html">
+        <source>Aucune adoption.</source>
+        <target state="translated">لا يوجد اعتماد.</target>
+      </trans-unit>
       <trans-unit id="smi.add.title" datatype="html">
         <source>Ajouter une norme au SMI</source>
         <target state="translated">إضافة معيار إلى نظام الإدارة المتكامل</target>

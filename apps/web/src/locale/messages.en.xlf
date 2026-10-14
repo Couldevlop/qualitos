@@ -23248,6 +23248,10 @@ declared income
         <source>L'administrateur de votre organisation ajoute les normes.</source>
         <target state="translated">Your organisation's administrator adds the standards.</target>
       </trans-unit>
+      <trans-unit id="standards.list.no-adoption" datatype="html">
+        <source>Aucune adoption.</source>
+        <target state="translated">No adoption.</target>
+      </trans-unit>
       <trans-unit id="smi.add.title" datatype="html">
         <source>Ajouter une norme au SMI</source>
         <target state="translated">Add a standard to the IMS</target>
