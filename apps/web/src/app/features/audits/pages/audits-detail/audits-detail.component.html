@@ -30,7 +30,8 @@
           <mat-icon>cancel</mat-icon> <span i18n="@@common.cancel">Annuler</span>
         </button>
         <button mat-stroked-button color="primary" (click)="start()"
-                [disabled]="(acting$ | async) || !canStart(p.status)">
+                [disabled]="(acting$ | async) || !canStart(p.status) || !!startBlocker(p)"
+                [matTooltip]="startBlocker(p) || ''" data-test="demarrer">
           <mat-icon>play_arrow</mat-icon> <span i18n="@@audits.detail.start">Démarrer</span>
         </button>
         <button mat-flat-button color="primary" (click)="complete()"
@@ -70,8 +71,8 @@
               <span class="info-value">{{ p.standard }}</span>
             </div>
             <div class="info-item">
-              <span class="info-label" i18n="@@audits.detail.lead-auditor">Lead auditeur</span>
-              <span class="info-value">{{ p.leadAuditorId }}</span>
+              <span class="info-label" i18n="@@audits.lead-auditor">Auditeur responsable</span>
+              <span class="info-value info-value--text" data-test="auditeur-responsable">{{ leadAuditorLabel(p) }}</span>
             </div>
             <div class="info-item" *ngIf="p.scheduledDate">
               <span class="info-label" i18n="@@audits.detail.scheduled">Planifié</span>
@@ -93,20 +94,8 @@
             </div>
           </div>
           <p class="description" *ngIf="p.scope">{{ p.scope }}</p>
-          <p class="description summary" *ngIf="p.reportSummary">
-            <strong i18n="@@audits.detail.summary-label">Synthèse :</strong> {{ p.reportSummary }}
-          </p>
-          <div class="report-actions">
-            <button mat-stroked-button color="primary" type="button"
-                    (click)="generateReport()" [disabled]="generating || (acting$ | async)"
-                    [attr.aria-busy]="generating"
-                    i18n-matTooltip="@@audits.detail.generate-report-tooltip"
-                    matTooltip="Générer une synthèse d'audit par IA à partir de la checklist et des constats">
-              <mat-progress-spinner *ngIf="generating; else genIcon" mode="indeterminate" diameter="18"></mat-progress-spinner>
-              <ng-template #genIcon><mat-icon aria-hidden="true">auto_awesome</mat-icon></ng-template>
-              <span>{{ reportButtonLabel(!!p.reportSummary) }}</span>
-            </button>
-          </div>
+          <!-- La synthèse et sa génération par IA vivent désormais dans la
+               section « Rapport », sous les constats. -->
         </mat-card-content>
       </mat-card>
 
@@ -185,12 +174,23 @@
         <mat-card-header class="checklist-header">
           <mat-card-title i18n="@@audits.detail.findings-count">Constats ({{ p.findings?.length || 0 }})</mat-card-title>
           <button mat-flat-button color="primary" type="button"
-                  (click)="openAddFinding()"
-                  [disabled]="isTerminal(p.status)">
+                  (click)="openAddFinding()" data-test="ajouter-constat"
+                  [disabled]="!!findingBlocker(p)"
+                  [attr.aria-describedby]="findingBlocker(p) ? 'finding-blocker' : null">
             <mat-icon>flag</mat-icon> <span i18n="@@audits.detail.add-finding">Ajouter un constat</span>
           </button>
         </mat-card-header>
         <mat-card-content>
+          <p class="section-note" id="finding-blocker" *ngIf="findingBlocker(p) as reason" data-test="raison-constat">
+            <mat-icon aria-hidden="true">info</mat-icon>
+            <span>{{ reason }}</span>
+            <button mat-button color="primary" type="button" data-test="demarrer-depuis-constats"
+                    *ngIf="p.status === 'PLANNED' && (p.checklist?.length || 0) > 0"
+                    (click)="start()" [disabled]="acting$ | async">
+              <mat-icon aria-hidden="true">play_arrow</mat-icon>
+              <span i18n="@@audits.detail.start-audit">Démarrer l'audit</span>
+            </button>
+          </p>
           <table mat-table [dataSource]="p.findings || []" class="checklist-table"
                  *ngIf="(p.findings?.length || 0) > 0">
             <ng-container matColumnDef="type">
@@ -231,6 +231,11 @@
           </p>
         </mat-card-content>
       </mat-card>
+
+      <!-- Le rapport, sous les constats dont il rend compte. -->
+      <qos-audit-report-panel [plan]="p" (issuedChange)="onReportIssued($event)"></qos-audit-report-panel>
+
+      <qos-audit-documents-panel [planId]="p.id" [lockReason]="documentsLockReason(p)"></qos-audit-documents-panel>
 
     </ng-container>
   </ng-container>

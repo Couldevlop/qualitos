@@ -8,7 +8,10 @@ import { ConnectivityService } from '../../core/offline/connectivity.service';
 import { OfflineQueueService } from '../../core/offline/offline-queue.service';
 import {
   AddFindingRequest,
+  AuditDocument,
   AuditPlanResponse,
+  AuditReport,
+  AuditReportDraftRequest,
   AuditPlanningEntry,
   AuditStatus,
   AuditType,
@@ -83,7 +86,8 @@ export class AuditsService {
         type: input.type,
         status: 'PLANNED',
         standard: input.standard,
-        leadAuditorId: input.leadAuditorId,
+        leadAuditorId: input.leadAuditorId ?? 'demo-user',
+        leadAuditorName: input.leadAuditorName,
         scheduledDate: input.scheduledDate,
         createdAt: now,
         updatedAt: now,
@@ -104,7 +108,10 @@ export class AuditsService {
         if (input.scope !== undefined) p.scope = input.scope;
         if (input.type !== undefined) p.type = input.type;
         if (input.standard !== undefined) p.standard = input.standard;
-        if (input.leadAuditorId !== undefined) p.leadAuditorId = input.leadAuditorId;
+        if (input.leadAuditorId !== undefined) {
+          p.leadAuditorId = input.leadAuditorId;
+          p.leadAuditorName = input.leadAuditorName;
+        }
         if (input.scheduledDate !== undefined) p.scheduledDate = input.scheduledDate;
         p.updatedAt = new Date().toISOString();
         return of(p).pipe(delay(120));
@@ -126,7 +133,6 @@ export class AuditsService {
         photoUrl: input.photoUrl,
         checklistItemId: input.checklistItemId,
         capaId: input.capaId,
-        raisedBy: input.raisedBy,
         raisedAt: now,
         createdAt: now,
         updatedAt: now
@@ -284,6 +290,48 @@ export class AuditsService {
     return this.transition(id, 'CANCELLED', 'cancel');
   }
 
+  // ---- rapport d'audit -----------------------------------------------------
+  //
+  // Aucune branche de démonstration, comme pour la checklist tirée d'un
+  // référentiel : un rapport « émis » fabriqué dans le navigateur porterait une
+  // empreinte et un émetteur que rien n'a produits.
+
+  /** Le rapport de l'audit ; vierge (id null) tant qu'aucun brouillon n'existe. */
+  getReport(planId: string): Observable<AuditReport> {
+    return this.http.get<AuditReport>(`${this.endpoint}/${planId}/report`);
+  }
+
+  /** Enregistre le brouillon — remplacement complet. 409 si le rapport est émis. */
+  saveReportDraft(planId: string, input: AuditReportDraftRequest): Observable<AuditReport> {
+    return this.http.put<AuditReport>(`${this.endpoint}/${planId}/report`, input);
+  }
+
+  /**
+   * Émet le rapport : il est figé et tracé au journal. 409 si l'audit n'est pas
+   * clôturé, 422 s'il manque la synthèse ou la conclusion, 403 « step-up-required »
+   * sans second facteur.
+   */
+  issueReport(planId: string): Observable<AuditReport> {
+    return this.http.post<AuditReport>(`${this.endpoint}/${planId}/report/issue`, {});
+  }
+
+  // ---- documents joints ----------------------------------------------------
+
+  listDocuments(planId: string): Observable<AuditDocument[]> {
+    return this.http.get<AuditDocument[]>(`${this.endpoint}/${planId}/documents`);
+  }
+
+  /** Multipart, champ `file` : le serveur vérifie type, signature et taille. */
+  uploadDocument(planId: string, file: File): Observable<AuditDocument> {
+    const form = new FormData();
+    form.append('file', file, file.name);
+    return this.http.post<AuditDocument>(`${this.endpoint}/${planId}/documents`, form);
+  }
+
+  deleteDocument(planId: string, documentId: string): Observable<void> {
+    return this.http.delete<void>(`${this.endpoint}/${planId}/documents/${documentId}`);
+  }
+
   private transition(
     id: string,
     targetStatus: AuditStatus,
@@ -318,7 +366,6 @@ export class AuditsService {
         photoUrl: input.photoUrl,
         checklistItemId: input.checklistItemId,
         capaId: input.capaId,
-        raisedBy: input.raisedBy,
         raisedAt: now,
         createdAt: now,
         updatedAt: now,

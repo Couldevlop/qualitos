@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, ValidationErrors, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -8,6 +8,7 @@ import { AuthService } from '../../../../core/auth/auth.service';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { AuditsService } from '../../audits.service';
 import { AuditPlanResponse, AuditType } from '../../audits.types';
+import { LeadAuditorDirectory, LeadAuditorOption } from '../../lead-auditor';
 
 /**
  * Adresse de courriel valide, espaces de bordure tolérées.
@@ -34,9 +35,14 @@ function trimmedEmail(control: AbstractControl): ValidationErrors | null {
   styleUrls: ['./audits-create-dialog.component.scss'],
   standalone: false
 })
-export class AuditsCreateDialogComponent {
+export class AuditsCreateDialogComponent implements OnInit {
 
   submitting = false;
+
+  /** Auditeurs proposables ; l'utilisateur connecté d'abord, valeur par défaut. */
+  leadAuditors: LeadAuditorOption[] = [];
+  /** L'annuaire n'a pas répondu : l'audit ne peut être confié qu'à soi-même. */
+  directoryUnavailable = false;
 
   readonly types: { value: AuditType; label: string }[] = [
     { value: 'INTERNAL',      label: $localize`:@@audits.type.internal:Interne` },
@@ -52,6 +58,10 @@ export class AuditsCreateDialogComponent {
     scope: [''],
     type: ['INTERNAL' as AuditType, [Validators.required]],
     standard: ['', [Validators.maxLength(100)]],
+    // L'auditeur responsable se CHOISIT : il était jusqu'ici recopié en silence
+    // depuis la session, et l'écran affichait ensuite un identifiant que
+    // personne ne savait relire. Par défaut : soi-même.
+    leadAuditorId: [this.auth.snapshot()?.userId ?? '', [Validators.required]],
     scheduledDate: [''],
     // Destinataire du rappel à 30 jours. Validation du formulaire en plus de
     // type="email" : celle du navigateur ne s'applique qu'à la saisie manuelle et
@@ -63,22 +73,30 @@ export class AuditsCreateDialogComponent {
     private readonly fb: FormBuilder,
     private readonly audits: AuditsService,
     private readonly auth: AuthService,
+    private readonly directory: LeadAuditorDirectory,
     private readonly snack: MatSnackBar,
     private readonly dialogRef: MatDialogRef<AuditsCreateDialogComponent, AuditPlanResponse>
   ) {}
+
+  ngOnInit(): void {
+    this.directory.choices().subscribe(c => {
+      this.leadAuditors = c.options;
+      this.directoryUnavailable = !c.directoryAvailable;
+    });
+  }
 
   submit(): void {
     if (this.form.invalid || this.submitting) {
       this.form.markAllAsTouched();
       return;
     }
-    const leadAuditorId = this.auth.snapshot()?.userId;
-    if (!leadAuditorId) {
+    const v = this.form.getRawValue();
+    const lead = this.leadAuditors.find(o => o.id === v.leadAuditorId);
+    if (!lead) {
       this.snack.open($localize`:@@common.session-expired:Session expirée — veuillez vous reconnecter.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     this.submitting = true;
-    const v = this.form.getRawValue();
     this.audits
       .createPlan({
         title: v.title.trim(),
@@ -87,7 +105,8 @@ export class AuditsCreateDialogComponent {
         standard: v.standard?.trim() || undefined,
         scheduledDate: v.scheduledDate || undefined,
         reminderEmail: v.reminderEmail?.trim() || undefined,
-        leadAuditorId
+        leadAuditorId: lead.id,
+        leadAuditorName: this.directory.nameFor(lead)
       })
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({

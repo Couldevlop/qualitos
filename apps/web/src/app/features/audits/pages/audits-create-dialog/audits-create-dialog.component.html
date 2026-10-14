@@ -44,6 +44,21 @@
   </div>
 
   <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@audits.lead-auditor">Auditeur responsable</mat-label>
+    <mat-select formControlName="leadAuditorId" required data-test="auditeur-responsable">
+      <mat-option *ngFor="let a of leadAuditors" [value]="a.id">{{ a.label }}</mat-option>
+    </mat-select>
+    <mat-hint *ngIf="!directoryUnavailable" i18n="@@audits.lead-auditor.hint">
+      Celui ou celle qui conduit l'audit et signe le rapport. Par défaut : vous.
+    </mat-hint>
+    <mat-hint *ngIf="directoryUnavailable" data-test="annuaire-indisponible"
+              i18n="@@audits.lead-auditor.directory-down">
+      L'annuaire de l'organisation n'est pas accessible avec vos droits : l'audit vous est confié.
+    </mat-hint>
+    <mat-error i18n="@@audits.lead-auditor.required">Désignez l'auditeur responsable.</mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full">
     <mat-label i18n="@@audits.create.scheduled-date">Date prévue (optionnel)</mat-label>
     <input matInput formControlName="scheduledDate" type="date">
   </mat-form-field>

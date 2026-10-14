@@ -1,0 +1,68 @@
+/* Section « Documents » d'un audit : une liste sobre, le nom en lien, la taille
+   et la date en retrait. Valeurs tirées des jetons du système de conception. */
+
+.documents-card { margin-bottom: var(--qos-space-4); }
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--qos-space-3);
+  padding-bottom: var(--qos-space-3);
+}
+
+.lock, .state {
+  display: flex;
+  align-items: center;
+  gap: var(--qos-space-2);
+  margin: 0 0 var(--qos-space-3);
+  font-size: var(--qos-fs-sm);
+  color: var(--qos-fg-secondary);
+
+  mat-icon { font-size: 18px; width: 18px; height: 18px; }
+}
+.state.error { color: var(--qos-danger-fg); }
+
+.docs {
+  margin: 0 0 var(--qos-space-2);
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: var(--qos-space-3);
+    padding: var(--qos-space-2) 0;
+    border-bottom: 1px solid var(--qos-border-subtle);
+  }
+}
+
+.docs__icon { color: var(--qos-fg-tertiary); flex: 0 0 auto; }
+
+.docs__name {
+  flex: 1 1 auto;
+  /* Un nom long ne doit pas pousser la taille et le bouton hors de la carte. */
+  min-width: 0;
+  overflow-wrap: anywhere;
+  color: var(--qos-fg-link);
+}
+
+.docs__meta {
+  flex: 0 0 auto;
+  color: var(--qos-fg-secondary);
+  font-size: var(--qos-fs-xs);
+  font-variant-numeric: tabular-nums;
+}
+
+.empty {
+  margin: 0;
+  padding: var(--qos-space-4) 0;
+  text-align: center;
+  color: var(--qos-fg-secondary);
+}
+
+.hint {
+  margin: var(--qos-space-2) 0 0;
+  color: var(--qos-fg-tertiary);
+  font-size: var(--qos-fs-xs);
+}

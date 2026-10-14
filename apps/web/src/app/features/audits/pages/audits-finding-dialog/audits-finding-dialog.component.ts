@@ -4,7 +4,6 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { finalize } from 'rxjs/operators';
 
-import { AuthService } from '../../../../core/auth/auth.service';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { AuditsService } from '../../audits.service';
 import { FindingResponse, FindingType } from '../../audits.types';
@@ -43,7 +42,6 @@ export class AuditsFindingDialogComponent {
   constructor(
     private readonly fb: FormBuilder,
     private readonly audits: AuditsService,
-    private readonly auth: AuthService,
     private readonly snack: MatSnackBar,
     private readonly dialogRef: MatDialogRef<AuditsFindingDialogComponent, FindingResponse>,
     @Inject(MAT_DIALOG_DATA) public readonly data: AuditsFindingDialogData
@@ -54,11 +52,6 @@ export class AuditsFindingDialogComponent {
       this.form.markAllAsTouched();
       return;
     }
-    const raisedBy = this.auth.snapshot()?.userId;
-    if (!raisedBy) {
-      this.snack.open($localize`:@@common.session-expired:Session expirée — veuillez vous reconnecter.`, $localize`:@@common.ok:OK`, { duration: 4000 });
-      return;
-    }
     this.submitting = true;
     const v = this.form.getRawValue();
     this.audits
@@ -67,8 +60,8 @@ export class AuditsFindingDialogComponent {
         description: v.description.trim(),
         clauseRef: v.clauseRef?.trim() || undefined,
         photoUrl: v.photoUrl?.trim() || undefined,
-        checklistItemId: this.data.checklistItemId,
-        raisedBy
+        // L'auteur n'est pas envoyé : le serveur le lit dans le jeton.
+        checklistItemId: this.data.checklistItemId
       })
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
@@ -79,13 +72,22 @@ export class AuditsFindingDialogComponent {
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[audits-finding-dialog] failed', err?.status, err?.error?.title);
-          this.snack.open(
-            safeErrorMessage(err, $localize`:@@audits.finding.save-error:Erreur lors de l'enregistrement.`),
-            $localize`:@@common.ok:OK`, { duration: 4000 }
-          );
+          this.snack.open(this.messageDErreur(err), $localize`:@@common.ok:OK`, { duration: 6000 });
         }
       });
   }
 
   cancel(): void { this.dialogRef.close(); }
+
+  /**
+   * Le 409 dit ici une chose précise : l'audit n'est pas en cours. Le message
+   * générique (« rechargez la page ») envoyait l'utilisateur recharger un écran
+   * qui refusait toujours, sans lui dire qu'il fallait démarrer l'audit.
+   */
+  private messageDErreur(err: unknown): string {
+    if ((err as { status?: number })?.status === 409) {
+      return $localize`:@@audits.finding.not-in-progress:Un constat se relève pendant l'audit : démarrez l'audit pour en ajouter.`;
+    }
+    return safeErrorMessage(err, $localize`:@@audits.finding.save-error:Erreur lors de l'enregistrement.`);
+  }
 }
