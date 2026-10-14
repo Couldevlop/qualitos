@@ -121,6 +121,7 @@ public class UserService {
                     .tenantId(tenantId)
                     .keycloakId(compte.accountId())
                     .email(request.email().strip())
+                    .displayName(AppUser.displayNameOf(request.firstName(), request.lastName()))
                     .roles(roles)
                     .active(true)
                     .build());
