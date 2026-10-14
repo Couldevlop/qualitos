@@ -1,0 +1,137 @@
+// La validation : une carte par rôle requis.
+
+:host {
+  display: block;
+  padding-top: var(--qos-space-5);
+}
+
+.validation__resume {
+  margin: 0 0 var(--qos-space-4);
+  font-weight: var(--qos-fw-semibold);
+}
+
+.validation__note {
+  margin: 0 0 var(--qos-space-3);
+  color: var(--qos-fg-secondary);
+  font-size: var(--qos-fs-sm);
+}
+
+.cartes {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--qos-space-3);
+}
+
+.carte {
+  display: flex;
+  flex-direction: column;
+  gap: var(--qos-space-2);
+  padding: var(--qos-space-4);
+  border-radius: var(--qos-radius-lg);
+  border: 1px solid var(--qos-border-subtle);
+  background: var(--qos-bg-elevated);
+
+  &--ok {
+    border-color: var(--qos-success-fg);
+    box-shadow: inset 3px 0 0 var(--qos-success-fg);
+  }
+
+  &--refus {
+    border-color: var(--qos-danger-fg);
+    box-shadow: inset 3px 0 0 var(--qos-danger-fg);
+  }
+
+  &__tete {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--qos-space-2);
+  }
+
+  &__role {
+    margin: 0;
+    font-size: var(--qos-fs-md);
+    font-weight: var(--qos-fw-semibold);
+  }
+
+  &__qui,
+  &__titulaires {
+    margin: 0;
+    font-size: var(--qos-fs-sm);
+    color: var(--qos-fg-secondary);
+  }
+
+  &__commentaire {
+    margin: 0;
+    padding: var(--qos-space-2) var(--qos-space-3);
+    border-left: 3px solid var(--qos-border-default);
+    background: var(--qos-bg-subtle);
+    border-radius: var(--qos-radius-sm);
+    font-size: var(--qos-fs-sm);
+    white-space: pre-line;
+  }
+
+  &__alerte {
+    margin: 0;
+    font-size: var(--qos-fs-sm);
+    color: var(--qos-warn-fg);
+  }
+
+  &__decision {
+    display: flex;
+    flex-direction: column;
+    gap: var(--qos-space-2);
+    margin-top: var(--qos-space-1);
+  }
+
+  &__champ {
+    width: 100%;
+  }
+
+  &__boutons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--qos-space-2);
+  }
+}
+
+.etat {
+  display: inline-flex;
+  padding: 2px 10px;
+  border-radius: var(--qos-radius-pill);
+  font-size: var(--qos-fs-xs);
+  font-weight: var(--qos-fw-semibold);
+  white-space: nowrap;
+
+  &--PENDING {
+    background: var(--qos-bg-sunken);
+    color: var(--qos-fg-secondary);
+  }
+
+  &--APPROVED {
+    background: var(--qos-success-bg-soft);
+    color: var(--qos-success-fg);
+  }
+
+  &--REJECTED {
+    background: var(--qos-danger-bg-soft);
+    color: var(--qos-danger-fg);
+  }
+}
+
+// Vert pour approuver, rouge pour rejeter (maquette) ; le texte reste lisible en mode sombre.
+.bouton-ok:not(:disabled) {
+  --mat-button-filled-container-color: var(--qos-success-600);
+  --mat-button-filled-label-text-color: #fff;
+  --mat-button-filled-icon-color: #fff;
+}
+
+.bouton-refus:not(:disabled) {
+  --mat-button-filled-container-color: var(--qos-danger-600);
+  --mat-button-filled-label-text-color: #fff;
+  --mat-button-filled-icon-color: #fff;
+}

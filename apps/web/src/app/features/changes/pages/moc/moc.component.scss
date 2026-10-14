@@ -1,0 +1,215 @@
+// Gestion des changements : la liste à gauche, la demande sélectionnée à droite.
+@use '../../moc.shared' as moc;
+
+:host {
+  display: block;
+}
+
+@include moc.pastilles;
+
+.cache {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.echec {
+  display: flex;
+  align-items: center;
+  gap: var(--qos-space-2);
+  color: var(--qos-danger-fg);
+}
+
+.moc__plan {
+  display: grid;
+  grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+  gap: var(--qos-space-5);
+  align-items: start;
+
+  @media (max-width: 1000px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ---------- colonne gauche ----------
+
+.liste {
+  display: flex;
+  flex-direction: column;
+  gap: var(--qos-space-3);
+  position: sticky;
+  top: var(--qos-space-4);
+
+  @media (max-width: 1000px) {
+    position: static;
+  }
+}
+
+.puces {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--qos-space-2);
+}
+
+.puce {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: var(--qos-radius-pill);
+  border: 1px solid var(--qos-border-default);
+  background: var(--qos-bg-elevated);
+  color: var(--qos-fg-secondary);
+  font: inherit;
+  font-size: var(--qos-fs-sm);
+  font-weight: var(--qos-fw-medium);
+  cursor: pointer;
+  transition: background var(--qos-motion-fast), color var(--qos-motion-fast), border-color var(--qos-motion-fast);
+
+  &:hover {
+    background: var(--qos-bg-hover);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: var(--qos-ring-focus);
+  }
+
+  &__compte {
+    font-size: var(--qos-fs-xs);
+    color: var(--qos-fg-tertiary);
+    font-variant-numeric: tabular-nums;
+  }
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+
+  &--active {
+    background: var(--qos-fg-primary);
+    border-color: var(--qos-fg-primary);
+    color: var(--qos-fg-inverse);
+
+    .puce__compte {
+      color: inherit;
+      opacity: .75;
+    }
+
+    &:hover {
+      background: var(--qos-fg-primary);
+    }
+  }
+
+  &--moi:not(.puce--active) {
+    border-color: var(--qos-warn-fg);
+    color: var(--qos-warn-fg);
+  }
+}
+
+.cartes {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--qos-space-2);
+}
+
+.carte {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: var(--qos-space-3) var(--qos-space-4);
+  text-align: left;
+  border-radius: var(--qos-radius-lg);
+  border: 1px solid var(--qos-border-subtle);
+  background: var(--qos-bg-elevated);
+  box-shadow: var(--qos-shadow-xs);
+  color: var(--qos-fg-primary);
+  font: inherit;
+  cursor: pointer;
+  transition: border-color var(--qos-motion-fast), box-shadow var(--qos-motion-fast);
+
+  &:hover {
+    border-color: var(--qos-border-strong);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: var(--qos-ring-focus);
+  }
+
+  &--active {
+    border-color: var(--qos-accent-fg);
+    background: var(--qos-accent-bg-soft);
+    box-shadow: inset 3px 0 0 var(--qos-accent-fg), var(--qos-shadow-sm);
+  }
+
+  &__titre {
+    font-weight: var(--qos-fw-semibold);
+    line-height: var(--qos-lh-snug);
+  }
+
+  &__meta {
+    font-size: var(--qos-fs-sm);
+    color: var(--qos-fg-secondary);
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__puces {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+  }
+
+  &__moi {
+    font-size: var(--qos-fs-xs);
+    font-weight: var(--qos-fw-semibold);
+    color: var(--qos-warn-fg);
+  }
+}
+
+.vide {
+  margin: 0;
+  padding: var(--qos-space-5);
+  text-align: center;
+  color: var(--qos-fg-tertiary);
+  border: 1px dashed var(--qos-border-default);
+  border-radius: var(--qos-radius-lg);
+}
+
+// ---------- panneau droit ----------
+
+.panneau {
+  min-width: 0;
+
+  &__vide {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--qos-space-3);
+    padding: var(--qos-space-12) var(--qos-space-6);
+    border-radius: var(--qos-radius-xl);
+    border: 1px dashed var(--qos-border-default);
+    color: var(--qos-fg-tertiary);
+    text-align: center;
+
+    mat-icon {
+      font-size: 40px;
+      width: 40px;
+      height: 40px;
+    }
+
+    p {
+      margin: 0;
+      max-width: 42ch;
+    }
+  }
+}

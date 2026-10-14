@@ -192,7 +192,7 @@ export class MainShellComponent implements OnInit, OnDestroy {
         { label: $localize`:@@nav.produits:Produits`,               route: '/products',  icon: 'inventory_2', module: 'product' },
         { label: $localize`:@@nav.risques-fmea:Risques (FMEA)`,     route: '/fmea',      icon: 'warning', module: 'risk' },
         { label: $localize`:@@nav.documents:Documents`,             route: '/documents', icon: 'description', module: 'docs' },
-        { label: $localize`:@@nav.changements:Changements`,         route: '/changes',   icon: 'change_circle', module: 'change' },
+        { label: $localize`:@@nav.moc:Gestion des changements (MOC)`, route: '/changes', icon: 'change_circle', module: 'change' },
         { label: $localize`:@@nav.ehs:EHS`,                         route: '/ehs',       icon: 'health_and_safety', module: 'ehs' }
       ]
     },
@@ -265,6 +265,13 @@ export class MainShellComponent implements OnInit, OnDestroy {
           label: $localize`:@@nav.admin-circuits:Circuits de validation`,
           route: '/admin/circuits',
           icon: 'alt_route',
+          roles: ADMIN_ROLES
+        },
+        {
+          // Les paramètres de la gestion des changements (ADR 0087) : seuils, poids, validateurs.
+          label: $localize`:@@nav.admin-moc:Paramètres MOC`,
+          route: '/admin/moc',
+          icon: 'rule',
           roles: ADMIN_ROLES
         },
         {

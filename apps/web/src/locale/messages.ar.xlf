@@ -8458,10 +8458,6 @@ Portail clients</source>
         <source>Documents</source>
         <target state="translated">المستندات</target>
       </trans-unit>
-      <trans-unit id="nav.changements" datatype="html">
-        <source>Changements</source>
-        <target state="translated">التغييرات</target>
-      </trans-unit>
       <trans-unit id="nav.ehs" datatype="html">
         <source>EHS</source>
         <target state="translated">البيئة والصحة والسلامة</target>
@@ -16416,6 +16412,710 @@ historique 12 mois</source>
         <source>Analyse du KPI</source>
         <target state="translated">تحليل مؤشر الأداء</target>
       </trans-unit>
+      <trans-unit id="nav.moc" datatype="html">
+        <source>Gestion des changements (MOC)</source>
+        <target state="translated">إدارة التغيير (MOC)</target>
+      </trans-unit>
+      <trans-unit id="nav.admin-moc" datatype="html">
+        <source>Paramètres MOC</source>
+        <target state="translated">إعدادات MOC</target>
+      </trans-unit>
+      <trans-unit id="authz.module.change" datatype="html">
+        <source>Gestion des changements</source>
+        <target state="translated">إدارة التغيير</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.change-request" datatype="html">
+        <source>Demander un changement et conduire ses demandes</source>
+        <target state="translated">طلب تغيير وإدارة طلباته</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.change-analyze" datatype="html">
+        <source>Gérer toutes les demandes de changement</source>
+        <target state="translated">إدارة جميع طلبات التغيير</target>
+      </trans-unit>
+      <trans-unit id="moc.title" datatype="html">
+        <source>Gestion des changements (MOC)</source>
+        <target state="translated">إدارة التغيير (MOC)</target>
+      </trans-unit>
+      <trans-unit id="moc.subtitle" datatype="html">
+        <source>Demande, analyse d'impact, validation</source>
+        <target state="translated">الطلب، تحليل الأثر، الاعتماد</target>
+      </trans-unit>
+      <trans-unit id="moc.settings-link" datatype="html">
+        <source>Paramètres MOC</source>
+        <target state="translated">إعدادات MOC</target>
+      </trans-unit>
+      <trans-unit id="moc.export" datatype="html">
+        <source>Extraire en Excel</source>
+        <target state="translated">تصدير إلى Excel</target>
+      </trans-unit>
+      <trans-unit id="moc.export-failed" datatype="html">
+        <source>L'extraction Excel a échoué.</source>
+        <target state="translated">فشل التصدير إلى Excel.</target>
+      </trans-unit>
+      <trans-unit id="moc.new" datatype="html">
+        <source>Nouvelle demande</source>
+        <target state="translated">طلب جديد</target>
+      </trans-unit>
+      <trans-unit id="moc.list-failed" datatype="html">
+        <source>Les demandes n'ont pas pu être chargées.</source>
+        <target state="translated">تعذّر تحميل الطلبات.</target>
+      </trans-unit>
+      <trans-unit id="moc.list-title" datatype="html">
+        <source>Demandes de changement</source>
+        <target state="translated">طلبات التغيير</target>
+      </trans-unit>
+      <trans-unit id="moc.load-failed" datatype="html">
+        <source>La demande n'a pas pu être chargée.</source>
+        <target state="translated">تعذّر تحميل الطلب.</target>
+      </trans-unit>
+      <trans-unit id="moc.filter-aria" datatype="html">
+        <source>Filtrer par statut</source>
+        <target state="translated">التصفية حسب الحالة</target>
+      </trans-unit>
+      <trans-unit id="moc.filter.all" datatype="html">
+        <source>Tous</source>
+        <target state="translated">الكل</target>
+      </trans-unit>
+      <trans-unit id="moc.filter.mine" datatype="html">
+        <source>À valider par moi</source>
+        <target state="translated">بانتظار اعتمادي</target>
+      </trans-unit>
+      <trans-unit id="moc.awaiting-me" datatype="html">
+        <source>À valider</source>
+        <target state="translated">للاعتماد</target>
+      </trans-unit>
+      <trans-unit id="moc.empty-filter" datatype="html">
+        <source>Aucune demande dans ce statut.</source>
+        <target state="translated">لا يوجد طلب بهذه الحالة.</target>
+      </trans-unit>
+      <trans-unit id="moc.empty" datatype="html">
+        <source>Aucune demande de changement pour l'instant.</source>
+        <target state="translated">لا توجد طلبات تغيير حتى الآن.</target>
+      </trans-unit>
+      <trans-unit id="moc.no-selection" datatype="html">
+        <source>Sélectionnez une demande pour voir sa demande, son analyse d'impact, ses validations et son historique.</source>
+        <target state="translated">اختر طلبًا لعرض تفاصيله وتحليل أثره واعتماداته وسجله.</target>
+      </trans-unit>
+      <trans-unit id="moc.status.draft" datatype="html">
+        <source>Brouillon</source>
+        <target state="translated">مسودة</target>
+      </trans-unit>
+      <trans-unit id="moc.status.in-analysis" datatype="html">
+        <source>En analyse</source>
+        <target state="translated">قيد التحليل</target>
+      </trans-unit>
+      <trans-unit id="moc.status.in-validation" datatype="html">
+        <source>En validation</source>
+        <target state="translated">قيد الاعتماد</target>
+      </trans-unit>
+      <trans-unit id="moc.status.approved" datatype="html">
+        <source>Approuvé</source>
+        <target state="translated">معتمد</target>
+      </trans-unit>
+      <trans-unit id="moc.status.rejected" datatype="html">
+        <source>Rejeté</source>
+        <target state="translated">مرفوض</target>
+      </trans-unit>
+      <trans-unit id="moc.class.not-assessed" datatype="html">
+        <source>Non évalué</source>
+        <target state="translated">غير مقيّم</target>
+      </trans-unit>
+      <trans-unit id="moc.class.minor" datatype="html">
+        <source>Mineur</source>
+        <target state="translated">ثانوي</target>
+      </trans-unit>
+      <trans-unit id="moc.class.major" datatype="html">
+        <source>Majeur</source>
+        <target state="translated">رئيسي</target>
+      </trans-unit>
+      <trans-unit id="moc.class.critical" datatype="html">
+        <source>Critique</source>
+        <target state="translated">حرج</target>
+      </trans-unit>
+      <trans-unit id="moc.level.none" datatype="html">
+        <source>Aucun</source>
+        <target state="translated">لا يوجد</target>
+      </trans-unit>
+      <trans-unit id="moc.level.low" datatype="html">
+        <source>Faible</source>
+        <target state="translated">منخفض</target>
+      </trans-unit>
+      <trans-unit id="moc.level.medium" datatype="html">
+        <source>Moyen</source>
+        <target state="translated">متوسط</target>
+      </trans-unit>
+      <trans-unit id="moc.level.high" datatype="html">
+        <source>Élevé</source>
+        <target state="translated">مرتفع</target>
+      </trans-unit>
+      <trans-unit id="moc.domain.safety" datatype="html">
+        <source>Sécurité</source>
+        <target state="translated">السلامة</target>
+      </trans-unit>
+      <trans-unit id="moc.domain.health-environment" datatype="html">
+        <source>Santé et environnement</source>
+        <target state="translated">الصحة والبيئة</target>
+      </trans-unit>
+      <trans-unit id="moc.domain.quality" datatype="html">
+        <source>Qualité</source>
+        <target state="translated">الجودة</target>
+      </trans-unit>
+      <trans-unit id="moc.domain.production" datatype="html">
+        <source>Production</source>
+        <target state="translated">الإنتاج</target>
+      </trans-unit>
+      <trans-unit id="moc.domain.maintenance" datatype="html">
+        <source>Maintenance</source>
+        <target state="translated">الصيانة</target>
+      </trans-unit>
+      <trans-unit id="moc.domain.costs" datatype="html">
+        <source>Coûts</source>
+        <target state="translated">التكاليف</target>
+      </trans-unit>
+      <trans-unit id="moc.domain.regulatory" datatype="html">
+        <source>Réglementaire</source>
+        <target state="translated">التنظيمي</target>
+      </trans-unit>
+      <trans-unit id="moc.domain.training" datatype="html">
+        <source>Formation</source>
+        <target state="translated">التدريب</target>
+      </trans-unit>
+      <trans-unit id="moc.type.permanent" datatype="html">
+        <source>Permanent</source>
+        <target state="translated">دائم</target>
+      </trans-unit>
+      <trans-unit id="moc.type.temporary" datatype="html">
+        <source>Temporaire</source>
+        <target state="translated">مؤقت</target>
+      </trans-unit>
+      <trans-unit id="moc.decision.pending" datatype="html">
+        <source>En attente</source>
+        <target state="translated">قيد الانتظار</target>
+      </trans-unit>
+      <trans-unit id="moc.decision.approved" datatype="html">
+        <source>Approuvé</source>
+        <target state="translated">معتمد</target>
+      </trans-unit>
+      <trans-unit id="moc.decision.rejected" datatype="html">
+        <source>Rejeté</source>
+        <target state="translated">مرفوض</target>
+      </trans-unit>
+      <trans-unit id="moc.send-to-analysis" datatype="html">
+        <source>Envoyer en analyse</source>
+        <target state="translated">إرسال للتحليل</target>
+      </trans-unit>
+      <trans-unit id="moc.submit" datatype="html">
+        <source>Soumettre à validation</source>
+        <target state="translated">إرسال للاعتماد</target>
+      </trans-unit>
+      <trans-unit id="moc.reopen" datatype="html">
+        <source>Rouvrir l'analyse</source>
+        <target state="translated">إعادة فتح التحليل</target>
+      </trans-unit>
+      <trans-unit id="moc.submit-blocked" datatype="html">
+        <source>Soumission bloquée : <x id="COUNT"/> domaine(s) d'impact sur 8 restent à évaluer.</source>
+        <target state="translated">الإرسال محظور: لا يزال <x id="COUNT"/> من 8 مجالات أثر بحاجة إلى تقييم.</target>
+      </trans-unit>
+      <trans-unit id="moc.progress-aria" datatype="html">
+        <source>Avancement de la demande</source>
+        <target state="translated">تقدّم الطلب</target>
+      </trans-unit>
+      <trans-unit id="moc.tab.request" datatype="html">
+        <source>Demande</source>
+        <target state="translated">الطلب</target>
+      </trans-unit>
+      <trans-unit id="moc.tab.impact" datatype="html">
+        <source>Analyse d'impact</source>
+        <target state="translated">تحليل الأثر</target>
+      </trans-unit>
+      <trans-unit id="moc.tab.validation" datatype="html">
+        <source>Validation</source>
+        <target state="translated">الاعتماد</target>
+      </trans-unit>
+      <trans-unit id="moc.tab.history" datatype="html">
+        <source>Historique</source>
+        <target state="translated">السجل</target>
+      </trans-unit>
+      <trans-unit id="moc.field.type" datatype="html">
+        <source>Type</source>
+        <target state="translated">النوع</target>
+      </trans-unit>
+      <trans-unit id="moc.field.site" datatype="html">
+        <source>Site / unité</source>
+        <target state="translated">الموقع / الوحدة</target>
+      </trans-unit>
+      <trans-unit id="moc.field.requester" datatype="html">
+        <source>Demandeur · date</source>
+        <target state="translated">مقدّم الطلب · التاريخ</target>
+      </trans-unit>
+      <trans-unit id="moc.field.planned" datatype="html">
+        <source>Mise en œuvre prévue</source>
+        <target state="translated">التنفيذ المخطط</target>
+      </trans-unit>
+      <trans-unit id="moc.field.description" datatype="html">
+        <source>Description</source>
+        <target state="translated">الوصف</target>
+      </trans-unit>
+      <trans-unit id="moc.field.justification" datatype="html">
+        <source>Justification</source>
+        <target state="translated">المبرر</target>
+      </trans-unit>
+      <trans-unit id="moc.sent-to-analysis" datatype="html">
+        <source>Demande envoyée en analyse.</source>
+        <target state="translated">تم إرسال الطلب للتحليل.</target>
+      </trans-unit>
+      <trans-unit id="moc.submitted" datatype="html">
+        <source>Demande soumise à validation : les validateurs sont prévenus.</source>
+        <target state="translated">تم إرسال الطلب للاعتماد: تم إبلاغ المعتمِدين.</target>
+      </trans-unit>
+      <trans-unit id="moc.reopened" datatype="html">
+        <source>L'analyse est rouverte.</source>
+        <target state="translated">أُعيد فتح التحليل.</target>
+      </trans-unit>
+      <trans-unit id="moc.delete-title" datatype="html">
+        <source>Supprimer la demande <x id="code"/> ?</source>
+        <target state="translated">حذف الطلب <x id="code"/>؟</target>
+      </trans-unit>
+      <trans-unit id="moc.delete-message" datatype="html">
+        <source>Le brouillon et son historique seront supprimés. Cette action est définitive.</source>
+        <target state="translated">ستُحذف المسودة وسجلها. هذا الإجراء نهائي.</target>
+      </trans-unit>
+      <trans-unit id="moc.deleted" datatype="html">
+        <source>Demande supprimée.</source>
+        <target state="translated">تم حذف الطلب.</target>
+      </trans-unit>
+      <trans-unit id="moc.action-failed" datatype="html">
+        <source>L'action sur la demande a échoué.</source>
+        <target state="translated">فشل الإجراء على الطلب.</target>
+      </trans-unit>
+      <trans-unit id="moc.history.with-actor" datatype="html">
+        <source><x id="event"/> par <x id="actor"/></source>
+        <target state="translated"><x id="event"/> بواسطة <x id="actor"/></target>
+      </trans-unit>
+      <trans-unit id="moc.history.created" datatype="html">
+        <source>Demande créée</source>
+        <target state="translated">تم إنشاء الطلب</target>
+      </trans-unit>
+      <trans-unit id="moc.history.updated" datatype="html">
+        <source>Demande modifiée</source>
+        <target state="translated">تم تعديل الطلب</target>
+      </trans-unit>
+      <trans-unit id="moc.history.sent-to-analysis" datatype="html">
+        <source>Envoyée en analyse</source>
+        <target state="translated">أُرسل للتحليل</target>
+      </trans-unit>
+      <trans-unit id="moc.history.analysis-completed" datatype="html">
+        <source>Analyse d'impact terminée</source>
+        <target state="translated">اكتمل تحليل الأثر</target>
+      </trans-unit>
+      <trans-unit id="moc.history.submitted" datatype="html">
+        <source>Soumise à validation</source>
+        <target state="translated">أُرسل للاعتماد</target>
+      </trans-unit>
+      <trans-unit id="moc.history.validation-approved" datatype="html">
+        <source>Validation accordée</source>
+        <target state="translated">تم منح الاعتماد</target>
+      </trans-unit>
+      <trans-unit id="moc.history.validation-rejected" datatype="html">
+        <source>Validation refusée</source>
+        <target state="translated">تم رفض الاعتماد</target>
+      </trans-unit>
+      <trans-unit id="moc.history.approved" datatype="html">
+        <source>Demande approuvée</source>
+        <target state="translated">تم اعتماد الطلب</target>
+      </trans-unit>
+      <trans-unit id="moc.history.rejected" datatype="html">
+        <source>Demande rejetée</source>
+        <target state="translated">تم رفض الطلب</target>
+      </trans-unit>
+      <trans-unit id="moc.history.reopened" datatype="html">
+        <source>Analyse rouverte</source>
+        <target state="translated">أُعيد فتح التحليل</target>
+      </trans-unit>
+      <trans-unit id="moc.history.reminder-sent" datatype="html">
+        <source>Rappel envoyé aux validateurs</source>
+        <target state="translated">تم إرسال تذكير إلى المعتمِدين</target>
+      </trans-unit>
+      <trans-unit id="moc.history.legacy-status" datatype="html">
+        <source>Statut antérieur au MOC</source>
+        <target state="translated">الحالة السابقة لـ MOC</target>
+      </trans-unit>
+      <trans-unit id="moc.history.legacy-decision" datatype="html">
+        <source>Décision antérieure au MOC</source>
+        <target state="translated">قرار سابق لـ MOC</target>
+      </trans-unit>
+      <trans-unit id="moc.history.legacy-impact" datatype="html">
+        <source>Objet lié avant le MOC</source>
+        <target state="translated">عنصر مرتبط قبل MOC</target>
+      </trans-unit>
+      <trans-unit id="moc.history.empty" datatype="html">
+        <source>Aucun événement.</source>
+        <target state="translated">لا توجد أحداث.</target>
+      </trans-unit>
+      <trans-unit id="moc.impact.title" datatype="html">
+        <source>Classification du changement</source>
+        <target state="translated">تصنيف التغيير</target>
+      </trans-unit>
+      <trans-unit id="moc.impact.score-aria" datatype="html">
+        <source>Score d'impact</source>
+        <target state="translated">درجة الأثر</target>
+      </trans-unit>
+      <trans-unit id="moc.impact.incomplete" datatype="html">
+        <source><x id="DONE"/> domaine(s) évalué(s) sur 8. La classification reste « Non évalué » et la soumission à validation est bloquée tant que les huit domaines ne sont pas évalués.</source>
+        <target state="translated">تم تقييم <x id="DONE"/> من 8 مجالات. يبقى التصنيف «غير مقيّم» ويبقى الإرسال للاعتماد محظورًا حتى تقييم المجالات الثمانية.</target>
+      </trans-unit>
+      <trans-unit id="moc.impact.draft" datatype="html">
+        <source>L'analyse d'impact s'ouvre quand la demande est envoyée en analyse.</source>
+        <target state="translated">يُفتح تحليل الأثر عند إرسال الطلب للتحليل.</target>
+      </trans-unit>
+      <trans-unit id="moc.impact.frozen" datatype="html">
+        <source>Analyse figée à la soumission à validation.</source>
+        <target state="translated">تم تجميد التحليل عند الإرسال للاعتماد.</target>
+      </trans-unit>
+      <trans-unit id="moc.impact.weight-tooltip" datatype="html">
+        <source>Poids de ce domaine dans le score, réglé par l'administrateur</source>
+        <target state="translated">وزن هذا المجال في الدرجة، يحدده المسؤول</target>
+      </trans-unit>
+      <trans-unit id="moc.impact.notes" datatype="html">
+        <source>Nature de l'impact et mesures de maîtrise</source>
+        <target state="translated">طبيعة الأثر وتدابير التحكم</target>
+      </trans-unit>
+      <trans-unit id="moc.impact-failed" datatype="html">
+        <source>L'évaluation n'a pas été enregistrée.</source>
+        <target state="translated">لم يتم حفظ التقييم.</target>
+      </trans-unit>
+      <trans-unit id="moc.validation.summary" datatype="html">
+        <source>Changement <x id="classe"/> : <x id="count"/> validation(s) requise(s). Un seul refus rejette la demande.</source>
+        <target state="translated">تغيير <x id="classe"/>: <x id="count"/> اعتماد(ات) مطلوبة. رفض واحد يكفي لرفض الطلب.</target>
+      </trans-unit>
+      <trans-unit id="moc.validation.not-assessed" datatype="html">
+        <source>Les validateurs requis seront connus une fois les huit domaines d'impact évalués.</source>
+        <target state="translated">سيُعرف المعتمِدون المطلوبون بعد تقييم مجالات الأثر الثمانية.</target>
+      </trans-unit>
+      <trans-unit id="moc.validation.legacy" datatype="html">
+        <source>Demande antérieure au MOC : ses décisions sont consignées dans l'historique.</source>
+        <target state="translated">طلب سابق لـ MOC: قراراته مسجّلة في السجل.</target>
+      </trans-unit>
+      <trans-unit id="moc.validation.preview" datatype="html">
+        <source>Aperçu : la liste des validateurs sera figée à la soumission à validation.</source>
+        <target state="translated">معاينة: ستُثبَّت قائمة المعتمِدين عند الإرسال للاعتماد.</target>
+      </trans-unit>
+      <trans-unit id="moc.validation.approved-by" datatype="html">
+        <source>Approuvé par <x id="NAME"/></source>
+        <target state="translated">اعتمده <x id="NAME"/></target>
+      </trans-unit>
+      <trans-unit id="moc.validation.rejected-by" datatype="html">
+        <source>Rejeté par <x id="NAME"/></source>
+        <target state="translated">رفضه <x id="NAME"/></target>
+      </trans-unit>
+      <trans-unit id="moc.validation.holders" datatype="html">
+        <source>Titulaires : <x id="NAMES"/></source>
+        <target state="translated">أصحاب الدور: <x id="NAMES"/></target>
+      </trans-unit>
+      <trans-unit id="moc.validation.waiting-for" datatype="html">
+        <source>En attente de : <x id="NAMES"/></source>
+        <target state="translated">بانتظار: <x id="NAMES"/></target>
+      </trans-unit>
+      <trans-unit id="moc.validation.no-holder" datatype="html">
+        <source>Aucun titulaire : l'administrateur doit en nommer un dans les paramètres MOC.</source>
+        <target state="translated">لا يوجد صاحب دور: يجب على المسؤول تعيين واحد في إعدادات MOC.</target>
+      </trans-unit>
+      <trans-unit id="moc.validation.self" datatype="html">
+        <source>Vous êtes le demandeur : vous ne pouvez pas valider votre propre demande.</source>
+        <target state="translated">أنت مقدّم الطلب: لا يمكنك اعتماد طلبك.</target>
+      </trans-unit>
+      <trans-unit id="moc.validation.comment" datatype="html">
+        <source>Commentaire (obligatoire en cas de refus)</source>
+        <target state="translated">تعليق (إلزامي في حالة الرفض)</target>
+      </trans-unit>
+      <trans-unit id="moc.validation.approve" datatype="html">
+        <source>Approuver</source>
+        <target state="translated">اعتماد</target>
+      </trans-unit>
+      <trans-unit id="moc.validation.reject" datatype="html">
+        <source>Rejeter</source>
+        <target state="translated">رفض</target>
+      </trans-unit>
+      <trans-unit id="moc.validation.reject-hint" datatype="html">
+        <source>Un refus doit être motivé par un commentaire</source>
+        <target state="translated">يجب تعليل الرفض بتعليق</target>
+      </trans-unit>
+      <trans-unit id="moc.validation.approved" datatype="html">
+        <source>Validation enregistrée.</source>
+        <target state="translated">تم تسجيل الاعتماد.</target>
+      </trans-unit>
+      <trans-unit id="moc.validation.rejected" datatype="html">
+        <source>Refus enregistré : la demande est rejetée.</source>
+        <target state="translated">تم تسجيل الرفض: رُفض الطلب.</target>
+      </trans-unit>
+      <trans-unit id="moc.validation.failed" datatype="html">
+        <source>La décision n'a pas été enregistrée.</source>
+        <target state="translated">لم يتم حفظ القرار.</target>
+      </trans-unit>
+      <trans-unit id="moc.dialog.new-title" datatype="html">
+        <source>Nouvelle demande de changement</source>
+        <target state="translated">طلب تغيير جديد</target>
+      </trans-unit>
+      <trans-unit id="moc.dialog.edit-title" datatype="html">
+        <source>Modifier la demande <x id="code"/></source>
+        <target state="translated">تعديل الطلب <x id="code"/></target>
+      </trans-unit>
+      <trans-unit id="moc.dialog.title-label" datatype="html">
+        <source>Titre</source>
+        <target state="translated">العنوان</target>
+      </trans-unit>
+      <trans-unit id="moc.dialog.title-required" datatype="html">
+        <source>Donnez un titre à la demande.</source>
+        <target state="translated">أدخل عنوانًا للطلب.</target>
+      </trans-unit>
+      <trans-unit id="moc.dialog.planned-hint" datatype="html">
+        <source>Facultatif : l'échéance apparaît au tableau de bord SMI.</source>
+        <target state="translated">اختياري: يظهر الموعد في لوحة نظام الإدارة المتكامل.</target>
+      </trans-unit>
+      <trans-unit id="moc.dialog.create" datatype="html">
+        <source>Créer la demande</source>
+        <target state="translated">إنشاء الطلب</target>
+      </trans-unit>
+      <trans-unit id="moc.dialog.created" datatype="html">
+        <source>Demande <x id="code"/> créée.</source>
+        <target state="translated">تم إنشاء الطلب <x id="code"/>.</target>
+      </trans-unit>
+      <trans-unit id="moc.dialog.updated" datatype="html">
+        <source>Demande modifiée.</source>
+        <target state="translated">تم تعديل الطلب.</target>
+      </trans-unit>
+      <trans-unit id="moc.dialog.failed" datatype="html">
+        <source>La demande n'a pas été enregistrée.</source>
+        <target state="translated">لم يتم حفظ الطلب.</target>
+      </trans-unit>
+      <trans-unit id="moc.error.analysis-incomplete" datatype="html">
+        <source>Évaluez les huit domaines d'impact avant de soumettre à validation.</source>
+        <target state="translated">قيّم مجالات الأثر الثمانية قبل الإرسال للاعتماد.</target>
+      </trans-unit>
+      <trans-unit id="moc.error.role-without-holder" datatype="html">
+        <source>Le rôle « <x id="role"/> » n'a aucun titulaire : demandez à l'administrateur d'en nommer un.</source>
+        <target state="translated">الدور «<x id="role"/>» بلا صاحب: اطلب من المسؤول تعيين واحد.</target>
+      </trans-unit>
+      <trans-unit id="moc.error.role-only-requester" datatype="html">
+        <source>Le rôle « <x id="role"/> » n'a pour titulaire que le demandeur, qui ne peut pas valider sa propre demande.</source>
+        <target state="translated">صاحب الدور «<x id="role"/>» الوحيد هو مقدّم الطلب، ولا يمكنه اعتماد طلبه.</target>
+      </trans-unit>
+      <trans-unit id="moc.error.not-holder" datatype="html">
+        <source>Seul un titulaire du rôle « <x id="role"/> » peut statuer sur cette carte.</source>
+        <target state="translated">لا يمكن البتّ في هذه البطاقة إلا لصاحب الدور «<x id="role"/>».</target>
+      </trans-unit>
+      <trans-unit id="moc.error.not-owner" datatype="html">
+        <source>Seul le demandeur ou un gestionnaire des changements peut conduire cette demande.</source>
+        <target state="translated">لا يمكن إدارة هذا الطلب إلا لمقدّمه أو لمدير التغييرات.</target>
+      </trans-unit>
+      <trans-unit id="moc.error.self-validation" datatype="html">
+        <source>Vous êtes le demandeur : vous ne pouvez pas valider votre propre demande.</source>
+        <target state="translated">أنت مقدّم الطلب: لا يمكنك اعتماد طلبك.</target>
+      </trans-unit>
+      <trans-unit id="moc.error.comment-required" datatype="html">
+        <source>Un refus doit être motivé par un commentaire.</source>
+        <target state="translated">يجب تعليل الرفض بتعليق.</target>
+      </trans-unit>
+      <trans-unit id="moc.error.already-decided" datatype="html">
+        <source>Ce rôle a déjà statué.</source>
+        <target state="translated">لقد بتّ هذا الدور بالفعل.</target>
+      </trans-unit>
+      <trans-unit id="moc.error.delete-not-draft" datatype="html">
+        <source>Seule une demande en brouillon peut être supprimée.</source>
+        <target state="translated">لا يمكن حذف إلا الطلب الذي في حالة مسودة.</target>
+      </trans-unit>
+      <trans-unit id="moc.error.role-in-use" datatype="html">
+        <source>Le rôle « <x id="role"/> » est attendu par une demande en validation : il ne peut pas être retiré.</source>
+        <target state="translated">الدور «<x id="role"/>» منتظَر في طلب قيد الاعتماد: لا يمكن حذفه.</target>
+      </trans-unit>
+      <trans-unit id="moc.error.role-in-use-holders" datatype="html">
+        <source>Le rôle « <x id="role"/> » est attendu par une demande en validation : il doit garder au moins un titulaire.</source>
+        <target state="translated">الدور «<x id="role"/>» منتظَر في طلب قيد الاعتماد: يجب أن يحتفظ بصاحب واحد على الأقل.</target>
+      </trans-unit>
+      <trans-unit id="moc.error.role-duplicate" datatype="html">
+        <source>Deux rôles portent le même libellé « <x id="role"/> ».</source>
+        <target state="translated">دوران يحملان الاسم نفسه «<x id="role"/>».</target>
+      </trans-unit>
+      <trans-unit id="moc.error.required-empty" datatype="html">
+        <source>Chaque classification doit exiger au moins un rôle de validation.</source>
+        <target state="translated">يجب أن يتطلب كل تصنيف دور اعتماد واحدًا على الأقل.</target>
+      </trans-unit>
+      <trans-unit id="moc.error.thresholds" datatype="html">
+        <source>Les seuils doivent respecter 0 &lt; seuil majeur &lt; seuil critique ≤ 100.</source>
+        <target state="translated">يجب أن تحقق العتبات 0 &lt; عتبة رئيسي &lt; عتبة حرج ≤ 100.</target>
+      </trans-unit>
+      <trans-unit id="moc.error.weights-zero" datatype="html">
+        <source>Au moins un domaine doit avoir un poids supérieur à 0.</source>
+        <target state="translated">يجب أن يكون لمجال واحد على الأقل وزن أكبر من 0.</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.title" datatype="html">
+        <source>Paramètres MOC</source>
+        <target state="translated">إعدادات MOC</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.subtitle" datatype="html">
+        <source>Classification, poids des domaines, rappel et validateurs de la gestion des changements.</source>
+        <target state="translated">التصنيف وأوزان المجالات والتذكير والمعتمِدون في إدارة التغيير.</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.back" datatype="html">
+        <source>Gestion des changements</source>
+        <target state="translated">إدارة التغيير</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.load-failed" datatype="html">
+        <source>Les paramètres MOC n'ont pas pu être chargés.</source>
+        <target state="translated">تعذّر تحميل إعدادات MOC.</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.scope" datatype="html">
+        <source>Un enregistrement reclasse aussitôt les demandes en brouillon ou en analyse. Les demandes déjà en validation, approuvées ou rejetées gardent leur score, leur classification et leurs validateurs, figés à la soumission.</source>
+        <target state="translated">يعيد الحفظ تصنيف الطلبات المسودة أو قيد التحليل فورًا. أما الطلبات قيد الاعتماد أو المعتمدة أو المرفوضة فتحتفظ بالدرجة والتصنيف والمعتمِدين المثبّتين عند الإرسال.</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.thresholds" datatype="html">
+        <source>Seuils de classification</source>
+        <target state="translated">عتبات التصنيف</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.thresholds-help" datatype="html">
+        <source>Le score d'impact va de 0 à 100. Il classe la demande, et la classe désigne les validateurs requis.</source>
+        <target state="translated">تتراوح درجة الأثر من 0 إلى 100. وهي تصنّف الطلب، والتصنيف يحدد المعتمِدين المطلوبين.</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.major" datatype="html">
+        <source>Seuil majeur</source>
+        <target state="translated">عتبة رئيسي</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.critical" datatype="html">
+        <source>Seuil critique</source>
+        <target state="translated">عتبة حرج</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.threshold-summary" datatype="html">
+        <source>Mineur &lt; <x id="major"/> ≤ Majeur &lt; <x id="critical"/> ≤ Critique</source>
+        <target state="translated">ثانوي &lt; <x id="major"/> ≤ رئيسي &lt; <x id="critical"/> ≤ حرج</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.reminder" datatype="html">
+        <source>Rappel aux validateurs</source>
+        <target state="translated">تذكير المعتمِدين</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.reminder-help" datatype="html">
+        <source>Sans décision dans ce délai, les titulaires du rôle reçoivent un rappel, répété au même rythme tant que personne n'a statué.</source>
+        <target state="translated">في غياب قرار خلال هذه المدة، يتلقى أصحاب الدور تذكيرًا يتكرر بالوتيرة نفسها حتى يبتّ أحدهم.</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.reminder-days" datatype="html">
+        <source>Délai (jours)</source>
+        <target state="translated">المهلة (أيام)</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.weights" datatype="html">
+        <source>Poids des domaines d'impact</source>
+        <target state="translated">أوزان مجالات الأثر</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.weights-help" datatype="html">
+        <source>De 0 à 10. Un domaine de poids 0 reste à évaluer mais ne compte pas dans le score. À 1 partout, le score est la moyenne simple.</source>
+        <target state="translated">من 0 إلى 10. المجال ذو الوزن 0 يبقى واجب التقييم لكنه لا يُحتسب في الدرجة. عند الوزن 1 للجميع، تكون الدرجة متوسطًا بسيطًا.</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.roles" datatype="html">
+        <source>Rôles de validation</source>
+        <target state="translated">أدوار الاعتماد</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.roles-help" datatype="html">
+        <source>Pour chaque rôle : les classifications qui l'exigent et ses titulaires (principal en premier, puis suppléants). N'importe lequel d'entre eux peut statuer ; jamais le demandeur.</source>
+        <target state="translated">لكل دور: التصنيفات التي تتطلبه وأصحابه (الأساسي أولًا ثم النواب). يمكن لأي منهم البتّ؛ وليس مقدّم الطلب أبدًا.</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.add-role" datatype="html">
+        <source>Ajouter un rôle</source>
+        <target state="translated">إضافة دور</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.directory-failed" datatype="html">
+        <source>L'annuaire n'a pas répondu : les titulaires ne peuvent pas être modifiés pour l'instant.</source>
+        <target state="translated">لم يستجب الدليل: لا يمكن تعديل أصحاب الأدوار حاليًا.</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.role-label" datatype="html">
+        <source>Libellé du rôle</source>
+        <target state="translated">اسم الدور</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.up" datatype="html">
+        <source>Monter le rôle</source>
+        <target state="translated">نقل الدور لأعلى</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.down" datatype="html">
+        <source>Descendre le rôle</source>
+        <target state="translated">نقل الدور لأسفل</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.remove-role" datatype="html">
+        <source>Retirer le rôle</source>
+        <target state="translated">إزالة الدور</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.required-for" datatype="html">
+        <source>Requis pour</source>
+        <target state="translated">مطلوب لـ</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.holders" datatype="html">
+        <source>Titulaires</source>
+        <target state="translated">أصحاب الدور</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.primary" datatype="html">
+        <source>Principal ·</source>
+        <target state="translated">أساسي ·</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.inactive" datatype="html">
+        <source>(désactivé)</source>
+        <target state="translated">(معطّل)</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.unknown" datatype="html">
+        <source>(absent de l'annuaire)</source>
+        <target state="translated">(غير موجود في الدليل)</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.remove-holder" datatype="html">
+        <source>Retirer <x id="member"/></source>
+        <target state="translated">إزالة <x id="member"/></target>
+      </trans-unit>
+      <trans-unit id="moc.settings.no-holder" datatype="html">
+        <source>Aucun titulaire : une demande qui exige ce rôle ne pourra pas être soumise à validation.</source>
+        <target state="translated">لا يوجد صاحب دور: لا يمكن إرسال طلب يتطلب هذا الدور للاعتماد.</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.add-holder" datatype="html">
+        <source>Ajouter un titulaire (annuaire)</source>
+        <target state="translated">إضافة صاحب دور (الدليل)</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.pending" datatype="html">
+        <source>Paramètres modifiés</source>
+        <target state="translated">تم تعديل الإعدادات</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.saved" datatype="html">
+        <source>Paramètres MOC enregistrés. Les demandes en brouillon ou en analyse sont reclassées.</source>
+        <target state="translated">تم حفظ إعدادات MOC. أُعيد تصنيف الطلبات المسودة أو قيد التحليل.</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.failed" datatype="html">
+        <source>Les paramètres MOC n'ont pas pu être enregistrés.</source>
+        <target state="translated">تعذّر حفظ إعدادات MOC.</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.problem.thresholds" datatype="html">
+        <source>Les seuils doivent respecter 0 &lt; seuil majeur &lt; seuil critique ≤ 100.</source>
+        <target state="translated">يجب أن تحقق العتبات 0 &lt; عتبة رئيسي &lt; عتبة حرج ≤ 100.</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.problem.reminder" datatype="html">
+        <source>Le délai de rappel est un nombre de jours de 1 à 30.</source>
+        <target state="translated">مهلة التذكير عدد أيام من 1 إلى 30.</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.problem.weights" datatype="html">
+        <source>Chaque poids est un entier de 0 à 10.</source>
+        <target state="translated">كل وزن عدد صحيح من 0 إلى 10.</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.problem.weights-zero" datatype="html">
+        <source>Au moins un domaine doit avoir un poids supérieur à 0.</source>
+        <target state="translated">يجب أن يكون لمجال واحد على الأقل وزن أكبر من 0.</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.problem.no-role" datatype="html">
+        <source>Il faut au moins un rôle de validation.</source>
+        <target state="translated">يلزم دور اعتماد واحد على الأقل.</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.problem.label" datatype="html">
+        <source>Chaque rôle porte un libellé de 1 à 100 caractères.</source>
+        <target state="translated">لكل دور اسم من 1 إلى 100 حرف.</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.problem.duplicate" datatype="html">
+        <source>Deux rôles portent le même libellé.</source>
+        <target state="translated">دوران يحملان الاسم نفسه.</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.problem.required" datatype="html">
+        <source>La classification « <x id="classe"/> » n'exige aucun rôle.</source>
+        <target state="translated">التصنيف «<x id="classe"/>» لا يتطلب أي دور.</target>
+      </trans-unit>
       <trans-unit id="nav.non-conformite" datatype="html">
         <source>Non-conformité</source>
         <target state="translated">عدم المطابقة</target>
@@ -19359,442 +20059,6 @@ historique 12 mois</source>
       <trans-unit id="capa.impact-subtitle" datatype="html">
         <source>Ce que la clôture de ce dossier a proposé de réviser.</source>
         <target state="translated">ما اقترحه إغلاق هذا الملف من مراجعات.</target>
-      </trans-unit>
-      <trans-unit id="changes.approver.added" datatype="html">
-        <source>Approbateur ajouté.</source>
-        <target state="translated">تمت إضافة المعتمِد.</target>
-      </trans-unit>
-      <trans-unit id="changes.approver.hint" datatype="html">
-        <source>Le workflow d'approbation passe en APPROVED quand tous les approbateurs ont
-     statué favorablement. Un seul REJECT marque la demande comme REJECTED.</source>
-        <target state="translated">ينتقل سير عمل الاعتماد إلى APPROVED عندما يبتّ جميع المعتمِدين
-     بالموافقة. ويكفي رفض واحد REJECT لوسم الطلب بـ REJECTED.</target>
-      </trans-unit>
-      <trans-unit id="changes.approver.level-label" datatype="html">
-        <source>Niveau d'approbation</source>
-        <target state="translated">مستوى الاعتماد</target>
-      </trans-unit>
-      <trans-unit id="changes.approver.title" datatype="html">
-        <source>Ajouter un approbateur</source>
-        <target state="translated">إضافة معتمِد</target>
-      </trans-unit>
-      <trans-unit id="changes.approver.uuid-hint" datatype="html">
-        <source>UUID v4 de l'utilisateur Keycloak</source>
-        <target state="translated">معرّف UUID v4 لمستخدم Keycloak</target>
-      </trans-unit>
-      <trans-unit id="changes.approver.uuid-label" datatype="html">
-        <source>UUID approbateur</source>
-        <target state="translated">معرّف UUID للمعتمِد</target>
-      </trans-unit>
-      <trans-unit id="changes.create.code-label" datatype="html">
-        <source>Code</source>
-        <target state="translated">الرمز</target>
-      </trans-unit>
-      <trans-unit id="changes.create.code-placeholder" datatype="html">
-        <source>Ex. : CHG-2026-014</source>
-        <target state="translated">مثال: CHG-2026-014</target>
-      </trans-unit>
-      <trans-unit id="changes.create.created" datatype="html">
-        <source>Demande créée.</source>
-        <target state="translated">تم إنشاء الطلب.</target>
-      </trans-unit>
-      <trans-unit id="changes.create.impact-summary-label" datatype="html">
-        <source>Synthèse d'impact</source>
-        <target state="translated">ملخص الأثر</target>
-      </trans-unit>
-      <trans-unit id="changes.create.planned-for-label" datatype="html">
-        <source>Date prévue</source>
-        <target state="translated">التاريخ المقرر</target>
-      </trans-unit>
-      <trans-unit id="changes.create.priority-label" datatype="html">
-        <source>Priorité</source>
-        <target state="translated">الأولوية</target>
-      </trans-unit>
-      <trans-unit id="changes.create.risk-label" datatype="html">
-        <source>Analyse de risque</source>
-        <target state="translated">تحليل المخاطر</target>
-      </trans-unit>
-      <trans-unit id="changes.create.save-error" datatype="html">
-        <source>Erreur lors de l'enregistrement.</source>
-        <target state="translated">حدث خطأ أثناء الحفظ.</target>
-      </trans-unit>
-      <trans-unit id="changes.create.updated" datatype="html">
-        <source>Demande mise à jour.</source>
-        <target state="translated">تم تحديث الطلب.</target>
-      </trans-unit>
-      <trans-unit id="changes.decision.approve-hint" datatype="html">
-        <source>Votre approbation sera enregistrée. La demande passera en APPROVED lorsque tous les approbateurs auront statué.</source>
-        <target state="translated">سيُسجَّل اعتمادك. وسينتقل الطلب إلى APPROVED عندما يبتّ جميع المعتمِدين.</target>
-      </trans-unit>
-      <trans-unit id="changes.decision.comment-label" datatype="html">
-        <source>Commentaire</source>
-        <target state="translated">تعليق</target>
-      </trans-unit>
-      <trans-unit id="changes.decision.failed" datatype="html">
-        <source>Décision impossible.</source>
-        <target state="translated">تعذّر اتخاذ القرار.</target>
-      </trans-unit>
-      <trans-unit id="changes.decision.recorded-approved" datatype="html">
-        <source>Décision enregistrée : approuvée.</source>
-        <target state="translated">تم تسجيل القرار: مُعتمَد.</target>
-      </trans-unit>
-      <trans-unit id="changes.decision.recorded-rejected" datatype="html">
-        <source>Décision enregistrée : rejetée.</source>
-        <target state="translated">تم تسجيل القرار: مرفوض.</target>
-      </trans-unit>
-      <trans-unit id="changes.decision.reject-hint" datatype="html">
-        <source>Un seul rejet marque la demande comme REJECTED — décision terminale.</source>
-        <target state="translated">يكفي رفض واحد لوسم الطلب بـ REJECTED — قرار نهائي.</target>
-      </trans-unit>
-      <trans-unit id="changes.decision.title-approve" datatype="html">
-        <source>Approuver la demande</source>
-        <target state="translated">اعتماد الطلب</target>
-      </trans-unit>
-      <trans-unit id="changes.decision.title-reject" datatype="html">
-        <source>Rejeter la demande</source>
-        <target state="translated">رفض الطلب</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.add-impact" datatype="html">
-        <source>Ajouter un impact</source>
-        <target state="translated">إضافة أثر</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.approvals-title" datatype="html">
-        <source>Approbations</source>
-        <target state="translated">الاعتمادات</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.approve" datatype="html">
-        <source>Approuver</source>
-        <target state="translated">اعتماد</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.back" datatype="html">
-        <source>Changements</source>
-        <target state="translated">التغييرات</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.cancel-confirm-label" datatype="html">
-        <source>Annuler la demande</source>
-        <target state="translated">إلغاء الطلب</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.cancel-confirm-title" datatype="html">
-        <source>Annuler la demande ?</source>
-        <target state="translated">إلغاء الطلب؟</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.cancel-failed" datatype="html">
-        <source>Annulation impossible.</source>
-        <target state="translated">تعذّر الإلغاء.</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.cancelled" datatype="html">
-        <source>Demande annulée.</source>
-        <target state="translated">تم إلغاء الطلب.</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.col-added" datatype="html">
-        <source>Ajouté</source>
-        <target state="translated">مُضاف</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.col-approver" datatype="html">
-        <source>Approbateur</source>
-        <target state="translated">المعتمِد</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.col-comment" datatype="html">
-        <source>Commentaire</source>
-        <target state="translated">تعليق</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.col-decided-at" datatype="html">
-        <source>Décidé le</source>
-        <target state="translated">تاريخ القرار</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.col-decision" datatype="html">
-        <source>Décision</source>
-        <target state="translated">القرار</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.col-level" datatype="html">
-        <source>Niveau</source>
-        <target state="translated">المستوى</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.col-notes" datatype="html">
-        <source>Notes</source>
-        <target state="translated">ملاحظات</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.col-target-uuid" datatype="html">
-        <source>UUID cible</source>
-        <target state="translated">معرّف UUID للهدف</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.delete-confirm-title" datatype="html">
-        <source>Supprimer la demande ?</source>
-        <target state="translated">حذف الطلب؟</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.deleted" datatype="html">
-        <source>Demande supprimée.</source>
-        <target state="translated">تم حذف الطلب.</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.impact-summary-title" datatype="html">
-        <source>Synthèse impact</source>
-        <target state="translated">ملخص الأثر</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.impacts-title" datatype="html">
-        <source>Impacts</source>
-        <target state="translated">الآثار</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.implement" datatype="html">
-        <source>Implémenter</source>
-        <target state="translated">تنفيذ</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.implemented-label" datatype="html">
-        <source>Implémenté :</source>
-        <target state="translated">تم التنفيذ:</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.keep" datatype="html">
-        <source>Conserver</source>
-        <target state="translated">الاحتفاظ</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.no-approvers" datatype="html">
-        <source>Aucun approbateur défini.</source>
-        <target state="translated">لم يُحدَّد أي معتمِد.</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.no-impact-summary" datatype="html">
-        <source>Aucune synthèse renseignée.</source>
-        <target state="translated">لم يُدخَل أي ملخص.</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.no-impacts" datatype="html">
-        <source>Aucun impact référencé.</source>
-        <target state="translated">لم يُسجَّل أي أثر.</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.no-risk" datatype="html">
-        <source>Aucune analyse renseignée.</source>
-        <target state="translated">لم يُدخَل أي تحليل.</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.planned-label" datatype="html">
-        <source>Prévu :</source>
-        <target state="translated">مقرر:</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.reject" datatype="html">
-        <source>Rejeter</source>
-        <target state="translated">رفض</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.rejection-label" datatype="html">
-        <source>Motif de rejet :</source>
-        <target state="translated">سبب الرفض:</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.remove" datatype="html">
-        <source>Retirer</source>
-        <target state="translated">إزالة</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.remove-approver-title" datatype="html">
-        <source>Retirer l'approbateur ?</source>
-        <target state="translated">إزالة المعتمِد؟</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.remove-failed" datatype="html">
-        <source>Retrait impossible.</source>
-        <target state="translated">تعذّرت الإزالة.</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.remove-impact-title" datatype="html">
-        <source>Retirer l'impact ?</source>
-        <target state="translated">إزالة الأثر؟</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.remove-tooltip" datatype="html">
-        <source>Retirer</source>
-        <target state="translated">إزالة</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.risk-title" datatype="html">
-        <source>Analyse de risque</source>
-        <target state="translated">تحليل المخاطر</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.stat-approved" datatype="html">
-        <source>Approuvés</source>
-        <target state="translated">مُعتمَدة</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.stat-approvers" datatype="html">
-        <source>Approbateurs</source>
-        <target state="translated">المعتمِدون</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.stat-impacts" datatype="html">
-        <source>Impacts</source>
-        <target state="translated">الآثار</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.stat-pending" datatype="html">
-        <source>En attente</source>
-        <target state="translated">قيد الانتظار</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.stat-rejected" datatype="html">
-        <source>Rejetés</source>
-        <target state="translated">مرفوضة</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.submit" datatype="html">
-        <source>Soumettre</source>
-        <target state="translated">إرسال</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.submit-failed" datatype="html">
-        <source>Soumission impossible.</source>
-        <target state="translated">تعذّر الإرسال.</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.submitted" datatype="html">
-        <source>Demande soumise.</source>
-        <target state="translated">تم إرسال الطلب.</target>
-      </trans-unit>
-      <trans-unit id="changes.impact-target.document" datatype="html">
-        <source>Document</source>
-        <target state="translated">مستند</target>
-      </trans-unit>
-      <trans-unit id="changes.impact-target.fmea-project" datatype="html">
-        <source>Projet FMEA</source>
-        <target state="translated">مشروع FMEA</target>
-      </trans-unit>
-      <trans-unit id="changes.impact-target.iot-device" datatype="html">
-        <source>Équipement IoT</source>
-        <target state="translated">جهاز IoT</target>
-      </trans-unit>
-      <trans-unit id="changes.impact-target.other" datatype="html">
-        <source>Autre</source>
-        <target state="translated">أخرى</target>
-      </trans-unit>
-      <trans-unit id="changes.impact-target.pdca-cycle" datatype="html">
-        <source>Cycle PDCA</source>
-        <target state="translated">دورة PDCA</target>
-      </trans-unit>
-      <trans-unit id="changes.impact-target.standard" datatype="html">
-        <source>Norme</source>
-        <target state="translated">معيار</target>
-      </trans-unit>
-      <trans-unit id="changes.impact-target.supplier" datatype="html">
-        <source>Fournisseur</source>
-        <target state="translated">مورّد</target>
-      </trans-unit>
-      <trans-unit id="changes.impact-target.training-path" datatype="html">
-        <source>Parcours de formation</source>
-        <target state="translated">مسار تدريبي</target>
-      </trans-unit>
-      <trans-unit id="changes.impact.added" datatype="html">
-        <source>Impact ajouté.</source>
-        <target state="translated">تمت إضافة الأثر.</target>
-      </trans-unit>
-      <trans-unit id="changes.impact.hint" datatype="html">
-        <source>Décrivez les entités QualitOS impactées par ce changement (document à mettre à jour,
-     parcours de formation à actualiser, équipement à recalibrer…).</source>
-        <target state="translated">صِف كيانات QualitOS المتأثرة بهذا التغيير (مستند يجب تحديثه،
-     مسار تدريبي يجب تجديده، جهاز يجب إعادة معايرته…).</target>
-      </trans-unit>
-      <trans-unit id="changes.impact.notes-label" datatype="html">
-        <source>Notes</source>
-        <target state="translated">ملاحظات</target>
-      </trans-unit>
-      <trans-unit id="changes.impact.target-type-label" datatype="html">
-        <source>Type d'entité impactée</source>
-        <target state="translated">نوع الكيان المتأثر</target>
-      </trans-unit>
-      <trans-unit id="changes.impact.title" datatype="html">
-        <source>Ajouter un impact</source>
-        <target state="translated">إضافة أثر</target>
-      </trans-unit>
-      <trans-unit id="changes.impact.uuid-label" datatype="html">
-        <source>UUID de l'entité</source>
-        <target state="translated">معرّف UUID للكيان</target>
-      </trans-unit>
-      <trans-unit id="changes.implement.confirm" datatype="html">
-        <source>Confirmer</source>
-        <target state="translated">تأكيد</target>
-      </trans-unit>
-      <trans-unit id="changes.implement.date-label" datatype="html">
-        <source>Date d'implémentation</source>
-        <target state="translated">تاريخ التنفيذ</target>
-      </trans-unit>
-      <trans-unit id="changes.implement.failed" datatype="html">
-        <source>Implémentation impossible.</source>
-        <target state="translated">تعذّر التنفيذ.</target>
-      </trans-unit>
-      <trans-unit id="changes.implement.implemented" datatype="html">
-        <source>Demande marquée IMPLEMENTED.</source>
-        <target state="translated">تم وسم الطلب بـ IMPLEMENTED.</target>
-      </trans-unit>
-      <trans-unit id="changes.implement.subtitle" datatype="html">
-        <source>Le changement doit être APPROVED. La transition vers IMPLEMENTED est terminale.</source>
-        <target state="translated">يجب أن يكون التغيير بحالة APPROVED. والانتقال إلى IMPLEMENTED نهائي.</target>
-      </trans-unit>
-      <trans-unit id="changes.implement.title" datatype="html">
-        <source>Marquer comme implémenté</source>
-        <target state="translated">وسم كمُنفَّذ</target>
-      </trans-unit>
-      <trans-unit id="changes.list.col-code" datatype="html">
-        <source>Code</source>
-        <target state="translated">الرمز</target>
-      </trans-unit>
-      <trans-unit id="changes.list.col-planned-for" datatype="html">
-        <source>Prévu pour</source>
-        <target state="translated">مقرر لـ</target>
-      </trans-unit>
-      <trans-unit id="changes.list.col-priority" datatype="html">
-        <source>Priorité</source>
-        <target state="translated">الأولوية</target>
-      </trans-unit>
-      <trans-unit id="changes.list.new-request" datatype="html">
-        <source>Nouvelle demande</source>
-        <target state="translated">طلب جديد</target>
-      </trans-unit>
-      <trans-unit id="changes.list.subtitle" datatype="html">
-        <source>Demandes de changement, analyse d'impact, validation multi-niveaux.</source>
-        <target state="translated">طلبات التغيير، تحليل الأثر، التحقق متعدد المستويات.</target>
-      </trans-unit>
-      <trans-unit id="changes.list.title" datatype="html">
-        <source>Gestion des changements</source>
-        <target state="translated">إدارة التغييرات</target>
-      </trans-unit>
-      <trans-unit id="changes.target.document" datatype="html">
-        <source>Document</source>
-        <target state="translated">مستند</target>
-      </trans-unit>
-      <trans-unit id="changes.target.fmea-project" datatype="html">
-        <source>FMEA</source>
-        <target state="translated">FMEA</target>
-      </trans-unit>
-      <trans-unit id="changes.target.iot-device" datatype="html">
-        <source>IoT</source>
-        <target state="translated">IoT</target>
-      </trans-unit>
-      <trans-unit id="changes.target.other" datatype="html">
-        <source>Autre</source>
-        <target state="translated">أخرى</target>
-      </trans-unit>
-      <trans-unit id="changes.target.pdca-cycle" datatype="html">
-        <source>PDCA</source>
-        <target state="translated">PDCA</target>
-      </trans-unit>
-      <trans-unit id="changes.target.standard" datatype="html">
-        <source>Norme</source>
-        <target state="translated">معيار</target>
-      </trans-unit>
-      <trans-unit id="changes.target.supplier" datatype="html">
-        <source>Fournisseur</source>
-        <target state="translated">مورّد</target>
-      </trans-unit>
-      <trans-unit id="changes.target.training-path" datatype="html">
-        <source>Parcours</source>
-        <target state="translated">المسار</target>
-      </trans-unit>
-      <trans-unit id="changes.type.document" datatype="html">
-        <source>Document</source>
-        <target state="translated">مستند</target>
-      </trans-unit>
-      <trans-unit id="changes.type.equipment" datatype="html">
-        <source>Équipement</source>
-        <target state="translated">معدّات</target>
-      </trans-unit>
-      <trans-unit id="changes.type.it-system" datatype="html">
-        <source>Système IT</source>
-        <target state="translated">نظام تقنية المعلومات</target>
-      </trans-unit>
-      <trans-unit id="changes.type.organizational" datatype="html">
-        <source>Organisationnel</source>
-        <target state="translated">تنظيمي</target>
-      </trans-unit>
-      <trans-unit id="changes.type.other" datatype="html">
-        <source>Autre</source>
-        <target state="translated">أخرى</target>
-      </trans-unit>
-      <trans-unit id="changes.type.process" datatype="html">
-        <source>Processus</source>
-        <target state="translated">عملية</target>
-      </trans-unit>
-      <trans-unit id="changes.type.supplier" datatype="html">
-        <source>Fournisseur</source>
-        <target state="translated">مورّد</target>
       </trans-unit>
       <trans-unit id="documents.create.code-hint" datatype="html">
         <source>A-Z, 0-9, point, tiret, underscore</source>

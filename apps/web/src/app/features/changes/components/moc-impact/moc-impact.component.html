@@ -1,0 +1,54 @@
+<section class="impact" aria-labelledby="moc-impact-titre">
+  <header class="impact__entete">
+    <h3 class="impact__titre" id="moc-impact-titre" i18n="@@moc.impact.title">Classification du changement</h3>
+    <div class="score">
+      <span class="classe classe--{{ detail.classification }}" data-test="classification">{{ classificationLabel(detail.classification) }}</span>
+      <div class="score__barre" role="meter" aria-valuemin="0" aria-valuemax="100"
+           [attr.aria-valuenow]="detail.score" i18n-aria-label="@@moc.impact.score-aria" aria-label="Score d'impact"
+           [class.score__barre--critique]="detail.classification === 'CRITICAL'"
+           [class.score__barre--majeur]="detail.classification === 'MAJOR'">
+        <span [style.width.%]="detail.score ?? 0"></span>
+      </div>
+      <span class="score__valeur" data-test="score">{{ scoreText }} / 100</span>
+    </div>
+  </header>
+
+  <p class="impact__note" *ngIf="evaluated < 8" data-test="incomplet">
+    <ng-container i18n="@@moc.impact.incomplete">{{ evaluated // i18n(ph="done") }} domaine(s) évalué(s) sur 8. La classification reste « Non évalué » et la soumission à validation est bloquée tant que les huit domaines ne sont pas évalués.</ng-container>
+  </p>
+  <p class="impact__note" *ngIf="detail.status === 'DRAFT'" i18n="@@moc.impact.draft">L'analyse d'impact s'ouvre quand la demande est envoyée en analyse.</p>
+  <p class="impact__note" *ngIf="detail.status !== 'DRAFT' && detail.status !== 'IN_ANALYSIS'" i18n="@@moc.impact.frozen">Analyse figée à la soumission à validation.</p>
+
+  <ul class="domaines">
+    <li *ngFor="let i of detail.impacts; trackBy: trackByDomain" class="domaine" [attr.data-test]="'domaine-' + i.domain">
+      <div class="domaine__tete">
+        <span class="domaine__nom" [id]="'moc-dom-' + detail.id + '-' + i.domain">
+          {{ domainLabel(i.domain) }}
+          <span class="domaine__poids" *ngIf="i.weight !== 1" i18n-matTooltip="@@moc.impact.weight-tooltip"
+                matTooltip="Poids de ce domaine dans le score, réglé par l'administrateur"
+                [attr.data-test]="'poids-' + i.domain">×{{ i.weight }}</span>
+        </span>
+
+        <div class="segments" role="radiogroup" [attr.aria-labelledby]="'moc-dom-' + detail.id + '-' + i.domain"
+             [attr.aria-disabled]="!editable || null" [class.segments--lecture]="!editable">
+          <button *ngFor="let l of levels; let k = index" type="button" role="radio"
+                  class="segment segment--{{ l }}" [class.segment--choisi]="i.level === l"
+                  [attr.aria-checked]="i.level === l" [attr.tabindex]="tabIndex(i, l)"
+                  [disabled]="!editable || isSaving(i.domain)"
+                  [attr.data-radio]="i.domain + '-' + l"
+                  (click)="setLevel(i, l)" (keydown)="onKey($event, i, k)">
+            {{ levelLabel(l) }}
+          </button>
+        </div>
+      </div>
+
+      <mat-form-field appearance="outline" class="domaine__texte" subscriptSizing="dynamic" *ngIf="editable">
+        <mat-label i18n="@@moc.impact.notes">Nature de l'impact et mesures de maîtrise</mat-label>
+        <textarea matInput rows="2" [value]="notes[i.domain] ?? ''" [attr.maxlength]="notesMax"
+                  (input)="noteInput(i.domain, $any($event.target).value)" (blur)="saveNotes(i)"
+                  [attr.data-test]="'notes-' + i.domain"></textarea>
+      </mat-form-field>
+      <p class="domaine__lecture" *ngIf="!editable && i.notes">{{ i.notes }}</p>
+    </li>
+  </ul>
+</section>

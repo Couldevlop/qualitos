@@ -1,0 +1,83 @@
+<div class="qos-page moc">
+  <qos-page-header
+    title="Gestion des changements (MOC)" i18n-title="@@moc.title"
+    subtitle="Demande, analyse d'impact, validation" i18n-subtitle="@@moc.subtitle">
+    <ng-container qosActions>
+      <a mat-stroked-button *ngIf="isAdmin" routerLink="/admin/moc" data-test="parametres">
+        <mat-icon>tune</mat-icon>
+        <span i18n="@@moc.settings-link">Paramètres MOC</span>
+      </a>
+      <button mat-stroked-button type="button" (click)="exportXlsx()" [disabled]="exporting || loading"
+              data-test="exporter">
+        <mat-icon>download</mat-icon>
+        <span i18n="@@moc.export">Extraire en Excel</span>
+      </button>
+      <button mat-flat-button color="primary" type="button" *ngIf="canRequest" (click)="create()"
+              data-test="nouvelle">
+        <mat-icon>add</mat-icon>
+        <span i18n="@@moc.new">Nouvelle demande</span>
+      </button>
+    </ng-container>
+  </qos-page-header>
+
+  <p class="echec" *ngIf="failed" role="alert">
+    <span i18n="@@moc.list-failed">Les demandes n'ont pas pu être chargées.</span>
+    <button mat-button type="button" (click)="reload()" i18n="@@common.retry">Réessayer</button>
+  </p>
+
+  <div class="moc__plan">
+    <!-- ===== Colonne gauche : filtres et demandes ===== -->
+    <aside class="liste" aria-labelledby="moc-liste-titre">
+      <h2 class="cache" id="moc-liste-titre" i18n="@@moc.list-title">Demandes de changement</h2>
+
+      <div class="puces" role="group" i18n-aria-label="@@moc.filter-aria" aria-label="Filtrer par statut">
+        <button *ngFor="let f of filters" type="button" class="puce"
+                [class.puce--active]="filter === f.value" [attr.aria-pressed]="filter === f.value"
+                (click)="setFilter(f.value)" [attr.data-test]="'filtre-' + f.value">
+          {{ f.label }} <span class="puce__compte">{{ count(f.value) }}</span>
+        </button>
+        <button *ngIf="awaitingMeCount" type="button" class="puce puce--moi"
+                [class.puce--active]="filter === 'MINE'" [attr.aria-pressed]="filter === 'MINE'"
+                (click)="setFilter('MINE')" data-test="filtre-MINE">
+          <mat-icon aria-hidden="true">how_to_reg</mat-icon>
+          <span i18n="@@moc.filter.mine">À valider par moi</span>
+          <span class="puce__compte">{{ awaitingMeCount }}</span>
+        </button>
+      </div>
+
+      <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+
+      <ul class="cartes" *ngIf="!loading">
+        <li *ngFor="let it of visible; trackBy: trackById">
+          <button type="button" class="carte" [class.carte--active]="it.id === selectedId"
+                  [attr.aria-current]="it.id === selectedId ? 'true' : null"
+                  (click)="select(it)" [attr.data-test]="'carte-' + it.code">
+            <span class="carte__titre">{{ it.title }}</span>
+            <span class="carte__meta">{{ it.code }}<ng-container *ngIf="it.requesterName"> · {{ it.requesterName }}</ng-container></span>
+            <span class="carte__puces">
+              <span class="statut statut--{{ it.status }}">{{ statusLabel(it.status) }}</span>
+              <span class="classe classe--{{ it.classification }}">{{ classificationLabel(it.classification) }}</span>
+              <span class="carte__moi" *ngIf="it.awaitingMe" i18n="@@moc.awaiting-me">À valider</span>
+            </span>
+          </button>
+        </li>
+      </ul>
+
+      <p class="vide" *ngIf="!loading && !failed && !visible.length" data-test="vide">
+        <ng-container *ngIf="items.length" i18n="@@moc.empty-filter">Aucune demande dans ce statut.</ng-container>
+        <ng-container *ngIf="!items.length" i18n="@@moc.empty">Aucune demande de changement pour l'instant.</ng-container>
+      </p>
+    </aside>
+
+    <!-- ===== Panneau droit : la demande sélectionnée ===== -->
+    <section class="panneau" aria-live="polite">
+      <mat-progress-bar *ngIf="detailLoading" mode="indeterminate"></mat-progress-bar>
+      <qos-moc-detail *ngIf="detail" [detail]="detail" (changed)="onChanged($event)"
+                      (deleted)="onDeleted($event)"></qos-moc-detail>
+      <div class="panneau__vide" *ngIf="!detail && !detailLoading" data-test="aucune-selection">
+        <mat-icon aria-hidden="true">change_circle</mat-icon>
+        <p i18n="@@moc.no-selection">Sélectionnez une demande pour voir sa demande, son analyse d'impact, ses validations et son historique.</p>
+      </div>
+    </section>
+  </div>
+</div>
