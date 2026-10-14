@@ -71,7 +71,7 @@ class AuditControllerTest {
     void create_returns201() throws Exception {
         when(service.createPlan(any())).thenReturn(planResp(AuditStatus.PLANNED));
         AuditDto.CreatePlanRequest req = new AuditDto.CreatePlanRequest(
-                "T", null, AuditType.INTERNAL, null, LEAD, null, null, null);
+                "T", null, AuditType.INTERNAL, null, LEAD, null, null, null, null);
         mockMvc.perform(post("/api/v1/audits/plans").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(om.writeValueAsString(req)))
@@ -276,7 +276,7 @@ class AuditControllerTest {
     void addFinding_returns201() throws Exception {
         when(service.addFinding(eq(PLAN), any())).thenReturn(findingResp(FindingType.OBSERVATION));
         AuditDto.FindingRequest req = new AuditDto.FindingRequest(
-                FindingType.OBSERVATION, "d", null, null, null, null, LEAD);
+                FindingType.OBSERVATION, "d", null, null, null, null);
         mockMvc.perform(post("/api/v1/audits/plans/{id}/findings", PLAN).with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(om.writeValueAsString(req)))
@@ -296,7 +296,7 @@ class AuditControllerTest {
         when(service.addFinding(eq(PLAN), any()))
                 .thenThrow(new AuditStateException("Findings can only be raised while audit is IN_PROGRESS"));
         AuditDto.FindingRequest req = new AuditDto.FindingRequest(
-                FindingType.MINOR_NC, "d", null, null, null, null, LEAD);
+                FindingType.MINOR_NC, "d", null, null, null, null);
         mockMvc.perform(post("/api/v1/audits/plans/{id}/findings", PLAN).with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(om.writeValueAsString(req)))
@@ -334,7 +334,7 @@ class AuditControllerTest {
     void create_missingTenant_returns403() throws Exception {
         when(service.createPlan(any())).thenThrow(new MissingTenantContextException());
         AuditDto.CreatePlanRequest req = new AuditDto.CreatePlanRequest(
-                "T", null, AuditType.INTERNAL, null, LEAD, null, null, null);
+                "T", null, AuditType.INTERNAL, null, LEAD, null, null, null, null);
         mockMvc.perform(post("/api/v1/audits/plans").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(om.writeValueAsString(req)))
@@ -390,7 +390,7 @@ class AuditControllerTest {
     private AuditDto.PlanResponse planResp(AuditStatus s) {
         return new AuditDto.PlanResponse(
                 PLAN, TENANT, "AUD-2026-0007", "T", null, AuditType.INTERNAL, s, null, null,
-                LEAD, null, null, null, null, null, null, null,
+                LEAD, null, null, null, null, null, null, null, null,
                 Instant.now(), Instant.now(), List.of(), List.of(), null);
     }
 

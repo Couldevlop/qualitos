@@ -1,8 +1,12 @@
 package com.openlab.qualitos.quality.common;
 
 import com.openlab.qualitos.quality.audit.AuditChecklistItemNotFoundException;
+import com.openlab.qualitos.quality.audit.AuditDocumentNotFoundException;
+import com.openlab.qualitos.quality.audit.AuditDocumentTooLargeException;
+import com.openlab.qualitos.quality.audit.AuditDocumentValidationException;
 import com.openlab.qualitos.quality.audit.AuditFindingNotFoundException;
 import com.openlab.qualitos.quality.audit.AuditPlanNotFoundException;
+import com.openlab.qualitos.quality.audit.AuditReportIncompleteException;
 import com.openlab.qualitos.quality.audit.AuditStateException;
 import com.openlab.qualitos.quality.capa.CapaActionNotFoundException;
 import com.openlab.qualitos.quality.capa.CapaEvidenceNotFoundException;
@@ -854,6 +858,43 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/audit-invalid-state"));
         problem.setTitle("Invalid Audit State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    /** 422 : le rapport est incomplet — l'utilisateur sait quoi compléter, rien à recharger. */
+    @ExceptionHandler(AuditReportIncompleteException.class)
+    public ProblemDetail handleAuditReportIncomplete(AuditReportIncompleteException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/audit-report-incomplete"));
+        problem.setTitle("Incomplete Audit Report");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(AuditDocumentNotFoundException.class)
+    public ProblemDetail handleAuditDocumentNotFound(AuditDocumentNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/audit-document-not-found"));
+        problem.setTitle("Audit Document Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(AuditDocumentValidationException.class)
+    public ProblemDetail handleAuditDocumentValidation(AuditDocumentValidationException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/audit-document-invalid"));
+        problem.setTitle("Invalid Audit Document");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(AuditDocumentTooLargeException.class)
+    public ProblemDetail handleAuditDocumentTooLarge(AuditDocumentTooLargeException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.PAYLOAD_TOO_LARGE, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/audit-document-too-large"));
+        problem.setTitle("Audit Document Too Large");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }

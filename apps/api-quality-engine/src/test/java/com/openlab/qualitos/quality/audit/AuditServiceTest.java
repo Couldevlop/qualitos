@@ -14,6 +14,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -35,6 +38,7 @@ class AuditServiceTest {
     @Mock AuditChecklistItemRepository checklistRepo;
     @Mock AuditFindingRepository findingRepo;
     @Mock com.openlab.qualitos.quality.standards.StandardRepository standardRepo;
+    @Mock AuditReportRepository reportRepo;
     @Mock AiGatewayClient ai;
     AuditService service;
 
@@ -53,17 +57,27 @@ class AuditServiceTest {
 
     @BeforeEach
     void ctx() {
-        service = new AuditService(planRepo, checklistRepo, findingRepo, standardRepo, ai, FIXED_CLOCK);
+        service = new AuditService(planRepo, checklistRepo, findingRepo, standardRepo, reportRepo, ai, FIXED_CLOCK);
         TenantContext.setTenantId(TENANT.toString());
     }
-    @AfterEach  void clr() { TenantContext.clear(); }
+    @AfterEach  void clr() {
+        TenantContext.clear();
+        SecurityContextHolder.clearContext();
+    }
+
+    /** Identité authentifiée : l'auteur d'un constat se lit dans le jeton, plus dans le corps. */
+    static void connecte(UUID userId, String name) {
+        Jwt jwt = Jwt.withTokenValue("t").header("alg", "none").subject(userId.toString())
+                .claim("name", name).build();
+        SecurityContextHolder.getContext().setAuthentication(new JwtAuthenticationToken(jwt, List.of()));
+    }
 
     // --- create ---
     @Test
     void createPlan_success() {
         AuditDto.CreatePlanRequest req = new AuditDto.CreatePlanRequest(
                 "Audit ISO 9001", "scope", AuditType.INTERNAL, "ISO_9001",
-                LEAD, AUDITEE, LocalDate.now().plusDays(15), "qualite@exemple.test");
+                LEAD, null, AUDITEE, LocalDate.now().plusDays(15), "qualite@exemple.test");
         when(planRepo.save(any())).thenAnswer(inv -> {
             AuditPlan p = inv.getArgument(0);
             p.setId(UUID.randomUUID());
@@ -78,7 +92,7 @@ class AuditServiceTest {
     void createPlan_missingTenant_throws() {
         TenantContext.clear();
         AuditDto.CreatePlanRequest req = new AuditDto.CreatePlanRequest(
-                "X", null, AuditType.INTERNAL, null, LEAD, null, null, null);
+                "X", null, AuditType.INTERNAL, null, LEAD, null, null, null, null);
         assertThatThrownBy(() -> service.createPlan(req))
                 .isInstanceOf(MissingTenantContextException.class);
     }
@@ -149,7 +163,7 @@ class AuditServiceTest {
         LocalDate when = LocalDate.now().plusDays(7);
         service.updatePlan(p.getId(),
                 new AuditDto.UpdatePlanRequest("T2", "s2", AuditType.LPA, "IATF_16949",
-                        newLead, AUDITEE, when, "pilote@exemple.test"));
+                        newLead, null, AUDITEE, when, "pilote@exemple.test"));
         assertThat(p.getTitle()).isEqualTo("T2");
         assertThat(p.getType()).isEqualTo(AuditType.LPA);
         assertThat(p.getLeadAuditorId()).isEqualTo(newLead);
@@ -161,7 +175,7 @@ class AuditServiceTest {
         AuditPlan p = plan(TENANT, AuditStatus.COMPLETED);
         when(planRepo.findByIdAndTenantId(p.getId(), TENANT)).thenReturn(Optional.of(p));
         assertThatThrownBy(() -> service.updatePlan(p.getId(),
-                new AuditDto.UpdatePlanRequest("X", null, null, null, null, null, null, null)))
+                new AuditDto.UpdatePlanRequest("X", null, null, null, null, null, null, null, null)))
                 .isInstanceOf(AuditStateException.class);
     }
 
@@ -391,6 +405,7 @@ class AuditServiceTest {
     // --- finding add ---
     @Test
     void addFinding_success_noChecklistLink() {
+        connecte(LEAD, "Alice Martin");
         AuditPlan p = plan(TENANT, AuditStatus.IN_PROGRESS);
         when(planRepo.findByIdAndTenantId(p.getId(), TENANT)).thenReturn(Optional.of(p));
         when(findingRepo.save(any())).thenAnswer(inv -> {
@@ -400,13 +415,31 @@ class AuditServiceTest {
         });
         AuditDto.FindingResponse r = service.addFinding(p.getId(),
                 new AuditDto.FindingRequest(FindingType.MINOR_NC, "desc", "8.5", null,
-                        null, null, LEAD));
+                        null, null));
         assertThat(r.type()).isEqualTo(FindingType.MINOR_NC);
         assertThat(r.checklistItemId()).isNull();
+        // L'auteur vient du jeton : c'est l'utilisateur connecté, pas un champ du corps.
+        assertThat(r.raisedBy()).isEqualTo(LEAD);
+    }
+
+    /**
+     * Non-régression « impossible d'ajouter un constat » : sans utilisateur
+     * authentifié exploitable, le refus est explicite (403 « missing tenant »)
+     * et rien n'est écrit — pas une ligne orpheline sans auteur.
+     */
+    @Test
+    void addFinding_withoutAuthenticatedUser_refusedAndNothingSaved() {
+        AuditPlan p = plan(TENANT, AuditStatus.IN_PROGRESS);
+        when(planRepo.findByIdAndTenantId(p.getId(), TENANT)).thenReturn(Optional.of(p));
+        assertThatThrownBy(() -> service.addFinding(p.getId(),
+                new AuditDto.FindingRequest(FindingType.OBSERVATION, "d", null, null, null, null)))
+                .isInstanceOf(MissingTenantContextException.class);
+        verify(findingRepo, never()).save(any());
     }
 
     @Test
     void addFinding_withChecklistLink() {
+        connecte(LEAD, "Alice Martin");
         AuditPlan p = plan(TENANT, AuditStatus.IN_PROGRESS);
         AuditChecklistItem i = item(p, 0);
         when(planRepo.findByIdAndTenantId(p.getId(), TENANT)).thenReturn(Optional.of(p));
@@ -418,19 +451,20 @@ class AuditServiceTest {
         });
         AuditDto.FindingResponse r = service.addFinding(p.getId(),
                 new AuditDto.FindingRequest(FindingType.MAJOR_NC, "d", null, null,
-                        i.getId(), null, LEAD));
+                        i.getId(), null));
         assertThat(r.checklistItemId()).isEqualTo(i.getId());
     }
 
     @Test
     void addFinding_checklistNotFound_throws() {
+        connecte(LEAD, "Alice Martin");
         AuditPlan p = plan(TENANT, AuditStatus.IN_PROGRESS);
         UUID itemId = UUID.randomUUID();
         when(planRepo.findByIdAndTenantId(p.getId(), TENANT)).thenReturn(Optional.of(p));
         when(checklistRepo.findByIdAndPlanId(itemId, p.getId())).thenReturn(Optional.empty());
         assertThatThrownBy(() -> service.addFinding(p.getId(),
                 new AuditDto.FindingRequest(FindingType.OBSERVATION, "d", null, null,
-                        itemId, null, LEAD)))
+                        itemId, null)))
                 .isInstanceOf(AuditChecklistItemNotFoundException.class);
     }
 
@@ -440,8 +474,75 @@ class AuditServiceTest {
         when(planRepo.findByIdAndTenantId(p.getId(), TENANT)).thenReturn(Optional.of(p));
         assertThatThrownBy(() -> service.addFinding(p.getId(),
                 new AuditDto.FindingRequest(FindingType.OBSERVATION, "d", null, null,
-                        null, null, LEAD)))
+                        null, null)))
                 .isInstanceOf(AuditStateException.class);
+    }
+
+    // --- auditeur responsable ---
+
+    @Test
+    void createPlan_withoutLead_isTheConnectedUser_namedFromToken() {
+        connecte(LEAD, "Alice Martin");
+        when(planRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+        AuditDto.PlanResponse r = service.createPlan(new AuditDto.CreatePlanRequest(
+                "T", null, AuditType.INTERNAL, null, null, "Nom forgé", null, null, null));
+        assertThat(r.leadAuditorId()).isEqualTo(LEAD);
+        // Le nom de l'utilisateur connecté se lit dans le jeton : le corps ne le renomme pas.
+        assertThat(r.leadAuditorName()).isEqualTo("Alice Martin");
+    }
+
+    @Test
+    void createPlan_designatesColleague_keepsDirectoryName() {
+        connecte(LEAD, "Alice Martin");
+        UUID collegue = UUID.randomUUID();
+        when(planRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+        AuditDto.PlanResponse r = service.createPlan(new AuditDto.CreatePlanRequest(
+                "T", null, AuditType.INTERNAL, null, collegue, "  bruno@exemple.test ", null, null, null));
+        assertThat(r.leadAuditorId()).isEqualTo(collegue);
+        assertThat(r.leadAuditorName()).isEqualTo("bruno@exemple.test");
+    }
+
+    @Test
+    void createPlan_withoutLeadNorAuthenticatedUser_refused() {
+        assertThatThrownBy(() -> service.createPlan(new AuditDto.CreatePlanRequest(
+                "T", null, AuditType.INTERNAL, null, null, null, null, null, null)))
+                .isInstanceOf(MissingTenantContextException.class);
+        verify(planRepo, never()).save(any());
+    }
+
+    @Test
+    void updatePlan_newLead_replacesNameToo() {
+        connecte(LEAD, "Alice Martin");
+        AuditPlan p = plan(TENANT, AuditStatus.PLANNED);
+        p.setLeadAuditorName("Alice Martin");
+        UUID collegue = UUID.randomUUID();
+        when(planRepo.findByIdAndTenantId(p.getId(), TENANT)).thenReturn(Optional.of(p));
+        when(planRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+        service.updatePlan(p.getId(), new AuditDto.UpdatePlanRequest(
+                null, null, null, null, collegue, "bruno@exemple.test", null, null, null));
+        assertThat(p.getLeadAuditorId()).isEqualTo(collegue);
+        assertThat(p.getLeadAuditorName()).isEqualTo("bruno@exemple.test");
+    }
+
+    @Test
+    void updatePlan_nameWithoutNewLead_isIgnored() {
+        AuditPlan p = plan(TENANT, AuditStatus.PLANNED);
+        p.setLeadAuditorName("Alice Martin");
+        when(planRepo.findByIdAndTenantId(p.getId(), TENANT)).thenReturn(Optional.of(p));
+        when(planRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+        service.updatePlan(p.getId(), new AuditDto.UpdatePlanRequest(
+                null, null, null, null, null, "Renommé", null, null, null));
+        assertThat(p.getLeadAuditorName()).isEqualTo("Alice Martin");
+    }
+
+    @Test
+    void generateReport_refusedOnceReportIssued() {
+        AuditPlan p = plan(TENANT, AuditStatus.COMPLETED);
+        when(planRepo.findByIdAndTenantId(p.getId(), TENANT)).thenReturn(Optional.of(p));
+        when(reportRepo.existsByPlanIdAndStatus(p.getId(), AuditReportStatus.ISSUED)).thenReturn(true);
+        assertThatThrownBy(() -> service.generateReport(p.getId()))
+                .isInstanceOf(AuditStateException.class);
+        verifyNoInteractions(ai);
     }
 
     // --- finding update ---
@@ -636,7 +737,7 @@ class AuditServiceTest {
     void createPlan_blankReminderEmail_isStoredAsNull() {
         when(planRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
         service.createPlan(new AuditDto.CreatePlanRequest(
-                "T", null, AuditType.INTERNAL, null, LEAD, null, null, "   "));
+                "T", null, AuditType.INTERNAL, null, LEAD, null, null, null, "   "));
         verify(planRepo).save(argThat(p -> p.getReminderEmail() == null));
     }
 
@@ -648,7 +749,7 @@ class AuditServiceTest {
         when(planRepo.save(p)).thenReturn(p);
 
         service.updatePlan(p.getId(), new AuditDto.UpdatePlanRequest(
-                null, null, null, null, null, null, null, ""));
+                null, null, null, null, null, null, null, null, ""));
 
         assertThat(p.getReminderEmail()).isNull();
     }
@@ -663,7 +764,7 @@ class AuditServiceTest {
         when(planRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
         AuditDto.PlanResponse r = service.createPlan(new AuditDto.CreatePlanRequest(
-                "Audit interne", null, AuditType.INTERNAL, null, LEAD, null, null, null));
+                "Audit interne", null, AuditType.INTERNAL, null, LEAD, null, null, null, null));
 
         // L'année vient de l'horloge INJECTÉE : figée à 2026 par FIXED_CLOCK.
         assertThat(r.reference()).isEqualTo("AUD-2026-0001");
@@ -675,7 +776,7 @@ class AuditServiceTest {
         when(planRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
         assertThat(service.createPlan(new AuditDto.CreatePlanRequest(
-                "T", null, AuditType.INTERNAL, null, LEAD, null, null, null)).reference())
+                "T", null, AuditType.INTERNAL, null, LEAD, null, null, null, null)).reference())
                 .isEqualTo("AUD-2026-0042");
     }
 
@@ -690,7 +791,7 @@ class AuditServiceTest {
         when(planRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
         assertThat(service.createPlan(new AuditDto.CreatePlanRequest(
-                "T", null, AuditType.INTERNAL, null, LEAD, null, null, null)).reference())
+                "T", null, AuditType.INTERNAL, null, LEAD, null, null, null, null)).reference())
                 .isEqualTo("AUD-2026-0002");
     }
 
@@ -713,7 +814,7 @@ class AuditServiceTest {
         when(planRepo.save(p)).thenReturn(p);
 
         service.updatePlan(p.getId(), new AuditDto.UpdatePlanRequest(
-                "T3", null, null, null, null, null, null, null));
+                "T3", null, null, null, null, null, null, null, null));
 
         assertThat(p.getReminderEmail()).isEqualTo("garde@exemple.test");
     }

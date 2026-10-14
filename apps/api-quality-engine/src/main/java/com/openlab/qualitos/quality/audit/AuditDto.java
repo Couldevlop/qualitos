@@ -20,7 +20,17 @@ public final class AuditDto {
             String scope,
             @NotNull AuditType type,
             @Size(max = 100) String standard,
-            @NotNull UUID leadAuditorId,
+            /*
+             * Auditeur responsable. Facultatif : absent, c'est l'utilisateur
+             * connecté (lu dans le jeton), ce que faisait implicitement l'écran.
+             */
+            UUID leadAuditorId,
+            /*
+             * Nom de l'auditeur désigné, tel que l'annuaire de l'organisation le
+             * montre. Ignoré quand l'auditeur est l'utilisateur connecté : son nom
+             * vient alors du jeton, pas du corps de la requête.
+             */
+            @Size(max = 255) String leadAuditorName,
             UUID auditeeId,
             LocalDate scheduledDate,
             /*
@@ -38,6 +48,8 @@ public final class AuditDto {
             AuditType type,
             @Size(max = 100) String standard,
             UUID leadAuditorId,
+            /* Lu seulement si {@code leadAuditorId} change — même règle qu'à la création. */
+            @Size(max = 255) String leadAuditorName,
             UUID auditeeId,
             LocalDate scheduledDate,
             @Email @Size(max = 320) String reminderEmail
@@ -64,8 +76,13 @@ public final class AuditDto {
             @Size(max = 100) String clauseRef,
             @Size(max = 1024) String photoUrl,
             UUID checklistItemId,
-            UUID capaId,
-            @NotNull UUID raisedBy
+            UUID capaId
+            /*
+             * Pas de « raisedBy » : l'auteur d'un constat est l'identité
+             * authentifiée (§18.2 #2), jamais un champ que l'appelant écrirait
+             * lui-même. Un ancien client qui l'envoie encore (file hors ligne) voit
+             * le champ ignoré, pas sa requête refusée.
+             */
     ) {}
 
     public record UpdateFindingRequest(
@@ -93,6 +110,8 @@ public final class AuditDto {
              */
             UUID standardId,
             UUID leadAuditorId,
+            /** Nom de l'auditeur responsable ; {@code null} sur les audits antérieurs à V140. */
+            String leadAuditorName,
             UUID auditeeId,
             LocalDate scheduledDate,
             Instant startedAt,

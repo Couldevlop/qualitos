@@ -47,6 +47,7 @@ class AuditChecklistFromStandardTest {
     @Mock AuditPlanRepository plans;
     @Mock AuditChecklistItemRepository checklist;
     @Mock AuditFindingRepository findings;
+    @Mock AuditReportRepository reports;
     @Mock StandardRepository standards;
     @Mock AiGatewayClient ai;
 
@@ -58,7 +59,7 @@ class AuditChecklistFromStandardTest {
     @BeforeEach
     void setUp() {
         TenantContext.setTenantId(TENANT.toString());
-        service = new AuditService(plans, checklist, findings, standards, ai, FIXED_CLOCK);
+        service = new AuditService(plans, checklist, findings, standards, reports, ai, FIXED_CLOCK);
         when(checklist.save(any(AuditChecklistItem.class))).thenAnswer(i -> {
             AuditChecklistItem item = i.getArgument(0);
             if (item.getId() == null) item.setId(UUID.randomUUID());

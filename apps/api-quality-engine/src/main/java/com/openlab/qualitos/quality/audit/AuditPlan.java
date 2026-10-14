@@ -67,6 +67,16 @@ public class AuditPlan {
     @Column(name = "lead_auditor_id", nullable = false)
     private UUID leadAuditorId;
 
+    /**
+     * Nom de l'auditeur responsable, recopié au moment de la désignation (V140).
+     *
+     * <p>Le moteur n'a pas d'annuaire : sans cette copie, l'écran n'aurait que
+     * l'identifiant du compte à montrer. {@code null} pour les audits antérieurs
+     * à la colonne — mieux vaut un nom absent qu'un nom reconstitué.
+     */
+    @Column(name = "lead_auditor_name", length = 255)
+    private String leadAuditorName;
+
     @Column(name = "auditee_id")
     private UUID auditeeId;
 
