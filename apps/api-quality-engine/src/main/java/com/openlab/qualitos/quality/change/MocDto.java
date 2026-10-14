@@ -55,11 +55,14 @@ public final class MocDto {
             boolean awaitingMe
     ) {}
 
-    /** La demande sélectionnée, avec tout ce que ses quatre onglets montrent. */
+    /**
+     * La demande sélectionnée, avec tout ce que ses quatre onglets montrent.
+     * {@code canManage} : l'utilisateur la conduit (son demandeur, ou un gestionnaire).
+     */
     public record Detail(
             UUID id, String code, String title, ChangeRequestType type, String site,
             String description, String justification, LocalDate plannedFor,
-            ChangeRequestStatus status, String requesterName, boolean requestedByMe,
+            ChangeRequestStatus status, String requesterName, boolean requestedByMe, boolean canManage,
             Instant createdAt, Instant submittedAt, Instant closedAt,
             Integer score, MocClassification classification,
             List<ImpactView> impacts, List<ValidationView> validations, List<HistoryView> history

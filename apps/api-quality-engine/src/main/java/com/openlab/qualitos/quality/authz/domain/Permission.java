@@ -70,9 +70,9 @@ public enum Permission {
     OPPORTUNITY_MANAGE("opportunity.manage", "risk", pilotage()),
 
     // ---------- gestion des changements (MOC, ADR 0087) ----------
-    /** Demander un changement : créer, compléter et supprimer un brouillon, l'envoyer en analyse. */
+    /** Demander un changement, et conduire SES demandes : brouillon, analyse, soumission, réouverture. */
     CHANGE_REQUEST("change.request", "change", plus(pilotage(), USER)),
-    /** Mener l'analyse d'impact, soumettre à validation, rouvrir une demande rejetée. */
+    /** Gérer les changements : conduire aussi les demandes des autres (modifier, analyser, soumettre, rouvrir, supprimer un brouillon). */
     CHANGE_ANALYZE("change.analyze", "change", pilotage());
 
     private final String code;

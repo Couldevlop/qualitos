@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
@@ -83,9 +84,17 @@ class MocFlowIntegrationTest {
         SecurityContextHolder.clearContext();
     }
 
-    static void connecte(UUID user, String nom) {
+    /** Un utilisateur du jeton, avec ses rôles de plateforme (sans rôle : simple membre). */
+    static void connecte(UUID user, String nom, String... roles) {
         Jwt jwt = Jwt.withTokenValue("t").header("alg", "none").subject(user.toString()).claim("name", nom).build();
-        SecurityContextHolder.getContext().setAuthentication(new JwtAuthenticationToken(jwt, List.of()));
+        List<SimpleGrantedAuthority> autorites = new ArrayList<>();
+        for (String r : roles) autorites.add(new SimpleGrantedAuthority("ROLE_" + r));
+        SecurityContextHolder.getContext().setAuthentication(new JwtAuthenticationToken(jwt, autorites));
+    }
+
+    /** Le gestionnaire des changements (change.analyze) : le manager qualité. */
+    void gestionnaire() {
+        connecte(responsable, "R. Martin", "QUALITY_MANAGER");
     }
 
     /** Les quatre rôles de la maquette, avec leurs titulaires (HSE a un suppléant). */
@@ -125,7 +134,7 @@ class MocFlowIntegrationTest {
     MocDto.Detail analysee(String titre) {
         MocDto.Detail d = creer(titre);
         service.sendToAnalysis(d.id());
-        connecte(responsable, "R. Martin");
+        gestionnaire();
         MocDto.Detail r = null;
         for (ImpactDomain dom : ImpactDomain.values()) {
             r = service.assess(d.id(), dom, new MocDto.ImpactForm(MAQUETTE.get(dom), "Nature " + dom));
@@ -203,7 +212,7 @@ class MocFlowIntegrationTest {
         assertThatThrownBy(() -> service.sendToAnalysis(d.id()))
                 .satisfies(e -> assertThat(code(e)).isEqualTo("moc.not-draft"));
 
-        connecte(responsable, "R. Martin");
+        gestionnaire();
         MocDto.Detail partiel = null;
         for (ImpactDomain dom : List.of(SAFETY, HEALTH_ENVIRONMENT, QUALITY, PRODUCTION, MAINTENANCE, COSTS, REGULATORY)) {
             partiel = service.assess(d.id(), dom, new MocDto.ImpactForm(MAQUETTE.get(dom), "Nature " + dom));
@@ -278,6 +287,7 @@ class MocFlowIntegrationTest {
                 MocHistoryEvent.VALIDATION_APPROVED, MocHistoryEvent.SUBMITTED);
         // Le plus récent en haut, la création en bas.
         assertThat(fin.history().get(fin.history().size() - 1).event()).isEqualTo(MocHistoryEvent.CREATED);
+        gestionnaire();
         assertThatThrownBy(() -> service.reopen(d.id()))
                 .satisfies(e -> assertThat(code(e)).isEqualTo("moc.not-rejected"));
     }
@@ -351,7 +361,7 @@ class MocFlowIntegrationTest {
         assertThatThrownBy(() -> service.delete(d.id()))
                 .satisfies(e -> assertThat(code(e)).isEqualTo("moc.delete-not-draft"));
 
-        connecte(responsable, "R");
+        gestionnaire();
         MocDto.Detail rouverte = service.reopen(d.id());
         assertThat(rouverte.status()).isEqualTo(ChangeRequestStatus.IN_ANALYSIS);
         assertThat(rouverte.submittedAt()).isNull();
@@ -378,9 +388,64 @@ class MocFlowIntegrationTest {
         connecte(admin, "Admin");
         settings.replace(new MocDto.SettingsForm(25, 50, 3, poids(1), List.of(
                 role(null, "Responsable", EnumSet.of(MINOR, MAJOR, CRITICAL), demandeur))));
-        connecte(responsable, "R");
+        gestionnaire();
         assertThatThrownBy(() -> service.submit(d.id()))
                 .satisfies(e -> assertThat(code(e)).isEqualTo("moc.role-only-requester"));
+    }
+
+    // ---------- qui conduit une demande ----------
+
+    @Test
+    void unAutreMembreDuClientNeConduitPasLaDemandeDAutrui() {
+        parametrer(25, 50, poids(1));
+        MocDto.Detail brouillon = creer("Brouillon de S. Benali");
+        MocDto.RequestForm form = new MocDto.RequestForm("Détourné", ChangeRequestType.PERMANENT, null, null, null, null);
+
+        connecte(intrus, "Intrus", "USER");
+        assertThat(service.get(brouillon.id()).canManage()).isFalse();
+        assertInterdit(() -> service.update(brouillon.id(), form));
+        assertInterdit(() -> service.delete(brouillon.id()));
+        assertInterdit(() -> service.sendToAnalysis(brouillon.id()));
+
+        connecte(demandeur, "S. Benali", "USER");
+        assertThat(service.get(brouillon.id()).canManage()).isTrue();
+        service.sendToAnalysis(brouillon.id());
+        connecte(intrus, "Intrus", "USER");
+        assertInterdit(() -> service.assess(brouillon.id(), SAFETY, new MocDto.ImpactForm(LOW, null)));
+        assertInterdit(() -> service.submit(brouillon.id()));
+
+        // Le demandeur, simple membre, mène lui-même son analyse et la soumet.
+        connecte(demandeur, "S. Benali", "USER");
+        MocDto.Detail r = null;
+        for (ImpactDomain dom : ImpactDomain.values()) {
+            r = service.assess(brouillon.id(), dom, new MocDto.ImpactForm(MAQUETTE.get(dom), null));
+        }
+        assertThat(r.score()).isEqualTo(54);
+        assertThat(service.submit(brouillon.id()).status()).isEqualTo(ChangeRequestStatus.IN_VALIDATION);
+        decider(hse, "J. Dupont", brouillon.id(), "HSE", ApprovalDecision.REJECTED, "Non");
+
+        connecte(intrus, "Intrus", "USER");
+        assertInterdit(() -> service.reopen(brouillon.id()));
+        connecte(demandeur, "S. Benali", "USER");
+        assertThat(service.reopen(brouillon.id()).status()).isEqualTo(ChangeRequestStatus.IN_ANALYSIS);
+    }
+
+    @Test
+    void unGestionnaireConduitLesDemandesDesAutres() {
+        MocDto.Detail brouillon = creer("Brouillon de S. Benali");
+        gestionnaire();
+        assertThat(service.get(brouillon.id()).canManage()).isTrue();
+        assertThat(service.update(brouillon.id(), new MocDto.RequestForm("Repris", ChangeRequestType.TEMPORARY,
+                null, null, null, null)).title()).isEqualTo("Repris");
+        service.delete(brouillon.id());
+        assertThat(requests.findById(brouillon.id())).isEmpty();
+    }
+
+    static void assertInterdit(org.assertj.core.api.ThrowableAssert.ThrowingCallable action) {
+        assertThatThrownBy(action).isInstanceOf(MocException.class).satisfies(e -> {
+            assertThat(((MocException) e).kind()).isEqualTo(MocException.Kind.FORBIDDEN);
+            assertThat(code(e)).isEqualTo("moc.not-owner");
+        });
     }
 
     // ---------- suppression ----------
@@ -433,7 +498,7 @@ class MocFlowIntegrationTest {
         assertThat(apres.reminderDays()).isEqualTo(5);
         assertThat(apres.weights()).containsEntry(PRODUCTION, 0);
 
-        connecte(responsable, "R");
+        gestionnaire();
         MocDto.Detail reclassee = service.get(ouverte.id());
         assertThat(reclassee.score()).isEqualTo(48);
         assertThat(reclassee.classification()).isEqualTo(MINOR);

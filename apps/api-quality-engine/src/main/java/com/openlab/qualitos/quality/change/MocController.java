@@ -20,8 +20,10 @@ import java.util.UUID;
 /**
  * La gestion des changements (MOC, ADR 0087).
  *
- * <p>Lire est ouvert à tout membre du client. Demander exige {@code change.request},
- * analyser et soumettre {@code change.analyze}. Statuer ne dépend pas d'un droit
+ * <p>Lire est ouvert à tout membre du client. Agir sur une demande exige
+ * {@code change.request} ; le service vérifie EN PLUS que l'utilisateur conduit
+ * CETTE demande — son demandeur, ou un gestionnaire ({@code change.analyze}).
+ * Statuer ne dépend pas d'un droit
  * de la plateforme mais d'une fonction dans l'organisation : être titulaire du
  * rôle de validation, vérifié par le service sur l'utilisateur du jeton.
  */
@@ -86,20 +88,20 @@ public class MocController {
     }
 
     @PutMapping("/{id}/impacts/{domain}")
-    @RequiresPermission(Permission.CHANGE_ANALYZE)
+    @RequiresPermission(Permission.CHANGE_REQUEST)
     public MocDto.Detail assess(@PathVariable UUID id, @PathVariable ImpactDomain domain,
                                 @Valid @RequestBody MocDto.ImpactForm form) {
         return service.assess(id, domain, form);
     }
 
     @PostMapping("/{id}/submit")
-    @RequiresPermission(Permission.CHANGE_ANALYZE)
+    @RequiresPermission(Permission.CHANGE_REQUEST)
     public MocDto.Detail submit(@PathVariable UUID id) {
         return service.submit(id);
     }
 
     @PostMapping("/{id}/reopen")
-    @RequiresPermission(Permission.CHANGE_ANALYZE)
+    @RequiresPermission(Permission.CHANGE_REQUEST)
     public MocDto.Detail reopen(@PathVariable UUID id) {
         return service.reopen(id);
     }

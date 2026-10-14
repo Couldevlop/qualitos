@@ -1,5 +1,7 @@
 package com.openlab.qualitos.quality.change;
 
+import com.openlab.qualitos.quality.authz.application.AuthorizationService;
+import com.openlab.qualitos.quality.authz.domain.Permission;
 import com.openlab.qualitos.quality.change.domain.ImpactDomain;
 import com.openlab.qualitos.quality.change.domain.MocClassification;
 import com.openlab.qualitos.quality.change.domain.MocException;
@@ -35,6 +37,9 @@ import java.util.stream.Collectors;
  *
  * <p><b>Règles tenues ici, quoi que l'écran ait laissé passer :</b>
  * <ul>
+ *   <li>une demande n'est conduite (modifiée, supprimée, analysée, soumise,
+ *       rouverte) que par son demandeur ou par un gestionnaire des changements
+ *       ({@code change.analyze}) ;</li>
  *   <li>seul un brouillon se supprime ; brouillon et analyse se modifient ;</li>
  *   <li>la soumission exige les huit domaines évalués, et un titulaire (autre que
  *       le demandeur) pour chaque rôle requis ;</li>
@@ -57,12 +62,13 @@ public class MocService {
     private final MocSettingsService settings;
     private final MocNotifier notifier;
     private final MocAuditTrail audit;
+    private final AuthorizationService authz;
     private final Clock clock;
 
     public MocService(ChangeRequestRepository requestRepo, ChangeImpactAssessmentRepository assessmentRepo,
                       ChangeValidationRepository validationRepo, ChangeHistoryRepository historyRepo,
                       ChangeCodeCounterRepository counterRepo, MocSettingsService settings,
-                      MocNotifier notifier, MocAuditTrail audit, Clock clock) {
+                      MocNotifier notifier, MocAuditTrail audit, AuthorizationService authz, Clock clock) {
         this.requestRepo = requestRepo;
         this.assessmentRepo = assessmentRepo;
         this.validationRepo = validationRepo;
@@ -71,6 +77,7 @@ public class MocService {
         this.settings = settings;
         this.notifier = notifier;
         this.audit = audit;
+        this.authz = authz;
         this.clock = clock;
     }
 
@@ -120,6 +127,7 @@ public class MocService {
     public MocDto.Detail update(UUID id, MocDto.RequestForm form) {
         UUID tenantId = MocSettingsService.requireTenantId();
         ChangeRequest c = load(tenantId, id);
+        exigerConducteur(c);
         if (!c.getStatus().open()) {
             throw MocException.conflict("moc.not-editable",
                     "Une demande ne se modifie qu'en brouillon ou en analyse (statut : " + c.getStatus() + ").");
@@ -136,6 +144,7 @@ public class MocService {
     public void delete(UUID id) {
         UUID tenantId = MocSettingsService.requireTenantId();
         ChangeRequest c = load(tenantId, id);
+        exigerConducteur(c);
         if (c.getStatus() != ChangeRequestStatus.DRAFT) {
             throw MocException.conflict("moc.delete-not-draft",
                     "Seule une demande en brouillon peut être supprimée (statut : " + c.getStatus() + ").");
@@ -153,6 +162,7 @@ public class MocService {
     public MocDto.Detail sendToAnalysis(UUID id) {
         UUID tenantId = MocSettingsService.requireTenantId();
         ChangeRequest c = load(tenantId, id);
+        exigerConducteur(c);
         exiger(c, ChangeRequestStatus.DRAFT, "moc.not-draft",
                 "Seul un brouillon s'envoie en analyse.");
         c.setStatus(ChangeRequestStatus.IN_ANALYSIS);
@@ -168,6 +178,7 @@ public class MocService {
         UUID tenantId = MocSettingsService.requireTenantId();
         UUID acteur = CurrentUser.requireUserId();
         ChangeRequest c = load(tenantId, id);
+        exigerConducteur(c);
         exiger(c, ChangeRequestStatus.IN_ANALYSIS, "moc.not-in-analysis",
                 "L'analyse d'impact ne se modifie que pendant l'analyse.");
         MocSettings s = settings.load(tenantId);
@@ -209,6 +220,7 @@ public class MocService {
         UUID tenantId = MocSettingsService.requireTenantId();
         UUID acteur = CurrentUser.requireUserId();
         ChangeRequest c = load(tenantId, id);
+        exigerConducteur(c);
         exiger(c, ChangeRequestStatus.IN_ANALYSIS, "moc.not-in-analysis",
                 "Seule une demande en analyse se soumet à validation.");
         MocSettings s = settings.load(tenantId);
@@ -327,6 +339,7 @@ public class MocService {
     public MocDto.Detail reopen(UUID id) {
         UUID tenantId = MocSettingsService.requireTenantId();
         ChangeRequest c = load(tenantId, id);
+        exigerConducteur(c);
         exiger(c, ChangeRequestStatus.REJECTED, "moc.not-rejected", "Seule une demande rejetée se rouvre.");
         MocSettings s = settings.load(tenantId);
         validationRepo.deleteByTenantIdAndChangeId(tenantId, id);
@@ -422,8 +435,8 @@ public class MocService {
         boolean demandeur = moi != null && moi.equals(c.getRequesterUserId());
         return new MocDto.Detail(c.getId(), c.getCode(), c.getTitle(), c.getType(), c.getSite(),
                 c.getDescription(), c.getJustification(), c.getPlannedFor(), c.getStatus(), c.getRequesterName(),
-                demandeur, c.getCreatedAt(), c.getSubmittedAt(), c.getClosedAt(), c.getImpactScore(),
-                c.getClassification(), impacts, cartes(c, s, moi, demandeur),
+                demandeur, conducteur(c, moi), c.getCreatedAt(), c.getSubmittedAt(), c.getClosedAt(),
+                c.getImpactScore(), c.getClassification(), impacts, cartes(c, s, moi, demandeur),
                 historyRepo.findByTenantIdAndChangeIdOrderByOccurredAtDesc(tenantId, c.getId()).stream()
                         .map(h -> new MocDto.HistoryView(h.getOccurredAt(), h.getEvent(), h.getActorName(),
                                 h.getDetail())).toList());
@@ -499,6 +512,18 @@ public class MocService {
         c.setDescription(blankToNull(form.description()));
         c.setJustification(blankToNull(form.justification()));
         c.setPlannedFor(form.plannedFor());
+    }
+
+    /** Vrai si l'utilisateur du jeton conduit cette demande : son demandeur, ou un gestionnaire. */
+    private boolean conducteur(ChangeRequest c, UUID moi) {
+        return (moi != null && moi.equals(c.getRequesterUserId())) || authz.has(Permission.CHANGE_ANALYZE);
+    }
+
+    private void exigerConducteur(ChangeRequest c) {
+        if (!conducteur(c, CurrentUser.requireUserId())) {
+            throw new MocException(MocException.Kind.FORBIDDEN, "moc.not-owner",
+                    "Seul le demandeur ou un gestionnaire des changements peut conduire cette demande.");
+        }
     }
 
     private static void exiger(ChangeRequest c, ChangeRequestStatus attendu, String code, String message) {

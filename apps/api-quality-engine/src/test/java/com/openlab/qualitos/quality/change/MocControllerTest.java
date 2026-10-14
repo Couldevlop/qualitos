@@ -59,13 +59,13 @@ class MocControllerTest {
 
     static MocDto.Detail detail() {
         return new MocDto.Detail(ID, "MOC-2026-014", "Four", ChangeRequestType.PERMANENT, "Atelier 2", null, null,
-                null, ChangeRequestStatus.DRAFT, "S. Benali", true, Instant.now(), null, null, null,
+                null, ChangeRequestStatus.DRAFT, "S. Benali", true, true, Instant.now(), null, null, null,
                 MocClassification.NOT_ASSESSED, List.of(), List.of(), List.of());
     }
 
     @Test
     @WithMockUser(roles = "USER")
-    void unUtilisateurLitEtDemandeMaisNAnalysePas() throws Exception {
+    void unUtilisateurLitDemandeEtConduitSesDemandes() throws Exception {
         when(service.list()).thenReturn(List.of(new MocDto.Summary(ID, "MOC-2026-014", "Four",
                 ChangeRequestType.PERMANENT, ChangeRequestStatus.DRAFT, MocClassification.NOT_ASSESSED, null,
                 "S. Benali", Instant.now(), false)));
@@ -79,11 +79,26 @@ class MocControllerTest {
         mockMvc.perform(post(BASE + "/" + ID + "/analysis").with(csrf())).andExpect(status().isOk());
         mockMvc.perform(delete(BASE + "/" + ID).with(csrf())).andExpect(status().isNoContent());
 
+        // Le service vérifie qu'il conduit CETTE demande : un refus y devient un 403 nommé.
+        when(service.submit(ID)).thenThrow(new MocException(MocException.Kind.FORBIDDEN, "moc.not-owner", "x"));
+        mockMvc.perform(post(BASE + "/" + ID + "/submit").with(csrf()))
+                .andExpect(status().isForbidden()).andExpect(jsonPath("$.code").value("moc.not-owner"));
+    }
+
+    @Test
+    @WithMockUser(roles = "AUDITOR")
+    void unAuditeurLitMaisNeDemandeRien() throws Exception {
+        when(service.list()).thenReturn(List.of());
+        mockMvc.perform(get(BASE)).andExpect(status().isOk());
+        mockMvc.perform(post(BASE).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(DEMANDE))
+                .andExpect(status().isForbidden());
         mockMvc.perform(post(BASE + "/" + ID + "/submit").with(csrf())).andExpect(status().isForbidden());
         mockMvc.perform(post(BASE + "/" + ID + "/reopen").with(csrf())).andExpect(status().isForbidden());
         mockMvc.perform(put(BASE + "/" + ID + "/impacts/SAFETY").with(csrf())
                 .contentType(MediaType.APPLICATION_JSON).content("{\"level\":\"LOW\"}"))
                 .andExpect(status().isForbidden());
+        mockMvc.perform(delete(BASE + "/" + ID).with(csrf())).andExpect(status().isForbidden());
+        verify(service, never()).create(any());
         verify(service, never()).submit(any());
         verify(service, never()).assess(any(), any(), any());
     }
