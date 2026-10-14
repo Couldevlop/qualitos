@@ -1,5 +1,7 @@
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatMenuModule } from '@angular/material/menu';
 import { RouterModule, Routes } from '@angular/router';
 
@@ -9,6 +11,7 @@ import { CredentialRevealComponent } from './components/credential-reveal/creden
 import { CircuitsComponent } from './pages/circuits/circuits.component';
 import { ClientsComponent } from './pages/clients/clients.component';
 import { LicenseComponent } from './pages/license/license.component';
+import { MocSettingsComponent } from './pages/moc-settings/moc-settings.component';
 import { RolesMatrixComponent } from './pages/roles-matrix/roles-matrix.component';
 import { TenantModulesComponent } from './pages/tenant-modules/tenant-modules.component';
 import { TenantTeamComponent } from './pages/tenant-team/tenant-team.component';
@@ -28,6 +31,8 @@ const routes: Routes = [
   { path: 'roles', component: RolesMatrixComponent },
   // Les circuits de validation (ADR 0080) : qui approuve, et dans quel ordre.
   { path: 'circuits', component: CircuitsComponent },
+  // Les paramètres de la gestion des changements (ADR 0087) : seuils, poids, rappel, validateurs.
+  { path: 'moc', component: MocSettingsComponent },
   // La licence d'une installation on-premise (ADR 0082).
   { path: 'licence', component: LicenseComponent },
   // Les clients de la plateforme et leur création (éditeur, ADR 0079).
@@ -60,7 +65,9 @@ const routes: Routes = [
 
 @NgModule({
   declarations: [TenantModulesComponent, TenantTeamComponent, RolesMatrixComponent, CircuitsComponent, ClientsComponent, LicenseComponent,
+    MocSettingsComponent,
     CredentialRevealComponent],
-  imports: [SharedModule, UiModule, DragDropModule, MatMenuModule, RouterModule.forChild(routes)]
+  imports: [SharedModule, UiModule, FormsModule, DragDropModule, MatMenuModule, MatAutocompleteModule,
+    RouterModule.forChild(routes)]
 })
 export class AdminModule {}

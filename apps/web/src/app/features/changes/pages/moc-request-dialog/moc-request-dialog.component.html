@@ -1,0 +1,39 @@
+<qos-form-dialog [title]="dialogTitle" [formGroup]="form" [submitting]="saving"
+                 [submitDisabled]="form.invalid || !!blockedReason" [blockedReason]="blockedReason"
+                 [submitLabel]="editing ? saveLabel : createLabel"
+                 (submitted)="submit()" (cancelled)="cancel()">
+  <mat-form-field appearance="outline" class="plein">
+    <mat-label i18n="@@moc.dialog.title-label">Titre</mat-label>
+    <input matInput formControlName="title" maxlength="250" data-test="titre" cdkFocusInitial>
+  </mat-form-field>
+
+  <div class="ligne">
+    <div class="type" role="group" aria-labelledby="moc-type-label">
+      <span class="type__label" id="moc-type-label" i18n="@@moc.field.type">Type</span>
+      <mat-button-toggle-group formControlName="type" hideSingleSelectionIndicator data-test="type">
+        <mat-button-toggle *ngFor="let t of types" [value]="t.value">{{ t.label }}</mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
+
+    <mat-form-field appearance="outline" class="site">
+      <mat-label i18n="@@moc.field.site">Site / unité</mat-label>
+      <input matInput formControlName="site" maxlength="200" data-test="site">
+    </mat-form-field>
+  </div>
+
+  <mat-form-field appearance="outline" class="plein">
+    <mat-label i18n="@@moc.field.description">Description</mat-label>
+    <textarea matInput formControlName="description" rows="3" maxlength="4000" data-test="description"></textarea>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="plein">
+    <mat-label i18n="@@moc.field.justification">Justification</mat-label>
+    <textarea matInput formControlName="justification" rows="3" maxlength="4000" data-test="justification"></textarea>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="date">
+    <mat-label i18n="@@moc.field.planned">Mise en œuvre prévue</mat-label>
+    <input matInput type="date" formControlName="plannedFor" data-test="prevue">
+    <mat-hint i18n="@@moc.dialog.planned-hint">Facultatif : l'échéance apparaît au tableau de bord SMI.</mat-hint>
+  </mat-form-field>
+</qos-form-dialog>

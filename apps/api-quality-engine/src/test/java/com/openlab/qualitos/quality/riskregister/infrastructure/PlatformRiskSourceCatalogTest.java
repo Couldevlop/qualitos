@@ -188,7 +188,7 @@ class PlatformRiskSourceCatalogTest {
         when(c.getTenantId()).thenReturn(TENANT);
         when(c.getCode()).thenReturn("CHG-2026-0007");
         when(c.getTitle()).thenReturn("Nouveau fournisseur de flux");
-        when(c.getRiskAssessment()).thenReturn("Compatibilité chimique");
+        when(c.getJustification()).thenReturn("Compatibilité chimique");
         when(c.getImpactSummary()).thenReturn("Qualification à refaire");
         when(changes.findById(ID)).thenReturn(Optional.of(c));
 

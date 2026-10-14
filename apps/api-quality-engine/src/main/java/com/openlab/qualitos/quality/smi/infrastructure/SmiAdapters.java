@@ -57,9 +57,8 @@ public final class SmiAdapters {
     static final Set<CapaStatus> CAPA_TERMINAL = EnumSet.of(CapaStatus.CLOSED, CapaStatus.REJECTED);
     /** Une norme retirée ou dont le certificat a expiré ne se pilote plus. */
     static final Set<AdoptionStatus> ADOPTION_ENDED = EnumSet.of(AdoptionStatus.WITHDRAWN, AdoptionStatus.EXPIRED);
-    /** Un changement attend une validation tant qu'il est soumis ou en revue. */
-    static final Set<ChangeRequestStatus> CHANGE_AWAITING =
-            EnumSet.of(ChangeRequestStatus.SUBMITTED, ChangeRequestStatus.UNDER_REVIEW);
+    /** Un changement attend une validation tant qu'il est en validation (MOC, ADR 0087). */
+    static final Set<ChangeRequestStatus> CHANGE_AWAITING = EnumSet.of(ChangeRequestStatus.IN_VALIDATION);
 
     static UUID tenant() {
         if (!TenantContext.hasTenant()) {

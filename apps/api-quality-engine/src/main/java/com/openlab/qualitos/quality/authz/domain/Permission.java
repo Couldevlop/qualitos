@@ -67,7 +67,13 @@ public enum Permission {
     /** Sans elle, on ne voit que les risques et opportunités qu'on a inscrits (ADR 0081). */
     RISK_VIEW_ALL("risk.view.all", "risk", tous()),
     RISK_MANAGE("risk.manage", "risk", pilotage()),
-    OPPORTUNITY_MANAGE("opportunity.manage", "risk", pilotage());
+    OPPORTUNITY_MANAGE("opportunity.manage", "risk", pilotage()),
+
+    // ---------- gestion des changements (MOC, ADR 0087) ----------
+    /** Demander un changement, et conduire SES demandes : brouillon, analyse, soumission, réouverture. */
+    CHANGE_REQUEST("change.request", "change", plus(pilotage(), USER)),
+    /** Gérer les changements : conduire aussi les demandes des autres (modifier, analyser, soumettre, rouvrir, supprimer un brouillon). */
+    CHANGE_ANALYZE("change.analyze", "change", pilotage());
 
     private final String code;
     private final String module;

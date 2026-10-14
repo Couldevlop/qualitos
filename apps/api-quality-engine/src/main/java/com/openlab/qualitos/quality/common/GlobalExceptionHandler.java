@@ -77,9 +77,8 @@ import com.openlab.qualitos.quality.training.EnrollmentNotFoundException;
 import com.openlab.qualitos.quality.training.SkillNotFoundException;
 import com.openlab.qualitos.quality.training.TrainingPathNotFoundException;
 import com.openlab.qualitos.quality.training.TrainingStateException;
-import com.openlab.qualitos.quality.change.ChangeChildNotFoundException;
 import com.openlab.qualitos.quality.change.ChangeRequestNotFoundException;
-import com.openlab.qualitos.quality.change.ChangeStateException;
+import com.openlab.qualitos.quality.change.domain.MocException;
 import com.openlab.qualitos.quality.complaints.ComplaintNotFoundException;
 import com.openlab.qualitos.quality.complaints.ComplaintResponseNotFoundException;
 import com.openlab.qualitos.quality.complaints.ComplaintStateException;
@@ -1405,20 +1404,24 @@ public class GlobalExceptionHandler {
         return problem;
     }
 
-    @ExceptionHandler(ChangeChildNotFoundException.class)
-    public ProblemDetail handleChangeChildNotFound(ChangeChildNotFoundException ex) {
-        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
-        problem.setType(URI.create("https://qualitos.io/errors/change-child-not-found"));
-        problem.setTitle("Change Sub-Resource Not Found");
-        problem.setProperty("timestamp", Instant.now());
-        return problem;
-    }
-
-    @ExceptionHandler(ChangeStateException.class)
-    public ProblemDetail handleChangeState(ChangeStateException ex) {
-        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
-        problem.setType(URI.create("https://qualitos.io/errors/change-invalid-state"));
-        problem.setTitle("Invalid Change Request State");
+    /**
+     * Les refus de la gestion des changements (ADR 0087) : le statut suit la
+     * nature du refus, et {@code code} (stable) permet à l'écran de l'expliquer
+     * dans la langue de l'utilisateur sans afficher le message du serveur.
+     */
+    @ExceptionHandler(MocException.class)
+    public ProblemDetail handleMoc(MocException ex) {
+        HttpStatus status = switch (ex.kind()) {
+            case INVALID -> HttpStatus.BAD_REQUEST;
+            case FORBIDDEN -> HttpStatus.FORBIDDEN;
+            case CONFLICT -> HttpStatus.CONFLICT;
+            case NOT_FOUND -> HttpStatus.NOT_FOUND;
+        };
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(status, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/moc"));
+        problem.setTitle("Change Management");
+        problem.setProperty("code", ex.code());
+        ex.details().forEach(problem::setProperty);
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }

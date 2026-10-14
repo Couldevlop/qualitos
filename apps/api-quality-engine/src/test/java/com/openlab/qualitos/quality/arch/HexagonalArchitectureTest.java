@@ -16,6 +16,19 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 class HexagonalArchitectureTest {
 
     @ArchTest
+    static final ArchRule moc_domain_has_no_framework_deps =
+        noClasses()
+            .that().resideInAPackage("..change.domain..")
+            .should().dependOnClassesThat().resideInAnyPackage(
+                "org.springframework..",
+                "jakarta.persistence..",
+                "jakarta.validation..",
+                "org.hibernate..",
+                "org.apache.poi..")
+            .because("Domain (gestion des changements, ADR 0087) : règles de score, de classification "
+                + "et de paramétrage sans framework.");
+
+    @ArchTest
     static final ArchRule p5_dashboards_domain_has_no_framework_deps =
         noClasses()
             .that().resideInAPackage("..dashboards.domain..")

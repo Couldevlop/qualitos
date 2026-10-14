@@ -1,0 +1,54 @@
+<section class="validation">
+  <p class="validation__resume" *ngIf="assessed && detail.validations.length" data-test="resume">{{ summary }}</p>
+  <p class="validation__note" *ngIf="!assessed && !legacy" i18n="@@moc.validation.not-assessed">Les validateurs requis seront connus une fois les huit domaines d'impact évalués.</p>
+  <p class="validation__note" *ngIf="legacy" i18n="@@moc.validation.legacy">Demande antérieure au MOC : ses décisions sont consignées dans l'historique.</p>
+  <p class="validation__note" *ngIf="detail.validations.length && detail.validations[0].preview" data-test="apercu"
+     i18n="@@moc.validation.preview">Aperçu : la liste des validateurs sera figée à la soumission à validation.</p>
+
+  <ul class="cartes">
+    <li *ngFor="let v of detail.validations; let i = index; trackBy: trackCard" class="carte"
+        [class.carte--ok]="v.decision === 'APPROVED'" [class.carte--refus]="v.decision === 'REJECTED'"
+        [attr.data-test]="'carte-' + i">
+      <div class="carte__tete">
+        <h4 class="carte__role">{{ v.roleLabel }}</h4>
+        <span class="etat etat--{{ v.decision }}" *ngIf="!v.preview" [attr.data-test]="'etat-' + i">
+          {{ decisionLabel(v.decision) }}<ng-container *ngIf="v.decidedAt"> · {{ v.decidedAt | date:'dd/MM/yyyy HH:mm' }}</ng-container>
+        </span>
+      </div>
+
+      <p class="carte__qui" *ngIf="v.decidedByName">
+        <ng-container *ngIf="v.decision === 'APPROVED'" i18n="@@moc.validation.approved-by">Approuvé par {{ v.decidedByName // i18n(ph="name") }}</ng-container>
+        <ng-container *ngIf="v.decision === 'REJECTED'" i18n="@@moc.validation.rejected-by">Rejeté par {{ v.decidedByName // i18n(ph="name") }}</ng-container>
+      </p>
+      <blockquote class="carte__commentaire" *ngIf="v.comment">{{ v.comment }}</blockquote>
+
+      <p class="carte__titulaires" *ngIf="v.holders.length && (v.decision === 'PENDING' || v.preview)">
+        <ng-container *ngIf="v.preview || v.canDecide" i18n="@@moc.validation.holders">Titulaires : {{ holdersText(v) // i18n(ph="names") }}</ng-container>
+        <ng-container *ngIf="!v.preview && !v.canDecide" i18n="@@moc.validation.waiting-for">En attente de : {{ holdersText(v) // i18n(ph="names") }}</ng-container>
+      </p>
+      <p class="carte__alerte" *ngIf="!v.holders.length && v.decision === 'PENDING'" i18n="@@moc.validation.no-holder">Aucun titulaire : l'administrateur doit en nommer un dans les paramètres MOC.</p>
+      <p class="carte__alerte" *ngIf="v.heldByMe && detail.requestedByMe && v.decision === 'PENDING' && !v.preview"
+         i18n="@@moc.validation.self">Vous êtes le demandeur : vous ne pouvez pas valider votre propre demande.</p>
+
+      <div class="carte__decision" *ngIf="v.canDecide">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="carte__champ">
+          <mat-label i18n="@@moc.validation.comment">Commentaire (obligatoire en cas de refus)</mat-label>
+          <textarea matInput rows="2" [value]="comment(v)" [attr.maxlength]="commentMax"
+                    (input)="setComment(v, $any($event.target).value)" [attr.data-test]="'commentaire-' + i"></textarea>
+        </mat-form-field>
+        <div class="carte__boutons">
+          <button mat-flat-button type="button" class="bouton-ok" (click)="approve(v)" [disabled]="busy !== null"
+                  [attr.data-test]="'approuver-' + i">
+            <mat-icon>check</mat-icon> <span i18n="@@moc.validation.approve">Approuver</span>
+          </button>
+          <button mat-flat-button type="button" class="bouton-refus" (click)="reject(v)"
+                  [disabled]="busy !== null || !canReject(v)" [attr.data-test]="'rejeter-' + i"
+                  i18n-matTooltip="@@moc.validation.reject-hint" matTooltip="Un refus doit être motivé par un commentaire"
+                  [matTooltipDisabled]="canReject(v)">
+            <mat-icon>close</mat-icon> <span i18n="@@moc.validation.reject">Rejeter</span>
+          </button>
+        </div>
+      </div>
+    </li>
+  </ul>
+</section>

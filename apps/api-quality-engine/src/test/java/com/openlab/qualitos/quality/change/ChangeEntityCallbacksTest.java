@@ -1,5 +1,6 @@
 package com.openlab.qualitos.quality.change;
 
+import com.openlab.qualitos.quality.change.domain.MocClassification;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
@@ -10,62 +11,49 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ChangeEntityCallbacksTest {
 
     @Test
-    void changePrePersist_defaultsStatusDraftAndPriorityMedium() throws Exception {
+    void uneNouvelleDemandeEstUnBrouillonPermanentNonEvalue() throws Exception {
         ChangeRequest c = new ChangeRequest();
         invoke(c, "prePersist");
         assertThat(c.getStatus()).isEqualTo(ChangeRequestStatus.DRAFT);
-        assertThat(c.getPriority()).isEqualTo(ChangeRequestPriority.MEDIUM);
+        assertThat(c.getType()).isEqualTo(ChangeRequestType.PERMANENT);
+        assertThat(c.getClassification()).isEqualTo(MocClassification.NOT_ASSESSED);
         assertThat(c.getCreatedAt()).isNotNull();
+        assertThat(c.getUpdatedAt()).isNotNull();
     }
 
     @Test
-    void changePrePersist_preservesValues() throws Exception {
+    void lesValeursPoseesSontGardees() throws Exception {
         ChangeRequest c = new ChangeRequest();
-        c.setStatus(ChangeRequestStatus.SUBMITTED);
-        c.setPriority(ChangeRequestPriority.HIGH);
+        c.setStatus(ChangeRequestStatus.IN_ANALYSIS);
+        c.setType(ChangeRequestType.TEMPORARY);
+        c.setClassification(MocClassification.MAJOR);
         invoke(c, "prePersist");
-        assertThat(c.getStatus()).isEqualTo(ChangeRequestStatus.SUBMITTED);
-        assertThat(c.getPriority()).isEqualTo(ChangeRequestPriority.HIGH);
+        assertThat(c.getStatus()).isEqualTo(ChangeRequestStatus.IN_ANALYSIS);
+        assertThat(c.getType()).isEqualTo(ChangeRequestType.TEMPORARY);
+        assertThat(c.getClassification()).isEqualTo(MocClassification.MAJOR);
     }
 
     @Test
-    void changePreUpdate_refreshes() throws Exception {
+    void laMiseAJourRafraichitLaDate() throws Exception {
         ChangeRequest c = new ChangeRequest();
         c.setUpdatedAt(Instant.now().minusSeconds(60));
         Instant before = c.getUpdatedAt();
-        Thread.sleep(5);
         invoke(c, "preUpdate");
         assertThat(c.getUpdatedAt()).isAfter(before);
     }
 
     @Test
-    void impactPrePersist_stamps() throws Exception {
-        ChangeImpact i = new ChangeImpact();
-        invoke(i, "prePersist");
-        assertThat(i.getCreatedAt()).isNotNull();
+    void seulsBrouillonEtAnalyseSontOuverts() {
+        assertThat(ChangeRequestStatus.DRAFT.open()).isTrue();
+        assertThat(ChangeRequestStatus.IN_ANALYSIS.open()).isTrue();
+        assertThat(ChangeRequestStatus.IN_VALIDATION.open()).isFalse();
+        assertThat(ChangeRequestStatus.APPROVED.open()).isFalse();
+        assertThat(ChangeRequestStatus.REJECTED.open()).isFalse();
     }
 
-    @Test
-    void approvalPrePersist_defaultsPendingAndLevel1() throws Exception {
-        ChangeApproval a = new ChangeApproval();
-        invoke(a, "prePersist");
-        assertThat(a.getDecision()).isEqualTo(ApprovalDecision.PENDING);
-        assertThat(a.getApprovalLevel()).isOne();
-    }
-
-    @Test
-    void approvalPrePersist_preservesValues() throws Exception {
-        ChangeApproval a = new ChangeApproval();
-        a.setDecision(ApprovalDecision.APPROVED);
-        a.setApprovalLevel(3);
-        invoke(a, "prePersist");
-        assertThat(a.getDecision()).isEqualTo(ApprovalDecision.APPROVED);
-        assertThat(a.getApprovalLevel()).isEqualTo(3);
-    }
-
-    private static void invoke(Object t, String m) throws Exception {
-        Method method = t.getClass().getDeclaredMethod(m);
-        method.setAccessible(true);
-        method.invoke(t);
+    private static void invoke(Object target, String name) throws Exception {
+        Method m = target.getClass().getDeclaredMethod(name);
+        m.setAccessible(true);
+        m.invoke(target);
     }
 }

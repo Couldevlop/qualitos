@@ -33,4 +33,10 @@ public interface NotificationJpaRepository extends JpaRepository<NotificationJpa
             + "and (n.recipientUserId is null or n.recipientUserId = :userId) and n.readAt is null")
     int markAllRead(@Param("tenantId") UUID tenantId, @Param("userId") String userId,
                     @Param("at") Instant at);
+
+    @Modifying
+    @Query("update NotificationJpaEntity n set n.readAt = :at where n.tenantId = :tenantId "
+            + "and n.recipientUserId = :userId and n.link = :link and n.readAt is null")
+    int markReadForLink(@Param("tenantId") UUID tenantId, @Param("userId") String userId,
+                        @Param("link") String link, @Param("at") Instant at);
 }

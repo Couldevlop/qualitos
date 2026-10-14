@@ -1,0 +1,34 @@
+// La saisie d'une demande : un champ par ligne, le type et le site côte à côte.
+
+.plein {
+  width: 100%;
+}
+
+.ligne {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--qos-space-4);
+}
+
+.type {
+  display: flex;
+  flex-direction: column;
+  gap: var(--qos-space-1);
+  margin-bottom: var(--qos-space-4);
+
+  &__label {
+    font-size: var(--qos-fs-xs);
+    font-weight: var(--qos-fw-semibold);
+    color: var(--qos-fg-secondary);
+  }
+}
+
+.site {
+  flex: 1 1 220px;
+}
+
+.date {
+  width: 260px;
+  max-width: 100%;
+}
