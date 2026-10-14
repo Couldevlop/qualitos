@@ -8,8 +8,9 @@ import { catchError, finalize, shareReplay, switchMap, tap } from 'rxjs/operator
 import { deferredView } from '../../../../core/rx/deferred-view';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../../../shared/ui/confirm-dialog/confirm-dialog.component';
-import { CapaDirectoryService, DirectoryMember } from '../../capa-directory.service';
-import { capaOwnerLabel, capaSourceLabel, capaTypeLabel } from '../../capa.labels';
+import { AccountNames } from '../../../../core/directory/directory-names';
+import { DirectoryService } from '../../../../core/directory/directory.service';
+import { capaOwnerLabel, capaSourceLabel, capaTypeLabel, unnamedOwners } from '../../capa.labels';
 import { CapaService } from '../../capa.service';
 import {
   CapaEditDialogComponent,
@@ -41,8 +42,8 @@ export class CapaDetailComponent implements OnInit {
 
   readonly notFoundLabel = $localize`:@@capa.detail.not-found:Cas introuvable`;
 
-  /** Les membres connus, pour nommer le pilote d'un dossier qui ne porte pas son nom. */
-  private members: DirectoryMember[] = [];
+  /** Le nom du pilote d'un dossier ancien qui ne l'a pas recopié, lu dans l'annuaire (ADR 0091). */
+  private readonly names = new AccountNames(this.directory);
 
   case$!: Observable<CapaCaseResponse | null>;
   private readonly loadingState$ = new BehaviorSubject<boolean>(false);
@@ -82,7 +83,7 @@ export class CapaDetailComponent implements OnInit {
     private readonly capa: CapaService,
     private readonly dialog: MatDialog,
     private readonly snack: MatSnackBar,
-    private readonly directory: CapaDirectoryService
+    private readonly directory: DirectoryService
   ) {}
 
   ngOnInit(): void {
@@ -104,17 +105,17 @@ export class CapaDetailComponent implements OnInit {
         }),
         finalize(() => this.loadingState$.next(false))
       )),
+      tap(c => { if (c) this.names.resolve(unnamedOwners([c])); }),
       shareReplay({ bufferSize: 1, refCount: true })
     );
     this.reload$.next();
     this.loadEvidences();
     this.loadActionEvidences();
-    this.directory.choices().subscribe(c => (this.members = c.members));
   }
 
   /** Le nom du pilote, jamais son identifiant (ADR 0088). */
   ownerLabel(c: CapaCaseResponse): string {
-    return capaOwnerLabel(c, this.members);
+    return capaOwnerLabel(c, id => this.names.get(id));
   }
 
   sourceLabel(c: CapaCaseResponse): string {

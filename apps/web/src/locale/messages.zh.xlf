@@ -5362,22 +5362,6 @@ Portail clients</source>
         <source>Celui ou celle qui conduit l'audit et signe le rapport.</source>
         <target state="translated">负责实施审核并签署报告的人。</target>
       </trans-unit>
-      <trans-unit id="audits.lead-auditor.directory-down" datatype="html">
-        <source>L'annuaire de l'organisation n'est pas accessible avec vos droits : l'audit vous est confié.</source>
-        <target state="translated">您的权限无法访问组织目录：审核将分配给您。</target>
-      </trans-unit>
-      <trans-unit id="audits.lead-auditor.directory-down-edit" datatype="html">
-        <source>L'annuaire de l'organisation n'est pas accessible avec vos droits : seuls vous et l'auditeur actuel sont proposés.</source>
-        <target state="translated">您的权限无法访问组织目录：仅提供您和当前审核员。</target>
-      </trans-unit>
-      <trans-unit id="audits.lead-auditor.required" datatype="html">
-        <source>Désignez l'auditeur responsable.</source>
-        <target state="translated">请指定审核组长。</target>
-      </trans-unit>
-      <trans-unit id="audits.lead-auditor.me" datatype="html">
-        <source><x id="name"/> (vous)</source>
-        <target state="translated"><x id="name"/>（您）</target>
-      </trans-unit>
       <trans-unit id="audits.lead-auditor.unknown" datatype="html">
         <source>Membre de l'organisation (nom non enregistré)</source>
         <target state="translated">组织成员（未记录姓名）</target>
@@ -6838,10 +6822,6 @@ Portail clients</source>
         <source>Lecture de l'annuaire…</source>
         <target state="translated">正在读取通讯录…</target>
       </trans-unit>
-      <trans-unit id="capa.open.owner-required" datatype="html">
-        <source>Choisis le responsable de l'action.</source>
-        <target state="translated">请选择措施负责人。</target>
-      </trans-unit>
       <trans-unit id="capa.open.due-date" datatype="html">
         <source>Échéance</source>
         <target state="translated">截止日期</target>
@@ -6853,10 +6833,6 @@ Portail clients</source>
       <trans-unit id="capa.open.due-date-past" datatype="html">
         <source>L'échéance ne peut pas être passée.</source>
         <target state="translated">截止日期不能早于今天。</target>
-      </trans-unit>
-      <trans-unit id="capa.open.directory-down" datatype="html">
-        <source>L'annuaire de l'organisation n'est pas accessible avec tes droits : tu peux te désigner toi-même. Pour confier l'action à un collègue, demande à un administrateur, ou réaffecte-la ensuite.</source>
-        <target state="translated">以你的权限无法访问组织通讯录：你可以指定自己。如需交给同事，请联系管理员，或稍后重新分配。</target>
       </trans-unit>
       <trans-unit id="capa.open.owner-hint-unmatched" datatype="html">
         <source>Propriétaire indiqué : <x id="INTERPOLATION"/> — introuvable dans l'annuaire, choisis son compte dans la liste.</source>
@@ -6989,10 +6965,6 @@ Portail clients</source>
       <trans-unit id="capa.verification.assignee-required" datatype="html">
         <source>Une vérification exigée doit être confiée à quelqu'un.</source>
         <target state="translated">被要求的验证必须指派给某个人。</target>
-      </trans-unit>
-      <trans-unit id="capa.verification.directory-down" datatype="html">
-        <source>L'annuaire de l'organisation n'a pas répondu : la liste est vide, et le dossier ne pourra pas être enregistré avec une vérification exigée.</source>
-        <target state="translated">组织目录没有响应：列表为空，且在要求验证的状态下无法保存本案卷。</target>
       </trans-unit>
       <trans-unit id="capa.verification.instructions" datatype="html">
         <source>Instructions de vérification</source>
@@ -17459,10 +17431,6 @@ historique 12 mois</source>
       <trans-unit id="moc.settings.add-role" datatype="html">
         <source>Ajouter un rôle</source>
         <target state="translated">添加角色</target>
-      </trans-unit>
-      <trans-unit id="moc.settings.directory-failed" datatype="html">
-        <source>L'annuaire n'a pas répondu : les titulaires ne peuvent pas être modifiés pour l'instant.</source>
-        <target state="translated">目录无响应：暂时无法修改负责人。</target>
       </trans-unit>
       <trans-unit id="moc.settings.role-label" datatype="html">
         <source>Libellé du rôle</source>

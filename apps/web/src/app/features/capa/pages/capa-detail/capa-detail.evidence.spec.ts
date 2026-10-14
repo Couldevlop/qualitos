@@ -16,7 +16,7 @@ import {
 } from '../capa-revision-impact/capa-revision-impact.component';
 import { ProductsService } from '../../../products/products.service';
 import { AuthzService } from '../../../../core/authz/authz.service';
-import { CapaDirectoryService } from '../../capa-directory.service';
+import { DirectoryService } from '../../../../core/directory/directory.service';
 
 /**
  * Preuves jointes au dossier CAPA (§4.2, ISO 9001 §10.2).
@@ -81,7 +81,7 @@ describe('CapaDetailComponent — preuves du dossier', () => {
       imports: [SharedModule, UiModule, NoopAnimationsModule],
       providers: [
         { provide: CapaService, useValue: capa },
-        { provide: CapaDirectoryService, useValue: { choices: () => of({ members: [], available: true }) } },
+        { provide: DirectoryService, useValue: { getByAccount: () => throwError(() => ({ status: 404 })) } },
         // Tous les droits : ces bancs testent la fiche, pas la matrice (ADR 0078).
         { provide: AuthzService, useValue: { can: () => of(true) } },
         // L'encart d'impact vit dans la fiche : sans ce doublon, il irait

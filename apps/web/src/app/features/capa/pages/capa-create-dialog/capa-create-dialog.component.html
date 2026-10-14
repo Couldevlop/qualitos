@@ -4,7 +4,7 @@
   subtitle="Une CAPA porte une action : ce qu'on va faire, qui en répond et pour quand. On la fait avancer jusqu'à la vérification d'efficacité."
   [formGroup]="form"
   [submitting]="submitting"
-  [submitDisabled]="form.invalid || loadingMembers"
+  [submitDisabled]="form.invalid || matchingOwner"
   [submitLabel]="submitLabel"
   (submitted)="submit()"
   (cancelled)="cancel()">
@@ -48,14 +48,11 @@
   </div>
 
   <div class="row">
-    <mat-form-field appearance="outline" class="col">
-      <mat-label i18n="@@capa.open.owner">Responsable</mat-label>
-      <mat-select formControlName="assigneeId" required data-test="capa-responsable">
-        <mat-option *ngFor="let m of members" [value]="m.userId">{{ m.label }}</mat-option>
-      </mat-select>
-      <mat-hint *ngIf="loadingMembers" i18n="@@capa.open.owner-loading">Lecture de l'annuaire…</mat-hint>
-      <mat-error *ngIf="form.controls.assigneeId.hasError('required')" i18n="@@capa.open.owner-required">Choisis le responsable de l'action.</mat-error>
-    </mat-form-field>
+    <!-- Le responsable pilote le dossier : n'importe quel membre de l'annuaire
+         (ADR 0091), soi-même par défaut. -->
+    <qos-user-picker class="col" formControlName="assigneeId" required data-test="capa-responsable"
+                     i18n-label="@@capa.open.owner" label="Responsable"
+                     (userSelected)="onOwner($event)"></qos-user-picker>
 
     <mat-form-field appearance="outline" class="col">
       <mat-label i18n="@@capa.open.due-date">Échéance</mat-label>
@@ -65,13 +62,8 @@
     </mat-form-field>
   </div>
 
-  <!-- Le responsable pilote le dossier. Quand l'annuaire n'est pas lisible
-       (réservé aux administrateurs), on se propose soi-même et on le dit. -->
-  <p class="aide" *ngIf="!loadingMembers && !directoryAvailable" role="status" data-test="annuaire-indisponible"
-     i18n="@@capa.open.directory-down">
-    L'annuaire de l'organisation n'est pas accessible avec tes droits : tu peux te désigner toi-même.
-    Pour confier l'action à un collègue, demande à un administrateur, ou réaffecte-la ensuite.
-  </p>
+  <p class="aide" *ngIf="matchingOwner" role="status" data-test="recherche-proprietaire"
+     i18n="@@capa.open.owner-loading">Lecture de l'annuaire…</p>
   <p class="aide" *ngIf="unmatchedOwnerHint as hint" data-test="proprietaire-non-trouve"
      i18n="@@capa.open.owner-hint-unmatched">
     Propriétaire indiqué : {{ hint }} — introuvable dans l'annuaire, choisis son compte dans la liste.

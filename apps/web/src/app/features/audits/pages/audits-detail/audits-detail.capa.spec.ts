@@ -1,3 +1,4 @@
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -5,7 +6,9 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router, convertToParamMap, provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 
+import { AuthService } from '../../../../core/auth/auth.service';
 import { AuthzService } from '../../../../core/authz/authz.service';
+import { DirectoryService } from '../../../../core/directory/directory.service';
 import { SharedModule } from '../../../../shared/shared.module';
 import { UiModule } from '../../../../shared/ui/ui.module';
 import { OpenCapaRequest } from '../../../capa/capa.types';
@@ -61,8 +64,12 @@ describe('AuditsDetailComponent — CAPA d\'un constat', () => {
         { provide: MatDialog, useValue: dialog },
         { provide: MatSnackBar, useValue: jasmine.createSpyObj('MatSnackBar', ['open']) },
         { provide: AuthzService, useValue: { can: () => of(true) } },
+        { provide: AuthService, useValue: { snapshot: () => ({ userId: 'u1', tenantId: 't', displayName: 'Alice', roles: [] }) } },
+        { provide: DirectoryService, useValue: { getByAccount: () => of({ id: 'i', accountId: 'u1', displayName: 'Alice', email: 'a@x.test', active: true }) } },
         { provide: ActivatedRoute, useValue: { snapshot: { paramMap: convertToParamMap({ id: PLAN_ID }) } } }
-      ]
+      ],
+      // Les panneaux « Rapport » et « Documents » ont leurs propres bancs.
+      schemas: [NO_ERRORS_SCHEMA]
     }).compileComponents();
     spyOn(TestBed.inject(Router), 'navigate').and.resolveTo(true);
   });

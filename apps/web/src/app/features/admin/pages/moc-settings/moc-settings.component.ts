@@ -1,6 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
+import { personName } from '../../../../core/directory/directory-names';
+import { DirectoryService } from '../../../../core/directory/directory.service';
+import { DirectoryUser } from '../../../../core/directory/directory.types';
+import { UserPickerComponent } from '../../../../shared/user-picker/user-picker.component';
+
 import { mocClassificationLabel, mocDomainLabel, mocErrorMessage } from '../../../changes/moc.labels';
 import { MocService } from '../../../changes/moc.service';
 import {
@@ -11,8 +16,6 @@ import {
   MocSettings,
   REQUIRED_CLASSES
 } from '../../../changes/moc.types';
-import { TenantUser } from '../../admin.types';
-import { TenantTeamService } from '../../tenant-team.service';
 
 type RequiredClass = Exclude<MocClassification, 'NOT_ASSESSED'>;
 
@@ -23,9 +26,10 @@ export interface EditableRole {
   label: string;
   requiredFor: RequiredClass[];
   holders: MocHolder[];
-  /** La saisie de recherche dans l'annuaire, propre à chaque rôle. */
-  search: string;
 }
+
+/** Ce que l'annuaire dit d'un titulaire : membre actif, ancien membre, ou inconnu. */
+export type HolderState = 'ok' | 'inactive' | 'unknown';
 
 const LABEL_MAX = 100;
 const MAX_ROLES = 20;
@@ -37,7 +41,9 @@ const MAX_HOLDERS = 20;
  * <p>Seuils de classification, délai de rappel des validateurs, poids des huit
  * domaines, et les rôles de validation : leur libellé, leur ordre, les
  * classifications qui les exigent et leurs titulaires, choisis dans l'annuaire
- * du client (jamais saisis à la main). Rien ne part avant « Enregistrer ».
+ * du client en lecture restreinte (ADR 0091) — jamais saisis à la main. Le nom
+ * de l'annuaire est recopié, avec l'adresse qui sert au courriel des
+ * validateurs. Rien ne part avant « Enregistrer ».
  *
  * <p>Ce qu'un enregistrement change est dit à l'écran : les demandes en
  * brouillon ou en analyse sont reclassées, celles déjà en validation gardent
@@ -62,8 +68,9 @@ export class MocSettingsComponent implements OnInit {
   weights = {} as Record<ImpactDomain, number>;
   roles: EditableRole[] = [];
 
-  members: TenantUser[] = [];
-  directoryFailed = false;
+  /** L'état de chaque titulaire dans l'annuaire, par compte. */
+  private readonly holderStates = new Map<string, HolderState>();
+  private readonly holderIdsCache = new WeakMap<MocHolder[], string[]>();
 
   loading = false;
   failed = false;
@@ -74,16 +81,12 @@ export class MocSettingsComponent implements OnInit {
 
   constructor(
     private readonly service: MocService,
-    private readonly team: TenantTeamService,
+    private readonly directory: DirectoryService,
     private readonly snack: MatSnackBar
   ) {}
 
   ngOnInit(): void {
     this.charger();
-    this.team.list(0, 500).subscribe({
-      next: page => this.members = page.content,
-      error: () => this.directoryFailed = true
-    });
   }
 
   charger(): void {
@@ -109,7 +112,7 @@ export class MocSettingsComponent implements OnInit {
 
   addRole(): void {
     if (this.roles.length >= MAX_ROLES) return;
-    this.roles.push({ key: this.nextKey++, id: null, label: '', requiredFor: ['CRITICAL'], holders: [], search: '' });
+    this.roles.push({ key: this.nextKey++, id: null, label: '', requiredFor: ['CRITICAL'], holders: [] });
   }
 
   removeRole(index: number): void {
@@ -131,32 +134,44 @@ export class MocSettingsComponent implements OnInit {
     r.requiredFor = on ? [...new Set([...r.requiredFor, c])] : r.requiredFor.filter(x => x !== c);
   }
 
-  /** Les membres de l'annuaire que la recherche désigne, hors titulaires déjà nommés. */
-  candidates(r: EditableRole): TenantUser[] {
-    const q = r.search.trim().toLowerCase();
-    return this.members
-      .filter(m => m.active)
-      .filter(m => !r.holders.some(h => h.userId === m.keycloakId))
-      .filter(m => !q || m.email.toLowerCase().includes(q))
-      .slice(0, 8);
+  /**
+   * Les comptes déjà titulaires du rôle : le sélecteur ne les propose plus.
+   * Même tableau tant que les titulaires ne changent pas (ils sont remplacés, jamais
+   * modifiés en place) : un nouveau tableau à chaque passe ferait lever NG0100.
+   */
+  holderIds(r: EditableRole): string[] {
+    let ids = this.holderIdsCache.get(r.holders);
+    if (!ids) {
+      ids = r.holders.map(h => h.userId);
+      this.holderIdsCache.set(r.holders, ids);
+    }
+    return ids;
   }
 
-  addHolder(r: EditableRole, m: TenantUser): void {
-    if (r.holders.length >= MAX_HOLDERS || r.holders.some(h => h.userId === m.keycloakId)) return;
-    r.holders = [...r.holders, { userId: m.keycloakId, label: m.email }];
-    r.search = '';
+  /**
+   * La personne choisie dans le sélecteur devient titulaire : son nom (jamais
+   * l'adresse quand un nom existe) et son adresse sont recopiés. Le sélecteur
+   * est ensuite vidé, prêt pour le suivant.
+   */
+  addHolder(r: EditableRole, user: DirectoryUser | null, picker?: UserPickerComponent): void {
+    if (!user) return;
+    picker?.writeValue(null);
+    if (r.holders.length >= MAX_HOLDERS || r.holders.some(h => h.userId === user.accountId)) return;
+    r.holders = [...r.holders, { userId: user.accountId, label: personName(user), email: user.email }];
+    this.holderStates.set(user.accountId, user.active ? 'ok' : 'inactive');
   }
 
   removeHolder(r: EditableRole, h: MocHolder): void {
     r.holders = r.holders.filter(x => x.userId !== h.userId);
   }
 
-  /** Un titulaire désactivé ou disparu de l'annuaire ne peut plus statuer : on le signale. */
-  holderState(h: MocHolder): 'ok' | 'inactive' | 'unknown' {
-    if (this.directoryFailed || !this.members.length) return 'ok';
-    const m = this.members.find(x => x.keycloakId === h.userId);
-    if (!m) return 'unknown';
-    return m.active ? 'ok' : 'inactive';
+  /**
+   * Un titulaire désactivé ou disparu de l'annuaire ne peut plus statuer : on
+   * le signale. Tant que l'annuaire n'a pas répondu — ou s'il est indisponible —,
+   * rien n'est signalé à tort.
+   */
+  holderState(h: MocHolder): HolderState {
+    return this.holderStates.get(h.userId) ?? 'ok';
   }
 
   removeHolderLabel(h: MocHolder): string {
@@ -250,7 +265,7 @@ export class MocSettingsComponent implements OnInit {
       roles: this.roles.map(r => ({
         id: r.id, label: r.label.trim(),
         requiredFor: this.classes.filter(c => r.requiredFor.includes(c)),
-        holders: r.holders.map(h => ({ userId: h.userId, label: h.label }))
+        holders: r.holders.map(h => ({ userId: h.userId, label: h.label, email: h.email ?? null }))
       }))
     };
   }
@@ -262,9 +277,24 @@ export class MocSettingsComponent implements OnInit {
     this.weights = { ...s.weights };
     this.roles = s.roles.map(r => ({
       key: this.nextKey++, id: r.id, label: r.label, requiredFor: [...r.requiredFor],
-      holders: r.holders.map(h => ({ ...h })), search: ''
+      holders: r.holders.map(h => ({ ...h }))
     }));
     this.saved = JSON.stringify(this.payload());
+    this.verifierTitulaires();
+  }
+
+  /** L'état de chaque titulaire, lu dans l'annuaire (une lecture par compte, gardée en cache). */
+  private verifierTitulaires(): void {
+    const comptes = new Set(this.roles.flatMap(r => r.holders.map(h => h.userId)));
+    for (const id of comptes) {
+      if (this.holderStates.has(id)) continue;
+      this.directory.getByAccount(id).subscribe({
+        next: u => this.holderStates.set(id, u.active ? 'ok' : 'inactive'),
+        // 404 : la personne n'est pas (ou plus) dans l'annuaire du client. Toute
+        // autre erreur (réseau) ne dit rien d'elle : on ne signale rien.
+        error: err => { if (err?.status === 404) this.holderStates.set(id, 'unknown'); }
+      });
+    }
   }
 
   trackByKey(_i: number, r: EditableRole): number {

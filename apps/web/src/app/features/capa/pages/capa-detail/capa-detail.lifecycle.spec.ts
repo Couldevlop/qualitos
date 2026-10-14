@@ -8,7 +8,7 @@ import { of, throwError } from 'rxjs';
 
 import { SharedModule } from '../../../../shared/shared.module';
 import { UiModule } from '../../../../shared/ui/ui.module';
-import { CapaDirectoryService } from '../../capa-directory.service';
+import { DirectoryService } from '../../../../core/directory/directory.service';
 import { CapaService } from '../../capa.service';
 import { CapaCaseResponse, CapaStatus } from '../../capa.types';
 import { CapaDetailComponent } from './capa-detail.component';
@@ -72,7 +72,7 @@ describe('CapaDetailComponent — cycle de vie du dossier', () => {
       imports: [SharedModule, UiModule, NoopAnimationsModule],
       providers: [
         { provide: CapaService, useValue: capa },
-        { provide: CapaDirectoryService, useValue: { choices: () => of({ members: [], available: true }) } },
+        { provide: DirectoryService, useValue: { getByAccount: () => throwError(() => ({ status: 404 })) } },
         // Tous les droits : ces bancs testent la fiche, pas la matrice (ADR 0078).
         { provide: AuthzService, useValue: { can: () => of(true) } },
         // L'encart d'impact vit dans la fiche : sans ce doublon, il irait

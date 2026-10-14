@@ -43,10 +43,6 @@ TRANSLATIONS = {
     'capa.open.owner-loading': (
         "Lecture de l'annuaire…", 'Reading the directory…', 'Leyendo el directorio…',
         'جارٍ قراءة الدليل…', 'ディレクトリを読み込み中…', '正在读取通讯录…'),
-    'capa.open.owner-required': (
-        "Choisis le responsable de l'action.", 'Choose the owner of the action.',
-        'Elige al responsable de la acción.', 'اختر المسؤول عن الإجراء.',
-        '対策の責任者を選択してください。', '请选择措施负责人。'),
     'capa.open.due-date': (
         'Échéance', 'Due date', 'Fecha límite', 'تاريخ الاستحقاق', '期限', '截止日期'),
     'capa.open.due-date-required': (
@@ -56,13 +52,6 @@ TRANSLATIONS = {
         "L'échéance ne peut pas être passée.", 'The due date cannot be in the past.',
         'La fecha límite no puede estar en el pasado.', 'لا يمكن أن يكون تاريخ الاستحقاق في الماضي.',
         '期限に過去の日付は指定できません。', '截止日期不能早于今天。'),
-    'capa.open.directory-down': (
-        "L'annuaire de l'organisation n'est pas accessible avec tes droits : tu peux te désigner toi-même. Pour confier l'action à un collègue, demande à un administrateur, ou réaffecte-la ensuite.",
-        "The organisation directory is not available with your rights: you can assign yourself. To entrust the action to a colleague, ask an administrator, or reassign it later.",
-        'El directorio de la organización no está accesible con tus permisos: puedes designarte a ti mismo. Para confiar la acción a un colega, pide a un administrador o reasígnala después.',
-        'دليل المؤسسة غير متاح بصلاحياتك: يمكنك تعيين نفسك. لإسناد الإجراء إلى زميل، اطلب ذلك من مسؤول، أو أعد إسناده لاحقًا.',
-        '現在の権限では組織のディレクトリを参照できません。自分自身を指定できます。同僚に任せる場合は管理者に依頼するか、後で再割り当てしてください。',
-        '以你的权限无法访问组织通讯录：你可以指定自己。如需交给同事，请联系管理员，或稍后重新分配。'),
     'capa.open.owner-hint-unmatched': (
         'Propriétaire indiqué : {$INTERPOLATION} — introuvable dans l\'annuaire, choisis son compte dans la liste.',
         'Stated owner: {$INTERPOLATION} — not found in the directory, choose their account from the list.',

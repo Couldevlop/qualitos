@@ -5,8 +5,11 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable, from, of } from 'rxjs';
 import { catchError, concatMap, finalize, map, switchMap, tap, toArray } from 'rxjs/operators';
 
+import { AuthService } from '../../../../core/auth/auth.service';
+import { findExactPerson, personName } from '../../../../core/directory/directory-names';
+import { DirectoryService } from '../../../../core/directory/directory.service';
+import { DirectoryUser } from '../../../../core/directory/directory.types';
 import { safeErrorMessage } from '../../../../core/http/error-message';
-import { CapaDirectoryService, DirectoryMember, matchMember } from '../../capa-directory.service';
 import { CAPA_SOURCES, capaSourceLabel } from '../../capa.labels';
 import { CapaService } from '../../capa.service';
 import { CapaCriticity, CapaSourceType, OpenCapaRequest } from '../../capa.types';
@@ -24,7 +27,8 @@ export interface CapaCreatePrefill {
   dueDate?: string;
   /**
    * Un nom écrit en clair ailleurs — le propriétaire d'un risque —, proposé
-   * comme responsable s'il se rapproche STRICTEMENT d'un membre de l'annuaire.
+   * comme responsable s'il désigne EXACTEMENT une personne de l'annuaire (nom
+   * ou adresse, accents et casse ignorés).
    */
   ownerHint?: string;
 }
@@ -68,10 +72,8 @@ export interface CapaCreateDialogData {
  *
  * Une CAPA porte une action : intitulé, nature, responsable et échéance sont à
  * la fois ceux du dossier et de son action, saisis une fois. Le responsable se
- * choisit dans l'annuaire du client et devient le pilote du dossier. Quand
- * l'annuaire n'est pas lisible — il est réservé aux administrateurs —, on se
- * propose soi-même et on le dit, plutôt que de bloquer ou de montrer une liste
- * trompeusement courte.
+ * choisit dans l'annuaire du client en lecture restreinte (ADR 0091), ouvert à
+ * tout membre, et devient le pilote du dossier. Par défaut : soi-même.
  */
 @Component({
   selector: 'qos-capa-create-dialog',
@@ -114,20 +116,25 @@ export class CapaCreateDialogComponent implements OnInit {
   /** Pas d'échéance dans le passé : le dossier naîtrait en retard (le serveur le refuse aussi). */
   readonly today = localIsoDate(new Date());
 
-  /** Les membres que l'on peut désigner ; « moi » en tête. */
-  members: DirectoryMember[] = [];
-  /** Faux : l'annuaire n'est pas lisible, seul « moi » est proposé — et l'écran le dit. */
-  directoryAvailable = true;
-  /** Vrai tant que l'annuaire n'a pas répondu : la liste n'est pas encore complète. */
-  loadingMembers = true;
+  /** Vrai le temps de chercher dans l'annuaire le propriétaire indiqué par l'écran d'origine. */
+  matchingOwner = false;
+  /** Le propriétaire indiqué n'a pas pu être rapproché d'un compte : on le dit. */
+  private ownerHintUnmatched = false;
+
+  /**
+   * Le nom recopié avec chaque compte rencontré : le sien pour l'utilisateur
+   * connecté, celui de l'annuaire pour les personnes choisies. Jamais l'adresse
+   * quand un nom existe.
+   */
+  private readonly names = new Map<string, string>();
 
   readonly form = this.fb.nonNullable.group({
     title: ['', [Validators.required, notBlank, Validators.maxLength(255)]],
     description: ['', [Validators.maxLength(4000)]],
     type: ['CORRECTIVE' as CapaNature, [Validators.required]],
     criticity: ['MEDIUM' as CapaCriticity, [Validators.required]],
-    // Le responsable : l'identifiant du COMPTE DE CONNEXION (`sub`), seul champ
-    // de sélection ; son nom est recopié à l'envoi depuis la liste proposée.
+    // Le responsable : l'identifiant du COMPTE DE CONNEXION (`sub`), rendu par
+    // le sélecteur de l'annuaire ; son nom est recopié à l'envoi.
     assigneeId: ['', [Validators.required]],
     dueDate: ['', [Validators.required, notInPast]],
     sourceType: ['INTERNAL' as CapaSourceType, [Validators.required]],
@@ -139,7 +146,8 @@ export class CapaCreateDialogComponent implements OnInit {
   constructor(
     private readonly fb: FormBuilder,
     private readonly capa: CapaService,
-    private readonly directory: CapaDirectoryService,
+    private readonly directory: DirectoryService,
+    private readonly auth: AuthService,
     private readonly snack: MatSnackBar,
     private readonly dialogRef: MatDialogRef<CapaCreateDialogComponent, CapaOpened>,
     @Optional() @Inject(MAT_DIALOG_DATA) data: CapaCreateDialogData | null
@@ -165,21 +173,36 @@ export class CapaCreateDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.directory.choices().subscribe(choices => {
-      this.members = choices.members;
-      this.directoryAvailable = choices.available;
-      this.loadingMembers = false;
-      if (!this.form.controls.assigneeId.value) {
-        // Le propriétaire désigné ailleurs s'il se retrouve dans l'annuaire,
-        // sinon soi-même : c'est ce qui se faisait avant, et c'est modifiable.
-        const propose = matchMember(this.members, this.data.prefill?.ownerHint)
-          ?? this.directory.currentMember()
-          ?? this.members[0];
-        if (propose && this.members.some(m => m.userId === propose.userId)) {
-          this.form.controls.assigneeId.setValue(propose.userId);
-        }
+    // Soi-même par défaut : c'est ce qui se faisait avant, et c'est modifiable.
+    const me = this.auth.snapshot();
+    if (me?.userId) {
+      if (me.displayName) {
+        this.names.set(me.userId, me.displayName);
       }
-    });
+      this.form.controls.assigneeId.setValue(me.userId);
+    }
+    // Le propriétaire désigné ailleurs, s'il désigne exactement une personne de
+    // l'annuaire, prend la place de « soi-même ».
+    const hint = this.data.prefill?.ownerHint?.trim();
+    if (hint) {
+      this.matchingOwner = true;
+      findExactPerson(this.directory, hint).subscribe(person => {
+        this.matchingOwner = false;
+        if (person) {
+          this.names.set(person.accountId, personName(person));
+          this.form.controls.assigneeId.setValue(person.accountId);
+        } else {
+          this.ownerHintUnmatched = true;
+        }
+      });
+    }
+  }
+
+  /** Le sélecteur rend la personne choisie : son nom part avec son compte. */
+  onOwner(user: DirectoryUser | null): void {
+    if (user) {
+      this.names.set(user.accountId, personName(user));
+    }
   }
 
   get isDefineAction(): boolean {
@@ -214,8 +237,7 @@ export class CapaCreateDialogComponent implements OnInit {
    */
   get unmatchedOwnerHint(): string | null {
     const hint = this.data.prefill?.ownerHint?.trim();
-    if (!hint || this.loadingMembers) return null;
-    return matchMember(this.members, hint) ? null : hint;
+    return hint && this.ownerHintUnmatched ? hint : null;
   }
 
   submit(): void {
@@ -224,19 +246,14 @@ export class CapaCreateDialogComponent implements OnInit {
       return;
     }
     const v = this.form.getRawValue();
-    const owner = this.members.find(m => m.userId === v.assigneeId);
-    if (!owner) {
-      this.form.controls.assigneeId.setErrors({ required: true });
-      return;
-    }
     this.submitting = true;
     const request: OpenCapaRequest = {
       title: v.title.trim(),
       description: v.description.trim() || undefined,
       type: v.type,
       criticity: v.criticity,
-      ownerId: owner.userId,
-      ownerName: owner.label,
+      ownerId: v.assigneeId,
+      ownerName: this.names.get(v.assigneeId),
       dueDate: v.dueDate
     };
     if (!this.sourceLocked) {

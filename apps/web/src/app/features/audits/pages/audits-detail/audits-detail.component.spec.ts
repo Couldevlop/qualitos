@@ -4,9 +4,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 
 import { AuthService, AuthUser } from '../../../../core/auth/auth.service';
+import { DirectoryService } from '../../../../core/directory/directory.service';
 import { SharedModule } from '../../../../shared/shared.module';
 import { AuditsService } from '../../audits.service';
 import { AuditPlanResponse, AuditStatus, ChecklistItemResponse } from '../../audits.types';
@@ -29,6 +30,7 @@ describe('AuditsDetailComponent', () => {
   let svc: jasmine.SpyObj<AuditsService>;
   let session: AuthUser | null;
   let plan: AuditPlanResponse;
+  let directory: jasmine.SpyObj<DirectoryService>;
 
   const question = { id: 'q1', planId: ID, question: 'Q ?', createdAt: '', updatedAt: '' } as ChecklistItemResponse;
 
@@ -55,6 +57,10 @@ describe('AuditsDetailComponent', () => {
   beforeEach(async () => {
     session = { userId: 'u1', tenantId: 't', displayName: 'Alice Martin', roles: ['quality_manager'] };
     svc = jasmine.createSpyObj<AuditsService>('AuditsService', ['getPlan', 'startPlan']);
+    directory = jasmine.createSpyObj<DirectoryService>('DirectoryService', ['getByAccount']);
+    directory.getByAccount.and.callFake(id => id === 'kc-claire'
+      ? of({ id: 'i3', accountId: 'kc-claire', displayName: 'Claire Roux', email: 'claire@exemple.test', active: true })
+      : throwError(() => ({ status: 404 })));
 
     await TestBed.configureTestingModule({
       declarations: [AuditsDetailComponent],
@@ -65,7 +71,8 @@ describe('AuditsDetailComponent', () => {
         { provide: AuditsService, useValue: svc },
         { provide: MatDialog, useValue: jasmine.createSpyObj('MatDialog', ['open']) },
         { provide: MatSnackBar, useValue: jasmine.createSpyObj('MatSnackBar', ['open']) },
-        { provide: AuthService, useValue: { snapshot: () => session } }
+        { provide: AuthService, useValue: { snapshot: () => session } },
+        { provide: DirectoryService, useValue: directory }
       ],
       // Les panneaux « Rapport » et « Documents » ont leurs propres bancs.
       schemas: [NO_ERRORS_SCHEMA]
@@ -144,6 +151,25 @@ describe('AuditsDetailComponent', () => {
     const autre = component.leadAuditorLabel(makePlan('PLANNED', { leadAuditorId: 'aaaa-bbbb' }));
     expect(autre).not.toContain('aaaa-bbbb');
     expect(autre).toContain('nom non enregistré');
+    flush();
+  }));
+
+  it('audit ancien sans nom : le nom d\'un collègue se lit dans l\'annuaire, sans /api/v1/users', fakeAsync(() => {
+    render(makePlan('PLANNED', { leadAuditorId: 'kc-claire' }));
+    tick(); fixture.detectChanges();
+
+    expect(directory.getByAccount).toHaveBeenCalledWith('kc-claire');
+    expect(el('auditeur-responsable')?.textContent).toContain('Claire Roux');
+    flush();
+  }));
+
+  it('ne consulte pas l\'annuaire quand le nom est recopié ou que l\'auditeur est soi-même', fakeAsync(() => {
+    render(makePlan('PLANNED', { leadAuditorId: 'u2', leadAuditorName: 'Bruno Petit' }));
+    tick();
+    render(makePlan('PLANNED'));
+    tick();
+
+    expect(directory.getByAccount).not.toHaveBeenCalled();
     flush();
   }));
 

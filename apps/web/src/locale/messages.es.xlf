@@ -5362,22 +5362,6 @@ Portal de clientes</target>
         <source>Celui ou celle qui conduit l'audit et signe le rapport.</source>
         <target state="translated">La persona que dirige la auditoría y firma el informe.</target>
       </trans-unit>
-      <trans-unit id="audits.lead-auditor.directory-down" datatype="html">
-        <source>L'annuaire de l'organisation n'est pas accessible avec vos droits : l'audit vous est confié.</source>
-        <target state="translated">El directorio de la organización no es accesible con sus permisos: la auditoría se le asigna a usted.</target>
-      </trans-unit>
-      <trans-unit id="audits.lead-auditor.directory-down-edit" datatype="html">
-        <source>L'annuaire de l'organisation n'est pas accessible avec vos droits : seuls vous et l'auditeur actuel sont proposés.</source>
-        <target state="translated">El directorio de la organización no es accesible con sus permisos: solo se proponen usted y el auditor actual.</target>
-      </trans-unit>
-      <trans-unit id="audits.lead-auditor.required" datatype="html">
-        <source>Désignez l'auditeur responsable.</source>
-        <target state="translated">Designe al auditor responsable.</target>
-      </trans-unit>
-      <trans-unit id="audits.lead-auditor.me" datatype="html">
-        <source><x id="name"/> (vous)</source>
-        <target state="translated"><x id="name"/> (usted)</target>
-      </trans-unit>
       <trans-unit id="audits.lead-auditor.unknown" datatype="html">
         <source>Membre de l'organisation (nom non enregistré)</source>
         <target state="translated">Miembro de la organización (nombre no registrado)</target>
@@ -6838,10 +6822,6 @@ Portal de clientes</target>
         <source>Lecture de l'annuaire…</source>
         <target state="translated">Leyendo el directorio…</target>
       </trans-unit>
-      <trans-unit id="capa.open.owner-required" datatype="html">
-        <source>Choisis le responsable de l'action.</source>
-        <target state="translated">Elige al responsable de la acción.</target>
-      </trans-unit>
       <trans-unit id="capa.open.due-date" datatype="html">
         <source>Échéance</source>
         <target state="translated">Fecha límite</target>
@@ -6853,10 +6833,6 @@ Portal de clientes</target>
       <trans-unit id="capa.open.due-date-past" datatype="html">
         <source>L'échéance ne peut pas être passée.</source>
         <target state="translated">La fecha límite no puede estar en el pasado.</target>
-      </trans-unit>
-      <trans-unit id="capa.open.directory-down" datatype="html">
-        <source>L'annuaire de l'organisation n'est pas accessible avec tes droits : tu peux te désigner toi-même. Pour confier l'action à un collègue, demande à un administrateur, ou réaffecte-la ensuite.</source>
-        <target state="translated">El directorio de la organización no está accesible con tus permisos: puedes designarte a ti mismo. Para confiar la acción a un colega, pide a un administrador o reasígnala después.</target>
       </trans-unit>
       <trans-unit id="capa.open.owner-hint-unmatched" datatype="html">
         <source>Propriétaire indiqué : <x id="INTERPOLATION"/> — introuvable dans l'annuaire, choisis son compte dans la liste.</source>
@@ -6989,10 +6965,6 @@ Portal de clientes</target>
       <trans-unit id="capa.verification.assignee-required" datatype="html">
         <source>Une vérification exigée doit être confiée à quelqu'un.</source>
         <target state="translated">Una verificación exigida debe asignarse a alguien.</target>
-      </trans-unit>
-      <trans-unit id="capa.verification.directory-down" datatype="html">
-        <source>L'annuaire de l'organisation n'a pas répondu : la liste est vide, et le dossier ne pourra pas être enregistré avec une vérification exigée.</source>
-        <target state="translated">El directorio de la organización no respondió: la lista está vacía y el expediente no podrá guardarse con una verificación exigida.</target>
       </trans-unit>
       <trans-unit id="capa.verification.instructions" datatype="html">
         <source>Instructions de vérification</source>
@@ -17459,10 +17431,6 @@ historial de 12 meses</target>
       <trans-unit id="moc.settings.add-role" datatype="html">
         <source>Ajouter un rôle</source>
         <target state="translated">Añadir un rol</target>
-      </trans-unit>
-      <trans-unit id="moc.settings.directory-failed" datatype="html">
-        <source>L'annuaire n'a pas répondu : les titulaires ne peuvent pas être modifiés pour l'instant.</source>
-        <target state="translated">El directorio no ha respondido: por ahora no se pueden modificar los titulares.</target>
       </trans-unit>
       <trans-unit id="moc.settings.role-label" datatype="html">
         <source>Libellé du rôle</source>

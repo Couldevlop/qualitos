@@ -1,35 +1,42 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { By } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
 
+import { DirectoryService } from '../../../../core/directory/directory.service';
+import { DirectoryUser } from '../../../../core/directory/directory.types';
 import { SharedModule } from '../../../../shared/shared.module';
 import { UiModule } from '../../../../shared/ui/ui.module';
+import { UserPickerComponent } from '../../../../shared/user-picker/user-picker.component';
+import { UserPickerModule } from '../../../../shared/user-picker/user-picker.module';
 import { MocService } from '../../../changes/moc.service';
 import { MocSettings } from '../../../changes/moc.types';
-import { TenantUser } from '../../admin.types';
-import { TenantTeamService } from '../../tenant-team.service';
 import { MocSettingsComponent } from './moc-settings.component';
 
 /**
  * « Paramètres MOC » : lecture, règles locales (seuils, poids, délai, rôles),
- * titulaires choisis dans l'annuaire, utilisateurs désactivés signalés, enregistrement.
+ * titulaires choisis dans l'annuaire en lecture restreinte (ADR 0091), nom et
+ * adresse recopiés, utilisateurs désactivés signalés, enregistrement.
  */
 describe('MocSettingsComponent', () => {
   let fixture: ComponentFixture<MocSettingsComponent>;
   let component: MocSettingsComponent;
   let service: jasmine.SpyObj<MocService>;
-  let team: jasmine.SpyObj<TenantTeamService>;
+  let directory: jasmine.SpyObj<DirectoryService>;
   let snack: jasmine.SpyObj<MatSnackBar>;
   const hote = (): HTMLElement => fixture.nativeElement as HTMLElement;
 
-  const membre = (id: string, email: string, active = true): TenantUser => ({
-    id: 'app-' + id, tenantId: 't', keycloakId: id, email, roles: ['user'], active, createdAt: '', updatedAt: ''
+  const membre = (id: string, displayName: string, email: string, active = true): DirectoryUser => ({
+    id: 'app-' + id, accountId: id, displayName, email, active
   });
-  const MEMBRES = [membre('u1', 'jean@acme.test'), membre('u2', 'marie@acme.test'), membre('u3', 'ancien@acme.test', false)];
+  const MEMBRES = [
+    membre('u1', 'Jean Dupont', 'jean@acme.test'),
+    membre('u2', 'Marie Curie', 'marie@acme.test'),
+    membre('u3', 'Ancien Membre', 'ancien@acme.test', false)
+  ];
 
   function reglages(): MocSettings {
     return {
@@ -46,18 +53,23 @@ describe('MocSettingsComponent', () => {
   async function setup(annuaire = true): Promise<void> {
     service = jasmine.createSpyObj<MocService>('MocService', ['settings', 'saveSettings']);
     service.settings.and.returnValue(of(reglages()));
-    team = jasmine.createSpyObj<TenantTeamService>('TenantTeamService', ['list']);
-    team.list.and.returnValue(annuaire
-      ? of({ content: MEMBRES, totalElements: 3, totalPages: 1, number: 0, size: 500 })
-      : throwError(() => ({ status: 403 })));
+    directory = jasmine.createSpyObj<DirectoryService>('DirectoryService', ['search', 'getByAccount']);
+    directory.search.and.returnValue(annuaire
+      ? of({ content: MEMBRES.filter(m => m.active), page: 0, size: 20, totalElements: 2, totalPages: 1 })
+      : throwError(() => ({ status: 0 })));
+    directory.getByAccount.and.callFake(id => {
+      if (!annuaire) return throwError(() => ({ status: 0 }));
+      const m = MEMBRES.find(x => x.accountId === id);
+      return m ? of(m) : throwError(() => ({ status: 404 }));
+    });
     snack = jasmine.createSpyObj<MatSnackBar>('MatSnackBar', ['open']);
     await TestBed.configureTestingModule({
       declarations: [MocSettingsComponent],
-      imports: [SharedModule, UiModule, FormsModule, MatAutocompleteModule, NoopAnimationsModule],
+      imports: [SharedModule, UiModule, FormsModule, UserPickerModule, NoopAnimationsModule],
       providers: [
         provideRouter([]),
         { provide: MocService, useValue: service },
-        { provide: TenantTeamService, useValue: team },
+        { provide: DirectoryService, useValue: directory },
         { provide: MatSnackBar, useValue: snack }
       ]
     }).compileComponents();
@@ -79,6 +91,7 @@ describe('MocSettingsComponent', () => {
 
   it('signale un titulaire désactivé ou absent de l’annuaire', async () => {
     await setup();
+    expect(directory.getByAccount.calls.allArgs()).toEqual([['u1'], ['u3'], ['u9']]);
     expect(component.holderState({ userId: 'u1', label: 'x' })).toBe('ok');
     expect(component.holderState({ userId: 'u3', label: 'x' })).toBe('inactive');
     expect(component.holderState({ userId: 'u9', label: 'x' })).toBe('unknown');
@@ -86,19 +99,40 @@ describe('MocSettingsComponent', () => {
     expect(hote().textContent).toContain("(absent de l'annuaire)");
   });
 
-  it('les titulaires viennent de l’annuaire, actifs et pas deux fois', async () => {
+  it('les titulaires viennent de l’annuaire, nom et adresse recopiés, et pas deux fois', async () => {
     await setup();
     const hse = component.roles[1];
-    expect(component.candidates(hse).map(m => m.keycloakId)).toEqual(['u1', 'u2']);
-    hse.search = 'mar';
-    expect(component.candidates(hse).map(m => m.email)).toEqual(['marie@acme.test']);
+    // Le sélecteur de chaque rôle écarte ses titulaires actuels.
+    expect(component.holderIds(hse)).toEqual(['u3']);
+    const pickers = fixture.debugElement.queryAll(By.directive(UserPickerComponent));
+    expect(pickers.length).toBe(3);
+    const pickerHse = pickers[1].componentInstance as UserPickerComponent;
+    expect(pickerHse.excludeIds).toEqual(['u3']);
+
+    // Un choix dans le sélecteur ajoute le titulaire, puis le sélecteur se vide.
+    pickerHse.onSelected({ option: { value: MEMBRES[1] } } as never);
+    expect(pickerHse.selected).toBeNull();
     component.addHolder(hse, MEMBRES[1]);
-    component.addHolder(hse, MEMBRES[1]);
-    expect(hse.holders.map(h => h.userId)).toEqual(['u3', 'u2']);
-    expect(hse.search).toBe('');
+    component.addHolder(hse, null);
+    expect(hse.holders).toEqual([
+      { userId: 'u3', label: 'ancien@acme.test' },
+      { userId: 'u2', label: 'Marie Curie', email: 'marie@acme.test' }
+    ]);
     component.removeHolder(hse, hse.holders[0]);
     expect(hse.holders.map(h => h.userId)).toEqual(['u2']);
     expect(component.dirty).toBeTrue();
+
+    service.saveSettings.and.returnValue(of(reglages()));
+    component.save();
+    expect(service.saveSettings.calls.mostRecent().args[0].roles[1].holders)
+      .toEqual([{ userId: 'u2', label: 'Marie Curie', email: 'marie@acme.test' }]);
+  });
+
+  it('recopie l’adresse comme nom seulement quand l’annuaire n’a pas de nom', async () => {
+    await setup();
+    const role = component.roles[0];
+    component.addHolder(role, membre('u7', '', 'sans.nom@acme.test'));
+    expect(role.holders[1]).toEqual({ userId: 'u7', label: 'sans.nom@acme.test', email: 'sans.nom@acme.test' });
   });
 
   it('refuse localement des seuils, un délai ou des poids incohérents', async () => {
@@ -160,7 +194,7 @@ describe('MocSettingsComponent', () => {
     expect(envoye.reminderDays).toBe(5);
     expect(envoye.weights.PRODUCTION).toBe(0);
     expect(envoye.roles[0]).toEqual({ id: 'r1', label: 'Responsable de service',
-      requiredFor: ['MINOR', 'MAJOR', 'CRITICAL'], holders: [{ userId: 'u1', label: 'jean@acme.test' }] });
+      requiredFor: ['MINOR', 'MAJOR', 'CRITICAL'], holders: [{ userId: 'u1', label: 'jean@acme.test', email: null }] });
     expect(component.dirty).toBeFalse();
     expect(snack.open).toHaveBeenCalled();
   });
@@ -179,12 +213,14 @@ describe('MocSettingsComponent', () => {
     expect(component.dirty).toBeFalse();
   });
 
-  it('sans annuaire, les titulaires ne se modifient pas et le dit', async () => {
+  it('annuaire indisponible : aucun titulaire signalé à tort, le sélecteur reste en place', async () => {
     await setup(false);
-    expect(component.directoryFailed).toBeTrue();
+    expect(component.holderState({ userId: 'u3', label: 'x' })).toBe('ok');
     expect(component.holderState({ userId: 'u9', label: 'x' })).toBe('ok');
-    expect(hote().textContent).toContain("L'annuaire n'a pas répondu");
-    expect(hote().querySelector('[data-test="recherche-0"]')).toBeNull();
+    expect(hote().textContent).not.toContain('(désactivé)');
+    // Plus de « l'annuaire n'a pas répondu, les titulaires ne se modifient pas » :
+    // le sélecteur dit lui-même que l'annuaire est indisponible, et l'on réessaie.
+    expect(hote().querySelector('[data-test="recherche-0"]')).not.toBeNull();
   });
 
   it('dit quand les réglages ne se chargent pas', async () => {

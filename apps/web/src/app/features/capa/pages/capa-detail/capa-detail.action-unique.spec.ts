@@ -8,7 +8,8 @@ import { of, throwError } from 'rxjs';
 
 import { SharedModule } from '../../../../shared/shared.module';
 import { UiModule } from '../../../../shared/ui/ui.module';
-import { CapaDirectoryService, DirectoryChoices } from '../../capa-directory.service';
+import { DirectoryService } from '../../../../core/directory/directory.service';
+import { DirectoryUser } from '../../../../core/directory/directory.types';
 import { CapaService } from '../../capa.service';
 import {
   CapaActionResponse, CapaCaseResponse, CapaEvidence, CapaSourceType
@@ -40,7 +41,8 @@ describe('CapaDetailComponent — action unique', () => {
   let capa: jasmine.SpyObj<CapaService>;
   let snack: jasmine.SpyObj<MatSnackBar>;
   let dialog: jasmine.SpyObj<MatDialog>;
-  let annuaire: DirectoryChoices;
+  let annuaire: DirectoryUser[];
+  let getByAccount: jasmine.Spy;
 
   const action = (over: Partial<CapaActionResponse> = {}): CapaActionResponse => ({
     id: ACTION_ID, capaId: CASE_ID, title: 'Réviser le plan de contrôle réception',
@@ -95,7 +97,11 @@ describe('CapaDetailComponent — action unique', () => {
     snack = jasmine.createSpyObj<MatSnackBar>('MatSnackBar', ['open']);
     dialog = jasmine.createSpyObj<MatDialog>('MatDialog', ['open']);
     dialog.open.and.returnValue({ afterClosed: () => of(true) } as never);
-    annuaire = { members: [], available: true };
+    annuaire = [];
+    getByAccount = jasmine.createSpy('getByAccount').and.callFake((id: string) => {
+      const u = annuaire.find(p => p.accountId === id);
+      return u ? of(u) : throwError(() => ({ status: 404 }));
+    });
 
     TestBed.resetTestingModule();
     await TestBed.configureTestingModule({
@@ -103,7 +109,7 @@ describe('CapaDetailComponent — action unique', () => {
       imports: [SharedModule, UiModule, NoopAnimationsModule],
       providers: [
         { provide: CapaService, useValue: capa },
-        { provide: CapaDirectoryService, useValue: { choices: () => of(annuaire) } },
+        { provide: DirectoryService, useValue: { getByAccount } },
         // Tous les droits : ces bancs testent la fiche, pas la matrice (ADR 0078).
         { provide: AuthzService, useValue: { can: () => of(true) } },
         // L'encart d'impact vit dans la fiche : sans ce doublon, il irait
@@ -226,15 +232,18 @@ describe('CapaDetailComponent — action unique', () => {
 
   // --- le pilote, par son nom ------------------------------------------------
 
-  it('nomme le pilote par le nom recopié à sa désignation', () => {
-    setup(dossier({ ownerName: 'amina.dridi@client.test' }));
-    expect(hote().querySelector('[data-test="capa-pilote"]')?.textContent?.trim()).toBe('amina.dridi@client.test');
+  it('nomme le pilote par le nom recopié à sa désignation, sans lire l\'annuaire', () => {
+    setup(dossier({ ownerName: 'Amina Dridi' }));
+    expect(hote().querySelector('[data-test="capa-pilote"]')?.textContent?.trim()).toBe('Amina Dridi');
+    expect(getByAccount).not.toHaveBeenCalled();
   });
 
-  it('nomme le pilote d\'un ancien dossier par l\'annuaire, jamais par son identifiant', () => {
-    annuaire = { members: [{ userId: '9c1f2b7e-0000-4000-8000-000000000000', label: 'karim@client.test' }], available: true };
+  it('nomme le pilote d\'un ancien dossier par l\'annuaire en lecture restreinte, jamais par son identifiant', () => {
+    annuaire = [{ id: 'i-k', accountId: '9c1f2b7e-0000-4000-8000-000000000000', displayName: 'Karim Benali',
+                  email: 'karim@client.test', active: true }];
     setup(dossier());
-    expect(hote().querySelector('[data-test="capa-pilote"]')?.textContent?.trim()).toBe('karim@client.test');
+    expect(getByAccount).toHaveBeenCalledWith('9c1f2b7e-0000-4000-8000-000000000000');
+    expect(hote().querySelector('[data-test="capa-pilote"]')?.textContent?.trim()).toBe('Karim Benali');
   });
 
   it('affiche « — » plutôt qu\'un identifiant quand le pilote est inconnu', () => {

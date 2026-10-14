@@ -1,14 +1,13 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { BehaviorSubject } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 
+import { personName } from '../../../../core/directory/directory-names';
+import { DirectoryUser } from '../../../../core/directory/directory.types';
 import { deferredView } from '../../../../core/rx/deferred-view';
-
-import { TenantUser } from '../../../admin/admin.types';
-import { TenantTeamService } from '../../../admin/tenant-team.service';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { CapaService } from '../../capa.service';
 import { CapaCaseResponse, CapaCriticity } from '../../capa.types';
@@ -23,32 +22,19 @@ export interface CapaEditDialogData {
   styleUrls: ['./capa-edit-dialog.component.scss'],
   standalone: false
 })
-export class CapaEditDialogComponent implements OnInit {
+export class CapaEditDialogComponent {
   submitting = false;
 
   /**
-   * Les membres de l'organisation, pour désigner le vérificateur.
+   * Le nom recopié avec le vérificateur (ADR 0091).
    *
-   * <p>L'annuaire du client (`/api/v1/users`) et non une saisie libre : un
-   * vérificateur est un vrai compte, à qui on peut notifier la tâche, et deux
-   * orthographes du même nom ne peuvent pas devenir deux personnes.
+   * <p>Le vérificateur se choisit dans l'annuaire en lecture restreinte, ouvert
+   * à tout membre — pas une saisie libre : c'est un vrai compte, à qui on peut
+   * notifier la tâche, et deux orthographes du même nom ne peuvent pas devenir
+   * deux personnes. Au départ, le nom déjà enregistré ; ensuite, celui que
+   * l'annuaire donne à la personne choisie.
    */
-  membres: TenantUser[] = [];
-
-  /**
-   * Vrai quand l'annuaire n'a pas répondu : on le DIT, on ne fait pas semblant.
-   *
-   * <p>Livré en MACROTÂCHE (`deferredView`), comme partout ailleurs dans ce
-   * dépôt : cet état bascule depuis un retour HTTP, donc potentiellement pendant
-   * la passe de détection en cours, et le lire directement rend NG0100.
-   */
-  private readonly annuaireState$ = new BehaviorSubject<boolean>(false);
-  readonly annuaireIndisponible$ = deferredView(this.annuaireState$);
-
-  /** État courant, pour la logique et les bancs — le gabarit passe par le flux. */
-  get annuaireIndisponible(): boolean {
-    return this.annuaireState$.value;
-  }
+  private verifierName: string | undefined;
 
   readonly criticities: CapaCriticity[] = ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'];
 
@@ -67,7 +53,6 @@ export class CapaEditDialogComponent implements OnInit {
   constructor(
     private readonly fb: FormBuilder,
     private readonly capa: CapaService,
-    private readonly equipe: TenantTeamService,
     private readonly snack: MatSnackBar,
     private readonly dialogRef: MatDialogRef<CapaEditDialogComponent, CapaCaseResponse>,
     @Inject(MAT_DIALOG_DATA) public readonly data: CapaEditDialogData
@@ -82,6 +67,7 @@ export class CapaEditDialogComponent implements OnInit {
       verificationAssigneeId: data.capa.verificationAssigneeId ?? null,
       verificationInstructions: data.capa.verificationInstructions ?? ''
     });
+    this.verifierName = data.capa.verificationAssigneeName || undefined;
 
     // Repasser à « non exigée » doit effacer le vérificateur et les consignes.
     // L'abonnement ne fait QUE publier l'état : aucune mutation du formulaire ici.
@@ -97,14 +83,13 @@ export class CapaEditDialogComponent implements OnInit {
     this.verificationExigee$.subscribe(exigee => this.appliquerExigence(exigee));
   }
 
-  ngOnInit(): void {
-    this.equipe.list(0, 200).subscribe({
-      // Le compte de CONNEXION (`keycloakId`, le `sub` du jeton) et non l'identifiant
-      // interne de l'annuaire : c'est lui que le moteur rapproche de l'utilisateur
-      // courant pour lui montrer les dossiers qui le concernent (ADR 0081, 0088).
-      next: page => (this.membres = page.content.filter(m => m.active && !!m.keycloakId)),
-      error: () => this.annuaireState$.next(true)
-    });
+  /**
+   * Le sélecteur rend la personne choisie — son compte de CONNEXION (`sub`),
+   * celui que le moteur rapproche de l'utilisateur courant (ADR 0081, 0088) —
+   * et son nom, recopié avec lui.
+   */
+  onVerifier(user: DirectoryUser | null): void {
+    this.verifierName = user ? personName(user) : undefined;
   }
 
   /**
@@ -198,10 +183,9 @@ export class CapaEditDialogComponent implements OnInit {
       });
   }
 
-  /** Le libellé du membre, tel qu'il sera figé dans le dossier. */
+  /** Le nom du vérificateur, tel qu'il sera figé dans le dossier. */
   private nomDu(id: string | null): string | undefined {
-    if (!id) return undefined;
-    return this.membres.find(m => m.keycloakId === id)?.email;
+    return id ? this.verifierName : undefined;
   }
 
   cancel(): void { this.dialogRef.close(); }

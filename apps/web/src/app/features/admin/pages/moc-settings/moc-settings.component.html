@@ -71,8 +71,6 @@
         </button>
       </div>
 
-      <p class="echec" *ngIf="directoryFailed" role="alert" i18n="@@moc.settings.directory-failed">L'annuaire n'a pas répondu : les titulaires ne peuvent pas être modifiés pour l'instant.</p>
-
       <ol class="roles">
         <li *ngFor="let r of roles; let i = index; let first = first; let last = last; trackBy: trackByKey"
             class="role" [attr.data-test]="'role-' + i">
@@ -121,14 +119,12 @@
             </mat-chip-set>
             <p class="role__alerte" *ngIf="warnNoHolder(r)" i18n="@@moc.settings.no-holder">Aucun titulaire : une demande qui exige ce rôle ne pourra pas être soumise à validation.</p>
 
-            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="role__recherche" *ngIf="!directoryFailed">
-              <mat-icon matPrefix>person_search</mat-icon>
-              <mat-label i18n="@@moc.settings.add-holder">Ajouter un titulaire (annuaire)</mat-label>
-              <input matInput [(ngModel)]="r.search" [matAutocomplete]="annuaire" [attr.data-test]="'recherche-' + i">
-              <mat-autocomplete #annuaire="matAutocomplete" (optionSelected)="addHolder(r, $event.option.value)">
-                <mat-option *ngFor="let m of candidates(r)" [value]="m">{{ m.email }}</mat-option>
-              </mat-autocomplete>
-            </mat-form-field>
+            <!-- L'annuaire en lecture restreinte (ADR 0091) ; un annuaire
+                 indisponible se dit dans la liste du sélecteur. -->
+            <qos-user-picker #titulaire class="role__recherche" [attr.data-test]="'recherche-' + i"
+                             [excludeIds]="holderIds(r)"
+                             i18n-label="@@moc.settings.add-holder" label="Ajouter un titulaire (annuaire)"
+                             (userSelected)="addHolder(r, $event, titulaire)"></qos-user-picker>
           </div>
         </li>
       </ol>

@@ -95,6 +95,9 @@ rôle porte :
   suppléants), identifiés par leur identifiant de connexion ; leur adresse est
   **recopiée** à l'affectation, pour que tout utilisateur voie des noms sans lire
   l'annuaire (réservé aux administrateurs).
+  *Mise à jour (ADR 0091) : les titulaires se choisissent dans l'annuaire en lecture
+  restreinte ; le libellé recopié est leur nom, l'adresse a sa colonne
+  (`moc_role_holders.user_email`, V141) et reste celle du courriel.*
 
 À la soumission, une carte par rôle requis est créée et **figée** avec le libellé
 du rôle : renommer ou réordonner les rôles ne change ni les demandes en

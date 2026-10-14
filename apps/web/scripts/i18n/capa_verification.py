@@ -45,17 +45,6 @@ TRANSLATIONS = {
         'التحقق المطلوب يجب إسناده إلى شخص ما.',
         '必要とされた検証は、担当者を定めなければなりません。',
         '被要求的验证必须指派给某个人。'),
-    'capa.verification.directory-down': (
-        "L'annuaire de l'organisation n'a pas répondu : la liste est vide, et le "
-        "dossier ne pourra pas être enregistré avec une vérification exigée.",
-        'The organisation directory did not answer: the list is empty, and the case '
-        'cannot be saved with a required verification.',
-        'El directorio de la organización no respondió: la lista está vacía y el '
-        'expediente no podrá guardarse con una verificación exigida.',
-        'لم يستجب دليل المؤسسة: القائمة فارغة، ولا يمكن حفظ الملف مع اشتراط التحقق.',
-        '組織のディレクトリが応答しませんでした。一覧は空で、検証を必要とした状態では'
-        '案件を保存できません。',
-        '组织目录没有响应：列表为空，且在要求验证的状态下无法保存本案卷。'),
     'capa.verification.instructions': (
         'Instructions de vérification', 'Verification instructions',
         'Instrucciones de verificación', 'تعليمات التحقق',

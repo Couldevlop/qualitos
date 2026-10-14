@@ -21,27 +21,6 @@ TRANSLATIONS = {
         'الشخص الذي يقود التدقيق ويوقّع التقرير.',
         '監査を主導し報告書に署名する人。',
         '负责实施审核并签署报告的人。'),
-    'audits.lead-auditor.directory-down': (
-        "L'annuaire de l'organisation n'est pas accessible avec vos droits : l'audit vous est confié.",
-        "The organization directory is not available with your permissions: the audit is assigned to you.",
-        'El directorio de la organización no es accesible con sus permisos: la auditoría se le asigna a usted.',
-        'دليل المؤسسة غير متاح بصلاحياتك: يُسند التدقيق إليك.',
-        '権限により組織のディレクトリを参照できないため、監査はあなたに割り当てられます。',
-        '您的权限无法访问组织目录：审核将分配给您。'),
-    'audits.lead-auditor.directory-down-edit': (
-        "L'annuaire de l'organisation n'est pas accessible avec vos droits : seuls vous et l'auditeur actuel sont proposés.",
-        'The organization directory is not available with your permissions: only you and the current auditor are offered.',
-        'El directorio de la organización no es accesible con sus permisos: solo se proponen usted y el auditor actual.',
-        'دليل المؤسسة غير متاح بصلاحياتك: لا يُقترح سواك والمدقّق الحالي.',
-        '権限により組織のディレクトリを参照できないため、あなたと現在の監査員のみが表示されます。',
-        '您的权限无法访问组织目录：仅提供您和当前审核员。'),
-    'audits.lead-auditor.required': (
-        "Désignez l'auditeur responsable.", 'Select the lead auditor.',
-        'Designe al auditor responsable.', 'حدّد المدقّق المسؤول.',
-        '主任監査員を選択してください。', '请指定审核组长。'),
-    'audits.lead-auditor.me': (
-        '{$name} (vous)', '{$name} (you)', '{$name} (usted)',
-        '{$name} (أنت)', '{$name}（あなた）', '{$name}（您）'),
     'audits.lead-auditor.unknown': (
         "Membre de l'organisation (nom non enregistré)",
         'Organization member (name not recorded)',

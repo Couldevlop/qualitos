@@ -471,13 +471,6 @@ TRANSLATIONS = {
         '各役割について、その役割を必要とする分類と担当者（主担当、次に代理）。いずれの担当者も判断できますが、申請者は判断できません。',
         '每个角色：要求该角色的分类及其负责人（主负责人在前，其次为代理人）。任何负责人均可作出决定；申请人除外。'),
     'moc.settings.add-role': ('Ajouter un rôle', 'Add a role', 'Añadir un rol', 'إضافة دور', '役割を追加', '添加角色'),
-    'moc.settings.directory-failed': (
-        "L'annuaire n'a pas répondu : les titulaires ne peuvent pas être modifiés pour l'instant.",
-        'The directory did not respond: holders cannot be changed for now.',
-        'El directorio no ha respondido: por ahora no se pueden modificar los titulares.',
-        'لم يستجب الدليل: لا يمكن تعديل أصحاب الأدوار حاليًا.',
-        'ディレクトリが応答しません。現在、担当者を変更できません。',
-        '目录无响应：暂时无法修改负责人。'),
     'moc.settings.role-label': ('Libellé du rôle', 'Role label', 'Denominación del rol', 'اسم الدور', '役割名', '角色名称'),
     'moc.settings.up': ('Monter le rôle', 'Move role up', 'Subir el rol', 'نقل الدور لأعلى', '役割を上へ', '上移角色'),
     'moc.settings.down': ('Descendre le rôle', 'Move role down', 'Bajar el rol', 'نقل الدور لأسفل', '役割を下へ', '下移角色'),

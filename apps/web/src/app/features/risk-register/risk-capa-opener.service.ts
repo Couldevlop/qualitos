@@ -23,7 +23,8 @@ interface RiskCapaOpened extends CapaOpened {
  *
  * <p>LA fenêtre de création commune (ADR 0088), source verrouillée sur le
  * risque, criticité issue de sa cotation brute. Le propriétaire du risque est
- * proposé comme responsable s'il se retrouve dans l'annuaire ; le responsable
+ * proposé comme responsable s'il désigne exactement une personne de l'annuaire
+ * en lecture restreinte (nom ou adresse — ADR 0091) ; le responsable
  * choisi pilote le dossier — et non plus celui qui clique.
  * Rend le lien du dossier ouvert, ou `null` si l'utilisateur a renoncé.
  */

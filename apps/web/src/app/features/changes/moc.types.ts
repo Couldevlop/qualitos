@@ -118,8 +118,12 @@ export interface MocDecisionForm {
 // ---------- paramètres (administrateur du client) ----------
 
 export interface MocHolder {
+  /** Le compte de connexion (`sub` du jeton) du titulaire. */
   userId: string;
+  /** Son nom, recopié de l'annuaire (ADR 0091) ; une adresse pour les titulaires nommés avant. */
   label: string;
+  /** Son adresse, pour le courriel aux validateurs ; absente pour les titulaires nommés avant. */
+  email?: string | null;
 }
 
 export interface MocRole {

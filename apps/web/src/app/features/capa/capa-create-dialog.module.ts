@@ -3,6 +3,7 @@ import { MatRadioModule } from '@angular/material/radio';
 
 import { SharedModule } from '../../shared/shared.module';
 import { UiModule } from '../../shared/ui/ui.module';
+import { UserPickerModule } from '../../shared/user-picker/user-picker.module';
 import { CapaCreateDialogComponent } from './pages/capa-create-dialog/capa-create-dialog.component';
 
 /**
@@ -19,7 +20,8 @@ import { CapaCreateDialogComponent } from './pages/capa-create-dialog/capa-creat
   declarations: [CapaCreateDialogComponent],
   // MatRadioModule n'est pas réexporté par SharedModule : la nature, corrective
   // ou préventive, est une question fermée à deux réponses.
-  imports: [SharedModule, UiModule, MatRadioModule],
+  // UserPickerModule : le responsable se choisit dans l'annuaire (ADR 0091).
+  imports: [SharedModule, UiModule, UserPickerModule, MatRadioModule],
   exports: [CapaCreateDialogComponent]
 })
 export class CapaCreateDialogModule {}

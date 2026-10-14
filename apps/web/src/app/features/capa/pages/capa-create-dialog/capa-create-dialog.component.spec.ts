@@ -2,13 +2,17 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { By } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { Observable, of, throwError } from 'rxjs';
 
+import { AuthService, AuthUser } from '../../../../core/auth/auth.service';
+import { DirectoryService } from '../../../../core/directory/directory.service';
+import { DirectoryPage, DirectoryUser } from '../../../../core/directory/directory.types';
 import { SharedModule } from '../../../../shared/shared.module';
 import { UiModule } from '../../../../shared/ui/ui.module';
+import { UserPickerComponent } from '../../../../shared/user-picker/user-picker.component';
 import { CapaCreateDialogModule } from '../../capa-create-dialog.module';
-import { CapaDirectoryService, DirectoryChoices, DirectoryMember } from '../../capa-directory.service';
 import { CapaService } from '../../capa.service';
 import { CapaCaseResponse, OpenCapaRequest } from '../../capa.types';
 import {
@@ -18,15 +22,18 @@ import {
 /**
  * LA fenêtre de création d'une CAPA (ADR 0088) : la même depuis la liste, une
  * NC, un constat, un risque ou la matrice SMI. Elle crée le dossier ET son
- * action ; le responsable, choisi dans l'annuaire, pilote le dossier. Quand
- * l'annuaire n'est pas lisible, on se désigne soi-même — jamais d'impasse,
- * jamais d'identifiant à l'écran.
+ * action ; le responsable, choisi dans l'annuaire en lecture restreinte
+ * (ADR 0091) — ouvert à tout membre —, pilote le dossier. Soi-même par défaut ;
+ * le nom recopié est celui de l'annuaire, jamais d'identifiant à l'écran.
  */
 describe('CapaCreateDialogComponent — fenêtre unique', () => {
 
-  const MOI: DirectoryMember = { userId: 'kc-moi', label: 'Moi Même' };
-  const AMINA: DirectoryMember = { userId: 'kc-amina', label: 'amina.dridi@client.test' };
-  const DIALLO: DirectoryMember = { userId: 'kc-diallo', label: 'a.diallo@client.test' };
+  const MOI: DirectoryUser = { id: 'i-moi', accountId: 'kc-moi', displayName: 'Moi Même', email: 'moi@client.test', active: true };
+  const AMINA: DirectoryUser = { id: 'i-amina', accountId: 'kc-amina', displayName: 'Amina Dridi', email: 'amina.dridi@client.test', active: true };
+  const DIALLO: DirectoryUser = { id: 'i-diallo', accountId: 'kc-diallo', displayName: 'Awa Diallo', email: 'a.diallo@client.test', active: true };
+  const ANNUAIRE = [MOI, DIALLO, AMINA];
+  const page = (content: DirectoryUser[]): DirectoryPage =>
+    ({ content, page: 0, size: 20, totalElements: content.length, totalPages: 1 });
   const DEMAIN = localIsoDate(new Date(Date.now() + 86_400_000));
   const HIER = localIsoDate(new Date(Date.now() - 86_400_000));
 
@@ -35,8 +42,8 @@ describe('CapaCreateDialogComponent — fenêtre unique', () => {
   let capa: jasmine.SpyObj<CapaService>;
   let snack: jasmine.SpyObj<MatSnackBar>;
   let ref: jasmine.SpyObj<MatDialogRef<CapaCreateDialogComponent, CapaOpened>>;
-  let choix: DirectoryChoices;
-  let moi: DirectoryMember | null;
+  let directory: jasmine.SpyObj<DirectoryService>;
+  let session: AuthUser | null;
 
   const ouvert = (over: Partial<CapaCaseResponse> = {}): CapaCaseResponse => ({
     id: 'c1', tenantId: 't1', title: 'Recalibrer', type: 'CORRECTIVE', criticity: 'MEDIUM',
@@ -50,7 +57,8 @@ describe('CapaCreateDialogComponent — fenêtre unique', () => {
       imports: [SharedModule, UiModule, CapaCreateDialogModule, NoopAnimationsModule],
       providers: [
         { provide: CapaService, useValue: capa },
-        { provide: CapaDirectoryService, useValue: { choices: () => of(choix), currentMember: () => moi } },
+        { provide: DirectoryService, useValue: directory },
+        { provide: AuthService, useValue: { snapshot: () => session } },
         { provide: MatSnackBar, useValue: snack },
         { provide: MatDialogRef, useValue: ref },
         { provide: MAT_DIALOG_DATA, useValue: data }
@@ -65,6 +73,15 @@ describe('CapaCreateDialogComponent — fenêtre unique', () => {
     return fixture.nativeElement as HTMLElement;
   }
 
+  const picker = (): UserPickerComponent =>
+    fixture.debugElement.query(By.directive(UserPickerComponent)).componentInstance as UserPickerComponent;
+
+  /** Choisir une personne dans le sélecteur, comme le ferait un clic dans sa liste. */
+  function choisir(user: DirectoryUser): void {
+    picker().onSelected({ option: { value: user } } as never);
+    fixture.detectChanges();
+  }
+
   function remplir(): void {
     component.form.patchValue({ title: '  Recalibrer la sonde  ', description: '  ', dueDate: DEMAIN });
   }
@@ -73,8 +90,13 @@ describe('CapaCreateDialogComponent — fenêtre unique', () => {
     capa = jasmine.createSpyObj<CapaService>('CapaService', ['openCase', 'addAction', 'uploadEvidence']);
     snack = jasmine.createSpyObj<MatSnackBar>('MatSnackBar', ['open']);
     ref = jasmine.createSpyObj<MatDialogRef<CapaCreateDialogComponent, CapaOpened>>('MatDialogRef', ['close']);
-    moi = MOI;
-    choix = { members: [MOI, DIALLO, AMINA], available: true };
+    session = { userId: 'kc-moi', tenantId: 't1', displayName: 'Moi Même', roles: ['quality_manager'] };
+    directory = jasmine.createSpyObj<DirectoryService>('DirectoryService', ['search', 'getByAccount']);
+    directory.search.and.callFake((q: string) => of(page(ANNUAIRE.filter(u =>
+      `${u.displayName} ${u.email}`.toLowerCase().includes((q ?? '').toLowerCase())))));
+    directory.getByAccount.and.callFake(id => ANNUAIRE.some(u => u.accountId === id)
+      ? of(ANNUAIRE.find(u => u.accountId === id)!)
+      : throwError(() => ({ status: 404 })));
   });
 
   // --- les champs ------------------------------------------------------------
@@ -98,12 +120,14 @@ describe('CapaCreateDialogComponent — fenêtre unique', () => {
     expect(component.submitLabel).toBe('Créer la CAPA');
   });
 
-  it('propose l\'annuaire, moi en tête, et me désigne par défaut', async () => {
+  it('le responsable se choisit dans l\'annuaire, moi par défaut, affiché par mon nom', async () => {
     await setup();
-    expect(component.members).toEqual([MOI, DIALLO, AMINA]);
     expect(component.form.controls.assigneeId.value).toBe('kc-moi');
-    expect(component.loadingMembers).toBeFalse();
+    expect(picker().selected?.displayName).toBe('Moi Même');
+    expect(component.matchingOwner).toBeFalse();
+    // Plus de message « pas accessible avec tes droits » : l'annuaire est ouvert à tous.
     expect(hote().querySelector('[data-test="annuaire-indisponible"]')).toBeNull();
+    expect(directory.search).not.toHaveBeenCalled();
   });
 
   it('refuse une échéance passée, et l\'exige', async () => {
@@ -129,24 +153,18 @@ describe('CapaCreateDialogComponent — fenêtre unique', () => {
     expect(component.form.controls.dueDate.value).toBe('');
   });
 
-  // --- l'annuaire illisible : jamais d'impasse -----------------------------
+  // --- le responsable par défaut ------------------------------------------
 
-  it('sans droit de lire l\'annuaire, me propose seul et le dit', async () => {
-    choix = { members: [MOI], available: false };
+  it('par défaut, me désigne avec mon nom de session', async () => {
     await setup();
-
-    expect(component.form.controls.assigneeId.value).toBe('kc-moi');
-    expect(hote().querySelector('[data-test="annuaire-indisponible"]')).not.toBeNull();
-
     capa.openCase.and.returnValue(of(ouvert()));
     remplir();
     component.submit();
     expect(capa.openCase).toHaveBeenCalledWith(jasmine.objectContaining({ ownerId: 'kc-moi', ownerName: 'Moi Même' }));
   });
 
-  it('sans session ni annuaire, ne part pas sans responsable', async () => {
-    choix = { members: [], available: false };
-    moi = null;
+  it('sans session, ne part pas sans responsable', async () => {
+    session = null;
     await setup();
     remplir();
     component.submit();
@@ -154,10 +172,11 @@ describe('CapaCreateDialogComponent — fenêtre unique', () => {
     expect(component.form.controls.assigneeId.hasError('required')).toBeTrue();
   });
 
-  it('refuse un responsable absent de la liste proposée', async () => {
+  it('vider le responsable bloque l\'envoi', async () => {
     await setup();
     remplir();
-    component.form.controls.assigneeId.setValue('kc-inconnu');
+    picker().clear();
+    fixture.detectChanges();
     component.submit();
     expect(capa.openCase).not.toHaveBeenCalled();
   });
@@ -168,7 +187,8 @@ describe('CapaCreateDialogComponent — fenêtre unique', () => {
     await setup();
     capa.openCase.and.returnValue(of(ouvert()));
     remplir();
-    component.form.patchValue({ assigneeId: 'kc-amina', type: 'PREVENTIVE', criticity: 'HIGH',
+    choisir(AMINA);
+    component.form.patchValue({ type: 'PREVENTIVE', criticity: 'HIGH',
       sourceType: 'COMPLAINT', sourceRef: ' REC-12 ' });
 
     component.submit();
@@ -176,7 +196,8 @@ describe('CapaCreateDialogComponent — fenêtre unique', () => {
     const envoye = capa.openCase.calls.mostRecent().args[0] as OpenCapaRequest;
     expect(envoye).toEqual({
       title: 'Recalibrer la sonde', description: undefined, type: 'PREVENTIVE', criticity: 'HIGH',
-      ownerId: 'kc-amina', ownerName: 'amina.dridi@client.test', dueDate: DEMAIN,
+      // Le NOM de l'annuaire, et non l'adresse.
+      ownerId: 'kc-amina', ownerName: 'Amina Dridi', dueDate: DEMAIN,
       sourceType: 'COMPLAINT', sourceRef: 'REC-12'
     });
     expect(ref.close).toHaveBeenCalledWith({ capaId: 'c1' });
@@ -288,18 +309,51 @@ describe('CapaCreateDialogComponent — fenêtre unique', () => {
     expect(ref.close).toHaveBeenCalledWith({ capaId: 'c-nc' });
   });
 
-  it('depuis un risque : criticité de la cotation, propriétaire proposé s\'il est dans l\'annuaire', async () => {
+  it('depuis un risque : criticité de la cotation, propriétaire proposé s\'il est EXACTEMENT dans l\'annuaire', async () => {
+    const open = jasmine.createSpy('open').and.returnValue(of({ capaId: 'c-r' }));
     await setup({
       source: { type: 'RISK', reference: 'R-001' }, lockCriticity: true,
-      prefill: { criticity: 'CRITICAL', ownerHint: 'A. Diallo' },
-      open: () => of({ capaId: 'c-r' })
+      prefill: { criticity: 'CRITICAL', ownerHint: 'awa diallo' },
+      open
     });
 
+    expect(directory.search).toHaveBeenCalledWith('awa diallo');
     expect(component.form.controls.criticity.disabled).toBeTrue();
     expect(component.form.controls.criticity.value).toBe('CRITICAL');
     expect(component.form.controls.assigneeId.value).toBe('kc-diallo');
     expect(component.unmatchedOwnerHint).toBeNull();
     expect(component.sourceLabel).toBe('Risque');
+
+    component.form.patchValue({ title: 'Dérive soudure', dueDate: DEMAIN });
+    component.submit();
+    expect(open).toHaveBeenCalledWith(jasmine.objectContaining({ ownerId: 'kc-diallo', ownerName: 'Awa Diallo' }));
+  });
+
+  it('depuis un risque, rapproche aussi le propriétaire par son adresse', async () => {
+    await setup({
+      source: { type: 'RISK', reference: 'R-001' },
+      prefill: { ownerHint: 'A.DIALLO@client.test' }, open: () => of({ capaId: 'c-r' })
+    });
+    expect(component.form.controls.assigneeId.value).toBe('kc-diallo');
+  });
+
+  it('depuis un risque, un nom seulement approchant ne désigne personne', async () => {
+    await setup({
+      source: { type: 'RISK', reference: 'R-001' },
+      prefill: { ownerHint: 'Diallo' }, open: () => of({ capaId: 'c-r' })
+    });
+    expect(component.form.controls.assigneeId.value).toBe('kc-moi');
+    expect(component.unmatchedOwnerHint).toBe('Diallo');
+  });
+
+  it('depuis un risque, l\'annuaire indisponible ne bloque pas : on me propose', async () => {
+    directory.search.and.returnValue(throwError(() => ({ status: 0 })));
+    await setup({
+      source: { type: 'RISK', reference: 'R-001' },
+      prefill: { ownerHint: 'Awa Diallo' }, open: () => of({ capaId: 'c-r' })
+    });
+    expect(component.matchingOwner).toBeFalse();
+    expect(component.form.controls.assigneeId.value).toBe('kc-moi');
   });
 
   it('depuis un risque dont le propriétaire est introuvable, le dit et me propose', async () => {
@@ -324,12 +378,13 @@ describe('CapaCreateDialogComponent — fenêtre unique', () => {
     expect(hote().querySelector('[data-test="capa-criticite"]')).toBeNull();
     expect(hote().querySelector('.attachments')).toBeNull();
 
-    component.form.patchValue({ assigneeId: 'kc-amina', dueDate: DEMAIN });
+    choisir(AMINA);
+    component.form.patchValue({ dueDate: DEMAIN });
     component.submit();
 
     expect(capa.addAction).toHaveBeenCalledWith('c9', {
       title: 'Dérive SPC', description: undefined, actionType: 'PREVENTIVE',
-      assigneeId: 'kc-amina', assigneeName: 'amina.dridi@client.test', dueDate: DEMAIN
+      assigneeId: 'kc-amina', assigneeName: 'Amina Dridi', dueDate: DEMAIN
     });
     expect(capa.openCase).not.toHaveBeenCalled();
     expect(ref.close).toHaveBeenCalledWith({ capaId: 'c9' });

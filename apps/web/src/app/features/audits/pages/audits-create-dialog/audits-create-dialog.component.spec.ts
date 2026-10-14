@@ -1,14 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { By } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { of, throwError } from 'rxjs';
 
 import { AuthService, AuthUser } from '../../../../core/auth/auth.service';
-import { TenantTeamService } from '../../../admin/tenant-team.service';
-import { TenantUser } from '../../../admin/admin.types';
+import { DirectoryService } from '../../../../core/directory/directory.service';
+import { DirectoryUser } from '../../../../core/directory/directory.types';
 import { SharedModule } from '../../../../shared/shared.module';
 import { UiModule } from '../../../../shared/ui/ui.module';
+import { UserPickerComponent } from '../../../../shared/user-picker/user-picker.component';
+import { UserPickerModule } from '../../../../shared/user-picker/user-picker.module';
 import { AuditsService } from '../../audits.service';
 import { AuditPlanResponse } from '../../audits.types';
 import { AuditsCreateDialogComponent } from './audits-create-dialog.component';
@@ -16,9 +19,9 @@ import { AuditsCreateDialogComponent } from './audits-create-dialog.component';
 /**
  * Création d'un plan d'audit (§4.4).
  *
- * L'auditeur responsable se CHOISIT dans l'annuaire, l'utilisateur connecté
- * par défaut. Il était recopié en silence depuis la session, puis affiché comme
- * un identifiant que personne ne savait relire.
+ * L'auditeur responsable se CHOISIT dans l'annuaire en lecture restreinte
+ * (ADR 0091) — ouvert à tout membre —, l'utilisateur connecté par défaut. Le
+ * nom recopié est celui de l'annuaire, jamais l'adresse quand un nom existe.
  */
 describe('AuditsCreateDialogComponent', () => {
   let fixture: ComponentFixture<AuditsCreateDialogComponent>;
@@ -27,41 +30,36 @@ describe('AuditsCreateDialogComponent', () => {
   let dialogRef: jasmine.SpyObj<MatDialogRef<AuditsCreateDialogComponent>>;
   let snack: jasmine.SpyObj<MatSnackBar>;
   let session: AuthUser | null;
-  let team: jasmine.SpyObj<TenantTeamService>;
+  let directory: jasmine.SpyObj<DirectoryService>;
 
-  const membre = (over: Partial<TenantUser>): TenantUser => ({
-    id: 'internal-' + (over.keycloakId ?? 'x'), tenantId: 't1', keycloakId: 'x', email: 'x@exemple.test',
-    roles: ['auditor'], active: true, createdAt: '', updatedAt: '', ...over
-  });
+  const MOI: DirectoryUser = { id: 'i1', accountId: 'u1', displayName: 'Demo', email: 'demo@exemple.test', active: true };
+  const BRUNO: DirectoryUser = { id: 'i2', accountId: 'u2', displayName: 'Bruno Petit', email: 'bruno@exemple.test', active: true };
 
   const created = { id: 'a-9', title: 'Audit' } as AuditPlanResponse;
 
   beforeEach(async () => {
-    session = { userId: 'u1', tenantId: 't1', displayName: 'Demo', roles: ['auditor'] };
+    session = { userId: 'u1', tenantId: 't1', displayName: 'Demo', roles: ['quality_manager'] };
     svc = jasmine.createSpyObj<AuditsService>('AuditsService', ['createPlan']);
     svc.createPlan.and.returnValue(of(created));
     dialogRef = jasmine.createSpyObj<MatDialogRef<AuditsCreateDialogComponent>>(
       'MatDialogRef', ['close']);
     snack = jasmine.createSpyObj<MatSnackBar>('MatSnackBar', ['open']);
-    team = jasmine.createSpyObj<TenantTeamService>('TenantTeamService', ['list']);
-    team.list.and.returnValue(of({
-      content: [
-        membre({ keycloakId: 'u1', email: 'demo@exemple.test' }),
-        membre({ keycloakId: 'u2', email: 'bruno@exemple.test' }),
-        membre({ keycloakId: 'u3', email: 'parti@exemple.test', active: false })
-      ],
-      totalElements: 3, totalPages: 1, number: 0, size: 200
-    }));
+    directory = jasmine.createSpyObj<DirectoryService>('DirectoryService', ['search', 'getByAccount']);
+    directory.getByAccount.and.callFake(id =>
+      [MOI, BRUNO].some(u => u.accountId === id)
+        ? of([MOI, BRUNO].find(u => u.accountId === id)!)
+        : throwError(() => ({ status: 404 })));
+    directory.search.and.returnValue(of({ content: [MOI, BRUNO], page: 0, size: 20, totalElements: 2, totalPages: 1 }));
 
     await TestBed.configureTestingModule({
       declarations: [AuditsCreateDialogComponent],
-      imports: [SharedModule, UiModule, NoopAnimationsModule],
+      imports: [SharedModule, UiModule, UserPickerModule, NoopAnimationsModule],
       providers: [
         { provide: AuditsService, useValue: svc },
         { provide: MatDialogRef, useValue: dialogRef },
         { provide: MatSnackBar, useValue: snack },
         { provide: AuthService, useValue: { snapshot: () => session } },
-        { provide: TenantTeamService, useValue: team }
+        { provide: DirectoryService, useValue: directory }
       ]
     }).compileComponents();
 
@@ -69,6 +67,15 @@ describe('AuditsCreateDialogComponent', () => {
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
+
+  const picker = (): UserPickerComponent =>
+    fixture.debugElement.query(By.directive(UserPickerComponent)).componentInstance as UserPickerComponent;
+
+  /** Choisir une personne dans le sélecteur, comme le ferait un clic dans sa liste. */
+  function choose(user: DirectoryUser): void {
+    picker().onSelected({ option: { value: user } } as never);
+    fixture.detectChanges();
+  }
 
   // ---- Ouverture ---------------------------------------------------------------
 
@@ -83,6 +90,14 @@ describe('AuditsCreateDialogComponent', () => {
     expect(component.form.getRawValue().title).toBe('');
     expect(component.form.valid).toBeFalse();
     expect(component.submitting).toBeFalse();
+  });
+
+  it('l\'auditeur est choisi dans l\'annuaire, soi-même par défaut, affiché par son nom', () => {
+    expect(component.form.getRawValue().leadAuditorId).toBe('u1');
+    expect(directory.getByAccount).toHaveBeenCalledWith('u1');
+    expect(picker().selected?.displayName).toBe('Demo');
+    // Aucun appel à l'annuaire d'administration, ni message « pas accessible avec vos droits ».
+    expect(fixture.nativeElement.querySelector('[data-test="annuaire-indisponible"]')).toBeNull();
   });
 
   // ---- Validation ---------------------------------------------------------------
@@ -143,15 +158,20 @@ describe('AuditsCreateDialogComponent', () => {
     expect(component.submitting).toBeFalse();
   });
 
-  it('propose soi-même en tête puis les membres actifs, soi-même par défaut', () => {
-    expect(component.leadAuditors.map(o => o.id)).toEqual(['u1', 'u2']);
-    expect(component.leadAuditors[0].label).toContain('Demo');
-    expect(component.form.getRawValue().leadAuditorId).toBe('u1');
-    expect(component.directoryUnavailable).toBeFalse();
+  it('confie l\'audit à un collègue choisi, avec son NOM d\'annuaire et non son adresse', () => {
+    component.form.patchValue({ title: 'Audit' });
+    choose(BRUNO);
+
+    component.submit();
+
+    expect(svc.createPlan).toHaveBeenCalledWith(jasmine.objectContaining({
+      leadAuditorId: 'u2', leadAuditorName: 'Bruno Petit'
+    }));
   });
 
-  it('confie l\'audit à un collègue choisi, avec son nom', () => {
-    component.form.patchValue({ title: 'Audit', leadAuditorId: 'u2' });
+  it('recopie l\'adresse seulement quand l\'annuaire n\'a pas de nom', () => {
+    component.form.patchValue({ title: 'Audit' });
+    choose({ ...BRUNO, displayName: '' });
 
     component.submit();
 
@@ -195,20 +215,15 @@ describe('AuditsCreateDialogComponent', () => {
   // ---- Cas dégradés -----------------------------------------------------------------
 
   it('refuse de créer sans auditeur responsable, plutôt que d\'en inventer un', () => {
-    component.form.patchValue({ title: 'Audit', leadAuditorId: '' });
+    component.form.patchValue({ title: 'Audit' });
+    picker().clear();
+    fixture.detectChanges();
 
+    expect(component.form.getRawValue().leadAuditorId).toBeFalsy();
     component.submit();
 
     expect(svc.createPlan).not.toHaveBeenCalled();
     expect(component.submitting).toBeFalse();
-  });
-
-  it('annuaire indisponible : seul soi-même est proposé, et l\'écran le dit', () => {
-    team.list.and.returnValue(throwError(() => ({ status: 403 })));
-    component.ngOnInit();
-
-    expect(component.leadAuditors.map(o => o.id)).toEqual(['u1']);
-    expect(component.directoryUnavailable).toBeTrue();
   });
 
   it('laisse le dialogue ouvert et explique quand le serveur refuse', () => {

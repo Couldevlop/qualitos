@@ -97,5 +97,8 @@ par « Membre de l'organisation (nom non enregistré) ».
   ce droit ne peut confier un audit qu'à lui-même, et l'écran le dit. Ouvrir une
   lecture restreinte de l'annuaire (identifiant, courriel) à tous les rôles est
   la suite naturelle, hors de cette décision.
+  *Mise à jour (ADR 0091) : c'est fait — l'auditeur se choisit dans l'annuaire en
+  lecture restreinte par tout rôle, et le nom recopié est son nom d'annuaire (non
+  plus son adresse).*
 - Le nom recopié d'un collègue vient de l'écran : il est informatif, pas
   probatoire. L'identifiant, lui, fait foi.

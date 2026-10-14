@@ -46,14 +46,17 @@ export function capaSourceLabel(source: CapaSourceType | string | undefined | nu
  * Le nom du pilote d'un dossier — jamais un identifiant (ADR 0088).
  *
  * Ordre : le nom recopié à la désignation ; à défaut celui que l'annuaire
- * connaît pour cet identifiant ; à défaut, si c'est l'utilisateur connecté,
- * son nom de session ; sinon « — ».
+ * (ADR 0091) donne à ce compte, via `nameOf` ; sinon « — ».
  */
 export function capaOwnerLabel(
   c: { ownerId?: string; ownerName?: string },
-  known: ReadonlyArray<{ userId: string; label: string }>
+  nameOf: (accountId: string) => string | undefined
 ): string {
   if (c.ownerName && c.ownerName.trim()) return c.ownerName;
-  const membre = c.ownerId ? known.find(m => m.userId === c.ownerId) : undefined;
-  return membre?.label ?? '—';
+  return (c.ownerId ? nameOf(c.ownerId) : undefined) ?? '—';
+}
+
+/** Les comptes des pilotes dont le dossier n'a pas recopié le nom. */
+export function unnamedOwners(cases: ReadonlyArray<{ ownerId?: string; ownerName?: string }>): string[] {
+  return cases.filter(c => !!c.ownerId && !c.ownerName?.trim()).map(c => c.ownerId as string);
 }

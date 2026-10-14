@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../../shared/shared.module';
 import { UiModule } from '../../shared/ui/ui.module';
+import { UserPickerModule } from '../../shared/user-picker/user-picker.module';
 import { AuditDocumentsPanelComponent } from './pages/audit-documents-panel/audit-documents-panel.component';
 import { AuditReportPanelComponent } from './pages/audit-report-panel/audit-report-panel.component';
 import { CapaCreateDialogModule } from '../capa/capa-create-dialog.module';
@@ -39,6 +40,7 @@ const routes: Routes = [
     AuditDocumentsPanelComponent
   ],
   // CapaCreateDialogModule : « Créer une CAPA » sur un constat ouvre LA fenêtre commune (ADR 0088).
-  imports: [SharedModule, UiModule, CapaCreateDialogModule, RouterModule.forChild(routes)]
+  // UserPickerModule : l'auditeur responsable se choisit dans l'annuaire (ADR 0091).
+  imports: [SharedModule, UiModule, UserPickerModule, CapaCreateDialogModule, RouterModule.forChild(routes)]
 })
 export class AuditsModule {}

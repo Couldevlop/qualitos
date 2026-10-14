@@ -71,6 +71,9 @@ L'annuaire (`/api/v1/users`) n'est lisible que des administrateurs. Sans ce
 droit, la fenêtre propose l'utilisateur courant seul et le dit : elle reste
 utilisable, sans jamais montrer d'identifiant. Ouvrir une lecture de l'annuaire
 à tous les membres est une décision produit distincte, en attente.
+*Mise à jour (ADR 0091) : décision prise — le responsable et le vérificateur se
+choisissent dans l'annuaire en lecture restreinte, ouvert à tous ; le repli
+« moi seulement » et son message ont disparu, le nom recopié est le nom d'annuaire.*
 
 ### 4. Une seule fenêtre, en deux modes
 

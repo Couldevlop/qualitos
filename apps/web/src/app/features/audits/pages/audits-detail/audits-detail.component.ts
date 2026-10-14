@@ -6,6 +6,8 @@ import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
 import { catchError, finalize, map, shareReplay, switchMap, tap } from 'rxjs/operators';
 
 import { AuthService } from '../../../../core/auth/auth.service';
+import { AccountNames } from '../../../../core/directory/directory-names';
+import { DirectoryService } from '../../../../core/directory/directory.service';
 import { deferredView } from '../../../../core/rx/deferred-view';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../../../shared/ui/confirm-dialog/confirm-dialog.component';
@@ -60,6 +62,9 @@ export class AuditsDetailComponent implements OnInit {
   /** Rapport émis : il verrouille les documents de l'audit. */
   reportIssued = false;
 
+  /** Le nom de l'auditeur d'un audit ancien qui ne l'a pas recopié, lu dans l'annuaire. */
+  private readonly names = new AccountNames(this.directory);
+
   private planId = '';
   private readonly reload$ = new BehaviorSubject<void>(undefined);
   private isMockId(s: string): boolean { return /^a-?[a-z0-9-]+$/i.test(s) && /^a[0-9-]/i.test(s); }
@@ -70,7 +75,8 @@ export class AuditsDetailComponent implements OnInit {
     private readonly audits: AuditsService,
     private readonly dialog: MatDialog,
     private readonly snack: MatSnackBar,
-    private readonly auth: AuthService
+    private readonly auth: AuthService,
+    private readonly directory: DirectoryService
   ) {}
 
   ngOnInit(): void {
@@ -92,6 +98,11 @@ export class AuditsDetailComponent implements OnInit {
         }),
         finalize(() => this.loadingState$.next(false))
       )),
+      tap(p => {
+        if (p && !p.leadAuditorName && p.leadAuditorId !== this.auth.snapshot()?.userId) {
+          this.names.resolve([p.leadAuditorId]);
+        }
+      }),
       shareReplay({ bufferSize: 1, refCount: false }) // refCount:false : gated sur loading, evite la boucle teardown
     );
     this.reload$.next();
@@ -224,7 +235,7 @@ export class AuditsDetailComponent implements OnInit {
 
   /** L'auditeur responsable, par son nom — jamais l'identifiant de son compte. */
   leadAuditorLabel(p: AuditPlanResponse): string {
-    return leadAuditorDisplay(p, this.auth.snapshot());
+    return leadAuditorDisplay(p, this.auth.snapshot(), this.names.get(p.leadAuditorId));
   }
 
   /**

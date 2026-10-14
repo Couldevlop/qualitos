@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 
 import { SharedModule } from '../../../../shared/shared.module';
 import { UiModule } from '../../../../shared/ui/ui.module';
@@ -15,7 +15,7 @@ import {
 } from '../capa-revision-impact/capa-revision-impact.component';
 import { ProductsService } from '../../../products/products.service';
 import { AuthzService } from '../../../../core/authz/authz.service';
-import { CapaDirectoryService } from '../../capa-directory.service';
+import { DirectoryService } from '../../../../core/directory/directory.service';
 
 /**
  * Ce qui s'oppose à la clôture, DIT avant le clic (§4.2).
@@ -74,7 +74,7 @@ describe('CapaDetailComponent — motifs de blocage de la clôture', () => {
       imports: [SharedModule, UiModule, NoopAnimationsModule],
       providers: [
         { provide: CapaService, useValue: capa },
-        { provide: CapaDirectoryService, useValue: { choices: () => of({ members: [], available: true }) } },
+        { provide: DirectoryService, useValue: { getByAccount: () => throwError(() => ({ status: 404 })) } },
         // Tous les droits : ces bancs testent la fiche, pas la matrice (ADR 0078).
         { provide: AuthzService, useValue: { can: () => of(true) } },
         // L'encart d'impact vit dans la fiche : sans ce doublon, il irait

@@ -1,14 +1,14 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { AbstractControl, FormBuilder, ValidationErrors, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { finalize } from 'rxjs/operators';
 
-import { AuthService } from '../../../../core/auth/auth.service';
+import { personName } from '../../../../core/directory/directory-names';
+import { DirectoryUser } from '../../../../core/directory/directory.types';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { AuditsService } from '../../audits.service';
 import { AuditPlanResponse, AuditType } from '../../audits.types';
-import { LeadAuditorDirectory, LeadAuditorOption, leadAuditorDisplay } from '../../lead-auditor';
 
 export interface AuditsEditDialogData {
   plan: AuditPlanResponse;
@@ -33,11 +33,11 @@ function trimmedEmail(control: AbstractControl): ValidationErrors | null {
   styleUrls: ['./audits-edit-dialog.component.scss'],
   standalone: false
 })
-export class AuditsEditDialogComponent implements OnInit {
+export class AuditsEditDialogComponent {
   submitting = false;
 
-  leadAuditors: LeadAuditorOption[] = [];
-  directoryUnavailable = false;
+  /** Le nom de l'auditeur nouvellement choisi, tel que l'annuaire le donne (ADR 0091). */
+  private chosenLeadName: string | undefined;
 
   readonly types: { value: AuditType; label: string }[] = [
     { value: 'INTERNAL',      label: $localize`:@@audits.type.internal:Interne` },
@@ -64,8 +64,6 @@ export class AuditsEditDialogComponent implements OnInit {
   constructor(
     private readonly fb: FormBuilder,
     private readonly audits: AuditsService,
-    private readonly directory: LeadAuditorDirectory,
-    private readonly auth: AuthService,
     private readonly snack: MatSnackBar,
     private readonly dialogRef: MatDialogRef<AuditsEditDialogComponent, AuditPlanResponse>,
     @Inject(MAT_DIALOG_DATA) public readonly data: AuditsEditDialogData
@@ -81,18 +79,13 @@ export class AuditsEditDialogComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {
-    this.directory.choices().subscribe(c => {
-      // L'auditeur en place reste proposé même s'il n'est pas (ou plus) dans
-      // l'annuaire lisible : sans cela, le formulaire perdrait sa valeur et
-      // obligerait à réattribuer l'audit pour simplement corriger un titre.
-      const current = this.data.plan.leadAuditorId;
-      const options = c.options.some(o => o.id === current)
-        ? c.options
-        : [...c.options, { id: current, label: leadAuditorDisplay(this.data.plan, this.auth.snapshot()) }];
-      this.leadAuditors = options;
-      this.directoryUnavailable = !c.directoryAvailable;
-    });
+  /**
+   * Le sélecteur rend la personne choisie. L'auditeur en place, lui, garde sa
+   * valeur même s'il n'est plus dans l'annuaire : corriger un titre n'oblige
+   * pas à réattribuer l'audit.
+   */
+  onLeadAuditor(user: DirectoryUser | null): void {
+    this.chosenLeadName = user ? personName(user) : undefined;
   }
 
   submit(): void {
@@ -104,12 +97,10 @@ export class AuditsEditDialogComponent implements OnInit {
     const v = this.form.getRawValue();
     // L'auditeur ne part que s'il change : le renvoyer à l'identique recopierait
     // un nom d'annuaire par-dessus celui enregistré à la désignation.
-    const lead = v.leadAuditorId !== this.data.plan.leadAuditorId
-      ? this.leadAuditors.find(o => o.id === v.leadAuditorId)
-      : undefined;
+    const changed = !!v.leadAuditorId && v.leadAuditorId !== this.data.plan.leadAuditorId;
     this.audits
       .updatePlan(this.data.plan.id, {
-        ...(lead ? { leadAuditorId: lead.id, leadAuditorName: this.directory.nameFor(lead) } : {}),
+        ...(changed ? { leadAuditorId: v.leadAuditorId, leadAuditorName: this.chosenLeadName } : {}),
         title: v.title.trim(),
         scope: v.scope?.trim() || undefined,
         type: v.type,
