@@ -49,6 +49,7 @@ class DirectoryControllerTest {
     private JwtDecoder jwtDecoder;
 
     private static final UUID ALICE = UUID.randomUUID();
+    private static final UUID KC_ALICE = UUID.randomUUID();
 
     private static JwtRequestPostProcessor plainUser() {
         return jwt().authorities(new SimpleGrantedAuthority("ROLE_USER"));
@@ -56,7 +57,7 @@ class DirectoryControllerTest {
 
     private static DirectoryDto.Page onePage() {
         return new DirectoryDto.Page(
-                List.of(new DirectoryDto.Entry(ALICE, "Alice Durand", "alice@acme.com", true)), 0, 20, 1, 1);
+                List.of(new DirectoryDto.Entry(ALICE, KC_ALICE.toString(), "Alice Durand", "alice@acme.com", true)), 0, 20, 1, 1);
     }
 
     @Test
@@ -167,7 +168,7 @@ class DirectoryControllerTest {
     @Test
     @DisplayName("lit le nom d'une personne par son identifiant")
     void getsOneEntry() throws Exception {
-        given(directory.get(ALICE)).willReturn(new DirectoryDto.Entry(ALICE, "Alice Durand", "alice@acme.com", false));
+        given(directory.get(ALICE)).willReturn(new DirectoryDto.Entry(ALICE, KC_ALICE.toString(), "Alice Durand", "alice@acme.com", false));
 
         mockMvc.perform(get("/api/v1/directory/users/{id}", ALICE).with(plainUser()))
                 .andExpect(status().isOk())
@@ -191,6 +192,54 @@ class DirectoryControllerTest {
     void malformedIdIs400() throws Exception {
         mockMvc.perform(get("/api/v1/directory/users/{id}", "pas-un-uuid").with(plainUser()))
                 .andExpect(status().isBadRequest());
+        verifyNoInteractions(directory);
+    }
+
+    @Test
+    @DisplayName("la recherche rend le compte de connexion, identité de référence du moteur qualité")
+    void searchExposesAccountId() throws Exception {
+        given(directory.search(any())).willReturn(onePage());
+
+        mockMvc.perform(get("/api/v1/directory/users").with(plainUser()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].accountId").value(KC_ALICE.toString()));
+    }
+
+    @Test
+    @DisplayName("lit une personne par son compte de connexion, ancien membre compris")
+    void getsByAccount() throws Exception {
+        given(directory.getByAccount(KC_ALICE)).willReturn(
+                new DirectoryDto.Entry(ALICE, KC_ALICE.toString(), "Alice Durand", "alice@acme.com", false));
+
+        mockMvc.perform(get("/api/v1/directory/accounts/{accountId}", KC_ALICE).with(plainUser()))
+                .andExpect(status().isOk())
+                .andExpect(header().string("Cache-Control", containsString("no-store")))
+                .andExpect(jsonPath("$.accountId").value(KC_ALICE.toString()))
+                .andExpect(jsonPath("$.displayName").value("Alice Durand"))
+                .andExpect(jsonPath("$.active").value(false))
+                .andExpect(jsonPath("$.roles").doesNotExist())
+                .andExpect(jsonPath("$.keycloakId").doesNotExist());
+    }
+
+    @Test
+    @DisplayName("compte absent du client : même 404 neutre")
+    void unknownAccountIs404() throws Exception {
+        given(directory.getByAccount(KC_ALICE)).willThrow(new DirectoryEntryNotFoundException());
+
+        mockMvc.perform(get("/api/v1/directory/accounts/{accountId}", KC_ALICE).with(plainUser()))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.detail").value("Directory entry not found"));
+    }
+
+    @Test
+    @DisplayName("compte mal formé : 400 ; sans jeton : 401 ; écriture : 403")
+    void accountEndpointGuards() throws Exception {
+        mockMvc.perform(get("/api/v1/directory/accounts/{accountId}", "pas-un-uuid").with(plainUser()))
+                .andExpect(status().isBadRequest());
+        mockMvc.perform(get("/api/v1/directory/accounts/{accountId}", KC_ALICE))
+                .andExpect(status().isUnauthorized());
+        mockMvc.perform(post("/api/v1/directory/accounts/{accountId}", KC_ALICE).with(plainUser()))
+                .andExpect(status().isForbidden());
         verifyNoInteractions(directory);
     }
 

@@ -9,7 +9,7 @@ import { DirectoryPage, DirectoryUser } from './directory.types';
 describe('DirectoryService', () => {
 
   const endpoint = `${environment.apiBaseUrl}/api/v1/directory/users`;
-  const alice: DirectoryUser = { id: 'a1', displayName: 'Alice Durand', email: 'alice@acme.com', active: true };
+  const alice: DirectoryUser = { id: 'a1', accountId: 'kc-a1', displayName: 'Alice Durand', email: 'alice@acme.com', active: true };
   const page = (content: DirectoryUser[]): DirectoryPage =>
     ({ content, page: 0, size: 20, totalElements: content.length, totalPages: 1 });
 
@@ -103,6 +103,34 @@ describe('DirectoryService', () => {
     expect(nom).toBe('Alice Durand');
   });
 
+  it('getByAccount lit /accounts/{accountId} et garde le nom', () => {
+    const noms: string[] = [];
+    service.getByAccount('kc-a1').subscribe(u => noms.push(u.displayName));
+    service.getByAccount('kc-a1').subscribe(u => noms.push(u.displayName));
+    http.expectOne(`${environment.apiBaseUrl}/api/v1/directory/accounts/kc-a1`).flush(alice);
+    service.getByAccount('kc-a1').subscribe(u => noms.push(u.displayName));
+    expect(noms).toEqual(['Alice Durand', 'Alice Durand', 'Alice Durand']);
+  });
+
+  it('getByAccount : un 404 ne reste pas en cache, et le compte est encodé', () => {
+    const accounts = `${environment.apiBaseUrl}/api/v1/directory/accounts`;
+    let status: number | undefined;
+    service.getByAccount('a/b').subscribe({ error: e => status = e.status });
+    http.expectOne(`${accounts}/a%2Fb`).flush('absent', { status: 404, statusText: 'Not Found' });
+    expect(status).toBe(404);
+    service.getByAccount('a/b').subscribe();
+    http.expectOne(`${accounts}/a%2Fb`).flush(alice);
+  });
+
+  it('une recherche alimente aussi le cache par compte', () => {
+    service.search('ali').subscribe();
+    http.expectOne(r => r.url === endpoint).flush(page([alice]));
+    let compte: string | undefined;
+    service.getByAccount('kc-a1').subscribe(u => compte = u.accountId);
+    http.expectNone(`${environment.apiBaseUrl}/api/v1/directory/accounts/kc-a1`);
+    expect(compte).toBe('kc-a1');
+  });
+
   it('l’identifiant est encodé dans le chemin', () => {
     let status: number | undefined;
     service.get('a/b').subscribe({ error: e => status = e.status });
@@ -112,7 +140,7 @@ describe('DirectoryService', () => {
 
   it('le cache est borné et se vide sur demande', () => {
     const many = Array.from({ length: DIRECTORY_CACHE_MAX + 5 }, (_, i) =>
-      ({ id: `u${i}`, displayName: `U${i}`, email: `u${i}@acme.com`, active: true }));
+      ({ id: `u${i}`, accountId: `kc-u${i}`, displayName: `U${i}`, email: `u${i}@acme.com`, active: true }));
     service.search('u').subscribe();
     http.expectOne(r => r.url === endpoint).flush(page(many));
     // La plus ancienne a été oubliée, la plus récente est gardée.
@@ -155,6 +183,15 @@ describe('DirectoryService', () => {
       expect(res?.content.length).toBe(2);
       expect(res?.totalElements).toBe(4);
       expect(res?.totalPages).toBe(2);
+    });
+
+    it('la première personne fictive est l’utilisateur fictif d’AuthService', () => {
+      let nom: string | undefined;
+      let erreur: { status: number } | undefined;
+      service.getByAccount('00000000-0000-0000-0000-000000000001').subscribe(u => nom = u.displayName);
+      service.getByAccount('inconnu').subscribe({ error: e => erreur = e });
+      expect(nom).toBe('Camille Bernard');
+      expect(erreur?.status).toBe(404);
     });
 
     it('get(id) rend la personne fictive ou une erreur 404', () => {

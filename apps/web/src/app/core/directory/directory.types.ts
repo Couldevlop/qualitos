@@ -4,7 +4,14 @@
  * personne, rien de ce qui sert à l'administrer.
  */
 export interface DirectoryUser {
+  /** Identifiant interne d'api-core : ne correspond à rien côté moteur qualité. */
   id: string;
+  /**
+   * Identité de RÉFÉRENCE : le compte de connexion (`sub` du jeton), celui que
+   * portent les enregistrements qualité (pilote CAPA, auditeur responsable,
+   * décideur d'un changement) et `AuthService.snapshot().userId`.
+   */
+  accountId: string;
   /** Nom saisi à l'invitation, ou l'adresse quand aucun nom n'est enregistré. Jamais vide. */
   displayName: string;
   /** Adresse professionnelle : départage deux homonymes. */

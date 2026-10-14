@@ -45,6 +45,17 @@ public class DirectoryService {
                 .orElseThrow(DirectoryEntryNotFoundException::new);
     }
 
+    /**
+     * Une personne du client par son compte de connexion, active ou non. Même 404
+     * neutre qu'un compte inconnu quand il appartient à un autre client.
+     */
+    public DirectoryDto.Entry getByAccount(UUID accountId) {
+        UUID tenant = currentTenant();
+        return users.findDirectoryRowByAccount(tenant, accountId.toString())
+                .map(DirectoryDto.Entry::from)
+                .orElseThrow(DirectoryEntryNotFoundException::new);
+    }
+
     private static UUID currentTenant() {
         String tenant = TenantContext.getTenantId();
         if (tenant == null) {
