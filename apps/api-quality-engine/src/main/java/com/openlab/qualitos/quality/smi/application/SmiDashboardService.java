@@ -4,6 +4,7 @@ import com.openlab.qualitos.quality.smi.domain.CoverageStatus;
 import com.openlab.qualitos.quality.smi.domain.Deadline;
 import com.openlab.qualitos.quality.smi.domain.HlsChapter;
 import com.openlab.qualitos.quality.smi.domain.RiskGrid;
+import com.openlab.qualitos.quality.smi.domain.StandardOrder;
 import com.openlab.qualitos.quality.smi.domain.StandardScope;
 
 import java.time.Clock;
@@ -118,9 +119,10 @@ public class SmiDashboardService {
 
     // ---------- blocs ----------
 
+    /** Rangées dans l'ordre naturel : ISO 9001, puis ISO 14001, puis ISO 45001. */
     private List<SmiPorts.AdoptedStandard> adopted() {
         return standards.adopted().stream()
-                .sorted(Comparator.comparing(SmiPorts.AdoptedStandard::code))
+                .sorted(Comparator.comparing(SmiPorts.AdoptedStandard::code, StandardOrder.BY_CODE))
                 .limit(MAX_STANDARDS)
                 .toList();
     }

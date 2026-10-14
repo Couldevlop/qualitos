@@ -21,6 +21,9 @@ import com.openlab.qualitos.quality.riskregister.domain.RiskStatus;
 import com.openlab.qualitos.quality.smi.application.SmiPorts;
 import com.openlab.qualitos.quality.smi.domain.Deadline;
 import com.openlab.qualitos.quality.standards.AdoptionStatus;
+import com.openlab.qualitos.quality.standards.Standard;
+import com.openlab.qualitos.quality.standards.StandardRepository;
+import com.openlab.qualitos.quality.standards.StandardStatus;
 import com.openlab.qualitos.quality.standards.StandardsDto;
 import com.openlab.qualitos.quality.standards.StandardsService;
 import org.springframework.data.domain.PageRequest;
@@ -28,6 +31,7 @@ import org.springframework.data.domain.Sort;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
@@ -90,6 +94,65 @@ public final class SmiAdapters {
                     .map(s -> new SmiPorts.SectionCoverage(s.sectionCode(), s.sectionTitle(),
                             s.coveredRequirements(), s.totalRequirements()))
                     .toList()));
+        }
+    }
+
+    /**
+     * Le catalogue des normes de système de management, lu dans le dépôt des
+     * normes : la liste du service ne rend ni les normes associées ni
+     * l'exigence de certification, qui font justement le tri ici. La lecture
+     * passe par la requête « visible du client », la même que le catalogue.
+     */
+    public static final class Catalog implements SmiPorts.Catalog {
+
+        /** La structure-cadre commune (Annexe SL) : chapitres 4 à 10 partagés. */
+        static final String HLS = "HLS";
+        private static final int MAX_CATALOG = 200;
+        private static final int MAX_ADOPTIONS = 200;
+
+        private final StandardRepository repository;
+        private final StandardsService service;
+
+        public Catalog(StandardRepository repository, StandardsService service) {
+            this.repository = repository;
+            this.service = service;
+        }
+
+        /**
+         * Normes publiées par la plateforme, de la famille HLS, certifiables :
+         * les lignes directrices (ISO 19011, 31000, 26000…) partagent la
+         * famille mais ne se certifient pas, et n'ont pas leur place dans un
+         * système de management à piloter.
+         */
+        @Override
+        public List<SmiPorts.CatalogStandard> managementSystems() {
+            Set<UUID> adoptees = service.listAdoptions(null, PageRequest.of(0, MAX_ADOPTIONS)).stream()
+                    .map(StandardsDto.AdoptionResponse::standardId)
+                    .collect(Collectors.toUnmodifiableSet());
+            return repository.findVisibleByFamily(HLS, tenant(), PageRequest.of(0, MAX_CATALOG)).stream()
+                    .filter(s -> s.getOwnerTenantId() == null)
+                    .filter(s -> s.getStatus() == StandardStatus.PUBLISHED)
+                    .filter(Standard::isCertificationBodyRequired)
+                    .map(s -> new SmiPorts.CatalogStandard(s.getId(), s.getCode(), s.getFullName(),
+                            s.getCurrentVersion(), related(s.getRelatedNormCodes()), adoptees.contains(s.getId())))
+                    .toList();
+        }
+
+        @Override
+        public SmiPorts.AdoptedStandard adopt(UUID standardId) {
+            StandardsDto.AdoptionResponse a = service.adopt(
+                    new StandardsDto.AdoptRequest(standardId, null, null, null, null));
+            return new SmiPorts.AdoptedStandard(a.id(), a.standardCode(), a.standardName());
+        }
+
+        static List<String> related(String codes) {
+            if (codes == null || codes.isBlank()) {
+                return List.of();
+            }
+            return Arrays.stream(codes.split(","))
+                    .map(String::strip)
+                    .filter(c -> !c.isEmpty())
+                    .toList();
         }
     }
 
