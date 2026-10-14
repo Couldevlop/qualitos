@@ -1,7 +1,7 @@
 package com.openlab.qualitos.quality.change;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDate;
@@ -12,13 +12,13 @@ import java.util.UUID;
 
 public interface ChangeRequestRepository extends JpaRepository<ChangeRequest, UUID> {
 
-    Optional<ChangeRequest> findByTenantIdAndCode(UUID tenantId, String code);
+    Optional<ChangeRequest> findByIdAndTenantId(UUID id, UUID tenantId);
 
-    Page<ChangeRequest> findByTenantId(UUID tenantId, Pageable pageable);
+    boolean existsByTenantIdAndCode(UUID tenantId, String code);
 
-    Page<ChangeRequest> findByTenantIdAndStatus(UUID tenantId, ChangeRequestStatus status, Pageable pageable);
+    List<ChangeRequest> findByTenantId(UUID tenantId, Sort sort);
 
-    Page<ChangeRequest> findByTenantIdAndType(UUID tenantId, ChangeRequestType type, Pageable pageable);
+    List<ChangeRequest> findByTenantIdAndStatusIn(UUID tenantId, Collection<ChangeRequestStatus> statuses);
 
     /** Les changements dans l'un des états donnés, prévus au plus tard le jour dit — le plus proche d'abord. */
     List<ChangeRequest> findByTenantIdAndStatusInAndPlannedForLessThanEqualOrderByPlannedForAsc(

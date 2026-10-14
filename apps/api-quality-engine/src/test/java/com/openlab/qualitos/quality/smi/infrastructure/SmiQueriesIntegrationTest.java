@@ -110,11 +110,11 @@ class SmiQueriesIntegrationTest {
     void seulsLesChangementsEnAttenteDeValidationDuClientSontDesEcheances() {
         UUID tenant = UUID.randomUUID();
         changes.saveAll(List.of(
-                changement(tenant, "MOC-1", ChangeRequestStatus.UNDER_REVIEW, J.plusDays(2)),
-                changement(tenant, "MOC-2", ChangeRequestStatus.SUBMITTED, J.minusDays(1)),
+                changement(tenant, "MOC-1", ChangeRequestStatus.IN_VALIDATION, J.plusDays(2)),
+                changement(tenant, "MOC-2", ChangeRequestStatus.IN_VALIDATION, J.minusDays(1)),
                 changement(tenant, "MOC-3", ChangeRequestStatus.APPROVED, J.plusDays(1)),
-                changement(tenant, "MOC-4", ChangeRequestStatus.UNDER_REVIEW, J.plusDays(30)),
-                changement(UUID.randomUUID(), "MOC-5", ChangeRequestStatus.UNDER_REVIEW, J)));
+                changement(tenant, "MOC-4", ChangeRequestStatus.IN_VALIDATION, J.plusDays(30)),
+                changement(UUID.randomUUID(), "MOC-5", ChangeRequestStatus.IN_VALIDATION, J)));
 
         TenantContext.setTenantId(tenant.toString());
         List<Deadline> echeances = new SmiAdapters.Deadlines(plans, equipments, changes).dueBy(J.plusDays(7), 8);
@@ -128,7 +128,7 @@ class SmiQueriesIntegrationTest {
         c.setTenantId(tenant);
         c.setCode(code);
         c.setTitle("Changement " + code);
-        c.setType(ChangeRequestType.PROCESS);
+        c.setType(ChangeRequestType.PERMANENT);
         c.setStatus(statut);
         c.setRequesterUserId(UUID.randomUUID());
         c.setPlannedFor(prevu);
