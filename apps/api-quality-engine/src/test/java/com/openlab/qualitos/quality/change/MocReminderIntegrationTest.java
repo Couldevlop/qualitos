@@ -7,6 +7,7 @@ import com.openlab.qualitos.quality.common.TenantContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -49,6 +50,12 @@ import static org.mockito.Mockito.verify;
  */
 @SpringBootTest
 @ActiveProfiles("test")
+/*
+ * Les deux classes d'intégration MOC partagent le même contexte Spring, donc le
+ * même notificateur simulé, remis à zéro après chaque test : elles ne tournent
+ * pas en même temps (les classes s'exécutent en parallèle).
+ */
+@ResourceLock(MocFlowIntegrationTest.NOTIFIER_LOCK)
 @Tag("web")
 class MocReminderIntegrationTest {
 
