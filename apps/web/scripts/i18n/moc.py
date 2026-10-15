@@ -276,6 +276,10 @@ TRANSLATIONS = {
         'コメント（却下時は必須）', '评论（拒绝时必填）'),
     'moc.validation.approve': ('Approuver', 'Approve', 'Aprobar', 'اعتماد', '承認', '批准'),
     'moc.validation.reject': ('Rejeter', 'Reject', 'Rechazar', 'رفض', '却下', '拒绝'),
+    'moc.validation.reject-reason': ('Motif du refus (obligatoire)', 'Reason for rejection (required)',
+        'Motivo del rechazo (obligatorio)', 'سبب الرفض (إلزامي)', '却下の理由（必須）', '拒绝理由（必填）'),
+    'moc.validation.reject-confirm': ('Confirmer le rejet', 'Confirm rejection', 'Confirmar el rechazo',
+        'تأكيد الرفض', '却下を確定', '确认拒绝'),
     'moc.validation.reject-hint': (
         'Un refus doit être motivé par un commentaire', 'A rejection must be justified by a comment',
         'Un rechazo debe justificarse con un comentario', 'يجب تعليل الرفض بتعليق',

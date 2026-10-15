@@ -59,28 +59,46 @@ describe('MocValidationComponent', () => {
     expect(el('approuver-2')).toBeNull();
   });
 
-  it('un refus exige un commentaire ; l’approbation n’en exige pas', async () => {
+  it('Approuver et Rejeter sont actifs d’emblée ; le motif n’apparaît qu’au rejet', async () => {
     await setup(demande({ status: 'IN_VALIDATION', validations: QUATRE }));
-    // Les deux boutons sont actifs d'emblée ; un refus sans motif n'est pas envoyé.
     expect((el('approuver-1') as HTMLButtonElement).disabled).toBeFalse();
     expect((el('rejeter-1') as HTMLButtonElement).disabled).toBeFalse();
-    expect(el('motif-requis-1')).toBeNull();
+    expect(el('commentaire-1')).toBeNull();
+
+    // Rejeter ouvre le champ du motif, qui prend le focus ; rien n'est envoyé.
     (el('rejeter-1') as HTMLButtonElement).click();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(el('commentaire-1')).not.toBeNull();
+    expect(document.activeElement).toBe(el('commentaire-1'));
+    expect(el('approuver-1')).toBeNull();
+    expect(service.decide).not.toHaveBeenCalled();
+
+    // Confirmer sans motif : refus non envoyé, le champ le réclame.
+    (el('confirmer-rejet-1') as HTMLButtonElement).click();
     fixture.detectChanges();
     expect(service.decide).not.toHaveBeenCalled();
     expect(el('motif-requis-1')?.textContent).toContain('motivé');
-    expect(document.activeElement).toBe(el('commentaire-1'));
 
     component.setComment(QUATRE[1], '  Coûts non chiffrés ');
     fixture.detectChanges();
     expect(el('motif-requis-1')).toBeNull();
     service.decide.and.returnValue(of(demande({ status: 'REJECTED' })));
-    (el('rejeter-1') as HTMLButtonElement).click();
+    (el('confirmer-rejet-1') as HTMLButtonElement).click();
     expect(service.decide).toHaveBeenCalledWith('c1', 'v1', { decision: 'REJECTED', comment: 'Coûts non chiffrés' });
     expect(emis[0].status).toBe('REJECTED');
+  });
 
-    TestBed.resetTestingModule();
+  it('Annuler referme le motif et revient aux deux choix ; Approuver décide sans commentaire', async () => {
     await setup(demande({ status: 'IN_VALIDATION', validations: QUATRE }));
+    (el('rejeter-1') as HTMLButtonElement).click();
+    fixture.detectChanges();
+    component.setComment(QUATRE[1], 'brouillon de motif');
+    (el('annuler-rejet-1') as HTMLButtonElement).click();
+    fixture.detectChanges();
+    expect(el('commentaire-1')).toBeNull();
+    expect(component.comment(QUATRE[1])).toBe('');
+
     service.decide.and.returnValue(of(demande()));
     (el('approuver-1') as HTMLButtonElement).click();
     expect(service.decide).toHaveBeenCalledWith('c1', 'v1', { decision: 'APPROVED', comment: null });

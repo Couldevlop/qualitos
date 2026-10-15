@@ -17252,6 +17252,14 @@ historique 12 mois</source>
         <source>Rejeter</source>
         <target state="translated">رفض</target>
       </trans-unit>
+      <trans-unit id="moc.validation.reject-reason" datatype="html">
+        <source>Motif du refus (obligatoire)</source>
+        <target state="translated">سبب الرفض (إلزامي)</target>
+      </trans-unit>
+      <trans-unit id="moc.validation.reject-confirm" datatype="html">
+        <source>Confirmer le rejet</source>
+        <target state="translated">تأكيد الرفض</target>
+      </trans-unit>
       <trans-unit id="moc.validation.reject-hint" datatype="html">
         <source>Un refus doit être motivé par un commentaire</source>
         <target state="translated">يجب تعليل الرفض بتعليق</target>

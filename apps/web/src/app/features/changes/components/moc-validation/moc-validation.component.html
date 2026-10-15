@@ -30,25 +30,39 @@
          i18n="@@moc.validation.self">Vous êtes le demandeur : vous ne pouvez pas valider votre propre demande.</p>
 
       <div class="carte__decision" *ngIf="v.canDecide">
-        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="carte__champ">
-          <mat-label i18n="@@moc.validation.comment">Commentaire (obligatoire en cas de refus)</mat-label>
-          <textarea matInput rows="2" #champ [value]="comment(v)" [attr.maxlength]="commentMax"
-                    (input)="setComment(v, $any($event.target).value)" [attr.data-test]="'commentaire-' + i"
-                    [attr.aria-invalid]="missingReason(v)"
-                    [attr.aria-describedby]="missingReason(v) ? 'motif-' + v.id : null"></textarea>
-        </mat-form-field>
-        <p class="carte__erreur" *ngIf="missingReason(v)" role="alert" [id]="'motif-' + v.id"
-           [attr.data-test]="'motif-requis-' + i" i18n="@@moc.validation.reject-hint">Un refus doit être motivé par un commentaire</p>
-        <div class="carte__boutons">
+        <!-- Deux choix d'emblée ; le motif ne se demande qu'au refus. -->
+        <div class="carte__boutons" *ngIf="!isRejecting(v)">
           <button mat-flat-button type="button" class="bouton-ok" (click)="approve(v)" [disabled]="busy !== null"
                   [attr.data-test]="'approuver-' + i">
             <span i18n="@@moc.validation.approve">Approuver</span>
           </button>
-          <button mat-flat-button type="button" class="bouton-refus" (click)="reject(v, champ)"
+          <button mat-flat-button type="button" class="bouton-refus" (click)="startReject(v)"
                   [disabled]="busy !== null" [attr.data-test]="'rejeter-' + i">
             <span i18n="@@moc.validation.reject">Rejeter</span>
           </button>
         </div>
+
+        <ng-container *ngIf="isRejecting(v)">
+          <mat-form-field appearance="outline" subscriptSizing="dynamic" class="carte__champ">
+            <mat-label i18n="@@moc.validation.reject-reason">Motif du refus (obligatoire)</mat-label>
+            <textarea matInput rows="3" #champ [value]="comment(v)" [attr.maxlength]="commentMax"
+                      (input)="setComment(v, $any($event.target).value)" [attr.data-test]="'commentaire-' + i"
+                      [attr.data-carte]="v.id" [attr.aria-invalid]="missingReason(v)"
+                      [attr.aria-describedby]="missingReason(v) ? 'motif-' + v.id : null"></textarea>
+          </mat-form-field>
+          <p class="carte__erreur" *ngIf="missingReason(v)" role="alert" [id]="'motif-' + v.id"
+             [attr.data-test]="'motif-requis-' + i" i18n="@@moc.validation.reject-hint">Un refus doit être motivé par un commentaire</p>
+          <div class="carte__boutons">
+            <button mat-flat-button type="button" class="bouton-refus" (click)="reject(v, champ)"
+                    [disabled]="busy !== null" [attr.data-test]="'confirmer-rejet-' + i">
+              <span i18n="@@moc.validation.reject-confirm">Confirmer le rejet</span>
+            </button>
+            <button mat-stroked-button type="button" (click)="cancelReject(v)" [disabled]="busy !== null"
+                    [attr.data-test]="'annuler-rejet-' + i">
+              <span i18n="@@common.cancel">Annuler</span>
+            </button>
+          </div>
+        </ng-container>
       </div>
     </li>
   </ul>
