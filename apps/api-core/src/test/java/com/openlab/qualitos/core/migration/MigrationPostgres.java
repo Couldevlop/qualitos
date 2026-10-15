@@ -40,8 +40,41 @@ final class MigrationPostgres {
 
     private MigrationPostgres() {}
 
+    /**
+     * Docker joignable ? Sur un poste, non est une réponse admise : les bancs se
+     * SAUTENT (assumption). En intégration continue ({@code CI} posé, comme sur
+     * GitHub Actions), non est une PANNE : le banc échoue au lieu de se sauter.
+     *
+     * <p>Pourquoi : la liste des membres et l'annuaire ont répondu 500 en
+     * préproduction (« uuid = character varying ») alors que toute la suite
+     * était verte — elle tournait sur H2, qui convertit implicitement, et le
+     * seul banc PostgreSQL de l'annuaire avait été sauté faute de Docker. Un
+     * banc sauté en silence ne protège rien ; en CI, il ne doit pas pouvoir
+     * l'être.
+     */
     static boolean dockerAvailable() {
-        return DockerClientFactory.instance().isDockerAvailable();
+        boolean available = DockerClientFactory.instance().isDockerAvailable();
+        if (!available && System.getenv("CI") != null) {
+            throw new AssertionError("Docker indisponible en integration continue : les bancs PostgreSQL "
+                    + "d'api-core ne peuvent pas etre sautes ici.");
+        }
+        return available;
+    }
+
+    /** Coordonnées du serveur partagé, pour un contexte Spring branché dessus. */
+    static String jdbcUrl() {
+        ensureStarted();
+        return container.getJdbcUrl();
+    }
+
+    static String username() {
+        ensureStarted();
+        return container.getUsername();
+    }
+
+    static String password() {
+        ensureStarted();
+        return container.getPassword();
     }
 
     /**
