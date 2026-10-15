@@ -7,7 +7,6 @@
 
   <ul class="cartes">
     <li *ngFor="let v of detail.validations; let i = index; trackBy: trackCard" class="carte"
-        [class.carte--ok]="v.decision === 'APPROVED'" [class.carte--refus]="v.decision === 'REJECTED'"
         [attr.data-test]="'carte-' + i">
       <div class="carte__tete">
         <h4 class="carte__role">{{ v.roleLabel }}</h4>
@@ -20,7 +19,7 @@
         <ng-container *ngIf="v.decision === 'APPROVED'" i18n="@@moc.validation.approved-by">Approuvé par {{ v.decidedByName // i18n(ph="name") }}</ng-container>
         <ng-container *ngIf="v.decision === 'REJECTED'" i18n="@@moc.validation.rejected-by">Rejeté par {{ v.decidedByName // i18n(ph="name") }}</ng-container>
       </p>
-      <blockquote class="carte__commentaire" *ngIf="v.comment">{{ v.comment }}</blockquote>
+      <p class="carte__commentaire" *ngIf="v.comment">{{ v.comment }}</p>
 
       <p class="carte__titulaires" *ngIf="v.holders.length && (v.decision === 'PENDING' || v.preview)">
         <ng-container *ngIf="v.preview || v.canDecide" i18n="@@moc.validation.holders">Titulaires : {{ holdersText(v) // i18n(ph="names") }}</ng-container>
@@ -39,13 +38,13 @@
         <div class="carte__boutons">
           <button mat-flat-button type="button" class="bouton-ok" (click)="approve(v)" [disabled]="busy !== null"
                   [attr.data-test]="'approuver-' + i">
-            <mat-icon>check</mat-icon> <span i18n="@@moc.validation.approve">Approuver</span>
+            <span i18n="@@moc.validation.approve">Approuver</span>
           </button>
           <button mat-flat-button type="button" class="bouton-refus" (click)="reject(v)"
                   [disabled]="busy !== null || !canReject(v)" [attr.data-test]="'rejeter-' + i"
                   i18n-matTooltip="@@moc.validation.reject-hint" matTooltip="Un refus doit être motivé par un commentaire"
                   [matTooltipDisabled]="canReject(v)">
-            <mat-icon>close</mat-icon> <span i18n="@@moc.validation.reject">Rejeter</span>
+            <span i18n="@@moc.validation.reject">Rejeter</span>
           </button>
         </div>
       </div>
