@@ -58,11 +58,11 @@
     }
 
     &--majeur span {
-      background: var(--qos-warn-600);
+      background: var(--qos-warn-fg);
     }
 
     &--critique span {
-      background: var(--qos-danger-600);
+      background: var(--qos-danger-fg);
     }
   }
 
@@ -176,11 +176,11 @@
     }
 
     &.segment--MEDIUM {
-      background: var(--qos-warn-600);
+      background: var(--qos-warn-fg);
     }
 
     &.segment--HIGH {
-      background: var(--qos-danger-600);
+      background: var(--qos-danger-fg);
     }
 
     &:hover:not(:disabled) {

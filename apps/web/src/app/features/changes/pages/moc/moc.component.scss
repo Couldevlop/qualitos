@@ -146,9 +146,9 @@
   }
 
   &--active {
-    border-color: var(--qos-accent-fg);
+    border-color: var(--qos-accent-bg);
     background: var(--qos-accent-bg-soft);
-    box-shadow: inset 3px 0 0 var(--qos-accent-fg), var(--qos-shadow-sm);
+    box-shadow: inset 3px 0 0 var(--qos-accent-bg), var(--qos-shadow-sm);
   }
 
   &__titre {

@@ -106,7 +106,7 @@
           <span class="historique__point" aria-hidden="true"></span>
           <div class="historique__corps">
             <span class="historique__quoi">{{ historyText(h) }}</span>
-            <span class="historique__detail" *ngIf="h.detail">{{ h.detail }}</span>
+            <span class="historique__detail" *ngIf="h.detail">{{ historyDetail(h) }}</span>
             <time class="historique__quand" [attr.datetime]="h.occurredAt">{{ h.occurredAt | date:'dd/MM/yyyy HH:mm' }}</time>
           </div>
         </li>
