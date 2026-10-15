@@ -61,13 +61,19 @@ describe('MocValidationComponent', () => {
 
   it('un refus exige un commentaire ; l’approbation n’en exige pas', async () => {
     await setup(demande({ status: 'IN_VALIDATION', validations: QUATRE }));
-    expect((el('rejeter-1') as HTMLButtonElement).disabled).toBeTrue();
-    component.reject(QUATRE[1]);
+    // Les deux boutons sont actifs d'emblée ; un refus sans motif n'est pas envoyé.
+    expect((el('approuver-1') as HTMLButtonElement).disabled).toBeFalse();
+    expect((el('rejeter-1') as HTMLButtonElement).disabled).toBeFalse();
+    expect(el('motif-requis-1')).toBeNull();
+    (el('rejeter-1') as HTMLButtonElement).click();
+    fixture.detectChanges();
     expect(service.decide).not.toHaveBeenCalled();
+    expect(el('motif-requis-1')?.textContent).toContain('motivé');
+    expect(document.activeElement).toBe(el('commentaire-1'));
 
     component.setComment(QUATRE[1], '  Coûts non chiffrés ');
     fixture.detectChanges();
-    expect((el('rejeter-1') as HTMLButtonElement).disabled).toBeFalse();
+    expect(el('motif-requis-1')).toBeNull();
     service.decide.and.returnValue(of(demande({ status: 'REJECTED' })));
     (el('rejeter-1') as HTMLButtonElement).click();
     expect(service.decide).toHaveBeenCalledWith('c1', 'v1', { decision: 'REJECTED', comment: 'Coûts non chiffrés' });

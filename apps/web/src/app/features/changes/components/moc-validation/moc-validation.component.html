@@ -32,18 +32,20 @@
       <div class="carte__decision" *ngIf="v.canDecide">
         <mat-form-field appearance="outline" subscriptSizing="dynamic" class="carte__champ">
           <mat-label i18n="@@moc.validation.comment">Commentaire (obligatoire en cas de refus)</mat-label>
-          <textarea matInput rows="2" [value]="comment(v)" [attr.maxlength]="commentMax"
-                    (input)="setComment(v, $any($event.target).value)" [attr.data-test]="'commentaire-' + i"></textarea>
+          <textarea matInput rows="2" #champ [value]="comment(v)" [attr.maxlength]="commentMax"
+                    (input)="setComment(v, $any($event.target).value)" [attr.data-test]="'commentaire-' + i"
+                    [attr.aria-invalid]="missingReason(v)"
+                    [attr.aria-describedby]="missingReason(v) ? 'motif-' + v.id : null"></textarea>
         </mat-form-field>
+        <p class="carte__erreur" *ngIf="missingReason(v)" role="alert" [id]="'motif-' + v.id"
+           [attr.data-test]="'motif-requis-' + i" i18n="@@moc.validation.reject-hint">Un refus doit être motivé par un commentaire</p>
         <div class="carte__boutons">
           <button mat-flat-button type="button" class="bouton-ok" (click)="approve(v)" [disabled]="busy !== null"
                   [attr.data-test]="'approuver-' + i">
             <span i18n="@@moc.validation.approve">Approuver</span>
           </button>
-          <button mat-flat-button type="button" class="bouton-refus" (click)="reject(v)"
-                  [disabled]="busy !== null || !canReject(v)" [attr.data-test]="'rejeter-' + i"
-                  i18n-matTooltip="@@moc.validation.reject-hint" matTooltip="Un refus doit être motivé par un commentaire"
-                  [matTooltipDisabled]="canReject(v)">
+          <button mat-flat-button type="button" class="bouton-refus" (click)="reject(v, champ)"
+                  [disabled]="busy !== null" [attr.data-test]="'rejeter-' + i">
             <span i18n="@@moc.validation.reject">Rejeter</span>
           </button>
         </div>
