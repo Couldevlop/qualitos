@@ -1,0 +1,8 @@
+:host {
+  display: inline;
+}
+
+.qos-person--muted {
+  color: var(--qos-text-muted, inherit);
+  font-style: italic;
+}

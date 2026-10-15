@@ -55,4 +55,7 @@ TRANSLATIONS = {
     'directory.picker.live-count': (
         '{$COUNT} personne(s) proposée(s)', '{$COUNT} person(s) suggested', '{$COUNT} persona(s) sugerida(s)',
         'الأشخاص المقترحون: {$COUNT}', '候補 {$COUNT} 件', '建议人员 {$COUNT} 名'),
+    'directory.person.unknown': (
+        'Personne inconnue', 'Unknown person', 'Persona desconocida', 'شخص غير معروف',
+        '不明な担当者', '未知人员'),
 }
