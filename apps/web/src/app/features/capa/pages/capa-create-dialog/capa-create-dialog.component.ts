@@ -144,8 +144,16 @@ export class CapaCreateDialogComponent implements OnInit {
     assigneeId: ['', [Validators.required]],
     dueDate: ['', [Validators.required, notInPast]],
     sourceType: ['INTERNAL' as CapaSourceType, [Validators.required]],
-    sourceRef: ['', [Validators.maxLength(255)]]
+    sourceRef: ['', [Validators.maxLength(255)]],
+    // La vérification d'efficacité (ADR 0073), décidée à l'ouverture : `null`
+    // tant que la question n'est pas tranchée — aucune réponse pré-cochée.
+    verificationRequired: [null as boolean | null],
+    verificationAssigneeId: [null as string | null],
+    verificationInstructions: ['', [Validators.maxLength(4000)]]
   });
+
+  /** Le nom d'annuaire du vérificateur choisi, recopié dans le dossier avec son compte. */
+  private verifierName: string | undefined;
 
   readonly data: CapaCreateDialogData;
 
@@ -175,6 +183,18 @@ export class CapaCreateDialogComponent implements OnInit {
     }
     if (this.data.lockCriticity || this.isDefineAction) {
       this.form.controls.criticity.disable();
+    }
+    // À l'ouverture, d'où qu'on vienne, la question de la vérification se
+    // TRANCHE : c'est la même décision de clôture pour toutes les sources, et
+    // personne ne repasserait par « Modifier » pour la poser. Le validateur est
+    // posé ICI, à la construction — jamais pendant un rendu, où il ferait
+    // basculer `form.invalid` au milieu de la passe (NG0100). Le mode « définir
+    // l'action » ne la pose pas : le dossier existe, sa décision se règle dans
+    // « Modifier » — deux endroits pour la même décision, le dernier gagnerait
+    // en silence.
+    if (!this.isDefineAction) {
+      this.form.controls.verificationRequired.addValidators(Validators.required);
+      this.form.controls.verificationRequired.updateValueAndValidity({ emitEvent: false });
     }
   }
 
@@ -215,6 +235,11 @@ export class CapaCreateDialogComponent implements OnInit {
     if (user) {
       this.names.set(user.accountId, personName(user));
     }
+  }
+
+  /** Le vérificateur choisi : son nom d'annuaire part avec son compte, comme pour l'édition. */
+  onVerifier(user: DirectoryUser | null): void {
+    this.verifierName = user ? personName(user) : undefined;
   }
 
   get isDefineAction(): boolean {
@@ -268,6 +293,9 @@ export class CapaCreateDialogComponent implements OnInit {
       ownerName: this.names.get(v.assigneeId),
       dueDate: v.dueDate
     };
+    if (!this.isDefineAction) {
+      Object.assign(request, this.verificationDecision(v));
+    }
     if (!this.sourceLocked) {
       request.sourceType = v.sourceType;
       request.sourceRef = v.sourceRef.trim() || undefined;
@@ -294,6 +322,30 @@ export class CapaCreateDialogComponent implements OnInit {
           );
         }
       });
+  }
+
+  /**
+   * La décision de vérification telle qu'elle part avec l'ouverture : le
+   * vérificateur, son nom et les consignes seulement si elle est exigée — le
+   * serveur refuse de désigner quelqu'un pour une vérification non exigée.
+   */
+  private verificationDecision(v: {
+    verificationRequired: boolean | null;
+    verificationAssigneeId: string | null;
+    verificationInstructions: string;
+  }): Partial<OpenCapaRequest> {
+    if (v.verificationRequired === null) {
+      return {};
+    }
+    if (!v.verificationRequired) {
+      return { verificationRequired: false };
+    }
+    return {
+      verificationRequired: true,
+      verificationAssigneeId: v.verificationAssigneeId ?? undefined,
+      verificationAssigneeName: v.verificationAssigneeId ? this.verifierName : undefined,
+      verificationInstructions: v.verificationInstructions.trim() || undefined
+    };
   }
 
   /** Une écriture : le dossier et son action, ou l'action d'un dossier existant. */

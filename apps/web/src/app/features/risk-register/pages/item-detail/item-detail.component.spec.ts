@@ -112,7 +112,7 @@ describe('ItemDetailComponent', () => {
     await setup('risk');
     http.expectOne(`${endpoint}/risks/r1`).flush(FICHE_RISQUE);
     fixture.detectChanges();
-    const ouverture = repondreCapa({ title: 'Carte SPC', type: 'CORRECTIVE', criticity: 'HIGH', ownerId: 'kc-diallo', ownerName: 'A. Diallo', dueDate: '2026-12-01' });
+    const ouverture = repondreCapa({ title: 'Carte SPC', type: 'CORRECTIVE', criticity: 'HIGH', ownerId: 'kc-diallo', ownerName: 'A. Diallo', dueDate: '2026-12-01', verificationRequired: false });
 
     (hote().querySelector('[data-test="creer-capa"]') as HTMLElement).click();
 
@@ -124,7 +124,10 @@ describe('ItemDetailComponent', () => {
     const req = http.expectOne(`${endpoint}/risks/r1/capa`);
     expect(req.request.body).toEqual({
       title: 'Carte SPC', description: null, kind: 'CORRECTIVE', ownerId: 'kc-diallo', ownerName: 'A. Diallo',
-      dueDate: '2026-12-01'
+      dueDate: '2026-12-01',
+      // La décision de vérification part avec l'ouverture (ADR 0073, 0088).
+      verificationRequired: false, verificationAssigneeId: null, verificationAssigneeName: null,
+      verificationInstructions: null
     });
     req.flush({ id: 'c2', title: 'Carte SPC', dueDate: '2026-12-01', status: 'OPEN', kind: 'CORRECTIVE', assignee: 'A. Diallo' });
     http.expectOne(`${endpoint}/risks/r1`).flush(FICHE_RISQUE);

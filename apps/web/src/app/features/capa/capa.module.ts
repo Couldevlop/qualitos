@@ -5,6 +5,7 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../../shared/shared.module';
 import { CapaCreateDialogModule } from './capa-create-dialog.module';
+import { CapaVerificationFieldsModule } from './capa-verification-fields.module';
 import { UiModule } from '../../shared/ui/ui.module';
 import { UserPickerModule } from '../../shared/user-picker/user-picker.module';
 import { CapaDetailComponent } from './pages/capa-detail/capa-detail.component';
@@ -42,7 +43,9 @@ const routes: Routes = [
   // `CapaCreateDialogModule` : la fenetre de creation est partagee avec toutes
   // les sections qui ouvrent une CAPA (ADR 0088). Elle est donc declaree a part.
   // UserPickerModule : le vérificateur se choisit dans l'annuaire (ADR 0091).
+  // `CapaVerificationFieldsModule` : le bloc de vérification, partagé avec la
+  // fenêtre d'ouverture.
   imports: [SharedModule, UiModule, UserPickerModule, MatButtonToggleModule, MatRadioModule,
-            CapaCreateDialogModule, RouterModule.forChild(routes)]
+            CapaCreateDialogModule, CapaVerificationFieldsModule, RouterModule.forChild(routes)]
 })
 export class CapaModule {}

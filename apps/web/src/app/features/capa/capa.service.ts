@@ -98,6 +98,11 @@ export class CapaService {
       ownerId: input.ownerId,
       ownerName: input.ownerName,
       dueDate: input.dueDate,
+      // La décision de vérification part avec l'ouverture, comme côté serveur.
+      verificationRequired: input.verificationRequired,
+      verificationAssigneeId: input.verificationRequired ? input.verificationAssigneeId : undefined,
+      verificationAssigneeName: input.verificationRequired ? input.verificationAssigneeName : undefined,
+      verificationInstructions: input.verificationRequired ? input.verificationInstructions : undefined,
       createdAt: now,
       updatedAt: now,
       actions: [{

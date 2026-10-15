@@ -6950,6 +6950,10 @@ Customer portal</target>
         <source>Une vérification est-elle exigée sur ce dossier ? Répondre « non » est une décision, qui se lit ; ne pas répondre laisse la question ouverte.</source>
         <target state="translated">Is a verification required on this case? Answering "no" is a decision, and it shows; leaving it unanswered leaves the question open.</target>
       </trans-unit>
+      <trans-unit id="capa.verification.hint-mandatory" datatype="html">
+        <source>Une vérification est-elle exigée sur ce dossier ? Il faut trancher pour l'ouvrir : répondre « non » est une décision, qui se lit.</source>
+        <target state="translated">Is a verification required on this case? You must decide to open it: answering "no" is a decision, and it shows.</target>
+      </trans-unit>
       <trans-unit id="capa.verification.required" datatype="html">
         <source>Exigée</source>
         <target state="translated">Required</target>

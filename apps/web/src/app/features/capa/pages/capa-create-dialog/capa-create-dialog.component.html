@@ -94,6 +94,13 @@
              placeholder="Ex. : NC-2026-018">
     </mat-form-field>
 
+    <!-- La vérification d'efficacité (ADR 0073) se décide à l'ouverture, d'où
+         qu'on vienne : c'est la même décision de clôture partout, et un dossier
+         né sans réponse ne se distinguerait plus d'un dossier délibérément jugé
+         non vérifiable. Le même bloc que l'édition ; ici, il faut trancher. -->
+    <qos-capa-verification-fields [group]="form" [mandatory]="true"
+                                  (verifierSelected)="onVerifier($event)"></qos-capa-verification-fields>
+
     <!-- Les pièces sont retenues ici et déposées une fois le dossier créé : ce qui
          a déclenché l'ouverture (photo du défaut, relevé, courriel client) se perd
          si l'on doit revenir le chercher plus tard. -->

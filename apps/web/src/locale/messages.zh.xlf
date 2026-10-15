@@ -6950,6 +6950,10 @@ Portail clients</source>
         <source>Une vérification est-elle exigée sur ce dossier ? Répondre « non » est une décision, qui se lit ; ne pas répondre laisse la question ouverte.</source>
         <target state="translated">本案卷是否要求验证？回答「否」是一项会被读到的决定；不作答则问题仍然悬而未决。</target>
       </trans-unit>
+      <trans-unit id="capa.verification.hint-mandatory" datatype="html">
+        <source>Une vérification est-elle exigée sur ce dossier ? Il faut trancher pour l'ouvrir : répondre « non » est une décision, qui se lit.</source>
+        <target state="translated">本案卷是否要求验证？必须作出决定才能开立：回答「否」是一项会被读到的决定。</target>
+      </trans-unit>
       <trans-unit id="capa.verification.required" datatype="html">
         <source>Exigée</source>
         <target state="translated">要求</target>

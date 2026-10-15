@@ -55,7 +55,11 @@ export class RiskCapaOpener {
         kind: request.type,
         ownerId: request.ownerId,
         ownerName: request.ownerName ?? null,
-        dueDate: request.dueDate
+        dueDate: request.dueDate,
+        verificationRequired: request.verificationRequired ?? null,
+        verificationAssigneeId: request.verificationAssigneeId ?? null,
+        verificationAssigneeName: request.verificationAssigneeName ?? null,
+        verificationInstructions: request.verificationInstructions ?? null
       }).pipe(map((link): RiskCapaOpened => ({ capaId: link.id, link })))
     };
     return this.dialog.open<CapaCreateDialogComponent, CapaCreateDialogData, CapaOpened>(

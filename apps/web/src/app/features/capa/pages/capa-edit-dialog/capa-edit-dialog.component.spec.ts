@@ -15,6 +15,10 @@ import { UiModule } from '../../../../shared/ui/ui.module';
 import { UserPickerComponent } from '../../../../shared/user-picker/user-picker.component';
 import { UserPickerModule } from '../../../../shared/user-picker/user-picker.module';
 import { CapaCaseResponse } from '../../capa.types';
+import { CapaVerificationFieldsModule } from '../../capa-verification-fields.module';
+import {
+  CapaVerificationFieldsComponent
+} from '../../components/capa-verification-fields/capa-verification-fields.component';
 import { CapaEditDialogComponent, CapaEditDialogData } from './capa-edit-dialog.component';
 
 /**
@@ -54,7 +58,8 @@ describe('CapaEditDialogComponent', () => {
     directory.getByAccount.and.callFake(id => id === CONTROLE.accountId ? of(CONTROLE) : throwError(() => ({ status: 404 })));
     await TestBed.configureTestingModule({
       declarations: [CapaEditDialogComponent],
-      imports: [SharedModule, UiModule, UserPickerModule, MatRadioModule, NoopAnimationsModule],
+      imports: [SharedModule, UiModule, UserPickerModule, MatRadioModule, CapaVerificationFieldsModule,
+                NoopAnimationsModule],
       providers: [
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
@@ -76,6 +81,10 @@ describe('CapaEditDialogComponent', () => {
     await macrotache();   // `deferredView` livre en macrotâche
     fixture.detectChanges();
   }
+
+  const bloc = (): CapaVerificationFieldsComponent =>
+    fixture.debugElement.query(By.directive(CapaVerificationFieldsComponent))
+      .componentInstance as CapaVerificationFieldsComponent;
 
   const picker = (): UserPickerComponent =>
     fixture.debugElement.query(By.directive(UserPickerComponent)).componentInstance as UserPickerComponent;
@@ -173,14 +182,14 @@ describe('CapaEditDialogComponent', () => {
     await build({ capa: existing });
 
     // Question non tranchee : le bloc « a qui » n'a pas lieu d'etre.
-    expect(component.verificationExigee).toBeFalse();
+    expect(bloc().verificationExigee).toBeFalse();
     expect(hote().querySelector('[data-test=verification-qui]')).toBeNull();
 
     component.form.controls.verificationRequired.setValue(true);
     await macrotache();   // `deferredView` livre en macrotâche
     fixture.detectChanges();
 
-    expect(component.verificationExigee).toBeTrue();
+    expect(bloc().verificationExigee).toBeTrue();
     expect(hote().querySelector('[data-test=verification-qui]')).not.toBeNull();
   });
 

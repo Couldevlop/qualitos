@@ -21,7 +21,9 @@ describe('RiskCapaOpener — LA fenêtre CAPA depuis un risque (ADR 0088)', () =
   };
   const DEMANDE: OpenCapaRequest = {
     title: 'Carte SPC', description: 'Sur le cordon', type: 'CORRECTIVE', criticity: 'HIGH',
-    ownerId: 'kc-diallo', ownerName: 'a.diallo@client.test', dueDate: '2099-01-01'
+    ownerId: 'kc-diallo', ownerName: 'a.diallo@client.test', dueDate: '2099-01-01',
+    verificationRequired: true, verificationAssigneeId: 'kc-controle',
+    verificationAssigneeName: 'Claire Contrôle', verificationInstructions: 'Relever 20 pièces'
   };
 
   let dialog: jasmine.SpyObj<MatDialog>;
@@ -81,7 +83,10 @@ describe('RiskCapaOpener — LA fenêtre CAPA depuis un risque (ADR 0088)', () =
 
     expect(service.openCapa).toHaveBeenCalledWith('r1', {
       title: 'Carte SPC', description: 'Sur le cordon', kind: 'CORRECTIVE',
-      ownerId: 'kc-diallo', ownerName: 'a.diallo@client.test', dueDate: '2099-01-01'
+      ownerId: 'kc-diallo', ownerName: 'a.diallo@client.test', dueDate: '2099-01-01',
+      // La décision de vérification part avec l'ouverture, comme depuis toute source.
+      verificationRequired: true, verificationAssigneeId: 'kc-controle',
+      verificationAssigneeName: 'Claire Contrôle', verificationInstructions: 'Relever 20 pièces'
     });
     expect(lien).toEqual(LIEN);
   });
@@ -94,8 +99,14 @@ describe('RiskCapaOpener — LA fenêtre CAPA depuis un risque (ADR 0088)', () =
       }) as never);
       opener.open(RISQUE).subscribe();
     });
-    await firstValueFrom(data.open!({ ...DEMANDE, description: undefined, ownerName: undefined }));
-    expect(service.openCapa).toHaveBeenCalledWith('r1', jasmine.objectContaining({ description: null, ownerName: null }));
+    await firstValueFrom(data.open!({
+      ...DEMANDE, description: undefined, ownerName: undefined, verificationRequired: undefined,
+      verificationAssigneeId: undefined, verificationAssigneeName: undefined, verificationInstructions: undefined
+    }));
+    expect(service.openCapa).toHaveBeenCalledWith('r1', jasmine.objectContaining({
+      description: null, ownerName: null, verificationRequired: null, verificationAssigneeId: null,
+      verificationAssigneeName: null, verificationInstructions: null
+    }));
   });
 
   it('rend null quand l\'utilisateur renonce', async () => {

@@ -30,6 +30,18 @@ TRANSLATIONS = {
         'この案件で検証は必要ですか。「いいえ」も記録に残る判断です。未回答のままだと'
         '問いは開いたままになります。',
         '本案卷是否要求验证？回答「否」是一项会被读到的决定；不作答则问题仍然悬而未决。'),
+    # À l'ouverture d'un dossier (ADR 0088), la question se tranche : la même
+    # décision de clôture, d'où qu'on ouvre la CAPA.
+    'capa.verification.hint-mandatory': (
+        "Une vérification est-elle exigée sur ce dossier ? Il faut trancher pour "
+        "l'ouvrir : répondre « non » est une décision, qui se lit.",
+        'Is a verification required on this case? You must decide to open it: '
+        'answering "no" is a decision, and it shows.',
+        '¿Se exige una verificación en este expediente? Hay que decidir para abrirlo: '
+        'responder «no» es una decisión, y se lee.',
+        'هل يُشترط التحقق في هذا الملف؟ يجب الحسم لفتحه: الإجابة بـ«لا» قرار يُقرأ.',
+        'この案件で検証は必要ですか。開くには判断が必要です。「いいえ」も記録に残る判断です。',
+        '本案卷是否要求验证？必须作出决定才能开立：回答「否」是一项会被读到的决定。'),
     'capa.verification.required': (
         'Exigée', 'Required', 'Exigida', 'مطلوب', '必要', '要求'),
     'capa.verification.not-required': (

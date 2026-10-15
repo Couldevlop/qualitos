@@ -56,6 +56,35 @@ describe('CapaService (mock mode)', () => {
       expect(c.actions[0].actionType).toBe('PREVENTIVE');
       expect(c.actions[0].assigneeId).toBe('u');
       expect(c.actions[0].dueDate).toBe('2099-01-01');
+      // Sans décision transmise, la question de la vérification reste ouverte.
+      expect(c.verificationRequired).toBeUndefined();
+      done();
+    });
+  });
+
+  it('garde la décision de vérification prise à l\'ouverture (ADR 0073)', (done) => {
+    service.openCase({
+      title: 'Vérifiée', type: 'CORRECTIVE', criticity: 'HIGH', ownerId: 'u', dueDate: '2099-01-01',
+      verificationRequired: true, verificationAssigneeId: 'kc-c', verificationAssigneeName: 'Claire Contrôle',
+      verificationInstructions: 'Relever 20 pièces'
+    }).subscribe(c => {
+      expect(c.verificationRequired).toBeTrue();
+      expect(c.verificationAssigneeId).toBe('kc-c');
+      expect(c.verificationAssigneeName).toBe('Claire Contrôle');
+      expect(c.verificationInstructions).toBe('Relever 20 pièces');
+      done();
+    });
+  });
+
+  it('un « non » à l\'ouverture ne garde ni vérificateur ni consignes', (done) => {
+    service.openCase({
+      title: 'Non vérifiée', type: 'CORRECTIVE', criticity: 'LOW', ownerId: 'u', dueDate: '2099-01-01',
+      verificationRequired: false, verificationAssigneeId: 'kc-c', verificationInstructions: 'x'
+    }).subscribe(c => {
+      expect(c.verificationRequired).toBeFalse();
+      expect(c.verificationAssigneeId).toBeUndefined();
+      expect(c.verificationAssigneeName).toBeUndefined();
+      expect(c.verificationInstructions).toBeUndefined();
       done();
     });
   });

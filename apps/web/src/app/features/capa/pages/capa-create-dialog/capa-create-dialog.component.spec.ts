@@ -83,7 +83,9 @@ describe('CapaCreateDialogComponent — fenêtre unique', () => {
   }
 
   function remplir(): void {
-    component.form.patchValue({ title: '  Recalibrer la sonde  ', description: '  ', dueDate: DEMAIN });
+    // « Non » est une réponse : sans elle, rien ne part (ADR 0073).
+    component.form.patchValue({ title: '  Recalibrer la sonde  ', description: '  ', dueDate: DEMAIN,
+      verificationRequired: false });
   }
 
   beforeEach(() => {
@@ -198,7 +200,7 @@ describe('CapaCreateDialogComponent — fenêtre unique', () => {
       title: 'Recalibrer la sonde', description: undefined, type: 'PREVENTIVE', criticity: 'HIGH',
       // Le NOM de l'annuaire, et non l'adresse.
       ownerId: 'kc-amina', ownerName: 'Amina Dridi', dueDate: DEMAIN,
-      sourceType: 'COMPLAINT', sourceRef: 'REC-12'
+      sourceType: 'COMPLAINT', sourceRef: 'REC-12', verificationRequired: false
     });
     expect(ref.close).toHaveBeenCalledWith({ capaId: 'c1' });
     expect(snack.open.calls.mostRecent().args[0]).toBe('CAPA créée.');
@@ -298,7 +300,7 @@ describe('CapaCreateDialogComponent — fenêtre unique', () => {
     expect(component.form.controls.title.value).toBe('Bavure poste 20');
     expect(component.form.controls.criticity.value).toBe('HIGH');
 
-    component.form.patchValue({ dueDate: DEMAIN });
+    component.form.patchValue({ dueDate: DEMAIN, verificationRequired: false });
     component.submit();
 
     const envoye = open.calls.mostRecent().args[0] as OpenCapaRequest;
@@ -324,7 +326,7 @@ describe('CapaCreateDialogComponent — fenêtre unique', () => {
     expect(component.unmatchedOwnerHint).toBeNull();
     expect(component.sourceLabel).toBe('Risque');
 
-    component.form.patchValue({ title: 'Dérive soudure', dueDate: DEMAIN });
+    component.form.patchValue({ title: 'Dérive soudure', dueDate: DEMAIN, verificationRequired: false });
     component.submit();
     expect(open).toHaveBeenCalledWith(jasmine.objectContaining({ ownerId: 'kc-diallo', ownerName: 'Awa Diallo' }));
   });
@@ -340,7 +342,7 @@ describe('CapaCreateDialogComponent — fenêtre unique', () => {
     expect(component.form.controls.assigneeId.value).toBe('kc-diallo');
     expect(component.unmatchedOwnerHint).toBeNull();
 
-    component.form.patchValue({ title: 'Dérive soudure', dueDate: DEMAIN });
+    component.form.patchValue({ title: 'Dérive soudure', dueDate: DEMAIN, verificationRequired: false });
     component.submit();
     expect(open).toHaveBeenCalledWith(jasmine.objectContaining({ ownerId: 'kc-diallo', ownerName: 'Awa D.' }));
   });
@@ -393,6 +395,9 @@ describe('CapaCreateDialogComponent — fenêtre unique', () => {
     expect(component.submitLabel).toBe('Enregistrer l\'action');
     expect(hote().querySelector('[data-test="capa-criticite"]')).toBeNull();
     expect(hote().querySelector('.attachments')).toBeNull();
+    // Le dossier existe : sa vérification se règle dans « Modifier », pas ici.
+    expect(hote().querySelector('[data-test="bloc-verification"]')).toBeNull();
+    expect(component.form.controls.verificationRequired.hasError('required')).toBeFalse();
 
     choisir(AMINA);
     component.form.patchValue({ dueDate: DEMAIN });
@@ -405,6 +410,161 @@ describe('CapaCreateDialogComponent — fenêtre unique', () => {
     expect(capa.openCase).not.toHaveBeenCalled();
     expect(ref.close).toHaveBeenCalledWith({ capaId: 'c9' });
     expect(snack.open.calls.mostRecent().args[0]).toBe('Action définie.');
+  });
+
+  // --- la vérification d'efficacité, décidée à l'ouverture (ADR 0073) --------
+
+  describe('vérification d\'efficacité', () => {
+    const CONTROLE: DirectoryUser = {
+      id: 'i-ctrl', accountId: 'kc-controle', displayName: 'Claire Contrôle', email: 'controle@client.test', active: true
+    };
+
+    /** Un tour de macrotâche : `deferredView` ne livre pas avant. */
+    const macrotache = () => new Promise<void>(r => setTimeout(r, 0));
+
+    async function repondre(exigee: boolean): Promise<void> {
+      component.form.controls.verificationRequired.setValue(exigee);
+      await macrotache();
+      fixture.detectChanges();
+    }
+
+    /** Le sélecteur du vérificateur : le second, après celui du responsable. */
+    const pickerVerificateur = (): UserPickerComponent =>
+      fixture.debugElement.queryAll(By.directive(UserPickerComponent))[1].componentInstance as UserPickerComponent;
+
+    function remplirSansDecision(): void {
+      component.form.patchValue({ title: 'Recalibrer la sonde', dueDate: DEMAIN });
+    }
+
+    it('pose la question en création libre, sans réponse pré-cochée', async () => {
+      await setup();
+      await macrotache();
+      fixture.detectChanges();
+
+      expect(hote().querySelector('[data-test="bloc-verification"]')).not.toBeNull();
+      expect(hote().querySelector('[data-test="verification-obligatoire"]')).not.toBeNull();
+      const choix = hote().querySelector('[data-test="verification-exigee"]')!;
+      expect(choix.querySelectorAll('mat-radio-button').length).toBe(2);
+      expect(choix.getAttribute('aria-required')).toBe('true');
+      expect(component.form.controls.verificationRequired.value).toBeNull();
+      // Rien de demandé tant que rien n'est répondu.
+      expect(hote().querySelector('[data-test="verification-qui"]')).toBeNull();
+      expect(hote().querySelector('[data-test="verification-consignes"]')).toBeNull();
+    });
+
+    it('la pose aussi depuis une non-conformité, un constat ou un risque', async () => {
+      for (const source of [
+        { type: 'NON_CONFORMITY' as const, reference: 'NC-2026-0001' },
+        { type: 'AUDIT' as const, reference: 'AUD-2026-0003 / constat 2' },
+        { type: 'RISK' as const, reference: 'R-001' }
+      ]) {
+        await setup({ source, open: () => of({ capaId: 'c' }) });
+        expect(hote().querySelector('[data-test="bloc-verification"]'))
+          .withContext(source.type).not.toBeNull();
+        expect(component.form.controls.verificationRequired.hasError('required'))
+          .withContext(source.type).toBeTrue();
+      }
+    });
+
+    it('exige une réponse avant tout envoi', async () => {
+      await setup();
+      remplirSansDecision();
+
+      expect(component.form.controls.verificationRequired.hasError('required')).toBeTrue();
+      expect(component.form.invalid).toBeTrue();
+      component.submit();
+      expect(capa.openCase).not.toHaveBeenCalled();
+    });
+
+    it('répondre oui demande à qui, et quoi vérifier ; le vérificateur devient obligatoire', async () => {
+      await setup();
+      remplirSansDecision();
+      await repondre(true);
+
+      expect(hote().querySelector('[data-test="verification-qui"]')).not.toBeNull();
+      expect(hote().querySelector('[data-test="verification-consignes"]')).not.toBeNull();
+      expect(component.form.controls.verificationAssigneeId.hasError('required')).toBeTrue();
+      // L'erreur attend que le champ ait été touché : rien n'est reproché d'emblée.
+      expect(hote().querySelector('[data-test="verification-qui-requis"]')).toBeNull();
+
+      component.submit();
+      expect(capa.openCase).not.toHaveBeenCalled();
+      fixture.detectChanges();
+      expect(hote().querySelector('[data-test="verification-qui-requis"]')).not.toBeNull();
+    });
+
+    it('envoie la décision avec le compte ET le nom d\'annuaire du vérificateur, et les consignes', async () => {
+      await setup();
+      capa.openCase.and.returnValue(of(ouvert()));
+      remplirSansDecision();
+      await repondre(true);
+      pickerVerificateur().onSelected({ option: { value: CONTROLE } } as never);
+      component.form.controls.verificationInstructions.setValue('  Relever 20 pièces  ');
+      fixture.detectChanges();
+
+      component.submit();
+
+      expect(capa.openCase).toHaveBeenCalledWith(jasmine.objectContaining({
+        verificationRequired: true,
+        verificationAssigneeId: 'kc-controle',
+        // Le NOM, pas l'adresse : recopié pour rester lisible.
+        verificationAssigneeName: 'Claire Contrôle',
+        verificationInstructions: 'Relever 20 pièces'
+      }));
+    });
+
+    it('un « oui » sans consignes n\'envoie pas de consignes vides, ni de nom inventé', async () => {
+      await setup();
+      capa.openCase.and.returnValue(of(ouvert()));
+      remplirSansDecision();
+      await repondre(true);
+      component.form.controls.verificationAssigneeId.setValue('kc-inconnu');
+
+      component.submit();
+
+      const envoye = capa.openCase.calls.mostRecent().args[0] as OpenCapaRequest;
+      expect(envoye.verificationAssigneeId).toBe('kc-inconnu');
+      expect(envoye.verificationAssigneeName).toBeUndefined();
+      expect(envoye.verificationInstructions).toBeUndefined();
+    });
+
+    it('revenir à « non » efface le vérificateur et les consignes, et n\'envoie que la décision', async () => {
+      const open = jasmine.createSpy('open').and.returnValue(of({ capaId: 'c-nc' }));
+      await setup({ source: { type: 'NON_CONFORMITY', reference: 'NC-2026-0001' }, open });
+      remplirSansDecision();
+      await repondre(true);
+      component.form.controls.verificationAssigneeId.setValue('kc-controle');
+      component.onVerifier(CONTROLE);
+      component.form.controls.verificationInstructions.setValue('Relever');
+
+      await repondre(false);
+
+      expect(hote().querySelector('[data-test="verification-qui"]')).toBeNull();
+      expect(component.form.controls.verificationAssigneeId.value).toBeNull();
+      expect(component.form.controls.verificationInstructions.value).toBe('');
+      expect(component.form.controls.verificationAssigneeId.hasError('required')).toBeFalse();
+
+      component.submit();
+      const envoye = open.calls.mostRecent().args[0] as OpenCapaRequest;
+      expect(envoye.verificationRequired).toBeFalse();
+      expect(envoye.verificationAssigneeId).toBeUndefined();
+      expect(envoye.verificationAssigneeName).toBeUndefined();
+      expect(envoye.verificationInstructions).toBeUndefined();
+    });
+
+    it('le vérificateur retiré du sélecteur ne laisse pas de nom derrière lui', async () => {
+      await setup();
+      component.onVerifier(CONTROLE);
+      component.onVerifier(null);
+      capa.openCase.and.returnValue(of(ouvert()));
+      remplirSansDecision();
+      await repondre(true);
+      component.form.controls.verificationAssigneeId.setValue('kc-controle');
+
+      component.submit();
+
+      expect((capa.openCase.calls.mostRecent().args[0] as OpenCapaRequest).verificationAssigneeName).toBeUndefined();
+    });
   });
 });
 

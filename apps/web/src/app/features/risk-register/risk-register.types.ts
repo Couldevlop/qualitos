@@ -210,6 +210,11 @@ export interface CapaRequest {
   ownerId: string;
   ownerName?: string | null;
   dueDate: string;
+  /** La décision de vérification d'efficacité, prise à l'ouverture (ADR 0073, 0088). */
+  verificationRequired?: boolean | null;
+  verificationAssigneeId?: string | null;
+  verificationAssigneeName?: string | null;
+  verificationInstructions?: string | null;
 }
 
 export interface ActionRequest {

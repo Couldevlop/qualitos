@@ -83,6 +83,19 @@ et sa route d'ouverture. Le mode « définir l'action » est le même formulaire
 réduit, pour un dossier sans action. Les fenêtres « Ajouter une action » et le
 mode CAPA de la fenêtre d'action du registre disparaissent.
 
+*Mise à jour (2026-10-15) : la fenêtre unique pose de nouveau la question de
+la vérification d'efficacité (ADR 0073), OBLIGATOIRE et sans réponse
+pré-cochée — pour TOUTES les sources, et non plus seulement depuis une NC comme
+l'ancienne « Ajouter une action » : c'est la même décision de clôture d'où
+qu'on ouvre la CAPA, et personne ne repasse par « Modifier » après
+l'ouverture. Si « oui », le vérificateur (annuaire, nom recopié) est requis, les
+consignes facultatives. Le bloc est un composant partagé avec la fenêtre
+d'édition (`qos-capa-verification-fields`) ; le mode « définir l'action » ne le
+pose pas (dossier existant, réglé dans « Modifier »). `OpenCaseRequest` et la
+demande CAPA du registre des risques portent la décision, avec les gardes de
+`updateCase` (exiger sans désigner, désigner sans exiger : refus) ; une
+décision absente laisse la question ouverte côté serveur.*
+
 ### 5. Plus de suggestions d'actions multiples
 
 Le bouton « Suggérer (IA) » proposait cinq à huit actions à ajouter : il n'a plus

@@ -148,6 +148,16 @@ export interface OpenCapaRequest {
   ownerId: string;
   ownerName?: string;
   dueDate: string;
+  /**
+   * La décision de vérification d'efficacité, prise à l'ouverture (ADR 0073,
+   * 0088). Absente : question laissée ouverte ; `false` est une décision.
+   */
+  verificationRequired?: boolean;
+  /** Le compte de connexion du vérificateur — seulement si la vérification est exigée. */
+  verificationAssigneeId?: string;
+  /** Son nom d'annuaire, recopié dans le dossier. */
+  verificationAssigneeName?: string;
+  verificationInstructions?: string;
 }
 
 export type CapaActionStatus = 'PENDING' | 'IN_PROGRESS' | 'DONE';
