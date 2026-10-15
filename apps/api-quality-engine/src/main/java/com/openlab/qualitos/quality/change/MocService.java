@@ -318,18 +318,42 @@ public class MocService {
         trace(c, refus ? MocHistoryEvent.VALIDATION_REJECTED : MocHistoryEvent.VALIDATION_APPROVED,
                 v.getRoleLabel() + (commentaire == null ? "" : " — " + commentaire));
         audit.change(tenantId, acteur, refus ? "validation.rejected" : "validation.approved", c, v.getRoleLabel());
-        notifier.retire(c, acteur);
-
         List<ChangeValidation> cartes = validationRepo.findByTenantIdAndChangeIdOrderByOrdinalAsc(tenantId, id);
+        Map<String, List<ValidationRole.RoleHolder>> attendus = enAttente(cartes, s);
         if (refus) {
+            notifier.retire(c, acteur);
             conclure(c, ChangeRequestStatus.REJECTED, MocHistoryEvent.REJECTED, commentaire, now, acteur);
-            notifier.validationClosed(c, MocNotifier.recipients(enAttente(cartes, s), c.getRequesterUserId()));
+            // Le refus clôt toutes les cartes : les titulaires encore attendus ET les
+            // autres titulaires du rôle qui vient de statuer n'ont plus rien à faire.
+            Map<String, List<ValidationRole.RoleHolder>> clos = new LinkedHashMap<>(attendus);
+            clos.put(v.getRoleLabel(), role.holders());
+            notifier.validationClosed(c, MocNotifier.recipients(clos, c.getRequesterUserId()).stream()
+                    .filter(r -> !r.userId().equals(acteur)).toList());
             notifier.decided(c, false, commentaire);
-        } else if (cartes.stream().allMatch(x -> x.getDecision() == ApprovalDecision.APPROVED)) {
-            conclure(c, ChangeRequestStatus.APPROVED, MocHistoryEvent.APPROVED, null, now, acteur);
-            notifier.decided(c, true, null);
         } else {
-            requestRepo.save(c);
+            Set<UUID> encoreAttendus = attendus.values().stream().flatMap(List::stream)
+                    .map(ValidationRole.RoleHolder::userId).collect(Collectors.toSet());
+            // Celui qui statue n'a plus de tâche sur cette demande — sauf s'il tient
+            // aussi le rôle d'une carte encore en attente : sa notification reste.
+            if (!encoreAttendus.contains(acteur)) {
+                notifier.retire(c, acteur);
+            }
+            // Les autres titulaires (suppléants compris) du rôle qui vient de
+            // statuer : la carte est traitée, leur « à valider » n'est plus
+            // actionnable. Celui qui reste attendu pour un autre rôle garde la sienne.
+            List<UUID> liberes = role.holders().stream().map(ValidationRole.RoleHolder::userId)
+                    .filter(u -> !u.equals(acteur) && !u.equals(c.getRequesterUserId())
+                            && !encoreAttendus.contains(u))
+                    .distinct().toList();
+            if (!liberes.isEmpty()) {
+                notifier.roleDecided(c, v.getRoleLabel(), liberes);
+            }
+            if (cartes.stream().allMatch(x -> x.getDecision() == ApprovalDecision.APPROVED)) {
+                conclure(c, ChangeRequestStatus.APPROVED, MocHistoryEvent.APPROVED, null, now, acteur);
+                notifier.decided(c, true, null);
+            } else {
+                requestRepo.save(c);
+            }
         }
         return detail(c, s);
     }

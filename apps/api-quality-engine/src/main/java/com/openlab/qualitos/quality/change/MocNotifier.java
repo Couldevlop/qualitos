@@ -125,6 +125,22 @@ public class MocNotifier {
         }
     }
 
+    /**
+     * Un titulaire du rôle a statué : ses co-titulaires et suppléants n'ont plus
+     * rien à faire sur cette carte. Même geste qu'après un refus — la
+     * notification « à valider » est marquée lue, puis une information les
+     * prévient — sans quoi elle restait chez eux comme une tâche qu'ils ne
+     * pouvaient plus accomplir (la carte répond « déjà statué »).
+     */
+    public void roleDecided(ChangeRequest c, String roleLabel, Collection<UUID> users) {
+        for (UUID u : users) {
+            retire(c, u);
+            inApp(c, u, NotificationType.INFO,
+                    c.getCode() + " : le rôle " + roleLabel + " a statué, votre validation n'est plus attendue",
+                    "« " + c.getTitle() + " »");
+        }
+    }
+
     /** Celui qui vient de statuer n'a plus de tâche sur cette demande. */
     public void retire(ChangeRequest c, UUID userId) {
         notifications.markReadForRecipientAndLink(c.getTenantId(), userId.toString(), link(c), clock.instant());
