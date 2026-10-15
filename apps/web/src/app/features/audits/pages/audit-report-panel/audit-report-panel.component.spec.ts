@@ -1,6 +1,8 @@
 import { SimpleChange } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSelect } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { of, Subject, throwError } from 'rxjs';
@@ -203,5 +205,21 @@ describe('AuditReportPanelComponent', () => {
   it('conclusions formulées selon le type d\'audit', () => {
     show(plan('IN_PROGRESS', { type: 'CERTIFICATION' }), report());
     expect(component.conclusions[0].label).toContain('Certification');
+  });
+
+  it('le menu de conclusion garde les mêmes options d\'une détection à l\'autre', () => {
+    // Des options recréées à chaque passage relancent MatSelect par microtâche,
+    // donc une nouvelle détection, sans fin : l'onglet se figeait.
+    show(plan('COMPLETED'), report());
+    const select = fixture.debugElement.query(By.directive(MatSelect)).componentInstance as MatSelect;
+    const avant = select.options.toArray();
+    const liste = component.conclusions;
+
+    fixture.detectChanges();
+    fixture.detectChanges();
+
+    expect(component.conclusions).toBe(liste);
+    expect(select.options.length).toBe(3);
+    select.options.forEach((o, i) => expect(o).toBe(avant[i]));
   });
 });

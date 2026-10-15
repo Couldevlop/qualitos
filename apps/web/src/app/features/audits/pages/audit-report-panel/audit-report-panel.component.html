@@ -95,7 +95,7 @@
         <mat-form-field appearance="outline" class="conclusion">
           <mat-label i18n="@@audits.report.conclusion">Conclusion / recommandation</mat-label>
           <mat-select formControlName="conclusion" data-test="conclusion">
-            <mat-option *ngFor="let c of conclusions" [value]="c.value">{{ c.label }}</mat-option>
+            <mat-option *ngFor="let c of conclusions; trackBy: trackConclusion" [value]="c.value">{{ c.label }}</mat-option>
           </mat-select>
         </mat-form-field>
 
