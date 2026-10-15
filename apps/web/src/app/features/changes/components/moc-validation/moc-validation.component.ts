@@ -7,9 +7,9 @@ import { MocDetail, MocValidation } from '../../moc.types';
 
 /**
  * La validation : une carte par rôle requis. Seul un titulaire du rôle (jamais
- * le demandeur) voit les boutons Approuver / Rejeter ; un refus exige un
- * commentaire, et un seul refus rejette la demande. Les autres lisent qui est
- * attendu.
+ * le demandeur) voit les boutons Approuver / Rejeter, tous deux actifs d'emblée ;
+ * un refus sans commentaire n'est pas envoyé : le champ le réclame et prend le
+ * focus. Un seul refus rejette la demande. Les autres lisent qui est attendu.
  */
 @Component({
   selector: 'qos-moc-validation',
@@ -24,6 +24,8 @@ export class MocValidationComponent implements OnChanges {
 
   readonly commentMax = 1000;
   comments: Record<string, string> = {};
+  /** Cartes où « Rejeter » a été pressé sans motif : le champ réclame le commentaire. */
+  reasonAsked: Record<string, boolean> = {};
   busy: string | null = null;
 
   constructor(private readonly service: MocService, private readonly snack: MatSnackBar) {}
@@ -31,7 +33,10 @@ export class MocValidationComponent implements OnChanges {
   ngOnChanges(): void {
     // Une carte décidée n'a plus de brouillon de commentaire.
     for (const v of this.detail.validations) {
-      if (v.id && !v.canDecide) delete this.comments[v.id];
+      if (v.id && !v.canDecide) {
+        delete this.comments[v.id];
+        delete this.reasonAsked[v.id];
+      }
     }
   }
 
@@ -64,12 +69,21 @@ export class MocValidationComponent implements OnChanges {
     return this.comment(v).trim().length > 0;
   }
 
+  /** Vrai une fois « Rejeter » pressé sans motif, tant que le commentaire reste vide. */
+  missingReason(v: MocValidation): boolean {
+    return !!v.id && !!this.reasonAsked[v.id] && !this.canReject(v);
+  }
+
   approve(v: MocValidation): void {
     this.decide(v, 'APPROVED');
   }
 
-  reject(v: MocValidation): void {
-    if (!this.canReject(v)) return;
+  reject(v: MocValidation, champ?: HTMLTextAreaElement): void {
+    if (!this.canReject(v)) {
+      if (v.id) this.reasonAsked[v.id] = true;
+      champ?.focus();
+      return;
+    }
     this.decide(v, 'REJECTED');
   }
 

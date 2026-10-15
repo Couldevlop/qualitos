@@ -25,6 +25,17 @@ describe('MocDetailComponent', () => {
   const hote = (): HTMLElement => fixture.nativeElement as HTMLElement;
   const bouton = (t: string) => hote().querySelector(`[data-test="${t}"]`) as HTMLButtonElement | null;
 
+  /**
+   * Ouvre l'onglet Analyse d'impact, où se trouve la soumission. Material ne rend
+   * que l'onglet actif, et l'attachement de son corps passe par la file de tâches.
+   */
+  async function ouvrirAnalyse(): Promise<void> {
+    component.tab = 1;
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+  }
+
   async function setup(d: MocDetail, droits: string[] = []): Promise<void> {
     service = jasmine.createSpyObj<MocService>('MocService', ['sendToAnalysis', 'submit', 'reopen', 'delete']);
     dialog = jasmine.createSpyObj<MatDialog>('MatDialog', ['open']);
@@ -94,6 +105,7 @@ describe('MocDetailComponent', () => {
   it('la soumission reste bloquée tant que les huit domaines ne sont pas évalués', async () => {
     await setup(demande({ classification: 'NOT_ASSESSED', score: null,
       impacts: impacts(['LOW', 'LOW', null, null, null, null, null, null]) }));
+    await ouvrirAnalyse();
     expect(bouton('soumettre')!.disabled).toBeTrue();
     expect(bouton('bloque')?.textContent).toContain('6');
     expect(bouton('supprimer')).toBeNull();
@@ -101,7 +113,9 @@ describe('MocDetailComponent', () => {
 
   it('une analyse complète se soumet ; un refus du serveur est expliqué', async () => {
     await setup(demande());
+    await ouvrirAnalyse();
     expect(bouton('bloque')).toBeNull();
+    expect(bouton('soumettre')!.closest('.fiche__entete')).toBeNull();
     service.submit.and.returnValue(of(demande({ status: 'IN_VALIDATION' })));
     bouton('soumettre')!.click();
     expect(emis[0].status).toBe('IN_VALIDATION');

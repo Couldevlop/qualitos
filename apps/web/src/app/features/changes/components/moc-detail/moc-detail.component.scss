@@ -57,11 +57,25 @@
     }
   }
 
+  // Pied de l'onglet Analyse d'impact : le message de blocage puis le bouton, à droite.
+  &__bas {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    align-items: center;
+    gap: var(--qos-space-3);
+    margin-top: var(--qos-space-5);
+
+    mat-icon {
+      margin-right: 2px;
+    }
+  }
+
   &__bloque {
     display: flex;
     align-items: center;
     gap: var(--qos-space-2);
-    margin: var(--qos-space-4) 0 0;
+    margin: 0;
     padding: var(--qos-space-2) var(--qos-space-3);
     border-radius: var(--qos-radius-md);
     background: var(--qos-warn-bg-soft);

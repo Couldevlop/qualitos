@@ -26,11 +26,6 @@
                 (click)="sendToAnalysis()" [disabled]="busy" data-test="analyse">
           <mat-icon>science</mat-icon> <span i18n="@@moc.send-to-analysis">Envoyer en analyse</span>
         </button>
-        <button mat-flat-button color="primary" type="button" *ngIf="detail.status === 'IN_ANALYSIS'"
-                (click)="submit()" [disabled]="busy || missingDomains > 0" data-test="soumettre"
-                [attr.aria-describedby]="missingDomains > 0 ? 'moc-bloque-' + detail.id : null">
-          <mat-icon>send</mat-icon> <span i18n="@@moc.submit">Soumettre à validation</span>
-        </button>
         <button mat-flat-button color="primary" type="button" *ngIf="detail.status === 'REJECTED'"
                 (click)="reopen()" [disabled]="busy" data-test="rouvrir">
           <mat-icon>restart_alt</mat-icon> <span i18n="@@moc.reopen">Rouvrir l'analyse</span>
@@ -38,12 +33,6 @@
       </ng-container>
     </div>
   </header>
-
-  <p class="fiche__bloque" *ngIf="detail.canManage && detail.status === 'IN_ANALYSIS' && missingDomains > 0"
-     role="status" [id]="'moc-bloque-' + detail.id" data-test="bloque">
-    <mat-icon aria-hidden="true">lock</mat-icon>
-    <span i18n="@@moc.submit-blocked">Soumission bloquée : {{ missingDomains // i18n(ph="count") }} domaine(s) d'impact sur 8 restent à évaluer.</span>
-  </p>
 
   <!-- Frise d'avancement : l'étape courante en gras, la barre suit. -->
   <ol class="frise" i18n-aria-label="@@moc.progress-aria" aria-label="Avancement de la demande">
@@ -92,6 +81,19 @@
     <!-- ===== Analyse d'impact ===== -->
     <mat-tab i18n-label="@@moc.tab.impact" label="Analyse d'impact">
       <qos-moc-impact [detail]="detail" (changed)="changed.emit($event)"></qos-moc-impact>
+      <!-- La soumission conclut l'analyse : sous les huit domaines, comme sur la maquette. -->
+      <div class="fiche__bas" *ngIf="detail.canManage && detail.status === 'IN_ANALYSIS'">
+        <p class="fiche__bloque" *ngIf="missingDomains > 0"
+           role="status" [id]="'moc-bloque-' + detail.id" data-test="bloque">
+          <mat-icon aria-hidden="true">lock</mat-icon>
+          <span i18n="@@moc.submit-blocked">Soumission bloquée : {{ missingDomains // i18n(ph="count") }} domaine(s) d'impact sur 8 restent à évaluer.</span>
+        </p>
+        <button mat-flat-button color="primary" type="button"
+                (click)="submit()" [disabled]="busy || missingDomains > 0" data-test="soumettre"
+                [attr.aria-describedby]="missingDomains > 0 ? 'moc-bloque-' + detail.id : null">
+          <mat-icon>send</mat-icon> <span i18n="@@moc.submit">Soumettre à validation</span>
+        </button>
+      </div>
     </mat-tab>
 
     <!-- ===== Validation ===== -->
