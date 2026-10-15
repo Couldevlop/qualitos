@@ -69,9 +69,10 @@ public class AppUser {
     private String email;
 
     /**
-     * Rôles métier QualitOS du tenant : SUPER_ADMIN, ADMIN, QUALITY_MANAGER,
-     * QUALITY_DIRECTOR, AUDITOR, USER, EXTERNAL_AUDITOR.
-     * Stockés en JSON dans PostgreSQL pour éviter une table de jointure.
+     * Rôles de plateforme du membre, écrits comme le realm les émet (V9,
+     * {@link com.openlab.qualitos.core.identity.PlatformRoles}) : super_admin,
+     * admin_tenant, quality_director, quality_manager, auditor, user,
+     * external_auditor. Table {@code app_user_roles}.
      */
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(
