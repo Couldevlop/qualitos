@@ -147,7 +147,8 @@ describe('MocDetailComponent', () => {
       .toBe('Rappel envoyé aux validateurs');
   });
 
-  it('affiche la classification du détail d\'historique dans la langue de l\'écran', () => {
+  it('affiche la classification du détail d\'historique dans la langue de l\'écran', async () => {
+    await setup(demande());
     expect(component.historyDetail({ occurredAt: 'x', event: 'SUBMITTED', actorName: null, detail: 'CRITICAL · 50/100' }))
       .toBe(component.classificationLabel('CRITICAL') + ' · 50/100');
     expect(component.historyDetail({ occurredAt: 'x', event: 'VALIDATION_APPROVED', actorName: null, detail: 'HSE — conforme' }))
