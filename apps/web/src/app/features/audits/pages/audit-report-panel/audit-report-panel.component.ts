@@ -14,6 +14,24 @@ import {
 import { AuditsService } from '../../audits.service';
 import { AuditConclusion, AuditPlanResponse, AuditReport } from '../../audits.types';
 
+interface ConclusionOption { value: AuditConclusion; label: string }
+
+/** Libellés de conclusion : la langue d'un audit de certification n'est pas celle d'un audit interne. */
+function conclusionsFor(plan: AuditPlanResponse): ConclusionOption[] {
+  const certification = plan.type === 'CERTIFICATION' || plan.type === 'SURVEILLANCE';
+  return certification
+    ? [
+        { value: 'FAVORABLE', label: $localize`:@@audits.report.conclusion.cert-favorable:Certification recommandée` },
+        { value: 'FAVORABLE_WITH_RESERVATIONS', label: $localize`:@@audits.report.conclusion.cert-reservations:Certification recommandée avec réserves` },
+        { value: 'UNFAVORABLE', label: $localize`:@@audits.report.conclusion.cert-unfavorable:Certification non recommandée` }
+      ]
+    : [
+        { value: 'FAVORABLE', label: $localize`:@@audits.report.conclusion.favorable:Favorable — système conforme` },
+        { value: 'FAVORABLE_WITH_RESERVATIONS', label: $localize`:@@audits.report.conclusion.reservations:Favorable avec réserves` },
+        { value: 'UNFAVORABLE', label: $localize`:@@audits.report.conclusion.unfavorable:Défavorable — système non conforme` }
+      ];
+}
+
 /** Les rôles admis à émettre, ceux que le serveur exige (`AuditReportController`). */
 export const ISSUE_ROLES: readonly string[] =
   ['QUALITY_MANAGER', 'DIRECTOR_QUALITY', 'QUALITY_DIRECTOR', 'ADMIN_TENANT', 'SUPER_ADMIN'];
@@ -57,6 +75,14 @@ export class AuditReportPanelComponent implements OnChanges {
 
   private loadedFor: string | null = null;
 
+  /**
+   * Libellés de conclusion, posés une fois par plan. Un getter qui rendait un
+   * nouveau tableau à chaque lecture faisait recréer les options du menu à
+   * chaque détection de changements ; MatSelect relit alors sa sélection par
+   * microtâche, ce qui relance une détection : la page se figeait.
+   */
+  conclusions: ConclusionOption[] = [];
+
   constructor(
     private readonly fb: FormBuilder,
     private readonly audits: AuditsService,
@@ -70,6 +96,7 @@ export class AuditReportPanelComponent implements OnChanges {
     // de plus changent les chiffres clés et ce qui est permis. Mais pas si rien
     // n'a bougé, pour ne pas écraser une saisie en cours.
     if (!changes['plan'] || !this.plan) return;
+    this.conclusions = conclusionsFor(this.plan);
     const key = this.plan.id + '|' + this.plan.updatedAt + '|' + (this.plan.findings?.length ?? 0);
     if (key === this.loadedFor) return;
     this.loadedFor = key;
@@ -84,20 +111,8 @@ export class AuditReportPanelComponent implements OnChanges {
     return !this.issued && this.plan.status !== 'CANCELLED';
   }
 
-  /** Libellés de conclusion : la langue d'un audit de certification n'est pas celle d'un audit interne. */
-  get conclusions(): { value: AuditConclusion; label: string }[] {
-    const certification = this.plan.type === 'CERTIFICATION' || this.plan.type === 'SURVEILLANCE';
-    return certification
-      ? [
-          { value: 'FAVORABLE', label: $localize`:@@audits.report.conclusion.cert-favorable:Certification recommandée` },
-          { value: 'FAVORABLE_WITH_RESERVATIONS', label: $localize`:@@audits.report.conclusion.cert-reservations:Certification recommandée avec réserves` },
-          { value: 'UNFAVORABLE', label: $localize`:@@audits.report.conclusion.cert-unfavorable:Certification non recommandée` }
-        ]
-      : [
-          { value: 'FAVORABLE', label: $localize`:@@audits.report.conclusion.favorable:Favorable — système conforme` },
-          { value: 'FAVORABLE_WITH_RESERVATIONS', label: $localize`:@@audits.report.conclusion.reservations:Favorable avec réserves` },
-          { value: 'UNFAVORABLE', label: $localize`:@@audits.report.conclusion.unfavorable:Défavorable — système non conforme` }
-        ];
+  trackConclusion(_: number, c: ConclusionOption): AuditConclusion {
+    return c.value;
   }
 
   conclusionLabel(value: AuditConclusion | null | undefined): string {
