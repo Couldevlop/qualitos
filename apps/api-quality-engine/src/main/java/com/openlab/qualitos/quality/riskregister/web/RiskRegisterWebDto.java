@@ -85,7 +85,8 @@ public final class RiskRegisterWebDto {
      * <p>Le responsable est un compte de l'annuaire du client — son identifiant
      * et son libellé recopié —, et non plus un nom tapé : il devient le pilote
      * du dossier. La criticité n'y figure pas, elle découle de la cotation brute
-     * du risque.
+     * du risque. La décision de vérification d'efficacité part avec
+     * l'ouverture, comme depuis toute autre source (ADR 0073, 0088).
      */
     public record CapaRequest(
             @NotBlank @Size(max = 255) String title,
@@ -93,7 +94,11 @@ public final class RiskRegisterWebDto {
             @NotNull RiskCapaKind kind,
             @NotNull UUID ownerId,
             @Size(max = 255) String ownerName,
-            @NotNull LocalDate dueDate) {}
+            @NotNull LocalDate dueDate,
+            Boolean verificationRequired,
+            UUID verificationAssigneeId,
+            @Size(max = 255) String verificationAssigneeName,
+            @Size(max = 4000) String verificationInstructions) {}
 
     public record ActionRequest(
             @NotBlank @Size(max = 255) String title,

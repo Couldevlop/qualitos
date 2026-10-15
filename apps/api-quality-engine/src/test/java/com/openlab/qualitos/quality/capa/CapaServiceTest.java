@@ -467,7 +467,7 @@ class CapaServiceTest {
         CapaDto.CaseResponse r = service.openCase(new CapaDto.OpenCaseRequest(
                 "  Recalibrer la sonde  ", "  Dérive constatée  ", CapaType.PREVENTIVE,
                 CapaCriticity.HIGH, CapaSourceType.OTHER, "ignoré", pilote, " a.diallo@client.test ",
-                echeance), CapaSourceType.NON_CONFORMITY, " NC-2026-0001 ");
+                echeance, null, null, null, null), CapaSourceType.NON_CONFORMITY, " NC-2026-0001 ");
 
         ArgumentCaptor<CapaCase> saved = ArgumentCaptor.forClass(CapaCase.class);
         verify(caseRepo).save(saved.capture());
@@ -534,23 +534,25 @@ class CapaServiceTest {
         assertThatThrownBy(() -> service.openCase(null, CapaSourceType.INTERNAL, null))
                 .isInstanceOf(CapaValidationException.class);
         assertThatThrownBy(() -> service.openCase(new CapaDto.OpenCaseRequest(
-                "t", null, null, CapaCriticity.LOW, null, null, o, null, d), CapaSourceType.INTERNAL, null))
+                "t", null, null, CapaCriticity.LOW, null, null, o, null, d, null, null, null, null),
+                CapaSourceType.INTERNAL, null))
                 .isInstanceOf(CapaValidationException.class);
         assertThatThrownBy(() -> service.openCase(new CapaDto.OpenCaseRequest(
-                "t", null, CapaType.CORRECTIVE, null, null, null, o, null, d), CapaSourceType.INTERNAL, null))
+                "t", null, CapaType.CORRECTIVE, null, null, null, o, null, d, null, null, null, null),
+                CapaSourceType.INTERNAL, null))
                 .isInstanceOf(CapaValidationException.class).hasMessageContaining("Criticity");
         assertThatThrownBy(() -> service.openCase(new CapaDto.OpenCaseRequest(
-                "t", null, CapaType.CORRECTIVE, CapaCriticity.LOW, null, null, null, null, d),
+                "t", null, CapaType.CORRECTIVE, CapaCriticity.LOW, null, null, null, null, d, null, null, null, null),
                 CapaSourceType.INTERNAL, null))
                 .isInstanceOf(CapaValidationException.class).hasMessageContaining("entrusted");
         assertThatThrownBy(() -> service.openCase(new CapaDto.OpenCaseRequest(
-                "t", null, CapaType.CORRECTIVE, CapaCriticity.LOW, null, null, o, null, null),
+                "t", null, CapaType.CORRECTIVE, CapaCriticity.LOW, null, null, o, null, null, null, null, null, null),
                 CapaSourceType.INTERNAL, null))
                 .isInstanceOf(CapaValidationException.class).hasMessageContaining("due date");
         assertThatThrownBy(() -> service.openCase(openReq(CapaType.CORRECTIVE, d, null), null, null))
                 .isInstanceOf(CapaValidationException.class).hasMessageContaining("source");
         assertThatThrownBy(() -> service.openCase(new CapaDto.OpenCaseRequest(
-                "   ", null, CapaType.CORRECTIVE, CapaCriticity.LOW, null, null, o, null, d),
+                "   ", null, CapaType.CORRECTIVE, CapaCriticity.LOW, null, null, o, null, d, null, null, null, null),
                 CapaSourceType.INTERNAL, null))
                 .isInstanceOf(CapaValidationException.class).hasMessageContaining("blank");
         assertThatThrownBy(() -> service.openCase(openReq(CapaType.CORRECTIVE, d, "x".repeat(256)),
@@ -568,9 +570,76 @@ class CapaServiceTest {
         verifyNoInteractions(caseRepo);
     }
 
+    // --- openCase : la décision de vérification part avec l'ouverture (ADR 0073, 0088) ---
+
+    @Test
+    void openCase_verificationExigee_estPoseeAvecSonVerificateurEtSesConsignes() {
+        UUID verificateur = UUID.randomUUID();
+        when(caseRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        CapaDto.CaseResponse r = service.openCase(openReqVerif(true, verificateur,
+                        "  Claire Contrôle  ", "  Relever 20 pièces  "),
+                CapaSourceType.NON_CONFORMITY, "NC-2026-0001");
+
+        assertThat(r.verificationRequired()).isTrue();
+        assertThat(r.verificationAssigneeId()).isEqualTo(verificateur);
+        assertThat(r.verificationAssigneeName()).isEqualTo("Claire Contrôle");
+        assertThat(r.verificationInstructions()).isEqualTo("Relever 20 pièces");
+    }
+
+    @Test
+    void openCase_verificationNonExigee_estUneDecisionQuiSeLit() {
+        when(caseRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        CapaDto.CaseResponse r = service.openCase(openReqVerif(false, null, null, null),
+                CapaSourceType.AUDIT, "AUD-2026-0003 / constat 2");
+
+        // FALSE n'est pas null : le dossier a été jugé non vérifiable, délibérément.
+        assertThat(r.verificationRequired()).isFalse();
+        assertThat(r.verificationAssigneeId()).isNull();
+        assertThat(r.verificationInstructions()).isNull();
+    }
+
+    @Test
+    void openCase_sansDecision_laisseLaQuestionOuverte() {
+        when(caseRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        CapaDto.CaseResponse r = service.openCase(openReq(CapaType.CORRECTIVE, LocalDate.now(), null),
+                CapaSourceType.INTERNAL, null);
+
+        assertThat(r.verificationRequired()).isNull();
+    }
+
+    @Test
+    void openCase_exigerSansDesigner_estRefuse_sansRienEcrire() {
+        assertThatThrownBy(() -> service.openCase(openReqVerif(true, null, null, "Relever"),
+                CapaSourceType.NON_CONFORMITY, "NC-2026-0001"))
+                .isInstanceOf(CapaValidationException.class)
+                .hasMessageContaining("assigned");
+        verifyNoInteractions(caseRepo);
+        verifyNoInteractions(journal);
+    }
+
+    @Test
+    void openCase_designerSansExiger_estRefuse() {
+        assertThatThrownBy(() -> service.openCase(openReqVerif(null, UUID.randomUUID(), "X", null),
+                CapaSourceType.INTERNAL, null))
+                .isInstanceOf(CapaValidationException.class)
+                .hasMessageContaining("verificationRequired=true");
+        assertThatThrownBy(() -> service.openCase(openReqVerif(null, null, null, "Relever"),
+                CapaSourceType.INTERNAL, null))
+                .isInstanceOf(CapaValidationException.class);
+        verifyNoInteractions(caseRepo);
+    }
+
+    private static CapaDto.OpenCaseRequest openReqVerif(Boolean exigee, UUID qui, String nom, String consignes) {
+        return new CapaDto.OpenCaseRequest("Recalibrer", null, CapaType.CORRECTIVE, CapaCriticity.MEDIUM,
+                null, null, OWNER, "Pilote", LocalDate.now().plusDays(5), exigee, qui, nom, consignes);
+    }
+
     private static CapaDto.OpenCaseRequest openReq(CapaType type, LocalDate due, String ownerName) {
         return new CapaDto.OpenCaseRequest("Recalibrer", null, type, CapaCriticity.MEDIUM,
-                null, null, OWNER, ownerName, due);
+                null, null, OWNER, ownerName, due, null, null, null, null);
     }
 
     @Test

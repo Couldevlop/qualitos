@@ -160,6 +160,10 @@ public class CapaService {
         c.setOwnerName(pilote);
         c.setDueDate(request.dueDate());
         c.setStatus(CapaStatus.OPEN);
+        // La décision de vérification, prise à l'ouverture : mêmes gardes que
+        // la mise à jour, avant toute écriture — un refus ne laisse rien.
+        appliquerVerification(c, request.verificationRequired(), request.verificationAssigneeId(),
+                request.verificationAssigneeName(), request.verificationInstructions());
 
         CapaAction a = new CapaAction();
         a.setCapa(c);
@@ -192,7 +196,8 @@ public class CapaService {
         if (request.sourceRef() != null) c.setSourceRef(request.sourceRef());
         if (request.rootCauseId() != null) c.setRootCauseId(request.rootCauseId());
         if (request.dueDate() != null) c.setDueDate(request.dueDate());
-        appliquerVerification(c, request);
+        appliquerVerification(c, request.verificationRequired(), request.verificationAssigneeId(),
+                request.verificationAssigneeName(), request.verificationInstructions());
         CapaCase saved = caseRepository.save(c);
         journal.record(saved, CapaTransition.UPDATED);
         return toResponse(saved);
@@ -217,9 +222,11 @@ public class CapaService {
      *
      * <p>{@code null} sur {@code verificationRequired} laisse tout en l'état :
      * la mise à jour est partielle, et ne rien dire n'est pas dire « non ».
+     * À l'ouverture (ADR 0088), le dossier neuf n'a encore rien décidé : les
+     * mêmes règles s'appliquent, et {@code null} laisse la question ouverte.
      */
-    private void appliquerVerification(CapaCase c, CapaDto.UpdateCaseRequest request) {
-        Boolean exigee = request.verificationRequired();
+    private void appliquerVerification(CapaCase c, Boolean exigee, UUID assigneeId,
+                                       String assigneeName, String instructions) {
 
         if (Boolean.FALSE.equals(exigee)) {
             c.setVerificationRequired(false);
@@ -233,8 +240,8 @@ public class CapaService {
                 || (exigee == null && Boolean.TRUE.equals(c.getVerificationRequired()));
 
         if (!exigeeApres
-                && (request.verificationAssigneeId() != null
-                    || nonVide(request.verificationInstructions()))) {
+                && (assigneeId != null
+                    || nonVide(instructions))) {
             throw new CapaValidationException(
                     "A verifier or verification instructions require verificationRequired=true");
         }
@@ -242,14 +249,14 @@ public class CapaService {
         if (Boolean.TRUE.equals(exigee)) {
             c.setVerificationRequired(true);
         }
-        if (request.verificationAssigneeId() != null) {
-            c.setVerificationAssigneeId(request.verificationAssigneeId());
+        if (assigneeId != null) {
+            c.setVerificationAssigneeId(assigneeId);
         }
-        if (request.verificationAssigneeName() != null) {
-            c.setVerificationAssigneeName(nettoyer(request.verificationAssigneeName()));
+        if (assigneeName != null) {
+            c.setVerificationAssigneeName(nettoyer(assigneeName));
         }
-        if (request.verificationInstructions() != null) {
-            c.setVerificationInstructions(nettoyer(request.verificationInstructions()));
+        if (instructions != null) {
+            c.setVerificationInstructions(nettoyer(instructions));
         }
 
         if (exigeeApres && c.getVerificationAssigneeId() == null) {

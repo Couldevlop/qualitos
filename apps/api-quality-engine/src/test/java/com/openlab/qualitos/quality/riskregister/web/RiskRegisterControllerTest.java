@@ -239,6 +239,27 @@ class RiskRegisterControllerTest {
 
     @Test
     @WithMockUser(roles = "QUALITY_MANAGER")
+    void laDecisionDeVerificationParvientAuService() throws Exception {
+        when(service.openCapa(eq(RISQUE), any())).thenReturn(new RiskRegisterDto.CapaView(UUID.randomUUID(),
+                "Carte SPC", LocalDate.of(2026, 12, 1), "OPEN", RiskCapaKind.PREVENTIVE, "A. Diallo"));
+        UUID verificateur = UUID.fromString("7a2d3b5f-2a1c-4d58-8e1f-3c9a4b7d8e22");
+        String corps = CORPS_CAPA.replace("}", ",\"verificationRequired\":true,\"verificationAssigneeId\":\""
+                + verificateur + "\",\"verificationAssigneeName\":\"Claire Contrôle\","
+                + "\"verificationInstructions\":\"Relever 20 pièces\"}");
+
+        mockMvc.perform(post(BASE + "/risks/" + RISQUE + "/capa").with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON).content(corps))
+                .andExpect(status().isCreated());
+
+        verify(service).openCapa(eq(RISQUE), argThat(c -> c.verification() != null
+                && Boolean.TRUE.equals(c.verification().required())
+                && verificateur.equals(c.verification().assigneeId())
+                && "Claire Contrôle".equals(c.verification().assigneeName())
+                && "Relever 20 pièces".equals(c.verification().instructions())));
+    }
+
+    @Test
+    @WithMockUser(roles = "QUALITY_MANAGER")
     void ouvrirUneCapaEtGererLesActions() throws Exception {
         when(service.openCapa(eq(RISQUE), any())).thenReturn(new RiskRegisterDto.CapaView(UUID.randomUUID(),
                 "Carte SPC", LocalDate.of(2026, 12, 1), "OPEN", RiskCapaKind.CORRECTIVE, "A. Diallo"));

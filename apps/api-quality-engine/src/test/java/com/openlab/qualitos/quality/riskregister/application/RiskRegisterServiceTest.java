@@ -229,6 +229,30 @@ class RiskRegisterServiceTest {
     }
 
     @Test
+    void laDecisionDeVerificationPartAvecLOuverture() {
+        UUID id = service.createRisk(risque("Dérive soudure", 4, 3)).id();
+        UUID verificateur = UUID.randomUUID();
+        RiskCapaGateway.Verification decision =
+                new RiskCapaGateway.Verification(true, verificateur, "Claire Contrôle", "Relever 20 pièces");
+
+        service.openCapa(id, new RiskRegisterDto.CapaCommand("Carte SPC", null, RiskCapaKind.PREVENTIVE,
+                PILOTE, "A. Diallo", LocalDate.of(2026, 12, 1), decision));
+
+        assertThat(capas.ouvertes).singleElement()
+                .satisfies(o -> assertThat(o.verification()).isEqualTo(decision));
+    }
+
+    @Test
+    void sansDecisionDeVerification_laQuestionResteOuverte() {
+        UUID id = service.createRisk(risque("Dérive soudure", 4, 3)).id();
+
+        service.openCapa(id, capa("Carte SPC"));
+
+        assertThat(capas.ouvertes).singleElement()
+                .satisfies(o -> assertThat(o.verification()).isEqualTo(RiskCapaGateway.Verification.UNDECIDED));
+    }
+
+    @Test
     void unRisqueClosNOuvrePlusDeCapa() {
         UUID id = service.createRisk(risque("Dérive soudure", 4, 3)).id();
         service.reviseRisk(id, revision(4, 3, null, null, RiskStatus.CLOSED));
@@ -725,7 +749,7 @@ class RiskRegisterServiceTest {
     }
 
     record Ouverture(Risk risk, String title, String description, RiskCapaKind kind, UUID owner,
-                     String assignee, LocalDate due) {}
+                     String assignee, LocalDate due, RiskCapaGateway.Verification verification) {}
 
     static final class FakeCapas implements RiskCapaGateway {
         final List<Ouverture> ouvertes = new ArrayList<>();
@@ -733,8 +757,8 @@ class RiskRegisterServiceTest {
 
         @Override
         public LinkedCapa open(Risk risk, String title, String description, RiskCapaKind kind,
-                               UUID ownerId, String assignee, LocalDate dueDate) {
-            ouvertes.add(new Ouverture(risk, title, description, kind, ownerId, assignee, dueDate));
+                               UUID ownerId, String assignee, LocalDate dueDate, Verification verification) {
+            ouvertes.add(new Ouverture(risk, title, description, kind, ownerId, assignee, dueDate, verification));
             LinkedCapa capa = new LinkedCapa(UUID.randomUUID(), title, dueDate, "OPEN", kind, assignee);
             lies.add(capa);
             return capa;

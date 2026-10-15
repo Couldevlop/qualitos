@@ -354,7 +354,7 @@ class NcServiceTest {
     private static CapaDto.OpenCaseRequest openReq() {
         return new CapaDto.OpenCaseRequest("Reprendre le réglage", null, CapaType.CORRECTIVE,
                 CapaCriticity.HIGH, null, null, OWNER, "a.diallo@client.test",
-                java.time.LocalDate.now().plusDays(7));
+                java.time.LocalDate.now().plusDays(7), null, null, null, null);
     }
 
     // --- rejet d'une réclamation externe ---

@@ -80,6 +80,33 @@ class CapaControllerTest {
     }
 
     @Test @WithMockUser(roles = "QUALITY_MANAGER")
+    void open_laDecisionDeVerificationParvientAuService() throws Exception {
+        UUID verificateur = UUID.randomUUID();
+        when(service.openCase(any(), eq(CapaSourceType.INTERNAL), isNull()))
+                .thenReturn(caseResp(CapaStatus.OPEN));
+        CapaDto.OpenCaseRequest base = openReq(null, null);
+        CapaDto.OpenCaseRequest demande = new CapaDto.OpenCaseRequest(base.title(), null, base.type(),
+                base.criticity(), null, null, base.ownerId(), base.ownerName(), base.dueDate(),
+                true, verificateur, "Claire Contrôle", "Relever 20 pièces");
+
+        mockMvc.perform(post("/api/v1/capa/cases/open").with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(om.writeValueAsString(demande)))
+                .andExpect(status().isCreated());
+
+        org.mockito.ArgumentCaptor<CapaDto.OpenCaseRequest> captor =
+                org.mockito.ArgumentCaptor.forClass(CapaDto.OpenCaseRequest.class);
+        verify(service).openCase(captor.capture(), eq(CapaSourceType.INTERNAL), isNull());
+        org.assertj.core.api.Assertions.assertThat(captor.getValue().verificationRequired()).isTrue();
+        org.assertj.core.api.Assertions.assertThat(captor.getValue().verificationAssigneeId())
+                .isEqualTo(verificateur);
+        org.assertj.core.api.Assertions.assertThat(captor.getValue().verificationAssigneeName())
+                .isEqualTo("Claire Contrôle");
+        org.assertj.core.api.Assertions.assertThat(captor.getValue().verificationInstructions())
+                .isEqualTo("Relever 20 pièces");
+    }
+
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void open_sourceRisque_estRefusee_seulLeRegistreLaPose() throws Exception {
         mockMvc.perform(post("/api/v1/capa/cases/open").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -322,7 +349,7 @@ class CapaControllerTest {
     private CapaDto.OpenCaseRequest openReq(CapaSourceType source, String ref) {
         return new CapaDto.OpenCaseRequest("Recalibrer la sonde", null, CapaType.CORRECTIVE,
                 CapaCriticity.HIGH, source, ref, OWNER, "a.diallo@client.test",
-                java.time.LocalDate.now().plusDays(10));
+                java.time.LocalDate.now().plusDays(10), null, null, null, null);
     }
 
     private CapaDto.CaseResponse caseResp(CapaStatus s) {

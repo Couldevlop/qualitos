@@ -23,9 +23,19 @@ public interface RiskCapaGateway {
      * pilote aussi le dossier (ADR 0088).
      */
     LinkedCapa open(Risk risk, String title, String description, RiskCapaKind kind, UUID ownerId,
-                    String ownerName, LocalDate dueDate);
+                    String ownerName, LocalDate dueDate, Verification verification);
 
     List<LinkedCapa> linkedTo(Risk risk);
+
+    /**
+     * La décision de vérification d'efficacité prise à l'ouverture (ADR 0073,
+     * 0088) : {@code required} nul laisse la question ouverte. Le module CAPA
+     * en tient les gardes — exiger sans désigner est refusé.
+     */
+    record Verification(Boolean required, UUID assigneeId, String assigneeName, String instructions) {
+        /** Aucune décision transmise : la question reste ouverte sur le dossier. */
+        public static final Verification UNDECIDED = new Verification(null, null, null, null);
+    }
 
     /** Un dossier CAPA réduit à ce que le tableau « Traitement » montre. */
     record LinkedCapa(UUID id, String title, LocalDate dueDate, String status, RiskCapaKind kind,

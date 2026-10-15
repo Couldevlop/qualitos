@@ -331,6 +331,7 @@ class RegisterInfrastructureTest {
         CapaCaseRepository capaCases = mock(CapaCaseRepository.class);
         UUID capaId = UUID.randomUUID();
         UUID pilote = UUID.randomUUID();
+        UUID verificateur = UUID.randomUUID();
         CapaDto.CaseResponse reponse = new CapaDto.CaseResponse(capaId, TENANT, "Carte SPC", "desc",
                 CapaType.CORRECTIVE, CapaCriticity.HIGH, CapaStatus.OPEN, CapaSourceType.RISK, "R-014", pilote,
                 "A. Diallo", null, LocalDate.of(2026, 12, 1), null, null, null, null, null, null, null, null,
@@ -340,7 +341,8 @@ class RegisterInfrastructureTest {
 
         RiskCapaGateway.LinkedCapa capa = new CapaRiskGateway(capaService, capaCases)
                 .open(r, "Carte SPC", "desc", RiskCapaKind.CORRECTIVE, pilote, "A. Diallo",
-                        LocalDate.of(2026, 12, 1));
+                        LocalDate.of(2026, 12, 1),
+                        new RiskCapaGateway.Verification(true, verificateur, "Claire Contrôle", "Relever"));
 
         // Une seule ouverture : le dossier ET son action, en une écriture (ADR 0088).
         ArgumentCaptor<CapaDto.OpenCaseRequest> captor = ArgumentCaptor.forClass(CapaDto.OpenCaseRequest.class);
@@ -355,6 +357,11 @@ class RegisterInfrastructureTest {
         // Le pilote est le responsable désigné, et son nom part avec lui.
         assertThat(demande.ownerId()).isEqualTo(pilote);
         assertThat(demande.ownerName()).isEqualTo("A. Diallo");
+        // La décision de vérification part avec l'ouverture (ADR 0073, 0088).
+        assertThat(demande.verificationRequired()).isTrue();
+        assertThat(demande.verificationAssigneeId()).isEqualTo(verificateur);
+        assertThat(demande.verificationAssigneeName()).isEqualTo("Claire Contrôle");
+        assertThat(demande.verificationInstructions()).isEqualTo("Relever");
         assertThat(capa.id()).isEqualTo(capaId);
         assertThat(capa.status()).isEqualTo("OPEN");
         assertThat(capa.kind()).isEqualTo(RiskCapaKind.CORRECTIVE);

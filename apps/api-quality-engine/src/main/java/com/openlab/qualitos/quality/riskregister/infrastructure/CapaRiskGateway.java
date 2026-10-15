@@ -40,10 +40,12 @@ public class CapaRiskGateway implements RiskCapaGateway {
 
     @Override
     public LinkedCapa open(Risk risk, String title, String description, RiskCapaKind kind, UUID ownerId,
-                           String ownerName, LocalDate dueDate) {
+                           String ownerName, LocalDate dueDate, Verification verification) {
+        Verification v = verification != null ? verification : Verification.UNDECIDED;
         CapaDto.CaseResponse dossier = capaService.openCase(new CapaDto.OpenCaseRequest(
                 title, description, typeDossier(kind), criticite(risk), CapaSourceType.RISK,
-                risk.getReference(), ownerId, ownerName, dueDate), CapaSourceType.RISK, risk.getReference());
+                risk.getReference(), ownerId, ownerName, dueDate, v.required(), v.assigneeId(),
+                v.assigneeName(), v.instructions()), CapaSourceType.RISK, risk.getReference());
         return new LinkedCapa(dossier.id(), dossier.title(), dossier.dueDate(), dossier.status().name(),
                 kind, dossier.ownerName());
     }

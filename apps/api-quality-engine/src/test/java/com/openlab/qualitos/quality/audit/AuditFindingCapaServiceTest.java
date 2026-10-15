@@ -145,7 +145,7 @@ class AuditFindingCapaServiceTest {
     private static CapaDto.OpenCaseRequest demande() {
         return new CapaDto.OpenCaseRequest("Reprendre la procédure", null, CapaType.CORRECTIVE,
                 CapaCriticity.HIGH, null, null, UUID.randomUUID(), "a.diallo@client.test",
-                LocalDate.now().plusDays(10));
+                LocalDate.now().plusDays(10), null, null, null, null);
     }
 
     private static AuditPlan plan(AuditStatus status, String reference) {

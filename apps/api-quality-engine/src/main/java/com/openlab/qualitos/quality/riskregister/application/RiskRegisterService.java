@@ -175,7 +175,8 @@ public class RiskRegisterService {
         }
 
         RiskCapaGateway.LinkedCapa capa = capas.open(risque, titre, description, commande.kind(),
-                commande.ownerId(), responsable, commande.dueDate());
+                commande.ownerId(), responsable, commande.dueDate(),
+                commande.verification() != null ? commande.verification() : RiskCapaGateway.Verification.UNDECIDED);
         tracer(tenant, RegisterItemKind.RISK, risque.getId(), RegisterEventType.ACTION_OPENED, null,
                 null, titre, acteur, clock.instant());
         audit.riskCapaOpened(risque, capa.id(), acteur);

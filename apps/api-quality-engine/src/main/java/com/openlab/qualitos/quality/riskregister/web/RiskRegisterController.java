@@ -3,6 +3,7 @@ package com.openlab.qualitos.quality.riskregister.web;
 import com.openlab.qualitos.quality.authz.domain.Permission;
 import com.openlab.qualitos.quality.authz.web.RequiresPermission;
 import com.openlab.qualitos.quality.config.RequiresModule;
+import com.openlab.qualitos.quality.riskregister.application.RiskCapaGateway;
 import com.openlab.qualitos.quality.riskregister.application.RiskRegisterDto;
 import com.openlab.qualitos.quality.riskregister.application.RiskRegisterService;
 import com.openlab.qualitos.quality.riskregister.domain.RegisterOrigin;
@@ -94,7 +95,9 @@ public class RiskRegisterController {
     public RiskRegisterDto.CapaView openCapa(@PathVariable UUID id,
                                              @Valid @RequestBody RiskRegisterWebDto.CapaRequest r) {
         return service.openCapa(id, new RiskRegisterDto.CapaCommand(r.title(), r.description(), r.kind(),
-                r.ownerId(), r.ownerName(), r.dueDate()));
+                r.ownerId(), r.ownerName(), r.dueDate(), new RiskCapaGateway.Verification(
+                        r.verificationRequired(), r.verificationAssigneeId(), r.verificationAssigneeName(),
+                        r.verificationInstructions())));
     }
 
     /**

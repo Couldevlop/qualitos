@@ -119,7 +119,14 @@ public final class RiskRegisterDto {
 
     /** Le responsable est un compte de l'annuaire, qui devient le pilote du dossier (ADR 0088). */
     public record CapaCommand(String title, String description, RiskCapaKind kind, UUID ownerId,
-                              String ownerName, LocalDate dueDate) {}
+                              String ownerName, LocalDate dueDate, RiskCapaGateway.Verification verification) {
+
+        /** Sans décision de vérification : la question reste ouverte sur le dossier. */
+        public CapaCommand(String title, String description, RiskCapaKind kind, UUID ownerId,
+                           String ownerName, LocalDate dueDate) {
+            this(title, description, kind, ownerId, ownerName, dueDate, null);
+        }
+    }
 
     public record ActionCommand(String title, LocalDate dueDate, OpportunityActionStatus status) {}
 }
