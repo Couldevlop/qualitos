@@ -1,4 +1,5 @@
-// La validation : une carte par rôle requis.
+// La validation : une carte par rôle requis, empilées sur toute la largeur
+// (maquette « Gestion des changements », diapositive 5).
 
 :host {
   display: block;
@@ -6,8 +7,8 @@
 }
 
 .validation__resume {
-  margin: 0 0 var(--qos-space-4);
-  font-weight: var(--qos-fw-semibold);
+  margin: 0 0 var(--qos-space-3);
+  color: var(--qos-fg-secondary);
 }
 
 .validation__note {
@@ -20,8 +21,8 @@
   list-style: none;
   margin: 0;
   padding: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  display: flex;
+  flex-direction: column;
   gap: var(--qos-space-3);
 }
 
@@ -33,16 +34,6 @@
   border-radius: var(--qos-radius-lg);
   border: 1px solid var(--qos-border-subtle);
   background: var(--qos-bg-elevated);
-
-  &--ok {
-    border-color: var(--qos-success-fg);
-    box-shadow: inset 3px 0 0 var(--qos-success-fg);
-  }
-
-  &--refus {
-    border-color: var(--qos-danger-fg);
-    box-shadow: inset 3px 0 0 var(--qos-danger-fg);
-  }
 
   &__tete {
     display: flex;
@@ -67,11 +58,6 @@
 
   &__commentaire {
     margin: 0;
-    padding: var(--qos-space-2) var(--qos-space-3);
-    border-left: 3px solid var(--qos-border-default);
-    background: var(--qos-bg-subtle);
-    border-radius: var(--qos-radius-sm);
-    font-size: var(--qos-fs-sm);
     white-space: pre-line;
   }
 
