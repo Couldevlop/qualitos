@@ -85,6 +85,11 @@ public class UserService {
         // Le tenantId vient TOUJOURS du JWT, jamais du body
         UUID tenantId = resolveTenantId();
 
+        // Forme du realm (minuscules) : celle qu'attend chk_app_user_roles_role.
+        // Écrits tels quels, « ADMIN_TENANT » ou « admin » faisaient échouer
+        // l'insertion sur la contrainte, en 500.
+        Set<String> roles = PlatformRoles.validated(request.roles());
+
         if (userRepository.existsByKeycloakId(request.keycloakId())) {
             throw new UserAlreadyExistsException(request.keycloakId());
         }
@@ -94,7 +99,7 @@ public class UserService {
                 .tenantId(tenantId)
                 .keycloakId(request.keycloakId())
                 .email(request.email())
-                .roles(request.roles())
+                .roles(roles)
                 .active(true)
                 .build();
 

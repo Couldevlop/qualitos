@@ -385,6 +385,42 @@ class MocFlowIntegrationTest {
     }
 
     @Test
+    void quandUnTitulaireStatueLesAutresTitulairesDuRoleNeSontPlusAttendus() {
+        parametrer(25, 50, poids(1));
+        MocDto.Detail d = analysee("Four");
+        service.submit(d.id());
+        clearInvocations(notifier);
+
+        // Le suppléant approuve pour HSE : le titulaire principal n'a plus de tâche.
+        decider(hseSuppleant, "M. Martin", d.id(), "HSE", ApprovalDecision.APPROVED, null);
+        verify(notifier).retire(any(), eq(hseSuppleant));
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<Collection<UUID>> liberes = ArgumentCaptor.forClass(Collection.class);
+        verify(notifier).roleDecided(any(), eq("HSE"), liberes.capture());
+        assertThat(liberes.getValue()).containsExactly(hse);
+
+        // Un rôle à titulaire unique : personne d'autre à prévenir.
+        clearInvocations(notifier);
+        decider(technique, "D. Tech", d.id(), "Directeur technique", ApprovalDecision.APPROVED, null);
+        verify(notifier).retire(any(), eq(technique));
+        verify(notifier, never()).roleDecided(any(), any(), any());
+
+        // Un refus par un titulaire : son co-titulaire est prévenu avec les autres
+        // validateurs encore attendus, jamais celui qui vient de refuser.
+        MocDto.Detail e = analysee("Four 2");
+        service.submit(e.id());
+        clearInvocations(notifier);
+        decider(hse, "J. Dupont", e.id(), "HSE", ApprovalDecision.REJECTED, "Risque non traité");
+        verify(notifier).retire(any(), eq(hse));
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<Collection<MocNotifier.Recipient>> clos = ArgumentCaptor.forClass(Collection.class);
+        verify(notifier).validationClosed(any(), clos.capture());
+        assertThat(clos.getValue()).extracting(MocNotifier.Recipient::userId)
+                .containsExactlyInAnyOrder(responsable, hseSuppleant, technique, site);
+        verify(notifier, never()).roleDecided(any(), any(), any());
+    }
+
+    @Test
     void laSoumissionExigeUnTitulaireAutreQueLeDemandeur() {
         // Paramétrage livré : les rôles n'ont aucun titulaire.
         MocDto.Detail d = analysee("Four");

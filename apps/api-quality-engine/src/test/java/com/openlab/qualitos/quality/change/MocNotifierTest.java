@@ -130,6 +130,24 @@ class MocNotifierTest {
     }
 
     @Test
+    void quandUnTitulaireStatueSesCoTitulairesNOntPlusDeTache() {
+        notifier.roleDecided(c, "HSE", List.of(JEAN, MARIE));
+        verify(notifications).markReadForRecipientAndLink(TENANT, JEAN.toString(), "/changes/" + c.getId(), NOW);
+        verify(notifications).markReadForRecipientAndLink(TENANT, MARIE.toString(), "/changes/" + c.getId(), NOW);
+        ArgumentCaptor<Notification> n = ArgumentCaptor.forClass(Notification.class);
+        verify(notifications, times(2)).save(n.capture());
+        assertThat(n.getAllValues()).allSatisfy(x -> {
+            assertThat(x.getType()).isEqualTo(NotificationType.INFO);
+            assertThat(x.getTitle()).isEqualTo("MOC-2026-014 : le rôle HSE a statué, votre validation n'est plus attendue");
+            assertThat(x.getLink()).isEqualTo("/changes/" + c.getId());
+        });
+        assertThat(n.getAllValues()).extracting(Notification::getRecipientUserId)
+                .containsExactly(JEAN.toString(), MARIE.toString());
+        // Une information, pas une tâche : aucun courriel.
+        verify(mailer, never()).send(anyString(), anyString(), anyString());
+    }
+
+    @Test
     void sansSmtpOuSansAdresseAucunCourrielEtUnEchecNEmpecheRien() {
         when(provider.getIfAvailable()).thenReturn(null);
         notifier.awaitingValidation(c, List.of(new MocNotifier.Recipient(JEAN, "jean@acme.test", List.of("HSE"))));

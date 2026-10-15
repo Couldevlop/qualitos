@@ -40,9 +40,17 @@ import java.util.UUID;
     }
 )
 @EntityListeners(AuditingEntityListener.class)
+/*
+ * Le paramètre est typé UUID, comme la colonne tenant_id de TOUTES les tables
+ * filtrées (tenant_modules, app_users). Typé String, Hibernate le liait en
+ * VARCHAR et PostgreSQL refusait la comparaison (« operator does not exist:
+ * uuid = character varying ») : l'annuaire et la liste des membres répondaient
+ * 500 en préproduction. H2, qui convertit implicitement, ne le voyait pas ; le
+ * banc DirectoryAndUsersOnPostgresTest le rejoue sur un vrai PostgreSQL.
+ */
 @FilterDef(
     name = "tenantFilter",
-    parameters = @ParamDef(name = "tenantId", type = String.class)
+    parameters = @ParamDef(name = "tenantId", type = UUID.class)
 )
 @Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
 @Getter

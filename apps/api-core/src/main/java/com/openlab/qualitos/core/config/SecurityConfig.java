@@ -1,6 +1,10 @@
 package com.openlab.qualitos.core.config;
 
 import com.openlab.qualitos.core.security.TenantJwtFilter;
+import com.openlab.qualitos.core.user.MemberProvisioning;
+import com.openlab.qualitos.core.user.MemberProvisioningFilter;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -84,7 +88,8 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
                                                    TenantJwtFilter tenantJwtFilter,
                                                    @org.springframework.beans.factory.annotation.Qualifier("corsConfigurationSource")
-                                                   CorsConfigurationSource corsSource) throws Exception {
+                                                   CorsConfigurationSource corsSource,
+                                                   ObjectProvider<MemberProvisioning> provisioning) throws Exception {
         http
             .cors(cors -> cors.configurationSource(corsSource))
             .csrf(AbstractHttpConfigurer::disable)
@@ -125,7 +130,10 @@ public class SecurityConfig {
             )
             // TenantJwtFilter s'exécute AVANT l'authentification Spring Security
             // pour peupler TenantContext avant que les services ne soient appelés
-            .addFilterBefore(tenantJwtFilter, UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(tenantJwtFilter, UsernamePasswordAuthenticationFilter.class)
+            // L'annuaire se remplit à la première connexion (ADR 0093) : APRÈS la
+            // validation du jeton, jamais sur un jeton refusé.
+            .addFilterAfter(new MemberProvisioningFilter(provisioning), BearerTokenAuthenticationFilter.class);
 
         return http.build();
     }

@@ -128,6 +128,12 @@ jobs:
             exit 1
           fi
 
+      - name: Realm Keycloak — tenant_id déclaré dans le profil utilisateur
+        run: |
+          # Sans cette déclaration, Keycloak supprime tenant_id à la création d'un
+          # compte : l'invitation d'un membre rend un compte sans client.
+          python3 infra/keycloak/user_profile.py --check infra/keycloak/realm-export.json
+
       - name: Mode léger — parité avec le chart, compose valide
         run: |
           # Le rendu on-premise de l'étape précédente sert de référence (ADR 0084).

@@ -252,6 +252,18 @@ public class SecurityConfig {
                 // qualité viderait le vote de son sens.
                 .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/api/v1/ideas/*/vote")
                     .authenticated()
+                // Brouillon de demande de changement (MOC, ADR 0087) : son demandeur
+                // doit pouvoir le supprimer, et c'est le service qui en décide —
+                // brouillon seulement (409 sinon), demandeur ou change.analyze (403
+                // sinon), sous @RequiresPermission(change.request) sur le contrôleur.
+                // Sans cette ligne, la règle générique ci-dessous répondait 403 sans
+                // corps au demandeur « user » avant même que la règle métier soit lue.
+                // Un seul segment (« * ») : la ligne n'ouvre que DELETE /changes/{id},
+                // aucune sous-ressource ; le paramétrage (/changes/settings) n'expose
+                // pas de DELETE et le segment n'étant pas un identifiant, il n'atteint
+                // aucune suppression.
+                .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/api/v1/changes/*")
+                    .authenticated()
                 // Suppression générique de ressource qualité : Manager Qualité ou plus.
                 .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/api/v1/**")
                     .hasAnyRole("ADMIN", "ADMIN_TENANT", "SUPER_ADMIN", "QUALITY_MANAGER")

@@ -71,6 +71,7 @@ public class TenantConfig {
      * Paramètre de filtre Hibernate utilisé dans les annotations @Filter.
      */
     public static Map<String, Object> tenantFilterParams(String tenantId) {
-        return Map.of(FilterNames.TENANT_FILTER_PARAM, tenantId);
+        // Typé UUID comme la colonne : une chaîne ferait échouer PostgreSQL (uuid = varchar).
+        return Map.of(FilterNames.TENANT_FILTER_PARAM, java.util.UUID.fromString(tenantId));
     }
 }
