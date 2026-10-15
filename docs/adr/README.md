@@ -96,6 +96,7 @@ supersession).
 | [0089](./0089-rapport-et-documents-d-audit.md) | **Le rapport d'audit, ses documents et son auditeur responsable** | Accepté |
 | [0090](./0090-le-smi-ajoute-une-norme-par-le-standards-hub.md) | **Le SMI ajoute une norme par le Standards Hub, et seul l'administrateur du client le fait** | Accepté |
 | [0091](./0091-annuaire-en-lecture-restreinte.md) | **Un annuaire en lecture restreinte.** `GET /api/v1/directory/users[/{id}]` et `/accounts/{accountId}` (api-core) pour tout membre authentifié : `{id, accountId, displayName, email, active}` seulement, `accountId` (`sub` du jeton) identité de référence et valeur du sélecteur ; actifs du client du jeton, recherche sans accents ni casse (clé calculée par l'application, V8), `size` ≤ 50, 404 neutre hors client ; routé par l'ingress et le proxy léger ; `qos-user-picker` partagé côté écran | Accepté |
+| [0092](./0092-une-personne-est-un-utilisateur-de-l-annuaire.md) | **Une personne désignée par un dossier est un utilisateur de l'annuaire.** Choisie par `qos-user-picker` (valeur = `accountId`), stockée par son compte + son nom recopié (V142 : risques, opportunités, livrables APQP, coût de la qualité, actions Ishikawa), affichée par `qos-person-name` (nom recopié, sinon annuaire, sinon libellé neutre) ; jamais un UUID à l'écran ni à taper ; les noms tapés avant restent lisibles | Accepté |
 
 ## Statuts possibles
 

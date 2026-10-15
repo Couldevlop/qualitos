@@ -1990,9 +1990,9 @@
         <source>Approuver</source>
         <target state="translated">承認する</target>
       </trans-unit>
-      <trans-unit id="ai-qms.approve.submitter-uuid" datatype="html">
-        <source>UUID du soumissionnaire (doit ≠ vous)</source>
-        <target state="translated">提出者のUUID（あなたと異なる必要があります）</target>
+      <trans-unit id="ai-qms.approve.submitter" datatype="html">
+        <source>Soumissionnaire (une autre personne que vous)</source>
+        <target state="translated">提出者（あなた以外の担当者）</target>
       </trans-unit>
       <trans-unit id="ai-qms.approve.subtitle" datatype="html">
         <source>L'approbation enregistre l'identité du soumissionnaire et de l'approbateur (séparation des rôles requise par AI Act Art. 17). Vous serez enregistré comme approbateur via votre session courante.</source>
@@ -3762,9 +3762,9 @@ Portail clients</source>
         <source>Notes</source>
         <target state="translated">メモ</target>
       </trans-unit>
-      <trans-unit id="nis2-measures.edit.owner-uuid" datatype="html">
-        <source>UUID propriétaire</source>
-        <target state="translated">所有者UUID</target>
+      <trans-unit id="nis2-measures.edit.owner" datatype="html">
+        <source>Propriétaire</source>
+        <target state="translated">所有者</target>
       </trans-unit>
       <trans-unit id="nis2-measures.edit.subtitle" datatype="html">
         <source>La référence et la catégorie ne peuvent pas changer après planification.</source>
@@ -3874,9 +3874,9 @@ Portail clients</source>
         <source>Notes (optionnel)</source>
         <target state="translated">メモ（任意）</target>
       </trans-unit>
-      <trans-unit id="nis2-measures.plan.owner-uuid" datatype="html">
-        <source>UUID propriétaire (optionnel)</source>
-        <target state="translated">所有者UUID（任意）</target>
+      <trans-unit id="nis2-measures.plan.owner" datatype="html">
+        <source>Propriétaire (optionnel)</source>
+        <target state="translated">所有者（任意）</target>
       </trans-unit>
       <trans-unit id="nis2-measures.plan.plan-failed" datatype="html">
         <source>Planification impossible.</source>
@@ -5194,6 +5194,10 @@ Portail clients</source>
         <source>Acquis</source>
         <target state="translated">取得済み</target>
       </trans-unit>
+      <trans-unit id="apqp.deliverable.owner-legacy" datatype="html">
+        <source>Nom enregistré : <x id="INTERPOLATION"/>. Choisissez cette personne dans l'annuaire.</source>
+        <target state="translated">登録済みの名前：<x id="INTERPOLATION"/>。ディレクトリからこの担当者を選択してください。</target>
+      </trans-unit>
       <trans-unit id="apqp.deliverable.owner" datatype="html">
         <source>Responsable</source>
         <target state="translated">担当者</target>
@@ -6369,10 +6373,6 @@ Portail clients</source>
       <trans-unit id="calibration.record.fail-warning" datatype="html">
         <source>Instrument critique : un résultat non conforme le met immédiatement hors service.</source>
         <target state="translated">重要計測器：不合格の結果は直ちに使用停止となります。</target>
-      </trans-unit>
-      <trans-unit id="calibration.record.internal" datatype="html">
-        <source>Interne</source>
-        <target state="translated">社内</target>
       </trans-unit>
       <trans-unit id="calibration.record.measurements" datatype="html">
         <source>Mesures</source>
@@ -9450,6 +9450,10 @@ Portail clients</source>
         <source>Responsable</source>
         <target state="translated">責任者</target>
       </trans-unit>
+      <trans-unit id="coq.dialog.responsible-legacy" datatype="html">
+        <source>Nom enregistré : <x id="INTERPOLATION"/>. Choisissez cette personne dans l'annuaire.</source>
+        <target state="translated">登録済みの名前：<x id="INTERPOLATION"/>。ディレクトリからこの担当者を選択してください。</target>
+      </trans-unit>
       <trans-unit id="coq.dialog.responsible-required" datatype="html">
         <source>Le responsable est requis.</source>
         <target state="translated">責任者は必須です。</target>
@@ -9957,6 +9961,10 @@ Portail clients</source>
       <trans-unit id="directory.picker.live-count" datatype="html">
         <source><x id="COUNT"/> personne(s) proposée(s)</source>
         <target state="translated">候補 <x id="COUNT"/> 件</target>
+      </trans-unit>
+      <trans-unit id="directory.person.unknown" datatype="html">
+        <source>Personne inconnue</source>
+        <target state="translated">不明な担当者</target>
       </trans-unit>
       <trans-unit id="nav.doc-gen-ia" datatype="html">
         <source>Génération doc IA</source>
@@ -16011,13 +16019,17 @@ historique 12 mois</source>
         <source>Objectif SMART + impact business attendu</source>
         <target state="translated">SMART目標＋期待されるビジネスインパクト</target>
       </trans-unit>
-      <trans-unit id="dmaic.create.champion-label" datatype="html">
-        <source>Champion (ID)</source>
-        <target state="translated">チャンピオン（ID）</target>
+      <trans-unit id="dmaic.create.champion" datatype="html">
+        <source>Champion (optionnel)</source>
+        <target state="translated">チャンピオン（任意）</target>
       </trans-unit>
-      <trans-unit id="dmaic.create.champion-placeholder" datatype="html">
-        <source>UUID utilisateur</source>
-        <target state="translated">ユーザーUUID</target>
+      <trans-unit id="dmaic.detail.black-belt-prefix" datatype="html">
+        <source>Black Belt :</source>
+        <target state="translated">ブラックベルト：</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.champion-prefix" datatype="html">
+        <source>Champion :</source>
+        <target state="translated">チャンピオン：</target>
       </trans-unit>
       <trans-unit id="dmaic.create.target-date-label" datatype="html">
         <source>Date cible</source>
@@ -16595,21 +16607,9 @@ historique 12 mois</source>
         <source>Ajouter un membre</source>
         <target state="translated">メンバーを追加</target>
       </trans-unit>
-      <trans-unit id="circles.member.hint" datatype="html">
-        <source>Renseigne l'identifiant utilisateur (UUID) et le rôle. La liste de sélection sera branchée sur l'annuaire Keycloak dans une prochaine itération.</source>
-        <target state="translated">ユーザー識別子（UUID）と役割を入力してください。選択リストは今後のイテレーションでKeycloakディレクトリに接続されます。</target>
-      </trans-unit>
-      <trans-unit id="circles.member.user-id" datatype="html">
-        <source>User ID (UUID)</source>
-        <target state="translated">ユーザーID (UUID)</target>
-      </trans-unit>
-      <trans-unit id="circles.member.uuid-required" datatype="html">
-        <source>UUID requis.</source>
-        <target state="translated">UUIDは必須です。</target>
-      </trans-unit>
-      <trans-unit id="circles.member.uuid-invalid" datatype="html">
-        <source>Format UUID invalide.</source>
-        <target state="translated">UUID形式が無効です。</target>
+      <trans-unit id="circles.member.person" datatype="html">
+        <source>Personne à ajouter</source>
+        <target state="translated">追加する担当者</target>
       </trans-unit>
       <trans-unit id="circles.member.role-facilitator" datatype="html">
         <source>Animateur</source>
@@ -22131,9 +22131,9 @@ historique 12 mois</source>
         <source>Responsable de l'action</source>
         <target state="translated">処置責任者</target>
       </trans-unit>
-      <trans-unit id="fmea.item.action-owner-name-hint" datatype="html">
-        <source>Une personne ou un service — la trame accepte les deux.</source>
-        <target state="translated">個人でも部署でも構いません。</target>
+      <trans-unit id="fmea.item.action-owner-legacy" datatype="html">
+        <source>Nom enregistré : <x id="INTERPOLATION"/>. Choisissez cette personne dans l'annuaire.</source>
+        <target state="translated">登録済みの名前：<x id="INTERPOLATION"/>。ディレクトリからこの担当者を選択してください。</target>
       </trans-unit>
       <trans-unit id="fmea.item.actions-taken" datatype="html">
         <source>Actions réalisées</source>
@@ -22866,6 +22866,10 @@ historique 12 mois</source>
       <trans-unit id="rr.form.benefit-check" datatype="html">
         <source>Vérification du bénéfice (critère)</source>
         <target state="translated">効果確認（基準）</target>
+      </trans-unit>
+      <trans-unit id="rr.form.owner-legacy" datatype="html">
+        <source>Nom enregistré : <x id="INTERPOLATION"/>. Choisissez cette personne dans l'annuaire.</source>
+        <target state="translated">登録済みの名前：<x id="INTERPOLATION"/>。ディレクトリからこの担当者を選択してください。</target>
       </trans-unit>
       <trans-unit id="rr.form.required" datatype="html">
         <source>Champ obligatoire.</source>

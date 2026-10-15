@@ -1990,9 +1990,9 @@
         <source>Approuver</source>
         <target state="translated">الموافقة</target>
       </trans-unit>
-      <trans-unit id="ai-qms.approve.submitter-uuid" datatype="html">
-        <source>UUID du soumissionnaire (doit ≠ vous)</source>
-        <target state="translated">UUID مُقدّم الطلب (يجب أن ≠ أنت)</target>
+      <trans-unit id="ai-qms.approve.submitter" datatype="html">
+        <source>Soumissionnaire (une autre personne que vous)</source>
+        <target state="translated">مقدّم الطلب (شخص آخر غيرك)</target>
       </trans-unit>
       <trans-unit id="ai-qms.approve.subtitle" datatype="html">
         <source>L'approbation enregistre l'identité du soumissionnaire et de l'approbateur (séparation des rôles requise par AI Act Art. 17). Vous serez enregistré comme approbateur via votre session courante.</source>
@@ -3762,9 +3762,9 @@ Portail clients</source>
         <source>Notes</source>
         <target state="translated">ملاحظات</target>
       </trans-unit>
-      <trans-unit id="nis2-measures.edit.owner-uuid" datatype="html">
-        <source>UUID propriétaire</source>
-        <target state="translated">معرّف UUID للمالك</target>
+      <trans-unit id="nis2-measures.edit.owner" datatype="html">
+        <source>Propriétaire</source>
+        <target state="translated">المالك</target>
       </trans-unit>
       <trans-unit id="nis2-measures.edit.subtitle" datatype="html">
         <source>La référence et la catégorie ne peuvent pas changer après planification.</source>
@@ -3874,9 +3874,9 @@ Portail clients</source>
         <source>Notes (optionnel)</source>
         <target state="translated">ملاحظات (اختياري)</target>
       </trans-unit>
-      <trans-unit id="nis2-measures.plan.owner-uuid" datatype="html">
-        <source>UUID propriétaire (optionnel)</source>
-        <target state="translated">معرّف UUID للمالك (اختياري)</target>
+      <trans-unit id="nis2-measures.plan.owner" datatype="html">
+        <source>Propriétaire (optionnel)</source>
+        <target state="translated">المالك (اختياري)</target>
       </trans-unit>
       <trans-unit id="nis2-measures.plan.plan-failed" datatype="html">
         <source>Planification impossible.</source>
@@ -5194,6 +5194,10 @@ Portail clients</source>
         <source>Acquis</source>
         <target state="translated">مُنجَز</target>
       </trans-unit>
+      <trans-unit id="apqp.deliverable.owner-legacy" datatype="html">
+        <source>Nom enregistré : <x id="INTERPOLATION"/>. Choisissez cette personne dans l'annuaire.</source>
+        <target state="translated">الاسم المسجّل: <x id="INTERPOLATION"/>. اختر هذا الشخص من الدليل.</target>
+      </trans-unit>
       <trans-unit id="apqp.deliverable.owner" datatype="html">
         <source>Responsable</source>
         <target state="translated">المسؤول</target>
@@ -6369,10 +6373,6 @@ Portail clients</source>
       <trans-unit id="calibration.record.fail-warning" datatype="html">
         <source>Instrument critique : un résultat non conforme le met immédiatement hors service.</source>
         <target state="translated">أداة حرجة: النتيجة غير المطابقة تُخرجها من الخدمة فورًا.</target>
-      </trans-unit>
-      <trans-unit id="calibration.record.internal" datatype="html">
-        <source>Interne</source>
-        <target state="translated">داخلي</target>
       </trans-unit>
       <trans-unit id="calibration.record.measurements" datatype="html">
         <source>Mesures</source>
@@ -9450,6 +9450,10 @@ Portail clients</source>
         <source>Responsable</source>
         <target state="translated">المسؤول</target>
       </trans-unit>
+      <trans-unit id="coq.dialog.responsible-legacy" datatype="html">
+        <source>Nom enregistré : <x id="INTERPOLATION"/>. Choisissez cette personne dans l'annuaire.</source>
+        <target state="translated">الاسم المسجّل: <x id="INTERPOLATION"/>. اختر هذا الشخص من الدليل.</target>
+      </trans-unit>
       <trans-unit id="coq.dialog.responsible-required" datatype="html">
         <source>Le responsable est requis.</source>
         <target state="translated">المسؤول مطلوب.</target>
@@ -9957,6 +9961,10 @@ Portail clients</source>
       <trans-unit id="directory.picker.live-count" datatype="html">
         <source><x id="COUNT"/> personne(s) proposée(s)</source>
         <target state="translated">الأشخاص المقترحون: <x id="COUNT"/></target>
+      </trans-unit>
+      <trans-unit id="directory.person.unknown" datatype="html">
+        <source>Personne inconnue</source>
+        <target state="translated">شخص غير معروف</target>
       </trans-unit>
       <trans-unit id="nav.doc-gen-ia" datatype="html">
         <source>Génération doc IA</source>
@@ -16012,13 +16020,17 @@ historique 12 mois</source>
         <source>Objectif SMART + impact business attendu</source>
         <target state="translated">هدف SMART + الأثر التجاري المتوقع</target>
       </trans-unit>
-      <trans-unit id="dmaic.create.champion-label" datatype="html">
-        <source>Champion (ID)</source>
-        <target state="translated">الراعي (المعرّف)</target>
+      <trans-unit id="dmaic.create.champion" datatype="html">
+        <source>Champion (optionnel)</source>
+        <target state="translated">الراعي (اختياري)</target>
       </trans-unit>
-      <trans-unit id="dmaic.create.champion-placeholder" datatype="html">
-        <source>UUID utilisateur</source>
-        <target state="translated">معرّف المستخدم UUID</target>
+      <trans-unit id="dmaic.detail.black-belt-prefix" datatype="html">
+        <source>Black Belt :</source>
+        <target state="translated">الحزام الأسود:</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.champion-prefix" datatype="html">
+        <source>Champion :</source>
+        <target state="translated">الراعي:</target>
       </trans-unit>
       <trans-unit id="dmaic.create.target-date-label" datatype="html">
         <source>Date cible</source>
@@ -16596,21 +16608,9 @@ historique 12 mois</source>
         <source>Ajouter un membre</source>
         <target state="translated">إضافة عضو</target>
       </trans-unit>
-      <trans-unit id="circles.member.hint" datatype="html">
-        <source>Renseigne l'identifiant utilisateur (UUID) et le rôle. La liste de sélection sera branchée sur l'annuaire Keycloak dans une prochaine itération.</source>
-        <target state="translated">أدخل معرّف المستخدم (UUID) والدور. ستُربط قائمة الاختيار بدليل Keycloak في تكرار لاحق.</target>
-      </trans-unit>
-      <trans-unit id="circles.member.user-id" datatype="html">
-        <source>User ID (UUID)</source>
-        <target state="translated">معرّف المستخدم (UUID)</target>
-      </trans-unit>
-      <trans-unit id="circles.member.uuid-required" datatype="html">
-        <source>UUID requis.</source>
-        <target state="translated">UUID مطلوب.</target>
-      </trans-unit>
-      <trans-unit id="circles.member.uuid-invalid" datatype="html">
-        <source>Format UUID invalide.</source>
-        <target state="translated">صيغة UUID غير صالحة.</target>
+      <trans-unit id="circles.member.person" datatype="html">
+        <source>Personne à ajouter</source>
+        <target state="translated">الشخص المراد إضافته</target>
       </trans-unit>
       <trans-unit id="circles.member.role-facilitator" datatype="html">
         <source>Animateur</source>
@@ -22132,9 +22132,9 @@ historique 12 mois</source>
         <source>Responsable de l'action</source>
         <target state="translated">المسؤول عن الإجراء</target>
       </trans-unit>
-      <trans-unit id="fmea.item.action-owner-name-hint" datatype="html">
-        <source>Une personne ou un service — la trame accepte les deux.</source>
-        <target state="translated">شخص أو قسم — النموذج يقبل كليهما.</target>
+      <trans-unit id="fmea.item.action-owner-legacy" datatype="html">
+        <source>Nom enregistré : <x id="INTERPOLATION"/>. Choisissez cette personne dans l'annuaire.</source>
+        <target state="translated">الاسم المسجّل: <x id="INTERPOLATION"/>. اختر هذا الشخص من الدليل.</target>
       </trans-unit>
       <trans-unit id="fmea.item.actions-taken" datatype="html">
         <source>Actions réalisées</source>
@@ -22867,6 +22867,10 @@ historique 12 mois</source>
       <trans-unit id="rr.form.benefit-check" datatype="html">
         <source>Vérification du bénéfice (critère)</source>
         <target state="translated">التحقق من الفائدة (المعيار)</target>
+      </trans-unit>
+      <trans-unit id="rr.form.owner-legacy" datatype="html">
+        <source>Nom enregistré : <x id="INTERPOLATION"/>. Choisissez cette personne dans l'annuaire.</source>
+        <target state="translated">الاسم المسجّل: <x id="INTERPOLATION"/>. اختر هذا الشخص من الدليل.</target>
       </trans-unit>
       <trans-unit id="rr.form.required" datatype="html">
         <source>Champ obligatoire.</source>
