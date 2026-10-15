@@ -62,6 +62,7 @@ class RiskRegisterControllerTest {
     static final UUID RISQUE = UUID.randomUUID();
     static final UUID OPP = UUID.randomUUID();
     static final UUID ACTION = UUID.randomUUID();
+    static final UUID PROPRIETAIRE = UUID.fromString("0b6c1f2e-4a3d-4e5f-8a9b-1c2d3e4f5a6b");
     static final String BASE = "/api/v1/risk-register";
 
     static final String CORPS_RISQUE = "{\"title\":\"Dérive soudure\",\"type\":\"QUALITY\","
@@ -79,7 +80,7 @@ class RiskRegisterControllerTest {
         return new RiskRegisterDto.RiskView(RISQUE, "R-014", "Dérive soudure", RegisterType.QUALITY, "Production",
                 null, "M. Kone", null, null, RegisterOrigin.FMEA, "PFMEA-7 #3", null, 4, 3, 12, RiskLevel.HIGH,
                 4, 2, 8, RiskLevel.MEDIUM, RiskDecision.REDUCE, RiskStatus.IN_TREATMENT,
-                List.of(RegisterRequirement.ISO_9001_6_1), null, null, Instant.EPOCH, Instant.EPOCH);
+                List.of(RegisterRequirement.ISO_9001_6_1), null, null, Instant.EPOCH, Instant.EPOCH, PROPRIETAIRE);
     }
 
     @Test
@@ -97,7 +98,9 @@ class RiskRegisterControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].reference").value("R-014"))
                 .andExpect(jsonPath("$[0].grossLevel").value("HIGH"))
-                .andExpect(jsonPath("$[0].residualScore").value(8));
+                .andExpect(jsonPath("$[0].residualScore").value(8))
+                .andExpect(jsonPath("$[0].owner").value("M. Kone"))
+                .andExpect(jsonPath("$[0].ownerUserId").value(PROPRIETAIRE.toString()));
         mockMvc.perform(get(BASE + "/risks/" + RISQUE))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.capas[0].status").value("IN_PROGRESS"));
@@ -162,6 +165,35 @@ class RiskRegisterControllerTest {
         verify(service).createRisk(argThat(c -> c.title().equals("Dérive soudure")
                 && c.grossSeverity() == 4 && c.requirements().size() == 2
                 && c.origin() == RegisterOrigin.FMEA && c.decision() == RiskDecision.REDUCE));
+    }
+
+    @Test
+    @WithMockUser(roles = "QUALITY_MANAGER")
+    void leProprietaireChoisiDansLAnnuairePasseAvecSonNom() throws Exception {
+        when(service.createRisk(any())).thenReturn(vue());
+        when(service.createOpportunity(any())).thenReturn(null);
+        String avecCompte = CORPS_RISQUE.replace("\"owner\":\"M. Kone\",",
+                "\"owner\":\"M. Kone\",\"ownerUserId\":\"" + PROPRIETAIRE + "\",");
+
+        mockMvc.perform(post(BASE + "/risks").with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON).content(avecCompte))
+                .andExpect(status().isCreated());
+        verify(service).createRisk(argThat(c -> PROPRIETAIRE.equals(c.ownerUserId())
+                && "M. Kone".equals(c.owner())));
+
+        mockMvc.perform(post(BASE + "/opportunities").with(csrf()).contentType(MediaType.APPLICATION_JSON)
+                        .content(CORPS_OPP.replace("{", "{\"ownerUserId\":\"" + PROPRIETAIRE + "\",")))
+                .andExpect(status().isCreated());
+        verify(service).createOpportunity(argThat(c -> PROPRIETAIRE.equals(c.ownerUserId())));
+    }
+
+    @Test
+    @WithMockUser(roles = "QUALITY_MANAGER")
+    void unCompteDeProprietaireMalFormeRend400AvantLeService() throws Exception {
+        mockMvc.perform(post(BASE + "/risks").with(csrf()).contentType(MediaType.APPLICATION_JSON)
+                        .content(CORPS_RISQUE.replace("{", "{\"ownerUserId\":\"pas-un-compte\",")))
+                .andExpect(status().isBadRequest());
+        verifyNoInteractions(service);
     }
 
     @Test
@@ -273,7 +305,7 @@ class RiskRegisterControllerTest {
                 null, 4, 4, 16, com.openlab.qualitos.quality.riskregister.domain.OpportunityLevel.PRIORITY,
                 com.openlab.qualitos.quality.riskregister.domain.OpportunityDecision.UNDECIDED,
                 com.openlab.qualitos.quality.riskregister.domain.OpportunityStatus.UNDER_STUDY, List.of(), null,
-                Instant.EPOCH, Instant.EPOCH);
+                Instant.EPOCH, Instant.EPOCH, null);
         when(service.createOpportunity(any())).thenReturn(o);
         when(service.reviseOpportunity(eq(OPP), any())).thenReturn(o);
         when(service.opportunity(OPP)).thenReturn(new RiskRegisterDto.OpportunitySheet(o, List.of(), List.of()));

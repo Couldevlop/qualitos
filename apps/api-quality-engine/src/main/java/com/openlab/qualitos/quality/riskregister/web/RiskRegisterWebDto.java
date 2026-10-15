@@ -28,6 +28,11 @@ import java.util.UUID;
  *
  * <p>Aucun champ tenant ni auteur : ils viennent du jeton (§18.2). Aucune
  * référence non plus : c'est le serveur qui l'attribue.
+ *
+ * <p>Le propriétaire est une personne de l'annuaire (ADR 0092) :
+ * {@code ownerUserId} est son compte de connexion, {@code owner} son nom
+ * recopié. Le compte reste facultatif pour les fiches antérieures, qui n'ont
+ * qu'un nom ; un compte mal formé est refusé (400) avant d'atteindre le domaine.
  */
 public final class RiskRegisterWebDto {
 
@@ -52,7 +57,8 @@ public final class RiskRegisterWebDto {
             RiskStatus status,
             @Size(max = 10) List<RegisterRequirement> requirements,
             LocalDate nextReviewOn,
-            @Size(max = 1000) String effectivenessCriterion) {}
+            @Size(max = 1000) String effectivenessCriterion,
+            UUID ownerUserId) {}
 
     public record OpportunityRequest(
             @NotBlank @Size(max = 255) String title,
@@ -70,7 +76,8 @@ public final class RiskRegisterWebDto {
             OpportunityDecision decision,
             OpportunityStatus status,
             @Size(max = 10) List<RegisterRequirement> requirements,
-            @Size(max = 1000) String benefitCriterion) {}
+            @Size(max = 1000) String benefitCriterion,
+            UUID ownerUserId) {}
 
     /**
      * Ce que la fenêtre de création CAPA commune envoie depuis un risque (ADR 0088).

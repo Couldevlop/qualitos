@@ -129,7 +129,7 @@ class SmiAdaptersTest {
         return new RiskRegisterDto.RiskView(UUID.randomUUID(), ref, "Dérive", RegisterType.QUALITY, "Production",
                 null, "M. Kone", "c", "e", RegisterOrigin.DIRECT, null, null, 4, 3, 12, RiskLevel.HIGH, 4, 2, 8,
                 RiskLevel.MEDIUM, RiskDecision.REDUCE, statut, List.of(RegisterRequirement.ISO_45001_6_1),
-                J.plusDays(3), null, Instant.now(), Instant.now());
+                J.plusDays(3), null, Instant.now(), Instant.now(), null);
     }
 
     @Test

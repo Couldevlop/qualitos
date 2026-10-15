@@ -59,6 +59,7 @@ public final class RegisterRepositoryAdapters {
             e.setProcess(i.process());
             e.setSite(i.site());
             e.setOwner(i.owner());
+            e.setOwnerUserId(i.ownerUserId());
             e.setOrigin(i.origin());
             e.setOriginRef(i.originRef());
             e.setRequirements(encode(i.requirements()));
@@ -107,7 +108,8 @@ public final class RegisterRepositoryAdapters {
                     ? null : new Rating(e.getResidualSeverity(), e.getResidualProbability());
             return new Risk(e.getId(), e.getTenantId(), e.getReference(), e.getSourceId(),
                     new Identification(e.getTitle(), e.getType(), e.getProcess(), e.getSite(),
-                            e.getOwner(), e.getOrigin(), e.getOriginRef(), decode(e.getRequirements())),
+                            e.getOwner(), e.getOrigin(), e.getOriginRef(), decode(e.getRequirements()),
+                            e.getOwnerUserId()),
                     e.getCause(), e.getEffect(), new Rating(e.getGrossSeverity(), e.getGrossProbability()),
                     residuelle, e.getDecision(), e.getStatus(), e.getNextReviewOn(),
                     e.getEffectivenessCriterion(), e.getCreatedBy(), e.getCreatedAt(), e.getUpdatedAt());
@@ -141,6 +143,7 @@ public final class RegisterRepositoryAdapters {
             e.setProcess(i.process());
             e.setSite(i.site());
             e.setOwner(i.owner());
+            e.setOwnerUserId(i.ownerUserId());
             e.setOrigin(i.origin());
             e.setOriginRef(i.originRef());
             e.setRequirements(encode(i.requirements()));
@@ -179,7 +182,8 @@ public final class RegisterRepositoryAdapters {
         static Opportunity toDomain(OpportunityJpaEntity e) {
             return new Opportunity(e.getId(), e.getTenantId(), e.getReference(),
                     new Identification(e.getTitle(), e.getType(), e.getProcess(), e.getSite(),
-                            e.getOwner(), e.getOrigin(), e.getOriginRef(), decode(e.getRequirements())),
+                            e.getOwner(), e.getOrigin(), e.getOriginRef(), decode(e.getRequirements()),
+                            e.getOwnerUserId()),
                     e.getTargetDate(), e.getContext(), e.getBenefit(),
                     new Rating(e.getGain(), e.getFeasibility()), e.getDecision(), e.getStatus(),
                     e.getBenefitCriterion(), e.getCreatedBy(), e.getCreatedAt(), e.getUpdatedAt());

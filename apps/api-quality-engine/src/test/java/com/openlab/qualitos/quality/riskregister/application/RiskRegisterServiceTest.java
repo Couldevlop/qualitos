@@ -426,6 +426,31 @@ class RiskRegisterServiceTest {
         assertThat(vue.title()).isEqualTo("Dérive");
     }
 
+    @Test
+    void leProprietaireChoisiDansLAnnuaireGardeSonCompteEtSonNom() {
+        UUID compte = UUID.randomUUID();
+        RiskRegisterDto.RiskCommand c = risque("Dérive", 3, 3);
+        RiskRegisterDto.RiskCommand avecCompte = new RiskRegisterDto.RiskCommand(c.title(), c.type(), c.process(),
+                c.site(), " Awa Diallo ", c.cause(), c.effect(), c.origin(), c.originRef(), c.sourceId(),
+                c.grossSeverity(), c.grossProbability(), null, null, null, null, c.requirements(), null, null,
+                compte);
+
+        RiskRegisterDto.RiskView vue = service.createRisk(avecCompte);
+        assertThat(vue.ownerUserId()).isEqualTo(compte);
+        assertThat(vue.owner()).isEqualTo("Awa Diallo");
+        assertThat(service.risk(vue.id()).risk().ownerUserId()).isEqualTo(compte);
+
+        // Une révision sans compte (nom seul, saisie antérieure) le retire : c'est le corps qui fait foi.
+        assertThat(service.reviseRisk(vue.id(), risque("Dérive", 3, 3)).ownerUserId()).isNull();
+
+        RiskRegisterDto.OpportunityCommand o = opportunite("Automatiser", 4, 4);
+        RiskRegisterDto.OpportunityView opp = service.createOpportunity(new RiskRegisterDto.OpportunityCommand(
+                o.title(), o.type(), o.process(), o.site(), "Awa Diallo", o.targetDate(), o.context(), o.benefit(),
+                o.origin(), o.originRef(), o.gain(), o.feasibility(), null, null, o.requirements(), null, compte));
+        assertThat(opp.ownerUserId()).isEqualTo(compte);
+        assertThat(opp.owner()).isEqualTo("Awa Diallo");
+    }
+
     // ---------- opportunités ----------
 
     @Test

@@ -35,7 +35,8 @@ public final class RiskRegisterDto {
             Integer residualSeverity, Integer residualProbability, Integer residualScore,
             RiskLevel residualLevel, RiskDecision decision, RiskStatus status,
             List<RegisterRequirement> requirements, LocalDate nextReviewOn,
-            String effectivenessCriterion, Instant createdAt, Instant updatedAt) {}
+            String effectivenessCriterion, Instant createdAt, Instant updatedAt,
+            UUID ownerUserId) {}
 
     /** La fiche d'un risque : la ligne, ses CAPA liées, son suivi. */
     public record RiskSheet(RiskView risk, List<CapaView> capas, List<EventView> events) {}
@@ -50,7 +51,7 @@ public final class RiskRegisterDto {
             RegisterOrigin origin, String originRef, int gain, int feasibility, int score,
             OpportunityLevel level, OpportunityDecision decision, OpportunityStatus status,
             List<RegisterRequirement> requirements, String benefitCriterion,
-            Instant createdAt, Instant updatedAt) {}
+            Instant createdAt, Instant updatedAt, UUID ownerUserId) {}
 
     public record OpportunitySheet(OpportunityView opportunity, List<ActionView> actions,
                                    List<EventView> events) {}
@@ -83,14 +84,38 @@ public final class RiskRegisterDto {
             Integer grossSeverity, Integer grossProbability,
             Integer residualSeverity, Integer residualProbability,
             RiskDecision decision, RiskStatus status, List<RegisterRequirement> requirements,
-            LocalDate nextReviewOn, String effectivenessCriterion) {}
+            LocalDate nextReviewOn, String effectivenessCriterion, UUID ownerUserId) {
+
+        /** Un risque sans compte de propriétaire (nom seul). */
+        public RiskCommand(String title, RegisterType type, String process, String site, String owner,
+                           String cause, String effect, RegisterOrigin origin, String originRef, UUID sourceId,
+                           Integer grossSeverity, Integer grossProbability,
+                           Integer residualSeverity, Integer residualProbability,
+                           RiskDecision decision, RiskStatus status, List<RegisterRequirement> requirements,
+                           LocalDate nextReviewOn, String effectivenessCriterion) {
+            this(title, type, process, site, owner, cause, effect, origin, originRef, sourceId,
+                    grossSeverity, grossProbability, residualSeverity, residualProbability, decision, status,
+                    requirements, nextReviewOn, effectivenessCriterion, null);
+        }
+    }
 
     public record OpportunityCommand(
             String title, RegisterType type, String process, String site, String owner,
             LocalDate targetDate, String context, String benefit, RegisterOrigin origin,
             String originRef, Integer gain, Integer feasibility, OpportunityDecision decision,
             OpportunityStatus status, List<RegisterRequirement> requirements,
-            String benefitCriterion) {}
+            String benefitCriterion, UUID ownerUserId) {
+
+        /** Une opportunité sans compte de propriétaire (nom seul). */
+        public OpportunityCommand(String title, RegisterType type, String process, String site, String owner,
+                                  LocalDate targetDate, String context, String benefit, RegisterOrigin origin,
+                                  String originRef, Integer gain, Integer feasibility, OpportunityDecision decision,
+                                  OpportunityStatus status, List<RegisterRequirement> requirements,
+                                  String benefitCriterion) {
+            this(title, type, process, site, owner, targetDate, context, benefit, origin, originRef, gain,
+                    feasibility, decision, status, requirements, benefitCriterion, null);
+        }
+    }
 
     /** Le responsable est un compte de l'annuaire, qui devient le pilote du dossier (ADR 0088). */
     public record CapaCommand(String title, String description, RiskCapaKind kind, UUID ownerId,

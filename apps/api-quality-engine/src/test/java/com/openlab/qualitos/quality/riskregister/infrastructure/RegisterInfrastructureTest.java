@@ -55,12 +55,14 @@ class RegisterInfrastructureTest {
 
     static final UUID TENANT = UUID.randomUUID();
     static final UUID ACTEUR = UUID.randomUUID();
+    /** Le compte de l'annuaire du propriétaire (ADR 0092), qui doit survivre à l'aller-retour. */
+    static final UUID PROPRIETAIRE = UUID.randomUUID();
     static final Instant T0 = Instant.parse("2026-10-01T08:00:00Z");
 
     static Identification ident() {
         return new Identification("Fuite — « confidentiel » de M. Kone", RegisterType.QUALITY, "Production",
                 "Usine A", "M. Kone", RegisterOrigin.FMEA, "PFMEA-7 #3",
-                Set.of(RegisterRequirement.ISO_9001_6_1, RegisterRequirement.IATF_16949_6_1_2));
+                Set.of(RegisterRequirement.ISO_9001_6_1, RegisterRequirement.IATF_16949_6_1_2), PROPRIETAIRE);
     }
 
     static Risk risque(UUID id) {
@@ -107,6 +109,7 @@ class RegisterInfrastructureTest {
         assertThat(relu.getReference()).isEqualTo("R-014");
         assertThat(relu.getSourceId()).isEqualTo(original.getSourceId());
         assertThat(relu.getIdentification()).isEqualTo(original.getIdentification());
+        assertThat(relu.getIdentification().ownerUserId()).isEqualTo(PROPRIETAIRE);
         assertThat(relu.getGross()).isEqualTo(original.getGross());
         assertThat(relu.getResidual()).isEqualTo(original.getResidual());
         assertThat(relu.getNextReviewOn()).isEqualTo(LocalDate.of(2027, 1, 1));
@@ -188,7 +191,7 @@ class RegisterInfrastructureTest {
         RegisterRepositoryAdapters.Opportunities adapter = new RegisterRepositoryAdapters.Opportunities(jpa);
         Opportunity o = Opportunity.create(TENANT, "O-003", new OpportunityDetails(
                 new Identification("Automatiser SPC", RegisterType.QUALITY, "Production", null, "Mme Diallo",
-                        RegisterOrigin.AUDIT, "AUD-7", Set.of(RegisterRequirement.ISO_9001_10_3)),
+                        RegisterOrigin.AUDIT, "AUD-7", Set.of(RegisterRequirement.ISO_9001_10_3), PROPRIETAIRE),
                 LocalDate.of(2027, 3, 31), "ctx", "bén", 4, 4, null, null, "crit"), ACTEUR, T0);
 
         Opportunity relue = adapter.save(o);
@@ -198,6 +201,8 @@ class RegisterInfrastructureTest {
         assertThat(relue.getIdentification().requirements()).containsExactly(RegisterRequirement.ISO_9001_10_3);
         assertThat(relue.getTargetDate()).isEqualTo(LocalDate.of(2027, 3, 31));
         assertThat(relue.getBenefitCriterion()).isEqualTo("crit");
+        assertThat(relue.getIdentification().ownerUserId()).isEqualTo(PROPRIETAIRE);
+        assertThat(relue.getIdentification().owner()).isEqualTo("Mme Diallo");
 
         UUID id = UUID.randomUUID();
         Opportunity existante = new Opportunity(id, TENANT, "O-003", relue.getIdentification(), null, null, null,

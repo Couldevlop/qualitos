@@ -187,13 +187,14 @@ public class RiskRegisterController {
                 r.cause(), r.effect(), r.origin(), r.originRef(), r.sourceId(), r.grossSeverity(),
                 r.grossProbability(),
                 r.residualSeverity(), r.residualProbability(), r.decision(), r.status(), r.requirements(),
-                r.nextReviewOn(), r.effectivenessCriterion());
+                r.nextReviewOn(), r.effectivenessCriterion(), r.ownerUserId());
     }
 
     private static RiskRegisterDto.OpportunityCommand commande(RiskRegisterWebDto.OpportunityRequest r) {
         return new RiskRegisterDto.OpportunityCommand(r.title(), r.type(), r.process(), r.site(), r.owner(),
                 r.targetDate(), r.context(), r.benefit(), r.origin(), r.originRef(), r.gain(),
-                r.feasibility(), r.decision(), r.status(), r.requirements(), r.benefitCriterion());
+                r.feasibility(), r.decision(), r.status(), r.requirements(), r.benefitCriterion(),
+                r.ownerUserId());
     }
 
     private static RiskRegisterDto.ActionCommand commande(RiskRegisterWebDto.ActionRequest r) {

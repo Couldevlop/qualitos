@@ -50,9 +50,16 @@ public class IshikawaAction {
     @Column(nullable = false, length = 500)
     private String label;
 
-    /** Qui s'en charge. Un nom libre : tous les responsables n'ont pas de compte. */
+    /**
+     * Qui s'en charge : son nom, recopié au choix dans l'annuaire (ADR 0092).
+     * Les actions antérieures gardent le nom tapé à l'époque.
+     */
     @Column(length = 255)
     private String responsible;
+
+    /** Le compte de connexion du responsable ; nul tant que personne n'est choisi dans l'annuaire. */
+    @Column(name = "responsible_user_id")
+    private UUID responsibleUserId;
 
     /**
      * Date à laquelle l'action a été DÉCIDÉE — la date de la réunion, du comité,

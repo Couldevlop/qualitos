@@ -62,7 +62,7 @@ class CostOfQualityControllerTest {
     static CoqDto.LineView ligne() {
         return new CoqDto.LineView(LIGNE, LIBELLE, "INTERNAL_SCRAP", "Rebuts", true,
                 new BigDecimal("1263.50"), 1, "Mme Diallo", LocalDate.of(2026, 9, 15), null,
-                "P-4410", 12, "L-2609", LocalDate.of(2026, 9, 12));
+                "P-4410", 12, "L-2609", LocalDate.of(2026, 9, 12), null);
     }
 
     static CoqDto.ReportView rapport(Integer mois) {
@@ -201,7 +201,26 @@ class CostOfQualityControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(CORPS.replace("1263.50", "-5")))
                 .andExpect(status().isBadRequest());
+        // Le responsable se choisit dans l'annuaire (ADR 0092) : son compte est un UUID.
+        mockMvc.perform(post("/api/v1/cost-of-quality/entries").with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(CORPS.replace("{", "{\"responsibleUserId\":\"Mme Diallo\",")))
+                .andExpect(status().isBadRequest());
         verifyNoInteractions(service);
+    }
+
+    @Test
+    @WithMockUser(roles = "QUALITY_MANAGER")
+    void leCompteDuResponsableEstTransmisAuService() throws Exception {
+        UUID compte = UUID.randomUUID();
+        when(service.record(any())).thenReturn(ligne());
+
+        mockMvc.perform(post("/api/v1/cost-of-quality/entries").with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(CORPS.replace("{", "{\"responsibleUserId\":\"" + compte + "\",")))
+                .andExpect(status().isCreated());
+        org.mockito.Mockito.verify(service).record(org.mockito.ArgumentMatchers.argThat(
+                c -> compte.equals(c.responsibleUserId()) && "Mme Diallo".equals(c.responsible())));
     }
 
     @Test

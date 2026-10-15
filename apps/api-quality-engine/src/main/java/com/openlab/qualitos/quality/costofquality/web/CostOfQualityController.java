@@ -110,6 +110,7 @@ public class CostOfQualityController {
 
     private static CoqDto.EntryCommand commande(CostOfQualityWebDto.EntryRequest r) {
         return new CoqDto.EntryCommand(r.labelId(), r.amount(), r.responsible(), r.imputationDate(),
-                r.comment(), r.partReference(), r.partQuantity(), r.lot(), r.receivedOrMadeOn());
+                r.comment(), r.partReference(), r.partQuantity(), r.lot(), r.receivedOrMadeOn(),
+                r.responsibleUserId());
     }
 }

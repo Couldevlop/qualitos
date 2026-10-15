@@ -50,8 +50,13 @@ public class OpportunityJpaEntity {
     @Column(length = 120)
     private String site;
 
+    /** Le nom du propriétaire, recopié au choix dans l'annuaire (ou tapé, avant l'ADR 0092). */
     @Column(nullable = false, length = 150)
     private String owner;
+
+    /** Le compte de connexion du propriétaire ; nul sur les fiches antérieures à l'annuaire. */
+    @Column(name = "owner_user_id")
+    private UUID ownerUserId;
 
     @Column(name = "target_date")
     private LocalDate targetDate;

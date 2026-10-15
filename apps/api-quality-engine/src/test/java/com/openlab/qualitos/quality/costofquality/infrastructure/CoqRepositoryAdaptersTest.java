@@ -73,6 +73,20 @@ class CoqRepositoryAdaptersTest {
         assertThat(relue.getPartQuantity()).isEqualTo(12);
         assertThat(relue.getReceivedOrMadeOn()).isEqualTo(LocalDate.of(2026, 9, 12));
         assertThat(relue.getComment()).isEqualTo("note");
+        assertThat(relue.getResponsibleUserId()).isNull();
+    }
+
+    @Test
+    void leCompteDuResponsableSEnregistreEtSeRelit() {
+        UUID compte = UUID.randomUUID();
+        LocalDate date = LocalDate.of(2026, 9, 15);
+        CoqEntry enregistree = entries.save(CoqEntry.record(tenant, rebuts, new CoqEntryDetails(
+                new BigDecimal("12.00"), "Awa Diallo", date, null, "P-1", 1, "L-1", date, compte),
+                UUID.randomUUID(), Instant.now()));
+
+        CoqEntry relue = entries.findByIdAndTenant(enregistree.getId(), tenant).orElseThrow();
+        assertThat(relue.getResponsibleUserId()).isEqualTo(compte);
+        assertThat(relue.getResponsible()).isEqualTo("Awa Diallo");
     }
 
     @Test

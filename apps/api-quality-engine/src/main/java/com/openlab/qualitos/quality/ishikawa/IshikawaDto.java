@@ -102,7 +102,9 @@ public final class IshikawaDto {
             LocalDate decidedOn,
             IshikawaActionStatus status,
             Instant createdAt,
-            Instant updatedAt
+            Instant updatedAt,
+            /** Le compte du responsable choisi dans l'annuaire (ADR 0092), ou rien. */
+            UUID responsibleUserId
     ) {}
 
     public record CreateActionRequest(
@@ -111,14 +113,32 @@ public final class IshikawaDto {
             /** Date de la DÉCISION (réunion, comité), pas une échéance. */
             LocalDate decidedOn,
             /** Absent = « à faire ». */
-            IshikawaActionStatus status
-    ) {}
+            IshikawaActionStatus status,
+            /** Le compte du responsable choisi dans l'annuaire ; {@code responsible} porte son nom. */
+            UUID responsibleUserId
+    ) {
+
+        /** Une action sans compte de responsable (nom seul, ou personne). */
+        public CreateActionRequest(String label, String responsible, LocalDate decidedOn,
+                                   IshikawaActionStatus status) {
+            this(label, responsible, decidedOn, status, null);
+        }
+    }
 
     /** Modification cellule par cellule : un champ absent signifie « inchangé ». */
     public record UpdateActionRequest(
             @Size(max = 500) String label,
             @Size(max = 255) String responsible,
             LocalDate decidedOn,
-            IshikawaActionStatus status
-    ) {}
+            IshikawaActionStatus status,
+            /** Avec {@code responsible} : le compte du nouveau responsable (absent = nom seul). */
+            UUID responsibleUserId
+    ) {
+
+        /** Une modification qui ne touche pas au compte du responsable. */
+        public UpdateActionRequest(String label, String responsible, LocalDate decidedOn,
+                                   IshikawaActionStatus status) {
+            this(label, responsible, decidedOn, status, null);
+        }
+    }
 }

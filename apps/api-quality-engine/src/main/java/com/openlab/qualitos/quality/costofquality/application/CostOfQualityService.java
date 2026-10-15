@@ -201,7 +201,7 @@ public class CostOfQualityService {
 
     private static CoqEntryDetails details(CoqDto.EntryCommand c) {
         return new CoqEntryDetails(c.amount(), c.responsible(), c.imputationDate(), c.comment(),
-                c.partReference(), c.partQuantity(), c.lot(), c.receivedOrMadeOn());
+                c.partReference(), c.partQuantity(), c.lot(), c.receivedOrMadeOn(), c.responsibleUserId());
     }
 
     /** Vue mois : une ligne par imputation, puis les libellés livrés restés sans imputation. */
@@ -232,7 +232,7 @@ public class CostOfQualityService {
             List<CoqEntry> siennes = parLibelle.get(l.getId());
             if (siennes != null) {
                 vues.add(new CoqDto.LineView(null, l.getId(), l.getCode(), l.getName(), l.isPartControl(),
-                        somme(siennes), siennes.size(), null, null, null, null, null, null, null));
+                        somme(siennes), siennes.size(), null, null, null, null, null, null, null, null));
             } else if (l.builtIn()) {
                 vues.add(vide(l));
             }
@@ -293,14 +293,15 @@ public class CostOfQualityService {
 
     private static CoqDto.LineView vide(CoqLabel l) {
         return new CoqDto.LineView(null, l.getId(), l.getCode(), l.getName(), l.isPartControl(),
-                BigDecimal.ZERO, 0, null, null, null, null, null, null, null);
+                BigDecimal.ZERO, 0, null, null, null, null, null, null, null, null);
     }
 
     private static CoqDto.LineView ligne(CoqEntry e, CoqLabel l) {
         return new CoqDto.LineView(e.getId(), e.getLabelId(),
                 l == null ? null : l.getCode(), l == null ? null : l.getName(), e.isPartControl(),
                 e.getAmount(), 1, e.getResponsible(), e.getImputationDate(), e.getComment(),
-                e.getPartReference(), e.getPartQuantity(), e.getLot(), e.getReceivedOrMadeOn());
+                e.getPartReference(), e.getPartQuantity(), e.getLot(), e.getReceivedOrMadeOn(),
+                e.getResponsibleUserId());
     }
 
     private static CoqDto.LabelView vue(CoqLabel l) {

@@ -230,6 +230,23 @@ class ApqpServiceTest {
         assertThat(livrable.getDueDate()).isEqualTo(LocalDate.of(2026, 11, 30));
         assertThat(livrable.getPercentComplete()).isEqualTo(60);
         assertThat(livrable.getComment()).isEqualTo("reçu le 3");
+        assertThat(livrable.getOwnerUserId()).isNull();
+    }
+
+    @Test
+    @DisplayName("le responsable choisi dans l'annuaire garde son compte et son nom")
+    void leResponsableChoisiDansLAnnuaire() {
+        ApqpDeliverable livrable = livrable();
+        preparerCycle(livrable);
+        UUID compte = UUID.randomUUID();
+
+        service.completerLivrable(PROJET_ID, PHASE_ID, LIVRABLE_ID,
+                new ApqpDto.CompletionRequest(false, null, null, "Awa Diallo", null, null, null, null, null, null,
+                        compte),
+                ACTEUR);
+
+        assertThat(livrable.getOwnerUserId()).isEqualTo(compte);
+        assertThat(livrable.getOwner()).isEqualTo("Awa Diallo");
     }
 
     @Test

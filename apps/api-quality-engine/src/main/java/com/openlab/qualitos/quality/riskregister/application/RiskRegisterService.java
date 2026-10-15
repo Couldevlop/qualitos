@@ -127,8 +127,7 @@ public class RiskRegisterService {
             // Un risque issu d'un objet garde son origine : seule la source vérifiée la porte.
             Identification i = details.identification();
             Identification origine = risque.getIdentification();
-            details = avecIdentification(details, new Identification(i.title(), i.type(), i.process(),
-                    i.site(), i.owner(), origine.origin(), origine.originRef(), i.requirements()));
+            details = avecIdentification(details, i.withOrigin(origine.origin(), origine.originRef()));
         }
         List<RegisterChange> changements = risque.revise(details, maintenant);
         Risk enregistre = risks.save(risque);
@@ -422,8 +421,7 @@ public class RiskRegisterService {
             throw new RegisterValidationException("sourceId",
                     "Cet objet ne justifie pas un risque (" + src.reason() + ").");
         }
-        return avecIdentification(details, new Identification(i.title(), i.type(), i.process(), i.site(),
-                i.owner(), i.origin(), src.originRef(), i.requirements()));
+        return avecIdentification(details, i.withOrigin(i.origin(), src.originRef()));
     }
 
     private static RiskDetails avecIdentification(RiskDetails d, Identification i) {
@@ -483,7 +481,7 @@ public class RiskRegisterService {
         }
         return new RiskDetails(
                 new Identification(c.title(), c.type(), c.process(), c.site(), c.owner(),
-                        c.origin(), c.originRef(), exigences(c.requirements())),
+                        c.origin(), c.originRef(), exigences(c.requirements()), c.ownerUserId()),
                 c.cause(), c.effect(), c.grossSeverity(), c.grossProbability(),
                 c.residualSeverity(), c.residualProbability(), c.decision(), c.status(),
                 c.nextReviewOn(), c.effectivenessCriterion());
@@ -495,7 +493,7 @@ public class RiskRegisterService {
         }
         return new OpportunityDetails(
                 new Identification(c.title(), c.type(), c.process(), c.site(), c.owner(),
-                        c.origin(), c.originRef(), exigences(c.requirements())),
+                        c.origin(), c.originRef(), exigences(c.requirements()), c.ownerUserId()),
                 c.targetDate(), c.context(), c.benefit(), c.gain(), c.feasibility(),
                 c.decision(), c.status(), c.benefitCriterion());
     }
@@ -514,7 +512,8 @@ public class RiskRegisterService {
                 residuelle ? r.getResidual().second() : null,
                 residuelle ? r.getResidual().score() : null,
                 r.residualLevel(), r.getDecision(), r.getStatus(), trie(i.requirements()),
-                r.getNextReviewOn(), r.getEffectivenessCriterion(), r.getCreatedAt(), r.getUpdatedAt());
+                r.getNextReviewOn(), r.getEffectivenessCriterion(), r.getCreatedAt(), r.getUpdatedAt(),
+                i.ownerUserId());
     }
 
     static RiskRegisterDto.OpportunityView vue(Opportunity o) {
@@ -523,7 +522,8 @@ public class RiskRegisterService {
                 i.process(), i.site(), i.owner(), o.getTargetDate(), o.getContext(), o.getBenefit(),
                 i.origin(), i.originRef(), o.getEvaluation().first(), o.getEvaluation().second(),
                 o.getEvaluation().score(), o.level(), o.getDecision(), o.getStatus(),
-                trie(i.requirements()), o.getBenefitCriterion(), o.getCreatedAt(), o.getUpdatedAt());
+                trie(i.requirements()), o.getBenefitCriterion(), o.getCreatedAt(), o.getUpdatedAt(),
+                i.ownerUserId());
     }
 
     static RiskRegisterDto.ActionView vue(OpportunityAction a) {
