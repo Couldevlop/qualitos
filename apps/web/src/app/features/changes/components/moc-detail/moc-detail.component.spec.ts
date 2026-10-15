@@ -86,6 +86,7 @@ describe('MocDetailComponent', () => {
     expect(bouton('modifier')).not.toBeNull();
     expect(bouton('soumettre')).toBeNull();
     service.sendToAnalysis.and.returnValue(of(demande({ status: 'IN_ANALYSIS' })));
+    expect(bouton('analyse')!.closest('.fiche__entete')).toBeNull();
     bouton('analyse')!.click();
     expect(emis[0].status).toBe('IN_ANALYSIS');
     expect(component.tab).toBe(1);

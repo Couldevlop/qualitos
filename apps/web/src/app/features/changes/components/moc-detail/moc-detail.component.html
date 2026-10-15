@@ -22,10 +22,6 @@
                 (click)="remove()" [disabled]="busy" data-test="supprimer">
           <mat-icon>delete_outline</mat-icon> <span i18n="@@common.delete">Supprimer</span>
         </button>
-        <button mat-flat-button color="primary" type="button" *ngIf="detail.status === 'DRAFT'"
-                (click)="sendToAnalysis()" [disabled]="busy" data-test="analyse">
-          <mat-icon>science</mat-icon> <span i18n="@@moc.send-to-analysis">Envoyer en analyse</span>
-        </button>
         <button mat-flat-button color="primary" type="button" *ngIf="detail.status === 'REJECTED'"
                 (click)="reopen()" [disabled]="busy" data-test="rouvrir">
           <mat-icon>restart_alt</mat-icon> <span i18n="@@moc.reopen">Rouvrir l'analyse</span>
@@ -76,6 +72,13 @@
           <dd class="demande__texte">{{ detail.justification || '—' }}</dd>
         </div>
       </dl>
+      <!-- Le brouillon relu, l'analyse s'ouvre : sous la demande, comme sur la maquette. -->
+      <div class="fiche__bas" *ngIf="detail.canManage && detail.status === 'DRAFT'">
+        <button mat-flat-button color="primary" type="button"
+                (click)="sendToAnalysis()" [disabled]="busy" data-test="analyse">
+          <mat-icon>science</mat-icon> <span i18n="@@moc.send-to-analysis">Envoyer en analyse</span>
+        </button>
+      </div>
     </mat-tab>
 
     <!-- ===== Analyse d'impact ===== -->
