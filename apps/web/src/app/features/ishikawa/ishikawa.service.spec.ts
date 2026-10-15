@@ -177,6 +177,32 @@ describe('IshikawaService', () => {
     it('convertit aussi une cause-racine ciblée', fakeAsync(() => {
       expect(run(service.convertToPdca('ish-1', 'c1')).status).toBe('PLAN');
     }));
+
+    // ---- Plan d'actions : le responsable est une personne de l'annuaire (ADR 0092)
+
+    it('tient le plan d\'actions : responsable nommé avec son compte, modifié puis retiré', fakeAsync(() => {
+      expect(run(service.listActions('ish-1'))).toEqual([]);
+
+      const action = run(service.addAction('ish-1', {
+        label: 'Former l\'équipe', responsible: 'Amina Dridi', responsibleUserId: 'kc-amina'
+      }));
+      expect(action.status).toBe('TODO');
+      expect(action.responsible).toBe('Amina Dridi');
+      expect(action.responsibleUserId).toBe('kc-amina');
+      expect(run(service.listActions('ish-1')).length).toBe(1);
+
+      const vide = run(service.addAction('ish-1', { label: 'Sans responsable' }));
+      expect(vide.responsible).toBeNull();
+      expect(vide.responsibleUserId).toBeNull();
+
+      const modifiee = run(service.updateAction(action.id, { status: 'DONE' }));
+      expect(modifiee.status).toBe('DONE');
+      expect(modifiee.responsibleUserId).toBe('kc-amina');
+
+      run(service.deleteAction(action.id));
+      run(service.deleteAction('inconnue'));
+      expect(run(service.listActions('ish-1')).map(a => a.label)).toEqual(['Sans responsable']);
+    }));
   });
 
   // ------------------------------------------------------------------------
@@ -260,6 +286,27 @@ describe('IshikawaService', () => {
       expect(req.request.method).toBe('POST');
       expect(req.request.body).toEqual({});
       req.flush([] as SuggestedCause[]);
+    });
+
+    it('passe le plan d\'actions par les routes du diagramme et de l\'action', () => {
+      service.listActions('d-1').subscribe();
+      http.expectOne(`${BASE}/d-1/actions`).flush([]);
+
+      service.addAction('d-1', { label: 'Former', responsible: 'Amina Dridi', responsibleUserId: 'kc-amina' }).subscribe();
+      const creation = http.expectOne(`${BASE}/d-1/actions`);
+      expect(creation.request.method).toBe('POST');
+      expect(creation.request.body.responsibleUserId).toBe('kc-amina');
+      creation.flush({});
+
+      service.updateAction('a-1', { responsible: 'Karim', responsibleUserId: 'kc-karim' }).subscribe();
+      const patch = http.expectOne(r => r.url.endsWith('/actions/a-1'));
+      expect(patch.request.method).toBe('PATCH');
+      patch.flush({});
+
+      service.deleteAction('a-1').subscribe();
+      const suppression = http.expectOne(r => r.url.endsWith('/actions/a-1'));
+      expect(suppression.request.method).toBe('DELETE');
+      suppression.flush(null);
     });
 
     it('convertit en PDCA sans paramètre, ou en ciblant une cause', () => {

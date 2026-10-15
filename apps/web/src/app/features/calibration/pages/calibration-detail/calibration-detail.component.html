@@ -216,8 +216,7 @@
             <th mat-header-cell *matHeaderCellDef i18n="@@calibration.record.performed-by">Réalisée par</th>
             <td mat-cell *matCellDef="let r">
               <span *ngIf="r.performedByOrg">{{ r.performedByOrg }}</span>
-              <span class="dim" *ngIf="!r.performedByOrg && r.performedByUserId"
-                    i18n="@@calibration.record.internal">Interne</span>
+              <qos-person-name *ngIf="!r.performedByOrg && r.performedByUserId" [accountId]="r.performedByUserId"></qos-person-name>
               <span class="dim" *ngIf="!r.performedByOrg && !r.performedByUserId">—</span>
             </td>
           </ng-container>

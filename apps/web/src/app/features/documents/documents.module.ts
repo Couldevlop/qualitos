@@ -10,6 +10,7 @@ import { DocumentCircuitComponent } from './components/document-circuit/document
 import { DocumentsListComponent } from './pages/documents-list/documents-list.component';
 import { DocumentsRejectDialogComponent } from './pages/documents-reject-dialog/documents-reject-dialog.component';
 import { DocumentsVersionDialogComponent } from './pages/documents-version-dialog/documents-version-dialog.component';
+import { PersonNameModule } from '../../shared/person-name/person-name.module';
 
 const routes: Routes = [
   { path: '', component: DocumentsListComponent },
@@ -26,6 +27,6 @@ const routes: Routes = [
     DocumentsRejectDialogComponent,
     DocumentCircuitComponent
   ],
-  imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
+  imports: [PersonNameModule, SharedModule, UiModule, RouterModule.forChild(routes)]
 })
 export class DocumentsModule {}

@@ -3,6 +3,8 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../../shared/shared.module';
 import { UiModule } from '../../shared/ui/ui.module';
+import { PersonNameModule } from '../../shared/person-name/person-name.module';
+import { UserPickerModule } from '../../shared/user-picker/user-picker.module';
 import { DmaicCreateDialogComponent } from './pages/dmaic-create-dialog/dmaic-create-dialog.component';
 import { DmaicDetailComponent } from './pages/dmaic-detail/dmaic-detail.component';
 import { DmaicEditDialogComponent } from './pages/dmaic-edit-dialog/dmaic-edit-dialog.component';
@@ -24,6 +26,6 @@ const routes: Routes = [
     DmaicMeasureDialogComponent,
     DmaicPokaYokeDialogComponent
   ],
-  imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
+  imports: [PersonNameModule, UserPickerModule, SharedModule, UiModule, RouterModule.forChild(routes)]
 })
 export class DmaicModule {}

@@ -9,6 +9,8 @@ import { UiModule } from '../../../../shared/ui/ui.module';
 import { DmaicService } from '../../dmaic.service';
 import { DmaicProjectResponse } from '../../dmaic.types';
 import { DmaicEditDialogComponent } from './dmaic-edit-dialog.component';
+import { provideDirectoryStub } from '../../../../core/directory/testing/directory.stub';
+import { UserPickerModule } from '../../../../shared/user-picker/user-picker.module';
 
 /**
  * Édition d'un projet DMAIC (§3.4).
@@ -59,8 +61,8 @@ describe('DmaicEditDialogComponent', () => {
 
     TestBed.configureTestingModule({
       declarations: [DmaicEditDialogComponent],
-      imports: [SharedModule, UiModule, NoopAnimationsModule],
-      providers: [
+      imports: [UserPickerModule, SharedModule, UiModule, NoopAnimationsModule],
+      providers: [provideDirectoryStub(),
         { provide: DmaicService, useValue: svc },
         { provide: MatDialogRef, useValue: dialogRef },
         { provide: MatSnackBar, useValue: snack },
@@ -99,7 +101,7 @@ describe('DmaicEditDialogComponent', () => {
     // « undefined » à l'écran.
     expect(v.problemStatement).toBe('');
     expect(v.goalStatement).toBe('');
-    expect(v.championId).toBe('');
+    expect(v.championId).toBeNull();
     expect(v.targetCompletionDate).toBe('');
     expect(v.specUnit).toBe('');
     // Numériques à null : 0 est une valeur légitime de spécification, le repli

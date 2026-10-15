@@ -11,6 +11,8 @@ import { UiModule } from '../../../../shared/ui/ui.module';
 import { PdcaService } from '../../pdca.service';
 import { PdcaCycleResponse, PdcaStatus, PdcaStepEvidence, PdcaStepResponse } from '../../pdca.types';
 import { PdcaDetailComponent } from './pdca-detail.component';
+import { provideDirectoryStub } from '../../../../core/directory/testing/directory.stub';
+import { PersonNameModule } from '../../../../shared/person-name/person-name.module';
 
 const ID = '11111111-1111-1111-1111-111111111111';
 
@@ -59,8 +61,8 @@ describe('PdcaDetailComponent', () => {
 
     await TestBed.configureTestingModule({
       declarations: [PdcaDetailComponent],
-      imports: [SharedModule, UiModule, NoopAnimationsModule],
-      providers: [
+      imports: [PersonNameModule, SharedModule, UiModule, NoopAnimationsModule],
+      providers: [provideDirectoryStub(),
         { provide: PdcaService, useValue: pdca },
         // paramMap lu à la volée : chaque test choisit l'identifiant de route
         // avant de monter le composant.

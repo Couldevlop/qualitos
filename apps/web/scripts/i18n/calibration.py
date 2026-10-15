@@ -126,7 +126,6 @@ TRANSLATIONS = {
     'calibration.record.certificate': ('Certificat', 'Certificate', 'Certificado', 'الشهادة', '証明書', '证书'),
     'calibration.record.certificate-ref': ('Référence du certificat', 'Certificate reference', 'Referencia del certificado', 'مرجع الشهادة', '証明書番号', '证书编号'),
     'calibration.record.fail-warning': ('Instrument critique : un résultat non conforme le met immédiatement hors service.', 'Critical instrument: a failed result takes it out of service immediately.', 'Instrumento crítico: un resultado no conforme lo pone inmediatamente fuera de servicio.', 'أداة حرجة: النتيجة غير المطابقة تُخرجها من الخدمة فورًا.', '重要計測器：不合格の結果は直ちに使用停止となります。', '关键仪器：不合格结果将立即使其停用。'),
-    'calibration.record.internal': ('Interne', 'Internal', 'Interna', 'داخلي', '社内', '内部'),
     'calibration.record.measurements': ('Mesures', 'Measurements', 'Mediciones', 'القياسات', '測定値', '测量值'),
     'calibration.record.measurements-hint': ("Points de contrôle, écarts constatés, conditions d'essai.", 'Check points, deviations found, test conditions.', 'Puntos de control, desviaciones detectadas, condiciones de ensayo.', 'نقاط الفحص والانحرافات الملاحظة وظروف الاختبار.', '検査ポイント、確認された偏差、試験条件。', '检查点、发现的偏差、试验条件。'),
     'calibration.record.measurements-taken': ('Mesures relevées', 'Measurements taken', 'Mediciones registradas', 'القياسات المسجّلة', '実測値', '实测值'),

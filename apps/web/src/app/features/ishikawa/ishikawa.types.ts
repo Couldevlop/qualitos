@@ -88,7 +88,10 @@ export interface IshikawaActionResponse {
   id: string;
   diagramId: string;
   label: string;
+  /** Le nom du responsable, recopié de l'annuaire (ou tapé, sur une action ancienne). */
   responsible?: string | null;
+  /** Son compte de connexion (ADR 0092) ; absent tant que personne n'est choisi. */
+  responsibleUserId?: string | null;
   /** Date de la DÉCISION (réunion, comité), et non une échéance. */
   decidedOn?: string | null;
   status: IshikawaActionStatus;
@@ -99,6 +102,7 @@ export interface IshikawaActionResponse {
 export interface CreateIshikawaActionRequest {
   label: string;
   responsible?: string;
+  responsibleUserId?: string;
   decidedOn?: string;
   status?: IshikawaActionStatus;
 }
@@ -107,6 +111,8 @@ export interface CreateIshikawaActionRequest {
 export interface UpdateIshikawaActionRequest {
   label?: string;
   responsible?: string;
+  /** Avec `responsible` : le compte du nouveau responsable. */
+  responsibleUserId?: string;
   decidedOn?: string;
   status?: IshikawaActionStatus;
 }

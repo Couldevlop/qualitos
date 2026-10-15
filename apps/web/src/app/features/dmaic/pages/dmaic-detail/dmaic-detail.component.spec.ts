@@ -16,6 +16,8 @@ import {
   MeasureResponse
 } from '../../dmaic.types';
 import { DmaicDetailComponent } from './dmaic-detail.component';
+import { STUB_PERSON, provideDirectoryStub } from '../../../../core/directory/testing/directory.stub';
+import { PersonNameModule } from '../../../../shared/person-name/person-name.module';
 
 /**
  * L'écran pilote les transitions du projet (avancer / pause / reprendre / annuler)
@@ -82,8 +84,8 @@ describe('DmaicDetailComponent', () => {
 
     await TestBed.configureTestingModule({
       declarations: [DmaicDetailComponent],
-      imports: [SharedModule, UiModule, NoopAnimationsModule],
-      providers: [
+      imports: [PersonNameModule, SharedModule, UiModule, NoopAnimationsModule],
+      providers: [provideDirectoryStub(),
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
         provideRouter([]),
@@ -112,6 +114,19 @@ describe('DmaicDetailComponent', () => {
     expect(el.querySelector('.meta-row')?.textContent).toContain('MEASURE');
     expect(el.querySelector('.cap-grid')?.textContent).toContain('40');
     expect(component.capability?.cpk).toBe(1.45);
+  });
+
+  it('nomme le Black Belt et le champion, jamais par leur identifiant (ADR 0092)', () => {
+    fixture.detectChanges();
+    flushDetail(project({ blackBeltId: STUB_PERSON.accountId, championId: '33333333-3333-4333-8333-333333333333' }));
+    fixture.detectChanges();
+
+    const el: HTMLElement = fixture.nativeElement;
+    expect(el.querySelector('[data-test="dmaic-black-belt"]')?.textContent).toContain(STUB_PERSON.displayName);
+    // Un compte que l'annuaire ne connaît pas se dit par un libellé neutre.
+    expect(el.querySelector('[data-test="dmaic-champion"]')?.textContent).toContain('Personne inconnue');
+    expect(el.textContent).not.toContain(STUB_PERSON.accountId);
+    expect(el.textContent).not.toContain('33333333-3333');
   });
 
   it('n\'appelle pas le serveur sur un identifiant qui n\'a pas la forme attendue', (done) => {

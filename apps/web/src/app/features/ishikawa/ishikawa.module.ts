@@ -9,6 +9,7 @@ import { IshikawaCreateDialogComponent } from './pages/ishikawa-create-dialog/is
 import { IshikawaDetailComponent } from './pages/ishikawa-detail/ishikawa-detail.component';
 import { IshikawaEditDialogComponent } from './pages/ishikawa-edit-dialog/ishikawa-edit-dialog.component';
 import { IshikawaListComponent } from './pages/ishikawa-list/ishikawa-list.component';
+import { PersonNameModule } from '../../shared/person-name/person-name.module';
 
 const routes: Routes = [
   { path: '', component: IshikawaListComponent },
@@ -24,6 +25,6 @@ const routes: Routes = [
     IshikawaEditDialogComponent,
     IshikawaFishboneComponent
   ],
-  imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
+  imports: [PersonNameModule, SharedModule, UiModule, RouterModule.forChild(routes)]
 })
 export class IshikawaModule {}

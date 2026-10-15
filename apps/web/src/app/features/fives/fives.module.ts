@@ -7,6 +7,7 @@ import { FivesCreateDialogComponent } from './pages/fives-create-dialog/fives-cr
 import { FivesDetailComponent } from './pages/fives-detail/fives-detail.component';
 import { FivesEditDialogComponent } from './pages/fives-edit-dialog/fives-edit-dialog.component';
 import { FivesListComponent } from './pages/fives-list/fives-list.component';
+import { PersonNameModule } from '../../shared/person-name/person-name.module';
 
 const routes: Routes = [
   { path: '', component: FivesListComponent },
@@ -20,6 +21,6 @@ const routes: Routes = [
     FivesCreateDialogComponent,
     FivesEditDialogComponent
   ],
-  imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
+  imports: [PersonNameModule, SharedModule, UiModule, RouterModule.forChild(routes)]
 })
 export class FivesModule {}

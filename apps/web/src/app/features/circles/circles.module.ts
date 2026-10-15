@@ -14,6 +14,8 @@ import { CirclesProposalDialogComponent } from './pages/circles-proposal-dialog/
 import { CirclesMinutesDialogComponent } from './pages/circles-minutes-dialog/circles-minutes-dialog.component';
 import { CirclesRejectDialogComponent } from './pages/circles-reject-dialog/circles-reject-dialog.component';
 import { CirclesImpactDialogComponent } from './pages/circles-impact-dialog/circles-impact-dialog.component';
+import { PersonNameModule } from '../../shared/person-name/person-name.module';
+import { UserPickerModule } from '../../shared/user-picker/user-picker.module';
 
 const routes: Routes = [
   { path: '', component: CirclesListComponent },
@@ -33,6 +35,6 @@ const routes: Routes = [
     CirclesRejectDialogComponent,
     CirclesImpactDialogComponent
   ],
-  imports: [SharedModule, UiModule, FormsModule, RouterModule.forChild(routes)]
+  imports: [PersonNameModule, UserPickerModule, SharedModule, UiModule, FormsModule, RouterModule.forChild(routes)]
 })
 export class CirclesModule {}

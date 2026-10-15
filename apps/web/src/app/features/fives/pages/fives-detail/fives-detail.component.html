@@ -66,7 +66,7 @@
             </div>
             <div class="info-item">
               <span class="info-label" i18n="@@fives.detail.auditor">Auditeur</span>
-              <span class="info-value">{{ a.auditorId }}</span>
+              <span class="info-value"><qos-person-name [accountId]="a.auditorId"></qos-person-name></span>
             </div>
             <div class="info-item">
               <span class="info-label" i18n="@@fives.detail.overall-score">Score global</span>

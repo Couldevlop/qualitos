@@ -183,8 +183,11 @@ export class CirclesDetailComponent implements OnInit {
       .subscribe();
   }
 
-  openAddMember(): void {
-    const data: CirclesMemberDialogData = { circleId: this.circleId };
+  openAddMember(c?: CircleResponse): void {
+    const data: CirclesMemberDialogData = {
+      circleId: this.circleId,
+      memberIds: (c?.members ?? []).map(m => m.userId)
+    };
     this.dialog
       .open(CirclesMemberDialogComponent, {
         data,

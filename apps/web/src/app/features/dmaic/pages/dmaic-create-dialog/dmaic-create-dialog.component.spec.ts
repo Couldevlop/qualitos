@@ -10,6 +10,8 @@ import { SharedModule } from '../../../../shared/shared.module';
 import { UiModule } from '../../../../shared/ui/ui.module';
 import { DmaicProjectResponse } from '../../dmaic.types';
 import { DmaicCreateDialogComponent } from './dmaic-create-dialog.component';
+import { provideDirectoryStub } from '../../../../core/directory/testing/directory.stub';
+import { UserPickerModule } from '../../../../shared/user-picker/user-picker.module';
 
 /**
  * Le Black Belt du projet n'est jamais saisi : il vient du JWT (§18.2 #2).
@@ -42,8 +44,8 @@ describe('DmaicCreateDialogComponent', () => {
 
     await TestBed.configureTestingModule({
       declarations: [DmaicCreateDialogComponent],
-      imports: [SharedModule, UiModule, NoopAnimationsModule],
-      providers: [
+      imports: [UserPickerModule, SharedModule, UiModule, NoopAnimationsModule],
+      providers: [provideDirectoryStub(),
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
         { provide: MatDialogRef, useValue: dialogRef },

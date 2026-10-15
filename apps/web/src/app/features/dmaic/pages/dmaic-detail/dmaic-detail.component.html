@@ -11,6 +11,12 @@
           <span [class]="phaseBadge(p.phase)">{{ p.phase }}</span>
           <span [class]="statusBadge(p.status)">{{ p.status }}</span>
           <span class="dim"><span i18n="@@dmaic.detail.target-prefix">Cible :</span> {{ p.targetCompletionDate || '—' }}</span>
+          <span class="dim" data-test="dmaic-black-belt">
+            <span i18n="@@dmaic.detail.black-belt-prefix">Black Belt :</span> <qos-person-name [accountId]="p.blackBeltId"></qos-person-name>
+          </span>
+          <span class="dim" *ngIf="p.championId" data-test="dmaic-champion">
+            <span i18n="@@dmaic.detail.champion-prefix">Champion :</span> <qos-person-name [accountId]="p.championId"></qos-person-name>
+          </span>
           <span *ngIf="p.estimatedSavingsEur" class="dim">
             <span i18n="@@dmaic.detail.savings-prefix">Économies estimées :</span> {{ p.estimatedSavingsEur | number:'1.0-0' }} €
           </span>

@@ -100,13 +100,13 @@
           <tr>
             <th i18n="@@ehs.detail.investigation-owner">Propriétaire investigation</th>
             <td>
-              <code *ngIf="i.ownerUserId" class="dim">{{ i.ownerUserId }}</code>
+              <qos-person-name *ngIf="i.ownerUserId" [accountId]="i.ownerUserId"></qos-person-name>
               <span *ngIf="!i.ownerUserId" class="dim">—</span>
             </td>
           </tr>
           <tr>
             <th i18n="@@ehs.detail.reported-by">Reporté par</th>
-            <td><code class="dim">{{ i.reportedBy }}</code></td>
+            <td><qos-person-name [accountId]="i.reportedBy"></qos-person-name></td>
           </tr>
         </table>
       </mat-card-content>

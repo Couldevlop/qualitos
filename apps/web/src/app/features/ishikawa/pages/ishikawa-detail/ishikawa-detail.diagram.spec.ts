@@ -15,6 +15,8 @@ import {
   IshikawaMode
 } from '../../ishikawa.types';
 import { IshikawaDetailComponent } from './ishikawa-detail.component';
+import { provideDirectoryStub } from '../../../../core/directory/testing/directory.stub';
+import { PersonNameModule } from '../../../../shared/person-name/person-name.module';
 
 /**
  * L'arête de poisson sur l'écran du diagramme.
@@ -58,8 +60,8 @@ describe('IshikawaDetailComponent (arête de poisson)', () => {
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({
       declarations: [IshikawaDetailComponent, IshikawaFishboneComponent],
-      imports: [SharedModule, UiModule, NoopAnimationsModule],
-      providers: [
+      imports: [PersonNameModule, SharedModule, UiModule, NoopAnimationsModule],
+      providers: [provideDirectoryStub(),
         { provide: IshikawaService, useValue: svc },
         { provide: MatSnackBar, useValue: jasmine.createSpyObj('MatSnackBar', ['open']) },
         { provide: MatDialog, useValue: jasmine.createSpyObj('MatDialog', ['open']) },
