@@ -19,7 +19,7 @@
 # =============================================================================
 
 # -------- build stage (mêmes Python et libc que le runtime) --------
-FROM cgr.dev/chainguard/python:latest-dev AS builder
+FROM cgr.dev/chainguard/python:latest-dev@sha256:c07959e43e3edece176d20c32428a53014379790169af4ea5de1dc47277eba75 AS builder
 # Les images Chainguard démarrent en nonroot ; le builder doit écrire dans /deps
 # et poser des paquets système. Ne concerne QUE cet étage.
 USER root
@@ -37,7 +37,7 @@ COPY requirements.txt ./
 RUN python -m pip install --no-cache-dir --only-binary=:all: --target=/deps -r requirements.txt
 
 # -------- runtime stage (Chainguard — surface minimale, nonroot, sans shell) ----
-FROM cgr.dev/chainguard/python:latest
+FROM cgr.dev/chainguard/python:latest@sha256:3f411b4aac1ed9cd6c9dec1486f92a8898737d9d6f95488dd727ca7d6f5254ee
 WORKDIR /app
 
 COPY --from=builder /deps /deps
