@@ -147,6 +147,14 @@ describe('MocDetailComponent', () => {
       .toBe('Rappel envoyé aux validateurs');
   });
 
+  it('affiche la classification du détail d'historique dans la langue de l'écran', () => {
+    expect(component.historyDetail({ occurredAt: 'x', event: 'SUBMITTED', actorName: null, detail: 'CRITICAL · 50/100' }))
+      .toBe(component.classificationLabel('CRITICAL') + ' · 50/100');
+    expect(component.historyDetail({ occurredAt: 'x', event: 'VALIDATION_APPROVED', actorName: null, detail: 'HSE — conforme' }))
+      .toBe('HSE — conforme');
+    expect(component.historyDetail({ occurredAt: 'x', event: 'CREATED', actorName: null, detail: null })).toBeNull();
+  });
+
   it('modifier ouvre la saisie pré-remplie et relaie la demande modifiée', async () => {
     await setup(demande());
     const modifiee = demande({ title: 'Four 3 bis' });

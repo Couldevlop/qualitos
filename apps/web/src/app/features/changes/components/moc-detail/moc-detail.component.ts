@@ -14,7 +14,7 @@ import {
   mocTypeLabel
 } from '../../moc.labels';
 import { MocService } from '../../moc.service';
-import { MOC_STEPS, MocDetail, MocHistoryEntry, MocStatus } from '../../moc.types';
+import { MOC_STEPS, MocClassification, MocDetail, MocHistoryEntry, MocStatus } from '../../moc.types';
 import {
   MocRequestDialogComponent,
   MocRequestDialogData
@@ -89,6 +89,19 @@ export class MocDetailComponent {
     const quoi = mocHistoryLabel(h.event);
     const qui = h.actorName;
     return qui ? $localize`:@@moc.history.with-actor:${quoi}:event: par ${qui}:actor:` : quoi;
+  }
+
+  /**
+   * Le détail est écrit par le serveur ; la soumission y consigne la
+   * classification par son code (« CRITICAL · 54/100 »). On l'affiche dans la
+   * langue de l'écran, y compris pour les entrées déjà enregistrées.
+   */
+  historyDetail(h: MocHistoryEntry): string | null {
+    if (!h.detail) {
+      return null;
+    }
+    return h.detail.replace(/^(NOT_ASSESSED|MINOR|MAJOR|CRITICAL)/,
+      (code) => mocClassificationLabel(code as MocClassification));
   }
 
   trackHistory(i: number, h: MocHistoryEntry): string {
