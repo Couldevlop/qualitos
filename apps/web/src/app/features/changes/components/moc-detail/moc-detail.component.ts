@@ -100,7 +100,7 @@ export class MocDetailComponent {
     if (!h.detail) {
       return null;
     }
-    return h.detail.replace(/^(NOT_ASSESSED|MINOR|MAJOR|CRITICAL)/,
+    return h.detail.replace(/^(NOT_ASSESSED|MINOR|MAJOR|CRITICAL)\b/,
       (code) => mocClassificationLabel(code as MocClassification));
   }
 
