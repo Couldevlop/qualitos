@@ -38,7 +38,7 @@ export class Nis2mEditDialogComponent {
   readonly form = this.fb.nonNullable.group({
     title:                     [this.data.row.title,                          [Validators.required, Validators.maxLength(250)]],
     description:               [this.data.row.description ?? '',              [Validators.maxLength(4000)]],
-    ownerUserId:               [this.data.row.ownerUserId ?? '',              [Validators.pattern(/^$|^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)]],
+    ownerUserId:               [this.data.row.ownerUserId ?? null,              [Validators.pattern(/^$|^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)]],
     maturityLevel:             [this.data.row.maturityLevel,                  [Validators.required, Validators.min(1), Validators.max(5)]],
     residualRiskRating:        [this.data.row.residualRiskRating,             [Validators.required]],
     criticalRiskJustification: [this.data.row.criticalRiskJustification ?? '',[Validators.maxLength(4000)]],

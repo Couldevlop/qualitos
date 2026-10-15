@@ -7,6 +7,7 @@ import { PaDetailComponent } from './pages/pa-detail/pa-detail.component';
 import { PaDialogComponent } from './pages/pa-dialog/pa-dialog.component';
 import { PaListComponent } from './pages/pa-list/pa-list.component';
 import { PaTerminateDialogComponent } from './pages/pa-terminate-dialog/pa-terminate-dialog.component';
+import { PersonNameModule } from '../../shared/person-name/person-name.module';
 
 const routes: Routes = [
   { path: '', component: PaListComponent },
@@ -20,6 +21,6 @@ const routes: Routes = [
     PaDialogComponent,
     PaTerminateDialogComponent
   ],
-  imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
+  imports: [PersonNameModule, SharedModule, UiModule, RouterModule.forChild(routes)]
 })
 export class ProcessorAgreementsModule {}

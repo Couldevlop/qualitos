@@ -79,7 +79,7 @@
         <mat-card-content>
           <table class="kv">
             <tr><th i18n="@@fria.detail.submitted-on">Soumise le</th><td>{{ f.submittedAt }}</td></tr>
-            <tr><th i18n="@@fria.detail.by">Par</th><td><code>{{ f.submittedByUserId }}</code></td></tr>
+            <tr><th i18n="@@fria.detail.by">Par</th><td><qos-person-name [accountId]="f.submittedByUserId"></qos-person-name></td></tr>
           </table>
         </mat-card-content>
       </mat-card>
@@ -89,7 +89,7 @@
         <mat-card-content>
           <table class="kv">
             <tr><th i18n="@@fria.detail.approved-on">Approuvée le</th><td>{{ f.approvedAt }}</td></tr>
-            <tr><th i18n="@@fria.detail.by">Par</th><td><code>{{ f.approvedByUserId }}</code></td></tr>
+            <tr><th i18n="@@fria.detail.by">Par</th><td><qos-person-name [accountId]="f.approvedByUserId"></qos-person-name></td></tr>
           </table>
           <p *ngIf="f.approvalNotes" class="text"><strong i18n="@@fria.detail.notes-label">Notes :</strong> {{ f.approvalNotes }}</p>
         </mat-card-content>
@@ -107,7 +107,7 @@
         <mat-card-header><mat-card-title i18n="@@fria.detail.trace">Trace</mat-card-title></mat-card-header>
         <mat-card-content>
           <table class="kv">
-            <tr><th i18n="@@fria.detail.created-by">Créée par</th><td><code>{{ f.createdByUserId }}</code></td></tr>
+            <tr><th i18n="@@fria.detail.created-by">Créée par</th><td><qos-person-name [accountId]="f.createdByUserId"></qos-person-name></td></tr>
             <tr><th i18n="@@fria.detail.created-on">Créée le</th><td>{{ f.createdAt }}</td></tr>
             <tr><th i18n="@@common.last-updated">Dernière MAJ</th><td>{{ f.updatedAt }}</td></tr>
           </table>

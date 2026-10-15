@@ -9,6 +9,7 @@ import { FriaDraftDialogComponent } from './pages/fria-draft-dialog/fria-draft-d
 import { FriaEditDialogComponent } from './pages/fria-edit-dialog/fria-edit-dialog.component';
 import { FriaListComponent } from './pages/fria-list/fria-list.component';
 import { FriaReasonDialogComponent } from './pages/fria-reason-dialog/fria-reason-dialog.component';
+import { PersonNameModule } from '../../shared/person-name/person-name.module';
 
 const routes: Routes = [
   { path: '', component: FriaListComponent },
@@ -24,6 +25,6 @@ const routes: Routes = [
     FriaApproveDialogComponent,
     FriaReasonDialogComponent
   ],
-  imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
+  imports: [PersonNameModule, SharedModule, UiModule, RouterModule.forChild(routes)]
 })
 export class FriaModule {}

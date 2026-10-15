@@ -18,6 +18,8 @@ import { CyiNotificationDialogComponent } from '../cyi-notification-dialog/cyi-n
 import { CyiSeverityDialogComponent } from '../cyi-severity-dialog/cyi-severity-dialog.component';
 import { CyiTextDialogComponent } from '../cyi-text-dialog/cyi-text-dialog.component';
 import { CyiDetailComponent } from './cyi-detail.component';
+import { provideDirectoryStub } from '../../../../core/directory/testing/directory.stub';
+import { PersonNameModule } from '../../../../shared/person-name/person-name.module';
 
 /**
  * La fiche n'offre que les transitions légales de l'incident : proposer
@@ -102,8 +104,8 @@ describe('CyiDetailComponent', () => {
 
     await TestBed.configureTestingModule({
       declarations: [CyiDetailComponent],
-      imports: [SharedModule, UiModule, NoopAnimationsModule],
-      providers: [
+      imports: [PersonNameModule, SharedModule, UiModule, NoopAnimationsModule],
+      providers: [provideDirectoryStub(),
         { provide: CyberIncidentsService, useValue: svc },
         { provide: MatDialog, useValue: dialog },
         { provide: MatSnackBar, useValue: snack },

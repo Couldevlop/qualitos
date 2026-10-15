@@ -11,6 +11,7 @@ import { CyiMitigateDialogComponent } from './pages/cyi-mitigate-dialog/cyi-miti
 import { CyiNotificationDialogComponent } from './pages/cyi-notification-dialog/cyi-notification-dialog.component';
 import { CyiSeverityDialogComponent } from './pages/cyi-severity-dialog/cyi-severity-dialog.component';
 import { CyiTextDialogComponent } from './pages/cyi-text-dialog/cyi-text-dialog.component';
+import { PersonNameModule } from '../../shared/person-name/person-name.module';
 
 const routes: Routes = [
   { path: '', component: CyiListComponent },
@@ -28,6 +29,6 @@ const routes: Routes = [
     CyiSeverityDialogComponent,
     CyiLinkBreachDialogComponent
   ],
-  imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
+  imports: [PersonNameModule, SharedModule, UiModule, RouterModule.forChild(routes)]
 })
 export class CyberIncidentsModule {}

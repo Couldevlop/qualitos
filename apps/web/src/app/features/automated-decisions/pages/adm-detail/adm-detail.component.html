@@ -106,7 +106,7 @@
         <mat-card-header><mat-card-title i18n="@@automated-decisions.detail.trace-title">Trace</mat-card-title></mat-card-header>
         <mat-card-content>
           <table class="kv">
-            <tr><th i18n="@@automated-decisions.detail.created-by">Créé par</th><td><code>{{ r.createdByUserId }}</code></td></tr>
+            <tr><th i18n="@@automated-decisions.detail.created-by">Créé par</th><td><qos-person-name [accountId]="r.createdByUserId"></qos-person-name></td></tr>
             <tr><th i18n="@@common.created-at">Créé le</th><td>{{ r.createdAt }}</td></tr>
             <tr><th i18n="@@automated-decisions.detail.effective-from">En vigueur depuis</th><td>{{ r.effectiveFrom || '—' }}</td></tr>
             <tr *ngIf="r.effectiveTo"><th i18n="@@automated-decisions.detail.archived-at">Archivé le</th><td>{{ r.effectiveTo }}</td></tr>

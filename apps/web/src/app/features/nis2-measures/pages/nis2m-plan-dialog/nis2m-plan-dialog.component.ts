@@ -46,7 +46,7 @@ export class Nis2mPlanDialogComponent {
     category:                  ['RISK_ANALYSIS' as Nis2MeasureCategory, [Validators.required]],
     title:                     ['', [Validators.required, Validators.maxLength(250)]],
     description:               ['', [Validators.maxLength(4000)]],
-    ownerUserId:               ['', [Validators.pattern(/^$|^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)]],
+    ownerUserId:               [null as string | null, [Validators.pattern(/^$|^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)]],
     maturityLevel:             [3,   [Validators.required, Validators.min(1), Validators.max(5)]],
     residualRiskRating:        ['MEDIUM' as ResidualRiskRating, [Validators.required]],
     criticalRiskJustification: ['', [Validators.maxLength(4000)]],

@@ -104,7 +104,7 @@
         <mat-card-header><mat-card-title i18n="@@dpo-appointments.detail.trace-title">Trace</mat-card-title></mat-card-header>
         <mat-card-content>
           <table class="kv">
-            <tr><th i18n="@@dpo-appointments.detail.created-by">Créée par</th><td><code>{{ a.createdByUserId }}</code></td></tr>
+            <tr><th i18n="@@dpo-appointments.detail.created-by">Créée par</th><td><qos-person-name [accountId]="a.createdByUserId"></qos-person-name></td></tr>
             <tr><th i18n="@@dpo-appointments.detail.created-at">Créée le</th><td>{{ a.createdAt }}</td></tr>
             <tr><th i18n="@@common.last-updated">Dernière MAJ</th><td>{{ a.updatedAt }}</td></tr>
           </table>

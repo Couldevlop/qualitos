@@ -7,6 +7,7 @@ import { AiSystemDetailComponent } from './pages/ai-system-detail/ai-system-deta
 import { AiSystemFormDialogComponent } from './pages/ai-system-form-dialog/ai-system-form-dialog.component';
 import { AiSystemWithdrawDialogComponent } from './pages/ai-system-withdraw-dialog/ai-system-withdraw-dialog.component';
 import { AiSystemsListComponent } from './pages/ai-systems-list/ai-systems-list.component';
+import { PersonNameModule } from '../../shared/person-name/person-name.module';
 
 /**
  * `:id` accepte aussi bien un UUID que la référence lisible du système
@@ -25,6 +26,6 @@ const routes: Routes = [
     AiSystemFormDialogComponent,
     AiSystemWithdrawDialogComponent
   ],
-  imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
+  imports: [PersonNameModule, SharedModule, UiModule, RouterModule.forChild(routes)]
 })
 export class AiSystemsModule {}

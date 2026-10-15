@@ -7,6 +7,7 @@ import { AdmCreateDialogComponent } from './pages/adm-create-dialog/adm-create-d
 import { AdmDetailComponent } from './pages/adm-detail/adm-detail.component';
 import { AdmEditDialogComponent } from './pages/adm-edit-dialog/adm-edit-dialog.component';
 import { AdmListComponent } from './pages/adm-list/adm-list.component';
+import { PersonNameModule } from '../../shared/person-name/person-name.module';
 
 const routes: Routes = [
   { path: '', component: AdmListComponent },
@@ -20,6 +21,6 @@ const routes: Routes = [
     AdmCreateDialogComponent,
     AdmEditDialogComponent
   ],
-  imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
+  imports: [PersonNameModule, SharedModule, UiModule, RouterModule.forChild(routes)]
 })
 export class AutomatedDecisionsModule {}

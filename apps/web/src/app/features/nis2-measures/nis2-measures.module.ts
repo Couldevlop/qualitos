@@ -8,6 +8,8 @@ import { Nis2mEditDialogComponent } from './pages/nis2m-edit-dialog/nis2m-edit-d
 import { Nis2mListComponent } from './pages/nis2m-list/nis2m-list.component';
 import { Nis2mPlanDialogComponent } from './pages/nis2m-plan-dialog/nis2m-plan-dialog.component';
 import { Nis2mReviewDialogComponent } from './pages/nis2m-review-dialog/nis2m-review-dialog.component';
+import { PersonNameModule } from '../../shared/person-name/person-name.module';
+import { UserPickerModule } from '../../shared/user-picker/user-picker.module';
 
 const routes: Routes = [
   { path: '', component: Nis2mListComponent },
@@ -22,6 +24,6 @@ const routes: Routes = [
     Nis2mEditDialogComponent,
     Nis2mReviewDialogComponent
   ],
-  imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
+  imports: [PersonNameModule, UserPickerModule, SharedModule, UiModule, RouterModule.forChild(routes)]
 })
 export class Nis2MeasuresModule {}

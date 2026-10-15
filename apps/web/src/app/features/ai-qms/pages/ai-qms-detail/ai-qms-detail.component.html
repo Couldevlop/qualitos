@@ -81,8 +81,8 @@
         <mat-card-header><mat-card-title i18n="@@ai-qms.detail.approval">Approbation</mat-card-title></mat-card-header>
         <mat-card-content>
           <table class="kv">
-            <tr *ngIf="q.submittedByUserId"><th i18n="@@ai-qms.detail.submitted-by">Soumis par</th><td><code>{{ q.submittedByUserId }}</code></td></tr>
-            <tr *ngIf="q.approvedByUserId"><th i18n="@@ai-qms.detail.approved-by">Approuvé par</th><td><code>{{ q.approvedByUserId }}</code></td></tr>
+            <tr *ngIf="q.submittedByUserId"><th i18n="@@ai-qms.detail.submitted-by">Soumis par</th><td><qos-person-name [accountId]="q.submittedByUserId"></qos-person-name></td></tr>
+            <tr *ngIf="q.approvedByUserId"><th i18n="@@ai-qms.detail.approved-by">Approuvé par</th><td><qos-person-name [accountId]="q.approvedByUserId"></qos-person-name></td></tr>
             <tr *ngIf="q.approvedAt"><th i18n="@@ai-qms.detail.approved-at">Approuvé le</th><td>{{ q.approvedAt }}</td></tr>
             <tr *ngIf="q.approvalNotes"><th i18n="@@ai-qms.detail.notes">Notes</th><td>{{ q.approvalNotes }}</td></tr>
           </table>

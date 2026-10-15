@@ -9,6 +9,7 @@ import { DpoEditDialogComponent } from './pages/dpo-edit-dialog/dpo-edit-dialog.
 import { DpoEndDialogComponent } from './pages/dpo-end-dialog/dpo-end-dialog.component';
 import { DpoListComponent } from './pages/dpo-list/dpo-list.component';
 import { DpoProposeDialogComponent } from './pages/dpo-propose-dialog/dpo-propose-dialog.component';
+import { PersonNameModule } from '../../shared/person-name/person-name.module';
 
 const routes: Routes = [
   { path: '', component: DpoListComponent },
@@ -24,6 +25,6 @@ const routes: Routes = [
     DpoActivateDialogComponent,
     DpoEndDialogComponent
   ],
-  imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
+  imports: [PersonNameModule, SharedModule, UiModule, RouterModule.forChild(routes)]
 })
 export class DpoAppointmentsModule {}

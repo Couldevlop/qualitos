@@ -9,9 +9,11 @@ import { safeErrorMessage } from '../../../../core/http/error-message';
 import { AiQmsService } from '../../ai-qms.service';
 import { AiQmsView } from '../../ai-qms.types';
 
-const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-
-export interface AiQmsApproveDialogData { qmsId: string; }
+export interface AiQmsApproveDialogData {
+  qmsId: string;
+  /** Le compte qui a soumis le QMS, quand il est connu : proposé d'office. */
+  submittedByUserId?: string;
+}
 
 @Component({
   selector: 'qos-ai-qms-approve-dialog',
@@ -23,8 +25,11 @@ export class AiQmsApproveDialogComponent {
 
   submitting = false;
 
-  readonly form = this.fb.nonNullable.group({
-    submittedByUserId: ['', [Validators.required, Validators.pattern(UUID_REGEX)]],
+  /** Séparation des rôles : l'approbateur (vous) n'est pas proposé comme soumissionnaire. */
+  readonly excluded: readonly string[];
+
+  readonly form = this.fb.group({
+    submittedByUserId: [null as string | null, [Validators.required]],
     approvalNotes: ['', [Validators.maxLength(4000)]]
   });
 
@@ -35,7 +40,13 @@ export class AiQmsApproveDialogComponent {
     private readonly snack: MatSnackBar,
     private readonly dialogRef: MatDialogRef<AiQmsApproveDialogComponent, AiQmsView>,
     @Inject(MAT_DIALOG_DATA) public readonly data: AiQmsApproveDialogData
-  ) {}
+  ) {
+    const me = this.auth.snapshot()?.userId;
+    this.excluded = me ? [me] : [];
+    if (data.submittedByUserId && data.submittedByUserId !== me) {
+      this.form.controls.submittedByUserId.setValue(data.submittedByUserId);
+    }
+  }
 
   submit(): void {
     if (this.form.invalid || this.submitting) { this.form.markAllAsTouched(); return; }
@@ -46,7 +57,8 @@ export class AiQmsApproveDialogComponent {
     }
     const v = this.form.getRawValue();
     // OWASP A04 — séparation des rôles : submitter ≠ approver.
-    if (v.submittedByUserId.trim() === approvedByUserId) {
+    const submittedByUserId = (v.submittedByUserId ?? '').trim();
+    if (submittedByUserId === approvedByUserId) {
       this.snack.open(
         $localize`:@@ai-qms.approve.role-separation:Séparation des rôles : le soumissionnaire et l'approbateur doivent être différents.`,
         $localize`:@@common.ok:OK`, { duration: 4500 }
@@ -55,7 +67,7 @@ export class AiQmsApproveDialogComponent {
     }
     this.submitting = true;
     this.svc.approve(this.data.qmsId, {
-      submittedByUserId: v.submittedByUserId.trim(),
+      submittedByUserId,
       approvedByUserId,
       approvalNotes: v.approvalNotes?.trim() || undefined
     })

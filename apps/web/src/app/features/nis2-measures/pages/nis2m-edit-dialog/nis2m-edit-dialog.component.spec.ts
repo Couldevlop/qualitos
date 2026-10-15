@@ -5,6 +5,8 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
+import { provideDirectoryStub } from '../../../../core/directory/testing/directory.stub';
+import { UserPickerModule } from '../../../../shared/user-picker/user-picker.module';
 import { environment } from '../../../../../environments/environment';
 import { SharedModule } from '../../../../shared/shared.module';
 import { UiModule } from '../../../../shared/ui/ui.module';
@@ -52,8 +54,10 @@ describe('Nis2mEditDialogComponent', () => {
     TestBed.resetTestingModule();
     await TestBed.configureTestingModule({
       declarations: [Nis2mEditDialogComponent],
-      imports: [SharedModule, UiModule, NoopAnimationsModule],
+      imports: [SharedModule, UiModule, UserPickerModule, NoopAnimationsModule],
       providers: [
+        // L'annuaire est doublé : le propriétaire se choisit par son nom (ADR 0092).
+        provideDirectoryStub(),
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
         { provide: MatDialogRef, useValue: dialogRef },
@@ -89,6 +93,15 @@ describe('Nis2mEditDialogComponent', () => {
       .toBe('https://wiki.local/a.pdf\nhttps://wiki.local/b.pdf');
     expect(component.form.controls.linkedActivitiesRaw.value).toBe(ACTIVITY);
     expect(component.form.valid).toBeTrue();
+  });
+
+  it('montre le propriétaire par son nom, jamais par son identifiant (ADR 0092)', async () => {
+    await build(row());
+    fixture.detectChanges();
+
+    const input = fixture.nativeElement.querySelector('[data-test="user-picker-input"]') as HTMLInputElement;
+    expect(input.value).toBe('Amina Dridi');
+    expect((fixture.nativeElement as HTMLElement).textContent).not.toContain(OWNER);
   });
 
   it('tolère une mesure sans description, notes ni rattachement', async () => {

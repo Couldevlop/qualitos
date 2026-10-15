@@ -58,7 +58,7 @@
                 <td><span *ngIf="isOverdue(p)" class="overdue">⚠ </span>
                     {{ p.nextReviewDueAt ? (p.nextReviewDueAt | slice:0:10) : '—' }}</td></tr>
             <tr *ngIf="p.lastReviewedByUserId">
-              <th i18n="@@ai-pmm.detail.last-review-by">Dernière revue par</th><td><code>{{ p.lastReviewedByUserId }}</code></td>
+              <th i18n="@@ai-pmm.detail.last-review-by">Dernière revue par</th><td><qos-person-name [accountId]="p.lastReviewedByUserId"></qos-person-name></td>
             </tr>
           </table>
         </mat-card-content>
@@ -112,7 +112,7 @@
         <mat-card-header><mat-card-title i18n="@@ai-pmm.detail.trace">Trace</mat-card-title></mat-card-header>
         <mat-card-content>
           <table class="kv">
-            <tr><th i18n="@@ai-pmm.detail.created-by">Créé par</th><td><code>{{ p.createdByUserId }}</code></td></tr>
+            <tr><th i18n="@@ai-pmm.detail.created-by">Créé par</th><td><qos-person-name [accountId]="p.createdByUserId"></qos-person-name></td></tr>
             <tr><th i18n="@@common.created-at">Créé le</th><td>{{ p.createdAt }}</td></tr>
             <tr><th i18n="@@common.last-updated">Dernière MAJ</th><td>{{ p.updatedAt }}</td></tr>
           </table>

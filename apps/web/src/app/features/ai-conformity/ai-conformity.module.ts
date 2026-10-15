@@ -8,6 +8,7 @@ import { CnfDetailComponent } from './pages/cnf-detail/cnf-detail.component';
 import { CnfListComponent } from './pages/cnf-list/cnf-list.component';
 import { CnfPlanDialogComponent } from './pages/cnf-plan-dialog/cnf-plan-dialog.component';
 import { CnfReasonDialogComponent } from './pages/cnf-reason-dialog/cnf-reason-dialog.component';
+import { PersonNameModule } from '../../shared/person-name/person-name.module';
 
 const routes: Routes = [
   { path: '', component: CnfListComponent },
@@ -22,6 +23,6 @@ const routes: Routes = [
     CnfCertifyDialogComponent,
     CnfReasonDialogComponent
   ],
-  imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
+  imports: [PersonNameModule, SharedModule, UiModule, RouterModule.forChild(routes)]
 })
 export class AiConformityModule {}

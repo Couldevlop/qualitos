@@ -10,6 +10,7 @@ import { EudbListComponent } from './pages/eudb-list/eudb-list.component';
 import { EudbReasonDialogComponent } from './pages/eudb-reason-dialog/eudb-reason-dialog.component';
 import { EudbRegisterDialogComponent } from './pages/eudb-register-dialog/eudb-register-dialog.component';
 import { EudbUpdateDialogComponent } from './pages/eudb-update-dialog/eudb-update-dialog.component';
+import { PersonNameModule } from '../../shared/person-name/person-name.module';
 
 const routes: Routes = [
   { path: '', component: EudbListComponent },
@@ -26,6 +27,6 @@ const routes: Routes = [
     EudbUpdateDialogComponent,
     EudbReasonDialogComponent
   ],
-  imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
+  imports: [PersonNameModule, SharedModule, UiModule, RouterModule.forChild(routes)]
 })
 export class AiEudbModule {}

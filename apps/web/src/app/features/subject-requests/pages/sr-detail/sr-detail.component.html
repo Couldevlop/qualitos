@@ -87,9 +87,9 @@
         <mat-card-header><mat-card-title i18n="@@subject-requests.detail.actors-title">Acteurs</mat-card-title></mat-card-header>
         <mat-card-content>
           <table class="kv">
-            <tr><th i18n="@@subject-requests.detail.received-by">Réceptionnée par</th><td><code>{{ r.requestedByUserId }}</code></td></tr>
+            <tr><th i18n="@@subject-requests.detail.received-by">Réceptionnée par</th><td><qos-person-name [accountId]="r.requestedByUserId"></qos-person-name></td></tr>
             <tr *ngIf="r.handledByUserId">
-              <th i18n="@@subject-requests.detail.handled-by">Traitée par</th><td><code>{{ r.handledByUserId }}</code></td>
+              <th i18n="@@subject-requests.detail.handled-by">Traitée par</th><td><qos-person-name [accountId]="r.handledByUserId"></qos-person-name></td>
             </tr>
           </table>
         </mat-card-content>

@@ -78,7 +78,7 @@ export class AiQmsDetailComponent implements OnInit {
 
   approve(q: AiQmsView): void {
     const ref = this.dialog.open(AiQmsApproveDialogComponent, {
-      data: { qmsId: q.id }, panelClass: 'qos-dialog-panel',
+      data: { qmsId: q.id, submittedByUserId: q.submittedByUserId }, panelClass: 'qos-dialog-panel',
       autoFocus: 'first-tabbable', restoreFocus: true
     });
     ref.afterClosed().subscribe(u => { if (u) this.refresh$.next(); });

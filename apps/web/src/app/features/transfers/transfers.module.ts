@@ -7,6 +7,7 @@ import { TrxDetailComponent } from './pages/trx-detail/trx-detail.component';
 import { TrxDialogComponent } from './pages/trx-dialog/trx-dialog.component';
 import { TrxListComponent } from './pages/trx-list/trx-list.component';
 import { TrxReasonDialogComponent } from './pages/trx-reason-dialog/trx-reason-dialog.component';
+import { PersonNameModule } from '../../shared/person-name/person-name.module';
 
 const routes: Routes = [
   { path: '', component: TrxListComponent },
@@ -20,6 +21,6 @@ const routes: Routes = [
     TrxDialogComponent,
     TrxReasonDialogComponent
   ],
-  imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
+  imports: [PersonNameModule, SharedModule, UiModule, RouterModule.forChild(routes)]
 })
 export class TransfersModule {}

@@ -9,6 +9,7 @@ import { SrExtendDialogComponent } from './pages/sr-extend-dialog/sr-extend-dial
 import { SrListComponent } from './pages/sr-list/sr-list.component';
 import { SrReceiveDialogComponent } from './pages/sr-receive-dialog/sr-receive-dialog.component';
 import { SrRejectDialogComponent } from './pages/sr-reject-dialog/sr-reject-dialog.component';
+import { PersonNameModule } from '../../shared/person-name/person-name.module';
 
 const routes: Routes = [
   { path: '', component: SrListComponent },
@@ -24,6 +25,6 @@ const routes: Routes = [
     SrRejectDialogComponent,
     SrExtendDialogComponent
   ],
-  imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
+  imports: [PersonNameModule, SharedModule, UiModule, RouterModule.forChild(routes)]
 })
 export class SubjectRequestsModule {}
