@@ -30,12 +30,8 @@
                  i18n="@@admin.audit.uuid-error">Identifiant attendu au format UUID.</mat-error>
     </mat-form-field>
 
-    <mat-form-field appearance="outline" subscriptSizing="dynamic">
-      <mat-label i18n="@@admin.audit.filter-actor">Acteur (utilisateur)</mat-label>
-      <input matInput formControlName="actorUserId" autocomplete="off">
-      <mat-error *ngIf="filterForm.controls.actorUserId.hasError('pattern')"
-                 i18n="@@admin.audit.uuid-error">Identifiant attendu au format UUID.</mat-error>
-    </mat-form-field>
+    <qos-user-picker formControlName="actorUserId" data-test="audit-actor-filter"
+                     i18n-label="@@admin.audit.filter-actor" label="Acteur (utilisateur)"></qos-user-picker>
 
     <mat-form-field appearance="outline" subscriptSizing="dynamic">
       <mat-label i18n="@@admin.audit.filter-from">Depuis</mat-label>
@@ -90,7 +86,7 @@
           <td mat-cell *matCellDef="let e">
             <div class="actor">
               <span class="qos-badge" [attr.data-tone]="actorTone(e.actorType)">{{ e.actorType }}</span>
-              <code class="mono" *ngIf="e.actorUserId">{{ e.actorUserId }}</code>
+              <qos-person-name *ngIf="e.actorUserId" [accountId]="e.actorUserId"></qos-person-name>
               <span class="dim" *ngIf="!e.actorUserId" i18n="@@admin.audit.no-actor">Non attribué</span>
             </div>
           </td>
@@ -243,7 +239,7 @@
           <dt i18n="@@admin.audit.col-actor">Acteur</dt>
           <dd>
             {{ e.actorType }}
-            <code class="mono" *ngIf="e.actorUserId">{{ e.actorUserId }}</code>
+            <qos-person-name *ngIf="e.actorUserId" [accountId]="e.actorUserId"></qos-person-name>
           </dd>
 
           <ng-container *ngIf="e.summary">

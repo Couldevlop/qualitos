@@ -15,6 +15,8 @@ import { ApiKeyView, IssuedApiKey } from '../../api-keys.types';
 import { ApiKeyCreateDialogComponent } from '../api-key-create-dialog/api-key-create-dialog.component';
 import { ApiKeyRevealDialogComponent } from '../api-key-reveal-dialog/api-key-reveal-dialog.component';
 import { ApiKeysListComponent } from './api-keys-list.component';
+import { provideDirectoryStub } from '../../../../core/directory/testing/directory.stub';
+import { PersonNameModule } from '../../../../shared/person-name/person-name.module';
 
 /**
  * L'écran est la seule voie de révocation d'urgence d'une clé : ses garde-fous
@@ -56,8 +58,8 @@ describe('ApiKeysListComponent', () => {
 
     await TestBed.configureTestingModule({
       declarations: [ApiKeysListComponent],
-      imports: [SharedModule, UiModule, NoopAnimationsModule],
-      providers: [
+      imports: [PersonNameModule, SharedModule, UiModule, NoopAnimationsModule],
+      providers: [provideDirectoryStub(),
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
         provideRouter([]),

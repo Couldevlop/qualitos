@@ -6,6 +6,7 @@ import { UiModule } from '../../shared/ui/ui.module';
 import { ApiKeyCreateDialogComponent } from './pages/api-key-create-dialog/api-key-create-dialog.component';
 import { ApiKeyRevealDialogComponent } from './pages/api-key-reveal-dialog/api-key-reveal-dialog.component';
 import { ApiKeysListComponent } from './pages/api-keys-list/api-keys-list.component';
+import { PersonNameModule } from '../../shared/person-name/person-name.module';
 
 /**
  * Administration des clés d'API du tenant (§13.1).
@@ -24,6 +25,6 @@ const routes: Routes = [
     ApiKeyCreateDialogComponent,
     ApiKeyRevealDialogComponent
   ],
-  imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
+  imports: [PersonNameModule, SharedModule, UiModule, RouterModule.forChild(routes)]
 })
 export class AdminApiKeysModule {}
