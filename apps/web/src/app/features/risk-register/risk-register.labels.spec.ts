@@ -86,7 +86,7 @@ describe('risk-register — libellés, CSV et service', () => {
     service.risk('a/b').subscribe();
     service.createRisk({} as never).subscribe();
     service.reviseRisk('r1', {} as never).subscribe();
-    service.openCapa('r1', { title: 't', kind: 'PREVENTIVE', assignee: 'A', dueDate: '2026-12-01' }).subscribe();
+    service.openCapa('r1', { title: 't', kind: 'PREVENTIVE', ownerId: 'kc-1', ownerName: 'A', dueDate: '2026-12-01' }).subscribe();
     service.draft('FMEA', 'i1').subscribe();
     service.opportunities().subscribe();
     service.opportunity('o1').subscribe();

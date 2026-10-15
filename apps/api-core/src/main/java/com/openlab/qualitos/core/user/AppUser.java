@@ -1,10 +1,12 @@
 package com.openlab.qualitos.core.user;
 
+import com.openlab.qualitos.core.common.SearchText;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -80,6 +82,23 @@ public class AppUser {
     @Builder.Default
     private Set<String> roles = new HashSet<>();
 
+    /**
+     * Nom affiché dans l'annuaire (ADR 0091), tel que saisi à l'invitation.
+     * {@code null} pour un membre enregistré sans nom : l'annuaire montre alors
+     * son adresse.
+     */
+    @Size(max = 200)
+    @Column(name = "display_name", length = 200)
+    private String displayName;
+
+    /**
+     * Forme de recherche du nom et de l'adresse ({@link SearchText}), recalculée
+     * à chaque écriture : jamais saisie, jamais exposée.
+     */
+    @Column(name = "search_key", nullable = false, length = 512)
+    @Setter(AccessLevel.NONE)
+    private String searchKey;
+
     @Column(name = "active", nullable = false)
     @Builder.Default
     private boolean active = true;
@@ -91,4 +110,25 @@ public class AppUser {
     @LastModifiedDate
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
+
+    /** La clé de recherche suit le nom et l'adresse à chaque écriture. */
+    @PrePersist
+    @PreUpdate
+    void refreshSearchKey() {
+        String key = (SearchText.normalize(displayName) + " " + SearchText.normalize(email)).strip();
+        this.searchKey = key.length() > 512 ? key.substring(0, 512) : key;
+    }
+
+    /**
+     * Le nom à afficher, composé du prénom et du nom saisis ; {@code null} quand
+     * aucun des deux n'est renseigné.
+     */
+    public static String displayNameOf(String firstName, String lastName) {
+        String full = ((firstName == null ? "" : firstName.strip()) + " "
+                + (lastName == null ? "" : lastName.strip())).strip();
+        if (full.isEmpty()) {
+            return null;
+        }
+        return full.length() > 200 ? full.substring(0, 200).strip() : full;
+    }
 }

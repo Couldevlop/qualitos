@@ -75,7 +75,7 @@
         <mat-card-content>
           <table class="kv">
             <tr><th i18n="@@consents.detail.withdrawn-on">Retiré le</th><td>{{ c.withdrawnAt }}</td></tr>
-            <tr><th i18n="@@consents.detail.actor">Acteur</th><td><code>{{ c.withdrawnByUserId }}</code></td></tr>
+            <tr><th i18n="@@consents.detail.actor">Acteur</th><td><qos-person-name [accountId]="c.withdrawnByUserId"></qos-person-name></td></tr>
             <tr *ngIf="c.withdrawalReason">
               <th i18n="@@consents.detail.reason">Motif</th><td>{{ c.withdrawalReason }}</td>
             </tr>
@@ -87,7 +87,7 @@
         <mat-card-header><mat-card-title i18n="@@consents.detail.trace-title">Trace technique</mat-card-title></mat-card-header>
         <mat-card-content>
           <table class="kv">
-            <tr><th i18n="@@consents.detail.granted-by">Recueilli par</th><td><code>{{ c.grantedByUserId }}</code></td></tr>
+            <tr><th i18n="@@consents.detail.granted-by">Recueilli par</th><td><qos-person-name [accountId]="c.grantedByUserId"></qos-person-name></td></tr>
             <tr><th i18n="@@consents.detail.created-on">Créé le</th><td>{{ c.grantedAt }}</td></tr>
             <tr><th i18n="@@consents.detail.last-update">Dernière mise à jour</th><td>{{ c.updatedAt }}</td></tr>
           </table>

@@ -42,8 +42,13 @@ public class CoqEntryJpaEntity {
     @Column(nullable = false, precision = 14, scale = 2)
     private BigDecimal amount;
 
+    /** Le nom du responsable, recopié au choix dans l'annuaire (ou tapé, avant l'ADR 0092). */
     @Column(nullable = false, length = 150)
     private String responsible;
+
+    /** Le compte de connexion du responsable ; nul sur les lignes antérieures à l'annuaire. */
+    @Column(name = "responsible_user_id")
+    private UUID responsibleUserId;
 
     @Column(name = "imputation_date", nullable = false)
     private LocalDate imputationDate;

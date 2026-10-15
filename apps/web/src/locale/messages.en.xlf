@@ -1990,9 +1990,9 @@
         <source>Approuver</source>
         <target state="translated">Approve</target>
       </trans-unit>
-      <trans-unit id="ai-qms.approve.submitter-uuid" datatype="html">
-        <source>UUID du soumissionnaire (doit ≠ vous)</source>
-        <target state="translated">Submitter UUID (must ≠ you)</target>
+      <trans-unit id="ai-qms.approve.submitter" datatype="html">
+        <source>Soumissionnaire (une autre personne que vous)</source>
+        <target state="translated">Submitter (someone other than you)</target>
       </trans-unit>
       <trans-unit id="ai-qms.approve.subtitle" datatype="html">
         <source>L'approbation enregistre l'identité du soumissionnaire et de l'approbateur (séparation des rôles requise par AI Act Art. 17). Vous serez enregistré comme approbateur via votre session courante.</source>
@@ -3762,9 +3762,9 @@ Customer portal</target>
         <source>Notes</source>
         <target state="translated">Notes</target>
       </trans-unit>
-      <trans-unit id="nis2-measures.edit.owner-uuid" datatype="html">
-        <source>UUID propriétaire</source>
-        <target state="translated">Owner UUID</target>
+      <trans-unit id="nis2-measures.edit.owner" datatype="html">
+        <source>Propriétaire</source>
+        <target state="translated">Owner</target>
       </trans-unit>
       <trans-unit id="nis2-measures.edit.subtitle" datatype="html">
         <source>La référence et la catégorie ne peuvent pas changer après planification.</source>
@@ -3874,9 +3874,9 @@ Customer portal</target>
         <source>Notes (optionnel)</source>
         <target state="translated">Notes (optional)</target>
       </trans-unit>
-      <trans-unit id="nis2-measures.plan.owner-uuid" datatype="html">
-        <source>UUID propriétaire (optionnel)</source>
-        <target state="translated">Owner UUID (optional)</target>
+      <trans-unit id="nis2-measures.plan.owner" datatype="html">
+        <source>Propriétaire (optionnel)</source>
+        <target state="translated">Owner (optional)</target>
       </trans-unit>
       <trans-unit id="nis2-measures.plan.plan-failed" datatype="html">
         <source>Planification impossible.</source>
@@ -5194,6 +5194,10 @@ Customer portal</target>
         <source>Acquis</source>
         <target state="translated">Obtained</target>
       </trans-unit>
+      <trans-unit id="apqp.deliverable.owner-legacy" datatype="html">
+        <source>Nom enregistré : <x id="INTERPOLATION"/>. Choisissez cette personne dans l'annuaire.</source>
+        <target state="translated">Recorded name: <x id="INTERPOLATION"/>. Pick this person from the directory.</target>
+      </trans-unit>
       <trans-unit id="apqp.deliverable.owner" datatype="html">
         <source>Responsable</source>
         <target state="translated">Owner</target>
@@ -5349,6 +5353,282 @@ Customer portal</target>
       <trans-unit id="audits.edit.reminder-email-hint" datatype="html">
         <source>Videz le champ pour ne plus envoyer de rappel par courriel.</source>
         <target state="translated">Clear the field to stop sending email reminders.</target>
+      </trans-unit>
+      <trans-unit id="audits.lead-auditor" datatype="html">
+        <source>Auditeur responsable</source>
+        <target state="translated">Lead auditor</target>
+      </trans-unit>
+      <trans-unit id="audits.lead-auditor.hint" datatype="html">
+        <source>Celui ou celle qui conduit l'audit et signe le rapport. Par défaut : vous.</source>
+        <target state="translated">The person who leads the audit and signs the report. Defaults to you.</target>
+      </trans-unit>
+      <trans-unit id="audits.lead-auditor.hint-edit" datatype="html">
+        <source>Celui ou celle qui conduit l'audit et signe le rapport.</source>
+        <target state="translated">The person who leads the audit and signs the report.</target>
+      </trans-unit>
+      <trans-unit id="audits.lead-auditor.unknown" datatype="html">
+        <source>Membre de l'organisation (nom non enregistré)</source>
+        <target state="translated">Organization member (name not recorded)</target>
+      </trans-unit>
+      <trans-unit id="audits.detail.finding-blocked-planned" datatype="html">
+        <source>Les constats se relèvent pendant l'audit : démarrez-le pour en ajouter.</source>
+        <target state="translated">Findings are raised during the audit: start it to add some.</target>
+      </trans-unit>
+      <trans-unit id="audits.detail.finding-blocked-no-checklist" datatype="html">
+        <source>Les constats se relèvent pendant l'audit. Ajoutez d'abord une question à la checklist, puis démarrez l'audit.</source>
+        <target state="translated">Findings are raised during the audit. First add a question to the checklist, then start the audit.</target>
+      </trans-unit>
+      <trans-unit id="audits.detail.finding-blocked-completed" datatype="html">
+        <source>Audit clôturé : plus aucun constat ne peut être ajouté.</source>
+        <target state="translated">Audit closed: no more findings can be added.</target>
+      </trans-unit>
+      <trans-unit id="audits.detail.finding-blocked-cancelled" datatype="html">
+        <source>Audit annulé : plus aucun constat ne peut être ajouté.</source>
+        <target state="translated">Audit cancelled: no more findings can be added.</target>
+      </trans-unit>
+      <trans-unit id="audits.detail.start-audit" datatype="html">
+        <source>Démarrer l'audit</source>
+        <target state="translated">Start the audit</target>
+      </trans-unit>
+      <trans-unit id="audits.detail.start-blocked" datatype="html">
+        <source>Ajoutez au moins une question à la checklist pour démarrer l'audit.</source>
+        <target state="translated">Add at least one question to the checklist to start the audit.</target>
+      </trans-unit>
+      <trans-unit id="audits.finding.not-in-progress" datatype="html">
+        <source>Un constat se relève pendant l'audit : démarrez l'audit pour en ajouter.</source>
+        <target state="translated">A finding is raised during the audit: start the audit to add one.</target>
+      </trans-unit>
+      <trans-unit id="audits.detail.documents-locked-cancelled" datatype="html">
+        <source>Audit annulé : ses documents ne se modifient plus.</source>
+        <target state="translated">Audit cancelled: its documents can no longer be changed.</target>
+      </trans-unit>
+      <trans-unit id="audits.detail.documents-locked-issued" datatype="html">
+        <source>Rapport émis : les documents de l'audit sont figés avec lui.</source>
+        <target state="translated">Report issued: the audit's documents are locked with it.</target>
+      </trans-unit>
+      <trans-unit id="audits.report.title" datatype="html">
+        <source>Rapport</source>
+        <target state="translated">Report</target>
+      </trans-unit>
+      <trans-unit id="audits.report.state-draft" datatype="html">
+        <source>Brouillon</source>
+        <target state="translated">Draft</target>
+      </trans-unit>
+      <trans-unit id="audits.report.state-issued" datatype="html">
+        <source>Émis</source>
+        <target state="translated">Issued</target>
+      </trans-unit>
+      <trans-unit id="audits.report.figures-aria" datatype="html">
+        <source>Chiffres clés du rapport</source>
+        <target state="translated">Report key figures</target>
+      </trans-unit>
+      <trans-unit id="audits.report.figures-total" datatype="html">
+        <source>Constats</source>
+        <target state="translated">Findings</target>
+      </trans-unit>
+      <trans-unit id="audits.report.figures-score" datatype="html">
+        <source>Taux de conformité</source>
+        <target state="translated">Conformity rate</target>
+      </trans-unit>
+      <trans-unit id="audits.report.issued-line" datatype="html">
+        <source>Émis le <x id="INTERPOLATION"/> par <x id="INTERPOLATION_1"/></source>
+        <target state="translated">Issued on <x id="INTERPOLATION"/> by <x id="INTERPOLATION_1"/></target>
+      </trans-unit>
+      <trans-unit id="audits.report.fingerprint-tooltip" datatype="html">
+        <source>Empreinte SHA-256 du contenu émis, inscrite au journal d'audit</source>
+        <target state="translated">SHA-256 fingerprint of the issued content, recorded in the audit trail</target>
+      </trans-unit>
+      <trans-unit id="audits.report.summary" datatype="html">
+        <source>Synthèse et conclusion rédigée</source>
+        <target state="translated">Written summary and conclusion</target>
+      </trans-unit>
+      <trans-unit id="audits.report.summary-placeholder" datatype="html">
+        <source>Contexte, périmètre couvert, appréciation d'ensemble du système…</source>
+        <target state="translated">Context, scope covered, overall assessment of the system…</target>
+      </trans-unit>
+      <trans-unit id="audits.report.generate" datatype="html">
+        <source>Proposer par IA</source>
+        <target state="translated">Draft with AI</target>
+      </trans-unit>
+      <trans-unit id="audits.report.generated" datatype="html">
+        <source>Synthèse générée : relisez-la avant d'émettre.</source>
+        <target state="translated">Summary generated: review it before issuing.</target>
+      </trans-unit>
+      <trans-unit id="audits.report.strengths" datatype="html">
+        <source>Points forts</source>
+        <target state="translated">Strengths</target>
+      </trans-unit>
+      <trans-unit id="audits.report.improvements" datatype="html">
+        <source>Axes d'amélioration</source>
+        <target state="translated">Areas for improvement</target>
+      </trans-unit>
+      <trans-unit id="audits.report.conclusion" datatype="html">
+        <source>Conclusion / recommandation</source>
+        <target state="translated">Conclusion / recommendation</target>
+      </trans-unit>
+      <trans-unit id="audits.report.conclusion.favorable" datatype="html">
+        <source>Favorable — système conforme</source>
+        <target state="translated">Favorable — system conforms</target>
+      </trans-unit>
+      <trans-unit id="audits.report.conclusion.reservations" datatype="html">
+        <source>Favorable avec réserves</source>
+        <target state="translated">Favorable with reservations</target>
+      </trans-unit>
+      <trans-unit id="audits.report.conclusion.unfavorable" datatype="html">
+        <source>Défavorable — système non conforme</source>
+        <target state="translated">Unfavorable — system does not conform</target>
+      </trans-unit>
+      <trans-unit id="audits.report.conclusion.cert-favorable" datatype="html">
+        <source>Certification recommandée</source>
+        <target state="translated">Certification recommended</target>
+      </trans-unit>
+      <trans-unit id="audits.report.conclusion.cert-reservations" datatype="html">
+        <source>Certification recommandée avec réserves</source>
+        <target state="translated">Certification recommended with reservations</target>
+      </trans-unit>
+      <trans-unit id="audits.report.conclusion.cert-unfavorable" datatype="html">
+        <source>Certification non recommandée</source>
+        <target state="translated">Certification not recommended</target>
+      </trans-unit>
+      <trans-unit id="audits.report.save-draft" datatype="html">
+        <source>Enregistrer le brouillon</source>
+        <target state="translated">Save draft</target>
+      </trans-unit>
+      <trans-unit id="audits.report.issue" datatype="html">
+        <source>Émettre le rapport</source>
+        <target state="translated">Issue the report</target>
+      </trans-unit>
+      <trans-unit id="audits.report.issue-confirm-title" datatype="html">
+        <source>Émettre le rapport ?</source>
+        <target state="translated">Issue the report?</target>
+      </trans-unit>
+      <trans-unit id="audits.report.issue-confirm-message" datatype="html">
+        <source>Le rapport sera figé — texte, conclusion et chiffres clés — et l'émission inscrite au journal d'audit. Il ne pourra plus être modifié, ni les documents de l'audit.</source>
+        <target state="translated">The report will be locked — text, conclusion and key figures — and the issuance recorded in the audit trail. Neither it nor the audit documents can be changed afterwards.</target>
+      </trans-unit>
+      <trans-unit id="audits.report.issued-msg" datatype="html">
+        <source>Rapport émis.</source>
+        <target state="translated">Report issued.</target>
+      </trans-unit>
+      <trans-unit id="audits.report.saved" datatype="html">
+        <source>Brouillon du rapport enregistré.</source>
+        <target state="translated">Report draft saved.</target>
+      </trans-unit>
+      <trans-unit id="audits.report.save-error" datatype="html">
+        <source>Le brouillon n'a pas pu être enregistré.</source>
+        <target state="translated">The draft could not be saved.</target>
+      </trans-unit>
+      <trans-unit id="audits.report.issue-error" datatype="html">
+        <source>Le rapport n'a pas pu être émis.</source>
+        <target state="translated">The report could not be issued.</target>
+      </trans-unit>
+      <trans-unit id="audits.report.load-error" datatype="html">
+        <source>Le rapport n'a pas pu être chargé.</source>
+        <target state="translated">The report could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="audits.report.conflict" datatype="html">
+        <source>Le rapport ne peut plus être modifié dans l'état actuel de l'audit — rechargez pour voir son état.</source>
+        <target state="translated">The report can no longer be changed in the current state of the audit — reload to see its state.</target>
+      </trans-unit>
+      <trans-unit id="audits.report.incomplete" datatype="html">
+        <source>Le rapport est incomplet : synthèse et conclusion sont requises.</source>
+        <target state="translated">The report is incomplete: a summary and a conclusion are required.</target>
+      </trans-unit>
+      <trans-unit id="audits.report.step-up" datatype="html">
+        <source>L'émission du rapport exige votre code à usage unique.</source>
+        <target state="translated">Issuing the report requires your one-time code.</target>
+      </trans-unit>
+      <trans-unit id="audits.report.blocker-cancelled" datatype="html">
+        <source>Un audit annulé n'a pas de rapport.</source>
+        <target state="translated">A cancelled audit has no report.</target>
+      </trans-unit>
+      <trans-unit id="audits.report.blocker-not-completed" datatype="html">
+        <source>Le rapport s'émet une fois l'audit clôturé. Vous pouvez déjà rédiger le brouillon.</source>
+        <target state="translated">The report is issued once the audit is closed. You can already write the draft.</target>
+      </trans-unit>
+      <trans-unit id="audits.report.blocker-role" datatype="html">
+        <source>L'émission du rapport revient au pilotage qualité (manager ou directeur qualité).</source>
+        <target state="translated">Issuing the report is up to quality management (quality manager or director).</target>
+      </trans-unit>
+      <trans-unit id="audits.report.blocker-summary" datatype="html">
+        <source>Rédigez la synthèse (ou générez-la) avant d'émettre.</source>
+        <target state="translated">Write (or generate) the summary before issuing.</target>
+      </trans-unit>
+      <trans-unit id="audits.report.blocker-conclusion" datatype="html">
+        <source>Choisissez la conclusion avant d'émettre.</source>
+        <target state="translated">Choose the conclusion before issuing.</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.title" datatype="html">
+        <source>Documents (<x id="INTERPOLATION"/>)</source>
+        <target state="translated">Documents (<x id="INTERPOLATION"/>)</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.add" datatype="html">
+        <source>Ajouter un document</source>
+        <target state="translated">Add document</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.added" datatype="html">
+        <source>Document ajouté à l'audit.</source>
+        <target state="translated">Document added to the audit.</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.empty" datatype="html">
+        <source>Aucun document. Joignez la convocation, le plan d'audit, des photos ou des relevés.</source>
+        <target state="translated">No documents yet. Attach the notice, the audit plan, photos or records.</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.limits" datatype="html">
+        <source>PDF, image, Word, Excel ou PowerPoint — 10 Mo par fichier, 20 documents par audit.</source>
+        <target state="translated">PDF, image, Word, Excel or PowerPoint — 10 MB per file, 20 documents per audit.</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.too-large" datatype="html">
+        <source>Fichier trop lourd : 10 Mo au plus.</source>
+        <target state="translated">File too large: 10 MB at most.</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.unnamed" datatype="html">
+        <source>document sans nom</source>
+        <target state="translated">unnamed document</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.delete-title" datatype="html">
+        <source>Retirer ce document ?</source>
+        <target state="translated">Remove this document?</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.delete-message" datatype="html">
+        <source>« <x id="name"/> » sera retiré de l'audit. Le retrait est inscrit au journal d'audit.</source>
+        <target state="translated">“<x id="name"/>” will be removed from the audit. The removal is recorded in the audit trail.</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.delete" datatype="html">
+        <source>Retirer</source>
+        <target state="translated">Remove</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.delete-tooltip" datatype="html">
+        <source>Retirer le document</source>
+        <target state="translated">Remove the document</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.remove-aria" datatype="html">
+        <source>Retirer le document <x id="name"/></source>
+        <target state="translated">Remove the document <x id="name"/></target>
+      </trans-unit>
+      <trans-unit id="audits.documents.storage-off" datatype="html">
+        <source>Le stockage des documents est désactivé sur cet environnement.</source>
+        <target state="translated">Document storage is disabled on this environment.</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.load-error" datatype="html">
+        <source>Les documents n'ont pas pu être chargés.</source>
+        <target state="translated">The documents could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.invalid" datatype="html">
+        <source>Fichier refusé : type non admis ou contenu qui ne correspond pas à son extension.</source>
+        <target state="translated">File rejected: type not allowed or content that does not match its extension.</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.limit" datatype="html">
+        <source>Limite atteinte : 10 Mo par fichier, 20 documents et 50 Mo par audit.</source>
+        <target state="translated">Limit reached: 10 MB per file, 20 documents and 50 MB per audit.</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.locked" datatype="html">
+        <source>Les documents de cet audit sont verrouillés (audit annulé ou rapport émis).</source>
+        <target state="translated">This audit's documents are locked (audit cancelled or report issued).</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.error" datatype="html">
+        <source>L'opération sur le document a échoué.</source>
+        <target state="translated">The document operation failed.</target>
       </trans-unit>
       <trans-unit id="nav.admin-roles" datatype="html">
         <source>Rôles et droits</source>
@@ -6094,10 +6374,6 @@ Customer portal</target>
         <source>Instrument critique : un résultat non conforme le met immédiatement hors service.</source>
         <target state="translated">Critical instrument: a failed result takes it out of service immediately.</target>
       </trans-unit>
-      <trans-unit id="calibration.record.internal" datatype="html">
-        <source>Interne</source>
-        <target state="translated">Internal</target>
-      </trans-unit>
       <trans-unit id="calibration.record.measurements" datatype="html">
         <source>Mesures</source>
         <target state="translated">Measurements</target>
@@ -6182,14 +6458,6 @@ Customer portal</target>
         <source>Réformé</source>
         <target state="translated">Retired</target>
       </trans-unit>
-      <trans-unit id="capa.detail.col-decided-on" datatype="html">
-        <source>Date</source>
-        <target state="translated">Date</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.col-assignee" datatype="html">
-        <source>Responsable</source>
-        <target state="translated">Owner</target>
-      </trans-unit>
       <trans-unit id="capa.detail.col-evidence" datatype="html">
         <source>Preuve</source>
         <target state="translated">Evidence</target>
@@ -6206,18 +6474,6 @@ Customer portal</target>
         <source>Faite</source>
         <target state="translated">Done</target>
       </trans-unit>
-      <trans-unit id="capa.detail.edit-title-label" datatype="html">
-        <source>Libellé de l'action</source>
-        <target state="translated">Action label</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.action-updated" datatype="html">
-        <source>Action modifiée.</source>
-        <target state="translated">Action updated.</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.action-update-error" datatype="html">
-        <source>Modification impossible.</source>
-        <target state="translated">Could not update the action.</target>
-      </trans-unit>
       <trans-unit id="capa.action-evidence.attach" datatype="html">
         <source>Joindre</source>
         <target state="translated">Attach</target>
@@ -6233,10 +6489,6 @@ Customer portal</target>
       <trans-unit id="capa.action-evidence.remove-aria" datatype="html">
         <source>Retirer la preuve de l'action : <x id="title"/></source>
         <target state="translated">Remove the action's evidence: <x id="title"/></target>
-      </trans-unit>
-      <trans-unit id="capa.detail.edit-action-aria" datatype="html">
-        <source>Modifier l'action : <x id="title"/></source>
-        <target state="translated">Edit the action: <x id="title"/></target>
       </trans-unit>
       <trans-unit id="capa.action-evidence.remove-tooltip" datatype="html">
         <source>Retirer la preuve de cette action</source>
@@ -6258,22 +6510,6 @@ Customer portal</target>
         <source>Cette action n'existe plus — recharge la fiche.</source>
         <target state="translated">This action no longer exists — reload the case.</target>
       </trans-unit>
-      <trans-unit id="capa.action.decided-on" datatype="html">
-        <source>Date de décision</source>
-        <target state="translated">Decision date</target>
-      </trans-unit>
-      <trans-unit id="capa.action.decided-on-hint" datatype="html">
-        <source>Le jour où l'action a été décidée (comité, revue), pas celui de sa saisie.</source>
-        <target state="translated">The day the action was decided (committee, review), not the day it was entered.</target>
-      </trans-unit>
-      <trans-unit id="capa.action.assignee-name" datatype="html">
-        <source>Responsable (optionnel)</source>
-        <target state="translated">Owner (optional)</target>
-      </trans-unit>
-      <trans-unit id="capa.action.assignee-name-placeholder" datatype="html">
-        <source>Ex. : Amina Dridi</source>
-        <target state="translated">e.g. Amina Dridi</target>
-      </trans-unit>
       <trans-unit id="capa.action-type.containment" datatype="html">
         <source>Endiguement</source>
         <target state="translated">Containment</target>
@@ -6286,21 +6522,9 @@ Customer portal</target>
         <source>Préventive</source>
         <target state="translated">Preventive</target>
       </trans-unit>
-      <trans-unit id="capa.detail.col-action-type" datatype="html">
-        <source>Nature</source>
-        <target state="translated">Kind</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.edit-action-type-label" datatype="html">
-        <source>Nature</source>
-        <target state="translated">Kind</target>
-      </trans-unit>
       <trans-unit id="capa.action.action-type" datatype="html">
         <source>Nature de l'action</source>
         <target state="translated">Kind of action</target>
-      </trans-unit>
-      <trans-unit id="capa.action.action-type-hint" datatype="html">
-        <source>L'endiguement arrête l'effet (trier un lot, arrêter une ligne) ; la correction supprime la cause.</source>
-        <target state="translated">Containment stops the effect (sorting a batch, halting a line); correction removes the cause.</target>
       </trans-unit>
       <trans-unit id="capa.detail.blockers-title" datatype="html">
         <source>Ce dossier ne peut pas encore être clôturé</source>
@@ -6317,10 +6541,6 @@ Customer portal</target>
       <trans-unit id="capa.blocker.actions-many" datatype="html">
         <source><x id="count"/> actions restent à terminer.</source>
         <target state="translated"><x id="count"/> actions are still to be completed.</target>
-      </trans-unit>
-      <trans-unit id="capa.blocker.containment-only" datatype="html">
-        <source>Le dossier ne porte que des mesures d'endiguement : elles arrêtent l'effet sans supprimer la cause. Ajoutez une action corrective ou préventive.</source>
-        <target state="translated">The case carries containment measures only: they stop the effect without removing the cause. Add a corrective or preventive action.</target>
       </trans-unit>
       <trans-unit id="capa.blocker.nc-one" datatype="html">
         <source>1 non-conformité liée est encore ouverte.</source>
@@ -6562,6 +6782,158 @@ Customer portal</target>
         <source>Le stockage des pièces jointes est désactivé sur cet environnement : aucune preuve ne peut y être déposée ni relue.</source>
         <target state="translated">Attachment storage is disabled on this environment: no evidence can be added or read here.</target>
       </trans-unit>
+      <trans-unit id="capa.open.title" datatype="html">
+        <source>Nouvelle CAPA</source>
+        <target state="translated">New CAPA</target>
+      </trans-unit>
+      <trans-unit id="capa.open.define-title" datatype="html">
+        <source>Définir l'action</source>
+        <target state="translated">Define the action</target>
+      </trans-unit>
+      <trans-unit id="capa.open.submit" datatype="html">
+        <source>Créer la CAPA</source>
+        <target state="translated">Create the CAPA</target>
+      </trans-unit>
+      <trans-unit id="capa.open.define-submit" datatype="html">
+        <source>Enregistrer l'action</source>
+        <target state="translated">Save the action</target>
+      </trans-unit>
+      <trans-unit id="capa.open.subtitle" datatype="html">
+        <source>Une CAPA porte une action : ce qu'on va faire, qui en répond et pour quand. On la fait avancer jusqu'à la vérification d'efficacité.</source>
+        <target state="translated">A CAPA carries one action: what will be done, who is accountable and by when. It is followed through to the effectiveness check.</target>
+      </trans-unit>
+      <trans-unit id="capa.open.title-label" datatype="html">
+        <source>Intitulé de l'action</source>
+        <target state="translated">Action title</target>
+      </trans-unit>
+      <trans-unit id="capa.open.description-placeholder" datatype="html">
+        <source>Méthode, ressources, critère de fin…</source>
+        <target state="translated">Method, resources, completion criterion…</target>
+      </trans-unit>
+      <trans-unit id="capa.open.nature" datatype="html">
+        <source>Nature</source>
+        <target state="translated">Nature</target>
+      </trans-unit>
+      <trans-unit id="capa.open.owner" datatype="html">
+        <source>Responsable</source>
+        <target state="translated">Owner</target>
+      </trans-unit>
+      <trans-unit id="capa.open.owner-loading" datatype="html">
+        <source>Lecture de l'annuaire…</source>
+        <target state="translated">Reading the directory…</target>
+      </trans-unit>
+      <trans-unit id="capa.open.due-date" datatype="html">
+        <source>Échéance</source>
+        <target state="translated">Due date</target>
+      </trans-unit>
+      <trans-unit id="capa.open.due-date-required" datatype="html">
+        <source>L'échéance est obligatoire.</source>
+        <target state="translated">The due date is required.</target>
+      </trans-unit>
+      <trans-unit id="capa.open.due-date-past" datatype="html">
+        <source>L'échéance ne peut pas être passée.</source>
+        <target state="translated">The due date cannot be in the past.</target>
+      </trans-unit>
+      <trans-unit id="capa.open.owner-hint-unmatched" datatype="html">
+        <source>Propriétaire indiqué : <x id="INTERPOLATION"/> — introuvable dans l'annuaire, choisis son compte dans la liste.</source>
+        <target state="translated">Stated owner: <x id="INTERPOLATION"/> — not found in the directory, choose their account from the list.</target>
+      </trans-unit>
+      <trans-unit id="capa.open.criticity-low" datatype="html">
+        <source>Faible</source>
+        <target state="translated">Low</target>
+      </trans-unit>
+      <trans-unit id="capa.open.criticity-medium" datatype="html">
+        <source>Moyenne</source>
+        <target state="translated">Medium</target>
+      </trans-unit>
+      <trans-unit id="capa.open.criticity-high" datatype="html">
+        <source>Élevée</source>
+        <target state="translated">High</target>
+      </trans-unit>
+      <trans-unit id="capa.open.criticity-critical" datatype="html">
+        <source>Critique</source>
+        <target state="translated">Critical</target>
+      </trans-unit>
+      <trans-unit id="capa.open.criticity-locked" datatype="html">
+        <source>Issue de la cotation du risque.</source>
+        <target state="translated">Derived from the risk rating.</target>
+      </trans-unit>
+      <trans-unit id="capa.open.attachment-remove-aria" datatype="html">
+        <source>Retirer <x id="name"/></source>
+        <target state="translated">Remove <x id="name"/></target>
+      </trans-unit>
+      <trans-unit id="capa.open.success" datatype="html">
+        <source>CAPA créée.</source>
+        <target state="translated">CAPA created.</target>
+      </trans-unit>
+      <trans-unit id="capa.open.success-with-evidence" datatype="html">
+        <source>CAPA créée, pièces jointes déposées.</source>
+        <target state="translated">CAPA created, attachments uploaded.</target>
+      </trans-unit>
+      <trans-unit id="capa.open.success-partial-evidence" datatype="html">
+        <source>CAPA créée, mais des pièces n'ont pas pu être déposées — reprends-les depuis la fiche.</source>
+        <target state="translated">CAPA created, but some attachments could not be uploaded — add them again from the record.</target>
+      </trans-unit>
+      <trans-unit id="capa.open.action-defined" datatype="html">
+        <source>Action définie.</source>
+        <target state="translated">Action defined.</target>
+      </trans-unit>
+      <trans-unit id="capa.source.spc-alert" datatype="html">
+        <source>Carte de contrôle</source>
+        <target state="translated">Control chart</target>
+      </trans-unit>
+      <trans-unit id="capa.source.anomaly" datatype="html">
+        <source>Anomalie détectée</source>
+        <target state="translated">Detected anomaly</target>
+      </trans-unit>
+      <trans-unit id="capa.source.risk" datatype="html">
+        <source>Risque</source>
+        <target state="translated">Risk</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.legacy-actions" datatype="html">
+        <source>Actions (<x id="INTERPOLATION"/>)</source>
+        <target state="translated">Actions (<x id="INTERPOLATION"/>)</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.action-missing" datatype="html">
+        <source>L'action de ce dossier n'a pas encore été définie : sans elle, il ne pourra pas être clôturé.</source>
+        <target state="translated">The action of this case has not been defined yet: without it, the case cannot be closed.</target>
+      </trans-unit>
+      <trans-unit id="capa.blocker.containment-only-single" datatype="html">
+        <source>Le dossier ne porte qu'une mesure d'endiguement : elle arrête l'effet sans supprimer la cause. Ouvrez une CAPA corrective pour traiter la cause.</source>
+        <target state="translated">The case only carries a containment measure: it stops the effect without removing the cause. Open a corrective CAPA to address the cause.</target>
+      </trans-unit>
+      <trans-unit id="capa.list.col-owner" datatype="html">
+        <source>Pilote</source>
+        <target state="translated">Owner</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.create-capa" datatype="html">
+        <source>Créer une CAPA</source>
+        <target state="translated">Create a CAPA</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.create-capa-tooltip" datatype="html">
+        <source>Ouvrir la CAPA qui traite cette non-conformité</source>
+        <target state="translated">Open the CAPA that addresses this non-conformity</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.open-capa" datatype="html">
+        <source>Voir la CAPA</source>
+        <target state="translated">View the CAPA</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.capa-link-open" datatype="html">
+        <source>Ouvrir le dossier</source>
+        <target state="translated">Open the case</target>
+      </trans-unit>
+      <trans-unit id="audits.detail.create-capa" datatype="html">
+        <source>Créer une CAPA</source>
+        <target state="translated">Create a CAPA</target>
+      </trans-unit>
+      <trans-unit id="audits.detail.open-capa" datatype="html">
+        <source>Voir la CAPA</source>
+        <target state="translated">View the CAPA</target>
+      </trans-unit>
+      <trans-unit id="audits.detail.finding-capa-ref" datatype="html">
+        <source><x id="audit"/> / constat <x id="rank"/></source>
+        <target state="translated"><x id="audit"/> / finding <x id="rank"/></target>
+      </trans-unit>
       <trans-unit id="common.yes" datatype="html">
         <source>Oui</source>
         <target state="translated">Yes</target>
@@ -6578,6 +6950,10 @@ Customer portal</target>
         <source>Une vérification est-elle exigée sur ce dossier ? Répondre « non » est une décision, qui se lit ; ne pas répondre laisse la question ouverte.</source>
         <target state="translated">Is a verification required on this case? Answering "no" is a decision, and it shows; leaving it unanswered leaves the question open.</target>
       </trans-unit>
+      <trans-unit id="capa.verification.hint-mandatory" datatype="html">
+        <source>Une vérification est-elle exigée sur ce dossier ? Il faut trancher pour l'ouvrir : répondre « non » est une décision, qui se lit.</source>
+        <target state="translated">Is a verification required on this case? You must decide to open it: answering "no" is a decision, and it shows.</target>
+      </trans-unit>
       <trans-unit id="capa.verification.required" datatype="html">
         <source>Exigée</source>
         <target state="translated">Required</target>
@@ -6593,10 +6969,6 @@ Customer portal</target>
       <trans-unit id="capa.verification.assignee-required" datatype="html">
         <source>Une vérification exigée doit être confiée à quelqu'un.</source>
         <target state="translated">A required verification must be assigned to someone.</target>
-      </trans-unit>
-      <trans-unit id="capa.verification.directory-down" datatype="html">
-        <source>L'annuaire de l'organisation n'a pas répondu : la liste est vide, et le dossier ne pourra pas être enregistré avec une vérification exigée.</source>
-        <target state="translated">The organisation directory did not answer: the list is empty, and the case cannot be saved with a required verification.</target>
       </trans-unit>
       <trans-unit id="capa.verification.instructions" datatype="html">
         <source>Instructions de vérification</source>
@@ -8458,10 +8830,6 @@ Customer portal</target>
         <source>Documents</source>
         <target state="translated">Documents</target>
       </trans-unit>
-      <trans-unit id="nav.changements" datatype="html">
-        <source>Changements</source>
-        <target state="translated">Changes</target>
-      </trans-unit>
       <trans-unit id="nav.ehs" datatype="html">
         <source>EHS</source>
         <target state="translated">EHS</target>
@@ -8641,14 +9009,6 @@ Customer portal</target>
       <trans-unit id="capa.create.evidence-limit" datatype="html">
         <source>Dix pièces au maximum par dossier.</source>
         <target state="translated">Ten files at most per case.</target>
-      </trans-unit>
-      <trans-unit id="capa.create.success-with-evidence" datatype="html">
-        <source>Cas CAPA créé, pièces jointes déposées.</source>
-        <target state="translated">CAPA case created, attachments uploaded.</target>
-      </trans-unit>
-      <trans-unit id="capa.create.success-partial-evidence" datatype="html">
-        <source>Cas CAPA créé, mais des pièces n'ont pas pu être déposées — reprends-les depuis la fiche.</source>
-        <target state="translated">CAPA case created, but some files could not be uploaded — add them again from the case.</target>
       </trans-unit>
       <trans-unit id="nc.list.col-reporter" datatype="html">
         <source>Détecté par</source>
@@ -9093,6 +9453,10 @@ Customer portal</target>
       <trans-unit id="coq.dialog.field-responsible" datatype="html">
         <source>Responsable</source>
         <target state="translated">Owner</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.responsible-legacy" datatype="html">
+        <source>Nom enregistré : <x id="INTERPOLATION"/>. Choisissez cette personne dans l'annuaire.</source>
+        <target state="translated">Recorded name: <x id="INTERPOLATION"/>. Pick this person from the directory.</target>
       </trans-unit>
       <trans-unit id="coq.dialog.responsible-required" datatype="html">
         <source>Le responsable est requis.</source>
@@ -9549,6 +9913,62 @@ Customer portal</target>
       <trans-unit id="dashboard.annot.delete-error" datatype="html">
         <source>Suppression refusée.</source>
         <target state="translated">Deletion refused.</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.label" datatype="html">
+        <source>Personne</source>
+        <target state="translated">Person</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.placeholder" datatype="html">
+        <source>Rechercher par nom ou adresse</source>
+        <target state="translated">Search by name or e-mail</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.clear" datatype="html">
+        <source>Retirer la personne choisie</source>
+        <target state="translated">Remove the selected person</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.loading" datatype="html">
+        <source>Recherche…</source>
+        <target state="translated">Searching…</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.error" datatype="html">
+        <source>Annuaire indisponible pour le moment. Réessayez dans un instant.</source>
+        <target state="translated">The directory is unavailable right now. Please try again in a moment.</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.empty" datatype="html">
+        <source>Aucune personne ne correspond.</source>
+        <target state="translated">No one matches.</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.more" datatype="html">
+        <source><x id="COUNT"/> autres résultats : précisez la recherche.</source>
+        <target state="translated"><x id="COUNT"/> more results: refine your search.</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.resolving" datatype="html">
+        <source>Chargement du nom…</source>
+        <target state="translated">Loading name…</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.unknown" datatype="html">
+        <source>Cette personne ne fait plus partie de l'annuaire.</source>
+        <target state="translated">This person is no longer in the directory.</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.former" datatype="html">
+        <source>Ancien membre de l'organisation.</source>
+        <target state="translated">Former member of the organization.</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.live-error" datatype="html">
+        <source>Annuaire indisponible</source>
+        <target state="translated">Directory unavailable</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.live-none" datatype="html">
+        <source>Aucune personne trouvée</source>
+        <target state="translated">No one found</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.live-count" datatype="html">
+        <source><x id="COUNT"/> personne(s) proposée(s)</source>
+        <target state="translated"><x id="COUNT"/> person(s) suggested</target>
+      </trans-unit>
+      <trans-unit id="directory.person.unknown" datatype="html">
+        <source>Personne inconnue</source>
+        <target state="translated">Unknown person</target>
       </trans-unit>
       <trans-unit id="nav.doc-gen-ia" datatype="html">
         <source>Génération doc IA</source>
@@ -15604,13 +16024,17 @@ declared income
         <source>Objectif SMART + impact business attendu</source>
         <target state="translated">SMART goal + expected business impact</target>
       </trans-unit>
-      <trans-unit id="dmaic.create.champion-label" datatype="html">
-        <source>Champion (ID)</source>
-        <target state="translated">Champion (ID)</target>
+      <trans-unit id="dmaic.create.champion" datatype="html">
+        <source>Champion (optionnel)</source>
+        <target state="translated">Champion (optional)</target>
       </trans-unit>
-      <trans-unit id="dmaic.create.champion-placeholder" datatype="html">
-        <source>UUID utilisateur</source>
-        <target state="translated">User UUID</target>
+      <trans-unit id="dmaic.detail.black-belt-prefix" datatype="html">
+        <source>Black Belt :</source>
+        <target state="translated">Black Belt:</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.champion-prefix" datatype="html">
+        <source>Champion :</source>
+        <target state="translated">Champion:</target>
       </trans-unit>
       <trans-unit id="dmaic.create.target-date-label" datatype="html">
         <source>Date cible</source>
@@ -16188,21 +16612,9 @@ declared income
         <source>Ajouter un membre</source>
         <target state="translated">Add a member</target>
       </trans-unit>
-      <trans-unit id="circles.member.hint" datatype="html">
-        <source>Renseigne l'identifiant utilisateur (UUID) et le rôle. La liste de sélection sera branchée sur l'annuaire Keycloak dans une prochaine itération.</source>
-        <target state="translated">Enter the user identifier (UUID) and the role. The selection list will be connected to the Keycloak directory in a future iteration.</target>
-      </trans-unit>
-      <trans-unit id="circles.member.user-id" datatype="html">
-        <source>User ID (UUID)</source>
-        <target state="translated">User ID (UUID)</target>
-      </trans-unit>
-      <trans-unit id="circles.member.uuid-required" datatype="html">
-        <source>UUID requis.</source>
-        <target state="translated">UUID required.</target>
-      </trans-unit>
-      <trans-unit id="circles.member.uuid-invalid" datatype="html">
-        <source>Format UUID invalide.</source>
-        <target state="translated">Invalid UUID format.</target>
+      <trans-unit id="circles.member.person" datatype="html">
+        <source>Personne à ajouter</source>
+        <target state="translated">Person to add</target>
       </trans-unit>
       <trans-unit id="circles.member.role-facilitator" datatype="html">
         <source>Animateur</source>
@@ -16415,6 +16827,706 @@ declared income
       <trans-unit id="spc.analyze.kpi-banner-prefix" datatype="html">
         <source>Analyse du KPI</source>
         <target state="translated">KPI analysis</target>
+      </trans-unit>
+      <trans-unit id="nav.moc" datatype="html">
+        <source>Gestion des changements (MOC)</source>
+        <target state="translated">Management of change (MOC)</target>
+      </trans-unit>
+      <trans-unit id="nav.admin-moc" datatype="html">
+        <source>Paramètres MOC</source>
+        <target state="translated">MOC settings</target>
+      </trans-unit>
+      <trans-unit id="authz.module.change" datatype="html">
+        <source>Gestion des changements</source>
+        <target state="translated">Management of change</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.change-request" datatype="html">
+        <source>Demander un changement et conduire ses demandes</source>
+        <target state="translated">Request a change and manage own requests</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.change-analyze" datatype="html">
+        <source>Gérer toutes les demandes de changement</source>
+        <target state="translated">Manage all change requests</target>
+      </trans-unit>
+      <trans-unit id="moc.title" datatype="html">
+        <source>Gestion des changements (MOC)</source>
+        <target state="translated">Management of change (MOC)</target>
+      </trans-unit>
+      <trans-unit id="moc.subtitle" datatype="html">
+        <source>Demande, analyse d'impact, validation</source>
+        <target state="translated">Request, impact analysis, approval</target>
+      </trans-unit>
+      <trans-unit id="moc.settings-link" datatype="html">
+        <source>Paramètres MOC</source>
+        <target state="translated">MOC settings</target>
+      </trans-unit>
+      <trans-unit id="moc.export" datatype="html">
+        <source>Extraire en Excel</source>
+        <target state="translated">Export to Excel</target>
+      </trans-unit>
+      <trans-unit id="moc.export-failed" datatype="html">
+        <source>L'extraction Excel a échoué.</source>
+        <target state="translated">The Excel export failed.</target>
+      </trans-unit>
+      <trans-unit id="moc.new" datatype="html">
+        <source>Nouvelle demande</source>
+        <target state="translated">New request</target>
+      </trans-unit>
+      <trans-unit id="moc.list-failed" datatype="html">
+        <source>Les demandes n'ont pas pu être chargées.</source>
+        <target state="translated">The requests could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="moc.list-title" datatype="html">
+        <source>Demandes de changement</source>
+        <target state="translated">Change requests</target>
+      </trans-unit>
+      <trans-unit id="moc.load-failed" datatype="html">
+        <source>La demande n'a pas pu être chargée.</source>
+        <target state="translated">The request could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="moc.filter-aria" datatype="html">
+        <source>Filtrer par statut</source>
+        <target state="translated">Filter by status</target>
+      </trans-unit>
+      <trans-unit id="moc.filter.all" datatype="html">
+        <source>Tous</source>
+        <target state="translated">All</target>
+      </trans-unit>
+      <trans-unit id="moc.filter.mine" datatype="html">
+        <source>À valider par moi</source>
+        <target state="translated">Awaiting my approval</target>
+      </trans-unit>
+      <trans-unit id="moc.awaiting-me" datatype="html">
+        <source>À valider</source>
+        <target state="translated">To approve</target>
+      </trans-unit>
+      <trans-unit id="moc.empty-filter" datatype="html">
+        <source>Aucune demande dans ce statut.</source>
+        <target state="translated">No request with this status.</target>
+      </trans-unit>
+      <trans-unit id="moc.empty" datatype="html">
+        <source>Aucune demande de changement pour l'instant.</source>
+        <target state="translated">No change request yet.</target>
+      </trans-unit>
+      <trans-unit id="moc.no-selection" datatype="html">
+        <source>Sélectionnez une demande pour voir sa demande, son analyse d'impact, ses validations et son historique.</source>
+        <target state="translated">Select a request to see its details, impact analysis, approvals and history.</target>
+      </trans-unit>
+      <trans-unit id="moc.status.draft" datatype="html">
+        <source>Brouillon</source>
+        <target state="translated">Draft</target>
+      </trans-unit>
+      <trans-unit id="moc.status.in-analysis" datatype="html">
+        <source>En analyse</source>
+        <target state="translated">In analysis</target>
+      </trans-unit>
+      <trans-unit id="moc.status.in-validation" datatype="html">
+        <source>En validation</source>
+        <target state="translated">In approval</target>
+      </trans-unit>
+      <trans-unit id="moc.status.approved" datatype="html">
+        <source>Approuvé</source>
+        <target state="translated">Approved</target>
+      </trans-unit>
+      <trans-unit id="moc.status.rejected" datatype="html">
+        <source>Rejeté</source>
+        <target state="translated">Rejected</target>
+      </trans-unit>
+      <trans-unit id="moc.class.not-assessed" datatype="html">
+        <source>Non évalué</source>
+        <target state="translated">Not assessed</target>
+      </trans-unit>
+      <trans-unit id="moc.class.minor" datatype="html">
+        <source>Mineur</source>
+        <target state="translated">Minor</target>
+      </trans-unit>
+      <trans-unit id="moc.class.major" datatype="html">
+        <source>Majeur</source>
+        <target state="translated">Major</target>
+      </trans-unit>
+      <trans-unit id="moc.class.critical" datatype="html">
+        <source>Critique</source>
+        <target state="translated">Critical</target>
+      </trans-unit>
+      <trans-unit id="moc.level.none" datatype="html">
+        <source>Aucun</source>
+        <target state="translated">None</target>
+      </trans-unit>
+      <trans-unit id="moc.level.low" datatype="html">
+        <source>Faible</source>
+        <target state="translated">Low</target>
+      </trans-unit>
+      <trans-unit id="moc.level.medium" datatype="html">
+        <source>Moyen</source>
+        <target state="translated">Medium</target>
+      </trans-unit>
+      <trans-unit id="moc.level.high" datatype="html">
+        <source>Élevé</source>
+        <target state="translated">High</target>
+      </trans-unit>
+      <trans-unit id="moc.domain.safety" datatype="html">
+        <source>Sécurité</source>
+        <target state="translated">Safety</target>
+      </trans-unit>
+      <trans-unit id="moc.domain.health-environment" datatype="html">
+        <source>Santé et environnement</source>
+        <target state="translated">Health and environment</target>
+      </trans-unit>
+      <trans-unit id="moc.domain.quality" datatype="html">
+        <source>Qualité</source>
+        <target state="translated">Quality</target>
+      </trans-unit>
+      <trans-unit id="moc.domain.production" datatype="html">
+        <source>Production</source>
+        <target state="translated">Production</target>
+      </trans-unit>
+      <trans-unit id="moc.domain.maintenance" datatype="html">
+        <source>Maintenance</source>
+        <target state="translated">Maintenance</target>
+      </trans-unit>
+      <trans-unit id="moc.domain.costs" datatype="html">
+        <source>Coûts</source>
+        <target state="translated">Costs</target>
+      </trans-unit>
+      <trans-unit id="moc.domain.regulatory" datatype="html">
+        <source>Réglementaire</source>
+        <target state="translated">Regulatory</target>
+      </trans-unit>
+      <trans-unit id="moc.domain.training" datatype="html">
+        <source>Formation</source>
+        <target state="translated">Training</target>
+      </trans-unit>
+      <trans-unit id="moc.type.permanent" datatype="html">
+        <source>Permanent</source>
+        <target state="translated">Permanent</target>
+      </trans-unit>
+      <trans-unit id="moc.type.temporary" datatype="html">
+        <source>Temporaire</source>
+        <target state="translated">Temporary</target>
+      </trans-unit>
+      <trans-unit id="moc.decision.pending" datatype="html">
+        <source>En attente</source>
+        <target state="translated">Pending</target>
+      </trans-unit>
+      <trans-unit id="moc.decision.approved" datatype="html">
+        <source>Approuvé</source>
+        <target state="translated">Approved</target>
+      </trans-unit>
+      <trans-unit id="moc.decision.rejected" datatype="html">
+        <source>Rejeté</source>
+        <target state="translated">Rejected</target>
+      </trans-unit>
+      <trans-unit id="moc.send-to-analysis" datatype="html">
+        <source>Envoyer en analyse</source>
+        <target state="translated">Send to analysis</target>
+      </trans-unit>
+      <trans-unit id="moc.submit" datatype="html">
+        <source>Soumettre à validation</source>
+        <target state="translated">Submit for approval</target>
+      </trans-unit>
+      <trans-unit id="moc.reopen" datatype="html">
+        <source>Rouvrir l'analyse</source>
+        <target state="translated">Reopen the analysis</target>
+      </trans-unit>
+      <trans-unit id="moc.submit-blocked" datatype="html">
+        <source>Soumission bloquée : <x id="COUNT"/> domaine(s) d'impact sur 8 restent à évaluer.</source>
+        <target state="translated">Submission blocked: <x id="COUNT"/> of 8 impact domain(s) remain to be assessed.</target>
+      </trans-unit>
+      <trans-unit id="moc.progress-aria" datatype="html">
+        <source>Avancement de la demande</source>
+        <target state="translated">Request progress</target>
+      </trans-unit>
+      <trans-unit id="moc.tab.request" datatype="html">
+        <source>Demande</source>
+        <target state="translated">Request</target>
+      </trans-unit>
+      <trans-unit id="moc.tab.impact" datatype="html">
+        <source>Analyse d'impact</source>
+        <target state="translated">Impact analysis</target>
+      </trans-unit>
+      <trans-unit id="moc.tab.validation" datatype="html">
+        <source>Validation</source>
+        <target state="translated">Approval</target>
+      </trans-unit>
+      <trans-unit id="moc.tab.history" datatype="html">
+        <source>Historique</source>
+        <target state="translated">History</target>
+      </trans-unit>
+      <trans-unit id="moc.field.type" datatype="html">
+        <source>Type</source>
+        <target state="translated">Type</target>
+      </trans-unit>
+      <trans-unit id="moc.field.site" datatype="html">
+        <source>Site / unité</source>
+        <target state="translated">Site / unit</target>
+      </trans-unit>
+      <trans-unit id="moc.field.requester" datatype="html">
+        <source>Demandeur · date</source>
+        <target state="translated">Requester · date</target>
+      </trans-unit>
+      <trans-unit id="moc.field.planned" datatype="html">
+        <source>Mise en œuvre prévue</source>
+        <target state="translated">Planned implementation</target>
+      </trans-unit>
+      <trans-unit id="moc.field.description" datatype="html">
+        <source>Description</source>
+        <target state="translated">Description</target>
+      </trans-unit>
+      <trans-unit id="moc.field.justification" datatype="html">
+        <source>Justification</source>
+        <target state="translated">Justification</target>
+      </trans-unit>
+      <trans-unit id="moc.sent-to-analysis" datatype="html">
+        <source>Demande envoyée en analyse.</source>
+        <target state="translated">Request sent to analysis.</target>
+      </trans-unit>
+      <trans-unit id="moc.submitted" datatype="html">
+        <source>Demande soumise à validation : les validateurs sont prévenus.</source>
+        <target state="translated">Request submitted for approval: the approvers have been notified.</target>
+      </trans-unit>
+      <trans-unit id="moc.reopened" datatype="html">
+        <source>L'analyse est rouverte.</source>
+        <target state="translated">The analysis has been reopened.</target>
+      </trans-unit>
+      <trans-unit id="moc.delete-title" datatype="html">
+        <source>Supprimer la demande <x id="code"/> ?</source>
+        <target state="translated">Delete request <x id="code"/>?</target>
+      </trans-unit>
+      <trans-unit id="moc.delete-message" datatype="html">
+        <source>Le brouillon et son historique seront supprimés. Cette action est définitive.</source>
+        <target state="translated">The draft and its history will be deleted. This cannot be undone.</target>
+      </trans-unit>
+      <trans-unit id="moc.deleted" datatype="html">
+        <source>Demande supprimée.</source>
+        <target state="translated">Request deleted.</target>
+      </trans-unit>
+      <trans-unit id="moc.action-failed" datatype="html">
+        <source>L'action sur la demande a échoué.</source>
+        <target state="translated">The action on the request failed.</target>
+      </trans-unit>
+      <trans-unit id="moc.history.with-actor" datatype="html">
+        <source><x id="event"/> par <x id="actor"/></source>
+        <target state="translated"><x id="event"/> by <x id="actor"/></target>
+      </trans-unit>
+      <trans-unit id="moc.history.created" datatype="html">
+        <source>Demande créée</source>
+        <target state="translated">Request created</target>
+      </trans-unit>
+      <trans-unit id="moc.history.updated" datatype="html">
+        <source>Demande modifiée</source>
+        <target state="translated">Request updated</target>
+      </trans-unit>
+      <trans-unit id="moc.history.sent-to-analysis" datatype="html">
+        <source>Envoyée en analyse</source>
+        <target state="translated">Sent to analysis</target>
+      </trans-unit>
+      <trans-unit id="moc.history.analysis-completed" datatype="html">
+        <source>Analyse d'impact terminée</source>
+        <target state="translated">Impact analysis completed</target>
+      </trans-unit>
+      <trans-unit id="moc.history.submitted" datatype="html">
+        <source>Soumise à validation</source>
+        <target state="translated">Submitted for approval</target>
+      </trans-unit>
+      <trans-unit id="moc.history.validation-approved" datatype="html">
+        <source>Validation accordée</source>
+        <target state="translated">Approval granted</target>
+      </trans-unit>
+      <trans-unit id="moc.history.validation-rejected" datatype="html">
+        <source>Validation refusée</source>
+        <target state="translated">Approval refused</target>
+      </trans-unit>
+      <trans-unit id="moc.history.approved" datatype="html">
+        <source>Demande approuvée</source>
+        <target state="translated">Request approved</target>
+      </trans-unit>
+      <trans-unit id="moc.history.rejected" datatype="html">
+        <source>Demande rejetée</source>
+        <target state="translated">Request rejected</target>
+      </trans-unit>
+      <trans-unit id="moc.history.reopened" datatype="html">
+        <source>Analyse rouverte</source>
+        <target state="translated">Analysis reopened</target>
+      </trans-unit>
+      <trans-unit id="moc.history.reminder-sent" datatype="html">
+        <source>Rappel envoyé aux validateurs</source>
+        <target state="translated">Reminder sent to approvers</target>
+      </trans-unit>
+      <trans-unit id="moc.history.legacy-status" datatype="html">
+        <source>Statut antérieur au MOC</source>
+        <target state="translated">Status before MOC</target>
+      </trans-unit>
+      <trans-unit id="moc.history.legacy-decision" datatype="html">
+        <source>Décision antérieure au MOC</source>
+        <target state="translated">Decision before MOC</target>
+      </trans-unit>
+      <trans-unit id="moc.history.legacy-impact" datatype="html">
+        <source>Objet lié avant le MOC</source>
+        <target state="translated">Object linked before MOC</target>
+      </trans-unit>
+      <trans-unit id="moc.history.empty" datatype="html">
+        <source>Aucun événement.</source>
+        <target state="translated">No event.</target>
+      </trans-unit>
+      <trans-unit id="moc.impact.title" datatype="html">
+        <source>Classification du changement</source>
+        <target state="translated">Change classification</target>
+      </trans-unit>
+      <trans-unit id="moc.impact.score-aria" datatype="html">
+        <source>Score d'impact</source>
+        <target state="translated">Impact score</target>
+      </trans-unit>
+      <trans-unit id="moc.impact.incomplete" datatype="html">
+        <source><x id="DONE"/> domaine(s) évalué(s) sur 8. La classification reste « Non évalué » et la soumission à validation est bloquée tant que les huit domaines ne sont pas évalués.</source>
+        <target state="translated"><x id="DONE"/> of 8 domain(s) assessed. The classification stays “Not assessed” and submission for approval is blocked until all eight domains are assessed.</target>
+      </trans-unit>
+      <trans-unit id="moc.impact.draft" datatype="html">
+        <source>L'analyse d'impact s'ouvre quand la demande est envoyée en analyse.</source>
+        <target state="translated">The impact analysis opens when the request is sent to analysis.</target>
+      </trans-unit>
+      <trans-unit id="moc.impact.frozen" datatype="html">
+        <source>Analyse figée à la soumission à validation.</source>
+        <target state="translated">Analysis frozen at submission for approval.</target>
+      </trans-unit>
+      <trans-unit id="moc.impact.weight-tooltip" datatype="html">
+        <source>Poids de ce domaine dans le score, réglé par l'administrateur</source>
+        <target state="translated">Weight of this domain in the score, set by the administrator</target>
+      </trans-unit>
+      <trans-unit id="moc.impact.notes" datatype="html">
+        <source>Nature de l'impact et mesures de maîtrise</source>
+        <target state="translated">Nature of the impact and control measures</target>
+      </trans-unit>
+      <trans-unit id="moc.impact-failed" datatype="html">
+        <source>L'évaluation n'a pas été enregistrée.</source>
+        <target state="translated">The assessment was not saved.</target>
+      </trans-unit>
+      <trans-unit id="moc.validation.summary" datatype="html">
+        <source>Changement <x id="classe"/> : <x id="count"/> validation(s) requise(s). Un seul refus rejette la demande.</source>
+        <target state="translated"><x id="classe"/> change: <x id="count"/> approval(s) required. A single refusal rejects the request.</target>
+      </trans-unit>
+      <trans-unit id="moc.validation.not-assessed" datatype="html">
+        <source>Les validateurs requis seront connus une fois les huit domaines d'impact évalués.</source>
+        <target state="translated">The required approvers will be known once all eight impact domains are assessed.</target>
+      </trans-unit>
+      <trans-unit id="moc.validation.legacy" datatype="html">
+        <source>Demande antérieure au MOC : ses décisions sont consignées dans l'historique.</source>
+        <target state="translated">Request created before MOC: its decisions are recorded in the history.</target>
+      </trans-unit>
+      <trans-unit id="moc.validation.preview" datatype="html">
+        <source>Aperçu : la liste des validateurs sera figée à la soumission à validation.</source>
+        <target state="translated">Preview: the list of approvers will be frozen at submission for approval.</target>
+      </trans-unit>
+      <trans-unit id="moc.validation.approved-by" datatype="html">
+        <source>Approuvé par <x id="NAME"/></source>
+        <target state="translated">Approved by <x id="NAME"/></target>
+      </trans-unit>
+      <trans-unit id="moc.validation.rejected-by" datatype="html">
+        <source>Rejeté par <x id="NAME"/></source>
+        <target state="translated">Rejected by <x id="NAME"/></target>
+      </trans-unit>
+      <trans-unit id="moc.validation.holders" datatype="html">
+        <source>Titulaires : <x id="NAMES"/></source>
+        <target state="translated">Holders: <x id="NAMES"/></target>
+      </trans-unit>
+      <trans-unit id="moc.validation.waiting-for" datatype="html">
+        <source>En attente de : <x id="NAMES"/></source>
+        <target state="translated">Waiting for: <x id="NAMES"/></target>
+      </trans-unit>
+      <trans-unit id="moc.validation.no-holder" datatype="html">
+        <source>Aucun titulaire : l'administrateur doit en nommer un dans les paramètres MOC.</source>
+        <target state="translated">No holder: the administrator must appoint one in the MOC settings.</target>
+      </trans-unit>
+      <trans-unit id="moc.validation.self" datatype="html">
+        <source>Vous êtes le demandeur : vous ne pouvez pas valider votre propre demande.</source>
+        <target state="translated">You are the requester: you cannot approve your own request.</target>
+      </trans-unit>
+      <trans-unit id="moc.validation.comment" datatype="html">
+        <source>Commentaire (obligatoire en cas de refus)</source>
+        <target state="translated">Comment (required when rejecting)</target>
+      </trans-unit>
+      <trans-unit id="moc.validation.approve" datatype="html">
+        <source>Approuver</source>
+        <target state="translated">Approve</target>
+      </trans-unit>
+      <trans-unit id="moc.validation.reject" datatype="html">
+        <source>Rejeter</source>
+        <target state="translated">Reject</target>
+      </trans-unit>
+      <trans-unit id="moc.validation.reject-hint" datatype="html">
+        <source>Un refus doit être motivé par un commentaire</source>
+        <target state="translated">A rejection must be justified by a comment</target>
+      </trans-unit>
+      <trans-unit id="moc.validation.approved" datatype="html">
+        <source>Validation enregistrée.</source>
+        <target state="translated">Approval recorded.</target>
+      </trans-unit>
+      <trans-unit id="moc.validation.rejected" datatype="html">
+        <source>Refus enregistré : la demande est rejetée.</source>
+        <target state="translated">Rejection recorded: the request is rejected.</target>
+      </trans-unit>
+      <trans-unit id="moc.validation.failed" datatype="html">
+        <source>La décision n'a pas été enregistrée.</source>
+        <target state="translated">The decision was not saved.</target>
+      </trans-unit>
+      <trans-unit id="moc.dialog.new-title" datatype="html">
+        <source>Nouvelle demande de changement</source>
+        <target state="translated">New change request</target>
+      </trans-unit>
+      <trans-unit id="moc.dialog.edit-title" datatype="html">
+        <source>Modifier la demande <x id="code"/></source>
+        <target state="translated">Edit request <x id="code"/></target>
+      </trans-unit>
+      <trans-unit id="moc.dialog.title-label" datatype="html">
+        <source>Titre</source>
+        <target state="translated">Title</target>
+      </trans-unit>
+      <trans-unit id="moc.dialog.title-required" datatype="html">
+        <source>Donnez un titre à la demande.</source>
+        <target state="translated">Give the request a title.</target>
+      </trans-unit>
+      <trans-unit id="moc.dialog.planned-hint" datatype="html">
+        <source>Facultatif : l'échéance apparaît au tableau de bord SMI.</source>
+        <target state="translated">Optional: the due date appears on the IMS dashboard.</target>
+      </trans-unit>
+      <trans-unit id="moc.dialog.create" datatype="html">
+        <source>Créer la demande</source>
+        <target state="translated">Create the request</target>
+      </trans-unit>
+      <trans-unit id="moc.dialog.created" datatype="html">
+        <source>Demande <x id="code"/> créée.</source>
+        <target state="translated">Request <x id="code"/> created.</target>
+      </trans-unit>
+      <trans-unit id="moc.dialog.updated" datatype="html">
+        <source>Demande modifiée.</source>
+        <target state="translated">Request updated.</target>
+      </trans-unit>
+      <trans-unit id="moc.dialog.failed" datatype="html">
+        <source>La demande n'a pas été enregistrée.</source>
+        <target state="translated">The request was not saved.</target>
+      </trans-unit>
+      <trans-unit id="moc.error.analysis-incomplete" datatype="html">
+        <source>Évaluez les huit domaines d'impact avant de soumettre à validation.</source>
+        <target state="translated">Assess all eight impact domains before submitting for approval.</target>
+      </trans-unit>
+      <trans-unit id="moc.error.role-without-holder" datatype="html">
+        <source>Le rôle « <x id="role"/> » n'a aucun titulaire : demandez à l'administrateur d'en nommer un.</source>
+        <target state="translated">The role “<x id="role"/>” has no holder: ask the administrator to appoint one.</target>
+      </trans-unit>
+      <trans-unit id="moc.error.role-only-requester" datatype="html">
+        <source>Le rôle « <x id="role"/> » n'a pour titulaire que le demandeur, qui ne peut pas valider sa propre demande.</source>
+        <target state="translated">The only holder of the role “<x id="role"/>” is the requester, who cannot approve their own request.</target>
+      </trans-unit>
+      <trans-unit id="moc.error.not-holder" datatype="html">
+        <source>Seul un titulaire du rôle « <x id="role"/> » peut statuer sur cette carte.</source>
+        <target state="translated">Only a holder of the role “<x id="role"/>” can decide on this card.</target>
+      </trans-unit>
+      <trans-unit id="moc.error.not-owner" datatype="html">
+        <source>Seul le demandeur ou un gestionnaire des changements peut conduire cette demande.</source>
+        <target state="translated">Only the requester or a change manager can handle this request.</target>
+      </trans-unit>
+      <trans-unit id="moc.error.self-validation" datatype="html">
+        <source>Vous êtes le demandeur : vous ne pouvez pas valider votre propre demande.</source>
+        <target state="translated">You are the requester: you cannot approve your own request.</target>
+      </trans-unit>
+      <trans-unit id="moc.error.comment-required" datatype="html">
+        <source>Un refus doit être motivé par un commentaire.</source>
+        <target state="translated">A rejection must be justified by a comment.</target>
+      </trans-unit>
+      <trans-unit id="moc.error.already-decided" datatype="html">
+        <source>Ce rôle a déjà statué.</source>
+        <target state="translated">This role has already decided.</target>
+      </trans-unit>
+      <trans-unit id="moc.error.delete-not-draft" datatype="html">
+        <source>Seule une demande en brouillon peut être supprimée.</source>
+        <target state="translated">Only a draft request can be deleted.</target>
+      </trans-unit>
+      <trans-unit id="moc.error.role-in-use" datatype="html">
+        <source>Le rôle « <x id="role"/> » est attendu par une demande en validation : il ne peut pas être retiré.</source>
+        <target state="translated">The role “<x id="role"/>” is awaited by a request in approval: it cannot be removed.</target>
+      </trans-unit>
+      <trans-unit id="moc.error.role-in-use-holders" datatype="html">
+        <source>Le rôle « <x id="role"/> » est attendu par une demande en validation : il doit garder au moins un titulaire.</source>
+        <target state="translated">The role “<x id="role"/>” is awaited by a request in approval: it must keep at least one holder.</target>
+      </trans-unit>
+      <trans-unit id="moc.error.role-duplicate" datatype="html">
+        <source>Deux rôles portent le même libellé « <x id="role"/> ».</source>
+        <target state="translated">Two roles have the same label “<x id="role"/>”.</target>
+      </trans-unit>
+      <trans-unit id="moc.error.required-empty" datatype="html">
+        <source>Chaque classification doit exiger au moins un rôle de validation.</source>
+        <target state="translated">Each classification must require at least one approval role.</target>
+      </trans-unit>
+      <trans-unit id="moc.error.thresholds" datatype="html">
+        <source>Les seuils doivent respecter 0 &lt; seuil majeur &lt; seuil critique ≤ 100.</source>
+        <target state="translated">Thresholds must satisfy 0 &lt; major threshold &lt; critical threshold ≤ 100.</target>
+      </trans-unit>
+      <trans-unit id="moc.error.weights-zero" datatype="html">
+        <source>Au moins un domaine doit avoir un poids supérieur à 0.</source>
+        <target state="translated">At least one domain must have a weight above 0.</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.title" datatype="html">
+        <source>Paramètres MOC</source>
+        <target state="translated">MOC settings</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.subtitle" datatype="html">
+        <source>Classification, poids des domaines, rappel et validateurs de la gestion des changements.</source>
+        <target state="translated">Classification, domain weights, reminders and approvers for management of change.</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.back" datatype="html">
+        <source>Gestion des changements</source>
+        <target state="translated">Management of change</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.load-failed" datatype="html">
+        <source>Les paramètres MOC n'ont pas pu être chargés.</source>
+        <target state="translated">The MOC settings could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.scope" datatype="html">
+        <source>Un enregistrement reclasse aussitôt les demandes en brouillon ou en analyse. Les demandes déjà en validation, approuvées ou rejetées gardent leur score, leur classification et leurs validateurs, figés à la soumission.</source>
+        <target state="translated">Saving immediately reclassifies requests in draft or in analysis. Requests already in approval, approved or rejected keep the score, classification and approvers frozen at submission.</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.thresholds" datatype="html">
+        <source>Seuils de classification</source>
+        <target state="translated">Classification thresholds</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.thresholds-help" datatype="html">
+        <source>Le score d'impact va de 0 à 100. Il classe la demande, et la classe désigne les validateurs requis.</source>
+        <target state="translated">The impact score ranges from 0 to 100. It classifies the request, and the class determines the required approvers.</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.major" datatype="html">
+        <source>Seuil majeur</source>
+        <target state="translated">Major threshold</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.critical" datatype="html">
+        <source>Seuil critique</source>
+        <target state="translated">Critical threshold</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.threshold-summary" datatype="html">
+        <source>Mineur &lt; <x id="major"/> ≤ Majeur &lt; <x id="critical"/> ≤ Critique</source>
+        <target state="translated">Minor &lt; <x id="major"/> ≤ Major &lt; <x id="critical"/> ≤ Critical</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.reminder" datatype="html">
+        <source>Rappel aux validateurs</source>
+        <target state="translated">Approver reminders</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.reminder-help" datatype="html">
+        <source>Sans décision dans ce délai, les titulaires du rôle reçoivent un rappel, répété au même rythme tant que personne n'a statué.</source>
+        <target state="translated">Without a decision within this period, the role holders receive a reminder, repeated at the same pace until someone decides.</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.reminder-days" datatype="html">
+        <source>Délai (jours)</source>
+        <target state="translated">Delay (days)</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.weights" datatype="html">
+        <source>Poids des domaines d'impact</source>
+        <target state="translated">Impact domain weights</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.weights-help" datatype="html">
+        <source>De 0 à 10. Un domaine de poids 0 reste à évaluer mais ne compte pas dans le score. À 1 partout, le score est la moyenne simple.</source>
+        <target state="translated">From 0 to 10. A domain weighted 0 must still be assessed but does not count in the score. With 1 everywhere, the score is the simple average.</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.roles" datatype="html">
+        <source>Rôles de validation</source>
+        <target state="translated">Approval roles</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.roles-help" datatype="html">
+        <source>Pour chaque rôle : les classifications qui l'exigent et ses titulaires (principal en premier, puis suppléants). N'importe lequel d'entre eux peut statuer ; jamais le demandeur.</source>
+        <target state="translated">For each role: the classifications that require it and its holders (primary first, then deputies). Any of them can decide; never the requester.</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.add-role" datatype="html">
+        <source>Ajouter un rôle</source>
+        <target state="translated">Add a role</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.role-label" datatype="html">
+        <source>Libellé du rôle</source>
+        <target state="translated">Role label</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.up" datatype="html">
+        <source>Monter le rôle</source>
+        <target state="translated">Move role up</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.down" datatype="html">
+        <source>Descendre le rôle</source>
+        <target state="translated">Move role down</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.remove-role" datatype="html">
+        <source>Retirer le rôle</source>
+        <target state="translated">Remove the role</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.required-for" datatype="html">
+        <source>Requis pour</source>
+        <target state="translated">Required for</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.holders" datatype="html">
+        <source>Titulaires</source>
+        <target state="translated">Holders</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.primary" datatype="html">
+        <source>Principal ·</source>
+        <target state="translated">Primary ·</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.inactive" datatype="html">
+        <source>(désactivé)</source>
+        <target state="translated">(deactivated)</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.unknown" datatype="html">
+        <source>(absent de l'annuaire)</source>
+        <target state="translated">(not in directory)</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.remove-holder" datatype="html">
+        <source>Retirer <x id="member"/></source>
+        <target state="translated">Remove <x id="member"/></target>
+      </trans-unit>
+      <trans-unit id="moc.settings.no-holder" datatype="html">
+        <source>Aucun titulaire : une demande qui exige ce rôle ne pourra pas être soumise à validation.</source>
+        <target state="translated">No holder: a request requiring this role cannot be submitted for approval.</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.add-holder" datatype="html">
+        <source>Ajouter un titulaire (annuaire)</source>
+        <target state="translated">Add a holder (directory)</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.pending" datatype="html">
+        <source>Paramètres modifiés</source>
+        <target state="translated">Settings changed</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.saved" datatype="html">
+        <source>Paramètres MOC enregistrés. Les demandes en brouillon ou en analyse sont reclassées.</source>
+        <target state="translated">MOC settings saved. Requests in draft or in analysis have been reclassified.</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.failed" datatype="html">
+        <source>Les paramètres MOC n'ont pas pu être enregistrés.</source>
+        <target state="translated">The MOC settings could not be saved.</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.problem.thresholds" datatype="html">
+        <source>Les seuils doivent respecter 0 &lt; seuil majeur &lt; seuil critique ≤ 100.</source>
+        <target state="translated">Thresholds must satisfy 0 &lt; major threshold &lt; critical threshold ≤ 100.</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.problem.reminder" datatype="html">
+        <source>Le délai de rappel est un nombre de jours de 1 à 30.</source>
+        <target state="translated">The reminder delay is a number of days from 1 to 30.</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.problem.weights" datatype="html">
+        <source>Chaque poids est un entier de 0 à 10.</source>
+        <target state="translated">Each weight is a whole number from 0 to 10.</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.problem.weights-zero" datatype="html">
+        <source>Au moins un domaine doit avoir un poids supérieur à 0.</source>
+        <target state="translated">At least one domain must have a weight above 0.</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.problem.no-role" datatype="html">
+        <source>Il faut au moins un rôle de validation.</source>
+        <target state="translated">At least one approval role is required.</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.problem.label" datatype="html">
+        <source>Chaque rôle porte un libellé de 1 à 100 caractères.</source>
+        <target state="translated">Each role has a label of 1 to 100 characters.</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.problem.duplicate" datatype="html">
+        <source>Deux rôles portent le même libellé.</source>
+        <target state="translated">Two roles have the same label.</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.problem.required" datatype="html">
+        <source>La classification « <x id="classe"/> » n'exige aucun rôle.</source>
+        <target state="translated">The classification “<x id="classe"/>” requires no role.</target>
       </trans-unit>
       <trans-unit id="nav.non-conformite" datatype="html">
         <source>Non-conformité</source>
@@ -16715,22 +17827,6 @@ declared income
       <trans-unit id="nc.detail.cancel-confirm-message" datatype="html">
         <source>La non-conformité sera marquée comme annulée. Cette décision est traçable.</source>
         <target state="translated">The non-conformance will be marked as cancelled. This decision is traceable.</target>
-      </trans-unit>
-      <trans-unit id="nc.detail.add-action" datatype="html">
-        <source>Ajouter une action</source>
-        <target state="translated">Add action</target>
-      </trans-unit>
-      <trans-unit id="nc.detail.add-action-tooltip" datatype="html">
-        <source>Poser une action corrective sur cette non-conformité</source>
-        <target state="translated">Record a corrective action on this non-conformance</target>
-      </trans-unit>
-      <trans-unit id="nc.detail.add-action-no-case" datatype="html">
-        <source>Dossier créé, mais introuvable pour y ajouter l'action. Ouvrez-le depuis la CAPA.</source>
-        <target state="translated">Case created, but it could not be found to add the action. Open it from CAPA.</target>
-      </trans-unit>
-      <trans-unit id="nc.detail.escalate-error" datatype="html">
-        <source>Erreur lors de l'escalade.</source>
-        <target state="translated">Error while escalating.</target>
       </trans-unit>
       <trans-unit id="nc.detail.transition-success" datatype="html">
         <source>Statut mis à jour.</source>
@@ -19360,442 +20456,6 @@ declared income
         <source>Ce que la clôture de ce dossier a proposé de réviser.</source>
         <target state="translated">What closing this case proposed to revise.</target>
       </trans-unit>
-      <trans-unit id="changes.approver.added" datatype="html">
-        <source>Approbateur ajouté.</source>
-        <target state="translated">Approver added.</target>
-      </trans-unit>
-      <trans-unit id="changes.approver.hint" datatype="html">
-        <source>Le workflow d'approbation passe en APPROVED quand tous les approbateurs ont
-     statué favorablement. Un seul REJECT marque la demande comme REJECTED.</source>
-        <target state="translated">The approval workflow moves to APPROVED once all approvers have ruled
-     favorably. A single REJECT marks the request as REJECTED.</target>
-      </trans-unit>
-      <trans-unit id="changes.approver.level-label" datatype="html">
-        <source>Niveau d'approbation</source>
-        <target state="translated">Approval level</target>
-      </trans-unit>
-      <trans-unit id="changes.approver.title" datatype="html">
-        <source>Ajouter un approbateur</source>
-        <target state="translated">Add an approver</target>
-      </trans-unit>
-      <trans-unit id="changes.approver.uuid-hint" datatype="html">
-        <source>UUID v4 de l'utilisateur Keycloak</source>
-        <target state="translated">Keycloak user UUID v4</target>
-      </trans-unit>
-      <trans-unit id="changes.approver.uuid-label" datatype="html">
-        <source>UUID approbateur</source>
-        <target state="translated">Approver UUID</target>
-      </trans-unit>
-      <trans-unit id="changes.create.code-label" datatype="html">
-        <source>Code</source>
-        <target state="translated">Code</target>
-      </trans-unit>
-      <trans-unit id="changes.create.code-placeholder" datatype="html">
-        <source>Ex. : CHG-2026-014</source>
-        <target state="translated">E.g.: CHG-2026-014</target>
-      </trans-unit>
-      <trans-unit id="changes.create.created" datatype="html">
-        <source>Demande créée.</source>
-        <target state="translated">Request created.</target>
-      </trans-unit>
-      <trans-unit id="changes.create.impact-summary-label" datatype="html">
-        <source>Synthèse d'impact</source>
-        <target state="translated">Impact summary</target>
-      </trans-unit>
-      <trans-unit id="changes.create.planned-for-label" datatype="html">
-        <source>Date prévue</source>
-        <target state="translated">Planned date</target>
-      </trans-unit>
-      <trans-unit id="changes.create.priority-label" datatype="html">
-        <source>Priorité</source>
-        <target state="translated">Priority</target>
-      </trans-unit>
-      <trans-unit id="changes.create.risk-label" datatype="html">
-        <source>Analyse de risque</source>
-        <target state="translated">Risk analysis</target>
-      </trans-unit>
-      <trans-unit id="changes.create.save-error" datatype="html">
-        <source>Erreur lors de l'enregistrement.</source>
-        <target state="translated">Error while saving.</target>
-      </trans-unit>
-      <trans-unit id="changes.create.updated" datatype="html">
-        <source>Demande mise à jour.</source>
-        <target state="translated">Request updated.</target>
-      </trans-unit>
-      <trans-unit id="changes.decision.approve-hint" datatype="html">
-        <source>Votre approbation sera enregistrée. La demande passera en APPROVED lorsque tous les approbateurs auront statué.</source>
-        <target state="translated">Your approval will be recorded. The request will move to APPROVED once all approvers have ruled.</target>
-      </trans-unit>
-      <trans-unit id="changes.decision.comment-label" datatype="html">
-        <source>Commentaire</source>
-        <target state="translated">Comment</target>
-      </trans-unit>
-      <trans-unit id="changes.decision.failed" datatype="html">
-        <source>Décision impossible.</source>
-        <target state="translated">Decision failed.</target>
-      </trans-unit>
-      <trans-unit id="changes.decision.recorded-approved" datatype="html">
-        <source>Décision enregistrée : approuvée.</source>
-        <target state="translated">Decision recorded: approved.</target>
-      </trans-unit>
-      <trans-unit id="changes.decision.recorded-rejected" datatype="html">
-        <source>Décision enregistrée : rejetée.</source>
-        <target state="translated">Decision recorded: rejected.</target>
-      </trans-unit>
-      <trans-unit id="changes.decision.reject-hint" datatype="html">
-        <source>Un seul rejet marque la demande comme REJECTED — décision terminale.</source>
-        <target state="translated">A single rejection marks the request as REJECTED — a terminal decision.</target>
-      </trans-unit>
-      <trans-unit id="changes.decision.title-approve" datatype="html">
-        <source>Approuver la demande</source>
-        <target state="translated">Approve the request</target>
-      </trans-unit>
-      <trans-unit id="changes.decision.title-reject" datatype="html">
-        <source>Rejeter la demande</source>
-        <target state="translated">Reject the request</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.add-impact" datatype="html">
-        <source>Ajouter un impact</source>
-        <target state="translated">Add an impact</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.approvals-title" datatype="html">
-        <source>Approbations</source>
-        <target state="translated">Approvals</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.approve" datatype="html">
-        <source>Approuver</source>
-        <target state="translated">Approve</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.back" datatype="html">
-        <source>Changements</source>
-        <target state="translated">Changes</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.cancel-confirm-label" datatype="html">
-        <source>Annuler la demande</source>
-        <target state="translated">Cancel the request</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.cancel-confirm-title" datatype="html">
-        <source>Annuler la demande ?</source>
-        <target state="translated">Cancel the request?</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.cancel-failed" datatype="html">
-        <source>Annulation impossible.</source>
-        <target state="translated">Cancellation failed.</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.cancelled" datatype="html">
-        <source>Demande annulée.</source>
-        <target state="translated">Request cancelled.</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.col-added" datatype="html">
-        <source>Ajouté</source>
-        <target state="translated">Added</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.col-approver" datatype="html">
-        <source>Approbateur</source>
-        <target state="translated">Approver</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.col-comment" datatype="html">
-        <source>Commentaire</source>
-        <target state="translated">Comment</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.col-decided-at" datatype="html">
-        <source>Décidé le</source>
-        <target state="translated">Decided on</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.col-decision" datatype="html">
-        <source>Décision</source>
-        <target state="translated">Decision</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.col-level" datatype="html">
-        <source>Niveau</source>
-        <target state="translated">Level</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.col-notes" datatype="html">
-        <source>Notes</source>
-        <target state="translated">Notes</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.col-target-uuid" datatype="html">
-        <source>UUID cible</source>
-        <target state="translated">Target UUID</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.delete-confirm-title" datatype="html">
-        <source>Supprimer la demande ?</source>
-        <target state="translated">Delete the request?</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.deleted" datatype="html">
-        <source>Demande supprimée.</source>
-        <target state="translated">Request deleted.</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.impact-summary-title" datatype="html">
-        <source>Synthèse impact</source>
-        <target state="translated">Impact summary</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.impacts-title" datatype="html">
-        <source>Impacts</source>
-        <target state="translated">Impacts</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.implement" datatype="html">
-        <source>Implémenter</source>
-        <target state="translated">Implement</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.implemented-label" datatype="html">
-        <source>Implémenté :</source>
-        <target state="translated">Implemented:</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.keep" datatype="html">
-        <source>Conserver</source>
-        <target state="translated">Keep</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.no-approvers" datatype="html">
-        <source>Aucun approbateur défini.</source>
-        <target state="translated">No approver defined.</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.no-impact-summary" datatype="html">
-        <source>Aucune synthèse renseignée.</source>
-        <target state="translated">No summary provided.</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.no-impacts" datatype="html">
-        <source>Aucun impact référencé.</source>
-        <target state="translated">No impact referenced.</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.no-risk" datatype="html">
-        <source>Aucune analyse renseignée.</source>
-        <target state="translated">No analysis provided.</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.planned-label" datatype="html">
-        <source>Prévu :</source>
-        <target state="translated">Planned:</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.reject" datatype="html">
-        <source>Rejeter</source>
-        <target state="translated">Reject</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.rejection-label" datatype="html">
-        <source>Motif de rejet :</source>
-        <target state="translated">Rejection reason:</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.remove" datatype="html">
-        <source>Retirer</source>
-        <target state="translated">Remove</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.remove-approver-title" datatype="html">
-        <source>Retirer l'approbateur ?</source>
-        <target state="translated">Remove the approver?</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.remove-failed" datatype="html">
-        <source>Retrait impossible.</source>
-        <target state="translated">Removal failed.</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.remove-impact-title" datatype="html">
-        <source>Retirer l'impact ?</source>
-        <target state="translated">Remove the impact?</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.remove-tooltip" datatype="html">
-        <source>Retirer</source>
-        <target state="translated">Remove</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.risk-title" datatype="html">
-        <source>Analyse de risque</source>
-        <target state="translated">Risk analysis</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.stat-approved" datatype="html">
-        <source>Approuvés</source>
-        <target state="translated">Approved</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.stat-approvers" datatype="html">
-        <source>Approbateurs</source>
-        <target state="translated">Approvers</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.stat-impacts" datatype="html">
-        <source>Impacts</source>
-        <target state="translated">Impacts</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.stat-pending" datatype="html">
-        <source>En attente</source>
-        <target state="translated">Pending</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.stat-rejected" datatype="html">
-        <source>Rejetés</source>
-        <target state="translated">Rejected</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.submit" datatype="html">
-        <source>Soumettre</source>
-        <target state="translated">Submit</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.submit-failed" datatype="html">
-        <source>Soumission impossible.</source>
-        <target state="translated">Submission failed.</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.submitted" datatype="html">
-        <source>Demande soumise.</source>
-        <target state="translated">Request submitted.</target>
-      </trans-unit>
-      <trans-unit id="changes.impact-target.document" datatype="html">
-        <source>Document</source>
-        <target state="translated">Document</target>
-      </trans-unit>
-      <trans-unit id="changes.impact-target.fmea-project" datatype="html">
-        <source>Projet FMEA</source>
-        <target state="translated">FMEA project</target>
-      </trans-unit>
-      <trans-unit id="changes.impact-target.iot-device" datatype="html">
-        <source>Équipement IoT</source>
-        <target state="translated">IoT device</target>
-      </trans-unit>
-      <trans-unit id="changes.impact-target.other" datatype="html">
-        <source>Autre</source>
-        <target state="translated">Other</target>
-      </trans-unit>
-      <trans-unit id="changes.impact-target.pdca-cycle" datatype="html">
-        <source>Cycle PDCA</source>
-        <target state="translated">PDCA cycle</target>
-      </trans-unit>
-      <trans-unit id="changes.impact-target.standard" datatype="html">
-        <source>Norme</source>
-        <target state="translated">Standard</target>
-      </trans-unit>
-      <trans-unit id="changes.impact-target.supplier" datatype="html">
-        <source>Fournisseur</source>
-        <target state="translated">Supplier</target>
-      </trans-unit>
-      <trans-unit id="changes.impact-target.training-path" datatype="html">
-        <source>Parcours de formation</source>
-        <target state="translated">Training path</target>
-      </trans-unit>
-      <trans-unit id="changes.impact.added" datatype="html">
-        <source>Impact ajouté.</source>
-        <target state="translated">Impact added.</target>
-      </trans-unit>
-      <trans-unit id="changes.impact.hint" datatype="html">
-        <source>Décrivez les entités QualitOS impactées par ce changement (document à mettre à jour,
-     parcours de formation à actualiser, équipement à recalibrer…).</source>
-        <target state="translated">Describe the QualitOS entities impacted by this change (document to update,
-     training path to refresh, equipment to recalibrate…).</target>
-      </trans-unit>
-      <trans-unit id="changes.impact.notes-label" datatype="html">
-        <source>Notes</source>
-        <target state="translated">Notes</target>
-      </trans-unit>
-      <trans-unit id="changes.impact.target-type-label" datatype="html">
-        <source>Type d'entité impactée</source>
-        <target state="translated">Impacted entity type</target>
-      </trans-unit>
-      <trans-unit id="changes.impact.title" datatype="html">
-        <source>Ajouter un impact</source>
-        <target state="translated">Add an impact</target>
-      </trans-unit>
-      <trans-unit id="changes.impact.uuid-label" datatype="html">
-        <source>UUID de l'entité</source>
-        <target state="translated">Entity UUID</target>
-      </trans-unit>
-      <trans-unit id="changes.implement.confirm" datatype="html">
-        <source>Confirmer</source>
-        <target state="translated">Confirm</target>
-      </trans-unit>
-      <trans-unit id="changes.implement.date-label" datatype="html">
-        <source>Date d'implémentation</source>
-        <target state="translated">Implementation date</target>
-      </trans-unit>
-      <trans-unit id="changes.implement.failed" datatype="html">
-        <source>Implémentation impossible.</source>
-        <target state="translated">Implementation failed.</target>
-      </trans-unit>
-      <trans-unit id="changes.implement.implemented" datatype="html">
-        <source>Demande marquée IMPLEMENTED.</source>
-        <target state="translated">Request marked IMPLEMENTED.</target>
-      </trans-unit>
-      <trans-unit id="changes.implement.subtitle" datatype="html">
-        <source>Le changement doit être APPROVED. La transition vers IMPLEMENTED est terminale.</source>
-        <target state="translated">The change must be APPROVED. The transition to IMPLEMENTED is terminal.</target>
-      </trans-unit>
-      <trans-unit id="changes.implement.title" datatype="html">
-        <source>Marquer comme implémenté</source>
-        <target state="translated">Mark as implemented</target>
-      </trans-unit>
-      <trans-unit id="changes.list.col-code" datatype="html">
-        <source>Code</source>
-        <target state="translated">Code</target>
-      </trans-unit>
-      <trans-unit id="changes.list.col-planned-for" datatype="html">
-        <source>Prévu pour</source>
-        <target state="translated">Planned for</target>
-      </trans-unit>
-      <trans-unit id="changes.list.col-priority" datatype="html">
-        <source>Priorité</source>
-        <target state="translated">Priority</target>
-      </trans-unit>
-      <trans-unit id="changes.list.new-request" datatype="html">
-        <source>Nouvelle demande</source>
-        <target state="translated">New request</target>
-      </trans-unit>
-      <trans-unit id="changes.list.subtitle" datatype="html">
-        <source>Demandes de changement, analyse d'impact, validation multi-niveaux.</source>
-        <target state="translated">Change requests, impact analysis, multi-level validation.</target>
-      </trans-unit>
-      <trans-unit id="changes.list.title" datatype="html">
-        <source>Gestion des changements</source>
-        <target state="translated">Change Management</target>
-      </trans-unit>
-      <trans-unit id="changes.target.document" datatype="html">
-        <source>Document</source>
-        <target state="translated">Document</target>
-      </trans-unit>
-      <trans-unit id="changes.target.fmea-project" datatype="html">
-        <source>FMEA</source>
-        <target state="translated">FMEA</target>
-      </trans-unit>
-      <trans-unit id="changes.target.iot-device" datatype="html">
-        <source>IoT</source>
-        <target state="translated">IoT</target>
-      </trans-unit>
-      <trans-unit id="changes.target.other" datatype="html">
-        <source>Autre</source>
-        <target state="translated">Other</target>
-      </trans-unit>
-      <trans-unit id="changes.target.pdca-cycle" datatype="html">
-        <source>PDCA</source>
-        <target state="translated">PDCA</target>
-      </trans-unit>
-      <trans-unit id="changes.target.standard" datatype="html">
-        <source>Norme</source>
-        <target state="translated">Standard</target>
-      </trans-unit>
-      <trans-unit id="changes.target.supplier" datatype="html">
-        <source>Fournisseur</source>
-        <target state="translated">Supplier</target>
-      </trans-unit>
-      <trans-unit id="changes.target.training-path" datatype="html">
-        <source>Parcours</source>
-        <target state="translated">Path</target>
-      </trans-unit>
-      <trans-unit id="changes.type.document" datatype="html">
-        <source>Document</source>
-        <target state="translated">Document</target>
-      </trans-unit>
-      <trans-unit id="changes.type.equipment" datatype="html">
-        <source>Équipement</source>
-        <target state="translated">Equipment</target>
-      </trans-unit>
-      <trans-unit id="changes.type.it-system" datatype="html">
-        <source>Système IT</source>
-        <target state="translated">IT system</target>
-      </trans-unit>
-      <trans-unit id="changes.type.organizational" datatype="html">
-        <source>Organisationnel</source>
-        <target state="translated">Organizational</target>
-      </trans-unit>
-      <trans-unit id="changes.type.other" datatype="html">
-        <source>Autre</source>
-        <target state="translated">Other</target>
-      </trans-unit>
-      <trans-unit id="changes.type.process" datatype="html">
-        <source>Processus</source>
-        <target state="translated">Process</target>
-      </trans-unit>
-      <trans-unit id="changes.type.supplier" datatype="html">
-        <source>Fournisseur</source>
-        <target state="translated">Supplier</target>
-      </trans-unit>
       <trans-unit id="documents.create.code-hint" datatype="html">
         <source>A-Z, 0-9, point, tiret, underscore</source>
         <target state="translated">A-Z, 0-9, dot, hyphen, underscore</target>
@@ -20552,10 +21212,6 @@ declared income
         <source>Audit annulé.</source>
         <target state="translated">Audit cancelled.</target>
       </trans-unit>
-      <trans-unit id="audits.detail.capa-label" datatype="html">
-        <source>CAPA :</source>
-        <target state="translated">CAPA:</target>
-      </trans-unit>
       <trans-unit id="audits.detail.checklist-count" datatype="html">
         <source>Checklist (<x id="INTERPOLATION"/>)</source>
         <target state="translated">Checklist (<x id="INTERPOLATION"/>)</target>
@@ -20912,53 +21568,9 @@ declared income
         <source>Surveillance</source>
         <target state="translated">Surveillance</target>
       </trans-unit>
-      <trans-unit id="capa.action.added" datatype="html">
-        <source>Action ajoutée.</source>
-        <target state="translated">Action added.</target>
-      </trans-unit>
-      <trans-unit id="capa.action.description-placeholder" datatype="html">
-        <source>Méthode, ressources nécessaires, critère de fin…</source>
-        <target state="translated">Method, required resources, completion criterion…</target>
-      </trans-unit>
-      <trans-unit id="capa.action.due-date" datatype="html">
-        <source>Échéance (optionnel)</source>
-        <target state="translated">Due date (optional)</target>
-      </trans-unit>
-      <trans-unit id="capa.action.verification-hint" datatype="html">
-        <source>Une vérification est-elle exigée sur ce dossier ? Il faut trancher : répondre « non » est une décision, qui se lit.</source>
-        <target state="translated">Is a verification required on this case? A decision is needed: answering "no" is itself a decision, and it is on record.</target>
-      </trans-unit>
-      <trans-unit id="capa.action.subtitle" datatype="html">
-        <source>Définis l'action concrète à mener pour résoudre ce cas.</source>
-        <target state="translated">Define the concrete action to take to resolve this case.</target>
-      </trans-unit>
-      <trans-unit id="capa.action.title" datatype="html">
-        <source>Ajouter une action</source>
-        <target state="translated">Add an action</target>
-      </trans-unit>
-      <trans-unit id="capa.action.title-label" datatype="html">
-        <source>Titre de l'action</source>
-        <target state="translated">Action title</target>
-      </trans-unit>
-      <trans-unit id="capa.action.title-placeholder" datatype="html">
-        <source>Ex. : Recalibrer la sonde de température hebdo</source>
-        <target state="translated">E.g.: Recalibrate the temperature probe weekly</target>
-      </trans-unit>
-      <trans-unit id="capa.action.title-required" datatype="html">
-        <source>Le titre est requis.</source>
-        <target state="translated">The title is required.</target>
-      </trans-unit>
       <trans-unit id="capa.create.criticity" datatype="html">
         <source>Criticité</source>
         <target state="translated">Criticality</target>
-      </trans-unit>
-      <trans-unit id="capa.create.description-placeholder" datatype="html">
-        <source>Contexte, impact, observations…</source>
-        <target state="translated">Context, impact, observations…</target>
-      </trans-unit>
-      <trans-unit id="capa.create.due-date" datatype="html">
-        <source>Échéance (optionnel)</source>
-        <target state="translated">Due date (optional)</target>
       </trans-unit>
       <trans-unit id="capa.create.source" datatype="html">
         <source>Source</source>
@@ -20972,18 +21584,6 @@ declared income
         <source>Ex. : NC-2026-018</source>
         <target state="translated">E.g.: NC-2026-018</target>
       </trans-unit>
-      <trans-unit id="capa.create.subtitle" datatype="html">
-        <source>Crée un cas correctif ou préventif. Les actions seront ajoutées ensuite et l'efficacité vérifiée à la clôture.</source>
-        <target state="translated">Create a corrective or preventive case. Actions will be added afterwards and effectiveness verified at closure.</target>
-      </trans-unit>
-      <trans-unit id="capa.create.success" datatype="html">
-        <source>Cas CAPA créé.</source>
-        <target state="translated">CAPA case created.</target>
-      </trans-unit>
-      <trans-unit id="capa.create.title" datatype="html">
-        <source>Nouveau cas CAPA</source>
-        <target state="translated">New CAPA case</target>
-      </trans-unit>
       <trans-unit id="capa.create.title-placeholder" datatype="html">
         <source>Ex. : Recalibration robot soudure cobot-3</source>
         <target state="translated">E.g.: Recalibration of welding robot cobot-3</target>
@@ -20991,26 +21591,6 @@ declared income
       <trans-unit id="capa.create.title-required" datatype="html">
         <source>Le titre est requis.</source>
         <target state="translated">The title is required.</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.action-added" datatype="html">
-        <source>Action ajoutée à la CAPA.</source>
-        <target state="translated">Action added to the CAPA.</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.actions-count" datatype="html">
-        <source>Actions (<x id="INTERPOLATION"/>)</source>
-        <target state="translated">Actions (<x id="INTERPOLATION"/>)</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.actions-empty" datatype="html">
-        <source>Aucune action. Clique sur</source>
-        <target state="translated">No actions. Click</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.add-action" datatype="html">
-        <source>Ajouter une action</source>
-        <target state="translated">Add an action</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.analysing" datatype="html">
-        <source>Analyse…</source>
-        <target state="translated">Analyzing…</target>
       </trans-unit>
       <trans-unit id="capa.detail.back-tooltip" datatype="html">
         <source>Retour à la liste</source>
@@ -21032,17 +21612,9 @@ declared income
         <source>Cas démarré.</source>
         <target state="translated">Case started.</target>
       </trans-unit>
-      <trans-unit id="capa.detail.col-action" datatype="html">
-        <source>Action</source>
-        <target state="translated">Action</target>
-      </trans-unit>
       <trans-unit id="capa.detail.col-completed" datatype="html">
         <source>Complétée</source>
         <target state="translated">Completed</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.col-advance" datatype="html">
-        <source>Avancement</source>
-        <target state="translated">Progress</target>
       </trans-unit>
       <trans-unit id="capa.detail.action-start" datatype="html">
         <source>Démarrer</source>
@@ -21063,10 +21635,6 @@ declared income
       <trans-unit id="capa.detail.action-done-tooltip" datatype="html">
         <source>Action terminée</source>
         <target state="translated">Action completed</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.col-due-date" datatype="html">
-        <source>Échéance</source>
-        <target state="translated">Due date</target>
       </trans-unit>
       <trans-unit id="capa.detail.confirm-effective-message" datatype="html">
         <source>Tu confirmes que les actions ont eu l'effet attendu. Le cas sera clôturé (CLOSED).</source>
@@ -21140,26 +21708,6 @@ declared income
         <source>CAPA · Corrective &amp; Preventive Actions</source>
         <target state="translated">CAPA · Corrective &amp; Preventive Actions</target>
       </trans-unit>
-      <trans-unit id="capa.detail.generating" datatype="html">
-        <source>Génération des actions… (peut prendre ~1 min sur CPU)</source>
-        <target state="translated">Generating actions… (may take ~1 min on CPU)</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.generating-aria" datatype="html">
-        <source>Génération des actions en cours</source>
-        <target state="translated">Generating actions in progress</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.hide" datatype="html">
-        <source>Masquer</source>
-        <target state="translated">Hide</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.hide-suggestions" datatype="html">
-        <source>Masquer les suggestions</source>
-        <target state="translated">Hide suggestions</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.no-suggestion" datatype="html">
-        <source>Aucune action exploitable — précisez le problème.</source>
-        <target state="translated">No usable action — please clarify the problem.</target>
-      </trans-unit>
       <trans-unit id="capa.detail.not-effective" datatype="html">
         <source>Non efficace</source>
         <target state="translated">Not effective</target>
@@ -21207,26 +21755,6 @@ declared income
       <trans-unit id="capa.detail.start-tooltip" datatype="html">
         <source>Démarrer le traitement</source>
         <target state="translated">Start processing</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.suggest" datatype="html">
-        <source>Suggérer (IA)</source>
-        <target state="translated">Suggest (AI)</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.suggest-tooltip" datatype="html">
-        <source>Suggérer des actions par l'IA</source>
-        <target state="translated">Suggest actions using AI</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.suggestion-unavailable" datatype="html">
-        <source>Suggestion IA indisponible (ai-service / Ollama).</source>
-        <target state="translated">AI suggestion unavailable (ai-service / Ollama).</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.suggestions-region" datatype="html">
-        <source>Actions suggérées par l'IA</source>
-        <target state="translated">Actions suggested by AI</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.suggestions-title" datatype="html">
-        <source>Actions suggérées par l'IA</source>
-        <target state="translated">Actions suggested by AI</target>
       </trans-unit>
       <trans-unit id="capa.detail.transition-error" datatype="html">
         <source>Erreur lors de la transition.</source>
@@ -21608,9 +22136,9 @@ declared income
         <source>Responsable de l'action</source>
         <target state="translated">Action owner</target>
       </trans-unit>
-      <trans-unit id="fmea.item.action-owner-name-hint" datatype="html">
-        <source>Une personne ou un service — la trame accepte les deux.</source>
-        <target state="translated">A person or a department — the form accepts either.</target>
+      <trans-unit id="fmea.item.action-owner-legacy" datatype="html">
+        <source>Nom enregistré : <x id="INTERPOLATION"/>. Choisissez cette personne dans l'annuaire.</source>
+        <target state="translated">Recorded name: <x id="INTERPOLATION"/>. Pick this person from the directory.</target>
       </trans-unit>
       <trans-unit id="fmea.item.actions-taken" datatype="html">
         <source>Actions réalisées</source>
@@ -22344,6 +22872,10 @@ declared income
         <source>Vérification du bénéfice (critère)</source>
         <target state="translated">Benefit check (criterion)</target>
       </trans-unit>
+      <trans-unit id="rr.form.owner-legacy" datatype="html">
+        <source>Nom enregistré : <x id="INTERPOLATION"/>. Choisissez cette personne dans l'annuaire.</source>
+        <target state="translated">Recorded name: <x id="INTERPOLATION"/>. Pick this person from the directory.</target>
+      </trans-unit>
       <trans-unit id="rr.form.required" datatype="html">
         <source>Champ obligatoire.</source>
         <target state="translated">Required field.</target>
@@ -22444,21 +22976,9 @@ declared income
         <source>Intitulé</source>
         <target state="translated">Title</target>
       </trans-unit>
-      <trans-unit id="rr.action.description" datatype="html">
-        <source>Description (facultatif)</source>
-        <target state="translated">Description (optional)</target>
-      </trans-unit>
       <trans-unit id="rr.action.capa-title" datatype="html">
         <source>Créer une action CAPA</source>
         <target state="translated">Create a CAPA action</target>
-      </trans-unit>
-      <trans-unit id="rr.action.capa-help" datatype="html">
-        <source>Un dossier CAPA est ouvert dans le module CAPA, avec la criticité du niveau brut du risque. Il porte cette action, confiée au responsable désigné, et apparaîtra dans le tableau « Traitement » de la fiche.</source>
-        <target state="translated">A CAPA case is opened in the CAPA module, with the criticality of the gross risk level. It carries this action, assigned to the designated owner, and will appear in the “Treatment” table of the record.</target>
-      </trans-unit>
-      <trans-unit id="rr.action.open-capa" datatype="html">
-        <source>Ouvrir le dossier CAPA</source>
-        <target state="translated">Open the CAPA case</target>
       </trans-unit>
       <trans-unit id="rr.action-status.to-start" datatype="html">
         <source>À démarrer</source>
@@ -22788,21 +23308,9 @@ declared income
         <source>Tableau de bord SMI</source>
         <target state="translated">IMS dashboard</target>
       </trans-unit>
-      <trans-unit id="rr.action.kind" datatype="html">
-        <source>Nature de l'action</source>
-        <target state="translated">Type of action</target>
-      </trans-unit>
       <trans-unit id="rr.action.kind-short" datatype="html">
         <source>Nature</source>
         <target state="translated">Type</target>
-      </trans-unit>
-      <trans-unit id="rr.action.kind-hint" datatype="html">
-        <source>Préventive : l'écart ne s'est pas encore produit. Corrective : il s'est déjà produit, on en supprime la cause.</source>
-        <target state="translated">Preventive: the deviation has not occurred yet. Corrective: it has already occurred, and its cause is removed.</target>
-      </trans-unit>
-      <trans-unit id="rr.action.assignee" datatype="html">
-        <source>Responsable de l'action</source>
-        <target state="translated">Action owner</target>
       </trans-unit>
       <trans-unit id="rr.action.assignee-short" datatype="html">
         <source>Responsable</source>
@@ -22819,10 +23327,6 @@ declared income
       <trans-unit id="capa.detail.single-action" datatype="html">
         <source>Action</source>
         <target state="translated">Action</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.single-action-missing" datatype="html">
-        <source>L'action de ce risque n'a pas encore été définie.</source>
-        <target state="translated">No action has been defined for this risk yet.</target>
       </trans-unit>
       <trans-unit id="capa.detail.single-action-define" datatype="html">
         <source>Définir l'action</source>
@@ -22841,8 +23345,8 @@ declared income
         <target state="translated">Integrated Management System</target>
       </trans-unit>
       <trans-unit id="smi.subtitle" datatype="html">
-        <source>Vue consolidée : une preuve compte pour toutes les normes qu'elle couvre.</source>
-        <target state="translated">Consolidated view: one piece of evidence counts for every standard it covers.</target>
+        <source>Vue consolidée de toutes les normes adoptées : conformité, risques, audits et échéances.</source>
+        <target state="translated">Consolidated view of every adopted standard: compliance, risks, audits and deadlines.</target>
       </trans-unit>
       <trans-unit id="smi.filter" datatype="html">
         <source>Filtrer par norme</source>
@@ -22867,10 +23371,6 @@ declared income
       <trans-unit id="smi.kpi.no-standard" datatype="html">
         <source>Aucune norme adoptée.</source>
         <target state="translated">No standard adopted.</target>
-      </trans-unit>
-      <trans-unit id="smi.kpi.adopt" datatype="html">
-        <source>Adopter une norme</source>
-        <target state="translated">Adopt a standard</target>
       </trans-unit>
       <trans-unit id="smi.kpi.overdue" datatype="html">
         <source>Actions en retard</source>
@@ -22907,10 +23407,6 @@ declared income
       <trans-unit id="smi.by-standard" datatype="html">
         <source>Conformité par référentiel</source>
         <target state="translated">Compliance by standard</target>
-      </trans-unit>
-      <trans-unit id="smi.by-standard-note" datatype="html">
-        <source>Une même preuve (procédure, audit, action) est comptée pour tous les référentiels concernés.</source>
-        <target state="translated">A single piece of evidence (procedure, audit, action) counts for every standard concerned.</target>
       </trans-unit>
       <trans-unit id="smi.see-matrix" datatype="html">
         <source>Voir la matrice des exigences</source>
@@ -22965,8 +23461,8 @@ declared income
         <target state="translated">Nothing overdue or due within seven days.</target>
       </trans-unit>
       <trans-unit id="smi.requirements.title" datatype="html">
-        <source>Matrice des exigences · une preuve, plusieurs référentiels</source>
-        <target state="translated">Requirements matrix · one piece of evidence, several standards</target>
+        <source>Matrice des exigences · chapitres communs × normes</source>
+        <target state="translated">Requirements matrix · common clauses × standards</target>
       </trans-unit>
       <trans-unit id="smi.requirements.teaser" datatype="html">
         <source>Chapitres communs 4 à 10, croisés avec chaque norme adoptée : couvert, partiel ou en écart.</source>
@@ -23224,10 +23720,6 @@ declared income
         <source>Compléter les preuves</source>
         <target state="translated">Add evidence</target>
       </trans-unit>
-      <trans-unit id="smi.req.reuse" datatype="html">
-        <source>Une preuve rattachée à une exigence commune compte pour toutes les normes qui partagent ce chapitre.</source>
-        <target state="translated">Evidence linked to a common requirement counts for every standard sharing this clause.</target>
-      </trans-unit>
       <trans-unit id="smi.req.all-covered" datatype="html">
         <source>Tout est couvert : choisissez une case pour en voir le détail.</source>
         <target state="translated">Everything is covered: choose a cell to see its detail.</target>
@@ -23239,6 +23731,90 @@ declared income
       <trans-unit id="smi.req.capa-description" datatype="html">
         <source><x id="covered"/> exigence(s) prouvée(s) sur <x id="total"/> au chapitre <x id="chapter"/> de <x id="standard"/>.</source>
         <target state="translated"><x id="covered"/> requirement(s) evidenced out of <x id="total"/> in clause <x id="chapter"/> of <x id="standard"/>.</target>
+      </trans-unit>
+      <trans-unit id="smi.add.open" datatype="html">
+        <source>Ajouter une norme</source>
+        <target state="translated">Add a standard</target>
+      </trans-unit>
+      <trans-unit id="smi.add.admin-only" datatype="html">
+        <source>L'administrateur de votre organisation ajoute les normes.</source>
+        <target state="translated">Your organisation's administrator adds the standards.</target>
+      </trans-unit>
+      <trans-unit id="standards.list.no-adoption" datatype="html">
+        <source>Aucune adoption.</source>
+        <target state="translated">No adoption.</target>
+      </trans-unit>
+      <trans-unit id="smi.add.title" datatype="html">
+        <source>Ajouter une norme au SMI</source>
+        <target state="translated">Add a standard to the IMS</target>
+      </trans-unit>
+      <trans-unit id="smi.add.subtitle" datatype="html">
+        <source>Les normes de système de management partagent les chapitres 4 à 10 : elles se pilotent dans le même tableau de bord et la même matrice des exigences.</source>
+        <target state="translated">Management system standards share clauses 4 to 10: they are managed in the same dashboard and the same requirements matrix.</target>
+      </trans-unit>
+      <trans-unit id="smi.add.loading" datatype="html">
+        <source>Chargement des normes du catalogue</source>
+        <target state="translated">Loading the catalogue standards</target>
+      </trans-unit>
+      <trans-unit id="smi.add.load-failed" datatype="html">
+        <source>Les normes du catalogue n'ont pas pu être chargées.</source>
+        <target state="translated">The catalogue standards could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="smi.add.none" datatype="html">
+        <source>Toutes les normes de système de management du catalogue sont déjà adoptées.</source>
+        <target state="translated">All management system standards in the catalogue are already adopted.</target>
+      </trans-unit>
+      <trans-unit id="smi.add.suggested" datatype="html">
+        <source>Suggérées pour votre SMI</source>
+        <target state="translated">Suggested for your IMS</target>
+      </trans-unit>
+      <trans-unit id="smi.add.others" datatype="html">
+        <source>Autres normes de système de management</source>
+        <target state="translated">Other management system standards</target>
+      </trans-unit>
+      <trans-unit id="smi.add.all" datatype="html">
+        <source>Normes de système de management</source>
+        <target state="translated">Management system standards</target>
+      </trans-unit>
+      <trans-unit id="smi.add.suggested-badge" datatype="html">
+        <source>Suggérée</source>
+        <target state="translated">Suggested</target>
+      </trans-unit>
+      <trans-unit id="smi.add.shared-with" datatype="html">
+        <source>Rattachée à <x id="standards"/></source>
+        <target state="translated">Linked to <x id="standards"/></target>
+      </trans-unit>
+      <trans-unit id="smi.add.hint" datatype="html">
+        <source>L'adoption crée la feuille de route de certification dans le Standards Hub ; les preuves s'y rattachent ensuite, exigence par exigence.</source>
+        <target state="translated">Adoption creates the certification roadmap in the Standards Hub; evidence is then linked to it, requirement by requirement.</target>
+      </trans-unit>
+      <trans-unit id="smi.add.submit" datatype="html">
+        <source>Ajouter</source>
+        <target state="translated">Add</target>
+      </trans-unit>
+      <trans-unit id="smi.add.blocked" datatype="html">
+        <source>Choisissez la norme à ajouter.</source>
+        <target state="translated">Choose the standard to add.</target>
+      </trans-unit>
+      <trans-unit id="smi.add.conflict" datatype="html">
+        <source>Cette norme est déjà adoptée par votre organisation.</source>
+        <target state="translated">Your organisation has already adopted this standard.</target>
+      </trans-unit>
+      <trans-unit id="smi.add.forbidden" datatype="html">
+        <source>Seul l'administrateur de votre organisation peut ajouter une norme.</source>
+        <target state="translated">Only your organisation's administrator can add a standard.</target>
+      </trans-unit>
+      <trans-unit id="smi.add.not-found" datatype="html">
+        <source>Cette norme n'est pas une norme de système de management du catalogue.</source>
+        <target state="translated">This standard is not a management system standard from the catalogue.</target>
+      </trans-unit>
+      <trans-unit id="smi.add.failed" datatype="html">
+        <source>La norme n'a pas pu être ajoutée.</source>
+        <target state="translated">The standard could not be added.</target>
+      </trans-unit>
+      <trans-unit id="smi.add.done" datatype="html">
+        <source><x id="standard"/> ajoutée au SMI — feuille de route de certification créée.</source>
+        <target state="translated"><x id="standard"/> added to the IMS — certification roadmap created.</target>
       </trans-unit>
       <trans-unit id="standards-extras.actions" datatype="html">
         <source>Actions</source>

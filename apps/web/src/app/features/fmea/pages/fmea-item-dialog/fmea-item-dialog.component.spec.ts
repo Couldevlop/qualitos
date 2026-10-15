@@ -9,6 +9,8 @@ import { UiModule } from '../../../../shared/ui/ui.module';
 import { FmeaService } from '../../fmea.service';
 import { FmeaItemResponse } from '../../fmea.types';
 import { FmeaItemDialogComponent, FmeaItemDialogData } from './fmea-item-dialog.component';
+import { STUB_PERSON, provideDirectoryStub } from '../../../../core/directory/testing/directory.stub';
+import { UserPickerModule } from '../../../../shared/user-picker/user-picker.module';
 
 /**
  * La saisie d'une ligne de PFMEA.
@@ -46,8 +48,8 @@ describe('FmeaItemDialogComponent', () => {
 
     await TestBed.resetTestingModule().configureTestingModule({
       declarations: [FmeaItemDialogComponent],
-      imports: [SharedModule, UiModule, NoopAnimationsModule],
-      providers: [
+      imports: [UserPickerModule, SharedModule, UiModule, NoopAnimationsModule],
+      providers: [provideDirectoryStub(),
         { provide: FmeaService, useValue: svc },
         { provide: MatDialogRef, useValue: dialogRef },
         { provide: MatSnackBar, useValue: snack },
@@ -135,6 +137,32 @@ describe('FmeaItemDialogComponent', () => {
     expect(dialogRef.close).not.toHaveBeenCalled();
     expect(component.submitting).toBeFalse();
     expect(snack.open).toHaveBeenCalled();
+  });
+
+  it('le responsable de l’action se choisit dans l’annuaire : son nom part avec son compte', async () => {
+    await setup();
+    svc.addItem.and.returnValue(of(item()));
+
+    component.onActionOwner(STUB_PERSON);
+    component.form.patchValue({ actionOwnerUserId: STUB_PERSON.accountId });
+    component.submit();
+
+    const envoye = svc.addItem.calls.mostRecent().args[1];
+    expect(envoye.actionOwnerName).toBe(STUB_PERSON.displayName);
+    expect(envoye.actionOwnerUserId).toBe(STUB_PERSON.accountId);
+  });
+
+  it('une ligne d’avant l’annuaire montre le nom tapé, jusqu’au choix d’une personne', async () => {
+    await setup({ item: item({ actionOwnerName: 'Service méthodes' }) });
+    fixture.detectChanges();
+
+    expect(component.legacyOwner).toBe('Service méthodes');
+    expect((fixture.nativeElement as HTMLElement)
+      .querySelector('[data-test="fmea-action-owner-legacy"]')?.textContent).toContain('Service méthodes');
+
+    component.onActionOwner(null);
+    expect(component.form.controls.actionOwnerName.value).toBe('');
+    expect(component.legacyOwner).toBeNull();
   });
 
   it('refuse d’envoyer une cotation hors échelle', async () => {

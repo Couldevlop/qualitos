@@ -5,6 +5,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { finalize } from 'rxjs/operators';
 
 import { AuthService } from '../../../../core/auth/auth.service';
+import { personName } from '../../../../core/directory/directory-names';
+import { DirectoryUser } from '../../../../core/directory/directory.types';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { AuditsService } from '../../audits.service';
 import { AuditPlanResponse, AuditType } from '../../audits.types';
@@ -38,6 +40,12 @@ export class AuditsCreateDialogComponent {
 
   submitting = false;
 
+  /**
+   * Le nom recopié avec l'auditeur choisi (ADR 0091) : celui de l'annuaire,
+   * pris au choix dans le sélecteur ; par défaut, le nom de session.
+   */
+  private leadAuditorName: string | undefined = this.auth.snapshot()?.displayName || undefined;
+
   readonly types: { value: AuditType; label: string }[] = [
     { value: 'INTERNAL',      label: $localize`:@@audits.type.internal:Interne` },
     { value: 'EXTERNAL',      label: $localize`:@@audits.type.external:Externe` },
@@ -52,6 +60,9 @@ export class AuditsCreateDialogComponent {
     scope: [''],
     type: ['INTERNAL' as AuditType, [Validators.required]],
     standard: ['', [Validators.maxLength(100)]],
+    // L'auditeur responsable se CHOISIT dans l'annuaire (compte de connexion,
+    // `sub` du jeton) ; tout membre peut désigner un collègue. Par défaut : soi-même.
+    leadAuditorId: [this.auth.snapshot()?.userId ?? '', [Validators.required]],
     scheduledDate: [''],
     // Destinataire du rappel à 30 jours. Validation du formulaire en plus de
     // type="email" : celle du navigateur ne s'applique qu'à la saisie manuelle et
@@ -67,18 +78,18 @@ export class AuditsCreateDialogComponent {
     private readonly dialogRef: MatDialogRef<AuditsCreateDialogComponent, AuditPlanResponse>
   ) {}
 
+  /** Le sélecteur rend la personne choisie : son nom part avec son compte. */
+  onLeadAuditor(user: DirectoryUser | null): void {
+    this.leadAuditorName = user ? personName(user) : undefined;
+  }
+
   submit(): void {
     if (this.form.invalid || this.submitting) {
       this.form.markAllAsTouched();
       return;
     }
-    const leadAuditorId = this.auth.snapshot()?.userId;
-    if (!leadAuditorId) {
-      this.snack.open($localize`:@@common.session-expired:Session expirée — veuillez vous reconnecter.`, $localize`:@@common.ok:OK`, { duration: 4000 });
-      return;
-    }
-    this.submitting = true;
     const v = this.form.getRawValue();
+    this.submitting = true;
     this.audits
       .createPlan({
         title: v.title.trim(),
@@ -87,7 +98,8 @@ export class AuditsCreateDialogComponent {
         standard: v.standard?.trim() || undefined,
         scheduledDate: v.scheduledDate || undefined,
         reminderEmail: v.reminderEmail?.trim() || undefined,
-        leadAuditorId
+        leadAuditorId: v.leadAuditorId,
+        leadAuditorName: this.leadAuditorName
       })
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({

@@ -86,4 +86,10 @@ class NotificationRepositoryAdapterTest {
         when(jpa.markAllRead(tenant, "u1", now)).thenReturn(5);
         assertThat(adapter.markAllReadForRecipient(tenant, "u1", now)).isEqualTo(5);
     }
+
+    @Test
+    void markReadForLink_delegates() {
+        when(jpa.markReadForLink(tenant, "u1", "/changes/x", now)).thenReturn(2);
+        assertThat(adapter.markReadForRecipientAndLink(tenant, "u1", "/changes/x", now)).isEqualTo(2);
+    }
 }

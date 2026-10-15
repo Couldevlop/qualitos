@@ -4,9 +4,10 @@ import { MatRadioModule } from '@angular/material/radio';
 import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../../shared/shared.module';
-import { CapaActionDialogModule } from './capa-action-dialog.module';
+import { CapaCreateDialogModule } from './capa-create-dialog.module';
+import { CapaVerificationFieldsModule } from './capa-verification-fields.module';
 import { UiModule } from '../../shared/ui/ui.module';
-import { CapaCreateDialogComponent } from './pages/capa-create-dialog/capa-create-dialog.component';
+import { UserPickerModule } from '../../shared/user-picker/user-picker.module';
 import { CapaDetailComponent } from './pages/capa-detail/capa-detail.component';
 import {
   CapaEffectivenessComponent
@@ -29,7 +30,6 @@ const routes: Routes = [
   declarations: [
     CapaListComponent,
     CapaDetailComponent,
-    CapaCreateDialogComponent,
     CapaEditDialogComponent,
     CapaRevisionImpactComponent,
     CapaEffectivenessComponent
@@ -40,9 +40,12 @@ const routes: Routes = [
   // exigée : oui / non » est une question fermée a deux reponses, ou un groupe de
   // boutons radio dit mieux qu'une case a cocher qu'AUCUNE des deux n'est cochee
   // tant que la question n'a pas ete tranchee.
-  // `CapaActionDialogModule` : le formulaire d'action est partage avec la fiche
-  // de non-conformite, qui l'ouvre directement. Il est donc declare a part.
-  imports: [SharedModule, UiModule, MatButtonToggleModule, MatRadioModule,
-            CapaActionDialogModule, RouterModule.forChild(routes)]
+  // `CapaCreateDialogModule` : la fenetre de creation est partagee avec toutes
+  // les sections qui ouvrent une CAPA (ADR 0088). Elle est donc declaree a part.
+  // UserPickerModule : le vérificateur se choisit dans l'annuaire (ADR 0091).
+  // `CapaVerificationFieldsModule` : le bloc de vérification, partagé avec la
+  // fenêtre d'ouverture.
+  imports: [SharedModule, UiModule, UserPickerModule, MatButtonToggleModule, MatRadioModule,
+            CapaCreateDialogModule, CapaVerificationFieldsModule, RouterModule.forChild(routes)]
 })
 export class CapaModule {}

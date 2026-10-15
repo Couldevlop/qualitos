@@ -35,6 +35,27 @@ public class CapaController {
         return service.createCase(request);
     }
 
+    /**
+     * Ouvre un dossier avec son action unique, depuis la liste CAPA (ADR 0088).
+     *
+     * <p>La source est choisie librement, sauf {@code RISK} : un dossier de
+     * risque se rattache à sa fiche par la référence R-xxx, et seul le
+     * registre peut la poser — sans quoi n'importe qui ferait apparaître un
+     * dossier dans le traitement d'un risque qu'il n'a pas ouvert. Depuis une
+     * NC, un constat ou un risque, c'est l'écran d'origine qui ouvre le
+     * dossier, par sa propre route, et fixe la source.
+     */
+    @PostMapping("/cases/open")
+    @RequiresPermission(Permission.CAPA_CREATE)
+    @ResponseStatus(HttpStatus.CREATED)
+    public CapaDto.CaseResponse open(@Valid @RequestBody CapaDto.OpenCaseRequest request) {
+        CapaSourceType source = request.sourceType() != null ? request.sourceType() : CapaSourceType.INTERNAL;
+        if (source == CapaSourceType.RISK) {
+            throw new CapaValidationException("A CAPA on a risk is opened from the risk register");
+        }
+        return service.openCase(request, source, request.sourceRef());
+    }
+
     @GetMapping("/cases/{id}")
     public CapaDto.CaseResponse get(@PathVariable UUID id) { return service.findById(id); }
 
@@ -76,13 +97,6 @@ public class CapaController {
     public CapaDto.ActionResponse addAction(@PathVariable UUID id,
                                             @Valid @RequestBody CapaDto.ActionRequest request) {
         return service.addAction(id, request);
-    }
-
-    // Suggestion d'actions par l'IA (§4.2) — POST : appel LLM, pas de persistance.
-    @PostMapping("/cases/{id}/suggest-actions")
-    @RequiresPermission(Permission.CAPA_ACTION_MANAGE)
-    public java.util.List<CapaDto.SuggestedAction> suggestActions(@PathVariable UUID id) {
-        return service.suggestActions(id);
     }
 
     @PatchMapping("/cases/{id}/actions/{actionId}")

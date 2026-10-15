@@ -55,12 +55,14 @@ class RegisterInfrastructureTest {
 
     static final UUID TENANT = UUID.randomUUID();
     static final UUID ACTEUR = UUID.randomUUID();
+    /** Le compte de l'annuaire du propriétaire (ADR 0092), qui doit survivre à l'aller-retour. */
+    static final UUID PROPRIETAIRE = UUID.randomUUID();
     static final Instant T0 = Instant.parse("2026-10-01T08:00:00Z");
 
     static Identification ident() {
         return new Identification("Fuite — « confidentiel » de M. Kone", RegisterType.QUALITY, "Production",
                 "Usine A", "M. Kone", RegisterOrigin.FMEA, "PFMEA-7 #3",
-                Set.of(RegisterRequirement.ISO_9001_6_1, RegisterRequirement.IATF_16949_6_1_2));
+                Set.of(RegisterRequirement.ISO_9001_6_1, RegisterRequirement.IATF_16949_6_1_2), PROPRIETAIRE);
     }
 
     static Risk risque(UUID id) {
@@ -107,6 +109,7 @@ class RegisterInfrastructureTest {
         assertThat(relu.getReference()).isEqualTo("R-014");
         assertThat(relu.getSourceId()).isEqualTo(original.getSourceId());
         assertThat(relu.getIdentification()).isEqualTo(original.getIdentification());
+        assertThat(relu.getIdentification().ownerUserId()).isEqualTo(PROPRIETAIRE);
         assertThat(relu.getGross()).isEqualTo(original.getGross());
         assertThat(relu.getResidual()).isEqualTo(original.getResidual());
         assertThat(relu.getNextReviewOn()).isEqualTo(LocalDate.of(2027, 1, 1));
@@ -188,7 +191,7 @@ class RegisterInfrastructureTest {
         RegisterRepositoryAdapters.Opportunities adapter = new RegisterRepositoryAdapters.Opportunities(jpa);
         Opportunity o = Opportunity.create(TENANT, "O-003", new OpportunityDetails(
                 new Identification("Automatiser SPC", RegisterType.QUALITY, "Production", null, "Mme Diallo",
-                        RegisterOrigin.AUDIT, "AUD-7", Set.of(RegisterRequirement.ISO_9001_10_3)),
+                        RegisterOrigin.AUDIT, "AUD-7", Set.of(RegisterRequirement.ISO_9001_10_3), PROPRIETAIRE),
                 LocalDate.of(2027, 3, 31), "ctx", "bén", 4, 4, null, null, "crit"), ACTEUR, T0);
 
         Opportunity relue = adapter.save(o);
@@ -198,6 +201,8 @@ class RegisterInfrastructureTest {
         assertThat(relue.getIdentification().requirements()).containsExactly(RegisterRequirement.ISO_9001_10_3);
         assertThat(relue.getTargetDate()).isEqualTo(LocalDate.of(2027, 3, 31));
         assertThat(relue.getBenefitCriterion()).isEqualTo("crit");
+        assertThat(relue.getIdentification().ownerUserId()).isEqualTo(PROPRIETAIRE);
+        assertThat(relue.getIdentification().owner()).isEqualTo("Mme Diallo");
 
         UUID id = UUID.randomUUID();
         Opportunity existante = new Opportunity(id, TENANT, "O-003", relue.getIdentification(), null, null, null,
@@ -325,47 +330,61 @@ class RegisterInfrastructureTest {
         CapaService capaService = mock(CapaService.class);
         CapaCaseRepository capaCases = mock(CapaCaseRepository.class);
         UUID capaId = UUID.randomUUID();
+        UUID pilote = UUID.randomUUID();
+        UUID verificateur = UUID.randomUUID();
         CapaDto.CaseResponse reponse = new CapaDto.CaseResponse(capaId, TENANT, "Carte SPC", "desc",
-                CapaType.PREVENTIVE, CapaCriticity.HIGH, CapaStatus.OPEN, CapaSourceType.RISK, "R-014", ACTEUR,
-                null, LocalDate.of(2026, 12, 1), null, null, null, null, null, null, null, null, T0, T0,
-                List.of(), null, List.of());
-        when(capaService.createCase(any())).thenReturn(reponse);
-        when(capaService.addAction(eq(capaId), any())).thenReturn(new CapaDto.ActionResponse(UUID.randomUUID(),
-                capaId, "Carte SPC", "desc", CapaActionStatus.PENDING, CapaActionType.CORRECTIVE, null,
-                "A. Diallo", LocalDate.of(2026, 10, 1), LocalDate.of(2026, 12, 1), null, T0, T0));
+                CapaType.CORRECTIVE, CapaCriticity.HIGH, CapaStatus.OPEN, CapaSourceType.RISK, "R-014", pilote,
+                "A. Diallo", null, LocalDate.of(2026, 12, 1), null, null, null, null, null, null, null, null,
+                T0, T0, List.of(), null, List.of());
+        when(capaService.openCase(any(), eq(CapaSourceType.RISK), eq("R-014"))).thenReturn(reponse);
         Risk r = risque(UUID.randomUUID());
 
         RiskCapaGateway.LinkedCapa capa = new CapaRiskGateway(capaService, capaCases)
-                .open(r, "Carte SPC", "desc", RiskCapaKind.CORRECTIVE, "A. Diallo", LocalDate.of(2026, 12, 1),
-                        ACTEUR);
+                .open(r, "Carte SPC", "desc", RiskCapaKind.CORRECTIVE, pilote, "A. Diallo",
+                        LocalDate.of(2026, 12, 1),
+                        new RiskCapaGateway.Verification(true, verificateur, "Claire Contrôle", "Relever"));
 
-        ArgumentCaptor<CapaDto.CreateCaseRequest> captor = ArgumentCaptor.forClass(CapaDto.CreateCaseRequest.class);
-        verify(capaService).createCase(captor.capture());
-        CapaDto.CreateCaseRequest demande = captor.getValue();
+        // Une seule ouverture : le dossier ET son action, en une écriture (ADR 0088).
+        ArgumentCaptor<CapaDto.OpenCaseRequest> captor = ArgumentCaptor.forClass(CapaDto.OpenCaseRequest.class);
+        verify(capaService).openCase(captor.capture(), eq(CapaSourceType.RISK), eq("R-014"));
+        verify(capaService, never()).createCase(any());
+        verify(capaService, never()).addAction(any(), any());
+        CapaDto.OpenCaseRequest demande = captor.getValue();
+        assertThat(demande.title()).isEqualTo("Carte SPC");
         assertThat(demande.type()).isEqualTo(CapaType.CORRECTIVE);
         assertThat(demande.dueDate()).isEqualTo(LocalDate.of(2026, 12, 1));
-        assertThat(demande.sourceType()).isEqualTo(CapaSourceType.RISK);
-        assertThat(demande.sourceRef()).isEqualTo("R-014");
         assertThat(demande.criticity()).isEqualTo(CapaCriticity.HIGH);
-        assertThat(demande.ownerId()).isEqualTo(ACTEUR);
+        // Le pilote est le responsable désigné, et son nom part avec lui.
+        assertThat(demande.ownerId()).isEqualTo(pilote);
+        assertThat(demande.ownerName()).isEqualTo("A. Diallo");
+        // La décision de vérification part avec l'ouverture (ADR 0073, 0088).
+        assertThat(demande.verificationRequired()).isTrue();
+        assertThat(demande.verificationAssigneeId()).isEqualTo(verificateur);
+        assertThat(demande.verificationAssigneeName()).isEqualTo("Claire Contrôle");
+        assertThat(demande.verificationInstructions()).isEqualTo("Relever");
         assertThat(capa.id()).isEqualTo(capaId);
         assertThat(capa.status()).isEqualTo("OPEN");
         assertThat(capa.kind()).isEqualTo(RiskCapaKind.CORRECTIVE);
         assertThat(capa.assignee()).isEqualTo("A. Diallo");
-
-        // Le dossier naît avec SON action : même nature, même échéance, confiée au responsable.
-        ArgumentCaptor<CapaDto.ActionRequest> action = ArgumentCaptor.forClass(CapaDto.ActionRequest.class);
-        verify(capaService).addAction(eq(capaId), action.capture());
-        assertThat(action.getValue().title()).isEqualTo("Carte SPC");
-        assertThat(action.getValue().actionType()).isEqualTo(CapaActionType.CORRECTIVE);
-        assertThat(action.getValue().assigneeName()).isEqualTo("A. Diallo");
-        assertThat(action.getValue().dueDate()).isEqualTo(LocalDate.of(2026, 12, 1));
     }
 
     @Test
-    void uneCapaPreventiveDonneUnDossierEtUneActionPreventives() {
+    void lePiloteNommeDuDossierPrimeSurLeResponsableDeLAction() {
+        CapaCase c = new CapaCase();
+        c.setOwnerName("b.martin@client.test");
+        CapaAction a = new CapaAction();
+        a.setAssigneeName("A. Diallo");
+        c.getActions().add(a);
+        assertThat(CapaRiskGateway.responsable(c)).isEqualTo("b.martin@client.test");
+        c.setOwnerName("  ");
+        assertThat(CapaRiskGateway.responsable(c)).isEqualTo("A. Diallo");
+        c.getActions().clear();
+        assertThat(CapaRiskGateway.responsable(c)).isNull();
+    }
+
+    @Test
+    void uneCapaPreventiveDonneUnDossierPreventif() {
         assertThat(CapaRiskGateway.typeDossier(RiskCapaKind.PREVENTIVE)).isEqualTo(CapaType.PREVENTIVE);
-        assertThat(CapaRiskGateway.typeAction(RiskCapaKind.PREVENTIVE)).isEqualTo(CapaActionType.PREVENTIVE);
         assertThat(CapaRiskGateway.nature(CapaType.CORRECTIVE)).isEqualTo(RiskCapaKind.CORRECTIVE);
         // Les dossiers ouverts avant le choix étaient tous préventifs.
         assertThat(CapaRiskGateway.nature(CapaType.PREVENTIVE)).isEqualTo(RiskCapaKind.PREVENTIVE);

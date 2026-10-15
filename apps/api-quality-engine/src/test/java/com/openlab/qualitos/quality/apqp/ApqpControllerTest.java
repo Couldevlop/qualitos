@@ -71,7 +71,7 @@ class ApqpControllerTest {
                 LIVRABLE, 1, "PFMEA",
                 "AMDEC processus rattachée à l'AMDEC produit", true,
                 null, null, ApqpDeliverableStatus.NOT_STARTED, 0,
-                false, null, null, null, null, null, 0);
+                false, null, null, null, null, null, 0, null);
     }
 
     /** Le cycle tel que la lecture le rend : le projet, ses phases, l'état du dossier. */
@@ -233,6 +233,19 @@ class ApqpControllerTest {
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"done\":false,\"percentComplete\":140}"))
+                .andExpect(status().isBadRequest());
+        verifyNoInteractions(service);
+    }
+
+    @Test
+    @WithMockUser(roles = "QUALITY_MANAGER")
+    void unResponsableQuiNEstPasUnCompteEstRefuseALaFrontiere() throws Exception {
+        // Le responsable se choisit dans l'annuaire (ADR 0092) : son compte est un
+        // UUID, jamais un texte libre glissé à sa place.
+        mockMvc.perform(put(RACINE + "/" + PHASE + "/deliverables/" + LIVRABLE + "/completion")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"done\":false,\"ownerUserId\":\"A. Dupont\"}"))
                 .andExpect(status().isBadRequest());
         verifyNoInteractions(service);
     }

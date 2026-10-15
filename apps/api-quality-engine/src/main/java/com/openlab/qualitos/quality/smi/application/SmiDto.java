@@ -51,9 +51,20 @@ public final class SmiDto {
     public record Upcoming(Deadline.Kind kind, UUID targetId, String reference, String title,
                            LocalDate dueOn, long daysLeft) {}
 
+    // ---------- ajout d'une norme ----------
+
+    /**
+     * Une norme que le client peut ajouter à son SMI.
+     *
+     * @param suggested vrai si le catalogue la rattache à une norme déjà pilotée
+     * @param sharedWith les normes pilotées auxquelles elle est rattachée
+     */
+    public record Candidate(UUID standardId, String code, String name, String version,
+                            boolean suggested, List<String> sharedWith) {}
+
     // ---------- matrice des exigences ----------
 
-    /** Chapitres communs × normes adoptées : une preuve, plusieurs référentiels. */
+    /** Chapitres communs × normes adoptées, chaque norme couverte par ses propres preuves. */
     public record RequirementsMatrix(List<StandardRef> standards, List<ChapterRow> rows) {}
 
     public record ChapterRow(String chapter, List<String> modules, List<Cell> cells) {}

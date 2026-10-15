@@ -14,6 +14,8 @@ import { AiSystemView } from '../../ai-systems.types';
 import { AiSystemFormDialogComponent } from '../ai-system-form-dialog/ai-system-form-dialog.component';
 import { AiSystemWithdrawDialogComponent } from '../ai-system-withdraw-dialog/ai-system-withdraw-dialog.component';
 import { AiSystemDetailComponent } from './ai-system-detail.component';
+import { provideDirectoryStub } from '../../../../core/directory/testing/directory.stub';
+import { PersonNameModule } from '../../../../shared/person-name/person-name.module';
 
 describe('AiSystemDetailComponent', () => {
   let fixture: ComponentFixture<AiSystemDetailComponent>;
@@ -96,8 +98,8 @@ describe('AiSystemDetailComponent', () => {
 
     await TestBed.configureTestingModule({
       declarations: [AiSystemDetailComponent],
-      imports: [SharedModule, UiModule, NoopAnimationsModule],
-      providers: [
+      imports: [PersonNameModule, SharedModule, UiModule, NoopAnimationsModule],
+      providers: [provideDirectoryStub(),
         { provide: AiSystemsService, useValue: svc },
         { provide: MatDialog, useValue: dialog },
         { provide: MatSnackBar, useValue: snack },

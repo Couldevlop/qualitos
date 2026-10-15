@@ -8,11 +8,13 @@ import { catchError, finalize, map, shareReplay, startWith, switchMap, tap } fro
 
 import { deferredView } from '../../../../core/rx/deferred-view';
 import { safeErrorMessage } from '../../../../core/http/error-message';
-import { capaTypeLabel } from '../../capa.labels';
+import { AccountNames } from '../../../../core/directory/directory-names';
+import { DirectoryService } from '../../../../core/directory/directory.service';
+import { capaOwnerLabel, capaTypeLabel, unnamedOwners } from '../../capa.labels';
 import { CapaService } from '../../capa.service';
 import { CapaCaseResponse, CapaCriticity, CapaPage, CapaStatus } from '../../capa.types';
 import {
-  CapaCreateDialogComponent, CapaCreatePrefill
+  CapaCreateDialogComponent, CapaCreateDialogData, CapaCreatePrefill, CapaOpened
 } from '../capa-create-dialog/capa-create-dialog.component';
 
 const PAGE_SIZE_OPTIONS = [10, 20, 50, 100];
@@ -29,7 +31,10 @@ const EMPTY_PAGE = { content: [], totalElements: 0, totalPages: 0, number: 0, si
 })
 export class CapaListComponent implements OnInit {
 
-  readonly displayedColumns = ['title', 'type', 'criticity', 'status', 'dueDate'];
+  readonly displayedColumns = ['title', 'type', 'criticity', 'status', 'owner', 'dueDate'];
+
+  /** Le nom du pilote des dossiers anciens qui ne l'ont pas recopié, lu dans l'annuaire (ADR 0091). */
+  private readonly names = new AccountNames(this.directory);
   readonly statusFilter = new FormControl<CapaStatus | ''>('');
   readonly statuses: CapaStatus[] = ['OPEN', 'IN_PROGRESS', 'RESOLVED', 'CLOSED', 'REJECTED'];
 
@@ -51,6 +56,7 @@ export class CapaListComponent implements OnInit {
     private readonly svc: CapaService,
     private readonly dialog: MatDialog,
     private readonly router: Router,
+    private readonly directory: DirectoryService,
     // Facultatif : la liste s'ouvre aussi hors routeur (bancs de test).
     @Optional() private readonly route?: ActivatedRoute
   ) {}
@@ -79,6 +85,7 @@ export class CapaListComponent implements OnInit {
       ),
       map(page => {
         this.totalElements = page.totalElements;
+        this.names.resolve(unnamedOwners(page.content));
         return page.content;
       }),
       shareReplay({ bufferSize: 1, refCount: false }) // refCount:false : evite la boucle de teardown quand *ngIf loading masque la table
@@ -92,12 +99,13 @@ export class CapaListComponent implements OnInit {
   }
 
   openCreate(prefill?: CapaCreatePrefill): void {
-    const ref = this.dialog.open(CapaCreateDialogComponent, {
-      autoFocus: 'first-tabbable',
-      restoreFocus: true,
-      panelClass: 'qos-dialog-panel',
-      data: prefill ?? null
-    });
+    const ref = this.dialog.open<CapaCreateDialogComponent, CapaCreateDialogData, CapaOpened>(
+      CapaCreateDialogComponent, {
+        autoFocus: 'first-tabbable',
+        restoreFocus: true,
+        panelClass: 'qos-dialog-panel',
+        data: { prefill }
+      });
     ref.afterClosed().subscribe(created => {
       if (created) {
         this.pageIndex = 0;
@@ -135,6 +143,9 @@ export class CapaListComponent implements OnInit {
   }
 
   statusBadge(s: CapaStatus): string { return 'badge badge-' + s.toLowerCase(); }
+
+  /** Le nom du pilote, jamais son identifiant (ADR 0088). */
+  ownerLabel(c: CapaCaseResponse): string { return capaOwnerLabel(c, id => this.names.get(id)); }
 
   /** Libellé lisible du type de dossier ; la colonne affichait l'énumération brute. */
   caseTypeLabel(type: string): string { return capaTypeLabel(type); }

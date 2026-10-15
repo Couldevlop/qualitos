@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -28,6 +29,27 @@ class IdentificationTest {
         assertThat(i.originRef()).isNull();
         assertThat(i.origin()).isEqualTo(RegisterOrigin.DIRECT);
         assertThat(i.requirements()).isEmpty();
+    }
+
+    @Test
+    void leCompteDuProprietaireTraverseLaValidationEtUnChangementDOrigine() {
+        UUID compte = UUID.randomUUID();
+        Identification i = new Identification("Titre", RegisterType.QUALITY, "Achats", null, " Mme Diallo ",
+                RegisterOrigin.FMEA, "PFMEA-1", Set.of(), compte).validated(true);
+        assertThat(i.ownerUserId()).isEqualTo(compte);
+        assertThat(i.owner()).isEqualTo("Mme Diallo");
+
+        Identification relue = i.withOrigin(RegisterOrigin.AUDIT, "AUD-3");
+        assertThat(relue.ownerUserId()).isEqualTo(compte);
+        assertThat(relue.origin()).isEqualTo(RegisterOrigin.AUDIT);
+        assertThat(relue.originRef()).isEqualTo("AUD-3");
+        assertThat(relue.owner()).isEqualTo("Mme Diallo");
+    }
+
+    @Test
+    void uneFicheAnterieureNAQueLeNomDuProprietaire() {
+        assertThat(correcte().ownerUserId()).isNull();
+        assertThat(correcte().validated(false).ownerUserId()).isNull();
     }
 
     @Test

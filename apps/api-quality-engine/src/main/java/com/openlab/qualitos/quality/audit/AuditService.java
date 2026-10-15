@@ -2,6 +2,7 @@ package com.openlab.qualitos.quality.audit;
 
 import com.openlab.qualitos.quality.aigateway.AiCompletionResult;
 import com.openlab.qualitos.quality.aigateway.AiGatewayClient;
+import com.openlab.qualitos.quality.common.CurrentUser;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.common.TenantContext;
 import com.openlab.qualitos.quality.standards.ObligationLevel;
@@ -23,6 +24,7 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -49,6 +51,7 @@ public class AuditService {
     private final AuditChecklistItemRepository checklistRepository;
     private final AuditFindingRepository findingRepository;
     private final StandardRepository standardRepository;
+    private final AuditReportRepository reportRepository;
     private final AiGatewayClient ai;
     private final Clock clock;
 
@@ -56,12 +59,14 @@ public class AuditService {
                         AuditChecklistItemRepository checklistRepository,
                         AuditFindingRepository findingRepository,
                         StandardRepository standardRepository,
+                        AuditReportRepository reportRepository,
                         AiGatewayClient ai,
                         Clock clock) {
         this.planRepository = planRepository;
         this.checklistRepository = checklistRepository;
         this.findingRepository = findingRepository;
         this.standardRepository = standardRepository;
+        this.reportRepository = reportRepository;
         this.ai = ai;
         this.clock = clock;
     }
@@ -71,9 +76,15 @@ public class AuditService {
      * périmètre, de la norme, des réponses de checklist et des constats. Tenant-scopé
      * (loadPlan). Le résumé généré est persisté dans {@code reportSummary}. Un service
      * IA indisponible remonte une {@code AiGatewayException} (mappée 502/503).
+     *
+     * <p>Refusé une fois le rapport émis : la synthèse fait alors partie d'un
+     * document remis, et la régénérer réécrirait ce qui a été émis.
      */
     public AuditDto.PlanResponse generateReport(UUID id) {
         AuditPlan p = loadPlan(id);
+        if (reportRepository.existsByPlanIdAndStatus(p.getId(), AuditReportStatus.ISSUED)) {
+            throw new AuditStateException("The audit report has been issued: its summary is locked");
+        }
 
         String systemPrompt = """
                 Tu es un auditeur qualité senior (QualitOS §1.4/§4.4). À partir des
@@ -194,7 +205,7 @@ public class AuditService {
         p.setType(req.type());
         p.setStatus(AuditStatus.PLANNED);
         p.setStandard(req.standard());
-        p.setLeadAuditorId(req.leadAuditorId());
+        assignLeadAuditor(p, req.leadAuditorId(), req.leadAuditorName());
         p.setAuditeeId(req.auditeeId());
         p.setScheduledDate(req.scheduledDate());
         p.setReminderEmail(normalizeEmail(req.reminderEmail()));
@@ -210,7 +221,7 @@ public class AuditService {
         if (req.scope() != null) p.setScope(req.scope());
         if (req.type() != null) p.setType(req.type());
         if (req.standard() != null) p.setStandard(req.standard());
-        if (req.leadAuditorId() != null) p.setLeadAuditorId(req.leadAuditorId());
+        if (req.leadAuditorId() != null) assignLeadAuditor(p, req.leadAuditorId(), req.leadAuditorName());
         if (req.auditeeId() != null) p.setAuditeeId(req.auditeeId());
         if (req.scheduledDate() != null) p.setScheduledDate(req.scheduledDate());
         // Chaîne vide = « retire le destinataire ». Sans ce cas, une adresse posée
@@ -420,7 +431,8 @@ public class AuditService {
         f.setClauseRef(req.clauseRef());
         f.setPhotoUrl(req.photoUrl());
         f.setCapaId(req.capaId());
-        f.setRaisedBy(req.raisedBy());
+        // L'auteur du constat est l'identité authentifiée, pas un champ du corps.
+        f.setRaisedBy(CurrentUser.requireUserId());
         f.setRaisedAt(Instant.now());
         if (req.checklistItemId() != null) {
             AuditChecklistItem item = checklistRepository
@@ -439,6 +451,14 @@ public class AuditService {
         }
         AuditFinding f = findingRepository.findByIdAndPlanId(findingId, planId)
                 .orElseThrow(() -> new AuditFindingNotFoundException(findingId));
+        // Le rapport émis a figé les chiffres des constats sous son empreinte :
+        // requalifier ou réécrire un constat après coup le contredirait. Seul le
+        // rattachement d'une CAPA reste possible, il ne change pas le constat.
+        boolean retouche = req.type() != null || req.description() != null
+                || req.clauseRef() != null || req.photoUrl() != null;
+        if (retouche && reportRepository.existsByPlanIdAndStatus(planId, AuditReportStatus.ISSUED)) {
+            throw new AuditStateException("Cannot modify a finding once the audit report is issued");
+        }
         if (req.type() != null) f.setType(req.type());
         if (req.description() != null) f.setDescription(req.description());
         if (req.clauseRef() != null) f.setClauseRef(req.clauseRef());
@@ -458,6 +478,37 @@ public class AuditService {
     }
 
     // --- helpers ---
+
+    /**
+     * Désigne l'auditeur responsable et recopie son nom.
+     *
+     * <p>Sans auditeur désigné, c'est l'utilisateur connecté — le comportement
+     * qu'avait l'écran, mais dit ici plutôt que fabriqué dans le navigateur.
+     * Quand l'auditeur EST l'utilisateur connecté, son nom se lit dans le jeton :
+     * le corps de la requête ne peut pas le renommer. Pour un collègue désigné,
+     * le nom est celui que l'annuaire a montré à l'auteur ; le moteur n'en
+     * possède pas d'autre.
+     */
+    private void assignLeadAuditor(AuditPlan p, UUID requestedId, String requestedName) {
+        Optional<UUID> me = CurrentUser.userId();
+        UUID leadId = requestedId != null
+                ? requestedId
+                : me.orElseThrow(MissingTenantContextException::new);
+        String name = trimToNull(requestedName);
+        if (me.isPresent() && me.get().equals(leadId)) {
+            name = CurrentUser.displayName().orElse(name);
+        }
+        p.setLeadAuditorId(leadId);
+        p.setLeadAuditorName(name);
+    }
+
+    private static String trimToNull(String raw) {
+        if (raw == null) {
+            return null;
+        }
+        String trimmed = raw.trim();
+        return trimmed.isEmpty() ? null : trimmed;
+    }
 
     private AuditPlan loadPlan(UUID id) {
         UUID tenantId = requireTenantId();
@@ -527,7 +578,7 @@ public class AuditService {
         return new AuditDto.PlanResponse(
                 p.getId(), p.getTenantId(), p.getReference(), p.getTitle(), p.getScope(),
                 p.getType(), p.getStatus(), p.getStandard(), p.getStandardId(),
-                p.getLeadAuditorId(), p.getAuditeeId(), p.getScheduledDate(),
+                p.getLeadAuditorId(), p.getLeadAuditorName(), p.getAuditeeId(), p.getScheduledDate(),
                 p.getStartedAt(), p.getCompletedAt(), p.getReportSummary(),
                 p.getReminderEmail(), p.getReminderSentAt(),
                 p.getCreatedAt(), p.getUpdatedAt(),

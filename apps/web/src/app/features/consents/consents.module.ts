@@ -7,6 +7,7 @@ import { ConsentsDetailComponent } from './pages/consents-detail/consents-detail
 import { ConsentsGrantDialogComponent } from './pages/consents-grant-dialog/consents-grant-dialog.component';
 import { ConsentsSearchComponent } from './pages/consents-search/consents-search.component';
 import { ConsentsWithdrawDialogComponent } from './pages/consents-withdraw-dialog/consents-withdraw-dialog.component';
+import { PersonNameModule } from '../../shared/person-name/person-name.module';
 
 const routes: Routes = [
   { path: '', component: ConsentsSearchComponent },
@@ -20,6 +21,6 @@ const routes: Routes = [
     ConsentsGrantDialogComponent,
     ConsentsWithdrawDialogComponent
   ],
-  imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
+  imports: [PersonNameModule, SharedModule, UiModule, RouterModule.forChild(routes)]
 })
 export class ConsentsModule {}

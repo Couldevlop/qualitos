@@ -1,0 +1,132 @@
+/* Section « Rapport » : les chiffres d'abord, le texte ensuite, l'émission en
+   dernier — l'ordre dans lequel un responsable qualité relit un rapport. Toutes
+   les valeurs viennent des jetons du système de conception. */
+
+.report-card { margin-bottom: var(--qos-space-4); }
+
+.section-header { padding-bottom: var(--qos-space-3); }
+
+mat-card-title {
+  display: flex;
+  align-items: center;
+  gap: var(--qos-space-3);
+}
+
+.state {
+  padding: 2px var(--qos-space-3);
+  border-radius: var(--qos-radius-pill);
+  background: var(--qos-bg-subtle);
+  color: var(--qos-fg-secondary);
+  font-size: var(--qos-fs-xs);
+  font-weight: var(--qos-fw-medium);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.state--issued {
+  background: var(--qos-success-bg-soft);
+  color: var(--qos-success-fg);
+}
+
+.state-row {
+  display: flex;
+  align-items: center;
+  gap: var(--qos-space-3);
+  padding: var(--qos-space-3) 0;
+}
+.state-row.error { color: var(--qos-danger-fg); }
+
+/* --- chiffres clés : une grille qui se reflue, lisible d'un coup d'œil ------ */
+
+.figures {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+  gap: var(--qos-space-2);
+  margin: 0 0 var(--qos-space-4);
+}
+
+.figure {
+  padding: var(--qos-space-3);
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: var(--qos-radius-md);
+  background: var(--qos-bg-elevated);
+
+  dt {
+    color: var(--qos-fg-secondary);
+    font-size: var(--qos-fs-xs);
+    line-height: var(--qos-lh-snug);
+  }
+  dd {
+    margin: var(--qos-space-1) 0 0;
+    color: var(--qos-fg-primary);
+    font-size: var(--qos-fs-xl);
+    font-weight: var(--qos-fw-semibold);
+    font-variant-numeric: tabular-nums;
+  }
+}
+.figure--major dd { color: var(--qos-danger-fg); }
+.figure--minor dd { color: var(--qos-warn-fg); }
+.figure--total { background: var(--qos-bg-subtle); }
+
+.issued-line {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--qos-space-2);
+  margin: 0 0 var(--qos-space-4);
+  padding: var(--qos-space-3);
+  border-radius: var(--qos-radius-md);
+  background: var(--qos-success-bg-soft);
+  color: var(--qos-success-fg);
+  font-size: var(--qos-fs-sm);
+}
+.fingerprint {
+  margin-left: auto;
+  color: var(--qos-fg-secondary);
+  code { font-family: var(--qos-font-mono); }
+}
+
+/* --- formulaire ------------------------------------------------------------ */
+
+.report-form { display: flex; flex-direction: column; }
+
+.summary-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--qos-space-3);
+  margin-bottom: var(--qos-space-2);
+}
+.field-label {
+  color: var(--qos-fg-primary);
+  font-size: var(--qos-fs-sm);
+  font-weight: var(--qos-fw-semibold);
+}
+
+.full { width: 100%; }
+
+.two-cols {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: 0 var(--qos-space-3);
+}
+
+.conclusion { width: min(100%, 28rem); }
+
+.report-actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: var(--qos-space-2);
+}
+
+.blocker {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--qos-space-2);
+  margin: var(--qos-space-2) 0 0;
+  color: var(--qos-fg-secondary);
+  font-size: var(--qos-fs-sm);
+
+  mat-icon { font-size: 18px; width: 18px; height: 18px; }
+}

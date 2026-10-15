@@ -23,7 +23,7 @@
 # Le cœur n'a AUCUNE dépendance tierce ; l'extra ONNX (onnxruntime + numpy) n'est
 # installé que si ARG WITH_ONNX=true.
 # =============================================================================
-FROM cgr.dev/chainguard/python:latest-dev AS builder
+FROM cgr.dev/chainguard/python:latest-dev@sha256:c07959e43e3edece176d20c32428a53014379790169af4ea5de1dc47277eba75 AS builder
 # Les images Chainguard démarrent en nonroot ; le builder doit écrire dans /deps.
 USER root
 WORKDIR /build
@@ -35,7 +35,7 @@ COPY edge_inference ./edge_inference
 RUN if [ "$WITH_ONNX" = "true" ]; then EXTRA="[onnx]"; else EXTRA=""; fi; \
     python -m pip install --no-cache-dir --target=/deps ".${EXTRA}"
 
-FROM cgr.dev/chainguard/python:latest
+FROM cgr.dev/chainguard/python:latest@sha256:3f411b4aac1ed9cd6c9dec1486f92a8898737d9d6f95488dd727ca7d6f5254ee
 WORKDIR /app
 COPY --from=builder /deps /deps
 COPY edge_inference /app/edge_inference

@@ -93,3 +93,17 @@ export interface RequirementsMatrix {
 
 /** Brute ou résiduelle : sur quelle cotation se lit la matrice. */
 export type RatingView = 'gross' | 'residual';
+
+// ---------- ajout d'une norme ----------
+
+/** Une norme de système de management que le client peut ajouter, telle que `GET /api/v1/smi/standards/candidates` la rend. */
+export interface StandardCandidate {
+  standardId: string;
+  code: string;
+  name: string;
+  version: string | null;
+  /** Le catalogue la rattache à une norme déjà pilotée. */
+  suggested: boolean;
+  /** Les normes pilotées auxquelles elle est rattachée (codes). */
+  sharedWith: string[];
+}

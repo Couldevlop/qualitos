@@ -1,0 +1,39 @@
+:host { display: block; }
+
+/* Le bloc est séparé de ce qui précède par un filet : ce qui précède décrit
+   l'ACTION, ce qui suit décide de sa VÉRIFICATION — deux questions distinctes. */
+.verification {
+  display: flex;
+  flex-direction: column;
+  margin: var(--qos-space-2, 8px) 0 var(--qos-space-3, 12px);
+  padding-top: var(--qos-space-4, 16px);
+  border-top: 1px solid var(--qos-border, rgba(0, 0, 0, 0.12));
+}
+
+.sous-titre {
+  margin: 0 0 var(--qos-space-2, 8px);
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+/* Les deux réponses côte à côte : elles sont exclusives, et les empiler
+   laissait croire à une liste où l'on pourrait cocher les deux. */
+.choix {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--qos-space-5, 20px);
+  margin-bottom: var(--qos-space-2, 8px);
+}
+
+.aide {
+  margin: 0 0 var(--qos-space-3, 12px);
+  color: var(--qos-fg-secondary, #6b7280);
+  font-size: var(--qos-fs-sm, 13px);
+  line-height: 1.5;
+}
+
+.aide.erreur {
+  color: var(--qos-danger, #b3261e);
+}
+
+.full { display: block; width: 100%; }

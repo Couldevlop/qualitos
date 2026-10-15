@@ -57,14 +57,72 @@ class CapaControllerTest {
     }
 
     @Test @WithMockUser(roles = "QUALITY_MANAGER")
-    void suggestActions_returns200() throws Exception {
-        when(service.suggestActions(CAPA)).thenReturn(List.of(
-                new CapaDto.SuggestedAction("Auditer le fournisseur Alpha sur site", null),
-                new CapaDto.SuggestedAction("Renforcer le plan de contrôle réception", null)));
-        mockMvc.perform(post("/api/v1/capa/cases/{id}/suggest-actions", CAPA).with(csrf()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(2))
-                .andExpect(jsonPath("$[0].title").value("Auditer le fournisseur Alpha sur site"));
+    void open_creeLeDossierEtSonAction_avecLaSourceChoisie() throws Exception {
+        when(service.openCase(any(), eq(CapaSourceType.COMPLAINT), eq("REC-12")))
+                .thenReturn(caseResp(CapaStatus.OPEN));
+        mockMvc.perform(post("/api/v1/capa/cases/open").with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(om.writeValueAsString(openReq(CapaSourceType.COMPLAINT, "REC-12"))))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").value(CAPA.toString()));
+        verify(service).openCase(any(), eq(CapaSourceType.COMPLAINT), eq("REC-12"));
+    }
+
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
+    void open_sansSource_estUneDetectionInterne() throws Exception {
+        when(service.openCase(any(), eq(CapaSourceType.INTERNAL), isNull()))
+                .thenReturn(caseResp(CapaStatus.OPEN));
+        mockMvc.perform(post("/api/v1/capa/cases/open").with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(om.writeValueAsString(openReq(null, null))))
+                .andExpect(status().isCreated());
+        verify(service).openCase(any(), eq(CapaSourceType.INTERNAL), isNull());
+    }
+
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
+    void open_laDecisionDeVerificationParvientAuService() throws Exception {
+        UUID verificateur = UUID.randomUUID();
+        when(service.openCase(any(), eq(CapaSourceType.INTERNAL), isNull()))
+                .thenReturn(caseResp(CapaStatus.OPEN));
+        CapaDto.OpenCaseRequest base = openReq(null, null);
+        CapaDto.OpenCaseRequest demande = new CapaDto.OpenCaseRequest(base.title(), null, base.type(),
+                base.criticity(), null, null, base.ownerId(), base.ownerName(), base.dueDate(),
+                true, verificateur, "Claire Contrôle", "Relever 20 pièces");
+
+        mockMvc.perform(post("/api/v1/capa/cases/open").with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(om.writeValueAsString(demande)))
+                .andExpect(status().isCreated());
+
+        org.mockito.ArgumentCaptor<CapaDto.OpenCaseRequest> captor =
+                org.mockito.ArgumentCaptor.forClass(CapaDto.OpenCaseRequest.class);
+        verify(service).openCase(captor.capture(), eq(CapaSourceType.INTERNAL), isNull());
+        org.assertj.core.api.Assertions.assertThat(captor.getValue().verificationRequired()).isTrue();
+        org.assertj.core.api.Assertions.assertThat(captor.getValue().verificationAssigneeId())
+                .isEqualTo(verificateur);
+        org.assertj.core.api.Assertions.assertThat(captor.getValue().verificationAssigneeName())
+                .isEqualTo("Claire Contrôle");
+        org.assertj.core.api.Assertions.assertThat(captor.getValue().verificationInstructions())
+                .isEqualTo("Relever 20 pièces");
+    }
+
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
+    void open_sourceRisque_estRefusee_seulLeRegistreLaPose() throws Exception {
+        mockMvc.perform(post("/api/v1/capa/cases/open").with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(om.writeValueAsString(openReq(CapaSourceType.RISK, "R-001"))))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.title").value("Invalid CAPA Input"));
+        verify(service, never()).openCase(any(), any(), any());
+    }
+
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
+    void open_sansResponsableNiEcheance_estRefuseAvantLeService() throws Exception {
+        mockMvc.perform(post("/api/v1/capa/cases/open").with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\":\"t\",\"type\":\"CORRECTIVE\",\"criticity\":\"HIGH\"}"))
+                .andExpect(status().isBadRequest());
+        verify(service, never()).openCase(any(), any(), any());
     }
 
     @Test @WithMockUser(roles = "QUALITY_MANAGER")
@@ -255,7 +313,7 @@ class CapaControllerTest {
     void get_exposeLEcartDOrigine_pourLaColonneNonConformite() throws Exception {
         when(service.findById(CAPA)).thenReturn(new CapaDto.CaseResponse(
                 CAPA, TENANT, "t", null, CapaType.CORRECTIVE, CapaCriticity.HIGH, CapaStatus.OPEN,
-                CapaSourceType.NON_CONFORMITY, "NC-2026-0018", OWNER, null, null,
+                CapaSourceType.NON_CONFORMITY, "NC-2026-0018", OWNER, "a.diallo@client.test", null, null,
                 null, null, null, null,
                 null, null, null, null,
                 Instant.now(), Instant.now(), List.of(),
@@ -288,10 +346,16 @@ class CapaControllerTest {
     }
 
     // helpers
+    private CapaDto.OpenCaseRequest openReq(CapaSourceType source, String ref) {
+        return new CapaDto.OpenCaseRequest("Recalibrer la sonde", null, CapaType.CORRECTIVE,
+                CapaCriticity.HIGH, source, ref, OWNER, "a.diallo@client.test",
+                java.time.LocalDate.now().plusDays(10), null, null, null, null);
+    }
+
     private CapaDto.CaseResponse caseResp(CapaStatus s) {
         return new CapaDto.CaseResponse(
                 CAPA, TENANT, "t", null, CapaType.CORRECTIVE, CapaCriticity.HIGH, s,
-                CapaSourceType.NON_CONFORMITY, null, OWNER, null, null,
+                CapaSourceType.NON_CONFORMITY, null, OWNER, null, null, null,
                 null, null, null, null,
                 null, null, null, null,
                 Instant.now(), Instant.now(), List.of(), null, List.of());

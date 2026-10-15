@@ -96,7 +96,7 @@
         <mat-card-header><mat-card-title i18n="@@ai-conformity.detail.trace">Trace</mat-card-title></mat-card-header>
         <mat-card-content>
           <table class="kv">
-            <tr><th i18n="@@ai-conformity.detail.created-by">Créé par</th><td><code>{{ c.createdByUserId }}</code></td></tr>
+            <tr><th i18n="@@ai-conformity.detail.created-by">Créé par</th><td><qos-person-name [accountId]="c.createdByUserId"></qos-person-name></td></tr>
             <tr><th i18n="@@common.created-at">Créé le</th><td>{{ c.createdAt }}</td></tr>
             <tr *ngIf="c.startedAt"><th i18n="@@ai-conformity.detail.started-at">Démarré le</th><td>{{ c.startedAt }}</td></tr>
             <tr><th i18n="@@common.last-updated">Dernière MAJ</th><td>{{ c.updatedAt }}</td></tr>

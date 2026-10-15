@@ -91,7 +91,7 @@
         <mat-card-content>
           <p class="text">{{ d.dpoOpinion }}</p>
           <table class="kv">
-            <tr *ngIf="d.dpoUserId"><th i18n="@@dpia.detail.dpo">DPO</th><td><code>{{ d.dpoUserId }}</code></td></tr>
+            <tr *ngIf="d.dpoUserId"><th i18n="@@dpia.detail.dpo">DPO</th><td><qos-person-name [accountId]="d.dpoUserId"></qos-person-name></td></tr>
             <tr *ngIf="d.dpoOpinionAt"><th i18n="@@dpia.detail.opinion-rendered-at">Avis rendu le</th><td>{{ d.dpoOpinionAt }}</td></tr>
           </table>
         </mat-card-content>
@@ -112,8 +112,8 @@
         <mat-card-header><mat-card-title i18n="@@dpia.detail.trace-title">Trace</mat-card-title></mat-card-header>
         <mat-card-content>
           <table class="kv">
-            <tr><th i18n="@@dpia.detail.created-by">Créée par</th><td><code>{{ d.createdByUserId }}</code></td></tr>
-            <tr *ngIf="d.handledByUserId"><th i18n="@@dpia.detail.handled-by">Pilotée par</th><td><code>{{ d.handledByUserId }}</code></td></tr>
+            <tr><th i18n="@@dpia.detail.created-by">Créée par</th><td><qos-person-name [accountId]="d.createdByUserId"></qos-person-name></td></tr>
+            <tr *ngIf="d.handledByUserId"><th i18n="@@dpia.detail.handled-by">Pilotée par</th><td><qos-person-name [accountId]="d.handledByUserId"></qos-person-name></td></tr>
             <tr><th i18n="@@dpia.detail.created-at">Créée le</th><td>{{ d.createdAt }}</td></tr>
             <tr><th i18n="@@common.last-updated">Dernière MAJ</th><td>{{ d.updatedAt }}</td></tr>
           </table>

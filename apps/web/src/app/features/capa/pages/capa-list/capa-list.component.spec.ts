@@ -5,7 +5,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, convertToParamMap, provideRouter, Router } from '@angular/router';
-import { firstValueFrom, of } from 'rxjs';
+import { firstValueFrom, of, throwError } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
 
 import { environment } from '../../../../../environments/environment';
@@ -14,6 +14,20 @@ import { UiModule } from '../../../../shared/ui/ui.module';
 import { CapaCaseResponse } from '../../capa.types';
 import { CapaListComponent } from './capa-list.component';
 import { AuthzService } from '../../../../core/authz/authz.service';
+import { DirectoryService } from '../../../../core/directory/directory.service';
+import { CapaService } from '../../capa.service';
+
+/**
+ * L'annuaire en lecture restreinte (ADR 0091) : le seul compte connu est
+ * « kc-1 », les autres répondent 404.
+ */
+function annuaire(): Pick<DirectoryService, 'getByAccount'> {
+  return {
+    getByAccount: (id: string) => id === 'kc-1'
+      ? of({ id: 'i-1', accountId: 'kc-1', displayName: 'Karim Benali', email: 'karim@client.test', active: true })
+      : throwError(() => ({ status: 404 }))
+  };
+}
 
 describe('CapaListComponent', () => {
   let component: CapaListComponent;
@@ -30,7 +44,8 @@ describe('CapaListComponent', () => {
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
         provideRouter([]),
-        { provide: AuthzService, useValue: { can: () => of(true) } }
+        { provide: AuthzService, useValue: { can: () => of(true) } },
+        { provide: DirectoryService, useValue: annuaire() }
       ]
     }).compileComponents();
     fixture = TestBed.createComponent(CapaListComponent);
@@ -50,7 +65,29 @@ describe('CapaListComponent', () => {
   });
 
   it('declares the expected displayed columns', () => {
-    expect(component.displayedColumns).toEqual(['title', 'type', 'criticity', 'status', 'dueDate']);
+    expect(component.displayedColumns).toEqual(['title', 'type', 'criticity', 'status', 'owner', 'dueDate']);
+  });
+
+  it('nomme le pilote, jamais par son identifiant (ADR 0088) ; l\'annuaire nomme les anciens dossiers', async () => {
+    const base = {
+      id: 'c', tenantId: 't', title: 't', type: 'CORRECTIVE', criticity: 'LOW', status: 'OPEN',
+      sourceType: 'INTERNAL', createdAt: '', updatedAt: '', actions: [] as CapaCaseResponse['actions']
+    } satisfies Omit<CapaCaseResponse, 'ownerId'>;
+    const nomme = { ...base, id: 'c1', ownerId: 'kc-x', ownerName: 'Amina Dridi' };
+    const ancien = { ...base, id: 'c2', ownerId: 'kc-1' };
+    const inconnu = { ...base, id: 'c3', ownerId: '9c1f2b7e-0000-4000-8000-000000000000' };
+    spyOn(TestBed.inject(CapaService), 'listCases').and.returnValue(of({
+      content: [nomme, ancien, inconnu], totalElements: 3, totalPages: 1, number: 0, size: 20
+    }));
+    const getByAccount = spyOn(TestBed.inject(DirectoryService), 'getByAccount').and.callThrough();
+    fixture.detectChanges();
+    await firstValueFrom(component.cases$);
+
+    expect(component.ownerLabel(nomme)).toBe('Amina Dridi');
+    expect(component.ownerLabel(ancien)).toBe('Karim Benali');
+    expect(component.ownerLabel(inconnu)).toBe('—');
+    // Le nom recopié ne coûte aucune lecture ; chaque compte inconnu, une seule.
+    expect(getByAccount.calls.allArgs()).toEqual([['kc-1'], ['9c1f2b7e-0000-4000-8000-000000000000']]);
   });
 
   it('computes badge classes from status and criticity', () => {
@@ -116,7 +153,8 @@ describe('CapaListComponent (chargement API)', () => {
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
         provideRouter([]),
-        { provide: AuthzService, useValue: { can: () => of(true) } }
+        { provide: AuthzService, useValue: { can: () => of(true) } },
+        { provide: DirectoryService, useValue: annuaire() }
       ]
     }).compileComponents();
     fixture = TestBed.createComponent(CapaListComponent);
@@ -246,6 +284,7 @@ describe('CapaListComponent — création ouverte par un lien', () => {
         provideHttpClientTesting(),
         provideRouter([]),
         { provide: AuthzService, useValue: { can: () => of(true) } },
+        { provide: DirectoryService, useValue: annuaire() },
         { provide: MatDialog, useValue: dialog },
         { provide: ActivatedRoute, useValue: { snapshot: { queryParamMap: convertToParamMap({
           nouveau: '1', titre: 'Écart ISO 45001 · 6', ref: 'iso-45001 §6', description: 'x'.repeat(5000)
@@ -259,7 +298,7 @@ describe('CapaListComponent — création ouverte par un lien', () => {
     fixture.componentInstance.ngOnInit();
     await Promise.resolve();
 
-    const data = dialog.open.calls.mostRecent().args[1]!.data as { title: string; sourceRef: string; description: string };
+    const data = (dialog.open.calls.mostRecent().args[1]!.data as { prefill: { title: string; sourceRef: string; description: string } }).prefill;
     expect(data.title).toBe('Écart ISO 45001 · 6');
     expect(data.sourceRef).toBe('iso-45001 §6');
     expect(data.description.length).toBe(4000);
@@ -276,6 +315,7 @@ describe('CapaListComponent — création ouverte par un lien', () => {
         provideHttpClientTesting(),
         provideRouter([]),
         { provide: AuthzService, useValue: { can: () => of(true) } },
+        { provide: DirectoryService, useValue: annuaire() },
         { provide: MatDialog, useValue: dialog },
         { provide: ActivatedRoute, useValue: { snapshot: { queryParamMap: convertToParamMap({}) } } }
       ]

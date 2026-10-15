@@ -74,7 +74,7 @@
             </div>
             <div class="info-item">
               <span class="info-label" i18n="@@ishikawa.detail.owner">Pilote</span>
-              <span class="info-value">{{ d.ownerId }}</span>
+              <span class="info-value"><qos-person-name [accountId]="d.ownerId"></qos-person-name></span>
             </div>
             <div class="info-item">
               <span class="info-label" i18n="@@ishikawa.detail.causes-total">Causes totales</span>

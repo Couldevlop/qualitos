@@ -3,9 +3,13 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import { RequirementsMatrix, SmiDashboard } from './smi.types';
+import { RequirementsMatrix, SmiDashboard, StandardCandidate, StandardRef } from './smi.types';
 
-/** Le tableau de bord SMI. Lecture seule ; le client vient du jeton. */
+/**
+ * Le tableau de bord SMI ; le client vient du jeton. Lecture, sauf l'ajout
+ * d'une norme, réservé à l'administrateur du client (le serveur refuse les
+ * autres en 403).
+ */
 @Injectable({ providedIn: 'root' })
 export class SmiService {
 
@@ -21,5 +25,17 @@ export class SmiService {
 
   requirementsMatrix(): Observable<RequirementsMatrix> {
     return this.http.get<RequirementsMatrix>(`${this.endpoint}/requirements-matrix`);
+  }
+
+  // ---------- ajout d'une norme (administrateur du client) ----------
+
+  /** Les normes de système de management encore à adopter, les suggérées en tête. */
+  candidates(): Observable<StandardCandidate[]> {
+    return this.http.get<StandardCandidate[]>(`${this.endpoint}/standards/candidates`);
+  }
+
+  /** Adopte la norme : la même adoption que dans le Standards Hub, feuille de route comprise. */
+  addStandard(standardId: string): Observable<StandardRef> {
+    return this.http.post<StandardRef>(`${this.endpoint}/standards`, { standardId });
   }
 }

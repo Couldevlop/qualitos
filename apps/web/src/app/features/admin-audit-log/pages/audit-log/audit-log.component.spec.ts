@@ -9,6 +9,9 @@ import { SharedModule } from '../../../../shared/shared.module';
 import { AuditLogService } from '../../audit-log.service';
 import { AuditEvent, AuditEventPage, ChainVerification } from '../../audit-log.types';
 import { AuditLogComponent } from './audit-log.component';
+import { provideDirectoryStub } from '../../../../core/directory/testing/directory.stub';
+import { PersonNameModule } from '../../../../shared/person-name/person-name.module';
+import { UserPickerModule } from '../../../../shared/user-picker/user-picker.module';
 
 describe('AuditLogComponent', () => {
   let component: AuditLogComponent;
@@ -49,8 +52,8 @@ describe('AuditLogComponent', () => {
 
     await TestBed.configureTestingModule({
       declarations: [AuditLogComponent],
-      imports: [SharedModule, NoopAnimationsModule],
-      providers: [
+      imports: [UserPickerModule, PersonNameModule, SharedModule, NoopAnimationsModule],
+      providers: [provideDirectoryStub(),
         { provide: AuditLogService, useValue: svc },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting()

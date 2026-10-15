@@ -51,6 +51,8 @@ class RiskRegisterServiceTest {
     static final UUID TENANT_A = UUID.randomUUID();
     static final UUID TENANT_B = UUID.randomUUID();
     static final UUID ACTEUR = UUID.randomUUID();
+    /** Le responsable choisi dans l'annuaire : distinct de qui clique (ADR 0088). */
+    static final UUID PILOTE = UUID.randomUUID();
     static final Instant MAINTENANT = Instant.parse("2026-10-01T09:00:00Z");
 
     FakeRisks risks;
@@ -204,7 +206,7 @@ class RiskRegisterServiceTest {
 
         RiskRegisterDto.CapaView capa = service.openCapa(id,
                 new RiskRegisterDto.CapaCommand("  Carte SPC sur le cordon ", " ", RiskCapaKind.CORRECTIVE,
-                        "  A. Diallo ", LocalDate.of(2026, 12, 1)));
+                        PILOTE, "  A. Diallo ", LocalDate.of(2026, 12, 1)));
 
         assertThat(capa.title()).isEqualTo("Carte SPC sur le cordon");
         assertThat(capa.kind()).isEqualTo(RiskCapaKind.CORRECTIVE);
@@ -215,7 +217,8 @@ class RiskRegisterServiceTest {
             assertThat(o.kind()).isEqualTo(RiskCapaKind.CORRECTIVE);
             assertThat(o.assignee()).isEqualTo("A. Diallo");
             assertThat(o.due()).isEqualTo(LocalDate.of(2026, 12, 1));
-            assertThat(o.owner()).isEqualTo(ACTEUR);
+            // Le pilote est le responsable choisi, pas celui qui clique (ADR 0088).
+            assertThat(o.owner()).isEqualTo(PILOTE).isNotEqualTo(ACTEUR);
             assertThat(o.risk().getReference()).isEqualTo("R-001");
         });
         assertThat(events.all.get(events.all.size() - 1)).satisfies(e -> {
@@ -223,6 +226,30 @@ class RiskRegisterServiceTest {
             assertThat(e.detail()).isEqualTo("Carte SPC sur le cordon");
         });
         verify(audit).riskCapaOpened(any(Risk.class), eq(capa.id()), eq(ACTEUR));
+    }
+
+    @Test
+    void laDecisionDeVerificationPartAvecLOuverture() {
+        UUID id = service.createRisk(risque("Dérive soudure", 4, 3)).id();
+        UUID verificateur = UUID.randomUUID();
+        RiskCapaGateway.Verification decision =
+                new RiskCapaGateway.Verification(true, verificateur, "Claire Contrôle", "Relever 20 pièces");
+
+        service.openCapa(id, new RiskRegisterDto.CapaCommand("Carte SPC", null, RiskCapaKind.PREVENTIVE,
+                PILOTE, "A. Diallo", LocalDate.of(2026, 12, 1), decision));
+
+        assertThat(capas.ouvertes).singleElement()
+                .satisfies(o -> assertThat(o.verification()).isEqualTo(decision));
+    }
+
+    @Test
+    void sansDecisionDeVerification_laQuestionResteOuverte() {
+        UUID id = service.createRisk(risque("Dérive soudure", 4, 3)).id();
+
+        service.openCapa(id, capa("Carte SPC"));
+
+        assertThat(capas.ouvertes).singleElement()
+                .satisfies(o -> assertThat(o.verification()).isEqualTo(RiskCapaGateway.Verification.UNDECIDED));
     }
 
     @Test
@@ -244,7 +271,7 @@ class RiskRegisterServiceTest {
                 .extracting("field").isEqualTo("title");
         assertThatThrownBy(() -> service.openCapa(id, null)).extracting("field").isEqualTo("title");
         assertThatThrownBy(() -> service.openCapa(id, new RiskRegisterDto.CapaCommand("t",
-                "d".repeat(RiskRegisterService.CAPA_DESCRIPTION_MAX + 1), RiskCapaKind.PREVENTIVE, "A",
+                "d".repeat(RiskRegisterService.CAPA_DESCRIPTION_MAX + 1), RiskCapaKind.PREVENTIVE, PILOTE, "A",
                 LocalDate.of(2026, 12, 1))))
                 .extracting("field").isEqualTo("description");
         verify(audit, never()).riskCapaOpened(any(), any(), any());
@@ -256,30 +283,32 @@ class RiskRegisterServiceTest {
         LocalDate demain = LocalDate.ofInstant(MAINTENANT, ZoneOffset.UTC).plusDays(1);
 
         assertThatThrownBy(() -> service.openCapa(id,
-                new RiskRegisterDto.CapaCommand("t", null, null, "A", demain)))
+                new RiskRegisterDto.CapaCommand("t", null, null, PILOTE, "A", demain)))
                 .extracting("field").isEqualTo("kind");
         assertThatThrownBy(() -> service.openCapa(id,
-                new RiskRegisterDto.CapaCommand("t", null, RiskCapaKind.PREVENTIVE, "  ", demain)))
-                .extracting("field").isEqualTo("assignee");
+                new RiskRegisterDto.CapaCommand("t", null, RiskCapaKind.PREVENTIVE, null, "A", demain)))
+                .extracting("field").isEqualTo("ownerId");
         assertThatThrownBy(() -> service.openCapa(id,
-                new RiskRegisterDto.CapaCommand("t", null, RiskCapaKind.PREVENTIVE, "A", null)))
+                new RiskRegisterDto.CapaCommand("t", null, RiskCapaKind.PREVENTIVE, PILOTE, "A", null)))
                 .extracting("field").isEqualTo("dueDate");
         assertThatThrownBy(() -> service.openCapa(id,
-                new RiskRegisterDto.CapaCommand("t", null, RiskCapaKind.PREVENTIVE, "A", demain.minusDays(2))))
+                new RiskRegisterDto.CapaCommand("t", null, RiskCapaKind.PREVENTIVE, PILOTE, "A",
+                        demain.minusDays(2))))
                 .extracting("field").isEqualTo("dueDate");
         assertThatThrownBy(() -> service.openCapa(id, new RiskRegisterDto.CapaCommand("t", null,
-                RiskCapaKind.PREVENTIVE, "x".repeat(RiskRegisterService.CAPA_ASSIGNEE_MAX + 1), demain)))
-                .extracting("field").isEqualTo("assignee");
+                RiskCapaKind.PREVENTIVE, PILOTE, "x".repeat(RiskRegisterService.CAPA_ASSIGNEE_MAX + 1), demain)))
+                .extracting("field").isEqualTo("ownerName");
         assertThat(capas.ouvertes).isEmpty();
 
-        // Le jour même est accepté : l'échéance n'est pas encore passée.
-        service.openCapa(id, new RiskRegisterDto.CapaCommand("t", null, RiskCapaKind.PREVENTIVE, "A",
+        // Le jour même est accepté : l'échéance n'est pas encore passée. Le
+        // libellé est facultatif : un compte de l'annuaire sans nom reste désigné.
+        service.openCapa(id, new RiskRegisterDto.CapaCommand("t", null, RiskCapaKind.PREVENTIVE, PILOTE, "  ",
                 demain.minusDays(1)));
-        assertThat(capas.ouvertes).hasSize(1);
+        assertThat(capas.ouvertes).singleElement().satisfies(o -> assertThat(o.assignee()).isNull());
     }
 
     private static RiskRegisterDto.CapaCommand capa(String titre) {
-        return new RiskRegisterDto.CapaCommand(titre, null, RiskCapaKind.PREVENTIVE, "A. Diallo",
+        return new RiskRegisterDto.CapaCommand(titre, null, RiskCapaKind.PREVENTIVE, PILOTE, "A. Diallo",
                 LocalDate.of(2026, 12, 1));
     }
 
@@ -419,6 +448,31 @@ class RiskRegisterServiceTest {
         assertThat(vue.originRef()).isEqualTo("PFMEA-7 #3");
         assertThat(vue.sourceId()).isEqualTo(LIGNE_AMDEC);
         assertThat(vue.title()).isEqualTo("Dérive");
+    }
+
+    @Test
+    void leProprietaireChoisiDansLAnnuaireGardeSonCompteEtSonNom() {
+        UUID compte = UUID.randomUUID();
+        RiskRegisterDto.RiskCommand c = risque("Dérive", 3, 3);
+        RiskRegisterDto.RiskCommand avecCompte = new RiskRegisterDto.RiskCommand(c.title(), c.type(), c.process(),
+                c.site(), " Awa Diallo ", c.cause(), c.effect(), c.origin(), c.originRef(), c.sourceId(),
+                c.grossSeverity(), c.grossProbability(), null, null, null, null, c.requirements(), null, null,
+                compte);
+
+        RiskRegisterDto.RiskView vue = service.createRisk(avecCompte);
+        assertThat(vue.ownerUserId()).isEqualTo(compte);
+        assertThat(vue.owner()).isEqualTo("Awa Diallo");
+        assertThat(service.risk(vue.id()).risk().ownerUserId()).isEqualTo(compte);
+
+        // Une révision sans compte (nom seul, saisie antérieure) le retire : c'est le corps qui fait foi.
+        assertThat(service.reviseRisk(vue.id(), risque("Dérive", 3, 3)).ownerUserId()).isNull();
+
+        RiskRegisterDto.OpportunityCommand o = opportunite("Automatiser", 4, 4);
+        RiskRegisterDto.OpportunityView opp = service.createOpportunity(new RiskRegisterDto.OpportunityCommand(
+                o.title(), o.type(), o.process(), o.site(), "Awa Diallo", o.targetDate(), o.context(), o.benefit(),
+                o.origin(), o.originRef(), o.gain(), o.feasibility(), null, null, o.requirements(), null, compte));
+        assertThat(opp.ownerUserId()).isEqualTo(compte);
+        assertThat(opp.owner()).isEqualTo("Awa Diallo");
     }
 
     // ---------- opportunités ----------
@@ -694,8 +748,8 @@ class RiskRegisterServiceTest {
         }
     }
 
-    record Ouverture(Risk risk, String title, String description, RiskCapaKind kind, String assignee,
-                     LocalDate due, UUID owner) {}
+    record Ouverture(Risk risk, String title, String description, RiskCapaKind kind, UUID owner,
+                     String assignee, LocalDate due, RiskCapaGateway.Verification verification) {}
 
     static final class FakeCapas implements RiskCapaGateway {
         final List<Ouverture> ouvertes = new ArrayList<>();
@@ -703,8 +757,8 @@ class RiskRegisterServiceTest {
 
         @Override
         public LinkedCapa open(Risk risk, String title, String description, RiskCapaKind kind,
-                               String assignee, LocalDate dueDate, UUID ownerId) {
-            ouvertes.add(new Ouverture(risk, title, description, kind, assignee, dueDate, ownerId));
+                               UUID ownerId, String assignee, LocalDate dueDate, Verification verification) {
+            ouvertes.add(new Ouverture(risk, title, description, kind, ownerId, assignee, dueDate, verification));
             LinkedCapa capa = new LinkedCapa(UUID.randomUUID(), title, dueDate, "OPEN", kind, assignee);
             lies.add(capa);
             return capa;

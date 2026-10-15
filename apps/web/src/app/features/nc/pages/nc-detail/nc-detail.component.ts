@@ -3,14 +3,15 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
-import { catchError, finalize, shareReplay, switchMap, tap } from 'rxjs/operators';
+import { catchError, finalize, map, shareReplay, switchMap, tap } from 'rxjs/operators';
 
 import { deferredView } from '../../../../core/rx/deferred-view';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import {
-  CapaActionDialogComponent, CapaActionDialogData
-} from '../../../capa/pages/capa-action-dialog/capa-action-dialog.component';
+  CapaCreateDialogComponent, CapaCreateDialogData, CapaOpened
+} from '../../../capa/pages/capa-create-dialog/capa-create-dialog.component';
+import { CapaCriticity } from '../../../capa/capa.types';
 import { ConnectivityService } from '../../../../core/offline/connectivity.service';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../../../shared/ui/confirm-dialog/confirm-dialog.component';
 import { FiveWhysService } from '../../../five-whys/five-whys.service';
@@ -520,83 +521,51 @@ export class NcDetailComponent implements OnInit {
   }
 
   /**
-   * Poser une action corrective sur cette non-conformité.
+   * Ouvre LA fenêtre de création CAPA, source verrouillée sur cette NC (ADR 0088).
    *
-   * <p><b>Ce que ce geste remplace.</b> Le bouton disait « Escalader CAPA » et
-   * ouvrait une simple confirmation : on créait un dossier vide, et il fallait
-   * ensuite le retrouver pour y écrire ce qu'on allait faire. Or ce qu'on a en
-   * tête à ce moment-là, c'est l'action — pas le dossier qui la range.
-   *
-   * <p>C'est donc LE MÊME formulaire que « Ajouter une action » dans une CAPA,
-   * et non un jumeau : {@link CapaActionDialogComponent}, partagé par les deux
-   * écrans. Deux formulaires séparés auraient divergé au premier champ ajouté
-   * d'un seul côté.
-   *
-   * <p>Le dossier CAPA reste la structure qui porte l'action, mais il devient
-   * une conséquence : s'il n'existe pas encore, on le crée en chemin, sans rien
-   * demander. Si la NC en a déjà un, on y ajoute simplement une action de plus.
+   * <p>Une NC a une CAPA, qui porte une action : intitulé, nature, responsable
+   * et échéance se saisissent une fois, et le serveur crée le dossier, son
+   * action et le lien en une écriture. Si la NC a déjà sa CAPA, on l'ouvre au
+   * lieu d'en proposer une seconde.
    */
-  addAction(nc: NcResponse): void {
+  openCapa(nc: NcResponse): void {
     if (this.acting$.value) return;
-
     if (nc.capaCaseId) {
-      this.ouvrirFormulaireAction(nc.capaCaseId);
+      this.router.navigate(['/capa', nc.capaCaseId]);
       return;
     }
-
-    // Pas encore de dossier : il se cree maintenant. Le pilote est celui qui
-    // pose l'action -- un dossier sans pilote n'avance pas.
-    const ownerId = this.auth.snapshot()?.userId;
-    if (!ownerId) {
-      this.snack.open(
-        $localize`:@@common.session-expired:Session expirée — veuillez vous reconnecter.`,
-        $localize`:@@common.ok:OK`, { duration: 4000 });
-      return;
-    }
-    this.acting$.next(true);
-    this.svc.escalateToCapa(this.ncId, { ownerId })
-      .pipe(finalize(() => this.acting$.next(false)))
-      .subscribe({
-        next: cree => {
-          this.reload$.next();
-          if (cree.capaCaseId) {
-            this.ouvrirFormulaireAction(cree.capaCaseId);
-          } else {
-            // Le serveur a accepte mais n'a pas rendu l'identifiant : on le DIT
-            // plutot que d'ouvrir un formulaire qui n'aurait nulle part ou
-            // ecrire, et qui echouerait a l'enregistrement.
-            this.snack.open(
-              $localize`:@@nc.detail.add-action-no-case:Dossier créé, mais introuvable pour y ajouter l'action. Ouvrez-le depuis la CAPA.`,
-              $localize`:@@common.ok:OK`, { duration: 5000 });
+    const data: CapaCreateDialogData = {
+      source: { type: 'NON_CONFORMITY', reference: nc.reference },
+      prefill: {
+        title: nc.title,
+        description: nc.description,
+        type: 'CORRECTIVE',
+        criticity: NcDetailComponent.criticityOf(nc.severity)
+      },
+      open: request => this.svc.escalateToCapa(nc.id, request).pipe(
+        map(updated => {
+          if (!updated.capaCaseId) {
+            // Le serveur a accepté sans rendre le lien : on le dit plutôt que de
+            // prétendre ouvrir un dossier introuvable.
+            throw new Error('capaCaseId absent');
           }
-        },
-        error: err => {
-          // eslint-disable-next-line no-console
-          console.warn('[nc-detail] escalate failed', err?.status, err?.error?.title);
-          this.snack.open(
-            safeErrorMessage(err, $localize`:@@nc.detail.escalate-error:Erreur lors de l'escalade.`),
-            'OK', { duration: 4000 });
-        }
-      });
+          return { capaId: updated.capaCaseId };
+        }))
+    };
+    this.dialog.open<CapaCreateDialogComponent, CapaCreateDialogData, CapaOpened>(CapaCreateDialogComponent, {
+      data,
+      autoFocus: 'first-tabbable',
+      restoreFocus: true,
+      panelClass: 'qos-dialog-panel'
+    }).afterClosed().subscribe(opened => {
+      // Rien n'a été créé si l'utilisateur a refermé : on ne recharge pas.
+      if (opened) this.reload$.next();
+    });
   }
 
-  /** Ouvre le formulaire d'action de la CAPA, et rafraîchit la fiche au retour. */
-  private ouvrirFormulaireAction(caseId: string): void {
-    this.dialog.open(CapaActionDialogComponent, {
-      // `askVerification` : depuis une NC, le dossier vient peut-etre d'etre
-      // cree et personne n'a vu son formulaire d'edition. Sans cela, la
-      // verification d'efficacite ne serait jamais posee sur ce chemin -- et un
-      // dossier sans decision est exactement ce que l'ADR 0073 cherche a
-      // distinguer d'un dossier delibérément juge non verifiable.
-      data: <CapaActionDialogData>{ caseId, askVerification: true },
-      autoFocus: 'first-tabbable',
-      restoreFocus: true
-    }).afterClosed().subscribe(action => {
-      // Rien n'a ete ajoute si l'utilisateur a referme : on ne recharge pas, et
-      // on ne lui annonce surtout pas une action qu'il n'a pas creee.
-      if (!action) return;
-      this.reload$.next();
-    });
+  /** La gravité de l'écart propose la criticité du dossier ; l'utilisateur la corrige s'il le faut. */
+  static criticityOf(severity: NcSeverity): CapaCriticity {
+    return severity === 'CRITICAL' ? 'CRITICAL' : severity === 'MAJOR' ? 'HIGH' : 'LOW';
   }
 
   private transition(action: 'start-analysis' | 'define-action' | 'close' | 'cancel'): void {

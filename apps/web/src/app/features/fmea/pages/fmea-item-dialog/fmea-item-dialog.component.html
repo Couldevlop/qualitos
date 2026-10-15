@@ -70,13 +70,13 @@
     <textarea matInput formControlName="recommendedAction" rows="2" maxlength="1000"></textarea>
   </mat-form-field>
 
-  <mat-form-field appearance="outline" class="full">
-    <mat-label i18n="@@fmea.item.action-owner-name">Responsable de l'action</mat-label>
-    <input matInput formControlName="actionOwnerName" maxlength="250">
-    <mat-hint i18n="@@fmea.item.action-owner-name-hint">
-      Une personne ou un service — la trame accepte les deux.
-    </mat-hint>
-  </mat-form-field>
+  <div class="full responsable">
+    <qos-user-picker formControlName="actionOwnerUserId" data-test="fmea-action-owner"
+                     i18n-label="@@fmea.item.action-owner-name" label="Responsable de l'action"
+                     (userSelected)="onActionOwner($event)"></qos-user-picker>
+    <p class="responsable__ancien" *ngIf="legacyOwner as ancien" data-test="fmea-action-owner-legacy"
+       i18n="@@fmea.item.action-owner-legacy">Nom enregistré : {{ ancien }}. Choisissez cette personne dans l'annuaire.</p>
+  </div>
 
   <mat-form-field appearance="outline" class="full">
     <mat-label i18n="@@fmea.item.action-due-date">Échéance action</mat-label>

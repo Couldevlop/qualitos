@@ -1,0 +1,121 @@
+<mat-card class="report-card" data-test="rapport">
+  <mat-card-header class="section-header">
+    <mat-card-title>
+      <span i18n="@@audits.report.title">Rapport</span>
+      <span class="state" [class.state--issued]="issued" data-test="etat-rapport">
+        <ng-container *ngIf="issued; else brouillon" i18n="@@audits.report.state-issued">Émis</ng-container>
+        <ng-template #brouillon><ng-container i18n="@@audits.report.state-draft">Brouillon</ng-container></ng-template>
+      </span>
+    </mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div class="state-row" *ngIf="loading && !report">
+      <mat-progress-spinner mode="indeterminate" diameter="24"></mat-progress-spinner>
+      <span i18n="@@common.loading">Chargement…</span>
+    </div>
+    <p class="state-row error" *ngIf="loadError" role="alert">
+      <mat-icon aria-hidden="true">error_outline</mat-icon> {{ loadError }}
+    </p>
+
+    <ng-container *ngIf="report">
+      <!-- Chiffres clés : en direct sur un brouillon, figés à l'émission. -->
+      <dl class="figures" data-test="chiffres-cles"
+          i18n-aria-label="@@audits.report.figures-aria" aria-label="Chiffres clés du rapport">
+        <div class="figure figure--major">
+          <dt i18n="@@audits.finding.major-nc">Non-conformité majeure</dt>
+          <dd>{{ report.keyFigures.majorNc }}</dd>
+        </div>
+        <div class="figure figure--minor">
+          <dt i18n="@@audits.finding.minor-nc">Non-conformité mineure</dt>
+          <dd>{{ report.keyFigures.minorNc }}</dd>
+        </div>
+        <div class="figure">
+          <dt i18n="@@audits.finding.observation">Observation</dt>
+          <dd>{{ report.keyFigures.observation }}</dd>
+        </div>
+        <div class="figure">
+          <dt i18n="@@audits.finding.opportunity">Opportunité</dt>
+          <dd>{{ report.keyFigures.opportunity }}</dd>
+        </div>
+        <div class="figure">
+          <dt i18n="@@audits.finding.conformity">Conformité</dt>
+          <dd>{{ report.keyFigures.conformity }}</dd>
+        </div>
+        <div class="figure figure--total">
+          <dt i18n="@@audits.report.figures-total">Constats</dt>
+          <dd>{{ report.keyFigures.total }}</dd>
+        </div>
+        <div class="figure figure--total">
+          <dt i18n="@@audits.report.figures-score">Taux de conformité</dt>
+          <dd>{{ report.keyFigures.conformityScore != null ? (report.keyFigures.conformityScore | number:'1.0-0') + ' %' : '—' }}</dd>
+        </div>
+      </dl>
+
+      <p class="issued-line" *ngIf="issued" data-test="emission">
+        <mat-icon aria-hidden="true">verified</mat-icon>
+        <span i18n="@@audits.report.issued-line">Émis le {{ report.issuedAt | date:'medium' }} par {{ report.issuedByName || '—' }}</span>
+        <span class="fingerprint" *ngIf="report.contentSha256"
+              i18n-matTooltip="@@audits.report.fingerprint-tooltip"
+              matTooltip="Empreinte SHA-256 du contenu émis, inscrite au journal d'audit">
+          SHA-256 <code>{{ report.contentSha256 | slice:0:16 }}…</code>
+        </span>
+      </p>
+
+      <form [formGroup]="form" class="report-form" (ngSubmit)="saveDraft()">
+        <div class="summary-head">
+          <label class="field-label" for="audit-report-summary" i18n="@@audits.report.summary">Synthèse et conclusion rédigée</label>
+          <button mat-stroked-button type="button" *ngIf="editable"
+                  (click)="generateSummary()" [disabled]="generating"
+                  [attr.aria-busy]="generating"
+                  i18n-matTooltip="@@audits.detail.generate-report-tooltip"
+                  matTooltip="Générer une synthèse d'audit par IA à partir de la checklist et des constats">
+            <mat-progress-spinner *ngIf="generating; else genIcon" mode="indeterminate" diameter="16"></mat-progress-spinner>
+            <ng-template #genIcon><mat-icon aria-hidden="true">auto_awesome</mat-icon></ng-template>
+            <span i18n="@@audits.report.generate">Proposer par IA</span>
+          </button>
+        </div>
+        <mat-form-field appearance="outline" class="full">
+          <textarea matInput id="audit-report-summary" formControlName="summary" rows="6"
+                    i18n-placeholder="@@audits.report.summary-placeholder"
+                    placeholder="Contexte, périmètre couvert, appréciation d'ensemble du système…"></textarea>
+        </mat-form-field>
+
+        <div class="two-cols">
+          <mat-form-field appearance="outline">
+            <mat-label i18n="@@audits.report.strengths">Points forts</mat-label>
+            <textarea matInput formControlName="strengths" rows="4"></textarea>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label i18n="@@audits.report.improvements">Axes d'amélioration</mat-label>
+            <textarea matInput formControlName="improvements" rows="4"></textarea>
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="conclusion">
+          <mat-label i18n="@@audits.report.conclusion">Conclusion / recommandation</mat-label>
+          <mat-select formControlName="conclusion" data-test="conclusion">
+            <mat-option *ngFor="let c of conclusions" [value]="c.value">{{ c.label }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <div class="report-actions" *ngIf="!issued">
+          <button mat-stroked-button type="submit" data-test="enregistrer-brouillon"
+                  [disabled]="!editable || saving || !form.dirty || form.invalid">
+            <mat-icon aria-hidden="true">save</mat-icon>
+            <span i18n="@@audits.report.save-draft">Enregistrer le brouillon</span>
+          </button>
+          <button mat-flat-button color="primary" type="button" data-test="emettre"
+                  (click)="issue()" [disabled]="!!issueBlocker || saving"
+                  [attr.aria-describedby]="issueBlocker ? 'audit-report-blocker' : null">
+            <mat-icon aria-hidden="true">send</mat-icon>
+            <span i18n="@@audits.report.issue">Émettre le rapport</span>
+          </button>
+        </div>
+        <p class="blocker" id="audit-report-blocker" *ngIf="issueBlocker" data-test="raison-emission">
+          <mat-icon aria-hidden="true">info</mat-icon> {{ issueBlocker }}
+        </p>
+      </form>
+    </ng-container>
+  </mat-card-content>
+</mat-card>

@@ -54,11 +54,14 @@
     </mat-form-field>
   </div>
 
-  <mat-form-field appearance="outline" class="full">
-    <mat-label i18n="@@coq.dialog.field-responsible">Responsable</mat-label>
-    <input matInput formControlName="responsible" maxlength="150" required data-test="responsable">
-    <mat-error i18n="@@coq.dialog.responsible-required">Le responsable est requis.</mat-error>
-  </mat-form-field>
+  <div class="responsable full">
+    <qos-user-picker formControlName="responsibleUserId" required data-test="responsable"
+                     i18n-label="@@coq.dialog.field-responsible" label="Responsable"
+                     (userSelected)="onResponsible($event)"></qos-user-picker>
+    <p class="responsable__ancien" *ngIf="legacyResponsible as ancien" data-test="responsable-ancien"
+       i18n="@@coq.dialog.responsible-legacy">Nom enregistré : {{ ancien }}. Choisissez cette personne dans l'annuaire.</p>
+    <mat-error *ngIf="responsibleMissing" i18n="@@coq.dialog.responsible-required">Le responsable est requis.</mat-error>
+  </div>
 
   <!-- Contrôle qualité de pièces : quatre champs, tous obligatoires. -->
   <fieldset class="pieces" *ngIf="partControl" data-test="bloc-pieces">

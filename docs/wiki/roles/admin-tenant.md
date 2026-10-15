@@ -31,6 +31,14 @@ la configuration de son organisation : utilisateurs, rôles, paramètres, intég
 - Ajouter / désactiver des utilisateurs au fil des arrivées et départs.
 - Réviser périodiquement les rôles attribués.
 
+### Ce que les autres membres voient de l'équipe
+
+Tous les membres de l'organisation peuvent chercher une personne dans l'**annuaire** pour la
+désigner responsable (audit, CAPA, changement…). Ils y voient son **nom** et son **adresse
+professionnelle**, rien d'autre : ni rôle, ni état du compte. Le nom affiché est celui saisi à
+l'**invitation** (prénom et nom) ; renseignez-le, sinon la personne apparaît sous sa seule adresse.
+Un membre désactivé disparaît des recherches.
+
 ## Bonnes pratiques
 
 - **Moindre privilège** : attribuez le rôle le plus restreint suffisant à chaque personne.

@@ -283,6 +283,7 @@ TRANSLATIONS = {
         'La fecha de imputación es obligatoria.', 'تاريخ القيد مطلوب.', '計上日は必須です。', '入账日期为必填项。'),
     'coq.dialog.field-responsible': (
         'Responsable', 'Owner', 'Responsable', 'المسؤول', '責任者', '负责人'),
+    'coq.dialog.responsible-legacy': ("Nom enregistré : {$INTERPOLATION}. Choisissez cette personne dans l'annuaire.", 'Recorded name: {$INTERPOLATION}. Pick this person from the directory.', 'Nombre registrado: {$INTERPOLATION}. Elija a esta persona en el directorio.', 'الاسم المسجّل: {$INTERPOLATION}. اختر هذا الشخص من الدليل.', '登録済みの名前：{$INTERPOLATION}。ディレクトリからこの担当者を選択してください。', '已记录的姓名：{$INTERPOLATION}。请在目录中选择此人。'),
     'coq.dialog.responsible-required': (
         'Le responsable est requis.', 'The owner is required.', 'El responsable es obligatorio.',
         'المسؤول مطلوب.', '責任者は必須です。', '负责人为必填项。'),

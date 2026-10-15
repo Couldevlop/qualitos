@@ -7,6 +7,7 @@ import { PdcaCreateDialogComponent } from './pages/pdca-create-dialog/pdca-creat
 import { PdcaDetailComponent } from './pages/pdca-detail/pdca-detail.component';
 import { PdcaListComponent } from './pages/pdca-list/pdca-list.component';
 import { PdcaStepDialogComponent } from './pages/pdca-step-dialog/pdca-step-dialog.component';
+import { PersonNameModule } from '../../shared/person-name/person-name.module';
 
 const routes: Routes = [
   { path: '', component: PdcaListComponent },
@@ -20,6 +21,6 @@ const routes: Routes = [
     PdcaCreateDialogComponent,
     PdcaStepDialogComponent
   ],
-  imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
+  imports: [PersonNameModule, SharedModule, UiModule, RouterModule.forChild(routes)]
 })
 export class PdcaModule {}

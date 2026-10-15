@@ -36,7 +36,10 @@ export interface RiskView {
   type: RegisterType;
   process: string;
   site: string | null;
+  /** Le nom du propriétaire, recopié de l'annuaire (ou tapé, sur une fiche ancienne). */
   owner: string;
+  /** Son compte de connexion (ADR 0092) ; absent sur une fiche d'avant l'annuaire. */
+  ownerUserId?: string | null;
   cause: string | null;
   effect: string | null;
   origin: RegisterOrigin;
@@ -68,7 +71,7 @@ export interface CapaLink {
   dueDate: string | null;
   status: string;
   kind: CapaKind;
-  /** Le responsable de l'action ; absent sur un dossier ouvert avant qu'on le désigne. */
+  /** Le nom du pilote du dossier ; absent sur un dossier ouvert avant qu'on le désigne. */
   assignee: string | null;
 }
 
@@ -95,6 +98,7 @@ export interface OpportunityView {
   process: string;
   site: string | null;
   owner: string;
+  ownerUserId?: string | null;
   targetDate: string | null;
   context: string | null;
   benefit: string | null;
@@ -157,6 +161,7 @@ export interface RiskRequest {
   process: string;
   site?: string | null;
   owner: string;
+  ownerUserId?: string | null;
   cause?: string | null;
   effect?: string | null;
   origin: RegisterOrigin;
@@ -179,6 +184,7 @@ export interface OpportunityRequest {
   process: string;
   site?: string | null;
   owner: string;
+  ownerUserId?: string | null;
   targetDate?: string | null;
   context?: string | null;
   benefit?: string | null;
@@ -192,12 +198,23 @@ export interface OpportunityRequest {
   benefitCriterion?: string | null;
 }
 
+/**
+ * Ce que la fenêtre de création CAPA commune envoie depuis un risque (ADR 0088).
+ * Le responsable est un compte de l'annuaire, qui pilote le dossier ; la
+ * criticité découle de la cotation brute du risque, côté serveur.
+ */
 export interface CapaRequest {
   title: string;
   description?: string | null;
   kind: CapaKind;
-  assignee: string;
+  ownerId: string;
+  ownerName?: string | null;
   dueDate: string;
+  /** La décision de vérification d'efficacité, prise à l'ouverture (ADR 0073, 0088). */
+  verificationRequired?: boolean | null;
+  verificationAssigneeId?: string | null;
+  verificationAssigneeName?: string | null;
+  verificationInstructions?: string | null;
 }
 
 export interface ActionRequest {

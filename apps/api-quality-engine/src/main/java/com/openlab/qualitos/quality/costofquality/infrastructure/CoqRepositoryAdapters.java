@@ -50,6 +50,7 @@ public final class CoqRepositoryAdapters {
             cible.setCategory(entry.getCategory());
             cible.setAmount(entry.getAmount());
             cible.setResponsible(entry.getResponsible());
+            cible.setResponsibleUserId(entry.getResponsibleUserId());
             cible.setImputationDate(entry.getImputationDate());
             cible.setComment(entry.getComment());
             cible.setPartControl(entry.isPartControl());
@@ -79,7 +80,7 @@ public final class CoqRepositoryAdapters {
 
         static CoqEntry toDomain(CoqEntryJpaEntity e) {
             return new CoqEntry(e.getId(), e.getTenantId(), e.getLabelId(), e.getCategory(),
-                    e.getAmount(), e.getResponsible(), e.getImputationDate(), e.getComment(),
+                    e.getAmount(), e.getResponsible(), e.getResponsibleUserId(), e.getImputationDate(), e.getComment(),
                     e.isPartControl(), e.getPartReference(), e.getPartQuantity(), e.getLot(),
                     e.getReceivedOrMadeOn(), e.getCreatedBy(), e.getCreatedAt(), e.getUpdatedAt());
         }

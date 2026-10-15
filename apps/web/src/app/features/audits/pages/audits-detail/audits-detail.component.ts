@@ -3,8 +3,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
-import { catchError, finalize, shareReplay, switchMap, tap } from 'rxjs/operators';
+import { catchError, finalize, map, shareReplay, switchMap, tap } from 'rxjs/operators';
 
+import { AuthService } from '../../../../core/auth/auth.service';
+import { AccountNames } from '../../../../core/directory/directory-names';
+import { DirectoryService } from '../../../../core/directory/directory.service';
 import { deferredView } from '../../../../core/rx/deferred-view';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../../../shared/ui/confirm-dialog/confirm-dialog.component';
@@ -17,7 +20,11 @@ import {
   AuditsFindingDialogComponent,
   AuditsFindingDialogData
 } from '../audits-finding-dialog/audits-finding-dialog.component';
-import { AuditPlanResponse, AuditStatus, ChecklistItemResponse } from '../../audits.types';
+import { AuditPlanResponse, AuditStatus, ChecklistItemResponse, FindingResponse } from '../../audits.types';
+import { leadAuditorDisplay } from '../../lead-auditor';
+import {
+  CapaCreateDialogComponent, CapaCreateDialogData, CapaOpened
+} from '../../../capa/pages/capa-create-dialog/capa-create-dialog.component';
 import {
   ChecklistFromStandardDialogComponent,
   ChecklistFromStandardDialogData
@@ -52,7 +59,11 @@ export class AuditsDetailComponent implements OnInit {
   private readonly errorState$ = new BehaviorSubject<string | null>(null);
   readonly error$ = deferredView(this.errorState$);
   acting$ = new BehaviorSubject<boolean>(false);
-  generating = false;
+  /** Rapport émis : il verrouille les documents de l'audit. */
+  reportIssued = false;
+
+  /** Le nom de l'auditeur d'un audit ancien qui ne l'a pas recopié, lu dans l'annuaire. */
+  private readonly names = new AccountNames(this.directory);
 
   private planId = '';
   private readonly reload$ = new BehaviorSubject<void>(undefined);
@@ -63,7 +74,9 @@ export class AuditsDetailComponent implements OnInit {
     private readonly router: Router,
     private readonly audits: AuditsService,
     private readonly dialog: MatDialog,
-    private readonly snack: MatSnackBar
+    private readonly snack: MatSnackBar,
+    private readonly auth: AuthService,
+    private readonly directory: DirectoryService
   ) {}
 
   ngOnInit(): void {
@@ -85,6 +98,11 @@ export class AuditsDetailComponent implements OnInit {
         }),
         finalize(() => this.loadingState$.next(false))
       )),
+      tap(p => {
+        if (p && !p.leadAuditorName && p.leadAuditorId !== this.auth.snapshot()?.userId) {
+          this.names.resolve([p.leadAuditorId]);
+        }
+      }),
       shareReplay({ bufferSize: 1, refCount: false }) // refCount:false : gated sur loading, evite la boucle teardown
     );
     this.reload$.next();
@@ -215,33 +233,61 @@ export class AuditsDetailComponent implements OnInit {
   complete(): void { this.transition('complete'); }
   cancel(): void { this.transition('cancel'); }
 
-  /** Libellé du bouton selon qu'un rapport existe déjà. */
-  reportButtonLabel(hasSummary: boolean): string {
-    return hasSummary
-      ? $localize`:@@audits.detail.regenerate-report:Régénérer le rapport (IA)`
-      : $localize`:@@audits.detail.generate-report:Générer le rapport (IA)`;
+  /** L'auditeur responsable, par son nom — jamais l'identifiant de son compte. */
+  leadAuditorLabel(p: AuditPlanResponse): string {
+    return leadAuditorDisplay(p, this.auth.snapshot(), this.names.get(p.leadAuditorId));
   }
 
-  /** Génère le rapport d'audit par LLM (ANO-012, §1.4/§4.4) et recharge le détail. */
-  generateReport(): void {
-    if (this.generating) return;
-    this.generating = true;
-    this.audits.generateReport(this.planId)
-      .pipe(finalize(() => (this.generating = false)))
-      .subscribe({
-        next: () => {
-          this.snack.open($localize`:@@audits.detail.report-generated:Rapport d'audit généré.`, $localize`:@@common.ok:OK`, { duration: 2500 });
-          this.reload$.next();
-        },
-        error: err => {
-          // eslint-disable-next-line no-console
-          console.warn('[audits-detail] generateReport failed', err?.status, err?.error?.title);
-          this.snack.open(
-            safeErrorMessage(err, $localize`:@@audits.detail.report-error:Génération du rapport indisponible (service IA).`),
-            $localize`:@@common.close:Fermer`, { duration: 4000 }
-          );
-        }
-      });
+  /**
+   * Pourquoi « Ajouter un constat » est barré, s'il l'est.
+   *
+   * Le serveur n'accepte un constat que pendant l'audit (IN_PROGRESS). Le bouton
+   * restait actif sur un audit PLANIFIÉ — l'état de tout audit qui vient d'être
+   * créé — et le refus revenait en « État incompatible — rechargez la page »,
+   * qu'aucun rechargement ne levait. La règle est désormais dite à l'écran, avec
+   * le geste qui la lève.
+   */
+  findingBlocker(p: AuditPlanResponse): string | null {
+    switch (p.status) {
+      case 'IN_PROGRESS':
+        return null;
+      case 'PLANNED':
+        return p.checklist?.length
+          ? $localize`:@@audits.detail.finding-blocked-planned:Les constats se relèvent pendant l'audit : démarrez-le pour en ajouter.`
+          : $localize`:@@audits.detail.finding-blocked-no-checklist:Les constats se relèvent pendant l'audit. Ajoutez d'abord une question à la checklist, puis démarrez l'audit.`;
+      case 'COMPLETED':
+        return $localize`:@@audits.detail.finding-blocked-completed:Audit clôturé : plus aucun constat ne peut être ajouté.`;
+      default:
+        return $localize`:@@audits.detail.finding-blocked-cancelled:Audit annulé : plus aucun constat ne peut être ajouté.`;
+    }
+  }
+
+  /** Le démarrage exige au moins une question : le serveur refuse sinon. */
+  startBlocker(p: AuditPlanResponse): string | null {
+    if (p.status !== 'PLANNED') return null;
+    return p.checklist?.length
+      ? null
+      : $localize`:@@audits.detail.start-blocked:Ajoutez au moins une question à la checklist pour démarrer l'audit.`;
+  }
+
+  /** Raison du verrou des documents : audit annulé ou rapport émis. */
+  documentsLockReason(p: AuditPlanResponse): string | null {
+    if (p.status === 'CANCELLED') {
+      return $localize`:@@audits.detail.documents-locked-cancelled:Audit annulé : ses documents ne se modifient plus.`;
+    }
+    return this.reportIssued
+      ? $localize`:@@audits.detail.documents-locked-issued:Rapport émis : les documents de l'audit sont figés avec lui.`
+      : null;
+  }
+
+  /**
+   * Le panneau du rapport annonce son état après un chargement. Différé d'une
+   * microtâche : l'annonce peut tomber pendant la détection de changements du
+   * parent, et modifier une liaison à ce moment-là lèverait NG0100.
+   */
+  onReportIssued(issued: boolean): void {
+    if (issued === this.reportIssued) return;
+    queueMicrotask(() => (this.reportIssued = issued));
   }
 
   private transition(action: 'start' | 'complete' | 'cancel'): void {
@@ -282,5 +328,36 @@ export class AuditsDetailComponent implements OnInit {
     if (s >= 85) return 'score score-high';
     if (s >= 70) return 'score score-mid';
     return 'score score-low';
+  }
+
+  // ---- CAPA d'un constat (ADR 0088) ------------------------------------------
+
+  /** Un écart sans CAPA appelle le bouton ; une observation ou une piste, non. */
+  canOpenFindingCapa(f: FindingResponse): boolean {
+    return (f.type === 'MINOR_NC' || f.type === 'MAJOR_NC') && !f.capaId && !f.pendingSync;
+  }
+
+  /**
+   * Ouvre LA fenêtre de création CAPA, source verrouillée sur ce constat : le
+   * serveur crée le dossier, son action unique et le lien au constat d'une
+   * seule écriture. La référence affichée est celle que l'auditeur cite.
+   */
+  openFindingCapa(p: AuditPlanResponse, f: FindingResponse): void {
+    const rang = (p.findings ?? []).findIndex(x => x.id === f.id) + 1;
+    const reference = $localize`:@@audits.detail.finding-capa-ref:${p.reference}:audit: / constat ${rang}:rank:`;
+    const data: CapaCreateDialogData = {
+      source: { type: 'AUDIT', reference },
+      prefill: {
+        title: f.description.slice(0, 255),
+        description: f.clauseRef ? `${p.title} — ${f.clauseRef}` : p.title,
+        type: 'CORRECTIVE',
+        criticity: f.type === 'MAJOR_NC' ? 'HIGH' : 'MEDIUM'
+      },
+      open: request => this.audits.openFindingCapa(p.id, f.id, request)
+        .pipe(map(r => ({ capaId: r.capaId })))
+    };
+    this.dialog.open<CapaCreateDialogComponent, CapaCreateDialogData, CapaOpened>(CapaCreateDialogComponent, {
+      data, autoFocus: 'first-tabbable', restoreFocus: true, panelClass: 'qos-dialog-panel'
+    }).afterClosed().subscribe(opened => { if (opened) this.reload$.next(); });
   }
 }

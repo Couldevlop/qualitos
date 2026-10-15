@@ -1,9 +1,14 @@
 <div class="qos-page">
   <qos-page-header
-    title="Matrice des exigences · une preuve, plusieurs référentiels" i18n-title="@@smi.requirements.title"
+    title="Matrice des exigences · chapitres communs × normes" i18n-title="@@smi.requirements.title"
     subtitle="Les chapitres communs à toutes les normes de système de management, croisés avec chaque norme adoptée."
     i18n-subtitle="@@smi.req.subtitle"
     [breadcrumbs]="breadcrumbs">
+    <button qosActions mat-flat-button color="primary" type="button" *ngIf="canAddStandard"
+            (click)="addStandard()" data-test="ajouter-norme">
+      <mat-icon aria-hidden="true">add</mat-icon>
+      <span i18n="@@smi.add.open">Ajouter une norme</span>
+    </button>
   </qos-page-header>
 
   <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
@@ -16,7 +21,7 @@
   <ng-container *ngIf="matrix as m">
     <p class="vide-page" *ngIf="!m.standards.length" data-test="aucune-norme">
       <span i18n="@@smi.kpi.no-standard">Aucune norme adoptée.</span>
-      <a routerLink="/standards" i18n="@@smi.kpi.adopt">Adopter une norme</a>
+      <span *ngIf="!canAddStandard" i18n="@@smi.add.admin-only">L'administrateur de votre organisation ajoute les normes.</span>
     </p>
 
     <div class="grille" *ngIf="m.standards.length">
@@ -26,7 +31,7 @@
             <thead>
               <tr>
                 <th scope="col" i18n="@@smi.req.col-chapter">Chapitre commun (HLS)</th>
-                <th scope="col" *ngFor="let s of m.standards; trackBy: trackByCode">{{ s.name }}</th>
+                <th scope="col" *ngFor="let s of m.standards; trackBy: trackByCode" [attr.title]="s.name">{{ shortName(s) }}</th>
                 <th scope="col" i18n="@@smi.req.col-module">Module QualitOS</th>
               </tr>
             </thead>
@@ -59,7 +64,7 @@
       <aside class="carte detail" data-test="detail" aria-live="polite">
         <ng-container *ngIf="selected as s; else rienChoisi">
           <p class="detail__surtitre"><span i18n="@@smi.req.detail-chapter">Détail · chapitre {{ s.row.chapter // i18n(ph="chapter") }}</span></p>
-          <h2 class="detail__titre">{{ coverageText(s.cell.status) }} {{ s.standard.name }} · {{ s.row.chapter }}</h2>
+          <h2 class="detail__titre">{{ coverageText(s.cell.status) }} {{ shortName(s.standard) }} · {{ s.row.chapter }}</h2>
           <p class="detail__texte">
             {{ chapterText(s.row.chapter) }} —
             <span i18n="@@smi.req.detail-count">{{ s.cell.covered // i18n(ph="covered") }} exigence(s) prouvée(s) sur {{ s.cell.total // i18n(ph="total") }}.</span>
@@ -84,7 +89,6 @@
             <a mat-stroked-button routerLink="/capa" [queryParams]="capaQuery" *ngIf="s.cell.status !== 'COVERED'"
                data-test="creer-capa" i18n="@@rr.action.capa-title">Créer une action CAPA</a>
           </div>
-          <p class="aide" i18n="@@smi.req.reuse">Une preuve rattachée à une exigence commune compte pour toutes les normes qui partagent ce chapitre.</p>
         </ng-container>
         <ng-template #rienChoisi>
           <p class="vide" i18n="@@smi.req.all-covered">Tout est couvert : choisissez une case pour en voir le détail.</p>

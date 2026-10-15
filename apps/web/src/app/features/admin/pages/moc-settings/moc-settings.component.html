@@ -1,0 +1,146 @@
+<div class="qos-page reglages">
+  <qos-page-header
+    title="Paramètres MOC" i18n-title="@@moc.settings.title"
+    subtitle="Classification, poids des domaines, rappel et validateurs de la gestion des changements."
+    i18n-subtitle="@@moc.settings.subtitle">
+    <ng-container qosActions>
+      <a mat-stroked-button routerLink="/changes">
+        <mat-icon>change_circle</mat-icon> <span i18n="@@moc.settings.back">Gestion des changements</span>
+      </a>
+    </ng-container>
+  </qos-page-header>
+
+  <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+
+  <p class="echec" *ngIf="failed" role="alert">
+    <span i18n="@@moc.settings.load-failed">Les paramètres MOC n'ont pas pu être chargés.</span>
+    <button mat-button type="button" (click)="charger()" i18n="@@common.retry">Réessayer</button>
+  </p>
+
+  <p class="portee" *ngIf="!failed && !loading" i18n="@@moc.settings.scope">Un enregistrement reclasse aussitôt les demandes en brouillon ou en analyse. Les demandes déjà en validation, approuvées ou rejetées gardent leur score, leur classification et leurs validateurs, figés à la soumission.</p>
+
+  <div class="grille" *ngIf="!failed && !loading">
+    <!-- ===== Classification ===== -->
+    <section class="bloc" aria-labelledby="moc-seuils">
+      <h2 class="bloc__titre" id="moc-seuils" i18n="@@moc.settings.thresholds">Seuils de classification</h2>
+      <p class="bloc__aide" i18n="@@moc.settings.thresholds-help">Le score d'impact va de 0 à 100. Il classe la demande, et la classe désigne les validateurs requis.</p>
+      <div class="champs">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label i18n="@@moc.settings.major">Seuil majeur</mat-label>
+          <input matInput type="number" min="1" max="99" step="1" [(ngModel)]="majorThreshold" data-test="seuil-majeur">
+        </mat-form-field>
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label i18n="@@moc.settings.critical">Seuil critique</mat-label>
+          <input matInput type="number" min="2" max="100" step="1" [(ngModel)]="criticalThreshold" data-test="seuil-critique">
+        </mat-form-field>
+      </div>
+      <p class="bloc__resume" data-test="resume-seuils">{{ thresholdSummary }}</p>
+    </section>
+
+    <!-- ===== Rappel ===== -->
+    <section class="bloc" aria-labelledby="moc-rappel">
+      <h2 class="bloc__titre" id="moc-rappel" i18n="@@moc.settings.reminder">Rappel aux validateurs</h2>
+      <p class="bloc__aide" i18n="@@moc.settings.reminder-help">Sans décision dans ce délai, les titulaires du rôle reçoivent un rappel, répété au même rythme tant que personne n'a statué.</p>
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="court">
+        <mat-label i18n="@@moc.settings.reminder-days">Délai (jours)</mat-label>
+        <input matInput type="number" min="1" max="30" step="1" [(ngModel)]="reminderDays" data-test="rappel">
+      </mat-form-field>
+    </section>
+
+    <!-- ===== Poids ===== -->
+    <section class="bloc bloc--large" aria-labelledby="moc-poids">
+      <h2 class="bloc__titre" id="moc-poids" i18n="@@moc.settings.weights">Poids des domaines d'impact</h2>
+      <p class="bloc__aide" i18n="@@moc.settings.weights-help">De 0 à 10. Un domaine de poids 0 reste à évaluer mais ne compte pas dans le score. À 1 partout, le score est la moyenne simple.</p>
+      <div class="poids">
+        <mat-form-field *ngFor="let d of domains" appearance="outline" subscriptSizing="dynamic">
+          <mat-label>{{ domainLabel(d) }}</mat-label>
+          <input matInput type="number" min="0" max="10" step="1" [(ngModel)]="weights[d]" [attr.data-test]="'poids-' + d">
+        </mat-form-field>
+      </div>
+    </section>
+
+    <!-- ===== Rôles ===== -->
+    <section class="bloc bloc--large" aria-labelledby="moc-roles">
+      <div class="bloc__entete">
+        <div>
+          <h2 class="bloc__titre" id="moc-roles" i18n="@@moc.settings.roles">Rôles de validation</h2>
+          <p class="bloc__aide" i18n="@@moc.settings.roles-help">Pour chaque rôle : les classifications qui l'exigent et ses titulaires (principal en premier, puis suppléants). N'importe lequel d'entre eux peut statuer ; jamais le demandeur.</p>
+        </div>
+        <button mat-stroked-button type="button" (click)="addRole()" [disabled]="roles.length >= maxRoles" data-test="ajouter-role">
+          <mat-icon>add</mat-icon> <span i18n="@@moc.settings.add-role">Ajouter un rôle</span>
+        </button>
+      </div>
+
+      <ol class="roles">
+        <li *ngFor="let r of roles; let i = index; let first = first; let last = last; trackBy: trackByKey"
+            class="role" [attr.data-test]="'role-' + i">
+          <div class="role__ligne">
+            <span class="role__rang" aria-hidden="true">{{ i + 1 }}</span>
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="role__libelle">
+              <mat-label i18n="@@moc.settings.role-label">Libellé du rôle</mat-label>
+              <input matInput [(ngModel)]="r.label" [attr.maxlength]="labelMax" [attr.data-test]="'libelle-' + i">
+            </mat-form-field>
+            <span class="role__outils">
+              <button mat-icon-button type="button" (click)="move(i, -1)" [disabled]="first"
+                      i18n-aria-label="@@moc.settings.up" aria-label="Monter le rôle">
+                <mat-icon>arrow_upward</mat-icon>
+              </button>
+              <button mat-icon-button type="button" (click)="move(i, 1)" [disabled]="last"
+                      i18n-aria-label="@@moc.settings.down" aria-label="Descendre le rôle">
+                <mat-icon>arrow_downward</mat-icon>
+              </button>
+              <button mat-icon-button type="button" (click)="removeRole(i)"
+                      i18n-aria-label="@@moc.settings.remove-role" aria-label="Retirer le rôle"
+                      [attr.data-test]="'retirer-role-' + i">
+                <mat-icon>delete_outline</mat-icon>
+              </button>
+            </span>
+          </div>
+
+          <div class="role__requis" role="group" i18n-aria-label="@@moc.settings.required-for" aria-label="Requis pour">
+            <span class="role__etiquette" i18n="@@moc.settings.required-for">Requis pour</span>
+            <mat-checkbox *ngFor="let c of classes" [checked]="isRequired(r, c)"
+                          (change)="toggleRequired(r, c, $event.checked)" [attr.data-test]="'requis-' + i + '-' + c">
+              {{ classLabel(c) }}
+            </mat-checkbox>
+          </div>
+
+          <div class="role__titulaires">
+            <span class="role__etiquette" i18n="@@moc.settings.holders">Titulaires</span>
+            <mat-chip-set i18n-aria-label="@@moc.settings.holders" aria-label="Titulaires">
+              <mat-chip *ngFor="let h of r.holders; let k = index" [removable]="true" (removed)="removeHolder(r, h)"
+                        [class.titulaire--alerte]="holderState(h) !== 'ok'">
+                <span *ngIf="k === 0" class="titulaire__principal" i18n="@@moc.settings.primary">Principal ·</span>
+                {{ h.label }}
+                <span *ngIf="holderState(h) === 'inactive'" class="titulaire__etat" i18n="@@moc.settings.inactive">(désactivé)</span>
+                <span *ngIf="holderState(h) === 'unknown'" class="titulaire__etat" i18n="@@moc.settings.unknown">(absent de l'annuaire)</span>
+                <button matChipRemove [attr.aria-label]="removeHolderLabel(h)"><mat-icon>cancel</mat-icon></button>
+              </mat-chip>
+            </mat-chip-set>
+            <p class="role__alerte" *ngIf="warnNoHolder(r)" i18n="@@moc.settings.no-holder">Aucun titulaire : une demande qui exige ce rôle ne pourra pas être soumise à validation.</p>
+
+            <!-- L'annuaire en lecture restreinte (ADR 0091) ; un annuaire
+                 indisponible se dit dans la liste du sélecteur. -->
+            <qos-user-picker #titulaire class="role__recherche" [attr.data-test]="'recherche-' + i"
+                             [excludeIds]="holderIds(r)"
+                             i18n-label="@@moc.settings.add-holder" label="Ajouter un titulaire (annuaire)"
+                             (userSelected)="addHolder(r, $event, titulaire)"></qos-user-picker>
+          </div>
+        </li>
+      </ol>
+    </section>
+  </div>
+
+  <!-- Barre d'enregistrement : présente seulement quand quelque chose a changé. -->
+  <div class="barre" *ngIf="dirty && !loading" role="status" data-test="barre">
+    <ul class="barre__problemes" *ngIf="problems.length">
+      <li *ngFor="let p of problems">{{ p }}</li>
+    </ul>
+    <span *ngIf="!problems.length" i18n="@@moc.settings.pending">Paramètres modifiés</span>
+    <span class="barre__boutons">
+      <button mat-stroked-button type="button" (click)="discard()" [disabled]="saving" i18n="@@authz.matrix.discard">Annuler les changements</button>
+      <button mat-flat-button color="primary" type="button" (click)="save()" [disabled]="saving || problems.length > 0"
+              data-test="enregistrer" i18n="@@common.save">Enregistrer</button>
+    </span>
+  </div>
+</div>

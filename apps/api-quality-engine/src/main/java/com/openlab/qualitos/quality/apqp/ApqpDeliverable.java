@@ -101,9 +101,16 @@ public class ApqpDeliverable {
     @Column(nullable = false)
     private boolean ppap;
 
-    /** Le responsable — colonne F. Un nom, pas un compte : il peut être externe. */
+    /**
+     * Le responsable — colonne F : son nom, recopié au choix dans l'annuaire
+     * (ADR 0092). Les livrables antérieurs gardent le nom tapé à l'époque.
+     */
     @Column(length = 150)
     private String owner;
+
+    /** Le compte de connexion du responsable ; nul tant que personne n'est choisi dans l'annuaire. */
+    @Column(name = "owner_user_id")
+    private UUID ownerUserId;
 
     /** L'échéance — colonne G. */
     @Column(name = "due_date")

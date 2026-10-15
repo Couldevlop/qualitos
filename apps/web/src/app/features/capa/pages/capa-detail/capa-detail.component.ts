@@ -1,5 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { AbstractControl, FormBuilder, ValidationErrors, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -9,17 +8,20 @@ import { catchError, finalize, shareReplay, switchMap, tap } from 'rxjs/operator
 import { deferredView } from '../../../../core/rx/deferred-view';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../../../shared/ui/confirm-dialog/confirm-dialog.component';
-import { capaTypeLabel } from '../../capa.labels';
+import { AccountNames } from '../../../../core/directory/directory-names';
+import { DirectoryService } from '../../../../core/directory/directory.service';
+import { capaOwnerLabel, capaSourceLabel, capaTypeLabel, unnamedOwners } from '../../capa.labels';
 import { CapaService } from '../../capa.service';
 import {
   CapaEditDialogComponent,
   CapaEditDialogData
 } from '../capa-edit-dialog/capa-edit-dialog.component';
-import { CapaActionResponse, CapaActionStatus, CapaActionType, CapaCaseResponse, CapaCriticity, CapaEvidence, CapaStatus, ClosureBlocker, SuggestedAction } from '../../capa.types';
+import { CapaActionResponse, CapaActionStatus, CapaActionType, CapaCaseResponse, CapaCriticity, CapaEvidence, CapaStatus, ClosureBlocker } from '../../capa.types';
 import {
-  CapaActionDialogComponent,
-  CapaActionDialogData
-} from '../capa-action-dialog/capa-action-dialog.component';
+  CapaCreateDialogComponent,
+  CapaCreateDialogData,
+  CapaOpened
+} from '../capa-create-dialog/capa-create-dialog.component';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -31,16 +33,7 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 })
 export class CapaDetailComponent implements OnInit {
 
-  /**
-   * Ordre des colonnes = ordre de lecture d'un auditeur : ce qui a été décidé,
-   * quand, par qui, sur quel écart, avec quelle preuve, et où ça en est.
-   * L'avancement et l'édition partagent la dernière colonne — deux colonnes de
-   * boutons repousseraient le contenu hors de l'écran.
-   */
-  readonly actionColumns = ['title', 'actionType', 'decidedOn', 'assignee',
-                            'evidence', 'status', 'dueDate', 'rowActions'];
-
-  /** Natures proposées, dans l'ordre du déroulé réel d'un traitement. */
+  /** Libellés des natures d'action, dans l'ordre du déroulé réel d'un traitement. */
   readonly actionTypes: { value: CapaActionType; label: string }[] = [
     { value: 'CONTAINMENT', label: $localize`:@@capa.action-type.containment:Endiguement` },
     { value: 'CORRECTIVE',  label: $localize`:@@capa.action-type.corrective:Corrective` },
@@ -48,9 +41,9 @@ export class CapaDetailComponent implements OnInit {
   ];
 
   readonly notFoundLabel = $localize`:@@capa.detail.not-found:Cas introuvable`;
-  readonly analysingLabel = $localize`:@@capa.detail.analysing:Analyse…`;
-  readonly suggestLabel = $localize`:@@capa.detail.suggest:Suggérer (IA)`;
-  readonly addLabel = $localize`:@@common.add:Ajouter`;
+
+  /** Le nom du pilote d'un dossier ancien qui ne l'a pas recopié, lu dans l'annuaire (ADR 0091). */
+  private readonly names = new AccountNames(this.directory);
 
   case$!: Observable<CapaCaseResponse | null>;
   private readonly loadingState$ = new BehaviorSubject<boolean>(false);
@@ -58,11 +51,6 @@ export class CapaDetailComponent implements OnInit {
   private readonly errorState$ = new BehaviorSubject<string | null>(null);
   readonly error$ = deferredView(this.errorState$);
   acting$ = new BehaviorSubject<boolean>(false);
-
-  // Suggestions d'actions par l'IA (non persistées tant que non ajoutées).
-  suggestions: SuggestedAction[] = [];
-  suggesting = false;
-  addingKey: string | null = null;
 
   // --- preuves du dossier (§4.2, ISO 9001 §10.2) ------------------------------
   /** Bornes tenues par le serveur ; l'écran les énonce au lieu de les faire découvrir. */
@@ -83,52 +71,6 @@ export class CapaDetailComponent implements OnInit {
   /** Action dont la pièce est en cours de dépôt ou de retrait (verrouille sa cellule). */
   readonly busyEvidenceActionId$ = new BehaviorSubject<string | null>(null);
 
-  // --- édition en ligne (§4.2) ---------------------------------------------------
-  // Le libellé et le statut se corrigent DANS le tableau. Un dialogue pour
-  // changer deux champs ferait perdre la ligne de vue, et l'utilisateur corrige
-  // justement en comparant aux lignes voisines.
-  editingActionId: string | null = null;
-  savingEdit = false;
-  readonly editForm = this.fb.nonNullable.group({
-    // `required` seul laisse passer une chaîne d'espaces — elle est « non
-    // vide » au sens du validateur. Le serveur la refuse (400) ; l'écran doit
-    // la refuser avant l'aller-retour, sinon l'utilisateur voit une erreur
-    // technique là où il a simplement effacé un champ.
-    title: ['', [Validators.required, CapaDetailComponent.notBlank, Validators.maxLength(255)]],
-    status: <CapaActionStatus>'PENDING',
-    // La nature se corrige en ligne comme le reste : c'est en relisant le tableau
-    // qu'on s'aperçoit qu'une action rangée en « corrective » n'a fait que contenir.
-    actionType: <CapaActionType>'CORRECTIVE'
-  });
-
-  /** Un libellé fait d'espaces n'est pas un libellé. */
-  private static notBlank(control: AbstractControl): ValidationErrors | null {
-    return typeof control.value === 'string' && control.value.trim().length === 0
-      ? { required: true }
-      : null;
-  }
-
-  readonly editableStatuses: CapaActionStatus[] = ['PENDING', 'IN_PROGRESS', 'DONE'];
-
-  /**
-   * Le champ de libellé prend le focus dès l'ouverture de l'édition.
-   *
-   * Sans cela, un utilisateur au clavier active « Modifier » et se retrouve
-   * avec le focus sur un bouton qui a disparu : le point d'insertion repart en
-   * tête de document et la ligne éditée devient introuvable. Le passage par un
-   * setter de ViewChild est nécessaire parce que le champ n'existe pas encore
-   * au moment du clic — il naît du rendu suivant.
-   */
-  private focusTitleOnRender = false;
-
-  @ViewChild('inlineTitle')
-  set inlineTitle(ref: ElementRef<HTMLInputElement> | undefined) {
-    if (ref && this.focusTitleOnRender) {
-      this.focusTitleOnRender = false;
-      ref.nativeElement.focus();
-    }
-  }
-
   private caseId = '';
   private readonly reload$ = new BehaviorSubject<void>(undefined);
   // Ancré des DEUX côtés et jeu de caractères restreint : un simple préfixe
@@ -141,7 +83,7 @@ export class CapaDetailComponent implements OnInit {
     private readonly capa: CapaService,
     private readonly dialog: MatDialog,
     private readonly snack: MatSnackBar,
-    private readonly fb: FormBuilder
+    private readonly directory: DirectoryService
   ) {}
 
   ngOnInit(): void {
@@ -163,11 +105,21 @@ export class CapaDetailComponent implements OnInit {
         }),
         finalize(() => this.loadingState$.next(false))
       )),
+      tap(c => { if (c) this.names.resolve(unnamedOwners([c])); }),
       shareReplay({ bufferSize: 1, refCount: true })
     );
     this.reload$.next();
     this.loadEvidences();
     this.loadActionEvidences();
+  }
+
+  /** Le nom du pilote, jamais son identifiant (ADR 0088). */
+  ownerLabel(c: CapaCaseResponse): string {
+    return capaOwnerLabel(c, id => this.names.get(id));
+  }
+
+  sourceLabel(c: CapaCaseResponse): string {
+    return capaSourceLabel(c.sourceType);
   }
 
   // --- preuves du dossier ------------------------------------------------------
@@ -437,86 +389,8 @@ export class CapaDetailComponent implements OnInit {
   /** Action visée par le sélecteur de fichier partagé entre toutes les lignes. */
   private pendingEvidenceActionId: string | null = null;
 
-  // --- édition en ligne du libellé et du statut (§4.2) -------------------------
-
-  /** Une ligne s'édite tant que le dossier vit et qu'aucune autre n'est ouverte. */
-  canEditAction(caseStatus: CapaStatus): boolean {
-    return !this.isTerminal(caseStatus) && !this.savingEdit;
-  }
-
-  isEditing(actionId: string): boolean {
-    return this.editingActionId === actionId;
-  }
-
-  startEdit(a: CapaActionResponse): void {
-    if (this.savingEdit) return;
-    this.editingActionId = a.id;
-    this.editForm.setValue({
-      title: a.title,
-      status: a.status,
-      // Repli sur « corrective » pour les actions antérieures à la colonne :
-      // c'est ce qu'elles sont en base, et laisser le contrôle vide requalifierait
-      // l'action au premier enregistrement.
-      actionType: a.actionType ?? 'CORRECTIVE'
-    });
-    this.focusTitleOnRender = true;
-  }
-
-  /** Sortie sans écrire : l'édition en ligne doit toujours être annulable. */
-  cancelEdit(): void {
-    if (this.savingEdit) return;
-    this.editingActionId = null;
-    this.editForm.reset({ title: '', status: 'PENDING', actionType: 'CORRECTIVE' });
-  }
-
   /**
-   * Échap annule, Entrée enregistre — l'édition se pilote au clavier seul, sans
-   * viser deux boutons à la souris pour corriger un mot.
-   */
-  onEditKeydown(event: KeyboardEvent): void {
-    if (event.key === 'Escape') {
-      event.preventDefault();
-      this.cancelEdit();
-    } else if (event.key === 'Enter') {
-      event.preventDefault();
-      this.saveEdit();
-    }
-  }
-
-  saveEdit(): void {
-    if (!this.editingActionId || this.savingEdit) return;
-    if (this.editForm.invalid) {
-      this.editForm.markAllAsTouched();
-      return;
-    }
-    const actionId = this.editingActionId;
-    const { title, status, actionType } = this.editForm.getRawValue();
-    this.savingEdit = true;
-    // PATCH partiel : seuls le libellé, le statut et la nature partent. La date
-    // de décision et le porteur, absents de la charge utile, restent intacts.
-    this.capa.updateAction(this.caseId, actionId, { title: title.trim(), status, actionType })
-      .pipe(finalize(() => (this.savingEdit = false)))
-      .subscribe({
-        next: () => {
-          this.editingActionId = null;
-          this.snack.open($localize`:@@capa.detail.action-updated:Action modifiée.`,
-            $localize`:@@common.ok:OK`, { duration: 2000 });
-          this.reload$.next();
-        },
-        error: err => {
-          // eslint-disable-next-line no-console
-          console.warn('[capa-detail] saveEdit failed', err?.status, err?.error?.title);
-          // La ligne RESTE en édition : refermer effacerait la saisie que
-          // l'utilisateur doit justement corriger.
-          this.snack.open(
-            safeErrorMessage(err, $localize`:@@capa.detail.action-update-error:Modification impossible.`),
-            $localize`:@@common.close:Fermer`, { duration: 4000 });
-        }
-      });
-  }
-
-  /**
-   * Libellés d'accessibilité des boutons du tableau.
+   * Libellés d'accessibilité des boutons de preuve d'action.
    *
    * Une icône seule ou un mot isolé (« Joindre », « × ») ne dit pas SUR QUOI il
    * agit : au lecteur d'écran, huit lignes rendent huit boutons « Joindre »
@@ -531,11 +405,7 @@ export class CapaDetailComponent implements OnInit {
     return $localize`:@@capa.action-evidence.remove-aria:Retirer la preuve de l'action : ${title}:title:`;
   }
 
-  editActionAria(title: string): string {
-    return $localize`:@@capa.detail.edit-action-aria:Modifier l'action : ${title}:title:`;
-  }
-
-  /** Libellé traduit d'un statut, pour la liste déroulante d'édition. */
+  /** Libellé traduit d'un statut d'action. */
   actionStatusLabel(s: CapaActionStatus): string {
     return s === 'PENDING'
       ? $localize`:@@capa.action-status.pending:À faire`
@@ -589,41 +459,34 @@ export class CapaDetailComponent implements OnInit {
     });
   }
 
-  openAddAction(): void {
-    const data: CapaActionDialogData = { caseId: this.caseId };
+  /**
+   * Définit l'action d'un dossier qui n'en a pas — ancien, ou ouvert par un
+   * automate (carte de contrôle, IoT, anomalie). LA fenêtre de création, en
+   * mode réduit : un quatrième formulaire divergerait (ADR 0088). Le
+   * responsable choisi devient le pilote du dossier.
+   */
+  openDefineAction(c: CapaCaseResponse): void {
+    const data: CapaCreateDialogData = {
+      mode: 'define-action',
+      caseId: this.caseId,
+      prefill: {
+        title: c.title,
+        description: c.description,
+        type: c.type === 'PREVENTIVE' ? 'PREVENTIVE' : 'CORRECTIVE',
+        dueDate: c.dueDate
+      }
+    };
     this.dialog
-      .open(CapaActionDialogComponent, {
+      .open<CapaCreateDialogComponent, CapaCreateDialogData, CapaOpened>(CapaCreateDialogComponent, {
         data,
         autoFocus: 'first-tabbable',
         restoreFocus: true,
         panelClass: 'qos-dialog-panel'
       })
       .afterClosed()
-      .subscribe(action => {
-        if (action) this.reload$.next();
+      .subscribe(defined => {
+        if (defined) this.reload$.next();
       });
-  }
-
-  // ---- Suggestion d'actions par l'IA (§4.2) ----
-
-  suggestActions(): void {
-    this.suggesting = true;
-    this.suggestions = [];
-    this.capa.suggestActions(this.caseId).subscribe({
-      next: list => {
-        this.suggestions = list;
-        this.suggesting = false;
-        if (!list.length) {
-          this.snack.open($localize`:@@capa.detail.no-suggestion:Aucune action exploitable — précisez le problème.`, $localize`:@@common.ok:OK`, { duration: 3000 });
-        }
-      },
-      error: err => {
-        this.suggesting = false;
-        this.snack.open(
-          safeErrorMessage(err, $localize`:@@capa.detail.suggestion-unavailable:Suggestion IA indisponible (ai-service / Ollama).`),
-          $localize`:@@common.close:Fermer`, { duration: 4000 });
-      }
-    });
   }
 
   // ---- Avancement du statut des actions (ANO-011, §4.2 / ISO 9001 §10.2) ----
@@ -637,17 +500,6 @@ export class CapaDetailComponent implements OnInit {
   /** Statut suivant d'une action (null si déjà DONE). */
   nextActionStatus(s: CapaActionStatus): CapaActionStatus | null {
     return CapaDetailComponent.ACTION_FLOW[s];
-  }
-
-  /**
-   * Vrai pour TOUT dossier ouvert depuis le registre des risques : il s'affiche
-   * réduit à son action unique, sans liste, sans « Ajouter une action » ni
-   * suggestion IA. Un ancien dossier encore sans action propose seulement de
-   * définir la sienne (sinon il ne serait jamais clôturable) ; le serveur
-   * refuse une deuxième action.
-   */
-  isSingleActionCase(c: CapaCaseResponse): boolean {
-    return c.sourceType === 'RISK';
   }
 
   trackActionById(_i: number, a: CapaActionResponse): string {
@@ -695,24 +547,6 @@ export class CapaDetailComponent implements OnInit {
         }
       });
   }
-
-  addSuggestion(s: SuggestedAction): void {
-    this.addingKey = s.title;
-    this.capa.addAction(this.caseId, { title: s.title, description: s.description }).subscribe({
-      next: () => {
-        this.addingKey = null;
-        this.suggestions = this.suggestions.filter(x => x !== s);
-        this.snack.open($localize`:@@capa.detail.action-added:Action ajoutée à la CAPA.`, $localize`:@@common.ok:OK`, { duration: 2000 });
-        this.reload$.next();
-      },
-      error: err => {
-        this.addingKey = null;
-        this.snack.open(safeErrorMessage(err, $localize`:@@common.add-failed:Ajout impossible.`), $localize`:@@common.close:Fermer`, { duration: 3500 });
-      }
-    });
-  }
-
-  dismissSuggestions(): void { this.suggestions = []; }
 
   start(): void { this.transition('start'); }
   resolve(): void { this.transition('resolve'); }
@@ -795,7 +629,9 @@ export class CapaDetailComponent implements OnInit {
           ? $localize`:@@capa.blocker.actions-one:1 action reste à terminer.`
           : $localize`:@@capa.blocker.actions-many:${b.count}:count: actions restent à terminer.`;
       case 'CONTAINMENT_ONLY':
-        return $localize`:@@capa.blocker.containment-only:Le dossier ne porte que des mesures d'endiguement : elles arrêtent l'effet sans supprimer la cause. Ajoutez une action corrective ou préventive.`;
+        // Seul un dossier antérieur peut en arriver là : une CAPA s'ouvre
+        // désormais corrective ou préventive, et ne reçoit pas d'autre action.
+        return $localize`:@@capa.blocker.containment-only-single:Le dossier ne porte qu'une mesure d'endiguement : elle arrête l'effet sans supprimer la cause. Ouvrez une CAPA corrective pour traiter la cause.`;
       case 'OPEN_NON_CONFORMITIES':
         return b.count === 1
           ? $localize`:@@capa.blocker.nc-one:1 non-conformité liée est encore ouverte.`

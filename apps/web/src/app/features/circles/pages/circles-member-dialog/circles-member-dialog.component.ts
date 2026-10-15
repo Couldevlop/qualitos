@@ -10,11 +10,9 @@ import { CircleMemberResponse, CircleRole } from '../../circles.types';
 
 export interface CirclesMemberDialogData {
   circleId: string;
+  /** Les comptes déjà membres : le sélecteur ne les propose pas une seconde fois. */
+  memberIds?: readonly string[];
 }
-
-// OWASP A03 — userId must be a UUID before we POST it. Mirror of the
-// route-param guard used elsewhere.
-const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 @Component({
   selector: 'qos-circles-member-dialog',
@@ -32,8 +30,9 @@ export class CirclesMemberDialogComponent {
     { value: 'MEMBER',      label: $localize`:@@circles.member.role-member:Membre` }
   ];
 
-  readonly form = this.fb.nonNullable.group({
-    userId: ['', [Validators.required, Validators.pattern(UUID_RE)]],
+  /** Le membre est une personne de l'annuaire, désignée par son compte (ADR 0092). */
+  readonly form = this.fb.group({
+    userId: [null as string | null, [Validators.required]],
     role: ['MEMBER' as CircleRole, [Validators.required]]
   });
 
@@ -53,7 +52,7 @@ export class CirclesMemberDialogComponent {
     this.submitting = true;
     const { userId, role } = this.form.getRawValue();
     this.circles
-      .addMember(this.data.circleId, { userId: userId.trim(), role })
+      .addMember(this.data.circleId, { userId: (userId ?? '').trim(), role: role ?? 'MEMBER' })
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: member => {

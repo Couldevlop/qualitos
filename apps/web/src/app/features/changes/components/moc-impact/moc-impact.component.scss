@@ -1,0 +1,194 @@
+// L'analyse d'impact : en-tête de score, puis un bloc par domaine.
+// Couleurs des segments (maquette) : Aucun et Faible en sombre neutre, Moyen en
+// ambre, Élevé en rouge — le mot reste écrit (WCAG 1.4.1).
+@use '../../moc.shared' as moc;
+
+:host {
+  display: block;
+  padding-top: var(--qos-space-5);
+}
+
+@include moc.pastilles;
+
+.impact__entete {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--qos-space-3);
+  padding: var(--qos-space-4);
+  border-radius: var(--qos-radius-lg);
+  background: var(--qos-bg-subtle);
+  border: 1px solid var(--qos-border-subtle);
+}
+
+.impact__titre {
+  margin: 0;
+  font-size: var(--qos-fs-md);
+  font-weight: var(--qos-fw-semibold);
+}
+
+.impact__note {
+  margin: var(--qos-space-3) 0 0;
+  color: var(--qos-fg-secondary);
+  font-size: var(--qos-fs-sm);
+}
+
+.score {
+  display: flex;
+  align-items: center;
+  gap: var(--qos-space-3);
+  flex: 1 1 320px;
+  justify-content: flex-end;
+
+  &__barre {
+    flex: 1 1 160px;
+    max-width: 260px;
+    height: 8px;
+    border-radius: var(--qos-radius-pill);
+    background: var(--qos-bg-sunken);
+    overflow: hidden;
+
+    span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: var(--qos-fg-secondary);
+      transition: width var(--qos-motion-base);
+    }
+
+    &--majeur span {
+      background: var(--qos-warn-600);
+    }
+
+    &--critique span {
+      background: var(--qos-danger-600);
+    }
+  }
+
+  &__valeur {
+    font-weight: var(--qos-fw-bold);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+}
+
+.domaines {
+  list-style: none;
+  margin: var(--qos-space-4) 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.domaine {
+  padding: var(--qos-space-4) 0;
+  border-bottom: 1px solid var(--qos-border-subtle);
+
+  &:last-child {
+    border-bottom: 0;
+  }
+
+  &__tete {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--qos-space-3);
+  }
+
+  &__nom {
+    font-weight: var(--qos-fw-semibold);
+  }
+
+  &__poids {
+    margin-left: var(--qos-space-1);
+    padding: 0 6px;
+    border-radius: var(--qos-radius-sm);
+    background: var(--qos-bg-sunken);
+    color: var(--qos-fg-tertiary);
+    font-size: var(--qos-fs-xs);
+    font-weight: var(--qos-fw-medium);
+    font-variant-numeric: tabular-nums;
+    cursor: help;
+  }
+
+  &__texte {
+    width: 100%;
+    margin-top: var(--qos-space-3);
+  }
+
+  &__lecture {
+    margin: var(--qos-space-2) 0 0;
+    color: var(--qos-fg-secondary);
+    font-size: var(--qos-fs-sm);
+    white-space: pre-line;
+  }
+}
+
+.segments {
+  display: inline-flex;
+  border: 1px solid var(--qos-border-default);
+  border-radius: var(--qos-radius-md);
+  overflow: hidden;
+  background: var(--qos-bg-elevated);
+}
+
+.segment {
+  min-width: 72px;
+  padding: 6px 12px;
+  border: 0;
+  border-right: 1px solid var(--qos-border-default);
+  background: transparent;
+  color: var(--qos-fg-secondary);
+  font: inherit;
+  font-size: var(--qos-fs-sm);
+  font-weight: var(--qos-fw-medium);
+  cursor: pointer;
+  transition: background var(--qos-motion-fast), color var(--qos-motion-fast);
+
+  &:last-child {
+    border-right: 0;
+  }
+
+  &:hover:not(:disabled) {
+    background: var(--qos-bg-hover);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: inset var(--qos-ring-focus);
+    position: relative;
+    z-index: 1;
+  }
+
+  &:disabled {
+    cursor: default;
+  }
+
+  &--choisi {
+    color: var(--qos-fg-inverse);
+    font-weight: var(--qos-fw-semibold);
+
+    &.segment--NONE,
+    &.segment--LOW {
+      background: var(--qos-fg-primary);
+    }
+
+    &.segment--MEDIUM {
+      background: var(--qos-warn-600);
+    }
+
+    &.segment--HIGH {
+      background: var(--qos-danger-600);
+    }
+
+    &:hover:not(:disabled) {
+      filter: brightness(1.05);
+    }
+  }
+}
+
+.segments--lecture .segment:not(.segment--choisi) {
+  color: var(--qos-fg-disabled);
+}

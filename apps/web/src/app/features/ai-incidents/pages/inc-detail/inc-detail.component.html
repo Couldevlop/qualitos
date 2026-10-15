@@ -72,7 +72,7 @@
           <table class="kv">
             <tr><th i18n="@@ai-incidents.detail.started-on">Démarrée le</th><td>{{ i.investigationStartedAt }}</td></tr>
             <tr *ngIf="i.investigationLeadUserId">
-              <th i18n="@@ai-incidents.detail.lead">Pilote</th><td><code>{{ i.investigationLeadUserId }}</code></td>
+              <th i18n="@@ai-incidents.detail.lead">Pilote</th><td><qos-person-name [accountId]="i.investigationLeadUserId"></qos-person-name></td>
             </tr>
           </table>
         </mat-card-content>
@@ -106,7 +106,7 @@
         <mat-card-header><mat-card-title i18n="@@ai-incidents.detail.trace">Trace</mat-card-title></mat-card-header>
         <mat-card-content>
           <table class="kv">
-            <tr><th i18n="@@ai-incidents.detail.created-by">Créé par</th><td><code>{{ i.createdByUserId }}</code></td></tr>
+            <tr><th i18n="@@ai-incidents.detail.created-by">Créé par</th><td><qos-person-name [accountId]="i.createdByUserId"></qos-person-name></td></tr>
             <tr><th i18n="@@common.created-at">Créé le</th><td>{{ i.createdAt }}</td></tr>
             <tr><th i18n="@@common.last-updated">Dernière MAJ</th><td>{{ i.updatedAt }}</td></tr>
           </table>

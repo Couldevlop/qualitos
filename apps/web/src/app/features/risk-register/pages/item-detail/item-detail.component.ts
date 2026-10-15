@@ -137,7 +137,7 @@ export class ItemDetailComponent implements OnInit {
       const r = this.risk?.risk;
       if (!r) return;
       this.busy = true;
-      this.capaOpener.open({ id: r.id, reference: r.reference, owner: r.owner }).subscribe({
+      this.capaOpener.open(r).subscribe({
         next: capa => {
           this.busy = false;
           if (!capa) return;

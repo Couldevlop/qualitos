@@ -1,7 +1,5 @@
 package com.openlab.qualitos.quality.capa;
 
-import com.openlab.qualitos.quality.aigateway.AiCompletionResult;
-import com.openlab.qualitos.quality.aigateway.AiGatewayClient;
 import com.openlab.qualitos.quality.authz.application.RecordScope;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.nonconformity.NcStatus;
@@ -15,24 +13,16 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 
 @Service
 @Transactional
 public class CapaService {
 
-    /** Borne de génération (latence CPU raisonnable ; cf. ADR 0014). */
-    private static final int SUGGEST_MAX_TOKENS = 320;
-    private static final int SUGGEST_MAX = 8;
-
     private final CapaCaseRepository caseRepository;
     private final CapaActionRepository actionRepository;
-    private final AiGatewayClient ai;
     /**
      * Un seul collaborateur pour tout ce qui se consigne : le service décrit ce
      * qui arrive au dossier, sans connaître ni le journal d'audit ni les abonnés.
@@ -54,13 +44,12 @@ public class CapaService {
     private final RecordScope scope;
 
     public CapaService(CapaCaseRepository caseRepository, CapaActionRepository actionRepository,
-                       AiGatewayClient ai, CapaLifecycleJournal journal,
+                       CapaLifecycleJournal journal,
                        NonConformityRepository ncRepository,
                        CapaEvidenceRepository evidenceRepository,
                        RecordScope scope) {
         this.caseRepository = caseRepository;
         this.actionRepository = actionRepository;
-        this.ai = ai;
         this.journal = journal;
         this.ncRepository = ncRepository;
         this.evidenceRepository = evidenceRepository;
@@ -112,6 +101,90 @@ public class CapaService {
         return toResponse(saved);
     }
 
+    /**
+     * Ouvre un dossier ET son action unique, dans la même transaction (ADR 0088).
+     *
+     * <p>Une CAPA porte une action : on ne crée plus un dossier vide à remplir
+     * ensuite. L'intitulé, la nature, le responsable et l'échéance de l'action
+     * sont ceux du dossier, et le responsable choisi dans l'annuaire en devient
+     * le pilote. Un échec de la seconde écriture annule la première : il ne
+     * reste jamais un dossier sans son action.
+     *
+     * <p>{@code sourceType} et {@code sourceRef} sont fixés par l'appelant
+     * serveur — la fiche NC, le constat d'audit, le risque — et jamais lus dans
+     * le corps quand le dossier s'ouvre depuis l'un d'eux. Le tenant vient du
+     * jeton, comme partout.
+     *
+     * <p>L'endiguement est refusé : un dossier dont l'unique action ne fait
+     * qu'endiguer ne pourrait jamais être clos (ISO 9001 §10.2), il naîtrait
+     * bloqué. Une échéance passée l'est aussi : le dossier naîtrait en retard.
+     */
+    public CapaDto.CaseResponse openCase(CapaDto.OpenCaseRequest request,
+                                         CapaSourceType sourceType, String sourceRef) {
+        if (request == null) {
+            throw new CapaValidationException("The CAPA and its action must be described");
+        }
+        if (request.type() == null || request.type() == CapaType.CONTAINMENT) {
+            throw new CapaValidationException(
+                    "A CAPA carries a single corrective or preventive action: containment alone "
+                    + "would never allow closing it");
+        }
+        if (request.criticity() == null) {
+            throw new CapaValidationException("Criticity is required");
+        }
+        if (request.ownerId() == null) {
+            throw new CapaValidationException("The CAPA must be entrusted to someone");
+        }
+        if (request.dueDate() == null) {
+            throw new CapaValidationException("A due date is required");
+        }
+        if (request.dueDate().isBefore(LocalDate.now())) {
+            throw new CapaValidationException("The due date cannot be in the past");
+        }
+        if (sourceType == null) {
+            throw new CapaValidationException("The CAPA source is required");
+        }
+        String titre = requireUsableTitle(request.title());
+        String description = nettoyer(request.description());
+        String pilote = normalizeName(request.ownerName());
+
+        CapaCase c = new CapaCase();
+        c.setTenantId(requireTenantId());
+        c.setTitle(titre);
+        c.setDescription(description);
+        c.setType(request.type());
+        c.setCriticity(request.criticity());
+        c.setSourceType(sourceType);
+        c.setSourceRef(nettoyer(sourceRef));
+        c.setOwnerId(request.ownerId());
+        c.setOwnerName(pilote);
+        c.setDueDate(request.dueDate());
+        c.setStatus(CapaStatus.OPEN);
+        // La décision de vérification, prise à l'ouverture : mêmes gardes que
+        // la mise à jour, avant toute écriture — un refus ne laisse rien.
+        appliquerVerification(c, request.verificationRequired(), request.verificationAssigneeId(),
+                request.verificationAssigneeName(), request.verificationInstructions());
+
+        CapaAction a = new CapaAction();
+        a.setCapa(c);
+        a.setTitle(titre);
+        a.setDescription(description);
+        a.setStatus(CapaActionStatus.PENDING);
+        a.setActionType(request.type() == CapaType.PREVENTIVE
+                ? CapaActionType.PREVENTIVE : CapaActionType.CORRECTIVE);
+        a.setAssigneeId(request.ownerId());
+        a.setAssigneeName(pilote);
+        a.setDecidedOn(LocalDate.now());
+        a.setDueDate(request.dueDate());
+        // L'action part avec le dossier (cascade) : une seule écriture, donc
+        // jamais l'un sans l'autre.
+        c.getActions().add(a);
+
+        CapaCase saved = caseRepository.save(c);
+        journal.record(saved, CapaTransition.OPENED);
+        return toResponse(saved);
+    }
+
     public CapaDto.CaseResponse updateCase(UUID id, CapaDto.UpdateCaseRequest request) {
         CapaCase c = loadCase(id);
         if (c.getStatus() == CapaStatus.CLOSED || c.getStatus() == CapaStatus.REJECTED) {
@@ -123,7 +196,8 @@ public class CapaService {
         if (request.sourceRef() != null) c.setSourceRef(request.sourceRef());
         if (request.rootCauseId() != null) c.setRootCauseId(request.rootCauseId());
         if (request.dueDate() != null) c.setDueDate(request.dueDate());
-        appliquerVerification(c, request);
+        appliquerVerification(c, request.verificationRequired(), request.verificationAssigneeId(),
+                request.verificationAssigneeName(), request.verificationInstructions());
         CapaCase saved = caseRepository.save(c);
         journal.record(saved, CapaTransition.UPDATED);
         return toResponse(saved);
@@ -148,9 +222,11 @@ public class CapaService {
      *
      * <p>{@code null} sur {@code verificationRequired} laisse tout en l'état :
      * la mise à jour est partielle, et ne rien dire n'est pas dire « non ».
+     * À l'ouverture (ADR 0088), le dossier neuf n'a encore rien décidé : les
+     * mêmes règles s'appliquent, et {@code null} laisse la question ouverte.
      */
-    private void appliquerVerification(CapaCase c, CapaDto.UpdateCaseRequest request) {
-        Boolean exigee = request.verificationRequired();
+    private void appliquerVerification(CapaCase c, Boolean exigee, UUID assigneeId,
+                                       String assigneeName, String instructions) {
 
         if (Boolean.FALSE.equals(exigee)) {
             c.setVerificationRequired(false);
@@ -164,8 +240,8 @@ public class CapaService {
                 || (exigee == null && Boolean.TRUE.equals(c.getVerificationRequired()));
 
         if (!exigeeApres
-                && (request.verificationAssigneeId() != null
-                    || nonVide(request.verificationInstructions()))) {
+                && (assigneeId != null
+                    || nonVide(instructions))) {
             throw new CapaValidationException(
                     "A verifier or verification instructions require verificationRequired=true");
         }
@@ -173,14 +249,14 @@ public class CapaService {
         if (Boolean.TRUE.equals(exigee)) {
             c.setVerificationRequired(true);
         }
-        if (request.verificationAssigneeId() != null) {
-            c.setVerificationAssigneeId(request.verificationAssigneeId());
+        if (assigneeId != null) {
+            c.setVerificationAssigneeId(assigneeId);
         }
-        if (request.verificationAssigneeName() != null) {
-            c.setVerificationAssigneeName(nettoyer(request.verificationAssigneeName()));
+        if (assigneeName != null) {
+            c.setVerificationAssigneeName(nettoyer(assigneeName));
         }
-        if (request.verificationInstructions() != null) {
-            c.setVerificationInstructions(nettoyer(request.verificationInstructions()));
+        if (instructions != null) {
+            c.setVerificationInstructions(nettoyer(instructions));
         }
 
         if (exigeeApres && c.getVerificationAssigneeId() == null) {
@@ -315,11 +391,13 @@ public class CapaService {
         if (c.getStatus() == CapaStatus.CLOSED || c.getStatus() == CapaStatus.REJECTED) {
             throw new CapaStateException("Cannot add actions to a " + c.getStatus() + " CAPA");
         }
-        // Un dossier ouvert depuis le registre des risques EST son action (ADR 0077) :
-        // une seule, décidée à l'ouverture. Un ancien dossier sans action peut
-        // recevoir la sienne — sans quoi il ne serait jamais clôturable —, pas une deuxième.
-        if (c.getSourceType() == CapaSourceType.RISK && !c.getActions().isEmpty()) {
-            throw new CapaStateException("A CAPA opened from a risk carries a single action");
+        // Une CAPA EST son action (ADR 0077 pour les risques, généralisé par
+        // l'ADR 0088) : une seule, décidée à l'ouverture. Un dossier sans action
+        // — ancien, ou ouvert par un automate (SPC, IoT, anomalie) — peut
+        // recevoir la sienne, sans quoi il ne serait jamais clôturable ; pas une
+        // deuxième, quelle que soit sa source.
+        if (!c.getActions().isEmpty()) {
+            throw new CapaStateException("A CAPA carries a single action");
         }
         CapaAction a = new CapaAction();
         a.setCapa(c);
@@ -340,59 +418,15 @@ public class CapaService {
         // ne se corrigerait jamais, parce qu'elle mentirait sans le dire.
         a.setDecidedOn(request.decidedOn() != null ? request.decidedOn() : LocalDate.now());
         a.setDueDate(request.dueDate());
-        return toActionResponse(actionRepository.save(a));
-    }
-
-    /**
-     * Suggère par l'IA (passerelle → ai-service) des actions correctives/préventives
-     * pour la CAPA (§4.2). L'IA suggère, l'humain valide : rien n'est persisté tant que
-     * l'utilisateur ne clique pas « Ajouter ».
-     */
-    @Transactional(readOnly = true)
-    public List<CapaDto.SuggestedAction> suggestActions(UUID capaId) {
-        CapaCase c = loadCase(capaId);
-        // Un dossier d'endiguement n'attend pas les mêmes actions qu'un dossier
-        // correctif : on lui demande de protéger tout de suite, pas de remonter
-        // à la cause — sinon l'IA propose des analyses là où il faut des gestes.
-        String kind = switch (c.getType()) {
-            case PREVENTIVE -> "préventives (empêcher l'apparition du problème)";
-            case CONTAINMENT -> "d'endiguement (contenir l'effet immédiatement et protéger "
-                    + "le client, sans attendre l'identification de la cause)";
-            case CORRECTIVE -> "correctives (corriger et éliminer la cause racine)";
-        };
-
-        String system = "Tu es un expert qualité (démarche CAPA). Pour le problème donné, propose "
-                + "des actions " + kind + " concrètes et activables. Donne UNE action par ligne, "
-                + "commençant par un verbe d'action. Exemple : - Réviser le plan de contrôle réception. "
-                + "Donne 5 à 8 actions concrètes, sans numéro ni autre texte.";
-        StringBuilder user = new StringBuilder("Problème : ").append(c.getTitle()).append("\n");
-        if (c.getDescription() != null && !c.getDescription().isBlank()) {
-            user.append("Détail : ").append(c.getDescription()).append("\n");
+        CapaAction saved = actionRepository.save(a);
+        // Le responsable de l'unique action pilote le dossier : c'est à lui
+        // qu'on demandera des nouvelles, et il doit pouvoir le voir (ADR 0081).
+        if (request.assigneeId() != null) {
+            c.setOwnerId(request.assigneeId());
+            c.setOwnerName(saved.getAssigneeName());
+            caseRepository.save(c);
         }
-        user.append("Type : ").append(c.getType())
-            .append(", criticité : ").append(c.getCriticity()).append(".\n")
-            .append("Liste les actions :");
-
-        AiCompletionResult r = ai.complete(system, user.toString(), SUGGEST_MAX_TOKENS);
-        return parseActions(r.text());
-    }
-
-    /** Une action par ligne ; ignore préambules/titres ; déduplique. */
-    private List<CapaDto.SuggestedAction> parseActions(String text) {
-        List<CapaDto.SuggestedAction> out = new ArrayList<>();
-        Set<String> seen = new LinkedHashSet<>();
-        if (text == null) return out;
-        for (String raw : text.split("\\r?\\n")) {
-            String line = raw.strip().replaceFirst("^[-*•·\\d.)\\s]+", "").strip();
-            if (line.length() < 5 || line.endsWith(":")) continue;
-            String title = line;
-            String description = null;
-            if (title.length() > 255) { description = title; title = title.substring(0, 255); }
-            if (!seen.add(title.toLowerCase(Locale.ROOT))) continue;
-            out.add(new CapaDto.SuggestedAction(title, description));
-            if (out.size() >= SUGGEST_MAX) break;
-        }
-        return out;
+        return toActionResponse(saved);
     }
 
     public CapaDto.ActionResponse updateAction(UUID capaId, UUID actionId, CapaDto.ActionRequest request) {
@@ -537,7 +571,7 @@ public class CapaService {
         return new CapaDto.CaseResponse(
                 c.getId(), c.getTenantId(), c.getTitle(), c.getDescription(),
                 c.getType(), c.getCriticity(), c.getStatus(),
-                c.getSourceType(), c.getSourceRef(), c.getOwnerId(),
+                c.getSourceType(), c.getSourceRef(), c.getOwnerId(), c.getOwnerName(),
                 c.getRootCauseId(), c.getDueDate(),
                 c.getResolvedAt(), c.getClosedAt(),
                 c.getEffectivenessVerified(), c.getEffectivenessVerifiedAt(),

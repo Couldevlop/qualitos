@@ -21,6 +21,7 @@ import {
 import {
   CalibrationRecordDialogComponent
 } from './pages/calibration-record-dialog/calibration-record-dialog.component';
+import { PersonNameModule } from '../../shared/person-name/person-name.module';
 
 /**
  * Calibration & gestion des équipements (§4.10).
@@ -43,6 +44,6 @@ const routes: Routes = [
     CalibrationRecordDialogComponent,
     CalibrationMsaDialogComponent
   ],
-  imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
+  imports: [PersonNameModule, SharedModule, UiModule, RouterModule.forChild(routes)]
 })
 export class CalibrationModule {}

@@ -15,6 +15,8 @@ import { Nis2MeasureView } from '../../nis2m.types';
 import { Nis2mEditDialogComponent } from '../nis2m-edit-dialog/nis2m-edit-dialog.component';
 import { Nis2mReviewDialogComponent } from '../nis2m-review-dialog/nis2m-review-dialog.component';
 import { Nis2mDetailComponent } from './nis2m-detail.component';
+import { provideDirectoryStub } from '../../../../core/directory/testing/directory.stub';
+import { PersonNameModule } from '../../../../shared/person-name/person-name.module';
 
 /**
  * La fiche n'offre que l'étape suivante du cycle de vie de la mesure, et exige
@@ -98,8 +100,8 @@ describe('Nis2mDetailComponent', () => {
 
     await TestBed.configureTestingModule({
       declarations: [Nis2mDetailComponent],
-      imports: [SharedModule, UiModule, NoopAnimationsModule],
-      providers: [
+      imports: [PersonNameModule, SharedModule, UiModule, NoopAnimationsModule],
+      providers: [provideDirectoryStub(),
         { provide: Nis2MeasuresService, useValue: svc },
         { provide: MatDialog, useValue: dialog },
         { provide: MatSnackBar, useValue: snack },

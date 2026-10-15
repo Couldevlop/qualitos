@@ -226,7 +226,7 @@
           <table class="kv">
             <tr>
               <th i18n="@@ai-systems.detail.created-by">Déclaré par</th>
-              <td><code>{{ s.createdByUserId }}</code></td>
+              <td><qos-person-name [accountId]="s.createdByUserId"></qos-person-name></td>
             </tr>
             <tr>
               <th i18n="@@common.created-at">Créé le</th>

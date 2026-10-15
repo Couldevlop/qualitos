@@ -23,7 +23,7 @@ export class DmaicCreateDialogComponent {
     title: ['', [Validators.required, Validators.maxLength(255)]],
     problemStatement: [''],
     goalStatement:    [''],
-    championId:       [''],
+    championId:       [null as string | null],
     targetCompletionDate: [''],
     specLowerLimit: [null as number | null],
     specUpperLimit: [null as number | null],

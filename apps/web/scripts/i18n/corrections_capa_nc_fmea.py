@@ -57,24 +57,6 @@ TRANSLATIONS = {
         'Diez archivos como máximo por caso.',
         'عشرة ملفات كحد أقصى لكل ملف تصحيحي.',
         '1件あたり添付は10件までです。', '每个案卷最多十份附件。'),
-    'capa.create.success-with-evidence': (
-        'Cas CAPA créé, pièces jointes déposées.',
-        'CAPA case created, attachments uploaded.',
-        'Caso CAPA creado, archivos adjuntos subidos.',
-        'تم إنشاء ملف CAPA ورفع المرفقات.',
-        'CAPA案件を作成し、添付ファイルを登録しました。',
-        'CAPA 案卷已创建，附件已上传。'),
-    'capa.create.success-partial-evidence': (
-        "Cas CAPA créé, mais des pièces n'ont pas pu être déposées — "
-        'reprends-les depuis la fiche.',
-        'CAPA case created, but some files could not be uploaded — '
-        'add them again from the case.',
-        'Caso CAPA creado, pero algunos archivos no se pudieron subir: '
-        'vuelve a añadirlos desde la ficha.',
-        'تم إنشاء ملف CAPA، لكن تعذّر رفع بعض المرفقات — أعد إضافتها من البطاقة.',
-        'CAPA案件は作成されましたが、一部の添付ファイルを送信できませんでした。'
-        '案件画面から再度添付してください。',
-        'CAPA 案卷已创建，但部分附件未能上传 — 请在案卷页面重新添加。'),
 
     # --- NC : qui a vu l'ecart ----------------------------------------------
     'nc.list.col-reporter': (

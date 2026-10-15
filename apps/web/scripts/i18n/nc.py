@@ -105,10 +105,6 @@ TRANSLATIONS = {
     'nc.detail.cancel-tooltip': ('Annuler la non-conformité', 'Cancel the non-conformance', 'Cancelar la no conformidad', 'إلغاء عدم المطابقة', '不適合をキャンセル', '取消不合格项'),
     'nc.detail.cancel-confirm-title': ('Annuler cette non-conformité ?', 'Cancel this non-conformance?', '¿Cancelar esta no conformidad?', 'إلغاء عدم المطابقة هذه؟', 'この不適合をキャンセルしますか？', '取消此不合格项？'),
     'nc.detail.cancel-confirm-message': ('La non-conformité sera marquée comme annulée. Cette décision est traçable.', 'The non-conformance will be marked as cancelled. This decision is traceable.', 'La no conformidad se marcará como cancelada. Esta decisión es trazable.', 'سيتم وضع علامة على عدم المطابقة بأنها ملغاة. هذا القرار قابل للتتبّع.', '不適合はキャンセル済みとしてマークされます。この決定はトレーサブルです。', '该不合格项将被标记为已取消。此决定可追溯。'),
-    'nc.detail.add-action': ('Ajouter une action', 'Add action', 'Añadir una acción', 'إضافة إجراء', 'アクションを追加', '添加措施'),
-    'nc.detail.add-action-tooltip': ("Poser une action corrective sur cette non-conformité", 'Record a corrective action on this non-conformance', 'Registrar una acción correctiva en esta no conformidad', 'تسجيل إجراء تصحيحي على عدم المطابقة هذه', 'この不適合に是正処置を登録', '为此不合格项登记纠正措施'),
-    'nc.detail.add-action-no-case': ("Dossier créé, mais introuvable pour y ajouter l'action. Ouvrez-le depuis la CAPA.", 'Case created, but it could not be found to add the action. Open it from CAPA.', 'Expediente creado, pero no se encontró para añadir la acción. Ábralo desde CAPA.', 'تم إنشاء الملف، لكن تعذر العثور عليه لإضافة الإجراء. افتحه من CAPA.', 'ケースは作成されましたが、アクションを追加する対象が見つかりません。CAPA から開いてください。', '已创建案卷，但无法找到以添加措施。请从 CAPA 打开。'),
-    'nc.detail.escalate-error': ("Erreur lors de l'escalade.", 'Error while escalating.', 'Error al escalar.', 'خطأ أثناء التصعيد.', 'エスカレーション中にエラーが発生しました。', '升级时出错。'),
     'nc.detail.transition-success': ('Statut mis à jour.', 'Status updated.', 'Estado actualizado.', 'تم تحديث الحالة.', 'ステータスを更新しました。', '状态已更新。'),
     'nc.detail.transition-error': ('Erreur lors de la transition.', 'Error during the transition.', 'Error durante la transición.', 'خطأ أثناء الانتقال.', '遷移中にエラーが発生しました。', '状态转换时出错。'),
 

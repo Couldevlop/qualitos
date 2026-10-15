@@ -24,4 +24,11 @@ public interface NotificationRepository {
 
     /** Marque toutes les non-lues visibles par l'utilisateur comme lues ; renvoie le nombre affecté. */
     int markAllReadForRecipient(UUID tenantId, String userId, Instant at);
+
+    /**
+     * Marque lues les notifications ADRESSÉES à cet utilisateur qui mènent à {@code link} :
+     * ce qu'elles demandaient n'est plus à faire (une validation close par un refus,
+     * une décision prise). Les diffusions au tenant ne sont pas touchées.
+     */
+    int markReadForRecipientAndLink(UUID tenantId, String userId, String link, Instant at);
 }

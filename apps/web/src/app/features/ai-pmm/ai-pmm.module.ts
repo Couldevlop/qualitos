@@ -8,6 +8,7 @@ import { PmmDraftDialogComponent } from './pages/pmm-draft-dialog/pmm-draft-dial
 import { PmmEditDialogComponent } from './pages/pmm-edit-dialog/pmm-edit-dialog.component';
 import { PmmListComponent } from './pages/pmm-list/pmm-list.component';
 import { PmmReasonDialogComponent } from './pages/pmm-reason-dialog/pmm-reason-dialog.component';
+import { PersonNameModule } from '../../shared/person-name/person-name.module';
 
 const routes: Routes = [
   { path: '', component: PmmListComponent },
@@ -22,6 +23,6 @@ const routes: Routes = [
     PmmEditDialogComponent,
     PmmReasonDialogComponent
   ],
-  imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
+  imports: [PersonNameModule, SharedModule, UiModule, RouterModule.forChild(routes)]
 })
 export class AiPmmModule {}

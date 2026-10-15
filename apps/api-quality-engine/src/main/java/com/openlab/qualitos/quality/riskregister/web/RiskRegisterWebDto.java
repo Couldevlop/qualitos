@@ -28,6 +28,11 @@ import java.util.UUID;
  *
  * <p>Aucun champ tenant ni auteur : ils viennent du jeton (§18.2). Aucune
  * référence non plus : c'est le serveur qui l'attribue.
+ *
+ * <p>Le propriétaire est une personne de l'annuaire (ADR 0092) :
+ * {@code ownerUserId} est son compte de connexion, {@code owner} son nom
+ * recopié. Le compte reste facultatif pour les fiches antérieures, qui n'ont
+ * qu'un nom ; un compte mal formé est refusé (400) avant d'atteindre le domaine.
  */
 public final class RiskRegisterWebDto {
 
@@ -52,7 +57,8 @@ public final class RiskRegisterWebDto {
             RiskStatus status,
             @Size(max = 10) List<RegisterRequirement> requirements,
             LocalDate nextReviewOn,
-            @Size(max = 1000) String effectivenessCriterion) {}
+            @Size(max = 1000) String effectivenessCriterion,
+            UUID ownerUserId) {}
 
     public record OpportunityRequest(
             @NotBlank @Size(max = 255) String title,
@@ -70,14 +76,29 @@ public final class RiskRegisterWebDto {
             OpportunityDecision decision,
             OpportunityStatus status,
             @Size(max = 10) List<RegisterRequirement> requirements,
-            @Size(max = 1000) String benefitCriterion) {}
+            @Size(max = 1000) String benefitCriterion,
+            UUID ownerUserId) {}
 
+    /**
+     * Ce que la fenêtre de création CAPA commune envoie depuis un risque (ADR 0088).
+     *
+     * <p>Le responsable est un compte de l'annuaire du client — son identifiant
+     * et son libellé recopié —, et non plus un nom tapé : il devient le pilote
+     * du dossier. La criticité n'y figure pas, elle découle de la cotation brute
+     * du risque. La décision de vérification d'efficacité part avec
+     * l'ouverture, comme depuis toute autre source (ADR 0073, 0088).
+     */
     public record CapaRequest(
             @NotBlank @Size(max = 255) String title,
             @Size(max = 4000) String description,
             @NotNull RiskCapaKind kind,
-            @NotBlank @Size(max = 255) String assignee,
-            @NotNull LocalDate dueDate) {}
+            @NotNull UUID ownerId,
+            @Size(max = 255) String ownerName,
+            @NotNull LocalDate dueDate,
+            Boolean verificationRequired,
+            UUID verificationAssigneeId,
+            @Size(max = 255) String verificationAssigneeName,
+            @Size(max = 4000) String verificationInstructions) {}
 
     public record ActionRequest(
             @NotBlank @Size(max = 255) String title,

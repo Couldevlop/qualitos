@@ -42,7 +42,8 @@ public final class CoqDto {
             UUID entryId, UUID labelId, String labelCode, String labelName, boolean partControl,
             BigDecimal amount, int entryCount,
             String responsible, LocalDate imputationDate, String comment,
-            String partReference, Integer partQuantity, String lot, LocalDate receivedOrMadeOn) {}
+            String partReference, Integer partQuantity, String lot, LocalDate receivedOrMadeOn,
+            UUID responsibleUserId) {}
 
     public record MonthView(int month, BigDecimal conformance, BigDecimal nonConformance) {}
 
@@ -52,7 +53,16 @@ public final class CoqDto {
     public record EntryCommand(
             UUID labelId, BigDecimal amount, String responsible, LocalDate imputationDate,
             String comment, String partReference, Integer partQuantity, String lot,
-            LocalDate receivedOrMadeOn) {}
+            LocalDate receivedOrMadeOn, UUID responsibleUserId) {
+
+        /** Une saisie sans compte de responsable (nom seul). */
+        public EntryCommand(UUID labelId, BigDecimal amount, String responsible, LocalDate imputationDate,
+                            String comment, String partReference, Integer partQuantity, String lot,
+                            LocalDate receivedOrMadeOn) {
+            this(labelId, amount, responsible, imputationDate, comment, partReference, partQuantity, lot,
+                    receivedOrMadeOn, null);
+        }
+    }
 
     public record LabelCommand(CoqCategory category, String name, boolean partControl) {}
 }

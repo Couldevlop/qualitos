@@ -22,10 +22,8 @@
   </mat-form-field>
 
   <div class="row">
-    <mat-form-field appearance="outline" class="col">
-      <mat-label i18n="@@dmaic.create.champion-label">Champion (ID)</mat-label>
-      <input matInput formControlName="championId">
-    </mat-form-field>
+    <qos-user-picker class="col" formControlName="championId" data-test="dmaic-champion-picker"
+                     i18n-label="@@dmaic.create.champion" label="Champion (optionnel)"></qos-user-picker>
     <mat-form-field appearance="outline" class="col">
       <mat-label i18n="@@dmaic.create.target-date-label">Date cible</mat-label>
       <input matInput formControlName="targetCompletionDate" type="date">

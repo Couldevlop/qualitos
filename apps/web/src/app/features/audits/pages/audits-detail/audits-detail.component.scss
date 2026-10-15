@@ -105,7 +105,28 @@
 .finding-opportunity { background: #f3e5f5; color: #4a148c; }
 .finding-conformity  { background: #e8f5e9; color: #1b5e20; }
 
-.findings-card { margin-top: 16px; }
+.findings-card { margin: 16px 0; }
+
+/* Un nom de personne se lit en police de texte, pas en chasse fixe : la chasse
+   fixe des autres valeurs servait aux codes, et donnait à l'auditeur l'air d'un
+   identifiant. */
+.info-value--text { font-family: var(--qos-font-sans); }
+
+/* Pourquoi une action est barrée — dit à côté, avec le geste qui la débloque. */
+.section-note {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--qos-space-2);
+  margin: 0 0 var(--qos-space-3);
+  padding: var(--qos-space-2) var(--qos-space-3);
+  border-radius: var(--qos-radius-md);
+  background: var(--qos-bg-subtle);
+  color: var(--qos-fg-secondary);
+  font-size: var(--qos-fs-sm);
+
+  > mat-icon { font-size: 18px; width: 18px; height: 18px; }
+}
 
 .score {
   display: inline-block;
@@ -123,4 +144,15 @@
 .creer-risque {
   font-size: var(--qos-fs-xs);
   color: var(--qos-fg-link);
+}
+
+/* CAPA d'un constat (ADR 0088) : lien quand elle existe, bouton discret sinon. */
+.voir-capa {
+  font-size: var(--qos-fs-xs);
+  color: var(--qos-fg-link);
+}
+
+.creer-capa {
+  align-self: flex-start;
+  margin-top: var(--qos-space-1);
 }

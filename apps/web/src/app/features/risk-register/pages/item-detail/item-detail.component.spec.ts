@@ -12,7 +12,11 @@ import { SharedModule } from '../../../../shared/shared.module';
 import { UiModule } from '../../../../shared/ui/ui.module';
 import { OpportunitySheet, RiskSheet } from '../../risk-register.types';
 import { opportunite, risque } from '../../testing/risk-register.fixtures';
-import { ActionDialogComponent, ActionDialogResult } from '../action-dialog/action-dialog.component';
+import { OpenCapaRequest } from '../../../capa/capa.types';
+import {
+  CapaCreateDialogComponent, CapaCreateDialogData
+} from '../../../capa/pages/capa-create-dialog/capa-create-dialog.component';
+import { ActionDialogResult } from '../action-dialog/action-dialog.component';
 import { ItemDetailComponent } from './item-detail.component';
 
 /**
@@ -74,9 +78,14 @@ describe('ItemDetailComponent', () => {
     return spyOn(dialog, 'open').and.returnValue({ afterClosed: () => of(result) } as MatDialogRef<unknown>);
   }
 
-  /** La fenêtre CAPA propose les noms déjà employés : ils arrivent d'abord. */
-  function suggestions(): void {
-    http.expectOne(`${endpoint}/suggestions`).flush({ processes: [], sites: [], owners: ['M. Kone', 'A. Diallo'] });
+  /**
+   * LA fenêtre CAPA (ADR 0088) : la doublure rejoue la validation en appelant
+   * la route d'ouverture fournie par la fiche, ou se ferme sans rien.
+   */
+  function repondreCapa(demande: OpenCapaRequest | undefined): jasmine.Spy {
+    return spyOn(dialog, 'open').and.callFake(((_c: unknown, config: { data: CapaCreateDialogData }) => ({
+      afterClosed: () => (demande ? config.data.open!(demande) : of(undefined))
+    })) as never);
   }
 
   afterEach(() => http.verify());
@@ -103,19 +112,22 @@ describe('ItemDetailComponent', () => {
     await setup('risk');
     http.expectOne(`${endpoint}/risks/r1`).flush(FICHE_RISQUE);
     fixture.detectChanges();
-    const ouverture = repondre({ title: 'Carte SPC', description: null, dueDate: '2026-12-01', status: 'TO_START', kind: 'CORRECTIVE', assignee: 'A. Diallo' });
+    const ouverture = repondreCapa({ title: 'Carte SPC', type: 'CORRECTIVE', criticity: 'HIGH', ownerId: 'kc-diallo', ownerName: 'A. Diallo', dueDate: '2026-12-01', verificationRequired: false });
 
     (hote().querySelector('[data-test="creer-capa"]') as HTMLElement).click();
-    suggestions();
 
-    expect(ouverture.calls.mostRecent().args[0]).toBe(ActionDialogComponent);
-    // Le propriétaire du risque est proposé comme responsable.
-    expect(ouverture.calls.mostRecent().args[1]!.data).toEqual(jasmine.objectContaining({
-      mode: 'capa', reference: 'R-014', assignee: 'M. Kone', assignees: ['M. Kone', 'A. Diallo']
-    }));
+    expect(ouverture.calls.mostRecent().args[0]).toBe(CapaCreateDialogComponent);
+    // Source verrouillée sur le risque ; son propriétaire est proposé comme responsable.
+    const data = ouverture.calls.mostRecent().args[1]!.data as CapaCreateDialogData;
+    expect(data.source).toEqual({ type: 'RISK', reference: 'R-014' });
+    expect(data.prefill?.ownerHint).toBe('M. Kone');
     const req = http.expectOne(`${endpoint}/risks/r1/capa`);
     expect(req.request.body).toEqual({
-      title: 'Carte SPC', description: null, kind: 'CORRECTIVE', assignee: 'A. Diallo', dueDate: '2026-12-01'
+      title: 'Carte SPC', description: null, kind: 'CORRECTIVE', ownerId: 'kc-diallo', ownerName: 'A. Diallo',
+      dueDate: '2026-12-01',
+      // La décision de vérification part avec l'ouverture (ADR 0073, 0088).
+      verificationRequired: false, verificationAssigneeId: null, verificationAssigneeName: null,
+      verificationInstructions: null
     });
     req.flush({ id: 'c2', title: 'Carte SPC', dueDate: '2026-12-01', status: 'OPEN', kind: 'CORRECTIVE', assignee: 'A. Diallo' });
     http.expectOne(`${endpoint}/risks/r1`).flush(FICHE_RISQUE);
@@ -124,9 +136,8 @@ describe('ItemDetailComponent', () => {
   it('fenêtre fermée sans saisie : rien ne part', async () => {
     await setup('risk');
     http.expectOne(`${endpoint}/risks/r1`).flush(FICHE_RISQUE);
-    repondre(undefined);
+    repondreCapa(undefined);
     component.createAction();
-    suggestions();
     http.expectNone(`${endpoint}/risks/r1/capa`);
     expect(component.busy).toBeFalse();
   });
@@ -145,7 +156,7 @@ describe('ItemDetailComponent', () => {
     fixture.detectChanges();
     expect(hote().querySelector('[data-test="modifier"]')).toBeNull();
     expect(hote().querySelector('[data-test="creer-capa"]')).toBeNull();
-    const spy = repondre({ title: 'Carte SPC', description: null, dueDate: '2026-12-01', status: 'TO_START', kind: 'CORRECTIVE', assignee: 'A. Diallo' });
+    const spy = repondreCapa({ title: 'Carte SPC', type: 'CORRECTIVE', criticity: 'HIGH', ownerId: 'kc-diallo', ownerName: 'A. Diallo', dueDate: '2026-12-01' });
     component.createAction();
     expect(spy).not.toHaveBeenCalled();
   });
@@ -169,12 +180,12 @@ describe('ItemDetailComponent', () => {
     expect(component.gainWord(4)).toBe('Fort');
     expect(component.feasibilityWord(4)).toBe('Facile');
 
-    const spy = repondre({ title: 'Piloter', description: null, dueDate: null, status: 'TO_START', kind: null, assignee: null });
+    const spy = repondre({ title: 'Piloter', dueDate: null, status: 'TO_START' });
     component.createAction();
     http.expectOne(`${endpoint}/opportunities/o1/actions`).flush({ id: 'a2', number: 4, title: 'Piloter', dueDate: null, status: 'TO_START' });
     http.expectOne(`${endpoint}/opportunities/o1`).flush(FICHE_OPP);
 
-    spy.and.returnValue({ afterClosed: () => of({ title: 'Chiffrer', description: null, dueDate: null, status: 'DONE', kind: null, assignee: null }) } as MatDialogRef<unknown>);
+    spy.and.returnValue({ afterClosed: () => of({ title: 'Chiffrer', dueDate: null, status: 'DONE' }) } as MatDialogRef<unknown>);
     component.editAction(FICHE_OPP.actions[0]);
     const revue = http.expectOne(`${endpoint}/opportunities/o1/actions/a1`);
     expect(revue.request.method).toBe('PUT');
@@ -200,9 +211,8 @@ describe('ItemDetailComponent', () => {
   it('une erreur d’ouverture de CAPA est signalée, sans recharger', async () => {
     await setup('risk');
     http.expectOne(`${endpoint}/risks/r1`).flush(FICHE_RISQUE);
-    repondre({ title: 'Carte SPC', description: null, dueDate: '2026-12-01', status: 'TO_START', kind: 'CORRECTIVE', assignee: 'A. Diallo' });
+    repondreCapa({ title: 'Carte SPC', type: 'CORRECTIVE', criticity: 'HIGH', ownerId: 'kc-diallo', ownerName: 'A. Diallo', dueDate: '2026-12-01' });
     component.createAction();
-    suggestions();
     http.expectOne(`${endpoint}/risks/r1/capa`).flush({ field: 'status' }, { status: 422, statusText: 'KO' });
     expect(component.busy).toBeFalse();
   });

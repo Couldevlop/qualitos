@@ -11,6 +11,7 @@ import { BreachListComponent } from './pages/breach-list/breach-list.component';
 import { BreachSeverityDialogComponent } from './pages/breach-severity-dialog/breach-severity-dialog.component';
 import { BreachSubjectsDialogComponent } from './pages/breach-subjects-dialog/breach-subjects-dialog.component';
 import { BreachTextDialogComponent } from './pages/breach-text-dialog/breach-text-dialog.component';
+import { PersonNameModule } from '../../shared/person-name/person-name.module';
 
 const routes: Routes = [
   { path: '', component: BreachListComponent },
@@ -28,6 +29,6 @@ const routes: Routes = [
     BreachTextDialogComponent,
     BreachSeverityDialogComponent
   ],
-  imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
+  imports: [PersonNameModule, SharedModule, UiModule, RouterModule.forChild(routes)]
 })
 export class BreachModule {}

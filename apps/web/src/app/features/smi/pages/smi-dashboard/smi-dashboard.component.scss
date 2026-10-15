@@ -36,11 +36,44 @@
 
 // ---------- filtre de norme ----------
 
+.barre-normes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--qos-space-3);
+  margin-bottom: var(--qos-space-5);
+}
+
 .normes {
   display: flex;
   flex-wrap: wrap;
   gap: var(--qos-space-2);
-  margin-bottom: var(--qos-space-5);
+}
+
+.ajout-norme {
+  margin-left: auto;
+}
+
+// Une action dans une phrase : l'allure d'un lien, la sémantique d'un bouton.
+.lien-bouton {
+  appearance: none;
+  padding: 0;
+  margin-left: var(--qos-space-1);
+  border: 0;
+  background: none;
+  font: inherit;
+  font-weight: var(--qos-fw-medium);
+  color: var(--qos-fg-link);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+
+  &:focus-visible {
+    outline: 2px solid var(--qos-border-focus);
+    outline-offset: 2px;
+    border-radius: var(--qos-radius-xs);
+  }
 }
 
 .norme {

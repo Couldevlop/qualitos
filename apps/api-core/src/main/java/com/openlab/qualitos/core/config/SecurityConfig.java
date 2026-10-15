@@ -35,6 +35,7 @@ import java.util.stream.Collectors;
  *   <li>OAuth2 Resource Server avec JWT Keycloak.</li>
  *   <li>/api/v1/tenants réservé ROLE_SUPER_ADMIN.</li>
  *   <li>/api/v1/users réservé ROLE_ADMIN + ROLE_SUPER_ADMIN.</li>
+ *   <li>/api/v1/directory : lecture seule pour tout utilisateur authentifié (ADR 0091).</li>
  *   <li>/actuator/health public.</li>
  * </ul>
  */
@@ -111,6 +112,11 @@ public class SecurityConfig {
                 // celle de l'organisation : le service lit le tenant dans le JWT.
                 .requestMatchers("/api/v1/users/**")
                     .hasAnyRole("ADMIN", "ADMIN_TENANT", "SUPER_ADMIN")
+                // Annuaire en lecture restreinte (ADR 0091) : tout membre authentifié
+                // de son client, en LECTURE seule. Nommé ici plutôt que laissé au
+                // « reste » : élargir ce chemin doit se voir dans ce fichier.
+                .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/v1/directory/**").authenticated()
+                .requestMatchers("/api/v1/directory/**").denyAll()
                 // Tout le reste nécessite une authentification
                 .anyRequest().authenticated()
             )

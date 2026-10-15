@@ -113,7 +113,7 @@
           <tbody>
             <tr *ngFor="let row of leaderboard.entries">
               <td class="rank">{{ row.rank }}</td>
-              <td class="learner">{{ row.userId }}</td>
+              <td class="learner"><qos-person-name [accountId]="row.userId"></qos-person-name></td>
               <td><span [class]="beltClass(row.beltLevel)">{{ row.beltLevel }}</span></td>
               <td class="points">{{ row.points }}</td>
               <td>{{ row.completedCount }}</td>

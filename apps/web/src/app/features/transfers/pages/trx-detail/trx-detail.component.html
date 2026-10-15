@@ -114,7 +114,7 @@
         <mat-card-header><mat-card-title i18n="@@transfers.detail.trace">Trace</mat-card-title></mat-card-header>
         <mat-card-content>
           <table class="kv">
-            <tr><th i18n="@@transfers.detail.created-by">Créé par</th><td><code>{{ t.createdByUserId }}</code></td></tr>
+            <tr><th i18n="@@transfers.detail.created-by">Créé par</th><td><qos-person-name [accountId]="t.createdByUserId"></qos-person-name></td></tr>
             <tr><th i18n="@@common.created-at">Créé le</th><td>{{ t.createdAt }}</td></tr>
             <tr><th i18n="@@common.last-updated">Dernière MAJ</th><td>{{ t.updatedAt }}</td></tr>
           </table>

@@ -1,7 +1,5 @@
 package com.openlab.qualitos.quality.capa;
 
-import com.openlab.qualitos.quality.aigateway.AiCompletionResult;
-import com.openlab.qualitos.quality.aigateway.AiGatewayClient;
 import com.openlab.qualitos.quality.authz.application.RecordScope;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.common.TenantContext;
@@ -34,7 +32,6 @@ class CapaServiceTest {
 
     @Mock CapaCaseRepository caseRepo;
     @Mock CapaActionRepository actionRepo;
-    @Mock AiGatewayClient ai;
     @Mock CapaLifecycleJournal journal;
     @Mock com.openlab.qualitos.quality.nonconformity.NonConformityRepository ncRepo;
     @Mock CapaEvidenceRepository evidenceRepo;
@@ -48,111 +45,6 @@ class CapaServiceTest {
 
     @BeforeEach void ctx() { TenantContext.setTenantId(TENANT.toString()); }
     @AfterEach  void clr() { TenantContext.clear(); }
-
-    // --- suggestActions (IA) ---
-    @Test
-    void suggestActions_parsesLinesAsActions_ignoresPreamble_dedups() {
-        UUID id = UUID.randomUUID();
-        CapaCase c = new CapaCase();
-        c.setTenantId(TENANT);
-        c.setTitle("NC répétitive sur joint torique fournisseur Alpha");
-        c.setType(CapaType.CORRECTIVE);
-        c.setCriticity(CapaCriticity.HIGH);
-        c.setStatus(CapaStatus.IN_PROGRESS);
-        when(caseRepo.findByIdAndTenantId(id, TENANT)).thenReturn(Optional.of(c));
-
-        String llm = String.join("\n",
-                "Voici les actions correctives :",
-                "- Auditer le fournisseur Alpha sur site",
-                "2. Renforcer le plan de contrôle réception",
-                "- Auditer le fournisseur Alpha sur site");
-        when(ai.complete(any(), any(), anyInt()))
-                .thenReturn(new AiCompletionResult(llm, "ollama", 80, 900));
-
-        List<CapaDto.SuggestedAction> res = service.suggestActions(id);
-
-        assertThat(res).extracting(CapaDto.SuggestedAction::title)
-                .containsExactly("Auditer le fournisseur Alpha sur site",
-                        "Renforcer le plan de contrôle réception");
-    }
-
-    /**
-     * Un dossier d'ENDIGUEMENT n'appelle pas les mêmes actions qu'un correctif :
-     * on lui demande de protéger tout de suite, pas de remonter à la cause.
-     * Sans cette branche, l'IA proposait des analyses là où il faut des gestes.
-     */
-    @Test
-    void suggestActions_containment_asksForImmediateProtectionNotRootCause() {
-        UUID id = UUID.randomUUID();
-        CapaCase c = new CapaCase();
-        c.setTenantId(TENANT);
-        c.setTitle("Lot 4471 suspect en cours d'expédition");
-        c.setType(CapaType.CONTAINMENT);
-        c.setCriticity(CapaCriticity.CRITICAL);
-        c.setStatus(CapaStatus.OPEN);
-        when(caseRepo.findByIdAndTenantId(id, TENANT)).thenReturn(Optional.of(c));
-        when(ai.complete(any(), any(), anyInt()))
-                .thenReturn(new AiCompletionResult("- Bloquer le lot 4471 en magasin",
-                        "ollama", 40, 500));
-
-        ArgumentCaptor<String> system = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String> user = ArgumentCaptor.forClass(String.class);
-
-        List<CapaDto.SuggestedAction> res = service.suggestActions(id);
-
-        verify(ai).complete(system.capture(), user.capture(), anyInt());
-        assertThat(system.getValue()).contains("endiguement");
-        assertThat(system.getValue()).doesNotContain("cause racine");
-        assertThat(user.getValue()).contains("CONTAINMENT");
-        assertThat(res).extracting(CapaDto.SuggestedAction::title)
-                .containsExactly("Bloquer le lot 4471 en magasin");
-    }
-
-    @Test
-    void suggestActions_preventive_withDescription_skipsShort_splitsLong_andCaps() {
-        UUID id = UUID.randomUUID();
-        CapaCase c = new CapaCase();
-        c.setTenantId(TENANT);
-        c.setTitle("Risque de dérive du procédé de collage");
-        c.setDescription("Contexte détaillé non vide");   // branche description != null && !blank
-        c.setType(CapaType.PREVENTIVE);                    // branche PREVENTIVE
-        c.setCriticity(CapaCriticity.LOW);
-        c.setStatus(CapaStatus.OPEN);
-        when(caseRepo.findByIdAndTenantId(id, TENANT)).thenReturn(Optional.of(c));
-
-        String longLine = "Mettre en place une surveillance renforcée " + "x".repeat(300);
-        StringBuilder sb = new StringBuilder();
-        sb.append("ok\n");                                 // < 5 caractères -> ignorée
-        sb.append(longLine).append("\n");                  // > 255 -> title tronqué, description = ligne complète
-        for (int i = 0; i < 10; i++) {                     // dépasse le plafond (8)
-            sb.append("Action préventive numéro ").append(i).append("\n");
-        }
-        when(ai.complete(any(), any(), anyInt()))
-                .thenReturn(new AiCompletionResult(sb.toString(), "ollama", 90, 1100));
-
-        List<CapaDto.SuggestedAction> res = service.suggestActions(id);
-
-        assertThat(res).hasSize(8);                        // plafonné
-        assertThat(res.get(0).title()).hasSize(255);       // ligne longue tronquée
-        assertThat(res.get(0).description()).isEqualTo(longLine);
-        assertThat(res).noneMatch(a -> a.title().equals("ok"));
-    }
-
-    @Test
-    void suggestActions_nullLlmText_returnsEmpty() {
-        UUID id = UUID.randomUUID();
-        CapaCase c = new CapaCase();
-        c.setTenantId(TENANT);
-        c.setTitle("Pb");
-        c.setType(CapaType.CORRECTIVE);
-        c.setCriticity(CapaCriticity.MEDIUM);
-        c.setStatus(CapaStatus.OPEN);
-        when(caseRepo.findByIdAndTenantId(id, TENANT)).thenReturn(Optional.of(c));
-        when(ai.complete(any(), any(), anyInt()))
-                .thenReturn(new AiCompletionResult(null, "ollama", 0, 10));
-
-        assertThat(service.suggestActions(id)).isEmpty();
-    }
 
     // --- create ---
     @Test
@@ -514,21 +406,244 @@ class CapaServiceTest {
     }
 
     @Test
-    void addAction_risqueAyantDejaSonAction_refuse() {
-        CapaCase c = capa(TENANT, CapaStatus.OPEN);
-        c.setSourceType(CapaSourceType.RISK);
-        c.getActions().add(new CapaAction());
-        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
-        CapaDto.ActionRequest req = new CapaDto.ActionRequest(
-                "deuxieme", null, null, null, null, null, null, null);
-        assertThatThrownBy(() -> service.addAction(c.getId(), req))
-                .isInstanceOf(CapaStateException.class)
-                .hasMessageContaining("single action");
+    void addAction_dossierAyantDejaSonAction_refuse_quelleQueSoitSaSource() {
+        // Une CAPA = une action (ADR 0088) : la règle ne vaut plus pour les
+        // seuls risques, elle vaut pour toutes les sources.
+        for (CapaSourceType source : CapaSourceType.values()) {
+            CapaCase c = capa(TENANT, CapaStatus.OPEN);
+            c.setSourceType(source);
+            c.getActions().add(new CapaAction());
+            when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+            CapaDto.ActionRequest req = new CapaDto.ActionRequest(
+                    "deuxieme", null, null, null, null, null, null, null);
+            assertThatThrownBy(() -> service.addAction(c.getId(), req))
+                    .as("source %s", source)
+                    .isInstanceOf(CapaStateException.class)
+                    .hasMessageContaining("single action");
+        }
         verify(actionRepo, never()).save(any());
     }
 
     @Test
-    void addAction_ancienRisqueSansAction_recoitLaSienne() {
+    void addAction_leResponsableDesigneDevientLePiloteDuDossier() {
+        CapaCase c = capa(TENANT, CapaStatus.OPEN);
+        UUID responsable = UUID.randomUUID();
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(actionRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        service.addAction(c.getId(), new CapaDto.ActionRequest(
+                "Définir le plan", null, null, null, responsable, "  a.diallo@client.test  ", null, null));
+
+        assertThat(c.getOwnerId()).isEqualTo(responsable);
+        assertThat(c.getOwnerName()).isEqualTo("a.diallo@client.test");
+        verify(caseRepo).save(c);
+    }
+
+    @Test
+    void addAction_sansResponsableDesigne_laissePiloteEnPlace() {
+        CapaCase c = capa(TENANT, CapaStatus.OPEN);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(actionRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        service.addAction(c.getId(), new CapaDto.ActionRequest(
+                "Définir le plan", null, null, null, null, "Nom libre", null, null));
+
+        assertThat(c.getOwnerId()).isEqualTo(OWNER);
+        verify(caseRepo, never()).save(any());
+    }
+
+    // --- openCase : le dossier ET son action, en une écriture (ADR 0088) ---
+
+    @Test
+    void openCase_creeLeDossierEtSonActionUnique_confieeAuPilote() {
+        UUID pilote = UUID.randomUUID();
+        when(caseRepo.save(any())).thenAnswer(inv -> {
+            CapaCase c = inv.getArgument(0);
+            c.setId(UUID.randomUUID());
+            return c;
+        });
+        LocalDate echeance = LocalDate.now().plusDays(30);
+
+        CapaDto.CaseResponse r = service.openCase(new CapaDto.OpenCaseRequest(
+                "  Recalibrer la sonde  ", "  Dérive constatée  ", CapaType.PREVENTIVE,
+                CapaCriticity.HIGH, CapaSourceType.OTHER, "ignoré", pilote, " a.diallo@client.test ",
+                echeance, null, null, null, null), CapaSourceType.NON_CONFORMITY, " NC-2026-0001 ");
+
+        ArgumentCaptor<CapaCase> saved = ArgumentCaptor.forClass(CapaCase.class);
+        verify(caseRepo).save(saved.capture());
+        CapaCase c = saved.getValue();
+        assertThat(c.getTenantId()).isEqualTo(TENANT);
+        assertThat(c.getTitle()).isEqualTo("Recalibrer la sonde");
+        assertThat(c.getDescription()).isEqualTo("Dérive constatée");
+        // La source est celle fixée par l'appelant serveur, jamais celle du corps.
+        assertThat(c.getSourceType()).isEqualTo(CapaSourceType.NON_CONFORMITY);
+        assertThat(c.getSourceRef()).isEqualTo("NC-2026-0001");
+        assertThat(c.getOwnerId()).isEqualTo(pilote);
+        assertThat(c.getOwnerName()).isEqualTo("a.diallo@client.test");
+        assertThat(c.getStatus()).isEqualTo(CapaStatus.OPEN);
+        assertThat(c.getDueDate()).isEqualTo(echeance);
+        assertThat(c.getActions()).singleElement().satisfies(a -> {
+            assertThat(a.getTitle()).isEqualTo("Recalibrer la sonde");
+            assertThat(a.getActionType()).isEqualTo(CapaActionType.PREVENTIVE);
+            assertThat(a.getAssigneeId()).isEqualTo(pilote);
+            assertThat(a.getAssigneeName()).isEqualTo("a.diallo@client.test");
+            assertThat(a.getStatus()).isEqualTo(CapaActionStatus.PENDING);
+            assertThat(a.getDecidedOn()).isEqualTo(LocalDate.now());
+            assertThat(a.getDueDate()).isEqualTo(echeance);
+            assertThat(a.getCapa()).isSameAs(c);
+        });
+        assertThat(r.ownerName()).isEqualTo("a.diallo@client.test");
+        assertThat(r.actions()).hasSize(1);
+        verify(journal).record(c, CapaTransition.OPENED);
+        // Une seule écriture : l'action part par cascade avec le dossier.
+        verify(actionRepo, never()).save(any());
+    }
+
+    @Test
+    void openCase_correctif_donneUneActionCorrective_etUnNomBlancDevientNul() {
+        when(caseRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+        CapaDto.CaseResponse r = service.openCase(openReq(CapaType.CORRECTIVE, LocalDate.now(), "   "),
+                CapaSourceType.INTERNAL, null);
+        assertThat(r.actions().get(0).actionType()).isEqualTo(CapaActionType.CORRECTIVE);
+        assertThat(r.ownerName()).isNull();
+        assertThat(r.sourceRef()).isNull();
+    }
+
+    @Test
+    void openCase_refuseLEndiguementSeul_quiNeSeCloraitJamais() {
+        assertThatThrownBy(() -> service.openCase(openReq(CapaType.CONTAINMENT, LocalDate.now(), null),
+                CapaSourceType.INTERNAL, null))
+                .isInstanceOf(CapaValidationException.class)
+                .hasMessageContaining("containment");
+        verifyNoInteractions(caseRepo);
+    }
+
+    @Test
+    void openCase_refuseUneEcheancePassee() {
+        assertThatThrownBy(() -> service.openCase(openReq(CapaType.CORRECTIVE, LocalDate.now().minusDays(1), null),
+                CapaSourceType.INTERNAL, null))
+                .isInstanceOf(CapaValidationException.class)
+                .hasMessageContaining("past");
+        verifyNoInteractions(caseRepo);
+    }
+
+    @Test
+    void openCase_refuseLesChampsManquants() {
+        LocalDate d = LocalDate.now().plusDays(3);
+        UUID o = UUID.randomUUID();
+        assertThatThrownBy(() -> service.openCase(null, CapaSourceType.INTERNAL, null))
+                .isInstanceOf(CapaValidationException.class);
+        assertThatThrownBy(() -> service.openCase(new CapaDto.OpenCaseRequest(
+                "t", null, null, CapaCriticity.LOW, null, null, o, null, d, null, null, null, null),
+                CapaSourceType.INTERNAL, null))
+                .isInstanceOf(CapaValidationException.class);
+        assertThatThrownBy(() -> service.openCase(new CapaDto.OpenCaseRequest(
+                "t", null, CapaType.CORRECTIVE, null, null, null, o, null, d, null, null, null, null),
+                CapaSourceType.INTERNAL, null))
+                .isInstanceOf(CapaValidationException.class).hasMessageContaining("Criticity");
+        assertThatThrownBy(() -> service.openCase(new CapaDto.OpenCaseRequest(
+                "t", null, CapaType.CORRECTIVE, CapaCriticity.LOW, null, null, null, null, d, null, null, null, null),
+                CapaSourceType.INTERNAL, null))
+                .isInstanceOf(CapaValidationException.class).hasMessageContaining("entrusted");
+        assertThatThrownBy(() -> service.openCase(new CapaDto.OpenCaseRequest(
+                "t", null, CapaType.CORRECTIVE, CapaCriticity.LOW, null, null, o, null, null, null, null, null, null),
+                CapaSourceType.INTERNAL, null))
+                .isInstanceOf(CapaValidationException.class).hasMessageContaining("due date");
+        assertThatThrownBy(() -> service.openCase(openReq(CapaType.CORRECTIVE, d, null), null, null))
+                .isInstanceOf(CapaValidationException.class).hasMessageContaining("source");
+        assertThatThrownBy(() -> service.openCase(new CapaDto.OpenCaseRequest(
+                "   ", null, CapaType.CORRECTIVE, CapaCriticity.LOW, null, null, o, null, d, null, null, null, null),
+                CapaSourceType.INTERNAL, null))
+                .isInstanceOf(CapaValidationException.class).hasMessageContaining("blank");
+        assertThatThrownBy(() -> service.openCase(openReq(CapaType.CORRECTIVE, d, "x".repeat(256)),
+                CapaSourceType.INTERNAL, null))
+                .isInstanceOf(CapaValidationException.class).hasMessageContaining("Assignee name");
+        verifyNoInteractions(caseRepo);
+    }
+
+    @Test
+    void openCase_sansTenant_estRefuse() {
+        TenantContext.clear();
+        assertThatThrownBy(() -> service.openCase(openReq(CapaType.CORRECTIVE, LocalDate.now(), null),
+                CapaSourceType.INTERNAL, null))
+                .isInstanceOf(MissingTenantContextException.class);
+        verifyNoInteractions(caseRepo);
+    }
+
+    // --- openCase : la décision de vérification part avec l'ouverture (ADR 0073, 0088) ---
+
+    @Test
+    void openCase_verificationExigee_estPoseeAvecSonVerificateurEtSesConsignes() {
+        UUID verificateur = UUID.randomUUID();
+        when(caseRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        CapaDto.CaseResponse r = service.openCase(openReqVerif(true, verificateur,
+                        "  Claire Contrôle  ", "  Relever 20 pièces  "),
+                CapaSourceType.NON_CONFORMITY, "NC-2026-0001");
+
+        assertThat(r.verificationRequired()).isTrue();
+        assertThat(r.verificationAssigneeId()).isEqualTo(verificateur);
+        assertThat(r.verificationAssigneeName()).isEqualTo("Claire Contrôle");
+        assertThat(r.verificationInstructions()).isEqualTo("Relever 20 pièces");
+    }
+
+    @Test
+    void openCase_verificationNonExigee_estUneDecisionQuiSeLit() {
+        when(caseRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        CapaDto.CaseResponse r = service.openCase(openReqVerif(false, null, null, null),
+                CapaSourceType.AUDIT, "AUD-2026-0003 / constat 2");
+
+        // FALSE n'est pas null : le dossier a été jugé non vérifiable, délibérément.
+        assertThat(r.verificationRequired()).isFalse();
+        assertThat(r.verificationAssigneeId()).isNull();
+        assertThat(r.verificationInstructions()).isNull();
+    }
+
+    @Test
+    void openCase_sansDecision_laisseLaQuestionOuverte() {
+        when(caseRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        CapaDto.CaseResponse r = service.openCase(openReq(CapaType.CORRECTIVE, LocalDate.now(), null),
+                CapaSourceType.INTERNAL, null);
+
+        assertThat(r.verificationRequired()).isNull();
+    }
+
+    @Test
+    void openCase_exigerSansDesigner_estRefuse_sansRienEcrire() {
+        assertThatThrownBy(() -> service.openCase(openReqVerif(true, null, null, "Relever"),
+                CapaSourceType.NON_CONFORMITY, "NC-2026-0001"))
+                .isInstanceOf(CapaValidationException.class)
+                .hasMessageContaining("assigned");
+        verifyNoInteractions(caseRepo);
+        verifyNoInteractions(journal);
+    }
+
+    @Test
+    void openCase_designerSansExiger_estRefuse() {
+        assertThatThrownBy(() -> service.openCase(openReqVerif(null, UUID.randomUUID(), "X", null),
+                CapaSourceType.INTERNAL, null))
+                .isInstanceOf(CapaValidationException.class)
+                .hasMessageContaining("verificationRequired=true");
+        assertThatThrownBy(() -> service.openCase(openReqVerif(null, null, null, "Relever"),
+                CapaSourceType.INTERNAL, null))
+                .isInstanceOf(CapaValidationException.class);
+        verifyNoInteractions(caseRepo);
+    }
+
+    private static CapaDto.OpenCaseRequest openReqVerif(Boolean exigee, UUID qui, String nom, String consignes) {
+        return new CapaDto.OpenCaseRequest("Recalibrer", null, CapaType.CORRECTIVE, CapaCriticity.MEDIUM,
+                null, null, OWNER, "Pilote", LocalDate.now().plusDays(5), exigee, qui, nom, consignes);
+    }
+
+    private static CapaDto.OpenCaseRequest openReq(CapaType type, LocalDate due, String ownerName) {
+        return new CapaDto.OpenCaseRequest("Recalibrer", null, type, CapaCriticity.MEDIUM,
+                null, null, OWNER, ownerName, due, null, null, null, null);
+    }
+
+    @Test
+    void addAction_dossierSansAction_recoitLaSienne() {
         CapaCase c = capa(TENANT, CapaStatus.OPEN);
         c.setSourceType(CapaSourceType.RISK);
         when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));

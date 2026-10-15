@@ -13,6 +13,8 @@ import {
   EquipmentDetail, EquipmentResponse, EquipmentSummary, MsaResponse, PlanResponse, RecordResponse
 } from '../../calibration.types';
 import { CalibrationDetailComponent } from './calibration-detail.component';
+import { provideDirectoryStub } from '../../../../core/directory/testing/directory.stub';
+import { PersonNameModule } from '../../../../shared/person-name/person-name.module';
 
 describe('CalibrationDetailComponent', () => {
   let fixture: ComponentFixture<CalibrationDetailComponent>;
@@ -92,8 +94,8 @@ describe('CalibrationDetailComponent', () => {
 
     await TestBed.configureTestingModule({
       declarations: [CalibrationDetailComponent],
-      imports: [SharedModule, UiModule, NoopAnimationsModule],
-      providers: [
+      imports: [PersonNameModule, SharedModule, UiModule, NoopAnimationsModule],
+      providers: [provideDirectoryStub(),
         { provide: CalibrationService, useValue: svc },
         { provide: MatDialog, useValue: { open: () => ({ afterClosed: () => of(dialogResult) }) } },
         { provide: MatSnackBar, useValue: jasmine.createSpyObj<MatSnackBar>('MatSnackBar', ['open']) },

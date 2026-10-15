@@ -26,7 +26,7 @@ export class DmaicEditDialogComponent {
     title: [this.data.project.title, [Validators.required, Validators.maxLength(255)]],
     problemStatement: [this.data.project.problemStatement ?? ''],
     goalStatement:    [this.data.project.goalStatement ?? ''],
-    championId:       [this.data.project.championId ?? ''],
+    championId:       [this.data.project.championId ?? null],
     targetCompletionDate: [this.data.project.targetCompletionDate ?? ''],
     specLowerLimit: [this.data.project.specLowerLimit ?? null as number | null],
     specUpperLimit: [this.data.project.specUpperLimit ?? null as number | null],

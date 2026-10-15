@@ -7,6 +7,7 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../../shared/shared.module';
 import { UiModule } from '../../shared/ui/ui.module';
+import { UserPickerModule } from '../../shared/user-picker/user-picker.module';
 import { CoqEntryDialogComponent } from './pages/coq-entry-dialog/coq-entry-dialog.component';
 import { CoqReportComponent } from './pages/coq-report/coq-report.component';
 
@@ -20,7 +21,7 @@ const routes: Routes = [
   // ici seulement, comme dans le module APQP, pour que le coût ne pèse que sur
   // l'écran qui s'en sert.
   imports: [
-    SharedModule, UiModule,
+    SharedModule, UiModule, UserPickerModule,
     MatAutocompleteModule, MatButtonToggleModule, MatDatepickerModule, MatNativeDateModule,
     RouterModule.forChild(routes)
   ]

@@ -15,6 +15,8 @@ import { DocumentsService } from '../../documents.service';
 import { DocumentResponse, DocumentVersionResponse } from '../../documents.types';
 import { DocumentsRejectDialogComponent } from '../documents-reject-dialog/documents-reject-dialog.component';
 import { DocumentsDetailComponent } from './documents-detail.component';
+import { provideDirectoryStub } from '../../../../core/directory/testing/directory.stub';
+import { PersonNameModule } from '../../../../shared/person-name/person-name.module';
 
 describe('DocumentsDetailComponent — revue et circuit', () => {
 
@@ -53,8 +55,8 @@ describe('DocumentsDetailComponent — revue et circuit', () => {
 
     await TestBed.configureTestingModule({
       declarations: [DocumentsDetailComponent, DocumentCircuitComponent],
-      imports: [SharedModule, UiModule, NoopAnimationsModule],
-      providers: [
+      imports: [PersonNameModule, SharedModule, UiModule, NoopAnimationsModule],
+      providers: [provideDirectoryStub(),
         provideRouter([]),
         { provide: ActivatedRoute, useValue: { paramMap: of(convertToParamMap({ id: 'doc-1' })) } },
         { provide: DocumentsService, useValue: svc },

@@ -53,7 +53,7 @@
       <mat-card-content>
         <table class="kv">
           <tr><th i18n="@@retention.detail.iso-period">Période ISO-8601</th><td><code>{{ r.retentionPeriod }}</code></td></tr>
-          <tr><th i18n="@@retention.detail.created-by">Créée par</th><td><code>{{ r.createdByUserId }}</code></td></tr>
+          <tr><th i18n="@@retention.detail.created-by">Créée par</th><td><qos-person-name [accountId]="r.createdByUserId"></qos-person-name></td></tr>
           <tr><th i18n="@@retention.detail.created-on">Créée le</th><td>{{ r.createdAt }}</td></tr>
           <tr><th i18n="@@common.last-updated">Dernière MAJ</th><td>{{ r.updatedAt }}</td></tr>
         </table>

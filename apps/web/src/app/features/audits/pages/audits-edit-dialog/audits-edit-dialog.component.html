@@ -33,6 +33,13 @@
     </mat-form-field>
   </div>
 
+  <qos-user-picker class="full" formControlName="leadAuditorId" required
+                   data-test="auditeur-responsable"
+                   i18n-label="@@audits.lead-auditor" label="Auditeur responsable"
+                   i18n-hint="@@audits.lead-auditor.hint-edit"
+                   hint="Celui ou celle qui conduit l'audit et signe le rapport."
+                   (userSelected)="onLeadAuditor($event)"></qos-user-picker>
+
   <mat-form-field appearance="outline" class="full">
     <mat-label i18n="@@audits.edit.scheduled-date">Date prévue</mat-label>
     <input matInput formControlName="scheduledDate" type="date">

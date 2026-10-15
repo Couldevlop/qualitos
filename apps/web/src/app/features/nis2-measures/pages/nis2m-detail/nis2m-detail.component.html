@@ -67,7 +67,7 @@
         <mat-card-content>
           <table class="kv">
             <tr><th i18n="@@nis2-measures.detail.owner">Propriétaire</th>
-                <td><code *ngIf="m.ownerUserId; else noOwner">{{ m.ownerUserId }}</code>
+                <td><qos-person-name *ngIf="m.ownerUserId; else noOwner" [accountId]="m.ownerUserId"></qos-person-name>
                     <ng-template #noOwner><span class="dim" i18n="@@nis2-measures.detail.unassigned">Non attribué</span></ng-template></td></tr>
             <tr><th i18n="@@nis2-measures.detail.maturity">Maturité</th><td>{{ m.maturityLevel }}/5</td></tr>
             <tr><th i18n="@@nis2-measures.detail.review-every">Revue tous les</th><td>{{ m.reviewIntervalDays }} <span i18n="@@nis2-measures.detail.days">jours</span></td></tr>
@@ -132,7 +132,7 @@
         <mat-card-header><mat-card-title i18n="@@nis2-measures.detail.trace">Trace</mat-card-title></mat-card-header>
         <mat-card-content>
           <table class="kv">
-            <tr><th i18n="@@nis2-measures.detail.created-by">Créé par</th><td><code>{{ m.createdByUserId }}</code></td></tr>
+            <tr><th i18n="@@nis2-measures.detail.created-by">Créé par</th><td><qos-person-name [accountId]="m.createdByUserId"></qos-person-name></td></tr>
             <tr><th i18n="@@common.created-at">Créé le</th><td>{{ m.createdAt }}</td></tr>
             <tr><th i18n="@@common.last-updated">Dernière MAJ</th><td>{{ m.updatedAt }}</td></tr>
           </table>

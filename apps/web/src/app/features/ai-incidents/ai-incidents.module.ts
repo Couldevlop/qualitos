@@ -8,6 +8,7 @@ import { IncDetailComponent } from './pages/inc-detail/inc-detail.component';
 import { IncDetectDialogComponent } from './pages/inc-detect-dialog/inc-detect-dialog.component';
 import { IncListComponent } from './pages/inc-list/inc-list.component';
 import { IncNotifyDialogComponent } from './pages/inc-notify-dialog/inc-notify-dialog.component';
+import { PersonNameModule } from '../../shared/person-name/person-name.module';
 
 const routes: Routes = [
   { path: '', component: IncListComponent },
@@ -22,6 +23,6 @@ const routes: Routes = [
     IncNotifyDialogComponent,
     IncCloseDialogComponent
   ],
-  imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
+  imports: [PersonNameModule, SharedModule, UiModule, RouterModule.forChild(routes)]
 })
 export class AiIncidentsModule {}

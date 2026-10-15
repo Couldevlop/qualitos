@@ -59,3 +59,25 @@ mat-checkbox.full {
   font-size: var(--qos-fs-xs);
   color: var(--qos-fg-tertiary);
 }
+
+// Le responsable, choisi dans l'annuaire (ADR 0092).
+.responsable {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: var(--qos-space-3);
+
+  qos-user-picker {
+    display: block;
+    width: 100%;
+  }
+
+  &__ancien {
+    margin: 0;
+    font-size: var(--qos-fs-sm);
+    color: var(--qos-fg-secondary);
+  }
+
+  mat-error {
+    font-size: var(--qos-fs-sm);
+  }
+}

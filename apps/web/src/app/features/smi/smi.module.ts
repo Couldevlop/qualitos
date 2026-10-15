@@ -6,13 +6,15 @@ import { RouterModule, Routes } from '@angular/router';
 import { SharedModule } from '../../shared/shared.module';
 import { UiModule } from '../../shared/ui/ui.module';
 import { RiskRegisterSharedModule } from '../risk-register/risk-register-shared.module';
+import { AddStandardDialogComponent } from './pages/add-standard-dialog/add-standard-dialog.component';
 import { RequirementsMatrixComponent } from './pages/requirements-matrix/requirements-matrix.component';
 import { RiskCellComponent } from './pages/risk-cell/risk-cell.component';
 import { SmiDashboardComponent } from './pages/smi-dashboard/smi-dashboard.component';
 
 /**
  * Le tableau de bord du système de management intégré : la page d'accueil,
- * la liste des risques d'une case de la matrice, et la matrice des exigences.
+ * la liste des risques d'une case de la matrice, la matrice des exigences, et
+ * la fenêtre qui ajoute une norme au SMI (administrateur du client).
  */
 const routes: Routes = [
   { path: '', component: SmiDashboardComponent },
@@ -21,7 +23,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [SmiDashboardComponent, RiskCellComponent, RequirementsMatrixComponent],
+  declarations: [SmiDashboardComponent, RiskCellComponent, RequirementsMatrixComponent, AddStandardDialogComponent],
   imports: [
     SharedModule, UiModule, FormsModule, MatButtonToggleModule,
     // La fenêtre « Créer une action CAPA » du registre, ouverte depuis le détail d'une case.

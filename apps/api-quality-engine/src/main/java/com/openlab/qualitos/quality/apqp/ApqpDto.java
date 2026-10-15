@@ -103,7 +103,8 @@ public final class ApqpDto {
             String comment,
             ApqpLinkedKind linkedKind,
             UUID linkedId,
-            int evidenceCount) {}
+            int evidenceCount,
+            UUID ownerUserId) {}
 
     /**
      * Le cycle d'un projet, et l'état de son dossier PPAP.
@@ -176,7 +177,17 @@ public final class ApqpDto {
             @Min(0) @Max(100) Integer percentComplete,
             @Size(max = 2000) String comment,
             ApqpLinkedKind linkedKind,
-            UUID linkedId) {}
+            UUID linkedId,
+            UUID ownerUserId) {
+
+        /** Sans compte de responsable : un nom seul, ou personne. */
+        public CompletionRequest(boolean done, String expectedArtifact, Boolean ppap, String owner,
+                                 LocalDate dueDate, ApqpDeliverableStatus status, Integer percentComplete,
+                                 String comment, ApqpLinkedKind linkedKind, UUID linkedId) {
+            this(done, expectedArtifact, ppap, owner, dueDate, status, percentComplete, comment, linkedKind,
+                    linkedId, null);
+        }
+    }
 
     /**
      * Réorganisation du cycle : la liste des identifiants dans leur nouvel

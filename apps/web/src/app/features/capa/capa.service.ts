@@ -1,6 +1,6 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { delay } from 'rxjs/operators';
 
 import { environment } from '../../../environments/environment';
@@ -12,8 +12,7 @@ import {
   CapaPage,
   CapaStatus,
   CreateCapaActionRequest,
-  CreateCapaCaseRequest,
-  SuggestedAction,
+  OpenCapaRequest,
   UpdateCapaActionRequest,
   UpdateCapaCaseRequest,
   CapaEffectivenessSummary
@@ -64,29 +63,62 @@ export class CapaService {
     return this.http.get<CapaCaseResponse>(`${this.endpoint}/${id}`);
   }
 
-  createCase(input: CreateCapaCaseRequest): Observable<CapaCaseResponse> {
+  /**
+   * Ouvre un dossier ET son action unique, en une seule écriture (ADR 0088).
+   *
+   * Création libre depuis la liste : la source est celle choisie, jamais
+   * `RISK` (le serveur la refuse — seul le registre la pose). Depuis une NC, un
+   * constat ou un risque, l'écran d'origine passe par sa propre route.
+   */
+  openCase(input: OpenCapaRequest): Observable<CapaCaseResponse> {
     if (environment.useMockApi) {
-      const now = new Date().toISOString();
-      const c: CapaCaseResponse = {
-        id: 'capa-' + (this.mockStore.length + 1) + '-' + Math.random().toString(36).slice(2, 7),
-        tenantId: 'demo-tenant',
-        title: input.title,
-        description: input.description,
-        type: input.type,
-        criticity: input.criticity,
-        status: 'OPEN',
-        sourceType: input.sourceType,
-        sourceRef: input.sourceRef,
-        ownerId: input.ownerId,
-        dueDate: input.dueDate,
-        createdAt: now,
-        updatedAt: now,
-        actions: []
-      };
-      this.mockStore.unshift(c);
-      return of(c).pipe(delay(200));
+      return of(this.mockOpen(input, input.sourceType ?? 'INTERNAL', input.sourceRef)).pipe(delay(200));
     }
-    return this.http.post<CapaCaseResponse>(this.endpoint, input);
+    return this.http.post<CapaCaseResponse>(`${this.endpoint}/open`, input);
+  }
+
+  /**
+   * Le dossier tel que le serveur l'ouvre, pour le mode démonstration — et
+   * pour les écrans d'origine (NC, audit) qui le simulent : même action unique,
+   * même pilote, de sorte que la démonstration dise ce que dira la production.
+   */
+  mockOpen(input: OpenCapaRequest, sourceType: CapaCaseResponse['sourceType'], sourceRef?: string): CapaCaseResponse {
+    const now = new Date().toISOString();
+    const id = 'capa-' + (this.mockStore.length + 1) + '-' + Math.random().toString(36).slice(2, 7);
+    const c: CapaCaseResponse = {
+      id,
+      tenantId: 'demo-tenant',
+      title: input.title,
+      description: input.description,
+      type: input.type,
+      criticity: input.criticity,
+      status: 'OPEN',
+      sourceType,
+      sourceRef,
+      ownerId: input.ownerId,
+      ownerName: input.ownerName,
+      dueDate: input.dueDate,
+      // La décision de vérification part avec l'ouverture, comme côté serveur.
+      verificationRequired: input.verificationRequired,
+      verificationAssigneeId: input.verificationRequired ? input.verificationAssigneeId : undefined,
+      verificationAssigneeName: input.verificationRequired ? input.verificationAssigneeName : undefined,
+      verificationInstructions: input.verificationRequired ? input.verificationInstructions : undefined,
+      createdAt: now,
+      updatedAt: now,
+      actions: [{
+        id: 'act-' + Math.random().toString(36).slice(2, 9),
+        capaId: id,
+        title: input.title,
+        status: 'PENDING',
+        actionType: input.type,
+        assigneeId: input.ownerId,
+        assigneeName: input.ownerName,
+        decidedOn: now.slice(0, 10),
+        dueDate: input.dueDate
+      }]
+    };
+    this.mockStore.unshift(c);
+    return c;
   }
 
   updateCase(id: string, input: UpdateCapaCaseRequest): Observable<CapaCaseResponse> {
@@ -136,9 +168,20 @@ export class CapaService {
     return this.http.delete<void>(`${this.endpoint}/${id}`);
   }
 
+  /**
+   * Définit l'action unique d'un dossier qui n'en a pas encore — ancien, ou
+   * ouvert par un automate (ADR 0088). Le serveur refuse une seconde action
+   * (409) ; le responsable désigné devient le pilote du dossier.
+   */
   addAction(caseId: string, input: CreateCapaActionRequest): Observable<CapaActionResponse> {
     if (environment.useMockApi) {
       const c = this.mockStore.find(x => x.id === caseId);
+      if (c && c.actions.length > 0) {
+        return throwError(() => new HttpErrorResponse({
+          status: 409, statusText: 'Conflict',
+          error: { title: 'Invalid CAPA State', detail: 'A CAPA carries a single action' }
+        }));
+      }
       const action: CapaActionResponse = {
         id: 'act-' + Math.random().toString(36).slice(2, 9),
         capaId: caseId,
@@ -156,6 +199,10 @@ export class CapaService {
       };
       if (c) {
         c.actions = [...c.actions, action];
+        if (input.assigneeId) {
+          c.ownerId = input.assigneeId;
+          c.ownerName = input.assigneeName;
+        }
         c.updatedAt = new Date().toISOString();
       }
       return of(action).pipe(delay(120));
@@ -191,19 +238,6 @@ export class CapaService {
       }).pipe(delay(120));
     }
     return this.http.patch<CapaActionResponse>(`${this.endpoint}/${caseId}/actions/${actionId}`, input);
-  }
-
-  /** Suggestions d'actions correctives/préventives par l'IA (via api-quality-engine → ai-service). §4.2 */
-  suggestActions(caseId: string): Observable<SuggestedAction[]> {
-    if (environment.useMockApi) {
-      return of(<SuggestedAction[]>[
-        { title: 'Auditer le fournisseur sur site et revoir le PPAP' },
-        { title: 'Renforcer le plan de contrôle réception (échantillonnage 100%)' },
-        { title: 'Mettre à jour la fiche de non-conformité et informer les parties prenantes' },
-        { title: 'Former les opérateurs au nouveau critère de contrôle' }
-      ]).pipe(delay(500));
-    }
-    return this.http.post<SuggestedAction[]>(`${this.endpoint}/${caseId}/suggest-actions`, {});
   }
 
   verifyEffectiveness(id: string, effective: boolean): Observable<CapaCaseResponse> {
@@ -390,7 +424,7 @@ export class CapaService {
         description: 'Suite NC répétée sur ligne 3.',
         type: 'CORRECTIVE', criticity: 'HIGH', status: 'IN_PROGRESS',
         sourceType: 'NON_CONFORMITY', sourceRef: 'NC-2026-018',
-        ownerId: 'demo-user', dueDate: '2026-05-30',
+        ownerId: 'demo-user', ownerName: 'Demo User', dueDate: '2026-05-30',
         // L'écart d'origine et le plan d'actions sont garnis : un dossier de
         // démonstration sans action ne montrait jamais le tableau, donc jamais
         // ce qu'il sait faire. Les dates de décision précèdent délibérément les

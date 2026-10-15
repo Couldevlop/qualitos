@@ -30,7 +30,9 @@ const PERMISSIONS: Record<string, string> = {
   'document.acknowledge': $localize`:@@authz.perm.document-acknowledge:Acquitter une lecture`,
   'risk.view.all': $localize`:@@authz.perm.risk-view-all:Voir tout le registre (sinon : ce qu'il a inscrit)`,
   'risk.manage': $localize`:@@authz.perm.risk-manage:Tenir le registre des risques`,
-  'opportunity.manage': $localize`:@@authz.perm.opportunity-manage:Tenir le registre des opportunités`
+  'opportunity.manage': $localize`:@@authz.perm.opportunity-manage:Tenir le registre des opportunités`,
+  'change.request': $localize`:@@authz.perm.change-request:Demander un changement et conduire ses demandes`,
+  'change.analyze': $localize`:@@authz.perm.change-analyze:Gérer toutes les demandes de changement`
 };
 
 const MODULES: Record<string, string> = {
@@ -38,7 +40,8 @@ const MODULES: Record<string, string> = {
   capa: $localize`:@@authz.module.capa:CAPA`,
   nc: $localize`:@@authz.module.nc:Non-conformités`,
   document: $localize`:@@authz.module.document:Documents`,
-  risk: $localize`:@@authz.module.risk:Risques et opportunités`
+  risk: $localize`:@@authz.module.risk:Risques et opportunités`,
+  change: $localize`:@@authz.module.change:Gestion des changements`
 };
 
 const SYSTEM_ROLES: Record<string, string> = {

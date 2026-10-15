@@ -5,6 +5,7 @@ import { AcademyRoutingModule } from './academy-routing.module';
 import { AcademyHomeComponent } from './presentation/academy-home/academy-home.component';
 import { CoursePlayerComponent } from './presentation/course-player/course-player.component';
 import { CertificateViewComponent } from './presentation/certificate-view/certificate-view.component';
+import { PersonNameModule } from '../../shared/person-name/person-name.module';
 
 /**
  * Module Academy (LMS-light + gamification, §19.3). Lazy-loaded sur la route
@@ -16,6 +17,6 @@ import { CertificateViewComponent } from './presentation/certificate-view/certif
     CoursePlayerComponent,
     CertificateViewComponent
   ],
-  imports: [SharedModule, AcademyRoutingModule]
+  imports: [PersonNameModule, SharedModule, AcademyRoutingModule]
 })
 export class AcademyModule {}

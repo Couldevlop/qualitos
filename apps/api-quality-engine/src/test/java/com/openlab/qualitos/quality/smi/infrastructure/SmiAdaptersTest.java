@@ -28,6 +28,9 @@ import com.openlab.qualitos.quality.riskregister.domain.RiskStatus;
 import com.openlab.qualitos.quality.smi.application.SmiPorts;
 import com.openlab.qualitos.quality.smi.domain.Deadline;
 import com.openlab.qualitos.quality.standards.AdoptionStatus;
+import com.openlab.qualitos.quality.standards.Standard;
+import com.openlab.qualitos.quality.standards.StandardRepository;
+import com.openlab.qualitos.quality.standards.StandardStatus;
 import com.openlab.qualitos.quality.standards.StandardsDto;
 import com.openlab.qualitos.quality.standards.StandardsService;
 import org.junit.jupiter.api.AfterEach;
@@ -126,7 +129,7 @@ class SmiAdaptersTest {
         return new RiskRegisterDto.RiskView(UUID.randomUUID(), ref, "Dérive", RegisterType.QUALITY, "Production",
                 null, "M. Kone", "c", "e", RegisterOrigin.DIRECT, null, null, 4, 3, 12, RiskLevel.HIGH, 4, 2, 8,
                 RiskLevel.MEDIUM, RiskDecision.REDUCE, statut, List.of(RegisterRequirement.ISO_45001_6_1),
-                J.plusDays(3), null, Instant.now(), Instant.now());
+                J.plusDays(3), null, Instant.now(), Instant.now(), null);
     }
 
     @Test
@@ -195,6 +198,66 @@ class SmiAdaptersTest {
         TenantContext.clear();
         assertThatThrownBy(() -> new SmiAdapters.Actions(mock(CapaActionRepository.class)).overdue(J))
                 .isInstanceOf(MissingTenantContextException.class);
+    }
+
+    // ---------- catalogue des normes de système de management ----------
+
+    static Standard norme(String code, boolean certifiable, StandardStatus statut, UUID proprietaire,
+                          String associees) {
+        Standard s = new Standard();
+        s.setId(UUID.randomUUID());
+        s.setCode(code);
+        s.setFullName(code.toUpperCase() + " — Exigences");
+        s.setCurrentVersion("2015");
+        s.setFamily("HLS");
+        s.setCertificationBodyRequired(certifiable);
+        s.setStatus(statut);
+        s.setOwnerTenantId(proprietaire);
+        s.setRelatedNormCodes(associees);
+        return s;
+    }
+
+    @Test
+    void leCatalogueNeGardeQueLesNormesDeSystemeDeManagementCertifiablesDeLaPlateforme() {
+        Standard iso9001 = norme("iso-9001", true, StandardStatus.PUBLISHED, null, "iso-9000, iso-19011");
+        Standard iso14001 = norme("iso-14001", true, StandardStatus.PUBLISHED, null, "iso-9001,iso-45001,,");
+        Standard iso19011 = norme("iso-19011", false, StandardStatus.PUBLISHED, null, "iso-9001");
+        Standard perimee = norme("iso-9999", true, StandardStatus.DEPRECATED, null, null);
+        Standard procedure = norme("proc-maison", true, StandardStatus.PUBLISHED, TENANT, " ");
+        StandardRepository depot = mock(StandardRepository.class);
+        when(depot.findVisibleByFamily(eq("HLS"), eq(TENANT), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of(iso9001, iso14001, iso19011, perimee, procedure)));
+        StandardsService service = mock(StandardsService.class);
+        StandardsDto.AdoptionResponse retiree = new StandardsDto.AdoptionResponse(UUID.randomUUID(), TENANT,
+                iso9001.getId(), "iso-9001", "ISO 9001", AdoptionStatus.WITHDRAWN, null, null, null, null, null,
+                null, Instant.now(), Instant.now());
+        when(service.listAdoptions(isNull(), any(Pageable.class))).thenReturn(new PageImpl<>(List.of(retiree)));
+
+        List<SmiPorts.CatalogStandard> c = new SmiAdapters.Catalog(depot, service).managementSystems();
+
+        assertThat(c).extracting(SmiPorts.CatalogStandard::code).containsExactly("iso-9001", "iso-14001");
+        // Une adoption retirée reste une adoption : le Standards Hub refuserait d'en créer une seconde.
+        assertThat(c.get(0).adopted()).isTrue();
+        assertThat(c.get(0).relatedCodes()).containsExactly("iso-9000", "iso-19011");
+        assertThat(c.get(1).adopted()).isFalse();
+        assertThat(c.get(1).relatedCodes()).containsExactly("iso-9001", "iso-45001");
+        assertThat(c.get(1).name()).isEqualTo("ISO-14001 — Exigences");
+        assertThat(SmiAdapters.Catalog.related(null)).isEmpty();
+    }
+
+    @Test
+    void adopterPasseParLeStandardsHub() {
+        UUID iso14001 = UUID.randomUUID();
+        UUID adoption = UUID.randomUUID();
+        StandardsService service = mock(StandardsService.class);
+        when(service.adopt(new StandardsDto.AdoptRequest(iso14001, null, null, null, null)))
+                .thenReturn(new StandardsDto.AdoptionResponse(adoption, TENANT, iso14001, "iso-14001",
+                        "ISO 14001:2015", AdoptionStatus.PLANNING, null, null, null, null, null, null,
+                        Instant.now(), Instant.now()));
+
+        SmiPorts.AdoptedStandard a = new SmiAdapters.Catalog(mock(StandardRepository.class), service).adopt(iso14001);
+
+        assertThat(a).isEqualTo(new SmiPorts.AdoptedStandard(adoption, "iso-14001", "ISO 14001:2015"));
     }
 
     static CalibrationEquipment equipement(String code, String nom, UUID tenant) {

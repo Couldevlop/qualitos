@@ -8,6 +8,7 @@ import { of, throwError } from 'rxjs';
 
 import { SharedModule } from '../../../../shared/shared.module';
 import { UiModule } from '../../../../shared/ui/ui.module';
+import { DirectoryService } from '../../../../core/directory/directory.service';
 import { CapaService } from '../../capa.service';
 import { CapaCaseResponse, CapaStatus } from '../../capa.types';
 import { CapaDetailComponent } from './capa-detail.component';
@@ -56,7 +57,7 @@ describe('CapaDetailComponent — cycle de vie du dossier', () => {
     capa = jasmine.createSpyObj<CapaService>('CapaService',
       ['getCase', 'listEvidences', 'uploadEvidence', 'deleteEvidence',
        'listActionEvidences', 'uploadActionEvidence', 'deleteActionEvidence',
-       'updateAction', 'addAction', 'deleteCase', 'suggestActions',
+       'updateAction', 'addAction', 'deleteCase',
        'verifyEffectiveness', 'startCase', 'resolveCase', 'rejectCase']);
     capa.listEvidences.and.returnValue(of([]));
     capa.listActionEvidences.and.returnValue(of([]));
@@ -71,6 +72,7 @@ describe('CapaDetailComponent — cycle de vie du dossier', () => {
       imports: [SharedModule, UiModule, NoopAnimationsModule],
       providers: [
         { provide: CapaService, useValue: capa },
+        { provide: DirectoryService, useValue: { getByAccount: () => throwError(() => ({ status: 404 })) } },
         // Tous les droits : ces bancs testent la fiche, pas la matrice (ADR 0078).
         { provide: AuthzService, useValue: { can: () => of(true) } },
         // L'encart d'impact vit dans la fiche : sans ce doublon, il irait
@@ -250,78 +252,6 @@ describe('CapaDetailComponent — cycle de vie du dossier', () => {
     expect(snack.open).toHaveBeenCalled();
   });
 
-  // --- suggestions IA (§12) -------------------------------------------------
-
-  it('affiche les actions suggérées sans rien persister', () => {
-    setup('OPEN');
-    capa.suggestActions.and.returnValue(of([{ title: 'Auditer le fournisseur' }]));
-
-    component.suggestActions();
-
-    expect(component.suggestions.length).toBe(1);
-    expect(component.suggesting).toBeFalse();
-    expect(capa.addAction).not.toHaveBeenCalled();
-  });
-
-  it('dit quand l\'IA ne rend rien d\'exploitable', () => {
-    setup('OPEN');
-    capa.suggestActions.and.returnValue(of([]));
-
-    component.suggestActions();
-
-    expect(snack.open).toHaveBeenCalled();
-  });
-
-  it('annonce l\'indisponibilité du service IA plutôt qu\'un silence', () => {
-    setup('OPEN');
-    capa.suggestActions.and.returnValue(
-      throwError(() => new HttpErrorResponse({ status: 502 })));
-
-    component.suggestActions();
-
-    expect(component.suggesting).toBeFalse();
-    expect(snack.open).toHaveBeenCalled();
-  });
-
-  it('ajoute une suggestion et la retire de la liste', () => {
-    setup('OPEN');
-    const suggestion = { title: 'Auditer le fournisseur' };
-    capa.suggestActions.and.returnValue(of([suggestion]));
-    capa.addAction.and.returnValue(of({
-      id: 'a1', capaId: CASE_ID, title: suggestion.title, status: 'PENDING',
-      actionType: 'CORRECTIVE'
-    }));
-
-    component.suggestActions();
-    component.addSuggestion(component.suggestions[0]);
-
-    expect(capa.addAction).toHaveBeenCalled();
-    expect(component.suggestions.length).toBe(0);
-    expect(component.addingKey).toBeNull();
-  });
-
-  it('garde la suggestion en liste quand son ajout échoue', () => {
-    setup('OPEN');
-    capa.suggestActions.and.returnValue(of([{ title: 'Auditer le fournisseur' }]));
-    capa.addAction.and.returnValue(throwError(() => new HttpErrorResponse({ status: 409 })));
-
-    component.suggestActions();
-    component.addSuggestion(component.suggestions[0]);
-
-    expect(component.suggestions.length).toBe(1);
-    expect(snack.open).toHaveBeenCalled();
-  });
-
-  it('referme le bloc de suggestions à la demande', () => {
-    setup('OPEN');
-    capa.suggestActions.and.returnValue(of([{ title: 'Auditer le fournisseur' }]));
-
-    component.suggestActions();
-    component.dismissSuggestions();
-
-    expect(component.suggestions).toEqual([]);
-  });
-
   // --- dialogues et navigation ---------------------------------------------
 
   it('recharge la fiche après une édition confirmée', () => {
@@ -334,11 +264,11 @@ describe('CapaDetailComponent — cycle de vie du dossier', () => {
     expect(capa.getCase).toHaveBeenCalled();
   });
 
-  it('recharge la fiche après l\'ajout d\'une action', () => {
+  it('recharge la fiche après la définition de l\'action', () => {
     setup('OPEN');
     capa.getCase.calls.reset();
 
-    component.openAddAction();
+    component.openDefineAction(dossier('OPEN'));
 
     expect(dialog.open).toHaveBeenCalled();
     expect(capa.getCase).toHaveBeenCalled();
@@ -349,7 +279,7 @@ describe('CapaDetailComponent — cycle de vie du dossier', () => {
     dialog.open.and.returnValue({ afterClosed: () => of(undefined) } as never);
     capa.getCase.calls.reset();
 
-    component.openAddAction();
+    component.openDefineAction(dossier('OPEN'));
 
     expect(capa.getCase).not.toHaveBeenCalled();
   });

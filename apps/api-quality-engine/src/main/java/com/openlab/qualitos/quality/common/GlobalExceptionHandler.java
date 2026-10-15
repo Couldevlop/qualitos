@@ -1,8 +1,12 @@
 package com.openlab.qualitos.quality.common;
 
 import com.openlab.qualitos.quality.audit.AuditChecklistItemNotFoundException;
+import com.openlab.qualitos.quality.audit.AuditDocumentNotFoundException;
+import com.openlab.qualitos.quality.audit.AuditDocumentTooLargeException;
+import com.openlab.qualitos.quality.audit.AuditDocumentValidationException;
 import com.openlab.qualitos.quality.audit.AuditFindingNotFoundException;
 import com.openlab.qualitos.quality.audit.AuditPlanNotFoundException;
+import com.openlab.qualitos.quality.audit.AuditReportIncompleteException;
 import com.openlab.qualitos.quality.audit.AuditStateException;
 import com.openlab.qualitos.quality.capa.CapaActionNotFoundException;
 import com.openlab.qualitos.quality.capa.CapaEvidenceNotFoundException;
@@ -73,9 +77,8 @@ import com.openlab.qualitos.quality.training.EnrollmentNotFoundException;
 import com.openlab.qualitos.quality.training.SkillNotFoundException;
 import com.openlab.qualitos.quality.training.TrainingPathNotFoundException;
 import com.openlab.qualitos.quality.training.TrainingStateException;
-import com.openlab.qualitos.quality.change.ChangeChildNotFoundException;
 import com.openlab.qualitos.quality.change.ChangeRequestNotFoundException;
-import com.openlab.qualitos.quality.change.ChangeStateException;
+import com.openlab.qualitos.quality.change.domain.MocException;
 import com.openlab.qualitos.quality.complaints.ComplaintNotFoundException;
 import com.openlab.qualitos.quality.complaints.ComplaintResponseNotFoundException;
 import com.openlab.qualitos.quality.complaints.ComplaintStateException;
@@ -858,6 +861,43 @@ public class GlobalExceptionHandler {
         return problem;
     }
 
+    /** 422 : le rapport est incomplet — l'utilisateur sait quoi compléter, rien à recharger. */
+    @ExceptionHandler(AuditReportIncompleteException.class)
+    public ProblemDetail handleAuditReportIncomplete(AuditReportIncompleteException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/audit-report-incomplete"));
+        problem.setTitle("Incomplete Audit Report");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(AuditDocumentNotFoundException.class)
+    public ProblemDetail handleAuditDocumentNotFound(AuditDocumentNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/audit-document-not-found"));
+        problem.setTitle("Audit Document Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(AuditDocumentValidationException.class)
+    public ProblemDetail handleAuditDocumentValidation(AuditDocumentValidationException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/audit-document-invalid"));
+        problem.setTitle("Invalid Audit Document");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(AuditDocumentTooLargeException.class)
+    public ProblemDetail handleAuditDocumentTooLarge(AuditDocumentTooLargeException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.PAYLOAD_TOO_LARGE, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/audit-document-too-large"));
+        problem.setTitle("Audit Document Too Large");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
     @ExceptionHandler(StandardNotFoundException.class)
     public ProblemDetail handleStandardNotFound(StandardNotFoundException ex) {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
@@ -1364,20 +1404,24 @@ public class GlobalExceptionHandler {
         return problem;
     }
 
-    @ExceptionHandler(ChangeChildNotFoundException.class)
-    public ProblemDetail handleChangeChildNotFound(ChangeChildNotFoundException ex) {
-        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
-        problem.setType(URI.create("https://qualitos.io/errors/change-child-not-found"));
-        problem.setTitle("Change Sub-Resource Not Found");
-        problem.setProperty("timestamp", Instant.now());
-        return problem;
-    }
-
-    @ExceptionHandler(ChangeStateException.class)
-    public ProblemDetail handleChangeState(ChangeStateException ex) {
-        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
-        problem.setType(URI.create("https://qualitos.io/errors/change-invalid-state"));
-        problem.setTitle("Invalid Change Request State");
+    /**
+     * Les refus de la gestion des changements (ADR 0087) : le statut suit la
+     * nature du refus, et {@code code} (stable) permet à l'écran de l'expliquer
+     * dans la langue de l'utilisateur sans afficher le message du serveur.
+     */
+    @ExceptionHandler(MocException.class)
+    public ProblemDetail handleMoc(MocException ex) {
+        HttpStatus status = switch (ex.kind()) {
+            case INVALID -> HttpStatus.BAD_REQUEST;
+            case FORBIDDEN -> HttpStatus.FORBIDDEN;
+            case CONFLICT -> HttpStatus.CONFLICT;
+            case NOT_FOUND -> HttpStatus.NOT_FOUND;
+        };
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(status, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/moc"));
+        problem.setTitle("Change Management");
+        problem.setProperty("code", ex.code());
+        ex.details().forEach(problem::setProperty);
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }

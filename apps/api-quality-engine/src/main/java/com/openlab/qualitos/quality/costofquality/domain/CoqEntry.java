@@ -33,6 +33,7 @@ public final class CoqEntry {
     private CoqCategory category;
     private BigDecimal amount;
     private String responsible;
+    private UUID responsibleUserId;
     private LocalDate imputationDate;
     private String comment;
     private boolean partControl;
@@ -65,6 +66,17 @@ public final class CoqEntry {
         this.createdBy = createdBy;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+    }
+
+    /** Reconstitution avec le compte du responsable choisi dans l'annuaire (ADR 0092). */
+    @SuppressWarnings("java:S107") // reconstitution depuis la persistance : un champ par colonne
+    public CoqEntry(UUID id, UUID tenantId, UUID labelId, CoqCategory category, BigDecimal amount,
+                    String responsible, UUID responsibleUserId, LocalDate imputationDate, String comment,
+                    boolean partControl, String partReference, Integer partQuantity, String lot,
+                    LocalDate receivedOrMadeOn, UUID createdBy, Instant createdAt, Instant updatedAt) {
+        this(id, tenantId, labelId, category, amount, responsible, imputationDate, comment, partControl,
+                partReference, partQuantity, lot, receivedOrMadeOn, createdBy, createdAt, updatedAt);
+        this.responsibleUserId = responsibleUserId;
     }
 
     /** Une ligne neuve, validée. */
@@ -122,6 +134,7 @@ public final class CoqEntry {
         this.partControl = label.isPartControl();
         this.amount = montant;
         this.responsible = qui;
+        this.responsibleUserId = d.responsibleUserId();
         this.imputationDate = d.imputationDate();
         this.comment = note;
         this.partReference = reference;
@@ -175,6 +188,7 @@ public final class CoqEntry {
     public CoqCategory getCategory() { return category; }
     public BigDecimal getAmount() { return amount; }
     public String getResponsible() { return responsible; }
+    public UUID getResponsibleUserId() { return responsibleUserId; }
     public LocalDate getImputationDate() { return imputationDate; }
     public String getComment() { return comment; }
     public boolean isPartControl() { return partControl; }

@@ -1,0 +1,48 @@
+<mat-card class="documents-card" data-test="documents">
+  <mat-card-header class="section-header">
+    <mat-card-title i18n="@@audits.documents.title">Documents ({{ documents.length }})</mat-card-title>
+    <input #fichier type="file" hidden [accept]="accept" (change)="choose(fichier)"
+           data-test="saisie-fichier">
+    <button mat-flat-button color="primary" type="button" data-test="ajouter-document"
+            (click)="fichier.click()" [disabled]="!!lockReason || uploading"
+            [attr.aria-describedby]="lockReason ? 'audit-documents-lock' : null">
+      <mat-progress-spinner *ngIf="uploading; else addIcon" mode="indeterminate" diameter="16"></mat-progress-spinner>
+      <ng-template #addIcon><mat-icon aria-hidden="true">attach_file</mat-icon></ng-template>
+      <span i18n="@@audits.documents.add">Ajouter un document</span>
+    </button>
+  </mat-card-header>
+
+  <mat-card-content>
+    <p class="lock" id="audit-documents-lock" *ngIf="lockReason" data-test="verrou-documents">
+      <mat-icon aria-hidden="true">lock</mat-icon> {{ lockReason }}
+    </p>
+
+    <p class="state error" *ngIf="loadError" role="alert">
+      <mat-icon aria-hidden="true">error_outline</mat-icon> {{ loadError }}
+    </p>
+
+    <ul class="docs" *ngIf="documents.length > 0">
+      <li *ngFor="let d of documents; trackBy: trackById" data-test="document">
+        <mat-icon class="docs__icon" aria-hidden="true">{{ icon(d) }}</mat-icon>
+        <!-- Le nom est un lien : l'URL est présignée et courte, elle ne vit pas en base. -->
+        <a class="docs__name" [href]="d.url" target="_blank" rel="noopener noreferrer"
+           data-test="telecharger">
+          {{ d.originalFilename || '—' }}
+        </a>
+        <span class="docs__meta">{{ size(d.sizeBytes) }} · {{ d.createdAt | date:'short' }}</span>
+        <button mat-icon-button type="button" *ngIf="canRemove" data-test="retirer"
+                [attr.aria-label]="removeAria(d)" (click)="remove(d)"
+                i18n-matTooltip="@@audits.documents.delete-tooltip" matTooltip="Retirer le document">
+          <mat-icon>delete_outline</mat-icon>
+        </button>
+      </li>
+    </ul>
+
+    <p class="empty" *ngIf="!loading && !loadError && documents.length === 0" i18n="@@audits.documents.empty">
+      Aucun document. Joignez la convocation, le plan d'audit, des photos ou des relevés.
+    </p>
+    <p class="hint" i18n="@@audits.documents.limits">
+      PDF, image, Word, Excel ou PowerPoint — 10 Mo par fichier, 20 documents par audit.
+    </p>
+  </mat-card-content>
+</mat-card>

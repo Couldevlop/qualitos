@@ -225,6 +225,21 @@ class CostOfQualityServiceTest {
     // ---------- écriture ----------
 
     @Test
+    void leResponsableChoisiDansLAnnuaireGardeSonCompteEtSonNom() {
+        UUID compte = UUID.randomUUID();
+        CoqDto.LineView ligne = service.record(new CoqDto.EntryCommand(FORMATION.getId(), BigDecimal.TEN,
+                " Awa Diallo ", LocalDate.of(2026, 9, 1), null, null, null, null, null, compte));
+
+        assertThat(ligne.responsibleUserId()).isEqualTo(compte);
+        assertThat(ligne.responsible()).isEqualTo("Awa Diallo");
+
+        // Une correction en nom seul (saisie antérieure) retire le compte : le corps fait foi.
+        CoqDto.LineView corrigee = service.revise(ligne.entryId(), simple(FORMATION, "10", LocalDate.of(2026, 9, 1)));
+        assertThat(corrigee.responsibleUserId()).isNull();
+        assertThat(corrigee.responsible()).isEqualTo("M. Alaoui");
+    }
+
+    @Test
     void saisirCorrigerEtSupprimerLaissentChacunUneTrace() {
         CoqDto.LineView ligne = service.record(simple(FORMATION, "10", LocalDate.of(2026, 9, 1)));
         service.revise(ligne.entryId(), simple(FORMATION, "20", LocalDate.of(2026, 9, 2)));
@@ -314,7 +329,8 @@ class CostOfQualityServiceTest {
         public CoqEntry save(CoqEntry e) {
             UUID id = e.getId() == null ? UUID.randomUUID() : e.getId();
             CoqEntry copie = new CoqEntry(id, e.getTenantId(), e.getLabelId(), e.getCategory(), e.getAmount(),
-                    e.getResponsible(), e.getImputationDate(), e.getComment(), e.isPartControl(),
+                    e.getResponsible(), e.getResponsibleUserId(), e.getImputationDate(), e.getComment(),
+                    e.isPartControl(),
                     e.getPartReference(), e.getPartQuantity(), e.getLot(), e.getReceivedOrMadeOn(),
                     e.getCreatedBy(), e.getCreatedAt(), e.getUpdatedAt());
             store.put(id, copie);

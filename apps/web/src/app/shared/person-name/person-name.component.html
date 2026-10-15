@@ -1,0 +1,5 @@
+<span class="qos-person"
+      data-test="person-name"
+      [class.qos-person--muted]="state !== 'named'"
+      [attr.title]="email"
+      [attr.aria-busy]="state === 'resolving' ? true : null">{{ label }}</span>

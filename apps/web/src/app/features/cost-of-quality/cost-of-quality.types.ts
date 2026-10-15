@@ -20,7 +20,10 @@ export interface CoqLine {
   partControl: boolean;
   amount: number;
   entryCount: number;
+  /** Le nom du responsable, recopié de l'annuaire (ou tapé, sur une ligne ancienne). */
   responsible: string | null;
+  /** Son compte de connexion (ADR 0092) ; absent sur une ligne d'avant l'annuaire. */
+  responsibleUserId?: string | null;
   imputationDate: string | null;
   comment: string | null;
   partReference: string | null;
@@ -67,6 +70,7 @@ export interface CoqEntryRequest {
   labelId: string;
   amount: number;
   responsible: string;
+  responsibleUserId?: string;
   imputationDate: string;
   comment?: string;
   partReference?: string;

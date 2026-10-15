@@ -3,6 +3,7 @@ package com.openlab.qualitos.quality.riskregister.web;
 import com.openlab.qualitos.quality.authz.domain.Permission;
 import com.openlab.qualitos.quality.authz.web.RequiresPermission;
 import com.openlab.qualitos.quality.config.RequiresModule;
+import com.openlab.qualitos.quality.riskregister.application.RiskCapaGateway;
 import com.openlab.qualitos.quality.riskregister.application.RiskRegisterDto;
 import com.openlab.qualitos.quality.riskregister.application.RiskRegisterService;
 import com.openlab.qualitos.quality.riskregister.domain.RegisterOrigin;
@@ -94,7 +95,9 @@ public class RiskRegisterController {
     public RiskRegisterDto.CapaView openCapa(@PathVariable UUID id,
                                              @Valid @RequestBody RiskRegisterWebDto.CapaRequest r) {
         return service.openCapa(id, new RiskRegisterDto.CapaCommand(r.title(), r.description(), r.kind(),
-                r.assignee(), r.dueDate()));
+                r.ownerId(), r.ownerName(), r.dueDate(), new RiskCapaGateway.Verification(
+                        r.verificationRequired(), r.verificationAssigneeId(), r.verificationAssigneeName(),
+                        r.verificationInstructions())));
     }
 
     /**
@@ -187,13 +190,14 @@ public class RiskRegisterController {
                 r.cause(), r.effect(), r.origin(), r.originRef(), r.sourceId(), r.grossSeverity(),
                 r.grossProbability(),
                 r.residualSeverity(), r.residualProbability(), r.decision(), r.status(), r.requirements(),
-                r.nextReviewOn(), r.effectivenessCriterion());
+                r.nextReviewOn(), r.effectivenessCriterion(), r.ownerUserId());
     }
 
     private static RiskRegisterDto.OpportunityCommand commande(RiskRegisterWebDto.OpportunityRequest r) {
         return new RiskRegisterDto.OpportunityCommand(r.title(), r.type(), r.process(), r.site(), r.owner(),
                 r.targetDate(), r.context(), r.benefit(), r.origin(), r.originRef(), r.gain(),
-                r.feasibility(), r.decision(), r.status(), r.requirements(), r.benefitCriterion());
+                r.feasibility(), r.decision(), r.status(), r.requirements(), r.benefitCriterion(),
+                r.ownerUserId());
     }
 
     private static RiskRegisterDto.ActionCommand commande(RiskRegisterWebDto.ActionRequest r) {

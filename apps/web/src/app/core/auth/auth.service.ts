@@ -53,7 +53,7 @@ export class AuthService {
    * reste le serveur — cette méthode ne sert qu'à ne pas afficher un bouton qui
    * répondra 403.
    */
-  hasAnyRole(roles: string[]): boolean {
+  hasAnyRole(roles: readonly string[]): boolean {
     const held = (this.snapshot()?.roles ?? []).map(role => role.toUpperCase());
     return roles.some(role => held.includes(role.toUpperCase()));
   }

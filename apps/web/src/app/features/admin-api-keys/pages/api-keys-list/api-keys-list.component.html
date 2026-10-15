@@ -174,7 +174,7 @@
         <dd>{{ d.createdAt | date:'medium' }}</dd>
 
         <dt i18n="@@admin.api-keys.detail-created-by">Créée par</dt>
-        <dd><code>{{ d.createdBy }}</code></dd>
+        <dd><qos-person-name [accountId]="d.createdBy"></qos-person-name></dd>
 
         <dt i18n="@@admin.api-keys.detail-expiry">Échéance</dt>
         <dd>
@@ -193,7 +193,7 @@
           <dd>{{ d.revokedAt | date:'medium' }}</dd>
 
           <dt i18n="@@admin.api-keys.detail-revoked-by">Révoquée par</dt>
-          <dd><code>{{ d.revokedBy }}</code></dd>
+          <dd><qos-person-name [accountId]="d.revokedBy"></qos-person-name></dd>
         </ng-container>
       </dl>
 

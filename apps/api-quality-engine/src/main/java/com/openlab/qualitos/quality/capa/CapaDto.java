@@ -26,6 +26,44 @@ public final class CapaDto {
     ) {}
 
     /**
+     * Ouverture d'un dossier ET de son action unique, en une seule écriture
+     * (ADR 0088) — ce que remplit la fenêtre de création, d'où qu'on l'ouvre.
+     *
+     * <p>Une CAPA porte une action : l'intitulé, la nature, le responsable et
+     * l'échéance du dossier SONT ceux de l'action. Le responsable devient le
+     * pilote du dossier ; il est désigné dans l'annuaire du client, d'où son
+     * identifiant et son libellé recopié.
+     *
+     * <p>Ni le tenant ni l'auteur n'y figurent : ils viennent du jeton. La
+     * source non plus quand le dossier s'ouvre depuis une NC, un constat ou un
+     * risque — c'est l'écran d'origine qui la fixe côté serveur ; les deux
+     * champs ne servent qu'à la création libre depuis la liste.
+     *
+     * <p>La décision de vérification d'efficacité (ADR 0073) part avec
+     * l'ouverture : c'est au moment où l'on décide de l'action qu'on décide si
+     * son effet sera vérifié. {@code verificationRequired} est un
+     * {@code Boolean} : {@code null} laisse la question ouverte, comme sur un
+     * dossier ouvert par un automate ; {@code FALSE} la tranche. Les mêmes
+     * gardes que la mise à jour s'appliquent — exiger sans désigner, ou
+     * désigner sans exiger, est refusé.
+     */
+    public record OpenCaseRequest(
+            @NotBlank @Size(max = 255) String title,
+            @Size(max = 4000) String description,
+            @NotNull CapaType type,
+            @NotNull CapaCriticity criticity,
+            CapaSourceType sourceType,
+            @Size(max = 255) String sourceRef,
+            @NotNull UUID ownerId,
+            @Size(max = 255) String ownerName,
+            @NotNull LocalDate dueDate,
+            Boolean verificationRequired,
+            UUID verificationAssigneeId,
+            @Size(max = 255) String verificationAssigneeName,
+            @Size(max = 4000) String verificationInstructions
+    ) {}
+
+    /**
      * Mise à jour PARTIELLE : un champ nul veut dire « ne touche pas ».
      *
      * <p>C'est pourquoi {@code verificationRequired} est un {@code Boolean} et
@@ -80,6 +118,9 @@ public final class CapaDto {
             CapaSourceType sourceType,
             String sourceRef,
             UUID ownerId,
+            // Libellé du pilote recopié de l'annuaire (ADR 0088) ; nul sur les
+            // dossiers antérieurs ou ouverts par un automate.
+            String ownerName,
             UUID rootCauseId,
             LocalDate dueDate,
             Instant resolvedAt,
@@ -145,11 +186,5 @@ public final class CapaDto {
             Instant completedAt,
             Instant createdAt,
             Instant updatedAt
-    ) {}
-
-    /** Action corrective/préventive suggérée par l'IA (à valider/ajouter). §4.2 */
-    public record SuggestedAction(
-            String title,
-            String description
     ) {}
 }

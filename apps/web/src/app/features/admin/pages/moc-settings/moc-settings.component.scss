@@ -1,0 +1,221 @@
+// Paramètres MOC : blocs de réglage, puis les rôles de validation et leurs titulaires.
+
+:host {
+  display: block;
+}
+
+.echec {
+  display: flex;
+  align-items: center;
+  gap: var(--qos-space-2);
+  color: var(--qos-danger-fg);
+}
+
+.portee {
+  margin: 0 0 var(--qos-space-4);
+  padding: var(--qos-space-3) var(--qos-space-4);
+  border-radius: var(--qos-radius-md);
+  background: var(--qos-accent-bg-soft);
+  color: var(--qos-fg-primary);
+  font-size: var(--qos-fs-sm);
+}
+
+.grille {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--qos-space-4);
+  padding-bottom: var(--qos-space-16);
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.bloc {
+  padding: var(--qos-space-5);
+  border-radius: var(--qos-radius-lg);
+  background: var(--qos-bg-elevated);
+  border: 1px solid var(--qos-border-subtle);
+  box-shadow: var(--qos-shadow-xs);
+
+  &--large {
+    grid-column: 1 / -1;
+  }
+
+  &__entete {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--qos-space-3);
+  }
+
+  &__titre {
+    margin: 0;
+    font-size: var(--qos-fs-lg);
+    font-weight: var(--qos-fw-semibold);
+  }
+
+  &__aide {
+    margin: var(--qos-space-1) 0 var(--qos-space-4);
+    color: var(--qos-fg-secondary);
+    font-size: var(--qos-fs-sm);
+    max-width: 72ch;
+  }
+
+  &__resume {
+    margin: var(--qos-space-3) 0 0;
+    font-family: var(--qos-font-mono);
+    font-size: var(--qos-fs-sm);
+    color: var(--qos-fg-secondary);
+  }
+}
+
+.champs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--qos-space-3);
+
+  mat-form-field {
+    width: 160px;
+  }
+}
+
+.court {
+  width: 160px;
+}
+
+.poids {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: var(--qos-space-3);
+}
+
+.roles {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--qos-space-3);
+}
+
+.role {
+  display: flex;
+  flex-direction: column;
+  gap: var(--qos-space-3);
+  padding: var(--qos-space-4);
+  border-radius: var(--qos-radius-md);
+  border: 1px solid var(--qos-border-subtle);
+  background: var(--qos-bg-subtle);
+
+  &__ligne {
+    display: flex;
+    align-items: center;
+    gap: var(--qos-space-3);
+  }
+
+  &__rang {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--qos-fg-primary);
+    color: var(--qos-fg-inverse);
+    font-size: var(--qos-fs-sm);
+    font-weight: var(--qos-fw-semibold);
+  }
+
+  &__libelle {
+    flex: 1 1 auto;
+  }
+
+  &__outils {
+    display: flex;
+  }
+
+  &__requis,
+  &__titulaires {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--qos-space-2) var(--qos-space-3);
+    padding-left: calc(28px + var(--qos-space-3));
+
+    @media (max-width: 600px) {
+      padding-left: 0;
+    }
+  }
+
+  &__etiquette {
+    font-size: var(--qos-fs-xs);
+    font-weight: var(--qos-fw-semibold);
+    color: var(--qos-fg-tertiary);
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    min-width: 96px;
+  }
+
+  &__recherche {
+    flex: 1 1 280px;
+    max-width: 420px;
+  }
+
+  &__alerte {
+    flex-basis: 100%;
+    margin: 0;
+    font-size: var(--qos-fs-sm);
+    color: var(--qos-warn-fg);
+  }
+}
+
+.titulaire__principal {
+  font-weight: var(--qos-fw-semibold);
+  margin-right: 4px;
+}
+
+.titulaire__etat {
+  margin-left: 4px;
+  color: var(--qos-danger-fg);
+}
+
+.titulaire--alerte {
+  outline: 1px solid var(--qos-danger-fg);
+}
+
+.barre {
+  position: sticky;
+  bottom: var(--qos-space-4);
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--qos-space-4);
+  flex-wrap: wrap;
+  max-width: 52rem;
+  margin: 0 auto;
+  padding: var(--qos-space-3) var(--qos-space-3) var(--qos-space-3) var(--qos-space-5);
+  border-radius: var(--qos-radius-lg);
+  background: var(--qos-fg-primary);
+  color: var(--qos-bg-elevated);
+  box-shadow: var(--qos-shadow-lg);
+  font-size: var(--qos-fs-sm);
+  font-weight: var(--qos-fw-medium);
+
+  &__problemes {
+    margin: 0;
+    padding-left: var(--qos-space-4);
+  }
+
+  &__boutons {
+    display: flex;
+    gap: var(--qos-space-2);
+  }
+
+  .mat-mdc-outlined-button:not(:disabled) {
+    color: var(--qos-bg-elevated);
+    border-color: color-mix(in srgb, var(--qos-bg-elevated) 45%, transparent);
+  }
+}

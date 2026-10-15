@@ -11,6 +11,16 @@
 }
 .empty { padding: 32px; text-align: center; color: var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.6)); }
 
+// Pourquoi il n'y a pas de bouton « Adopter » : dit une fois, au-dessus du catalogue.
+.admin-only {
+  margin: 0 0 12px;
+  padding: var(--qos-space-2) var(--qos-space-3);
+  border-radius: var(--qos-radius-md);
+  background: var(--qos-bg-subtle);
+  color: var(--qos-fg-secondary);
+  font-size: var(--qos-fs-sm);
+}
+
 .catalog-header {
   display: flex;
   flex-wrap: wrap;

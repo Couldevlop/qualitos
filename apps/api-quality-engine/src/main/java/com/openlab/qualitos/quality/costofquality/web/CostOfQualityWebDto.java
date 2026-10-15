@@ -21,7 +21,9 @@ import java.util.UUID;
  * s'écrire ici, parce qu'elle dépend du libellé choisi : c'est le domaine qui
  * la tient ({@code CoqEntry}).
  *
- * <p>Aucun champ tenant ni auteur : ils viennent du jeton (§18.2).
+ * <p>Aucun champ tenant ni auteur : ils viennent du jeton (§18.2). Le
+ * responsable d'une ligne est une personne de l'annuaire (ADR 0092) : son
+ * compte ({@code responsibleUserId}, un UUID ou rien) et son nom recopié.
  */
 public final class CostOfQualityWebDto {
 
@@ -36,7 +38,8 @@ public final class CostOfQualityWebDto {
             @Size(max = 120) String partReference,
             @Min(1) Integer partQuantity,
             @Size(max = 120) String lot,
-            LocalDate receivedOrMadeOn) {}
+            LocalDate receivedOrMadeOn,
+            UUID responsibleUserId) {}
 
     public record LabelRequest(
             @NotNull CoqCategory category,

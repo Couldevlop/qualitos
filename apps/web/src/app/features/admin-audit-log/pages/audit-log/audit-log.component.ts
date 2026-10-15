@@ -68,8 +68,9 @@ export class AuditLogComponent implements OnInit {
     resourceId: new FormControl('', {
       nonNullable: true, validators: [Validators.pattern(UUID_PATTERN)]
     }),
-    actorUserId: new FormControl('', {
-      nonNullable: true, validators: [Validators.pattern(UUID_PATTERN)]
+    // L'acteur se choisit dans l'annuaire (ADR 0092) : la valeur est son compte.
+    actorUserId: new FormControl<string | null>(null, {
+      validators: [Validators.pattern(UUID_PATTERN)]
     }),
     from: new FormControl('', { nonNullable: true }),
     to: new FormControl('', { nonNullable: true })
@@ -166,7 +167,8 @@ export class AuditLogComponent implements OnInit {
     if (raw.action) filter.action = raw.action.trim();
     if (raw.resourceType) filter.resourceType = raw.resourceType.trim();
     if (raw.resourceId) filter.resourceId = raw.resourceId.trim();
-    if (raw.actorUserId) filter.actorUserId = raw.actorUserId.trim();
+    const actor = raw.actorUserId?.trim();
+    if (actor) filter.actorUserId = actor;
     const from = this.toInstant(raw.from);
     const to = this.toInstant(raw.to);
     if (from) filter.from = from;

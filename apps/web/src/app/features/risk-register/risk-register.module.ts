@@ -6,6 +6,7 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../../shared/shared.module';
 import { UiModule } from '../../shared/ui/ui.module';
+import { UserPickerModule } from '../../shared/user-picker/user-picker.module';
 import { RiskRegisterSharedModule } from './risk-register-shared.module';
 import { ItemDetailComponent } from './pages/item-detail/item-detail.component';
 import { ItemFormComponent } from './pages/item-form/item-form.component';
@@ -29,7 +30,7 @@ const routes: Routes = [
 @NgModule({
   declarations: [RegisterComponent, ItemFormComponent, ItemDetailComponent],
   imports: [
-    SharedModule, UiModule, FormsModule, RiskRegisterSharedModule,
+    SharedModule, UiModule, FormsModule, RiskRegisterSharedModule, UserPickerModule,
     MatAutocompleteModule, MatButtonToggleModule,
     RouterModule.forChild(routes)
   ]

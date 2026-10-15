@@ -1990,9 +1990,9 @@
         <source>Approuver</source>
         <target state="translated">批准</target>
       </trans-unit>
-      <trans-unit id="ai-qms.approve.submitter-uuid" datatype="html">
-        <source>UUID du soumissionnaire (doit ≠ vous)</source>
-        <target state="translated">提交人 UUID（必须 ≠ 您）</target>
+      <trans-unit id="ai-qms.approve.submitter" datatype="html">
+        <source>Soumissionnaire (une autre personne que vous)</source>
+        <target state="translated">提交人（须为您以外的人员）</target>
       </trans-unit>
       <trans-unit id="ai-qms.approve.subtitle" datatype="html">
         <source>L'approbation enregistre l'identité du soumissionnaire et de l'approbateur (séparation des rôles requise par AI Act Art. 17). Vous serez enregistré comme approbateur via votre session courante.</source>
@@ -3762,9 +3762,9 @@ Portail clients</source>
         <source>Notes</source>
         <target state="translated">备注</target>
       </trans-unit>
-      <trans-unit id="nis2-measures.edit.owner-uuid" datatype="html">
-        <source>UUID propriétaire</source>
-        <target state="translated">负责人 UUID</target>
+      <trans-unit id="nis2-measures.edit.owner" datatype="html">
+        <source>Propriétaire</source>
+        <target state="translated">负责人</target>
       </trans-unit>
       <trans-unit id="nis2-measures.edit.subtitle" datatype="html">
         <source>La référence et la catégorie ne peuvent pas changer après planification.</source>
@@ -3874,9 +3874,9 @@ Portail clients</source>
         <source>Notes (optionnel)</source>
         <target state="translated">备注（可选）</target>
       </trans-unit>
-      <trans-unit id="nis2-measures.plan.owner-uuid" datatype="html">
-        <source>UUID propriétaire (optionnel)</source>
-        <target state="translated">负责人 UUID（可选）</target>
+      <trans-unit id="nis2-measures.plan.owner" datatype="html">
+        <source>Propriétaire (optionnel)</source>
+        <target state="translated">负责人（可选）</target>
       </trans-unit>
       <trans-unit id="nis2-measures.plan.plan-failed" datatype="html">
         <source>Planification impossible.</source>
@@ -5194,6 +5194,10 @@ Portail clients</source>
         <source>Acquis</source>
         <target state="translated">已取得</target>
       </trans-unit>
+      <trans-unit id="apqp.deliverable.owner-legacy" datatype="html">
+        <source>Nom enregistré : <x id="INTERPOLATION"/>. Choisissez cette personne dans l'annuaire.</source>
+        <target state="translated">已记录的姓名：<x id="INTERPOLATION"/>。请在目录中选择此人。</target>
+      </trans-unit>
       <trans-unit id="apqp.deliverable.owner" datatype="html">
         <source>Responsable</source>
         <target state="translated">负责人</target>
@@ -5349,6 +5353,282 @@ Portail clients</source>
       <trans-unit id="audits.edit.reminder-email-hint" datatype="html">
         <source>Videz le champ pour ne plus envoyer de rappel par courriel.</source>
         <target state="translated">清空该字段即可停止发送邮件提醒。</target>
+      </trans-unit>
+      <trans-unit id="audits.lead-auditor" datatype="html">
+        <source>Auditeur responsable</source>
+        <target state="translated">审核组长</target>
+      </trans-unit>
+      <trans-unit id="audits.lead-auditor.hint" datatype="html">
+        <source>Celui ou celle qui conduit l'audit et signe le rapport. Par défaut : vous.</source>
+        <target state="translated">负责实施审核并签署报告的人。默认为您。</target>
+      </trans-unit>
+      <trans-unit id="audits.lead-auditor.hint-edit" datatype="html">
+        <source>Celui ou celle qui conduit l'audit et signe le rapport.</source>
+        <target state="translated">负责实施审核并签署报告的人。</target>
+      </trans-unit>
+      <trans-unit id="audits.lead-auditor.unknown" datatype="html">
+        <source>Membre de l'organisation (nom non enregistré)</source>
+        <target state="translated">组织成员（未记录姓名）</target>
+      </trans-unit>
+      <trans-unit id="audits.detail.finding-blocked-planned" datatype="html">
+        <source>Les constats se relèvent pendant l'audit : démarrez-le pour en ajouter.</source>
+        <target state="translated">审核发现在审核期间记录：请先启动审核再添加。</target>
+      </trans-unit>
+      <trans-unit id="audits.detail.finding-blocked-no-checklist" datatype="html">
+        <source>Les constats se relèvent pendant l'audit. Ajoutez d'abord une question à la checklist, puis démarrez l'audit.</source>
+        <target state="translated">审核发现在审核期间记录。请先在检查清单中添加问题，然后启动审核。</target>
+      </trans-unit>
+      <trans-unit id="audits.detail.finding-blocked-completed" datatype="html">
+        <source>Audit clôturé : plus aucun constat ne peut être ajouté.</source>
+        <target state="translated">审核已关闭：不能再添加发现。</target>
+      </trans-unit>
+      <trans-unit id="audits.detail.finding-blocked-cancelled" datatype="html">
+        <source>Audit annulé : plus aucun constat ne peut être ajouté.</source>
+        <target state="translated">审核已取消：不能再添加发现。</target>
+      </trans-unit>
+      <trans-unit id="audits.detail.start-audit" datatype="html">
+        <source>Démarrer l'audit</source>
+        <target state="translated">启动审核</target>
+      </trans-unit>
+      <trans-unit id="audits.detail.start-blocked" datatype="html">
+        <source>Ajoutez au moins une question à la checklist pour démarrer l'audit.</source>
+        <target state="translated">请至少在检查清单中添加一个问题以启动审核。</target>
+      </trans-unit>
+      <trans-unit id="audits.finding.not-in-progress" datatype="html">
+        <source>Un constat se relève pendant l'audit : démarrez l'audit pour en ajouter.</source>
+        <target state="translated">审核发现在审核期间记录：请启动审核后再添加。</target>
+      </trans-unit>
+      <trans-unit id="audits.detail.documents-locked-cancelled" datatype="html">
+        <source>Audit annulé : ses documents ne se modifient plus.</source>
+        <target state="translated">审核已取消：其文件不能再修改。</target>
+      </trans-unit>
+      <trans-unit id="audits.detail.documents-locked-issued" datatype="html">
+        <source>Rapport émis : les documents de l'audit sont figés avec lui.</source>
+        <target state="translated">报告已发布：审核文件随之锁定。</target>
+      </trans-unit>
+      <trans-unit id="audits.report.title" datatype="html">
+        <source>Rapport</source>
+        <target state="translated">报告</target>
+      </trans-unit>
+      <trans-unit id="audits.report.state-draft" datatype="html">
+        <source>Brouillon</source>
+        <target state="translated">草稿</target>
+      </trans-unit>
+      <trans-unit id="audits.report.state-issued" datatype="html">
+        <source>Émis</source>
+        <target state="translated">已发布</target>
+      </trans-unit>
+      <trans-unit id="audits.report.figures-aria" datatype="html">
+        <source>Chiffres clés du rapport</source>
+        <target state="translated">报告关键数据</target>
+      </trans-unit>
+      <trans-unit id="audits.report.figures-total" datatype="html">
+        <source>Constats</source>
+        <target state="translated">发现</target>
+      </trans-unit>
+      <trans-unit id="audits.report.figures-score" datatype="html">
+        <source>Taux de conformité</source>
+        <target state="translated">符合率</target>
+      </trans-unit>
+      <trans-unit id="audits.report.issued-line" datatype="html">
+        <source>Émis le <x id="INTERPOLATION"/> par <x id="INTERPOLATION_1"/></source>
+        <target state="translated">由 <x id="INTERPOLATION_1"/> 于 <x id="INTERPOLATION"/> 发布</target>
+      </trans-unit>
+      <trans-unit id="audits.report.fingerprint-tooltip" datatype="html">
+        <source>Empreinte SHA-256 du contenu émis, inscrite au journal d'audit</source>
+        <target state="translated">已发布内容的 SHA-256 指纹，记录在审计日志中</target>
+      </trans-unit>
+      <trans-unit id="audits.report.summary" datatype="html">
+        <source>Synthèse et conclusion rédigée</source>
+        <target state="translated">书面总结与结论</target>
+      </trans-unit>
+      <trans-unit id="audits.report.summary-placeholder" datatype="html">
+        <source>Contexte, périmètre couvert, appréciation d'ensemble du système…</source>
+        <target state="translated">背景、覆盖范围、体系的总体评价…</target>
+      </trans-unit>
+      <trans-unit id="audits.report.generate" datatype="html">
+        <source>Proposer par IA</source>
+        <target state="translated">AI 起草</target>
+      </trans-unit>
+      <trans-unit id="audits.report.generated" datatype="html">
+        <source>Synthèse générée : relisez-la avant d'émettre.</source>
+        <target state="translated">已生成总结：发布前请审阅。</target>
+      </trans-unit>
+      <trans-unit id="audits.report.strengths" datatype="html">
+        <source>Points forts</source>
+        <target state="translated">优势</target>
+      </trans-unit>
+      <trans-unit id="audits.report.improvements" datatype="html">
+        <source>Axes d'amélioration</source>
+        <target state="translated">改进方向</target>
+      </trans-unit>
+      <trans-unit id="audits.report.conclusion" datatype="html">
+        <source>Conclusion / recommandation</source>
+        <target state="translated">结论 / 建议</target>
+      </trans-unit>
+      <trans-unit id="audits.report.conclusion.favorable" datatype="html">
+        <source>Favorable — système conforme</source>
+        <target state="translated">合格 — 体系符合</target>
+      </trans-unit>
+      <trans-unit id="audits.report.conclusion.reservations" datatype="html">
+        <source>Favorable avec réserves</source>
+        <target state="translated">有保留地合格</target>
+      </trans-unit>
+      <trans-unit id="audits.report.conclusion.unfavorable" datatype="html">
+        <source>Défavorable — système non conforme</source>
+        <target state="translated">不合格 — 体系不符合</target>
+      </trans-unit>
+      <trans-unit id="audits.report.conclusion.cert-favorable" datatype="html">
+        <source>Certification recommandée</source>
+        <target state="translated">建议认证</target>
+      </trans-unit>
+      <trans-unit id="audits.report.conclusion.cert-reservations" datatype="html">
+        <source>Certification recommandée avec réserves</source>
+        <target state="translated">有保留地建议认证</target>
+      </trans-unit>
+      <trans-unit id="audits.report.conclusion.cert-unfavorable" datatype="html">
+        <source>Certification non recommandée</source>
+        <target state="translated">不建议认证</target>
+      </trans-unit>
+      <trans-unit id="audits.report.save-draft" datatype="html">
+        <source>Enregistrer le brouillon</source>
+        <target state="translated">保存草稿</target>
+      </trans-unit>
+      <trans-unit id="audits.report.issue" datatype="html">
+        <source>Émettre le rapport</source>
+        <target state="translated">发布报告</target>
+      </trans-unit>
+      <trans-unit id="audits.report.issue-confirm-title" datatype="html">
+        <source>Émettre le rapport ?</source>
+        <target state="translated">发布报告？</target>
+      </trans-unit>
+      <trans-unit id="audits.report.issue-confirm-message" datatype="html">
+        <source>Le rapport sera figé — texte, conclusion et chiffres clés — et l'émission inscrite au journal d'audit. Il ne pourra plus être modifié, ni les documents de l'audit.</source>
+        <target state="translated">报告（文本、结论和关键数据）将被锁定，发布记录写入审计日志。此后报告及审核文件均不可修改。</target>
+      </trans-unit>
+      <trans-unit id="audits.report.issued-msg" datatype="html">
+        <source>Rapport émis.</source>
+        <target state="translated">报告已发布。</target>
+      </trans-unit>
+      <trans-unit id="audits.report.saved" datatype="html">
+        <source>Brouillon du rapport enregistré.</source>
+        <target state="translated">报告草稿已保存。</target>
+      </trans-unit>
+      <trans-unit id="audits.report.save-error" datatype="html">
+        <source>Le brouillon n'a pas pu être enregistré.</source>
+        <target state="translated">无法保存草稿。</target>
+      </trans-unit>
+      <trans-unit id="audits.report.issue-error" datatype="html">
+        <source>Le rapport n'a pas pu être émis.</source>
+        <target state="translated">无法发布报告。</target>
+      </trans-unit>
+      <trans-unit id="audits.report.load-error" datatype="html">
+        <source>Le rapport n'a pas pu être chargé.</source>
+        <target state="translated">无法加载报告。</target>
+      </trans-unit>
+      <trans-unit id="audits.report.conflict" datatype="html">
+        <source>Le rapport ne peut plus être modifié dans l'état actuel de l'audit — rechargez pour voir son état.</source>
+        <target state="translated">在审核当前状态下报告已不可修改——请刷新查看其状态。</target>
+      </trans-unit>
+      <trans-unit id="audits.report.incomplete" datatype="html">
+        <source>Le rapport est incomplet : synthèse et conclusion sont requises.</source>
+        <target state="translated">报告不完整：需要总结和结论。</target>
+      </trans-unit>
+      <trans-unit id="audits.report.step-up" datatype="html">
+        <source>L'émission du rapport exige votre code à usage unique.</source>
+        <target state="translated">发布报告需要您的一次性验证码。</target>
+      </trans-unit>
+      <trans-unit id="audits.report.blocker-cancelled" datatype="html">
+        <source>Un audit annulé n'a pas de rapport.</source>
+        <target state="translated">已取消的审核没有报告。</target>
+      </trans-unit>
+      <trans-unit id="audits.report.blocker-not-completed" datatype="html">
+        <source>Le rapport s'émet une fois l'audit clôturé. Vous pouvez déjà rédiger le brouillon.</source>
+        <target state="translated">报告在审核关闭后发布。您现在即可撰写草稿。</target>
+      </trans-unit>
+      <trans-unit id="audits.report.blocker-role" datatype="html">
+        <source>L'émission du rapport revient au pilotage qualité (manager ou directeur qualité).</source>
+        <target state="translated">报告的发布由质量管理层（质量经理或质量总监）负责。</target>
+      </trans-unit>
+      <trans-unit id="audits.report.blocker-summary" datatype="html">
+        <source>Rédigez la synthèse (ou générez-la) avant d'émettre.</source>
+        <target state="translated">发布前请撰写（或生成）总结。</target>
+      </trans-unit>
+      <trans-unit id="audits.report.blocker-conclusion" datatype="html">
+        <source>Choisissez la conclusion avant d'émettre.</source>
+        <target state="translated">发布前请选择结论。</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.title" datatype="html">
+        <source>Documents (<x id="INTERPOLATION"/>)</source>
+        <target state="translated">文件（<x id="INTERPOLATION"/>）</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.add" datatype="html">
+        <source>Ajouter un document</source>
+        <target state="translated">添加文件</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.added" datatype="html">
+        <source>Document ajouté à l'audit.</source>
+        <target state="translated">文件已添加到审核。</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.empty" datatype="html">
+        <source>Aucun document. Joignez la convocation, le plan d'audit, des photos ou des relevés.</source>
+        <target state="translated">暂无文件。请附上通知、审核计划、照片或记录。</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.limits" datatype="html">
+        <source>PDF, image, Word, Excel ou PowerPoint — 10 Mo par fichier, 20 documents par audit.</source>
+        <target state="translated">PDF、图片、Word、Excel 或 PowerPoint — 每个文件 10 MB，每次审核最多 20 个文件。</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.too-large" datatype="html">
+        <source>Fichier trop lourd : 10 Mo au plus.</source>
+        <target state="translated">文件过大：最多 10 MB。</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.unnamed" datatype="html">
+        <source>document sans nom</source>
+        <target state="translated">未命名文件</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.delete-title" datatype="html">
+        <source>Retirer ce document ?</source>
+        <target state="translated">移除此文件？</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.delete-message" datatype="html">
+        <source>« <x id="name"/> » sera retiré de l'audit. Le retrait est inscrit au journal d'audit.</source>
+        <target state="translated">“<x id="name"/>”将从审核中移除。移除操作会记录在审计日志中。</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.delete" datatype="html">
+        <source>Retirer</source>
+        <target state="translated">移除</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.delete-tooltip" datatype="html">
+        <source>Retirer le document</source>
+        <target state="translated">移除文件</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.remove-aria" datatype="html">
+        <source>Retirer le document <x id="name"/></source>
+        <target state="translated">移除文件 <x id="name"/></target>
+      </trans-unit>
+      <trans-unit id="audits.documents.storage-off" datatype="html">
+        <source>Le stockage des documents est désactivé sur cet environnement.</source>
+        <target state="translated">此环境已禁用文件存储。</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.load-error" datatype="html">
+        <source>Les documents n'ont pas pu être chargés.</source>
+        <target state="translated">无法加载文件。</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.invalid" datatype="html">
+        <source>Fichier refusé : type non admis ou contenu qui ne correspond pas à son extension.</source>
+        <target state="translated">文件被拒绝：类型不允许或内容与扩展名不符。</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.limit" datatype="html">
+        <source>Limite atteinte : 10 Mo par fichier, 20 documents et 50 Mo par audit.</source>
+        <target state="translated">已达上限：每个文件 10 MB，每次审核 20 个文件、50 MB。</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.locked" datatype="html">
+        <source>Les documents de cet audit sont verrouillés (audit annulé ou rapport émis).</source>
+        <target state="translated">此审核的文件已锁定（审核已取消或报告已发布）。</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.error" datatype="html">
+        <source>L'opération sur le document a échoué.</source>
+        <target state="translated">文件操作失败。</target>
       </trans-unit>
       <trans-unit id="nav.admin-roles" datatype="html">
         <source>Rôles et droits</source>
@@ -6094,10 +6374,6 @@ Portail clients</source>
         <source>Instrument critique : un résultat non conforme le met immédiatement hors service.</source>
         <target state="translated">关键仪器：不合格结果将立即使其停用。</target>
       </trans-unit>
-      <trans-unit id="calibration.record.internal" datatype="html">
-        <source>Interne</source>
-        <target state="translated">内部</target>
-      </trans-unit>
       <trans-unit id="calibration.record.measurements" datatype="html">
         <source>Mesures</source>
         <target state="translated">测量值</target>
@@ -6182,14 +6458,6 @@ Portail clients</source>
         <source>Réformé</source>
         <target state="translated">已报废</target>
       </trans-unit>
-      <trans-unit id="capa.detail.col-decided-on" datatype="html">
-        <source>Date</source>
-        <target state="translated">日期</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.col-assignee" datatype="html">
-        <source>Responsable</source>
-        <target state="translated">负责人</target>
-      </trans-unit>
       <trans-unit id="capa.detail.col-evidence" datatype="html">
         <source>Preuve</source>
         <target state="translated">证据</target>
@@ -6206,18 +6474,6 @@ Portail clients</source>
         <source>Faite</source>
         <target state="translated">已完成</target>
       </trans-unit>
-      <trans-unit id="capa.detail.edit-title-label" datatype="html">
-        <source>Libellé de l'action</source>
-        <target state="translated">措施名称</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.action-updated" datatype="html">
-        <source>Action modifiée.</source>
-        <target state="translated">措施已修改。</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.action-update-error" datatype="html">
-        <source>Modification impossible.</source>
-        <target state="translated">无法修改。</target>
-      </trans-unit>
       <trans-unit id="capa.action-evidence.attach" datatype="html">
         <source>Joindre</source>
         <target state="translated">附加</target>
@@ -6233,10 +6489,6 @@ Portail clients</source>
       <trans-unit id="capa.action-evidence.remove-aria" datatype="html">
         <source>Retirer la preuve de l'action : <x id="title"/></source>
         <target state="translated">移除措施的证据：<x id="title"/></target>
-      </trans-unit>
-      <trans-unit id="capa.detail.edit-action-aria" datatype="html">
-        <source>Modifier l'action : <x id="title"/></source>
-        <target state="translated">修改措施：<x id="title"/></target>
       </trans-unit>
       <trans-unit id="capa.action-evidence.remove-tooltip" datatype="html">
         <source>Retirer la preuve de cette action</source>
@@ -6258,22 +6510,6 @@ Portail clients</source>
         <source>Cette action n'existe plus — recharge la fiche.</source>
         <target state="translated">该措施已不存在 — 请重新加载档案。</target>
       </trans-unit>
-      <trans-unit id="capa.action.decided-on" datatype="html">
-        <source>Date de décision</source>
-        <target state="translated">决定日期</target>
-      </trans-unit>
-      <trans-unit id="capa.action.decided-on-hint" datatype="html">
-        <source>Le jour où l'action a été décidée (comité, revue), pas celui de sa saisie.</source>
-        <target state="translated">措施被决定的那一天（委员会、评审），而非录入之日。</target>
-      </trans-unit>
-      <trans-unit id="capa.action.assignee-name" datatype="html">
-        <source>Responsable (optionnel)</source>
-        <target state="translated">负责人（可选）</target>
-      </trans-unit>
-      <trans-unit id="capa.action.assignee-name-placeholder" datatype="html">
-        <source>Ex. : Amina Dridi</source>
-        <target state="translated">例：Amina Dridi</target>
-      </trans-unit>
       <trans-unit id="capa.action-type.containment" datatype="html">
         <source>Endiguement</source>
         <target state="translated">围堵措施</target>
@@ -6286,21 +6522,9 @@ Portail clients</source>
         <source>Préventive</source>
         <target state="translated">预防措施</target>
       </trans-unit>
-      <trans-unit id="capa.detail.col-action-type" datatype="html">
-        <source>Nature</source>
-        <target state="translated">类别</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.edit-action-type-label" datatype="html">
-        <source>Nature</source>
-        <target state="translated">类别</target>
-      </trans-unit>
       <trans-unit id="capa.action.action-type" datatype="html">
         <source>Nature de l'action</source>
         <target state="translated">措施类别</target>
-      </trans-unit>
-      <trans-unit id="capa.action.action-type-hint" datatype="html">
-        <source>L'endiguement arrête l'effet (trier un lot, arrêter une ligne) ; la correction supprime la cause.</source>
-        <target state="translated">围堵措施只是止住影响（挑选批次、停线），纠正措施才消除原因。</target>
       </trans-unit>
       <trans-unit id="capa.detail.blockers-title" datatype="html">
         <source>Ce dossier ne peut pas encore être clôturé</source>
@@ -6317,10 +6541,6 @@ Portail clients</source>
       <trans-unit id="capa.blocker.actions-many" datatype="html">
         <source><x id="count"/> actions restent à terminer.</source>
         <target state="translated">还有 <x id="count"/> 项措施未完成。</target>
-      </trans-unit>
-      <trans-unit id="capa.blocker.containment-only" datatype="html">
-        <source>Le dossier ne porte que des mesures d'endiguement : elles arrêtent l'effet sans supprimer la cause. Ajoutez une action corrective ou préventive.</source>
-        <target state="translated">该档案仅包含围堵措施：它们止住影响但未消除原因。请添加纠正或预防措施。</target>
       </trans-unit>
       <trans-unit id="capa.blocker.nc-one" datatype="html">
         <source>1 non-conformité liée est encore ouverte.</source>
@@ -6562,6 +6782,158 @@ Portail clients</source>
         <source>Le stockage des pièces jointes est désactivé sur cet environnement : aucune preuve ne peut y être déposée ni relue.</source>
         <target state="translated">本环境的附件存储已停用：无法在此上传或查阅任何证据。</target>
       </trans-unit>
+      <trans-unit id="capa.open.title" datatype="html">
+        <source>Nouvelle CAPA</source>
+        <target state="translated">新建 CAPA</target>
+      </trans-unit>
+      <trans-unit id="capa.open.define-title" datatype="html">
+        <source>Définir l'action</source>
+        <target state="translated">定义措施</target>
+      </trans-unit>
+      <trans-unit id="capa.open.submit" datatype="html">
+        <source>Créer la CAPA</source>
+        <target state="translated">创建 CAPA</target>
+      </trans-unit>
+      <trans-unit id="capa.open.define-submit" datatype="html">
+        <source>Enregistrer l'action</source>
+        <target state="translated">保存措施</target>
+      </trans-unit>
+      <trans-unit id="capa.open.subtitle" datatype="html">
+        <source>Une CAPA porte une action : ce qu'on va faire, qui en répond et pour quand. On la fait avancer jusqu'à la vérification d'efficacité.</source>
+        <target state="translated">一个 CAPA 对应一项措施：做什么、由谁负责、何时完成。持续推进直至有效性验证。</target>
+      </trans-unit>
+      <trans-unit id="capa.open.title-label" datatype="html">
+        <source>Intitulé de l'action</source>
+        <target state="translated">措施名称</target>
+      </trans-unit>
+      <trans-unit id="capa.open.description-placeholder" datatype="html">
+        <source>Méthode, ressources, critère de fin…</source>
+        <target state="translated">方法、资源、完成标准…</target>
+      </trans-unit>
+      <trans-unit id="capa.open.nature" datatype="html">
+        <source>Nature</source>
+        <target state="translated">性质</target>
+      </trans-unit>
+      <trans-unit id="capa.open.owner" datatype="html">
+        <source>Responsable</source>
+        <target state="translated">负责人</target>
+      </trans-unit>
+      <trans-unit id="capa.open.owner-loading" datatype="html">
+        <source>Lecture de l'annuaire…</source>
+        <target state="translated">正在读取通讯录…</target>
+      </trans-unit>
+      <trans-unit id="capa.open.due-date" datatype="html">
+        <source>Échéance</source>
+        <target state="translated">截止日期</target>
+      </trans-unit>
+      <trans-unit id="capa.open.due-date-required" datatype="html">
+        <source>L'échéance est obligatoire.</source>
+        <target state="translated">截止日期为必填项。</target>
+      </trans-unit>
+      <trans-unit id="capa.open.due-date-past" datatype="html">
+        <source>L'échéance ne peut pas être passée.</source>
+        <target state="translated">截止日期不能早于今天。</target>
+      </trans-unit>
+      <trans-unit id="capa.open.owner-hint-unmatched" datatype="html">
+        <source>Propriétaire indiqué : <x id="INTERPOLATION"/> — introuvable dans l'annuaire, choisis son compte dans la liste.</source>
+        <target state="translated">指定的负责人：<x id="INTERPOLATION"/> — 通讯录中未找到，请从列表中选择其账户。</target>
+      </trans-unit>
+      <trans-unit id="capa.open.criticity-low" datatype="html">
+        <source>Faible</source>
+        <target state="translated">低</target>
+      </trans-unit>
+      <trans-unit id="capa.open.criticity-medium" datatype="html">
+        <source>Moyenne</source>
+        <target state="translated">中</target>
+      </trans-unit>
+      <trans-unit id="capa.open.criticity-high" datatype="html">
+        <source>Élevée</source>
+        <target state="translated">高</target>
+      </trans-unit>
+      <trans-unit id="capa.open.criticity-critical" datatype="html">
+        <source>Critique</source>
+        <target state="translated">严重</target>
+      </trans-unit>
+      <trans-unit id="capa.open.criticity-locked" datatype="html">
+        <source>Issue de la cotation du risque.</source>
+        <target state="translated">取自风险评级。</target>
+      </trans-unit>
+      <trans-unit id="capa.open.attachment-remove-aria" datatype="html">
+        <source>Retirer <x id="name"/></source>
+        <target state="translated">移除 <x id="name"/></target>
+      </trans-unit>
+      <trans-unit id="capa.open.success" datatype="html">
+        <source>CAPA créée.</source>
+        <target state="translated">已创建 CAPA。</target>
+      </trans-unit>
+      <trans-unit id="capa.open.success-with-evidence" datatype="html">
+        <source>CAPA créée, pièces jointes déposées.</source>
+        <target state="translated">已创建 CAPA，附件已上传。</target>
+      </trans-unit>
+      <trans-unit id="capa.open.success-partial-evidence" datatype="html">
+        <source>CAPA créée, mais des pièces n'ont pas pu être déposées — reprends-les depuis la fiche.</source>
+        <target state="translated">已创建 CAPA，但部分附件未能上传——请在详情页重新添加。</target>
+      </trans-unit>
+      <trans-unit id="capa.open.action-defined" datatype="html">
+        <source>Action définie.</source>
+        <target state="translated">已定义措施。</target>
+      </trans-unit>
+      <trans-unit id="capa.source.spc-alert" datatype="html">
+        <source>Carte de contrôle</source>
+        <target state="translated">控制图</target>
+      </trans-unit>
+      <trans-unit id="capa.source.anomaly" datatype="html">
+        <source>Anomalie détectée</source>
+        <target state="translated">检测到的异常</target>
+      </trans-unit>
+      <trans-unit id="capa.source.risk" datatype="html">
+        <source>Risque</source>
+        <target state="translated">风险</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.legacy-actions" datatype="html">
+        <source>Actions (<x id="INTERPOLATION"/>)</source>
+        <target state="translated">措施（<x id="INTERPOLATION"/>）</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.action-missing" datatype="html">
+        <source>L'action de ce dossier n'a pas encore été définie : sans elle, il ne pourra pas être clôturé.</source>
+        <target state="translated">该案例的措施尚未定义：没有措施则无法关闭。</target>
+      </trans-unit>
+      <trans-unit id="capa.blocker.containment-only-single" datatype="html">
+        <source>Le dossier ne porte qu'une mesure d'endiguement : elle arrête l'effet sans supprimer la cause. Ouvrez une CAPA corrective pour traiter la cause.</source>
+        <target state="translated">该案例仅包含围堵措施：它阻止了影响，但未消除原因。请新建纠正 CAPA 以处理原因。</target>
+      </trans-unit>
+      <trans-unit id="capa.list.col-owner" datatype="html">
+        <source>Pilote</source>
+        <target state="translated">负责人</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.create-capa" datatype="html">
+        <source>Créer une CAPA</source>
+        <target state="translated">创建 CAPA</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.create-capa-tooltip" datatype="html">
+        <source>Ouvrir la CAPA qui traite cette non-conformité</source>
+        <target state="translated">创建处理此不符合项的 CAPA</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.open-capa" datatype="html">
+        <source>Voir la CAPA</source>
+        <target state="translated">查看 CAPA</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.capa-link-open" datatype="html">
+        <source>Ouvrir le dossier</source>
+        <target state="translated">打开案例</target>
+      </trans-unit>
+      <trans-unit id="audits.detail.create-capa" datatype="html">
+        <source>Créer une CAPA</source>
+        <target state="translated">创建 CAPA</target>
+      </trans-unit>
+      <trans-unit id="audits.detail.open-capa" datatype="html">
+        <source>Voir la CAPA</source>
+        <target state="translated">查看 CAPA</target>
+      </trans-unit>
+      <trans-unit id="audits.detail.finding-capa-ref" datatype="html">
+        <source><x id="audit"/> / constat <x id="rank"/></source>
+        <target state="translated"><x id="audit"/> / 发现项 <x id="rank"/></target>
+      </trans-unit>
       <trans-unit id="common.yes" datatype="html">
         <source>Oui</source>
         <target state="translated">是</target>
@@ -6578,6 +6950,10 @@ Portail clients</source>
         <source>Une vérification est-elle exigée sur ce dossier ? Répondre « non » est une décision, qui se lit ; ne pas répondre laisse la question ouverte.</source>
         <target state="translated">本案卷是否要求验证？回答「否」是一项会被读到的决定；不作答则问题仍然悬而未决。</target>
       </trans-unit>
+      <trans-unit id="capa.verification.hint-mandatory" datatype="html">
+        <source>Une vérification est-elle exigée sur ce dossier ? Il faut trancher pour l'ouvrir : répondre « non » est une décision, qui se lit.</source>
+        <target state="translated">本案卷是否要求验证？必须作出决定才能开立：回答「否」是一项会被读到的决定。</target>
+      </trans-unit>
       <trans-unit id="capa.verification.required" datatype="html">
         <source>Exigée</source>
         <target state="translated">要求</target>
@@ -6593,10 +6969,6 @@ Portail clients</source>
       <trans-unit id="capa.verification.assignee-required" datatype="html">
         <source>Une vérification exigée doit être confiée à quelqu'un.</source>
         <target state="translated">被要求的验证必须指派给某个人。</target>
-      </trans-unit>
-      <trans-unit id="capa.verification.directory-down" datatype="html">
-        <source>L'annuaire de l'organisation n'a pas répondu : la liste est vide, et le dossier ne pourra pas être enregistré avec une vérification exigée.</source>
-        <target state="translated">组织目录没有响应：列表为空，且在要求验证的状态下无法保存本案卷。</target>
       </trans-unit>
       <trans-unit id="capa.verification.instructions" datatype="html">
         <source>Instructions de vérification</source>
@@ -8458,10 +8830,6 @@ Portail clients</source>
         <source>Documents</source>
         <target state="translated">文档</target>
       </trans-unit>
-      <trans-unit id="nav.changements" datatype="html">
-        <source>Changements</source>
-        <target state="translated">变更</target>
-      </trans-unit>
       <trans-unit id="nav.ehs" datatype="html">
         <source>EHS</source>
         <target state="translated">EHS</target>
@@ -8641,14 +9009,6 @@ Portail clients</source>
       <trans-unit id="capa.create.evidence-limit" datatype="html">
         <source>Dix pièces au maximum par dossier.</source>
         <target state="translated">每个案卷最多十份附件。</target>
-      </trans-unit>
-      <trans-unit id="capa.create.success-with-evidence" datatype="html">
-        <source>Cas CAPA créé, pièces jointes déposées.</source>
-        <target state="translated">CAPA 案卷已创建，附件已上传。</target>
-      </trans-unit>
-      <trans-unit id="capa.create.success-partial-evidence" datatype="html">
-        <source>Cas CAPA créé, mais des pièces n'ont pas pu être déposées — reprends-les depuis la fiche.</source>
-        <target state="translated">CAPA 案卷已创建，但部分附件未能上传 — 请在案卷页面重新添加。</target>
       </trans-unit>
       <trans-unit id="nc.list.col-reporter" datatype="html">
         <source>Détecté par</source>
@@ -9093,6 +9453,10 @@ Portail clients</source>
       <trans-unit id="coq.dialog.field-responsible" datatype="html">
         <source>Responsable</source>
         <target state="translated">负责人</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.responsible-legacy" datatype="html">
+        <source>Nom enregistré : <x id="INTERPOLATION"/>. Choisissez cette personne dans l'annuaire.</source>
+        <target state="translated">已记录的姓名：<x id="INTERPOLATION"/>。请在目录中选择此人。</target>
       </trans-unit>
       <trans-unit id="coq.dialog.responsible-required" datatype="html">
         <source>Le responsable est requis.</source>
@@ -9549,6 +9913,62 @@ Portail clients</source>
       <trans-unit id="dashboard.annot.delete-error" datatype="html">
         <source>Suppression refusée.</source>
         <target state="translated">删除被拒绝。</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.label" datatype="html">
+        <source>Personne</source>
+        <target state="translated">人员</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.placeholder" datatype="html">
+        <source>Rechercher par nom ou adresse</source>
+        <target state="translated">按姓名或邮箱搜索</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.clear" datatype="html">
+        <source>Retirer la personne choisie</source>
+        <target state="translated">移除所选人员</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.loading" datatype="html">
+        <source>Recherche…</source>
+        <target state="translated">正在搜索…</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.error" datatype="html">
+        <source>Annuaire indisponible pour le moment. Réessayez dans un instant.</source>
+        <target state="translated">目录暂时不可用，请稍后重试。</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.empty" datatype="html">
+        <source>Aucune personne ne correspond.</source>
+        <target state="translated">没有匹配的人员。</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.more" datatype="html">
+        <source><x id="COUNT"/> autres résultats : précisez la recherche.</source>
+        <target state="translated">还有 <x id="COUNT"/> 条结果：请细化搜索。</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.resolving" datatype="html">
+        <source>Chargement du nom…</source>
+        <target state="translated">正在加载姓名…</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.unknown" datatype="html">
+        <source>Cette personne ne fait plus partie de l'annuaire.</source>
+        <target state="translated">此人已不在目录中。</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.former" datatype="html">
+        <source>Ancien membre de l'organisation.</source>
+        <target state="translated">组织的前成员。</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.live-error" datatype="html">
+        <source>Annuaire indisponible</source>
+        <target state="translated">目录不可用</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.live-none" datatype="html">
+        <source>Aucune personne trouvée</source>
+        <target state="translated">未找到任何人员</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.live-count" datatype="html">
+        <source><x id="COUNT"/> personne(s) proposée(s)</source>
+        <target state="translated">建议人员 <x id="COUNT"/> 名</target>
+      </trans-unit>
+      <trans-unit id="directory.person.unknown" datatype="html">
+        <source>Personne inconnue</source>
+        <target state="translated">未知人员</target>
       </trans-unit>
       <trans-unit id="nav.doc-gen-ia" datatype="html">
         <source>Génération doc IA</source>
@@ -15604,13 +16024,17 @@ historique 12 mois</source>
         <source>Objectif SMART + impact business attendu</source>
         <target state="translated">SMART目标＋预期业务影响</target>
       </trans-unit>
-      <trans-unit id="dmaic.create.champion-label" datatype="html">
-        <source>Champion (ID)</source>
-        <target state="translated">倡导者（ID）</target>
+      <trans-unit id="dmaic.create.champion" datatype="html">
+        <source>Champion (optionnel)</source>
+        <target state="translated">倡导者（可选）</target>
       </trans-unit>
-      <trans-unit id="dmaic.create.champion-placeholder" datatype="html">
-        <source>UUID utilisateur</source>
-        <target state="translated">用户UUID</target>
+      <trans-unit id="dmaic.detail.black-belt-prefix" datatype="html">
+        <source>Black Belt :</source>
+        <target state="translated">黑带：</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.champion-prefix" datatype="html">
+        <source>Champion :</source>
+        <target state="translated">倡导者：</target>
       </trans-unit>
       <trans-unit id="dmaic.create.target-date-label" datatype="html">
         <source>Date cible</source>
@@ -16188,21 +16612,9 @@ historique 12 mois</source>
         <source>Ajouter un membre</source>
         <target state="translated">添加成员</target>
       </trans-unit>
-      <trans-unit id="circles.member.hint" datatype="html">
-        <source>Renseigne l'identifiant utilisateur (UUID) et le rôle. La liste de sélection sera branchée sur l'annuaire Keycloak dans une prochaine itération.</source>
-        <target state="translated">请输入用户标识符（UUID）和角色。选择列表将在后续迭代中接入Keycloak目录。</target>
-      </trans-unit>
-      <trans-unit id="circles.member.user-id" datatype="html">
-        <source>User ID (UUID)</source>
-        <target state="translated">用户ID (UUID)</target>
-      </trans-unit>
-      <trans-unit id="circles.member.uuid-required" datatype="html">
-        <source>UUID requis.</source>
-        <target state="translated">UUID 为必填项。</target>
-      </trans-unit>
-      <trans-unit id="circles.member.uuid-invalid" datatype="html">
-        <source>Format UUID invalide.</source>
-        <target state="translated">UUID 格式无效。</target>
+      <trans-unit id="circles.member.person" datatype="html">
+        <source>Personne à ajouter</source>
+        <target state="translated">要添加的人员</target>
       </trans-unit>
       <trans-unit id="circles.member.role-facilitator" datatype="html">
         <source>Animateur</source>
@@ -16415,6 +16827,706 @@ historique 12 mois</source>
       <trans-unit id="spc.analyze.kpi-banner-prefix" datatype="html">
         <source>Analyse du KPI</source>
         <target state="translated">KPI分析</target>
+      </trans-unit>
+      <trans-unit id="nav.moc" datatype="html">
+        <source>Gestion des changements (MOC)</source>
+        <target state="translated">变更管理（MOC）</target>
+      </trans-unit>
+      <trans-unit id="nav.admin-moc" datatype="html">
+        <source>Paramètres MOC</source>
+        <target state="translated">MOC 设置</target>
+      </trans-unit>
+      <trans-unit id="authz.module.change" datatype="html">
+        <source>Gestion des changements</source>
+        <target state="translated">变更管理</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.change-request" datatype="html">
+        <source>Demander un changement et conduire ses demandes</source>
+        <target state="translated">提出变更申请并处理自己的申请</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.change-analyze" datatype="html">
+        <source>Gérer toutes les demandes de changement</source>
+        <target state="translated">管理所有变更申请</target>
+      </trans-unit>
+      <trans-unit id="moc.title" datatype="html">
+        <source>Gestion des changements (MOC)</source>
+        <target state="translated">变更管理（MOC）</target>
+      </trans-unit>
+      <trans-unit id="moc.subtitle" datatype="html">
+        <source>Demande, analyse d'impact, validation</source>
+        <target state="translated">申请、影响分析、审批</target>
+      </trans-unit>
+      <trans-unit id="moc.settings-link" datatype="html">
+        <source>Paramètres MOC</source>
+        <target state="translated">MOC 设置</target>
+      </trans-unit>
+      <trans-unit id="moc.export" datatype="html">
+        <source>Extraire en Excel</source>
+        <target state="translated">导出为 Excel</target>
+      </trans-unit>
+      <trans-unit id="moc.export-failed" datatype="html">
+        <source>L'extraction Excel a échoué.</source>
+        <target state="translated">Excel 导出失败。</target>
+      </trans-unit>
+      <trans-unit id="moc.new" datatype="html">
+        <source>Nouvelle demande</source>
+        <target state="translated">新建申请</target>
+      </trans-unit>
+      <trans-unit id="moc.list-failed" datatype="html">
+        <source>Les demandes n'ont pas pu être chargées.</source>
+        <target state="translated">无法加载申请。</target>
+      </trans-unit>
+      <trans-unit id="moc.list-title" datatype="html">
+        <source>Demandes de changement</source>
+        <target state="translated">变更申请</target>
+      </trans-unit>
+      <trans-unit id="moc.load-failed" datatype="html">
+        <source>La demande n'a pas pu être chargée.</source>
+        <target state="translated">无法加载该申请。</target>
+      </trans-unit>
+      <trans-unit id="moc.filter-aria" datatype="html">
+        <source>Filtrer par statut</source>
+        <target state="translated">按状态筛选</target>
+      </trans-unit>
+      <trans-unit id="moc.filter.all" datatype="html">
+        <source>Tous</source>
+        <target state="translated">全部</target>
+      </trans-unit>
+      <trans-unit id="moc.filter.mine" datatype="html">
+        <source>À valider par moi</source>
+        <target state="translated">待我审批</target>
+      </trans-unit>
+      <trans-unit id="moc.awaiting-me" datatype="html">
+        <source>À valider</source>
+        <target state="translated">待审批</target>
+      </trans-unit>
+      <trans-unit id="moc.empty-filter" datatype="html">
+        <source>Aucune demande dans ce statut.</source>
+        <target state="translated">没有此状态的申请。</target>
+      </trans-unit>
+      <trans-unit id="moc.empty" datatype="html">
+        <source>Aucune demande de changement pour l'instant.</source>
+        <target state="translated">暂无变更申请。</target>
+      </trans-unit>
+      <trans-unit id="moc.no-selection" datatype="html">
+        <source>Sélectionnez une demande pour voir sa demande, son analyse d'impact, ses validations et son historique.</source>
+        <target state="translated">选择一个申请以查看其内容、影响分析、审批和历史。</target>
+      </trans-unit>
+      <trans-unit id="moc.status.draft" datatype="html">
+        <source>Brouillon</source>
+        <target state="translated">草稿</target>
+      </trans-unit>
+      <trans-unit id="moc.status.in-analysis" datatype="html">
+        <source>En analyse</source>
+        <target state="translated">分析中</target>
+      </trans-unit>
+      <trans-unit id="moc.status.in-validation" datatype="html">
+        <source>En validation</source>
+        <target state="translated">审批中</target>
+      </trans-unit>
+      <trans-unit id="moc.status.approved" datatype="html">
+        <source>Approuvé</source>
+        <target state="translated">已批准</target>
+      </trans-unit>
+      <trans-unit id="moc.status.rejected" datatype="html">
+        <source>Rejeté</source>
+        <target state="translated">已拒绝</target>
+      </trans-unit>
+      <trans-unit id="moc.class.not-assessed" datatype="html">
+        <source>Non évalué</source>
+        <target state="translated">未评估</target>
+      </trans-unit>
+      <trans-unit id="moc.class.minor" datatype="html">
+        <source>Mineur</source>
+        <target state="translated">轻微</target>
+      </trans-unit>
+      <trans-unit id="moc.class.major" datatype="html">
+        <source>Majeur</source>
+        <target state="translated">重大</target>
+      </trans-unit>
+      <trans-unit id="moc.class.critical" datatype="html">
+        <source>Critique</source>
+        <target state="translated">关键</target>
+      </trans-unit>
+      <trans-unit id="moc.level.none" datatype="html">
+        <source>Aucun</source>
+        <target state="translated">无</target>
+      </trans-unit>
+      <trans-unit id="moc.level.low" datatype="html">
+        <source>Faible</source>
+        <target state="translated">低</target>
+      </trans-unit>
+      <trans-unit id="moc.level.medium" datatype="html">
+        <source>Moyen</source>
+        <target state="translated">中</target>
+      </trans-unit>
+      <trans-unit id="moc.level.high" datatype="html">
+        <source>Élevé</source>
+        <target state="translated">高</target>
+      </trans-unit>
+      <trans-unit id="moc.domain.safety" datatype="html">
+        <source>Sécurité</source>
+        <target state="translated">安全</target>
+      </trans-unit>
+      <trans-unit id="moc.domain.health-environment" datatype="html">
+        <source>Santé et environnement</source>
+        <target state="translated">健康与环境</target>
+      </trans-unit>
+      <trans-unit id="moc.domain.quality" datatype="html">
+        <source>Qualité</source>
+        <target state="translated">质量</target>
+      </trans-unit>
+      <trans-unit id="moc.domain.production" datatype="html">
+        <source>Production</source>
+        <target state="translated">生产</target>
+      </trans-unit>
+      <trans-unit id="moc.domain.maintenance" datatype="html">
+        <source>Maintenance</source>
+        <target state="translated">维护</target>
+      </trans-unit>
+      <trans-unit id="moc.domain.costs" datatype="html">
+        <source>Coûts</source>
+        <target state="translated">成本</target>
+      </trans-unit>
+      <trans-unit id="moc.domain.regulatory" datatype="html">
+        <source>Réglementaire</source>
+        <target state="translated">法规</target>
+      </trans-unit>
+      <trans-unit id="moc.domain.training" datatype="html">
+        <source>Formation</source>
+        <target state="translated">培训</target>
+      </trans-unit>
+      <trans-unit id="moc.type.permanent" datatype="html">
+        <source>Permanent</source>
+        <target state="translated">永久</target>
+      </trans-unit>
+      <trans-unit id="moc.type.temporary" datatype="html">
+        <source>Temporaire</source>
+        <target state="translated">临时</target>
+      </trans-unit>
+      <trans-unit id="moc.decision.pending" datatype="html">
+        <source>En attente</source>
+        <target state="translated">待定</target>
+      </trans-unit>
+      <trans-unit id="moc.decision.approved" datatype="html">
+        <source>Approuvé</source>
+        <target state="translated">已批准</target>
+      </trans-unit>
+      <trans-unit id="moc.decision.rejected" datatype="html">
+        <source>Rejeté</source>
+        <target state="translated">已拒绝</target>
+      </trans-unit>
+      <trans-unit id="moc.send-to-analysis" datatype="html">
+        <source>Envoyer en analyse</source>
+        <target state="translated">提交分析</target>
+      </trans-unit>
+      <trans-unit id="moc.submit" datatype="html">
+        <source>Soumettre à validation</source>
+        <target state="translated">提交审批</target>
+      </trans-unit>
+      <trans-unit id="moc.reopen" datatype="html">
+        <source>Rouvrir l'analyse</source>
+        <target state="translated">重新打开分析</target>
+      </trans-unit>
+      <trans-unit id="moc.submit-blocked" datatype="html">
+        <source>Soumission bloquée : <x id="COUNT"/> domaine(s) d'impact sur 8 restent à évaluer.</source>
+        <target state="translated">无法提交：8 个影响领域中还有 <x id="COUNT"/> 个待评估。</target>
+      </trans-unit>
+      <trans-unit id="moc.progress-aria" datatype="html">
+        <source>Avancement de la demande</source>
+        <target state="translated">申请进度</target>
+      </trans-unit>
+      <trans-unit id="moc.tab.request" datatype="html">
+        <source>Demande</source>
+        <target state="translated">申请</target>
+      </trans-unit>
+      <trans-unit id="moc.tab.impact" datatype="html">
+        <source>Analyse d'impact</source>
+        <target state="translated">影响分析</target>
+      </trans-unit>
+      <trans-unit id="moc.tab.validation" datatype="html">
+        <source>Validation</source>
+        <target state="translated">审批</target>
+      </trans-unit>
+      <trans-unit id="moc.tab.history" datatype="html">
+        <source>Historique</source>
+        <target state="translated">历史</target>
+      </trans-unit>
+      <trans-unit id="moc.field.type" datatype="html">
+        <source>Type</source>
+        <target state="translated">类型</target>
+      </trans-unit>
+      <trans-unit id="moc.field.site" datatype="html">
+        <source>Site / unité</source>
+        <target state="translated">场所/单位</target>
+      </trans-unit>
+      <trans-unit id="moc.field.requester" datatype="html">
+        <source>Demandeur · date</source>
+        <target state="translated">申请人 · 日期</target>
+      </trans-unit>
+      <trans-unit id="moc.field.planned" datatype="html">
+        <source>Mise en œuvre prévue</source>
+        <target state="translated">计划实施</target>
+      </trans-unit>
+      <trans-unit id="moc.field.description" datatype="html">
+        <source>Description</source>
+        <target state="translated">描述</target>
+      </trans-unit>
+      <trans-unit id="moc.field.justification" datatype="html">
+        <source>Justification</source>
+        <target state="translated">理由</target>
+      </trans-unit>
+      <trans-unit id="moc.sent-to-analysis" datatype="html">
+        <source>Demande envoyée en analyse.</source>
+        <target state="translated">申请已提交分析。</target>
+      </trans-unit>
+      <trans-unit id="moc.submitted" datatype="html">
+        <source>Demande soumise à validation : les validateurs sont prévenus.</source>
+        <target state="translated">申请已提交审批：已通知审批人。</target>
+      </trans-unit>
+      <trans-unit id="moc.reopened" datatype="html">
+        <source>L'analyse est rouverte.</source>
+        <target state="translated">分析已重新打开。</target>
+      </trans-unit>
+      <trans-unit id="moc.delete-title" datatype="html">
+        <source>Supprimer la demande <x id="code"/> ?</source>
+        <target state="translated">删除申请 <x id="code"/>？</target>
+      </trans-unit>
+      <trans-unit id="moc.delete-message" datatype="html">
+        <source>Le brouillon et son historique seront supprimés. Cette action est définitive.</source>
+        <target state="translated">草稿及其历史将被删除。此操作不可撤销。</target>
+      </trans-unit>
+      <trans-unit id="moc.deleted" datatype="html">
+        <source>Demande supprimée.</source>
+        <target state="translated">申请已删除。</target>
+      </trans-unit>
+      <trans-unit id="moc.action-failed" datatype="html">
+        <source>L'action sur la demande a échoué.</source>
+        <target state="translated">对申请的操作失败。</target>
+      </trans-unit>
+      <trans-unit id="moc.history.with-actor" datatype="html">
+        <source><x id="event"/> par <x id="actor"/></source>
+        <target state="translated"><x id="event"/>（<x id="actor"/>）</target>
+      </trans-unit>
+      <trans-unit id="moc.history.created" datatype="html">
+        <source>Demande créée</source>
+        <target state="translated">申请已创建</target>
+      </trans-unit>
+      <trans-unit id="moc.history.updated" datatype="html">
+        <source>Demande modifiée</source>
+        <target state="translated">申请已修改</target>
+      </trans-unit>
+      <trans-unit id="moc.history.sent-to-analysis" datatype="html">
+        <source>Envoyée en analyse</source>
+        <target state="translated">已提交分析</target>
+      </trans-unit>
+      <trans-unit id="moc.history.analysis-completed" datatype="html">
+        <source>Analyse d'impact terminée</source>
+        <target state="translated">影响分析已完成</target>
+      </trans-unit>
+      <trans-unit id="moc.history.submitted" datatype="html">
+        <source>Soumise à validation</source>
+        <target state="translated">已提交审批</target>
+      </trans-unit>
+      <trans-unit id="moc.history.validation-approved" datatype="html">
+        <source>Validation accordée</source>
+        <target state="translated">审批通过</target>
+      </trans-unit>
+      <trans-unit id="moc.history.validation-rejected" datatype="html">
+        <source>Validation refusée</source>
+        <target state="translated">审批被拒</target>
+      </trans-unit>
+      <trans-unit id="moc.history.approved" datatype="html">
+        <source>Demande approuvée</source>
+        <target state="translated">申请已批准</target>
+      </trans-unit>
+      <trans-unit id="moc.history.rejected" datatype="html">
+        <source>Demande rejetée</source>
+        <target state="translated">申请已拒绝</target>
+      </trans-unit>
+      <trans-unit id="moc.history.reopened" datatype="html">
+        <source>Analyse rouverte</source>
+        <target state="translated">分析已重新打开</target>
+      </trans-unit>
+      <trans-unit id="moc.history.reminder-sent" datatype="html">
+        <source>Rappel envoyé aux validateurs</source>
+        <target state="translated">已向审批人发送提醒</target>
+      </trans-unit>
+      <trans-unit id="moc.history.legacy-status" datatype="html">
+        <source>Statut antérieur au MOC</source>
+        <target state="translated">MOC 之前的状态</target>
+      </trans-unit>
+      <trans-unit id="moc.history.legacy-decision" datatype="html">
+        <source>Décision antérieure au MOC</source>
+        <target state="translated">MOC 之前的决定</target>
+      </trans-unit>
+      <trans-unit id="moc.history.legacy-impact" datatype="html">
+        <source>Objet lié avant le MOC</source>
+        <target state="translated">MOC 之前关联的对象</target>
+      </trans-unit>
+      <trans-unit id="moc.history.empty" datatype="html">
+        <source>Aucun événement.</source>
+        <target state="translated">暂无事件。</target>
+      </trans-unit>
+      <trans-unit id="moc.impact.title" datatype="html">
+        <source>Classification du changement</source>
+        <target state="translated">变更分类</target>
+      </trans-unit>
+      <trans-unit id="moc.impact.score-aria" datatype="html">
+        <source>Score d'impact</source>
+        <target state="translated">影响评分</target>
+      </trans-unit>
+      <trans-unit id="moc.impact.incomplete" datatype="html">
+        <source><x id="DONE"/> domaine(s) évalué(s) sur 8. La classification reste « Non évalué » et la soumission à validation est bloquée tant que les huit domaines ne sont pas évalués.</source>
+        <target state="translated">已评估 8 个领域中的 <x id="DONE"/> 个。在八个领域全部评估之前，分类保持“未评估”，且无法提交审批。</target>
+      </trans-unit>
+      <trans-unit id="moc.impact.draft" datatype="html">
+        <source>L'analyse d'impact s'ouvre quand la demande est envoyée en analyse.</source>
+        <target state="translated">申请提交分析后即可进行影响分析。</target>
+      </trans-unit>
+      <trans-unit id="moc.impact.frozen" datatype="html">
+        <source>Analyse figée à la soumission à validation.</source>
+        <target state="translated">提交审批时分析已锁定。</target>
+      </trans-unit>
+      <trans-unit id="moc.impact.weight-tooltip" datatype="html">
+        <source>Poids de ce domaine dans le score, réglé par l'administrateur</source>
+        <target state="translated">该领域在评分中的权重，由管理员设置</target>
+      </trans-unit>
+      <trans-unit id="moc.impact.notes" datatype="html">
+        <source>Nature de l'impact et mesures de maîtrise</source>
+        <target state="translated">影响性质及控制措施</target>
+      </trans-unit>
+      <trans-unit id="moc.impact-failed" datatype="html">
+        <source>L'évaluation n'a pas été enregistrée.</source>
+        <target state="translated">评估未能保存。</target>
+      </trans-unit>
+      <trans-unit id="moc.validation.summary" datatype="html">
+        <source>Changement <x id="classe"/> : <x id="count"/> validation(s) requise(s). Un seul refus rejette la demande.</source>
+        <target state="translated"><x id="classe"/>变更：需要 <x id="count"/> 项审批。任一拒绝即驳回申请。</target>
+      </trans-unit>
+      <trans-unit id="moc.validation.not-assessed" datatype="html">
+        <source>Les validateurs requis seront connus une fois les huit domaines d'impact évalués.</source>
+        <target state="translated">八个影响领域全部评估后，才会确定所需审批人。</target>
+      </trans-unit>
+      <trans-unit id="moc.validation.legacy" datatype="html">
+        <source>Demande antérieure au MOC : ses décisions sont consignées dans l'historique.</source>
+        <target state="translated">MOC 之前的申请：其决定记录在历史中。</target>
+      </trans-unit>
+      <trans-unit id="moc.validation.preview" datatype="html">
+        <source>Aperçu : la liste des validateurs sera figée à la soumission à validation.</source>
+        <target state="translated">预览：审批人名单将在提交审批时锁定。</target>
+      </trans-unit>
+      <trans-unit id="moc.validation.approved-by" datatype="html">
+        <source>Approuvé par <x id="NAME"/></source>
+        <target state="translated">批准人：<x id="NAME"/></target>
+      </trans-unit>
+      <trans-unit id="moc.validation.rejected-by" datatype="html">
+        <source>Rejeté par <x id="NAME"/></source>
+        <target state="translated">拒绝人：<x id="NAME"/></target>
+      </trans-unit>
+      <trans-unit id="moc.validation.holders" datatype="html">
+        <source>Titulaires : <x id="NAMES"/></source>
+        <target state="translated">负责人：<x id="NAMES"/></target>
+      </trans-unit>
+      <trans-unit id="moc.validation.waiting-for" datatype="html">
+        <source>En attente de : <x id="NAMES"/></source>
+        <target state="translated">等待：<x id="NAMES"/></target>
+      </trans-unit>
+      <trans-unit id="moc.validation.no-holder" datatype="html">
+        <source>Aucun titulaire : l'administrateur doit en nommer un dans les paramètres MOC.</source>
+        <target state="translated">无负责人：管理员需在 MOC 设置中指定。</target>
+      </trans-unit>
+      <trans-unit id="moc.validation.self" datatype="html">
+        <source>Vous êtes le demandeur : vous ne pouvez pas valider votre propre demande.</source>
+        <target state="translated">您是申请人：不能审批自己的申请。</target>
+      </trans-unit>
+      <trans-unit id="moc.validation.comment" datatype="html">
+        <source>Commentaire (obligatoire en cas de refus)</source>
+        <target state="translated">评论（拒绝时必填）</target>
+      </trans-unit>
+      <trans-unit id="moc.validation.approve" datatype="html">
+        <source>Approuver</source>
+        <target state="translated">批准</target>
+      </trans-unit>
+      <trans-unit id="moc.validation.reject" datatype="html">
+        <source>Rejeter</source>
+        <target state="translated">拒绝</target>
+      </trans-unit>
+      <trans-unit id="moc.validation.reject-hint" datatype="html">
+        <source>Un refus doit être motivé par un commentaire</source>
+        <target state="translated">拒绝须附评论说明理由</target>
+      </trans-unit>
+      <trans-unit id="moc.validation.approved" datatype="html">
+        <source>Validation enregistrée.</source>
+        <target state="translated">审批已记录。</target>
+      </trans-unit>
+      <trans-unit id="moc.validation.rejected" datatype="html">
+        <source>Refus enregistré : la demande est rejetée.</source>
+        <target state="translated">拒绝已记录：申请已被驳回。</target>
+      </trans-unit>
+      <trans-unit id="moc.validation.failed" datatype="html">
+        <source>La décision n'a pas été enregistrée.</source>
+        <target state="translated">决定未能保存。</target>
+      </trans-unit>
+      <trans-unit id="moc.dialog.new-title" datatype="html">
+        <source>Nouvelle demande de changement</source>
+        <target state="translated">新建变更申请</target>
+      </trans-unit>
+      <trans-unit id="moc.dialog.edit-title" datatype="html">
+        <source>Modifier la demande <x id="code"/></source>
+        <target state="translated">编辑申请 <x id="code"/></target>
+      </trans-unit>
+      <trans-unit id="moc.dialog.title-label" datatype="html">
+        <source>Titre</source>
+        <target state="translated">标题</target>
+      </trans-unit>
+      <trans-unit id="moc.dialog.title-required" datatype="html">
+        <source>Donnez un titre à la demande.</source>
+        <target state="translated">请为申请填写标题。</target>
+      </trans-unit>
+      <trans-unit id="moc.dialog.planned-hint" datatype="html">
+        <source>Facultatif : l'échéance apparaît au tableau de bord SMI.</source>
+        <target state="translated">可选：截止日期将显示在综合管理体系仪表板上。</target>
+      </trans-unit>
+      <trans-unit id="moc.dialog.create" datatype="html">
+        <source>Créer la demande</source>
+        <target state="translated">创建申请</target>
+      </trans-unit>
+      <trans-unit id="moc.dialog.created" datatype="html">
+        <source>Demande <x id="code"/> créée.</source>
+        <target state="translated">申请 <x id="code"/> 已创建。</target>
+      </trans-unit>
+      <trans-unit id="moc.dialog.updated" datatype="html">
+        <source>Demande modifiée.</source>
+        <target state="translated">申请已修改。</target>
+      </trans-unit>
+      <trans-unit id="moc.dialog.failed" datatype="html">
+        <source>La demande n'a pas été enregistrée.</source>
+        <target state="translated">申请未能保存。</target>
+      </trans-unit>
+      <trans-unit id="moc.error.analysis-incomplete" datatype="html">
+        <source>Évaluez les huit domaines d'impact avant de soumettre à validation.</source>
+        <target state="translated">提交审批前请评估全部八个影响领域。</target>
+      </trans-unit>
+      <trans-unit id="moc.error.role-without-holder" datatype="html">
+        <source>Le rôle « <x id="role"/> » n'a aucun titulaire : demandez à l'administrateur d'en nommer un.</source>
+        <target state="translated">角色“<x id="role"/>”没有负责人：请联系管理员指定。</target>
+      </trans-unit>
+      <trans-unit id="moc.error.role-only-requester" datatype="html">
+        <source>Le rôle « <x id="role"/> » n'a pour titulaire que le demandeur, qui ne peut pas valider sa propre demande.</source>
+        <target state="translated">角色“<x id="role"/>”的唯一负责人是申请人，申请人不能审批自己的申请。</target>
+      </trans-unit>
+      <trans-unit id="moc.error.not-holder" datatype="html">
+        <source>Seul un titulaire du rôle « <x id="role"/> » peut statuer sur cette carte.</source>
+        <target state="translated">只有角色“<x id="role"/>”的负责人才能处理此卡片。</target>
+      </trans-unit>
+      <trans-unit id="moc.error.not-owner" datatype="html">
+        <source>Seul le demandeur ou un gestionnaire des changements peut conduire cette demande.</source>
+        <target state="translated">只有申请人或变更管理者才能处理此申请。</target>
+      </trans-unit>
+      <trans-unit id="moc.error.self-validation" datatype="html">
+        <source>Vous êtes le demandeur : vous ne pouvez pas valider votre propre demande.</source>
+        <target state="translated">您是申请人：不能审批自己的申请。</target>
+      </trans-unit>
+      <trans-unit id="moc.error.comment-required" datatype="html">
+        <source>Un refus doit être motivé par un commentaire.</source>
+        <target state="translated">拒绝须附评论说明理由。</target>
+      </trans-unit>
+      <trans-unit id="moc.error.already-decided" datatype="html">
+        <source>Ce rôle a déjà statué.</source>
+        <target state="translated">该角色已作出决定。</target>
+      </trans-unit>
+      <trans-unit id="moc.error.delete-not-draft" datatype="html">
+        <source>Seule une demande en brouillon peut être supprimée.</source>
+        <target state="translated">只能删除草稿状态的申请。</target>
+      </trans-unit>
+      <trans-unit id="moc.error.role-in-use" datatype="html">
+        <source>Le rôle « <x id="role"/> » est attendu par une demande en validation : il ne peut pas être retiré.</source>
+        <target state="translated">角色“<x id="role"/>”正被审批中的申请等待：无法删除。</target>
+      </trans-unit>
+      <trans-unit id="moc.error.role-in-use-holders" datatype="html">
+        <source>Le rôle « <x id="role"/> » est attendu par une demande en validation : il doit garder au moins un titulaire.</source>
+        <target state="translated">角色“<x id="role"/>”正被审批中的申请等待：必须至少保留一名负责人。</target>
+      </trans-unit>
+      <trans-unit id="moc.error.role-duplicate" datatype="html">
+        <source>Deux rôles portent le même libellé « <x id="role"/> ».</source>
+        <target state="translated">两个角色名称相同：“<x id="role"/>”。</target>
+      </trans-unit>
+      <trans-unit id="moc.error.required-empty" datatype="html">
+        <source>Chaque classification doit exiger au moins un rôle de validation.</source>
+        <target state="translated">每个分类必须至少要求一个审批角色。</target>
+      </trans-unit>
+      <trans-unit id="moc.error.thresholds" datatype="html">
+        <source>Les seuils doivent respecter 0 &lt; seuil majeur &lt; seuil critique ≤ 100.</source>
+        <target state="translated">阈值必须满足 0 &lt; 重大阈值 &lt; 关键阈值 ≤ 100。</target>
+      </trans-unit>
+      <trans-unit id="moc.error.weights-zero" datatype="html">
+        <source>Au moins un domaine doit avoir un poids supérieur à 0.</source>
+        <target state="translated">至少一个领域的权重必须大于 0。</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.title" datatype="html">
+        <source>Paramètres MOC</source>
+        <target state="translated">MOC 设置</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.subtitle" datatype="html">
+        <source>Classification, poids des domaines, rappel et validateurs de la gestion des changements.</source>
+        <target state="translated">变更管理的分类、领域权重、提醒和审批人。</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.back" datatype="html">
+        <source>Gestion des changements</source>
+        <target state="translated">变更管理</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.load-failed" datatype="html">
+        <source>Les paramètres MOC n'ont pas pu être chargés.</source>
+        <target state="translated">无法加载 MOC 设置。</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.scope" datatype="html">
+        <source>Un enregistrement reclasse aussitôt les demandes en brouillon ou en analyse. Les demandes déjà en validation, approuvées ou rejetées gardent leur score, leur classification et leurs validateurs, figés à la soumission.</source>
+        <target state="translated">保存后，草稿或分析中的申请会立即重新分类。已在审批中、已批准或已拒绝的申请保留提交时锁定的评分、分类和审批人。</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.thresholds" datatype="html">
+        <source>Seuils de classification</source>
+        <target state="translated">分类阈值</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.thresholds-help" datatype="html">
+        <source>Le score d'impact va de 0 à 100. Il classe la demande, et la classe désigne les validateurs requis.</source>
+        <target state="translated">影响评分范围为 0 到 100。评分决定申请的分类，分类决定所需审批人。</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.major" datatype="html">
+        <source>Seuil majeur</source>
+        <target state="translated">重大阈值</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.critical" datatype="html">
+        <source>Seuil critique</source>
+        <target state="translated">关键阈值</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.threshold-summary" datatype="html">
+        <source>Mineur &lt; <x id="major"/> ≤ Majeur &lt; <x id="critical"/> ≤ Critique</source>
+        <target state="translated">轻微 &lt; <x id="major"/> ≤ 重大 &lt; <x id="critical"/> ≤ 关键</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.reminder" datatype="html">
+        <source>Rappel aux validateurs</source>
+        <target state="translated">审批人提醒</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.reminder-help" datatype="html">
+        <source>Sans décision dans ce délai, les titulaires du rôle reçoivent un rappel, répété au même rythme tant que personne n'a statué.</source>
+        <target state="translated">在此期限内未作决定时，角色负责人会收到提醒，并按相同频率重复，直到有人作出决定。</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.reminder-days" datatype="html">
+        <source>Délai (jours)</source>
+        <target state="translated">期限（天）</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.weights" datatype="html">
+        <source>Poids des domaines d'impact</source>
+        <target state="translated">影响领域权重</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.weights-help" datatype="html">
+        <source>De 0 à 10. Un domaine de poids 0 reste à évaluer mais ne compte pas dans le score. À 1 partout, le score est la moyenne simple.</source>
+        <target state="translated">0 到 10。权重为 0 的领域仍需评估，但不计入评分。全部为 1 时，评分即为简单平均。</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.roles" datatype="html">
+        <source>Rôles de validation</source>
+        <target state="translated">审批角色</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.roles-help" datatype="html">
+        <source>Pour chaque rôle : les classifications qui l'exigent et ses titulaires (principal en premier, puis suppléants). N'importe lequel d'entre eux peut statuer ; jamais le demandeur.</source>
+        <target state="translated">每个角色：要求该角色的分类及其负责人（主负责人在前，其次为代理人）。任何负责人均可作出决定；申请人除外。</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.add-role" datatype="html">
+        <source>Ajouter un rôle</source>
+        <target state="translated">添加角色</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.role-label" datatype="html">
+        <source>Libellé du rôle</source>
+        <target state="translated">角色名称</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.up" datatype="html">
+        <source>Monter le rôle</source>
+        <target state="translated">上移角色</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.down" datatype="html">
+        <source>Descendre le rôle</source>
+        <target state="translated">下移角色</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.remove-role" datatype="html">
+        <source>Retirer le rôle</source>
+        <target state="translated">移除角色</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.required-for" datatype="html">
+        <source>Requis pour</source>
+        <target state="translated">适用于</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.holders" datatype="html">
+        <source>Titulaires</source>
+        <target state="translated">负责人</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.primary" datatype="html">
+        <source>Principal ·</source>
+        <target state="translated">主负责人 ·</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.inactive" datatype="html">
+        <source>(désactivé)</source>
+        <target state="translated">（已停用）</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.unknown" datatype="html">
+        <source>(absent de l'annuaire)</source>
+        <target state="translated">（不在目录中）</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.remove-holder" datatype="html">
+        <source>Retirer <x id="member"/></source>
+        <target state="translated">移除 <x id="member"/></target>
+      </trans-unit>
+      <trans-unit id="moc.settings.no-holder" datatype="html">
+        <source>Aucun titulaire : une demande qui exige ce rôle ne pourra pas être soumise à validation.</source>
+        <target state="translated">无负责人：需要该角色的申请将无法提交审批。</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.add-holder" datatype="html">
+        <source>Ajouter un titulaire (annuaire)</source>
+        <target state="translated">添加负责人（目录）</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.pending" datatype="html">
+        <source>Paramètres modifiés</source>
+        <target state="translated">设置已修改</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.saved" datatype="html">
+        <source>Paramètres MOC enregistrés. Les demandes en brouillon ou en analyse sont reclassées.</source>
+        <target state="translated">MOC 设置已保存。草稿或分析中的申请已重新分类。</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.failed" datatype="html">
+        <source>Les paramètres MOC n'ont pas pu être enregistrés.</source>
+        <target state="translated">无法保存 MOC 设置。</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.problem.thresholds" datatype="html">
+        <source>Les seuils doivent respecter 0 &lt; seuil majeur &lt; seuil critique ≤ 100.</source>
+        <target state="translated">阈值必须满足 0 &lt; 重大阈值 &lt; 关键阈值 ≤ 100。</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.problem.reminder" datatype="html">
+        <source>Le délai de rappel est un nombre de jours de 1 à 30.</source>
+        <target state="translated">提醒期限为 1 到 30 天。</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.problem.weights" datatype="html">
+        <source>Chaque poids est un entier de 0 à 10.</source>
+        <target state="translated">每个权重为 0 到 10 的整数。</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.problem.weights-zero" datatype="html">
+        <source>Au moins un domaine doit avoir un poids supérieur à 0.</source>
+        <target state="translated">至少一个领域的权重必须大于 0。</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.problem.no-role" datatype="html">
+        <source>Il faut au moins un rôle de validation.</source>
+        <target state="translated">至少需要一个审批角色。</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.problem.label" datatype="html">
+        <source>Chaque rôle porte un libellé de 1 à 100 caractères.</source>
+        <target state="translated">每个角色名称为 1 到 100 个字符。</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.problem.duplicate" datatype="html">
+        <source>Deux rôles portent le même libellé.</source>
+        <target state="translated">两个角色名称相同。</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.problem.required" datatype="html">
+        <source>La classification « <x id="classe"/> » n'exige aucun rôle.</source>
+        <target state="translated">分类“<x id="classe"/>”未要求任何角色。</target>
       </trans-unit>
       <trans-unit id="nav.non-conformite" datatype="html">
         <source>Non-conformité</source>
@@ -16715,22 +17827,6 @@ historique 12 mois</source>
       <trans-unit id="nc.detail.cancel-confirm-message" datatype="html">
         <source>La non-conformité sera marquée comme annulée. Cette décision est traçable.</source>
         <target state="translated">该不合格项将被标记为已取消。此决定可追溯。</target>
-      </trans-unit>
-      <trans-unit id="nc.detail.add-action" datatype="html">
-        <source>Ajouter une action</source>
-        <target state="translated">添加措施</target>
-      </trans-unit>
-      <trans-unit id="nc.detail.add-action-tooltip" datatype="html">
-        <source>Poser une action corrective sur cette non-conformité</source>
-        <target state="translated">为此不合格项登记纠正措施</target>
-      </trans-unit>
-      <trans-unit id="nc.detail.add-action-no-case" datatype="html">
-        <source>Dossier créé, mais introuvable pour y ajouter l'action. Ouvrez-le depuis la CAPA.</source>
-        <target state="translated">已创建案卷，但无法找到以添加措施。请从 CAPA 打开。</target>
-      </trans-unit>
-      <trans-unit id="nc.detail.escalate-error" datatype="html">
-        <source>Erreur lors de l'escalade.</source>
-        <target state="translated">升级时出错。</target>
       </trans-unit>
       <trans-unit id="nc.detail.transition-success" datatype="html">
         <source>Statut mis à jour.</source>
@@ -19360,442 +20456,6 @@ historique 12 mois</source>
         <source>Ce que la clôture de ce dossier a proposé de réviser.</source>
         <target state="translated">本案关闭后提出修订的内容。</target>
       </trans-unit>
-      <trans-unit id="changes.approver.added" datatype="html">
-        <source>Approbateur ajouté.</source>
-        <target state="translated">已添加审批人。</target>
-      </trans-unit>
-      <trans-unit id="changes.approver.hint" datatype="html">
-        <source>Le workflow d'approbation passe en APPROVED quand tous les approbateurs ont
-     statué favorablement. Un seul REJECT marque la demande comme REJECTED.</source>
-        <target state="translated">当所有审批人均作出同意决定后，审批工作流转为 APPROVED。
-     只要有一个 REJECT，申请即标记为 REJECTED。</target>
-      </trans-unit>
-      <trans-unit id="changes.approver.level-label" datatype="html">
-        <source>Niveau d'approbation</source>
-        <target state="translated">审批级别</target>
-      </trans-unit>
-      <trans-unit id="changes.approver.title" datatype="html">
-        <source>Ajouter un approbateur</source>
-        <target state="translated">添加审批人</target>
-      </trans-unit>
-      <trans-unit id="changes.approver.uuid-hint" datatype="html">
-        <source>UUID v4 de l'utilisateur Keycloak</source>
-        <target state="translated">Keycloak 用户的 UUID v4</target>
-      </trans-unit>
-      <trans-unit id="changes.approver.uuid-label" datatype="html">
-        <source>UUID approbateur</source>
-        <target state="translated">审批人 UUID</target>
-      </trans-unit>
-      <trans-unit id="changes.create.code-label" datatype="html">
-        <source>Code</source>
-        <target state="translated">编号</target>
-      </trans-unit>
-      <trans-unit id="changes.create.code-placeholder" datatype="html">
-        <source>Ex. : CHG-2026-014</source>
-        <target state="translated">例：CHG-2026-014</target>
-      </trans-unit>
-      <trans-unit id="changes.create.created" datatype="html">
-        <source>Demande créée.</source>
-        <target state="translated">申请已创建。</target>
-      </trans-unit>
-      <trans-unit id="changes.create.impact-summary-label" datatype="html">
-        <source>Synthèse d'impact</source>
-        <target state="translated">影响概述</target>
-      </trans-unit>
-      <trans-unit id="changes.create.planned-for-label" datatype="html">
-        <source>Date prévue</source>
-        <target state="translated">计划日期</target>
-      </trans-unit>
-      <trans-unit id="changes.create.priority-label" datatype="html">
-        <source>Priorité</source>
-        <target state="translated">优先级</target>
-      </trans-unit>
-      <trans-unit id="changes.create.risk-label" datatype="html">
-        <source>Analyse de risque</source>
-        <target state="translated">风险分析</target>
-      </trans-unit>
-      <trans-unit id="changes.create.save-error" datatype="html">
-        <source>Erreur lors de l'enregistrement.</source>
-        <target state="translated">保存时出错。</target>
-      </trans-unit>
-      <trans-unit id="changes.create.updated" datatype="html">
-        <source>Demande mise à jour.</source>
-        <target state="translated">申请已更新。</target>
-      </trans-unit>
-      <trans-unit id="changes.decision.approve-hint" datatype="html">
-        <source>Votre approbation sera enregistrée. La demande passera en APPROVED lorsque tous les approbateurs auront statué.</source>
-        <target state="translated">您的审批将被记录。当所有审批人均作出决定后，申请将转为 APPROVED。</target>
-      </trans-unit>
-      <trans-unit id="changes.decision.comment-label" datatype="html">
-        <source>Commentaire</source>
-        <target state="translated">备注</target>
-      </trans-unit>
-      <trans-unit id="changes.decision.failed" datatype="html">
-        <source>Décision impossible.</source>
-        <target state="translated">无法作出决定。</target>
-      </trans-unit>
-      <trans-unit id="changes.decision.recorded-approved" datatype="html">
-        <source>Décision enregistrée : approuvée.</source>
-        <target state="translated">决定已记录：已批准。</target>
-      </trans-unit>
-      <trans-unit id="changes.decision.recorded-rejected" datatype="html">
-        <source>Décision enregistrée : rejetée.</source>
-        <target state="translated">决定已记录：已拒绝。</target>
-      </trans-unit>
-      <trans-unit id="changes.decision.reject-hint" datatype="html">
-        <source>Un seul rejet marque la demande comme REJECTED — décision terminale.</source>
-        <target state="translated">只要有一个拒绝，申请即标记为 REJECTED —— 此为最终决定。</target>
-      </trans-unit>
-      <trans-unit id="changes.decision.title-approve" datatype="html">
-        <source>Approuver la demande</source>
-        <target state="translated">批准申请</target>
-      </trans-unit>
-      <trans-unit id="changes.decision.title-reject" datatype="html">
-        <source>Rejeter la demande</source>
-        <target state="translated">拒绝申请</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.add-impact" datatype="html">
-        <source>Ajouter un impact</source>
-        <target state="translated">添加影响</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.approvals-title" datatype="html">
-        <source>Approbations</source>
-        <target state="translated">审批</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.approve" datatype="html">
-        <source>Approuver</source>
-        <target state="translated">批准</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.back" datatype="html">
-        <source>Changements</source>
-        <target state="translated">变更</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.cancel-confirm-label" datatype="html">
-        <source>Annuler la demande</source>
-        <target state="translated">取消申请</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.cancel-confirm-title" datatype="html">
-        <source>Annuler la demande ?</source>
-        <target state="translated">取消申请？</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.cancel-failed" datatype="html">
-        <source>Annulation impossible.</source>
-        <target state="translated">无法取消。</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.cancelled" datatype="html">
-        <source>Demande annulée.</source>
-        <target state="translated">申请已取消。</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.col-added" datatype="html">
-        <source>Ajouté</source>
-        <target state="translated">添加时间</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.col-approver" datatype="html">
-        <source>Approbateur</source>
-        <target state="translated">审批人</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.col-comment" datatype="html">
-        <source>Commentaire</source>
-        <target state="translated">备注</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.col-decided-at" datatype="html">
-        <source>Décidé le</source>
-        <target state="translated">决定日期</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.col-decision" datatype="html">
-        <source>Décision</source>
-        <target state="translated">决定</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.col-level" datatype="html">
-        <source>Niveau</source>
-        <target state="translated">级别</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.col-notes" datatype="html">
-        <source>Notes</source>
-        <target state="translated">备注</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.col-target-uuid" datatype="html">
-        <source>UUID cible</source>
-        <target state="translated">目标 UUID</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.delete-confirm-title" datatype="html">
-        <source>Supprimer la demande ?</source>
-        <target state="translated">删除申请？</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.deleted" datatype="html">
-        <source>Demande supprimée.</source>
-        <target state="translated">申请已删除。</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.impact-summary-title" datatype="html">
-        <source>Synthèse impact</source>
-        <target state="translated">影响概述</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.impacts-title" datatype="html">
-        <source>Impacts</source>
-        <target state="translated">影响</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.implement" datatype="html">
-        <source>Implémenter</source>
-        <target state="translated">实施</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.implemented-label" datatype="html">
-        <source>Implémenté :</source>
-        <target state="translated">已实施：</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.keep" datatype="html">
-        <source>Conserver</source>
-        <target state="translated">保留</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.no-approvers" datatype="html">
-        <source>Aucun approbateur défini.</source>
-        <target state="translated">未定义审批人。</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.no-impact-summary" datatype="html">
-        <source>Aucune synthèse renseignée.</source>
-        <target state="translated">未填写概述。</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.no-impacts" datatype="html">
-        <source>Aucun impact référencé.</source>
-        <target state="translated">未引用任何影响。</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.no-risk" datatype="html">
-        <source>Aucune analyse renseignée.</source>
-        <target state="translated">未填写分析。</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.planned-label" datatype="html">
-        <source>Prévu :</source>
-        <target state="translated">计划：</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.reject" datatype="html">
-        <source>Rejeter</source>
-        <target state="translated">拒绝</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.rejection-label" datatype="html">
-        <source>Motif de rejet :</source>
-        <target state="translated">拒绝原因：</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.remove" datatype="html">
-        <source>Retirer</source>
-        <target state="translated">移除</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.remove-approver-title" datatype="html">
-        <source>Retirer l'approbateur ?</source>
-        <target state="translated">移除审批人？</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.remove-failed" datatype="html">
-        <source>Retrait impossible.</source>
-        <target state="translated">无法移除。</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.remove-impact-title" datatype="html">
-        <source>Retirer l'impact ?</source>
-        <target state="translated">移除影响？</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.remove-tooltip" datatype="html">
-        <source>Retirer</source>
-        <target state="translated">移除</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.risk-title" datatype="html">
-        <source>Analyse de risque</source>
-        <target state="translated">风险分析</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.stat-approved" datatype="html">
-        <source>Approuvés</source>
-        <target state="translated">已批准</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.stat-approvers" datatype="html">
-        <source>Approbateurs</source>
-        <target state="translated">审批人</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.stat-impacts" datatype="html">
-        <source>Impacts</source>
-        <target state="translated">影响</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.stat-pending" datatype="html">
-        <source>En attente</source>
-        <target state="translated">待处理</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.stat-rejected" datatype="html">
-        <source>Rejetés</source>
-        <target state="translated">已拒绝</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.submit" datatype="html">
-        <source>Soumettre</source>
-        <target state="translated">提交</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.submit-failed" datatype="html">
-        <source>Soumission impossible.</source>
-        <target state="translated">无法提交。</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.submitted" datatype="html">
-        <source>Demande soumise.</source>
-        <target state="translated">申请已提交。</target>
-      </trans-unit>
-      <trans-unit id="changes.impact-target.document" datatype="html">
-        <source>Document</source>
-        <target state="translated">文档</target>
-      </trans-unit>
-      <trans-unit id="changes.impact-target.fmea-project" datatype="html">
-        <source>Projet FMEA</source>
-        <target state="translated">FMEA 项目</target>
-      </trans-unit>
-      <trans-unit id="changes.impact-target.iot-device" datatype="html">
-        <source>Équipement IoT</source>
-        <target state="translated">IoT 设备</target>
-      </trans-unit>
-      <trans-unit id="changes.impact-target.other" datatype="html">
-        <source>Autre</source>
-        <target state="translated">其他</target>
-      </trans-unit>
-      <trans-unit id="changes.impact-target.pdca-cycle" datatype="html">
-        <source>Cycle PDCA</source>
-        <target state="translated">PDCA 循环</target>
-      </trans-unit>
-      <trans-unit id="changes.impact-target.standard" datatype="html">
-        <source>Norme</source>
-        <target state="translated">标准</target>
-      </trans-unit>
-      <trans-unit id="changes.impact-target.supplier" datatype="html">
-        <source>Fournisseur</source>
-        <target state="translated">供应商</target>
-      </trans-unit>
-      <trans-unit id="changes.impact-target.training-path" datatype="html">
-        <source>Parcours de formation</source>
-        <target state="translated">培训路径</target>
-      </trans-unit>
-      <trans-unit id="changes.impact.added" datatype="html">
-        <source>Impact ajouté.</source>
-        <target state="translated">已添加影响。</target>
-      </trans-unit>
-      <trans-unit id="changes.impact.hint" datatype="html">
-        <source>Décrivez les entités QualitOS impactées par ce changement (document à mettre à jour,
-     parcours de formation à actualiser, équipement à recalibrer…).</source>
-        <target state="translated">请描述受此变更影响的 QualitOS 实体（需更新的文档、
-     需更新的培训路径、需重新校准的设备等）。</target>
-      </trans-unit>
-      <trans-unit id="changes.impact.notes-label" datatype="html">
-        <source>Notes</source>
-        <target state="translated">备注</target>
-      </trans-unit>
-      <trans-unit id="changes.impact.target-type-label" datatype="html">
-        <source>Type d'entité impactée</source>
-        <target state="translated">受影响实体类型</target>
-      </trans-unit>
-      <trans-unit id="changes.impact.title" datatype="html">
-        <source>Ajouter un impact</source>
-        <target state="translated">添加影响</target>
-      </trans-unit>
-      <trans-unit id="changes.impact.uuid-label" datatype="html">
-        <source>UUID de l'entité</source>
-        <target state="translated">实体 UUID</target>
-      </trans-unit>
-      <trans-unit id="changes.implement.confirm" datatype="html">
-        <source>Confirmer</source>
-        <target state="translated">确认</target>
-      </trans-unit>
-      <trans-unit id="changes.implement.date-label" datatype="html">
-        <source>Date d'implémentation</source>
-        <target state="translated">实施日期</target>
-      </trans-unit>
-      <trans-unit id="changes.implement.failed" datatype="html">
-        <source>Implémentation impossible.</source>
-        <target state="translated">无法实施。</target>
-      </trans-unit>
-      <trans-unit id="changes.implement.implemented" datatype="html">
-        <source>Demande marquée IMPLEMENTED.</source>
-        <target state="translated">申请已标记为 IMPLEMENTED。</target>
-      </trans-unit>
-      <trans-unit id="changes.implement.subtitle" datatype="html">
-        <source>Le changement doit être APPROVED. La transition vers IMPLEMENTED est terminale.</source>
-        <target state="translated">变更必须为 APPROVED。向 IMPLEMENTED 的转换为最终状态。</target>
-      </trans-unit>
-      <trans-unit id="changes.implement.title" datatype="html">
-        <source>Marquer comme implémenté</source>
-        <target state="translated">标记为已实施</target>
-      </trans-unit>
-      <trans-unit id="changes.list.col-code" datatype="html">
-        <source>Code</source>
-        <target state="translated">编号</target>
-      </trans-unit>
-      <trans-unit id="changes.list.col-planned-for" datatype="html">
-        <source>Prévu pour</source>
-        <target state="translated">计划日期</target>
-      </trans-unit>
-      <trans-unit id="changes.list.col-priority" datatype="html">
-        <source>Priorité</source>
-        <target state="translated">优先级</target>
-      </trans-unit>
-      <trans-unit id="changes.list.new-request" datatype="html">
-        <source>Nouvelle demande</source>
-        <target state="translated">新建申请</target>
-      </trans-unit>
-      <trans-unit id="changes.list.subtitle" datatype="html">
-        <source>Demandes de changement, analyse d'impact, validation multi-niveaux.</source>
-        <target state="translated">变更申请、影响分析、多级验证。</target>
-      </trans-unit>
-      <trans-unit id="changes.list.title" datatype="html">
-        <source>Gestion des changements</source>
-        <target state="translated">变更管理</target>
-      </trans-unit>
-      <trans-unit id="changes.target.document" datatype="html">
-        <source>Document</source>
-        <target state="translated">文档</target>
-      </trans-unit>
-      <trans-unit id="changes.target.fmea-project" datatype="html">
-        <source>FMEA</source>
-        <target state="translated">FMEA</target>
-      </trans-unit>
-      <trans-unit id="changes.target.iot-device" datatype="html">
-        <source>IoT</source>
-        <target state="translated">IoT</target>
-      </trans-unit>
-      <trans-unit id="changes.target.other" datatype="html">
-        <source>Autre</source>
-        <target state="translated">其他</target>
-      </trans-unit>
-      <trans-unit id="changes.target.pdca-cycle" datatype="html">
-        <source>PDCA</source>
-        <target state="translated">PDCA</target>
-      </trans-unit>
-      <trans-unit id="changes.target.standard" datatype="html">
-        <source>Norme</source>
-        <target state="translated">标准</target>
-      </trans-unit>
-      <trans-unit id="changes.target.supplier" datatype="html">
-        <source>Fournisseur</source>
-        <target state="translated">供应商</target>
-      </trans-unit>
-      <trans-unit id="changes.target.training-path" datatype="html">
-        <source>Parcours</source>
-        <target state="translated">路径</target>
-      </trans-unit>
-      <trans-unit id="changes.type.document" datatype="html">
-        <source>Document</source>
-        <target state="translated">文档</target>
-      </trans-unit>
-      <trans-unit id="changes.type.equipment" datatype="html">
-        <source>Équipement</source>
-        <target state="translated">设备</target>
-      </trans-unit>
-      <trans-unit id="changes.type.it-system" datatype="html">
-        <source>Système IT</source>
-        <target state="translated">IT 系统</target>
-      </trans-unit>
-      <trans-unit id="changes.type.organizational" datatype="html">
-        <source>Organisationnel</source>
-        <target state="translated">组织</target>
-      </trans-unit>
-      <trans-unit id="changes.type.other" datatype="html">
-        <source>Autre</source>
-        <target state="translated">其他</target>
-      </trans-unit>
-      <trans-unit id="changes.type.process" datatype="html">
-        <source>Processus</source>
-        <target state="translated">流程</target>
-      </trans-unit>
-      <trans-unit id="changes.type.supplier" datatype="html">
-        <source>Fournisseur</source>
-        <target state="translated">供应商</target>
-      </trans-unit>
       <trans-unit id="documents.create.code-hint" datatype="html">
         <source>A-Z, 0-9, point, tiret, underscore</source>
         <target state="translated">A-Z、0-9、点、连字符、下划线</target>
@@ -20552,10 +21212,6 @@ historique 12 mois</source>
         <source>Audit annulé.</source>
         <target state="translated">审核已取消。</target>
       </trans-unit>
-      <trans-unit id="audits.detail.capa-label" datatype="html">
-        <source>CAPA :</source>
-        <target state="translated">CAPA：</target>
-      </trans-unit>
       <trans-unit id="audits.detail.checklist-count" datatype="html">
         <source>Checklist (<x id="INTERPOLATION"/>)</source>
         <target state="translated">检查清单 (<x id="INTERPOLATION"/>)</target>
@@ -20912,53 +21568,9 @@ historique 12 mois</source>
         <source>Surveillance</source>
         <target state="translated">监督</target>
       </trans-unit>
-      <trans-unit id="capa.action.added" datatype="html">
-        <source>Action ajoutée.</source>
-        <target state="translated">已添加措施。</target>
-      </trans-unit>
-      <trans-unit id="capa.action.description-placeholder" datatype="html">
-        <source>Méthode, ressources nécessaires, critère de fin…</source>
-        <target state="translated">方法、所需资源、完成标准……</target>
-      </trans-unit>
-      <trans-unit id="capa.action.due-date" datatype="html">
-        <source>Échéance (optionnel)</source>
-        <target state="translated">截止日期（可选）</target>
-      </trans-unit>
-      <trans-unit id="capa.action.verification-hint" datatype="html">
-        <source>Une vérification est-elle exigée sur ce dossier ? Il faut trancher : répondre « non » est une décision, qui se lit.</source>
-        <target state="translated">此案卷是否要求验证？必须作出判断：回答「否」本身也是一项决定，并会被记录。</target>
-      </trans-unit>
-      <trans-unit id="capa.action.subtitle" datatype="html">
-        <source>Définis l'action concrète à mener pour résoudre ce cas.</source>
-        <target state="translated">定义解决此案例需采取的具体措施。</target>
-      </trans-unit>
-      <trans-unit id="capa.action.title" datatype="html">
-        <source>Ajouter une action</source>
-        <target state="translated">添加措施</target>
-      </trans-unit>
-      <trans-unit id="capa.action.title-label" datatype="html">
-        <source>Titre de l'action</source>
-        <target state="translated">措施标题</target>
-      </trans-unit>
-      <trans-unit id="capa.action.title-placeholder" datatype="html">
-        <source>Ex. : Recalibrer la sonde de température hebdo</source>
-        <target state="translated">例：每周重新校准温度探头</target>
-      </trans-unit>
-      <trans-unit id="capa.action.title-required" datatype="html">
-        <source>Le titre est requis.</source>
-        <target state="translated">标题为必填项。</target>
-      </trans-unit>
       <trans-unit id="capa.create.criticity" datatype="html">
         <source>Criticité</source>
         <target state="translated">严重度</target>
-      </trans-unit>
-      <trans-unit id="capa.create.description-placeholder" datatype="html">
-        <source>Contexte, impact, observations…</source>
-        <target state="translated">背景、影响、观察……</target>
-      </trans-unit>
-      <trans-unit id="capa.create.due-date" datatype="html">
-        <source>Échéance (optionnel)</source>
-        <target state="translated">截止日期（可选）</target>
       </trans-unit>
       <trans-unit id="capa.create.source" datatype="html">
         <source>Source</source>
@@ -20972,18 +21584,6 @@ historique 12 mois</source>
         <source>Ex. : NC-2026-018</source>
         <target state="translated">例：NC-2026-018</target>
       </trans-unit>
-      <trans-unit id="capa.create.subtitle" datatype="html">
-        <source>Crée un cas correctif ou préventif. Les actions seront ajoutées ensuite et l'efficacité vérifiée à la clôture.</source>
-        <target state="translated">创建纠正性或预防性案例。措施将在之后添加，有效性将在结案时验证。</target>
-      </trans-unit>
-      <trans-unit id="capa.create.success" datatype="html">
-        <source>Cas CAPA créé.</source>
-        <target state="translated">已创建 CAPA 案例。</target>
-      </trans-unit>
-      <trans-unit id="capa.create.title" datatype="html">
-        <source>Nouveau cas CAPA</source>
-        <target state="translated">新建 CAPA 案例</target>
-      </trans-unit>
       <trans-unit id="capa.create.title-placeholder" datatype="html">
         <source>Ex. : Recalibration robot soudure cobot-3</source>
         <target state="translated">例：焊接机器人 cobot-3 重新校准</target>
@@ -20991,26 +21591,6 @@ historique 12 mois</source>
       <trans-unit id="capa.create.title-required" datatype="html">
         <source>Le titre est requis.</source>
         <target state="translated">标题为必填项。</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.action-added" datatype="html">
-        <source>Action ajoutée à la CAPA.</source>
-        <target state="translated">已将措施添加到 CAPA。</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.actions-count" datatype="html">
-        <source>Actions (<x id="INTERPOLATION"/>)</source>
-        <target state="translated">措施 (<x id="INTERPOLATION"/>)</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.actions-empty" datatype="html">
-        <source>Aucune action. Clique sur</source>
-        <target state="translated">暂无措施。点击</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.add-action" datatype="html">
-        <source>Ajouter une action</source>
-        <target state="translated">添加措施</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.analysing" datatype="html">
-        <source>Analyse…</source>
-        <target state="translated">分析中……</target>
       </trans-unit>
       <trans-unit id="capa.detail.back-tooltip" datatype="html">
         <source>Retour à la liste</source>
@@ -21032,17 +21612,9 @@ historique 12 mois</source>
         <source>Cas démarré.</source>
         <target state="translated">案例已启动。</target>
       </trans-unit>
-      <trans-unit id="capa.detail.col-action" datatype="html">
-        <source>Action</source>
-        <target state="translated">措施</target>
-      </trans-unit>
       <trans-unit id="capa.detail.col-completed" datatype="html">
         <source>Complétée</source>
         <target state="translated">已完成</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.col-advance" datatype="html">
-        <source>Avancement</source>
-        <target state="translated">进度</target>
       </trans-unit>
       <trans-unit id="capa.detail.action-start" datatype="html">
         <source>Démarrer</source>
@@ -21063,10 +21635,6 @@ historique 12 mois</source>
       <trans-unit id="capa.detail.action-done-tooltip" datatype="html">
         <source>Action terminée</source>
         <target state="translated">措施已完成</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.col-due-date" datatype="html">
-        <source>Échéance</source>
-        <target state="translated">截止日期</target>
       </trans-unit>
       <trans-unit id="capa.detail.confirm-effective-message" datatype="html">
         <source>Tu confirmes que les actions ont eu l'effet attendu. Le cas sera clôturé (CLOSED).</source>
@@ -21140,26 +21708,6 @@ historique 12 mois</source>
         <source>CAPA · Corrective &amp; Preventive Actions</source>
         <target state="translated">CAPA · Corrective &amp; Preventive Actions</target>
       </trans-unit>
-      <trans-unit id="capa.detail.generating" datatype="html">
-        <source>Génération des actions… (peut prendre ~1 min sur CPU)</source>
-        <target state="translated">正在生成措施……（在 CPU 上可能需约 1 分钟）</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.generating-aria" datatype="html">
-        <source>Génération des actions en cours</source>
-        <target state="translated">正在生成措施</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.hide" datatype="html">
-        <source>Masquer</source>
-        <target state="translated">隐藏</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.hide-suggestions" datatype="html">
-        <source>Masquer les suggestions</source>
-        <target state="translated">隐藏建议</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.no-suggestion" datatype="html">
-        <source>Aucune action exploitable — précisez le problème.</source>
-        <target state="translated">无可用措施 — 请明确问题。</target>
-      </trans-unit>
       <trans-unit id="capa.detail.not-effective" datatype="html">
         <source>Non efficace</source>
         <target state="translated">无效</target>
@@ -21207,26 +21755,6 @@ historique 12 mois</source>
       <trans-unit id="capa.detail.start-tooltip" datatype="html">
         <source>Démarrer le traitement</source>
         <target state="translated">启动处理</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.suggest" datatype="html">
-        <source>Suggérer (IA)</source>
-        <target state="translated">建议（AI）</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.suggest-tooltip" datatype="html">
-        <source>Suggérer des actions par l'IA</source>
-        <target state="translated">用 AI 建议措施</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.suggestion-unavailable" datatype="html">
-        <source>Suggestion IA indisponible (ai-service / Ollama).</source>
-        <target state="translated">AI 建议不可用（ai-service / Ollama）。</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.suggestions-region" datatype="html">
-        <source>Actions suggérées par l'IA</source>
-        <target state="translated">AI 建议的措施</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.suggestions-title" datatype="html">
-        <source>Actions suggérées par l'IA</source>
-        <target state="translated">AI 建议的措施</target>
       </trans-unit>
       <trans-unit id="capa.detail.transition-error" datatype="html">
         <source>Erreur lors de la transition.</source>
@@ -21608,9 +22136,9 @@ historique 12 mois</source>
         <source>Responsable de l'action</source>
         <target state="translated">措施负责人</target>
       </trans-unit>
-      <trans-unit id="fmea.item.action-owner-name-hint" datatype="html">
-        <source>Une personne ou un service — la trame accepte les deux.</source>
-        <target state="translated">可填个人或部门，两者皆可。</target>
+      <trans-unit id="fmea.item.action-owner-legacy" datatype="html">
+        <source>Nom enregistré : <x id="INTERPOLATION"/>. Choisissez cette personne dans l'annuaire.</source>
+        <target state="translated">已记录的姓名：<x id="INTERPOLATION"/>。请在目录中选择此人。</target>
       </trans-unit>
       <trans-unit id="fmea.item.actions-taken" datatype="html">
         <source>Actions réalisées</source>
@@ -22344,6 +22872,10 @@ historique 12 mois</source>
         <source>Vérification du bénéfice (critère)</source>
         <target state="translated">效益验证（准则）</target>
       </trans-unit>
+      <trans-unit id="rr.form.owner-legacy" datatype="html">
+        <source>Nom enregistré : <x id="INTERPOLATION"/>. Choisissez cette personne dans l'annuaire.</source>
+        <target state="translated">已记录的姓名：<x id="INTERPOLATION"/>。请在目录中选择此人。</target>
+      </trans-unit>
       <trans-unit id="rr.form.required" datatype="html">
         <source>Champ obligatoire.</source>
         <target state="translated">必填字段。</target>
@@ -22444,21 +22976,9 @@ historique 12 mois</source>
         <source>Intitulé</source>
         <target state="translated">名称</target>
       </trans-unit>
-      <trans-unit id="rr.action.description" datatype="html">
-        <source>Description (facultatif)</source>
-        <target state="translated">描述（可选）</target>
-      </trans-unit>
       <trans-unit id="rr.action.capa-title" datatype="html">
         <source>Créer une action CAPA</source>
         <target state="translated">创建 CAPA 措施</target>
-      </trans-unit>
-      <trans-unit id="rr.action.capa-help" datatype="html">
-        <source>Un dossier CAPA est ouvert dans le module CAPA, avec la criticité du niveau brut du risque. Il porte cette action, confiée au responsable désigné, et apparaîtra dans le tableau « Traitement » de la fiche.</source>
-        <target state="translated">将在 CAPA 模块中开启一个 CAPA 案例，其关键度取风险的固有等级。该案例承载此措施并指派给指定负责人，并将显示在记录的“处理”表中。</target>
-      </trans-unit>
-      <trans-unit id="rr.action.open-capa" datatype="html">
-        <source>Ouvrir le dossier CAPA</source>
-        <target state="translated">打开 CAPA 案例</target>
       </trans-unit>
       <trans-unit id="rr.action-status.to-start" datatype="html">
         <source>À démarrer</source>
@@ -22788,21 +23308,9 @@ historique 12 mois</source>
         <source>Tableau de bord SMI</source>
         <target state="translated">综合管理体系仪表板</target>
       </trans-unit>
-      <trans-unit id="rr.action.kind" datatype="html">
-        <source>Nature de l'action</source>
-        <target state="translated">措施性质</target>
-      </trans-unit>
       <trans-unit id="rr.action.kind-short" datatype="html">
         <source>Nature</source>
         <target state="translated">性质</target>
-      </trans-unit>
-      <trans-unit id="rr.action.kind-hint" datatype="html">
-        <source>Préventive : l'écart ne s'est pas encore produit. Corrective : il s'est déjà produit, on en supprime la cause.</source>
-        <target state="translated">预防：偏差尚未发生。纠正：偏差已经发生，需消除其原因。</target>
-      </trans-unit>
-      <trans-unit id="rr.action.assignee" datatype="html">
-        <source>Responsable de l'action</source>
-        <target state="translated">措施负责人</target>
       </trans-unit>
       <trans-unit id="rr.action.assignee-short" datatype="html">
         <source>Responsable</source>
@@ -22819,10 +23327,6 @@ historique 12 mois</source>
       <trans-unit id="capa.detail.single-action" datatype="html">
         <source>Action</source>
         <target state="translated">措施</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.single-action-missing" datatype="html">
-        <source>L'action de ce risque n'a pas encore été définie.</source>
-        <target state="translated">尚未为此风险定义措施。</target>
       </trans-unit>
       <trans-unit id="capa.detail.single-action-define" datatype="html">
         <source>Définir l'action</source>
@@ -22841,8 +23345,8 @@ historique 12 mois</source>
         <target state="translated">综合管理体系</target>
       </trans-unit>
       <trans-unit id="smi.subtitle" datatype="html">
-        <source>Vue consolidée : une preuve compte pour toutes les normes qu'elle couvre.</source>
-        <target state="translated">综合视图：一项证据适用于其覆盖的所有标准。</target>
+        <source>Vue consolidée de toutes les normes adoptées : conformité, risques, audits et échéances.</source>
+        <target state="translated">所有已采用标准的综合视图：符合率、风险、审核与期限。</target>
       </trans-unit>
       <trans-unit id="smi.filter" datatype="html">
         <source>Filtrer par norme</source>
@@ -22867,10 +23371,6 @@ historique 12 mois</source>
       <trans-unit id="smi.kpi.no-standard" datatype="html">
         <source>Aucune norme adoptée.</source>
         <target state="translated">尚未采用任何标准。</target>
-      </trans-unit>
-      <trans-unit id="smi.kpi.adopt" datatype="html">
-        <source>Adopter une norme</source>
-        <target state="translated">采用标准</target>
       </trans-unit>
       <trans-unit id="smi.kpi.overdue" datatype="html">
         <source>Actions en retard</source>
@@ -22907,10 +23407,6 @@ historique 12 mois</source>
       <trans-unit id="smi.by-standard" datatype="html">
         <source>Conformité par référentiel</source>
         <target state="translated">按标准的符合率</target>
-      </trans-unit>
-      <trans-unit id="smi.by-standard-note" datatype="html">
-        <source>Une même preuve (procédure, audit, action) est comptée pour tous les référentiels concernés.</source>
-        <target state="translated">同一证据（程序、审核、措施）适用于所有相关标准。</target>
       </trans-unit>
       <trans-unit id="smi.see-matrix" datatype="html">
         <source>Voir la matrice des exigences</source>
@@ -22965,8 +23461,8 @@ historique 12 mois</source>
         <target state="translated">没有逾期项，也没有七天内到期的事项。</target>
       </trans-unit>
       <trans-unit id="smi.requirements.title" datatype="html">
-        <source>Matrice des exigences · une preuve, plusieurs référentiels</source>
-        <target state="translated">要求矩阵 · 一项证据，多项标准</target>
+        <source>Matrice des exigences · chapitres communs × normes</source>
+        <target state="translated">要求矩阵 · 通用章节 × 标准</target>
       </trans-unit>
       <trans-unit id="smi.requirements.teaser" datatype="html">
         <source>Chapitres communs 4 à 10, croisés avec chaque norme adoptée : couvert, partiel ou en écart.</source>
@@ -23224,10 +23720,6 @@ historique 12 mois</source>
         <source>Compléter les preuves</source>
         <target state="translated">补充证据</target>
       </trans-unit>
-      <trans-unit id="smi.req.reuse" datatype="html">
-        <source>Une preuve rattachée à une exigence commune compte pour toutes les normes qui partagent ce chapitre.</source>
-        <target state="translated">关联到通用要求的证据，适用于共享该章节的所有标准。</target>
-      </trans-unit>
       <trans-unit id="smi.req.all-covered" datatype="html">
         <source>Tout est couvert : choisissez une case pour en voir le détail.</source>
         <target state="translated">全部已覆盖：选择一个单元格查看详情。</target>
@@ -23239,6 +23731,90 @@ historique 12 mois</source>
       <trans-unit id="smi.req.capa-description" datatype="html">
         <source><x id="covered"/> exigence(s) prouvée(s) sur <x id="total"/> au chapitre <x id="chapter"/> de <x id="standard"/>.</source>
         <target state="translated"><x id="standard"/> 第 <x id="chapter"/> 章：<x id="total"/> 项要求中有 <x id="covered"/> 项有证据。</target>
+      </trans-unit>
+      <trans-unit id="smi.add.open" datatype="html">
+        <source>Ajouter une norme</source>
+        <target state="translated">添加标准</target>
+      </trans-unit>
+      <trans-unit id="smi.add.admin-only" datatype="html">
+        <source>L'administrateur de votre organisation ajoute les normes.</source>
+        <target state="translated">标准由贵组织的管理员添加。</target>
+      </trans-unit>
+      <trans-unit id="standards.list.no-adoption" datatype="html">
+        <source>Aucune adoption.</source>
+        <target state="translated">暂无采用。</target>
+      </trans-unit>
+      <trans-unit id="smi.add.title" datatype="html">
+        <source>Ajouter une norme au SMI</source>
+        <target state="translated">向综合管理体系添加标准</target>
+      </trans-unit>
+      <trans-unit id="smi.add.subtitle" datatype="html">
+        <source>Les normes de système de management partagent les chapitres 4 à 10 : elles se pilotent dans le même tableau de bord et la même matrice des exigences.</source>
+        <target state="translated">管理体系标准共享第 4 至 10 章：在同一仪表板和同一要求矩阵中管理。</target>
+      </trans-unit>
+      <trans-unit id="smi.add.loading" datatype="html">
+        <source>Chargement des normes du catalogue</source>
+        <target state="translated">正在加载目录中的标准</target>
+      </trans-unit>
+      <trans-unit id="smi.add.load-failed" datatype="html">
+        <source>Les normes du catalogue n'ont pas pu être chargées.</source>
+        <target state="translated">无法加载目录中的标准。</target>
+      </trans-unit>
+      <trans-unit id="smi.add.none" datatype="html">
+        <source>Toutes les normes de système de management du catalogue sont déjà adoptées.</source>
+        <target state="translated">目录中的所有管理体系标准均已采用。</target>
+      </trans-unit>
+      <trans-unit id="smi.add.suggested" datatype="html">
+        <source>Suggérées pour votre SMI</source>
+        <target state="translated">为您的综合管理体系推荐</target>
+      </trans-unit>
+      <trans-unit id="smi.add.others" datatype="html">
+        <source>Autres normes de système de management</source>
+        <target state="translated">其他管理体系标准</target>
+      </trans-unit>
+      <trans-unit id="smi.add.all" datatype="html">
+        <source>Normes de système de management</source>
+        <target state="translated">管理体系标准</target>
+      </trans-unit>
+      <trans-unit id="smi.add.suggested-badge" datatype="html">
+        <source>Suggérée</source>
+        <target state="translated">推荐</target>
+      </trans-unit>
+      <trans-unit id="smi.add.shared-with" datatype="html">
+        <source>Rattachée à <x id="standards"/></source>
+        <target state="translated">关联 <x id="standards"/></target>
+      </trans-unit>
+      <trans-unit id="smi.add.hint" datatype="html">
+        <source>L'adoption crée la feuille de route de certification dans le Standards Hub ; les preuves s'y rattachent ensuite, exigence par exigence.</source>
+        <target state="translated">采用后会在 Standards Hub 中创建认证路线图；之后逐条要求关联证据。</target>
+      </trans-unit>
+      <trans-unit id="smi.add.submit" datatype="html">
+        <source>Ajouter</source>
+        <target state="translated">添加</target>
+      </trans-unit>
+      <trans-unit id="smi.add.blocked" datatype="html">
+        <source>Choisissez la norme à ajouter.</source>
+        <target state="translated">请选择要添加的标准。</target>
+      </trans-unit>
+      <trans-unit id="smi.add.conflict" datatype="html">
+        <source>Cette norme est déjà adoptée par votre organisation.</source>
+        <target state="translated">贵组织已采用该标准。</target>
+      </trans-unit>
+      <trans-unit id="smi.add.forbidden" datatype="html">
+        <source>Seul l'administrateur de votre organisation peut ajouter une norme.</source>
+        <target state="translated">只有贵组织的管理员才能添加标准。</target>
+      </trans-unit>
+      <trans-unit id="smi.add.not-found" datatype="html">
+        <source>Cette norme n'est pas une norme de système de management du catalogue.</source>
+        <target state="translated">该标准不是目录中的管理体系标准。</target>
+      </trans-unit>
+      <trans-unit id="smi.add.failed" datatype="html">
+        <source>La norme n'a pas pu être ajoutée.</source>
+        <target state="translated">无法添加该标准。</target>
+      </trans-unit>
+      <trans-unit id="smi.add.done" datatype="html">
+        <source><x id="standard"/> ajoutée au SMI — feuille de route de certification créée.</source>
+        <target state="translated">已将 <x id="standard"/> 添加到综合管理体系 — 已创建认证路线图。</target>
       </trans-unit>
       <trans-unit id="standards-extras.actions" datatype="html">
         <source>Actions</source>

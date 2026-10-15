@@ -43,40 +43,81 @@ describe('CapaService (mock mode)', () => {
     });
   });
 
-  it('creates a case in OPEN status', (done) => {
-    service.createCase({
-      title: 'Nouvelle action', type: 'CORRECTIVE', criticity: 'LOW', sourceType: 'INTERNAL', ownerId: 'u'
+  it('ouvre un dossier OPEN qui porte son action unique, confiée au pilote (ADR 0088)', (done) => {
+    service.openCase({
+      title: 'Nouvelle action', type: 'PREVENTIVE', criticity: 'LOW', ownerId: 'u',
+      ownerName: 'amina.dridi@demo.qualitos.io', dueDate: '2099-01-01'
     }).subscribe(c => {
       expect(c.status).toBe('OPEN');
       expect(c.title).toBe('Nouvelle action');
-      expect(c.actions).toEqual([]);
+      expect(c.sourceType).toBe('INTERNAL');
+      expect(c.ownerName).toBe('amina.dridi@demo.qualitos.io');
+      expect(c.actions.length).toBe(1);
+      expect(c.actions[0].actionType).toBe('PREVENTIVE');
+      expect(c.actions[0].assigneeId).toBe('u');
+      expect(c.actions[0].dueDate).toBe('2099-01-01');
+      // Sans décision transmise, la question de la vérification reste ouverte.
+      expect(c.verificationRequired).toBeUndefined();
       done();
     });
   });
 
-  it('adds an action to a case', (done) => {
-    service.addAction('capa-1', { title: 'Recalibrer' }).subscribe(a => {
-      expect(a.capaId).toBe('capa-1');
+  it('garde la décision de vérification prise à l\'ouverture (ADR 0073)', (done) => {
+    service.openCase({
+      title: 'Vérifiée', type: 'CORRECTIVE', criticity: 'HIGH', ownerId: 'u', dueDate: '2099-01-01',
+      verificationRequired: true, verificationAssigneeId: 'kc-c', verificationAssigneeName: 'Claire Contrôle',
+      verificationInstructions: 'Relever 20 pièces'
+    }).subscribe(c => {
+      expect(c.verificationRequired).toBeTrue();
+      expect(c.verificationAssigneeId).toBe('kc-c');
+      expect(c.verificationAssigneeName).toBe('Claire Contrôle');
+      expect(c.verificationInstructions).toBe('Relever 20 pièces');
+      done();
+    });
+  });
+
+  it('un « non » à l\'ouverture ne garde ni vérificateur ni consignes', (done) => {
+    service.openCase({
+      title: 'Non vérifiée', type: 'CORRECTIVE', criticity: 'LOW', ownerId: 'u', dueDate: '2099-01-01',
+      verificationRequired: false, verificationAssigneeId: 'kc-c', verificationInstructions: 'x'
+    }).subscribe(c => {
+      expect(c.verificationRequired).toBeFalse();
+      expect(c.verificationAssigneeId).toBeUndefined();
+      expect(c.verificationAssigneeName).toBeUndefined();
+      expect(c.verificationInstructions).toBeUndefined();
+      done();
+    });
+  });
+
+  it('définit l action d un dossier vide, et son responsable devient le pilote', (done) => {
+    service.addAction('capa-2', { title: 'Recalibrer', assigneeId: 'u9', assigneeName: 'Karim' }).subscribe(a => {
+      expect(a.capaId).toBe('capa-2');
       expect(a.status).toBe('PENDING');
-      done();
-    });
-  });
-
-  it('updateAction advances an action to DONE and stamps completedAt (ANO-011)', (done) => {
-    service.addAction('capa-1', { title: 'Recalibrer' }).subscribe(a => {
-      service.updateAction('capa-1', a.id, { title: a.title, status: 'DONE' }).subscribe(updated => {
-        expect(updated.status).toBe('DONE');
-        expect(updated.completedAt).toBeTruthy();
+      service.getCase('capa-2').subscribe(c => {
+        expect(c.ownerId).toBe('u9');
+        expect(c.ownerName).toBe('Karim');
         done();
       });
     });
   });
 
-  it('suggests AI actions', (done) => {
-    service.suggestActions('capa-1').subscribe(actions => {
-      expect(actions.length).toBeGreaterThan(0);
-      expect(actions[0].title).toBeTruthy();
-      done();
+  it('refuse une seconde action, comme le serveur (409)', (done) => {
+    service.addAction('capa-1', { title: 'Encore une' }).subscribe({
+      next: () => fail('une CAPA porte une seule action'),
+      error: err => {
+        expect(err.status).toBe(409);
+        done();
+      }
+    });
+  });
+
+  it('updateAction advances an action to DONE and stamps completedAt (ANO-011)', (done) => {
+    service.addAction('capa-2', { title: 'Recalibrer' }).subscribe(a => {
+      service.updateAction('capa-2', a.id, { title: a.title, status: 'DONE' }).subscribe(updated => {
+        expect(updated.status).toBe('DONE');
+        expect(updated.completedAt).toBeTruthy();
+        done();
+      });
     });
   });
 
@@ -258,15 +299,16 @@ describe('CapaService (API réelle)', () => {
     req.flush(aCase());
   });
 
-  it('crée un cas en POST sur la collection', () => {
-    service.createCase({
+  it('ouvre un dossier et son action en POST sur /open (ADR 0088)', () => {
+    service.openCase({
       title: 'Nouveau', type: 'PREVENTIVE', criticity: 'LOW',
-      sourceType: 'INTERNAL', ownerId: 'u1'
+      sourceType: 'COMPLAINT', ownerId: 'u1', ownerName: 'a@b.c', dueDate: '2099-01-01'
     }).subscribe();
-    const req = http.expectOne(base);
+    const req = http.expectOne(`${base}/open`);
     expect(req.request.method).toBe('POST');
     expect(req.request.body.title).toBe('Nouveau');
-    expect(req.request.body.type).toBe('PREVENTIVE');
+    expect(req.request.body.ownerId).toBe('u1');
+    expect(req.request.body.dueDate).toBe('2099-01-01');
     req.flush(aCase());
   });
 
@@ -323,29 +365,6 @@ describe('CapaService (API réelle)', () => {
       assigneeName: 'Amina Dridi'
     });
     req.flush({ id: 'a1', capaId: 'c1', title: 'Réviser le plan de contrôle', status: 'PENDING' });
-  });
-
-  it('demande les suggestions IA en POST avec un corps vide', (done) => {
-    service.suggestActions('c1').subscribe(list => {
-      expect(list.length).toBe(1);
-      done();
-    });
-    const req = http.expectOne(`${base}/c1/suggest-actions`);
-    expect(req.request.method).toBe('POST');
-    expect(req.request.body).toEqual({});
-    req.flush([{ title: 'Auditer le fournisseur' }]);
-  });
-
-  it('remonte l\'indisponibilité du service IA à l\'appelant', (done) => {
-    service.suggestActions('c1').subscribe({
-      next: () => fail('un 503 ne doit pas être avalé par le service'),
-      error: err => {
-        expect(err.status).toBe(503);
-        done();
-      }
-    });
-    http.expectOne(`${base}/c1/suggest-actions`)
-      .flush({ title: 'unavailable' }, { status: 503, statusText: 'Service Unavailable' });
   });
 
   it('vérifie l\'efficacité en PATCH sur la sous-ressource dédiée', () => {
@@ -632,7 +651,7 @@ describe('CapaService — preuves d\'action', () => {
     });
 
     it('déduit explicitement la date de décision à la création d\'une action', (done) => {
-      service.addAction('capa-1', { title: 'Réviser le plan de contrôle' }).subscribe(a => {
+      service.addAction('capa-2', { title: 'Réviser le plan de contrôle' }).subscribe(a => {
         // Déduction assumée, jamais un champ technique renommé : la date est
         // celle du jour, et reste corrigeable.
         expect(a.decidedOn).toBe(new Date().toISOString().slice(0, 10));

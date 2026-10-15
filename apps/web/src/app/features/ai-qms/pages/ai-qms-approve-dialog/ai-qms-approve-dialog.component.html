@@ -10,11 +10,9 @@
   (submitted)="submit()"
   (cancelled)="cancel()">
 
-  <mat-form-field appearance="outline" class="full">
-    <mat-label i18n="@@ai-qms.approve.submitter-uuid">UUID du soumissionnaire (doit ≠ vous)</mat-label>
-    <input matInput formControlName="submittedByUserId" required
-           placeholder="00000000-0000-0000-0000-000000000000">
-  </mat-form-field>
+  <qos-user-picker class="full" formControlName="submittedByUserId" required data-test="ai-qms-submitter"
+                   [excludeIds]="excluded"
+                   i18n-label="@@ai-qms.approve.submitter" label="Soumissionnaire (une autre personne que vous)"></qos-user-picker>
 
   <mat-form-field appearance="outline" class="full">
     <mat-label i18n="@@ai-qms.approve.notes">Notes d'approbation</mat-label>

@@ -17,8 +17,8 @@ import { expect, Page, test } from '@playwright/test';
  * (422), ne plus exiger efface le reste — sont tenues par `CapaService` côté
  * Java et couvertes par `CapaServiceTest`. Ce qui se vérifie ICI est ce que le
  * harnais rend réellement observable : que le bloc apparaisse et disparaisse
- * avec la réponse, que l'annuaire absent soit DIT au lieu d'offrir une liste
- * vide, et qu'un « non » enregistré se relise sur la fiche.
+ * avec la réponse, que le vérificateur se choisisse dans l'annuaire par son
+ * NOM, et qu'un « non » enregistré se relise sur la fiche.
  *
  * <p>Aucun compteur codé en dur ici : le jeu de démonstration bouge, et un
  * `toHaveCount(3)` transforme un enrichissement des données en échec de test.
@@ -102,19 +102,42 @@ test.describe('CAPA — vérification d\'efficacité', () => {
     await expect(dialogue.locator('[data-test="verification-consignes"]')).toHaveCount(0);
   });
 
-  test('un annuaire muet est annoncé, pas déguisé en liste vide', async ({ page }) => {
-    // En configuration `e2e` il n'y a pas de backend : `/api/v1/users` échoue.
-    // C'est le cas réel qu'on veut voir — un vérificateur qu'on ne peut pas
-    // désigner doit se DIRE, sinon l'utilisateur ouvre une liste vide et croit
-    // que son organisation ne compte personne.
+  test('le vérificateur se choisit dans l\'annuaire, par son nom', async ({ page }) => {
+    // L'intention d'origine tient toujours : l'utilisateur n'est jamais devant
+    // une liste vide sans explication. En configuration `e2e`, l'annuaire a sa
+    // démonstration (`DirectoryService`, mode maquette) : la liste propose des
+    // PERSONNES, nommées — jamais un identifiant de compte. Un annuaire en
+    // panne, lui, se dit dans la liste (« Annuaire indisponible »), et c'est
+    // couvert par les specs du sélecteur.
     await ouvrirPremierDossier(page);
     const dialogue = await ouvrirEdition(page);
 
     await dialogue.locator('[data-test="verification-exigee"]')
       .getByRole('radio', { name: /^Oui$/ }).click();
 
-    await expect(dialogue.locator('[data-test="annuaire-indisponible"]'))
-      .toBeVisible({ timeout: 10_000 });
+    const champ = dialogue.locator('[data-test="verification-qui"] [data-test="user-picker-input"]');
+    await expect(champ).toBeVisible();
+    await champ.click();
+
+    // La liste de l'autocomplétion s'ouvre dans la surcouche, hors du dialogue.
+    const options = page.locator('[data-test="user-picker-option"]');
+    await expect(options.first()).toBeVisible({ timeout: 10_000 });
+    await expect(page.locator('[data-test="user-picker-empty"]')).toHaveCount(0);
+    await expect(page.locator('[data-test="user-picker-error"]')).toHaveCount(0);
+
+    const UUID = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i;
+    const noms = await options.locator('.option__name').allInnerTexts();
+    expect(noms.length).toBeGreaterThan(0);
+    for (const nom of noms) {
+      expect(nom.trim()).not.toBe('');
+      expect(nom).not.toMatch(UUID);
+    }
+
+    // Choisir une personne l'affiche par son nom dans le champ.
+    const premier = noms[0].trim();
+    await options.first().click();
+    await expect(champ).toHaveValue(premier);
+    await expect(champ).not.toHaveValue(UUID);
   });
 
   test('un « non » enregistré se relit sur la fiche', async ({ page }) => {
@@ -136,18 +159,18 @@ test.describe('CAPA — vérification d\'efficacité', () => {
 /**
  * Le même bloc, atteint par l'autre porte : depuis une non-conformité.
  *
- * <p>Sur ce chemin, le dossier CAPA vient peut-être d'être créé et personne n'a
- * vu son formulaire d'édition — la question de la vérification ne serait donc
- * jamais posée. Elle l'est dans le popup d'ajout d'action, et elle y est
- * OBLIGATOIRE : c'est le moment où elle a un sens.
+ * <p>Depuis l'ADR 0088, « Créer la CAPA » ouvre LA fenêtre unique, qui crée le
+ * dossier et son action en une écriture. Personne ne passera ensuite par
+ * « Modifier » : la question de la vérification se pose donc là, et elle y est
+ * OBLIGATOIRE — c'est la même décision de clôture d'où qu'on ouvre la CAPA.
  *
  * <p>Ce banc ne vérifie que ce que le harnais rend observable (`useMockApi`,
- * aucun backend) : que le bloc soit là, qu'il exige une réponse, et qu'il
- * s'ouvre en demandant à qui et quoi vérifier.
+ * aucun backend) : que le bloc soit là, qu'il exige une réponse avant de
+ * laisser créer, et qu'un « oui » demande à qui et quoi vérifier.
  */
-test.describe('NC — le popup d\'action pose la vérification', () => {
+test.describe('NC — la fenêtre de création CAPA pose la vérification', () => {
 
-  test('le formulaire d\'action porte la question, et exige une réponse', async ({ page }) => {
+  test('la question est posée, et il faut y répondre pour créer', async ({ page }) => {
     const erreurs: string[] = [];
     page.on('pageerror', (err) => erreurs.push(err.message));
 
@@ -158,25 +181,47 @@ test.describe('NC — le popup d\'action pose la vérification', () => {
     await expect(lignes.first()).toBeVisible({ timeout: 15_000 });
     await lignes.first().click();
 
-    const ajouter = page.locator('[data-test="ajouter-action"]');
-    await expect(ajouter).toBeVisible({ timeout: 15_000 });
-    await ajouter.click();
+    const creer = page.locator('[data-test="creer-capa"]');
+    await expect(creer).toBeVisible({ timeout: 15_000 });
+    await creer.click();
 
     const dialogue = page.getByRole('dialog');
-    // Le bloc est là : sans lui, la question ne serait jamais posée ici.
-    await expect(dialogue.locator('[data-test="bloc-verification"]'))
-      .toBeVisible({ timeout: 10_000 });
+    // La source est celle de la NC, verrouillée.
+    await expect(dialogue.locator('[data-test="source-verrouillee"]')).toBeVisible({ timeout: 10_000 });
+    // Le bloc est là : sans lui, la question ne serait jamais posée sur ce chemin.
+    await expect(dialogue.locator('[data-test="bloc-verification"]')).toBeVisible();
 
     const choix = dialogue.locator('[data-test="verification-exigee"]');
+    await expect(choix).toHaveAttribute('aria-required', 'true');
     await expect(choix.getByRole('radio', { name: /^Oui$/ })).toBeVisible();
     await expect(choix.getByRole('radio', { name: /^Non$/ })).toBeVisible();
+    // Aucune réponse pré-cochée : un défaut ferait passer l'oubli pour une décision.
+    await expect(choix.getByRole('radio', { name: /^Oui$/ })).not.toBeChecked();
+    await expect(choix.getByRole('radio', { name: /^Non$/ })).not.toBeChecked();
 
     // Rien de demandé tant que rien n'est répondu.
     await expect(dialogue.locator('[data-test="verification-qui"]')).toHaveCount(0);
+    await expect(dialogue.locator('[data-test="verification-consignes"]')).toHaveCount(0);
 
+    // Tout le reste rempli (intitulé repris de la NC, moi comme responsable) :
+    // seule la question manque, et la création reste impossible.
+    const demain = new Date(Date.now() + 86_400_000);
+    const iso = `${demain.getFullYear()}-${String(demain.getMonth() + 1).padStart(2, '0')}-`
+      + `${String(demain.getDate()).padStart(2, '0')}`;
+    await dialogue.locator('[data-test="capa-echeance"]').fill(iso);
+    const envoyer = dialogue.getByRole('button', { name: /Créer la CAPA/ });
+    await expect(envoyer).toBeDisabled();
+
+    // « Non » est une réponse : elle suffit à créer.
+    await choix.getByRole('radio', { name: /^Non$/ }).click();
+    await expect(envoyer).toBeEnabled();
+
+    // « Oui » demande à qui, et quoi vérifier — et redevient bloquant tant que
+    // personne n'est désigné.
     await choix.getByRole('radio', { name: /^Oui$/ }).click();
     await expect(dialogue.locator('[data-test="verification-qui"]')).toBeVisible();
     await expect(dialogue.locator('[data-test="verification-consignes"]')).toBeVisible();
+    await expect(envoyer).toBeDisabled();
 
     // L'apparition du bloc attache ses validateurs : c'est exactement ce qui a
     // produit quatre NG0100 sur le dialogue d'édition. NG0100 est une erreur en

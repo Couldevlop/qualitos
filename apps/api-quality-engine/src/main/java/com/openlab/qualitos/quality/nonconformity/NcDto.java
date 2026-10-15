@@ -93,10 +93,6 @@ public final class NcDto {
     public record RejectRequest(
             @NotBlank @Size(max = 2000) String reason) {}
 
-    public record EscalateRequest(
-            @NotNull UUID ownerId
-    ) {}
-
     public record Response(
             UUID id,
             UUID tenantId,

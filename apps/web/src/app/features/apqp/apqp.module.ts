@@ -5,6 +5,7 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../../shared/shared.module';
 import { UiModule } from '../../shared/ui/ui.module';
+import { UserPickerModule } from '../../shared/user-picker/user-picker.module';
 import {
   ApqpDeliverableDetailDialogComponent
 } from './pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component';
@@ -63,7 +64,7 @@ const routes: Routes = [
   // `MatNativeDateModule` prend la langue du build via `LOCALE_ID` : le
   // calendrier s'ouvre donc en francais ou en japonais sans reglage de plus.
   imports: [
-    SharedModule, UiModule,
+    SharedModule, UiModule, UserPickerModule,
     MatDatepickerModule, MatNativeDateModule,
     RouterModule.forChild(routes)
   ]

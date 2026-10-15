@@ -6,6 +6,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AuthService, AuthUser } from '../../../../core/auth/auth.service';
+import { provideDirectoryStub } from '../../../../core/directory/testing/directory.stub';
+import { UserPickerModule } from '../../../../shared/user-picker/user-picker.module';
 import { environment } from '../../../../../environments/environment';
 import { SharedModule } from '../../../../shared/shared.module';
 import { UiModule } from '../../../../shared/ui/ui.module';
@@ -47,8 +49,10 @@ describe('Nis2mPlanDialogComponent', () => {
 
     await TestBed.configureTestingModule({
       declarations: [Nis2mPlanDialogComponent],
-      imports: [SharedModule, UiModule, NoopAnimationsModule],
+      imports: [SharedModule, UiModule, UserPickerModule, NoopAnimationsModule],
       providers: [
+        // L'annuaire est doublé : le propriétaire se choisit par son nom (ADR 0092).
+        provideDirectoryStub(),
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
         { provide: MatDialogRef, useValue: dialogRef },

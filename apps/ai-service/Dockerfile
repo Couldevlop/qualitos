@@ -30,7 +30,11 @@
 # exécutées par l'interpréteur natif via PYTHONPATH.
 
 # -------- build stage (mêmes Python et libc que le runtime) --------
-FROM cgr.dev/chainguard/python:latest-dev AS builder
+# Images épinglées par empreinte (Python 3.14) : l'étiquette `latest` est passée
+# à Python 3.15 le 15/10/2026, pour lequel uvloop/httptools (uvicorn[standard])
+# n'ont pas encore de version installable. Même couple d'empreintes dans
+# ai-vision-5s, l'inférence edge et le job pytest de la CI : à relever ensemble.
+FROM cgr.dev/chainguard/python:latest-dev@sha256:c07959e43e3edece176d20c32428a53014379790169af4ea5de1dc47277eba75 AS builder
 # Les images Chainguard démarrent en nonroot ; l'étage de construction a besoin
 # d'écrire dans /deps. Cela ne concerne QUE le builder — le runtime plus bas
 # conserve l'utilisateur nonroot par défaut.
@@ -66,7 +70,7 @@ RUN python -m pip install --no-cache-dir --upgrade pip \
     "psycopg[binary]>=3.2"
 
 # -------- runtime stage (Chainguard — surface minimale, nonroot, sans shell) ----
-FROM cgr.dev/chainguard/python:latest
+FROM cgr.dev/chainguard/python:latest@sha256:3f411b4aac1ed9cd6c9dec1486f92a8898737d9d6f95488dd727ca7d6f5254ee
 WORKDIR /app
 
 # site-packages tiers + code applicatif.

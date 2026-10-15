@@ -219,7 +219,10 @@ public class ApqpService {
         if (requete.ppap() != null) {
             livrable.setPpap(requete.ppap());
         }
+        // Le responsable est une personne de l'annuaire (ADR 0092) : son compte et
+        // son nom recopié voyagent ensemble, comme le reste du formulaire.
         livrable.setOwner(nettoyer(requete.owner()));
+        livrable.setOwnerUserId(requete.ownerUserId());
         livrable.setDueDate(requete.dueDate());
         livrable.setComment(nettoyer(requete.comment()));
         livrable.setLinkedKind(requete.linkedKind());
@@ -451,7 +454,8 @@ public class ApqpService {
                 livrable.getComment(),
                 livrable.getLinkedKind(),
                 livrable.getLinkedId(),
-                pieces);
+                pieces,
+                livrable.getOwnerUserId());
     }
 
     /**

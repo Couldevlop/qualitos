@@ -46,6 +46,7 @@ public class IshikawaActionService {
         action.setDiagram(diagram);
         action.setLabel(requireLabel(request.label()));
         action.setResponsible(trimToNull(request.responsible()));
+        action.setResponsibleUserId(request.responsibleUserId());
         action.setDecidedOn(request.decidedOn());
         action.setStatus(request.status() == null ? IshikawaActionStatus.TODO : request.status());
         return toResponse(actionRepository.save(action));
@@ -63,7 +64,14 @@ public class IshikawaActionService {
                 .orElseThrow(() -> new IshikawaActionNotFoundException(id));
 
         if (request.label() != null)       action.setLabel(requireLabel(request.label()));
-        if (request.responsible() != null) action.setResponsible(trimToNull(request.responsible()));
+        if (request.responsible() != null) {
+            // Le nom et le compte vont ensemble (ADR 0092) : un nouveau nom sans
+            // compte n'hérite pas du compte de l'ancien responsable.
+            action.setResponsible(trimToNull(request.responsible()));
+            action.setResponsibleUserId(request.responsibleUserId());
+        } else if (request.responsibleUserId() != null) {
+            action.setResponsibleUserId(request.responsibleUserId());
+        }
         if (request.decidedOn() != null)   action.setDecidedOn(request.decidedOn());
         if (request.status() != null)      action.setStatus(request.status());
         return toResponse(actionRepository.save(action));
@@ -117,6 +125,7 @@ public class IshikawaActionService {
                 action.getDecidedOn(),
                 action.getStatus(),
                 action.getCreatedAt(),
-                action.getUpdatedAt());
+                action.getUpdatedAt(),
+                action.getResponsibleUserId());
     }
 }

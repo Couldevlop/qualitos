@@ -9,6 +9,7 @@ import { EhsLinkDialogComponent } from './pages/ehs-link-dialog/ehs-link-dialog.
 import { EhsListComponent } from './pages/ehs-list/ehs-list.component';
 import { EhsMitigateDialogComponent } from './pages/ehs-mitigate-dialog/ehs-mitigate-dialog.component';
 import { EhsReportDialogComponent } from './pages/ehs-report-dialog/ehs-report-dialog.component';
+import { PersonNameModule } from '../../shared/person-name/person-name.module';
 
 const routes: Routes = [
   { path: '', component: EhsListComponent },
@@ -24,6 +25,6 @@ const routes: Routes = [
     EhsMitigateDialogComponent,
     EhsLinkDialogComponent
   ],
-  imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
+  imports: [PersonNameModule, SharedModule, UiModule, RouterModule.forChild(routes)]
 })
 export class EhsModule {}

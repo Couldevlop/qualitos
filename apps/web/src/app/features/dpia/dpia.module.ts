@@ -8,6 +8,7 @@ import { DpiaDetailComponent } from './pages/dpia-detail/dpia-detail.component';
 import { DpiaEditDialogComponent } from './pages/dpia-edit-dialog/dpia-edit-dialog.component';
 import { DpiaListComponent } from './pages/dpia-list/dpia-list.component';
 import { DpiaOpinionDialogComponent } from './pages/dpia-opinion-dialog/dpia-opinion-dialog.component';
+import { PersonNameModule } from '../../shared/person-name/person-name.module';
 
 const routes: Routes = [
   { path: '', component: DpiaListComponent },
@@ -22,6 +23,6 @@ const routes: Routes = [
     DpiaEditDialogComponent,
     DpiaOpinionDialogComponent
   ],
-  imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
+  imports: [PersonNameModule, SharedModule, UiModule, RouterModule.forChild(routes)]
 })
 export class DpiaModule {}

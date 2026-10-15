@@ -1990,9 +1990,9 @@
         <source>Approuver</source>
         <target state="translated">承認する</target>
       </trans-unit>
-      <trans-unit id="ai-qms.approve.submitter-uuid" datatype="html">
-        <source>UUID du soumissionnaire (doit ≠ vous)</source>
-        <target state="translated">提出者のUUID（あなたと異なる必要があります）</target>
+      <trans-unit id="ai-qms.approve.submitter" datatype="html">
+        <source>Soumissionnaire (une autre personne que vous)</source>
+        <target state="translated">提出者（あなた以外の担当者）</target>
       </trans-unit>
       <trans-unit id="ai-qms.approve.subtitle" datatype="html">
         <source>L'approbation enregistre l'identité du soumissionnaire et de l'approbateur (séparation des rôles requise par AI Act Art. 17). Vous serez enregistré comme approbateur via votre session courante.</source>
@@ -3762,9 +3762,9 @@ Portail clients</source>
         <source>Notes</source>
         <target state="translated">メモ</target>
       </trans-unit>
-      <trans-unit id="nis2-measures.edit.owner-uuid" datatype="html">
-        <source>UUID propriétaire</source>
-        <target state="translated">所有者UUID</target>
+      <trans-unit id="nis2-measures.edit.owner" datatype="html">
+        <source>Propriétaire</source>
+        <target state="translated">所有者</target>
       </trans-unit>
       <trans-unit id="nis2-measures.edit.subtitle" datatype="html">
         <source>La référence et la catégorie ne peuvent pas changer après planification.</source>
@@ -3874,9 +3874,9 @@ Portail clients</source>
         <source>Notes (optionnel)</source>
         <target state="translated">メモ（任意）</target>
       </trans-unit>
-      <trans-unit id="nis2-measures.plan.owner-uuid" datatype="html">
-        <source>UUID propriétaire (optionnel)</source>
-        <target state="translated">所有者UUID（任意）</target>
+      <trans-unit id="nis2-measures.plan.owner" datatype="html">
+        <source>Propriétaire (optionnel)</source>
+        <target state="translated">所有者（任意）</target>
       </trans-unit>
       <trans-unit id="nis2-measures.plan.plan-failed" datatype="html">
         <source>Planification impossible.</source>
@@ -5194,6 +5194,10 @@ Portail clients</source>
         <source>Acquis</source>
         <target state="translated">取得済み</target>
       </trans-unit>
+      <trans-unit id="apqp.deliverable.owner-legacy" datatype="html">
+        <source>Nom enregistré : <x id="INTERPOLATION"/>. Choisissez cette personne dans l'annuaire.</source>
+        <target state="translated">登録済みの名前：<x id="INTERPOLATION"/>。ディレクトリからこの担当者を選択してください。</target>
+      </trans-unit>
       <trans-unit id="apqp.deliverable.owner" datatype="html">
         <source>Responsable</source>
         <target state="translated">担当者</target>
@@ -5349,6 +5353,282 @@ Portail clients</source>
       <trans-unit id="audits.edit.reminder-email-hint" datatype="html">
         <source>Videz le champ pour ne plus envoyer de rappel par courriel.</source>
         <target state="translated">メール通知を止めるには、この欄を空にしてください。</target>
+      </trans-unit>
+      <trans-unit id="audits.lead-auditor" datatype="html">
+        <source>Auditeur responsable</source>
+        <target state="translated">主任監査員</target>
+      </trans-unit>
+      <trans-unit id="audits.lead-auditor.hint" datatype="html">
+        <source>Celui ou celle qui conduit l'audit et signe le rapport. Par défaut : vous.</source>
+        <target state="translated">監査を主導し報告書に署名する人。既定ではあなたです。</target>
+      </trans-unit>
+      <trans-unit id="audits.lead-auditor.hint-edit" datatype="html">
+        <source>Celui ou celle qui conduit l'audit et signe le rapport.</source>
+        <target state="translated">監査を主導し報告書に署名する人。</target>
+      </trans-unit>
+      <trans-unit id="audits.lead-auditor.unknown" datatype="html">
+        <source>Membre de l'organisation (nom non enregistré)</source>
+        <target state="translated">組織のメンバー（氏名未登録）</target>
+      </trans-unit>
+      <trans-unit id="audits.detail.finding-blocked-planned" datatype="html">
+        <source>Les constats se relèvent pendant l'audit : démarrez-le pour en ajouter.</source>
+        <target state="translated">所見は監査中に記録します。追加するには監査を開始してください。</target>
+      </trans-unit>
+      <trans-unit id="audits.detail.finding-blocked-no-checklist" datatype="html">
+        <source>Les constats se relèvent pendant l'audit. Ajoutez d'abord une question à la checklist, puis démarrez l'audit.</source>
+        <target state="translated">所見は監査中に記録します。まずチェックリストに質問を追加し、監査を開始してください。</target>
+      </trans-unit>
+      <trans-unit id="audits.detail.finding-blocked-completed" datatype="html">
+        <source>Audit clôturé : plus aucun constat ne peut être ajouté.</source>
+        <target state="translated">監査は終了しました。所見はこれ以上追加できません。</target>
+      </trans-unit>
+      <trans-unit id="audits.detail.finding-blocked-cancelled" datatype="html">
+        <source>Audit annulé : plus aucun constat ne peut être ajouté.</source>
+        <target state="translated">監査は中止されました。所見はこれ以上追加できません。</target>
+      </trans-unit>
+      <trans-unit id="audits.detail.start-audit" datatype="html">
+        <source>Démarrer l'audit</source>
+        <target state="translated">監査を開始</target>
+      </trans-unit>
+      <trans-unit id="audits.detail.start-blocked" datatype="html">
+        <source>Ajoutez au moins une question à la checklist pour démarrer l'audit.</source>
+        <target state="translated">監査を開始するには、チェックリストに質問を1つ以上追加してください。</target>
+      </trans-unit>
+      <trans-unit id="audits.finding.not-in-progress" datatype="html">
+        <source>Un constat se relève pendant l'audit : démarrez l'audit pour en ajouter.</source>
+        <target state="translated">所見は監査中に記録します。追加するには監査を開始してください。</target>
+      </trans-unit>
+      <trans-unit id="audits.detail.documents-locked-cancelled" datatype="html">
+        <source>Audit annulé : ses documents ne se modifient plus.</source>
+        <target state="translated">監査は中止されました。文書は変更できません。</target>
+      </trans-unit>
+      <trans-unit id="audits.detail.documents-locked-issued" datatype="html">
+        <source>Rapport émis : les documents de l'audit sont figés avec lui.</source>
+        <target state="translated">報告書が発行されました。監査の文書も確定されています。</target>
+      </trans-unit>
+      <trans-unit id="audits.report.title" datatype="html">
+        <source>Rapport</source>
+        <target state="translated">報告書</target>
+      </trans-unit>
+      <trans-unit id="audits.report.state-draft" datatype="html">
+        <source>Brouillon</source>
+        <target state="translated">下書き</target>
+      </trans-unit>
+      <trans-unit id="audits.report.state-issued" datatype="html">
+        <source>Émis</source>
+        <target state="translated">発行済み</target>
+      </trans-unit>
+      <trans-unit id="audits.report.figures-aria" datatype="html">
+        <source>Chiffres clés du rapport</source>
+        <target state="translated">報告書の主要数値</target>
+      </trans-unit>
+      <trans-unit id="audits.report.figures-total" datatype="html">
+        <source>Constats</source>
+        <target state="translated">所見</target>
+      </trans-unit>
+      <trans-unit id="audits.report.figures-score" datatype="html">
+        <source>Taux de conformité</source>
+        <target state="translated">適合率</target>
+      </trans-unit>
+      <trans-unit id="audits.report.issued-line" datatype="html">
+        <source>Émis le <x id="INTERPOLATION"/> par <x id="INTERPOLATION_1"/></source>
+        <target state="translated"><x id="INTERPOLATION"/> に <x id="INTERPOLATION_1"/> が発行</target>
+      </trans-unit>
+      <trans-unit id="audits.report.fingerprint-tooltip" datatype="html">
+        <source>Empreinte SHA-256 du contenu émis, inscrite au journal d'audit</source>
+        <target state="translated">発行内容の SHA-256 フィンガープリント（監査証跡に記録）</target>
+      </trans-unit>
+      <trans-unit id="audits.report.summary" datatype="html">
+        <source>Synthèse et conclusion rédigée</source>
+        <target state="translated">総括と結論（記述）</target>
+      </trans-unit>
+      <trans-unit id="audits.report.summary-placeholder" datatype="html">
+        <source>Contexte, périmètre couvert, appréciation d'ensemble du système…</source>
+        <target state="translated">背景、対象範囲、システム全体の評価…</target>
+      </trans-unit>
+      <trans-unit id="audits.report.generate" datatype="html">
+        <source>Proposer par IA</source>
+        <target state="translated">AI で下書き</target>
+      </trans-unit>
+      <trans-unit id="audits.report.generated" datatype="html">
+        <source>Synthèse générée : relisez-la avant d'émettre.</source>
+        <target state="translated">総括を生成しました。発行前に確認してください。</target>
+      </trans-unit>
+      <trans-unit id="audits.report.strengths" datatype="html">
+        <source>Points forts</source>
+        <target state="translated">強み</target>
+      </trans-unit>
+      <trans-unit id="audits.report.improvements" datatype="html">
+        <source>Axes d'amélioration</source>
+        <target state="translated">改善の余地</target>
+      </trans-unit>
+      <trans-unit id="audits.report.conclusion" datatype="html">
+        <source>Conclusion / recommandation</source>
+        <target state="translated">結論／推奨</target>
+      </trans-unit>
+      <trans-unit id="audits.report.conclusion.favorable" datatype="html">
+        <source>Favorable — système conforme</source>
+        <target state="translated">良好 — システムは適合</target>
+      </trans-unit>
+      <trans-unit id="audits.report.conclusion.reservations" datatype="html">
+        <source>Favorable avec réserves</source>
+        <target state="translated">条件付きで良好</target>
+      </trans-unit>
+      <trans-unit id="audits.report.conclusion.unfavorable" datatype="html">
+        <source>Défavorable — système non conforme</source>
+        <target state="translated">不良 — システムは不適合</target>
+      </trans-unit>
+      <trans-unit id="audits.report.conclusion.cert-favorable" datatype="html">
+        <source>Certification recommandée</source>
+        <target state="translated">認証を推奨</target>
+      </trans-unit>
+      <trans-unit id="audits.report.conclusion.cert-reservations" datatype="html">
+        <source>Certification recommandée avec réserves</source>
+        <target state="translated">条件付きで認証を推奨</target>
+      </trans-unit>
+      <trans-unit id="audits.report.conclusion.cert-unfavorable" datatype="html">
+        <source>Certification non recommandée</source>
+        <target state="translated">認証を推奨しない</target>
+      </trans-unit>
+      <trans-unit id="audits.report.save-draft" datatype="html">
+        <source>Enregistrer le brouillon</source>
+        <target state="translated">下書きを保存</target>
+      </trans-unit>
+      <trans-unit id="audits.report.issue" datatype="html">
+        <source>Émettre le rapport</source>
+        <target state="translated">報告書を発行</target>
+      </trans-unit>
+      <trans-unit id="audits.report.issue-confirm-title" datatype="html">
+        <source>Émettre le rapport ?</source>
+        <target state="translated">報告書を発行しますか？</target>
+      </trans-unit>
+      <trans-unit id="audits.report.issue-confirm-message" datatype="html">
+        <source>Le rapport sera figé — texte, conclusion et chiffres clés — et l'émission inscrite au journal d'audit. Il ne pourra plus être modifié, ni les documents de l'audit.</source>
+        <target state="translated">報告書（本文・結論・主要数値）は確定され、発行は監査証跡に記録されます。以後、報告書も監査文書も変更できません。</target>
+      </trans-unit>
+      <trans-unit id="audits.report.issued-msg" datatype="html">
+        <source>Rapport émis.</source>
+        <target state="translated">報告書を発行しました。</target>
+      </trans-unit>
+      <trans-unit id="audits.report.saved" datatype="html">
+        <source>Brouillon du rapport enregistré.</source>
+        <target state="translated">報告書の下書きを保存しました。</target>
+      </trans-unit>
+      <trans-unit id="audits.report.save-error" datatype="html">
+        <source>Le brouillon n'a pas pu être enregistré.</source>
+        <target state="translated">下書きを保存できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="audits.report.issue-error" datatype="html">
+        <source>Le rapport n'a pas pu être émis.</source>
+        <target state="translated">報告書を発行できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="audits.report.load-error" datatype="html">
+        <source>Le rapport n'a pas pu être chargé.</source>
+        <target state="translated">報告書を読み込めませんでした。</target>
+      </trans-unit>
+      <trans-unit id="audits.report.conflict" datatype="html">
+        <source>Le rapport ne peut plus être modifié dans l'état actuel de l'audit — rechargez pour voir son état.</source>
+        <target state="translated">現在の監査状態では報告書を変更できません。再読み込みして状態を確認してください。</target>
+      </trans-unit>
+      <trans-unit id="audits.report.incomplete" datatype="html">
+        <source>Le rapport est incomplet : synthèse et conclusion sont requises.</source>
+        <target state="translated">報告書が不完全です。総括と結論が必要です。</target>
+      </trans-unit>
+      <trans-unit id="audits.report.step-up" datatype="html">
+        <source>L'émission du rapport exige votre code à usage unique.</source>
+        <target state="translated">報告書の発行にはワンタイムコードが必要です。</target>
+      </trans-unit>
+      <trans-unit id="audits.report.blocker-cancelled" datatype="html">
+        <source>Un audit annulé n'a pas de rapport.</source>
+        <target state="translated">中止された監査には報告書がありません。</target>
+      </trans-unit>
+      <trans-unit id="audits.report.blocker-not-completed" datatype="html">
+        <source>Le rapport s'émet une fois l'audit clôturé. Vous pouvez déjà rédiger le brouillon.</source>
+        <target state="translated">報告書は監査終了後に発行します。下書きは今から作成できます。</target>
+      </trans-unit>
+      <trans-unit id="audits.report.blocker-role" datatype="html">
+        <source>L'émission du rapport revient au pilotage qualité (manager ou directeur qualité).</source>
+        <target state="translated">報告書の発行は品質管理部門（品質マネージャーまたは品質部長）が行います。</target>
+      </trans-unit>
+      <trans-unit id="audits.report.blocker-summary" datatype="html">
+        <source>Rédigez la synthèse (ou générez-la) avant d'émettre.</source>
+        <target state="translated">発行前に総括を記述（または生成）してください。</target>
+      </trans-unit>
+      <trans-unit id="audits.report.blocker-conclusion" datatype="html">
+        <source>Choisissez la conclusion avant d'émettre.</source>
+        <target state="translated">発行前に結論を選択してください。</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.title" datatype="html">
+        <source>Documents (<x id="INTERPOLATION"/>)</source>
+        <target state="translated">文書（<x id="INTERPOLATION"/>）</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.add" datatype="html">
+        <source>Ajouter un document</source>
+        <target state="translated">文書を追加</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.added" datatype="html">
+        <source>Document ajouté à l'audit.</source>
+        <target state="translated">文書を監査に追加しました。</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.empty" datatype="html">
+        <source>Aucun document. Joignez la convocation, le plan d'audit, des photos ou des relevés.</source>
+        <target state="translated">文書はありません。通知、監査計画、写真、記録を添付してください。</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.limits" datatype="html">
+        <source>PDF, image, Word, Excel ou PowerPoint — 10 Mo par fichier, 20 documents par audit.</source>
+        <target state="translated">PDF、画像、Word、Excel、PowerPoint — 1 ファイル 10 MB、監査あたり 20 文書まで。</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.too-large" datatype="html">
+        <source>Fichier trop lourd : 10 Mo au plus.</source>
+        <target state="translated">ファイルが大きすぎます（最大 10 MB）。</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.unnamed" datatype="html">
+        <source>document sans nom</source>
+        <target state="translated">名前のない文書</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.delete-title" datatype="html">
+        <source>Retirer ce document ?</source>
+        <target state="translated">この文書を削除しますか？</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.delete-message" datatype="html">
+        <source>« <x id="name"/> » sera retiré de l'audit. Le retrait est inscrit au journal d'audit.</source>
+        <target state="translated">「<x id="name"/>」を監査から削除します。削除は監査証跡に記録されます。</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.delete" datatype="html">
+        <source>Retirer</source>
+        <target state="translated">削除</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.delete-tooltip" datatype="html">
+        <source>Retirer le document</source>
+        <target state="translated">文書を削除</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.remove-aria" datatype="html">
+        <source>Retirer le document <x id="name"/></source>
+        <target state="translated">文書 <x id="name"/> を削除</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.storage-off" datatype="html">
+        <source>Le stockage des documents est désactivé sur cet environnement.</source>
+        <target state="translated">この環境では文書ストレージが無効です。</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.load-error" datatype="html">
+        <source>Les documents n'ont pas pu être chargés.</source>
+        <target state="translated">文書を読み込めませんでした。</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.invalid" datatype="html">
+        <source>Fichier refusé : type non admis ou contenu qui ne correspond pas à son extension.</source>
+        <target state="translated">ファイルが拒否されました：許可されていない形式、または拡張子と内容が一致しません。</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.limit" datatype="html">
+        <source>Limite atteinte : 10 Mo par fichier, 20 documents et 50 Mo par audit.</source>
+        <target state="translated">上限に達しました：1 ファイル 10 MB、監査あたり 20 文書・50 MB まで。</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.locked" datatype="html">
+        <source>Les documents de cet audit sont verrouillés (audit annulé ou rapport émis).</source>
+        <target state="translated">この監査の文書はロックされています（監査中止または報告書発行済み）。</target>
+      </trans-unit>
+      <trans-unit id="audits.documents.error" datatype="html">
+        <source>L'opération sur le document a échoué.</source>
+        <target state="translated">文書の操作に失敗しました。</target>
       </trans-unit>
       <trans-unit id="nav.admin-roles" datatype="html">
         <source>Rôles et droits</source>
@@ -6094,10 +6374,6 @@ Portail clients</source>
         <source>Instrument critique : un résultat non conforme le met immédiatement hors service.</source>
         <target state="translated">重要計測器：不合格の結果は直ちに使用停止となります。</target>
       </trans-unit>
-      <trans-unit id="calibration.record.internal" datatype="html">
-        <source>Interne</source>
-        <target state="translated">社内</target>
-      </trans-unit>
       <trans-unit id="calibration.record.measurements" datatype="html">
         <source>Mesures</source>
         <target state="translated">測定値</target>
@@ -6182,14 +6458,6 @@ Portail clients</source>
         <source>Réformé</source>
         <target state="translated">廃棄済み</target>
       </trans-unit>
-      <trans-unit id="capa.detail.col-decided-on" datatype="html">
-        <source>Date</source>
-        <target state="translated">日付</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.col-assignee" datatype="html">
-        <source>Responsable</source>
-        <target state="translated">担当者</target>
-      </trans-unit>
       <trans-unit id="capa.detail.col-evidence" datatype="html">
         <source>Preuve</source>
         <target state="translated">証拠</target>
@@ -6206,18 +6474,6 @@ Portail clients</source>
         <source>Faite</source>
         <target state="translated">完了</target>
       </trans-unit>
-      <trans-unit id="capa.detail.edit-title-label" datatype="html">
-        <source>Libellé de l'action</source>
-        <target state="translated">対策の名称</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.action-updated" datatype="html">
-        <source>Action modifiée.</source>
-        <target state="translated">対策を更新しました。</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.action-update-error" datatype="html">
-        <source>Modification impossible.</source>
-        <target state="translated">更新できませんでした。</target>
-      </trans-unit>
       <trans-unit id="capa.action-evidence.attach" datatype="html">
         <source>Joindre</source>
         <target state="translated">添付</target>
@@ -6233,10 +6489,6 @@ Portail clients</source>
       <trans-unit id="capa.action-evidence.remove-aria" datatype="html">
         <source>Retirer la preuve de l'action : <x id="title"/></source>
         <target state="translated">対策の証拠を削除：<x id="title"/></target>
-      </trans-unit>
-      <trans-unit id="capa.detail.edit-action-aria" datatype="html">
-        <source>Modifier l'action : <x id="title"/></source>
-        <target state="translated">対策を編集：<x id="title"/></target>
       </trans-unit>
       <trans-unit id="capa.action-evidence.remove-tooltip" datatype="html">
         <source>Retirer la preuve de cette action</source>
@@ -6258,22 +6510,6 @@ Portail clients</source>
         <source>Cette action n'existe plus — recharge la fiche.</source>
         <target state="translated">この対策はもう存在しません。ページを再読み込みしてください。</target>
       </trans-unit>
-      <trans-unit id="capa.action.decided-on" datatype="html">
-        <source>Date de décision</source>
-        <target state="translated">決定日</target>
-      </trans-unit>
-      <trans-unit id="capa.action.decided-on-hint" datatype="html">
-        <source>Le jour où l'action a été décidée (comité, revue), pas celui de sa saisie.</source>
-        <target state="translated">対策が決定された日（委員会・レビュー）であり、入力日ではありません。</target>
-      </trans-unit>
-      <trans-unit id="capa.action.assignee-name" datatype="html">
-        <source>Responsable (optionnel)</source>
-        <target state="translated">担当者（任意）</target>
-      </trans-unit>
-      <trans-unit id="capa.action.assignee-name-placeholder" datatype="html">
-        <source>Ex. : Amina Dridi</source>
-        <target state="translated">例：Amina Dridi</target>
-      </trans-unit>
       <trans-unit id="capa.action-type.containment" datatype="html">
         <source>Endiguement</source>
         <target state="translated">暫定対策</target>
@@ -6286,21 +6522,9 @@ Portail clients</source>
         <source>Préventive</source>
         <target state="translated">予防対策</target>
       </trans-unit>
-      <trans-unit id="capa.detail.col-action-type" datatype="html">
-        <source>Nature</source>
-        <target state="translated">種別</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.edit-action-type-label" datatype="html">
-        <source>Nature</source>
-        <target state="translated">種別</target>
-      </trans-unit>
       <trans-unit id="capa.action.action-type" datatype="html">
         <source>Nature de l'action</source>
         <target state="translated">対策の種別</target>
-      </trans-unit>
-      <trans-unit id="capa.action.action-type-hint" datatype="html">
-        <source>L'endiguement arrête l'effet (trier un lot, arrêter une ligne) ; la correction supprime la cause.</source>
-        <target state="translated">暫定対策は影響を止め（ロットの選別、ラインの停止）、是正対策は原因を取り除きます。</target>
       </trans-unit>
       <trans-unit id="capa.detail.blockers-title" datatype="html">
         <source>Ce dossier ne peut pas encore être clôturé</source>
@@ -6317,10 +6541,6 @@ Portail clients</source>
       <trans-unit id="capa.blocker.actions-many" datatype="html">
         <source><x id="count"/> actions restent à terminer.</source>
         <target state="translated">未完了の対策が <x id="count"/> 件あります。</target>
-      </trans-unit>
-      <trans-unit id="capa.blocker.containment-only" datatype="html">
-        <source>Le dossier ne porte que des mesures d'endiguement : elles arrêtent l'effet sans supprimer la cause. Ajoutez une action corrective ou préventive.</source>
-        <target state="translated">この案件には暫定対策しかありません。影響は止まりますが原因は残ります。是正対策または予防対策を追加してください。</target>
       </trans-unit>
       <trans-unit id="capa.blocker.nc-one" datatype="html">
         <source>1 non-conformité liée est encore ouverte.</source>
@@ -6562,6 +6782,158 @@ Portail clients</source>
         <source>Le stockage des pièces jointes est désactivé sur cet environnement : aucune preuve ne peut y être déposée ni relue.</source>
         <target state="translated">この環境では添付ファイルの保管が無効です。証拠の追加も閲覧もできません。</target>
       </trans-unit>
+      <trans-unit id="capa.open.title" datatype="html">
+        <source>Nouvelle CAPA</source>
+        <target state="translated">新規CAPA</target>
+      </trans-unit>
+      <trans-unit id="capa.open.define-title" datatype="html">
+        <source>Définir l'action</source>
+        <target state="translated">対策を定義</target>
+      </trans-unit>
+      <trans-unit id="capa.open.submit" datatype="html">
+        <source>Créer la CAPA</source>
+        <target state="translated">CAPAを作成</target>
+      </trans-unit>
+      <trans-unit id="capa.open.define-submit" datatype="html">
+        <source>Enregistrer l'action</source>
+        <target state="translated">対策を保存</target>
+      </trans-unit>
+      <trans-unit id="capa.open.subtitle" datatype="html">
+        <source>Une CAPA porte une action : ce qu'on va faire, qui en répond et pour quand. On la fait avancer jusqu'à la vérification d'efficacité.</source>
+        <target state="translated">CAPAは1つの対策を持ちます。何を行い、誰が責任を持ち、いつまでに行うか。有効性確認まで進めます。</target>
+      </trans-unit>
+      <trans-unit id="capa.open.title-label" datatype="html">
+        <source>Intitulé de l'action</source>
+        <target state="translated">対策の件名</target>
+      </trans-unit>
+      <trans-unit id="capa.open.description-placeholder" datatype="html">
+        <source>Méthode, ressources, critère de fin…</source>
+        <target state="translated">方法、リソース、完了基準…</target>
+      </trans-unit>
+      <trans-unit id="capa.open.nature" datatype="html">
+        <source>Nature</source>
+        <target state="translated">種別</target>
+      </trans-unit>
+      <trans-unit id="capa.open.owner" datatype="html">
+        <source>Responsable</source>
+        <target state="translated">責任者</target>
+      </trans-unit>
+      <trans-unit id="capa.open.owner-loading" datatype="html">
+        <source>Lecture de l'annuaire…</source>
+        <target state="translated">ディレクトリを読み込み中…</target>
+      </trans-unit>
+      <trans-unit id="capa.open.due-date" datatype="html">
+        <source>Échéance</source>
+        <target state="translated">期限</target>
+      </trans-unit>
+      <trans-unit id="capa.open.due-date-required" datatype="html">
+        <source>L'échéance est obligatoire.</source>
+        <target state="translated">期限は必須です。</target>
+      </trans-unit>
+      <trans-unit id="capa.open.due-date-past" datatype="html">
+        <source>L'échéance ne peut pas être passée.</source>
+        <target state="translated">期限に過去の日付は指定できません。</target>
+      </trans-unit>
+      <trans-unit id="capa.open.owner-hint-unmatched" datatype="html">
+        <source>Propriétaire indiqué : <x id="INTERPOLATION"/> — introuvable dans l'annuaire, choisis son compte dans la liste.</source>
+        <target state="translated">記載された所有者：<x id="INTERPOLATION"/> — ディレクトリに見つかりません。一覧からアカウントを選択してください。</target>
+      </trans-unit>
+      <trans-unit id="capa.open.criticity-low" datatype="html">
+        <source>Faible</source>
+        <target state="translated">低</target>
+      </trans-unit>
+      <trans-unit id="capa.open.criticity-medium" datatype="html">
+        <source>Moyenne</source>
+        <target state="translated">中</target>
+      </trans-unit>
+      <trans-unit id="capa.open.criticity-high" datatype="html">
+        <source>Élevée</source>
+        <target state="translated">高</target>
+      </trans-unit>
+      <trans-unit id="capa.open.criticity-critical" datatype="html">
+        <source>Critique</source>
+        <target state="translated">重大</target>
+      </trans-unit>
+      <trans-unit id="capa.open.criticity-locked" datatype="html">
+        <source>Issue de la cotation du risque.</source>
+        <target state="translated">リスク評価に基づきます。</target>
+      </trans-unit>
+      <trans-unit id="capa.open.attachment-remove-aria" datatype="html">
+        <source>Retirer <x id="name"/></source>
+        <target state="translated"><x id="name"/> を削除</target>
+      </trans-unit>
+      <trans-unit id="capa.open.success" datatype="html">
+        <source>CAPA créée.</source>
+        <target state="translated">CAPAを作成しました。</target>
+      </trans-unit>
+      <trans-unit id="capa.open.success-with-evidence" datatype="html">
+        <source>CAPA créée, pièces jointes déposées.</source>
+        <target state="translated">CAPAを作成し、添付ファイルをアップロードしました。</target>
+      </trans-unit>
+      <trans-unit id="capa.open.success-partial-evidence" datatype="html">
+        <source>CAPA créée, mais des pièces n'ont pas pu être déposées — reprends-les depuis la fiche.</source>
+        <target state="translated">CAPAを作成しましたが、一部の添付ファイルをアップロードできませんでした。詳細画面から再度追加してください。</target>
+      </trans-unit>
+      <trans-unit id="capa.open.action-defined" datatype="html">
+        <source>Action définie.</source>
+        <target state="translated">対策を定義しました。</target>
+      </trans-unit>
+      <trans-unit id="capa.source.spc-alert" datatype="html">
+        <source>Carte de contrôle</source>
+        <target state="translated">管理図</target>
+      </trans-unit>
+      <trans-unit id="capa.source.anomaly" datatype="html">
+        <source>Anomalie détectée</source>
+        <target state="translated">検知された異常</target>
+      </trans-unit>
+      <trans-unit id="capa.source.risk" datatype="html">
+        <source>Risque</source>
+        <target state="translated">リスク</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.legacy-actions" datatype="html">
+        <source>Actions (<x id="INTERPOLATION"/>)</source>
+        <target state="translated">対策（<x id="INTERPOLATION"/>）</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.action-missing" datatype="html">
+        <source>L'action de ce dossier n'a pas encore été définie : sans elle, il ne pourra pas être clôturé.</source>
+        <target state="translated">この案件の対策はまだ定義されていません。対策がなければクローズできません。</target>
+      </trans-unit>
+      <trans-unit id="capa.blocker.containment-only-single" datatype="html">
+        <source>Le dossier ne porte qu'une mesure d'endiguement : elle arrête l'effet sans supprimer la cause. Ouvrez une CAPA corrective pour traiter la cause.</source>
+        <target state="translated">この案件には暫定対策しかありません。影響は止めますが原因は除去しません。原因に対処するには是正CAPAを作成してください。</target>
+      </trans-unit>
+      <trans-unit id="capa.list.col-owner" datatype="html">
+        <source>Pilote</source>
+        <target state="translated">責任者</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.create-capa" datatype="html">
+        <source>Créer une CAPA</source>
+        <target state="translated">CAPAを作成</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.create-capa-tooltip" datatype="html">
+        <source>Ouvrir la CAPA qui traite cette non-conformité</source>
+        <target state="translated">この不適合に対処するCAPAを作成</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.open-capa" datatype="html">
+        <source>Voir la CAPA</source>
+        <target state="translated">CAPAを表示</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.capa-link-open" datatype="html">
+        <source>Ouvrir le dossier</source>
+        <target state="translated">案件を開く</target>
+      </trans-unit>
+      <trans-unit id="audits.detail.create-capa" datatype="html">
+        <source>Créer une CAPA</source>
+        <target state="translated">CAPAを作成</target>
+      </trans-unit>
+      <trans-unit id="audits.detail.open-capa" datatype="html">
+        <source>Voir la CAPA</source>
+        <target state="translated">CAPAを表示</target>
+      </trans-unit>
+      <trans-unit id="audits.detail.finding-capa-ref" datatype="html">
+        <source><x id="audit"/> / constat <x id="rank"/></source>
+        <target state="translated"><x id="audit"/> / 所見 <x id="rank"/></target>
+      </trans-unit>
       <trans-unit id="common.yes" datatype="html">
         <source>Oui</source>
         <target state="translated">はい</target>
@@ -6578,6 +6950,10 @@ Portail clients</source>
         <source>Une vérification est-elle exigée sur ce dossier ? Répondre « non » est une décision, qui se lit ; ne pas répondre laisse la question ouverte.</source>
         <target state="translated">この案件で検証は必要ですか。「いいえ」も記録に残る判断です。未回答のままだと問いは開いたままになります。</target>
       </trans-unit>
+      <trans-unit id="capa.verification.hint-mandatory" datatype="html">
+        <source>Une vérification est-elle exigée sur ce dossier ? Il faut trancher pour l'ouvrir : répondre « non » est une décision, qui se lit.</source>
+        <target state="translated">この案件で検証は必要ですか。開くには判断が必要です。「いいえ」も記録に残る判断です。</target>
+      </trans-unit>
       <trans-unit id="capa.verification.required" datatype="html">
         <source>Exigée</source>
         <target state="translated">必要</target>
@@ -6593,10 +6969,6 @@ Portail clients</source>
       <trans-unit id="capa.verification.assignee-required" datatype="html">
         <source>Une vérification exigée doit être confiée à quelqu'un.</source>
         <target state="translated">必要とされた検証は、担当者を定めなければなりません。</target>
-      </trans-unit>
-      <trans-unit id="capa.verification.directory-down" datatype="html">
-        <source>L'annuaire de l'organisation n'a pas répondu : la liste est vide, et le dossier ne pourra pas être enregistré avec une vérification exigée.</source>
-        <target state="translated">組織のディレクトリが応答しませんでした。一覧は空で、検証を必要とした状態では案件を保存できません。</target>
       </trans-unit>
       <trans-unit id="capa.verification.instructions" datatype="html">
         <source>Instructions de vérification</source>
@@ -8458,10 +8830,6 @@ Portail clients</source>
         <source>Documents</source>
         <target state="translated">文書</target>
       </trans-unit>
-      <trans-unit id="nav.changements" datatype="html">
-        <source>Changements</source>
-        <target state="translated">変更管理</target>
-      </trans-unit>
       <trans-unit id="nav.ehs" datatype="html">
         <source>EHS</source>
         <target state="translated">EHS</target>
@@ -8641,14 +9009,6 @@ Portail clients</source>
       <trans-unit id="capa.create.evidence-limit" datatype="html">
         <source>Dix pièces au maximum par dossier.</source>
         <target state="translated">1件あたり添付は10件までです。</target>
-      </trans-unit>
-      <trans-unit id="capa.create.success-with-evidence" datatype="html">
-        <source>Cas CAPA créé, pièces jointes déposées.</source>
-        <target state="translated">CAPA案件を作成し、添付ファイルを登録しました。</target>
-      </trans-unit>
-      <trans-unit id="capa.create.success-partial-evidence" datatype="html">
-        <source>Cas CAPA créé, mais des pièces n'ont pas pu être déposées — reprends-les depuis la fiche.</source>
-        <target state="translated">CAPA案件は作成されましたが、一部の添付ファイルを送信できませんでした。案件画面から再度添付してください。</target>
       </trans-unit>
       <trans-unit id="nc.list.col-reporter" datatype="html">
         <source>Détecté par</source>
@@ -9093,6 +9453,10 @@ Portail clients</source>
       <trans-unit id="coq.dialog.field-responsible" datatype="html">
         <source>Responsable</source>
         <target state="translated">責任者</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.responsible-legacy" datatype="html">
+        <source>Nom enregistré : <x id="INTERPOLATION"/>. Choisissez cette personne dans l'annuaire.</source>
+        <target state="translated">登録済みの名前：<x id="INTERPOLATION"/>。ディレクトリからこの担当者を選択してください。</target>
       </trans-unit>
       <trans-unit id="coq.dialog.responsible-required" datatype="html">
         <source>Le responsable est requis.</source>
@@ -9549,6 +9913,62 @@ Portail clients</source>
       <trans-unit id="dashboard.annot.delete-error" datatype="html">
         <source>Suppression refusée.</source>
         <target state="translated">削除が拒否されました。</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.label" datatype="html">
+        <source>Personne</source>
+        <target state="translated">担当者</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.placeholder" datatype="html">
+        <source>Rechercher par nom ou adresse</source>
+        <target state="translated">名前またはメールアドレスで検索</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.clear" datatype="html">
+        <source>Retirer la personne choisie</source>
+        <target state="translated">選択した担当者を解除</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.loading" datatype="html">
+        <source>Recherche…</source>
+        <target state="translated">検索中…</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.error" datatype="html">
+        <source>Annuaire indisponible pour le moment. Réessayez dans un instant.</source>
+        <target state="translated">現在ディレクトリを利用できません。しばらくしてから再度お試しください。</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.empty" datatype="html">
+        <source>Aucune personne ne correspond.</source>
+        <target state="translated">該当する担当者はいません。</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.more" datatype="html">
+        <source><x id="COUNT"/> autres résultats : précisez la recherche.</source>
+        <target state="translated">ほかに <x id="COUNT"/> 件あります。検索条件を絞り込んでください。</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.resolving" datatype="html">
+        <source>Chargement du nom…</source>
+        <target state="translated">名前を読み込み中…</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.unknown" datatype="html">
+        <source>Cette personne ne fait plus partie de l'annuaire.</source>
+        <target state="translated">この担当者はディレクトリに存在しません。</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.former" datatype="html">
+        <source>Ancien membre de l'organisation.</source>
+        <target state="translated">組織の元メンバーです。</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.live-error" datatype="html">
+        <source>Annuaire indisponible</source>
+        <target state="translated">ディレクトリを利用できません</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.live-none" datatype="html">
+        <source>Aucune personne trouvée</source>
+        <target state="translated">該当者なし</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.live-count" datatype="html">
+        <source><x id="COUNT"/> personne(s) proposée(s)</source>
+        <target state="translated">候補 <x id="COUNT"/> 件</target>
+      </trans-unit>
+      <trans-unit id="directory.person.unknown" datatype="html">
+        <source>Personne inconnue</source>
+        <target state="translated">不明な担当者</target>
       </trans-unit>
       <trans-unit id="nav.doc-gen-ia" datatype="html">
         <source>Génération doc IA</source>
@@ -15603,13 +16023,17 @@ historique 12 mois</source>
         <source>Objectif SMART + impact business attendu</source>
         <target state="translated">SMART目標＋期待されるビジネスインパクト</target>
       </trans-unit>
-      <trans-unit id="dmaic.create.champion-label" datatype="html">
-        <source>Champion (ID)</source>
-        <target state="translated">チャンピオン（ID）</target>
+      <trans-unit id="dmaic.create.champion" datatype="html">
+        <source>Champion (optionnel)</source>
+        <target state="translated">チャンピオン（任意）</target>
       </trans-unit>
-      <trans-unit id="dmaic.create.champion-placeholder" datatype="html">
-        <source>UUID utilisateur</source>
-        <target state="translated">ユーザーUUID</target>
+      <trans-unit id="dmaic.detail.black-belt-prefix" datatype="html">
+        <source>Black Belt :</source>
+        <target state="translated">ブラックベルト：</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.champion-prefix" datatype="html">
+        <source>Champion :</source>
+        <target state="translated">チャンピオン：</target>
       </trans-unit>
       <trans-unit id="dmaic.create.target-date-label" datatype="html">
         <source>Date cible</source>
@@ -16187,21 +16611,9 @@ historique 12 mois</source>
         <source>Ajouter un membre</source>
         <target state="translated">メンバーを追加</target>
       </trans-unit>
-      <trans-unit id="circles.member.hint" datatype="html">
-        <source>Renseigne l'identifiant utilisateur (UUID) et le rôle. La liste de sélection sera branchée sur l'annuaire Keycloak dans une prochaine itération.</source>
-        <target state="translated">ユーザー識別子（UUID）と役割を入力してください。選択リストは今後のイテレーションでKeycloakディレクトリに接続されます。</target>
-      </trans-unit>
-      <trans-unit id="circles.member.user-id" datatype="html">
-        <source>User ID (UUID)</source>
-        <target state="translated">ユーザーID (UUID)</target>
-      </trans-unit>
-      <trans-unit id="circles.member.uuid-required" datatype="html">
-        <source>UUID requis.</source>
-        <target state="translated">UUIDは必須です。</target>
-      </trans-unit>
-      <trans-unit id="circles.member.uuid-invalid" datatype="html">
-        <source>Format UUID invalide.</source>
-        <target state="translated">UUID形式が無効です。</target>
+      <trans-unit id="circles.member.person" datatype="html">
+        <source>Personne à ajouter</source>
+        <target state="translated">追加する担当者</target>
       </trans-unit>
       <trans-unit id="circles.member.role-facilitator" datatype="html">
         <source>Animateur</source>
@@ -16414,6 +16826,706 @@ historique 12 mois</source>
       <trans-unit id="spc.analyze.kpi-banner-prefix" datatype="html">
         <source>Analyse du KPI</source>
         <target state="translated">KPI分析</target>
+      </trans-unit>
+      <trans-unit id="nav.moc" datatype="html">
+        <source>Gestion des changements (MOC)</source>
+        <target state="translated">変更管理（MOC）</target>
+      </trans-unit>
+      <trans-unit id="nav.admin-moc" datatype="html">
+        <source>Paramètres MOC</source>
+        <target state="translated">MOC 設定</target>
+      </trans-unit>
+      <trans-unit id="authz.module.change" datatype="html">
+        <source>Gestion des changements</source>
+        <target state="translated">変更管理</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.change-request" datatype="html">
+        <source>Demander un changement et conduire ses demandes</source>
+        <target state="translated">変更を申請し自分の申請を進める</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.change-analyze" datatype="html">
+        <source>Gérer toutes les demandes de changement</source>
+        <target state="translated">すべての変更申請を管理する</target>
+      </trans-unit>
+      <trans-unit id="moc.title" datatype="html">
+        <source>Gestion des changements (MOC)</source>
+        <target state="translated">変更管理（MOC）</target>
+      </trans-unit>
+      <trans-unit id="moc.subtitle" datatype="html">
+        <source>Demande, analyse d'impact, validation</source>
+        <target state="translated">申請、影響分析、承認</target>
+      </trans-unit>
+      <trans-unit id="moc.settings-link" datatype="html">
+        <source>Paramètres MOC</source>
+        <target state="translated">MOC 設定</target>
+      </trans-unit>
+      <trans-unit id="moc.export" datatype="html">
+        <source>Extraire en Excel</source>
+        <target state="translated">Excel に出力</target>
+      </trans-unit>
+      <trans-unit id="moc.export-failed" datatype="html">
+        <source>L'extraction Excel a échoué.</source>
+        <target state="translated">Excel への出力に失敗しました。</target>
+      </trans-unit>
+      <trans-unit id="moc.new" datatype="html">
+        <source>Nouvelle demande</source>
+        <target state="translated">新規申請</target>
+      </trans-unit>
+      <trans-unit id="moc.list-failed" datatype="html">
+        <source>Les demandes n'ont pas pu être chargées.</source>
+        <target state="translated">申請を読み込めませんでした。</target>
+      </trans-unit>
+      <trans-unit id="moc.list-title" datatype="html">
+        <source>Demandes de changement</source>
+        <target state="translated">変更申請</target>
+      </trans-unit>
+      <trans-unit id="moc.load-failed" datatype="html">
+        <source>La demande n'a pas pu être chargée.</source>
+        <target state="translated">申請を読み込めませんでした。</target>
+      </trans-unit>
+      <trans-unit id="moc.filter-aria" datatype="html">
+        <source>Filtrer par statut</source>
+        <target state="translated">ステータスで絞り込む</target>
+      </trans-unit>
+      <trans-unit id="moc.filter.all" datatype="html">
+        <source>Tous</source>
+        <target state="translated">すべて</target>
+      </trans-unit>
+      <trans-unit id="moc.filter.mine" datatype="html">
+        <source>À valider par moi</source>
+        <target state="translated">自分の承認待ち</target>
+      </trans-unit>
+      <trans-unit id="moc.awaiting-me" datatype="html">
+        <source>À valider</source>
+        <target state="translated">承認待ち</target>
+      </trans-unit>
+      <trans-unit id="moc.empty-filter" datatype="html">
+        <source>Aucune demande dans ce statut.</source>
+        <target state="translated">このステータスの申請はありません。</target>
+      </trans-unit>
+      <trans-unit id="moc.empty" datatype="html">
+        <source>Aucune demande de changement pour l'instant.</source>
+        <target state="translated">変更申請はまだありません。</target>
+      </trans-unit>
+      <trans-unit id="moc.no-selection" datatype="html">
+        <source>Sélectionnez une demande pour voir sa demande, son analyse d'impact, ses validations et son historique.</source>
+        <target state="translated">申請を選択すると、内容、影響分析、承認、履歴を確認できます。</target>
+      </trans-unit>
+      <trans-unit id="moc.status.draft" datatype="html">
+        <source>Brouillon</source>
+        <target state="translated">下書き</target>
+      </trans-unit>
+      <trans-unit id="moc.status.in-analysis" datatype="html">
+        <source>En analyse</source>
+        <target state="translated">分析中</target>
+      </trans-unit>
+      <trans-unit id="moc.status.in-validation" datatype="html">
+        <source>En validation</source>
+        <target state="translated">承認中</target>
+      </trans-unit>
+      <trans-unit id="moc.status.approved" datatype="html">
+        <source>Approuvé</source>
+        <target state="translated">承認済み</target>
+      </trans-unit>
+      <trans-unit id="moc.status.rejected" datatype="html">
+        <source>Rejeté</source>
+        <target state="translated">却下</target>
+      </trans-unit>
+      <trans-unit id="moc.class.not-assessed" datatype="html">
+        <source>Non évalué</source>
+        <target state="translated">未評価</target>
+      </trans-unit>
+      <trans-unit id="moc.class.minor" datatype="html">
+        <source>Mineur</source>
+        <target state="translated">軽微</target>
+      </trans-unit>
+      <trans-unit id="moc.class.major" datatype="html">
+        <source>Majeur</source>
+        <target state="translated">重大</target>
+      </trans-unit>
+      <trans-unit id="moc.class.critical" datatype="html">
+        <source>Critique</source>
+        <target state="translated">重要危機</target>
+      </trans-unit>
+      <trans-unit id="moc.level.none" datatype="html">
+        <source>Aucun</source>
+        <target state="translated">なし</target>
+      </trans-unit>
+      <trans-unit id="moc.level.low" datatype="html">
+        <source>Faible</source>
+        <target state="translated">低</target>
+      </trans-unit>
+      <trans-unit id="moc.level.medium" datatype="html">
+        <source>Moyen</source>
+        <target state="translated">中</target>
+      </trans-unit>
+      <trans-unit id="moc.level.high" datatype="html">
+        <source>Élevé</source>
+        <target state="translated">高</target>
+      </trans-unit>
+      <trans-unit id="moc.domain.safety" datatype="html">
+        <source>Sécurité</source>
+        <target state="translated">安全</target>
+      </trans-unit>
+      <trans-unit id="moc.domain.health-environment" datatype="html">
+        <source>Santé et environnement</source>
+        <target state="translated">健康・環境</target>
+      </trans-unit>
+      <trans-unit id="moc.domain.quality" datatype="html">
+        <source>Qualité</source>
+        <target state="translated">品質</target>
+      </trans-unit>
+      <trans-unit id="moc.domain.production" datatype="html">
+        <source>Production</source>
+        <target state="translated">生産</target>
+      </trans-unit>
+      <trans-unit id="moc.domain.maintenance" datatype="html">
+        <source>Maintenance</source>
+        <target state="translated">保全</target>
+      </trans-unit>
+      <trans-unit id="moc.domain.costs" datatype="html">
+        <source>Coûts</source>
+        <target state="translated">コスト</target>
+      </trans-unit>
+      <trans-unit id="moc.domain.regulatory" datatype="html">
+        <source>Réglementaire</source>
+        <target state="translated">法規制</target>
+      </trans-unit>
+      <trans-unit id="moc.domain.training" datatype="html">
+        <source>Formation</source>
+        <target state="translated">教育訓練</target>
+      </trans-unit>
+      <trans-unit id="moc.type.permanent" datatype="html">
+        <source>Permanent</source>
+        <target state="translated">恒久</target>
+      </trans-unit>
+      <trans-unit id="moc.type.temporary" datatype="html">
+        <source>Temporaire</source>
+        <target state="translated">一時的</target>
+      </trans-unit>
+      <trans-unit id="moc.decision.pending" datatype="html">
+        <source>En attente</source>
+        <target state="translated">保留中</target>
+      </trans-unit>
+      <trans-unit id="moc.decision.approved" datatype="html">
+        <source>Approuvé</source>
+        <target state="translated">承認済み</target>
+      </trans-unit>
+      <trans-unit id="moc.decision.rejected" datatype="html">
+        <source>Rejeté</source>
+        <target state="translated">却下</target>
+      </trans-unit>
+      <trans-unit id="moc.send-to-analysis" datatype="html">
+        <source>Envoyer en analyse</source>
+        <target state="translated">分析に回す</target>
+      </trans-unit>
+      <trans-unit id="moc.submit" datatype="html">
+        <source>Soumettre à validation</source>
+        <target state="translated">承認に提出</target>
+      </trans-unit>
+      <trans-unit id="moc.reopen" datatype="html">
+        <source>Rouvrir l'analyse</source>
+        <target state="translated">分析を再開</target>
+      </trans-unit>
+      <trans-unit id="moc.submit-blocked" datatype="html">
+        <source>Soumission bloquée : <x id="COUNT"/> domaine(s) d'impact sur 8 restent à évaluer.</source>
+        <target state="translated">提出不可：影響領域 8 件中 <x id="COUNT"/> 件が未評価です。</target>
+      </trans-unit>
+      <trans-unit id="moc.progress-aria" datatype="html">
+        <source>Avancement de la demande</source>
+        <target state="translated">申請の進捗</target>
+      </trans-unit>
+      <trans-unit id="moc.tab.request" datatype="html">
+        <source>Demande</source>
+        <target state="translated">申請</target>
+      </trans-unit>
+      <trans-unit id="moc.tab.impact" datatype="html">
+        <source>Analyse d'impact</source>
+        <target state="translated">影響分析</target>
+      </trans-unit>
+      <trans-unit id="moc.tab.validation" datatype="html">
+        <source>Validation</source>
+        <target state="translated">承認</target>
+      </trans-unit>
+      <trans-unit id="moc.tab.history" datatype="html">
+        <source>Historique</source>
+        <target state="translated">履歴</target>
+      </trans-unit>
+      <trans-unit id="moc.field.type" datatype="html">
+        <source>Type</source>
+        <target state="translated">種別</target>
+      </trans-unit>
+      <trans-unit id="moc.field.site" datatype="html">
+        <source>Site / unité</source>
+        <target state="translated">拠点／部門</target>
+      </trans-unit>
+      <trans-unit id="moc.field.requester" datatype="html">
+        <source>Demandeur · date</source>
+        <target state="translated">申請者・日付</target>
+      </trans-unit>
+      <trans-unit id="moc.field.planned" datatype="html">
+        <source>Mise en œuvre prévue</source>
+        <target state="translated">実施予定日</target>
+      </trans-unit>
+      <trans-unit id="moc.field.description" datatype="html">
+        <source>Description</source>
+        <target state="translated">説明</target>
+      </trans-unit>
+      <trans-unit id="moc.field.justification" datatype="html">
+        <source>Justification</source>
+        <target state="translated">理由</target>
+      </trans-unit>
+      <trans-unit id="moc.sent-to-analysis" datatype="html">
+        <source>Demande envoyée en analyse.</source>
+        <target state="translated">申請を分析に回しました。</target>
+      </trans-unit>
+      <trans-unit id="moc.submitted" datatype="html">
+        <source>Demande soumise à validation : les validateurs sont prévenus.</source>
+        <target state="translated">申請を承認に提出しました。承認者に通知されました。</target>
+      </trans-unit>
+      <trans-unit id="moc.reopened" datatype="html">
+        <source>L'analyse est rouverte.</source>
+        <target state="translated">分析を再開しました。</target>
+      </trans-unit>
+      <trans-unit id="moc.delete-title" datatype="html">
+        <source>Supprimer la demande <x id="code"/> ?</source>
+        <target state="translated">申請 <x id="code"/> を削除しますか？</target>
+      </trans-unit>
+      <trans-unit id="moc.delete-message" datatype="html">
+        <source>Le brouillon et son historique seront supprimés. Cette action est définitive.</source>
+        <target state="translated">下書きとその履歴が削除されます。この操作は取り消せません。</target>
+      </trans-unit>
+      <trans-unit id="moc.deleted" datatype="html">
+        <source>Demande supprimée.</source>
+        <target state="translated">申請を削除しました。</target>
+      </trans-unit>
+      <trans-unit id="moc.action-failed" datatype="html">
+        <source>L'action sur la demande a échoué.</source>
+        <target state="translated">申請への操作に失敗しました。</target>
+      </trans-unit>
+      <trans-unit id="moc.history.with-actor" datatype="html">
+        <source><x id="event"/> par <x id="actor"/></source>
+        <target state="translated"><x id="event"/>（<x id="actor"/>）</target>
+      </trans-unit>
+      <trans-unit id="moc.history.created" datatype="html">
+        <source>Demande créée</source>
+        <target state="translated">申請作成</target>
+      </trans-unit>
+      <trans-unit id="moc.history.updated" datatype="html">
+        <source>Demande modifiée</source>
+        <target state="translated">申請更新</target>
+      </trans-unit>
+      <trans-unit id="moc.history.sent-to-analysis" datatype="html">
+        <source>Envoyée en analyse</source>
+        <target state="translated">分析に回付</target>
+      </trans-unit>
+      <trans-unit id="moc.history.analysis-completed" datatype="html">
+        <source>Analyse d'impact terminée</source>
+        <target state="translated">影響分析完了</target>
+      </trans-unit>
+      <trans-unit id="moc.history.submitted" datatype="html">
+        <source>Soumise à validation</source>
+        <target state="translated">承認に提出</target>
+      </trans-unit>
+      <trans-unit id="moc.history.validation-approved" datatype="html">
+        <source>Validation accordée</source>
+        <target state="translated">承認</target>
+      </trans-unit>
+      <trans-unit id="moc.history.validation-rejected" datatype="html">
+        <source>Validation refusée</source>
+        <target state="translated">承認拒否</target>
+      </trans-unit>
+      <trans-unit id="moc.history.approved" datatype="html">
+        <source>Demande approuvée</source>
+        <target state="translated">申請承認</target>
+      </trans-unit>
+      <trans-unit id="moc.history.rejected" datatype="html">
+        <source>Demande rejetée</source>
+        <target state="translated">申請却下</target>
+      </trans-unit>
+      <trans-unit id="moc.history.reopened" datatype="html">
+        <source>Analyse rouverte</source>
+        <target state="translated">分析再開</target>
+      </trans-unit>
+      <trans-unit id="moc.history.reminder-sent" datatype="html">
+        <source>Rappel envoyé aux validateurs</source>
+        <target state="translated">承認者にリマインダーを送信</target>
+      </trans-unit>
+      <trans-unit id="moc.history.legacy-status" datatype="html">
+        <source>Statut antérieur au MOC</source>
+        <target state="translated">MOC 導入前のステータス</target>
+      </trans-unit>
+      <trans-unit id="moc.history.legacy-decision" datatype="html">
+        <source>Décision antérieure au MOC</source>
+        <target state="translated">MOC 導入前の決定</target>
+      </trans-unit>
+      <trans-unit id="moc.history.legacy-impact" datatype="html">
+        <source>Objet lié avant le MOC</source>
+        <target state="translated">MOC 導入前の関連対象</target>
+      </trans-unit>
+      <trans-unit id="moc.history.empty" datatype="html">
+        <source>Aucun événement.</source>
+        <target state="translated">イベントはありません。</target>
+      </trans-unit>
+      <trans-unit id="moc.impact.title" datatype="html">
+        <source>Classification du changement</source>
+        <target state="translated">変更の分類</target>
+      </trans-unit>
+      <trans-unit id="moc.impact.score-aria" datatype="html">
+        <source>Score d'impact</source>
+        <target state="translated">影響スコア</target>
+      </trans-unit>
+      <trans-unit id="moc.impact.incomplete" datatype="html">
+        <source><x id="DONE"/> domaine(s) évalué(s) sur 8. La classification reste « Non évalué » et la soumission à validation est bloquée tant que les huit domaines ne sont pas évalués.</source>
+        <target state="translated">8 領域中 <x id="DONE"/> 件を評価済み。8 領域すべてを評価するまで、分類は「未評価」のままで承認への提出はできません。</target>
+      </trans-unit>
+      <trans-unit id="moc.impact.draft" datatype="html">
+        <source>L'analyse d'impact s'ouvre quand la demande est envoyée en analyse.</source>
+        <target state="translated">影響分析は申請が分析に回された時点で開始されます。</target>
+      </trans-unit>
+      <trans-unit id="moc.impact.frozen" datatype="html">
+        <source>Analyse figée à la soumission à validation.</source>
+        <target state="translated">承認への提出時に分析は確定しました。</target>
+      </trans-unit>
+      <trans-unit id="moc.impact.weight-tooltip" datatype="html">
+        <source>Poids de ce domaine dans le score, réglé par l'administrateur</source>
+        <target state="translated">スコアにおけるこの領域の重み（管理者が設定）</target>
+      </trans-unit>
+      <trans-unit id="moc.impact.notes" datatype="html">
+        <source>Nature de l'impact et mesures de maîtrise</source>
+        <target state="translated">影響の内容と管理策</target>
+      </trans-unit>
+      <trans-unit id="moc.impact-failed" datatype="html">
+        <source>L'évaluation n'a pas été enregistrée.</source>
+        <target state="translated">評価を保存できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="moc.validation.summary" datatype="html">
+        <source>Changement <x id="classe"/> : <x id="count"/> validation(s) requise(s). Un seul refus rejette la demande.</source>
+        <target state="translated"><x id="classe"/> の変更：必要な承認は <x id="count"/> 件。1 件でも拒否されると申請は却下されます。</target>
+      </trans-unit>
+      <trans-unit id="moc.validation.not-assessed" datatype="html">
+        <source>Les validateurs requis seront connus une fois les huit domaines d'impact évalués.</source>
+        <target state="translated">必要な承認者は、8 つの影響領域をすべて評価した後に決まります。</target>
+      </trans-unit>
+      <trans-unit id="moc.validation.legacy" datatype="html">
+        <source>Demande antérieure au MOC : ses décisions sont consignées dans l'historique.</source>
+        <target state="translated">MOC 導入前の申請です。決定内容は履歴に記録されています。</target>
+      </trans-unit>
+      <trans-unit id="moc.validation.preview" datatype="html">
+        <source>Aperçu : la liste des validateurs sera figée à la soumission à validation.</source>
+        <target state="translated">プレビュー：承認者の一覧は承認への提出時に確定します。</target>
+      </trans-unit>
+      <trans-unit id="moc.validation.approved-by" datatype="html">
+        <source>Approuvé par <x id="NAME"/></source>
+        <target state="translated">承認者：<x id="NAME"/></target>
+      </trans-unit>
+      <trans-unit id="moc.validation.rejected-by" datatype="html">
+        <source>Rejeté par <x id="NAME"/></source>
+        <target state="translated">却下者：<x id="NAME"/></target>
+      </trans-unit>
+      <trans-unit id="moc.validation.holders" datatype="html">
+        <source>Titulaires : <x id="NAMES"/></source>
+        <target state="translated">担当者：<x id="NAMES"/></target>
+      </trans-unit>
+      <trans-unit id="moc.validation.waiting-for" datatype="html">
+        <source>En attente de : <x id="NAMES"/></source>
+        <target state="translated">承認待ち：<x id="NAMES"/></target>
+      </trans-unit>
+      <trans-unit id="moc.validation.no-holder" datatype="html">
+        <source>Aucun titulaire : l'administrateur doit en nommer un dans les paramètres MOC.</source>
+        <target state="translated">担当者がいません。管理者が MOC 設定で指名する必要があります。</target>
+      </trans-unit>
+      <trans-unit id="moc.validation.self" datatype="html">
+        <source>Vous êtes le demandeur : vous ne pouvez pas valider votre propre demande.</source>
+        <target state="translated">あなたは申請者のため、自分の申請を承認できません。</target>
+      </trans-unit>
+      <trans-unit id="moc.validation.comment" datatype="html">
+        <source>Commentaire (obligatoire en cas de refus)</source>
+        <target state="translated">コメント（却下時は必須）</target>
+      </trans-unit>
+      <trans-unit id="moc.validation.approve" datatype="html">
+        <source>Approuver</source>
+        <target state="translated">承認</target>
+      </trans-unit>
+      <trans-unit id="moc.validation.reject" datatype="html">
+        <source>Rejeter</source>
+        <target state="translated">却下</target>
+      </trans-unit>
+      <trans-unit id="moc.validation.reject-hint" datatype="html">
+        <source>Un refus doit être motivé par un commentaire</source>
+        <target state="translated">却下にはコメントによる理由が必要です</target>
+      </trans-unit>
+      <trans-unit id="moc.validation.approved" datatype="html">
+        <source>Validation enregistrée.</source>
+        <target state="translated">承認を記録しました。</target>
+      </trans-unit>
+      <trans-unit id="moc.validation.rejected" datatype="html">
+        <source>Refus enregistré : la demande est rejetée.</source>
+        <target state="translated">却下を記録しました。申請は却下されました。</target>
+      </trans-unit>
+      <trans-unit id="moc.validation.failed" datatype="html">
+        <source>La décision n'a pas été enregistrée.</source>
+        <target state="translated">決定を保存できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="moc.dialog.new-title" datatype="html">
+        <source>Nouvelle demande de changement</source>
+        <target state="translated">新規変更申請</target>
+      </trans-unit>
+      <trans-unit id="moc.dialog.edit-title" datatype="html">
+        <source>Modifier la demande <x id="code"/></source>
+        <target state="translated">申請 <x id="code"/> を編集</target>
+      </trans-unit>
+      <trans-unit id="moc.dialog.title-label" datatype="html">
+        <source>Titre</source>
+        <target state="translated">タイトル</target>
+      </trans-unit>
+      <trans-unit id="moc.dialog.title-required" datatype="html">
+        <source>Donnez un titre à la demande.</source>
+        <target state="translated">申請にタイトルを付けてください。</target>
+      </trans-unit>
+      <trans-unit id="moc.dialog.planned-hint" datatype="html">
+        <source>Facultatif : l'échéance apparaît au tableau de bord SMI.</source>
+        <target state="translated">任意：期日は統合マネジメントシステムのダッシュボードに表示されます。</target>
+      </trans-unit>
+      <trans-unit id="moc.dialog.create" datatype="html">
+        <source>Créer la demande</source>
+        <target state="translated">申請を作成</target>
+      </trans-unit>
+      <trans-unit id="moc.dialog.created" datatype="html">
+        <source>Demande <x id="code"/> créée.</source>
+        <target state="translated">申請 <x id="code"/> を作成しました。</target>
+      </trans-unit>
+      <trans-unit id="moc.dialog.updated" datatype="html">
+        <source>Demande modifiée.</source>
+        <target state="translated">申請を更新しました。</target>
+      </trans-unit>
+      <trans-unit id="moc.dialog.failed" datatype="html">
+        <source>La demande n'a pas été enregistrée.</source>
+        <target state="translated">申請を保存できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="moc.error.analysis-incomplete" datatype="html">
+        <source>Évaluez les huit domaines d'impact avant de soumettre à validation.</source>
+        <target state="translated">承認に提出する前に 8 つの影響領域をすべて評価してください。</target>
+      </trans-unit>
+      <trans-unit id="moc.error.role-without-holder" datatype="html">
+        <source>Le rôle « <x id="role"/> » n'a aucun titulaire : demandez à l'administrateur d'en nommer un.</source>
+        <target state="translated">役割「<x id="role"/>」に担当者がいません。管理者に指名を依頼してください。</target>
+      </trans-unit>
+      <trans-unit id="moc.error.role-only-requester" datatype="html">
+        <source>Le rôle « <x id="role"/> » n'a pour titulaire que le demandeur, qui ne peut pas valider sa propre demande.</source>
+        <target state="translated">役割「<x id="role"/>」の担当者は申請者のみで、申請者は自分の申請を承認できません。</target>
+      </trans-unit>
+      <trans-unit id="moc.error.not-holder" datatype="html">
+        <source>Seul un titulaire du rôle « <x id="role"/> » peut statuer sur cette carte.</source>
+        <target state="translated">このカードを判断できるのは役割「<x id="role"/>」の担当者のみです。</target>
+      </trans-unit>
+      <trans-unit id="moc.error.not-owner" datatype="html">
+        <source>Seul le demandeur ou un gestionnaire des changements peut conduire cette demande.</source>
+        <target state="translated">この申請を進められるのは申請者または変更管理者のみです。</target>
+      </trans-unit>
+      <trans-unit id="moc.error.self-validation" datatype="html">
+        <source>Vous êtes le demandeur : vous ne pouvez pas valider votre propre demande.</source>
+        <target state="translated">あなたは申請者のため、自分の申請を承認できません。</target>
+      </trans-unit>
+      <trans-unit id="moc.error.comment-required" datatype="html">
+        <source>Un refus doit être motivé par un commentaire.</source>
+        <target state="translated">却下にはコメントによる理由が必要です。</target>
+      </trans-unit>
+      <trans-unit id="moc.error.already-decided" datatype="html">
+        <source>Ce rôle a déjà statué.</source>
+        <target state="translated">この役割はすでに判断済みです。</target>
+      </trans-unit>
+      <trans-unit id="moc.error.delete-not-draft" datatype="html">
+        <source>Seule une demande en brouillon peut être supprimée.</source>
+        <target state="translated">削除できるのは下書きの申請のみです。</target>
+      </trans-unit>
+      <trans-unit id="moc.error.role-in-use" datatype="html">
+        <source>Le rôle « <x id="role"/> » est attendu par une demande en validation : il ne peut pas être retiré.</source>
+        <target state="translated">役割「<x id="role"/>」は承認中の申請で必要とされているため削除できません。</target>
+      </trans-unit>
+      <trans-unit id="moc.error.role-in-use-holders" datatype="html">
+        <source>Le rôle « <x id="role"/> » est attendu par une demande en validation : il doit garder au moins un titulaire.</source>
+        <target state="translated">役割「<x id="role"/>」は承認中の申請で必要とされているため、担当者を 1 人以上残す必要があります。</target>
+      </trans-unit>
+      <trans-unit id="moc.error.role-duplicate" datatype="html">
+        <source>Deux rôles portent le même libellé « <x id="role"/> ».</source>
+        <target state="translated">2 つの役割が同じ名称「<x id="role"/>」です。</target>
+      </trans-unit>
+      <trans-unit id="moc.error.required-empty" datatype="html">
+        <source>Chaque classification doit exiger au moins un rôle de validation.</source>
+        <target state="translated">各分類には少なくとも 1 つの承認役割が必要です。</target>
+      </trans-unit>
+      <trans-unit id="moc.error.thresholds" datatype="html">
+        <source>Les seuils doivent respecter 0 &lt; seuil majeur &lt; seuil critique ≤ 100.</source>
+        <target state="translated">しきい値は 0 &lt; 重大しきい値 &lt; 重要危機しきい値 ≤ 100 を満たす必要があります。</target>
+      </trans-unit>
+      <trans-unit id="moc.error.weights-zero" datatype="html">
+        <source>Au moins un domaine doit avoir un poids supérieur à 0.</source>
+        <target state="translated">少なくとも 1 つの領域の重みを 0 より大きくしてください。</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.title" datatype="html">
+        <source>Paramètres MOC</source>
+        <target state="translated">MOC 設定</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.subtitle" datatype="html">
+        <source>Classification, poids des domaines, rappel et validateurs de la gestion des changements.</source>
+        <target state="translated">変更管理の分類、領域の重み、リマインダー、承認者。</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.back" datatype="html">
+        <source>Gestion des changements</source>
+        <target state="translated">変更管理</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.load-failed" datatype="html">
+        <source>Les paramètres MOC n'ont pas pu être chargés.</source>
+        <target state="translated">MOC 設定を読み込めませんでした。</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.scope" datatype="html">
+        <source>Un enregistrement reclasse aussitôt les demandes en brouillon ou en analyse. Les demandes déjà en validation, approuvées ou rejetées gardent leur score, leur classification et leurs validateurs, figés à la soumission.</source>
+        <target state="translated">保存すると下書きまたは分析中の申請は直ちに再分類されます。承認中・承認済み・却下済みの申請は、提出時に確定したスコア、分類、承認者を維持します。</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.thresholds" datatype="html">
+        <source>Seuils de classification</source>
+        <target state="translated">分類しきい値</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.thresholds-help" datatype="html">
+        <source>Le score d'impact va de 0 à 100. Il classe la demande, et la classe désigne les validateurs requis.</source>
+        <target state="translated">影響スコアは 0〜100 です。スコアが申請を分類し、分類が必要な承認者を決めます。</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.major" datatype="html">
+        <source>Seuil majeur</source>
+        <target state="translated">重大しきい値</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.critical" datatype="html">
+        <source>Seuil critique</source>
+        <target state="translated">重要危機しきい値</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.threshold-summary" datatype="html">
+        <source>Mineur &lt; <x id="major"/> ≤ Majeur &lt; <x id="critical"/> ≤ Critique</source>
+        <target state="translated">軽微 &lt; <x id="major"/> ≤ 重大 &lt; <x id="critical"/> ≤ 重要危機</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.reminder" datatype="html">
+        <source>Rappel aux validateurs</source>
+        <target state="translated">承認者へのリマインダー</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.reminder-help" datatype="html">
+        <source>Sans décision dans ce délai, les titulaires du rôle reçoivent un rappel, répété au même rythme tant que personne n'a statué.</source>
+        <target state="translated">この期間内に判断がない場合、役割の担当者にリマインダーが送られ、誰かが判断するまで同じ間隔で繰り返されます。</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.reminder-days" datatype="html">
+        <source>Délai (jours)</source>
+        <target state="translated">期間（日）</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.weights" datatype="html">
+        <source>Poids des domaines d'impact</source>
+        <target state="translated">影響領域の重み</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.weights-help" datatype="html">
+        <source>De 0 à 10. Un domaine de poids 0 reste à évaluer mais ne compte pas dans le score. À 1 partout, le score est la moyenne simple.</source>
+        <target state="translated">0〜10。重み 0 の領域も評価は必要ですが、スコアには含まれません。すべて 1 の場合、スコアは単純平均です。</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.roles" datatype="html">
+        <source>Rôles de validation</source>
+        <target state="translated">承認役割</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.roles-help" datatype="html">
+        <source>Pour chaque rôle : les classifications qui l'exigent et ses titulaires (principal en premier, puis suppléants). N'importe lequel d'entre eux peut statuer ; jamais le demandeur.</source>
+        <target state="translated">各役割について、その役割を必要とする分類と担当者（主担当、次に代理）。いずれの担当者も判断できますが、申請者は判断できません。</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.add-role" datatype="html">
+        <source>Ajouter un rôle</source>
+        <target state="translated">役割を追加</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.role-label" datatype="html">
+        <source>Libellé du rôle</source>
+        <target state="translated">役割名</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.up" datatype="html">
+        <source>Monter le rôle</source>
+        <target state="translated">役割を上へ</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.down" datatype="html">
+        <source>Descendre le rôle</source>
+        <target state="translated">役割を下へ</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.remove-role" datatype="html">
+        <source>Retirer le rôle</source>
+        <target state="translated">役割を削除</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.required-for" datatype="html">
+        <source>Requis pour</source>
+        <target state="translated">必要な分類</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.holders" datatype="html">
+        <source>Titulaires</source>
+        <target state="translated">担当者</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.primary" datatype="html">
+        <source>Principal ·</source>
+        <target state="translated">主担当・</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.inactive" datatype="html">
+        <source>(désactivé)</source>
+        <target state="translated">（無効）</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.unknown" datatype="html">
+        <source>(absent de l'annuaire)</source>
+        <target state="translated">（ディレクトリに存在しません）</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.remove-holder" datatype="html">
+        <source>Retirer <x id="member"/></source>
+        <target state="translated"><x id="member"/> を外す</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.no-holder" datatype="html">
+        <source>Aucun titulaire : une demande qui exige ce rôle ne pourra pas être soumise à validation.</source>
+        <target state="translated">担当者がいません。この役割を必要とする申請は承認に提出できません。</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.add-holder" datatype="html">
+        <source>Ajouter un titulaire (annuaire)</source>
+        <target state="translated">担当者を追加（ディレクトリ）</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.pending" datatype="html">
+        <source>Paramètres modifiés</source>
+        <target state="translated">設定が変更されました</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.saved" datatype="html">
+        <source>Paramètres MOC enregistrés. Les demandes en brouillon ou en analyse sont reclassées.</source>
+        <target state="translated">MOC 設定を保存しました。下書きまたは分析中の申請は再分類されました。</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.failed" datatype="html">
+        <source>Les paramètres MOC n'ont pas pu être enregistrés.</source>
+        <target state="translated">MOC 設定を保存できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.problem.thresholds" datatype="html">
+        <source>Les seuils doivent respecter 0 &lt; seuil majeur &lt; seuil critique ≤ 100.</source>
+        <target state="translated">しきい値は 0 &lt; 重大しきい値 &lt; 重要危機しきい値 ≤ 100 を満たす必要があります。</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.problem.reminder" datatype="html">
+        <source>Le délai de rappel est un nombre de jours de 1 à 30.</source>
+        <target state="translated">リマインダーの期間は 1〜30 日です。</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.problem.weights" datatype="html">
+        <source>Chaque poids est un entier de 0 à 10.</source>
+        <target state="translated">各重みは 0〜10 の整数です。</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.problem.weights-zero" datatype="html">
+        <source>Au moins un domaine doit avoir un poids supérieur à 0.</source>
+        <target state="translated">少なくとも 1 つの領域の重みを 0 より大きくしてください。</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.problem.no-role" datatype="html">
+        <source>Il faut au moins un rôle de validation.</source>
+        <target state="translated">承認役割が少なくとも 1 つ必要です。</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.problem.label" datatype="html">
+        <source>Chaque rôle porte un libellé de 1 à 100 caractères.</source>
+        <target state="translated">各役割の名称は 1〜100 文字です。</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.problem.duplicate" datatype="html">
+        <source>Deux rôles portent le même libellé.</source>
+        <target state="translated">2 つの役割が同じ名称です。</target>
+      </trans-unit>
+      <trans-unit id="moc.settings.problem.required" datatype="html">
+        <source>La classification « <x id="classe"/> » n'exige aucun rôle.</source>
+        <target state="translated">分類「<x id="classe"/>」に必要な役割がありません。</target>
       </trans-unit>
       <trans-unit id="nav.non-conformite" datatype="html">
         <source>Non-conformité</source>
@@ -16714,22 +17826,6 @@ historique 12 mois</source>
       <trans-unit id="nc.detail.cancel-confirm-message" datatype="html">
         <source>La non-conformité sera marquée comme annulée. Cette décision est traçable.</source>
         <target state="translated">不適合はキャンセル済みとしてマークされます。この決定はトレーサブルです。</target>
-      </trans-unit>
-      <trans-unit id="nc.detail.add-action" datatype="html">
-        <source>Ajouter une action</source>
-        <target state="translated">アクションを追加</target>
-      </trans-unit>
-      <trans-unit id="nc.detail.add-action-tooltip" datatype="html">
-        <source>Poser une action corrective sur cette non-conformité</source>
-        <target state="translated">この不適合に是正処置を登録</target>
-      </trans-unit>
-      <trans-unit id="nc.detail.add-action-no-case" datatype="html">
-        <source>Dossier créé, mais introuvable pour y ajouter l'action. Ouvrez-le depuis la CAPA.</source>
-        <target state="translated">ケースは作成されましたが、アクションを追加する対象が見つかりません。CAPA から開いてください。</target>
-      </trans-unit>
-      <trans-unit id="nc.detail.escalate-error" datatype="html">
-        <source>Erreur lors de l'escalade.</source>
-        <target state="translated">エスカレーション中にエラーが発生しました。</target>
       </trans-unit>
       <trans-unit id="nc.detail.transition-success" datatype="html">
         <source>Statut mis à jour.</source>
@@ -19359,442 +20455,6 @@ historique 12 mois</source>
         <source>Ce que la clôture de ce dossier a proposé de réviser.</source>
         <target state="translated">この案件の完了が改訂を提案した内容。</target>
       </trans-unit>
-      <trans-unit id="changes.approver.added" datatype="html">
-        <source>Approbateur ajouté.</source>
-        <target state="translated">承認者を追加しました。</target>
-      </trans-unit>
-      <trans-unit id="changes.approver.hint" datatype="html">
-        <source>Le workflow d'approbation passe en APPROVED quand tous les approbateurs ont
-     statué favorablement. Un seul REJECT marque la demande comme REJECTED.</source>
-        <target state="translated">すべての承認者が承認の判断を下すと、承認ワークフローは
-     APPROVED に移行します。1 件でも REJECT があると、申請は REJECTED となります。</target>
-      </trans-unit>
-      <trans-unit id="changes.approver.level-label" datatype="html">
-        <source>Niveau d'approbation</source>
-        <target state="translated">承認レベル</target>
-      </trans-unit>
-      <trans-unit id="changes.approver.title" datatype="html">
-        <source>Ajouter un approbateur</source>
-        <target state="translated">承認者を追加</target>
-      </trans-unit>
-      <trans-unit id="changes.approver.uuid-hint" datatype="html">
-        <source>UUID v4 de l'utilisateur Keycloak</source>
-        <target state="translated">Keycloak ユーザーの UUID v4</target>
-      </trans-unit>
-      <trans-unit id="changes.approver.uuid-label" datatype="html">
-        <source>UUID approbateur</source>
-        <target state="translated">承認者 UUID</target>
-      </trans-unit>
-      <trans-unit id="changes.create.code-label" datatype="html">
-        <source>Code</source>
-        <target state="translated">コード</target>
-      </trans-unit>
-      <trans-unit id="changes.create.code-placeholder" datatype="html">
-        <source>Ex. : CHG-2026-014</source>
-        <target state="translated">例：CHG-2026-014</target>
-      </trans-unit>
-      <trans-unit id="changes.create.created" datatype="html">
-        <source>Demande créée.</source>
-        <target state="translated">申請を作成しました。</target>
-      </trans-unit>
-      <trans-unit id="changes.create.impact-summary-label" datatype="html">
-        <source>Synthèse d'impact</source>
-        <target state="translated">影響の要約</target>
-      </trans-unit>
-      <trans-unit id="changes.create.planned-for-label" datatype="html">
-        <source>Date prévue</source>
-        <target state="translated">予定日</target>
-      </trans-unit>
-      <trans-unit id="changes.create.priority-label" datatype="html">
-        <source>Priorité</source>
-        <target state="translated">優先度</target>
-      </trans-unit>
-      <trans-unit id="changes.create.risk-label" datatype="html">
-        <source>Analyse de risque</source>
-        <target state="translated">リスク分析</target>
-      </trans-unit>
-      <trans-unit id="changes.create.save-error" datatype="html">
-        <source>Erreur lors de l'enregistrement.</source>
-        <target state="translated">保存中にエラーが発生しました。</target>
-      </trans-unit>
-      <trans-unit id="changes.create.updated" datatype="html">
-        <source>Demande mise à jour.</source>
-        <target state="translated">申請を更新しました。</target>
-      </trans-unit>
-      <trans-unit id="changes.decision.approve-hint" datatype="html">
-        <source>Votre approbation sera enregistrée. La demande passera en APPROVED lorsque tous les approbateurs auront statué.</source>
-        <target state="translated">あなたの承認が記録されます。すべての承認者が判断を下すと、申請は APPROVED に移行します。</target>
-      </trans-unit>
-      <trans-unit id="changes.decision.comment-label" datatype="html">
-        <source>Commentaire</source>
-        <target state="translated">コメント</target>
-      </trans-unit>
-      <trans-unit id="changes.decision.failed" datatype="html">
-        <source>Décision impossible.</source>
-        <target state="translated">判断を記録できませんでした。</target>
-      </trans-unit>
-      <trans-unit id="changes.decision.recorded-approved" datatype="html">
-        <source>Décision enregistrée : approuvée.</source>
-        <target state="translated">判断を記録しました：承認。</target>
-      </trans-unit>
-      <trans-unit id="changes.decision.recorded-rejected" datatype="html">
-        <source>Décision enregistrée : rejetée.</source>
-        <target state="translated">判断を記録しました：却下。</target>
-      </trans-unit>
-      <trans-unit id="changes.decision.reject-hint" datatype="html">
-        <source>Un seul rejet marque la demande comme REJECTED — décision terminale.</source>
-        <target state="translated">1 件の却下で申請は REJECTED となります。これは最終決定です。</target>
-      </trans-unit>
-      <trans-unit id="changes.decision.title-approve" datatype="html">
-        <source>Approuver la demande</source>
-        <target state="translated">申請を承認</target>
-      </trans-unit>
-      <trans-unit id="changes.decision.title-reject" datatype="html">
-        <source>Rejeter la demande</source>
-        <target state="translated">申請を却下</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.add-impact" datatype="html">
-        <source>Ajouter un impact</source>
-        <target state="translated">影響を追加</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.approvals-title" datatype="html">
-        <source>Approbations</source>
-        <target state="translated">承認</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.approve" datatype="html">
-        <source>Approuver</source>
-        <target state="translated">承認</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.back" datatype="html">
-        <source>Changements</source>
-        <target state="translated">変更</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.cancel-confirm-label" datatype="html">
-        <source>Annuler la demande</source>
-        <target state="translated">申請をキャンセル</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.cancel-confirm-title" datatype="html">
-        <source>Annuler la demande ?</source>
-        <target state="translated">申請をキャンセルしますか？</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.cancel-failed" datatype="html">
-        <source>Annulation impossible.</source>
-        <target state="translated">キャンセルできませんでした。</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.cancelled" datatype="html">
-        <source>Demande annulée.</source>
-        <target state="translated">申請をキャンセルしました。</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.col-added" datatype="html">
-        <source>Ajouté</source>
-        <target state="translated">追加日</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.col-approver" datatype="html">
-        <source>Approbateur</source>
-        <target state="translated">承認者</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.col-comment" datatype="html">
-        <source>Commentaire</source>
-        <target state="translated">コメント</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.col-decided-at" datatype="html">
-        <source>Décidé le</source>
-        <target state="translated">判断日</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.col-decision" datatype="html">
-        <source>Décision</source>
-        <target state="translated">判断</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.col-level" datatype="html">
-        <source>Niveau</source>
-        <target state="translated">レベル</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.col-notes" datatype="html">
-        <source>Notes</source>
-        <target state="translated">備考</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.col-target-uuid" datatype="html">
-        <source>UUID cible</source>
-        <target state="translated">対象 UUID</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.delete-confirm-title" datatype="html">
-        <source>Supprimer la demande ?</source>
-        <target state="translated">申請を削除しますか？</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.deleted" datatype="html">
-        <source>Demande supprimée.</source>
-        <target state="translated">申請を削除しました。</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.impact-summary-title" datatype="html">
-        <source>Synthèse impact</source>
-        <target state="translated">影響の要約</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.impacts-title" datatype="html">
-        <source>Impacts</source>
-        <target state="translated">影響</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.implement" datatype="html">
-        <source>Implémenter</source>
-        <target state="translated">実装</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.implemented-label" datatype="html">
-        <source>Implémenté :</source>
-        <target state="translated">実装済み：</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.keep" datatype="html">
-        <source>Conserver</source>
-        <target state="translated">保持</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.no-approvers" datatype="html">
-        <source>Aucun approbateur défini.</source>
-        <target state="translated">承認者が設定されていません。</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.no-impact-summary" datatype="html">
-        <source>Aucune synthèse renseignée.</source>
-        <target state="translated">要約が入力されていません。</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.no-impacts" datatype="html">
-        <source>Aucun impact référencé.</source>
-        <target state="translated">影響が登録されていません。</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.no-risk" datatype="html">
-        <source>Aucune analyse renseignée.</source>
-        <target state="translated">分析が入力されていません。</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.planned-label" datatype="html">
-        <source>Prévu :</source>
-        <target state="translated">予定：</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.reject" datatype="html">
-        <source>Rejeter</source>
-        <target state="translated">却下</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.rejection-label" datatype="html">
-        <source>Motif de rejet :</source>
-        <target state="translated">却下理由：</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.remove" datatype="html">
-        <source>Retirer</source>
-        <target state="translated">削除</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.remove-approver-title" datatype="html">
-        <source>Retirer l'approbateur ?</source>
-        <target state="translated">承認者を削除しますか？</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.remove-failed" datatype="html">
-        <source>Retrait impossible.</source>
-        <target state="translated">削除できませんでした。</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.remove-impact-title" datatype="html">
-        <source>Retirer l'impact ?</source>
-        <target state="translated">影響を削除しますか？</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.remove-tooltip" datatype="html">
-        <source>Retirer</source>
-        <target state="translated">削除</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.risk-title" datatype="html">
-        <source>Analyse de risque</source>
-        <target state="translated">リスク分析</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.stat-approved" datatype="html">
-        <source>Approuvés</source>
-        <target state="translated">承認済み</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.stat-approvers" datatype="html">
-        <source>Approbateurs</source>
-        <target state="translated">承認者</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.stat-impacts" datatype="html">
-        <source>Impacts</source>
-        <target state="translated">影響</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.stat-pending" datatype="html">
-        <source>En attente</source>
-        <target state="translated">保留中</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.stat-rejected" datatype="html">
-        <source>Rejetés</source>
-        <target state="translated">却下済み</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.submit" datatype="html">
-        <source>Soumettre</source>
-        <target state="translated">提出</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.submit-failed" datatype="html">
-        <source>Soumission impossible.</source>
-        <target state="translated">提出できませんでした。</target>
-      </trans-unit>
-      <trans-unit id="changes.detail.submitted" datatype="html">
-        <source>Demande soumise.</source>
-        <target state="translated">申請を提出しました。</target>
-      </trans-unit>
-      <trans-unit id="changes.impact-target.document" datatype="html">
-        <source>Document</source>
-        <target state="translated">ドキュメント</target>
-      </trans-unit>
-      <trans-unit id="changes.impact-target.fmea-project" datatype="html">
-        <source>Projet FMEA</source>
-        <target state="translated">FMEA プロジェクト</target>
-      </trans-unit>
-      <trans-unit id="changes.impact-target.iot-device" datatype="html">
-        <source>Équipement IoT</source>
-        <target state="translated">IoT 機器</target>
-      </trans-unit>
-      <trans-unit id="changes.impact-target.other" datatype="html">
-        <source>Autre</source>
-        <target state="translated">その他</target>
-      </trans-unit>
-      <trans-unit id="changes.impact-target.pdca-cycle" datatype="html">
-        <source>Cycle PDCA</source>
-        <target state="translated">PDCA サイクル</target>
-      </trans-unit>
-      <trans-unit id="changes.impact-target.standard" datatype="html">
-        <source>Norme</source>
-        <target state="translated">規格</target>
-      </trans-unit>
-      <trans-unit id="changes.impact-target.supplier" datatype="html">
-        <source>Fournisseur</source>
-        <target state="translated">サプライヤー</target>
-      </trans-unit>
-      <trans-unit id="changes.impact-target.training-path" datatype="html">
-        <source>Parcours de formation</source>
-        <target state="translated">研修パス</target>
-      </trans-unit>
-      <trans-unit id="changes.impact.added" datatype="html">
-        <source>Impact ajouté.</source>
-        <target state="translated">影響を追加しました。</target>
-      </trans-unit>
-      <trans-unit id="changes.impact.hint" datatype="html">
-        <source>Décrivez les entités QualitOS impactées par ce changement (document à mettre à jour,
-     parcours de formation à actualiser, équipement à recalibrer…).</source>
-        <target state="translated">この変更によって影響を受ける QualitOS のエンティティを記述してください（更新すべきドキュメント、
-     更新すべき研修パス、再校正すべき機器など）。</target>
-      </trans-unit>
-      <trans-unit id="changes.impact.notes-label" datatype="html">
-        <source>Notes</source>
-        <target state="translated">備考</target>
-      </trans-unit>
-      <trans-unit id="changes.impact.target-type-label" datatype="html">
-        <source>Type d'entité impactée</source>
-        <target state="translated">影響を受けるエンティティの種類</target>
-      </trans-unit>
-      <trans-unit id="changes.impact.title" datatype="html">
-        <source>Ajouter un impact</source>
-        <target state="translated">影響を追加</target>
-      </trans-unit>
-      <trans-unit id="changes.impact.uuid-label" datatype="html">
-        <source>UUID de l'entité</source>
-        <target state="translated">エンティティ UUID</target>
-      </trans-unit>
-      <trans-unit id="changes.implement.confirm" datatype="html">
-        <source>Confirmer</source>
-        <target state="translated">確認</target>
-      </trans-unit>
-      <trans-unit id="changes.implement.date-label" datatype="html">
-        <source>Date d'implémentation</source>
-        <target state="translated">実装日</target>
-      </trans-unit>
-      <trans-unit id="changes.implement.failed" datatype="html">
-        <source>Implémentation impossible.</source>
-        <target state="translated">実装できませんでした。</target>
-      </trans-unit>
-      <trans-unit id="changes.implement.implemented" datatype="html">
-        <source>Demande marquée IMPLEMENTED.</source>
-        <target state="translated">申請を IMPLEMENTED に設定しました。</target>
-      </trans-unit>
-      <trans-unit id="changes.implement.subtitle" datatype="html">
-        <source>Le changement doit être APPROVED. La transition vers IMPLEMENTED est terminale.</source>
-        <target state="translated">変更は APPROVED である必要があります。IMPLEMENTED への遷移は最終的なものです。</target>
-      </trans-unit>
-      <trans-unit id="changes.implement.title" datatype="html">
-        <source>Marquer comme implémenté</source>
-        <target state="translated">実装済みに設定</target>
-      </trans-unit>
-      <trans-unit id="changes.list.col-code" datatype="html">
-        <source>Code</source>
-        <target state="translated">コード</target>
-      </trans-unit>
-      <trans-unit id="changes.list.col-planned-for" datatype="html">
-        <source>Prévu pour</source>
-        <target state="translated">予定日</target>
-      </trans-unit>
-      <trans-unit id="changes.list.col-priority" datatype="html">
-        <source>Priorité</source>
-        <target state="translated">優先度</target>
-      </trans-unit>
-      <trans-unit id="changes.list.new-request" datatype="html">
-        <source>Nouvelle demande</source>
-        <target state="translated">新規申請</target>
-      </trans-unit>
-      <trans-unit id="changes.list.subtitle" datatype="html">
-        <source>Demandes de changement, analyse d'impact, validation multi-niveaux.</source>
-        <target state="translated">変更申請、影響分析、多階層の検証。</target>
-      </trans-unit>
-      <trans-unit id="changes.list.title" datatype="html">
-        <source>Gestion des changements</source>
-        <target state="translated">変更管理</target>
-      </trans-unit>
-      <trans-unit id="changes.target.document" datatype="html">
-        <source>Document</source>
-        <target state="translated">ドキュメント</target>
-      </trans-unit>
-      <trans-unit id="changes.target.fmea-project" datatype="html">
-        <source>FMEA</source>
-        <target state="translated">FMEA</target>
-      </trans-unit>
-      <trans-unit id="changes.target.iot-device" datatype="html">
-        <source>IoT</source>
-        <target state="translated">IoT</target>
-      </trans-unit>
-      <trans-unit id="changes.target.other" datatype="html">
-        <source>Autre</source>
-        <target state="translated">その他</target>
-      </trans-unit>
-      <trans-unit id="changes.target.pdca-cycle" datatype="html">
-        <source>PDCA</source>
-        <target state="translated">PDCA</target>
-      </trans-unit>
-      <trans-unit id="changes.target.standard" datatype="html">
-        <source>Norme</source>
-        <target state="translated">規格</target>
-      </trans-unit>
-      <trans-unit id="changes.target.supplier" datatype="html">
-        <source>Fournisseur</source>
-        <target state="translated">サプライヤー</target>
-      </trans-unit>
-      <trans-unit id="changes.target.training-path" datatype="html">
-        <source>Parcours</source>
-        <target state="translated">パス</target>
-      </trans-unit>
-      <trans-unit id="changes.type.document" datatype="html">
-        <source>Document</source>
-        <target state="translated">ドキュメント</target>
-      </trans-unit>
-      <trans-unit id="changes.type.equipment" datatype="html">
-        <source>Équipement</source>
-        <target state="translated">機器</target>
-      </trans-unit>
-      <trans-unit id="changes.type.it-system" datatype="html">
-        <source>Système IT</source>
-        <target state="translated">IT システム</target>
-      </trans-unit>
-      <trans-unit id="changes.type.organizational" datatype="html">
-        <source>Organisationnel</source>
-        <target state="translated">組織的</target>
-      </trans-unit>
-      <trans-unit id="changes.type.other" datatype="html">
-        <source>Autre</source>
-        <target state="translated">その他</target>
-      </trans-unit>
-      <trans-unit id="changes.type.process" datatype="html">
-        <source>Processus</source>
-        <target state="translated">プロセス</target>
-      </trans-unit>
-      <trans-unit id="changes.type.supplier" datatype="html">
-        <source>Fournisseur</source>
-        <target state="translated">サプライヤー</target>
-      </trans-unit>
       <trans-unit id="documents.create.code-hint" datatype="html">
         <source>A-Z, 0-9, point, tiret, underscore</source>
         <target state="translated">A-Z、0-9、ピリオド、ハイフン、アンダースコア</target>
@@ -20551,10 +21211,6 @@ historique 12 mois</source>
         <source>Audit annulé.</source>
         <target state="translated">監査をキャンセルしました。</target>
       </trans-unit>
-      <trans-unit id="audits.detail.capa-label" datatype="html">
-        <source>CAPA :</source>
-        <target state="translated">CAPA：</target>
-      </trans-unit>
       <trans-unit id="audits.detail.checklist-count" datatype="html">
         <source>Checklist (<x id="INTERPOLATION"/>)</source>
         <target state="translated">チェックリスト (<x id="INTERPOLATION"/>)</target>
@@ -20911,53 +21567,9 @@ historique 12 mois</source>
         <source>Surveillance</source>
         <target state="translated">サーベイランス</target>
       </trans-unit>
-      <trans-unit id="capa.action.added" datatype="html">
-        <source>Action ajoutée.</source>
-        <target state="translated">アクションを追加しました。</target>
-      </trans-unit>
-      <trans-unit id="capa.action.description-placeholder" datatype="html">
-        <source>Méthode, ressources nécessaires, critère de fin…</source>
-        <target state="translated">方法、必要なリソース、完了基準…</target>
-      </trans-unit>
-      <trans-unit id="capa.action.due-date" datatype="html">
-        <source>Échéance (optionnel)</source>
-        <target state="translated">期限（任意）</target>
-      </trans-unit>
-      <trans-unit id="capa.action.verification-hint" datatype="html">
-        <source>Une vérification est-elle exigée sur ce dossier ? Il faut trancher : répondre « non » est une décision, qui se lit.</source>
-        <target state="translated">この案件に有効性検証は必要ですか。判断が必要です — 「いいえ」も記録される一つの判断です。</target>
-      </trans-unit>
-      <trans-unit id="capa.action.subtitle" datatype="html">
-        <source>Définis l'action concrète à mener pour résoudre ce cas.</source>
-        <target state="translated">このケースを解決するために実施する具体的なアクションを定義します。</target>
-      </trans-unit>
-      <trans-unit id="capa.action.title" datatype="html">
-        <source>Ajouter une action</source>
-        <target state="translated">アクションを追加</target>
-      </trans-unit>
-      <trans-unit id="capa.action.title-label" datatype="html">
-        <source>Titre de l'action</source>
-        <target state="translated">アクションのタイトル</target>
-      </trans-unit>
-      <trans-unit id="capa.action.title-placeholder" datatype="html">
-        <source>Ex. : Recalibrer la sonde de température hebdo</source>
-        <target state="translated">例：温度センサーを毎週再校正する</target>
-      </trans-unit>
-      <trans-unit id="capa.action.title-required" datatype="html">
-        <source>Le titre est requis.</source>
-        <target state="translated">タイトルは必須です。</target>
-      </trans-unit>
       <trans-unit id="capa.create.criticity" datatype="html">
         <source>Criticité</source>
         <target state="translated">重大度</target>
-      </trans-unit>
-      <trans-unit id="capa.create.description-placeholder" datatype="html">
-        <source>Contexte, impact, observations…</source>
-        <target state="translated">背景、影響、所見…</target>
-      </trans-unit>
-      <trans-unit id="capa.create.due-date" datatype="html">
-        <source>Échéance (optionnel)</source>
-        <target state="translated">期限（任意）</target>
       </trans-unit>
       <trans-unit id="capa.create.source" datatype="html">
         <source>Source</source>
@@ -20971,18 +21583,6 @@ historique 12 mois</source>
         <source>Ex. : NC-2026-018</source>
         <target state="translated">例：NC-2026-018</target>
       </trans-unit>
-      <trans-unit id="capa.create.subtitle" datatype="html">
-        <source>Crée un cas correctif ou préventif. Les actions seront ajoutées ensuite et l'efficacité vérifiée à la clôture.</source>
-        <target state="translated">是正または予防のケースを作成します。アクションは後で追加され、有効性はクローズ時に検証されます。</target>
-      </trans-unit>
-      <trans-unit id="capa.create.success" datatype="html">
-        <source>Cas CAPA créé.</source>
-        <target state="translated">CAPA ケースを作成しました。</target>
-      </trans-unit>
-      <trans-unit id="capa.create.title" datatype="html">
-        <source>Nouveau cas CAPA</source>
-        <target state="translated">新しい CAPA ケース</target>
-      </trans-unit>
       <trans-unit id="capa.create.title-placeholder" datatype="html">
         <source>Ex. : Recalibration robot soudure cobot-3</source>
         <target state="translated">例：溶接ロボット cobot-3 の再校正</target>
@@ -20990,26 +21590,6 @@ historique 12 mois</source>
       <trans-unit id="capa.create.title-required" datatype="html">
         <source>Le titre est requis.</source>
         <target state="translated">タイトルは必須です。</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.action-added" datatype="html">
-        <source>Action ajoutée à la CAPA.</source>
-        <target state="translated">アクションを CAPA に追加しました。</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.actions-count" datatype="html">
-        <source>Actions (<x id="INTERPOLATION"/>)</source>
-        <target state="translated">アクション (<x id="INTERPOLATION"/>)</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.actions-empty" datatype="html">
-        <source>Aucune action. Clique sur</source>
-        <target state="translated">アクションはありません。クリック</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.add-action" datatype="html">
-        <source>Ajouter une action</source>
-        <target state="translated">アクションを追加</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.analysing" datatype="html">
-        <source>Analyse…</source>
-        <target state="translated">分析中…</target>
       </trans-unit>
       <trans-unit id="capa.detail.back-tooltip" datatype="html">
         <source>Retour à la liste</source>
@@ -21031,17 +21611,9 @@ historique 12 mois</source>
         <source>Cas démarré.</source>
         <target state="translated">ケースを開始しました。</target>
       </trans-unit>
-      <trans-unit id="capa.detail.col-action" datatype="html">
-        <source>Action</source>
-        <target state="translated">アクション</target>
-      </trans-unit>
       <trans-unit id="capa.detail.col-completed" datatype="html">
         <source>Complétée</source>
         <target state="translated">完了</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.col-advance" datatype="html">
-        <source>Avancement</source>
-        <target state="translated">進捗</target>
       </trans-unit>
       <trans-unit id="capa.detail.action-start" datatype="html">
         <source>Démarrer</source>
@@ -21062,10 +21634,6 @@ historique 12 mois</source>
       <trans-unit id="capa.detail.action-done-tooltip" datatype="html">
         <source>Action terminée</source>
         <target state="translated">アクション完了</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.col-due-date" datatype="html">
-        <source>Échéance</source>
-        <target state="translated">期限</target>
       </trans-unit>
       <trans-unit id="capa.detail.confirm-effective-message" datatype="html">
         <source>Tu confirmes que les actions ont eu l'effet attendu. Le cas sera clôturé (CLOSED).</source>
@@ -21139,26 +21707,6 @@ historique 12 mois</source>
         <source>CAPA · Corrective &amp; Preventive Actions</source>
         <target state="translated">CAPA · Corrective &amp; Preventive Actions</target>
       </trans-unit>
-      <trans-unit id="capa.detail.generating" datatype="html">
-        <source>Génération des actions… (peut prendre ~1 min sur CPU)</source>
-        <target state="translated">アクションを生成中…（CPU では約1分かかる場合があります）</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.generating-aria" datatype="html">
-        <source>Génération des actions en cours</source>
-        <target state="translated">アクションの生成を実行中</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.hide" datatype="html">
-        <source>Masquer</source>
-        <target state="translated">非表示</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.hide-suggestions" datatype="html">
-        <source>Masquer les suggestions</source>
-        <target state="translated">提案を非表示</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.no-suggestion" datatype="html">
-        <source>Aucune action exploitable — précisez le problème.</source>
-        <target state="translated">利用可能なアクションはありません — 問題を明確にしてください。</target>
-      </trans-unit>
       <trans-unit id="capa.detail.not-effective" datatype="html">
         <source>Non efficace</source>
         <target state="translated">有効でない</target>
@@ -21206,26 +21754,6 @@ historique 12 mois</source>
       <trans-unit id="capa.detail.start-tooltip" datatype="html">
         <source>Démarrer le traitement</source>
         <target state="translated">処理を開始</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.suggest" datatype="html">
-        <source>Suggérer (IA)</source>
-        <target state="translated">提案（AI）</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.suggest-tooltip" datatype="html">
-        <source>Suggérer des actions par l'IA</source>
-        <target state="translated">AI でアクションを提案</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.suggestion-unavailable" datatype="html">
-        <source>Suggestion IA indisponible (ai-service / Ollama).</source>
-        <target state="translated">AI 提案は利用できません（ai-service / Ollama）。</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.suggestions-region" datatype="html">
-        <source>Actions suggérées par l'IA</source>
-        <target state="translated">AI が提案したアクション</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.suggestions-title" datatype="html">
-        <source>Actions suggérées par l'IA</source>
-        <target state="translated">AI が提案したアクション</target>
       </trans-unit>
       <trans-unit id="capa.detail.transition-error" datatype="html">
         <source>Erreur lors de la transition.</source>
@@ -21607,9 +22135,9 @@ historique 12 mois</source>
         <source>Responsable de l'action</source>
         <target state="translated">処置責任者</target>
       </trans-unit>
-      <trans-unit id="fmea.item.action-owner-name-hint" datatype="html">
-        <source>Une personne ou un service — la trame accepte les deux.</source>
-        <target state="translated">個人でも部署でも構いません。</target>
+      <trans-unit id="fmea.item.action-owner-legacy" datatype="html">
+        <source>Nom enregistré : <x id="INTERPOLATION"/>. Choisissez cette personne dans l'annuaire.</source>
+        <target state="translated">登録済みの名前：<x id="INTERPOLATION"/>。ディレクトリからこの担当者を選択してください。</target>
       </trans-unit>
       <trans-unit id="fmea.item.actions-taken" datatype="html">
         <source>Actions réalisées</source>
@@ -22343,6 +22871,10 @@ historique 12 mois</source>
         <source>Vérification du bénéfice (critère)</source>
         <target state="translated">効果確認（基準）</target>
       </trans-unit>
+      <trans-unit id="rr.form.owner-legacy" datatype="html">
+        <source>Nom enregistré : <x id="INTERPOLATION"/>. Choisissez cette personne dans l'annuaire.</source>
+        <target state="translated">登録済みの名前：<x id="INTERPOLATION"/>。ディレクトリからこの担当者を選択してください。</target>
+      </trans-unit>
       <trans-unit id="rr.form.required" datatype="html">
         <source>Champ obligatoire.</source>
         <target state="translated">必須項目です。</target>
@@ -22443,21 +22975,9 @@ historique 12 mois</source>
         <source>Intitulé</source>
         <target state="translated">名称</target>
       </trans-unit>
-      <trans-unit id="rr.action.description" datatype="html">
-        <source>Description (facultatif)</source>
-        <target state="translated">説明（任意）</target>
-      </trans-unit>
       <trans-unit id="rr.action.capa-title" datatype="html">
         <source>Créer une action CAPA</source>
         <target state="translated">CAPAアクションを作成</target>
-      </trans-unit>
-      <trans-unit id="rr.action.capa-help" datatype="html">
-        <source>Un dossier CAPA est ouvert dans le module CAPA, avec la criticité du niveau brut du risque. Il porte cette action, confiée au responsable désigné, et apparaîtra dans le tableau « Traitement » de la fiche.</source>
-        <target state="translated">CAPAモジュールでCAPAケースが開始され、リスクの固有レベルに応じた重要度が設定されます。このアクションは指定された責任者に割り当てられ、記録の「対応」表に表示されます。</target>
-      </trans-unit>
-      <trans-unit id="rr.action.open-capa" datatype="html">
-        <source>Ouvrir le dossier CAPA</source>
-        <target state="translated">CAPAケースを開く</target>
       </trans-unit>
       <trans-unit id="rr.action-status.to-start" datatype="html">
         <source>À démarrer</source>
@@ -22787,21 +23307,9 @@ historique 12 mois</source>
         <source>Tableau de bord SMI</source>
         <target state="translated">統合マネジメントシステム ダッシュボード</target>
       </trans-unit>
-      <trans-unit id="rr.action.kind" datatype="html">
-        <source>Nature de l'action</source>
-        <target state="translated">アクションの種類</target>
-      </trans-unit>
       <trans-unit id="rr.action.kind-short" datatype="html">
         <source>Nature</source>
         <target state="translated">種類</target>
-      </trans-unit>
-      <trans-unit id="rr.action.kind-hint" datatype="html">
-        <source>Préventive : l'écart ne s'est pas encore produit. Corrective : il s'est déjà produit, on en supprime la cause.</source>
-        <target state="translated">予防：逸脱はまだ発生していない。是正：既に発生しており、その原因を取り除く。</target>
-      </trans-unit>
-      <trans-unit id="rr.action.assignee" datatype="html">
-        <source>Responsable de l'action</source>
-        <target state="translated">アクション責任者</target>
       </trans-unit>
       <trans-unit id="rr.action.assignee-short" datatype="html">
         <source>Responsable</source>
@@ -22818,10 +23326,6 @@ historique 12 mois</source>
       <trans-unit id="capa.detail.single-action" datatype="html">
         <source>Action</source>
         <target state="translated">アクション</target>
-      </trans-unit>
-      <trans-unit id="capa.detail.single-action-missing" datatype="html">
-        <source>L'action de ce risque n'a pas encore été définie.</source>
-        <target state="translated">このリスクの処置はまだ定義されていません。</target>
       </trans-unit>
       <trans-unit id="capa.detail.single-action-define" datatype="html">
         <source>Définir l'action</source>
@@ -22840,8 +23344,8 @@ historique 12 mois</source>
         <target state="translated">統合マネジメントシステム</target>
       </trans-unit>
       <trans-unit id="smi.subtitle" datatype="html">
-        <source>Vue consolidée : une preuve compte pour toutes les normes qu'elle couvre.</source>
-        <target state="translated">統合ビュー：1つの証拠は、それが対象とするすべての規格に有効です。</target>
+        <source>Vue consolidée de toutes les normes adoptées : conformité, risques, audits et échéances.</source>
+        <target state="translated">採用したすべての規格の統合ビュー：適合率、リスク、監査、期限。</target>
       </trans-unit>
       <trans-unit id="smi.filter" datatype="html">
         <source>Filtrer par norme</source>
@@ -22866,10 +23370,6 @@ historique 12 mois</source>
       <trans-unit id="smi.kpi.no-standard" datatype="html">
         <source>Aucune norme adoptée.</source>
         <target state="translated">採用された規格はありません。</target>
-      </trans-unit>
-      <trans-unit id="smi.kpi.adopt" datatype="html">
-        <source>Adopter une norme</source>
-        <target state="translated">規格を採用</target>
       </trans-unit>
       <trans-unit id="smi.kpi.overdue" datatype="html">
         <source>Actions en retard</source>
@@ -22906,10 +23406,6 @@ historique 12 mois</source>
       <trans-unit id="smi.by-standard" datatype="html">
         <source>Conformité par référentiel</source>
         <target state="translated">規格別の適合率</target>
-      </trans-unit>
-      <trans-unit id="smi.by-standard-note" datatype="html">
-        <source>Une même preuve (procédure, audit, action) est comptée pour tous les référentiels concernés.</source>
-        <target state="translated">同じ証拠（手順、監査、アクション）が関係するすべての規格に有効です。</target>
       </trans-unit>
       <trans-unit id="smi.see-matrix" datatype="html">
         <source>Voir la matrice des exigences</source>
@@ -22964,8 +23460,8 @@ historique 12 mois</source>
         <target state="translated">期限超過も7日以内の期限もありません。</target>
       </trans-unit>
       <trans-unit id="smi.requirements.title" datatype="html">
-        <source>Matrice des exigences · une preuve, plusieurs référentiels</source>
-        <target state="translated">要求事項マトリクス · 1つの証拠で複数の規格</target>
+        <source>Matrice des exigences · chapitres communs × normes</source>
+        <target state="translated">要求事項マトリクス · 共通箇条 × 規格</target>
       </trans-unit>
       <trans-unit id="smi.requirements.teaser" datatype="html">
         <source>Chapitres communs 4 à 10, croisés avec chaque norme adoptée : couvert, partiel ou en écart.</source>
@@ -23223,10 +23719,6 @@ historique 12 mois</source>
         <source>Compléter les preuves</source>
         <target state="translated">証拠を追加</target>
       </trans-unit>
-      <trans-unit id="smi.req.reuse" datatype="html">
-        <source>Une preuve rattachée à une exigence commune compte pour toutes les normes qui partagent ce chapitre.</source>
-        <target state="translated">共通の要求事項に紐づく証拠は、この箇条を共有するすべての規格に有効です。</target>
-      </trans-unit>
       <trans-unit id="smi.req.all-covered" datatype="html">
         <source>Tout est couvert : choisissez une case pour en voir le détail.</source>
         <target state="translated">すべて適合しています。セルを選んで詳細を表示してください。</target>
@@ -23238,6 +23730,90 @@ historique 12 mois</source>
       <trans-unit id="smi.req.capa-description" datatype="html">
         <source><x id="covered"/> exigence(s) prouvée(s) sur <x id="total"/> au chapitre <x id="chapter"/> de <x id="standard"/>.</source>
         <target state="translated"><x id="standard"/> の箇条 <x id="chapter"/>：<x id="total"/> 件中 <x id="covered"/> 件の要求事項に証拠あり。</target>
+      </trans-unit>
+      <trans-unit id="smi.add.open" datatype="html">
+        <source>Ajouter une norme</source>
+        <target state="translated">規格を追加</target>
+      </trans-unit>
+      <trans-unit id="smi.add.admin-only" datatype="html">
+        <source>L'administrateur de votre organisation ajoute les normes.</source>
+        <target state="translated">規格の追加は組織の管理者が行います。</target>
+      </trans-unit>
+      <trans-unit id="standards.list.no-adoption" datatype="html">
+        <source>Aucune adoption.</source>
+        <target state="translated">採用はありません。</target>
+      </trans-unit>
+      <trans-unit id="smi.add.title" datatype="html">
+        <source>Ajouter une norme au SMI</source>
+        <target state="translated">統合マネジメントシステムに規格を追加</target>
+      </trans-unit>
+      <trans-unit id="smi.add.subtitle" datatype="html">
+        <source>Les normes de système de management partagent les chapitres 4 à 10 : elles se pilotent dans le même tableau de bord et la même matrice des exigences.</source>
+        <target state="translated">マネジメントシステム規格は箇条4〜10を共有します。同じダッシュボードと同じ要求事項マトリクスで管理されます。</target>
+      </trans-unit>
+      <trans-unit id="smi.add.loading" datatype="html">
+        <source>Chargement des normes du catalogue</source>
+        <target state="translated">カタログの規格を読み込み中</target>
+      </trans-unit>
+      <trans-unit id="smi.add.load-failed" datatype="html">
+        <source>Les normes du catalogue n'ont pas pu être chargées.</source>
+        <target state="translated">カタログの規格を読み込めませんでした。</target>
+      </trans-unit>
+      <trans-unit id="smi.add.none" datatype="html">
+        <source>Toutes les normes de système de management du catalogue sont déjà adoptées.</source>
+        <target state="translated">カタログのマネジメントシステム規格はすべて採用済みです。</target>
+      </trans-unit>
+      <trans-unit id="smi.add.suggested" datatype="html">
+        <source>Suggérées pour votre SMI</source>
+        <target state="translated">あなたの統合マネジメントシステムへのおすすめ</target>
+      </trans-unit>
+      <trans-unit id="smi.add.others" datatype="html">
+        <source>Autres normes de système de management</source>
+        <target state="translated">その他のマネジメントシステム規格</target>
+      </trans-unit>
+      <trans-unit id="smi.add.all" datatype="html">
+        <source>Normes de système de management</source>
+        <target state="translated">マネジメントシステム規格</target>
+      </trans-unit>
+      <trans-unit id="smi.add.suggested-badge" datatype="html">
+        <source>Suggérée</source>
+        <target state="translated">おすすめ</target>
+      </trans-unit>
+      <trans-unit id="smi.add.shared-with" datatype="html">
+        <source>Rattachée à <x id="standards"/></source>
+        <target state="translated"><x id="standards"/> と関連</target>
+      </trans-unit>
+      <trans-unit id="smi.add.hint" datatype="html">
+        <source>L'adoption crée la feuille de route de certification dans le Standards Hub ; les preuves s'y rattachent ensuite, exigence par exigence.</source>
+        <target state="translated">採用すると Standards Hub に認証ロードマップが作成され、その後、要求事項ごとに証拠を紐づけます。</target>
+      </trans-unit>
+      <trans-unit id="smi.add.submit" datatype="html">
+        <source>Ajouter</source>
+        <target state="translated">追加</target>
+      </trans-unit>
+      <trans-unit id="smi.add.blocked" datatype="html">
+        <source>Choisissez la norme à ajouter.</source>
+        <target state="translated">追加する規格を選択してください。</target>
+      </trans-unit>
+      <trans-unit id="smi.add.conflict" datatype="html">
+        <source>Cette norme est déjà adoptée par votre organisation.</source>
+        <target state="translated">この規格は既に組織で採用されています。</target>
+      </trans-unit>
+      <trans-unit id="smi.add.forbidden" datatype="html">
+        <source>Seul l'administrateur de votre organisation peut ajouter une norme.</source>
+        <target state="translated">規格を追加できるのは組織の管理者のみです。</target>
+      </trans-unit>
+      <trans-unit id="smi.add.not-found" datatype="html">
+        <source>Cette norme n'est pas une norme de système de management du catalogue.</source>
+        <target state="translated">この規格はカタログのマネジメントシステム規格ではありません。</target>
+      </trans-unit>
+      <trans-unit id="smi.add.failed" datatype="html">
+        <source>La norme n'a pas pu être ajoutée.</source>
+        <target state="translated">規格を追加できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="smi.add.done" datatype="html">
+        <source><x id="standard"/> ajoutée au SMI — feuille de route de certification créée.</source>
+        <target state="translated"><x id="standard"/> を統合マネジメントシステムに追加しました — 認証ロードマップを作成しました。</target>
       </trans-unit>
       <trans-unit id="standards-extras.actions" datatype="html">
         <source>Actions</source>

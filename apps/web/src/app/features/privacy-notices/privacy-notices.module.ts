@@ -6,6 +6,7 @@ import { UiModule } from '../../shared/ui/ui.module';
 import { PnDetailComponent } from './pages/pn-detail/pn-detail.component';
 import { PnDialogComponent } from './pages/pn-dialog/pn-dialog.component';
 import { PnListComponent } from './pages/pn-list/pn-list.component';
+import { PersonNameModule } from '../../shared/person-name/person-name.module';
 
 const routes: Routes = [
   { path: '', component: PnListComponent },
@@ -18,6 +19,6 @@ const routes: Routes = [
     PnDetailComponent,
     PnDialogComponent
   ],
-  imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
+  imports: [PersonNameModule, SharedModule, UiModule, RouterModule.forChild(routes)]
 })
 export class PrivacyNoticesModule {}

@@ -320,6 +320,7 @@ export class CoqReportComponent implements OnInit {
       labelId: line.labelId,
       amount: line.amount,
       responsible: line.responsible ?? '',
+      responsibleUserId: line.responsibleUserId ?? undefined,
       imputationDate: line.imputationDate ?? '',
       comment: line.comment ?? undefined,
       partReference: line.partReference ?? undefined,

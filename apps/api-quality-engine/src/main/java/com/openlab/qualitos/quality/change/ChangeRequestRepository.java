@@ -1,8 +1,10 @@
 package com.openlab.qualitos.quality.change;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -12,13 +14,21 @@ import java.util.UUID;
 
 public interface ChangeRequestRepository extends JpaRepository<ChangeRequest, UUID> {
 
-    Optional<ChangeRequest> findByTenantIdAndCode(UUID tenantId, String code);
+    Optional<ChangeRequest> findByIdAndTenantId(UUID id, UUID tenantId);
 
-    Page<ChangeRequest> findByTenantId(UUID tenantId, Pageable pageable);
+    /**
+     * La demande sous verrou d'écriture, pour les gestes qui la font changer
+     * d'étape : deux validateurs qui statuent au même instant passent l'un
+     * après l'autre, et le second voit la décision du premier.
+     */
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    Optional<ChangeRequest> findForUpdateByIdAndTenantId(UUID id, UUID tenantId);
 
-    Page<ChangeRequest> findByTenantIdAndStatus(UUID tenantId, ChangeRequestStatus status, Pageable pageable);
+    boolean existsByTenantIdAndCode(UUID tenantId, String code);
 
-    Page<ChangeRequest> findByTenantIdAndType(UUID tenantId, ChangeRequestType type, Pageable pageable);
+    List<ChangeRequest> findByTenantId(UUID tenantId, Sort sort);
+
+    List<ChangeRequest> findByTenantIdAndStatusIn(UUID tenantId, Collection<ChangeRequestStatus> statuses);
 
     /** Les changements dans l'un des états donnés, prévus au plus tard le jour dit — le plus proche d'abord. */
     List<ChangeRequest> findByTenantIdAndStatusInAndPlannedForLessThanEqualOrderByPlannedForAsc(

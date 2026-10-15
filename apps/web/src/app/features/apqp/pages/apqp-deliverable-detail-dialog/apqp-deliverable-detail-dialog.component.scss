@@ -88,3 +88,22 @@
      peser autant que ce qui la précède. */
   border-top: 1px solid var(--qos-border-subtle);
 }
+
+/* --- responsable, choisi dans l'annuaire (ADR 0092) ----------------------- */
+
+.responsable {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+
+  qos-user-picker {
+    display: block;
+    width: 100%;
+  }
+
+  &__ancien {
+    margin: 0 0 var(--qos-space-2);
+    font-size: var(--qos-fs-sm);
+    color: var(--qos-fg-secondary);
+  }
+}

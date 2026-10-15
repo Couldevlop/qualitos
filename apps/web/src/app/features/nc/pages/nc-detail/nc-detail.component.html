@@ -32,21 +32,24 @@
           <mat-icon>block</mat-icon> <span i18n="@@nc.detail.reject">Rejeter</span>
         </button>
         </ng-container>
-        <!-- « Ajouter une action » et non « Escalader CAPA » : ce qu'on veut
-             poser ici, c'est l'action qu'on a decidee, pas un dossier abstrait.
-             Le dossier CAPA reste la structure qui la porte -- il se cree tout
-             seul a la premiere action si la NC n'en a pas encore -- mais il
-             n'est plus ce qu'on demande a l'utilisateur de faire.
-
-             Plus barre non plus quand la NC porte deja une CAPA : on ajoute une
-             DEUXIEME action, un troisieme, autant que le traitement en demande. -->
-        <button mat-stroked-button (click)="addAction(n)" data-test="ajouter-action" *qosCan="'nc.escalate'"
-                [disabled]="(acting$ | async) || !canEscalate(n.status)"
-                i18n-matTooltip="@@nc.detail.add-action-tooltip"
-                matTooltip="Poser une action corrective sur cette non-conformité">
-          <mat-icon>engineering</mat-icon>
-          <span i18n="@@nc.detail.add-action">Ajouter une action</span>
-        </button>
+        <!-- Une NC a une CAPA, qui porte une action (ADR 0088) : la créer ouvre
+             LA fenêtre commune, source verrouillée sur cette NC. Quand elle
+             existe, le bouton l'ouvre au lieu d'en proposer une seconde. -->
+        <ng-container *ngIf="!n.capaCaseId; else voirCapa">
+          <button mat-stroked-button (click)="openCapa(n)" data-test="creer-capa" *qosCan="'nc.escalate'"
+                  [disabled]="(acting$ | async) || !canEscalate(n.status)"
+                  i18n-matTooltip="@@nc.detail.create-capa-tooltip"
+                  matTooltip="Ouvrir la CAPA qui traite cette non-conformité">
+            <mat-icon>engineering</mat-icon>
+            <span i18n="@@nc.detail.create-capa">Créer une CAPA</span>
+          </button>
+        </ng-container>
+        <ng-template #voirCapa>
+          <a mat-stroked-button [routerLink]="['/capa', n.capaCaseId]" data-test="voir-capa">
+            <mat-icon>engineering</mat-icon>
+            <span i18n="@@nc.detail.open-capa">Voir la CAPA</span>
+          </a>
+        </ng-template>
         <!-- L'analyse des 5 Pourquoi part d'un écart constaté : c'est d'ici
              qu'elle se déroule. Le compteur dit s'il y en a déjà une. -->
         <button mat-stroked-button class="five-whys-btn" (click)="openFiveWhys()"
@@ -173,7 +176,7 @@
             </div>
             <div class="info-item" *ngIf="n.capaCaseId">
               <span class="info-label" i18n="@@nc.detail.capa-link">CAPA liée</span>
-              <span class="info-value">{{ n.capaCaseId }}</span>
+              <a class="info-value" [routerLink]="['/capa', n.capaCaseId]" i18n="@@nc.detail.capa-link-open">Ouvrir le dossier</a>
             </div>
           </div>
 

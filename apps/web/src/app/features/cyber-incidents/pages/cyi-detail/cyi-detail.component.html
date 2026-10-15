@@ -65,7 +65,7 @@
             <tr><th i18n="@@cyber-incidents.detail.occurred-on">Survenu le</th><td>{{ i.occurredAt || '—' }}</td></tr>
             <tr><th i18n="@@cyber-incidents.detail.detected-on">Détecté le</th><td>{{ i.detectedAt }}</td></tr>
             <tr><th i18n="@@cyber-incidents.detail.handled-by">Pris en charge par</th>
-                <td><code *ngIf="i.handledByUserId; else noHandler">{{ i.handledByUserId }}</code>
+                <td><qos-person-name *ngIf="i.handledByUserId; else noHandler" [accountId]="i.handledByUserId"></qos-person-name>
                     <ng-template #noHandler><span class="dim">—</span></ng-template></td></tr>
             <tr><th i18n="@@common.last-updated">Dernière MAJ</th><td>{{ i.updatedAt }}</td></tr>
             <tr *ngIf="i.closedAt"><th i18n="@@cyber-incidents.detail.closed-on">Clôturé le</th><td>{{ i.closedAt }}</td></tr>
@@ -155,7 +155,7 @@
         <mat-card-header><mat-card-title i18n="@@cyber-incidents.detail.trace">Trace</mat-card-title></mat-card-header>
         <mat-card-content>
           <table class="kv">
-            <tr><th i18n="@@cyber-incidents.detail.reported-by">Signalé par</th><td><code>{{ i.reportedByUserId }}</code></td></tr>
+            <tr><th i18n="@@cyber-incidents.detail.reported-by">Signalé par</th><td><qos-person-name [accountId]="i.reportedByUserId"></qos-person-name></td></tr>
             <tr><th i18n="@@common.last-updated">Dernière MAJ</th><td>{{ i.updatedAt }}</td></tr>
           </table>
         </mat-card-content>

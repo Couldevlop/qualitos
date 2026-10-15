@@ -89,7 +89,7 @@
             <tr><th i18n="@@breach.detail.occurred-at">Survenue le</th><td>{{ b.occurredAt || '—' }}</td></tr>
             <tr><th i18n="@@breach.detail.detected-at">Détectée le</th><td>{{ b.detectedAt }}</td></tr>
             <tr><th i18n="@@breach.detail.handled-by">Pris en charge</th>
-                <td><code *ngIf="b.handledByUserId; else noHandler">{{ b.handledByUserId }}</code>
+                <td><qos-person-name *ngIf="b.handledByUserId; else noHandler" [accountId]="b.handledByUserId"></qos-person-name>
                     <ng-template #noHandler><span class="dim">—</span></ng-template></td></tr>
             <tr><th i18n="@@common.last-updated">Dernière MAJ</th><td>{{ b.updatedAt }}</td></tr>
             <tr *ngIf="b.closedAt"><th i18n="@@breach.detail.closed-at">Clôturée le</th><td>{{ b.closedAt }}</td></tr>
@@ -130,7 +130,7 @@
         <mat-card-header><mat-card-title i18n="@@breach.detail.trace-title">Trace</mat-card-title></mat-card-header>
         <mat-card-content>
           <table class="kv">
-            <tr><th i18n="@@breach.detail.reported-by">Signalée par</th><td><code>{{ b.reportedByUserId }}</code></td></tr>
+            <tr><th i18n="@@breach.detail.reported-by">Signalée par</th><td><qos-person-name [accountId]="b.reportedByUserId"></qos-person-name></td></tr>
           </table>
         </mat-card-content>
       </mat-card>

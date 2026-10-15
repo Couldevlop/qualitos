@@ -14,27 +14,13 @@ TRANSLATIONS = {
         'لوحة نظام الإدارة المتكامل', '統合マネジメントシステム ダッシュボード', '综合管理体系仪表板'),
 
     # ---------- registre : action CAPA d'un risque ----------
-    'rr.action.kind': (
-        "Nature de l'action", 'Type of action', 'Naturaleza de la acción',
-        'طبيعة الإجراء', 'アクションの種類', '措施性质'),
     'rr.action.kind-short': ('Nature', 'Type', 'Naturaleza', 'الطبيعة', '種類', '性质'),
-    'rr.action.kind-hint': (
-        "Préventive : l'écart ne s'est pas encore produit. Corrective : il s'est déjà produit, on en supprime la cause.",
-        'Preventive: the deviation has not occurred yet. Corrective: it has already occurred, and its cause is removed.',
-        'Preventiva: la desviación aún no se ha producido. Correctiva: ya se ha producido y se elimina su causa.',
-        'وقائي: لم يقع الانحراف بعد. تصحيحي: وقع بالفعل ويُزال سببه.',
-        '予防：逸脱はまだ発生していない。是正：既に発生しており、その原因を取り除く。',
-        '预防：偏差尚未发生。纠正：偏差已经发生，需消除其原因。'),
-    'rr.action.assignee': (
-        "Responsable de l'action", 'Action owner', 'Responsable de la acción',
-        'مسؤول الإجراء', 'アクション責任者', '措施负责人'),
     'rr.action.assignee-short': ('Responsable', 'Owner', 'Responsable', 'المسؤول', '責任者', '负责人'),
     'rr.capa-kind.preventive': ('Préventive', 'Preventive', 'Preventiva', 'وقائي', '予防', '预防'),
     'rr.capa-kind.corrective': ('Corrective', 'Corrective', 'Correctiva', 'تصحيحي', '是正', '纠正'),
 
     # ---------- fiche CAPA : action unique d'un dossier issu d'un risque ----------
     'capa.detail.single-action': ('Action', 'Action', 'Acción', 'الإجراء', 'アクション', '措施'),
-    'capa.detail.single-action-missing': ("L'action de ce risque n'a pas encore été définie.", 'No action has been defined for this risk yet.', 'Todavía no se ha definido la acción de este riesgo.', 'لم يتم تحديد إجراء هذا الخطر بعد.', 'このリスクの処置はまだ定義されていません。', '尚未为此风险定义措施。'),
     'capa.detail.single-action-define': ("Définir l'action", 'Define the action', 'Definir la acción', 'تحديد الإجراء', '処置を定義する', '定义措施'),
     'capa.detail.single-action-assignee': ('Responsable', 'Owner', 'Responsable', 'المسؤول', '責任者', '负责人'),
 
@@ -44,12 +30,12 @@ TRANSLATIONS = {
         'Système de Management Intégré', 'Integrated Management System', 'Sistema de Gestión Integrado',
         'نظام الإدارة المتكامل', '統合マネジメントシステム', '综合管理体系'),
     'smi.subtitle': (
-        "Vue consolidée : une preuve compte pour toutes les normes qu'elle couvre.",
-        'Consolidated view: one piece of evidence counts for every standard it covers.',
-        'Vista consolidada: una evidencia cuenta para todas las normas que cubre.',
-        'عرض موحّد: يُحتسب الدليل لكل المعايير التي يغطيها.',
-        '統合ビュー：1つの証拠は、それが対象とするすべての規格に有効です。',
-        '综合视图：一项证据适用于其覆盖的所有标准。'),
+        'Vue consolidée de toutes les normes adoptées : conformité, risques, audits et échéances.',
+        'Consolidated view of every adopted standard: compliance, risks, audits and deadlines.',
+        'Vista consolidada de todas las normas adoptadas: conformidad, riesgos, auditorías y plazos.',
+        'عرض موحّد لكل المعايير المعتمدة: الامتثال والمخاطر والتدقيقات والمواعيد.',
+        '採用したすべての規格の統合ビュー：適合率、リスク、監査、期限。',
+        '所有已采用标准的综合视图：符合率、风险、审核与期限。'),
     'smi.filter': (
         'Filtrer par norme', 'Filter by standard', 'Filtrar por norma',
         'تصفية حسب المعيار', '規格で絞り込み', '按标准筛选'),
@@ -63,7 +49,6 @@ TRANSLATIONS = {
     'smi.kpi.no-standard': (
         'Aucune norme adoptée.', 'No standard adopted.', 'Ninguna norma adoptada.',
         'لم يُعتمد أي معيار.', '採用された規格はありません。', '尚未采用任何标准。'),
-    'smi.kpi.adopt': ('Adopter une norme', 'Adopt a standard', 'Adoptar una norma', 'اعتماد معيار', '規格を採用', '采用标准'),
     'smi.kpi.overdue': ('Actions en retard', 'Overdue actions', 'Acciones atrasadas', 'إجراءات متأخرة', '期限超過のアクション', '逾期措施'),
     'smi.kpi.overdue-critical': (
         'dont {$CRITICAL} critiques', 'including {$CRITICAL} critical', 'de ellas {$CRITICAL} críticas',
@@ -87,13 +72,6 @@ TRANSLATIONS = {
     'smi.by-standard': (
         'Conformité par référentiel', 'Compliance by standard', 'Conformidad por norma',
         'الامتثال حسب المرجع', '規格別の適合率', '按标准的符合率'),
-    'smi.by-standard-note': (
-        'Une même preuve (procédure, audit, action) est comptée pour tous les référentiels concernés.',
-        'A single piece of evidence (procedure, audit, action) counts for every standard concerned.',
-        'Una misma evidencia (procedimiento, auditoría, acción) cuenta para todas las normas afectadas.',
-        'يُحتسب الدليل الواحد (إجراء موثّق، تدقيق، إجراء تصحيحي) لكل المراجع المعنية.',
-        '同じ証拠（手順、監査、アクション）が関係するすべての規格に有効です。',
-        '同一证据（程序、审核、措施）适用于所有相关标准。'),
     'smi.see-matrix': (
         'Voir la matrice des exigences', 'See the requirements matrix', 'Ver la matriz de requisitos',
         'عرض مصفوفة المتطلبات', '要求事項マトリクスを見る', '查看要求矩阵'),
@@ -134,12 +112,12 @@ TRANSLATIONS = {
         'Nada vencido ni previsto en los próximos siete días.', 'لا شيء متأخر أو مستحق خلال سبعة أيام.',
         '期限超過も7日以内の期限もありません。', '没有逾期项，也没有七天内到期的事项。'),
     'smi.requirements.title': (
-        'Matrice des exigences · une preuve, plusieurs référentiels',
-        'Requirements matrix · one piece of evidence, several standards',
-        'Matriz de requisitos · una evidencia, varias normas',
-        'مصفوفة المتطلبات · دليل واحد لعدة مراجع',
-        '要求事項マトリクス · 1つの証拠で複数の規格',
-        '要求矩阵 · 一项证据，多项标准'),
+        'Matrice des exigences · chapitres communs × normes',
+        'Requirements matrix · common clauses × standards',
+        'Matriz de requisitos · capítulos comunes × normas',
+        'مصفوفة المتطلبات · الفصول المشتركة × المعايير',
+        '要求事項マトリクス · 共通箇条 × 規格',
+        '要求矩阵 · 通用章节 × 标准'),
     'smi.requirements.teaser': (
         'Chapitres communs 4 à 10, croisés avec chaque norme adoptée : couvert, partiel ou en écart.',
         'Common clauses 4 to 10, crossed with each adopted standard: covered, partial or gap.',
@@ -275,13 +253,6 @@ TRANSLATIONS = {
         'No se pudo cargar el detalle de las cláusulas.', 'تعذّر تحميل تفاصيل البنود.',
         '細分箇条の詳細を読み込めませんでした。', '无法加载条款详情。'),
     'smi.req.complete': ('Compléter les preuves', 'Add evidence', 'Completar las evidencias', 'استكمال الأدلة', '証拠を追加', '补充证据'),
-    'smi.req.reuse': (
-        'Une preuve rattachée à une exigence commune compte pour toutes les normes qui partagent ce chapitre.',
-        'Evidence linked to a common requirement counts for every standard sharing this clause.',
-        'Una evidencia vinculada a un requisito común cuenta para todas las normas que comparten este capítulo.',
-        'الدليل المرتبط بمتطلب مشترك يُحتسب لكل المعايير التي تشترك في هذا الفصل.',
-        '共通の要求事項に紐づく証拠は、この箇条を共有するすべての規格に有効です。',
-        '关联到通用要求的证据，适用于共享该章节的所有标准。'),
     'smi.req.all-covered': (
         'Tout est couvert : choisissez une case pour en voir le détail.',
         'Everything is covered: choose a cell to see its detail.',

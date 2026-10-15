@@ -144,7 +144,7 @@
         <mat-card-header><mat-card-title i18n="@@dpa.detail.trace">Trace</mat-card-title></mat-card-header>
         <mat-card-content>
           <table class="kv">
-            <tr><th i18n="@@dpa.detail.created-by">Créé par</th><td><code>{{ p.createdByUserId }}</code></td></tr>
+            <tr><th i18n="@@dpa.detail.created-by">Créé par</th><td><qos-person-name [accountId]="p.createdByUserId"></qos-person-name></td></tr>
             <tr><th i18n="@@common.created-at">Créé le</th><td>{{ p.createdAt }}</td></tr>
             <tr><th i18n="@@common.last-updated">Dernière MAJ</th><td>{{ p.updatedAt }}</td></tr>
           </table>

@@ -4,6 +4,8 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { finalize } from 'rxjs/operators';
 
+import { personName } from '../../../../core/directory/directory-names';
+import { DirectoryUser } from '../../../../core/directory/directory.types';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { AuditsService } from '../../audits.service';
 import { AuditPlanResponse, AuditType } from '../../audits.types';
@@ -34,6 +36,9 @@ function trimmedEmail(control: AbstractControl): ValidationErrors | null {
 export class AuditsEditDialogComponent {
   submitting = false;
 
+  /** Le nom de l'auditeur nouvellement choisi, tel que l'annuaire le donne (ADR 0091). */
+  private chosenLeadName: string | undefined;
+
   readonly types: { value: AuditType; label: string }[] = [
     { value: 'INTERNAL',      label: $localize`:@@audits.type.internal:Interne` },
     { value: 'EXTERNAL',      label: $localize`:@@audits.type.external:Externe` },
@@ -48,6 +53,7 @@ export class AuditsEditDialogComponent {
     scope: [''],
     type: ['INTERNAL' as AuditType, [Validators.required]],
     standard: ['', [Validators.maxLength(100)]],
+    leadAuditorId: ['', [Validators.required]],
     scheduledDate: [''],
     // Le destinataire du rappel doit pouvoir se corriger, et surtout se RETIRER :
     // le service traite la chaîne vide comme un effacement explicite, et sans ce
@@ -64,12 +70,22 @@ export class AuditsEditDialogComponent {
   ) {
     this.form.patchValue({
       title: data.plan.title,
+      leadAuditorId: data.plan.leadAuditorId,
       scope: data.plan.scope ?? '',
       type: data.plan.type,
       standard: data.plan.standard ?? '',
       scheduledDate: data.plan.scheduledDate ?? '',
       reminderEmail: data.plan.reminderEmail ?? ''
     });
+  }
+
+  /**
+   * Le sélecteur rend la personne choisie. L'auditeur en place, lui, garde sa
+   * valeur même s'il n'est plus dans l'annuaire : corriger un titre n'oblige
+   * pas à réattribuer l'audit.
+   */
+  onLeadAuditor(user: DirectoryUser | null): void {
+    this.chosenLeadName = user ? personName(user) : undefined;
   }
 
   submit(): void {
@@ -79,8 +95,12 @@ export class AuditsEditDialogComponent {
     }
     this.submitting = true;
     const v = this.form.getRawValue();
+    // L'auditeur ne part que s'il change : le renvoyer à l'identique recopierait
+    // un nom d'annuaire par-dessus celui enregistré à la désignation.
+    const changed = !!v.leadAuditorId && v.leadAuditorId !== this.data.plan.leadAuditorId;
     this.audits
       .updatePlan(this.data.plan.id, {
+        ...(changed ? { leadAuditorId: v.leadAuditorId, leadAuditorName: this.chosenLeadName } : {}),
         title: v.title.trim(),
         scope: v.scope?.trim() || undefined,
         type: v.type,

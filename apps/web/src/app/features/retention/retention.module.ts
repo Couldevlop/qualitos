@@ -7,6 +7,7 @@ import { RetDetailComponent } from './pages/ret-detail/ret-detail.component';
 import { RetEvaluateDialogComponent } from './pages/ret-evaluate-dialog/ret-evaluate-dialog.component';
 import { RetListComponent } from './pages/ret-list/ret-list.component';
 import { RetRuleDialogComponent } from './pages/ret-rule-dialog/ret-rule-dialog.component';
+import { PersonNameModule } from '../../shared/person-name/person-name.module';
 
 const routes: Routes = [
   { path: '', component: RetListComponent },
@@ -20,6 +21,6 @@ const routes: Routes = [
     RetRuleDialogComponent,
     RetEvaluateDialogComponent
   ],
-  imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
+  imports: [PersonNameModule, SharedModule, UiModule, RouterModule.forChild(routes)]
 })
 export class RetentionModule {}

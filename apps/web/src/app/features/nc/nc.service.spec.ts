@@ -88,7 +88,7 @@ describe('NcService (mock mode)', () => {
   });
 
   it('escalateToCapa links a CAPA case', (done) => {
-    service.escalateToCapa('nc-1', { ownerId: 'u' }).subscribe(n => {
+    service.escalateToCapa('nc-1', { title: 'T', type: 'CORRECTIVE', criticity: 'HIGH', ownerId: 'owner-9', ownerName: 'A', dueDate: '2099-01-01' }).subscribe(n => {
       expect(n.capaCaseId).toBeTruthy();
       done();
     });
@@ -324,12 +324,12 @@ describe('NcService (offline-first, API réelle)', () => {
     });
   });
 
-  it('escalateToCapa envoie ownerId dans le body (online-only)', (done) => {
+  it('escalateToCapa envoie le dossier et son action dans le body (online-only)', (done) => {
     connectivity.online = true;
-    service.escalateToCapa('a1', { ownerId: 'owner-9' }).subscribe(() => done());
+    service.escalateToCapa('a1', { title: 'T', type: 'CORRECTIVE', criticity: 'HIGH', ownerId: 'owner-9', ownerName: 'A', dueDate: '2099-01-01' }).subscribe(() => done());
     const req = httpMock.expectOne(`${endpoint}/a1/escalate-capa`);
     expect(req.request.method).toBe('POST');
-    expect(req.request.body).toEqual({ ownerId: 'owner-9' });
+    expect(req.request.body).toEqual({ title: 'T', type: 'CORRECTIVE', criticity: 'HIGH', ownerId: 'owner-9', ownerName: 'A', dueDate: '2099-01-01' });
     req.flush({
       id: 'a1', reference: 'NC-2026-1', title: 't', category: 'PROCESS',
       severity: 'MAJOR', status: 'ACTION_DEFINED', detectedAt: '', createdAt: '',

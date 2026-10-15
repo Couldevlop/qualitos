@@ -2,6 +2,7 @@ package com.openlab.qualitos.quality.nonconformity;
 
 import com.openlab.qualitos.quality.authz.domain.Permission;
 import com.openlab.qualitos.quality.authz.web.RequiresPermission;
+import com.openlab.qualitos.quality.capa.CapaDto;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -96,10 +97,14 @@ public class NcController {
         return service.reject(id, request);
     }
 
+    /**
+     * Ouvre la CAPA de la NC, avec son action unique (ADR 0088). Le corps est
+     * celui de la fenêtre de création commune ; la source, elle, est la NC.
+     */
     @PostMapping("/{id}/escalate-capa")
     @RequiresPermission(Permission.NC_ESCALATE)
     public NcDto.Response escalateToCapa(@PathVariable UUID id,
-                                         @Valid @RequestBody NcDto.EscalateRequest request) {
+                                         @Valid @RequestBody CapaDto.OpenCaseRequest request) {
         return service.escalateToCapa(id, request);
     }
 

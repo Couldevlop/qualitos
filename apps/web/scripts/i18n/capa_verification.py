@@ -30,6 +30,18 @@ TRANSLATIONS = {
         'この案件で検証は必要ですか。「いいえ」も記録に残る判断です。未回答のままだと'
         '問いは開いたままになります。',
         '本案卷是否要求验证？回答「否」是一项会被读到的决定；不作答则问题仍然悬而未决。'),
+    # À l'ouverture d'un dossier (ADR 0088), la question se tranche : la même
+    # décision de clôture, d'où qu'on ouvre la CAPA.
+    'capa.verification.hint-mandatory': (
+        "Une vérification est-elle exigée sur ce dossier ? Il faut trancher pour "
+        "l'ouvrir : répondre « non » est une décision, qui se lit.",
+        'Is a verification required on this case? You must decide to open it: '
+        'answering "no" is a decision, and it shows.',
+        '¿Se exige una verificación en este expediente? Hay que decidir para abrirlo: '
+        'responder «no» es una decisión, y se lee.',
+        'هل يُشترط التحقق في هذا الملف؟ يجب الحسم لفتحه: الإجابة بـ«لا» قرار يُقرأ.',
+        'この案件で検証は必要ですか。開くには判断が必要です。「いいえ」も記録に残る判断です。',
+        '本案卷是否要求验证？必须作出决定才能开立：回答「否」是一项会被读到的决定。'),
     'capa.verification.required': (
         'Exigée', 'Required', 'Exigida', 'مطلوب', '必要', '要求'),
     'capa.verification.not-required': (
@@ -45,17 +57,6 @@ TRANSLATIONS = {
         'التحقق المطلوب يجب إسناده إلى شخص ما.',
         '必要とされた検証は、担当者を定めなければなりません。',
         '被要求的验证必须指派给某个人。'),
-    'capa.verification.directory-down': (
-        "L'annuaire de l'organisation n'a pas répondu : la liste est vide, et le "
-        "dossier ne pourra pas être enregistré avec une vérification exigée.",
-        'The organisation directory did not answer: the list is empty, and the case '
-        'cannot be saved with a required verification.',
-        'El directorio de la organización no respondió: la lista está vacía y el '
-        'expediente no podrá guardarse con una verificación exigida.',
-        'لم يستجب دليل المؤسسة: القائمة فارغة، ولا يمكن حفظ الملف مع اشتراط التحقق.',
-        '組織のディレクトリが応答しませんでした。一覧は空で、検証を必要とした状態では'
-        '案件を保存できません。',
-        '组织目录没有响应：列表为空，且在要求验证的状态下无法保存本案卷。'),
     'capa.verification.instructions': (
         'Instructions de vérification', 'Verification instructions',
         'Instrucciones de verificación', 'تعليمات التحقق',

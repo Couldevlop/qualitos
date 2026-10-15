@@ -9,16 +9,9 @@
   (submitted)="submit()"
   (cancelled)="cancel()">
 
-  <p class="hint" i18n="@@circles.member.hint">Renseigne l'identifiant utilisateur (UUID) et le rôle. La liste
-     de sélection sera branchée sur l'annuaire Keycloak dans une prochaine itération.</p>
-
-  <mat-form-field appearance="outline" class="full">
-    <mat-label i18n="@@circles.member.user-id">User ID (UUID)</mat-label>
-    <input matInput formControlName="userId" required
-           placeholder="00000000-0000-0000-0000-000000000000">
-    <mat-error *ngIf="form.controls.userId.hasError('required')" i18n="@@circles.member.uuid-required">UUID requis.</mat-error>
-    <mat-error *ngIf="form.controls.userId.hasError('pattern')" i18n="@@circles.member.uuid-invalid">Format UUID invalide.</mat-error>
-  </mat-form-field>
+  <qos-user-picker class="full" formControlName="userId" required data-test="circle-member"
+                   [excludeIds]="data.memberIds ?? []"
+                   i18n-label="@@circles.member.person" label="Personne à ajouter"></qos-user-picker>
 
   <mat-form-field appearance="outline" class="full">
     <mat-label i18n="@@circles.detail.role">Rôle</mat-label>

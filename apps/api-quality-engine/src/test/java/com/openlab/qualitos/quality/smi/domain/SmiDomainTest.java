@@ -2,8 +2,10 @@ package com.openlab.qualitos.quality.smi.domain;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -56,5 +58,32 @@ class SmiDomainTest {
         assertThat(g.total()).isEqualTo(3);
         assertThat(g.counts()).hasSize(5).allSatisfy(l -> assertThat(l).hasSize(5));
         assertThat(RiskGrid.of(Arrays.asList((RiskGrid.Rating) null)).total()).isZero();
+    }
+
+    @Test
+    void lesNormesSeRangentDansLOrdreNaturelDeLeursNumeros() {
+        List<String> codes = new ArrayList<>(List.of(
+                "iso-45001", "iso-14001", "iso-9001", "iatf-16949", "iso-20000-1", "iso-27001"));
+        codes.sort(StandardOrder.BY_CODE);
+
+        assertThat(codes).containsExactly(
+                "iatf-16949", "iso-9001", "iso-14001", "iso-20000-1", "iso-27001", "iso-45001");
+        assertThat(StandardOrder.BY_CODE.compare("ISO-9001", "iso-9001")).isZero();
+        // Zéros de tête et nombres plus grands qu'un long : comparés sans conversion.
+        assertThat(StandardOrder.BY_CODE.compare("iso-09001", "iso-9001")).isZero();
+        assertThat(StandardOrder.BY_CODE.compare("x-123456789012345678901", "x-99")).isPositive();
+        assertThat(StandardOrder.BY_CODE.compare("iso", "iso-9001")).isNegative();
+        assertThat(StandardOrder.BY_CODE.compare(null, "iso-9001")).isPositive();
+    }
+
+    @Test
+    void uneNormeIndisponibleDitPourquoi() {
+        UUID id = UUID.randomUUID();
+        assertThat(new StandardUnavailableException(id, StandardUnavailableException.Reason.ALREADY_ADOPTED))
+                .hasMessageContaining("already adopted")
+                .extracting(StandardUnavailableException::reason)
+                .isEqualTo(StandardUnavailableException.Reason.ALREADY_ADOPTED);
+        assertThat(new StandardUnavailableException(id, StandardUnavailableException.Reason.NOT_A_MANAGEMENT_SYSTEM))
+                .hasMessageContaining("not a certifiable management system");
     }
 }

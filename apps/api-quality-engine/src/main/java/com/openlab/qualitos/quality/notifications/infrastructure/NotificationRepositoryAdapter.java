@@ -49,4 +49,9 @@ public class NotificationRepositoryAdapter implements NotificationRepository {
     public int markAllReadForRecipient(UUID tenantId, String userId, Instant at) {
         return jpa.markAllRead(tenantId, userId, at);
     }
+
+    @Override
+    public int markReadForRecipientAndLink(UUID tenantId, String userId, String link, Instant at) {
+        return jpa.markReadForLink(tenantId, userId, link, at);
+    }
 }

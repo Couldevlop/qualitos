@@ -46,6 +46,7 @@ export class IshikawaService {
         diagramId,
         label: input.label,
         responsible: input.responsible ?? null,
+        responsibleUserId: input.responsibleUserId ?? null,
         decidedOn: input.decidedOn ?? null,
         status: input.status ?? 'TODO',
         createdAt: now, updatedAt: now

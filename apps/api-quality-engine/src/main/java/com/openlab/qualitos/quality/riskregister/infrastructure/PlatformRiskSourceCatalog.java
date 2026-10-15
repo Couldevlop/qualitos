@@ -155,14 +155,14 @@ public class PlatformRiskSourceCatalog implements RiskSourceCatalog {
         };
     }
 
-    /** Un changement (MOC) : l'analyse de risque en cause, l'analyse d'impact en effet. */
+    /** Un changement (MOC) : sa justification en cause, la synthèse de son analyse d'impact en effet. */
     private Optional<SourceDraft> changement(UUID tenant, UUID changeId) {
         return changes.findById(changeId)
                 .filter(c -> tenant.equals(c.getTenantId()))
                 .map((ChangeRequest c) -> new SourceDraft(
                         borne(c.getCode(), REF_MAX),
                         borne(c.getTitle(), TITLE_MAX),
-                        borne(c.getRiskAssessment(), TEXT_MAX),
+                        borne(c.getJustification(), TEXT_MAX),
                         borne(c.getImpactSummary(), TEXT_MAX),
                         null, null, null, true, null));
     }

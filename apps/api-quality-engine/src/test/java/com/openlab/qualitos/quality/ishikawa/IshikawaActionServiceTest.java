@@ -96,6 +96,47 @@ class IshikawaActionServiceTest {
     }
 
     @Test
+    @DisplayName("le responsable choisi dans l'annuaire garde son compte et son nom")
+    void keepsTheDirectoryAccountOfTheResponsible() {
+        when(diagramRepo.findByIdAndTenantId(DIAGRAM, TENANT))
+                .thenReturn(Optional.of(diagram(TENANT)));
+        when(actionRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+        UUID compte = UUID.randomUUID();
+
+        IshikawaDto.ActionResponse created = service.create(DIAGRAM,
+                new IshikawaDto.CreateActionRequest("Former l'équipe", " Awa Diallo ", null, null, compte));
+
+        assertThat(created.responsibleUserId()).isEqualTo(compte);
+        assertThat(created.responsible()).isEqualTo("Awa Diallo");
+    }
+
+    @Test
+    @DisplayName("un nouveau responsable remplace le nom ET le compte ; un compte seul se pose seul")
+    void replacesNameAndAccountTogether() {
+        IshikawaAction existing = action("Former l'équipe");
+        existing.setResponsible("Karim");
+        existing.setResponsibleUserId(UUID.randomUUID());
+        when(actionRepo.findByIdAndTenantId(existing.getId(), TENANT))
+                .thenReturn(Optional.of(existing));
+        when(actionRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        // Un nom sans compte (saisie d'avant l'annuaire) n'hérite pas du compte de Karim.
+        service.update(existing.getId(), new IshikawaDto.UpdateActionRequest(null, "Awa", null, null));
+        assertThat(existing.getResponsible()).isEqualTo("Awa");
+        assertThat(existing.getResponsibleUserId()).isNull();
+
+        UUID compte = UUID.randomUUID();
+        service.update(existing.getId(), new IshikawaDto.UpdateActionRequest(null, null, null, null, compte));
+        assertThat(existing.getResponsibleUserId()).isEqualTo(compte);
+        assertThat(existing.getResponsible()).isEqualTo("Awa");
+
+        // Vider le responsable vide les deux.
+        service.update(existing.getId(), new IshikawaDto.UpdateActionRequest(null, "", null, null));
+        assertThat(existing.getResponsible()).isNull();
+        assertThat(existing.getResponsibleUserId()).isNull();
+    }
+
+    @Test
     @DisplayName("le statut demandé à la création est respecté")
     void honoursTheRequestedStatus() {
         when(diagramRepo.findByIdAndTenantId(DIAGRAM, TENANT))

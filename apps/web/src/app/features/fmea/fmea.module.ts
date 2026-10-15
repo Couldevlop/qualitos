@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../../shared/shared.module';
 import { UiModule } from '../../shared/ui/ui.module';
+import { UserPickerModule } from '../../shared/user-picker/user-picker.module';
 import { FmeaCreateDialogComponent } from './pages/fmea-create-dialog/fmea-create-dialog.component';
 import { FmeaDetailComponent } from './pages/fmea-detail/fmea-detail.component';
 import { FmeaEditDialogComponent } from './pages/fmea-edit-dialog/fmea-edit-dialog.component';
@@ -23,6 +24,6 @@ const routes: Routes = [
     FmeaEditDialogComponent,
     FmeaItemDialogComponent
   ],
-  imports: [SharedModule, UiModule, FmeaReferenceModule, RouterModule.forChild(routes)]
+  imports: [SharedModule, UiModule, UserPickerModule, FmeaReferenceModule, RouterModule.forChild(routes)]
 })
 export class FmeaModule {}
