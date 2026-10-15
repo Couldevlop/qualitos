@@ -123,7 +123,7 @@
       display: block;
       height: 100%;
       border-radius: inherit;
-      background: var(--qos-accent-fg);
+      background: var(--qos-accent-bg);
       transition: width var(--qos-motion-base);
     }
 
@@ -210,7 +210,7 @@
     margin-top: 5px;
     border-radius: 50%;
     background: var(--qos-bg-elevated);
-    border: 2px solid var(--qos-accent-fg);
+    border: 2px solid var(--qos-accent-bg);
   }
 
   &__corps {

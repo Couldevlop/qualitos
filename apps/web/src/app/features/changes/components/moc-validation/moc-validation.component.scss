@@ -123,15 +123,16 @@
   }
 }
 
-// Vert pour approuver, rouge pour rejeter (maquette) ; le texte reste lisible en mode sombre.
+// Vert pour approuver, rouge pour rejeter (maquette). Fond et texte viennent des
+// jetons de statut : en mode sombre le fond s'éclaircit et le texte s'assombrit.
 .bouton-ok:not(:disabled) {
-  --mat-button-filled-container-color: var(--qos-success-600);
-  --mat-button-filled-label-text-color: #fff;
-  --mat-button-filled-icon-color: #fff;
+  --mat-button-filled-container-color: var(--qos-success-fg);
+  --mat-button-filled-label-text-color: var(--qos-fg-inverse);
+  --mat-button-filled-icon-color: var(--qos-fg-inverse);
 }
 
 .bouton-refus:not(:disabled) {
-  --mat-button-filled-container-color: var(--qos-danger-600);
-  --mat-button-filled-label-text-color: #fff;
-  --mat-button-filled-icon-color: #fff;
+  --mat-button-filled-container-color: var(--qos-danger-fg);
+  --mat-button-filled-label-text-color: var(--qos-fg-inverse);
+  --mat-button-filled-icon-color: var(--qos-fg-inverse);
 }

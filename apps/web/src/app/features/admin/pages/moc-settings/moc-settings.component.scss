@@ -24,7 +24,7 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--qos-space-4);
-  padding-bottom: var(--qos-space-16);
+  padding-bottom: var(--qos-space-12);
 
   @media (max-width: 900px) {
     grid-template-columns: 1fr;

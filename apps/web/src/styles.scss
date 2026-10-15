@@ -318,9 +318,9 @@ mat-icon.material-symbols-outlined {
   --mat-snackbar-supporting-text-color: var(--qos-bg-elevated);
   .mdc-snackbar__surface { box-shadow: var(--qos-shadow-lg) !important; }
 
-  &.qos-snack-success { --mat-snackbar-container-color: var(--qos-success-600); }
-  &.qos-snack-warn    { --mat-snackbar-container-color: var(--qos-warn-600); }
-  &.qos-snack-danger  { --mat-snackbar-container-color: var(--qos-danger-600); }
+  &.qos-snack-success { --mat-snackbar-container-color: var(--qos-success-fg); }
+  &.qos-snack-warn    { --mat-snackbar-container-color: var(--qos-warn-fg); }
+  &.qos-snack-danger  { --mat-snackbar-container-color: var(--qos-danger-fg); }
 }
 
 /* ---- Spinner / progress : teinte accent par défaut. ---- */
