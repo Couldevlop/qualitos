@@ -409,6 +409,25 @@ if [ -n "$KC_POD" ]; then
     echo "    KC_URL=http://127.0.0.1:$STEP_UP_PORT/auth KC_REALM=qualitos \\" >&2
     echo "    KC_ADMIN=... KC_ADMIN_PASSWORD=... infra/keycloak/apply-step-up.sh" >&2
   fi
+
+  # Profil utilisateur : `tenant_id` déclaré, éditable par l'administration
+  # seulement. Sans lui, Keycloak 25 SUPPRIME l'attribut à la création d'un
+  # compte par l'API d'administration (attribut « non géré ») : le membre
+  # invité n'avait pas de client et l'invitation échouait. L'import du realm
+  # n'ayant lieu que sur une base vide, la déclaration est posée ICI, par le
+  # même tunnel, à chaque déploiement ; le script n'écrit que si le profil
+  # diffère. Un échec n'arrête pas le déploiement mais se signale.
+  if [ "$TUNNEL_PRET" = 1 ] \
+     && KC_URL="http://127.0.0.1:$STEP_UP_PORT/auth" KC_REALM=qualitos \
+        KC_ADMIN="$KC_ADMIN" KC_ADMIN_PASSWORD="$KC_PWD" \
+        python3 "$ROOT/infra/keycloak/user_profile.py" --apply; then
+    echo "  realm qualitos : tenant_id déclaré dans le profil utilisateur"
+  else
+    echo "  ATTENTION : tenant_id non déclaré dans le profil utilisateur du realm." >&2
+    echo "  L'invitation d'un membre créera un compte SANS client (attribut supprimé)." >&2
+    echo "  Reprendre par le tunnel : KC_URL=http://127.0.0.1:$STEP_UP_PORT/auth \\" >&2
+    echo "    KC_ADMIN=... KC_ADMIN_PASSWORD=... python3 infra/keycloak/user_profile.py --apply" >&2
+  fi
   kill "$PF_PID" 2>/dev/null || true
   wait "$PF_PID" 2>/dev/null || true
   rm -f "$STEP_UP_LOG"
