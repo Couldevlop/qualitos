@@ -17252,6 +17252,14 @@ declared income
         <source>Rejeter</source>
         <target state="translated">Reject</target>
       </trans-unit>
+      <trans-unit id="moc.validation.reject-reason" datatype="html">
+        <source>Motif du refus (obligatoire)</source>
+        <target state="translated">Reason for rejection (required)</target>
+      </trans-unit>
+      <trans-unit id="moc.validation.reject-confirm" datatype="html">
+        <source>Confirmer le rejet</source>
+        <target state="translated">Confirm rejection</target>
+      </trans-unit>
       <trans-unit id="moc.validation.reject-hint" datatype="html">
         <source>Un refus doit être motivé par un commentaire</source>
         <target state="translated">A rejection must be justified by a comment</target>

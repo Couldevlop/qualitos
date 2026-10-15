@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnChanges, Output, QueryList, ViewChildren } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { mocClassificationLabel, mocDecisionLabel, mocErrorMessage } from '../../moc.labels';
@@ -7,9 +7,10 @@ import { MocDetail, MocValidation } from '../../moc.types';
 
 /**
  * La validation : une carte par rôle requis. Seul un titulaire du rôle (jamais
- * le demandeur) voit les boutons Approuver / Rejeter, tous deux actifs d'emblée ;
- * un refus sans commentaire n'est pas envoyé : le champ le réclame et prend le
- * focus. Un seul refus rejette la demande. Les autres lisent qui est attendu.
+ * le demandeur) voit les boutons Approuver / Rejeter, tous deux actifs d'emblée.
+ * Approuver décide aussitôt ; Rejeter ouvre le champ du motif, qui prend le
+ * focus, et le refus ne part qu'à « Confirmer le rejet » avec un motif. Un seul
+ * refus rejette la demande. Les autres lisent qui est attendu.
  */
 @Component({
   selector: 'qos-moc-validation',
@@ -24,8 +25,12 @@ export class MocValidationComponent implements OnChanges {
 
   readonly commentMax = 1000;
   comments: Record<string, string> = {};
-  /** Cartes où « Rejeter » a été pressé sans motif : le champ réclame le commentaire. */
+  /** Cartes dont le titulaire a choisi de rejeter : le champ du motif est ouvert. */
+  rejecting: Record<string, boolean> = {};
+  /** Cartes où le rejet a été confirmé sans motif : le champ le réclame. */
   reasonAsked: Record<string, boolean> = {};
+
+  @ViewChildren('champ') private champs?: QueryList<ElementRef<HTMLTextAreaElement>>;
   busy: string | null = null;
 
   constructor(private readonly service: MocService, private readonly snack: MatSnackBar) {}
@@ -35,6 +40,7 @@ export class MocValidationComponent implements OnChanges {
     for (const v of this.detail.validations) {
       if (v.id && !v.canDecide) {
         delete this.comments[v.id];
+        delete this.rejecting[v.id];
         delete this.reasonAsked[v.id];
       }
     }
@@ -74,8 +80,28 @@ export class MocValidationComponent implements OnChanges {
     return !!v.id && !!this.reasonAsked[v.id] && !this.canReject(v);
   }
 
+  isRejecting(v: MocValidation): boolean {
+    return !!v.id && !!this.rejecting[v.id];
+  }
+
   approve(v: MocValidation): void {
     this.decide(v, 'APPROVED');
+  }
+
+  /** Ouvre le champ du motif et y place le curseur, une fois rendu. */
+  startReject(v: MocValidation): void {
+    if (!v.id) return;
+    this.rejecting[v.id] = true;
+    const id = v.id;
+    setTimeout(() => this.champs?.find(c => c.nativeElement.dataset['carte'] === id)?.nativeElement.focus());
+  }
+
+  /** Revient aux deux choix ; le motif saisi est oublié. */
+  cancelReject(v: MocValidation): void {
+    if (!v.id) return;
+    delete this.rejecting[v.id];
+    delete this.reasonAsked[v.id];
+    delete this.comments[v.id];
   }
 
   reject(v: MocValidation, champ?: HTMLTextAreaElement): void {
