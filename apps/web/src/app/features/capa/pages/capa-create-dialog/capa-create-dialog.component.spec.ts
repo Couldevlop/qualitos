@@ -329,6 +329,22 @@ describe('CapaCreateDialogComponent — fenêtre unique', () => {
     expect(open).toHaveBeenCalledWith(jasmine.objectContaining({ ownerId: 'kc-diallo', ownerName: 'Awa Diallo' }));
   });
 
+  it('depuis un risque au propriétaire choisi dans l\'annuaire, le propose sans le chercher par son nom', async () => {
+    const open = jasmine.createSpy('open').and.returnValue(of({ capaId: 'c-r' }));
+    await setup({
+      source: { type: 'RISK', reference: 'R-001' },
+      prefill: { ownerHint: 'Awa D.', ownerAccountId: 'kc-diallo' }, open
+    });
+
+    expect(directory.search).not.toHaveBeenCalledWith('Awa D.');
+    expect(component.form.controls.assigneeId.value).toBe('kc-diallo');
+    expect(component.unmatchedOwnerHint).toBeNull();
+
+    component.form.patchValue({ title: 'Dérive soudure', dueDate: DEMAIN });
+    component.submit();
+    expect(open).toHaveBeenCalledWith(jasmine.objectContaining({ ownerId: 'kc-diallo', ownerName: 'Awa D.' }));
+  });
+
   it('depuis un risque, rapproche aussi le propriétaire par son adresse', async () => {
     await setup({
       source: { type: 'RISK', reference: 'R-001' },

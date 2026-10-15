@@ -72,7 +72,10 @@ export interface ApqpDeliverable {
   expectedArtifact?: string | null;
   /** Requis au dossier PPAP — c'est l'UTILISATEUR qui en décide, pas un référentiel. */
   ppap: boolean;
+  /** Le nom du responsable, recopié de l'annuaire (ou tapé, sur un livrable ancien). */
   owner?: string | null;
+  /** Son compte de connexion (ADR 0092) ; absent tant que personne n'est choisi. */
+  ownerUserId?: string | null;
   /** Date ISO (yyyy-MM-dd), ou absente : une échéance peut n'être pas posée. */
   dueDate?: string | null;
   status: ApqpDeliverableStatus;
@@ -159,6 +162,7 @@ export interface ApqpCompletionRequest {
   expectedArtifact?: string | null;
   ppap?: boolean | null;
   owner?: string | null;
+  ownerUserId?: string | null;
   dueDate?: string | null;
   status?: ApqpDeliverableStatus | null;
   percentComplete?: number | null;

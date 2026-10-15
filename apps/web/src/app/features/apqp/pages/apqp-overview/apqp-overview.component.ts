@@ -383,6 +383,7 @@ export class ApqpOverviewComponent implements OnInit, OnDestroy {
       expectedArtifact: livrable.expectedArtifact ?? null,
       ppap: livrable.ppap,
       owner: livrable.owner ?? null,
+      ownerUserId: livrable.ownerUserId ?? null,
       dueDate: livrable.dueDate ?? null,
       status: null,
       percentComplete: null,

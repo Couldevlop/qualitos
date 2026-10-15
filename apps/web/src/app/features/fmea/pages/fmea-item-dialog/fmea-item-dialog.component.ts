@@ -4,6 +4,8 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { finalize } from 'rxjs/operators';
 
+import { personName } from '../../../../core/directory/directory-names';
+import { DirectoryUser } from '../../../../core/directory/directory.types';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { FmeaService } from '../../fmea.service';
 import { FmeaItemResponse } from '../../fmea.types';
@@ -26,6 +28,11 @@ export class FmeaItemDialogComponent {
 
   readonly scale = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
+  /** Le nom tapé d'une ligne d'avant l'annuaire, tant qu'aucune personne n'est choisie. */
+  legacyOwner: string | null =
+    !this.data.item?.actionOwnerUserId && this.data.item?.actionOwnerName?.trim()
+      ? this.data.item.actionOwnerName.trim() : null;
+
   readonly form = this.fb.nonNullable.group({
     function:        [this.data.item?.function        ?? '', [Validators.maxLength(500)]],
     failureMode:     [this.data.item?.failureMode     ?? '', [Validators.maxLength(500)]],
@@ -40,6 +47,8 @@ export class FmeaItemDialogComponent {
     recommendedAction: [this.data.item?.recommendedAction ?? '', [Validators.maxLength(1000)]],
     actionDueDate:     [this.data.item?.actionDueDate     ?? ''],
     actionOwnerName:   [this.data.item?.actionOwnerName   ?? '', [Validators.maxLength(250)]],
+    /** Le responsable est une personne de l'annuaire (ADR 0092) : son compte, son nom recopié à côté. */
+    actionOwnerUserId: [this.data.item?.actionOwnerUserId ?? null as string | null],
     actionsTaken:      [this.data.item?.actionsTaken      ?? '', [Validators.maxLength(2000)]],
     actionsTakenAt:    [this.data.item?.actionsTakenAt    ?? ''],
 
@@ -100,6 +109,12 @@ export class FmeaItemDialogComponent {
       : undefined;
   }
 
+  /** Le responsable choisi dans l'annuaire : son nom est recopié et part avec son compte. */
+  onActionOwner(user: DirectoryUser | null): void {
+    this.form.controls.actionOwnerName.setValue(user ? personName(user).slice(0, 250) : '');
+    this.legacyOwner = null;
+  }
+
   submit(): void {
     if (this.form.invalid || this.submitting) {
       this.form.markAllAsTouched();
@@ -117,6 +132,7 @@ export class FmeaItemDialogComponent {
       recommendedAction: v.recommendedAction?.trim() || undefined,
       actionDueDate: v.actionDueDate || undefined,
       actionOwnerName: v.actionOwnerName?.trim() || undefined,
+      actionOwnerUserId: v.actionOwnerUserId || undefined,
       actionsTaken: v.actionsTaken?.trim() || undefined,
       actionsTakenAt: v.actionsTakenAt || undefined,
       resultingSeverity:   v.resultingSeverity   ?? undefined,

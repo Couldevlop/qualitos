@@ -3,6 +3,8 @@ import { FormBuilder, FormControl, ValidatorFn, Validators } from '@angular/form
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, merge } from 'rxjs';
 
+import { personName } from '../../../../core/directory/directory-names';
+import { DirectoryUser } from '../../../../core/directory/directory.types';
 import { nonBlank } from '../../../apqp/apqp.validators';
 import { CATEGORY_TEXT, coqLabelText } from '../../cost-of-quality.labels';
 import { CoqCategory, CoqEntryRequest, CoqLabel, CoqLine } from '../../cost-of-quality.types';
@@ -58,6 +60,8 @@ export class CoqEntryDialogComponent implements OnDestroy {
     newPartControl: this.fb.nonNullable.control(false),
     amount: new FormControl<number | null>(null, [Validators.required, Validators.min(0), Validators.max(999999999999.99)]),
     responsible: this.fb.nonNullable.control('', [Validators.required, nonBlank, Validators.maxLength(150)]),
+    /** Le compte du responsable, choisi dans l'annuaire (ADR 0092) ; `responsible` porte son nom. */
+    responsibleUserId: new FormControl<string | null>(null, Validators.required),
     imputationDate: new FormControl<Date | null>(null, Validators.required),
     comment: this.fb.nonNullable.control('', Validators.maxLength(2000)),
     partReference: this.fb.nonNullable.control(''),
@@ -75,6 +79,8 @@ export class CoqEntryDialogComponent implements OnDestroy {
   /** Les libellés que la liste propose pour le texte en cours. */
   suggestions: CoqLabel[];
   partControl = false;
+  /** Le nom tapé d'une ligne d'avant l'annuaire, tant qu'aucune personne n'est choisie. */
+  legacyResponsible: string | null = null;
   /** Faux tant que les validateurs pièces n'ont jamais été posés. */
   private partControlApplied = false;
 
@@ -94,6 +100,7 @@ export class CoqEntryDialogComponent implements OnDestroy {
       label: preset ? this.labelText(preset) : '',
       amount: line ? line.amount : null,
       responsible: line?.responsible ?? '',
+      responsibleUserId: line?.responsibleUserId ?? null,
       imputationDate: CoqEntryDialogComponent.enDateLocale(line?.imputationDate ?? data.defaultDate),
       comment: line?.comment ?? '',
       partReference: line?.partReference ?? '',
@@ -101,6 +108,8 @@ export class CoqEntryDialogComponent implements OnDestroy {
       lot: line?.lot ?? '',
       receivedOrMadeOn: CoqEntryDialogComponent.enDateLocale(line?.receivedOrMadeOn)
     });
+    this.legacyResponsible = line && !line.responsibleUserId && line.responsible?.trim()
+      ? line.responsible.trim() : null;
     this.title = line
       ? coqLabelText(line.labelCode, line.labelName)
       : $localize`:@@coq.dialog.new-title:Nouvelle ligne`;
@@ -119,6 +128,21 @@ export class CoqEntryDialogComponent implements OnDestroy {
     this.subscription.unsubscribe();
   }
 
+  /** Le responsable choisi dans l'annuaire : son nom est recopié et part avec son compte. */
+  onResponsible(user: DirectoryUser | null): void {
+    this.form.controls.responsible.setValue(user ? personName(user).slice(0, 150) : '');
+    this.form.controls.responsibleUserId.markAsTouched();
+    if (user) {
+      this.legacyResponsible = null;
+    }
+  }
+
+  /** Personne n'est choisi dans l'annuaire. */
+  get responsibleMissing(): boolean {
+    const c = this.form.controls.responsibleUserId;
+    return c.touched && c.invalid;
+  }
+
   /** Vrai quand le texte saisi ne désigne aucun libellé : il sera ajouté à la liste. */
   get isNewLabel(): boolean {
     return !this.selected && this.form.controls.label.value.trim().length > 0;
@@ -129,7 +153,9 @@ export class CoqEntryDialogComponent implements OnDestroy {
     const c = this.form.controls;
     if (c.label.invalid) return $localize`:@@coq.dialog.blocked-label:Choisissez ou saisissez un libellé.`;
     if (c.amount.invalid) return $localize`:@@coq.dialog.blocked-amount:Indiquez un montant positif ou nul.`;
-    if (c.responsible.invalid) return $localize`:@@coq.dialog.blocked-responsible:Indiquez le responsable.`;
+    if (c.responsibleUserId.invalid || c.responsible.invalid) {
+      return $localize`:@@coq.dialog.blocked-responsible:Indiquez le responsable.`;
+    }
     if (c.imputationDate.invalid) return $localize`:@@coq.dialog.blocked-date:Indiquez la date d'imputation.`;
     if (this.partControl && CHAMPS_PIECES.some(n => c[n].invalid)) {
       return $localize`:@@coq.dialog.blocked-parts:Un contrôle de pièces exige la référence, le nombre de pièces, le lot et la date de réception ou de fabrication.`;
@@ -147,6 +173,7 @@ export class CoqEntryDialogComponent implements OnDestroy {
     const entry: Omit<CoqEntryRequest, 'labelId'> = {
       amount: Number(v.amount),
       responsible: v.responsible.trim(),
+      responsibleUserId: v.responsibleUserId ?? undefined,
       imputationDate: CoqEntryDialogComponent.enDateIso(v.imputationDate) ?? '',
       comment: v.comment.trim() || undefined
     };

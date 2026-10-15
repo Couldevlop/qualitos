@@ -10,7 +10,8 @@ import { RiskRegisterService } from './risk-register.service';
 import { CapaLink, RiskView } from './risk-register.types';
 
 /** Ce qu'il faut d'un risque pour lui ouvrir une CAPA. */
-export type RiskForCapa = Pick<RiskView, 'id' | 'reference' | 'title' | 'owner' | 'grossLevel'>;
+export type RiskForCapa = Pick<RiskView, 'id' | 'reference' | 'title' | 'owner' | 'grossLevel'>
+  & Partial<Pick<RiskView, 'ownerUserId'>>;
 
 /** Ce que la fenêtre rend quand la CAPA vient d'un risque : le lien, pour la fiche. */
 interface RiskCapaOpened extends CapaOpened {
@@ -23,8 +24,9 @@ interface RiskCapaOpened extends CapaOpened {
  *
  * <p>LA fenêtre de création commune (ADR 0088), source verrouillée sur le
  * risque, criticité issue de sa cotation brute. Le propriétaire du risque est
- * proposé comme responsable s'il désigne exactement une personne de l'annuaire
- * en lecture restreinte (nom ou adresse — ADR 0091) ; le responsable
+ * proposé comme responsable : directement son compte quand il a été choisi
+ * dans l'annuaire (ADR 0092), sinon s'il désigne exactement une personne de
+ * l'annuaire en lecture restreinte (nom ou adresse — ADR 0091) ; le responsable
  * choisi pilote le dossier — et non plus celui qui clique.
  * Rend le lien du dossier ouvert, ou `null` si l'utilisateur a renoncé.
  */
@@ -44,7 +46,8 @@ export class RiskCapaOpener {
         title: risk.title,
         type: 'PREVENTIVE',
         criticity: risk.grossLevel,
-        ownerHint: risk.owner
+        ownerHint: risk.owner,
+        ownerAccountId: risk.ownerUserId ?? undefined
       },
       open: request => this.service.openCapa(risk.id, {
         title: request.title,

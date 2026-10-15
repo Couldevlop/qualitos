@@ -4,6 +4,8 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { finalize } from 'rxjs/operators';
 
+import { personName } from '../../../../core/directory/directory-names';
+import { DirectoryUser } from '../../../../core/directory/directory.types';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { ApqpService } from '../../apqp.service';
 import {
@@ -61,6 +63,8 @@ export class ApqpDeliverableDetailDialogComponent implements OnInit {
   evidences: ApqpEvidence[] = [];
   chargement = false;
   envoi = false;
+  /** Le nom tapé d'un livrable d'avant l'annuaire, tant qu'aucune personne n'est choisie. */
+  legacyOwner: string | null = null;
 
   /** Les quatre etats qu'un livrable peut prendre, dans l'ordre du classeur. */
   readonly statuts: ApqpDeliverableStatus[] =
@@ -81,12 +85,17 @@ export class ApqpDeliverableDetailDialogComponent implements OnInit {
       expectedArtifact: [livrable.expectedArtifact ?? '', [Validators.maxLength(1000)]],
       ppap: [livrable.ppap],
       owner: [livrable.owner ?? '', [Validators.maxLength(150)]],
+      ownerUserId: [livrable.ownerUserId ?? null as string | null],
       dueDate: [ApqpDeliverableDetailDialogComponent.enDateLocale(livrable.dueDate)],
       status: [livrable.status],
       percentComplete: [
         livrable.percentComplete, [Validators.min(0), Validators.max(100)]],
       comment: [livrable.comment ?? '', [Validators.maxLength(2000)]]
     });
+
+    // Un livrable d'avant l'annuaire n'a qu'un nom tapé : on le montre, pour que
+    // l'utilisateur sache qui choisir (ADR 0092).
+    this.legacyOwner = !livrable.ownerUserId && livrable.owner?.trim() ? livrable.owner.trim() : null;
 
     // La case pilote : on reflète la règle du serveur DANS le formulaire, pour
     // que l'utilisateur la voie au lieu de la découvrir après enregistrement.
@@ -183,6 +192,15 @@ export class ApqpDeliverableDetailDialogComponent implements OnInit {
 
   // ---------- enregistrement ----------
 
+  /**
+   * Le responsable est une personne de l'annuaire (ADR 0092) : son nom est
+   * recopié au choix, et part avec son compte.
+   */
+  onOwner(user: DirectoryUser | null): void {
+    this.form.get('owner')!.setValue(user ? personName(user).slice(0, 150) : '');
+    this.legacyOwner = null;
+  }
+
   submit(): void {
     if (this.form.invalid || this.envoi) {
       this.form.markAllAsTouched();
@@ -197,6 +215,7 @@ export class ApqpDeliverableDetailDialogComponent implements OnInit {
         expectedArtifact: this.rogne(valeurs.expectedArtifact),
         ppap: valeurs.ppap,
         owner: this.rogne(valeurs.owner),
+        ownerUserId: valeurs.ownerUserId ?? null,
         dueDate: this.enDateIso(valeurs.dueDate),
         // Le serveur applique la règle « la case pilote » ; l'écran envoie ce
         // qu'il affiche, et les deux disent alors la même chose.

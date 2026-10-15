@@ -68,3 +68,21 @@
 .rpn-ok       { background: var(--qos-success-bg-soft); color: var(--qos-success-fg); }
 .rpn-high     { background: var(--qos-warn-bg-soft);    color: var(--qos-warn-fg); }
 .rpn-critical { background: var(--qos-danger-bg-soft);  color: var(--qos-danger-fg); }
+
+// Le responsable de l'action, choisi dans l'annuaire (ADR 0092).
+.responsable {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: var(--qos-space-3);
+
+  qos-user-picker {
+    display: block;
+    width: 100%;
+  }
+
+  &__ancien {
+    margin: 0;
+    font-size: var(--qos-fs-sm);
+    color: var(--qos-fg-secondary);
+  }
+}

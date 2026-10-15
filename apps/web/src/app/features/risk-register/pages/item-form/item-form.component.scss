@@ -130,3 +130,27 @@
   gap: var(--qos-space-3);
   padding-top: var(--qos-space-2);
 }
+
+// Le propriétaire, choisi dans l'annuaire (ADR 0092) : le sélecteur occupe la
+// cellule, le nom d'une fiche ancienne et l'erreur s'affichent dessous.
+.proprietaire {
+  display: flex;
+  flex-direction: column;
+  gap: var(--qos-space-1);
+  min-width: 0;
+
+  qos-user-picker {
+    display: block;
+    width: 100%;
+  }
+
+  &__ancien {
+    margin: 0;
+    font-size: var(--qos-fs-sm);
+    color: var(--qos-fg-secondary);
+  }
+
+  mat-error {
+    font-size: var(--qos-fs-sm);
+  }
+}

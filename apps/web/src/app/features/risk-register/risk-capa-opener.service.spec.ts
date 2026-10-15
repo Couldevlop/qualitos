@@ -61,6 +61,21 @@ describe('RiskCapaOpener — LA fenêtre CAPA depuis un risque (ADR 0088)', () =
     }));
   });
 
+  it('propose directement le compte du propriétaire choisi dans l\'annuaire (ADR 0092)', async () => {
+    await firstValueFrom(opener.open({ ...RISQUE, ownerUserId: 'kc-diallo' }));
+
+    const data = dialog.open.calls.mostRecent().args[1]!.data as CapaCreateDialogData;
+    expect(data.prefill?.ownerAccountId).toBe('kc-diallo');
+    expect(data.prefill?.ownerHint).toBe('A. Diallo');
+  });
+
+  it('sans compte de propriétaire, ne propose que le nom à rapprocher', async () => {
+    await firstValueFrom(opener.open(RISQUE));
+
+    const data = dialog.open.calls.mostRecent().args[1]!.data as CapaCreateDialogData;
+    expect(data.prefill?.ownerAccountId).toBeUndefined();
+  });
+
   it('ouvre le dossier par le registre, avec le responsable choisi comme pilote, et rend le lien', async () => {
     const lien = await firstValueFrom(opener.open(RISQUE));
 

@@ -31,6 +31,12 @@ export interface CapaCreatePrefill {
    * ou adresse, accents et casse ignorés).
    */
   ownerHint?: string;
+  /**
+   * Le compte de cette personne quand l'autre écran le connaît (propriétaire
+   * d'un risque choisi dans l'annuaire, ADR 0092) : proposé tel quel, sans
+   * rapprochement par le nom ; `ownerHint` sert alors de nom affiché.
+   */
+  ownerAccountId?: string;
 }
 
 /** La source d'où l'on ouvre la CAPA : fixée, affichée, jamais modifiable ici. */
@@ -184,7 +190,13 @@ export class CapaCreateDialogComponent implements OnInit {
     // Le propriétaire désigné ailleurs, s'il désigne exactement une personne de
     // l'annuaire, prend la place de « soi-même ».
     const hint = this.data.prefill?.ownerHint?.trim();
-    if (hint) {
+    const account = this.data.prefill?.ownerAccountId;
+    if (account) {
+      if (hint) {
+        this.names.set(account, hint);
+      }
+      this.form.controls.assigneeId.setValue(account);
+    } else if (hint) {
       this.matchingOwner = true;
       findExactPerson(this.directory, hint).subscribe(person => {
         this.matchingOwner = false;

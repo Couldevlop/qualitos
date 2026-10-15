@@ -36,7 +36,10 @@ export interface RiskView {
   type: RegisterType;
   process: string;
   site: string | null;
+  /** Le nom du propriétaire, recopié de l'annuaire (ou tapé, sur une fiche ancienne). */
   owner: string;
+  /** Son compte de connexion (ADR 0092) ; absent sur une fiche d'avant l'annuaire. */
+  ownerUserId?: string | null;
   cause: string | null;
   effect: string | null;
   origin: RegisterOrigin;
@@ -95,6 +98,7 @@ export interface OpportunityView {
   process: string;
   site: string | null;
   owner: string;
+  ownerUserId?: string | null;
   targetDate: string | null;
   context: string | null;
   benefit: string | null;
@@ -157,6 +161,7 @@ export interface RiskRequest {
   process: string;
   site?: string | null;
   owner: string;
+  ownerUserId?: string | null;
   cause?: string | null;
   effect?: string | null;
   origin: RegisterOrigin;
@@ -179,6 +184,7 @@ export interface OpportunityRequest {
   process: string;
   site?: string | null;
   owner: string;
+  ownerUserId?: string | null;
   targetDate?: string | null;
   context?: string | null;
   benefit?: string | null;

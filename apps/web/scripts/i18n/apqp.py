@@ -482,6 +482,7 @@ TRANSLATIONS = {
     'apqp.status.done': (
         'Acquis', 'Obtained', 'Obtenido', 'مُنجَز', '取得済み', '已取得'),
 
+    'apqp.deliverable.owner-legacy': ("Nom enregistré : {$INTERPOLATION}. Choisissez cette personne dans l'annuaire.", 'Recorded name: {$INTERPOLATION}. Pick this person from the directory.', 'Nombre registrado: {$INTERPOLATION}. Elija a esta persona en el directorio.', 'الاسم المسجّل: {$INTERPOLATION}. اختر هذا الشخص من الدليل.', '登録済みの名前：{$INTERPOLATION}。ディレクトリからこの担当者を選択してください。', '已记录的姓名：{$INTERPOLATION}。请在目录中选择此人。'),
     'apqp.deliverable.owner': (
         'Responsable', 'Owner', 'Responsable', 'المسؤول', '担当者', '负责人'),
     'apqp.deliverable.due-date': (

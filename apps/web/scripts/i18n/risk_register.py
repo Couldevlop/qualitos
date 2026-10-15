@@ -270,6 +270,7 @@ TRANSLATIONS = {
         'Vérification du bénéfice (critère)', 'Benefit check (criterion)',
         'Verificación del beneficio (criterio)', 'التحقق من الفائدة (المعيار)',
         '効果確認（基準）', '效益验证（准则）'),
+    'rr.form.owner-legacy': ("Nom enregistré : {$INTERPOLATION}. Choisissez cette personne dans l'annuaire.", 'Recorded name: {$INTERPOLATION}. Pick this person from the directory.', 'Nombre registrado: {$INTERPOLATION}. Elija a esta persona en el directorio.', 'الاسم المسجّل: {$INTERPOLATION}. اختر هذا الشخص من الدليل.', '登録済みの名前：{$INTERPOLATION}。ディレクトリからこの担当者を選択してください。', '已记录的姓名：{$INTERPOLATION}。请在目录中选择此人。'),
     'rr.form.required': ('Champ obligatoire.', 'Required field.', 'Campo obligatorio.', 'حقل إلزامي.', '必須項目です。', '必填字段。'),
     'rr.form.save-risk': ('Enregistrer le risque', 'Save risk', 'Guardar el riesgo', 'حفظ الخطر', 'リスクを保存', '保存风险'),
     'rr.form.save-opportunity': (

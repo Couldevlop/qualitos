@@ -13,6 +13,8 @@ import { ApqpCycle, ApqpDeliverable, ApqpPhase } from '../../apqp.types';
 import {
   ApqpDeliverableDetailDialogComponent
 } from './apqp-deliverable-detail-dialog.component';
+import { STUB_PERSON, provideDirectoryStub } from '../../../../core/directory/testing/directory.stub';
+import { UserPickerModule } from '../../../../shared/user-picker/user-picker.module';
 
 /**
  * Le formulaire UNIQUE d'un livrable APQP.
@@ -68,9 +70,9 @@ describe('ApqpDeliverableDetailDialogComponent', () => {
       // Le calendrier n'est ni dans SharedModule ni dans UiModule : il est cable
       // sur le seul module APQP, pour ne pas imposer son adaptateur de date a
       // toute l'application. Le banc l'importe donc lui-meme.
-      imports: [SharedModule, UiModule, NoopAnimationsModule,
+      imports: [UserPickerModule, SharedModule, UiModule, NoopAnimationsModule,
                 MatDatepickerModule, MatNativeDateModule],
-      providers: [
+      providers: [provideDirectoryStub(),
         { provide: ApqpService, useValue: service },
         { provide: MatDialogRef, useValue: dialogRef },
         { provide: Router, useValue: routeur },
@@ -221,6 +223,39 @@ describe('ApqpDeliverableDetailDialogComponent', () => {
     expect(envoye.linkedId).toBeNull();
     expect('doneAt' in envoye).toBeFalse();
     expect('doneBy' in envoye).toBeFalse();
+  });
+
+  it('le responsable se choisit dans l\'annuaire : son nom part avec son compte', async () => {
+    await ouvrir({});
+
+    component.onOwner(STUB_PERSON);
+    component.form.patchValue({ ownerUserId: STUB_PERSON.accountId });
+    component.submit();
+
+    const envoye = service.completeDeliverable.calls.mostRecent().args[3];
+    expect(envoye.owner).toBe(STUB_PERSON.displayName);
+    expect(envoye.ownerUserId).toBe(STUB_PERSON.accountId);
+  });
+
+  it('un livrable d\'avant l\'annuaire montre son nom tapé jusqu\'au choix d\'une personne', async () => {
+    await ouvrir({ owner: 'R. Martin' });
+
+    expect(component.legacyOwner).toBe('R. Martin');
+    expect(hote().querySelector('[data-test=responsable-ancien]')?.textContent).toContain('R. Martin');
+
+    component.onOwner(null);
+    expect(component.form.get('owner')!.value).toBe('');
+    expect(component.legacyOwner).toBeNull();
+  });
+
+  it('un responsable choisi se lit par son nom, jamais par son compte', async () => {
+    await ouvrir({ owner: 'Amina D.', ownerUserId: STUB_PERSON.accountId });
+    fixture.detectChanges();
+
+    expect(component.legacyOwner).toBeNull();
+    const champ = hote().querySelector('[data-test="user-picker-input"]') as HTMLInputElement;
+    expect(champ.value).toBe(STUB_PERSON.displayName);
+    expect(hote().textContent).not.toContain(STUB_PERSON.accountId);
   });
 
   it('rend le cycle au parent en se fermant, pour qu\'il recompte le dossier PPAP', async () => {

@@ -13,6 +13,9 @@ import { RiskDraft } from '../../risk-register.types';
 import { opportunite, risque } from '../../testing/risk-register.fixtures';
 import { ItemFormComponent } from './item-form.component';
 import { of } from 'rxjs';
+import { STUB_PERSON, provideDirectoryStub } from '../../../../core/directory/testing/directory.stub';
+import { DirectoryUser } from '../../../../core/directory/directory.types';
+import { UserPickerModule } from '../../../../shared/user-picker/user-picker.module';
 
 /**
  * Le formulaire : création (directe ou depuis un objet source), modification,
@@ -33,14 +36,15 @@ describe('ItemFormComponent', () => {
     id?: string | null;
     query?: Record<string, string>;
     roles?: string[];
+    people?: DirectoryUser[];
   }
 
   async function setup(o: Options = {}): Promise<void> {
     const roles = o.roles ?? ['QUALITY_MANAGER'];
     await TestBed.resetTestingModule().configureTestingModule({
       declarations: [ItemFormComponent],
-      imports: [SharedModule, UiModule, MatAutocompleteModule, NoopAnimationsModule],
-      providers: [
+      imports: [UserPickerModule, SharedModule, UiModule, MatAutocompleteModule, NoopAnimationsModule],
+      providers: [provideDirectoryStub(o.people),
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
         provideRouter([]),
@@ -68,7 +72,8 @@ describe('ItemFormComponent', () => {
 
   function remplir(): void {
     component.form.patchValue({
-      title: '  Dérive soudure ', process: 'Production', owner: 'M. Kone', cause: 'Buse usée', effect: 'Fuite'
+      title: '  Dérive soudure ', process: 'Production', owner: 'M. Kone', ownerUserId: STUB_PERSON.accountId,
+      cause: 'Buse usée', effect: 'Fuite'
     });
   }
 
@@ -91,6 +96,8 @@ describe('ItemFormComponent', () => {
     expect(req.request.body.requirements).toEqual(['ISO_9001_6_1']);
     expect(req.request.body.tenantId).toBeUndefined();
     expect(req.request.body.reference).toBeUndefined();
+    expect(req.request.body.owner).toBe('M. Kone');
+    expect(req.request.body.ownerUserId).toBe(STUB_PERSON.accountId);
     req.flush(risque({ id: 'nouveau-id' }));
     expect(router.navigate).toHaveBeenCalledWith(['/risques', 'nouveau-id']);
   });
@@ -160,6 +167,47 @@ describe('ItemFormComponent', () => {
     expect(router.navigate).toHaveBeenCalledWith(['/risques', 'r1']);
   });
 
+  it('le propriétaire se choisit dans l’annuaire : son nom part avec son compte', async () => {
+    await setup();
+    remplir();
+    component.form.patchValue({ owner: '', ownerUserId: null });
+    component.submit();
+    http.expectNone(`${endpoint}/risks`);
+    expect(component.ownerMissing).toBeTrue();
+    fixture.detectChanges();
+    expect(hote().textContent).toContain('Champ obligatoire');
+
+    component.onOwner(STUB_PERSON);
+    component.form.patchValue({ ownerUserId: STUB_PERSON.accountId });
+    expect(component.form.get('owner')!.value).toBe(STUB_PERSON.displayName);
+    expect(component.ownerMissing).toBeFalse();
+
+    component.onOwner(null);
+    expect(component.form.get('owner')!.value).toBe('');
+  });
+
+  it('une fiche d’avant l’annuaire : un nom qui désigne exactement une personne la propose', async () => {
+    const kone: DirectoryUser = { id: 'i-k', accountId: '22222222-2222-4222-8222-222222222222',
+      displayName: 'M. Kone', email: 'kone@client.test', active: true };
+    await setup({ id: 'r1', people: [kone] });
+    http.expectOne(`${endpoint}/risks/r1`).flush({ risk: risque({ ownerUserId: null }), capas: [], events: [] });
+
+    expect(component.form.get('ownerUserId')!.value).toBe(kone.accountId);
+    expect(component.legacyOwner).toBeNull();
+  });
+
+  it('une fiche d’avant l’annuaire au nom inconnu garde le nom et invite à choisir', async () => {
+    await setup({ id: 'r1' });
+    http.expectOne(`${endpoint}/risks/r1`).flush({ risk: risque({ ownerUserId: null }), capas: [], events: [] });
+    fixture.detectChanges();
+
+    expect(component.form.get('ownerUserId')!.value).toBeNull();
+    expect(component.legacyOwner).toBe('M. Kone');
+    expect(hote().querySelector('[data-test="proprietaire-ancien"]')!.textContent).toContain('M. Kone');
+    component.submit();
+    http.expectNone(`${endpoint}/risks/r1`);
+  });
+
   it('refuse une résiduelle au-dessus de la brute avant d’envoyer', async () => {
     await setup({ id: 'r1' });
     http.expectOne(`${endpoint}/risks/r1`).flush({ risk: risque(), capas: [], events: [] });
@@ -198,7 +246,7 @@ describe('ItemFormComponent', () => {
     expect(hote().querySelector('[data-test="source"]')!.textContent).toContain('PFMEA-7 #3');
     expect(hote().querySelector('[data-test="source-existants"]')!.textContent).toContain('R-014');
 
-    component.form.patchValue({ process: 'Soudage', owner: 'M. Kone' });
+    component.form.patchValue({ process: 'Soudage', owner: 'M. Kone', ownerUserId: STUB_PERSON.accountId });
     component.submit();
     const req = http.expectOne(`${endpoint}/risks`);
     expect(req.request.body.sourceId).toBe('item-9');
@@ -239,13 +287,14 @@ describe('ItemFormComponent', () => {
     expect(component.origins.map(o => o.value)).not.toContain('FMEA');
     expect(component.requirements.map(r => r.value)).toContain('ISO_9001_10_3');
     component.form.patchValue({ title: 'Automatiser', process: 'Production', owner: 'Mme Diallo',
-      targetDate: '2027-03-31', gain: 5, feasibility: 3 });
+      ownerUserId: STUB_PERSON.accountId, targetDate: '2027-03-31', gain: 5, feasibility: 3 });
     expect(component.grossLevel).toBe('PRIORITY');
 
     component.submit();
     const req = http.expectOne(`${endpoint}/opportunities`);
     expect(req.request.body.targetDate).toBe('2027-03-31');
     expect(req.request.body.gain).toBe(5);
+    expect(req.request.body.ownerUserId).toBe(STUB_PERSON.accountId);
     req.flush(opportunite({ id: 'o9' }));
     expect(router.navigate).toHaveBeenCalledWith(['/risques', 'opportunites', 'o9']);
   });

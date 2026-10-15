@@ -9,6 +9,8 @@ import { SharedModule } from '../../../../shared/shared.module';
 import { UiModule } from '../../../../shared/ui/ui.module';
 import { CoqLabel, CoqLine } from '../../cost-of-quality.types';
 import { CoqEntryDialogComponent, CoqEntryDialogData } from './coq-entry-dialog.component';
+import { STUB_PERSON, provideDirectoryStub } from '../../../../core/directory/testing/directory.stub';
+import { UserPickerModule } from '../../../../shared/user-picker/user-picker.module';
 
 /**
  * La fenêtre d'une ligne de coût.
@@ -45,9 +47,10 @@ describe('CoqEntryDialogComponent', () => {
     };
     await TestBed.resetTestingModule().configureTestingModule({
       declarations: [CoqEntryDialogComponent],
-      imports: [SharedModule, UiModule, MatAutocompleteModule, MatDatepickerModule, MatNativeDateModule,
+      imports: [UserPickerModule, SharedModule, UiModule, MatAutocompleteModule, MatDatepickerModule, MatNativeDateModule,
         NoopAnimationsModule],
       providers: [
+        provideDirectoryStub(),
         { provide: MatDialogRef, useValue: dialogRef },
         { provide: MAT_DIALOG_DATA, useValue: data }
       ]
@@ -58,7 +61,7 @@ describe('CoqEntryDialogComponent', () => {
   }
 
   function remplirCommun(): void {
-    component.form.patchValue({ amount: 120, responsible: '  M. Alaoui  ' });
+    component.form.patchValue({ amount: 120, responsible: '  M. Alaoui  ', responsibleUserId: STUB_PERSON.accountId });
   }
 
   it('s’ouvre vide sur la date proposée, et dit ce qui bloque', async () => {
@@ -83,7 +86,10 @@ describe('CoqEntryDialogComponent', () => {
     component.submit();
     expect(dialogRef.close).toHaveBeenCalledWith({
       labelId: 'l-ess',
-      entry: { amount: 120, responsible: 'M. Alaoui', imputationDate: '2026-09-01', comment: undefined }
+      entry: {
+        amount: 120, responsible: 'M. Alaoui', responsibleUserId: STUB_PERSON.accountId,
+        imputationDate: '2026-09-01', comment: undefined
+      }
     });
   });
 
@@ -108,7 +114,8 @@ describe('CoqEntryDialogComponent', () => {
     expect(dialogRef.close).toHaveBeenCalledWith({
       labelId: 'l-rec',
       entry: {
-        amount: 120, responsible: 'M. Alaoui', imputationDate: '2026-09-01', comment: undefined,
+        amount: 120, responsible: 'M. Alaoui', responsibleUserId: STUB_PERSON.accountId,
+        imputationDate: '2026-09-01', comment: undefined,
         partReference: 'P-4410', partQuantity: 12, lot: 'L-2609', receivedOrMadeOn: '2026-09-12'
       }
     });
@@ -174,16 +181,51 @@ describe('CoqEntryDialogComponent', () => {
   it('une ligne ouverte reprend ses valeurs, dates comprises, sans décalage de fuseau', async () => {
     const ligne: CoqLine = {
       entryId: 'e1', labelId: 'l-rec', labelCode: 'APPRAISAL_INCOMING_INSPECTION', labelName: 'Réception',
-      partControl: true, amount: 574, entryCount: 1, responsible: 'Mme Diallo', imputationDate: '2026-09-18',
+      partControl: true, amount: 574, entryCount: 1, responsible: 'Mme Diallo',
+      responsibleUserId: STUB_PERSON.accountId, imputationDate: '2026-09-18',
       comment: 'Lot trié', partReference: 'P-1', partQuantity: 40, lot: 'L-1', receivedOrMadeOn: '2026-09-17'
     };
     await setup({ line: ligne });
+    fixture.detectChanges();
 
     expect(component.title).toContain('Contrôle réception matières');
     expect(component.form.controls.label.value).toBe('Contrôle réception matières');
     const date = component.form.controls.imputationDate.value!;
     expect([date.getFullYear(), date.getMonth(), date.getDate()]).toEqual([2026, 8, 18]);
     expect(component.form.valid).toBeTrue();
+    expect(component.legacyResponsible).toBeNull();
+    // Le responsable se lit par son nom, jamais par son compte (ADR 0092).
+    const champ = hote().querySelector('[data-test="user-picker-input"]') as HTMLInputElement;
+    expect(champ.value).toBe(STUB_PERSON.displayName);
+  });
+
+  it('une ligne d\'avant l\'annuaire montre son nom tapé et demande de choisir la personne', async () => {
+    const ligne: CoqLine = {
+      entryId: 'e2', labelId: 'l-ess', labelCode: 'APPRAISAL_TESTING_CALIBRATION', labelName: 'Essais',
+      partControl: false, amount: 10, entryCount: 1, responsible: 'M. Kone', imputationDate: '2026-09-18',
+      comment: null, partReference: null, partQuantity: null, lot: null, receivedOrMadeOn: null
+    };
+    await setup({ line: ligne });
+
+    expect(component.legacyResponsible).toBe('M. Kone');
+    expect(hote().querySelector('[data-test="responsable-ancien"]')?.textContent).toContain('M. Kone');
+    expect(component.form.valid).toBeFalse();
+    expect(component.blockedReason).toContain('responsable');
+
+    component.onResponsible(STUB_PERSON);
+    component.form.controls.responsibleUserId.setValue(STUB_PERSON.accountId);
+    expect(component.form.controls.responsible.value).toBe(STUB_PERSON.displayName);
+    expect(component.legacyResponsible).toBeNull();
+    expect(component.form.valid).toBeTrue();
+  });
+
+  it('retirer la personne choisie vide son nom et le signale', async () => {
+    await setup({ presetLabelId: 'l-ess' });
+    component.onResponsible(STUB_PERSON);
+    component.onResponsible(null);
+
+    expect(component.form.controls.responsible.value).toBe('');
+    expect(component.responsibleMissing).toBeTrue();
   });
 
   it('en lecture seule, tout est désactivé et rien ne se rend', async () => {

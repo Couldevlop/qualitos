@@ -71,15 +71,14 @@
             </mat-autocomplete>
           </mat-form-field>
 
-          <mat-form-field appearance="outline">
-            <mat-label i18n="@@rr.col.owner">Propriétaire</mat-label>
-            <input matInput formControlName="owner" maxlength="150" [matAutocomplete]="autoProprio"
-                   data-test="proprietaire">
-            <mat-autocomplete #autoProprio="matAutocomplete">
-              <mat-option *ngFor="let o of filtered(suggestions.owners, 'owner')" [value]="o">{{ o }}</mat-option>
-            </mat-autocomplete>
-            <mat-error *ngIf="form.get('owner')?.hasError('required')" i18n="@@rr.form.required">Champ obligatoire.</mat-error>
-          </mat-form-field>
+          <div class="proprietaire">
+            <qos-user-picker formControlName="ownerUserId" required data-test="proprietaire"
+                             i18n-label="@@rr.col.owner" label="Propriétaire"
+                             (userSelected)="onOwner($event)"></qos-user-picker>
+            <p class="proprietaire__ancien" *ngIf="legacyOwner as ancien" data-test="proprietaire-ancien"
+               i18n="@@rr.form.owner-legacy">Nom enregistré : {{ ancien }}. Choisissez cette personne dans l'annuaire.</p>
+            <mat-error *ngIf="ownerMissing" i18n="@@rr.form.required">Champ obligatoire.</mat-error>
+          </div>
 
           <mat-form-field appearance="outline" *ngIf="!isRisk">
             <mat-label i18n="@@rr.form.target-date">Échéance visée</mat-label>

@@ -7,6 +7,9 @@ import { Observable, of } from 'rxjs';
 import { catchError, finalize, map } from 'rxjs/operators';
 
 import { AuthzService } from '../../../../core/authz/authz.service';
+import { findExactPerson, personName } from '../../../../core/directory/directory-names';
+import { DirectoryService } from '../../../../core/directory/directory.service';
+import { DirectoryUser } from '../../../../core/directory/directory.types';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { PageBreadcrumb } from '../../../../shared/ui/page-header/page-header.component';
@@ -82,6 +85,8 @@ export class ItemFormComponent implements OnInit {
   originLocked = false;
 
   suggestions: RegisterSuggestions = { processes: [], sites: [], owners: [] };
+  /** Le nom tapé d'une fiche d'avant l'annuaire, tant qu'aucune personne n'est choisie. */
+  legacyOwner: string | null = null;
   loading = false;
   saving = false;
   failed = false;
@@ -94,7 +99,8 @@ export class ItemFormComponent implements OnInit {
     private readonly route: ActivatedRoute,
     private readonly router: Router,
     private readonly snack: MatSnackBar,
-    private readonly authz: AuthzService
+    private readonly authz: AuthzService,
+    private readonly directory: DirectoryService
   ) {}
 
   ngOnInit(): void {
@@ -202,6 +208,24 @@ export class ItemFormComponent implements OnInit {
     this.form.markAsDirty();
   }
 
+  /**
+   * Le propriétaire est une personne de l'annuaire (ADR 0092) : son compte part
+   * avec son nom, recopié au moment du choix.
+   */
+  onOwner(user: DirectoryUser | null): void {
+    this.form.get('owner')!.setValue(user ? personName(user).slice(0, 150) : '');
+    this.form.get('ownerUserId')!.markAsTouched();
+    if (user) {
+      this.legacyOwner = null;
+    }
+  }
+
+  /** Personne n'est choisi dans l'annuaire. */
+  get ownerMissing(): boolean {
+    const compte = this.form.get('ownerUserId');
+    return !!compte && compte.touched && compte.invalid;
+  }
+
   filtered(liste: string[], controlName: string): string[] {
     const q = String(this.form.get(controlName)?.value ?? '').trim().toLowerCase();
     return liste.filter(v => !q || v.toLowerCase().includes(q)).slice(0, 20);
@@ -220,6 +244,8 @@ export class ItemFormComponent implements OnInit {
       process: ['', [Validators.required, Validators.maxLength(120)]],
       site: ['', Validators.maxLength(120)],
       owner: ['', [Validators.required, Validators.maxLength(150)]],
+      // Le propriétaire est une personne de l'annuaire (ADR 0092) : la choisir est obligatoire.
+      ownerUserId: [null as string | null, Validators.required],
       origin: ['DIRECT' as RegisterOrigin, Validators.required],
       originRef: ['', Validators.maxLength(120)],
       decision: ['UNDECIDED', Validators.required],
@@ -270,6 +296,7 @@ export class ItemFormComponent implements OnInit {
     this.reference = item.reference;
     const commun = {
       title: item.title, type: item.type, process: item.process, site: item.site ?? '', owner: item.owner,
+      ownerUserId: item.ownerUserId ?? null,
       origin: item.origin, originRef: item.originRef ?? '', decision: item.decision,
       requirements: [...item.requirements], status: item.status
     };
@@ -291,6 +318,26 @@ export class ItemFormComponent implements OnInit {
     }
     this.verrouillerOrigine();
     this.form.markAsPristine();
+    if (!item.ownerUserId) {
+      this.rapprocherProprietaire(item.owner);
+    }
+  }
+
+  /**
+   * Une fiche d'avant l'annuaire n'a qu'un nom tapé : s'il désigne EXACTEMENT
+   * une personne de l'annuaire, elle est proposée ; sinon le nom reste, et
+   * l'écran invite à choisir la personne.
+   */
+  private rapprocherProprietaire(nom: string | null | undefined): void {
+    const ancien = nom?.trim();
+    if (!ancien) return;
+    this.legacyOwner = ancien;
+    findExactPerson(this.directory, ancien).subscribe(person => {
+      if (person && !this.form.get('ownerUserId')!.value) {
+        this.form.patchValue({ ownerUserId: person.accountId, owner: personName(person).slice(0, 150) });
+        this.legacyOwner = null;
+      }
+    });
   }
 
   private chargerBrouillon(origine: RiskSourceOrigin, source: string): void {
@@ -360,7 +407,8 @@ export class ItemFormComponent implements OnInit {
     const v = this.form.getRawValue();
     return {
       title: v.title.trim(), type: v.type, process: v.process.trim(), site: v.site.trim() || null,
-      owner: v.owner.trim(), cause: v.cause.trim() || null, effect: v.effect.trim() || null,
+      owner: v.owner.trim(), ownerUserId: v.ownerUserId ?? null,
+      cause: v.cause.trim() || null, effect: v.effect.trim() || null,
       origin: v.origin, originRef: v.originRef.trim() || null,
       sourceId: this.draft?.sourceId ?? null,
       grossSeverity: v.grossSeverity, grossProbability: v.grossProbability,
@@ -377,7 +425,8 @@ export class ItemFormComponent implements OnInit {
     const v = this.form.getRawValue();
     return {
       title: v.title.trim(), type: v.type, process: v.process.trim(), site: v.site.trim() || null,
-      owner: v.owner.trim(), targetDate: v.targetDate || null, context: v.context.trim() || null,
+      owner: v.owner.trim(), ownerUserId: v.ownerUserId ?? null,
+      targetDate: v.targetDate || null, context: v.context.trim() || null,
       benefit: v.benefit.trim() || null, origin: v.origin, originRef: v.originRef.trim() || null,
       gain: v.gain, feasibility: v.feasibility, decision: v.decision,
       status: this.isEdit && v.status ? v.status : undefined, requirements: v.requirements,
