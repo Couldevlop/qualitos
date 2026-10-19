@@ -10762,6 +10762,538 @@ Portail clients</source>
         <source>Échec de la prévision (HTTP <x id="status"/>).</source>
         <target state="translated">预测失败（HTTP <x id="status"/>）。</target>
       </trans-unit>
+      <trans-unit id="nav.admin-documents" datatype="html">
+        <source>Documentation</source>
+        <target state="translated">文档管理</target>
+      </trans-unit>
+      <trans-unit id="documents.type.external" datatype="html">
+        <source>Document externe</source>
+        <target state="translated">外部文件</target>
+      </trans-unit>
+      <trans-unit id="documents.status.in-force" datatype="html">
+        <source>En vigueur</source>
+        <target state="translated">现行</target>
+      </trans-unit>
+      <trans-unit id="documents.status.in-revision" datatype="html">
+        <source>En révision</source>
+        <target state="translated">修订中</target>
+      </trans-unit>
+      <trans-unit id="documents.status.draft" datatype="html">
+        <source>Brouillon</source>
+        <target state="translated">草稿</target>
+      </trans-unit>
+      <trans-unit id="documents.status.review-overdue" datatype="html">
+        <source>Revue dépassée</source>
+        <target state="translated">复审逾期</target>
+      </trans-unit>
+      <trans-unit id="documents.status.archived" datatype="html">
+        <source>Archivé</source>
+        <target state="translated">已归档</target>
+      </trans-unit>
+      <trans-unit id="documents.version.draft" datatype="html">
+        <source>Brouillon</source>
+        <target state="translated">草稿</target>
+      </trans-unit>
+      <trans-unit id="documents.version.in-review" datatype="html">
+        <source>En revue</source>
+        <target state="translated">审核中</target>
+      </trans-unit>
+      <trans-unit id="documents.version.approved" datatype="html">
+        <source>Approuvée</source>
+        <target state="translated">已批准</target>
+      </trans-unit>
+      <trans-unit id="documents.version.published" datatype="html">
+        <source>Actuelle</source>
+        <target state="translated">现行</target>
+      </trans-unit>
+      <trans-unit id="documents.version.obsolete" datatype="html">
+        <source>Obsolète</source>
+        <target state="translated">已废止</target>
+      </trans-unit>
+      <trans-unit id="documents.view.all" datatype="html">
+        <source>Tous les documents</source>
+        <target state="translated">全部文件</target>
+      </trans-unit>
+      <trans-unit id="documents.view.mine" datatype="html">
+        <source>Mes documents</source>
+        <target state="translated">我的文件</target>
+      </trans-unit>
+      <trans-unit id="documents.view.to-validate" datatype="html">
+        <source>À valider par moi</source>
+        <target state="translated">待我审批</target>
+      </trans-unit>
+      <trans-unit id="documents.view.review-due" datatype="html">
+        <source>Revues à échéance</source>
+        <target state="translated">待复审</target>
+      </trans-unit>
+      <trans-unit id="documents.view.archived" datatype="html">
+        <source>Archives (obsolètes)</source>
+        <target state="translated">归档（已废止）</target>
+      </trans-unit>
+      <trans-unit id="documents.unit.bytes" datatype="html">
+        <source>o</source>
+        <target state="translated">B</target>
+      </trans-unit>
+      <trans-unit id="documents.unit.kb" datatype="html">
+        <source>Ko</source>
+        <target state="translated">KB</target>
+      </trans-unit>
+      <trans-unit id="documents.unit.mb" datatype="html">
+        <source>Mo</source>
+        <target state="translated">MB</target>
+      </trans-unit>
+      <trans-unit id="documents.unit.gb" datatype="html">
+        <source>Go</source>
+        <target state="translated">GB</target>
+      </trans-unit>
+      <trans-unit id="documents.nav.aria" datatype="html">
+        <source>Documentation</source>
+        <target state="translated">文档管理</target>
+      </trans-unit>
+      <trans-unit id="documents.nav.folders" datatype="html">
+        <source>Arborescence</source>
+        <target state="translated">文件夹</target>
+      </trans-unit>
+      <trans-unit id="documents.list.heading" datatype="html">
+        <source>Documentation qualité</source>
+        <target state="translated">质量文件</target>
+      </trans-unit>
+      <trans-unit id="documents.list.count-one" datatype="html">
+        <source>1 document</source>
+        <target state="translated">1 份文件</target>
+      </trans-unit>
+      <trans-unit id="documents.list.count-many" datatype="html">
+        <source><x id="INTERPOLATION"/> documents</source>
+        <target state="translated"><x id="INTERPOLATION"/> 份文件</target>
+      </trans-unit>
+      <trans-unit id="documents.list.import" datatype="html">
+        <source>Importer</source>
+        <target state="translated">导入</target>
+      </trans-unit>
+      <trans-unit id="documents.list.col-reference" datatype="html">
+        <source>Référence</source>
+        <target state="translated">编号</target>
+      </trans-unit>
+      <trans-unit id="documents.list.col-owner" datatype="html">
+        <source>Propriétaire</source>
+        <target state="translated">负责人</target>
+      </trans-unit>
+      <trans-unit id="documents.list.col-review" datatype="html">
+        <source>Prochaine revue</source>
+        <target state="translated">下次复审</target>
+      </trans-unit>
+      <trans-unit id="documents.filter.search" datatype="html">
+        <source>Rechercher par code, titre ou description</source>
+        <target state="translated">按编号、标题或描述搜索</target>
+      </trans-unit>
+      <trans-unit id="documents.filter.process" datatype="html">
+        <source>Processus</source>
+        <target state="translated">过程</target>
+      </trans-unit>
+      <trans-unit id="documents.filter.owner" datatype="html">
+        <source>Propriétaire</source>
+        <target state="translated">负责人</target>
+      </trans-unit>
+      <trans-unit id="documents.filter.clear" datatype="html">
+        <source>Effacer les filtres</source>
+        <target state="translated">清除筛选</target>
+      </trans-unit>
+      <trans-unit id="documents.empty.filtered" datatype="html">
+        <source>Aucun document ne correspond à ces filtres.</source>
+        <target state="translated">没有符合这些筛选条件的文件。</target>
+      </trans-unit>
+      <trans-unit id="documents.empty.none" datatype="html">
+        <source>Aucun document ici pour l'instant.</source>
+        <target state="translated">这里还没有文件。</target>
+      </trans-unit>
+      <trans-unit id="documents.empty.hint" datatype="html">
+        <source>Déposez des fichiers sur cette page ou créez un document.</source>
+        <target state="translated">将文件拖放到此页面，或新建文件。</target>
+      </trans-unit>
+      <trans-unit id="documents.pager.range" datatype="html">
+        <source><x id="INTERPOLATION"/>–<x id="INTERPOLATION_1"/> sur <x id="INTERPOLATION_2"/></source>
+        <target state="translated">第 <x id="INTERPOLATION"/>–<x id="INTERPOLATION_1"/> 条，共 <x id="INTERPOLATION_2"/> 条</target>
+      </trans-unit>
+      <trans-unit id="documents.pager.page" datatype="html">
+        <source>Page <x id="INTERPOLATION"/> / <x id="INTERPOLATION_1"/></source>
+        <target state="translated">第 <x id="INTERPOLATION"/> / <x id="INTERPOLATION_1"/> 页</target>
+      </trans-unit>
+      <trans-unit id="documents.pager.previous" datatype="html">
+        <source>Page précédente</source>
+        <target state="translated">上一页</target>
+      </trans-unit>
+      <trans-unit id="documents.pager.next" datatype="html">
+        <source>Page suivante</source>
+        <target state="translated">下一页</target>
+      </trans-unit>
+      <trans-unit id="documents.drop.title" datatype="html">
+        <source>Déposez vos fichiers pour les importer</source>
+        <target state="translated">拖放文件以导入</target>
+      </trans-unit>
+      <trans-unit id="documents.drop.where" datatype="html">
+        <source>Dans « <x id="INTERPOLATION"/> »</source>
+        <target state="translated">至“<x id="INTERPOLATION"/>”</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.close" datatype="html">
+        <source>Fermer la fiche</source>
+        <target state="translated">关闭面板</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.preview-loading" datatype="html">
+        <source>Chargement de l'aperçu…</source>
+        <target state="translated">正在加载预览…</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.preview-title" datatype="html">
+        <source>Aperçu du document</source>
+        <target state="translated">文件预览</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.preview-failed" datatype="html">
+        <source>L'aperçu n'a pas pu être chargé.</source>
+        <target state="translated">无法加载预览。</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.preview-too-large" datatype="html">
+        <source>Fichier trop volumineux pour l'aperçu : téléchargez-le.</source>
+        <target state="translated">文件过大，无法预览，请下载。</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.preview-purged" datatype="html">
+        <source>Fichier retiré au terme de sa conservation. Son empreinte reste vérifiable.</source>
+        <target state="translated">文件已在保存期满后移除，其指纹仍可验证。</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.preview-unavailable" datatype="html">
+        <source>Pas d'aperçu pour ce format.</source>
+        <target state="translated">此格式不支持预览。</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.no-file" datatype="html">
+        <source>Aucun fichier joint à cette version.</source>
+        <target state="translated">此版本未附加文件。</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.open" datatype="html">
+        <source>Ouvrir</source>
+        <target state="translated">打开</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.download" datatype="html">
+        <source>Télécharger</source>
+        <target state="translated">下载</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.download-failed" datatype="html">
+        <source>Le fichier n'a pas pu être téléchargé. Réessayez.</source>
+        <target state="translated">无法下载文件，请重试。</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.circuit" datatype="html">
+        <source>Circuit de la version <x id="INTERPOLATION"/></source>
+        <target state="translated">第 <x id="INTERPOLATION"/> 版审批流程</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.step-draft" datatype="html">
+        <source>Rédaction</source>
+        <target state="translated">起草</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.step-review" datatype="html">
+        <source>Vérification</source>
+        <target state="translated">审核</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.step-approval" datatype="html">
+        <source>Approbation</source>
+        <target state="translated">批准</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.step-publish" datatype="html">
+        <source>Diffusion</source>
+        <target state="translated">发布</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.rejected" datatype="html">
+        <source>Refusée : <x id="INTERPOLATION"/></source>
+        <target state="translated">已退回：<x id="INTERPOLATION"/></target>
+      </trans-unit>
+      <trans-unit id="documents.panel.details" datatype="html">
+        <source>Informations</source>
+        <target state="translated">详情</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.folder" datatype="html">
+        <source>Dossier</source>
+        <target state="translated">文件夹</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.acknowledgments" datatype="html">
+        <source>Prises de connaissance</source>
+        <target state="translated">已阅确认</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.updated" datatype="html">
+        <source>Mis à jour</source>
+        <target state="translated">更新于</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.history" datatype="html">
+        <source>Historique des versions</source>
+        <target state="translated">版本历史</target>
+      </trans-unit>
+      <trans-unit id="documents.import.title" datatype="html">
+        <source>Importer des documents</source>
+        <target state="translated">导入文件</target>
+      </trans-unit>
+      <trans-unit id="documents.import.intro" datatype="html">
+        <source>Chaque fichier devient un document en brouillon, avec le fichier dans sa première version.</source>
+        <target state="translated">每个文件都会成为一份草稿文件，文件放在其第一个版本中。</target>
+      </trans-unit>
+      <trans-unit id="documents.import.no-folder" datatype="html">
+        <source>Sans dossier</source>
+        <target state="translated">无文件夹</target>
+      </trans-unit>
+      <trans-unit id="documents.import.mandatory-read" datatype="html">
+        <source>Lecture obligatoire</source>
+        <target state="translated">必读</target>
+      </trans-unit>
+      <trans-unit id="documents.import.drop" datatype="html">
+        <source>Déposez des fichiers ici ou cliquez pour les choisir</source>
+        <target state="translated">将文件拖放到此处，或点击选择</target>
+      </trans-unit>
+      <trans-unit id="documents.import.policy" datatype="html">
+        <source>PDF, Word, Excel, PowerPoint, images ou texte — <x id="INTERPOLATION"/> Mo maximum par fichier</source>
+        <target state="translated">PDF、Word、Excel、PowerPoint、图片或文本 — 每个文件最大 <x id="INTERPOLATION"/> MB</target>
+      </trans-unit>
+      <trans-unit id="documents.import.remove" datatype="html">
+        <source>Retirer ce fichier</source>
+        <target state="translated">移除此文件</target>
+      </trans-unit>
+      <trans-unit id="documents.import.fix-lines" datatype="html">
+        <source>Corrigez ou retirez les lignes signalées.</source>
+        <target state="translated">请更正或移除标记的行。</target>
+      </trans-unit>
+      <trans-unit id="documents.import.progress" datatype="html">
+        <source><x id="INTERPOLATION"/> sur <x id="INTERPOLATION_1"/> importés</source>
+        <target state="translated">已导入 <x id="INTERPOLATION"/> / <x id="INTERPOLATION_1"/></target>
+      </trans-unit>
+      <trans-unit id="documents.import.submit" datatype="html">
+        <source>Importer <x id="INTERPOLATION"/> fichier(s)</source>
+        <target state="translated">导入 <x id="INTERPOLATION"/> 个文件</target>
+      </trans-unit>
+      <trans-unit id="documents.import.running" datatype="html">
+        <source>Import en cours…</source>
+        <target state="translated">正在导入…</target>
+      </trans-unit>
+      <trans-unit id="documents.import.upload-failed" datatype="html">
+        <source>Document créé, mais le fichier n'a pas été envoyé.</source>
+        <target state="translated">文件记录已创建，但文件未上传。</target>
+      </trans-unit>
+      <trans-unit id="documents.import.empty-file" datatype="html">
+        <source>Ce fichier est vide.</source>
+        <target state="translated">此文件为空。</target>
+      </trans-unit>
+      <trans-unit id="documents.import.too-large" datatype="html">
+        <source>Fichier trop volumineux (maximum <x id="max"/> Mo).</source>
+        <target state="translated">文件过大（最大 <x id="max"/> MB）。</target>
+      </trans-unit>
+      <trans-unit id="documents.import.bad-type" datatype="html">
+        <source>Format non accepté.</source>
+        <target state="translated">不支持此格式。</target>
+      </trans-unit>
+      <trans-unit id="documents.import.bad-code" datatype="html">
+        <source>Code invalide : lettres majuscules, chiffres, point, tiret, souligné.</source>
+        <target state="translated">编号无效：仅限大写字母、数字、点、连字符、下划线。</target>
+      </trans-unit>
+      <trans-unit id="documents.import.bad-title" datatype="html">
+        <source>Le titre est obligatoire.</source>
+        <target state="translated">标题为必填项。</target>
+      </trans-unit>
+      <trans-unit id="documents.create.attach" datatype="html">
+        <source>Joindre un fichier (facultatif)</source>
+        <target state="translated">附加文件（可选）</target>
+      </trans-unit>
+      <trans-unit id="documents.create.remove-file" datatype="html">
+        <source>Retirer le fichier</source>
+        <target state="translated">移除文件</target>
+      </trans-unit>
+      <trans-unit id="documents.create.first-version-title" datatype="html">
+        <source>Première version, en brouillon</source>
+        <target state="translated">第一版（草稿）</target>
+      </trans-unit>
+      <trans-unit id="documents.edit.review-hint" datatype="html">
+        <source>Fixée à la publication selon la périodicité du tenant ; avancez-la ou reculez-la au besoin.</source>
+        <target state="translated">发布时按复审周期设定，可按需提前或推迟。</target>
+      </trans-unit>
+      <trans-unit id="documents.detail.col-file" datatype="html">
+        <source>Fichier</source>
+        <target state="translated">文件</target>
+      </trans-unit>
+      <trans-unit id="documents.detail.file-purged" datatype="html">
+        <source>Retiré (conservation échue)</source>
+        <target state="translated">已移除（保存期满）</target>
+      </trans-unit>
+      <trans-unit id="documents.detail.attach-file" datatype="html">
+        <source>Joindre</source>
+        <target state="translated">附加</target>
+      </trans-unit>
+      <trans-unit id="documents.detail.replace-file" datatype="html">
+        <source>Remplacer</source>
+        <target state="translated">替换</target>
+      </trans-unit>
+      <trans-unit id="documents.detail.file-uploaded" datatype="html">
+        <source>Fichier joint.</source>
+        <target state="translated">文件已附加。</target>
+      </trans-unit>
+      <trans-unit id="documents.detail.file-upload-failed" datatype="html">
+        <source>Le fichier n'a pas pu être envoyé.</source>
+        <target state="translated">无法上传文件。</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.title" datatype="html">
+        <source>Documentation</source>
+        <target state="translated">文档管理</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.subtitle" datatype="html">
+        <source>Revues périodiques, fichiers, arborescence et processus de la documentation qualité.</source>
+        <target state="translated">质量文件的定期复审、文件、文件夹和过程。</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.back" datatype="html">
+        <source>Documentation qualité</source>
+        <target state="translated">质量文件</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.load-failed" datatype="html">
+        <source>Les paramètres de la documentation n'ont pas pu être chargés.</source>
+        <target state="translated">无法加载文档设置。</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.storage" datatype="html">
+        <source>Stockage</source>
+        <target state="translated">存储</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.stored" datatype="html">
+        <source>occupés</source>
+        <target state="translated">已占用</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.files" datatype="html">
+        <source>fichiers distincts</source>
+        <target state="translated">个不同文件</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.saved-by" datatype="html">
+        <source>grâce aux doublons et à la compression</source>
+        <target state="translated">得益于去重和压缩</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.quota-used" datatype="html">
+        <source>Quota utilisé</source>
+        <target state="translated">已用配额</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.quota-line" datatype="html">
+        <source><x id="INTERPOLATION"/> % du quota de <x id="INTERPOLATION_1"/></source>
+        <target state="translated">已用 <x id="INTERPOLATION_1"/> 配额的 <x id="INTERPOLATION"/>%</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.storage-help" datatype="html">
+        <source>Un fichier déposé deux fois n'est stocké qu'une fois ; les formats texte et bureautiques anciens sont compressés. Sans compression ni partage, la documentation occuperait <x id="INTERPOLATION"/>.</source>
+        <target state="translated">重复上传的文件只存储一次；文本和旧版办公格式会被压缩。若不压缩也不共享，文档将占用 <x id="INTERPOLATION"/>。</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.review" datatype="html">
+        <source>Revue périodique</source>
+        <target state="translated">定期复审</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.review-help" datatype="html">
+        <source>À la publication, la prochaine revue est fixée selon cette périodicité. Le préavis fait entrer le document dans « Revues à échéance ».</source>
+        <target state="translated">发布时按此周期设定下次复审；进入提前通知期后，文件会出现在“待复审”中。</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.period" datatype="html">
+        <source>Périodicité (mois)</source>
+        <target state="translated">周期（月）</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.warning" datatype="html">
+        <source>Préavis (jours)</source>
+        <target state="translated">提前通知（天）</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.files-title" datatype="html">
+        <source>Fichiers</source>
+        <target state="translated">文件</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.files-help" datatype="html">
+        <source>Laissez le quota vide pour ne pas en fixer. Sans durée de conservation, les fichiers des versions obsolètes sont gardés indéfiniment ; leur empreinte reste toujours.</source>
+        <target state="translated">配额留空即不设限。未设保存期限时，已废止版本的文件将无限期保留；其指纹始终保留。</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.max-file" datatype="html">
+        <source>Taille max. par fichier (Mo)</source>
+        <target state="translated">单个文件最大（MB）</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.max-file-hint" datatype="html">
+        <source>Au plus <x id="INTERPOLATION"/> Mo</source>
+        <target state="translated">最多 <x id="INTERPOLATION"/> MB</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.quota" datatype="html">
+        <source>Quota (Mo)</source>
+        <target state="translated">配额（MB）</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.retention" datatype="html">
+        <source>Conservation (ans)</source>
+        <target state="translated">保存期限（年）</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.retention-hint" datatype="html">
+        <source>Fichiers des versions obsolètes</source>
+        <target state="translated">已废止版本的文件</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.add-root" datatype="html">
+        <source>Dossier racine</source>
+        <target state="translated">根文件夹</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.tree-help" datatype="html">
+        <source>Jusqu'à <x id="INTERPOLATION"/> niveaux. Les documents se classent dans ces dossiers.</source>
+        <target state="translated">最多 <x id="INTERPOLATION"/> 级。文件归类在这些文件夹中。</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.add-child" datatype="html">
+        <source>Ajouter un sous-dossier</source>
+        <target state="translated">添加子文件夹</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.rename" datatype="html">
+        <source>Renommer</source>
+        <target state="translated">重命名</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.processes" datatype="html">
+        <source>Processus</source>
+        <target state="translated">过程</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.add-process" datatype="html">
+        <source>Ajouter</source>
+        <target state="translated">添加</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.processes-help" datatype="html">
+        <source>Les processus de la cartographie auxquels un document se rattache.</source>
+        <target state="translated">文件所属的过程图中的过程。</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.delete-folder" datatype="html">
+        <source>Supprimer le dossier « <x id="name"/> » ?</source>
+        <target state="translated">删除文件夹“<x id="name"/>”？</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.delete-folder-help" datatype="html">
+        <source>Un dossier qui contient des sous-dossiers ou des documents ne peut pas être supprimé.</source>
+        <target state="translated">包含子文件夹或文件的文件夹无法删除。</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.delete-process" datatype="html">
+        <source>Supprimer le processus « <x id="name"/> » ?</source>
+        <target state="translated">删除过程“<x id="name"/>”？</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.delete-process-help" datatype="html">
+        <source>Un processus rattaché à des documents ne peut pas être supprimé.</source>
+        <target state="translated">已关联文件的过程无法删除。</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.bad-period" datatype="html">
+        <source>La périodicité va de 1 à 120 mois.</source>
+        <target state="translated">周期为 1 至 120 个月。</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.bad-warning" datatype="html">
+        <source>Le préavis va de 0 à 365 jours.</source>
+        <target state="translated">提前通知为 0 至 365 天。</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.bad-max-file" datatype="html">
+        <source>La taille maximale va de 1 à <x id="max"/> Mo.</source>
+        <target state="translated">最大大小为 1 至 <x id="max"/> MB。</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.bad-quota" datatype="html">
+        <source>Le quota est un nombre entier de Mo, ou vide pour aucun.</source>
+        <target state="translated">配额为整数 MB，留空表示不设限。</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.bad-retention" datatype="html">
+        <source>La conservation va de 1 à 100 ans, ou vide pour tout garder.</source>
+        <target state="translated">保存期限为 1 至 100 年，留空表示全部保留。</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.saved" datatype="html">
+        <source>Paramètres enregistrés.</source>
+        <target state="translated">设置已保存。</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.unsaved" datatype="html">
+        <source>Modifications non enregistrées</source>
+        <target state="translated">未保存的更改</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.discard" datatype="html">
+        <source>Annuler les modifications</source>
+        <target state="translated">放弃更改</target>
+      </trans-unit>
       <trans-unit id="dpia.create.hint" datatype="html">
         <source>L'Art. 35 RGPD impose une DPIA pour les traitements présentant un</source>
         <target state="translated">GDPR 第 35 条要求对存在以下风险的处理活动进行 DPIA</target>

@@ -24,6 +24,34 @@
     <textarea matInput formControlName="description" rows="3"></textarea>
   </mat-form-field>
 
+  <div class="row">
+    <mat-form-field appearance="outline" class="col">
+      <mat-label i18n="@@documents.panel.folder">Dossier</mat-label>
+      <mat-select formControlName="folderId">
+        <mat-option [value]="null" i18n="@@documents.import.no-folder">Sans dossier</mat-option>
+        <mat-option *ngFor="let r of folders" [value]="r.folder.id">
+          <span [style.padding-inline-start.px]="r.depth * 12">{{ r.folder.name }}</span>
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="col">
+      <mat-label i18n="@@documents.filter.process">Processus</mat-label>
+      <mat-select formControlName="processId">
+        <mat-option [value]="null" i18n="@@common.none">Aucun</mat-option>
+        <mat-option *ngFor="let p of processes" [value]="p.id">{{ p.name }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <qos-user-picker class="full" formControlName="ownerId" required
+                   label="Propriétaire" i18n-label="@@documents.list.col-owner"></qos-user-picker>
+
+  <mat-form-field appearance="outline" class="full" *ngIf="reviewEditable">
+    <mat-label i18n="@@documents.list.col-review">Prochaine revue</mat-label>
+    <input matInput type="date" formControlName="nextReviewDate">
+    <mat-hint i18n="@@documents.edit.review-hint">Fixée à la publication selon la périodicité du tenant ; avancez-la ou reculez-la au besoin.</mat-hint>
+  </mat-form-field>
+
   <mat-checkbox formControlName="mandatoryRead" i18n="@@documents.edit.mandatory-read">Lecture obligatoire</mat-checkbox>
 
 </qos-form-dialog>

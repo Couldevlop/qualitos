@@ -1,4 +1,4 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpBackend, HttpClient, HttpEvent, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { delay } from 'rxjs/operators';
@@ -12,10 +12,21 @@ import {
   CreateVersionRequest,
   DocumentPage,
   DocumentResponse,
+  DocumentFolder,
+  DocumentListFilter,
+  DocumentProcess,
+  DocumentSettings,
+  DocumentSettingsForm,
   DocumentStatus,
   DocumentVersionResponse,
+  DocumentViewCounts,
+  FileLink,
+  FolderRequest,
+  ProcessRequest,
+  StorageUsage,
   UpdateDocumentRequest,
-  UpdateVersionRequest
+  UpdateVersionRequest,
+  UploadPolicy
 } from './documents.types';
 
 @Injectable({ providedIn: 'root' })
@@ -23,9 +34,136 @@ export class DocumentsService {
 
   private readonly endpoint = `${environment.apiBaseUrl}/api/v1/documents`;
 
+  private readonly filesEndpoint = `${environment.apiBaseUrl}/api/v1/document-files`;
+
   private readonly mockStore: DocumentResponse[] = this.seedMockDocuments();
 
-  constructor(private readonly http: HttpClient) {}
+  /**
+   * Client SANS intercepteurs, pour lire un fichier par son lien présigné : la
+   * signature du lien fait l'autorisation, et un jeton ajouté par l'intercepteur
+   * ferait refuser la requête par le stockage (deux authentifications à la fois).
+   */
+  private readonly rawHttp: HttpClient;
+
+  constructor(private readonly http: HttpClient, backend: HttpBackend) {
+    this.rawHttp = new HttpClient(backend);
+  }
+
+  // ---------- GED : liste, vues, arborescence (ADR 0094) ----------
+
+  /** La liste filtrée comme l'écran le demande. */
+  search(filter: DocumentListFilter, page = 0, size = 20): Observable<DocumentPage> {
+    if (environment.useMockApi) {
+      const q = (filter.q ?? '').toLowerCase();
+      const rows = this.mockStore.filter(d =>
+        (filter.view === 'ARCHIVED' ? d.status === 'ARCHIVED' : d.status === 'ACTIVE')
+        && (!q || d.code.toLowerCase().includes(q) || d.title.toLowerCase().includes(q)));
+      return of({ content: rows, totalElements: rows.length, totalPages: 1, number: 0, size: rows.length })
+        .pipe(delay(120));
+    }
+    let params = new HttpParams().set('page', page).set('size', size).set('view', filter.view ?? 'ALL');
+    const optional: [string, string | null | undefined][] = [
+      ['folderId', filter.folderId], ['q', filter.q?.trim()], ['displayStatus', filter.displayStatus],
+      ['type', filter.type], ['processId', filter.processId], ['ownerId', filter.ownerId]
+    ];
+    for (const [k, v] of optional) {
+      if (v) params = params.set(k, v);
+    }
+    return this.http.get<DocumentPage>(this.endpoint, { params });
+  }
+
+  views(): Observable<DocumentViewCounts> {
+    if (environment.useMockApi) {
+      const active = this.mockStore.filter(d => d.status === 'ACTIVE').length;
+      return of({ all: active, mine: active, toValidate: 1, reviewDue: 0,
+        archived: this.mockStore.length - active }).pipe(delay(60));
+    }
+    return this.http.get<DocumentViewCounts>(`${this.endpoint}/views`);
+  }
+
+  folders(): Observable<DocumentFolder[]> {
+    if (environment.useMockApi) {
+      return of([
+        { id: 'f-man', parentId: null, name: 'Manuel qualité', position: 0 },
+        { id: 'f-pro', parentId: null, name: 'Procédures', position: 1 },
+        { id: 'f-pro-r', parentId: 'f-pro', name: 'Processus de réalisation', position: 0 },
+        { id: 'f-pro-s', parentId: 'f-pro', name: 'Processus support', position: 1 }
+      ]).pipe(delay(60));
+    }
+    return this.http.get<DocumentFolder[]>(`${this.endpoint}/folders`);
+  }
+
+  createFolder(body: FolderRequest): Observable<DocumentFolder> {
+    return this.http.post<DocumentFolder>(`${this.endpoint}/folders`, body);
+  }
+
+  updateFolder(id: string, body: FolderRequest): Observable<DocumentFolder> {
+    return this.http.put<DocumentFolder>(`${this.endpoint}/folders/${id}`, body);
+  }
+
+  deleteFolder(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.endpoint}/folders/${id}`);
+  }
+
+  processes(): Observable<DocumentProcess[]> {
+    if (environment.useMockApi) {
+      return of([{ id: 'p-mq', name: 'Management qualité', position: 0 }]).pipe(delay(60));
+    }
+    return this.http.get<DocumentProcess[]>(`${this.endpoint}/processes`);
+  }
+
+  createProcess(body: ProcessRequest): Observable<DocumentProcess> {
+    return this.http.post<DocumentProcess>(`${this.endpoint}/processes`, body);
+  }
+
+  updateProcess(id: string, body: ProcessRequest): Observable<DocumentProcess> {
+    return this.http.put<DocumentProcess>(`${this.endpoint}/processes/${id}`, body);
+  }
+
+  deleteProcess(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.endpoint}/processes/${id}`);
+  }
+
+  settings(): Observable<DocumentSettings> {
+    return this.http.get<DocumentSettings>(`${this.endpoint}/settings`);
+  }
+
+  saveSettings(form: DocumentSettingsForm): Observable<DocumentSettings> {
+    return this.http.put<DocumentSettings>(`${this.endpoint}/settings`, form);
+  }
+
+  storage(): Observable<StorageUsage> {
+    return this.http.get<StorageUsage>(`${this.endpoint}/storage`);
+  }
+
+  uploadPolicy(): Observable<UploadPolicy> {
+    if (environment.useMockApi) {
+      return of({ maxFileMb: 25, allowedTypes: ['application/pdf'], allowedExtensions: ['pdf'] });
+    }
+    return this.http.get<UploadPolicy>(`${this.endpoint}/upload-policy`);
+  }
+
+  // ---------- fichiers ----------
+
+  /** Joint un fichier à une version en brouillon ; les évènements portent la progression. */
+  uploadFile(documentId: string, versionId: string, file: File): Observable<HttpEvent<DocumentVersionResponse>> {
+    const form = new FormData();
+    form.append('file', file, file.name);
+    return this.http.post<DocumentVersionResponse>(
+      `${this.filesEndpoint}/${documentId}/versions/${versionId}`, form,
+      { reportProgress: true, observe: 'events' });
+  }
+
+  /** Un lien présigné, valable quelques minutes : téléchargement ou aperçu. */
+  fileLink(documentId: string, versionId: string, download: boolean): Observable<FileLink> {
+    const params = new HttpParams().set('download', download);
+    return this.http.get<FileLink>(`${this.endpoint}/${documentId}/versions/${versionId}/file`, { params });
+  }
+
+  /** Les octets d'un fichier, lus par son lien présigné (pour l'aperçu). */
+  fetchFile(url: string): Observable<Blob> {
+    return this.rawHttp.get(url, { responseType: 'blob' });
+  }
 
   // ---------- Documents ----------
 

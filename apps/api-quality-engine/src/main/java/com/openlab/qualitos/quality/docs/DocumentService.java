@@ -1,5 +1,7 @@
 package com.openlab.qualitos.quality.docs;
 
+import com.openlab.qualitos.quality.authz.application.AuthorizationService;
+import com.openlab.qualitos.quality.authz.domain.Permission;
 import com.openlab.qualitos.quality.circuit.application.ApprovalCircuits;
 import com.openlab.qualitos.quality.circuit.application.CircuitDto;
 import com.openlab.qualitos.quality.circuit.domain.CircuitRun;
@@ -9,51 +11,135 @@ import com.openlab.qualitos.quality.common.CurrentUser;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.common.TenantContext;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.Clock;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HexFormat;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
 @Transactional
 public class DocumentService {
 
+    /**
+     * Rôle qu'aucun client ne porte : la requête « à valider par moi » exige une
+     * liste de rôles non vide, et un utilisateur sans rôle ne doit rien y trouver.
+     */
+    private static final String NO_ROLE = "-";
+
     private final DocumentRepository documentRepository;
     private final DocumentVersionRepository versionRepository;
     private final DocumentAcknowledgmentRepository ackRepository;
     private final ApprovalCircuits circuits;
+    private final DocumentCatalogService catalog;
+    private final AuthorizationService authorization;
+    private final Clock clock;
 
     public DocumentService(DocumentRepository documentRepository,
                            DocumentVersionRepository versionRepository,
                            DocumentAcknowledgmentRepository ackRepository,
-                           ApprovalCircuits circuits) {
+                           ApprovalCircuits circuits,
+                           DocumentCatalogService catalog,
+                           AuthorizationService authorization,
+                           Clock clock) {
         this.documentRepository = documentRepository;
         this.versionRepository = versionRepository;
         this.ackRepository = ackRepository;
         this.circuits = circuits;
+        this.catalog = catalog;
+        this.authorization = authorization;
+        this.clock = clock;
     }
 
     // --- documents ---
 
     @Transactional(readOnly = true)
     public Page<DocumentDto.DocumentResponse> findAll(DocumentStatus status, Pageable pageable) {
+        return search(DocumentDto.ListFilter.of(status), pageable);
+    }
+
+    /** La liste de la GED, filtrée comme l'écran le demande (ADR 0094). */
+    @Transactional(readOnly = true)
+    public Page<DocumentDto.DocumentResponse> search(DocumentDto.ListFilter f, Pageable pageable) {
         UUID tenantId = requireTenantId();
-        Page<Document> page = status != null
-                ? documentRepository.findByTenantIdAndStatus(tenantId, status, pageable)
-                : documentRepository.findByTenantId(tenantId, pageable);
-        return page.map(this::toResponse);
+        LocalDate today = today();
+        List<Specification<Document>> specs = new ArrayList<>();
+        specs.add(DocumentSpecifications.tenant(tenantId));
+        if (f.view() != null) {
+            specs.add(viewSpec(tenantId, f.view(), today));
+        }
+        if (f.folderId() != null) {
+            specs.add(DocumentSpecifications.inFolders(catalog.folderAndDescendants(tenantId, f.folderId())));
+        }
+        specs.add(DocumentSpecifications.matching(f.q()));
+        specs.add(DocumentSpecifications.withDisplayStatus(f.displayStatus(), today));
+        specs.add(DocumentSpecifications.ofType(f.type()));
+        specs.add(DocumentSpecifications.ofProcess(f.processId()));
+        specs.add(DocumentSpecifications.ownedBy(f.ownerId()));
+        Pageable sorted = pageable.getSort().isSorted() ? pageable
+                : PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("code"));
+        return documentRepository.findAll(Specification.allOf(specs.stream().filter(s -> s != null).toList()), sorted)
+                .map(d -> toResponse(d, today));
+    }
+
+    /** Les compteurs des vues rapides du panneau de gauche. */
+    @Transactional(readOnly = true)
+    public DocumentDto.ViewCounts viewCounts() {
+        UUID tenantId = requireTenantId();
+        LocalDate today = today();
+        return new DocumentDto.ViewCounts(
+                count(tenantId, DocumentView.ALL, today),
+                count(tenantId, DocumentView.MINE, today),
+                count(tenantId, DocumentView.TO_VALIDATE, today),
+                count(tenantId, DocumentView.REVIEW_DUE, today),
+                count(tenantId, DocumentView.ARCHIVED, today));
+    }
+
+    private long count(UUID tenantId, DocumentView view, LocalDate today) {
+        return documentRepository.count(Specification.allOf(DocumentSpecifications.tenant(tenantId),
+                viewSpec(tenantId, view, today)));
+    }
+
+    private Specification<Document> viewSpec(UUID tenantId, DocumentView view, LocalDate today) {
+        return switch (view) {
+            case ALL -> DocumentSpecifications.active();
+            case ARCHIVED -> DocumentSpecifications.archived();
+            case MINE -> Specification.allOf(DocumentSpecifications.active(),
+                    DocumentSpecifications.ownedBy(CurrentUser.requireUserId()));
+            case REVIEW_DUE -> Specification.allOf(DocumentSpecifications.active(),
+                    DocumentSpecifications.reviewDueBy(
+                            today.plusDays(catalog.settingsOf(tenantId).getReviewWarningDays())));
+            case TO_VALIDATE -> DocumentSpecifications.idIn(awaitingMyDecision(tenantId));
+        };
+    }
+
+    /** Les documents dont une version en revue attend la décision de l'utilisateur. */
+    private List<UUID> awaitingMyDecision(UUID tenantId) {
+        Set<String> roles = new HashSet<>(authorization.currentRoleCodes());
+        roles.add(NO_ROLE);
+        return documentRepository.findIdsAwaitingDecisionOf(tenantId, CurrentUser.requireUserId(), roles,
+                authorization.has(Permission.DOCUMENT_APPROVE)).stream().map(UUID::fromString).toList();
     }
 
     @Transactional(readOnly = true)
     public DocumentDto.DocumentResponse findById(UUID id) {
-        return toResponse(loadDocument(id));
+        return toResponse(loadDocument(id), today());
     }
 
     public DocumentDto.DocumentResponse createDocument(DocumentDto.CreateDocumentRequest req) {
@@ -61,6 +147,8 @@ public class DocumentService {
         if (documentRepository.existsByTenantIdAndCode(tenantId, req.code())) {
             throw new DocumentCodeConflictException(req.code());
         }
+        if (req.folderId() != null) catalog.requireFolderOf(tenantId, req.folderId());
+        if (req.processId() != null) catalog.requireProcessOf(tenantId, req.processId());
 
         Document d = new Document();
         d.setTenantId(tenantId);
@@ -71,6 +159,9 @@ public class DocumentService {
         d.setStatus(DocumentStatus.ACTIVE);
         d.setOwnerId(req.ownerId());
         d.setMandatoryRead(req.mandatoryRead());
+        d.setFolderId(req.folderId());
+        d.setProcessId(req.processId());
+        d.setLifecycle(DocumentLifecycle.DRAFT);
         d = documentRepository.save(d);
 
         DocumentVersion v = new DocumentVersion();
@@ -88,7 +179,7 @@ public class DocumentService {
         versionRepository.save(v);
         d.getVersions().add(v);
 
-        return toResponse(d);
+        return toResponse(d, today());
     }
 
     public DocumentDto.DocumentResponse updateDocument(UUID id, DocumentDto.UpdateDocumentRequest req) {
@@ -101,7 +192,25 @@ public class DocumentService {
         if (req.type() != null) d.setType(req.type());
         if (req.ownerId() != null) d.setOwnerId(req.ownerId());
         if (req.mandatoryRead() != null) d.setMandatoryRead(req.mandatoryRead());
-        return toResponse(documentRepository.save(d));
+        if (Boolean.TRUE.equals(req.clearFolder())) {
+            d.setFolderId(null);
+        } else if (req.folderId() != null) {
+            catalog.requireFolderOf(d.getTenantId(), req.folderId());
+            d.setFolderId(req.folderId());
+        }
+        if (Boolean.TRUE.equals(req.clearProcess())) {
+            d.setProcessId(null);
+        } else if (req.processId() != null) {
+            catalog.requireProcessOf(d.getTenantId(), req.processId());
+            d.setProcessId(req.processId());
+        }
+        if (req.nextReviewDate() != null) {
+            if (d.getLifecycle() == DocumentLifecycle.DRAFT) {
+                throw new DocumentStateException("A document gets a review date once a version is published");
+            }
+            d.setNextReviewDate(req.nextReviewDate());
+        }
+        return toResponse(documentRepository.save(d), today());
     }
 
     public DocumentDto.DocumentResponse archiveDocument(UUID id) {
@@ -110,7 +219,7 @@ public class DocumentService {
             throw new DocumentStateException("Document already archived");
         }
         d.setStatus(DocumentStatus.ARCHIVED);
-        return toResponse(documentRepository.save(d));
+        return toResponse(documentRepository.save(d), today());
     }
 
     // --- versions ---
@@ -139,7 +248,26 @@ public class DocumentService {
         v.setChangeNote(req.changeNote());
         v.setStatus(VersionStatus.DRAFT);
         v.setAuthorId(actingAs(req.authorId()));
+        // La nouvelle version part du fichier de celle qui fait foi : tant qu'on ne
+        // le remplace pas, les deux partagent le même objet stocké (ADR 0094).
+        latestWithFile(d).ifPresent(prev -> {
+            v.setBlob(prev.getBlob());
+            v.setFileName(prev.getFileName());
+            if (req.content() == null) {
+                v.setContentHash(prev.getBlob().getSha256());
+            }
+        });
+        if (d.getCurrentVersionId() != null) {
+            d.setLifecycle(DocumentLifecycle.IN_REVISION);
+            documentRepository.save(d);
+        }
         return toVersionResponse(versionRepository.save(v));
+    }
+
+    private static Optional<DocumentVersion> latestWithFile(Document d) {
+        return d.getVersions().stream()
+                .filter(x -> x.getBlob() != null)
+                .max(Comparator.comparing(DocumentVersion::getVersionNumber));
     }
 
     public DocumentDto.VersionResponse updateVersion(UUID documentId, UUID versionId,
@@ -152,7 +280,10 @@ public class DocumentService {
         }
         if (req.content() != null) {
             v.setContent(req.content());
-            v.setContentHash(computeHash(req.content()));
+            // Un fichier joint fait foi : son empreinte n'est pas remplacée par celle du texte.
+            if (v.getBlob() == null) {
+                v.setContentHash(computeHash(req.content()));
+            }
         }
         if (req.contentUri() != null) v.setContentUri(req.contentUri());
         if (req.changeNote() != null) v.setChangeNote(req.changeNote());
@@ -227,14 +358,21 @@ public class DocumentService {
         if (v.getStatus() != VersionStatus.APPROVED) {
             throw new DocumentStateException("Only APPROVED versions can be published");
         }
-        // Marquer l'ancienne PUBLISHED en OBSOLETE
+        Instant now = clock.instant();
+        // Marquer l'ancienne PUBLISHED en OBSOLETE : sa conservation court dès maintenant.
         d.getVersions().stream()
                 .filter(other -> other.getStatus() == VersionStatus.PUBLISHED)
-                .forEach(other -> other.setStatus(VersionStatus.OBSOLETE));
+                .forEach(other -> {
+                    other.setStatus(VersionStatus.OBSOLETE);
+                    other.setObsoletedAt(now);
+                });
 
         v.setStatus(VersionStatus.PUBLISHED);
-        v.setPublishedAt(Instant.now());
+        v.setPublishedAt(now);
         d.setCurrentVersionId(v.getId());
+        d.setLifecycle(DocumentLifecycle.IN_FORCE);
+        // La revue périodique repart de la publication, au délai réglé par le client.
+        d.setNextReviewDate(today().plusMonths(catalog.settingsOf(d.getTenantId()).getReviewPeriodMonths()));
         documentRepository.save(d);
         return toVersionResponse(versionRepository.save(v));
     }
@@ -316,6 +454,10 @@ public class DocumentService {
         return UUID.fromString(TenantContext.getTenantId());
     }
 
+    private LocalDate today() {
+        return LocalDate.now(clock);
+    }
+
     static String computeHash(String content) {
         if (content == null) return null;
         try {
@@ -327,21 +469,54 @@ public class DocumentService {
         }
     }
 
-    private DocumentDto.DocumentResponse toResponse(Document d) {
+    /** Le statut affiché : une revue dépassée l'emporte sur le cycle de vie (ADR 0094). */
+    static DisplayStatus displayStatus(Document d, LocalDate today) {
+        if (d.getStatus() == DocumentStatus.ARCHIVED) {
+            return DisplayStatus.ARCHIVED;
+        }
+        DocumentLifecycle lc = d.getLifecycle() == null ? DocumentLifecycle.DRAFT : d.getLifecycle();
+        if (lc != DocumentLifecycle.DRAFT && d.getNextReviewDate() != null && d.getNextReviewDate().isBefore(today)) {
+            return DisplayStatus.REVIEW_OVERDUE;
+        }
+        return switch (lc) {
+            case DRAFT -> DisplayStatus.DRAFT;
+            case IN_FORCE -> DisplayStatus.IN_FORCE;
+            case IN_REVISION -> DisplayStatus.IN_REVISION;
+        };
+    }
+
+    private DocumentDto.DocumentResponse toResponse(Document d, LocalDate today) {
         return new DocumentDto.DocumentResponse(
                 d.getId(), d.getTenantId(), d.getCode(), d.getTitle(), d.getDescription(),
                 d.getType(), d.getStatus(), d.getOwnerId(), d.getCurrentVersionId(),
                 d.isMandatoryRead(), d.getCreatedAt(), d.getUpdatedAt(),
-                d.getVersions().stream().map(this::toVersionResponse).toList());
+                d.getVersions().stream().map(DocumentService::toVersionResponse).toList(),
+                d.getFolderId(), d.getProcessId(), d.getLifecycle(), displayStatus(d, today),
+                d.getNextReviewDate());
     }
 
-    private DocumentDto.VersionResponse toVersionResponse(DocumentVersion v) {
+    static DocumentDto.VersionResponse toVersionResponse(DocumentVersion v) {
         return new DocumentDto.VersionResponse(
                 v.getId(), v.getDocument().getId(), v.getVersionNumber(),
                 v.getContent(), v.getContentUri(), v.getContentHash(), v.getChangeNote(),
                 v.getStatus(), v.getAuthorId(), v.getApprovedBy(), v.getApprovedAt(),
                 v.getPublishedAt(), v.getBlockchainTxHash(),
                 v.getCreatedAt(), v.getUpdatedAt(),
-                v.getRejectedBy(), v.getRejectedAt(), v.getRejectionReason());
+                v.getRejectedBy(), v.getRejectedAt(), v.getRejectionReason(),
+                fileInfo(v));
+    }
+
+    private static DocumentDto.FileInfo fileInfo(DocumentVersion v) {
+        DocumentBlob b = v.getBlob();
+        if (b != null) {
+            String type = b.getContentType();
+            boolean previewable = "application/pdf".equals(type) || type.startsWith("image/")
+                    || DocumentFiles.isTextType(type);
+            return new DocumentDto.FileInfo(v.getFileName(), type, b.getOriginalSize(), previewable, false);
+        }
+        if (v.getFilePurgedAt() != null) {
+            return new DocumentDto.FileInfo(v.getFileName(), null, 0, false, true);
+        }
+        return null;
     }
 }

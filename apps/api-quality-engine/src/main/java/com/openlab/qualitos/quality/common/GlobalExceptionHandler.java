@@ -26,7 +26,10 @@ import com.openlab.qualitos.quality.circle.CircleMemberNotFoundException;
 import com.openlab.qualitos.quality.circle.CircleNotFoundException;
 import com.openlab.qualitos.quality.circle.CircleProposalNotFoundException;
 import com.openlab.qualitos.quality.circle.CircleStateException;
+import com.openlab.qualitos.quality.docs.DocumentCatalogNotFoundException;
 import com.openlab.qualitos.quality.docs.DocumentCodeConflictException;
+import com.openlab.qualitos.quality.docs.DocumentFileRejectedException;
+import com.openlab.qualitos.quality.docs.DocumentFileTooLargeException;
 import com.openlab.qualitos.quality.docs.DocumentNotFoundException;
 import com.openlab.qualitos.quality.docs.DocumentStateException;
 import com.openlab.qualitos.quality.docs.DocumentVersionNotFoundException;
@@ -821,6 +824,33 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/document-code-conflict"));
         problem.setTitle("Document Code Conflict");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(DocumentFileRejectedException.class)
+    public ProblemDetail handleDocFileRejected(DocumentFileRejectedException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/document-file-invalid"));
+        problem.setTitle("Invalid Document File");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(DocumentFileTooLargeException.class)
+    public ProblemDetail handleDocFileTooLarge(DocumentFileTooLargeException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.PAYLOAD_TOO_LARGE, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/document-file-too-large"));
+        problem.setTitle("Document File Too Large");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(DocumentCatalogNotFoundException.class)
+    public ProblemDetail handleDocCatalogNotFound(DocumentCatalogNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/document-catalog-not-found"));
+        problem.setTitle("Document Folder or Process Not Found");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }

@@ -17,6 +17,7 @@ public class InMemoryObjectStorage implements ObjectStorage {
     public record Stored(String contentType, byte[] content, Instant lastModified) {}
 
     private final Map<String, Stored> objects = new LinkedHashMap<>();
+    private final Map<String, String> encodings = new LinkedHashMap<>();
 
     /**
      * Date attribuée aux prochains dépôts. Réglable : le balayage des orphelins
@@ -29,6 +30,30 @@ public class InMemoryObjectStorage implements ObjectStorage {
     public void put(String key, String contentType, byte[] content) {
         objects.put(key, new Stored(contentType, content.clone(), now));
     }
+
+    @Override
+    public void put(String key, String contentType, String contentEncoding, byte[] content) {
+        objects.put(key, new Stored(contentType, content.clone(), now));
+        if (contentEncoding != null) {
+            encodings.put(key, contentEncoding);
+        } else {
+            encodings.remove(key);
+        }
+    }
+
+    @Override
+    public URL presignGet(String key, Duration ttl, String filename, boolean attachment) {
+        try {
+            return java.net.URI.create("https://storage.test/" + key + "?ttl=" + ttl.getSeconds()
+                    + "&disposition=" + (attachment ? "attachment" : "inline")
+                    + (filename == null ? "" : "&filename=" + filename)).toURL();
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    /** L'encodage sous lequel la clé a été déposée, {@code null} si aucun. */
+    public String encodingOf(String key) { return encodings.get(key); }
 
     @Override
     public URL presignGet(String key, Duration ttl) {

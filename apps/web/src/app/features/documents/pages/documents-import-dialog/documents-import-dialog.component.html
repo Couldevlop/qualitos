@@ -1,0 +1,100 @@
+<h2 mat-dialog-title i18n="@@documents.import.title">Importer des documents</h2>
+
+<mat-dialog-content class="content">
+  <p class="intro" i18n="@@documents.import.intro">
+    Chaque fichier devient un document en brouillon, avec le fichier dans sa première version.
+  </p>
+
+  <div class="common" [formGroup]="common">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label i18n="@@documents.panel.folder">Dossier</mat-label>
+      <mat-select formControlName="folderId">
+        <mat-option [value]="null" i18n="@@documents.import.no-folder">Sans dossier</mat-option>
+        <mat-option *ngFor="let r of data.folders" [value]="r.folder.id">
+          <span [style.padding-inline-start.px]="r.depth * 12">{{ r.folder.name }}</span>
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label i18n="@@documents.filter.process">Processus</mat-label>
+      <mat-select formControlName="processId">
+        <mat-option [value]="null" i18n="@@common.none">Aucun</mat-option>
+        <mat-option *ngFor="let p of data.processes" [value]="p.id">{{ p.name }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-checkbox formControlName="mandatoryRead" i18n="@@documents.import.mandatory-read">Lecture obligatoire</mat-checkbox>
+  </div>
+
+  <label class="dropzone" [class.over]="dragging" [class.compact]="items.length > 0"
+         (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)" (drop)="onDrop($event)">
+    <input #picker type="file" multiple [accept]="accept" (change)="onPick(picker)" [disabled]="running">
+    <mat-icon aria-hidden="true">cloud_upload</mat-icon>
+    <span class="dz-main" i18n="@@documents.import.drop">Déposez des fichiers ici ou cliquez pour les choisir</span>
+    <span class="dz-hint" *ngIf="policy" i18n="@@documents.import.policy">
+      PDF, Word, Excel, PowerPoint, images ou texte — {{ policy.maxFileMb }} Mo maximum par fichier
+    </span>
+  </label>
+
+  <ul class="items" *ngIf="items.length">
+    <li *ngFor="let item of items; trackBy: trackByItem" class="item" [attr.data-state]="item.state">
+      <div class="file">
+        <mat-icon class="state-icon" aria-hidden="true" [ngSwitch]="item.state">
+          <ng-container *ngSwitchCase="'done'">check_circle</ng-container>
+          <ng-container *ngSwitchCase="'failed'">error</ng-container>
+          <ng-container *ngSwitchCase="'invalid'">warning</ng-container>
+          <ng-container *ngSwitchDefault>description</ng-container>
+        </mat-icon>
+        <span class="name" [title]="item.file.name">{{ item.file.name }}</span>
+        <span class="size">{{ size(item.file.size) }}</span>
+        <button mat-icon-button type="button" class="remove" (click)="remove(item)"
+                *ngIf="item.state !== 'done' && !running"
+                aria-label="Retirer ce fichier" i18n-aria-label="@@documents.import.remove">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      <div class="fields" *ngIf="!item.created">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="f-code">
+          <mat-label i18n="@@documents.create.code-label">Code</mat-label>
+          <input matInput [(ngModel)]="item.code" (ngModelChange)="edited(item)" maxlength="100"
+                 [disabled]="running" autocomplete="off">
+        </mat-form-field>
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="f-title">
+          <mat-label i18n="@@common.title">Titre</mat-label>
+          <input matInput [(ngModel)]="item.title" (ngModelChange)="edited(item)" maxlength="255"
+                 [disabled]="running" autocomplete="off">
+        </mat-form-field>
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="f-type">
+          <mat-label i18n="@@common.type">Type</mat-label>
+          <mat-select [(ngModel)]="item.type" [disabled]="running">
+            <mat-option *ngFor="let t of types" [value]="t">{{ typeLabels[t] }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="progress" *ngIf="item.state === 'uploading' || item.state === 'done'">
+        <span class="bar" [style.width.%]="item.progress"></span>
+      </div>
+      <p class="error" *ngIf="item.error" role="alert">{{ item.error }}</p>
+    </li>
+  </ul>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="actions">
+  <span class="summary" *ngIf="items.length" aria-live="polite">
+    <ng-container *ngIf="hasInvalid; else counts" i18n="@@documents.import.fix-lines">Corrigez ou retirez les lignes signalées.</ng-container>
+    <ng-template #counts><ng-container i18n="@@documents.import.progress">{{ doneCount }} sur {{ items.length }} importés</ng-container></ng-template>
+  </span>
+  <button mat-button type="button" (click)="close()" [disabled]="running">
+    <ng-container *ngIf="doneCount > 0; else cancelLabel" i18n="@@common.close">Fermer</ng-container>
+    <ng-template #cancelLabel><ng-container i18n="@@common.cancel">Annuler</ng-container></ng-template>
+  </button>
+  <button mat-flat-button color="primary" type="button" (click)="start()"
+          [disabled]="running || pending.length === 0 || hasInvalid">
+    <mat-icon>upload</mat-icon>
+    <span *ngIf="!running" i18n="@@documents.import.submit">Importer {{ pending.length }} fichier(s)</span>
+    <span *ngIf="running" i18n="@@documents.import.running">Import en cours…</span>
+  </button>
+</mat-dialog-actions>

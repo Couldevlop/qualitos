@@ -10762,6 +10762,538 @@ Portail clients</source>
         <source>Échec de la prévision (HTTP <x id="status"/>).</source>
         <target state="translated">予測に失敗しました（HTTP <x id="status"/>）。</target>
       </trans-unit>
+      <trans-unit id="nav.admin-documents" datatype="html">
+        <source>Documentation</source>
+        <target state="translated">文書管理</target>
+      </trans-unit>
+      <trans-unit id="documents.type.external" datatype="html">
+        <source>Document externe</source>
+        <target state="translated">外部文書</target>
+      </trans-unit>
+      <trans-unit id="documents.status.in-force" datatype="html">
+        <source>En vigueur</source>
+        <target state="translated">有効</target>
+      </trans-unit>
+      <trans-unit id="documents.status.in-revision" datatype="html">
+        <source>En révision</source>
+        <target state="translated">改訂中</target>
+      </trans-unit>
+      <trans-unit id="documents.status.draft" datatype="html">
+        <source>Brouillon</source>
+        <target state="translated">下書き</target>
+      </trans-unit>
+      <trans-unit id="documents.status.review-overdue" datatype="html">
+        <source>Revue dépassée</source>
+        <target state="translated">レビュー期限切れ</target>
+      </trans-unit>
+      <trans-unit id="documents.status.archived" datatype="html">
+        <source>Archivé</source>
+        <target state="translated">アーカイブ済み</target>
+      </trans-unit>
+      <trans-unit id="documents.version.draft" datatype="html">
+        <source>Brouillon</source>
+        <target state="translated">下書き</target>
+      </trans-unit>
+      <trans-unit id="documents.version.in-review" datatype="html">
+        <source>En revue</source>
+        <target state="translated">レビュー中</target>
+      </trans-unit>
+      <trans-unit id="documents.version.approved" datatype="html">
+        <source>Approuvée</source>
+        <target state="translated">承認済み</target>
+      </trans-unit>
+      <trans-unit id="documents.version.published" datatype="html">
+        <source>Actuelle</source>
+        <target state="translated">現行</target>
+      </trans-unit>
+      <trans-unit id="documents.version.obsolete" datatype="html">
+        <source>Obsolète</source>
+        <target state="translated">廃止</target>
+      </trans-unit>
+      <trans-unit id="documents.view.all" datatype="html">
+        <source>Tous les documents</source>
+        <target state="translated">すべての文書</target>
+      </trans-unit>
+      <trans-unit id="documents.view.mine" datatype="html">
+        <source>Mes documents</source>
+        <target state="translated">自分の文書</target>
+      </trans-unit>
+      <trans-unit id="documents.view.to-validate" datatype="html">
+        <source>À valider par moi</source>
+        <target state="translated">自分の承認待ち</target>
+      </trans-unit>
+      <trans-unit id="documents.view.review-due" datatype="html">
+        <source>Revues à échéance</source>
+        <target state="translated">レビュー期限</target>
+      </trans-unit>
+      <trans-unit id="documents.view.archived" datatype="html">
+        <source>Archives (obsolètes)</source>
+        <target state="translated">アーカイブ（廃止）</target>
+      </trans-unit>
+      <trans-unit id="documents.unit.bytes" datatype="html">
+        <source>o</source>
+        <target state="translated">B</target>
+      </trans-unit>
+      <trans-unit id="documents.unit.kb" datatype="html">
+        <source>Ko</source>
+        <target state="translated">KB</target>
+      </trans-unit>
+      <trans-unit id="documents.unit.mb" datatype="html">
+        <source>Mo</source>
+        <target state="translated">MB</target>
+      </trans-unit>
+      <trans-unit id="documents.unit.gb" datatype="html">
+        <source>Go</source>
+        <target state="translated">GB</target>
+      </trans-unit>
+      <trans-unit id="documents.nav.aria" datatype="html">
+        <source>Documentation</source>
+        <target state="translated">文書管理</target>
+      </trans-unit>
+      <trans-unit id="documents.nav.folders" datatype="html">
+        <source>Arborescence</source>
+        <target state="translated">フォルダー</target>
+      </trans-unit>
+      <trans-unit id="documents.list.heading" datatype="html">
+        <source>Documentation qualité</source>
+        <target state="translated">品質文書</target>
+      </trans-unit>
+      <trans-unit id="documents.list.count-one" datatype="html">
+        <source>1 document</source>
+        <target state="translated">1 件の文書</target>
+      </trans-unit>
+      <trans-unit id="documents.list.count-many" datatype="html">
+        <source><x id="INTERPOLATION"/> documents</source>
+        <target state="translated"><x id="INTERPOLATION"/> 件の文書</target>
+      </trans-unit>
+      <trans-unit id="documents.list.import" datatype="html">
+        <source>Importer</source>
+        <target state="translated">インポート</target>
+      </trans-unit>
+      <trans-unit id="documents.list.col-reference" datatype="html">
+        <source>Référence</source>
+        <target state="translated">文書番号</target>
+      </trans-unit>
+      <trans-unit id="documents.list.col-owner" datatype="html">
+        <source>Propriétaire</source>
+        <target state="translated">所有者</target>
+      </trans-unit>
+      <trans-unit id="documents.list.col-review" datatype="html">
+        <source>Prochaine revue</source>
+        <target state="translated">次回レビュー</target>
+      </trans-unit>
+      <trans-unit id="documents.filter.search" datatype="html">
+        <source>Rechercher par code, titre ou description</source>
+        <target state="translated">コード、タイトル、説明で検索</target>
+      </trans-unit>
+      <trans-unit id="documents.filter.process" datatype="html">
+        <source>Processus</source>
+        <target state="translated">プロセス</target>
+      </trans-unit>
+      <trans-unit id="documents.filter.owner" datatype="html">
+        <source>Propriétaire</source>
+        <target state="translated">所有者</target>
+      </trans-unit>
+      <trans-unit id="documents.filter.clear" datatype="html">
+        <source>Effacer les filtres</source>
+        <target state="translated">フィルターをクリア</target>
+      </trans-unit>
+      <trans-unit id="documents.empty.filtered" datatype="html">
+        <source>Aucun document ne correspond à ces filtres.</source>
+        <target state="translated">この条件に一致する文書はありません。</target>
+      </trans-unit>
+      <trans-unit id="documents.empty.none" datatype="html">
+        <source>Aucun document ici pour l'instant.</source>
+        <target state="translated">ここにはまだ文書がありません。</target>
+      </trans-unit>
+      <trans-unit id="documents.empty.hint" datatype="html">
+        <source>Déposez des fichiers sur cette page ou créez un document.</source>
+        <target state="translated">このページにファイルをドロップするか、文書を作成してください。</target>
+      </trans-unit>
+      <trans-unit id="documents.pager.range" datatype="html">
+        <source><x id="INTERPOLATION"/>–<x id="INTERPOLATION_1"/> sur <x id="INTERPOLATION_2"/></source>
+        <target state="translated"><x id="INTERPOLATION_2"/> 件中 <x id="INTERPOLATION"/>–<x id="INTERPOLATION_1"/></target>
+      </trans-unit>
+      <trans-unit id="documents.pager.page" datatype="html">
+        <source>Page <x id="INTERPOLATION"/> / <x id="INTERPOLATION_1"/></source>
+        <target state="translated"><x id="INTERPOLATION"/> / <x id="INTERPOLATION_1"/> ページ</target>
+      </trans-unit>
+      <trans-unit id="documents.pager.previous" datatype="html">
+        <source>Page précédente</source>
+        <target state="translated">前のページ</target>
+      </trans-unit>
+      <trans-unit id="documents.pager.next" datatype="html">
+        <source>Page suivante</source>
+        <target state="translated">次のページ</target>
+      </trans-unit>
+      <trans-unit id="documents.drop.title" datatype="html">
+        <source>Déposez vos fichiers pour les importer</source>
+        <target state="translated">ファイルをドロップしてインポート</target>
+      </trans-unit>
+      <trans-unit id="documents.drop.where" datatype="html">
+        <source>Dans « <x id="INTERPOLATION"/> »</source>
+        <target state="translated">「<x id="INTERPOLATION"/>」へ</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.close" datatype="html">
+        <source>Fermer la fiche</source>
+        <target state="translated">パネルを閉じる</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.preview-loading" datatype="html">
+        <source>Chargement de l'aperçu…</source>
+        <target state="translated">プレビューを読み込み中…</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.preview-title" datatype="html">
+        <source>Aperçu du document</source>
+        <target state="translated">文書のプレビュー</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.preview-failed" datatype="html">
+        <source>L'aperçu n'a pas pu être chargé.</source>
+        <target state="translated">プレビューを読み込めませんでした。</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.preview-too-large" datatype="html">
+        <source>Fichier trop volumineux pour l'aperçu : téléchargez-le.</source>
+        <target state="translated">ファイルが大きすぎてプレビューできません。ダウンロードしてください。</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.preview-purged" datatype="html">
+        <source>Fichier retiré au terme de sa conservation. Son empreinte reste vérifiable.</source>
+        <target state="translated">保存期間の終了により削除されました。ハッシュは引き続き検証できます。</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.preview-unavailable" datatype="html">
+        <source>Pas d'aperçu pour ce format.</source>
+        <target state="translated">この形式はプレビューできません。</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.no-file" datatype="html">
+        <source>Aucun fichier joint à cette version.</source>
+        <target state="translated">この版にはファイルが添付されていません。</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.open" datatype="html">
+        <source>Ouvrir</source>
+        <target state="translated">開く</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.download" datatype="html">
+        <source>Télécharger</source>
+        <target state="translated">ダウンロード</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.download-failed" datatype="html">
+        <source>Le fichier n'a pas pu être téléchargé. Réessayez.</source>
+        <target state="translated">ファイルをダウンロードできませんでした。もう一度お試しください。</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.circuit" datatype="html">
+        <source>Circuit de la version <x id="INTERPOLATION"/></source>
+        <target state="translated">第 <x id="INTERPOLATION"/> 版の承認フロー</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.step-draft" datatype="html">
+        <source>Rédaction</source>
+        <target state="translated">作成</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.step-review" datatype="html">
+        <source>Vérification</source>
+        <target state="translated">確認</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.step-approval" datatype="html">
+        <source>Approbation</source>
+        <target state="translated">承認</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.step-publish" datatype="html">
+        <source>Diffusion</source>
+        <target state="translated">配布</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.rejected" datatype="html">
+        <source>Refusée : <x id="INTERPOLATION"/></source>
+        <target state="translated">差し戻し：<x id="INTERPOLATION"/></target>
+      </trans-unit>
+      <trans-unit id="documents.panel.details" datatype="html">
+        <source>Informations</source>
+        <target state="translated">詳細</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.folder" datatype="html">
+        <source>Dossier</source>
+        <target state="translated">フォルダー</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.acknowledgments" datatype="html">
+        <source>Prises de connaissance</source>
+        <target state="translated">既読確認</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.updated" datatype="html">
+        <source>Mis à jour</source>
+        <target state="translated">更新日</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.history" datatype="html">
+        <source>Historique des versions</source>
+        <target state="translated">版の履歴</target>
+      </trans-unit>
+      <trans-unit id="documents.import.title" datatype="html">
+        <source>Importer des documents</source>
+        <target state="translated">文書をインポート</target>
+      </trans-unit>
+      <trans-unit id="documents.import.intro" datatype="html">
+        <source>Chaque fichier devient un document en brouillon, avec le fichier dans sa première version.</source>
+        <target state="translated">各ファイルは下書き文書になり、ファイルはその第 1 版に入ります。</target>
+      </trans-unit>
+      <trans-unit id="documents.import.no-folder" datatype="html">
+        <source>Sans dossier</source>
+        <target state="translated">フォルダーなし</target>
+      </trans-unit>
+      <trans-unit id="documents.import.mandatory-read" datatype="html">
+        <source>Lecture obligatoire</source>
+        <target state="translated">必読</target>
+      </trans-unit>
+      <trans-unit id="documents.import.drop" datatype="html">
+        <source>Déposez des fichiers ici ou cliquez pour les choisir</source>
+        <target state="translated">ここにファイルをドロップするか、クリックして選択</target>
+      </trans-unit>
+      <trans-unit id="documents.import.policy" datatype="html">
+        <source>PDF, Word, Excel, PowerPoint, images ou texte — <x id="INTERPOLATION"/> Mo maximum par fichier</source>
+        <target state="translated">PDF、Word、Excel、PowerPoint、画像、テキスト — 1 ファイル最大 <x id="INTERPOLATION"/> MB</target>
+      </trans-unit>
+      <trans-unit id="documents.import.remove" datatype="html">
+        <source>Retirer ce fichier</source>
+        <target state="translated">このファイルを外す</target>
+      </trans-unit>
+      <trans-unit id="documents.import.fix-lines" datatype="html">
+        <source>Corrigez ou retirez les lignes signalées.</source>
+        <target state="translated">指摘された行を修正するか外してください。</target>
+      </trans-unit>
+      <trans-unit id="documents.import.progress" datatype="html">
+        <source><x id="INTERPOLATION"/> sur <x id="INTERPOLATION_1"/> importés</source>
+        <target state="translated"><x id="INTERPOLATION_1"/> 件中 <x id="INTERPOLATION"/> 件をインポート済み</target>
+      </trans-unit>
+      <trans-unit id="documents.import.submit" datatype="html">
+        <source>Importer <x id="INTERPOLATION"/> fichier(s)</source>
+        <target state="translated"><x id="INTERPOLATION"/> 件のファイルをインポート</target>
+      </trans-unit>
+      <trans-unit id="documents.import.running" datatype="html">
+        <source>Import en cours…</source>
+        <target state="translated">インポート中…</target>
+      </trans-unit>
+      <trans-unit id="documents.import.upload-failed" datatype="html">
+        <source>Document créé, mais le fichier n'a pas été envoyé.</source>
+        <target state="translated">文書は作成されましたが、ファイルはアップロードされませんでした。</target>
+      </trans-unit>
+      <trans-unit id="documents.import.empty-file" datatype="html">
+        <source>Ce fichier est vide.</source>
+        <target state="translated">このファイルは空です。</target>
+      </trans-unit>
+      <trans-unit id="documents.import.too-large" datatype="html">
+        <source>Fichier trop volumineux (maximum <x id="max"/> Mo).</source>
+        <target state="translated">ファイルが大きすぎます（最大 <x id="max"/> MB）。</target>
+      </trans-unit>
+      <trans-unit id="documents.import.bad-type" datatype="html">
+        <source>Format non accepté.</source>
+        <target state="translated">この形式は受け付けていません。</target>
+      </trans-unit>
+      <trans-unit id="documents.import.bad-code" datatype="html">
+        <source>Code invalide : lettres majuscules, chiffres, point, tiret, souligné.</source>
+        <target state="translated">コードが無効です：大文字、数字、ピリオド、ハイフン、アンダースコア。</target>
+      </trans-unit>
+      <trans-unit id="documents.import.bad-title" datatype="html">
+        <source>Le titre est obligatoire.</source>
+        <target state="translated">タイトルは必須です。</target>
+      </trans-unit>
+      <trans-unit id="documents.create.attach" datatype="html">
+        <source>Joindre un fichier (facultatif)</source>
+        <target state="translated">ファイルを添付（任意）</target>
+      </trans-unit>
+      <trans-unit id="documents.create.remove-file" datatype="html">
+        <source>Retirer le fichier</source>
+        <target state="translated">ファイルを外す</target>
+      </trans-unit>
+      <trans-unit id="documents.create.first-version-title" datatype="html">
+        <source>Première version, en brouillon</source>
+        <target state="translated">第 1 版（下書き）</target>
+      </trans-unit>
+      <trans-unit id="documents.edit.review-hint" datatype="html">
+        <source>Fixée à la publication selon la périodicité du tenant ; avancez-la ou reculez-la au besoin.</source>
+        <target state="translated">公開時にレビュー周期から設定されます。必要に応じて前後に変更できます。</target>
+      </trans-unit>
+      <trans-unit id="documents.detail.col-file" datatype="html">
+        <source>Fichier</source>
+        <target state="translated">ファイル</target>
+      </trans-unit>
+      <trans-unit id="documents.detail.file-purged" datatype="html">
+        <source>Retiré (conservation échue)</source>
+        <target state="translated">削除済み（保存期間終了）</target>
+      </trans-unit>
+      <trans-unit id="documents.detail.attach-file" datatype="html">
+        <source>Joindre</source>
+        <target state="translated">添付</target>
+      </trans-unit>
+      <trans-unit id="documents.detail.replace-file" datatype="html">
+        <source>Remplacer</source>
+        <target state="translated">差し替え</target>
+      </trans-unit>
+      <trans-unit id="documents.detail.file-uploaded" datatype="html">
+        <source>Fichier joint.</source>
+        <target state="translated">ファイルを添付しました。</target>
+      </trans-unit>
+      <trans-unit id="documents.detail.file-upload-failed" datatype="html">
+        <source>Le fichier n'a pas pu être envoyé.</source>
+        <target state="translated">ファイルをアップロードできませんでした。</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.title" datatype="html">
+        <source>Documentation</source>
+        <target state="translated">文書管理</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.subtitle" datatype="html">
+        <source>Revues périodiques, fichiers, arborescence et processus de la documentation qualité.</source>
+        <target state="translated">品質文書の定期レビュー、ファイル、フォルダー、プロセス。</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.back" datatype="html">
+        <source>Documentation qualité</source>
+        <target state="translated">品質文書</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.load-failed" datatype="html">
+        <source>Les paramètres de la documentation n'ont pas pu être chargés.</source>
+        <target state="translated">文書管理の設定を読み込めませんでした。</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.storage" datatype="html">
+        <source>Stockage</source>
+        <target state="translated">ストレージ</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.stored" datatype="html">
+        <source>occupés</source>
+        <target state="translated">使用中</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.files" datatype="html">
+        <source>fichiers distincts</source>
+        <target state="translated">個別ファイル</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.saved-by" datatype="html">
+        <source>grâce aux doublons et à la compression</source>
+        <target state="translated">重複排除と圧縮による削減</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.quota-used" datatype="html">
+        <source>Quota utilisé</source>
+        <target state="translated">使用済みクォータ</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.quota-line" datatype="html">
+        <source><x id="INTERPOLATION"/> % du quota de <x id="INTERPOLATION_1"/></source>
+        <target state="translated"><x id="INTERPOLATION_1"/> のクォータの <x id="INTERPOLATION"/>%</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.storage-help" datatype="html">
+        <source>Un fichier déposé deux fois n'est stocké qu'une fois ; les formats texte et bureautiques anciens sont compressés. Sans compression ni partage, la documentation occuperait <x id="INTERPOLATION"/>.</source>
+        <target state="translated">同じファイルは 1 回だけ保存され、テキストと旧形式のオフィス文書は圧縮されます。圧縮も共有もなければ <x id="INTERPOLATION"/> を占有します。</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.review" datatype="html">
+        <source>Revue périodique</source>
+        <target state="translated">定期レビュー</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.review-help" datatype="html">
+        <source>À la publication, la prochaine revue est fixée selon cette périodicité. Le préavis fait entrer le document dans « Revues à échéance ».</source>
+        <target state="translated">公開時に、この周期で次回レビューが設定されます。予告期間に入ると「レビュー期限」に表示されます。</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.period" datatype="html">
+        <source>Périodicité (mois)</source>
+        <target state="translated">周期（月）</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.warning" datatype="html">
+        <source>Préavis (jours)</source>
+        <target state="translated">予告（日）</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.files-title" datatype="html">
+        <source>Fichiers</source>
+        <target state="translated">ファイル</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.files-help" datatype="html">
+        <source>Laissez le quota vide pour ne pas en fixer. Sans durée de conservation, les fichiers des versions obsolètes sont gardés indéfiniment ; leur empreinte reste toujours.</source>
+        <target state="translated">クォータを設けない場合は空欄にします。保存期間がなければ、廃止版のファイルは無期限に保持されます。ハッシュは常に残ります。</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.max-file" datatype="html">
+        <source>Taille max. par fichier (Mo)</source>
+        <target state="translated">1 ファイルの最大サイズ（MB）</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.max-file-hint" datatype="html">
+        <source>Au plus <x id="INTERPOLATION"/> Mo</source>
+        <target state="translated">最大 <x id="INTERPOLATION"/> MB</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.quota" datatype="html">
+        <source>Quota (Mo)</source>
+        <target state="translated">クォータ（MB）</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.retention" datatype="html">
+        <source>Conservation (ans)</source>
+        <target state="translated">保存期間（年）</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.retention-hint" datatype="html">
+        <source>Fichiers des versions obsolètes</source>
+        <target state="translated">廃止版のファイル</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.add-root" datatype="html">
+        <source>Dossier racine</source>
+        <target state="translated">ルートフォルダー</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.tree-help" datatype="html">
+        <source>Jusqu'à <x id="INTERPOLATION"/> niveaux. Les documents se classent dans ces dossiers.</source>
+        <target state="translated">最大 <x id="INTERPOLATION"/> 階層。文書はこれらのフォルダーに分類されます。</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.add-child" datatype="html">
+        <source>Ajouter un sous-dossier</source>
+        <target state="translated">サブフォルダーを追加</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.rename" datatype="html">
+        <source>Renommer</source>
+        <target state="translated">名前を変更</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.processes" datatype="html">
+        <source>Processus</source>
+        <target state="translated">プロセス</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.add-process" datatype="html">
+        <source>Ajouter</source>
+        <target state="translated">追加</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.processes-help" datatype="html">
+        <source>Les processus de la cartographie auxquels un document se rattache.</source>
+        <target state="translated">文書が属するプロセスマップ上のプロセス。</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.delete-folder" datatype="html">
+        <source>Supprimer le dossier « <x id="name"/> » ?</source>
+        <target state="translated">フォルダー「<x id="name"/>」を削除しますか？</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.delete-folder-help" datatype="html">
+        <source>Un dossier qui contient des sous-dossiers ou des documents ne peut pas être supprimé.</source>
+        <target state="translated">サブフォルダーや文書を含むフォルダーは削除できません。</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.delete-process" datatype="html">
+        <source>Supprimer le processus « <x id="name"/> » ?</source>
+        <target state="translated">プロセス「<x id="name"/>」を削除しますか？</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.delete-process-help" datatype="html">
+        <source>Un processus rattaché à des documents ne peut pas être supprimé.</source>
+        <target state="translated">文書に紐づくプロセスは削除できません。</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.bad-period" datatype="html">
+        <source>La périodicité va de 1 à 120 mois.</source>
+        <target state="translated">周期は 1〜120 か月です。</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.bad-warning" datatype="html">
+        <source>Le préavis va de 0 à 365 jours.</source>
+        <target state="translated">予告は 0〜365 日です。</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.bad-max-file" datatype="html">
+        <source>La taille maximale va de 1 à <x id="max"/> Mo.</source>
+        <target state="translated">最大サイズは 1〜<x id="max"/> MB です。</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.bad-quota" datatype="html">
+        <source>Le quota est un nombre entier de Mo, ou vide pour aucun.</source>
+        <target state="translated">クォータは MB 単位の整数です。設けない場合は空欄にします。</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.bad-retention" datatype="html">
+        <source>La conservation va de 1 à 100 ans, ou vide pour tout garder.</source>
+        <target state="translated">保存期間は 1〜100 年です。すべて保持する場合は空欄にします。</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.saved" datatype="html">
+        <source>Paramètres enregistrés.</source>
+        <target state="translated">設定を保存しました。</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.unsaved" datatype="html">
+        <source>Modifications non enregistrées</source>
+        <target state="translated">未保存の変更</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.discard" datatype="html">
+        <source>Annuler les modifications</source>
+        <target state="translated">変更を破棄</target>
+      </trans-unit>
       <trans-unit id="dpia.create.hint" datatype="html">
         <source>L'Art. 35 RGPD impose une DPIA pour les traitements présentant un</source>
         <target state="translated">GDPR第35条は、次のリスクを伴う処理についてDPIAの実施を義務付けています</target>

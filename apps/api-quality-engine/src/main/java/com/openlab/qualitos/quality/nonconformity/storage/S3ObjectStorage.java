@@ -87,8 +87,37 @@ public class S3ObjectStorage implements ObjectStorage {
     }
 
     @Override
+    public void put(String key, String contentType, String contentEncoding, byte[] content) {
+        if (contentEncoding == null) {
+            put(key, contentType, content);
+            return;
+        }
+        PutObjectRequest request = PutObjectRequest.builder()
+                .bucket(bucket)
+                .key(key)
+                .contentType(contentType)
+                .contentEncoding(contentEncoding)
+                .contentLength((long) content.length)
+                .build();
+        client.putObject(request, RequestBody.fromBytes(content));
+    }
+
+    @Override
     public URL presignGet(String key, Duration ttl) {
-        GetObjectRequest get = GetObjectRequest.builder().bucket(bucket).key(key).build();
+        return presign(GetObjectRequest.builder().bucket(bucket).key(key).build(), ttl);
+    }
+
+    @Override
+    public URL presignGet(String key, Duration ttl, String filename, boolean attachment) {
+        // Le nom vient de l'appelant, déjà réduit à [A-Za-z0-9._-] : il n'a besoin
+        // d'aucun échappement dans l'en-tête, et ne peut pas y injecter de paramètre.
+        String disposition = (attachment ? "attachment" : "inline")
+                + (filename == null ? "" : "; filename=\"" + filename + "\"");
+        return presign(GetObjectRequest.builder().bucket(bucket).key(key)
+                .responseContentDisposition(disposition).build(), ttl);
+    }
+
+    private URL presign(GetObjectRequest get, Duration ttl) {
         GetObjectPresignRequest presign = GetObjectPresignRequest.builder()
                 .signatureDuration(ttl)
                 .getObjectRequest(get)

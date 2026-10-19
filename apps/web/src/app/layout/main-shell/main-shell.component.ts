@@ -275,6 +275,13 @@ export class MainShellComponent implements OnInit, OnDestroy {
           roles: ADMIN_ROLES
         },
         {
+          // La documentation qualité (ADR 0094) : revues, fichiers, arborescence, processus.
+          label: $localize`:@@nav.admin-documents:Documentation`,
+          route: '/admin/documents',
+          icon: 'folder_copy',
+          roles: ADMIN_ROLES
+        },
+        {
           label: $localize`:@@nav.admin-api-keys:Clés d'API`,
           route: '/admin/api-keys',
           icon: 'key',

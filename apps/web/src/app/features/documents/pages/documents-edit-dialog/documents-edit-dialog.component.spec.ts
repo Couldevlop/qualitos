@@ -5,6 +5,8 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 import { environment } from '../../../../../environments/environment';
+import { provideDirectoryStub } from '../../../../core/directory/testing/directory.stub';
+import { UserPickerModule } from '../../../../shared/user-picker/user-picker.module';
 import { SharedModule } from '../../../../shared/shared.module';
 import { UiModule } from '../../../../shared/ui/ui.module';
 import { DocumentResponse } from '../../documents.types';
@@ -36,8 +38,9 @@ describe('DocumentsEditDialogComponent', () => {
       'MatDialogRef', ['close']);
     await TestBed.configureTestingModule({
       declarations: [DocumentsEditDialogComponent],
-      imports: [SharedModule, UiModule, NoopAnimationsModule],
+      imports: [SharedModule, UiModule, UserPickerModule, NoopAnimationsModule],
       providers: [
+        provideDirectoryStub(),
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
         { provide: MatDialogRef, useValue: dialogRef },
@@ -70,10 +73,10 @@ describe('DocumentsEditDialogComponent', () => {
     expect(Object.keys(component.form.controls)).not.toContain('code');
   });
 
-  it('expose les sept types documentaires', async () => {
+  it('expose les huit types documentaires', async () => {
     await build({ document: existing });
     expect(component.types.map(t => t.value)).toEqual([
-      'POLICY', 'PROCEDURE', 'WORK_INSTRUCTION', 'RECORD', 'FORM', 'MANUAL', 'OTHER'
+      'POLICY', 'PROCEDURE', 'WORK_INSTRUCTION', 'RECORD', 'FORM', 'MANUAL', 'EXTERNAL', 'OTHER'
     ]);
   });
 
@@ -131,6 +134,110 @@ describe('DocumentsEditDialogComponent', () => {
     component.submit();
     http.expectNone(`${base}/d1`);
     req.flush(existing);
+  });
+
+  it('reprend dossier, processus, propriétaire et listes ; envoie le propriétaire', async () => {
+    const folders = [{ folder: { id: 'f1', parentId: null, name: 'Achats', position: 0 }, depth: 0, hasChildren: false }];
+    const processes = [{ id: 'p1', name: 'Approvisionnement', position: 0 }];
+    await build({ document: { ...existing, folderId: 'f1', processId: 'p1' }, folders, processes });
+    expect(component.folders).toBe(folders);
+    expect(component.processes).toBe(processes);
+    expect(component.form.controls.folderId.value).toBe('f1');
+    expect(component.form.controls.processId.value).toBe('p1');
+    expect(component.form.controls.ownerId.value).toBe('u1');
+
+    component.form.patchValue({ ownerId: 'u2' });
+    component.submit();
+    const req = http.expectOne(`${base}/d1`);
+    expect(req.request.body.ownerId).toBe('u2');
+    expect(req.request.body.folderId).toBe('f1');
+    expect(req.request.body.processId).toBe('p1');
+    expect(req.request.body.clearFolder).toBeUndefined();
+    expect(req.request.body.clearProcess).toBeUndefined();
+    req.flush(existing);
+  });
+
+  it('sans listes fournies, le dialogue part de listes vides', async () => {
+    await build({ document: existing });
+    expect(component.folders).toEqual([]);
+    expect(component.processes).toEqual([]);
+  });
+
+  it('exige un propriétaire', async () => {
+    await build({ document: existing });
+    component.form.patchValue({ ownerId: null });
+    component.submit();
+    http.expectNone(`${base}/d1`);
+  });
+
+  it('vider le dossier ou le processus se dit explicitement', async () => {
+    await build({ document: { ...existing, folderId: 'f1', processId: 'p1' } });
+    component.form.patchValue({ folderId: null, processId: null });
+    component.submit();
+    const req = http.expectOne(`${base}/d1`);
+    expect(req.request.body.clearFolder).toBeTrue();
+    expect(req.request.body.clearProcess).toBeTrue();
+    expect(req.request.body.folderId).toBeUndefined();
+    expect(req.request.body.processId).toBeUndefined();
+    req.flush(existing);
+  });
+
+  it('un dossier ou un processus jamais posé n’est pas « vidé »', async () => {
+    await build({ document: { ...existing, folderId: null, processId: undefined } });
+    component.submit();
+    const req = http.expectOne(`${base}/d1`);
+    expect(req.request.body.clearFolder).toBeUndefined();
+    expect(req.request.body.clearProcess).toBeUndefined();
+    req.flush(existing);
+  });
+
+  it('déplacer dans un autre dossier ne vide rien', async () => {
+    await build({ document: { ...existing, folderId: 'f1' } });
+    component.form.patchValue({ folderId: 'f2' });
+    component.submit();
+    const req = http.expectOne(`${base}/d1`);
+    expect(req.request.body.folderId).toBe('f2');
+    expect(req.request.body.clearFolder).toBeUndefined();
+    req.flush(existing);
+  });
+
+  it('un brouillon n’a pas d’échéance de revue réglable', async () => {
+    await build({ document: { ...existing, lifecycle: 'DRAFT', nextReviewDate: null } });
+    expect(component.reviewEditable).toBeFalse();
+    expect(component.form.controls.nextReviewDate.value).toBe('');
+    component.form.patchValue({ nextReviewDate: '2027-01-01' });
+    component.submit();
+    const req = http.expectOne(`${base}/d1`);
+    expect('nextReviewDate' in req.request.body).toBeFalse();
+    req.flush(existing);
+  });
+
+  it('sans cycle de vie connu, le document est traité en brouillon', async () => {
+    await build({ document: { ...existing, lifecycle: undefined } });
+    expect(component.reviewEditable).toBeFalse();
+  });
+
+  it('un document en vigueur envoie l’échéance de revue seulement si elle change', async () => {
+    await build({ document: { ...existing, lifecycle: 'IN_FORCE', nextReviewDate: '2027-06-30' } });
+    expect(component.reviewEditable).toBeTrue();
+    expect(component.form.controls.nextReviewDate.value).toBe('2027-06-30');
+
+    component.submit();
+    const same = http.expectOne(`${base}/d1`);
+    expect('nextReviewDate' in same.request.body).toBeFalse();
+    same.flush(existing);
+
+    component.form.patchValue({ nextReviewDate: '2027-09-30' });
+    component.submit();
+    const changed = http.expectOne(`${base}/d1`);
+    expect(changed.request.body.nextReviewDate).toBe('2027-09-30');
+    changed.flush(existing);
+
+    component.form.patchValue({ nextReviewDate: '' });
+    component.submit();
+    const emptied = http.expectOne(`${base}/d1`);
+    expect('nextReviewDate' in emptied.request.body).toBeFalse();
+    emptied.flush(existing);
   });
 
   it('ferme sans rien modifier à l\'annulation', async () => {

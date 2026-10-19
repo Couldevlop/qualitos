@@ -103,12 +103,16 @@ spring:
           timeout: ${MAIL_READ_TIMEOUT_MS:10000}
           writetimeout: ${MAIL_WRITE_TIMEOUT_MS:10000}
 
-  # Upload multipart — 1er rempart taille pour les photos de NC (§4.3). Aligné sur
-  # le plafond applicatif (10 Mo) : au-delà → 413 (MaxUploadSizeExceededException).
+  # Upload multipart — 1er rempart taille, commun à tous les dépôts. Aligné sur le
+  # plus grand plafond applicatif : les fichiers de la GED (50 Mo, ADR 0094). Chaque
+  # module garde sa propre borne, plus basse (10 Mo pour les photos de NC et les
+  # preuves) : au-delà → 413. Au-dessus du seuil, Spring écrit la pièce sur disque
+  # plutôt que de la garder en mémoire.
   servlet:
     multipart:
-      max-file-size: 10MB
-      max-request-size: 12MB
+      max-file-size: 50MB
+      max-request-size: 52MB
+      file-size-threshold: 2MB
 
 server:
   port: 8082

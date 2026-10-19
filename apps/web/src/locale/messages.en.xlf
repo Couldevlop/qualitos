@@ -10762,6 +10762,538 @@ Customer portal</target>
         <source>Échec de la prévision (HTTP <x id="status"/>).</source>
         <target state="translated">Forecast failed (HTTP <x id="status"/>).</target>
       </trans-unit>
+      <trans-unit id="nav.admin-documents" datatype="html">
+        <source>Documentation</source>
+        <target state="translated">Documentation</target>
+      </trans-unit>
+      <trans-unit id="documents.type.external" datatype="html">
+        <source>Document externe</source>
+        <target state="translated">External document</target>
+      </trans-unit>
+      <trans-unit id="documents.status.in-force" datatype="html">
+        <source>En vigueur</source>
+        <target state="translated">In force</target>
+      </trans-unit>
+      <trans-unit id="documents.status.in-revision" datatype="html">
+        <source>En révision</source>
+        <target state="translated">Under revision</target>
+      </trans-unit>
+      <trans-unit id="documents.status.draft" datatype="html">
+        <source>Brouillon</source>
+        <target state="translated">Draft</target>
+      </trans-unit>
+      <trans-unit id="documents.status.review-overdue" datatype="html">
+        <source>Revue dépassée</source>
+        <target state="translated">Review overdue</target>
+      </trans-unit>
+      <trans-unit id="documents.status.archived" datatype="html">
+        <source>Archivé</source>
+        <target state="translated">Archived</target>
+      </trans-unit>
+      <trans-unit id="documents.version.draft" datatype="html">
+        <source>Brouillon</source>
+        <target state="translated">Draft</target>
+      </trans-unit>
+      <trans-unit id="documents.version.in-review" datatype="html">
+        <source>En revue</source>
+        <target state="translated">In review</target>
+      </trans-unit>
+      <trans-unit id="documents.version.approved" datatype="html">
+        <source>Approuvée</source>
+        <target state="translated">Approved</target>
+      </trans-unit>
+      <trans-unit id="documents.version.published" datatype="html">
+        <source>Actuelle</source>
+        <target state="translated">Current</target>
+      </trans-unit>
+      <trans-unit id="documents.version.obsolete" datatype="html">
+        <source>Obsolète</source>
+        <target state="translated">Obsolete</target>
+      </trans-unit>
+      <trans-unit id="documents.view.all" datatype="html">
+        <source>Tous les documents</source>
+        <target state="translated">All documents</target>
+      </trans-unit>
+      <trans-unit id="documents.view.mine" datatype="html">
+        <source>Mes documents</source>
+        <target state="translated">My documents</target>
+      </trans-unit>
+      <trans-unit id="documents.view.to-validate" datatype="html">
+        <source>À valider par moi</source>
+        <target state="translated">Awaiting my approval</target>
+      </trans-unit>
+      <trans-unit id="documents.view.review-due" datatype="html">
+        <source>Revues à échéance</source>
+        <target state="translated">Reviews due</target>
+      </trans-unit>
+      <trans-unit id="documents.view.archived" datatype="html">
+        <source>Archives (obsolètes)</source>
+        <target state="translated">Archive (obsolete)</target>
+      </trans-unit>
+      <trans-unit id="documents.unit.bytes" datatype="html">
+        <source>o</source>
+        <target state="translated">B</target>
+      </trans-unit>
+      <trans-unit id="documents.unit.kb" datatype="html">
+        <source>Ko</source>
+        <target state="translated">KB</target>
+      </trans-unit>
+      <trans-unit id="documents.unit.mb" datatype="html">
+        <source>Mo</source>
+        <target state="translated">MB</target>
+      </trans-unit>
+      <trans-unit id="documents.unit.gb" datatype="html">
+        <source>Go</source>
+        <target state="translated">GB</target>
+      </trans-unit>
+      <trans-unit id="documents.nav.aria" datatype="html">
+        <source>Documentation</source>
+        <target state="translated">Documentation</target>
+      </trans-unit>
+      <trans-unit id="documents.nav.folders" datatype="html">
+        <source>Arborescence</source>
+        <target state="translated">Folders</target>
+      </trans-unit>
+      <trans-unit id="documents.list.heading" datatype="html">
+        <source>Documentation qualité</source>
+        <target state="translated">Quality documentation</target>
+      </trans-unit>
+      <trans-unit id="documents.list.count-one" datatype="html">
+        <source>1 document</source>
+        <target state="translated">1 document</target>
+      </trans-unit>
+      <trans-unit id="documents.list.count-many" datatype="html">
+        <source><x id="INTERPOLATION"/> documents</source>
+        <target state="translated"><x id="INTERPOLATION"/> documents</target>
+      </trans-unit>
+      <trans-unit id="documents.list.import" datatype="html">
+        <source>Importer</source>
+        <target state="translated">Import</target>
+      </trans-unit>
+      <trans-unit id="documents.list.col-reference" datatype="html">
+        <source>Référence</source>
+        <target state="translated">Reference</target>
+      </trans-unit>
+      <trans-unit id="documents.list.col-owner" datatype="html">
+        <source>Propriétaire</source>
+        <target state="translated">Owner</target>
+      </trans-unit>
+      <trans-unit id="documents.list.col-review" datatype="html">
+        <source>Prochaine revue</source>
+        <target state="translated">Next review</target>
+      </trans-unit>
+      <trans-unit id="documents.filter.search" datatype="html">
+        <source>Rechercher par code, titre ou description</source>
+        <target state="translated">Search by code, title or description</target>
+      </trans-unit>
+      <trans-unit id="documents.filter.process" datatype="html">
+        <source>Processus</source>
+        <target state="translated">Process</target>
+      </trans-unit>
+      <trans-unit id="documents.filter.owner" datatype="html">
+        <source>Propriétaire</source>
+        <target state="translated">Owner</target>
+      </trans-unit>
+      <trans-unit id="documents.filter.clear" datatype="html">
+        <source>Effacer les filtres</source>
+        <target state="translated">Clear filters</target>
+      </trans-unit>
+      <trans-unit id="documents.empty.filtered" datatype="html">
+        <source>Aucun document ne correspond à ces filtres.</source>
+        <target state="translated">No document matches these filters.</target>
+      </trans-unit>
+      <trans-unit id="documents.empty.none" datatype="html">
+        <source>Aucun document ici pour l'instant.</source>
+        <target state="translated">No documents here yet.</target>
+      </trans-unit>
+      <trans-unit id="documents.empty.hint" datatype="html">
+        <source>Déposez des fichiers sur cette page ou créez un document.</source>
+        <target state="translated">Drop files on this page or create a document.</target>
+      </trans-unit>
+      <trans-unit id="documents.pager.range" datatype="html">
+        <source><x id="INTERPOLATION"/>–<x id="INTERPOLATION_1"/> sur <x id="INTERPOLATION_2"/></source>
+        <target state="translated"><x id="INTERPOLATION"/>–<x id="INTERPOLATION_1"/> of <x id="INTERPOLATION_2"/></target>
+      </trans-unit>
+      <trans-unit id="documents.pager.page" datatype="html">
+        <source>Page <x id="INTERPOLATION"/> / <x id="INTERPOLATION_1"/></source>
+        <target state="translated">Page <x id="INTERPOLATION"/> / <x id="INTERPOLATION_1"/></target>
+      </trans-unit>
+      <trans-unit id="documents.pager.previous" datatype="html">
+        <source>Page précédente</source>
+        <target state="translated">Previous page</target>
+      </trans-unit>
+      <trans-unit id="documents.pager.next" datatype="html">
+        <source>Page suivante</source>
+        <target state="translated">Next page</target>
+      </trans-unit>
+      <trans-unit id="documents.drop.title" datatype="html">
+        <source>Déposez vos fichiers pour les importer</source>
+        <target state="translated">Drop your files to import them</target>
+      </trans-unit>
+      <trans-unit id="documents.drop.where" datatype="html">
+        <source>Dans « <x id="INTERPOLATION"/> »</source>
+        <target state="translated">Into "<x id="INTERPOLATION"/>"</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.close" datatype="html">
+        <source>Fermer la fiche</source>
+        <target state="translated">Close the panel</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.preview-loading" datatype="html">
+        <source>Chargement de l'aperçu…</source>
+        <target state="translated">Loading preview…</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.preview-title" datatype="html">
+        <source>Aperçu du document</source>
+        <target state="translated">Document preview</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.preview-failed" datatype="html">
+        <source>L'aperçu n'a pas pu être chargé.</source>
+        <target state="translated">The preview could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.preview-too-large" datatype="html">
+        <source>Fichier trop volumineux pour l'aperçu : téléchargez-le.</source>
+        <target state="translated">File too large to preview: download it.</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.preview-purged" datatype="html">
+        <source>Fichier retiré au terme de sa conservation. Son empreinte reste vérifiable.</source>
+        <target state="translated">File removed at the end of its retention period. Its fingerprint can still be verified.</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.preview-unavailable" datatype="html">
+        <source>Pas d'aperçu pour ce format.</source>
+        <target state="translated">No preview for this format.</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.no-file" datatype="html">
+        <source>Aucun fichier joint à cette version.</source>
+        <target state="translated">No file attached to this version.</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.open" datatype="html">
+        <source>Ouvrir</source>
+        <target state="translated">Open</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.download" datatype="html">
+        <source>Télécharger</source>
+        <target state="translated">Download</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.download-failed" datatype="html">
+        <source>Le fichier n'a pas pu être téléchargé. Réessayez.</source>
+        <target state="translated">The file could not be downloaded. Try again.</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.circuit" datatype="html">
+        <source>Circuit de la version <x id="INTERPOLATION"/></source>
+        <target state="translated">Version <x id="INTERPOLATION"/> workflow</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.step-draft" datatype="html">
+        <source>Rédaction</source>
+        <target state="translated">Drafting</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.step-review" datatype="html">
+        <source>Vérification</source>
+        <target state="translated">Review</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.step-approval" datatype="html">
+        <source>Approbation</source>
+        <target state="translated">Approval</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.step-publish" datatype="html">
+        <source>Diffusion</source>
+        <target state="translated">Release</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.rejected" datatype="html">
+        <source>Refusée : <x id="INTERPOLATION"/></source>
+        <target state="translated">Rejected: <x id="INTERPOLATION"/></target>
+      </trans-unit>
+      <trans-unit id="documents.panel.details" datatype="html">
+        <source>Informations</source>
+        <target state="translated">Details</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.folder" datatype="html">
+        <source>Dossier</source>
+        <target state="translated">Folder</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.acknowledgments" datatype="html">
+        <source>Prises de connaissance</source>
+        <target state="translated">Acknowledgements</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.updated" datatype="html">
+        <source>Mis à jour</source>
+        <target state="translated">Updated</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.history" datatype="html">
+        <source>Historique des versions</source>
+        <target state="translated">Version history</target>
+      </trans-unit>
+      <trans-unit id="documents.import.title" datatype="html">
+        <source>Importer des documents</source>
+        <target state="translated">Import documents</target>
+      </trans-unit>
+      <trans-unit id="documents.import.intro" datatype="html">
+        <source>Chaque fichier devient un document en brouillon, avec le fichier dans sa première version.</source>
+        <target state="translated">Each file becomes a draft document, with the file in its first version.</target>
+      </trans-unit>
+      <trans-unit id="documents.import.no-folder" datatype="html">
+        <source>Sans dossier</source>
+        <target state="translated">No folder</target>
+      </trans-unit>
+      <trans-unit id="documents.import.mandatory-read" datatype="html">
+        <source>Lecture obligatoire</source>
+        <target state="translated">Mandatory reading</target>
+      </trans-unit>
+      <trans-unit id="documents.import.drop" datatype="html">
+        <source>Déposez des fichiers ici ou cliquez pour les choisir</source>
+        <target state="translated">Drop files here or click to choose them</target>
+      </trans-unit>
+      <trans-unit id="documents.import.policy" datatype="html">
+        <source>PDF, Word, Excel, PowerPoint, images ou texte — <x id="INTERPOLATION"/> Mo maximum par fichier</source>
+        <target state="translated">PDF, Word, Excel, PowerPoint, images or text — up to <x id="INTERPOLATION"/> MB per file</target>
+      </trans-unit>
+      <trans-unit id="documents.import.remove" datatype="html">
+        <source>Retirer ce fichier</source>
+        <target state="translated">Remove this file</target>
+      </trans-unit>
+      <trans-unit id="documents.import.fix-lines" datatype="html">
+        <source>Corrigez ou retirez les lignes signalées.</source>
+        <target state="translated">Fix or remove the flagged lines.</target>
+      </trans-unit>
+      <trans-unit id="documents.import.progress" datatype="html">
+        <source><x id="INTERPOLATION"/> sur <x id="INTERPOLATION_1"/> importés</source>
+        <target state="translated"><x id="INTERPOLATION"/> of <x id="INTERPOLATION_1"/> imported</target>
+      </trans-unit>
+      <trans-unit id="documents.import.submit" datatype="html">
+        <source>Importer <x id="INTERPOLATION"/> fichier(s)</source>
+        <target state="translated">Import <x id="INTERPOLATION"/> file(s)</target>
+      </trans-unit>
+      <trans-unit id="documents.import.running" datatype="html">
+        <source>Import en cours…</source>
+        <target state="translated">Importing…</target>
+      </trans-unit>
+      <trans-unit id="documents.import.upload-failed" datatype="html">
+        <source>Document créé, mais le fichier n'a pas été envoyé.</source>
+        <target state="translated">Document created, but the file was not uploaded.</target>
+      </trans-unit>
+      <trans-unit id="documents.import.empty-file" datatype="html">
+        <source>Ce fichier est vide.</source>
+        <target state="translated">This file is empty.</target>
+      </trans-unit>
+      <trans-unit id="documents.import.too-large" datatype="html">
+        <source>Fichier trop volumineux (maximum <x id="max"/> Mo).</source>
+        <target state="translated">File too large (maximum <x id="max"/> MB).</target>
+      </trans-unit>
+      <trans-unit id="documents.import.bad-type" datatype="html">
+        <source>Format non accepté.</source>
+        <target state="translated">Format not accepted.</target>
+      </trans-unit>
+      <trans-unit id="documents.import.bad-code" datatype="html">
+        <source>Code invalide : lettres majuscules, chiffres, point, tiret, souligné.</source>
+        <target state="translated">Invalid code: capital letters, digits, dot, hyphen, underscore.</target>
+      </trans-unit>
+      <trans-unit id="documents.import.bad-title" datatype="html">
+        <source>Le titre est obligatoire.</source>
+        <target state="translated">The title is required.</target>
+      </trans-unit>
+      <trans-unit id="documents.create.attach" datatype="html">
+        <source>Joindre un fichier (facultatif)</source>
+        <target state="translated">Attach a file (optional)</target>
+      </trans-unit>
+      <trans-unit id="documents.create.remove-file" datatype="html">
+        <source>Retirer le fichier</source>
+        <target state="translated">Remove the file</target>
+      </trans-unit>
+      <trans-unit id="documents.create.first-version-title" datatype="html">
+        <source>Première version, en brouillon</source>
+        <target state="translated">First version, as a draft</target>
+      </trans-unit>
+      <trans-unit id="documents.edit.review-hint" datatype="html">
+        <source>Fixée à la publication selon la périodicité du tenant ; avancez-la ou reculez-la au besoin.</source>
+        <target state="translated">Set at publication from the review period; move it earlier or later if needed.</target>
+      </trans-unit>
+      <trans-unit id="documents.detail.col-file" datatype="html">
+        <source>Fichier</source>
+        <target state="translated">File</target>
+      </trans-unit>
+      <trans-unit id="documents.detail.file-purged" datatype="html">
+        <source>Retiré (conservation échue)</source>
+        <target state="translated">Removed (retention ended)</target>
+      </trans-unit>
+      <trans-unit id="documents.detail.attach-file" datatype="html">
+        <source>Joindre</source>
+        <target state="translated">Attach</target>
+      </trans-unit>
+      <trans-unit id="documents.detail.replace-file" datatype="html">
+        <source>Remplacer</source>
+        <target state="translated">Replace</target>
+      </trans-unit>
+      <trans-unit id="documents.detail.file-uploaded" datatype="html">
+        <source>Fichier joint.</source>
+        <target state="translated">File attached.</target>
+      </trans-unit>
+      <trans-unit id="documents.detail.file-upload-failed" datatype="html">
+        <source>Le fichier n'a pas pu être envoyé.</source>
+        <target state="translated">The file could not be uploaded.</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.title" datatype="html">
+        <source>Documentation</source>
+        <target state="translated">Documentation</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.subtitle" datatype="html">
+        <source>Revues périodiques, fichiers, arborescence et processus de la documentation qualité.</source>
+        <target state="translated">Periodic reviews, files, folders and processes of the quality documentation.</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.back" datatype="html">
+        <source>Documentation qualité</source>
+        <target state="translated">Quality documentation</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.load-failed" datatype="html">
+        <source>Les paramètres de la documentation n'ont pas pu être chargés.</source>
+        <target state="translated">The documentation settings could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.storage" datatype="html">
+        <source>Stockage</source>
+        <target state="translated">Storage</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.stored" datatype="html">
+        <source>occupés</source>
+        <target state="translated">used</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.files" datatype="html">
+        <source>fichiers distincts</source>
+        <target state="translated">distinct files</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.saved-by" datatype="html">
+        <source>grâce aux doublons et à la compression</source>
+        <target state="translated">thanks to deduplication and compression</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.quota-used" datatype="html">
+        <source>Quota utilisé</source>
+        <target state="translated">Quota used</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.quota-line" datatype="html">
+        <source><x id="INTERPOLATION"/> % du quota de <x id="INTERPOLATION_1"/></source>
+        <target state="translated"><x id="INTERPOLATION"/>% of the <x id="INTERPOLATION_1"/> quota</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.storage-help" datatype="html">
+        <source>Un fichier déposé deux fois n'est stocké qu'une fois ; les formats texte et bureautiques anciens sont compressés. Sans compression ni partage, la documentation occuperait <x id="INTERPOLATION"/>.</source>
+        <target state="translated">A file uploaded twice is stored once; text and legacy office formats are compressed. Without compression or sharing, the documentation would take <x id="INTERPOLATION"/>.</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.review" datatype="html">
+        <source>Revue périodique</source>
+        <target state="translated">Periodic review</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.review-help" datatype="html">
+        <source>À la publication, la prochaine revue est fixée selon cette périodicité. Le préavis fait entrer le document dans « Revues à échéance ».</source>
+        <target state="translated">At publication, the next review is set from this period. The notice moves the document into "Reviews due".</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.period" datatype="html">
+        <source>Périodicité (mois)</source>
+        <target state="translated">Period (months)</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.warning" datatype="html">
+        <source>Préavis (jours)</source>
+        <target state="translated">Notice (days)</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.files-title" datatype="html">
+        <source>Fichiers</source>
+        <target state="translated">Files</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.files-help" datatype="html">
+        <source>Laissez le quota vide pour ne pas en fixer. Sans durée de conservation, les fichiers des versions obsolètes sont gardés indéfiniment ; leur empreinte reste toujours.</source>
+        <target state="translated">Leave the quota empty for none. Without a retention period, files of obsolete versions are kept indefinitely; their fingerprint is always kept.</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.max-file" datatype="html">
+        <source>Taille max. par fichier (Mo)</source>
+        <target state="translated">Max. size per file (MB)</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.max-file-hint" datatype="html">
+        <source>Au plus <x id="INTERPOLATION"/> Mo</source>
+        <target state="translated">At most <x id="INTERPOLATION"/> MB</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.quota" datatype="html">
+        <source>Quota (Mo)</source>
+        <target state="translated">Quota (MB)</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.retention" datatype="html">
+        <source>Conservation (ans)</source>
+        <target state="translated">Retention (years)</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.retention-hint" datatype="html">
+        <source>Fichiers des versions obsolètes</source>
+        <target state="translated">Files of obsolete versions</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.add-root" datatype="html">
+        <source>Dossier racine</source>
+        <target state="translated">Root folder</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.tree-help" datatype="html">
+        <source>Jusqu'à <x id="INTERPOLATION"/> niveaux. Les documents se classent dans ces dossiers.</source>
+        <target state="translated">Up to <x id="INTERPOLATION"/> levels. Documents are filed in these folders.</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.add-child" datatype="html">
+        <source>Ajouter un sous-dossier</source>
+        <target state="translated">Add a subfolder</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.rename" datatype="html">
+        <source>Renommer</source>
+        <target state="translated">Rename</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.processes" datatype="html">
+        <source>Processus</source>
+        <target state="translated">Processes</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.add-process" datatype="html">
+        <source>Ajouter</source>
+        <target state="translated">Add</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.processes-help" datatype="html">
+        <source>Les processus de la cartographie auxquels un document se rattache.</source>
+        <target state="translated">The processes of the process map that a document belongs to.</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.delete-folder" datatype="html">
+        <source>Supprimer le dossier « <x id="name"/> » ?</source>
+        <target state="translated">Delete the folder "<x id="name"/>"?</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.delete-folder-help" datatype="html">
+        <source>Un dossier qui contient des sous-dossiers ou des documents ne peut pas être supprimé.</source>
+        <target state="translated">A folder that contains subfolders or documents cannot be deleted.</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.delete-process" datatype="html">
+        <source>Supprimer le processus « <x id="name"/> » ?</source>
+        <target state="translated">Delete the process "<x id="name"/>"?</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.delete-process-help" datatype="html">
+        <source>Un processus rattaché à des documents ne peut pas être supprimé.</source>
+        <target state="translated">A process linked to documents cannot be deleted.</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.bad-period" datatype="html">
+        <source>La périodicité va de 1 à 120 mois.</source>
+        <target state="translated">The period ranges from 1 to 120 months.</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.bad-warning" datatype="html">
+        <source>Le préavis va de 0 à 365 jours.</source>
+        <target state="translated">The notice ranges from 0 to 365 days.</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.bad-max-file" datatype="html">
+        <source>La taille maximale va de 1 à <x id="max"/> Mo.</source>
+        <target state="translated">The maximum size ranges from 1 to <x id="max"/> MB.</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.bad-quota" datatype="html">
+        <source>Le quota est un nombre entier de Mo, ou vide pour aucun.</source>
+        <target state="translated">The quota is a whole number of MB, or empty for none.</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.bad-retention" datatype="html">
+        <source>La conservation va de 1 à 100 ans, ou vide pour tout garder.</source>
+        <target state="translated">Retention ranges from 1 to 100 years, or empty to keep everything.</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.saved" datatype="html">
+        <source>Paramètres enregistrés.</source>
+        <target state="translated">Settings saved.</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.unsaved" datatype="html">
+        <source>Modifications non enregistrées</source>
+        <target state="translated">Unsaved changes</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.discard" datatype="html">
+        <source>Annuler les modifications</source>
+        <target state="translated">Discard changes</target>
+      </trans-unit>
       <trans-unit id="dpia.create.hint" datatype="html">
         <source>L'Art. 35 RGPD impose une DPIA pour les traitements présentant un</source>
         <target state="translated">GDPR Art. 35 mandates a DPIA for processing operations presenting a</target>

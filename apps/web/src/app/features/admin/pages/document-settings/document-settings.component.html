@@ -1,0 +1,202 @@
+<div class="qos-page reglages">
+  <qos-page-header
+    title="Documentation" i18n-title="@@documents.settings.title"
+    subtitle="Revues périodiques, fichiers, arborescence et processus de la documentation qualité."
+    i18n-subtitle="@@documents.settings.subtitle">
+    <ng-container qosActions>
+      <a mat-stroked-button routerLink="/documents">
+        <mat-icon>folder_copy</mat-icon> <span i18n="@@documents.settings.back">Documentation qualité</span>
+      </a>
+    </ng-container>
+  </qos-page-header>
+
+  <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+
+  <p class="echec" *ngIf="failed" role="alert">
+    <span i18n="@@documents.settings.load-failed">Les paramètres de la documentation n'ont pas pu être chargés.</span>
+    <button mat-button type="button" (click)="load()" i18n="@@common.retry">Réessayer</button>
+  </p>
+
+  <div class="grille" *ngIf="!failed && !loading && settings">
+
+    <!-- ===== Stockage ===== -->
+    <section class="bloc stockage" aria-labelledby="doc-storage" *ngIf="usage">
+      <h2 class="bloc__titre" id="doc-storage" i18n="@@documents.settings.storage">Stockage</h2>
+      <div class="chiffres">
+        <div class="chiffre">
+          <span class="valeur">{{ size(usage.storedBytes) }}</span>
+          <span class="libelle" i18n="@@documents.settings.stored">occupés</span>
+        </div>
+        <div class="chiffre">
+          <span class="valeur">{{ usage.files }}</span>
+          <span class="libelle" i18n="@@documents.settings.files">fichiers distincts</span>
+        </div>
+        <div class="chiffre gain" *ngIf="savedPercent > 0">
+          <span class="valeur">−{{ savedPercent }} %</span>
+          <span class="libelle" i18n="@@documents.settings.saved-by">grâce aux doublons et à la compression</span>
+        </div>
+      </div>
+      <div class="jauge" *ngIf="quotaPercent !== null" [class.pleine]="quotaPercent >= 90"
+           role="progressbar" [attr.aria-valuenow]="quotaPercent" aria-valuemin="0" aria-valuemax="100"
+           aria-label="Quota utilisé" i18n-aria-label="@@documents.settings.quota-used">
+        <span class="remplissage" [style.width.%]="quotaPercent"></span>
+      </div>
+      <p class="bloc__aide" *ngIf="quotaPercent !== null" i18n="@@documents.settings.quota-line">
+        {{ quotaPercent }} % du quota de {{ size(usage.quotaBytes) }}
+      </p>
+      <p class="bloc__aide" i18n="@@documents.settings.storage-help">
+        Un fichier déposé deux fois n'est stocké qu'une fois ; les formats texte et bureautiques anciens sont compressés.
+        Sans compression ni partage, la documentation occuperait {{ size(usage.logicalBytes) }}.
+      </p>
+    </section>
+
+    <!-- ===== Revues ===== -->
+    <section class="bloc" aria-labelledby="doc-review">
+      <h2 class="bloc__titre" id="doc-review" i18n="@@documents.settings.review">Revue périodique</h2>
+      <p class="bloc__aide" i18n="@@documents.settings.review-help">À la publication, la prochaine revue est fixée selon cette périodicité. Le préavis fait entrer le document dans « Revues à échéance ».</p>
+      <div class="champs">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label i18n="@@documents.settings.period">Périodicité (mois)</mat-label>
+          <input matInput type="number" min="1" max="120" step="1" [(ngModel)]="form.reviewPeriodMonths">
+        </mat-form-field>
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label i18n="@@documents.settings.warning">Préavis (jours)</mat-label>
+          <input matInput type="number" min="0" max="365" step="1" [(ngModel)]="form.reviewWarningDays">
+        </mat-form-field>
+      </div>
+    </section>
+
+    <!-- ===== Fichiers ===== -->
+    <section class="bloc" aria-labelledby="doc-files">
+      <h2 class="bloc__titre" id="doc-files" i18n="@@documents.settings.files-title">Fichiers</h2>
+      <p class="bloc__aide" i18n="@@documents.settings.files-help">Laissez le quota vide pour ne pas en fixer. Sans durée de conservation, les fichiers des versions obsolètes sont gardés indéfiniment ; leur empreinte reste toujours.</p>
+      <div class="champs">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label i18n="@@documents.settings.max-file">Taille max. par fichier (Mo)</mat-label>
+          <input matInput type="number" min="1" [max]="settings.platformMaxFileMb" step="1" [(ngModel)]="form.maxFileMb">
+          <mat-hint i18n="@@documents.settings.max-file-hint">Au plus {{ settings.platformMaxFileMb }} Mo</mat-hint>
+        </mat-form-field>
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label i18n="@@documents.settings.quota">Quota (Mo)</mat-label>
+          <input matInput type="number" min="1" step="1" [ngModel]="form.quotaMb"
+                 (ngModelChange)="form.quotaMb = optional($event)">
+        </mat-form-field>
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label i18n="@@documents.settings.retention">Conservation (ans)</mat-label>
+          <input matInput type="number" min="1" max="100" step="1" [ngModel]="form.obsoleteRetentionYears"
+                 (ngModelChange)="form.obsoleteRetentionYears = optional($event)">
+          <mat-hint i18n="@@documents.settings.retention-hint">Fichiers des versions obsolètes</mat-hint>
+        </mat-form-field>
+      </div>
+    </section>
+
+    <!-- ===== Arborescence ===== -->
+    <section class="bloc" aria-labelledby="doc-tree">
+      <div class="bloc__entete">
+        <h2 class="bloc__titre" id="doc-tree" i18n="@@documents.nav.folders">Arborescence</h2>
+        <button mat-button type="button" (click)="startFolder(null)" [disabled]="busy">
+          <mat-icon>create_new_folder</mat-icon> <span i18n="@@documents.settings.add-root">Dossier racine</span>
+        </button>
+      </div>
+      <p class="bloc__aide" i18n="@@documents.settings.tree-help">Jusqu'à {{ maxDepth }} niveaux. Les documents se classent dans ces dossiers.</p>
+
+      <ul class="liste">
+        <ng-container *ngTemplateOutlet="newFolder; context: { parentId: null, depth: 0 }"></ng-container>
+        <ng-container *ngFor="let row of folderRows; trackBy: trackByFolder">
+          <li class="ligne" [style.--depth]="row.depth">
+            <ng-container *ngIf="isDraft('folder', row.folder.id); else showFolder">
+              <ng-container *ngTemplateOutlet="editor"></ng-container>
+            </ng-container>
+            <ng-template #showFolder>
+              <mat-icon class="ico" aria-hidden="true">folder</mat-icon>
+              <span class="nom">{{ row.folder.name }}</span>
+              <span class="outils">
+                <button mat-icon-button type="button" *ngIf="canNest(row)" (click)="startFolder(row)" [disabled]="busy"
+                        aria-label="Ajouter un sous-dossier" i18n-aria-label="@@documents.settings.add-child">
+                  <mat-icon>create_new_folder</mat-icon>
+                </button>
+                <button mat-icon-button type="button" (click)="renameFolder(row)" [disabled]="busy"
+                        aria-label="Renommer" i18n-aria-label="@@documents.settings.rename">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button type="button" (click)="deleteFolder(row)" [disabled]="busy || row.hasChildren"
+                        aria-label="Supprimer" i18n-aria-label="@@common.delete">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </span>
+            </ng-template>
+          </li>
+          <ng-container *ngTemplateOutlet="newFolder; context: { parentId: row.folder.id, depth: row.depth + 1 }"></ng-container>
+        </ng-container>
+      </ul>
+    </section>
+
+    <!-- ===== Processus ===== -->
+    <section class="bloc" aria-labelledby="doc-processes">
+      <div class="bloc__entete">
+        <h2 class="bloc__titre" id="doc-processes" i18n="@@documents.settings.processes">Processus</h2>
+        <button mat-button type="button" (click)="startProcess()" [disabled]="busy">
+          <mat-icon>add</mat-icon> <span i18n="@@documents.settings.add-process">Ajouter</span>
+        </button>
+      </div>
+      <p class="bloc__aide" i18n="@@documents.settings.processes-help">Les processus de la cartographie auxquels un document se rattache.</p>
+      <ul class="liste">
+        <li class="ligne" *ngFor="let p of processes; trackBy: trackByProcess">
+          <ng-container *ngIf="isDraft('process', p.id); else showProcess">
+            <ng-container *ngTemplateOutlet="editor"></ng-container>
+          </ng-container>
+          <ng-template #showProcess>
+            <mat-icon class="ico" aria-hidden="true">account_tree</mat-icon>
+            <span class="nom">{{ p.name }}</span>
+            <span class="outils">
+              <button mat-icon-button type="button" (click)="renameProcess(p)" [disabled]="busy"
+                      aria-label="Renommer" i18n-aria-label="@@documents.settings.rename">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button type="button" (click)="deleteProcess(p)" [disabled]="busy"
+                      aria-label="Supprimer" i18n-aria-label="@@common.delete">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </span>
+          </ng-template>
+        </li>
+        <li class="ligne" *ngIf="isDraft('process', null)">
+          <ng-container *ngTemplateOutlet="editor"></ng-container>
+        </li>
+      </ul>
+    </section>
+  </div>
+
+  <!-- Barre d'enregistrement des réglages -->
+  <div class="barre" *ngIf="settings && !failed && (dirty || problem)">
+    <span class="probleme" *ngIf="problem; else changed" role="alert">{{ problem }}</span>
+    <ng-template #changed><span i18n="@@documents.settings.unsaved">Modifications non enregistrées</span></ng-template>
+    <button mat-button type="button" (click)="reset()" [disabled]="saving" i18n="@@documents.settings.discard">Annuler les modifications</button>
+    <button mat-flat-button color="primary" type="button" (click)="save()" [disabled]="saving || !!problem || !dirty"
+            i18n="@@common.save">Enregistrer</button>
+  </div>
+</div>
+
+<ng-template #newFolder let-parentId="parentId" let-depth="depth">
+  <li class="ligne" *ngIf="isDraft('folder', null, parentId)" [style.--depth]="depth">
+    <ng-container *ngTemplateOutlet="editor"></ng-container>
+  </li>
+</ng-template>
+
+<ng-template #editor>
+  <form class="edition" *ngIf="draft" (ngSubmit)="commitDraft()">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label i18n="@@common.name">Nom</mat-label>
+      <input matInput name="name" [(ngModel)]="draft.name" [maxlength]="nameMax" required
+             (keydown.escape)="cancelDraft()" cdkFocusInitial autofocus autocomplete="off">
+    </mat-form-field>
+    <button mat-icon-button type="submit" [disabled]="busy || !draft.name.trim()"
+            aria-label="Enregistrer" i18n-aria-label="@@common.save">
+      <mat-icon>check</mat-icon>
+    </button>
+    <button mat-icon-button type="button" (click)="cancelDraft()"
+            aria-label="Annuler" i18n-aria-label="@@common.cancel">
+      <mat-icon>close</mat-icon>
+    </button>
+  </form>
+</ng-template>

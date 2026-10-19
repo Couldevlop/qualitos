@@ -57,6 +57,14 @@ ingress:
     secretName: qualitos-tls
 
 # -----------------------------------------------------------------------------
+# Dépôt des fichiers de la documentation qualité (GED, ADR 0094) : son propre
+# ingress, seul à accepter des corps au-delà de 12 Mo. 52 Mo = plafond de
+# plateforme (50 Mo) + enveloppe multipart.
+# -----------------------------------------------------------------------------
+documentFiles:
+  maxBodySize: 52m
+
+# -----------------------------------------------------------------------------
 # Stockage objet des pièces jointes (photos de NC §4.3, preuves CAPA §4.2).
 # Le MinIO lui-même est une dépendance d'état (infra/k8s/deps/50-minio.yaml),
 # pas un service du chart : le chart n'a qu'à publier la route de LECTURE.

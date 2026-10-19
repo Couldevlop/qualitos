@@ -76,4 +76,27 @@ class S3ObjectStorageTest {
 
         assertThat(url.getQuery()).contains("X-Amz-Expires=900");
     }
+
+    @Test
+    @DisplayName("téléchargement : la disposition « attachment » et le nom sont signés dans l'URL")
+    void presignsAttachmentWithFilename() {
+        S3ObjectStorage storage = new S3ObjectStorage(props("http://minio:9000", null));
+
+        URL url = storage.presignGet("tenants/t1/documents/blobs/abc", Duration.ofMinutes(10), "proc.pdf", true);
+
+        assertThat(url.getQuery())
+                .contains("response-content-disposition=attachment%3B%20filename%3D%22proc.pdf%22")
+                .contains("X-Amz-Expires=600");
+    }
+
+    @Test
+    @DisplayName("aperçu sans nom : disposition « inline » seule")
+    void presignsInlineWithoutFilename() {
+        S3ObjectStorage storage = new S3ObjectStorage(props("http://minio:9000", null));
+
+        URL url = storage.presignGet("tenants/t1/documents/blobs/abc", Duration.ofMinutes(10), null, false);
+
+        assertThat(url.getQuery()).contains("response-content-disposition=inline")
+                .doesNotContain("filename");
+    }
 }

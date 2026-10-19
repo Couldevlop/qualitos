@@ -4,7 +4,40 @@ mat-dialog-content { padding-top: 8px; display: flex; flex-direction: column; ga
 .row { display: flex; gap: 12px; }
 .col { flex: 1; min-width: 0; }
 .col-code { max-width: 220px; }
-.section { margin: 12px 0 6px; font-size: 13px; font-weight: 700; color: rgba(0,0,0,0.65); text-transform: uppercase; letter-spacing: 0.04em; }
+.section { margin: 12px 0 6px; font-size: var(--qos-fs-sm); font-weight: var(--qos-fw-semibold); color: var(--qos-fg-secondary); }
+
+.file-field {
+  display: flex;
+  align-items: center;
+  gap: var(--qos-space-2);
+  min-height: 48px;
+  margin-bottom: var(--qos-space-2);
+  padding: 0 var(--qos-space-3);
+  border: 1px dashed var(--qos-border-default);
+  border-radius: var(--qos-radius-md);
+  background: var(--qos-bg-subtle);
+  font-size: var(--qos-fs-sm);
+
+  mat-icon { color: var(--qos-fg-tertiary); }
+  .file-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: var(--qos-fw-medium); }
+  .file-size { color: var(--qos-fg-tertiary); font-size: var(--qos-fs-xs); }
+}
+
+.file-pick {
+  display: flex;
+  align-items: center;
+  gap: var(--qos-space-2);
+  width: 100%;
+  min-height: 46px;
+  color: var(--qos-fg-link);
+  cursor: pointer;
+
+  input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+  mat-icon { color: inherit; }
+  &:focus-within { outline: none; box-shadow: var(--qos-ring-focus); border-radius: var(--qos-radius-sm); }
+}
+
+.file-error { margin: 0 0 var(--qos-space-2); color: var(--qos-danger-fg); font-size: var(--qos-fs-xs); }
 mat-checkbox { margin: 4px 0 8px; }
 mat-dialog-actions { padding: 12px 0 0; gap: 8px; }
 mat-dialog-actions button[type='submit'] { display: inline-flex; align-items: center; gap: 6px; }

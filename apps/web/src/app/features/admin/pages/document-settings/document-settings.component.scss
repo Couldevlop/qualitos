@@ -1,0 +1,205 @@
+// Documentation : réglages, stockage, arborescence et processus.
+
+:host {
+  display: block;
+}
+
+.echec {
+  display: flex;
+  align-items: center;
+  gap: var(--qos-space-2);
+  color: var(--qos-danger-fg);
+}
+
+.grille {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--qos-space-4);
+  padding-bottom: var(--qos-space-16);
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.bloc {
+  display: flex;
+  flex-direction: column;
+  gap: var(--qos-space-3);
+  padding: var(--qos-space-5);
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: var(--qos-radius-lg);
+  background: var(--qos-bg-elevated);
+  box-shadow: var(--qos-shadow-xs);
+}
+
+.bloc__entete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--qos-space-2);
+}
+
+.bloc__titre {
+  margin: 0;
+  font-size: var(--qos-fs-md);
+  font-weight: var(--qos-fw-semibold);
+}
+
+.bloc__aide {
+  margin: 0;
+  color: var(--qos-fg-secondary);
+  font-size: var(--qos-fs-sm);
+  line-height: var(--qos-lh-normal);
+}
+
+.champs {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: var(--qos-space-3);
+}
+
+// ---------- stockage ----------
+
+.stockage {
+  grid-column: 1 / -1;
+}
+
+.chiffres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--qos-space-8);
+}
+
+.chiffre {
+  display: flex;
+  flex-direction: column;
+
+  .valeur {
+    font-size: var(--qos-fs-2xl);
+    font-weight: var(--qos-fw-bold);
+    line-height: var(--qos-lh-tight);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .libelle {
+    color: var(--qos-fg-secondary);
+    font-size: var(--qos-fs-sm);
+  }
+
+  &.gain .valeur { color: var(--qos-success-fg); }
+}
+
+.jauge {
+  height: 8px;
+  overflow: hidden;
+  border-radius: var(--qos-radius-pill);
+  background: var(--qos-bg-subtle);
+
+  .remplissage {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--qos-accent-bg);
+    transition: width var(--qos-motion-slow) ease-out;
+  }
+
+  &.pleine .remplissage { background: var(--qos-danger-fg); }
+}
+
+// ---------- listes ----------
+
+.liste {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ligne {
+  display: flex;
+  align-items: center;
+  gap: var(--qos-space-2);
+  min-height: 40px;
+  padding: 0 var(--qos-space-2);
+  padding-inline-start: calc(var(--qos-space-2) + var(--depth, 0) * 20px);
+  border-radius: var(--qos-radius-md);
+  transition: background var(--qos-motion-fast) ease-out;
+
+  .ico {
+    flex: none;
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+    color: var(--qos-fg-tertiary);
+  }
+
+  .nom {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: var(--qos-fs-sm);
+  }
+
+  .outils {
+    display: flex;
+    opacity: 0;
+    transition: opacity var(--qos-motion-fast) ease-out;
+  }
+
+  &:hover, &:focus-within {
+    background: var(--qos-bg-hover);
+    .outils { opacity: 1; }
+  }
+}
+
+@media (hover: none) {
+  .ligne .outils { opacity: 1; }
+}
+
+.edition {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: var(--qos-space-1);
+  padding: var(--qos-space-1) 0;
+
+  mat-form-field { flex: 1; }
+}
+
+// ---------- enregistrement ----------
+
+.barre {
+  position: sticky;
+  bottom: var(--qos-space-4);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: var(--qos-space-2);
+  margin-top: calc(-1 * var(--qos-space-12));
+  padding: var(--qos-space-3) var(--qos-space-4);
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: var(--qos-radius-lg);
+  background: var(--qos-bg-elevated);
+  box-shadow: var(--qos-shadow-lg);
+  animation: barre-in var(--qos-motion-base) ease-out;
+
+  > span { margin-inline-end: auto; font-size: var(--qos-fs-sm); }
+  .probleme { color: var(--qos-danger-fg); }
+}
+
+@keyframes barre-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
