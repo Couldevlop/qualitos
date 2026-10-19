@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -54,6 +55,22 @@ public class Document {
     /** Si true: lecture obligatoire — chaque utilisateur ciblé doit l'acknowledger. */
     @Column(name = "mandatory_read", nullable = false)
     private boolean mandatoryRead;
+
+    /** Le dossier de l'arborescence où le document est rangé (null : non classé). */
+    @Column(name = "folder_id")
+    private UUID folderId;
+
+    /** Le processus auquel le document se rattache (null : non renseigné). */
+    @Column(name = "process_id")
+    private UUID processId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private DocumentLifecycle lifecycle = DocumentLifecycle.DRAFT;
+
+    /** Échéance de la revue périodique, posée à la publication (null tant que rien n'est publié). */
+    @Column(name = "next_review_date")
+    private LocalDate nextReviewDate;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;

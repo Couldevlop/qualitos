@@ -87,8 +87,10 @@ ingress:
     # more_set_headers l'emporte), sans toucher à la config partagée des autres
     # projets. `unsafe-inline`/`unsafe-eval` sont CONSERVÉS : l'application tourne
     # avec aujourd'hui ; les retirer demande une vérification applicative dédiée.
+    # `blob:` en img-src, frame-src et object-src : l'aperçu de la GED (ADR 0094)
+    # affiche un PDF ou une image lus en mémoire, jamais une adresse extérieure.
     nginx.ingress.kubernetes.io/configuration-snippet: |
-      more_set_headers "Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'";
+      more_set_headers "Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self'; frame-src 'self' blob:; object-src 'self' blob:; frame-ancestors 'self'; base-uri 'self'; form-action 'self'";
   host: preprod.qualitos.openlabconsulting.com
   tls:
     enabled: true

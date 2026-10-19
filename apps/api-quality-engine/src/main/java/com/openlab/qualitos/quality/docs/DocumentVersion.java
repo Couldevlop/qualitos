@@ -35,9 +35,29 @@ public class DocumentVersion {
     @Column(name = "content_uri", length = 1024)
     private String contentUri;
 
-    /** Hash SHA-256 hex pour ancrage blockchain (32B → 64 hex chars). */
+    /**
+     * Hash SHA-256 hex pour ancrage blockchain (32B → 64 hex chars) : celui du
+     * fichier tel que déposé quand la version en porte un, celui du texte sinon.
+     */
     @Column(name = "content_hash", length = 64)
     private String contentHash;
+
+    /** Le fichier de la version, partagé avec toute autre version au même contenu (ADR 0094). */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "blob_id")
+    private DocumentBlob blob;
+
+    /** Le nom d'origine du fichier, assaini ; il s'affiche et nomme le téléchargement. */
+    @Column(name = "file_name", length = 255)
+    private String fileName;
+
+    /** Quand la version a cessé de faire foi : point de départ de sa conservation. */
+    @Column(name = "obsoleted_at")
+    private Instant obsoletedAt;
+
+    /** Le fichier a été retiré au terme de sa conservation ; l'empreinte reste. */
+    @Column(name = "file_purged_at")
+    private Instant filePurgedAt;
 
     @Column(name = "change_note", columnDefinition = "TEXT")
     private String changeNote;

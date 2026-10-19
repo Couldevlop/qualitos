@@ -1,0 +1,131 @@
+<aside class="panel" aria-labelledby="doc-panel-title">
+  <header class="panel-head">
+    <div class="ids">
+      <span class="ref">{{ document.code }}</span>
+      <span class="status" [attr.data-status]="displayStatus">{{ statusLabels[displayStatus] }}</span>
+    </div>
+    <button mat-icon-button type="button" class="close" (click)="closed.emit()"
+            aria-label="Fermer la fiche" i18n-aria-label="@@documents.panel.close">
+      <mat-icon>close</mat-icon>
+    </button>
+  </header>
+
+  <h2 id="doc-panel-title" class="title">{{ document.title }}</h2>
+  <p class="desc" *ngIf="document.description">{{ document.description }}</p>
+
+  <!-- Aperçu -->
+  <div class="preview" [attr.data-state]="preview" [attr.data-kind]="previewKind">
+    <ng-container [ngSwitch]="preview">
+      <div *ngSwitchCase="'loading'" class="preview-msg" aria-live="polite">
+        <mat-progress-spinner mode="indeterminate" diameter="28"></mat-progress-spinner>
+        <span i18n="@@documents.panel.preview-loading">Chargement de l'aperçu…</span>
+      </div>
+
+      <ng-container *ngSwitchCase="'ready'">
+        <iframe *ngIf="previewKind === 'pdf' && previewUrl" [src]="previewUrl"
+                title="Aperçu du document" i18n-title="@@documents.panel.preview-title"></iframe>
+        <img *ngIf="previewKind === 'image' && imageUrl" [src]="imageUrl" [alt]="document.title">
+        <pre *ngIf="previewKind === 'text'">{{ previewText }}</pre>
+      </ng-container>
+
+      <div *ngSwitchCase="'failed'" class="preview-msg">
+        <mat-icon aria-hidden="true">error_outline</mat-icon>
+        <span i18n="@@documents.panel.preview-failed">L'aperçu n'a pas pu être chargé.</span>
+        <button mat-button type="button" (click)="retryPreview()" i18n="@@common.retry">Réessayer</button>
+      </div>
+
+      <div *ngSwitchCase="'too-large'" class="preview-msg">
+        <mat-icon aria-hidden="true">insert_drive_file</mat-icon>
+        <span i18n="@@documents.panel.preview-too-large">Fichier trop volumineux pour l'aperçu : téléchargez-le.</span>
+      </div>
+
+      <div *ngSwitchCase="'purged'" class="preview-msg">
+        <mat-icon aria-hidden="true">auto_delete</mat-icon>
+        <span i18n="@@documents.panel.preview-purged">Fichier retiré au terme de sa conservation. Son empreinte reste vérifiable.</span>
+      </div>
+
+      <div *ngSwitchDefault class="preview-msg">
+        <mat-icon aria-hidden="true">{{ version?.file ? 'description' : 'note' }}</mat-icon>
+        <span *ngIf="version?.file; else noFile" i18n="@@documents.panel.preview-unavailable">Pas d'aperçu pour ce format.</span>
+        <ng-template #noFile><span i18n="@@documents.panel.no-file">Aucun fichier joint à cette version.</span></ng-template>
+      </div>
+    </ng-container>
+  </div>
+
+  <div class="file-line" *ngIf="version?.file as f">
+    <mat-icon aria-hidden="true">attach_file</mat-icon>
+    <span class="file-name" [title]="f.fileName">{{ f.fileName }}</span>
+    <span class="dim">{{ size(f.sizeBytes) }}</span>
+  </div>
+
+  <div class="panel-actions">
+    <a mat-flat-button color="primary" [routerLink]="['/documents', document.id]">
+      <mat-icon>open_in_new</mat-icon> <span i18n="@@documents.panel.open">Ouvrir</span>
+    </a>
+    <button mat-stroked-button type="button" (click)="download()"
+            [disabled]="!version?.file || version?.file?.purged || downloading">
+      <mat-icon>download</mat-icon> <span i18n="@@documents.panel.download">Télécharger</span>
+    </button>
+  </div>
+  <p class="link-error" *ngIf="linkError" role="alert">{{ linkError }}</p>
+
+  <!-- Circuit -->
+  <section class="block" *ngIf="version">
+    <h3 i18n="@@documents.panel.circuit">Circuit de la version {{ version.versionNumber }}</h3>
+    <ol class="stepper">
+      <li *ngFor="let s of steps" [attr.data-state]="s.state"
+          [attr.aria-current]="s.state === 'current' ? 'step' : null">
+        <span class="dot" aria-hidden="true"><mat-icon *ngIf="s.state === 'done'">check</mat-icon></span>
+        <span class="step-label">{{ s.label }}</span>
+      </li>
+    </ol>
+    <p class="rejected" *ngIf="version.status === 'DRAFT' && version.rejectionReason">
+      <mat-icon aria-hidden="true">undo</mat-icon>
+      <span i18n="@@documents.panel.rejected">Refusée : {{ version.rejectionReason }}</span>
+    </p>
+  </section>
+
+  <!-- Métadonnées -->
+  <section class="block">
+    <h3 i18n="@@documents.panel.details">Informations</h3>
+    <dl class="meta">
+      <dt i18n="@@common.type">Type</dt>
+      <dd>{{ typeLabels[document.type] }}</dd>
+
+      <dt i18n="@@documents.panel.folder">Dossier</dt>
+      <dd>{{ folderName ?? '—' }}</dd>
+
+      <dt i18n="@@documents.filter.process">Processus</dt>
+      <dd>{{ processName ?? '—' }}</dd>
+
+      <dt i18n="@@documents.list.col-owner">Propriétaire</dt>
+      <dd><qos-person-name [accountId]="document.ownerId"></qos-person-name></dd>
+
+      <dt i18n="@@documents.list.col-review">Prochaine revue</dt>
+      <dd [class.overdue]="displayStatus === 'REVIEW_OVERDUE'">
+        {{ document.nextReviewDate ? (document.nextReviewDate | date:'mediumDate') : '—' }}
+      </dd>
+
+      <ng-container *ngIf="document.mandatoryRead">
+        <dt i18n="@@documents.panel.acknowledgments">Prises de connaissance</dt>
+        <dd>{{ acknowledgments ?? '—' }}</dd>
+      </ng-container>
+
+      <dt i18n="@@documents.panel.updated">Mis à jour</dt>
+      <dd>{{ document.updatedAt | date:'medium' }}</dd>
+    </dl>
+  </section>
+
+  <!-- Historique -->
+  <section class="block" *ngIf="history.length">
+    <h3 i18n="@@documents.panel.history">Historique des versions</h3>
+    <ul class="history">
+      <li *ngFor="let v of history; trackBy: trackByVersion" [class.current]="v.id === document.currentVersionId">
+        <span class="v">v{{ v.versionNumber }}</span>
+        <span class="v-status" [attr.data-vstatus]="v.status">{{ versionLabels[v.status] }}</span>
+        <span class="v-date">{{ (v.publishedAt ?? v.createdAt) | date:'mediumDate' }}</span>
+        <span class="v-note" *ngIf="v.changeNote" [title]="v.changeNote">{{ v.changeNote }}</span>
+      </li>
+    </ul>
+  </section>
+</aside>

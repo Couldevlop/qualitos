@@ -33,6 +33,7 @@ class DocumentControllerTest {
 
     @Autowired MockMvc mockMvc;
     @MockitoBean DocumentService service;
+    @MockitoBean DocumentFileService files;
     ObjectMapper om;
 
     static final UUID DOC = UUID.randomUUID();
@@ -63,6 +64,48 @@ class DocumentControllerTest {
                 .thenReturn(new PageImpl<>(List.of(docResp(DocumentStatus.ARCHIVED))));
         mockMvc.perform(get("/api/v1/documents").param("status", "ARCHIVED"))
                 .andExpect(status().isOk());
+    }
+
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
+    void list_withGedFilters_searches() throws Exception {
+        UUID folder = UUID.randomUUID();
+        when(service.search(any(), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of(docResp(DocumentStatus.ACTIVE))));
+        mockMvc.perform(get("/api/v1/documents")
+                        .param("view", "MINE").param("folderId", folder.toString()).param("q", "achat")
+                        .param("displayStatus", "IN_FORCE").param("type", "PROCEDURE"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].displayStatus").value("DRAFT"));
+        verify(service).search(eq(new DocumentDto.ListFilter(DocumentView.MINE, folder, "achat",
+                DisplayStatus.IN_FORCE, DocumentType.PROCEDURE, null, null)), any(Pageable.class));
+    }
+
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
+    void list_statusWithNewFilter_mapsStatusToView() throws Exception {
+        when(service.search(any(), any(Pageable.class))).thenReturn(new PageImpl<>(List.of()));
+        mockMvc.perform(get("/api/v1/documents").param("status", "ARCHIVED").param("q", "x"))
+                .andExpect(status().isOk());
+        verify(service).search(eq(new DocumentDto.ListFilter(DocumentView.ARCHIVED, null, "x",
+                null, null, null, null)), any(Pageable.class));
+    }
+
+    @Test @WithMockUser(roles = "USER")
+    void views_returnsCounters() throws Exception {
+        when(service.viewCounts()).thenReturn(new DocumentDto.ViewCounts(10, 2, 1, 3, 4));
+        mockMvc.perform(get("/api/v1/documents/views"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.toValidate").value(1))
+                .andExpect(jsonPath("$.reviewDue").value(3));
+    }
+
+    @Test @WithMockUser(roles = "USER")
+    void fileLink_returnsPresignedLink() throws Exception {
+        when(files.link(DOC, VER, true)).thenReturn(new DocumentDto.FileLink(
+                "https://storage.test/x", "proc.pdf", "application/pdf", 12, 600));
+        mockMvc.perform(get("/api/v1/documents/" + DOC + "/versions/" + VER + "/file").param("download", "true"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.url").value("https://storage.test/x"))
+                .andExpect(jsonPath("$.fileName").value("proc.pdf"));
     }
 
     @Test @WithMockUser(roles = "QUALITY_MANAGER")
@@ -295,12 +338,13 @@ class DocumentControllerTest {
     private DocumentDto.DocumentResponse docResp(DocumentStatus s) {
         return new DocumentDto.DocumentResponse(
                 DOC, TENANT, "C", "T", null, DocumentType.PROCEDURE, s, OWNER, null,
-                false, Instant.now(), Instant.now(), List.of());
+                false, Instant.now(), Instant.now(), List.of(),
+                null, null, DocumentLifecycle.DRAFT, DisplayStatus.DRAFT, null);
     }
 
     private DocumentDto.VersionResponse verResp(VersionStatus s) {
         return new DocumentDto.VersionResponse(
                 VER, DOC, 1, null, null, null, null, s, OWNER, null, null, null, null,
-                Instant.now(), Instant.now(), null, null, null);
+                Instant.now(), Instant.now(), null, null, null, null);
     }
 }

@@ -157,8 +157,8 @@ describe('MainShellComponent (navigation model)', () => {
     // Administration passe a 8 : + Roles et droits (ADR 0078), puis a 9 : + Clients (ADR 0079),
     // puis a 10 : + Circuits de validation (ADR 0080), puis a 11 : + Licence
     // (ADR 0082) — qui n'apparait qu'en on-premise, comme Clients qu'en SaaS. Puis a 12 :
-    // + Parametres MOC (ADR 0087).
-    expect(labels).toEqual([7, 6, 8, 1, 4, 1, 9, 11, 1, 12]);
+    // + Parametres MOC (ADR 0087). Puis a 13 : + Documentation (ADR 0094).
+    expect(labels).toEqual([7, 6, 8, 1, 4, 1, 9, 11, 1, 13]);
   });
 
   it('le registre des risques a son groupe, juste apres la non-conformite', () => {

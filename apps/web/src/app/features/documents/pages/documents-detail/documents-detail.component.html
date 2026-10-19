@@ -12,10 +12,17 @@
         </h1>
         <div class="meta-row">
           <span class="dim">{{ typeLabel(d.type) }}</span>
-          <span [class]="statusBadge(d.status)">{{ d.status }}</span>
+          <span class="status" [attr.data-status]="displayStatus(d)">{{ statusLabels[displayStatus(d)] }}</span>
           <mat-icon *ngIf="d.mandatoryRead" class="lock" matTooltip="Lecture obligatoire" i18n-matTooltip="@@documents.detail.mandatory-read-tooltip">verified_user</mat-icon>
         </div>
         <p *ngIf="d.description" class="desc">{{ d.description }}</p>
+        <dl class="facts">
+          <div><dt i18n="@@documents.panel.folder">Dossier</dt><dd>{{ folderName(d.folderId) ?? '—' }}</dd></div>
+          <div><dt i18n="@@documents.filter.process">Processus</dt><dd>{{ processName(d.processId) ?? '—' }}</dd></div>
+          <div><dt i18n="@@documents.list.col-owner">Propriétaire</dt><dd><qos-person-name [accountId]="d.ownerId"></qos-person-name></dd></div>
+          <div><dt i18n="@@documents.list.col-review">Prochaine revue</dt>
+            <dd [class.overdue]="displayStatus(d) === 'REVIEW_OVERDUE'">{{ d.nextReviewDate ? (d.nextReviewDate | date:'mediumDate') : '—' }}</dd></div>
+        </dl>
       </div>
 
       <div class="toolbar" *qosCan="'document.edit'">
@@ -51,7 +58,37 @@
 
           <ng-container matColumnDef="status">
             <th mat-header-cell *matHeaderCellDef i18n="@@common.status">Statut</th>
-            <td mat-cell *matCellDef="let v"><span [class]="versionBadge(v.status)">{{ v.status }}</span></td>
+            <td mat-cell *matCellDef="let v"><span [class]="versionBadge(v.status)">{{ versionLabel(v.status) }}</span></td>
+          </ng-container>
+
+          <ng-container matColumnDef="file">
+            <th mat-header-cell *matHeaderCellDef i18n="@@documents.detail.col-file">Fichier</th>
+            <td mat-cell *matCellDef="let v" class="file-cell">
+              <ng-container *ngIf="v.file as f; else noFile">
+                <span *ngIf="f.purged; else live" class="dim" i18n="@@documents.detail.file-purged">Retiré (conservation échue)</span>
+                <ng-template #live>
+                  <button mat-button type="button" class="file-link" (click)="download(v)" [title]="f.fileName">
+                    <mat-icon>download</mat-icon>
+                    <span class="file-name">{{ f.fileName }}</span>
+                  </button>
+                  <span class="dim">{{ size(f.sizeBytes) }}</span>
+                </ng-template>
+              </ng-container>
+              <ng-template #noFile><span class="dim">—</span></ng-template>
+
+              <ng-container *qosCan="'document.edit'">
+                <ng-container *ngIf="v.status === 'DRAFT' && d.status !== 'ARCHIVED'">
+                  <mat-progress-bar *ngIf="uploading?.versionId === v.id" mode="determinate"
+                                    [value]="uploading?.progress ?? 0" class="upload-bar"></mat-progress-bar>
+                  <label class="attach" *ngIf="uploading?.versionId !== v.id">
+                    <input #picker type="file" (change)="uploadFile(v, picker)" [disabled]="!!uploading">
+                    <mat-icon aria-hidden="true">{{ v.file ? 'swap_horiz' : 'attach_file' }}</mat-icon>
+                    <span *ngIf="v.file; else attachLabel" i18n="@@documents.detail.replace-file">Remplacer</span>
+                    <ng-template #attachLabel><span i18n="@@documents.detail.attach-file">Joindre</span></ng-template>
+                  </label>
+                </ng-container>
+              </ng-container>
+            </td>
           </ng-container>
 
           <ng-container matColumnDef="changeNote">
@@ -66,7 +103,7 @@
 
           <ng-container matColumnDef="updatedAt">
             <th mat-header-cell *matHeaderCellDef i18n="@@documents.detail.col-updated">Mis à jour</th>
-            <td mat-cell *matCellDef="let v">{{ v.updatedAt }}</td>
+            <td mat-cell *matCellDef="let v">{{ v.updatedAt | date:'medium' }}</td>
           </ng-container>
 
           <ng-container matColumnDef="actions">

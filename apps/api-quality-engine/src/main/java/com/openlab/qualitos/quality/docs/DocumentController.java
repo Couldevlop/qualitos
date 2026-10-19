@@ -3,6 +3,8 @@ package com.openlab.qualitos.quality.docs;
 import com.openlab.qualitos.quality.authz.domain.Permission;
 import com.openlab.qualitos.quality.authz.web.RequiresPermission;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Size;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -13,18 +15,57 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
+@Validated
 @RequestMapping("/api/v1/documents")
 public class DocumentController {
 
     private final DocumentService service;
+    private final DocumentFileService files;
 
-    public DocumentController(DocumentService service) { this.service = service; }
+    public DocumentController(DocumentService service, DocumentFileService files) {
+        this.service = service;
+        this.files = files;
+    }
 
+    /**
+     * La liste de la GED (ADR 0094). {@code status} reste accepté pour les appels
+     * d'avant les vues ; {@code view} le remplace dès qu'il est fourni.
+     */
     @GetMapping
     public Page<DocumentDto.DocumentResponse> list(
             @RequestParam(required = false) DocumentStatus status,
+            @RequestParam(required = false) DocumentView view,
+            @RequestParam(required = false) UUID folderId,
+            @RequestParam(required = false) @Size(max = 200) String q,
+            @RequestParam(required = false) DisplayStatus displayStatus,
+            @RequestParam(required = false) DocumentType type,
+            @RequestParam(required = false) UUID processId,
+            @RequestParam(required = false) UUID ownerId,
             @PageableDefault(size = 20) Pageable pageable) {
-        return service.findAll(status, pageable);
+        boolean anyNewFilter = view != null || folderId != null || q != null || displayStatus != null
+                || type != null || processId != null || ownerId != null;
+        if (!anyNewFilter) {
+            return service.findAll(status, pageable);
+        }
+        DocumentView effective = view != null ? view : DocumentDto.ListFilter.of(status).view();
+        return service.search(new DocumentDto.ListFilter(effective, folderId, q, displayStatus, type,
+                processId, ownerId), pageable);
+    }
+
+    /** Les compteurs des vues rapides. */
+    @GetMapping("/views")
+    public DocumentDto.ViewCounts views() {
+        return service.viewCounts();
+    }
+
+    /**
+     * Un lien présigné vers le fichier d'une version, valable dix minutes :
+     * {@code download=true} pour l'enregistrer, sinon pour l'aperçu.
+     */
+    @GetMapping("/{id}/versions/{vid}/file")
+    public DocumentDto.FileLink fileLink(@PathVariable UUID id, @PathVariable UUID vid,
+                                         @RequestParam(defaultValue = "false") boolean download) {
+        return files.link(id, vid, download);
     }
 
     @PostMapping

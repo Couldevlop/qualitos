@@ -1,10 +1,13 @@
 package com.openlab.qualitos.quality.docs;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,16 +25,44 @@ public final class DocumentDto {
             /** Contenu de la première version DRAFT (optionnel). */
             String initialContent,
             String initialContentUri,
-            String initialChangeNote
-    ) {}
+            String initialChangeNote,
+            /** Dossier de l'arborescence (optionnel, ADR 0094). */
+            UUID folderId,
+            /** Processus de rattachement (optionnel, ADR 0094). */
+            UUID processId
+    ) {
 
+        public CreateDocumentRequest(String code, String title, String description, DocumentType type,
+                                     UUID ownerId, boolean mandatoryRead, String initialContent,
+                                     String initialContentUri, String initialChangeNote) {
+            this(code, title, description, type, ownerId, mandatoryRead, initialContent,
+                    initialContentUri, initialChangeNote, null, null);
+        }
+    }
+
+    /**
+     * Mise à jour partielle : un champ absent reste inchangé. Pour sortir un
+     * document de son dossier ou de son processus, {@code clearFolder} et
+     * {@code clearProcess} le disent explicitement.
+     */
     public record UpdateDocumentRequest(
             @Size(max = 255) String title,
             String description,
             DocumentType type,
             UUID ownerId,
-            Boolean mandatoryRead
-    ) {}
+            Boolean mandatoryRead,
+            UUID folderId,
+            UUID processId,
+            LocalDate nextReviewDate,
+            Boolean clearFolder,
+            Boolean clearProcess
+    ) {
+
+        public UpdateDocumentRequest(String title, String description, DocumentType type, UUID ownerId,
+                                     Boolean mandatoryRead) {
+            this(title, description, type, ownerId, mandatoryRead, null, null, null, null, null);
+        }
+    }
 
     /**
      * {@code authorId} n'est plus cru : l'auteur est l'utilisateur du jeton
@@ -81,7 +112,22 @@ public final class DocumentDto {
             boolean mandatoryRead,
             Instant createdAt,
             Instant updatedAt,
-            List<VersionResponse> versions
+            List<VersionResponse> versions,
+            UUID folderId,
+            UUID processId,
+            DocumentLifecycle lifecycle,
+            DisplayStatus displayStatus,
+            LocalDate nextReviewDate
+    ) {}
+
+    /** Le fichier d'une version : ce que l'écran en montre, jamais sa clé de stockage. */
+    public record FileInfo(
+            String fileName,
+            String contentType,
+            long sizeBytes,
+            boolean previewable,
+            /** Le fichier a été retiré au terme de sa conservation ; l'empreinte reste. */
+            boolean purged
     ) {}
 
     public record VersionResponse(
@@ -102,7 +148,8 @@ public final class DocumentDto {
             Instant updatedAt,
             UUID rejectedBy,
             Instant rejectedAt,
-            String rejectionReason
+            String rejectionReason,
+            FileInfo file
     ) {}
 
     public record AcknowledgmentResponse(
@@ -111,4 +158,61 @@ public final class DocumentDto {
             UUID userId,
             Instant acknowledgedAt
     ) {}
+
+    /** Les filtres de la liste ; un champ {@code null} ne filtre rien. */
+    public record ListFilter(DocumentView view, UUID folderId, String q, DisplayStatus displayStatus,
+                             DocumentType type, UUID processId, UUID ownerId) {
+
+        public static ListFilter of(DocumentStatus status) {
+            return new ListFilter(status == DocumentStatus.ARCHIVED ? DocumentView.ARCHIVED
+                    : status == DocumentStatus.ACTIVE ? DocumentView.ALL : null,
+                    null, null, null, null, null, null);
+        }
+    }
+
+    /** Les compteurs des vues rapides, pour les pastilles du panneau de gauche. */
+    public record ViewCounts(long all, long mine, long toValidate, long reviewDue, long archived) {}
+
+    /** Un lien présigné vers le fichier d'une version, valable quelques minutes. */
+    public record FileLink(String url, String fileName, String contentType, long sizeBytes, long expiresInSeconds) {}
+
+    // ---------- arborescence, processus, paramétrage ----------
+
+    public record FolderView(UUID id, UUID parentId, String name, int position) {}
+
+    public record FolderRequest(@NotBlank @Size(max = 120) String name, UUID parentId,
+                                @Min(0) @Max(10_000) Integer position) {}
+
+    public record ProcessView(UUID id, String name, int position) {}
+
+    public record ProcessRequest(@NotBlank @Size(max = 120) String name, @Min(0) @Max(10_000) Integer position) {}
+
+    public record SettingsView(int reviewPeriodMonths, int reviewWarningDays, int maxFileMb, int platformMaxFileMb,
+                               Integer quotaMb, Integer obsoleteRetentionYears) {}
+
+    public record SettingsForm(
+            @Min(1) @Max(120) int reviewPeriodMonths,
+            @Min(0) @Max(365) int reviewWarningDays,
+            @Min(1) @Max(DocumentSettingsRow.PLATFORM_MAX_FILE_MB) int maxFileMb,
+            @Min(1) @Max(10_000_000) Integer quotaMb,
+            @Min(1) @Max(100) Integer obsoleteRetentionYears
+    ) {}
+
+    /** Ce que le dépôt admet, pour que l'écran refuse avant d'envoyer. */
+    public record UploadPolicy(int maxFileMb, List<String> allowedTypes, List<String> allowedExtensions) {}
+
+    /**
+     * L'occupation du stockage par la GED d'un client : ce que pèsent ses fichiers,
+     * ce qu'ils occupent réellement après compression et dédoublonnage, et le quota.
+     */
+    public record StorageUsage(
+            /** Fichiers distincts réellement stockés. */
+            long files,
+            /** Ce que pèseraient les fichiers de toutes les versions, sans dédoublonnage. */
+            long logicalBytes,
+            /** Ce que pèsent les fichiers distincts, avant compression. */
+            long originalBytes,
+            /** Ce que le stockage occupe réellement. */
+            long storedBytes,
+            Long quotaBytes) {}
 }

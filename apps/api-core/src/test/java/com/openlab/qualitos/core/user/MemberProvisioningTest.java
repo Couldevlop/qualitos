@@ -76,6 +76,13 @@ class MemberProvisioningTest {
         ((Logger) LoggerFactory.getLogger(MemberProvisioning.class)).detachAppender(journal);
     }
 
+    /** Les tests voisins écrivent sur le même logger : on lit une copie prise sous le verrou de l'appender. */
+    private java.util.List<ILoggingEvent> logged() {
+        synchronized (journal) {
+            return java.util.List.copyOf(journal.list);
+        }
+    }
+
     static Jwt jwt(Map<String, Object> claims) {
         Jwt.Builder b = Jwt.withTokenValue("t").header("alg", "none");
         claims.forEach(b::claim);
@@ -169,7 +176,7 @@ class MemberProvisioningTest {
 
         assertThat(provisioning.provision(person("ana@acme.example", "Ana", "user")))
                 .isEqualTo(MemberProvisioning.Outcome.CONFLICT);
-        assertThat(journal.list).anySatisfy(e -> {
+        assertThat(logged()).anySatisfy(e -> {
             assertThat(e.getLevel()).isEqualTo(Level.WARN);
             assertThat(e.getFormattedMessage()).startsWith("directory.provisioning.conflict")
                     .doesNotContain("ana@acme.example");
@@ -226,12 +233,12 @@ class MemberProvisioningTest {
         assertThat(provisioning.provision(jeton)).isEqualTo(MemberProvisioning.Outcome.TENANT_MISSING);
         verify(users, never()).saveAndFlush(any());
         verify(users, never()).findByKeycloakId(anyString());
-        assertThat(journal.list).anySatisfy(e -> {
+        assertThat(logged()).anySatisfy(e -> {
             assertThat(e.getLevel()).isEqualTo(Level.WARN);
             assertThat(e.getFormattedMessage())
                     .isEqualTo("directory.provisioning.tenant-missing tenant_id=" + inconnu);
         });
-        assertThat(journal.list).noneSatisfy(e -> assertThat(e.getFormattedMessage())
+        assertThat(logged()).noneSatisfy(e -> assertThat(e.getFormattedMessage())
                 .containsAnyOf("zoe@inconnu.example", "Zoé Secret"));
         // Le cache évite de reposer la question à chaque requête.
         assertThat(provisioning.provision(jeton)).isEqualTo(MemberProvisioning.Outcome.CACHED);

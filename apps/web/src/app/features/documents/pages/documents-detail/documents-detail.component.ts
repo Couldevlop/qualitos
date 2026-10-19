@@ -1,3 +1,4 @@
+import { HttpEventType } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -9,10 +10,16 @@ import { deferredView } from '../../../../core/rx/deferred-view';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { ConfirmDialogComponent } from '../../../../shared/ui/confirm-dialog/confirm-dialog.component';
+import { FolderRow, buildFolderRows } from '../../documents.folders';
+import {
+  DISPLAY_STATUS_LABELS, DOCUMENT_TYPE_LABELS, VERSION_STATUS_LABELS, displayStatusOf, formatBytes
+} from '../../documents.labels';
 import { DocumentsService } from '../../documents.service';
 import {
+  DisplayStatus,
+  DocumentFolder,
+  DocumentProcess,
   DocumentResponse,
-  DocumentStatus,
   DocumentType,
   DocumentVersionResponse,
   VersionStatus
@@ -31,7 +38,13 @@ const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12
 })
 export class DocumentsDetailComponent implements OnInit {
 
-  readonly versionColumns = ['versionNumber', 'status', 'changeNote', 'authorId', 'updatedAt', 'actions'];
+  readonly versionColumns = ['versionNumber', 'status', 'file', 'changeNote', 'authorId', 'updatedAt', 'actions'];
+  readonly statusLabels = DISPLAY_STATUS_LABELS;
+
+  folders: FolderRow[] = [];
+  processes: DocumentProcess[] = [];
+  /** La version dont le fichier part, et sa progression en pour cent. */
+  uploading: { versionId: string; progress: number } | null = null;
 
   document$!: Observable<DocumentResponse | null>;
   private readonly loadingState$ = new BehaviorSubject<boolean>(false);
@@ -52,6 +65,10 @@ export class DocumentsDetailComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.svc.folders().pipe(catchError(() => of([] as DocumentFolder[])))
+      .subscribe(f => this.folders = buildFolderRows(f));
+    this.svc.processes().pipe(catchError(() => of([] as DocumentProcess[])))
+      .subscribe(p => this.processes = p);
     this.document$ = this.route.paramMap.pipe(
       tap(() => { this.errorState$.next(null); this.loadingState$.next(true); }),
       switchMap(p => {
@@ -80,7 +97,7 @@ export class DocumentsDetailComponent implements OnInit {
 
   openEdit(d: DocumentResponse): void {
     const ref = this.dialog.open(DocumentsEditDialogComponent, {
-      data: { document: d }, autoFocus: 'first-tabbable', restoreFocus: true,
+      data: { document: d, folders: this.folders, processes: this.processes }, autoFocus: 'first-tabbable', restoreFocus: true,
       panelClass: 'qos-dialog-panel'
     });
     ref.afterClosed().subscribe(updated => { if (updated) this.refresh$.next(); });
@@ -188,18 +205,61 @@ export class DocumentsDetailComponent implements OnInit {
     });
   }
 
-  statusBadge(s: DocumentStatus): string { return 'badge badge-' + s.toLowerCase(); }
+  // ---------- fichier d'une version ----------
+
+  /** Joint ou remplace le fichier d'une version en brouillon. */
+  uploadFile(v: DocumentVersionResponse, input: HTMLInputElement): void {
+    const file = input.files?.[0];
+    input.value = '';
+    if (!file || this.uploading) return;
+    this.uploading = { versionId: v.id, progress: 0 };
+    this.svc.uploadFile(v.documentId, v.id, file).subscribe({
+      next: event => {
+        if (event.type === HttpEventType.UploadProgress && event.total && this.uploading) {
+          this.uploading.progress = Math.round(100 * event.loaded / event.total);
+        } else if (event.type === HttpEventType.Response) {
+          this.uploading = null;
+          this.snack.open($localize`:@@documents.detail.file-uploaded:Fichier joint.`, $localize`:@@common.ok:OK`, { duration: 2200 });
+          this.refresh$.next();
+        }
+      },
+      error: err => {
+        this.uploading = null;
+        this.fail(err, $localize`:@@documents.detail.file-upload-failed:Le fichier n'a pas pu être envoyé.`);
+      }
+    });
+  }
+
+  download(v: DocumentVersionResponse): void {
+    this.svc.fileLink(v.documentId, v.id, true).subscribe({
+      next: link => {
+        const a = window.document.createElement('a');
+        a.href = link.url;
+        a.rel = 'noopener';
+        a.click();
+      },
+      error: err => this.fail(err, $localize`:@@documents.panel.download-failed:Le fichier n'a pas pu être téléchargé. Réessayez.`)
+    });
+  }
+
+  size(bytes: number): string {
+    return formatBytes(bytes);
+  }
+
+  displayStatus(d: DocumentResponse): DisplayStatus {
+    return displayStatusOf(d);
+  }
+
   versionBadge(s: VersionStatus): string { return 'vbadge vbadge-' + s.toLowerCase(); }
-  typeLabel(t: DocumentType): string {
-    return ({
-      POLICY: $localize`:@@documents.type.policy:Politique`,
-      PROCEDURE: $localize`:@@documents.type.procedure:Procédure`,
-      WORK_INSTRUCTION: $localize`:@@documents.type.work-instruction:Mode opératoire`,
-      RECORD: $localize`:@@documents.type.record:Enregistrement`,
-      FORM: $localize`:@@documents.type.form:Formulaire`,
-      MANUAL: $localize`:@@documents.type.manual:Manuel`,
-      OTHER: $localize`:@@documents.type.other:Autre`
-    })[t];
+  versionLabel(s: VersionStatus): string { return VERSION_STATUS_LABELS[s] ?? s; }
+  typeLabel(t: DocumentType): string { return DOCUMENT_TYPE_LABELS[t]; }
+
+  folderName(id: string | null | undefined): string | null {
+    return id ? this.folders.find(r => r.folder.id === id)?.folder.name ?? null : null;
+  }
+
+  processName(id: string | null | undefined): string | null {
+    return id ? this.processes.find(p => p.id === id)?.name ?? null : null;
   }
 
   private fail(err: unknown, fallback: string): void {

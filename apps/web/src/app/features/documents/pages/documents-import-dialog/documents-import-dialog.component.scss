@@ -1,0 +1,211 @@
+:host {
+  display: block;
+  --ged-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--qos-space-4);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.intro {
+  margin: 0;
+  color: var(--qos-fg-secondary);
+  font-size: var(--qos-fs-sm);
+}
+
+.common {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--qos-space-3);
+
+  mat-form-field { flex: 1 1 200px; }
+}
+
+// ---------- zone de dépôt ----------
+
+.dropzone {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--qos-space-1);
+  padding: var(--qos-space-8) var(--qos-space-4);
+  border: 2px dashed var(--qos-border-default);
+  border-radius: var(--qos-radius-lg);
+  background: var(--qos-bg-subtle);
+  cursor: pointer;
+  text-align: center;
+  transition: border-color var(--qos-motion-fast) var(--ged-ease),
+              background var(--qos-motion-fast) var(--ged-ease),
+              padding var(--qos-motion-base) var(--ged-ease);
+
+  input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  mat-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 36px;
+    color: var(--qos-accent-fg-soft);
+    transition: transform var(--qos-motion-base) var(--ged-ease);
+  }
+
+  .dz-main { font-weight: var(--qos-fw-semibold); }
+  .dz-main u { color: var(--qos-fg-link); }
+  .dz-hint { color: var(--qos-fg-tertiary); font-size: var(--qos-fs-xs); }
+
+  &:hover, &.over {
+    border-color: var(--qos-accent-bg);
+    background: var(--qos-accent-bg-soft);
+    mat-icon { transform: translateY(-3px); }
+  }
+
+  &:focus-within { box-shadow: var(--qos-ring-focus); }
+
+  &.compact {
+    flex-direction: row;
+    justify-content: center;
+    gap: var(--qos-space-2);
+    padding: var(--qos-space-3) var(--qos-space-4);
+
+    mat-icon { width: 24px; height: 24px; font-size: 24px; }
+    .dz-hint { display: none; }
+  }
+}
+
+// ---------- fichiers ----------
+
+.items {
+  display: flex;
+  flex-direction: column;
+  gap: var(--qos-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--qos-space-2);
+  padding: var(--qos-space-3);
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: var(--qos-radius-md);
+  background: var(--qos-bg-elevated);
+  animation: item-in var(--qos-motion-base) var(--ged-ease);
+  transition: border-color var(--qos-motion-fast) var(--ged-ease), background var(--qos-motion-base) var(--ged-ease);
+
+  &[data-state='invalid'] { border-color: var(--qos-warn-fg); }
+  &[data-state='failed'] { border-color: var(--qos-danger-fg); }
+  &[data-state='done'] { background: var(--qos-success-bg-soft); border-color: transparent; }
+}
+
+.file {
+  display: flex;
+  align-items: center;
+  gap: var(--qos-space-2);
+  min-height: 32px;
+  font-size: var(--qos-fs-sm);
+
+  .name {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: var(--qos-fw-medium);
+  }
+
+  .size {
+    color: var(--qos-fg-tertiary);
+    font-size: var(--qos-fs-xs);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .remove { margin: -6px calc(-1 * var(--qos-space-2)) -6px 0; }
+}
+
+.state-icon {
+  width: 20px;
+  height: 20px;
+  font-size: 20px;
+  color: var(--qos-fg-tertiary);
+
+  [data-state='done'] & { color: var(--qos-success-fg); animation: pop var(--qos-motion-slow) var(--ged-ease); }
+  [data-state='failed'] & { color: var(--qos-danger-fg); }
+  [data-state='invalid'] & { color: var(--qos-warn-fg); }
+}
+
+.fields {
+  display: grid;
+  grid-template-columns: 200px 1fr 170px;
+  gap: var(--qos-space-2);
+}
+
+.progress {
+  height: 4px;
+  overflow: hidden;
+  border-radius: var(--qos-radius-pill);
+  background: var(--qos-bg-subtle);
+
+  .bar {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--qos-accent-bg);
+    transition: width var(--qos-motion-base) linear;
+
+    [data-state='done'] & { background: var(--qos-success-fg); }
+  }
+}
+
+.error {
+  margin: 0;
+  color: var(--qos-danger-fg);
+  font-size: var(--qos-fs-xs);
+
+  [data-state='invalid'] & { color: var(--qos-warn-fg); }
+}
+
+.actions {
+  gap: var(--qos-space-2);
+
+  .summary {
+    margin-inline-end: auto;
+    color: var(--qos-fg-secondary);
+    font-size: var(--qos-fs-sm);
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@keyframes item-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes pop {
+  0%   { transform: scale(0.6); }
+  60%  { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+
+@media (max-width: 640px) {
+  .fields { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

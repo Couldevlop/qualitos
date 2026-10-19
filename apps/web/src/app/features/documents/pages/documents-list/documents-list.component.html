@@ -1,81 +1,211 @@
-<section class="documents-list">
-  <header class="head">
-    <div>
-      <h1 i18n="@@documents.list.title">Document Control</h1>
-      <p i18n="@@documents.list.subtitle">GED qualité — versioning, workflow d'approbation, lecture obligatoire et ancrage blockchain.</p>
-    </div>
-    <button mat-flat-button color="primary" (click)="openCreate()" *qosCan="'document.edit'">
-      <mat-icon>note_add</mat-icon> <span i18n="@@documents.list.new-document">Nouveau document</span>
-    </button>
-  </header>
+<section class="ged qos-page" [class.has-panel]="!!selected">
 
-  <div class="filters">
-    <mat-form-field appearance="outline">
-      <mat-label i18n="@@common.status">Statut</mat-label>
-      <mat-select [formControl]="statusFilter">
-        <mat-option [value]="''" i18n="@@common.all">Tous</mat-option>
-        <mat-option *ngFor="let s of statuses" [value]="s">{{ s }}</mat-option>
-      </mat-select>
-    </mat-form-field>
+  <!-- Vues rapides et arborescence -->
+  <nav class="ged-nav" aria-label="Documentation" i18n-aria-label="@@documents.nav.aria">
+    <ul class="views" *ngIf="{ c: counts$ | async } as vm">
+      <li *ngFor="let v of views">
+        <button type="button" class="nav-item" [class.active]="view === v.view && !folderId"
+                [attr.aria-current]="view === v.view && !folderId ? 'page' : null"
+                (click)="selectView(v.view)">
+          <mat-icon aria-hidden="true">{{ v.icon }}</mat-icon>
+          <span class="label">{{ v.label }}</span>
+          <span class="count" *ngIf="vm.c" [class.attention]="v.key === 'toValidate' && vm.c.toValidate > 0
+                                                         || v.key === 'reviewDue' && vm.c.reviewDue > 0">
+            {{ vm.c[v.key] }}
+          </span>
+        </button>
+      </li>
+    </ul>
+
+    <h2 class="nav-heading" i18n="@@documents.nav.folders">Arborescence</h2>
+    <ul class="tree" role="tree" aria-label="Arborescence" i18n-aria-label="@@documents.nav.folders">
+      <ng-container *ngFor="let row of folderRows; trackBy: trackByFolder">
+        <li *ngIf="isVisible(row)" role="treeitem"
+            [attr.aria-expanded]="row.hasChildren ? !collapsed.has(row.folder.id) : null"
+            [attr.aria-level]="row.depth + 1">
+          <button type="button" class="nav-item folder" [class.active]="folderId === row.folder.id"
+                  [style.--depth]="row.depth" (click)="selectFolder(row)">
+            <span class="chevron" *ngIf="row.hasChildren; else spacer"
+                  [class.open]="!collapsed.has(row.folder.id)"
+                  (click)="toggleFolder(row, $event)" aria-hidden="true">
+              <mat-icon>chevron_right</mat-icon>
+            </span>
+            <ng-template #spacer><span class="chevron-spacer"></span></ng-template>
+            <mat-icon aria-hidden="true">{{ folderId === row.folder.id ? 'folder_open' : 'folder' }}</mat-icon>
+            <span class="label">{{ row.folder.name }}</span>
+          </button>
+        </li>
+      </ng-container>
+    </ul>
+
+    <div class="nav-foot">
+      <button type="button" class="nav-item" [class.active]="view === 'ARCHIVED'" (click)="selectView('ARCHIVED')">
+        <mat-icon aria-hidden="true">inventory_2</mat-icon>
+        <span class="label">{{ archivesLabel }}</span>
+        <span class="count" *ngIf="counts$ | async as c">{{ c.archived }}</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Liste -->
+  <div class="ged-main">
+    <header class="main-head">
+      <div class="titles">
+        <h1>{{ heading }}</h1>
+        <p class="sub">
+          <ng-container *ngIf="totalElements === 1; else plural" i18n="@@documents.list.count-one">1 document</ng-container>
+          <ng-template #plural><ng-container i18n="@@documents.list.count-many">{{ totalElements }} documents</ng-container></ng-template>
+        </p>
+      </div>
+      <div class="actions" *qosCan="'document.edit'">
+        <button mat-stroked-button type="button" (click)="openImport()">
+          <mat-icon>upload_file</mat-icon> <span i18n="@@documents.list.import">Importer</span>
+        </button>
+        <button mat-flat-button color="primary" type="button" (click)="openCreate()">
+          <mat-icon>note_add</mat-icon> <span i18n="@@documents.list.new-document">Nouveau document</span>
+        </button>
+      </div>
+    </header>
+
+    <form class="filters" [formGroup]="filters" (submit)="$event.preventDefault()">
+      <mat-form-field appearance="outline" class="search" subscriptSizing="dynamic">
+        <mat-icon matPrefix>search</mat-icon>
+        <mat-label i18n="@@documents.filter.search">Rechercher par code, titre ou description</mat-label>
+        <input matInput formControlName="q" maxlength="200" autocomplete="off">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label i18n="@@common.status">Statut</mat-label>
+        <mat-select formControlName="displayStatus">
+          <mat-option [value]="null" i18n="@@common.all">Tous</mat-option>
+          <mat-option *ngFor="let s of statuses" [value]="s">{{ statusLabels[s] }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label i18n="@@common.type">Type</mat-label>
+        <mat-select formControlName="type">
+          <mat-option [value]="null" i18n="@@common.all">Tous</mat-option>
+          <mat-option *ngFor="let t of types" [value]="t">{{ typeLabels[t] }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label i18n="@@documents.filter.process">Processus</mat-label>
+        <mat-select formControlName="processId">
+          <mat-option [value]="null" i18n="@@common.all">Tous</mat-option>
+          <mat-option *ngFor="let p of processes" [value]="p.id">{{ p.name }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <qos-user-picker class="owner" formControlName="ownerId"
+                       label="Propriétaire" i18n-label="@@documents.filter.owner"></qos-user-picker>
+
+      <button mat-button type="button" class="clear" *ngIf="hasFilters" (click)="clearFilters()">
+        <mat-icon>filter_alt_off</mat-icon> <span i18n="@@documents.filter.clear">Effacer les filtres</span>
+      </button>
+    </form>
+
+    <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
+
+    <div class="table-card">
+      <mat-progress-bar *ngIf="loading$ | async" mode="indeterminate" class="loading-bar"></mat-progress-bar>
+
+      <table class="doc-table" [attr.aria-busy]="(loading$ | async) ? 'true' : 'false'">
+        <thead>
+          <tr>
+            <th scope="col" i18n="@@documents.list.col-reference">Référence</th>
+            <th scope="col" i18n="@@common.title">Titre</th>
+            <th scope="col" class="col-type" i18n="@@common.type">Type</th>
+            <th scope="col" class="col-version" i18n="@@documents.list.col-version">Version</th>
+            <th scope="col" i18n="@@common.status">Statut</th>
+            <th scope="col" class="col-owner" i18n="@@documents.list.col-owner">Propriétaire</th>
+            <th scope="col" class="col-review" i18n="@@documents.list.col-review">Prochaine revue</th>
+          </tr>
+        </thead>
+
+        <!-- Squelette au premier chargement -->
+        <tbody *ngIf="(loading$ | async) && documents.length === 0">
+          <tr *ngFor="let _ of [1,2,3,4,5,6]" class="skeleton" aria-hidden="true">
+            <td><span class="bone w-60"></span></td>
+            <td><span class="bone w-90"></span></td>
+            <td class="col-type"><span class="bone w-70"></span></td>
+            <td class="col-version"><span class="bone w-30"></span></td>
+            <td><span class="bone w-60"></span></td>
+            <td class="col-owner"><span class="bone w-70"></span></td>
+            <td class="col-review"><span class="bone w-60"></span></td>
+          </tr>
+        </tbody>
+
+        <tbody [class.dimmed]="loading$ | async">
+          <tr *ngFor="let d of documents; let i = index; trackBy: trackById"
+              tabindex="0" [class.selected]="selected?.id === d.id"
+              [attr.aria-selected]="selected?.id === d.id"
+              (click)="select(d)" (keydown.enter)="select(d)" (keydown)="onRowKey($event, i)">
+            <td><span class="ref">{{ d.code }}</span></td>
+            <td class="title-cell">
+              <span class="title">{{ d.title }}</span>
+              <span class="where" *ngIf="folderName(d.folderId) || processName(d.processId)">
+                <span *ngIf="folderName(d.folderId) as f"><mat-icon aria-hidden="true">folder</mat-icon>{{ f }}</span>
+                <span *ngIf="processName(d.processId) as p"><mat-icon aria-hidden="true">account_tree</mat-icon>{{ p }}</span>
+              </span>
+            </td>
+            <td class="col-type"><span class="type-chip">{{ typeLabels[d.type] }}</span></td>
+            <td class="col-version">
+              <span class="version" *ngIf="versionNumber(d) as n; else noVersion">v{{ n }}</span>
+              <ng-template #noVersion><span class="dim">—</span></ng-template>
+            </td>
+            <td>
+              <span class="status" [attr.data-status]="displayStatus(d)">{{ statusLabels[displayStatus(d)] }}</span>
+            </td>
+            <td class="col-owner"><qos-person-name [accountId]="d.ownerId"></qos-person-name></td>
+            <td class="col-review">
+              <span [class.overdue]="displayStatus(d) === 'REVIEW_OVERDUE'">
+                {{ d.nextReviewDate ? (d.nextReviewDate | date:'mediumDate') : '—' }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="empty" *ngIf="!(loading$ | async) && documents.length === 0">
+        <mat-icon aria-hidden="true">{{ hasFilters ? 'search_off' : 'description' }}</mat-icon>
+        <ng-container *ngIf="hasFilters; else emptyView">
+          <p class="empty-title" i18n="@@documents.empty.filtered">Aucun document ne correspond à ces filtres.</p>
+          <button mat-stroked-button type="button" (click)="clearFilters()" i18n="@@documents.filter.clear">Effacer les filtres</button>
+        </ng-container>
+        <ng-template #emptyView>
+          <p class="empty-title" i18n="@@documents.empty.none">Aucun document ici pour l'instant.</p>
+          <p class="dim" *qosCan="'document.edit'" i18n="@@documents.empty.hint">Déposez des fichiers sur cette page ou créez un document.</p>
+        </ng-template>
+      </div>
+
+      <footer class="pager" *ngIf="totalElements > pageSize">
+        <span class="range" i18n="@@documents.pager.range">{{ rangeStart }}–{{ rangeEnd }} sur {{ totalElements }}</span>
+        <button mat-icon-button type="button" [disabled]="pageIndex === 0" (click)="goToPage(pageIndex - 1)"
+                aria-label="Page précédente" i18n-aria-label="@@documents.pager.previous">
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+        <span class="page" i18n="@@documents.pager.page">Page {{ pageIndex + 1 }} / {{ pageCount }}</span>
+        <button mat-icon-button type="button" [disabled]="pageIndex + 1 >= pageCount" (click)="goToPage(pageIndex + 1)"
+                aria-label="Page suivante" i18n-aria-label="@@documents.pager.next">
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+      </footer>
+    </div>
   </div>
 
-  <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
-  <div *ngIf="loading$ | async" class="banner banner-info" i18n="@@common.loading">Chargement…</div>
+  <!-- Fiche du document choisi -->
+  <qos-document-panel *ngIf="selected" class="ged-panel"
+                      [document]="selected" [folders]="folderRows" [processes]="processes"
+                      (closed)="selected = null" (changed)="onPanelChanged()"></qos-document-panel>
 
-  <div class="table-wrap mat-elevation-z1">
-    <table mat-table [dataSource]="(documents$ | async) ?? []">
-
-      <ng-container matColumnDef="code">
-        <th mat-header-cell *matHeaderCellDef i18n="@@documents.list.col-code">Code</th>
-        <td mat-cell *matCellDef="let d"><code>{{ d.code }}</code></td>
-      </ng-container>
-
-      <ng-container matColumnDef="title">
-        <th mat-header-cell *matHeaderCellDef i18n="@@common.title">Titre</th>
-        <td mat-cell *matCellDef="let d">
-          <a class="title-link" (click)="open(d)">{{ d.title }}</a>
-          <small *ngIf="d.description" class="dim">{{ d.description }}</small>
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="type">
-        <th mat-header-cell *matHeaderCellDef i18n="@@common.type">Type</th>
-        <td mat-cell *matCellDef="let d"><span [class]="typeBadge(d.type)">{{ d.type }}</span></td>
-      </ng-container>
-
-      <ng-container matColumnDef="currentVersion">
-        <th mat-header-cell *matHeaderCellDef i18n="@@documents.list.col-version">Version</th>
-        <td mat-cell *matCellDef="let d">
-          <ng-container *ngIf="currentVersion(d) as cv">
-            <strong *ngIf="cv.number">v{{ cv.number }}</strong>
-            <span [class]="versionBadge(cv.status)">{{ cv.status }}</span>
-          </ng-container>
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="status">
-        <th mat-header-cell *matHeaderCellDef i18n="@@common.status">Statut</th>
-        <td mat-cell *matCellDef="let d"><span [class]="statusBadge(d.status)">{{ d.status }}</span></td>
-      </ng-container>
-
-      <ng-container matColumnDef="mandatoryRead">
-        <th mat-header-cell *matHeaderCellDef i18n="@@documents.list.col-mandatory-read">Lecture obligatoire</th>
-        <td mat-cell *matCellDef="let d">
-          <mat-icon *ngIf="d.mandatoryRead" class="lock" matTooltip="Lecture obligatoire" i18n-matTooltip="@@documents.list.mandatory-read-tooltip">verified_user</mat-icon>
-          <span *ngIf="!d.mandatoryRead" class="dim">—</span>
-        </td>
-      </ng-container>
-
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns" class="row-clickable" (click)="open(row)"></tr>
-    </table>
-
-    <mat-paginator
-      [length]="totalElements"
-      [pageIndex]="pageIndex"
-      [pageSize]="pageSize"
-      [pageSizeOptions]="pageSizeOptions"
-      (page)="onPage($event)"
-      showFirstLastButtons></mat-paginator>
+  <!-- Zone de dépôt -->
+  <div class="drop-overlay" *ngIf="dragging" aria-hidden="true">
+    <div class="drop-card">
+      <mat-icon>cloud_upload</mat-icon>
+      <p i18n="@@documents.drop.title">Déposez vos fichiers pour les importer</p>
+      <p class="dim" *ngIf="folderId" i18n="@@documents.drop.where">Dans « {{ heading }} »</p>
+    </div>
   </div>
 </section>

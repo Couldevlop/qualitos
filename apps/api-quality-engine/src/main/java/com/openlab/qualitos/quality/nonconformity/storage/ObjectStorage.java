@@ -25,10 +25,24 @@ public interface ObjectStorage {
     void put(String key, String contentType, byte[] content);
 
     /**
+     * Téléverse un objet stocké sous un encodage ({@code gzip}) : le stockage le
+     * resservira avec l'en-tête {@code Content-Encoding}, et le navigateur le
+     * décompressera de lui-même. {@code null} revient à {@link #put}.
+     */
+    void put(String key, String contentType, String contentEncoding, byte[] content);
+
+    /**
      * Génère une URL pré-signée de lecture (GET) valable {@code ttl}.
      * L'objet n'est jamais exposé en accès public.
      */
     URL presignGet(String key, Duration ttl);
+
+    /**
+     * Comme {@link #presignGet(String, Duration)}, la réponse portant en plus son
+     * nom de fichier : en pièce jointe pour un téléchargement ({@code attachment}),
+     * en ligne pour un aperçu. Le nom doit déjà être assaini par l'appelant.
+     */
+    URL presignGet(String key, Duration ttl, String filename, boolean attachment);
 
     /** Supprime l'objet. Idempotent : aucune erreur si la clé n'existe pas. */
     void delete(String key);

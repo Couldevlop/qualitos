@@ -10762,6 +10762,538 @@ Portail clients</source>
         <source>Échec de la prévision (HTTP <x id="status"/>).</source>
         <target state="translated">فشل التنبؤ (HTTP <x id="status"/>).</target>
       </trans-unit>
+      <trans-unit id="nav.admin-documents" datatype="html">
+        <source>Documentation</source>
+        <target state="translated">التوثيق</target>
+      </trans-unit>
+      <trans-unit id="documents.type.external" datatype="html">
+        <source>Document externe</source>
+        <target state="translated">وثيقة خارجية</target>
+      </trans-unit>
+      <trans-unit id="documents.status.in-force" datatype="html">
+        <source>En vigueur</source>
+        <target state="translated">سارية</target>
+      </trans-unit>
+      <trans-unit id="documents.status.in-revision" datatype="html">
+        <source>En révision</source>
+        <target state="translated">قيد المراجعة</target>
+      </trans-unit>
+      <trans-unit id="documents.status.draft" datatype="html">
+        <source>Brouillon</source>
+        <target state="translated">مسودة</target>
+      </trans-unit>
+      <trans-unit id="documents.status.review-overdue" datatype="html">
+        <source>Revue dépassée</source>
+        <target state="translated">المراجعة متأخرة</target>
+      </trans-unit>
+      <trans-unit id="documents.status.archived" datatype="html">
+        <source>Archivé</source>
+        <target state="translated">مؤرشفة</target>
+      </trans-unit>
+      <trans-unit id="documents.version.draft" datatype="html">
+        <source>Brouillon</source>
+        <target state="translated">مسودة</target>
+      </trans-unit>
+      <trans-unit id="documents.version.in-review" datatype="html">
+        <source>En revue</source>
+        <target state="translated">قيد المراجعة</target>
+      </trans-unit>
+      <trans-unit id="documents.version.approved" datatype="html">
+        <source>Approuvée</source>
+        <target state="translated">معتمدة</target>
+      </trans-unit>
+      <trans-unit id="documents.version.published" datatype="html">
+        <source>Actuelle</source>
+        <target state="translated">الحالية</target>
+      </trans-unit>
+      <trans-unit id="documents.version.obsolete" datatype="html">
+        <source>Obsolète</source>
+        <target state="translated">ملغاة</target>
+      </trans-unit>
+      <trans-unit id="documents.view.all" datatype="html">
+        <source>Tous les documents</source>
+        <target state="translated">كل الوثائق</target>
+      </trans-unit>
+      <trans-unit id="documents.view.mine" datatype="html">
+        <source>Mes documents</source>
+        <target state="translated">وثائقي</target>
+      </trans-unit>
+      <trans-unit id="documents.view.to-validate" datatype="html">
+        <source>À valider par moi</source>
+        <target state="translated">بانتظار اعتمادي</target>
+      </trans-unit>
+      <trans-unit id="documents.view.review-due" datatype="html">
+        <source>Revues à échéance</source>
+        <target state="translated">مراجعات مستحقة</target>
+      </trans-unit>
+      <trans-unit id="documents.view.archived" datatype="html">
+        <source>Archives (obsolètes)</source>
+        <target state="translated">الأرشيف (الملغاة)</target>
+      </trans-unit>
+      <trans-unit id="documents.unit.bytes" datatype="html">
+        <source>o</source>
+        <target state="translated">بايت</target>
+      </trans-unit>
+      <trans-unit id="documents.unit.kb" datatype="html">
+        <source>Ko</source>
+        <target state="translated">ك.ب</target>
+      </trans-unit>
+      <trans-unit id="documents.unit.mb" datatype="html">
+        <source>Mo</source>
+        <target state="translated">م.ب</target>
+      </trans-unit>
+      <trans-unit id="documents.unit.gb" datatype="html">
+        <source>Go</source>
+        <target state="translated">ج.ب</target>
+      </trans-unit>
+      <trans-unit id="documents.nav.aria" datatype="html">
+        <source>Documentation</source>
+        <target state="translated">التوثيق</target>
+      </trans-unit>
+      <trans-unit id="documents.nav.folders" datatype="html">
+        <source>Arborescence</source>
+        <target state="translated">المجلدات</target>
+      </trans-unit>
+      <trans-unit id="documents.list.heading" datatype="html">
+        <source>Documentation qualité</source>
+        <target state="translated">وثائق الجودة</target>
+      </trans-unit>
+      <trans-unit id="documents.list.count-one" datatype="html">
+        <source>1 document</source>
+        <target state="translated">وثيقة واحدة</target>
+      </trans-unit>
+      <trans-unit id="documents.list.count-many" datatype="html">
+        <source><x id="INTERPOLATION"/> documents</source>
+        <target state="translated"><x id="INTERPOLATION"/> وثيقة</target>
+      </trans-unit>
+      <trans-unit id="documents.list.import" datatype="html">
+        <source>Importer</source>
+        <target state="translated">استيراد</target>
+      </trans-unit>
+      <trans-unit id="documents.list.col-reference" datatype="html">
+        <source>Référence</source>
+        <target state="translated">المرجع</target>
+      </trans-unit>
+      <trans-unit id="documents.list.col-owner" datatype="html">
+        <source>Propriétaire</source>
+        <target state="translated">المالك</target>
+      </trans-unit>
+      <trans-unit id="documents.list.col-review" datatype="html">
+        <source>Prochaine revue</source>
+        <target state="translated">المراجعة القادمة</target>
+      </trans-unit>
+      <trans-unit id="documents.filter.search" datatype="html">
+        <source>Rechercher par code, titre ou description</source>
+        <target state="translated">ابحث بالرمز أو العنوان أو الوصف</target>
+      </trans-unit>
+      <trans-unit id="documents.filter.process" datatype="html">
+        <source>Processus</source>
+        <target state="translated">العملية</target>
+      </trans-unit>
+      <trans-unit id="documents.filter.owner" datatype="html">
+        <source>Propriétaire</source>
+        <target state="translated">المالك</target>
+      </trans-unit>
+      <trans-unit id="documents.filter.clear" datatype="html">
+        <source>Effacer les filtres</source>
+        <target state="translated">مسح عوامل التصفية</target>
+      </trans-unit>
+      <trans-unit id="documents.empty.filtered" datatype="html">
+        <source>Aucun document ne correspond à ces filtres.</source>
+        <target state="translated">لا توجد وثيقة تطابق عوامل التصفية هذه.</target>
+      </trans-unit>
+      <trans-unit id="documents.empty.none" datatype="html">
+        <source>Aucun document ici pour l'instant.</source>
+        <target state="translated">لا توجد وثائق هنا بعد.</target>
+      </trans-unit>
+      <trans-unit id="documents.empty.hint" datatype="html">
+        <source>Déposez des fichiers sur cette page ou créez un document.</source>
+        <target state="translated">أفلت الملفات على هذه الصفحة أو أنشئ وثيقة.</target>
+      </trans-unit>
+      <trans-unit id="documents.pager.range" datatype="html">
+        <source><x id="INTERPOLATION"/>–<x id="INTERPOLATION_1"/> sur <x id="INTERPOLATION_2"/></source>
+        <target state="translated"><x id="INTERPOLATION"/>–<x id="INTERPOLATION_1"/> من <x id="INTERPOLATION_2"/></target>
+      </trans-unit>
+      <trans-unit id="documents.pager.page" datatype="html">
+        <source>Page <x id="INTERPOLATION"/> / <x id="INTERPOLATION_1"/></source>
+        <target state="translated">الصفحة <x id="INTERPOLATION"/> / <x id="INTERPOLATION_1"/></target>
+      </trans-unit>
+      <trans-unit id="documents.pager.previous" datatype="html">
+        <source>Page précédente</source>
+        <target state="translated">الصفحة السابقة</target>
+      </trans-unit>
+      <trans-unit id="documents.pager.next" datatype="html">
+        <source>Page suivante</source>
+        <target state="translated">الصفحة التالية</target>
+      </trans-unit>
+      <trans-unit id="documents.drop.title" datatype="html">
+        <source>Déposez vos fichiers pour les importer</source>
+        <target state="translated">أفلت ملفاتك لاستيرادها</target>
+      </trans-unit>
+      <trans-unit id="documents.drop.where" datatype="html">
+        <source>Dans « <x id="INTERPOLATION"/> »</source>
+        <target state="translated">في «<x id="INTERPOLATION"/>»</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.close" datatype="html">
+        <source>Fermer la fiche</source>
+        <target state="translated">إغلاق البطاقة</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.preview-loading" datatype="html">
+        <source>Chargement de l'aperçu…</source>
+        <target state="translated">جارٍ تحميل المعاينة…</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.preview-title" datatype="html">
+        <source>Aperçu du document</source>
+        <target state="translated">معاينة الوثيقة</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.preview-failed" datatype="html">
+        <source>L'aperçu n'a pas pu être chargé.</source>
+        <target state="translated">تعذر تحميل المعاينة.</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.preview-too-large" datatype="html">
+        <source>Fichier trop volumineux pour l'aperçu : téléchargez-le.</source>
+        <target state="translated">الملف أكبر من أن يُعاين: نزّله.</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.preview-purged" datatype="html">
+        <source>Fichier retiré au terme de sa conservation. Son empreinte reste vérifiable.</source>
+        <target state="translated">أُزيل الملف بانتهاء مدة حفظه. تبقى بصمته قابلة للتحقق.</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.preview-unavailable" datatype="html">
+        <source>Pas d'aperçu pour ce format.</source>
+        <target state="translated">لا معاينة لهذا التنسيق.</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.no-file" datatype="html">
+        <source>Aucun fichier joint à cette version.</source>
+        <target state="translated">لا يوجد ملف مرفق بهذا الإصدار.</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.open" datatype="html">
+        <source>Ouvrir</source>
+        <target state="translated">فتح</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.download" datatype="html">
+        <source>Télécharger</source>
+        <target state="translated">تنزيل</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.download-failed" datatype="html">
+        <source>Le fichier n'a pas pu être téléchargé. Réessayez.</source>
+        <target state="translated">تعذر تنزيل الملف. حاول مرة أخرى.</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.circuit" datatype="html">
+        <source>Circuit de la version <x id="INTERPOLATION"/></source>
+        <target state="translated">مسار الإصدار <x id="INTERPOLATION"/></target>
+      </trans-unit>
+      <trans-unit id="documents.panel.step-draft" datatype="html">
+        <source>Rédaction</source>
+        <target state="translated">الصياغة</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.step-review" datatype="html">
+        <source>Vérification</source>
+        <target state="translated">التحقق</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.step-approval" datatype="html">
+        <source>Approbation</source>
+        <target state="translated">الاعتماد</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.step-publish" datatype="html">
+        <source>Diffusion</source>
+        <target state="translated">النشر</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.rejected" datatype="html">
+        <source>Refusée : <x id="INTERPOLATION"/></source>
+        <target state="translated">مرفوضة: <x id="INTERPOLATION"/></target>
+      </trans-unit>
+      <trans-unit id="documents.panel.details" datatype="html">
+        <source>Informations</source>
+        <target state="translated">المعلومات</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.folder" datatype="html">
+        <source>Dossier</source>
+        <target state="translated">المجلد</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.acknowledgments" datatype="html">
+        <source>Prises de connaissance</source>
+        <target state="translated">الإقرارات بالاطلاع</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.updated" datatype="html">
+        <source>Mis à jour</source>
+        <target state="translated">آخر تحديث</target>
+      </trans-unit>
+      <trans-unit id="documents.panel.history" datatype="html">
+        <source>Historique des versions</source>
+        <target state="translated">سجل الإصدارات</target>
+      </trans-unit>
+      <trans-unit id="documents.import.title" datatype="html">
+        <source>Importer des documents</source>
+        <target state="translated">استيراد وثائق</target>
+      </trans-unit>
+      <trans-unit id="documents.import.intro" datatype="html">
+        <source>Chaque fichier devient un document en brouillon, avec le fichier dans sa première version.</source>
+        <target state="translated">يصبح كل ملف وثيقة مسودة، والملف في إصدارها الأول.</target>
+      </trans-unit>
+      <trans-unit id="documents.import.no-folder" datatype="html">
+        <source>Sans dossier</source>
+        <target state="translated">بلا مجلد</target>
+      </trans-unit>
+      <trans-unit id="documents.import.mandatory-read" datatype="html">
+        <source>Lecture obligatoire</source>
+        <target state="translated">قراءة إلزامية</target>
+      </trans-unit>
+      <trans-unit id="documents.import.drop" datatype="html">
+        <source>Déposez des fichiers ici ou cliquez pour les choisir</source>
+        <target state="translated">أفلت الملفات هنا أو انقر لاختيارها</target>
+      </trans-unit>
+      <trans-unit id="documents.import.policy" datatype="html">
+        <source>PDF, Word, Excel, PowerPoint, images ou texte — <x id="INTERPOLATION"/> Mo maximum par fichier</source>
+        <target state="translated">PDF أو Word أو Excel أو PowerPoint أو صور أو نص — <x id="INTERPOLATION"/> م.ب كحد أقصى لكل ملف</target>
+      </trans-unit>
+      <trans-unit id="documents.import.remove" datatype="html">
+        <source>Retirer ce fichier</source>
+        <target state="translated">إزالة هذا الملف</target>
+      </trans-unit>
+      <trans-unit id="documents.import.fix-lines" datatype="html">
+        <source>Corrigez ou retirez les lignes signalées.</source>
+        <target state="translated">صحّح الأسطر المشار إليها أو أزلها.</target>
+      </trans-unit>
+      <trans-unit id="documents.import.progress" datatype="html">
+        <source><x id="INTERPOLATION"/> sur <x id="INTERPOLATION_1"/> importés</source>
+        <target state="translated">تم استيراد <x id="INTERPOLATION"/> من <x id="INTERPOLATION_1"/></target>
+      </trans-unit>
+      <trans-unit id="documents.import.submit" datatype="html">
+        <source>Importer <x id="INTERPOLATION"/> fichier(s)</source>
+        <target state="translated">استيراد <x id="INTERPOLATION"/> ملف(ات)</target>
+      </trans-unit>
+      <trans-unit id="documents.import.running" datatype="html">
+        <source>Import en cours…</source>
+        <target state="translated">جارٍ الاستيراد…</target>
+      </trans-unit>
+      <trans-unit id="documents.import.upload-failed" datatype="html">
+        <source>Document créé, mais le fichier n'a pas été envoyé.</source>
+        <target state="translated">أُنشئت الوثيقة، لكن الملف لم يُرسل.</target>
+      </trans-unit>
+      <trans-unit id="documents.import.empty-file" datatype="html">
+        <source>Ce fichier est vide.</source>
+        <target state="translated">هذا الملف فارغ.</target>
+      </trans-unit>
+      <trans-unit id="documents.import.too-large" datatype="html">
+        <source>Fichier trop volumineux (maximum <x id="max"/> Mo).</source>
+        <target state="translated">الملف كبير جدًا (الحد الأقصى <x id="max"/> م.ب).</target>
+      </trans-unit>
+      <trans-unit id="documents.import.bad-type" datatype="html">
+        <source>Format non accepté.</source>
+        <target state="translated">تنسيق غير مقبول.</target>
+      </trans-unit>
+      <trans-unit id="documents.import.bad-code" datatype="html">
+        <source>Code invalide : lettres majuscules, chiffres, point, tiret, souligné.</source>
+        <target state="translated">رمز غير صالح: أحرف كبيرة وأرقام ونقطة وشرطة وشرطة سفلية.</target>
+      </trans-unit>
+      <trans-unit id="documents.import.bad-title" datatype="html">
+        <source>Le titre est obligatoire.</source>
+        <target state="translated">العنوان إلزامي.</target>
+      </trans-unit>
+      <trans-unit id="documents.create.attach" datatype="html">
+        <source>Joindre un fichier (facultatif)</source>
+        <target state="translated">إرفاق ملف (اختياري)</target>
+      </trans-unit>
+      <trans-unit id="documents.create.remove-file" datatype="html">
+        <source>Retirer le fichier</source>
+        <target state="translated">إزالة الملف</target>
+      </trans-unit>
+      <trans-unit id="documents.create.first-version-title" datatype="html">
+        <source>Première version, en brouillon</source>
+        <target state="translated">الإصدار الأول، كمسودة</target>
+      </trans-unit>
+      <trans-unit id="documents.edit.review-hint" datatype="html">
+        <source>Fixée à la publication selon la périodicité du tenant ; avancez-la ou reculez-la au besoin.</source>
+        <target state="translated">تُحدد عند النشر وفق الدورية؛ قدّمها أو أخّرها عند الحاجة.</target>
+      </trans-unit>
+      <trans-unit id="documents.detail.col-file" datatype="html">
+        <source>Fichier</source>
+        <target state="translated">الملف</target>
+      </trans-unit>
+      <trans-unit id="documents.detail.file-purged" datatype="html">
+        <source>Retiré (conservation échue)</source>
+        <target state="translated">أُزيل (انتهت مدة الحفظ)</target>
+      </trans-unit>
+      <trans-unit id="documents.detail.attach-file" datatype="html">
+        <source>Joindre</source>
+        <target state="translated">إرفاق</target>
+      </trans-unit>
+      <trans-unit id="documents.detail.replace-file" datatype="html">
+        <source>Remplacer</source>
+        <target state="translated">استبدال</target>
+      </trans-unit>
+      <trans-unit id="documents.detail.file-uploaded" datatype="html">
+        <source>Fichier joint.</source>
+        <target state="translated">أُرفق الملف.</target>
+      </trans-unit>
+      <trans-unit id="documents.detail.file-upload-failed" datatype="html">
+        <source>Le fichier n'a pas pu être envoyé.</source>
+        <target state="translated">تعذر إرسال الملف.</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.title" datatype="html">
+        <source>Documentation</source>
+        <target state="translated">التوثيق</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.subtitle" datatype="html">
+        <source>Revues périodiques, fichiers, arborescence et processus de la documentation qualité.</source>
+        <target state="translated">المراجعات الدورية والملفات والمجلدات والعمليات لوثائق الجودة.</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.back" datatype="html">
+        <source>Documentation qualité</source>
+        <target state="translated">وثائق الجودة</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.load-failed" datatype="html">
+        <source>Les paramètres de la documentation n'ont pas pu être chargés.</source>
+        <target state="translated">تعذر تحميل إعدادات التوثيق.</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.storage" datatype="html">
+        <source>Stockage</source>
+        <target state="translated">التخزين</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.stored" datatype="html">
+        <source>occupés</source>
+        <target state="translated">مستخدمة</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.files" datatype="html">
+        <source>fichiers distincts</source>
+        <target state="translated">ملفات مميزة</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.saved-by" datatype="html">
+        <source>grâce aux doublons et à la compression</source>
+        <target state="translated">بفضل إزالة التكرار والضغط</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.quota-used" datatype="html">
+        <source>Quota utilisé</source>
+        <target state="translated">الحصة المستخدمة</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.quota-line" datatype="html">
+        <source><x id="INTERPOLATION"/> % du quota de <x id="INTERPOLATION_1"/></source>
+        <target state="translated"><x id="INTERPOLATION"/>% من حصة <x id="INTERPOLATION_1"/></target>
+      </trans-unit>
+      <trans-unit id="documents.settings.storage-help" datatype="html">
+        <source>Un fichier déposé deux fois n'est stocké qu'une fois ; les formats texte et bureautiques anciens sont compressés. Sans compression ni partage, la documentation occuperait <x id="INTERPOLATION"/>.</source>
+        <target state="translated">الملف المرفوع مرتين يُخزَّن مرة واحدة؛ وتُضغط تنسيقات النصوص والمكتبية القديمة. بدون ضغط أو مشاركة، ستشغل الوثائق <x id="INTERPOLATION"/>.</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.review" datatype="html">
+        <source>Revue périodique</source>
+        <target state="translated">المراجعة الدورية</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.review-help" datatype="html">
+        <source>À la publication, la prochaine revue est fixée selon cette périodicité. Le préavis fait entrer le document dans « Revues à échéance ».</source>
+        <target state="translated">عند النشر، تُحدد المراجعة القادمة وفق هذه الدورية. ويُدخل الإشعار المسبق الوثيقة في «مراجعات مستحقة».</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.period" datatype="html">
+        <source>Périodicité (mois)</source>
+        <target state="translated">الدورية (أشهر)</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.warning" datatype="html">
+        <source>Préavis (jours)</source>
+        <target state="translated">الإشعار المسبق (أيام)</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.files-title" datatype="html">
+        <source>Fichiers</source>
+        <target state="translated">الملفات</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.files-help" datatype="html">
+        <source>Laissez le quota vide pour ne pas en fixer. Sans durée de conservation, les fichiers des versions obsolètes sont gardés indéfiniment ; leur empreinte reste toujours.</source>
+        <target state="translated">اترك الحصة فارغة لعدم تحديدها. بدون مدة حفظ، تُحفظ ملفات الإصدارات الملغاة إلى أجل غير مسمى؛ وتبقى بصمتها دائمًا.</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.max-file" datatype="html">
+        <source>Taille max. par fichier (Mo)</source>
+        <target state="translated">الحد الأقصى لحجم الملف (م.ب)</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.max-file-hint" datatype="html">
+        <source>Au plus <x id="INTERPOLATION"/> Mo</source>
+        <target state="translated"><x id="INTERPOLATION"/> م.ب كحد أقصى</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.quota" datatype="html">
+        <source>Quota (Mo)</source>
+        <target state="translated">الحصة (م.ب)</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.retention" datatype="html">
+        <source>Conservation (ans)</source>
+        <target state="translated">مدة الحفظ (سنوات)</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.retention-hint" datatype="html">
+        <source>Fichiers des versions obsolètes</source>
+        <target state="translated">ملفات الإصدارات الملغاة</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.add-root" datatype="html">
+        <source>Dossier racine</source>
+        <target state="translated">مجلد جذري</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.tree-help" datatype="html">
+        <source>Jusqu'à <x id="INTERPOLATION"/> niveaux. Les documents se classent dans ces dossiers.</source>
+        <target state="translated">حتى <x id="INTERPOLATION"/> مستويات. تُصنَّف الوثائق في هذه المجلدات.</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.add-child" datatype="html">
+        <source>Ajouter un sous-dossier</source>
+        <target state="translated">إضافة مجلد فرعي</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.rename" datatype="html">
+        <source>Renommer</source>
+        <target state="translated">إعادة التسمية</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.processes" datatype="html">
+        <source>Processus</source>
+        <target state="translated">العمليات</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.add-process" datatype="html">
+        <source>Ajouter</source>
+        <target state="translated">إضافة</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.processes-help" datatype="html">
+        <source>Les processus de la cartographie auxquels un document se rattache.</source>
+        <target state="translated">عمليات خريطة العمليات التي ترتبط بها الوثيقة.</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.delete-folder" datatype="html">
+        <source>Supprimer le dossier « <x id="name"/> » ?</source>
+        <target state="translated">حذف المجلد «<x id="name"/>»؟</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.delete-folder-help" datatype="html">
+        <source>Un dossier qui contient des sous-dossiers ou des documents ne peut pas être supprimé.</source>
+        <target state="translated">لا يمكن حذف مجلد يحتوي على مجلدات فرعية أو وثائق.</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.delete-process" datatype="html">
+        <source>Supprimer le processus « <x id="name"/> » ?</source>
+        <target state="translated">حذف العملية «<x id="name"/>»؟</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.delete-process-help" datatype="html">
+        <source>Un processus rattaché à des documents ne peut pas être supprimé.</source>
+        <target state="translated">لا يمكن حذف عملية مرتبطة بوثائق.</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.bad-period" datatype="html">
+        <source>La périodicité va de 1 à 120 mois.</source>
+        <target state="translated">تتراوح الدورية بين 1 و120 شهرًا.</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.bad-warning" datatype="html">
+        <source>Le préavis va de 0 à 365 jours.</source>
+        <target state="translated">يتراوح الإشعار المسبق بين 0 و365 يومًا.</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.bad-max-file" datatype="html">
+        <source>La taille maximale va de 1 à <x id="max"/> Mo.</source>
+        <target state="translated">يتراوح الحد الأقصى للحجم بين 1 و<x id="max"/> م.ب.</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.bad-quota" datatype="html">
+        <source>Le quota est un nombre entier de Mo, ou vide pour aucun.</source>
+        <target state="translated">الحصة عدد صحيح من م.ب، أو فارغة لعدم التحديد.</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.bad-retention" datatype="html">
+        <source>La conservation va de 1 à 100 ans, ou vide pour tout garder.</source>
+        <target state="translated">تتراوح مدة الحفظ بين 1 و100 سنة، أو فارغة للاحتفاظ بكل شيء.</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.saved" datatype="html">
+        <source>Paramètres enregistrés.</source>
+        <target state="translated">حُفظت الإعدادات.</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.unsaved" datatype="html">
+        <source>Modifications non enregistrées</source>
+        <target state="translated">تغييرات غير محفوظة</target>
+      </trans-unit>
+      <trans-unit id="documents.settings.discard" datatype="html">
+        <source>Annuler les modifications</source>
+        <target state="translated">تجاهل التغييرات</target>
+      </trans-unit>
       <trans-unit id="dpia.create.hint" datatype="html">
         <source>L'Art. 35 RGPD impose une DPIA pour les traitements présentant un</source>
         <target state="translated">تفرض المادة 35 من اللائحة العامة لحماية البيانات إجراء تقييم لأثر حماية البيانات (DPIA) لعمليات المعالجة التي تنطوي على</target>

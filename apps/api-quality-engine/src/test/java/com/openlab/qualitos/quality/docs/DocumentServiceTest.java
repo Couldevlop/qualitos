@@ -1,5 +1,7 @@
 package com.openlab.qualitos.quality.docs;
 
+import com.openlab.qualitos.quality.authz.application.AuthorizationService;
+import com.openlab.qualitos.quality.authz.domain.Permission;
 import com.openlab.qualitos.quality.circuit.application.ApprovalCircuits;
 import com.openlab.qualitos.quality.circuit.application.CircuitDto;
 import com.openlab.qualitos.quality.circuit.domain.CircuitSubject;
@@ -11,15 +13,22 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
+import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 
+import java.time.Clock;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.util.Set;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -36,7 +45,10 @@ class DocumentServiceTest {
     @Mock DocumentAcknowledgmentRepository ackRepo;
     /** Sans réglage, Mockito rend Optional.empty() : l'approbation simple d'avant. */
     @Mock ApprovalCircuits circuits;
-    @InjectMocks DocumentService service;
+    @Mock DocumentCatalogService catalog;
+    @Mock AuthorizationService authorization;
+    static final Clock CLOCK = Clock.fixed(Instant.parse("2026-10-19T10:00:00Z"), ZoneOffset.UTC);
+    DocumentService service;
 
     static final UUID TENANT = UUID.randomUUID();
     static final UUID OWNER = UUID.randomUUID();
@@ -50,7 +62,11 @@ class DocumentServiceTest {
                 new UsernamePasswordAuthenticationToken(user.toString(), "n/a", List.of()));
     }
 
-    @BeforeEach void ctx() { TenantContext.setTenantId(TENANT.toString()); connecte(OWNER); }
+    @BeforeEach void ctx() {
+        service = new DocumentService(docRepo, versionRepo, ackRepo, circuits, catalog, authorization, CLOCK);
+        TenantContext.setTenantId(TENANT.toString());
+        connecte(OWNER);
+    }
     @AfterEach  void clr() { TenantContext.clear(); SecurityContextHolder.clearContext(); }
 
     // --- create ---
@@ -103,7 +119,7 @@ class DocumentServiceTest {
     @Test
     void findAll_noFilter() {
         Pageable p = PageRequest.of(0, 10);
-        when(docRepo.findByTenantId(TENANT, p))
+        when(docRepo.findAll(ArgumentMatchers.<Specification<Document>>any(), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of(doc(TENANT, DocumentStatus.ACTIVE))));
         Page<DocumentDto.DocumentResponse> r = service.findAll(null, p);
         assertThat(r.getContent()).hasSize(1);
@@ -112,10 +128,77 @@ class DocumentServiceTest {
     @Test
     void findAll_withFilter() {
         Pageable p = PageRequest.of(0, 10);
-        when(docRepo.findByTenantIdAndStatus(TENANT, DocumentStatus.ARCHIVED, p))
+        when(docRepo.findAll(ArgumentMatchers.<Specification<Document>>any(), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of(doc(TENANT, DocumentStatus.ARCHIVED))));
         Page<DocumentDto.DocumentResponse> r = service.findAll(DocumentStatus.ARCHIVED, p);
         assertThat(r.getContent().get(0).status()).isEqualTo(DocumentStatus.ARCHIVED);
+        assertThat(r.getContent().get(0).displayStatus()).isEqualTo(DisplayStatus.ARCHIVED);
+    }
+
+    @Test
+    void findAll_unsorted_sortsByReference() {
+        when(docRepo.findAll(ArgumentMatchers.<Specification<Document>>any(), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of()));
+        service.findAll(null, PageRequest.of(0, 10));
+        ArgumentCaptor<Pageable> captor = ArgumentCaptor.forClass(Pageable.class);
+        verify(docRepo).findAll(ArgumentMatchers.<Specification<Document>>any(), captor.capture());
+        assertThat(captor.getValue().getSort().getOrderFor("code")).isNotNull();
+    }
+
+    @Test
+    void search_withFolder_expandsToDescendants() {
+        UUID folder = UUID.randomUUID();
+        when(catalog.folderAndDescendants(TENANT, folder)).thenReturn(Set.of(folder, UUID.randomUUID()));
+        when(docRepo.findAll(ArgumentMatchers.<Specification<Document>>any(), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of()));
+        service.search(new DocumentDto.ListFilter(DocumentView.ALL, folder, "pro", DisplayStatus.IN_FORCE,
+                DocumentType.PROCEDURE, UUID.randomUUID(), OWNER), PageRequest.of(0, 10, Sort.by("title")));
+        verify(catalog).folderAndDescendants(TENANT, folder);
+    }
+
+    @Test
+    void search_toValidate_asksForDocumentsAwaitingMyDecision() {
+        when(authorization.currentRoleCodes()).thenReturn(Set.of("QUALITY_MANAGER"));
+        when(authorization.has(Permission.DOCUMENT_APPROVE)).thenReturn(true);
+        when(docRepo.findIdsAwaitingDecisionOf(eq(TENANT), eq(OWNER), any(), eq(true))).thenReturn(List.of());
+        when(docRepo.findAll(ArgumentMatchers.<Specification<Document>>any(), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of()));
+        service.search(new DocumentDto.ListFilter(DocumentView.TO_VALIDATE, null, null, null, null, null, null),
+                PageRequest.of(0, 10));
+        ArgumentCaptor<java.util.Collection<String>> roles = ArgumentCaptor.forClass(java.util.Collection.class);
+        verify(docRepo).findIdsAwaitingDecisionOf(eq(TENANT), eq(OWNER), roles.capture(), eq(true));
+        // Jamais vide : une liste vide rendrait la requête SQL invalide.
+        assertThat(roles.getValue()).contains("QUALITY_MANAGER").hasSizeGreaterThan(1);
+    }
+
+    @Test
+    void viewCounts_countsEachView() {
+        when(catalog.settingsOf(TENANT)).thenReturn(DocumentSettingsRow.defaults(TENANT));
+        when(authorization.currentRoleCodes()).thenReturn(Set.of());
+        when(docRepo.findIdsAwaitingDecisionOf(any(), any(), any(), anyBoolean())).thenReturn(List.of());
+        when(docRepo.count(ArgumentMatchers.<Specification<Document>>any())).thenReturn(3L, 1L, 0L, 2L, 4L);
+        DocumentDto.ViewCounts c = service.viewCounts();
+        assertThat(c).isEqualTo(new DocumentDto.ViewCounts(3, 1, 0, 2, 4));
+    }
+
+    // --- statut affiché ---
+    @Test
+    void displayStatus_reviewOverdueWinsOverLifecycle() {
+        LocalDate today = LocalDate.of(2026, 10, 19);
+        Document d = doc(TENANT, DocumentStatus.ACTIVE);
+        assertThat(DocumentService.displayStatus(d, today)).isEqualTo(DisplayStatus.DRAFT);
+        d.setLifecycle(DocumentLifecycle.IN_FORCE);
+        d.setNextReviewDate(today);
+        assertThat(DocumentService.displayStatus(d, today)).isEqualTo(DisplayStatus.IN_FORCE);
+        d.setLifecycle(DocumentLifecycle.IN_REVISION);
+        assertThat(DocumentService.displayStatus(d, today)).isEqualTo(DisplayStatus.IN_REVISION);
+        d.setNextReviewDate(today.minusDays(1));
+        assertThat(DocumentService.displayStatus(d, today)).isEqualTo(DisplayStatus.REVIEW_OVERDUE);
+        d.setStatus(DocumentStatus.ARCHIVED);
+        assertThat(DocumentService.displayStatus(d, today)).isEqualTo(DisplayStatus.ARCHIVED);
+        d.setStatus(DocumentStatus.ACTIVE);
+        d.setLifecycle(null);
+        assertThat(DocumentService.displayStatus(d, today)).isEqualTo(DisplayStatus.DRAFT);
     }
 
     // --- findById ---
@@ -433,13 +516,133 @@ class DocumentServiceTest {
         when(docRepo.findByIdAndTenantId(d.getId(), TENANT)).thenReturn(Optional.of(d));
         when(versionRepo.findByIdAndDocumentId(next.getId(), d.getId())).thenReturn(Optional.of(next));
         when(versionRepo.save(next)).thenReturn(next);
+        DocumentSettingsRow settings = DocumentSettingsRow.defaults(TENANT);
+        settings.setReviewPeriodMonths(12);
+        when(catalog.settingsOf(TENANT)).thenReturn(settings);
 
         service.publishVersion(d.getId(), next.getId());
 
         assertThat(old.getStatus()).isEqualTo(VersionStatus.OBSOLETE);
+        assertThat(old.getObsoletedAt()).isEqualTo(Instant.parse("2026-10-19T10:00:00Z"));
         assertThat(next.getStatus()).isEqualTo(VersionStatus.PUBLISHED);
         assertThat(next.getPublishedAt()).isNotNull();
         assertThat(d.getCurrentVersionId()).isEqualTo(next.getId());
+        assertThat(d.getLifecycle()).isEqualTo(DocumentLifecycle.IN_FORCE);
+        assertThat(d.getNextReviewDate()).isEqualTo(LocalDate.of(2027, 10, 19));
+    }
+
+    // --- GED : dossier, processus, revue (ADR 0094) ---
+    @Test
+    void createDocument_withFolderAndProcess_checksTheyBelongToTheTenant() {
+        UUID folder = UUID.randomUUID();
+        UUID process = UUID.randomUUID();
+        when(docRepo.existsByTenantIdAndCode(TENANT, "PRO-9")).thenReturn(false);
+        when(docRepo.save(any())).thenAnswer(inv -> {
+            Document d = inv.getArgument(0);
+            d.setId(UUID.randomUUID());
+            return d;
+        });
+        when(versionRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+        DocumentDto.DocumentResponse r = service.createDocument(new DocumentDto.CreateDocumentRequest(
+                "PRO-9", "T", null, DocumentType.EXTERNAL, OWNER, false, null, null, null, folder, process));
+        verify(catalog).requireFolderOf(TENANT, folder);
+        verify(catalog).requireProcessOf(TENANT, process);
+        assertThat(r.folderId()).isEqualTo(folder);
+        assertThat(r.processId()).isEqualTo(process);
+        assertThat(r.lifecycle()).isEqualTo(DocumentLifecycle.DRAFT);
+        assertThat(r.displayStatus()).isEqualTo(DisplayStatus.DRAFT);
+    }
+
+    @Test
+    void updateDocument_movesAndClears() {
+        Document d = doc(TENANT, DocumentStatus.ACTIVE);
+        d.setFolderId(UUID.randomUUID());
+        d.setProcessId(UUID.randomUUID());
+        when(docRepo.findByIdAndTenantId(d.getId(), TENANT)).thenReturn(Optional.of(d));
+        when(docRepo.save(d)).thenReturn(d);
+        UUID folder = UUID.randomUUID();
+        service.updateDocument(d.getId(), new DocumentDto.UpdateDocumentRequest(
+                null, null, null, null, null, folder, null, null, null, true));
+        assertThat(d.getFolderId()).isEqualTo(folder);
+        assertThat(d.getProcessId()).isNull();
+        verify(catalog).requireFolderOf(TENANT, folder);
+
+        UUID process = UUID.randomUUID();
+        service.updateDocument(d.getId(), new DocumentDto.UpdateDocumentRequest(
+                null, null, null, null, null, null, process, null, true, null));
+        assertThat(d.getFolderId()).isNull();
+        assertThat(d.getProcessId()).isEqualTo(process);
+    }
+
+    @Test
+    void updateDocument_reviewDate_onlyOncePublished() {
+        Document d = doc(TENANT, DocumentStatus.ACTIVE);
+        when(docRepo.findByIdAndTenantId(d.getId(), TENANT)).thenReturn(Optional.of(d));
+        LocalDate date = LocalDate.of(2027, 1, 1);
+        DocumentDto.UpdateDocumentRequest req = new DocumentDto.UpdateDocumentRequest(
+                null, null, null, null, null, null, null, date, null, null);
+        assertThatThrownBy(() -> service.updateDocument(d.getId(), req))
+                .isInstanceOf(DocumentStateException.class);
+
+        d.setLifecycle(DocumentLifecycle.IN_FORCE);
+        when(docRepo.save(d)).thenReturn(d);
+        service.updateDocument(d.getId(), req);
+        assertThat(d.getNextReviewDate()).isEqualTo(date);
+    }
+
+    @Test
+    void createVersion_afterPublication_inheritsFileAndGoesInRevision() {
+        Document d = doc(TENANT, DocumentStatus.ACTIVE);
+        DocumentVersion published = ver(d, 1, VersionStatus.PUBLISHED);
+        DocumentBlob blob = new DocumentBlob();
+        blob.setId(UUID.randomUUID());
+        blob.setSha256("a".repeat(64));
+        blob.setContentType("application/pdf");
+        blob.setOriginalSize(10);
+        published.setBlob(blob);
+        published.setFileName("proc.pdf");
+        d.getVersions().add(published);
+        d.setCurrentVersionId(published.getId());
+        d.setLifecycle(DocumentLifecycle.IN_FORCE);
+        when(docRepo.findByIdAndTenantId(d.getId(), TENANT)).thenReturn(Optional.of(d));
+        when(versionRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        DocumentDto.VersionResponse r = service.createVersion(d.getId(),
+                new DocumentDto.CreateVersionRequest(null, null, "v2", null));
+
+        assertThat(d.getLifecycle()).isEqualTo(DocumentLifecycle.IN_REVISION);
+        assertThat(r.contentHash()).isEqualTo("a".repeat(64));
+        assertThat(r.file()).isNotNull();
+        assertThat(r.file().fileName()).isEqualTo("proc.pdf");
+        assertThat(r.file().previewable()).isTrue();
+    }
+
+    @Test
+    void updateVersion_textDoesNotReplaceFileHash() {
+        Document d = doc(TENANT, DocumentStatus.ACTIVE);
+        DocumentVersion v = ver(d, 1, VersionStatus.DRAFT);
+        DocumentBlob blob = new DocumentBlob();
+        blob.setSha256("b".repeat(64));
+        blob.setContentType("text/csv");
+        v.setBlob(blob);
+        v.setContentHash("b".repeat(64));
+        when(docRepo.findByIdAndTenantId(d.getId(), TENANT)).thenReturn(Optional.of(d));
+        when(versionRepo.findByIdAndDocumentId(v.getId(), d.getId())).thenReturn(Optional.of(v));
+        when(versionRepo.save(v)).thenReturn(v);
+        service.updateVersion(d.getId(), v.getId(), new DocumentDto.UpdateVersionRequest("texte", null, null));
+        assertThat(v.getContentHash()).isEqualTo("b".repeat(64));
+    }
+
+    @Test
+    void versionResponse_purgedFile_isFlagged() {
+        Document d = doc(TENANT, DocumentStatus.ACTIVE);
+        DocumentVersion v = ver(d, 1, VersionStatus.OBSOLETE);
+        v.setFileName("old.pdf");
+        v.setFilePurgedAt(Instant.now());
+        DocumentDto.VersionResponse r = DocumentService.toVersionResponse(v);
+        assertThat(r.file().purged()).isTrue();
+        assertThat(r.file().previewable()).isFalse();
+        assertThat(DocumentService.toVersionResponse(ver(d, 2, VersionStatus.DRAFT)).file()).isNull();
     }
 
     @Test
