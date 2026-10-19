@@ -11,8 +11,12 @@ public final class CircuitDto {
 
     public record StepView(String name, String roleCode, int minApprovals) {}
 
-    /** Le circuit d'un type d'objet ; sans étape, l'approbation simple d'avant s'applique. */
-    public record CircuitView(String subject, List<StepView> steps) {}
+    /**
+     * Le circuit d'un type d'objet. Sans étape, ou suspendu ({@code enabled} faux),
+     * l'approbation simple s'applique ; les étapes d'un circuit suspendu restent
+     * réglées (ADR 0095).
+     */
+    public record CircuitView(String subject, boolean enabled, List<StepView> steps) {}
 
     public record DecisionView(int stepIndex, UUID actorId, boolean approved, String comment, Instant at) {}
 

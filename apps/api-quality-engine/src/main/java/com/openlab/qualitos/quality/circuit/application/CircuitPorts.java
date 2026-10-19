@@ -20,7 +20,10 @@ public final class CircuitPorts {
 
         List<CircuitStep> find(UUID tenantId, CircuitSubject subject);
 
-        void replace(UUID tenantId, CircuitSubject subject, List<CircuitStep> steps, UUID actor);
+        /** Vrai si le circuit est actif ; sans réglage, il l'est (ADR 0095). */
+        boolean enabled(UUID tenantId, CircuitSubject subject);
+
+        void replace(UUID tenantId, CircuitSubject subject, List<CircuitStep> steps, boolean enabled, UUID actor);
     }
 
     public interface Runs {
@@ -50,7 +53,8 @@ public final class CircuitPorts {
     /** La trace opposable, sans texte libre (les commentaires restent au passage). */
     public interface Audit {
 
-        void circuitReplaced(UUID tenantId, CircuitSubject subject, List<CircuitStep> steps, UUID actor);
+        void circuitReplaced(UUID tenantId, CircuitSubject subject, List<CircuitStep> steps, boolean enabled,
+                             UUID actor);
 
         void decided(CircuitRun run, CircuitRun.Decision decision);
     }

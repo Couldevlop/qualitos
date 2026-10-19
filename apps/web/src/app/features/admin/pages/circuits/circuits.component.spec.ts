@@ -33,13 +33,14 @@ describe('CircuitsComponent', () => {
   const PILOTE = role({ code: 'PILOTE', name: 'Pilote de site', system: false, permissions: ['document.approve'] });
   const USER = role({ code: 'USER', permissions: ['nc.create'] });
 
-  async function setup(steps: CircuitStep[] = [], fails = false): Promise<void> {
+  async function setup(steps: CircuitStep[] = [], fails = false, enabled = true): Promise<void> {
     authz = jasmine.createSpyObj<AuthzService>('AuthzService', ['roles']);
     authz.roles.and.returnValue(of([MANAGER, DIRECTEUR, PILOTE, USER]));
     circuits = jasmine.createSpyObj<CircuitService>('CircuitService', ['circuit', 'save']);
     circuits.circuit.and.returnValue(fails ? throwError(() => new Error('503'))
-      : of({ subject: 'document-version', steps }));
-    circuits.save.and.callFake((_s, st) => of({ subject: 'document-version' as const, steps: st }));
+      : of({ subject: 'document-version', enabled, steps }));
+    circuits.save.and.callFake((_s, st, on) =>
+      of({ subject: 'document-version' as const, enabled: on !== false, steps: st }));
     snack = jasmine.createSpyObj<MatSnackBar>('MatSnackBar', ['open']);
 
     await TestBed.configureTestingModule({
@@ -143,7 +144,7 @@ describe('CircuitsComponent', () => {
     expect(circuits.save).toHaveBeenCalledWith('document-version', [
       { name: 'Relecture', roleCode: 'QUALITY_MANAGER', minApprovals: 2 },
       { name: 'Directeur qualité', roleCode: 'QUALITY_DIRECTOR', minApprovals: 1 }
-    ]);
+    ], true);
     fixture.detectChanges();
     expect(component.dirty).toBeFalse();
     expect(snack.open).toHaveBeenCalled();
@@ -168,7 +169,46 @@ describe('CircuitsComponent', () => {
     fixture.detectChanges();
     (q('enregistrer') as HTMLButtonElement).click();
 
-    expect(circuits.save).toHaveBeenCalledWith('document-version', []);
+    expect(circuits.save).toHaveBeenCalledWith('document-version', [], true);
+  });
+
+  it('choisir l’approbation simple garde les étapes en réserve', async () => {
+    const relecture = { name: 'Relecture', roleCode: 'QUALITY_MANAGER', minApprovals: 1 };
+    await setup([relecture]);
+    expect(q('mode-etapes')!.getAttribute('aria-pressed')).toBe('true');
+
+    (q('mode-simple') as HTMLButtonElement).click();
+    fixture.detectChanges();
+    expect(component.dirty).toBeTrue();
+    expect(component.stepwise).toBeFalse();
+    expect(q('suspendu')).not.toBeNull();
+    expect(q('resume')!.textContent).toContain('une seule approbation suffit');
+
+    (q('enregistrer') as HTMLButtonElement).click();
+    expect(circuits.save).toHaveBeenCalledWith('document-version', [relecture], false);
+    fixture.detectChanges();
+    expect(component.enabled).toBeFalse();
+    expect(component.dirty).toBeFalse();
+    expect(component.steps.length).toBe(1);
+  });
+
+  it('un circuit suspendu se rouvre d’un clic', async () => {
+    await setup([{ name: 'Relecture', roleCode: 'QUALITY_MANAGER', minApprovals: 1 }], false, false);
+    expect(q('mode-simple')!.getAttribute('aria-pressed')).toBe('true');
+
+    (q('mode-etapes') as HTMLButtonElement).click();
+    fixture.detectChanges();
+    expect(component.stepwise).toBeTrue();
+    expect(q('suspendu')).toBeNull();
+    component.discard();
+    expect(component.enabled).toBeFalse();
+  });
+
+  it('pendant l’enregistrement, le mode ne bouge pas', async () => {
+    await setup();
+    component.saving = true;
+    component.setEnabled(false);
+    expect(component.enabled).toBeTrue();
   });
 
   it('annuler rend le circuit enregistré', async () => {

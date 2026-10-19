@@ -9,6 +9,7 @@ import { DocumentsDetailComponent } from './pages/documents-detail/documents-det
 import { DocumentsEditDialogComponent } from './pages/documents-edit-dialog/documents-edit-dialog.component';
 import { DocumentCircuitComponent } from './components/document-circuit/document-circuit.component';
 import { DocumentPanelComponent } from './components/document-panel/document-panel.component';
+import { DocumentValidationComponent } from './components/document-validation/document-validation.component';
 import { DocumentsImportDialogComponent } from './pages/documents-import-dialog/documents-import-dialog.component';
 import { DocumentsListComponent } from './pages/documents-list/documents-list.component';
 import { DocumentsRejectDialogComponent } from './pages/documents-reject-dialog/documents-reject-dialog.component';
@@ -31,6 +32,7 @@ const routes: Routes = [
     DocumentsRejectDialogComponent,
     DocumentCircuitComponent,
     DocumentPanelComponent,
+    DocumentValidationComponent,
     DocumentsImportDialogComponent
   ],
   imports: [FormsModule, PersonNameModule, SharedModule, UiModule, UserPickerModule, RouterModule.forChild(routes)]

@@ -7174,6 +7174,30 @@ Customer portal</target>
         <source><x id="DONE"/> sur <x id="NEEDED"/></source>
         <target state="translated"><x id="DONE"/> of <x id="NEEDED"/></target>
       </trans-unit>
+      <trans-unit id="circuits.mode" datatype="html">
+        <source>Mode de validation</source>
+        <target state="translated">Approval mode</target>
+      </trans-unit>
+      <trans-unit id="circuits.mode-simple" datatype="html">
+        <source>Approbation simple</source>
+        <target state="translated">Single approval</target>
+      </trans-unit>
+      <trans-unit id="circuits.mode-simple-help" datatype="html">
+        <source>Toute personne qui a le droit d'approuver valide seule, sauf l'auteur.</source>
+        <target state="translated">Anyone with the right to approve can approve alone, except the author.</target>
+      </trans-unit>
+      <trans-unit id="circuits.mode-steps" datatype="html">
+        <source>Validation par étapes</source>
+        <target state="translated">Step-by-step approval</target>
+      </trans-unit>
+      <trans-unit id="circuits.mode-steps-help" datatype="html">
+        <source>Validateur 1, puis 2, puis 3… : chaque étape revient à un rôle.</source>
+        <target state="translated">Approver 1, then 2, then 3…: each step belongs to a role.</target>
+      </trans-unit>
+      <trans-unit id="circuits.suspended" datatype="html">
+        <source>Les étapes ci-dessous sont gardées en réserve : elles ne s'appliquent pas tant que l'approbation simple est choisie.</source>
+        <target state="translated">The steps below are kept in reserve: they do not apply while single approval is selected.</target>
+      </trans-unit>
       <trans-unit id="documents.circuit.you" datatype="html">
         <source>Vous</source>
         <target state="translated">You</target>
@@ -8827,8 +8851,8 @@ Customer portal</target>
         <target state="translated">Risks (FMEA)</target>
       </trans-unit>
       <trans-unit id="nav.documents" datatype="html">
-        <source>Documents</source>
-        <target state="translated">Documents</target>
+        <source>GED</source>
+        <target state="translated">Document management</target>
       </trans-unit>
       <trans-unit id="nav.ehs" datatype="html">
         <source>EHS</source>
@@ -10978,25 +11002,33 @@ Customer portal</target>
         <source>Le fichier n'a pas pu être téléchargé. Réessayez.</source>
         <target state="translated">The file could not be downloaded. Try again.</target>
       </trans-unit>
-      <trans-unit id="documents.panel.circuit" datatype="html">
-        <source>Circuit de la version <x id="INTERPOLATION"/></source>
-        <target state="translated">Version <x id="INTERPOLATION"/> workflow</target>
+      <trans-unit id="documents.panel.circuit-title" datatype="html">
+        <source>Circuit de validation</source>
+        <target state="translated">Approval workflow</target>
       </trans-unit>
-      <trans-unit id="documents.panel.step-draft" datatype="html">
+      <trans-unit id="documents.validation.draft" datatype="html">
         <source>Rédaction</source>
         <target state="translated">Drafting</target>
       </trans-unit>
-      <trans-unit id="documents.panel.step-review" datatype="html">
-        <source>Vérification</source>
-        <target state="translated">Review</target>
-      </trans-unit>
-      <trans-unit id="documents.panel.step-approval" datatype="html">
+      <trans-unit id="documents.validation.simple" datatype="html">
         <source>Approbation</source>
         <target state="translated">Approval</target>
       </trans-unit>
-      <trans-unit id="documents.panel.step-publish" datatype="html">
-        <source>Diffusion</source>
-        <target state="translated">Release</target>
+      <trans-unit id="documents.validation.publish" datatype="html">
+        <source>Diffusion et prise de connaissance</source>
+        <target state="translated">Release and acknowledgement</target>
+      </trans-unit>
+      <trans-unit id="documents.validation.approvals" datatype="html">
+        <source><x id="DONE"/> approbation(s) sur <x id="NEEDED"/></source>
+        <target state="translated"><x id="DONE"/> of <x id="NEEDED"/> approval(s)</target>
+      </trans-unit>
+      <trans-unit id="documents.validation.simple-waiting" datatype="html">
+        <source>Une personne ayant le droit d'approuver suffit</source>
+        <target state="translated">One person with the right to approve is enough</target>
+      </trans-unit>
+      <trans-unit id="documents.validation.readers" datatype="html">
+        <source><x id="COUNT"/> lecteur(s) ont confirmé la lecture</source>
+        <target state="translated"><x id="COUNT"/> reader(s) confirmed reading</target>
       </trans-unit>
       <trans-unit id="documents.panel.rejected" datatype="html">
         <source>Refusée : <x id="INTERPOLATION"/></source>
@@ -11009,10 +11041,6 @@ Customer portal</target>
       <trans-unit id="documents.panel.folder" datatype="html">
         <source>Dossier</source>
         <target state="translated">Folder</target>
-      </trans-unit>
-      <trans-unit id="documents.panel.acknowledgments" datatype="html">
-        <source>Prises de connaissance</source>
-        <target state="translated">Acknowledgements</target>
       </trans-unit>
       <trans-unit id="documents.panel.updated" datatype="html">
         <source>Mis à jour</source>

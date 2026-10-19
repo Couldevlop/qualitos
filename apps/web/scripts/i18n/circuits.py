@@ -196,6 +196,30 @@ TRANSLATIONS = {
     'documents.circuit.count': (
         '{$DONE} sur {$NEEDED}', '{$DONE} of {$NEEDED}', '{$DONE} de {$NEEDED}', '{$DONE} من {$NEEDED}',
         '{$NEEDED} 件中 {$DONE} 件', '{$DONE}/{$NEEDED}'),
+    'circuits.mode': ('Mode de validation', 'Approval mode', 'Modo de validación', 'نمط الاعتماد', '承認方式', '审批方式'),
+    'circuits.mode-simple': ('Approbation simple', 'Single approval', 'Aprobación simple', 'اعتماد بسيط', '単独承認', '单人审批'),
+    'circuits.mode-simple-help': (
+        "Toute personne qui a le droit d'approuver valide seule, sauf l'auteur.",
+        'Anyone with the right to approve can approve alone, except the author.',
+        'Cualquier persona con derecho a aprobar valida sola, salvo el autor.',
+        'يعتمد أي شخص لديه صلاحية الاعتماد بمفرده، باستثناء المؤلف.',
+        '承認権限を持つ人なら誰でも単独で承認できます（作成者を除く）。',
+        '任何有审批权限的人都可单独审批，作者除外。'),
+    'circuits.mode-steps': ('Validation par étapes', 'Step-by-step approval', 'Validación por etapas', 'اعتماد على مراحل', '段階承認', '分步审批'),
+    'circuits.mode-steps-help': (
+        'Validateur 1, puis 2, puis 3… : chaque étape revient à un rôle.',
+        'Approver 1, then 2, then 3…: each step belongs to a role.',
+        'Validador 1, luego 2, luego 3…: cada etapa corresponde a un rol.',
+        'المعتمد 1، ثم 2، ثم 3…: لكل مرحلة دور.',
+        '承認者 1、次に 2、次に 3…：各段階はロールが担当します。',
+        '审批人 1，然后 2，然后 3……：每一步由一个角色负责。'),
+    'circuits.suspended': (
+        "Les étapes ci-dessous sont gardées en réserve : elles ne s'appliquent pas tant que l'approbation simple est choisie.",
+        'The steps below are kept in reserve: they do not apply while single approval is selected.',
+        'Las etapas siguientes se conservan en reserva: no se aplican mientras esté elegida la aprobación simple.',
+        'المراحل أدناه محفوظة احتياطيًا: لا تُطبَّق ما دام الاعتماد البسيط مختارًا.',
+        '以下の段階は保存されていますが、単独承認を選んでいる間は適用されません。',
+        '以下步骤已保留：选择单人审批期间不会生效。'),
     'documents.circuit.you': ('Vous', 'You', 'Usted', 'أنت', 'あなた', '您'),
     'documents.circuit.someone': ('Un membre', 'A member', 'Un miembro', 'عضو', 'メンバー', '一名成员'),
     'documents.circuit.rejected': (

@@ -40,15 +40,22 @@ public class CircuitService implements ApprovalCircuits {
     // ---------- réglage ----------
 
     public CircuitDto.CircuitView circuit(CircuitSubject subject) {
-        return view(subject, circuits.find(context.requireTenantId(), subject));
+        UUID tenant = context.requireTenantId();
+        return view(subject, circuits.enabled(tenant, subject), circuits.find(tenant, subject));
+    }
+
+    /** Remplace le circuit et le laisse actif. */
+    public CircuitDto.CircuitView replace(CircuitSubject subject, List<CircuitDto.StepView> steps) {
+        return replace(subject, steps, true);
     }
 
     /**
-     * Remplace le circuit d'un type d'objet. Une liste vide le retire : l'objet
-     * revient à l'approbation simple. Les passages déjà commencés gardent leurs
-     * étapes.
+     * Remplace le circuit d'un type d'objet. Une liste vide le retire, un circuit
+     * suspendu garde ses étapes (ADR 0095) : dans les deux cas, l'objet revient à
+     * l'approbation simple. Les passages déjà commencés gardent leurs étapes.
      */
-    public CircuitDto.CircuitView replace(CircuitSubject subject, List<CircuitDto.StepView> steps) {
+    public CircuitDto.CircuitView replace(CircuitSubject subject, List<CircuitDto.StepView> steps,
+                                          boolean enabled) {
         UUID tenant = context.requireTenantId();
         List<CircuitDto.StepView> demandees = steps == null ? List.of() : steps;
         if (demandees.size() > MAX_STEPS) {
@@ -71,9 +78,9 @@ public class CircuitService implements ApprovalCircuits {
             return e;
         }).toList();
         UUID acteur = context.requireActorId();
-        circuits.replace(tenant, subject, etapes, acteur);
-        audit.circuitReplaced(tenant, subject, etapes, acteur);
-        return view(subject, etapes);
+        circuits.replace(tenant, subject, etapes, enabled, acteur);
+        audit.circuitReplaced(tenant, subject, etapes, enabled, acteur);
+        return view(subject, enabled, etapes);
     }
 
     // ---------- passages ----------
@@ -84,6 +91,10 @@ public class CircuitService implements ApprovalCircuits {
         Optional<CircuitRun> ouvert = runs.findOpen(tenant, subject, subjectId);
         if (ouvert.isPresent()) {
             return ouvert.map(CircuitService::view);
+        }
+        // Suspendu, le circuit garde ses étapes mais n'ouvre plus de passage.
+        if (!circuits.enabled(tenant, subject)) {
+            return Optional.empty();
         }
         List<CircuitStep> etapes = circuits.find(tenant, subject);
         if (etapes.isEmpty()) {
@@ -117,8 +128,8 @@ public class CircuitService implements ApprovalCircuits {
 
     // ---------- vues ----------
 
-    private static CircuitDto.CircuitView view(CircuitSubject subject, List<CircuitStep> etapes) {
-        return new CircuitDto.CircuitView(subject.code(), etapes.stream().map(CircuitService::view).toList());
+    private static CircuitDto.CircuitView view(CircuitSubject subject, boolean enabled, List<CircuitStep> etapes) {
+        return new CircuitDto.CircuitView(subject.code(), enabled, etapes.stream().map(CircuitService::view).toList());
     }
 
     private static CircuitDto.StepView view(CircuitStep s) {

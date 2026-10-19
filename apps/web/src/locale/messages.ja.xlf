@@ -7174,6 +7174,30 @@ Portail clients</source>
         <source><x id="DONE"/> sur <x id="NEEDED"/></source>
         <target state="translated"><x id="NEEDED"/> 件中 <x id="DONE"/> 件</target>
       </trans-unit>
+      <trans-unit id="circuits.mode" datatype="html">
+        <source>Mode de validation</source>
+        <target state="translated">承認方式</target>
+      </trans-unit>
+      <trans-unit id="circuits.mode-simple" datatype="html">
+        <source>Approbation simple</source>
+        <target state="translated">単独承認</target>
+      </trans-unit>
+      <trans-unit id="circuits.mode-simple-help" datatype="html">
+        <source>Toute personne qui a le droit d'approuver valide seule, sauf l'auteur.</source>
+        <target state="translated">承認権限を持つ人なら誰でも単独で承認できます（作成者を除く）。</target>
+      </trans-unit>
+      <trans-unit id="circuits.mode-steps" datatype="html">
+        <source>Validation par étapes</source>
+        <target state="translated">段階承認</target>
+      </trans-unit>
+      <trans-unit id="circuits.mode-steps-help" datatype="html">
+        <source>Validateur 1, puis 2, puis 3… : chaque étape revient à un rôle.</source>
+        <target state="translated">承認者 1、次に 2、次に 3…：各段階はロールが担当します。</target>
+      </trans-unit>
+      <trans-unit id="circuits.suspended" datatype="html">
+        <source>Les étapes ci-dessous sont gardées en réserve : elles ne s'appliquent pas tant que l'approbation simple est choisie.</source>
+        <target state="translated">以下の段階は保存されていますが、単独承認を選んでいる間は適用されません。</target>
+      </trans-unit>
       <trans-unit id="documents.circuit.you" datatype="html">
         <source>Vous</source>
         <target state="translated">あなた</target>
@@ -8827,8 +8851,8 @@ Portail clients</source>
         <target state="translated">リスク（FMEA）</target>
       </trans-unit>
       <trans-unit id="nav.documents" datatype="html">
-        <source>Documents</source>
-        <target state="translated">文書</target>
+        <source>GED</source>
+        <target state="translated">文書管理</target>
       </trans-unit>
       <trans-unit id="nav.ehs" datatype="html">
         <source>EHS</source>
@@ -10978,25 +11002,33 @@ Portail clients</source>
         <source>Le fichier n'a pas pu être téléchargé. Réessayez.</source>
         <target state="translated">ファイルをダウンロードできませんでした。もう一度お試しください。</target>
       </trans-unit>
-      <trans-unit id="documents.panel.circuit" datatype="html">
-        <source>Circuit de la version <x id="INTERPOLATION"/></source>
-        <target state="translated">第 <x id="INTERPOLATION"/> 版の承認フロー</target>
+      <trans-unit id="documents.panel.circuit-title" datatype="html">
+        <source>Circuit de validation</source>
+        <target state="translated">承認フロー</target>
       </trans-unit>
-      <trans-unit id="documents.panel.step-draft" datatype="html">
+      <trans-unit id="documents.validation.draft" datatype="html">
         <source>Rédaction</source>
         <target state="translated">作成</target>
       </trans-unit>
-      <trans-unit id="documents.panel.step-review" datatype="html">
-        <source>Vérification</source>
-        <target state="translated">確認</target>
-      </trans-unit>
-      <trans-unit id="documents.panel.step-approval" datatype="html">
+      <trans-unit id="documents.validation.simple" datatype="html">
         <source>Approbation</source>
         <target state="translated">承認</target>
       </trans-unit>
-      <trans-unit id="documents.panel.step-publish" datatype="html">
-        <source>Diffusion</source>
-        <target state="translated">配布</target>
+      <trans-unit id="documents.validation.publish" datatype="html">
+        <source>Diffusion et prise de connaissance</source>
+        <target state="translated">配布と既読確認</target>
+      </trans-unit>
+      <trans-unit id="documents.validation.approvals" datatype="html">
+        <source><x id="DONE"/> approbation(s) sur <x id="NEEDED"/></source>
+        <target state="translated"><x id="NEEDED"/> 件中 <x id="DONE"/> 件承認</target>
+      </trans-unit>
+      <trans-unit id="documents.validation.simple-waiting" datatype="html">
+        <source>Une personne ayant le droit d'approuver suffit</source>
+        <target state="translated">承認権限を持つ1名で足ります</target>
+      </trans-unit>
+      <trans-unit id="documents.validation.readers" datatype="html">
+        <source><x id="COUNT"/> lecteur(s) ont confirmé la lecture</source>
+        <target state="translated"><x id="COUNT"/> 人が既読を確認</target>
       </trans-unit>
       <trans-unit id="documents.panel.rejected" datatype="html">
         <source>Refusée : <x id="INTERPOLATION"/></source>
@@ -11009,10 +11041,6 @@ Portail clients</source>
       <trans-unit id="documents.panel.folder" datatype="html">
         <source>Dossier</source>
         <target state="translated">フォルダー</target>
-      </trans-unit>
-      <trans-unit id="documents.panel.acknowledgments" datatype="html">
-        <source>Prises de connaissance</source>
-        <target state="translated">既読確認</target>
       </trans-unit>
       <trans-unit id="documents.panel.updated" datatype="html">
         <source>Mis à jour</source>

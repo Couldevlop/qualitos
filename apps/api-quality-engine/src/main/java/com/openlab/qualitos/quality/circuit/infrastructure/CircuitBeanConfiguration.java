@@ -13,11 +13,12 @@ import java.time.Clock;
 public class CircuitBeanConfiguration {
 
     @Bean
-    public CircuitService circuitService(CircuitStepRepository steps, CircuitRunRepository runs,
+    public CircuitService circuitService(CircuitStepRepository steps, CircuitSettingRepository settings,
+                                         CircuitRunRepository runs,
                                          AuthorizationService authorization, AuditEventService auditEvents,
                                          Clock clock) {
         return new CircuitService(
-                new CircuitAdapters.Circuits(steps, clock),
+                new CircuitAdapters.Circuits(steps, settings, clock),
                 new CircuitAdapters.Runs(runs),
                 new CircuitAdapters.Context(authorization),
                 new CircuitAdapters.Audit(auditEvents),

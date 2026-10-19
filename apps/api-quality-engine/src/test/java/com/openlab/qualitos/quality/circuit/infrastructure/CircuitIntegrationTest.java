@@ -165,6 +165,29 @@ class CircuitIntegrationTest {
     }
 
     @Test
+    void unCircuitSuspendu_gardeSesEtapes_etUneApprobationSuffit() {
+        connecte(tenant, admin, "ADMIN_TENANT");
+        dans(() -> circuits.replace(CircuitSubject.DOCUMENT_VERSION, List.of(
+                new CircuitDto.StepView("Relecture", "QUALITY_MANAGER", 2)), false));
+        CircuitDto.CircuitView relu = dans(() -> circuits.circuit(CircuitSubject.DOCUMENT_VERSION));
+        assertThat(relu.enabled()).isFalse();
+        assertThat(relu.steps()).hasSize(1);
+
+        UUID[] ids = documentEnRevue("PRO-C5");
+        connecte(tenant, alice, "QUALITY_MANAGER");
+        DocumentDto.VersionResponse r = dans(() -> documents.approveVersion(ids[0], ids[1],
+                new DocumentDto.ApprovalRequest(null)));
+
+        assertThat(r.status()).isEqualTo(VersionStatus.APPROVED);
+        assertThat(dans(() -> circuits.run(CircuitSubject.DOCUMENT_VERSION, ids[1]))).isEmpty();
+
+        // Réactivé, il reprend ses étapes pour les soumissions suivantes.
+        connecte(tenant, admin, "ADMIN_TENANT");
+        dans(() -> circuits.replace(CircuitSubject.DOCUMENT_VERSION, relu.steps(), true));
+        assertThat(dans(() -> circuits.circuit(CircuitSubject.DOCUMENT_VERSION)).enabled()).isTrue();
+    }
+
+    @Test
     void unRoleSansLeDroitDApprouver_nePeutPasPorterUneEtape() {
         connecte(tenant, admin, "ADMIN_TENANT");
         assertThatThrownBy(() -> dans(() -> circuits.replace(CircuitSubject.DOCUMENT_VERSION, List.of(

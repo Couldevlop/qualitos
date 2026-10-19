@@ -7174,6 +7174,30 @@ Portal de clientes</target>
         <source><x id="DONE"/> sur <x id="NEEDED"/></source>
         <target state="translated"><x id="DONE"/> de <x id="NEEDED"/></target>
       </trans-unit>
+      <trans-unit id="circuits.mode" datatype="html">
+        <source>Mode de validation</source>
+        <target state="translated">Modo de validación</target>
+      </trans-unit>
+      <trans-unit id="circuits.mode-simple" datatype="html">
+        <source>Approbation simple</source>
+        <target state="translated">Aprobación simple</target>
+      </trans-unit>
+      <trans-unit id="circuits.mode-simple-help" datatype="html">
+        <source>Toute personne qui a le droit d'approuver valide seule, sauf l'auteur.</source>
+        <target state="translated">Cualquier persona con derecho a aprobar valida sola, salvo el autor.</target>
+      </trans-unit>
+      <trans-unit id="circuits.mode-steps" datatype="html">
+        <source>Validation par étapes</source>
+        <target state="translated">Validación por etapas</target>
+      </trans-unit>
+      <trans-unit id="circuits.mode-steps-help" datatype="html">
+        <source>Validateur 1, puis 2, puis 3… : chaque étape revient à un rôle.</source>
+        <target state="translated">Validador 1, luego 2, luego 3…: cada etapa corresponde a un rol.</target>
+      </trans-unit>
+      <trans-unit id="circuits.suspended" datatype="html">
+        <source>Les étapes ci-dessous sont gardées en réserve : elles ne s'appliquent pas tant que l'approbation simple est choisie.</source>
+        <target state="translated">Las etapas siguientes se conservan en reserva: no se aplican mientras esté elegida la aprobación simple.</target>
+      </trans-unit>
       <trans-unit id="documents.circuit.you" datatype="html">
         <source>Vous</source>
         <target state="translated">Usted</target>
@@ -8827,8 +8851,8 @@ Portal de clientes</target>
         <target state="translated">Riesgos (AMFE)</target>
       </trans-unit>
       <trans-unit id="nav.documents" datatype="html">
-        <source>Documents</source>
-        <target state="translated">Documentos</target>
+        <source>GED</source>
+        <target state="translated">Gestión documental</target>
       </trans-unit>
       <trans-unit id="nav.ehs" datatype="html">
         <source>EHS</source>
@@ -10978,25 +11002,33 @@ Portal de clientes</target>
         <source>Le fichier n'a pas pu être téléchargé. Réessayez.</source>
         <target state="translated">No se pudo descargar el archivo. Inténtelo de nuevo.</target>
       </trans-unit>
-      <trans-unit id="documents.panel.circuit" datatype="html">
-        <source>Circuit de la version <x id="INTERPOLATION"/></source>
-        <target state="translated">Circuito de la versión <x id="INTERPOLATION"/></target>
+      <trans-unit id="documents.panel.circuit-title" datatype="html">
+        <source>Circuit de validation</source>
+        <target state="translated">Circuito de validación</target>
       </trans-unit>
-      <trans-unit id="documents.panel.step-draft" datatype="html">
+      <trans-unit id="documents.validation.draft" datatype="html">
         <source>Rédaction</source>
         <target state="translated">Redacción</target>
       </trans-unit>
-      <trans-unit id="documents.panel.step-review" datatype="html">
-        <source>Vérification</source>
-        <target state="translated">Verificación</target>
-      </trans-unit>
-      <trans-unit id="documents.panel.step-approval" datatype="html">
+      <trans-unit id="documents.validation.simple" datatype="html">
         <source>Approbation</source>
         <target state="translated">Aprobación</target>
       </trans-unit>
-      <trans-unit id="documents.panel.step-publish" datatype="html">
-        <source>Diffusion</source>
-        <target state="translated">Difusión</target>
+      <trans-unit id="documents.validation.publish" datatype="html">
+        <source>Diffusion et prise de connaissance</source>
+        <target state="translated">Difusión y toma de conocimiento</target>
+      </trans-unit>
+      <trans-unit id="documents.validation.approvals" datatype="html">
+        <source><x id="DONE"/> approbation(s) sur <x id="NEEDED"/></source>
+        <target state="translated"><x id="DONE"/> aprobación(es) de <x id="NEEDED"/></target>
+      </trans-unit>
+      <trans-unit id="documents.validation.simple-waiting" datatype="html">
+        <source>Une personne ayant le droit d'approuver suffit</source>
+        <target state="translated">Basta una persona con derecho a aprobar</target>
+      </trans-unit>
+      <trans-unit id="documents.validation.readers" datatype="html">
+        <source><x id="COUNT"/> lecteur(s) ont confirmé la lecture</source>
+        <target state="translated"><x id="COUNT"/> lector(es) confirmaron la lectura</target>
       </trans-unit>
       <trans-unit id="documents.panel.rejected" datatype="html">
         <source>Refusée : <x id="INTERPOLATION"/></source>
@@ -11009,10 +11041,6 @@ Portal de clientes</target>
       <trans-unit id="documents.panel.folder" datatype="html">
         <source>Dossier</source>
         <target state="translated">Carpeta</target>
-      </trans-unit>
-      <trans-unit id="documents.panel.acknowledgments" datatype="html">
-        <source>Prises de connaissance</source>
-        <target state="translated">Tomas de conocimiento</target>
       </trans-unit>
       <trans-unit id="documents.panel.updated" datatype="html">
         <source>Mis à jour</source>

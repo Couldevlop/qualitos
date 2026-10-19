@@ -1,0 +1,112 @@
+:host {
+  display: block;
+  --ged-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+// Le parcours : une pastille par temps, reliées par un trait qui se remplit au fil des validations.
+.parcours {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.temps {
+  position: relative;
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr);
+  column-gap: var(--qos-space-3);
+  padding-bottom: var(--qos-space-3);
+
+  &:last-child { padding-bottom: 0; }
+
+  // Le trait vers le temps suivant.
+  &:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 28px;
+    bottom: 2px;
+    inset-inline-start: 12px;
+    width: 2px;
+    border-radius: 1px;
+    background: var(--qos-border-default);
+    transition: background var(--qos-motion-slow) var(--ged-ease);
+  }
+
+  &[data-state='done']:not(:last-child)::after { background: var(--qos-accent-bg); }
+}
+
+.marque {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border: 2px solid var(--qos-border-default);
+  border-radius: 50%;
+  background: var(--qos-bg-elevated);
+  color: var(--qos-fg-secondary);
+  font-size: var(--qos-fs-xs);
+  font-weight: var(--qos-fw-semibold);
+  transition: background var(--qos-motion-base) var(--ged-ease), border-color var(--qos-motion-base) var(--ged-ease);
+
+  mat-icon { width: 16px; height: 16px; font-size: 16px; color: var(--qos-fg-inverse); }
+}
+
+[data-state='done'] .marque {
+  border-color: var(--qos-accent-bg);
+  background: var(--qos-accent-bg);
+}
+
+[data-state='current'] .marque {
+  border-color: var(--qos-accent-bg);
+  color: var(--qos-accent-bg);
+  box-shadow: 0 0 0 4px var(--qos-accent-bg-soft);
+}
+
+[data-state='rejected'] .marque {
+  border-color: var(--qos-danger-fg);
+  color: var(--qos-danger-fg);
+}
+
+.texte {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+  padding-top: 3px;
+}
+
+.libelle {
+  font-size: var(--qos-fs-sm);
+  font-weight: var(--qos-fw-medium);
+  line-height: var(--qos-lh-snug);
+  color: var(--qos-fg-primary);
+}
+
+[data-state='todo'] .libelle { color: var(--qos-fg-secondary); }
+
+.detail {
+  font-size: var(--qos-fs-xs);
+  line-height: var(--qos-lh-normal);
+  color: var(--qos-fg-secondary);
+  overflow-wrap: anywhere;
+
+  &--attente { color: var(--qos-accent-fg-soft); }
+}
+
+.refus {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--qos-space-2);
+  margin: var(--qos-space-3) 0 0;
+  padding: var(--qos-space-2) var(--qos-space-3);
+  border-radius: var(--qos-radius-md);
+  background: var(--qos-danger-bg-soft);
+  color: var(--qos-danger-fg);
+  font-size: var(--qos-fs-sm);
+
+  mat-icon { flex: none; width: 18px; height: 18px; font-size: 18px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .temps::after, .marque { transition: none; }
+}

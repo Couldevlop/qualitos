@@ -7,8 +7,8 @@ import { environment } from '../../../environments/environment';
 import { CircuitRun, CircuitStep, CircuitSubject, CircuitView } from './circuit.types';
 
 /**
- * Les circuits de validation : les régler (exige `authz.manage`), et voir où
- * en est un objet (ouvert à tout membre du client). Les décisions passent par
+ * Les circuits de validation : les lire et voir où en est un objet (ouvert à
+ * tout membre du client), les régler (exige `authz.manage`). Les décisions passent par
  * le module métier — approuver ou refuser une version de document.
  */
 @Injectable({ providedIn: 'root' })
@@ -22,9 +22,12 @@ export class CircuitService {
     return this.http.get<CircuitView>(`${this.endpoint}/${subject}`);
   }
 
-  /** Remplace le circuit ; une liste vide le retire (retour à l'approbation simple). */
-  save(subject: CircuitSubject, steps: CircuitStep[]): Observable<CircuitView> {
-    return this.http.put<CircuitView>(`${this.endpoint}/${subject}`, { steps });
+  /**
+   * Remplace le circuit. Une liste vide le retire ; `enabled` faux le suspend en
+   * gardant ses étapes. Dans les deux cas, l'approbation simple s'applique.
+   */
+  save(subject: CircuitSubject, steps: CircuitStep[], enabled = true): Observable<CircuitView> {
+    return this.http.put<CircuitView>(`${this.endpoint}/${subject}`, { enabled, steps });
   }
 
   /** Le dernier passage de l'objet, ou `null` s'il n'est jamais entré dans un circuit. */

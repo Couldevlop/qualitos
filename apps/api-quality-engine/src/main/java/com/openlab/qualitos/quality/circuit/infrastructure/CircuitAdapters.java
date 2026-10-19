@@ -30,10 +30,12 @@ public final class CircuitAdapters {
     public static final class Circuits implements CircuitPorts.Circuits {
 
         private final CircuitStepRepository repository;
+        private final CircuitSettingRepository settings;
         private final Clock clock;
 
-        public Circuits(CircuitStepRepository repository, Clock clock) {
+        public Circuits(CircuitStepRepository repository, CircuitSettingRepository settings, Clock clock) {
             this.repository = repository;
+            this.settings = settings;
             this.clock = clock;
         }
 
@@ -45,10 +47,30 @@ public final class CircuitAdapters {
         }
 
         @Override
-        public void replace(UUID tenantId, CircuitSubject subject, List<CircuitStep> steps, UUID actor) {
+        public boolean enabled(UUID tenantId, CircuitSubject subject) {
+            return settings.findById(new CircuitSettingJpaEntity.Key(tenantId, subject.code()))
+                    .map(CircuitSettingJpaEntity::isEnabled)
+                    .orElse(true);
+        }
+
+        @Override
+        public void replace(UUID tenantId, CircuitSubject subject, List<CircuitStep> steps, boolean enabled,
+                            UUID actor) {
             repository.deleteCircuit(tenantId, subject.code());
             repository.flush();
             Instant maintenant = clock.instant();
+            CircuitSettingJpaEntity reglage = settings
+                    .findById(new CircuitSettingJpaEntity.Key(tenantId, subject.code()))
+                    .orElseGet(() -> {
+                        CircuitSettingJpaEntity n = new CircuitSettingJpaEntity();
+                        n.setTenantId(tenantId);
+                        n.setSubject(subject.code());
+                        return n;
+                    });
+            reglage.setEnabled(enabled);
+            reglage.setUpdatedBy(actor);
+            reglage.setUpdatedAt(maintenant);
+            settings.save(reglage);
             for (int i = 0; i < steps.size(); i++) {
                 CircuitStep s = steps.get(i);
                 CircuitStepJpaEntity e = new CircuitStepJpaEntity();
@@ -185,12 +207,14 @@ public final class CircuitAdapters {
         }
 
         @Override
-        public void circuitReplaced(UUID tenantId, CircuitSubject subject, List<CircuitStep> steps, UUID actor) {
+        public void circuitReplaced(UUID tenantId, CircuitSubject subject, List<CircuitStep> steps, boolean enabled,
+                                    UUID actor) {
             String etapes = steps.stream()
                     .map(s -> "{\"role\":\"" + s.roleCode() + "\",\"min\":" + s.minApprovals() + "}")
                     .collect(Collectors.joining(",", "[", "]"));
             publish(tenantId, "circuit.replaced", CIRCUIT_RESOURCE, null, "Circuit de validation réglé",
-                    "{\"subject\":\"" + subject.code() + "\",\"steps\":" + etapes + "}", actor);
+                    "{\"subject\":\"" + subject.code() + "\",\"enabled\":" + enabled + ",\"steps\":" + etapes
+                            + "}", actor);
         }
 
         @Override

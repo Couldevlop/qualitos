@@ -29,9 +29,10 @@ export interface EditableStep extends CircuitStep {
  * la déplace. Le bouton « + » d'un rôle et les flèches d'une étape font la même
  * chose au clavier.
  *
- * <p>Rien ne part avant « Enregistrer ». Un circuit vide rend l'approbation
- * simple : une seule personne ayant le droit d'approuver suffit. Les versions
- * déjà soumises gardent le circuit de leur soumission.
+ * <p>Rien ne part avant « Enregistrer ». En approbation simple — choisie, ou
+ * faute d'étape —, une seule personne ayant le droit d'approuver suffit ; les
+ * étapes réglées restent en réserve pour le jour où l'on y revient. Les
+ * versions déjà soumises gardent le circuit de leur soumission.
  */
 @Component({
   selector: 'qos-circuits',
@@ -48,7 +49,10 @@ export class CircuitsComponent implements OnInit {
 
   roles: RoleView[] = [];
   steps: EditableStep[] = [];
+  /** Faux : approbation simple, les étapes restent réglées mais ne s'appliquent pas. */
+  enabled = true;
   private saved: CircuitStep[] = [];
+  private savedEnabled = true;
   private nextKey = 0;
 
   loading = false;
@@ -73,7 +77,7 @@ export class CircuitsComponent implements OnInit {
       .subscribe({
         next: r => {
           this.roles = r.roles;
-          this.reprendre(r.circuit.steps);
+          this.reprendre(r.circuit.steps, r.circuit.enabled);
         },
         error: err => {
           this.failed = true;
@@ -95,6 +99,17 @@ export class CircuitsComponent implements OnInit {
 
   get full(): boolean {
     return this.steps.length >= MAX_STEPS;
+  }
+
+  // ---------- mode ----------
+
+  setEnabled(value: boolean): void {
+    if (!this.saving) this.enabled = value;
+  }
+
+  /** Le circuit qui s'appliquera vraiment aux prochaines soumissions. */
+  get stepwise(): boolean {
+    return this.enabled && this.steps.length > 0;
   }
 
   // ---------- parcours ----------
@@ -146,7 +161,7 @@ export class CircuitsComponent implements OnInit {
 
   get dirty(): boolean {
     const actuel = this.payload();
-    return actuel.length !== this.saved.length || actuel.some((s, i) =>
+    return this.enabled !== this.savedEnabled || actuel.length !== this.saved.length || actuel.some((s, i) =>
       s.name !== this.saved[i].name || s.roleCode !== this.saved[i].roleCode
       || s.minApprovals !== this.saved[i].minApprovals);
   }
@@ -156,16 +171,16 @@ export class CircuitsComponent implements OnInit {
   }
 
   discard(): void {
-    this.reprendre(this.saved);
+    this.reprendre(this.saved, this.savedEnabled);
   }
 
   save(): void {
     if (!this.dirty || this.invalid || this.saving) return;
     this.saving = true;
-    this.circuits.save(this.subject, this.payload()).pipe(finalize(() => this.saving = false)).subscribe({
+    this.circuits.save(this.subject, this.payload(), this.enabled).pipe(finalize(() => this.saving = false)).subscribe({
       next: c => {
-        this.reprendre(c.steps);
-        this.snack.open(c.steps.length
+        this.reprendre(c.steps, c.enabled);
+        this.snack.open(c.enabled && c.steps.length
           ? $localize`:@@circuits.saved:Circuit enregistré. Les prochaines soumissions le suivront.`
           : $localize`:@@circuits.cleared:Circuit retiré : une seule approbation suffit de nouveau.`,
         undefined, { duration: 3000 });
@@ -178,7 +193,9 @@ export class CircuitsComponent implements OnInit {
     return this.steps.map(s => ({ name: s.name.trim(), roleCode: s.roleCode, minApprovals: s.minApprovals }));
   }
 
-  private reprendre(steps: CircuitStep[]): void {
+  private reprendre(steps: CircuitStep[], enabled: boolean): void {
+    // Une réponse d'avant le mode explicite n'en dit rien : le circuit s'appliquait.
+    this.enabled = this.savedEnabled = enabled !== false;
     this.saved = steps.map(s => ({ ...s }));
     this.steps = steps.map(s => ({ ...s, key: this.nextKey++ }));
   }
@@ -187,7 +204,7 @@ export class CircuitsComponent implements OnInit {
 
   /** La phrase qui résume le parcours, telle qu'on l'expliquerait à un collègue. */
   get summary(): string {
-    if (!this.steps.length) {
+    if (!this.stepwise) {
       return $localize`:@@circuits.summary.none:Aujourd'hui, une seule approbation suffit, par toute personne qui a le droit d'approuver.`;
     }
     const parts = this.steps.map(s => this.stepSentence(s))

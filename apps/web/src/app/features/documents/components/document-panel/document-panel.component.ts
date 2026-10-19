@@ -8,7 +8,7 @@ import {
   DISPLAY_STATUS_LABELS, DOCUMENT_TYPE_LABELS, VERSION_STATUS_LABELS, displayStatusOf, formatBytes
 } from '../../documents.labels';
 import {
-  DisplayStatus, DocumentProcess, DocumentResponse, DocumentVersionResponse, VersionStatus
+  DisplayStatus, DocumentProcess, DocumentResponse, DocumentVersionResponse
 } from '../../documents.types';
 import { FolderRow } from '../../documents.folders';
 
@@ -17,23 +17,6 @@ export const MAX_PREVIEW_BYTES = 15 * 1024 * 1024;
 
 export type PreviewKind = 'pdf' | 'image' | 'text';
 type PreviewState = 'none' | 'loading' | 'ready' | 'failed' | 'too-large' | 'purged';
-
-export interface CircuitStepView {
-  label: string;
-  state: 'done' | 'current' | 'todo';
-}
-
-/** Les quatre temps d'une version, de la rédaction à la diffusion. */
-const STEP_LABELS = [
-  $localize`:@@documents.panel.step-draft:Rédaction`,
-  $localize`:@@documents.panel.step-review:Vérification`,
-  $localize`:@@documents.panel.step-approval:Approbation`,
-  $localize`:@@documents.panel.step-publish:Diffusion`
-];
-
-const STEP_OF: Record<VersionStatus, number> = {
-  DRAFT: 0, IN_REVIEW: 1, APPROVED: 2, PUBLISHED: 4, OBSOLETE: 4
-};
 
 /**
  * La fiche d'un document dans la GED : l'aperçu de son fichier, où en est sa
@@ -64,7 +47,6 @@ export class DocumentPanelComponent implements OnChanges, OnDestroy {
 
   version: DocumentVersionResponse | null = null;
   history: DocumentVersionResponse[] = [];
-  steps: CircuitStepView[] = [];
 
   preview: PreviewState = 'none';
   previewKind: PreviewKind | null = null;
@@ -91,7 +73,6 @@ export class DocumentPanelComponent implements OnChanges, OnDestroy {
     this.history = [...this.document.versions].sort((a, b) => b.versionNumber - a.versionNumber);
     // La version qu'on présente : celle en cours de travail si elle existe, sinon celle qui fait foi.
     this.version = this.history[0] ?? null;
-    this.steps = stepsOf(this.version?.status ?? null);
     this.linkError = null;
 
     // Même version, même fichier, toujours présent : on garde l'aperçu au lieu de le relire.
@@ -222,12 +203,4 @@ export function previewKindOf(contentType: string | null | undefined): PreviewKi
   if (contentType.startsWith('image/')) return 'image';
   if (contentType.startsWith('text/')) return 'text';
   return null;
-}
-
-export function stepsOf(status: VersionStatus | null): CircuitStepView[] {
-  const reached = status ? STEP_OF[status] : -1;
-  return STEP_LABELS.map((label, i) => ({
-    label,
-    state: i < reached ? 'done' : i === reached ? 'current' : 'todo'
-  }));
 }
