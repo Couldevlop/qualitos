@@ -27,6 +27,97 @@
   color: var(--qos-danger-fg);
 }
 
+// ---------- mode ----------
+
+.modes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--qos-space-3);
+  max-width: calc(16rem + 46rem + var(--qos-space-6));
+  margin-bottom: var(--qos-space-4);
+
+  @media (max-width: 720px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mode {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--qos-space-3);
+  padding: var(--qos-space-4);
+  text-align: start;
+  font: inherit;
+  color: var(--qos-fg-secondary);
+  background: var(--qos-bg-elevated);
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: var(--qos-radius-lg);
+  cursor: pointer;
+  transition: border-color var(--qos-motion-fast), box-shadow var(--qos-motion-fast), background var(--qos-motion-fast);
+
+  &:hover:not(:disabled) { border-color: var(--qos-border-strong, var(--qos-border-subtle)); }
+
+  &:focus-visible {
+    outline: 2px solid var(--qos-accent-bg);
+    outline-offset: 2px;
+  }
+
+  &:disabled { cursor: default; opacity: 0.7; }
+
+  &__icone {
+    flex: none;
+    color: var(--qos-fg-tertiary);
+  }
+
+  &__texte {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 2px;
+    font-size: var(--qos-fs-sm);
+    line-height: var(--qos-lh-normal);
+
+    strong {
+      color: var(--qos-fg-primary);
+      font-size: var(--qos-fs-md, var(--qos-fs-sm));
+      font-weight: var(--qos-fw-semibold);
+    }
+  }
+
+  &__coche {
+    flex: none;
+    color: var(--qos-fg-tertiary);
+  }
+
+  &--actif {
+    background: color-mix(in srgb, var(--qos-accent-bg) 6%, var(--qos-bg-elevated));
+    border-color: var(--qos-accent-bg);
+    box-shadow: 0 0 0 1px var(--qos-accent-bg);
+
+    .mode__icone,
+    .mode__coche { color: var(--qos-accent-bg); }
+  }
+}
+
+.suspendu {
+  display: flex;
+  align-items: center;
+  gap: var(--qos-space-2);
+  max-width: calc(16rem + 46rem + var(--qos-space-6));
+  margin: 0 0 var(--qos-space-4);
+  color: var(--qos-fg-secondary);
+  font-size: var(--qos-fs-sm);
+
+  mat-icon { flex: none; color: var(--qos-fg-tertiary); }
+}
+
+.plateau--suspendu .parcours {
+  opacity: 0.6;
+  transition: opacity var(--qos-motion-fast);
+
+  &:hover, &:focus-within { opacity: 1; }
+}
+
 .plateau {
   display: grid;
   grid-template-columns: 16rem minmax(0, 46rem);

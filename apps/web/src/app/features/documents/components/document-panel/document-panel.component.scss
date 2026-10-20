@@ -14,6 +14,9 @@
   border: 1px solid var(--qos-border-subtle);
   border-radius: var(--qos-radius-lg);
   box-shadow: var(--qos-shadow-sm);
+
+  // Le panneau défile ; ses blocs gardent leur hauteur au lieu de s'écraser.
+  > * { flex-shrink: 0; }
 }
 
 @media (max-width: 1200px) {
@@ -100,6 +103,7 @@
   &[data-state='ready'][data-kind='pdf'] { height: 420px; }
 
   iframe {
+    place-self: stretch;
     width: 100%;
     height: 100%;
     border: 0;
@@ -188,94 +192,6 @@
     font-size: var(--qos-fs-sm);
     font-weight: var(--qos-fw-semibold);
   }
-}
-
-// Le circuit : quatre temps reliés par un trait qui se remplit.
-.stepper {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  counter-reset: none;
-
-  li {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--qos-space-1);
-    text-align: center;
-
-    &:not(:first-child)::before {
-      content: '';
-      position: absolute;
-      top: 11px;
-      inset-inline-end: 50%;
-      width: 100%;
-      height: 2px;
-      background: var(--qos-border-default);
-      transition: background var(--qos-motion-slow) var(--ged-ease);
-    }
-
-    &[data-state='done']::before,
-    &[data-state='current']::before { background: var(--qos-accent-bg); }
-  }
-
-  .dot {
-    position: relative;
-    z-index: 1;
-    display: grid;
-    place-items: center;
-    width: 24px;
-    height: 24px;
-    border: 2px solid var(--qos-border-default);
-    border-radius: 50%;
-    background: var(--qos-bg-elevated);
-    transition: background var(--qos-motion-base) var(--ged-ease), border-color var(--qos-motion-base) var(--ged-ease);
-
-    mat-icon { width: 14px; height: 14px; font-size: 14px; color: var(--qos-fg-inverse); }
-  }
-
-  [data-state='done'] .dot {
-    border-color: var(--qos-accent-bg);
-    background: var(--qos-accent-bg);
-  }
-
-  [data-state='current'] .dot {
-    border-color: var(--qos-accent-bg);
-    box-shadow: 0 0 0 4px var(--qos-accent-bg-soft);
-
-    &::after {
-      content: '';
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--qos-accent-bg);
-    }
-  }
-
-  .step-label {
-    font-size: var(--qos-fs-xs);
-    color: var(--qos-fg-tertiary);
-  }
-
-  [data-state='done'] .step-label { color: var(--qos-fg-secondary); }
-  [data-state='current'] .step-label { color: var(--qos-fg-primary); font-weight: var(--qos-fw-semibold); }
-}
-
-.rejected {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--qos-space-2);
-  margin: var(--qos-space-3) 0 0;
-  padding: var(--qos-space-2) var(--qos-space-3);
-  border-radius: var(--qos-radius-md);
-  background: var(--qos-danger-bg-soft);
-  color: var(--qos-danger-fg);
-  font-size: var(--qos-fs-sm);
-
-  mat-icon { flex: none; width: 18px; height: 18px; font-size: 18px; }
 }
 
 .meta {

@@ -71,18 +71,9 @@
 
   <!-- Circuit -->
   <section class="block" *ngIf="version">
-    <h3 i18n="@@documents.panel.circuit">Circuit de la version {{ version.versionNumber }}</h3>
-    <ol class="stepper">
-      <li *ngFor="let s of steps" [attr.data-state]="s.state"
-          [attr.aria-current]="s.state === 'current' ? 'step' : null">
-        <span class="dot" aria-hidden="true"><mat-icon *ngIf="s.state === 'done'">check</mat-icon></span>
-        <span class="step-label">{{ s.label }}</span>
-      </li>
-    </ol>
-    <p class="rejected" *ngIf="version.status === 'DRAFT' && version.rejectionReason">
-      <mat-icon aria-hidden="true">undo</mat-icon>
-      <span i18n="@@documents.panel.rejected">Refusée : {{ version.rejectionReason }}</span>
-    </p>
+    <h3 i18n="@@documents.panel.circuit-title">Circuit de validation</h3>
+    <qos-document-validation [document]="document" [version]="version"
+                             [acknowledgments]="acknowledgments"></qos-document-validation>
   </section>
 
   <!-- Métadonnées -->
@@ -105,11 +96,6 @@
       <dd [class.overdue]="displayStatus === 'REVIEW_OVERDUE'">
         {{ document.nextReviewDate ? (document.nextReviewDate | date:'mediumDate') : '—' }}
       </dd>
-
-      <ng-container *ngIf="document.mandatoryRead">
-        <dt i18n="@@documents.panel.acknowledgments">Prises de connaissance</dt>
-        <dd>{{ acknowledgments ?? '—' }}</dd>
-      </ng-container>
 
       <dt i18n="@@documents.panel.updated">Mis à jour</dt>
       <dd>{{ document.updatedAt | date:'medium' }}</dd>

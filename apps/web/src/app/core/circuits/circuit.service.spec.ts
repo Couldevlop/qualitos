@@ -25,13 +25,22 @@ describe('CircuitService', () => {
   it('lit et remplace le circuit d’un type d’objet', () => {
     service.circuit('document-version').subscribe(c => expect(c.steps.length).toBe(1));
     http.expectOne(`${endpoint}/document-version`)
-      .flush({ subject: 'document-version', steps: [{ name: 'R', roleCode: 'QUALITY_MANAGER', minApprovals: 1 }] });
+      .flush({ subject: 'document-version', enabled: true,
+        steps: [{ name: 'R', roleCode: 'QUALITY_MANAGER', minApprovals: 1 }] });
 
     service.save('document-version', []).subscribe(c => expect(c.steps).toEqual([]));
     const req = http.expectOne(`${endpoint}/document-version`);
     expect(req.request.method).toBe('PUT');
-    expect(req.request.body).toEqual({ steps: [] });
-    req.flush({ subject: 'document-version', steps: [] });
+    expect(req.request.body).toEqual({ enabled: true, steps: [] });
+    req.flush({ subject: 'document-version', enabled: true, steps: [] });
+  });
+
+  it('suspend le circuit en gardant ses étapes', () => {
+    const steps = [{ name: 'R', roleCode: 'QUALITY_MANAGER', minApprovals: 1 }];
+    service.save('document-version', steps, false).subscribe(c => expect(c.enabled).toBeFalse());
+    const req = http.expectOne(`${endpoint}/document-version`);
+    expect(req.request.body).toEqual({ enabled: false, steps });
+    req.flush({ subject: 'document-version', enabled: false, steps });
   });
 
   it('rend le passage d’un objet, ou null s’il n’en a jamais eu', () => {

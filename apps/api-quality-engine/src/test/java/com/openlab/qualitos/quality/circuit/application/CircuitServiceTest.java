@@ -109,6 +109,30 @@ class CircuitServiceTest {
         }
 
         @Test
+        void aCircuitIsActiveByDefault() {
+            assertThat(service.circuit(DV).enabled()).isTrue();
+            assertThat(service.replace(DV, List.of(step("R", "QUALITY_MANAGER", 1))).enabled()).isTrue();
+            assertThat(audit.replacedEnabled).containsExactly(true);
+        }
+
+        @Test
+        void suspending_keepsTheSteps_andAuditsIt() {
+            CircuitDto.CircuitView v = service.replace(DV, List.of(step("R", "QUALITY_MANAGER", 1)), false);
+
+            assertThat(v.enabled()).isFalse();
+            assertThat(v.steps()).hasSize(1);
+            assertThat(service.circuit(DV).enabled()).isFalse();
+            assertThat(service.circuit(DV).steps()).hasSize(1);
+            assertThat(audit.replacedEnabled).containsExactly(false);
+        }
+
+        @Test
+        void suspendedSteps_areStillValidated() {
+            assertThatThrownBy(() -> service.replace(DV, List.of(step("R", "PHARMACIEN", 1)), false))
+                    .isInstanceOf(CircuitException.class);
+        }
+
+        @Test
         void eachTenantHasItsOwnCircuit() {
             service.replace(DV, List.of(step("R", "QUALITY_MANAGER", 1)));
             context.tenant = OTHER_TENANT;
@@ -124,6 +148,34 @@ class CircuitServiceTest {
             assertThat(service.start(DV, DOC, AUTHOR)).isEmpty();
             assertThat(service.decide(DV, DOC, true, null)).isEmpty();
             assertThat(runs.saved).isEmpty();
+        }
+
+        @Test
+        void aSuspendedCircuit_opensNoRun_legacyApproval() {
+            service.replace(DV, List.of(step("Relecture", "QUALITY_MANAGER", 1)), false);
+
+            assertThat(service.start(DV, DOC, AUTHOR)).isEmpty();
+            assertThat(runs.saved).isEmpty();
+        }
+
+        @Test
+        void suspending_letsTheOpenRunFinish() {
+            service.replace(DV, List.of(step("Relecture", "QUALITY_MANAGER", 1)));
+            UUID ouvert = service.start(DV, DOC, AUTHOR).orElseThrow().id();
+            service.replace(DV, List.of(step("Relecture", "QUALITY_MANAGER", 1)), false);
+
+            assertThat(service.start(DV, DOC, AUTHOR).orElseThrow().id()).isEqualTo(ouvert);
+            context.actor = ALICE;
+            context.roles = Set.of("QUALITY_MANAGER");
+            assertThat(service.decide(DV, DOC, true, null).orElseThrow().status()).isEqualTo("APPROVED");
+        }
+
+        @Test
+        void reactivating_opensRunsAgain() {
+            service.replace(DV, List.of(step("Relecture", "QUALITY_MANAGER", 1)), false);
+            service.replace(DV, List.of(step("Relecture", "QUALITY_MANAGER", 1)), true);
+
+            assertThat(service.start(DV, DOC, AUTHOR)).isPresent();
         }
 
         @Test
@@ -201,6 +253,7 @@ class CircuitServiceTest {
 
     static final class FakeCircuits implements CircuitPorts.Circuits {
         final Map<String, List<CircuitStep>> store = new HashMap<>();
+        final Map<String, Boolean> enabled = new HashMap<>();
 
         @Override
         public List<CircuitStep> find(UUID tenantId, CircuitSubject subject) {
@@ -208,8 +261,15 @@ class CircuitServiceTest {
         }
 
         @Override
-        public void replace(UUID tenantId, CircuitSubject subject, List<CircuitStep> steps, UUID actor) {
+        public boolean enabled(UUID tenantId, CircuitSubject subject) {
+            return enabled.getOrDefault(tenantId + "/" + subject, true);
+        }
+
+        @Override
+        public void replace(UUID tenantId, CircuitSubject subject, List<CircuitStep> steps, boolean enabled,
+                            UUID actor) {
             store.put(tenantId + "/" + subject, List.copyOf(steps));
+            this.enabled.put(tenantId + "/" + subject, enabled);
         }
     }
 
@@ -265,11 +325,14 @@ class CircuitServiceTest {
 
     static final class FakeAudit implements CircuitPorts.Audit {
         final List<UUID> replaced = new ArrayList<>();
+        final List<Boolean> replacedEnabled = new ArrayList<>();
         final List<CircuitRun.Decision> decided = new ArrayList<>();
 
         @Override
-        public void circuitReplaced(UUID tenantId, CircuitSubject subject, List<CircuitStep> steps, UUID actor) {
+        public void circuitReplaced(UUID tenantId, CircuitSubject subject, List<CircuitStep> steps, boolean enabled,
+                                    UUID actor) {
             replaced.add(actor);
+            replacedEnabled.add(enabled);
         }
 
         @Override

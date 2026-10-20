@@ -1,0 +1,39 @@
+<ol class="parcours" [attr.aria-busy]="!loaded">
+  <li *ngFor="let r of rows; let i = index; trackBy: trackByIndex" class="temps" [attr.data-state]="r.state"
+      [attr.data-kind]="r.kind" [attr.aria-current]="r.state === 'current' ? 'step' : null"
+      [attr.data-test]="'temps-' + i">
+    <span class="marque" aria-hidden="true">
+      <mat-icon *ngIf="r.state === 'done'">check</mat-icon>
+      <ng-container *ngIf="r.state !== 'done'">{{ i + 1 }}</ng-container>
+    </span>
+
+    <div class="texte">
+      <span class="libelle">{{ r.label }}</span>
+
+      <span class="detail" *ngIf="r.kind === 'step' && r.roleCode">{{ roleText(r.roleCode) }}</span>
+
+      <!-- Qui, et quand -->
+      <span class="detail" *ngIf="r.actors.length || r.at">
+        <ng-container *ngFor="let a of r.actors; let last = last">
+          <qos-person-name [accountId]="a"></qos-person-name><ng-container *ngIf="!last">, </ng-container>
+        </ng-container>
+        <ng-container *ngIf="r.actors.length && r.at"> · </ng-container>
+        <ng-container *ngIf="r.at">{{ r.at | date:'mediumDate' }}</ng-container>
+      </span>
+
+      <span class="detail detail--attente" *ngIf="r.state === 'current' && r.approvals && r.approvals.needed > 1"
+            i18n="@@documents.validation.approvals">{{ r.approvals.done // i18n(ph="done") }} approbation(s) sur {{ r.approvals.needed // i18n(ph="needed") }}</span>
+      <span class="detail detail--attente" *ngIf="r.kind === 'step' && r.state === 'current' && !r.roleCode"
+            i18n="@@documents.validation.simple-waiting">Une personne ayant le droit d'approuver suffit</span>
+
+      <ng-container *ngIf="r.kind === 'publish' && tracksReading && r.state === 'done'">
+        <span class="detail" data-test="lectures" i18n="@@documents.validation.readers">{{ readers // i18n(ph="count") }} lecteur(s) ont confirmé la lecture</span>
+      </ng-container>
+    </div>
+  </li>
+</ol>
+
+<p class="refus" *ngIf="version.status === 'DRAFT' && version.rejectionReason" role="note" data-test="refus">
+  <mat-icon aria-hidden="true">undo</mat-icon>
+  <span i18n="@@documents.panel.rejected">Refusée : {{ version.rejectionReason }}</span>
+</p>

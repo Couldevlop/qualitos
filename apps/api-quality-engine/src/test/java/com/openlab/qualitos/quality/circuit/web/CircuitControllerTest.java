@@ -24,6 +24,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -52,26 +53,54 @@ class CircuitControllerTest {
     @WithMockUser(roles = "ADMIN_TENANT")
     void lAdministrateurLitEtRegleLeCircuit() throws Exception {
         when(authorization.has(Permission.AUTHZ_MANAGE)).thenReturn(true);
-        CircuitDto.CircuitView vue = new CircuitDto.CircuitView("document-version", List.of(
+        CircuitDto.CircuitView vue = new CircuitDto.CircuitView("document-version", true, List.of(
                 new CircuitDto.StepView("Relecture", "QUALITY_MANAGER", 2),
                 new CircuitDto.StepView("Signature", "QUALITY_DIRECTOR", 1)));
         when(service.circuit(CircuitSubject.DOCUMENT_VERSION)).thenReturn(vue);
-        when(service.replace(eq(CircuitSubject.DOCUMENT_VERSION), any())).thenReturn(vue);
+        when(service.replace(eq(CircuitSubject.DOCUMENT_VERSION), any(), anyBoolean())).thenReturn(vue);
 
         mockMvc.perform(get(BASE)).andExpect(status().isOk())
+                .andExpect(jsonPath("$.enabled").value(true))
                 .andExpect(jsonPath("$.steps[1].roleCode").value("QUALITY_DIRECTOR"));
         mockMvc.perform(put(BASE).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(CORPS))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.steps[0].minApprovals").value(2));
+        // Sans « enabled » dans le corps, le circuit reste actif (ADR 0095).
+        verify(service).replace(eq(CircuitSubject.DOCUMENT_VERSION), any(), eq(true));
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN_TENANT")
+    void lAdministrateurSuspendLeCircuitSansPerdreSesEtapes() throws Exception {
+        when(authorization.has(Permission.AUTHZ_MANAGE)).thenReturn(true);
+        CircuitDto.CircuitView vue = new CircuitDto.CircuitView("document-version", false, List.of(
+                new CircuitDto.StepView("Relecture", "QUALITY_MANAGER", 2)));
+        when(service.replace(eq(CircuitSubject.DOCUMENT_VERSION), any(), eq(false))).thenReturn(vue);
+
+        mockMvc.perform(put(BASE).with(csrf()).contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"enabled\":false,\"steps\":[{\"name\":\"Relecture\","
+                                + "\"roleCode\":\"QUALITY_MANAGER\",\"minApprovals\":2}]}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.enabled").value(false))
+                .andExpect(jsonPath("$.steps.length()").value(1));
+    }
+
+    @Test
+    @WithMockUser(roles = "USER")
+    void toutMembreLitLeCircuit_pourSavoirParOuPasseraSaVersion() throws Exception {
+        when(service.circuit(CircuitSubject.DOCUMENT_VERSION)).thenReturn(new CircuitDto.CircuitView(
+                "document-version", true, List.of(new CircuitDto.StepView("Relecture", "QUALITY_MANAGER", 1))));
+
+        mockMvc.perform(get(BASE)).andExpect(status().isOk())
+                .andExpect(jsonPath("$.steps[0].name").value("Relecture"));
     }
 
     @Test
     @WithMockUser(roles = "QUALITY_MANAGER")
-    void sansLeDroitDAdministrer_refuseAvantLeCorps() throws Exception {
-        mockMvc.perform(get(BASE)).andExpect(status().isForbidden());
+    void sansLeDroitDAdministrer_leReglageEstRefuseAvantLeCorps() throws Exception {
         mockMvc.perform(put(BASE).with(csrf()).contentType(MediaType.APPLICATION_JSON).content("{"))
                 .andExpect(status().isForbidden());
-        verify(service, never()).replace(any(), any());
+        verify(service, never()).replace(any(), any(), anyBoolean());
     }
 
     @Test
@@ -86,7 +115,7 @@ class CircuitControllerTest {
                         .content("{\"steps\":[{\"name\":\"R\",\"roleCode\":\"AUDITOR\",\"minApprovals\":11}]}"))
                 .andExpect(status().isBadRequest());
         // Règle du domaine : le rôle n'a pas le droit d'approuver.
-        when(service.replace(eq(CircuitSubject.DOCUMENT_VERSION), any())).thenThrow(
+        when(service.replace(eq(CircuitSubject.DOCUMENT_VERSION), any(), anyBoolean())).thenThrow(
                 new CircuitException(CircuitException.Reason.INVALID, "steps", "Le rôle AUDITOR n'a pas le droit."));
         mockMvc.perform(put(BASE).with(csrf()).contentType(MediaType.APPLICATION_JSON)
                         .content("{\"steps\":[{\"name\":\"R\",\"roleCode\":\"AUDITOR\",\"minApprovals\":1}]}"))

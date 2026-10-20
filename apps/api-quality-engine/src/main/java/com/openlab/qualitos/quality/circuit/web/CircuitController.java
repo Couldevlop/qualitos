@@ -28,8 +28,9 @@ import java.util.UUID;
 /**
  * Les circuits de validation d'un client (ADR 0080).
  *
- * <p>Régler un circuit exige {@code authz.manage} ; voir où en est un objet est
- * ouvert à tout membre du client. Les décisions passent par le module métier
+ * <p>Régler un circuit exige {@code authz.manage} ; le lire et voir où en est un
+ * objet est ouvert à tout membre du client — l'auteur d'une version doit savoir
+ * par quelles étapes elle passera (ADR 0095). Les décisions passent par le module métier
  * (approuver ou refuser une version de document), qui garde ses propres droits.
  */
 @RestController
@@ -47,7 +48,6 @@ public class CircuitController {
     }
 
     @GetMapping("/{subject}")
-    @RequiresPermission(Permission.AUTHZ_MANAGE)
     @Transactional(readOnly = true)
     public CircuitDto.CircuitView circuit(@PathVariable @Pattern(regexp = SUBJECT) String subject) {
         return service.circuit(CircuitSubject.fromCode(subject));
@@ -60,7 +60,9 @@ public class CircuitController {
                                           @Valid @RequestBody CircuitRequest r) {
         return service.replace(CircuitSubject.fromCode(subject),
                 r.steps().stream().map(s -> new CircuitDto.StepView(s.name(), s.roleCode(), s.minApprovals()))
-                        .toList());
+                        .toList(),
+                // Absent, le circuit reste actif : un client d'avant l'ADR 0095 n'y voit rien changer.
+                r.enabled() == null || r.enabled());
     }
 
     /** Le dernier passage de l'objet dans son circuit ; 204 s'il n'en a jamais eu. */
@@ -75,7 +77,7 @@ public class CircuitController {
 
     // ---------- corps de requête ----------
 
-    public record CircuitRequest(@NotNull @Size(max = 10) List<@NotNull @Valid StepRequest> steps) {}
+    public record CircuitRequest(@NotNull @Size(max = 10) List<@NotNull @Valid StepRequest> steps, Boolean enabled) {}
 
     public record StepRequest(
             @NotNull @Size(min = 1, max = 120) String name,

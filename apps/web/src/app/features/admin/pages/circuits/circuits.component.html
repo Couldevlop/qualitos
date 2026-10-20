@@ -12,7 +12,35 @@
     <button mat-button type="button" (click)="charger()" i18n="@@common.retry">Réessayer</button>
   </p>
 
-  <div class="plateau" *ngIf="!failed && !loading" cdkDropListGroup>
+  <!-- ===== Mode : une approbation suffit, ou des étapes ===== -->
+  <div class="modes" *ngIf="!failed && !loading" role="group"
+       aria-label="Mode de validation" i18n-aria-label="@@circuits.mode">
+    <button type="button" class="mode" [class.mode--actif]="!enabled" [attr.aria-pressed]="!enabled"
+            (click)="setEnabled(false)" [disabled]="saving" data-test="mode-simple">
+      <mat-icon class="mode__icone" aria-hidden="true">how_to_reg</mat-icon>
+      <span class="mode__texte">
+        <strong i18n="@@circuits.mode-simple">Approbation simple</strong>
+        <span i18n="@@circuits.mode-simple-help">Toute personne qui a le droit d'approuver valide seule, sauf l'auteur.</span>
+      </span>
+      <mat-icon class="mode__coche" aria-hidden="true">{{ !enabled ? 'radio_button_checked' : 'radio_button_unchecked' }}</mat-icon>
+    </button>
+    <button type="button" class="mode" [class.mode--actif]="enabled" [attr.aria-pressed]="enabled"
+            (click)="setEnabled(true)" [disabled]="saving" data-test="mode-etapes">
+      <mat-icon class="mode__icone" aria-hidden="true">alt_route</mat-icon>
+      <span class="mode__texte">
+        <strong i18n="@@circuits.mode-steps">Validation par étapes</strong>
+        <span i18n="@@circuits.mode-steps-help">Validateur 1, puis 2, puis 3… : chaque étape revient à un rôle.</span>
+      </span>
+      <mat-icon class="mode__coche" aria-hidden="true">{{ enabled ? 'radio_button_checked' : 'radio_button_unchecked' }}</mat-icon>
+    </button>
+  </div>
+
+  <p class="suspendu" *ngIf="!failed && !loading && !enabled && steps.length" role="note" data-test="suspendu">
+    <mat-icon aria-hidden="true">pause_circle</mat-icon>
+    <span i18n="@@circuits.suspended">Les étapes ci-dessous sont gardées en réserve : elles ne s'appliquent pas tant que l'approbation simple est choisie.</span>
+  </p>
+
+  <div class="plateau" *ngIf="!failed && !loading" cdkDropListGroup [class.plateau--suspendu]="!enabled">
 
     <!-- ===== Palette : les rôles qui peuvent tenir une étape ===== -->
     <aside class="palette" aria-labelledby="palette-titre">

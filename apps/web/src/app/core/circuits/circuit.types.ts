@@ -11,9 +11,13 @@ export interface CircuitStep {
   minApprovals: number;
 }
 
-/** Le circuit d'un type d'objet. Sans étape, l'approbation simple d'avant s'applique. */
+/**
+ * Le circuit d'un type d'objet. Sans étape, ou suspendu (`enabled` faux),
+ * l'approbation simple s'applique ; les étapes suspendues restent réglées.
+ */
 export interface CircuitView {
   subject: CircuitSubject;
+  enabled: boolean;
   steps: CircuitStep[];
 }
 

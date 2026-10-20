@@ -4,15 +4,17 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 import { Subject, of, throwError } from 'rxjs';
 
+import { CircuitService } from '../../../../core/circuits/circuit.service';
 import { provideDirectoryStub } from '../../../../core/directory/testing/directory.stub';
 import { PersonNameModule } from '../../../../shared/person-name/person-name.module';
 import { SharedModule } from '../../../../shared/shared.module';
 import { buildFolderRows } from '../../documents.folders';
 import { DocumentsService } from '../../documents.service';
 import {
-  DocumentFileInfo, DocumentResponse, DocumentVersionResponse, FileLink, VersionStatus
+  DocumentFileInfo, DocumentResponse, DocumentVersionResponse, FileLink
 } from '../../documents.types';
-import { DocumentPanelComponent, MAX_PREVIEW_BYTES, previewKindOf, stepsOf } from './document-panel.component';
+import { DocumentValidationComponent } from '../document-validation/document-validation.component';
+import { DocumentPanelComponent, MAX_PREVIEW_BYTES, previewKindOf } from './document-panel.component';
 
 describe('previewKindOf', () => {
   it('reconnaît le PDF, les images et le texte, rien d’autre', () => {
@@ -25,23 +27,6 @@ describe('previewKindOf', () => {
     expect(previewKindOf('')).toBeNull();
     expect(previewKindOf(null)).toBeNull();
     expect(previewKindOf(undefined)).toBeNull();
-  });
-});
-
-describe('stepsOf', () => {
-  const states = (s: VersionStatus | null) => stepsOf(s).map(x => x.state);
-
-  it('nomme les quatre temps d’une version', () => {
-    expect(stepsOf(null).map(s => s.label)).toEqual(['Rédaction', 'Vérification', 'Approbation', 'Diffusion']);
-  });
-
-  it('place chaque statut de version sur le circuit', () => {
-    expect(states(null)).toEqual(['todo', 'todo', 'todo', 'todo']);
-    expect(states('DRAFT')).toEqual(['current', 'todo', 'todo', 'todo']);
-    expect(states('IN_REVIEW')).toEqual(['done', 'current', 'todo', 'todo']);
-    expect(states('APPROVED')).toEqual(['done', 'done', 'current', 'todo']);
-    expect(states('PUBLISHED')).toEqual(['done', 'done', 'done', 'done']);
-    expect(states('OBSOLETE')).toEqual(['done', 'done', 'done', 'done']);
   });
 });
 
@@ -100,9 +85,15 @@ describe('DocumentPanelComponent', () => {
     revokeUrl = spyOn(URL, 'revokeObjectURL');
 
     await TestBed.configureTestingModule({
-      declarations: [DocumentPanelComponent],
+      declarations: [DocumentPanelComponent, DocumentValidationComponent],
       imports: [SharedModule, PersonNameModule, NoopAnimationsModule],
-      providers: [provideRouter([]), provideDirectoryStub(), { provide: DocumentsService, useValue: svc }]
+      providers: [
+        provideRouter([]), provideDirectoryStub(), { provide: DocumentsService, useValue: svc },
+        { provide: CircuitService, useValue: {
+          circuit: () => of({ subject: 'document-version', enabled: true, steps: [] }),
+          run: () => of(null)
+        } }
+      ]
     }).compileComponents();
     fixture = TestBed.createComponent(DocumentPanelComponent);
     component = fixture.componentInstance;
@@ -116,14 +107,12 @@ describe('DocumentPanelComponent', () => {
     ] }));
     expect(component.history.map(v => v.id)).toEqual(['v3', 'v2', 'v1']);
     expect(component.version?.id).toBe('v3');
-    expect(component.steps.map(s => s.state)).toEqual(['done', 'current', 'todo', 'todo']);
   });
 
   it('un document sans version n’a ni circuit entamé ni aperçu', () => {
     show(doc({ versions: [], currentVersionId: undefined }));
     expect(component.version).toBeNull();
     expect(component.history).toEqual([]);
-    expect(component.steps.every(s => s.state === 'todo')).toBeTrue();
     expect(component.preview).toBe('none');
     expect(svc.fileLink).not.toHaveBeenCalled();
   });
@@ -364,7 +353,8 @@ describe('DocumentPanelComponent', () => {
     expect(host.querySelector('#doc-panel-title')?.textContent).toContain('Procédure achats');
     expect(host.textContent).toContain('Aucun fichier joint à cette version.');
     expect(host.textContent).toContain('Refusée : Incomplet');
-    expect(host.querySelectorAll('.stepper li').length).toBe(4);
+    // Brouillon sans circuit réglé : rédaction, approbation simple, diffusion.
+    expect(host.querySelectorAll('qos-document-validation .temps').length).toBe(3);
 
     let closed = false;
     component.closed.subscribe(() => closed = true);
