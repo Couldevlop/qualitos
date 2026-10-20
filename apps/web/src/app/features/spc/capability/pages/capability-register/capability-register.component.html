@@ -1,0 +1,169 @@
+<div class="qos-page">
+  <qos-page-header
+    eyebrow="SPC · Cartes de contrôle" i18n-eyebrow="@@spc.register.eyebrow"
+    title="Registre des études SPC" i18n-title="@@spc.register.title"
+    subtitle="Toutes les études de capabilité (Cp / Cpk) réalisées. Cliquez sur une ligne pour rouvrir l'étude."
+    i18n-subtitle="@@spc.register.subtitle">
+    <ng-container qosActions>
+      <button mat-stroked-button type="button" (click)="exporter()" [disabled]="loading" data-test="exporter">
+        <mat-icon>download</mat-icon>
+        <span i18n="@@spc.register.export">Exporter CSV</span>
+      </button>
+      <button mat-flat-button color="primary" type="button" *ngIf="canManage" (click)="create()" data-test="nouvelle">
+        <mat-icon>add</mat-icon>
+        <span i18n="@@spc.register.new">Créer une étude SPC</span>
+      </button>
+    </ng-container>
+  </qos-page-header>
+
+  <!-- Les indicateurs du registre, sur le verdict rendu par le serveur. -->
+  <section class="kpis" i18n-aria-label="@@spc.register.kpis" aria-label="Indicateurs du registre">
+    <div class="kpi" data-test="kpi-total">
+      <b>{{ studies.length }}</b>
+      <span i18n="@@spc.register.kpi-total">Études réalisées</span>
+    </div>
+    <div class="kpi" data-test="kpi-maitrises">
+      <b>{{ controlledPercent === null ? '–' : controlledPercent + ' %' }}</b>
+      <span i18n="@@spc.register.kpi-controlled">Procédés maîtrisés</span>
+    </div>
+    <div class="kpi" data-test="kpi-plans">
+      <b>{{ withPlan }}</b>
+      <span i18n="@@spc.register.kpi-plans">Plans d'actions en cours</span>
+    </div>
+    <div class="kpi" data-test="kpi-surveiller">
+      <b>{{ toWatch }}</b>
+      <span>
+        <ng-container i18n="@@spc.register.kpi-watch">Procédés à surveiller</ng-container>
+        <ng-container *ngIf="watchRange"> (Cpk {{ watchRange }})</ng-container>
+      </span>
+    </div>
+    <div class="kpi" [class.kpi--alerte]="uncontrolledWithoutPlan > 0"
+         [class.kpi--ok]="studies.length > 0 && uncontrolledWithoutPlan === 0" data-test="kpi-sans-plan">
+      <b>{{ uncontrolledWithoutPlan }}</b>
+      <span i18n="@@spc.register.kpi-without-plan">Non maîtrisées sans plan d'actions</span>
+    </div>
+  </section>
+
+  <div class="filtres">
+    <mat-form-field appearance="outline" class="filtres__recherche" subscriptSizing="dynamic">
+      <mat-icon matPrefix>search</mat-icon>
+      <input matInput [(ngModel)]="search" data-test="recherche"
+             [placeholder]="searchPlaceholder" [attr.aria-label]="searchPlaceholder">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filtres__liste" subscriptSizing="dynamic">
+      <mat-select [(ngModel)]="statusFilter" data-test="filtre-statut"
+                  i18n-aria-label="@@spc.register.filter-status" aria-label="Filtrer par statut">
+        <mat-option value="" i18n="@@spc.register.all-statuses">Tous les statuts</mat-option>
+        <mat-option value="controlled" i18n="@@spc.status.capable">Maîtrisé</mat-option>
+        <mat-option value="uncontrolled" i18n="@@spc.status.not-capable">Non maîtrisé</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filtres__liste" subscriptSizing="dynamic">
+      <mat-select [(ngModel)]="planFilter" data-test="filtre-plan"
+                  i18n-aria-label="@@spc.register.filter-plan" aria-label="Filtrer par plan d'actions">
+        <mat-option value="" i18n="@@spc.register.all-plans">Plan d'actions : tous</mat-option>
+        <mat-option value="yes" i18n="@@spc.register.with-plan">Avec plan</mat-option>
+        <mat-option value="no" i18n="@@spc.register.without-plan">Sans plan</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+
+  <p class="echec" *ngIf="failed" role="alert">
+    <span i18n="@@spc.register.load-failed">Le registre des études n'a pas pu être chargé.</span>
+    <button mat-button type="button" (click)="charger()" i18n="@@common.retry">Réessayer</button>
+  </p>
+
+  <div class="tableau" *ngIf="!failed">
+    <table data-test="table-etudes">
+      <thead>
+        <tr>
+          <th scope="col" [attr.aria-sort]="ariaSort('partReference')">
+            <button type="button" class="tri" (click)="sortBy('partReference')" i18n="@@spc.col.part">Référence pièce</button>
+          </th>
+          <th scope="col" [attr.aria-sort]="ariaSort('characteristic')">
+            <button type="button" class="tri" (click)="sortBy('characteristic')" i18n="@@spc.col.characteristic">Caractéristique</button>
+          </th>
+          <th scope="col" [attr.aria-sort]="ariaSort('leaderName')">
+            <button type="button" class="tri" (click)="sortBy('leaderName')" i18n="@@spc.col.leader">Meneur</button>
+          </th>
+          <th scope="col" [attr.aria-sort]="ariaSort('studyDate')">
+            <button type="button" class="tri" (click)="sortBy('studyDate')" data-test="tri-date" i18n="@@spc.col.date">Date</button>
+          </th>
+          <th scope="col" [attr.aria-sort]="ariaSort('machine')">
+            <button type="button" class="tri" (click)="sortBy('machine')" i18n="@@spc.col.machine">Machine</button>
+          </th>
+          <th scope="col" class="num" [attr.aria-sort]="ariaSort('cp')">
+            <button type="button" class="tri" (click)="sortBy('cp')">Cp</button>
+          </th>
+          <th scope="col" class="num" [attr.aria-sort]="ariaSort('cpk')">
+            <button type="button" class="tri" (click)="sortBy('cpk')" data-test="tri-cpk">Cpk</button>
+          </th>
+          <th scope="col" [attr.aria-sort]="ariaSort('status')">
+            <button type="button" class="tri" (click)="sortBy('status')" i18n="@@spc.col.status">Statut</button>
+          </th>
+          <th scope="col" [attr.aria-sort]="ariaSort('actionPlan')">
+            <button type="button" class="tri" (click)="sortBy('actionPlan')" i18n="@@spc.col.plan-yn">Plan d'actions (O/N)</button>
+          </th>
+          <th scope="col"><span class="cdk-visually-hidden" i18n="@@spc.col.actions">Actions</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let s of rows; trackBy: trackById" class="ligne" [class.ligne--alerte]="needsAction(s)"
+            tabindex="0" (click)="open(s)" (keydown.enter)="open(s)" data-test="ligne-etude">
+          <td class="piece">{{ s.partReference }}</td>
+          <td>
+            {{ s.characteristic || '–' }}
+            <div class="sous" *ngIf="s.specification">{{ s.specification }}</div>
+          </td>
+          <td>{{ s.leaderName || '–' }}</td>
+          <td class="date">{{ s.studyDate | date: 'dd/MM/yyyy' }}</td>
+          <td>{{ s.machine || '–' }}</td>
+          <td class="num mono">{{ num(s.cp) }}</td>
+          <td class="num">
+            <span class="pastille pastille--{{ tone(s.status) }} mono" data-test="cpk">{{ num(s.cpk) }}</span>
+          </td>
+          <td>
+            <span class="statut statut--{{ s.status === 'CAPABLE' ? 'ok' : 'bad' }}" data-test="statut">
+              {{ controlled(s.status) }}
+            </span>
+          </td>
+          <td (click)="$event.stopPropagation()" (keydown.enter)="$event.stopPropagation()">
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="plan" *ngIf="canManage; else planLu">
+              <mat-select [ngModel]="s.actionPlan" (ngModelChange)="setPlan(s, $event)" data-test="plan"
+                          i18n-aria-label="@@spc.col.plan" aria-label="Plan d'actions">
+                <mat-option [value]="false" i18n="@@common.no">Non</mat-option>
+                <mat-option [value]="true" i18n="@@common.yes">Oui</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <ng-template #planLu>
+              <span *ngIf="s.actionPlan" i18n="@@common.yes">Oui</span>
+              <span *ngIf="!s.actionPlan" i18n="@@common.no">Non</span>
+            </ng-template>
+          </td>
+          <td class="actions" (click)="$event.stopPropagation()" (keydown.enter)="$event.stopPropagation()">
+            <button mat-stroked-button type="button" (click)="open(s)" data-test="ouvrir"
+                    i18n="@@spc.register.open">Ouvrir</button>
+            <button mat-stroked-button type="button" *ngIf="canManage" (click)="remove(s)" data-test="supprimer"
+                    i18n="@@common.delete">Supprimer</button>
+          </td>
+        </tr>
+        <tr *ngIf="!loading && rows.length === 0">
+          <td colspan="10" class="aucun">
+            <span *ngIf="studies.length === 0" i18n="@@spc.register.empty">Aucune étude pour le moment. Cliquez sur « Créer une étude SPC » pour commencer.</span>
+            <ng-container *ngIf="studies.length > 0">
+              <span i18n="@@spc.register.no-match">Aucune étude ne correspond aux filtres.</span>
+              <button mat-button type="button" (click)="resetFilters()" i18n="@@spc.register.reset-filters">Effacer les filtres</button>
+            </ng-container>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="legende" data-test="legende">
+      <span i18n="@@spc.register.legend">Cpk en vert : maîtrisé · en jaune : à surveiller · en rouge : non maîtrisé. Le liseré rouge signale une étude non maîtrisée sans plan d'actions.</span>
+    </p>
+  </div>
+</div>

@@ -168,6 +168,8 @@ import com.openlab.qualitos.quality.apqp.ApqpProjectNotFoundException;
 import com.openlab.qualitos.quality.apqp.ApqpReorderException;
 import com.openlab.qualitos.quality.costofquality.domain.CoqNotFoundException;
 import com.openlab.qualitos.quality.costofquality.domain.CoqValidationException;
+import com.openlab.qualitos.quality.spc.capability.domain.SpcNotFoundException;
+import com.openlab.qualitos.quality.spc.capability.domain.SpcValidationException;
 import com.openlab.qualitos.quality.authz.domain.AuthzNotFoundException;
 import com.openlab.qualitos.quality.authz.domain.AuthzValidationException;
 import com.openlab.qualitos.quality.riskregister.domain.RegisterNotFoundException;
@@ -535,6 +537,31 @@ public class GlobalExceptionHandler {
                 HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/coq-invalid"));
         problem.setTitle("Invalid Cost Of Quality Line");
+        problem.setProperty("field", ex.getField());
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(SpcNotFoundException.class)
+    public ProblemDetail handleSpcNotFound(SpcNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/spc-study-not-found"));
+        problem.setTitle("SPC Study Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    /**
+     * 422 : l'étude est bien formée mais incohérente (USL sous LSL, aucun
+     * sous-groupe complet, seuils inversés). {@code field} dit lequel, pour que
+     * l'écran l'accroche au bon contrôle.
+     */
+    @ExceptionHandler(SpcValidationException.class)
+    public ProblemDetail handleSpcValidation(SpcValidationException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/spc-study-invalid"));
+        problem.setTitle("Invalid SPC Study");
         problem.setProperty("field", ex.getField());
         problem.setProperty("timestamp", Instant.now());
         return problem;

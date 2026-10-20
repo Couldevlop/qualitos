@@ -32,7 +32,8 @@ const PERMISSIONS: Record<string, string> = {
   'risk.manage': $localize`:@@authz.perm.risk-manage:Tenir le registre des risques`,
   'opportunity.manage': $localize`:@@authz.perm.opportunity-manage:Tenir le registre des opportunités`,
   'change.request': $localize`:@@authz.perm.change-request:Demander un changement et conduire ses demandes`,
-  'change.analyze': $localize`:@@authz.perm.change-analyze:Gérer toutes les demandes de changement`
+  'change.analyze': $localize`:@@authz.perm.change-analyze:Gérer toutes les demandes de changement`,
+  'spc.manage': $localize`:@@authz.perm.spc-manage:Saisir et supprimer les études de capabilité SPC`
 };
 
 const MODULES: Record<string, string> = {
@@ -41,7 +42,8 @@ const MODULES: Record<string, string> = {
   nc: $localize`:@@authz.module.nc:Non-conformités`,
   document: $localize`:@@authz.module.document:Documents`,
   risk: $localize`:@@authz.module.risk:Risques et opportunités`,
-  change: $localize`:@@authz.module.change:Gestion des changements`
+  change: $localize`:@@authz.module.change:Gestion des changements`,
+  spc: $localize`:@@authz.module.spc:SPC`
 };
 
 const SYSTEM_ROLES: Record<string, string> = {

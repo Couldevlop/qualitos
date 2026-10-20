@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Étude de capabilité procédé – Cp / Cpk</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#f3f5f7;--panel:#fff;--ink:#16212b;--mute:#5d6b78;--line:#d8dee4;--accent:#0b6e8a;--input:#fff7d6;--ok:#1c7c4a;--ko:#b3261e;--okbg:#e3f3ea;--kobg:#fbe5e3;--ucl:#b3261e;--cl:#0b6e8a}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10161c;--panel:#18212a;--ink:#e6ecf1;--mute:#93a1ad;--line:#2b3742;--accent:#4cc3e0;--input:#3a3414;--ok:#5fd394;--ko:#ff8a80;--okbg:#123124;--kobg:#3a1815;--ucl:#ff8a80;--cl:#4cc3e0}}
+:root[data-theme="dark"]{--bg:#10161c;--panel:#18212a;--ink:#e6ecf1;--mute:#93a1ad;--line:#2b3742;--accent:#4cc3e0;--input:#3a3414;--ok:#5fd394;--ko:#ff8a80;--okbg:#123124;--kobg:#3a1815;--ucl:#ff8a80;--cl:#4cc3e0}
+html{height:auto}*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 'IBM Plex Sans',system-ui,sans-serif}
+main{max-width:1180px;margin:0 auto;padding:20px 16px 40px}
+h1{font-size:20px;font-weight:600;margin:0 0 2px}
+.sub{color:var(--mute);margin:0 0 16px}
+section{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:14px 16px;margin-bottom:14px}
+h2{font-size:14px;font-weight:600;margin:0 0 10px}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+label{display:flex;flex-direction:column;gap:3px;color:var(--mute);font-size:12px}
+input,select{font:inherit;color:var(--ink);background:var(--input);border:1px solid var(--line);border-radius:4px;padding:6px 8px;min-width:0}
+input:focus,select:focus{outline:2px solid var(--accent);outline-offset:1px}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:12.5px}
+th,td{border:1px solid var(--line);padding:0;text-align:center;min-width:54px}
+th{background:var(--bg);font-weight:500;padding:5px 4px;color:var(--mute)}
+td input{width:54px;border:0;border-radius:0;text-align:center;background:var(--input);padding:5px 2px}
+td.calc{padding:5px 4px;background:var(--bg)}
+td.out{color:var(--ko);font-weight:600}
+th.row{text-align:left;padding-left:8px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:12px}
+.kpi{border:1px solid var(--line);border-radius:6px;padding:10px 12px}
+.kpi b{display:block;font-size:26px;font-weight:600;font-family:'IBM Plex Mono',monospace;line-height:1.15}
+.kpi span{color:var(--mute);font-size:12px}
+.status{display:flex;gap:10px;flex-wrap:wrap}
+.pill{padding:8px 14px;border-radius:4px;border:1px solid var(--line);color:var(--mute)}
+.pill.on.ok{background:var(--okbg);color:var(--ok);border-color:var(--ok);font-weight:600}
+.pill.on.ko{background:var(--kobg);color:var(--ko);border-color:var(--ko);font-weight:600}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.stat{display:grid;grid-template-columns:auto 1fr auto;gap:4px 12px;font-size:13px}
+.stat .f{color:var(--mute);font-family:'IBM Plex Mono',monospace;font-size:12px}
+.stat .v{font-family:'IBM Plex Mono',monospace;text-align:right}
+.chart{width:100%;height:auto;display:block}
+.note{color:var(--mute);font-size:12px;margin-top:8px}
+button{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:6px 12px;cursor:pointer}
+button:hover{border-color:var(--accent)}
+.bar{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.reads{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px;margin-top:12px}
+.reads div{border:1px solid var(--line);border-radius:6px;padding:10px 12px}
+.reads b{display:block;margin-bottom:2px}
+.reads p{margin:0;color:var(--mute)}
+.reads .diag{grid-column:1/-1;background:var(--bg)}
+.ftable{width:100%;max-width:680px;font-family:inherit;font-size:13px}
+.ftable th,.ftable td{padding:6px 10px;text-align:left;border:0;border-bottom:1px solid var(--line)}
+.ftable th{color:var(--ink);font-weight:600;white-space:nowrap;background:none}
+.ftable tr.grp th{background:var(--bg);color:var(--mute);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.ftable td.fm{color:var(--mute);font-family:'IBM Plex Mono',monospace;font-size:12px}
+.ftable td.val{width:120px;text-align:right;font-family:'IBM Plex Mono',monospace;font-weight:500;border:1px solid var(--ink);background:var(--panel)}
+.ftable td.val.key{border:2px solid var(--accent);color:var(--accent);font-weight:600;font-size:15px}
+</style>
+</head>
+<body>
+<main>
+<h1>Étude de capabilité procédé (Cp / Cpk)</h1>
+<p class="sub">Cartes de contrôle X̄ – R. Saisissez les mesures dans les cellules jaunes ; tout le reste se calcule.</p>
+
+<section>
+<h2>Identification</h2>
+<div class="fields">
+<label>Paramètre<input id="f_param" value="Weight"></label>
+<label>Taille / tolérance<input id="f_size" value="500 ± 25 gram"></label>
+<label>Nom de la pièce<input id="f_part" value="Shaft AX"></label>
+<label>N° de machine<input id="f_machine"></label>
+<label>Contrôlé par<input id="f_by"></label>
+<label>Date<input id="f_date" type="date"></label>
+<label>LSL (limite inférieure)<input id="lsl" type="number" step="any" value="475"></label>
+<label>USL (limite supérieure)<input id="usl" type="number" step="any" value="525"></label>
+<label>Taille du sous-groupe (n)<select id="n"></select></label>
+</div>
+</section>
+
+<section>
+<h2>Mesures par sous-groupe</h2>
+<div class="scroll"><table id="grid"></table></div>
+<div class="bar"><button id="clear">Vider les mesures</button><button id="demo">Recharger l’exemple</button><button id="theme">Thème clair / sombre</button></div>
+<p class="note">Astuce : collez un bloc copié depuis Excel dans une cellule pour remplir la grille d’un coup.</p>
+</section>
+
+<section>
+<h2>Résultats</h2>
+<div class="kpis" id="kpis"></div>
+<div class="status" id="status"></div>
+<div class="bar"><button id="ftoggle" aria-expanded="true" aria-controls="fpanel">Masquer les formules</button></div>
+<div id="fpanel" style="margin-top:12px"><div class="scroll"><table class="ftable" id="stat"></table></div></div>
+</section>
+
+<div class="cols">
+<section><h2>Carte X̄</h2><div id="cx"></div></section>
+<section><h2>Carte R</h2><div id="cr"></div></section>
+</div>
+
+<section>
+<h2>Distribution et tolérance</h2>
+<div id="dist"></div>
+<div class="reads" id="reads"></div>
+</section>
+</main>
+
+<script>
+const K=20;
+// Constantes (valeurs du classeur pour n=2..5, tables usuelles au-delà)
+const C={2:{d2:1.13,A2:1.88,D3:0,D4:3.27},3:{d2:1.69,A2:1.02,D3:0,D4:2.57},4:{d2:2.06,A2:0.73,D3:0,D4:2.29},5:{d2:2.33,A2:0.58,D3:0,D4:2.11},
+6:{d2:2.53,A2:0.48,D3:0,D4:2.00},7:{d2:2.70,A2:0.42,D3:0.076,D4:1.92},8:{d2:2.85,A2:0.37,D3:0.136,D4:1.86},9:{d2:2.97,A2:0.34,D3:0.184,D4:1.82},10:{d2:3.08,A2:0.31,D3:0.223,D4:1.78}};
+const DEMO=[[504,508,497,504,496,493,494,494,507,499,500,496,494,505,499,498,508,495,493,495],
+[497,505,508,497,498,507,498,502,501,507,504,505,494,495,495,498,506,497,499,497],
+[497,492,496,494,502,496,498,502,497,498,496,493,502,496,496,499,506,492,506,500],
+[497,494,501,498,493,504,506,498,494,498,494,500,503,502,498,507,493,500,504,497],
+[498,492,496,500,494,507,497,502,500,499,500,499,494,502,500,500,503,502,498,492]];
+let data=[];const $=id=>document.getElementById(id);
+const nSel=$('n');for(let i=2;i<=10;i++)nSel.add(new Option(i,i));nSel.value=5;
+const fmt=(v,d=3)=>Number.isFinite(v)?v.toFixed(d):'–';
+
+function reset(src){data=Array.from({length:10},(_,r)=>Array.from({length:K},(_,c)=>src&&src[r]?src[r][c]:''));}
+reset(DEMO);
+
+function build(){
+ const n=+nSel.value;let h='<tr><th class="row">Échantillon</th>';
+ for(let c=0;c<K;c++)h+=`<th>SG ${String(c+1).padStart(2,'0')}</th>`;h+='</tr>';
+ for(let r=0;r<n;r++){h+=`<tr><th class="row">${r+1}</th>`;
+  for(let c=0;c<K;c++)h+=`<td><input inputmode="decimal" data-r="${r}" data-c="${c}" value="${data[r][c]}" aria-label="Échantillon ${r+1}, sous-groupe ${c+1}"></td>`;h+='</tr>';}
+ h+='<tr><th class="row">X̄</th>'+Array.from({length:K},(_,c)=>`<td class="calc" id="xb${c}"></td>`).join('')+'</tr>';
+ h+='<tr><th class="row">R</th>'+Array.from({length:K},(_,c)=>`<td class="calc" id="rg${c}"></td>`).join('')+'</tr>';
+ $('grid').innerHTML=h;
+}
+
+function chart(vals,ucl,cl,lcl,unit){
+ const pts=vals.map((v,i)=>({v,i})).filter(p=>Number.isFinite(p.v));
+ if(!pts.length)return '<p class="note">Aucune donnée à tracer.</p>';
+ const all=pts.map(p=>p.v).concat([ucl,lcl,cl]);let lo=Math.min(...all),hi=Math.max(...all);const pad=(hi-lo||1)*0.12;lo-=pad;hi+=pad;
+ const W=560,H=260,L=44,R=64,T=12,B=26,x=i=>L+(W-L-R)*i/(K-1),y=v=>T+(H-T-B)*(1-(v-lo)/(hi-lo));
+ let s=`<svg class="chart" viewBox="0 0 ${W} ${H}" role="img">`;
+ for(let t=0;t<=4;t++){const v=lo+(hi-lo)*t/4;s+=`<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)" stroke-width=".6"/><text x="${L-6}" y="${y(v)+3}" text-anchor="end" font-size="10" fill="var(--mute)">${v.toFixed(unit)}</text>`;}
+ [[ucl,'UCL','var(--ucl)'],[cl,'CL','var(--cl)'],[lcl,'LCL','var(--ucl)']].forEach(([v,l,c])=>{
+  s+=`<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" stroke="${c}" stroke-width="1.2" stroke-dasharray="${l==='CL'?'':'5 3'}"/><text x="${W-R+4}" y="${y(v)+3}" font-size="10" fill="${c}">${l} ${v.toFixed(unit)}</text>`;});
+ for(let i=0;i<K;i+=1)if(i%2==0||i==K-1)s+=`<text x="${x(i)}" y="${H-8}" text-anchor="middle" font-size="10" fill="var(--mute)">${i+1}</text>`;
+ s+=`<polyline fill="none" stroke="var(--ink)" stroke-width="1.2" points="${pts.map(p=>x(p.i)+','+y(p.v)).join(' ')}"/>`;
+ pts.forEach(p=>{const out=p.v>ucl||p.v<lcl;s+=`<circle cx="${x(p.i)}" cy="${y(p.v)}" r="${out?4.5:3}" fill="${out?'var(--ucl)':'var(--panel)'}" stroke="${out?'var(--ucl)':'var(--ink)'}" stroke-width="1.3"><title>SG ${p.i+1} : ${p.v.toFixed(unit)}</title></circle>`;});
+ return s+'</svg>';
+}
+
+function calc(){
+ const n=+nSel.value,k=C[n],usl=parseFloat($('usl').value),lsl=parseFloat($('lsl').value);
+ const xb=[],rg=[];
+ for(let c=0;c<K;c++){const col=[];for(let r=0;r<n;r++){const v=parseFloat(data[r][c]);if(Number.isFinite(v))col.push(v);}
+  if(col.length===n){xb.push(col.reduce((a,b)=>a+b,0)/n);rg.push(Math.max(...col)-Math.min(...col));}else{xb.push(NaN);rg.push(NaN);}
+  $('xb'+c).textContent=fmt(xb[c],2);$('rg'+c).textContent=fmt(rg[c],0);}
+ const vx=xb.filter(Number.isFinite),vr=rg.filter(Number.isFinite),m=vx.length;
+ const xbb=vx.reduce((a,b)=>a+b,0)/m,rb=vr.reduce((a,b)=>a+b,0)/m;
+ const sigma=rb/k.d2,cp=(usl-lsl)/(6*sigma),cpu=(usl-xbb)/(3*sigma),cpl=(xbb-lsl)/(3*sigma),cpk=Math.min(cpu,cpl);
+ const uclx=xbb+k.A2*rb,lclx=xbb-k.A2*rb,uclr=k.D4*rb,lclr=k.D3*rb;
+ xb.forEach((v,c)=>{$('xb'+c).classList.toggle('out',v>uclx||v<lclx);});
+ rg.forEach((v,c)=>{$('rg'+c).classList.toggle('out',v>uclr||v<lclr);});
+ const good=cpk>=1.67;
+ const kp=(l,v,s)=>`<div class="kpi"><b>${v}</b><span>${l}${s?' – '+s:''}</span></div>`;
+ $('kpis').innerHTML=m?kp('Cp',fmt(cp,2))+kp('Cpk',fmt(cpk,2),'seuil 1,67')+kp('Moyenne X̿',fmt(xbb,2))+kp('Sigma (R̄/d2)',fmt(sigma,3))+kp('Sous-groupes complets',m+' / '+K):'<p class="note">Saisissez au moins un sous-groupe complet.</p>';
+ $('status').innerHTML=m?`<div class="pill on ${good?'ok':''}">Procédé maîtrisé : ${good?'OUI':'NON'}</div><div class="pill on ${good?'':'ko'}">Procédé non maîtrisé : ${good?'NON':'OUI'}</div>`:'';
+ $('cx').innerHTML=m?chart(xb,uclx,xbb,lclx,2):'';
+ $('cr').innerHTML=m?chart(rg,uclr,rb,lclr,2):'';
+ renderDist(m,xbb,sigma,lsl,usl,cp,cpk);
+ const sumx=vx.reduce((a,b)=>a+b,0);
+ const R=(l,f,v,key)=>`<tr><th>${l}</th><td class="fm">${f}</td><td class="val${key?' key':''}">${v}</td></tr>`,G=t=>`<tr class="grp"><th colspan="3">${t}</th></tr>`;
+ $('stat').innerHTML=G('Moyennes et dispersion')+
+  R('Σ X̄','Somme des X̄',fmt(m?sumx:NaN,2))+R('X̿','Σ X̄ / '+m,fmt(xbb,3))+R('R̄','Σ R / '+m,fmt(rb,3))+
+  R('SIGMA','R̄ / d2',fmt(sigma,4))+R('3 SIGMA','3 × R̄ / d2',fmt(3*sigma,3))+R('6 SIGMA','6 × R̄ / d2',fmt(6*sigma,3))+
+  G('Capabilité')+R('USL','Limite supérieure',fmt(usl,2))+R('LSL','Limite inférieure',fmt(lsl,2))+
+  R('Cp','(USL − LSL) / 6 SIGMA',fmt(cp,3),1)+R('CPU','(USL − X̿) / 3 SIGMA',fmt(cpu,3))+R('CPL','(X̿ − LSL) / 3 SIGMA',fmt(cpl,3))+R('Cpk','MIN (CPU, CPL)',fmt(cpk,3),1)+
+  G('Carte X̄')+R('UCL','X̿ + A2 × R̄',fmt(uclx,3))+R('LCL','X̿ − A2 × R̄',fmt(lclx,3))+R('Limite de contrôle','UCL − LCL',fmt(uclx-lclx,3))+
+  G('Carte R')+R('UCL','D4 × R̄',fmt(uclr,3))+R('LCL','D3 × R̄',fmt(lclr,3))+
+  G('Constantes (n = '+n+')')+R('d2','Table SPC',k.d2)+R('A2','Table SPC',k.A2)+R('D3','Table SPC',k.D3)+R('D4','Table SPC',k.D4);
+}
+
+function ncdf(z){const t=1/(1+0.2316419*Math.abs(z)),d=0.3989423*Math.exp(-z*z/2),p=d*t*(0.3193815+t*(-0.3565638+t*(1.781478+t*(-1.821256+t*1.330274))));return z>0?1-p:p;}
+function renderDist(m,xbb,sg,lsl,usl,cp,cpk){
+ const n=+nSel.value,vals=[];
+ for(let c=0;c<K;c++){const col=[];for(let r=0;r<n;r++){const v=parseFloat(data[r][c]);if(Number.isFinite(v))col.push(v);}if(col.length===n)vals.push(...col);}
+ if(!m||!(sg>0)||!(usl>lsl)){$('dist').innerHTML='<p class="note">Saisissez au moins un sous-groupe complet et des limites valides.</p>';$('reads').innerHTML='';return;}
+ const tol=usl-lsl,lo0=Math.min(lsl,...vals,xbb-4*sg),hi0=Math.max(usl,...vals,xbb+4*sg),pad=(hi0-lo0)*0.04,lo=lo0-pad,hi=hi0+pad;
+ const NB=30,bw=(hi-lo)/NB,cnt=Array(NB).fill(0);vals.forEach(v=>{cnt[Math.min(NB-1,Math.floor((v-lo)/bw))]++;});
+ const dens=v=>vals.length*bw*Math.exp(-0.5*((v-xbb)/sg)**2)/(sg*Math.sqrt(2*Math.PI));
+ const ymax=Math.max(...cnt,dens(xbb))*1.15,W=560,H=250,L=14,R=14,T=26,Bm=26,x=v=>L+(W-L-R)*(v-lo)/(hi-lo),y=v=>T+(H-T-Bm)*(1-v/ymax),f0=T,f1=H-Bm;
+ let s=`<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Histogramme des mesures et limites de tolérance">`;
+ s+=`<rect x="${L}" y="${f0}" width="${Math.max(0,x(lsl)-L)}" height="${f1-f0}" fill="var(--kobg)"/><rect x="${x(usl)}" y="${f0}" width="${Math.max(0,W-R-x(usl))}" height="${f1-f0}" fill="var(--kobg)"/>`;
+ cnt.forEach((c,i)=>{if(!c)return;const v0=lo+i*bw,mid=v0+bw/2,out=mid<lsl||mid>usl;s+=`<rect x="${x(v0)+1}" y="${y(c)}" width="${x(v0+bw)-x(v0)-2}" height="${y(0)-y(c)}" fill="${out?'var(--ko)':'var(--accent)'}" opacity=".55"><title>${c} mesure(s)</title></rect>`;});
+ let pts=[];for(let i=0;i<=120;i++){const v=lo+(hi-lo)*i/120;pts.push(x(v)+','+y(dens(v)));}
+ s+=`<polyline fill="none" stroke="var(--ink)" stroke-width="1.4" points="${pts.join(' ')}"/>`;
+ s+=`<line x1="${L}" x2="${W-R}" y1="${f1}" y2="${f1}" stroke="var(--mute)"/>`;
+ [[lsl,'LSL','var(--ucl)'],[usl,'USL','var(--ucl)']].forEach(([v,l,c])=>{s+=`<line x1="${x(v)}" x2="${x(v)}" y1="${f0}" y2="${f1}" stroke="${c}" stroke-width="1.5"/><text x="${x(v)}" y="${f0-8}" text-anchor="middle" font-size="11" fill="${c}">${l} ${v}</text>`;});
+ s+=`<line x1="${x(xbb)}" x2="${x(xbb)}" y1="${f0}" y2="${f1}" stroke="var(--cl)" stroke-width="1.5" stroke-dasharray="5 3"/><text x="${x(xbb)}" y="${H-8}" text-anchor="middle" font-size="11" fill="var(--cl)">moyenne ${xbb.toFixed(1)}</text>`;
+ s+='</svg>';$('dist').innerHTML=s;
+ const mid=(usl+lsl)/2,off=xbb-mid,offPct=Math.abs(off)/(tol/2)*100,use=6*sg/tol*100;
+ const ppm=(ncdf((lsl-xbb)/sg)+1-ncdf((usl-xbb)/sg))*1e6,ppmTxt=ppm<1?'moins de 1 ppm':Math.round(ppm).toLocaleString('fr-FR')+' ppm';
+ const diag=cpk>=1.67?'Le procédé est capable : la dispersion tient largement dans la tolérance et la moyenne est bien placée.':cp>=1.67?'La dispersion est suffisante, mais la moyenne est trop décalée : recentrer le procédé suffit à atteindre Cpk 1,67.':'La dispersion est trop grande pour la tolérance : il faut réduire la variabilité, puis vérifier le centrage.';
+ $('reads').innerHTML=`<div><b>Dispersion : ${use.toFixed(0)} % de la tolérance</b><p>6 sigma = ${(6*sg).toFixed(1)} pour une tolérance de ${tol}.</p></div>`+
+ `<div><b>Centrage : ${offPct<2?'centré':'décalé de '+offPct.toFixed(0)+' %'}</b><p>${offPct<2?'La moyenne est au milieu de la tolérance.':'Moyenne '+Math.abs(off).toFixed(1)+' '+(off>0?'au-dessus':'en dessous')+' du milieu ('+mid+'), vers la '+(off>0?'USL':'LSL')+'.'}</p></div>`+
+ `<div><b>Hors tolérance estimé : ${ppmTxt}</b><p>Selon une loi normale de moyenne ${xbb.toFixed(1)} et sigma ${sg.toFixed(2)}.</p></div>`+
+ `<div class="diag"><b>Lecture : Cp ${cp.toFixed(2)} · Cpk ${cpk.toFixed(2)}</b><p>${diag}</p></div>`;
+}
+$('grid').addEventListener('input',e=>{const t=e.target;if(t.dataset.r!==undefined){data[t.dataset.r][t.dataset.c]=t.value;calc();}});
+$('grid').addEventListener('paste',e=>{const t=e.target;if(t.dataset.r===undefined)return;
+ const txt=(e.clipboardData||window.clipboardData).getData('text');if(!/[\t\n]/.test(txt))return;e.preventDefault();
+ const r0=+t.dataset.r,c0=+t.dataset.c;txt.trim().split(/\r?\n/).forEach((line,i)=>line.split('\t').forEach((v,j)=>{if(r0+i<10&&c0+j<K)data[r0+i][c0+j]=v.trim();}));build();calc();});
+nSel.onchange=()=>{build();calc();};['usl','lsl'].forEach(id=>$(id).oninput=calc);
+$('ftoggle').onclick=()=>{const p=$('fpanel'),open=p.hidden;p.hidden=!open;$('ftoggle').setAttribute('aria-expanded',open);$('ftoggle').textContent=open?'Masquer les formules':'Voir les formules';};
+$('clear').onclick=()=>{reset();build();calc();};
+$('demo').onclick=()=>{reset(DEMO);build();calc();};
+$('theme').onclick=()=>{const d=document.documentElement,dark=d.dataset.theme?d.dataset.theme==='dark':matchMedia('(prefers-color-scheme:dark)').matches;d.dataset.theme=dark?'light':'dark';};
+build();calc();
+</script>
+</body>
+</html>

@@ -24384,6 +24384,570 @@ historique 12 mois</source>
         <source><x id="standard"/> ajoutée au SMI — feuille de route de certification créée.</source>
         <target state="translated">أُضيف <x id="standard"/> إلى نظام الإدارة المتكامل — أُنشئت خارطة طريق الشهادة.</target>
       </trans-unit>
+      <trans-unit id="nav.spc-section" datatype="html">
+        <source>SPC</source>
+        <target state="translated">SPC</target>
+      </trans-unit>
+      <trans-unit id="nav.spc-control-charts" datatype="html">
+        <source>Cartes de contrôle</source>
+        <target state="translated">مخططات التحكم</target>
+      </trans-unit>
+      <trans-unit id="nav.spc-gage-rr" datatype="html">
+        <source>Gage R&amp;R</source>
+        <target state="translated">Gage R&amp;R</target>
+      </trans-unit>
+      <trans-unit id="nav.admin-spc" datatype="html">
+        <source>Paramètres SPC</source>
+        <target state="translated">إعدادات SPC</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.title" datatype="html">
+        <source>Gage R&amp;R</source>
+        <target state="translated">Gage R&amp;R</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.spc-manage" datatype="html">
+        <source>Saisir et supprimer les études de capabilité SPC</source>
+        <target state="translated">تسجيل دراسات قدرة SPC وحذفها</target>
+      </trans-unit>
+      <trans-unit id="authz.module.spc" datatype="html">
+        <source>SPC</source>
+        <target state="translated">SPC</target>
+      </trans-unit>
+      <trans-unit id="spc.status.capable" datatype="html">
+        <source>Maîtrisé</source>
+        <target state="translated">تحت السيطرة</target>
+      </trans-unit>
+      <trans-unit id="spc.status.not-capable" datatype="html">
+        <source>Non maîtrisé</source>
+        <target state="translated">خارج السيطرة</target>
+      </trans-unit>
+      <trans-unit id="spc.col.part" datatype="html">
+        <source>Référence pièce</source>
+        <target state="translated">مرجع القطعة</target>
+      </trans-unit>
+      <trans-unit id="spc.col.characteristic" datatype="html">
+        <source>Caractéristique</source>
+        <target state="translated">الخاصية</target>
+      </trans-unit>
+      <trans-unit id="spc.col.specification" datatype="html">
+        <source>Spécification</source>
+        <target state="translated">المواصفة</target>
+      </trans-unit>
+      <trans-unit id="spc.col.leader" datatype="html">
+        <source>Meneur</source>
+        <target state="translated">قائد الدراسة</target>
+      </trans-unit>
+      <trans-unit id="spc.col.date" datatype="html">
+        <source>Date</source>
+        <target state="translated">التاريخ</target>
+      </trans-unit>
+      <trans-unit id="spc.col.machine" datatype="html">
+        <source>Machine</source>
+        <target state="translated">الآلة</target>
+      </trans-unit>
+      <trans-unit id="spc.col.status" datatype="html">
+        <source>Statut</source>
+        <target state="translated">الحالة</target>
+      </trans-unit>
+      <trans-unit id="spc.col.plan" datatype="html">
+        <source>Plan d'actions</source>
+        <target state="translated">خطة العمل</target>
+      </trans-unit>
+      <trans-unit id="spc.col.plan-yn" datatype="html">
+        <source>Plan d'actions (O/N)</source>
+        <target state="translated">خطة العمل (نعم/لا)</target>
+      </trans-unit>
+      <trans-unit id="spc.col.actions" datatype="html">
+        <source>Actions</source>
+        <target state="translated">الإجراءات</target>
+      </trans-unit>
+      <trans-unit id="spc.register.eyebrow" datatype="html">
+        <source>SPC · Cartes de contrôle</source>
+        <target state="translated">SPC · مخططات التحكم</target>
+      </trans-unit>
+      <trans-unit id="spc.register.title" datatype="html">
+        <source>Registre des études SPC</source>
+        <target state="translated">سجل دراسات SPC</target>
+      </trans-unit>
+      <trans-unit id="spc.register.subtitle" datatype="html">
+        <source>Toutes les études de capabilité (Cp / Cpk) réalisées. Cliquez sur une ligne pour rouvrir l'étude.</source>
+        <target state="translated">جميع دراسات القدرة (Cp / Cpk) المنجزة. انقر على سطر لإعادة فتح الدراسة.</target>
+      </trans-unit>
+      <trans-unit id="spc.register.export" datatype="html">
+        <source>Exporter CSV</source>
+        <target state="translated">تصدير CSV</target>
+      </trans-unit>
+      <trans-unit id="spc.register.new" datatype="html">
+        <source>Créer une étude SPC</source>
+        <target state="translated">إنشاء دراسة SPC</target>
+      </trans-unit>
+      <trans-unit id="spc.register.kpis" datatype="html">
+        <source>Indicateurs du registre</source>
+        <target state="translated">مؤشرات السجل</target>
+      </trans-unit>
+      <trans-unit id="spc.register.kpi-total" datatype="html">
+        <source>Études réalisées</source>
+        <target state="translated">الدراسات المنجزة</target>
+      </trans-unit>
+      <trans-unit id="spc.register.kpi-controlled" datatype="html">
+        <source>Procédés maîtrisés</source>
+        <target state="translated">العمليات تحت السيطرة</target>
+      </trans-unit>
+      <trans-unit id="spc.register.kpi-plans" datatype="html">
+        <source>Plans d'actions en cours</source>
+        <target state="translated">خطط العمل الجارية</target>
+      </trans-unit>
+      <trans-unit id="spc.register.kpi-watch" datatype="html">
+        <source>Procédés à surveiller</source>
+        <target state="translated">عمليات تحت المراقبة</target>
+      </trans-unit>
+      <trans-unit id="spc.register.kpi-without-plan" datatype="html">
+        <source>Non maîtrisées sans plan d'actions</source>
+        <target state="translated">خارج السيطرة دون خطة عمل</target>
+      </trans-unit>
+      <trans-unit id="spc.register.search" datatype="html">
+        <source>Rechercher : pièce, meneur, machine…</source>
+        <target state="translated">بحث: القطعة، القائد، الآلة…</target>
+      </trans-unit>
+      <trans-unit id="spc.register.filter-status" datatype="html">
+        <source>Filtrer par statut</source>
+        <target state="translated">تصفية حسب الحالة</target>
+      </trans-unit>
+      <trans-unit id="spc.register.all-statuses" datatype="html">
+        <source>Tous les statuts</source>
+        <target state="translated">جميع الحالات</target>
+      </trans-unit>
+      <trans-unit id="spc.register.filter-plan" datatype="html">
+        <source>Filtrer par plan d'actions</source>
+        <target state="translated">تصفية حسب خطة العمل</target>
+      </trans-unit>
+      <trans-unit id="spc.register.all-plans" datatype="html">
+        <source>Plan d'actions : tous</source>
+        <target state="translated">خطة العمل: الكل</target>
+      </trans-unit>
+      <trans-unit id="spc.register.with-plan" datatype="html">
+        <source>Avec plan</source>
+        <target state="translated">مع خطة</target>
+      </trans-unit>
+      <trans-unit id="spc.register.without-plan" datatype="html">
+        <source>Sans plan</source>
+        <target state="translated">بدون خطة</target>
+      </trans-unit>
+      <trans-unit id="spc.register.load-failed" datatype="html">
+        <source>Le registre des études n'a pas pu être chargé.</source>
+        <target state="translated">تعذر تحميل سجل الدراسات.</target>
+      </trans-unit>
+      <trans-unit id="spc.register.plan-failed" datatype="html">
+        <source>Le plan d'actions n'a pas pu être modifié.</source>
+        <target state="translated">تعذر تعديل خطة العمل.</target>
+      </trans-unit>
+      <trans-unit id="spc.register.open" datatype="html">
+        <source>Ouvrir</source>
+        <target state="translated">فتح</target>
+      </trans-unit>
+      <trans-unit id="spc.register.delete-title" datatype="html">
+        <source>Supprimer l'étude <x id="part"/> ?</source>
+        <target state="translated">حذف الدراسة <x id="part"/>؟</target>
+      </trans-unit>
+      <trans-unit id="spc.register.delete-message" datatype="html">
+        <source>L'étude et ses mesures quittent le registre. La suppression est tracée dans le journal d'audit.</source>
+        <target state="translated">تُحذف الدراسة وقياساتها من السجل. ويُسجَّل الحذف في سجل التدقيق.</target>
+      </trans-unit>
+      <trans-unit id="spc.register.delete-failed" datatype="html">
+        <source>L'étude n'a pas pu être supprimée.</source>
+        <target state="translated">تعذر حذف الدراسة.</target>
+      </trans-unit>
+      <trans-unit id="spc.register.empty" datatype="html">
+        <source>Aucune étude pour le moment. Cliquez sur « Créer une étude SPC » pour commencer.</source>
+        <target state="translated">لا توجد دراسات بعد. انقر على «إنشاء دراسة SPC» للبدء.</target>
+      </trans-unit>
+      <trans-unit id="spc.register.no-match" datatype="html">
+        <source>Aucune étude ne correspond aux filtres.</source>
+        <target state="translated">لا توجد دراسة تطابق عوامل التصفية.</target>
+      </trans-unit>
+      <trans-unit id="spc.register.reset-filters" datatype="html">
+        <source>Effacer les filtres</source>
+        <target state="translated">مسح عوامل التصفية</target>
+      </trans-unit>
+      <trans-unit id="spc.register.legend" datatype="html">
+        <source>Cpk en vert : maîtrisé · en jaune : à surveiller · en rouge : non maîtrisé. Le liseré rouge signale une étude non maîtrisée sans plan d'actions.</source>
+        <target state="translated">Cpk بالأخضر: تحت السيطرة · بالأصفر: تحت المراقبة · بالأحمر: خارج السيطرة. يشير الحد الأحمر إلى دراسة خارج السيطرة دون خطة عمل.</target>
+      </trans-unit>
+      <trans-unit id="spc.study.title-new" datatype="html">
+        <source>Nouvelle étude de capabilité</source>
+        <target state="translated">دراسة قدرة جديدة</target>
+      </trans-unit>
+      <trans-unit id="spc.study.title-edit" datatype="html">
+        <source>Étude de capabilité <x id="part"/></source>
+        <target state="translated">دراسة القدرة <x id="part"/></target>
+      </trans-unit>
+      <trans-unit id="spc.study.subtitle" datatype="html">
+        <source>Cartes de contrôle X̄ – R. Saisissez les mesures dans les cellules jaunes ; tout le reste se calcule.</source>
+        <target state="translated">مخططات التحكم X̄ – R. أدخل القياسات في الخلايا الصفراء؛ ويُحسب كل ما تبقى تلقائياً.</target>
+      </trans-unit>
+      <trans-unit id="spc.study.back" datatype="html">
+        <source>Registre</source>
+        <target state="translated">السجل</target>
+      </trans-unit>
+      <trans-unit id="spc.study.save" datatype="html">
+        <source>Enregistrer l'étude</source>
+        <target state="translated">حفظ الدراسة</target>
+      </trans-unit>
+      <trans-unit id="spc.study.saved" datatype="html">
+        <source>Étude enregistrée.</source>
+        <target state="translated">تم حفظ الدراسة.</target>
+      </trans-unit>
+      <trans-unit id="spc.study.save-failed" datatype="html">
+        <source>L'étude n'a pas pu être enregistrée.</source>
+        <target state="translated">تعذر حفظ الدراسة.</target>
+      </trans-unit>
+      <trans-unit id="spc.study.load-failed" datatype="html">
+        <source>L'étude n'a pas pu être chargée.</source>
+        <target state="translated">تعذر تحميل الدراسة.</target>
+      </trans-unit>
+      <trans-unit id="spc.study.not-found" datatype="html">
+        <source>Étude introuvable.</source>
+        <target state="translated">الدراسة غير موجودة.</target>
+      </trans-unit>
+      <trans-unit id="spc.study.read-only" datatype="html">
+        <source>Consultation seule : la saisie des études est réservée aux personnes qui en ont le droit.</source>
+        <target state="translated">عرض فقط: تسجيل الدراسات مقصور على الأشخاص المخوَّلين.</target>
+      </trans-unit>
+      <trans-unit id="spc.study.identification" datatype="html">
+        <source>Identification</source>
+        <target state="translated">التعريف</target>
+      </trans-unit>
+      <trans-unit id="spc.study.characteristic" datatype="html">
+        <source>Paramètre</source>
+        <target state="translated">المعامل</target>
+      </trans-unit>
+      <trans-unit id="spc.study.specification" datatype="html">
+        <source>Taille / tolérance</source>
+        <target state="translated">المقاس / التفاوت</target>
+      </trans-unit>
+      <trans-unit id="spc.study.machine" datatype="html">
+        <source>N° de machine</source>
+        <target state="translated">رقم الآلة</target>
+      </trans-unit>
+      <trans-unit id="spc.study.lsl" datatype="html">
+        <source>LSL (limite inférieure)</source>
+        <target state="translated">LSL (الحد الأدنى)</target>
+      </trans-unit>
+      <trans-unit id="spc.study.usl" datatype="html">
+        <source>USL (limite supérieure)</source>
+        <target state="translated">USL (الحد الأعلى)</target>
+      </trans-unit>
+      <trans-unit id="spc.study.subgroup-size" datatype="html">
+        <source>Taille du sous-groupe (n)</source>
+        <target state="translated">حجم المجموعة الفرعية (n)</target>
+      </trans-unit>
+      <trans-unit id="spc.study.part-required" datatype="html">
+        <source>La référence de la pièce est obligatoire.</source>
+        <target state="translated">مرجع القطعة إلزامي.</target>
+      </trans-unit>
+      <trans-unit id="spc.study.date-required" datatype="html">
+        <source>La date de l'étude est obligatoire.</source>
+        <target state="translated">تاريخ الدراسة إلزامي.</target>
+      </trans-unit>
+      <trans-unit id="spc.study.lsl-required" datatype="html">
+        <source>La limite inférieure est obligatoire.</source>
+        <target state="translated">الحد الأدنى إلزامي.</target>
+      </trans-unit>
+      <trans-unit id="spc.study.usl-required" datatype="html">
+        <source>La limite supérieure est obligatoire.</source>
+        <target state="translated">الحد الأعلى إلزامي.</target>
+      </trans-unit>
+      <trans-unit id="spc.study.measurements" datatype="html">
+        <source>Mesures par sous-groupe</source>
+        <target state="translated">القياسات حسب المجموعة الفرعية</target>
+      </trans-unit>
+      <trans-unit id="spc.study.sample" datatype="html">
+        <source>Échantillon</source>
+        <target state="translated">العينة</target>
+      </trans-unit>
+      <trans-unit id="spc.study.cell-aria" datatype="html">
+        <source>Échantillon <x id="sample"/>, sous-groupe <x id="subgroup"/></source>
+        <target state="translated">العينة <x id="sample"/>، المجموعة الفرعية <x id="subgroup"/></target>
+      </trans-unit>
+      <trans-unit id="spc.study.clear" datatype="html">
+        <source>Vider les mesures</source>
+        <target state="translated">مسح القياسات</target>
+      </trans-unit>
+      <trans-unit id="spc.study.paste-tip" datatype="html">
+        <source>Astuce : collez un bloc copié depuis Excel dans une cellule pour remplir la grille d'un coup.</source>
+        <target state="translated">نصيحة: الصق في خلية كتلة منسوخة من Excel لملء الشبكة دفعة واحدة.</target>
+      </trans-unit>
+      <trans-unit id="spc.study.results" datatype="html">
+        <source>Résultats</source>
+        <target state="translated">النتائج</target>
+      </trans-unit>
+      <trans-unit id="spc.study.threshold" datatype="html">
+        <source>seuil</source>
+        <target state="translated">العتبة</target>
+      </trans-unit>
+      <trans-unit id="spc.study.grand-mean" datatype="html">
+        <source>Moyenne X̿</source>
+        <target state="translated">المتوسط X̿</target>
+      </trans-unit>
+      <trans-unit id="spc.study.sigma" datatype="html">
+        <source>Sigma (R̄ / d2)</source>
+        <target state="translated">سيغما (R̄ / d2)</target>
+      </trans-unit>
+      <trans-unit id="spc.study.controlled" datatype="html">
+        <source>Procédé maîtrisé :</source>
+        <target state="translated">العملية تحت السيطرة:</target>
+      </trans-unit>
+      <trans-unit id="spc.study.not-controlled" datatype="html">
+        <source>Procédé non maîtrisé :</source>
+        <target state="translated">العملية خارج السيطرة:</target>
+      </trans-unit>
+      <trans-unit id="spc.study.yes" datatype="html">
+        <source>OUI</source>
+        <target state="translated">نعم</target>
+      </trans-unit>
+      <trans-unit id="spc.study.no" datatype="html">
+        <source>NON</source>
+        <target state="translated">لا</target>
+      </trans-unit>
+      <trans-unit id="spc.study.need-subgroup" datatype="html">
+        <source>Saisissez au moins un sous-groupe complet.</source>
+        <target state="translated">أدخل مجموعة فرعية كاملة واحدة على الأقل.</target>
+      </trans-unit>
+      <trans-unit id="spc.study.hide-formulas" datatype="html">
+        <source>Masquer les formules</source>
+        <target state="translated">إخفاء الصيغ</target>
+      </trans-unit>
+      <trans-unit id="spc.study.show-formulas" datatype="html">
+        <source>Voir les formules</source>
+        <target state="translated">عرض الصيغ</target>
+      </trans-unit>
+      <trans-unit id="spc.study.xbar-chart" datatype="html">
+        <source>Carte X̄</source>
+        <target state="translated">مخطط X̄</target>
+      </trans-unit>
+      <trans-unit id="spc.study.range-chart" datatype="html">
+        <source>Carte R</source>
+        <target state="translated">مخطط R</target>
+      </trans-unit>
+      <trans-unit id="spc.study.xbar-aria" datatype="html">
+        <source>Carte X̄ : moyenne de chaque sous-groupe et limites de contrôle</source>
+        <target state="translated">مخطط X̄: متوسط كل مجموعة فرعية وحدود التحكم</target>
+      </trans-unit>
+      <trans-unit id="spc.study.range-aria" datatype="html">
+        <source>Carte R : étendue de chaque sous-groupe et limites de contrôle</source>
+        <target state="translated">مخطط R: مدى كل مجموعة فرعية وحدود التحكم</target>
+      </trans-unit>
+      <trans-unit id="spc.study.distribution" datatype="html">
+        <source>Distribution et tolérance</source>
+        <target state="translated">التوزيع والتفاوت</target>
+      </trans-unit>
+      <trans-unit id="spc.study.error.part" datatype="html">
+        <source>La référence de la pièce est obligatoire (120 caractères au plus).</source>
+        <target state="translated">مرجع القطعة إلزامي (120 حرفاً كحد أقصى).</target>
+      </trans-unit>
+      <trans-unit id="spc.study.error.date" datatype="html">
+        <source>La date de l'étude est obligatoire.</source>
+        <target state="translated">تاريخ الدراسة إلزامي.</target>
+      </trans-unit>
+      <trans-unit id="spc.study.error.limits" datatype="html">
+        <source>La limite supérieure (USL) doit dépasser la limite inférieure (LSL).</source>
+        <target state="translated">يجب أن يتجاوز الحد الأعلى (USL) الحد الأدنى (LSL).</target>
+      </trans-unit>
+      <trans-unit id="spc.study.error.leader" datatype="html">
+        <source>Le meneur choisi n'a pas pu être retrouvé dans l'annuaire.</source>
+        <target state="translated">تعذر العثور على قائد الدراسة المختار في الدليل.</target>
+      </trans-unit>
+      <trans-unit id="spc.study.error.measurements" datatype="html">
+        <source>Saisissez au moins un sous-groupe complet, avec des mesures qui ne soient pas toutes identiques.</source>
+        <target state="translated">أدخل مجموعة فرعية كاملة واحدة على الأقل، بقياسات ليست كلها متطابقة.</target>
+      </trans-unit>
+      <trans-unit id="spc.study.error.generic" datatype="html">
+        <source>Un champ de l'étude a été refusé : vérifiez la saisie.</source>
+        <target state="translated">تم رفض أحد حقول الدراسة: تحقّق من الإدخال.</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.group-means" datatype="html">
+        <source>Moyennes et dispersion</source>
+        <target state="translated">المتوسطات والتشتت</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.sum-means" datatype="html">
+        <source>Somme des X̄</source>
+        <target state="translated">مجموع X̄</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.group-capability" datatype="html">
+        <source>Capabilité</source>
+        <target state="translated">القدرة</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.usl" datatype="html">
+        <source>Limite supérieure</source>
+        <target state="translated">الحد الأعلى</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.lsl" datatype="html">
+        <source>Limite inférieure</source>
+        <target state="translated">الحد الأدنى</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.group-xbar" datatype="html">
+        <source>Carte X̄</source>
+        <target state="translated">مخطط X̄</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.control-limit" datatype="html">
+        <source>Limite de contrôle</source>
+        <target state="translated">حد التحكم</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.group-range" datatype="html">
+        <source>Carte R</source>
+        <target state="translated">مخطط R</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.group-constants" datatype="html">
+        <source>Constantes</source>
+        <target state="translated">الثوابت</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.table" datatype="html">
+        <source>Table SPC</source>
+        <target state="translated">جدول SPC</target>
+      </trans-unit>
+      <trans-unit id="spc.chart.no-data" datatype="html">
+        <source>Aucune donnée à tracer.</source>
+        <target state="translated">لا توجد بيانات للرسم.</target>
+      </trans-unit>
+      <trans-unit id="spc.chart.out-of-limits" datatype="html">
+        <source>Sous-groupes hors limites de contrôle : <x id="count"/></source>
+        <target state="translated">المجموعات الفرعية خارج حدود التحكم: <x id="count"/></target>
+      </trans-unit>
+      <trans-unit id="spc.distribution.aria" datatype="html">
+        <source>Histogramme des mesures et limites de tolérance</source>
+        <target state="translated">المدرج التكراري للقياسات وحدود التفاوت</target>
+      </trans-unit>
+      <trans-unit id="spc.distribution.bar" datatype="html">
+        <source>Mesures dans cette classe : <x id="count"/></source>
+        <target state="translated">القياسات في هذه الفئة: <x id="count"/></target>
+      </trans-unit>
+      <trans-unit id="spc.distribution.mean" datatype="html">
+        <source>moyenne</source>
+        <target state="translated">المتوسط</target>
+      </trans-unit>
+      <trans-unit id="spc.distribution.empty" datatype="html">
+        <source>Saisissez au moins un sous-groupe complet et des limites valides.</source>
+        <target state="translated">أدخل مجموعة فرعية كاملة واحدة على الأقل وحدوداً صالحة.</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.dispersion" datatype="html">
+        <source>Dispersion :</source>
+        <target state="translated">التشتت:</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.of-tolerance" datatype="html">
+        <source>de la tolérance</source>
+        <target state="translated">من التفاوت</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.tolerance" datatype="html">
+        <source>tolérance</source>
+        <target state="translated">التفاوت</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.centering" datatype="html">
+        <source>Centrage :</source>
+        <target state="translated">التمركز:</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.centered" datatype="html">
+        <source>centré</source>
+        <target state="translated">متمركز</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.off-center" datatype="html">
+        <source>décalé de</source>
+        <target state="translated">منحرف بنسبة</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.centered-detail" datatype="html">
+        <source>La moyenne est au milieu de la tolérance.</source>
+        <target state="translated">المتوسط في منتصف التفاوت.</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.mean" datatype="html">
+        <source>Moyenne</source>
+        <target state="translated">المتوسط</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.above" datatype="html">
+        <source>au-dessus du milieu, vers la USL</source>
+        <target state="translated">فوق المنتصف، نحو USL</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.below" datatype="html">
+        <source>en dessous du milieu, vers la LSL</source>
+        <target state="translated">تحت المنتصف، نحو LSL</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.reading" datatype="html">
+        <source>Lecture :</source>
+        <target state="translated">القراءة:</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.capable" datatype="html">
+        <source>Le procédé est capable : la dispersion tient largement dans la tolérance et la moyenne est bien placée.</source>
+        <target state="translated">العملية قادرة: التشتت يقع بارتياح ضمن التفاوت والمتوسط في موضع جيد.</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.recenter" datatype="html">
+        <source>La dispersion est suffisante, mais la moyenne est trop décalée : recentrer le procédé suffit à atteindre Cpk <x id="threshold"/>.</source>
+        <target state="translated">التشتت كافٍ، لكن المتوسط منحرف أكثر من اللازم: تكفي إعادة تمركز العملية لبلوغ Cpk <x id="threshold"/>.</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.reduce" datatype="html">
+        <source>La dispersion est trop grande pour la tolérance : il faut réduire la variabilité, puis vérifier le centrage.</source>
+        <target state="translated">التشتت كبير جداً بالنسبة إلى التفاوت: يجب تقليل التباين ثم التحقق من التمركز.</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.title" datatype="html">
+        <source>Paramètres SPC</source>
+        <target state="translated">إعدادات SPC</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.subtitle" datatype="html">
+        <source>Les seuils de Cpk qui classent les études de capabilité.</source>
+        <target state="translated">عتبات Cpk التي تصنّف دراسات القدرة.</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.load-failed" datatype="html">
+        <source>Les paramètres SPC n'ont pas pu être chargés.</source>
+        <target state="translated">تعذر تحميل إعدادات SPC.</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.save-failed" datatype="html">
+        <source>Les paramètres SPC n'ont pas pu être enregistrés.</source>
+        <target state="translated">تعذر حفظ إعدادات SPC.</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.saved" datatype="html">
+        <source>Paramètres SPC enregistrés. Ils s'appliquent aux prochaines études.</source>
+        <target state="translated">تم حفظ إعدادات SPC. وهي تنطبق على الدراسات القادمة.</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.scope" datatype="html">
+        <source>Les seuils s'appliquent aux études créées après l'enregistrement. Une étude garde ceux qu'elle avait à sa création : son verdict ne change pas après coup.</source>
+        <target state="translated">تنطبق العتبات على الدراسات المنشأة بعد الحفظ. وتحتفظ كل دراسة بالعتبات التي كانت لها عند إنشائها: فلا يتغير حكمها لاحقاً.</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.thresholds" datatype="html">
+        <source>Seuils de capabilité (Cpk)</source>
+        <target state="translated">عتبات القدرة (Cpk)</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.thresholds-help" datatype="html">
+        <source>Au-dessus du seuil de maîtrise, le procédé est maîtrisé (vert). Entre les deux, il est à surveiller (jaune). En deçà du seuil de surveillance, il n'est pas maîtrisé (rouge).</source>
+        <target state="translated">فوق عتبة السيطرة تكون العملية تحت السيطرة (أخضر). وبين العتبتين تكون تحت المراقبة (أصفر). وتحت عتبة المراقبة تكون خارج السيطرة (أحمر).</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.defaults" datatype="html">
+        <source>Ce sont aujourd'hui les seuils de la plateforme.</source>
+        <target state="translated">هذه حالياً عتبات المنصة.</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.capable" datatype="html">
+        <source>Seuil de maîtrise</source>
+        <target state="translated">عتبة السيطرة</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.watch" datatype="html">
+        <source>Seuil de surveillance</source>
+        <target state="translated">عتبة المراقبة</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.zone-watch" datatype="html">
+        <source>À surveiller</source>
+        <target state="translated">تحت المراقبة</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.summary" datatype="html">
+        <source>Non maîtrisé &lt; <x id="watch"/> ≤ À surveiller &lt; <x id="capable"/> ≤ Maîtrisé</source>
+        <target state="translated">خارج السيطرة &lt; <x id="watch"/> ≤ تحت المراقبة &lt; <x id="capable"/> ≤ تحت السيطرة</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.pending" datatype="html">
+        <source>Paramètres modifiés</source>
+        <target state="translated">تم تعديل الإعدادات</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.problem.range" datatype="html">
+        <source>Chaque seuil est un nombre de 0,01 à 10, avec deux décimales au plus.</source>
+        <target state="translated">كل عتبة عدد من 0.01 إلى 10، بخانتين عشريتين كحد أقصى.</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.problem.order" datatype="html">
+        <source>Le seuil de surveillance doit rester sous le seuil de maîtrise.</source>
+        <target state="translated">يجب أن تبقى عتبة المراقبة أدنى من عتبة السيطرة.</target>
+      </trans-unit>
       <trans-unit id="standards-extras.actions" datatype="html">
         <source>Actions</source>
         <target state="translated">إجراءات</target>

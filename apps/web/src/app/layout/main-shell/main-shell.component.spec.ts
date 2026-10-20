@@ -81,11 +81,12 @@ describe('MainShellComponent (navigation model)', () => {
     component = make();
   });
 
-  it('expose dix groupes de navigation', () => {
+  it('expose onze groupes de navigation', () => {
     // Le septième est l'Administration ; le huitième, « Non-conformité », sorti
     // des Opérations pour porter ses deux origines (interne / externe). Le
-    // dixième, « Risques & opportunités », suit la non-conformité.
-    expect(component.sections.length).toBe(10);
+    // dixième, « Risques & opportunités », suit la non-conformité. Le onzième,
+    // « SPC », suit les Analyses IA (ADR 0096).
+    expect(component.sections.length).toBe(11);
   });
 
   it('une seule entree s’allume, meme quand une route en prefixe une autre', () => {
@@ -112,6 +113,15 @@ describe('MainShellComponent (navigation model)', () => {
     routeur.url = '/capa/efficacite?from=menu#haut';
     expect(shell.estActif('/capa/efficacite')).toBeTrue();
     expect(shell.estActif('/capa')).toBeFalse();
+  });
+
+  it('SPC a son groupe, en deux sous-menus : cartes de controle et Gage R&R', () => {
+    const spc = component.sections.find(s => s.items.some(i => i.route === '/spc/cartes'))!;
+    expect(spc.items.map(i => i.route)).toEqual(['/spc/cartes', '/spc/gage-rr']);
+    expect(spc.items.every(i => i.module === 'dmaic')).toBeTrue();
+    // L'analyse SPC par les regles de Nelson reste dans les Analyses IA.
+    const ia = component.sections.find(s => s.items.some(i => i.route === '/anomaly'))!;
+    expect(ia.items.map(i => i.route)).toContain('/spc');
   });
 
   it('APQP n’a qu’une entree : les projets', () => {
@@ -158,7 +168,9 @@ describe('MainShellComponent (navigation model)', () => {
     // puis a 10 : + Circuits de validation (ADR 0080), puis a 11 : + Licence
     // (ADR 0082) — qui n'apparait qu'en on-premise, comme Clients qu'en SaaS. Puis a 12 :
     // + Parametres MOC (ADR 0087). Puis a 13 : + Documentation (ADR 0094).
-    expect(labels).toEqual([7, 6, 8, 1, 4, 1, 9, 11, 1, 13]);
+    // SPC (2) s'insere apres les Analyses IA : Cartes de controle et Gage R&R
+    // (ADR 0096) ; Administration passe a 14 : + Parametres SPC.
+    expect(labels).toEqual([7, 6, 8, 2, 1, 4, 1, 9, 11, 1, 14]);
   });
 
   it('le registre des risques a son groupe, juste apres la non-conformite', () => {
@@ -502,10 +514,10 @@ describe('MainShellComponent (visibilité par rôle)', () => {
 
   it('supprime la section entière plutôt que d’afficher un titre orphelin', () => {
     // Toutes les entrées d'administration sont gardées : la section disparaît, et
-    // il reste les neuf autres — Non-conformité, APQP et Risques & opportunités
-    // comprises, chacune avec ses propres entrées.
+    // il reste les dix autres — Non-conformité, APQP, Risques & opportunités et
+    // SPC comprises, chacune avec ses propres entrées.
     const sections = make().filterSections(['USER']);
-    expect(sections.length).toBe(9);
+    expect(sections.length).toBe(10);
     expect(sections.some(s => s.items.some(i => i.route.startsWith('/admin')))).toBeFalse();
   });
 

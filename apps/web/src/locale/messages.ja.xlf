@@ -24383,6 +24383,570 @@ historique 12 mois</source>
         <source><x id="standard"/> ajoutée au SMI — feuille de route de certification créée.</source>
         <target state="translated"><x id="standard"/> を統合マネジメントシステムに追加しました — 認証ロードマップを作成しました。</target>
       </trans-unit>
+      <trans-unit id="nav.spc-section" datatype="html">
+        <source>SPC</source>
+        <target state="translated">SPC</target>
+      </trans-unit>
+      <trans-unit id="nav.spc-control-charts" datatype="html">
+        <source>Cartes de contrôle</source>
+        <target state="translated">管理図</target>
+      </trans-unit>
+      <trans-unit id="nav.spc-gage-rr" datatype="html">
+        <source>Gage R&amp;R</source>
+        <target state="translated">Gage R&amp;R</target>
+      </trans-unit>
+      <trans-unit id="nav.admin-spc" datatype="html">
+        <source>Paramètres SPC</source>
+        <target state="translated">SPC 設定</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.title" datatype="html">
+        <source>Gage R&amp;R</source>
+        <target state="translated">Gage R&amp;R</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.spc-manage" datatype="html">
+        <source>Saisir et supprimer les études de capabilité SPC</source>
+        <target state="translated">SPC 工程能力調査の登録と削除</target>
+      </trans-unit>
+      <trans-unit id="authz.module.spc" datatype="html">
+        <source>SPC</source>
+        <target state="translated">SPC</target>
+      </trans-unit>
+      <trans-unit id="spc.status.capable" datatype="html">
+        <source>Maîtrisé</source>
+        <target state="translated">管理状態</target>
+      </trans-unit>
+      <trans-unit id="spc.status.not-capable" datatype="html">
+        <source>Non maîtrisé</source>
+        <target state="translated">管理外</target>
+      </trans-unit>
+      <trans-unit id="spc.col.part" datatype="html">
+        <source>Référence pièce</source>
+        <target state="translated">部品番号</target>
+      </trans-unit>
+      <trans-unit id="spc.col.characteristic" datatype="html">
+        <source>Caractéristique</source>
+        <target state="translated">特性</target>
+      </trans-unit>
+      <trans-unit id="spc.col.specification" datatype="html">
+        <source>Spécification</source>
+        <target state="translated">仕様</target>
+      </trans-unit>
+      <trans-unit id="spc.col.leader" datatype="html">
+        <source>Meneur</source>
+        <target state="translated">調査責任者</target>
+      </trans-unit>
+      <trans-unit id="spc.col.date" datatype="html">
+        <source>Date</source>
+        <target state="translated">日付</target>
+      </trans-unit>
+      <trans-unit id="spc.col.machine" datatype="html">
+        <source>Machine</source>
+        <target state="translated">設備</target>
+      </trans-unit>
+      <trans-unit id="spc.col.status" datatype="html">
+        <source>Statut</source>
+        <target state="translated">ステータス</target>
+      </trans-unit>
+      <trans-unit id="spc.col.plan" datatype="html">
+        <source>Plan d'actions</source>
+        <target state="translated">処置計画</target>
+      </trans-unit>
+      <trans-unit id="spc.col.plan-yn" datatype="html">
+        <source>Plan d'actions (O/N)</source>
+        <target state="translated">処置計画（有/無）</target>
+      </trans-unit>
+      <trans-unit id="spc.col.actions" datatype="html">
+        <source>Actions</source>
+        <target state="translated">操作</target>
+      </trans-unit>
+      <trans-unit id="spc.register.eyebrow" datatype="html">
+        <source>SPC · Cartes de contrôle</source>
+        <target state="translated">SPC · 管理図</target>
+      </trans-unit>
+      <trans-unit id="spc.register.title" datatype="html">
+        <source>Registre des études SPC</source>
+        <target state="translated">SPC 調査台帳</target>
+      </trans-unit>
+      <trans-unit id="spc.register.subtitle" datatype="html">
+        <source>Toutes les études de capabilité (Cp / Cpk) réalisées. Cliquez sur une ligne pour rouvrir l'étude.</source>
+        <target state="translated">実施したすべての工程能力調査（Cp / Cpk）。行をクリックすると調査を再表示します。</target>
+      </trans-unit>
+      <trans-unit id="spc.register.export" datatype="html">
+        <source>Exporter CSV</source>
+        <target state="translated">CSV エクスポート</target>
+      </trans-unit>
+      <trans-unit id="spc.register.new" datatype="html">
+        <source>Créer une étude SPC</source>
+        <target state="translated">SPC 調査を作成</target>
+      </trans-unit>
+      <trans-unit id="spc.register.kpis" datatype="html">
+        <source>Indicateurs du registre</source>
+        <target state="translated">台帳の指標</target>
+      </trans-unit>
+      <trans-unit id="spc.register.kpi-total" datatype="html">
+        <source>Études réalisées</source>
+        <target state="translated">実施した調査</target>
+      </trans-unit>
+      <trans-unit id="spc.register.kpi-controlled" datatype="html">
+        <source>Procédés maîtrisés</source>
+        <target state="translated">管理状態の工程</target>
+      </trans-unit>
+      <trans-unit id="spc.register.kpi-plans" datatype="html">
+        <source>Plans d'actions en cours</source>
+        <target state="translated">進行中の処置計画</target>
+      </trans-unit>
+      <trans-unit id="spc.register.kpi-watch" datatype="html">
+        <source>Procédés à surveiller</source>
+        <target state="translated">要監視の工程</target>
+      </trans-unit>
+      <trans-unit id="spc.register.kpi-without-plan" datatype="html">
+        <source>Non maîtrisées sans plan d'actions</source>
+        <target state="translated">処置計画のない管理外</target>
+      </trans-unit>
+      <trans-unit id="spc.register.search" datatype="html">
+        <source>Rechercher : pièce, meneur, machine…</source>
+        <target state="translated">検索：部品、責任者、設備…</target>
+      </trans-unit>
+      <trans-unit id="spc.register.filter-status" datatype="html">
+        <source>Filtrer par statut</source>
+        <target state="translated">ステータスで絞り込む</target>
+      </trans-unit>
+      <trans-unit id="spc.register.all-statuses" datatype="html">
+        <source>Tous les statuts</source>
+        <target state="translated">すべてのステータス</target>
+      </trans-unit>
+      <trans-unit id="spc.register.filter-plan" datatype="html">
+        <source>Filtrer par plan d'actions</source>
+        <target state="translated">処置計画で絞り込む</target>
+      </trans-unit>
+      <trans-unit id="spc.register.all-plans" datatype="html">
+        <source>Plan d'actions : tous</source>
+        <target state="translated">処置計画：すべて</target>
+      </trans-unit>
+      <trans-unit id="spc.register.with-plan" datatype="html">
+        <source>Avec plan</source>
+        <target state="translated">計画あり</target>
+      </trans-unit>
+      <trans-unit id="spc.register.without-plan" datatype="html">
+        <source>Sans plan</source>
+        <target state="translated">計画なし</target>
+      </trans-unit>
+      <trans-unit id="spc.register.load-failed" datatype="html">
+        <source>Le registre des études n'a pas pu être chargé.</source>
+        <target state="translated">調査台帳を読み込めませんでした。</target>
+      </trans-unit>
+      <trans-unit id="spc.register.plan-failed" datatype="html">
+        <source>Le plan d'actions n'a pas pu être modifié.</source>
+        <target state="translated">処置計画を変更できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="spc.register.open" datatype="html">
+        <source>Ouvrir</source>
+        <target state="translated">開く</target>
+      </trans-unit>
+      <trans-unit id="spc.register.delete-title" datatype="html">
+        <source>Supprimer l'étude <x id="part"/> ?</source>
+        <target state="translated">調査 <x id="part"/> を削除しますか？</target>
+      </trans-unit>
+      <trans-unit id="spc.register.delete-message" datatype="html">
+        <source>L'étude et ses mesures quittent le registre. La suppression est tracée dans le journal d'audit.</source>
+        <target state="translated">調査とその測定値は台帳から削除されます。削除は監査ログに記録されます。</target>
+      </trans-unit>
+      <trans-unit id="spc.register.delete-failed" datatype="html">
+        <source>L'étude n'a pas pu être supprimée.</source>
+        <target state="translated">調査を削除できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="spc.register.empty" datatype="html">
+        <source>Aucune étude pour le moment. Cliquez sur « Créer une étude SPC » pour commencer.</source>
+        <target state="translated">まだ調査はありません。「SPC 調査を作成」をクリックして開始してください。</target>
+      </trans-unit>
+      <trans-unit id="spc.register.no-match" datatype="html">
+        <source>Aucune étude ne correspond aux filtres.</source>
+        <target state="translated">条件に一致する調査はありません。</target>
+      </trans-unit>
+      <trans-unit id="spc.register.reset-filters" datatype="html">
+        <source>Effacer les filtres</source>
+        <target state="translated">絞り込みを解除</target>
+      </trans-unit>
+      <trans-unit id="spc.register.legend" datatype="html">
+        <source>Cpk en vert : maîtrisé · en jaune : à surveiller · en rouge : non maîtrisé. Le liseré rouge signale une étude non maîtrisée sans plan d'actions.</source>
+        <target state="translated">Cpk 緑：管理状態 · 黄：要監視 · 赤：管理外。赤い縁取りは処置計画のない管理外の調査を示します。</target>
+      </trans-unit>
+      <trans-unit id="spc.study.title-new" datatype="html">
+        <source>Nouvelle étude de capabilité</source>
+        <target state="translated">新しい工程能力調査</target>
+      </trans-unit>
+      <trans-unit id="spc.study.title-edit" datatype="html">
+        <source>Étude de capabilité <x id="part"/></source>
+        <target state="translated">工程能力調査 <x id="part"/></target>
+      </trans-unit>
+      <trans-unit id="spc.study.subtitle" datatype="html">
+        <source>Cartes de contrôle X̄ – R. Saisissez les mesures dans les cellules jaunes ; tout le reste se calcule.</source>
+        <target state="translated">X̄ – R 管理図。黄色のセルに測定値を入力してください。その他はすべて自動計算されます。</target>
+      </trans-unit>
+      <trans-unit id="spc.study.back" datatype="html">
+        <source>Registre</source>
+        <target state="translated">台帳</target>
+      </trans-unit>
+      <trans-unit id="spc.study.save" datatype="html">
+        <source>Enregistrer l'étude</source>
+        <target state="translated">調査を保存</target>
+      </trans-unit>
+      <trans-unit id="spc.study.saved" datatype="html">
+        <source>Étude enregistrée.</source>
+        <target state="translated">調査を保存しました。</target>
+      </trans-unit>
+      <trans-unit id="spc.study.save-failed" datatype="html">
+        <source>L'étude n'a pas pu être enregistrée.</source>
+        <target state="translated">調査を保存できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="spc.study.load-failed" datatype="html">
+        <source>L'étude n'a pas pu être chargée.</source>
+        <target state="translated">調査を読み込めませんでした。</target>
+      </trans-unit>
+      <trans-unit id="spc.study.not-found" datatype="html">
+        <source>Étude introuvable.</source>
+        <target state="translated">調査が見つかりません。</target>
+      </trans-unit>
+      <trans-unit id="spc.study.read-only" datatype="html">
+        <source>Consultation seule : la saisie des études est réservée aux personnes qui en ont le droit.</source>
+        <target state="translated">閲覧のみ：調査の入力は権限を持つ人に限られます。</target>
+      </trans-unit>
+      <trans-unit id="spc.study.identification" datatype="html">
+        <source>Identification</source>
+        <target state="translated">識別情報</target>
+      </trans-unit>
+      <trans-unit id="spc.study.characteristic" datatype="html">
+        <source>Paramètre</source>
+        <target state="translated">パラメータ</target>
+      </trans-unit>
+      <trans-unit id="spc.study.specification" datatype="html">
+        <source>Taille / tolérance</source>
+        <target state="translated">寸法 / 公差</target>
+      </trans-unit>
+      <trans-unit id="spc.study.machine" datatype="html">
+        <source>N° de machine</source>
+        <target state="translated">設備番号</target>
+      </trans-unit>
+      <trans-unit id="spc.study.lsl" datatype="html">
+        <source>LSL (limite inférieure)</source>
+        <target state="translated">LSL（下限規格）</target>
+      </trans-unit>
+      <trans-unit id="spc.study.usl" datatype="html">
+        <source>USL (limite supérieure)</source>
+        <target state="translated">USL（上限規格）</target>
+      </trans-unit>
+      <trans-unit id="spc.study.subgroup-size" datatype="html">
+        <source>Taille du sous-groupe (n)</source>
+        <target state="translated">サブグループサイズ (n)</target>
+      </trans-unit>
+      <trans-unit id="spc.study.part-required" datatype="html">
+        <source>La référence de la pièce est obligatoire.</source>
+        <target state="translated">部品番号は必須です。</target>
+      </trans-unit>
+      <trans-unit id="spc.study.date-required" datatype="html">
+        <source>La date de l'étude est obligatoire.</source>
+        <target state="translated">調査日は必須です。</target>
+      </trans-unit>
+      <trans-unit id="spc.study.lsl-required" datatype="html">
+        <source>La limite inférieure est obligatoire.</source>
+        <target state="translated">下限規格は必須です。</target>
+      </trans-unit>
+      <trans-unit id="spc.study.usl-required" datatype="html">
+        <source>La limite supérieure est obligatoire.</source>
+        <target state="translated">上限規格は必須です。</target>
+      </trans-unit>
+      <trans-unit id="spc.study.measurements" datatype="html">
+        <source>Mesures par sous-groupe</source>
+        <target state="translated">サブグループ別の測定値</target>
+      </trans-unit>
+      <trans-unit id="spc.study.sample" datatype="html">
+        <source>Échantillon</source>
+        <target state="translated">サンプル</target>
+      </trans-unit>
+      <trans-unit id="spc.study.cell-aria" datatype="html">
+        <source>Échantillon <x id="sample"/>, sous-groupe <x id="subgroup"/></source>
+        <target state="translated">サンプル <x id="sample"/>、サブグループ <x id="subgroup"/></target>
+      </trans-unit>
+      <trans-unit id="spc.study.clear" datatype="html">
+        <source>Vider les mesures</source>
+        <target state="translated">測定値をクリア</target>
+      </trans-unit>
+      <trans-unit id="spc.study.paste-tip" datatype="html">
+        <source>Astuce : collez un bloc copié depuis Excel dans une cellule pour remplir la grille d'un coup.</source>
+        <target state="translated">ヒント：Excel からコピーした範囲をセルに貼り付けると、表を一度に入力できます。</target>
+      </trans-unit>
+      <trans-unit id="spc.study.results" datatype="html">
+        <source>Résultats</source>
+        <target state="translated">結果</target>
+      </trans-unit>
+      <trans-unit id="spc.study.threshold" datatype="html">
+        <source>seuil</source>
+        <target state="translated">しきい値</target>
+      </trans-unit>
+      <trans-unit id="spc.study.grand-mean" datatype="html">
+        <source>Moyenne X̿</source>
+        <target state="translated">平均 X̿</target>
+      </trans-unit>
+      <trans-unit id="spc.study.sigma" datatype="html">
+        <source>Sigma (R̄ / d2)</source>
+        <target state="translated">シグマ (R̄ / d2)</target>
+      </trans-unit>
+      <trans-unit id="spc.study.controlled" datatype="html">
+        <source>Procédé maîtrisé :</source>
+        <target state="translated">工程は管理状態：</target>
+      </trans-unit>
+      <trans-unit id="spc.study.not-controlled" datatype="html">
+        <source>Procédé non maîtrisé :</source>
+        <target state="translated">工程は管理外：</target>
+      </trans-unit>
+      <trans-unit id="spc.study.yes" datatype="html">
+        <source>OUI</source>
+        <target state="translated">はい</target>
+      </trans-unit>
+      <trans-unit id="spc.study.no" datatype="html">
+        <source>NON</source>
+        <target state="translated">いいえ</target>
+      </trans-unit>
+      <trans-unit id="spc.study.need-subgroup" datatype="html">
+        <source>Saisissez au moins un sous-groupe complet.</source>
+        <target state="translated">少なくとも 1 つの完全なサブグループを入力してください。</target>
+      </trans-unit>
+      <trans-unit id="spc.study.hide-formulas" datatype="html">
+        <source>Masquer les formules</source>
+        <target state="translated">計算式を隠す</target>
+      </trans-unit>
+      <trans-unit id="spc.study.show-formulas" datatype="html">
+        <source>Voir les formules</source>
+        <target state="translated">計算式を表示</target>
+      </trans-unit>
+      <trans-unit id="spc.study.xbar-chart" datatype="html">
+        <source>Carte X̄</source>
+        <target state="translated">X̄ 管理図</target>
+      </trans-unit>
+      <trans-unit id="spc.study.range-chart" datatype="html">
+        <source>Carte R</source>
+        <target state="translated">R 管理図</target>
+      </trans-unit>
+      <trans-unit id="spc.study.xbar-aria" datatype="html">
+        <source>Carte X̄ : moyenne de chaque sous-groupe et limites de contrôle</source>
+        <target state="translated">X̄ 管理図：各サブグループの平均と管理限界</target>
+      </trans-unit>
+      <trans-unit id="spc.study.range-aria" datatype="html">
+        <source>Carte R : étendue de chaque sous-groupe et limites de contrôle</source>
+        <target state="translated">R 管理図：各サブグループの範囲と管理限界</target>
+      </trans-unit>
+      <trans-unit id="spc.study.distribution" datatype="html">
+        <source>Distribution et tolérance</source>
+        <target state="translated">分布と公差</target>
+      </trans-unit>
+      <trans-unit id="spc.study.error.part" datatype="html">
+        <source>La référence de la pièce est obligatoire (120 caractères au plus).</source>
+        <target state="translated">部品番号は必須です（120 文字以内）。</target>
+      </trans-unit>
+      <trans-unit id="spc.study.error.date" datatype="html">
+        <source>La date de l'étude est obligatoire.</source>
+        <target state="translated">調査日は必須です。</target>
+      </trans-unit>
+      <trans-unit id="spc.study.error.limits" datatype="html">
+        <source>La limite supérieure (USL) doit dépasser la limite inférieure (LSL).</source>
+        <target state="translated">上限規格 (USL) は下限規格 (LSL) より大きくなければなりません。</target>
+      </trans-unit>
+      <trans-unit id="spc.study.error.leader" datatype="html">
+        <source>Le meneur choisi n'a pas pu être retrouvé dans l'annuaire.</source>
+        <target state="translated">選択した調査責任者がディレクトリに見つかりませんでした。</target>
+      </trans-unit>
+      <trans-unit id="spc.study.error.measurements" datatype="html">
+        <source>Saisissez au moins un sous-groupe complet, avec des mesures qui ne soient pas toutes identiques.</source>
+        <target state="translated">少なくとも 1 つの完全なサブグループを、すべて同じではない測定値で入力してください。</target>
+      </trans-unit>
+      <trans-unit id="spc.study.error.generic" datatype="html">
+        <source>Un champ de l'étude a été refusé : vérifiez la saisie.</source>
+        <target state="translated">調査の項目が受け付けられませんでした。入力内容を確認してください。</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.group-means" datatype="html">
+        <source>Moyennes et dispersion</source>
+        <target state="translated">平均とばらつき</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.sum-means" datatype="html">
+        <source>Somme des X̄</source>
+        <target state="translated">X̄ の合計</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.group-capability" datatype="html">
+        <source>Capabilité</source>
+        <target state="translated">工程能力</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.usl" datatype="html">
+        <source>Limite supérieure</source>
+        <target state="translated">上限規格</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.lsl" datatype="html">
+        <source>Limite inférieure</source>
+        <target state="translated">下限規格</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.group-xbar" datatype="html">
+        <source>Carte X̄</source>
+        <target state="translated">X̄ 管理図</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.control-limit" datatype="html">
+        <source>Limite de contrôle</source>
+        <target state="translated">管理限界</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.group-range" datatype="html">
+        <source>Carte R</source>
+        <target state="translated">R 管理図</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.group-constants" datatype="html">
+        <source>Constantes</source>
+        <target state="translated">定数</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.table" datatype="html">
+        <source>Table SPC</source>
+        <target state="translated">SPC 係数表</target>
+      </trans-unit>
+      <trans-unit id="spc.chart.no-data" datatype="html">
+        <source>Aucune donnée à tracer.</source>
+        <target state="translated">描画するデータがありません。</target>
+      </trans-unit>
+      <trans-unit id="spc.chart.out-of-limits" datatype="html">
+        <source>Sous-groupes hors limites de contrôle : <x id="count"/></source>
+        <target state="translated">管理限界外のサブグループ：<x id="count"/></target>
+      </trans-unit>
+      <trans-unit id="spc.distribution.aria" datatype="html">
+        <source>Histogramme des mesures et limites de tolérance</source>
+        <target state="translated">測定値のヒストグラムと公差限界</target>
+      </trans-unit>
+      <trans-unit id="spc.distribution.bar" datatype="html">
+        <source>Mesures dans cette classe : <x id="count"/></source>
+        <target state="translated">この階級の測定値：<x id="count"/></target>
+      </trans-unit>
+      <trans-unit id="spc.distribution.mean" datatype="html">
+        <source>moyenne</source>
+        <target state="translated">平均</target>
+      </trans-unit>
+      <trans-unit id="spc.distribution.empty" datatype="html">
+        <source>Saisissez au moins un sous-groupe complet et des limites valides.</source>
+        <target state="translated">少なくとも 1 つの完全なサブグループと有効な規格限界を入力してください。</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.dispersion" datatype="html">
+        <source>Dispersion :</source>
+        <target state="translated">ばらつき：</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.of-tolerance" datatype="html">
+        <source>de la tolérance</source>
+        <target state="translated">（公差比）</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.tolerance" datatype="html">
+        <source>tolérance</source>
+        <target state="translated">公差</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.centering" datatype="html">
+        <source>Centrage :</source>
+        <target state="translated">中心位置：</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.centered" datatype="html">
+        <source>centré</source>
+        <target state="translated">中央</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.off-center" datatype="html">
+        <source>décalé de</source>
+        <target state="translated">ずれ</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.centered-detail" datatype="html">
+        <source>La moyenne est au milieu de la tolérance.</source>
+        <target state="translated">平均は公差の中央にあります。</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.mean" datatype="html">
+        <source>Moyenne</source>
+        <target state="translated">平均</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.above" datatype="html">
+        <source>au-dessus du milieu, vers la USL</source>
+        <target state="translated">中央より上、USL 側</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.below" datatype="html">
+        <source>en dessous du milieu, vers la LSL</source>
+        <target state="translated">中央より下、LSL 側</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.reading" datatype="html">
+        <source>Lecture :</source>
+        <target state="translated">判定：</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.capable" datatype="html">
+        <source>Le procédé est capable : la dispersion tient largement dans la tolérance et la moyenne est bien placée.</source>
+        <target state="translated">工程は能力があります：ばらつきは公差内に十分収まり、平均も適切な位置にあります。</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.recenter" datatype="html">
+        <source>La dispersion est suffisante, mais la moyenne est trop décalée : recentrer le procédé suffit à atteindre Cpk <x id="threshold"/>.</source>
+        <target state="translated">ばらつきは十分ですが、平均のずれが大きすぎます。工程を中心に戻せば Cpk <x id="threshold"/> に達します。</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.reduce" datatype="html">
+        <source>La dispersion est trop grande pour la tolérance : il faut réduire la variabilité, puis vérifier le centrage.</source>
+        <target state="translated">ばらつきが公差に対して大きすぎます。変動を減らしてから中心位置を確認してください。</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.title" datatype="html">
+        <source>Paramètres SPC</source>
+        <target state="translated">SPC 設定</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.subtitle" datatype="html">
+        <source>Les seuils de Cpk qui classent les études de capabilité.</source>
+        <target state="translated">工程能力調査を判定する Cpk のしきい値。</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.load-failed" datatype="html">
+        <source>Les paramètres SPC n'ont pas pu être chargés.</source>
+        <target state="translated">SPC 設定を読み込めませんでした。</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.save-failed" datatype="html">
+        <source>Les paramètres SPC n'ont pas pu être enregistrés.</source>
+        <target state="translated">SPC 設定を保存できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.saved" datatype="html">
+        <source>Paramètres SPC enregistrés. Ils s'appliquent aux prochaines études.</source>
+        <target state="translated">SPC 設定を保存しました。次回以降の調査に適用されます。</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.scope" datatype="html">
+        <source>Les seuils s'appliquent aux études créées après l'enregistrement. Une étude garde ceux qu'elle avait à sa création : son verdict ne change pas après coup.</source>
+        <target state="translated">しきい値は保存後に作成される調査に適用されます。調査は作成時のしきい値を保持するため、判定が後から変わることはありません。</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.thresholds" datatype="html">
+        <source>Seuils de capabilité (Cpk)</source>
+        <target state="translated">工程能力のしきい値 (Cpk)</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.thresholds-help" datatype="html">
+        <source>Au-dessus du seuil de maîtrise, le procédé est maîtrisé (vert). Entre les deux, il est à surveiller (jaune). En deçà du seuil de surveillance, il n'est pas maîtrisé (rouge).</source>
+        <target state="translated">管理しきい値以上なら工程は管理状態（緑）、その間は要監視（黄）、監視しきい値未満は管理外（赤）です。</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.defaults" datatype="html">
+        <source>Ce sont aujourd'hui les seuils de la plateforme.</source>
+        <target state="translated">現在はプラットフォームの既定しきい値です。</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.capable" datatype="html">
+        <source>Seuil de maîtrise</source>
+        <target state="translated">管理しきい値</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.watch" datatype="html">
+        <source>Seuil de surveillance</source>
+        <target state="translated">監視しきい値</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.zone-watch" datatype="html">
+        <source>À surveiller</source>
+        <target state="translated">要監視</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.summary" datatype="html">
+        <source>Non maîtrisé &lt; <x id="watch"/> ≤ À surveiller &lt; <x id="capable"/> ≤ Maîtrisé</source>
+        <target state="translated">管理外 &lt; <x id="watch"/> ≤ 要監視 &lt; <x id="capable"/> ≤ 管理状態</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.pending" datatype="html">
+        <source>Paramètres modifiés</source>
+        <target state="translated">設定が変更されています</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.problem.range" datatype="html">
+        <source>Chaque seuil est un nombre de 0,01 à 10, avec deux décimales au plus.</source>
+        <target state="translated">各しきい値は 0.01〜10 の数値で、小数点以下 2 桁までです。</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.problem.order" datatype="html">
+        <source>Le seuil de surveillance doit rester sous le seuil de maîtrise.</source>
+        <target state="translated">監視しきい値は管理しきい値より小さくなければなりません。</target>
+      </trans-unit>
       <trans-unit id="standards-extras.actions" datatype="html">
         <source>Actions</source>
         <target state="translated">操作</target>

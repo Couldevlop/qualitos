@@ -24384,6 +24384,570 @@ historique 12 mois</source>
         <source><x id="standard"/> ajoutée au SMI — feuille de route de certification créée.</source>
         <target state="translated">已将 <x id="standard"/> 添加到综合管理体系 — 已创建认证路线图。</target>
       </trans-unit>
+      <trans-unit id="nav.spc-section" datatype="html">
+        <source>SPC</source>
+        <target state="translated">SPC</target>
+      </trans-unit>
+      <trans-unit id="nav.spc-control-charts" datatype="html">
+        <source>Cartes de contrôle</source>
+        <target state="translated">控制图</target>
+      </trans-unit>
+      <trans-unit id="nav.spc-gage-rr" datatype="html">
+        <source>Gage R&amp;R</source>
+        <target state="translated">Gage R&amp;R</target>
+      </trans-unit>
+      <trans-unit id="nav.admin-spc" datatype="html">
+        <source>Paramètres SPC</source>
+        <target state="translated">SPC 设置</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.title" datatype="html">
+        <source>Gage R&amp;R</source>
+        <target state="translated">Gage R&amp;R</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.spc-manage" datatype="html">
+        <source>Saisir et supprimer les études de capabilité SPC</source>
+        <target state="translated">录入和删除 SPC 能力研究</target>
+      </trans-unit>
+      <trans-unit id="authz.module.spc" datatype="html">
+        <source>SPC</source>
+        <target state="translated">SPC</target>
+      </trans-unit>
+      <trans-unit id="spc.status.capable" datatype="html">
+        <source>Maîtrisé</source>
+        <target state="translated">受控</target>
+      </trans-unit>
+      <trans-unit id="spc.status.not-capable" datatype="html">
+        <source>Non maîtrisé</source>
+        <target state="translated">不受控</target>
+      </trans-unit>
+      <trans-unit id="spc.col.part" datatype="html">
+        <source>Référence pièce</source>
+        <target state="translated">零件编号</target>
+      </trans-unit>
+      <trans-unit id="spc.col.characteristic" datatype="html">
+        <source>Caractéristique</source>
+        <target state="translated">特性</target>
+      </trans-unit>
+      <trans-unit id="spc.col.specification" datatype="html">
+        <source>Spécification</source>
+        <target state="translated">规格</target>
+      </trans-unit>
+      <trans-unit id="spc.col.leader" datatype="html">
+        <source>Meneur</source>
+        <target state="translated">研究负责人</target>
+      </trans-unit>
+      <trans-unit id="spc.col.date" datatype="html">
+        <source>Date</source>
+        <target state="translated">日期</target>
+      </trans-unit>
+      <trans-unit id="spc.col.machine" datatype="html">
+        <source>Machine</source>
+        <target state="translated">设备</target>
+      </trans-unit>
+      <trans-unit id="spc.col.status" datatype="html">
+        <source>Statut</source>
+        <target state="translated">状态</target>
+      </trans-unit>
+      <trans-unit id="spc.col.plan" datatype="html">
+        <source>Plan d'actions</source>
+        <target state="translated">行动计划</target>
+      </trans-unit>
+      <trans-unit id="spc.col.plan-yn" datatype="html">
+        <source>Plan d'actions (O/N)</source>
+        <target state="translated">行动计划（是/否）</target>
+      </trans-unit>
+      <trans-unit id="spc.col.actions" datatype="html">
+        <source>Actions</source>
+        <target state="translated">操作</target>
+      </trans-unit>
+      <trans-unit id="spc.register.eyebrow" datatype="html">
+        <source>SPC · Cartes de contrôle</source>
+        <target state="translated">SPC · 控制图</target>
+      </trans-unit>
+      <trans-unit id="spc.register.title" datatype="html">
+        <source>Registre des études SPC</source>
+        <target state="translated">SPC 研究登记簿</target>
+      </trans-unit>
+      <trans-unit id="spc.register.subtitle" datatype="html">
+        <source>Toutes les études de capabilité (Cp / Cpk) réalisées. Cliquez sur une ligne pour rouvrir l'étude.</source>
+        <target state="translated">已完成的全部能力研究（Cp / Cpk）。单击一行可重新打开研究。</target>
+      </trans-unit>
+      <trans-unit id="spc.register.export" datatype="html">
+        <source>Exporter CSV</source>
+        <target state="translated">导出 CSV</target>
+      </trans-unit>
+      <trans-unit id="spc.register.new" datatype="html">
+        <source>Créer une étude SPC</source>
+        <target state="translated">创建 SPC 研究</target>
+      </trans-unit>
+      <trans-unit id="spc.register.kpis" datatype="html">
+        <source>Indicateurs du registre</source>
+        <target state="translated">登记簿指标</target>
+      </trans-unit>
+      <trans-unit id="spc.register.kpi-total" datatype="html">
+        <source>Études réalisées</source>
+        <target state="translated">已完成研究</target>
+      </trans-unit>
+      <trans-unit id="spc.register.kpi-controlled" datatype="html">
+        <source>Procédés maîtrisés</source>
+        <target state="translated">受控过程</target>
+      </trans-unit>
+      <trans-unit id="spc.register.kpi-plans" datatype="html">
+        <source>Plans d'actions en cours</source>
+        <target state="translated">进行中的行动计划</target>
+      </trans-unit>
+      <trans-unit id="spc.register.kpi-watch" datatype="html">
+        <source>Procédés à surveiller</source>
+        <target state="translated">需关注的过程</target>
+      </trans-unit>
+      <trans-unit id="spc.register.kpi-without-plan" datatype="html">
+        <source>Non maîtrisées sans plan d'actions</source>
+        <target state="translated">不受控且无行动计划</target>
+      </trans-unit>
+      <trans-unit id="spc.register.search" datatype="html">
+        <source>Rechercher : pièce, meneur, machine…</source>
+        <target state="translated">搜索：零件、负责人、设备…</target>
+      </trans-unit>
+      <trans-unit id="spc.register.filter-status" datatype="html">
+        <source>Filtrer par statut</source>
+        <target state="translated">按状态筛选</target>
+      </trans-unit>
+      <trans-unit id="spc.register.all-statuses" datatype="html">
+        <source>Tous les statuts</source>
+        <target state="translated">全部状态</target>
+      </trans-unit>
+      <trans-unit id="spc.register.filter-plan" datatype="html">
+        <source>Filtrer par plan d'actions</source>
+        <target state="translated">按行动计划筛选</target>
+      </trans-unit>
+      <trans-unit id="spc.register.all-plans" datatype="html">
+        <source>Plan d'actions : tous</source>
+        <target state="translated">行动计划：全部</target>
+      </trans-unit>
+      <trans-unit id="spc.register.with-plan" datatype="html">
+        <source>Avec plan</source>
+        <target state="translated">有计划</target>
+      </trans-unit>
+      <trans-unit id="spc.register.without-plan" datatype="html">
+        <source>Sans plan</source>
+        <target state="translated">无计划</target>
+      </trans-unit>
+      <trans-unit id="spc.register.load-failed" datatype="html">
+        <source>Le registre des études n'a pas pu être chargé.</source>
+        <target state="translated">无法加载研究登记簿。</target>
+      </trans-unit>
+      <trans-unit id="spc.register.plan-failed" datatype="html">
+        <source>Le plan d'actions n'a pas pu être modifié.</source>
+        <target state="translated">无法修改行动计划。</target>
+      </trans-unit>
+      <trans-unit id="spc.register.open" datatype="html">
+        <source>Ouvrir</source>
+        <target state="translated">打开</target>
+      </trans-unit>
+      <trans-unit id="spc.register.delete-title" datatype="html">
+        <source>Supprimer l'étude <x id="part"/> ?</source>
+        <target state="translated">删除研究 <x id="part"/>？</target>
+      </trans-unit>
+      <trans-unit id="spc.register.delete-message" datatype="html">
+        <source>L'étude et ses mesures quittent le registre. La suppression est tracée dans le journal d'audit.</source>
+        <target state="translated">该研究及其测量值将从登记簿中移除。删除操作会记录在审计日志中。</target>
+      </trans-unit>
+      <trans-unit id="spc.register.delete-failed" datatype="html">
+        <source>L'étude n'a pas pu être supprimée.</source>
+        <target state="translated">无法删除该研究。</target>
+      </trans-unit>
+      <trans-unit id="spc.register.empty" datatype="html">
+        <source>Aucune étude pour le moment. Cliquez sur « Créer une étude SPC » pour commencer.</source>
+        <target state="translated">暂无研究。单击“创建 SPC 研究”开始。</target>
+      </trans-unit>
+      <trans-unit id="spc.register.no-match" datatype="html">
+        <source>Aucune étude ne correspond aux filtres.</source>
+        <target state="translated">没有符合筛选条件的研究。</target>
+      </trans-unit>
+      <trans-unit id="spc.register.reset-filters" datatype="html">
+        <source>Effacer les filtres</source>
+        <target state="translated">清除筛选</target>
+      </trans-unit>
+      <trans-unit id="spc.register.legend" datatype="html">
+        <source>Cpk en vert : maîtrisé · en jaune : à surveiller · en rouge : non maîtrisé. Le liseré rouge signale une étude non maîtrisée sans plan d'actions.</source>
+        <target state="translated">Cpk 绿色：受控 · 黄色：需关注 · 红色：不受控。红色边线表示不受控且无行动计划的研究。</target>
+      </trans-unit>
+      <trans-unit id="spc.study.title-new" datatype="html">
+        <source>Nouvelle étude de capabilité</source>
+        <target state="translated">新建能力研究</target>
+      </trans-unit>
+      <trans-unit id="spc.study.title-edit" datatype="html">
+        <source>Étude de capabilité <x id="part"/></source>
+        <target state="translated">能力研究 <x id="part"/></target>
+      </trans-unit>
+      <trans-unit id="spc.study.subtitle" datatype="html">
+        <source>Cartes de contrôle X̄ – R. Saisissez les mesures dans les cellules jaunes ; tout le reste se calcule.</source>
+        <target state="translated">X̄ – R 控制图。在黄色单元格中输入测量值，其余内容自动计算。</target>
+      </trans-unit>
+      <trans-unit id="spc.study.back" datatype="html">
+        <source>Registre</source>
+        <target state="translated">登记簿</target>
+      </trans-unit>
+      <trans-unit id="spc.study.save" datatype="html">
+        <source>Enregistrer l'étude</source>
+        <target state="translated">保存研究</target>
+      </trans-unit>
+      <trans-unit id="spc.study.saved" datatype="html">
+        <source>Étude enregistrée.</source>
+        <target state="translated">研究已保存。</target>
+      </trans-unit>
+      <trans-unit id="spc.study.save-failed" datatype="html">
+        <source>L'étude n'a pas pu être enregistrée.</source>
+        <target state="translated">无法保存该研究。</target>
+      </trans-unit>
+      <trans-unit id="spc.study.load-failed" datatype="html">
+        <source>L'étude n'a pas pu être chargée.</source>
+        <target state="translated">无法加载该研究。</target>
+      </trans-unit>
+      <trans-unit id="spc.study.not-found" datatype="html">
+        <source>Étude introuvable.</source>
+        <target state="translated">未找到该研究。</target>
+      </trans-unit>
+      <trans-unit id="spc.study.read-only" datatype="html">
+        <source>Consultation seule : la saisie des études est réservée aux personnes qui en ont le droit.</source>
+        <target state="translated">仅供查看：只有具备权限的人员才能录入研究。</target>
+      </trans-unit>
+      <trans-unit id="spc.study.identification" datatype="html">
+        <source>Identification</source>
+        <target state="translated">标识</target>
+      </trans-unit>
+      <trans-unit id="spc.study.characteristic" datatype="html">
+        <source>Paramètre</source>
+        <target state="translated">参数</target>
+      </trans-unit>
+      <trans-unit id="spc.study.specification" datatype="html">
+        <source>Taille / tolérance</source>
+        <target state="translated">尺寸 / 公差</target>
+      </trans-unit>
+      <trans-unit id="spc.study.machine" datatype="html">
+        <source>N° de machine</source>
+        <target state="translated">设备编号</target>
+      </trans-unit>
+      <trans-unit id="spc.study.lsl" datatype="html">
+        <source>LSL (limite inférieure)</source>
+        <target state="translated">LSL（下限）</target>
+      </trans-unit>
+      <trans-unit id="spc.study.usl" datatype="html">
+        <source>USL (limite supérieure)</source>
+        <target state="translated">USL（上限）</target>
+      </trans-unit>
+      <trans-unit id="spc.study.subgroup-size" datatype="html">
+        <source>Taille du sous-groupe (n)</source>
+        <target state="translated">子组大小 (n)</target>
+      </trans-unit>
+      <trans-unit id="spc.study.part-required" datatype="html">
+        <source>La référence de la pièce est obligatoire.</source>
+        <target state="translated">零件编号为必填项。</target>
+      </trans-unit>
+      <trans-unit id="spc.study.date-required" datatype="html">
+        <source>La date de l'étude est obligatoire.</source>
+        <target state="translated">研究日期为必填项。</target>
+      </trans-unit>
+      <trans-unit id="spc.study.lsl-required" datatype="html">
+        <source>La limite inférieure est obligatoire.</source>
+        <target state="translated">下限为必填项。</target>
+      </trans-unit>
+      <trans-unit id="spc.study.usl-required" datatype="html">
+        <source>La limite supérieure est obligatoire.</source>
+        <target state="translated">上限为必填项。</target>
+      </trans-unit>
+      <trans-unit id="spc.study.measurements" datatype="html">
+        <source>Mesures par sous-groupe</source>
+        <target state="translated">按子组的测量值</target>
+      </trans-unit>
+      <trans-unit id="spc.study.sample" datatype="html">
+        <source>Échantillon</source>
+        <target state="translated">样本</target>
+      </trans-unit>
+      <trans-unit id="spc.study.cell-aria" datatype="html">
+        <source>Échantillon <x id="sample"/>, sous-groupe <x id="subgroup"/></source>
+        <target state="translated">样本 <x id="sample"/>，子组 <x id="subgroup"/></target>
+      </trans-unit>
+      <trans-unit id="spc.study.clear" datatype="html">
+        <source>Vider les mesures</source>
+        <target state="translated">清空测量值</target>
+      </trans-unit>
+      <trans-unit id="spc.study.paste-tip" datatype="html">
+        <source>Astuce : collez un bloc copié depuis Excel dans une cellule pour remplir la grille d'un coup.</source>
+        <target state="translated">提示：将从 Excel 复制的数据块粘贴到单元格中，即可一次填满表格。</target>
+      </trans-unit>
+      <trans-unit id="spc.study.results" datatype="html">
+        <source>Résultats</source>
+        <target state="translated">结果</target>
+      </trans-unit>
+      <trans-unit id="spc.study.threshold" datatype="html">
+        <source>seuil</source>
+        <target state="translated">阈值</target>
+      </trans-unit>
+      <trans-unit id="spc.study.grand-mean" datatype="html">
+        <source>Moyenne X̿</source>
+        <target state="translated">均值 X̿</target>
+      </trans-unit>
+      <trans-unit id="spc.study.sigma" datatype="html">
+        <source>Sigma (R̄ / d2)</source>
+        <target state="translated">西格玛 (R̄ / d2)</target>
+      </trans-unit>
+      <trans-unit id="spc.study.controlled" datatype="html">
+        <source>Procédé maîtrisé :</source>
+        <target state="translated">过程受控：</target>
+      </trans-unit>
+      <trans-unit id="spc.study.not-controlled" datatype="html">
+        <source>Procédé non maîtrisé :</source>
+        <target state="translated">过程不受控：</target>
+      </trans-unit>
+      <trans-unit id="spc.study.yes" datatype="html">
+        <source>OUI</source>
+        <target state="translated">是</target>
+      </trans-unit>
+      <trans-unit id="spc.study.no" datatype="html">
+        <source>NON</source>
+        <target state="translated">否</target>
+      </trans-unit>
+      <trans-unit id="spc.study.need-subgroup" datatype="html">
+        <source>Saisissez au moins un sous-groupe complet.</source>
+        <target state="translated">请至少输入一个完整的子组。</target>
+      </trans-unit>
+      <trans-unit id="spc.study.hide-formulas" datatype="html">
+        <source>Masquer les formules</source>
+        <target state="translated">隐藏公式</target>
+      </trans-unit>
+      <trans-unit id="spc.study.show-formulas" datatype="html">
+        <source>Voir les formules</source>
+        <target state="translated">显示公式</target>
+      </trans-unit>
+      <trans-unit id="spc.study.xbar-chart" datatype="html">
+        <source>Carte X̄</source>
+        <target state="translated">X̄ 控制图</target>
+      </trans-unit>
+      <trans-unit id="spc.study.range-chart" datatype="html">
+        <source>Carte R</source>
+        <target state="translated">R 控制图</target>
+      </trans-unit>
+      <trans-unit id="spc.study.xbar-aria" datatype="html">
+        <source>Carte X̄ : moyenne de chaque sous-groupe et limites de contrôle</source>
+        <target state="translated">X̄ 控制图：各子组均值与控制限</target>
+      </trans-unit>
+      <trans-unit id="spc.study.range-aria" datatype="html">
+        <source>Carte R : étendue de chaque sous-groupe et limites de contrôle</source>
+        <target state="translated">R 控制图：各子组极差与控制限</target>
+      </trans-unit>
+      <trans-unit id="spc.study.distribution" datatype="html">
+        <source>Distribution et tolérance</source>
+        <target state="translated">分布与公差</target>
+      </trans-unit>
+      <trans-unit id="spc.study.error.part" datatype="html">
+        <source>La référence de la pièce est obligatoire (120 caractères au plus).</source>
+        <target state="translated">零件编号为必填项（最多 120 个字符）。</target>
+      </trans-unit>
+      <trans-unit id="spc.study.error.date" datatype="html">
+        <source>La date de l'étude est obligatoire.</source>
+        <target state="translated">研究日期为必填项。</target>
+      </trans-unit>
+      <trans-unit id="spc.study.error.limits" datatype="html">
+        <source>La limite supérieure (USL) doit dépasser la limite inférieure (LSL).</source>
+        <target state="translated">上限 (USL) 必须大于下限 (LSL)。</target>
+      </trans-unit>
+      <trans-unit id="spc.study.error.leader" datatype="html">
+        <source>Le meneur choisi n'a pas pu être retrouvé dans l'annuaire.</source>
+        <target state="translated">在目录中找不到所选的研究负责人。</target>
+      </trans-unit>
+      <trans-unit id="spc.study.error.measurements" datatype="html">
+        <source>Saisissez au moins un sous-groupe complet, avec des mesures qui ne soient pas toutes identiques.</source>
+        <target state="translated">请至少输入一个完整的子组，且测量值不能全部相同。</target>
+      </trans-unit>
+      <trans-unit id="spc.study.error.generic" datatype="html">
+        <source>Un champ de l'étude a été refusé : vérifiez la saisie.</source>
+        <target state="translated">研究中的某个字段被拒绝：请检查输入内容。</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.group-means" datatype="html">
+        <source>Moyennes et dispersion</source>
+        <target state="translated">均值与离散</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.sum-means" datatype="html">
+        <source>Somme des X̄</source>
+        <target state="translated">X̄ 之和</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.group-capability" datatype="html">
+        <source>Capabilité</source>
+        <target state="translated">能力</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.usl" datatype="html">
+        <source>Limite supérieure</source>
+        <target state="translated">上限</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.lsl" datatype="html">
+        <source>Limite inférieure</source>
+        <target state="translated">下限</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.group-xbar" datatype="html">
+        <source>Carte X̄</source>
+        <target state="translated">X̄ 控制图</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.control-limit" datatype="html">
+        <source>Limite de contrôle</source>
+        <target state="translated">控制限</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.group-range" datatype="html">
+        <source>Carte R</source>
+        <target state="translated">R 控制图</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.group-constants" datatype="html">
+        <source>Constantes</source>
+        <target state="translated">常数</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.table" datatype="html">
+        <source>Table SPC</source>
+        <target state="translated">SPC 系数表</target>
+      </trans-unit>
+      <trans-unit id="spc.chart.no-data" datatype="html">
+        <source>Aucune donnée à tracer.</source>
+        <target state="translated">没有可绘制的数据。</target>
+      </trans-unit>
+      <trans-unit id="spc.chart.out-of-limits" datatype="html">
+        <source>Sous-groupes hors limites de contrôle : <x id="count"/></source>
+        <target state="translated">超出控制限的子组：<x id="count"/></target>
+      </trans-unit>
+      <trans-unit id="spc.distribution.aria" datatype="html">
+        <source>Histogramme des mesures et limites de tolérance</source>
+        <target state="translated">测量值直方图与公差限</target>
+      </trans-unit>
+      <trans-unit id="spc.distribution.bar" datatype="html">
+        <source>Mesures dans cette classe : <x id="count"/></source>
+        <target state="translated">该组内的测量值：<x id="count"/></target>
+      </trans-unit>
+      <trans-unit id="spc.distribution.mean" datatype="html">
+        <source>moyenne</source>
+        <target state="translated">均值</target>
+      </trans-unit>
+      <trans-unit id="spc.distribution.empty" datatype="html">
+        <source>Saisissez au moins un sous-groupe complet et des limites valides.</source>
+        <target state="translated">请至少输入一个完整的子组和有效的规格限。</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.dispersion" datatype="html">
+        <source>Dispersion :</source>
+        <target state="translated">离散：</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.of-tolerance" datatype="html">
+        <source>de la tolérance</source>
+        <target state="translated">（占公差）</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.tolerance" datatype="html">
+        <source>tolérance</source>
+        <target state="translated">公差</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.centering" datatype="html">
+        <source>Centrage :</source>
+        <target state="translated">对中：</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.centered" datatype="html">
+        <source>centré</source>
+        <target state="translated">居中</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.off-center" datatype="html">
+        <source>décalé de</source>
+        <target state="translated">偏移</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.centered-detail" datatype="html">
+        <source>La moyenne est au milieu de la tolérance.</source>
+        <target state="translated">均值位于公差中间。</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.mean" datatype="html">
+        <source>Moyenne</source>
+        <target state="translated">均值</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.above" datatype="html">
+        <source>au-dessus du milieu, vers la USL</source>
+        <target state="translated">高于中间值，偏向 USL</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.below" datatype="html">
+        <source>en dessous du milieu, vers la LSL</source>
+        <target state="translated">低于中间值，偏向 LSL</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.reading" datatype="html">
+        <source>Lecture :</source>
+        <target state="translated">解读：</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.capable" datatype="html">
+        <source>Le procédé est capable : la dispersion tient largement dans la tolérance et la moyenne est bien placée.</source>
+        <target state="translated">过程具备能力：离散充分落在公差内，均值位置良好。</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.recenter" datatype="html">
+        <source>La dispersion est suffisante, mais la moyenne est trop décalée : recentrer le procédé suffit à atteindre Cpk <x id="threshold"/>.</source>
+        <target state="translated">离散足够小，但均值偏移过大：将过程重新对中即可达到 Cpk <x id="threshold"/>。</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.reduce" datatype="html">
+        <source>La dispersion est trop grande pour la tolérance : il faut réduire la variabilité, puis vérifier le centrage.</source>
+        <target state="translated">离散相对于公差过大：需先降低变异，再检查对中。</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.title" datatype="html">
+        <source>Paramètres SPC</source>
+        <target state="translated">SPC 设置</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.subtitle" datatype="html">
+        <source>Les seuils de Cpk qui classent les études de capabilité.</source>
+        <target state="translated">用于判定能力研究的 Cpk 阈值。</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.load-failed" datatype="html">
+        <source>Les paramètres SPC n'ont pas pu être chargés.</source>
+        <target state="translated">无法加载 SPC 设置。</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.save-failed" datatype="html">
+        <source>Les paramètres SPC n'ont pas pu être enregistrés.</source>
+        <target state="translated">无法保存 SPC 设置。</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.saved" datatype="html">
+        <source>Paramètres SPC enregistrés. Ils s'appliquent aux prochaines études.</source>
+        <target state="translated">SPC 设置已保存，将适用于之后的研究。</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.scope" datatype="html">
+        <source>Les seuils s'appliquent aux études créées après l'enregistrement. Une étude garde ceux qu'elle avait à sa création : son verdict ne change pas après coup.</source>
+        <target state="translated">阈值适用于保存后创建的研究。每项研究保留其创建时的阈值：其结论不会事后改变。</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.thresholds" datatype="html">
+        <source>Seuils de capabilité (Cpk)</source>
+        <target state="translated">能力阈值 (Cpk)</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.thresholds-help" datatype="html">
+        <source>Au-dessus du seuil de maîtrise, le procédé est maîtrisé (vert). Entre les deux, il est à surveiller (jaune). En deçà du seuil de surveillance, il n'est pas maîtrisé (rouge).</source>
+        <target state="translated">高于受控阈值时过程受控（绿色）；介于两者之间需关注（黄色）；低于关注阈值时不受控（红色）。</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.defaults" datatype="html">
+        <source>Ce sont aujourd'hui les seuils de la plateforme.</source>
+        <target state="translated">当前使用的是平台默认阈值。</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.capable" datatype="html">
+        <source>Seuil de maîtrise</source>
+        <target state="translated">受控阈值</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.watch" datatype="html">
+        <source>Seuil de surveillance</source>
+        <target state="translated">关注阈值</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.zone-watch" datatype="html">
+        <source>À surveiller</source>
+        <target state="translated">需关注</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.summary" datatype="html">
+        <source>Non maîtrisé &lt; <x id="watch"/> ≤ À surveiller &lt; <x id="capable"/> ≤ Maîtrisé</source>
+        <target state="translated">不受控 &lt; <x id="watch"/> ≤ 需关注 &lt; <x id="capable"/> ≤ 受控</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.pending" datatype="html">
+        <source>Paramètres modifiés</source>
+        <target state="translated">设置已修改</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.problem.range" datatype="html">
+        <source>Chaque seuil est un nombre de 0,01 à 10, avec deux décimales au plus.</source>
+        <target state="translated">每个阈值为 0.01 至 10 之间的数字，最多两位小数。</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.problem.order" datatype="html">
+        <source>Le seuil de surveillance doit rester sous le seuil de maîtrise.</source>
+        <target state="translated">关注阈值必须低于受控阈值。</target>
+      </trans-unit>
       <trans-unit id="standards-extras.actions" datatype="html">
         <source>Actions</source>
         <target state="translated">操作</target>
