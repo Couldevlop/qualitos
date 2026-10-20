@@ -1,0 +1,63 @@
+:host {
+  display: block;
+}
+
+.distribution {
+  display: block;
+  width: 100%;
+  height: auto;
+  font-family: var(--qos-font-mono);
+  font-size: 11px;
+}
+
+.zone {
+  fill: var(--qos-danger-bg-soft);
+}
+
+.barre {
+  fill: var(--qos-accent-bg);
+  opacity: 0.55;
+
+  &--hors {
+    fill: var(--qos-danger-fg);
+  }
+}
+
+.courbe {
+  fill: none;
+  stroke: var(--qos-fg-primary);
+  stroke-width: 1.4;
+}
+
+.base {
+  stroke: var(--qos-fg-tertiary);
+}
+
+.tolerance {
+  line {
+    stroke: var(--qos-danger-fg);
+    stroke-width: 1.5;
+  }
+
+  text {
+    fill: var(--qos-danger-fg);
+  }
+}
+
+.moyenne {
+  line {
+    stroke: var(--qos-success-fg);
+    stroke-width: 1.5;
+    stroke-dasharray: 5 3;
+  }
+
+  text {
+    fill: var(--qos-success-fg);
+  }
+}
+
+.vide {
+  margin: 0;
+  font-size: var(--qos-fs-sm);
+  color: var(--qos-fg-tertiary);
+}

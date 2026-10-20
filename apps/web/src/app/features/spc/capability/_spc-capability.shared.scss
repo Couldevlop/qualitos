@@ -1,0 +1,48 @@
+// Les pastilles SPC partagées par le registre et la fiche d'étude.
+
+@mixin pastilles {
+  // Le Cpk : vert maîtrisé, jaune à surveiller, rouge non maîtrisé.
+  .pastille {
+    display: inline-block;
+    padding: 2px var(--qos-space-2);
+    border-radius: var(--qos-radius-pill);
+    font-size: var(--qos-fs-xs);
+    font-weight: var(--qos-fw-semibold);
+    white-space: nowrap;
+
+    &--ok {
+      background: var(--qos-success-bg-soft);
+      color: var(--qos-success-fg);
+    }
+
+    &--warn {
+      background: var(--qos-warn-bg-soft);
+      color: var(--qos-warn-fg);
+    }
+
+    &--bad {
+      background: var(--qos-danger-bg-soft);
+      color: var(--qos-danger-fg);
+    }
+  }
+
+  // Le verdict : maîtrisé, ou non.
+  .statut {
+    display: inline-block;
+    padding: 2px var(--qos-space-3);
+    border-radius: var(--qos-radius-pill);
+    font-size: var(--qos-fs-xs);
+    font-weight: var(--qos-fw-medium);
+    white-space: nowrap;
+
+    &--ok {
+      background: var(--qos-success-bg-soft);
+      color: var(--qos-success-fg);
+    }
+
+    &--bad {
+      background: var(--qos-danger-bg-soft);
+      color: var(--qos-danger-fg);
+    }
+  }
+}

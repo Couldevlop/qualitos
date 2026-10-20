@@ -1,0 +1,28 @@
+<svg *ngIf="geometry as g; else vide" class="distribution"
+     [attr.viewBox]="'0 0 ' + g.width + ' ' + g.height" role="img" [attr.aria-label]="ariaLabel">
+  <rect class="zone" [attr.x]="g.lowZone.x" [attr.y]="g.top" [attr.width]="g.lowZone.width"
+        [attr.height]="g.bottom - g.top" data-test="zone-basse"></rect>
+  <rect class="zone" [attr.x]="g.highZone.x" [attr.y]="g.top" [attr.width]="g.highZone.width"
+        [attr.height]="g.bottom - g.top" data-test="zone-haute"></rect>
+  <rect *ngFor="let b of g.bars" class="barre" [class.barre--hors]="b.out"
+        [attr.x]="b.x" [attr.y]="b.y" [attr.width]="b.width" [attr.height]="b.height" data-test="barre">
+    <title>{{ barTitle(b.count) }}</title>
+  </rect>
+  <polyline class="courbe" [attr.points]="g.curve"></polyline>
+  <line class="base" [attr.x1]="g.left" [attr.x2]="g.right" [attr.y1]="g.bottom" [attr.y2]="g.bottom"></line>
+  <g class="tolerance">
+    <line [attr.x1]="g.lslX" [attr.x2]="g.lslX" [attr.y1]="g.top" [attr.y2]="g.bottom"></line>
+    <text [attr.x]="g.lslX" [attr.y]="g.top - 8" text-anchor="middle">LSL {{ lsl }}</text>
+    <line [attr.x1]="g.uslX" [attr.x2]="g.uslX" [attr.y1]="g.top" [attr.y2]="g.bottom"></line>
+    <text [attr.x]="g.uslX" [attr.y]="g.top - 8" text-anchor="middle">USL {{ usl }}</text>
+  </g>
+  <g class="moyenne">
+    <line [attr.x1]="g.meanX" [attr.x2]="g.meanX" [attr.y1]="g.top" [attr.y2]="g.bottom"></line>
+    <text [attr.x]="g.meanX" [attr.y]="g.height - 8" text-anchor="middle">
+      <tspan i18n="@@spc.distribution.mean">moyenne</tspan> {{ mean | number: '1.1-1' }}
+    </text>
+  </g>
+</svg>
+<ng-template #vide>
+  <p class="vide" i18n="@@spc.distribution.empty">Saisissez au moins un sous-groupe complet et des limites valides.</p>
+</ng-template>

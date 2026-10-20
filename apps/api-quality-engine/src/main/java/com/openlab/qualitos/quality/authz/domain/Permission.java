@@ -73,7 +73,11 @@ public enum Permission {
     /** Demander un changement, et conduire SES demandes : brouillon, analyse, soumission, réouverture. */
     CHANGE_REQUEST("change.request", "change", plus(pilotage(), USER)),
     /** Gérer les changements : conduire aussi les demandes des autres (modifier, analyser, soumettre, rouvrir, supprimer un brouillon). */
-    CHANGE_ANALYZE("change.analyze", "change", pilotage());
+    CHANGE_ANALYZE("change.analyze", "change", pilotage()),
+
+    // ---------- SPC (ADR 0096) ----------
+    /** Créer, corriger et supprimer une étude de capabilité, cocher son plan d'actions. */
+    SPC_MANAGE("spc.manage", "spc", pilotage());
 
     private final String code;
     private final String module;

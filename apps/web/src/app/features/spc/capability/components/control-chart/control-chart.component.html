@@ -1,0 +1,25 @@
+<ng-container *ngIf="geometry as g; else vide">
+  <svg class="carte" [attr.viewBox]="'0 0 ' + g.width + ' ' + g.height" role="img" [attr.aria-label]="label">
+    <g *ngFor="let t of g.ticks">
+      <line class="grille" [attr.x1]="g.left" [attr.x2]="g.right" [attr.y1]="t.y" [attr.y2]="t.y"></line>
+      <text class="axe" [attr.x]="g.left - 6" [attr.y]="t.y + 3" text-anchor="end">{{ fixed(t.value) }}</text>
+    </g>
+    <g *ngFor="let l of g.lines" [class.limite]="l.label !== 'CL'" [class.centre]="l.label === 'CL'"
+       [attr.data-test]="'ligne-' + l.label">
+      <line [attr.x1]="g.left" [attr.x2]="g.right" [attr.y1]="l.y" [attr.y2]="l.y"></line>
+      <text [attr.x]="g.right + 4" [attr.y]="l.y + 3">{{ l.label }} {{ fixed(l.value) }}</text>
+    </g>
+    <text class="axe" *ngFor="let x of g.xLabels" [attr.x]="x.x" [attr.y]="g.height - 8" text-anchor="middle">{{ x.label }}</text>
+    <polyline class="trace" [attr.points]="g.polyline"></polyline>
+    <circle *ngFor="let p of g.points" class="point" [class.point--hors]="p.out"
+            [attr.cx]="p.x" [attr.cy]="p.y" [attr.r]="p.out ? 4.5 : 3" [attr.data-test]="p.out ? 'point-hors' : 'point'">
+      <title>SG {{ p.index + 1 }} : {{ fixed(p.value) }}</title>
+    </circle>
+  </svg>
+  <p class="resume" *ngIf="outCount > 0" data-test="hors-limites">
+    {{ outLabel }}
+  </p>
+</ng-container>
+<ng-template #vide>
+  <p class="vide" i18n="@@spc.chart.no-data">Aucune donnée à tracer.</p>
+</ng-template>

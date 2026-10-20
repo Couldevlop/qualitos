@@ -1,0 +1,60 @@
+<div class="qos-page">
+  <qos-page-header
+    title="Paramètres SPC" i18n-title="@@spc.settings.title"
+    subtitle="Les seuils de Cpk qui classent les études de capabilité."
+    i18n-subtitle="@@spc.settings.subtitle">
+    <ng-container qosActions>
+      <a mat-stroked-button routerLink="/spc/cartes">
+        <mat-icon>stacked_line_chart</mat-icon> <span i18n="@@nav.spc-control-charts">Cartes de contrôle</span>
+      </a>
+    </ng-container>
+  </qos-page-header>
+
+  <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+
+  <p class="echec" *ngIf="failed" role="alert">
+    <span i18n="@@spc.settings.load-failed">Les paramètres SPC n'ont pas pu être chargés.</span>
+    <button mat-button type="button" (click)="charger()" i18n="@@common.retry">Réessayer</button>
+  </p>
+
+  <ng-container *ngIf="!failed && !loading">
+    <p class="portee" i18n="@@spc.settings.scope">Les seuils s'appliquent aux études créées après l'enregistrement. Une étude garde ceux qu'elle avait à sa création : son verdict ne change pas après coup.</p>
+
+    <section class="bloc" aria-labelledby="spc-seuils">
+      <h2 class="bloc__titre" id="spc-seuils" i18n="@@spc.settings.thresholds">Seuils de capabilité (Cpk)</h2>
+      <p class="bloc__aide">
+        <ng-container i18n="@@spc.settings.thresholds-help">Au-dessus du seuil de maîtrise, le procédé est maîtrisé (vert). Entre les deux, il est à surveiller (jaune). En deçà du seuil de surveillance, il n'est pas maîtrisé (rouge).</ng-container>
+        <ng-container *ngIf="defaults"> <ng-container i18n="@@spc.settings.defaults">Ce sont aujourd'hui les seuils de la plateforme.</ng-container></ng-container>
+      </p>
+      <div class="champs">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label i18n="@@spc.settings.capable">Seuil de maîtrise</mat-label>
+          <input matInput type="number" min="0.01" max="10" step="0.01" [(ngModel)]="capableThreshold" data-test="seuil-maitrise">
+        </mat-form-field>
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label i18n="@@spc.settings.watch">Seuil de surveillance</mat-label>
+          <input matInput type="number" min="0.01" max="10" step="0.01" [(ngModel)]="watchThreshold" data-test="seuil-surveillance">
+        </mat-form-field>
+      </div>
+      <div class="zones" aria-hidden="true">
+        <span class="zone zone--bad" i18n="@@spc.status.not-capable">Non maîtrisé</span>
+        <span class="zone zone--warn" i18n="@@spc.settings.zone-watch">À surveiller</span>
+        <span class="zone zone--ok" i18n="@@spc.status.capable">Maîtrisé</span>
+      </div>
+      <p class="bloc__resume" data-test="resume">{{ summary }}</p>
+    </section>
+
+    <div class="barre" *ngIf="dirty" role="status">
+      <ul class="barre__problemes" *ngIf="problems.length" data-test="problemes">
+        <li *ngFor="let p of problems">{{ p }}</li>
+      </ul>
+      <span *ngIf="!problems.length" i18n="@@spc.settings.pending">Paramètres modifiés</span>
+      <span class="barre__actions">
+        <button mat-stroked-button type="button" (click)="discard()" [disabled]="saving"
+                data-test="annuler" i18n="@@authz.matrix.discard">Annuler les changements</button>
+        <button mat-flat-button color="primary" type="button" (click)="save()" [disabled]="saving || problems.length > 0"
+                data-test="enregistrer" i18n="@@common.save">Enregistrer</button>
+      </span>
+    </div>
+  </ng-container>
+</div>

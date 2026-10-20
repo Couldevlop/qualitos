@@ -1,0 +1,208 @@
+// Le registre : la maquette (docs/spc/Études SPC – Registre et capabilité.html),
+// traduite dans les jetons du design system pour suivre les thèmes clair et sombre.
+@use '../../spc-capability.shared' as spc;
+
+:host {
+  display: block;
+}
+
+@include spc.pastilles;
+
+// ---------- indicateurs ----------
+
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr));
+  gap: var(--qos-space-3);
+  margin-bottom: var(--qos-space-5);
+}
+
+.kpi {
+  padding: var(--qos-space-4);
+  border-radius: var(--qos-radius-lg);
+  background: var(--qos-bg-elevated);
+  border: 1px solid var(--qos-border-subtle);
+  box-shadow: var(--qos-shadow-xs);
+
+  b {
+    display: block;
+    font-family: var(--qos-font-mono);
+    font-size: var(--qos-fs-2xl);
+    font-weight: var(--qos-fw-semibold);
+    line-height: var(--qos-lh-snug);
+    color: var(--qos-fg-primary);
+  }
+
+  span {
+    font-size: var(--qos-fs-xs);
+    color: var(--qos-fg-secondary);
+  }
+
+  &--alerte b {
+    color: var(--qos-danger-fg);
+  }
+
+  &--ok b {
+    color: var(--qos-success-fg);
+  }
+}
+
+// ---------- filtres ----------
+
+.filtres {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--qos-space-3);
+  margin-bottom: var(--qos-space-4);
+
+  &__recherche {
+    flex: 1 1 16rem;
+    max-width: 26rem;
+  }
+
+  &__liste {
+    width: 12rem;
+  }
+}
+
+.echec {
+  display: flex;
+  align-items: center;
+  gap: var(--qos-space-2);
+  color: var(--qos-danger-fg);
+}
+
+// ---------- tableau ----------
+
+.tableau {
+  overflow-x: auto;
+  border-radius: var(--qos-radius-lg);
+  background: var(--qos-bg-elevated);
+  box-shadow: var(--qos-shadow-sm);
+  border: 1px solid var(--qos-border-subtle);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--qos-fs-sm);
+}
+
+thead th {
+  position: sticky;
+  top: 0;
+  text-align: left;
+  padding: 0;
+  background: var(--qos-bg-subtle);
+  white-space: nowrap;
+
+  &.num {
+    text-align: right;
+  }
+}
+
+.tri {
+  appearance: none;
+  width: 100%;
+  border: 0;
+  background: none;
+  padding: var(--qos-space-3) var(--qos-space-4);
+  font: inherit;
+  font-size: var(--qos-fs-xs);
+  font-weight: var(--qos-fw-semibold);
+  color: var(--qos-fg-secondary);
+  text-align: inherit;
+  cursor: pointer;
+
+  &:hover {
+    color: var(--qos-fg-primary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--qos-border-focus);
+    outline-offset: -2px;
+  }
+}
+
+th[aria-sort='ascending'] .tri::after {
+  content: ' ▲';
+}
+
+th[aria-sort='descending'] .tri::after {
+  content: ' ▼';
+}
+
+tbody td {
+  padding: var(--qos-space-3) var(--qos-space-4);
+  border-top: 1px solid var(--qos-border-subtle);
+  vertical-align: middle;
+}
+
+.ligne {
+  cursor: pointer;
+
+  &:hover {
+    background: var(--qos-bg-hover);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--qos-border-focus);
+    outline-offset: -2px;
+  }
+
+  // Le liseré de la maquette : non maîtrisée, et personne n'a encore décidé quoi faire.
+  &--alerte td:first-child {
+    box-shadow: inset 3px 0 var(--qos-danger-fg);
+  }
+}
+
+.piece {
+  font-weight: var(--qos-fw-semibold);
+  color: var(--qos-fg-primary);
+  white-space: nowrap;
+}
+
+.sous {
+  font-size: var(--qos-fs-xs);
+  color: var(--qos-fg-tertiary);
+}
+
+.date {
+  white-space: nowrap;
+}
+
+.num {
+  text-align: right;
+}
+
+.mono {
+  font-family: var(--qos-font-mono);
+}
+
+.plan {
+  width: 6.5rem;
+}
+
+.actions {
+  white-space: nowrap;
+  text-align: right;
+
+  button + button {
+    margin-left: var(--qos-space-2);
+  }
+}
+
+.aucun {
+  text-align: center;
+  padding: var(--qos-space-8);
+  color: var(--qos-fg-secondary);
+}
+
+.legende {
+  margin: 0;
+  padding: var(--qos-space-3) var(--qos-space-4);
+  border-top: 1px solid var(--qos-border-subtle);
+  font-size: var(--qos-fs-xs);
+  color: var(--qos-fg-tertiary);
+}

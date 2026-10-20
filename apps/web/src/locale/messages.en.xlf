@@ -24384,6 +24384,570 @@ declared income
         <source><x id="standard"/> ajoutée au SMI — feuille de route de certification créée.</source>
         <target state="translated"><x id="standard"/> added to the IMS — certification roadmap created.</target>
       </trans-unit>
+      <trans-unit id="nav.spc-section" datatype="html">
+        <source>SPC</source>
+        <target state="translated">SPC</target>
+      </trans-unit>
+      <trans-unit id="nav.spc-control-charts" datatype="html">
+        <source>Cartes de contrôle</source>
+        <target state="translated">Control charts</target>
+      </trans-unit>
+      <trans-unit id="nav.spc-gage-rr" datatype="html">
+        <source>Gage R&amp;R</source>
+        <target state="translated">Gage R&amp;R</target>
+      </trans-unit>
+      <trans-unit id="nav.admin-spc" datatype="html">
+        <source>Paramètres SPC</source>
+        <target state="translated">SPC settings</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.title" datatype="html">
+        <source>Gage R&amp;R</source>
+        <target state="translated">Gage R&amp;R</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.spc-manage" datatype="html">
+        <source>Saisir et supprimer les études de capabilité SPC</source>
+        <target state="translated">Record and delete SPC capability studies</target>
+      </trans-unit>
+      <trans-unit id="authz.module.spc" datatype="html">
+        <source>SPC</source>
+        <target state="translated">SPC</target>
+      </trans-unit>
+      <trans-unit id="spc.status.capable" datatype="html">
+        <source>Maîtrisé</source>
+        <target state="translated">Under control</target>
+      </trans-unit>
+      <trans-unit id="spc.status.not-capable" datatype="html">
+        <source>Non maîtrisé</source>
+        <target state="translated">Not under control</target>
+      </trans-unit>
+      <trans-unit id="spc.col.part" datatype="html">
+        <source>Référence pièce</source>
+        <target state="translated">Part reference</target>
+      </trans-unit>
+      <trans-unit id="spc.col.characteristic" datatype="html">
+        <source>Caractéristique</source>
+        <target state="translated">Characteristic</target>
+      </trans-unit>
+      <trans-unit id="spc.col.specification" datatype="html">
+        <source>Spécification</source>
+        <target state="translated">Specification</target>
+      </trans-unit>
+      <trans-unit id="spc.col.leader" datatype="html">
+        <source>Meneur</source>
+        <target state="translated">Study lead</target>
+      </trans-unit>
+      <trans-unit id="spc.col.date" datatype="html">
+        <source>Date</source>
+        <target state="translated">Date</target>
+      </trans-unit>
+      <trans-unit id="spc.col.machine" datatype="html">
+        <source>Machine</source>
+        <target state="translated">Machine</target>
+      </trans-unit>
+      <trans-unit id="spc.col.status" datatype="html">
+        <source>Statut</source>
+        <target state="translated">Status</target>
+      </trans-unit>
+      <trans-unit id="spc.col.plan" datatype="html">
+        <source>Plan d'actions</source>
+        <target state="translated">Action plan</target>
+      </trans-unit>
+      <trans-unit id="spc.col.plan-yn" datatype="html">
+        <source>Plan d'actions (O/N)</source>
+        <target state="translated">Action plan (Y/N)</target>
+      </trans-unit>
+      <trans-unit id="spc.col.actions" datatype="html">
+        <source>Actions</source>
+        <target state="translated">Actions</target>
+      </trans-unit>
+      <trans-unit id="spc.register.eyebrow" datatype="html">
+        <source>SPC · Cartes de contrôle</source>
+        <target state="translated">SPC · Control charts</target>
+      </trans-unit>
+      <trans-unit id="spc.register.title" datatype="html">
+        <source>Registre des études SPC</source>
+        <target state="translated">SPC study register</target>
+      </trans-unit>
+      <trans-unit id="spc.register.subtitle" datatype="html">
+        <source>Toutes les études de capabilité (Cp / Cpk) réalisées. Cliquez sur une ligne pour rouvrir l'étude.</source>
+        <target state="translated">Every capability study (Cp / Cpk) carried out. Click a row to reopen the study.</target>
+      </trans-unit>
+      <trans-unit id="spc.register.export" datatype="html">
+        <source>Exporter CSV</source>
+        <target state="translated">Export CSV</target>
+      </trans-unit>
+      <trans-unit id="spc.register.new" datatype="html">
+        <source>Créer une étude SPC</source>
+        <target state="translated">Create an SPC study</target>
+      </trans-unit>
+      <trans-unit id="spc.register.kpis" datatype="html">
+        <source>Indicateurs du registre</source>
+        <target state="translated">Register indicators</target>
+      </trans-unit>
+      <trans-unit id="spc.register.kpi-total" datatype="html">
+        <source>Études réalisées</source>
+        <target state="translated">Studies carried out</target>
+      </trans-unit>
+      <trans-unit id="spc.register.kpi-controlled" datatype="html">
+        <source>Procédés maîtrisés</source>
+        <target state="translated">Processes under control</target>
+      </trans-unit>
+      <trans-unit id="spc.register.kpi-plans" datatype="html">
+        <source>Plans d'actions en cours</source>
+        <target state="translated">Action plans in progress</target>
+      </trans-unit>
+      <trans-unit id="spc.register.kpi-watch" datatype="html">
+        <source>Procédés à surveiller</source>
+        <target state="translated">Processes to watch</target>
+      </trans-unit>
+      <trans-unit id="spc.register.kpi-without-plan" datatype="html">
+        <source>Non maîtrisées sans plan d'actions</source>
+        <target state="translated">Not under control, no action plan</target>
+      </trans-unit>
+      <trans-unit id="spc.register.search" datatype="html">
+        <source>Rechercher : pièce, meneur, machine…</source>
+        <target state="translated">Search: part, lead, machine…</target>
+      </trans-unit>
+      <trans-unit id="spc.register.filter-status" datatype="html">
+        <source>Filtrer par statut</source>
+        <target state="translated">Filter by status</target>
+      </trans-unit>
+      <trans-unit id="spc.register.all-statuses" datatype="html">
+        <source>Tous les statuts</source>
+        <target state="translated">All statuses</target>
+      </trans-unit>
+      <trans-unit id="spc.register.filter-plan" datatype="html">
+        <source>Filtrer par plan d'actions</source>
+        <target state="translated">Filter by action plan</target>
+      </trans-unit>
+      <trans-unit id="spc.register.all-plans" datatype="html">
+        <source>Plan d'actions : tous</source>
+        <target state="translated">Action plan: all</target>
+      </trans-unit>
+      <trans-unit id="spc.register.with-plan" datatype="html">
+        <source>Avec plan</source>
+        <target state="translated">With a plan</target>
+      </trans-unit>
+      <trans-unit id="spc.register.without-plan" datatype="html">
+        <source>Sans plan</source>
+        <target state="translated">Without a plan</target>
+      </trans-unit>
+      <trans-unit id="spc.register.load-failed" datatype="html">
+        <source>Le registre des études n'a pas pu être chargé.</source>
+        <target state="translated">The study register could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="spc.register.plan-failed" datatype="html">
+        <source>Le plan d'actions n'a pas pu être modifié.</source>
+        <target state="translated">The action plan could not be changed.</target>
+      </trans-unit>
+      <trans-unit id="spc.register.open" datatype="html">
+        <source>Ouvrir</source>
+        <target state="translated">Open</target>
+      </trans-unit>
+      <trans-unit id="spc.register.delete-title" datatype="html">
+        <source>Supprimer l'étude <x id="part"/> ?</source>
+        <target state="translated">Delete study <x id="part"/>?</target>
+      </trans-unit>
+      <trans-unit id="spc.register.delete-message" datatype="html">
+        <source>L'étude et ses mesures quittent le registre. La suppression est tracée dans le journal d'audit.</source>
+        <target state="translated">The study and its measurements leave the register. The deletion is recorded in the audit log.</target>
+      </trans-unit>
+      <trans-unit id="spc.register.delete-failed" datatype="html">
+        <source>L'étude n'a pas pu être supprimée.</source>
+        <target state="translated">The study could not be deleted.</target>
+      </trans-unit>
+      <trans-unit id="spc.register.empty" datatype="html">
+        <source>Aucune étude pour le moment. Cliquez sur « Créer une étude SPC » pour commencer.</source>
+        <target state="translated">No studies yet. Click “Create an SPC study” to get started.</target>
+      </trans-unit>
+      <trans-unit id="spc.register.no-match" datatype="html">
+        <source>Aucune étude ne correspond aux filtres.</source>
+        <target state="translated">No study matches the filters.</target>
+      </trans-unit>
+      <trans-unit id="spc.register.reset-filters" datatype="html">
+        <source>Effacer les filtres</source>
+        <target state="translated">Clear filters</target>
+      </trans-unit>
+      <trans-unit id="spc.register.legend" datatype="html">
+        <source>Cpk en vert : maîtrisé · en jaune : à surveiller · en rouge : non maîtrisé. Le liseré rouge signale une étude non maîtrisée sans plan d'actions.</source>
+        <target state="translated">Cpk in green: under control · yellow: to watch · red: not under control. A red edge flags a study not under control with no action plan.</target>
+      </trans-unit>
+      <trans-unit id="spc.study.title-new" datatype="html">
+        <source>Nouvelle étude de capabilité</source>
+        <target state="translated">New capability study</target>
+      </trans-unit>
+      <trans-unit id="spc.study.title-edit" datatype="html">
+        <source>Étude de capabilité <x id="part"/></source>
+        <target state="translated">Capability study <x id="part"/></target>
+      </trans-unit>
+      <trans-unit id="spc.study.subtitle" datatype="html">
+        <source>Cartes de contrôle X̄ – R. Saisissez les mesures dans les cellules jaunes ; tout le reste se calcule.</source>
+        <target state="translated">X̄ – R control charts. Enter the measurements in the yellow cells; everything else is calculated.</target>
+      </trans-unit>
+      <trans-unit id="spc.study.back" datatype="html">
+        <source>Registre</source>
+        <target state="translated">Register</target>
+      </trans-unit>
+      <trans-unit id="spc.study.save" datatype="html">
+        <source>Enregistrer l'étude</source>
+        <target state="translated">Save the study</target>
+      </trans-unit>
+      <trans-unit id="spc.study.saved" datatype="html">
+        <source>Étude enregistrée.</source>
+        <target state="translated">Study saved.</target>
+      </trans-unit>
+      <trans-unit id="spc.study.save-failed" datatype="html">
+        <source>L'étude n'a pas pu être enregistrée.</source>
+        <target state="translated">The study could not be saved.</target>
+      </trans-unit>
+      <trans-unit id="spc.study.load-failed" datatype="html">
+        <source>L'étude n'a pas pu être chargée.</source>
+        <target state="translated">The study could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="spc.study.not-found" datatype="html">
+        <source>Étude introuvable.</source>
+        <target state="translated">Study not found.</target>
+      </trans-unit>
+      <trans-unit id="spc.study.read-only" datatype="html">
+        <source>Consultation seule : la saisie des études est réservée aux personnes qui en ont le droit.</source>
+        <target state="translated">Read only: recording studies is reserved for people who have the right to do so.</target>
+      </trans-unit>
+      <trans-unit id="spc.study.identification" datatype="html">
+        <source>Identification</source>
+        <target state="translated">Identification</target>
+      </trans-unit>
+      <trans-unit id="spc.study.characteristic" datatype="html">
+        <source>Paramètre</source>
+        <target state="translated">Parameter</target>
+      </trans-unit>
+      <trans-unit id="spc.study.specification" datatype="html">
+        <source>Taille / tolérance</source>
+        <target state="translated">Size / tolerance</target>
+      </trans-unit>
+      <trans-unit id="spc.study.machine" datatype="html">
+        <source>N° de machine</source>
+        <target state="translated">Machine no.</target>
+      </trans-unit>
+      <trans-unit id="spc.study.lsl" datatype="html">
+        <source>LSL (limite inférieure)</source>
+        <target state="translated">LSL (lower limit)</target>
+      </trans-unit>
+      <trans-unit id="spc.study.usl" datatype="html">
+        <source>USL (limite supérieure)</source>
+        <target state="translated">USL (upper limit)</target>
+      </trans-unit>
+      <trans-unit id="spc.study.subgroup-size" datatype="html">
+        <source>Taille du sous-groupe (n)</source>
+        <target state="translated">Subgroup size (n)</target>
+      </trans-unit>
+      <trans-unit id="spc.study.part-required" datatype="html">
+        <source>La référence de la pièce est obligatoire.</source>
+        <target state="translated">The part reference is required.</target>
+      </trans-unit>
+      <trans-unit id="spc.study.date-required" datatype="html">
+        <source>La date de l'étude est obligatoire.</source>
+        <target state="translated">The study date is required.</target>
+      </trans-unit>
+      <trans-unit id="spc.study.lsl-required" datatype="html">
+        <source>La limite inférieure est obligatoire.</source>
+        <target state="translated">The lower limit is required.</target>
+      </trans-unit>
+      <trans-unit id="spc.study.usl-required" datatype="html">
+        <source>La limite supérieure est obligatoire.</source>
+        <target state="translated">The upper limit is required.</target>
+      </trans-unit>
+      <trans-unit id="spc.study.measurements" datatype="html">
+        <source>Mesures par sous-groupe</source>
+        <target state="translated">Measurements by subgroup</target>
+      </trans-unit>
+      <trans-unit id="spc.study.sample" datatype="html">
+        <source>Échantillon</source>
+        <target state="translated">Sample</target>
+      </trans-unit>
+      <trans-unit id="spc.study.cell-aria" datatype="html">
+        <source>Échantillon <x id="sample"/>, sous-groupe <x id="subgroup"/></source>
+        <target state="translated">Sample <x id="sample"/>, subgroup <x id="subgroup"/></target>
+      </trans-unit>
+      <trans-unit id="spc.study.clear" datatype="html">
+        <source>Vider les mesures</source>
+        <target state="translated">Clear the measurements</target>
+      </trans-unit>
+      <trans-unit id="spc.study.paste-tip" datatype="html">
+        <source>Astuce : collez un bloc copié depuis Excel dans une cellule pour remplir la grille d'un coup.</source>
+        <target state="translated">Tip: paste a block copied from Excel into a cell to fill the grid in one go.</target>
+      </trans-unit>
+      <trans-unit id="spc.study.results" datatype="html">
+        <source>Résultats</source>
+        <target state="translated">Results</target>
+      </trans-unit>
+      <trans-unit id="spc.study.threshold" datatype="html">
+        <source>seuil</source>
+        <target state="translated">threshold</target>
+      </trans-unit>
+      <trans-unit id="spc.study.grand-mean" datatype="html">
+        <source>Moyenne X̿</source>
+        <target state="translated">Mean X̿</target>
+      </trans-unit>
+      <trans-unit id="spc.study.sigma" datatype="html">
+        <source>Sigma (R̄ / d2)</source>
+        <target state="translated">Sigma (R̄ / d2)</target>
+      </trans-unit>
+      <trans-unit id="spc.study.controlled" datatype="html">
+        <source>Procédé maîtrisé :</source>
+        <target state="translated">Process under control:</target>
+      </trans-unit>
+      <trans-unit id="spc.study.not-controlled" datatype="html">
+        <source>Procédé non maîtrisé :</source>
+        <target state="translated">Process not under control:</target>
+      </trans-unit>
+      <trans-unit id="spc.study.yes" datatype="html">
+        <source>OUI</source>
+        <target state="translated">YES</target>
+      </trans-unit>
+      <trans-unit id="spc.study.no" datatype="html">
+        <source>NON</source>
+        <target state="translated">NO</target>
+      </trans-unit>
+      <trans-unit id="spc.study.need-subgroup" datatype="html">
+        <source>Saisissez au moins un sous-groupe complet.</source>
+        <target state="translated">Enter at least one complete subgroup.</target>
+      </trans-unit>
+      <trans-unit id="spc.study.hide-formulas" datatype="html">
+        <source>Masquer les formules</source>
+        <target state="translated">Hide the formulas</target>
+      </trans-unit>
+      <trans-unit id="spc.study.show-formulas" datatype="html">
+        <source>Voir les formules</source>
+        <target state="translated">Show the formulas</target>
+      </trans-unit>
+      <trans-unit id="spc.study.xbar-chart" datatype="html">
+        <source>Carte X̄</source>
+        <target state="translated">X̄ chart</target>
+      </trans-unit>
+      <trans-unit id="spc.study.range-chart" datatype="html">
+        <source>Carte R</source>
+        <target state="translated">R chart</target>
+      </trans-unit>
+      <trans-unit id="spc.study.xbar-aria" datatype="html">
+        <source>Carte X̄ : moyenne de chaque sous-groupe et limites de contrôle</source>
+        <target state="translated">X̄ chart: mean of each subgroup and control limits</target>
+      </trans-unit>
+      <trans-unit id="spc.study.range-aria" datatype="html">
+        <source>Carte R : étendue de chaque sous-groupe et limites de contrôle</source>
+        <target state="translated">R chart: range of each subgroup and control limits</target>
+      </trans-unit>
+      <trans-unit id="spc.study.distribution" datatype="html">
+        <source>Distribution et tolérance</source>
+        <target state="translated">Distribution and tolerance</target>
+      </trans-unit>
+      <trans-unit id="spc.study.error.part" datatype="html">
+        <source>La référence de la pièce est obligatoire (120 caractères au plus).</source>
+        <target state="translated">The part reference is required (120 characters at most).</target>
+      </trans-unit>
+      <trans-unit id="spc.study.error.date" datatype="html">
+        <source>La date de l'étude est obligatoire.</source>
+        <target state="translated">The study date is required.</target>
+      </trans-unit>
+      <trans-unit id="spc.study.error.limits" datatype="html">
+        <source>La limite supérieure (USL) doit dépasser la limite inférieure (LSL).</source>
+        <target state="translated">The upper limit (USL) must be above the lower limit (LSL).</target>
+      </trans-unit>
+      <trans-unit id="spc.study.error.leader" datatype="html">
+        <source>Le meneur choisi n'a pas pu être retrouvé dans l'annuaire.</source>
+        <target state="translated">The chosen study lead could not be found in the directory.</target>
+      </trans-unit>
+      <trans-unit id="spc.study.error.measurements" datatype="html">
+        <source>Saisissez au moins un sous-groupe complet, avec des mesures qui ne soient pas toutes identiques.</source>
+        <target state="translated">Enter at least one complete subgroup, with measurements that are not all identical.</target>
+      </trans-unit>
+      <trans-unit id="spc.study.error.generic" datatype="html">
+        <source>Un champ de l'étude a été refusé : vérifiez la saisie.</source>
+        <target state="translated">A field of the study was rejected: check what you entered.</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.group-means" datatype="html">
+        <source>Moyennes et dispersion</source>
+        <target state="translated">Means and spread</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.sum-means" datatype="html">
+        <source>Somme des X̄</source>
+        <target state="translated">Sum of X̄</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.group-capability" datatype="html">
+        <source>Capabilité</source>
+        <target state="translated">Capability</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.usl" datatype="html">
+        <source>Limite supérieure</source>
+        <target state="translated">Upper limit</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.lsl" datatype="html">
+        <source>Limite inférieure</source>
+        <target state="translated">Lower limit</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.group-xbar" datatype="html">
+        <source>Carte X̄</source>
+        <target state="translated">X̄ chart</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.control-limit" datatype="html">
+        <source>Limite de contrôle</source>
+        <target state="translated">Control limit</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.group-range" datatype="html">
+        <source>Carte R</source>
+        <target state="translated">R chart</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.group-constants" datatype="html">
+        <source>Constantes</source>
+        <target state="translated">Constants</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.table" datatype="html">
+        <source>Table SPC</source>
+        <target state="translated">SPC table</target>
+      </trans-unit>
+      <trans-unit id="spc.chart.no-data" datatype="html">
+        <source>Aucune donnée à tracer.</source>
+        <target state="translated">No data to plot.</target>
+      </trans-unit>
+      <trans-unit id="spc.chart.out-of-limits" datatype="html">
+        <source>Sous-groupes hors limites de contrôle : <x id="count"/></source>
+        <target state="translated">Subgroups outside the control limits: <x id="count"/></target>
+      </trans-unit>
+      <trans-unit id="spc.distribution.aria" datatype="html">
+        <source>Histogramme des mesures et limites de tolérance</source>
+        <target state="translated">Histogram of the measurements and tolerance limits</target>
+      </trans-unit>
+      <trans-unit id="spc.distribution.bar" datatype="html">
+        <source>Mesures dans cette classe : <x id="count"/></source>
+        <target state="translated">Measurements in this bin: <x id="count"/></target>
+      </trans-unit>
+      <trans-unit id="spc.distribution.mean" datatype="html">
+        <source>moyenne</source>
+        <target state="translated">mean</target>
+      </trans-unit>
+      <trans-unit id="spc.distribution.empty" datatype="html">
+        <source>Saisissez au moins un sous-groupe complet et des limites valides.</source>
+        <target state="translated">Enter at least one complete subgroup and valid limits.</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.dispersion" datatype="html">
+        <source>Dispersion :</source>
+        <target state="translated">Spread:</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.of-tolerance" datatype="html">
+        <source>de la tolérance</source>
+        <target state="translated">of the tolerance</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.tolerance" datatype="html">
+        <source>tolérance</source>
+        <target state="translated">tolerance</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.centering" datatype="html">
+        <source>Centrage :</source>
+        <target state="translated">Centring:</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.centered" datatype="html">
+        <source>centré</source>
+        <target state="translated">centred</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.off-center" datatype="html">
+        <source>décalé de</source>
+        <target state="translated">off by</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.centered-detail" datatype="html">
+        <source>La moyenne est au milieu de la tolérance.</source>
+        <target state="translated">The mean is in the middle of the tolerance.</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.mean" datatype="html">
+        <source>Moyenne</source>
+        <target state="translated">Mean</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.above" datatype="html">
+        <source>au-dessus du milieu, vers la USL</source>
+        <target state="translated">above the middle, towards the USL</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.below" datatype="html">
+        <source>en dessous du milieu, vers la LSL</source>
+        <target state="translated">below the middle, towards the LSL</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.reading" datatype="html">
+        <source>Lecture :</source>
+        <target state="translated">Reading:</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.capable" datatype="html">
+        <source>Le procédé est capable : la dispersion tient largement dans la tolérance et la moyenne est bien placée.</source>
+        <target state="translated">The process is capable: the spread fits well within the tolerance and the mean is well placed.</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.recenter" datatype="html">
+        <source>La dispersion est suffisante, mais la moyenne est trop décalée : recentrer le procédé suffit à atteindre Cpk <x id="threshold"/>.</source>
+        <target state="translated">The spread is good enough, but the mean is too far off: re-centring the process is enough to reach Cpk <x id="threshold"/>.</target>
+      </trans-unit>
+      <trans-unit id="spc.reading.reduce" datatype="html">
+        <source>La dispersion est trop grande pour la tolérance : il faut réduire la variabilité, puis vérifier le centrage.</source>
+        <target state="translated">The spread is too wide for the tolerance: reduce the variability, then check the centring.</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.title" datatype="html">
+        <source>Paramètres SPC</source>
+        <target state="translated">SPC settings</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.subtitle" datatype="html">
+        <source>Les seuils de Cpk qui classent les études de capabilité.</source>
+        <target state="translated">The Cpk thresholds that rank capability studies.</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.load-failed" datatype="html">
+        <source>Les paramètres SPC n'ont pas pu être chargés.</source>
+        <target state="translated">The SPC settings could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.save-failed" datatype="html">
+        <source>Les paramètres SPC n'ont pas pu être enregistrés.</source>
+        <target state="translated">The SPC settings could not be saved.</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.saved" datatype="html">
+        <source>Paramètres SPC enregistrés. Ils s'appliquent aux prochaines études.</source>
+        <target state="translated">SPC settings saved. They apply to the next studies.</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.scope" datatype="html">
+        <source>Les seuils s'appliquent aux études créées après l'enregistrement. Une étude garde ceux qu'elle avait à sa création : son verdict ne change pas après coup.</source>
+        <target state="translated">The thresholds apply to studies created after saving. A study keeps the ones it had when it was created: its verdict does not change afterwards.</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.thresholds" datatype="html">
+        <source>Seuils de capabilité (Cpk)</source>
+        <target state="translated">Capability thresholds (Cpk)</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.thresholds-help" datatype="html">
+        <source>Au-dessus du seuil de maîtrise, le procédé est maîtrisé (vert). Entre les deux, il est à surveiller (jaune). En deçà du seuil de surveillance, il n'est pas maîtrisé (rouge).</source>
+        <target state="translated">Above the control threshold, the process is under control (green). In between, it is to be watched (yellow). Below the watch threshold, it is not under control (red).</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.defaults" datatype="html">
+        <source>Ce sont aujourd'hui les seuils de la plateforme.</source>
+        <target state="translated">These are currently the platform thresholds.</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.capable" datatype="html">
+        <source>Seuil de maîtrise</source>
+        <target state="translated">Control threshold</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.watch" datatype="html">
+        <source>Seuil de surveillance</source>
+        <target state="translated">Watch threshold</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.zone-watch" datatype="html">
+        <source>À surveiller</source>
+        <target state="translated">To watch</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.summary" datatype="html">
+        <source>Non maîtrisé &lt; <x id="watch"/> ≤ À surveiller &lt; <x id="capable"/> ≤ Maîtrisé</source>
+        <target state="translated">Not under control &lt; <x id="watch"/> ≤ To watch &lt; <x id="capable"/> ≤ Under control</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.pending" datatype="html">
+        <source>Paramètres modifiés</source>
+        <target state="translated">Settings changed</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.problem.range" datatype="html">
+        <source>Chaque seuil est un nombre de 0,01 à 10, avec deux décimales au plus.</source>
+        <target state="translated">Each threshold is a number from 0.01 to 10, with two decimals at most.</target>
+      </trans-unit>
+      <trans-unit id="spc.settings.problem.order" datatype="html">
+        <source>Le seuil de surveillance doit rester sous le seuil de maîtrise.</source>
+        <target state="translated">The watch threshold must stay below the control threshold.</target>
+      </trans-unit>
       <trans-unit id="standards-extras.actions" datatype="html">
         <source>Actions</source>
         <target state="translated">Actions</target>

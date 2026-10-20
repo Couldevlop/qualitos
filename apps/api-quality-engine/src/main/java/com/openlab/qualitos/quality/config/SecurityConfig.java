@@ -264,6 +264,13 @@ public class SecurityConfig {
                 // aucune suppression.
                 .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/api/v1/changes/*")
                     .authenticated()
+                // Études SPC (ADR 0096) : la suppression relève de l'action spc.manage,
+                // réglable par le client dans sa matrice des droits et vérifiée par
+                // @RequiresPermission sur le contrôleur. Sans cette ligne, la règle
+                // générique ci-dessous refusait le directeur qualité, à qui la
+                // plateforme accorde pourtant spc.manage par défaut.
+                .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/api/v1/spc/studies/*")
+                    .authenticated()
                 // Suppression générique de ressource qualité : Manager Qualité ou plus.
                 .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/api/v1/**")
                     .hasAnyRole("ADMIN", "ADMIN_TENANT", "SUPER_ADMIN", "QUALITY_MANAGER")

@@ -145,6 +145,17 @@ export class MainShellComponent implements OnInit, OnDestroy {
       ]
     },
     {
+      // La maîtrise statistique des procédés (ADR 0096), en deux sous-menus :
+      // les cartes de contrôle (registre des études Cp / Cpk) et Gage R&R.
+      // Module « dmaic », comme l'analyse SPC des Analyses IA : la capabilité
+      // relève du pilotage Six Sigma (§3.4).
+      label: $localize`:@@nav.spc-section:SPC`,
+      items: [
+        { label: $localize`:@@nav.spc-control-charts:Cartes de contrôle`, route: '/spc/cartes', icon: 'stacked_line_chart', module: 'dmaic' },
+        { label: $localize`:@@nav.spc-gage-rr:Gage R&R`, route: '/spc/gage-rr', icon: 'precision_manufacturing', module: 'dmaic' }
+      ]
+    },
+    {
       // Une seule entrée : les projets. Le cycle en V d'un projet porte lui-même
       // la navigation entre ses phases, et un sous-menu qui doublerait ses cinq
       // jalons demanderait de tenir deux listes d'accord pour le même parcours.
@@ -279,6 +290,13 @@ export class MainShellComponent implements OnInit, OnDestroy {
           label: $localize`:@@nav.admin-documents:Documentation`,
           route: '/admin/documents',
           icon: 'folder_copy',
+          roles: ADMIN_ROLES
+        },
+        {
+          // Les seuils de Cpk (ADR 0096) : maîtrisé, à surveiller.
+          label: $localize`:@@nav.admin-spc:Paramètres SPC`,
+          route: '/admin/spc',
+          icon: 'stacked_line_chart',
           roles: ADMIN_ROLES
         },
         {
