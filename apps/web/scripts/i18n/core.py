@@ -84,7 +84,7 @@ TRANSLATIONS = {
     'nav.capa': ('CAPA', 'CAPA', 'CAPA', 'CAPA', 'CAPA', 'CAPA'),
     'nav.audits': ('Audits', 'Audits', 'Auditorías', 'التدقيقات', '監査', '审核'),
     'nav.risques-fmea': ('Risques (FMEA)', 'Risks (FMEA)', 'Riesgos (AMFE)', 'المخاطر (FMEA)', 'リスク（FMEA）', '风险（FMEA）'),
-    'nav.documents': ('GED', 'Document management', 'Gestión documental', 'إدارة الوثائق', '文書管理', '文档管理'),
+    'nav.documents': ('GED', 'GED', 'GED', 'GED', 'GED', 'GED'),
     'nav.ehs': ('EHS', 'EHS', 'EHS', 'البيئة والصحة والسلامة', 'EHS', 'EHS'),
     'nav.fournisseurs-competences': ('Fournisseurs & compétences', 'Suppliers & skills', 'Proveedores y competencias', 'الموردون والكفاءات', 'サプライヤーとスキル', '供应商与能力'),
     'nav.fournisseurs': ('Fournisseurs', 'Suppliers', 'Proveedores', 'الموردون', 'サプライヤー', '供应商'),

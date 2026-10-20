@@ -8852,7 +8852,7 @@ Portail clients</source>
       </trans-unit>
       <trans-unit id="nav.documents" datatype="html">
         <source>GED</source>
-        <target state="translated">إدارة الوثائق</target>
+        <target state="translated">GED</target>
       </trans-unit>
       <trans-unit id="nav.ehs" datatype="html">
         <source>EHS</source>

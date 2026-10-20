@@ -8852,7 +8852,7 @@ Portal de clientes</target>
       </trans-unit>
       <trans-unit id="nav.documents" datatype="html">
         <source>GED</source>
-        <target state="translated">Gestión documental</target>
+        <target state="translated">GED</target>
       </trans-unit>
       <trans-unit id="nav.ehs" datatype="html">
         <source>EHS</source>
