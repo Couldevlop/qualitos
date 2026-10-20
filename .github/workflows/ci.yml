@@ -672,6 +672,11 @@ jobs:
       # écrit son rapport par défaut (report_json.json) et le relit ensuite ; un nom
       # custom casse l'action (« report_json.json does not exist »).
       # allow_issue_writing:false : pas de création d'issue GitHub.
+      # -z "-Xmx8g" : zap.sh prend par défaut 1/4 de la mémoire du runner (~3 Go
+      # utiles sur 16), et l'add-on insights arrête ZAP à 95 % du tas
+      # (insights.memHigh / insights.exitAuto) : le scan actif de la spec OpenAPI,
+      # qui grossit à chaque module, s'interrompait sans rapport. Un -Xmx passé en
+      # option ZAP est repris par zap.sh comme taille de tas.
       - name: ZAP API scan (OpenAPI /v3/api-docs)
         uses: zaproxy/action-api-scan@77dfa9a647bb0f583e39d4df8531634d6ddd8df4 # v0.9.0
         with:
@@ -680,6 +685,7 @@ jobs:
           rules_file_name: '.zap/rules.tsv'
           allow_issue_writing: false
           fail_action: false
+          cmd_options: '-z "-Xmx8g"'
           artifact_name: zap-api-scan-report
 
       # --- Gate : échec UNIQUEMENT sur alerte de risque HIGH (riskcode=3) ------
