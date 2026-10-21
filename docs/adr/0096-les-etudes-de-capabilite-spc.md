@@ -80,7 +80,44 @@ Création, révision, plan d'actions, suppression et réglage des seuils sont
 journalisés (`spc.study.*`, `spc.settings.updated`) avec la taille du
 sous-groupe, Cp, Cpk, le statut et le plan d'actions : ni mesure, ni nom.
 
-### 7. Gage R&R : un sous-menu, une page vide
+### 7. La fiche suit la disposition du classeur
+
+Les formules se lisent **juste à droite de la grille de saisie**, comme les
+colonnes V à Y du classeur : la table des constantes (n, d2, A2, D3, D4, la
+ligne de la taille choisie mise en évidence), puis Σ X̄, X̿, R̄, σ, 3σ, 6σ, Cp,
+CPU, CPL, Cpk, les limites des cartes X̄ et R et le rappel « CP = / Cpk = ». Le
+bouton « Masquer les formules » replie ce panneau ; la grille reprend alors
+toute la largeur. Sous une largeur d'écran réduite, le panneau passe sous la
+grille.
+
+La carte X̄ trace aussi la USL et la LSL (lignes 44 à 53 du classeur), en plus
+de UCL, CL et LCL. La carte R ne les trace pas : la tolérance ne s'applique pas
+à une étendue.
+
+Les deux pastilles « Procédé maîtrisé » et « Procédé non maîtrisé » (cellules
+G39 à J40 du classeur) sont toujours affichées : neutres (« — ») tant qu'aucun
+Cpk ne se calcule, puis OUI / NON selon le seuil de l'étude. La courbe de
+distribution et de tolérance, sous les deux cartes, se trace d'elle-même dès
+qu'un sous-groupe est complet.
+
+La ligne n = 1 de la table du classeur (cartes de valeurs individuelles) n'est
+pas reprise : une étude X̄ – R a des sous-groupes de 2 à 10 mesures.
+
+### 8. Deux jeux d'exemple, chargés sans être enregistrés
+
+La personne qui a le droit `spc.manage` peut charger deux jeux d'exemple
+(`spc-capability.examples.ts`) : la grille du classeur (poids 500 ± 25 g,
+n = 5, maîtrisé, Cp 1,84, Cpk 1,77) et un diamètre usiné décentré
+(Ø 12 ± 0,1 mm, n = 4, non maîtrisé, Cp 1,42, Cpk 0,66, sous-groupe 14 hors des
+limites de la carte X̄). L'exemple remplit l'identification, les limites, la
+taille du sous-groupe et la grille. Il remplace des mesures déjà saisies
+seulement après confirmation. Rien n'est enregistré tant que la personne
+n'enregistre pas l'étude.
+
+Ce bouton remplace « Recharger l'exemple », écarté au départ parce qu'il
+écrasait la saisie sans prévenir.
+
+### 9. Gage R&R : un sous-menu, une page vide
 
 Le sous-menu « Gage R&R » est créé et mène à `/spc/gage-rr`, une page qui ne
 porte que son titre. Son contenu (répétabilité et reproductibilité des moyens de
@@ -99,6 +136,10 @@ mesure) fera l'objet d'une décision quand il sera spécifié.
 
 - `CapabilityCalculationTest`, `spc-capability.calc.spec.ts` : test doré du
   classeur.
+- `spc-capability.examples.spec.ts` : les deux jeux d'exemple et leurs verdicts.
+- `capability-study.component.spec.ts` : panneau des formules, table des
+  constantes, pastilles de statut, chargement d'un exemple avec ou sans
+  confirmation.
 - `CapabilityStudyTest`, `CapabilityThresholdsTest` : validations et seuils.
 - `SpcStudyControllerTest` : droits, module, refus 422 par champ.
 - `EtudesSpcOnPostgresTest` : migration V145 et RLS sur PostgreSQL.

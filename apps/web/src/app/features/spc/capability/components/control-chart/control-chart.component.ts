@@ -20,6 +20,9 @@ export class ControlChartComponent implements OnChanges {
   @Input() ucl: number | null = null;
   @Input() cl: number | null = null;
   @Input() lcl: number | null = null;
+  /** Les limites de tolérance à tracer aussi (carte X̄, comme le classeur). */
+  @Input() usl: number | null = null;
+  @Input() lsl: number | null = null;
   /** Le nom du graphique, pour les lecteurs d'écran. */
   @Input() label = '';
   @Input() digits = 2;
@@ -27,7 +30,7 @@ export class ControlChartComponent implements OnChanges {
   geometry: ControlChartGeometry | null = null;
 
   ngOnChanges(): void {
-    this.geometry = controlChart(this.values, this.ucl, this.cl, this.lcl);
+    this.geometry = controlChart(this.values, this.ucl, this.cl, this.lcl, { usl: this.usl, lsl: this.lsl });
   }
 
   fixed(v: number): string {

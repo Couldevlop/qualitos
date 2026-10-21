@@ -59,7 +59,55 @@
   color: var(--qos-danger-fg);
 }
 
-// ---------- grille ----------
+// ---------- grille et formules ----------
+
+.entete-bloc {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--qos-space-3);
+  margin-bottom: var(--qos-space-3);
+
+  h2 {
+    margin: 0;
+  }
+}
+
+.exemples {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--qos-space-2);
+  margin-bottom: var(--qos-space-4);
+
+  &__titre {
+    font-size: var(--qos-fs-xs);
+    font-weight: var(--qos-fw-semibold);
+    color: var(--qos-fg-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+}
+
+// La grille à gauche, les formules juste à sa droite (colonnes V à Y du classeur) ;
+// les deux s'empilent quand la largeur manque.
+.saisie {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--qos-space-4);
+  align-items: start;
+
+  &--formules {
+    grid-template-columns: minmax(0, 1fr) minmax(19rem, 24rem);
+  }
+
+  @media (max-width: 1100px) {
+    &--formules {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+}
 
 .defile {
   overflow-x: auto;
@@ -201,8 +249,19 @@
 .verdicts {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: var(--qos-space-3);
   margin-top: var(--qos-space-4);
+
+  &__titre {
+    font-size: var(--qos-fs-sm);
+    font-weight: var(--qos-fw-semibold);
+    color: var(--qos-fg-secondary);
+  }
+}
+
+.attente {
+  margin-top: var(--qos-space-3);
 }
 
 .verdict {
@@ -230,26 +289,33 @@
 }
 
 .formules {
-  margin-top: var(--qos-space-4);
+  padding: var(--qos-space-3);
   border-radius: var(--qos-radius-md);
   border: 1px solid var(--qos-border-subtle);
+  background: var(--qos-bg-elevated);
+
+  h3 {
+    margin: 0 0 var(--qos-space-3);
+    font-size: var(--qos-fs-sm);
+    font-weight: var(--qos-fw-semibold);
+    color: var(--qos-fg-primary);
+  }
 
   table {
     width: 100%;
     border-collapse: collapse;
-    font-size: var(--qos-fs-sm);
+    font-size: var(--qos-fs-xs);
   }
 
   th,
   td {
-    padding: var(--qos-space-2) var(--qos-space-4);
+    padding: var(--qos-space-1) var(--qos-space-2);
     border-top: 1px solid var(--qos-border-subtle);
     text-align: left;
   }
 
   .groupe th {
     background: var(--qos-bg-subtle);
-    font-size: var(--qos-fs-xs);
     font-weight: var(--qos-fw-semibold);
     color: var(--qos-fg-secondary);
     text-transform: uppercase;
@@ -265,13 +331,14 @@
     font-family: var(--qos-font-mono);
     text-align: right;
     color: var(--qos-fg-primary);
+    white-space: nowrap;
   }
 
   .cle .valeur {
     font-weight: var(--qos-fw-semibold);
   }
 
-  // Non maîtrisé : le tableau passe au rouge, les indices clés en premier.
+  // Non maîtrisé : le panneau passe au rouge, les indices clés en premier.
   &--ko {
     border-color: var(--qos-danger-fg);
 
@@ -281,9 +348,70 @@
     }
 
     .cle th,
-    .cle .valeur {
+    .cle .valeur,
+    .resume .cle dd {
       color: var(--qos-danger-fg);
     }
+  }
+}
+
+// La table des constantes (n, d2, A2, D3, D4), la ligne de la taille choisie en évidence.
+.constantes {
+  margin-bottom: var(--qos-space-3);
+  font-family: var(--qos-font-mono);
+
+  caption {
+    padding-bottom: var(--qos-space-1);
+    font-family: var(--qos-font-sans, inherit);
+    font-weight: var(--qos-fw-semibold);
+    color: var(--qos-fg-secondary);
+    text-align: left;
+  }
+
+  thead th {
+    background: var(--qos-bg-subtle);
+    color: var(--qos-fg-secondary);
+  }
+
+  th,
+  td {
+    text-align: center;
+  }
+
+  .actif {
+    background: var(--qos-accent-bg-soft);
+    font-weight: var(--qos-fw-semibold);
+    box-shadow: inset 3px 0 0 var(--qos-accent-bg);
+  }
+}
+
+.resume {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--qos-space-2);
+  margin: var(--qos-space-3) 0 0;
+
+  div {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: var(--qos-space-2) var(--qos-space-3);
+    border-radius: var(--qos-radius-sm);
+    background: var(--qos-bg-subtle);
+  }
+
+  dt {
+    font-size: var(--qos-fs-xs);
+    font-weight: var(--qos-fw-semibold);
+    color: var(--qos-fg-secondary);
+  }
+
+  dd {
+    margin: 0;
+    font-family: var(--qos-font-mono);
+    font-size: var(--qos-fs-md);
+    font-weight: var(--qos-fw-semibold);
+    color: var(--qos-fg-primary);
   }
 }
 

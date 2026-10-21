@@ -29,6 +29,16 @@ describe('ControlChartComponent', () => {
     expect(hote().querySelector('[data-test="hors-limites"]')?.textContent).toContain('1');
   });
 
+  it('trace la USL et la LSL quand on les lui donne', () => {
+    rendre([5, 6], 10, 6, 2);
+    expect(hote().querySelector('[data-test="ligne-USL"]')).toBeNull();
+    fixture.componentRef.setInput('usl', 12);
+    fixture.componentRef.setInput('lsl', 1);
+    fixture.detectChanges();
+    expect(hote().querySelector('[data-test="ligne-USL"]')?.textContent).toContain('USL 12.00');
+    expect(hote().querySelector('[data-test="ligne-LSL"]')?.textContent).toContain('LSL 1.00');
+  });
+
   it('ne signale rien quand tout est dans les limites', () => {
     rendre([5, 6], 10, 6, 2);
     expect(hote().querySelector('[data-test="hors-limites"]')).toBeNull();

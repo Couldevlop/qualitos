@@ -42,6 +42,17 @@
   }
 }
 
+.tolerance {
+  line {
+    stroke: var(--qos-warn-fg);
+    stroke-width: 1.4;
+  }
+
+  text {
+    fill: var(--qos-warn-fg);
+  }
+}
+
 .trace {
   fill: none;
   stroke: var(--qos-fg-primary);

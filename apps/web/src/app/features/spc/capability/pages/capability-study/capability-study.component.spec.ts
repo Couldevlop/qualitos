@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router, convertToParamMap, provideRouter } from '@angular/router';
@@ -14,6 +15,7 @@ import { UiModule } from '../../../../../shared/ui/ui.module';
 import { UserPickerModule } from '../../../../../shared/user-picker/user-picker.module';
 import { ControlChartComponent } from '../../components/control-chart/control-chart.component';
 import { DistributionChartComponent } from '../../components/distribution-chart/distribution-chart.component';
+import { TURNING_EXAMPLE, WORKBOOK_EXAMPLE } from '../../spc-capability.examples';
 import { GOLDEN, GOLDEN_GRID, sheet } from '../../spc-capability.fixtures';
 import { SpcCapabilityService } from '../../spc-capability.service';
 import { CapabilityStudyComponent, fieldMessage } from './capability-study.component';
@@ -21,14 +23,17 @@ import { CapabilityStudyComponent, fieldMessage } from './capability-study.compo
 /**
  * La fiche d'étude : saisie et collage de la grille, calcul en direct (test
  * doré), verdict au seuil du client ou aux seuils figés de l'étude, formules en
- * rouge quand le procédé n'est pas maîtrisé, enregistrement, refus du serveur
- * dits sans reprendre son texte, consultation seule.
+ * rouge quand le procédé n'est pas maîtrisé, table des constantes à droite de
+ * la grille, jeux d'exemple, enregistrement, refus du serveur dits sans
+ * reprendre son texte, consultation seule.
  */
 describe('CapabilityStudyComponent', () => {
   let fixture: ComponentFixture<CapabilityStudyComponent>;
   let component: CapabilityStudyComponent;
   let service: jasmine.SpyObj<SpcCapabilityService>;
   let snack: jasmine.SpyObj<MatSnackBar>;
+  let dialog: jasmine.SpyObj<MatDialog>;
+  let confirme: boolean;
   let router: Router;
   const hote = (): HTMLElement => fixture.nativeElement as HTMLElement;
   const un = (sel: string) => hote().querySelector<HTMLElement>(`[data-test="${sel}"]`);
@@ -43,6 +48,9 @@ describe('CapabilityStudyComponent', () => {
       : of({ capableThreshold: 1.5, watchThreshold: 1.2, defaults: false }));
     service.get.and.returnValue(of(sheet({ capableThreshold: 2, watchThreshold: 1.5, status: 'WATCH' })));
     snack = jasmine.createSpyObj<MatSnackBar>('MatSnackBar', ['open']);
+    confirme = true;
+    dialog = jasmine.createSpyObj<MatDialog>('MatDialog', ['open']);
+    dialog.open.and.callFake((() => ({ afterClosed: () => of(confirme) })) as never);
     const directory = jasmine.createSpyObj<DirectoryService>('DirectoryService', ['search', 'getByAccount']);
     directory.search.and.returnValue(of({ content: [JEAN], page: 0, size: 20, totalElements: 1, totalPages: 1 }));
     directory.getByAccount.and.returnValue(of(JEAN));
@@ -53,6 +61,7 @@ describe('CapabilityStudyComponent', () => {
         provideRouter([]),
         { provide: SpcCapabilityService, useValue: service },
         { provide: MatSnackBar, useValue: snack },
+        { provide: MatDialog, useValue: dialog },
         { provide: DirectoryService, useValue: directory },
         { provide: AuthzService, useValue: { can: () => of(opts.canManage ?? true) } },
         { provide: ActivatedRoute, useValue: { snapshot: { paramMap: convertToParamMap(opts.id ? { id: opts.id } : {}) } } }
@@ -98,7 +107,14 @@ describe('CapabilityStudyComponent', () => {
     expect(un('kpi-cpk')?.classList).toContain('kpi--ok');
     expect(un('formule-sigma')?.textContent).toContain('4.5279');
     expect(un('formules')?.classList).not.toContain('formules--ko');
-    expect(un('verdict')?.textContent).toContain('OUI');
+    expect(un('verdict-maitrise')?.textContent).toContain('OUI');
+    expect(un('verdict-maitrise')?.classList).toContain('verdict--ok');
+    expect(un('verdict-non-maitrise')?.textContent).toContain('NON');
+    expect(un('verdict-non-maitrise')?.classList).not.toContain('verdict--ko');
+    expect(un('formule-cpu')?.textContent).toContain('1.912');
+    expect(un('formule-x-ecart')?.textContent?.trim()).not.toBe('–');
+    expect(un('resume')?.textContent).toContain('1.84');
+    expect(un('attente')).toBeNull();
     expect(un('diagnostic')?.textContent).toContain('capable');
     expect(un('lectures')?.textContent).toContain('54 %');
     expect(hote().querySelectorAll('qos-spc-control-chart svg').length).toBe(2);
@@ -152,6 +168,73 @@ describe('CapabilityStudyComponent', () => {
     expect(component.calc.d2).toBe(1.69);
     component.form.controls.subgroupSize.setValue(5);
     expect(component.calc.cpk!).toBeCloseTo(GOLDEN.cpk, 3);
+  });
+
+  it('tient les pastilles de statut et la table des constantes avant toute mesure', async () => {
+    await setup();
+    expect(un('verdict-maitrise')?.textContent).toContain('—');
+    expect(un('verdict-non-maitrise')?.textContent).toContain('—');
+    expect(un('verdict-maitrise')?.classList).not.toContain('verdict--ok');
+    expect(un('verdict-non-maitrise')?.classList).not.toContain('verdict--ko');
+    expect(un('kpi-cp')?.textContent).toContain('–');
+    expect(un('attente')).not.toBeNull();
+    expect(un('grille-vide')).not.toBeNull();
+    expect(hote().querySelectorAll('[data-test^="constante-"]').length).toBe(9);
+    expect(un('constante-5')?.getAttribute('aria-current')).toBe('true');
+    expect(un('constante-4')?.hasAttribute('aria-current')).toBeFalse();
+    component.form.controls.subgroupSize.setValue(4);
+    fixture.detectChanges();
+    expect(un('constante-4')?.classList).toContain('actif');
+    expect(un('constante-4')?.textContent).toContain('2.06');
+  });
+
+  it('nomme les deux jeux d\'exemple', async () => {
+    await setup();
+    expect(component.examples).toEqual([WORKBOOK_EXAMPLE, TURNING_EXAMPLE]);
+    expect(un('exemple-workbook')?.textContent).toContain('500 ± 25 g');
+    expect(un('exemple-turning')?.textContent).toContain('Ø 12');
+  });
+
+  it('charge l\'exemple du classeur dans une grille vide, sans rien demander', async () => {
+    await setup();
+    un('exemple-workbook')!.click();
+    fixture.detectChanges();
+    expect(dialog.open).not.toHaveBeenCalled();
+    expect(component.form.value).toEqual(jasmine.objectContaining({
+      characteristic: 'Weight', specification: '500 ± 25 gram', partReference: 'Shaft AX',
+      lsl: 475, usl: 525, subgroupSize: 5
+    }));
+    expect(component.form.dirty).toBeTrue();
+    expect(component.calc.cpk!).toBeCloseTo(GOLDEN.cpk, 3);
+    expect(un('verdict-maitrise')?.classList).toContain('verdict--ok');
+    expect(un('grille-vide')).toBeNull();
+    expect(hote().querySelector('qos-spc-distribution-chart svg')).not.toBeNull();
+    expect(un('carte-x')?.querySelector('[data-test="ligne-USL"]')).not.toBeNull();
+    expect(un('carte-r')?.querySelector('[data-test="ligne-USL"]')).toBeNull();
+  });
+
+  it('demande avant de remplacer des mesures par l\'exemple non maîtrisé', async () => {
+    await setup();
+    remplir();
+    confirme = false;
+    un('exemple-turning')!.click();
+    expect(dialog.open).toHaveBeenCalledTimes(1);
+    expect(component.form.controls.partReference.value).toBe('Shaft AX');
+
+    confirme = true;
+    component.loadExample(TURNING_EXAMPLE);
+    fixture.detectChanges();
+    expect(dialog.open).toHaveBeenCalledTimes(2);
+    expect(component.form.controls.partReference.value).toBe('Axe AX-12');
+    expect(component.n).toBe(4);
+    expect(component.raw[4].every(v => v === '')).toBeTrue();
+    expect(component.calc.cp!).toBeCloseTo(1.42, 2);
+    expect(component.calc.cpk!).toBeCloseTo(0.66, 2);
+    expect(component.status).toBe('NOT_CAPABLE');
+    expect(un('formules')?.classList).toContain('formules--ko');
+    expect(un('verdict-non-maitrise')?.classList).toContain('verdict--ko');
+    expect(un('moyenne-13')?.classList).toContain('hors');
+    expect(un('constante-4')?.classList).toContain('actif');
   });
 
   it('vide les mesures', async () => {
@@ -269,7 +352,9 @@ describe('CapabilityStudyComponent', () => {
       expect(component.title).toBe('Étude de capabilité Shaft AX');
       expect(un('kpi-cpk')?.classList).toContain('kpi--warn');
       expect(un('formules')?.classList).toContain('formules--ko');
-      expect(un('verdict')?.textContent).toContain('NON');
+      expect(un('verdict-maitrise')?.textContent).toContain('NON');
+      expect(un('verdict-non-maitrise')?.classList).toContain('verdict--ko');
+      expect(un('verdict-non-maitrise')?.textContent).toContain('OUI');
       expect(un('diagnostic')?.classList).toContain('diagnostic--ko');
       expect(un('diagnostic')?.textContent).toContain('réduire');
       expect(component.form.controls.partReference.value).toBe('Shaft AX');
@@ -309,6 +394,11 @@ describe('CapabilityStudyComponent', () => {
     expect(un('lecture-seule')).not.toBeNull();
     expect(un('enregistrer')).toBeNull();
     expect(un('vider')).toBeNull();
+    expect(un('exemples')).toBeNull();
+    const avant = component.raw.map(r => [...r]);
+    component.loadExample(TURNING_EXAMPLE);
+    expect(component.raw).toEqual(avant);
+    expect(dialog.open).not.toHaveBeenCalled();
     expect((un('cellule-0-0') as HTMLInputElement).readOnly).toBeTrue();
     expect(component.form.disabled).toBeTrue();
     component.save();
