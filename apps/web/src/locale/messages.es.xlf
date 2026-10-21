@@ -24796,14 +24796,6 @@ historial de 12 meses</target>
         <source>Carte R</source>
         <target state="translated">Gráfico R</target>
       </trans-unit>
-      <trans-unit id="spc.formula.group-constants" datatype="html">
-        <source>Constantes</source>
-        <target state="translated">Constantes</target>
-      </trans-unit>
-      <trans-unit id="spc.formula.table" datatype="html">
-        <source>Table SPC</source>
-        <target state="translated">Tabla SPC</target>
-      </trans-unit>
       <trans-unit id="spc.chart.no-data" datatype="html">
         <source>Aucune donnée à tracer.</source>
         <target state="translated">No hay datos que trazar.</target>
@@ -24947,6 +24939,46 @@ historial de 12 meses</target>
       <trans-unit id="spc.settings.problem.order" datatype="html">
         <source>Le seuil de surveillance doit rester sous le seuil de maîtrise.</source>
         <target state="translated">El umbral de vigilancia debe quedar por debajo del umbral de control.</target>
+      </trans-unit>
+      <trans-unit id="spc.example.title" datatype="html">
+        <source>Jeux d'exemple</source>
+        <target state="translated">Conjuntos de ejemplo</target>
+      </trans-unit>
+      <trans-unit id="spc.example.workbook" datatype="html">
+        <source>Exemple 1 — classeur : poids 500 ± 25 g (maîtrisé)</source>
+        <target state="translated">Ejemplo 1 — libro: peso 500 ± 25 g (bajo control)</target>
+      </trans-unit>
+      <trans-unit id="spc.example.turning" datatype="html">
+        <source>Exemple 2 — diamètre Ø 12 ± 0,1 mm (non maîtrisé)</source>
+        <target state="translated">Ejemplo 2 — diámetro Ø 12 ± 0,1 mm (fuera de control)</target>
+      </trans-unit>
+      <trans-unit id="spc.example.confirm-title" datatype="html">
+        <source>Remplacer les mesures saisies ?</source>
+        <target state="translated">¿Reemplazar las mediciones introducidas?</target>
+      </trans-unit>
+      <trans-unit id="spc.example.confirm-message" datatype="html">
+        <source>L'exemple remplace l'identification de la pièce, les limites et toutes les mesures de la grille. Rien n'est enregistré tant que vous n'enregistrez pas l'étude.</source>
+        <target state="translated">El ejemplo reemplaza la identificación de la pieza, los límites y todas las mediciones de la cuadrícula. No se guarda nada hasta que guarde el estudio.</target>
+      </trans-unit>
+      <trans-unit id="spc.example.confirm" datatype="html">
+        <source>Charger l'exemple</source>
+        <target state="translated">Cargar el ejemplo</target>
+      </trans-unit>
+      <trans-unit id="spc.example.empty" datatype="html">
+        <source>La grille est vide : saisissez vos mesures ou chargez un des jeux d'exemple.</source>
+        <target state="translated">La cuadrícula está vacía: introduzca sus mediciones o cargue uno de los conjuntos de ejemplo.</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.title" datatype="html">
+        <source>Formules</source>
+        <target state="translated">Fórmulas</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.constants-title" datatype="html">
+        <source>Table des constantes SPC</source>
+        <target state="translated">Tabla de constantes SPC</target>
+      </trans-unit>
+      <trans-unit id="spc.study.process-status" datatype="html">
+        <source>Statut du procédé</source>
+        <target state="translated">Estado del proceso</target>
       </trans-unit>
       <trans-unit id="standards-extras.actions" datatype="html">
         <source>Actions</source>

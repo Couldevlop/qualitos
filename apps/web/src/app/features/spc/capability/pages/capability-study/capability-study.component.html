@@ -92,92 +92,12 @@
       </form>
     </section>
 
-    <!-- ---------- mesures ---------- -->
+    <!-- ---------- mesures et formules ---------- -->
+    <!-- Comme au classeur : la grille de saisie à gauche, la table des constantes et
+         les formules juste à sa droite. -->
     <section class="bloc" aria-labelledby="titre-mesures">
-      <h2 id="titre-mesures" i18n="@@spc.study.measurements">Mesures par sous-groupe</h2>
-      <div class="defile">
-        <table class="grille" data-test="grille">
-          <thead>
-            <tr>
-              <th scope="col" class="entete-ligne" i18n="@@spc.study.sample">Échantillon</th>
-              <th scope="col" *ngFor="let l of columnLabels">{{ l }}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let r of rows">
-              <th scope="row" class="entete-ligne">{{ r + 1 }}</th>
-              <td *ngFor="let c of columns">
-                <input class="cellule" inputmode="decimal" [value]="cell(r, c)" [readOnly]="!canManage"
-                       [class.cellule--invalide]="cellInvalid(r, c)"
-                       (input)="onCell(r, c, $event)" (paste)="onPaste(r, c, $event)"
-                       [attr.aria-label]="cellLabel(r, c)"
-                       [attr.data-test]="'cellule-' + r + '-' + c">
-              </td>
-            </tr>
-            <tr class="calculee">
-              <th scope="row" class="entete-ligne">X̄</th>
-              <td *ngFor="let c of columns" [class.hors]="meanOut(c)" [attr.data-test]="'moyenne-' + c">
-                {{ num(calc.subgroupMeans[c], 2) }}
-              </td>
-            </tr>
-            <tr class="calculee">
-              <th scope="row" class="entete-ligne">R</th>
-              <td *ngFor="let c of columns" [class.hors]="rangeOut(c)" [attr.data-test]="'etendue-' + c">
-                {{ num(calc.subgroupRanges[c], 0) }}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="barre-actions">
-        <button mat-stroked-button type="button" *ngIf="canManage" (click)="clearMeasurements()" data-test="vider">
-          <mat-icon>backspace</mat-icon>
-          <span i18n="@@spc.study.clear">Vider les mesures</span>
-        </button>
-        <p class="note" i18n="@@spc.study.paste-tip">Astuce : collez un bloc copié depuis Excel dans une cellule pour remplir la grille d'un coup.</p>
-      </div>
-    </section>
-
-    <!-- ---------- résultats ---------- -->
-    <section class="bloc" aria-labelledby="titre-resultats">
-      <h2 id="titre-resultats" i18n="@@spc.study.results">Résultats</h2>
-
-      <ng-container *ngIf="calc.completeSubgroups > 0; else pasDeResultat">
-        <div class="kpis">
-          <div class="kpi" data-test="kpi-cp">
-            <b>{{ num(calc.cp, 2) }}</b>
-            <span>Cp</span>
-          </div>
-          <div class="kpi kpi--{{ status ? tone(status) : 'neutre' }}" data-test="kpi-cpk">
-            <b>{{ num(calc.cpk, 2) }}</b>
-            <span>Cpk – <ng-container i18n="@@spc.study.threshold">seuil</ng-container> {{ fixed(capableThreshold) }}</span>
-          </div>
-          <div class="kpi" data-test="kpi-moyenne">
-            <b>{{ num(calc.grandMean, 2) }}</b>
-            <span i18n="@@spc.study.grand-mean">Moyenne X̿</span>
-          </div>
-          <div class="kpi" data-test="kpi-sigma">
-            <b>{{ num(calc.sigma, 3) }}</b>
-            <span i18n="@@spc.study.sigma">Sigma (R̄ / d2)</span>
-          </div>
-        </div>
-
-        <div class="verdicts" *ngIf="status" data-test="verdict">
-          <span class="verdict" [class.verdict--ok]="controlled">
-            <ng-container i18n="@@spc.study.controlled">Procédé maîtrisé :</ng-container>
-            <b>{{ controlled ? yes : no }}</b>
-          </span>
-          <span class="verdict" [class.verdict--ko]="!controlled">
-            <ng-container i18n="@@spc.study.not-controlled">Procédé non maîtrisé :</ng-container>
-            <b>{{ controlled ? no : yes }}</b>
-          </span>
-        </div>
-      </ng-container>
-      <ng-template #pasDeResultat>
-        <p class="note" i18n="@@spc.study.need-subgroup">Saisissez au moins un sous-groupe complet.</p>
-      </ng-template>
-
-      <div class="barre-actions">
+      <div class="entete-bloc">
+        <h2 id="titre-mesures" i18n="@@spc.study.measurements">Mesures par sous-groupe</h2>
         <button mat-stroked-button type="button" (click)="toggleFormulas()" [attr.aria-expanded]="showFormulas"
                 aria-controls="panneau-formules" data-test="formules-bascule">
           <mat-icon>functions</mat-icon>
@@ -186,45 +106,166 @@
         </button>
       </div>
 
-      <!-- Non maîtrisé : le tableau des formules se lit en rouge (demande de la maquette). -->
-      <div id="panneau-formules" class="defile formules" *ngIf="showFormulas"
-           [class.formules--ko]="status !== null && !controlled" data-test="formules">
-        <table>
-          <tbody>
-            <tr class="groupe"><th colspan="3" i18n="@@spc.formula.group-means">Moyennes et dispersion</th></tr>
-            <tr><th>Σ X̄</th><td class="formule" i18n="@@spc.formula.sum-means">Somme des X̄</td><td class="valeur">{{ num(calc.sumOfMeans, 2) }}</td></tr>
-            <tr><th>X̿</th><td class="formule">Σ X̄ / {{ calc.completeSubgroups }}</td><td class="valeur">{{ num(calc.grandMean, 3) }}</td></tr>
-            <tr><th>R̄</th><td class="formule">Σ R / {{ calc.completeSubgroups }}</td><td class="valeur">{{ num(calc.meanRange, 3) }}</td></tr>
-            <tr><th>SIGMA</th><td class="formule">R̄ / d2</td><td class="valeur" data-test="formule-sigma">{{ num(calc.sigma, 4) }}</td></tr>
-            <tr><th>3 SIGMA</th><td class="formule">3 × R̄ / d2</td><td class="valeur">{{ num(calc.sigma === null ? null : 3 * calc.sigma, 3) }}</td></tr>
-            <tr><th>6 SIGMA</th><td class="formule">6 × R̄ / d2</td><td class="valeur">{{ num(calc.sigma === null ? null : 6 * calc.sigma, 3) }}</td></tr>
-
-            <tr class="groupe"><th colspan="3" i18n="@@spc.formula.group-capability">Capabilité</th></tr>
-            <tr><th>USL</th><td class="formule" i18n="@@spc.formula.usl">Limite supérieure</td><td class="valeur">{{ num(usl, 2) }}</td></tr>
-            <tr><th>LSL</th><td class="formule" i18n="@@spc.formula.lsl">Limite inférieure</td><td class="valeur">{{ num(lsl, 2) }}</td></tr>
-            <tr class="cle"><th>Cp</th><td class="formule">(USL − LSL) / 6 SIGMA</td><td class="valeur" data-test="formule-cp">{{ num(calc.cp) }}</td></tr>
-            <tr><th>CPU</th><td class="formule">(USL − X̿) / 3 SIGMA</td><td class="valeur">{{ num(calc.cpu) }}</td></tr>
-            <tr><th>CPL</th><td class="formule">(X̿ − LSL) / 3 SIGMA</td><td class="valeur">{{ num(calc.cpl) }}</td></tr>
-            <tr class="cle"><th>Cpk</th><td class="formule">MIN (CPU, CPL)</td><td class="valeur" data-test="formule-cpk">{{ num(calc.cpk) }}</td></tr>
-
-            <tr class="groupe"><th colspan="3" i18n="@@spc.formula.group-xbar">Carte X̄</th></tr>
-            <tr><th>UCL</th><td class="formule">X̿ + A2 × R̄</td><td class="valeur">{{ num(calc.meanUcl) }}</td></tr>
-            <tr><th>LCL</th><td class="formule">X̿ − A2 × R̄</td><td class="valeur">{{ num(calc.meanLcl) }}</td></tr>
-            <tr><th i18n="@@spc.formula.control-limit">Limite de contrôle</th><td class="formule">UCL − LCL</td>
-              <td class="valeur">{{ num(calc.meanUcl === null || calc.meanLcl === null ? null : calc.meanUcl - calc.meanLcl) }}</td></tr>
-
-            <tr class="groupe"><th colspan="3" i18n="@@spc.formula.group-range">Carte R</th></tr>
-            <tr><th>UCL</th><td class="formule">D4 × R̄</td><td class="valeur">{{ num(calc.rangeUcl) }}</td></tr>
-            <tr><th>LCL</th><td class="formule">D3 × R̄</td><td class="valeur">{{ num(calc.rangeLcl) }}</td></tr>
-
-            <tr class="groupe"><th colspan="3"><ng-container i18n="@@spc.formula.group-constants">Constantes</ng-container> (n = {{ n }})</th></tr>
-            <tr><th>d2</th><td class="formule" i18n="@@spc.formula.table">Table SPC</td><td class="valeur">{{ calc.d2 }}</td></tr>
-            <tr><th>A2</th><td class="formule" i18n="@@spc.formula.table">Table SPC</td><td class="valeur">{{ calc.a2 }}</td></tr>
-            <tr><th>D3</th><td class="formule" i18n="@@spc.formula.table">Table SPC</td><td class="valeur">{{ calc.d3 }}</td></tr>
-            <tr><th>D4</th><td class="formule" i18n="@@spc.formula.table">Table SPC</td><td class="valeur">{{ calc.d4 }}</td></tr>
-          </tbody>
-        </table>
+      <div class="exemples" *ngIf="canManage" data-test="exemples">
+        <span class="exemples__titre" i18n="@@spc.example.title">Jeux d'exemple</span>
+        <button mat-stroked-button type="button" *ngFor="let ex of examples" (click)="loadExample(ex)"
+                [attr.data-test]="'exemple-' + ex.id">
+          <mat-icon>dataset</mat-icon>
+          <span>{{ exampleLabel(ex) }}</span>
+        </button>
       </div>
+
+      <div class="saisie" [class.saisie--formules]="showFormulas">
+        <div class="defile">
+          <table class="grille" data-test="grille">
+            <thead>
+              <tr>
+                <th scope="col" class="entete-ligne" i18n="@@spc.study.sample">Échantillon</th>
+                <th scope="col" *ngFor="let l of columnLabels">{{ l }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let r of rows">
+                <th scope="row" class="entete-ligne">{{ r + 1 }}</th>
+                <td *ngFor="let c of columns">
+                  <input class="cellule" inputmode="decimal" [value]="cell(r, c)" [readOnly]="!canManage"
+                         [class.cellule--invalide]="cellInvalid(r, c)"
+                         (input)="onCell(r, c, $event)" (paste)="onPaste(r, c, $event)"
+                         [attr.aria-label]="cellLabel(r, c)"
+                         [attr.data-test]="'cellule-' + r + '-' + c">
+                </td>
+              </tr>
+              <tr class="calculee">
+                <th scope="row" class="entete-ligne">X̄</th>
+                <td *ngFor="let c of columns" [class.hors]="meanOut(c)" [attr.data-test]="'moyenne-' + c">
+                  {{ num(calc.subgroupMeans[c], 2) }}
+                </td>
+              </tr>
+              <tr class="calculee">
+                <th scope="row" class="entete-ligne">R</th>
+                <td *ngFor="let c of columns" [class.hors]="rangeOut(c)" [attr.data-test]="'etendue-' + c">
+                  {{ num(calc.subgroupRanges[c], 0) }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Non maîtrisé : le panneau des formules se lit en rouge (demande de la maquette). -->
+        <aside id="panneau-formules" class="formules" *ngIf="showFormulas"
+               [class.formules--ko]="status !== null && !controlled" data-test="formules"
+               aria-labelledby="titre-formules">
+          <h3 id="titre-formules" i18n="@@spc.formula.title">Formules</h3>
+
+          <table class="constantes" data-test="constantes">
+            <caption i18n="@@spc.formula.constants-title">Table des constantes SPC</caption>
+            <thead>
+              <tr>
+                <th scope="col">n</th>
+                <th scope="col">d2</th>
+                <th scope="col">A2</th>
+                <th scope="col">D3</th>
+                <th scope="col">D4</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let k of constantRows" [class.actif]="k.n === n"
+                  [attr.aria-current]="k.n === n ? 'true' : null" [attr.data-test]="'constante-' + k.n">
+                <th scope="row">{{ k.n }}</th>
+                <td>{{ k.d2 }}</td>
+                <td>{{ k.a2 }}</td>
+                <td>{{ k.d3 }}</td>
+                <td>{{ k.d4 }}</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <table class="calculs">
+            <tbody>
+              <tr class="groupe"><th colspan="3" i18n="@@spc.formula.group-means">Moyennes et dispersion</th></tr>
+              <tr><th>Σ X̄</th><td class="formule" i18n="@@spc.formula.sum-means">Somme des X̄</td><td class="valeur" data-test="formule-somme">{{ num(calc.sumOfMeans, 2) }}</td></tr>
+              <tr><th>X̿</th><td class="formule">Σ X̄ / {{ calc.completeSubgroups }}</td><td class="valeur" data-test="formule-moyenne">{{ num(calc.grandMean, 3) }}</td></tr>
+              <tr><th>R̄</th><td class="formule">Σ R / {{ calc.completeSubgroups }}</td><td class="valeur" data-test="formule-etendue">{{ num(calc.meanRange, 3) }}</td></tr>
+              <tr><th>SIGMA</th><td class="formule">R̄ / d2</td><td class="valeur" data-test="formule-sigma">{{ num(calc.sigma, 4) }}</td></tr>
+              <tr><th>3 SIGMA</th><td class="formule">3 × R̄ / d2</td><td class="valeur" data-test="formule-3sigma">{{ num(calc.sigma === null ? null : 3 * calc.sigma, 3) }}</td></tr>
+              <tr><th>6 SIGMA</th><td class="formule">6 × R̄ / d2</td><td class="valeur" data-test="formule-6sigma">{{ num(calc.sigma === null ? null : 6 * calc.sigma, 3) }}</td></tr>
+
+              <tr class="groupe"><th colspan="3" i18n="@@spc.formula.group-capability">Capabilité</th></tr>
+              <tr><th>USL</th><td class="formule" i18n="@@spc.formula.usl">Limite supérieure</td><td class="valeur">{{ num(usl, 2) }}</td></tr>
+              <tr><th>LSL</th><td class="formule" i18n="@@spc.formula.lsl">Limite inférieure</td><td class="valeur">{{ num(lsl, 2) }}</td></tr>
+              <tr class="cle"><th>Cp</th><td class="formule">(USL − LSL) / 6 SIGMA</td><td class="valeur" data-test="formule-cp">{{ num(calc.cp) }}</td></tr>
+              <tr><th>CPU</th><td class="formule">(USL − X̿) / 3 SIGMA</td><td class="valeur" data-test="formule-cpu">{{ num(calc.cpu) }}</td></tr>
+              <tr><th>CPL</th><td class="formule">(X̿ − LSL) / 3 SIGMA</td><td class="valeur" data-test="formule-cpl">{{ num(calc.cpl) }}</td></tr>
+              <tr class="cle"><th>Cpk</th><td class="formule">MIN (CPU, CPL)</td><td class="valeur" data-test="formule-cpk">{{ num(calc.cpk) }}</td></tr>
+
+              <tr class="groupe"><th colspan="3"><ng-container i18n="@@spc.formula.group-xbar">Carte X̄</ng-container> (A2 = {{ calc.a2 }})</th></tr>
+              <tr><th>UCL</th><td class="formule">X̿ + A2 × R̄</td><td class="valeur" data-test="formule-x-ucl">{{ num(calc.meanUcl) }}</td></tr>
+              <tr><th>LCL</th><td class="formule">X̿ − A2 × R̄</td><td class="valeur" data-test="formule-x-lcl">{{ num(calc.meanLcl) }}</td></tr>
+              <tr><th i18n="@@spc.formula.control-limit">Limite de contrôle</th><td class="formule">UCL − LCL</td>
+                <td class="valeur" data-test="formule-x-ecart">{{ num(calc.meanUcl === null || calc.meanLcl === null ? null : calc.meanUcl - calc.meanLcl) }}</td></tr>
+
+              <tr class="groupe"><th colspan="3"><ng-container i18n="@@spc.formula.group-range">Carte R</ng-container> (D3 = {{ calc.d3 }}, D4 = {{ calc.d4 }})</th></tr>
+              <tr><th>UCL</th><td class="formule">D4 × R̄</td><td class="valeur" data-test="formule-r-ucl">{{ num(calc.rangeUcl) }}</td></tr>
+              <tr><th>LCL</th><td class="formule">D3 × R̄</td><td class="valeur" data-test="formule-r-lcl">{{ num(calc.rangeLcl) }}</td></tr>
+            </tbody>
+          </table>
+
+          <dl class="resume" data-test="resume">
+            <div><dt>CP =</dt><dd>{{ num(calc.cp, 2) }}</dd></div>
+            <div class="cle"><dt>Cpk =</dt><dd>{{ num(calc.cpk, 2) }}</dd></div>
+          </dl>
+        </aside>
+      </div>
+
+      <div class="barre-actions">
+        <button mat-stroked-button type="button" *ngIf="canManage" (click)="clearMeasurements()" data-test="vider">
+          <mat-icon>backspace</mat-icon>
+          <span i18n="@@spc.study.clear">Vider les mesures</span>
+        </button>
+        <p class="note" *ngIf="canManage && !hasMeasurements" data-test="grille-vide"
+           i18n="@@spc.example.empty">La grille est vide : saisissez vos mesures ou chargez un des jeux d'exemple.</p>
+        <p class="note" i18n="@@spc.study.paste-tip">Astuce : collez un bloc copié depuis Excel dans une cellule pour remplir la grille d'un coup.</p>
+      </div>
+    </section>
+
+    <!-- ---------- résultats ---------- -->
+    <section class="bloc" aria-labelledby="titre-resultats">
+      <h2 id="titre-resultats" i18n="@@spc.study.results">Résultats</h2>
+
+      <div class="kpis">
+        <div class="kpi" data-test="kpi-cp">
+          <b>{{ num(calc.cp, 2) }}</b>
+          <span>Cp</span>
+        </div>
+        <div class="kpi kpi--{{ status ? tone(status) : 'neutre' }}" data-test="kpi-cpk">
+          <b>{{ num(calc.cpk, 2) }}</b>
+          <span>Cpk – <ng-container i18n="@@spc.study.threshold">seuil</ng-container> {{ fixed(capableThreshold) }}</span>
+        </div>
+        <div class="kpi" data-test="kpi-moyenne">
+          <b>{{ num(calc.grandMean, 2) }}</b>
+          <span i18n="@@spc.study.grand-mean">Moyenne X̿</span>
+        </div>
+        <div class="kpi" data-test="kpi-sigma">
+          <b>{{ num(calc.sigma, 3) }}</b>
+          <span i18n="@@spc.study.sigma">Sigma (R̄ / d2)</span>
+        </div>
+      </div>
+
+      <!-- Les deux pastilles du classeur (« CONTROLLED » / « NOT CONTROLLED ») : toujours là,
+           neutres tant qu'aucun Cpk ne se calcule. -->
+      <div class="verdicts" data-test="verdict" role="status">
+        <span class="verdicts__titre" i18n="@@spc.study.process-status">Statut du procédé</span>
+        <span class="verdict" [class.verdict--ok]="status !== null && controlled" data-test="verdict-maitrise">
+          <ng-container i18n="@@spc.study.controlled">Procédé maîtrisé :</ng-container>
+          <b>{{ status === null ? '—' : (controlled ? yes : no) }}</b>
+        </span>
+        <span class="verdict" [class.verdict--ko]="status !== null && !controlled" data-test="verdict-non-maitrise">
+          <ng-container i18n="@@spc.study.not-controlled">Procédé non maîtrisé :</ng-container>
+          <b>{{ status === null ? '—' : (controlled ? no : yes) }}</b>
+        </span>
+      </div>
+      <p class="note attente" *ngIf="calc.completeSubgroups === 0" data-test="attente"
+         i18n="@@spc.study.need-subgroup">Saisissez au moins un sous-groupe complet.</p>
     </section>
 
     <!-- ---------- cartes ---------- -->
@@ -232,7 +273,8 @@
       <section class="bloc" aria-labelledby="titre-carte-x">
         <h2 id="titre-carte-x" i18n="@@spc.study.xbar-chart">Carte X̄</h2>
         <qos-spc-control-chart [values]="calc.subgroupMeans" [ucl]="calc.meanUcl" [cl]="calc.grandMean"
-                               [lcl]="calc.meanLcl" [label]="xbarLabel" data-test="carte-x"></qos-spc-control-chart>
+                               [lcl]="calc.meanLcl" [usl]="usl" [lsl]="lsl" [label]="xbarLabel"
+                               data-test="carte-x"></qos-spc-control-chart>
       </section>
       <section class="bloc" aria-labelledby="titre-carte-r">
         <h2 id="titre-carte-r" i18n="@@spc.study.range-chart">Carte R</h2>
@@ -242,6 +284,7 @@
     </div>
 
     <!-- ---------- distribution ---------- -->
+    <!-- Sous les deux cartes, la courbe se trace seule dès qu'un sous-groupe est complet. -->
     <section class="bloc" aria-labelledby="titre-distribution">
       <h2 id="titre-distribution" i18n="@@spc.study.distribution">Distribution et tolérance</h2>
       <qos-spc-distribution-chart [values]="values" [mean]="calc.grandMean" [sigma]="calc.sigma"

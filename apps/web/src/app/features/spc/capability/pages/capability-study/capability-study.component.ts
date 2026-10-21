@@ -2,6 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -10,9 +11,14 @@ import { personName } from '../../../../../core/directory/directory-names';
 import { DirectoryUser } from '../../../../../core/directory/directory.types';
 import { safeErrorMessage } from '../../../../../core/http/error-message';
 import {
-  MAX_SUBGROUP_SIZE, SUBGROUPS, SUBGROUP_SIZES, classify, computeCapability, parseMeasurement, pasteBlock
+  ConfirmDialogComponent, ConfirmDialogData
+} from '../../../../../shared/ui/confirm-dialog/confirm-dialog.component';
+import {
+  CONSTANT_ROWS, MAX_SUBGROUP_SIZE, SUBGROUPS, SUBGROUP_SIZES, classify, computeCapability, parseMeasurement,
+  pasteBlock
 } from '../../spc-capability.calc';
 import { completeValues } from '../../spc-capability.charts';
+import { SPC_EXAMPLES, SpcExample } from '../../spc-capability.examples';
 import { fmt, statusTone } from '../../spc-capability.labels';
 import { CapabilityReadings, capabilityReadings } from '../../spc-capability.readings';
 import { SpcCapabilityService } from '../../spc-capability.service';
@@ -24,8 +30,9 @@ const DEFAULT_SUBGROUP_SIZE = 5;
 
 /**
  * Une étude de capabilité (maquette `docs/spc/Étude de capabilité procédé –
- * Cp _ Cpk 4.html`) : identification, grille de mesures, résultats, formules,
- * cartes X̄ et R, distribution.
+ * Cp _ Cpk 4.html`) : identification, grille de mesures avec, à sa droite
+ * comme dans le classeur, la table des constantes et toutes ses formules ;
+ * résultats et statut du procédé ; cartes X̄ et R, puis distribution.
  *
  * <p>Tout se recalcule à la frappe avec la même table et les mêmes formules
  * que le serveur, qui refait le calcul à l'enregistrement : ce qui est
@@ -45,6 +52,8 @@ const DEFAULT_SUBGROUP_SIZE = 5;
 export class CapabilityStudyComponent implements OnInit {
 
   readonly subgroupSizes = SUBGROUP_SIZES;
+  readonly constantRows = CONSTANT_ROWS;
+  readonly examples = SPC_EXAMPLES;
   readonly columns = Array.from({ length: SUBGROUPS }, (_, i) => i);
   readonly columnLabels = this.columns.map(i => `SG ${String(i + 1).padStart(2, '0')}`);
   readonly yes = $localize`:@@spc.study.yes:OUI`;
@@ -92,6 +101,7 @@ export class CapabilityStudyComponent implements OnInit {
     private readonly router: Router,
     private readonly service: SpcCapabilityService,
     private readonly snack: MatSnackBar,
+    private readonly dialog: MatDialog,
     authz: AuthzService
   ) {
     authz.can('spc.manage').pipe(takeUntilDestroyed()).subscribe(v => {
@@ -204,6 +214,41 @@ export class CapabilityStudyComponent implements OnInit {
     event.preventDefault();
     this.raw = pasteBlock(this.raw, r, c, text);
     this.recompute();
+  }
+
+  /** Une mesure au moins est saisie : charger un exemple l'écraserait. */
+  get hasMeasurements(): boolean {
+    return this.raw.some(row => row.some(v => v.trim() !== ''));
+  }
+
+  exampleLabel(ex: SpcExample): string {
+    return ex.id === 'workbook'
+      ? $localize`:@@spc.example.workbook:Exemple 1 — classeur : poids 500 ± 25 g (maîtrisé)`
+      : $localize`:@@spc.example.turning:Exemple 2 — diamètre Ø 12 ± 0,1 mm (non maîtrisé)`;
+  }
+
+  /**
+   * Charge un jeu d'exemple : paramètre, tolérance, référence, limites, taille du
+   * sous-groupe et mesures. Rien n'est enregistré ; des mesures déjà saisies ne
+   * sont remplacées qu'après confirmation.
+   */
+  loadExample(ex: SpcExample): void {
+    if (!this.canManage) return;
+    if (!this.hasMeasurements) {
+      this.applyExample(ex);
+      return;
+    }
+    this.dialog.open<ConfirmDialogComponent, ConfirmDialogData, boolean>(ConfirmDialogComponent, {
+      data: {
+        title: $localize`:@@spc.example.confirm-title:Remplacer les mesures saisies ?`,
+        message: $localize`:@@spc.example.confirm-message:L'exemple remplace l'identification de la pièce, les limites et toutes les mesures de la grille. Rien n'est enregistré tant que vous n'enregistrez pas l'étude.`,
+        confirmLabel: $localize`:@@spc.example.confirm:Charger l'exemple`
+      },
+      autoFocus: false,
+      restoreFocus: true
+    }).afterClosed().subscribe(ok => {
+      if (ok) this.applyExample(ex);
+    });
   }
 
   clearMeasurements(): void {
@@ -329,6 +374,24 @@ export class CapabilityStudyComponent implements OnInit {
       subgroupSize: sheet.subgroupSize
     });
     this.form.markAsPristine();
+    this.recompute();
+  }
+
+  private applyExample(ex: SpcExample): void {
+    this.raw = Array.from({ length: MAX_SUBGROUP_SIZE }, (_, r) =>
+      Array.from({ length: SUBGROUPS }, (_, c) => {
+        const v = ex.grid[r]?.[c];
+        return v === null || v === undefined ? '' : String(v);
+      }));
+    this.form.patchValue({
+      characteristic: ex.characteristic,
+      specification: ex.specification,
+      partReference: ex.partReference,
+      lsl: ex.lsl,
+      usl: ex.usl,
+      subgroupSize: ex.subgroupSize
+    });
+    this.form.markAsDirty();
     this.recompute();
   }
 

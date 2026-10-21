@@ -24796,14 +24796,6 @@ historique 12 mois</source>
         <source>Carte R</source>
         <target state="translated">R 控制图</target>
       </trans-unit>
-      <trans-unit id="spc.formula.group-constants" datatype="html">
-        <source>Constantes</source>
-        <target state="translated">常数</target>
-      </trans-unit>
-      <trans-unit id="spc.formula.table" datatype="html">
-        <source>Table SPC</source>
-        <target state="translated">SPC 系数表</target>
-      </trans-unit>
       <trans-unit id="spc.chart.no-data" datatype="html">
         <source>Aucune donnée à tracer.</source>
         <target state="translated">没有可绘制的数据。</target>
@@ -24947,6 +24939,46 @@ historique 12 mois</source>
       <trans-unit id="spc.settings.problem.order" datatype="html">
         <source>Le seuil de surveillance doit rester sous le seuil de maîtrise.</source>
         <target state="translated">关注阈值必须低于受控阈值。</target>
+      </trans-unit>
+      <trans-unit id="spc.example.title" datatype="html">
+        <source>Jeux d'exemple</source>
+        <target state="translated">示例数据集</target>
+      </trans-unit>
+      <trans-unit id="spc.example.workbook" datatype="html">
+        <source>Exemple 1 — classeur : poids 500 ± 25 g (maîtrisé)</source>
+        <target state="translated">示例 1 — 工作簿：重量 500 ± 25 g（受控）</target>
+      </trans-unit>
+      <trans-unit id="spc.example.turning" datatype="html">
+        <source>Exemple 2 — diamètre Ø 12 ± 0,1 mm (non maîtrisé)</source>
+        <target state="translated">示例 2 — 直径 Ø 12 ± 0.1 mm（不受控）</target>
+      </trans-unit>
+      <trans-unit id="spc.example.confirm-title" datatype="html">
+        <source>Remplacer les mesures saisies ?</source>
+        <target state="translated">替换已输入的测量值？</target>
+      </trans-unit>
+      <trans-unit id="spc.example.confirm-message" datatype="html">
+        <source>L'exemple remplace l'identification de la pièce, les limites et toutes les mesures de la grille. Rien n'est enregistré tant que vous n'enregistrez pas l'étude.</source>
+        <target state="translated">示例将替换零件标识、规格限和网格中的所有测量值。在保存研究之前不会保存任何内容。</target>
+      </trans-unit>
+      <trans-unit id="spc.example.confirm" datatype="html">
+        <source>Charger l'exemple</source>
+        <target state="translated">加载示例</target>
+      </trans-unit>
+      <trans-unit id="spc.example.empty" datatype="html">
+        <source>La grille est vide : saisissez vos mesures ou chargez un des jeux d'exemple.</source>
+        <target state="translated">网格为空：请输入测量值或加载一个示例数据集。</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.title" datatype="html">
+        <source>Formules</source>
+        <target state="translated">公式</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.constants-title" datatype="html">
+        <source>Table des constantes SPC</source>
+        <target state="translated">SPC 常数表</target>
+      </trans-unit>
+      <trans-unit id="spc.study.process-status" datatype="html">
+        <source>Statut du procédé</source>
+        <target state="translated">过程状态</target>
       </trans-unit>
       <trans-unit id="standards-extras.actions" datatype="html">
         <source>Actions</source>

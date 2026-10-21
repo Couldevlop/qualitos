@@ -25,6 +25,18 @@ describe('spc-capability.charts', () => {
       expect(g.xLabels.map(l => l.label)).toEqual([1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 20]);
     });
 
+    it('trace la tolérance sur la carte et l\'inclut dans l\'échelle', () => {
+      expect(controlChart([5, 6], 10, 6, 2)!.specs).toEqual([]);
+      const g = controlChart([5, 6], 10, 6, 2, { usl: 20, lsl: Number.NaN })!;
+      expect(g.specs.map(t => t.label)).toEqual(['USL']);
+      expect(g.specs[0].value).toBe(20);
+      expect(g.specs[0].y).toBeLessThan(g.lines[0].y);
+      expect(g.ticks[4].value).toBeGreaterThan(20);
+      const h = controlChart([5, 6], 10, 6, 2, { usl: null, lsl: -4 })!;
+      expect(h.specs.map(t => t.label)).toEqual(['LSL']);
+      expect(h.ticks[0].value).toBeLessThan(-4);
+    });
+
     it('garde une échelle quand toutes les valeurs sont égales', () => {
       const g = controlChart([2, 2], 2, 2, 2)!;
       expect(g.points.every(p => Number.isFinite(p.y))).toBeTrue();

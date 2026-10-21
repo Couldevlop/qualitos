@@ -9,6 +9,7 @@ import { Measurement } from './spc-capability.types';
 
 export interface ChartPoint { index: number; value: number; x: number; y: number; out: boolean }
 export interface ChartLine { label: 'UCL' | 'CL' | 'LCL'; value: number; y: number }
+export interface SpecLine { label: 'USL' | 'LSL'; value: number; y: number }
 export interface ChartTick { value: number; y: number }
 
 export interface ControlChartGeometry {
@@ -19,6 +20,8 @@ export interface ControlChartGeometry {
   points: ChartPoint[];
   polyline: string;
   lines: ChartLine[];
+  /** Les limites de tolérance, tracées sur la carte X̄ comme dans le classeur. */
+  specs: SpecLine[];
   ticks: ChartTick[];
   xLabels: { label: number; x: number }[];
 }
@@ -32,16 +35,22 @@ const CB = 26;
 
 /**
  * Une carte de contrôle : les valeurs de chaque sous-groupe, les trois limites,
- * et les points hors limites. `null` quand il n'y a rien à tracer.
+ * et les points hors limites. `null` quand il n'y a rien à tracer. Les limites
+ * de tolérance, quand on les donne (carte X̄), entrent dans l'échelle.
  */
 export function controlChart(values: (number | null)[], ucl: number | null, cl: number | null,
-                             lcl: number | null): ControlChartGeometry | null {
+                             lcl: number | null,
+                             spec: { usl: number | null; lsl: number | null } = { usl: null, lsl: null }
+): ControlChartGeometry | null {
   if (ucl === null || cl === null || lcl === null) return null;
   const pts = values
     .map((v, i) => ({ v, i }))
     .filter((p): p is { v: number; i: number } => p.v !== null && Number.isFinite(p.v));
   if (!pts.length) return null;
-  const all = [...pts.map(p => p.v), ucl, lcl, cl];
+  const tolerances: { label: 'USL' | 'LSL'; value: number }[] = [];
+  if (spec.usl !== null && Number.isFinite(spec.usl)) tolerances.push({ label: 'USL', value: spec.usl });
+  if (spec.lsl !== null && Number.isFinite(spec.lsl)) tolerances.push({ label: 'LSL', value: spec.lsl });
+  const all = [...pts.map(p => p.v), ucl, lcl, cl, ...tolerances.map(t => t.value)];
   let lo = Math.min(...all);
   let hi = Math.max(...all);
   const pad = (hi - lo || 1) * 0.12;
@@ -59,6 +68,7 @@ export function controlChart(values: (number | null)[], ucl: number | null, cl: 
       { label: 'CL', value: cl, y: y(cl) },
       { label: 'LCL', value: lcl, y: y(lcl) }
     ],
+    specs: tolerances.map(t => ({ ...t, y: y(t.value) })),
     ticks: [0, 1, 2, 3, 4].map(t => {
       const v = lo + (hi - lo) * t / 4;
       return { value: v, y: y(v) };

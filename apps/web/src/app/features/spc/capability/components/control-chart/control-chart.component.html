@@ -9,6 +9,10 @@
       <line [attr.x1]="g.left" [attr.x2]="g.right" [attr.y1]="l.y" [attr.y2]="l.y"></line>
       <text [attr.x]="g.right + 4" [attr.y]="l.y + 3">{{ l.label }} {{ fixed(l.value) }}</text>
     </g>
+    <g *ngFor="let s of g.specs" class="tolerance" [attr.data-test]="'ligne-' + s.label">
+      <line [attr.x1]="g.left" [attr.x2]="g.right" [attr.y1]="s.y" [attr.y2]="s.y"></line>
+      <text [attr.x]="g.right + 4" [attr.y]="s.y + 3">{{ s.label }} {{ fixed(s.value) }}</text>
+    </g>
     <text class="axe" *ngFor="let x of g.xLabels" [attr.x]="x.x" [attr.y]="g.height - 8" text-anchor="middle">{{ x.label }}</text>
     <polyline class="trace" [attr.points]="g.polyline"></polyline>
     <circle *ngFor="let p of g.points" class="point" [class.point--hors]="p.out"

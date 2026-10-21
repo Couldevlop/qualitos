@@ -24795,14 +24795,6 @@ historique 12 mois</source>
         <source>Carte R</source>
         <target state="translated">R 管理図</target>
       </trans-unit>
-      <trans-unit id="spc.formula.group-constants" datatype="html">
-        <source>Constantes</source>
-        <target state="translated">定数</target>
-      </trans-unit>
-      <trans-unit id="spc.formula.table" datatype="html">
-        <source>Table SPC</source>
-        <target state="translated">SPC 係数表</target>
-      </trans-unit>
       <trans-unit id="spc.chart.no-data" datatype="html">
         <source>Aucune donnée à tracer.</source>
         <target state="translated">描画するデータがありません。</target>
@@ -24946,6 +24938,46 @@ historique 12 mois</source>
       <trans-unit id="spc.settings.problem.order" datatype="html">
         <source>Le seuil de surveillance doit rester sous le seuil de maîtrise.</source>
         <target state="translated">監視しきい値は管理しきい値より小さくなければなりません。</target>
+      </trans-unit>
+      <trans-unit id="spc.example.title" datatype="html">
+        <source>Jeux d'exemple</source>
+        <target state="translated">サンプルデータ</target>
+      </trans-unit>
+      <trans-unit id="spc.example.workbook" datatype="html">
+        <source>Exemple 1 — classeur : poids 500 ± 25 g (maîtrisé)</source>
+        <target state="translated">例 1 — ワークブック：重量 500 ± 25 g（管理状態）</target>
+      </trans-unit>
+      <trans-unit id="spc.example.turning" datatype="html">
+        <source>Exemple 2 — diamètre Ø 12 ± 0,1 mm (non maîtrisé)</source>
+        <target state="translated">例 2 — 直径 Ø 12 ± 0.1 mm（管理外）</target>
+      </trans-unit>
+      <trans-unit id="spc.example.confirm-title" datatype="html">
+        <source>Remplacer les mesures saisies ?</source>
+        <target state="translated">入力済みの測定値を置き換えますか？</target>
+      </trans-unit>
+      <trans-unit id="spc.example.confirm-message" datatype="html">
+        <source>L'exemple remplace l'identification de la pièce, les limites et toutes les mesures de la grille. Rien n'est enregistré tant que vous n'enregistrez pas l'étude.</source>
+        <target state="translated">サンプルは部品の識別情報、規格限界、グリッドのすべての測定値を置き換えます。調査を保存するまで何も保存されません。</target>
+      </trans-unit>
+      <trans-unit id="spc.example.confirm" datatype="html">
+        <source>Charger l'exemple</source>
+        <target state="translated">サンプルを読み込む</target>
+      </trans-unit>
+      <trans-unit id="spc.example.empty" datatype="html">
+        <source>La grille est vide : saisissez vos mesures ou chargez un des jeux d'exemple.</source>
+        <target state="translated">グリッドが空です。測定値を入力するか、サンプルデータを読み込んでください。</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.title" datatype="html">
+        <source>Formules</source>
+        <target state="translated">計算式</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.constants-title" datatype="html">
+        <source>Table des constantes SPC</source>
+        <target state="translated">SPC 定数表</target>
+      </trans-unit>
+      <trans-unit id="spc.study.process-status" datatype="html">
+        <source>Statut du procédé</source>
+        <target state="translated">工程の状態</target>
       </trans-unit>
       <trans-unit id="standards-extras.actions" datatype="html">
         <source>Actions</source>

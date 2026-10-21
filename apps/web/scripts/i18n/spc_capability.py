@@ -252,8 +252,6 @@ TRANSLATIONS = {
     'spc.formula.group-xbar': ('Carte X̄', 'X̄ chart', 'Gráfico X̄', 'مخطط X̄', 'X̄ 管理図', 'X̄ 控制图'),
     'spc.formula.control-limit': ('Limite de contrôle', 'Control limit', 'Límite de control', 'حد التحكم', '管理限界', '控制限'),
     'spc.formula.group-range': ('Carte R', 'R chart', 'Gráfico R', 'مخطط R', 'R 管理図', 'R 控制图'),
-    'spc.formula.group-constants': ('Constantes', 'Constants', 'Constantes', 'الثوابت', '定数', '常数'),
-    'spc.formula.table': ('Table SPC', 'SPC table', 'Tabla SPC', 'جدول SPC', 'SPC 係数表', 'SPC 系数表'),
 
     # ----- graphiques -----
     'spc.chart.no-data': ('Aucune donnée à tracer.', 'No data to plot.', 'No hay datos que trazar.', 'لا توجد بيانات للرسم.', '描画するデータがありません。', '没有可绘制的数据。'),
@@ -383,4 +381,43 @@ TRANSLATIONS = {
         'يجب أن تبقى عتبة المراقبة أدنى من عتبة السيطرة.',
         '監視しきい値は管理しきい値より小さくなければなりません。',
         '关注阈值必须低于受控阈值。'),
+    'spc.example.title': ("Jeux d'exemple", 'Sample datasets', 'Conjuntos de ejemplo', 'مجموعات بيانات نموذجية', 'サンプルデータ', '示例数据集'),
+    'spc.example.workbook': (
+        'Exemple 1 — classeur : poids 500 ± 25 g (maîtrisé)',
+        'Example 1 — workbook: weight 500 ± 25 g (under control)',
+        'Ejemplo 1 — libro: peso 500 ± 25 g (bajo control)',
+        'المثال 1 — المصنف: الوزن 500 ± 25 غ (تحت السيطرة)',
+        '例 1 — ワークブック：重量 500 ± 25 g（管理状態）',
+        '示例 1 — 工作簿：重量 500 ± 25 g（受控）'),
+    'spc.example.turning': (
+        'Exemple 2 — diamètre Ø 12 ± 0,1 mm (non maîtrisé)',
+        'Example 2 — diameter Ø 12 ± 0.1 mm (not under control)',
+        'Ejemplo 2 — diámetro Ø 12 ± 0,1 mm (fuera de control)',
+        'المثال 2 — القطر Ø 12 ± 0.1 مم (خارج السيطرة)',
+        '例 2 — 直径 Ø 12 ± 0.1 mm（管理外）',
+        '示例 2 — 直径 Ø 12 ± 0.1 mm（不受控）'),
+    'spc.example.confirm-title': (
+        'Remplacer les mesures saisies ?', 'Replace the entered measurements?',
+        '¿Reemplazar las mediciones introducidas?', 'استبدال القياسات المُدخلة؟',
+        '入力済みの測定値を置き換えますか？', '替换已输入的测量值？'),
+    'spc.example.confirm-message': (
+        "L'exemple remplace l'identification de la pièce, les limites et toutes les mesures de la grille. Rien n'est enregistré tant que vous n'enregistrez pas l'étude.",
+        'The example replaces the part identification, the limits and every measurement in the grid. Nothing is saved until you save the study.',
+        'El ejemplo reemplaza la identificación de la pieza, los límites y todas las mediciones de la cuadrícula. No se guarda nada hasta que guarde el estudio.',
+        'يستبدل المثال تعريف القطعة والحدود وجميع قياسات الشبكة. لا يُحفظ شيء ما لم تحفظ الدراسة.',
+        'サンプルは部品の識別情報、規格限界、グリッドのすべての測定値を置き換えます。調査を保存するまで何も保存されません。',
+        '示例将替换零件标识、规格限和网格中的所有测量值。在保存研究之前不会保存任何内容。'),
+    'spc.example.confirm': ("Charger l'exemple", 'Load the example', 'Cargar el ejemplo', 'تحميل المثال', 'サンプルを読み込む', '加载示例'),
+    'spc.example.empty': (
+        "La grille est vide : saisissez vos mesures ou chargez un des jeux d'exemple.",
+        'The grid is empty: enter your measurements or load one of the sample datasets.',
+        'La cuadrícula está vacía: introduzca sus mediciones o cargue uno de los conjuntos de ejemplo.',
+        'الشبكة فارغة: أدخل قياساتك أو حمّل إحدى مجموعات البيانات النموذجية.',
+        'グリッドが空です。測定値を入力するか、サンプルデータを読み込んでください。',
+        '网格为空：请输入测量值或加载一个示例数据集。'),
+    'spc.formula.title': ('Formules', 'Formulas', 'Fórmulas', 'الصيغ', '計算式', '公式'),
+    'spc.formula.constants-title': (
+        'Table des constantes SPC', 'SPC constants table', 'Tabla de constantes SPC',
+        'جدول ثوابت SPC', 'SPC 定数表', 'SPC 常数表'),
+    'spc.study.process-status': ('Statut du procédé', 'Process status', 'Estado del proceso', 'حالة العملية', '工程の状態', '过程状态'),
 }

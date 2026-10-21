@@ -27,6 +27,10 @@ const CONSTANTS: Record<number, Constants> = {
 
 export const SUBGROUP_SIZES = Object.keys(CONSTANTS).map(Number);
 
+/** La table des constantes, telle que le classeur l'affiche à droite de la grille. */
+export const CONSTANT_ROWS: readonly ({ n: number } & Constants)[] =
+  SUBGROUP_SIZES.map(n => ({ n, ...CONSTANTS[n] }));
+
 export function constantsFor(n: number): Constants {
   const k = CONSTANTS[n];
   if (!k) throw new RangeError(`subgroup size ${n}`);
