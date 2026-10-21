@@ -2,7 +2,37 @@
 # CVE Critique/Haute ne franchit la CI ; toute entrée ici doit citer le correctif
 # attendu et une date de revue).
 #
-# ÉTAT AU 2026-10-10 : DEUX EXCEPTIONS, Spring Framework 6.2.19 (spring-webmvc).
+# ÉTAT AU 2026-10-21 : TROIS EXCEPTIONS — les deux de Spring Framework 6.2.19
+# (ci-dessous, 2026-10-10) et une sur la base Chainguard Python.
+#
+# 2026-10-21 — CVE-2026-111943 (HIGH), ca-certificates-bundle 20260909-r2,
+# corrigée en 20260909-r3. Elle bloquait la CD préprod sur l'image ai-service ;
+# ai-vision-5s et l'inférence edge partagent la même base.
+#
+# Pourquoi pas la base corrigée : l'étiquette `latest` qui embarque r3 est en
+# Python 3.15 (mesuré le 2026-10-21, empreintes e2ade446… et latest-dev
+# 6611f09b…). Sur cet interpréteur, uvicorn[standard] ne s'installe pas
+# (uvloop/httptools sans roue 3.15) et onnxruntime 1.28.0 n'existe pas :
+# les trois images ne se construisent plus. Chainguard ne publie gratuitement que
+# `latest`, il n'y a pas d'étiquette 3.14 à relever. La base reste donc épinglée
+# en 3.14 (voir le commentaire des Dockerfile), et son runtime n'a pas d'apk pour
+# monter le seul paquet.
+#
+# Pourquoi ce n'est pas une faille ICI : la CVE porte sur un certificat du
+# magasin système (le titre amont la rattache à crypto/x509 de Go). Aucun code
+# Go dans ces images, et le code Python ne lit pas ce magasin : pas de
+# `ssl.create_default_context`, d'urllib ni de `cafile` ; les appels TLS sortants
+# passent par httpx, qui vérifie avec certifi (2026.10.19 dans l'image, à jour).
+# Décision prise avec le responsable du projet le 2026-10-21, CD préprod bloquée
+# sinon.
+#
+# REVUE : 2026-11-21 — relever les deux empreintes Chainguard (ai-service,
+# ai-vision-5s, infra/edge/inference, job pytest de la CI) si uvicorn[standard]
+# et onnxruntime s'installent en 3.15, et retirer cette entrée. Ne pas reconduire
+# sans avoir refait ce test.
+CVE-2026-111943 exp:2026-11-21
+#
+# 2026-10-10 — DEUX EXCEPTIONS, Spring Framework 6.2.19 (spring-webmvc).
 #
 #   CVE-2026-47884  CRITICAL  exécution de code par une limitation de chemin
 #                              insuffisante dans XsltView
