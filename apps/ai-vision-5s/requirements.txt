@@ -10,11 +10,14 @@
 #   - python-multipart 0.0.20 → CVE-2026-24486 / 42561 / 53539.
 # Toutes les versions ci-dessous ont été vérifiées : elles s'installent en roue
 # binaire sur l'interpréteur du runtime (Python 3.14, base Chainguard).
+# Pillow 12.3.0 → 13.0.0 le 2026-10-21 : CVE-2026-112403 (CRITICAL, décodage
+#   JPEG) et six HIGH, dont CVE-2026-112397, 112400 et 112404, toutes sur le
+#   décodage d'images, encore une fois la surface exposée du service.
 fastapi==0.141.1
 uvicorn[standard]==0.52.1
 python-multipart==0.0.32
 pydantic==2.13.4
-Pillow==12.3.0
+Pillow==13.0.0
 python-magic==0.4.27 ; sys_platform != "win32"
 python-magic-bin==0.4.14 ; sys_platform == "win32"
 python-jose[cryptography]==3.5.0
