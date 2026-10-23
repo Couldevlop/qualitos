@@ -1,5 +1,6 @@
 package com.openlab.qualitos.quality.docs;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -149,8 +150,26 @@ public final class DocumentDto {
             UUID rejectedBy,
             Instant rejectedAt,
             String rejectionReason,
-            FileInfo file
+            FileInfo file,
+            /** Les signataires de la dernière soumission, dans l'ordre ; vide sans circuit de signature. */
+            List<SignatoryView> signatories
     ) {}
+
+    /** Un signataire désigné et sa signature (ADR 0099). */
+    public record SignatoryView(
+            int position,
+            UUID userId,
+            String name,
+            SignatoryDecision decision,
+            Instant decidedAt,
+            String comment
+    ) {}
+
+    /** Une personne désignée à la soumission : son compte de l'annuaire et son nom affiché. */
+    public record SignatoryRequest(@NotNull UUID userId, @NotBlank @Size(max = 255) String name) {}
+
+    /** La soumission à validation : de un à trois signataires, dans l'ordre où ils signeront. */
+    public record SubmitRequest(@NotNull @Size(min = 1, max = 3) List<@NotNull @Valid SignatoryRequest> signatories) {}
 
     public record AcknowledgmentResponse(
             UUID id,

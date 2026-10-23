@@ -26,6 +26,7 @@ import {
 } from '../../documents.types';
 import { DocumentsEditDialogComponent } from '../documents-edit-dialog/documents-edit-dialog.component';
 import { DocumentsRejectDialogComponent } from '../documents-reject-dialog/documents-reject-dialog.component';
+import { DocumentsSubmitDialogComponent } from '../documents-submit-dialog/documents-submit-dialog.component';
 import { DocumentsVersionDialogComponent } from '../documents-version-dialog/documents-version-dialog.component';
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -132,11 +133,22 @@ export class DocumentsDetailComponent implements OnInit {
     ref.afterClosed().subscribe(v => { if (v) this.refresh$.next(); });
   }
 
+  /** Soumettre, c'est choisir ses signataires (ADR 0099) ; une version sans fichier ne part pas. */
   submitForReview(v: DocumentVersionResponse): void {
-    this.svc.submit(v.documentId, v.id).subscribe({
-      next: () => { this.snack.open($localize`:@@documents.detail.submitted:Soumise à revue.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); },
-      error: err => this.fail(err, $localize`:@@documents.detail.submit-failed:Soumission impossible.`)
-    });
+    if (!v.file) {
+      this.snack.open($localize`:@@documents.detail.submit-needs-file:Joignez le fichier du document avant de soumettre la version.`,
+        $localize`:@@common.ok:OK`, { duration: 4000 });
+      return;
+    }
+    this.dialog.open(DocumentsSubmitDialogComponent, {
+      data: { version: v }, autoFocus: 'first-tabbable', restoreFocus: true,
+      panelClass: 'qos-dialog-panel'
+    }).afterClosed().subscribe(r => { if (r) this.refresh$.next(); });
+  }
+
+  /** Une revue d'avant l'ADR 0099, sans signataires : elle se décide encore par le droit d'approuver. */
+  legacyReview(v: DocumentVersionResponse): boolean {
+    return v.status === 'IN_REVIEW' && !v.signatories?.length;
   }
 
   approve(v: DocumentVersionResponse): void {
@@ -163,6 +175,11 @@ export class DocumentsDetailComponent implements OnInit {
       data: { version: v }, autoFocus: 'first-tabbable', restoreFocus: true,
       panelClass: 'qos-dialog-panel'
     }).afterClosed().subscribe(r => { if (r) this.refresh$.next(); });
+  }
+
+  /** Relit la fiche après une signature ou un refus. */
+  refresh(): void {
+    this.refresh$.next();
   }
 
   /** Les versions qui demandent l'attention : celle en revue, et un brouillon revenu d'un refus. */

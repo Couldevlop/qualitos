@@ -11,6 +11,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -35,7 +36,7 @@ class DocumentFileControllerTest {
     static DocumentDto.VersionResponse resp() {
         return new DocumentDto.VersionResponse(VER, DOC, 1, null, null, "abc", null, VersionStatus.DRAFT,
                 UUID.randomUUID(), null, null, null, null, Instant.now(), Instant.now(), null, null, null,
-                new DocumentDto.FileInfo("proc.pdf", "application/pdf", PDF.length, true, false));
+                new DocumentDto.FileInfo("proc.pdf", "application/pdf", PDF.length, true, false), List.of());
     }
 
     @Test @WithMockUser(roles = "QUALITY_MANAGER")

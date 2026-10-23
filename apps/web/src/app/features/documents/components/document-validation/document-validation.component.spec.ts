@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 
 import { CircuitService } from '../../../../core/circuits/circuit.service';
-import { CircuitRun, CircuitView } from '../../../../core/circuits/circuit.types';
+import { CircuitRun } from '../../../../core/circuits/circuit.types';
 import { provideDirectoryStub } from '../../../../core/directory/testing/directory.stub';
 import { PersonNameModule } from '../../../../shared/person-name/person-name.module';
 import { SharedModule } from '../../../../shared/shared.module';
@@ -31,16 +31,34 @@ const states = (rows: { state: string }[]) => rows.map(r => r.state);
 
 describe('validationRows', () => {
 
-  it('un brouillon montre le circuit qu’il suivra', () => {
-    const rows = validationRows(version({ status: 'DRAFT' }), { run: null, plan: STEPS });
-    expect(rows.map(r => r.label)).toEqual(['Rédaction', 'Validateur 1', 'Validateur 2', 'Diffusion et prise de connaissance']);
-    expect(states(rows)).toEqual(['current', 'todo', 'todo', 'todo']);
+  it('un brouillon annonce la signature : ses signataires se choisiront à la soumission', () => {
+    const rows = validationRows(version({ status: 'DRAFT' }), { run: null });
+    expect(rows.map(r => r.label)).toEqual(['Rédaction', 'Signature', 'Diffusion et prise de connaissance']);
+    expect(states(rows)).toEqual(['current', 'todo', 'todo']);
     expect(rows[0].actors).toEqual(['autrice']);
-    expect(rows[1].approvals).toEqual({ done: 0, needed: 2 });
+    expect(rows[1].note).toContain('choisis à la soumission');
+  });
+
+  it('avec des signataires : une ligne chacun, dans l’ordre, l’attendu en cours', () => {
+    const sig = (position: number, userId: string, decision: 'PENDING' | 'APPROVED' | 'REJECTED', decidedAt: string | null = null) =>
+      ({ position, userId, name: userId, decision, decidedAt, comment: null });
+    const rows = validationRows(version({ signatories: [
+      sig(1, 'alice', 'APPROVED', '2026-10-02T09:00:00Z'), sig(2, 'bob', 'PENDING'), sig(3, 'chloe', 'PENDING')] }),
+      { run: passage() });
+    expect(rows.map(r => r.label)).toEqual(['Rédaction', 'Signataire 1', 'Signataire 2', 'Signataire 3',
+      'Diffusion et prise de connaissance']);
+    expect(states(rows)).toEqual(['done', 'done', 'current', 'todo', 'todo']);
+    expect(rows[1].actors).toEqual(['alice']);
+    expect(rows[1].at).toBe('2026-10-02T09:00:00Z');
+
+    const approuvee = validationRows(version({ status: 'APPROVED', signatories: [sig(1, 'alice', 'APPROVED')] }), { run: null });
+    expect(states(approuvee)).toEqual(['done', 'done', 'current']);
+    const rejetee = validationRows(version({ status: 'OBSOLETE', signatories: [sig(1, 'alice', 'REJECTED')] }), { run: null });
+    expect(rejetee[1].state).toBe('rejected');
   });
 
   it('en revue, suit le passage : qui a validé, et l’étape en cours', () => {
-    const rows = validationRows(version(), { run: passage(), plan: null });
+    const rows = validationRows(version(), { run: passage() });
     expect(states(rows)).toEqual(['done', 'current', 'todo', 'todo']);
     expect(rows[1].actors).toEqual(['alice']);
     expect(rows[1].at).toBe('2026-10-02T09:00:00Z');
@@ -50,40 +68,40 @@ describe('validationRows', () => {
 
   it('une version publiée a franchi toutes les étapes de son passage', () => {
     const rows = validationRows(version({ status: 'PUBLISHED', publishedAt: '2026-10-05T00:00:00Z' }),
-      { run: passage({ status: 'APPROVED', currentStep: 1 }), plan: null });
+      { run: passage({ status: 'APPROVED', currentStep: 1 }) });
     expect(states(rows)).toEqual(['done', 'done', 'done', 'done']);
     expect(rows[3].at).toBe('2026-10-05T00:00:00Z');
   });
 
   it('une version approuvée attend sa diffusion', () => {
     const rows = validationRows(version({ status: 'APPROVED' }),
-      { run: passage({ status: 'APPROVED', currentStep: 1 }), plan: null });
+      { run: passage({ status: 'APPROVED', currentStep: 1 }) });
     expect(states(rows)).toEqual(['done', 'done', 'done', 'current']);
   });
 
   it('sans circuit, une seule approbation : en attente, puis faite par son approbateur', () => {
-    expect(states(validationRows(version({ status: 'DRAFT' }), { run: null, plan: null })))
-      .toEqual(['current', 'todo', 'todo']);
-    expect(states(validationRows(version(), { run: null, plan: null }))).toEqual(['done', 'current', 'todo']);
+    const enRevue = validationRows(version(), { run: null });
+    expect(states(enRevue)).toEqual(['done', 'current', 'todo']);
+    expect(enRevue[1].note).toContain("droit d'approuver");
 
     const rows = validationRows(version({ status: 'APPROVED', approvedBy: 'bob', approvedAt: '2026-10-03T00:00:00Z' }),
-      { run: null, plan: null });
+      { run: null });
     expect(rows[1].label).toBe('Approbation');
     expect(rows[1].roleCode).toBeNull();
     expect(rows[1].actors).toEqual(['bob']);
     expect(rows[1].at).toBe('2026-10-03T00:00:00Z');
 
-    const sansTrace = validationRows(version({ status: 'OBSOLETE' }), { run: null, plan: null });
+    const sansTrace = validationRows(version({ status: 'OBSOLETE' }), { run: null });
     expect(sansTrace[1].actors).toEqual([]);
     expect(sansTrace[2].at).toBeNull();
   });
 
   it('un passage refusé ou d’une autre soumission ne décrit pas la revue en cours', () => {
-    expect(states(validationRows(version(), { run: passage({ status: 'REJECTED' }), plan: null })))
+    expect(states(validationRows(version(), { run: passage({ status: 'REJECTED' }) })))
       .toEqual(['done', 'current', 'todo']);
-    expect(states(validationRows(version({ status: 'PUBLISHED' }), { run: passage(), plan: null })))
+    expect(states(validationRows(version({ status: 'PUBLISHED' }), { run: passage() })))
       .toEqual(['done', 'done', 'done']);
-    expect(states(validationRows(version({ status: 'DRAFT' }), { run: passage({ status: 'APPROVED' }), plan: null })))
+    expect(states(validationRows(version({ status: 'DRAFT' }), { run: passage({ status: 'APPROVED' }) })))
       .toEqual(['current', 'todo', 'todo']);
   });
 });
@@ -99,10 +117,8 @@ describe('DocumentValidationComponent', () => {
     createdAt: '', updatedAt: '', versions: [], ...o
   });
 
-  async function setup(view: CircuitView | 'echec' = { subject: 'document-version', enabled: true, steps: STEPS },
-                       run: CircuitRun | null | 'echec' = passage()): Promise<void> {
-    circuits = jasmine.createSpyObj<CircuitService>('CircuitService', ['circuit', 'run']);
-    circuits.circuit.and.returnValue(view === 'echec' ? throwError(() => new Error('503')) : of(view));
+  async function setup(run: CircuitRun | null | 'echec' = passage()): Promise<void> {
+    circuits = jasmine.createSpyObj<CircuitService>('CircuitService', ['run']);
     circuits.run.and.returnValue(run === 'echec' ? throwError(() => new Error('503')) : of(run));
     await TestBed.configureTestingModule({
       declarations: [DocumentValidationComponent],
@@ -123,28 +139,29 @@ describe('DocumentValidationComponent', () => {
 
   const host = (): HTMLElement => fixture.nativeElement as HTMLElement;
 
-  it('lit le passage d’une version soumise et le rend du haut vers le bas', async () => {
+  it('lit le passage d’une revue d’avant les signataires et le rend du haut vers le bas', async () => {
     await setup();
     show(version());
     expect(circuits.run).toHaveBeenCalledWith('document-version', 'v1');
-    expect(circuits.circuit).not.toHaveBeenCalled();
     expect(component.loaded).toBeTrue();
     expect(host().querySelectorAll('.temps').length).toBe(4);
     expect(host().querySelector('[data-test="temps-1"]')!.getAttribute('aria-current')).toBe('step');
     expect(host().textContent).toContain('1 approbation(s) sur 2');
   });
 
-  it('lit le circuit réglé pour un brouillon ; suspendu, l’approbation simple s’annonce', async () => {
-    await setup({ subject: 'document-version', enabled: false, steps: STEPS });
+  it('un brouillon ou une version à signataires n’a rien à lire', async () => {
+    await setup();
     show(version({ status: 'DRAFT' }));
-    expect(circuits.circuit).toHaveBeenCalledWith('document-version');
-    expect(component.rows.map(r => r.label)).toEqual(['Rédaction', 'Approbation', 'Diffusion et prise de connaissance']);
+    show(version({ id: 'v2', signatories: [
+      { position: 1, userId: 'alice', name: 'Alice', decision: 'PENDING', decidedAt: null, comment: null }] }));
+    expect(circuits.run).not.toHaveBeenCalled();
+    expect(component.loaded).toBeTrue();
+    expect(host().querySelector('[data-test="note"]')).toBeNull();
+    expect(component.rows.map(r => r.label)).toEqual(['Rédaction', 'Signataire 1', 'Diffusion et prise de connaissance']);
   });
 
   it('une lecture en échec retombe sur l’approbation simple', async () => {
-    await setup('echec', 'echec');
-    show(version({ status: 'DRAFT' }));
-    expect(component.rows.length).toBe(3);
+    await setup('echec');
     show(version({ id: 'v2' }));
     expect(component.rows.length).toBe(3);
     expect(component.loaded).toBeTrue();
@@ -164,7 +181,7 @@ describe('DocumentValidationComponent', () => {
   });
 
   it('suit la prise de connaissance de la version en vigueur', async () => {
-    await setup(undefined, passage({ status: 'APPROVED', currentStep: 1 }));
+    await setup(passage({ status: 'APPROVED', currentStep: 1 }));
     component.acknowledgments = 4;
     show(version({ status: 'PUBLISHED', publishedAt: '2026-10-05T00:00:00Z' }));
     expect(component.tracksReading).toBeTrue();

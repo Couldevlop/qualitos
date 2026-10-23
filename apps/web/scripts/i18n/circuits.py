@@ -227,12 +227,12 @@ TRANSLATIONS = {
         'Versión v{$NUMBER} rechazada el {$DATE}', 'رُفض الإصدار v{$NUMBER} في {$DATE}',
         'バージョン v{$NUMBER} は {$DATE} に却下されました', '版本 v{$NUMBER} 于 {$DATE} 被驳回'),
     'documents.circuit.rejected-next': (
-        'Corrigez-la, puis soumettez-la de nouveau : le circuit repartira de la première étape.',
-        'Correct it, then submit it again: the workflow will restart from the first step.',
-        'Corríjala y vuelva a enviarla: el circuito empezará de nuevo desde la primera etapa.',
-        'صحّحه ثم قدّمه من جديد: سيبدأ المسار من المرحلة الأولى.',
-        '修正して再提出してください。ワークフローは最初のステップからやり直しになります。',
-        '请修改后重新提交：流程将从第一步重新开始。'),
+        'Corrigez-la, puis soumettez-la de nouveau en choisissant ses signataires : la signature repartira du signataire 1.',
+        'Correct it, then submit it again, choosing its signatories: signing will restart from signatory 1.',
+        'Corríjala y vuelva a enviarla eligiendo sus firmantes: la firma empezará de nuevo por el firmante 1.',
+        'صحّحه ثم قدّمه من جديد مع اختيار موقّعيه: سيبدأ التوقيع من جديد من الموقّع 1.',
+        '修正し、署名者を選んで再提出してください。署名は署名者 1 からやり直しになります。',
+        '请修改后重新提交并选择签署人：签署将从签署人 1 重新开始。'),
     'documents.reject.title': (
         'Refuser la version v{$number}', 'Reject version v{$number}', 'Rechazar la versión v{$number}',
         'رفض الإصدار v{$number}', 'バージョン v{$number} を却下', '驳回版本 v{$number}'),

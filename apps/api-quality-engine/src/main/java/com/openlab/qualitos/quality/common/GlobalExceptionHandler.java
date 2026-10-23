@@ -31,6 +31,7 @@ import com.openlab.qualitos.quality.docs.DocumentCodeConflictException;
 import com.openlab.qualitos.quality.docs.DocumentFileRejectedException;
 import com.openlab.qualitos.quality.docs.DocumentFileTooLargeException;
 import com.openlab.qualitos.quality.docs.DocumentNotFoundException;
+import com.openlab.qualitos.quality.docs.DocumentSignatoryException;
 import com.openlab.qualitos.quality.docs.DocumentStateException;
 import com.openlab.qualitos.quality.docs.DocumentVersionNotFoundException;
 import com.openlab.qualitos.quality.fives.FiveSAuditNotFoundException;
@@ -833,6 +834,15 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/document-version-not-found"));
         problem.setTitle("Document Version Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(DocumentSignatoryException.class)
+    public ProblemDetail handleDocSignatory(DocumentSignatoryException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/document-invalid-signatories"));
+        problem.setTitle("Invalid Signatories");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }

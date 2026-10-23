@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -87,6 +89,11 @@ public class DocumentVersion {
 
     @Column(name = "published_at")
     private Instant publishedAt;
+
+    /** Les signataires de la dernière soumission, dans l'ordre où ils signent (ADR 0099). */
+    @OneToMany(mappedBy = "version", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OrderBy("position ASC")
+    private List<DocumentVersionSignatory> signatories = new ArrayList<>();
 
     /** Hash blockchain (rempli après ancrage). */
     @Column(name = "blockchain_tx_hash", length = 128)

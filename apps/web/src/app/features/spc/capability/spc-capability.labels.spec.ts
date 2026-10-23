@@ -1,11 +1,11 @@
-import { controlledLabel, csvCell, fmt, statusTone } from './spc-capability.labels';
+import { statusLabel, csvCell, fmt, statusTone } from './spc-capability.labels';
 
 describe('spc-capability.labels', () => {
 
-  it('ne dit « Maîtrisé » que pour un procédé capable', () => {
-    expect(controlledLabel('CAPABLE')).toBe('Maîtrisé');
-    expect(controlledLabel('WATCH')).toBe('Non maîtrisé');
-    expect(controlledLabel('NOT_CAPABLE')).toBe('Non maîtrisé');
+  it('nomme les trois statuts comme les trois couleurs du Cpk', () => {
+    expect(statusLabel('CAPABLE')).toBe('Maîtrisé');
+    expect(statusLabel('WATCH')).toBe('À surveiller');
+    expect(statusLabel('NOT_CAPABLE')).toBe('Non maîtrisé');
   });
 
   it('colore le Cpk : vert, jaune, rouge', () => {

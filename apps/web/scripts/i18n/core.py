@@ -76,7 +76,6 @@ TRANSLATIONS = {
     'nav.ishikawa': ('Ishikawa', 'Ishikawa', 'Ishikawa', 'إيشيكاوا', '特性要因図', '鱼骨图'),
     'nav.5s': ('5S', '5S', '5S', '5S', '5S', '5S'),
     'nav.dmaic': ('DMAIC', 'DMAIC', 'DMAIC', 'DMAIC', 'DMAIC', 'DMAIC'),
-    'nav.spc': ('SPC', 'SPC', 'SPC', 'SPC', 'SPC', 'SPC'),
     'nav.cercles': ('Cercles', 'Quality circles', 'Círculos', 'حلقات الجودة', 'QCサークル', '质量圈'),
     'nav.workflow-designer': ('Designer de workflow', 'Workflow designer', 'Diseñador de flujos', 'مصمّم سير العمل', 'ワークフローデザイナー', '工作流设计器'),
     'nav.qualite-operationnelle': ('Qualité opérationnelle', 'Operational quality', 'Calidad operativa', 'الجودة التشغيلية', 'オペレーション品質', '运营质量'),

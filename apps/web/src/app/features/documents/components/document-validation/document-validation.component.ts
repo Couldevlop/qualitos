@@ -4,7 +4,7 @@ import { catchError, map } from 'rxjs/operators';
 
 import { roleLabel } from '../../../../core/authz/authz.labels';
 import { CircuitService } from '../../../../core/circuits/circuit.service';
-import { CircuitRun, CircuitStep } from '../../../../core/circuits/circuit.types';
+import { CircuitRun } from '../../../../core/circuits/circuit.types';
 import { DocumentResponse, DocumentVersionResponse } from '../../documents.types';
 
 export type RowState = 'done' | 'current' | 'todo' | 'rejected';
@@ -21,29 +21,30 @@ export interface ValidationRow {
   at: string | null;
   /** Où en est une étape à plusieurs approbations. */
   approvals: { done: number; needed: number } | null;
+  /** Une précision sous l'étape, quand elle en appelle une. */
+  note: string | null;
 }
 
-/**
- * Ce que l'on sait du circuit d'une version : son passage, s'il en a un, ou
- * pour un brouillon les étapes qu'il suivra une fois soumis.
- */
+/** Ce que l'on sait du circuit par rôles d'une revue d'avant l'ADR 0099 : son passage, s'il en a un. */
 export interface CircuitFacts {
   run: CircuitRun | null;
-  plan: CircuitStep[] | null;
 }
 
 const LABEL_DRAFT = $localize`:@@documents.validation.draft:Rédaction`;
 const LABEL_SIMPLE = $localize`:@@documents.validation.simple:Approbation`;
 const LABEL_PUBLISH = $localize`:@@documents.validation.publish:Diffusion et prise de connaissance`;
+const LABEL_SIGNATURE = $localize`:@@documents.validation.signature:Signature`;
+const NOTE_SIGNATURE = $localize`:@@documents.validation.signature-note:De un à trois signataires, choisis à la soumission`;
+const NOTE_SIMPLE = $localize`:@@documents.validation.simple-waiting:Une personne ayant le droit d'approuver suffit`;
 
 /**
- * Le circuit de validation d'une version dans la fiche GED : la rédaction, les
- * étapes réglées par l'administrateur (ADR 0080) avec qui a validé et quand,
+ * Le circuit de validation d'une version dans la fiche GED : la rédaction, la
+ * signature de chacun de ses signataires dans l'ordre (ADR 0099) avec quand,
  * puis la diffusion et le suivi de la prise de connaissance.
  *
- * <p>Pour une version en revue ou validée, les étapes sont celles de son
- * passage, figées à la soumission ; pour un brouillon, celles qu'il suivra.
- * Sans circuit, une seule approbation suffit et le parcours le dit.
+ * <p>Un brouillon annonce la signature à venir : ses signataires se choisissent
+ * à la soumission. Une revue d'avant l'ADR 0099, sans signataires, montre les
+ * étapes de son passage par rôles (ADR 0080), ou l'approbation simple.
  */
 @Component({
   selector: 'qos-document-validation',
@@ -60,7 +61,7 @@ export class DocumentValidationComponent implements OnChanges, OnDestroy {
 
   rows: ValidationRow[] = [];
   loaded = false;
-  private facts: CircuitFacts = { run: null, plan: null };
+  private facts: CircuitFacts = { run: null };
   private sub?: Subscription;
 
   constructor(private readonly circuits: CircuitService) {}
@@ -100,7 +101,7 @@ export class DocumentValidationComponent implements OnChanges, OnDestroy {
   private load(): void {
     this.sub?.unsubscribe();
     this.loaded = false;
-    this.facts = { run: null, plan: null };
+    this.facts = { run: null };
     this.rows = validationRows(this.version, this.facts);
     this.sub = this.read().subscribe(facts => {
       this.facts = facts;
@@ -109,16 +110,14 @@ export class DocumentValidationComponent implements OnChanges, OnDestroy {
     });
   }
 
-  /** Un brouillon montre le circuit qu'il suivra ; une version soumise, son passage. */
+  /** Seule une revue soumise sans signataires a un passage par rôles à lire. */
   private read(): Observable<CircuitFacts> {
-    if (this.version.status === 'DRAFT') {
-      return this.circuits.circuit('document-version').pipe(
-        map(c => ({ run: null, plan: c.enabled !== false && c.steps.length ? c.steps : null })),
-        catchError(() => of({ run: null, plan: null })));
+    if (this.version.status === 'DRAFT' || this.version.signatories?.length) {
+      return of({ run: null });
     }
     return this.circuits.run('document-version', this.version.id).pipe(
-      map(run => ({ run, plan: null })),
-      catchError(() => of({ run: null, plan: null })));
+      map(run => ({ run })),
+      catchError(() => of({ run: null })));
   }
 }
 
@@ -128,7 +127,7 @@ export function validationRows(v: DocumentVersionResponse, facts: CircuitFacts):
   const rows: ValidationRow[] = [{
     kind: 'draft', label: LABEL_DRAFT, roleCode: null,
     state: submitted ? 'done' : 'current',
-    actors: [v.authorId], at: v.createdAt, approvals: null
+    actors: [v.authorId], at: v.createdAt, approvals: null, note: null
   }];
   rows.push(...stepRows(v, facts));
 
@@ -136,15 +135,33 @@ export function validationRows(v: DocumentVersionResponse, facts: CircuitFacts):
   rows.push({
     kind: 'publish', label: LABEL_PUBLISH, roleCode: null,
     state: published ? 'done' : v.status === 'APPROVED' ? 'current' : 'todo',
-    actors: [], at: published ? v.publishedAt ?? null : null, approvals: null
+    actors: [], at: published ? v.publishedAt ?? null : null, approvals: null, note: null
   });
   return rows;
 }
 
-function stepRows(v: DocumentVersionResponse, { run, plan }: CircuitFacts): ValidationRow[] {
+function stepRows(v: DocumentVersionResponse, { run }: CircuitFacts): ValidationRow[] {
+  // Un brouillon : ses signataires se choisiront à la soumission.
+  if (v.status === 'DRAFT') {
+    return [{
+      kind: 'step', label: LABEL_SIGNATURE, roleCode: null, state: 'todo', actors: [], at: null,
+      approvals: null, note: NOTE_SIGNATURE
+    }];
+  }
+  const signatories = v.signatories ?? [];
+  if (signatories.length) {
+    const awaited = v.status === 'IN_REVIEW' ? signatories.find(s => s.decision === 'PENDING') : undefined;
+    return signatories.map(s => ({
+      kind: 'step', label: $localize`:@@documents.signatory.label:Signataire ${s.position}:position:`,
+      roleCode: null,
+      state: s.decision === 'APPROVED' ? 'done' : s.decision === 'REJECTED' ? 'rejected'
+        : s === awaited ? 'current' : 'todo',
+      actors: [s.userId], at: s.decidedAt, approvals: null, note: null
+    } as ValidationRow));
+  }
   // Le passage qui compte : celui en cours pendant la revue, celui qui a abouti ensuite.
   const own = run && (v.status === 'IN_REVIEW' ? run.status === 'IN_PROGRESS'
-    : v.status !== 'DRAFT' && run.status === 'APPROVED') ? run : null;
+    : run.status === 'APPROVED') ? run : null;
 
   if (own) {
     return own.steps.map((s, i) => {
@@ -155,22 +172,16 @@ function stepRows(v: DocumentVersionResponse, { run, plan }: CircuitFacts): Vali
         state: own.status === 'APPROVED' || i < own.currentStep ? 'done'
           : i === own.currentStep ? 'current' : 'todo',
         actors: approvals.map(d => d.actorId), at: last?.at ?? null,
-        approvals: { done: approvals.length, needed: s.minApprovals }
+        approvals: { done: approvals.length, needed: s.minApprovals }, note: null
       } as ValidationRow;
     });
   }
-  if (v.status === 'DRAFT' && plan) {
-    return plan.map(s => ({
-      kind: 'step', label: s.name, roleCode: s.roleCode, state: 'todo', actors: [], at: null,
-      approvals: { done: 0, needed: s.minApprovals }
-    } as ValidationRow));
-  }
   // Approbation simple : une personne ayant le droit d'approuver suffit.
-  const approved = v.status !== 'DRAFT' && v.status !== 'IN_REVIEW';
+  const approved = v.status !== 'IN_REVIEW';
   return [{
     kind: 'step', label: LABEL_SIMPLE, roleCode: null,
-    state: approved ? 'done' : v.status === 'IN_REVIEW' ? 'current' : 'todo',
+    state: approved ? 'done' : 'current',
     actors: approved && v.approvedBy ? [v.approvedBy] : [], at: approved ? v.approvedAt ?? null : null,
-    approvals: null
+    approvals: null, note: approved ? null : NOTE_SIMPLE
   }];
 }

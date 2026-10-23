@@ -7211,8 +7211,8 @@ Portail clients</source>
         <target state="translated">版本 v<x id="NUMBER"/> 于 <x id="DATE"/> 被驳回</target>
       </trans-unit>
       <trans-unit id="documents.circuit.rejected-next" datatype="html">
-        <source>Corrigez-la, puis soumettez-la de nouveau : le circuit repartira de la première étape.</source>
-        <target state="translated">请修改后重新提交：流程将从第一步重新开始。</target>
+        <source>Corrigez-la, puis soumettez-la de nouveau en choisissant ses signataires : la signature repartira du signataire 1.</source>
+        <target state="translated">请修改后重新提交并选择签署人：签署将从签署人 1 重新开始。</target>
       </trans-unit>
       <trans-unit id="documents.reject.title" datatype="html">
         <source>Refuser la version v<x id="number"/></source>
@@ -8817,10 +8817,6 @@ Portail clients</source>
       <trans-unit id="nav.dmaic" datatype="html">
         <source>DMAIC</source>
         <target state="translated">DMAIC</target>
-      </trans-unit>
-      <trans-unit id="nav.spc" datatype="html">
-        <source>SPC</source>
-        <target state="translated">SPC</target>
       </trans-unit>
       <trans-unit id="nav.cercles" datatype="html">
         <source>Cercles</source>
@@ -10795,8 +10791,8 @@ Portail clients</source>
         <target state="translated">外部文件</target>
       </trans-unit>
       <trans-unit id="documents.status.in-force" datatype="html">
-        <source>En vigueur</source>
-        <target state="translated">现行</target>
+        <source>Approuvé</source>
+        <target state="translated">已批准</target>
       </trans-unit>
       <trans-unit id="documents.status.in-revision" datatype="html">
         <source>En révision</source>
@@ -11119,8 +11115,8 @@ Portail clients</source>
         <target state="translated">标题为必填项。</target>
       </trans-unit>
       <trans-unit id="documents.create.attach" datatype="html">
-        <source>Joindre un fichier (facultatif)</source>
-        <target state="translated">附加文件（可选）</target>
+        <source>Joindre le fichier du document *</source>
+        <target state="translated">附加文档文件 *</target>
       </trans-unit>
       <trans-unit id="documents.create.remove-file" datatype="html">
         <source>Retirer le fichier</source>
@@ -11321,6 +11317,98 @@ Portail clients</source>
       <trans-unit id="documents.settings.discard" datatype="html">
         <source>Annuler les modifications</source>
         <target state="translated">放弃更改</target>
+      </trans-unit>
+      <trans-unit id="documents.signatory.label" datatype="html">
+        <source>Signataire <x id="position"/></source>
+        <target state="translated">签署人 <x id="position"/></target>
+      </trans-unit>
+      <trans-unit id="documents.signatory.pending" datatype="html">
+        <source>En attente</source>
+        <target state="translated">待签署</target>
+      </trans-unit>
+      <trans-unit id="documents.signatory.approved" datatype="html">
+        <source>Approuvé</source>
+        <target state="translated">已批准</target>
+      </trans-unit>
+      <trans-unit id="documents.signatory.rejected" datatype="html">
+        <source>Rejeté</source>
+        <target state="translated">已驳回</target>
+      </trans-unit>
+      <trans-unit id="documents.submit.title" datatype="html">
+        <source>Soumettre la version v<x id="number"/> à signature</source>
+        <target state="translated">提交版本 v<x id="number"/> 签署</target>
+      </trans-unit>
+      <trans-unit id="documents.submit.subtitle" datatype="html">
+        <source>Choisissez de une à trois personnes. Elles signeront dans l'ordre : le signataire 2 après le 1, le 3 après le 2. Un seul refus renvoie la version en brouillon.</source>
+        <target state="translated">请选择一到三人。他们将按顺序签署：签署人 2 在 1 之后，3 在 2 之后。只要有一人驳回，版本即退回草稿。</target>
+      </trans-unit>
+      <trans-unit id="documents.submit.blocked" datatype="html">
+        <source>Choisissez au moins le signataire 1, une personne différente à chaque place.</source>
+        <target state="translated">请至少选择签署人 1，且每个位置为不同的人。</target>
+      </trans-unit>
+      <trans-unit id="documents.submit.submit" datatype="html">
+        <source>Soumettre à signature</source>
+        <target state="translated">提交签署</target>
+      </trans-unit>
+      <trans-unit id="documents.submit.duplicate" datatype="html">
+        <source>Une même personne ne peut signer qu'une fois.</source>
+        <target state="translated">同一人只能签署一次。</target>
+      </trans-unit>
+      <trans-unit id="documents.submit.done" datatype="html">
+        <source>Version soumise : le signataire 1 est invité à signer.</source>
+        <target state="translated">版本已提交：已邀请签署人 1 签署。</target>
+      </trans-unit>
+      <trans-unit id="documents.detail.submit-needs-file" datatype="html">
+        <source>Joignez le fichier du document avant de soumettre la version.</source>
+        <target state="translated">提交版本前请先附加文档文件。</target>
+      </trans-unit>
+      <trans-unit id="documents.signature.title" datatype="html">
+        <source>Circuit de signature de la version v<x id="NUMBER"/></source>
+        <target state="translated">版本 v<x id="NUMBER"/> 的签署流程</target>
+      </trans-unit>
+      <trans-unit id="documents.signature.turn-yours" datatype="html">
+        <source>C'est à vous de signer : approuvez ou rejetez la version.</source>
+        <target state="translated">轮到您签署：请批准或驳回该版本。</target>
+      </trans-unit>
+      <trans-unit id="documents.signature.turn-author" datatype="html">
+        <source>Vous en êtes l'auteur : vos signataires la valident dans l'ordre.</source>
+        <target state="translated">您是作者：您的签署人将按顺序审批。</target>
+      </trans-unit>
+      <trans-unit id="documents.signature.turn-waiting" datatype="html">
+        <source>En attente de la signature de <x id="NAME"/>.</source>
+        <target state="translated">等待 <x id="NAME"/> 签署。</target>
+      </trans-unit>
+      <trans-unit id="documents.signature.comment" datatype="html">
+        <source>Commentaire (facultatif)</source>
+        <target state="translated">备注（可选）</target>
+      </trans-unit>
+      <trans-unit id="documents.signature.signed" datatype="html">
+        <source>Signature enregistrée : le signataire suivant est invité à signer.</source>
+        <target state="translated">签署已记录：已邀请下一位签署人签署。</target>
+      </trans-unit>
+      <trans-unit id="documents.signature.rejected" datatype="html">
+        <source>Rejet enregistré : la version revient en brouillon chez son auteur.</source>
+        <target state="translated">驳回已记录：版本退回作者的草稿。</target>
+      </trans-unit>
+      <trans-unit id="documents.signature.failed" datatype="html">
+        <source>La signature n'a pas été enregistrée.</source>
+        <target state="translated">签署未被记录。</target>
+      </trans-unit>
+      <trans-unit id="documents.validation.signature" datatype="html">
+        <source>Signature</source>
+        <target state="translated">签署</target>
+      </trans-unit>
+      <trans-unit id="documents.validation.signature-note" datatype="html">
+        <source>De un à trois signataires, choisis à la soumission</source>
+        <target state="translated">一至三名签署人，在提交时选择</target>
+      </trans-unit>
+      <trans-unit id="documents.create.blocked" datatype="html">
+        <source>Renseignez les champs obligatoires et joignez le fichier du document.</source>
+        <target state="translated">请填写必填字段并附加文档文件。</target>
+      </trans-unit>
+      <trans-unit id="documents.create.file-required" datatype="html">
+        <source>Un document se crée avec son fichier : joignez-le.</source>
+        <target state="translated">创建文档时须附带其文件：请附加。</target>
       </trans-unit>
       <trans-unit id="dpia.create.hint" datatype="html">
         <source>L'Art. 35 RGPD impose une DPIA pour les traitements présentant un</source>
@@ -17389,8 +17477,8 @@ historique 12 mois</source>
         <target state="translated">KPI分析</target>
       </trans-unit>
       <trans-unit id="nav.moc" datatype="html">
-        <source>Gestion des changements (MOC)</source>
-        <target state="translated">变更管理（MOC）</target>
+        <source>MOC</source>
+        <target state="translated">MOC</target>
       </trans-unit>
       <trans-unit id="nav.admin-moc" datatype="html">
         <source>Paramètres MOC</source>
@@ -17409,8 +17497,8 @@ historique 12 mois</source>
         <target state="translated">管理所有变更申请</target>
       </trans-unit>
       <trans-unit id="moc.title" datatype="html">
-        <source>Gestion des changements (MOC)</source>
-        <target state="translated">变更管理（MOC）</target>
+        <source>MOC</source>
+        <target state="translated">MOC</target>
       </trans-unit>
       <trans-unit id="moc.subtitle" datatype="html">
         <source>Demande, analyse d'impact, validation</source>
@@ -21041,8 +21129,8 @@ historique 12 mois</source>
         <target state="translated">内容</target>
       </trans-unit>
       <trans-unit id="documents.create.content-placeholder" datatype="html">
-        <source>Corps du document, ou laissez vide pour ne créer qu'une enveloppe.</source>
-        <target state="translated">文档正文，留空则仅创建一个外壳。</target>
+        <source>Résumé ou extrait du document (facultatif).</source>
+        <target state="translated">文档摘要或摘录（可选）。</target>
       </trans-unit>
       <trans-unit id="documents.create.created" datatype="html">
         <source>Document créé.</source>
@@ -21165,12 +21253,8 @@ historique 12 mois</source>
         <target state="translated">无法提交。</target>
       </trans-unit>
       <trans-unit id="documents.detail.submit-review-tooltip" datatype="html">
-        <source>Soumettre à revue</source>
-        <target state="translated">提交审阅</target>
-      </trans-unit>
-      <trans-unit id="documents.detail.submitted" datatype="html">
-        <source>Soumise à revue.</source>
-        <target state="translated">已提交审阅。</target>
+        <source>Soumettre à signature</source>
+        <target state="translated">提交签署</target>
       </trans-unit>
       <trans-unit id="documents.detail.versions-title" datatype="html">
         <source>Versions</source>
@@ -24420,6 +24504,10 @@ historique 12 mois</source>
         <source>Non maîtrisé</source>
         <target state="translated">不受控</target>
       </trans-unit>
+      <trans-unit id="spc.status.watch" datatype="html">
+        <source>À surveiller</source>
+        <target state="translated">需关注</target>
+      </trans-unit>
       <trans-unit id="spc.col.part" datatype="html">
         <source>Référence pièce</source>
         <target state="translated">零件编号</target>
@@ -24569,8 +24657,8 @@ historique 12 mois</source>
         <target state="translated">清除筛选</target>
       </trans-unit>
       <trans-unit id="spc.register.legend" datatype="html">
-        <source>Cpk en vert : maîtrisé · en jaune : à surveiller · en rouge : non maîtrisé. Le liseré rouge signale une étude non maîtrisée sans plan d'actions.</source>
-        <target state="translated">Cpk 绿色：受控 · 黄色：需关注 · 红色：不受控。红色边线表示不受控且无行动计划的研究。</target>
+        <source>Statut et Cpk en vert : maîtrisé · en jaune : à surveiller · en rouge : non maîtrisé. Le liseré rouge signale une étude à surveiller ou non maîtrisée sans plan d'actions.</source>
+        <target state="translated">状态和 Cpk 绿色：受控 · 黄色：需关注 · 红色：不受控。红色边线表示需关注或不受控且无行动计划的研究。</target>
       </trans-unit>
       <trans-unit id="spc.study.title-new" datatype="html">
         <source>Nouvelle étude de capabilité</source>
@@ -24699,6 +24787,10 @@ historique 12 mois</source>
       <trans-unit id="spc.study.not-controlled" datatype="html">
         <source>Procédé non maîtrisé :</source>
         <target state="translated">过程不受控：</target>
+      </trans-unit>
+      <trans-unit id="spc.study.watch" datatype="html">
+        <source>Procédé à surveiller :</source>
+        <target state="translated">过程需关注：</target>
       </trans-unit>
       <trans-unit id="spc.study.yes" datatype="html">
         <source>OUI</source>

@@ -38,6 +38,8 @@ export class DocumentsCreateDialogComponent implements OnInit {
 
   file: File | null = null;
   fileError: string | null = null;
+  /** Créer a été tenté sans fichier : le champ le réclame. */
+  fileAsked = false;
   private policy: UploadPolicy | null = null;
 
   readonly form = this.fb.nonNullable.group({
@@ -90,6 +92,11 @@ export class DocumentsCreateDialogComponent implements OnInit {
     if (f) this.checkFile(f);
   }
 
+  /** Le fichier est obligatoire : un document se valide sur pièce (ADR 0099). */
+  get fileMissing(): boolean {
+    return this.fileAsked && !this.file;
+  }
+
   clearFile(): void {
     this.file = null;
     this.fileError = null;
@@ -108,14 +115,15 @@ export class DocumentsCreateDialogComponent implements OnInit {
   }
 
   submit(): void {
-    if (this.form.invalid || this.submitting || this.fileError) {
+    if (this.form.invalid || this.submitting || this.fileError || !this.file) {
       this.form.markAllAsTouched();
+      this.fileAsked = true;
       return;
     }
     const v = this.form.getRawValue();
     if (!v.ownerId) return;
     this.submitting = true;
-    const file = this.file;
+    const file: File = this.file;
     this.svc.create({
       code: v.code.trim(),
       title: v.title.trim(),
@@ -129,7 +137,6 @@ export class DocumentsCreateDialogComponent implements OnInit {
       initialChangeNote: v.initialChangeNote?.trim() || undefined
     }).pipe(
       switchMap(doc => {
-        if (!file) return of({ doc, fileFailed: null as unknown });
         const version = [...doc.versions].sort((a, b) => b.versionNumber - a.versionNumber)[0];
         this.progress = 0;
         return this.svc.uploadFile(doc.id, version.id, file).pipe(

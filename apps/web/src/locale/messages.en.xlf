@@ -7211,8 +7211,8 @@ Customer portal</target>
         <target state="translated">Version v<x id="NUMBER"/> rejected on <x id="DATE"/></target>
       </trans-unit>
       <trans-unit id="documents.circuit.rejected-next" datatype="html">
-        <source>Corrigez-la, puis soumettez-la de nouveau : le circuit repartira de la première étape.</source>
-        <target state="translated">Correct it, then submit it again: the workflow will restart from the first step.</target>
+        <source>Corrigez-la, puis soumettez-la de nouveau en choisissant ses signataires : la signature repartira du signataire 1.</source>
+        <target state="translated">Correct it, then submit it again, choosing its signatories: signing will restart from signatory 1.</target>
       </trans-unit>
       <trans-unit id="documents.reject.title" datatype="html">
         <source>Refuser la version v<x id="number"/></source>
@@ -8817,10 +8817,6 @@ Customer portal</target>
       <trans-unit id="nav.dmaic" datatype="html">
         <source>DMAIC</source>
         <target state="translated">DMAIC</target>
-      </trans-unit>
-      <trans-unit id="nav.spc" datatype="html">
-        <source>SPC</source>
-        <target state="translated">SPC</target>
       </trans-unit>
       <trans-unit id="nav.cercles" datatype="html">
         <source>Cercles</source>
@@ -10795,8 +10791,8 @@ Customer portal</target>
         <target state="translated">External document</target>
       </trans-unit>
       <trans-unit id="documents.status.in-force" datatype="html">
-        <source>En vigueur</source>
-        <target state="translated">In force</target>
+        <source>Approuvé</source>
+        <target state="translated">Approved</target>
       </trans-unit>
       <trans-unit id="documents.status.in-revision" datatype="html">
         <source>En révision</source>
@@ -11119,8 +11115,8 @@ Customer portal</target>
         <target state="translated">The title is required.</target>
       </trans-unit>
       <trans-unit id="documents.create.attach" datatype="html">
-        <source>Joindre un fichier (facultatif)</source>
-        <target state="translated">Attach a file (optional)</target>
+        <source>Joindre le fichier du document *</source>
+        <target state="translated">Attach the document file *</target>
       </trans-unit>
       <trans-unit id="documents.create.remove-file" datatype="html">
         <source>Retirer le fichier</source>
@@ -11321,6 +11317,98 @@ Customer portal</target>
       <trans-unit id="documents.settings.discard" datatype="html">
         <source>Annuler les modifications</source>
         <target state="translated">Discard changes</target>
+      </trans-unit>
+      <trans-unit id="documents.signatory.label" datatype="html">
+        <source>Signataire <x id="position"/></source>
+        <target state="translated">Signatory <x id="position"/></target>
+      </trans-unit>
+      <trans-unit id="documents.signatory.pending" datatype="html">
+        <source>En attente</source>
+        <target state="translated">Pending</target>
+      </trans-unit>
+      <trans-unit id="documents.signatory.approved" datatype="html">
+        <source>Approuvé</source>
+        <target state="translated">Approved</target>
+      </trans-unit>
+      <trans-unit id="documents.signatory.rejected" datatype="html">
+        <source>Rejeté</source>
+        <target state="translated">Rejected</target>
+      </trans-unit>
+      <trans-unit id="documents.submit.title" datatype="html">
+        <source>Soumettre la version v<x id="number"/> à signature</source>
+        <target state="translated">Submit version v<x id="number"/> for signature</target>
+      </trans-unit>
+      <trans-unit id="documents.submit.subtitle" datatype="html">
+        <source>Choisissez de une à trois personnes. Elles signeront dans l'ordre : le signataire 2 après le 1, le 3 après le 2. Un seul refus renvoie la version en brouillon.</source>
+        <target state="translated">Choose one to three people. They will sign in order: signatory 2 after 1, 3 after 2. A single rejection sends the version back to draft.</target>
+      </trans-unit>
+      <trans-unit id="documents.submit.blocked" datatype="html">
+        <source>Choisissez au moins le signataire 1, une personne différente à chaque place.</source>
+        <target state="translated">Choose at least signatory 1, a different person in each place.</target>
+      </trans-unit>
+      <trans-unit id="documents.submit.submit" datatype="html">
+        <source>Soumettre à signature</source>
+        <target state="translated">Submit for signature</target>
+      </trans-unit>
+      <trans-unit id="documents.submit.duplicate" datatype="html">
+        <source>Une même personne ne peut signer qu'une fois.</source>
+        <target state="translated">The same person can only sign once.</target>
+      </trans-unit>
+      <trans-unit id="documents.submit.done" datatype="html">
+        <source>Version soumise : le signataire 1 est invité à signer.</source>
+        <target state="translated">Version submitted: signatory 1 is invited to sign.</target>
+      </trans-unit>
+      <trans-unit id="documents.detail.submit-needs-file" datatype="html">
+        <source>Joignez le fichier du document avant de soumettre la version.</source>
+        <target state="translated">Attach the document file before submitting the version.</target>
+      </trans-unit>
+      <trans-unit id="documents.signature.title" datatype="html">
+        <source>Circuit de signature de la version v<x id="NUMBER"/></source>
+        <target state="translated">Signature workflow for version v<x id="NUMBER"/></target>
+      </trans-unit>
+      <trans-unit id="documents.signature.turn-yours" datatype="html">
+        <source>C'est à vous de signer : approuvez ou rejetez la version.</source>
+        <target state="translated">It is your turn to sign: approve or reject the version.</target>
+      </trans-unit>
+      <trans-unit id="documents.signature.turn-author" datatype="html">
+        <source>Vous en êtes l'auteur : vos signataires la valident dans l'ordre.</source>
+        <target state="translated">You are its author: your signatories approve it in order.</target>
+      </trans-unit>
+      <trans-unit id="documents.signature.turn-waiting" datatype="html">
+        <source>En attente de la signature de <x id="NAME"/>.</source>
+        <target state="translated">Waiting for the signature of <x id="NAME"/>.</target>
+      </trans-unit>
+      <trans-unit id="documents.signature.comment" datatype="html">
+        <source>Commentaire (facultatif)</source>
+        <target state="translated">Comment (optional)</target>
+      </trans-unit>
+      <trans-unit id="documents.signature.signed" datatype="html">
+        <source>Signature enregistrée : le signataire suivant est invité à signer.</source>
+        <target state="translated">Signature recorded: the next signatory is invited to sign.</target>
+      </trans-unit>
+      <trans-unit id="documents.signature.rejected" datatype="html">
+        <source>Rejet enregistré : la version revient en brouillon chez son auteur.</source>
+        <target state="translated">Rejection recorded: the version goes back to draft with its author.</target>
+      </trans-unit>
+      <trans-unit id="documents.signature.failed" datatype="html">
+        <source>La signature n'a pas été enregistrée.</source>
+        <target state="translated">The signature was not recorded.</target>
+      </trans-unit>
+      <trans-unit id="documents.validation.signature" datatype="html">
+        <source>Signature</source>
+        <target state="translated">Signature</target>
+      </trans-unit>
+      <trans-unit id="documents.validation.signature-note" datatype="html">
+        <source>De un à trois signataires, choisis à la soumission</source>
+        <target state="translated">One to three signatories, chosen at submission</target>
+      </trans-unit>
+      <trans-unit id="documents.create.blocked" datatype="html">
+        <source>Renseignez les champs obligatoires et joignez le fichier du document.</source>
+        <target state="translated">Fill in the required fields and attach the document file.</target>
+      </trans-unit>
+      <trans-unit id="documents.create.file-required" datatype="html">
+        <source>Un document se crée avec son fichier : joignez-le.</source>
+        <target state="translated">A document is created with its file: attach it.</target>
       </trans-unit>
       <trans-unit id="dpia.create.hint" datatype="html">
         <source>L'Art. 35 RGPD impose une DPIA pour les traitements présentant un</source>
@@ -17389,8 +17477,8 @@ declared income
         <target state="translated">KPI analysis</target>
       </trans-unit>
       <trans-unit id="nav.moc" datatype="html">
-        <source>Gestion des changements (MOC)</source>
-        <target state="translated">Management of change (MOC)</target>
+        <source>MOC</source>
+        <target state="translated">MOC</target>
       </trans-unit>
       <trans-unit id="nav.admin-moc" datatype="html">
         <source>Paramètres MOC</source>
@@ -17409,8 +17497,8 @@ declared income
         <target state="translated">Manage all change requests</target>
       </trans-unit>
       <trans-unit id="moc.title" datatype="html">
-        <source>Gestion des changements (MOC)</source>
-        <target state="translated">Management of change (MOC)</target>
+        <source>MOC</source>
+        <target state="translated">MOC</target>
       </trans-unit>
       <trans-unit id="moc.subtitle" datatype="html">
         <source>Demande, analyse d'impact, validation</source>
@@ -21041,8 +21129,8 @@ declared income
         <target state="translated">Content</target>
       </trans-unit>
       <trans-unit id="documents.create.content-placeholder" datatype="html">
-        <source>Corps du document, ou laissez vide pour ne créer qu'une enveloppe.</source>
-        <target state="translated">Document body, or leave empty to create only an envelope.</target>
+        <source>Résumé ou extrait du document (facultatif).</source>
+        <target state="translated">Summary or excerpt of the document (optional).</target>
       </trans-unit>
       <trans-unit id="documents.create.created" datatype="html">
         <source>Document créé.</source>
@@ -21165,12 +21253,8 @@ declared income
         <target state="translated">Submission failed.</target>
       </trans-unit>
       <trans-unit id="documents.detail.submit-review-tooltip" datatype="html">
-        <source>Soumettre à revue</source>
-        <target state="translated">Submit for review</target>
-      </trans-unit>
-      <trans-unit id="documents.detail.submitted" datatype="html">
-        <source>Soumise à revue.</source>
-        <target state="translated">Submitted for review.</target>
+        <source>Soumettre à signature</source>
+        <target state="translated">Submit for signature</target>
       </trans-unit>
       <trans-unit id="documents.detail.versions-title" datatype="html">
         <source>Versions</source>
@@ -24420,6 +24504,10 @@ declared income
         <source>Non maîtrisé</source>
         <target state="translated">Not under control</target>
       </trans-unit>
+      <trans-unit id="spc.status.watch" datatype="html">
+        <source>À surveiller</source>
+        <target state="translated">To watch</target>
+      </trans-unit>
       <trans-unit id="spc.col.part" datatype="html">
         <source>Référence pièce</source>
         <target state="translated">Part reference</target>
@@ -24569,8 +24657,8 @@ declared income
         <target state="translated">Clear filters</target>
       </trans-unit>
       <trans-unit id="spc.register.legend" datatype="html">
-        <source>Cpk en vert : maîtrisé · en jaune : à surveiller · en rouge : non maîtrisé. Le liseré rouge signale une étude non maîtrisée sans plan d'actions.</source>
-        <target state="translated">Cpk in green: under control · yellow: to watch · red: not under control. A red edge flags a study not under control with no action plan.</target>
+        <source>Statut et Cpk en vert : maîtrisé · en jaune : à surveiller · en rouge : non maîtrisé. Le liseré rouge signale une étude à surveiller ou non maîtrisée sans plan d'actions.</source>
+        <target state="translated">Status and Cpk in green: under control · yellow: to watch · red: not under control. A red edge flags a study to watch or not under control with no action plan.</target>
       </trans-unit>
       <trans-unit id="spc.study.title-new" datatype="html">
         <source>Nouvelle étude de capabilité</source>
@@ -24699,6 +24787,10 @@ declared income
       <trans-unit id="spc.study.not-controlled" datatype="html">
         <source>Procédé non maîtrisé :</source>
         <target state="translated">Process not under control:</target>
+      </trans-unit>
+      <trans-unit id="spc.study.watch" datatype="html">
+        <source>Procédé à surveiller :</source>
+        <target state="translated">Process to watch:</target>
       </trans-unit>
       <trans-unit id="spc.study.yes" datatype="html">
         <source>OUI</source>

@@ -134,7 +134,6 @@ export class MainShellComponent implements OnInit, OnDestroy {
     {
       label: $localize`:@@nav.analyses-ia:Analyses IA`,
       items: [
-        { label: $localize`:@@nav.spc:SPC`,                       route: '/spc',            icon: 'show_chart', module: 'dmaic' },
         { label: $localize`:@@nav.anomaly:Anomalies IA`,          route: '/anomaly',        icon: 'bubble_chart' },
         { label: $localize`:@@nav.forecast:Prévision KPI`,        route: '/forecast',       icon: 'trending_up' },
         { label: $localize`:@@nav.nc-clusters:Clustering NC`,     route: '/nc-clusters',    icon: 'hub', module: 'capa' },
@@ -147,8 +146,9 @@ export class MainShellComponent implements OnInit, OnDestroy {
     {
       // La maîtrise statistique des procédés (ADR 0096), en deux sous-menus :
       // les cartes de contrôle (registre des études Cp / Cpk) et Gage R&R.
-      // Module « dmaic », comme l'analyse SPC des Analyses IA : la capabilité
-      // relève du pilotage Six Sigma (§3.4).
+      // Module « dmaic » : la capabilité relève du pilotage Six Sigma (§3.4).
+      // L'analyse des règles de Nelson n'a plus d'entrée dans les Analyses IA :
+      // la SPC se rejoint ici, et `/spc` reste ouvert depuis l'analyse d'un KPI.
       label: $localize`:@@nav.spc-section:SPC`,
       items: [
         { label: $localize`:@@nav.spc-control-charts:Cartes de contrôle`, route: '/spc/cartes', icon: 'stacked_line_chart', module: 'dmaic' },
@@ -203,7 +203,7 @@ export class MainShellComponent implements OnInit, OnDestroy {
         { label: $localize`:@@nav.produits:Produits`,               route: '/products',  icon: 'inventory_2', module: 'product' },
         { label: $localize`:@@nav.risques-fmea:Risques (FMEA)`,     route: '/fmea',      icon: 'warning', module: 'risk' },
         { label: $localize`:@@nav.documents:GED`,                   route: '/documents', icon: 'description', module: 'docs' },
-        { label: $localize`:@@nav.moc:Gestion des changements (MOC)`, route: '/changes', icon: 'change_circle', module: 'change' },
+        { label: $localize`:@@nav.moc:MOC`, route: '/changes', icon: 'change_circle', module: 'change' },
         { label: $localize`:@@nav.ehs:EHS`,                         route: '/ehs',       icon: 'health_and_safety', module: 'ehs' }
       ]
     },
@@ -269,13 +269,6 @@ export class MainShellComponent implements OnInit, OnDestroy {
           label: $localize`:@@nav.admin-roles:Rôles et droits`,
           route: '/admin/roles',
           icon: 'admin_panel_settings',
-          roles: ADMIN_ROLES
-        },
-        {
-          // Les circuits de validation (ADR 0080) : qui approuve, dans quel ordre.
-          label: $localize`:@@nav.admin-circuits:Circuits de validation`,
-          route: '/admin/circuits',
-          icon: 'alt_route',
           roles: ADMIN_ROLES
         },
         {

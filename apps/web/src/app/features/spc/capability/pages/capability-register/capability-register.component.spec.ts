@@ -66,7 +66,7 @@ describe('CapabilityRegisterComponent', () => {
   it('calcule les indicateurs sur le verdict rendu par le serveur', async () => {
     await setup();
     expect(un('kpi-total')?.textContent).toContain('3');
-    expect(un('kpi-maitrises')?.textContent).toContain('33 %');
+    expect(un('kpi-maitrises')?.querySelector('b')?.textContent?.trim()).toBe('1');
     expect(un('kpi-plans')?.textContent).toContain('1');
     expect(un('kpi-surveiller')?.textContent).toContain('1');
     expect(un('kpi-surveiller')?.textContent).toContain('1.33 – 1.67');
@@ -76,8 +76,8 @@ describe('CapabilityRegisterComponent', () => {
 
   it('affiche les indicateurs d\'un registre vide', async () => {
     await setup(true, []);
-    expect(component.controlledPercent).toBeNull();
-    expect(un('kpi-maitrises')?.textContent).toContain('–');
+    expect(component.controlledCount).toBe(0);
+    expect(un('kpi-maitrises')?.querySelector('b')?.textContent?.trim()).toBe('0');
     expect(component.watchRange).toBe('');
     expect(hote().textContent).toContain('Aucune étude pour le moment');
   });
@@ -90,7 +90,11 @@ describe('CapabilityRegisterComponent', () => {
       jasmine.stringContaining('pastille--warn'), jasmine.stringContaining('pastille--ok'),
       jasmine.stringContaining('pastille--bad')
     ]);
-    expect(tous('statut').map(s => s.textContent?.trim())).toEqual(['Non maîtrisé', 'Maîtrisé', 'Non maîtrisé']);
+    expect(tous('statut').map(s => s.textContent?.trim())).toEqual(['À surveiller', 'Maîtrisé', 'Non maîtrisé']);
+    expect(tous('statut').map(s => s.className)).toEqual([
+      jasmine.stringContaining('statut--warn'), jasmine.stringContaining('statut--ok'),
+      jasmine.stringContaining('statut--bad')
+    ]);
     expect(lignes[2].classList).toContain('ligne--alerte');
     expect(lignes[0].classList).not.toContain('ligne--alerte');
   });
@@ -119,14 +123,13 @@ describe('CapabilityRegisterComponent', () => {
     component.search = 'm-7';
     expect(component.rows.map(r => r.id)).toEqual(['b']);
     component.search = '';
-    component.statusFilter = 'controlled';
+    component.statusFilter = 'CAPABLE';
     expect(component.rows.map(r => r.id)).toEqual(['a']);
-    component.statusFilter = 'uncontrolled';
-    expect(component.rows.map(r => r.id)).toEqual(['b', 'c']);
-    component.planFilter = 'no';
+    component.statusFilter = 'WATCH';
+    expect(component.rows.map(r => r.id)).toEqual(['b']);
+    component.statusFilter = 'NOT_CAPABLE';
     expect(component.rows.map(r => r.id)).toEqual(['c']);
     component.planFilter = 'yes';
-    component.statusFilter = 'controlled';
     fixture.detectChanges();
     expect(hote().textContent).toContain('Aucune étude ne correspond aux filtres.');
     component.resetFilters();
@@ -191,7 +194,7 @@ describe('CapabilityRegisterComponent', () => {
     });
     spyOn(URL, 'revokeObjectURL');
     const clic = spyOn(HTMLAnchorElement.prototype, 'click');
-    component.statusFilter = 'controlled';
+    component.statusFilter = 'CAPABLE';
     component.studies[0].partReference = '=CMD()';
     component.exporter();
     expect(clic).toHaveBeenCalled();

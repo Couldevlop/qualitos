@@ -23,6 +23,7 @@ TRANSLATIONS = {
     # ----- verdicts -----
     'spc.status.capable': ('Maîtrisé', 'Under control', 'Bajo control', 'تحت السيطرة', '管理状態', '受控'),
     'spc.status.not-capable': ('Non maîtrisé', 'Not under control', 'Fuera de control', 'خارج السيطرة', '管理外', '不受控'),
+    'spc.status.watch': ('À surveiller', 'To watch', 'A vigilar', 'تحت المراقبة', '要監視', '需关注'),
 
     # ----- colonnes -----
     'spc.col.part': ('Référence pièce', 'Part reference', 'Referencia de pieza', 'مرجع القطعة', '部品番号', '零件编号'),
@@ -102,12 +103,12 @@ TRANSLATIONS = {
         'لا توجد دراسة تطابق عوامل التصفية.', '条件に一致する調査はありません。', '没有符合筛选条件的研究。'),
     'spc.register.reset-filters': ('Effacer les filtres', 'Clear filters', 'Borrar filtros', 'مسح عوامل التصفية', '絞り込みを解除', '清除筛选'),
     'spc.register.legend': (
-        'Cpk en vert : maîtrisé · en jaune : à surveiller · en rouge : non maîtrisé. Le liseré rouge signale une étude non maîtrisée sans plan d\'actions.',
-        'Cpk in green: under control · yellow: to watch · red: not under control. A red edge flags a study not under control with no action plan.',
-        'Cpk en verde: bajo control · en amarillo: a vigilar · en rojo: fuera de control. El borde rojo señala un estudio fuera de control sin plan de acción.',
-        'Cpk بالأخضر: تحت السيطرة · بالأصفر: تحت المراقبة · بالأحمر: خارج السيطرة. يشير الحد الأحمر إلى دراسة خارج السيطرة دون خطة عمل.',
-        'Cpk 緑：管理状態 · 黄：要監視 · 赤：管理外。赤い縁取りは処置計画のない管理外の調査を示します。',
-        'Cpk 绿色：受控 · 黄色：需关注 · 红色：不受控。红色边线表示不受控且无行动计划的研究。'),
+        'Statut et Cpk en vert : maîtrisé · en jaune : à surveiller · en rouge : non maîtrisé. Le liseré rouge signale une étude à surveiller ou non maîtrisée sans plan d\'actions.',
+        'Status and Cpk in green: under control · yellow: to watch · red: not under control. A red edge flags a study to watch or not under control with no action plan.',
+        'Estado y Cpk en verde: bajo control · en amarillo: a vigilar · en rojo: fuera de control. El borde rojo señala un estudio a vigilar o fuera de control sin plan de acción.',
+        'الحالة و Cpk بالأخضر: تحت السيطرة · بالأصفر: تحت المراقبة · بالأحمر: خارج السيطرة. يشير الحد الأحمر إلى دراسة تحت المراقبة أو خارج السيطرة دون خطة عمل.',
+        '状態と Cpk 緑：管理状態 · 黄：要監視 · 赤：管理外。赤い縁取りは処置計画のない要監視または管理外の調査を示します。',
+        '状态和 Cpk 绿色：受控 · 黄色：需关注 · 红色：不受控。红色边线表示需关注或不受控且无行动计划的研究。'),
 
     # ----- fiche d'étude -----
     'spc.study.title-new': (
@@ -179,6 +180,7 @@ TRANSLATIONS = {
     'spc.study.sigma': ('Sigma (R̄ / d2)', 'Sigma (R̄ / d2)', 'Sigma (R̄ / d2)', 'سيغما (R̄ / d2)', 'シグマ (R̄ / d2)', '西格玛 (R̄ / d2)'),
     'spc.study.controlled': ('Procédé maîtrisé :', 'Process under control:', 'Proceso bajo control:', 'العملية تحت السيطرة:', '工程は管理状態：', '过程受控：'),
     'spc.study.not-controlled': ('Procédé non maîtrisé :', 'Process not under control:', 'Proceso fuera de control:', 'العملية خارج السيطرة:', '工程は管理外：', '过程不受控：'),
+    'spc.study.watch': ('Procédé à surveiller :', 'Process to watch:', 'Proceso a vigilar:', 'العملية تحت المراقبة:', '工程は要監視：', '过程需关注：'),
     'spc.study.yes': ('OUI', 'YES', 'SÍ', 'نعم', 'はい', '是'),
     'spc.study.no': ('NON', 'NO', 'NO', 'لا', 'いいえ', '否'),
     'spc.study.need-subgroup': (

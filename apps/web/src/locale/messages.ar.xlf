@@ -7211,8 +7211,8 @@ Portail clients</source>
         <target state="translated">رُفض الإصدار v<x id="NUMBER"/> في <x id="DATE"/></target>
       </trans-unit>
       <trans-unit id="documents.circuit.rejected-next" datatype="html">
-        <source>Corrigez-la, puis soumettez-la de nouveau : le circuit repartira de la première étape.</source>
-        <target state="translated">صحّحه ثم قدّمه من جديد: سيبدأ المسار من المرحلة الأولى.</target>
+        <source>Corrigez-la, puis soumettez-la de nouveau en choisissant ses signataires : la signature repartira du signataire 1.</source>
+        <target state="translated">صحّحه ثم قدّمه من جديد مع اختيار موقّعيه: سيبدأ التوقيع من جديد من الموقّع 1.</target>
       </trans-unit>
       <trans-unit id="documents.reject.title" datatype="html">
         <source>Refuser la version v<x id="number"/></source>
@@ -8817,10 +8817,6 @@ Portail clients</source>
       <trans-unit id="nav.dmaic" datatype="html">
         <source>DMAIC</source>
         <target state="translated">DMAIC</target>
-      </trans-unit>
-      <trans-unit id="nav.spc" datatype="html">
-        <source>SPC</source>
-        <target state="translated">SPC</target>
       </trans-unit>
       <trans-unit id="nav.cercles" datatype="html">
         <source>Cercles</source>
@@ -10795,8 +10791,8 @@ Portail clients</source>
         <target state="translated">وثيقة خارجية</target>
       </trans-unit>
       <trans-unit id="documents.status.in-force" datatype="html">
-        <source>En vigueur</source>
-        <target state="translated">سارية</target>
+        <source>Approuvé</source>
+        <target state="translated">معتمد</target>
       </trans-unit>
       <trans-unit id="documents.status.in-revision" datatype="html">
         <source>En révision</source>
@@ -11119,8 +11115,8 @@ Portail clients</source>
         <target state="translated">العنوان إلزامي.</target>
       </trans-unit>
       <trans-unit id="documents.create.attach" datatype="html">
-        <source>Joindre un fichier (facultatif)</source>
-        <target state="translated">إرفاق ملف (اختياري)</target>
+        <source>Joindre le fichier du document *</source>
+        <target state="translated">إرفاق ملف المستند *</target>
       </trans-unit>
       <trans-unit id="documents.create.remove-file" datatype="html">
         <source>Retirer le fichier</source>
@@ -11321,6 +11317,98 @@ Portail clients</source>
       <trans-unit id="documents.settings.discard" datatype="html">
         <source>Annuler les modifications</source>
         <target state="translated">تجاهل التغييرات</target>
+      </trans-unit>
+      <trans-unit id="documents.signatory.label" datatype="html">
+        <source>Signataire <x id="position"/></source>
+        <target state="translated">الموقّع <x id="position"/></target>
+      </trans-unit>
+      <trans-unit id="documents.signatory.pending" datatype="html">
+        <source>En attente</source>
+        <target state="translated">قيد الانتظار</target>
+      </trans-unit>
+      <trans-unit id="documents.signatory.approved" datatype="html">
+        <source>Approuvé</source>
+        <target state="translated">معتمد</target>
+      </trans-unit>
+      <trans-unit id="documents.signatory.rejected" datatype="html">
+        <source>Rejeté</source>
+        <target state="translated">مرفوض</target>
+      </trans-unit>
+      <trans-unit id="documents.submit.title" datatype="html">
+        <source>Soumettre la version v<x id="number"/> à signature</source>
+        <target state="translated">إرسال الإصدار v<x id="number"/> للتوقيع</target>
+      </trans-unit>
+      <trans-unit id="documents.submit.subtitle" datatype="html">
+        <source>Choisissez de une à trois personnes. Elles signeront dans l'ordre : le signataire 2 après le 1, le 3 après le 2. Un seul refus renvoie la version en brouillon.</source>
+        <target state="translated">اختر من شخص إلى ثلاثة أشخاص. سيوقّعون بالترتيب: الموقّع 2 بعد 1، و3 بعد 2. رفض واحد يعيد الإصدار إلى المسودة.</target>
+      </trans-unit>
+      <trans-unit id="documents.submit.blocked" datatype="html">
+        <source>Choisissez au moins le signataire 1, une personne différente à chaque place.</source>
+        <target state="translated">اختر الموقّع 1 على الأقل، وشخصًا مختلفًا في كل موضع.</target>
+      </trans-unit>
+      <trans-unit id="documents.submit.submit" datatype="html">
+        <source>Soumettre à signature</source>
+        <target state="translated">إرسال للتوقيع</target>
+      </trans-unit>
+      <trans-unit id="documents.submit.duplicate" datatype="html">
+        <source>Une même personne ne peut signer qu'une fois.</source>
+        <target state="translated">لا يمكن للشخص نفسه التوقيع إلا مرة واحدة.</target>
+      </trans-unit>
+      <trans-unit id="documents.submit.done" datatype="html">
+        <source>Version soumise : le signataire 1 est invité à signer.</source>
+        <target state="translated">تم إرسال الإصدار: دُعي الموقّع 1 إلى التوقيع.</target>
+      </trans-unit>
+      <trans-unit id="documents.detail.submit-needs-file" datatype="html">
+        <source>Joignez le fichier du document avant de soumettre la version.</source>
+        <target state="translated">أرفق ملف المستند قبل إرسال الإصدار.</target>
+      </trans-unit>
+      <trans-unit id="documents.signature.title" datatype="html">
+        <source>Circuit de signature de la version v<x id="NUMBER"/></source>
+        <target state="translated">مسار توقيع الإصدار v<x id="NUMBER"/></target>
+      </trans-unit>
+      <trans-unit id="documents.signature.turn-yours" datatype="html">
+        <source>C'est à vous de signer : approuvez ou rejetez la version.</source>
+        <target state="translated">حان دورك للتوقيع: اعتمد الإصدار أو ارفضه.</target>
+      </trans-unit>
+      <trans-unit id="documents.signature.turn-author" datatype="html">
+        <source>Vous en êtes l'auteur : vos signataires la valident dans l'ordre.</source>
+        <target state="translated">أنت مؤلفه: يعتمده موقّعوك بالترتيب.</target>
+      </trans-unit>
+      <trans-unit id="documents.signature.turn-waiting" datatype="html">
+        <source>En attente de la signature de <x id="NAME"/>.</source>
+        <target state="translated">في انتظار توقيع <x id="NAME"/>.</target>
+      </trans-unit>
+      <trans-unit id="documents.signature.comment" datatype="html">
+        <source>Commentaire (facultatif)</source>
+        <target state="translated">تعليق (اختياري)</target>
+      </trans-unit>
+      <trans-unit id="documents.signature.signed" datatype="html">
+        <source>Signature enregistrée : le signataire suivant est invité à signer.</source>
+        <target state="translated">تم تسجيل التوقيع: دُعي الموقّع التالي إلى التوقيع.</target>
+      </trans-unit>
+      <trans-unit id="documents.signature.rejected" datatype="html">
+        <source>Rejet enregistré : la version revient en brouillon chez son auteur.</source>
+        <target state="translated">تم تسجيل الرفض: يعود الإصدار إلى المسودة لدى مؤلفه.</target>
+      </trans-unit>
+      <trans-unit id="documents.signature.failed" datatype="html">
+        <source>La signature n'a pas été enregistrée.</source>
+        <target state="translated">لم يُسجَّل التوقيع.</target>
+      </trans-unit>
+      <trans-unit id="documents.validation.signature" datatype="html">
+        <source>Signature</source>
+        <target state="translated">التوقيع</target>
+      </trans-unit>
+      <trans-unit id="documents.validation.signature-note" datatype="html">
+        <source>De un à trois signataires, choisis à la soumission</source>
+        <target state="translated">من موقّع إلى ثلاثة، يُختارون عند الإرسال</target>
+      </trans-unit>
+      <trans-unit id="documents.create.blocked" datatype="html">
+        <source>Renseignez les champs obligatoires et joignez le fichier du document.</source>
+        <target state="translated">املأ الحقول الإلزامية وأرفق ملف المستند.</target>
+      </trans-unit>
+      <trans-unit id="documents.create.file-required" datatype="html">
+        <source>Un document se crée avec son fichier : joignez-le.</source>
+        <target state="translated">يُنشأ المستند مع ملفه: أرفقه.</target>
       </trans-unit>
       <trans-unit id="dpia.create.hint" datatype="html">
         <source>L'Art. 35 RGPD impose une DPIA pour les traitements présentant un</source>
@@ -17389,8 +17477,8 @@ historique 12 mois</source>
         <target state="translated">تحليل مؤشر الأداء</target>
       </trans-unit>
       <trans-unit id="nav.moc" datatype="html">
-        <source>Gestion des changements (MOC)</source>
-        <target state="translated">إدارة التغيير (MOC)</target>
+        <source>MOC</source>
+        <target state="translated">MOC</target>
       </trans-unit>
       <trans-unit id="nav.admin-moc" datatype="html">
         <source>Paramètres MOC</source>
@@ -17409,8 +17497,8 @@ historique 12 mois</source>
         <target state="translated">إدارة جميع طلبات التغيير</target>
       </trans-unit>
       <trans-unit id="moc.title" datatype="html">
-        <source>Gestion des changements (MOC)</source>
-        <target state="translated">إدارة التغيير (MOC)</target>
+        <source>MOC</source>
+        <target state="translated">MOC</target>
       </trans-unit>
       <trans-unit id="moc.subtitle" datatype="html">
         <source>Demande, analyse d'impact, validation</source>
@@ -21041,8 +21129,8 @@ historique 12 mois</source>
         <target state="translated">المحتوى</target>
       </trans-unit>
       <trans-unit id="documents.create.content-placeholder" datatype="html">
-        <source>Corps du document, ou laissez vide pour ne créer qu'une enveloppe.</source>
-        <target state="translated">متن المستند، أو اتركه فارغًا لإنشاء غلاف فقط.</target>
+        <source>Résumé ou extrait du document (facultatif).</source>
+        <target state="translated">ملخص أو مقتطف من المستند (اختياري).</target>
       </trans-unit>
       <trans-unit id="documents.create.created" datatype="html">
         <source>Document créé.</source>
@@ -21165,12 +21253,8 @@ historique 12 mois</source>
         <target state="translated">تعذّر الإرسال.</target>
       </trans-unit>
       <trans-unit id="documents.detail.submit-review-tooltip" datatype="html">
-        <source>Soumettre à revue</source>
-        <target state="translated">إرسال للمراجعة</target>
-      </trans-unit>
-      <trans-unit id="documents.detail.submitted" datatype="html">
-        <source>Soumise à revue.</source>
-        <target state="translated">تم الإرسال للمراجعة.</target>
+        <source>Soumettre à signature</source>
+        <target state="translated">إرسال للتوقيع</target>
       </trans-unit>
       <trans-unit id="documents.detail.versions-title" datatype="html">
         <source>Versions</source>
@@ -24420,6 +24504,10 @@ historique 12 mois</source>
         <source>Non maîtrisé</source>
         <target state="translated">خارج السيطرة</target>
       </trans-unit>
+      <trans-unit id="spc.status.watch" datatype="html">
+        <source>À surveiller</source>
+        <target state="translated">تحت المراقبة</target>
+      </trans-unit>
       <trans-unit id="spc.col.part" datatype="html">
         <source>Référence pièce</source>
         <target state="translated">مرجع القطعة</target>
@@ -24569,8 +24657,8 @@ historique 12 mois</source>
         <target state="translated">مسح عوامل التصفية</target>
       </trans-unit>
       <trans-unit id="spc.register.legend" datatype="html">
-        <source>Cpk en vert : maîtrisé · en jaune : à surveiller · en rouge : non maîtrisé. Le liseré rouge signale une étude non maîtrisée sans plan d'actions.</source>
-        <target state="translated">Cpk بالأخضر: تحت السيطرة · بالأصفر: تحت المراقبة · بالأحمر: خارج السيطرة. يشير الحد الأحمر إلى دراسة خارج السيطرة دون خطة عمل.</target>
+        <source>Statut et Cpk en vert : maîtrisé · en jaune : à surveiller · en rouge : non maîtrisé. Le liseré rouge signale une étude à surveiller ou non maîtrisée sans plan d'actions.</source>
+        <target state="translated">الحالة و Cpk بالأخضر: تحت السيطرة · بالأصفر: تحت المراقبة · بالأحمر: خارج السيطرة. يشير الحد الأحمر إلى دراسة تحت المراقبة أو خارج السيطرة دون خطة عمل.</target>
       </trans-unit>
       <trans-unit id="spc.study.title-new" datatype="html">
         <source>Nouvelle étude de capabilité</source>
@@ -24699,6 +24787,10 @@ historique 12 mois</source>
       <trans-unit id="spc.study.not-controlled" datatype="html">
         <source>Procédé non maîtrisé :</source>
         <target state="translated">العملية خارج السيطرة:</target>
+      </trans-unit>
+      <trans-unit id="spc.study.watch" datatype="html">
+        <source>Procédé à surveiller :</source>
+        <target state="translated">العملية تحت المراقبة:</target>
       </trans-unit>
       <trans-unit id="spc.study.yes" datatype="html">
         <source>OUI</source>

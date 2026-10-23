@@ -1,0 +1,29 @@
+<qos-form-dialog
+  [title]="title"
+  i18n-subtitle="@@documents.submit.subtitle"
+  subtitle="Choisissez de une à trois personnes. Elles signeront dans l'ordre : le signataire 2 après le 1, le 3 après le 2. Un seul refus renvoie la version en brouillon."
+  [formGroup]="form"
+  [submitting]="submitting"
+  [submitDisabled]="form.invalid"
+  i18n-blockedReason="@@documents.submit.blocked"
+  blockedReason="Choisissez au moins le signataire 1, une personne différente à chaque place."
+  i18n-submitLabel="@@documents.submit.submit"
+  submitLabel="Soumettre à signature"
+  submitIcon="draw"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
+
+  <ol class="signataires">
+    <li *ngFor="let slot of slots; let i = index" class="signataire">
+      <span class="signataire__rang" aria-hidden="true">{{ i + 1 }}</span>
+      <qos-user-picker class="signataire__choix" [formControlName]="slot" [label]="label(i)"
+                       [required]="i === 0" [excludeIds]="excluded(slot)"
+                       [attr.data-test]="'signataire-' + (i + 1)"
+                       (userSelected)="onSelected(slot, $event)"></qos-user-picker>
+    </li>
+  </ol>
+
+  <p class="erreur" *ngIf="form.hasError('duplicate')" role="alert" data-test="doublon"
+     i18n="@@documents.submit.duplicate">Une même personne ne peut signer qu'une fois.</p>
+
+</qos-form-dialog>

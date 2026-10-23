@@ -4,11 +4,77 @@
   <div>
     <strong i18n="@@documents.circuit.rejected">Version v{{ version.versionNumber // i18n(ph="number") }} refusée le {{ version.rejectedAt | date:'short' // i18n(ph="date") }}</strong>
     <p class="refus__raison">{{ version.rejectionReason }}</p>
-    <p class="refus__suite" i18n="@@documents.circuit.rejected-next">Corrigez-la, puis soumettez-la de nouveau : le circuit repartira de la première étape.</p>
+    <p class="refus__suite" i18n="@@documents.circuit.rejected-next">Corrigez-la, puis soumettez-la de nouveau en choisissant ses signataires : la signature repartira du signataire 1.</p>
   </div>
 </div>
 
-<section class="circuit" *ngIf="inReview && loaded" aria-labelledby="circuit-titre" data-test="circuit">
+<!-- Le circuit de signature (ADR 0099) : une carte par signataire, comme la validation d'un MOC. -->
+<section class="circuit" *ngIf="signed && (inReview || rejected)" [attr.aria-labelledby]="'signature-' + version.id"
+         data-test="signature">
+  <header class="circuit__entete">
+    <h3 [id]="'signature-' + version.id" i18n="@@documents.signature.title">Circuit de signature de la version v{{ version.versionNumber // i18n(ph="number") }}</h3>
+    <p class="tour tour--{{ signTurn }}" *ngIf="signTurn" [ngSwitch]="signTurn" data-test="tour-signature">
+      <ng-container *ngSwitchCase="'yours'" i18n="@@documents.signature.turn-yours">C'est à vous de signer : approuvez ou rejetez la version.</ng-container>
+      <ng-container *ngSwitchCase="'author'" i18n="@@documents.signature.turn-author">Vous en êtes l'auteur : vos signataires la valident dans l'ordre.</ng-container>
+      <ng-container *ngSwitchDefault i18n="@@documents.signature.turn-waiting">En attente de la signature de {{ awaited!.name // i18n(ph="name") }}.</ng-container>
+    </p>
+  </header>
+
+  <ul class="cartes">
+    <li *ngFor="let s of signatories; trackBy: trackBySignatory" class="carte" [class.carte--attendue]="isAwaited(s)"
+        [attr.aria-current]="isAwaited(s) ? 'step' : null" [attr.data-test]="'signataire-' + s.position">
+      <div class="carte__tete">
+        <h4 class="carte__role">{{ signatoryLabel(s) }}</h4>
+        <span class="etat etat--{{ s.decision }}" [attr.data-test]="'etat-' + s.position">
+          {{ decisionText(s) }}<ng-container *ngIf="s.decidedAt"> · {{ s.decidedAt | date:'dd/MM/yyyy HH:mm' }}</ng-container>
+        </span>
+      </div>
+      <p class="carte__qui">{{ s.name }}</p>
+      <p class="carte__commentaire" *ngIf="s.comment">{{ s.comment }}</p>
+
+      <div class="carte__decision" *ngIf="canSign(s)">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="carte__champ" *ngIf="!rejecting">
+          <mat-label i18n="@@documents.signature.comment">Commentaire (facultatif)</mat-label>
+          <textarea matInput rows="2" [value]="comment" [attr.maxlength]="commentMax"
+                    (input)="comment = $any($event.target).value" data-test="commentaire"></textarea>
+        </mat-form-field>
+        <!-- Deux choix d'emblée ; le motif ne se demande qu'au rejet. -->
+        <div class="carte__boutons" *ngIf="!rejecting">
+          <button mat-flat-button type="button" class="bouton-ok" (click)="approve()" [disabled]="busy" data-test="approuver">
+            <span i18n="@@moc.validation.approve">Approuver</span>
+          </button>
+          <button mat-flat-button type="button" class="bouton-refus" (click)="startReject()" [disabled]="busy" data-test="rejeter">
+            <span i18n="@@moc.validation.reject">Rejeter</span>
+          </button>
+        </div>
+
+        <ng-container *ngIf="rejecting">
+          <mat-form-field appearance="outline" subscriptSizing="dynamic" class="carte__champ">
+            <mat-label i18n="@@moc.validation.reject-reason">Motif du refus (obligatoire)</mat-label>
+            <textarea matInput rows="3" #motif [value]="comment" [attr.maxlength]="commentMax"
+                      (input)="comment = $any($event.target).value" data-test="motif"
+                      [attr.aria-invalid]="missingReason"
+                      [attr.aria-describedby]="missingReason ? 'motif-requis-' + version.id : null"></textarea>
+          </mat-form-field>
+          <p class="carte__erreur" *ngIf="missingReason" role="alert" [id]="'motif-requis-' + version.id"
+             data-test="motif-requis" i18n="@@moc.validation.reject-hint">Un refus doit être motivé par un commentaire</p>
+          <div class="carte__boutons">
+            <button mat-flat-button type="button" class="bouton-refus" (click)="reject(motif)" [disabled]="busy"
+                    data-test="confirmer-rejet">
+              <span i18n="@@moc.validation.reject-confirm">Confirmer le rejet</span>
+            </button>
+            <button mat-stroked-button type="button" (click)="cancelReject()" [disabled]="busy" data-test="annuler-rejet">
+              <span i18n="@@common.cancel">Annuler</span>
+            </button>
+          </div>
+        </ng-container>
+      </div>
+    </li>
+  </ul>
+</section>
+
+<!-- Une revue d'avant l'ADR 0099 : le circuit par rôles (ADR 0080). -->
+<section class="circuit" *ngIf="inReview && loaded && !signed" aria-labelledby="circuit-titre" data-test="circuit">
   <header class="circuit__entete">
     <h3 id="circuit-titre" i18n="@@documents.circuit.title">Validation de la version v{{ version.versionNumber // i18n(ph="number") }}</h3>
 

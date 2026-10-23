@@ -23,7 +23,7 @@
       <span i18n="@@spc.register.kpi-total">Études réalisées</span>
     </div>
     <div class="kpi" data-test="kpi-maitrises">
-      <b>{{ controlledPercent === null ? '–' : controlledPercent + ' %' }}</b>
+      <b>{{ controlledCount }}</b>
       <span i18n="@@spc.register.kpi-controlled">Procédés maîtrisés</span>
     </div>
     <div class="kpi" data-test="kpi-plans">
@@ -55,8 +55,9 @@
       <mat-select [(ngModel)]="statusFilter" data-test="filtre-statut"
                   i18n-aria-label="@@spc.register.filter-status" aria-label="Filtrer par statut">
         <mat-option value="" i18n="@@spc.register.all-statuses">Tous les statuts</mat-option>
-        <mat-option value="controlled" i18n="@@spc.status.capable">Maîtrisé</mat-option>
-        <mat-option value="uncontrolled" i18n="@@spc.status.not-capable">Non maîtrisé</mat-option>
+        <mat-option value="CAPABLE" i18n="@@spc.status.capable">Maîtrisé</mat-option>
+        <mat-option value="WATCH" i18n="@@spc.status.watch">À surveiller</mat-option>
+        <mat-option value="NOT_CAPABLE" i18n="@@spc.status.not-capable">Non maîtrisé</mat-option>
       </mat-select>
     </mat-form-field>
 
@@ -127,8 +128,8 @@
             <span class="pastille pastille--{{ tone(s.status) }} mono" data-test="cpk">{{ num(s.cpk) }}</span>
           </td>
           <td>
-            <span class="statut statut--{{ s.status === 'CAPABLE' ? 'ok' : 'bad' }}" data-test="statut">
-              {{ controlled(s.status) }}
+            <span class="statut statut--{{ tone(s.status) }}" data-test="statut">
+              {{ label(s.status) }}
             </span>
           </td>
           <td (click)="$event.stopPropagation()" (keydown.enter)="$event.stopPropagation()">
@@ -163,7 +164,7 @@
       </tbody>
     </table>
     <p class="legende" data-test="legende">
-      <span i18n="@@spc.register.legend">Cpk en vert : maîtrisé · en jaune : à surveiller · en rouge : non maîtrisé. Le liseré rouge signale une étude non maîtrisée sans plan d'actions.</span>
+      <span i18n="@@spc.register.legend">Statut et Cpk en vert : maîtrisé · en jaune : à surveiller · en rouge : non maîtrisé. Le liseré rouge signale une étude à surveiller ou non maîtrisée sans plan d'actions.</span>
     </p>
   </div>
 </div>

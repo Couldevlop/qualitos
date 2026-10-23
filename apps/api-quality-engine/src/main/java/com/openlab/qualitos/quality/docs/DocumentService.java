@@ -43,6 +43,9 @@ public class DocumentService {
      */
     private static final String NO_ROLE = "-";
 
+    /** Signataire 1, 2 et 3 : pas davantage (ADR 0099). */
+    static final int MAX_SIGNATORIES = 3;
+
     private final DocumentRepository documentRepository;
     private final DocumentVersionRepository versionRepository;
     private final DocumentAcknowledgmentRepository ackRepository;
@@ -290,17 +293,86 @@ public class DocumentService {
         return toVersionResponse(versionRepository.save(v));
     }
 
-    public DocumentDto.VersionResponse submitForReview(UUID documentId, UUID versionId) {
-        loadDocument(documentId);
+    /**
+     * Soumet un brouillon à validation, avec le circuit de signature que l'auteur
+     * désigne : un à trois signataires, qui signeront dans l'ordre (ADR 0099). La
+     * version doit porter son fichier : un document se valide sur pièce.
+     * Une nouvelle soumission remplace les signataires de la précédente.
+     */
+    public DocumentDto.VersionResponse submitForReview(UUID documentId, UUID versionId,
+                                                      DocumentDto.SubmitRequest req) {
+        Document d = loadDocument(documentId);
         DocumentVersion v = loadVersion(documentId, versionId);
         if (v.getStatus() != VersionStatus.DRAFT) {
             throw new DocumentStateException("Only DRAFT versions can be submitted for review");
         }
+        if (v.getBlob() == null) {
+            throw new DocumentStateException("Attach the document file before submitting the version");
+        }
+        List<DocumentDto.SignatoryRequest> designes = checkedSignatories(req, v.getAuthorId());
+        if (!v.getSignatories().isEmpty()) {
+            // Les anciennes lignes partent avant les nouvelles : mêmes rangs, même version.
+            v.getSignatories().clear();
+            versionRepository.saveAndFlush(v);
+        }
+        for (int i = 0; i < designes.size(); i++) {
+            DocumentDto.SignatoryRequest s = designes.get(i);
+            DocumentVersionSignatory g = new DocumentVersionSignatory();
+            g.setTenantId(d.getTenantId());
+            g.setVersion(v);
+            g.setPosition(i + 1);
+            g.setSignerId(s.userId());
+            g.setSignerName(s.name().strip());
+            v.getSignatories().add(g);
+        }
         v.setStatus(VersionStatus.IN_REVIEW);
-        DocumentVersion soumise = versionRepository.save(v);
-        // Si le client a réglé un circuit, le passage commence ici (ADR 0080).
-        circuits.start(CircuitSubject.DOCUMENT_VERSION, soumise.getId(), soumise.getAuthorId());
-        return toVersionResponse(soumise);
+        return toVersionResponse(versionRepository.save(v));
+    }
+
+    /** Un à trois signataires, tous distincts, et jamais l'auteur : on ne valide pas son propre texte. */
+    private static List<DocumentDto.SignatoryRequest> checkedSignatories(DocumentDto.SubmitRequest req, UUID auteur) {
+        List<DocumentDto.SignatoryRequest> liste = req == null || req.signatories() == null
+                ? List.of() : req.signatories();
+        if (liste.isEmpty() || liste.size() > MAX_SIGNATORIES) {
+            throw new DocumentSignatoryException("Designate between 1 and " + MAX_SIGNATORIES + " signatories");
+        }
+        Set<UUID> vus = new HashSet<>();
+        for (DocumentDto.SignatoryRequest s : liste) {
+            if (s == null || s.userId() == null || s.name() == null || s.name().isBlank()) {
+                throw new DocumentSignatoryException("Each signatory needs a directory account and a name");
+            }
+            if (s.userId().equals(auteur)) {
+                throw new DocumentSignatoryException("The author of the version cannot sign it");
+            }
+            if (!vus.add(s.userId())) {
+                throw new DocumentSignatoryException("The same person cannot sign twice");
+            }
+        }
+        return liste;
+    }
+
+    /** Le signataire dont c'est le tour : le premier rang encore en attente. */
+    private static Optional<DocumentVersionSignatory> currentSignatory(DocumentVersion v) {
+        return v.getSignatories().stream()
+                .filter(s -> s.getDecision() == SignatoryDecision.PENDING)
+                .min(Comparator.comparingInt(DocumentVersionSignatory::getPosition));
+    }
+
+    /** Seul le signataire dont c'est le tour signe ou refuse ; les autres reçoivent 403. */
+    private static DocumentVersionSignatory requireMyTurn(DocumentVersion v, UUID acteur) {
+        DocumentVersionSignatory tour = currentSignatory(v)
+                .orElseThrow(() -> new DocumentStateException("Every signatory has already decided"));
+        if (!tour.getSignerId().equals(acteur)) {
+            throw new AccessDeniedException("It is not your turn to sign this version");
+        }
+        return tour;
+    }
+
+    /** Une version sans signataires (soumise avant le circuit de signature) suit l'approbation par droit. */
+    private void requireApproveRight() {
+        if (!authorization.has(Permission.DOCUMENT_APPROVE)) {
+            throw new AccessDeniedException("Access denied");
+        }
     }
 
     public DocumentDto.VersionResponse approveVersion(UUID documentId, UUID versionId,
@@ -314,6 +386,23 @@ public class DocumentService {
         if (approbateur.equals(v.getAuthorId())) {
             throw new DocumentStateException("Approver cannot be the author of the version");
         }
+        if (!v.getSignatories().isEmpty()) {
+            // Le circuit de signature : le signataire dont c'est le tour signe ; la
+            // version n'est approuvée qu'à la dernière signature (ADR 0099).
+            DocumentVersionSignatory tour = requireMyTurn(v, approbateur);
+            Instant now = clock.instant();
+            tour.setDecision(SignatoryDecision.APPROVED);
+            tour.setDecidedAt(now);
+            tour.setComment(req == null || req.comment() == null || req.comment().isBlank()
+                    ? null : req.comment().strip());
+            if (currentSignatory(v).isEmpty()) {
+                v.setStatus(VersionStatus.APPROVED);
+                v.setApprovedBy(approbateur);
+                v.setApprovedAt(now);
+            }
+            return toVersionResponse(versionRepository.save(v));
+        }
+        requireApproveRight();
         // Avec un circuit, l'approbation franchit une étape ; la version n'est
         // approuvée qu'à la dernière. Sans circuit, une approbation suffit.
         Optional<CircuitDto.RunView> passage = circuits.decide(CircuitSubject.DOCUMENT_VERSION, v.getId(), true,
@@ -329,8 +418,9 @@ public class DocumentService {
 
     /**
      * Refuse une version en revue : elle revient en brouillon avec la raison,
-     * pour que l'auteur la corrige et la soumette à nouveau. Avec un circuit,
-     * seul le porteur du rôle de l'étape en cours refuse.
+     * pour que l'auteur la corrige et la soumette à nouveau. Avec des
+     * signataires, seul celui dont c'est le tour refuse ; avec un circuit par
+     * rôles d'avant (ADR 0080), le porteur du rôle de l'étape en cours.
      */
     public DocumentDto.VersionResponse rejectVersion(UUID documentId, UUID versionId,
                                                     DocumentDto.RejectionRequest req) {
@@ -344,7 +434,16 @@ public class DocumentService {
             throw new DocumentStateException("The author cannot reject their own version");
         }
         String raison = req.reason().strip();
-        circuits.decide(CircuitSubject.DOCUMENT_VERSION, v.getId(), false, raison);
+        if (!v.getSignatories().isEmpty()) {
+            // Un refus du signataire dont c'est le tour arrête le circuit (ADR 0099).
+            DocumentVersionSignatory tour = requireMyTurn(v, acteur);
+            tour.setDecision(SignatoryDecision.REJECTED);
+            tour.setDecidedAt(clock.instant());
+            tour.setComment(raison);
+        } else {
+            requireApproveRight();
+            circuits.decide(CircuitSubject.DOCUMENT_VERSION, v.getId(), false, raison);
+        }
         v.setStatus(VersionStatus.DRAFT);
         v.setRejectedBy(acteur);
         v.setRejectedAt(Instant.now());
@@ -503,7 +602,11 @@ public class DocumentService {
                 v.getPublishedAt(), v.getBlockchainTxHash(),
                 v.getCreatedAt(), v.getUpdatedAt(),
                 v.getRejectedBy(), v.getRejectedAt(), v.getRejectionReason(),
-                fileInfo(v));
+                fileInfo(v),
+                v.getSignatories().stream()
+                        .map(s -> new DocumentDto.SignatoryView(s.getPosition(), s.getSignerId(), s.getSignerName(),
+                                s.getDecision(), s.getDecidedAt(), s.getComment()))
+                        .toList());
     }
 
     private static DocumentDto.FileInfo fileInfo(DocumentVersion v) {
