@@ -138,7 +138,40 @@ describe('CompetencyMatrixComponent', () => {
       await setup({ matrix: of(view({ cells })) });
       expect(component.atRiskCount).toBe(0);
       expect(un('risques')?.textContent).toContain('Aucun risque');
+      expect(un('risques')?.classList).toContain('risques--ok');
       expect(un('kpi-risque')?.classList).toContain('kpi--ok');
+    });
+
+    it('garde le liseré d\'alerte du panneau tant qu\'une compétence est à risque', async () => {
+      await setup();
+      expect(un('risques')?.classList).not.toContain('risques--ok');
+    });
+
+    it('avertit, sans bloquer, quand le formateur désigné n\'est pas autonome sur sa compétence', async () => {
+      // Métrologie : formateur Boris, présent dans la matrice mais non formé ; Soudure :
+      // formateur hors matrice, formé ailleurs peut-être, rien à en dire.
+      const skills = [skill('s-1', 'Tournage CN', 'Usinage'), skill('s-2', 'Soudure', 'Assemblage'),
+        { ...skill('s-3', 'Métrologie', 'Qualité'), trainerUserId: 'u-2', trainerName: 'Boris Lemaire' }];
+      await setup({ matrix: of(view({ skills })) });
+
+      const alertes = tous('alerte-formateur');
+      expect(alertes.length).toBe(1);
+      expect(alertes[0].textContent).toContain('Le formateur est lui-même « Non formé » sur cette compétence.');
+      expect(component.skillTooltip(component.skills[2]))
+        .toBe('Formateur : Boris Lemaire — Le formateur est lui-même « Non formé » sur cette compétence.');
+      expect(component.skillTooltip(component.skills[1])).toBe('Formateur : Formateur Soudure');
+
+      // Autonome (niveau 2) : l'alerte se tait.
+      service.setLevel.and.callFake(r => of({ userId: r.userId, skillId: r.skillId, level: r.level }));
+      component.cycle(component.operators[1], component.skills[2]);
+      component.cycle(component.operators[1], component.skills[2]);
+      expect(component.trainerWarning(component.skills[2])).toBeNull();
+    });
+
+    it('explique ce que compte la moyenne', async () => {
+      await setup();
+      expect(component.averageHelp).toContain('compte comme « Non formé » (0)');
+      expect(un('entete-moyenne')?.textContent).toContain('Moy.');
     });
 
     it('dit que la matrice est vide quand il n\'y a ni opérateur ni compétence', async () => {
@@ -198,6 +231,30 @@ describe('CompetencyMatrixComponent', () => {
       fixture.detectChanges();
       expect(component.visibleOperators.length).toBe(3);
       expect(component.visibleSkills.length).toBe(3);
+    });
+
+    it('fait suivre les indicateurs aux filtres, en rappelant le total', async () => {
+      await setup();
+      expect(hote().querySelector('.kpi__total')).toBeNull();
+
+      component.workshopFilter = 'Usinage';
+      fixture.detectChanges();
+      expect(un('kpi-operateurs')?.textContent?.replace(/\s+/g, '')).toContain('2/3');
+      // La couverture se lit sur toute la matrice : filtrer les lignes ne change pas les risques.
+      expect(un('kpi-risque')?.textContent).toContain('2');
+
+      component.workshopFilter = '';
+      component.categoryFilter = 'Usinage';
+      fixture.detectChanges();
+      expect(un('kpi-competences')?.textContent?.replace(/\s+/g, '')).toContain('1/3');
+      expect(un('kpi-operateurs')?.querySelector('.kpi__total')).toBeNull();
+      expect(un('kpi-risque')?.textContent).toContain('0');
+      expect(un('kpi-risque')?.classList).toContain('kpi--ok');
+      expect(un('kpi-formateur')?.textContent).toContain('1');
+
+      component.categoryFilter = 'Qualité';
+      fixture.detectChanges();
+      expect(un('kpi-formateur')?.textContent).toContain('0');
     });
 
     it('estompe les colonnes couvertes quand on met les risques en évidence', async () => {

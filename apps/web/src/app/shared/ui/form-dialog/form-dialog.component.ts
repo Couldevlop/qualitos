@@ -67,8 +67,21 @@ export class FormDialogComponent {
     if (!this.submitDisabled || this.submitting) {
       return undefined;
     }
-    return this.blockedReason
-      ?? $localize`:@@common.form-blocked:Des champs obligatoires restent à renseigner.`;
+    if (this.blockedReason) {
+      return this.blockedReason;
+    }
+    return this.pristine
+      ? $localize`:@@common.form-pending:Renseignez les champs marqués d'un astérisque (*).`
+      : $localize`:@@common.form-blocked:Des champs obligatoires restent à renseigner.`;
+  }
+
+  /**
+   * Rien n'a encore été saisi ni touché : le motif se dit en simple consigne, sur
+   * un ton neutre. Une alerte orange à l'ouverture reprocherait à l'utilisateur
+   * un formulaire qu'il n'a pas encore commencé.
+   */
+  get pristine(): boolean {
+    return !!this.formGroup && this.formGroup.pristine && this.formGroup.untouched;
   }
 
   /** Émis à la soumission (le parent appelle son service). */

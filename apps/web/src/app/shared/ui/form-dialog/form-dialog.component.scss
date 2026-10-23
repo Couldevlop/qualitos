@@ -47,6 +47,11 @@
     width: 18px;
     height: 18px;
   }
+
+  /* Formulaire pas encore commencé : une consigne, pas une alerte. */
+  &--pending {
+    color: var(--qos-fg-secondary);
+  }
 }
 
 .qfd-buttons {

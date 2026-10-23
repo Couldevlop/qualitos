@@ -177,6 +177,20 @@ TRANSLATIONS = {
     'training.matrix.trainer-of': (
         'Formateur : {$trainer}', 'Trainer: {$trainer}', 'Formador: {$trainer}',
         'المدرّب: {$trainer}', 'トレーナー：{$trainer}', '培训师：{$trainer}'),
+    'training.matrix.trainer-not-autonomous': (
+        'Le formateur est lui-même « {$level} » sur cette compétence.',
+        'The trainer is rated “{$level}” on this skill.',
+        'El formador está evaluado como «{$level}» en esta competencia.',
+        'المدرّب نفسه مُقيَّم «{$level}» في هذه الكفاءة.',
+        'トレーナー自身がこのスキルで「{$level}」です。',
+        '培训师本人在该能力上为“{$level}”。'),
+    'training.matrix.average-help': (
+        'Niveau moyen sur les compétences affichées. Une case non évaluée (·) compte comme « Non formé » (0).',
+        'Average level across the skills shown. A cell not yet assessed (·) counts as “Not trained” (0).',
+        'Nivel medio en las competencias mostradas. Una casilla sin evaluar (·) cuenta como «No formado» (0).',
+        'متوسط المستوى على الكفاءات المعروضة. الخانة غير المُقيَّمة (·) تُحسب «غير مُدرَّب» (0).',
+        '表示中のスキルの平均レベル。未評価のセル（·）は「未訓練」（0）として数えます。',
+        '所显示能力的平均水平。未评估的单元格（·）按“未培训”（0）计算。'),
     'training.matrix.no-risk': (
         'Aucun risque : toutes les compétences sont couvertes.',
         'No risk: every skill is covered.',

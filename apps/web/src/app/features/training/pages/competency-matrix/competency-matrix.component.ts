@@ -10,7 +10,7 @@ import {
 } from '../../../../shared/ui/confirm-dialog/confirm-dialog.component';
 import {
   LEVEL_LABELS, LevelIndex, MIN_AUTONOMOUS, autonomousOn, categoriesOf, filterOperators, filterSkills,
-  hasTrainerLevel, isAtRisk, levelLabel, nextLevel, operatorAverage, workshopFilterOptions
+  hasTrainerLevel, isAtRisk, levelLabel, nextLevel, operatorAverage, trainerShortfall, workshopFilterOptions
 } from '../../competency-matrix/competency-matrix.model';
 import { CompetencyMatrixService } from '../../competency-matrix/competency-matrix.service';
 import { CompetencyMatrixView, MatrixOperator, MatrixSkill } from '../../competency-matrix/competency-matrix.types';
@@ -54,6 +54,7 @@ export class CompetencyMatrixComponent implements OnInit {
   readonly levels = LEVEL_LABELS.map((label, level) => ({ level, label }));
   readonly minAutonomous = MIN_AUTONOMOUS;
   readonly searchPlaceholder = $localize`:@@training.matrix.search:Rechercher un opérateur…`;
+  readonly averageHelp = $localize`:@@training.matrix.average-help:Niveau moyen sur les compétences affichées. Une case non évaluée (·) compte comme « Non formé » (0).`;
 
   /** Écrire : le serveur tranche (action training.manage) ; l'écran n'affiche que ce qui servira. */
   canManage = false;
@@ -133,13 +134,26 @@ export class CompetencyMatrixComponent implements OnInit {
     return categoriesOf(this.skills);
   }
 
+  /** Un filtre réduit les lignes ou les colonnes : les indicateurs disent alors « n / total ». */
+  get operatorsFiltered(): boolean {
+    return this.visibleOperators.length !== this.operators.length;
+  }
+
+  get skillsFiltered(): boolean {
+    return this.visibleSkills.length !== this.skills.length;
+  }
+
   get atRiskCount(): number {
     return this.risks.length;
   }
 
-  /** Compétences où au moins une personne est au niveau « formateur ». */
+  /**
+   * Compétences affichées où au moins une personne est au niveau « formateur ».
+   * La couverture d'une compétence se lit sur toute la matrice : le filtre
+   * d'atelier choisit les lignes montrées, pas qui tient la compétence.
+   */
   get withTrainerCount(): number {
-    return this.skills.filter(s => hasTrainerLevel(this.shown, this.operators, s.skillId)).length;
+    return this.visibleSkills.filter(s => hasTrainerLevel(this.shown, this.operators, s.skillId)).length;
   }
 
   /** Les compétences affichées qui ont moins de deux personnes autonomes, et qui les tient. */
@@ -173,6 +187,20 @@ export class CompetencyMatrixComponent implements OnInit {
 
   trainerLabel(s: MatrixSkill): string {
     return $localize`:@@training.matrix.trainer-of:Formateur : ${s.trainerName}:trainer:`;
+  }
+
+  /** Le formateur désigné n'est pas autonome sur sa propre compétence : on le dit, sans bloquer. */
+  trainerWarning(s: MatrixSkill): string | null {
+    const level = trainerShortfall(this.shown, this.operators, s);
+    if (level === null) return null;
+    const niveau = levelLabel(level);
+    return $localize`:@@training.matrix.trainer-not-autonomous:Le formateur est lui-même « ${niveau}:level: » sur cette compétence.`;
+  }
+
+  /** L'infobulle d'en-tête : le formateur, et l'alerte s'il n'est pas autonome. */
+  skillTooltip(s: MatrixSkill): string {
+    const alerte = this.trainerWarning(s);
+    return alerte ? `${this.trainerLabel(s)} — ${alerte}` : this.trainerLabel(s);
   }
 
   soleLabel(name: string): string {

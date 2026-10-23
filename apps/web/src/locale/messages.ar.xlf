@@ -6774,6 +6774,14 @@ Portail clients</source>
         <source>Formateur : <x id="trainer"/></source>
         <target state="translated">المدرّب: <x id="trainer"/></target>
       </trans-unit>
+      <trans-unit id="training.matrix.trainer-not-autonomous" datatype="html">
+        <source>Le formateur est lui-même « <x id="level"/> » sur cette compétence.</source>
+        <target state="translated">المدرّب نفسه مُقيَّم «<x id="level"/>» في هذه الكفاءة.</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.average-help" datatype="html">
+        <source>Niveau moyen sur les compétences affichées. Une case non évaluée (·) compte comme « Non formé » (0).</source>
+        <target state="translated">متوسط المستوى على الكفاءات المعروضة. الخانة غير المُقيَّمة (·) تُحسب «غير مُدرَّب» (0).</target>
+      </trans-unit>
       <trans-unit id="training.matrix.no-risk" datatype="html">
         <source>Aucun risque : toutes les compétences sont couvertes.</source>
         <target state="translated">لا مخاطر: كل الكفاءات مغطّاة.</target>
@@ -8901,6 +8909,10 @@ Portail clients</source>
       <trans-unit id="common.cancel" datatype="html">
         <source>Annuler</source>
         <target state="translated">إلغاء</target>
+      </trans-unit>
+      <trans-unit id="common.form-pending" datatype="html">
+        <source>Renseignez les champs marqués d'un astérisque (*).</source>
+        <target state="translated">املأ الحقول المعلَّمة بنجمة (*).</target>
       </trans-unit>
       <trans-unit id="common.form-blocked" datatype="html">
         <source>Des champs obligatoires restent à renseigner.</source>

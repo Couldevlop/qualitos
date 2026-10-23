@@ -1,6 +1,6 @@
 import {
   LevelIndex, autonomousOn, categoriesOf, filterOperators, filterSkills, hasTrainerLevel, isAtRisk,
-  levelLabel, nextLevel, normalize, operatorAverage, workshopFilterOptions
+  levelLabel, nextLevel, normalize, operatorAverage, trainerShortfall, workshopFilterOptions
 } from './competency-matrix.model';
 import { MatrixOperator, MatrixSkill } from './competency-matrix.types';
 
@@ -53,6 +53,16 @@ describe('competency-matrix.model', () => {
     const index = new LevelIndex([{ userId: 'u1', skillId: 's1', level: 3 }, { userId: 'u1', skillId: 's2', level: 2 }]);
     expect(operatorAverage(index, 'u1', skills)).toBe('1.3');
     expect(operatorAverage(index, 'u1', [])).toBe('0.0');
+  });
+
+  it('dit le niveau du formateur désigné quand il est dans la matrice sans y être autonome', () => {
+    const index = new LevelIndex([{ userId: 'u2', skillId: 's2', level: 1 }, { userId: 'u3', skillId: 's1', level: 2 }]);
+    const de = (skillId: string, trainerUserId: string): MatrixSkill => ({ ...sk(skillId, null), trainerUserId });
+    expect(trainerShortfall(index, ops, de('s2', 'u2'))).toBe(1);
+    expect(trainerShortfall(index, ops, de('s1', 'u1'))).toBe(0);
+    expect(trainerShortfall(index, ops, de('s1', 'u3'))).toBeNull();
+    // Hors de la matrice : formé ailleurs, peut-être.
+    expect(trainerShortfall(index, ops, de('s1', 'externe'))).toBeNull();
   });
 
   it('liste les catégories sans doublon ni vide', () => {

@@ -53,6 +53,13 @@
   &--ok b {
     color: var(--qos-success-fg);
   }
+
+  // Filtré : le total, en retrait, après le nombre affiché.
+  &__total {
+    font-size: var(--qos-fs-sm);
+    font-weight: var(--qos-fw-regular);
+    color: var(--qos-fg-tertiary);
+  }
 }
 
 // ---------- filtres ----------
@@ -170,6 +177,11 @@
     font-size: var(--qos-fs-sm);
     color: var(--qos-success-fg);
   }
+
+  // Plus rien à risque : le liseré rouge se tait et passe à la couleur du succès.
+  &--ok {
+    border-left-color: var(--qos-success-fg);
+  }
 }
 
 .risque {
@@ -193,6 +205,12 @@
 
   &__formateur {
     color: var(--qos-fg-secondary);
+  }
+
+  &__alerte {
+    display: block;
+    color: var(--qos-warn-fg);
+    font-size: var(--qos-fs-xs);
   }
 
   &__etat {
@@ -293,13 +311,20 @@ tfoot .nom {
 .competence {
   min-width: var(--mx-case);
 
+  // La croix en haut, l'intitulé en bas : toutes les croix sur une même ligne, quelle
+  // que soit la longueur de l'intitulé. La hauteur est celle de l'en-tête, posée ici
+  // parce qu'un `height: 100%` ne se résout pas dans une cellule de tableau.
   &__inner {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-end;
-    height: 100%;
+    height: 10rem;
     gap: var(--qos-space-1);
+
+    // Sans droit d'écriture, pas de croix : l'intitulé reste quand même en bas.
+    .vertical {
+      margin-top: auto;
+    }
   }
 }
 
