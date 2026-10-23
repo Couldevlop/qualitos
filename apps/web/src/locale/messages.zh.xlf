@@ -17101,16 +17101,16 @@ historique 12 mois</source>
         <target state="translated">测量值（用逗号、空格或换行分隔）</target>
       </trans-unit>
       <trans-unit id="spc.analyze.baseline-hint" datatype="html">
-        <source>Baseline connue (optionnel) — sinon les limites sont estimées :</source>
-        <target state="translated">已知基线（可选）— 否则将估算控制限：</target>
+        <source>Ligne centrale et σ connus (facultatif). Laissés vides, ils sont estimés à partir de la série.</source>
+        <target state="translated">已知中心线和 σ（可选）。留空时将根据序列估算。</target>
       </trans-unit>
       <trans-unit id="spc.analyze.center-label" datatype="html">
-        <source>Ligne centrale (center)</source>
-        <target state="translated">中心线 (center)</target>
+        <source>Ligne centrale</source>
+        <target state="translated">中心线</target>
       </trans-unit>
       <trans-unit id="spc.analyze.sigma-label" datatype="html">
-        <source>σ (sigma)</source>
-        <target state="translated">σ (sigma)</target>
+        <source>Écart type σ</source>
+        <target state="translated">标准差 σ</target>
       </trans-unit>
       <trans-unit id="spc.analyze.analyze-series" datatype="html">
         <source>Analyser la série</source>
@@ -17173,8 +17173,8 @@ historique 12 mois</source>
         <target state="translated">由序列估算</target>
       </trans-unit>
       <trans-unit id="spc.analyze.center-baseline" datatype="html">
-        <source>Baseline fournie</source>
-        <target state="translated">已提供基线</target>
+        <source>Valeur fournie</source>
+        <target state="translated">已提供的值</target>
       </trans-unit>
       <trans-unit id="spc.analyze.control-limits" datatype="html">
         <source>Limites de contrôle (3σ)</source>
@@ -17189,8 +17189,60 @@ historique 12 mois</source>
         <target state="translated">触发的Nelson规则</target>
       </trans-unit>
       <trans-unit id="spc.analyze.no-violation" datatype="html">
-        <source>Aucune règle déclenchée : le procédé est statistiquement maîtrisé 🎉</source>
-        <target state="translated">未触发任何规则：过程处于统计受控状态 🎉</target>
+        <source>Aucune règle déclenchée : le procédé est statistiquement maîtrisé.</source>
+        <target state="translated">未触发任何规则：过程处于统计受控状态。</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.eyebrow" datatype="html">
+        <source>DMAIC · Control</source>
+        <target state="translated">DMAIC · Control</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.kpi-label" datatype="html">
+        <source>KPI</source>
+        <target state="translated">KPI</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.auto-placeholder" datatype="html">
+        <source>Estimée</source>
+        <target state="translated">估算</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.auto-placeholder-m" datatype="html">
+        <source>Estimé</source>
+        <target state="translated">估算</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.state-desc-none" datatype="html">
+        <source>Aucune règle de Nelson déclenchée · <x id="points"/> points</source>
+        <target state="translated">未触发纳尔逊规则 · <x id="points"/> 个点</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.state-desc" datatype="html">
+        <source><x id="rules"/> règle(s) de Nelson déclenchée(s) · <x id="points"/> points</source>
+        <target state="translated">触发 <x id="rules"/> 条纳尔逊规则 · <x id="points"/> 个点</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.sev-critical" datatype="html">
+        <source>Critique</source>
+        <target state="translated">严重</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.sev-major" datatype="html">
+        <source>Majeure</source>
+        <target state="translated">主要</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.sev-minor" datatype="html">
+        <source>Mineure</source>
+        <target state="translated">次要</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.chart-measures" datatype="html">
+        <source>Mesures</source>
+        <target state="translated">测量值</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.chart-ooc" datatype="html">
+        <source>Hors contrôle</source>
+        <target state="translated">失控</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.chart-point" datatype="html">
+        <source>Point</source>
+        <target state="translated">点</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.chart-value" datatype="html">
+        <source>Valeur</source>
+        <target state="translated">值</target>
       </trans-unit>
       <trans-unit id="spc.analyze.col-rule" datatype="html">
         <source>Règle</source>
@@ -17213,8 +17265,8 @@ historique 12 mois</source>
         <target state="translated">请至少输入一个数值测量值。</target>
       </trans-unit>
       <trans-unit id="spc.analyze.err-baseline-both" datatype="html">
-        <source>La baseline exige center ET σ (ou aucun des deux).</source>
-        <target state="translated">基线需要同时提供 center 和 σ（或两者都不提供）。</target>
+        <source>Renseignez la ligne centrale et σ ensemble, ou laissez les deux vides.</source>
+        <target state="translated">请同时填写中心线和 σ，或两者都留空。</target>
       </trans-unit>
       <trans-unit id="spc.analyze.err-sigma-positive" datatype="html">
         <source>σ doit être strictement positif.</source>
@@ -17229,32 +17281,32 @@ historique 12 mois</source>
         <target state="translated">此KPI至少需要2个测量值。</target>
       </trans-unit>
       <trans-unit id="spc.analyze.err-backend" datatype="html">
-        <source>Backend injoignable (engine sur 8082 ?).</source>
-        <target state="translated">无法连接后端（engine 在 8082？）。</target>
+        <source>Le serveur ne répond pas. Vérifiez votre connexion, puis relancez l'analyse.</source>
+        <target state="translated">服务器无响应。请检查网络连接，然后重新分析。</target>
       </trans-unit>
       <trans-unit id="spc.analyze.err-invalid-series" datatype="html">
-        <source>Série invalide (1 à 10000 mesures attendues).</source>
-        <target state="translated">序列无效（应为1至10000个测量值）。</target>
+        <source>La série doit compter de 1 à 10 000 mesures.</source>
+        <target state="translated">序列须包含 1 至 10,000 个测量值。</target>
       </trans-unit>
       <trans-unit id="spc.analyze.err-too-large" datatype="html">
-        <source>Série trop volumineuse (garde-fou IA).</source>
-        <target state="translated">序列过大（AI防护）。</target>
+        <source>La série est trop longue pour être analysée en une fois : réduisez-la.</source>
+        <target state="translated">序列过长，无法一次分析：请缩短。</target>
       </trans-unit>
       <trans-unit id="spc.analyze.err-quota" datatype="html">
-        <source>Débit/quota IA dépassé pour ce tenant — réessayez plus tard.</source>
-        <target state="translated">该租户的AI速率/配额已超出 — 请稍后重试。</target>
+        <source>Trop d'analyses en peu de temps : réessayez dans une minute.</source>
+        <target state="translated">短时间内分析次数过多：请一分钟后重试。</target>
       </trans-unit>
       <trans-unit id="spc.analyze.err-gateway" datatype="html">
-        <source>Passerelle IA indisponible (ai-service injoignable).</source>
-        <target state="translated">AI网关不可用（无法连接 ai-service）。</target>
+        <source>L'analyse est momentanément indisponible. Réessayez dans quelques minutes.</source>
+        <target state="translated">分析暂时不可用。请几分钟后重试。</target>
       </trans-unit>
       <trans-unit id="spc.analyze.err-unavailable" datatype="html">
-        <source>Service IA momentanément indisponible (disjoncteur ouvert).</source>
-        <target state="translated">AI服务暂时不可用（熔断器开启）。</target>
+        <source>L'analyse est momentanément indisponible. Réessayez dans quelques minutes.</source>
+        <target state="translated">分析暂时不可用。请几分钟后重试。</target>
       </trans-unit>
       <trans-unit id="spc.analyze.err-generic" datatype="html">
-        <source>Échec de l'analyse SPC (HTTP <x id="status"/>).</source>
-        <target state="translated">SPC分析失败（HTTP <x id="status"/>）。</target>
+        <source>L'analyse a échoué (erreur <x id="status"/>). Réessayez.</source>
+        <target state="translated">分析失败（错误 <x id="status"/>）。请重试。</target>
       </trans-unit>
       <trans-unit id="circles.list.title" datatype="html">
         <source>Cercles de Qualité</source>
