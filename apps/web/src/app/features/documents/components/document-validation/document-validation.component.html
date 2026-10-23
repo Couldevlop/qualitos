@@ -23,8 +23,7 @@
 
       <span class="detail detail--attente" *ngIf="r.state === 'current' && r.approvals && r.approvals.needed > 1"
             i18n="@@documents.validation.approvals">{{ r.approvals.done // i18n(ph="done") }} approbation(s) sur {{ r.approvals.needed // i18n(ph="needed") }}</span>
-      <span class="detail detail--attente" *ngIf="r.kind === 'step' && r.state === 'current' && !r.roleCode"
-            i18n="@@documents.validation.simple-waiting">Une personne ayant le droit d'approuver suffit</span>
+      <span class="detail detail--attente" *ngIf="r.note" data-test="note">{{ r.note }}</span>
 
       <ng-container *ngIf="r.kind === 'publish' && tracksReading && r.state === 'done'">
         <span class="detail" data-test="lectures" i18n="@@documents.validation.readers">{{ readers // i18n(ph="count") }} lecteur(s) ont confirmé la lecture</span>

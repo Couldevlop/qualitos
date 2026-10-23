@@ -6674,45 +6674,333 @@ Customer portal</target>
         <source>Matrice de compétences</source>
         <target state="translated">Competency matrix</target>
       </trans-unit>
-      <trans-unit id="training.matrix.subtitle" datatype="html">
-        <source>Qui sait faire quoi. Une ligne dont une seule case est remplie signale une compétence qui ne tient qu'à une personne.</source>
-        <target state="translated">Who can do what. A row with a single filled cell flags a skill held by one person only.</target>
+      <trans-unit id="training.matrix.eyebrow" datatype="html">
+        <source>Formation</source>
+        <target state="translated">Training</target>
       </trans-unit>
-      <trans-unit id="training.matrix.only-at-risk" datatype="html">
-        <source>Seulement les compétences à risque</source>
-        <target state="translated">Only skills at risk</target>
+      <trans-unit id="training.matrix.subtitle-editable" datatype="html">
+        <source>Cliquez sur une case pour changer le niveau. Objectif : au moins deux personnes autonomes (niveau 2 ou plus) par compétence.</source>
+        <target state="translated">Click a cell to change the level. Goal: at least two autonomous people (level 2 or more) per skill.</target>
       </trans-unit>
-      <trans-unit id="training.matrix.col-skill" datatype="html">
+      <trans-unit id="training.matrix.workshops-settings" datatype="html">
+        <source>Ateliers</source>
+        <target state="translated">Workshops</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.add-operator" datatype="html">
+        <source>Opérateur</source>
+        <target state="translated">Operator</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.add-skill" datatype="html">
         <source>Compétence</source>
         <target state="translated">Skill</target>
       </trans-unit>
-      <trans-unit id="training.matrix.ungrouped" datatype="html">
-        <source>Sans famille</source>
-        <target state="translated">Ungrouped</target>
+      <trans-unit id="training.matrix.kpis" datatype="html">
+        <source>Indicateurs de la matrice</source>
+        <target state="translated">Matrix indicators</target>
       </trans-unit>
-      <trans-unit id="training.matrix.single-holder" datatype="html">
-        <source>Un seul détenteur</source>
-        <target state="translated">Single holder</target>
+      <trans-unit id="training.matrix.kpi-operators" datatype="html">
+        <source>Opérateurs</source>
+        <target state="translated">Operators</target>
       </trans-unit>
-      <trans-unit id="training.matrix.unassessed" datatype="html">
-        <source>Non évalué</source>
-        <target state="translated">Not assessed</target>
+      <trans-unit id="training.matrix.kpi-skills" datatype="html">
+        <source>Compétences suivies</source>
+        <target state="translated">Tracked skills</target>
       </trans-unit>
-      <trans-unit id="training.matrix.unassessed-legend" datatype="html">
-        <source>non évalué</source>
-        <target state="translated">not assessed</target>
+      <trans-unit id="training.matrix.kpi-at-risk" datatype="html">
+        <source>Compétences à risque</source>
+        <target state="translated">Skills at risk</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.kpi-with-trainer" datatype="html">
+        <source>Avec un formateur</source>
+        <target state="translated">With a trainer</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.search" datatype="html">
+        <source>Rechercher un opérateur…</source>
+        <target state="translated">Search for an operator…</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.filter-workshop" datatype="html">
+        <source>Filtrer par atelier</source>
+        <target state="translated">Filter by workshop</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.all-workshops" datatype="html">
+        <source>Tous les ateliers</source>
+        <target state="translated">All workshops</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.filter-category" datatype="html">
+        <source>Filtrer par catégorie</source>
+        <target state="translated">Filter by category</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.all-categories" datatype="html">
+        <source>Toutes les catégories</source>
+        <target state="translated">All categories</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.highlight-risks" datatype="html">
+        <source>Mettre en évidence les risques</source>
+        <target state="translated">Highlight risks</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.level-0" datatype="html">
+        <source>Non formé</source>
+        <target state="translated">Not trained</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.level-1" datatype="html">
+        <source>Débutant</source>
+        <target state="translated">Beginner</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.level-2" datatype="html">
+        <source>Autonome</source>
+        <target state="translated">Autonomous</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.level-3" datatype="html">
+        <source>Expert</source>
+        <target state="translated">Expert</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.level-4" datatype="html">
+        <source>Formateur</source>
+        <target state="translated">Trainer</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.risks-title" datatype="html">
+        <source>Compétences à risque</source>
+        <target state="translated">Skills at risk</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.sole-autonomous" datatype="html">
+        <source>Seule personne autonome : <x id="name"/></source>
+        <target state="translated">Only autonomous person: <x id="name"/></target>
+      </trans-unit>
+      <trans-unit id="training.matrix.no-autonomous" datatype="html">
+        <source>Aucune personne autonome</source>
+        <target state="translated">No autonomous person</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.trainer-of" datatype="html">
+        <source>Formateur : <x id="trainer"/></source>
+        <target state="translated">Trainer: <x id="trainer"/></target>
+      </trans-unit>
+      <trans-unit id="training.matrix.no-risk" datatype="html">
+        <source>Aucun risque : toutes les compétences sont couvertes.</source>
+        <target state="translated">No risk: every skill is covered.</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.empty" datatype="html">
+        <source>La matrice est vide. Ajoutez des opérateurs depuis l'annuaire et les compétences à suivre.</source>
+        <target state="translated">The matrix is empty. Add operators from the directory and the skills to track.</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.operator" datatype="html">
+        <source>Opérateur</source>
+        <target state="translated">Operator</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.average" datatype="html">
+        <source>Moy.</source>
+        <target state="translated">Avg.</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.cell-label" datatype="html">
+        <source><x id="operator"/> – <x id="skill"/> : <x id="level"/></source>
+        <target state="translated"><x id="operator"/> – <x id="skill"/>: <x id="level"/></target>
+      </trans-unit>
+      <trans-unit id="training.matrix.no-operator" datatype="html">
+        <source>Aucun opérateur dans la matrice pour le moment.</source>
+        <target state="translated">No operator in the matrix yet.</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.no-match" datatype="html">
+        <source>Aucun opérateur ne correspond aux filtres.</source>
+        <target state="translated">No operator matches the filters.</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.reset-filters" datatype="html">
+        <source>Effacer les filtres</source>
+        <target state="translated">Clear filters</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.autonomous-footer" datatype="html">
+        <source>Personnes autonomes (2+)</source>
+        <target state="translated">Autonomous people (2+)</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.at-risk" datatype="html">
+        <source>à risque</source>
+        <target state="translated">at risk</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.note" datatype="html">
+        <source>Chaque niveau posé ici est l'évaluation de compétence de la personne, enregistrée et tracée dans le journal d'audit.</source>
+        <target state="translated">Each level set here is the person's competency assessment, saved and traced in the audit log.</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.level-failed" datatype="html">
+        <source>Le niveau n'a pas pu être enregistré.</source>
+        <target state="translated">The level could not be saved.</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.remove-operator" datatype="html">
+        <source>Retirer <x id="name"/> de la matrice</source>
+        <target state="translated">Remove <x id="name"/> from the matrix</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.remove-skill" datatype="html">
+        <source>Retirer la compétence <x id="name"/> de la matrice</source>
+        <target state="translated">Remove the skill <x id="name"/> from the matrix</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.remove-operator-title" datatype="html">
+        <source>Retirer <x id="name"/> de la matrice ?</source>
+        <target state="translated">Remove <x id="name"/> from the matrix?</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.remove-operator-message" datatype="html">
+        <source>La ligne quitte la matrice. Les évaluations de la personne restent à son dossier de formation, et reviennent si elle est réinscrite.</source>
+        <target state="translated">The row leaves the matrix. The person's assessments stay in their training record, and come back if they are added again.</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.remove-skill-title" datatype="html">
+        <source>Retirer « <x id="name"/> » de la matrice ?</source>
+        <target state="translated">Remove “<x id="name"/>” from the matrix?</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.remove-skill-message" datatype="html">
+        <source>La colonne quitte la matrice. La compétence reste au catalogue, avec ses évaluations.</source>
+        <target state="translated">The column leaves the matrix. The skill stays in the catalogue, with its assessments.</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.remove" datatype="html">
+        <source>Retirer</source>
+        <target state="translated">Remove</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.remove-failed" datatype="html">
+        <source>Le retrait n'a pas pu être enregistré.</source>
+        <target state="translated">The removal could not be saved.</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.add" datatype="html">
+        <source>Ajouter</source>
+        <target state="translated">Add</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.add-operator-title" datatype="html">
+        <source>Ajouter un opérateur</source>
+        <target state="translated">Add an operator</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.add-operator-help" datatype="html">
+        <source>Choisissez la personne dans l'annuaire, puis son atelier. Ses niveaux partent de « Non formé », ou reprennent ses évaluations existantes.</source>
+        <target state="translated">Pick the person from the directory, then their workshop. Their levels start at “Not trained”, or pick up their existing assessments.</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.workshop" datatype="html">
+        <source>Atelier</source>
+        <target state="translated">Workshop</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.operator-exists" datatype="html">
+        <source>Cette personne figure déjà dans la matrice.</source>
+        <target state="translated">This person is already in the matrix.</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.operator-failed" datatype="html">
+        <source>L'opérateur n'a pas pu être ajouté.</source>
+        <target state="translated">The operator could not be added.</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.add-skill-title" datatype="html">
+        <source>Ajouter une compétence</source>
+        <target state="translated">Add a skill</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.add-skill-help" datatype="html">
+        <source>Une compétence déjà au catalogue sous ce nom est reprise avec ses évaluations. Le formateur est la personne qui transmettra la compétence quand elle passe à risque.</source>
+        <target state="translated">A skill already in the catalogue under this name is reused with its assessments. The trainer is the person who will pass the skill on when it falls at risk.</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.skill-name" datatype="html">
+        <source>Compétence</source>
+        <target state="translated">Skill</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.skill-name-placeholder" datatype="html">
+        <source>Ex. : Soudure orbitale</source>
+        <target state="translated">E.g. Orbital welding</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.category" datatype="html">
+        <source>Catégorie</source>
+        <target state="translated">Category</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.trainer" datatype="html">
+        <source>Formateur</source>
+        <target state="translated">Trainer</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.trainer-hint" datatype="html">
+        <source>Obligatoire : qui forme sur cette compétence ?</source>
+        <target state="translated">Required: who trains on this skill?</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.skill-exists" datatype="html">
+        <source>Cette compétence figure déjà dans la matrice.</source>
+        <target state="translated">This skill is already in the matrix.</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.skill-failed" datatype="html">
+        <source>La compétence n'a pas pu être ajoutée.</source>
+        <target state="translated">The skill could not be added.</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.workshops-title" datatype="html">
+        <source>Ateliers de la matrice de compétences</source>
+        <target state="translated">Competency matrix workshops</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.workshops-subtitle" datatype="html">
+        <source>Les ateliers dans lesquels on range les opérateurs, et par lesquels on filtre la matrice.</source>
+        <target state="translated">The workshops operators are assigned to, and by which the matrix is filtered.</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.workshops-load-failed" datatype="html">
+        <source>Les ateliers n'ont pas pu être chargés.</source>
+        <target state="translated">The workshops could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.workshops-scope" datatype="html">
+        <source>Retirer un atelier ne réaffecte personne : les opérateurs qui y sont rangés le gardent, et le filtre de la matrice le propose encore.</source>
+        <target state="translated">Removing a workshop reassigns nobody: operators assigned to it keep it, and the matrix filter still offers it.</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.workshops-list" datatype="html">
+        <source>Ateliers</source>
+        <target state="translated">Workshops</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.workshops-help" datatype="html">
+        <source>L'ordre de la liste est celui des menus et des lignes de la matrice.</source>
+        <target state="translated">The list order is the order of the menus and of the matrix rows.</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.workshops-defaults" datatype="html">
+        <source>Ce sont aujourd'hui les ateliers proposés par la plateforme.</source>
+        <target state="translated">These are currently the workshops provided by the platform.</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.workshops-name" datatype="html">
+        <source>Nom de l'atelier</source>
+        <target state="translated">Workshop name</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.workshops-up" datatype="html">
+        <source>Monter</source>
+        <target state="translated">Move up</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.workshops-down" datatype="html">
+        <source>Descendre</source>
+        <target state="translated">Move down</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.workshops-remove" datatype="html">
+        <source>Retirer l'atelier</source>
+        <target state="translated">Remove the workshop</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.workshops-new" datatype="html">
+        <source>Nouvel atelier</source>
+        <target state="translated">New workshop</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.workshops-pending" datatype="html">
+        <source>Ateliers modifiés</source>
+        <target state="translated">Workshops changed</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.workshops-problem-empty" datatype="html">
+        <source>Il faut au moins un atelier.</source>
+        <target state="translated">At least one workshop is required.</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.workshops-problem-count" datatype="html">
+        <source><x id="max"/> ateliers au plus.</source>
+        <target state="translated">At most <x id="max"/> workshops.</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.workshops-problem-length" datatype="html">
+        <source>Chaque atelier a un nom de 1 à <x id="max"/> caractères.</source>
+        <target state="translated">Each workshop has a name of 1 to <x id="max"/> characters.</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.workshops-problem-duplicate" datatype="html">
+        <source>Deux ateliers portent le même nom.</source>
+        <target state="translated">Two workshops have the same name.</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.workshops-saved" datatype="html">
+        <source>Ateliers enregistrés.</source>
+        <target state="translated">Workshops saved.</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.workshops-save-failed" datatype="html">
+        <source>Les ateliers n'ont pas pu être enregistrés.</source>
+        <target state="translated">The workshops could not be saved.</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.training-manage" datatype="html">
+        <source>Tenir la matrice de compétences</source>
+        <target state="translated">Maintain the competency matrix</target>
+      </trans-unit>
+      <trans-unit id="authz.module.training" datatype="html">
+        <source>Formation</source>
+        <target state="translated">Training</target>
       </trans-unit>
       <trans-unit id="training.matrix.legend" datatype="html">
         <source>Niveaux</source>
         <target state="translated">Levels</target>
-      </trans-unit>
-      <trans-unit id="training.matrix.none" datatype="html">
-        <source>Aucune compétence au catalogue. Créez-en, puis évaluez les collaborateurs : la matrice se construit à partir des évaluations.</source>
-        <target state="translated">No skill in the catalogue. Create some, then assess people: the matrix is built from the assessments.</target>
-      </trans-unit>
-      <trans-unit id="training.matrix.no-people" datatype="html">
-        <source>Le catalogue existe, mais personne n'a encore été évalué. Les colonnes sont les personnes évaluées — la matrice reste vide tant qu'aucune ne l'est.</source>
-        <target state="translated">The catalogue exists, but nobody has been assessed yet. Columns are the assessed people — the matrix stays empty until someone is.</target>
       </trans-unit>
       <trans-unit id="training.matrix.failed" datatype="html">
         <source>Impossible de charger la matrice de compétences.</source>
@@ -7211,8 +7499,8 @@ Customer portal</target>
         <target state="translated">Version v<x id="NUMBER"/> rejected on <x id="DATE"/></target>
       </trans-unit>
       <trans-unit id="documents.circuit.rejected-next" datatype="html">
-        <source>Corrigez-la, puis soumettez-la de nouveau : le circuit repartira de la première étape.</source>
-        <target state="translated">Correct it, then submit it again: the workflow will restart from the first step.</target>
+        <source>Corrigez-la, puis soumettez-la de nouveau en choisissant ses signataires : la signature repartira du signataire 1.</source>
+        <target state="translated">Correct it, then submit it again, choosing its signatories: signing will restart from signatory 1.</target>
       </trans-unit>
       <trans-unit id="documents.reject.title" datatype="html">
         <source>Refuser la version v<x id="number"/></source>
@@ -8817,10 +9105,6 @@ Customer portal</target>
       <trans-unit id="nav.dmaic" datatype="html">
         <source>DMAIC</source>
         <target state="translated">DMAIC</target>
-      </trans-unit>
-      <trans-unit id="nav.spc" datatype="html">
-        <source>SPC</source>
-        <target state="translated">SPC</target>
       </trans-unit>
       <trans-unit id="nav.cercles" datatype="html">
         <source>Cercles</source>
@@ -10795,8 +11079,8 @@ Customer portal</target>
         <target state="translated">External document</target>
       </trans-unit>
       <trans-unit id="documents.status.in-force" datatype="html">
-        <source>En vigueur</source>
-        <target state="translated">In force</target>
+        <source>Approuvé</source>
+        <target state="translated">Approved</target>
       </trans-unit>
       <trans-unit id="documents.status.in-revision" datatype="html">
         <source>En révision</source>
@@ -11119,8 +11403,8 @@ Customer portal</target>
         <target state="translated">The title is required.</target>
       </trans-unit>
       <trans-unit id="documents.create.attach" datatype="html">
-        <source>Joindre un fichier (facultatif)</source>
-        <target state="translated">Attach a file (optional)</target>
+        <source>Joindre le fichier du document *</source>
+        <target state="translated">Attach the document file *</target>
       </trans-unit>
       <trans-unit id="documents.create.remove-file" datatype="html">
         <source>Retirer le fichier</source>
@@ -11321,6 +11605,98 @@ Customer portal</target>
       <trans-unit id="documents.settings.discard" datatype="html">
         <source>Annuler les modifications</source>
         <target state="translated">Discard changes</target>
+      </trans-unit>
+      <trans-unit id="documents.signatory.label" datatype="html">
+        <source>Signataire <x id="position"/></source>
+        <target state="translated">Signatory <x id="position"/></target>
+      </trans-unit>
+      <trans-unit id="documents.signatory.pending" datatype="html">
+        <source>En attente</source>
+        <target state="translated">Pending</target>
+      </trans-unit>
+      <trans-unit id="documents.signatory.approved" datatype="html">
+        <source>Approuvé</source>
+        <target state="translated">Approved</target>
+      </trans-unit>
+      <trans-unit id="documents.signatory.rejected" datatype="html">
+        <source>Rejeté</source>
+        <target state="translated">Rejected</target>
+      </trans-unit>
+      <trans-unit id="documents.submit.title" datatype="html">
+        <source>Soumettre la version v<x id="number"/> à signature</source>
+        <target state="translated">Submit version v<x id="number"/> for signature</target>
+      </trans-unit>
+      <trans-unit id="documents.submit.subtitle" datatype="html">
+        <source>Choisissez de une à trois personnes. Elles signeront dans l'ordre : le signataire 2 après le 1, le 3 après le 2. Un seul refus renvoie la version en brouillon.</source>
+        <target state="translated">Choose one to three people. They will sign in order: signatory 2 after 1, 3 after 2. A single rejection sends the version back to draft.</target>
+      </trans-unit>
+      <trans-unit id="documents.submit.blocked" datatype="html">
+        <source>Choisissez au moins le signataire 1, une personne différente à chaque place.</source>
+        <target state="translated">Choose at least signatory 1, a different person in each place.</target>
+      </trans-unit>
+      <trans-unit id="documents.submit.submit" datatype="html">
+        <source>Soumettre à signature</source>
+        <target state="translated">Submit for signature</target>
+      </trans-unit>
+      <trans-unit id="documents.submit.duplicate" datatype="html">
+        <source>Une même personne ne peut signer qu'une fois.</source>
+        <target state="translated">The same person can only sign once.</target>
+      </trans-unit>
+      <trans-unit id="documents.submit.done" datatype="html">
+        <source>Version soumise : le signataire 1 est invité à signer.</source>
+        <target state="translated">Version submitted: signatory 1 is invited to sign.</target>
+      </trans-unit>
+      <trans-unit id="documents.detail.submit-needs-file" datatype="html">
+        <source>Joignez le fichier du document avant de soumettre la version.</source>
+        <target state="translated">Attach the document file before submitting the version.</target>
+      </trans-unit>
+      <trans-unit id="documents.signature.title" datatype="html">
+        <source>Circuit de signature de la version v<x id="NUMBER"/></source>
+        <target state="translated">Signature workflow for version v<x id="NUMBER"/></target>
+      </trans-unit>
+      <trans-unit id="documents.signature.turn-yours" datatype="html">
+        <source>C'est à vous de signer : approuvez ou rejetez la version.</source>
+        <target state="translated">It is your turn to sign: approve or reject the version.</target>
+      </trans-unit>
+      <trans-unit id="documents.signature.turn-author" datatype="html">
+        <source>Vous en êtes l'auteur : vos signataires la valident dans l'ordre.</source>
+        <target state="translated">You are its author: your signatories approve it in order.</target>
+      </trans-unit>
+      <trans-unit id="documents.signature.turn-waiting" datatype="html">
+        <source>En attente de la signature de <x id="NAME"/>.</source>
+        <target state="translated">Waiting for the signature of <x id="NAME"/>.</target>
+      </trans-unit>
+      <trans-unit id="documents.signature.comment" datatype="html">
+        <source>Commentaire (facultatif)</source>
+        <target state="translated">Comment (optional)</target>
+      </trans-unit>
+      <trans-unit id="documents.signature.signed" datatype="html">
+        <source>Signature enregistrée : le signataire suivant est invité à signer.</source>
+        <target state="translated">Signature recorded: the next signatory is invited to sign.</target>
+      </trans-unit>
+      <trans-unit id="documents.signature.rejected" datatype="html">
+        <source>Rejet enregistré : la version revient en brouillon chez son auteur.</source>
+        <target state="translated">Rejection recorded: the version goes back to draft with its author.</target>
+      </trans-unit>
+      <trans-unit id="documents.signature.failed" datatype="html">
+        <source>La signature n'a pas été enregistrée.</source>
+        <target state="translated">The signature was not recorded.</target>
+      </trans-unit>
+      <trans-unit id="documents.validation.signature" datatype="html">
+        <source>Signature</source>
+        <target state="translated">Signature</target>
+      </trans-unit>
+      <trans-unit id="documents.validation.signature-note" datatype="html">
+        <source>De un à trois signataires, choisis à la soumission</source>
+        <target state="translated">One to three signatories, chosen at submission</target>
+      </trans-unit>
+      <trans-unit id="documents.create.blocked" datatype="html">
+        <source>Renseignez les champs obligatoires et joignez le fichier du document.</source>
+        <target state="translated">Fill in the required fields and attach the document file.</target>
+      </trans-unit>
+      <trans-unit id="documents.create.file-required" datatype="html">
+        <source>Un document se crée avec son fichier : joignez-le.</source>
+        <target state="translated">A document is created with its file: attach it.</target>
       </trans-unit>
       <trans-unit id="dpia.create.hint" datatype="html">
         <source>L'Art. 35 RGPD impose une DPIA pour les traitements présentant un</source>
@@ -17389,8 +17765,8 @@ declared income
         <target state="translated">KPI analysis</target>
       </trans-unit>
       <trans-unit id="nav.moc" datatype="html">
-        <source>Gestion des changements (MOC)</source>
-        <target state="translated">Management of change (MOC)</target>
+        <source>MOC</source>
+        <target state="translated">MOC</target>
       </trans-unit>
       <trans-unit id="nav.admin-moc" datatype="html">
         <source>Paramètres MOC</source>
@@ -17409,8 +17785,8 @@ declared income
         <target state="translated">Manage all change requests</target>
       </trans-unit>
       <trans-unit id="moc.title" datatype="html">
-        <source>Gestion des changements (MOC)</source>
-        <target state="translated">Management of change (MOC)</target>
+        <source>MOC</source>
+        <target state="translated">MOC</target>
       </trans-unit>
       <trans-unit id="moc.subtitle" datatype="html">
         <source>Demande, analyse d'impact, validation</source>
@@ -21041,8 +21417,8 @@ declared income
         <target state="translated">Content</target>
       </trans-unit>
       <trans-unit id="documents.create.content-placeholder" datatype="html">
-        <source>Corps du document, ou laissez vide pour ne créer qu'une enveloppe.</source>
-        <target state="translated">Document body, or leave empty to create only an envelope.</target>
+        <source>Résumé ou extrait du document (facultatif).</source>
+        <target state="translated">Summary or excerpt of the document (optional).</target>
       </trans-unit>
       <trans-unit id="documents.create.created" datatype="html">
         <source>Document créé.</source>
@@ -21165,12 +21541,8 @@ declared income
         <target state="translated">Submission failed.</target>
       </trans-unit>
       <trans-unit id="documents.detail.submit-review-tooltip" datatype="html">
-        <source>Soumettre à revue</source>
-        <target state="translated">Submit for review</target>
-      </trans-unit>
-      <trans-unit id="documents.detail.submitted" datatype="html">
-        <source>Soumise à revue.</source>
-        <target state="translated">Submitted for review.</target>
+        <source>Soumettre à signature</source>
+        <target state="translated">Submit for signature</target>
       </trans-unit>
       <trans-unit id="documents.detail.versions-title" datatype="html">
         <source>Versions</source>
@@ -24404,6 +24776,810 @@ declared income
         <source>Gage R&amp;R</source>
         <target state="translated">Gage R&amp;R</target>
       </trans-unit>
+      <trans-unit id="spc.gage-rr.eyebrow" datatype="html">
+        <source>SPC · Analyse du système de mesure</source>
+        <target state="translated">SPC · Measurement system analysis</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.register.subtitle" datatype="html">
+        <source>Répétabilité et reproductibilité des moyens de mesure (AIAG MSA). Cliquez sur une ligne pour rouvrir l'étude.</source>
+        <target state="translated">Repeatability and reproducibility of measuring equipment (AIAG MSA). Click a row to reopen the study.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.register.new" datatype="html">
+        <source>Nouvelle étude R&amp;R</source>
+        <target state="translated">New R&amp;R study</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.register.kpi-total" datatype="html">
+        <source>Études R&amp;R</source>
+        <target state="translated">R&amp;R studies</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.register.kpi-acceptable" datatype="html">
+        <source>Acceptables (%GRR &lt; 10 %)</source>
+        <target state="translated">Acceptable (%GRR &lt; 10%)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.register.kpi-conditional" datatype="html">
+        <source>Sous conditions (10 – 30 %)</source>
+        <target state="translated">Conditional (10 – 30%)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.register.kpi-not-acceptable" datatype="html">
+        <source>Non acceptables (&gt; 30 %)</source>
+        <target state="translated">Not acceptable (&gt; 30%)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.register.kpi-ndc" datatype="html">
+        <source>Discrimination insuffisante (ndc &lt; 5)</source>
+        <target state="translated">Insufficient discrimination (ndc &lt; 5)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.register.search" datatype="html">
+        <source>Rechercher : pièce, instrument, opérateur…</source>
+        <target state="translated">Search: part, instrument, operator…</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.register.filter-decision" datatype="html">
+        <source>Filtrer par décision</source>
+        <target state="translated">Filter by decision</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.register.all-decisions" datatype="html">
+        <source>Toutes les décisions</source>
+        <target state="translated">All decisions</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.register.load-failed" datatype="html">
+        <source>Le registre des études R&amp;R n'a pas pu être chargé.</source>
+        <target state="translated">The R&amp;R study register could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.register.empty" datatype="html">
+        <source>Aucune étude R&amp;R pour le moment. Cliquez sur « Nouvelle étude R&amp;R » pour commencer.</source>
+        <target state="translated">No R&amp;R study yet. Click “New R&amp;R study” to start.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.register.legend" datatype="html">
+        <source>%GRR de la variation totale (méthode moyenne et étendue, AIAG) : vert sous 10 %, jaune de 10 à 30 %, rouge au-delà. Le liseré rouge signale un système de mesure non acceptable.</source>
+        <target state="translated">%GRR of total variation (average and range method, AIAG): green below 10%, yellow from 10 to 30%, red above. The red edge flags an unacceptable measurement system.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.register.delete-title" datatype="html">
+        <source>Supprimer l'étude R&amp;R <x id="part"/> ?</source>
+        <target state="translated">Delete R&amp;R study <x id="part"/>?</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.register.delete-message" datatype="html">
+        <source>L'étude et ses mesures quittent le registre. La suppression est tracée dans le journal d'audit.</source>
+        <target state="translated">The study and its measurements leave the register. The deletion is recorded in the audit log.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.register.delete-failed" datatype="html">
+        <source>L'étude n'a pas pu être supprimée.</source>
+        <target state="translated">The study could not be deleted.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.instrument" datatype="html">
+        <source>Instrument</source>
+        <target state="translated">Instrument</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.responsible" datatype="html">
+        <source>Responsable</source>
+        <target state="translated">Owner</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.operators" datatype="html">
+        <source>Opérateurs</source>
+        <target state="translated">Operators</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.plan" datatype="html">
+        <source>Plan (k × n × r)</source>
+        <target state="translated">Design (k × n × r)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.multiplier" datatype="html">
+        <source>Multiplicateur σ</source>
+        <target state="translated">σ multiplier</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.grr-tolerance" datatype="html">
+        <source>%GRR tolérance</source>
+        <target state="translated">%GRR of tolerance</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.decision" datatype="html">
+        <source>Décision</source>
+        <target state="translated">Decision</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.quantity" datatype="html">
+        <source>Grandeur</source>
+        <target state="translated">Quantity</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.formula" datatype="html">
+        <source>Formule</source>
+        <target state="translated">Formula</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.application" datatype="html">
+        <source>Application numérique</source>
+        <target state="translated">Worked calculation</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.value" datatype="html">
+        <source>Valeur</source>
+        <target state="translated">Value</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.constant" datatype="html">
+        <source>Constante</source>
+        <target state="translated">Constant</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.role" datatype="html">
+        <source>Rôle</source>
+        <target state="translated">Role</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.read-for" datatype="html">
+        <source>Valeur lue pour…</source>
+        <target state="translated">Value read for…</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.source" datatype="html">
+        <source>Source de variation</source>
+        <target state="translated">Source of variation</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.percent-total" datatype="html">
+        <source>% variation totale</source>
+        <target state="translated">% total variation</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.percent-contribution" datatype="html">
+        <source>% contribution</source>
+        <target state="translated">% contribution</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.percent-tolerance" datatype="html">
+        <source>% tolérance</source>
+        <target state="translated">% tolerance</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.indicator" datatype="html">
+        <source>Indicateur</source>
+        <target state="translated">Indicator</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.rule" datatype="html">
+        <source>Règle</source>
+        <target state="translated">Rule</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.df" datatype="html">
+        <source>ddl</source>
+        <target state="translated">df</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.ss" datatype="html">
+        <source>Somme des carrés</source>
+        <target state="translated">Sum of squares</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.ms" datatype="html">
+        <source>Carré moyen</source>
+        <target state="translated">Mean square</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.variance" datatype="html">
+        <source>Variance</source>
+        <target state="translated">Variance</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.spread" datatype="html">
+        <source>Dispersion (<x id="MULTIPLIER"/> σ)</source>
+        <target state="translated">Spread (<x id="MULTIPLIER"/> σ)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.decision.acceptable" datatype="html">
+        <source>Acceptable</source>
+        <target state="translated">Acceptable</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.decision.conditional" datatype="html">
+        <source>Acceptable sous conditions</source>
+        <target state="translated">Conditionally acceptable</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.decision.not-acceptable" datatype="html">
+        <source>Non acceptable</source>
+        <target state="translated">Not acceptable</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.ndc.sufficient" datatype="html">
+        <source>Discrimination suffisante</source>
+        <target state="translated">Sufficient discrimination</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.ndc.insufficient" datatype="html">
+        <source>Discrimination insuffisante</source>
+        <target state="translated">Insufficient discrimination</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.operator-n" datatype="html">
+        <source>Opérateur <x id="letter"/></source>
+        <target state="translated">Operator <x id="letter"/></target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.anova.part" datatype="html">
+        <source>Pièces</source>
+        <target state="translated">Parts</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.anova.operator" datatype="html">
+        <source>Opérateurs</source>
+        <target state="translated">Operators</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.anova.interaction" datatype="html">
+        <source>Interaction pièce × opérateur</source>
+        <target state="translated">Part × operator interaction</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.anova.repeatability" datatype="html">
+        <source>Répétabilité</source>
+        <target state="translated">Repeatability</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.anova.repeatability-pooled" datatype="html">
+        <source>Répétabilité (interaction regroupée)</source>
+        <target state="translated">Repeatability (interaction pooled)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.anova.total" datatype="html">
+        <source>Total</source>
+        <target state="translated">Total</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.error.part" datatype="html">
+        <source>La référence de la pièce est obligatoire (120 caractères au plus).</source>
+        <target state="translated">The part reference is required (120 characters at most).</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.error.date" datatype="html">
+        <source>La date de l'étude est obligatoire.</source>
+        <target state="translated">The study date is required.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.error.limits" datatype="html">
+        <source>La limite supérieure (USL) doit dépasser la limite inférieure (LSL).</source>
+        <target state="translated">The upper limit (USL) must exceed the lower limit (LSL).</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.error.operators" datatype="html">
+        <source>Choisissez chaque opérateur dans l'annuaire, sans doublon.</source>
+        <target state="translated">Choose each operator from the directory, without duplicates.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.error.responsible" datatype="html">
+        <source>Le responsable choisi n'a pas pu être retrouvé dans l'annuaire.</source>
+        <target state="translated">The selected owner could not be found in the directory.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.error.plan" datatype="html">
+        <source>Le plan doit compter 2 ou 3 opérateurs, 2 à 10 pièces, 2 ou 3 essais, à 5,15 ou 6 σ.</source>
+        <target state="translated">The design must have 2 or 3 operators, 2 to 10 parts, 2 or 3 trials, at 5.15 or 6 σ.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.error.measurements" datatype="html">
+        <source>Toutes les mesures de la grille sont obligatoires, et elles ne doivent pas être toutes identiques.</source>
+        <target state="translated">Every measurement in the grid is required, and they must not all be identical.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.error.generic" datatype="html">
+        <source>Un champ de l'étude a été refusé : vérifiez la saisie.</source>
+        <target state="translated">A field of the study was rejected: check your entry.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.read.ev" datatype="html">
+        <source>Répétabilité (EV) = <x id="ev"/>, soit <x id="pct"/> % de la variation totale : dispersion d'un même opérateur mesurant plusieurs fois la même pièce avec le même instrument.</source>
+        <target state="translated">Repeatability (EV) = <x id="ev"/>, i.e. <x id="pct"/>% of total variation: spread of one operator measuring the same part several times with the same instrument.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.read.av" datatype="html">
+        <source>Reproductibilité (AV) = <x id="av"/>, soit <x id="pct"/> % : écart entre opérateurs (X̄diff = <x id="xdiff"/>).</source>
+        <target state="translated">Reproducibility (AV) = <x id="av"/>, i.e. <x id="pct"/>%: difference between operators (X̄diff = <x id="xdiff"/>).</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.read.grr" datatype="html">
+        <source>GRR = <x id="grr"/> : <x id="pct"/> % de la variation totale et <x id="tol"/> % de la tolérance. Décision : <x id="decision"/>.</source>
+        <target state="translated">GRR = <x id="grr"/>: <x id="pct"/>% of total variation and <x id="tol"/>% of tolerance. Decision: <x id="decision"/>.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.read.ndc-ok" datatype="html">
+        <source>Le système distingue <x id="ndc"/> catégories de pièces (ndc). C'est suffisant pour piloter un procédé.</source>
+        <target state="translated">The system distinguishes <x id="ndc"/> categories of parts (ndc). That is enough to control a process.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.read.ndc-ko" datatype="html">
+        <source>Le système distingue <x id="ndc"/> catégories de pièces (ndc). C'est insuffisant : améliorer l'instrument ou la méthode.</source>
+        <target state="translated">The system distinguishes <x id="ndc"/> categories of parts (ndc). That is not enough: improve the instrument or the method.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.read.dominant-ev" datatype="html">
+        <source>Le poste dominant est la répétabilité (instrument ou méthode) : vérifier la résolution, la fixation de la pièce, l'état de l'instrument.</source>
+        <target state="translated">The dominant source is repeatability (instrument or method): check the resolution, how the part is held, and the instrument's condition.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.read.dominant-av" datatype="html">
+        <source>Le poste dominant est la reproductibilité (opérateurs) : harmoniser la méthode de mesure, former les opérateurs, vérifier la lisibilité de l'instrument.</source>
+        <target state="translated">The dominant source is reproducibility (operators): harmonise the measuring method, train the operators, check the instrument's readability.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.chart.repeatability" datatype="html">
+        <source>Répétabilité (EV)</source>
+        <target state="translated">Repeatability (EV)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.chart.reproducibility" datatype="html">
+        <source>Reproductibilité (AV)</source>
+        <target state="translated">Reproducibility (AV)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.chart.parts" datatype="html">
+        <source>Pièces (PV)</source>
+        <target state="translated">Parts (PV)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.chart.contribution" datatype="html">
+        <source>% contribution</source>
+        <target state="translated">% contribution</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.chart.total" datatype="html">
+        <source>% variation totale</source>
+        <target state="translated">% total variation</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.chart.tolerance" datatype="html">
+        <source>% tolérance</source>
+        <target state="translated">% tolerance</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.chart.part-mean" datatype="html">
+        <source>Moyenne pièce</source>
+        <target state="translated">Part mean</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.chart.part-axis" datatype="html">
+        <source>Pièce</source>
+        <target state="translated">Part</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.title-new" datatype="html">
+        <source>Nouvelle étude R&amp;R</source>
+        <target state="translated">New R&amp;R study</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.title-edit" datatype="html">
+        <source>Étude R&amp;R <x id="part"/></source>
+        <target state="translated">R&amp;R study <x id="part"/></target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.subtitle" datatype="html">
+        <source>Répétabilité et reproductibilité, méthode moyenne et étendue puis ANOVA. Saisissez les mesures dans les cellules jaunes ; tout le reste se calcule.</source>
+        <target state="translated">Repeatability and reproducibility, average and range method then ANOVA. Enter the measurements in the yellow cells; everything else is calculated.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.back" datatype="html">
+        <source>Registre R&amp;R</source>
+        <target state="translated">R&amp;R register</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.save" datatype="html">
+        <source>Enregistrer l'étude</source>
+        <target state="translated">Save the study</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.saved" datatype="html">
+        <source>Étude R&amp;R enregistrée.</source>
+        <target state="translated">R&amp;R study saved.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.save-failed" datatype="html">
+        <source>L'étude R&amp;R n'a pas pu être enregistrée.</source>
+        <target state="translated">The R&amp;R study could not be saved.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.load-failed" datatype="html">
+        <source>L'étude R&amp;R n'a pas pu être chargée.</source>
+        <target state="translated">The R&amp;R study could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.not-found" datatype="html">
+        <source>Étude R&amp;R introuvable.</source>
+        <target state="translated">R&amp;R study not found.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.read-only" datatype="html">
+        <source>Consultation seule : la saisie des études R&amp;R est réservée aux personnes qui en ont le droit.</source>
+        <target state="translated">Read only: entering R&amp;R studies is reserved for people with that permission.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.identification" datatype="html">
+        <source>Identification et plan</source>
+        <target state="translated">Identification and design</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.characteristic" datatype="html">
+        <source>Caractéristique mesurée</source>
+        <target state="translated">Measured characteristic</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.part-required" datatype="html">
+        <source>La référence de la pièce est obligatoire.</source>
+        <target state="translated">The part reference is required.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.date-required" datatype="html">
+        <source>La date de l'étude est obligatoire.</source>
+        <target state="translated">The study date is required.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.lsl" datatype="html">
+        <source>LSL (limite inférieure)</source>
+        <target state="translated">LSL (lower limit)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.lsl-required" datatype="html">
+        <source>La limite inférieure est obligatoire.</source>
+        <target state="translated">The lower limit is required.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.usl" datatype="html">
+        <source>USL (limite supérieure)</source>
+        <target state="translated">USL (upper limit)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.usl-required" datatype="html">
+        <source>La limite supérieure est obligatoire.</source>
+        <target state="translated">The upper limit is required.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.tolerance" datatype="html">
+        <source>Tolérance (USL − LSL)</source>
+        <target state="translated">Tolerance (USL − LSL)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.operator-count" datatype="html">
+        <source>Opérateurs (k)</source>
+        <target state="translated">Operators (k)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.part-count" datatype="html">
+        <source>Pièces (n)</source>
+        <target state="translated">Parts (n)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.trial-count" datatype="html">
+        <source>Essais (r)</source>
+        <target state="translated">Trials (r)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.measurements" datatype="html">
+        <source>Mesures — <x id="K"/> opérateurs × <x id="N"/> pièces × <x id="R"/> essais</source>
+        <target state="translated">Measurements — <x id="K"/> operators × <x id="N"/> parts × <x id="R"/> trials</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.clear" datatype="html">
+        <source>Vider la grille</source>
+        <target state="translated">Clear the grid</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.grid-help" datatype="html">
+        <source>« Moyenne » : moyenne des essais d'un opérateur sur une pièce. « Étendue » : max − min de ces essais (sert à estimer la répétabilité). Un bloc copié depuis un tableur se colle d'un coup.</source>
+        <target state="translated">“Mean”: average of one operator’s trials on a part. “Range”: max − min of those trials (used to estimate repeatability). A block copied from a spreadsheet pastes in one go.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.part-no" datatype="html">
+        <source>Pièce n°</source>
+        <target state="translated">Part no.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.part-mean" datatype="html">
+        <source>Moyenne pièce</source>
+        <target state="translated">Part mean</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.trial" datatype="html">
+        <source>Essai <x id="TRIAL"/></source>
+        <target state="translated">Trial <x id="TRIAL"/></target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.mean" datatype="html">
+        <source>Moyenne</source>
+        <target state="translated">Mean</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.range" datatype="html">
+        <source>Étendue</source>
+        <target state="translated">Range</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.cell-aria" datatype="html">
+        <source><x id="operator"/>, pièce <x id="part"/>, essai <x id="trial"/></source>
+        <target state="translated"><x id="operator"/>, part <x id="part"/>, trial <x id="trial"/></target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.waiting" datatype="html">
+        <source>Encore <x id="MISSING"/> mesure(s) à saisir avant le calcul.</source>
+        <target state="translated"><x id="MISSING"/> measurement(s) still to enter before the calculation.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.no-spread" datatype="html">
+        <source>Toutes les mesures sont identiques : aucune variation à décomposer.</source>
+        <target state="translated">All measurements are identical: no variation to break down.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.summary" datatype="html">
+        <source>Synthèse de l'étude</source>
+        <target state="translated">Study summary</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.interpretation" datatype="html">
+        <source>Interprétation</source>
+        <target state="translated">Interpretation</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.example.load" datatype="html">
+        <source>Charger l'exemple</source>
+        <target state="translated">Load the example</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.example.confirm-title" datatype="html">
+        <source>Remplacer les mesures saisies ?</source>
+        <target state="translated">Replace the entered measurements?</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.example.confirm-message" datatype="html">
+        <source>L'exemple remplace l'identification, les limites, le plan et toutes les mesures de la grille. Rien n'est enregistré tant que vous n'enregistrez pas l'étude.</source>
+        <target state="translated">The example replaces the identification, limits, design and every measurement in the grid. Nothing is saved until you save the study.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.kpi.grr" datatype="html">
+        <source>%GRR de la variation totale</source>
+        <target state="translated">%GRR of total variation</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.kpi.tolerance" datatype="html">
+        <source>%GRR de la tolérance</source>
+        <target state="translated">%GRR of tolerance</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.kpi.anova" datatype="html">
+        <source>%GRR selon l'ANOVA</source>
+        <target state="translated">%GRR by ANOVA</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.kpi.decision" datatype="html">
+        <source>Décision AIAG sur le %GRR</source>
+        <target state="translated">AIAG decision on %GRR</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step1.title" datatype="html">
+        <source>Étape 1 – Moyennes et étendues par opérateur</source>
+        <target state="translated">Step 1 – Means and ranges per operator</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step1.xbar-formula" datatype="html">
+        <source>Moyenne des <x id="N"/> pièces</source>
+        <target state="translated">Mean of the <x id="N"/> parts</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step1.xdiff" datatype="html">
+        <source>X̄diff (écart entre opérateurs)</source>
+        <target state="translated">X̄diff (difference between operators)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step1.rbar-formula" datatype="html">
+        <source>Moyenne des <x id="N"/> étendues</source>
+        <target state="translated">Mean of the <x id="N"/> ranges</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step1.rbarbar" datatype="html">
+        <source>R̄̄ (étendue moyenne)</source>
+        <target state="translated">R̄̄ (average range)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step1.rp" datatype="html">
+        <source>Rp (étendue des pièces)</source>
+        <target state="translated">Rp (range of parts)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step1.rp-formula" datatype="html">
+        <source>max − min des moyennes pièces</source>
+        <target state="translated">max − min of the part means</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step1.ucl" datatype="html">
+        <source>UCLR (limite de contrôle)</source>
+        <target state="translated">UCLR (control limit)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step1.check" datatype="html">
+        <source>Contrôle des étendues</source>
+        <target state="translated">Range check</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step1.check-rule" datatype="html">
+        <source>Aucune étendue ne doit dépasser UCLR</source>
+        <target state="translated">No range may exceed UCLR</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step1.check-ok" datatype="html">
+        <source>OK : aucune étendue hors limite</source>
+        <target state="translated">OK: no range beyond the limit</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step1.check-ko" datatype="html">
+        <source><x id="COUNT"/> étendue(s) au-dessus de UCLR : vérifier les mesures</source>
+        <target state="translated"><x id="COUNT"/> range(s) above UCLR: check the measurements</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step2.title" datatype="html">
+        <source>Étape 2 – Constantes, ajustées au multiplicateur σ choisi</source>
+        <target state="translated">Step 2 – Constants, scaled to the chosen σ multiplier</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step2.k1" datatype="html">
+        <source>Répétabilité</source>
+        <target state="translated">Repeatability</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step2.k2" datatype="html">
+        <source>Reproductibilité</source>
+        <target state="translated">Reproducibility</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step2.d4" datatype="html">
+        <source>Limite des étendues</source>
+        <target state="translated">Range limit</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step2.k3" datatype="html">
+        <source>Variation pièces</source>
+        <target state="translated">Part variation</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step3.title" datatype="html">
+        <source>Étape 3 – Décomposition de la variation</source>
+        <target state="translated">Step 3 – Breakdown of variation</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step3.ev" datatype="html">
+        <source>EV – Répétabilité</source>
+        <target state="translated">EV – Repeatability</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step3.av" datatype="html">
+        <source>AV – Reproductibilité</source>
+        <target state="translated">AV – Reproducibility</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step3.grr" datatype="html">
+        <source>GRR – Répétabilité et reproductibilité</source>
+        <target state="translated">GRR – Repeatability and reproducibility</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step3.pv" datatype="html">
+        <source>PV – Variation entre pièces</source>
+        <target state="translated">PV – Part-to-part variation</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step3.tv" datatype="html">
+        <source>TV – Variation totale</source>
+        <target state="translated">TV – Total variation</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step3.note" datatype="html">
+        <source>Les « % variation totale » ne s'additionnent pas à 100 % (somme quadratique) ; les « % contribution », rapports de variances, s'additionnent : EV + AV + PV = 100 %.</source>
+        <target state="translated">The “% total variation” values do not add up to 100% (quadratic sum); the “% contribution” values, ratios of variances, do: EV + AV + PV = 100%.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step4.title" datatype="html">
+        <source>Étape 4 – Indicateurs d'aptitude et conclusion</source>
+        <target state="translated">Step 4 – Capability indicators and conclusion</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step4.grr-total" datatype="html">
+        <source>%GRR (de la variation totale)</source>
+        <target state="translated">%GRR (of total variation)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step4.grr-tolerance" datatype="html">
+        <source>%GRR (de la tolérance)</source>
+        <target state="translated">%GRR (of tolerance)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step4.ndc" datatype="html">
+        <source>ndc (catégories distinctes)</source>
+        <target state="translated">ndc (distinct categories)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step4.ndc-rule" datatype="html">
+        <source>1,41 × PV / GRR, arrondi à l'entier inférieur</source>
+        <target state="translated">1.41 × PV / GRR, rounded down</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step4.decision-grr" datatype="html">
+        <source>Décision sur %GRR</source>
+        <target state="translated">Decision on %GRR</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step4.decision-grr-rule" datatype="html">
+        <source>&lt; 10 % acceptable · 10 – 30 % sous conditions · &gt; 30 % non acceptable</source>
+        <target state="translated">&lt; 10% acceptable · 10 – 30% conditional · &gt; 30% not acceptable</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step4.decision-ndc" datatype="html">
+        <source>Décision sur ndc</source>
+        <target state="translated">Decision on ndc</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step4.decision-ndc-rule" datatype="html">
+        <source>ndc ≥ 5 : le système distingue assez de catégories</source>
+        <target state="translated">ndc ≥ 5: the system distinguishes enough categories</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.anova.title" datatype="html">
+        <source>ANOVA à deux facteurs avec interaction</source>
+        <target state="translated">Two-way ANOVA with interaction</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.anova.pooled" datatype="html">
+        <source>L'interaction pièce × opérateur n'est pas significative (p &gt; 0,25) : elle est regroupée avec la répétabilité.</source>
+        <target state="translated">The part × operator interaction is not significant (p &gt; 0.25): it is pooled with repeatability.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.anova.not-pooled" datatype="html">
+        <source>L'interaction pièce × opérateur est significative (p ≤ 0,25) : elle compte dans la reproductibilité.</source>
+        <target state="translated">The part × operator interaction is significant (p ≤ 0.25): it counts towards reproducibility.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.anova.full" datatype="html">
+        <source>Tableau d'ANOVA avec interaction</source>
+        <target state="translated">ANOVA table with interaction</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.anova.pooled-table" datatype="html">
+        <source>Tableau d'ANOVA sans interaction (regroupée)</source>
+        <target state="translated">ANOVA table without interaction (pooled)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.anova.components" datatype="html">
+        <source>Composantes de la variance</source>
+        <target state="translated">Variance components</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.anova.ev" datatype="html">
+        <source>Répétabilité (EV)</source>
+        <target state="translated">Repeatability (EV)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.anova.av" datatype="html">
+        <source>Reproductibilité (AV)</source>
+        <target state="translated">Reproducibility (AV)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.anova.av-operator" datatype="html">
+        <source>dont opérateurs</source>
+        <target state="translated">of which operators</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.anova.av-interaction" datatype="html">
+        <source>dont interaction</source>
+        <target state="translated">of which interaction</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.anova.pv" datatype="html">
+        <source>Pièces (PV)</source>
+        <target state="translated">Parts (PV)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.anova.tv" datatype="html">
+        <source>Totale (TV)</source>
+        <target state="translated">Total (TV)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.method.title" datatype="html">
+        <source>Comparaison des deux méthodes</source>
+        <target state="translated">Comparison of the two methods</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.method.col" datatype="html">
+        <source>Méthode</source>
+        <target state="translated">Method</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.method.average-range" datatype="html">
+        <source>Moyenne et étendue</source>
+        <target state="translated">Average and range</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.method.anova" datatype="html">
+        <source>ANOVA</source>
+        <target state="translated">ANOVA</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.charts.title" datatype="html">
+        <source>Graphiques</source>
+        <target state="translated">Charts</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.charts.components" datatype="html">
+        <source>Composantes de la variation</source>
+        <target state="translated">Components of variation</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.charts.range" datatype="html">
+        <source>Carte R par opérateur (étendues et UCLR)</source>
+        <target state="translated">R chart by operator (ranges and UCLR)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.charts.mean" datatype="html">
+        <source>Carte X̄ par opérateur : un bon système a la plupart des points hors limites</source>
+        <target state="translated">X̄ chart by operator: a good system has most points outside the limits</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.charts.by-part" datatype="html">
+        <source>Mesures par pièce : des traits parallèles disent des opérateurs cohérents</source>
+        <target state="translated">Measurements by part: parallel lines mean consistent operators</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.title" datatype="html">
+        <source>Guide de l'étude R&amp;R</source>
+        <target state="translated">R&amp;R study guide</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.show" datatype="html">
+        <source>Lire le guide</source>
+        <target state="translated">Read the guide</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.hide" datatype="html">
+        <source>Masquer le guide</source>
+        <target state="translated">Hide the guide</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.purpose-title" datatype="html">
+        <source>À quoi sert une étude R&amp;R ?</source>
+        <target state="translated">What is an R&amp;R study for?</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.purpose" datatype="html">
+        <source>Savoir quelle part de la variation observée vient du système de mesure (instrument et opérateurs) et non des pièces. Si le système de mesure varie trop, on ne peut ni juger ni piloter le procédé : les Cp et Cpk sont faussés.</source>
+        <target state="translated">To know how much of the observed variation comes from the measurement system (instrument and operators) rather than from the parts. If the measurement system varies too much, the process can be neither judged nor controlled: Cp and Cpk are distorted.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.plan-title" datatype="html">
+        <source>Réaliser l'étude (plan standard)</source>
+        <target state="translated">Running the study (standard design)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.plan-1" datatype="html">
+        <source>Choisir 10 pièces prises dans la production, couvrant toute l'étendue de la tolérance (de bonne à limite), numérotées en secret.</source>
+        <target state="translated">Choose 10 parts taken from production, covering the whole tolerance range (from good to borderline), numbered in secret.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.plan-2" datatype="html">
+        <source>Choisir 3 opérateurs, ceux qui mesurent réellement en production, avec l'instrument habituel.</source>
+        <target state="translated">Choose 3 operators, those who actually measure in production, with the usual instrument.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.plan-3" datatype="html">
+        <source>Mesurer 3 fois chaque pièce : chaque opérateur mesure les pièces dans un ordre aléatoire, sans voir ses résultats précédents ni ceux des autres.</source>
+        <target state="translated">Measure each part 3 times: each operator measures the parts in random order, without seeing their previous results or those of the others.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.plan-4" datatype="html">
+        <source>Saisir les mesures dans les cellules jaunes, ainsi que les limites LSL et USL.</source>
+        <target state="translated">Enter the measurements in the yellow cells, along with the LSL and USL limits.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.plan-5" datatype="html">
+        <source>Lire les résultats : méthode moyenne et étendue, puis ANOVA (EV, AV, GRR, PV, TV, %GRR, ndc, décision).</source>
+        <target state="translated">Read the results: average and range method, then ANOVA (EV, AV, GRR, PV, TV, %GRR, ndc, decision).</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.terms-title" datatype="html">
+        <source>Signification des grandeurs</source>
+        <target state="translated">What the quantities mean</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.ev-term" datatype="html">
+        <source>EV – Répétabilité</source>
+        <target state="translated">EV – Repeatability</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.ev" datatype="html">
+        <source>Variation d'un même opérateur mesurant la même pièce plusieurs fois (équipement). EV = R̄̄ × K1.</source>
+        <target state="translated">Variation of one operator measuring the same part several times (equipment). EV = R̄̄ × K1.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.av-term" datatype="html">
+        <source>AV – Reproductibilité</source>
+        <target state="translated">AV – Reproducibility</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.av" datatype="html">
+        <source>Variation entre opérateurs (méthode, habileté). AV = √[(X̄diff × K2)² − EV²/(n × r)], ramenée à 0 si négative.</source>
+        <target state="translated">Variation between operators (method, skill). AV = √[(X̄diff × K2)² − EV²/(n × r)], set to 0 if negative.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.grr" datatype="html">
+        <source>Variation du système de mesure : √(EV² + AV²).</source>
+        <target state="translated">Variation of the measurement system: √(EV² + AV²).</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.pv-term" datatype="html">
+        <source>PV – Variation pièces</source>
+        <target state="translated">PV – Part variation</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.pv" datatype="html">
+        <source>Variation réelle entre pièces : Rp × K3.</source>
+        <target state="translated">Actual variation between parts: Rp × K3.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.tv-term" datatype="html">
+        <source>TV – Variation totale</source>
+        <target state="translated">TV – Total variation</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.ndc" datatype="html">
+        <source>Nombre de catégories distinctes que le système sait séparer : 1,41 × PV / GRR, arrondi à l'entier inférieur.</source>
+        <target state="translated">Number of distinct categories the system can separate: 1.41 × PV / GRR, rounded down.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.criteria-title" datatype="html">
+        <source>Critères d'acceptation (AIAG MSA)</source>
+        <target state="translated">Acceptance criteria (AIAG MSA)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.criteria-ok" datatype="html">
+        <source>Système de mesure acceptable.</source>
+        <target state="translated">Acceptable measurement system.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.criteria-warn" datatype="html">
+        <source>Acceptable sous conditions (importance de la mesure, coût de l'instrument, coût des réparations) : décision à justifier.</source>
+        <target state="translated">Conditionally acceptable (importance of the measurement, cost of the instrument, cost of repairs): the decision must be justified.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.criteria-bad" datatype="html">
+        <source>Non acceptable : améliorer le système de mesure.</source>
+        <target state="translated">Not acceptable: improve the measurement system.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.criteria-ndc" datatype="html">
+        <source>Discrimination suffisante. De 2 à 4 : information grossière, bonne pour un tri large mais pas pour des cartes de contrôle ni des Cp / Cpk. À 1, le système ne distingue rien.</source>
+        <target state="translated">Sufficient discrimination. From 2 to 4: coarse information, fine for broad sorting but not for control charts or Cp / Cpk. At 1, the system distinguishes nothing.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.methods-title" datatype="html">
+        <source>Deux méthodes, mêmes mesures</source>
+        <target state="translated">Two methods, same measurements</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.methods" datatype="html">
+        <source>La méthode moyenne et étendue est rapide ; l'ANOVA à deux facteurs, avec l'interaction pièce × opérateur, est la méthode de référence, plus précise. L'interaction est regroupée avec la répétabilité quand elle n'est pas significative (p &gt; 0,25). Les constantes K1, K2 et K3 valent pour 5,15 σ ; à 6 σ, elles sont mises à l'échelle (× 6 / 5,15).</source>
+        <target state="translated">The average and range method is quick; two-way ANOVA, with the part × operator interaction, is the reference method and more accurate. The interaction is pooled with repeatability when it is not significant (p &gt; 0.25). Constants K1, K2 and K3 apply to 5.15 σ; at 6 σ they are scaled (× 6 / 5.15).</target>
+      </trans-unit>
       <trans-unit id="authz.perm.spc-manage" datatype="html">
         <source>Saisir et supprimer les études de capabilité SPC</source>
         <target state="translated">Record and delete SPC capability studies</target>
@@ -24419,6 +25595,10 @@ declared income
       <trans-unit id="spc.status.not-capable" datatype="html">
         <source>Non maîtrisé</source>
         <target state="translated">Not under control</target>
+      </trans-unit>
+      <trans-unit id="spc.status.watch" datatype="html">
+        <source>À surveiller</source>
+        <target state="translated">To watch</target>
       </trans-unit>
       <trans-unit id="spc.col.part" datatype="html">
         <source>Référence pièce</source>
@@ -24569,8 +25749,8 @@ declared income
         <target state="translated">Clear filters</target>
       </trans-unit>
       <trans-unit id="spc.register.legend" datatype="html">
-        <source>Cpk en vert : maîtrisé · en jaune : à surveiller · en rouge : non maîtrisé. Le liseré rouge signale une étude non maîtrisée sans plan d'actions.</source>
-        <target state="translated">Cpk in green: under control · yellow: to watch · red: not under control. A red edge flags a study not under control with no action plan.</target>
+        <source>Statut et Cpk en vert : maîtrisé · en jaune : à surveiller · en rouge : non maîtrisé. Le liseré rouge signale une étude à surveiller ou non maîtrisée sans plan d'actions.</source>
+        <target state="translated">Status and Cpk in green: under control · yellow: to watch · red: not under control. A red edge flags a study to watch or not under control with no action plan.</target>
       </trans-unit>
       <trans-unit id="spc.study.title-new" datatype="html">
         <source>Nouvelle étude de capabilité</source>
@@ -24699,6 +25879,10 @@ declared income
       <trans-unit id="spc.study.not-controlled" datatype="html">
         <source>Procédé non maîtrisé :</source>
         <target state="translated">Process not under control:</target>
+      </trans-unit>
+      <trans-unit id="spc.study.watch" datatype="html">
+        <source>Procédé à surveiller :</source>
+        <target state="translated">Process to watch:</target>
       </trans-unit>
       <trans-unit id="spc.study.yes" datatype="html">
         <source>OUI</source>

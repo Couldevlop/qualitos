@@ -1,13 +1,14 @@
 import { CapabilityStatus } from './spc-capability.types';
 
 /**
- * Le verdict du registre. Seul `CAPABLE` vaut « Maîtrisé » : `WATCH` reste un
- * procédé non maîtrisé, que seule la couleur du Cpk distingue (jaune).
+ * Le statut d'une étude, en trois mots comme les trois couleurs du Cpk :
+ * maîtrisé (vert), à surveiller (jaune), non maîtrisé (rouge). Le libellé et la
+ * pastille disent toujours la même chose.
  */
-export function controlledLabel(s: CapabilityStatus): string {
-  return s === 'CAPABLE'
-    ? $localize`:@@spc.status.capable:Maîtrisé`
-    : $localize`:@@spc.status.not-capable:Non maîtrisé`;
+export function statusLabel(s: CapabilityStatus): string {
+  return s === 'CAPABLE' ? $localize`:@@spc.status.capable:Maîtrisé`
+    : s === 'WATCH' ? $localize`:@@spc.status.watch:À surveiller`
+      : $localize`:@@spc.status.not-capable:Non maîtrisé`;
 }
 
 /** La couleur d'une pastille de Cpk : vert, jaune, rouge. */

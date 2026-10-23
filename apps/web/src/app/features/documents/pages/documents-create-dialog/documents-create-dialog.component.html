@@ -3,7 +3,9 @@
   title="Nouveau document"
   [formGroup]="form"
   [submitting]="submitting"
-  [submitDisabled]="form.invalid || !!fileError"
+  [submitDisabled]="form.invalid || !file || !!fileError"
+  i18n-blockedReason="@@documents.create.blocked"
+  blockedReason="Renseignez les champs obligatoires et joignez le fichier du document."
   i18n-submitLabel="@@common.create"
   submitLabel="Créer"
   (submitted)="submit()"
@@ -63,7 +65,7 @@
 
   <h3 class="section" i18n="@@documents.create.first-version-title">Première version, en brouillon</h3>
 
-  <div class="file-field">
+  <div class="file-field" [class.file-field--manquant]="fileMissing">
     <ng-container *ngIf="file; else pick">
       <mat-icon aria-hidden="true">attach_file</mat-icon>
       <span class="file-name" [title]="file.name">{{ file.name }}</span>
@@ -75,20 +77,24 @@
     </ng-container>
     <ng-template #pick>
       <label class="file-pick">
-        <input #picker type="file" [accept]="accept" (change)="onPick(picker)">
+        <input #picker type="file" [accept]="accept" (change)="onPick(picker)" required
+               [attr.aria-invalid]="fileMissing" data-test="fichier"
+               [attr.aria-describedby]="fileMissing ? 'fichier-requis' : null">
         <mat-icon aria-hidden="true">upload_file</mat-icon>
-        <span i18n="@@documents.create.attach">Joindre un fichier (facultatif)</span>
+        <span i18n="@@documents.create.attach">Joindre le fichier du document *</span>
       </label>
     </ng-template>
   </div>
   <p class="file-error" *ngIf="fileError" role="alert">{{ fileError }}</p>
+  <p class="file-error" *ngIf="fileMissing" role="alert" id="fichier-requis" data-test="fichier-requis"
+     i18n="@@documents.create.file-required">Un document se crée avec son fichier : joignez-le.</p>
   <mat-progress-bar *ngIf="progress !== null" mode="determinate" [value]="progress"></mat-progress-bar>
 
   <mat-form-field appearance="outline" class="full">
     <mat-label i18n="@@documents.create.content-label">Contenu</mat-label>
     <textarea matInput formControlName="initialContent" rows="5"
               i18n-placeholder="@@documents.create.content-placeholder"
-              placeholder="Corps du document, ou laissez vide pour ne créer qu'une enveloppe."></textarea>
+              placeholder="Résumé ou extrait du document (facultatif)."></textarea>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">

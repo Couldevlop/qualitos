@@ -336,26 +336,251 @@ class DocumentServiceTest {
                 .isInstanceOf(DocumentVersionNotFoundException.class);
     }
 
-    // --- submitForReview ---
-    @Test
-    void submitForReview_success() {
-        Document d = doc(TENANT, DocumentStatus.ACTIVE);
-        DocumentVersion v = ver(d, 1, VersionStatus.DRAFT);
+    // --- submitForReview : le circuit de signature (ADR 0099) ---
+    static final UUID SIGNER_1 = UUID.randomUUID();
+    static final UUID SIGNER_2 = UUID.randomUUID();
+    static final UUID SIGNER_3 = UUID.randomUUID();
+
+    static DocumentDto.SubmitRequest signataires(UUID... ids) {
+        List<DocumentDto.SignatoryRequest> l = new java.util.ArrayList<>();
+        for (int i = 0; i < ids.length; i++) {
+            l.add(new DocumentDto.SignatoryRequest(ids[i], "  Signataire " + (i + 1) + "  "));
+        }
+        return new DocumentDto.SubmitRequest(l);
+    }
+
+    /** Une version qui porte son fichier : la soumission l'exige. */
+    static DocumentVersion avecFichier(DocumentVersion v) {
+        DocumentBlob b = new DocumentBlob();
+        b.setContentType("application/pdf");
+        v.setBlob(b);
+        v.setFileName("proc.pdf");
+        return v;
+    }
+
+    /** Une version en revue, avec ses signataires en attente. */
+    DocumentVersion enSignature(Document d, UUID... ids) {
+        DocumentVersion v = ver(d, 1, VersionStatus.IN_REVIEW);
+        v.setAuthorId(AUTHOR);
+        for (int i = 0; i < ids.length; i++) {
+            DocumentVersionSignatory g = new DocumentVersionSignatory();
+            g.setTenantId(TENANT);
+            g.setVersion(v);
+            g.setPosition(i + 1);
+            g.setSignerId(ids[i]);
+            g.setSignerName("Signataire " + (i + 1));
+            v.getSignatories().add(g);
+        }
+        return v;
+    }
+
+    void charge(Document d, DocumentVersion v) {
         when(docRepo.findByIdAndTenantId(d.getId(), TENANT)).thenReturn(Optional.of(d));
         when(versionRepo.findByIdAndDocumentId(v.getId(), d.getId())).thenReturn(Optional.of(v));
+    }
+
+    @Test
+    void submitForReview_designeLesSignatairesDansLOrdre_sansDemarrerDeCircuitParRoles() {
+        Document d = doc(TENANT, DocumentStatus.ACTIVE);
+        DocumentVersion v = avecFichier(ver(d, 1, VersionStatus.DRAFT));
+        v.setAuthorId(AUTHOR);
+        charge(d, v);
         when(versionRepo.save(v)).thenReturn(v);
-        service.submitForReview(d.getId(), v.getId());
+
+        DocumentDto.VersionResponse r = service.submitForReview(d.getId(), v.getId(),
+                signataires(SIGNER_1, SIGNER_2, SIGNER_3));
+
         assertThat(v.getStatus()).isEqualTo(VersionStatus.IN_REVIEW);
+        assertThat(r.signatories()).extracting(DocumentDto.SignatoryView::position).containsExactly(1, 2, 3);
+        assertThat(r.signatories()).extracting(DocumentDto.SignatoryView::userId)
+                .containsExactly(SIGNER_1, SIGNER_2, SIGNER_3);
+        assertThat(r.signatories()).extracting(DocumentDto.SignatoryView::name)
+                .containsExactly("Signataire 1", "Signataire 2", "Signataire 3");
+        assertThat(r.signatories()).allMatch(g -> g.decision() == SignatoryDecision.PENDING);
+        assertThat(v.getSignatories()).allMatch(g -> TENANT.equals(g.getTenantId()));
+        verifyNoInteractions(circuits);
+        verify(versionRepo, never()).saveAndFlush(any());
+    }
+
+    @Test
+    void submitForReview_uneNouvelleSoumissionRemplaceLesSignataires() {
+        Document d = doc(TENANT, DocumentStatus.ACTIVE);
+        DocumentVersion v = avecFichier(enSignature(d, SIGNER_1, SIGNER_2));
+        v.setStatus(VersionStatus.DRAFT);
+        charge(d, v);
+        when(versionRepo.save(v)).thenReturn(v);
+
+        service.submitForReview(d.getId(), v.getId(), signataires(SIGNER_3));
+
+        verify(versionRepo).saveAndFlush(v);
+        assertThat(v.getSignatories()).extracting(DocumentVersionSignatory::getSignerId).containsExactly(SIGNER_3);
+    }
+
+    @Test
+    void submitForReview_sansFichier_refuse() {
+        Document d = doc(TENANT, DocumentStatus.ACTIVE);
+        DocumentVersion v = ver(d, 1, VersionStatus.DRAFT);
+        charge(d, v);
+        assertThatThrownBy(() -> service.submitForReview(d.getId(), v.getId(), signataires(SIGNER_1)))
+                .isInstanceOf(DocumentStateException.class)
+                .hasMessageContaining("Attach the document file");
+        assertThat(v.getStatus()).isEqualTo(VersionStatus.DRAFT);
+    }
+
+    @Test
+    void submitForReview_listeDeSignatairesInvalide_refusee() {
+        Document d = doc(TENANT, DocumentStatus.ACTIVE);
+        DocumentVersion v = avecFichier(ver(d, 1, VersionStatus.DRAFT));
+        v.setAuthorId(AUTHOR);
+        charge(d, v);
+        UUID id = d.getId();
+        UUID vid = v.getId();
+
+        assertThatThrownBy(() -> service.submitForReview(id, vid, null))
+                .isInstanceOf(DocumentSignatoryException.class);
+        assertThatThrownBy(() -> service.submitForReview(id, vid, new DocumentDto.SubmitRequest(null)))
+                .isInstanceOf(DocumentSignatoryException.class);
+        assertThatThrownBy(() -> service.submitForReview(id, vid, signataires()))
+                .isInstanceOf(DocumentSignatoryException.class);
+        assertThatThrownBy(() -> service.submitForReview(id, vid,
+                signataires(SIGNER_1, SIGNER_2, SIGNER_3, UUID.randomUUID())))
+                .isInstanceOf(DocumentSignatoryException.class).hasMessageContaining("between 1 and 3");
+        assertThatThrownBy(() -> service.submitForReview(id, vid, signataires(SIGNER_1, SIGNER_1)))
+                .isInstanceOf(DocumentSignatoryException.class).hasMessageContaining("twice");
+        assertThatThrownBy(() -> service.submitForReview(id, vid, signataires(AUTHOR)))
+                .isInstanceOf(DocumentSignatoryException.class).hasMessageContaining("author");
+        // Celui qui soumet ne se désigne pas : il approuverait seul ce qu'il envoie.
+        assertThatThrownBy(() -> service.submitForReview(id, vid, signataires(SIGNER_1, OWNER)))
+                .isInstanceOf(DocumentSignatoryException.class).hasMessageContaining("yourself");
+        assertThatThrownBy(() -> service.submitForReview(id, vid, new DocumentDto.SubmitRequest(
+                java.util.Arrays.asList(new DocumentDto.SignatoryRequest(SIGNER_1, "  ")))))
+                .isInstanceOf(DocumentSignatoryException.class);
+        assertThatThrownBy(() -> service.submitForReview(id, vid, new DocumentDto.SubmitRequest(
+                java.util.Arrays.asList((DocumentDto.SignatoryRequest) null))))
+                .isInstanceOf(DocumentSignatoryException.class);
+        assertThatThrownBy(() -> service.submitForReview(id, vid, new DocumentDto.SubmitRequest(
+                List.of(new DocumentDto.SignatoryRequest(null, "X")))))
+                .isInstanceOf(DocumentSignatoryException.class);
+        assertThat(v.getStatus()).isEqualTo(VersionStatus.DRAFT);
+        assertThat(v.getSignatories()).isEmpty();
     }
 
     @Test
     void submitForReview_notDraft_throws() {
         Document d = doc(TENANT, DocumentStatus.ACTIVE);
         DocumentVersion v = ver(d, 1, VersionStatus.PUBLISHED);
-        when(docRepo.findByIdAndTenantId(d.getId(), TENANT)).thenReturn(Optional.of(d));
-        when(versionRepo.findByIdAndDocumentId(v.getId(), d.getId())).thenReturn(Optional.of(v));
-        assertThatThrownBy(() -> service.submitForReview(d.getId(), v.getId()))
+        charge(d, v);
+        assertThatThrownBy(() -> service.submitForReview(d.getId(), v.getId(), signataires(SIGNER_1)))
                 .isInstanceOf(DocumentStateException.class);
+    }
+
+    // --- la signature, dans l'ordre (ADR 0099) ---
+
+    @Test
+    void signer_chacunASonTour_laDerniereSignatureApprouve() {
+        Document d = doc(TENANT, DocumentStatus.ACTIVE);
+        DocumentVersion v = enSignature(d, SIGNER_1, SIGNER_2);
+        charge(d, v);
+        when(versionRepo.save(v)).thenReturn(v);
+
+        connecte(SIGNER_1);
+        DocumentDto.VersionResponse r = service.approveVersion(d.getId(), v.getId(),
+                new DocumentDto.ApprovalRequest(null, "  Conforme  "));
+        assertThat(r.status()).isEqualTo(VersionStatus.IN_REVIEW);
+        assertThat(r.signatories().get(0).decision()).isEqualTo(SignatoryDecision.APPROVED);
+        assertThat(r.signatories().get(0).comment()).isEqualTo("Conforme");
+        assertThat(r.signatories().get(0).decidedAt()).isEqualTo(CLOCK.instant());
+        assertThat(r.signatories().get(1).decision()).isEqualTo(SignatoryDecision.PENDING);
+        assertThat(v.getApprovedBy()).isNull();
+
+        connecte(SIGNER_2);
+        r = service.approveVersion(d.getId(), v.getId(), new DocumentDto.ApprovalRequest(null, " "));
+        assertThat(r.status()).isEqualTo(VersionStatus.APPROVED);
+        assertThat(r.signatories().get(1).comment()).isNull();
+        assertThat(v.getApprovedBy()).isEqualTo(SIGNER_2);
+        assertThat(v.getApprovedAt()).isEqualTo(CLOCK.instant());
+        verifyNoInteractions(circuits, authorization);
+    }
+
+    @Test
+    void signer_sansCommentaire_etSansCorps() {
+        Document d = doc(TENANT, DocumentStatus.ACTIVE);
+        DocumentVersion v = enSignature(d, SIGNER_1);
+        charge(d, v);
+        when(versionRepo.save(v)).thenReturn(v);
+        connecte(SIGNER_1);
+
+        DocumentDto.VersionResponse r = service.approveVersion(d.getId(), v.getId(), null);
+
+        assertThat(r.status()).isEqualTo(VersionStatus.APPROVED);
+        assertThat(r.signatories().get(0).comment()).isNull();
+    }
+
+    @Test
+    void signer_horsDeSonTour_ouSansEtreDesigne_estRefuse() {
+        Document d = doc(TENANT, DocumentStatus.ACTIVE);
+        DocumentVersion v = enSignature(d, SIGNER_1, SIGNER_2);
+        charge(d, v);
+
+        connecte(SIGNER_2);
+        assertThatThrownBy(() -> service.approveVersion(d.getId(), v.getId(), new DocumentDto.ApprovalRequest(null)))
+                .isInstanceOf(org.springframework.security.access.AccessDeniedException.class);
+        assertThatThrownBy(() -> service.rejectVersion(d.getId(), v.getId(), new DocumentDto.RejectionRequest("non")))
+                .isInstanceOf(org.springframework.security.access.AccessDeniedException.class);
+        connecte(USER);
+        assertThatThrownBy(() -> service.approveVersion(d.getId(), v.getId(), new DocumentDto.ApprovalRequest(null)))
+                .isInstanceOf(org.springframework.security.access.AccessDeniedException.class);
+        assertThat(v.getSignatories()).allMatch(g -> g.getDecision() == SignatoryDecision.PENDING);
+        assertThat(v.getStatus()).isEqualTo(VersionStatus.IN_REVIEW);
+        verify(versionRepo, never()).save(any());
+    }
+
+    @Test
+    void signer_quandToutLeMondeADecide_estUnConflit() {
+        Document d = doc(TENANT, DocumentStatus.ACTIVE);
+        DocumentVersion v = enSignature(d, SIGNER_1);
+        v.getSignatories().get(0).setDecision(SignatoryDecision.APPROVED);
+        charge(d, v);
+        connecte(SIGNER_1);
+        assertThatThrownBy(() -> service.approveVersion(d.getId(), v.getId(), new DocumentDto.ApprovalRequest(null)))
+                .isInstanceOf(DocumentStateException.class);
+    }
+
+    @Test
+    void refuser_parLeSignataireDontCEstLeTour_renvoieEnBrouillon() {
+        Document d = doc(TENANT, DocumentStatus.ACTIVE);
+        DocumentVersion v = enSignature(d, SIGNER_1, SIGNER_2);
+        v.getSignatories().get(0).setDecision(SignatoryDecision.APPROVED);
+        charge(d, v);
+        when(versionRepo.save(v)).thenReturn(v);
+        connecte(SIGNER_2);
+
+        DocumentDto.VersionResponse r = service.rejectVersion(d.getId(), v.getId(),
+                new DocumentDto.RejectionRequest("  Annexe manquante "));
+
+        assertThat(r.status()).isEqualTo(VersionStatus.DRAFT);
+        assertThat(r.rejectedBy()).isEqualTo(SIGNER_2);
+        assertThat(r.rejectionReason()).isEqualTo("Annexe manquante");
+        assertThat(r.signatories().get(1).decision()).isEqualTo(SignatoryDecision.REJECTED);
+        assertThat(r.signatories().get(1).comment()).isEqualTo("Annexe manquante");
+        assertThat(r.signatories().get(1).decidedAt()).isEqualTo(CLOCK.instant());
+        verifyNoInteractions(circuits, authorization);
+    }
+
+    @Test
+    void versionSoumiseAvantLeCircuitDeSignature_exigeLeDroitDApprouver() {
+        Document d = doc(TENANT, DocumentStatus.ACTIVE);
+        DocumentVersion v = ver(d, 1, VersionStatus.IN_REVIEW);
+        v.setAuthorId(AUTHOR);
+        charge(d, v);
+        connecte(APPROVER);
+        when(authorization.has(Permission.DOCUMENT_APPROVE)).thenReturn(false);
+
+        assertThatThrownBy(() -> service.approveVersion(d.getId(), v.getId(), new DocumentDto.ApprovalRequest(null)))
+                .isInstanceOf(org.springframework.security.access.AccessDeniedException.class);
+        assertThatThrownBy(() -> service.rejectVersion(d.getId(), v.getId(), new DocumentDto.RejectionRequest("non")))
+                .isInstanceOf(org.springframework.security.access.AccessDeniedException.class);
+        verifyNoInteractions(circuits);
     }
 
     // --- approveVersion ---
@@ -367,6 +592,7 @@ class DocumentServiceTest {
         when(docRepo.findByIdAndTenantId(d.getId(), TENANT)).thenReturn(Optional.of(d));
         when(versionRepo.findByIdAndDocumentId(v.getId(), d.getId())).thenReturn(Optional.of(v));
         when(versionRepo.save(v)).thenReturn(v);
+        when(authorization.has(Permission.DOCUMENT_APPROVE)).thenReturn(true);
         connecte(APPROVER);
         service.approveVersion(d.getId(), v.getId(), new DocumentDto.ApprovalRequest(APPROVER));
         assertThat(v.getStatus()).isEqualTo(VersionStatus.APPROVED);
@@ -408,20 +634,6 @@ class DocumentServiceTest {
     }
 
     @Test
-    void submitForReview_startsTheCircuit_withTheAuthor() {
-        Document d = doc(TENANT, DocumentStatus.ACTIVE);
-        DocumentVersion v = ver(d, 1, VersionStatus.DRAFT);
-        v.setAuthorId(AUTHOR);
-        when(docRepo.findByIdAndTenantId(d.getId(), TENANT)).thenReturn(Optional.of(d));
-        when(versionRepo.findByIdAndDocumentId(v.getId(), d.getId())).thenReturn(Optional.of(v));
-        when(versionRepo.save(v)).thenReturn(v);
-
-        service.submitForReview(d.getId(), v.getId());
-
-        verify(circuits).start(CircuitSubject.DOCUMENT_VERSION, v.getId(), AUTHOR);
-    }
-
-    @Test
     void approveVersion_circuitStillRunning_staysInReview() {
         Document d = doc(TENANT, DocumentStatus.ACTIVE);
         DocumentVersion v = ver(d, 1, VersionStatus.IN_REVIEW);
@@ -430,6 +642,7 @@ class DocumentServiceTest {
         when(versionRepo.findByIdAndDocumentId(v.getId(), d.getId())).thenReturn(Optional.of(v));
         when(circuits.decide(CircuitSubject.DOCUMENT_VERSION, v.getId(), true, "vu"))
                 .thenReturn(Optional.of(passage(v.getId(), "IN_PROGRESS")));
+        when(authorization.has(Permission.DOCUMENT_APPROVE)).thenReturn(true);
         connecte(APPROVER);
 
         DocumentDto.VersionResponse r = service.approveVersion(d.getId(), v.getId(),
@@ -450,6 +663,7 @@ class DocumentServiceTest {
         when(versionRepo.save(v)).thenReturn(v);
         when(circuits.decide(CircuitSubject.DOCUMENT_VERSION, v.getId(), true, null))
                 .thenReturn(Optional.of(passage(v.getId(), "APPROVED")));
+        when(authorization.has(Permission.DOCUMENT_APPROVE)).thenReturn(true);
         connecte(APPROVER);
 
         service.approveVersion(d.getId(), v.getId(), new DocumentDto.ApprovalRequest(null));
@@ -466,6 +680,7 @@ class DocumentServiceTest {
         when(docRepo.findByIdAndTenantId(d.getId(), TENANT)).thenReturn(Optional.of(d));
         when(versionRepo.findByIdAndDocumentId(v.getId(), d.getId())).thenReturn(Optional.of(v));
         when(versionRepo.save(v)).thenReturn(v);
+        when(authorization.has(Permission.DOCUMENT_APPROVE)).thenReturn(true);
         connecte(APPROVER);
 
         DocumentDto.VersionResponse r = service.rejectVersion(d.getId(), v.getId(),
@@ -833,6 +1048,7 @@ class DocumentServiceTest {
         when(versionRepo.findByIdAndDocumentId(v.getId(), d.getId())).thenReturn(Optional.of(v));
         when(versionRepo.save(v)).thenReturn(v);
 
+        when(authorization.has(Permission.DOCUMENT_APPROVE)).thenReturn(true);
         connecte(APPROVER);
         service.approveVersion(d.getId(), v.getId(), null);
 

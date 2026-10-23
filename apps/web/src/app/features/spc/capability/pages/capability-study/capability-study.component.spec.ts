@@ -111,6 +111,8 @@ describe('CapabilityStudyComponent', () => {
     expect(un('verdict-maitrise')?.classList).toContain('verdict--ok');
     expect(un('verdict-non-maitrise')?.textContent).toContain('NON');
     expect(un('verdict-non-maitrise')?.classList).not.toContain('verdict--ko');
+    expect(un('verdict-surveiller')?.textContent).toContain('NON');
+    expect(un('verdict-surveiller')?.classList).not.toContain('verdict--warn');
     expect(un('formule-cpu')?.textContent).toContain('1.912');
     expect(un('formule-x-ecart')?.textContent?.trim()).not.toBe('–');
     expect(un('resume')?.textContent).toContain('1.84');
@@ -174,6 +176,7 @@ describe('CapabilityStudyComponent', () => {
     await setup();
     expect(un('verdict-maitrise')?.textContent).toContain('—');
     expect(un('verdict-non-maitrise')?.textContent).toContain('—');
+    expect(un('verdict-surveiller')?.textContent).toContain('—');
     expect(un('verdict-maitrise')?.classList).not.toContain('verdict--ok');
     expect(un('verdict-non-maitrise')?.classList).not.toContain('verdict--ko');
     expect(un('kpi-cp')?.textContent).toContain('–');
@@ -353,8 +356,10 @@ describe('CapabilityStudyComponent', () => {
       expect(un('kpi-cpk')?.classList).toContain('kpi--warn');
       expect(un('formules')?.classList).toContain('formules--ko');
       expect(un('verdict-maitrise')?.textContent).toContain('NON');
-      expect(un('verdict-non-maitrise')?.classList).toContain('verdict--ko');
-      expect(un('verdict-non-maitrise')?.textContent).toContain('OUI');
+      expect(un('verdict-surveiller')?.classList).toContain('verdict--warn');
+      expect(un('verdict-surveiller')?.textContent).toContain('OUI');
+      expect(un('verdict-non-maitrise')?.classList).not.toContain('verdict--ko');
+      expect(un('verdict-non-maitrise')?.textContent).toContain('NON');
       expect(un('diagnostic')?.classList).toContain('diagnostic--ko');
       expect(un('diagnostic')?.textContent).toContain('réduire');
       expect(component.form.controls.partReference.value).toBe('Shaft AX');

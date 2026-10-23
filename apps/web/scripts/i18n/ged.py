@@ -6,7 +6,7 @@ TRANSLATIONS = {
 
     # Libellés partagés
     'documents.type.external': ('Document externe', 'External document', 'Documento externo', 'وثيقة خارجية', '外部文書', '外部文件'),
-    'documents.status.in-force': ('En vigueur', 'In force', 'En vigor', 'سارية', '有効', '现行'),
+    'documents.status.in-force': ('Approuvé', 'Approved', 'Aprobado', 'معتمد', '承認済み', '已批准'),
     'documents.status.in-revision': ('En révision', 'Under revision', 'En revisión', 'قيد المراجعة', '改訂中', '修订中'),
     'documents.status.draft': ('Brouillon', 'Draft', 'Borrador', 'مسودة', '下書き', '草稿'),
     'documents.status.review-overdue': ('Revue dépassée', 'Review overdue', 'Revisión vencida', 'المراجعة متأخرة', 'レビュー期限切れ', '复审逾期'),
@@ -95,7 +95,7 @@ TRANSLATIONS = {
     'documents.import.bad-title': ('Le titre est obligatoire.', 'The title is required.', 'El título es obligatorio.', 'العنوان إلزامي.', 'タイトルは必須です。', '标题为必填项。'),
 
     # Création, modification, fiche détaillée
-    'documents.create.attach': ('Joindre un fichier (facultatif)', 'Attach a file (optional)', 'Adjuntar un archivo (opcional)', 'إرفاق ملف (اختياري)', 'ファイルを添付（任意）', '附加文件（可选）'),
+    'documents.create.attach': ('Joindre le fichier du document *', 'Attach the document file *', 'Adjuntar el archivo del documento *', 'إرفاق ملف المستند *', '文書ファイルを添付 *', '附加文档文件 *'),
     'documents.create.remove-file': ('Retirer le fichier', 'Remove the file', 'Quitar el archivo', 'إزالة الملف', 'ファイルを外す', '移除文件'),
     'documents.create.first-version-title': ('Première version, en brouillon', 'First version, as a draft', 'Primera versión, en borrador', 'الإصدار الأول، كمسودة', '第 1 版（下書き）', '第一版（草稿）'),
     'documents.edit.review-hint': ('Fixée à la publication selon la périodicité du tenant ; avancez-la ou reculez-la au besoin.', 'Set at publication from the review period; move it earlier or later if needed.', 'Fijada en la publicación según la periodicidad; adelántela o retrásela si es necesario.', 'تُحدد عند النشر وفق الدورية؛ قدّمها أو أخّرها عند الحاجة.', '公開時にレビュー周期から設定されます。必要に応じて前後に変更できます。', '发布时按复审周期设定，可按需提前或推迟。'),

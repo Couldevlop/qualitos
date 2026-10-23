@@ -1,0 +1,148 @@
+<div class="qos-page">
+  <qos-page-header
+    eyebrow="SPC · Analyse du système de mesure" i18n-eyebrow="@@spc.gage-rr.eyebrow"
+    title="Gage R&amp;R" i18n-title="@@spc.gage-rr.title"
+    subtitle="Répétabilité et reproductibilité des moyens de mesure (AIAG MSA). Cliquez sur une ligne pour rouvrir l'étude."
+    i18n-subtitle="@@spc.gage-rr.register.subtitle">
+    <ng-container qosActions>
+      <button mat-stroked-button type="button" (click)="exporter()" [disabled]="loading" data-test="exporter">
+        <mat-icon>download</mat-icon>
+        <span i18n="@@spc.register.export">Exporter CSV</span>
+      </button>
+      <button mat-flat-button color="primary" type="button" *ngIf="canManage" (click)="create()" data-test="nouvelle">
+        <mat-icon>add</mat-icon>
+        <span i18n="@@spc.gage-rr.register.new">Nouvelle étude R&amp;R</span>
+      </button>
+    </ng-container>
+  </qos-page-header>
+
+  <!-- Les indicateurs du registre, sur le verdict rendu par le serveur. -->
+  <section class="kpis" i18n-aria-label="@@spc.register.kpis" aria-label="Indicateurs du registre">
+    <div class="kpi" data-test="kpi-total">
+      <b>{{ studies.length }}</b>
+      <span i18n="@@spc.gage-rr.register.kpi-total">Études R&amp;R</span>
+    </div>
+    <div class="kpi kpi--ok" data-test="kpi-acceptables">
+      <b>{{ count('ACCEPTABLE') }}</b>
+      <span i18n="@@spc.gage-rr.register.kpi-acceptable">Acceptables (%GRR &lt; 10 %)</span>
+    </div>
+    <div class="kpi kpi--warn" data-test="kpi-conditions">
+      <b>{{ count('CONDITIONAL') }}</b>
+      <span i18n="@@spc.gage-rr.register.kpi-conditional">Sous conditions (10 – 30 %)</span>
+    </div>
+    <div class="kpi kpi--bad" data-test="kpi-non-acceptables">
+      <b>{{ count('NOT_ACCEPTABLE') }}</b>
+      <span i18n="@@spc.gage-rr.register.kpi-not-acceptable">Non acceptables (&gt; 30 %)</span>
+    </div>
+    <div class="kpi" [class.kpi--alerte]="weakDiscrimination > 0" data-test="kpi-ndc">
+      <b>{{ weakDiscrimination }}</b>
+      <span i18n="@@spc.gage-rr.register.kpi-ndc">Discrimination insuffisante (ndc &lt; 5)</span>
+    </div>
+  </section>
+
+  <div class="filtres">
+    <mat-form-field appearance="outline" class="filtres__recherche" subscriptSizing="dynamic">
+      <mat-icon matPrefix>search</mat-icon>
+      <input matInput [(ngModel)]="search" data-test="recherche"
+             [placeholder]="searchPlaceholder" [attr.aria-label]="searchPlaceholder">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filtres__liste" subscriptSizing="dynamic">
+      <mat-select [(ngModel)]="decisionFilter" data-test="filtre-decision"
+                  i18n-aria-label="@@spc.gage-rr.register.filter-decision" aria-label="Filtrer par décision">
+        <mat-option value="" i18n="@@spc.gage-rr.register.all-decisions">Toutes les décisions</mat-option>
+        <mat-option value="ACCEPTABLE" i18n="@@spc.gage-rr.decision.acceptable">Acceptable</mat-option>
+        <mat-option value="CONDITIONAL" i18n="@@spc.gage-rr.decision.conditional">Acceptable sous conditions</mat-option>
+        <mat-option value="NOT_ACCEPTABLE" i18n="@@spc.gage-rr.decision.not-acceptable">Non acceptable</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+
+  <p class="echec" *ngIf="failed" role="alert">
+    <span i18n="@@spc.gage-rr.register.load-failed">Le registre des études R&amp;R n'a pas pu être chargé.</span>
+    <button mat-button type="button" (click)="charger()" i18n="@@common.retry">Réessayer</button>
+  </p>
+
+  <div class="tableau" *ngIf="!failed">
+    <table data-test="table-etudes">
+      <thead>
+        <tr>
+          <th scope="col" [attr.aria-sort]="ariaSort('partReference')">
+            <button type="button" class="tri" (click)="sortBy('partReference')" i18n="@@spc.col.part">Référence pièce</button>
+          </th>
+          <th scope="col" [attr.aria-sort]="ariaSort('instrument')">
+            <button type="button" class="tri" (click)="sortBy('instrument')" i18n="@@spc.gage-rr.col.instrument">Instrument</button>
+          </th>
+          <th scope="col" [attr.aria-sort]="ariaSort('responsibleName')">
+            <button type="button" class="tri" (click)="sortBy('responsibleName')" i18n="@@spc.gage-rr.col.responsible">Responsable</button>
+          </th>
+          <th scope="col" [attr.aria-sort]="ariaSort('studyDate')">
+            <button type="button" class="tri" (click)="sortBy('studyDate')" data-test="tri-date" i18n="@@spc.col.date">Date</button>
+          </th>
+          <th scope="col" class="num" i18n="@@spc.gage-rr.col.plan">Plan (k × n × r)</th>
+          <th scope="col" class="num" [attr.aria-sort]="ariaSort('grrPercent')">
+            <button type="button" class="tri" (click)="sortBy('grrPercent')" data-test="tri-grr">%GRR</button>
+          </th>
+          <th scope="col" class="num" [attr.aria-sort]="ariaSort('grrTolerancePercent')">
+            <button type="button" class="tri" (click)="sortBy('grrTolerancePercent')" i18n="@@spc.gage-rr.col.grr-tolerance">%GRR tolérance</button>
+          </th>
+          <th scope="col" class="num" [attr.aria-sort]="ariaSort('ndc')">
+            <button type="button" class="tri" (click)="sortBy('ndc')">ndc</button>
+          </th>
+          <th scope="col" class="num" [attr.aria-sort]="ariaSort('anovaGrrPercent')">
+            <button type="button" class="tri" (click)="sortBy('anovaGrrPercent')">%GRR ANOVA</button>
+          </th>
+          <th scope="col" [attr.aria-sort]="ariaSort('decision')">
+            <button type="button" class="tri" (click)="sortBy('decision')" data-test="tri-decision" i18n="@@spc.gage-rr.col.decision">Décision</button>
+          </th>
+          <th scope="col"><span class="cdk-visually-hidden" i18n="@@spc.col.actions">Actions</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let s of rows; trackBy: trackById" class="ligne" [class.ligne--alerte]="s.decision === 'NOT_ACCEPTABLE'"
+            tabindex="0" (click)="open(s)" (keydown.enter)="open(s)" data-test="ligne-etude">
+          <td>
+            <span class="piece">{{ s.partReference }}</span>
+            <div class="sous" *ngIf="s.characteristic">{{ s.characteristic }}</div>
+          </td>
+          <td>
+            {{ s.instrument || '–' }}
+            <div class="sous" *ngIf="s.operators.length">{{ operatorNames(s) }}</div>
+          </td>
+          <td>{{ s.responsibleName || '–' }}</td>
+          <td class="date">{{ s.studyDate | date: 'dd/MM/yyyy' }}</td>
+          <td class="num mono">{{ plan(s) }}</td>
+          <td class="num">
+            <span class="pastille pastille--{{ tone(s.decision) }} mono" data-test="grr">{{ percent(s.grrPercent) }}</span>
+          </td>
+          <td class="num mono">{{ percent(s.grrTolerancePercent) }}</td>
+          <td class="num mono" [class.faible]="s.ndc < 5" data-test="ndc">{{ s.ndc }}</td>
+          <td class="num mono">{{ percent(s.anovaGrrPercent) }}</td>
+          <td>
+            <span class="statut statut--{{ tone(s.decision) }}" data-test="decision">{{ decision(s.decision) }}</span>
+          </td>
+          <td class="actions" (click)="$event.stopPropagation()" (keydown.enter)="$event.stopPropagation()">
+            <button mat-stroked-button type="button" (click)="open(s)" data-test="ouvrir"
+                    i18n="@@spc.register.open">Ouvrir</button>
+            <button mat-stroked-button type="button" *ngIf="canManage" (click)="remove(s)" data-test="supprimer"
+                    i18n="@@common.delete">Supprimer</button>
+          </td>
+        </tr>
+        <tr *ngIf="!loading && rows.length === 0">
+          <td colspan="11" class="aucun">
+            <span *ngIf="studies.length === 0" i18n="@@spc.gage-rr.register.empty">Aucune étude R&amp;R pour le moment. Cliquez sur « Nouvelle étude R&amp;R » pour commencer.</span>
+            <ng-container *ngIf="studies.length > 0">
+              <span i18n="@@spc.register.no-match">Aucune étude ne correspond aux filtres.</span>
+              <button mat-button type="button" (click)="resetFilters()" i18n="@@spc.register.reset-filters">Effacer les filtres</button>
+            </ng-container>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="legende" data-test="legende">
+      <span i18n="@@spc.gage-rr.register.legend">%GRR de la variation totale (méthode moyenne et étendue, AIAG) : vert sous 10 %, jaune de 10 à 30 %, rouge au-delà. Le liseré rouge signale un système de mesure non acceptable.</span>
+    </p>
+  </div>
+</div>

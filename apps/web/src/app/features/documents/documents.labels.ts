@@ -1,4 +1,4 @@
-import { DisplayStatus, DocumentType, DocumentView, VersionStatus } from './documents.types';
+import { DisplayStatus, DocumentType, DocumentView, SignatoryDecision, VersionStatus } from './documents.types';
 
 /**
  * Les libellés de la GED, en un seul endroit : la liste, le panneau, les
@@ -18,7 +18,7 @@ export const DOCUMENT_TYPE_LABELS: Record<DocumentType, string> = {
 export const DOCUMENT_TYPES = Object.keys(DOCUMENT_TYPE_LABELS) as DocumentType[];
 
 export const DISPLAY_STATUS_LABELS: Record<DisplayStatus, string> = {
-  IN_FORCE:       $localize`:@@documents.status.in-force:En vigueur`,
+  IN_FORCE:       $localize`:@@documents.status.in-force:Approuvé`,
   IN_REVISION:    $localize`:@@documents.status.in-revision:En révision`,
   DRAFT:          $localize`:@@documents.status.draft:Brouillon`,
   REVIEW_OVERDUE: $localize`:@@documents.status.review-overdue:Revue dépassée`,
@@ -34,6 +34,13 @@ export const VERSION_STATUS_LABELS: Record<VersionStatus, string> = {
   APPROVED:  $localize`:@@documents.version.approved:Approuvée`,
   PUBLISHED: $localize`:@@documents.version.published:Actuelle`,
   OBSOLETE:  $localize`:@@documents.version.obsolete:Obsolète`
+};
+
+/** La décision d'un signataire (ADR 0099), sur sa carte. */
+export const SIGNATORY_DECISION_LABELS: Record<SignatoryDecision, string> = {
+  PENDING:  $localize`:@@documents.signatory.pending:En attente`,
+  APPROVED: $localize`:@@documents.signatory.approved:Approuvé`,
+  REJECTED: $localize`:@@documents.signatory.rejected:Rejeté`
 };
 
 export const VIEW_LABELS: Record<DocumentView, string> = {

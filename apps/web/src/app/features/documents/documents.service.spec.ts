@@ -59,15 +59,24 @@ describe('DocumentsService (mock mode)', () => {
     service.create({ code: 'L', title: 'Lifecycle', type: 'POLICY', ownerId: 'u', mandatoryRead: false })
       .subscribe(d => {
         const v = d.versions[0];
-        service.submit(d.id, v.id).subscribe(sub => {
+        service.submit(d.id, v.id, [{ userId: 'mgr', name: 'Marie' }, { userId: 'dir', name: 'Paul' }]).subscribe(sub => {
           expect(sub.status).toBe('IN_REVIEW');
-          service.approve(d.id, v.id, { approverId: 'mgr' }).subscribe(app => {
+          expect(sub.signatories!.map(s => [s.position, s.name, s.decision]))
+            .toEqual([[1, 'Marie', 'PENDING'], [2, 'Paul', 'PENDING']]);
+          service.approve(d.id, v.id, { approverId: 'mgr', comment: ' Conforme ' }).subscribe(un => {
+            // Le signataire 1 a signé ; le 2 reste attendu.
+            expect(un.status).toBe('IN_REVIEW');
+            expect(un.signatories![0].decision).toBe('APPROVED');
+            expect(un.signatories![0].comment).toBe('Conforme');
+          service.approve(d.id, v.id, { approverId: 'dir' }).subscribe(app => {
             expect(app.status).toBe('APPROVED');
-            expect(app.approvedBy).toBe('mgr');
+            expect(app.approvedBy).toBe('dir');
+            expect(app.signatories![1].comment).toBeNull();
             service.publish(d.id, v.id).subscribe(pub => {
               expect(pub.status).toBe('PUBLISHED');
               done();
             });
+          });
           });
         });
       });
@@ -77,9 +86,11 @@ describe('DocumentsService (mock mode)', () => {
     service.create({ code: 'R', title: 'Refus', type: 'POLICY', ownerId: 'u', mandatoryRead: false })
       .subscribe(d => {
         const v = d.versions[0];
-        service.submit(d.id, v.id).subscribe(() => {
+        service.submit(d.id, v.id, [{ userId: 'mgr', name: 'Marie' }]).subscribe(() => {
           service.reject(d.id, v.id, 'Incomplet').subscribe(r => {
             expect(r.status).toBe('DRAFT');
+            expect(r.signatories![0].decision).toBe('REJECTED');
+            expect(r.signatories![0].comment).toBe('Incomplet');
             expect(r.rejectionReason).toBe('Incomplet');
             expect(r.rejectedAt).toBeTruthy();
             service.reject('doc-1', 'inconnue', 'x').subscribe(() => done());
@@ -195,7 +206,7 @@ describe('DocumentsService (mock mode)', () => {
   });
 
   it('soumettre une version inconnue ne fait basculer aucun statut', (done) => {
-    service.submit('doc-3', 'inconnue').subscribe(() => {
+    service.submit('doc-3', 'inconnue', [{ userId: 'mgr', name: 'Marie' }]).subscribe(() => {
       service.get('doc-3').subscribe(d => {
         expect(d.versions[0].status).toBe('DRAFT');
         done();
@@ -331,14 +342,14 @@ describe('DocumentsService (API réelle)', () => {
     req.flush(version({ content: 'corps' }));
   });
 
-  it('soumet une version à revue', (done) => {
-    service.submit('d1', 'v1').subscribe(v => {
+  it('soumet une version à ses signataires, dans l’ordre', (done) => {
+    service.submit('d1', 'v1', [{ userId: 'u1', name: 'Marie' }, { userId: 'u2', name: 'Paul' }]).subscribe(v => {
       expect(v.status).toBe('IN_REVIEW');
       done();
     });
     const req = http.expectOne(`${base}/d1/versions/v1/submit`);
     expect(req.request.method).toBe('PATCH');
-    expect(req.request.body).toEqual({});
+    expect(req.request.body).toEqual({ signatories: [{ userId: 'u1', name: 'Marie' }, { userId: 'u2', name: 'Paul' }] });
     req.flush(version({ status: 'IN_REVIEW' }));
   });
 

@@ -119,9 +119,9 @@ describe('MainShellComponent (navigation model)', () => {
     const spc = component.sections.find(s => s.items.some(i => i.route === '/spc/cartes'))!;
     expect(spc.items.map(i => i.route)).toEqual(['/spc/cartes', '/spc/gage-rr']);
     expect(spc.items.every(i => i.module === 'dmaic')).toBeTrue();
-    // L'analyse SPC par les regles de Nelson reste dans les Analyses IA.
+    // L'analyse SPC n'a plus d'entree dans les Analyses IA : la SPC se rejoint par son groupe.
     const ia = component.sections.find(s => s.items.some(i => i.route === '/anomaly'))!;
-    expect(ia.items.map(i => i.route)).toContain('/spc');
+    expect(ia.items.map(i => i.route)).not.toContain('/spc');
   });
 
   it('APQP n’a qu’une entree : les projets', () => {
@@ -170,7 +170,10 @@ describe('MainShellComponent (navigation model)', () => {
     // + Parametres MOC (ADR 0087). Puis a 13 : + Documentation (ADR 0094).
     // SPC (2) s'insere apres les Analyses IA : Cartes de controle et Gage R&R
     // (ADR 0096) ; Administration passe a 14 : + Parametres SPC.
-    expect(labels).toEqual([7, 6, 8, 2, 1, 4, 1, 9, 11, 1, 14]);
+    // Analyses IA retombe a 7 : l'entree SPC la quittait pour son propre groupe.
+    // Administration retombe a 13 : les circuits par roles cedent la place aux
+    // signataires choisis a la soumission (ADR 0099).
+    expect(labels).toEqual([7, 6, 7, 2, 1, 4, 1, 9, 11, 1, 13]);
   });
 
   it('le registre des risques a son groupe, juste apres la non-conformite', () => {
@@ -209,7 +212,7 @@ describe('MainShellComponent (navigation model)', () => {
 
   it('keeps all core method/operation routes reachable from the sidebar', () => {
     const allRoutes = component.sections.flatMap(s => s.items.map(i => i.route));
-    ['/home', '/dashboard', '/smi', '/pdca', '/fives', '/dmaic', '/spc',
+    ['/home', '/dashboard', '/smi', '/pdca', '/fives', '/dmaic', '/spc/cartes',
      '/nc/interne', '/nc/externe', '/capa', '/audits', '/standards', '/itsm', '/compliance']
       .forEach(r => expect(allRoutes).withContext(r).toContain(r));
   });

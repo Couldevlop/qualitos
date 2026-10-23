@@ -35,6 +35,8 @@ public interface DocumentRepository extends JpaRepository<Document, UUID>, JpaSp
      *   <li>avec un circuit, l'étape en cours doit revenir à l'un de ses rôles, et il
      *       ne doit pas avoir déjà décidé dans ce passage (quatre yeux).</li>
      * </ul>
+     * Une version soumise avec des signataires (ADR 0099) n'attend que celui dont
+     * c'est le tour : le premier rang encore en attente.
      * L'auteur d'une version ne la valide jamais. {@code roles} n'est jamais vide :
      * l'appelant y glisse une valeur neutre, une liste vide rendrait la requête invalide.
      * Les identifiants reviennent en texte : le pilote ne rend pas le même type
@@ -51,10 +53,15 @@ public interface DocumentRepository extends JpaRepository<Document, UUID>, JpaSp
               AND d.status = 'ACTIVE'
               AND v.status = 'IN_REVIEW'
               AND v.author_id <> :userId
-              AND ((r.id IS NULL AND :canApprove)
-                   OR (r.id IS NOT NULL AND s.role_code IN (:roles)
-                       AND NOT EXISTS (SELECT 1 FROM circuit_decisions c
-                                       WHERE c.run_id = r.id AND c.actor_id = :userId)))
+              AND (EXISTS (SELECT 1 FROM document_version_signatories g
+                           WHERE g.version_id = v.id AND g.signer_id = :userId AND g.decision = 'PENDING'
+                             AND g.position = (SELECT MIN(g2.position) FROM document_version_signatories g2
+                                               WHERE g2.version_id = v.id AND g2.decision = 'PENDING'))
+                   OR (NOT EXISTS (SELECT 1 FROM document_version_signatories g3 WHERE g3.version_id = v.id)
+                       AND ((r.id IS NULL AND :canApprove)
+                            OR (r.id IS NOT NULL AND s.role_code IN (:roles)
+                                AND NOT EXISTS (SELECT 1 FROM circuit_decisions c
+                                                WHERE c.run_id = r.id AND c.actor_id = :userId)))))
             """, nativeQuery = true)
     List<String> findIdsAwaitingDecisionOf(@Param("tenantId") UUID tenantId,
                                          @Param("userId") UUID userId,

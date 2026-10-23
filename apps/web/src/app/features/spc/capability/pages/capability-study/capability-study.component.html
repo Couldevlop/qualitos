@@ -116,39 +116,67 @@
       </div>
 
       <div class="saisie" [class.saisie--formules]="showFormulas">
-        <div class="defile">
-          <table class="grille" data-test="grille">
-            <thead>
-              <tr>
-                <th scope="col" class="entete-ligne" i18n="@@spc.study.sample">Échantillon</th>
-                <th scope="col" *ngFor="let l of columnLabels">{{ l }}</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let r of rows">
-                <th scope="row" class="entete-ligne">{{ r + 1 }}</th>
-                <td *ngFor="let c of columns">
-                  <input class="cellule" inputmode="decimal" [value]="cell(r, c)" [readOnly]="!canManage"
-                         [class.cellule--invalide]="cellInvalid(r, c)"
-                         (input)="onCell(r, c, $event)" (paste)="onPaste(r, c, $event)"
-                         [attr.aria-label]="cellLabel(r, c)"
-                         [attr.data-test]="'cellule-' + r + '-' + c">
-                </td>
-              </tr>
-              <tr class="calculee">
-                <th scope="row" class="entete-ligne">X̄</th>
-                <td *ngFor="let c of columns" [class.hors]="meanOut(c)" [attr.data-test]="'moyenne-' + c">
-                  {{ num(calc.subgroupMeans[c], 2) }}
-                </td>
-              </tr>
-              <tr class="calculee">
-                <th scope="row" class="entete-ligne">R</th>
-                <td *ngFor="let c of columns" [class.hors]="rangeOut(c)" [attr.data-test]="'etendue-' + c">
-                  {{ num(calc.subgroupRanges[c], 0) }}
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        <!-- La colonne de gauche porte la grille puis, juste dessous, les cartes X̄ et R :
+             à côté du panneau des formules, plus haut que la grille, aucun vide ne reste. -->
+        <div class="saisie__principal">
+          <div class="defile">
+            <table class="grille" data-test="grille">
+              <thead>
+                <tr>
+                  <th scope="col" class="entete-ligne" i18n="@@spc.study.sample">Échantillon</th>
+                  <th scope="col" *ngFor="let l of columnLabels">{{ l }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let r of rows">
+                  <th scope="row" class="entete-ligne">{{ r + 1 }}</th>
+                  <td *ngFor="let c of columns">
+                    <input class="cellule" inputmode="decimal" [value]="cell(r, c)" [readOnly]="!canManage"
+                           [class.cellule--invalide]="cellInvalid(r, c)"
+                           (input)="onCell(r, c, $event)" (paste)="onPaste(r, c, $event)"
+                           [attr.aria-label]="cellLabel(r, c)"
+                           [attr.data-test]="'cellule-' + r + '-' + c">
+                  </td>
+                </tr>
+                <tr class="calculee">
+                  <th scope="row" class="entete-ligne">X̄</th>
+                  <td *ngFor="let c of columns" [class.hors]="meanOut(c)" [attr.data-test]="'moyenne-' + c">
+                    {{ num(calc.subgroupMeans[c], 2) }}
+                  </td>
+                </tr>
+                <tr class="calculee">
+                  <th scope="row" class="entete-ligne">R</th>
+                  <td *ngFor="let c of columns" [class.hors]="rangeOut(c)" [attr.data-test]="'etendue-' + c">
+                    {{ num(calc.subgroupRanges[c], 0) }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="barre-actions">
+            <button mat-stroked-button type="button" *ngIf="canManage" (click)="clearMeasurements()" data-test="vider">
+              <mat-icon>backspace</mat-icon>
+              <span i18n="@@spc.study.clear">Vider les mesures</span>
+            </button>
+            <p class="note" *ngIf="canManage && !hasMeasurements" data-test="grille-vide"
+               i18n="@@spc.example.empty">La grille est vide : saisissez vos mesures ou chargez un des jeux d'exemple.</p>
+            <p class="note" i18n="@@spc.study.paste-tip">Astuce : collez un bloc copié depuis Excel dans une cellule pour remplir la grille d'un coup.</p>
+          </div>
+
+          <div class="cartes">
+            <section class="carte-bloc" aria-labelledby="titre-carte-x">
+              <h3 id="titre-carte-x" i18n="@@spc.study.xbar-chart">Carte X̄</h3>
+              <qos-spc-control-chart [values]="calc.subgroupMeans" [ucl]="calc.meanUcl" [cl]="calc.grandMean"
+                                     [lcl]="calc.meanLcl" [usl]="usl" [lsl]="lsl" [label]="xbarLabel"
+                                     data-test="carte-x"></qos-spc-control-chart>
+            </section>
+            <section class="carte-bloc" aria-labelledby="titre-carte-r">
+              <h3 id="titre-carte-r" i18n="@@spc.study.range-chart">Carte R</h3>
+              <qos-spc-control-chart [values]="calc.subgroupRanges" [ucl]="calc.rangeUcl" [cl]="calc.meanRange"
+                                     [lcl]="calc.rangeLcl" [label]="rangeLabel" data-test="carte-r"></qos-spc-control-chart>
+            </section>
+          </div>
         </div>
 
         <!-- Non maîtrisé : le panneau des formules se lit en rouge (demande de la maquette). -->
@@ -216,16 +244,6 @@
           </dl>
         </aside>
       </div>
-
-      <div class="barre-actions">
-        <button mat-stroked-button type="button" *ngIf="canManage" (click)="clearMeasurements()" data-test="vider">
-          <mat-icon>backspace</mat-icon>
-          <span i18n="@@spc.study.clear">Vider les mesures</span>
-        </button>
-        <p class="note" *ngIf="canManage && !hasMeasurements" data-test="grille-vide"
-           i18n="@@spc.example.empty">La grille est vide : saisissez vos mesures ou chargez un des jeux d'exemple.</p>
-        <p class="note" i18n="@@spc.study.paste-tip">Astuce : collez un bloc copié depuis Excel dans une cellule pour remplir la grille d'un coup.</p>
-      </div>
     </section>
 
     <!-- ---------- résultats ---------- -->
@@ -251,40 +269,29 @@
         </div>
       </div>
 
-      <!-- Les deux pastilles du classeur (« CONTROLLED » / « NOT CONTROLLED ») : toujours là,
-           neutres tant qu'aucun Cpk ne se calcule. -->
+      <!-- Les pastilles du statut, une par couleur du Cpk (maîtrisé, à surveiller, non
+           maîtrisé) : toujours là, neutres tant qu'aucun Cpk ne se calcule. -->
       <div class="verdicts" data-test="verdict" role="status">
         <span class="verdicts__titre" i18n="@@spc.study.process-status">Statut du procédé</span>
         <span class="verdict" [class.verdict--ok]="status !== null && controlled" data-test="verdict-maitrise">
           <ng-container i18n="@@spc.study.controlled">Procédé maîtrisé :</ng-container>
           <b>{{ status === null ? '—' : (controlled ? yes : no) }}</b>
         </span>
-        <span class="verdict" [class.verdict--ko]="status !== null && !controlled" data-test="verdict-non-maitrise">
+        <span class="verdict" [class.verdict--warn]="status === 'WATCH'" data-test="verdict-surveiller">
+          <ng-container i18n="@@spc.study.watch">Procédé à surveiller :</ng-container>
+          <b>{{ status === null ? '—' : (status === 'WATCH' ? yes : no) }}</b>
+        </span>
+        <span class="verdict" [class.verdict--ko]="status === 'NOT_CAPABLE'" data-test="verdict-non-maitrise">
           <ng-container i18n="@@spc.study.not-controlled">Procédé non maîtrisé :</ng-container>
-          <b>{{ status === null ? '—' : (controlled ? no : yes) }}</b>
+          <b>{{ status === null ? '—' : (status === 'NOT_CAPABLE' ? yes : no) }}</b>
         </span>
       </div>
       <p class="note attente" *ngIf="calc.completeSubgroups === 0" data-test="attente"
          i18n="@@spc.study.need-subgroup">Saisissez au moins un sous-groupe complet.</p>
     </section>
 
-    <!-- ---------- cartes ---------- -->
-    <div class="colonnes">
-      <section class="bloc" aria-labelledby="titre-carte-x">
-        <h2 id="titre-carte-x" i18n="@@spc.study.xbar-chart">Carte X̄</h2>
-        <qos-spc-control-chart [values]="calc.subgroupMeans" [ucl]="calc.meanUcl" [cl]="calc.grandMean"
-                               [lcl]="calc.meanLcl" [usl]="usl" [lsl]="lsl" [label]="xbarLabel"
-                               data-test="carte-x"></qos-spc-control-chart>
-      </section>
-      <section class="bloc" aria-labelledby="titre-carte-r">
-        <h2 id="titre-carte-r" i18n="@@spc.study.range-chart">Carte R</h2>
-        <qos-spc-control-chart [values]="calc.subgroupRanges" [ucl]="calc.rangeUcl" [cl]="calc.meanRange"
-                               [lcl]="calc.rangeLcl" [label]="rangeLabel" data-test="carte-r"></qos-spc-control-chart>
-      </section>
-    </div>
-
     <!-- ---------- distribution ---------- -->
-    <!-- Sous les deux cartes, la courbe se trace seule dès qu'un sous-groupe est complet. -->
+    <!-- Sous les résultats, la courbe se trace seule dès qu'un sous-groupe est complet. -->
     <section class="bloc" aria-labelledby="titre-distribution">
       <h2 id="titre-distribution" i18n="@@spc.study.distribution">Distribution et tolérance</h2>
       <qos-spc-distribution-chart [values]="values" [mean]="calc.grandMean" [sigma]="calc.sigma"

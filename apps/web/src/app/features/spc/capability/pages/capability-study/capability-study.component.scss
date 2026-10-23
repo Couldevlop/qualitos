@@ -281,6 +281,12 @@
     color: var(--qos-success-fg);
   }
 
+  &--warn {
+    border-color: transparent;
+    background: var(--qos-warn-bg-soft);
+    color: var(--qos-warn-fg);
+  }
+
   &--ko {
     border-color: transparent;
     background: var(--qos-danger-bg-soft);
@@ -416,11 +422,28 @@
 }
 
 // ---------- cartes ----------
+// Juste sous la grille, dans la même colonne : côte à côte quand la place le permet.
 
-.colonnes {
+.saisie__principal {
+  min-width: 0;
+}
+
+.cartes {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr));
-  gap: 0 var(--qos-space-5);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+  gap: var(--qos-space-4) var(--qos-space-5);
+  margin-top: var(--qos-space-5);
+}
+
+.carte-bloc {
+  min-width: 0;
+
+  h3 {
+    margin: 0 0 var(--qos-space-2);
+    font-size: var(--qos-fs-sm);
+    font-weight: var(--qos-fw-semibold);
+    color: var(--qos-fg-primary);
+  }
 }
 
 // ---------- lectures ----------

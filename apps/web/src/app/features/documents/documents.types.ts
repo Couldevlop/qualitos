@@ -33,6 +33,25 @@ export interface DocumentFileInfo {
 
 export type VersionStatus = 'DRAFT' | 'IN_REVIEW' | 'APPROVED' | 'PUBLISHED' | 'OBSOLETE';
 
+export type SignatoryDecision = 'PENDING' | 'APPROVED' | 'REJECTED';
+
+/** Un signataire désigné à la soumission ; ils signent dans l'ordre 1 → 3 (ADR 0099). */
+export interface DocumentSignatory {
+  position: number;
+  /** Le compte de connexion (`sub`) de la personne. */
+  userId: string;
+  name: string;
+  decision: SignatoryDecision;
+  decidedAt: string | null;
+  comment: string | null;
+}
+
+/** Un signataire choisi dans l'annuaire, tel qu'il part à la soumission. */
+export interface SignatoryRequest {
+  userId: string;
+  name: string;
+}
+
 export interface DocumentVersionResponse {
   id: string;
   documentId: string;
@@ -54,6 +73,8 @@ export interface DocumentVersionResponse {
   rejectedAt?: string | null;
   rejectionReason?: string | null;
   file?: DocumentFileInfo | null;
+  /** Le circuit de signature, dans l'ordre ; vide pour une revue d'avant l'ADR 0099. */
+  signatories?: DocumentSignatory[];
 }
 
 export interface DocumentResponse {

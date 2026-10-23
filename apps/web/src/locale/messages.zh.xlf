@@ -6674,45 +6674,333 @@ Portail clients</source>
         <source>Matrice de compétences</source>
         <target state="translated">能力矩阵</target>
       </trans-unit>
-      <trans-unit id="training.matrix.subtitle" datatype="html">
-        <source>Qui sait faire quoi. Une ligne dont une seule case est remplie signale une compétence qui ne tient qu'à une personne.</source>
-        <target state="translated">谁会做什么。某行只有一格被填，说明该能力仅由一人掌握。</target>
+      <trans-unit id="training.matrix.eyebrow" datatype="html">
+        <source>Formation</source>
+        <target state="translated">培训</target>
       </trans-unit>
-      <trans-unit id="training.matrix.only-at-risk" datatype="html">
-        <source>Seulement les compétences à risque</source>
-        <target state="translated">仅显示有风险的能力</target>
+      <trans-unit id="training.matrix.subtitle-editable" datatype="html">
+        <source>Cliquez sur une case pour changer le niveau. Objectif : au moins deux personnes autonomes (niveau 2 ou plus) par compétence.</source>
+        <target state="translated">点击单元格可更改等级。目标：每项能力至少两名可独立操作的人员（2级及以上）。</target>
       </trans-unit>
-      <trans-unit id="training.matrix.col-skill" datatype="html">
+      <trans-unit id="training.matrix.workshops-settings" datatype="html">
+        <source>Ateliers</source>
+        <target state="translated">车间</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.add-operator" datatype="html">
+        <source>Opérateur</source>
+        <target state="translated">操作员</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.add-skill" datatype="html">
         <source>Compétence</source>
         <target state="translated">能力</target>
       </trans-unit>
-      <trans-unit id="training.matrix.ungrouped" datatype="html">
-        <source>Sans famille</source>
-        <target state="translated">未分组</target>
+      <trans-unit id="training.matrix.kpis" datatype="html">
+        <source>Indicateurs de la matrice</source>
+        <target state="translated">矩阵指标</target>
       </trans-unit>
-      <trans-unit id="training.matrix.single-holder" datatype="html">
-        <source>Un seul détenteur</source>
-        <target state="translated">仅一名掌握者</target>
+      <trans-unit id="training.matrix.kpi-operators" datatype="html">
+        <source>Opérateurs</source>
+        <target state="translated">操作员</target>
       </trans-unit>
-      <trans-unit id="training.matrix.unassessed" datatype="html">
-        <source>Non évalué</source>
-        <target state="translated">未评估</target>
+      <trans-unit id="training.matrix.kpi-skills" datatype="html">
+        <source>Compétences suivies</source>
+        <target state="translated">跟踪的能力</target>
       </trans-unit>
-      <trans-unit id="training.matrix.unassessed-legend" datatype="html">
-        <source>non évalué</source>
-        <target state="translated">未评估</target>
+      <trans-unit id="training.matrix.kpi-at-risk" datatype="html">
+        <source>Compétences à risque</source>
+        <target state="translated">有风险的能力</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.kpi-with-trainer" datatype="html">
+        <source>Avec un formateur</source>
+        <target state="translated">有培训师</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.search" datatype="html">
+        <source>Rechercher un opérateur…</source>
+        <target state="translated">搜索操作员…</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.filter-workshop" datatype="html">
+        <source>Filtrer par atelier</source>
+        <target state="translated">按车间筛选</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.all-workshops" datatype="html">
+        <source>Tous les ateliers</source>
+        <target state="translated">所有车间</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.filter-category" datatype="html">
+        <source>Filtrer par catégorie</source>
+        <target state="translated">按类别筛选</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.all-categories" datatype="html">
+        <source>Toutes les catégories</source>
+        <target state="translated">所有类别</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.highlight-risks" datatype="html">
+        <source>Mettre en évidence les risques</source>
+        <target state="translated">突出显示风险</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.level-0" datatype="html">
+        <source>Non formé</source>
+        <target state="translated">未培训</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.level-1" datatype="html">
+        <source>Débutant</source>
+        <target state="translated">初学者</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.level-2" datatype="html">
+        <source>Autonome</source>
+        <target state="translated">可独立操作</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.level-3" datatype="html">
+        <source>Expert</source>
+        <target state="translated">专家</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.level-4" datatype="html">
+        <source>Formateur</source>
+        <target state="translated">培训师</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.risks-title" datatype="html">
+        <source>Compétences à risque</source>
+        <target state="translated">有风险的能力</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.sole-autonomous" datatype="html">
+        <source>Seule personne autonome : <x id="name"/></source>
+        <target state="translated">唯一可独立操作的人员：<x id="name"/></target>
+      </trans-unit>
+      <trans-unit id="training.matrix.no-autonomous" datatype="html">
+        <source>Aucune personne autonome</source>
+        <target state="translated">没有可独立操作的人员</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.trainer-of" datatype="html">
+        <source>Formateur : <x id="trainer"/></source>
+        <target state="translated">培训师：<x id="trainer"/></target>
+      </trans-unit>
+      <trans-unit id="training.matrix.no-risk" datatype="html">
+        <source>Aucun risque : toutes les compétences sont couvertes.</source>
+        <target state="translated">无风险：所有能力均已覆盖。</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.empty" datatype="html">
+        <source>La matrice est vide. Ajoutez des opérateurs depuis l'annuaire et les compétences à suivre.</source>
+        <target state="translated">矩阵为空。请从通讯录添加操作员以及需要跟踪的能力。</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.operator" datatype="html">
+        <source>Opérateur</source>
+        <target state="translated">操作员</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.average" datatype="html">
+        <source>Moy.</source>
+        <target state="translated">平均</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.cell-label" datatype="html">
+        <source><x id="operator"/> – <x id="skill"/> : <x id="level"/></source>
+        <target state="translated"><x id="operator"/> – <x id="skill"/>：<x id="level"/></target>
+      </trans-unit>
+      <trans-unit id="training.matrix.no-operator" datatype="html">
+        <source>Aucun opérateur dans la matrice pour le moment.</source>
+        <target state="translated">矩阵中暂无操作员。</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.no-match" datatype="html">
+        <source>Aucun opérateur ne correspond aux filtres.</source>
+        <target state="translated">没有符合筛选条件的操作员。</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.reset-filters" datatype="html">
+        <source>Effacer les filtres</source>
+        <target state="translated">清除筛选</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.autonomous-footer" datatype="html">
+        <source>Personnes autonomes (2+)</source>
+        <target state="translated">可独立操作人员（2级及以上）</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.at-risk" datatype="html">
+        <source>à risque</source>
+        <target state="translated">有风险</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.note" datatype="html">
+        <source>Chaque niveau posé ici est l'évaluation de compétence de la personne, enregistrée et tracée dans le journal d'audit.</source>
+        <target state="translated">此处设置的每个等级都是该人员的能力评估，会被保存并记录在审计日志中。</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.level-failed" datatype="html">
+        <source>Le niveau n'a pas pu être enregistré.</source>
+        <target state="translated">无法保存该等级。</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.remove-operator" datatype="html">
+        <source>Retirer <x id="name"/> de la matrice</source>
+        <target state="translated">将 <x id="name"/> 移出矩阵</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.remove-skill" datatype="html">
+        <source>Retirer la compétence <x id="name"/> de la matrice</source>
+        <target state="translated">将能力 <x id="name"/> 移出矩阵</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.remove-operator-title" datatype="html">
+        <source>Retirer <x id="name"/> de la matrice ?</source>
+        <target state="translated">要将 <x id="name"/> 移出矩阵吗？</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.remove-operator-message" datatype="html">
+        <source>La ligne quitte la matrice. Les évaluations de la personne restent à son dossier de formation, et reviennent si elle est réinscrite.</source>
+        <target state="translated">该行将移出矩阵。此人的评估仍保留在其培训档案中，重新加入后会恢复。</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.remove-skill-title" datatype="html">
+        <source>Retirer « <x id="name"/> » de la matrice ?</source>
+        <target state="translated">要将“<x id="name"/>”移出矩阵吗？</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.remove-skill-message" datatype="html">
+        <source>La colonne quitte la matrice. La compétence reste au catalogue, avec ses évaluations.</source>
+        <target state="translated">该列将移出矩阵。该能力及其评估仍保留在目录中。</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.remove" datatype="html">
+        <source>Retirer</source>
+        <target state="translated">移除</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.remove-failed" datatype="html">
+        <source>Le retrait n'a pas pu être enregistré.</source>
+        <target state="translated">无法保存移除操作。</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.add" datatype="html">
+        <source>Ajouter</source>
+        <target state="translated">添加</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.add-operator-title" datatype="html">
+        <source>Ajouter un opérateur</source>
+        <target state="translated">添加操作员</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.add-operator-help" datatype="html">
+        <source>Choisissez la personne dans l'annuaire, puis son atelier. Ses niveaux partent de « Non formé », ou reprennent ses évaluations existantes.</source>
+        <target state="translated">从通讯录中选择人员，再选择其车间。其等级从“未培训”开始，或沿用已有评估。</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.workshop" datatype="html">
+        <source>Atelier</source>
+        <target state="translated">车间</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.operator-exists" datatype="html">
+        <source>Cette personne figure déjà dans la matrice.</source>
+        <target state="translated">此人已在矩阵中。</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.operator-failed" datatype="html">
+        <source>L'opérateur n'a pas pu être ajouté.</source>
+        <target state="translated">无法添加操作员。</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.add-skill-title" datatype="html">
+        <source>Ajouter une compétence</source>
+        <target state="translated">添加能力</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.add-skill-help" datatype="html">
+        <source>Une compétence déjà au catalogue sous ce nom est reprise avec ses évaluations. Le formateur est la personne qui transmettra la compétence quand elle passe à risque.</source>
+        <target state="translated">目录中已有同名能力时将连同其评估一并沿用。培训师是在该能力出现风险时负责传授的人。</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.skill-name" datatype="html">
+        <source>Compétence</source>
+        <target state="translated">能力</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.skill-name-placeholder" datatype="html">
+        <source>Ex. : Soudure orbitale</source>
+        <target state="translated">例如：轨道焊接</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.category" datatype="html">
+        <source>Catégorie</source>
+        <target state="translated">类别</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.trainer" datatype="html">
+        <source>Formateur</source>
+        <target state="translated">培训师</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.trainer-hint" datatype="html">
+        <source>Obligatoire : qui forme sur cette compétence ?</source>
+        <target state="translated">必填：谁负责此能力的培训？</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.skill-exists" datatype="html">
+        <source>Cette compétence figure déjà dans la matrice.</source>
+        <target state="translated">该能力已在矩阵中。</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.skill-failed" datatype="html">
+        <source>La compétence n'a pas pu être ajoutée.</source>
+        <target state="translated">无法添加能力。</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.workshops-title" datatype="html">
+        <source>Ateliers de la matrice de compétences</source>
+        <target state="translated">能力矩阵的车间</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.workshops-subtitle" datatype="html">
+        <source>Les ateliers dans lesquels on range les opérateurs, et par lesquels on filtre la matrice.</source>
+        <target state="translated">用于归类操作员并筛选矩阵的车间。</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.workshops-load-failed" datatype="html">
+        <source>Les ateliers n'ont pas pu être chargés.</source>
+        <target state="translated">无法加载车间。</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.workshops-scope" datatype="html">
+        <source>Retirer un atelier ne réaffecte personne : les opérateurs qui y sont rangés le gardent, et le filtre de la matrice le propose encore.</source>
+        <target state="translated">移除车间不会重新分配任何人：已归入该车间的操作员保留该车间，矩阵筛选中也仍会显示。</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.workshops-list" datatype="html">
+        <source>Ateliers</source>
+        <target state="translated">车间</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.workshops-help" datatype="html">
+        <source>L'ordre de la liste est celui des menus et des lignes de la matrice.</source>
+        <target state="translated">列表顺序即菜单和矩阵行的顺序。</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.workshops-defaults" datatype="html">
+        <source>Ce sont aujourd'hui les ateliers proposés par la plateforme.</source>
+        <target state="translated">目前为平台提供的默认车间。</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.workshops-name" datatype="html">
+        <source>Nom de l'atelier</source>
+        <target state="translated">车间名称</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.workshops-up" datatype="html">
+        <source>Monter</source>
+        <target state="translated">上移</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.workshops-down" datatype="html">
+        <source>Descendre</source>
+        <target state="translated">下移</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.workshops-remove" datatype="html">
+        <source>Retirer l'atelier</source>
+        <target state="translated">移除车间</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.workshops-new" datatype="html">
+        <source>Nouvel atelier</source>
+        <target state="translated">新车间</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.workshops-pending" datatype="html">
+        <source>Ateliers modifiés</source>
+        <target state="translated">车间已修改</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.workshops-problem-empty" datatype="html">
+        <source>Il faut au moins un atelier.</source>
+        <target state="translated">至少需要一个车间。</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.workshops-problem-count" datatype="html">
+        <source><x id="max"/> ateliers au plus.</source>
+        <target state="translated">最多 <x id="max"/> 个车间。</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.workshops-problem-length" datatype="html">
+        <source>Chaque atelier a un nom de 1 à <x id="max"/> caractères.</source>
+        <target state="translated">每个车间名称为 1 到 <x id="max"/> 个字符。</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.workshops-problem-duplicate" datatype="html">
+        <source>Deux ateliers portent le même nom.</source>
+        <target state="translated">有两个车间名称相同。</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.workshops-saved" datatype="html">
+        <source>Ateliers enregistrés.</source>
+        <target state="translated">车间已保存。</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.workshops-save-failed" datatype="html">
+        <source>Les ateliers n'ont pas pu être enregistrés.</source>
+        <target state="translated">无法保存车间。</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.training-manage" datatype="html">
+        <source>Tenir la matrice de compétences</source>
+        <target state="translated">维护能力矩阵</target>
+      </trans-unit>
+      <trans-unit id="authz.module.training" datatype="html">
+        <source>Formation</source>
+        <target state="translated">培训</target>
       </trans-unit>
       <trans-unit id="training.matrix.legend" datatype="html">
         <source>Niveaux</source>
         <target state="translated">等级</target>
-      </trans-unit>
-      <trans-unit id="training.matrix.none" datatype="html">
-        <source>Aucune compétence au catalogue. Créez-en, puis évaluez les collaborateurs : la matrice se construit à partir des évaluations.</source>
-        <target state="translated">目录中暂无能力项。请先创建，再评估人员：矩阵由评估结果构建。</target>
-      </trans-unit>
-      <trans-unit id="training.matrix.no-people" datatype="html">
-        <source>Le catalogue existe, mais personne n'a encore été évalué. Les colonnes sont les personnes évaluées — la matrice reste vide tant qu'aucune ne l'est.</source>
-        <target state="translated">目录已存在，但尚无人被评估。列即为已评估的人员。</target>
       </trans-unit>
       <trans-unit id="training.matrix.failed" datatype="html">
         <source>Impossible de charger la matrice de compétences.</source>
@@ -7211,8 +7499,8 @@ Portail clients</source>
         <target state="translated">版本 v<x id="NUMBER"/> 于 <x id="DATE"/> 被驳回</target>
       </trans-unit>
       <trans-unit id="documents.circuit.rejected-next" datatype="html">
-        <source>Corrigez-la, puis soumettez-la de nouveau : le circuit repartira de la première étape.</source>
-        <target state="translated">请修改后重新提交：流程将从第一步重新开始。</target>
+        <source>Corrigez-la, puis soumettez-la de nouveau en choisissant ses signataires : la signature repartira du signataire 1.</source>
+        <target state="translated">请修改后重新提交并选择签署人：签署将从签署人 1 重新开始。</target>
       </trans-unit>
       <trans-unit id="documents.reject.title" datatype="html">
         <source>Refuser la version v<x id="number"/></source>
@@ -8817,10 +9105,6 @@ Portail clients</source>
       <trans-unit id="nav.dmaic" datatype="html">
         <source>DMAIC</source>
         <target state="translated">DMAIC</target>
-      </trans-unit>
-      <trans-unit id="nav.spc" datatype="html">
-        <source>SPC</source>
-        <target state="translated">SPC</target>
       </trans-unit>
       <trans-unit id="nav.cercles" datatype="html">
         <source>Cercles</source>
@@ -10795,8 +11079,8 @@ Portail clients</source>
         <target state="translated">外部文件</target>
       </trans-unit>
       <trans-unit id="documents.status.in-force" datatype="html">
-        <source>En vigueur</source>
-        <target state="translated">现行</target>
+        <source>Approuvé</source>
+        <target state="translated">已批准</target>
       </trans-unit>
       <trans-unit id="documents.status.in-revision" datatype="html">
         <source>En révision</source>
@@ -11119,8 +11403,8 @@ Portail clients</source>
         <target state="translated">标题为必填项。</target>
       </trans-unit>
       <trans-unit id="documents.create.attach" datatype="html">
-        <source>Joindre un fichier (facultatif)</source>
-        <target state="translated">附加文件（可选）</target>
+        <source>Joindre le fichier du document *</source>
+        <target state="translated">附加文档文件 *</target>
       </trans-unit>
       <trans-unit id="documents.create.remove-file" datatype="html">
         <source>Retirer le fichier</source>
@@ -11321,6 +11605,98 @@ Portail clients</source>
       <trans-unit id="documents.settings.discard" datatype="html">
         <source>Annuler les modifications</source>
         <target state="translated">放弃更改</target>
+      </trans-unit>
+      <trans-unit id="documents.signatory.label" datatype="html">
+        <source>Signataire <x id="position"/></source>
+        <target state="translated">签署人 <x id="position"/></target>
+      </trans-unit>
+      <trans-unit id="documents.signatory.pending" datatype="html">
+        <source>En attente</source>
+        <target state="translated">待签署</target>
+      </trans-unit>
+      <trans-unit id="documents.signatory.approved" datatype="html">
+        <source>Approuvé</source>
+        <target state="translated">已批准</target>
+      </trans-unit>
+      <trans-unit id="documents.signatory.rejected" datatype="html">
+        <source>Rejeté</source>
+        <target state="translated">已驳回</target>
+      </trans-unit>
+      <trans-unit id="documents.submit.title" datatype="html">
+        <source>Soumettre la version v<x id="number"/> à signature</source>
+        <target state="translated">提交版本 v<x id="number"/> 签署</target>
+      </trans-unit>
+      <trans-unit id="documents.submit.subtitle" datatype="html">
+        <source>Choisissez de une à trois personnes. Elles signeront dans l'ordre : le signataire 2 après le 1, le 3 après le 2. Un seul refus renvoie la version en brouillon.</source>
+        <target state="translated">请选择一到三人。他们将按顺序签署：签署人 2 在 1 之后，3 在 2 之后。只要有一人驳回，版本即退回草稿。</target>
+      </trans-unit>
+      <trans-unit id="documents.submit.blocked" datatype="html">
+        <source>Choisissez au moins le signataire 1, une personne différente à chaque place.</source>
+        <target state="translated">请至少选择签署人 1，且每个位置为不同的人。</target>
+      </trans-unit>
+      <trans-unit id="documents.submit.submit" datatype="html">
+        <source>Soumettre à signature</source>
+        <target state="translated">提交签署</target>
+      </trans-unit>
+      <trans-unit id="documents.submit.duplicate" datatype="html">
+        <source>Une même personne ne peut signer qu'une fois.</source>
+        <target state="translated">同一人只能签署一次。</target>
+      </trans-unit>
+      <trans-unit id="documents.submit.done" datatype="html">
+        <source>Version soumise : le signataire 1 est invité à signer.</source>
+        <target state="translated">版本已提交：已邀请签署人 1 签署。</target>
+      </trans-unit>
+      <trans-unit id="documents.detail.submit-needs-file" datatype="html">
+        <source>Joignez le fichier du document avant de soumettre la version.</source>
+        <target state="translated">提交版本前请先附加文档文件。</target>
+      </trans-unit>
+      <trans-unit id="documents.signature.title" datatype="html">
+        <source>Circuit de signature de la version v<x id="NUMBER"/></source>
+        <target state="translated">版本 v<x id="NUMBER"/> 的签署流程</target>
+      </trans-unit>
+      <trans-unit id="documents.signature.turn-yours" datatype="html">
+        <source>C'est à vous de signer : approuvez ou rejetez la version.</source>
+        <target state="translated">轮到您签署：请批准或驳回该版本。</target>
+      </trans-unit>
+      <trans-unit id="documents.signature.turn-author" datatype="html">
+        <source>Vous en êtes l'auteur : vos signataires la valident dans l'ordre.</source>
+        <target state="translated">您是作者：您的签署人将按顺序审批。</target>
+      </trans-unit>
+      <trans-unit id="documents.signature.turn-waiting" datatype="html">
+        <source>En attente de la signature de <x id="NAME"/>.</source>
+        <target state="translated">等待 <x id="NAME"/> 签署。</target>
+      </trans-unit>
+      <trans-unit id="documents.signature.comment" datatype="html">
+        <source>Commentaire (facultatif)</source>
+        <target state="translated">备注（可选）</target>
+      </trans-unit>
+      <trans-unit id="documents.signature.signed" datatype="html">
+        <source>Signature enregistrée : le signataire suivant est invité à signer.</source>
+        <target state="translated">签署已记录：已邀请下一位签署人签署。</target>
+      </trans-unit>
+      <trans-unit id="documents.signature.rejected" datatype="html">
+        <source>Rejet enregistré : la version revient en brouillon chez son auteur.</source>
+        <target state="translated">驳回已记录：版本退回作者的草稿。</target>
+      </trans-unit>
+      <trans-unit id="documents.signature.failed" datatype="html">
+        <source>La signature n'a pas été enregistrée.</source>
+        <target state="translated">签署未被记录。</target>
+      </trans-unit>
+      <trans-unit id="documents.validation.signature" datatype="html">
+        <source>Signature</source>
+        <target state="translated">签署</target>
+      </trans-unit>
+      <trans-unit id="documents.validation.signature-note" datatype="html">
+        <source>De un à trois signataires, choisis à la soumission</source>
+        <target state="translated">一至三名签署人，在提交时选择</target>
+      </trans-unit>
+      <trans-unit id="documents.create.blocked" datatype="html">
+        <source>Renseignez les champs obligatoires et joignez le fichier du document.</source>
+        <target state="translated">请填写必填字段并附加文档文件。</target>
+      </trans-unit>
+      <trans-unit id="documents.create.file-required" datatype="html">
+        <source>Un document se crée avec son fichier : joignez-le.</source>
+        <target state="translated">创建文档时须附带其文件：请附加。</target>
       </trans-unit>
       <trans-unit id="dpia.create.hint" datatype="html">
         <source>L'Art. 35 RGPD impose une DPIA pour les traitements présentant un</source>
@@ -17389,8 +17765,8 @@ historique 12 mois</source>
         <target state="translated">KPI分析</target>
       </trans-unit>
       <trans-unit id="nav.moc" datatype="html">
-        <source>Gestion des changements (MOC)</source>
-        <target state="translated">变更管理（MOC）</target>
+        <source>MOC</source>
+        <target state="translated">MOC</target>
       </trans-unit>
       <trans-unit id="nav.admin-moc" datatype="html">
         <source>Paramètres MOC</source>
@@ -17409,8 +17785,8 @@ historique 12 mois</source>
         <target state="translated">管理所有变更申请</target>
       </trans-unit>
       <trans-unit id="moc.title" datatype="html">
-        <source>Gestion des changements (MOC)</source>
-        <target state="translated">变更管理（MOC）</target>
+        <source>MOC</source>
+        <target state="translated">MOC</target>
       </trans-unit>
       <trans-unit id="moc.subtitle" datatype="html">
         <source>Demande, analyse d'impact, validation</source>
@@ -21041,8 +21417,8 @@ historique 12 mois</source>
         <target state="translated">内容</target>
       </trans-unit>
       <trans-unit id="documents.create.content-placeholder" datatype="html">
-        <source>Corps du document, ou laissez vide pour ne créer qu'une enveloppe.</source>
-        <target state="translated">文档正文，留空则仅创建一个外壳。</target>
+        <source>Résumé ou extrait du document (facultatif).</source>
+        <target state="translated">文档摘要或摘录（可选）。</target>
       </trans-unit>
       <trans-unit id="documents.create.created" datatype="html">
         <source>Document créé.</source>
@@ -21165,12 +21541,8 @@ historique 12 mois</source>
         <target state="translated">无法提交。</target>
       </trans-unit>
       <trans-unit id="documents.detail.submit-review-tooltip" datatype="html">
-        <source>Soumettre à revue</source>
-        <target state="translated">提交审阅</target>
-      </trans-unit>
-      <trans-unit id="documents.detail.submitted" datatype="html">
-        <source>Soumise à revue.</source>
-        <target state="translated">已提交审阅。</target>
+        <source>Soumettre à signature</source>
+        <target state="translated">提交签署</target>
       </trans-unit>
       <trans-unit id="documents.detail.versions-title" datatype="html">
         <source>Versions</source>
@@ -24404,6 +24776,810 @@ historique 12 mois</source>
         <source>Gage R&amp;R</source>
         <target state="translated">Gage R&amp;R</target>
       </trans-unit>
+      <trans-unit id="spc.gage-rr.eyebrow" datatype="html">
+        <source>SPC · Analyse du système de mesure</source>
+        <target state="translated">SPC · 测量系统分析</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.register.subtitle" datatype="html">
+        <source>Répétabilité et reproductibilité des moyens de mesure (AIAG MSA). Cliquez sur une ligne pour rouvrir l'étude.</source>
+        <target state="translated">测量器具的重复性与再现性（AIAG MSA）。点击一行即可重新打开研究。</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.register.new" datatype="html">
+        <source>Nouvelle étude R&amp;R</source>
+        <target state="translated">新建 R&amp;R 研究</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.register.kpi-total" datatype="html">
+        <source>Études R&amp;R</source>
+        <target state="translated">R&amp;R 研究</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.register.kpi-acceptable" datatype="html">
+        <source>Acceptables (%GRR &lt; 10 %)</source>
+        <target state="translated">可接受（%GRR &lt; 10%）</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.register.kpi-conditional" datatype="html">
+        <source>Sous conditions (10 – 30 %)</source>
+        <target state="translated">有条件（10 – 30%）</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.register.kpi-not-acceptable" datatype="html">
+        <source>Non acceptables (&gt; 30 %)</source>
+        <target state="translated">不可接受（&gt; 30%）</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.register.kpi-ndc" datatype="html">
+        <source>Discrimination insuffisante (ndc &lt; 5)</source>
+        <target state="translated">分辨力不足（ndc &lt; 5）</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.register.search" datatype="html">
+        <source>Rechercher : pièce, instrument, opérateur…</source>
+        <target state="translated">搜索：零件、量具、操作员…</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.register.filter-decision" datatype="html">
+        <source>Filtrer par décision</source>
+        <target state="translated">按判定筛选</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.register.all-decisions" datatype="html">
+        <source>Toutes les décisions</source>
+        <target state="translated">全部判定</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.register.load-failed" datatype="html">
+        <source>Le registre des études R&amp;R n'a pas pu être chargé.</source>
+        <target state="translated">无法加载 R&amp;R 研究登记册。</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.register.empty" datatype="html">
+        <source>Aucune étude R&amp;R pour le moment. Cliquez sur « Nouvelle étude R&amp;R » pour commencer.</source>
+        <target state="translated">尚无 R&amp;R 研究。点击“新建 R&amp;R 研究”开始。</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.register.legend" datatype="html">
+        <source>%GRR de la variation totale (méthode moyenne et étendue, AIAG) : vert sous 10 %, jaune de 10 à 30 %, rouge au-delà. Le liseré rouge signale un système de mesure non acceptable.</source>
+        <target state="translated">占总变差的 %GRR（均值极差法，AIAG）：低于 10% 为绿色，10% 至 30% 为黄色，高于 30% 为红色。红色边线表示测量系统不可接受。</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.register.delete-title" datatype="html">
+        <source>Supprimer l'étude R&amp;R <x id="part"/> ?</source>
+        <target state="translated">删除 R&amp;R 研究 <x id="part"/>？</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.register.delete-message" datatype="html">
+        <source>L'étude et ses mesures quittent le registre. La suppression est tracée dans le journal d'audit.</source>
+        <target state="translated">该研究及其测量值将从登记册中移除。删除操作会记入审计日志。</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.register.delete-failed" datatype="html">
+        <source>L'étude n'a pas pu être supprimée.</source>
+        <target state="translated">无法删除该研究。</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.instrument" datatype="html">
+        <source>Instrument</source>
+        <target state="translated">量具</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.responsible" datatype="html">
+        <source>Responsable</source>
+        <target state="translated">负责人</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.operators" datatype="html">
+        <source>Opérateurs</source>
+        <target state="translated">操作员</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.plan" datatype="html">
+        <source>Plan (k × n × r)</source>
+        <target state="translated">方案（k × n × r）</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.multiplier" datatype="html">
+        <source>Multiplicateur σ</source>
+        <target state="translated">σ 倍数</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.grr-tolerance" datatype="html">
+        <source>%GRR tolérance</source>
+        <target state="translated">%GRR 公差</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.decision" datatype="html">
+        <source>Décision</source>
+        <target state="translated">判定</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.quantity" datatype="html">
+        <source>Grandeur</source>
+        <target state="translated">量</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.formula" datatype="html">
+        <source>Formule</source>
+        <target state="translated">公式</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.application" datatype="html">
+        <source>Application numérique</source>
+        <target state="translated">数值计算</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.value" datatype="html">
+        <source>Valeur</source>
+        <target state="translated">值</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.constant" datatype="html">
+        <source>Constante</source>
+        <target state="translated">常数</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.role" datatype="html">
+        <source>Rôle</source>
+        <target state="translated">作用</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.read-for" datatype="html">
+        <source>Valeur lue pour…</source>
+        <target state="translated">取值依据…</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.source" datatype="html">
+        <source>Source de variation</source>
+        <target state="translated">变差来源</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.percent-total" datatype="html">
+        <source>% variation totale</source>
+        <target state="translated">% 总变差</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.percent-contribution" datatype="html">
+        <source>% contribution</source>
+        <target state="translated">% 贡献率</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.percent-tolerance" datatype="html">
+        <source>% tolérance</source>
+        <target state="translated">% 公差</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.indicator" datatype="html">
+        <source>Indicateur</source>
+        <target state="translated">指标</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.rule" datatype="html">
+        <source>Règle</source>
+        <target state="translated">规则</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.df" datatype="html">
+        <source>ddl</source>
+        <target state="translated">自由度</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.ss" datatype="html">
+        <source>Somme des carrés</source>
+        <target state="translated">平方和</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.ms" datatype="html">
+        <source>Carré moyen</source>
+        <target state="translated">均方</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.variance" datatype="html">
+        <source>Variance</source>
+        <target state="translated">方差</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.spread" datatype="html">
+        <source>Dispersion (<x id="MULTIPLIER"/> σ)</source>
+        <target state="translated">离散（<x id="MULTIPLIER"/> σ）</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.decision.acceptable" datatype="html">
+        <source>Acceptable</source>
+        <target state="translated">可接受</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.decision.conditional" datatype="html">
+        <source>Acceptable sous conditions</source>
+        <target state="translated">有条件可接受</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.decision.not-acceptable" datatype="html">
+        <source>Non acceptable</source>
+        <target state="translated">不可接受</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.ndc.sufficient" datatype="html">
+        <source>Discrimination suffisante</source>
+        <target state="translated">分辨力充分</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.ndc.insufficient" datatype="html">
+        <source>Discrimination insuffisante</source>
+        <target state="translated">分辨力不足</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.operator-n" datatype="html">
+        <source>Opérateur <x id="letter"/></source>
+        <target state="translated">操作员 <x id="letter"/></target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.anova.part" datatype="html">
+        <source>Pièces</source>
+        <target state="translated">零件</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.anova.operator" datatype="html">
+        <source>Opérateurs</source>
+        <target state="translated">操作员</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.anova.interaction" datatype="html">
+        <source>Interaction pièce × opérateur</source>
+        <target state="translated">零件 × 操作员交互作用</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.anova.repeatability" datatype="html">
+        <source>Répétabilité</source>
+        <target state="translated">重复性</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.anova.repeatability-pooled" datatype="html">
+        <source>Répétabilité (interaction regroupée)</source>
+        <target state="translated">重复性（合并交互作用）</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.anova.total" datatype="html">
+        <source>Total</source>
+        <target state="translated">合计</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.error.part" datatype="html">
+        <source>La référence de la pièce est obligatoire (120 caractères au plus).</source>
+        <target state="translated">零件编号为必填项（最多 120 个字符）。</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.error.date" datatype="html">
+        <source>La date de l'étude est obligatoire.</source>
+        <target state="translated">研究日期为必填项。</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.error.limits" datatype="html">
+        <source>La limite supérieure (USL) doit dépasser la limite inférieure (LSL).</source>
+        <target state="translated">上限（USL）必须大于下限（LSL）。</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.error.operators" datatype="html">
+        <source>Choisissez chaque opérateur dans l'annuaire, sans doublon.</source>
+        <target state="translated">请从通讯录中选择每位操作员，不得重复。</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.error.responsible" datatype="html">
+        <source>Le responsable choisi n'a pas pu être retrouvé dans l'annuaire.</source>
+        <target state="translated">在通讯录中找不到所选负责人。</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.error.plan" datatype="html">
+        <source>Le plan doit compter 2 ou 3 opérateurs, 2 à 10 pièces, 2 ou 3 essais, à 5,15 ou 6 σ.</source>
+        <target state="translated">方案须包含 2 或 3 名操作员、2 至 10 个零件、2 或 3 次试验，采用 5.15 或 6 σ。</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.error.measurements" datatype="html">
+        <source>Toutes les mesures de la grille sont obligatoires, et elles ne doivent pas être toutes identiques.</source>
+        <target state="translated">表格中的所有测量值均为必填项，且不能全部相同。</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.error.generic" datatype="html">
+        <source>Un champ de l'étude a été refusé : vérifiez la saisie.</source>
+        <target state="translated">研究的某个字段被拒绝：请检查输入。</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.read.ev" datatype="html">
+        <source>Répétabilité (EV) = <x id="ev"/>, soit <x id="pct"/> % de la variation totale : dispersion d'un même opérateur mesurant plusieurs fois la même pièce avec le même instrument.</source>
+        <target state="translated">重复性（EV）= <x id="ev"/>，占总变差的 <x id="pct"/>%：同一操作员用同一量具多次测量同一零件时的离散。</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.read.av" datatype="html">
+        <source>Reproductibilité (AV) = <x id="av"/>, soit <x id="pct"/> % : écart entre opérateurs (X̄diff = <x id="xdiff"/>).</source>
+        <target state="translated">再现性（AV）= <x id="av"/>，占 <x id="pct"/>%：操作员之间的差异（X̄diff = <x id="xdiff"/>）。</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.read.grr" datatype="html">
+        <source>GRR = <x id="grr"/> : <x id="pct"/> % de la variation totale et <x id="tol"/> % de la tolérance. Décision : <x id="decision"/>.</source>
+        <target state="translated">GRR = <x id="grr"/>：占总变差的 <x id="pct"/>%，占公差的 <x id="tol"/>%。判定：<x id="decision"/>。</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.read.ndc-ok" datatype="html">
+        <source>Le système distingue <x id="ndc"/> catégories de pièces (ndc). C'est suffisant pour piloter un procédé.</source>
+        <target state="translated">该系统可区分 <x id="ndc"/> 个零件类别（ndc），足以用于过程控制。</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.read.ndc-ko" datatype="html">
+        <source>Le système distingue <x id="ndc"/> catégories de pièces (ndc). C'est insuffisant : améliorer l'instrument ou la méthode.</source>
+        <target state="translated">该系统可区分 <x id="ndc"/> 个零件类别（ndc），不足：请改进量具或方法。</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.read.dominant-ev" datatype="html">
+        <source>Le poste dominant est la répétabilité (instrument ou méthode) : vérifier la résolution, la fixation de la pièce, l'état de l'instrument.</source>
+        <target state="translated">主要来源是重复性（量具或方法）：请检查分辨率、零件装夹和量具状态。</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.read.dominant-av" datatype="html">
+        <source>Le poste dominant est la reproductibilité (opérateurs) : harmoniser la méthode de mesure, former les opérateurs, vérifier la lisibilité de l'instrument.</source>
+        <target state="translated">主要来源是再现性（操作员）：请统一测量方法、培训操作员并检查量具的可读性。</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.chart.repeatability" datatype="html">
+        <source>Répétabilité (EV)</source>
+        <target state="translated">重复性（EV）</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.chart.reproducibility" datatype="html">
+        <source>Reproductibilité (AV)</source>
+        <target state="translated">再现性（AV）</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.chart.parts" datatype="html">
+        <source>Pièces (PV)</source>
+        <target state="translated">零件（PV）</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.chart.contribution" datatype="html">
+        <source>% contribution</source>
+        <target state="translated">% 贡献率</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.chart.total" datatype="html">
+        <source>% variation totale</source>
+        <target state="translated">% 总变差</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.chart.tolerance" datatype="html">
+        <source>% tolérance</source>
+        <target state="translated">% 公差</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.chart.part-mean" datatype="html">
+        <source>Moyenne pièce</source>
+        <target state="translated">零件均值</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.chart.part-axis" datatype="html">
+        <source>Pièce</source>
+        <target state="translated">零件</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.title-new" datatype="html">
+        <source>Nouvelle étude R&amp;R</source>
+        <target state="translated">新建 R&amp;R 研究</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.title-edit" datatype="html">
+        <source>Étude R&amp;R <x id="part"/></source>
+        <target state="translated">R&amp;R 研究 <x id="part"/></target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.subtitle" datatype="html">
+        <source>Répétabilité et reproductibilité, méthode moyenne et étendue puis ANOVA. Saisissez les mesures dans les cellules jaunes ; tout le reste se calcule.</source>
+        <target state="translated">重复性与再现性：先用均值极差法，再用 ANOVA。在黄色单元格中输入测量值，其余均自动计算。</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.back" datatype="html">
+        <source>Registre R&amp;R</source>
+        <target state="translated">R&amp;R 登记册</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.save" datatype="html">
+        <source>Enregistrer l'étude</source>
+        <target state="translated">保存研究</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.saved" datatype="html">
+        <source>Étude R&amp;R enregistrée.</source>
+        <target state="translated">R&amp;R 研究已保存。</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.save-failed" datatype="html">
+        <source>L'étude R&amp;R n'a pas pu être enregistrée.</source>
+        <target state="translated">无法保存 R&amp;R 研究。</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.load-failed" datatype="html">
+        <source>L'étude R&amp;R n'a pas pu être chargée.</source>
+        <target state="translated">无法加载 R&amp;R 研究。</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.not-found" datatype="html">
+        <source>Étude R&amp;R introuvable.</source>
+        <target state="translated">未找到 R&amp;R 研究。</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.read-only" datatype="html">
+        <source>Consultation seule : la saisie des études R&amp;R est réservée aux personnes qui en ont le droit.</source>
+        <target state="translated">仅可查看：仅有权限的人员可以录入 R&amp;R 研究。</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.identification" datatype="html">
+        <source>Identification et plan</source>
+        <target state="translated">标识与方案</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.characteristic" datatype="html">
+        <source>Caractéristique mesurée</source>
+        <target state="translated">测量特性</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.part-required" datatype="html">
+        <source>La référence de la pièce est obligatoire.</source>
+        <target state="translated">零件编号为必填项。</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.date-required" datatype="html">
+        <source>La date de l'étude est obligatoire.</source>
+        <target state="translated">研究日期为必填项。</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.lsl" datatype="html">
+        <source>LSL (limite inférieure)</source>
+        <target state="translated">LSL（下限）</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.lsl-required" datatype="html">
+        <source>La limite inférieure est obligatoire.</source>
+        <target state="translated">下限为必填项。</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.usl" datatype="html">
+        <source>USL (limite supérieure)</source>
+        <target state="translated">USL（上限）</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.usl-required" datatype="html">
+        <source>La limite supérieure est obligatoire.</source>
+        <target state="translated">上限为必填项。</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.tolerance" datatype="html">
+        <source>Tolérance (USL − LSL)</source>
+        <target state="translated">公差（USL − LSL）</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.operator-count" datatype="html">
+        <source>Opérateurs (k)</source>
+        <target state="translated">操作员（k）</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.part-count" datatype="html">
+        <source>Pièces (n)</source>
+        <target state="translated">零件（n）</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.trial-count" datatype="html">
+        <source>Essais (r)</source>
+        <target state="translated">试验（r）</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.measurements" datatype="html">
+        <source>Mesures — <x id="K"/> opérateurs × <x id="N"/> pièces × <x id="R"/> essais</source>
+        <target state="translated">测量值 — <x id="K"/> 名操作员 × <x id="N"/> 个零件 × <x id="R"/> 次试验</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.clear" datatype="html">
+        <source>Vider la grille</source>
+        <target state="translated">清空表格</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.grid-help" datatype="html">
+        <source>« Moyenne » : moyenne des essais d'un opérateur sur une pièce. « Étendue » : max − min de ces essais (sert à estimer la répétabilité). Un bloc copié depuis un tableur se colle d'un coup.</source>
+        <target state="translated">“均值”：某操作员对一个零件各次试验的平均值。“极差”：这些试验的最大值 − 最小值（用于估计重复性）。从电子表格复制的数据块可一次性粘贴。</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.part-no" datatype="html">
+        <source>Pièce n°</source>
+        <target state="translated">零件编号</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.part-mean" datatype="html">
+        <source>Moyenne pièce</source>
+        <target state="translated">零件均值</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.trial" datatype="html">
+        <source>Essai <x id="TRIAL"/></source>
+        <target state="translated">试验 <x id="TRIAL"/></target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.mean" datatype="html">
+        <source>Moyenne</source>
+        <target state="translated">均值</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.range" datatype="html">
+        <source>Étendue</source>
+        <target state="translated">极差</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.cell-aria" datatype="html">
+        <source><x id="operator"/>, pièce <x id="part"/>, essai <x id="trial"/></source>
+        <target state="translated"><x id="operator"/>，零件 <x id="part"/>，试验 <x id="trial"/></target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.waiting" datatype="html">
+        <source>Encore <x id="MISSING"/> mesure(s) à saisir avant le calcul.</source>
+        <target state="translated">计算前还需录入 <x id="MISSING"/> 个测量值。</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.no-spread" datatype="html">
+        <source>Toutes les mesures sont identiques : aucune variation à décomposer.</source>
+        <target state="translated">所有测量值均相同：没有可分解的变差。</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.summary" datatype="html">
+        <source>Synthèse de l'étude</source>
+        <target state="translated">研究摘要</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.interpretation" datatype="html">
+        <source>Interprétation</source>
+        <target state="translated">解读</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.example.load" datatype="html">
+        <source>Charger l'exemple</source>
+        <target state="translated">载入示例</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.example.confirm-title" datatype="html">
+        <source>Remplacer les mesures saisies ?</source>
+        <target state="translated">替换已录入的测量值？</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.example.confirm-message" datatype="html">
+        <source>L'exemple remplace l'identification, les limites, le plan et toutes les mesures de la grille. Rien n'est enregistré tant que vous n'enregistrez pas l'étude.</source>
+        <target state="translated">示例将替换标识、界限、方案以及表格中的所有测量值。在您保存研究之前不会保存任何内容。</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.kpi.grr" datatype="html">
+        <source>%GRR de la variation totale</source>
+        <target state="translated">占总变差的 %GRR</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.kpi.tolerance" datatype="html">
+        <source>%GRR de la tolérance</source>
+        <target state="translated">占公差的 %GRR</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.kpi.anova" datatype="html">
+        <source>%GRR selon l'ANOVA</source>
+        <target state="translated">ANOVA 计算的 %GRR</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.kpi.decision" datatype="html">
+        <source>Décision AIAG sur le %GRR</source>
+        <target state="translated">基于 %GRR 的 AIAG 判定</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step1.title" datatype="html">
+        <source>Étape 1 – Moyennes et étendues par opérateur</source>
+        <target state="translated">第 1 步 – 各操作员的均值与极差</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step1.xbar-formula" datatype="html">
+        <source>Moyenne des <x id="N"/> pièces</source>
+        <target state="translated"><x id="N"/> 个零件的均值</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step1.xdiff" datatype="html">
+        <source>X̄diff (écart entre opérateurs)</source>
+        <target state="translated">X̄diff（操作员之间的差异）</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step1.rbar-formula" datatype="html">
+        <source>Moyenne des <x id="N"/> étendues</source>
+        <target state="translated"><x id="N"/> 个极差的均值</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step1.rbarbar" datatype="html">
+        <source>R̄̄ (étendue moyenne)</source>
+        <target state="translated">R̄̄（平均极差）</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step1.rp" datatype="html">
+        <source>Rp (étendue des pièces)</source>
+        <target state="translated">Rp（零件极差）</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step1.rp-formula" datatype="html">
+        <source>max − min des moyennes pièces</source>
+        <target state="translated">零件均值的最大值 − 最小值</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step1.ucl" datatype="html">
+        <source>UCLR (limite de contrôle)</source>
+        <target state="translated">UCLR（控制限）</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step1.check" datatype="html">
+        <source>Contrôle des étendues</source>
+        <target state="translated">极差检查</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step1.check-rule" datatype="html">
+        <source>Aucune étendue ne doit dépasser UCLR</source>
+        <target state="translated">任何极差都不得超过 UCLR</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step1.check-ok" datatype="html">
+        <source>OK : aucune étendue hors limite</source>
+        <target state="translated">正常：没有极差超限</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step1.check-ko" datatype="html">
+        <source><x id="COUNT"/> étendue(s) au-dessus de UCLR : vérifier les mesures</source>
+        <target state="translated"><x id="COUNT"/> 个极差高于 UCLR：请检查测量值</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step2.title" datatype="html">
+        <source>Étape 2 – Constantes, ajustées au multiplicateur σ choisi</source>
+        <target state="translated">第 2 步 – 按所选 σ 倍数调整的常数</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step2.k1" datatype="html">
+        <source>Répétabilité</source>
+        <target state="translated">重复性</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step2.k2" datatype="html">
+        <source>Reproductibilité</source>
+        <target state="translated">再现性</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step2.d4" datatype="html">
+        <source>Limite des étendues</source>
+        <target state="translated">极差界限</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step2.k3" datatype="html">
+        <source>Variation pièces</source>
+        <target state="translated">零件变差</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step3.title" datatype="html">
+        <source>Étape 3 – Décomposition de la variation</source>
+        <target state="translated">第 3 步 – 变差分解</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step3.ev" datatype="html">
+        <source>EV – Répétabilité</source>
+        <target state="translated">EV – 重复性</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step3.av" datatype="html">
+        <source>AV – Reproductibilité</source>
+        <target state="translated">AV – 再现性</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step3.grr" datatype="html">
+        <source>GRR – Répétabilité et reproductibilité</source>
+        <target state="translated">GRR – 重复性与再现性</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step3.pv" datatype="html">
+        <source>PV – Variation entre pièces</source>
+        <target state="translated">PV – 零件间变差</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step3.tv" datatype="html">
+        <source>TV – Variation totale</source>
+        <target state="translated">TV – 总变差</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step3.note" datatype="html">
+        <source>Les « % variation totale » ne s'additionnent pas à 100 % (somme quadratique) ; les « % contribution », rapports de variances, s'additionnent : EV + AV + PV = 100 %.</source>
+        <target state="translated">“% 总变差”相加不等于 100%（平方和关系）；“% 贡献率”是方差之比，可以相加：EV + AV + PV = 100%。</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step4.title" datatype="html">
+        <source>Étape 4 – Indicateurs d'aptitude et conclusion</source>
+        <target state="translated">第 4 步 – 能力指标与结论</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step4.grr-total" datatype="html">
+        <source>%GRR (de la variation totale)</source>
+        <target state="translated">%GRR（占总变差）</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step4.grr-tolerance" datatype="html">
+        <source>%GRR (de la tolérance)</source>
+        <target state="translated">%GRR（占公差）</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step4.ndc" datatype="html">
+        <source>ndc (catégories distinctes)</source>
+        <target state="translated">ndc（可区分类别数）</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step4.ndc-rule" datatype="html">
+        <source>1,41 × PV / GRR, arrondi à l'entier inférieur</source>
+        <target state="translated">1.41 × PV / GRR，向下取整</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step4.decision-grr" datatype="html">
+        <source>Décision sur %GRR</source>
+        <target state="translated">%GRR 判定</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step4.decision-grr-rule" datatype="html">
+        <source>&lt; 10 % acceptable · 10 – 30 % sous conditions · &gt; 30 % non acceptable</source>
+        <target state="translated">&lt; 10% 可接受 · 10 – 30% 有条件 · &gt; 30% 不可接受</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step4.decision-ndc" datatype="html">
+        <source>Décision sur ndc</source>
+        <target state="translated">ndc 判定</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step4.decision-ndc-rule" datatype="html">
+        <source>ndc ≥ 5 : le système distingue assez de catégories</source>
+        <target state="translated">ndc ≥ 5：系统可区分足够多的类别</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.anova.title" datatype="html">
+        <source>ANOVA à deux facteurs avec interaction</source>
+        <target state="translated">含交互作用的双因素方差分析</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.anova.pooled" datatype="html">
+        <source>L'interaction pièce × opérateur n'est pas significative (p &gt; 0,25) : elle est regroupée avec la répétabilité.</source>
+        <target state="translated">零件 × 操作员交互作用不显著（p &gt; 0.25）：将其并入重复性。</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.anova.not-pooled" datatype="html">
+        <source>L'interaction pièce × opérateur est significative (p ≤ 0,25) : elle compte dans la reproductibilité.</source>
+        <target state="translated">零件 × 操作员交互作用显著（p ≤ 0.25）：计入再现性。</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.anova.full" datatype="html">
+        <source>Tableau d'ANOVA avec interaction</source>
+        <target state="translated">含交互作用的方差分析表</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.anova.pooled-table" datatype="html">
+        <source>Tableau d'ANOVA sans interaction (regroupée)</source>
+        <target state="translated">不含交互作用的方差分析表（已合并）</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.anova.components" datatype="html">
+        <source>Composantes de la variance</source>
+        <target state="translated">方差分量</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.anova.ev" datatype="html">
+        <source>Répétabilité (EV)</source>
+        <target state="translated">重复性（EV）</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.anova.av" datatype="html">
+        <source>Reproductibilité (AV)</source>
+        <target state="translated">再现性（AV）</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.anova.av-operator" datatype="html">
+        <source>dont opérateurs</source>
+        <target state="translated">其中操作员</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.anova.av-interaction" datatype="html">
+        <source>dont interaction</source>
+        <target state="translated">其中交互作用</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.anova.pv" datatype="html">
+        <source>Pièces (PV)</source>
+        <target state="translated">零件（PV）</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.anova.tv" datatype="html">
+        <source>Totale (TV)</source>
+        <target state="translated">总计（TV）</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.method.title" datatype="html">
+        <source>Comparaison des deux méthodes</source>
+        <target state="translated">两种方法的比较</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.method.col" datatype="html">
+        <source>Méthode</source>
+        <target state="translated">方法</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.method.average-range" datatype="html">
+        <source>Moyenne et étendue</source>
+        <target state="translated">均值极差法</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.method.anova" datatype="html">
+        <source>ANOVA</source>
+        <target state="translated">ANOVA</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.charts.title" datatype="html">
+        <source>Graphiques</source>
+        <target state="translated">图表</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.charts.components" datatype="html">
+        <source>Composantes de la variation</source>
+        <target state="translated">变差分量</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.charts.range" datatype="html">
+        <source>Carte R par opérateur (étendues et UCLR)</source>
+        <target state="translated">按操作员的 R 图（极差与 UCLR）</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.charts.mean" datatype="html">
+        <source>Carte X̄ par opérateur : un bon système a la plupart des points hors limites</source>
+        <target state="translated">按操作员的 X̄ 图：好的测量系统大部分点位于控制限之外</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.charts.by-part" datatype="html">
+        <source>Mesures par pièce : des traits parallèles disent des opérateurs cohérents</source>
+        <target state="translated">按零件的测量值：线条平行表示操作员之间一致</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.title" datatype="html">
+        <source>Guide de l'étude R&amp;R</source>
+        <target state="translated">R&amp;R 研究指南</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.show" datatype="html">
+        <source>Lire le guide</source>
+        <target state="translated">阅读指南</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.hide" datatype="html">
+        <source>Masquer le guide</source>
+        <target state="translated">隐藏指南</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.purpose-title" datatype="html">
+        <source>À quoi sert une étude R&amp;R ?</source>
+        <target state="translated">R&amp;R 研究有什么用？</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.purpose" datatype="html">
+        <source>Savoir quelle part de la variation observée vient du système de mesure (instrument et opérateurs) et non des pièces. Si le système de mesure varie trop, on ne peut ni juger ni piloter le procédé : les Cp et Cpk sont faussés.</source>
+        <target state="translated">了解观测到的变差中有多少来自测量系统（量具和操作员）而非零件。如果测量系统变差过大，就既无法判断也无法控制过程：Cp 和 Cpk 会失真。</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.plan-title" datatype="html">
+        <source>Réaliser l'étude (plan standard)</source>
+        <target state="translated">开展研究（标准方案）</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.plan-1" datatype="html">
+        <source>Choisir 10 pièces prises dans la production, couvrant toute l'étendue de la tolérance (de bonne à limite), numérotées en secret.</source>
+        <target state="translated">从生产中选取 10 个零件，覆盖整个公差范围（从良好到临界），并秘密编号。</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.plan-2" datatype="html">
+        <source>Choisir 3 opérateurs, ceux qui mesurent réellement en production, avec l'instrument habituel.</source>
+        <target state="translated">选取 3 名实际在生产中进行测量的操作员，使用常用量具。</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.plan-3" datatype="html">
+        <source>Mesurer 3 fois chaque pièce : chaque opérateur mesure les pièces dans un ordre aléatoire, sans voir ses résultats précédents ni ceux des autres.</source>
+        <target state="translated">每个零件测量 3 次：每位操作员按随机顺序测量，不得查看自己之前的结果或他人的结果。</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.plan-4" datatype="html">
+        <source>Saisir les mesures dans les cellules jaunes, ainsi que les limites LSL et USL.</source>
+        <target state="translated">在黄色单元格中输入测量值以及 LSL 和 USL 界限。</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.plan-5" datatype="html">
+        <source>Lire les résultats : méthode moyenne et étendue, puis ANOVA (EV, AV, GRR, PV, TV, %GRR, ndc, décision).</source>
+        <target state="translated">阅读结果：先看均值极差法，再看 ANOVA（EV、AV、GRR、PV、TV、%GRR、ndc、判定）。</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.terms-title" datatype="html">
+        <source>Signification des grandeurs</source>
+        <target state="translated">各量的含义</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.ev-term" datatype="html">
+        <source>EV – Répétabilité</source>
+        <target state="translated">EV – 重复性</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.ev" datatype="html">
+        <source>Variation d'un même opérateur mesurant la même pièce plusieurs fois (équipement). EV = R̄̄ × K1.</source>
+        <target state="translated">同一操作员多次测量同一零件时的变差（设备）。EV = R̄̄ × K1。</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.av-term" datatype="html">
+        <source>AV – Reproductibilité</source>
+        <target state="translated">AV – 再现性</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.av" datatype="html">
+        <source>Variation entre opérateurs (méthode, habileté). AV = √[(X̄diff × K2)² − EV²/(n × r)], ramenée à 0 si négative.</source>
+        <target state="translated">操作员之间的变差（方法、技能）。AV = √[(X̄diff × K2)² − EV²/(n × r)]，若为负则取 0。</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.grr" datatype="html">
+        <source>Variation du système de mesure : √(EV² + AV²).</source>
+        <target state="translated">测量系统的变差：√(EV² + AV²)。</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.pv-term" datatype="html">
+        <source>PV – Variation pièces</source>
+        <target state="translated">PV – 零件变差</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.pv" datatype="html">
+        <source>Variation réelle entre pièces : Rp × K3.</source>
+        <target state="translated">零件之间的实际变差：Rp × K3。</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.tv-term" datatype="html">
+        <source>TV – Variation totale</source>
+        <target state="translated">TV – 总变差</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.ndc" datatype="html">
+        <source>Nombre de catégories distinctes que le système sait séparer : 1,41 × PV / GRR, arrondi à l'entier inférieur.</source>
+        <target state="translated">系统能够区分的类别数：1.41 × PV / GRR，向下取整。</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.criteria-title" datatype="html">
+        <source>Critères d'acceptation (AIAG MSA)</source>
+        <target state="translated">接受准则（AIAG MSA）</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.criteria-ok" datatype="html">
+        <source>Système de mesure acceptable.</source>
+        <target state="translated">测量系统可接受。</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.criteria-warn" datatype="html">
+        <source>Acceptable sous conditions (importance de la mesure, coût de l'instrument, coût des réparations) : décision à justifier.</source>
+        <target state="translated">有条件可接受（测量的重要性、量具成本、维修成本）：需说明判定理由。</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.criteria-bad" datatype="html">
+        <source>Non acceptable : améliorer le système de mesure.</source>
+        <target state="translated">不可接受：请改进测量系统。</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.criteria-ndc" datatype="html">
+        <source>Discrimination suffisante. De 2 à 4 : information grossière, bonne pour un tri large mais pas pour des cartes de contrôle ni des Cp / Cpk. À 1, le système ne distingue rien.</source>
+        <target state="translated">分辨力充分。2 至 4：信息粗略，可用于粗分选，但不适用于控制图或 Cp / Cpk。为 1 时，系统无法区分任何差异。</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.methods-title" datatype="html">
+        <source>Deux méthodes, mêmes mesures</source>
+        <target state="translated">两种方法，同一组测量值</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.methods" datatype="html">
+        <source>La méthode moyenne et étendue est rapide ; l'ANOVA à deux facteurs, avec l'interaction pièce × opérateur, est la méthode de référence, plus précise. L'interaction est regroupée avec la répétabilité quand elle n'est pas significative (p &gt; 0,25). Les constantes K1, K2 et K3 valent pour 5,15 σ ; à 6 σ, elles sont mises à l'échelle (× 6 / 5,15).</source>
+        <target state="translated">均值极差法速度快；含零件 × 操作员交互作用的双因素方差分析是更精确的参考方法。交互作用不显著（p &gt; 0.25）时并入重复性。常数 K1、K2、K3 适用于 5.15 σ；采用 6 σ 时按比例缩放（× 6 / 5.15）。</target>
+      </trans-unit>
       <trans-unit id="authz.perm.spc-manage" datatype="html">
         <source>Saisir et supprimer les études de capabilité SPC</source>
         <target state="translated">录入和删除 SPC 能力研究</target>
@@ -24419,6 +25595,10 @@ historique 12 mois</source>
       <trans-unit id="spc.status.not-capable" datatype="html">
         <source>Non maîtrisé</source>
         <target state="translated">不受控</target>
+      </trans-unit>
+      <trans-unit id="spc.status.watch" datatype="html">
+        <source>À surveiller</source>
+        <target state="translated">需关注</target>
       </trans-unit>
       <trans-unit id="spc.col.part" datatype="html">
         <source>Référence pièce</source>
@@ -24569,8 +25749,8 @@ historique 12 mois</source>
         <target state="translated">清除筛选</target>
       </trans-unit>
       <trans-unit id="spc.register.legend" datatype="html">
-        <source>Cpk en vert : maîtrisé · en jaune : à surveiller · en rouge : non maîtrisé. Le liseré rouge signale une étude non maîtrisée sans plan d'actions.</source>
-        <target state="translated">Cpk 绿色：受控 · 黄色：需关注 · 红色：不受控。红色边线表示不受控且无行动计划的研究。</target>
+        <source>Statut et Cpk en vert : maîtrisé · en jaune : à surveiller · en rouge : non maîtrisé. Le liseré rouge signale une étude à surveiller ou non maîtrisée sans plan d'actions.</source>
+        <target state="translated">状态和 Cpk 绿色：受控 · 黄色：需关注 · 红色：不受控。红色边线表示需关注或不受控且无行动计划的研究。</target>
       </trans-unit>
       <trans-unit id="spc.study.title-new" datatype="html">
         <source>Nouvelle étude de capabilité</source>
@@ -24699,6 +25879,10 @@ historique 12 mois</source>
       <trans-unit id="spc.study.not-controlled" datatype="html">
         <source>Procédé non maîtrisé :</source>
         <target state="translated">过程不受控：</target>
+      </trans-unit>
+      <trans-unit id="spc.study.watch" datatype="html">
+        <source>Procédé à surveiller :</source>
+        <target state="translated">过程需关注：</target>
       </trans-unit>
       <trans-unit id="spc.study.yes" datatype="html">
         <source>OUI</source>

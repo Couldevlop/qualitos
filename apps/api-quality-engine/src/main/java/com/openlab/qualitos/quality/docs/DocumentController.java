@@ -108,21 +108,27 @@ public class DocumentController {
         return service.updateVersion(id, vid, req);
     }
 
+    /** La soumission désigne le circuit de signature : un à trois signataires, dans l'ordre (ADR 0099). */
     @PatchMapping("/{id}/versions/{vid}/submit")
     @RequiresPermission(Permission.DOCUMENT_SUBMIT)
-    public DocumentDto.VersionResponse submit(@PathVariable UUID id, @PathVariable UUID vid) {
-        return service.submitForReview(id, vid);
+    public DocumentDto.VersionResponse submit(@PathVariable UUID id, @PathVariable UUID vid,
+                                              @Valid @RequestBody DocumentDto.SubmitRequest req) {
+        return service.submitForReview(id, vid, req);
     }
 
+    /**
+     * Signer et refuser ne passent pas par un droit de rôle : la désignation fait
+     * le droit, et le service vérifie que c'est le tour de l'appelant (ADR 0099).
+     * Une version soumise avant le circuit de signature exige encore
+     * {@code document.approve}, vérifié par le service.
+     */
     @PatchMapping("/{id}/versions/{vid}/approve")
-    @RequiresPermission(Permission.DOCUMENT_APPROVE)
     public DocumentDto.VersionResponse approve(@PathVariable UUID id, @PathVariable UUID vid,
                                                @Valid @RequestBody DocumentDto.ApprovalRequest req) {
         return service.approveVersion(id, vid, req);
     }
 
     @PatchMapping("/{id}/versions/{vid}/reject")
-    @RequiresPermission(Permission.DOCUMENT_APPROVE)
     public DocumentDto.VersionResponse reject(@PathVariable UUID id, @PathVariable UUID vid,
                                               @Valid @RequestBody DocumentDto.RejectionRequest req) {
         return service.rejectVersion(id, vid, req);

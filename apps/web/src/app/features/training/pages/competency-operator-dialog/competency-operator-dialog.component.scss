@@ -1,0 +1,22 @@
+:host {
+  display: block;
+}
+
+.full {
+  display: block;
+  width: 100%;
+  margin-bottom: var(--qos-space-3);
+}
+
+.aide {
+  margin: 0 0 var(--qos-space-4);
+  max-width: 52ch;
+  font-size: var(--qos-fs-sm);
+  color: var(--qos-fg-secondary);
+}
+
+.erreur {
+  margin: 0;
+  font-size: var(--qos-fs-sm);
+  color: var(--qos-danger-fg);
+}

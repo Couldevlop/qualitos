@@ -26,7 +26,7 @@
     }
   }
 
-  // Le verdict : maîtrisé, ou non.
+  // Le statut : les trois couleurs du Cpk.
   .statut {
     display: inline-block;
     padding: 2px var(--qos-space-3);
@@ -38,6 +38,11 @@
     &--ok {
       background: var(--qos-success-bg-soft);
       color: var(--qos-success-fg);
+    }
+
+    &--warn {
+      background: var(--qos-warn-bg-soft);
+      color: var(--qos-warn-fg);
     }
 
     &--bad {
