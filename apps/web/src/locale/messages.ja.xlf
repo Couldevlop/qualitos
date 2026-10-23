@@ -17176,8 +17176,8 @@ historique 12 mois</source>
         <target state="translated">指定値</target>
       </trans-unit>
       <trans-unit id="spc.analyze.control-limits" datatype="html">
-        <source>Limites de contrôle (3σ)</source>
-        <target state="translated">管理限界 (3σ)</target>
+        <source>Limites de contrôle (± 3 sigmas)</source>
+        <target state="translated">管理限界（± 3 シグマ）</target>
       </trans-unit>
       <trans-unit id="spc.analyze.control-chart" datatype="html">
         <source>Carte de contrôle</source>

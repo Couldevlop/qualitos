@@ -191,6 +191,8 @@ export class SpcAnalyzeComponent implements OnInit {
     return {
       tooltip: { trigger: 'axis' },
       legend: { data: [measures, outOfControl], top: 0 },
+      // Place à droite pour les étiquettes UCL / CL / LCL, sinon coupées au bord du graphique.
+      grid: { left: 48, right: 96, top: 48, bottom: 40 },
       xAxis: { type: 'category', data: categories, name: $localize`:@@spc.analyze.chart-point:Point`, boundaryGap: false },
       yAxis: { type: 'value', name: $localize`:@@spc.analyze.chart-value:Valeur`, scale: true },
       series: [

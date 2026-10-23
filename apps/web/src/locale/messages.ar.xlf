@@ -17177,8 +17177,8 @@ historique 12 mois</source>
         <target state="translated">قيمة مُقدَّمة</target>
       </trans-unit>
       <trans-unit id="spc.analyze.control-limits" datatype="html">
-        <source>Limites de contrôle (3σ)</source>
-        <target state="translated">حدود التحكم (3σ)</target>
+        <source>Limites de contrôle (± 3 sigmas)</source>
+        <target state="translated">حدود التحكم (± 3 سيغما)</target>
       </trans-unit>
       <trans-unit id="spc.analyze.control-chart" datatype="html">
         <source>Carte de contrôle</source>

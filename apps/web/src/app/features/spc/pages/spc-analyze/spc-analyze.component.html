@@ -107,7 +107,7 @@
     </qos-kpi-card>
     <qos-kpi-card
       i18n-label="@@spc.analyze.control-limits"
-      label="Limites de contrôle (3σ)"
+      label="Limites de contrôle (± 3 sigmas)"
       [value]="(r.limits.lcl | number:'1.0-2') + ' … ' + (r.limits.ucl | number:'1.0-2')"
       state="neutral" icon="straighten"
       [description]="'σ = ' + (r.limits.sigma | number:'1.0-3')">

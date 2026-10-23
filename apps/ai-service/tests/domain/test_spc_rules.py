@@ -30,6 +30,7 @@ def test_rule1_point_beyond_3sigma():
     assert "NELSON_1" in _rules_fired(a)
     v = next(v for v in a.violations if v.rule == "NELSON_1")
     assert v.point_indices == [3]
+    assert v.description.startswith("Le point 4 ")  # rang humain, pas l'indice
     assert v.severity == "high"
 
 
