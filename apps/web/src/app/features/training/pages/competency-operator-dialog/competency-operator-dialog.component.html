@@ -1,0 +1,25 @@
+<qos-form-dialog
+  [title]="title"
+  [formGroup]="form"
+  [submitting]="submitting"
+  [submitDisabled]="form.invalid"
+  [submitLabel]="submitLabel"
+  submitIcon="person_add"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
+
+  <p class="aide" i18n="@@training.matrix.add-operator-help">Choisissez la personne dans l'annuaire, puis son atelier. Ses niveaux partent de « Non formé », ou reprennent ses évaluations existantes.</p>
+
+  <qos-user-picker class="full" formControlName="userId" required data-test="operateur-personne"
+                   [excludeIds]="data.excludeIds" (userSelected)="onPerson($event)"
+                   label="Opérateur" i18n-label="@@training.matrix.operator"></qos-user-picker>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@training.matrix.workshop">Atelier</mat-label>
+    <mat-select formControlName="workshop" required data-test="operateur-atelier">
+      <mat-option *ngFor="let w of data.workshops" [value]="w">{{ w }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <p class="erreur" *ngIf="error" role="alert" data-test="operateur-erreur">{{ error }}</p>
+</qos-form-dialog>

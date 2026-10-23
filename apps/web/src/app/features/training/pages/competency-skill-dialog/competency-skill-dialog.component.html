@@ -1,0 +1,35 @@
+<qos-form-dialog
+  [title]="title"
+  [formGroup]="form"
+  [submitting]="submitting"
+  [submitDisabled]="form.invalid"
+  [submitLabel]="submitLabel"
+  submitIcon="add"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
+
+  <p class="aide" i18n="@@training.matrix.add-skill-help">Une compétence déjà au catalogue sous ce nom est reprise avec ses évaluations. Le formateur est la personne qui transmettra la compétence quand elle passe à risque.</p>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@training.matrix.skill-name">Compétence</mat-label>
+    <input matInput formControlName="name" maxlength="200" required data-test="competence-nom"
+           placeholder="Ex. : Soudure orbitale" i18n-placeholder="@@training.matrix.skill-name-placeholder">
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@training.matrix.category">Catégorie</mat-label>
+    <input matInput formControlName="category" maxlength="64" required data-test="competence-categorie"
+           [matAutocomplete]="categories">
+    <mat-autocomplete #categories="matAutocomplete">
+      <mat-option *ngFor="let c of categoryOptions" [value]="c">{{ c }}</mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+
+  <qos-user-picker class="full" formControlName="trainerUserId" required data-test="competence-formateur"
+                   (userSelected)="onTrainer($event)"
+                   label="Formateur" i18n-label="@@training.matrix.trainer"
+                   hint="Obligatoire : qui forme sur cette compétence ?"
+                   i18n-hint="@@training.matrix.trainer-hint"></qos-user-picker>
+
+  <p class="erreur" *ngIf="error" role="alert" data-test="competence-erreur">{{ error }}</p>
+</qos-form-dialog>

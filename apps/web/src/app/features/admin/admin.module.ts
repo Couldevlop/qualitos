@@ -14,6 +14,7 @@ import { LicenseComponent } from './pages/license/license.component';
 import { MocSettingsComponent } from './pages/moc-settings/moc-settings.component';
 import { DocumentSettingsComponent } from './pages/document-settings/document-settings.component';
 import { SpcSettingsComponent } from './pages/spc-settings/spc-settings.component';
+import { CompetencyWorkshopsComponent } from './pages/competency-workshops/competency-workshops.component';
 import { RolesMatrixComponent } from './pages/roles-matrix/roles-matrix.component';
 import { TenantModulesComponent } from './pages/tenant-modules/tenant-modules.component';
 import { TenantTeamComponent } from './pages/tenant-team/tenant-team.component';
@@ -39,6 +40,8 @@ const routes: Routes = [
   { path: 'documents', component: DocumentSettingsComponent },
   // Les seuils de Cpk des études de capabilité SPC (ADR 0096).
   { path: 'spc', component: SpcSettingsComponent },
+  // Les ateliers de la matrice de compétences (ADR 0098).
+  { path: 'competences', component: CompetencyWorkshopsComponent },
   // La licence d'une installation on-premise (ADR 0082).
   { path: 'licence', component: LicenseComponent },
   // Les clients de la plateforme et leur création (éditeur, ADR 0079).
@@ -71,7 +74,7 @@ const routes: Routes = [
 
 @NgModule({
   declarations: [TenantModulesComponent, TenantTeamComponent, RolesMatrixComponent, CircuitsComponent, ClientsComponent, LicenseComponent,
-    MocSettingsComponent, DocumentSettingsComponent, SpcSettingsComponent,
+    MocSettingsComponent, DocumentSettingsComponent, SpcSettingsComponent, CompetencyWorkshopsComponent,
     CredentialRevealComponent],
   // UserPickerModule : les titulaires des rôles MOC se choisissent dans l'annuaire (ADR 0091).
   imports: [SharedModule, UiModule, FormsModule, DragDropModule, MatMenuModule,

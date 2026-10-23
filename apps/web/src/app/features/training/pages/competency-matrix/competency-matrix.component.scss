@@ -1,143 +1,418 @@
-.page-head {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--qos-space-4);
-  align-items: flex-start;
-  justify-content: space-between;
+// La matrice de compétences : la maquette (« Matrice de compétences.html »),
+// traduite dans les jetons du design system pour suivre les thèmes clair et
+// sombre. Les cinq niveaux se dérivent des teintes d'état (avertissement pour le
+// débutant, succès pour l'autonomie) mélangées au fond de carte : ils suivent
+// donc le thème sans table de couleurs à part.
+
+:host {
+  display: block;
+
+  --mx-l0: var(--qos-bg-subtle);
+  --mx-l1: color-mix(in srgb, var(--qos-warn-fg) 20%, var(--qos-bg-elevated));
+  --mx-l2: color-mix(in srgb, var(--qos-success-fg) 24%, var(--qos-bg-elevated));
+  --mx-l3: color-mix(in srgb, var(--qos-success-fg) 52%, var(--qos-bg-elevated));
+  --mx-l4: var(--qos-success-fg);
+  --mx-l4-fg: var(--qos-bg-elevated);
+  --mx-case: 2.75rem;
+}
+
+// ---------- indicateurs ----------
+
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr));
+  gap: var(--qos-space-3);
   margin-bottom: var(--qos-space-5);
 }
 
-.subtitle {
-  margin: var(--qos-space-1) 0 0;
-  max-width: 60ch;
+.kpi {
+  padding: var(--qos-space-4);
+  border-radius: var(--qos-radius-lg);
+  background: var(--qos-bg-elevated);
+  border: 1px solid var(--qos-border-subtle);
+  box-shadow: var(--qos-shadow-xs);
+
+  b {
+    display: block;
+    font-family: var(--qos-font-mono);
+    font-size: var(--qos-fs-2xl);
+    font-weight: var(--qos-fw-semibold);
+    line-height: var(--qos-lh-snug);
+    color: var(--qos-fg-primary);
+  }
+
+  span {
+    font-size: var(--qos-fs-xs);
+    color: var(--qos-fg-secondary);
+  }
+
+  &--alerte b {
+    color: var(--qos-danger-fg);
+  }
+
+  &--ok b {
+    color: var(--qos-success-fg);
+  }
+}
+
+// ---------- filtres ----------
+
+.filtres {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--qos-space-3);
+  margin-bottom: var(--qos-space-4);
+
+  &__recherche {
+    flex: 1 1 16rem;
+    max-width: 24rem;
+  }
+
+  &__liste {
+    width: 13rem;
+  }
+}
+
+.bascule--on {
+  background: var(--qos-danger-bg-soft);
+  border-color: var(--qos-danger-fg);
+  color: var(--qos-danger-fg);
+}
+
+.echec {
+  display: flex;
+  align-items: center;
+  gap: var(--qos-space-2);
+  color: var(--qos-danger-fg);
+}
+
+// ---------- légende ----------
+
+.legende {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--qos-space-2) var(--qos-space-4);
+  margin: 0 0 var(--qos-space-4);
+  padding: 0;
+  list-style: none;
+  font-size: var(--qos-fs-xs);
+  color: var(--qos-fg-secondary);
+
+  li {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--qos-space-2);
+  }
+}
+
+.pastille {
+  display: inline-block;
+  width: 0.875rem;
+  height: 0.875rem;
+  border-radius: var(--qos-radius-sm);
+  border: 1px solid var(--qos-border-subtle);
+}
+
+// ---------- niveaux ----------
+
+.niveau-0 {
+  background: var(--mx-l0);
   color: var(--qos-fg-tertiary);
 }
 
-.matrix {
-  border-collapse: collapse;
-  width: max-content;
-  min-width: 100%;
+.niveau-1 {
+  background: var(--mx-l1);
+  color: var(--qos-fg-primary);
+}
+
+.niveau-2 {
+  background: var(--mx-l2);
+  color: var(--qos-fg-primary);
+}
+
+.niveau-3 {
+  background: var(--mx-l3);
+  color: var(--qos-fg-primary);
+}
+
+.niveau-4 {
+  background: var(--mx-l4);
+  color: var(--mx-l4-fg);
+}
+
+// ---------- panneau des risques ----------
+
+.risques {
+  margin-bottom: var(--qos-space-5);
+  padding: var(--qos-space-4) var(--qos-space-5);
+  border-radius: var(--qos-radius-lg);
+  background: var(--qos-bg-elevated);
+  border: 1px solid var(--qos-border-subtle);
+  border-left: 4px solid var(--qos-danger-fg);
+  box-shadow: var(--qos-shadow-xs);
+
+  &__titre {
+    margin: 0 0 var(--qos-space-2);
+    font-size: var(--qos-fs-sm);
+    font-weight: var(--qos-fw-semibold);
+    color: var(--qos-fg-primary);
+  }
+
+  &__liste {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__aucun {
+    margin: 0;
+    font-size: var(--qos-fs-sm);
+    color: var(--qos-success-fg);
+  }
+}
+
+.risque {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--qos-space-1) var(--qos-space-4);
+  padding: var(--qos-space-2) 0;
+  border-top: 1px solid var(--qos-border-subtle);
+  font-size: var(--qos-fs-sm);
+
+  &__nom {
+    flex: 1 1 14rem;
+    color: var(--qos-fg-primary);
+
+    small {
+      margin-left: var(--qos-space-1);
+      color: var(--qos-fg-tertiary);
+    }
+  }
+
+  &__formateur {
+    color: var(--qos-fg-secondary);
+  }
+
+  &__etat {
+    color: var(--qos-danger-fg);
+    font-weight: var(--qos-fw-medium);
+  }
+}
+
+.vide {
+  padding: var(--qos-space-8);
+  text-align: center;
+  color: var(--qos-fg-secondary);
+  border-radius: var(--qos-radius-lg);
+  border: 1px dashed var(--qos-border-subtle);
+}
+
+// ---------- tableau ----------
+
+// Le défilement horizontal reste DANS le tableau : la page, elle, ne déborde jamais.
+.tableau {
+  overflow-x: auto;
+  max-width: 100%;
+  border-radius: var(--qos-radius-lg);
+  background: var(--qos-bg-elevated);
+  border: 1px solid var(--qos-border-subtle);
+  box-shadow: var(--qos-shadow-sm);
+}
+
+.matrice {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  font-size: var(--qos-fs-sm);
 
   th,
   td {
-    padding: var(--qos-space-2) var(--qos-space-3);
-    border: 1px solid var(--qos-border-subtle);
-    text-align: left;
+    padding: 0;
+    text-align: center;
+    border-bottom: 1px solid var(--qos-border-subtle);
   }
 
   thead th {
     position: sticky;
     top: 0;
     z-index: 1;
-    background: var(--qos-bg-subtle);
-    font-weight: 600;
+    height: 10rem;
+    vertical-align: bottom;
+    background: var(--qos-bg-elevated);
+    font-size: var(--qos-fs-xs);
+    font-weight: var(--qos-fw-medium);
+    color: var(--qos-fg-secondary);
   }
 }
 
-/*
-  La colonne des compétences reste visible quand on fait défiler vers la droite :
-  une note sans son intitulé ne veut rien dire, et une matrice large se lit
-  forcément en défilant.
-*/
-.skill-col {
+// La première colonne reste visible en défilant : un niveau sans son opérateur ne veut rien dire.
+.nom {
   position: sticky;
   left: 0;
   z-index: 2;
-  min-width: 260px;
-  background: var(--qos-bg-default, #fff);
-}
+  min-width: 12rem;
+  padding: var(--qos-space-2) var(--qos-space-3) !important;
+  text-align: left !important;
+  background: var(--qos-bg-elevated);
+  border-right: 1px solid var(--qos-border-subtle);
+  font-weight: var(--qos-fw-medium);
+  color: var(--qos-fg-primary);
 
-thead .skill-col {
-  z-index: 3;
-}
-
-.person-col {
-  min-width: 110px;
-  max-width: 160px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.group-row th {
-  background: var(--qos-bg-subtle);
-  font-weight: 600;
-  color: var(--qos-fg-secondary);
-}
-
-.code {
-  display: block;
-  font-size: var(--qos-text-xs);
-  color: var(--qos-fg-tertiary);
-}
-
-.at-risk {
-  display: inline-block;
-  margin-top: var(--qos-space-1);
-  padding: 0 var(--qos-space-2);
-  border-radius: var(--qos-radius-sm);
-  background: var(--qos-danger, #b3261e);
-  color: #fff;
-  font-size: var(--qos-text-xs);
-}
-
-/*
-  Cinq paliers, du plus clair au plus soutenu. Le niveau zéro — évalué, non
-  acquis — se distingue du non-évalué : l'un est un constat, l'autre une absence
-  de constat, et les confondre accuserait des gens qu'on n'a jamais évalués.
-*/
-td {
-  text-align: center;
-  font-variant-numeric: tabular-nums;
-}
-
-.cell-none { background: var(--qos-bg-subtle); color: var(--qos-fg-tertiary); }
-.cell-l1 { background: color-mix(in srgb, var(--qos-accent, #3b6ea5) 12%, transparent); }
-.cell-l2 { background: color-mix(in srgb, var(--qos-accent, #3b6ea5) 26%, transparent); }
-.cell-l3 { background: color-mix(in srgb, var(--qos-accent, #3b6ea5) 42%, transparent); }
-.cell-l4 {
-  background: color-mix(in srgb, var(--qos-accent, #3b6ea5) 60%, transparent);
-  font-weight: 600;
-}
-
-.cell-unknown {
-  color: var(--qos-fg-tertiary);
-}
-
-.unknown {
-  color: var(--qos-fg-tertiary);
-}
-
-.legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--qos-space-3);
-  align-items: center;
-  margin-top: var(--qos-space-4);
-  font-size: var(--qos-text-xs);
-  color: var(--qos-fg-tertiary);
-}
-
-.legend-item {
-  display: inline-flex;
-  gap: var(--qos-space-1);
-  align-items: center;
-
-  span:first-child {
-    display: inline-flex;
-    width: 22px;
-    height: 22px;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid var(--qos-border-subtle);
-    border-radius: var(--qos-radius-sm);
+  small {
+    display: block;
+    font-size: var(--qos-fs-xs);
+    font-weight: var(--qos-fw-regular);
+    color: var(--qos-fg-tertiary);
   }
 }
 
-.empty {
-  padding: var(--qos-space-8) 0;
-  max-width: 70ch;
-  margin: 0 auto;
-  text-align: center;
+thead .nom {
+  z-index: 3;
+  vertical-align: bottom;
+}
+
+.nom__ligne {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--qos-space-2);
+}
+
+tfoot .nom {
+  font-size: var(--qos-fs-xs);
+  font-weight: var(--qos-fw-regular);
+  color: var(--qos-fg-secondary);
+}
+
+.competence {
+  min-width: var(--mx-case);
+
+  &__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    height: 100%;
+    gap: var(--qos-space-1);
+  }
+}
+
+// En-tête vertical, catégorie dessous : la maquette, lisible de bas en haut.
+.vertical {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  padding: var(--qos-space-2) var(--qos-space-1);
+  white-space: nowrap;
+  color: var(--qos-fg-primary);
+
+  small {
+    display: block;
+    font-size: 0.625rem;
+    color: var(--qos-fg-tertiary);
+  }
+}
+
+.retirer {
+  --mdc-icon-button-state-layer-size: 1.75rem;
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+  opacity: 0.45;
   color: var(--qos-fg-tertiary);
+
+  mat-icon {
+    font-size: 1rem;
+    width: 1rem;
+    height: 1rem;
+  }
+
+  &:hover,
+  &:focus-visible {
+    opacity: 1;
+    color: var(--qos-danger-fg);
+  }
+}
+
+.case {
+  width: var(--mx-case);
+  min-width: var(--mx-case);
+  height: var(--mx-case);
+  border-left: 1px solid var(--qos-bg-elevated);
+  font-family: var(--qos-font-mono);
+  font-weight: var(--qos-fw-semibold);
+
+  &__bouton,
+  &__lecture {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    min-height: var(--mx-case);
+  }
+
+  &__bouton {
+    appearance: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+    user-select: none;
+    transition: box-shadow 120ms ease;
+
+    &:hover {
+      box-shadow: inset 0 0 0 2px var(--qos-border-focus);
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: inset 0 0 0 3px var(--qos-border-focus);
+    }
+  }
+}
+
+.moyenne {
+  min-width: 4rem;
+  padding: 0 var(--qos-space-3) !important;
+  font-family: var(--qos-font-mono);
+  font-weight: var(--qos-fw-semibold);
+  color: var(--qos-fg-primary);
+}
+
+.pied {
+  padding: var(--qos-space-2) var(--qos-space-1) !important;
+  font-size: var(--qos-fs-xs);
+  color: var(--qos-fg-secondary);
+
+  &--risque {
+    color: var(--qos-danger-fg);
+    font-weight: var(--qos-fw-semibold);
+  }
+}
+
+// « Mettre en évidence les risques » : ce qui est couvert s'efface.
+.estompe {
+  opacity: 0.35;
+}
+
+.aucun {
+  padding: var(--qos-space-8) !important;
+  color: var(--qos-fg-secondary);
+}
+
+.note {
+  margin: var(--qos-space-3) 0 0;
+  font-size: var(--qos-fs-xs);
+  color: var(--qos-fg-tertiary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .case__bouton {
+    transition: none;
+  }
 }
