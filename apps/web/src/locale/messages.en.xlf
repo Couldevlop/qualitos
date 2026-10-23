@@ -17177,8 +17177,8 @@ declared income
         <target state="translated">Value provided</target>
       </trans-unit>
       <trans-unit id="spc.analyze.control-limits" datatype="html">
-        <source>Limites de contrôle (3σ)</source>
-        <target state="translated">Control limits (3σ)</target>
+        <source>Limites de contrôle (± 3 sigmas)</source>
+        <target state="translated">Control limits (± 3 sigmas)</target>
       </trans-unit>
       <trans-unit id="spc.analyze.control-chart" datatype="html">
         <source>Carte de contrôle</source>

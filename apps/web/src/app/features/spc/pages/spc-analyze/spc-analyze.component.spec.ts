@@ -20,6 +20,7 @@ describe('SpcAnalyzeComponent', () => {
   let component: SpcAnalyzeComponent;
   let spc: jasmine.SpyObj<SpcService>;
   const hote = (): HTMLElement => fixture.nativeElement as HTMLElement;
+  const texte0 = (): string => hote().textContent ?? '';
 
   const RESULTAT = (o: Partial<SpcAnalyzeResponse> = {}): SpcAnalyzeResponse => ({
     n: 11,
@@ -62,6 +63,8 @@ describe('SpcAnalyzeComponent', () => {
 
     expect(spc.analyze).toHaveBeenCalledWith(jasmine.objectContaining({ center: undefined, sigma: undefined }));
     expect(component.chartOption).not.toBeNull();
+    expect((component.chartOption as { grid: { right: number } }).grid.right).toBeGreaterThanOrEqual(90);
+    expect(texte0()).toContain('± 3 sigmas');
     const texte = hote().textContent!;
     expect(texte).toContain('Hors contrôle');
     expect(texte).toContain('3 règle(s) de Nelson déclenchée(s) · 11 points');

@@ -277,7 +277,7 @@ TRANSLATIONS = {
     'spc.analyze.center-line': ('Ligne centrale', 'Center line', 'Línea central', 'الخط المركزي', '中心線', '中心线'),
     'spc.analyze.center-estimated': ('Estimée depuis la série', 'Estimated from series', 'Estimada a partir de la serie', 'مُقدَّرة من السلسلة', '系列から推定', '由序列估算'),
     'spc.analyze.center-baseline': ('Valeur fournie', 'Value provided', 'Valor proporcionado', 'قيمة مُقدَّمة', '指定値', '已提供的值'),
-    'spc.analyze.control-limits': ('Limites de contrôle (3σ)', 'Control limits (3σ)', 'Límites de control (3σ)', 'حدود التحكم (3σ)', '管理限界 (3σ)', '控制限 (3σ)'),
+    'spc.analyze.control-limits': ('Limites de contrôle (± 3 sigmas)', 'Control limits (± 3 sigmas)', 'Límites de control (± 3 sigmas)', 'حدود التحكم (± 3 سيغما)', '管理限界（± 3 シグマ）', '控制限（± 3 西格玛）'),
     'spc.analyze.control-chart': ('Carte de contrôle', 'Control chart', 'Gráfico de control', 'مخطط التحكم', '管理図', '控制图'),
     'spc.analyze.nelson-rules': ('Règles de Nelson déclenchées', 'Triggered Nelson rules', 'Reglas de Nelson activadas', 'قواعد نيلسون المُفعَّلة', '発動したネルソンのルール', '触发的Nelson规则'),
     'spc.analyze.no-violation': ('Aucune règle déclenchée : le procédé est statistiquement maîtrisé.', 'No rule triggered: the process is statistically in control.', 'Ninguna regla activada: el proceso está estadísticamente bajo control.', 'لم تُفعَّل أي قاعدة: العملية مضبوطة إحصائياً.', 'ルールは発動していません：工程は統計的に管理されています。', '未触发任何规则：过程处于统计受控状态。'),
