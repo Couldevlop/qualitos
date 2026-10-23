@@ -23,6 +23,12 @@
   width: 100%;
 }
 
+// Le libellé flottant d'un champ « outline » monte de 7 px au-dessus du champ : sans marge,
+// il recouvrait l'indication du champ précédent (« Aucun KPI au catalogue »).
+.full + .full {
+  margin-top: var(--qos-space-4, 16px);
+}
+
 .baseline-hint {
   margin: 4px 0 8px;
   font-size: 0.82rem;
