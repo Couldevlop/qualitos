@@ -59,48 +59,70 @@ récidives imaginaires.
 
 ## Matrice de compétences
 
-### Ce qu'elle montre, et dans quel sens la lire
+> Décision : [ADR 0098](../../adr/0098-matrice-de-competences-editable.md).
 
-Compétences en lignes, groupées par famille. Collaborateurs en colonnes. Un
-niveau à l'intersection.
+### Ce qu'elle montre
 
-La lecture **en colonne** dit ce qu'une personne couvre. La lecture **en ligne**
-dit qui sait faire quoi — et c'est celle-là qui intéresse : une seule case remplie
-sur toute une rangée signale une compétence qui ne tient qu'à une personne. Ce
-n'est pas une donnée, c'est un risque d'organisation. La ligne porte alors la
-mention **« un seul détenteur »**, et l'interrupteur en haut de page ne garde que
-ces lignes-là.
+Opérateurs en lignes, rangés par atelier. Compétences en colonnes, chacune avec
+sa catégorie et son **formateur**. Un niveau à l'intersection :
 
-### Une case vide n'est pas un zéro
+| Niveau | Sens |
+| --- | --- |
+| 0 | Non formé |
+| 1 | Débutant |
+| 2 | Autonome |
+| 3 | Expert |
+| 4 | Formateur |
 
-- **Vide (—)** : cette personne n'a jamais été évaluée sur cette compétence. On
-  ne sait pas.
-- **0** : elle a été évaluée, et le niveau constaté est nul.
+La figure se lit **en colonne** : une compétence est **à risque** quand moins de
+deux personnes y sont autonomes (niveau 2 ou plus). Le pied de colonne compte les
+personnes autonomes et porte ⚠ sous ce seuil ; le panneau « Compétences à
+risque » dit qui la tient seule (« Seule personne autonome : … ») ou que
+personne ne la tient, et nomme le formateur vers qui se tourner. La bascule
+**Mettre en évidence les risques** estompe tout le reste.
 
-Les confondre reviendrait à affirmer une incompétence que personne n'a constatée.
-La distinction tient d'un bout à l'autre de la chaîne, jusqu'à la couleur de la
-case.
+En haut : opérateurs, compétences suivies, compétences à risque, compétences
+avec au moins un formateur (niveau 4). La colonne **Moy.** donne le niveau moyen
+de chaque opérateur sur les compétences affichées. On cherche un opérateur par
+son nom et on filtre par atelier ou par catégorie.
 
-### L'échelle
+### Changer un niveau
 
-Cinq niveaux, de 0 à 4 : *Aucun, Sensibilisé, Pratiquant, Autonome, Expert*. Les
-trames papier notent souvent de 1 à 5 ; afficher cette échelle-là supposerait de
-décaler les valeurs enregistrées, c'est-à-dire de montrer autre chose que ce que
-la plateforme détient.
+Cliquez sur une case : le niveau avance de 0 à 4, puis revient à 0. Au clavier,
+les flèches, Début et Fin passent d'une case à l'autre, Entrée ou Espace font
+tourner le niveau. Chaque niveau posé **est l'évaluation de compétence** de la
+personne : le dossier de formation affiche la même valeur, et l'écriture est
+tracée dans le journal d'audit. Si le serveur refuse, la case reprend sa valeur.
 
-### D'où viennent les colonnes
+Une case sans évaluation se lit « Non formé » : l'opérateur a été inscrit dans
+la matrice, il n'a pas encore été formé.
 
-Des **évaluations** : seules les personnes évaluées au moins une fois
-apparaissent. Le nom affiché est celui saisi au moment de l'évaluation — la
-plateforme n'a pas d'annuaire. À défaut, un identifiant abrégé tient lieu
-d'en-tête : illisible, mais moins trompeur qu'un nom inventé.
+### Ajouter et retirer
 
-Une réévaluation qui ne transmet pas le nom **n'efface pas** celui déjà connu.
+- **Opérateur** : une personne choisie dans l'annuaire, et son atelier. Ses
+  évaluations existantes la suivent.
+- **Compétence** : un intitulé, une catégorie et un **formateur obligatoire**,
+  choisi dans l'annuaire. Une compétence déjà au catalogue sous ce nom est
+  reprise avec ses évaluations.
+- **Retirer** (croix sur la ligne ou sur l'en-tête, après confirmation) ne
+  détruit rien : les évaluations restent au dossier de formation, la compétence
+  reste au catalogue.
+
+Ces actions demandent le droit **Tenir la matrice de compétences**
+(`training.manage`), donné par défaut à l'administrateur du client, au directeur
+qualité et au manager qualité. Les autres membres lisent la matrice.
+
+### Les ateliers
+
+L'administrateur du client règle la liste dans **Administration → Ateliers**
+(`/admin/competences`, ou le bouton « Ateliers » de la matrice) : ajouter,
+renommer, ordonner, retirer, puis enregistrer. Sans réglage, la plateforme
+propose Usinage, Assemblage, Qualité, Maintenance. Retirer un atelier ne
+réaffecte personne : les opérateurs qui y sont rangés le gardent.
 
 ### Bonnes pratiques
 
-- **Classez vos compétences par famille.** Une matrice sans groupes se lit comme
-  une liste, et perd ce qui fait sa valeur : la comparaison au sein d'un métier.
-- **Évaluez à zéro quand c'est vrai.** Un zéro assumé vaut mieux qu'une case vide
-  qui laisse croire à un oubli.
-- **Regardez les lignes avant les colonnes.** Ce sont elles qui portent le risque.
+- **Visez deux autonomes par compétence**, et un formateur désigné qui puisse
+  les former.
+- **Regardez les colonnes rouges d'abord.** Ce sont elles qui portent le risque.
+- **Rangez vos compétences par catégorie** : le filtre et le tri s'en servent.

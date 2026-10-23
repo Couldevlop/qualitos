@@ -271,6 +271,15 @@ public class SecurityConfig {
                 // plateforme accorde pourtant spc.manage par défaut.
                 .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/api/v1/spc/studies/*")
                     .authenticated()
+                // Matrice de compétences (ADR 0098) : retirer un opérateur ou une
+                // compétence relève de l'action training.manage, vérifiée par
+                // @RequiresPermission. Même raison que pour les études SPC : la règle
+                // générique refuserait le directeur qualité, à qui la plateforme
+                // l'accorde. Un seul segment : aucune sous-ressource n'en profite.
+                .requestMatchers(org.springframework.http.HttpMethod.DELETE,
+                        "/api/v1/training/competencies/matrix/operators/*",
+                        "/api/v1/training/competencies/matrix/skills/*")
+                    .authenticated()
                 // Suppression générique de ressource qualité : Manager Qualité ou plus.
                 .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/api/v1/**")
                     .hasAnyRole("ADMIN", "ADMIN_TENANT", "SUPER_ADMIN", "QUALITY_MANAGER")
