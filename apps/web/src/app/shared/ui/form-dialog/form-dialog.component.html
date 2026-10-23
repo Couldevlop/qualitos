@@ -16,7 +16,7 @@
   -->
   <mat-dialog-actions>
     <p class="qfd-blocked" [class.qfd-blocked--pending]="pristine" *ngIf="blockedMessage" role="status">
-      <mat-icon aria-hidden="true">{{ pristine ? 'info_outline' : 'error_outline' }}</mat-icon>
+      <mat-icon aria-hidden="true">{{ pristine ? 'info' : 'error_outline' }}</mat-icon>
       <span>{{ blockedMessage }}</span>
     </p>
 
