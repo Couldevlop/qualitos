@@ -271,6 +271,9 @@ public class SecurityConfig {
                 // plateforme accorde pourtant spc.manage par défaut.
                 .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/api/v1/spc/studies/*")
                     .authenticated()
+                // Études Gage R&R (ADR 0097) : même règle, même action spc.manage.
+                .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/api/v1/spc/gage-rr/*")
+                    .authenticated()
                 // Suppression générique de ressource qualité : Manager Qualité ou plus.
                 .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/api/v1/**")
                     .hasAnyRole("ADMIN", "ADMIN_TENANT", "SUPER_ADMIN", "QUALITY_MANAGER")
