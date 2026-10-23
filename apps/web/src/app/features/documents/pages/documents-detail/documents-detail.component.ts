@@ -182,9 +182,16 @@ export class DocumentsDetailComponent implements OnInit {
     this.refresh$.next();
   }
 
-  /** Les versions qui demandent l'attention : celle en revue, et un brouillon revenu d'un refus. */
+  /**
+   * Les versions qui demandent l'attention : celle en revue, un brouillon revenu d'un refus,
+   * et la dernière version signée, dont les cartes gardent la trace des signatures.
+   */
   attention(d: DocumentResponse): DocumentVersionResponse[] {
-    return d.versions.filter(v => v.status === 'IN_REVIEW' || (v.status === 'DRAFT' && !!v.rejectionReason));
+    const open = d.versions.filter(v => v.status === 'IN_REVIEW' || (v.status === 'DRAFT' && !!v.rejectionReason));
+    const signed = d.versions
+      .filter(v => (v.status === 'APPROVED' || v.status === 'PUBLISHED') && !!v.signatories?.length)
+      .reduce<DocumentVersionResponse | null>((last, v) => !last || v.versionNumber > last.versionNumber ? v : last, null);
+    return signed ? [...open, signed] : open;
   }
 
   trackById(_i: number, v: DocumentVersionResponse): string {
@@ -195,7 +202,7 @@ export class DocumentsDetailComponent implements OnInit {
     const ref = this.dialog.open(ConfirmDialogComponent, {
       data: {
         title: 'Publier la version v' + v.versionNumber + ' ?',
-        message: $localize`:@@documents.detail.publish-confirm-message:La version actuellement publiée sera marquée OBSOLETE.`,
+        message: $localize`:@@documents.detail.publish-confirm-message:La version actuelle deviendra Obsolète.`,
         confirmLabel: $localize`:@@documents.detail.publish:Publier`,
         cancelLabel: $localize`:@@common.cancel:Annuler`,
         danger: false

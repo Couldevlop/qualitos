@@ -54,8 +54,13 @@ export function componentsOption(c: GageRrCalculationView): EChartsCoreOption {
   return {
     tooltip: { trigger: 'axis', valueFormatter: (v: unknown) => `${v} %` },
     legend: { top: 0 },
-    grid: { top: 36 },
-    xAxis: { type: 'category', data: categories },
+    grid: { top: 36, bottom: 48 },
+    // Les quatre libellés toujours affichés, coupés sur deux lignes : sinon ECharts
+    // en masquait un sur deux faute de place (EV et PV disparaissaient).
+    xAxis: {
+      type: 'category', data: categories,
+      axisLabel: { interval: 0, width: 96, overflow: 'break', lineHeight: 14 }
+    },
     yAxis: { type: 'value', axisLabel: { formatter: '{value} %' } },
     series
   };

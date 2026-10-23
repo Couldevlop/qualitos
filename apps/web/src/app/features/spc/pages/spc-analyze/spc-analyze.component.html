@@ -48,7 +48,8 @@
     <qos-panel i18n-title="@@spc.analyze.from-kpi-panel" title="Depuis un KPI" icon="monitoring" class="spc-input">
       <p class="baseline-hint" i18n="@@spc.analyze.from-kpi-hint">Tire automatiquement les dernières mesures d'un KPI du catalogue.</p>
       <form [formGroup]="kpiForm" (ngSubmit)="analyzeKpi()">
-        <mat-form-field appearance="outline" class="full">
+        <!-- Sous-texte dynamique : l'indication « aucun KPI » prend sa place au lieu de chevaucher le champ suivant. -->
+        <mat-form-field appearance="outline" class="full" subscriptSizing="dynamic">
           <mat-label>KPI</mat-label>
           <mat-select formControlName="kpiId">
             <mat-option *ngFor="let k of kpis" [value]="k.id">{{ k.code }} — {{ k.name }}</mat-option>

@@ -858,20 +858,29 @@ TRANSLATIONS = {
     'spc.reading.dispersion': ('Dispersion :', 'Spread:', 'Dispersión:', 'التشتت:', 'ばらつき：', '离散：'),
     'spc.reading.of-tolerance': ('de la tolérance', 'of the tolerance', 'de la tolerancia', 'من التفاوت', '（公差比）', '（占公差）'),
     'spc.reading.tolerance': ('tolérance', 'tolerance', 'tolerancia', 'التفاوت', '公差', '公差'),
-    'spc.reading.centering': ('Centrage :', 'Centring:', 'Centrado:', 'التمركز:', '中心位置：', '对中：'),
-    'spc.reading.centered': ('centré', 'centred', 'centrado', 'متمركز', '中央', '居中'),
-    'spc.reading.off-center': ('décalé de', 'off by', 'desplazado un', 'منحرف بنسبة', 'ずれ', '偏移'),
+    'spc.reading.centering-centered': (
+        'Centrage : centré', 'Centring: centred', 'Centrado: centrado', 'التمركز: متمركز', '中心位置：中央', '对中：居中'),
+    'spc.reading.centering-off': (
+        'Centrage : décalé de {$PERCENT} %', 'Centring: off by {$PERCENT} %', 'Centrado: desplazado un {$PERCENT} %',
+        'التمركز: منحرف بنسبة {$PERCENT} %', '中心位置：{$PERCENT} % のずれ', '对中：偏移 {$PERCENT} %'),
     'spc.reading.centered-detail': (
         'La moyenne est au milieu de la tolérance.', 'The mean is in the middle of the tolerance.',
         'La media está en el centro de la tolerancia.', 'المتوسط في منتصف التفاوت.',
         '平均は公差の中央にあります。', '均值位于公差中间。'),
-    'spc.reading.mean': ('Moyenne', 'Mean', 'Media', 'المتوسط', '平均', '均值'),
-    'spc.reading.above': (
-        'au-dessus du milieu, vers la USL', 'above the middle, towards the USL', 'por encima del centro, hacia el USL',
-        'فوق المنتصف، نحو USL', '中央より上、USL 側', '高于中间值，偏向 USL'),
-    'spc.reading.below': (
-        'en dessous du milieu, vers la LSL', 'below the middle, towards the LSL', 'por debajo del centro, hacia el LSL',
-        'تحت المنتصف، نحو LSL', '中央より下、LSL 側', '低于中间值，偏向 LSL'),
+    'spc.reading.above-middle': (
+        'Moyenne {$GAP} au-dessus du milieu de la tolérance ({$MIDDLE}), vers la USL.',
+        'Mean {$GAP} above the middle of the tolerance ({$MIDDLE}), towards the USL.',
+        'Media {$GAP} por encima del centro de la tolerancia ({$MIDDLE}), hacia el USL.',
+        'المتوسط أعلى بمقدار {$GAP} من منتصف التفاوت ({$MIDDLE})، نحو USL.',
+        '平均は公差の中央（{$MIDDLE}）より {$GAP} 上、USL 側です。',
+        '均值比公差中间值（{$MIDDLE}）高 {$GAP}，偏向 USL。'),
+    'spc.reading.below-middle': (
+        'Moyenne {$GAP} en dessous du milieu de la tolérance ({$MIDDLE}), vers la LSL.',
+        'Mean {$GAP} below the middle of the tolerance ({$MIDDLE}), towards the LSL.',
+        'Media {$GAP} por debajo del centro de la tolerancia ({$MIDDLE}), hacia el LSL.',
+        'المتوسط أدنى بمقدار {$GAP} من منتصف التفاوت ({$MIDDLE})، نحو LSL.',
+        '平均は公差の中央（{$MIDDLE}）より {$GAP} 下、LSL 側です。',
+        '均值比公差中间值（{$MIDDLE}）低 {$GAP}，偏向 LSL。'),
     'spc.reading.reading': ('Lecture :', 'Reading:', 'Lectura:', 'القراءة:', '判定：', '解读：'),
     'spc.reading.capable': (
         'Le procédé est capable : la dispersion tient largement dans la tolérance et la moyenne est bien placée.',

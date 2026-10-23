@@ -21520,8 +21520,8 @@ historique 12 mois</source>
         <target state="translated">公開</target>
       </trans-unit>
       <trans-unit id="documents.detail.publish-confirm-message" datatype="html">
-        <source>La version actuellement publiée sera marquée OBSOLETE.</source>
-        <target state="translated">現在公開されているバージョンは OBSOLETE に設定されます。</target>
+        <source>La version actuelle deviendra Obsolète.</source>
+        <target state="translated">現行バージョンは廃止になります。</target>
       </trans-unit>
       <trans-unit id="documents.detail.publish-failed" datatype="html">
         <source>Publication impossible.</source>
@@ -21632,8 +21632,8 @@ historique 12 mois</source>
         <target state="translated">加えた変更内容を記述してください</target>
       </trans-unit>
       <trans-unit id="documents.version.subtitle" datatype="html">
-        <source>Workflow : DRAFT → IN_REVIEW → APPROVED → PUBLISHED. La précédente version publiée sera automatiquement marquée OBSOLETE à la publication.</source>
-        <target state="translated">ワークフロー：DRAFT → IN_REVIEW → APPROVED → PUBLISHED。公開時に、以前公開されていたバージョンは自動的に OBSOLETE に設定されます。</target>
+        <source>Parcours : Brouillon → En revue → Approuvée → Actuelle. À la publication, la version actuelle précédente devient Obsolète.</source>
+        <target state="translated">流れ：下書き → レビュー中 → 承認済み → 現行。公開すると、以前の現行バージョンは廃止になります。</target>
       </trans-unit>
       <trans-unit id="documents.version.uri-label" datatype="html">
         <source>URI / lien vers fichier externe</source>
@@ -26015,33 +26015,25 @@ historique 12 mois</source>
         <source>tolérance</source>
         <target state="translated">公差</target>
       </trans-unit>
-      <trans-unit id="spc.reading.centering" datatype="html">
-        <source>Centrage :</source>
-        <target state="translated">中心位置：</target>
+      <trans-unit id="spc.reading.centering-centered" datatype="html">
+        <source>Centrage : centré</source>
+        <target state="translated">中心位置：中央</target>
       </trans-unit>
-      <trans-unit id="spc.reading.centered" datatype="html">
-        <source>centré</source>
-        <target state="translated">中央</target>
-      </trans-unit>
-      <trans-unit id="spc.reading.off-center" datatype="html">
-        <source>décalé de</source>
-        <target state="translated">ずれ</target>
+      <trans-unit id="spc.reading.centering-off" datatype="html">
+        <source>Centrage : décalé de <x id="PERCENT"/> %</source>
+        <target state="translated">中心位置：<x id="PERCENT"/> % のずれ</target>
       </trans-unit>
       <trans-unit id="spc.reading.centered-detail" datatype="html">
         <source>La moyenne est au milieu de la tolérance.</source>
         <target state="translated">平均は公差の中央にあります。</target>
       </trans-unit>
-      <trans-unit id="spc.reading.mean" datatype="html">
-        <source>Moyenne</source>
-        <target state="translated">平均</target>
+      <trans-unit id="spc.reading.above-middle" datatype="html">
+        <source>Moyenne <x id="GAP"/> au-dessus du milieu de la tolérance (<x id="MIDDLE"/>), vers la USL.</source>
+        <target state="translated">平均は公差の中央（<x id="MIDDLE"/>）より <x id="GAP"/> 上、USL 側です。</target>
       </trans-unit>
-      <trans-unit id="spc.reading.above" datatype="html">
-        <source>au-dessus du milieu, vers la USL</source>
-        <target state="translated">中央より上、USL 側</target>
-      </trans-unit>
-      <trans-unit id="spc.reading.below" datatype="html">
-        <source>en dessous du milieu, vers la LSL</source>
-        <target state="translated">中央より下、LSL 側</target>
+      <trans-unit id="spc.reading.below-middle" datatype="html">
+        <source>Moyenne <x id="GAP"/> en dessous du milieu de la tolérance (<x id="MIDDLE"/>), vers la LSL.</source>
+        <target state="translated">平均は公差の中央（<x id="MIDDLE"/>）より <x id="GAP"/> 下、LSL 側です。</target>
       </trans-unit>
       <trans-unit id="spc.reading.reading" datatype="html">
         <source>Lecture :</source>

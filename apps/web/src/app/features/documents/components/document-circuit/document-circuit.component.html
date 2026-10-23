@@ -9,7 +9,7 @@
 </div>
 
 <!-- Le circuit de signature (ADR 0099) : une carte par signataire, comme la validation d'un MOC. -->
-<section class="circuit" *ngIf="signed && (inReview || rejected)" [attr.aria-labelledby]="'signature-' + version.id"
+<section class="circuit" *ngIf="signed && (inReview || rejected || signedOff)" [attr.aria-labelledby]="'signature-' + version.id"
          data-test="signature">
   <header class="circuit__entete">
     <h3 [id]="'signature-' + version.id" i18n="@@documents.signature.title">Circuit de signature de la version v{{ version.versionNumber // i18n(ph="number") }}</h3>

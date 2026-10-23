@@ -2,7 +2,7 @@ import { byPartOption, componentsOption, meanChartOption, rangeChartOption } fro
 import { GOLDEN_GRID, goldenCalculation } from './gage-rr.fixtures';
 
 type Series = { name: string; type: string; data: unknown[]; markLine?: { data: { yAxis: number }[] } };
-type Option = { series: Series[]; xAxis: { data: string[] } };
+type Option = { series: Series[]; xAxis: { data: string[]; axisLabel?: { interval?: number; overflow?: string } } };
 
 describe('gage-rr.charts', () => {
   const noms = ['Alice', 'Bruno', 'Chloé'];
@@ -10,6 +10,8 @@ describe('gage-rr.charts', () => {
   it('trace les composantes en pourcentage, avec les seuils de 10 % et 30 %', () => {
     const o = componentsOption(goldenCalculation()) as unknown as Option;
     expect(o.xAxis.data.length).toBe(4);
+    expect(o.xAxis.axisLabel?.interval).toBe(0);
+    expect(o.xAxis.axisLabel?.overflow).toBe('break');
     expect(o.series.length).toBe(3);
     expect(o.series[1].data[0]).toBe(21);
     expect(o.series[1].markLine!.data.map(d => d.yAxis)).toEqual([10, 30]);

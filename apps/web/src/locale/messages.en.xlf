@@ -21521,8 +21521,8 @@ declared income
         <target state="translated">Publish</target>
       </trans-unit>
       <trans-unit id="documents.detail.publish-confirm-message" datatype="html">
-        <source>La version actuellement publiée sera marquée OBSOLETE.</source>
-        <target state="translated">The currently published version will be marked OBSOLETE.</target>
+        <source>La version actuelle deviendra Obsolète.</source>
+        <target state="translated">The current version will become Obsolete.</target>
       </trans-unit>
       <trans-unit id="documents.detail.publish-failed" datatype="html">
         <source>Publication impossible.</source>
@@ -21633,8 +21633,8 @@ declared income
         <target state="translated">Describe the changes made</target>
       </trans-unit>
       <trans-unit id="documents.version.subtitle" datatype="html">
-        <source>Workflow : DRAFT → IN_REVIEW → APPROVED → PUBLISHED. La précédente version publiée sera automatiquement marquée OBSOLETE à la publication.</source>
-        <target state="translated">Workflow: DRAFT → IN_REVIEW → APPROVED → PUBLISHED. The previously published version will be automatically marked OBSOLETE upon publication.</target>
+        <source>Parcours : Brouillon → En revue → Approuvée → Actuelle. À la publication, la version actuelle précédente devient Obsolète.</source>
+        <target state="translated">Path: Draft → In review → Approved → Current. On publication, the previous current version becomes Obsolete.</target>
       </trans-unit>
       <trans-unit id="documents.version.uri-label" datatype="html">
         <source>URI / lien vers fichier externe</source>
@@ -26016,33 +26016,25 @@ declared income
         <source>tolérance</source>
         <target state="translated">tolerance</target>
       </trans-unit>
-      <trans-unit id="spc.reading.centering" datatype="html">
-        <source>Centrage :</source>
-        <target state="translated">Centring:</target>
+      <trans-unit id="spc.reading.centering-centered" datatype="html">
+        <source>Centrage : centré</source>
+        <target state="translated">Centring: centred</target>
       </trans-unit>
-      <trans-unit id="spc.reading.centered" datatype="html">
-        <source>centré</source>
-        <target state="translated">centred</target>
-      </trans-unit>
-      <trans-unit id="spc.reading.off-center" datatype="html">
-        <source>décalé de</source>
-        <target state="translated">off by</target>
+      <trans-unit id="spc.reading.centering-off" datatype="html">
+        <source>Centrage : décalé de <x id="PERCENT"/> %</source>
+        <target state="translated">Centring: off by <x id="PERCENT"/> %</target>
       </trans-unit>
       <trans-unit id="spc.reading.centered-detail" datatype="html">
         <source>La moyenne est au milieu de la tolérance.</source>
         <target state="translated">The mean is in the middle of the tolerance.</target>
       </trans-unit>
-      <trans-unit id="spc.reading.mean" datatype="html">
-        <source>Moyenne</source>
-        <target state="translated">Mean</target>
+      <trans-unit id="spc.reading.above-middle" datatype="html">
+        <source>Moyenne <x id="GAP"/> au-dessus du milieu de la tolérance (<x id="MIDDLE"/>), vers la USL.</source>
+        <target state="translated">Mean <x id="GAP"/> above the middle of the tolerance (<x id="MIDDLE"/>), towards the USL.</target>
       </trans-unit>
-      <trans-unit id="spc.reading.above" datatype="html">
-        <source>au-dessus du milieu, vers la USL</source>
-        <target state="translated">above the middle, towards the USL</target>
-      </trans-unit>
-      <trans-unit id="spc.reading.below" datatype="html">
-        <source>en dessous du milieu, vers la LSL</source>
-        <target state="translated">below the middle, towards the LSL</target>
+      <trans-unit id="spc.reading.below-middle" datatype="html">
+        <source>Moyenne <x id="GAP"/> en dessous du milieu de la tolérance (<x id="MIDDLE"/>), vers la LSL.</source>
+        <target state="translated">Mean <x id="GAP"/> below the middle of the tolerance (<x id="MIDDLE"/>), towards the LSL.</target>
       </trans-unit>
       <trans-unit id="spc.reading.reading" datatype="html">
         <source>Lecture :</source>

@@ -304,18 +304,12 @@
           <p>6 sigma = {{ rd.sixSigma | number: '1.1-1' }} · <ng-container i18n="@@spc.reading.tolerance">tolérance</ng-container> {{ rd.tolerance | number: '1.0-3' }}</p>
         </div>
         <div>
-          <b>
-            <ng-container i18n="@@spc.reading.centering">Centrage :</ng-container>
-            <ng-container *ngIf="rd.centered" i18n="@@spc.reading.centered">centré</ng-container>
-            <ng-container *ngIf="!rd.centered"><ng-container i18n="@@spc.reading.off-center">décalé de</ng-container> {{ rd.centeringPercent | number: '1.0-0' }} %</ng-container>
-          </b>
+          <!-- Des phrases entières : une phrase en morceaux perdait ses espaces et mêlait milieu et limite. -->
+          <b *ngIf="rd.centered" i18n="@@spc.reading.centering-centered">Centrage : centré</b>
+          <b *ngIf="!rd.centered" i18n="@@spc.reading.centering-off">Centrage : décalé de {{ rd.centeringPercent | number: '1.0-0' // i18n(ph="percent") }} %</b>
           <p *ngIf="rd.centered" i18n="@@spc.reading.centered-detail">La moyenne est au milieu de la tolérance.</p>
-          <p *ngIf="!rd.centered">
-            <ng-container i18n="@@spc.reading.mean">Moyenne</ng-container> {{ (rd.offset < 0 ? -rd.offset : rd.offset) | number: '1.1-2' }}
-            <ng-container *ngIf="rd.offset > 0" i18n="@@spc.reading.above">au-dessus du milieu, vers la USL</ng-container>
-            <ng-container *ngIf="rd.offset < 0" i18n="@@spc.reading.below">en dessous du milieu, vers la LSL</ng-container>
-            ({{ rd.middle | number: '1.0-3' }}).
-          </p>
+          <p *ngIf="!rd.centered && rd.offset > 0" i18n="@@spc.reading.above-middle">Moyenne {{ rd.offset | number: '1.1-2' // i18n(ph="gap") }} au-dessus du milieu de la tolérance ({{ rd.middle | number: '1.0-3' // i18n(ph="middle") }}), vers la USL.</p>
+          <p *ngIf="!rd.centered && rd.offset < 0" i18n="@@spc.reading.below-middle">Moyenne {{ -rd.offset | number: '1.1-2' // i18n(ph="gap") }} en dessous du milieu de la tolérance ({{ rd.middle | number: '1.0-3' // i18n(ph="middle") }}), vers la LSL.</p>
         </div>
         <div class="diagnostic" [class.diagnostic--ko]="!controlled" data-test="diagnostic">
           <b><ng-container i18n="@@spc.reading.reading">Lecture :</ng-container> Cp {{ num(calc.cp, 2) }} · Cpk {{ num(calc.cpk, 2) }}</b>
