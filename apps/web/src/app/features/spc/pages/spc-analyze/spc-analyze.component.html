@@ -1,6 +1,6 @@
 <div class="qos-page">
   <qos-page-header
-    eyebrow="DMAIC · Control"
+    eyebrow="DMAIC · Control" i18n-eyebrow="@@spc.analyze.eyebrow"
     i18n-title="@@spc.analyze.title"
     title="Détection d'anomalies SPC"
     i18n-subtitle="@@spc.analyze.subtitle"
@@ -17,26 +17,27 @@
                     placeholder="10.0, 10.2, 9.8, 10.1, …"></textarea>
         </mat-form-field>
 
-        <p class="baseline-hint" i18n="@@spc.analyze.baseline-hint">Baseline connue (optionnel) — sinon les limites sont estimées :</p>
+        <p class="baseline-hint" i18n="@@spc.analyze.baseline-hint">Ligne centrale et σ connus (facultatif). Laissés vides, ils sont estimés à partir de la série.</p>
         <div class="baseline-row">
           <mat-form-field appearance="outline">
-            <mat-label i18n="@@spc.analyze.center-label">Ligne centrale (center)</mat-label>
-            <input matInput type="number" formControlName="center" placeholder="auto">
+            <mat-label i18n="@@spc.analyze.center-label">Ligne centrale</mat-label>
+            <input matInput type="number" formControlName="center" placeholder="Estimée" i18n-placeholder="@@spc.analyze.auto-placeholder">
           </mat-form-field>
           <mat-form-field appearance="outline">
-            <mat-label i18n="@@spc.analyze.sigma-label">σ (sigma)</mat-label>
-            <input matInput type="number" formControlName="sigma" placeholder="auto" min="0">
+            <mat-label i18n="@@spc.analyze.sigma-label">Écart type σ</mat-label>
+            <input matInput type="number" formControlName="sigma" placeholder="Estimé" i18n-placeholder="@@spc.analyze.auto-placeholder-m" min="0">
           </mat-form-field>
         </div>
 
         <div class="actions">
-          <button mat-raised-button color="primary" type="submit" [disabled]="loading || form.invalid">
+          <button mat-flat-button color="primary" type="submit" [disabled]="loading || form.invalid">
             <mat-icon>insights</mat-icon>
             <span *ngIf="!loading" i18n="@@spc.analyze.analyze-series">Analyser la série</span>
             <span *ngIf="loading" i18n="@@spc.analyze.analyzing">Analyse…</span>
           </button>
-          <button mat-button type="button" (click)="loadExample()" [disabled]="loading">
-            <mat-icon>science</mat-icon> <span i18n="@@spc.analyze.example">Exemple</span>
+          <button mat-stroked-button type="button" (click)="loadExample()" [disabled]="loading">
+            <mat-icon>science</mat-icon>
+            <span i18n="@@spc.analyze.example">Exemple</span>
           </button>
         </div>
       </form>
@@ -50,7 +51,7 @@
       <form [formGroup]="kpiForm" (ngSubmit)="analyzeKpi()">
         <!-- Sous-texte dynamique : l'indication « aucun KPI » prend sa place au lieu de chevaucher le champ suivant. -->
         <mat-form-field appearance="outline" class="full" subscriptSizing="dynamic">
-          <mat-label>KPI</mat-label>
+          <mat-label i18n="@@spc.analyze.kpi-label">KPI</mat-label>
           <mat-select formControlName="kpiId">
             <mat-option *ngFor="let k of kpis" [value]="k.id">{{ k.code }} — {{ k.name }}</mat-option>
           </mat-select>
@@ -67,7 +68,7 @@
         </mat-checkbox>
 
         <div class="actions">
-          <button mat-raised-button color="primary" type="submit"
+          <button mat-flat-button color="primary" type="submit"
                   [disabled]="loading || kpiForm.invalid">
             <mat-icon>monitoring</mat-icon>
             <span *ngIf="!loading" i18n="@@spc.analyze.analyze-kpi">Analyser le KPI</span>
@@ -95,7 +96,7 @@
       [value]="r.outOfControl ? processStateValue(true) : processStateValue(false)"
       [state]="r.outOfControl ? 'bad' : 'good'"
       [icon]="r.outOfControl ? 'error' : 'verified'"
-      [description]="r.violations.length + ' règle(s) de Nelson déclenchée(s) · ' + r.n + ' points'">
+      [description]="stateDescription(r.violations.length, r.n)">
     </qos-kpi-card>
     <qos-kpi-card
       i18n-label="@@spc.analyze.center-line"
@@ -121,16 +122,17 @@
   <!-- Violations -->
   <qos-panel i18n-title="@@spc.analyze.nelson-rules" title="Règles de Nelson déclenchées" icon="rule" *ngIf="result as r">
     <p class="empty" *ngIf="r.violations.length === 0" i18n="@@spc.analyze.no-violation">
-      Aucune règle déclenchée : le procédé est statistiquement maîtrisé 🎉
+      Aucune règle déclenchée : le procédé est statistiquement maîtrisé.
     </p>
-    <table class="violations-table" *ngIf="r.violations.length">
+    <div class="table-scroll" *ngIf="r.violations.length">
+    <table class="violations-table">
       <thead>
         <tr><th i18n="@@spc.analyze.col-rule">Règle</th><th i18n="@@spc.analyze.col-severity">Sévérité</th><th i18n="@@spc.analyze.col-finding">Constat</th><th i18n="@@spc.analyze.col-points">Points concernés</th></tr>
       </thead>
       <tbody>
         <tr *ngFor="let v of r.violations">
           <td class="nowrap"><strong>{{ v.rule }}</strong><div class="v-title">{{ v.title }}</div></td>
-          <td><span class="sev" [ngClass]="severityClass(v.severity)">{{ v.severity }}</span></td>
+          <td><span class="sev" [ngClass]="severityClass(v.severity)">{{ severityLabel(v.severity) }}</span></td>
           <td>{{ v.description }}</td>
           <td class="pts">
             <span class="pt-chip" *ngFor="let i of v.pointIndices">#{{ i + 1 }}</span>
@@ -138,5 +140,6 @@
         </tr>
       </tbody>
     </table>
+    </div>
   </qos-panel>
 </div>

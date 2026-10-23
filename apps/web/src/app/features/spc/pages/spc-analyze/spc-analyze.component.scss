@@ -1,21 +1,19 @@
+// Détection d'anomalies SPC : la page suit la marge et le rythme communs (.qos-page,
+// styles.scss) ; ici, seulement ce qui lui est propre, en jetons du design system.
+
 :host {
   display: block;
 }
 
-.qos-page {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  padding: 8px 4px;
-}
-
+// La saisie à gauche, l'analyse d'un KPI à droite ; empilées quand la largeur manque.
 .spc-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.4fr) minmax(260px, 0.9fr);
-  gap: 20px;
+  grid-template-columns: minmax(0, 1.4fr) minmax(17rem, 0.9fr);
+  gap: var(--qos-space-5);
+  align-items: start;
 
   @media (max-width: 900px) {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
@@ -26,104 +24,123 @@
 // Le libellé flottant d'un champ « outline » monte de 7 px au-dessus du champ : sans marge,
 // il recouvrait l'indication du champ précédent (« Aucun KPI au catalogue »).
 .full + .full {
-  margin-top: var(--qos-space-4, 16px);
+  margin-top: var(--qos-space-4);
 }
 
 .baseline-hint {
-  margin: 4px 0 8px;
-  font-size: 0.82rem;
-  color: var(--qos-fg-secondary, #475569);
+  margin: 0 0 var(--qos-space-3);
+  font-size: var(--qos-fs-sm);
+  line-height: 1.5;
+  color: var(--qos-fg-secondary);
 }
 
 .baseline-row {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--qos-space-3);
+
+  @media (max-width: 480px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 .actions {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 12px;
-  margin-top: 8px;
-
-  mat-icon {
-    margin-right: 6px;
-  }
+  gap: var(--qos-space-3);
+  margin-top: var(--qos-space-3);
 }
 
 .error {
-  margin-top: 12px;
-  padding: 10px 12px;
-  border-radius: 8px;
-  background: rgba(220, 38, 38, 0.08);
-  color: #b91c1c;
-  font-size: 0.88rem;
-}
-
-/* Cartes de verdict : rangée pleine largeur (responsive). */
-.kpi-col {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-
-  @media (max-width: 760px) {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* Bannière contexte KPI + lien vers la CAPA ouverte. */
-.kpi-banner {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 14px;
-  border-radius: var(--qos-radius-md, 10px);
-  background: var(--qos-bg-subtle, rgba(37, 99, 235, 0.06));
-  border: 1px solid var(--qos-border-subtle, #e2e8f0);
-  font-size: 0.9rem;
-
-  .capa-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    margin-left: auto;
-    color: #b45309;
-    font-weight: 600;
-    text-decoration: none;
-
-    &:hover { text-decoration: underline; }
-    mat-icon { font-size: 18px; height: 18px; width: 18px; }
-  }
+  margin: var(--qos-space-3) 0 0;
+  padding: var(--qos-space-3) var(--qos-space-4);
+  border-radius: var(--qos-radius-md);
+  background: var(--qos-danger-bg-soft);
+  color: var(--qos-danger-fg);
+  font-size: var(--qos-fs-sm);
 }
 
 .capa-check {
   display: block;
-  margin: 4px 0 12px;
+  margin: var(--qos-space-3) 0 var(--qos-space-2);
+}
+
+// Verdict : trois cartes sur une rangée, empilées sur mobile.
+.kpi-col {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--qos-space-4);
+
+  @media (max-width: 760px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+// Contexte de l'analyse d'un KPI, et la CAPA ouverte s'il y en a une.
+.kpi-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--qos-space-2) var(--qos-space-3);
+  padding: var(--qos-space-3) var(--qos-space-4);
+  border-radius: var(--qos-radius-md);
+  background: var(--qos-bg-subtle);
+  border: 1px solid var(--qos-border-subtle);
+  font-size: var(--qos-fs-sm);
+
+  > mat-icon {
+    color: var(--qos-fg-secondary);
+  }
+
+  .capa-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--qos-space-1);
+    margin-left: auto;
+    color: var(--qos-warn-fg);
+    font-weight: var(--qos-fw-semibold);
+    text-decoration: none;
+
+    &:hover,
+    &:focus-visible { text-decoration: underline; }
+
+    mat-icon { font-size: 18px; height: 18px; width: 18px; }
+  }
 }
 
 .empty {
-  color: var(--qos-fg-secondary, #475569);
-  font-size: 0.92rem;
+  margin: 0;
+  color: var(--qos-fg-secondary);
+  font-size: var(--qos-fs-sm);
+}
+
+// Le tableau défile seul sur petit écran : la page, elle, ne déborde pas.
+.table-scroll {
+  overflow-x: auto;
 }
 
 .violations-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.88rem;
+  font-size: var(--qos-fs-sm);
 
   th {
     text-align: left;
-    font-weight: 600;
-    color: var(--qos-fg-secondary, #475569);
-    border-bottom: 1px solid var(--qos-border-subtle, #e2e8f0);
-    padding: 8px 10px;
+    font-weight: var(--qos-fw-semibold);
+    color: var(--qos-fg-secondary);
+    border-bottom: 1px solid var(--qos-border-subtle);
+    padding: var(--qos-space-2) var(--qos-space-3);
   }
 
   td {
-    padding: 10px;
-    border-bottom: 1px solid var(--qos-border-subtle, #e2e8f0);
+    padding: var(--qos-space-3);
+    border-bottom: 1px solid var(--qos-border-subtle);
     vertical-align: top;
+  }
+
+  tbody tr:last-child td {
+    border-bottom: 0;
   }
 
   .nowrap {
@@ -131,36 +148,36 @@
   }
 
   .v-title {
-    font-size: 0.78rem;
-    color: var(--qos-fg-secondary, #475569);
+    margin-top: var(--qos-space-1);
+    font-size: var(--qos-fs-xs);
+    color: var(--qos-fg-secondary);
   }
 }
 
+// Sévérité : la couleur de la gravité, comme partout ailleurs (danger, alerte, information).
 .sev {
   display: inline-block;
-  padding: 2px 10px;
-  border-radius: 999px;
-  font-size: 0.74rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
+  padding: 2px var(--qos-space-3);
+  border-radius: var(--qos-radius-pill);
+  font-size: var(--qos-fs-xs);
+  font-weight: var(--qos-fw-semibold);
 
-  &.sev-crit { background: rgba(220, 38, 38, 0.12); color: #b91c1c; }
-  &.sev-maj  { background: rgba(217, 119, 6, 0.14); color: #b45309; }
-  &.sev-min  { background: rgba(37, 99, 235, 0.12); color: #1d4ed8; }
+  &.sev-crit { background: var(--qos-danger-bg-soft); color: var(--qos-danger-fg); }
+  &.sev-maj  { background: var(--qos-warn-bg-soft); color: var(--qos-warn-fg); }
+  &.sev-min  { background: var(--qos-accent-bg-soft); color: var(--qos-accent-fg-soft); }
 }
 
 .pts {
-  max-width: 280px;
+  max-width: 18rem;
 }
 
 .pt-chip {
   display: inline-block;
-  margin: 2px 4px 2px 0;
-  padding: 1px 8px;
-  border-radius: 6px;
-  background: var(--qos-bg-subtle, #f1f5f9);
-  color: var(--qos-fg-primary, #0f172a);
+  margin: 2px var(--qos-space-1) 2px 0;
+  padding: 1px var(--qos-space-2);
+  border-radius: var(--qos-radius-sm);
+  background: var(--qos-bg-subtle);
+  color: var(--qos-fg-primary);
   font-variant-numeric: tabular-nums;
-  font-size: 0.78rem;
+  font-size: var(--qos-fs-xs);
 }
