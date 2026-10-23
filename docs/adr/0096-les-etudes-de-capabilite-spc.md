@@ -123,6 +123,9 @@ Le sous-menu « Gage R&R » est créé et mène à `/spc/gage-rr`, une page qui 
 porte que son titre. Son contenu (répétabilité et reproductibilité des moyens de
 mesure) fera l'objet d'une décision quand il sera spécifié.
 
+> Remplacé par l'ADR 0097 (les études Gage R&R) : la page porte désormais le
+> registre et les fiches d'étude R&R.
+
 ## Conséquences
 
 - La section « SPC » du menu regroupe « Cartes de contrôle » et « Gage R&R » ;

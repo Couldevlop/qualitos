@@ -24776,6 +24776,810 @@ historial de 12 meses</target>
         <source>Gage R&amp;R</source>
         <target state="translated">Gage R&amp;R</target>
       </trans-unit>
+      <trans-unit id="spc.gage-rr.eyebrow" datatype="html">
+        <source>SPC · Analyse du système de mesure</source>
+        <target state="translated">SPC · Análisis del sistema de medición</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.register.subtitle" datatype="html">
+        <source>Répétabilité et reproductibilité des moyens de mesure (AIAG MSA). Cliquez sur une ligne pour rouvrir l'étude.</source>
+        <target state="translated">Repetibilidad y reproducibilidad de los medios de medición (AIAG MSA). Haga clic en una fila para reabrir el estudio.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.register.new" datatype="html">
+        <source>Nouvelle étude R&amp;R</source>
+        <target state="translated">Nuevo estudio R&amp;R</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.register.kpi-total" datatype="html">
+        <source>Études R&amp;R</source>
+        <target state="translated">Estudios R&amp;R</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.register.kpi-acceptable" datatype="html">
+        <source>Acceptables (%GRR &lt; 10 %)</source>
+        <target state="translated">Aceptables (%GRR &lt; 10 %)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.register.kpi-conditional" datatype="html">
+        <source>Sous conditions (10 – 30 %)</source>
+        <target state="translated">Bajo condiciones (10 – 30 %)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.register.kpi-not-acceptable" datatype="html">
+        <source>Non acceptables (&gt; 30 %)</source>
+        <target state="translated">No aceptables (&gt; 30 %)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.register.kpi-ndc" datatype="html">
+        <source>Discrimination insuffisante (ndc &lt; 5)</source>
+        <target state="translated">Discriminación insuficiente (ndc &lt; 5)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.register.search" datatype="html">
+        <source>Rechercher : pièce, instrument, opérateur…</source>
+        <target state="translated">Buscar: pieza, instrumento, operador…</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.register.filter-decision" datatype="html">
+        <source>Filtrer par décision</source>
+        <target state="translated">Filtrar por decisión</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.register.all-decisions" datatype="html">
+        <source>Toutes les décisions</source>
+        <target state="translated">Todas las decisiones</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.register.load-failed" datatype="html">
+        <source>Le registre des études R&amp;R n'a pas pu être chargé.</source>
+        <target state="translated">No se pudo cargar el registro de estudios R&amp;R.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.register.empty" datatype="html">
+        <source>Aucune étude R&amp;R pour le moment. Cliquez sur « Nouvelle étude R&amp;R » pour commencer.</source>
+        <target state="translated">Todavía no hay estudios R&amp;R. Haga clic en «Nuevo estudio R&amp;R» para empezar.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.register.legend" datatype="html">
+        <source>%GRR de la variation totale (méthode moyenne et étendue, AIAG) : vert sous 10 %, jaune de 10 à 30 %, rouge au-delà. Le liseré rouge signale un système de mesure non acceptable.</source>
+        <target state="translated">%GRR de la variación total (método de promedio y rango, AIAG): verde por debajo del 10 %, amarillo del 10 al 30 %, rojo por encima. El borde rojo señala un sistema de medición no aceptable.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.register.delete-title" datatype="html">
+        <source>Supprimer l'étude R&amp;R <x id="part"/> ?</source>
+        <target state="translated">¿Eliminar el estudio R&amp;R <x id="part"/>?</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.register.delete-message" datatype="html">
+        <source>L'étude et ses mesures quittent le registre. La suppression est tracée dans le journal d'audit.</source>
+        <target state="translated">El estudio y sus mediciones salen del registro. La eliminación queda registrada en el registro de auditoría.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.register.delete-failed" datatype="html">
+        <source>L'étude n'a pas pu être supprimée.</source>
+        <target state="translated">No se pudo eliminar el estudio.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.instrument" datatype="html">
+        <source>Instrument</source>
+        <target state="translated">Instrumento</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.responsible" datatype="html">
+        <source>Responsable</source>
+        <target state="translated">Responsable</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.operators" datatype="html">
+        <source>Opérateurs</source>
+        <target state="translated">Operadores</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.plan" datatype="html">
+        <source>Plan (k × n × r)</source>
+        <target state="translated">Plan (k × n × r)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.multiplier" datatype="html">
+        <source>Multiplicateur σ</source>
+        <target state="translated">Multiplicador σ</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.grr-tolerance" datatype="html">
+        <source>%GRR tolérance</source>
+        <target state="translated">%GRR de tolerancia</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.decision" datatype="html">
+        <source>Décision</source>
+        <target state="translated">Decisión</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.quantity" datatype="html">
+        <source>Grandeur</source>
+        <target state="translated">Magnitud</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.formula" datatype="html">
+        <source>Formule</source>
+        <target state="translated">Fórmula</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.application" datatype="html">
+        <source>Application numérique</source>
+        <target state="translated">Aplicación numérica</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.value" datatype="html">
+        <source>Valeur</source>
+        <target state="translated">Valor</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.constant" datatype="html">
+        <source>Constante</source>
+        <target state="translated">Constante</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.role" datatype="html">
+        <source>Rôle</source>
+        <target state="translated">Función</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.read-for" datatype="html">
+        <source>Valeur lue pour…</source>
+        <target state="translated">Valor leído para…</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.source" datatype="html">
+        <source>Source de variation</source>
+        <target state="translated">Fuente de variación</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.percent-total" datatype="html">
+        <source>% variation totale</source>
+        <target state="translated">% variación total</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.percent-contribution" datatype="html">
+        <source>% contribution</source>
+        <target state="translated">% contribución</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.percent-tolerance" datatype="html">
+        <source>% tolérance</source>
+        <target state="translated">% tolerancia</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.indicator" datatype="html">
+        <source>Indicateur</source>
+        <target state="translated">Indicador</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.rule" datatype="html">
+        <source>Règle</source>
+        <target state="translated">Regla</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.df" datatype="html">
+        <source>ddl</source>
+        <target state="translated">gl</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.ss" datatype="html">
+        <source>Somme des carrés</source>
+        <target state="translated">Suma de cuadrados</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.ms" datatype="html">
+        <source>Carré moyen</source>
+        <target state="translated">Cuadrado medio</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.variance" datatype="html">
+        <source>Variance</source>
+        <target state="translated">Varianza</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.col.spread" datatype="html">
+        <source>Dispersion (<x id="MULTIPLIER"/> σ)</source>
+        <target state="translated">Dispersión (<x id="MULTIPLIER"/> σ)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.decision.acceptable" datatype="html">
+        <source>Acceptable</source>
+        <target state="translated">Aceptable</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.decision.conditional" datatype="html">
+        <source>Acceptable sous conditions</source>
+        <target state="translated">Aceptable bajo condiciones</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.decision.not-acceptable" datatype="html">
+        <source>Non acceptable</source>
+        <target state="translated">No aceptable</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.ndc.sufficient" datatype="html">
+        <source>Discrimination suffisante</source>
+        <target state="translated">Discriminación suficiente</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.ndc.insufficient" datatype="html">
+        <source>Discrimination insuffisante</source>
+        <target state="translated">Discriminación insuficiente</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.operator-n" datatype="html">
+        <source>Opérateur <x id="letter"/></source>
+        <target state="translated">Operador <x id="letter"/></target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.anova.part" datatype="html">
+        <source>Pièces</source>
+        <target state="translated">Piezas</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.anova.operator" datatype="html">
+        <source>Opérateurs</source>
+        <target state="translated">Operadores</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.anova.interaction" datatype="html">
+        <source>Interaction pièce × opérateur</source>
+        <target state="translated">Interacción pieza × operador</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.anova.repeatability" datatype="html">
+        <source>Répétabilité</source>
+        <target state="translated">Repetibilidad</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.anova.repeatability-pooled" datatype="html">
+        <source>Répétabilité (interaction regroupée)</source>
+        <target state="translated">Repetibilidad (interacción agrupada)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.anova.total" datatype="html">
+        <source>Total</source>
+        <target state="translated">Total</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.error.part" datatype="html">
+        <source>La référence de la pièce est obligatoire (120 caractères au plus).</source>
+        <target state="translated">La referencia de la pieza es obligatoria (120 caracteres como máximo).</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.error.date" datatype="html">
+        <source>La date de l'étude est obligatoire.</source>
+        <target state="translated">La fecha del estudio es obligatoria.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.error.limits" datatype="html">
+        <source>La limite supérieure (USL) doit dépasser la limite inférieure (LSL).</source>
+        <target state="translated">El límite superior (USL) debe superar el límite inferior (LSL).</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.error.operators" datatype="html">
+        <source>Choisissez chaque opérateur dans l'annuaire, sans doublon.</source>
+        <target state="translated">Elija cada operador en el directorio, sin duplicados.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.error.responsible" datatype="html">
+        <source>Le responsable choisi n'a pas pu être retrouvé dans l'annuaire.</source>
+        <target state="translated">No se encontró en el directorio al responsable elegido.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.error.plan" datatype="html">
+        <source>Le plan doit compter 2 ou 3 opérateurs, 2 à 10 pièces, 2 ou 3 essais, à 5,15 ou 6 σ.</source>
+        <target state="translated">El plan debe tener 2 o 3 operadores, de 2 a 10 piezas, 2 o 3 ensayos, a 5,15 o 6 σ.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.error.measurements" datatype="html">
+        <source>Toutes les mesures de la grille sont obligatoires, et elles ne doivent pas être toutes identiques.</source>
+        <target state="translated">Todas las mediciones de la tabla son obligatorias y no deben ser todas idénticas.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.error.generic" datatype="html">
+        <source>Un champ de l'étude a été refusé : vérifiez la saisie.</source>
+        <target state="translated">Se rechazó un campo del estudio: revise los datos introducidos.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.read.ev" datatype="html">
+        <source>Répétabilité (EV) = <x id="ev"/>, soit <x id="pct"/> % de la variation totale : dispersion d'un même opérateur mesurant plusieurs fois la même pièce avec le même instrument.</source>
+        <target state="translated">Repetibilidad (EV) = <x id="ev"/>, es decir, <x id="pct"/> % de la variación total: dispersión de un mismo operador que mide varias veces la misma pieza con el mismo instrumento.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.read.av" datatype="html">
+        <source>Reproductibilité (AV) = <x id="av"/>, soit <x id="pct"/> % : écart entre opérateurs (X̄diff = <x id="xdiff"/>).</source>
+        <target state="translated">Reproducibilidad (AV) = <x id="av"/>, es decir, <x id="pct"/> %: diferencia entre operadores (X̄diff = <x id="xdiff"/>).</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.read.grr" datatype="html">
+        <source>GRR = <x id="grr"/> : <x id="pct"/> % de la variation totale et <x id="tol"/> % de la tolérance. Décision : <x id="decision"/>.</source>
+        <target state="translated">GRR = <x id="grr"/>: <x id="pct"/> % de la variación total y <x id="tol"/> % de la tolerancia. Decisión: <x id="decision"/>.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.read.ndc-ok" datatype="html">
+        <source>Le système distingue <x id="ndc"/> catégories de pièces (ndc). C'est suffisant pour piloter un procédé.</source>
+        <target state="translated">El sistema distingue <x id="ndc"/> categorías de piezas (ndc). Es suficiente para controlar un proceso.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.read.ndc-ko" datatype="html">
+        <source>Le système distingue <x id="ndc"/> catégories de pièces (ndc). C'est insuffisant : améliorer l'instrument ou la méthode.</source>
+        <target state="translated">El sistema distingue <x id="ndc"/> categorías de piezas (ndc). Es insuficiente: mejore el instrumento o el método.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.read.dominant-ev" datatype="html">
+        <source>Le poste dominant est la répétabilité (instrument ou méthode) : vérifier la résolution, la fixation de la pièce, l'état de l'instrument.</source>
+        <target state="translated">La fuente dominante es la repetibilidad (instrumento o método): verifique la resolución, la sujeción de la pieza y el estado del instrumento.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.read.dominant-av" datatype="html">
+        <source>Le poste dominant est la reproductibilité (opérateurs) : harmoniser la méthode de mesure, former les opérateurs, vérifier la lisibilité de l'instrument.</source>
+        <target state="translated">La fuente dominante es la reproducibilidad (operadores): armonice el método de medición, forme a los operadores y verifique la legibilidad del instrumento.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.chart.repeatability" datatype="html">
+        <source>Répétabilité (EV)</source>
+        <target state="translated">Repetibilidad (EV)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.chart.reproducibility" datatype="html">
+        <source>Reproductibilité (AV)</source>
+        <target state="translated">Reproducibilidad (AV)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.chart.parts" datatype="html">
+        <source>Pièces (PV)</source>
+        <target state="translated">Piezas (PV)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.chart.contribution" datatype="html">
+        <source>% contribution</source>
+        <target state="translated">% contribución</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.chart.total" datatype="html">
+        <source>% variation totale</source>
+        <target state="translated">% variación total</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.chart.tolerance" datatype="html">
+        <source>% tolérance</source>
+        <target state="translated">% tolerancia</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.chart.part-mean" datatype="html">
+        <source>Moyenne pièce</source>
+        <target state="translated">Media de la pieza</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.chart.part-axis" datatype="html">
+        <source>Pièce</source>
+        <target state="translated">Pieza</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.title-new" datatype="html">
+        <source>Nouvelle étude R&amp;R</source>
+        <target state="translated">Nuevo estudio R&amp;R</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.title-edit" datatype="html">
+        <source>Étude R&amp;R <x id="part"/></source>
+        <target state="translated">Estudio R&amp;R <x id="part"/></target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.subtitle" datatype="html">
+        <source>Répétabilité et reproductibilité, méthode moyenne et étendue puis ANOVA. Saisissez les mesures dans les cellules jaunes ; tout le reste se calcule.</source>
+        <target state="translated">Repetibilidad y reproducibilidad, método de promedio y rango y luego ANOVA. Introduzca las mediciones en las celdas amarillas; todo lo demás se calcula.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.back" datatype="html">
+        <source>Registre R&amp;R</source>
+        <target state="translated">Registro R&amp;R</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.save" datatype="html">
+        <source>Enregistrer l'étude</source>
+        <target state="translated">Guardar el estudio</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.saved" datatype="html">
+        <source>Étude R&amp;R enregistrée.</source>
+        <target state="translated">Estudio R&amp;R guardado.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.save-failed" datatype="html">
+        <source>L'étude R&amp;R n'a pas pu être enregistrée.</source>
+        <target state="translated">No se pudo guardar el estudio R&amp;R.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.load-failed" datatype="html">
+        <source>L'étude R&amp;R n'a pas pu être chargée.</source>
+        <target state="translated">No se pudo cargar el estudio R&amp;R.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.not-found" datatype="html">
+        <source>Étude R&amp;R introuvable.</source>
+        <target state="translated">Estudio R&amp;R no encontrado.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.read-only" datatype="html">
+        <source>Consultation seule : la saisie des études R&amp;R est réservée aux personnes qui en ont le droit.</source>
+        <target state="translated">Solo consulta: el registro de estudios R&amp;R está reservado a las personas autorizadas.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.identification" datatype="html">
+        <source>Identification et plan</source>
+        <target state="translated">Identificación y plan</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.characteristic" datatype="html">
+        <source>Caractéristique mesurée</source>
+        <target state="translated">Característica medida</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.part-required" datatype="html">
+        <source>La référence de la pièce est obligatoire.</source>
+        <target state="translated">La referencia de la pieza es obligatoria.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.date-required" datatype="html">
+        <source>La date de l'étude est obligatoire.</source>
+        <target state="translated">La fecha del estudio es obligatoria.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.lsl" datatype="html">
+        <source>LSL (limite inférieure)</source>
+        <target state="translated">LSL (límite inferior)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.lsl-required" datatype="html">
+        <source>La limite inférieure est obligatoire.</source>
+        <target state="translated">El límite inferior es obligatorio.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.usl" datatype="html">
+        <source>USL (limite supérieure)</source>
+        <target state="translated">USL (límite superior)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.usl-required" datatype="html">
+        <source>La limite supérieure est obligatoire.</source>
+        <target state="translated">El límite superior es obligatorio.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.tolerance" datatype="html">
+        <source>Tolérance (USL − LSL)</source>
+        <target state="translated">Tolerancia (USL − LSL)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.operator-count" datatype="html">
+        <source>Opérateurs (k)</source>
+        <target state="translated">Operadores (k)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.part-count" datatype="html">
+        <source>Pièces (n)</source>
+        <target state="translated">Piezas (n)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.trial-count" datatype="html">
+        <source>Essais (r)</source>
+        <target state="translated">Ensayos (r)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.measurements" datatype="html">
+        <source>Mesures — <x id="K"/> opérateurs × <x id="N"/> pièces × <x id="R"/> essais</source>
+        <target state="translated">Mediciones — <x id="K"/> operadores × <x id="N"/> piezas × <x id="R"/> ensayos</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.clear" datatype="html">
+        <source>Vider la grille</source>
+        <target state="translated">Vaciar la tabla</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.grid-help" datatype="html">
+        <source>« Moyenne » : moyenne des essais d'un opérateur sur une pièce. « Étendue » : max − min de ces essais (sert à estimer la répétabilité). Un bloc copié depuis un tableur se colle d'un coup.</source>
+        <target state="translated">«Media»: media de los ensayos de un operador sobre una pieza. «Rango»: máx − mín de esos ensayos (sirve para estimar la repetibilidad). Un bloque copiado de una hoja de cálculo se pega de una vez.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.part-no" datatype="html">
+        <source>Pièce n°</source>
+        <target state="translated">Pieza n.º</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.part-mean" datatype="html">
+        <source>Moyenne pièce</source>
+        <target state="translated">Media de la pieza</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.trial" datatype="html">
+        <source>Essai <x id="TRIAL"/></source>
+        <target state="translated">Ensayo <x id="TRIAL"/></target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.mean" datatype="html">
+        <source>Moyenne</source>
+        <target state="translated">Media</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.range" datatype="html">
+        <source>Étendue</source>
+        <target state="translated">Rango</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.cell-aria" datatype="html">
+        <source><x id="operator"/>, pièce <x id="part"/>, essai <x id="trial"/></source>
+        <target state="translated"><x id="operator"/>, pieza <x id="part"/>, ensayo <x id="trial"/></target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.waiting" datatype="html">
+        <source>Encore <x id="MISSING"/> mesure(s) à saisir avant le calcul.</source>
+        <target state="translated">Faltan <x id="MISSING"/> medición(es) por introducir antes del cálculo.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.no-spread" datatype="html">
+        <source>Toutes les mesures sont identiques : aucune variation à décomposer.</source>
+        <target state="translated">Todas las mediciones son idénticas: no hay variación que descomponer.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.summary" datatype="html">
+        <source>Synthèse de l'étude</source>
+        <target state="translated">Resumen del estudio</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.study.interpretation" datatype="html">
+        <source>Interprétation</source>
+        <target state="translated">Interpretación</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.example.load" datatype="html">
+        <source>Charger l'exemple</source>
+        <target state="translated">Cargar el ejemplo</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.example.confirm-title" datatype="html">
+        <source>Remplacer les mesures saisies ?</source>
+        <target state="translated">¿Reemplazar las mediciones introducidas?</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.example.confirm-message" datatype="html">
+        <source>L'exemple remplace l'identification, les limites, le plan et toutes les mesures de la grille. Rien n'est enregistré tant que vous n'enregistrez pas l'étude.</source>
+        <target state="translated">El ejemplo reemplaza la identificación, los límites, el plan y todas las mediciones de la tabla. No se guarda nada hasta que guarde el estudio.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.kpi.grr" datatype="html">
+        <source>%GRR de la variation totale</source>
+        <target state="translated">%GRR de la variación total</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.kpi.tolerance" datatype="html">
+        <source>%GRR de la tolérance</source>
+        <target state="translated">%GRR de la tolerancia</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.kpi.anova" datatype="html">
+        <source>%GRR selon l'ANOVA</source>
+        <target state="translated">%GRR según el ANOVA</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.kpi.decision" datatype="html">
+        <source>Décision AIAG sur le %GRR</source>
+        <target state="translated">Decisión AIAG sobre el %GRR</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step1.title" datatype="html">
+        <source>Étape 1 – Moyennes et étendues par opérateur</source>
+        <target state="translated">Paso 1 – Medias y rangos por operador</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step1.xbar-formula" datatype="html">
+        <source>Moyenne des <x id="N"/> pièces</source>
+        <target state="translated">Media de las <x id="N"/> piezas</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step1.xdiff" datatype="html">
+        <source>X̄diff (écart entre opérateurs)</source>
+        <target state="translated">X̄diff (diferencia entre operadores)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step1.rbar-formula" datatype="html">
+        <source>Moyenne des <x id="N"/> étendues</source>
+        <target state="translated">Media de los <x id="N"/> rangos</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step1.rbarbar" datatype="html">
+        <source>R̄̄ (étendue moyenne)</source>
+        <target state="translated">R̄̄ (rango medio)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step1.rp" datatype="html">
+        <source>Rp (étendue des pièces)</source>
+        <target state="translated">Rp (rango de las piezas)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step1.rp-formula" datatype="html">
+        <source>max − min des moyennes pièces</source>
+        <target state="translated">máx − mín de las medias de las piezas</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step1.ucl" datatype="html">
+        <source>UCLR (limite de contrôle)</source>
+        <target state="translated">UCLR (límite de control)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step1.check" datatype="html">
+        <source>Contrôle des étendues</source>
+        <target state="translated">Control de los rangos</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step1.check-rule" datatype="html">
+        <source>Aucune étendue ne doit dépasser UCLR</source>
+        <target state="translated">Ningún rango debe superar UCLR</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step1.check-ok" datatype="html">
+        <source>OK : aucune étendue hors limite</source>
+        <target state="translated">OK: ningún rango fuera del límite</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step1.check-ko" datatype="html">
+        <source><x id="COUNT"/> étendue(s) au-dessus de UCLR : vérifier les mesures</source>
+        <target state="translated"><x id="COUNT"/> rango(s) por encima de UCLR: verifique las mediciones</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step2.title" datatype="html">
+        <source>Étape 2 – Constantes, ajustées au multiplicateur σ choisi</source>
+        <target state="translated">Paso 2 – Constantes, ajustadas al multiplicador σ elegido</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step2.k1" datatype="html">
+        <source>Répétabilité</source>
+        <target state="translated">Repetibilidad</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step2.k2" datatype="html">
+        <source>Reproductibilité</source>
+        <target state="translated">Reproducibilidad</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step2.d4" datatype="html">
+        <source>Limite des étendues</source>
+        <target state="translated">Límite de los rangos</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step2.k3" datatype="html">
+        <source>Variation pièces</source>
+        <target state="translated">Variación de las piezas</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step3.title" datatype="html">
+        <source>Étape 3 – Décomposition de la variation</source>
+        <target state="translated">Paso 3 – Descomposición de la variación</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step3.ev" datatype="html">
+        <source>EV – Répétabilité</source>
+        <target state="translated">EV – Repetibilidad</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step3.av" datatype="html">
+        <source>AV – Reproductibilité</source>
+        <target state="translated">AV – Reproducibilidad</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step3.grr" datatype="html">
+        <source>GRR – Répétabilité et reproductibilité</source>
+        <target state="translated">GRR – Repetibilidad y reproducibilidad</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step3.pv" datatype="html">
+        <source>PV – Variation entre pièces</source>
+        <target state="translated">PV – Variación entre piezas</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step3.tv" datatype="html">
+        <source>TV – Variation totale</source>
+        <target state="translated">TV – Variación total</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step3.note" datatype="html">
+        <source>Les « % variation totale » ne s'additionnent pas à 100 % (somme quadratique) ; les « % contribution », rapports de variances, s'additionnent : EV + AV + PV = 100 %.</source>
+        <target state="translated">Los «% variación total» no suman 100 % (suma cuadrática); los «% contribución», cocientes de varianzas, sí suman: EV + AV + PV = 100 %.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step4.title" datatype="html">
+        <source>Étape 4 – Indicateurs d'aptitude et conclusion</source>
+        <target state="translated">Paso 4 – Indicadores de aptitud y conclusión</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step4.grr-total" datatype="html">
+        <source>%GRR (de la variation totale)</source>
+        <target state="translated">%GRR (de la variación total)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step4.grr-tolerance" datatype="html">
+        <source>%GRR (de la tolérance)</source>
+        <target state="translated">%GRR (de la tolerancia)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step4.ndc" datatype="html">
+        <source>ndc (catégories distinctes)</source>
+        <target state="translated">ndc (categorías distintas)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step4.ndc-rule" datatype="html">
+        <source>1,41 × PV / GRR, arrondi à l'entier inférieur</source>
+        <target state="translated">1,41 × PV / GRR, redondeado hacia abajo</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step4.decision-grr" datatype="html">
+        <source>Décision sur %GRR</source>
+        <target state="translated">Decisión sobre el %GRR</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step4.decision-grr-rule" datatype="html">
+        <source>&lt; 10 % acceptable · 10 – 30 % sous conditions · &gt; 30 % non acceptable</source>
+        <target state="translated">&lt; 10 % aceptable · 10 – 30 % bajo condiciones · &gt; 30 % no aceptable</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step4.decision-ndc" datatype="html">
+        <source>Décision sur ndc</source>
+        <target state="translated">Decisión sobre el ndc</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.step4.decision-ndc-rule" datatype="html">
+        <source>ndc ≥ 5 : le système distingue assez de catégories</source>
+        <target state="translated">ndc ≥ 5: el sistema distingue suficientes categorías</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.anova.title" datatype="html">
+        <source>ANOVA à deux facteurs avec interaction</source>
+        <target state="translated">ANOVA de dos factores con interacción</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.anova.pooled" datatype="html">
+        <source>L'interaction pièce × opérateur n'est pas significative (p &gt; 0,25) : elle est regroupée avec la répétabilité.</source>
+        <target state="translated">La interacción pieza × operador no es significativa (p &gt; 0,25): se agrupa con la repetibilidad.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.anova.not-pooled" datatype="html">
+        <source>L'interaction pièce × opérateur est significative (p ≤ 0,25) : elle compte dans la reproductibilité.</source>
+        <target state="translated">La interacción pieza × operador es significativa (p ≤ 0,25): cuenta en la reproducibilidad.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.anova.full" datatype="html">
+        <source>Tableau d'ANOVA avec interaction</source>
+        <target state="translated">Tabla ANOVA con interacción</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.anova.pooled-table" datatype="html">
+        <source>Tableau d'ANOVA sans interaction (regroupée)</source>
+        <target state="translated">Tabla ANOVA sin interacción (agrupada)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.anova.components" datatype="html">
+        <source>Composantes de la variance</source>
+        <target state="translated">Componentes de la varianza</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.anova.ev" datatype="html">
+        <source>Répétabilité (EV)</source>
+        <target state="translated">Repetibilidad (EV)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.anova.av" datatype="html">
+        <source>Reproductibilité (AV)</source>
+        <target state="translated">Reproducibilidad (AV)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.anova.av-operator" datatype="html">
+        <source>dont opérateurs</source>
+        <target state="translated">de ella, operadores</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.anova.av-interaction" datatype="html">
+        <source>dont interaction</source>
+        <target state="translated">de ella, interacción</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.anova.pv" datatype="html">
+        <source>Pièces (PV)</source>
+        <target state="translated">Piezas (PV)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.anova.tv" datatype="html">
+        <source>Totale (TV)</source>
+        <target state="translated">Total (TV)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.method.title" datatype="html">
+        <source>Comparaison des deux méthodes</source>
+        <target state="translated">Comparación de los dos métodos</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.method.col" datatype="html">
+        <source>Méthode</source>
+        <target state="translated">Método</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.method.average-range" datatype="html">
+        <source>Moyenne et étendue</source>
+        <target state="translated">Promedio y rango</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.method.anova" datatype="html">
+        <source>ANOVA</source>
+        <target state="translated">ANOVA</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.charts.title" datatype="html">
+        <source>Graphiques</source>
+        <target state="translated">Gráficos</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.charts.components" datatype="html">
+        <source>Composantes de la variation</source>
+        <target state="translated">Componentes de la variación</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.charts.range" datatype="html">
+        <source>Carte R par opérateur (étendues et UCLR)</source>
+        <target state="translated">Gráfico R por operador (rangos y UCLR)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.charts.mean" datatype="html">
+        <source>Carte X̄ par opérateur : un bon système a la plupart des points hors limites</source>
+        <target state="translated">Gráfico X̄ por operador: un buen sistema tiene la mayoría de los puntos fuera de los límites</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.charts.by-part" datatype="html">
+        <source>Mesures par pièce : des traits parallèles disent des opérateurs cohérents</source>
+        <target state="translated">Mediciones por pieza: líneas paralelas indican operadores coherentes</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.title" datatype="html">
+        <source>Guide de l'étude R&amp;R</source>
+        <target state="translated">Guía del estudio R&amp;R</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.show" datatype="html">
+        <source>Lire le guide</source>
+        <target state="translated">Leer la guía</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.hide" datatype="html">
+        <source>Masquer le guide</source>
+        <target state="translated">Ocultar la guía</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.purpose-title" datatype="html">
+        <source>À quoi sert une étude R&amp;R ?</source>
+        <target state="translated">¿Para qué sirve un estudio R&amp;R?</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.purpose" datatype="html">
+        <source>Savoir quelle part de la variation observée vient du système de mesure (instrument et opérateurs) et non des pièces. Si le système de mesure varie trop, on ne peut ni juger ni piloter le procédé : les Cp et Cpk sont faussés.</source>
+        <target state="translated">Saber qué parte de la variación observada proviene del sistema de medición (instrumento y operadores) y no de las piezas. Si el sistema de medición varía demasiado, no se puede ni juzgar ni controlar el proceso: los Cp y Cpk quedan falseados.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.plan-title" datatype="html">
+        <source>Réaliser l'étude (plan standard)</source>
+        <target state="translated">Realizar el estudio (plan estándar)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.plan-1" datatype="html">
+        <source>Choisir 10 pièces prises dans la production, couvrant toute l'étendue de la tolérance (de bonne à limite), numérotées en secret.</source>
+        <target state="translated">Elegir 10 piezas tomadas de la producción que cubran todo el rango de tolerancia (de buenas a límite), numeradas en secreto.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.plan-2" datatype="html">
+        <source>Choisir 3 opérateurs, ceux qui mesurent réellement en production, avec l'instrument habituel.</source>
+        <target state="translated">Elegir 3 operadores, los que miden realmente en producción, con el instrumento habitual.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.plan-3" datatype="html">
+        <source>Mesurer 3 fois chaque pièce : chaque opérateur mesure les pièces dans un ordre aléatoire, sans voir ses résultats précédents ni ceux des autres.</source>
+        <target state="translated">Medir cada pieza 3 veces: cada operador mide las piezas en orden aleatorio, sin ver sus resultados anteriores ni los de los demás.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.plan-4" datatype="html">
+        <source>Saisir les mesures dans les cellules jaunes, ainsi que les limites LSL et USL.</source>
+        <target state="translated">Introducir las mediciones en las celdas amarillas, así como los límites LSL y USL.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.plan-5" datatype="html">
+        <source>Lire les résultats : méthode moyenne et étendue, puis ANOVA (EV, AV, GRR, PV, TV, %GRR, ndc, décision).</source>
+        <target state="translated">Leer los resultados: método de promedio y rango, luego ANOVA (EV, AV, GRR, PV, TV, %GRR, ndc, decisión).</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.terms-title" datatype="html">
+        <source>Signification des grandeurs</source>
+        <target state="translated">Significado de las magnitudes</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.ev-term" datatype="html">
+        <source>EV – Répétabilité</source>
+        <target state="translated">EV – Repetibilidad</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.ev" datatype="html">
+        <source>Variation d'un même opérateur mesurant la même pièce plusieurs fois (équipement). EV = R̄̄ × K1.</source>
+        <target state="translated">Variación de un mismo operador que mide la misma pieza varias veces (equipo). EV = R̄̄ × K1.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.av-term" datatype="html">
+        <source>AV – Reproductibilité</source>
+        <target state="translated">AV – Reproducibilidad</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.av" datatype="html">
+        <source>Variation entre opérateurs (méthode, habileté). AV = √[(X̄diff × K2)² − EV²/(n × r)], ramenée à 0 si négative.</source>
+        <target state="translated">Variación entre operadores (método, habilidad). AV = √[(X̄diff × K2)² − EV²/(n × r)], llevada a 0 si es negativa.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.grr" datatype="html">
+        <source>Variation du système de mesure : √(EV² + AV²).</source>
+        <target state="translated">Variación del sistema de medición: √(EV² + AV²).</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.pv-term" datatype="html">
+        <source>PV – Variation pièces</source>
+        <target state="translated">PV – Variación de las piezas</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.pv" datatype="html">
+        <source>Variation réelle entre pièces : Rp × K3.</source>
+        <target state="translated">Variación real entre piezas: Rp × K3.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.tv-term" datatype="html">
+        <source>TV – Variation totale</source>
+        <target state="translated">TV – Variación total</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.ndc" datatype="html">
+        <source>Nombre de catégories distinctes que le système sait séparer : 1,41 × PV / GRR, arrondi à l'entier inférieur.</source>
+        <target state="translated">Número de categorías distintas que el sistema sabe separar: 1,41 × PV / GRR, redondeado hacia abajo.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.criteria-title" datatype="html">
+        <source>Critères d'acceptation (AIAG MSA)</source>
+        <target state="translated">Criterios de aceptación (AIAG MSA)</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.criteria-ok" datatype="html">
+        <source>Système de mesure acceptable.</source>
+        <target state="translated">Sistema de medición aceptable.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.criteria-warn" datatype="html">
+        <source>Acceptable sous conditions (importance de la mesure, coût de l'instrument, coût des réparations) : décision à justifier.</source>
+        <target state="translated">Aceptable bajo condiciones (importancia de la medición, coste del instrumento, coste de las reparaciones): decisión que debe justificarse.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.criteria-bad" datatype="html">
+        <source>Non acceptable : améliorer le système de mesure.</source>
+        <target state="translated">No aceptable: mejore el sistema de medición.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.criteria-ndc" datatype="html">
+        <source>Discrimination suffisante. De 2 à 4 : information grossière, bonne pour un tri large mais pas pour des cartes de contrôle ni des Cp / Cpk. À 1, le système ne distingue rien.</source>
+        <target state="translated">Discriminación suficiente. De 2 a 4: información aproximada, válida para una clasificación amplia pero no para gráficos de control ni Cp / Cpk. Con 1, el sistema no distingue nada.</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.methods-title" datatype="html">
+        <source>Deux méthodes, mêmes mesures</source>
+        <target state="translated">Dos métodos, mismas mediciones</target>
+      </trans-unit>
+      <trans-unit id="spc.gage-rr.guide.methods" datatype="html">
+        <source>La méthode moyenne et étendue est rapide ; l'ANOVA à deux facteurs, avec l'interaction pièce × opérateur, est la méthode de référence, plus précise. L'interaction est regroupée avec la répétabilité quand elle n'est pas significative (p &gt; 0,25). Les constantes K1, K2 et K3 valent pour 5,15 σ ; à 6 σ, elles sont mises à l'échelle (× 6 / 5,15).</source>
+        <target state="translated">El método de promedio y rango es rápido; el ANOVA de dos factores, con la interacción pieza × operador, es el método de referencia, más preciso. La interacción se agrupa con la repetibilidad cuando no es significativa (p &gt; 0,25). Las constantes K1, K2 y K3 valen para 5,15 σ; a 6 σ se ajustan a escala (× 6 / 5,15).</target>
+      </trans-unit>
       <trans-unit id="authz.perm.spc-manage" datatype="html">
         <source>Saisir et supprimer les études de capabilité SPC</source>
         <target state="translated">Registrar y eliminar estudios de capacidad SPC</target>

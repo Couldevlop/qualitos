@@ -1,0 +1,574 @@
+<div class="qos-page">
+  <qos-page-header
+    eyebrow="SPC · Analyse du système de mesure" i18n-eyebrow="@@spc.gage-rr.eyebrow"
+    [title]="title"
+    subtitle="Répétabilité et reproductibilité, méthode moyenne et étendue puis ANOVA. Saisissez les mesures dans les cellules jaunes ; tout le reste se calcule."
+    i18n-subtitle="@@spc.gage-rr.study.subtitle">
+    <ng-container qosActions>
+      <button mat-stroked-button type="button" (click)="back()" data-test="retour">
+        <mat-icon>arrow_back</mat-icon>
+        <span i18n="@@spc.gage-rr.study.back">Registre R&amp;R</span>
+      </button>
+      <button mat-flat-button color="primary" type="button" *ngIf="canManage" (click)="save()"
+              [disabled]="saving || loading || failed" data-test="enregistrer">
+        <mat-icon>save</mat-icon>
+        <span i18n="@@spc.gage-rr.study.save">Enregistrer l'étude</span>
+      </button>
+    </ng-container>
+  </qos-page-header>
+
+  <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+
+  <p class="echec" *ngIf="failed" role="alert">
+    <span i18n="@@spc.gage-rr.study.load-failed">L'étude R&amp;R n'a pas pu être chargée.</span>
+    <button mat-button type="button" (click)="charger()" i18n="@@common.retry">Réessayer</button>
+  </p>
+
+  <p class="lecture-seule" *ngIf="!canManage" data-test="lecture-seule">
+    <mat-icon>visibility</mat-icon>
+    <span i18n="@@spc.gage-rr.study.read-only">Consultation seule : la saisie des études R&amp;R est réservée aux personnes qui en ont le droit.</span>
+  </p>
+
+  <p class="erreur" *ngIf="fieldError" role="alert" data-test="erreur-champ">
+    <mat-icon>error</mat-icon>
+    <span>{{ fieldError.message }}</span>
+  </p>
+
+  <ng-container *ngIf="!failed">
+    <!-- ---------- guide ---------- -->
+    <section class="bloc guide" aria-labelledby="titre-guide">
+      <div class="entete-bloc">
+        <h2 id="titre-guide" i18n="@@spc.gage-rr.guide.title">Guide de l'étude R&amp;R</h2>
+        <button mat-stroked-button type="button" (click)="toggleGuide()" [attr.aria-expanded]="showGuide"
+                aria-controls="panneau-guide" data-test="guide-bascule">
+          <mat-icon>menu_book</mat-icon>
+          <span *ngIf="showGuide" i18n="@@spc.gage-rr.guide.hide">Masquer le guide</span>
+          <span *ngIf="!showGuide" i18n="@@spc.gage-rr.guide.show">Lire le guide</span>
+        </button>
+      </div>
+      <div id="panneau-guide" class="guide__corps" *ngIf="showGuide" data-test="guide">
+        <h3 i18n="@@spc.gage-rr.guide.purpose-title">À quoi sert une étude R&amp;R ?</h3>
+        <p i18n="@@spc.gage-rr.guide.purpose">Savoir quelle part de la variation observée vient du système de mesure (instrument et opérateurs) et non des pièces. Si le système de mesure varie trop, on ne peut ni juger ni piloter le procédé : les Cp et Cpk sont faussés.</p>
+
+        <h3 i18n="@@spc.gage-rr.guide.plan-title">Réaliser l'étude (plan standard)</h3>
+        <ol>
+          <li i18n="@@spc.gage-rr.guide.plan-1">Choisir 10 pièces prises dans la production, couvrant toute l'étendue de la tolérance (de bonne à limite), numérotées en secret.</li>
+          <li i18n="@@spc.gage-rr.guide.plan-2">Choisir 3 opérateurs, ceux qui mesurent réellement en production, avec l'instrument habituel.</li>
+          <li i18n="@@spc.gage-rr.guide.plan-3">Mesurer 3 fois chaque pièce : chaque opérateur mesure les pièces dans un ordre aléatoire, sans voir ses résultats précédents ni ceux des autres.</li>
+          <li i18n="@@spc.gage-rr.guide.plan-4">Saisir les mesures dans les cellules jaunes, ainsi que les limites LSL et USL.</li>
+          <li i18n="@@spc.gage-rr.guide.plan-5">Lire les résultats : méthode moyenne et étendue, puis ANOVA (EV, AV, GRR, PV, TV, %GRR, ndc, décision).</li>
+        </ol>
+
+        <h3 i18n="@@spc.gage-rr.guide.terms-title">Signification des grandeurs</h3>
+        <dl class="guide__termes">
+          <dt i18n="@@spc.gage-rr.guide.ev-term">EV – Répétabilité</dt>
+          <dd i18n="@@spc.gage-rr.guide.ev">Variation d'un même opérateur mesurant la même pièce plusieurs fois (équipement). EV = R̄̄ × K1.</dd>
+          <dt i18n="@@spc.gage-rr.guide.av-term">AV – Reproductibilité</dt>
+          <dd i18n="@@spc.gage-rr.guide.av">Variation entre opérateurs (méthode, habileté). AV = √[(X̄diff × K2)² − EV²/(n × r)], ramenée à 0 si négative.</dd>
+          <dt>GRR</dt>
+          <dd i18n="@@spc.gage-rr.guide.grr">Variation du système de mesure : √(EV² + AV²).</dd>
+          <dt i18n="@@spc.gage-rr.guide.pv-term">PV – Variation pièces</dt>
+          <dd i18n="@@spc.gage-rr.guide.pv">Variation réelle entre pièces : Rp × K3.</dd>
+          <dt i18n="@@spc.gage-rr.guide.tv-term">TV – Variation totale</dt>
+          <dd>√(GRR² + PV²).</dd>
+          <dt>ndc</dt>
+          <dd i18n="@@spc.gage-rr.guide.ndc">Nombre de catégories distinctes que le système sait séparer : 1,41 × PV / GRR, arrondi à l'entier inférieur.</dd>
+        </dl>
+
+        <h3 i18n="@@spc.gage-rr.guide.criteria-title">Critères d'acceptation (AIAG MSA)</h3>
+        <ul>
+          <li><span class="pastille pastille--ok">%GRR &lt; 10 %</span> <span i18n="@@spc.gage-rr.guide.criteria-ok">Système de mesure acceptable.</span></li>
+          <li><span class="pastille pastille--warn">10 % ≤ %GRR ≤ 30 %</span> <span i18n="@@spc.gage-rr.guide.criteria-warn">Acceptable sous conditions (importance de la mesure, coût de l'instrument, coût des réparations) : décision à justifier.</span></li>
+          <li><span class="pastille pastille--bad">%GRR &gt; 30 %</span> <span i18n="@@spc.gage-rr.guide.criteria-bad">Non acceptable : améliorer le système de mesure.</span></li>
+          <li><span class="pastille pastille--ok">ndc ≥ 5</span> <span i18n="@@spc.gage-rr.guide.criteria-ndc">Discrimination suffisante. De 2 à 4 : information grossière, bonne pour un tri large mais pas pour des cartes de contrôle ni des Cp / Cpk. À 1, le système ne distingue rien.</span></li>
+        </ul>
+
+        <h3 i18n="@@spc.gage-rr.guide.methods-title">Deux méthodes, mêmes mesures</h3>
+        <p i18n="@@spc.gage-rr.guide.methods">La méthode moyenne et étendue est rapide ; l'ANOVA à deux facteurs, avec l'interaction pièce × opérateur, est la méthode de référence, plus précise. L'interaction est regroupée avec la répétabilité quand elle n'est pas significative (p &gt; 0,25). Les constantes K1, K2 et K3 valent pour 5,15 σ ; à 6 σ, elles sont mises à l'échelle (× 6 / 5,15).</p>
+      </div>
+    </section>
+
+    <!-- ---------- identification et plan ---------- -->
+    <section class="bloc" aria-labelledby="titre-identification">
+      <h2 id="titre-identification" i18n="@@spc.gage-rr.study.identification">Identification et plan</h2>
+      <form class="champs" [formGroup]="form" (ngSubmit)="save()">
+        <mat-form-field appearance="outline">
+          <mat-label i18n="@@spc.col.part">Référence pièce</mat-label>
+          <input matInput formControlName="partReference" maxlength="120" required data-test="piece">
+          <mat-error i18n="@@spc.gage-rr.study.part-required">La référence de la pièce est obligatoire.</mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label i18n="@@spc.gage-rr.study.characteristic">Caractéristique mesurée</mat-label>
+          <input matInput formControlName="characteristic" maxlength="150" data-test="caracteristique">
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label i18n="@@spc.gage-rr.col.instrument">Instrument</mat-label>
+          <input matInput formControlName="instrument" maxlength="150" data-test="instrument">
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label i18n="@@spc.col.date">Date</mat-label>
+          <input matInput type="date" formControlName="studyDate" required data-test="date">
+          <mat-error i18n="@@spc.gage-rr.study.date-required">La date de l'étude est obligatoire.</mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label i18n="@@spc.gage-rr.study.lsl">LSL (limite inférieure)</mat-label>
+          <input matInput type="number" step="any" formControlName="lsl" required data-test="lsl">
+          <mat-error i18n="@@spc.gage-rr.study.lsl-required">La limite inférieure est obligatoire.</mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label i18n="@@spc.gage-rr.study.usl">USL (limite supérieure)</mat-label>
+          <input matInput type="number" step="any" formControlName="usl" required data-test="usl">
+          <mat-error i18n="@@spc.gage-rr.study.usl-required">La limite supérieure est obligatoire.</mat-error>
+          <mat-hint class="hint-erreur" *ngIf="limitsInvalid" data-test="limites-invalides"
+                    i18n="@@spc.gage-rr.error.limits">La limite supérieure (USL) doit dépasser la limite inférieure (LSL).</mat-hint>
+          <mat-hint *ngIf="tolerance !== null" data-test="tolerance"><span i18n="@@spc.gage-rr.study.tolerance">Tolérance (USL − LSL)</span> : {{ num(tolerance) }}</mat-hint>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label i18n="@@spc.gage-rr.study.operator-count">Opérateurs (k)</mat-label>
+          <mat-select formControlName="operatorCount" data-test="k">
+            <mat-option *ngFor="let v of operatorCounts" [value]="v">{{ v }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label i18n="@@spc.gage-rr.study.part-count">Pièces (n)</mat-label>
+          <mat-select formControlName="partCount" data-test="n">
+            <mat-option *ngFor="let v of partCounts" [value]="v">{{ v }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label i18n="@@spc.gage-rr.study.trial-count">Essais (r)</mat-label>
+          <mat-select formControlName="trialCount" data-test="r">
+            <mat-option *ngFor="let v of trialCounts" [value]="v">{{ v }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label i18n="@@spc.gage-rr.col.multiplier">Multiplicateur σ</mat-label>
+          <mat-select formControlName="sigmaMultiplier" data-test="multiplicateur">
+            <mat-option *ngFor="let v of multipliers" [value]="v">{{ v }} σ</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <qos-user-picker formControlName="responsibleUserId" data-test="responsable"
+                         i18n-label="@@spc.gage-rr.col.responsible" label="Responsable"
+                         (userSelected)="onResponsible($event)"></qos-user-picker>
+        <ng-container *ngFor="let o of operators">
+          <qos-user-picker [formControlName]="operatorControls[o]" [attr.data-test]="'operateur-' + o"
+                           [label]="operatorName(o)" [excludeIds]="excludedFor(o)" required
+                           (userSelected)="onOperator(o, $event)"></qos-user-picker>
+        </ng-container>
+      </form>
+    </section>
+
+    <!-- ---------- mesures (onglet « Données ») ---------- -->
+    <section class="bloc" aria-labelledby="titre-mesures">
+      <div class="entete-bloc">
+        <h2 id="titre-mesures" i18n="@@spc.gage-rr.study.measurements">Mesures — {{ k // i18n(ph="k") }} opérateurs × {{ n // i18n(ph="n") }} pièces × {{ r // i18n(ph="r") }} essais</h2>
+        <div class="entete-bloc__actions" *ngIf="canManage">
+          <button mat-stroked-button type="button" (click)="loadExample()" data-test="exemple">
+            <mat-icon>dataset</mat-icon>
+            <span i18n="@@spc.gage-rr.example.load">Charger l'exemple</span>
+          </button>
+          <button mat-button type="button" (click)="clearMeasurements()" [disabled]="!hasMeasurements" data-test="vider">
+            <mat-icon>backspace</mat-icon>
+            <span i18n="@@spc.gage-rr.study.clear">Vider la grille</span>
+          </button>
+        </div>
+      </div>
+      <p class="aide" i18n="@@spc.gage-rr.study.grid-help">« Moyenne » : moyenne des essais d'un opérateur sur une pièce. « Étendue » : max − min de ces essais (sert à estimer la répétabilité). Un bloc copié depuis un tableur se colle d'un coup.</p>
+
+      <div class="defile">
+        <table class="grille" data-test="grille">
+          <thead>
+            <tr>
+              <th scope="col" rowspan="2" class="entete-ligne" i18n="@@spc.gage-rr.study.part-no">Pièce n°</th>
+              <th scope="colgroup" *ngFor="let o of operators" [attr.colspan]="r + 2" class="operateur"
+                  [attr.data-test]="'entete-operateur-' + o">{{ operatorName(o) }}</th>
+              <th scope="col" rowspan="2" class="calc" i18n="@@spc.gage-rr.study.part-mean">Moyenne pièce</th>
+            </tr>
+            <tr>
+              <ng-container *ngFor="let o of operators">
+                <th scope="col" *ngFor="let t of trials" i18n="@@spc.gage-rr.study.trial">Essai {{ t + 1 // i18n(ph="trial") }}</th>
+                <th scope="col" class="calc" i18n="@@spc.gage-rr.study.mean">Moyenne</th>
+                <th scope="col" class="calc fin-bloc" i18n="@@spc.gage-rr.study.range">Étendue</th>
+              </ng-container>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let p of parts; trackBy: trackByIndex">
+              <th scope="row" class="entete-ligne">{{ p + 1 }}</th>
+              <ng-container *ngFor="let o of operators; trackBy: trackByIndex">
+                <td *ngFor="let t of trials; trackBy: trackByIndex">
+                  <input class="cellule" inputmode="decimal" [value]="cell(o, p, t)" [readOnly]="!canManage"
+                         [class.cellule--invalide]="cellInvalid(o, p, t)"
+                         (input)="onCell(o, p, t, $event)" (paste)="onPaste(o, p, t, $event)"
+                         [attr.aria-label]="cellLabel(o, p, t)"
+                         [attr.data-test]="'cellule-' + o + '-' + p + '-' + t">
+                </td>
+                <td class="calc mono" [attr.data-test]="'moyenne-' + o + '-' + p">{{ num(rowMean(o, p)) }}</td>
+                <td class="calc mono fin-bloc" [class.hors]="rangeOut(o, p)"
+                    [attr.data-test]="'etendue-' + o + '-' + p">{{ num(rowRange(o, p)) }}</td>
+              </ng-container>
+              <td class="calc mono" [attr.data-test]="'moyenne-piece-' + p">{{ num(partMean(p)) }}</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <th scope="row" class="entete-ligne" i18n="@@spc.gage-rr.study.mean">Moyenne</th>
+              <ng-container *ngFor="let o of operators">
+                <td class="calc mono" *ngFor="let t of trials">{{ num(calc?.trialMeans?.[o]?.[t]) }}</td>
+                <td class="calc mono fort" [attr.data-test]="'xbar-' + o">{{ num(calc?.operatorMeans?.[o]) }}</td>
+                <td class="calc mono fort fin-bloc" [attr.data-test]="'rbar-' + o">{{ num(calc?.operatorRanges?.[o]) }}</td>
+              </ng-container>
+              <td class="calc mono fort" data-test="moyenne-generale">{{ num(calc?.grandMean) }}</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+      <p class="attente" *ngIf="!calc" data-test="attente" i18n="@@spc.gage-rr.study.waiting">Encore {{ missing // i18n(ph="missing") }} mesure(s) à saisir avant le calcul.</p>
+    </section>
+
+    <ng-container *ngIf="calc as c">
+      <p class="attente" *ngIf="c.tv.value <= 0" data-test="sans-dispersion" i18n="@@spc.gage-rr.study.no-spread">Toutes les mesures sont identiques : aucune variation à décomposer.</p>
+
+      <ng-container *ngIf="c.tv.value > 0">
+        <!-- ---------- synthèse ---------- -->
+        <section class="kpis" i18n-aria-label="@@spc.gage-rr.study.summary" aria-label="Synthèse de l'étude" data-test="synthese">
+          <div class="kpi kpi--{{ tone(c.decision) }}" data-test="kpi-grr">
+            <b>{{ percent(c.grr.percentOfTotal) }}</b>
+            <span i18n="@@spc.gage-rr.kpi.grr">%GRR de la variation totale</span>
+          </div>
+          <div class="kpi" data-test="kpi-tolerance">
+            <b>{{ percent(c.grr.percentTolerance) }}</b>
+            <span i18n="@@spc.gage-rr.kpi.tolerance">%GRR de la tolérance</span>
+          </div>
+          <div class="kpi" [class.kpi--ok]="c.ndcSufficient" [class.kpi--bad]="!c.ndcSufficient" data-test="kpi-ndc">
+            <b>{{ c.ndc }}</b>
+            <span>ndc · {{ ndcText(c.ndcSufficient) }}</span>
+          </div>
+          <div class="kpi kpi--{{ tone(c.anova.decision) }}" data-test="kpi-anova">
+            <b>{{ percent(c.anova.grr.percentOfTotal) }}</b>
+            <span i18n="@@spc.gage-rr.kpi.anova">%GRR selon l'ANOVA</span>
+          </div>
+          <div class="kpi" data-test="kpi-decision">
+            <span class="statut statut--{{ tone(c.decision) }}" data-test="decision">{{ decision(c.decision) }}</span>
+            <span class="kpi__note" i18n="@@spc.gage-rr.kpi.decision">Décision AIAG sur le %GRR</span>
+          </div>
+        </section>
+
+        <!-- ---------- étapes 1 et 2 ---------- -->
+        <section class="bloc" aria-labelledby="titre-etape1">
+          <h2 id="titre-etape1" i18n="@@spc.gage-rr.step1.title">Étape 1 – Moyennes et étendues par opérateur</h2>
+          <div class="defile">
+            <table class="resultats" data-test="etape-1">
+              <thead>
+                <tr>
+                  <th scope="col" i18n="@@spc.gage-rr.col.quantity">Grandeur</th>
+                  <th scope="col" i18n="@@spc.gage-rr.col.formula">Formule</th>
+                  <th scope="col" i18n="@@spc.gage-rr.col.application">Application numérique</th>
+                  <th scope="col" class="num" i18n="@@spc.gage-rr.col.value">Valeur</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let o of operators">
+                  <th scope="row">X̄ {{ operatorName(o) }}</th>
+                  <td i18n="@@spc.gage-rr.step1.xbar-formula">Moyenne des {{ n // i18n(ph="n") }} pièces</td>
+                  <td class="mono">–</td>
+                  <td class="num mono">{{ num(c.operatorMeans[o]) }}</td>
+                </tr>
+                <tr>
+                  <th scope="row" i18n="@@spc.gage-rr.step1.xdiff">X̄diff (écart entre opérateurs)</th>
+                  <td>max(X̄) − min(X̄)</td>
+                  <td class="mono">{{ xDiffApplication }}</td>
+                  <td class="num mono" data-test="xdiff">{{ num(c.xDiff) }}</td>
+                </tr>
+                <tr *ngFor="let o of operators">
+                  <th scope="row">R̄ {{ operatorName(o) }}</th>
+                  <td i18n="@@spc.gage-rr.step1.rbar-formula">Moyenne des {{ n // i18n(ph="n") }} étendues</td>
+                  <td class="mono">–</td>
+                  <td class="num mono">{{ num(c.operatorRanges[o]) }}</td>
+                </tr>
+                <tr>
+                  <th scope="row" i18n="@@spc.gage-rr.step1.rbarbar">R̄̄ (étendue moyenne)</th>
+                  <td>(Σ R̄) / k</td>
+                  <td class="mono">{{ meanRangeApplication }}</td>
+                  <td class="num mono" data-test="rbarbar">{{ num(c.meanRange) }}</td>
+                </tr>
+                <tr>
+                  <th scope="row" i18n="@@spc.gage-rr.step1.rp">Rp (étendue des pièces)</th>
+                  <td i18n="@@spc.gage-rr.step1.rp-formula">max − min des moyennes pièces</td>
+                  <td class="mono">{{ partRangeApplication }}</td>
+                  <td class="num mono" data-test="rp">{{ num(c.partRange) }}</td>
+                </tr>
+                <tr>
+                  <th scope="row" i18n="@@spc.gage-rr.step1.ucl">UCLR (limite de contrôle)</th>
+                  <td>D4 × R̄̄</td>
+                  <td class="mono">{{ num(c.d4, 2) }} × {{ num(c.meanRange) }}</td>
+                  <td class="num mono" data-test="ucl">{{ num(c.rangeUcl) }}</td>
+                </tr>
+                <tr>
+                  <th scope="row" i18n="@@spc.gage-rr.step1.check">Contrôle des étendues</th>
+                  <td i18n="@@spc.gage-rr.step1.check-rule">Aucune étendue ne doit dépasser UCLR</td>
+                  <td colspan="2" data-test="controle-etendues">
+                    <span *ngIf="c.rangesBeyondLimit === 0" class="statut statut--ok"
+                          i18n="@@spc.gage-rr.step1.check-ok">OK : aucune étendue hors limite</span>
+                    <span *ngIf="c.rangesBeyondLimit > 0" class="statut statut--bad"
+                          i18n="@@spc.gage-rr.step1.check-ko">{{ c.rangesBeyondLimit // i18n(ph="count") }} étendue(s) au-dessus de UCLR : vérifier les mesures</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3 i18n="@@spc.gage-rr.step2.title">Étape 2 – Constantes, ajustées au multiplicateur σ choisi</h3>
+          <div class="defile">
+            <table class="resultats" data-test="etape-2">
+              <thead>
+                <tr>
+                  <th scope="col" i18n="@@spc.gage-rr.col.constant">Constante</th>
+                  <th scope="col" i18n="@@spc.gage-rr.col.role">Rôle</th>
+                  <th scope="col" i18n="@@spc.gage-rr.col.read-for">Valeur lue pour…</th>
+                  <th scope="col" class="num" i18n="@@spc.gage-rr.col.value">Valeur</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row">K1</th>
+                  <td i18n="@@spc.gage-rr.step2.k1">Répétabilité</td>
+                  <td>r = {{ r }}</td>
+                  <td class="num mono" data-test="k1">{{ num(c.k1, 3) }}</td>
+                </tr>
+                <tr>
+                  <th scope="row">K2</th>
+                  <td i18n="@@spc.gage-rr.step2.k2">Reproductibilité</td>
+                  <td>k = {{ k }}</td>
+                  <td class="num mono" data-test="k2">{{ num(c.k2, 3) }}</td>
+                </tr>
+                <tr>
+                  <th scope="row">D4</th>
+                  <td i18n="@@spc.gage-rr.step2.d4">Limite des étendues</td>
+                  <td>r = {{ r }}</td>
+                  <td class="num mono">{{ num(c.d4, 2) }}</td>
+                </tr>
+                <tr>
+                  <th scope="row">K3</th>
+                  <td i18n="@@spc.gage-rr.step2.k3">Variation pièces</td>
+                  <td>n = {{ n }}</td>
+                  <td class="num mono" data-test="k3">{{ num(c.k3, 3) }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- ---------- étapes 3 et 4 ---------- -->
+        <section class="bloc" aria-labelledby="titre-etape3">
+          <h2 id="titre-etape3" i18n="@@spc.gage-rr.step3.title">Étape 3 – Décomposition de la variation</h2>
+          <div class="defile">
+            <table class="resultats" data-test="etape-3">
+              <thead>
+                <tr>
+                  <th scope="col" i18n="@@spc.gage-rr.col.source">Source de variation</th>
+                  <th scope="col" i18n="@@spc.gage-rr.col.formula">Formule</th>
+                  <th scope="col" i18n="@@spc.gage-rr.col.application">Application numérique</th>
+                  <th scope="col" class="num" i18n="@@spc.gage-rr.col.value">Valeur</th>
+                  <th scope="col" class="num" i18n="@@spc.gage-rr.col.percent-total">% variation totale</th>
+                  <th scope="col" class="num" i18n="@@spc.gage-rr.col.percent-contribution">% contribution</th>
+                  <th scope="col" class="num" i18n="@@spc.gage-rr.col.percent-tolerance">% tolérance</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let row of stepThree" [class.fort]="row.key === 'grr'" [attr.data-test]="'ligne-' + row.key">
+                  <th scope="row">{{ row.label }}</th>
+                  <td class="mono">{{ row.formula }}</td>
+                  <td class="mono">{{ row.application }}</td>
+                  <td class="num mono">{{ num(row.component.value) }}</td>
+                  <td class="num mono">{{ percent(row.component.percentOfTotal, 2) }}</td>
+                  <td class="num mono">{{ percent(row.component.percentContribution, 2) }}</td>
+                  <td class="num mono">{{ percent(row.component.percentTolerance, 2) }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="aide" i18n="@@spc.gage-rr.step3.note">Les « % variation totale » ne s'additionnent pas à 100 % (somme quadratique) ; les « % contribution », rapports de variances, s'additionnent : EV + AV + PV = 100 %.</p>
+
+          <h3 i18n="@@spc.gage-rr.step4.title">Étape 4 – Indicateurs d'aptitude et conclusion</h3>
+          <div class="defile">
+            <table class="resultats" data-test="etape-4">
+              <thead>
+                <tr>
+                  <th scope="col" i18n="@@spc.gage-rr.col.indicator">Indicateur</th>
+                  <th scope="col" i18n="@@spc.gage-rr.col.rule">Règle</th>
+                  <th scope="col" i18n="@@spc.gage-rr.col.application">Application numérique</th>
+                  <th scope="col" class="num" i18n="@@spc.gage-rr.col.value">Valeur</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row" i18n="@@spc.gage-rr.step4.grr-total">%GRR (de la variation totale)</th>
+                  <td>GRR / TV</td>
+                  <td class="mono">{{ num(c.grr.value) }} / {{ num(c.tv.value) }}</td>
+                  <td class="num mono" data-test="grr-total">{{ percent(c.grr.percentOfTotal, 2) }}</td>
+                </tr>
+                <tr>
+                  <th scope="row" i18n="@@spc.gage-rr.step4.grr-tolerance">%GRR (de la tolérance)</th>
+                  <td>GRR / (USL − LSL)</td>
+                  <td class="mono">{{ num(c.grr.value) }} / {{ tolerance === null ? '–' : num(tolerance, 3) }}</td>
+                  <td class="num mono" data-test="grr-tolerance">{{ percent(c.grr.percentTolerance, 2) }}</td>
+                </tr>
+                <tr>
+                  <th scope="row" i18n="@@spc.gage-rr.step4.ndc">ndc (catégories distinctes)</th>
+                  <td i18n="@@spc.gage-rr.step4.ndc-rule">1,41 × PV / GRR, arrondi à l'entier inférieur</td>
+                  <td class="mono">1,41 × {{ num(c.pv.value) }} / {{ num(c.grr.value) }}</td>
+                  <td class="num mono" data-test="ndc">{{ c.ndc }}</td>
+                </tr>
+                <tr>
+                  <th scope="row" i18n="@@spc.gage-rr.step4.decision-grr">Décision sur %GRR</th>
+                  <td i18n="@@spc.gage-rr.step4.decision-grr-rule">&lt; 10 % acceptable · 10 – 30 % sous conditions · &gt; 30 % non acceptable</td>
+                  <td colspan="2"><span class="statut statut--{{ tone(c.decision) }}">{{ decision(c.decision) }}</span></td>
+                </tr>
+                <tr>
+                  <th scope="row" i18n="@@spc.gage-rr.step4.decision-ndc">Décision sur ndc</th>
+                  <td i18n="@@spc.gage-rr.step4.decision-ndc-rule">ndc ≥ 5 : le système distingue assez de catégories</td>
+                  <td colspan="2">
+                    <span class="statut" [class.statut--ok]="c.ndcSufficient" [class.statut--bad]="!c.ndcSufficient"
+                          data-test="decision-ndc">{{ ndcText(c.ndcSufficient) }}</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3 i18n="@@spc.gage-rr.study.interpretation">Interprétation</h3>
+          <ul class="lectures" data-test="interpretation">
+            <li *ngFor="let line of readings">{{ line }}</li>
+          </ul>
+        </section>
+
+        <!-- ---------- ANOVA ---------- -->
+        <section class="bloc" aria-labelledby="titre-anova">
+          <h2 id="titre-anova" i18n="@@spc.gage-rr.anova.title">ANOVA à deux facteurs avec interaction</h2>
+          <p class="aide" data-test="regroupement">
+            <span *ngIf="c.anova.interactionPooled" i18n="@@spc.gage-rr.anova.pooled">L'interaction pièce × opérateur n'est pas significative (p &gt; 0,25) : elle est regroupée avec la répétabilité.</span>
+            <span *ngIf="!c.anova.interactionPooled" i18n="@@spc.gage-rr.anova.not-pooled">L'interaction pièce × opérateur est significative (p ≤ 0,25) : elle compte dans la reproductibilité.</span>
+          </p>
+          <div class="defile">
+            <table class="resultats" data-test="anova-complete">
+              <caption i18n="@@spc.gage-rr.anova.full">Tableau d'ANOVA avec interaction</caption>
+              <ng-container *ngTemplateOutlet="enteteAnova"></ng-container>
+              <tbody>
+                <tr *ngFor="let row of c.anova.fullTable" [attr.data-test]="'anova-' + row.source">
+                  <th scope="row">{{ source(row, false) }}</th>
+                  <td class="num mono">{{ row.degreesOfFreedom }}</td>
+                  <td class="num mono">{{ num(row.sumOfSquares, 6) }}</td>
+                  <td class="num mono">{{ num(row.meanSquare, 6) }}</td>
+                  <td class="num mono">{{ num(row.f, 3) }}</td>
+                  <td class="num mono">{{ p(row.p) }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="defile" *ngIf="c.anova.pooledTable as pooled">
+            <table class="resultats" data-test="anova-regroupee">
+              <caption i18n="@@spc.gage-rr.anova.pooled-table">Tableau d'ANOVA sans interaction (regroupée)</caption>
+              <ng-container *ngTemplateOutlet="enteteAnova"></ng-container>
+              <tbody>
+                <tr *ngFor="let row of pooled">
+                  <th scope="row">{{ source(row, true) }}</th>
+                  <td class="num mono">{{ row.degreesOfFreedom }}</td>
+                  <td class="num mono">{{ num(row.sumOfSquares, 6) }}</td>
+                  <td class="num mono">{{ num(row.meanSquare, 6) }}</td>
+                  <td class="num mono">{{ num(row.f, 3) }}</td>
+                  <td class="num mono">{{ p(row.p) }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <ng-template #enteteAnova>
+            <thead>
+              <tr>
+                <th scope="col" i18n="@@spc.gage-rr.col.source">Source de variation</th>
+                <th scope="col" class="num" i18n="@@spc.gage-rr.col.df">ddl</th>
+                <th scope="col" class="num" i18n="@@spc.gage-rr.col.ss">Somme des carrés</th>
+                <th scope="col" class="num" i18n="@@spc.gage-rr.col.ms">Carré moyen</th>
+                <th scope="col" class="num">F</th>
+                <th scope="col" class="num">p</th>
+              </tr>
+            </thead>
+          </ng-template>
+
+          <h3 i18n="@@spc.gage-rr.anova.components">Composantes de la variance</h3>
+          <div class="defile">
+            <table class="resultats" data-test="anova-composantes">
+              <thead>
+                <tr>
+                  <th scope="col" i18n="@@spc.gage-rr.col.source">Source de variation</th>
+                  <th scope="col" class="num" i18n="@@spc.gage-rr.col.variance">Variance</th>
+                  <th scope="col" class="num" i18n="@@spc.gage-rr.col.spread">Dispersion ({{ multiplier // i18n(ph="multiplier") }} σ)</th>
+                  <th scope="col" class="num" i18n="@@spc.gage-rr.col.percent-total">% variation totale</th>
+                  <th scope="col" class="num" i18n="@@spc.gage-rr.col.percent-contribution">% contribution</th>
+                  <th scope="col" class="num" i18n="@@spc.gage-rr.col.percent-tolerance">% tolérance</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let row of anovaComponents" [class.fort]="row.label === 'GRR'">
+                  <th scope="row">{{ row.label }}</th>
+                  <td class="num mono">{{ num(row.variance, 8) }}</td>
+                  <td class="num mono">{{ num(row.component.value) }}</td>
+                  <td class="num mono">{{ percent(row.component.percentOfTotal, 2) }}</td>
+                  <td class="num mono">{{ percent(row.component.percentContribution, 2) }}</td>
+                  <td class="num mono">{{ percent(row.component.percentTolerance, 2) }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3 i18n="@@spc.gage-rr.method.title">Comparaison des deux méthodes</h3>
+          <div class="defile">
+            <table class="resultats" data-test="comparaison">
+              <thead>
+                <tr>
+                  <th scope="col" i18n="@@spc.gage-rr.method.col">Méthode</th>
+                  <th scope="col" class="num">%GRR</th>
+                  <th scope="col" class="num" i18n="@@spc.gage-rr.col.grr-tolerance">%GRR tolérance</th>
+                  <th scope="col" class="num">ndc</th>
+                  <th scope="col" i18n="@@spc.gage-rr.col.decision">Décision</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let m of methods">
+                  <th scope="row">{{ m.label }}</th>
+                  <td class="num mono">{{ percent(m.grr.percentOfTotal, 2) }}</td>
+                  <td class="num mono">{{ percent(m.grr.percentTolerance, 2) }}</td>
+                  <td class="num mono">{{ m.ndc }}</td>
+                  <td><span class="statut statut--{{ tone(m.decision) }}">{{ decision(m.decision) }}</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- ---------- graphiques ---------- -->
+        <section class="bloc" aria-labelledby="titre-graphiques">
+          <h2 id="titre-graphiques" i18n="@@spc.gage-rr.charts.title">Graphiques</h2>
+          <div class="graphiques">
+            <figure class="graphique" data-test="graphique-composantes">
+              <figcaption i18n="@@spc.gage-rr.charts.components">Composantes de la variation</figcaption>
+              <qos-echart [option]="componentsChart" [height]="300"></qos-echart>
+            </figure>
+            <figure class="graphique" data-test="graphique-etendues">
+              <figcaption i18n="@@spc.gage-rr.charts.range">Carte R par opérateur (étendues et UCLR)</figcaption>
+              <qos-echart [option]="rangeChart" [height]="300"></qos-echart>
+            </figure>
+            <figure class="graphique" data-test="graphique-moyennes">
+              <figcaption i18n="@@spc.gage-rr.charts.mean">Carte X̄ par opérateur : un bon système a la plupart des points hors limites</figcaption>
+              <qos-echart [option]="meanChart" [height]="300"></qos-echart>
+            </figure>
+            <figure class="graphique" data-test="graphique-pieces">
+              <figcaption i18n="@@spc.gage-rr.charts.by-part">Mesures par pièce : des traits parallèles disent des opérateurs cohérents</figcaption>
+              <qos-echart [option]="partChart" [height]="300"></qos-echart>
+            </figure>
+          </div>
+        </section>
+      </ng-container>
+    </ng-container>
+  </ng-container>
+</div>
