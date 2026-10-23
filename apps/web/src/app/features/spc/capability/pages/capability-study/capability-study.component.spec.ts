@@ -106,6 +106,8 @@ describe('CapabilityStudyComponent', () => {
     expect(un('kpi-cpk')?.textContent).toContain('1.50');
     expect(un('kpi-cpk')?.classList).toContain('kpi--ok');
     expect(un('formule-sigma')?.textContent).toContain('4.5279');
+    // Mesures entières : l'affichage d'origine, moyennes à deux décimales, étendues entières.
+    expect(component.digits).toEqual({ mean: 2, range: 0 });
     expect(un('formules')?.classList).not.toContain('formules--ko');
     expect(un('verdict-maitrise')?.textContent).toContain('OUI');
     expect(un('verdict-maitrise')?.classList).toContain('verdict--ok');
@@ -241,6 +243,10 @@ describe('CapabilityStudyComponent', () => {
     expect(un('verdict-non-maitrise')?.classList).toContain('verdict--ko');
     expect(un('moyenne-13')?.classList).toContain('hors');
     expect(un('constante-4')?.classList).toContain('actif');
+    // Mesures au millième : l'étendue garde ses décimales au lieu de tomber à « 0 ».
+    expect(component.digits).toEqual({ mean: 4, range: 3 });
+    expect(un('etendue-0')?.textContent?.trim()).toBe(component.calc.subgroupRanges[0]!.toFixed(3));
+    expect(un('etendue-0')?.textContent?.trim()).not.toBe('0');
   });
 
   it('vide les mesures', async () => {
