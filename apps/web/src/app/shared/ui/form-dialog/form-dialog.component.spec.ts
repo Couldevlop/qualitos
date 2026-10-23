@@ -71,7 +71,7 @@ describe('FormDialogComponent — ce qui bloque', () => {
 
     expect(motifAffiche()).toContain('astérisque');
     expect(motif.classList).toContain('qfd-blocked--pending');
-    expect(motif.querySelector('mat-icon')!.textContent).toContain('info_outline');
+    expect(motif.querySelector('mat-icon')!.textContent).toContain('info');
   });
 
   it('retombe sur une formule générique, en alerte, une fois le formulaire touché', () => {
