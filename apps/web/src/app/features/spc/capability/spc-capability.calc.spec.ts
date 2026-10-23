@@ -1,6 +1,6 @@
 import {
-  SUBGROUPS, SUBGROUP_SIZES, classify, computeCapability, constantsFor, emptyGrid, parseMeasurement,
-  pasteBlock, resizeGrid
+  SUBGROUPS, SUBGROUP_SIZES, classify, computeCapability, constantsFor, displayDigits, emptyGrid,
+  measurementDecimals, parseMeasurement, pasteBlock, resizeGrid
 } from './spc-capability.calc';
 import { GOLDEN, GOLDEN_GRID, GOLDEN_LSL, GOLDEN_USL } from './spc-capability.fixtures';
 import { Measurement } from './spc-capability.types';
@@ -150,5 +150,20 @@ describe('spc-capability.calc', () => {
     const deborde = pasteBlock(raw, 1, 0, '7\n8\n9');
     expect(deborde[1][0]).toBe('7');
     expect(deborde.length).toBe(2);
+  });
+
+  describe('décimales d’affichage', () => {
+    it('suivent la résolution des mesures saisies, plafonnée à 4', () => {
+      expect(measurementDecimals([['500', '498'], ['', 'x']])).toBe(0);
+      expect(measurementDecimals([['12,05', '12.095'], [' 12.1 ', '']])).toBe(3);
+      expect(measurementDecimals([['1.1234567']])).toBe(4);
+      expect(measurementDecimals([])).toBe(0);
+    });
+
+    it('donnent l’étendue à la résolution et la moyenne une décimale plus fine, au moins deux', () => {
+      expect(displayDigits(0)).toEqual({ mean: 2, range: 0 });
+      expect(displayDigits(3)).toEqual({ mean: 4, range: 3 });
+      expect(displayDigits(4)).toEqual({ mean: 4, range: 4 });
+    });
   });
 });
