@@ -99,7 +99,7 @@ describe('CompetencySkillDialogComponent', () => {
 
   it('signale tout autre refus', async () => {
     await build();
-    service.addSkill.and.returnValue(throwError(() => ({ status: 500 })));
+    service.addSkill.and.returnValue(throwError(() => ({ status: 404 })));
     remplir();
     component.submit();
     expect(component.error).toBe('La compétence n\'a pas pu être ajoutée.');

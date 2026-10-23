@@ -119,7 +119,7 @@ describe('CompetencyWorkshopsComponent', () => {
 
   it('garde la saisie et signale un enregistrement refusé', async () => {
     await setup();
-    service.updateWorkshops.and.returnValue(throwError(() => ({ status: 403 })));
+    service.updateWorkshops.and.returnValue(throwError(() => ({ status: 404 })));
     component.names = ['Peinture'];
     component.save();
     expect(component.names).toEqual(['Peinture']);

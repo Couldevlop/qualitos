@@ -154,7 +154,7 @@ describe('CompetencyMatrixComponent', () => {
     });
 
     it('signale l\'échec de lecture et relit sur demande', async () => {
-      await setup({ matrix: throwError(() => ({ status: 500 })) });
+      await setup({ matrix: throwError(() => ({ status: 404 })) });
       expect(component.failed).toBeTrue();
       expect(snack.open).toHaveBeenCalledWith('Impossible de charger la matrice de compétences.', undefined, { duration: 5000 });
       service.matrix.and.returnValue(of(view()));
@@ -247,7 +247,7 @@ describe('CompetencyMatrixComponent', () => {
 
     it('rétablit la valeur du serveur quand l\'écriture est refusée', async () => {
       await setup();
-      service.setLevel.and.returnValue(throwError(() => ({ status: 403 })));
+      service.setLevel.and.returnValue(throwError(() => ({ status: 404 })));
       component.cycle(component.operators[1], component.skills[0]);
       expect(cellule(1, 0)).toBe(2);
       expect(snack.open).toHaveBeenCalledWith('Le niveau n\'a pas pu être enregistré.', undefined, { duration: 5000 });
@@ -387,8 +387,8 @@ describe('CompetencyMatrixComponent', () => {
     it('signale un retrait refusé', async () => {
       await setup();
       dialogResult = true;
-      service.removeOperator.and.returnValue(throwError(() => ({ status: 500 })));
-      service.removeSkill.and.returnValue(throwError(() => ({ status: 500 })));
+      service.removeOperator.and.returnValue(throwError(() => ({ status: 404 })));
+      service.removeSkill.and.returnValue(throwError(() => ({ status: 404 })));
       component.removeOperator(component.operators[0]);
       component.removeSkill(component.skills[0]);
       expect(snack.open).toHaveBeenCalledTimes(2);

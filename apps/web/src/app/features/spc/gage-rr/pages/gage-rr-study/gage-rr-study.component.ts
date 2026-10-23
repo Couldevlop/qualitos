@@ -310,13 +310,16 @@ export class GageRrStudyComponent implements OnInit {
   save(): void {
     this.fieldError = null;
     if (!this.canManage || this.saving) return;
-    if (this.form.invalid || this.limitsInvalid) {
-      this.form.markAllAsTouched();
-      return;
-    }
+    // Les sélecteurs d'opérateurs portent `required` : un opérateur manquant rend
+    // aussi le formulaire invalide. On le dit d'abord, sinon le message se perdrait.
     const operators = this.chosenOperators();
     if (!operators) {
+      this.form.markAllAsTouched();
       this.fieldError = { field: 'operators', message: fieldMessage('operators') };
+      return;
+    }
+    if (this.form.invalid || this.limitsInvalid) {
+      this.form.markAllAsTouched();
       return;
     }
     const grid = this.grid;

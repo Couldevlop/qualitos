@@ -90,7 +90,7 @@ describe('CompetencyOperatorDialogComponent', () => {
 
   it('signale tout autre refus', async () => {
     await build({ workshops: ['Usinage'], excludeIds: [] });
-    service.addOperator.and.returnValue(throwError(() => ({ status: 500 })));
+    service.addOperator.and.returnValue(throwError(() => ({ status: 404 })));
     choisir();
     component.submit();
     expect(component.error).toBe('L\'opérateur n\'a pas pu être ajouté.');
