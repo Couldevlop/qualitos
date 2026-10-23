@@ -64,10 +64,33 @@ describe('FormDialogComponent — ce qui bloque', () => {
     expect(motifAffiche()).toContain('Renseignez le nom');
   });
 
-  it('retombe sur une formule générique quand l’hôte n’en fournit pas', () => {
+  it('à l’ouverture, donne une consigne sur un ton neutre plutôt qu’une alerte', () => {
+    // Rien n'est encore saisi : reprocher un formulaire pas commencé serait déplacé,
+    // mais le bouton grisé doit tout de même s'expliquer.
+    const motif = fixture.nativeElement.querySelector('.qfd-blocked') as HTMLElement;
+
+    expect(motifAffiche()).toContain('astérisque');
+    expect(motif.classList).toContain('qfd-blocked--pending');
+    expect(motif.querySelector('mat-icon')!.textContent).toContain('info_outline');
+  });
+
+  it('retombe sur une formule générique, en alerte, une fois le formulaire touché', () => {
     // Un dialogue qui ne sait pas nommer son champ fautif doit tout de même
     // expliquer le blocage : rien du tout serait le défaut d'origine.
     hote.motif = undefined;
+    hote.form.markAllAsTouched();
+    fixture.detectChanges();
+    const motif = fixture.nativeElement.querySelector('.qfd-blocked') as HTMLElement;
+
+    expect(motifAffiche()).toContain('obligatoires');
+    expect(motif.classList).not.toContain('qfd-blocked--pending');
+    expect(motif.querySelector('mat-icon')!.textContent).toContain('error_outline');
+  });
+
+  it('passe en alerte dès qu’un champ est saisi puis vidé', () => {
+    hote.form.controls['nom'].setValue('x');
+    hote.form.controls['nom'].markAsDirty();
+    hote.form.controls['nom'].setValue('');
     fixture.detectChanges();
 
     expect(motifAffiche()).toContain('obligatoires');

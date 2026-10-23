@@ -68,7 +68,24 @@ export function hasTrainerLevel(index: LevelIndex, operators: readonly MatrixOpe
   return operators.some(o => index.get(o.userId, skillId) === MAX_LEVEL);
 }
 
-/** La moyenne d'une ligne sur les compétences affichées, à un chiffre après la virgule. */
+/**
+ * Le niveau du formateur désigné quand il est lui-même dans la matrice SANS y
+ * être autonome sur la compétence — `null` sinon. Hors de la matrice, il a pu
+ * être formé ailleurs : rien à en dire.
+ */
+export function trainerShortfall(index: LevelIndex, operators: readonly MatrixOperator[], skill: MatrixSkill): number | null {
+  if (!operators.some(o => o.userId === skill.trainerUserId)) {
+    return null;
+  }
+  const level = index.get(skill.trainerUserId, skill.skillId);
+  return level < AUTONOMOUS_LEVEL ? level : null;
+}
+
+/**
+ * La moyenne d'une ligne sur les compétences affichées, à un chiffre après la
+ * virgule. Une case jamais évaluée vaut « non formé » (0), comme pour le serveur :
+ * la moyenne mesure la polyvalence sur l'ensemble des compétences suivies.
+ */
 export function operatorAverage(index: LevelIndex, userId: string, skills: readonly MatrixSkill[]): string {
   if (!skills.length) {
     return (0).toFixed(1);

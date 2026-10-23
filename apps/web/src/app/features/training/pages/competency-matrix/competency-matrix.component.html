@@ -32,15 +32,16 @@
   <ng-container *ngIf="!failed && !loading">
     <!-- Les indicateurs : la maquette, sans le niveau moyen (la colonne « Moy. » le porte par personne). -->
     <section class="kpis" aria-label="Indicateurs de la matrice" i18n-aria-label="@@training.matrix.kpis">
+      <!-- Les indicateurs suivent les filtres ; filtrés, ils rappellent le total (« 1 / 2 »). -->
       <div class="kpi" data-test="kpi-operateurs">
-        <b>{{ operators.length }}</b>
+        <b>{{ visibleOperators.length }}<small class="kpi__total" *ngIf="operatorsFiltered"> / {{ operators.length }}</small></b>
         <span i18n="@@training.matrix.kpi-operators">Opérateurs</span>
       </div>
       <div class="kpi" data-test="kpi-competences">
-        <b>{{ skills.length }}</b>
+        <b>{{ visibleSkills.length }}<small class="kpi__total" *ngIf="skillsFiltered"> / {{ skills.length }}</small></b>
         <span i18n="@@training.matrix.kpi-skills">Compétences suivies</span>
       </div>
-      <div class="kpi" [class.kpi--alerte]="atRiskCount > 0" [class.kpi--ok]="skills.length > 0 && atRiskCount === 0"
+      <div class="kpi" [class.kpi--alerte]="atRiskCount > 0" [class.kpi--ok]="visibleSkills.length > 0 && atRiskCount === 0"
            data-test="kpi-risque">
         <b>{{ atRiskCount }}</b>
         <span i18n="@@training.matrix.kpi-at-risk">Compétences à risque</span>
@@ -85,7 +86,8 @@
       <li *ngFor="let l of levels"><i class="pastille niveau-{{ l.level }}" aria-hidden="true"></i>{{ l.level }} – {{ l.label }}</li>
     </ul>
 
-    <section class="risques" *ngIf="skills.length" aria-labelledby="mx-risques" data-test="risques">
+    <section class="risques" [class.risques--ok]="!risks.length" *ngIf="skills.length" aria-labelledby="mx-risques"
+             data-test="risques">
       <h2 id="mx-risques" class="risques__titre">
         <span i18n="@@training.matrix.risks-title">Compétences à risque</span> ({{ risks.length }})
       </h2>
@@ -94,7 +96,10 @@
           <span class="risque__nom">
             {{ r.skill.name }} <small *ngIf="r.skill.category">{{ r.skill.category }}</small>
           </span>
-          <span class="risque__formateur">{{ trainerLabel(r.skill) }}</span>
+          <span class="risque__formateur">
+            {{ trainerLabel(r.skill) }}
+            <small class="risque__alerte" *ngIf="trainerWarning(r.skill) as alerte" data-test="alerte-formateur">{{ alerte }}</small>
+          </span>
           <span class="risque__etat">
             <ng-container *ngIf="r.soleAutonomous">{{ soleLabel(r.soleAutonomous) }}</ng-container>
             <ng-container *ngIf="!r.soleAutonomous"><span i18n="@@training.matrix.no-autonomous">Aucune personne autonome</span></ng-container>
@@ -116,7 +121,7 @@
           <tr>
             <th scope="col" class="nom" i18n="@@training.matrix.operator">Opérateur</th>
             <th scope="col" *ngFor="let s of visibleSkills; trackBy: trackSkill" class="competence"
-                [class.estompe]="highlightRisks && !atRisk(s)" [matTooltip]="trainerLabel(s)" data-test="entete-competence">
+                [class.estompe]="highlightRisks && !atRisk(s)" [matTooltip]="skillTooltip(s)" data-test="entete-competence">
               <div class="competence__inner">
                 <button mat-icon-button type="button" class="retirer" *ngIf="canManage" (click)="removeSkill(s)"
                         [attr.aria-label]="removeSkillLabel(s)" data-test="retirer-competence">
@@ -125,7 +130,9 @@
                 <span class="vertical">{{ s.name }}<small *ngIf="s.category">{{ s.category }}</small></span>
               </div>
             </th>
-            <th scope="col" class="moyenne" i18n="@@training.matrix.average">Moy.</th>
+            <th scope="col" class="moyenne" [matTooltip]="averageHelp" data-test="entete-moyenne">
+              <span i18n="@@training.matrix.average">Moy.</span>
+            </th>
           </tr>
         </thead>
         <tbody>

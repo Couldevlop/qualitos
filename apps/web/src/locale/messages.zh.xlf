@@ -6774,6 +6774,14 @@ Portail clients</source>
         <source>Formateur : <x id="trainer"/></source>
         <target state="translated">培训师：<x id="trainer"/></target>
       </trans-unit>
+      <trans-unit id="training.matrix.trainer-not-autonomous" datatype="html">
+        <source>Le formateur est lui-même « <x id="level"/> » sur cette compétence.</source>
+        <target state="translated">培训师本人在该能力上为“<x id="level"/>”。</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.average-help" datatype="html">
+        <source>Niveau moyen sur les compétences affichées. Une case non évaluée (·) compte comme « Non formé » (0).</source>
+        <target state="translated">所显示能力的平均水平。未评估的单元格（·）按“未培训”（0）计算。</target>
+      </trans-unit>
       <trans-unit id="training.matrix.no-risk" datatype="html">
         <source>Aucun risque : toutes les compétences sont couvertes.</source>
         <target state="translated">无风险：所有能力均已覆盖。</target>
@@ -8901,6 +8909,10 @@ Portail clients</source>
       <trans-unit id="common.cancel" datatype="html">
         <source>Annuler</source>
         <target state="translated">取消</target>
+      </trans-unit>
+      <trans-unit id="common.form-pending" datatype="html">
+        <source>Renseignez les champs marqués d'un astérisque (*).</source>
+        <target state="translated">请填写带星号（*）的字段。</target>
       </trans-unit>
       <trans-unit id="common.form-blocked" datatype="html">
         <source>Des champs obligatoires restent à renseigner.</source>
