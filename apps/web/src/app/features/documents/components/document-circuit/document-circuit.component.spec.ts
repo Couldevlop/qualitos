@@ -283,6 +283,37 @@ describe('DocumentCircuitComponent', () => {
     expect(component.trackBySignatory(0, component.signatories[0])).toBe(1);
   });
 
+  const signeeJusquauBout = (status: 'APPROVED' | 'PUBLISHED') => signee({ status, signatories: [
+    sig(1, 'alice', { decision: 'APPROVED', decidedAt: '2026-10-20T08:00:00Z' }),
+    sig(2, 'chloe', { decision: 'APPROVED', decidedAt: '2026-10-21T08:00:00Z', comment: 'Bon pour diffusion' })
+  ] });
+
+  it('une version signée jusqu’au bout garde ses cartes, en lecture seule', async () => {
+    await setup(signeeJusquauBout('APPROVED'), null);
+
+    expect(component.signedOff).toBeTrue();
+    expect(q('signature')).not.toBeNull();
+    expect(q('signataire-2')!.textContent).toContain('Bon pour diffusion');
+    expect(q('etat-2')!.classList).toContain('etat--APPROVED');
+    expect(component.signTurn).toBeNull();
+    expect(q('approuver')).toBeNull();
+    expect(q('tour-signature')).toBeNull();
+  });
+
+  it('publiée, elle garde aussi ses cartes', async () => {
+    await setup(signeeJusquauBout('PUBLISHED'), null);
+
+    expect(component.signedOff).toBeTrue();
+    expect(q('signataire-1')).not.toBeNull();
+    expect(q('approuver')).toBeNull();
+  });
+
+  it('une version approuvée sans signataire ne montre aucun circuit', async () => {
+    await setup(version({ status: 'APPROVED' }), null);
+    expect(q('signature')).toBeNull();
+    expect(q('circuit')).toBeNull();
+  });
+
   it('se désabonne en partant', async () => {
     await setup(version(), passage());
     component.ngOnDestroy();

@@ -77,7 +77,9 @@ La fiche montre une carte par signataire (« Signataire 1 », « Signataire 2 »
 « Signataire 3 »), son nom, son état et sa date, son commentaire. Celui dont
 c'est le tour voit Approuver (vert) et Rejeter (rouge) ; Rejeter ouvre le motif
 obligatoire et « Confirmer le rejet ». Le parcours du panneau suit les mêmes
-rangs. Le statut affiché d'un document en vigueur se lit « Approuvé ».
+rangs. Une fois la version approuvée puis publiée, les cartes de sa dernière
+version signée restent affichées, en lecture seule : elles sont la trace de qui
+a signé, quand, et avec quel commentaire. Le statut affiché d'un document en vigueur se lit « Approuvé ».
 
 ## Conséquences
 

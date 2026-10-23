@@ -97,6 +97,18 @@ describe('DocumentsDetailComponent — revue et circuit', () => {
     expect(component.trackById(0, d.versions[0])).toBe('a');
   });
 
+  it('la dernière version signée garde ses cartes ; une version approuvée sans signataire, non', () => {
+    const signataires = [{ position: 1, userId: 'alice', name: 'Alice', decision: 'APPROVED' as const,
+      decidedAt: '2026-10-20T08:00:00Z', comment: null }];
+    const d = { ...DOC, versions: [
+      version({ id: 'ancienne', versionNumber: 1, status: 'PUBLISHED', signatories: signataires }),
+      version({ id: 'recente', versionNumber: 2, status: 'APPROVED', signatories: signataires }),
+      version({ id: 'nue', versionNumber: 3, status: 'APPROVED' }),
+      version({ id: 'revue', versionNumber: 4, status: 'IN_REVIEW' })
+    ] } as DocumentResponse;
+    expect(component.attention(d).map(v => v.id)).toEqual(['revue', 'recente']);
+  });
+
   it('refuser ouvre le dialogue motivé et recharge après un refus', () => {
     dialog.open.and.returnValue({ afterClosed: () => of(version({ status: 'DRAFT' })) } as never);
     svc.get.calls.reset();

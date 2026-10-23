@@ -105,6 +105,11 @@ export class DocumentCircuitComponent implements OnChanges, OnDestroy {
     return this.version?.status === 'DRAFT' && !!this.version.rejectionReason;
   }
 
+  /** Version signée jusqu'au bout : ses cartes restent la trace de qui a signé et quand. */
+  get signedOff(): boolean {
+    return this.version?.status === 'APPROVED' || this.version?.status === 'PUBLISHED';
+  }
+
   state(i: number): StepState {
     const r = this.run!;
     if (r.status === 'REJECTED' && i === r.currentStep) return 'rejected';

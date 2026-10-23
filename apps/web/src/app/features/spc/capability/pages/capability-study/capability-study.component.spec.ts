@@ -119,6 +119,9 @@ describe('CapabilityStudyComponent', () => {
     expect(un('attente')).toBeNull();
     expect(un('diagnostic')?.textContent).toContain('capable');
     expect(un('lectures')?.textContent).toContain('54 %');
+    // Des phrases entières : l'espace après les deux-points tient, et le nombre entre parenthèses est le milieu.
+    expect(un('lectures')?.textContent).toContain('Centrage : décalé de 4 %');
+    expect(un('lectures')?.textContent).toContain('en dessous du milieu de la tolérance (500), vers la LSL.');
     expect(hote().querySelectorAll('qos-spc-control-chart svg').length).toBe(2);
     expect(hote().querySelector('qos-spc-distribution-chart svg')).not.toBeNull();
   });

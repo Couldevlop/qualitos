@@ -214,6 +214,9 @@
 // Le défilement horizontal reste DANS le tableau : la page, elle, ne déborde jamais.
 .tableau {
   overflow-x: auto;
+  // Le cadre épouse la matrice : à 100 %, la largeur restante allait toute à la colonne
+  // « Opérateur » et une matrice de deux compétences s'étalait sur toute la page.
+  width: fit-content;
   max-width: 100%;
   border-radius: var(--qos-radius-lg);
   background: var(--qos-bg-elevated);
@@ -224,7 +227,7 @@
 .matrice {
   border-collapse: separate;
   border-spacing: 0;
-  width: 100%;
+  width: max-content;
   font-size: var(--qos-fs-sm);
 
   th,
@@ -253,6 +256,7 @@
   left: 0;
   z-index: 2;
   min-width: 12rem;
+  max-width: 20rem;
   padding: var(--qos-space-2) var(--qos-space-3) !important;
   text-align: left !important;
   background: var(--qos-bg-elevated);
