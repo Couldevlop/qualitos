@@ -4,6 +4,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { finalize } from 'rxjs/operators';
 
+import { AuthService } from '../../../../core/auth/auth.service';
 import { personName } from '../../../../core/directory/directory-names';
 import { DirectoryUser } from '../../../../core/directory/directory.types';
 import { safeErrorMessage } from '../../../../core/http/error-message';
@@ -53,6 +54,7 @@ export class DocumentsSubmitDialogComponent {
     private readonly fb: FormBuilder,
     private readonly svc: DocumentsService,
     private readonly snack: MatSnackBar,
+    private readonly auth: AuthService,
     private readonly dialogRef: MatDialogRef<DocumentsSubmitDialogComponent, DocumentVersionResponse>,
     @Inject(MAT_DIALOG_DATA) public readonly data: DocumentsSubmitDialogData
   ) {}
@@ -65,11 +67,12 @@ export class DocumentsSubmitDialogComponent {
     return $localize`:@@documents.signatory.label:Signataire ${i + 1}:position:`;
   }
 
-  /** Ni l'auteur, ni une personne déjà choisie à une autre place. */
+  /** Ni l'auteur, ni soi-même (on n'approuve pas seul ce qu'on soumet), ni une personne déjà placée. */
   excluded(slot: SignatorySlot): string[] {
+    const me = this.auth.snapshot()?.userId;
     const others = SIGNATORY_SLOTS.filter(k => k !== slot)
       .map(k => this.form.controls[k].value).filter((v): v is string => !!v);
-    return [this.data.version.authorId, ...others];
+    return [this.data.version.authorId, ...(me && me !== this.data.version.authorId ? [me] : []), ...others];
   }
 
   onSelected(slot: SignatorySlot, user: DirectoryUser | null): void {

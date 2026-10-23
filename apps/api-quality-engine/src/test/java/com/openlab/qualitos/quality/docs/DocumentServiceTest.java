@@ -449,6 +449,9 @@ class DocumentServiceTest {
                 .isInstanceOf(DocumentSignatoryException.class).hasMessageContaining("twice");
         assertThatThrownBy(() -> service.submitForReview(id, vid, signataires(AUTHOR)))
                 .isInstanceOf(DocumentSignatoryException.class).hasMessageContaining("author");
+        // Celui qui soumet ne se désigne pas : il approuverait seul ce qu'il envoie.
+        assertThatThrownBy(() -> service.submitForReview(id, vid, signataires(SIGNER_1, OWNER)))
+                .isInstanceOf(DocumentSignatoryException.class).hasMessageContaining("yourself");
         assertThatThrownBy(() -> service.submitForReview(id, vid, new DocumentDto.SubmitRequest(
                 java.util.Arrays.asList(new DocumentDto.SignatoryRequest(SIGNER_1, "  ")))))
                 .isInstanceOf(DocumentSignatoryException.class);

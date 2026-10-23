@@ -4,6 +4,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { of, throwError } from 'rxjs';
 
+import { AuthService } from '../../../../core/auth/auth.service';
 import { DirectoryService } from '../../../../core/directory/directory.service';
 import { DirectoryUser } from '../../../../core/directory/directory.types';
 import { SharedModule } from '../../../../shared/shared.module';
@@ -20,6 +21,7 @@ describe('DocumentsSubmitDialogComponent', () => {
   let svc: jasmine.SpyObj<DocumentsService>;
   let ref: jasmine.SpyObj<MatDialogRef<DocumentsSubmitDialogComponent>>;
   let snack: jasmine.SpyObj<MatSnackBar>;
+  let moi: string | undefined = 'auteur';
 
   const VERSION = {
     id: 'v1', documentId: 'd1', versionNumber: 2, status: 'DRAFT', authorId: 'auteur', createdAt: '', updatedAt: ''
@@ -45,6 +47,7 @@ describe('DocumentsSubmitDialogComponent', () => {
       providers: [
         { provide: DocumentsService, useValue: svc },
         { provide: DirectoryService, useValue: directory },
+        { provide: AuthService, useValue: { snapshot: () => (moi ? { userId: moi } : null) } },
         { provide: MatDialogRef, useValue: ref },
         { provide: MatSnackBar, useValue: snack },
         { provide: MAT_DIALOG_DATA, useValue: { version: VERSION } }
@@ -72,6 +75,14 @@ describe('DocumentsSubmitDialogComponent', () => {
     choisir('s1', MARIE);
     expect(component.excluded('s2')).toEqual(['auteur', 'u1']);
     expect(component.excluded('s1')).toEqual(['auteur']);
+  });
+
+  it('écarte aussi la personne qui soumet, si ce n’est pas l’auteur', () => {
+    moi = 'manager';
+    expect(component.excluded('s1')).toEqual(['auteur', 'manager']);
+    moi = undefined;
+    expect(component.excluded('s1')).toEqual(['auteur']);
+    moi = 'auteur';
   });
 
   it('refuse une même personne à deux places', () => {

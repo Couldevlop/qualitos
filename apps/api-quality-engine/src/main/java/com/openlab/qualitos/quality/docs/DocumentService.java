@@ -309,7 +309,7 @@ public class DocumentService {
         if (v.getBlob() == null) {
             throw new DocumentStateException("Attach the document file before submitting the version");
         }
-        List<DocumentDto.SignatoryRequest> designes = checkedSignatories(req, v.getAuthorId());
+        List<DocumentDto.SignatoryRequest> designes = checkedSignatories(req, v.getAuthorId(), CurrentUser.requireUserId());
         if (!v.getSignatories().isEmpty()) {
             // Les anciennes lignes partent avant les nouvelles : mêmes rangs, même version.
             v.getSignatories().clear();
@@ -329,8 +329,13 @@ public class DocumentService {
         return toVersionResponse(versionRepository.save(v));
     }
 
-    /** Un à trois signataires, tous distincts, et jamais l'auteur : on ne valide pas son propre texte. */
-    private static List<DocumentDto.SignatoryRequest> checkedSignatories(DocumentDto.SubmitRequest req, UUID auteur) {
+    /**
+     * Un à trois signataires, tous distincts, ni l'auteur ni la personne qui
+     * soumet : on ne valide pas son propre texte, et on ne se désigne pas pour
+     * approuver seul ce qu'on envoie en validation.
+     */
+    private static List<DocumentDto.SignatoryRequest> checkedSignatories(DocumentDto.SubmitRequest req, UUID auteur,
+                                                                         UUID soumetteur) {
         List<DocumentDto.SignatoryRequest> liste = req == null || req.signatories() == null
                 ? List.of() : req.signatories();
         if (liste.isEmpty() || liste.size() > MAX_SIGNATORIES) {
@@ -343,6 +348,9 @@ public class DocumentService {
             }
             if (s.userId().equals(auteur)) {
                 throw new DocumentSignatoryException("The author of the version cannot sign it");
+            }
+            if (s.userId().equals(soumetteur)) {
+                throw new DocumentSignatoryException("You cannot designate yourself to sign what you submit");
             }
             if (!vus.add(s.userId())) {
                 throw new DocumentSignatoryException("The same person cannot sign twice");
