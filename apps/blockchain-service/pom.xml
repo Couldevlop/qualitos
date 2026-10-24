@@ -14,12 +14,12 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <!-- 3.5.0 embarquait un contournement d'authentification Actuator
-             (CVE-2026-22733) et CVE-2026-22731, corrigés en 3.5.12. Ce module
-             ayant son PROPRE parent, il ne bénéficie d'aucune des surcharges de
-             sécurité de qualitos-parent : ses versions doivent être suivies ici,
-             séparément. -->
-        <version>3.5.16</version>
+        <!-- Spring Boot 4.0 (ADR 0100) : la ligne 3.5 et Spring Framework 6.2
+             ne reçoivent plus de correctifs (CVE-2026-47884, CVE-2026-47890).
+             Ce module ayant son PROPRE parent, il ne bénéficie d'aucune des
+             surcharges de sécurité de qualitos-parent : ses versions doivent
+             être suivies ici, séparément. -->
+        <version>4.0.9</version>
         <relativePath/>
     </parent>
 
@@ -53,9 +53,17 @@
     </properties>
 
     <dependencies>
+        <!-- Jackson 2 conservé le temps de la migration Spring Boot 4 (ADR 0100) :
+             Boot 4 passe à Jackson 3 (tools.jackson), le code applique encore
+             l'API com.fasterxml. Module de compatibilité officiel, à retirer avec
+             le passage à Jackson 3. -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
+            <artifactId>spring-boot-jackson2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webmvc</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -92,7 +100,7 @@
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
+            <artifactId>spring-boot-starter-test-classic</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

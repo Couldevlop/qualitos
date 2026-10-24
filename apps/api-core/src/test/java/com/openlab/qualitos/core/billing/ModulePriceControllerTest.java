@@ -6,8 +6,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -54,13 +54,13 @@ class ModulePriceControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @MockitoBean
     private ModulePriceService service;
 
     // SecurityConfig déclare un bean TenantJwtFilter(JwtDecoder) : sans ce
     // mock, le contexte @WebMvcTest ne démarre pas — même motif que dans
     // BillingProfileControllerTest.
-    @MockBean
+    @MockitoBean
     private JwtDecoder jwtDecoder;
 
     private static final UUID ACTOR = UUID.randomUUID();

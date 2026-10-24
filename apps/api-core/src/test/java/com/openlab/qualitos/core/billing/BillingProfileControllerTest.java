@@ -6,8 +6,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -48,7 +48,7 @@ class BillingProfileControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @MockitoBean
     private BillingProfileService service;
 
     // SecurityConfig déclare un bean TenantJwtFilter(JwtDecoder) : sans ce
@@ -56,7 +56,7 @@ class BillingProfileControllerTest {
     // TenantControllerTest. Le filtre lui-même est un no-op ici : les tests
     // n'envoient aucun en-tête Authorization, @WithMockUser pose directement
     // l'Authentication dans le contexte de sécurité.
-    @MockBean
+    @MockitoBean
     private JwtDecoder jwtDecoder;
 
     private static final UUID CLIENT = UUID.randomUUID();
