@@ -24975,6 +24975,22 @@ historique 12 mois</source>
         <source>Action CAPA ouverte : <x id="title"/></source>
         <target state="translated">CAPAアクションを開始：<x id="title"/></target>
       </trans-unit>
+      <trans-unit id="shell.search.goto-placeholder" datatype="html">
+        <source>Aller à un écran…</source>
+        <target state="translated">画面に移動…</target>
+      </trans-unit>
+      <trans-unit id="shell.search.goto-aria" datatype="html">
+        <source>Aller à un écran</source>
+        <target state="translated">画面に移動</target>
+      </trans-unit>
+      <trans-unit id="shell.search.list-aria" datatype="html">
+        <source>Écrans proposés</source>
+        <target state="translated">候補の画面</target>
+      </trans-unit>
+      <trans-unit id="shell.search.no-match" datatype="html">
+        <source>Aucun écran ne correspond à « <x id="INTERPOLATION"/> ».</source>
+        <target state="translated">「<x id="INTERPOLATION"/>」に一致する画面はありません。</target>
+      </trans-unit>
       <trans-unit id="nav.smi" datatype="html">
         <source>Tableau de bord SMI</source>
         <target state="translated">統合マネジメントシステム ダッシュボード</target>

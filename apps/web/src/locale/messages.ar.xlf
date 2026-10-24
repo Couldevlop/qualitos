@@ -24976,6 +24976,22 @@ historique 12 mois</source>
         <source>Action CAPA ouverte : <x id="title"/></source>
         <target state="translated">تم فتح إجراء CAPA: <x id="title"/></target>
       </trans-unit>
+      <trans-unit id="shell.search.goto-placeholder" datatype="html">
+        <source>Aller à un écran…</source>
+        <target state="translated">الانتقال إلى شاشة…</target>
+      </trans-unit>
+      <trans-unit id="shell.search.goto-aria" datatype="html">
+        <source>Aller à un écran</source>
+        <target state="translated">الانتقال إلى شاشة</target>
+      </trans-unit>
+      <trans-unit id="shell.search.list-aria" datatype="html">
+        <source>Écrans proposés</source>
+        <target state="translated">الشاشات المقترحة</target>
+      </trans-unit>
+      <trans-unit id="shell.search.no-match" datatype="html">
+        <source>Aucun écran ne correspond à « <x id="INTERPOLATION"/> ».</source>
+        <target state="translated">لا توجد شاشة تطابق «<x id="INTERPOLATION"/>».</target>
+      </trans-unit>
       <trans-unit id="nav.smi" datatype="html">
         <source>Tableau de bord SMI</source>
         <target state="translated">لوحة نظام الإدارة المتكامل</target>
