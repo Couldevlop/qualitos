@@ -9,6 +9,7 @@ import { of, throwError } from 'rxjs';
 import { AuthService, AuthUser } from '../../../../core/auth/auth.service';
 import { DirectoryService } from '../../../../core/directory/directory.service';
 import { SharedModule } from '../../../../shared/shared.module';
+import { UiModule } from '../../../../shared/ui/ui.module';
 import { AuditsService } from '../../audits.service';
 import { AuditPlanResponse, AuditStatus, ChecklistItemResponse } from '../../audits.types';
 import { AuditsDetailComponent } from './audits-detail.component';
@@ -64,7 +65,7 @@ describe('AuditsDetailComponent', () => {
 
     await TestBed.configureTestingModule({
       declarations: [AuditsDetailComponent],
-      imports: [SharedModule, NoopAnimationsModule],
+      imports: [SharedModule, UiModule, NoopAnimationsModule],
       providers: [
         provideRouter([]),
         { provide: ActivatedRoute, useValue: { snapshot: { paramMap: convertToParamMap({ id: ID }) } } },

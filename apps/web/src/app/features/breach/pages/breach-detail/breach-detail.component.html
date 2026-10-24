@@ -11,7 +11,7 @@
           <span class="title">{{ b.title }}</span>
         </h1>
         <div class="meta-row">
-          <span [class]="statusBadge(b.status)">{{ b.status }}</span>
+          <span [class]="statusBadge(b.status)">{{ b.status | statusLabel }}</span>
           <span [class]="severityBadge(b.severity)">{{ b.severity }}</span>
           <span class="dim">{{ b.affectedSubjectsCount | number }} <span i18n="@@breach.detail.affected-subjects">personnes concernées</span></span>
           <span *ngIf="b.subjectNotificationRequired" class="flag flag-sig">

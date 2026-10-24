@@ -4,7 +4,7 @@
   <header class="page-header" *ngIf="adoption as a">
     <div class="title-row">
       <h1>{{ a.standardCode | uppercase }}</h1>
-      <span class="badge status-{{ a.status }}">{{ a.status }}</span>
+      <span class="badge status-{{ a.status | statusLabel }}">{{ a.status | statusLabel }}</span>
     </div>
     <p>{{ a.standardName }}</p>
     <p class="meta">
@@ -213,7 +213,7 @@
                 <mat-form-field appearance="outline" class="status-select">
                   <mat-select [value]="st.status"
                               (selectionChange)="changeStageStatus(st, $event.value)">
-                    <mat-option *ngFor="let s of stageStatuses" [value]="s">{{ s }}</mat-option>
+                    <mat-option *ngFor="let s of stageStatuses" [value]="s">{{ s | statusLabel }}</mat-option>
                   </mat-select>
                 </mat-form-field>
               </td>
@@ -397,7 +397,7 @@
           <div class="rev" *ngFor="let r of revisions" [ngClass]="revisionClass(r.status)">
             <div class="rev-head">
               <span class="rev-version">{{ r.version }}</span>
-              <span class="rev-status">{{ r.status }}</span>
+              <span class="rev-status">{{ r.status | statusLabel }}</span>
               <span class="rev-date" *ngIf="r.publishedDate">· {{ r.publishedDate | date }}</span>
             </div>
             <p class="rev-summary" *ngIf="r.summary">{{ r.summary }}</p>

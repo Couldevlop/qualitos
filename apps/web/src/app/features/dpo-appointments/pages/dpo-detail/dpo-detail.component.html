@@ -12,7 +12,7 @@
         </h1>
         <div class="meta-row">
           <span [class]="typeBadge(a.dpoType)">{{ typeLabel(a.dpoType) }}</span>
-          <span [class]="statusBadge(a.status)">{{ a.status }}</span>
+          <span [class]="statusBadge(a.status)">{{ a.status | statusLabel }}</span>
           <span class="dim"><span i18n="@@dpo-appointments.detail.scope">Périmètre :</span> <code>{{ a.scope }}</code></span>
           <span class="dim" *ngIf="a.effectiveFrom"><span i18n="@@dpo-appointments.detail.effective-from">Effective depuis :</span> {{ a.effectiveFrom }}</span>
           <span class="dim" *ngIf="a.effectiveTo"><span i18n="@@dpo-appointments.detail.effective-to">Terminée le :</span> {{ a.effectiveTo }}</span>

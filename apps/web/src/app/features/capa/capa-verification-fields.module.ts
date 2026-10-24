@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { MatRadioModule } from '@angular/material/radio';
 
 import { SharedModule } from '../../shared/shared.module';
+import { UiModule } from '../../shared/ui/ui.module';
 import { UserPickerModule } from '../../shared/user-picker/user-picker.module';
 import {
   CapaVerificationFieldsComponent
@@ -20,7 +21,7 @@ import {
  */
 @NgModule({
   declarations: [CapaVerificationFieldsComponent],
-  imports: [SharedModule, UserPickerModule, MatRadioModule],
+  imports: [SharedModule, UiModule, UserPickerModule, MatRadioModule],
   exports: [CapaVerificationFieldsComponent]
 })
 export class CapaVerificationFieldsModule {}

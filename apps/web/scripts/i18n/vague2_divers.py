@@ -38,7 +38,7 @@ TRANSLATIONS = {
     'nav.admin-quotas': ("Quotas d'API", 'API quotas', 'Cuotas de API', 'حصص API', 'APIクォータ', 'API 配额'),
     'nav.admin-webhooks': ('Webhooks', 'Webhooks', 'Webhooks', 'خطافات الويب', 'Webhook', 'Webhook'),
     'nav.administration': ('Administration', 'Administration', 'Administración', 'الإدارة', '管理', '管理'),
-    'nav.calibration': ('Calibration', 'Calibration', 'Calibración', 'المعايرة', '校正', '校准'),
+    'nav.calibration': ('Instruments', 'Instruments', 'Instrumentos', 'أدوات القياس', '計測器', '仪器'),
     'nav.conformite': ('Conformité', 'Compliance', 'Cumplimiento', 'الامتثال', 'コンプライアンス', '合规'),
     'nav.conformite-cyber-nis-2': ('Conformité — Cyber (NIS 2)', 'Compliance — Cyber (NIS 2)', 'Cumplimiento — Ciber (NIS 2)', 'الامتثال — السيبراني (NIS 2)', 'コンプライアンス — サイバー（NIS 2）', '合规 — 网络（NIS 2）'),
     'nav.conformite-donnees-rgpd': ('Conformité — Données (RGPD)', 'Compliance — Data (GDPR)', 'Cumplimiento — Datos (RGPD)', 'الامتثال — البيانات (GDPR)', 'コンプライアンス — データ（GDPR）', '合规 — 数据（GDPR）'),

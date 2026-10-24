@@ -10,7 +10,7 @@
           <span [class]="typeBadge(r.type)">{{ typeLabel(r.type) }}</span>
         </h1>
         <div class="meta-row">
-          <span [class]="statusBadge(r.status)">{{ r.status }}</span>
+          <span [class]="statusBadge(r.status)">{{ r.status | statusLabel }}</span>
           <span *ngIf="r.overdue" class="flag flag-overdue">
             <mat-icon>schedule</mat-icon> <span i18n="@@subject-requests.list.flag-overdue">en retard</span>
           </span>

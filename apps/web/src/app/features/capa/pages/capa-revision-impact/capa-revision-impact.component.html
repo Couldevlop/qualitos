@@ -15,7 +15,7 @@
         <span class="qos-badge"
               [attr.data-tone]="request.status === 'ACCEPTED' ? 'success'
                                : request.status === 'REJECTED' ? 'neutral' : 'warning'">
-          {{ request.status }}
+          {{ request.status | statusLabel }}
         </span>
         <div class="rationale">{{ request.rationale }}</div>
         <div class="note" *ngIf="request.decisionNote">{{ request.decisionNote }}</div>

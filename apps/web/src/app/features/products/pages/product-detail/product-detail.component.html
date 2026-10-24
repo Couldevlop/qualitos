@@ -35,7 +35,7 @@
               <span class="qos-badge"
                     [attr.data-tone]="p.status === 'ACTIVE' ? 'success'
                                      : p.status === 'OBSOLETE' ? 'neutral' : 'info'">
-                {{ p.status }}
+                {{ p.status | statusLabel }}
               </span>
             </dd>
           </div>

@@ -6215,8 +6215,8 @@ Portail clients</source>
         <target state="translated">设备总数</target>
       </trans-unit>
       <trans-unit id="calibration.list.title" datatype="html">
-        <source>Calibration et équipements</source>
-        <target state="translated">校准与设备</target>
+        <source>Instruments</source>
+        <target state="translated">仪器</target>
       </trans-unit>
       <trans-unit id="calibration.manufacturer" datatype="html">
         <source>Fabricant</source>
@@ -23577,8 +23577,8 @@ historique 12 mois</source>
         <target state="translated">所有过程</target>
       </trans-unit>
       <trans-unit id="rr.all-statuses" datatype="html">
-        <source>Tous statuts</source>
-        <target state="translated">所有状态</target>
+        <source>Statut : tous</source>
+        <target state="translated">状态：全部</target>
       </trans-unit>
       <trans-unit id="rr.all-opportunities" datatype="html">
         <source>Toutes</source>
@@ -25757,8 +25757,8 @@ historique 12 mois</source>
         <target state="translated">按状态筛选</target>
       </trans-unit>
       <trans-unit id="spc.register.all-statuses" datatype="html">
-        <source>Tous les statuts</source>
-        <target state="translated">全部状态</target>
+        <source>Statut : tous</source>
+        <target state="translated">状态：全部</target>
       </trans-unit>
       <trans-unit id="spc.register.filter-plan" datatype="html">
         <source>Filtrer par plan d'actions</source>
@@ -28502,6 +28502,498 @@ Inde (centre de service)</source>
         <source>—</source>
         <target state="translated">—</target>
       </trans-unit>
+      <trans-unit id="status.abandoned" datatype="html">
+        <source>Abandonné</source>
+        <target state="translated">已放弃</target>
+      </trans-unit>
+      <trans-unit id="status.accepted" datatype="html">
+        <source>Accepté</source>
+        <target state="translated">已接受</target>
+      </trans-unit>
+      <trans-unit id="status.act" datatype="html">
+        <source>Agir</source>
+        <target state="translated">处置</target>
+      </trans-unit>
+      <trans-unit id="status.action-defined" datatype="html">
+        <source>Action définie</source>
+        <target state="translated">已确定措施</target>
+      </trans-unit>
+      <trans-unit id="status.active" datatype="html">
+        <source>Actif</source>
+        <target state="translated">有效</target>
+      </trans-unit>
+      <trans-unit id="status.approuve" datatype="html">
+        <source>Approuvé</source>
+        <target state="translated">已批准</target>
+      </trans-unit>
+      <trans-unit id="status.approved" datatype="html">
+        <source>Approuvé</source>
+        <target state="translated">已批准</target>
+      </trans-unit>
+      <trans-unit id="status.archived" datatype="html">
+        <source>Archivé</source>
+        <target state="translated">已归档</target>
+      </trans-unit>
+      <trans-unit id="status.assessing" datatype="html">
+        <source>En cours d'évaluation</source>
+        <target state="translated">评估中</target>
+      </trans-unit>
+      <trans-unit id="status.blacklisted" datatype="html">
+        <source>Exclu</source>
+        <target state="translated">已列入黑名单</target>
+      </trans-unit>
+      <trans-unit id="status.blocked" datatype="html">
+        <source>Bloqué</source>
+        <target state="translated">已阻止</target>
+      </trans-unit>
+      <trans-unit id="status.brouillon-ia" datatype="html">
+        <source>Brouillon IA</source>
+        <target state="translated">AI 草稿</target>
+      </trans-unit>
+      <trans-unit id="status.cancelled" datatype="html">
+        <source>Annulé</source>
+        <target state="translated">已取消</target>
+      </trans-unit>
+      <trans-unit id="status.capable" datatype="html">
+        <source>Capable</source>
+        <target state="translated">有能力</target>
+      </trans-unit>
+      <trans-unit id="status.certified" datatype="html">
+        <source>Certifié</source>
+        <target state="translated">已认证</target>
+      </trans-unit>
+      <trans-unit id="status.check" datatype="html">
+        <source>Vérifier</source>
+        <target state="translated">检查</target>
+      </trans-unit>
+      <trans-unit id="status.closed" datatype="html">
+        <source>Clôturé</source>
+        <target state="translated">已关闭</target>
+      </trans-unit>
+      <trans-unit id="status.completed" datatype="html">
+        <source>Terminé</source>
+        <target state="translated">已完成</target>
+      </trans-unit>
+      <trans-unit id="status.conditional" datatype="html">
+        <source>Sous conditions</source>
+        <target state="translated">有条件</target>
+      </trans-unit>
+      <trans-unit id="status.contained" datatype="html">
+        <source>Contenu</source>
+        <target state="translated">已控制</target>
+      </trans-unit>
+      <trans-unit id="status.covered" datatype="html">
+        <source>Couvert</source>
+        <target state="translated">已覆盖</target>
+      </trans-unit>
+      <trans-unit id="status.current" datatype="html">
+        <source>En vigueur</source>
+        <target state="translated">现行</target>
+      </trans-unit>
+      <trans-unit id="status.deactivated" datatype="html">
+        <source>Désactivé</source>
+        <target state="translated">已停用</target>
+      </trans-unit>
+      <trans-unit id="status.dead-letter" datatype="html">
+        <source>En échec définitif</source>
+        <target state="translated">最终失败</target>
+      </trans-unit>
+      <trans-unit id="status.decommissioned" datatype="html">
+        <source>Mis au rebut</source>
+        <target state="translated">已报废</target>
+      </trans-unit>
+      <trans-unit id="status.deprecated" datatype="html">
+        <source>Déprécié</source>
+        <target state="translated">已弃用</target>
+      </trans-unit>
+      <trans-unit id="status.detected" datatype="html">
+        <source>Détecté</source>
+        <target state="translated">已发现</target>
+      </trans-unit>
+      <trans-unit id="status.disabled" datatype="html">
+        <source>Désactivé</source>
+        <target state="translated">已禁用</target>
+      </trans-unit>
+      <trans-unit id="status.disabled-on-errors" datatype="html">
+        <source>Désactivé après erreurs</source>
+        <target state="translated">因错误停用</target>
+      </trans-unit>
+      <trans-unit id="status.discarded" datatype="html">
+        <source>Écarté</source>
+        <target state="translated">已舍弃</target>
+      </trans-unit>
+      <trans-unit id="status.dismissed" datatype="html">
+        <source>Classé sans suite</source>
+        <target state="translated">已驳回</target>
+      </trans-unit>
+      <trans-unit id="status.do" datatype="html">
+        <source>Faire</source>
+        <target state="translated">执行</target>
+      </trans-unit>
+      <trans-unit id="status.done" datatype="html">
+        <source>Fait</source>
+        <target state="translated">已完成</target>
+      </trans-unit>
+      <trans-unit id="status.dpo-review" datatype="html">
+        <source>Revue DPO</source>
+        <target state="translated">DPO 审核</target>
+      </trans-unit>
+      <trans-unit id="status.draft" datatype="html">
+        <source>Brouillon</source>
+        <target state="translated">草稿</target>
+      </trans-unit>
+      <trans-unit id="status.echec" datatype="html">
+        <source>Échec</source>
+        <target state="translated">失败</target>
+      </trans-unit>
+      <trans-unit id="status.en-attente" datatype="html">
+        <source>En attente</source>
+        <target state="translated">待处理</target>
+      </trans-unit>
+      <trans-unit id="status.en-generation" datatype="html">
+        <source>En génération</source>
+        <target state="translated">生成中</target>
+      </trans-unit>
+      <trans-unit id="status.en-validation" datatype="html">
+        <source>En validation</source>
+        <target state="translated">审批中</target>
+      </trans-unit>
+      <trans-unit id="status.ended" datatype="html">
+        <source>Terminé</source>
+        <target state="translated">已结束</target>
+      </trans-unit>
+      <trans-unit id="status.enrolled" datatype="html">
+        <source>Inscrit</source>
+        <target state="translated">已报名</target>
+      </trans-unit>
+      <trans-unit id="status.expired" datatype="html">
+        <source>Expiré</source>
+        <target state="translated">已过期</target>
+      </trans-unit>
+      <trans-unit id="status.failed" datatype="html">
+        <source>Échec</source>
+        <target state="translated">失败</target>
+      </trans-unit>
+      <trans-unit id="status.finalise" datatype="html">
+        <source>Finalisé</source>
+        <target state="translated">已定稿</target>
+      </trans-unit>
+      <trans-unit id="status.gap" datatype="html">
+        <source>Écart</source>
+        <target state="translated">差距</target>
+      </trans-unit>
+      <trans-unit id="status.generation-en-cours" datatype="html">
+        <source>Génération en cours</source>
+        <target state="translated">正在生成</target>
+      </trans-unit>
+      <trans-unit id="status.genere" datatype="html">
+        <source>Généré</source>
+        <target state="translated">已生成</target>
+      </trans-unit>
+      <trans-unit id="status.grace" datatype="html">
+        <source>Période de grâce</source>
+        <target state="translated">宽限期</target>
+      </trans-unit>
+      <trans-unit id="status.granted" datatype="html">
+        <source>Accordé</source>
+        <target state="translated">已授予</target>
+      </trans-unit>
+      <trans-unit id="status.implemented" datatype="html">
+        <source>Mis en œuvre</source>
+        <target state="translated">已实施</target>
+      </trans-unit>
+      <trans-unit id="status.in-analysis" datatype="html">
+        <source>En cours d'analyse</source>
+        <target state="translated">分析中</target>
+      </trans-unit>
+      <trans-unit id="status.in-design" datatype="html">
+        <source>En conception</source>
+        <target state="translated">设计中</target>
+      </trans-unit>
+      <trans-unit id="status.in-force" datatype="html">
+        <source>En vigueur</source>
+        <target state="translated">生效</target>
+      </trans-unit>
+      <trans-unit id="status.in-observation" datatype="html">
+        <source>En observation</source>
+        <target state="translated">观察中</target>
+      </trans-unit>
+      <trans-unit id="status.in-progress" datatype="html">
+        <source>En cours</source>
+        <target state="translated">进行中</target>
+      </trans-unit>
+      <trans-unit id="status.in-review" datatype="html">
+        <source>En revue</source>
+        <target state="translated">审核中</target>
+      </trans-unit>
+      <trans-unit id="status.in-revision" datatype="html">
+        <source>En révision</source>
+        <target state="translated">修订中</target>
+      </trans-unit>
+      <trans-unit id="status.in-treatment" datatype="html">
+        <source>En traitement</source>
+        <target state="translated">处理中</target>
+      </trans-unit>
+      <trans-unit id="status.in-use" datatype="html">
+        <source>En service</source>
+        <target state="translated">使用中</target>
+      </trans-unit>
+      <trans-unit id="status.in-validation" datatype="html">
+        <source>En validation</source>
+        <target state="translated">审批中</target>
+      </trans-unit>
+      <trans-unit id="status.installed" datatype="html">
+        <source>Installé</source>
+        <target state="translated">已安装</target>
+      </trans-unit>
+      <trans-unit id="status.invalid" datatype="html">
+        <source>Invalide</source>
+        <target state="translated">无效</target>
+      </trans-unit>
+      <trans-unit id="status.investigating" datatype="html">
+        <source>En cours d'investigation</source>
+        <target state="translated">调查中</target>
+      </trans-unit>
+      <trans-unit id="status.issued" datatype="html">
+        <source>Émis</source>
+        <target state="translated">已签发</target>
+      </trans-unit>
+      <trans-unit id="status.measured" datatype="html">
+        <source>Mesuré</source>
+        <target state="translated">已测量</target>
+      </trans-unit>
+      <trans-unit id="status.missing" datatype="html">
+        <source>Manquant</source>
+        <target state="translated">缺失</target>
+      </trans-unit>
+      <trans-unit id="status.mitigated" datatype="html">
+        <source>Atténué</source>
+        <target state="translated">已缓解</target>
+      </trans-unit>
+      <trans-unit id="status.monitored" datatype="html">
+        <source>Sous surveillance</source>
+        <target state="translated">监控中</target>
+      </trans-unit>
+      <trans-unit id="status.not-anchored" datatype="html">
+        <source>Non ancré</source>
+        <target state="translated">未锚定</target>
+      </trans-unit>
+      <trans-unit id="status.not-applicable" datatype="html">
+        <source>Non applicable</source>
+        <target state="translated">不适用</target>
+      </trans-unit>
+      <trans-unit id="status.not-capable" datatype="html">
+        <source>Non capable</source>
+        <target state="translated">无能力</target>
+      </trans-unit>
+      <trans-unit id="status.not-measurable" datatype="html">
+        <source>Non mesurable</source>
+        <target state="translated">不可测量</target>
+      </trans-unit>
+      <trans-unit id="status.not-required" datatype="html">
+        <source>Non requis</source>
+        <target state="translated">不需要</target>
+      </trans-unit>
+      <trans-unit id="status.not-started" datatype="html">
+        <source>Non démarré</source>
+        <target state="translated">未开始</target>
+      </trans-unit>
+      <trans-unit id="status.not-yet-valid" datatype="html">
+        <source>Pas encore valide</source>
+        <target state="translated">尚未生效</target>
+      </trans-unit>
+      <trans-unit id="status.notified-regulator" datatype="html">
+        <source>Notifié à l'autorité</source>
+        <target state="translated">已通知监管机构</target>
+      </trans-unit>
+      <trans-unit id="status.obsolete" datatype="html">
+        <source>Obsolète</source>
+        <target state="translated">已废止</target>
+      </trans-unit>
+      <trans-unit id="status.on-hold" datatype="html">
+        <source>En pause</source>
+        <target state="translated">暂停</target>
+      </trans-unit>
+      <trans-unit id="status.open" datatype="html">
+        <source>Ouvert</source>
+        <target state="translated">未结</target>
+      </trans-unit>
+      <trans-unit id="status.out-of-service" datatype="html">
+        <source>Hors service</source>
+        <target state="translated">停用</target>
+      </trans-unit>
+      <trans-unit id="status.partial" datatype="html">
+        <source>Partiel</source>
+        <target state="translated">部分</target>
+      </trans-unit>
+      <trans-unit id="status.paused" datatype="html">
+        <source>En pause</source>
+        <target state="translated">已暂停</target>
+      </trans-unit>
+      <trans-unit id="status.pending" datatype="html">
+        <source>En attente</source>
+        <target state="translated">待处理</target>
+      </trans-unit>
+      <trans-unit id="status.plan" datatype="html">
+        <source>Planifier</source>
+        <target state="translated">计划</target>
+      </trans-unit>
+      <trans-unit id="status.planned" datatype="html">
+        <source>Planifié</source>
+        <target state="translated">已计划</target>
+      </trans-unit>
+      <trans-unit id="status.planning" datatype="html">
+        <source>En planification</source>
+        <target state="translated">规划中</target>
+      </trans-unit>
+      <trans-unit id="status.proposed" datatype="html">
+        <source>Proposé</source>
+        <target state="translated">已提议</target>
+      </trans-unit>
+      <trans-unit id="status.prospect" datatype="html">
+        <source>Prospect</source>
+        <target state="translated">潜在</target>
+      </trans-unit>
+      <trans-unit id="status.provisioned" datatype="html">
+        <source>Provisionné</source>
+        <target state="translated">已配置</target>
+      </trans-unit>
+      <trans-unit id="status.published" datatype="html">
+        <source>Publié</source>
+        <target state="translated">已发布</target>
+      </trans-unit>
+      <trans-unit id="status.received" datatype="html">
+        <source>Reçu</source>
+        <target state="translated">已接收</target>
+      </trans-unit>
+      <trans-unit id="status.registered" datatype="html">
+        <source>Enregistré</source>
+        <target state="translated">已登记</target>
+      </trans-unit>
+      <trans-unit id="status.rejected" datatype="html">
+        <source>Rejeté</source>
+        <target state="translated">已拒绝</target>
+      </trans-unit>
+      <trans-unit id="status.rejete" datatype="html">
+        <source>Rejeté</source>
+        <target state="translated">已拒绝</target>
+      </trans-unit>
+      <trans-unit id="status.reported" datatype="html">
+        <source>Signalé</source>
+        <target state="translated">已报告</target>
+      </trans-unit>
+      <trans-unit id="status.resolved" datatype="html">
+        <source>Résolu</source>
+        <target state="translated">已解决</target>
+      </trans-unit>
+      <trans-unit id="status.retired" datatype="html">
+        <source>Réformé</source>
+        <target state="translated">已退役</target>
+      </trans-unit>
+      <trans-unit id="status.retrying" datatype="html">
+        <source>Nouvelle tentative</source>
+        <target state="translated">重试中</target>
+      </trans-unit>
+      <trans-unit id="status.reutilise" datatype="html">
+        <source>Réutilisé</source>
+        <target state="translated">已复用</target>
+      </trans-unit>
+      <trans-unit id="status.review-overdue" datatype="html">
+        <source>Revue en retard</source>
+        <target state="translated">审核逾期</target>
+      </trans-unit>
+      <trans-unit id="status.revoked" datatype="html">
+        <source>Révoqué</source>
+        <target state="translated">已撤销</target>
+      </trans-unit>
+      <trans-unit id="status.skipped" datatype="html">
+        <source>Ignoré</source>
+        <target state="translated">已跳过</target>
+      </trans-unit>
+      <trans-unit id="status.submitted" datatype="html">
+        <source>Soumis</source>
+        <target state="translated">已提交</target>
+      </trans-unit>
+      <trans-unit id="status.success" datatype="html">
+        <source>Réussi</source>
+        <target state="translated">成功</target>
+      </trans-unit>
+      <trans-unit id="status.superseded" datatype="html">
+        <source>Remplacé</source>
+        <target state="translated">已取代</target>
+      </trans-unit>
+      <trans-unit id="status.surveillance" datatype="html">
+        <source>Surveillance</source>
+        <target state="translated">监督</target>
+      </trans-unit>
+      <trans-unit id="status.suspended" datatype="html">
+        <source>Suspendu</source>
+        <target state="translated">已暂停</target>
+      </trans-unit>
+      <trans-unit id="status.tampered" datatype="html">
+        <source>Altéré</source>
+        <target state="translated">已篡改</target>
+      </trans-unit>
+      <trans-unit id="status.terminated" datatype="html">
+        <source>Résilié</source>
+        <target state="translated">已终止</target>
+      </trans-unit>
+      <trans-unit id="status.to-start" datatype="html">
+        <source>À démarrer</source>
+        <target state="translated">待开始</target>
+      </trans-unit>
+      <trans-unit id="status.to-treat" datatype="html">
+        <source>À traiter</source>
+        <target state="translated">待处理</target>
+      </trans-unit>
+      <trans-unit id="status.todo" datatype="html">
+        <source>À faire</source>
+        <target state="translated">待办</target>
+      </trans-unit>
+      <trans-unit id="status.trial" datatype="html">
+        <source>Période d'essai</source>
+        <target state="translated">试用</target>
+      </trans-unit>
+      <trans-unit id="status.under-analysis" datatype="html">
+        <source>En cours d'analyse</source>
+        <target state="translated">分析中</target>
+      </trans-unit>
+      <trans-unit id="status.under-review" datatype="html">
+        <source>En revue</source>
+        <target state="translated">审核中</target>
+      </trans-unit>
+      <trans-unit id="status.under-study" datatype="html">
+        <source>À l'étude</source>
+        <target state="translated">研究中</target>
+      </trans-unit>
+      <trans-unit id="status.uninstalled" datatype="html">
+        <source>Désinstallé</source>
+        <target state="translated">已卸载</target>
+      </trans-unit>
+      <trans-unit id="status.updated" datatype="html">
+        <source>Mis à jour</source>
+        <target state="translated">已更新</target>
+      </trans-unit>
+      <trans-unit id="status.valid" datatype="html">
+        <source>Valide</source>
+        <target state="translated">有效</target>
+      </trans-unit>
+      <trans-unit id="status.validated" datatype="html">
+        <source>Validé</source>
+        <target state="translated">已验证</target>
+      </trans-unit>
+      <trans-unit id="status.verified" datatype="html">
+        <source>Vérifié</source>
+        <target state="translated">已核实</target>
+      </trans-unit>
+      <trans-unit id="status.watch" datatype="html">
+        <source>À surveiller</source>
+        <target state="translated">需关注</target>
+      </trans-unit>
+      <trans-unit id="status.withdrawn" datatype="html">
+        <source>Retiré</source>
+        <target state="translated">已撤回</target>
+      </trans-unit>
       <trans-unit id="nav.storyboard" datatype="html">
         <source>Storyboard IA</source>
         <target state="translated">AI 叙事板</target>
@@ -28983,8 +29475,8 @@ Inde (centre de service)</source>
         <target state="translated">管理</target>
       </trans-unit>
       <trans-unit id="nav.calibration" datatype="html">
-        <source>Calibration</source>
-        <target state="translated">校准</target>
+        <source>Instruments</source>
+        <target state="translated">仪器</target>
       </trans-unit>
       <trans-unit id="nav.iot" datatype="html">
         <source>Parc IoT</source>

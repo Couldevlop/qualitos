@@ -6,6 +6,7 @@ import { Router, provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 
 import { SharedModule } from '../../../../shared/shared.module';
+import { UiModule } from '../../../../shared/ui/ui.module';
 import { WorkflowDesignerService } from '../../workflow-designer.service';
 import { WorkflowSummary } from '../../workflow-designer.types';
 import { WorkflowListComponent } from './workflow-list.component';
@@ -32,7 +33,7 @@ describe('WorkflowListComponent', () => {
 
     await TestBed.configureTestingModule({
       declarations: [WorkflowListComponent],
-      imports: [SharedModule, NoopAnimationsModule],
+      imports: [SharedModule, UiModule, NoopAnimationsModule],
       providers: [
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
