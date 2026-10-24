@@ -10,7 +10,7 @@ import { deferredView } from '../../../../core/rx/deferred-view';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { AccountNames } from '../../../../core/directory/directory-names';
 import { DirectoryService } from '../../../../core/directory/directory.service';
-import { capaOwnerLabel, capaTypeLabel, unnamedOwners } from '../../capa.labels';
+import { capaCriticityLabel, capaOwnerLabel, capaSourceLabel, capaTypeLabel, unnamedOwners } from '../../capa.labels';
 import { CapaService } from '../../capa.service';
 import { CapaCaseResponse, CapaCriticity, CapaPage, CapaStatus } from '../../capa.types';
 import {
@@ -150,4 +150,6 @@ export class CapaListComponent implements OnInit {
   /** Libellé lisible du type de dossier ; la colonne affichait l'énumération brute. */
   caseTypeLabel(type: string): string { return capaTypeLabel(type); }
   criticityBadge(c: CapaCriticity): string { return 'crit crit-' + c.toLowerCase(); }
+  readonly criticityLabel = capaCriticityLabel;
+  readonly sourceLabel = capaSourceLabel;
 }

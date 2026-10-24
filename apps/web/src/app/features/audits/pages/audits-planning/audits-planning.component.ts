@@ -7,6 +7,7 @@ import { catchError, finalize, map, shareReplay, startWith, switchMap, tap } fro
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { deferredView } from '../../../../core/rx/deferred-view';
 import { AuditsService } from '../../audits.service';
+import { auditTypeLabel } from '../../audits.labels';
 import { AuditPlanningEntry, AuditType } from '../../audits.types';
 
 /** Seuil d'alerte, aligné sur le rappel serveur (30 jours) : les deux doivent dire la même chose. */
@@ -22,6 +23,7 @@ const SOON_THRESHOLD_DAYS = 60;
   standalone: false
 })
 export class AuditsPlanningComponent implements OnInit {
+  readonly typeLabel = auditTypeLabel;
 
   readonly displayedColumns = ['scheduledDate', 'countdown', 'reference', 'title',
                                'type', 'standard', 'reminder'];

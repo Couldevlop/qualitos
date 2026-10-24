@@ -138,11 +138,11 @@
             </div>
             <div class="info-item">
               <span class="info-label" i18n="@@nc.create.severity">Sévérité</span>
-              <span [class]="severityBadgeClass(n.severity)">{{ n.severity }}</span>
+              <span [class]="severityBadgeClass(n.severity)">{{ n.severity | severityLabel }}</span>
             </div>
             <div class="info-item">
               <span class="info-label" i18n="@@nc.create.category">Catégorie</span>
-              <span class="info-value">{{ n.category }}</span>
+              <span class="info-value">{{ n.category | ncCategoryLabel }}</span>
             </div>
             <div class="info-item" *ngIf="n.zone">
               <span class="info-label" i18n="@@common.zone">Zone</span>
@@ -362,7 +362,7 @@
                     <li class="finding" *ngFor="let f of vision.findings">
                       <span class="finding-pillar">{{ f.pillar }}</span>
                       <span class="finding-desc">{{ f.description }}</span>
-                      <span [class]="visionSeverityClass(f.severity)">{{ f.severity }}</span>
+                      <span [class]="visionSeverityClass(f.severity)">{{ f.severity | severityLabel }}</span>
                       <span class="finding-conf"
                             i18n-matTooltip="@@nc.vision.confidence-tooltip"
                             matTooltip="Confiance du modèle">{{ visionConfidencePct(f.confidence) }}%</span>

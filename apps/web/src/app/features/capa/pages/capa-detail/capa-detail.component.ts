@@ -10,7 +10,7 @@ import { safeErrorMessage } from '../../../../core/http/error-message';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../../../shared/ui/confirm-dialog/confirm-dialog.component';
 import { AccountNames } from '../../../../core/directory/directory-names';
 import { DirectoryService } from '../../../../core/directory/directory.service';
-import { capaOwnerLabel, capaSourceLabel, capaTypeLabel, unnamedOwners } from '../../capa.labels';
+import { capaCriticityLabel, capaOwnerLabel, capaSourceLabel, capaTypeLabel, unnamedOwners } from '../../capa.labels';
 import { CapaService } from '../../capa.service';
 import {
   CapaEditDialogComponent,
@@ -699,5 +699,6 @@ export class CapaDetailComponent implements OnInit {
 
   statusBadge(s: CapaStatus): string { return 'badge badge-' + s.toLowerCase(); }
   criticityBadge(c: CapaCriticity): string { return 'crit crit-' + c.toLowerCase(); }
+  readonly criticityLabel = capaCriticityLabel;
   actionBadge(s: 'PENDING' | 'IN_PROGRESS' | 'DONE'): string { return 'badge badge-' + s.toLowerCase(); }
 }

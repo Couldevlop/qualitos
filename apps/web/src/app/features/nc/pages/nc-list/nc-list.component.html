@@ -40,7 +40,7 @@
       <mat-label i18n="@@nc.list.filter-severity">Filtrer par sévérité</mat-label>
       <mat-select [formControl]="severityFilter">
         <mat-option [value]="''" i18n="@@common.all">Tous</mat-option>
-        <mat-option *ngFor="let s of severities" [value]="s">{{ s }}</mat-option>
+        <mat-option *ngFor="let s of severities" [value]="s">{{ s | severityLabel }}</mat-option>
       </mat-select>
     </mat-form-field>
 
@@ -48,7 +48,7 @@
       <mat-label i18n="@@nc.list.filter-category">Filtrer par catégorie</mat-label>
       <mat-select [formControl]="categoryFilter">
         <mat-option [value]="''" i18n="@@common.all">Tous</mat-option>
-        <mat-option *ngFor="let c of categories" [value]="c">{{ c }}</mat-option>
+        <mat-option *ngFor="let c of categories" [value]="c">{{ c | ncCategoryLabel }}</mat-option>
       </mat-select>
     </mat-form-field>
   </mat-card>
@@ -85,11 +85,11 @@
       </ng-container>
       <ng-container matColumnDef="category">
         <th mat-header-cell *matHeaderCellDef i18n="@@nc.list.col-category">Catégorie</th>
-        <td mat-cell *matCellDef="let n">{{ n.category }}</td>
+        <td mat-cell *matCellDef="let n">{{ n.category | ncCategoryLabel }}</td>
       </ng-container>
       <ng-container matColumnDef="severity">
         <th mat-header-cell *matHeaderCellDef i18n="@@nc.list.col-severity">Sévérité</th>
-        <td mat-cell *matCellDef="let n"><span [class]="severityBadgeClass(n.severity)">{{ n.severity }}</span></td>
+        <td mat-cell *matCellDef="let n"><span [class]="severityBadgeClass(n.severity)">{{ n.severity | severityLabel }}</span></td>
       </ng-container>
       <ng-container matColumnDef="status">
         <th mat-header-cell *matHeaderCellDef i18n="@@common.status">Statut</th>
