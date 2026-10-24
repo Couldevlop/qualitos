@@ -24156,6 +24156,10 @@ historique 12 mois</source>
         <source>Lien impossible.</source>
         <target state="translated">تعذّر الربط.</target>
       </trans-unit>
+      <trans-unit id="workflow.editor.start-event" datatype="html">
+        <source>Début</source>
+        <target state="translated">البداية</target>
+      </trans-unit>
       <trans-unit id="common.retry" datatype="html">
         <source>Réessayer</source>
         <target state="translated">إعادة المحاولة</target>

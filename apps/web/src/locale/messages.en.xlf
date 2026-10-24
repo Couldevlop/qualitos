@@ -24156,6 +24156,10 @@ declared income
         <source>Lien impossible.</source>
         <target state="translated">Linking failed.</target>
       </trans-unit>
+      <trans-unit id="workflow.editor.start-event" datatype="html">
+        <source>Début</source>
+        <target state="translated">Start</target>
+      </trans-unit>
       <trans-unit id="common.retry" datatype="html">
         <source>Réessayer</source>
         <target state="translated">Retry</target>

@@ -99,9 +99,15 @@ export class WorkflowDesignerService {
     return this.http.delete<void>(`${this.endpoint}/${id}`);
   }
 
-  /** Diagramme BPMN vide par défaut pour démarrer un nouveau workflow. */
+  /**
+   * Diagramme BPMN vide par défaut pour démarrer un nouveau workflow. Le nom de
+   * l'événement de début suit la langue de l'interface (il restait « Début »
+   * en anglais) ; échappé, car il entre dans un attribut XML.
+   */
   emptyDiagram(): string {
-    return EMPTY_BPMN_XML;
+    const start = $localize`:@@workflow.editor.start-event:Début`
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+    return EMPTY_BPMN_XML.replace('name="Début"', `name="${start}"`);
   }
 
   private transition(

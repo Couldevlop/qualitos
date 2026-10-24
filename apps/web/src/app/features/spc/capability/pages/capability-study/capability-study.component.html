@@ -295,7 +295,7 @@
     <section class="bloc" aria-labelledby="titre-distribution">
       <h2 id="titre-distribution" i18n="@@spc.study.distribution">Distribution et tolérance</h2>
       <qos-spc-distribution-chart [values]="values" [mean]="calc.grandMean" [sigma]="calc.sigma"
-                                  [lsl]="lsl" [usl]="usl"></qos-spc-distribution-chart>
+                                  [lsl]="lsl" [usl]="usl" [digits]="digits.mean"></qos-spc-distribution-chart>
 
       <div class="lectures" *ngIf="readings as rd" data-test="lectures">
         <div>

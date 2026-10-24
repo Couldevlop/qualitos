@@ -19,7 +19,7 @@
   <g class="moyenne">
     <line [attr.x1]="g.meanX" [attr.x2]="g.meanX" [attr.y1]="g.top" [attr.y2]="g.bottom"></line>
     <text [attr.x]="g.meanX" [attr.y]="g.height - 8" text-anchor="middle">
-      <tspan i18n="@@spc.distribution.mean">moyenne</tspan> {{ mean | number: '1.1-1' }}
+      <tspan i18n="@@spc.distribution.mean">moyenne</tspan> {{ mean?.toFixed(digits) }}
     </text>
   </g>
 </svg>
