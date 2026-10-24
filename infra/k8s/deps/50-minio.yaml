@@ -69,9 +69,13 @@ spec:
     spec:
       containers:
         - name: minio
-          # Version FIGÉE, comme les autres dépendances : `latest` sur un registre
-          # est une cible mouvante, et l'on veut savoir ce qui tourne.
-          image: minio/minio:RELEASE.2025-09-07T16-13-09Z
+          # Version FIGÉE par empreinte, comme les autres dépendances : `latest` sur
+          # un registre est une cible mouvante, et l'on veut savoir ce qui tourne.
+          # Image Chainguard (RELEASE.2026-10-23) : minio/minio a disparu de Docker
+          # Hub. Bascule vérifiée le 2026-10-24 sur une copie des données de
+          # préproduction (écrites en RELEASE.2025-09-07) : mêmes objets, contenu
+          # identique au SHA-256, compte applicatif et politique conservés.
+          image: cgr.dev/chainguard/minio@sha256:73297936408b731668ca0e835ac9add1a35cb6026a125c2f0cd476d9ef48222c
           args: ["server", "/data", "--console-address", ":9001"]
           ports:
             - name: s3
@@ -87,6 +91,10 @@ spec:
             allowPrivilegeEscalation: false
             capabilities:
               drop: ["ALL"]
+            # UID 0 explicite : l'image Chainguard démarre en 65532, alors que
+            # le volume existant appartient à root (voir ci-dessous).
+            runAsUser: 0
+            runAsGroup: 0
             # runAsNonRoot n'est PAS forcé ici, contrairement aux services de la
             # plateforme. Vérifié sur cette version : lancée avec un UID non nul,
             # elle s'arrête au démarrage sur « Unable to initialize backend: file

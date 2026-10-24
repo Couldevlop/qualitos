@@ -90,6 +90,9 @@ services:
   minio:
     <<: *durci
     image: ${QOS_IMG_MINIO}
+    # L'image Chainguard démarre en 65532 ; MinIO exige root sur son volume
+    # (voir infra/k8s/deps/50-minio.yaml). Capacités retirées par *durci.
+    user: "0:0"
     command: ["server", "/data", "--console-address", ":9001"]
     environment:
       MINIO_ROOT_USER: qualitos

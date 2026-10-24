@@ -71,7 +71,7 @@ IMG_POSTGRES="$(qos_mirror_ref "$(image_of postgres "$DEPS/10-postgres.yaml")" "
 IMG_KEYCLOAK="$(qos_mirror_ref "$(image_of keycloak "$DEPS/20-keycloak.yaml")" "$QOS_MIRROR_REGISTRY")"
 IMG_QDRANT="$(qos_mirror_ref "$(image_of qdrant/qdrant "$DEPS/30-qdrant.yaml")" "$QOS_MIRROR_REGISTRY")"
 IMG_OLLAMA="$(qos_mirror_ref "$(image_of ollama/ollama "$DEPS/45-ollama.yaml")" "$QOS_MIRROR_REGISTRY")"
-IMG_MINIO="$(qos_mirror_ref "$(image_of minio/minio "$DEPS/50-minio.yaml")" "$QOS_MIRROR_REGISTRY")"
+IMG_MINIO="$(qos_mirror_ref "$(image_of chainguard/minio@ "$DEPS/50-minio.yaml")" "$QOS_MIRROR_REGISTRY")"
 IMG_MC="$(qos_mirror_ref "$(image_of minio-client "$DEPS/50-minio.yaml")" "$QOS_MIRROR_REGISTRY")"
 IMG_NGINX="$(qos_mirror_ref "nginx:1.27-alpine" "$QOS_MIRROR_REGISTRY")"
 
