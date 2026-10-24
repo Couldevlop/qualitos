@@ -6,7 +6,7 @@ import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.lang.NonNull;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authorization.AuthorizationDecision;
+import org.springframework.security.authorization.AuthorizationResult;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
@@ -109,8 +109,8 @@ public class MethodAuthorizationPreCheckInterceptor implements HandlerIntercepto
         }
 
         Supplier<Authentication> supplier = () -> authentication;
-        AuthorizationDecision decision = manager.get()
-                .check(supplier, new RequestAuthorizationContext(request));
+        AuthorizationResult decision = manager.get()
+                .authorize(supplier, new RequestAuthorizationContext(request));
 
         // `null` = le gestionnaire s'abstient. Une abstention n'est pas un refus :
         // on laisse @PreAuthorize trancher, comme avant cet intercepteur.

@@ -1,0 +1,160 @@
+<div class="qos-page">
+  <qos-page-header
+    title="Paramètres DMAIC" i18n-title="@@dmaic.settings.title"
+    subtitle="Le questionnaire de la fiche de résolution, les types de défaillance et les sévérités."
+    i18n-subtitle="@@dmaic.settings.subtitle">
+    <ng-container qosActions>
+      <a mat-stroked-button routerLink="/dmaic">
+        <mat-icon>insights</mat-icon> <span i18n="@@dmaic.list.title">Projets DMAIC</span>
+      </a>
+      <button mat-stroked-button type="button" color="warn" (click)="reset()" [disabled]="defaults || saving || loading"
+              data-test="retablir">
+        <mat-icon>restart_alt</mat-icon> <span i18n="@@dmaic.settings.reset-action">Valeurs de la plateforme</span>
+      </button>
+    </ng-container>
+  </qos-page-header>
+
+  <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+
+  <p class="echec" *ngIf="failed" role="alert">
+    <span i18n="@@dmaic.settings.load-failed">Les paramètres DMAIC n'ont pas pu être chargés.</span>
+    <button mat-button type="button" (click)="charger()" i18n="@@common.retry">Réessayer</button>
+  </p>
+
+  <ng-container *ngIf="!failed && !loading">
+    <p class="portee">
+      <ng-container i18n="@@dmaic.settings.scope">Une question se reconnaît à son code : en changer le libellé garde les réponses déjà données ; la retirer les cache sans les effacer.</ng-container>
+      <ng-container *ngIf="defaults"> <ng-container i18n="@@dmaic.settings.defaults">Ce sont aujourd'hui les valeurs de la plateforme, reprises du classeur.</ng-container></ng-container>
+    </p>
+
+    <!-- ===== Questionnaire ===== -->
+    <section class="bloc" aria-labelledby="dmaic-q">
+      <header class="bloc__head">
+        <div>
+          <h2 class="bloc__titre" id="dmaic-q" i18n="@@dmaic.settings.questions">Questionnaire</h2>
+          <p class="bloc__aide"><span i18n="@@dmaic.settings.questions-help">Les questions de chaque phase, dans l'ordre de la fiche.</span> {{ questions.length }}/{{ limits.questions }}</p>
+        </div>
+      </header>
+
+      <div class="phases" role="tablist" i18n-aria-label="@@dmaic.settings.phases" aria-label="Phases">
+        <button *ngFor="let s of sections" type="button" role="tab" class="phase"
+                [class.phase--on]="s === section" [attr.aria-selected]="s === section"
+                (click)="section = s" [attr.data-test]="'phase-' + s">
+          {{ sectionTitle(s) }} <span class="phase__nb">{{ countOf(s) }}</span>
+        </button>
+      </div>
+
+      <ol class="lignes" role="tabpanel">
+        <li class="ligne ligne--question" [class.ligne--sans-rubrique]="section !== 'DEFINE'" *ngFor="let q of sectionQuestions; let i = index; let last = last" data-test="question">
+          <mat-form-field appearance="outline" subscriptSizing="dynamic" class="ligne__code">
+            <mat-label i18n="@@dmaic.settings.code">Code</mat-label>
+            <input matInput [(ngModel)]="q.code" maxlength="20">
+          </mat-form-field>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic" class="ligne__libelle">
+            <mat-label i18n="@@dmaic.settings.question">Question</mat-label>
+            <textarea matInput rows="1" [(ngModel)]="q.label" [maxlength]="limits.questionLabel"></textarea>
+          </mat-form-field>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic" *ngIf="section === 'DEFINE'">
+            <mat-label i18n="@@dmaic.settings.topic">Rubrique</mat-label>
+            <mat-select [(ngModel)]="q.topic">
+              <mat-option [value]="null" i18n="@@dmaic.settings.no-topic">Sans rubrique</mat-option>
+              <mat-option *ngFor="let t of topics" [value]="t">{{ topicLabel[t] }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <mat-label i18n="@@dmaic.settings.answer-type">Réponse</mat-label>
+            <mat-select [(ngModel)]="q.answerType">
+              <mat-option *ngFor="let a of answerTypes" [value]="a">{{ answerTypeLabel[a] }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <span class="ligne__outils">
+            <button mat-icon-button type="button" (click)="moveQuestion(q, -1)" [disabled]="i === 0"
+                    i18n-aria-label="@@dmaic.settings.up" aria-label="Monter">
+              <mat-icon>arrow_upward</mat-icon>
+            </button>
+            <button mat-icon-button type="button" (click)="moveQuestion(q, 1)" [disabled]="last"
+                    i18n-aria-label="@@dmaic.settings.down" aria-label="Descendre">
+              <mat-icon>arrow_downward</mat-icon>
+            </button>
+            <button mat-icon-button type="button" (click)="removeQuestion(q)"
+                    i18n-aria-label="@@dmaic.settings.remove" aria-label="Retirer">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </span>
+        </li>
+      </ol>
+      <p class="dim" *ngIf="!sectionQuestions.length" i18n="@@dmaic.settings.no-question-here">Aucune question dans cette phase.</p>
+      <button mat-stroked-button type="button" (click)="addQuestion()" [disabled]="questions.length >= limits.questions"
+              data-test="question-ajout">
+        <mat-icon>add</mat-icon> <span i18n="@@dmaic.settings.add-question">Ajouter une question</span>
+      </button>
+    </section>
+
+    <div class="deux">
+      <!-- ===== Sévérités ===== -->
+      <section class="bloc" aria-labelledby="dmaic-sev">
+        <h2 class="bloc__titre" id="dmaic-sev" i18n="@@dmaic.settings.severities">Sévérités</h2>
+        <p class="bloc__aide" i18n="@@dmaic.settings.severities-help">Du plus grave (1) au moins grave.</p>
+        <ol class="lignes">
+          <li class="ligne ligne--simple" *ngFor="let s of severities" data-test="severite">
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="ligne__code">
+              <mat-label i18n="@@dmaic.settings.level">Niveau</mat-label>
+              <input matInput type="number" min="1" max="10" step="1" [(ngModel)]="s.level">
+            </mat-form-field>
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="ligne__libelle">
+              <mat-label i18n="@@dmaic.settings.label">Libellé</mat-label>
+              <input matInput [(ngModel)]="s.label" [maxlength]="limits.severityLabel">
+            </mat-form-field>
+            <button mat-icon-button type="button" (click)="removeSeverity(s)"
+                    i18n-aria-label="@@dmaic.settings.remove" aria-label="Retirer">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </li>
+        </ol>
+        <button mat-stroked-button type="button" (click)="addSeverity()" [disabled]="severities.length >= limits.severities"
+                data-test="severite-ajout">
+          <mat-icon>add</mat-icon> <span i18n="@@dmaic.settings.add-severity">Ajouter un niveau</span>
+        </button>
+      </section>
+
+      <!-- ===== Types de défaillance ===== -->
+      <section class="bloc" aria-labelledby="dmaic-ft">
+        <h2 class="bloc__titre" id="dmaic-ft" i18n="@@dmaic.settings.failure-types">Types de défaillance</h2>
+        <p class="bloc__aide">{{ failureTypes.length }}/{{ limits.failureTypes }}</p>
+        <ol class="lignes lignes--defilantes">
+          <li class="ligne ligne--simple" *ngFor="let f of failureTypes" data-test="defaillance">
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="ligne__code">
+              <mat-label i18n="@@dmaic.settings.code">Code</mat-label>
+              <input matInput [(ngModel)]="f.code" maxlength="20">
+            </mat-form-field>
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="ligne__libelle">
+              <mat-label i18n="@@dmaic.settings.label">Libellé</mat-label>
+              <input matInput [(ngModel)]="f.label" [maxlength]="limits.failureLabel">
+            </mat-form-field>
+            <button mat-icon-button type="button" (click)="removeFailureType(f)"
+                    i18n-aria-label="@@dmaic.settings.remove" aria-label="Retirer">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </li>
+        </ol>
+        <button mat-stroked-button type="button" (click)="addFailureType()" [disabled]="failureTypes.length >= limits.failureTypes"
+                data-test="defaillance-ajout">
+          <mat-icon>add</mat-icon> <span i18n="@@dmaic.settings.add-failure">Ajouter un type</span>
+        </button>
+      </section>
+    </div>
+
+    <div class="barre" *ngIf="dirty" role="status">
+      <ul class="barre__problemes" *ngIf="problems.length" data-test="problemes">
+        <li *ngFor="let p of problems">{{ p }}</li>
+      </ul>
+      <span *ngIf="!problems.length" i18n="@@spc.settings.pending">Paramètres modifiés</span>
+      <span class="barre__actions">
+        <button mat-stroked-button type="button" (click)="discard()" [disabled]="saving"
+                data-test="annuler" i18n="@@authz.matrix.discard">Annuler les changements</button>
+        <button mat-flat-button color="primary" type="button" (click)="save()" [disabled]="saving || problems.length > 0"
+                data-test="enregistrer" i18n="@@common.save">Enregistrer</button>
+      </span>
+    </div>
+  </ng-container>
+</div>

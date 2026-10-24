@@ -22,6 +22,7 @@ import { DmaicEditDialogComponent } from '../dmaic-edit-dialog/dmaic-edit-dialog
 import { DmaicMeasureDialogComponent } from '../dmaic-measure-dialog/dmaic-measure-dialog.component';
 import { DmaicPokaYokeDialogComponent } from '../dmaic-pokayoke-dialog/dmaic-pokayoke-dialog.component';
 
+const TAB_RESOLUTION = 'fiche';
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 @Component({
@@ -33,6 +34,9 @@ const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12
 export class DmaicDetailComponent implements OnInit {
 
   readonly phases: DmaicPhase[] = ['DEFINE', 'MEASURE', 'ANALYZE', 'IMPROVE', 'CONTROL'];
+
+  /** L'onglet ouvert : `?onglet=fiche` mène droit à la fiche de résolution. */
+  tabIndex = 0;
 
   project$!: Observable<DmaicProjectResponse | null>;
   private readonly loadingState$ = new BehaviorSubject<boolean>(false);
@@ -63,6 +67,7 @@ export class DmaicDetailComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.tabIndex = this.route.snapshot.queryParamMap.get('onglet') === TAB_RESOLUTION ? 1 : 0;
     this.project$ = this.route.paramMap.pipe(
       tap(() => { this.errorState$.next(null); this.loadingState$.next(true); }),
       switchMap(p => {
@@ -96,6 +101,17 @@ export class DmaicDetailComponent implements OnInit {
       map(p => p),
       shareReplay({ bufferSize: 1, refCount: true })
     );
+  }
+
+  /** Garde l'onglet dans l'adresse, pour qu'un lien ou un retour arrière y ramène. */
+  onTab(index: number): void {
+    this.tabIndex = index;
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { onglet: index === 1 ? TAB_RESOLUTION : null },
+      queryParamsHandling: 'merge',
+      replaceUrl: true
+    });
   }
 
   refreshCapability(): void {

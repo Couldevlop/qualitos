@@ -134,7 +134,7 @@
           <div class="info-grid">
             <div class="info-item">
               <span class="info-label" i18n="@@common.status">Statut</span>
-              <span [class]="statusBadgeClass(n.status)">{{ n.status }}</span>
+              <span [class]="statusBadgeClass(n.status)">{{ n.status | statusLabel }}</span>
             </div>
             <div class="info-item">
               <span class="info-label" i18n="@@nc.create.severity">Sévérité</span>

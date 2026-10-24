@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 
@@ -39,7 +40,11 @@ abstract class AbstractErpRestClient implements ErpProviderClient {
     protected final RestClient client;
 
     AbstractErpRestClient(RestClient client) {
-        this.client = client;
+        // Les collections sont lues en JsonNode Jackson 2 ; Spring 7 choisit
+        // Jackson 3 par défaut, d'où le convertisseur posé explicitement (ADR 0100).
+        this.client = client.mutate()
+                .configureMessageConverters(c -> c.withJsonConverter(new MappingJackson2HttpMessageConverter()))
+                .build();
     }
 
     /** Chemin (relatif à baseUrl) de la collection fournisseurs. */

@@ -27,7 +27,7 @@
     <mat-form-field appearance="outline" class="col">
       <mat-label i18n="@@common.status">Statut</mat-label>
       <mat-select formControlName="status">
-        <mat-option *ngFor="let s of statuses" [value]="s">{{ s }}</mat-option>
+        <mat-option *ngFor="let s of statuses" [value]="s">{{ s | statusLabel }}</mat-option>
       </mat-select>
     </mat-form-field>
   </div>

@@ -78,7 +78,7 @@ TRANSLATIONS = {
     'calibration.list.tile-due-soon': ("Échéances dans l'horizon", 'Due within horizon', 'Vencimientos en el horizonte', 'استحقاقات ضمن الأفق', '対象期間内の期限', '范围内到期'),
     'calibration.list.tile-overdue': ('Calibrations en retard', 'Overdue calibrations', 'Calibraciones vencidas', 'معايرات متأخرة', '期限超過の校正', '逾期校准'),
     'calibration.list.tile-total': ('Équipements', 'Equipment', 'Equipos', 'المعدات', '設備数', '设备总数'),
-    'calibration.list.title': ('Calibration et équipements', 'Calibration and equipment', 'Calibración y equipos', 'المعايرة والمعدات', '校正と設備', '校准与设备'),
+    'calibration.list.title': ('Instruments', 'Instruments', 'Instrumentos', 'أدوات القياس', '計測器', '仪器'),
 
     # --- calibration -------------------------------------------------
     'calibration.manufacturer': ('Fabricant', 'Manufacturer', 'Fabricante', 'الشركة المصنِّعة', '製造元', '制造商'),

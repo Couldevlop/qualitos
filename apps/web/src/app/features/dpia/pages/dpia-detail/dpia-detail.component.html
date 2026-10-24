@@ -10,7 +10,7 @@
         </h1>
         <div class="meta-row">
           <span [class]="riskBadge(d.overallRiskLevel)">{{ d.overallRiskLevel }}</span>
-          <span [class]="statusBadge(d.status)">{{ d.status }}</span>
+          <span [class]="statusBadge(d.status)">{{ d.status | statusLabel }}</span>
           <span *ngIf="d.consultationRequired" class="cons-flag">
             <mat-icon>gavel</mat-icon> <span i18n="@@dpia.detail.consultation-required">Consultation Art. 36 requise</span>
           </span>

@@ -32,29 +32,9 @@
 # sans avoir refait ce test.
 CVE-2026-111943 exp:2026-11-21
 #
-# 2026-10-10 — DEUX EXCEPTIONS, Spring Framework 6.2.19 (spring-webmvc).
-#
-#   CVE-2026-47884  CRITICAL  exécution de code par une limitation de chemin
-#                              insuffisante dans XsltView
-#   CVE-2026-47890            corruption de flux SSE (Server-Sent Events) avec
-#                              rendu de vue
-#
-# Pourquoi ce n'est pas une faille ICI : les deux portent sur des composants que
-# QualitOS n'utilise pas — aucune vue XSLT (XsltView, XsltViewResolver), aucun
-# flux SSE (SseEmitter, ServerSentEvent, text/event-stream). Les services
-# répondent en JSON par @RestController. Le job CI « Composants Spring exposés »
-# échoue si l'un de ces composants apparaît dans le code : l'exception tombe
-# d'elle-même le jour où elle cesserait d'être vraie.
-#
-# Correctif attendu : seule la branche 7.0 est corrigée (7.0.9) ; aucune 6.2.x
-# publique au-delà de 6.2.19 au 2026-10-10. La sortie passe par Spring Boot 4
-# (Spring Framework 7), à planifier. Décision prise avec le responsable du
-# projet le 2026-10-10, préproduction bloquée sinon.
-#
-# REVUE : 2026-11-10 — vérifier une 6.2.x corrigée, sinon l'avancement de la
-# migration Spring Boot 4. Ne pas reconduire sans l'un ou l'autre.
-CVE-2026-47884 exp:2026-11-10
-CVE-2026-47890 exp:2026-11-10
+# 2026-10-24 — exceptions CVE-2026-47884 et CVE-2026-47890 (Spring Framework
+# 6.2.19, spring-webmvc) retirées : passage à Spring Boot 4.0.9 / Spring
+# Framework 7.0.10, qui les corrige (ADR 0100).
 #
 # ÉTAT AU 2026-09-01 : CE FICHIER NE PORTAIT PLUS AUCUNE EXCEPTION.
 #

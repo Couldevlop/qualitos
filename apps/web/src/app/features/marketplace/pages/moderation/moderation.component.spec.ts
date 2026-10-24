@@ -5,6 +5,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { of } from 'rxjs';
 
 import { SharedModule } from '../../../../shared/shared.module';
+import { UiModule } from '../../../../shared/ui/ui.module';
 import { MarketplaceService } from '../../marketplace.service';
 import { MarketplacePackView } from '../../marketplace.types';
 import { ModerationComponent } from './moderation.component';
@@ -31,7 +32,7 @@ describe('ModerationComponent', () => {
 
     await TestBed.configureTestingModule({
       declarations: [ModerationComponent],
-      imports: [SharedModule, NoopAnimationsModule],
+      imports: [SharedModule, UiModule, NoopAnimationsModule],
       providers: [
         { provide: MarketplaceService, useValue: svc },
         { provide: MatSnackBar, useValue: snack },

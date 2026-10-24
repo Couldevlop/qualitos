@@ -13,7 +13,7 @@
         </h1>
         <h2 class="title">{{ n.title }}</h2>
         <div class="meta-row">
-          <span [class]="statusBadge(n.status)">{{ n.status }}</span>
+          <span [class]="statusBadge(n.status)">{{ n.status | statusLabel }}</span>
           <span class="dim" *ngIf="n.effectiveFrom"><ng-container i18n="@@privacy-notices.detail.effective-from">Effectif depuis :</ng-container> {{ n.effectiveFrom }}</span>
           <span class="dim" *ngIf="n.effectiveTo"><ng-container i18n="@@privacy-notices.detail.effective-to">Effectif jusqu'à :</ng-container> {{ n.effectiveTo }}</span>
         </div>
@@ -104,7 +104,7 @@
             <li *ngFor="let v of versions" [class.current]="v.id === n.id">
               <a (click)="openVersion(v)">
                 <code>v{{ v.version }}</code> <span class="lang">{{ v.language | uppercase }}</span>
-                <span [class]="statusBadge(v.status)">{{ v.status }}</span>
+                <span [class]="statusBadge(v.status)">{{ v.status | statusLabel }}</span>
               </a>
             </li>
           </ul>

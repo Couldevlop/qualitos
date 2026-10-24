@@ -75,7 +75,7 @@
         <div class="enrollment-list" *ngIf="!loadingEnrollments">
           <article class="enrollment-card" *ngFor="let e of enrollments; trackBy: trackById"
                    (click)="openEnrollment(e)">
-            <div class="enr-status status-{{ e.status.toLowerCase() }}">{{ e.status }}</div>
+            <div class="enr-status status-{{ e.status.toLowerCase() }}">{{ e.status | statusLabel }}</div>
             <div class="enr-body">
               <mat-progress-bar mode="determinate" [value]="e.progressPct"></mat-progress-bar>
               <div class="enr-meta">

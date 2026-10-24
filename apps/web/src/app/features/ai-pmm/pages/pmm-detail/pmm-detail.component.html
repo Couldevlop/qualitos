@@ -11,7 +11,7 @@
           <span class="title">{{ p.name }}</span>
         </h1>
         <div class="meta-row">
-          <span [class]="statusBadge(p.status)">{{ p.status }}</span>
+          <span [class]="statusBadge(p.status)">{{ p.status | statusLabel }}</span>
           <span class="freq-pill">{{ freqOf(p.reviewFrequency) }}</span>
           <span class="dim"><span i18n="@@ai-pmm.detail.ai-system">Système IA</span> <code>{{ p.aiSystemId.slice(0, 8) }}…</code></span>
           <span *ngIf="isOverdue(p)" class="flag flag-overdue">

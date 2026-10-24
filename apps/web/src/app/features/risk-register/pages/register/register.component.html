@@ -74,7 +74,7 @@
     <mat-form-field appearance="outline" class="filtres__liste" subscriptSizing="dynamic">
       <mat-select [(ngModel)]="statusFilter" data-test="filtre-statut"
                   i18n-aria-label="@@rr.filter-status" aria-label="Filtrer par statut">
-        <mat-option value="" i18n="@@rr.all-statuses">Tous statuts</mat-option>
+        <mat-option value="" i18n="@@rr.all-statuses">Statut : tous</mat-option>
         <ng-container *ngIf="tab === 'risks'">
           <mat-option *ngFor="let s of riskStatuses" [value]="s.value">{{ s.label }}</mat-option>
         </ng-container>

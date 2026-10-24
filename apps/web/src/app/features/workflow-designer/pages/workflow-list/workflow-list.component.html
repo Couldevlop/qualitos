@@ -15,7 +15,7 @@
       <mat-label i18n="@@common.filter-by-status">Filtrer par statut</mat-label>
       <mat-select [formControl]="statusFilter">
         <mat-option [value]="''" i18n="@@common.all">Tous</mat-option>
-        <mat-option *ngFor="let s of statuses" [value]="s">{{ s }}</mat-option>
+        <mat-option *ngFor="let s of statuses" [value]="s">{{ s | statusLabel }}</mat-option>
       </mat-select>
     </mat-form-field>
   </mat-card>
@@ -38,7 +38,7 @@
                [attr.aria-label]="'Ouvrir ' + wf.name">
         <div class="wf-card-head">
           <mat-icon class="wf-card-icon">account_tree</mat-icon>
-          <span [class]="statusBadgeClass(wf.status)">{{ wf.status }}</span>
+          <span [class]="statusBadgeClass(wf.status)">{{ wf.status | statusLabel }}</span>
         </div>
         <h2 class="wf-card-title">{{ wf.name }}</h2>
         <p class="wf-card-desc" *ngIf="wf.description">{{ wf.description }}</p>

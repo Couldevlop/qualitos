@@ -12,7 +12,7 @@
         </h1>
         <div class="meta-row">
           <span class="cat-pill">{{ catLabel(m.category) }}</span>
-          <span [class]="statusBadge(m.status)">{{ m.status }}</span>
+          <span [class]="statusBadge(m.status)">{{ m.status | statusLabel }}</span>
           <span [class]="riskBadge(m.residualRiskRating)">{{ m.residualRiskRating }}</span>
           <span class="maturity"><span i18n="@@nis2-measures.detail.maturity-prefix">Maturité</span> {{ m.maturityLevel }}/5</span>
           <span *ngIf="m.criticalResidualRisk" class="flag flag-overdue">
