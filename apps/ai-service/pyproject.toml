@@ -9,7 +9,12 @@ description = "QualitOS AI gateway — completion, RAG, NLQ, federated scaffold"
 requires-python = ">=3.11"
 dependencies = [
     "fastapi>=0.115",
-    "uvicorn[standard]>=0.32",
+    # Pas d'extra [standard] : il tire pyyaml (sans roue 3.15) ; on garde ses
+    # accélérateurs de prod (voir le Dockerfile).
+    "uvicorn>=0.32",
+    "uvloop>=0.21",
+    "httptools>=0.6",
+    "websockets>=13",
     "pydantic>=2.9",
     "httpx>=0.27",
     "sqlglot>=25.5",

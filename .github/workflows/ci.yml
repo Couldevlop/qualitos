@@ -456,13 +456,13 @@ jobs:
         run: |
           docker run --rm --user root --entrypoint /bin/sh \
             -v "$PWD/apps/ai-service:/src:ro" \
-            cgr.dev/chainguard/python:latest-dev@sha256:c07959e43e3edece176d20c32428a53014379790169af4ea5de1dc47277eba75 -c '
+            cgr.dev/chainguard/python:latest-dev@sha256:c179c7d8e23caed59a51ff74d4742f8f8d3f16af4c33c40acaf8d3ee07234592 -c '
               set -eu
               python -V
               mkdir -p /w && cd /w && cp -r /src/. . && rm -rf .venv .pytest_cache
               python -m pip install --quiet --no-cache-dir --only-binary=:all: \
                 "fastapi>=0.115" \
-                "uvicorn[standard]>=0.32" \
+                "uvicorn>=0.32" "uvloop>=0.21" "httptools>=0.6" "websockets>=13" \
                 "pydantic>=2.9" \
                 "httpx>=0.27" \
                 "sqlglot>=25.5" \

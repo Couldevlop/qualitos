@@ -26,6 +26,15 @@
 # Décision prise avec le responsable du projet le 2026-10-21, CD préprod bloquée
 # sinon.
 #
+# 2026-10-24 — ai-service N'EST PLUS CONCERNÉE : une seconde CVE de la même base,
+# CVE-2026-111497 (brotli 1.2.0-r5, écriture hors limites au décodage), bloquait
+# la CD, et celle-là est atteignable — la libcrypto d'OpenSSL 4.0 s'en sert pour
+# décompresser les certificats TLS reçus, avant leur vérification. Pas
+# d'exception : ai-service est passée en Python 3.15 (uvloop/httptools ont
+# désormais une roue 3.15 ; pyyaml non, d'où uvicorn sans l'extra [standard]).
+# L'entrée reste pour ai-vision-5s et l'inférence edge, toujours en 3.14 faute
+# d'onnxruntime 3.15 (elles ne sont pas scannées par la CI ni livrées par la CD).
+#
 # REVUE : 2026-11-21 — relever les deux empreintes Chainguard (ai-service,
 # ai-vision-5s, infra/edge/inference, job pytest de la CI) si uvicorn[standard]
 # et onnxruntime s'installent en 3.15, et retirer cette entrée. Ne pas reconduire
