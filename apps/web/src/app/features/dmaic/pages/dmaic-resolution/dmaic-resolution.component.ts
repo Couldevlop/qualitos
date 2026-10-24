@@ -388,9 +388,14 @@ export class DmaicResolutionComponent implements OnInit, OnDestroy {
       },
       error: err => {
         this.photoBusy.delete(slot);
-        this.fail(err, err?.status === 503
-          ? $localize`:@@dmaic.res.photo.storage-off:Le stockage des photos n'est pas disponible sur cette installation.`
-          : $localize`:@@dmaic.res.photo.upload-failed:La photo n'a pas pu être versée.`);
+        // 503 : le stockage objet est éteint sur cette installation. Le message
+        // générique des erreurs serveur laisserait croire à une panne passagère.
+        if (err?.status === 503) {
+          this.snack.open($localize`:@@dmaic.res.photo.storage-off:Le stockage des photos n'est pas disponible sur cette installation.`,
+            undefined, { duration: 5000 });
+          return;
+        }
+        this.fail(err, $localize`:@@dmaic.res.photo.upload-failed:La photo n'a pas pu être versée.`);
       }
     });
   }

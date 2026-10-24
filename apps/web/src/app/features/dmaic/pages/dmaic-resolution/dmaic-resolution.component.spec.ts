@@ -436,10 +436,10 @@ describe('DmaicResolutionComponent', () => {
 
   it('mène à une partie de la fiche depuis le sommaire', async () => {
     await setup();
+    const defile = spyOn(Element.prototype, 'scrollIntoView');
     const cible = document.createElement('div');
     cible.id = 'res-measure';
     document.body.appendChild(cible);
-    const defile = spyOn(cible, 'scrollIntoView');
     un('nav-res-measure')!.click();
     expect(defile).toHaveBeenCalledWith(jasmine.objectContaining({ block: 'start' }));
     cible.remove();
