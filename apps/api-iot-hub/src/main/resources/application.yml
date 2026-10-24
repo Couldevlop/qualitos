@@ -8,6 +8,12 @@ server:
 spring:
   application:
     name: api-iot-hub
+  # Boot 4 sérialise en Jackson 3 par défaut ; le code et ses ObjectMapper
+  # sont encore en Jackson 2 (ADR 0100) : les réponses HTTP doivent passer
+  # par le même moteur que le reste de l'application.
+  http:
+    converters:
+      preferred-json-mapper: jackson2
   datasource:
     url: ${IOT_DB_URL:jdbc:postgresql://postgres:5432/qualitos_iot}
     username: ${IOT_DB_USERNAME:qualitos}

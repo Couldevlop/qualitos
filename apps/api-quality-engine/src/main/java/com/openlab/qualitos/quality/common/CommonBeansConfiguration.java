@@ -17,7 +17,7 @@ public class CommonBeansConfiguration {
     /**
      * Horloge systeme UTC. Permet aux services qui injectent Clock (rate-limit,
      * tenant-modules, audit-event, etc.) d'avoir une horloge mockable en test
-     * via @MockBean(Clock.class).
+     * via @MockitoBean.
      */
     @Bean
     @Primary
