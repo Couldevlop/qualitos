@@ -38,7 +38,10 @@ spec:
           restartPolicy: OnFailure
           containers:
             - name: mirror
-              image: minio/mc:RELEASE.2025-08-13T08-35-41Z
+              # Client mc Chainguard, épinglé par empreinte : minio/mc a disparu de
+              # Docker Hub (« repository does not exist », constaté le 2026-10-24 en
+              # préproduction, ImagePullBackOff). La variante -dev porte le shell du script.
+              image: cgr.dev/chainguard/minio-client:latest-dev@sha256:3f349bd07076e8e4040dc5c32598b632268accba8ac7f460cb077670ee2e3407
               envFrom:
                 - secretRef:
                     name: qualitos-minio
