@@ -11,7 +11,7 @@
         </h1>
         <h2 class="label">{{ r.dataCategoryLabel || '(libellé non renseigné)' }}</h2>
         <div class="meta-row">
-          <span [class]="statusBadge(r.status)">{{ r.status }}</span>
+          <span [class]="statusBadge(r.status)">{{ r.status | statusLabel }}</span>
           <span class="period-big">{{ describe(r.retentionPeriod) }}</span>
           <span class="dim" *ngIf="r.effectiveFrom"><span i18n="@@retention.detail.effective-from">Effective depuis :</span> {{ r.effectiveFrom }}</span>
           <span class="dim" *ngIf="r.effectiveTo"><span i18n="@@retention.detail.archived-on">Archivée le :</span> {{ r.effectiveTo }}</span>

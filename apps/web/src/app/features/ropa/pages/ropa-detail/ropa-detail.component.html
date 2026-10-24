@@ -10,7 +10,7 @@
         </h1>
         <div class="meta-row">
           <span [class]="basisBadge(a.lawfulBasis)">{{ basisLabel(a.lawfulBasis) }}</span>
-          <span [class]="statusBadge(a.status)">{{ a.status }}</span>
+          <span [class]="statusBadge(a.status)">{{ a.status | statusLabel }}</span>
           <span class="dim" *ngIf="a.effectiveFrom"><span i18n="@@ropa.detail.effective-from">Effectif depuis :</span> {{ a.effectiveFrom }}</span>
           <span class="dim" *ngIf="a.effectiveTo"><span i18n="@@ropa.detail.archived-on">Archivé :</span> {{ a.effectiveTo }}</span>
         </div>

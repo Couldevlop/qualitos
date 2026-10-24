@@ -55,7 +55,7 @@
             <span class="carte__titre">{{ it.title }}</span>
             <span class="carte__meta">{{ it.code }}<ng-container *ngIf="it.requesterName"> · {{ it.requesterName }}</ng-container></span>
             <span class="carte__puces">
-              <span class="statut statut--{{ it.status }}">{{ statusLabel(it.status) }}</span>
+              <span class="statut statut--{{ it.status | statusLabel }}">{{ statusLabel(it.status) }}</span>
               <span class="classe classe--{{ it.classification }}">{{ classificationLabel(it.classification) }}</span>
               <span class="carte__moi" *ngIf="it.awaitingMe" i18n="@@moc.awaiting-me">À valider</span>
             </span>

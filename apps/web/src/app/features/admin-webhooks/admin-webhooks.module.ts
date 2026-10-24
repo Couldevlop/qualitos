@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../../shared/shared.module';
+import { UiModule } from '../../shared/ui/ui.module';
 import { WebhookDeliveryDialogComponent } from './pages/webhook-delivery-dialog/webhook-delivery-dialog.component';
 import { WebhookFormDialogComponent } from './pages/webhook-form-dialog/webhook-form-dialog.component';
 import { WebhookSecretDialogComponent } from './pages/webhook-secret-dialog/webhook-secret-dialog.component';
@@ -22,6 +23,6 @@ const routes: Routes = [
     WebhookSecretDialogComponent,
     WebhookDeliveryDialogComponent
   ],
-  imports: [SharedModule, RouterModule.forChild(routes)]
+  imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
 })
 export class AdminWebhooksModule {}

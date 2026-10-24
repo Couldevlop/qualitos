@@ -11,7 +11,7 @@
           {{ p.processorName }}
         </h1>
         <div class="meta-row">
-          <span [class]="statusBadge(p.status)">{{ p.status }}</span>
+          <span [class]="statusBadge(p.status)">{{ p.status | statusLabel }}</span>
           <span class="dim" *ngIf="p.processorLegalEntity">{{ p.processorLegalEntity }}</span>
           <span class="dim" *ngIf="p.processorCountry"><span i18n="@@dpa.detail.country-label">Pays :</span> <code>{{ p.processorCountry }}</code></span>
           <span *ngIf="daysUntilExpiration(p) !== null"

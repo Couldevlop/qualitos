@@ -3,6 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 import { SharedModule } from '../../../../shared/shared.module';
+import { UiModule } from '../../../../shared/ui/ui.module';
 import { WebhookDelivery } from '../../webhooks.types';
 import {
   WebhookDeliveryDialogComponent, WebhookDeliveryDialogData
@@ -22,7 +23,7 @@ describe('WebhookDeliveryDialogComponent', () => {
   async function setup(data: WebhookDeliveryDialogData): Promise<ComponentFixture<WebhookDeliveryDialogComponent>> {
     await TestBed.configureTestingModule({
       declarations: [WebhookDeliveryDialogComponent],
-      imports: [SharedModule, NoopAnimationsModule],
+      imports: [SharedModule, UiModule, NoopAnimationsModule],
       providers: [
         { provide: MatDialogRef, useValue: dialogRef },
         { provide: MAT_DIALOG_DATA, useValue: data }
