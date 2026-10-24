@@ -1,4 +1,4 @@
-import { CapaSourceType, CapaType } from './capa.types';
+import { CapaCriticity, CapaSourceType, CapaType } from './capa.types';
 
 /**
  * Libellés des raisons d'ouverture d'un dossier CAPA.
@@ -17,6 +17,20 @@ export const CAPA_TYPES: ReadonlyArray<{ value: CapaType; label: string }> = [
 export function capaTypeLabel(type: CapaType | string | undefined | null): string {
   if (!type) return '—';
   return CAPA_TYPES.find(t => t.value === type)?.label ?? String(type);
+}
+
+/** Libellés des criticités ; la liste et la fiche affichaient « HIGH », « CRITICAL ». */
+export const CAPA_CRITICITIES: ReadonlyArray<{ value: CapaCriticity; label: string }> = [
+  { value: 'LOW',      label: $localize`:@@capa.open.criticity-low:Faible` },
+  { value: 'MEDIUM',   label: $localize`:@@capa.open.criticity-medium:Moyenne` },
+  { value: 'HIGH',     label: $localize`:@@capa.open.criticity-high:Élevée` },
+  { value: 'CRITICAL', label: $localize`:@@capa.open.criticity-critical:Critique` }
+];
+
+/** Libellé lisible d'une criticité ; la valeur brute si elle est inconnue. */
+export function capaCriticityLabel(criticity: CapaCriticity | string | undefined | null): string {
+  if (!criticity) return '—';
+  return CAPA_CRITICITIES.find(c => c.value === criticity)?.label ?? String(criticity);
 }
 
 /**

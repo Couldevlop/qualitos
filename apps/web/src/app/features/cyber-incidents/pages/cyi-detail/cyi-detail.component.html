@@ -13,7 +13,7 @@
         <div class="meta-row">
           <span class="type-pill">{{ typeOf(i.incidentType) }}</span>
           <span [class]="statusBadge(i.status)">{{ i.status | statusLabel }}</span>
-          <span [class]="severityBadge(i.severity)">{{ i.severity }}</span>
+          <span [class]="severityBadge(i.severity)">{{ i.severity | severityLabel }}</span>
           <span *ngIf="i.significant" class="flag flag-sig">
             <mat-icon>shield</mat-icon> <span i18n="@@cyber-incidents.detail.significant">Incident significatif (NIS 2)</span>
           </span>

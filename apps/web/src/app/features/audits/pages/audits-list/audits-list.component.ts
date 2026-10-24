@@ -9,6 +9,7 @@ import { catchError, finalize, map, shareReplay, startWith, switchMap, tap } fro
 import { deferredView } from '../../../../core/rx/deferred-view';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { AuditsService } from '../../audits.service';
+import { auditTypeLabel } from '../../audits.labels';
 import { AuditPlanResponse, AuditStatus, AuditsPage } from '../../audits.types';
 import { AuditsCreateDialogComponent } from '../audits-create-dialog/audits-create-dialog.component';
 
@@ -25,6 +26,7 @@ const EMPTY_PAGE = { content: [], totalElements: 0, totalPages: 0, number: 0, si
   standalone: false
 })
 export class AuditsListComponent implements OnInit {
+  readonly typeLabel = auditTypeLabel;
 
   readonly displayedColumns = ['title', 'type', 'standard', 'status', 'score', 'scheduledDate'];
   readonly statusFilter = new FormControl<AuditStatus | ''>('');

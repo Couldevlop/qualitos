@@ -22,7 +22,7 @@
     <mat-form-field appearance="outline" class="full">
       <mat-label i18n="@@breach.severity.new-label">Nouvelle sévérité</mat-label>
       <mat-select formControlName="severity" required>
-        <mat-option *ngFor="let s of severities" [value]="s">{{ s }}</mat-option>
+        <mat-option *ngFor="let s of severities" [value]="s">{{ s | severityLabel }}</mat-option>
       </mat-select>
     </mat-form-field>
 

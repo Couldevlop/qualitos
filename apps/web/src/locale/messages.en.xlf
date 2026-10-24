@@ -24980,6 +24980,58 @@ declared income
         <source>Action CAPA ouverte : <x id="title"/></source>
         <target state="translated">CAPA action opened: <x id="title"/></target>
       </trans-unit>
+      <trans-unit id="severity.low" datatype="html">
+        <source>Faible</source>
+        <target state="translated">Low</target>
+      </trans-unit>
+      <trans-unit id="severity.medium" datatype="html">
+        <source>Moyenne</source>
+        <target state="translated">Medium</target>
+      </trans-unit>
+      <trans-unit id="severity.high" datatype="html">
+        <source>Élevée</source>
+        <target state="translated">High</target>
+      </trans-unit>
+      <trans-unit id="severity.critical" datatype="html">
+        <source>Critique</source>
+        <target state="translated">Critical</target>
+      </trans-unit>
+      <trans-unit id="severity.minor" datatype="html">
+        <source>Mineure</source>
+        <target state="translated">Minor</target>
+      </trans-unit>
+      <trans-unit id="severity.major" datatype="html">
+        <source>Majeure</source>
+        <target state="translated">Major</target>
+      </trans-unit>
+      <trans-unit id="nc.category.product" datatype="html">
+        <source>Produit</source>
+        <target state="translated">Product</target>
+      </trans-unit>
+      <trans-unit id="nc.category.process" datatype="html">
+        <source>Processus</source>
+        <target state="translated">Process</target>
+      </trans-unit>
+      <trans-unit id="nc.category.documentation" datatype="html">
+        <source>Documentation</source>
+        <target state="translated">Documentation</target>
+      </trans-unit>
+      <trans-unit id="nc.category.supplier" datatype="html">
+        <source>Fournisseur</source>
+        <target state="translated">Supplier</target>
+      </trans-unit>
+      <trans-unit id="nc.category.safety" datatype="html">
+        <source>Sécurité</source>
+        <target state="translated">Safety</target>
+      </trans-unit>
+      <trans-unit id="nc.category.environment" datatype="html">
+        <source>Environnement</source>
+        <target state="translated">Environment</target>
+      </trans-unit>
+      <trans-unit id="nc.category.other" datatype="html">
+        <source>Autre</source>
+        <target state="translated">Other</target>
+      </trans-unit>
       <trans-unit id="shell.search.goto-placeholder" datatype="html">
         <source>Aller à un écran…</source>
         <target state="translated">Go to a screen…</target>

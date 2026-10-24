@@ -20,6 +20,7 @@ import {
   AuditsFindingDialogComponent,
   AuditsFindingDialogData
 } from '../audits-finding-dialog/audits-finding-dialog.component';
+import { auditTypeLabel, findingTypeLabel } from '../../audits.labels';
 import { AuditPlanResponse, AuditStatus, ChecklistItemResponse, FindingResponse } from '../../audits.types';
 import { leadAuditorDisplay } from '../../lead-auditor';
 import {
@@ -47,6 +48,8 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
   standalone: false
 })
 export class AuditsDetailComponent implements OnInit {
+  readonly typeLabel = auditTypeLabel;
+  readonly findingLabel = findingTypeLabel;
 
   readonly checklistColumns = ['orderIndex', 'question', 'clauseRef', 'weight', 'response', 'actions'];
   readonly findingColumns = ['type', 'description', 'clauseRef', 'raisedAt'];

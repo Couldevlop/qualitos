@@ -176,7 +176,7 @@
               </p>
               <ul class="vision-findings" *ngIf="v.findings.length > 0">
                 <li *ngFor="let f of v.findings">
-                  <span [class]="findingSeverityClass(f.severity)">{{ f.severity }}</span>
+                  <span [class]="findingSeverityClass(f.severity)">{{ f.severity | severityLabel }}</span>
                   <strong>{{ f.pillar }}</strong>
                   <span class="finding-desc">{{ f.description }}</span>
                   <span class="finding-conf">{{ (f.confidence * 100) | number:'1.0-0' }}%</span>

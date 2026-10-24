@@ -12,7 +12,7 @@
         </h1>
         <div class="meta-row">
           <span class="dim">{{ typeLabel(i.type) }}</span>
-          <span [class]="severityBadge(i.severity)">{{ i.severity }}</span>
+          <span [class]="severityBadge(i.severity)">{{ i.severity | severityLabel }}</span>
           <span [class]="statusBadge(i.status)">{{ i.status | statusLabel }}</span>
           <span class="dim" *ngIf="i.occurredAt"><span i18n="@@ehs.detail.occurred-label">Survenu :</span> {{ i.occurredAt }}</span>
           <span class="dim"><span i18n="@@ehs.detail.reported-label">Reporté :</span> {{ i.reportedAt }}</span>

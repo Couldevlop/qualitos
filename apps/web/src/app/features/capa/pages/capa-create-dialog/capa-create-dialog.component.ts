@@ -10,7 +10,7 @@ import { findExactPerson, personName } from '../../../../core/directory/director
 import { DirectoryService } from '../../../../core/directory/directory.service';
 import { DirectoryUser } from '../../../../core/directory/directory.types';
 import { safeErrorMessage } from '../../../../core/http/error-message';
-import { CAPA_SOURCES, capaSourceLabel } from '../../capa.labels';
+import { CAPA_CRITICITIES, CAPA_SOURCES, capaSourceLabel } from '../../capa.labels';
 import { CapaService } from '../../capa.service';
 import { CapaCriticity, CapaSourceType, OpenCapaRequest } from '../../capa.types';
 
@@ -111,12 +111,7 @@ export class CapaCreateDialogComponent implements OnInit {
     { value: 'CORRECTIVE', label: $localize`:@@capa.type.corrective:Corrective` },
     { value: 'PREVENTIVE', label: $localize`:@@capa.type.preventive:Préventive` }
   ];
-  readonly criticities: { value: CapaCriticity; label: string }[] = [
-    { value: 'LOW',      label: $localize`:@@capa.open.criticity-low:Faible` },
-    { value: 'MEDIUM',   label: $localize`:@@capa.open.criticity-medium:Moyenne` },
-    { value: 'HIGH',     label: $localize`:@@capa.open.criticity-high:Élevée` },
-    { value: 'CRITICAL', label: $localize`:@@capa.open.criticity-critical:Critique` }
-  ];
+  readonly criticities = CAPA_CRITICITIES;
   readonly sourceTypes = CAPA_SOURCES.filter(s => s.manual);
 
   /** Pas d'échéance dans le passé : le dossier naîtrait en retard (le serveur le refuse aussi). */
