@@ -23577,8 +23577,8 @@ declared income
         <target state="translated">All processes</target>
       </trans-unit>
       <trans-unit id="rr.all-statuses" datatype="html">
-        <source>Tous statuts</source>
-        <target state="translated">All statuses</target>
+        <source>Statut : tous</source>
+        <target state="translated">Status: all</target>
       </trans-unit>
       <trans-unit id="rr.all-opportunities" datatype="html">
         <source>Toutes</source>
@@ -25757,8 +25757,8 @@ declared income
         <target state="translated">Filter by status</target>
       </trans-unit>
       <trans-unit id="spc.register.all-statuses" datatype="html">
-        <source>Tous les statuts</source>
-        <target state="translated">All statuses</target>
+        <source>Statut : tous</source>
+        <target state="translated">Status: all</target>
       </trans-unit>
       <trans-unit id="spc.register.filter-plan" datatype="html">
         <source>Filtrer par plan d'actions</source>

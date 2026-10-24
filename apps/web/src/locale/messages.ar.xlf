@@ -23577,8 +23577,8 @@ historique 12 mois</source>
         <target state="translated">جميع العمليات</target>
       </trans-unit>
       <trans-unit id="rr.all-statuses" datatype="html">
-        <source>Tous statuts</source>
-        <target state="translated">جميع الحالات</target>
+        <source>Statut : tous</source>
+        <target state="translated">الحالة: الكل</target>
       </trans-unit>
       <trans-unit id="rr.all-opportunities" datatype="html">
         <source>Toutes</source>
@@ -25757,8 +25757,8 @@ historique 12 mois</source>
         <target state="translated">تصفية حسب الحالة</target>
       </trans-unit>
       <trans-unit id="spc.register.all-statuses" datatype="html">
-        <source>Tous les statuts</source>
-        <target state="translated">جميع الحالات</target>
+        <source>Statut : tous</source>
+        <target state="translated">الحالة: الكل</target>
       </trans-unit>
       <trans-unit id="spc.register.filter-plan" datatype="html">
         <source>Filtrer par plan d'actions</source>

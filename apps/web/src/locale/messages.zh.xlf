@@ -23577,8 +23577,8 @@ historique 12 mois</source>
         <target state="translated">所有过程</target>
       </trans-unit>
       <trans-unit id="rr.all-statuses" datatype="html">
-        <source>Tous statuts</source>
-        <target state="translated">所有状态</target>
+        <source>Statut : tous</source>
+        <target state="translated">状态：全部</target>
       </trans-unit>
       <trans-unit id="rr.all-opportunities" datatype="html">
         <source>Toutes</source>
@@ -25757,8 +25757,8 @@ historique 12 mois</source>
         <target state="translated">按状态筛选</target>
       </trans-unit>
       <trans-unit id="spc.register.all-statuses" datatype="html">
-        <source>Tous les statuts</source>
-        <target state="translated">全部状态</target>
+        <source>Statut : tous</source>
+        <target state="translated">状态：全部</target>
       </trans-unit>
       <trans-unit id="spc.register.filter-plan" datatype="html">
         <source>Filtrer par plan d'actions</source>
