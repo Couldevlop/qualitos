@@ -311,20 +311,22 @@ tfoot .nom {
 .competence {
   min-width: var(--mx-case);
 
-  // La croix en haut, l'intitulé en bas : toutes les croix sur une même ligne, quelle
-  // que soit la longueur de l'intitulé. La hauteur est celle de l'en-tête, posée ici
-  // parce qu'un `height: 100%` ne se résout pas dans une cellule de tableau.
+  // L'intitulé en bas, la croix épinglée en haut de la cellule. La rangée d'en-tête
+  // a une seule hauteur (au moins 10rem, davantage si un intitulé l'exige) : toutes
+  // les croix tombent sur la même ligne, et aucun intitulé ne déborde sur la grille.
   &__inner {
     display: flex;
     flex-direction: column;
     align-items: center;
-    height: 10rem;
-    gap: var(--qos-space-1);
+    justify-content: flex-end;
+    padding-top: 2rem;          // la place de la croix
+  }
 
-    // Sans droit d'écriture, pas de croix : l'intitulé reste quand même en bas.
-    .vertical {
-      margin-top: auto;
-    }
+  .retirer {
+    position: absolute;
+    top: var(--qos-space-1);
+    left: 50%;
+    transform: translateX(-50%);
   }
 }
 

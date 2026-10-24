@@ -130,6 +130,39 @@ export function parseMeasurement(text: string): Measurement {
   return Number.isFinite(v) ? v : null;
 }
 
+/** Au-delà, l'affichage n'apporte plus rien qu'un instrument de terrain puisse garantir. */
+const MAX_DISPLAY_DECIMALS = 4;
+
+/**
+ * Le nombre de décimales des mesures saisies — la résolution de l'instrument,
+ * plafonnée à 4. Un diamètre relevé au millième ne s'affiche pas comme un poids
+ * en grammes : une étendue de 0,045 mm arrondie à l'unité devenait « 0 ».
+ */
+export function measurementDecimals(cells: readonly (readonly string[])[]): number {
+  let decimals = 0;
+  for (const row of cells) {
+    for (const text of row) {
+      if (parseMeasurement(text) === null) continue;
+      const t = text.trim().replace(/\s/g, '').replace(',', '.');
+      const point = t.indexOf('.');
+      if (point >= 0) decimals = Math.max(decimals, t.length - point - 1);
+    }
+  }
+  return Math.min(decimals, MAX_DISPLAY_DECIMALS);
+}
+
+/**
+ * Les décimales d'affichage déduites de la résolution : l'étendue à la résolution
+ * des mesures, une moyenne une décimale plus fine (au moins deux, l'affichage
+ * d'origine pour des mesures entières).
+ */
+export function displayDigits(decimals: number): { mean: number; range: number } {
+  return {
+    mean: Math.min(MAX_DISPLAY_DECIMALS, Math.max(2, decimals + 1)),
+    range: Math.min(MAX_DISPLAY_DECIMALS, decimals)
+  };
+}
+
 /**
  * Colle un bloc copié depuis un tableur (tabulations, retours à la ligne) à
  * partir de la cellule (r0, c0), dans la grille de texte saisi. Ce qui déborde

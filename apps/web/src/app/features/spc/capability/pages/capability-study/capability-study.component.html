@@ -141,13 +141,13 @@
                 <tr class="calculee">
                   <th scope="row" class="entete-ligne">X̄</th>
                   <td *ngFor="let c of columns" [class.hors]="meanOut(c)" [attr.data-test]="'moyenne-' + c">
-                    {{ num(calc.subgroupMeans[c], 2) }}
+                    {{ num(calc.subgroupMeans[c], digits.mean) }}
                   </td>
                 </tr>
                 <tr class="calculee">
                   <th scope="row" class="entete-ligne">R</th>
                   <td *ngFor="let c of columns" [class.hors]="rangeOut(c)" [attr.data-test]="'etendue-' + c">
-                    {{ num(calc.subgroupRanges[c], 0) }}
+                    {{ num(calc.subgroupRanges[c], digits.range) }}
                   </td>
                 </tr>
               </tbody>
@@ -168,13 +168,13 @@
             <section class="carte-bloc" aria-labelledby="titre-carte-x">
               <h3 id="titre-carte-x" i18n="@@spc.study.xbar-chart">Carte X̄</h3>
               <qos-spc-control-chart [values]="calc.subgroupMeans" [ucl]="calc.meanUcl" [cl]="calc.grandMean"
-                                     [lcl]="calc.meanLcl" [usl]="usl" [lsl]="lsl" [label]="xbarLabel"
+                                     [lcl]="calc.meanLcl" [usl]="usl" [lsl]="lsl" [label]="xbarLabel" [digits]="digits.mean"
                                      data-test="carte-x"></qos-spc-control-chart>
             </section>
             <section class="carte-bloc" aria-labelledby="titre-carte-r">
               <h3 id="titre-carte-r" i18n="@@spc.study.range-chart">Carte R</h3>
               <qos-spc-control-chart [values]="calc.subgroupRanges" [ucl]="calc.rangeUcl" [cl]="calc.meanRange"
-                                     [lcl]="calc.rangeLcl" [label]="rangeLabel" data-test="carte-r"></qos-spc-control-chart>
+                                     [lcl]="calc.rangeLcl" [label]="rangeLabel" [digits]="digits.mean" data-test="carte-r"></qos-spc-control-chart>
             </section>
           </div>
         </div>
@@ -211,7 +211,7 @@
           <table class="calculs">
             <tbody>
               <tr class="groupe"><th colspan="3" i18n="@@spc.formula.group-means">Moyennes et dispersion</th></tr>
-              <tr><th>Σ X̄</th><td class="formule" i18n="@@spc.formula.sum-means">Somme des X̄</td><td class="valeur" data-test="formule-somme">{{ num(calc.sumOfMeans, 2) }}</td></tr>
+              <tr><th>Σ X̄</th><td class="formule" i18n="@@spc.formula.sum-means">Somme des X̄</td><td class="valeur" data-test="formule-somme">{{ num(calc.sumOfMeans, digits.mean) }}</td></tr>
               <tr><th>X̿</th><td class="formule">Σ X̄ / {{ calc.completeSubgroups }}</td><td class="valeur" data-test="formule-moyenne">{{ num(calc.grandMean, 3) }}</td></tr>
               <tr><th>R̄</th><td class="formule">Σ R / {{ calc.completeSubgroups }}</td><td class="valeur" data-test="formule-etendue">{{ num(calc.meanRange, 3) }}</td></tr>
               <tr><th>SIGMA</th><td class="formule">R̄ / d2</td><td class="valeur" data-test="formule-sigma">{{ num(calc.sigma, 4) }}</td></tr>
@@ -260,7 +260,7 @@
           <span>Cpk – <ng-container i18n="@@spc.study.threshold">seuil</ng-container> {{ fixed(capableThreshold) }}</span>
         </div>
         <div class="kpi" data-test="kpi-moyenne">
-          <b>{{ num(calc.grandMean, 2) }}</b>
+          <b>{{ num(calc.grandMean, digits.mean) }}</b>
           <span i18n="@@spc.study.grand-mean">Moyenne X̿</span>
         </div>
         <div class="kpi" data-test="kpi-sigma">

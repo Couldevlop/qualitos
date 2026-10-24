@@ -24229,8 +24229,8 @@ historial de 12 meses</target>
         <target state="translated">Todos los procesos</target>
       </trans-unit>
       <trans-unit id="rr.all-statuses" datatype="html">
-        <source>Tous statuts</source>
-        <target state="translated">Todos los estados</target>
+        <source>Statut : tous</source>
+        <target state="translated">Estado: todos</target>
       </trans-unit>
       <trans-unit id="rr.all-opportunities" datatype="html">
         <source>Toutes</source>
@@ -26409,8 +26409,8 @@ historial de 12 meses</target>
         <target state="translated">Filtrar por estado</target>
       </trans-unit>
       <trans-unit id="spc.register.all-statuses" datatype="html">
-        <source>Tous les statuts</source>
-        <target state="translated">Todos los estados</target>
+        <source>Statut : tous</source>
+        <target state="translated">Estado: todos</target>
       </trans-unit>
       <trans-unit id="spc.register.filter-plan" datatype="html">
         <source>Filtrer par plan d'actions</source>
