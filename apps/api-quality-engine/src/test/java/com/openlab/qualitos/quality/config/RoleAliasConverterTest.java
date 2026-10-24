@@ -59,7 +59,7 @@ class RoleAliasConverterTest {
         Jwt jwt = new Jwt("t", Instant.now(), Instant.now().plusSeconds(60),
                 Map.of("alg", "none"), Map.of("sub", "u"));
 
-        assertThat(config.jwtAuthenticationConverter().convert(jwt).getAuthorities()).isEmpty();
+        assertThat(roles(config.jwtAuthenticationConverter().convert(jwt).getAuthorities())).isEmpty();
     }
 
     @Test
@@ -67,7 +67,7 @@ class RoleAliasConverterTest {
         Jwt jwt = new Jwt("t", Instant.now(), Instant.now().plusSeconds(60),
                 Map.of("alg", "none"), Map.of("sub", "u", "realm_access", Map.of()));
 
-        assertThat(config.jwtAuthenticationConverter().convert(jwt).getAuthorities()).isEmpty();
+        assertThat(roles(config.jwtAuthenticationConverter().convert(jwt).getAuthorities())).isEmpty();
     }
 
     @Test
@@ -84,7 +84,17 @@ class RoleAliasConverterTest {
         Jwt jwt = new Jwt("t", Instant.now(), Instant.now().plusSeconds(60),
                 Map.of("alg", "none"),
                 Map.of("sub", "u", "realm_access", Map.of("roles", List.of(realmRoles))));
-        return config.jwtAuthenticationConverter().convert(jwt).getAuthorities().stream()
+        return roles(config.jwtAuthenticationConverter().convert(jwt).getAuthorities());
+    }
+
+    /**
+     * Les rôles seuls : Spring Security 7 ajoute à toute authentification une
+     * autorité de facteur ({@code FACTOR_BEARER}), qui dit comment la personne
+     * s'est authentifiée et n'ouvre aucune règle {@code hasRole}.
+     */
+    private static List<GrantedAuthority> roles(Collection<? extends GrantedAuthority> authorities) {
+        return authorities.stream()
+                .filter(a -> a.getAuthority().startsWith("ROLE_"))
                 .map(GrantedAuthority.class::cast)
                 .toList();
     }
