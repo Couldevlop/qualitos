@@ -386,6 +386,10 @@ mat-icon.material-symbols-outlined {
  * ============================================================ */
 html, body { overflow-x: hidden; }
 
+// Un mot long (référence, URL, hash) passe à la ligne au lieu de chevaucher
+// la colonne voisine ; sans effet sur la largeur minimale des cellules.
+body { overflow-wrap: break-word; }
+
 .qos-page {
   // Un tableau dense ne rétrécit pas : on lui donne son propre défilement plutôt
   // que de laisser la page entière glisser sous le doigt.
@@ -809,7 +813,11 @@ html, body { overflow-x: hidden; }
 /* Carte de tableau — pas de padding, le tableau remplit, coins arrondis nets. */
 .table-card {
   padding: 0;
-  overflow: hidden;
+  // Défilement horizontal dans la carte (coins toujours rognés) plutôt qu'un
+  // tableau coupé à droite sur écran étroit.
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
 }
 
 /* ---- États : loading / empty / error premium et réutilisables ---- */

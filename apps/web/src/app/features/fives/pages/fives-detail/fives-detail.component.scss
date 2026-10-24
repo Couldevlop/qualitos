@@ -95,7 +95,7 @@
 }
 
 .score-field { width: 130px; }
-.note-field  { flex: 1; min-width: 220px; }
+.note-field  { flex: 1; min-width: min(220px, 100%); }
 
 .pillar-score {
   display: inline-flex;

@@ -1,4 +1,4 @@
-.conn-form { display: flex; flex-direction: column; min-width: 620px; max-width: 760px; }
+.conn-form { display: flex; flex-direction: column; min-width: min(620px, 100%); max-width: 760px; }
 mat-dialog-content { padding-top: 8px; display: flex; flex-direction: column; gap: 4px; }
 .full { width: 100%; }
 .row { display: flex; gap: 12px; }

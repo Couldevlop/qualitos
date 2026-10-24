@@ -6,7 +6,7 @@
   align-items: center;
   gap: 16px;
 }
-.type-filter    { width: 240px; }
+.type-filter    { width: min(240px, 100%); }
 .horizon-filter { width: 160px; }
 
 .counters { display: flex; flex-wrap: wrap; gap: 12px; margin-left: auto; }

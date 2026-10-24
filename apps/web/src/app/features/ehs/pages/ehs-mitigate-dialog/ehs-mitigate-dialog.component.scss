@@ -1,4 +1,4 @@
-.mit-form { display: flex; flex-direction: column; min-width: 600px; max-width: 720px; }
+.mit-form { display: flex; flex-direction: column; min-width: min(600px, 100%); max-width: 720px; }
 .hint { margin: 0 0 12px; color: rgba(0,0,0,0.6); font-size: 13px; }
 mat-dialog-content { padding-top: 8px; display: flex; flex-direction: column; gap: 4px; }
 .full { width: 100%; }

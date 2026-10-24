@@ -1,5 +1,5 @@
 import {
-  AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild
+  AfterViewInit, Component, DOCUMENT, ElementRef, OnDestroy, OnInit, ViewChild, inject
 } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -7,6 +7,7 @@ import { firstValueFrom } from 'rxjs';
 
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { WorkflowDesignerService } from '../../workflow-designer.service';
+import { ensureBpmnStyles } from '../../bpmn-styles';
 import {
   CreateWorkflowRequest, UpdateWorkflowRequest, WorkflowDefinition, WorkflowStatus
 } from '../../workflow-designer.types';
@@ -81,6 +82,8 @@ export class WorkflowEditorComponent implements OnInit, AfterViewInit, OnDestroy
   private modeler?: BpmnModelerLike;
   private pendingXml = '';
 
+  private readonly document = inject(DOCUMENT);
+
   constructor(
     private readonly svc: WorkflowDesignerService,
     private readonly route: ActivatedRoute,
@@ -89,6 +92,7 @@ export class WorkflowEditorComponent implements OnInit, AfterViewInit, OnDestroy
   ) {}
 
   ngOnInit(): void {
+    ensureBpmnStyles(this.document);
     const param = this.route.snapshot.paramMap.get('id');
     if (param === 'new' || param === null) {
       this.isNew = true;

@@ -20108,6 +20108,22 @@ historial de 12 meses</target>
         <source>Une erreur est survenue lors du traitement de la question (HTTP <x id="status"/>).</source>
         <target state="translated">Se produjo un error al procesar la pregunta (HTTP <x id="status"/>).</target>
       </trans-unit>
+      <trans-unit id="notfound.title" datatype="html">
+        <source>Cette page n'existe pas</source>
+        <target state="translated">Esta página no existe</target>
+      </trans-unit>
+      <trans-unit id="notfound.hint" datatype="html">
+        <source>L'adresse a peut-être changé, ou le lien est incomplet.</source>
+        <target state="translated">Puede que la dirección haya cambiado o que el enlace esté incompleto.</target>
+      </trans-unit>
+      <trans-unit id="notfound.home" datatype="html">
+        <source>Retour à l'accueil</source>
+        <target state="translated">Volver al inicio</target>
+      </trans-unit>
+      <trans-unit id="notfound.back" datatype="html">
+        <source>Page précédente</source>
+        <target state="translated">Página anterior</target>
+      </trans-unit>
       <trans-unit id="offline.queue.title" datatype="html">
         <source>File d'attente offline</source>
         <target state="translated">Cola sin conexión</target>

@@ -44,7 +44,7 @@
 .tile[data-tone='info'] { border-left-color: var(--qos-accent-bg); }
 
 .filters { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
-.filters__field { min-width: 210px; }
+.filters__field { min-width: min(210px, 100%); }
 .filters__field--search { flex: 1 1 260px; }
 
 .banner { padding: 10px 14px; border-radius: var(--qos-radius-md); font-size: 13px; }

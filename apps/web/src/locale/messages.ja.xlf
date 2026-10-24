@@ -20107,6 +20107,22 @@ historique 12 mois</source>
         <source>Une erreur est survenue lors du traitement de la question (HTTP <x id="status"/>).</source>
         <target state="translated">質問の処理中にエラーが発生しました（HTTP <x id="status"/>）。</target>
       </trans-unit>
+      <trans-unit id="notfound.title" datatype="html">
+        <source>Cette page n'existe pas</source>
+        <target state="translated">このページは存在しません</target>
+      </trans-unit>
+      <trans-unit id="notfound.hint" datatype="html">
+        <source>L'adresse a peut-être changé, ou le lien est incomplet.</source>
+        <target state="translated">アドレスが変更されたか、リンクが不完全な可能性があります。</target>
+      </trans-unit>
+      <trans-unit id="notfound.home" datatype="html">
+        <source>Retour à l'accueil</source>
+        <target state="translated">ホームに戻る</target>
+      </trans-unit>
+      <trans-unit id="notfound.back" datatype="html">
+        <source>Page précédente</source>
+        <target state="translated">前のページ</target>
+      </trans-unit>
       <trans-unit id="offline.queue.title" datatype="html">
         <source>File d'attente offline</source>
         <target state="translated">オフラインキュー</target>

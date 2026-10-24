@@ -5,7 +5,7 @@
 .actions button { display: inline-flex; align-items: center; gap: 6px; }
 
 .filters { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
-.mode-filter, .status-filter { min-width: 200px; }
+.mode-filter, .status-filter { min-width: min(200px, 100%); }
 
 .banner { padding: 10px 14px; border-radius: 8px; font-size: 13px; }
 .banner-info { background: #e3f2fd; color: #0d47a1; }

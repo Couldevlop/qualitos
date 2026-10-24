@@ -1,6 +1,6 @@
 .message {
   margin: 0;
-  min-width: 320px;
+  min-width: min(320px, 100%);
   max-width: 520px;
   font-size: var(--qos-fs-base);
   line-height: var(--qos-lh-normal);

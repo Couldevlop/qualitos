@@ -1,4 +1,4 @@
-.end-form { display: flex; flex-direction: column; min-width: 540px; max-width: 680px; }
+.end-form { display: flex; flex-direction: column; min-width: min(540px, 100%); max-width: 680px; }
 .warn {
   margin: 0 0 12px; padding: 10px 12px;
   background: #fbe9e7; color: #b71c1c;

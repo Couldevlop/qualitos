@@ -1,4 +1,4 @@
-.edt-form { display: flex; flex-direction: column; min-width: 720px; max-width: 900px; max-height: 85vh; }
+.edt-form { display: flex; flex-direction: column; min-width: min(720px, 100%); max-width: 900px; max-height: 85vh; }
 .hint { margin: 0 0 12px; padding: 10px 12px; border-left: 4px solid #1565c0;
         background: #e3f2fd; color: #0d47a1; font-size: 13px; line-height: 1.45; border-radius: 4px; }
 .hint.warn { border-left-color: #b71c1c; background: #fbe9e7; color: #b71c1c; }

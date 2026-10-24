@@ -34,7 +34,7 @@
 .link-table th {
   text-align: left; font-weight: 600; padding: 6px 12px 6px 0;
   color: rgba(0,0,0,0.55); font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em;
-  width: 220px;
+  width: min(220px, 100%);
 }
 .link-table td { padding: 6px 0; }
 

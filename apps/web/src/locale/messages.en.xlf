@@ -20108,6 +20108,22 @@ declared income
         <source>Une erreur est survenue lors du traitement de la question (HTTP <x id="status"/>).</source>
         <target state="translated">An error occurred while processing the question (HTTP <x id="status"/>).</target>
       </trans-unit>
+      <trans-unit id="notfound.title" datatype="html">
+        <source>Cette page n'existe pas</source>
+        <target state="translated">This page does not exist</target>
+      </trans-unit>
+      <trans-unit id="notfound.hint" datatype="html">
+        <source>L'adresse a peut-être changé, ou le lien est incomplet.</source>
+        <target state="translated">The address may have changed, or the link is incomplete.</target>
+      </trans-unit>
+      <trans-unit id="notfound.home" datatype="html">
+        <source>Retour à l'accueil</source>
+        <target state="translated">Back to home</target>
+      </trans-unit>
+      <trans-unit id="notfound.back" datatype="html">
+        <source>Page précédente</source>
+        <target state="translated">Previous page</target>
+      </trans-unit>
       <trans-unit id="offline.queue.title" datatype="html">
         <source>File d'attente offline</source>
         <target state="translated">Offline queue</target>

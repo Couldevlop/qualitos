@@ -1,4 +1,4 @@
-.rj-form { display: flex; flex-direction: column; min-width: 560px; max-width: 700px; }
+.rj-form { display: flex; flex-direction: column; min-width: min(560px, 100%); max-width: 700px; }
 .warn {
   margin: 0 0 12px; padding: 10px 12px;
   background: #fbe9e7; color: #b71c1c;

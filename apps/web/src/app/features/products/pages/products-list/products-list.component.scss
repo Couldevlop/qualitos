@@ -4,7 +4,7 @@
   margin-bottom: var(--qos-space-4);
 }
 
-.status-filter { min-width: 200px; }
+.status-filter { min-width: min(200px, 100%); }
 
 .state-row { display: flex; justify-content: center; padding: var(--qos-space-8) 0; }
 

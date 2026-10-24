@@ -540,7 +540,7 @@
 /* Le panneau est large et scrollable : une notification tient sur 3 lignes. */
 ::ng-deep .qos-notifications-panel.mat-mdc-menu-panel {
   max-width: 380px;
-  min-width: 340px;
+  min-width: min(340px, 100%);
   max-height: 60vh;
 }
 
@@ -623,7 +623,7 @@
   color: var(--qos-text-tertiary, var(--qos-text-secondary));
 }
 
-::ng-deep .qos-user-panel.mat-mdc-menu-panel { min-width: 240px; }
+::ng-deep .qos-user-panel.mat-mdc-menu-panel { min-width: min(240px, 100%); }
 
 ::ng-deep .qos-user__head {
   flex-direction: column;
