@@ -14,6 +14,7 @@ import { CoreModule } from './core/core.module';
 import { ApiInterceptor } from './core/http/api.interceptor';
 import { MainShellModule } from './layout/main-shell/main-shell.module';
 import { MAT_DIALOG_DEFAULT_OPTIONS } from '@angular/material/dialog';
+import { QOS_DIALOG_DEFAULTS } from './core/ui/dialog-defaults';
 
 @NgModule({
   declarations: [AppComponent],
@@ -42,10 +43,10 @@ import { MAT_DIALOG_DEFAULT_OPTIONS } from '@angular/material/dialog';
     { provide: APP_INITIALIZER, useFactory: initOidc, deps: [OAuthService], multi: true },
     // Une boîte de dialogue ouverte sans options hérite du cadre commun : largeur
     // bornée à l'écran, focus sur le premier champ, focus rendu au déclencheur.
-    {
-      provide: MAT_DIALOG_DEFAULT_OPTIONS,
-      useValue: { panelClass: 'qos-dialog-panel', maxWidth: '94vw', autoFocus: 'first-tabbable', restoreFocus: true, hasBackdrop: true }
-    }
+    // Ces options REMPLACENT celles de Material au lieu de s'y ajouter : on part
+    // donc de MatDialogConfig, sans quoi `role: 'dialog'` et `ariaModal` disparaissent
+    // et la fenêtre n'est plus annoncée comme un dialogue.
+    { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: QOS_DIALOG_DEFAULTS }
   ],
   bootstrap: [AppComponent]
 })
