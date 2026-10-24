@@ -1,4 +1,4 @@
-.measure-form { display: flex; flex-direction: column; min-width: 480px; max-width: 600px; }
+.measure-form { display: flex; flex-direction: column; min-width: min(480px, 100%); max-width: 600px; }
 .hint { margin: 0 0 12px; color: rgba(0,0,0,0.6); font-size: 13px; }
 .full { width: 100%; }
 .row { display: flex; gap: 12px; }

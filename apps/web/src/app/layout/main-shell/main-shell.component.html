@@ -104,16 +104,50 @@
         <span class="material-symbols-outlined" aria-hidden="true">menu</span>
       </button>
 
-      <div class="qos-topbar__search">
+      <!-- Recherche d'écran : propose les entrées de menu visibles qui
+           correspondent à la saisie, ouvertes à la souris ou au clavier. -->
+      <div class="qos-topbar__search" role="search">
         <span class="material-symbols-outlined qos-topbar__search-icon" aria-hidden="true">search</span>
         <input
+          #searchInput
           type="search"
           class="qos-topbar__search-input"
-          placeholder="Rechercher : modules, normes, KPI, documents…"
-          i18n-placeholder="@@shell.search.placeholder"
-          aria-label="Recherche globale"
-          i18n-aria-label="@@shell.search.aria">
-        <kbd class="qos-topbar__kbd">⌘K</kbd>
+          placeholder="Aller à un écran…"
+          i18n-placeholder="@@shell.search.goto-placeholder"
+          aria-label="Aller à un écran"
+          i18n-aria-label="@@shell.search.goto-aria"
+          role="combobox"
+          aria-autocomplete="list"
+          aria-controls="qos-nav-search-list"
+          autocomplete="off"
+          [attr.aria-expanded]="searchOpen"
+          [attr.aria-activedescendant]="searchOpen && activeHit >= 0 ? 'qos-nav-hit-' + activeHit : null"
+          [value]="searchQuery"
+          (input)="onSearchInput(searchInput.value)"
+          (focus)="searchQuery && onSearchInput(searchQuery)"
+          (keydown)="onSearchKeydown($event)"
+          (blur)="closeSearch()">
+        <kbd class="qos-topbar__kbd" *ngIf="!searchQuery" aria-hidden="true">{{ searchShortcut }}</kbd>
+
+        <ul id="qos-nav-search-list" class="qos-search-list" role="listbox"
+            aria-label="Écrans proposés" i18n-aria-label="@@shell.search.list-aria"
+            *ngIf="searchOpen">
+          <li *ngFor="let hit of searchHits; let i = index"
+              [id]="'qos-nav-hit-' + i"
+              role="option"
+              class="qos-search-list__item"
+              [class.qos-search-list__item--active]="i === activeHit"
+              [attr.aria-selected]="i === activeHit"
+              (mousedown)="$event.preventDefault()"
+              (mouseenter)="activeHit = i"
+              (click)="openHit(hit)">
+            <span class="material-symbols-outlined qos-search-list__icon" aria-hidden="true">{{ hit.item.icon }}</span>
+            <span class="qos-search-list__label">{{ hit.item.label }}</span>
+            <span class="qos-search-list__group">{{ hit.section }}</span>
+          </li>
+          <li *ngIf="!searchHits.length" class="qos-search-list__empty" role="option" aria-disabled="true"
+              i18n="@@shell.search.no-match">Aucun écran ne correspond à « {{ searchQuery }} ».</li>
+        </ul>
       </div>
 
       <div class="qos-topbar__actions">

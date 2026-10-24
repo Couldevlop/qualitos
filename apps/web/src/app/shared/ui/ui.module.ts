@@ -18,6 +18,7 @@ import { LocaleSwitcherComponent } from './locale-switcher/locale-switcher.compo
 import { PageHeaderComponent } from './page-header/page-header.component';
 import { PanelComponent } from './panel/panel.component';
 import { ScopeNoteComponent } from './scope-note/scope-note.component';
+import { StatusLabelPipe } from './status-label/status-label.pipe';
 import { StatusPillComponent } from './status-pill/status-pill.component';
 import { ThemeToggleComponent } from './theme-toggle/theme-toggle.component';
 
@@ -31,7 +32,8 @@ const COMPONENTS = [
   EchartComponent,
   FormDialogComponent,
   ScopeNoteComponent,
-  LicenseBannerComponent
+  LicenseBannerComponent,
+  StatusLabelPipe
 ];
 
 /**

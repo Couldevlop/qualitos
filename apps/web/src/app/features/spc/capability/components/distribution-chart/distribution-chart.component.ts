@@ -21,6 +21,8 @@ export class DistributionChartComponent implements OnChanges {
   @Input() sigma: number | null = null;
   @Input() lsl: number | null = null;
   @Input() usl: number | null = null;
+  /** Les décimales de la moyenne : celles de l'étude (arrondie au dixième, 12.0533 devenait l'USL 12.1). */
+  @Input() digits = 2;
 
   geometry: DistributionGeometry | null = null;
 

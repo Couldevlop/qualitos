@@ -162,7 +162,25 @@ describe('DocumentsCreateDialogComponent', () => {
       http.expectNone(base);
     });
 
-    it('normalise les champs et omet le contenu initial vide (enveloppe seule)', () => {
+    it('sans fichier, rien ne part et le champ le réclame', () => {
+      component.form.patchValue({ code: 'POL-001', title: 'Politique' });
+      expect(component.fileMissing).toBeFalse();
+
+      component.submit();
+      fixture.detectChanges();
+
+      http.expectNone(base);
+      expect(component.fileMissing).toBeTrue();
+      const el: HTMLElement = fixture.nativeElement;
+      expect(el.querySelector('[data-test="fichier-requis"]')).not.toBeNull();
+      expect(el.querySelector('[data-test="fichier"]')!.getAttribute('aria-invalid')).toBe('true');
+
+      component.onPick(pickInput(pdf()));
+      expect(component.fileMissing).toBeFalse();
+    });
+
+    it('normalise les champs et omet le contenu initial vide', () => {
+      component.onPick(pickInput(pdf()));
       component.form.patchValue({
         code: 'POL-QUAL-001',
         title: '  Politique Qualité  ',
@@ -187,12 +205,14 @@ describe('DocumentsCreateDialogComponent', () => {
       expect(req.request.body.processId).toBeNull();
 
       req.flush(created);
+      http.expectOne(`${filesBase}/d1/versions/v2`).flush(created.versions[1]);
       expect(dialogRef.close).toHaveBeenCalledWith(created);
       expect(snack.open.calls.mostRecent().args[0]).toBe('Document créé.');
       expect(component.submitting).toBeFalse();
     });
 
     it('transmet le contenu de la première version quand il est saisi', () => {
+      component.onPick(pickInput(pdf()));
       component.form.patchValue({
         code: 'PROC-001', title: 'Procédure', initialContent: '  Objet et domaine d\'application  '
       });
@@ -200,9 +220,11 @@ describe('DocumentsCreateDialogComponent', () => {
       const req = http.expectOne(base);
       expect(req.request.body.initialContent).toBe('Objet et domaine d\'application');
       req.flush(created);
+      http.expectOne(`${filesBase}/d1/versions/v2`).flush(created.versions[1]);
     });
 
     it('ne ferme pas le dialogue quand le code est déjà pris (409)', () => {
+      component.onPick(pickInput(pdf()));
       component.form.patchValue({ code: 'POL-QUAL-001', title: 'Politique' });
       component.submit();
       http.expectOne(base).flush({ title: 'duplicate code' }, { status: 409, statusText: 'Conflict' });
@@ -214,6 +236,7 @@ describe('DocumentsCreateDialogComponent', () => {
     });
 
     it('ignore un second envoi tant que le premier est en vol', () => {
+      component.onPick(pickInput(pdf()));
       component.form.patchValue({ code: 'POL-001', title: 'Politique' });
       component.submit();
       const req = http.expectOne(base);
@@ -223,6 +246,7 @@ describe('DocumentsCreateDialogComponent', () => {
       http.expectNone(base);
 
       req.flush(created);
+      http.expectOne(`${filesBase}/d1/versions/v2`).flush(created.versions[1]);
     });
 
     it('ferme le dialogue sans rien créer à l\'annulation', () => {
@@ -325,12 +349,14 @@ describe('DocumentsCreateDialogComponent', () => {
     expect(component.processes).toBe(processes);
     expect(component.form.controls.folderId.value).toBe('f1');
 
+    component.onPick(pickInput(pdf()));
     component.form.patchValue({ code: 'PROC-001', title: 'Procédure', processId: 'p1' });
     component.submit();
     const req = http.expectOne(base);
     expect(req.request.body.folderId).toBe('f1');
     expect(req.request.body.processId).toBe('p1');
     req.flush(created);
+    http.expectOne(`${filesBase}/d1/versions/v2`).flush(created.versions[1]);
   });
 
   it('accepte des données de dialogue nulles', async () => {

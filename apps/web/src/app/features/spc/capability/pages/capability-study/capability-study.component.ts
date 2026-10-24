@@ -14,8 +14,8 @@ import {
   ConfirmDialogComponent, ConfirmDialogData
 } from '../../../../../shared/ui/confirm-dialog/confirm-dialog.component';
 import {
-  CONSTANT_ROWS, MAX_SUBGROUP_SIZE, SUBGROUPS, SUBGROUP_SIZES, classify, computeCapability, parseMeasurement,
-  pasteBlock
+  CONSTANT_ROWS, MAX_SUBGROUP_SIZE, SUBGROUPS, SUBGROUP_SIZES, classify, computeCapability, displayDigits,
+  measurementDecimals, parseMeasurement, pasteBlock
 } from '../../spc-capability.calc';
 import { completeValues } from '../../spc-capability.charts';
 import { SPC_EXAMPLES, SpcExample } from '../../spc-capability.examples';
@@ -153,6 +153,11 @@ export class CapabilityStudyComponent implements OnInit {
 
   get rows(): number[] {
     return Array.from({ length: this.n }, (_, i) => i);
+  }
+
+  /** Les décimales des X̄ et des R, suivant la résolution des mesures saisies. */
+  get digits(): { mean: number; range: number } {
+    return displayDigits(measurementDecimals(this.raw.slice(0, this.n)));
   }
 
   get grid(): Measurement[][] {

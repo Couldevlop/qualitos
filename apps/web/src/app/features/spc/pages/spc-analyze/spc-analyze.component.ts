@@ -83,7 +83,7 @@ export class SpcAnalyzeComponent implements OnInit {
     const sigma = this.form.value.sigma;
     // Baseline : center et sigma doivent être fournis ensemble (sinon limites estimées).
     if ((center == null) !== (sigma == null)) {
-      this.error = $localize`:@@spc.analyze.err-baseline-both:La baseline exige center ET σ (ou aucun des deux).`;
+      this.error = $localize`:@@spc.analyze.err-baseline-both:Renseignez la ligne centrale et σ ensemble, ou laissez les deux vides.`;
       return;
     }
     if (sigma != null && sigma <= 0) {
@@ -186,14 +186,18 @@ export class SpcAnalyzeComponent implements OnInit {
           label: { formatter: `LCL ${L.lcl.toFixed(2)}`, color: '#DC2626', position: 'end' as const } }
       ]
     } : undefined;
+    const measures = $localize`:@@spc.analyze.chart-measures:Mesures`;
+    const outOfControl = $localize`:@@spc.analyze.chart-ooc:Hors contrôle`;
     return {
       tooltip: { trigger: 'axis' },
-      legend: { data: ['Mesures', 'Hors-contrôle'], top: 0 },
-      xAxis: { type: 'category', data: categories, name: 'Point', boundaryGap: false },
-      yAxis: { type: 'value', name: 'Valeur', scale: true },
+      legend: { data: [measures, outOfControl], top: 0 },
+      // Place à droite pour les étiquettes UCL / CL / LCL, sinon coupées au bord du graphique.
+      grid: { left: 48, right: 96, top: 48, bottom: 40 },
+      xAxis: { type: 'category', data: categories, name: $localize`:@@spc.analyze.chart-point:Point`, boundaryGap: false },
+      yAxis: { type: 'value', name: $localize`:@@spc.analyze.chart-value:Valeur`, scale: true },
       series: [
         {
-          name: 'Mesures',
+          name: measures,
           type: 'line',
           smooth: false,
           symbol: 'circle',
@@ -203,7 +207,7 @@ export class SpcAnalyzeComponent implements OnInit {
           ...(markLine ? { markLine } : {})
         },
         {
-          name: 'Hors-contrôle',
+          name: outOfControl,
           type: 'scatter',
           data: oocPoints,
           symbolSize: 13,
@@ -216,13 +220,13 @@ export class SpcAnalyzeComponent implements OnInit {
 
   private messageFor(err: HttpErrorResponse): string {
     switch (err.status) {
-      case 0: return $localize`:@@spc.analyze.err-backend:Backend injoignable (engine sur 8082 ?).`;
-      case 400: return $localize`:@@spc.analyze.err-invalid-series:Série invalide (1 à 10000 mesures attendues).`;
-      case 413: return $localize`:@@spc.analyze.err-too-large:Série trop volumineuse (garde-fou IA).`;
-      case 429: return $localize`:@@spc.analyze.err-quota:Débit/quota IA dépassé pour ce tenant — réessayez plus tard.`;
-      case 502: return $localize`:@@spc.analyze.err-gateway:Passerelle IA indisponible (ai-service injoignable).`;
-      case 503: return $localize`:@@spc.analyze.err-unavailable:Service IA momentanément indisponible (disjoncteur ouvert).`;
-      default:  return $localize`:@@spc.analyze.err-generic:Échec de l'analyse SPC (HTTP ${err.status}:status:).`;
+      case 0: return $localize`:@@spc.analyze.err-backend:Le serveur ne répond pas. Vérifiez votre connexion, puis relancez l'analyse.`;
+      case 400: return $localize`:@@spc.analyze.err-invalid-series:La série doit compter de 1 à 10 000 mesures.`;
+      case 413: return $localize`:@@spc.analyze.err-too-large:La série est trop longue pour être analysée en une fois : réduisez-la.`;
+      case 429: return $localize`:@@spc.analyze.err-quota:Trop d'analyses en peu de temps : réessayez dans une minute.`;
+      case 502: return $localize`:@@spc.analyze.err-gateway:L'analyse est momentanément indisponible. Réessayez dans quelques minutes.`;
+      case 503: return $localize`:@@spc.analyze.err-unavailable:L'analyse est momentanément indisponible. Réessayez dans quelques minutes.`;
+      default:  return $localize`:@@spc.analyze.err-generic:L'analyse a échoué (erreur ${err.status}:status:). Réessayez.`;
     }
   }
 
@@ -237,7 +241,22 @@ export class SpcAnalyzeComponent implements OnInit {
   estimatedDesc(estimated: boolean): string {
     return estimated
       ? $localize`:@@spc.analyze.center-estimated:Estimée depuis la série`
-      : $localize`:@@spc.analyze.center-baseline:Baseline fournie`;
+      : $localize`:@@spc.analyze.center-baseline:Valeur fournie`;
+  }
+
+  /** Sous-texte de l'état du procédé : nombre de règles déclenchées et de points. */
+  stateDescription(rules: number, points: number): string {
+    return rules === 0
+      ? $localize`:@@spc.analyze.state-desc-none:Aucune règle de Nelson déclenchée · ${points}:points: points`
+      : $localize`:@@spc.analyze.state-desc:${rules}:rules: règle(s) de Nelson déclenchée(s) · ${points}:points: points`;
+  }
+
+  /** Libellé de la sévérité renvoyée par le service, dans la langue de l'écran. */
+  severityLabel(sev: string): string {
+    const c = this.severityClass(sev);
+    return c === 'sev-crit' ? $localize`:@@spc.analyze.sev-critical:Critique`
+      : c === 'sev-maj' ? $localize`:@@spc.analyze.sev-major:Majeure`
+      : $localize`:@@spc.analyze.sev-minor:Mineure`;
   }
 
   severityClass(sev: string): string {

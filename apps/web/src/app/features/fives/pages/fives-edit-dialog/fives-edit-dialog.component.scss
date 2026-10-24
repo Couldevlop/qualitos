@@ -1,4 +1,4 @@
-.edit-form { display: flex; flex-direction: column; min-width: 480px; max-width: 560px; }
+.edit-form { display: flex; flex-direction: column; min-width: min(480px, 100%); max-width: 560px; }
 mat-dialog-content { padding-top: 8px; }
 .full { width: 100%; }
 mat-dialog-actions { padding: 12px 0 0; gap: 8px; }

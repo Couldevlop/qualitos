@@ -106,17 +106,24 @@ describe('CapabilityStudyComponent', () => {
     expect(un('kpi-cpk')?.textContent).toContain('1.50');
     expect(un('kpi-cpk')?.classList).toContain('kpi--ok');
     expect(un('formule-sigma')?.textContent).toContain('4.5279');
+    // Mesures entières : l'affichage d'origine, moyennes à deux décimales, étendues entières.
+    expect(component.digits).toEqual({ mean: 2, range: 0 });
     expect(un('formules')?.classList).not.toContain('formules--ko');
     expect(un('verdict-maitrise')?.textContent).toContain('OUI');
     expect(un('verdict-maitrise')?.classList).toContain('verdict--ok');
     expect(un('verdict-non-maitrise')?.textContent).toContain('NON');
     expect(un('verdict-non-maitrise')?.classList).not.toContain('verdict--ko');
+    expect(un('verdict-surveiller')?.textContent).toContain('NON');
+    expect(un('verdict-surveiller')?.classList).not.toContain('verdict--warn');
     expect(un('formule-cpu')?.textContent).toContain('1.912');
     expect(un('formule-x-ecart')?.textContent?.trim()).not.toBe('–');
     expect(un('resume')?.textContent).toContain('1.84');
     expect(un('attente')).toBeNull();
     expect(un('diagnostic')?.textContent).toContain('capable');
     expect(un('lectures')?.textContent).toContain('54 %');
+    // Des phrases entières : l'espace après les deux-points tient, et le nombre entre parenthèses est le milieu.
+    expect(un('lectures')?.textContent).toContain('Centrage : décalé de 4 %');
+    expect(un('lectures')?.textContent).toContain('en dessous du milieu de la tolérance (500), vers la LSL.');
     expect(hote().querySelectorAll('qos-spc-control-chart svg').length).toBe(2);
     expect(hote().querySelector('qos-spc-distribution-chart svg')).not.toBeNull();
   });
@@ -174,6 +181,7 @@ describe('CapabilityStudyComponent', () => {
     await setup();
     expect(un('verdict-maitrise')?.textContent).toContain('—');
     expect(un('verdict-non-maitrise')?.textContent).toContain('—');
+    expect(un('verdict-surveiller')?.textContent).toContain('—');
     expect(un('verdict-maitrise')?.classList).not.toContain('verdict--ok');
     expect(un('verdict-non-maitrise')?.classList).not.toContain('verdict--ko');
     expect(un('kpi-cp')?.textContent).toContain('–');
@@ -235,6 +243,10 @@ describe('CapabilityStudyComponent', () => {
     expect(un('verdict-non-maitrise')?.classList).toContain('verdict--ko');
     expect(un('moyenne-13')?.classList).toContain('hors');
     expect(un('constante-4')?.classList).toContain('actif');
+    // Mesures au millième : l'étendue garde ses décimales au lieu de tomber à « 0 ».
+    expect(component.digits).toEqual({ mean: 4, range: 3 });
+    expect(un('etendue-0')?.textContent?.trim()).toBe(component.calc.subgroupRanges[0]!.toFixed(3));
+    expect(un('etendue-0')?.textContent?.trim()).not.toBe('0');
   });
 
   it('vide les mesures', async () => {
@@ -353,8 +365,10 @@ describe('CapabilityStudyComponent', () => {
       expect(un('kpi-cpk')?.classList).toContain('kpi--warn');
       expect(un('formules')?.classList).toContain('formules--ko');
       expect(un('verdict-maitrise')?.textContent).toContain('NON');
-      expect(un('verdict-non-maitrise')?.classList).toContain('verdict--ko');
-      expect(un('verdict-non-maitrise')?.textContent).toContain('OUI');
+      expect(un('verdict-surveiller')?.classList).toContain('verdict--warn');
+      expect(un('verdict-surveiller')?.textContent).toContain('OUI');
+      expect(un('verdict-non-maitrise')?.classList).not.toContain('verdict--ko');
+      expect(un('verdict-non-maitrise')?.textContent).toContain('NON');
       expect(un('diagnostic')?.classList).toContain('diagnostic--ko');
       expect(un('diagnostic')?.textContent).toContain('réduire');
       expect(component.form.controls.partReference.value).toBe('Shaft AX');

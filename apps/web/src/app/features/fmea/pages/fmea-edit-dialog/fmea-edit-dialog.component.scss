@@ -1,4 +1,4 @@
-.fmea-form { display: flex; flex-direction: column; min-width: 520px; max-width: 640px; }
+.fmea-form { display: flex; flex-direction: column; min-width: min(520px, 100%); max-width: 640px; }
 mat-dialog-content { padding-top: 8px; display: flex; flex-direction: column; gap: 4px; }
 .full { width: 100%; }
 mat-dialog-actions { padding: 12px 0 0; gap: 8px; }

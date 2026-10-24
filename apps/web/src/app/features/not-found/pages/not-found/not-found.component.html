@@ -1,0 +1,18 @@
+<section class="qos-page not-found" aria-labelledby="not-found-title">
+  <div class="qos-empty not-found__box">
+    <span class="qos-empty__icon" aria-hidden="true"><mat-icon>travel_explore</mat-icon></span>
+    <h1 id="not-found-title" class="qos-empty__title" i18n="@@notfound.title">Cette page n'existe pas</h1>
+    <p class="qos-empty__hint" i18n="@@notfound.hint">L'adresse a peut-être changé, ou le lien est incomplet.</p>
+    <code class="not-found__path">{{ requestedPath }}</code>
+    <div class="not-found__actions qos-empty__cta">
+      <a mat-flat-button color="primary" routerLink="/home">
+        <mat-icon>home</mat-icon>
+        <span i18n="@@notfound.home">Retour à l'accueil</span>
+      </a>
+      <button mat-stroked-button type="button" (click)="back()">
+        <mat-icon>arrow_back</mat-icon>
+        <span i18n="@@notfound.back">Page précédente</span>
+      </button>
+    </div>
+  </div>
+</section>

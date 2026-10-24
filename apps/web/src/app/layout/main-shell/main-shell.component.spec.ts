@@ -1,5 +1,5 @@
-import { Router } from '@angular/router';
-import { NEVER, Observable, of } from 'rxjs';
+import { NavigationEnd, Router } from '@angular/router';
+import { NEVER, Observable, Subject, of } from 'rxjs';
 
 import { EditionService } from '../../core/edition/edition.service';
 import { Edition } from '../../core/edition/edition.types';
@@ -17,6 +17,8 @@ interface ShellHarness {
   component: MainShellComponent;
   notifications: jasmine.SpyObj<NotificationsService>;
   router: jasmine.SpyObj<Router>;
+  /** Flux d'événements du routeur simulé : on y pousse les fins de navigation. */
+  events: Subject<unknown>;
   auth: jasmine.SpyObj<AuthService>;
   modules: jasmine.SpyObj<TenantModulesService>;
 }
@@ -47,6 +49,10 @@ function harness(): ShellHarness {
 
   const router = jasmine.createSpyObj<Router>('Router', ['navigateByUrl']);
   router.navigateByUrl.and.returnValue(Promise.resolve(true));
+  // Propriétés simples (et non des espions d'accesseur) : les bancs posent
+  // l'adresse courante par affectation.
+  const events = new Subject<unknown>();
+  Object.assign(router, { events, url: '/home' });
 
   const modules = jasmine.createSpyObj<TenantModulesService>(
     'TenantModulesService', ['enabledCodes']);
@@ -65,7 +71,7 @@ function harness(): ShellHarness {
   return {
     component: new MainShellComponent(
       auth, connectivity, offline, notifications, router, modules, editions),
-    notifications, router, auth, modules
+    notifications, router, auth, modules, events
   };
 }
 
@@ -119,9 +125,9 @@ describe('MainShellComponent (navigation model)', () => {
     const spc = component.sections.find(s => s.items.some(i => i.route === '/spc/cartes'))!;
     expect(spc.items.map(i => i.route)).toEqual(['/spc/cartes', '/spc/gage-rr']);
     expect(spc.items.every(i => i.module === 'dmaic')).toBeTrue();
-    // L'analyse SPC par les regles de Nelson reste dans les Analyses IA.
+    // L'analyse SPC n'a plus d'entree dans les Analyses IA : la SPC se rejoint par son groupe.
     const ia = component.sections.find(s => s.items.some(i => i.route === '/anomaly'))!;
-    expect(ia.items.map(i => i.route)).toContain('/spc');
+    expect(ia.items.map(i => i.route)).not.toContain('/spc');
   });
 
   it('APQP n’a qu’une entree : les projets', () => {
@@ -170,7 +176,10 @@ describe('MainShellComponent (navigation model)', () => {
     // + Parametres MOC (ADR 0087). Puis a 13 : + Documentation (ADR 0094).
     // SPC (2) s'insere apres les Analyses IA : Cartes de controle et Gage R&R
     // (ADR 0096) ; Administration passe a 14 : + Parametres SPC.
-    expect(labels).toEqual([7, 6, 8, 2, 1, 4, 1, 9, 11, 1, 14]);
+    // Analyses IA retombe a 7 : l'entree SPC la quittait pour son propre groupe.
+    // Administration retombe a 13 : les circuits par roles cedent la place aux
+    // signataires choisis a la soumission (ADR 0099). Puis a 14 : + Parametres DMAIC (ADR 0101).
+    expect(labels).toEqual([7, 6, 7, 2, 1, 4, 1, 9, 11, 1, 14]);
   });
 
   it('le registre des risques a son groupe, juste apres la non-conformite', () => {
@@ -209,7 +218,7 @@ describe('MainShellComponent (navigation model)', () => {
 
   it('keeps all core method/operation routes reachable from the sidebar', () => {
     const allRoutes = component.sections.flatMap(s => s.items.map(i => i.route));
-    ['/home', '/dashboard', '/smi', '/pdca', '/fives', '/dmaic', '/spc',
+    ['/home', '/dashboard', '/smi', '/pdca', '/fives', '/dmaic', '/spc/cartes',
      '/nc/interne', '/nc/externe', '/capa', '/audits', '/standards', '/itsm', '/compliance']
       .forEach(r => expect(allRoutes).withContext(r).toContain(r));
   });
@@ -228,11 +237,49 @@ describe('MainShellComponent (navigation model)', () => {
     component.ngOnInit();
     const label = component.sections[2].label;
     component.toggleSection(label);
-    expect(component.isSectionCollapsed(label)).toBeTrue();
+    expect(component.isSectionCollapsed(label)).toBeFalse();
 
     const restored = make();
     restored.ngOnInit();
-    expect(restored.isSectionCollapsed(label)).toBeTrue();
+    expect(restored.isSectionCollapsed(label)).toBeFalse();
+    // Les autres groupes gardent l'état enregistré, replié.
+    expect(restored.isSectionCollapsed(component.sections[3].label)).toBeTrue();
+  });
+
+  it('rend tous les groupes repliables, sauf le Pilotage', () => {
+    expect(component.sections[0].collapsible).toBeFalsy();
+    component.sections.slice(1).forEach(s =>
+      expect(s.collapsible).withContext(s.label).toBeTrue());
+  });
+
+  it('replie par défaut tous les groupes, sauf celui de la page courante', () => {
+    const h = harness();
+    (h.router as unknown as { url: string }).url = '/capa/efficacite';
+    h.component.ngOnInit();
+    const capa = h.component.sections.find(s => s.items.some(i => i.route === '/capa'))!;
+    expect(h.component.isSectionCollapsed(capa.label)).toBeFalse();
+    h.component.sections
+      .filter(s => s.collapsible && s !== capa)
+      .forEach(s => expect(h.component.isSectionCollapsed(s.label)).withContext(s.label).toBeTrue());
+    h.component.ngOnDestroy();
+  });
+
+  it('ouvre le groupe de la page atteinte par une navigation', () => {
+    const h = harness();
+    h.component.ngOnInit();
+    const audits = h.component.sections.find(s => s.items.some(i => i.route === '/audits'))!;
+    expect(h.component.isSectionCollapsed(audits.label)).toBeTrue();
+
+    (h.router as unknown as { url: string }).url = '/audits/a-1';
+    h.events.next(new NavigationEnd(1, '/audits/a-1', '/audits/a-1'));
+    expect(h.component.isSectionCollapsed(audits.label)).toBeFalse();
+    expect(JSON.parse(localStorage.getItem('qos.nav.collapsed')!)).not.toContain(audits.label);
+
+    // Une adresse hors menu ne change rien.
+    (h.router as unknown as { url: string }).url = '/inconnue';
+    h.events.next(new NavigationEnd(2, '/inconnue', '/inconnue'));
+    expect(h.component.isSectionCollapsed(audits.label)).toBeFalse();
+    h.component.ngOnDestroy();
   });
 
   it('toggles a collapsed group back open', () => {
@@ -549,5 +596,112 @@ describe('MainShellComponent (visibilité par rôle)', () => {
     // Édition encore inconnue : rien n'est retiré.
     expect(routes(null)).toContain('/admin/clients');
     expect(routes(null)).toContain('/admin/licence');
+  });
+});
+
+describe("MainShellComponent (recherche d'écran)", () => {
+  let h: ShellHarness;
+
+  beforeEach(() => {
+    localStorage.clear();
+    h = harness();
+    h.component.ngOnInit();
+    // Les sections visibles alimentent la recherche dès leur premier calcul.
+    h.component.visibleSections$.subscribe();
+  });
+
+  afterEach(() => h.component.ngOnDestroy());
+
+  function key(k: string, init: KeyboardEventInit = {}): KeyboardEvent {
+    return new KeyboardEvent('keydown', { key: k, cancelable: true, ...init });
+  }
+
+  it('propose les entrées visibles qui correspondent', () => {
+    h.component.onSearchInput('capa');
+    expect(h.component.searchOpen).toBeTrue();
+    expect(h.component.searchHits.map(x => x.item.route)).toContain('/capa');
+    expect(h.component.activeHit).toBe(0);
+  });
+
+  it("referme la liste pour une saisie vide et signale l'absence de résultat", () => {
+    h.component.onSearchInput('   ');
+    expect(h.component.searchOpen).toBeFalse();
+    h.component.onSearchInput('zzzz-introuvable');
+    expect(h.component.searchOpen).toBeTrue();
+    expect(h.component.searchHits).toEqual([]);
+    expect(h.component.activeHit).toBe(-1);
+  });
+
+  it('parcourt les propositions au clavier, en boucle', () => {
+    h.component.onSearchInput('a');
+    const count = h.component.searchHits.length;
+    expect(count).toBeGreaterThan(1);
+    const down = key('ArrowDown');
+    h.component.onSearchKeydown(down);
+    expect(down.defaultPrevented).toBeTrue();
+    expect(h.component.activeHit).toBe(1);
+    h.component.onSearchKeydown(key('ArrowUp'));
+    h.component.onSearchKeydown(key('ArrowUp'));
+    expect(h.component.activeHit).toBe(count - 1);
+  });
+
+  it('ouvre la proposition désignée avec Entrée et vide le champ', () => {
+    h.component.onSearchInput('capa');
+    const target = h.component.searchHits[0].item.route;
+    h.component.onSearchKeydown(key('Enter'));
+    expect(h.router.navigateByUrl).toHaveBeenCalledWith(target);
+    expect(h.component.searchQuery).toBe('');
+    expect(h.component.searchOpen).toBeFalse();
+  });
+
+  it('ignore Entrée et les flèches sans proposition', () => {
+    h.component.onSearchInput('zzzz-introuvable');
+    const enter = key('Enter');
+    h.component.onSearchKeydown(enter);
+    h.component.onSearchKeydown(key('ArrowDown'));
+    expect(enter.defaultPrevented).toBeFalse();
+    expect(h.router.navigateByUrl).not.toHaveBeenCalled();
+  });
+
+  it('abandonne la recherche avec Échap sans fermer le tiroir', () => {
+    h.component.navOpen = true;
+    h.component.onSearchInput('capa');
+    const esc = key('Escape');
+    spyOn(esc, 'stopPropagation');
+    h.component.onSearchKeydown(esc);
+    expect(esc.stopPropagation).toHaveBeenCalled();
+    expect(h.component.searchQuery).toBe('');
+    expect(h.component.navOpen).toBeTrue();
+  });
+
+  it('referme la liste à la perte du focus en gardant la saisie', () => {
+    h.component.onSearchInput('capa');
+    h.component.closeSearch();
+    expect(h.component.searchOpen).toBeFalse();
+    expect(h.component.searchQuery).toBe('capa');
+  });
+
+  it('ouvrir une proposition referme aussi le tiroir', () => {
+    h.component.navOpen = true;
+    h.component.onSearchInput('capa');
+    h.component.openHit(h.component.searchHits[0]);
+    expect(h.component.navOpen).toBeFalse();
+    expect(h.router.navigateByUrl).toHaveBeenCalled();
+  });
+
+  it('Ctrl+K et ⌘K captent le raccourci, les autres touches non', () => {
+    const ctrlK = key('k', { ctrlKey: true });
+    h.component.onGlobalKeydown(ctrlK);
+    expect(ctrlK.defaultPrevented).toBeTrue();
+    const metaK = key('K', { metaKey: true });
+    h.component.onGlobalKeydown(metaK);
+    expect(metaK.defaultPrevented).toBeTrue();
+    const plainK = key('k');
+    h.component.onGlobalKeydown(plainK);
+    expect(plainK.defaultPrevented).toBeFalse();
+  });
+
+  it('affiche un raccourci adapté à la plateforme', () => {
+    expect(['⌘K', 'Ctrl K']).toContain(h.component.searchShortcut);
   });
 });

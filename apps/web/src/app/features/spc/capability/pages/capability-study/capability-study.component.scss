@@ -281,6 +281,12 @@
     color: var(--qos-success-fg);
   }
 
+  &--warn {
+    border-color: transparent;
+    background: var(--qos-warn-bg-soft);
+    color: var(--qos-warn-fg);
+  }
+
   &--ko {
     border-color: transparent;
     background: var(--qos-danger-bg-soft);
@@ -293,6 +299,18 @@
   border-radius: var(--qos-radius-md);
   border: 1px solid var(--qos-border-subtle);
   background: var(--qos-bg-elevated);
+
+  // À côté de la grille, le panneau prend la hauteur de la grille et des cartes, pas plus :
+  // plus long, il repoussait les résultats et laissait un grand blanc sous les cartes.
+  // Hauteur nulle + minimum à 100 % : il ne compte pas dans la hauteur de la ligne et
+  // s'étire sur celle de la colonne principale ; le surplus défile dans le panneau.
+  @media (min-width: 1101px) {
+    align-self: stretch;
+    height: 0;
+    min-height: 100%;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
 
   h3 {
     margin: 0 0 var(--qos-space-3);
@@ -390,6 +408,11 @@
   grid-template-columns: 1fr 1fr;
   gap: var(--qos-space-2);
   margin: var(--qos-space-3) 0 0;
+  // Cp et Cpk restent lisibles au pied du panneau pendant qu'on fait défiler les formules.
+  position: sticky;
+  bottom: calc(-1 * var(--qos-space-3));
+  padding-block: var(--qos-space-2) var(--qos-space-3);
+  background: var(--qos-bg-elevated);
 
   div {
     display: flex;
@@ -416,11 +439,28 @@
 }
 
 // ---------- cartes ----------
+// Juste sous la grille, dans la même colonne : côte à côte quand la place le permet.
 
-.colonnes {
+.saisie__principal {
+  min-width: 0;
+}
+
+.cartes {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr));
-  gap: 0 var(--qos-space-5);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+  gap: var(--qos-space-4) var(--qos-space-5);
+  margin-top: var(--qos-space-5);
+}
+
+.carte-bloc {
+  min-width: 0;
+
+  h3 {
+    margin: 0 0 var(--qos-space-2);
+    font-size: var(--qos-fs-sm);
+    font-weight: var(--qos-fw-semibold);
+    color: var(--qos-fg-primary);
+  }
 }
 
 // ---------- lectures ----------

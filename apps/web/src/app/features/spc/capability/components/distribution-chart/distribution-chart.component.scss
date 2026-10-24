@@ -5,6 +5,10 @@
 .distribution {
   display: block;
   width: 100%;
+  // Le viewBox fait 560 de large : étiré sur toute la carte (~1 100 px), le
+  // texte doublait de taille et le graphique mangeait l'écran.
+  max-width: 760px;
+  margin-inline: auto;
   height: auto;
   font-family: var(--qos-font-mono);
   font-size: 11px;

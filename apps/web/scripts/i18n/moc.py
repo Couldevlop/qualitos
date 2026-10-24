@@ -10,9 +10,7 @@ côté gabarit s'écrit {$NOM}.
 
 TRANSLATIONS = {
     # ---------- navigation et droits ----------
-    'nav.moc': (
-        'Gestion des changements (MOC)', 'Management of change (MOC)', 'Gestión del cambio (MOC)',
-        'إدارة التغيير (MOC)', '変更管理（MOC）', '变更管理（MOC）'),
+    'nav.moc': ('MOC', 'MOC', 'MOC', 'MOC', 'MOC', 'MOC'),
     'nav.admin-moc': ('Paramètres MOC', 'MOC settings', 'Parámetros MOC', 'إعدادات MOC', 'MOC 設定', 'MOC 设置'),
     'authz.module.change': (
         'Gestion des changements', 'Management of change', 'Gestión del cambio', 'إدارة التغيير',
@@ -27,9 +25,7 @@ TRANSLATIONS = {
         'すべての変更申請を管理する', '管理所有变更申请'),
 
     # ---------- écran ----------
-    'moc.title': (
-        'Gestion des changements (MOC)', 'Management of change (MOC)', 'Gestión del cambio (MOC)',
-        'إدارة التغيير (MOC)', '変更管理（MOC）', '变更管理（MOC）'),
+    'moc.title': ('MOC', 'MOC', 'MOC', 'MOC', 'MOC', 'MOC'),
     'moc.subtitle': (
         "Demande, analyse d'impact, validation", 'Request, impact analysis, approval',
         'Solicitud, análisis de impacto, validación', 'الطلب، تحليل الأثر، الاعتماد',

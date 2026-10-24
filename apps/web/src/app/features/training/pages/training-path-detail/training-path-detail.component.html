@@ -11,7 +11,7 @@
           {{ p.name }}
         </h1>
         <div class="meta-row">
-          <span [class]="statusBadge(p.status)">{{ p.status }}</span>
+          <span [class]="statusBadge(p.status)">{{ p.status | statusLabel }}</span>
           <span class="dim" *ngIf="p.targetRole"><span i18n="@@training.home.col-target-role">Rôle cible</span> : {{ p.targetRole }}</span>
           <span class="dim">{{ p.durationHours }} h</span>
           <span class="dim">Passing ≥ {{ p.passingScore }} %</span>

@@ -6,8 +6,9 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
@@ -19,6 +20,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -215,18 +217,59 @@ class DocumentControllerTest {
                 .andExpect(status().isNotFound());
     }
 
+    static final String UN_SIGNATAIRE = "{\"signatories\":[{\"userId\":\"" + UUID.randomUUID()
+            + "\",\"name\":\"Marie Curie\"}]}";
+
     @Test @WithMockUser(roles = "QUALITY_MANAGER")
-    void submit_success() throws Exception {
-        when(service.submitForReview(DOC, VER)).thenReturn(verResp(VersionStatus.IN_REVIEW));
-        mockMvc.perform(patch("/api/v1/documents/{id}/versions/{vid}/submit", DOC, VER).with(csrf()))
+    void submit_avecSesSignataires_ok() throws Exception {
+        when(service.submitForReview(eq(DOC), eq(VER), any())).thenReturn(verResp(VersionStatus.IN_REVIEW));
+        mockMvc.perform(patch("/api/v1/documents/{id}/versions/{vid}/submit", DOC, VER).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON).content(UN_SIGNATAIRE))
                 .andExpect(status().isOk());
+        ArgumentCaptor<DocumentDto.SubmitRequest> req = ArgumentCaptor.forClass(DocumentDto.SubmitRequest.class);
+        verify(service).submitForReview(eq(DOC), eq(VER), req.capture());
+        assertThat(req.getValue().signatories()).extracting(DocumentDto.SignatoryRequest::name)
+                .containsExactly("Marie Curie");
     }
 
     @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void submit_invalid_returns409() throws Exception {
-        when(service.submitForReview(DOC, VER)).thenThrow(new DocumentStateException("nope"));
-        mockMvc.perform(patch("/api/v1/documents/{id}/versions/{vid}/submit", DOC, VER).with(csrf()))
+        when(service.submitForReview(eq(DOC), eq(VER), any())).thenThrow(new DocumentStateException("nope"));
+        mockMvc.perform(patch("/api/v1/documents/{id}/versions/{vid}/submit", DOC, VER).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON).content(UN_SIGNATAIRE))
                 .andExpect(status().isConflict());
+    }
+
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
+    void submit_signatairesRefusesParLeService_400() throws Exception {
+        when(service.submitForReview(eq(DOC), eq(VER), any()))
+                .thenThrow(new DocumentSignatoryException("The same person cannot sign twice"));
+        mockMvc.perform(patch("/api/v1/documents/{id}/versions/{vid}/submit", DOC, VER).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON).content(UN_SIGNATAIRE))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.title").value("Invalid Signatories"));
+    }
+
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
+    void submit_sansSignataire_ouAvecPlusDeTrois_400() throws Exception {
+        String quatre = "{\"signatories\":[" + String.join(",", java.util.Collections.nCopies(4,
+                "{\"userId\":\"" + UUID.randomUUID() + "\",\"name\":\"X\"}")) + "]}";
+        for (String corps : List.of("{}", "{\"signatories\":[]}", quatre,
+                "{\"signatories\":[{\"userId\":null,\"name\":\"X\"}]}",
+                "{\"signatories\":[{\"userId\":\"" + UUID.randomUUID() + "\",\"name\":\" \"}]}")) {
+            mockMvc.perform(patch("/api/v1/documents/{id}/versions/{vid}/submit", DOC, VER).with(csrf())
+                            .contentType(MediaType.APPLICATION_JSON).content(corps))
+                    .andExpect(status().isBadRequest());
+        }
+        verify(service, never()).submitForReview(any(), any(), any());
+    }
+
+    @Test @WithMockUser(roles = "USER")
+    void submit_sansLeDroitDeSoumettre_403() throws Exception {
+        mockMvc.perform(patch("/api/v1/documents/{id}/versions/{vid}/submit", DOC, VER).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON).content(UN_SIGNATAIRE))
+                .andExpect(status().isForbidden());
+        verify(service, never()).submitForReview(any(), any(), any());
     }
 
     @Test @WithMockUser(roles = "QUALITY_MANAGER")
@@ -269,10 +312,25 @@ class DocumentControllerTest {
     }
 
     @Test @WithMockUser(roles = "USER")
-    void reject_withoutTheRightToApprove_403() throws Exception {
+    void signerEtRefuser_ouvertsAUnSignataireSansRoleQualite_leServiceVerifieSonTour() throws Exception {
+        // ADR 0099 : la désignation fait le droit ; le contrôle du tour est au service.
+        when(service.approveVersion(eq(DOC), eq(VER), any())).thenReturn(verResp(VersionStatus.IN_REVIEW));
+        when(service.rejectVersion(eq(DOC), eq(VER), any())).thenReturn(verResp(VersionStatus.DRAFT));
+        mockMvc.perform(patch("/api/v1/documents/{id}/versions/{vid}/approve", DOC, VER).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON).content("{}"))
+                .andExpect(status().isOk());
         mockMvc.perform(patch("/api/v1/documents/{id}/versions/{vid}/reject", DOC, VER).with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"reason\":\"non\"}"))
+                .andExpect(status().isOk());
+    }
+
+    @Test @WithMockUser(roles = "USER")
+    void signerHorsDeSonTour_403() throws Exception {
+        when(service.approveVersion(eq(DOC), eq(VER), any()))
+                .thenThrow(new org.springframework.security.access.AccessDeniedException("not your turn"));
+        mockMvc.perform(patch("/api/v1/documents/{id}/versions/{vid}/approve", DOC, VER).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON).content("{}"))
                 .andExpect(status().isForbidden());
     }
 
@@ -345,6 +403,6 @@ class DocumentControllerTest {
     private DocumentDto.VersionResponse verResp(VersionStatus s) {
         return new DocumentDto.VersionResponse(
                 VER, DOC, 1, null, null, null, null, s, OWNER, null, null, null, null,
-                Instant.now(), Instant.now(), null, null, null, null);
+                Instant.now(), Instant.now(), null, null, null, null, List.of());
     }
 }

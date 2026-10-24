@@ -540,7 +540,7 @@
 /* Le panneau est large et scrollable : une notification tient sur 3 lignes. */
 ::ng-deep .qos-notifications-panel.mat-mdc-menu-panel {
   max-width: 380px;
-  min-width: 340px;
+  min-width: min(340px, 100%);
   max-height: 60vh;
 }
 
@@ -623,7 +623,7 @@
   color: var(--qos-text-tertiary, var(--qos-text-secondary));
 }
 
-::ng-deep .qos-user-panel.mat-mdc-menu-panel { min-width: 240px; }
+::ng-deep .qos-user-panel.mat-mdc-menu-panel { min-width: min(240px, 100%); }
 
 ::ng-deep .qos-user__head {
   flex-direction: column;
@@ -636,4 +636,62 @@
 ::ng-deep .qos-user__roles {
   font-size: 0.75rem;
   color: var(--qos-text-secondary);
+}
+
+/* ============================================================
+ * Recherche d'écran — liste des propositions sous le champ.
+ * ============================================================ */
+.qos-search-list {
+  position: absolute;
+  inset-inline: 0;
+  top: calc(100% + 6px);
+  z-index: 70;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  max-height: min(420px, 70dvh);
+  overflow-y: auto;
+  background: var(--qos-bg-elevated);
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: var(--qos-radius-md);
+  box-shadow: var(--qos-shadow-lg);
+
+  &__item {
+    display: grid;
+    grid-template-columns: 24px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 10px;
+    min-height: 40px;
+    padding: 6px 10px;
+    border-radius: var(--qos-radius-sm);
+    cursor: pointer;
+    color: var(--qos-fg-primary);
+
+    &--active { background: var(--qos-accent-bg-soft); }
+  }
+
+  &__icon { font-size: 20px; color: var(--qos-fg-secondary); }
+
+  &__label {
+    font-size: var(--qos-fs-sm);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__group {
+    font-size: var(--qos-fs-xs);
+    color: var(--qos-fg-tertiary);
+    white-space: nowrap;
+  }
+
+  &__empty {
+    padding: 12px 10px;
+    font-size: var(--qos-fs-sm);
+    color: var(--qos-fg-secondary);
+  }
+}
+
+@media (max-width: 480px) {
+  .qos-search-list__group { display: none; }
 }

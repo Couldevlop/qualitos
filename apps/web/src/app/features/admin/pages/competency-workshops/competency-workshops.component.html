@@ -1,0 +1,76 @@
+<div class="qos-page">
+  <qos-page-header
+    title="Ateliers de la matrice de compétences" i18n-title="@@training.matrix.workshops-title"
+    subtitle="Les ateliers dans lesquels on range les opérateurs, et par lesquels on filtre la matrice."
+    i18n-subtitle="@@training.matrix.workshops-subtitle">
+    <ng-container qosActions>
+      <a mat-stroked-button routerLink="/training/competences">
+        <mat-icon>grid_on</mat-icon> <span i18n="@@training.matrix.title">Matrice de compétences</span>
+      </a>
+    </ng-container>
+  </qos-page-header>
+
+  <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+
+  <p class="echec" *ngIf="failed" role="alert">
+    <span i18n="@@training.matrix.workshops-load-failed">Les ateliers n'ont pas pu être chargés.</span>
+    <button mat-button type="button" (click)="charger()" i18n="@@common.retry">Réessayer</button>
+  </p>
+
+  <ng-container *ngIf="!failed && !loading">
+    <p class="portee" i18n="@@training.matrix.workshops-scope">Retirer un atelier ne réaffecte personne : les opérateurs qui y sont rangés le gardent, et le filtre de la matrice le propose encore.</p>
+
+    <section class="bloc" aria-labelledby="mx-ateliers">
+      <h2 class="bloc__titre" id="mx-ateliers" i18n="@@training.matrix.workshops-list">Ateliers</h2>
+      <p class="bloc__aide">
+        <ng-container i18n="@@training.matrix.workshops-help">L'ordre de la liste est celui des menus et des lignes de la matrice.</ng-container>
+        <ng-container *ngIf="defaults"> <ng-container i18n="@@training.matrix.workshops-defaults">Ce sont aujourd'hui les ateliers proposés par la plateforme.</ng-container></ng-container>
+      </p>
+
+      <ol class="liste" data-test="ateliers">
+        <li *ngFor="let n of names; let i = index; let first = first; let last = last; trackBy: trackByIndex" class="atelier">
+          <span class="atelier__rang" aria-hidden="true">{{ i + 1 }}</span>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic" class="atelier__nom">
+            <input matInput [ngModel]="n" (ngModelChange)="rename(i, $event)" [maxlength]="maxLength"
+                   aria-label="Nom de l'atelier" i18n-aria-label="@@training.matrix.workshops-name" data-test="atelier-nom">
+          </mat-form-field>
+          <button mat-icon-button type="button" (click)="move(i, -1)" [disabled]="first"
+                  aria-label="Monter" i18n-aria-label="@@training.matrix.workshops-up" data-test="monter">
+            <mat-icon>arrow_upward</mat-icon>
+          </button>
+          <button mat-icon-button type="button" (click)="move(i, 1)" [disabled]="last"
+                  aria-label="Descendre" i18n-aria-label="@@training.matrix.workshops-down" data-test="descendre">
+            <mat-icon>arrow_downward</mat-icon>
+          </button>
+          <button mat-icon-button type="button" (click)="remove(i)"
+                  aria-label="Retirer l'atelier" i18n-aria-label="@@training.matrix.workshops-remove" data-test="retirer">
+            <mat-icon>delete_outline</mat-icon>
+          </button>
+        </li>
+      </ol>
+
+      <form class="ajout" (ngSubmit)="add()">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="ajout__champ">
+          <mat-label i18n="@@training.matrix.workshops-new">Nouvel atelier</mat-label>
+          <input matInput name="nouvel-atelier" [(ngModel)]="newName" [maxlength]="maxLength" data-test="nouvel-atelier">
+        </mat-form-field>
+        <button mat-stroked-button type="submit" [disabled]="!newName.trim()" data-test="ajouter">
+          <mat-icon>add</mat-icon> <span i18n="@@training.matrix.add">Ajouter</span>
+        </button>
+      </form>
+    </section>
+
+    <div class="barre" *ngIf="dirty" role="status">
+      <ul class="barre__problemes" *ngIf="problems.length" data-test="problemes">
+        <li *ngFor="let p of problems">{{ p }}</li>
+      </ul>
+      <span *ngIf="!problems.length" i18n="@@training.matrix.workshops-pending">Ateliers modifiés</span>
+      <span class="barre__actions">
+        <button mat-stroked-button type="button" (click)="discard()" [disabled]="saving"
+                data-test="annuler" i18n="@@authz.matrix.discard">Annuler les changements</button>
+        <button mat-flat-button color="primary" type="button" (click)="save()" [disabled]="saving || problems.length > 0"
+                data-test="enregistrer" i18n="@@common.save">Enregistrer</button>
+      </span>
+    </div>
+  </ng-container>
+</div>

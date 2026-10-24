@@ -209,8 +209,8 @@
   gap: var(--qos-space-2);
 
   mat-form-field { width: 168px; }
-  .search { flex: 1 1 280px; width: auto; min-width: 220px; }
-  .owner { width: 200px; }
+  .search { flex: 1 1 280px; width: auto; min-width: min(220px, 100%); }
+  .owner { width: min(200px, 100%); }
   .clear { color: var(--qos-fg-secondary); }
 }
 
@@ -293,7 +293,7 @@
 }
 
 .title-cell {
-  min-width: 220px;
+  min-width: min(220px, 100%);
 
   .title {
     display: block;

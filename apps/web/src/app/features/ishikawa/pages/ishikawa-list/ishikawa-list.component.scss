@@ -8,7 +8,7 @@
   p  { margin: 0; color: var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.6)); }
 }
 .filter-card { padding: 16px; margin-bottom: 16px; }
-.status-filter { width: 220px; }
+.status-filter { width: min(220px, 100%); }
 .state-row {
   display: flex; align-items: center; gap: 12px; padding: 24px 0;
   &.error { color: var(--mat-sys-error, #b3261e); }

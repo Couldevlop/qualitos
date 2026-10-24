@@ -5,8 +5,12 @@ import com.openlab.qualitos.quality.circuit.application.CircuitService;
 import com.openlab.qualitos.quality.circuit.domain.CircuitException;
 import com.openlab.qualitos.quality.circuit.domain.CircuitSubject;
 import com.openlab.qualitos.quality.common.TenantContext;
+import com.openlab.qualitos.quality.docs.DocumentBlob;
+import com.openlab.qualitos.quality.docs.DocumentBlobRepository;
 import com.openlab.qualitos.quality.docs.DocumentDto;
 import com.openlab.qualitos.quality.docs.DocumentService;
+import com.openlab.qualitos.quality.docs.DocumentVersion;
+import com.openlab.qualitos.quality.docs.DocumentVersionRepository;
 import com.openlab.qualitos.quality.docs.DocumentType;
 import com.openlab.qualitos.quality.docs.VersionStatus;
 import org.junit.jupiter.api.AfterEach;
@@ -31,10 +35,15 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Un circuit de bout en bout sur le mapping JPA réel : le réglage du client,
- * la soumission d'un document qui ouvre le passage, les décisions qui se
- * relisent d'une transaction à l'autre, l'approbation finale, le refus et le
+ * le passage ouvert sur une version en revue, les décisions qui se relisent
+ * d'une transaction à l'autre, l'approbation finale, le refus et le
  * cloisonnement par client. Un dépôt simulé ne dirait rien d'une collection
  * de décisions mal rechargée.
+ *
+ * <p>Depuis l'ADR 0099, la GED soumet avec des signataires désignés et n'ouvre
+ * plus de passage. Les versions déjà en revue sous un circuit par rôles le
+ * terminent : c'est ce que ces scénarios rejouent, en ouvrant le passage comme
+ * le faisait la soumission d'avant.
  */
 @SpringBootTest
 @ActiveProfiles("test")
@@ -43,6 +52,8 @@ class CircuitIntegrationTest {
 
     @Autowired CircuitService circuits;
     @Autowired DocumentService documents;
+    @Autowired DocumentVersionRepository versions;
+    @Autowired DocumentBlobRepository blobs;
     @Autowired TransactionTemplate tx;
 
     final UUID tenant = UUID.randomUUID();
@@ -71,13 +82,22 @@ class CircuitIntegrationTest {
                 Arrays.stream(roles).map(r -> new SimpleGrantedAuthority("ROLE_" + r)).toList(), user.toString()));
     }
 
-    /** Un document en revue, rédigé par l'autrice. Rend [documentId, versionId]. */
+    /**
+     * Un document en revue sous le circuit d'avant l'ADR 0099, rédigé par
+     * l'autrice : la version passe en revue et son passage s'ouvre, s'il y a un
+     * circuit réglé. Rend [documentId, versionId].
+     */
     UUID[] documentEnRevue(String code) {
         connecte(tenant, autrice, "QUALITY_MANAGER");
         DocumentDto.DocumentResponse d = dans(() -> documents.createDocument(new DocumentDto.CreateDocumentRequest(
                 code, "Procédure " + code, null, DocumentType.PROCEDURE, autrice, false, "contenu", null, "v1")));
         UUID version = d.versions().get(0).id();
-        dans(() -> documents.submitForReview(d.id(), version));
+        dans(() -> {
+            DocumentVersion v = versions.findById(version).orElseThrow();
+            v.setStatus(VersionStatus.IN_REVIEW);
+            versions.save(v);
+            return circuits.start(CircuitSubject.DOCUMENT_VERSION, version, autrice);
+        });
         return new UUID[] {d.id(), version};
     }
 
@@ -129,7 +149,7 @@ class CircuitIntegrationTest {
     }
 
     @Test
-    void unRefusRenvoieEnBrouillon_etUneNouvelleSoumissionRepartDeZero() {
+    void unRefusRenvoieEnBrouillon_etLaNouvelleSoumissionPasseParLesSignataires() {
         reglerDeuxEtapes();
         UUID[] ids = documentEnRevue("PRO-C3");
 
@@ -140,13 +160,31 @@ class CircuitIntegrationTest {
         assertThat(refusee.rejectionReason()).isEqualTo("Section 4 incomplète");
         UUID premier = dans(() -> circuits.run(CircuitSubject.DOCUMENT_VERSION, ids[1])).orElseThrow().id();
 
+        // La version corrigée repart avec ses signataires : aucun nouveau passage par rôles.
         connecte(tenant, autrice, "QUALITY_MANAGER");
-        dans(() -> documents.submitForReview(ids[0], ids[1]));
-        CircuitDto.RunView second = dans(() -> circuits.run(CircuitSubject.DOCUMENT_VERSION, ids[1])).orElseThrow();
+        dans(() -> {
+            DocumentVersion v = versions.findById(ids[1]).orElseThrow();
+            DocumentBlob b = new DocumentBlob();
+            b.setTenantId(tenant);
+            b.setSha256("a".repeat(64));
+            b.setObjectKey("t/" + UUID.randomUUID());
+            b.setContentType("application/pdf");
+            b.setOriginalSize(8);
+            b.setStoredSize(8);
+            v.setBlob(blobs.save(b));
+            return versions.save(v);
+        });
+        DocumentDto.VersionResponse resoumise = dans(() -> documents.submitForReview(ids[0], ids[1],
+                new DocumentDto.SubmitRequest(List.of(new DocumentDto.SignatoryRequest(alice, "Alice")))));
+        CircuitDto.RunView dernier = dans(() -> circuits.run(CircuitSubject.DOCUMENT_VERSION, ids[1])).orElseThrow();
 
-        assertThat(second.id()).isNotEqualTo(premier);
-        assertThat(second.status()).isEqualTo("IN_PROGRESS");
-        assertThat(second.decisions()).isEmpty();
+        assertThat(dernier.id()).isEqualTo(premier);
+        assertThat(dernier.status()).isEqualTo("REJECTED");
+        assertThat(resoumise.signatories()).extracting(DocumentDto.SignatoryView::userId).containsExactly(alice);
+
+        connecte(tenant, alice, "QUALITY_MANAGER");
+        assertThat(dans(() -> documents.approveVersion(ids[0], ids[1], new DocumentDto.ApprovalRequest(null)))
+                .status()).isEqualTo(VersionStatus.APPROVED);
     }
 
     @Test

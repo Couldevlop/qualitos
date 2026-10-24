@@ -10,7 +10,7 @@
   display: flex; gap: 12px; align-items: flex-start; flex-wrap: wrap;
   background: #fff; padding: 16px; border-radius: 12px;
 }
-.search-form .mode  { min-width: 360px; flex: 0 0 auto; }
+.search-form .mode  { min-width: min(360px, 100%); flex: 0 0 auto; }
 .search-form .query { flex: 1 1 320px; }
 .search-form button { display: inline-flex; align-items: center; gap: 6px; margin-top: 6px; }
 

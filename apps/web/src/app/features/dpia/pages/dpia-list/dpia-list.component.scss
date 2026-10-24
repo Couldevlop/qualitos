@@ -4,7 +4,7 @@
 .head p  { margin: 0; color: rgba(0,0,0,0.6); font-size: 13px; max-width: 720px; }
 
 .filters { display: flex; gap: 12px; flex-wrap: wrap; }
-.filters mat-form-field { min-width: 200px; }
+.filters mat-form-field { min-width: min(200px, 100%); }
 
 .banner { padding: 10px 14px; border-radius: 8px; font-size: 13px; }
 .banner-error { background: #fbe9e7; color: #b71c1c; }

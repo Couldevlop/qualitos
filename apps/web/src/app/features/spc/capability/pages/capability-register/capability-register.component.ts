@@ -9,7 +9,7 @@ import { safeErrorMessage } from '../../../../../core/http/error-message';
 import {
   ConfirmDialogComponent, ConfirmDialogData
 } from '../../../../../shared/ui/confirm-dialog/confirm-dialog.component';
-import { controlledLabel, csvCell, fmt, statusTone } from '../../spc-capability.labels';
+import { csvCell, fmt, statusLabel, statusTone } from '../../spc-capability.labels';
 import { SpcCapabilityService } from '../../spc-capability.service';
 import { CapabilityStatus, StudySummary } from '../../spc-capability.types';
 
@@ -41,7 +41,7 @@ export class CapabilityRegisterComponent implements OnInit {
   failed = false;
 
   search = '';
-  statusFilter: '' | 'controlled' | 'uncontrolled' = '';
+  statusFilter: '' | CapabilityStatus = '';
   planFilter: '' | 'yes' | 'no' = '';
   sortKey: SortKey = 'studyDate';
   sortDir: 1 | -1 = -1;
@@ -80,9 +80,9 @@ export class CapabilityRegisterComponent implements OnInit {
 
   // ---------- indicateurs ----------
 
-  get controlledPercent(): number | null {
-    if (!this.studies.length) return null;
-    return Math.round(100 * this.studies.filter(s => s.status === 'CAPABLE').length / this.studies.length);
+  /** Un compte d'études, pas un pourcentage : on lit « 3 procédés maîtrisés » à côté des « 5 études ». */
+  get controlledCount(): number {
+    return this.studies.filter(s => s.status === 'CAPABLE').length;
   }
 
   get withPlan(): number {
@@ -115,7 +115,7 @@ export class CapabilityRegisterComponent implements OnInit {
     return this.studies
       .filter(s => !q || [s.partReference, s.characteristic, s.leaderName, s.machine]
         .some(v => (v ?? '').toLowerCase().includes(q)))
-      .filter(s => !this.statusFilter || (this.statusFilter === 'controlled') === (s.status === 'CAPABLE'))
+      .filter(s => !this.statusFilter || s.status === this.statusFilter)
       .filter(s => !this.planFilter || (this.planFilter === 'yes') === s.actionPlan)
       .sort((a, b) => this.compare(a, b) * this.sortDir);
   }
@@ -198,7 +198,7 @@ export class CapabilityRegisterComponent implements OnInit {
       $localize`:@@spc.col.status:Statut`, $localize`:@@spc.col.plan:Plan d'actions`
     ], ...this.rows.map(s => [
       s.partReference, s.characteristic ?? '', s.specification ?? '', s.leaderName ?? '', s.studyDate,
-      s.machine ?? '', s.cp, s.cpk, controlledLabel(s.status),
+      s.machine ?? '', s.cp, s.cpk, statusLabel(s.status),
       s.actionPlan ? $localize`:@@common.yes:Oui` : $localize`:@@common.no:Non`
     ])];
     const csv = '\uFEFF' + lignes.map(l => l.map(csvCell).join(';')).join('\r\n');
@@ -212,7 +212,7 @@ export class CapabilityRegisterComponent implements OnInit {
 
   // ---------- gabarit ----------
 
-  controlled(s: CapabilityStatus): string { return controlledLabel(s); }
+  label(s: CapabilityStatus): string { return statusLabel(s); }
   tone(s: CapabilityStatus): string { return statusTone(s); }
   num(v: number, digits = 2): string { return fmt(v, digits); }
 

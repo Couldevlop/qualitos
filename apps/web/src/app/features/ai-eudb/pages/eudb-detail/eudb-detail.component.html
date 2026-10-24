@@ -11,7 +11,7 @@
           <span *ngIf="r.eudbId" class="eudb-id">{{ r.eudbId }}</span>
         </h1>
         <div class="meta-row">
-          <span [class]="statusBadge(r.status)">{{ r.status }}</span>
+          <span [class]="statusBadge(r.status)">{{ r.status | statusLabel }}</span>
           <span class="dim" *ngIf="r.memberStateOfReference" i18n="@@ai-eudb.detail.member-state-inline">État membre : {{ r.memberStateOfReference }}</span>
           <span class="dim" i18n="@@ai-eudb.detail.updated-inline">Mis à jour : {{ r.updatedAt | slice:0:10 }}</span>
         </div>

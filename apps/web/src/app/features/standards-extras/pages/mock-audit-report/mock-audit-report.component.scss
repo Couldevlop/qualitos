@@ -149,7 +149,7 @@
   tbody tr:hover { background: var(--qos-bg-subtle); }
 }
 
-.action-text { line-height: 1.55; min-width: 280px; }
+.action-text { line-height: 1.55; min-width: min(280px, 100%); }
 
 @media (max-width: 860px) {
   .summary { grid-template-columns: 1fr; }

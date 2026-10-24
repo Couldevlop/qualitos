@@ -37,6 +37,16 @@ describe('spc-capability.charts', () => {
       expect(h.ticks[0].value).toBeLessThan(-4);
     });
 
+    it('élargit la marge gauche pour que les graduations ne soient pas rognées', () => {
+      const court = controlChart([5, 6], 10, 6, 2, { usl: null, lsl: null }, 2)!;
+      const long = controlChart([12.05, 12.06], 12.09, 12.05, 12.02, { usl: 12.1, lsl: 11.9 }, 4)!;
+      // « 12.0620 » : sept caractères mono de 10 px, plus l'écart au trait.
+      expect(long.left).toBeGreaterThanOrEqual(7 * 6 + 6);
+      expect(long.left).toBeGreaterThan(court.left);
+      expect(long.points[0].x).toBe(long.left);
+      expect(court.left).toBe(44);
+    });
+
     it('garde une échelle quand toutes les valeurs sont égales', () => {
       const g = controlChart([2, 2], 2, 2, 2)!;
       expect(g.points.every(p => Number.isFinite(p.y))).toBeTrue();

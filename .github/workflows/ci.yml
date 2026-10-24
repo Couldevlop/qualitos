@@ -147,25 +147,6 @@ jobs:
           printf 'QOS_HOST=q.example.local\nQOS_REGISTRY=r.example.local\nQOS_VERSION=0\n' >> ci.env
           docker compose --env-file ci.env --profile ollama --profile hors-site config --quiet
 
-  spring-exposure-guard:
-    name: Composants Spring exposés
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - name: Checkout
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
-
-      # Garde de l'exception .trivyignore du 2026-10-10 (CVE-2026-47884,
-      # CVE-2026-47890) : elle ne tient que tant que ni vue XSLT ni flux SSE
-      # n'existe dans les services Java.
-      - name: Ni vue XSLT ni flux SSE
-        run: |
-          if grep -rnE "XsltView|SseEmitter|ServerSentEvent|TEXT_EVENT_STREAM|text/event-stream" \
-               --include=*.java apps libs; then
-            echo "::error::vue XSLT ou flux SSE introduit : l'exception Trivy de Spring 6.2.19 (CVE-2026-47884/47890) ne tient plus — migrer vers Spring Boot 4 ou retirer ce code"
-            exit 1
-          fi
-
   sast-semgrep:
     name: SAST (Semgrep)
     runs-on: ubuntu-latest
@@ -475,13 +456,13 @@ jobs:
         run: |
           docker run --rm --user root --entrypoint /bin/sh \
             -v "$PWD/apps/ai-service:/src:ro" \
-            cgr.dev/chainguard/python:latest-dev@sha256:c07959e43e3edece176d20c32428a53014379790169af4ea5de1dc47277eba75 -c '
+            cgr.dev/chainguard/python:latest-dev@sha256:c179c7d8e23caed59a51ff74d4742f8f8d3f16af4c33c40acaf8d3ee07234592 -c '
               set -eu
               python -V
               mkdir -p /w && cd /w && cp -r /src/. . && rm -rf .venv .pytest_cache
               python -m pip install --quiet --no-cache-dir --only-binary=:all: \
                 "fastapi>=0.115" \
-                "uvicorn[standard]>=0.32" \
+                "uvicorn>=0.32" "uvloop>=0.21" "httptools>=0.6" "websockets>=13" \
                 "pydantic>=2.9" \
                 "httpx>=0.27" \
                 "sqlglot>=25.5" \

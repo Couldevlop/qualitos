@@ -13,6 +13,7 @@ import { DocumentValidationComponent } from './components/document-validation/do
 import { DocumentsImportDialogComponent } from './pages/documents-import-dialog/documents-import-dialog.component';
 import { DocumentsListComponent } from './pages/documents-list/documents-list.component';
 import { DocumentsRejectDialogComponent } from './pages/documents-reject-dialog/documents-reject-dialog.component';
+import { DocumentsSubmitDialogComponent } from './pages/documents-submit-dialog/documents-submit-dialog.component';
 import { DocumentsVersionDialogComponent } from './pages/documents-version-dialog/documents-version-dialog.component';
 import { PersonNameModule } from '../../shared/person-name/person-name.module';
 import { UserPickerModule } from '../../shared/user-picker/user-picker.module';
@@ -30,6 +31,7 @@ const routes: Routes = [
     DocumentsEditDialogComponent,
     DocumentsVersionDialogComponent,
     DocumentsRejectDialogComponent,
+    DocumentsSubmitDialogComponent,
     DocumentCircuitComponent,
     DocumentPanelComponent,
     DocumentValidationComponent,

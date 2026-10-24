@@ -1,0 +1,24 @@
+.not-found {
+  display: flex;
+  justify-content: center;
+  padding-top: var(--qos-space-12);
+}
+
+.not-found__box { max-width: 560px; }
+
+.not-found__path {
+  max-width: 100%;
+  padding: var(--qos-space-1) var(--qos-space-2);
+  border-radius: var(--qos-radius-sm, 6px);
+  background: var(--qos-bg-subtle, var(--qos-bg-app));
+  color: var(--qos-fg-secondary);
+  font-size: var(--qos-fs-xs);
+  overflow-wrap: anywhere;
+}
+
+.not-found__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--qos-space-2);
+}

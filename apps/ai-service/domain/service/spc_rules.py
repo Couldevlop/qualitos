@@ -107,7 +107,8 @@ def _rule1_beyond_3s(z: np.ndarray) -> list[SpcViolation]:
             out.append(SpcViolation(
                 rule="NELSON_1",
                 title="Point hors limites (>3σ)",
-                description=f"Le point {i} est au-delà de 3σ — cause spéciale probable.",
+                # Rang affiché à partir de 1, comme les puces « #n » de l'écran ; l'indice reste 0-based.
+                description=f"Le point {i + 1} est au-delà de 3σ — cause spéciale probable.",
                 point_indices=[i],
                 severity="high",
             ))

@@ -7,7 +7,7 @@
 
 .tab-content { padding: 16px 0; display: flex; flex-direction: column; gap: 12px; }
 .tab-toolbar { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-.tab-toolbar .filter { min-width: 200px; }
+.tab-toolbar .filter { min-width: min(200px, 100%); }
 .spacer { flex: 1; }
 
 .table-wrap { background: var(--qos-bg-elevated); border: 1px solid var(--qos-border-subtle); border-radius: var(--qos-radius-lg); overflow: hidden; }
@@ -21,7 +21,7 @@ small.dim { display: block; margin-top: 2px; }
 
 code { font-family: 'IBM Plex Mono','Fira Code',monospace; font-size: 12px; }
 
-.progress-cell { min-width: 220px; }
+.progress-cell { min-width: min(220px, 100%); }
 .progress-cell mat-progress-bar { display: block; margin-bottom: 2px; }
 .progress-pct { font-size: 11px; color: rgba(0,0,0,0.6); font-variant-numeric: tabular-nums; }
 

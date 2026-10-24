@@ -15,8 +15,8 @@
     champs restés vides ne s'affichent qu'une fois touchés.
   -->
   <mat-dialog-actions>
-    <p class="qfd-blocked" *ngIf="blockedMessage" role="status">
-      <mat-icon aria-hidden="true">error_outline</mat-icon>
+    <p class="qfd-blocked" [class.qfd-blocked--pending]="pristine" *ngIf="blockedMessage" role="status">
+      <mat-icon aria-hidden="true">{{ pristine ? 'info' : 'error_outline' }}</mat-icon>
       <span>{{ blockedMessage }}</span>
     </p>
 

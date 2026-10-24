@@ -29,6 +29,6 @@
 }
 
 .date {
-  width: 260px;
+  width: min(260px, 100%);
   max-width: 100%;
 }

@@ -90,6 +90,12 @@ class GedIntegrationTest {
                 .getContent());
     }
 
+    /** Le circuit de signature d'une soumission : les signataires, dans l'ordre (ADR 0099). */
+    static DocumentDto.SubmitRequest signataires(UUID... ids) {
+        return new DocumentDto.SubmitRequest(Arrays.stream(ids)
+                .map(id -> new DocumentDto.SignatoryRequest(id, "Personne " + id)).toList());
+    }
+
     static DocumentDto.ListFilter vue(DocumentView v) {
         return new DocumentDto.ListFilter(v, null, null, null, null, null, null);
     }
@@ -148,19 +154,39 @@ class GedIntegrationTest {
         connecte(tenant, redacteur, "QUALITY_MANAGER");
         DocumentDto.DocumentResponse d = cree("PRO-QUA-001", "Maîtrise des documents", null, null);
         UUID v1 = d.versions().get(0).id();
-        dans(() -> documents.submitForReview(d.id(), v1));
+        // Sans fichier, la version ne part pas en validation : un document se valide sur pièce.
+        assertThatThrownBy(() -> dans(() -> documents.submitForReview(d.id(), v1, signataires(valideur))))
+                .isInstanceOf(DocumentStateException.class);
+        dans(() -> files.upload(d.id(), v1, "application/pdf", "procedure.pdf", PDF));
+        UUID second = UUID.randomUUID();
+        dans(() -> documents.submitForReview(d.id(), v1, signataires(valideur, second)));
 
-        // L'auteur ne valide pas sa propre version ; un autre manager, si.
+        // L'auteur ne valide pas sa propre version ; le signataire 1, si — et lui seul pour l'instant.
         assertThat(codes(vue(DocumentView.TO_VALIDATE))).isEmpty();
         connecte(tenant, valideur, "QUALITY_MANAGER");
         assertThat(codes(vue(DocumentView.TO_VALIDATE))).containsExactly("PRO-QUA-001");
         assertThat(dans(documents::viewCounts).toValidate()).isEqualTo(1);
-        // Un simple utilisateur n'a pas le droit d'approuver.
-        connecte(tenant, UUID.randomUUID(), "USER");
+        // Le signataire 2 attend son tour ; une personne non désignée n'a rien à signer.
+        connecte(tenant, second, "USER");
+        assertThat(codes(vue(DocumentView.TO_VALIDATE))).isEmpty();
+        connecte(tenant, UUID.randomUUID(), "QUALITY_MANAGER");
         assertThat(codes(vue(DocumentView.TO_VALIDATE))).isEmpty();
 
         connecte(tenant, valideur, "QUALITY_MANAGER");
-        dans(() -> documents.approveVersion(d.id(), v1, new DocumentDto.ApprovalRequest(null)));
+        DocumentDto.VersionResponse signee = dans(() -> documents.approveVersion(d.id(), v1,
+                new DocumentDto.ApprovalRequest(null, "Conforme")));
+        assertThat(signee.status()).isEqualTo(VersionStatus.IN_REVIEW);
+        assertThat(signee.signatories()).extracting(DocumentDto.SignatoryView::decision)
+                .containsExactly(SignatoryDecision.APPROVED, SignatoryDecision.PENDING);
+
+        // À son tour, le signataire 2 — un simple utilisateur : la désignation fait le droit.
+        connecte(tenant, second, "USER");
+        assertThat(codes(vue(DocumentView.TO_VALIDATE))).containsExactly("PRO-QUA-001");
+        assertThat(dans(() -> documents.approveVersion(d.id(), v1, new DocumentDto.ApprovalRequest(null)))
+                .status()).isEqualTo(VersionStatus.APPROVED);
+        assertThat(codes(vue(DocumentView.TO_VALIDATE))).isEmpty();
+
+        connecte(tenant, valideur, "QUALITY_MANAGER");
         dans(() -> documents.publishVersion(d.id(), v1));
         DocumentDto.DocumentResponse publie = dans(() -> documents.findById(d.id()));
         assertThat(publie.displayStatus()).isEqualTo(DisplayStatus.IN_FORCE);
@@ -223,14 +249,14 @@ class GedIntegrationTest {
 
         // Publication puis v2 : la v1 devient obsolète, la v2 hérite du même fichier.
         connecte(tenant, redacteur, "QUALITY_MANAGER");
-        dans(() -> documents.submitForReview(a.id(), va));
+        dans(() -> documents.submitForReview(a.id(), va, signataires(valideur)));
         connecte(tenant, valideur, "QUALITY_MANAGER");
         dans(() -> documents.approveVersion(a.id(), va, new DocumentDto.ApprovalRequest(null)));
         dans(() -> documents.publishVersion(a.id(), va));
         DocumentDto.VersionResponse v2 = dans(() -> documents.createVersion(a.id(),
                 new DocumentDto.CreateVersionRequest(null, null, "v2", null)));
         assertThat(v2.file().fileName()).isEqualTo("fiche.pdf");
-        dans(() -> documents.submitForReview(a.id(), v2.id()));
+        dans(() -> documents.submitForReview(a.id(), v2.id(), signataires(redacteur)));
         connecte(tenant, redacteur, "QUALITY_MANAGER");
         dans(() -> documents.approveVersion(a.id(), v2.id(), new DocumentDto.ApprovalRequest(null)));
         dans(() -> documents.publishVersion(a.id(), v2.id()));

@@ -9,7 +9,7 @@
           {{ k.name }}
         </h1>
         <div class="meta-row">
-          <span [class]="statusBadge(k.status)">{{ k.status }}</span>
+          <span [class]="statusBadge(k.status)">{{ k.status | statusLabel }}</span>
           <span class="dim">{{ directionLabel(k.direction) }}</span>
           <span class="dim" *ngIf="k.category"><span i18n="@@kpis.detail.category-prefix">Catégorie :</span> {{ k.category }}</span>
           <span class="dim" *ngIf="k.frequency"><span i18n="@@kpis.detail.frequency-prefix">Fréquence :</span> {{ k.frequency }}</span>

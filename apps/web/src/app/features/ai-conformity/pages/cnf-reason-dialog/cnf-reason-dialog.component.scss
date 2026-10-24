@@ -1,4 +1,4 @@
-.rsn-form { display: flex; flex-direction: column; min-width: 520px; max-width: 660px; }
+.rsn-form { display: flex; flex-direction: column; min-width: min(520px, 100%); max-width: 660px; }
 .warn { margin: 0 0 12px; padding: 10px 12px; background: #fbe9e7; color: #b71c1c;
         border-left: 4px solid #b71c1c; border-radius: 4px; line-height: 1.5; font-size: 13px; }
 mat-dialog-content { padding-top: 8px; display: flex; flex-direction: column; gap: 4px; }

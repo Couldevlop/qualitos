@@ -1,4 +1,4 @@
-.reg-form { display: flex; flex-direction: column; min-width: 540px; max-width: 660px; }
+.reg-form { display: flex; flex-direction: column; min-width: min(540px, 100%); max-width: 660px; }
 .hint { margin: 0 0 12px; padding: 10px 12px; border-left: 4px solid #1b5e20;
         background: #e8f5e9; color: #1b5e20; font-size: 13px; line-height: 1.45; border-radius: 4px; }
 .hint code { background: rgba(0,0,0,0.06); padding: 1px 6px; border-radius: 4px;

@@ -88,6 +88,11 @@ describe('WorkflowDesignerService (mock mode)', () => {
     expect(service.emptyDiagram()).toContain('bpmn:definitions');
     expect(service.emptyDiagram()).toContain('bpmn:process');
   });
+
+  it('emptyDiagram nomme l\'événement de début par le libellé traduit', () => {
+    // Sans traduction chargée, $localize rend le texte source.
+    expect(service.emptyDiagram()).toContain('<bpmn:startEvent id="StartEvent_1" name="Début" />');
+  });
 });
 
 describe('WorkflowDesignerService (HTTP mode)', () => {

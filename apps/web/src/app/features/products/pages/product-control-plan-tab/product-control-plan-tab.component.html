@@ -8,7 +8,7 @@
     <mat-chip-option *ngFor="let plan of plans"
                      [selected]="selected?.plan?.id === plan.id"
                      (click)="select(plan)">
-      {{ plan.phase }} · r{{ plan.revision }} · {{ plan.status }}
+      {{ plan.phase }} · r{{ plan.revision }} · {{ plan.status | statusLabel }}
     </mat-chip-option>
   </mat-chip-listbox>
 

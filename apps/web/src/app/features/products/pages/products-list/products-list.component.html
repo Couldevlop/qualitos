@@ -14,7 +14,7 @@
       <mat-label i18n="@@product.filter-status">Statut</mat-label>
       <mat-select [(ngModel)]="statusFilter" name="statusFilter">
         <mat-option value="" i18n="@@product.filter-all">Tous</mat-option>
-        <mat-option *ngFor="let status of statuses" [value]="status">{{ status }}</mat-option>
+        <mat-option *ngFor="let status of statuses" [value]="status">{{ status | statusLabel }}</mat-option>
       </mat-select>
     </mat-form-field>
   </div>
@@ -55,7 +55,7 @@
           <span class="qos-badge"
                 [attr.data-tone]="row.product.status === 'ACTIVE' ? 'success'
                                  : row.product.status === 'OBSOLETE' ? 'neutral' : 'info'">
-            {{ row.product.status }}
+            {{ row.product.status | statusLabel }}
           </span>
         </td>
       </ng-container>

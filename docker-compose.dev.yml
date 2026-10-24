@@ -185,7 +185,8 @@ services:
   # -------------------------------------------------------------------------
 
   minio:
-    image: minio/minio:latest
+    # minio/minio et minio/mc ont disparu de Docker Hub : images Chainguard.
+    image: cgr.dev/chainguard/minio:latest
     container_name: qualitos-minio
     profiles: ["storage"]
     command: server /data --console-address ":9001"
@@ -206,7 +207,7 @@ services:
 
   # Création idempotente du bucket au démarrage (job one-shot via le client mc).
   minio-init:
-    image: minio/mc:latest
+    image: cgr.dev/chainguard/minio-client:latest-dev
     container_name: qualitos-minio-init
     profiles: ["storage"]
     depends_on:

@@ -60,7 +60,7 @@ TRANSLATIONS = {
     'rr.all-processes': (
         'Tous processus', 'All processes', 'Todos los procesos',
         'جميع العمليات', 'すべてのプロセス', '所有过程'),
-    'rr.all-statuses': ('Tous statuts', 'All statuses', 'Todos los estados', 'جميع الحالات', 'すべてのステータス', '所有状态'),
+    'rr.all-statuses': ('Statut : tous', 'Status: all', 'Estado: todos', 'الحالة: الكل', 'ステータス：すべて', '状态：全部'),
     'rr.all-opportunities': ('Toutes', 'All', 'Todas', 'الكل', 'すべて', '全部'),
     'rr.priority-filter': (
         'Filtre de priorité', 'Priority filter', 'Filtro de prioridad',

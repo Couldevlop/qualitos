@@ -1,6 +1,12 @@
 spring:
   application:
     name: api-quality-engine
+  # Boot 4 sérialise en Jackson 3 par défaut ; le code et ses ObjectMapper
+  # sont encore en Jackson 2 (ADR 0100) : les réponses HTTP doivent passer
+  # par le même moteur que le reste de l'application.
+  http:
+    converters:
+      preferred-json-mapper: jackson2
 
   datasource:
     url: ${DB_URL:jdbc:postgresql://localhost:5432/qualitos_quality}

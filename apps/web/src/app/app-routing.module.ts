@@ -329,10 +329,15 @@ const routes: Routes = [
         path: 'offline-queue',
         loadChildren: () =>
           import('./features/offline-queue/offline-queue.module').then(m => m.OfflineQueueModule)
+      },
+      {
+        // Adresse inconnue : page dédiée dans le cadre de l'application plutôt
+        // qu'un renvoi silencieux vers l'accueil qui masquait les liens cassés.
+        path: '**',
+        loadChildren: () => import('./features/not-found/not-found.module').then(m => m.NotFoundModule)
       }
     ]
-  },
-  { path: '**', redirectTo: 'home' }
+  }
 ];
 
 @NgModule({

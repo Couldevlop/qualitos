@@ -22,7 +22,7 @@ class GlobalExceptionHandlerTest {
     @Test
     void noResourceFound_mapsTo404_withoutLeakingDetails() {
         ProblemDetail pd = handler.handleNoResource(
-                new NoResourceFoundException(HttpMethod.GET, "/api/v1/does-not-exist"));
+                new NoResourceFoundException(HttpMethod.GET, "/api/v1/does-not-exist", "api/v1/does-not-exist"));
         assertThat(pd.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
         assertThat(pd.getDetail()).isEqualTo("Resource not found");
         // ne divulgue pas le chemin demandé

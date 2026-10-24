@@ -47,7 +47,7 @@
 }
 
 .filters mat-form-field {
-  min-width: 220px;
+  min-width: min(220px, 100%);
 }
 
 .banner {

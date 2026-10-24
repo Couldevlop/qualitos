@@ -1,4 +1,4 @@
-.proposal-form { display: flex; flex-direction: column; min-width: 480px; max-width: 580px; }
+.proposal-form { display: flex; flex-direction: column; min-width: min(480px, 100%); max-width: 580px; }
 mat-dialog-content { padding-top: 8px; }
 .hint {
   margin: 0 0 16px;

@@ -16,6 +16,7 @@ import { DocumentsService } from '../../documents.service';
 import { DocumentFolder, DocumentResponse, DocumentVersionResponse, FileLink } from '../../documents.types';
 import { DocumentsEditDialogComponent } from '../documents-edit-dialog/documents-edit-dialog.component';
 import { DocumentsRejectDialogComponent } from '../documents-reject-dialog/documents-reject-dialog.component';
+import { DocumentsSubmitDialogComponent } from '../documents-submit-dialog/documents-submit-dialog.component';
 import { DocumentsDetailComponent } from './documents-detail.component';
 import { provideDirectoryStub } from '../../../../core/directory/testing/directory.stub';
 import { PersonNameModule } from '../../../../shared/person-name/person-name.module';
@@ -51,7 +52,7 @@ describe('DocumentsDetailComponent — revue et circuit', () => {
 
   beforeEach(async () => {
     svc = jasmine.createSpyObj<DocumentsService>('DocumentsService',
-      ['get', 'approve', 'folders', 'processes', 'uploadFile', 'fileLink']);
+      ['get', 'approve', 'reject', 'folders', 'processes', 'uploadFile', 'fileLink']);
     svc.get.and.returnValue(of(DOC));
     svc.folders.and.returnValue(of(FOLDERS));
     svc.processes.and.returnValue(of([{ id: 'p1', name: 'Achats', position: 0 }]));
@@ -96,6 +97,18 @@ describe('DocumentsDetailComponent — revue et circuit', () => {
     expect(component.trackById(0, d.versions[0])).toBe('a');
   });
 
+  it('la dernière version signée garde ses cartes ; une version approuvée sans signataire, non', () => {
+    const signataires = [{ position: 1, userId: 'alice', name: 'Alice', decision: 'APPROVED' as const,
+      decidedAt: '2026-10-20T08:00:00Z', comment: null }];
+    const d = { ...DOC, versions: [
+      version({ id: 'ancienne', versionNumber: 1, status: 'PUBLISHED', signatories: signataires }),
+      version({ id: 'recente', versionNumber: 2, status: 'APPROVED', signatories: signataires }),
+      version({ id: 'nue', versionNumber: 3, status: 'APPROVED' }),
+      version({ id: 'revue', versionNumber: 4, status: 'IN_REVIEW' })
+    ] } as DocumentResponse;
+    expect(component.attention(d).map(v => v.id)).toEqual(['revue', 'recente']);
+  });
+
   it('refuser ouvre le dialogue motivé et recharge après un refus', () => {
     dialog.open.and.returnValue({ afterClosed: () => of(version({ status: 'DRAFT' })) } as never);
     svc.get.calls.reset();
@@ -116,6 +129,48 @@ describe('DocumentsDetailComponent — revue et circuit', () => {
     svc.approve.and.returnValue(of(version({ status: 'APPROVED' })));
     component.approve(DOC.versions[1]);
     expect(snack.open.calls.mostRecent().args[0]).toContain('Version approuvée');
+  });
+
+  it('soumettre ouvre le choix des signataires et recharge après la soumission', () => {
+    dialog.open.and.returnValue({ afterClosed: () => of(version({ status: 'IN_REVIEW' })) } as never);
+    svc.get.calls.reset();
+    const brouillon = version({ id: 'v3', status: 'DRAFT', file: {
+      fileName: 'p.pdf', contentType: 'application/pdf', sizeBytes: 8, previewable: true, purged: false } });
+
+    component.submitForReview(brouillon);
+
+    expect(dialog.open).toHaveBeenCalledWith(DocumentsSubmitDialogComponent, jasmine.objectContaining({
+      data: { version: brouillon }
+    }));
+    expect(svc.get).toHaveBeenCalled();
+  });
+
+  it('un dialogue de soumission fermé sans soumettre ne recharge pas', () => {
+    dialog.open.and.returnValue({ afterClosed: () => of(undefined) } as never);
+    svc.get.calls.reset();
+    component.submitForReview(version({ status: 'DRAFT', file: {
+      fileName: 'p.pdf', contentType: null, sizeBytes: 8, previewable: false, purged: false } }));
+    expect(svc.get).not.toHaveBeenCalled();
+  });
+
+  it('une version sans fichier ne part pas en signature : on le dit', () => {
+    component.submitForReview(version({ status: 'DRAFT' }));
+    expect(dialog.open).not.toHaveBeenCalled();
+    expect(snack.open.calls.mostRecent().args[0]).toContain('Joignez le fichier');
+  });
+
+  it('avec des signataires, la décision se prend sur leurs cartes, pas dans la liste', () => {
+    const signee = version({ id: 'v2', versionNumber: 2, status: 'IN_REVIEW', signatories: [
+      { position: 1, userId: 'chloe', name: 'Chloé', decision: 'PENDING', decidedAt: null, comment: null }] });
+    expect(component.legacyReview(signee)).toBeFalse();
+    expect(component.legacyReview(DOC.versions[1])).toBeTrue();
+    expect(component.legacyReview(version({ status: 'DRAFT' }))).toBeFalse();
+
+    svc.get.and.returnValue(of({ ...DOC, versions: [DOC.versions[0], signee] } as DocumentResponse));
+    component.refresh();
+    fixture.detectChanges();
+
+    expect(hote().querySelector('[data-test="refuser"]')).toBeNull();
   });
 
   it('charge l’arborescence et les processus pour nommer le classement', () => {

@@ -1,7 +1,7 @@
-import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { Observable, combineLatest, of } from 'rxjs';
-import { catchError, map, shareReplay, startWith } from 'rxjs/operators';
+import { Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { NavigationEnd, Router } from '@angular/router';
+import { Observable, Subscription, combineLatest, of } from 'rxjs';
+import { catchError, filter, map, shareReplay, startWith, tap } from 'rxjs/operators';
 
 import { AuthService, AuthUser } from '../../core/auth/auth.service';
 import { NotificationView } from '../../core/notifications/notification.types';
@@ -11,6 +11,7 @@ import { OfflineQueueService } from '../../core/offline/offline-queue.service';
 import { EditionService } from '../../core/edition/edition.service';
 import { Edition } from '../../core/edition/edition.types';
 import { TenantModulesService } from '../../features/admin/tenant-modules.service';
+import { NavHit, searchNav } from './nav-search';
 
 export interface NavItem {
   label: string;
@@ -42,7 +43,11 @@ export interface NavItem {
 export interface NavSection {
   label: string;
   items: NavItem[];
-  /** Section repliable (groupes de conformité GRC), repliée par défaut. */
+  /**
+   * Section repliable. Toutes le sont, sauf le Pilotage : repliées par défaut,
+   * hormis celle de la page courante, elles ramènent la barre à une douzaine
+   * de lignes au lieu de soixante entrées à faire défiler.
+   */
   collapsible?: boolean;
 }
 
@@ -119,6 +124,7 @@ export class MainShellComponent implements OnInit, OnDestroy {
     },
     {
       label: $localize`:@@nav.methodes-qualite:Méthodes qualité`,
+      collapsible: true,
       items: [
         { label: $localize`:@@nav.pdca:PDCA`,         route: '/pdca',     icon: 'autorenew', module: 'pdca' },
         { label: $localize`:@@nav.5s:5S`,             route: '/fives',    icon: 'check_circle', module: 'fives' },
@@ -133,8 +139,8 @@ export class MainShellComponent implements OnInit, OnDestroy {
     },
     {
       label: $localize`:@@nav.analyses-ia:Analyses IA`,
+      collapsible: true,
       items: [
-        { label: $localize`:@@nav.spc:SPC`,                       route: '/spc',            icon: 'show_chart', module: 'dmaic' },
         { label: $localize`:@@nav.anomaly:Anomalies IA`,          route: '/anomaly',        icon: 'bubble_chart' },
         { label: $localize`:@@nav.forecast:Prévision KPI`,        route: '/forecast',       icon: 'trending_up' },
         { label: $localize`:@@nav.nc-clusters:Clustering NC`,     route: '/nc-clusters',    icon: 'hub', module: 'capa' },
@@ -147,9 +153,11 @@ export class MainShellComponent implements OnInit, OnDestroy {
     {
       // La maîtrise statistique des procédés (ADR 0096), en deux sous-menus :
       // les cartes de contrôle (registre des études Cp / Cpk) et Gage R&R.
-      // Module « dmaic », comme l'analyse SPC des Analyses IA : la capabilité
-      // relève du pilotage Six Sigma (§3.4).
+      // Module « dmaic » : la capabilité relève du pilotage Six Sigma (§3.4).
+      // L'analyse des règles de Nelson n'a plus d'entrée dans les Analyses IA :
+      // la SPC se rejoint ici, et `/spc` reste ouvert depuis l'analyse d'un KPI.
       label: $localize`:@@nav.spc-section:SPC`,
+      collapsible: true,
       items: [
         { label: $localize`:@@nav.spc-control-charts:Cartes de contrôle`, route: '/spc/cartes', icon: 'stacked_line_chart', module: 'dmaic' },
         { label: $localize`:@@nav.spc-gage-rr:Gage R&R`, route: '/spc/gage-rr', icon: 'precision_manufacturing', module: 'dmaic' }
@@ -162,6 +170,7 @@ export class MainShellComponent implements OnInit, OnDestroy {
       // Le dossier PPAP n'a plus d'entrée non plus : il appartient désormais à un
       // projet, et une entrée globale n'aurait pas su duquel elle parlait.
       label: $localize`:@@nav.apqp:APQP`,
+      collapsible: true,
       items: [
         { label: $localize`:@@nav.apqp-projects:Projets`, route: '/apqp', icon: 'account_tree' }
       ]
@@ -173,6 +182,7 @@ export class MainShellComponent implements OnInit, OnDestroy {
       // fiche de non-conformité, qui les crée sur son propre sujet et les
       // rattache. Une entrée de menu laissait croire à une analyse hors sol.
       label: $localize`:@@nav.non-conformite:Non-conformité`,
+      collapsible: true,
       items: [
         { label: $localize`:@@nav.nc-interne:NC interne`,  route: '/nc/interne',  icon: 'home_repair_service', module: 'capa' },
         { label: $localize`:@@nav.nc-externe:NC externe (Réclamations)`,  route: '/nc/externe',  icon: 'campaign',            module: 'capa' },
@@ -189,26 +199,29 @@ export class MainShellComponent implements OnInit, OnDestroy {
       // -- risques, opportunités -- portent la navigation interne. Module
       // « risk », comme l'AMDEC : le serveur refuse les écritures sans lui.
       label: $localize`:@@nav.risques-opportunites:Risques & opportunités`,
+      collapsible: true,
       items: [
         { label: $localize`:@@nav.registre-risques:Registre`, route: '/risques', icon: 'shield', module: 'risk' }
       ]
     },
     {
       label: $localize`:@@nav.operations:Opérations`,
+      collapsible: true,
       items: [
-        { label: $localize`:@@nav.calibration:Calibration`,         route: '/calibration', icon: 'straighten', module: 'calibration' },
+        { label: $localize`:@@nav.calibration:Instruments`,         route: '/calibration', icon: 'straighten', module: 'calibration' },
         { label: $localize`:@@nav.iot:Parc IoT`,                    route: '/iot',        icon: 'sensors', module: 'iot' },
         { label: $localize`:@@nav.audits:Audits`,                   route: '/audits',    icon: 'fact_check', module: 'audit' },
         { label: $localize`:@@nav.audits-planning:Planning audits`, route: '/audits/planning', icon: 'event_available', module: 'audit' },
         { label: $localize`:@@nav.produits:Produits`,               route: '/products',  icon: 'inventory_2', module: 'product' },
         { label: $localize`:@@nav.risques-fmea:Risques (FMEA)`,     route: '/fmea',      icon: 'warning', module: 'risk' },
         { label: $localize`:@@nav.documents:GED`,                   route: '/documents', icon: 'description', module: 'docs' },
-        { label: $localize`:@@nav.moc:Gestion des changements (MOC)`, route: '/changes', icon: 'change_circle', module: 'change' },
+        { label: $localize`:@@nav.moc:MOC`, route: '/changes', icon: 'change_circle', module: 'change' },
         { label: $localize`:@@nav.ehs:EHS`,                         route: '/ehs',       icon: 'health_and_safety', module: 'ehs' }
       ]
     },
     {
       label: $localize`:@@nav.referentiels:Référentiels`,
+      collapsible: true,
       items: [
         { label: $localize`:@@nav.standards-hub:Standards Hub`,     route: '/standards',      icon: 'workspace_premium', module: 'standards' },
         { label: $localize`:@@nav.standards-ims:Co-couverture IMS`, route: '/standards-ims',  icon: 'grid_view', module: 'standards' },
@@ -225,6 +238,7 @@ export class MainShellComponent implements OnInit, OnDestroy {
     },
     {
       label: $localize`:@@nav.conformite-grc:Conformité (GRC)`,
+      collapsible: true,
       items: [
         // Une seule entrée, à dessein : la masse GRC (20 routes) est repliée derrière
         // la page hub /compliance. Y ajouter une entrée de plus ferait revenir le
@@ -234,6 +248,7 @@ export class MainShellComponent implements OnInit, OnDestroy {
     },
     {
       label: $localize`:@@nav.administration:Administration`,
+      collapsible: true,
       items: [
         {
           // L'éditeur seulement : créer une organisation, ses modules, son administrateur.
@@ -272,13 +287,6 @@ export class MainShellComponent implements OnInit, OnDestroy {
           roles: ADMIN_ROLES
         },
         {
-          // Les circuits de validation (ADR 0080) : qui approuve, dans quel ordre.
-          label: $localize`:@@nav.admin-circuits:Circuits de validation`,
-          route: '/admin/circuits',
-          icon: 'alt_route',
-          roles: ADMIN_ROLES
-        },
-        {
           // Les paramètres de la gestion des changements (ADR 0087) : seuils, poids, validateurs.
           label: $localize`:@@nav.admin-moc:Paramètres MOC`,
           route: '/admin/moc',
@@ -297,6 +305,13 @@ export class MainShellComponent implements OnInit, OnDestroy {
           label: $localize`:@@nav.admin-spc:Paramètres SPC`,
           route: '/admin/spc',
           icon: 'stacked_line_chart',
+          roles: ADMIN_ROLES
+        },
+        {
+          // Le questionnaire de la fiche de résolution DMAIC (ADR 0101), ses défaillances et sévérités.
+          label: $localize`:@@nav.admin-dmaic:Paramètres DMAIC`,
+          route: '/admin/dmaic',
+          icon: 'fact_check',
           roles: ADMIN_ROLES
         },
         {
@@ -338,6 +353,9 @@ export class MainShellComponent implements OnInit, OnDestroy {
    * entrées sont masquées disparaît entièrement — pas de titre de groupe orphelin.
    */
   visibleSections$!: Observable<NavSection[]>;
+  /** Dernières sections visibles : la recherche ne propose que ce que le menu montre. */
+  private searchable: NavSection[] = [];
+  private navigationSub?: Subscription;
 
   /** État réseau + file offline (§15.2-15.3) — chip de synchro dans la topbar. */
   online$!: Observable<boolean>;
@@ -375,12 +393,18 @@ export class MainShellComponent implements OnInit, OnDestroy {
     const edition$ = this.editions.edition().pipe(startWith(null as Edition | null));
 
     this.visibleSections$ = combineLatest([this.user$, modules$, edition$]).pipe(
-      map(([user, modules, edition]) => this.filterSections(user?.roles ?? [], modules, edition))
+      map(([user, modules, edition]) => this.filterSections(user?.roles ?? [], modules, edition)),
+      tap(sections => { this.searchable = sections; })
     );
     this.online$ = this.connectivity.online$;
     this.pendingSync$ = this.offlineQueue.pendingCount$;
     this.unreadCount$ = this.notificationsService.unread$;
     this.restoreCollapsedSections();
+    // Une page atteinte par un lien, la recherche ou une notification se
+    // retrouve dans le menu : son groupe s'ouvre s'il était replié.
+    this.navigationSub = this.router.events
+      .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
+      .subscribe(() => this.revealCurrentSection());
     this.watchViewport();
     // Pastille alimentée dès l'ouverture de l'application : la liste complète n'est
     // chargée qu'à l'ouverture du menu (appel léger au démarrage).
@@ -389,6 +413,82 @@ export class MainShellComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.compactMedia?.removeEventListener('change', this.compactListener);
+    this.navigationSub?.unsubscribe();
+  }
+
+  // ---- Recherche d'écran ----------------------------------------------------
+
+  /** Saisie en cours dans la recherche de la barre supérieure. */
+  searchQuery = '';
+  /** Écrans proposés pour la saisie courante. */
+  searchHits: NavHit[] = [];
+  /** Rang de la proposition désignée au clavier, -1 si aucune. */
+  activeHit = -1;
+  /** La liste des propositions est déroulée. */
+  searchOpen = false;
+  /** Raccourci affiché dans le champ : ⌘K sur Mac, Ctrl K ailleurs. */
+  readonly searchShortcut =
+    typeof navigator !== 'undefined' && /mac|iphone|ipad/i.test(navigator.platform) ? '⌘K' : 'Ctrl K';
+
+  @ViewChild('searchInput') private searchInput?: ElementRef<HTMLInputElement>;
+
+  /** Ctrl+K / ⌘K place le curseur dans la recherche, d'où qu'on soit. */
+  @HostListener('document:keydown', ['$event'])
+  onGlobalKeydown(event: KeyboardEvent): void {
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
+      event.preventDefault();
+      this.searchInput?.nativeElement.focus();
+      this.searchInput?.nativeElement.select();
+    }
+  }
+
+  onSearchInput(query: string): void {
+    this.searchQuery = query;
+    this.searchHits = searchNav(this.searchable, query);
+    this.activeHit = this.searchHits.length ? 0 : -1;
+    this.searchOpen = query.trim().length > 0;
+  }
+
+  /** Flèches pour parcourir, Entrée pour ouvrir, Échap pour abandonner. */
+  onSearchKeydown(event: KeyboardEvent): void {
+    const count = this.searchHits.length;
+    switch (event.key) {
+      case 'ArrowDown':
+        if (count) { event.preventDefault(); this.activeHit = (this.activeHit + 1) % count; }
+        break;
+      case 'ArrowUp':
+        if (count) { event.preventDefault(); this.activeHit = (this.activeHit - 1 + count) % count; }
+        break;
+      case 'Enter':
+        if (this.activeHit >= 0 && this.activeHit < count) {
+          event.preventDefault();
+          this.openHit(this.searchHits[this.activeHit]);
+        }
+        break;
+      case 'Escape':
+        event.stopPropagation();
+        this.resetSearch();
+        this.searchInput?.nativeElement.blur();
+        break;
+    }
+  }
+
+  /** Le champ perd le focus : la liste se referme, la saisie reste. */
+  closeSearch(): void {
+    this.searchOpen = false;
+  }
+
+  openHit(hit: NavHit): void {
+    this.resetSearch();
+    this.onNavigate();
+    void this.router.navigateByUrl(hit.item.route);
+  }
+
+  private resetSearch(): void {
+    this.searchQuery = '';
+    this.searchHits = [];
+    this.activeHit = -1;
+    this.searchOpen = false;
   }
 
   /**
@@ -569,9 +669,32 @@ export class MainShellComponent implements OnInit, OnDestroy {
     } catch {
       // localStorage indisponible / JSON corrompu → on retombe sur le défaut
     }
+    const current = this.sectionOf(this.router.url);
     this.sections
-      .filter(s => s.collapsible)
+      .filter(s => s.collapsible && s.label !== current)
       .forEach(s => this.collapsedSections.add(s.label));
+  }
+
+  /** Ouvre le groupe qui porte la page courante, s'il était replié. */
+  private revealCurrentSection(): void {
+    const current = this.sectionOf(this.router.url);
+    if (current && this.collapsedSections.delete(current)) {
+      this.persistCollapsedSections();
+    }
+  }
+
+  /** Le groupe dont une entrée correspond le mieux à l'adresse. */
+  private sectionOf(rawUrl: string | undefined): string | null {
+    const url = (rawUrl ?? '').split('?')[0].split('#')[0];
+    let best: { label: string; length: number } | null = null;
+    for (const section of this.sections) {
+      for (const item of section.items) {
+        if (this.correspond(url, item.route) && item.route.length > (best?.length ?? 0)) {
+          best = { label: section.label, length: item.route.length };
+        }
+      }
+    }
+    return best?.label ?? null;
   }
 
   private persistCollapsedSections(): void {

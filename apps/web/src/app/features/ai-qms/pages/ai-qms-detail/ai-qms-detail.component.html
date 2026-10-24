@@ -12,7 +12,7 @@
         </h1>
         <h2 class="name">{{ q.name }}</h2>
         <div class="meta-row">
-          <span [class]="statusBadge(q.status)">{{ q.status }}</span>
+          <span [class]="statusBadge(q.status)">{{ q.status | statusLabel }}</span>
           <span class="dim" *ngIf="q.inForceFrom"><span i18n="@@ai-qms.detail.in-force-since">En vigueur depuis :</span> {{ q.inForceFrom }}</span>
           <span class="dim" *ngIf="q.supersededAt"><span i18n="@@ai-qms.detail.superseded">Remplacé :</span> {{ q.supersededAt }}</span>
         </div>

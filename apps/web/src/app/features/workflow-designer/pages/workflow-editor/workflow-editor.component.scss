@@ -4,13 +4,15 @@
   display: flex; align-items: center; gap: 12px; margin-bottom: 8px; flex-wrap: wrap;
   .spacer { flex: 1 1 auto; }
 }
-.title-block { display: flex; flex-direction: column; min-width: 280px; }
+.title-block { display: flex; flex-direction: column; min-width: min(280px, 100%); }
 .eyebrow {
   font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase;
   color: var(--qos-text-muted, var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.55)));
-  margin-bottom: 2px;
+  // Le libellé flottant du champ « outline » dépasse de ~8 px au-dessus du
+  // cadre : avec 2 px, il touchait cette ligne.
+  margin-bottom: 12px;
 }
-.name-field { width: 320px; }
+.name-field { width: min(320px, 100%); }
 .desc-field { width: 100%; max-width: 640px; margin-bottom: 8px; }
 
 .version {

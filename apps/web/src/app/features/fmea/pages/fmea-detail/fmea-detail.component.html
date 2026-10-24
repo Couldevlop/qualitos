@@ -12,7 +12,7 @@
         </h1>
         <div class="meta-row">
           <span [class]="typeBadge(p.type)">{{ typeLabel(p.type) }}</span>
-          <span [class]="statusBadge(p.status)">{{ p.status }}</span>
+          <span [class]="statusBadge(p.status)">{{ p.status | statusLabel }}</span>
           <span class="dim"><span i18n="@@fmea.detail.revision-label">Rév.</span> {{ p.revision }}</span>
           <span class="dim"><span i18n="@@fmea.detail.rpn-threshold-label">Seuil RPN critique :</span> {{ p.criticalRpnThreshold }}</span>
         </div>

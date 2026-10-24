@@ -19,6 +19,7 @@ import {
   DocumentSettingsForm,
   DocumentStatus,
   DocumentVersionResponse,
+  SignatoryRequest,
   DocumentViewCounts,
   FileLink,
   FolderRequest,
@@ -287,18 +288,45 @@ export class DocumentsService {
     return this.http.patch<DocumentVersionResponse>(`${this.endpoint}/${documentId}/versions/${versionId}`, input);
   }
 
-  submit(documentId: string, versionId: string): Observable<DocumentVersionResponse> {
-    return this.transitionVersion(documentId, versionId, 'submit', 'IN_REVIEW');
+  /** Soumet une version à la signature de 1 à 3 personnes, qui signeront dans l'ordre (ADR 0099). */
+  submit(documentId: string, versionId: string, signatories: SignatoryRequest[]): Observable<DocumentVersionResponse> {
+    if (environment.useMockApi) {
+      const v = this.findVersion(documentId, versionId);
+      if (v) {
+        v.status = 'IN_REVIEW';
+        v.signatories = signatories.map((s, i) => ({
+          position: i + 1, userId: s.userId, name: s.name, decision: 'PENDING', decidedAt: null, comment: null
+        }));
+        v.rejectedBy = null;
+        v.rejectedAt = null;
+        v.rejectionReason = null;
+        v.updatedAt = new Date().toISOString();
+        return of(v).pipe(delay(120));
+      }
+      return of(this.mockStore[0].versions[0]).pipe(delay(120));
+    }
+    return this.http.patch<DocumentVersionResponse>(
+      `${this.endpoint}/${documentId}/versions/${versionId}/submit`, { signatories }
+    );
   }
 
   approve(documentId: string, versionId: string, body: ApprovalRequest): Observable<DocumentVersionResponse> {
     if (environment.useMockApi) {
       const v = this.findVersion(documentId, versionId);
       if (v) {
-        v.status = 'APPROVED';
-        v.approvedBy = body.approverId;
-        v.approvedAt = new Date().toISOString();
-        v.updatedAt = v.approvedAt;
+        const now = new Date().toISOString();
+        const turn = v.signatories?.find(s => s.decision === 'PENDING');
+        if (turn) {
+          turn.decision = 'APPROVED';
+          turn.decidedAt = now;
+          turn.comment = body.comment?.trim() || null;
+        }
+        if (!v.signatories?.some(s => s.decision === 'PENDING')) {
+          v.status = 'APPROVED';
+          v.approvedBy = body.approverId;
+          v.approvedAt = now;
+        }
+        v.updatedAt = now;
         return of(v).pipe(delay(120));
       }
       return of(this.mockStore[0].versions[0]).pipe(delay(120));
@@ -314,6 +342,12 @@ export class DocumentsService {
       const v = this.findVersion(documentId, versionId);
       if (v) {
         const now = new Date().toISOString();
+        const turn = v.signatories?.find(s => s.decision === 'PENDING');
+        if (turn) {
+          turn.decision = 'REJECTED';
+          turn.decidedAt = now;
+          turn.comment = reason;
+        }
         v.status = 'DRAFT';
         v.rejectedBy = 'demo-user';
         v.rejectedAt = now;
@@ -386,24 +420,6 @@ export class DocumentsService {
     }
     return this.http.get<{ count: number }>(
       `${this.endpoint}/${documentId}/versions/${versionId}/acknowledgments/count`
-    );
-  }
-
-  private transitionVersion(
-    documentId: string, versionId: string, op: 'submit',
-    target: 'IN_REVIEW'
-  ): Observable<DocumentVersionResponse> {
-    if (environment.useMockApi) {
-      const v = this.findVersion(documentId, versionId);
-      if (v) {
-        v.status = target;
-        v.updatedAt = new Date().toISOString();
-        return of(v).pipe(delay(120));
-      }
-      return of(this.mockStore[0].versions[0]).pipe(delay(120));
-    }
-    return this.http.patch<DocumentVersionResponse>(
-      `${this.endpoint}/${documentId}/versions/${versionId}/${op}`, {}
     );
   }
 

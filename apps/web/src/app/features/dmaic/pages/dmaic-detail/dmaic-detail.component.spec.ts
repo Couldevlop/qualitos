@@ -1,5 +1,6 @@
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { Component, Input } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
@@ -19,6 +20,12 @@ import { DmaicDetailComponent } from './dmaic-detail.component';
 import { STUB_PERSON, provideDirectoryStub } from '../../../../core/directory/testing/directory.stub';
 import { PersonNameModule } from '../../../../shared/person-name/person-name.module';
 
+/** La fiche de résolution a ses propres tests : ici, seul son onglet compte. */
+@Component({ selector: 'qos-dmaic-resolution', template: '<p data-test="fiche">fiche {{ projectId }}</p>', standalone: false })
+class ResolutionStubComponent {
+  @Input() projectId = '';
+}
+
 /**
  * L'écran pilote les transitions du projet (avancer / pause / reprendre / annuler)
  * et la capabilité : chaque action doit être confirmée quand elle est destructrice,
@@ -30,6 +37,7 @@ describe('DmaicDetailComponent', () => {
   let http: HttpTestingController;
   let prevMock: boolean;
   let routeId: string;
+  let routeQuery: Record<string, string>;
 
   const ID = 'dmaic-1';
   const base = `${environment.apiBaseUrl}/api/v1/dmaic`;
@@ -81,9 +89,10 @@ describe('DmaicDetailComponent', () => {
     prevMock = environment.useMockApi;
     environment.useMockApi = false;
     routeId = ID;
+    routeQuery = {};
 
     await TestBed.configureTestingModule({
-      declarations: [DmaicDetailComponent],
+      declarations: [DmaicDetailComponent, ResolutionStubComponent],
       imports: [PersonNameModule, SharedModule, UiModule, NoopAnimationsModule],
       providers: [provideDirectoryStub(),
         provideHttpClient(withInterceptorsFromDi()),
@@ -91,7 +100,13 @@ describe('DmaicDetailComponent', () => {
         provideRouter([]),
         // `defer` : l'identifiant est lu à l'abonnement, un test peut donc le
         // remplacer avant la première détection de changements.
-        { provide: ActivatedRoute, useValue: { paramMap: defer(() => of(convertToParamMap({ id: routeId }))) } }
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            paramMap: defer(() => of(convertToParamMap({ id: routeId }))),
+            get snapshot() { return { queryParamMap: convertToParamMap(routeQuery) }; }
+          }
+        }
       ]
     }).compileComponents();
 
@@ -111,7 +126,8 @@ describe('DmaicDetailComponent', () => {
 
     const el: HTMLElement = fixture.nativeElement;
     expect(el.querySelector('h1')?.textContent).toContain('Rebut ligne A');
-    expect(el.querySelector('.meta-row')?.textContent).toContain('MEASURE');
+    expect(el.querySelector('.meta-row')?.textContent).toContain('Mesurer');
+    expect(el.querySelector('.phase-stepper')?.textContent).toContain('Améliorer');
     expect(el.querySelector('.cap-grid')?.textContent).toContain('40');
     expect(component.capability?.cpk).toBe(1.45);
   });
@@ -201,7 +217,7 @@ describe('DmaicDetailComponent', () => {
 
     flushDetail(project({ phase: 'ANALYZE' }));
     expect((fixture.nativeElement as HTMLElement).querySelector('.meta-row')?.textContent)
-      .toContain('ANALYZE');
+      .toContain('Analyser');
   });
 
   it('met en pause puis reprend le projet', () => {
@@ -216,7 +232,7 @@ describe('DmaicDetailComponent', () => {
     http.expectOne(`${base}/projects/${ID}/resume`).flush(project());
     flushDetail();
     expect((fixture.nativeElement as HTMLElement).querySelector('.meta-row')?.textContent)
-      .toContain('ACTIVE');
+      .toContain('Actif');
   });
 
   it('ne recharge pas et reste sur l\'état connu quand la transition est refusée', () => {
@@ -229,7 +245,7 @@ describe('DmaicDetailComponent', () => {
 
     http.expectNone(`${base}/projects/${ID}`);
     expect((fixture.nativeElement as HTMLElement).querySelector('.meta-row')?.textContent)
-      .toContain('MEASURE');
+      .toContain('Mesurer');
   });
 
   it('n\'annule le projet qu\'après confirmation explicite', () => {
@@ -245,7 +261,7 @@ describe('DmaicDetailComponent', () => {
     http.expectOne(`${base}/projects/${ID}/cancel`).flush(project({ status: 'CANCELLED' }));
     flushDetail(project({ status: 'CANCELLED' }));
     expect((fixture.nativeElement as HTMLElement).querySelector('.meta-row')?.textContent)
-      .toContain('CANCELLED');
+      .toContain('Annulé');
   });
 
   it('supprime le projet puis revient à la liste', () => {
@@ -389,5 +405,29 @@ describe('DmaicDetailComponent', () => {
     expect(component.statusBadge('COMPLETED')).toBe('badge badge-completed');
     expect(component.assignmentBadge('IN_DESIGN')).toBe('assign assign-in_design');
     expect(component.assignmentBadge('VERIFIED')).toBe('assign assign-verified');
+  });
+
+  it("ouvre la fiche de résolution par l'adresse, et garde l'onglet dans l'adresse", async () => {
+    routeQuery = { onglet: 'fiche' };
+    const nav = spyOn(TestBed.inject(Router), 'navigate').and.resolveTo(true);
+    fixture.detectChanges();
+    flushDetail();
+    await fixture.whenStable();
+    fixture.detectChanges();
+    expect(component.tabIndex).toBe(1);
+    expect(fixture.nativeElement.querySelector('[data-test="fiche"]')?.textContent).toContain(ID);
+
+    component.onTab(0);
+    expect(component.tabIndex).toBe(0);
+    expect(nav).toHaveBeenCalledWith([], jasmine.objectContaining({ queryParams: { onglet: null }, replaceUrl: true }));
+    component.onTab(1);
+    expect(nav).toHaveBeenCalledWith([], jasmine.objectContaining({ queryParams: { onglet: 'fiche' } }));
+  });
+
+  it('ouvre le pilotage par défaut', () => {
+    fixture.detectChanges();
+    flushDetail();
+    expect(component.tabIndex).toBe(0);
+    expect(fixture.nativeElement.querySelector('[data-test="fiche"]')).toBeNull();
   });
 });

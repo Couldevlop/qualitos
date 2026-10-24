@@ -1,7 +1,7 @@
 /* Émission d'une clé d'API — gabarit qos-form-dialog, champs en colonne unique :
    le formulaire est court et chaque champ porte un avertissement à lire. */
 
-:host { display: block; min-width: 520px; max-width: 640px; }
+:host { display: block; min-width: min(520px, 100%); max-width: 640px; }
 
 .full { width: 100%; }
 

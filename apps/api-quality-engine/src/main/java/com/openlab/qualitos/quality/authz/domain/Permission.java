@@ -77,7 +77,15 @@ public enum Permission {
 
     // ---------- SPC (ADR 0096) ----------
     /** Créer, corriger et supprimer une étude de capabilité, cocher son plan d'actions. */
-    SPC_MANAGE("spc.manage", "spc", pilotage());
+    SPC_MANAGE("spc.manage", "spc", pilotage()),
+
+    // ---------- DMAIC (ADR 0101) ----------
+    /** Remplir la fiche de résolution d'un projet : réponses, causes, plan d'actions, photos. */
+    DMAIC_MANAGE("dmaic.manage", "dmaic", pilotage()),
+
+    // ---------- formation (ADR 0098) ----------
+    /** Tenir la matrice de compétences : opérateurs, compétences, formateurs, niveaux. */
+    TRAINING_MANAGE("training.manage", "training", pilotage());
 
     private final String code;
     private final String module;

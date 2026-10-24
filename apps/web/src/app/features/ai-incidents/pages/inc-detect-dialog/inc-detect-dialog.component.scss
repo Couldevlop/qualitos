@@ -1,4 +1,4 @@
-.det-form { display: flex; flex-direction: column; min-width: 640px; max-width: 780px; max-height: 80vh; }
+.det-form { display: flex; flex-direction: column; min-width: min(640px, 100%); max-width: 780px; max-height: 80vh; }
 .hint { margin: 0 0 12px; padding: 10px 12px; border-left: 4px solid #b71c1c;
         background: #fbe9e7; color: #b71c1c; font-size: 13px; line-height: 1.45; border-radius: 4px; }
 mat-dialog-content { padding-top: 8px; display: flex; flex-direction: column; gap: 4px; }

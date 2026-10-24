@@ -1,7 +1,7 @@
 <qos-form-dialog
   [title]="'Nouvelle version (v' + data.nextVersionNumber + ')'"
   i18n-subtitle="@@documents.version.subtitle"
-  subtitle="Workflow : DRAFT → IN_REVIEW → APPROVED → PUBLISHED. La précédente version publiée sera automatiquement marquée OBSOLETE à la publication."
+  subtitle="Parcours : Brouillon → En revue → Approuvée → Actuelle. À la publication, la version actuelle précédente devient Obsolète."
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"

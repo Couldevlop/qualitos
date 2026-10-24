@@ -14,4 +14,9 @@ public interface SkillRepository extends JpaRepository<Skill, UUID> {
     Page<Skill> findByTenantId(UUID tenantId, Pageable pageable);
 
     Page<Skill> findByTenantIdAndCategory(UUID tenantId, String category, Pageable pageable);
+
+    /** La plus ancienne compétence du client qui porte cet intitulé, casse ignorée (matrice, ADR 0098). */
+    Optional<Skill> findFirstByTenantIdAndNameIgnoreCaseOrderByCreatedAtAsc(UUID tenantId, String name);
+
+    boolean existsByTenantIdAndCode(UUID tenantId, String code);
 }
