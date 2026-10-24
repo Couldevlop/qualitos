@@ -3,6 +3,9 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../../shared/shared.module';
 import { UiModule } from '../../shared/ui/ui.module';
+import { SupplierDocumentsDialogComponent } from './pages/supplier-documents-dialog/supplier-documents-dialog.component';
+import { SupplierDocumentsPanelComponent } from './pages/supplier-documents-panel/supplier-documents-panel.component';
+import { SupplierNcListComponent } from './pages/supplier-nc-list/supplier-nc-list.component';
 import { SuppliersAuditDialogComponent } from './pages/suppliers-audit-dialog/suppliers-audit-dialog.component';
 import { SuppliersCertDialogComponent } from './pages/suppliers-cert-dialog/suppliers-cert-dialog.component';
 import { SuppliersCreateDialogComponent } from './pages/suppliers-create-dialog/suppliers-create-dialog.component';
@@ -14,7 +17,10 @@ import { SuppliersStatusDialogComponent } from './pages/suppliers-status-dialog/
 
 const routes: Routes = [
   { path: '', component: SuppliersListComponent },
-  { path: ':id', component: SuppliersDetailComponent }
+  // Avant ':id', sinon « non-conformites » serait pris pour un identifiant de fournisseur.
+  { path: 'non-conformites', component: SupplierNcListComponent },
+  { path: ':id', component: SuppliersDetailComponent },
+  { path: ':id/non-conformites', component: SupplierNcListComponent }
 ];
 
 @NgModule({
@@ -26,7 +32,10 @@ const routes: Routes = [
     SuppliersStatusDialogComponent,
     SuppliersAuditDialogComponent,
     SuppliersNcDialogComponent,
-    SuppliersCertDialogComponent
+    SuppliersCertDialogComponent,
+    SupplierNcListComponent,
+    SupplierDocumentsPanelComponent,
+    SupplierDocumentsDialogComponent
   ],
   imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
 })

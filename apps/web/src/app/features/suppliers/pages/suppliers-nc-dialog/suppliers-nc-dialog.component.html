@@ -22,6 +22,21 @@
       </mat-form-field>
     </div>
 
+    <div class="row">
+      <mat-form-field appearance="outline" class="col">
+        <mat-label i18n="@@suppliers.nc.part-number">Référence pièce (part number)</mat-label>
+        <input matInput formControlName="partNumber" maxlength="100" required data-test="part-number"
+               i18n-placeholder="@@suppliers.nc.part-number-placeholder" placeholder="Ex. : PN-7781-A">
+        <mat-error i18n="@@suppliers.nc.part-number-required">La référence de la pièce est obligatoire.</mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="col qty">
+        <mat-label i18n="@@suppliers.nc.part-quantity">Nombre de pièces</mat-label>
+        <input matInput formControlName="partQuantity" type="number" min="1" step="1" required
+               inputmode="numeric" data-test="part-quantity">
+        <mat-error i18n="@@suppliers.nc.part-quantity-required">Un nombre entier de pièces, au moins 1.</mat-error>
+      </mat-form-field>
+    </div>
+
     <mat-form-field appearance="outline" class="full">
       <mat-label i18n="@@suppliers.nc.lot-reference">Référence lot</mat-label>
       <input matInput formControlName="lotReference" maxlength="100"
@@ -33,5 +48,14 @@
       <mat-label i18n="@@common.description">Description</mat-label>
       <textarea matInput formControlName="description" rows="4" maxlength="1000"></textarea>
     </mat-form-field>
+
+    <fieldset class="eight-d">
+      <legend i18n="@@suppliers.nc.eight-d-legend">Rapport 8D du fournisseur</legend>
+      <mat-checkbox formControlName="eightDRequested" data-test="eight-d-requested"
+                    i18n="@@suppliers.nc.eight-d-requested">8D demandé</mat-checkbox>
+      <mat-checkbox formControlName="eightDReceived" data-test="eight-d-received"
+                    i18n="@@suppliers.nc.eight-d-received">8D reçu</mat-checkbox>
+    </fieldset>
+    <p class="hint" i18n="@@suppliers.nc.attach-hint">Le 8D et les preuves de CAPA se joignent depuis la liste, une fois la NC enregistrée.</p>
 
 </qos-form-dialog>

@@ -9,6 +9,7 @@ import {
 import { AuthzService } from '../../../../core/authz/authz.service';
 import { deferredView } from '../../../../core/rx/deferred-view';
 import { safeErrorMessage } from '../../../../core/http/error-message';
+import { TenantModulesService } from '../../../admin/tenant-modules.service';
 import { DocumentsService } from '../../documents.service';
 import {
   DISPLAY_STATUS_LABELS, DOCUMENT_TYPE_LABELS, DOCUMENT_TYPES, FILTERABLE_STATUSES, VIEW_LABELS, displayStatusOf
@@ -82,6 +83,16 @@ export class DocumentsListComponent implements OnInit, OnDestroy {
   readonly collapsed = new Set<string>();
   processes: DocumentProcess[] = [];
   counts$!: Observable<DocumentViewCounts | null>;
+  /**
+   * Les pièces des fournisseurs (8D, preuves de CAPA, certificats) se lisent aussi
+   * d'ici, quand le module est actif. Modules inconnus (échec de chargement) : on
+   * montre l'entrée, le serveur reste l'autorité.
+   */
+  readonly supplierDocuments$: Observable<boolean> = this.modules.enabledCodes().pipe(
+    map(codes => codes.includes('supplier')),
+    catchError(() => of(true)),
+    shareReplay({ bufferSize: 1, refCount: true })
+  );
 
   /** Un glisser de fichiers survole la liste. */
   dragging = false;
@@ -103,7 +114,8 @@ export class DocumentsListComponent implements OnInit, OnDestroy {
     private readonly svc: DocumentsService,
     private readonly dialog: MatDialog,
     private readonly fb: FormBuilder,
-    private readonly authz: AuthzService
+    private readonly authz: AuthzService,
+    private readonly modules: TenantModulesService
   ) {}
 
   ngOnInit(): void {

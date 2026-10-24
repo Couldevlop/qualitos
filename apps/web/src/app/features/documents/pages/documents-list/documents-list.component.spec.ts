@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed, discardPeriodicTasks, fakeAsync, flush, tick
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
-import { of, throwError } from 'rxjs';
+import { defer, of, throwError } from 'rxjs';
 
 import { AuthzService } from '../../../../core/authz/authz.service';
 import { provideDirectoryStub } from '../../../../core/directory/testing/directory.stub';
@@ -13,6 +13,7 @@ import { UiModule } from '../../../../shared/ui/ui.module';
 import { UserPickerModule } from '../../../../shared/user-picker/user-picker.module';
 import { FolderRow } from '../../documents.folders';
 import { VIEW_LABELS } from '../../documents.labels';
+import { TenantModulesService } from '../../../admin/tenant-modules.service';
 import { DocumentsService } from '../../documents.service';
 import {
   DocumentFolder, DocumentListFilter, DocumentPage, DocumentResponse, DocumentVersionResponse
@@ -32,6 +33,8 @@ describe('DocumentsListComponent', () => {
   let svc: jasmine.SpyObj<DocumentsService>;
   let dialog: jasmine.SpyObj<MatDialog>;
   let canEdit: boolean;
+  /** Les modules actifs du tenant, lus au premier rendu ; null = échec de chargement. */
+  let modules: string[] | null;
   /** La fiche se tient à côté de la liste sur un écran large, par-dessus sinon. */
   let wide: boolean;
 
@@ -83,7 +86,10 @@ describe('DocumentsListComponent', () => {
         provideDirectoryStub(),
         { provide: DocumentsService, useValue: svc },
         { provide: AuthzService, useValue: authz },
-        { provide: MatDialog, useValue: dialog }
+        { provide: MatDialog, useValue: dialog },
+        { provide: TenantModulesService, useValue: {
+          enabledCodes: () => defer(() => modules ? of(modules) : throwError(() => new Error('down')))
+        } }
       ],
       // La fiche du document a son propre banc.
       schemas: [NO_ERRORS_SCHEMA]
@@ -107,6 +113,7 @@ describe('DocumentsListComponent', () => {
 
   beforeEach(async () => {
     canEdit = true;
+    modules = ['documents', 'supplier'];
     wide = true;
     // Seule la requête de la fiche est simulée ; les autres (CDK) gardent le vrai navigateur.
     const realMatchMedia = window.matchMedia.bind(window);
@@ -497,6 +504,31 @@ describe('DocumentsListComponent', () => {
       const bare = new DragEvent('dragenter', { cancelable: true });
       component.onDragEnter(bare);
       expect(component.dragging).toBeFalse();
+      finish();
+    }));
+  });
+
+  describe('documents fournisseurs', () => {
+    const link = () => fixture.nativeElement.querySelector('[data-test="documents-fournisseurs"]');
+
+    it('ouvre la vue des pièces fournisseurs quand le module est actif', fakeAsync(() => {
+      init();
+      expect(link()).not.toBeNull();
+      expect(link().getAttribute('href')).toContain('fournisseurs');
+      finish();
+    }));
+
+    it('ne la propose pas quand le module fournisseurs est éteint', fakeAsync(() => {
+      modules = ['documents'];
+      init();
+      expect(link()).toBeNull();
+      finish();
+    }));
+
+    it('la propose quand les modules ne se chargent pas : le serveur reste l’autorité', fakeAsync(() => {
+      modules = null;
+      init();
+      expect(link()).not.toBeNull();
       finish();
     }));
   });

@@ -179,7 +179,8 @@ describe('MainShellComponent (navigation model)', () => {
     // Analyses IA retombe a 7 : l'entree SPC la quittait pour son propre groupe.
     // Administration retombe a 13 : les circuits par roles cedent la place aux
     // signataires choisis a la soumission (ADR 0099). Puis a 14 : + Parametres DMAIC (ADR 0101).
-    expect(labels).toEqual([7, 6, 7, 2, 1, 4, 1, 9, 11, 1, 14]);
+    // Non-conformite passe a 5 : + NC fournisseurs, a cote des NC interne et externe.
+    expect(labels).toEqual([7, 6, 7, 2, 1, 5, 1, 9, 11, 1, 14]);
   });
 
   it('le registre des risques a son groupe, juste apres la non-conformite', () => {

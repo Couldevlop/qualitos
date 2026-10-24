@@ -1,0 +1,18 @@
+<h2 mat-dialog-title>
+  {{ title }}
+  <span class="subject">{{ data.subject }}</span>
+</h2>
+
+<mat-dialog-content>
+  <qos-supplier-documents-panel
+    [supplierId]="data.supplierId"
+    [ownerType]="data.ownerType"
+    [ownerId]="data.ownerId"
+    [lockReason]="data.lockReason ?? null"
+    (changed)="changed($event)">
+  </qos-supplier-documents-panel>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-stroked-button type="button" (click)="close()" data-test="fermer" i18n="@@common.close">Fermer</button>
+</mat-dialog-actions>

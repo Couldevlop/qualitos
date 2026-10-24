@@ -5,3 +5,22 @@ mat-dialog-content { padding-top: 8px; display: flex; flex-direction: column; ga
 .col { flex: 1; min-width: 0; }
 mat-dialog-actions { padding: 12px 0 0; gap: 8px; }
 mat-dialog-actions button[type='submit'] { display: inline-flex; align-items: center; gap: 6px; }
+.qty { flex: 0 0 180px; }
+@media (max-width: 560px) { .row { flex-direction: column; gap: 0; } .qty { flex: 1; } }
+
+.eight-d {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--qos-space-4);
+  margin: 0;
+  padding: var(--qos-space-2) var(--qos-space-3);
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: var(--qos-radius-md, 8px);
+}
+.eight-d legend {
+  padding: 0 var(--qos-space-1, 4px);
+  color: var(--qos-fg-secondary);
+  font-size: var(--qos-fs-xs);
+  font-weight: 600;
+}
+.hint { margin: var(--qos-space-2) 0 0; color: var(--qos-fg-tertiary); font-size: var(--qos-fs-xs); }

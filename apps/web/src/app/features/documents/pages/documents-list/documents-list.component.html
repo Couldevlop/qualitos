@@ -44,6 +44,10 @@
         <span class="label">{{ archivesLabel }}</span>
         <span class="count" *ngIf="counts$ | async as c">{{ c.archived }}</span>
       </button>
+      <a *ngIf="supplierDocuments$ | async" class="nav-item" routerLink="fournisseurs" data-test="documents-fournisseurs">
+        <mat-icon aria-hidden="true">local_shipping</mat-icon>
+        <span class="label" i18n="@@documents.nav.supplier-documents">Documents fournisseurs</span>
+      </a>
     </div>
   </nav>
 

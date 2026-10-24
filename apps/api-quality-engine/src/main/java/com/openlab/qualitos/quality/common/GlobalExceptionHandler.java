@@ -75,6 +75,8 @@ import com.openlab.qualitos.quality.risk.FmeaItemNotFoundException;
 import com.openlab.qualitos.quality.risk.FmeaProjectNotFoundException;
 import com.openlab.qualitos.quality.risk.FmeaStateException;
 import com.openlab.qualitos.quality.supplier.SupplierChildNotFoundException;
+import com.openlab.qualitos.quality.supplier.SupplierDocumentTooLargeException;
+import com.openlab.qualitos.quality.supplier.SupplierDocumentValidationException;
 import com.openlab.qualitos.quality.supplier.SupplierNotFoundException;
 import com.openlab.qualitos.quality.supplier.SupplierStateException;
 import com.openlab.qualitos.quality.training.EnrollmentNotFoundException;
@@ -1543,6 +1545,24 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/supplier-child-not-found"));
         problem.setTitle("Supplier Sub-Resource Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(SupplierDocumentValidationException.class)
+    public ProblemDetail handleSupplierDocumentValidation(SupplierDocumentValidationException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/supplier-document-invalid"));
+        problem.setTitle("Invalid Supplier Document");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(SupplierDocumentTooLargeException.class)
+    public ProblemDetail handleSupplierDocumentTooLarge(SupplierDocumentTooLargeException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.PAYLOAD_TOO_LARGE, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/supplier-document-too-large"));
+        problem.setTitle("Supplier Document Too Large");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }

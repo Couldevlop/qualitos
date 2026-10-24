@@ -1,0 +1,107 @@
+/* Les pièces des fournisseurs, lues depuis la GED : une table sobre, le fichier
+   en tête, son porteur à un clic. */
+
+.library {
+  padding: var(--qos-space-6, 24px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--qos-space-4);
+}
+
+.head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--qos-space-3);
+  flex-wrap: wrap;
+
+  button { display: inline-flex; align-items: center; gap: 6px; }
+}
+.titles h1 { margin: var(--qos-space-1, 4px) 0 2px; font-size: var(--qos-fs-xl); }
+.sub { margin: 0; max-width: 72ch; color: var(--qos-fg-secondary); font-size: var(--qos-fs-sm); }
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--qos-space-1, 4px);
+  color: var(--qos-fg-secondary);
+  font-size: var(--qos-fs-sm);
+  text-decoration: none;
+
+  mat-icon { font-size: 18px; width: 18px; height: 18px; }
+  &:hover { color: var(--qos-fg-link); }
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--qos-space-3);
+
+  mat-form-field { width: 200px; max-width: 100%; }
+  .search { width: 280px; }
+  button { display: inline-flex; align-items: center; gap: 6px; }
+}
+
+.banner { padding: 10px 14px; border-radius: var(--qos-radius-md, 8px); font-size: var(--qos-fs-sm); }
+.banner-error { background: var(--qos-danger-bg, #fbe9e7); color: var(--qos-danger-fg); }
+
+.table-wrap {
+  position: relative;
+  background: var(--qos-bg-elevated);
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: var(--qos-radius-lg);
+  overflow: hidden;
+
+  mat-progress-bar { position: absolute; inset: 0 0 auto 0; z-index: 2; }
+}
+.scroll { overflow-x: auto; }
+table { width: 100%; }
+th.mat-mdc-header-cell { white-space: nowrap; }
+
+a { color: var(--qos-fg-link); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.strong-link { font-weight: 600; }
+
+.name {
+  display: flex;
+  align-items: center;
+  gap: var(--qos-space-2);
+  min-width: 220px;
+  max-width: 420px;
+
+  a, span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+}
+.file-icon { flex: none; color: var(--qos-fg-tertiary); font-size: 20px; width: 20px; height: 20px; }
+
+.chip {
+  display: inline-block;
+  padding: 1px 10px;
+  border-radius: 999px;
+  background: var(--qos-bg-subtle);
+  color: var(--qos-fg-secondary);
+  font-size: var(--qos-fs-xs);
+  white-space: nowrap;
+}
+.chip.eight-d { background: var(--qos-accent-bg); color: var(--qos-accent-fg); font-weight: 600; }
+
+.dim { display: block; margin-top: 2px; color: var(--qos-fg-tertiary); font-size: var(--qos-fs-xs); }
+code { font-family: 'IBM Plex Mono', 'Fira Code', monospace; font-size: 12px; }
+.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.nowrap { white-space: nowrap; }
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--qos-space-2);
+  padding: var(--qos-space-8, 40px) var(--qos-space-4);
+  color: var(--qos-fg-secondary);
+
+  mat-icon { font-size: 36px; width: 36px; height: 36px; color: var(--qos-fg-tertiary); }
+  p { margin: 0; }
+}
+
+@media (max-width: 600px) {
+  .library { padding: var(--qos-space-4); }
+  .filters mat-form-field, .filters .search { width: 100%; }
+}
