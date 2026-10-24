@@ -216,7 +216,7 @@ describe('DmaicDetailComponent', () => {
     http.expectOne(`${base}/projects/${ID}/resume`).flush(project());
     flushDetail();
     expect((fixture.nativeElement as HTMLElement).querySelector('.meta-row')?.textContent)
-      .toContain('ACTIVE');
+      .toContain('Actif');
   });
 
   it('ne recharge pas et reste sur l\'état connu quand la transition est refusée', () => {
@@ -245,7 +245,7 @@ describe('DmaicDetailComponent', () => {
     http.expectOne(`${base}/projects/${ID}/cancel`).flush(project({ status: 'CANCELLED' }));
     flushDetail(project({ status: 'CANCELLED' }));
     expect((fixture.nativeElement as HTMLElement).querySelector('.meta-row')?.textContent)
-      .toContain('CANCELLED');
+      .toContain('Annulé');
   });
 
   it('supprime le projet puis revient à la liste', () => {
