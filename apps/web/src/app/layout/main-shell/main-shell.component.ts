@@ -293,6 +293,13 @@ export class MainShellComponent implements OnInit, OnDestroy {
           roles: ADMIN_ROLES
         },
         {
+          // Le questionnaire de la fiche de résolution DMAIC (ADR 0101), ses défaillances et sévérités.
+          label: $localize`:@@nav.admin-dmaic:Paramètres DMAIC`,
+          route: '/admin/dmaic',
+          icon: 'fact_check',
+          roles: ADMIN_ROLES
+        },
+        {
           label: $localize`:@@nav.admin-api-keys:Clés d'API`,
           route: '/admin/api-keys',
           icon: 'key',

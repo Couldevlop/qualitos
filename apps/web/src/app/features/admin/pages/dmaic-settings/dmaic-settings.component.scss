@@ -1,0 +1,220 @@
+// Paramètres DMAIC : le questionnaire, une phase à la fois ; sévérités et
+// types de défaillance côte à côte au-dessus de 1100 px.
+
+:host {
+  display: block;
+}
+
+.echec {
+  display: flex;
+  align-items: center;
+  gap: var(--qos-space-2);
+  color: var(--qos-danger-fg);
+}
+
+.dim {
+  color: var(--qos-fg-secondary);
+  font-size: var(--qos-fs-sm);
+}
+
+.portee {
+  max-width: 60rem;
+  margin: 0 0 var(--qos-space-4);
+  padding: var(--qos-space-3) var(--qos-space-4);
+  border-radius: var(--qos-radius-md);
+  background: var(--qos-accent-bg-soft);
+  color: var(--qos-fg-primary);
+  font-size: var(--qos-fs-sm);
+}
+
+.bloc {
+  min-width: 0;
+  padding: var(--qos-space-5);
+  border-radius: var(--qos-radius-lg);
+  background: var(--qos-bg-elevated);
+  border: 1px solid var(--qos-border-subtle);
+  box-shadow: var(--qos-shadow-xs);
+
+  & + & {
+    margin-top: var(--qos-space-4);
+  }
+
+  &__titre {
+    margin: 0;
+    font-size: var(--qos-fs-lg);
+    font-weight: var(--qos-fw-semibold);
+  }
+
+  &__aide {
+    margin: var(--qos-space-1) 0 var(--qos-space-4);
+    font-size: var(--qos-fs-sm);
+    color: var(--qos-fg-secondary);
+  }
+}
+
+.phases {
+  display: flex;
+  gap: var(--qos-space-1);
+  margin-bottom: var(--qos-space-3);
+  overflow-x: auto;
+}
+
+.phase {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--qos-space-2);
+  min-height: 2.5rem;
+  padding: 0 var(--qos-space-3);
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: var(--qos-radius-pill);
+  background: transparent;
+  color: var(--qos-fg-primary);
+  font: inherit;
+  font-size: var(--qos-fs-sm);
+  white-space: nowrap;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid var(--qos-accent-bg);
+    outline-offset: 2px;
+  }
+
+  &--on {
+    border-color: var(--qos-accent-bg);
+    background: var(--qos-accent-bg-soft);
+    color: var(--qos-accent-fg-soft);
+    font-weight: var(--qos-fw-semibold);
+  }
+
+  &__nb {
+    font-size: var(--qos-fs-xs);
+    font-variant-numeric: tabular-nums;
+    color: var(--qos-fg-secondary);
+  }
+}
+
+.lignes {
+  display: grid;
+  gap: var(--qos-space-2);
+  margin: 0 0 var(--qos-space-3);
+  padding: 0;
+  list-style: none;
+
+  &--defilantes {
+    max-height: 32rem;
+    overflow-y: auto;
+    padding-right: var(--qos-space-1);
+  }
+}
+
+.ligne {
+  display: grid;
+  align-items: center;
+  gap: var(--qos-space-2);
+  min-width: 0;
+
+  > * {
+    min-width: 0;
+  }
+
+  &--question {
+    grid-template-columns: 7rem minmax(0, 1fr) 10rem 13rem auto;
+    padding-bottom: var(--qos-space-2);
+    border-bottom: 1px solid var(--qos-border-subtle);
+  }
+
+  &--simple {
+    grid-template-columns: 6rem minmax(0, 1fr) auto;
+  }
+
+  &__outils {
+    display: inline-flex;
+  }
+}
+
+// Hors « Définir », pas de rubrique : une colonne de moins.
+.ligne.ligne--sans-rubrique {
+  grid-template-columns: 7rem minmax(0, 1fr) 13rem auto;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+.deux {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  gap: var(--qos-space-4);
+  margin-top: var(--qos-space-4);
+
+  > .bloc + .bloc {
+    margin-top: 0;
+  }
+}
+
+.barre {
+  position: sticky;
+  bottom: var(--qos-space-3);
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--qos-space-3);
+  margin-top: var(--qos-space-4);
+  padding: var(--qos-space-3) var(--qos-space-4);
+  border-radius: var(--qos-radius-lg);
+  background: var(--qos-bg-elevated);
+  border: 1px solid var(--qos-border-subtle);
+  box-shadow: var(--qos-shadow-md);
+
+  &__problemes {
+    margin: 0;
+    padding-left: var(--qos-space-5);
+    color: var(--qos-danger-fg);
+    font-size: var(--qos-fs-sm);
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--qos-space-2);
+    margin-left: auto;
+  }
+}
+
+@media (max-width: 1100px) {
+  .deux {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ligne.ligne--question,
+  .ligne.ligne--sans-rubrique {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    .ligne__libelle {
+      grid-column: 1 / -1;
+    }
+
+    .ligne__outils {
+      grid-column: 1 / -1;
+      justify-self: end;
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .bloc {
+    padding: var(--qos-space-4);
+  }
+
+  .ligne.ligne--question,
+  .ligne.ligne--sans-rubrique,
+  .ligne.ligne--simple {
+    grid-template-columns: minmax(0, 1fr);
+
+    .ligne__libelle {
+      grid-column: auto;
+    }
+  }
+}
