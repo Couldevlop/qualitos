@@ -15,7 +15,7 @@
       <mat-label i18n="@@common.status">Statut</mat-label>
       <mat-select [formControl]="statusFilter">
         <mat-option [value]="''" i18n="@@common.all">Tous</mat-option>
-        <mat-option *ngFor="let s of statuses" [value]="s">{{ s }}</mat-option>
+        <mat-option *ngFor="let s of statuses" [value]="s">{{ s | statusLabel }}</mat-option>
       </mat-select>
     </mat-form-field>
   </div>
@@ -50,7 +50,7 @@
 
       <ng-container matColumnDef="status">
         <th mat-header-cell *matHeaderCellDef i18n="@@common.status">Statut</th>
-        <td mat-cell *matCellDef="let n"><span [class]="statusBadge(n.status)">{{ n.status }}</span></td>
+        <td mat-cell *matCellDef="let n"><span [class]="statusBadge(n.status)">{{ n.status | statusLabel }}</span></td>
       </ng-container>
 
       <ng-container matColumnDef="effectiveFrom">

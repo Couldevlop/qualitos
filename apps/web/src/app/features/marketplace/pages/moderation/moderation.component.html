@@ -25,7 +25,7 @@
           <span class="pack-meta">{{ p.publisher }} · {{ p.packId }} v{{ p.version }}</span>
         </div>
         <span class="status" [class.submitted]="p.status === 'SUBMITTED'"
-              [class.review]="p.status === 'IN_REVIEW'">{{ p.status }}</span>
+              [class.review]="p.status === 'IN_REVIEW'">{{ p.status | statusLabel }}</span>
       </div>
 
       <p class="pack-desc" *ngIf="p.description">{{ p.description }}</p>

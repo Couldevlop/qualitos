@@ -12,7 +12,7 @@
         </h1>
         <div class="meta-row">
           <span [class]="mechBadge(t.mechanism)">{{ mechLabel(t.mechanism) }}</span>
-          <span [class]="statusBadge(t.status)">{{ t.status }}</span>
+          <span [class]="statusBadge(t.status)">{{ t.status | statusLabel }}</span>
           <span class="dim" *ngIf="t.effectiveFrom"><span i18n="@@transfers.detail.effective-from">Effectif depuis :</span> {{ t.effectiveFrom }}</span>
           <span class="dim" *ngIf="t.effectiveTo"><span i18n="@@transfers.detail.terminated-on">Terminé :</span> {{ t.effectiveTo }}</span>
         </div>

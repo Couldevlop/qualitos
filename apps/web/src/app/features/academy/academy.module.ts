@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 
 import { SharedModule } from '../../shared/shared.module';
+import { UiModule } from '../../shared/ui/ui.module';
 import { AcademyRoutingModule } from './academy-routing.module';
 import { AcademyHomeComponent } from './presentation/academy-home/academy-home.component';
 import { CoursePlayerComponent } from './presentation/course-player/course-player.component';
@@ -17,6 +18,6 @@ import { PersonNameModule } from '../../shared/person-name/person-name.module';
     CoursePlayerComponent,
     CertificateViewComponent
   ],
-  imports: [PersonNameModule, SharedModule, AcademyRoutingModule]
+  imports: [PersonNameModule, SharedModule, UiModule, AcademyRoutingModule]
 })
 export class AcademyModule {}

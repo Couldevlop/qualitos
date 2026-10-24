@@ -9,7 +9,7 @@
         <h1>{{ p.title }}</h1>
         <div class="meta-row">
           <span [class]="phaseBadge(p.phase)">{{ p.phase }}</span>
-          <span [class]="statusBadge(p.status)">{{ p.status }}</span>
+          <span [class]="statusBadge(p.status)">{{ p.status | statusLabel }}</span>
           <span class="dim"><span i18n="@@dmaic.detail.target-prefix">Cible :</span> {{ p.targetCompletionDate || '—' }}</span>
           <span class="dim" data-test="dmaic-black-belt">
             <span i18n="@@dmaic.detail.black-belt-prefix">Black Belt :</span> <qos-person-name [accountId]="p.blackBeltId"></qos-person-name>
@@ -161,7 +161,7 @@
           </ng-container>
           <ng-container matColumnDef="status">
             <th mat-header-cell *matHeaderCellDef i18n="@@common.status">Statut</th>
-            <td mat-cell *matCellDef="let a"><span [class]="assignmentBadge(a.status)">{{ a.status }}</span></td>
+            <td mat-cell *matCellDef="let a"><span [class]="assignmentBadge(a.status)">{{ a.status | statusLabel }}</span></td>
           </ng-container>
           <ng-container matColumnDef="note">
             <th mat-header-cell *matHeaderCellDef i18n="@@dmaic.detail.col-note">Note</th>

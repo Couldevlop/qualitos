@@ -11,7 +11,7 @@
         </h1>
         <div class="meta-row">
           <span [class]="procedureBadge(c.procedure)">{{ procedureLabel(c.procedure) }}</span>
-          <span [class]="statusBadge(c.status)">{{ c.status }}</span>
+          <span [class]="statusBadge(c.status)">{{ c.status | statusLabel }}</span>
           <span class="dim" *ngIf="c.validUntil"><span i18n="@@ai-conformity.detail.valid-until">Valide jusqu'au</span> {{ c.validUntil | slice:0:10 }}</span>
         </div>
       </div>

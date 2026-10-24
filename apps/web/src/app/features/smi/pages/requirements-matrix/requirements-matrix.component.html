@@ -39,7 +39,7 @@
               <tr *ngFor="let row of m.rows; trackBy: trackByChapter">
                 <th scope="row" class="chapitre">{{ chapterText(row.chapter) }}</th>
                 <td *ngFor="let c of row.cells; let i = index; trackBy: trackByCode">
-                  <button type="button" class="etat etat--{{ c.status }}" *ngIf="c.status !== 'NOT_APPLICABLE'; else sansObjet"
+                  <button type="button" class="etat etat--{{ c.status | statusLabel }}" *ngIf="c.status !== 'NOT_APPLICABLE'; else sansObjet"
                           [class.etat--choisi]="isSelected(row, i)" [attr.aria-pressed]="isSelected(row, i)"
                           [attr.aria-label]="cellLabel(row, c, i)" (click)="select(row, c, i)"
                           [attr.data-test]="'case-' + row.chapter + '-' + c.standardCode">
