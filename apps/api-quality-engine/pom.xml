@@ -17,14 +17,6 @@
 
     <dependencyManagement>
         <dependencies>
-        <!-- Jackson 2 conservé le temps de la migration Spring Boot 4 (ADR 0100) :
-             Boot 4 passe à Jackson 3 (tools.jackson), le code applique encore
-             l'API com.fasterxml. Module de compatibilité officiel, à retirer avec
-             le passage à Jackson 3. -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-jackson2</artifactId>
-        </dependency>
             <!-- BOM AWS SDK v2 : aligne s3 + ses transitives (smithy, http-client).
                  Version explicite (le parent qualitos n'embarque pas le BOM AWS). -->
             <dependency>
@@ -38,6 +30,14 @@
     </dependencyManagement>
 
     <dependencies>
+        <!-- Jackson 2 conservé le temps de la migration Spring Boot 4 (ADR 0100) :
+             Boot 4 passe à Jackson 3 (tools.jackson), le code applique encore
+             l'API com.fasterxml. Module de compatibilité officiel, à retirer avec
+             le passage à Jackson 3. -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-jackson2</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webmvc</artifactId>
