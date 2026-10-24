@@ -24156,6 +24156,10 @@ historial de 12 meses</target>
         <source>Lien impossible.</source>
         <target state="translated">No se pudo vincular.</target>
       </trans-unit>
+      <trans-unit id="workflow.editor.start-event" datatype="html">
+        <source>Début</source>
+        <target state="translated">Inicio</target>
+      </trans-unit>
       <trans-unit id="common.retry" datatype="html">
         <source>Réessayer</source>
         <target state="translated">Reintentar</target>

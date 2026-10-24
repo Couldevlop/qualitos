@@ -8,7 +8,9 @@
 .eyebrow {
   font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase;
   color: var(--qos-text-muted, var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.55)));
-  margin-bottom: 2px;
+  // Le libellé flottant du champ « outline » dépasse de ~8 px au-dessus du
+  // cadre : avec 2 px, il touchait cette ligne.
+  margin-bottom: 12px;
 }
 .name-field { width: min(320px, 100%); }
 .desc-field { width: 100%; max-width: 640px; margin-bottom: 8px; }

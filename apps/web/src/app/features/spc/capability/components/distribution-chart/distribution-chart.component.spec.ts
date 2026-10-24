@@ -32,6 +32,18 @@ describe('DistributionChartComponent', () => {
     expect(hote().querySelector('[data-test="barre"] title')?.textContent).toContain('Mesures dans cette classe');
   });
 
+  it('écrit la moyenne avec la précision de l\'étude, pas arrondie au dixième', () => {
+    fixture.componentRef.setInput('digits', 4);
+    fixture.componentRef.setInput('values', [12.04, 12.05, 12.06]);
+    fixture.componentRef.setInput('mean', 12.0533);
+    fixture.componentRef.setInput('sigma', 0.0234);
+    fixture.componentRef.setInput('lsl', 11.9);
+    fixture.componentRef.setInput('usl', 12.1);
+    fixture.detectChanges();
+    // Arrondie à « 12.1 », elle se confondait avec l'USL.
+    expect(hote().querySelector('.moyenne text')?.textContent).toContain('12.0533');
+  });
+
   it('demande des données valides', () => {
     rendre([], null, null);
     expect(hote().querySelector('svg')).toBeNull();

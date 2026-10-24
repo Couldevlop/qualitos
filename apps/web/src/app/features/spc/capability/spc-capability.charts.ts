@@ -32,15 +32,21 @@ const CL_ = 44;
 const CR = 64;
 const CT = 12;
 const CB = 26;
+/** Largeur d'un caractère de la police mono à 10 px, et écart entre graduation et trait. */
+const MONO_CHAR = 6.2;
+const TICK_GAP = 8;
 
 /**
  * Une carte de contrôle : les valeurs de chaque sous-groupe, les trois limites,
  * et les points hors limites. `null` quand il n'y a rien à tracer. Les limites
- * de tolérance, quand on les donne (carte X̄), entrent dans l'échelle.
+ * de tolérance, quand on les donne (carte X̄), entrent dans l'échelle. La marge
+ * gauche suit la graduation la plus longue écrite avec `digits` décimales :
+ * fixe, elle rognait « 12.0620 » en « .0620 ».
  */
 export function controlChart(values: (number | null)[], ucl: number | null, cl: number | null,
                              lcl: number | null,
-                             spec: { usl: number | null; lsl: number | null } = { usl: null, lsl: null }
+                             spec: { usl: number | null; lsl: number | null } = { usl: null, lsl: null },
+                             digits = 2
 ): ControlChartGeometry | null {
   if (ucl === null || cl === null || lcl === null) return null;
   const pts = values
@@ -56,11 +62,17 @@ export function controlChart(values: (number | null)[], ucl: number | null, cl: 
   const pad = (hi - lo || 1) * 0.12;
   lo -= pad;
   hi += pad;
-  const x = (i: number) => CL_ + (CW - CL_ - CR) * i / (SUBGROUPS - 1);
   const y = (v: number) => CT + (CH - CT - CB) * (1 - (v - lo) / (hi - lo));
+  const ticks = [0, 1, 2, 3, 4].map(t => {
+    const v = lo + (hi - lo) * t / 4;
+    return { value: v, y: y(v) };
+  });
+  const longest = Math.max(...ticks.map(t => t.value.toFixed(digits).length));
+  const left = Math.max(CL_, Math.ceil(longest * MONO_CHAR + TICK_GAP));
+  const x = (i: number) => left + (CW - left - CR) * i / (SUBGROUPS - 1);
   const points = pts.map(p => ({ index: p.i, value: p.v, x: x(p.i), y: y(p.v), out: p.v > ucl || p.v < lcl }));
   return {
-    width: CW, height: CH, left: CL_, right: CW - CR,
+    width: CW, height: CH, left, right: CW - CR,
     points,
     polyline: points.map(p => `${p.x},${p.y}`).join(' '),
     lines: [
@@ -69,10 +81,7 @@ export function controlChart(values: (number | null)[], ucl: number | null, cl: 
       { label: 'LCL', value: lcl, y: y(lcl) }
     ],
     specs: tolerances.map(t => ({ ...t, y: y(t.value) })),
-    ticks: [0, 1, 2, 3, 4].map(t => {
-      const v = lo + (hi - lo) * t / 4;
-      return { value: v, y: y(v) };
-    }),
+    ticks,
     xLabels: Array.from({ length: SUBGROUPS }, (_, i) => i)
       .filter(i => i % 2 === 0 || i === SUBGROUPS - 1)
       .map(i => ({ label: i + 1, x: x(i) }))

@@ -24156,6 +24156,10 @@ historique 12 mois</source>
         <source>Lien impossible.</source>
         <target state="translated">无法关联。</target>
       </trans-unit>
+      <trans-unit id="workflow.editor.start-event" datatype="html">
+        <source>Début</source>
+        <target state="translated">开始</target>
+      </trans-unit>
       <trans-unit id="common.retry" datatype="html">
         <source>Réessayer</source>
         <target state="translated">重试</target>

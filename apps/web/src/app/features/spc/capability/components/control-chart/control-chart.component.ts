@@ -30,7 +30,8 @@ export class ControlChartComponent implements OnChanges {
   geometry: ControlChartGeometry | null = null;
 
   ngOnChanges(): void {
-    this.geometry = controlChart(this.values, this.ucl, this.cl, this.lcl, { usl: this.usl, lsl: this.lsl });
+    this.geometry = controlChart(this.values, this.ucl, this.cl, this.lcl, { usl: this.usl, lsl: this.lsl },
+                                 this.digits);
   }
 
   fixed(v: number): string {
