@@ -22,7 +22,7 @@
 <div *ngIf="project as p">
   <div class="project-line">
     <span class="qos-badge" [attr.data-tone]="p.status === 'ACTIVE' ? 'success' : 'info'">
-      {{ p.status }}
+      {{ p.status | statusLabel }}
     </span>
     <code>{{ p.code }}</code>
     <span>{{ p.name }}</span>

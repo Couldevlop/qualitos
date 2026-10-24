@@ -196,7 +196,7 @@ export class MainShellComponent implements OnInit, OnDestroy {
     {
       label: $localize`:@@nav.operations:Opérations`,
       items: [
-        { label: $localize`:@@nav.calibration:Calibration`,         route: '/calibration', icon: 'straighten', module: 'calibration' },
+        { label: $localize`:@@nav.calibration:Instruments`,         route: '/calibration', icon: 'straighten', module: 'calibration' },
         { label: $localize`:@@nav.iot:Parc IoT`,                    route: '/iot',        icon: 'sensors', module: 'iot' },
         { label: $localize`:@@nav.audits:Audits`,                   route: '/audits',    icon: 'fact_check', module: 'audit' },
         { label: $localize`:@@nav.audits-planning:Planning audits`, route: '/audits/planning', icon: 'event_available', module: 'audit' },
@@ -290,6 +290,13 @@ export class MainShellComponent implements OnInit, OnDestroy {
           label: $localize`:@@nav.admin-spc:Paramètres SPC`,
           route: '/admin/spc',
           icon: 'stacked_line_chart',
+          roles: ADMIN_ROLES
+        },
+        {
+          // Le questionnaire de la fiche de résolution DMAIC (ADR 0101), ses défaillances et sévérités.
+          label: $localize`:@@nav.admin-dmaic:Paramètres DMAIC`,
+          route: '/admin/dmaic',
+          icon: 'fact_check',
           roles: ADMIN_ROLES
         },
         {

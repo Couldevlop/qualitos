@@ -3,6 +3,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../../shared/shared.module';
+import { UiModule } from '../../shared/ui/ui.module';
 import { CatalogComponent } from './pages/catalog/catalog.component';
 import { ModerationComponent } from './pages/moderation/moderation.component';
 import { RejectDialogComponent } from './pages/moderation/reject-dialog/reject-dialog.component';
@@ -16,6 +17,6 @@ const routes: Routes = [
 
 @NgModule({
   declarations: [CatalogComponent, SubmitComponent, ModerationComponent, RejectDialogComponent],
-  imports: [SharedModule, FormsModule, ReactiveFormsModule, RouterModule.forChild(routes)]
+  imports: [SharedModule, UiModule, FormsModule, ReactiveFormsModule, RouterModule.forChild(routes)]
 })
 export class MarketplaceModule {}

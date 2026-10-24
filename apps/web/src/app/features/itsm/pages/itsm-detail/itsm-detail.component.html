@@ -9,7 +9,7 @@
         <h1>{{ c.name }}</h1>
         <div class="meta-row">
           <span [class]="providerBadge(c.provider)">{{ providerLabel(c.provider) }}</span>
-          <span [class]="statusBadge(c.status)">{{ c.status }}</span>
+          <span [class]="statusBadge(c.status)">{{ c.status | statusLabel }}</span>
           <span *ngIf="c.consecutiveFailures > 0" class="fail">
             <mat-icon>error_outline</mat-icon> {{ c.consecutiveFailures }} <span i18n="@@itsm.detail.failures-suffix">échec(s) consécutif(s)</span>
           </span>

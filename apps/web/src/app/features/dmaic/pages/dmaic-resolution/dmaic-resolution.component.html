@@ -1,0 +1,366 @@
+<mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+
+<p class="echec" *ngIf="failed" role="alert">
+  <span i18n="@@dmaic.res.load-failed">La fiche de résolution n'a pas pu être chargée.</span>
+  <button mat-button type="button" (click)="load()" i18n="@@common.retry">Réessayer</button>
+</p>
+
+<div class="res" *ngIf="sheet && !failed">
+
+  <!-- Sommaire : chaque partie à un clic, avec son avancement. -->
+  <nav class="res__nav" i18n-aria-label="@@dmaic.res.nav" aria-label="Sommaire de la fiche">
+    <ol>
+      <li *ngFor="let e of nav">
+        <button type="button" class="nav-item" (click)="goTo(e.id)" [attr.data-test]="'nav-' + e.id">
+          <span class="nav-item__letter" aria-hidden="true">{{ e.letter }}</span>
+          <span class="nav-item__label">{{ e.label }}</span>
+          <span class="nav-item__count" *ngIf="e.total"
+                [class.nav-item__count--full]="e.done === e.total">{{ e.done }}/{{ e.total }}</span>
+        </button>
+      </li>
+    </ol>
+  </nav>
+
+  <div class="res__main">
+
+    <div class="res__state">
+      <p class="res__saved" data-test="etat">
+        <ng-container *ngIf="sheet.saved; else neverSaved">
+          <span i18n="@@dmaic.res.saved-on">Enregistrée le</span> {{ sheet.updatedAt | date:'medium' }}
+        </ng-container>
+        <ng-template #neverSaved><span i18n="@@dmaic.res.never-saved">Fiche vierge : rien n'est encore enregistré.</span></ng-template>
+        <ng-container *ngIf="!canEdit"> · <span i18n="@@dmaic.res.read-only">Lecture seule</span></ng-container>
+      </p>
+      <button mat-stroked-button type="button" (click)="downloadReport()"
+              [disabled]="downloading || dirty || !sheet.saved" data-test="rapport">
+        <mat-icon>picture_as_pdf</mat-icon>
+        <span i18n="@@dmaic.res.report">Rapport client</span>
+      </button>
+      <p class="res__hint" *ngIf="dirty" data-test="rapport-aide">{{ reportDirtyHint }}</p>
+    </div>
+
+    <!-- ===== Réclamation ===== -->
+    <section class="bloc" id="res-claim" aria-labelledby="res-claim-t">
+      <header class="bloc__head">
+        <span class="bloc__letter" aria-hidden="true">#</span>
+        <div>
+          <h2 class="bloc__titre" id="res-claim-t" i18n="@@dmaic.res.claim">Réclamation</h2>
+          <p class="bloc__lead" *ngIf="sheet.problemStatement">{{ sheet.problemStatement }}</p>
+        </div>
+      </header>
+
+      <div class="champs champs--3">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label i18n="@@dmaic.res.client">Client ou projet</mat-label>
+          <input matInput [(ngModel)]="draft.clientName" [maxlength]="limits.short" [disabled]="!canEdit" data-test="client">
+        </mat-form-field>
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label i18n="@@dmaic.res.claim-number">N° de réclamation</mat-label>
+          <input matInput [(ngModel)]="draft.claimNumber" [maxlength]="limits.claim" [disabled]="!canEdit" data-test="claim">
+        </mat-form-field>
+        <qos-user-picker label="Propriétaire du problème" i18n-label="@@dmaic.res.owner"
+                         [ngModel]="draft.problemOwner?.accountId ?? null" [disabled]="!canEdit"
+                         (userSelected)="onOwner($event)" data-test="owner"></qos-user-picker>
+
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label i18n="@@dmaic.res.opened-on">Date de création</mat-label>
+          <input matInput type="date" [(ngModel)]="draft.openedOn" [disabled]="!canEdit" data-test="opened">
+        </mat-form-field>
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label i18n="@@dmaic.res.closed-on">Date de fermeture</mat-label>
+          <input matInput type="date" [(ngModel)]="draft.closedOn" [min]="draft.openedOn ?? ''" [disabled]="!canEdit" data-test="closed">
+        </mat-form-field>
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label i18n="@@dmaic.res.severity">Sévérité</mat-label>
+          <mat-select [(ngModel)]="draft.severity" [disabled]="!canEdit" data-test="severity">
+            <mat-option [value]="null" i18n="@@dmaic.res.none">— Non renseignée —</mat-option>
+            <mat-option *ngFor="let s of severities" [value]="s.level">{{ s.level }} · {{ s.label }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="champ-large">
+        <mat-label i18n="@@dmaic.res.failure-type">Type de défaillance</mat-label>
+        <mat-select [(ngModel)]="draft.failureTypeCode" [disabled]="!canEdit" data-test="failure">
+          <mat-option [value]="null" i18n="@@dmaic.res.none">— Non renseignée —</mat-option>
+          <mat-option *ngFor="let f of failureTypes" [value]="f.code">{{ f.code }} · {{ f.label }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div class="equipe">
+        <h3 class="sous-titre">
+          <span i18n="@@dmaic.res.team">Membres de l'équipe</span>
+          <span class="dim">{{ draft.team.length }}/{{ limits.team }}</span>
+        </h3>
+        <ul class="equipe__liste" *ngIf="draft.team.length; else noTeam">
+          <li *ngFor="let m of draft.team" class="personne" data-test="team-member">
+            <mat-icon aria-hidden="true">person</mat-icon>
+            <span class="personne__nom">{{ m.name }}</span>
+            <button mat-icon-button type="button" *ngIf="canEdit" (click)="removeTeam(m.accountId)"
+                    i18n-aria-label="@@dmaic.res.team-remove" aria-label="Retirer de l'équipe">
+              <mat-icon>close</mat-icon>
+            </button>
+          </li>
+        </ul>
+        <ng-template #noTeam><p class="dim" i18n="@@dmaic.res.team-empty">Personne pour l'instant.</p></ng-template>
+        <qos-user-picker *ngIf="canEdit && draft.team.length < limits.team" class="equipe__ajout"
+                         label="Ajouter un membre" i18n-label="@@dmaic.res.team-add"
+                         [formControl]="teamPicker" [excludeIds]="teamIds"
+                         (userSelected)="addTeam($event)" data-test="team-picker"></qos-user-picker>
+      </div>
+
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="champ-large">
+        <mat-label i18n="@@dmaic.res.symptoms">Symptômes constatés par le client</mat-label>
+        <textarea matInput rows="3" [(ngModel)]="draft.customerSymptoms" [maxlength]="limits.summary"
+                  [disabled]="!canEdit" data-test="symptoms"></textarea>
+      </mat-form-field>
+    </section>
+
+    <!-- ===== Les phases ===== -->
+    <ng-container *ngFor="let s of sections">
+      <section class="bloc" [id]="'res-' + s.toLowerCase()" [attr.aria-labelledby]="'res-t-' + s">
+        <header class="bloc__head">
+          <span class="bloc__letter bloc__letter--phase" aria-hidden="true">{{ sectionText(s).letter }}</span>
+          <div>
+            <h2 class="bloc__titre" [id]="'res-t-' + s">{{ sectionText(s).title }}</h2>
+            <p class="bloc__lead">{{ sectionText(s).lead }}</p>
+            <details class="bloc__more">
+              <summary i18n="@@dmaic.res.more">En savoir plus</summary>
+              <p>{{ sectionText(s).more }}</p>
+            </details>
+          </div>
+        </header>
+
+        <div *ngFor="let g of groupsOf(s)" class="groupe">
+          <h3 class="sous-titre" *ngIf="g.label">{{ g.label }}</h3>
+          <ol class="questions">
+            <li *ngFor="let q of g.questions" class="question" [attr.data-test]="'q-' + q.code">
+              <span class="question__label" [id]="'ql-' + q.code">{{ q.label }}</span>
+              <div class="question__reponse">
+                <mat-form-field *ngIf="q.answerType === 'TEXT'; else closed" appearance="outline" subscriptSizing="dynamic">
+                  <textarea matInput rows="2" [attr.aria-labelledby]="'ql-' + q.code"
+                            [ngModel]="answerOf(q.code)" (ngModelChange)="setAnswer(q.code, $event)"
+                            [maxlength]="limits.answer" [disabled]="!canEdit"></textarea>
+                </mat-form-field>
+                <ng-template #closed>
+                  <div class="choix" role="radiogroup" [attr.aria-labelledby]="'ql-' + q.code">
+                    <button *ngFor="let c of choicesOf(q)" type="button" class="choix__btn" role="radio"
+                            [class.choix__btn--on]="draft.answers[q.code] === c"
+                            [class.choix__btn--yes]="c === 'YES'" [class.choix__btn--no]="c === 'NO'"
+                            [attr.aria-checked]="draft.answers[q.code] === c" [disabled]="!canEdit"
+                            (click)="toggleAnswer(q.code, c)" [attr.data-test]="'choix-' + q.code + '-' + c">
+                      {{ answerLabel(c) }}
+                    </button>
+                  </div>
+                </ng-template>
+              </div>
+            </li>
+          </ol>
+        </div>
+
+        <ng-container *ngIf="s === 'ANALYZE'">
+          <div class="ishikawa">
+            <mat-form-field appearance="outline" subscriptSizing="dynamic">
+              <mat-label i18n="@@dmaic.res.ishikawa">Diagramme d'Ishikawa</mat-label>
+              <mat-select [(ngModel)]="draft.ishikawaId" [disabled]="!canEdit" data-test="ishikawa">
+                <mat-option [value]="null" i18n="@@dmaic.res.ishikawa-none">— Aucun —</mat-option>
+                <mat-option *ngFor="let d of ishikawas" [value]="d.id">{{ d.label }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <a mat-button *ngIf="draft.ishikawaId" [routerLink]="['/ishikawa', draft.ishikawaId]" data-test="ishikawa-open">
+              <mat-icon>open_in_new</mat-icon> <span i18n="@@dmaic.res.ishikawa-open">Ouvrir le diagramme</span>
+            </a>
+            <a mat-button *ngIf="!draft.ishikawaId" routerLink="/ishikawa">
+              <mat-icon>account_tree</mat-icon> <span i18n="@@dmaic.res.ishikawa-new">Créer un diagramme</span>
+            </a>
+          </div>
+        </ng-container>
+
+        <mat-form-field *ngIf="sectionText(s).summary" appearance="outline" subscriptSizing="dynamic" class="champ-large synthese">
+          <mat-label>{{ sectionText(s).summary }}</mat-label>
+          <textarea matInput rows="3" [ngModel]="summaryOf(s)" (ngModelChange)="setSummary(s, $event)"
+                    [maxlength]="limits.summary" [disabled]="!canEdit" [attr.data-test]="'synthese-' + s"></textarea>
+        </mat-form-field>
+      </section>
+
+      <!-- ===== 5 pourquoi, à la suite de l'analyse ===== -->
+      <section *ngIf="s === 'ANALYZE'" class="bloc" id="res-whys" aria-labelledby="res-whys-t">
+        <header class="bloc__head">
+          <span class="bloc__letter" aria-hidden="true">5</span>
+          <div>
+            <h2 class="bloc__titre" id="res-whys-t" i18n="@@dmaic.res.whys">5 pourquoi</h2>
+            <p class="bloc__lead" i18n="@@dmaic.res.whys-lead">Trois questions, trois chaînes de pourquoi. Marquez celles qui mènent à une cause racine et notez leur action.</p>
+          </div>
+        </header>
+        <div class="branches">
+          <div class="branche" *ngFor="let b of branches" [attr.data-test]="'branche-' + b">
+            <h3 class="branche__titre">{{ branchText[b].title }}</h3>
+            <p class="branche__question">{{ branchText[b].question }}</p>
+
+            <div class="chaine" *ngFor="let c of chainsOf(b); let ci = index">
+              <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                <mat-label i18n="@@dmaic.res.why-cause">Constat</mat-label>
+                <input matInput [(ngModel)]="c.cause" [maxlength]="limits.why" [disabled]="!canEdit">
+              </mat-form-field>
+              <ol class="chaine__pourquoi">
+                <li *ngFor="let w of c.whys; let wi = index; trackBy: trackByIndex">
+                  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                    <mat-label><span i18n="@@dmaic.res.why-n">Pourquoi</span> {{ wi + 1 }}</mat-label>
+                    <input matInput [ngModel]="w" (ngModelChange)="setWhy(c, wi, $event)" [maxlength]="limits.why" [disabled]="!canEdit">
+                  </mat-form-field>
+                  <button mat-icon-button type="button" *ngIf="canEdit && c.whys.length > 1" (click)="removeWhy(c, wi)"
+                          i18n-aria-label="@@dmaic.res.why-remove" aria-label="Retirer ce pourquoi">
+                    <mat-icon>remove_circle_outline</mat-icon>
+                  </button>
+                </li>
+              </ol>
+              <button mat-button type="button" *ngIf="canEdit && c.whys.length < limits.whysPerChain" (click)="addWhy(c)">
+                <mat-icon>add</mat-icon> <span i18n="@@dmaic.res.why-add">Pourquoi suivant</span>
+              </button>
+              <mat-checkbox [(ngModel)]="c.rootCause" [disabled]="!canEdit" i18n="@@dmaic.res.why-root">C'est une cause racine</mat-checkbox>
+              <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                <mat-label i18n="@@dmaic.res.why-action">Action</mat-label>
+                <input matInput [(ngModel)]="c.action" [maxlength]="limits.why" [disabled]="!canEdit">
+              </mat-form-field>
+              <button mat-button type="button" color="warn" class="chaine__retirer" *ngIf="canEdit" (click)="removeChain(c)">
+                <mat-icon>delete</mat-icon> <span i18n="@@dmaic.res.chain-remove">Retirer la chaîne</span>
+              </button>
+            </div>
+
+            <p class="dim" *ngIf="!chainsOf(b).length" i18n="@@dmaic.res.chain-empty">Aucune chaîne.</p>
+            <button mat-stroked-button type="button" *ngIf="canEdit" [disabled]="!canAddChain" (click)="addChain(b)"
+                    [attr.data-test]="'chaine-ajout-' + b">
+              <mat-icon>add</mat-icon> <span i18n="@@dmaic.res.chain-add">Ajouter une chaîne</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== Plan d'actions, à la suite de l'amélioration ===== -->
+      <section *ngIf="s === 'IMPROVE'" class="bloc" id="res-actions" aria-labelledby="res-actions-t">
+        <header class="bloc__head">
+          <span class="bloc__letter" aria-hidden="true">✓</span>
+          <div class="bloc__head-texte">
+            <h2 class="bloc__titre" id="res-actions-t" i18n="@@dmaic.res.actions">Plan d'actions</h2>
+            <p class="bloc__lead" i18n="@@dmaic.res.actions-lead">Ce qui doit être fait, par qui, pour quand.</p>
+          </div>
+          <button mat-stroked-button type="button" color="primary" *ngIf="canEdit" [disabled]="!canAddAction"
+                  (click)="addAction()" data-test="action-ajout">
+            <mat-icon>add</mat-icon> <span i18n="@@dmaic.res.action-add">Ajouter une action</span>
+          </button>
+        </header>
+
+        <p class="dim" *ngIf="!draft.actions.length" i18n="@@dmaic.res.actions-empty">Aucune action. Ajoutez la première pour piloter les solutions retenues.</p>
+
+        <ol class="actions">
+          <li class="action" *ngFor="let a of draft.actions; let i = index" data-test="action">
+            <div class="action__tete">
+              <span class="action__num">{{ i + 1 }}</span>
+              <mat-form-field appearance="outline" subscriptSizing="dynamic" class="action__texte">
+                <mat-label i18n="@@dmaic.res.action">Action</mat-label>
+                <textarea matInput rows="2" [(ngModel)]="a.action" [maxlength]="limits.actionText" [disabled]="!canEdit"></textarea>
+              </mat-form-field>
+              <button mat-icon-button type="button" *ngIf="canEdit" (click)="removeAction(a)"
+                      i18n-aria-label="@@dmaic.res.action-remove" aria-label="Retirer l'action">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+            <div class="champs champs--4">
+              <qos-user-picker label="Responsable" i18n-label="@@dmaic.res.responsible"
+                               [ngModel]="a.responsible?.accountId ?? null" [disabled]="!canEdit"
+                               (userSelected)="onResponsible(a, $event)"></qos-user-picker>
+              <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                <mat-label i18n="@@common.status">Statut</mat-label>
+                <mat-select [(ngModel)]="a.status" [disabled]="!canEdit">
+                  <mat-option *ngFor="let st of actionStatuses" [value]="st">{{ actionStatusLabel(st) }}</mat-option>
+                </mat-select>
+              </mat-form-field>
+              <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                <mat-label i18n="@@dmaic.res.planned-on">Prévue le</mat-label>
+                <input matInput type="date" [(ngModel)]="a.plannedOn" [disabled]="!canEdit">
+              </mat-form-field>
+              <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                <mat-label i18n="@@dmaic.res.done-on">Réalisée le</mat-label>
+                <input matInput type="date" [(ngModel)]="a.doneOn" [disabled]="!canEdit">
+              </mat-form-field>
+              <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                <mat-label i18n="@@dmaic.res.percent">Avancement (%)</mat-label>
+                <input matInput type="number" min="0" max="100" step="5" [(ngModel)]="a.percent" [disabled]="!canEdit">
+              </mat-form-field>
+              <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                <mat-label i18n="@@dmaic.res.created-on">Créée le</mat-label>
+                <input matInput type="date" [(ngModel)]="a.createdOn" [disabled]="!canEdit">
+              </mat-form-field>
+              <mat-form-field appearance="outline" subscriptSizing="dynamic" class="champs__large">
+                <mat-label i18n="@@dmaic.res.notes">Notes</mat-label>
+                <input matInput [(ngModel)]="a.notes" [maxlength]="limits.actionText" [disabled]="!canEdit">
+              </mat-form-field>
+            </div>
+            <div class="avancement" aria-hidden="true"><span [style.width.%]="a.percent"></span></div>
+          </li>
+        </ol>
+      </section>
+    </ng-container>
+
+    <!-- ===== Photos ===== -->
+    <section class="bloc" id="res-photos" aria-labelledby="res-photos-t">
+      <header class="bloc__head">
+        <span class="bloc__letter" aria-hidden="true">▣</span>
+        <div>
+          <h2 class="bloc__titre" id="res-photos-t" i18n="@@dmaic.res.photos">Photos</h2>
+          <p class="bloc__lead" i18n="@@dmaic.res.photos-lead">Six emplacements, une remarque par photo. JPEG, PNG, GIF ou WEBP, 10 Mo au plus. Une photo est enregistrée dès qu'elle est versée.</p>
+        </div>
+      </header>
+      <ul class="photos">
+        <li class="photo" *ngFor="let slot of photoSlots" [attr.data-test]="'photo-' + slot">
+          <ng-container *ngIf="photoAt(slot) as ph; else emptySlot">
+            <a class="photo__image" [href]="ph.url" target="_blank" rel="noopener noreferrer">
+              <img [src]="ph.url" [alt]="ph.remark || photoAlt(slot)" loading="lazy">
+            </a>
+            <mat-form-field appearance="outline" subscriptSizing="dynamic">
+              <mat-label i18n="@@dmaic.res.photo.remark">Remarque</mat-label>
+              <textarea matInput rows="2" [(ngModel)]="remarks[slot]" (blur)="saveRemark(slot)"
+                        [maxlength]="limits.remark" [disabled]="!canEdit || photoBusy.has(slot)"></textarea>
+            </mat-form-field>
+            <div class="photo__actions" *ngIf="canEdit">
+              <label class="photo__remplacer" [class.is-busy]="photoBusy.has(slot)">
+                <input type="file" [accept]="photoAccept" (change)="onFile(slot, $event)" [disabled]="photoBusy.has(slot)">
+                <mat-icon aria-hidden="true">swap_horiz</mat-icon> <span i18n="@@dmaic.res.photo.replace">Remplacer</span>
+              </label>
+              <button mat-button type="button" color="warn" (click)="removePhoto(slot)" [disabled]="photoBusy.has(slot)">
+                <mat-icon>delete</mat-icon> <span i18n="@@dmaic.res.photo.delete">Retirer</span>
+              </button>
+            </div>
+          </ng-container>
+          <ng-template #emptySlot>
+            <label class="photo__vide" *ngIf="canEdit; else noPhoto" [class.is-busy]="photoBusy.has(slot)">
+              <input type="file" [accept]="photoAccept" (change)="onFile(slot, $event)" [disabled]="photoBusy.has(slot)"
+                     [attr.data-test]="'photo-input-' + slot">
+              <mat-icon aria-hidden="true">add_a_photo</mat-icon>
+              <span><span i18n="@@dmaic.res.photo.add">Ajouter la photo</span> {{ slot }}</span>
+            </label>
+            <ng-template #noPhoto>
+              <div class="photo__vide photo__vide--lecture"><span><span i18n="@@dmaic.res.photo.none">Pas de photo</span> {{ slot }}</span></div>
+            </ng-template>
+          </ng-template>
+          <mat-progress-bar *ngIf="photoBusy.has(slot)" mode="indeterminate"></mat-progress-bar>
+        </li>
+      </ul>
+    </section>
+
+  </div>
+
+  <!-- Barre d'enregistrement : n'apparaît qu'avec des changements. -->
+  <div class="barre" *ngIf="dirty && canEdit" role="status">
+    <ul class="barre__problemes" *ngIf="problems.length" data-test="problemes">
+      <li *ngFor="let p of problems">{{ p }}</li>
+    </ul>
+    <span *ngIf="!problems.length" i18n="@@dmaic.res.pending">Fiche modifiée</span>
+    <span class="barre__actions">
+      <button mat-stroked-button type="button" (click)="discard()" [disabled]="saving"
+              data-test="annuler" i18n="@@authz.matrix.discard">Annuler les changements</button>
+      <button mat-flat-button color="primary" type="button" (click)="save()" [disabled]="saving || problems.length > 0"
+              data-test="enregistrer" i18n="@@common.save">Enregistrer</button>
+    </span>
+  </div>
+</div>

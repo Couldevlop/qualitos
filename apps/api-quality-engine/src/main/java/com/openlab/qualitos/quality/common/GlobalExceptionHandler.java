@@ -2282,9 +2282,9 @@ public class GlobalExceptionHandler {
         return problem;
     }
 
-    @ExceptionHandler(org.springframework.data.mapping.PropertyReferenceException.class)
+    @ExceptionHandler(org.springframework.data.core.PropertyReferenceException.class)
     public ProblemDetail handlePropertyReference(
-            org.springframework.data.mapping.PropertyReferenceException ex) {
+            org.springframework.data.core.PropertyReferenceException ex) {
         // BUG #24 — Un ?sort=champInconnu (ou tout tri sur une propriété absente) fait
         // remonter PropertyReferenceException depuis Spring Data jusqu'au handler
         // générique → 500 sur TOUS les endpoints paginés. C'est une erreur du CLIENT

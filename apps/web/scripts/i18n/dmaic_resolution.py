@@ -1,0 +1,398 @@
+# -*- coding: utf-8 -*-
+"""Table i18n - fiche de resolution DMAIC (ADR 0101) et ses parametres.
+id: (fr, en, es, ar, ja, zh)."""
+
+TRANSLATIONS = {
+    # ----- menu, droits, onglets -----
+    'nav.admin-dmaic': ('Paramètres DMAIC', 'DMAIC settings', 'Parámetros DMAIC', 'إعدادات DMAIC', 'DMAIC 設定', 'DMAIC 设置'),
+    'authz.perm.dmaic-manage': (
+        'Remplir la fiche de résolution DMAIC et ses photos', 'Fill in the DMAIC resolution sheet and its photos',
+        'Completar la ficha de resolución DMAIC y sus fotos', 'ملء بطاقة حل DMAIC وصورها',
+        'DMAIC 解決シートと写真を記入する', '填写 DMAIC 解决表及其照片'),
+    'authz.module.dmaic': ('DMAIC', 'DMAIC', 'DMAIC', 'DMAIC', 'DMAIC', 'DMAIC'),
+    'dmaic.detail.tab-pilotage': ('Pilotage', 'Steering', 'Pilotaje', 'القيادة', '進行管理', '项目管控'),
+    'dmaic.detail.tab-resolution': ('Fiche de résolution', 'Resolution sheet', 'Ficha de resolución', 'بطاقة الحل', '解決シート', '解决表'),
+
+    # ----- fiche : etat, sommaire -----
+    'dmaic.res.load-failed': (
+        "La fiche de résolution n'a pas pu être chargée.", 'The resolution sheet could not be loaded.',
+        'No se pudo cargar la ficha de resolución.', 'تعذّر تحميل بطاقة الحل.', '解決シートを読み込めませんでした。', '无法加载解决表。'),
+    'dmaic.res.nav': ('Sommaire de la fiche', 'Sheet contents', 'Índice de la ficha', 'فهرس البطاقة', 'シートの目次', '表格目录'),
+    'dmaic.res.saved-on': ('Enregistrée le', 'Saved on', 'Guardada el', 'حُفظت في', '保存日時', '保存于'),
+    'dmaic.res.never-saved': (
+        "Fiche vierge : rien n'est encore enregistré.", 'Blank sheet: nothing has been saved yet.',
+        'Ficha en blanco: aún no se ha guardado nada.', 'بطاقة فارغة: لم يُحفظ شيء بعد.',
+        '白紙のシート：まだ何も保存されていません。', '空白表：尚未保存任何内容。'),
+    'dmaic.res.read-only': ('Lecture seule', 'Read only', 'Solo lectura', 'للقراءة فقط', '閲覧のみ', '只读'),
+    'dmaic.res.report': ('Rapport client', 'Customer report', 'Informe al cliente', 'تقرير العميل', '顧客報告書', '客户报告'),
+    'dmaic.res.report-dirty': (
+        'Enregistrez la fiche : le rapport reprend ce qui est enregistré.',
+        'Save the sheet first: the report uses what is saved.',
+        'Guarde la ficha: el informe recoge lo guardado.',
+        'احفظ البطاقة: يعتمد التقرير على ما هو محفوظ.',
+        'シートを保存してください。報告書は保存済みの内容を使います。',
+        '请先保存表格：报告使用已保存的内容。'),
+    'dmaic.res.report-failed': (
+        "Le rapport n'a pas pu être produit.", 'The report could not be produced.', 'No se pudo generar el informe.',
+        'تعذّر إنشاء التقرير.', '報告書を作成できませんでした。', '无法生成报告。'),
+    'dmaic.res.pending': ('Fiche modifiée', 'Sheet changed', 'Ficha modificada', 'تم تعديل البطاقة', 'シートが変更されました', '表格已修改'),
+    'dmaic.res.saved': (
+        'Fiche de résolution enregistrée.', 'Resolution sheet saved.', 'Ficha de resolución guardada.',
+        'تم حفظ بطاقة الحل.', '解決シートを保存しました。', '解决表已保存。'),
+    'dmaic.res.save-failed': (
+        "La fiche n'a pas pu être enregistrée.", 'The sheet could not be saved.', 'No se pudo guardar la ficha.',
+        'تعذّر حفظ البطاقة.', 'シートを保存できませんでした。', '无法保存表格。'),
+    'dmaic.res.problem.dates': (
+        'La date de fermeture ne peut pas précéder la date de création.', 'The closing date cannot be before the creation date.',
+        'La fecha de cierre no puede ser anterior a la de creación.', 'لا يمكن أن يسبق تاريخ الإغلاق تاريخ الإنشاء.',
+        '終了日を作成日より前にすることはできません。', '关闭日期不能早于创建日期。'),
+    'dmaic.res.problem.percent': (
+        "L'avancement d'une action est un nombre entier de 0 à 100.", 'Action progress is a whole number from 0 to 100.',
+        'El avance de una acción es un número entero de 0 a 100.', 'تقدّم الإجراء عدد صحيح من 0 إلى 100.',
+        'アクションの進捗は 0〜100 の整数です。', '行动进度是 0 到 100 的整数。'),
+    'dmaic.res.problem.planned': (
+        'Une action ne peut pas être prévue avant sa date de création.', 'An action cannot be planned before its creation date.',
+        'Una acción no puede preverse antes de su fecha de creación.', 'لا يمكن التخطيط لإجراء قبل تاريخ إنشائه.',
+        'アクションの予定日を作成日より前にすることはできません。', '行动的计划日期不能早于其创建日期。'),
+
+    # ----- reclamation -----
+    'dmaic.res.claim': ('Réclamation', 'Claim', 'Reclamación', 'الشكوى', 'クレーム', '投诉'),
+    'dmaic.res.client': ('Client ou projet', 'Customer or project', 'Cliente o proyecto', 'العميل أو المشروع', '顧客またはプロジェクト', '客户或项目'),
+    'dmaic.res.claim-number': ('N° de réclamation', 'Claim number', 'N.º de reclamación', 'رقم الشكوى', 'クレーム番号', '投诉编号'),
+    'dmaic.res.owner': ('Propriétaire du problème', 'Problem owner', 'Responsable del problema', 'مالك المشكلة', '問題の責任者', '问题负责人'),
+    'dmaic.res.opened-on': ('Date de création', 'Creation date', 'Fecha de creación', 'تاريخ الإنشاء', '作成日', '创建日期'),
+    'dmaic.res.closed-on': ('Date de fermeture', 'Closing date', 'Fecha de cierre', 'تاريخ الإغلاق', '終了日', '关闭日期'),
+    'dmaic.res.severity': ('Sévérité', 'Severity', 'Gravedad', 'الخطورة', '重大度', '严重程度'),
+    'dmaic.res.none': ('— Non renseignée —', '— Not set —', '— Sin indicar —', '— غير محدد —', '— 未設定 —', '— 未填写 —'),
+    'dmaic.res.failure-type': ('Type de défaillance', 'Failure type', 'Tipo de fallo', 'نوع العطل', '不具合の種類', '失效类型'),
+    'dmaic.res.team': ("Membres de l'équipe", 'Team members', 'Miembros del equipo', 'أعضاء الفريق', 'チームメンバー', '团队成员'),
+    'dmaic.res.team-remove': ("Retirer de l'équipe", 'Remove from the team', 'Quitar del equipo', 'إزالة من الفريق', 'チームから外す', '移出团队'),
+    'dmaic.res.team-empty': ("Personne pour l'instant.", 'Nobody yet.', 'Nadie por ahora.', 'لا أحد حتى الآن.', 'まだ誰もいません。', '暂无成员。'),
+    'dmaic.res.team-add': ('Ajouter un membre', 'Add a member', 'Añadir un miembro', 'إضافة عضو', 'メンバーを追加', '添加成员'),
+    'dmaic.res.symptoms': (
+        'Symptômes constatés par le client', 'Symptoms observed by the customer', 'Síntomas observados por el cliente',
+        'الأعراض التي لاحظها العميل', '顧客が確認した症状', '客户观察到的症状'),
+
+    # ----- phases -----
+    'dmaic.res.more': ('En savoir plus', 'Learn more', 'Más información', 'اعرف المزيد', '詳しく見る', '了解更多'),
+    'dmaic.res.section.define': ('Définir', 'Define', 'Definir', 'التعريف', '定義', '定义'),
+    'dmaic.res.section.define-lead': (
+        'Un problème bien défini est un problème à moitié résolu.', 'A well-defined problem is a problem half solved.',
+        'Un problema bien definido está medio resuelto.', 'المشكلة المحددة جيدًا نصف محلولة.',
+        'よく定義された問題は半分解決したも同然です。', '定义清楚的问题已经解决了一半。'),
+    'dmaic.res.section.define-more': (
+        "Les problèmes viennent des indicateurs internes, des retours des clients et des employés, des vérifications par rapport aux normes. Nommez l'équipe, le rôle de chacun et les limites de son champ d'action. L'énoncé du problème fixe la portée du travail et dit ce qui est attendu de l'équipe. Allez voir sur place, parlez avec les gens, recueillez des faits, visualisez le problème.",
+        'Problems come from internal indicators, customer and employee feedback, and checks against standards. Name the team, each person’s role and the limits of its scope. The problem statement sets the scope of the work and says what is expected of the team. Go and see, talk to people, gather facts, visualise the problem.',
+        'Los problemas provienen de indicadores internos, de los comentarios de clientes y empleados y de las verificaciones frente a las normas. Nombre al equipo, el papel de cada uno y los límites de su alcance. El enunciado del problema fija el alcance del trabajo y lo que se espera del equipo. Vaya al lugar, hable con la gente, reúna hechos, visualice el problema.',
+        'تأتي المشكلات من المؤشرات الداخلية وملاحظات العملاء والموظفين والتحقق من المطابقة للمعايير. سمِّ الفريق ودور كل فرد وحدود نطاقه. يحدد بيان المشكلة نطاق العمل وما هو متوقع من الفريق. اذهب إلى الموقع، تحدث مع الناس، اجمع الوقائع، وتصوّر المشكلة.',
+        '問題は社内指標、顧客や従業員の声、規格に対する検証から見つかります。チーム、各自の役割、活動範囲の限界を決めてください。問題記述は作業範囲とチームに期待されることを示します。現場に行き、人と話し、事実を集め、問題を見える化しましょう。',
+        '问题来源于内部指标、客户和员工的反馈以及对照标准的检查。确定团队、每个人的角色及其职责范围。问题陈述确定工作范围并说明对团队的期望。到现场去看，与人交谈，收集事实，让问题可视化。'),
+    'dmaic.res.section.measure': ('Mesurer', 'Measure', 'Medir', 'القياس', '測定', '测量'),
+    'dmaic.res.section.measure-lead': (
+        "Mettre en place les moyens de mesure, pour collecter les données qui démontreront l'atteinte des objectifs.",
+        'Set up the means of measurement to collect the data that will show the objectives are met.',
+        'Establecer los medios de medición para recoger los datos que demostrarán el logro de los objetivos.',
+        'وضع وسائل القياس لجمع البيانات التي ستثبت تحقيق الأهداف.',
+        '目標の達成を示すデータを集めるため、測定手段を整えます。',
+        '建立测量手段，收集能证明目标达成的数据。'),
+    'dmaic.res.section.measure-more': (
+        "Les systèmes de mesure et les données de cette phase servent deux fois : à trouver la cause racine du problème, puis à démontrer l'efficacité de la démarche.",
+        'The measurement systems and data of this phase serve twice: to find the root cause of the problem, then to show the approach works.',
+        'Los sistemas de medición y los datos de esta fase sirven dos veces: para encontrar la causa raíz del problema y luego para demostrar la eficacia del método.',
+        'تُستخدم أنظمة القياس وبيانات هذه المرحلة مرتين: لإيجاد السبب الجذري للمشكلة، ثم لإثبات فعالية النهج.',
+        'この段階の測定システムとデータは二度役立ちます。問題の根本原因を見つけるため、そして取り組みの有効性を示すためです。',
+        '本阶段的测量系统和数据有两个用途：找出问题的根本原因，以及证明方法的有效性。'),
+    'dmaic.res.section.measure-summary': ('Synthèse des mesures', 'Measurement summary', 'Síntesis de las mediciones', 'ملخص القياسات', '測定のまとめ', '测量汇总'),
+    'dmaic.res.section.contain': (
+        'Analyser — contenir le problème', 'Analyse — contain the problem', 'Analizar — contener el problema',
+        'التحليل — احتواء المشكلة', '分析 — 問題の封じ込め', '分析 — 遏制问题'),
+    'dmaic.res.section.contain-lead': (
+        "Mesures conservatoires pour contenir le problème jusqu'à ce que les actions correctives définitives soient en place.",
+        'Containment measures to hold the problem until the permanent corrective actions are in place.',
+        'Medidas de contención para contener el problema hasta que las acciones correctivas definitivas estén implantadas.',
+        'إجراءات احتوائية لاحتواء المشكلة حتى تُنفَّذ الإجراءات التصحيحية النهائية.',
+        '恒久的な是正処置が整うまで問題を封じ込める暫定処置です。',
+        '在永久纠正措施落实之前遏制问题的临时措施。'),
+    'dmaic.res.section.contain-more': (
+        "Le confinement passe avant l'analyse : tant que la cause n'est pas traitée, il protège le client des produits suspects, y compris ceux encore en fabrication.",
+        'Containment comes before analysis: until the cause is dealt with, it protects the customer from suspect products, including those still being made.',
+        'La contención va antes del análisis: mientras la causa no se trate, protege al cliente de los productos sospechosos, incluidos los que aún se fabrican.',
+        'يسبق الاحتواء التحليل: ما دام السبب لم يُعالَج، فإنه يحمي العميل من المنتجات المشتبه بها، بما فيها تلك التي ما زالت قيد التصنيع.',
+        '封じ込めは分析より先に行います。原因が処置されるまで、製造中のものも含め、疑わしい製品から顧客を守ります。',
+        '遏制先于分析：在原因得到处理之前，它保护客户免受可疑产品影响，包括仍在生产中的产品。'),
+    'dmaic.res.section.contain-summary': ('Mesures conservatoires', 'Containment measures', 'Medidas de contención', 'الإجراءات الاحتوائية', '暫定処置', '临时措施'),
+    'dmaic.res.section.analyze': (
+        'Analyser — les causes', 'Analyse — the causes', 'Analizar — las causas', 'التحليل — الأسباب', '分析 — 原因', '分析 — 原因'),
+    'dmaic.res.section.analyze-lead': (
+        'Trouver les causes racines est le cœur de la résolution. Testez chaque cause possible plutôt que de traiter les symptômes.',
+        'Finding the root causes is the heart of problem solving. Test every possible cause rather than treating the symptoms.',
+        'Encontrar las causas raíz es el núcleo de la resolución. Pruebe cada causa posible en lugar de tratar los síntomas.',
+        'إيجاد الأسباب الجذرية هو جوهر الحل. اختبر كل سبب محتمل بدلًا من معالجة الأعراض.',
+        '根本原因の特定が問題解決の核心です。症状に対処するのではなく、考えられる原因を一つずつ検証してください。',
+        '找出根本原因是解决问题的核心。逐一验证每个可能的原因，而不是处理症状。'),
+    'dmaic.res.section.analyze-more': (
+        "Les causes apparentes sont souvent des symptômes ; les causes racines, celles qui les ont permis, sont ancrées dans le processus. Une fois connues, les solutions deviennent souvent évidentes. Tenez-vous loin de l'« erreur humaine » comme cause : c'est le signe qu'un processus n'était pas assez clair.",
+        'Apparent causes are often symptoms; the root causes, the ones that allowed them, are embedded in the process. Once they are known, solutions often become obvious. Stay away from “human error” as a cause: it is a sign that a process was not clear enough.',
+        'Las causas aparentes suelen ser síntomas; las causas raíz, las que los permitieron, están arraigadas en el proceso. Una vez conocidas, las soluciones suelen ser evidentes. Evite el «error humano» como causa: es señal de que un proceso no era lo bastante claro.',
+        'الأسباب الظاهرة غالبًا ما تكون أعراضًا؛ أما الأسباب الجذرية، التي سمحت بها، فهي متجذرة في العملية. عند معرفتها تصبح الحلول واضحة في الغالب. ابتعد عن «الخطأ البشري» كسبب: فهو علامة على أن العملية لم تكن واضحة بما يكفي.',
+        '見かけの原因は多くの場合症状にすぎず、それを許した根本原因はプロセスに根付いています。根本原因が分かれば、解決策は明らかになることが多いです。「ヒューマンエラー」を原因にするのは避けてください。プロセスが十分に明確でなかった兆候です。',
+        '表面原因往往只是症状；导致它们的根本原因深植于过程之中。一旦找到，解决方案往往显而易见。不要把“人为错误”当作原因：这说明某个过程不够清晰。'),
+    'dmaic.res.section.analyze-summary': ('Cause racine', 'Root cause', 'Causa raíz', 'السبب الجذري', '根本原因', '根本原因'),
+    'dmaic.res.section.improve': ('Améliorer', 'Improve', 'Mejorar', 'التحسين', '改善', '改进'),
+    'dmaic.res.section.improve-lead': (
+        "Choisir la meilleure solution, ou un ensemble de solutions robustes et rentables, et piloter leur mise en place par le plan d'actions.",
+        'Choose the best solution, or a set of robust and cost-effective solutions, and steer their roll-out with the action plan.',
+        'Elegir la mejor solución, o un conjunto de soluciones robustas y rentables, y pilotar su implantación con el plan de acciones.',
+        'اختر أفضل حل، أو مجموعة من الحلول المتينة والمجدية، وقُد تنفيذها عبر خطة الإجراءات.',
+        '最善の解決策、または堅牢で費用対効果の高い解決策の組み合わせを選び、行動計画で導入を管理します。',
+        '选择最佳方案，或一组稳健且经济的方案，并通过行动计划推进落实。'),
+    'dmaic.res.section.improve-more': (
+        "Développez autant de solutions que possible, avec des personnes aux points de vue différents, sans les juger trop tôt. Si aucune solution n'apparaît, la cause racine n'est sans doute pas trouvée. Le plan d'actions dit ce qui doit être fait, par qui et pour quand.",
+        'Develop as many solutions as possible, with people of different viewpoints, without judging them too early. If no solution appears, the root cause has probably not been found. The action plan says what must be done, by whom and by when.',
+        'Desarrolle tantas soluciones como sea posible, con personas de puntos de vista distintos, sin juzgarlas demasiado pronto. Si no aparece ninguna solución, probablemente no se ha encontrado la causa raíz. El plan de acciones dice qué hay que hacer, quién y para cuándo.',
+        'طوّر أكبر عدد ممكن من الحلول مع أشخاص ذوي وجهات نظر مختلفة، دون الحكم عليها مبكرًا. إذا لم يظهر أي حل، فالأرجح أن السبب الجذري لم يُعثر عليه. تحدد خطة الإجراءات ما يجب فعله ومن يفعله ومتى.',
+        '異なる視点を持つ人々とともに、早すぎる評価をせず、できるだけ多くの解決策を出してください。解決策が見えないなら、根本原因はおそらく見つかっていません。行動計画は、何を、誰が、いつまでに行うかを示します。',
+        '与观点各异的人一起提出尽可能多的方案，不要过早评判。如果找不到方案，很可能还没有找到根本原因。行动计划说明要做什么、由谁做、何时完成。'),
+    'dmaic.res.section.improve-summary': ('Solutions retenues', 'Selected solutions', 'Soluciones elegidas', 'الحلول المعتمدة', '採用した解決策', '选定的方案'),
+    'dmaic.res.section.control': ('Contrôler', 'Control', 'Controlar', 'المراقبة', '管理', '控制'),
+    'dmaic.res.section.control-lead': (
+        "Vérifier et valider que le problème est contenu dans la durée, avec un plan de surveillance qui soutient l'amélioration.",
+        'Check and confirm that the problem stays contained over time, with a monitoring plan that sustains the improvement.',
+        'Verificar y validar que el problema queda contenido a largo plazo, con un plan de vigilancia que sostenga la mejora.',
+        'التحقق والتأكد من أن المشكلة تبقى محتواة على المدى الطويل، مع خطة مراقبة تدعم التحسين.',
+        '改善を支える監視計画により、問題が長期的に抑えられていることを検証し、妥当性を確認します。',
+        '核实并确认问题得到长期控制，并以监控计划巩固改进成果。'),
+    'dmaic.res.section.control-more': (
+        "Vérifier, c'est tester que la solution produit le résultat voulu ; valider, c'est s'assurer qu'elle résout vraiment le problème. Quand c'est acquis, l'équipe mérite d'être reconnue pour son travail.",
+        'Verifying means testing that the solution gives the intended result; validating means making sure it really solves the problem. Once that is achieved, the team deserves recognition for its work.',
+        'Verificar es comprobar que la solución da el resultado esperado; validar es asegurarse de que realmente resuelve el problema. Una vez logrado, el equipo merece reconocimiento por su trabajo.',
+        'التحقق يعني اختبار أن الحل يعطي النتيجة المرجوة؛ والتصديق يعني التأكد من أنه يحل المشكلة فعلًا. عند تحقق ذلك، يستحق الفريق التقدير على عمله.',
+        '検証とは解決策が意図した結果を出すことを確かめること、妥当性確認とは本当に問題を解決していることを確かめることです。それが達成されたら、チームの働きを称えましょう。',
+        '验证是检验方案能否产生预期结果；确认是确保它真正解决了问题。达成后，团队的工作值得认可。'),
+    'dmaic.res.section.control-summary': ('Plan de surveillance', 'Monitoring plan', 'Plan de vigilancia', 'خطة المراقبة', '監視計画', '监控计划'),
+    'dmaic.res.topic.what': ('Quoi', 'What', 'Qué', 'ماذا', '何が', '什么'),
+    'dmaic.res.topic.who': ('Qui', 'Who', 'Quién', 'من', '誰が', '谁'),
+    'dmaic.res.topic.why': ('Pourquoi', 'Why', 'Por qué', 'لماذا', 'なぜ', '为什么'),
+    'dmaic.res.topic.where': ('Où', 'Where', 'Dónde', 'أين', 'どこで', '哪里'),
+    'dmaic.res.topic.when': ('Quand', 'When', 'Cuándo', 'متى', 'いつ', '何时'),
+    'dmaic.res.topic.how-many': ('Combien', 'How many', 'Cuántos', 'كم', 'どれだけ', '多少'),
+    'dmaic.res.answer.yes': ('Oui', 'Yes', 'Sí', 'نعم', 'はい', '是'),
+    'dmaic.res.answer.no': ('Non', 'No', 'No', 'لا', 'いいえ', '否'),
+    'dmaic.res.answer.na': ('Sans objet', 'Not applicable', 'No aplica', 'لا ينطبق', '該当なし', '不适用'),
+    'dmaic.res.answer.unknown': ('Inconnu', 'Unknown', 'Desconocido', 'غير معروف', '不明', '未知'),
+    'dmaic.res.answer-type.text': ('Texte libre', 'Free text', 'Texto libre', 'نص حر', '自由記述', '自由文本'),
+    'dmaic.res.answer-type.yes-no': ('Oui / Non', 'Yes / No', 'Sí / No', 'نعم / لا', 'はい / いいえ', '是 / 否'),
+    'dmaic.res.answer-type.yes-no-na': (
+        'Oui / Non / Sans objet', 'Yes / No / Not applicable', 'Sí / No / No aplica', 'نعم / لا / لا ينطبق',
+        'はい / いいえ / 該当なし', '是 / 否 / 不适用'),
+    'dmaic.res.answer-type.yes-no-unknown': (
+        'Oui / Non / Inconnu', 'Yes / No / Unknown', 'Sí / No / Desconocido', 'نعم / لا / غير معروف',
+        'はい / いいえ / 不明', '是 / 否 / 未知'),
+
+    # ----- Ishikawa -----
+    'dmaic.res.ishikawa': ("Diagramme d'Ishikawa", 'Ishikawa diagram', 'Diagrama de Ishikawa', 'مخطط إيشيكاوا', '石川ダイアグラム', '石川图'),
+    'dmaic.res.ishikawa-none': ('— Aucun —', '— None —', '— Ninguno —', '— لا شيء —', '— なし —', '— 无 —'),
+    'dmaic.res.ishikawa-open': ('Ouvrir le diagramme', 'Open the diagram', 'Abrir el diagrama', 'فتح المخطط', 'ダイアグラムを開く', '打开图表'),
+    'dmaic.res.ishikawa-new': ('Créer un diagramme', 'Create a diagram', 'Crear un diagrama', 'إنشاء مخطط', 'ダイアグラムを作成', '创建图表'),
+
+    # ----- 5 pourquoi -----
+    'dmaic.res.whys': ('5 pourquoi', '5 whys', '5 porqués', 'لماذا الخمسة', 'なぜなぜ分析', '5 个为什么'),
+    'dmaic.res.whys-lead': (
+        'Trois questions, trois chaînes de pourquoi. Marquez celles qui mènent à une cause racine et notez leur action.',
+        'Three questions, three chains of whys. Mark those that lead to a root cause and note their action.',
+        'Tres preguntas, tres cadenas de porqués. Marque las que llevan a una causa raíz y anote su acción.',
+        'ثلاثة أسئلة، ثلاث سلاسل من «لماذا». ميّز تلك التي تقود إلى سبب جذري وسجّل إجراءها.',
+        '3 つの問い、3 本のなぜの連鎖。根本原因につながるものに印を付け、その対策を記入します。',
+        '三个问题，三条“为什么”链。标出通向根本原因的链并记录其行动。'),
+    'dmaic.res.branch.occurrence': ('Apparition', 'Occurrence', 'Aparición', 'الحدوث', '発生', '发生'),
+    'dmaic.res.branch.occurrence-q': (
+        'Pourquoi le défaut est-il apparu ?', 'Why did the defect occur?', '¿Por qué apareció el defecto?',
+        'لماذا ظهر العيب؟', 'なぜ不具合が発生したのか？', '缺陷为什么会发生？'),
+    'dmaic.res.branch.detection': ('Non-détection', 'Non-detection', 'No detección', 'عدم الكشف', '未検出', '未检出'),
+    'dmaic.res.branch.detection-q': (
+        "Pourquoi a-t-il échappé jusqu'au client ?", 'Why did it reach the customer undetected?',
+        '¿Por qué llegó hasta el cliente sin detectarse?', 'لماذا وصل إلى العميل دون اكتشافه؟',
+        'なぜ顧客まで流出したのか？', '为什么它未被发现就到了客户手中？'),
+    'dmaic.res.branch.systemic': ('Système', 'System', 'Sistema', 'النظام', 'システム', '体系'),
+    'dmaic.res.branch.systemic-q': (
+        "Pourquoi le système l'a-t-il permis ?", 'Why did the system allow it?', '¿Por qué lo permitió el sistema?',
+        'لماذا سمح النظام بذلك؟', 'なぜシステムがそれを許したのか？', '体系为什么允许它发生？'),
+    'dmaic.res.why-cause': ('Constat', 'Finding', 'Constatación', 'الملاحظة', '事象', '现象'),
+    'dmaic.res.why-n': ('Pourquoi', 'Why', 'Por qué', 'لماذا', 'なぜ', '为什么'),
+    'dmaic.res.why-remove': ('Retirer ce pourquoi', 'Remove this why', 'Quitar este porqué', 'إزالة هذا السؤال', 'このなぜを削除', '删除此为什么'),
+    'dmaic.res.why-add': ('Pourquoi suivant', 'Next why', 'Siguiente porqué', 'لماذا التالي', '次のなぜ', '下一个为什么'),
+    'dmaic.res.why-root': ("C'est une cause racine", 'This is a root cause', 'Es una causa raíz', 'هذا سبب جذري', 'これは根本原因です', '这是根本原因'),
+    'dmaic.res.why-action': ('Action', 'Action', 'Acción', 'الإجراء', '対策', '行动'),
+    'dmaic.res.chain-remove': ('Retirer la chaîne', 'Remove the chain', 'Quitar la cadena', 'إزالة السلسلة', '連鎖を削除', '删除此链'),
+    'dmaic.res.chain-empty': ('Aucune chaîne.', 'No chain.', 'Ninguna cadena.', 'لا توجد سلسلة.', '連鎖はありません。', '暂无链。'),
+    'dmaic.res.chain-add': ('Ajouter une chaîne', 'Add a chain', 'Añadir una cadena', 'إضافة سلسلة', '連鎖を追加', '添加链'),
+
+    # ----- plan d'actions -----
+    'dmaic.res.actions': ("Plan d'actions", 'Action plan', 'Plan de acciones', 'خطة الإجراءات', '行動計画', '行动计划'),
+    'dmaic.res.actions-lead': (
+        'Ce qui doit être fait, par qui, pour quand.', 'What must be done, by whom, by when.',
+        'Qué hay que hacer, quién y para cuándo.', 'ما يجب فعله، ومن يفعله، ومتى.', '何を、誰が、いつまでに。', '做什么、由谁做、何时完成。'),
+    'dmaic.res.action-add': ('Ajouter une action', 'Add an action', 'Añadir una acción', 'إضافة إجراء', 'アクションを追加', '添加行动'),
+    'dmaic.res.actions-empty': (
+        'Aucune action. Ajoutez la première pour piloter les solutions retenues.',
+        'No action yet. Add the first one to steer the selected solutions.',
+        'Ninguna acción. Añada la primera para pilotar las soluciones elegidas.',
+        'لا توجد إجراءات. أضف الأول لقيادة الحلول المعتمدة.',
+        'アクションはありません。採用した解決策を進めるため、最初のアクションを追加してください。',
+        '暂无行动。添加第一项以推进选定的方案。'),
+    'dmaic.res.action': ('Action', 'Action', 'Acción', 'الإجراء', 'アクション', '行动'),
+    'dmaic.res.action-remove': ("Retirer l'action", 'Remove the action', 'Quitar la acción', 'إزالة الإجراء', 'アクションを削除', '删除行动'),
+    'dmaic.res.responsible': ('Responsable', 'Owner', 'Responsable', 'المسؤول', '担当者', '负责人'),
+    'dmaic.res.planned-on': ('Prévue le', 'Planned for', 'Prevista el', 'مخطط في', '予定日', '计划日期'),
+    'dmaic.res.done-on': ('Réalisée le', 'Done on', 'Realizada el', 'أُنجز في', '完了日', '完成日期'),
+    'dmaic.res.percent': ('Avancement (%)', 'Progress (%)', 'Avance (%)', 'التقدم (%)', '進捗（%）', '进度（%）'),
+    'dmaic.res.created-on': ('Créée le', 'Created on', 'Creada el', 'أُنشئ في', '作成日', '创建日期'),
+    'dmaic.res.notes': ('Notes', 'Notes', 'Notas', 'ملاحظات', 'メモ', '备注'),
+    'dmaic.res.action-status.open': ('Ouvert', 'Open', 'Abierta', 'مفتوح', '未着手', '待处理'),
+    'dmaic.res.action-status.in-progress': ('En cours', 'In progress', 'En curso', 'قيد التنفيذ', '進行中', '进行中'),
+    'dmaic.res.action-status.in-review': ('En revue', 'In review', 'En revisión', 'قيد المراجعة', 'レビュー中', '审核中'),
+    'dmaic.res.action-status.closed': ('Clos', 'Closed', 'Cerrada', 'مغلق', '完了', '已关闭'),
+
+    # ----- photos -----
+    'dmaic.res.photos': ('Photos', 'Photos', 'Fotos', 'الصور', '写真', '照片'),
+    'dmaic.res.photos-lead': (
+        "Six emplacements, une remarque par photo. JPEG, PNG, GIF ou WEBP, 10 Mo au plus. Une photo est enregistrée dès qu'elle est versée.",
+        'Six slots, one remark per photo. JPEG, PNG, GIF or WEBP, 10 MB at most. A photo is saved as soon as it is uploaded.',
+        'Seis espacios, una observación por foto. JPEG, PNG, GIF o WEBP, 10 MB como máximo. Una foto se guarda en cuanto se sube.',
+        'ست خانات، ملاحظة لكل صورة. JPEG أو PNG أو GIF أو WEBP، بحد أقصى 10 ميغابايت. تُحفظ الصورة فور رفعها.',
+        '6 枠、写真ごとにコメント 1 件。JPEG、PNG、GIF、WEBP、最大 10 MB。写真はアップロードした時点で保存されます。',
+        '六个位置，每张照片一条备注。JPEG、PNG、GIF 或 WEBP，最大 10 MB。照片上传后即保存。'),
+    'dmaic.res.photo.alt': ('Photo {$slot}', 'Photo {$slot}', 'Foto {$slot}', 'الصورة {$slot}', '写真 {$slot}', '照片 {$slot}'),
+    'dmaic.res.photo.remark': ('Remarque', 'Remark', 'Observación', 'ملاحظة', 'コメント', '备注'),
+    'dmaic.res.photo.replace': ('Remplacer', 'Replace', 'Sustituir', 'استبدال', '差し替え', '替换'),
+    'dmaic.res.photo.delete': ('Retirer', 'Remove', 'Quitar', 'إزالة', '削除', '移除'),
+    'dmaic.res.photo.add': ('Ajouter la photo', 'Add photo', 'Añadir la foto', 'إضافة الصورة', '写真を追加', '添加照片'),
+    'dmaic.res.photo.none': ('Pas de photo', 'No photo', 'Sin foto', 'لا توجد صورة', '写真なし', '无照片'),
+    'dmaic.res.photo.bad-type': (
+        'Format refusé : JPEG, PNG, GIF ou WEBP uniquement.', 'Format not accepted: JPEG, PNG, GIF or WEBP only.',
+        'Formato rechazado: solo JPEG, PNG, GIF o WEBP.', 'صيغة مرفوضة: JPEG أو PNG أو GIF أو WEBP فقط.',
+        '対応していない形式です。JPEG、PNG、GIF、WEBP のみ。', '格式不支持：仅限 JPEG、PNG、GIF 或 WEBP。'),
+    'dmaic.res.photo.too-big': (
+        'La photo dépasse 10 Mo.', 'The photo is larger than 10 MB.', 'La foto supera los 10 MB.',
+        'تتجاوز الصورة 10 ميغابايت.', '写真が 10 MB を超えています。', '照片超过 10 MB。'),
+    'dmaic.res.photo.storage-off': (
+        "Le stockage des photos n'est pas disponible sur cette installation.", 'Photo storage is not available on this installation.',
+        'El almacenamiento de fotos no está disponible en esta instalación.', 'تخزين الصور غير متاح في هذا التثبيت.',
+        'このインストールでは写真の保存を利用できません。', '此安装不提供照片存储。'),
+    'dmaic.res.photo.upload-failed': (
+        "La photo n'a pas pu être versée.", 'The photo could not be uploaded.', 'No se pudo subir la foto.',
+        'تعذّر رفع الصورة.', '写真をアップロードできませんでした。', '无法上传照片。'),
+    'dmaic.res.photo.remark-failed': (
+        "La remarque n'a pas pu être enregistrée.", 'The remark could not be saved.', 'No se pudo guardar la observación.',
+        'تعذّر حفظ الملاحظة.', 'コメントを保存できませんでした。', '无法保存备注。'),
+    'dmaic.res.photo.delete-title': ('Retirer la photo ?', 'Remove the photo?', '¿Quitar la foto?', 'إزالة الصورة؟', '写真を削除しますか？', '移除照片？'),
+    'dmaic.res.photo.delete-message': (
+        'La photo et sa remarque seront retirées de la fiche.', 'The photo and its remark will be removed from the sheet.',
+        'La foto y su observación se quitarán de la ficha.', 'ستُزال الصورة وملاحظتها من البطاقة.',
+        '写真とそのコメントがシートから削除されます。', '照片及其备注将从表格中移除。'),
+    'dmaic.res.photo.delete-failed': (
+        "La photo n'a pas pu être retirée.", 'The photo could not be removed.', 'No se pudo quitar la foto.',
+        'تعذّرت إزالة الصورة.', '写真を削除できませんでした。', '无法移除照片。'),
+
+    # ----- parametres (administrateur) -----
+    'dmaic.settings.title': ('Paramètres DMAIC', 'DMAIC settings', 'Parámetros DMAIC', 'إعدادات DMAIC', 'DMAIC 設定', 'DMAIC 设置'),
+    'dmaic.settings.subtitle': (
+        'Le questionnaire de la fiche de résolution, les types de défaillance et les sévérités.',
+        'The resolution sheet questionnaire, failure types and severities.',
+        'El cuestionario de la ficha de resolución, los tipos de fallo y las gravedades.',
+        'استبيان بطاقة الحل وأنواع الأعطال ومستويات الخطورة.',
+        '解決シートの質問票、不具合の種類、重大度。', '解决表的问卷、失效类型和严重程度。'),
+    'dmaic.settings.reset-action': (
+        'Valeurs de la plateforme', 'Platform defaults', 'Valores de la plataforma', 'قيم المنصة', 'プラットフォームの既定値', '平台默认值'),
+    'dmaic.settings.load-failed': (
+        "Les paramètres DMAIC n'ont pas pu être chargés.", 'DMAIC settings could not be loaded.',
+        'No se pudieron cargar los parámetros DMAIC.', 'تعذّر تحميل إعدادات DMAIC.', 'DMAIC 設定を読み込めませんでした。', '无法加载 DMAIC 设置。'),
+    'dmaic.settings.scope': (
+        'Une question se reconnaît à son code : en changer le libellé garde les réponses déjà données ; la retirer les cache sans les effacer.',
+        'A question is identified by its code: changing its wording keeps the answers already given; removing it hides them without deleting them.',
+        'Una pregunta se reconoce por su código: cambiar su texto conserva las respuestas ya dadas; quitarla las oculta sin borrarlas.',
+        'يُعرَف السؤال برمزه: تغيير صياغته يحتفظ بالإجابات السابقة؛ وإزالته تخفيها دون حذفها.',
+        '質問はコードで識別されます。文言を変えても既存の回答は残り、質問を削除すると回答は消去されず非表示になります。',
+        '问题以代码识别：修改措辞会保留已有回答；删除问题会隐藏回答而不删除。'),
+    'dmaic.settings.defaults': (
+        "Ce sont aujourd'hui les valeurs de la plateforme, reprises du classeur.",
+        'These are currently the platform defaults, taken from the workbook.',
+        'Actualmente son los valores de la plataforma, tomados del libro de trabajo.',
+        'هذه حاليًا قيم المنصة، مأخوذة من المصنف.',
+        '現在はワークブックから取り込んだプラットフォームの既定値です。', '当前为取自工作簿的平台默认值。'),
+    'dmaic.settings.questions': ('Questionnaire', 'Questionnaire', 'Cuestionario', 'الاستبيان', '質問票', '问卷'),
+    'dmaic.settings.questions-help': (
+        "Les questions de chaque phase, dans l'ordre de la fiche.", 'The questions of each phase, in sheet order.',
+        'Las preguntas de cada fase, en el orden de la ficha.', 'أسئلة كل مرحلة، بترتيب البطاقة.',
+        '各フェーズの質問（シートの順）。', '各阶段的问题，按表格顺序排列。'),
+    'dmaic.settings.phases': ('Phases', 'Phases', 'Fases', 'المراحل', 'フェーズ', '阶段'),
+    'dmaic.settings.code': ('Code', 'Code', 'Código', 'الرمز', 'コード', '代码'),
+    'dmaic.settings.question': ('Question', 'Question', 'Pregunta', 'السؤال', '質問', '问题'),
+    'dmaic.settings.topic': ('Rubrique', 'Topic', 'Apartado', 'المحور', '項目', '类别'),
+    'dmaic.settings.no-topic': ('Sans rubrique', 'No topic', 'Sin apartado', 'بدون محور', '項目なし', '无类别'),
+    'dmaic.settings.answer-type': ('Réponse', 'Answer', 'Respuesta', 'الإجابة', '回答', '回答'),
+    'dmaic.settings.up': ('Monter', 'Move up', 'Subir', 'تحريك لأعلى', '上へ', '上移'),
+    'dmaic.settings.down': ('Descendre', 'Move down', 'Bajar', 'تحريك لأسفل', '下へ', '下移'),
+    'dmaic.settings.remove': ('Retirer', 'Remove', 'Quitar', 'إزالة', '削除', '移除'),
+    'dmaic.settings.no-question-here': (
+        'Aucune question dans cette phase.', 'No question in this phase.', 'Ninguna pregunta en esta fase.',
+        'لا توجد أسئلة في هذه المرحلة.', 'このフェーズに質問はありません。', '此阶段没有问题。'),
+    'dmaic.settings.add-question': ('Ajouter une question', 'Add a question', 'Añadir una pregunta', 'إضافة سؤال', '質問を追加', '添加问题'),
+    'dmaic.settings.severities': ('Sévérités', 'Severities', 'Gravedades', 'مستويات الخطورة', '重大度', '严重程度'),
+    'dmaic.settings.severities-help': (
+        'Du plus grave (1) au moins grave.', 'From most severe (1) to least severe.', 'De la más grave (1) a la menos grave.',
+        'من الأشد خطورة (1) إلى الأقل.', '最も重大（1）から軽微な順。', '从最严重（1）到最轻。'),
+    'dmaic.settings.level': ('Niveau', 'Level', 'Nivel', 'المستوى', 'レベル', '级别'),
+    'dmaic.settings.label': ('Libellé', 'Label', 'Etiqueta', 'التسمية', 'ラベル', '名称'),
+    'dmaic.settings.add-severity': ('Ajouter un niveau', 'Add a level', 'Añadir un nivel', 'إضافة مستوى', 'レベルを追加', '添加级别'),
+    'dmaic.settings.failure-types': ('Types de défaillance', 'Failure types', 'Tipos de fallo', 'أنواع الأعطال', '不具合の種類', '失效类型'),
+    'dmaic.settings.add-failure': ('Ajouter un type', 'Add a type', 'Añadir un tipo', 'إضافة نوع', '種類を追加', '添加类型'),
+    'dmaic.settings.problem.no-question': (
+        'Gardez au moins une question.', 'Keep at least one question.', 'Mantenga al menos una pregunta.',
+        'احتفظ بسؤال واحد على الأقل.', '少なくとも 1 つの質問を残してください。', '请至少保留一个问题。'),
+    'dmaic.settings.problem.code': (
+        'Un code fait 1 à 20 caractères : lettres, chiffres, point, tiret ou soulignement.',
+        'A code is 1 to 20 characters: letters, digits, dot, hyphen or underscore.',
+        'Un código tiene de 1 a 20 caracteres: letras, cifras, punto, guion o guion bajo.',
+        'الرمز من 1 إلى 20 حرفًا: أحرف أو أرقام أو نقطة أو شرطة أو شرطة سفلية.',
+        'コードは 1〜20 文字（英字、数字、ピリオド、ハイフン、アンダースコア）です。',
+        '代码为 1 到 20 个字符：字母、数字、点、连字符或下划线。'),
+    'dmaic.settings.problem.question-dup': (
+        'Deux questions portent le même code.', 'Two questions have the same code.', 'Dos preguntas tienen el mismo código.',
+        'سؤالان يحملان الرمز نفسه.', '2 つの質問が同じコードです。', '两个问题使用了相同的代码。'),
+    'dmaic.settings.problem.failure-dup': (
+        'Deux types de défaillance portent le même code.', 'Two failure types have the same code.',
+        'Dos tipos de fallo tienen el mismo código.', 'نوعا عطل يحملان الرمز نفسه.',
+        '2 つの不具合の種類が同じコードです。', '两个失效类型使用了相同的代码。'),
+    'dmaic.settings.problem.label': (
+        "Chaque ligne a besoin d'un libellé.", 'Each line needs a label.', 'Cada línea necesita una etiqueta.',
+        'يحتاج كل سطر إلى تسمية.', '各行にラベルが必要です。', '每一行都需要名称。'),
+    'dmaic.settings.problem.no-severity': (
+        'Gardez au moins un niveau de sévérité.', 'Keep at least one severity level.', 'Mantenga al menos un nivel de gravedad.',
+        'احتفظ بمستوى خطورة واحد على الأقل.', '少なくとも 1 つの重大度を残してください。', '请至少保留一个严重程度级别。'),
+    'dmaic.settings.problem.level': (
+        'Chaque sévérité a son propre niveau, de 1 à 10.', 'Each severity has its own level, from 1 to 10.',
+        'Cada gravedad tiene su propio nivel, de 1 a 10.', 'لكل مستوى خطورة رقمه الخاص، من 1 إلى 10.',
+        '各重大度には 1〜10 の固有のレベルが必要です。', '每个严重程度都有自己的级别，从 1 到 10。'),
+    'dmaic.settings.saved': (
+        'Paramètres DMAIC enregistrés.', 'DMAIC settings saved.', 'Parámetros DMAIC guardados.',
+        'تم حفظ إعدادات DMAIC.', 'DMAIC 設定を保存しました。', 'DMAIC 设置已保存。'),
+    'dmaic.settings.save-failed': (
+        "Les paramètres DMAIC n'ont pas pu être enregistrés.", 'DMAIC settings could not be saved.',
+        'No se pudieron guardar los parámetros DMAIC.', 'تعذّر حفظ إعدادات DMAIC.',
+        'DMAIC 設定を保存できませんでした。', '无法保存 DMAIC 设置。'),
+    'dmaic.settings.reset-title': (
+        'Revenir aux valeurs de la plateforme ?', 'Go back to the platform defaults?', '¿Volver a los valores de la plataforma?',
+        'العودة إلى قيم المنصة؟', 'プラットフォームの既定値に戻しますか？', '恢复为平台默认值？'),
+    'dmaic.settings.reset-message': (
+        "Le questionnaire, les types de défaillance et les sévérités reprennent ceux du classeur d'origine. Les réponses déjà données restent en base.",
+        'The questionnaire, failure types and severities return to those of the original workbook. Answers already given are kept.',
+        'El cuestionario, los tipos de fallo y las gravedades vuelven a los del libro original. Las respuestas ya dadas se conservan.',
+        'يعود الاستبيان وأنواع الأعطال ومستويات الخطورة إلى ما في المصنف الأصلي. تبقى الإجابات السابقة محفوظة.',
+        '質問票、不具合の種類、重大度が元のワークブックの内容に戻ります。既存の回答は保持されます。',
+        '问卷、失效类型和严重程度将恢复为原始工作簿中的内容。已有回答会保留。'),
+    'dmaic.settings.reset': ('Rétablir', 'Restore', 'Restablecer', 'استعادة', '元に戻す', '恢复'),
+    'dmaic.settings.reset-done': (
+        'Valeurs de la plateforme rétablies.', 'Platform defaults restored.', 'Valores de la plataforma restablecidos.',
+        'تمت استعادة قيم المنصة.', 'プラットフォームの既定値に戻しました。', '已恢复平台默认值。'),
+}

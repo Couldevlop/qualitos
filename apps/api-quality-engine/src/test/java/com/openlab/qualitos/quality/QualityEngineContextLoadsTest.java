@@ -96,6 +96,6 @@ class QualityEngineContextLoadsTest {
     @Test
     void santeDuCourrielEteinteQuandLaBriqueEstEteinte() {
         assertThat(context.getBeanNamesForType(
-                org.springframework.boot.actuate.mail.MailHealthIndicator.class)).isEmpty();
+                org.springframework.boot.mail.health.MailHealthIndicator.class)).isEmpty();
     }
 }

@@ -9,7 +9,7 @@
           <span class="dim version">v{{ c.purposeVersion }}</span>
         </h1>
         <div class="meta-row">
-          <span [class]="statusBadge(c.status)">{{ c.status }}</span>
+          <span [class]="statusBadge(c.status)">{{ c.status | statusLabel }}</span>
           <span *ngIf="c.active" class="badge badge-active-flag" i18n="@@consents.detail.active-flag">ACTIF</span>
           <span class="dim">{{ sourceLabel(c.source) }}</span>
           <span class="dim"><span i18n="@@consents.detail.granted-on">Recueilli le</span> {{ c.grantedAt }}</span>

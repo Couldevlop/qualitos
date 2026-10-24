@@ -8,7 +8,7 @@ import com.openlab.qualitos.iot.domain.port.NonConformancePublisher;
 import com.openlab.qualitos.iot.domain.port.TelemetryRepository;
 import com.openlab.qualitos.iot.domain.port.ThresholdRegistry;
 import com.openlab.qualitos.iot.domain.service.StreamRuleEngine;
-import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.boot.restclient.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;

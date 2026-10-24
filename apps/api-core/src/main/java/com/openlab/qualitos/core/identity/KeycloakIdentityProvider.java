@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 
@@ -62,7 +63,11 @@ public class KeycloakIdentityProvider implements IdentityProvider {
 
     public KeycloakIdentityProvider(IdentityProperties props, RestClient.Builder builder, Clock clock) {
         this.props = props;
-        this.http = builder.build();
+        // Les réponses sont lues en JsonNode Jackson 2 ; Spring 7 choisit Jackson 3
+        // par défaut, d'où le convertisseur posé explicitement (ADR 0100).
+        this.http = builder
+                .configureMessageConverters(c -> c.withJsonConverter(new MappingJackson2HttpMessageConverter()))
+                .build();
         this.clock = clock;
     }
 

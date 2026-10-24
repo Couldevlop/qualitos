@@ -6215,8 +6215,8 @@ Portail clients</source>
         <target state="translated">設備数</target>
       </trans-unit>
       <trans-unit id="calibration.list.title" datatype="html">
-        <source>Calibration et équipements</source>
-        <target state="translated">校正と設備</target>
+        <source>Instruments</source>
+        <target state="translated">計測器</target>
       </trans-unit>
       <trans-unit id="calibration.manufacturer" datatype="html">
         <source>Fabricant</source>
@@ -10289,6 +10289,658 @@ Portail clients</source>
       <trans-unit id="directory.person.unknown" datatype="html">
         <source>Personne inconnue</source>
         <target state="translated">不明な担当者</target>
+      </trans-unit>
+      <trans-unit id="nav.admin-dmaic" datatype="html">
+        <source>Paramètres DMAIC</source>
+        <target state="translated">DMAIC 設定</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.dmaic-manage" datatype="html">
+        <source>Remplir la fiche de résolution DMAIC et ses photos</source>
+        <target state="translated">DMAIC 解決シートと写真を記入する</target>
+      </trans-unit>
+      <trans-unit id="authz.module.dmaic" datatype="html">
+        <source>DMAIC</source>
+        <target state="translated">DMAIC</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.tab-pilotage" datatype="html">
+        <source>Pilotage</source>
+        <target state="translated">進行管理</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.tab-resolution" datatype="html">
+        <source>Fiche de résolution</source>
+        <target state="translated">解決シート</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.load-failed" datatype="html">
+        <source>La fiche de résolution n'a pas pu être chargée.</source>
+        <target state="translated">解決シートを読み込めませんでした。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.nav" datatype="html">
+        <source>Sommaire de la fiche</source>
+        <target state="translated">シートの目次</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.saved-on" datatype="html">
+        <source>Enregistrée le</source>
+        <target state="translated">保存日時</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.never-saved" datatype="html">
+        <source>Fiche vierge : rien n'est encore enregistré.</source>
+        <target state="translated">白紙のシート：まだ何も保存されていません。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.read-only" datatype="html">
+        <source>Lecture seule</source>
+        <target state="translated">閲覧のみ</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.report" datatype="html">
+        <source>Rapport client</source>
+        <target state="translated">顧客報告書</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.report-dirty" datatype="html">
+        <source>Enregistrez la fiche : le rapport reprend ce qui est enregistré.</source>
+        <target state="translated">シートを保存してください。報告書は保存済みの内容を使います。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.report-failed" datatype="html">
+        <source>Le rapport n'a pas pu être produit.</source>
+        <target state="translated">報告書を作成できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.pending" datatype="html">
+        <source>Fiche modifiée</source>
+        <target state="translated">シートが変更されました</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.saved" datatype="html">
+        <source>Fiche de résolution enregistrée.</source>
+        <target state="translated">解決シートを保存しました。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.save-failed" datatype="html">
+        <source>La fiche n'a pas pu être enregistrée.</source>
+        <target state="translated">シートを保存できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.problem.dates" datatype="html">
+        <source>La date de fermeture ne peut pas précéder la date de création.</source>
+        <target state="translated">終了日を作成日より前にすることはできません。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.problem.percent" datatype="html">
+        <source>L'avancement d'une action est un nombre entier de 0 à 100.</source>
+        <target state="translated">アクションの進捗は 0〜100 の整数です。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.problem.planned" datatype="html">
+        <source>Une action ne peut pas être prévue avant sa date de création.</source>
+        <target state="translated">アクションの予定日を作成日より前にすることはできません。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.claim" datatype="html">
+        <source>Réclamation</source>
+        <target state="translated">クレーム</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.client" datatype="html">
+        <source>Client ou projet</source>
+        <target state="translated">顧客またはプロジェクト</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.claim-number" datatype="html">
+        <source>N° de réclamation</source>
+        <target state="translated">クレーム番号</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.owner" datatype="html">
+        <source>Propriétaire du problème</source>
+        <target state="translated">問題の責任者</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.opened-on" datatype="html">
+        <source>Date de création</source>
+        <target state="translated">作成日</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.closed-on" datatype="html">
+        <source>Date de fermeture</source>
+        <target state="translated">終了日</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.severity" datatype="html">
+        <source>Sévérité</source>
+        <target state="translated">重大度</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.none" datatype="html">
+        <source>— Non renseignée —</source>
+        <target state="translated">— 未設定 —</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.failure-type" datatype="html">
+        <source>Type de défaillance</source>
+        <target state="translated">不具合の種類</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.team" datatype="html">
+        <source>Membres de l'équipe</source>
+        <target state="translated">チームメンバー</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.team-remove" datatype="html">
+        <source>Retirer de l'équipe</source>
+        <target state="translated">チームから外す</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.team-empty" datatype="html">
+        <source>Personne pour l'instant.</source>
+        <target state="translated">まだ誰もいません。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.team-add" datatype="html">
+        <source>Ajouter un membre</source>
+        <target state="translated">メンバーを追加</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.symptoms" datatype="html">
+        <source>Symptômes constatés par le client</source>
+        <target state="translated">顧客が確認した症状</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.more" datatype="html">
+        <source>En savoir plus</source>
+        <target state="translated">詳しく見る</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.section.define" datatype="html">
+        <source>Définir</source>
+        <target state="translated">定義</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.section.define-lead" datatype="html">
+        <source>Un problème bien défini est un problème à moitié résolu.</source>
+        <target state="translated">よく定義された問題は半分解決したも同然です。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.section.define-more" datatype="html">
+        <source>Les problèmes viennent des indicateurs internes, des retours des clients et des employés, des vérifications par rapport aux normes. Nommez l'équipe, le rôle de chacun et les limites de son champ d'action. L'énoncé du problème fixe la portée du travail et dit ce qui est attendu de l'équipe. Allez voir sur place, parlez avec les gens, recueillez des faits, visualisez le problème.</source>
+        <target state="translated">問題は社内指標、顧客や従業員の声、規格に対する検証から見つかります。チーム、各自の役割、活動範囲の限界を決めてください。問題記述は作業範囲とチームに期待されることを示します。現場に行き、人と話し、事実を集め、問題を見える化しましょう。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.section.measure" datatype="html">
+        <source>Mesurer</source>
+        <target state="translated">測定</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.section.measure-lead" datatype="html">
+        <source>Mettre en place les moyens de mesure, pour collecter les données qui démontreront l'atteinte des objectifs.</source>
+        <target state="translated">目標の達成を示すデータを集めるため、測定手段を整えます。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.section.measure-more" datatype="html">
+        <source>Les systèmes de mesure et les données de cette phase servent deux fois : à trouver la cause racine du problème, puis à démontrer l'efficacité de la démarche.</source>
+        <target state="translated">この段階の測定システムとデータは二度役立ちます。問題の根本原因を見つけるため、そして取り組みの有効性を示すためです。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.section.measure-summary" datatype="html">
+        <source>Synthèse des mesures</source>
+        <target state="translated">測定のまとめ</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.section.contain" datatype="html">
+        <source>Analyser — contenir le problème</source>
+        <target state="translated">分析 — 問題の封じ込め</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.section.contain-lead" datatype="html">
+        <source>Mesures conservatoires pour contenir le problème jusqu'à ce que les actions correctives définitives soient en place.</source>
+        <target state="translated">恒久的な是正処置が整うまで問題を封じ込める暫定処置です。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.section.contain-more" datatype="html">
+        <source>Le confinement passe avant l'analyse : tant que la cause n'est pas traitée, il protège le client des produits suspects, y compris ceux encore en fabrication.</source>
+        <target state="translated">封じ込めは分析より先に行います。原因が処置されるまで、製造中のものも含め、疑わしい製品から顧客を守ります。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.section.contain-summary" datatype="html">
+        <source>Mesures conservatoires</source>
+        <target state="translated">暫定処置</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.section.analyze" datatype="html">
+        <source>Analyser — les causes</source>
+        <target state="translated">分析 — 原因</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.section.analyze-lead" datatype="html">
+        <source>Trouver les causes racines est le cœur de la résolution. Testez chaque cause possible plutôt que de traiter les symptômes.</source>
+        <target state="translated">根本原因の特定が問題解決の核心です。症状に対処するのではなく、考えられる原因を一つずつ検証してください。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.section.analyze-more" datatype="html">
+        <source>Les causes apparentes sont souvent des symptômes ; les causes racines, celles qui les ont permis, sont ancrées dans le processus. Une fois connues, les solutions deviennent souvent évidentes. Tenez-vous loin de l'« erreur humaine » comme cause : c'est le signe qu'un processus n'était pas assez clair.</source>
+        <target state="translated">見かけの原因は多くの場合症状にすぎず、それを許した根本原因はプロセスに根付いています。根本原因が分かれば、解決策は明らかになることが多いです。「ヒューマンエラー」を原因にするのは避けてください。プロセスが十分に明確でなかった兆候です。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.section.analyze-summary" datatype="html">
+        <source>Cause racine</source>
+        <target state="translated">根本原因</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.section.improve" datatype="html">
+        <source>Améliorer</source>
+        <target state="translated">改善</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.section.improve-lead" datatype="html">
+        <source>Choisir la meilleure solution, ou un ensemble de solutions robustes et rentables, et piloter leur mise en place par le plan d'actions.</source>
+        <target state="translated">最善の解決策、または堅牢で費用対効果の高い解決策の組み合わせを選び、行動計画で導入を管理します。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.section.improve-more" datatype="html">
+        <source>Développez autant de solutions que possible, avec des personnes aux points de vue différents, sans les juger trop tôt. Si aucune solution n'apparaît, la cause racine n'est sans doute pas trouvée. Le plan d'actions dit ce qui doit être fait, par qui et pour quand.</source>
+        <target state="translated">異なる視点を持つ人々とともに、早すぎる評価をせず、できるだけ多くの解決策を出してください。解決策が見えないなら、根本原因はおそらく見つかっていません。行動計画は、何を、誰が、いつまでに行うかを示します。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.section.improve-summary" datatype="html">
+        <source>Solutions retenues</source>
+        <target state="translated">採用した解決策</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.section.control" datatype="html">
+        <source>Contrôler</source>
+        <target state="translated">管理</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.section.control-lead" datatype="html">
+        <source>Vérifier et valider que le problème est contenu dans la durée, avec un plan de surveillance qui soutient l'amélioration.</source>
+        <target state="translated">改善を支える監視計画により、問題が長期的に抑えられていることを検証し、妥当性を確認します。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.section.control-more" datatype="html">
+        <source>Vérifier, c'est tester que la solution produit le résultat voulu ; valider, c'est s'assurer qu'elle résout vraiment le problème. Quand c'est acquis, l'équipe mérite d'être reconnue pour son travail.</source>
+        <target state="translated">検証とは解決策が意図した結果を出すことを確かめること、妥当性確認とは本当に問題を解決していることを確かめることです。それが達成されたら、チームの働きを称えましょう。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.section.control-summary" datatype="html">
+        <source>Plan de surveillance</source>
+        <target state="translated">監視計画</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.topic.what" datatype="html">
+        <source>Quoi</source>
+        <target state="translated">何が</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.topic.who" datatype="html">
+        <source>Qui</source>
+        <target state="translated">誰が</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.topic.why" datatype="html">
+        <source>Pourquoi</source>
+        <target state="translated">なぜ</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.topic.where" datatype="html">
+        <source>Où</source>
+        <target state="translated">どこで</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.topic.when" datatype="html">
+        <source>Quand</source>
+        <target state="translated">いつ</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.topic.how-many" datatype="html">
+        <source>Combien</source>
+        <target state="translated">どれだけ</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.answer.yes" datatype="html">
+        <source>Oui</source>
+        <target state="translated">はい</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.answer.no" datatype="html">
+        <source>Non</source>
+        <target state="translated">いいえ</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.answer.na" datatype="html">
+        <source>Sans objet</source>
+        <target state="translated">該当なし</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.answer.unknown" datatype="html">
+        <source>Inconnu</source>
+        <target state="translated">不明</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.answer-type.text" datatype="html">
+        <source>Texte libre</source>
+        <target state="translated">自由記述</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.answer-type.yes-no" datatype="html">
+        <source>Oui / Non</source>
+        <target state="translated">はい / いいえ</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.answer-type.yes-no-na" datatype="html">
+        <source>Oui / Non / Sans objet</source>
+        <target state="translated">はい / いいえ / 該当なし</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.answer-type.yes-no-unknown" datatype="html">
+        <source>Oui / Non / Inconnu</source>
+        <target state="translated">はい / いいえ / 不明</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.ishikawa" datatype="html">
+        <source>Diagramme d'Ishikawa</source>
+        <target state="translated">石川ダイアグラム</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.ishikawa-none" datatype="html">
+        <source>— Aucun —</source>
+        <target state="translated">— なし —</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.ishikawa-open" datatype="html">
+        <source>Ouvrir le diagramme</source>
+        <target state="translated">ダイアグラムを開く</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.ishikawa-new" datatype="html">
+        <source>Créer un diagramme</source>
+        <target state="translated">ダイアグラムを作成</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.whys" datatype="html">
+        <source>5 pourquoi</source>
+        <target state="translated">なぜなぜ分析</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.whys-lead" datatype="html">
+        <source>Trois questions, trois chaînes de pourquoi. Marquez celles qui mènent à une cause racine et notez leur action.</source>
+        <target state="translated">3 つの問い、3 本のなぜの連鎖。根本原因につながるものに印を付け、その対策を記入します。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.branch.occurrence" datatype="html">
+        <source>Apparition</source>
+        <target state="translated">発生</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.branch.occurrence-q" datatype="html">
+        <source>Pourquoi le défaut est-il apparu ?</source>
+        <target state="translated">なぜ不具合が発生したのか？</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.branch.detection" datatype="html">
+        <source>Non-détection</source>
+        <target state="translated">未検出</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.branch.detection-q" datatype="html">
+        <source>Pourquoi a-t-il échappé jusqu'au client ?</source>
+        <target state="translated">なぜ顧客まで流出したのか？</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.branch.systemic" datatype="html">
+        <source>Système</source>
+        <target state="translated">システム</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.branch.systemic-q" datatype="html">
+        <source>Pourquoi le système l'a-t-il permis ?</source>
+        <target state="translated">なぜシステムがそれを許したのか？</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.why-cause" datatype="html">
+        <source>Constat</source>
+        <target state="translated">事象</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.why-n" datatype="html">
+        <source>Pourquoi</source>
+        <target state="translated">なぜ</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.why-remove" datatype="html">
+        <source>Retirer ce pourquoi</source>
+        <target state="translated">このなぜを削除</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.why-add" datatype="html">
+        <source>Pourquoi suivant</source>
+        <target state="translated">次のなぜ</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.why-root" datatype="html">
+        <source>C'est une cause racine</source>
+        <target state="translated">これは根本原因です</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.why-action" datatype="html">
+        <source>Action</source>
+        <target state="translated">対策</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.chain-remove" datatype="html">
+        <source>Retirer la chaîne</source>
+        <target state="translated">連鎖を削除</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.chain-empty" datatype="html">
+        <source>Aucune chaîne.</source>
+        <target state="translated">連鎖はありません。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.chain-add" datatype="html">
+        <source>Ajouter une chaîne</source>
+        <target state="translated">連鎖を追加</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.actions" datatype="html">
+        <source>Plan d'actions</source>
+        <target state="translated">行動計画</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.actions-lead" datatype="html">
+        <source>Ce qui doit être fait, par qui, pour quand.</source>
+        <target state="translated">何を、誰が、いつまでに。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.action-add" datatype="html">
+        <source>Ajouter une action</source>
+        <target state="translated">アクションを追加</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.actions-empty" datatype="html">
+        <source>Aucune action. Ajoutez la première pour piloter les solutions retenues.</source>
+        <target state="translated">アクションはありません。採用した解決策を進めるため、最初のアクションを追加してください。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.action" datatype="html">
+        <source>Action</source>
+        <target state="translated">アクション</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.action-remove" datatype="html">
+        <source>Retirer l'action</source>
+        <target state="translated">アクションを削除</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.responsible" datatype="html">
+        <source>Responsable</source>
+        <target state="translated">担当者</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.planned-on" datatype="html">
+        <source>Prévue le</source>
+        <target state="translated">予定日</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.done-on" datatype="html">
+        <source>Réalisée le</source>
+        <target state="translated">完了日</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.percent" datatype="html">
+        <source>Avancement (%)</source>
+        <target state="translated">進捗（%）</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.created-on" datatype="html">
+        <source>Créée le</source>
+        <target state="translated">作成日</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.notes" datatype="html">
+        <source>Notes</source>
+        <target state="translated">メモ</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.action-status.open" datatype="html">
+        <source>Ouvert</source>
+        <target state="translated">未着手</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.action-status.in-progress" datatype="html">
+        <source>En cours</source>
+        <target state="translated">進行中</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.action-status.in-review" datatype="html">
+        <source>En revue</source>
+        <target state="translated">レビュー中</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.action-status.closed" datatype="html">
+        <source>Clos</source>
+        <target state="translated">完了</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.photos" datatype="html">
+        <source>Photos</source>
+        <target state="translated">写真</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.photos-lead" datatype="html">
+        <source>Six emplacements, une remarque par photo. JPEG, PNG, GIF ou WEBP, 10 Mo au plus. Une photo est enregistrée dès qu'elle est versée.</source>
+        <target state="translated">6 枠、写真ごとにコメント 1 件。JPEG、PNG、GIF、WEBP、最大 10 MB。写真はアップロードした時点で保存されます。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.photo.alt" datatype="html">
+        <source>Photo <x id="slot"/></source>
+        <target state="translated">写真 <x id="slot"/></target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.photo.remark" datatype="html">
+        <source>Remarque</source>
+        <target state="translated">コメント</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.photo.replace" datatype="html">
+        <source>Remplacer</source>
+        <target state="translated">差し替え</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.photo.delete" datatype="html">
+        <source>Retirer</source>
+        <target state="translated">削除</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.photo.add" datatype="html">
+        <source>Ajouter la photo</source>
+        <target state="translated">写真を追加</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.photo.none" datatype="html">
+        <source>Pas de photo</source>
+        <target state="translated">写真なし</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.photo.bad-type" datatype="html">
+        <source>Format refusé : JPEG, PNG, GIF ou WEBP uniquement.</source>
+        <target state="translated">対応していない形式です。JPEG、PNG、GIF、WEBP のみ。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.photo.too-big" datatype="html">
+        <source>La photo dépasse 10 Mo.</source>
+        <target state="translated">写真が 10 MB を超えています。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.photo.storage-off" datatype="html">
+        <source>Le stockage des photos n'est pas disponible sur cette installation.</source>
+        <target state="translated">このインストールでは写真の保存を利用できません。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.photo.upload-failed" datatype="html">
+        <source>La photo n'a pas pu être versée.</source>
+        <target state="translated">写真をアップロードできませんでした。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.photo.remark-failed" datatype="html">
+        <source>La remarque n'a pas pu être enregistrée.</source>
+        <target state="translated">コメントを保存できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.photo.delete-title" datatype="html">
+        <source>Retirer la photo ?</source>
+        <target state="translated">写真を削除しますか？</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.photo.delete-message" datatype="html">
+        <source>La photo et sa remarque seront retirées de la fiche.</source>
+        <target state="translated">写真とそのコメントがシートから削除されます。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.photo.delete-failed" datatype="html">
+        <source>La photo n'a pas pu être retirée.</source>
+        <target state="translated">写真を削除できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.settings.title" datatype="html">
+        <source>Paramètres DMAIC</source>
+        <target state="translated">DMAIC 設定</target>
+      </trans-unit>
+      <trans-unit id="dmaic.settings.subtitle" datatype="html">
+        <source>Le questionnaire de la fiche de résolution, les types de défaillance et les sévérités.</source>
+        <target state="translated">解決シートの質問票、不具合の種類、重大度。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.settings.reset-action" datatype="html">
+        <source>Valeurs de la plateforme</source>
+        <target state="translated">プラットフォームの既定値</target>
+      </trans-unit>
+      <trans-unit id="dmaic.settings.load-failed" datatype="html">
+        <source>Les paramètres DMAIC n'ont pas pu être chargés.</source>
+        <target state="translated">DMAIC 設定を読み込めませんでした。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.settings.scope" datatype="html">
+        <source>Une question se reconnaît à son code : en changer le libellé garde les réponses déjà données ; la retirer les cache sans les effacer.</source>
+        <target state="translated">質問はコードで識別されます。文言を変えても既存の回答は残り、質問を削除すると回答は消去されず非表示になります。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.settings.defaults" datatype="html">
+        <source>Ce sont aujourd'hui les valeurs de la plateforme, reprises du classeur.</source>
+        <target state="translated">現在はワークブックから取り込んだプラットフォームの既定値です。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.settings.questions" datatype="html">
+        <source>Questionnaire</source>
+        <target state="translated">質問票</target>
+      </trans-unit>
+      <trans-unit id="dmaic.settings.questions-help" datatype="html">
+        <source>Les questions de chaque phase, dans l'ordre de la fiche.</source>
+        <target state="translated">各フェーズの質問（シートの順）。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.settings.phases" datatype="html">
+        <source>Phases</source>
+        <target state="translated">フェーズ</target>
+      </trans-unit>
+      <trans-unit id="dmaic.settings.code" datatype="html">
+        <source>Code</source>
+        <target state="translated">コード</target>
+      </trans-unit>
+      <trans-unit id="dmaic.settings.question" datatype="html">
+        <source>Question</source>
+        <target state="translated">質問</target>
+      </trans-unit>
+      <trans-unit id="dmaic.settings.topic" datatype="html">
+        <source>Rubrique</source>
+        <target state="translated">項目</target>
+      </trans-unit>
+      <trans-unit id="dmaic.settings.no-topic" datatype="html">
+        <source>Sans rubrique</source>
+        <target state="translated">項目なし</target>
+      </trans-unit>
+      <trans-unit id="dmaic.settings.answer-type" datatype="html">
+        <source>Réponse</source>
+        <target state="translated">回答</target>
+      </trans-unit>
+      <trans-unit id="dmaic.settings.up" datatype="html">
+        <source>Monter</source>
+        <target state="translated">上へ</target>
+      </trans-unit>
+      <trans-unit id="dmaic.settings.down" datatype="html">
+        <source>Descendre</source>
+        <target state="translated">下へ</target>
+      </trans-unit>
+      <trans-unit id="dmaic.settings.remove" datatype="html">
+        <source>Retirer</source>
+        <target state="translated">削除</target>
+      </trans-unit>
+      <trans-unit id="dmaic.settings.no-question-here" datatype="html">
+        <source>Aucune question dans cette phase.</source>
+        <target state="translated">このフェーズに質問はありません。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.settings.add-question" datatype="html">
+        <source>Ajouter une question</source>
+        <target state="translated">質問を追加</target>
+      </trans-unit>
+      <trans-unit id="dmaic.settings.severities" datatype="html">
+        <source>Sévérités</source>
+        <target state="translated">重大度</target>
+      </trans-unit>
+      <trans-unit id="dmaic.settings.severities-help" datatype="html">
+        <source>Du plus grave (1) au moins grave.</source>
+        <target state="translated">最も重大（1）から軽微な順。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.settings.level" datatype="html">
+        <source>Niveau</source>
+        <target state="translated">レベル</target>
+      </trans-unit>
+      <trans-unit id="dmaic.settings.label" datatype="html">
+        <source>Libellé</source>
+        <target state="translated">ラベル</target>
+      </trans-unit>
+      <trans-unit id="dmaic.settings.add-severity" datatype="html">
+        <source>Ajouter un niveau</source>
+        <target state="translated">レベルを追加</target>
+      </trans-unit>
+      <trans-unit id="dmaic.settings.failure-types" datatype="html">
+        <source>Types de défaillance</source>
+        <target state="translated">不具合の種類</target>
+      </trans-unit>
+      <trans-unit id="dmaic.settings.add-failure" datatype="html">
+        <source>Ajouter un type</source>
+        <target state="translated">種類を追加</target>
+      </trans-unit>
+      <trans-unit id="dmaic.settings.problem.no-question" datatype="html">
+        <source>Gardez au moins une question.</source>
+        <target state="translated">少なくとも 1 つの質問を残してください。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.settings.problem.code" datatype="html">
+        <source>Un code fait 1 à 20 caractères : lettres, chiffres, point, tiret ou soulignement.</source>
+        <target state="translated">コードは 1〜20 文字（英字、数字、ピリオド、ハイフン、アンダースコア）です。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.settings.problem.question-dup" datatype="html">
+        <source>Deux questions portent le même code.</source>
+        <target state="translated">2 つの質問が同じコードです。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.settings.problem.failure-dup" datatype="html">
+        <source>Deux types de défaillance portent le même code.</source>
+        <target state="translated">2 つの不具合の種類が同じコードです。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.settings.problem.label" datatype="html">
+        <source>Chaque ligne a besoin d'un libellé.</source>
+        <target state="translated">各行にラベルが必要です。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.settings.problem.no-severity" datatype="html">
+        <source>Gardez au moins un niveau de sévérité.</source>
+        <target state="translated">少なくとも 1 つの重大度を残してください。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.settings.problem.level" datatype="html">
+        <source>Chaque sévérité a son propre niveau, de 1 à 10.</source>
+        <target state="translated">各重大度には 1〜10 の固有のレベルが必要です。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.settings.saved" datatype="html">
+        <source>Paramètres DMAIC enregistrés.</source>
+        <target state="translated">DMAIC 設定を保存しました。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.settings.save-failed" datatype="html">
+        <source>Les paramètres DMAIC n'ont pas pu être enregistrés.</source>
+        <target state="translated">DMAIC 設定を保存できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.settings.reset-title" datatype="html">
+        <source>Revenir aux valeurs de la plateforme ?</source>
+        <target state="translated">プラットフォームの既定値に戻しますか？</target>
+      </trans-unit>
+      <trans-unit id="dmaic.settings.reset-message" datatype="html">
+        <source>Le questionnaire, les types de défaillance et les sévérités reprennent ceux du classeur d'origine. Les réponses déjà données restent en base.</source>
+        <target state="translated">質問票、不具合の種類、重大度が元のワークブックの内容に戻ります。既存の回答は保持されます。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.settings.reset" datatype="html">
+        <source>Rétablir</source>
+        <target state="translated">元に戻す</target>
+      </trans-unit>
+      <trans-unit id="dmaic.settings.reset-done" datatype="html">
+        <source>Valeurs de la plateforme rétablies.</source>
+        <target state="translated">プラットフォームの既定値に戻しました。</target>
       </trans-unit>
       <trans-unit id="nav.doc-gen-ia" datatype="html">
         <source>Génération doc IA</source>
@@ -23592,8 +24244,8 @@ historique 12 mois</source>
         <target state="translated">すべてのプロセス</target>
       </trans-unit>
       <trans-unit id="rr.all-statuses" datatype="html">
-        <source>Tous statuts</source>
-        <target state="translated">すべてのステータス</target>
+        <source>Statut : tous</source>
+        <target state="translated">ステータス：すべて</target>
       </trans-unit>
       <trans-unit id="rr.all-opportunities" datatype="html">
         <source>Toutes</source>
@@ -25772,8 +26424,8 @@ historique 12 mois</source>
         <target state="translated">ステータスで絞り込む</target>
       </trans-unit>
       <trans-unit id="spc.register.all-statuses" datatype="html">
-        <source>Tous les statuts</source>
-        <target state="translated">すべてのステータス</target>
+        <source>Statut : tous</source>
+        <target state="translated">ステータス：すべて</target>
       </trans-unit>
       <trans-unit id="spc.register.filter-plan" datatype="html">
         <source>Filtrer par plan d'actions</source>
@@ -28517,6 +29169,526 @@ Inde (centre de service)</source>
         <source>—</source>
         <target state="translated">—</target>
       </trans-unit>
+      <trans-unit id="status.abandoned" datatype="html">
+        <source>Abandonné</source>
+        <target state="translated">中止</target>
+      </trans-unit>
+      <trans-unit id="status.accepted" datatype="html">
+        <source>Accepté</source>
+        <target state="translated">承認済み</target>
+      </trans-unit>
+      <trans-unit id="status.act" datatype="html">
+        <source>Agir</source>
+        <target state="translated">改善</target>
+      </trans-unit>
+      <trans-unit id="status.action-defined" datatype="html">
+        <source>Action définie</source>
+        <target state="translated">処置決定</target>
+      </trans-unit>
+      <trans-unit id="status.active" datatype="html">
+        <source>Actif</source>
+        <target state="translated">有効</target>
+      </trans-unit>
+      <trans-unit id="status.approuve" datatype="html">
+        <source>Approuvé</source>
+        <target state="translated">承認済み</target>
+      </trans-unit>
+      <trans-unit id="status.approved" datatype="html">
+        <source>Approuvé</source>
+        <target state="translated">承認済み</target>
+      </trans-unit>
+      <trans-unit id="status.archived" datatype="html">
+        <source>Archivé</source>
+        <target state="translated">アーカイブ済み</target>
+      </trans-unit>
+      <trans-unit id="status.assessing" datatype="html">
+        <source>En cours d'évaluation</source>
+        <target state="translated">評価中</target>
+      </trans-unit>
+      <trans-unit id="status.blacklisted" datatype="html">
+        <source>Exclu</source>
+        <target state="translated">取引停止</target>
+      </trans-unit>
+      <trans-unit id="status.blocked" datatype="html">
+        <source>Bloqué</source>
+        <target state="translated">ブロック</target>
+      </trans-unit>
+      <trans-unit id="status.brouillon-ia" datatype="html">
+        <source>Brouillon IA</source>
+        <target state="translated">AI下書き</target>
+      </trans-unit>
+      <trans-unit id="status.cancelled" datatype="html">
+        <source>Annulé</source>
+        <target state="translated">取消</target>
+      </trans-unit>
+      <trans-unit id="status.capable" datatype="html">
+        <source>Capable</source>
+        <target state="translated">能力あり</target>
+      </trans-unit>
+      <trans-unit id="status.certified" datatype="html">
+        <source>Certifié</source>
+        <target state="translated">認証済み</target>
+      </trans-unit>
+      <trans-unit id="status.check" datatype="html">
+        <source>Vérifier</source>
+        <target state="translated">評価</target>
+      </trans-unit>
+      <trans-unit id="status.closed" datatype="html">
+        <source>Clôturé</source>
+        <target state="translated">クローズ</target>
+      </trans-unit>
+      <trans-unit id="status.completed" datatype="html">
+        <source>Terminé</source>
+        <target state="translated">完了</target>
+      </trans-unit>
+      <trans-unit id="status.conditional" datatype="html">
+        <source>Sous conditions</source>
+        <target state="translated">条件付き</target>
+      </trans-unit>
+      <trans-unit id="status.contained" datatype="html">
+        <source>Contenu</source>
+        <target state="translated">封じ込め済み</target>
+      </trans-unit>
+      <trans-unit id="status.covered" datatype="html">
+        <source>Couvert</source>
+        <target state="translated">対応済み</target>
+      </trans-unit>
+      <trans-unit id="status.current" datatype="html">
+        <source>En vigueur</source>
+        <target state="translated">現行</target>
+      </trans-unit>
+      <trans-unit id="status.deactivated" datatype="html">
+        <source>Désactivé</source>
+        <target state="translated">無効化</target>
+      </trans-unit>
+      <trans-unit id="status.dead-letter" datatype="html">
+        <source>En échec définitif</source>
+        <target state="translated">最終失敗</target>
+      </trans-unit>
+      <trans-unit id="status.decommissioned" datatype="html">
+        <source>Mis au rebut</source>
+        <target state="translated">廃棄</target>
+      </trans-unit>
+      <trans-unit id="status.deprecated" datatype="html">
+        <source>Déprécié</source>
+        <target state="translated">非推奨</target>
+      </trans-unit>
+      <trans-unit id="status.detected" datatype="html">
+        <source>Détecté</source>
+        <target state="translated">検出</target>
+      </trans-unit>
+      <trans-unit id="status.disabled" datatype="html">
+        <source>Désactivé</source>
+        <target state="translated">無効</target>
+      </trans-unit>
+      <trans-unit id="status.disabled-on-errors" datatype="html">
+        <source>Désactivé après erreurs</source>
+        <target state="translated">エラーにより無効</target>
+      </trans-unit>
+      <trans-unit id="status.discarded" datatype="html">
+        <source>Écarté</source>
+        <target state="translated">破棄</target>
+      </trans-unit>
+      <trans-unit id="status.dismissed" datatype="html">
+        <source>Classé sans suite</source>
+        <target state="translated">却下</target>
+      </trans-unit>
+      <trans-unit id="status.analyze" datatype="html">
+        <source>Analyser</source>
+        <target state="translated">分析</target>
+      </trans-unit>
+      <trans-unit id="status.control" datatype="html">
+        <source>Contrôler</source>
+        <target state="translated">管理</target>
+      </trans-unit>
+      <trans-unit id="status.define" datatype="html">
+        <source>Définir</source>
+        <target state="translated">定義</target>
+      </trans-unit>
+      <trans-unit id="status.detection" datatype="html">
+        <source>Détection</source>
+        <target state="translated">検出</target>
+      </trans-unit>
+      <trans-unit id="status.improve" datatype="html">
+        <source>Améliorer</source>
+        <target state="translated">改善</target>
+      </trans-unit>
+      <trans-unit id="status.measure" datatype="html">
+        <source>Mesurer</source>
+        <target state="translated">測定</target>
+      </trans-unit>
+      <trans-unit id="status.prevention" datatype="html">
+        <source>Prévention</source>
+        <target state="translated">予防</target>
+      </trans-unit>
+      <trans-unit id="status.do" datatype="html">
+        <source>Faire</source>
+        <target state="translated">実行</target>
+      </trans-unit>
+      <trans-unit id="status.done" datatype="html">
+        <source>Fait</source>
+        <target state="translated">完了</target>
+      </trans-unit>
+      <trans-unit id="status.dpo-review" datatype="html">
+        <source>Revue DPO</source>
+        <target state="translated">DPOレビュー</target>
+      </trans-unit>
+      <trans-unit id="status.draft" datatype="html">
+        <source>Brouillon</source>
+        <target state="translated">下書き</target>
+      </trans-unit>
+      <trans-unit id="status.echec" datatype="html">
+        <source>Échec</source>
+        <target state="translated">失敗</target>
+      </trans-unit>
+      <trans-unit id="status.en-attente" datatype="html">
+        <source>En attente</source>
+        <target state="translated">保留中</target>
+      </trans-unit>
+      <trans-unit id="status.en-generation" datatype="html">
+        <source>En génération</source>
+        <target state="translated">生成中</target>
+      </trans-unit>
+      <trans-unit id="status.en-validation" datatype="html">
+        <source>En validation</source>
+        <target state="translated">承認待ち</target>
+      </trans-unit>
+      <trans-unit id="status.ended" datatype="html">
+        <source>Terminé</source>
+        <target state="translated">終了</target>
+      </trans-unit>
+      <trans-unit id="status.enrolled" datatype="html">
+        <source>Inscrit</source>
+        <target state="translated">受講登録済み</target>
+      </trans-unit>
+      <trans-unit id="status.expired" datatype="html">
+        <source>Expiré</source>
+        <target state="translated">期限切れ</target>
+      </trans-unit>
+      <trans-unit id="status.failed" datatype="html">
+        <source>Échec</source>
+        <target state="translated">失敗</target>
+      </trans-unit>
+      <trans-unit id="status.finalise" datatype="html">
+        <source>Finalisé</source>
+        <target state="translated">確定</target>
+      </trans-unit>
+      <trans-unit id="status.gap" datatype="html">
+        <source>Écart</source>
+        <target state="translated">ギャップ</target>
+      </trans-unit>
+      <trans-unit id="status.generation-en-cours" datatype="html">
+        <source>Génération en cours</source>
+        <target state="translated">生成中</target>
+      </trans-unit>
+      <trans-unit id="status.genere" datatype="html">
+        <source>Généré</source>
+        <target state="translated">生成済み</target>
+      </trans-unit>
+      <trans-unit id="status.grace" datatype="html">
+        <source>Période de grâce</source>
+        <target state="translated">猶予期間</target>
+      </trans-unit>
+      <trans-unit id="status.granted" datatype="html">
+        <source>Accordé</source>
+        <target state="translated">付与済み</target>
+      </trans-unit>
+      <trans-unit id="status.implemented" datatype="html">
+        <source>Mis en œuvre</source>
+        <target state="translated">実施済み</target>
+      </trans-unit>
+      <trans-unit id="status.in-analysis" datatype="html">
+        <source>En cours d'analyse</source>
+        <target state="translated">分析中</target>
+      </trans-unit>
+      <trans-unit id="status.in-design" datatype="html">
+        <source>En conception</source>
+        <target state="translated">設計中</target>
+      </trans-unit>
+      <trans-unit id="status.in-force" datatype="html">
+        <source>En vigueur</source>
+        <target state="translated">施行中</target>
+      </trans-unit>
+      <trans-unit id="status.in-observation" datatype="html">
+        <source>En observation</source>
+        <target state="translated">観察中</target>
+      </trans-unit>
+      <trans-unit id="status.in-progress" datatype="html">
+        <source>En cours</source>
+        <target state="translated">進行中</target>
+      </trans-unit>
+      <trans-unit id="status.in-review" datatype="html">
+        <source>En revue</source>
+        <target state="translated">レビュー中</target>
+      </trans-unit>
+      <trans-unit id="status.in-revision" datatype="html">
+        <source>En révision</source>
+        <target state="translated">改訂中</target>
+      </trans-unit>
+      <trans-unit id="status.in-treatment" datatype="html">
+        <source>En traitement</source>
+        <target state="translated">対応中</target>
+      </trans-unit>
+      <trans-unit id="status.in-use" datatype="html">
+        <source>En service</source>
+        <target state="translated">使用中</target>
+      </trans-unit>
+      <trans-unit id="status.in-validation" datatype="html">
+        <source>En validation</source>
+        <target state="translated">承認待ち</target>
+      </trans-unit>
+      <trans-unit id="status.installed" datatype="html">
+        <source>Installé</source>
+        <target state="translated">インストール済み</target>
+      </trans-unit>
+      <trans-unit id="status.invalid" datatype="html">
+        <source>Invalide</source>
+        <target state="translated">無効</target>
+      </trans-unit>
+      <trans-unit id="status.investigating" datatype="html">
+        <source>En cours d'investigation</source>
+        <target state="translated">調査中</target>
+      </trans-unit>
+      <trans-unit id="status.issued" datatype="html">
+        <source>Émis</source>
+        <target state="translated">発行済み</target>
+      </trans-unit>
+      <trans-unit id="status.measured" datatype="html">
+        <source>Mesuré</source>
+        <target state="translated">測定済み</target>
+      </trans-unit>
+      <trans-unit id="status.missing" datatype="html">
+        <source>Manquant</source>
+        <target state="translated">欠落</target>
+      </trans-unit>
+      <trans-unit id="status.mitigated" datatype="html">
+        <source>Atténué</source>
+        <target state="translated">軽減済み</target>
+      </trans-unit>
+      <trans-unit id="status.monitored" datatype="html">
+        <source>Sous surveillance</source>
+        <target state="translated">監視中</target>
+      </trans-unit>
+      <trans-unit id="status.not-anchored" datatype="html">
+        <source>Non ancré</source>
+        <target state="translated">未アンカー</target>
+      </trans-unit>
+      <trans-unit id="status.not-applicable" datatype="html">
+        <source>Non applicable</source>
+        <target state="translated">該当なし</target>
+      </trans-unit>
+      <trans-unit id="status.not-capable" datatype="html">
+        <source>Non capable</source>
+        <target state="translated">能力不足</target>
+      </trans-unit>
+      <trans-unit id="status.not-measurable" datatype="html">
+        <source>Non mesurable</source>
+        <target state="translated">測定不能</target>
+      </trans-unit>
+      <trans-unit id="status.not-required" datatype="html">
+        <source>Non requis</source>
+        <target state="translated">不要</target>
+      </trans-unit>
+      <trans-unit id="status.not-started" datatype="html">
+        <source>Non démarré</source>
+        <target state="translated">未着手</target>
+      </trans-unit>
+      <trans-unit id="status.not-yet-valid" datatype="html">
+        <source>Pas encore valide</source>
+        <target state="translated">未発効</target>
+      </trans-unit>
+      <trans-unit id="status.notified-regulator" datatype="html">
+        <source>Notifié à l'autorité</source>
+        <target state="translated">当局へ通知済み</target>
+      </trans-unit>
+      <trans-unit id="status.obsolete" datatype="html">
+        <source>Obsolète</source>
+        <target state="translated">廃止</target>
+      </trans-unit>
+      <trans-unit id="status.on-hold" datatype="html">
+        <source>En pause</source>
+        <target state="translated">保留</target>
+      </trans-unit>
+      <trans-unit id="status.open" datatype="html">
+        <source>Ouvert</source>
+        <target state="translated">オープン</target>
+      </trans-unit>
+      <trans-unit id="status.out-of-service" datatype="html">
+        <source>Hors service</source>
+        <target state="translated">使用停止</target>
+      </trans-unit>
+      <trans-unit id="status.partial" datatype="html">
+        <source>Partiel</source>
+        <target state="translated">一部</target>
+      </trans-unit>
+      <trans-unit id="status.paused" datatype="html">
+        <source>En pause</source>
+        <target state="translated">一時停止</target>
+      </trans-unit>
+      <trans-unit id="status.pending" datatype="html">
+        <source>En attente</source>
+        <target state="translated">保留中</target>
+      </trans-unit>
+      <trans-unit id="status.plan" datatype="html">
+        <source>Planifier</source>
+        <target state="translated">計画</target>
+      </trans-unit>
+      <trans-unit id="status.planned" datatype="html">
+        <source>Planifié</source>
+        <target state="translated">計画済み</target>
+      </trans-unit>
+      <trans-unit id="status.planning" datatype="html">
+        <source>En planification</source>
+        <target state="translated">計画中</target>
+      </trans-unit>
+      <trans-unit id="status.proposed" datatype="html">
+        <source>Proposé</source>
+        <target state="translated">提案済み</target>
+      </trans-unit>
+      <trans-unit id="status.prospect" datatype="html">
+        <source>Prospect</source>
+        <target state="translated">見込み</target>
+      </trans-unit>
+      <trans-unit id="status.provisioned" datatype="html">
+        <source>Provisionné</source>
+        <target state="translated">プロビジョニング済み</target>
+      </trans-unit>
+      <trans-unit id="status.published" datatype="html">
+        <source>Publié</source>
+        <target state="translated">公開済み</target>
+      </trans-unit>
+      <trans-unit id="status.received" datatype="html">
+        <source>Reçu</source>
+        <target state="translated">受領</target>
+      </trans-unit>
+      <trans-unit id="status.registered" datatype="html">
+        <source>Enregistré</source>
+        <target state="translated">登録済み</target>
+      </trans-unit>
+      <trans-unit id="status.rejected" datatype="html">
+        <source>Rejeté</source>
+        <target state="translated">却下</target>
+      </trans-unit>
+      <trans-unit id="status.rejete" datatype="html">
+        <source>Rejeté</source>
+        <target state="translated">却下</target>
+      </trans-unit>
+      <trans-unit id="status.reported" datatype="html">
+        <source>Signalé</source>
+        <target state="translated">報告済み</target>
+      </trans-unit>
+      <trans-unit id="status.resolved" datatype="html">
+        <source>Résolu</source>
+        <target state="translated">解決済み</target>
+      </trans-unit>
+      <trans-unit id="status.retired" datatype="html">
+        <source>Réformé</source>
+        <target state="translated">退役</target>
+      </trans-unit>
+      <trans-unit id="status.retrying" datatype="html">
+        <source>Nouvelle tentative</source>
+        <target state="translated">再試行中</target>
+      </trans-unit>
+      <trans-unit id="status.reutilise" datatype="html">
+        <source>Réutilisé</source>
+        <target state="translated">再利用</target>
+      </trans-unit>
+      <trans-unit id="status.review-overdue" datatype="html">
+        <source>Revue en retard</source>
+        <target state="translated">レビュー期限超過</target>
+      </trans-unit>
+      <trans-unit id="status.revoked" datatype="html">
+        <source>Révoqué</source>
+        <target state="translated">失効</target>
+      </trans-unit>
+      <trans-unit id="status.skipped" datatype="html">
+        <source>Ignoré</source>
+        <target state="translated">スキップ</target>
+      </trans-unit>
+      <trans-unit id="status.submitted" datatype="html">
+        <source>Soumis</source>
+        <target state="translated">提出済み</target>
+      </trans-unit>
+      <trans-unit id="status.success" datatype="html">
+        <source>Réussi</source>
+        <target state="translated">成功</target>
+      </trans-unit>
+      <trans-unit id="status.superseded" datatype="html">
+        <source>Remplacé</source>
+        <target state="translated">置き換え済み</target>
+      </trans-unit>
+      <trans-unit id="status.surveillance" datatype="html">
+        <source>Surveillance</source>
+        <target state="translated">サーベイランス</target>
+      </trans-unit>
+      <trans-unit id="status.suspended" datatype="html">
+        <source>Suspendu</source>
+        <target state="translated">停止中</target>
+      </trans-unit>
+      <trans-unit id="status.tampered" datatype="html">
+        <source>Altéré</source>
+        <target state="translated">改ざん</target>
+      </trans-unit>
+      <trans-unit id="status.terminated" datatype="html">
+        <source>Résilié</source>
+        <target state="translated">解約</target>
+      </trans-unit>
+      <trans-unit id="status.to-start" datatype="html">
+        <source>À démarrer</source>
+        <target state="translated">未開始</target>
+      </trans-unit>
+      <trans-unit id="status.to-treat" datatype="html">
+        <source>À traiter</source>
+        <target state="translated">未対応</target>
+      </trans-unit>
+      <trans-unit id="status.todo" datatype="html">
+        <source>À faire</source>
+        <target state="translated">未着手</target>
+      </trans-unit>
+      <trans-unit id="status.trial" datatype="html">
+        <source>Période d'essai</source>
+        <target state="translated">試用</target>
+      </trans-unit>
+      <trans-unit id="status.under-analysis" datatype="html">
+        <source>En cours d'analyse</source>
+        <target state="translated">分析中</target>
+      </trans-unit>
+      <trans-unit id="status.under-review" datatype="html">
+        <source>En revue</source>
+        <target state="translated">レビュー中</target>
+      </trans-unit>
+      <trans-unit id="status.under-study" datatype="html">
+        <source>À l'étude</source>
+        <target state="translated">検討中</target>
+      </trans-unit>
+      <trans-unit id="status.uninstalled" datatype="html">
+        <source>Désinstallé</source>
+        <target state="translated">アンインストール済み</target>
+      </trans-unit>
+      <trans-unit id="status.updated" datatype="html">
+        <source>Mis à jour</source>
+        <target state="translated">更新済み</target>
+      </trans-unit>
+      <trans-unit id="status.valid" datatype="html">
+        <source>Valide</source>
+        <target state="translated">有効</target>
+      </trans-unit>
+      <trans-unit id="status.validated" datatype="html">
+        <source>Validé</source>
+        <target state="translated">承認済み</target>
+      </trans-unit>
+      <trans-unit id="status.verified" datatype="html">
+        <source>Vérifié</source>
+        <target state="translated">検証済み</target>
+      </trans-unit>
+      <trans-unit id="status.watch" datatype="html">
+        <source>À surveiller</source>
+        <target state="translated">要注意</target>
+      </trans-unit>
+      <trans-unit id="status.withdrawn" datatype="html">
+        <source>Retiré</source>
+        <target state="translated">撤回</target>
+      </trans-unit>
       <trans-unit id="nav.storyboard" datatype="html">
         <source>Storyboard IA</source>
         <target state="translated">AIストーリーボード</target>
@@ -28998,8 +30170,8 @@ Inde (centre de service)</source>
         <target state="translated">管理</target>
       </trans-unit>
       <trans-unit id="nav.calibration" datatype="html">
-        <source>Calibration</source>
-        <target state="translated">校正</target>
+        <source>Instruments</source>
+        <target state="translated">計測器</target>
       </trans-unit>
       <trans-unit id="nav.iot" datatype="html">
         <source>Parc IoT</source>

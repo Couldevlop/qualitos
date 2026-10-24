@@ -10,7 +10,7 @@
           <code>{{ f.reference }}</code>
         </h1>
         <div class="meta-row">
-          <span [class]="statusBadge(f.status)">{{ f.status }}</span>
+          <span [class]="statusBadge(f.status)">{{ f.status | statusLabel }}</span>
           <span class="dim"><span i18n="@@fria.detail.ai-system">Système IA</span> <code>{{ f.aiSystemId.slice(0, 8) }}…</code></span>
           <span class="dim"><span i18n="@@fria.detail.updated-label">Mis à jour :</span> {{ f.updatedAt | slice:0:10 }}</span>
         </div>

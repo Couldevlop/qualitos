@@ -638,7 +638,7 @@ TRANSLATIONS = {
         'Rechercher : pièce, meneur, machine…', 'Search: part, lead, machine…', 'Buscar: pieza, responsable, máquina…',
         'بحث: القطعة، القائد، الآلة…', '検索：部品、責任者、設備…', '搜索：零件、负责人、设备…'),
     'spc.register.filter-status': ('Filtrer par statut', 'Filter by status', 'Filtrar por estado', 'تصفية حسب الحالة', 'ステータスで絞り込む', '按状态筛选'),
-    'spc.register.all-statuses': ('Tous les statuts', 'All statuses', 'Todos los estados', 'جميع الحالات', 'すべてのステータス', '全部状态'),
+    'spc.register.all-statuses': ('Statut : tous', 'Status: all', 'Estado: todos', 'الحالة: الكل', 'ステータス：すべて', '状态：全部'),
     'spc.register.filter-plan': (
         "Filtrer par plan d'actions", 'Filter by action plan', 'Filtrar por plan de acción',
         'تصفية حسب خطة العمل', '処置計画で絞り込む', '按行动计划筛选'),

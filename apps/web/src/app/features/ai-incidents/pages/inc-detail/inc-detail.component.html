@@ -11,7 +11,7 @@
         </h1>
         <div class="meta-row">
           <span [class]="severityBadge(i.severity)">{{ severityLabel(i.severity) }}</span>
-          <span [class]="statusBadge(i.status)">{{ i.status }}</span>
+          <span [class]="statusBadge(i.status)">{{ i.status | statusLabel }}</span>
           <span *ngIf="i.overdueForRegulator" class="flag flag-overdue">
             <mat-icon>warning</mat-icon> <span i18n="@@ai-incidents.overdue-regulator">Délai régulateur dépassé</span>
           </span>
