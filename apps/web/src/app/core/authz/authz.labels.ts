@@ -34,6 +34,7 @@ const PERMISSIONS: Record<string, string> = {
   'change.request': $localize`:@@authz.perm.change-request:Demander un changement et conduire ses demandes`,
   'change.analyze': $localize`:@@authz.perm.change-analyze:Gérer toutes les demandes de changement`,
   'spc.manage': $localize`:@@authz.perm.spc-manage:Saisir et supprimer les études de capabilité SPC`,
+  'dmaic.manage': $localize`:@@authz.perm.dmaic-manage:Remplir la fiche de résolution DMAIC et ses photos`,
   'training.manage': $localize`:@@authz.perm.training-manage:Tenir la matrice de compétences`
 };
 
@@ -45,6 +46,7 @@ const MODULES: Record<string, string> = {
   risk: $localize`:@@authz.module.risk:Risques et opportunités`,
   change: $localize`:@@authz.module.change:Gestion des changements`,
   spc: $localize`:@@authz.module.spc:SPC`,
+  dmaic: $localize`:@@authz.module.dmaic:DMAIC`,
   training: $localize`:@@authz.module.training:Formation`
 };
 

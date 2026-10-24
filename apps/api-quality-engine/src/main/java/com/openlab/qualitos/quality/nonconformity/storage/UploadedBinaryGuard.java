@@ -39,7 +39,7 @@ public final class UploadedBinaryGuard {
      *   <li>docx / xlsx : des archives ZIP, donc {@code PK} — la signature ne
      *       distingue pas les deux, et c'est assumé : elle écarte ce qui n'est pas
      *       une archive, le type déclaré fait le reste</li>
-     *   <li>JPEG, PNG, WEBP, HEIC : signatures d'image usuelles</li>
+     *   <li>JPEG, PNG, GIF, WEBP, HEIC : signatures d'image usuelles</li>
      * </ul>
      *
      * @return {@code false} pour tout type hors de cette liste — un type inconnu
@@ -58,6 +58,7 @@ public final class UploadedBinaryGuard {
             case "image/jpeg" -> startsWith(content, 0xFF, 0xD8, 0xFF);
             case "image/png" ->
                     startsWith(content, 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A);
+            case "image/gif" -> startsWith(content, 0x47, 0x49, 0x46, 0x38);
             case "image/webp" -> content.length >= 12
                     && startsWith(content, 0x52, 0x49, 0x46, 0x46)
                     && content[8] == 'W' && content[9] == 'E'

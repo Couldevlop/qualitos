@@ -283,6 +283,13 @@ public class SecurityConfig {
                         "/api/v1/training/competencies/matrix/operators/*",
                         "/api/v1/training/competencies/matrix/skills/*")
                     .authenticated()
+                // Photos de la fiche de résolution DMAIC (ADR 0101) : retirer une
+                // photo relève de l'action dmaic.manage, vérifiée par
+                // @RequiresPermission, réglable par le client. Un emplacement
+                // précis seulement : la fiche elle-même n'expose aucun DELETE.
+                .requestMatchers(org.springframework.http.HttpMethod.DELETE,
+                        "/api/v1/dmaic/projects/*/resolution/photos/*")
+                    .authenticated()
                 // Suppression générique de ressource qualité : Manager Qualité ou plus.
                 .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/api/v1/**")
                     .hasAnyRole("ADMIN", "ADMIN_TENANT", "SUPER_ADMIN", "QUALITY_MANAGER")
