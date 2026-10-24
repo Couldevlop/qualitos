@@ -35,10 +35,10 @@
 # L'entrée reste pour ai-vision-5s et l'inférence edge, toujours en 3.14 faute
 # d'onnxruntime 3.15 (elles ne sont pas scannées par la CI ni livrées par la CD).
 #
-# REVUE : 2026-11-21 — relever les deux empreintes Chainguard (ai-service,
-# ai-vision-5s, infra/edge/inference, job pytest de la CI) si uvicorn[standard]
-# et onnxruntime s'installent en 3.15, et retirer cette entrée. Ne pas reconduire
-# sans avoir refait ce test.
+# REVUE : 2026-11-21 — relever les deux empreintes Chainguard d'ai-vision-5s,
+# d'infra/edge/inference et du job CI « Vision 5S tests » (ai-service est déjà
+# en 3.15) si onnxruntime s'installe en 3.15, et retirer cette entrée. Ne pas
+# reconduire sans avoir refait ce test.
 CVE-2026-111943 exp:2026-11-21
 #
 # 2026-10-24 — exceptions CVE-2026-47884 et CVE-2026-47890 (Spring Framework
