@@ -30,11 +30,14 @@
 # exécutées par l'interpréteur natif via PYTHONPATH.
 
 # -------- build stage (mêmes Python et libc que le runtime) --------
-# Images épinglées par empreinte (Python 3.14) : l'étiquette `latest` est passée
-# à Python 3.15 le 15/10/2026, pour lequel uvloop/httptools (uvicorn[standard])
-# n'ont pas encore de version installable. Même couple d'empreintes dans
-# ai-vision-5s, l'inférence edge et le job pytest de la CI : à relever ensemble.
-FROM cgr.dev/chainguard/python:latest-dev@sha256:c07959e43e3edece176d20c32428a53014379790169af4ea5de1dc47277eba75 AS builder
+# Images épinglées par empreinte (Python 3.15, relevées le 2026-10-24) : elles
+# embarquent brotli 1.2.1 (CVE-2026-111497, atteignable ici — la libcrypto
+# d'OpenSSL 4.0 s'en sert pour décompresser les certificats TLS reçus, AVANT leur
+# vérification) et ca-certificates-bundle r3 (CVE-2026-111943). Même empreinte
+# `latest-dev` dans le job pytest de la CI : à relever ensemble.
+# ai-vision-5s et l'inférence edge restent en 3.14 : onnxruntime n'a pas de roue
+# 3.15. Elles ne sont ni scannées ni livrées par la CD.
+FROM cgr.dev/chainguard/python:latest-dev@sha256:c179c7d8e23caed59a51ff74d4742f8f8d3f16af4c33c40acaf8d3ee07234592 AS builder
 # Les images Chainguard démarrent en nonroot ; l'étage de construction a besoin
 # d'écrire dans /deps. Cela ne concerne QUE le builder — le runtime plus bas
 # conserve l'utilisateur nonroot par défaut.
@@ -54,11 +57,19 @@ WORKDIR /build
 # --only-binary=:all: : le runtime n'a ni compilateur ni en-têtes. Sans ce garde-fou,
 # une dépendance sans roue se compilerait silencieusement dans le builder et
 # produirait un binaire qu'on ne saurait pas reconstruire ; on préfère un échec de
-# build explicite. Vérifié : les onze dépendances ont une roue manylinux.
+# build explicite. Vérifié : toutes les dépendances ont une roue manylinux.
+#
+# uvicorn sans l'extra [standard] : on en reprend les accélérateurs servis en prod
+# (uvloop, httptools, websockets), mais pas pyyaml (configuration de logs YAML,
+# inutilisée, et sans roue 3.15), watchfiles (--reload) ni python-dotenv
+# (--env-file), qui ne servent qu'en développement.
 RUN python -m pip install --no-cache-dir --upgrade pip \
  && python -m pip install --no-cache-dir --only-binary=:all: --target=/deps \
     "fastapi>=0.115" \
-    "uvicorn[standard]>=0.32" \
+    "uvicorn>=0.32" \
+    "uvloop>=0.21" \
+    "httptools>=0.6" \
+    "websockets>=13" \
     "python-multipart>=0.0.12" \
     "pydantic>=2.9" \
     "httpx>=0.27" \
@@ -70,7 +81,7 @@ RUN python -m pip install --no-cache-dir --upgrade pip \
     "psycopg[binary]>=3.2"
 
 # -------- runtime stage (Chainguard — surface minimale, nonroot, sans shell) ----
-FROM cgr.dev/chainguard/python:latest@sha256:3f411b4aac1ed9cd6c9dec1486f92a8898737d9d6f95488dd727ca7d6f5254ee
+FROM cgr.dev/chainguard/python:latest@sha256:fd6d0771e8ec99b1710dfc3d72ca19ba2ff6b14f72b7978922ab0c8acb72c3f3
 WORKDIR /app
 
 # site-packages tiers + code applicatif.
