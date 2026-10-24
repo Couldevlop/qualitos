@@ -24324,6 +24324,22 @@ historial de 12 meses</target>
         <source>Action CAPA ouverte : <x id="title"/></source>
         <target state="translated">Acción CAPA abierta: <x id="title"/></target>
       </trans-unit>
+      <trans-unit id="shell.search.goto-placeholder" datatype="html">
+        <source>Aller à un écran…</source>
+        <target state="translated">Ir a una pantalla…</target>
+      </trans-unit>
+      <trans-unit id="shell.search.goto-aria" datatype="html">
+        <source>Aller à un écran</source>
+        <target state="translated">Ir a una pantalla</target>
+      </trans-unit>
+      <trans-unit id="shell.search.list-aria" datatype="html">
+        <source>Écrans proposés</source>
+        <target state="translated">Pantallas sugeridas</target>
+      </trans-unit>
+      <trans-unit id="shell.search.no-match" datatype="html">
+        <source>Aucun écran ne correspond à « <x id="INTERPOLATION"/> ».</source>
+        <target state="translated">Ninguna pantalla coincide con «<x id="INTERPOLATION"/>».</target>
+      </trans-unit>
       <trans-unit id="nav.smi" datatype="html">
         <source>Tableau de bord SMI</source>
         <target state="translated">Panel del SGI</target>

@@ -24324,6 +24324,22 @@ historique 12 mois</source>
         <source>Action CAPA ouverte : <x id="title"/></source>
         <target state="translated">CAPA 措施已开启：<x id="title"/></target>
       </trans-unit>
+      <trans-unit id="shell.search.goto-placeholder" datatype="html">
+        <source>Aller à un écran…</source>
+        <target state="translated">转到页面…</target>
+      </trans-unit>
+      <trans-unit id="shell.search.goto-aria" datatype="html">
+        <source>Aller à un écran</source>
+        <target state="translated">转到页面</target>
+      </trans-unit>
+      <trans-unit id="shell.search.list-aria" datatype="html">
+        <source>Écrans proposés</source>
+        <target state="translated">建议的页面</target>
+      </trans-unit>
+      <trans-unit id="shell.search.no-match" datatype="html">
+        <source>Aucun écran ne correspond à « <x id="INTERPOLATION"/> ».</source>
+        <target state="translated">没有与“<x id="INTERPOLATION"/>”匹配的页面。</target>
+      </trans-unit>
       <trans-unit id="nav.smi" datatype="html">
         <source>Tableau de bord SMI</source>
         <target state="translated">综合管理体系仪表板</target>

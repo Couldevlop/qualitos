@@ -24324,6 +24324,22 @@ declared income
         <source>Action CAPA ouverte : <x id="title"/></source>
         <target state="translated">CAPA action opened: <x id="title"/></target>
       </trans-unit>
+      <trans-unit id="shell.search.goto-placeholder" datatype="html">
+        <source>Aller à un écran…</source>
+        <target state="translated">Go to a screen…</target>
+      </trans-unit>
+      <trans-unit id="shell.search.goto-aria" datatype="html">
+        <source>Aller à un écran</source>
+        <target state="translated">Go to a screen</target>
+      </trans-unit>
+      <trans-unit id="shell.search.list-aria" datatype="html">
+        <source>Écrans proposés</source>
+        <target state="translated">Suggested screens</target>
+      </trans-unit>
+      <trans-unit id="shell.search.no-match" datatype="html">
+        <source>Aucun écran ne correspond à « <x id="INTERPOLATION"/> ».</source>
+        <target state="translated">No screen matches “<x id="INTERPOLATION"/>”.</target>
+      </trans-unit>
       <trans-unit id="nav.smi" datatype="html">
         <source>Tableau de bord SMI</source>
         <target state="translated">IMS dashboard</target>
