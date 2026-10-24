@@ -1,4 +1,4 @@
-.meeting-form { display: flex; flex-direction: column; min-width: 520px; max-width: 620px; }
+.meeting-form { display: flex; flex-direction: column; min-width: min(520px, 100%); max-width: 620px; }
 mat-dialog-content { padding-top: 8px; }
 .full { width: 100%; }
 .row { display: flex; gap: 12px; }

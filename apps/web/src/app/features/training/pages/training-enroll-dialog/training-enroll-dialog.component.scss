@@ -1,4 +1,4 @@
-.enroll-form { display: flex; flex-direction: column; min-width: 520px; max-width: 640px; }
+.enroll-form { display: flex; flex-direction: column; min-width: min(520px, 100%); max-width: 640px; }
 mat-dialog-content { padding-top: 8px; display: flex; flex-direction: column; gap: 4px; }
 .full { width: 100%; }
 .banner { padding: 8px 12px; border-radius: 8px; font-size: 13px; margin-bottom: 8px; }

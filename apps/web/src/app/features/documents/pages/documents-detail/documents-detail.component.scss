@@ -51,7 +51,7 @@
 }
 
 .file-cell {
-  min-width: 220px;
+  min-width: min(220px, 100%);
   .file-link { max-width: 240px; padding-inline: 4px; }
   .file-name { display: inline-block; max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: bottom; }
   .upload-bar { width: 140px; margin-top: 4px; }

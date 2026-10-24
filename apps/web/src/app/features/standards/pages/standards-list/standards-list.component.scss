@@ -38,7 +38,7 @@
   gap: 12px;
 }
 
-.scope-field { width: 200px; }
+.scope-field { width: min(200px, 100%); }
 
 /* Repère visuel : ces quelques lignes appartiennent au tenant, au milieu de
    soixante normes livrées qu'il ne peut pas modifier. */

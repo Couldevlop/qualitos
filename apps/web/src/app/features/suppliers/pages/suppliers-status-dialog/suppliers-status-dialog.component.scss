@@ -1,4 +1,4 @@
-.status-form { display: flex; flex-direction: column; min-width: 520px; max-width: 640px; }
+.status-form { display: flex; flex-direction: column; min-width: min(520px, 100%); max-width: 640px; }
 mat-dialog-content { padding-top: 8px; display: flex; flex-direction: column; gap: 4px; }
 .full { width: 100%; }
 p { margin: 0 0 12px; color: rgba(0,0,0,0.7); line-height: 1.45; }

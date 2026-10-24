@@ -1,7 +1,7 @@
 /* Affichage unique du secret : tout l'écran doit converger vers « copier maintenant ».
    D'où l'avertissement en tête, le secret en très gros mono, et une seule action. */
 
-:host { display: block; min-width: 540px; max-width: 720px; }
+:host { display: block; min-width: min(540px, 100%); max-width: 720px; }
 
 h2[mat-dialog-title] { display: flex; align-items: center; gap: 8px; }
 

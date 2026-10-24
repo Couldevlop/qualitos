@@ -13,6 +13,7 @@ import { initOidc } from './core/auth/oidc.initializer';
 import { CoreModule } from './core/core.module';
 import { ApiInterceptor } from './core/http/api.interceptor';
 import { MainShellModule } from './layout/main-shell/main-shell.module';
+import { MAT_DIALOG_DEFAULT_OPTIONS } from '@angular/material/dialog';
 
 @NgModule({
   declarations: [AppComponent],
@@ -38,7 +39,13 @@ import { MainShellModule } from './layout/main-shell/main-shell.module';
   providers: [
     provideHttpClient(withInterceptorsFromDi()),
     { provide: HTTP_INTERCEPTORS, useClass: ApiInterceptor, multi: true },
-    { provide: APP_INITIALIZER, useFactory: initOidc, deps: [OAuthService], multi: true }
+    { provide: APP_INITIALIZER, useFactory: initOidc, deps: [OAuthService], multi: true },
+    // Une boîte de dialogue ouverte sans options hérite du cadre commun : largeur
+    // bornée à l'écran, focus sur le premier champ, focus rendu au déclencheur.
+    {
+      provide: MAT_DIALOG_DEFAULT_OPTIONS,
+      useValue: { panelClass: 'qos-dialog-panel', maxWidth: '94vw', autoFocus: 'first-tabbable', restoreFocus: true, hasBackdrop: true }
+    }
   ],
   bootstrap: [AppComponent]
 })

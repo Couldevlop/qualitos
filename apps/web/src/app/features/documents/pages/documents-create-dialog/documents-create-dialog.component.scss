@@ -1,4 +1,4 @@
-.documents-form { display: flex; flex-direction: column; min-width: 600px; max-width: 720px; }
+.documents-form { display: flex; flex-direction: column; min-width: min(600px, 100%); max-width: 720px; }
 mat-dialog-content { padding-top: 8px; display: flex; flex-direction: column; gap: 4px; }
 .full { width: 100%; }
 .row { display: flex; gap: 12px; }

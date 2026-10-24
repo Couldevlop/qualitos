@@ -8,7 +8,7 @@
  * faisait diverger du reste de la plateforme sans rien apporter. Seule reste la
  * respiration avant le tableau, que le scaffold ne fournit pas. */
 .filter-card { margin-bottom: 16px; }
-.filter-field { width: 220px; }
+.filter-field { width: min(220px, 100%); }
 .state-row { display: flex; align-items: center; gap: 12px; padding: 24px 0; }
 .state-row.error { color: var(--mat-sys-error, #b3261e); padding: 16px 0; }
 .table-card { padding: 0; overflow: hidden; }

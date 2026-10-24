@@ -1,7 +1,7 @@
 .response-form {
   display: flex;
   flex-direction: column;
-  min-width: 520px;
+  min-width: min(520px, 100%);
   max-width: 620px;
 }
 

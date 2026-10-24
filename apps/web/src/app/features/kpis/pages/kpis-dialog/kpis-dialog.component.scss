@@ -1,4 +1,4 @@
-.kpi-form { display: flex; flex-direction: column; min-width: 640px; max-width: 780px; }
+.kpi-form { display: flex; flex-direction: column; min-width: min(640px, 100%); max-width: 780px; }
 mat-dialog-content { padding-top: 8px; display: flex; flex-direction: column; gap: 4px; }
 .full { width: 100%; }
 .row { display: flex; gap: 12px; }

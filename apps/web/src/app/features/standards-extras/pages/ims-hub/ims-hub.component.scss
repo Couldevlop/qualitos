@@ -29,7 +29,7 @@
 .scope-select   { flex: 1 1 360px; max-width: 520px; }
 .adoption-select { flex: 1 1 360px; max-width: 520px; }
 .batch-field    { width: 160px; }
-.hash-field     { flex: 1 1 320px; min-width: 240px; }
+.hash-field     { flex: 1 1 320px; min-width: min(240px, 100%); }
 
 /* ---- Compteurs de tête ---------------------------------------------------- */
 

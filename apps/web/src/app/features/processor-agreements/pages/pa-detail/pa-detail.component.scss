@@ -32,7 +32,7 @@
 .kv { width: 100%; border-collapse: collapse; }
 .kv th { text-align: left; padding: 6px 12px 6px 0;
          color: rgba(0,0,0,0.55); font-size: 12px; font-weight: 600;
-         text-transform: uppercase; letter-spacing: 0.04em; width: 200px; vertical-align: top; }
+         text-transform: uppercase; letter-spacing: 0.04em; width: min(200px, 100%); vertical-align: top; }
 .kv td { padding: 6px 0; word-break: break-word; }
 .kv .ok { color: #1b5e20; vertical-align: middle; font-size: 18px; }
 .kv .bad { color: #b71c1c; vertical-align: middle; font-size: 18px; }
