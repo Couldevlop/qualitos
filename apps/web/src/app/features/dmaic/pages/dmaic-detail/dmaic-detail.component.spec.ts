@@ -67,9 +67,16 @@ describe('DmaicDetailComponent', () => {
     createdAt: '2026-07-02T08:00:00Z', updatedAt: '2026-07-02T08:00:00Z', ...over
   });
 
-  /** Une passe de chargement = le projet puis sa capabilité (recalculée à chaque fois). */
-  function flushDetail(p: DmaicProjectResponse = project(), cap: CapabilityResponse | null = capability): void {
+  /** Une passe de chargement = le projet, puis ses mesures, ses Poka-Yoke et sa capabilité (relus à chaque fois). */
+  function flushDetail(
+    p: DmaicProjectResponse = project(),
+    cap: CapabilityResponse | null = capability,
+    measures: MeasureResponse[] = [],
+    assignments: AssignmentResponse[] = []
+  ): void {
     http.expectOne(`${base}/projects/${ID}`).flush(p);
+    http.expectOne(`${base}/projects/${ID}/measures`).flush(measures);
+    http.expectOne(`${base}/projects/${ID}/pokayoke`).flush(assignments);
     const capReq = http.expectOne(`${base}/projects/${ID}/capability`);
     if (cap) {
       capReq.flush(cap);
@@ -161,6 +168,8 @@ describe('DmaicDetailComponent', () => {
     routeId = 'a1b2c3d4-1111-2222-3333-444455556666';
     fixture.detectChanges();
     http.expectOne(`${base}/projects/${routeId}`).flush(project({ id: routeId }));
+    http.expectOne(`${base}/projects/${routeId}/measures`).flush([]);
+    http.expectOne(`${base}/projects/${routeId}/pokayoke`).flush([]);
     http.expectOne(`${base}/projects/${routeId}/capability`).flush(capability);
     fixture.detectChanges();
     expect((fixture.nativeElement as HTMLElement).querySelector('h1')).not.toBeNull();
@@ -291,15 +300,15 @@ describe('DmaicDetailComponent', () => {
     expect(nav).not.toHaveBeenCalled();
   });
 
-  it('ajoute la mesure saisie en tête de liste et recharge la capabilité', () => {
+  it("relit les mesures et la capabilité après l'ajout d'une mesure", () => {
     fixture.detectChanges();
     flushDetail();
 
     const dialog = stubDialog(measure({ id: 'm-new', value: 9.99 }));
     component.openAddMeasure();
-    expect(component.measures[0].id).toBe('m-new');
     // La capabilité dépend de l'échantillon : elle est recalculée après l'ajout.
-    flushDetail(project({ measureCount: 1 }), { ...capability, sampleSize: 41 });
+    flushDetail(project({ measureCount: 1 }), { ...capability, sampleSize: 41 }, [measure({ id: 'm-new', value: 9.99 })]);
+    expect(component.measures.map(m => m.id)).toEqual(['m-new']);
     expect(component.capability?.sampleSize).toBe(41);
 
     // Dialogue fermé sans saisie : aucune requête, aucun rechargement.
@@ -308,12 +317,11 @@ describe('DmaicDetailComponent', () => {
     http.expectNone(`${base}/projects/${ID}`);
   });
 
-  it('affiche les mesures et les assignations rattachées au projet', () => {
+  it('affiche les mesures et les assignations lues sur le serveur', () => {
     fixture.detectChanges();
-    flushDetail();
-    component.measures = [measure({ id: 'm1', value: 9.99, subgroupId: 'g1' })];
-    component.assignments = [assignment({ note: 'pilote atelier' })];
-    fixture.detectChanges();
+    flushDetail(project(), capability,
+      [measure({ id: 'm1', value: 9.99, subgroupId: 'g1' })],
+      [assignment({ note: 'pilote atelier' })]);
 
     const el: HTMLElement = fixture.nativeElement;
     expect(el.querySelector('.measures-card')?.textContent).toContain('9.99');
@@ -325,9 +333,7 @@ describe('DmaicDetailComponent', () => {
 
   it('supprime une mesure après confirmation et la retire du tableau', () => {
     fixture.detectChanges();
-    flushDetail();
-    component.measures = [measure({ id: 'm1' }), measure({ id: 'm2', value: 10.04 })];
-    fixture.detectChanges();
+    flushDetail(project(), capability, [measure({ id: 'm1' }), measure({ id: 'm2', value: 10.04 })]);
 
     stubDialog(true);
     component.removeMeasure(measure({ id: 'm1' }));
@@ -336,13 +342,12 @@ describe('DmaicDetailComponent', () => {
     req.flush(null);
 
     expect(component.measures.map(m => m.id)).toEqual(['m2']);
-    flushDetail();
+    flushDetail(project(), capability, [measure({ id: 'm2', value: 10.04 })]);
   });
 
   it('conserve la mesure quand sa suppression est refusée', () => {
     fixture.detectChanges();
-    flushDetail();
-    component.measures = [measure({ id: 'm1' })];
+    flushDetail(project(), capability, [measure({ id: 'm1' })]);
 
     stubDialog(true);
     component.removeMeasure(measure({ id: 'm1' }));
@@ -359,8 +364,8 @@ describe('DmaicDetailComponent', () => {
 
     const dialog = stubDialog(assignment());
     component.openAddPokaYoke();
+    flushDetail(project({ pokaYokeCount: 1 }), capability, [], [assignment()]);
     expect(component.assignments.map(a => a.deviceCode)).toEqual(['PK-INT-001']);
-    flushDetail(project({ pokaYokeCount: 1 }));
 
     dialog.and.returnValue({ afterClosed: () => of(undefined) } as MatDialogRef<unknown>);
     component.openAddPokaYoke();
@@ -369,8 +374,8 @@ describe('DmaicDetailComponent', () => {
 
   it('détache une assignation après confirmation et la retire du tableau', () => {
     fixture.detectChanges();
-    flushDetail();
-    component.assignments = [assignment({ id: 'as1' }), assignment({ id: 'as2', deviceCode: 'PK-VIS-002' })];
+    flushDetail(project(), capability, [],
+      [assignment({ id: 'as1' }), assignment({ id: 'as2', deviceCode: 'PK-VIS-002' })]);
 
     const dialog = stubDialog(false);
     component.removeAssignment(assignment({ id: 'as1' }));
@@ -383,7 +388,7 @@ describe('DmaicDetailComponent', () => {
     expect(req.request.method).toBe('DELETE');
     req.flush(null);
     expect(component.assignments.map(a => a.id)).toEqual(['as2']);
-    flushDetail();
+    flushDetail(project(), capability, [], [assignment({ id: 'as2', deviceCode: 'PK-VIS-002' })]);
   });
 
   it('recharge après une modification, et pas quand le dialogue est annulé', () => {
