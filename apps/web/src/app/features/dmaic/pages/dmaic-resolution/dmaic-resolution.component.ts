@@ -6,6 +6,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subscription, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
+import { AuthService } from '../../../../core/auth/auth.service';
 import { AuthzService } from '../../../../core/authz/authz.service';
 import { DirectoryUser } from '../../../../core/directory/directory.types';
 import { safeErrorMessage } from '../../../../core/http/error-message';
@@ -84,6 +85,8 @@ interface IshikawaOption {
 export class DmaicResolutionComponent implements OnInit, OnDestroy {
 
   @Input({ required: true }) projectId!: string;
+  /** Le problème de la charte : il devient l'effet du diagramme d'Ishikawa créé depuis la fiche. */
+  @Input() problemStatement: string | null = null;
 
   readonly limits = RESOLUTION_LIMITS;
   readonly branches = WHY_BRANCHES;
@@ -110,6 +113,7 @@ export class DmaicResolutionComponent implements OnInit, OnDestroy {
   failed = false;
   saving = false;
   downloading = false;
+  creatingIshikawa = false;
   canEdit = false;
   readonly photoBusy = new Set<number>();
 
@@ -119,6 +123,7 @@ export class DmaicResolutionComponent implements OnInit, OnDestroy {
   constructor(
     private readonly svc: DmaicResolutionService,
     private readonly ishikawa: IshikawaService,
+    private readonly auth: AuthService,
     private readonly authz: AuthzService,
     private readonly dialog: MatDialog,
     private readonly snack: MatSnackBar
@@ -367,6 +372,37 @@ export class DmaicResolutionComponent implements OnInit, OnDestroy {
       error: err => {
         this.saving = false;
         this.fail(err, $localize`:@@dmaic.res.save-failed:La fiche n'a pas pu être enregistrée.`);
+      }
+    });
+  }
+
+  // ---------- Ishikawa ----------
+
+  /**
+   * Crée le diagramme de la feuille « Fishbone » du classeur : les 6 M
+   * (méthode, personnel, machine, matériel, mesures, environnement), le problème
+   * du projet comme effet. Le lien est enregistré aussitôt avec la fiche.
+   */
+  createIshikawa(): void {
+    const ownerId = this.auth.snapshot()?.userId;
+    if (!this.canEdit || this.creatingIshikawa || !ownerId) return;
+    this.creatingIshikawa = true;
+    this.ishikawa.createDiagram({
+      problemStatement: this.problemStatement?.trim()
+        || $localize`:@@dmaic.res.ishikawa-default-effect:Problème du projet DMAIC`,
+      description: $localize`:@@dmaic.res.ishikawa-description:Diagramme créé depuis la fiche de résolution DMAIC.`,
+      mode: 'SIX_M',
+      ownerId
+    }).subscribe({
+      next: d => {
+        this.creatingIshikawa = false;
+        this.ishikawas = [{ id: d.id, label: d.problemStatement }, ...this.ishikawas];
+        this.draft.ishikawaId = d.id;
+        this.save();
+      },
+      error: err => {
+        this.creatingIshikawa = false;
+        this.fail(err, $localize`:@@dmaic.res.ishikawa-create-failed:Le diagramme n'a pas pu être créé.`);
       }
     });
   }

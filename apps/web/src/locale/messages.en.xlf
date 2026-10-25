@@ -10734,6 +10734,18 @@ Customer portal</target>
         <source>Créer un diagramme</source>
         <target state="translated">Create a diagram</target>
       </trans-unit>
+      <trans-unit id="dmaic.res.ishikawa-default-effect" datatype="html">
+        <source>Problème du projet DMAIC</source>
+        <target state="translated">DMAIC project problem</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.ishikawa-description" datatype="html">
+        <source>Diagramme créé depuis la fiche de résolution DMAIC.</source>
+        <target state="translated">Diagram created from the DMAIC resolution sheet.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.ishikawa-create-failed" datatype="html">
+        <source>Le diagramme n'a pas pu être créé.</source>
+        <target state="translated">The diagram could not be created.</target>
+      </trans-unit>
       <trans-unit id="dmaic.res.whys" datatype="html">
         <source>5 pourquoi</source>
         <target state="translated">5 whys</target>
