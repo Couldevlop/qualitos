@@ -81,6 +81,9 @@ export interface NonConformityResponse {
   id: string;
   tenantId: string;
   supplierId: string;
+  /** Le fournisseur de la NC — renseigné pour la liste transverse des NC. */
+  supplierCode?: string;
+  supplierName?: string;
   lotReference?: string;
   description?: string;
   severity: NonConformitySeverity;
@@ -88,6 +91,12 @@ export interface NonConformityResponse {
   detectedOn: string;
   resolvedOn?: string;
   resolution?: string;
+  /** Référence de la pièce touchée ; absente des NC saisies avant qu'elle soit exigée. */
+  partNumber?: string;
+  partQuantity?: number;
+  eightDRequested: boolean;
+  eightDReceived: boolean;
+  documentCount: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -99,6 +108,10 @@ export interface CreateNonConformityRequest {
   description?: string;
   severity: NonConformitySeverity;
   detectedOn: string;
+  partNumber: string;
+  partQuantity: number;
+  eightDRequested?: boolean;
+  eightDReceived?: boolean;
 }
 
 export interface UpdateNonConformityRequest {
@@ -108,6 +121,17 @@ export interface UpdateNonConformityRequest {
   status?: NonConformityStatus;
   resolvedOn?: string;
   resolution?: string;
+  partNumber?: string;
+  partQuantity?: number;
+  eightDRequested?: boolean;
+  eightDReceived?: boolean;
+}
+
+/** Filtres de la liste transverse des NC fournisseur. */
+export interface NonConformityFilters {
+  supplierId?: string;
+  status?: NonConformityStatus;
+  severity?: NonConformitySeverity;
 }
 
 export interface CertificateResponse {
@@ -120,6 +144,7 @@ export interface CertificateResponse {
   expiresOn: string;
   documentUrl?: string;
   expired: boolean;
+  documentCount: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -142,4 +167,42 @@ export interface SupplierStatistics {
   resolvedNonConformitiesRecent: number;
   expiredCertificates: number;
   lastAuditAt?: string;
+}
+
+/** Ce qui porte un document fournisseur. */
+export type SupplierDocumentOwnerType = 'NON_CONFORMITY' | 'CERTIFICATE';
+
+/** Nature d'un document : elle se lit dans la fiche NC imprimée et dans la GED. */
+export type SupplierDocumentCategory = 'EIGHT_D' | 'CAPA_EVIDENCE' | 'CERTIFICATE' | 'OTHER';
+
+export interface SupplierDocument {
+  id: string;
+  supplierId: string;
+  ownerType: SupplierDocumentOwnerType;
+  ownerId: string;
+  category: SupplierDocumentCategory;
+  contentType: string;
+  sizeBytes: number;
+  originalFilename?: string;
+  uploadedBy?: string;
+  createdAt: string;
+  /** Lien de lecture présigné, de courte durée ; absent de la réponse de dépôt. */
+  url?: string;
+}
+
+/** Ligne de la vue « Documents fournisseurs » de la GED. */
+export interface SupplierDocumentCatalogItem extends SupplierDocument {
+  supplierCode?: string;
+  supplierName?: string;
+  /** Référence de pièce de la NC, ou norme et référence du certificat. */
+  ownerLabel?: string;
+}
+
+export type SupplierDocumentCatalogPage = SpringPage<SupplierDocumentCatalogItem>;
+
+export interface SupplierDocumentFilters {
+  supplierId?: string;
+  ownerType?: SupplierDocumentOwnerType;
+  category?: SupplierDocumentCategory;
+  q?: string;
 }

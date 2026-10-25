@@ -52,6 +52,8 @@ describe('SuppliersService', () => {
     description: 'Lot hors tolérance dimensionnelle',
     severity: 'MAJOR',
     detectedOn: iso(0),
+    partNumber: 'PN-7781-A',
+    partQuantity: 40,
     ...over
   });
 
@@ -249,6 +251,58 @@ describe('SuppliersService', () => {
       expect(created.status).toBe('OPEN');
       expect(created.severity).toBe('MAJOR');
       expect(run(service.listNcs('sup-1')).content[0].id).toBe(created.id);
+    }));
+
+    it('porte la pièce, la quantité et le suivi du 8D, sans document au départ', fakeAsync(() => {
+      const created = run(service.addNc('sup-1', ncReq({ eightDRequested: true })));
+
+      expect(created.partNumber).toBe('PN-7781-A');
+      expect(created.partQuantity).toBe(40);
+      expect(created.eightDRequested).toBeTrue();
+      expect(created.eightDReceived).toBeFalse();
+      expect(created.documentCount).toBe(0);
+    }));
+
+    it('liste toutes les NC du tenant avec leur fournisseur, et filtre', fakeAsync(() => {
+      const a = run(service.addNc('sup-1', ncReq({ severity: 'CRITICAL' })));
+      run(service.addNc('sup-2', ncReq({ severity: 'MINOR' })));
+
+      const all = run(service.listAllNcs()).content;
+      const row = all.find(n => n.id === a.id)!;
+      expect(row.supplierName).toBeTruthy();
+      expect(row.supplierCode).toBeTruthy();
+
+      const critical = run(service.listAllNcs({ severity: 'CRITICAL' })).content;
+      expect(critical.every(n => n.severity === 'CRITICAL')).toBeTrue();
+      expect(run(service.listAllNcs({ supplierId: 'sup-2' })).content.every(n => n.supplierId === 'sup-2')).toBeTrue();
+      expect(run(service.listAllNcs({ status: 'RESOLVED' })).content.every(n => n.status === 'RESOLVED')).toBeTrue();
+    }));
+
+    it('rend une fiche NC en PDF nommée par le serveur', fakeAsync(() => {
+      const res = run(service.ncReport('sup-1', 'n-9'));
+
+      expect(res.body?.type).toBe('application/pdf');
+      expect(res.headers.get('Content-Disposition')).toContain('nc-fournisseur-n-9.pdf');
+    }));
+
+    it('joint, liste, retrouve dans la GED puis retire un document', fakeAsync(() => {
+      const nc = run(service.addNc('sup-1', ncReq()));
+      const file = new File(['8d'], 'rapport-8d.pdf', { type: 'application/pdf' });
+
+      const doc = run(service.uploadDocument('sup-1', 'NON_CONFORMITY', nc.id, file, 'EIGHT_D'));
+      expect(doc.category).toBe('EIGHT_D');
+      expect(doc.originalFilename).toBe('rapport-8d.pdf');
+      expect(run(service.listDocuments('sup-1', 'NON_CONFORMITY', nc.id)).map(d => d.id)).toEqual([doc.id]);
+
+      const ged = run(service.listAllDocuments({ q: 'RAPPORT-8D', category: 'EIGHT_D', ownerType: 'NON_CONFORMITY' })).content;
+      expect(ged.map(d => d.id)).toContain(doc.id);
+      expect(ged.find(d => d.id === doc.id)!.supplierName).toBeTruthy();
+      expect(run(service.listAllDocuments({ supplierId: 'autre' })).content.map(d => d.id)).not.toContain(doc.id);
+
+      run(service.deleteDocument('sup-1', 'NON_CONFORMITY', nc.id, doc.id));
+      expect(run(service.listDocuments('sup-1', 'NON_CONFORMITY', nc.id))).toEqual([]);
+      // Un retrait inconnu ne casse rien.
+      run(service.deleteDocument('sup-1', 'NON_CONFORMITY', nc.id, 'inconnu'));
     }));
 
     it('met à jour une non-conformité existante', fakeAsync(() => {
@@ -459,6 +513,74 @@ describe('SuppliersService', () => {
       expect(patch.request.method).toBe('PATCH');
       expect(patch.request.body).toEqual({ status: 'RESOLVED' });
       patch.flush({} as NonConformityResponse);
+    });
+
+    it('liste toutes les NC du tenant, filtres seulement s\'ils sont fournis', () => {
+      service.listAllNcs().subscribe();
+      const bare = http.expectOne(r => r.url === `${BASE}/non-conformities`);
+      expect(bare.request.params.keys().sort()).toEqual(['page', 'size']);
+      bare.flush({ content: [], totalElements: 0, totalPages: 0, number: 0, size: 0 });
+
+      service.listAllNcs({ supplierId: 's-1', status: 'OPEN', severity: 'MAJOR' }, 2, 25).subscribe();
+      const req = http.expectOne(r => r.url === `${BASE}/non-conformities`);
+      expect(req.request.params.get('supplierId')).toBe('s-1');
+      expect(req.request.params.get('status')).toBe('OPEN');
+      expect(req.request.params.get('severity')).toBe('MAJOR');
+      expect(req.request.params.get('page')).toBe('2');
+      expect(req.request.params.get('size')).toBe('25');
+      req.flush({ content: [], totalElements: 0, totalPages: 0, number: 0, size: 0 });
+    });
+
+    it('télécharge la fiche NC en blob, avec ses en-têtes', () => {
+      service.ncReport('s-1', 'n-1').subscribe();
+      const req = http.expectOne(`${BASE}/s-1/non-conformities/n-1/report`);
+      expect(req.request.method).toBe('GET');
+      expect(req.request.responseType).toBe('blob');
+      req.flush(new Blob(['%PDF']));
+    });
+
+    it('range les documents sous la NC ou le certificat qui les porte', () => {
+      service.listDocuments('s-1', 'NON_CONFORMITY', 'n-1').subscribe();
+      http.expectOne(`${BASE}/s-1/non-conformities/n-1/documents`).flush([]);
+
+      service.listDocuments('s-1', 'CERTIFICATE', 'c-1').subscribe();
+      http.expectOne(`${BASE}/s-1/certificates/c-1/documents`).flush([]);
+
+      const file = new File(['x'], 'cert.pdf', { type: 'application/pdf' });
+      service.uploadDocument('s-1', 'CERTIFICATE', 'c-1', file, 'CERTIFICATE').subscribe();
+      const up = http.expectOne(`${BASE}/s-1/certificates/c-1/documents`);
+      expect(up.request.method).toBe('POST');
+      const form = up.request.body as FormData;
+      expect((form.get('file') as File).name).toBe('cert.pdf');
+      expect(form.get('category')).toBe('CERTIFICATE');
+      up.flush({});
+
+      service.deleteDocument('s-1', 'NON_CONFORMITY', 'n-1', 'd-1').subscribe();
+      const del = http.expectOne(`${BASE}/s-1/non-conformities/n-1/documents/d-1`);
+      expect(del.request.method).toBe('DELETE');
+      del.flush(null);
+    });
+
+    it('interroge le catalogue GED des documents, recherche nettoyée', () => {
+      service.listAllDocuments().subscribe();
+      const bare = http.expectOne(r => r.url === `${BASE}/documents`);
+      expect(bare.request.params.keys().sort()).toEqual(['page', 'size']);
+      bare.flush({ content: [], totalElements: 0, totalPages: 0, number: 0, size: 0 });
+
+      service.listAllDocuments({ supplierId: 's-1', ownerType: 'NON_CONFORMITY', category: 'EIGHT_D', q: '  8d ' }, 1, 25)
+        .subscribe();
+      const req = http.expectOne(r => r.url === `${BASE}/documents`);
+      expect(req.request.params.get('supplierId')).toBe('s-1');
+      expect(req.request.params.get('ownerType')).toBe('NON_CONFORMITY');
+      expect(req.request.params.get('category')).toBe('EIGHT_D');
+      expect(req.request.params.get('q')).toBe('8d');
+      expect(req.request.params.get('page')).toBe('1');
+      req.flush({ content: [], totalElements: 0, totalPages: 0, number: 0, size: 0 });
+
+      service.listAllDocuments({ q: '   ' }).subscribe();
+      const blank = http.expectOne(r => r.url === `${BASE}/documents`);
+      expect(blank.request.params.has('q')).toBeFalse();
+      blank.flush({ content: [], totalElements: 0, totalPages: 0, number: 0, size: 0 });
     });
 
     it('gère les certificats sous la ressource du fournisseur', () => {

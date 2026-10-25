@@ -55,7 +55,7 @@
       <mat-label i18n="@@ehs.list.severity">Sévérité</mat-label>
       <mat-select [formControl]="severityFilter">
         <mat-option [value]="''" i18n="@@ehs.list.severity-all">Toutes</mat-option>
-        <mat-option *ngFor="let s of severities" [value]="s">{{ s }}</mat-option>
+        <mat-option *ngFor="let s of severities" [value]="s">{{ s | severityLabel }}</mat-option>
       </mat-select>
     </mat-form-field>
   </div>
@@ -85,7 +85,7 @@
 
       <ng-container matColumnDef="severity">
         <th mat-header-cell *matHeaderCellDef i18n="@@ehs.list.severity">Sévérité</th>
-        <td mat-cell *matCellDef="let i"><span [class]="severityBadge(i.severity)">{{ i.severity }}</span></td>
+        <td mat-cell *matCellDef="let i"><span [class]="severityBadge(i.severity)">{{ i.severity | severityLabel }}</span></td>
       </ng-container>
 
       <ng-container matColumnDef="status">

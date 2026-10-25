@@ -40,6 +40,7 @@ class SupplierControllerTest {
      * la cause réelle derrière vingt erreurs identiques.
      */
     @MockitoBean SupplierRiskPredictionService riskPredictionService;
+    @MockitoBean SupplierNcReportService ncReportService;
     ObjectMapper om;
 
     static final UUID SUP = UUID.randomUUID();
@@ -193,11 +194,71 @@ class SupplierControllerTest {
     void addNc_returns201() throws Exception {
         when(service.addNonConformity(eq(SUP), any())).thenReturn(ncResp());
         SupplierDto.CreateNonConformityRequest req = new SupplierDto.CreateNonConformityRequest(
-                "LOT-1", "issue", NonConformitySeverity.MAJOR, LocalDate.parse("2026-05-01"));
+                "LOT-1", "issue", NonConformitySeverity.MAJOR, LocalDate.parse("2026-05-01"),
+                "PN-1", 12, true, false);
         mockMvc.perform(post("/api/v1/suppliers/{id}/non-conformities", SUP).with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(om.writeValueAsString(req)))
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.partNumber").value("PN-1"))
+                .andExpect(jsonPath("$.eightDRequested").value(true));
+    }
+
+    @Test @WithMockUser
+    void addNc_withoutPartNumberOrQuantity_returns400() throws Exception {
+        String body = "{\"severity\":\"MAJOR\",\"detectedOn\":\"2026-05-01\",\"partNumber\":\"  \"}";
+        mockMvc.perform(post("/api/v1/suppliers/{id}/non-conformities", SUP).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON).content(body))
+                .andExpect(status().isBadRequest());
+        verify(service, never()).addNonConformity(any(), any());
+    }
+
+    @Test @WithMockUser
+    void addNc_zeroQuantity_returns400() throws Exception {
+        String body = "{\"severity\":\"MAJOR\",\"detectedOn\":\"2026-05-01\","
+                + "\"partNumber\":\"PN-1\",\"partQuantity\":0}";
+        mockMvc.perform(post("/api/v1/suppliers/{id}/non-conformities", SUP).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON).content(body))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test @WithMockUser
+    void updateNc_blankPartNumber_returns400() throws Exception {
+        mockMvc.perform(patch("/api/v1/suppliers/{id}/non-conformities/{ncId}", SUP, CHILD)
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"partNumber\":\"   \"}"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test @WithMockUser
+    void listAllNc_passesFilters() throws Exception {
+        when(service.listAllNonConformities(eq(SUP), eq(NonConformityStatus.OPEN),
+                eq(NonConformitySeverity.CRITICAL), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of(ncResp())));
+        mockMvc.perform(get("/api/v1/suppliers/non-conformities")
+                        .param("supplierId", SUP.toString())
+                        .param("status", "OPEN")
+                        .param("severity", "CRITICAL"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].supplierName").value("Acme"));
+    }
+
+    @Test @WithMockUser
+    void ncReport_returnsPdfAttachment() throws Exception {
+        when(ncReportService.render(SUP, CHILD)).thenReturn("%PDF-1.7".getBytes());
+        mockMvc.perform(get("/api/v1/suppliers/{id}/non-conformities/{ncId}/report", SUP, CHILD))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_PDF))
+                .andExpect(header().string("Content-Disposition",
+                        org.hamcrest.Matchers.containsString("nc-fournisseur-" + CHILD + ".pdf")));
+    }
+
+    @Test @WithMockUser
+    void ncReport_unknownNc_returns404() throws Exception {
+        when(ncReportService.render(SUP, CHILD)).thenThrow(new SupplierChildNotFoundException("Non-conformity", CHILD));
+        mockMvc.perform(get("/api/v1/suppliers/{id}/non-conformities/{ncId}/report", SUP, CHILD))
+                .andExpect(status().isNotFound());
     }
 
     @Test @WithMockUser
@@ -257,9 +318,10 @@ class SupplierControllerTest {
 
     private SupplierDto.NonConformityResponse ncResp() {
         return new SupplierDto.NonConformityResponse(
-                CHILD, TENANT, SUP, "LOT-1", "issue",
+                CHILD, TENANT, SUP, "acme", "Acme", "LOT-1", "issue",
                 NonConformitySeverity.MAJOR, NonConformityStatus.OPEN,
                 LocalDate.parse("2026-05-01"), null, null,
+                "PN-1", 12, true, false, 0L,
                 Instant.now(), Instant.now());
     }
 
@@ -267,6 +329,6 @@ class SupplierControllerTest {
         return new SupplierDto.CertificateResponse(
                 CHILD, TENANT, SUP, "iso-9001", "REF",
                 LocalDate.parse("2024-01-01"), LocalDate.parse("2027-01-01"),
-                null, false, Instant.now(), Instant.now());
+                null, false, 0L, Instant.now(), Instant.now());
     }
 }

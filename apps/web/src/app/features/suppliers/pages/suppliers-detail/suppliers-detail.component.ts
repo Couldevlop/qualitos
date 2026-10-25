@@ -25,6 +25,11 @@ import { SuppliersCertDialogComponent } from '../suppliers-cert-dialog/suppliers
 import { SuppliersEditDialogComponent } from '../suppliers-edit-dialog/suppliers-edit-dialog.component';
 import { SuppliersNcDialogComponent } from '../suppliers-nc-dialog/suppliers-nc-dialog.component';
 import { SuppliersStatusDialogComponent } from '../suppliers-status-dialog/suppliers-status-dialog.component';
+import {
+  SupplierDocumentsDialogComponent,
+  SupplierDocumentsDialogData
+} from '../supplier-documents-dialog/supplier-documents-dialog.component';
+import { attachmentName, ncLockReason, ncSubject, saveBlob } from '../../suppliers.labels';
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -37,7 +42,7 @@ const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12
 export class SuppliersDetailComponent implements OnInit {
 
   readonly auditColumns = ['auditedOn', 'score', 'critical', 'major', 'minor', 'findingsSummary'];
-  readonly ncColumns    = ['detectedOn', 'severity', 'status', 'lotReference', 'description'];
+  readonly ncColumns    = ['detectedOn', 'partNumber', 'partQuantity', 'severity', 'status', 'eightD', 'description', 'ncActions'];
   readonly certColumns  = ['standardCode', 'reference', 'issuedOn', 'expiresOn', 'actions'];
 
   supplier$!: Observable<SupplierResponse | null>;
@@ -181,6 +186,37 @@ export class SuppliersDetailComponent implements OnInit {
         error: err => this.fail(err, $localize`:@@suppliers.detail.delete-failed:Suppression impossible.`)
       });
     });
+  }
+
+  openNcDocuments(s: SupplierResponse, nc: NonConformityResponse): void {
+    const data: SupplierDocumentsDialogData = {
+      supplierId: s.id, ownerType: 'NON_CONFORMITY', ownerId: nc.id,
+      subject: ncSubject(nc), lockReason: ncLockReason(nc)
+    };
+    this.dialog.open(SupplierDocumentsDialogComponent, { data, autoFocus: 'first-tabbable', restoreFocus: true,
+      panelClass: 'qos-dialog-panel' })
+      .afterClosed().subscribe(count => { if (count !== undefined) nc.documentCount = count; });
+  }
+
+  openCertDocuments(s: SupplierResponse, c: CertificateResponse): void {
+    const data: SupplierDocumentsDialogData = {
+      supplierId: s.id, ownerType: 'CERTIFICATE', ownerId: c.id,
+      subject: c.reference ? `${c.standardCode} — ${c.reference}` : c.standardCode
+    };
+    this.dialog.open(SupplierDocumentsDialogComponent, { data, autoFocus: 'first-tabbable', restoreFocus: true,
+      panelClass: 'qos-dialog-panel' })
+      .afterClosed().subscribe(count => { if (count !== undefined) c.documentCount = count; });
+  }
+
+  downloadReport(s: SupplierResponse, nc: NonConformityResponse): void {
+    this.svc.ncReport(s.id, nc.id).subscribe({
+      next: res => { if (res.body) saveBlob(res.body, attachmentName(res, `nc-fournisseur-${nc.id}.pdf`)); },
+      error: err => this.fail(err, $localize`:@@suppliers.nc.report-failed:La fiche NC n'a pas pu être générée.`)
+    });
+  }
+
+  documentsAria(count: number): string {
+    return $localize`:@@suppliers.documents.open-aria:Documents joints (${count}:count:)`;
   }
 
   scoreClass(score: number, status: SupplierStatus): string {

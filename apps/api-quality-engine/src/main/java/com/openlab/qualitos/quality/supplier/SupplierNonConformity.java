@@ -37,6 +37,22 @@ public class SupplierNonConformity {
     @Column(length = 1000)
     private String description;
 
+    /** Référence de la pièce touchée. Exigée à la saisie ; absente des NC antérieures (V150). */
+    @Column(name = "part_number", length = 100)
+    private String partNumber;
+
+    /** Nombre de pièces touchées, strictement positif. Même régime que {@link #partNumber}. */
+    @Column(name = "part_quantity")
+    private Integer partQuantity;
+
+    /** Un rapport 8D a été demandé au fournisseur. */
+    @Column(name = "eight_d_requested", nullable = false)
+    private boolean eightDRequested;
+
+    /** Le fournisseur a remis son rapport 8D. */
+    @Column(name = "eight_d_received", nullable = false)
+    private boolean eightDReceived;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 32)
     private NonConformitySeverity severity;
@@ -81,6 +97,14 @@ public class SupplierNonConformity {
     public void setLotReference(String lotReference) { this.lotReference = lotReference; }
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
+    public String getPartNumber() { return partNumber; }
+    public void setPartNumber(String partNumber) { this.partNumber = partNumber; }
+    public Integer getPartQuantity() { return partQuantity; }
+    public void setPartQuantity(Integer partQuantity) { this.partQuantity = partQuantity; }
+    public boolean isEightDRequested() { return eightDRequested; }
+    public void setEightDRequested(boolean eightDRequested) { this.eightDRequested = eightDRequested; }
+    public boolean isEightDReceived() { return eightDReceived; }
+    public void setEightDReceived(boolean eightDReceived) { this.eightDReceived = eightDReceived; }
     public NonConformitySeverity getSeverity() { return severity; }
     public void setSeverity(NonConformitySeverity severity) { this.severity = severity; }
     public NonConformityStatus getStatus() { return status; }

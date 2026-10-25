@@ -6,16 +6,22 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -33,6 +39,7 @@ class SupplierServiceTest {
     @Mock SupplierNonConformityRepository ncRepo;
     @Mock SupplierCertificateRepository certRepo;
     @Mock SupplierScoringService scoring;
+    @Mock SupplierDocumentService documents;
 
     SupplierService service;
     static final UUID TENANT = UUID.randomUUID();
@@ -44,7 +51,7 @@ class SupplierServiceTest {
 
     @BeforeEach
     void setup() {
-        service = new SupplierService(supplierRepo, auditRepo, ncRepo, certRepo, scoring, CLOCK);
+        service = new SupplierService(supplierRepo, auditRepo, ncRepo, certRepo, scoring, documents, CLOCK);
         TenantContext.setTenantId(TENANT.toString());
     }
 
@@ -125,6 +132,7 @@ class SupplierServiceTest {
         verify(auditRepo).deleteBySupplierId(SUP);
         verify(ncRepo).deleteBySupplierId(SUP);
         verify(certRepo).deleteBySupplierId(SUP);
+        verify(documents).purgeSupplier(TENANT, SUP);
         verify(supplierRepo).delete(s);
     }
 
@@ -251,9 +259,123 @@ class SupplierServiceTest {
         SupplierDto.NonConformityResponse out = service.addNonConformity(SUP,
                 new SupplierDto.CreateNonConformityRequest(
                         "LOT-42", "Dim hors tolérance",
-                        NonConformitySeverity.MAJOR, LocalDate.parse("2026-05-01")));
+                        NonConformitySeverity.MAJOR, LocalDate.parse("2026-05-01"),
+                        "  PN-7781-A ", 120, true, null));
         assertThat(out.status()).isEqualTo(NonConformityStatus.OPEN);
+        assertThat(out.partNumber()).isEqualTo("PN-7781-A");
+        assertThat(out.partQuantity()).isEqualTo(120);
+        assertThat(out.eightDRequested()).isTrue();
+        assertThat(out.eightDReceived()).isFalse();
+        assertThat(out.supplierCode()).isEqualTo("s-1");
+        assertThat(out.supplierName()).isEqualTo("Supplier 1");
+        assertThat(out.documentCount()).isZero();
         verify(scoring).recompute(s);
+    }
+
+    @Test
+    void updateNc_marksEightDReceivedAndKeepsOtherFields() {
+        Supplier s = supplier();
+        when(supplierRepo.findById(SUP)).thenReturn(Optional.of(s));
+        SupplierNonConformity nc = nc();
+        nc.setPartNumber("PN-1"); nc.setPartQuantity(4); nc.setEightDRequested(true);
+        when(ncRepo.findById(CHILD)).thenReturn(Optional.of(nc));
+        when(ncRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+        when(documents.countByOwners(eq(TENANT), eq(SupplierDocumentOwnerType.NON_CONFORMITY), any()))
+                .thenReturn(Map.of(CHILD, 2L));
+
+        SupplierDto.NonConformityResponse out = service.updateNonConformity(SUP, CHILD,
+                new SupplierDto.UpdateNonConformityRequest(
+                        null, null, null, null, null, null, null, null, null, true));
+
+        assertThat(nc.isEightDReceived()).isTrue();
+        assertThat(nc.isEightDRequested()).isTrue();
+        assertThat(nc.getPartNumber()).isEqualTo("PN-1");
+        assertThat(nc.getPartQuantity()).isEqualTo(4);
+        assertThat(out.documentCount()).isEqualTo(2L);
+    }
+
+    @Test
+    void updateNc_replacesPartNumberAndQuantity() {
+        Supplier s = supplier();
+        when(supplierRepo.findById(SUP)).thenReturn(Optional.of(s));
+        SupplierNonConformity nc = nc();
+        nc.setPartNumber("PN-1"); nc.setPartQuantity(4); nc.setEightDRequested(true);
+        when(ncRepo.findById(CHILD)).thenReturn(Optional.of(nc));
+        when(ncRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        service.updateNonConformity(SUP, CHILD, new SupplierDto.UpdateNonConformityRequest(
+                null, null, null, null, null, null, " PN-2 ", 9, false, null));
+
+        assertThat(nc.getPartNumber()).isEqualTo("PN-2");
+        assertThat(nc.getPartQuantity()).isEqualTo(9);
+        assertThat(nc.isEightDRequested()).isFalse();
+    }
+
+    @Test
+    void listNc_carriesSupplierAndDocumentCounts() {
+        Supplier s = supplier();
+        when(supplierRepo.findById(SUP)).thenReturn(Optional.of(s));
+        SupplierNonConformity nc = nc();
+        when(ncRepo.findBySupplierIdOrderByDetectedOnDesc(eq(SUP), any()))
+                .thenReturn(new PageImpl<>(List.of(nc)));
+        when(documents.countByOwners(TENANT, SupplierDocumentOwnerType.NON_CONFORMITY, List.of(CHILD)))
+                .thenReturn(Map.of(CHILD, 3L));
+
+        Page<SupplierDto.NonConformityResponse> out = service.listNonConformities(SUP, PageRequest.of(0, 20));
+
+        assertThat(out.getContent()).singleElement().satisfies(r -> {
+            assertThat(r.documentCount()).isEqualTo(3L);
+            assertThat(r.supplierCode()).isEqualTo("s-1");
+        });
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void listAllNc_joinsSuppliersAndSortsMostRecentFirstByDefault() {
+        SupplierNonConformity nc = nc();
+        when(ncRepo.findAll(any(Specification.class), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of(nc)));
+        when(supplierRepo.findAllById(List.of(SUP))).thenReturn(List.of(supplier()));
+        when(documents.countByOwners(TENANT, SupplierDocumentOwnerType.NON_CONFORMITY, List.of(CHILD)))
+                .thenReturn(Map.of(CHILD, 1L));
+
+        Page<SupplierDto.NonConformityResponse> out = service.listAllNonConformities(
+                SUP, NonConformityStatus.OPEN, NonConformitySeverity.MAJOR, PageRequest.of(1, 25));
+
+        ArgumentCaptor<Pageable> pageable = ArgumentCaptor.forClass(Pageable.class);
+        verify(ncRepo).findAll(any(Specification.class), pageable.capture());
+        assertThat(pageable.getValue().getPageNumber()).isEqualTo(1);
+        assertThat(pageable.getValue().getPageSize()).isEqualTo(25);
+        assertThat(pageable.getValue().getSort().getOrderFor("detectedOn").getDirection())
+                .isEqualTo(Sort.Direction.DESC);
+        assertThat(out.getContent()).singleElement().satisfies(r -> {
+            assertThat(r.supplierName()).isEqualTo("Supplier 1");
+            assertThat(r.documentCount()).isEqualTo(1L);
+        });
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void listAllNc_keepsRequestedSortAndHidesForeignSupplier() {
+        SupplierNonConformity nc = nc();
+        Supplier foreign = supplier();
+        foreign.setTenantId(UUID.randomUUID());
+        when(ncRepo.findAll(any(Specification.class), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of(nc)));
+        when(supplierRepo.findAllById(List.of(SUP))).thenReturn(List.of(foreign));
+        PageRequest bySeverity = PageRequest.of(0, 10, Sort.by("severity"));
+
+        Page<SupplierDto.NonConformityResponse> out = service.listAllNonConformities(null, null, null, bySeverity);
+
+        verify(ncRepo).findAll(any(Specification.class), eq(bySeverity));
+        assertThat(out.getContent()).singleElement().satisfies(r -> assertThat(r.supplierName()).isNull());
+    }
+
+    @Test
+    void listAllNc_withoutTenant_throws() {
+        TenantContext.clear();
+        assertThatThrownBy(() -> service.listAllNonConformities(null, null, null, PageRequest.of(0, 10)))
+                .isInstanceOf(MissingTenantContextException.class);
     }
 
     @Test
@@ -264,7 +386,7 @@ class SupplierServiceTest {
         when(ncRepo.findById(CHILD)).thenReturn(Optional.of(nc));
         when(ncRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
         service.updateNonConformity(SUP, CHILD, new SupplierDto.UpdateNonConformityRequest(
-                null, null, null, NonConformityStatus.RESOLVED, null, "Lot rebuté"));
+                null, null, null, NonConformityStatus.RESOLVED, null, "Lot rebuté", null, null, null, null));
         assertThat(nc.getResolvedOn()).isEqualTo(LocalDate.parse("2026-05-15"));
         assertThat(nc.getResolution()).isEqualTo("Lot rebuté");
         verify(scoring).recompute(s);
@@ -278,7 +400,7 @@ class SupplierServiceTest {
         nc.setSupplierId(UUID.randomUUID()); // appartient à un autre supplier
         when(ncRepo.findById(CHILD)).thenReturn(Optional.of(nc));
         assertThatThrownBy(() -> service.updateNonConformity(SUP, CHILD,
-                new SupplierDto.UpdateNonConformityRequest(null, null, null, null, null, null)))
+                new SupplierDto.UpdateNonConformityRequest(null, null, null, null, null, null, null, null, null, null)))
                 .isInstanceOf(SupplierChildNotFoundException.class);
     }
 
@@ -334,6 +456,7 @@ class SupplierServiceTest {
         c.setExpiresOn(LocalDate.parse("2027-01-01"));
         when(certRepo.findById(CHILD)).thenReturn(Optional.of(c));
         service.deleteCertificate(SUP, CHILD);
+        verify(documents).purgeOwner(TENANT, SupplierDocumentOwnerType.CERTIFICATE, CHILD);
         verify(certRepo).delete(c);
         verify(scoring).recompute(s);
     }

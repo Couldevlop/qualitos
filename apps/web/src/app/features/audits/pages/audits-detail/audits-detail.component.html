@@ -64,7 +64,7 @@
             </div>
             <div class="info-item">
               <span class="info-label" i18n="@@common.type">Type</span>
-              <span class="info-value">{{ p.type }}</span>
+              <span class="info-value">{{ typeLabel(p.type) }}</span>
             </div>
             <div class="info-item" *ngIf="p.standard">
               <span class="info-label" i18n="@@audits.detail.standard">Norme</span>
@@ -196,7 +196,7 @@
             <ng-container matColumnDef="type">
               <th mat-header-cell *matHeaderCellDef i18n="@@common.type">Type</th>
               <td mat-cell *matCellDef="let f">
-                <span [class]="findingBadge(f.type)">{{ f.type }}</span>
+                <span [class]="findingBadge(f.type)">{{ findingLabel(f.type) }}</span>
               </td>
             </ng-container>
             <ng-container matColumnDef="description">

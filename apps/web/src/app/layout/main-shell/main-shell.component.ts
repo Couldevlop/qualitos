@@ -186,6 +186,9 @@ export class MainShellComponent implements OnInit, OnDestroy {
       items: [
         { label: $localize`:@@nav.nc-interne:NC interne`,  route: '/nc/interne',  icon: 'home_repair_service', module: 'capa' },
         { label: $localize`:@@nav.nc-externe:NC externe (Réclamations)`,  route: '/nc/externe',  icon: 'campaign',            module: 'capa' },
+        // Le troisieme ecart : celui que l'on recoit d'un fournisseur, suivi
+        // jusqu'a son 8D. Il vit avec le module fournisseurs, pas avec la CAPA.
+        { label: $localize`:@@nav.nc-fournisseurs:NC fournisseurs`, route: '/suppliers/non-conformites', icon: 'local_shipping', module: 'supplier' },
         // La CAPA suit immediatement la non-conformite parce que c'est la
         // suite du meme geste : on constate un ecart, puis on le traite. La
         // ranger dans « Operations » l'eloignait de ce qui la declenche.

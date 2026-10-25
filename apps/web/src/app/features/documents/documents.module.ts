@@ -15,11 +15,14 @@ import { DocumentsListComponent } from './pages/documents-list/documents-list.co
 import { DocumentsRejectDialogComponent } from './pages/documents-reject-dialog/documents-reject-dialog.component';
 import { DocumentsSubmitDialogComponent } from './pages/documents-submit-dialog/documents-submit-dialog.component';
 import { DocumentsVersionDialogComponent } from './pages/documents-version-dialog/documents-version-dialog.component';
+import { SupplierDocumentsLibraryComponent } from './pages/supplier-documents-library/supplier-documents-library.component';
 import { PersonNameModule } from '../../shared/person-name/person-name.module';
 import { UserPickerModule } from '../../shared/user-picker/user-picker.module';
 
 const routes: Routes = [
   { path: '', component: DocumentsListComponent },
+  // Avant ':id' : « fournisseurs » n'est pas un identifiant de document.
+  { path: 'fournisseurs', component: SupplierDocumentsLibraryComponent },
   { path: ':id', component: DocumentsDetailComponent }
 ];
 
@@ -35,7 +38,8 @@ const routes: Routes = [
     DocumentCircuitComponent,
     DocumentPanelComponent,
     DocumentValidationComponent,
-    DocumentsImportDialogComponent
+    DocumentsImportDialogComponent,
+    SupplierDocumentsLibraryComponent
   ],
   imports: [FormsModule, PersonNameModule, SharedModule, UiModule, UserPickerModule, RouterModule.forChild(routes)]
 })

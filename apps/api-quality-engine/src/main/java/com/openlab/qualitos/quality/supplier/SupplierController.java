@@ -4,7 +4,11 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -17,10 +21,14 @@ public class SupplierController {
 
     private final SupplierRiskPredictionService riskPrediction;
 
+    private final SupplierNcReportService ncReport;
+
     public SupplierController(SupplierService service,
-                              SupplierRiskPredictionService riskPrediction) {
+                              SupplierRiskPredictionService riskPrediction,
+                              SupplierNcReportService ncReport) {
         this.service = service;
         this.riskPrediction = riskPrediction;
+        this.ncReport = ncReport;
     }
 
     /**
@@ -90,6 +98,30 @@ public class SupplierController {
     }
 
     // ---- Non-conformities ----
+
+    /**
+     * Les NC de tous les fournisseurs du tenant, filtrables. Le segment littéral
+     * l'emporte sur {@code /{id}} : aucune collision avec la fiche d'un fournisseur.
+     */
+    @GetMapping("/non-conformities")
+    public Page<SupplierDto.NonConformityResponse> listAllNc(
+            @RequestParam(required = false) UUID supplierId,
+            @RequestParam(required = false) NonConformityStatus status,
+            @RequestParam(required = false) NonConformitySeverity severity,
+            @PageableDefault(size = 50) Pageable pageable) {
+        return service.listAllNonConformities(supplierId, status, severity, pageable);
+    }
+
+    /** La fiche PDF d'une NC, refaite à chaque demande. */
+    @GetMapping(value = "/{id}/non-conformities/{ncId}/report", produces = MediaType.APPLICATION_PDF_VALUE)
+    public ResponseEntity<byte[]> ncReport(@PathVariable UUID id, @PathVariable UUID ncId) {
+        byte[] pdf = ncReport.render(id, ncId);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        ContentDisposition.attachment().filename("nc-fournisseur-" + ncId + ".pdf").build().toString())
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdf);
+    }
 
     @GetMapping("/{id}/non-conformities")
     public Page<SupplierDto.NonConformityResponse> listNc(@PathVariable UUID id,

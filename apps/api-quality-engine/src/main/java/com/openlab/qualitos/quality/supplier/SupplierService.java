@@ -3,7 +3,10 @@ package com.openlab.qualitos.quality.supplier;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.common.TenantContext;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,10 +15,13 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.EnumMap;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Service orchestrant les fournisseurs et leurs sous-entités.
@@ -52,6 +58,7 @@ public class SupplierService {
     private final SupplierNonConformityRepository ncRepo;
     private final SupplierCertificateRepository certRepo;
     private final SupplierScoringService scoringService;
+    private final SupplierDocumentService documentService;
     private final Clock clock;
 
     @org.springframework.beans.factory.annotation.Autowired
@@ -59,8 +66,9 @@ public class SupplierService {
                            SupplierAuditRecordRepository auditRepo,
                            SupplierNonConformityRepository ncRepo,
                            SupplierCertificateRepository certRepo,
-                           SupplierScoringService scoringService) {
-        this(supplierRepo, auditRepo, ncRepo, certRepo, scoringService, Clock.systemUTC());
+                           SupplierScoringService scoringService,
+                           SupplierDocumentService documentService) {
+        this(supplierRepo, auditRepo, ncRepo, certRepo, scoringService, documentService, Clock.systemUTC());
     }
 
     SupplierService(SupplierRepository supplierRepo,
@@ -68,12 +76,14 @@ public class SupplierService {
                     SupplierNonConformityRepository ncRepo,
                     SupplierCertificateRepository certRepo,
                     SupplierScoringService scoringService,
+                    SupplierDocumentService documentService,
                     Clock clock) {
         this.supplierRepo = supplierRepo;
         this.auditRepo = auditRepo;
         this.ncRepo = ncRepo;
         this.certRepo = certRepo;
         this.scoringService = scoringService;
+        this.documentService = documentService;
         this.clock = clock;
     }
 
@@ -130,6 +140,8 @@ public class SupplierService {
         // Nettoyage explicite des enfants (ON DELETE CASCADE en DB mais on garde la
         // symétrie côté JPA — Hibernate ne suit pas la cascade FK SQL).
         auditRepo.deleteBySupplierId(id);
+        // Les documents d'abord : leurs binaires ne partiraient pas avec la cascade SQL.
+        documentService.purgeSupplier(s.getTenantId(), id);
         ncRepo.deleteBySupplierId(id);
         certRepo.deleteBySupplierId(id);
         supplierRepo.delete(s);
@@ -193,21 +205,21 @@ public class SupplierService {
         nc.setDescription(req.description());
         nc.setSeverity(req.severity());
         nc.setDetectedOn(req.detectedOn());
+        nc.setPartNumber(req.partNumber().strip());
+        nc.setPartQuantity(req.partQuantity());
+        nc.setEightDRequested(Boolean.TRUE.equals(req.eightDRequested()));
+        nc.setEightDReceived(Boolean.TRUE.equals(req.eightDReceived()));
         nc.setStatus(NonConformityStatus.OPEN);
         SupplierNonConformity saved = ncRepo.save(nc);
         scoringService.recompute(s);
-        return toResponse(saved);
+        return toResponse(saved, s, 0);
     }
 
     @Transactional
     public SupplierDto.NonConformityResponse updateNonConformity(
             UUID supplierId, UUID ncId, SupplierDto.UpdateNonConformityRequest req) {
         Supplier s = loadForTenant(supplierId);
-        SupplierNonConformity nc = ncRepo.findById(ncId)
-                .orElseThrow(() -> new SupplierChildNotFoundException("Non-conformity", ncId));
-        if (!nc.getSupplierId().equals(supplierId) || !nc.getTenantId().equals(s.getTenantId())) {
-            throw new SupplierChildNotFoundException("Non-conformity", ncId);
-        }
+        SupplierNonConformity nc = loadNonConformity(s, ncId);
         if (req.lotReference() != null) nc.setLotReference(req.lotReference());
         if (req.description() != null) nc.setDescription(req.description());
         if (req.severity() != null) nc.setSeverity(req.severity());
@@ -219,17 +231,76 @@ public class SupplierService {
         }
         if (req.resolvedOn() != null) nc.setResolvedOn(req.resolvedOn());
         if (req.resolution() != null) nc.setResolution(req.resolution());
+        if (req.partNumber() != null) nc.setPartNumber(req.partNumber().strip());
+        if (req.partQuantity() != null) nc.setPartQuantity(req.partQuantity());
+        if (req.eightDRequested() != null) nc.setEightDRequested(req.eightDRequested());
+        if (req.eightDReceived() != null) nc.setEightDReceived(req.eightDReceived());
         SupplierNonConformity saved = ncRepo.save(nc);
         scoringService.recompute(s);
-        return toResponse(saved);
+        return toResponse(saved, s, documentCounts(s.getTenantId(), List.of(saved)).getOrDefault(saved.getId(), 0L));
     }
 
     @Transactional(readOnly = true)
     public Page<SupplierDto.NonConformityResponse> listNonConformities(
             UUID supplierId, Pageable pageable) {
-        loadForTenant(supplierId);
-        return ncRepo.findBySupplierIdOrderByDetectedOnDesc(supplierId, pageable)
-                .map(this::toResponse);
+        Supplier s = loadForTenant(supplierId);
+        Page<SupplierNonConformity> page = ncRepo.findBySupplierIdOrderByDetectedOnDesc(supplierId, pageable);
+        Map<UUID, Long> counts = documentCounts(s.getTenantId(), page.getContent());
+        return page.map(nc -> toResponse(nc, s, counts.getOrDefault(nc.getId(), 0L)));
+    }
+
+    /**
+     * Les NC de tous les fournisseurs du tenant, les plus récentes d'abord, avec
+     * des filtres facultatifs. Le fournisseur de chaque ligne est chargé en une
+     * requête pour toute la page, comme le nombre de documents.
+     */
+    @Transactional(readOnly = true)
+    public Page<SupplierDto.NonConformityResponse> listAllNonConformities(
+            UUID supplierId, NonConformityStatus status, NonConformitySeverity severity, Pageable pageable) {
+        UUID tenantId = requireTenantId();
+        Specification<SupplierNonConformity> filters = (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId);
+        if (supplierId != null) {
+            filters = filters.and((root, query, cb) -> cb.equal(root.get("supplierId"), supplierId));
+        }
+        if (status != null) {
+            filters = filters.and((root, query, cb) -> cb.equal(root.get("status"), status));
+        }
+        if (severity != null) {
+            filters = filters.and((root, query, cb) -> cb.equal(root.get("severity"), severity));
+        }
+        Page<SupplierNonConformity> page = ncRepo.findAll(filters, withDefaultSort(pageable));
+
+        Map<UUID, Supplier> owners = supplierRepo.findAllById(
+                        page.getContent().stream().map(SupplierNonConformity::getSupplierId).distinct().toList())
+                .stream()
+                .filter(s -> s.getTenantId().equals(tenantId))
+                .collect(Collectors.toMap(Supplier::getId, Function.identity()));
+        Map<UUID, Long> counts = documentCounts(tenantId, page.getContent());
+        return page.map(nc -> toResponse(nc, owners.get(nc.getSupplierId()), counts.getOrDefault(nc.getId(), 0L)));
+    }
+
+    /** Une NC de ce fournisseur, ou 404 — y compris quand elle appartient à un autre. */
+    public SupplierNonConformity loadNonConformity(Supplier s, UUID ncId) {
+        SupplierNonConformity nc = ncRepo.findById(ncId)
+                .orElseThrow(() -> new SupplierChildNotFoundException("Non-conformity", ncId));
+        if (!nc.getSupplierId().equals(s.getId()) || !nc.getTenantId().equals(s.getTenantId())) {
+            throw new SupplierChildNotFoundException("Non-conformity", ncId);
+        }
+        return nc;
+    }
+
+    /** Sans tri demandé, les NC les plus récentes d'abord : c'est la page qu'on vient chercher. */
+    private static Pageable withDefaultSort(Pageable pageable) {
+        if (pageable.getSort().isSorted() || pageable.isUnpaged()) {
+            return pageable;
+        }
+        return PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
+                Sort.by(Sort.Order.desc("detectedOn"), Sort.Order.desc("createdAt")));
+    }
+
+    private Map<UUID, Long> documentCounts(UUID tenantId, List<SupplierNonConformity> page) {
+        return documentService.countByOwners(tenantId, SupplierDocumentOwnerType.NON_CONFORMITY,
+                page.stream().map(SupplierNonConformity::getId).toList());
     }
 
     // ---------- Certificates ----------
@@ -251,7 +322,7 @@ public class SupplierService {
         c.setDocumentUrl(req.documentUrl());
         SupplierCertificate saved = certRepo.save(c);
         scoringService.recompute(s);
-        return toResponse(saved);
+        return toResponse(saved, 0);
     }
 
     @Transactional
@@ -262,15 +333,19 @@ public class SupplierService {
         if (!c.getSupplierId().equals(supplierId) || !c.getTenantId().equals(s.getTenantId())) {
             throw new SupplierChildNotFoundException("Certificate", certId);
         }
+        // Ses documents partent avec lui : rien ne les rattacherait plus à rien.
+        documentService.purgeOwner(s.getTenantId(), SupplierDocumentOwnerType.CERTIFICATE, certId);
         certRepo.delete(c);
         scoringService.recompute(s);
     }
 
     @Transactional(readOnly = true)
     public Page<SupplierDto.CertificateResponse> listCertificates(UUID supplierId, Pageable pageable) {
-        loadForTenant(supplierId);
-        return certRepo.findBySupplierIdOrderByExpiresOnAsc(supplierId, pageable)
-                .map(this::toResponse);
+        Supplier s = loadForTenant(supplierId);
+        Page<SupplierCertificate> page = certRepo.findBySupplierIdOrderByExpiresOnAsc(supplierId, pageable);
+        Map<UUID, Long> counts = documentService.countByOwners(s.getTenantId(), SupplierDocumentOwnerType.CERTIFICATE,
+                page.getContent().stream().map(SupplierCertificate::getId).toList());
+        return page.map(c -> toResponse(c, counts.getOrDefault(c.getId(), 0L)));
     }
 
     // ---------- Statistics ----------
@@ -292,7 +367,7 @@ public class SupplierService {
 
     // ---------- helpers ----------
 
-    Supplier loadForTenant(UUID id) {
+    public Supplier loadForTenant(UUID id) {
         UUID tenantId = requireTenantId();
         Supplier s = supplierRepo.findById(id).orElseThrow(() -> new SupplierNotFoundException(id));
         if (!s.getTenantId().equals(tenantId)) throw new SupplierNotFoundException(id);
@@ -319,21 +394,28 @@ public class SupplierService {
                 a.getCreatedAt());
     }
 
-    private SupplierDto.NonConformityResponse toResponse(SupplierNonConformity nc) {
+    private SupplierDto.NonConformityResponse toResponse(SupplierNonConformity nc, Supplier owner,
+                                                         long documentCount) {
         return new SupplierDto.NonConformityResponse(
                 nc.getId(), nc.getTenantId(), nc.getSupplierId(),
+                owner == null ? null : owner.getCode(),
+                owner == null ? null : owner.getName(),
                 nc.getLotReference(), nc.getDescription(),
                 nc.getSeverity(), nc.getStatus(),
                 nc.getDetectedOn(), nc.getResolvedOn(), nc.getResolution(),
+                nc.getPartNumber(), nc.getPartQuantity(),
+                nc.isEightDRequested(), nc.isEightDReceived(),
+                documentCount,
                 nc.getCreatedAt(), nc.getUpdatedAt());
     }
 
-    private SupplierDto.CertificateResponse toResponse(SupplierCertificate c) {
+    private SupplierDto.CertificateResponse toResponse(SupplierCertificate c, long documentCount) {
         return new SupplierDto.CertificateResponse(
                 c.getId(), c.getTenantId(), c.getSupplierId(),
                 c.getStandardCode(), c.getReference(),
                 c.getIssuedOn(), c.getExpiresOn(), c.getDocumentUrl(),
                 c.isExpiredAt(LocalDate.now(clock)),
+                documentCount,
                 c.getCreatedAt(), c.getUpdatedAt());
     }
 
