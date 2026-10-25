@@ -480,6 +480,35 @@ jobs:
             '
 
   # ---------------------------------------------------------------------------
+  # Tests du service Vision 5S. Ils n'étaient exécutés nulle part : une
+  # régression n'apparaissait qu'au build d'image. Même principe que le job
+  # précédent : on teste dans l'image de base du runtime (Python 3.14, épinglée
+  # comme dans apps/ai-vision-5s/Dockerfile — onnxruntime n'a pas de roue 3.15),
+  # avec les versions figées de requirements-dev.txt. Seuil de couverture (85 %)
+  # porté par [tool.pytest.ini_options] de pyproject.toml.
+  # ---------------------------------------------------------------------------
+  ai-vision-5s-tests:
+    name: Vision 5S tests (pytest)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Tests (dans l'image de base du runtime)
+        run: |
+          docker run --rm --user root --entrypoint /bin/sh \
+            -v "$PWD/apps/ai-vision-5s:/src:ro" \
+            cgr.dev/chainguard/python:latest-dev@sha256:c07959e43e3edece176d20c32428a53014379790169af4ea5de1dc47277eba75 -c '
+              set -eu
+              python -V
+              mkdir -p /w && cd /w && cp -r /src/. . && rm -rf .venv .pytest_cache
+              python -m pip install --quiet --no-cache-dir --only-binary=:all: -r requirements-dev.txt
+              python -m pytest -p no:cacheprovider
+            '
+
+  # ---------------------------------------------------------------------------
   # Scan d'images conteneur (§14.2 ; règle §18.2.1 : aucune CVE Critique/Haute).
   # Build Docker + Trivy, uniquement sur push main/develop (étape lourde).
   # ignore-unfixed : ne bloque pas sur les CVE sans correctif disponible amont.
