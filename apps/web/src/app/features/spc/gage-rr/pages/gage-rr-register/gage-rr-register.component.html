@@ -107,7 +107,7 @@
             <span class="piece">{{ s.partReference }}</span>
             <div class="sous" *ngIf="s.characteristic">{{ s.characteristic }}</div>
           </td>
-          <td>
+          <td class="instrument">
             {{ s.instrument || '–' }}
             <div class="sous" *ngIf="s.operators.length">{{ operatorNames(s) }}</div>
           </td>

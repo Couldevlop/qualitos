@@ -99,6 +99,7 @@ export class DmaicResolutionComponent implements OnInit, OnDestroy {
   sheet: ResolutionSheet | null = null;
   draft: ResolutionContent = emptyContent();
   sections: SheetSection[] = [];
+  private groups: Partial<Record<SheetSection, TopicGroup[]>> = {};
   ishikawas: IshikawaOption[] = [];
   /** Les remarques des photos en cours de frappe, par emplacement. */
   remarks: Record<number, string> = {};
@@ -163,8 +164,17 @@ export class DmaicResolutionComponent implements OnInit, OnDestroy {
     return this.sheet?.settings.questions.filter(q => q.section === section) ?? [];
   }
 
-  /** « Définir » se range en rubriques Quoi, Qui… ; les autres phases forment un seul groupe. */
+  /**
+   * Les groupes sont calculés une fois, au chargement de la fiche : rendre des
+   * objets neufs à chaque détection ferait recréer par `*ngFor` chaque question
+   * et son `ngModel`, dont l'écriture différée relance la détection, sans fin.
+   */
   groupsOf(section: SheetSection): TopicGroup[] {
+    return this.groups[section] ?? [];
+  }
+
+  /** « Définir » se range en rubriques Quoi, Qui… ; les autres phases forment un seul groupe. */
+  private buildGroups(section: SheetSection): TopicGroup[] {
     const questions = this.questionsOf(section);
     if (section !== 'DEFINE') return questions.length ? [{ topic: null, label: null, questions }] : [];
     const groups: TopicGroup[] = DEFINE_TOPICS
@@ -468,12 +478,15 @@ export class DmaicResolutionComponent implements OnInit, OnDestroy {
 
   trackByIndex(index: number): number { return index; }
 
+  trackByNav(_: number, e: NavEntry): string { return e.id; }
+
   private take(s: ResolutionSheet): void {
     this.sheet = s;
     this.draft = withEditableWhys(structuredClone(s.content));
     this.savedJson = JSON.stringify(clean(s.content));
     this.sections = SHEET_SECTIONS.filter(sec => s.settings.questions.some(q => q.section === sec)
       || SECTION_TEXT[sec].summary !== null);
+    this.groups = Object.fromEntries(this.sections.map(sec => [sec, this.buildGroups(sec)]));
     this.remarks = Object.fromEntries(s.photos.map(p => [p.slot, p.remark ?? '']));
     this.syncTeamIds();
   }

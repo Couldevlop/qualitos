@@ -4,7 +4,7 @@
   <header class="page-header" *ngIf="adoption as a">
     <div class="title-row">
       <h1>{{ a.standardCode | uppercase }}</h1>
-      <span class="badge status-{{ a.status | statusLabel }}">{{ a.status | statusLabel }}</span>
+      <span class="badge status-{{ a.status }}">{{ a.status | statusLabel }}</span>
     </div>
     <p>{{ a.standardName }}</p>
     <p class="meta">

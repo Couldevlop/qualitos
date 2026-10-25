@@ -58,6 +58,24 @@ class DmaicControllerTest {
     }
 
     @Test @WithMockUser
+    void listMeasures_returns200() throws Exception {
+        when(service.listMeasures(PROJECT)).thenReturn(List.of(measureResp()));
+        mockMvc.perform(get("/api/v1/dmaic/projects/" + PROJECT + "/measures"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(MEASURE.toString()))
+                .andExpect(jsonPath("$[0].value").value(15.4));
+    }
+
+    @Test @WithMockUser
+    void listAssignments_returns200() throws Exception {
+        when(service.listAssignments(PROJECT)).thenReturn(List.of(assignmentResp()));
+        mockMvc.perform(get("/api/v1/dmaic/projects/" + PROJECT + "/pokayoke"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(ASSIGNMENT.toString()))
+                .andExpect(jsonPath("$[0].deviceCode").value("PY-X"));
+    }
+
+    @Test @WithMockUser
     void listProjects_withFilters() throws Exception {
         when(service.listProjects(eq(DmaicStatus.ACTIVE), eq(DmaicPhase.IMPROVE), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of()));

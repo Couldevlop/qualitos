@@ -7,6 +7,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -64,6 +65,11 @@ public class DmaicController {
 
     // ---- Measures ----
 
+    @GetMapping("/projects/{id}/measures")
+    public List<DmaicDto.MeasureResponse> listMeasures(@PathVariable UUID id) {
+        return service.listMeasures(id);
+    }
+
     @PostMapping("/projects/{id}/measures")
     @ResponseStatus(HttpStatus.CREATED)
     public DmaicDto.MeasureResponse addMeasure(@PathVariable UUID id,
@@ -103,6 +109,11 @@ public class DmaicController {
     }
 
     // ---- Assignments ----
+
+    @GetMapping("/projects/{id}/pokayoke")
+    public List<DmaicDto.AssignmentResponse> listAssignments(@PathVariable UUID id) {
+        return service.listAssignments(id);
+    }
 
     @PostMapping("/projects/{id}/pokayoke")
     @ResponseStatus(HttpStatus.CREATED)
