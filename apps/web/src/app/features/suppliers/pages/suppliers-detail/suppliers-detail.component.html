@@ -109,9 +109,14 @@
     <mat-card class="ncs-card">
       <mat-card-header class="card-head">
         <mat-card-title><span i18n="@@suppliers.detail.ncs-title">Non-conformités</span> ({{ ncs.length }})</mat-card-title>
-        <button mat-stroked-button color="primary" (click)="openNc(s)">
-          <mat-icon>add</mat-icon> <span i18n="@@suppliers.detail.new-nc">Nouvelle NC</span>
-        </button>
+        <div class="card-actions">
+          <a mat-button color="primary" [routerLink]="['/suppliers', s.id, 'non-conformites']" data-test="toutes-les-nc">
+            <mat-icon>list_alt</mat-icon> <span i18n="@@suppliers.detail.all-ncs">Toutes les NC</span>
+          </a>
+          <button mat-stroked-button color="primary" (click)="openNc(s)">
+            <mat-icon>add</mat-icon> <span i18n="@@suppliers.detail.new-nc">Nouvelle NC</span>
+          </button>
+        </div>
       </mat-card-header>
       <mat-card-content>
         <table mat-table [dataSource]="ncs" *ngIf="ncs.length; else emptyN">
@@ -127,13 +132,42 @@
             <th mat-header-cell *matHeaderCellDef i18n="@@common.status">Statut</th>
             <td mat-cell *matCellDef="let nc"><span [class]="ncStatusBadge(nc.status)">{{ nc.status | statusLabel }}</span></td>
           </ng-container>
-          <ng-container matColumnDef="lotReference">
-            <th mat-header-cell *matHeaderCellDef i18n="@@suppliers.detail.col-lot">Lot</th>
-            <td mat-cell *matCellDef="let nc"><code class="dim">{{ nc.lotReference || '—' }}</code></td>
+          <ng-container matColumnDef="partNumber">
+            <th mat-header-cell *matHeaderCellDef i18n="@@suppliers.nc.col-part">Pièce</th>
+            <td mat-cell *matCellDef="let nc">
+              <code>{{ nc.partNumber || '—' }}</code>
+              <small class="dim lot" *ngIf="nc.lotReference"><span i18n="@@suppliers.detail.col-lot">Lot</span> {{ nc.lotReference }}</small>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="partQuantity">
+            <th mat-header-cell *matHeaderCellDef class="num" i18n="@@suppliers.nc.col-quantity">Qté</th>
+            <td mat-cell *matCellDef="let nc" class="num">{{ nc.partQuantity ?? '—' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="eightD">
+            <th mat-header-cell *matHeaderCellDef i18n="@@suppliers.nc.col-eight-d">8D</th>
+            <td mat-cell *matCellDef="let nc">
+              <span class="eightd" [class.on]="nc.eightDRequested" i18n="@@suppliers.nc.eight-d-requested-short">Demandé</span>
+              <span class="eightd" [class.on]="nc.eightDReceived" i18n="@@suppliers.nc.eight-d-received-short">Reçu</span>
+            </td>
           </ng-container>
           <ng-container matColumnDef="description">
-            <th mat-header-cell *matHeaderCellDef i18n="@@common.description">Description</th>
-            <td mat-cell *matCellDef="let nc">{{ nc.description || '—' }}</td>
+            <th mat-header-cell *matHeaderCellDef i18n="@@suppliers.nc.col-definition">Définition</th>
+            <td mat-cell *matCellDef="let nc" class="definition">{{ nc.description || '—' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="ncActions">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let nc" class="row-actions">
+              <button mat-button type="button" class="doc-btn" (click)="openNcDocuments(s, nc)" data-test="documents-nc"
+                      [attr.aria-label]="documentsAria(nc.documentCount)"
+                      i18n-matTooltip="@@suppliers.nc.documents-tooltip" matTooltip="8D, preuves de CAPA…">
+                <mat-icon aria-hidden="true">attach_file</mat-icon><span class="doc-count" *ngIf="nc.documentCount">{{ nc.documentCount }}</span>
+              </button>
+              <button mat-icon-button type="button" (click)="downloadReport(s, nc)" data-test="rapport-nc"
+                      i18n-aria-label="@@suppliers.nc.report-aria" aria-label="Télécharger la fiche NC en PDF"
+                      i18n-matTooltip="@@suppliers.nc.report-tooltip" matTooltip="Fiche NC (PDF)">
+                <mat-icon>picture_as_pdf</mat-icon>
+              </button>
+            </td>
           </ng-container>
           <tr mat-header-row *matHeaderRowDef="ncColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: ncColumns"></tr>
@@ -177,6 +211,11 @@
                  rel="noopener noreferrer" matTooltip="Document" i18n-matTooltip="@@suppliers.detail.document-tooltip">
                 <mat-icon>open_in_new</mat-icon>
               </a>
+              <button mat-button type="button" class="doc-btn" (click)="openCertDocuments(s, c)" data-test="documents-certificat"
+                      [attr.aria-label]="documentsAria(c.documentCount)"
+                      i18n-matTooltip="@@suppliers.cert.documents-tooltip" matTooltip="Documents du certificat">
+                <mat-icon aria-hidden="true">attach_file</mat-icon><span class="doc-count" *ngIf="c.documentCount">{{ c.documentCount }}</span>
+              </button>
               <button mat-icon-button (click)="removeCert(s, c)" matTooltip="Supprimer" i18n-matTooltip="@@common.delete">
                 <mat-icon>delete</mat-icon>
               </button>

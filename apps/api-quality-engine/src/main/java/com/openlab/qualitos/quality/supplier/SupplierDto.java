@@ -86,26 +86,47 @@ public final class SupplierDto {
             Instant createdAt
     ) {}
 
+    /** Plafond de la quantité de pièces : au-delà, c'est une faute de frappe, pas un lot. */
+    public static final int MAX_PART_QUANTITY = 1_000_000_000;
+
+    /**
+     * Saisie d'une NC fournisseur. La référence de la pièce et le nombre de
+     * pièces touchées sont obligatoires : sans eux, ni le fournisseur ni le
+     * magasin ne savent quoi trier.
+     */
     public record CreateNonConformityRequest(
             @Size(max = 100) String lotReference,
             @Size(max = 1000) String description,
             @NotNull NonConformitySeverity severity,
-            @NotNull LocalDate detectedOn
+            @NotNull LocalDate detectedOn,
+            @NotBlank @Size(max = 100) String partNumber,
+            @NotNull @Min(1) @Max(MAX_PART_QUANTITY) Integer partQuantity,
+            Boolean eightDRequested,
+            Boolean eightDReceived
     ) {}
 
+    /** Mise à jour partielle : un champ absent reste tel quel. */
     public record UpdateNonConformityRequest(
-            String lotReference,
-            String description,
+            @Size(max = 100) String lotReference,
+            @Size(max = 1000) String description,
             NonConformitySeverity severity,
             NonConformityStatus status,
             LocalDate resolvedOn,
-            String resolution
+            @Size(max = 1000) String resolution,
+            // Présente, la référence ne peut pas être vidée : elle est obligatoire.
+            @Size(max = 100) @Pattern(regexp = "(?s).*\\S.*", message = "partNumber must not be blank")
+            String partNumber,
+            @Min(1) @Max(MAX_PART_QUANTITY) Integer partQuantity,
+            Boolean eightDRequested,
+            Boolean eightDReceived
     ) {}
 
     public record NonConformityResponse(
             UUID id,
             UUID tenantId,
             UUID supplierId,
+            String supplierCode,
+            String supplierName,
             String lotReference,
             String description,
             NonConformitySeverity severity,
@@ -113,6 +134,11 @@ public final class SupplierDto {
             LocalDate detectedOn,
             LocalDate resolvedOn,
             String resolution,
+            String partNumber,
+            Integer partQuantity,
+            boolean eightDRequested,
+            boolean eightDReceived,
+            long documentCount,
             Instant createdAt,
             Instant updatedAt
     ) {}
@@ -136,6 +162,7 @@ public final class SupplierDto {
             LocalDate expiresOn,
             String documentUrl,
             boolean expired,
+            long documentCount,
             Instant createdAt,
             Instant updatedAt
     ) {}

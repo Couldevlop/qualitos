@@ -1,4 +1,4 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { delay } from 'rxjs/operators';
@@ -9,8 +9,10 @@ import {
   CertificatePage, CertificateResponse,
   CreateAuditRequest, CreateCertificateRequest,
   CreateNonConformityRequest, CreateSupplierRequest,
-  NonConformityPage, NonConformityResponse,
+  NonConformityFilters, NonConformityPage, NonConformityResponse,
   StatusChangeRequest,
+  SupplierDocument, SupplierDocumentCatalogPage, SupplierDocumentCategory,
+  SupplierDocumentFilters, SupplierDocumentOwnerType,
   SupplierPage, SupplierResponse,
   SupplierStatistics, SupplierStatus, SupplierType,
   UpdateNonConformityRequest, UpdateSupplierRequest
@@ -25,6 +27,7 @@ export class SuppliersService {
   private readonly mockAudits: Record<string, AuditResponse[]> = this.seedAudits();
   private readonly mockNcs:    Record<string, NonConformityResponse[]> = {};
   private readonly mockCerts:  Record<string, CertificateResponse[]>   = this.seedCerts();
+  private readonly mockDocs: SupplierDocument[] = [];
 
   constructor(private readonly http: HttpClient) {}
 
@@ -184,6 +187,11 @@ export class SuppliersService {
         severity: input.severity,
         status: 'OPEN',
         detectedOn: input.detectedOn,
+        partNumber: input.partNumber,
+        partQuantity: input.partQuantity,
+        eightDRequested: !!input.eightDRequested,
+        eightDReceived: !!input.eightDReceived,
+        documentCount: 0,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       };
@@ -212,6 +220,105 @@ export class SuppliersService {
     );
   }
 
+  /** Les NC de tous les fournisseurs, les plus récentes d'abord. */
+  listAllNcs(filters: NonConformityFilters = {}, page = 0, size = 50): Observable<NonConformityPage> {
+    if (environment.useMockApi) {
+      const all = Object.values(this.mockNcs).flat()
+        .filter(n => !filters.supplierId || n.supplierId === filters.supplierId)
+        .filter(n => !filters.status || n.status === filters.status)
+        .filter(n => !filters.severity || n.severity === filters.severity)
+        .map(n => {
+          const s = this.mockStore.find(x => x.id === n.supplierId);
+          return { ...n, supplierCode: s?.code, supplierName: s?.name };
+        });
+      return of({ content: all, totalElements: all.length, totalPages: 1, number: 0, size: all.length }).pipe(delay(100));
+    }
+    let params = new HttpParams().set('page', page).set('size', size);
+    if (filters.supplierId) params = params.set('supplierId', filters.supplierId);
+    if (filters.status)     params = params.set('status', filters.status);
+    if (filters.severity)   params = params.set('severity', filters.severity);
+    return this.http.get<NonConformityPage>(`${this.endpoint}/non-conformities`, { params });
+  }
+
+  /** La fiche PDF d'une NC, avec son nom de fichier dans l'en-tête. */
+  ncReport(supplierId: string, ncId: string): Observable<HttpResponse<Blob>> {
+    if (environment.useMockApi) {
+      return of(new HttpResponse({
+        body: new Blob(['%PDF-1.4\n%demo\n'], { type: 'application/pdf' }), status: 200,
+        headers: new HttpHeaders({ 'Content-Disposition': `attachment; filename="nc-fournisseur-${ncId}.pdf"` })
+      })).pipe(delay(100));
+    }
+    return this.http.get(`${this.endpoint}/${supplierId}/non-conformities/${ncId}/report`,
+      { responseType: 'blob', observe: 'response' });
+  }
+
+  // ---------- Documents (NC et certificats) ----------
+
+  listDocuments(supplierId: string, ownerType: SupplierDocumentOwnerType, ownerId: string): Observable<SupplierDocument[]> {
+    if (environment.useMockApi) {
+      return of(this.mockDocs.filter(d => d.ownerType === ownerType && d.ownerId === ownerId)).pipe(delay(80));
+    }
+    return this.http.get<SupplierDocument[]>(this.documentsUrl(supplierId, ownerType, ownerId));
+  }
+
+  uploadDocument(
+    supplierId: string, ownerType: SupplierDocumentOwnerType, ownerId: string,
+    file: File, category: SupplierDocumentCategory
+  ): Observable<SupplierDocument> {
+    if (environment.useMockApi) {
+      const d: SupplierDocument = {
+        id: 'sd-' + Math.random().toString(36).slice(2, 9), supplierId, ownerType, ownerId, category,
+        contentType: file.type, sizeBytes: file.size, originalFilename: file.name,
+        createdAt: new Date().toISOString(), url: URL.createObjectURL(file)
+      };
+      this.mockDocs.push(d);
+      return of(d).pipe(delay(120));
+    }
+    const form = new FormData();
+    form.append('file', file, file.name);
+    form.append('category', category);
+    return this.http.post<SupplierDocument>(this.documentsUrl(supplierId, ownerType, ownerId), form);
+  }
+
+  deleteDocument(
+    supplierId: string, ownerType: SupplierDocumentOwnerType, ownerId: string, documentId: string
+  ): Observable<void> {
+    if (environment.useMockApi) {
+      const i = this.mockDocs.findIndex(d => d.id === documentId);
+      if (i >= 0) this.mockDocs.splice(i, 1);
+      return of(undefined).pipe(delay(80));
+    }
+    return this.http.delete<void>(`${this.documentsUrl(supplierId, ownerType, ownerId)}/${documentId}`);
+  }
+
+  /** Tous les documents fournisseur — la vue « Documents fournisseurs » de la GED. */
+  listAllDocuments(filters: SupplierDocumentFilters = {}, page = 0, size = 50): Observable<SupplierDocumentCatalogPage> {
+    if (environment.useMockApi) {
+      const q = filters.q?.trim().toLowerCase();
+      const rows = this.mockDocs
+        .filter(d => !filters.supplierId || d.supplierId === filters.supplierId)
+        .filter(d => !filters.ownerType || d.ownerType === filters.ownerType)
+        .filter(d => !filters.category || d.category === filters.category)
+        .filter(d => !q || (d.originalFilename ?? '').toLowerCase().includes(q))
+        .map(d => {
+          const s = this.mockStore.find(x => x.id === d.supplierId);
+          return { ...d, supplierCode: s?.code, supplierName: s?.name };
+        });
+      return of({ content: rows, totalElements: rows.length, totalPages: 1, number: 0, size: rows.length }).pipe(delay(100));
+    }
+    let params = new HttpParams().set('page', page).set('size', size);
+    if (filters.supplierId) params = params.set('supplierId', filters.supplierId);
+    if (filters.ownerType)  params = params.set('ownerType', filters.ownerType);
+    if (filters.category)   params = params.set('category', filters.category);
+    if (filters.q?.trim())  params = params.set('q', filters.q.trim());
+    return this.http.get<SupplierDocumentCatalogPage>(`${this.endpoint}/documents`, { params });
+  }
+
+  private documentsUrl(supplierId: string, ownerType: SupplierDocumentOwnerType, ownerId: string): string {
+    const segment = ownerType === 'CERTIFICATE' ? 'certificates' : 'non-conformities';
+    return `${this.endpoint}/${supplierId}/${segment}/${ownerId}/documents`;
+  }
+
   // ---------- Certificates ----------
 
   listCerts(supplierId: string, page = 0, size = 50): Observable<CertificatePage> {
@@ -236,6 +343,7 @@ export class SuppliersService {
         expiresOn: input.expiresOn,
         documentUrl: input.documentUrl,
         expired: expires.getTime() < Date.now(),
+        documentCount: 0,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       };
@@ -316,13 +424,13 @@ export class SuppliersService {
         id: 'sc-1', tenantId: 'demo-tenant', supplierId: 'sup-1',
         standardCode: 'iso-9001', reference: 'AFAQ-2024-9001-FR-001',
         issuedOn: '2024-06-12', expiresOn: '2027-06-11',
-        expired: false, createdAt: now, updatedAt: now
+        expired: false, documentCount: 0, createdAt: now, updatedAt: now
       }],
       'sup-2': [{
         id: 'sc-2', tenantId: 'demo-tenant', supplierId: 'sup-2',
         standardCode: 'iatf-16949', reference: 'TUV-2023-IATF-0042',
         issuedOn: '2023-05-04', expiresOn: '2026-05-03',
-        expired: true, createdAt: now, updatedAt: now
+        expired: true, documentCount: 0, createdAt: now, updatedAt: now
       }]
     };
   }

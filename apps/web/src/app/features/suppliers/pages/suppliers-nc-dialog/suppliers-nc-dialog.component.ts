@@ -29,8 +29,13 @@ export class SuppliersNcDialogComponent {
   readonly form = this.fb.nonNullable.group({
     detectedOn: ['', [Validators.required]],
     severity:   ['MAJOR' as NonConformitySeverity, [Validators.required]],
+    partNumber:   ['', [Validators.required, Validators.maxLength(100), Validators.pattern(/\S/)]],
+    partQuantity: [null as number | null, [Validators.required, Validators.min(1), Validators.max(1_000_000_000),
+                                          Validators.pattern(/^\d+$/)]],
     lotReference: ['', [Validators.maxLength(100)]],
-    description:  ['', [Validators.maxLength(1000)]]
+    description:  ['', [Validators.maxLength(1000)]],
+    eightDRequested: [false],
+    eightDReceived:  [false]
   });
 
   constructor(
@@ -48,6 +53,10 @@ export class SuppliersNcDialogComponent {
     this.svc.addNc(this.data.supplierId, {
       detectedOn: v.detectedOn,
       severity: v.severity,
+      partNumber: v.partNumber.trim(),
+      partQuantity: Number(v.partQuantity),
+      eightDRequested: v.eightDRequested,
+      eightDReceived: v.eightDReceived,
       lotReference: v.lotReference?.trim() || undefined,
       description:  v.description?.trim()  || undefined
     })

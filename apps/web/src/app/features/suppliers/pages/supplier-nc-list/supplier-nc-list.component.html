@@ -1,0 +1,163 @@
+<section class="nc-list qos-page">
+  <header class="head">
+    <div class="titles">
+      <a *ngIf="scopedSupplierId; else toSuppliers" class="back" [routerLink]="['/suppliers', scopedSupplierId]">
+        <mat-icon aria-hidden="true">arrow_back</mat-icon>
+        <span>{{ supplier?.name || '…' }}</span>
+      </a>
+      <ng-template #toSuppliers>
+        <a class="back" routerLink="/suppliers">
+          <mat-icon aria-hidden="true">arrow_back</mat-icon>
+          <span i18n="@@suppliers.detail.back">Fournisseurs</span>
+        </a>
+      </ng-template>
+      <h1>{{ heading }}</h1>
+      <p class="sub">
+        <ng-container *ngIf="totalElements <= 1; else plural" i18n="@@suppliers.nc-list.count-one">{{ totalElements }} non-conformité</ng-container>
+        <ng-template #plural><ng-container i18n="@@suppliers.nc-list.count-many">{{ totalElements }} non-conformités</ng-container></ng-template>
+      </p>
+    </div>
+    <button *ngIf="scopedSupplierId" mat-flat-button color="primary" type="button" (click)="create()" data-test="nouvelle-nc">
+      <mat-icon aria-hidden="true">add</mat-icon> <span i18n="@@suppliers.detail.new-nc">Nouvelle NC</span>
+    </button>
+  </header>
+
+  <form class="filters" [formGroup]="filters" role="search"
+        aria-label="Filtrer les non-conformités" i18n-aria-label="@@suppliers.nc-list.filters-aria">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" *ngIf="!scopedSupplierId">
+      <mat-label i18n="@@suppliers.nc-list.filter-supplier">Fournisseur</mat-label>
+      <mat-select formControlName="supplierId" data-test="filtre-fournisseur">
+        <mat-option value="" i18n="@@common.all">Tous</mat-option>
+        <mat-option *ngFor="let s of suppliers" [value]="s.id">{{ s.code }} — {{ s.name }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label i18n="@@common.status">Statut</mat-label>
+      <mat-select formControlName="status" data-test="filtre-statut">
+        <mat-option value="" i18n="@@common.all">Tous</mat-option>
+        <mat-option *ngFor="let st of statuses" [value]="st">{{ st | statusLabel }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label i18n="@@suppliers.detail.col-severity">Sévérité</mat-label>
+      <mat-select formControlName="severity" data-test="filtre-gravite">
+        <mat-option value="" i18n="@@common.all">Tous</mat-option>
+        <mat-option *ngFor="let sv of severities" [value]="sv">{{ sv | severityLabel }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <button *ngIf="hasFilters" mat-button type="button" (click)="clearFilters()" data-test="effacer-filtres">
+      <mat-icon aria-hidden="true">filter_alt_off</mat-icon> <span i18n="@@suppliers.nc-list.clear-filters">Effacer les filtres</span>
+    </button>
+  </form>
+
+  <div *ngIf="error" class="banner banner-error" role="alert">{{ error }}</div>
+
+  <div class="table-wrap">
+    <mat-progress-bar *ngIf="loading" mode="indeterminate" aria-hidden="true"></mat-progress-bar>
+    <div class="scroll">
+      <table mat-table [dataSource]="rows" [trackBy]="trackById">
+        <ng-container matColumnDef="detectedOn">
+          <th mat-header-cell *matHeaderCellDef i18n="@@suppliers.detail.col-detected">Détectée</th>
+          <td mat-cell *matCellDef="let nc" class="nowrap">{{ nc.detectedOn | date:'mediumDate' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="supplier">
+          <th mat-header-cell *matHeaderCellDef i18n="@@suppliers.nc-list.filter-supplier">Fournisseur</th>
+          <td mat-cell *matCellDef="let nc">
+            <a class="supplier-link" [routerLink]="['/suppliers', nc.supplierId]">{{ nc.supplierName || '—' }}</a>
+            <small class="dim" *ngIf="nc.supplierCode"><code>{{ nc.supplierCode }}</code></small>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="part">
+          <th mat-header-cell *matHeaderCellDef i18n="@@suppliers.nc.col-part">Pièce</th>
+          <td mat-cell *matCellDef="let nc" class="part">
+            <code>{{ nc.partNumber || '—' }}</code>
+            <small class="dim" *ngIf="nc.lotReference"><span i18n="@@suppliers.detail.col-lot">Lot</span> {{ nc.lotReference }}</small>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="quantity">
+          <th mat-header-cell *matHeaderCellDef class="num" i18n="@@suppliers.nc.col-quantity">Qté</th>
+          <td mat-cell *matCellDef="let nc" class="num">{{ nc.partQuantity ?? '—' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="definition">
+          <th mat-header-cell *matHeaderCellDef i18n="@@suppliers.nc.col-definition">Définition</th>
+          <td mat-cell *matCellDef="let nc" class="definition" [attr.title]="nc.description || null">
+            {{ nc.description || '—' }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="severity">
+          <th mat-header-cell *matHeaderCellDef i18n="@@suppliers.detail.col-severity">Sévérité</th>
+          <td mat-cell *matCellDef="let nc"><span [class]="severityBadge(nc.severity)">{{ nc.severity | severityLabel }}</span></td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef i18n="@@common.status">Statut</th>
+          <td mat-cell *matCellDef="let nc">
+            <mat-select class="status-select" [class]="ncStatusBadge(nc.status)" [value]="nc.status"
+                        [disabled]="saving.has(nc.id)" (selectionChange)="setStatus(nc, $event.value)"
+                        aria-label="Statut de la non-conformité" i18n-aria-label="@@suppliers.nc-list.status-aria"
+                        data-test="statut">
+              <mat-option *ngFor="let st of statuses" [value]="st">{{ st | statusLabel }}</mat-option>
+            </mat-select>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="eightDRequested">
+          <th mat-header-cell *matHeaderCellDef class="center" i18n="@@suppliers.nc.eight-d-requested">8D demandé</th>
+          <td mat-cell *matCellDef="let nc" class="center">
+            <mat-checkbox [checked]="nc.eightDRequested" [disabled]="saving.has(nc.id)"
+                          (change)="setEightD(nc, 'eightDRequested', $event.checked)" data-test="eight-d-requested"
+                          aria-label="8D demandé" i18n-aria-label="@@suppliers.nc.eight-d-requested"></mat-checkbox>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="eightDReceived">
+          <th mat-header-cell *matHeaderCellDef class="center" i18n="@@suppliers.nc.eight-d-received">8D reçu</th>
+          <td mat-cell *matCellDef="let nc" class="center">
+            <mat-checkbox [checked]="nc.eightDReceived" [disabled]="saving.has(nc.id)"
+                          (change)="setEightD(nc, 'eightDReceived', $event.checked)" data-test="eight-d-received"
+                          aria-label="8D reçu" i18n-aria-label="@@suppliers.nc.eight-d-received"></mat-checkbox>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="documents">
+          <th mat-header-cell *matHeaderCellDef i18n="@@suppliers.nc-list.col-documents">Pièces jointes</th>
+          <td mat-cell *matCellDef="let nc">
+            <button mat-button type="button" class="doc-btn" (click)="openDocuments(nc)" data-test="documents-nc"
+                    [attr.aria-label]="documentsAria(nc)">
+              <mat-icon aria-hidden="true">attach_file</mat-icon>
+              <span class="doc-count">{{ nc.documentCount }}</span>
+            </button>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="report">
+          <th mat-header-cell *matHeaderCellDef i18n="@@suppliers.nc-list.col-report">Rapport</th>
+          <td mat-cell *matCellDef="let nc">
+            <button mat-stroked-button type="button" class="report-btn" (click)="downloadReport(nc)" data-test="rapport-nc"
+                    i18n-aria-label="@@suppliers.nc.report-aria" aria-label="Télécharger la fiche NC en PDF">
+              <mat-icon aria-hidden="true">picture_as_pdf</mat-icon> <span i18n="@@suppliers.nc-list.report">Fiche PDF</span>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="columns; sticky: true"></tr>
+        <tr mat-row *matRowDef="let row; columns: columns" [class.closed]="row.status === 'RESOLVED' || row.status === 'REJECTED'"></tr>
+      </table>
+    </div>
+
+    <div class="empty" *ngIf="!loading && !error && rows.length === 0" data-test="vide">
+      <mat-icon aria-hidden="true">fact_check</mat-icon>
+      <p *ngIf="hasFilters; else none" i18n="@@suppliers.nc-list.empty-filtered">Aucune non-conformité ne correspond à ces filtres.</p>
+      <ng-template #none><p i18n="@@suppliers.nc-list.empty">Aucune non-conformité fournisseur enregistrée.</p></ng-template>
+    </div>
+
+    <mat-paginator *ngIf="totalElements > pageSize"
+                   [length]="totalElements" [pageIndex]="pageIndex" [pageSize]="pageSize"
+                   [hidePageSize]="true" (page)="onPage($event)" showFirstLastButtons></mat-paginator>
+  </div>
+</section>

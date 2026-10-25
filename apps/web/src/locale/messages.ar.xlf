@@ -29910,6 +29910,334 @@ Inde (centre de service)</source>
         <source>Échec de la génération (HTTP <x id="status"/>).</source>
         <target state="translated">فشل الإنشاء (HTTP <x id="status"/>).</target>
       </trans-unit>
+      <trans-unit id="nav.nc-fournisseurs" datatype="html">
+        <source>NC fournisseurs</source>
+        <target state="translated">عدم مطابقة الموردين</target>
+      </trans-unit>
+      <trans-unit id="documents.nav.supplier-documents" datatype="html">
+        <source>Documents fournisseurs</source>
+        <target state="translated">مستندات الموردين</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.part-number" datatype="html">
+        <source>Référence pièce (part number)</source>
+        <target state="translated">رقم القطعة (part number)</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.part-number-placeholder" datatype="html">
+        <source>Ex. : PN-7781-A</source>
+        <target state="translated">مثال: PN-7781-A</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.part-number-required" datatype="html">
+        <source>La référence de la pièce est obligatoire.</source>
+        <target state="translated">رقم القطعة إلزامي.</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.part-quantity" datatype="html">
+        <source>Nombre de pièces</source>
+        <target state="translated">عدد القطع</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.part-quantity-required" datatype="html">
+        <source>Un nombre entier de pièces, au moins 1.</source>
+        <target state="translated">عدد صحيح من القطع، 1 على الأقل.</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.eight-d-legend" datatype="html">
+        <source>Rapport 8D du fournisseur</source>
+        <target state="translated">تقرير 8D من المورد</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.eight-d-requested" datatype="html">
+        <source>8D demandé</source>
+        <target state="translated">تم طلب 8D</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.eight-d-received" datatype="html">
+        <source>8D reçu</source>
+        <target state="translated">تم استلام 8D</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.eight-d-requested-short" datatype="html">
+        <source>Demandé</source>
+        <target state="translated">مطلوب</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.eight-d-received-short" datatype="html">
+        <source>Reçu</source>
+        <target state="translated">مستلم</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.attach-hint" datatype="html">
+        <source>Le 8D et les preuves de CAPA se joignent depuis la liste, une fois la NC enregistrée.</source>
+        <target state="translated">يُرفق تقرير 8D وأدلة CAPA من القائمة بعد حفظ عدم المطابقة.</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.col-part" datatype="html">
+        <source>Pièce</source>
+        <target state="translated">القطعة</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.col-quantity" datatype="html">
+        <source>Qté</source>
+        <target state="translated">الكمية</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.col-eight-d" datatype="html">
+        <source>8D</source>
+        <target state="translated">8D</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.col-definition" datatype="html">
+        <source>Définition</source>
+        <target state="translated">التعريف</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.documents-tooltip" datatype="html">
+        <source>8D, preuves de CAPA…</source>
+        <target state="translated">8D، أدلة CAPA…</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.report-aria" datatype="html">
+        <source>Télécharger la fiche NC en PDF</source>
+        <target state="translated">تنزيل بطاقة عدم المطابقة بصيغة PDF</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.report-tooltip" datatype="html">
+        <source>Fiche NC (PDF)</source>
+        <target state="translated">بطاقة عدم المطابقة (PDF)</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.report-failed" datatype="html">
+        <source>La fiche NC n'a pas pu être générée.</source>
+        <target state="translated">تعذّر إنشاء بطاقة عدم المطابقة.</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.subject" datatype="html">
+        <source>NC <x id="part"/> · <x id="quantity"/> pièce(s) · <x id="date"/></source>
+        <target state="translated">عدم مطابقة <x id="part"/> · <x id="quantity"/> قطعة · <x id="date"/></target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.subject-no-quantity" datatype="html">
+        <source>NC <x id="part"/> · <x id="date"/></source>
+        <target state="translated">عدم مطابقة <x id="part"/> · <x id="date"/></target>
+      </trans-unit>
+      <trans-unit id="suppliers.detail.all-ncs" datatype="html">
+        <source>Toutes les NC</source>
+        <target state="translated">كل حالات عدم المطابقة</target>
+      </trans-unit>
+      <trans-unit id="suppliers.cert.documents-tooltip" datatype="html">
+        <source>Documents du certificat</source>
+        <target state="translated">مستندات الشهادة</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc-list.title" datatype="html">
+        <source>Non-conformités fournisseurs</source>
+        <target state="translated">حالات عدم مطابقة الموردين</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc-list.title-supplier" datatype="html">
+        <source>Non-conformités du fournisseur</source>
+        <target state="translated">حالات عدم مطابقة المورد</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc-list.count-one" datatype="html">
+        <source><x id="INTERPOLATION"/> non-conformité</source>
+        <target state="translated"><x id="INTERPOLATION"/> حالة عدم مطابقة</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc-list.count-many" datatype="html">
+        <source><x id="INTERPOLATION"/> non-conformités</source>
+        <target state="translated"><x id="INTERPOLATION"/> حالات عدم مطابقة</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc-list.filters-aria" datatype="html">
+        <source>Filtrer les non-conformités</source>
+        <target state="translated">تصفية حالات عدم المطابقة</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc-list.filter-supplier" datatype="html">
+        <source>Fournisseur</source>
+        <target state="translated">المورد</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc-list.clear-filters" datatype="html">
+        <source>Effacer les filtres</source>
+        <target state="translated">مسح عوامل التصفية</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc-list.status-aria" datatype="html">
+        <source>Statut de la non-conformité</source>
+        <target state="translated">حالة عدم المطابقة</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc-list.col-documents" datatype="html">
+        <source>Pièces jointes</source>
+        <target state="translated">المرفقات</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc-list.col-report" datatype="html">
+        <source>Rapport</source>
+        <target state="translated">التقرير</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc-list.report" datatype="html">
+        <source>Fiche PDF</source>
+        <target state="translated">بطاقة PDF</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc-list.empty" datatype="html">
+        <source>Aucune non-conformité fournisseur enregistrée.</source>
+        <target state="translated">لا توجد حالة عدم مطابقة مسجلة للموردين.</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc-list.empty-filtered" datatype="html">
+        <source>Aucune non-conformité ne correspond à ces filtres.</source>
+        <target state="translated">لا توجد حالة عدم مطابقة تطابق عوامل التصفية هذه.</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc-list.load-error" datatype="html">
+        <source>Les non-conformités n'ont pas pu être chargées.</source>
+        <target state="translated">تعذّر تحميل حالات عدم المطابقة.</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc-list.update-failed" datatype="html">
+        <source>La modification n'a pas été enregistrée.</source>
+        <target state="translated">لم يُحفظ التعديل.</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.title-nc" datatype="html">
+        <source>Documents de la non-conformité</source>
+        <target state="translated">مستندات عدم المطابقة</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.title-certificate" datatype="html">
+        <source>Documents du certificat</source>
+        <target state="translated">مستندات الشهادة</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.open-aria" datatype="html">
+        <source>Documents joints (<x id="count"/>)</source>
+        <target state="translated">المستندات المرفقة (<x id="count"/>)</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.category" datatype="html">
+        <source>Nature du document</source>
+        <target state="translated">نوع المستند</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.category-eight-d" datatype="html">
+        <source>8D fournisseur</source>
+        <target state="translated">8D المورد</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.category-capa" datatype="html">
+        <source>Preuve de CAPA</source>
+        <target state="translated">دليل CAPA</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.category-certificate" datatype="html">
+        <source>Certificat</source>
+        <target state="translated">شهادة</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.category-other" datatype="html">
+        <source>Autre</source>
+        <target state="translated">أخرى</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.owner-nc" datatype="html">
+        <source>Non-conformité</source>
+        <target state="translated">عدم مطابقة</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.owner-certificate" datatype="html">
+        <source>Certificat</source>
+        <target state="translated">شهادة</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.add" datatype="html">
+        <source>Joindre un fichier</source>
+        <target state="translated">إرفاق ملف</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.added" datatype="html">
+        <source>Document ajouté.</source>
+        <target state="translated">تمت إضافة المستند.</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.unnamed" datatype="html">
+        <source>document sans nom</source>
+        <target state="translated">مستند بلا اسم</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.delete" datatype="html">
+        <source>Retirer</source>
+        <target state="translated">إزالة</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.delete-title" datatype="html">
+        <source>Retirer ce document ?</source>
+        <target state="translated">إزالة هذا المستند؟</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.delete-message" datatype="html">
+        <source>« <x id="name"/> » sera retiré. Le retrait est inscrit au journal d'audit.</source>
+        <target state="translated">ستتم إزالة «<x id="name"/>». تُسجَّل الإزالة في سجل التدقيق.</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.delete-tooltip" datatype="html">
+        <source>Retirer le document</source>
+        <target state="translated">إزالة المستند</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.remove-aria" datatype="html">
+        <source>Retirer le document <x id="name"/></source>
+        <target state="translated">إزالة المستند <x id="name"/></target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.empty" datatype="html">
+        <source>Aucun document joint pour l'instant.</source>
+        <target state="translated">لا توجد مستندات مرفقة حتى الآن.</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.limits" datatype="html">
+        <source>PDF, image, Word, Excel ou PowerPoint — 10 Mo par fichier, 20 documents au plus.</source>
+        <target state="translated">PDF أو صورة أو Word أو Excel أو PowerPoint · 10 ميغابايت لكل ملف، 20 مستندًا كحد أقصى.</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.too-large" datatype="html">
+        <source>Fichier trop lourd : 10 Mo au plus.</source>
+        <target state="translated">الملف كبير جدًا: 10 ميغابايت كحد أقصى.</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.invalid" datatype="html">
+        <source>Fichier refusé : type non admis ou contenu qui ne correspond pas à son extension.</source>
+        <target state="translated">تم رفض الملف: نوع غير مسموح به أو محتوى لا يطابق امتداده.</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.limit" datatype="html">
+        <source>Limite atteinte : 10 Mo par fichier, 20 documents et 50 Mo au total.</source>
+        <target state="translated">تم بلوغ الحد: 10 ميغابايت لكل ملف، و20 مستندًا و50 ميغابايت إجمالًا.</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.locked" datatype="html">
+        <source>Les documents sont verrouillés : la non-conformité est close.</source>
+        <target state="translated">المستندات مقفلة: تم إغلاق عدم المطابقة.</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.locked-closed" datatype="html">
+        <source>NC close : ses documents sont figés. Rouvrez-la pour en joindre.</source>
+        <target state="translated">عدم المطابقة مغلقة: مستنداتها مجمّدة. أعد فتحها لإرفاق المزيد.</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.storage-off" datatype="html">
+        <source>Le stockage des documents est désactivé sur cet environnement.</source>
+        <target state="translated">تخزين المستندات معطّل في هذه البيئة.</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.load-error" datatype="html">
+        <source>Les documents n'ont pas pu être chargés.</source>
+        <target state="translated">تعذّر تحميل المستندات.</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.error" datatype="html">
+        <source>L'opération sur le document a échoué.</source>
+        <target state="translated">فشلت العملية على المستند.</target>
+      </trans-unit>
+      <trans-unit id="documents.suppliers.back" datatype="html">
+        <source>Documentation</source>
+        <target state="translated">الوثائق</target>
+      </trans-unit>
+      <trans-unit id="documents.suppliers.intro" datatype="html">
+        <source>8D, preuves de CAPA et certificats joints aux fournisseurs. On les joint ou les retire depuis la NC ou le certificat qui les porte.</source>
+        <target state="translated">تقارير 8D وأدلة CAPA والشهادات المرفقة بالموردين. تُرفق أو تُزال من عدم المطابقة أو الشهادة التي تحملها.</target>
+      </trans-unit>
+      <trans-unit id="documents.suppliers.reload" datatype="html">
+        <source>Actualiser</source>
+        <target state="translated">تحديث</target>
+      </trans-unit>
+      <trans-unit id="documents.suppliers.reload-tooltip" datatype="html">
+        <source>Les liens de lecture expirent après quelques minutes</source>
+        <target state="translated">تنتهي صلاحية روابط القراءة بعد بضع دقائق</target>
+      </trans-unit>
+      <trans-unit id="documents.suppliers.filters-aria" datatype="html">
+        <source>Filtrer les documents fournisseurs</source>
+        <target state="translated">تصفية مستندات الموردين</target>
+      </trans-unit>
+      <trans-unit id="documents.suppliers.search" datatype="html">
+        <source>Nom du fichier</source>
+        <target state="translated">اسم الملف</target>
+      </trans-unit>
+      <trans-unit id="documents.suppliers.owner" datatype="html">
+        <source>Rattaché à</source>
+        <target state="translated">مرتبط بـ</target>
+      </trans-unit>
+      <trans-unit id="documents.suppliers.col-name" datatype="html">
+        <source>Document</source>
+        <target state="translated">المستند</target>
+      </trans-unit>
+      <trans-unit id="documents.suppliers.col-size" datatype="html">
+        <source>Taille</source>
+        <target state="translated">الحجم</target>
+      </trans-unit>
+      <trans-unit id="documents.suppliers.col-added" datatype="html">
+        <source>Ajouté le</source>
+        <target state="translated">أضيف في</target>
+      </trans-unit>
+      <trans-unit id="documents.suppliers.unnamed" datatype="html">
+        <source>Document sans nom</source>
+        <target state="translated">مستند بلا اسم</target>
+      </trans-unit>
+      <trans-unit id="documents.suppliers.empty" datatype="html">
+        <source>Aucun document n'a encore été joint à un fournisseur.</source>
+        <target state="translated">لم يُرفق أي مستند بمورد بعد.</target>
+      </trans-unit>
+      <trans-unit id="documents.suppliers.empty-filtered" datatype="html">
+        <source>Aucun document ne correspond à ces filtres.</source>
+        <target state="translated">لا يوجد مستند يطابق عوامل التصفية هذه.</target>
+      </trans-unit>
+      <trans-unit id="documents.suppliers.load-error" datatype="html">
+        <source>Les documents fournisseurs n'ont pas pu être chargés.</source>
+        <target state="translated">تعذّر تحميل مستندات الموردين.</target>
+      </trans-unit>
       <trans-unit id="nav.admin-team" datatype="html">
         <source>Équipe &amp; habilitations</source>
         <target state="translated">الفريق والصلاحيات</target>

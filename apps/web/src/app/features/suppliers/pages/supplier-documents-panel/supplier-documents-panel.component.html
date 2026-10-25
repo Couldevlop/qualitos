@@ -1,0 +1,54 @@
+<div class="documents" data-test="documents">
+  <div class="add-row">
+    <mat-form-field appearance="outline" class="category" subscriptSizing="dynamic" *ngIf="categories.length > 1">
+      <mat-label i18n="@@suppliers.documents.category">Nature du document</mat-label>
+      <mat-select [(value)]="category" [disabled]="!!lockReason" data-test="nature">
+        <mat-option *ngFor="let c of categories" [value]="c.value">{{ c.label }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <input #fichier type="file" hidden [accept]="accept" (change)="choose(fichier)" data-test="saisie-fichier">
+    <button mat-flat-button color="primary" type="button" data-test="ajouter-document"
+            (click)="fichier.click()" [disabled]="!!lockReason || uploading"
+            [attr.aria-describedby]="lockReason ? 'supplier-documents-lock' : null">
+      <mat-progress-spinner *ngIf="uploading; else addIcon" mode="indeterminate" diameter="16"></mat-progress-spinner>
+      <ng-template #addIcon><mat-icon aria-hidden="true">attach_file</mat-icon></ng-template>
+      <span i18n="@@suppliers.documents.add">Joindre un fichier</span>
+    </button>
+  </div>
+
+  <p class="lock" id="supplier-documents-lock" *ngIf="lockReason" data-test="verrou-documents">
+    <mat-icon aria-hidden="true">lock</mat-icon> {{ lockReason }}
+  </p>
+
+  <p class="state error" *ngIf="loadError" role="alert">
+    <mat-icon aria-hidden="true">error_outline</mat-icon> {{ loadError }}
+  </p>
+
+  <ul class="docs" *ngIf="documents.length > 0">
+    <li *ngFor="let d of documents; trackBy: trackById" data-test="document">
+      <mat-icon class="docs__icon" aria-hidden="true">{{ icon(d) }}</mat-icon>
+      <div class="docs__body">
+        <!-- Le nom est un lien : l'URL est présignée et courte, elle ne vit pas en base. -->
+        <a class="docs__name" [href]="d.url" target="_blank" rel="noopener noreferrer" data-test="telecharger">
+          {{ d.originalFilename || '—' }}
+        </a>
+        <span class="docs__meta">
+          <span class="chip">{{ categoryLabel(d.category) }}</span>
+          {{ size(d.sizeBytes) }} · {{ d.createdAt | date:'short' }}
+        </span>
+      </div>
+      <button mat-icon-button type="button" *ngIf="canRemove" data-test="retirer"
+              [attr.aria-label]="removeAria(d)" (click)="remove(d)"
+              i18n-matTooltip="@@suppliers.documents.delete-tooltip" matTooltip="Retirer le document">
+        <mat-icon>delete_outline</mat-icon>
+      </button>
+    </li>
+  </ul>
+
+  <p class="empty" *ngIf="!loading && !loadError && documents.length === 0" i18n="@@suppliers.documents.empty">
+    Aucun document joint pour l'instant.
+  </p>
+  <p class="hint" i18n="@@suppliers.documents.limits">
+    PDF, image, Word, Excel ou PowerPoint — 10 Mo par fichier, 20 documents au plus.
+  </p>
+</div>

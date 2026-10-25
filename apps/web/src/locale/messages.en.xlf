@@ -29910,6 +29910,334 @@ India (service centre)</target>
         <source>Échec de la génération (HTTP <x id="status"/>).</source>
         <target state="translated">Generation failed (HTTP <x id="status"/>).</target>
       </trans-unit>
+      <trans-unit id="nav.nc-fournisseurs" datatype="html">
+        <source>NC fournisseurs</source>
+        <target state="translated">Supplier NCs</target>
+      </trans-unit>
+      <trans-unit id="documents.nav.supplier-documents" datatype="html">
+        <source>Documents fournisseurs</source>
+        <target state="translated">Supplier documents</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.part-number" datatype="html">
+        <source>Référence pièce (part number)</source>
+        <target state="translated">Part number</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.part-number-placeholder" datatype="html">
+        <source>Ex. : PN-7781-A</source>
+        <target state="translated">e.g. PN-7781-A</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.part-number-required" datatype="html">
+        <source>La référence de la pièce est obligatoire.</source>
+        <target state="translated">The part number is required.</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.part-quantity" datatype="html">
+        <source>Nombre de pièces</source>
+        <target state="translated">Number of parts</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.part-quantity-required" datatype="html">
+        <source>Un nombre entier de pièces, au moins 1.</source>
+        <target state="translated">A whole number of parts, at least 1.</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.eight-d-legend" datatype="html">
+        <source>Rapport 8D du fournisseur</source>
+        <target state="translated">Supplier 8D report</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.eight-d-requested" datatype="html">
+        <source>8D demandé</source>
+        <target state="translated">8D requested</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.eight-d-received" datatype="html">
+        <source>8D reçu</source>
+        <target state="translated">8D received</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.eight-d-requested-short" datatype="html">
+        <source>Demandé</source>
+        <target state="translated">Requested</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.eight-d-received-short" datatype="html">
+        <source>Reçu</source>
+        <target state="translated">Received</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.attach-hint" datatype="html">
+        <source>Le 8D et les preuves de CAPA se joignent depuis la liste, une fois la NC enregistrée.</source>
+        <target state="translated">The 8D and CAPA evidence are attached from the list once the NC is saved.</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.col-part" datatype="html">
+        <source>Pièce</source>
+        <target state="translated">Part</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.col-quantity" datatype="html">
+        <source>Qté</source>
+        <target state="translated">Qty</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.col-eight-d" datatype="html">
+        <source>8D</source>
+        <target state="translated">8D</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.col-definition" datatype="html">
+        <source>Définition</source>
+        <target state="translated">Definition</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.documents-tooltip" datatype="html">
+        <source>8D, preuves de CAPA…</source>
+        <target state="translated">8D, CAPA evidence…</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.report-aria" datatype="html">
+        <source>Télécharger la fiche NC en PDF</source>
+        <target state="translated">Download the NC sheet as PDF</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.report-tooltip" datatype="html">
+        <source>Fiche NC (PDF)</source>
+        <target state="translated">NC sheet (PDF)</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.report-failed" datatype="html">
+        <source>La fiche NC n'a pas pu être générée.</source>
+        <target state="translated">The NC sheet could not be generated.</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.subject" datatype="html">
+        <source>NC <x id="part"/> · <x id="quantity"/> pièce(s) · <x id="date"/></source>
+        <target state="translated">NC <x id="part"/> · <x id="quantity"/> part(s) · <x id="date"/></target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.subject-no-quantity" datatype="html">
+        <source>NC <x id="part"/> · <x id="date"/></source>
+        <target state="translated">NC <x id="part"/> · <x id="date"/></target>
+      </trans-unit>
+      <trans-unit id="suppliers.detail.all-ncs" datatype="html">
+        <source>Toutes les NC</source>
+        <target state="translated">All NCs</target>
+      </trans-unit>
+      <trans-unit id="suppliers.cert.documents-tooltip" datatype="html">
+        <source>Documents du certificat</source>
+        <target state="translated">Certificate documents</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc-list.title" datatype="html">
+        <source>Non-conformités fournisseurs</source>
+        <target state="translated">Supplier non-conformities</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc-list.title-supplier" datatype="html">
+        <source>Non-conformités du fournisseur</source>
+        <target state="translated">Supplier's non-conformities</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc-list.count-one" datatype="html">
+        <source><x id="INTERPOLATION"/> non-conformité</source>
+        <target state="translated"><x id="INTERPOLATION"/> non-conformity</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc-list.count-many" datatype="html">
+        <source><x id="INTERPOLATION"/> non-conformités</source>
+        <target state="translated"><x id="INTERPOLATION"/> non-conformities</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc-list.filters-aria" datatype="html">
+        <source>Filtrer les non-conformités</source>
+        <target state="translated">Filter non-conformities</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc-list.filter-supplier" datatype="html">
+        <source>Fournisseur</source>
+        <target state="translated">Supplier</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc-list.clear-filters" datatype="html">
+        <source>Effacer les filtres</source>
+        <target state="translated">Clear filters</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc-list.status-aria" datatype="html">
+        <source>Statut de la non-conformité</source>
+        <target state="translated">Non-conformity status</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc-list.col-documents" datatype="html">
+        <source>Pièces jointes</source>
+        <target state="translated">Attachments</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc-list.col-report" datatype="html">
+        <source>Rapport</source>
+        <target state="translated">Report</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc-list.report" datatype="html">
+        <source>Fiche PDF</source>
+        <target state="translated">PDF sheet</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc-list.empty" datatype="html">
+        <source>Aucune non-conformité fournisseur enregistrée.</source>
+        <target state="translated">No supplier non-conformity recorded.</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc-list.empty-filtered" datatype="html">
+        <source>Aucune non-conformité ne correspond à ces filtres.</source>
+        <target state="translated">No non-conformity matches these filters.</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc-list.load-error" datatype="html">
+        <source>Les non-conformités n'ont pas pu être chargées.</source>
+        <target state="translated">The non-conformities could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc-list.update-failed" datatype="html">
+        <source>La modification n'a pas été enregistrée.</source>
+        <target state="translated">The change was not saved.</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.title-nc" datatype="html">
+        <source>Documents de la non-conformité</source>
+        <target state="translated">Non-conformity documents</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.title-certificate" datatype="html">
+        <source>Documents du certificat</source>
+        <target state="translated">Certificate documents</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.open-aria" datatype="html">
+        <source>Documents joints (<x id="count"/>)</source>
+        <target state="translated">Attached documents (<x id="count"/>)</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.category" datatype="html">
+        <source>Nature du document</source>
+        <target state="translated">Document type</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.category-eight-d" datatype="html">
+        <source>8D fournisseur</source>
+        <target state="translated">Supplier 8D</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.category-capa" datatype="html">
+        <source>Preuve de CAPA</source>
+        <target state="translated">CAPA evidence</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.category-certificate" datatype="html">
+        <source>Certificat</source>
+        <target state="translated">Certificate</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.category-other" datatype="html">
+        <source>Autre</source>
+        <target state="translated">Other</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.owner-nc" datatype="html">
+        <source>Non-conformité</source>
+        <target state="translated">Non-conformity</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.owner-certificate" datatype="html">
+        <source>Certificat</source>
+        <target state="translated">Certificate</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.add" datatype="html">
+        <source>Joindre un fichier</source>
+        <target state="translated">Attach a file</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.added" datatype="html">
+        <source>Document ajouté.</source>
+        <target state="translated">Document added.</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.unnamed" datatype="html">
+        <source>document sans nom</source>
+        <target state="translated">unnamed document</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.delete" datatype="html">
+        <source>Retirer</source>
+        <target state="translated">Remove</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.delete-title" datatype="html">
+        <source>Retirer ce document ?</source>
+        <target state="translated">Remove this document?</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.delete-message" datatype="html">
+        <source>« <x id="name"/> » sera retiré. Le retrait est inscrit au journal d'audit.</source>
+        <target state="translated">"<x id="name"/>" will be removed. The removal is recorded in the audit log.</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.delete-tooltip" datatype="html">
+        <source>Retirer le document</source>
+        <target state="translated">Remove the document</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.remove-aria" datatype="html">
+        <source>Retirer le document <x id="name"/></source>
+        <target state="translated">Remove document <x id="name"/></target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.empty" datatype="html">
+        <source>Aucun document joint pour l'instant.</source>
+        <target state="translated">No document attached yet.</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.limits" datatype="html">
+        <source>PDF, image, Word, Excel ou PowerPoint — 10 Mo par fichier, 20 documents au plus.</source>
+        <target state="translated">PDF, image, Word, Excel or PowerPoint · 10 MB per file, 20 documents at most.</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.too-large" datatype="html">
+        <source>Fichier trop lourd : 10 Mo au plus.</source>
+        <target state="translated">File too large: 10 MB at most.</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.invalid" datatype="html">
+        <source>Fichier refusé : type non admis ou contenu qui ne correspond pas à son extension.</source>
+        <target state="translated">File rejected: type not allowed or content that does not match its extension.</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.limit" datatype="html">
+        <source>Limite atteinte : 10 Mo par fichier, 20 documents et 50 Mo au total.</source>
+        <target state="translated">Limit reached: 10 MB per file, 20 documents and 50 MB in total.</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.locked" datatype="html">
+        <source>Les documents sont verrouillés : la non-conformité est close.</source>
+        <target state="translated">Documents are locked: the non-conformity is closed.</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.locked-closed" datatype="html">
+        <source>NC close : ses documents sont figés. Rouvrez-la pour en joindre.</source>
+        <target state="translated">NC closed: its documents are frozen. Reopen it to attach more.</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.storage-off" datatype="html">
+        <source>Le stockage des documents est désactivé sur cet environnement.</source>
+        <target state="translated">Document storage is disabled in this environment.</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.load-error" datatype="html">
+        <source>Les documents n'ont pas pu être chargés.</source>
+        <target state="translated">The documents could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.error" datatype="html">
+        <source>L'opération sur le document a échoué.</source>
+        <target state="translated">The document operation failed.</target>
+      </trans-unit>
+      <trans-unit id="documents.suppliers.back" datatype="html">
+        <source>Documentation</source>
+        <target state="translated">Documentation</target>
+      </trans-unit>
+      <trans-unit id="documents.suppliers.intro" datatype="html">
+        <source>8D, preuves de CAPA et certificats joints aux fournisseurs. On les joint ou les retire depuis la NC ou le certificat qui les porte.</source>
+        <target state="translated">8Ds, CAPA evidence and certificates attached to suppliers. They are attached or removed from the NC or certificate that holds them.</target>
+      </trans-unit>
+      <trans-unit id="documents.suppliers.reload" datatype="html">
+        <source>Actualiser</source>
+        <target state="translated">Refresh</target>
+      </trans-unit>
+      <trans-unit id="documents.suppliers.reload-tooltip" datatype="html">
+        <source>Les liens de lecture expirent après quelques minutes</source>
+        <target state="translated">Read links expire after a few minutes</target>
+      </trans-unit>
+      <trans-unit id="documents.suppliers.filters-aria" datatype="html">
+        <source>Filtrer les documents fournisseurs</source>
+        <target state="translated">Filter supplier documents</target>
+      </trans-unit>
+      <trans-unit id="documents.suppliers.search" datatype="html">
+        <source>Nom du fichier</source>
+        <target state="translated">File name</target>
+      </trans-unit>
+      <trans-unit id="documents.suppliers.owner" datatype="html">
+        <source>Rattaché à</source>
+        <target state="translated">Attached to</target>
+      </trans-unit>
+      <trans-unit id="documents.suppliers.col-name" datatype="html">
+        <source>Document</source>
+        <target state="translated">Document</target>
+      </trans-unit>
+      <trans-unit id="documents.suppliers.col-size" datatype="html">
+        <source>Taille</source>
+        <target state="translated">Size</target>
+      </trans-unit>
+      <trans-unit id="documents.suppliers.col-added" datatype="html">
+        <source>Ajouté le</source>
+        <target state="translated">Added on</target>
+      </trans-unit>
+      <trans-unit id="documents.suppliers.unnamed" datatype="html">
+        <source>Document sans nom</source>
+        <target state="translated">Unnamed document</target>
+      </trans-unit>
+      <trans-unit id="documents.suppliers.empty" datatype="html">
+        <source>Aucun document n'a encore été joint à un fournisseur.</source>
+        <target state="translated">No document has been attached to a supplier yet.</target>
+      </trans-unit>
+      <trans-unit id="documents.suppliers.empty-filtered" datatype="html">
+        <source>Aucun document ne correspond à ces filtres.</source>
+        <target state="translated">No document matches these filters.</target>
+      </trans-unit>
+      <trans-unit id="documents.suppliers.load-error" datatype="html">
+        <source>Les documents fournisseurs n'ont pas pu être chargés.</source>
+        <target state="translated">Supplier documents could not be loaded.</target>
+      </trans-unit>
       <trans-unit id="nav.admin-team" datatype="html">
         <source>Équipe &amp; habilitations</source>
         <target state="translated">Team &amp; permissions</target>

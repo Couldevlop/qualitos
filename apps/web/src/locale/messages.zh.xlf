@@ -29910,6 +29910,334 @@ Inde (centre de service)</source>
         <source>Échec de la génération (HTTP <x id="status"/>).</source>
         <target state="translated">生成失败（HTTP <x id="status"/>）。</target>
       </trans-unit>
+      <trans-unit id="nav.nc-fournisseurs" datatype="html">
+        <source>NC fournisseurs</source>
+        <target state="translated">供应商不合格</target>
+      </trans-unit>
+      <trans-unit id="documents.nav.supplier-documents" datatype="html">
+        <source>Documents fournisseurs</source>
+        <target state="translated">供应商文件</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.part-number" datatype="html">
+        <source>Référence pièce (part number)</source>
+        <target state="translated">零件号（part number）</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.part-number-placeholder" datatype="html">
+        <source>Ex. : PN-7781-A</source>
+        <target state="translated">例如：PN-7781-A</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.part-number-required" datatype="html">
+        <source>La référence de la pièce est obligatoire.</source>
+        <target state="translated">零件号为必填项。</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.part-quantity" datatype="html">
+        <source>Nombre de pièces</source>
+        <target state="translated">零件数量</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.part-quantity-required" datatype="html">
+        <source>Un nombre entier de pièces, au moins 1.</source>
+        <target state="translated">零件数量须为整数，至少为 1。</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.eight-d-legend" datatype="html">
+        <source>Rapport 8D du fournisseur</source>
+        <target state="translated">供应商 8D 报告</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.eight-d-requested" datatype="html">
+        <source>8D demandé</source>
+        <target state="translated">已要求 8D</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.eight-d-received" datatype="html">
+        <source>8D reçu</source>
+        <target state="translated">已收到 8D</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.eight-d-requested-short" datatype="html">
+        <source>Demandé</source>
+        <target state="translated">已要求</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.eight-d-received-short" datatype="html">
+        <source>Reçu</source>
+        <target state="translated">已收到</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.attach-hint" datatype="html">
+        <source>Le 8D et les preuves de CAPA se joignent depuis la liste, une fois la NC enregistrée.</source>
+        <target state="translated">保存不合格项后，可在列表中附加 8D 和 CAPA 证据。</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.col-part" datatype="html">
+        <source>Pièce</source>
+        <target state="translated">零件</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.col-quantity" datatype="html">
+        <source>Qté</source>
+        <target state="translated">数量</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.col-eight-d" datatype="html">
+        <source>8D</source>
+        <target state="translated">8D</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.col-definition" datatype="html">
+        <source>Définition</source>
+        <target state="translated">定义</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.documents-tooltip" datatype="html">
+        <source>8D, preuves de CAPA…</source>
+        <target state="translated">8D、CAPA 证据……</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.report-aria" datatype="html">
+        <source>Télécharger la fiche NC en PDF</source>
+        <target state="translated">以 PDF 下载不合格单</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.report-tooltip" datatype="html">
+        <source>Fiche NC (PDF)</source>
+        <target state="translated">不合格单（PDF）</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.report-failed" datatype="html">
+        <source>La fiche NC n'a pas pu être générée.</source>
+        <target state="translated">无法生成不合格单。</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.subject" datatype="html">
+        <source>NC <x id="part"/> · <x id="quantity"/> pièce(s) · <x id="date"/></source>
+        <target state="translated">不合格 <x id="part"/> · <x id="quantity"/> 件 · <x id="date"/></target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.subject-no-quantity" datatype="html">
+        <source>NC <x id="part"/> · <x id="date"/></source>
+        <target state="translated">不合格 <x id="part"/> · <x id="date"/></target>
+      </trans-unit>
+      <trans-unit id="suppliers.detail.all-ncs" datatype="html">
+        <source>Toutes les NC</source>
+        <target state="translated">全部不合格项</target>
+      </trans-unit>
+      <trans-unit id="suppliers.cert.documents-tooltip" datatype="html">
+        <source>Documents du certificat</source>
+        <target state="translated">证书文件</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc-list.title" datatype="html">
+        <source>Non-conformités fournisseurs</source>
+        <target state="translated">供应商不合格项</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc-list.title-supplier" datatype="html">
+        <source>Non-conformités du fournisseur</source>
+        <target state="translated">该供应商的不合格项</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc-list.count-one" datatype="html">
+        <source><x id="INTERPOLATION"/> non-conformité</source>
+        <target state="translated"><x id="INTERPOLATION"/> 项不合格</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc-list.count-many" datatype="html">
+        <source><x id="INTERPOLATION"/> non-conformités</source>
+        <target state="translated"><x id="INTERPOLATION"/> 项不合格</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc-list.filters-aria" datatype="html">
+        <source>Filtrer les non-conformités</source>
+        <target state="translated">筛选不合格项</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc-list.filter-supplier" datatype="html">
+        <source>Fournisseur</source>
+        <target state="translated">供应商</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc-list.clear-filters" datatype="html">
+        <source>Effacer les filtres</source>
+        <target state="translated">清除筛选</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc-list.status-aria" datatype="html">
+        <source>Statut de la non-conformité</source>
+        <target state="translated">不合格项状态</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc-list.col-documents" datatype="html">
+        <source>Pièces jointes</source>
+        <target state="translated">附件</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc-list.col-report" datatype="html">
+        <source>Rapport</source>
+        <target state="translated">报告</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc-list.report" datatype="html">
+        <source>Fiche PDF</source>
+        <target state="translated">PDF 单</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc-list.empty" datatype="html">
+        <source>Aucune non-conformité fournisseur enregistrée.</source>
+        <target state="translated">尚无已登记的供应商不合格项。</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc-list.empty-filtered" datatype="html">
+        <source>Aucune non-conformité ne correspond à ces filtres.</source>
+        <target state="translated">没有符合这些筛选条件的不合格项。</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc-list.load-error" datatype="html">
+        <source>Les non-conformités n'ont pas pu être chargées.</source>
+        <target state="translated">无法加载不合格项。</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc-list.update-failed" datatype="html">
+        <source>La modification n'a pas été enregistrée.</source>
+        <target state="translated">修改未保存。</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.title-nc" datatype="html">
+        <source>Documents de la non-conformité</source>
+        <target state="translated">不合格项文件</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.title-certificate" datatype="html">
+        <source>Documents du certificat</source>
+        <target state="translated">证书文件</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.open-aria" datatype="html">
+        <source>Documents joints (<x id="count"/>)</source>
+        <target state="translated">附加文件（<x id="count"/>）</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.category" datatype="html">
+        <source>Nature du document</source>
+        <target state="translated">文件类型</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.category-eight-d" datatype="html">
+        <source>8D fournisseur</source>
+        <target state="translated">供应商 8D</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.category-capa" datatype="html">
+        <source>Preuve de CAPA</source>
+        <target state="translated">CAPA 证据</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.category-certificate" datatype="html">
+        <source>Certificat</source>
+        <target state="translated">证书</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.category-other" datatype="html">
+        <source>Autre</source>
+        <target state="translated">其他</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.owner-nc" datatype="html">
+        <source>Non-conformité</source>
+        <target state="translated">不合格项</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.owner-certificate" datatype="html">
+        <source>Certificat</source>
+        <target state="translated">证书</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.add" datatype="html">
+        <source>Joindre un fichier</source>
+        <target state="translated">附加文件</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.added" datatype="html">
+        <source>Document ajouté.</source>
+        <target state="translated">文件已添加。</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.unnamed" datatype="html">
+        <source>document sans nom</source>
+        <target state="translated">未命名文件</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.delete" datatype="html">
+        <source>Retirer</source>
+        <target state="translated">移除</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.delete-title" datatype="html">
+        <source>Retirer ce document ?</source>
+        <target state="translated">移除此文件？</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.delete-message" datatype="html">
+        <source>« <x id="name"/> » sera retiré. Le retrait est inscrit au journal d'audit.</source>
+        <target state="translated">“<x id="name"/>”将被移除。移除操作会记入审计日志。</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.delete-tooltip" datatype="html">
+        <source>Retirer le document</source>
+        <target state="translated">移除文件</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.remove-aria" datatype="html">
+        <source>Retirer le document <x id="name"/></source>
+        <target state="translated">移除文件 <x id="name"/></target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.empty" datatype="html">
+        <source>Aucun document joint pour l'instant.</source>
+        <target state="translated">尚未附加任何文件。</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.limits" datatype="html">
+        <source>PDF, image, Word, Excel ou PowerPoint — 10 Mo par fichier, 20 documents au plus.</source>
+        <target state="translated">PDF、图片、Word、Excel 或 PowerPoint · 每个文件不超过 10 MB，最多 20 个文件。</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.too-large" datatype="html">
+        <source>Fichier trop lourd : 10 Mo au plus.</source>
+        <target state="translated">文件过大：最多 10 MB。</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.invalid" datatype="html">
+        <source>Fichier refusé : type non admis ou contenu qui ne correspond pas à son extension.</source>
+        <target state="translated">文件被拒绝：类型不允许，或内容与扩展名不符。</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.limit" datatype="html">
+        <source>Limite atteinte : 10 Mo par fichier, 20 documents et 50 Mo au total.</source>
+        <target state="translated">已达上限：每个文件 10 MB，共 20 个文件、50 MB。</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.locked" datatype="html">
+        <source>Les documents sont verrouillés : la non-conformité est close.</source>
+        <target state="translated">文件已锁定：该不合格项已关闭。</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.locked-closed" datatype="html">
+        <source>NC close : ses documents sont figés. Rouvrez-la pour en joindre.</source>
+        <target state="translated">不合格项已关闭：其文件已冻结。重新打开后方可附加。</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.storage-off" datatype="html">
+        <source>Le stockage des documents est désactivé sur cet environnement.</source>
+        <target state="translated">此环境已停用文件存储。</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.load-error" datatype="html">
+        <source>Les documents n'ont pas pu être chargés.</source>
+        <target state="translated">无法加载文件。</target>
+      </trans-unit>
+      <trans-unit id="suppliers.documents.error" datatype="html">
+        <source>L'opération sur le document a échoué.</source>
+        <target state="translated">文件操作失败。</target>
+      </trans-unit>
+      <trans-unit id="documents.suppliers.back" datatype="html">
+        <source>Documentation</source>
+        <target state="translated">文档</target>
+      </trans-unit>
+      <trans-unit id="documents.suppliers.intro" datatype="html">
+        <source>8D, preuves de CAPA et certificats joints aux fournisseurs. On les joint ou les retire depuis la NC ou le certificat qui les porte.</source>
+        <target state="translated">附加到供应商的 8D、CAPA 证据和证书。需在其所属的不合格项或证书中附加或移除。</target>
+      </trans-unit>
+      <trans-unit id="documents.suppliers.reload" datatype="html">
+        <source>Actualiser</source>
+        <target state="translated">刷新</target>
+      </trans-unit>
+      <trans-unit id="documents.suppliers.reload-tooltip" datatype="html">
+        <source>Les liens de lecture expirent après quelques minutes</source>
+        <target state="translated">查看链接几分钟后失效</target>
+      </trans-unit>
+      <trans-unit id="documents.suppliers.filters-aria" datatype="html">
+        <source>Filtrer les documents fournisseurs</source>
+        <target state="translated">筛选供应商文件</target>
+      </trans-unit>
+      <trans-unit id="documents.suppliers.search" datatype="html">
+        <source>Nom du fichier</source>
+        <target state="translated">文件名</target>
+      </trans-unit>
+      <trans-unit id="documents.suppliers.owner" datatype="html">
+        <source>Rattaché à</source>
+        <target state="translated">所属</target>
+      </trans-unit>
+      <trans-unit id="documents.suppliers.col-name" datatype="html">
+        <source>Document</source>
+        <target state="translated">文件</target>
+      </trans-unit>
+      <trans-unit id="documents.suppliers.col-size" datatype="html">
+        <source>Taille</source>
+        <target state="translated">大小</target>
+      </trans-unit>
+      <trans-unit id="documents.suppliers.col-added" datatype="html">
+        <source>Ajouté le</source>
+        <target state="translated">添加日期</target>
+      </trans-unit>
+      <trans-unit id="documents.suppliers.unnamed" datatype="html">
+        <source>Document sans nom</source>
+        <target state="translated">未命名文件</target>
+      </trans-unit>
+      <trans-unit id="documents.suppliers.empty" datatype="html">
+        <source>Aucun document n'a encore été joint à un fournisseur.</source>
+        <target state="translated">尚未向任何供应商附加文件。</target>
+      </trans-unit>
+      <trans-unit id="documents.suppliers.empty-filtered" datatype="html">
+        <source>Aucun document ne correspond à ces filtres.</source>
+        <target state="translated">没有符合这些筛选条件的文件。</target>
+      </trans-unit>
+      <trans-unit id="documents.suppliers.load-error" datatype="html">
+        <source>Les documents fournisseurs n'ont pas pu être chargés.</source>
+        <target state="translated">无法加载供应商文件。</target>
+      </trans-unit>
       <trans-unit id="nav.admin-team" datatype="html">
         <source>Équipe &amp; habilitations</source>
         <target state="translated">团队与权限</target>
