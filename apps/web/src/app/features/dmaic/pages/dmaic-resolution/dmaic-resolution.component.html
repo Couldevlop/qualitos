@@ -10,7 +10,7 @@
   <!-- Sommaire : chaque partie à un clic, avec son avancement. -->
   <nav class="res__nav" i18n-aria-label="@@dmaic.res.nav" aria-label="Sommaire de la fiche">
     <ol>
-      <li *ngFor="let e of nav">
+      <li *ngFor="let e of nav; trackBy: trackByNav">
         <button type="button" class="nav-item" (click)="goTo(e.id)" [attr.data-test]="'nav-' + e.id">
           <span class="nav-item__letter" aria-hidden="true">{{ e.letter }}</span>
           <span class="nav-item__label">{{ e.label }}</span>

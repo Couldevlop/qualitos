@@ -182,6 +182,13 @@ tbody td {
   color: var(--qos-fg-tertiary);
 }
 
+// L'instrument et ses opérateurs : un libellé long ne doit pas s'écraser en
+// colonne de quelques lettres entre les cellules numériques, qui ne passent
+// jamais à la ligne. Le tableau défile horizontalement s'il manque de place.
+.instrument {
+  min-width: 16rem;
+}
+
 .date {
   white-space: nowrap;
 }

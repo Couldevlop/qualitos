@@ -137,6 +137,14 @@ describe('DmaicResolutionComponent', () => {
     expect(component.groupsOf('IMPROVE')).toEqual([]);
   });
 
+  it('rend les mêmes groupes d\'une détection à l\'autre, sans quoi chaque question serait recréée sans fin', async () => {
+    await setup();
+    const avant = component.groupsOf('DEFINE');
+    fixture.detectChanges();
+    expect(component.groupsOf('DEFINE')).toBe(avant);
+    expect(component.groupsOf('DEFINE')[0]).toBe(avant[0]);
+  });
+
   it('une réponse fermée se donne et se retire d\'un clic ; elle part en code', async () => {
     await setup();
     un('choix-MES-01-YES')!.click();
