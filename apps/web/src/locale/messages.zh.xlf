@@ -30019,8 +30019,8 @@ Inde (centre de service)</source>
         <target state="translated">该供应商的不合格项</target>
       </trans-unit>
       <trans-unit id="suppliers.nc-list.count-one" datatype="html">
-        <source>1 non-conformité</source>
-        <target state="translated">1 项不合格</target>
+        <source><x id="INTERPOLATION"/> non-conformité</source>
+        <target state="translated"><x id="INTERPOLATION"/> 项不合格</target>
       </trans-unit>
       <trans-unit id="suppliers.nc-list.count-many" datatype="html">
         <source><x id="INTERPOLATION"/> non-conformités</source>

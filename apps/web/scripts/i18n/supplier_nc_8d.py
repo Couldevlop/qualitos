@@ -37,7 +37,7 @@ TRANSLATIONS = {
     # --- Page des NC fournisseur ---
     'suppliers.nc-list.title': ('Non-conformités fournisseurs', 'Supplier non-conformities', 'No conformidades de proveedores', 'حالات عدم مطابقة الموردين', 'サプライヤーの不適合', '供应商不合格项'),
     'suppliers.nc-list.title-supplier': ('Non-conformités du fournisseur', "Supplier's non-conformities", 'No conformidades del proveedor', 'حالات عدم مطابقة المورد', 'このサプライヤーの不適合', '该供应商的不合格项'),
-    'suppliers.nc-list.count-one': ('1 non-conformité', '1 non-conformity', '1 no conformidad', 'حالة عدم مطابقة واحدة', '不適合 1 件', '1 项不合格'),
+    'suppliers.nc-list.count-one': ('{$INTERPOLATION} non-conformité', '{$INTERPOLATION} non-conformity', '{$INTERPOLATION} no conformidad', '{$INTERPOLATION} حالة عدم مطابقة', '不適合 {$INTERPOLATION} 件', '{$INTERPOLATION} 项不合格'),
     'suppliers.nc-list.count-many': ('{$INTERPOLATION} non-conformités', '{$INTERPOLATION} non-conformities', '{$INTERPOLATION} no conformidades', '{$INTERPOLATION} حالات عدم مطابقة', '不適合 {$INTERPOLATION} 件', '{$INTERPOLATION} 项不合格'),
     'suppliers.nc-list.filters-aria': ('Filtrer les non-conformités', 'Filter non-conformities', 'Filtrar las no conformidades', 'تصفية حالات عدم المطابقة', '不適合を絞り込む', '筛选不合格项'),
     'suppliers.nc-list.filter-supplier': ('Fournisseur', 'Supplier', 'Proveedor', 'المورد', 'サプライヤー', '供应商'),

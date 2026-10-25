@@ -1,7 +1,8 @@
 .nc-form { display: flex; flex-direction: column; min-width: min(560px, 100%); max-width: 700px; }
 mat-dialog-content { padding-top: 8px; display: flex; flex-direction: column; gap: 4px; }
 .full { width: 100%; }
-.row { display: flex; gap: 12px; }
+/* flex-start : étirés à la hauteur de la ligne, les contours des champs ne s'alignent plus. */
+.row { display: flex; gap: 12px; align-items: flex-start; }
 .col { flex: 1; min-width: 0; }
 mat-dialog-actions { padding: 12px 0 0; gap: 8px; }
 mat-dialog-actions button[type='submit'] { display: inline-flex; align-items: center; gap: 6px; }

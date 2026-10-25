@@ -55,10 +55,12 @@
       <table mat-table [dataSource]="rows" [trackBy]="trackById">
         <ng-container matColumnDef="name">
           <th mat-header-cell *matHeaderCellDef i18n="@@documents.suppliers.col-name">Document</th>
-          <td mat-cell *matCellDef="let d" class="name">
-            <mat-icon class="file-icon" aria-hidden="true">{{ icon(d) }}</mat-icon>
-            <a *ngIf="d.url; else plain" [href]="d.url" target="_blank" rel="noopener noreferrer" data-test="ouvrir">{{ name(d) }}</a>
-            <ng-template #plain><span>{{ name(d) }}</span></ng-template>
+          <td mat-cell *matCellDef="let d">
+            <div class="name">
+              <mat-icon class="file-icon" aria-hidden="true">{{ icon(d) }}</mat-icon>
+              <a *ngIf="d.url; else plain" [href]="d.url" target="_blank" rel="noopener noreferrer" data-test="ouvrir">{{ name(d) }}</a>
+              <ng-template #plain><span>{{ name(d) }}</span></ng-template>
+            </div>
           </td>
         </ng-container>
 

@@ -30019,8 +30019,8 @@ India (centro de servicio)</target>
         <target state="translated">No conformidades del proveedor</target>
       </trans-unit>
       <trans-unit id="suppliers.nc-list.count-one" datatype="html">
-        <source>1 non-conformité</source>
-        <target state="translated">1 no conformidad</target>
+        <source><x id="INTERPOLATION"/> non-conformité</source>
+        <target state="translated"><x id="INTERPOLATION"/> no conformidad</target>
       </trans-unit>
       <trans-unit id="suppliers.nc-list.count-many" datatype="html">
         <source><x id="INTERPOLATION"/> non-conformités</source>

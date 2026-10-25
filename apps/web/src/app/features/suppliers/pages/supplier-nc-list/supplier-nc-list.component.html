@@ -13,7 +13,7 @@
       </ng-template>
       <h1>{{ heading }}</h1>
       <p class="sub">
-        <ng-container *ngIf="totalElements === 1; else plural" i18n="@@suppliers.nc-list.count-one">1 non-conformité</ng-container>
+        <ng-container *ngIf="totalElements <= 1; else plural" i18n="@@suppliers.nc-list.count-one">{{ totalElements }} non-conformité</ng-container>
         <ng-template #plural><ng-container i18n="@@suppliers.nc-list.count-many">{{ totalElements }} non-conformités</ng-container></ng-template>
       </p>
     </div>
@@ -71,7 +71,7 @@
 
         <ng-container matColumnDef="part">
           <th mat-header-cell *matHeaderCellDef i18n="@@suppliers.nc.col-part">Pièce</th>
-          <td mat-cell *matCellDef="let nc">
+          <td mat-cell *matCellDef="let nc" class="part">
             <code>{{ nc.partNumber || '—' }}</code>
             <small class="dim" *ngIf="nc.lotReference"><span i18n="@@suppliers.detail.col-lot">Lot</span> {{ nc.lotReference }}</small>
           </td>

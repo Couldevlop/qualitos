@@ -62,6 +62,8 @@ a { color: var(--qos-fg-link); text-decoration: none; }
 a:hover { text-decoration: underline; }
 .strong-link { font-weight: 600; }
 
+/* Le flex vit dans un bloc de la cellule : posé sur le td, il le sortait de
+   l'alignement vertical de la ligne. */
 .name {
   display: flex;
   align-items: center;

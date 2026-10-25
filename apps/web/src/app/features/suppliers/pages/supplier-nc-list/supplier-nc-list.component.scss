@@ -65,6 +65,9 @@ tr.closed td { color: var(--qos-fg-secondary); }
 .dim { display: block; margin-top: 2px; color: var(--qos-fg-tertiary); font-size: var(--qos-fs-xs); }
 code { font-family: 'IBM Plex Mono', 'Fira Code', monospace; font-size: 12px; }
 
+/* Une référence ne se coupe pas : « PN-7781-A » doit se lire d'un bloc. */
+.part code, .part .dim { white-space: nowrap; }
+
 .supplier-link { color: var(--qos-fg-link); font-weight: 600; text-decoration: none; }
 .supplier-link:hover { text-decoration: underline; }
 
