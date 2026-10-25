@@ -80,6 +80,21 @@ Spring exposés » n'a plus d'objet et est retiré.
 - Trivy (SCA) vert sans exception Spring.
 - Préprod : connexion, listes et création d'enregistrements après déploiement.
 
+## Suivi — passage à la ligne 4.1 (2026-10-25)
+
+Le parent passe de 4.0.9 à **4.1.2** (blockchain-service compris, qui a son
+propre parent), et springdoc de 3.1.1 à **3.2.0**, la version construite sur
+Boot 4.1.2. Spring Framework reste en 7.0.10, Tomcat en 11.0.27, Netty en
+4.2.19, Jackson 2 en 2.21.7 et pgjdbc en 42.7.14. Ce sont donc les mêmes
+correctifs de sécurité ; la décision reste valable.
+
+Ce qui bouge sous Boot : Spring Security 7.0.8 → 7.1.2, Spring Data 2025.1 →
+2026.0, Hibernate 7.2 → 7.4, Flyway 11 → 12, Kafka 4.1 → 4.2, Micrometer
+1.16 → 1.17. Aucune surcharge de version n'est ajoutée.
+
+Vérification : même protocole que ci-dessus (tests de tous les modules, dont
+`contextLoads`, scan Trivy, recette en préprod après déploiement).
+
 ## Références
 
 CLAUDE.md §10.2, §18.2.1 ; guide de migration Spring Boot 4.0 ;

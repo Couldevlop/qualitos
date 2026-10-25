@@ -14,12 +14,12 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <!-- Spring Boot 4.0 (ADR 0100) : la ligne 3.5 et Spring Framework 6.2
+        <!-- Spring Boot 4.1 (ADR 0100) : la ligne 3.5 et Spring Framework 6.2
              ne reçoivent plus de correctifs (CVE-2026-47884, CVE-2026-47890).
              Ce module ayant son PROPRE parent, il ne bénéficie d'aucune des
              surcharges de sécurité de qualitos-parent : ses versions doivent
              être suivies ici, séparément. -->
-        <version>4.0.9</version>
+        <version>4.1.2</version>
         <relativePath/>
     </parent>
 
