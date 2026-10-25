@@ -2,7 +2,7 @@ import { AuthConfig, OAuthEvent, OAuthService } from 'angular-oauth2-oidc';
 import { Subject } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import { initOidc } from './oidc.initializer';
+import { initOidc, restoreReturnRoute } from './oidc.initializer';
 
 /**
  * L'amorçage OIDC.
@@ -109,5 +109,56 @@ describe('initOidc', () => {
     await Promise.resolve();
 
     expect(oauth.initLoginFlow).toHaveBeenCalled();
+  });
+});
+
+/**
+ * Restauration de la route après le retour de Keycloak. Le retour arrive sur `/`,
+ * que nginx renvoie vers la locale du navigateur : la route mémorisée peut
+ * appartenir à une autre build. La restaurer sous la mauvaise base donnait
+ * `/en/fr/…` et la page « introuvable ».
+ */
+describe('restoreReturnRoute', () => {
+
+  const KEY = 'qos.oidc.returnRoute';
+  let loc: { pathname: string; search: string; replace: jasmine.Spy };
+  let history: jasmine.SpyObj<History>;
+
+  beforeEach(() => {
+    sessionStorage.clear();
+    loc = { pathname: '/en/', search: '', replace: jasmine.createSpy('replace') };
+    history = jasmine.createSpyObj<History>('History', ['replaceState']);
+  });
+
+  afterEach(() => sessionStorage.clear());
+
+  it('restaure sans rechargement une route de la même locale', () => {
+    sessionStorage.setItem(KEY, '/en/suppliers/non-conformites');
+
+    expect(restoreReturnRoute('/en/', loc as never, history)).toBeFalse();
+
+    expect(history.replaceState).toHaveBeenCalledWith({}, '', '/en/suppliers/non-conformites');
+    expect(loc.replace).not.toHaveBeenCalled();
+  });
+
+  it('recharge la route dans sa propre build quand la locale diffère', () => {
+    sessionStorage.setItem(KEY, '/fr/suppliers/non-conformites');
+
+    expect(restoreReturnRoute('/en/', loc as never, history)).toBeTrue();
+
+    expect(loc.replace).toHaveBeenCalledWith('/fr/suppliers/non-conformites');
+    expect(history.replaceState).not.toHaveBeenCalled();
+  });
+
+  it('ne fait rien sans route mémorisée, et consomme la clé', () => {
+    expect(restoreReturnRoute('/en/', loc as never, history)).toBeFalse();
+    sessionStorage.setItem(KEY, '/en/');
+    loc.pathname = '/en/';
+
+    expect(restoreReturnRoute('/en/', loc as never, history)).toBeFalse();
+
+    expect(history.replaceState).not.toHaveBeenCalled();
+    expect(loc.replace).not.toHaveBeenCalled();
+    expect(sessionStorage.getItem(KEY)).toBeNull();
   });
 });
