@@ -4014,6 +4014,150 @@ Portail clients</source>
         <source>Lier</source>
         <target state="translated">ربط</target>
       </trans-unit>
+      <trans-unit id="nav.admin-ai" datatype="html">
+        <source>Fournisseur d'IA</source>
+        <target state="translated">مزوّد الذكاء الاصطناعي</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.title" datatype="html">
+        <source>Fournisseur d'IA</source>
+        <target state="translated">مزوّد الذكاء الاصطناعي</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.subtitle" datatype="html">
+        <source>À qui partent les demandes faites à l'IA pour votre organisation.</source>
+        <target state="translated">إلى أين تُرسَل الطلبات الموجّهة إلى الذكاء الاصطناعي لمؤسستك.</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.load-failed" datatype="html">
+        <source>Le fournisseur d'IA n'a pas pu être chargé.</source>
+        <target state="translated">تعذّر تحميل مزوّد الذكاء الاصطناعي.</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.save-failed" datatype="html">
+        <source>Le fournisseur d'IA n'a pas pu être enregistré.</source>
+        <target state="translated">تعذّر حفظ مزوّد الذكاء الاصطناعي.</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.saved" datatype="html">
+        <source>Fournisseur d'IA enregistré. Il s'applique aux prochaines demandes.</source>
+        <target state="translated">تم حفظ مزوّد الذكاء الاصطناعي. يُطبَّق على الطلبات القادمة.</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.unknown-provider" datatype="html">
+        <source>inconnu</source>
+        <target state="translated">غير معروف</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.provider.ollama" datatype="html">
+        <source>Modèle local (Ollama)</source>
+        <target state="translated">نموذج محلي (Ollama)</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.provider.ollama-desc" datatype="html">
+        <source>Le modèle tourne sur l'infrastructure de votre installation. Les demandes, et les données qu'elles portent, ne la quittent pas.</source>
+        <target state="translated">يعمل النموذج على البنية التحتية لتثبيتك. لا تغادرها الطلبات ولا البيانات التي تحملها.</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.provider.mistral" datatype="html">
+        <source>Mistral AI</source>
+        <target state="translated">Mistral AI</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.provider.mistral-desc" datatype="html">
+        <source>Service externe. Les demandes lui sont transmises, une fois retirées les données personnelles détectées.</source>
+        <target state="translated">خدمة خارجية. تُرسَل إليها الطلبات بعد إزالة البيانات الشخصية المكتشفة.</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.provider.anthropic" datatype="html">
+        <source>Anthropic</source>
+        <target state="translated">Anthropic</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.provider.anthropic-desc" datatype="html">
+        <source>Service externe. Les demandes lui sont transmises, une fois retirées les données personnelles détectées.</source>
+        <target state="translated">خدمة خارجية. تُرسَل إليها الطلبات بعد إزالة البيانات الشخصية المكتشفة.</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.state.sovereign" datatype="html">
+        <source>Souverain : les demandes restent sur votre infrastructure.</source>
+        <target state="translated">سيادي: تبقى الطلبات على بنيتك التحتية.</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.state.external" datatype="html">
+        <source>Les demandes partent vers un service externe : <x id="INTERPOLATION"/>.</source>
+        <target state="translated">تُرسَل الطلبات إلى خدمة خارجية: <x id="INTERPOLATION"/>.</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.state.unknown" datatype="html">
+        <source>Le fournisseur qui répond n'est pas connu pour l'instant.</source>
+        <target state="translated">المزوّد الذي يجيب غير معروف حاليًا.</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.state.pending" datatype="html">
+        <source>Ce sera le cas une fois le choix enregistré.</source>
+        <target state="translated">سيصبح ذلك ساريًا بعد حفظ الاختيار.</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.state.changed" datatype="html">
+        <source>Choisi le <x id="INTERPOLATION"/> par</source>
+        <target state="translated">اختير في <x id="INTERPOLATION"/> بواسطة</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.catalog-unavailable" datatype="html">
+        <source>Le service d'IA ne répond pas : on ne peut pas vérifier pour l'instant quels fournisseurs sont configurés.</source>
+        <target state="translated">خدمة الذكاء الاصطناعي لا تستجيب: لا يمكن حاليًا التحقق من المزوّدين المهيّئين.</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.pinned-broken" datatype="html">
+        <source>Le fournisseur choisi n'est plus configuré sur la plateforme : les fonctions d'IA échouent tant qu'un autre n'est pas choisi.</source>
+        <target state="translated">المزوّد المختار لم يعد مهيّأً على المنصة: تفشل وظائف الذكاء الاصطناعي حتى يتم اختيار مزوّد آخر.</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.choice" datatype="html">
+        <source>Fournisseur des demandes</source>
+        <target state="translated">مزوّد الطلبات</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.choice-help" datatype="html">
+        <source>Un seul fournisseur reçoit toutes les demandes de votre organisation. Il n'y a pas de bascule automatique : si celui-ci ne répond pas, la demande échoue plutôt que de partir ailleurs.</source>
+        <target state="translated">يتلقى مزوّد واحد جميع طلبات مؤسستك. لا يوجد تحويل تلقائي: إذا لم يستجب، تفشل الطلب بدلًا من إرساله إلى جهة أخرى.</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.default" datatype="html">
+        <source>Défaut de la plateforme</source>
+        <target state="translated">الإعداد الافتراضي للمنصة</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.default-desc" datatype="html">
+        <source>Suit le réglage de la plateforme, aujourd'hui : <x id="INTERPOLATION"/>. Il peut changer sans que vous le choisissiez.</source>
+        <target state="translated">يتبع إعداد المنصة، حاليًا: <x id="INTERPOLATION"/>. قد يتغيّر دون أن تختاره.</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.default-desc-unknown" datatype="html">
+        <source>Suit le réglage de la plateforme. Il peut changer sans que vous le choisissiez.</source>
+        <target state="translated">يتبع إعداد المنصة. قد يتغيّر دون أن تختاره.</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.badge.on-premise" datatype="html">
+        <source>Sur votre infrastructure</source>
+        <target state="translated">على بنيتك التحتية</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.badge.external" datatype="html">
+        <source>Service externe</source>
+        <target state="translated">خدمة خارجية</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.badge.not-configured" datatype="html">
+        <source>Non configuré</source>
+        <target state="translated">غير مهيّأ</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.scope" datatype="html">
+        <source>Ce que ce choix couvre</source>
+        <target state="translated">ما يشمله هذا الاختيار</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.scope.reports" datatype="html">
+        <source>Rapports d'audit, comptes-rendus de cercles et récits des tableaux de bord.</source>
+        <target state="translated">تقارير التدقيق ومحاضر الحلقات وسرديات لوحات المعلومات.</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.scope.causes" datatype="html">
+        <source>Causes suggérées des diagrammes d'Ishikawa et brouillons de documents normatifs.</source>
+        <target state="translated">الأسباب المقترحة لمخططات إيشيكاوا ومسودات الوثائق المعيارية.</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.scope.nlq" datatype="html">
+        <source>Questions posées en langage naturel sur vos données.</source>
+        <target state="translated">الأسئلة المطروحة بلغة طبيعية حول بياناتك.</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.scope.mock-audit" datatype="html">
+        <source>Audits blancs du Standards Hub.</source>
+        <target state="translated">عمليات التدقيق التجريبية في Standards Hub.</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.scope.not-covered" datatype="html">
+        <source>Les calculs statistiques (cartes SPC, anomalies, prévisions, regroupement des NC) n'utilisent aucun modèle de langage : ils restent sur la plateforme quel que soit ce choix.</source>
+        <target state="translated">لا تستخدم الحسابات الإحصائية (مخططات SPC، الحالات الشاذة، التوقعات، تجميع حالات عدم المطابقة) أي نموذج لغوي: تبقى على المنصة مهما كان هذا الاختيار.</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.leaving-premises" datatype="html">
+        <source>Attention : les demandes vont quitter votre infrastructure.</source>
+        <target state="translated">تنبيه: ستغادر الطلبات بنيتك التحتية.</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.pending" datatype="html">
+        <source>Fournisseur modifié</source>
+        <target state="translated">تم تغيير المزوّد</target>
+      </trans-unit>
       <trans-unit id="ai-systems.detail.action-failed" datatype="html">
         <source>L'opération sur le système a échoué.</source>
         <target state="translated">فشلت العملية على النظام.</target>

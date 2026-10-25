@@ -7,6 +7,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { SharedModule } from '../../shared/shared.module';
 import { UiModule } from '../../shared/ui/ui.module';
 import { UserPickerModule } from '../../shared/user-picker/user-picker.module';
+import { PersonNameModule } from '../../shared/person-name/person-name.module';
 import { CredentialRevealComponent } from './components/credential-reveal/credential-reveal.component';
 import { CircuitsComponent } from './pages/circuits/circuits.component';
 import { ClientsComponent } from './pages/clients/clients.component';
@@ -14,6 +15,7 @@ import { LicenseComponent } from './pages/license/license.component';
 import { MocSettingsComponent } from './pages/moc-settings/moc-settings.component';
 import { DocumentSettingsComponent } from './pages/document-settings/document-settings.component';
 import { SpcSettingsComponent } from './pages/spc-settings/spc-settings.component';
+import { AiPolicyComponent } from './pages/ai-policy/ai-policy.component';
 import { DmaicSettingsComponent } from './pages/dmaic-settings/dmaic-settings.component';
 import { CompetencyWorkshopsComponent } from './pages/competency-workshops/competency-workshops.component';
 import { RolesMatrixComponent } from './pages/roles-matrix/roles-matrix.component';
@@ -43,6 +45,8 @@ const routes: Routes = [
   { path: 'spc', component: SpcSettingsComponent },
   // Le questionnaire, les types de défaillance et les sévérités de la fiche DMAIC (ADR 0101).
   { path: 'dmaic', component: DmaicSettingsComponent },
+  // Le fournisseur des appels LLM du tenant, et sa souveraineté (ADR 0102).
+  { path: 'ia', component: AiPolicyComponent },
   // Les ateliers de la matrice de compétences (ADR 0098).
   { path: 'competences', component: CompetencyWorkshopsComponent },
   // La licence d'une installation on-premise (ADR 0082).
@@ -78,9 +82,9 @@ const routes: Routes = [
 @NgModule({
   declarations: [TenantModulesComponent, TenantTeamComponent, RolesMatrixComponent, CircuitsComponent, ClientsComponent, LicenseComponent,
     MocSettingsComponent, DocumentSettingsComponent, SpcSettingsComponent, DmaicSettingsComponent, CompetencyWorkshopsComponent,
-    CredentialRevealComponent],
+    AiPolicyComponent, CredentialRevealComponent],
   // UserPickerModule : les titulaires des rôles MOC se choisissent dans l'annuaire (ADR 0091).
   imports: [SharedModule, UiModule, FormsModule, DragDropModule, MatMenuModule,
-    UserPickerModule, RouterModule.forChild(routes)]
+    UserPickerModule, PersonNameModule, RouterModule.forChild(routes)]
 })
 export class AdminModule {}

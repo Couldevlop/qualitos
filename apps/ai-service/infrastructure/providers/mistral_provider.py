@@ -41,6 +41,9 @@ class MistralProvider(AIProviderBase):
     def name(self) -> ProviderName:
         return ProviderName.MISTRAL
 
+    def is_configured(self) -> bool:
+        return bool(self._api_key)
+
     def complete(self, request: CompletionRequest) -> CompletionResponse:
         if not self._api_key:
             raise ProviderUnavailableError("MISTRAL_API_KEY not configured")

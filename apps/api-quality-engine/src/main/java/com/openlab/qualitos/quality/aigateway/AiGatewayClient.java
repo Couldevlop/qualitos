@@ -3,6 +3,7 @@ package com.openlab.qualitos.quality.aigateway;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openlab.qualitos.quality.ai.guard.AiCallContext;
 import com.openlab.qualitos.quality.ai.guard.AiGuard;
+import com.openlab.qualitos.quality.airouting.application.TenantAiPolicyResolver;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.common.TenantContext;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,6 +34,10 @@ import java.util.function.Consumer;
  * En prod : jeton OIDC client_credentials d'audience {@code qualitos-ai}, accompagné de
  * l'en-tête {@code X-Tenant-Id} (ADR 0048) — un tel jeton représente une machine et ne porte
  * aucun tenant ; l'ai-service ne croit cet en-tête que d'un {@code azp} de confiance.
+ *
+ * <p>Souveraineté (ADR 0102) : chaque appel <em>LLM</em> porte le fournisseur auquel le
+ * tenant est épinglé. Un tenant sur {@code ollama} ne voit donc jamais ses prompts
+ * partir vers un tiers, et l'ai-service ne bascule pas d'un fournisseur à l'autre.
  */
 @Component
 public class AiGatewayClient {
@@ -54,6 +59,7 @@ public class AiGatewayClient {
     private final AiGuard guard;
     private final AuthMode authMode;
     private final AiServiceTokenProvider tokenProvider;
+    private final TenantAiPolicyResolver providerResolver;
 
     public AiGatewayClient(
             @Value("${qualitos.ai.base-url:http://localhost:8085}") String baseUrl,
@@ -61,9 +67,11 @@ public class AiGatewayClient {
             @Value("${qualitos.ai.read-timeout-ms:260000}") int readTimeoutMs,
             @Value("${qualitos.ai.auth:dev-claims}") String authMode,
             AiGuard guard,
-            AiServiceTokenProvider tokenProvider) {
+            AiServiceTokenProvider tokenProvider,
+            TenantAiPolicyResolver providerResolver) {
         this.guard = guard;
         this.tokenProvider = tokenProvider;
+        this.providerResolver = providerResolver;
         String raw = authMode == null ? "" : authMode.trim().toLowerCase();
         this.authMode = switch (raw) {
             case "", "dev-claims" -> AuthMode.DEV_CLAIMS;
@@ -89,11 +97,12 @@ public class AiGatewayClient {
             throw new MissingTenantContextException();
         }
         Consumer<HttpHeaders> auth = authHeaders(UUID.fromString(TenantContext.getTenantId()));
-        Map<String, Object> body = Map.of(
-                "system_prompt", systemPrompt,
-                "user_prompt", userPrompt,
-                "max_tokens", maxTokens,
-                "temperature", 0.2);
+        Map<String, Object> body = new HashMap<>();
+        body.put("system_prompt", systemPrompt);
+        body.put("user_prompt", userPrompt);
+        body.put("max_tokens", maxTokens);
+        body.put("temperature", 0.2);
+        routeToTenantProvider(body);
         AiCallContext ctx = new AiCallContext(TenantContext.getTenantId(), "complete",
                 (systemPrompt == null ? 0 : systemPrompt.length())
                         + (userPrompt == null ? 0 : userPrompt.length()));
@@ -132,7 +141,12 @@ public class AiGatewayClient {
             throw new MissingTenantContextException();
         }
         Consumer<HttpHeaders> auth = authHeaders(UUID.fromString(TenantContext.getTenantId()));
-        Map<String, Object> body = Map.of("question", question, "max_rows", maxRows);
+        Map<String, Object> body = new HashMap<>();
+        body.put("question", question);
+        body.put("max_rows", maxRows);
+        // Le texte-vers-SQL est produit par un LLM : la question, et le schéma des
+        // données du tenant, suivent sa politique comme tout autre prompt.
+        routeToTenantProvider(body);
         AiCallContext ctx = new AiCallContext(TenantContext.getTenantId(), "nlq",
                 question == null ? 0 : question.length());
         guard.check(ctx);
@@ -457,11 +471,14 @@ public class AiGatewayClient {
      *             nombre de clauses sert d'unité de débit pour le garde-fou
      */
     @SuppressWarnings("unchecked")
-    public Map<String, Object> mockAudit(Map<String, Object> body, int clauseCount) {
+    public Map<String, Object> mockAudit(Map<String, Object> request, int clauseCount) {
         if (!TenantContext.hasTenant()) {
             throw new MissingTenantContextException();
         }
         Consumer<HttpHeaders> auth = authHeaders(UUID.fromString(TenantContext.getTenantId()));
+        // Copie : le corps reçu appartient à l'appelant, et il peut être immuable.
+        Map<String, Object> body = new HashMap<>(request);
+        routeToTenantProvider(body);
         AiCallContext ctx = new AiCallContext(TenantContext.getTenantId(), "mock-audit",
                 clauseCount);
         guard.check(ctx);
@@ -618,6 +635,43 @@ public class AiGatewayClient {
                 };
             }
         };
+    }
+
+    /**
+     * Les fournisseurs LLM de l'ai-service et, pour chacun, s'il est configuré
+     * ({@code GET /v1/ai/providers}). Sert au paramétrage du tenant, pas à un appel
+     * de modèle : ni garde-fou de débit, ni routage.
+     */
+    @SuppressWarnings("unchecked")
+    public Map<String, Object> providers() {
+        if (!TenantContext.hasTenant()) {
+            throw new MissingTenantContextException();
+        }
+        Consumer<HttpHeaders> auth = authHeaders(UUID.fromString(TenantContext.getTenantId()));
+        try {
+            Map<String, Object> resp = client.get()
+                    .uri("/v1/ai/providers")
+                    .headers(auth)
+                    .retrieve()
+                    .body(Map.class);
+            if (resp == null) {
+                throw new AiGatewayException("Réponse vide de la passerelle IA (providers)");
+            }
+            return resp;
+        } catch (RestClientException e) {
+            throw new AiGatewayException("Passerelle IA indisponible (providers) : " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Impose au corps d'un appel LLM le fournisseur du tenant courant (ADR 0102).
+     * Sans politique, aucun champ : l'ai-service applique le défaut de la plateforme.
+     * Un fournisseur posé par l'appelant est écrasé — la politique du tenant prime.
+     * Une erreur de lecture de la politique interrompt l'appel (fail-closed).
+     */
+    private void routeToTenantProvider(Map<String, Object> body) {
+        providerResolver.providerFor(UUID.fromString(TenantContext.getTenantId()))
+                .ifPresent(p -> body.put("provider", p.wireName()));
     }
 
     private String devClaims(UUID tenantId) {

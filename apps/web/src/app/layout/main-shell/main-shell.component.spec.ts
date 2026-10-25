@@ -180,7 +180,8 @@ describe('MainShellComponent (navigation model)', () => {
     // Administration retombe a 13 : les circuits par roles cedent la place aux
     // signataires choisis a la soumission (ADR 0099). Puis a 14 : + Parametres DMAIC (ADR 0101).
     // Non-conformite passe a 5 : + NC fournisseurs, a cote des NC interne et externe.
-    expect(labels).toEqual([7, 6, 7, 2, 1, 5, 1, 9, 11, 1, 14]);
+    // Administration passe a 15 : + Fournisseur d'IA (ADR 0102).
+    expect(labels).toEqual([7, 6, 7, 2, 1, 5, 1, 9, 11, 1, 15]);
   });
 
   it('le registre des risques a son groupe, juste apres la non-conformite', () => {

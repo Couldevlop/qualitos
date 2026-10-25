@@ -24,6 +24,18 @@ class CitationSchema(BaseModel):
     excerpt: str
 
 
+class ProviderStatusSchema(BaseModel):
+    name: str
+    configured: bool
+
+
+class ProvidersResponseSchema(BaseModel):
+    """Which providers can answer here, and which one a request without ``provider`` gets."""
+
+    default_provider: str
+    providers: list[ProviderStatusSchema]
+
+
 class CompletionResponseSchema(BaseModel):
     text: str
     provider: str

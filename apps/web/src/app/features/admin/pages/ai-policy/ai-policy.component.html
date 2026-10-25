@@ -1,0 +1,105 @@
+<div class="qos-page">
+  <qos-page-header
+    title="Fournisseur d'IA" i18n-title="@@admin.ai.title"
+    subtitle="À qui partent les demandes faites à l'IA pour votre organisation."
+    i18n-subtitle="@@admin.ai.subtitle">
+  </qos-page-header>
+
+  <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+
+  <p class="echec" *ngIf="failed" role="alert">
+    <span i18n="@@admin.ai.load-failed">Le fournisseur d'IA n'a pas pu être chargé.</span>
+    <button mat-button type="button" (click)="charger()" i18n="@@common.retry">Réessayer</button>
+  </p>
+
+  <ng-container *ngIf="!failed && !loading && policy as p">
+    <section class="etat" [class.etat--souverain]="sovereign === true" [class.etat--externe]="sovereign === false"
+             aria-live="polite" data-test="etat">
+      <mat-icon class="etat__icone" aria-hidden="true">{{ sovereign === true ? 'shield' : sovereign === false ? 'public' : 'help_outline' }}</mat-icon>
+      <div>
+        <p class="etat__titre">
+          <ng-container *ngIf="sovereign === true" i18n="@@admin.ai.state.sovereign">Souverain : les demandes restent sur votre infrastructure.</ng-container>
+          <ng-container *ngIf="sovereign === false" i18n="@@admin.ai.state.external">Les demandes partent vers un service externe : {{ label(chosenProvider) }}.</ng-container>
+          <ng-container *ngIf="sovereign === null" i18n="@@admin.ai.state.unknown">Le fournisseur qui répond n'est pas connu pour l'instant.</ng-container>
+        </p>
+        <p class="etat__detail" *ngIf="dirty" i18n="@@admin.ai.state.pending">Ce sera le cas une fois le choix enregistré.</p>
+        <p class="etat__detail" *ngIf="!dirty && p.pinned && p.updatedAt">
+          <ng-container i18n="@@admin.ai.state.changed">Choisi le {{ p.updatedAt | date:'longDate' }} par</ng-container>
+          <qos-person-name [accountId]="p.updatedBy"></qos-person-name>.
+        </p>
+      </div>
+    </section>
+
+    <p class="alerte" *ngIf="!p.catalogAvailable" role="status" data-test="catalogue-absent">
+      <mat-icon aria-hidden="true">cloud_off</mat-icon>
+      <span i18n="@@admin.ai.catalog-unavailable">Le service d'IA ne répond pas : on ne peut pas vérifier pour l'instant quels fournisseurs sont configurés.</span>
+    </p>
+    <p class="alerte alerte--danger" *ngIf="pinnedBroken" role="alert" data-test="epingle-casse">
+      <mat-icon aria-hidden="true">error_outline</mat-icon>
+      <span i18n="@@admin.ai.pinned-broken">Le fournisseur choisi n'est plus configuré sur la plateforme : les fonctions d'IA échouent tant qu'un autre n'est pas choisi.</span>
+    </p>
+
+    <section class="bloc" aria-labelledby="ia-choix">
+      <h2 class="bloc__titre" id="ia-choix" i18n="@@admin.ai.choice">Fournisseur des demandes</h2>
+      <p class="bloc__aide" i18n="@@admin.ai.choice-help">Un seul fournisseur reçoit toutes les demandes de votre organisation. Il n'y a pas de bascule automatique : si celui-ci ne répond pas, la demande échoue plutôt que de partir ailleurs.</p>
+
+      <div class="choix" role="radiogroup" aria-labelledby="ia-choix">
+        <label class="carte" [class.carte--active]="choice === 'default'" data-test="choix-default">
+          <input type="radio" name="ia-fournisseur" value="default" [checked]="choice === 'default'"
+                 (change)="select('default')">
+          <span class="carte__corps">
+            <span class="carte__nom" i18n="@@admin.ai.default">Défaut de la plateforme</span>
+            <span class="carte__desc">
+              <ng-container *ngIf="p.platformDefault" i18n="@@admin.ai.default-desc">Suit le réglage de la plateforme, aujourd'hui : {{ label(p.platformDefault) }}. Il peut changer sans que vous le choisissiez.</ng-container>
+              <ng-container *ngIf="!p.platformDefault" i18n="@@admin.ai.default-desc-unknown">Suit le réglage de la plateforme. Il peut changer sans que vous le choisissiez.</ng-container>
+            </span>
+          </span>
+        </label>
+
+        <label class="carte" *ngFor="let o of p.providers"
+               [class.carte--active]="choice === o.name" [class.carte--indisponible]="o.configured === false"
+               [attr.data-test]="'choix-' + o.name">
+          <input type="radio" name="ia-fournisseur" [value]="o.name" [checked]="choice === o.name"
+                 [disabled]="o.configured === false" (change)="select(o.name)">
+          <span class="carte__corps">
+            <span class="carte__nom">{{ texts[o.name].label }}</span>
+            <span class="carte__desc">{{ texts[o.name].description }}</span>
+            <span class="carte__badges">
+              <span class="badge" [class.badge--souverain]="o.onPremise" [class.badge--externe]="!o.onPremise">
+                <ng-container *ngIf="o.onPremise" i18n="@@admin.ai.badge.on-premise">Sur votre infrastructure</ng-container>
+                <ng-container *ngIf="!o.onPremise" i18n="@@admin.ai.badge.external">Service externe</ng-container>
+              </span>
+              <span class="badge badge--neutre" *ngIf="o.configured === false" i18n="@@admin.ai.badge.not-configured">Non configuré</span>
+            </span>
+          </span>
+        </label>
+      </div>
+    </section>
+
+    <section class="bloc bloc--portee" aria-labelledby="ia-portee">
+      <h2 class="bloc__titre" id="ia-portee" i18n="@@admin.ai.scope">Ce que ce choix couvre</h2>
+      <ul class="portee">
+        <li i18n="@@admin.ai.scope.reports">Rapports d'audit, comptes-rendus de cercles et récits des tableaux de bord.</li>
+        <li i18n="@@admin.ai.scope.causes">Causes suggérées des diagrammes d'Ishikawa et brouillons de documents normatifs.</li>
+        <li i18n="@@admin.ai.scope.nlq">Questions posées en langage naturel sur vos données.</li>
+        <li i18n="@@admin.ai.scope.mock-audit">Audits blancs du Standards Hub.</li>
+      </ul>
+      <p class="bloc__aide" i18n="@@admin.ai.scope.not-covered">Les calculs statistiques (cartes SPC, anomalies, prévisions, regroupement des NC) n'utilisent aucun modèle de langage : ils restent sur la plateforme quel que soit ce choix.</p>
+    </section>
+
+    <div class="barre" *ngIf="dirty" role="status">
+      <span class="barre__note">
+        <ng-container *ngIf="sovereign === false && savedChoice !== 'default' && option(savedChoice)?.onPremise"
+                      i18n="@@admin.ai.leaving-premises">Attention : les demandes vont quitter votre infrastructure.</ng-container>
+        <ng-container *ngIf="!(sovereign === false && savedChoice !== 'default' && option(savedChoice)?.onPremise)"
+                      i18n="@@admin.ai.pending">Fournisseur modifié</ng-container>
+      </span>
+      <span class="barre__actions">
+        <button mat-stroked-button type="button" (click)="discard()" [disabled]="saving"
+                data-test="annuler" i18n="@@authz.matrix.discard">Annuler les changements</button>
+        <button mat-flat-button color="primary" type="button" (click)="save()" [disabled]="saving"
+                data-test="enregistrer" i18n="@@common.save">Enregistrer</button>
+      </span>
+    </div>
+  </ng-container>
+</div>

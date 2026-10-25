@@ -5,6 +5,7 @@ from pydantic import BaseModel, Field
 
 from domain.model.completion import ProviderName
 from domain.model.mock_audit import MockAuditReport
+from presentation.provider_defaults import DEFAULT_PROVIDER
 
 
 class AuditClauseSchema(BaseModel):
@@ -25,7 +26,7 @@ class MockAuditRequestSchema(BaseModel):
     language: str = Field(default="fr", min_length=2, max_length=10)
     min_questions: int = Field(default=30, ge=1, le=200)
     max_questions: int = Field(default=100, ge=1, le=200)
-    provider: ProviderName = ProviderName.OLLAMA
+    provider: ProviderName = DEFAULT_PROVIDER
     max_tokens: int = Field(default=2048, ge=256, le=8192)
     temperature: float = Field(default=0.2, ge=0.0, le=2.0)
 

@@ -52,6 +52,8 @@ import com.openlab.qualitos.quality.ai.guard.AiPromptTooLargeException;
 import com.openlab.qualitos.quality.ai.guard.AiQuotaExceededException;
 import com.openlab.qualitos.quality.ai.guard.AiRateLimitExceededException;
 import com.openlab.qualitos.quality.aigateway.AiGatewayException;
+import com.openlab.qualitos.quality.airouting.domain.AiProviderNotConfiguredException;
+import com.openlab.qualitos.quality.airouting.domain.InvalidAiProviderException;
 import com.openlab.qualitos.quality.visiongateway.VisionGatewayException;
 import com.openlab.qualitos.quality.visiongateway.VisionImageTooLargeException;
 import com.openlab.qualitos.quality.visiongateway.VisionImageValidationException;
@@ -1076,6 +1078,25 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_GATEWAY, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/ai-gateway-unavailable"));
         problem.setTitle("AI Gateway Unavailable");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(InvalidAiProviderException.class)
+    public ProblemDetail handleInvalidAiProvider(InvalidAiProviderException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/ai-provider-invalid"));
+        problem.setTitle("Invalid AI Provider");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(AiProviderNotConfiguredException.class)
+    public ProblemDetail handleAiProviderNotConfigured(AiProviderNotConfiguredException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/ai-provider-not-configured"));
+        problem.setTitle("AI Provider Not Configured");
+        problem.setProperty("provider", ex.provider().wireName());
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }

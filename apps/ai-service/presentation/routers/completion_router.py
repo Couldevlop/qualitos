@@ -15,7 +15,10 @@ from presentation.schemas.completion import (
     CitationSchema,
     CompletionRequestSchema,
     CompletionResponseSchema,
+    ProvidersResponseSchema,
+    ProviderStatusSchema,
 )
+from presentation.provider_defaults import DEFAULT_PROVIDER
 from presentation.security import current_user
 
 router = APIRouter(prefix="/v1/ai", tags=["ai"])
@@ -64,4 +67,26 @@ async def complete(
         injection_score=result.injection_score,
         tokens_used=resp.tokens_used,
         latency_ms=resp.latency_ms,
+    )
+
+
+@router.get(
+    "/providers",
+    response_model=ProvidersResponseSchema,
+    summary="List the LLM providers and whether each one is configured",
+)
+async def providers(
+    user: UserContext = Depends(current_user),
+) -> ProvidersResponseSchema:
+    """Lets the engine refuse to pin a tenant on a provider that cannot answer.
+
+    Only the provider names and a yes/no are returned, never a key, a URL or a model.
+    """
+    del user  # authentication is the point; the answer does not depend on the tenant
+    return ProvidersResponseSchema(
+        default_provider=DEFAULT_PROVIDER.value,
+        providers=[
+            ProviderStatusSchema(name=name.value, configured=provider.is_configured())
+            for name, provider in sorted(_container.providers.items(), key=lambda kv: kv[0].value)
+        ],
     )

@@ -22,3 +22,13 @@ class AIProvider(ABC):
     @abstractmethod
     def complete(self, request: CompletionRequest) -> CompletionResponse:
         """Generate a completion. Synchronous to keep the use-case simple."""
+
+    def is_configured(self) -> bool:
+        """Whether this provider has what it needs to answer (e.g. its API key).
+
+        Lets an administrator see, before pinning a tenant on a provider, that the
+        call would not fail on a missing secret. Says nothing about the secret
+        itself, and does not probe the network: a local provider is configured by
+        its URL alone.
+        """
+        return True

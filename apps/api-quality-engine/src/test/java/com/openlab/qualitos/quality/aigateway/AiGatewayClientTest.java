@@ -1,5 +1,7 @@
 package com.openlab.qualitos.quality.aigateway;
 
+import com.openlab.qualitos.quality.airouting.InMemoryTenantAiPolicyRepository;
+
 import com.openlab.qualitos.quality.ai.guard.AiGuard;
 import com.openlab.qualitos.quality.ai.guard.AiGuardProperties;
 import com.openlab.qualitos.quality.ai.guard.TokenBucketAiGuard;
@@ -60,7 +62,7 @@ class AiGatewayClientTest {
             }
             exchange.close();
         });
-        return new AiGatewayClient("http://localhost:" + port, 2000, 5000, "dev-claims", newGuard(), unusedTokenProvider());
+        return new AiGatewayClient("http://localhost:" + port, 2000, 5000, "dev-claims", newGuard(), unusedTokenProvider(), InMemoryTenantAiPolicyRepository.noPolicy());
     }
 
     /**
@@ -108,7 +110,7 @@ class AiGatewayClientTest {
     @Test
     void complete_missingTenant_throws() {
         TenantContext.clear();
-        AiGatewayClient c = new AiGatewayClient("http://localhost:" + port, 2000, 5000, "dev-claims", newGuard(), unusedTokenProvider());
+        AiGatewayClient c = new AiGatewayClient("http://localhost:" + port, 2000, 5000, "dev-claims", newGuard(), unusedTokenProvider(), InMemoryTenantAiPolicyRepository.noPolicy());
         assertThatThrownBy(() -> c.complete("s", "u", 10))
                 .isInstanceOf(MissingTenantContextException.class);
     }
@@ -139,7 +141,7 @@ class AiGatewayClientTest {
     @Test
     void askNlq_missingTenant_throws() {
         TenantContext.clear();
-        AiGatewayClient c = new AiGatewayClient("http://localhost:" + port, 2000, 5000, "dev-claims", newGuard(), unusedTokenProvider());
+        AiGatewayClient c = new AiGatewayClient("http://localhost:" + port, 2000, 5000, "dev-claims", newGuard(), unusedTokenProvider(), InMemoryTenantAiPolicyRepository.noPolicy());
         assertThatThrownBy(() -> c.askNlq("q", 10))
                 .isInstanceOf(MissingTenantContextException.class);
     }
@@ -170,7 +172,7 @@ class AiGatewayClientTest {
     @Test
     void detectSpc_missingTenant_throws() {
         TenantContext.clear();
-        AiGatewayClient c = new AiGatewayClient("http://localhost:" + port, 2000, 5000, "dev-claims", newGuard(), unusedTokenProvider());
+        AiGatewayClient c = new AiGatewayClient("http://localhost:" + port, 2000, 5000, "dev-claims", newGuard(), unusedTokenProvider(), InMemoryTenantAiPolicyRepository.noPolicy());
         assertThatThrownBy(() -> c.detectSpc(List.of(1.0), null, null))
                 .isInstanceOf(MissingTenantContextException.class);
     }
@@ -203,7 +205,7 @@ class AiGatewayClientTest {
     @Test
     void detectAnomaly_missingTenant_throws() {
         TenantContext.clear();
-        AiGatewayClient c = new AiGatewayClient("http://localhost:" + port, 2000, 5000, "dev-claims", newGuard(), unusedTokenProvider());
+        AiGatewayClient c = new AiGatewayClient("http://localhost:" + port, 2000, 5000, "dev-claims", newGuard(), unusedTokenProvider(), InMemoryTenantAiPolicyRepository.noPolicy());
         assertThatThrownBy(() -> c.detectAnomaly(List.of(List.of(1.0)), null, null, null))
                 .isInstanceOf(MissingTenantContextException.class);
     }
@@ -245,7 +247,7 @@ class AiGatewayClientTest {
     @Test
     void forecastKpi_missingTenant_throws() {
         TenantContext.clear();
-        AiGatewayClient c = new AiGatewayClient("http://localhost:" + port, 2000, 5000, "dev-claims", newGuard(), unusedTokenProvider());
+        AiGatewayClient c = new AiGatewayClient("http://localhost:" + port, 2000, 5000, "dev-claims", newGuard(), unusedTokenProvider(), InMemoryTenantAiPolicyRepository.noPolicy());
         assertThatThrownBy(() -> c.forecastKpi(List.of(1.0, 2.0, 3.0, 4.0), 10.0, null, null, null))
                 .isInstanceOf(MissingTenantContextException.class);
     }
@@ -277,7 +279,7 @@ class AiGatewayClientTest {
     @Test
     void clusterNc_missingTenant_throws() {
         TenantContext.clear();
-        AiGatewayClient c = new AiGatewayClient("http://localhost:" + port, 2000, 5000, "dev-claims", newGuard(), unusedTokenProvider());
+        AiGatewayClient c = new AiGatewayClient("http://localhost:" + port, 2000, 5000, "dev-claims", newGuard(), unusedTokenProvider(), InMemoryTenantAiPolicyRepository.noPolicy());
         assertThatThrownBy(() -> c.clusterNc(List.of("a b", "a c"), null, null))
                 .isInstanceOf(MissingTenantContextException.class);
     }
@@ -303,7 +305,7 @@ class AiGatewayClientTest {
     @Test
     void explainAnomaly_missingTenant_throws() {
         TenantContext.clear();
-        AiGatewayClient c = new AiGatewayClient("http://localhost:" + port, 2000, 5000, "dev-claims", newGuard(), unusedTokenProvider());
+        AiGatewayClient c = new AiGatewayClient("http://localhost:" + port, 2000, 5000, "dev-claims", newGuard(), unusedTokenProvider(), InMemoryTenantAiPolicyRepository.noPolicy());
         assertThatThrownBy(() -> c.explainAnomaly(List.of(List.of(1.0, 2.0)), 0))
                 .isInstanceOf(MissingTenantContextException.class);
     }
@@ -336,7 +338,7 @@ class AiGatewayClientTest {
     @Test
     void analyzeComplaints_missingTenant_throws() {
         TenantContext.clear();
-        AiGatewayClient c = new AiGatewayClient("http://localhost:" + port, 2000, 5000, "dev-claims", newGuard(), unusedTokenProvider());
+        AiGatewayClient c = new AiGatewayClient("http://localhost:" + port, 2000, 5000, "dev-claims", newGuard(), unusedTokenProvider(), InMemoryTenantAiPolicyRepository.noPolicy());
         assertThatThrownBy(() -> c.analyzeComplaints(List.of("test"), null))
                 .isInstanceOf(MissingTenantContextException.class);
     }
@@ -369,7 +371,7 @@ class AiGatewayClientTest {
     @Test
     void mockAudit_missingTenant_throws() {
         TenantContext.clear();
-        AiGatewayClient c = new AiGatewayClient("http://localhost:" + port, 2000, 5000, "dev-claims", newGuard(), unusedTokenProvider());
+        AiGatewayClient c = new AiGatewayClient("http://localhost:" + port, 2000, 5000, "dev-claims", newGuard(), unusedTokenProvider(), InMemoryTenantAiPolicyRepository.noPolicy());
         assertThatThrownBy(() -> c.mockAudit(Map.of("standard_code", "iso-9001"), 1))
                 .isInstanceOf(MissingTenantContextException.class);
     }

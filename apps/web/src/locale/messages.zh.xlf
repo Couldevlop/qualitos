@@ -4014,6 +4014,150 @@ Portail clients</source>
         <source>Lier</source>
         <target state="translated">关联</target>
       </trans-unit>
+      <trans-unit id="nav.admin-ai" datatype="html">
+        <source>Fournisseur d'IA</source>
+        <target state="translated">AI 提供方</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.title" datatype="html">
+        <source>Fournisseur d'IA</source>
+        <target state="translated">AI 提供方</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.subtitle" datatype="html">
+        <source>À qui partent les demandes faites à l'IA pour votre organisation.</source>
+        <target state="translated">贵组织向 AI 发出的请求发送到哪里。</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.load-failed" datatype="html">
+        <source>Le fournisseur d'IA n'a pas pu être chargé.</source>
+        <target state="translated">无法加载 AI 提供方。</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.save-failed" datatype="html">
+        <source>Le fournisseur d'IA n'a pas pu être enregistré.</source>
+        <target state="translated">无法保存 AI 提供方。</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.saved" datatype="html">
+        <source>Fournisseur d'IA enregistré. Il s'applique aux prochaines demandes.</source>
+        <target state="translated">AI 提供方已保存，将用于之后的请求。</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.unknown-provider" datatype="html">
+        <source>inconnu</source>
+        <target state="translated">未知</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.provider.ollama" datatype="html">
+        <source>Modèle local (Ollama)</source>
+        <target state="translated">本地模型（Ollama）</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.provider.ollama-desc" datatype="html">
+        <source>Le modèle tourne sur l'infrastructure de votre installation. Les demandes, et les données qu'elles portent, ne la quittent pas.</source>
+        <target state="translated">模型运行在您部署环境的基础设施上。请求及其携带的数据不会离开该环境。</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.provider.mistral" datatype="html">
+        <source>Mistral AI</source>
+        <target state="translated">Mistral AI</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.provider.mistral-desc" datatype="html">
+        <source>Service externe. Les demandes lui sont transmises, une fois retirées les données personnelles détectées.</source>
+        <target state="translated">外部服务。请求在移除检测到的个人数据后发送给它。</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.provider.anthropic" datatype="html">
+        <source>Anthropic</source>
+        <target state="translated">Anthropic</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.provider.anthropic-desc" datatype="html">
+        <source>Service externe. Les demandes lui sont transmises, une fois retirées les données personnelles détectées.</source>
+        <target state="translated">外部服务。请求在移除检测到的个人数据后发送给它。</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.state.sovereign" datatype="html">
+        <source>Souverain : les demandes restent sur votre infrastructure.</source>
+        <target state="translated">自主可控：请求保留在您的基础设施内。</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.state.external" datatype="html">
+        <source>Les demandes partent vers un service externe : <x id="INTERPOLATION"/>.</source>
+        <target state="translated">请求将发送到外部服务：<x id="INTERPOLATION"/>。</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.state.unknown" datatype="html">
+        <source>Le fournisseur qui répond n'est pas connu pour l'instant.</source>
+        <target state="translated">目前尚不清楚由哪个提供方响应。</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.state.pending" datatype="html">
+        <source>Ce sera le cas une fois le choix enregistré.</source>
+        <target state="translated">保存选择后即生效。</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.state.changed" datatype="html">
+        <source>Choisi le <x id="INTERPOLATION"/> par</source>
+        <target state="translated">于 <x id="INTERPOLATION"/> 选择，选择人：</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.catalog-unavailable" datatype="html">
+        <source>Le service d'IA ne répond pas : on ne peut pas vérifier pour l'instant quels fournisseurs sont configurés.</source>
+        <target state="translated">AI 服务无响应：目前无法确认哪些提供方已配置。</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.pinned-broken" datatype="html">
+        <source>Le fournisseur choisi n'est plus configuré sur la plateforme : les fonctions d'IA échouent tant qu'un autre n'est pas choisi.</source>
+        <target state="translated">所选提供方已不再在平台上配置：在选择其他提供方之前，AI 功能将无法使用。</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.choice" datatype="html">
+        <source>Fournisseur des demandes</source>
+        <target state="translated">请求的提供方</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.choice-help" datatype="html">
+        <source>Un seul fournisseur reçoit toutes les demandes de votre organisation. Il n'y a pas de bascule automatique : si celui-ci ne répond pas, la demande échoue plutôt que de partir ailleurs.</source>
+        <target state="translated">贵组织的所有请求均由一个提供方接收。没有自动切换：若其无响应，请求将失败，而不会转发到其他地方。</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.default" datatype="html">
+        <source>Défaut de la plateforme</source>
+        <target state="translated">平台默认</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.default-desc" datatype="html">
+        <source>Suit le réglage de la plateforme, aujourd'hui : <x id="INTERPOLATION"/>. Il peut changer sans que vous le choisissiez.</source>
+        <target state="translated">遵循平台设置，当前为：<x id="INTERPOLATION"/>。它可能在您未选择的情况下改变。</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.default-desc-unknown" datatype="html">
+        <source>Suit le réglage de la plateforme. Il peut changer sans que vous le choisissiez.</source>
+        <target state="translated">遵循平台设置。它可能在您未选择的情况下改变。</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.badge.on-premise" datatype="html">
+        <source>Sur votre infrastructure</source>
+        <target state="translated">在您的基础设施上</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.badge.external" datatype="html">
+        <source>Service externe</source>
+        <target state="translated">外部服务</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.badge.not-configured" datatype="html">
+        <source>Non configuré</source>
+        <target state="translated">未配置</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.scope" datatype="html">
+        <source>Ce que ce choix couvre</source>
+        <target state="translated">此选择涵盖的内容</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.scope.reports" datatype="html">
+        <source>Rapports d'audit, comptes-rendus de cercles et récits des tableaux de bord.</source>
+        <target state="translated">审核报告、圈会议纪要和仪表板叙述。</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.scope.causes" datatype="html">
+        <source>Causes suggérées des diagrammes d'Ishikawa et brouillons de documents normatifs.</source>
+        <target state="translated">石川图的建议原因及标准文件草稿。</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.scope.nlq" datatype="html">
+        <source>Questions posées en langage naturel sur vos données.</source>
+        <target state="translated">以自然语言提出的关于您数据的问题。</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.scope.mock-audit" datatype="html">
+        <source>Audits blancs du Standards Hub.</source>
+        <target state="translated">Standards Hub 的模拟审核。</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.scope.not-covered" datatype="html">
+        <source>Les calculs statistiques (cartes SPC, anomalies, prévisions, regroupement des NC) n'utilisent aucun modèle de langage : ils restent sur la plateforme quel que soit ce choix.</source>
+        <target state="translated">统计计算（SPC 控制图、异常、预测、不合格项聚类）不使用任何语言模型：无论此选择如何，均保留在平台内。</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.leaving-premises" datatype="html">
+        <source>Attention : les demandes vont quitter votre infrastructure.</source>
+        <target state="translated">注意：请求将离开您的基础设施。</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.pending" datatype="html">
+        <source>Fournisseur modifié</source>
+        <target state="translated">提供方已更改</target>
+      </trans-unit>
       <trans-unit id="ai-systems.detail.action-failed" datatype="html">
         <source>L'opération sur le système a échoué.</source>
         <target state="translated">对该系统的操作失败。</target>
