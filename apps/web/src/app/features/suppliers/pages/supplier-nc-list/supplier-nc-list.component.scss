@@ -73,7 +73,9 @@ code { font-family: 'IBM Plex Mono', 'Fira Code', monospace; font-size: 12px; }
 
 .definition {
   max-width: 340px;
-  /* Deux lignes au plus : la définition entière est dans l'infobulle et la fiche PDF. */
+  /* Deux lignes au plus : la définition entière est dans l'infobulle et la fiche PDF.
+     Le rognage vit sur un bloc interne : posé sur la cellule, `display` la sort du
+     modèle de tableau et le contenu ne se centre plus verticalement. */
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;

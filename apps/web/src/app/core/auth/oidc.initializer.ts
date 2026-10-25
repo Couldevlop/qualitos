@@ -75,7 +75,11 @@ export function initOidc(oauthService: OAuthService): () => Promise<void> {
 
     // Retour d'authentification : restaure la route demandee avant le redirect,
     // avant que le router ne bootstrap (sinon on resterait sur `/` → `/home`).
-    restoreReturnRoute();
+    // Si la route appartient a une autre locale, la page est rechargee sur elle :
+    // on suspend alors l'amorcage pour ne pas afficher cette build-ci un instant.
+    if (restoreReturnRoute()) {
+      await new Promise<never>(() => undefined);
+    }
   };
 }
 
@@ -98,16 +102,34 @@ function redirectToLogin(oauthService: OAuthService): void {
 /**
  * Si une route avait ete memorisee avant le redirect, la restaure dans l'URL
  * (replaceState) pour que le router demarre dessus, puis nettoie la cle.
+ *
+ * Le retour de Keycloak arrive sur `/`, que nginx renvoie vers la locale du
+ * navigateur (`Accept-Language`) : on peut donc revenir dans la build `/en/`
+ * avec une route memorisee depuis `/fr/`. Un replaceState sous une autre base
+ * donnait `/en/fr/…` et la page « introuvable » ; on recharge alors la route
+ * telle quelle, dans sa propre build. Le jeton, en sessionStorage, est conserve.
+ *
+ * @returns `true` si un rechargement complet a ete lance.
  */
-function restoreReturnRoute(): void {
+export function restoreReturnRoute(
+  basePath: string = new URL(document.baseURI).pathname,
+  loc: Pick<Location, 'pathname' | 'search' | 'replace'> = window.location,
+  history: Pick<History, 'replaceState'> = window.history
+): boolean {
   try {
     const target = sessionStorage.getItem(RETURN_ROUTE_KEY);
     sessionStorage.removeItem(RETURN_ROUTE_KEY);
-    const current = window.location.pathname + window.location.search;
-    if (target && target !== current && target !== '/') {
-      window.history.replaceState({}, '', target);
+    const current = loc.pathname + loc.search;
+    if (!target || target === current || target === '/') {
+      return false;
     }
+    if (!target.startsWith(basePath)) {
+      loc.replace(target);
+      return true;
+    }
+    history.replaceState({}, '', target);
   } catch {
     /* pas de route memorisee ou storage indisponible : on reste sur l'URL courante */
   }
+  return false;
 }
