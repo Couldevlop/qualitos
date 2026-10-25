@@ -285,6 +285,28 @@ class DmaicServiceTest {
     }
 
     @Test
+    void listMeasures_returnsProjectMeasuresInRecordOrder() {
+        DmaicProject p = project(DmaicStatus.COMPLETED, DmaicPhase.CONTROL);
+        ProcessMeasure m1 = measure(p, 15.0); ProcessMeasure m2 = measure(p, 16.0);
+        when(projectRepo.findByIdAndTenantId(p.getId(), TENANT)).thenReturn(Optional.of(p));
+        when(measureRepo.findByProjectIdOrderByRecordedAtAsc(p.getId())).thenReturn(List.of(m1, m2));
+
+        List<DmaicDto.MeasureResponse> r = service.listMeasures(p.getId());
+
+        assertThat(r).extracting(DmaicDto.MeasureResponse::value).containsExactly(15.0, 16.0);
+        assertThat(r).allSatisfy(m -> assertThat(m.projectId()).isEqualTo(p.getId()));
+    }
+
+    @Test
+    void listMeasures_projectOfAnotherTenant_throws() {
+        UUID id = UUID.randomUUID();
+        when(projectRepo.findByIdAndTenantId(id, TENANT)).thenReturn(Optional.empty());
+        assertThatThrownBy(() -> service.listMeasures(id))
+                .isInstanceOf(DmaicProjectNotFoundException.class);
+        verifyNoInteractions(measureRepo);
+    }
+
+    @Test
     void computeCapability_delegates() {
         DmaicProject p = project(DmaicStatus.ACTIVE, DmaicPhase.MEASURE);
         p.setSpecLowerLimit(10.0); p.setSpecUpperLimit(20.0); p.setSpecTarget(15.0);
@@ -357,6 +379,31 @@ class DmaicServiceTest {
     }
 
     // --- assignments ---
+    @Test
+    void listAssignments_returnsProjectAssignments() {
+        DmaicProject p = project(DmaicStatus.COMPLETED, DmaicPhase.CONTROL);
+        PokaYokeAssignment a = assignment(p, PokaYokeAssignmentStatus.VERIFIED);
+        when(projectRepo.findByIdAndTenantId(p.getId(), TENANT)).thenReturn(Optional.of(p));
+        when(assignmentRepo.findByProjectId(p.getId())).thenReturn(List.of(a));
+
+        List<DmaicDto.AssignmentResponse> r = service.listAssignments(p.getId());
+
+        assertThat(r).singleElement().satisfies(x -> {
+            assertThat(x.id()).isEqualTo(a.getId());
+            assertThat(x.status()).isEqualTo(PokaYokeAssignmentStatus.VERIFIED);
+            assertThat(x.deviceCode()).isEqualTo(a.getDevice().getCode());
+        });
+    }
+
+    @Test
+    void listAssignments_projectOfAnotherTenant_throws() {
+        UUID id = UUID.randomUUID();
+        when(projectRepo.findByIdAndTenantId(id, TENANT)).thenReturn(Optional.empty());
+        assertThatThrownBy(() -> service.listAssignments(id))
+                .isInstanceOf(DmaicProjectNotFoundException.class);
+        verifyNoInteractions(assignmentRepo);
+    }
+
     @Test
     void assign_success() {
         DmaicProject p = project(DmaicStatus.ACTIVE, DmaicPhase.IMPROVE);

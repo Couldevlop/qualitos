@@ -225,8 +225,11 @@ export class DmaicService {
     return this.http.get<CapabilityResponse>(`${this.endpoint}/projects/${projectId}/capability`);
   }
 
-  listMeasures(projectId: string): MeasureResponse[] {
-    return this.mockMeasures[projectId] ?? [];
+  listMeasures(projectId: string): Observable<MeasureResponse[]> {
+    if (environment.useMockApi) {
+      return of([...(this.mockMeasures[projectId] ?? [])]);
+    }
+    return this.http.get<MeasureResponse[]>(`${this.endpoint}/projects/${projectId}/measures`);
   }
 
   // ---------- Poka-Yoke catalog ----------
@@ -268,8 +271,11 @@ export class DmaicService {
 
   // ---------- Assignments ----------
 
-  listAssignments(projectId: string): AssignmentResponse[] {
-    return this.mockAssignments[projectId] ?? [];
+  listAssignments(projectId: string): Observable<AssignmentResponse[]> {
+    if (environment.useMockApi) {
+      return of([...(this.mockAssignments[projectId] ?? [])]);
+    }
+    return this.http.get<AssignmentResponse[]>(`${this.endpoint}/projects/${projectId}/pokayoke`);
   }
 
   assignDevice(projectId: string, input: AssignPokaYokeRequest): Observable<AssignmentResponse> {

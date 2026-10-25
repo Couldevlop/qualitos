@@ -53,10 +53,6 @@ export class DmaicDetailComponent implements OnInit {
 
   private readonly refresh$ = new BehaviorSubject<void>(undefined);
   private projectId = '';
-  // Note: mock list helpers — backend has no list endpoints for these (read-after-write only).
-  // For real API we rely on the project response counts; UI shows last-added items via local refresh.
-  private addedMeasures: MeasureResponse[]      = [];
-  private addedAssignments: AssignmentResponse[] = [];
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -93,8 +89,8 @@ export class DmaicDetailComponent implements OnInit {
       tap(p => {
         this.loadingState$.next(false);
         if (p) {
-          this.measures    = this.svc.listMeasures(p.id);
-          this.assignments = this.svc.listAssignments(p.id);
+          this.loadMeasures();
+          this.loadAssignments();
           this.refreshCapability();
         }
       }),
@@ -111,6 +107,29 @@ export class DmaicDetailComponent implements OnInit {
       queryParams: { onglet: index === 1 ? TAB_RESOLUTION : null },
       queryParamsHandling: 'merge',
       replaceUrl: true
+    });
+  }
+
+  /** Mesures du projet, dans l'ordre de relevé : celui du calcul de capabilité. */
+  private loadMeasures(): void {
+    this.svc.listMeasures(this.projectId).subscribe({
+      next: list => (this.measures = list),
+      error: err => {
+        // eslint-disable-next-line no-console
+        console.warn('[dmaic-detail] measures failed', err?.status, err?.error?.title);
+        this.measures = [];
+      }
+    });
+  }
+
+  private loadAssignments(): void {
+    this.svc.listAssignments(this.projectId).subscribe({
+      next: list => (this.assignments = list),
+      error: err => {
+        // eslint-disable-next-line no-console
+        console.warn('[dmaic-detail] assignments failed', err?.status, err?.error?.title);
+        this.assignments = [];
+      }
     });
   }
 
@@ -202,13 +221,8 @@ export class DmaicDetailComponent implements OnInit {
       autoFocus: 'first-tabbable', restoreFocus: true,
       panelClass: 'qos-dialog-panel'
     });
-    ref.afterClosed().subscribe(m => {
-      if (m) {
-        this.addedMeasures = [m, ...this.addedMeasures];
-        this.measures = [m, ...this.measures];
-        this.refresh$.next();
-      }
-    });
+    // Le rechargement du projet relit aussi les mesures et la capabilité.
+    ref.afterClosed().subscribe(m => { if (m) this.refresh$.next(); });
   }
 
   openAddPokaYoke(): void {
@@ -217,13 +231,7 @@ export class DmaicDetailComponent implements OnInit {
       autoFocus: 'first-tabbable', restoreFocus: true,
       panelClass: 'qos-dialog-panel'
     });
-    ref.afterClosed().subscribe(a => {
-      if (a) {
-        this.addedAssignments = [a, ...this.addedAssignments];
-        this.assignments = [a, ...this.assignments];
-        this.refresh$.next();
-      }
-    });
+    ref.afterClosed().subscribe(a => { if (a) this.refresh$.next(); });
   }
 
   removeMeasure(m: MeasureResponse): void {

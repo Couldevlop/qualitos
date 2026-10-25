@@ -149,6 +149,13 @@ public class DmaicService {
 
     // ===== Measures =====
 
+    @Transactional(readOnly = true)
+    public List<DmaicDto.MeasureResponse> listMeasures(UUID projectId) {
+        loadProject(projectId);
+        return measureRepository.findByProjectIdOrderByRecordedAtAsc(projectId).stream()
+                .map(this::toMeasureResponse).toList();
+    }
+
     public DmaicDto.MeasureResponse addMeasure(UUID projectId, DmaicDto.AddMeasureRequest req) {
         DmaicProject p = loadProject(projectId);
         if (p.getStatus() != DmaicStatus.ACTIVE) {
@@ -214,6 +221,13 @@ public class DmaicService {
     }
 
     // ===== Assignments =====
+
+    @Transactional(readOnly = true)
+    public List<DmaicDto.AssignmentResponse> listAssignments(UUID projectId) {
+        loadProject(projectId);
+        return assignmentRepository.findByProjectId(projectId).stream()
+                .map(this::toAssignmentResponse).toList();
+    }
 
     public DmaicDto.AssignmentResponse assignDevice(UUID projectId,
                                                     DmaicDto.AssignPokaYokeRequest req) {

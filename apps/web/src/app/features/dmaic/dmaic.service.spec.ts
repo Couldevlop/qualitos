@@ -1,6 +1,7 @@
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import { DmaicService } from './dmaic.service';
@@ -12,6 +13,13 @@ import { AssignmentResponse, DeviceDetail, DmaicProjectResponse, MeasureResponse
  * les deux doivent donc être vérifiées — un écart de contrat entre elles se paie
  * au moment où un tenant bascule sur le vrai backend.
  */
+/** En mode démo, les listes répondent tout de suite : on lit la valeur sans attendre. */
+function snap<T>(source: Observable<T>): T {
+  let value!: T;
+  source.subscribe(v => (value = v));
+  return value;
+}
+
 describe('DmaicService (mode démo hors-ligne)', () => {
   let service: DmaicService;
   let prevMock: boolean;
@@ -199,9 +207,9 @@ describe('DmaicService (mode démo hors-ligne)', () => {
 
   it('retire la mesure supprimée du compteur du projet', (done) => {
     service.addMeasure('dmaic-1', { value: 5 }).subscribe(m => {
-      expect(service.listMeasures('dmaic-1').length).toBe(1);
+      expect(snap(service.listMeasures('dmaic-1')).length).toBe(1);
       service.deleteMeasure('dmaic-1', m.id).subscribe(() => {
-        expect(service.listMeasures('dmaic-1').length).toBe(0);
+        expect(snap(service.listMeasures('dmaic-1')).length).toBe(0);
         service.getProject('dmaic-1').subscribe(p => {
           expect(p.measureCount).toBe(0);
           done();
@@ -261,9 +269,9 @@ describe('DmaicService (mode démo hors-ligne)', () => {
 
   it('décrémente le compteur Poka-Yoke à la suppression d\'une assignation', (done) => {
     service.assignDevice('dmaic-1', { deviceId: 'pk-5' }).subscribe(a => {
-      expect(service.listAssignments('dmaic-1').length).toBe(1);
+      expect(snap(service.listAssignments('dmaic-1')).length).toBe(1);
       service.deleteAssignment('dmaic-1', a.id).subscribe(() => {
-        expect(service.listAssignments('dmaic-1').length).toBe(0);
+        expect(snap(service.listAssignments('dmaic-1')).length).toBe(0);
         service.getProject('dmaic-1').subscribe(p => {
           expect(p.pokaYokeCount).toBe(0);
           done();
@@ -273,8 +281,8 @@ describe('DmaicService (mode démo hors-ligne)', () => {
   });
 
   it('renvoie des listes vides pour un projet sans mesure ni assignation', () => {
-    expect(service.listMeasures('inconnu')).toEqual([]);
-    expect(service.listAssignments('inconnu')).toEqual([]);
+    expect(snap(service.listMeasures('inconnu'))).toEqual([]);
+    expect(snap(service.listAssignments('inconnu'))).toEqual([]);
   });
 
   // ---- Replis du mode démo sur identifiant inconnu ---------------------------
@@ -322,11 +330,11 @@ describe('DmaicService (mode démo hors-ligne)', () => {
   it('ne modifie aucun dispositif quand l\'assignation visée est inconnue', (done) => {
     service.listProjects().subscribe(page => {
       const projectId = page.content[0].id;
-      const before = service.listAssignments(projectId).map(a => a.status);
+      const before = snap(service.listAssignments(projectId)).map(a => a.status);
 
       service.updateAssignment(projectId, 'assignation-inconnue', { status: 'VERIFIED' })
         .subscribe(() => {
-          expect(service.listAssignments(projectId).map(a => a.status)).toEqual(before);
+          expect(snap(service.listAssignments(projectId)).map(a => a.status)).toEqual(before);
           done();
         });
     });
@@ -395,6 +403,26 @@ describe('DmaicService (API réelle)', () => {
     expect(req.request.params.get('status')).toBe('ON_HOLD');
     expect(req.request.params.get('phase')).toBe('IMPROVE');
     req.flush({ content: [], totalElements: 0, totalPages: 0, number: 2, size: 50 });
+  });
+
+  it('lit les mesures du projet dans l’ordre de relevé', (done) => {
+    service.listMeasures(PROJECT_ID).subscribe(list => {
+      expect(list.map(m => m.id)).toEqual(['m1']);
+      done();
+    });
+    const req = http.expectOne(`${base}/projects/${PROJECT_ID}/measures`);
+    expect(req.request.method).toBe('GET');
+    req.flush([measure]);
+  });
+
+  it('lit les Poka-Yoke assignés au projet', (done) => {
+    service.listAssignments(PROJECT_ID).subscribe(list => {
+      expect(list.map(a => a.deviceCode)).toEqual(['PK-INT-001']);
+      done();
+    });
+    const req = http.expectOne(`${base}/projects/${PROJECT_ID}/pokayoke`);
+    expect(req.request.method).toBe('GET');
+    req.flush([assignment]);
   });
 
   it('lit un projet par identifiant', (done) => {
