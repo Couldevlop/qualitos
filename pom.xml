@@ -9,9 +9,9 @@
         <artifactId>spring-boot-starter-parent</artifactId>
         <!-- Spring Boot 4 (Spring Framework 7) : seule sortie des CVE-2026-47884 et
              CVE-2026-47890 de spring-webmvc, corrigées en 7.0.9 et jamais sur la
-             ligne 6.2 (ADR 0100). Suivre le dernier patch de la ligne 4.0 (règle
-             §18.2.1 : 0 CVE Critique/Haute). -->
-        <version>4.0.9</version>
+             ligne 6.2 (ADR 0100). Ligne 4.1 depuis 4.1.2 : suivre son dernier
+             patch (règle §18.2.1 : 0 CVE Critique/Haute). -->
+        <version>4.1.2</version>
         <relativePath/>
     </parent>
 
@@ -44,7 +44,7 @@
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <!-- Aucune surcharge de version gérée par Spring Boot : Boot 4.0.9 gère
+        <!-- Aucune surcharge de version gérée par Spring Boot : Boot 4.1.2 gère
              tomcat 11.0.27, netty 4.2.19, jackson 2.21.7 (jackson-2-bom) et pgjdbc
              42.7.14, au-delà des correctifs que les surcharges de la ligne 3.5
              allaient chercher (ADR 0100). En rajouter une seulement si Boot prend
@@ -52,8 +52,9 @@
         <!-- Dependency versions -->
         <mapstruct.version>1.6.3</mapstruct.version>
         <jjwt.version>0.12.6</jjwt.version>
-        <!-- springdoc 3.x : la ligne compatible Spring Boot 4. -->
-        <springdoc.version>3.1.1</springdoc.version>
+        <!-- springdoc 3.x : la ligne compatible Spring Boot 4 ; 3.2.0 est construite
+             sur Boot 4.1.2. -->
+        <springdoc.version>3.2.0</springdoc.version>
         <!-- Bouncy Castle : fournit ML-DSA (FIPS 204) + ML-KEM (FIPS 203). cf. ADR 0011.
              bcprov-jdk18on n'est PAS FIPS-validé → marqué dev dans le CBOM ; la prod
              régulée bascule sur bc-fips via le même SPI (crypto-agility).
