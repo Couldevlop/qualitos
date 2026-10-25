@@ -170,9 +170,10 @@
             <a mat-button *ngIf="draft.ishikawaId" [routerLink]="['/ishikawa', draft.ishikawaId]" data-test="ishikawa-open">
               <mat-icon>open_in_new</mat-icon> <span i18n="@@dmaic.res.ishikawa-open">Ouvrir le diagramme</span>
             </a>
-            <a mat-button *ngIf="!draft.ishikawaId" routerLink="/ishikawa">
+            <button mat-button type="button" *ngIf="!draft.ishikawaId && canEdit" (click)="createIshikawa()"
+                    [disabled]="creatingIshikawa" data-test="ishikawa-create">
               <mat-icon>account_tree</mat-icon> <span i18n="@@dmaic.res.ishikawa-new">Créer un diagramme</span>
-            </a>
+            </button>
           </div>
         </ng-container>
 

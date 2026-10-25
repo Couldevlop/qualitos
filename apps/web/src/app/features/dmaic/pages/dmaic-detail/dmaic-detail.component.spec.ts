@@ -24,6 +24,7 @@ import { PersonNameModule } from '../../../../shared/person-name/person-name.mod
 @Component({ selector: 'qos-dmaic-resolution', template: '<p data-test="fiche">fiche {{ projectId }}</p>', standalone: false })
 class ResolutionStubComponent {
   @Input() projectId = '';
+  @Input() problemStatement: string | null = null;
 }
 
 /**

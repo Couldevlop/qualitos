@@ -194,6 +194,9 @@ TRANSLATIONS = {
     'dmaic.res.ishikawa-none': ('— Aucun —', '— None —', '— Ninguno —', '— لا شيء —', '— なし —', '— 无 —'),
     'dmaic.res.ishikawa-open': ('Ouvrir le diagramme', 'Open the diagram', 'Abrir el diagrama', 'فتح المخطط', 'ダイアグラムを開く', '打开图表'),
     'dmaic.res.ishikawa-new': ('Créer un diagramme', 'Create a diagram', 'Crear un diagrama', 'إنشاء مخطط', 'ダイアグラムを作成', '创建图表'),
+    'dmaic.res.ishikawa-default-effect': ('Problème du projet DMAIC', 'DMAIC project problem', 'Problema del proyecto DMAIC', 'مشكلة مشروع DMAIC', 'DMAICプロジェクトの問題', 'DMAIC 项目问题'),
+    'dmaic.res.ishikawa-description': ('Diagramme créé depuis la fiche de résolution DMAIC.', 'Diagram created from the DMAIC resolution sheet.', 'Diagrama creado desde la ficha de resolución DMAIC.', 'مخطط أُنشئ من بطاقة حل DMAIC.', 'DMAIC解決シートから作成されたダイアグラム。', '从 DMAIC 解决表创建的图表。'),
+    'dmaic.res.ishikawa-create-failed': ("Le diagramme n'a pas pu être créé.", 'The diagram could not be created.', 'No se pudo crear el diagrama.', 'تعذّر إنشاء المخطط.', 'ダイアグラムを作成できませんでした。', '无法创建图表。'),
 
     # ----- 5 pourquoi -----
     'dmaic.res.whys': ('5 pourquoi', '5 whys', '5 porqués', 'لماذا الخمسة', 'なぜなぜ分析', '5 个为什么'),

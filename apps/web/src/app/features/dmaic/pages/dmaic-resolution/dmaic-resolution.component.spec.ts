@@ -7,6 +7,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 import { BehaviorSubject, of, throwError } from 'rxjs';
 
+import { AuthService } from '../../../../core/auth/auth.service';
 import { AuthzService } from '../../../../core/authz/authz.service';
 import { STUB_PERSON, provideDirectoryStub } from '../../../../core/directory/testing/directory.stub';
 import { DirectoryUser } from '../../../../core/directory/directory.types';
@@ -14,7 +15,7 @@ import { SharedModule } from '../../../../shared/shared.module';
 import { UiModule } from '../../../../shared/ui/ui.module';
 import { UserPickerModule } from '../../../../shared/user-picker/user-picker.module';
 import { IshikawaService } from '../../../ishikawa/ishikawa.service';
-import { IshikawaPage } from '../../../ishikawa/ishikawa.types';
+import { IshikawaDiagramResponse, IshikawaPage } from '../../../ishikawa/ishikawa.types';
 import { DmaicResolutionService } from '../../resolution/dmaic-resolution.service';
 import {
   ResolutionContent,
@@ -75,7 +76,7 @@ describe('DmaicResolutionComponent', () => {
     svc = jasmine.createSpyObj<DmaicResolutionService>('DmaicResolutionService',
       ['sheet', 'save', 'uploadPhoto', 'updateRemark', 'deletePhoto', 'claimReport']);
     svc.sheet.and.returnValue(sheet === 'erreur' ? throwError(() => ({ status: 500 })) : of(sheet));
-    ishikawa = jasmine.createSpyObj<IshikawaService>('IshikawaService', ['listDiagrams']);
+    ishikawa = jasmine.createSpyObj<IshikawaService>('IshikawaService', ['listDiagrams', 'createDiagram']);
     ishikawa.listDiagrams.and.returnValue(of({
       content: [{ id: 'ish-1', problemStatement: 'Rebut', causes: [] }],
       totalElements: 1, totalPages: 1, number: 0, size: 50
@@ -94,6 +95,7 @@ describe('DmaicResolutionComponent', () => {
         { provide: DmaicResolutionService, useValue: svc },
         { provide: IshikawaService, useValue: ishikawa },
         { provide: AuthzService, useValue: authz },
+        { provide: AuthService, useValue: { snapshot: () => ({ userId: 'u-1' }) } },
         { provide: MatSnackBar, useValue: snack }
       ]
     }).compileComponents();
@@ -440,6 +442,40 @@ describe('DmaicResolutionComponent', () => {
     ishikawa.listDiagrams.and.returnValue(throwError(() => ({ status: 500 })));
     component.ngOnInit();
     expect(component.ishikawas).toEqual([]);
+  });
+
+  it("crée le diagramme 6 M du classeur, avec le problème du projet pour effet, et l'enregistre lié", async () => {
+    await setup();
+    component.problemStatement = '  Fuite au joint  ';
+    ishikawa.createDiagram.and.returnValue(of({ id: 'ish-9', problemStatement: 'Fuite au joint' } as IshikawaDiagramResponse));
+    svc.save.and.returnValue(of(fiche({ saved: true }, { ishikawaId: 'ish-9' })));
+    un('ishikawa-create')!.click();
+
+    expect(ishikawa.createDiagram).toHaveBeenCalledWith(jasmine.objectContaining({
+      problemStatement: 'Fuite au joint', mode: 'SIX_M', ownerId: 'u-1'
+    }));
+    expect(component.ishikawas[0]).toEqual({ id: 'ish-9', label: 'Fuite au joint' });
+    expect(svc.save.calls.mostRecent().args[1].ishikawaId).toBe('ish-9');
+    expect(component.creatingIshikawa).toBeFalse();
+  });
+
+  it('prend un effet par défaut sans charte, et ne lie rien quand la création échoue', async () => {
+    await setup();
+    ishikawa.createDiagram.and.returnValue(throwError(() => ({ status: 500 })));
+    component.createIshikawa();
+
+    expect(ishikawa.createDiagram.calls.mostRecent().args[0].problemStatement).toBe('Problème du projet DMAIC');
+    expect(component.draft.ishikawaId).toBeNull();
+    expect(svc.save).not.toHaveBeenCalled();
+    expect(snack.open).toHaveBeenCalled();
+    expect(component.creatingIshikawa).toBeFalse();
+  });
+
+  it('ne propose pas la création sans le droit de modifier', async () => {
+    await setup(fiche(), false);
+    expect(un('ishikawa-create')).toBeNull();
+    component.createIshikawa();
+    expect(ishikawa.createDiagram).not.toHaveBeenCalled();
   });
 
   it('mène à une partie de la fiche depuis le sommaire', async () => {

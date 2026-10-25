@@ -186,7 +186,7 @@
       </mat-tab>
       <mat-tab label="Fiche de résolution" i18n-label="@@dmaic.detail.tab-resolution">
         <ng-template matTabContent>
-          <qos-dmaic-resolution class="onglet" [projectId]="p.id"></qos-dmaic-resolution>
+          <qos-dmaic-resolution class="onglet" [projectId]="p.id" [problemStatement]="p.problemStatement ?? null"></qos-dmaic-resolution>
         </ng-template>
       </mat-tab>
     </mat-tab-group>
