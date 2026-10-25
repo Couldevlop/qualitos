@@ -4014,6 +4014,150 @@ Portal de clientes</target>
         <source>Lier</source>
         <target state="translated">Vincular</target>
       </trans-unit>
+      <trans-unit id="nav.admin-ai" datatype="html">
+        <source>Fournisseur d'IA</source>
+        <target state="translated">Proveedor de IA</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.title" datatype="html">
+        <source>Fournisseur d'IA</source>
+        <target state="translated">Proveedor de IA</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.subtitle" datatype="html">
+        <source>À qui partent les demandes faites à l'IA pour votre organisation.</source>
+        <target state="translated">A quién se envían las solicitudes hechas a la IA para su organización.</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.load-failed" datatype="html">
+        <source>Le fournisseur d'IA n'a pas pu être chargé.</source>
+        <target state="translated">No se ha podido cargar el proveedor de IA.</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.save-failed" datatype="html">
+        <source>Le fournisseur d'IA n'a pas pu être enregistré.</source>
+        <target state="translated">No se ha podido guardar el proveedor de IA.</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.saved" datatype="html">
+        <source>Fournisseur d'IA enregistré. Il s'applique aux prochaines demandes.</source>
+        <target state="translated">Proveedor de IA guardado. Se aplica a las próximas solicitudes.</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.unknown-provider" datatype="html">
+        <source>inconnu</source>
+        <target state="translated">desconocido</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.provider.ollama" datatype="html">
+        <source>Modèle local (Ollama)</source>
+        <target state="translated">Modelo local (Ollama)</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.provider.ollama-desc" datatype="html">
+        <source>Le modèle tourne sur l'infrastructure de votre installation. Les demandes, et les données qu'elles portent, ne la quittent pas.</source>
+        <target state="translated">El modelo se ejecuta en la infraestructura de su instalación. Las solicitudes, y los datos que contienen, no salen de ella.</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.provider.mistral" datatype="html">
+        <source>Mistral AI</source>
+        <target state="translated">Mistral AI</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.provider.mistral-desc" datatype="html">
+        <source>Service externe. Les demandes lui sont transmises, une fois retirées les données personnelles détectées.</source>
+        <target state="translated">Servicio externo. Las solicitudes se le transmiten una vez eliminados los datos personales detectados.</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.provider.anthropic" datatype="html">
+        <source>Anthropic</source>
+        <target state="translated">Anthropic</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.provider.anthropic-desc" datatype="html">
+        <source>Service externe. Les demandes lui sont transmises, une fois retirées les données personnelles détectées.</source>
+        <target state="translated">Servicio externo. Las solicitudes se le transmiten una vez eliminados los datos personales detectados.</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.state.sovereign" datatype="html">
+        <source>Souverain : les demandes restent sur votre infrastructure.</source>
+        <target state="translated">Soberano: las solicitudes permanecen en su infraestructura.</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.state.external" datatype="html">
+        <source>Les demandes partent vers un service externe : <x id="INTERPOLATION"/>.</source>
+        <target state="translated">Las solicitudes se envían a un servicio externo: <x id="INTERPOLATION"/>.</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.state.unknown" datatype="html">
+        <source>Le fournisseur qui répond n'est pas connu pour l'instant.</source>
+        <target state="translated">Por ahora no se sabe qué proveedor responde.</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.state.pending" datatype="html">
+        <source>Ce sera le cas une fois le choix enregistré.</source>
+        <target state="translated">Así será una vez guardada la elección.</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.state.changed" datatype="html">
+        <source>Choisi le <x id="INTERPOLATION"/> par</source>
+        <target state="translated">Elegido el <x id="INTERPOLATION"/> por</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.catalog-unavailable" datatype="html">
+        <source>Le service d'IA ne répond pas : on ne peut pas vérifier pour l'instant quels fournisseurs sont configurés.</source>
+        <target state="translated">El servicio de IA no responde: por ahora no se puede comprobar qué proveedores están configurados.</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.pinned-broken" datatype="html">
+        <source>Le fournisseur choisi n'est plus configuré sur la plateforme : les fonctions d'IA échouent tant qu'un autre n'est pas choisi.</source>
+        <target state="translated">El proveedor elegido ya no está configurado en la plataforma: las funciones de IA fallan hasta que se elija otro.</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.choice" datatype="html">
+        <source>Fournisseur des demandes</source>
+        <target state="translated">Proveedor de las solicitudes</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.choice-help" datatype="html">
+        <source>Un seul fournisseur reçoit toutes les demandes de votre organisation. Il n'y a pas de bascule automatique : si celui-ci ne répond pas, la demande échoue plutôt que de partir ailleurs.</source>
+        <target state="translated">Un único proveedor recibe todas las solicitudes de su organización. No hay conmutación automática: si no responde, la solicitud falla en lugar de enviarse a otro lugar.</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.default" datatype="html">
+        <source>Défaut de la plateforme</source>
+        <target state="translated">Predeterminado de la plataforma</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.default-desc" datatype="html">
+        <source>Suit le réglage de la plateforme, aujourd'hui : <x id="INTERPOLATION"/>. Il peut changer sans que vous le choisissiez.</source>
+        <target state="translated">Sigue la configuración de la plataforma, actualmente: <x id="INTERPOLATION"/>. Puede cambiar sin que usted lo elija.</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.default-desc-unknown" datatype="html">
+        <source>Suit le réglage de la plateforme. Il peut changer sans que vous le choisissiez.</source>
+        <target state="translated">Sigue la configuración de la plataforma. Puede cambiar sin que usted lo elija.</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.badge.on-premise" datatype="html">
+        <source>Sur votre infrastructure</source>
+        <target state="translated">En su infraestructura</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.badge.external" datatype="html">
+        <source>Service externe</source>
+        <target state="translated">Servicio externo</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.badge.not-configured" datatype="html">
+        <source>Non configuré</source>
+        <target state="translated">No configurado</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.scope" datatype="html">
+        <source>Ce que ce choix couvre</source>
+        <target state="translated">Lo que abarca esta elección</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.scope.reports" datatype="html">
+        <source>Rapports d'audit, comptes-rendus de cercles et récits des tableaux de bord.</source>
+        <target state="translated">Informes de auditoría, actas de círculos y relatos de los cuadros de mando.</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.scope.causes" datatype="html">
+        <source>Causes suggérées des diagrammes d'Ishikawa et brouillons de documents normatifs.</source>
+        <target state="translated">Causas sugeridas de los diagramas de Ishikawa y borradores de documentos normativos.</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.scope.nlq" datatype="html">
+        <source>Questions posées en langage naturel sur vos données.</source>
+        <target state="translated">Preguntas en lenguaje natural sobre sus datos.</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.scope.mock-audit" datatype="html">
+        <source>Audits blancs du Standards Hub.</source>
+        <target state="translated">Auditorías simuladas del Standards Hub.</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.scope.not-covered" datatype="html">
+        <source>Les calculs statistiques (cartes SPC, anomalies, prévisions, regroupement des NC) n'utilisent aucun modèle de langage : ils restent sur la plateforme quel que soit ce choix.</source>
+        <target state="translated">Los cálculos estadísticos (gráficos SPC, anomalías, previsiones, agrupación de NC) no usan ningún modelo de lenguaje: permanecen en la plataforma sea cual sea esta elección.</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.leaving-premises" datatype="html">
+        <source>Attention : les demandes vont quitter votre infrastructure.</source>
+        <target state="translated">Atención: las solicitudes saldrán de su infraestructura.</target>
+      </trans-unit>
+      <trans-unit id="admin.ai.pending" datatype="html">
+        <source>Fournisseur modifié</source>
+        <target state="translated">Proveedor modificado</target>
+      </trans-unit>
       <trans-unit id="ai-systems.detail.action-failed" datatype="html">
         <source>L'opération sur le système a échoué.</source>
         <target state="translated">La operación sobre el sistema ha fallado.</target>

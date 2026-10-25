@@ -1,5 +1,7 @@
 package com.openlab.qualitos.quality.aigateway;
 
+import com.openlab.qualitos.quality.airouting.InMemoryTenantAiPolicyRepository;
+
 import com.openlab.qualitos.quality.ai.guard.AiGuard;
 import com.openlab.qualitos.quality.ai.guard.AiGuardProperties;
 import com.openlab.qualitos.quality.ai.guard.TokenBucketAiGuard;
@@ -89,7 +91,7 @@ class AiGatewayAuthModeTest {
     }
 
     private AiGatewayClient client(String mode) {
-        return new AiGatewayClient("http://localhost:" + port, 2000, 5000, mode, guard(), tokenProvider());
+        return new AiGatewayClient("http://localhost:" + port, 2000, 5000, mode, guard(), tokenProvider(), InMemoryTenantAiPolicyRepository.noPolicy());
     }
 
     @Test
@@ -147,7 +149,8 @@ class AiGatewayAuthModeTest {
     @DisplayName("mode bearer sans configuration de jeton : échoue, ne se rabat pas")
     void bearerSansConfiguration() {
         AiGatewayClient c = new AiGatewayClient("http://localhost:" + port, 2000, 5000, "bearer",
-                guard(), new AiServiceTokenProvider("", "", "", "", 30, 1000, 1000));
+                guard(), new AiServiceTokenProvider("", "", "", "", 30, 1000, 1000),
+                InMemoryTenantAiPolicyRepository.noPolicy());
 
         assertThatThrownBy(() -> c.detectAnomaly(List.of(List.of(1.0)), null, null, null))
                 .isInstanceOf(AiGatewayException.class);

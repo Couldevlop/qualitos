@@ -118,3 +118,21 @@ def test_mistral_rejects_attacker_url():
 def test_ollama_rejects_attacker_url():
     with pytest.raises(PermissionError):
         OllamaProvider(base_url="http://attacker.com:1234")
+
+
+def test_remote_providers_are_configured_only_with_their_key(monkeypatch):
+    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+    monkeypatch.delenv("MISTRAL_API_KEY", raising=False)
+    assert AnthropicProvider(api_key="").is_configured() is False
+    assert MistralProvider(api_key="").is_configured() is False
+    assert AnthropicProvider(api_key="k").is_configured() is True
+    assert MistralProvider(api_key="k").is_configured() is True
+
+
+def test_remote_provider_key_can_come_from_the_environment(monkeypatch):
+    monkeypatch.setenv("MISTRAL_API_KEY", "from-env")
+    assert MistralProvider().is_configured() is True
+
+
+def test_local_provider_needs_no_key():
+    assert OllamaProvider(base_url="http://ollama:11434", model="m").is_configured() is True

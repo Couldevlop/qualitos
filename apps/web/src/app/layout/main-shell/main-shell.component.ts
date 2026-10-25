@@ -318,6 +318,13 @@ export class MainShellComponent implements OnInit, OnDestroy {
           roles: ADMIN_ROLES
         },
         {
+          // Le fournisseur des appels LLM du tenant (ADR 0102) : local et souverain, ou externe.
+          label: $localize`:@@nav.admin-ai:Fournisseur d'IA`,
+          route: '/admin/ia',
+          icon: 'shield',
+          roles: ADMIN_ROLES
+        },
+        {
           label: $localize`:@@nav.admin-api-keys:Clés d'API`,
           route: '/admin/api-keys',
           icon: 'key',
