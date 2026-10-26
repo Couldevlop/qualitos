@@ -63,6 +63,15 @@ Prefer a SINGLE table: do NOT use JOIN unless the question truly needs columns
 from two tables. Most questions are one table + GROUP BY (e.g. "score moyen des
 audits 5S par zone" -> SELECT zone, AVG(overall_score) FROM fives_audits
 WHERE tenant_id = :tenant_id GROUP BY zone). Never invent columns or foreign keys.
+
+Examples:
+  "Combien de CAPA par statut ?" -> SELECT status, COUNT(*) AS total FROM capa_cases
+     WHERE tenant_id = :tenant_id GROUP BY status
+  "Nombre de non-conformités par criticité" -> SELECT criticity, COUNT(*) AS total
+     FROM capa_cases WHERE tenant_id = :tenant_id AND source_type = 'NON_CONFORMITY'
+     GROUP BY criticity
+  "Cycles PDCA par statut" -> SELECT status, COUNT(*) AS total FROM pdca_cycles
+     WHERE tenant_id = :tenant_id GROUP BY status
 """.strip()
 
 _SQL_SYSTEM_PROMPT = (
@@ -82,6 +91,18 @@ class NlqAskRequest:
 
 class NlqAskUseCase:
     """Generate, validate, execute, explain."""
+
+    @staticmethod
+    def _generate(provider: AIProvider, name: ProviderName, user_prompt: str):
+        return provider.complete(
+            CompletionRequest(
+                system_prompt=_SQL_SYSTEM_PROMPT,
+                user_prompt=user_prompt,
+                provider=name,
+                max_tokens=512,
+                temperature=0.0,
+            )
+        )
 
     def __init__(
         self,
@@ -115,23 +136,31 @@ class NlqAskUseCase:
         )
 
         provider = self._providers[req.provider]
-        completion = provider.complete(
-            CompletionRequest(
-                system_prompt=_SQL_SYSTEM_PROMPT,
-                user_prompt=f"NL question: {sanitized_q}\n\nReturn one SELECT statement.",
-                provider=req.provider,
-                max_tokens=512,
-                temperature=0.0,
-            )
-        )
-
+        user_prompt = f"NL question: {sanitized_q}\n\nReturn one SELECT statement."
+        completion = self._generate(provider, req.provider, user_prompt)
         raw_sql = _strip_codefences(completion.text)
 
         # CRITICAL: validate + rewrite. Raises UnsafeSqlError on violation.
         try:
-            validated = self._validator.validate_and_rewrite(
-                raw_sql, user.tenant.tenant_id
-            )
+            try:
+                validated = self._validator.validate_and_rewrite(
+                    raw_sql, user.tenant.tenant_id
+                )
+            except UnsafeSqlError as first:
+                # One second chance, from the SAME provider (no fallback, ADR 0102):
+                # small local models often fix a wrong table name once told why.
+                # The retry goes through the very same validator.
+                completion = self._generate(
+                    provider,
+                    req.provider,
+                    f"{user_prompt}\n\nYour previous query was rejected: {first}\n"
+                    f"Rejected query: {raw_sql[:500]}\n"
+                    "Write a corrected query using ONLY the tables listed above.",
+                )
+                raw_sql = _strip_codefences(completion.text)
+                validated = self._validator.validate_and_rewrite(
+                    raw_sql, user.tenant.tenant_id
+                )
         except UnsafeSqlError:
             self._audit.log(
                 PromptAuditEntry(

@@ -36,6 +36,14 @@ class GlobalExceptionHandlerTest {
      * c'est exactement ce qui s'est produit au premier déploiement réel.
      */
     @Test
+    void nlqUntranslatable_mapsTo422_notBadGateway() {
+        ProblemDetail pd = handler.handleNlqUntranslatable(
+                new com.openlab.qualitos.quality.aigateway.NlqUntranslatableException("Question non traduisible en requête sûre", null));
+        assertThat(pd.getStatus()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY.value());
+        assertThat(pd.getType().toString()).endsWith("/nlq-untranslatable");
+    }
+
+    @Test
     void objectStorageFailure_mapsTo503_withoutLeakingInternals() {
         ProblemDetail pd = handler.handleObjectStorageFailure(
                 software.amazon.awssdk.services.s3.model.NoSuchBucketException.builder()

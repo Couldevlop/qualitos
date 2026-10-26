@@ -52,6 +52,7 @@ import com.openlab.qualitos.quality.ai.guard.AiPromptTooLargeException;
 import com.openlab.qualitos.quality.ai.guard.AiQuotaExceededException;
 import com.openlab.qualitos.quality.ai.guard.AiRateLimitExceededException;
 import com.openlab.qualitos.quality.aigateway.AiGatewayException;
+import com.openlab.qualitos.quality.aigateway.NlqUntranslatableException;
 import com.openlab.qualitos.quality.airouting.domain.AiProviderNotConfiguredException;
 import com.openlab.qualitos.quality.airouting.domain.InvalidAiProviderException;
 import com.openlab.qualitos.quality.visiongateway.VisionGatewayException;
@@ -1078,6 +1079,15 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_GATEWAY, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/ai-gateway-unavailable"));
         problem.setTitle("AI Gateway Unavailable");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(NlqUntranslatableException.class)
+    public ProblemDetail handleNlqUntranslatable(NlqUntranslatableException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/nlq-untranslatable"));
+        problem.setTitle("NLQ Question Untranslatable");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }

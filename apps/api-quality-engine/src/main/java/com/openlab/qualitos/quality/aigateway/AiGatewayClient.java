@@ -14,6 +14,7 @@ import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 
@@ -164,6 +165,12 @@ public class AiGatewayClient {
             guard.recordSuccess(ctx.tenantId());
             return resp;
         } catch (RestClientException e) {
+            if (e instanceof HttpClientErrorException http && http.getStatusCode().value() == 422) {
+                // La passerelle a répondu : la question n'est pas traduisible en requête
+                // sûre. Ce n'est pas une panne, le disjoncteur n'a pas à la compter.
+                guard.recordSuccess(ctx.tenantId());
+                throw new NlqUntranslatableException("Question non traduisible en requête sûre", e);
+            }
             guard.recordFailure(ctx.tenantId());
             throw new AiGatewayException("Passerelle IA indisponible (NLQ) : " + e.getMessage(), e);
         }
