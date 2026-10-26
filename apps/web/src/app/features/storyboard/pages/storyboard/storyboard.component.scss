@@ -117,6 +117,16 @@
   white-space: pre-wrap;
 }
 
+.unverified {
+  margin: 0 0 var(--qos-space-3, 12px);
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: var(--qos-warn-bg-soft);
+  color: var(--qos-warn-fg);
+
+  strong { margin-left: 4px; }
+}
+
 .disclaimer {
   margin: 16px 0 0;
   padding: 10px 12px;

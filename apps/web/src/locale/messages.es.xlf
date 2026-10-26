@@ -30026,6 +30026,10 @@ India (centro de servicio)</target>
         <source>Généré par</source>
         <target state="translated">Generado por</target>
       </trans-unit>
+      <trans-unit id="storyboard.unverified" datatype="html">
+        <source>Chiffres absents des données source, à vérifier :</source>
+        <target state="translated">Cifras ausentes de los datos fuente, a verificar:</target>
+      </trans-unit>
       <trans-unit id="storyboard.disclaimer" datatype="html">
         <source>Récit généré par IA, à valider par un humain. Aucune décision ne doit reposer sur ce texte sans vérification des chiffres source.</source>
         <target state="translated">Relato generado por IA, a validar por una persona. Ninguna decisión debe basarse en este texto sin verificar las cifras de origen.</target>

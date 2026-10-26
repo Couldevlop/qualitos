@@ -30,4 +30,6 @@ export interface StoryboardResponse {
   period: string;
   /** Rappel fidèle des chiffres source (explicabilité §12.3). */
   sources: IndicatorPoint[];
+  /** Nombres du récit absents des chiffres source : à vérifier avant usage. */
+  unverifiedNumbers?: string[];
 }
