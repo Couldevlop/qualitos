@@ -32,4 +32,6 @@ export interface StoryboardResponse {
   sources: IndicatorPoint[];
   /** Nombres du récit absents des chiffres source : à vérifier avant usage. */
   unverifiedNumbers?: string[];
+  /** ai : premier jet ; ai-corrected : réécrit ; factual : rédigé par le moteur, sans IA. */
+  mode?: 'ai' | 'ai-corrected' | 'factual';
 }

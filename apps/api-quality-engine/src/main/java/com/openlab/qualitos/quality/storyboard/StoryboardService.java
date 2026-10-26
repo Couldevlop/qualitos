@@ -43,13 +43,65 @@ public class StoryboardService {
         String system = buildSystemPrompt();
         String user = buildUserPrompt(request);
         AiCompletionResult r = ai.complete(system, user, MAX_TOKENS);
-        String narrative = r.text() == null ? "" : r.text().strip();
-        return new StoryboardDto.StoryboardResponse(
-                narrative,
-                r.provider(),
-                request.period(),
-                request.points(),
-                unverifiedNumbers(narrative, request));
+        String narrative = text(r);
+        List<String> unknown = unverifiedNumbers(narrative, request);
+        if (unknown.isEmpty()) {
+            return response(narrative, r.provider(), request, List.of(), "ai");
+        }
+        // Une seconde demande, au même fournisseur, qui nomme les chiffres inventés.
+        AiCompletionResult retry = ai.complete(system, user
+                + "\n\nTon récit précédent contenait des chiffres absents des données : "
+                + String.join(", ", unknown)
+                + ". Réécris-le sans aucun de ces chiffres, en n'utilisant que les valeurs "
+                + "données ci-dessus.", MAX_TOKENS);
+        String corrected = text(retry);
+        if (!corrected.isEmpty() && unverifiedNumbers(corrected, request).isEmpty()) {
+            return response(corrected, retry.provider(), request, List.of(), "ai-corrected");
+        }
+        // Deux fois des chiffres inventés : on ne publie pas un récit faux, le moteur
+        // rédige le récit factuel à partir des mêmes données.
+        return response(factualNarrative(request), retry.provider(), request, List.of(), "factual");
+    }
+
+    private static StoryboardDto.StoryboardResponse response(String narrative, String provider,
+                                                             StoryboardDto.StoryboardRequest request,
+                                                             List<String> unverified, String mode) {
+        return new StoryboardDto.StoryboardResponse(narrative, provider, request.period(),
+                request.points(), unverified, mode);
+    }
+
+    private static String text(AiCompletionResult r) {
+        return r == null || r.text() == null ? "" : r.text().strip();
+    }
+
+    /**
+     * Le récit sans IA : une phrase par indicateur, avec sa valeur, sa tendance et le
+     * statut de sa cible calculé par {@link #targetMet}. Il ne contient que des chiffres
+     * fournis — il ne peut pas être faux.
+     */
+    static String factualNarrative(StoryboardDto.StoryboardRequest request) {
+        StringBuilder sb = new StringBuilder("Sur la période ").append(request.period().strip());
+        if (request.context() != null && !request.context().isBlank()) {
+            sb.append(" (").append(request.context().strip()).append(')');
+        }
+        sb.append(" :");
+        for (StoryboardDto.IndicatorPoint p : request.points()) {
+            sb.append(' ').append(p.label().strip()).append(" s'établit à ").append(p.value().strip());
+            if (p.unit() != null && !p.unit().isBlank()) {
+                sb.append(' ').append(p.unit().strip());
+            }
+            if (p.trend() != null && !p.trend().isBlank()) {
+                sb.append(", tendance ").append(p.trend().strip());
+            }
+            if (p.target() != null && !p.target().isBlank()) {
+                Boolean met = targetMet(p.value(), p.target());
+                sb.append(met == null ? " ; cible " + p.target().strip()
+                        : met ? " ; la cible " + p.target().strip() + " est atteinte"
+                        : " ; la cible " + p.target().strip() + " n'est pas atteinte");
+            }
+            sb.append('.');
+        }
+        return sb.toString();
     }
 
     /**

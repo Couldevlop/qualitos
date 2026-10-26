@@ -30025,6 +30025,14 @@ Inde (centre de service)</source>
         <source>Généré par</source>
         <target state="translated">生成元</target>
       </trans-unit>
+      <trans-unit id="storyboard.mode-factual" datatype="html">
+        <source>Le modèle a avancé des chiffres absents de vos données : voici le récit factuel, rédigé sans IA à partir des chiffres source.</source>
+        <target state="translated">モデルがデータにない数値を示したため、ソースの数値からAIを使わずに作成した事実ベースの記述を表示します。</target>
+      </trans-unit>
+      <trans-unit id="storyboard.mode-corrected" datatype="html">
+        <source>Récit réécrit par l'IA après correction de chiffres absents des données.</source>
+        <target state="translated">データにない数値を修正した後、AIが書き直した記述です。</target>
+      </trans-unit>
       <trans-unit id="storyboard.unverified" datatype="html">
         <source>Chiffres absents des données source, à vérifier :</source>
         <target state="translated">ソースデータにない数値（要確認）：</target>
