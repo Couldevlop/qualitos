@@ -129,4 +129,36 @@ class StoryboardServiceTest {
                 .containsExactly("3", "24");
         assertThat(StoryboardService.unverifiedNumbers("Taux de NC 1.8 %, cible 2.", sampleRequest())).isEmpty();
     }
+
+    @Test
+    void inventedNumbers_triggerOneCorrection() {
+        when(ai.complete(anyString(), anyString(), anyInt()))
+                .thenReturn(new AiCompletionResult("Le taux de NC passe de 3 % à 1,8 %.", "ollama", 1, 1))
+                .thenReturn(new AiCompletionResult("Le taux de NC recule à 1,8 %.", "ollama", 1, 1));
+        StoryboardDto.StoryboardResponse r = service.generate(sampleRequest());
+        assertThat(r.mode()).isEqualTo("ai-corrected");
+        assertThat(r.narrative()).isEqualTo("Le taux de NC recule à 1,8 %.");
+        ArgumentCaptor<String> user = ArgumentCaptor.forClass(String.class);
+        verify(ai, org.mockito.Mockito.times(2)).complete(anyString(), user.capture(), anyInt());
+        assertThat(user.getAllValues().get(1)).contains("chiffres absents des données : 3");
+    }
+
+    @Test
+    void inventedTwice_fallsBackToTheFactualNarrative() {
+        when(ai.complete(anyString(), anyString(), anyInt()))
+                .thenReturn(new AiCompletionResult("De 3 % à 1,8 %.", "ollama", 1, 1));
+        StoryboardDto.StoryboardResponse r = service.generate(sampleRequest());
+        assertThat(r.mode()).isEqualTo("factual");
+        assertThat(r.narrative()).isEqualTo(StoryboardService.factualNarrative(sampleRequest()));
+        assertThat(r.unverifiedNumbers()).isEmpty();
+    }
+
+    @Test
+    void factualNarrative_saysOnlyWhatTheDataSays() {
+        String text = StoryboardService.factualNarrative(sampleRequest());
+        assertThat(text).isEqualTo("Sur la période Mai 2026 (Site de Lyon) : "
+                + "Taux de NC s'établit à 1,8 %, tendance -12 % ; la cible < 2 est atteinte. "
+                + "Délai CAPA s'établit à 26 j, tendance stable ; la cible < 30 est atteinte.");
+        assertThat(StoryboardService.unverifiedNumbers(text, sampleRequest())).isEmpty();
+    }
 }

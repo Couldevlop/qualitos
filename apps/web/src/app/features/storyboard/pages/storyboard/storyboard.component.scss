@@ -117,6 +117,12 @@
   white-space: pre-wrap;
 }
 
+.mode {
+  margin: 0 0 8px;
+  font-size: 0.875rem;
+  color: var(--qos-warn-fg);
+}
+
 .unverified {
   margin: 0 0 var(--qos-space-3, 12px);
   padding: 8px 12px;

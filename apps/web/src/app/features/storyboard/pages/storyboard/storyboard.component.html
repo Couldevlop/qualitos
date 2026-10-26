@@ -83,6 +83,10 @@
       <mat-icon>smart_toy</mat-icon>
       <span i18n="@@storyboard.provider">Généré par</span> {{ r.provider || 'IA' }} · {{ r.period }}
     </p>
+    <p class="mode" *ngIf="r.mode === 'factual'" role="note" data-test="mode-factual"
+       i18n="@@storyboard.mode-factual">Le modèle a avancé des chiffres absents de vos données : voici le récit factuel, rédigé sans IA à partir des chiffres source.</p>
+    <p class="mode" *ngIf="r.mode === 'ai-corrected'" role="note" data-test="mode-corrected"
+       i18n="@@storyboard.mode-corrected">Récit réécrit par l'IA après correction de chiffres absents des données.</p>
     <p class="narrative">{{ r.narrative }}</p>
     <p class="unverified" role="alert" *ngIf="r.unverifiedNumbers?.length" data-test="unverified">
       <span i18n="@@storyboard.unverified">Chiffres absents des données source, à vérifier :</span>

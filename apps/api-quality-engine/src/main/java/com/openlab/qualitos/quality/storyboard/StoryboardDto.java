@@ -58,6 +58,12 @@ public final class StoryboardDto {
             String period,
             List<IndicatorPoint> sources,
             /** Nombres du récit absents des chiffres source : à vérifier avant usage. */
-            List<String> unverifiedNumbers
+            List<String> unverifiedNumbers,
+            /**
+             * D'où vient le récit : {@code ai} (premier jet), {@code ai-corrected} (réécrit après
+             * signalement de chiffres absents), {@code factual} (rédigé par le moteur, sans IA,
+             * quand le modèle a inventé des chiffres deux fois).
+             */
+            String mode
     ) {}
 }

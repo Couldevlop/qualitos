@@ -30026,6 +30026,14 @@ Inde (centre de service)</source>
         <source>Généré par</source>
         <target state="translated">生成者</target>
       </trans-unit>
+      <trans-unit id="storyboard.mode-factual" datatype="html">
+        <source>Le modèle a avancé des chiffres absents de vos données : voici le récit factuel, rédigé sans IA à partir des chiffres source.</source>
+        <target state="translated">模型给出了数据中不存在的数字：以下是不使用 AI、根据源数据撰写的事实叙述。</target>
+      </trans-unit>
+      <trans-unit id="storyboard.mode-corrected" datatype="html">
+        <source>Récit réécrit par l'IA après correction de chiffres absents des données.</source>
+        <target state="translated">AI 在更正数据中不存在的数字后重写的叙述。</target>
+      </trans-unit>
       <trans-unit id="storyboard.unverified" datatype="html">
         <source>Chiffres absents des données source, à vérifier :</source>
         <target state="translated">源数据中没有的数字，需核实：</target>

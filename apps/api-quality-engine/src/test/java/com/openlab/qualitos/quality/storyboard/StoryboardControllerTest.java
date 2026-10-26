@@ -44,7 +44,7 @@ class StoryboardControllerTest {
     void generate_returns200_withNarrativeAndSources() throws Exception {
         when(storyboardService.generate(any())).thenReturn(new StoryboardDto.StoryboardResponse(
                 "Sur mai 2026, le taux de NC recule.", "ollama", "Mai 2026",
-                List.of(new StoryboardDto.IndicatorPoint("Taux de NC", "1,8", "-12 %", "< 2", "%")), List.of()));
+                List.of(new StoryboardDto.IndicatorPoint("Taux de NC", "1,8", "-12 %", "< 2", "%")), List.of(), "ai"));
 
         mockMvc.perform(post("/api/v1/ai/storyboard").with(csrf())
                         .contentType("application/json")

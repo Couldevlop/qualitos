@@ -30026,6 +30026,14 @@ India (centro de servicio)</target>
         <source>Généré par</source>
         <target state="translated">Generado por</target>
       </trans-unit>
+      <trans-unit id="storyboard.mode-factual" datatype="html">
+        <source>Le modèle a avancé des chiffres absents de vos données : voici le récit factuel, rédigé sans IA à partir des chiffres source.</source>
+        <target state="translated">El modelo dio cifras ausentes de sus datos: este es el relato factual, redactado sin IA a partir de las cifras fuente.</target>
+      </trans-unit>
+      <trans-unit id="storyboard.mode-corrected" datatype="html">
+        <source>Récit réécrit par l'IA après correction de chiffres absents des données.</source>
+        <target state="translated">Relato reescrito por la IA tras corregir cifras ausentes de los datos.</target>
+      </trans-unit>
       <trans-unit id="storyboard.unverified" datatype="html">
         <source>Chiffres absents des données source, à vérifier :</source>
         <target state="translated">Cifras ausentes de los datos fuente, a verificar:</target>

@@ -30026,6 +30026,14 @@ Inde (centre de service)</source>
         <source>Généré par</source>
         <target state="translated">تم الإنشاء بواسطة</target>
       </trans-unit>
+      <trans-unit id="storyboard.mode-factual" datatype="html">
+        <source>Le modèle a avancé des chiffres absents de vos données : voici le récit factuel, rédigé sans IA à partir des chiffres source.</source>
+        <target state="translated">ذكر النموذج أرقامًا غير موجودة في بياناتك: إليك السرد الواقعي، مكتوبًا دون ذكاء اصطناعي من الأرقام المصدرية.</target>
+      </trans-unit>
+      <trans-unit id="storyboard.mode-corrected" datatype="html">
+        <source>Récit réécrit par l'IA après correction de chiffres absents des données.</source>
+        <target state="translated">سرد أعاد الذكاء الاصطناعي كتابته بعد تصحيح أرقام غير موجودة في البيانات.</target>
+      </trans-unit>
       <trans-unit id="storyboard.unverified" datatype="html">
         <source>Chiffres absents des données source, à vérifier :</source>
         <target state="translated">أرقام غير موجودة في البيانات المصدرية، يجب التحقق منها:</target>
