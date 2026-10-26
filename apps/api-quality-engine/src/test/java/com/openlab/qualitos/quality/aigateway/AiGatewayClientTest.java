@@ -132,6 +132,13 @@ class AiGatewayClientTest {
     }
 
     @Test
+    void askNlq_unprocessable_isUntranslatableNotOutage() {
+        AiGatewayClient c = clientReturning(422, "{\"detail\":\"table not in allow-list: pdca_cycle\"}");
+        assertThatThrownBy(() -> c.askNlq("q", 10))
+                .isInstanceOf(NlqUntranslatableException.class);
+    }
+
+    @Test
     void askNlq_serverError_throws() {
         AiGatewayClient c = clientReturning(503, "down");
         assertThatThrownBy(() -> c.askNlq("q", 10))

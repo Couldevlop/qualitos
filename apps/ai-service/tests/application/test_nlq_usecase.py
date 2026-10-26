@@ -114,3 +114,50 @@ def test_nlq_auto_injects_tenant_filter(user_context):
     )
     answer = uc.execute(user_context, NlqAskRequest(question="urgent capas"))
     assert "tenant_id" in answer.sql.sql.lower()
+
+
+class _SequenceProvider(_SqlProvider):
+    """Returns one canned SQL per call and keeps the prompts it received."""
+
+    def __init__(self, *sqls: str) -> None:
+        super().__init__(sqls[0])
+        self._sqls = list(sqls)
+        self.prompts: list[str] = []
+
+    def complete(self, request: CompletionRequest) -> CompletionResponse:
+        self.prompts.append(request.user_prompt)
+        self._sql = self._sqls[min(len(self.prompts), len(self._sqls)) - 1]
+        return super().complete(request)
+
+
+def _uc(provider, fixtures, audit=None):
+    return NlqAskUseCase(
+        providers={ProviderName.OLLAMA: provider},
+        sql_validator=SqlglotValidator(),
+        sql_executor=InMemoryReadOnlyExecutor(fixtures),
+        pii_filter=_NoopPii(),
+        injection_filter=_NoopInjection(),
+        audit_logger=audit or _NoopAudit(),
+    )
+
+
+def test_nlq_second_chance_fixes_a_wrong_table(user_context):
+    provider = _SequenceProvider(
+        "SELECT status, count(*) AS total FROM pdca_cycle WHERE tenant_id = :tenant_id GROUP BY status",
+        "SELECT status, count(*) AS total FROM capa_cases WHERE tenant_id = :tenant_id GROUP BY status",
+    )
+    fixtures = {"capa_cases": [{"status": "OPEN", "total": 3}]}
+    answer = _uc(provider, fixtures).execute(user_context, NlqAskRequest(question="Combien de CAPA par statut ?"))
+    assert answer.row_count == 1
+    assert len(provider.prompts) == 2
+    # the retry tells the model why, and shows it the rejected query
+    assert "pdca_cycle" in provider.prompts[1] and "rejected" in provider.prompts[1]
+
+
+def test_nlq_gives_up_after_the_second_chance(user_context):
+    provider = _SequenceProvider("DROP TABLE pdca_cycles")
+    audit = _NoopAudit()
+    with pytest.raises(UnsafeSqlError):
+        _uc(provider, {}, audit).execute(user_context, NlqAskRequest(question="drop the table"))
+    assert len(provider.prompts) == 2
+    assert [e.operation for e in audit.entries] == ["nlq.ask.rejected"]
