@@ -6,7 +6,7 @@ import { environment } from '../../../environments/environment';
 import { AiPolicyService } from './ai-policy.service';
 
 describe('AiPolicyService', () => {
-  const base = `${environment.apiBaseUrl}/api/v1/admin/ai-policy`;
+  const base = `${environment.apiBaseUrl}/api/v1/ai/policy`;
   let service: AiPolicyService;
   let http: HttpTestingController;
 

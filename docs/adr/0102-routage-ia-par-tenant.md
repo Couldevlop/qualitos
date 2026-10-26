@@ -36,7 +36,7 @@ pas tomber sans que personne le sache.
    (ADR 0086) s'y applique.
 
 2. **Le choix appartient à l'admin du client**, par le droit
-   `authz.manage` (ADR 0078) — `GET/PUT/DELETE /api/v1/admin/ai-policy`. Le
+   `authz.manage` (ADR 0078) — `GET/PUT/DELETE /api/v1/ai/policy`. Le
    client et l'acteur viennent du jeton, jamais du corps (§18.2 n° 2). Chaque
    épinglage et chaque retour au défaut est inscrit au journal chaîné
    (`ai.policy.pinned`, `ai.policy.released`), avec le fournisseur précédent.

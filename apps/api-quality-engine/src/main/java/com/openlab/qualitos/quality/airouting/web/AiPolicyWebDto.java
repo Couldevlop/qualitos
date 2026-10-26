@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
 /**
- * Corps de {@code PUT /api/v1/admin/ai-policy} (ADR 0102). Ni tenant ni auteur :
+ * Corps de {@code PUT /api/v1/ai/policy} (ADR 0102). Ni tenant ni auteur :
  * ils viennent du jeton (§18.2). Le fournisseur est validé ici, puis au domaine.
  */
 public record AiPolicyWebDto(
