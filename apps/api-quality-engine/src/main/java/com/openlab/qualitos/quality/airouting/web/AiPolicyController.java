@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
  * ({@code authz.manage}), comme les autres paramétrages. Le tenant vient du jeton.
  */
 @RestController
-@RequestMapping("/api/v1/admin/ai-policy")
+@RequestMapping("/api/v1/ai/policy")
 @PreAuthorize("isAuthenticated()")
 @RequiresPermission(Permission.AUTHZ_MANAGE)
 @Tag(name = "AI policy", description = "Tenant LLM provider routing")

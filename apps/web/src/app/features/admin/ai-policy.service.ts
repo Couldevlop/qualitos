@@ -12,7 +12,7 @@ import { AiPolicy, AiProviderName } from './ai-policy.types';
 @Injectable({ providedIn: 'root' })
 export class AiPolicyService {
 
-  private readonly base = `${environment.apiBaseUrl}/api/v1/admin/ai-policy`;
+  private readonly base = `${environment.apiBaseUrl}/api/v1/ai/policy`;
 
   constructor(private readonly http: HttpClient) {}
 

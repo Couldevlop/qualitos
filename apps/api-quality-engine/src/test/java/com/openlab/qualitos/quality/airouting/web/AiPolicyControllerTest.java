@@ -45,7 +45,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(MethodSecurityTestConfig.class)
 class AiPolicyControllerTest {
 
-    private static final String BASE = "/api/v1/admin/ai-policy";
+    private static final String BASE = "/api/v1/ai/policy";
     private static final UUID ADMIN = UUID.fromString("22222222-2222-2222-2222-222222222222");
 
     @Autowired MockMvc mockMvc;
