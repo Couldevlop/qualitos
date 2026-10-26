@@ -24,7 +24,14 @@ import java.util.List;
 public class StoryboardService {
 
     /** Plafond de génération : un récit court (3 à 6 phrases) tient largement. */
-    private static final int MAX_TOKENS = 320;
+    private static final int MAX_TOKENS = 700;
+
+    private static final java.util.regex.Pattern NUMBER =
+            java.util.regex.Pattern.compile("\\d+(?:[.,]\\d+)?");
+    private static final java.util.regex.Pattern COMPARISON =
+            java.util.regex.Pattern.compile("^(<=|>=|<|>|≤|≥)\\s*(\\d+(?:[.,]\\d+)?)$");
+    private static final java.util.regex.Pattern FRACTION =
+            java.util.regex.Pattern.compile("^(\\d+(?:[.,]\\d+)?)\\s*/\\s*(\\d+(?:[.,]\\d+)?)$");
 
     private final AiGatewayClient ai;
 
@@ -36,11 +43,13 @@ public class StoryboardService {
         String system = buildSystemPrompt();
         String user = buildUserPrompt(request);
         AiCompletionResult r = ai.complete(system, user, MAX_TOKENS);
+        String narrative = r.text() == null ? "" : r.text().strip();
         return new StoryboardDto.StoryboardResponse(
-                r.text() == null ? "" : r.text().strip(),
+                narrative,
                 r.provider(),
                 request.period(),
-                request.points());
+                request.points(),
+                unverifiedNumbers(narrative, request));
     }
 
     /**
@@ -57,7 +66,11 @@ public class StoryboardService {
                 + "n'invente AUCUN chiffre, aucune cause et aucun fait non présent dans les "
                 + "données ; pas de liste à puces, pas de titres, pas de tableau. "
                 + "Si une tendance ou une cible est fournie, exploite-la (progression, écart à "
-                + "la cible) ; sinon ne la mentionne pas.";
+                + "la cible) ; sinon ne la mentionne pas. "
+                + "Le statut de cible indiqué (ATTEINTE ou NON ATTEINTE) est calculé : reprends-le "
+                + "tel quel, ne le contredis jamais. N'évoque aucune valeur antérieure, aucune "
+                + "autre période et aucune année qui ne figurent pas dans les données. "
+                + "Termine toujours ta dernière phrase.";
     }
 
     /**
@@ -81,11 +94,68 @@ public class StoryboardService {
             }
             if (notBlank(p.target())) {
                 sb.append(" ; cible ").append(p.target().strip());
+                Boolean met = targetMet(p.value(), p.target());
+                if (met != null) {
+                    sb.append(" ; statut : cible ").append(met ? "ATTEINTE" : "NON ATTEINTE");
+                }
             }
             sb.append('\n');
         }
         sb.append("Rédige le récit.");
         return sb.toString();
+    }
+
+    /**
+     * La cible est-elle atteinte ? Calcul déterministe, pour que le modèle n'ait pas à
+     * comparer lui-même des nombres (un petit modèle s'y trompe). {@code null} quand la
+     * valeur ou la cible ne se lit pas : rien n'est alors affirmé.
+     */
+    static Boolean targetMet(String value, String target) {
+        if (value == null || target == null) {
+            return null;
+        }
+        String t = target.strip();
+        java.util.regex.Matcher frac = FRACTION.matcher(t);
+        java.util.regex.Matcher val = FRACTION.matcher(value.strip());
+        if (frac.matches() && val.matches()) {
+            return num(val.group(1)) / num(val.group(2)) >= num(frac.group(1)) / num(frac.group(2));
+        }
+        java.util.regex.Matcher cmp = COMPARISON.matcher(t);
+        java.util.regex.Matcher v = NUMBER.matcher(value);
+        if (!cmp.matches() || !v.find()) {
+            return null;
+        }
+        double x = num(v.group());
+        double bound = num(cmp.group(2));
+        return switch (cmp.group(1)) {
+            case "<" -> x < bound;
+            case "<=", "≤" -> x <= bound;
+            case ">" -> x > bound;
+            default -> x >= bound;
+        };
+    }
+
+    /**
+     * Les nombres du récit qu'on ne retrouve dans aucune donnée fournie (valeur, tendance,
+     * cible, période, contexte). Ce n'est pas une preuve d'erreur, c'est une alerte : le
+     * lecteur sait quels chiffres vérifier avant de reprendre le texte.
+     */
+    static List<String> unverifiedNumbers(String narrative, StoryboardDto.StoryboardRequest request) {
+        java.util.Set<Double> known = new java.util.HashSet<>();
+        StringBuilder sources = new StringBuilder(request.period()).append(' ').append(request.context());
+        for (StoryboardDto.IndicatorPoint p : request.points()) {
+            sources.append(' ').append(p.value()).append(' ').append(p.trend()).append(' ').append(p.target());
+        }
+        NUMBER.matcher(sources).results().forEach(m -> known.add(num(m.group())));
+        java.util.Set<String> unknown = new java.util.LinkedHashSet<>();
+        NUMBER.matcher(narrative).results()
+                .filter(m -> !known.contains(num(m.group())))
+                .forEach(m -> unknown.add(m.group()));
+        return List.copyOf(unknown);
+    }
+
+    private static double num(String s) {
+        return Double.parseDouble(s.replace(',', '.'));
     }
 
     private boolean notBlank(String s) {

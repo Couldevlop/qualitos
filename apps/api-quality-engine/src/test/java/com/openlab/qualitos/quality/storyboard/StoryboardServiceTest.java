@@ -101,4 +101,32 @@ class StoryboardServiceTest {
         assertThat(r.narrative()).isEmpty();
         verify(ai).complete(anyString(), anyString(), anyInt());
     }
+
+    @Test
+    void targetMet_isComputed_notLeftToTheModel() {
+        assertThat(StoryboardService.targetMet("26", "< 30")).isTrue();
+        assertThat(StoryboardService.targetMet("1,8", "< 2")).isTrue();
+        assertThat(StoryboardService.targetMet("97,4", "> 98")).isFalse();
+        assertThat(StoryboardService.targetMet("8/10", "10/10")).isFalse();
+        assertThat(StoryboardService.targetMet("30", "<= 30")).isTrue();
+        assertThat(StoryboardService.targetMet("98", ">= 98")).isTrue();
+        assertThat(StoryboardService.targetMet("élevé", "< 30")).isNull();
+        assertThat(StoryboardService.targetMet("26", "réduire")).isNull();
+        assertThat(StoryboardService.targetMet(null, "< 2")).isNull();
+    }
+
+    @Test
+    void prompt_carriesTheComputedStatus() {
+        String user = service.debugPrompts(sampleRequest()).get(1);
+        assertThat(user).contains("Délai CAPA : 26 j ; tendance stable ; cible < 30 ; statut : cible ATTEINTE");
+    }
+
+    @Test
+    void unverifiedNumbers_flagsWhatTheSourcesDoNotContain() {
+        assertThat(StoryboardService.unverifiedNumbers(
+                "En mai 2026, le taux de NC passe de 3 % à 1,8 % (-12 %) ; délai CAPA 26 j, 24 j avant.",
+                sampleRequest()))
+                .containsExactly("3", "24");
+        assertThat(StoryboardService.unverifiedNumbers("Taux de NC 1.8 %, cible 2.", sampleRequest())).isEmpty();
+    }
 }

@@ -56,6 +56,8 @@ public final class StoryboardDto {
             String narrative,
             String provider,
             String period,
-            List<IndicatorPoint> sources
+            List<IndicatorPoint> sources,
+            /** Nombres du récit absents des chiffres source : à vérifier avant usage. */
+            List<String> unverifiedNumbers
     ) {}
 }

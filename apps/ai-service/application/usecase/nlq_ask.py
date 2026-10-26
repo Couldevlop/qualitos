@@ -67,9 +67,11 @@ WHERE tenant_id = :tenant_id GROUP BY zone). Never invent columns or foreign key
 Examples:
   "Combien de CAPA par statut ?" -> SELECT status, COUNT(*) AS total FROM capa_cases
      WHERE tenant_id = :tenant_id GROUP BY status
-  "Nombre de non-conformités par criticité" -> SELECT criticity, COUNT(*) AS total
-     FROM capa_cases WHERE tenant_id = :tenant_id AND source_type = 'NON_CONFORMITY'
-     GROUP BY criticity
+  "Combien de CAPA par criticité ?" -> SELECT criticity, COUNT(*) AS total FROM capa_cases
+     WHERE tenant_id = :tenant_id GROUP BY criticity
+  Add `source_type = 'NON_CONFORMITY'` ONLY when the question explicitly says
+  "non-conformité" / "NC"; a question about CAPA never filters on source_type.
+  Enum literals are written exactly, without spaces inside the quotes.
   "Cycles PDCA par statut" -> SELECT status, COUNT(*) AS total FROM pdca_cycles
      WHERE tenant_id = :tenant_id GROUP BY status
 """.strip()

@@ -84,6 +84,10 @@
       <span i18n="@@storyboard.provider">Généré par</span> {{ r.provider || 'IA' }} · {{ r.period }}
     </p>
     <p class="narrative">{{ r.narrative }}</p>
+    <p class="unverified" role="alert" *ngIf="r.unverifiedNumbers?.length" data-test="unverified">
+      <span i18n="@@storyboard.unverified">Chiffres absents des données source, à vérifier :</span>
+      <strong>{{ r.unverifiedNumbers!.join(' · ') }}</strong>
+    </p>
     <p class="disclaimer" role="note" i18n="@@storyboard.disclaimer">
       Récit généré par IA, à valider par un humain. Aucune décision ne doit reposer sur ce texte
       sans vérification des chiffres source.
