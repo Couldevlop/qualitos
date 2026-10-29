@@ -62,7 +62,7 @@ export class EudbListComponent implements OnInit {
     this.dialog.open(EudbDraftDialogComponent, {
       panelClass: 'qos-dialog-panel', autoFocus: 'first-tabbable', restoreFocus: true
     }).afterClosed().subscribe((r?: EudbView) => {
-      if (r) { this.snack.open('Brouillon EUDB créé.', 'OK', { duration: 2200 }); this.refresh$.next(); }
+      if (r) { this.snack.open('Brouillon EUDB créé.', $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); }
     });
   }
 

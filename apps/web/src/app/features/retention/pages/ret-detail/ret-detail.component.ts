@@ -139,6 +139,6 @@ export class RetDetailComponent implements OnInit {
   private fail(err: unknown, fallback: string): void {
     // eslint-disable-next-line no-console
     console.warn('[ret-detail] action failed', (err as any)?.status, (err as any)?.error?.title);
-    this.snack.open(safeErrorMessage(err, fallback), 'OK', { duration: 4000 });
+    this.snack.open(safeErrorMessage(err, fallback), $localize`:@@common.ok:OK`, { duration: 4000 });
   }
 }

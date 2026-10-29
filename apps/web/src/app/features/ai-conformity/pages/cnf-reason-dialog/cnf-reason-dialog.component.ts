@@ -51,11 +51,11 @@ export class CnfReasonDialogComponent {
     op$
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
-        next: c => { this.snack.open(this.data.mode === 'REVOKE' ? 'Certificat révoqué.' : 'Évaluation marquée en échec.', 'OK', { duration: 2500 }); this.dialogRef.close(c); },
+        next: c => { this.snack.open(this.data.mode === 'REVOKE' ? 'Certificat révoqué.' : 'Évaluation marquée en échec.', $localize`:@@common.ok:OK`, { duration: 2500 }); this.dialogRef.close(c); },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[cnf-reason] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Opération impossible.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, 'Opération impossible.'), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

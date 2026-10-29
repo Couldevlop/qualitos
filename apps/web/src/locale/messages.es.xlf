@@ -10550,6 +10550,256 @@ Portal de clientes</target>
         <source>Entreprise</source>
         <target state="translated">Empresa</target>
       </trans-unit>
+      <trans-unit id="home.kpi.open-nc-internal" datatype="html">
+        <source>Non-conformités internes ouvertes</source>
+        <target state="translated">No conformidades internas abiertas</target>
+      </trans-unit>
+      <trans-unit id="home.kpi.fives-sample" datatype="html">
+        <source>Sur <x id="count"/> audits terminés</source>
+        <target state="translated">Sobre <x id="count"/> auditorías finalizadas</target>
+      </trans-unit>
+      <trans-unit id="home.kpi.fives-none" datatype="html">
+        <source>Aucun audit terminé</source>
+        <target state="translated">Ninguna auditoría finalizada</target>
+      </trans-unit>
+      <trans-unit id="home.kpi.unavailable" datatype="html">
+        <source>Indisponible — ouvrir le module</source>
+        <target state="translated">No disponible — abrir el módulo</target>
+      </trans-unit>
+      <trans-unit id="dashboard.exec.generated-at" datatype="html">
+        <source>Données du <x id="INTERPOLATION"/></source>
+        <target state="translated">Datos del <x id="INTERPOLATION"/></target>
+      </trans-unit>
+      <trans-unit id="dashboard.exec.trend-empty-title" datatype="html">
+        <source>Pas encore de mesure</source>
+        <target state="translated">Aún no hay mediciones</target>
+      </trans-unit>
+      <trans-unit id="dashboard.exec.trend-empty-hint" datatype="html">
+        <source>La courbe se trace dès que les indicateurs de qualité reçoivent leurs premières valeurs.</source>
+        <target state="translated">La curva aparece en cuanto los indicadores de calidad reciben sus primeros valores.</target>
+      </trans-unit>
+      <trans-unit id="dashboard.exec.norms-tracked-count" datatype="html">
+        <source>Normes suivies : <x id="count"/></source>
+        <target state="translated">Normas seguidas: <x id="count"/></target>
+      </trans-unit>
+      <trans-unit id="dashboard.chart.overall-quality" datatype="html">
+        <source>Qualité globale</source>
+        <target state="translated">Calidad global</target>
+      </trans-unit>
+      <trans-unit id="dashboard.chart.target" datatype="html">
+        <source>Cible</source>
+        <target state="translated">Objetivo</target>
+      </trans-unit>
+      <trans-unit id="dashboard.chart.defects" datatype="html">
+        <source>Défauts</source>
+        <target state="translated">Defectos</target>
+      </trans-unit>
+      <trans-unit id="dashboard.chart.cumulative" datatype="html">
+        <source>Cumul</source>
+        <target state="translated">Acumulado</target>
+      </trans-unit>
+      <trans-unit id="dashboard.chart.cumulative-pct" datatype="html">
+        <source>Cumul %</source>
+        <target state="translated">Acumulado %</target>
+      </trans-unit>
+      <trans-unit id="dashboard.csv.indicator" datatype="html">
+        <source>Indicateur</source>
+        <target state="translated">Indicador</target>
+      </trans-unit>
+      <trans-unit id="dashboard.csv.value" datatype="html">
+        <source>Valeur</source>
+        <target state="translated">Valor</target>
+      </trans-unit>
+      <trans-unit id="dashboard.csv.unit" datatype="html">
+        <source>Unité</source>
+        <target state="translated">Unidad</target>
+      </trans-unit>
+      <trans-unit id="dashboard.csv.target" datatype="html">
+        <source>Cible</source>
+        <target state="translated">Objetivo</target>
+      </trans-unit>
+      <trans-unit id="dashboard.csv.trend" datatype="html">
+        <source>Variation</source>
+        <target state="translated">Variación</target>
+      </trans-unit>
+      <trans-unit id="dashboard.csv.state" datatype="html">
+        <source>État</source>
+        <target state="translated">Estado</target>
+      </trans-unit>
+      <trans-unit id="restricted.title" datatype="html">
+        <source>Accès réservé à l'administrateur</source>
+        <target state="translated">Acceso reservado al administrador</target>
+      </trans-unit>
+      <trans-unit id="restricted.hint" datatype="html">
+        <source>Cette page relève de l'administration de votre organisation. Si vous en avez besoin, demandez à votre administrateur de vous attribuer le rôle correspondant.</source>
+        <target state="translated">Esta página forma parte de la administración de su organización. Si la necesita, pida a su administrador que le asigne el rol correspondiente.</target>
+      </trans-unit>
+      <trans-unit id="paginator.items-per-page" datatype="html">
+        <source>Éléments par page :</source>
+        <target state="translated">Elementos por página:</target>
+      </trans-unit>
+      <trans-unit id="paginator.next" datatype="html">
+        <source>Page suivante</source>
+        <target state="translated">Página siguiente</target>
+      </trans-unit>
+      <trans-unit id="paginator.previous" datatype="html">
+        <source>Page précédente</source>
+        <target state="translated">Página anterior</target>
+      </trans-unit>
+      <trans-unit id="paginator.first" datatype="html">
+        <source>Première page</source>
+        <target state="translated">Primera página</target>
+      </trans-unit>
+      <trans-unit id="paginator.last" datatype="html">
+        <source>Dernière page</source>
+        <target state="translated">Última página</target>
+      </trans-unit>
+      <trans-unit id="paginator.range-empty" datatype="html">
+        <source>0 sur <x id="total"/></source>
+        <target state="translated">0 de <x id="total"/></target>
+      </trans-unit>
+      <trans-unit id="paginator.range" datatype="html">
+        <source><x id="start"/> – <x id="end"/> sur <x id="total"/></source>
+        <target state="translated"><x id="start"/> – <x id="end"/> de <x id="total"/></target>
+      </trans-unit>
+      <trans-unit id="training.path-detail.passing" datatype="html">
+        <source>Seuil de réussite ≥ <x id="INTERPOLATION"/> %</source>
+        <target state="translated">Umbral de aprobación ≥ <x id="INTERPOLATION"/> %</target>
+      </trans-unit>
+      <trans-unit id="training.path-detail.validity" datatype="html">
+        <source>Validité <x id="INTERPOLATION"/> mois</source>
+        <target state="translated">Validez <x id="INTERPOLATION"/> meses</target>
+      </trans-unit>
+      <trans-unit id="complaint-nlp.input.placeholder" datatype="html">
+        <source>Produit cassé à la réception
+Livraison en retard
+…</source>
+        <target state="translated">Producto roto en la recepción
+Entrega con retraso
+…</target>
+      </trans-unit>
+      <trans-unit id="anomaly.form.context-placeholder" datatype="html">
+        <source>presse-2 / ligne 3</source>
+        <target state="translated">prensa-2 / línea 3</target>
+      </trans-unit>
+      <trans-unit id="calibration.equipment.code-placeholder" datatype="html">
+        <source>Ex. : CAL-PIED-001</source>
+        <target state="translated">Ej.: CAL-PIE-001</target>
+      </trans-unit>
+      <trans-unit id="calibration.plan.procedure-placeholder" datatype="html">
+        <source>Ex. : MO-CAL-014 rév. C</source>
+        <target state="translated">Ej.: MO-CAL-014 rev. C</target>
+      </trans-unit>
+      <trans-unit id="calibration.plan.tolerance-placeholder" datatype="html">
+        <source>Ex. : ± 0,02 mm sur toute l'étendue</source>
+        <target state="translated">Ej.: ± 0,02 mm en todo el rango</target>
+      </trans-unit>
+      <trans-unit id="calibration.plan.accreditation-placeholder" datatype="html">
+        <source>Ex. : COFRAC 2-1234</source>
+        <target state="translated">Ej.: COFRAC 2-1234</target>
+      </trans-unit>
+      <trans-unit id="calibration.record.provider-placeholder" datatype="html">
+        <source>Ex. : laboratoire accrédité COFRAC</source>
+        <target state="translated">Ej.: laboratorio acreditado COFRAC</target>
+      </trans-unit>
+      <trans-unit id="ehs.report.location-placeholder" datatype="html">
+        <source>Atelier B, zone 3…</source>
+        <target state="translated">Taller B, zona 3…</target>
+      </trans-unit>
+      <trans-unit id="iot.device.code-placeholder" datatype="html">
+        <source>Ex. : FRIGO-PHARMA-01</source>
+        <target state="translated">Ej.: FRIGO-FARMA-01</target>
+      </trans-unit>
+      <trans-unit id="iot.device.location-placeholder" datatype="html">
+        <source>Ex. : Pharmacie — réserve froide</source>
+        <target state="translated">Ej.: Farmacia – reserva fría</target>
+      </trans-unit>
+      <trans-unit id="iot.telemetry.metric-placeholder" datatype="html">
+        <source>Ex. : temperature</source>
+        <target state="translated">Ej.: temperatura</target>
+      </trans-unit>
+      <trans-unit id="iot.telemetry.unit-placeholder" datatype="html">
+        <source>Ex. : °C</source>
+        <target state="translated">Ej.: °C</target>
+      </trans-unit>
+      <trans-unit id="iot.telemetry.event-placeholder" datatype="html">
+        <source>Ex. : ALARME_PORTE_OUVERTE</source>
+        <target state="translated">Ej.: ALARMA_PUERTA_ABIERTA</target>
+      </trans-unit>
+      <trans-unit id="iot.threshold.metric-placeholder" datatype="html">
+        <source>Ex. : temperature</source>
+        <target state="translated">Ej.: temperatura</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.cause.weight-placeholder" datatype="html">
+        <source>Ex. : 0.85</source>
+        <target state="translated">Ej.: 0,85</target>
+      </trans-unit>
+      <trans-unit id="retention.rule.label-placeholder" datatype="html">
+        <source>Bulletins de paie salariés</source>
+        <target state="translated">Nóminas de los empleados</target>
+      </trans-unit>
+      <trans-unit id="storyboard.form.period-placeholder" datatype="html">
+        <source>Mai 2026</source>
+        <target state="translated">Mayo de 2026</target>
+      </trans-unit>
+      <trans-unit id="storyboard.form.scope-placeholder" datatype="html">
+        <source>Site de Lyon, atelier mécanique</source>
+        <target state="translated">Sede de Lyon, taller mecánico</target>
+      </trans-unit>
+      <trans-unit id="suppliers.cert.standard-placeholder" datatype="html">
+        <source>Ex. : iso-9001, iatf-16949, as9100</source>
+        <target state="translated">Ej.: iso-9001, iatf-16949, as9100</target>
+      </trans-unit>
+      <trans-unit id="training.path-dialog.code-placeholder" datatype="html">
+        <source>Ex. : yellow-belt-quality</source>
+        <target state="translated">Ej.: yellow-belt-quality</target>
+      </trans-unit>
+      <trans-unit id="training.skill-dialog.code-placeholder" datatype="html">
+        <source>Ex. : iso-9001-internal-auditor</source>
+        <target state="translated">Ej.: iso-9001-internal-auditor</target>
+      </trans-unit>
+      <trans-unit id="transfers.dialog.countries-placeholder" datatype="html">
+        <source>USA
+Inde</source>
+        <target state="translated">EE. UU.
+India</target>
+      </trans-unit>
+      <trans-unit id="transfers.dialog.safeguards-placeholder" datatype="html">
+        <source>SCC 2021 modules 2/3, mesures supplémentaires (chiffrement, contrôles d'accès), audit annuel…</source>
+        <target state="translated">CCT 2021 módulos 2/3, medidas adicionales (cifrado, controles de acceso), auditoría anual…</target>
+      </trans-unit>
+      <trans-unit id="transfers.dialog.derogation-placeholder" datatype="html">
+        <source>Cas Art. 49 invoqué (intérêt vital, contrat, motif d'intérêt public, …). Caractère exceptionnel et non répétitif documenté.</source>
+        <target state="translated">Caso del art. 49 invocado (interés vital, contrato, motivo de interés público, …). Carácter excepcional y no repetitivo documentado.</target>
+      </trans-unit>
+      <trans-unit id="transfers.dialog.categories-placeholder" datatype="html">
+        <source>Identité prospects
+Coordonnées professionnelles</source>
+        <target state="translated">Identidad de los clientes potenciales
+Datos de contacto profesionales</target>
+      </trans-unit>
+      <trans-unit id="privacy-notices.dialog.content-placeholder" datatype="html">
+        <source># Politique de confidentialité
+
+## Identité du responsable
+...</source>
+        <target state="translated"># Política de privacidad
+
+## Identidad del responsable
+...</target>
+      </trans-unit>
+      <trans-unit id="doc-gen.form.org-placeholder" datatype="html">
+        <source>ACME Industrie</source>
+        <target state="translated">ACME Industria</target>
+      </trans-unit>
+      <trans-unit id="doc-gen.form.size-placeholder" datatype="html">
+        <source>PME</source>
+        <target state="translated">PYME</target>
+      </trans-unit>
+      <trans-unit id="webhooks.form.name-placeholder" datatype="html">
+        <source>ERP production</source>
+        <target state="translated">ERP de producción</target>
+      </trans-unit>
       <trans-unit id="directory.picker.label" datatype="html">
         <source>Personne</source>
         <target state="translated">Persona</target>
@@ -15561,7 +15811,7 @@ salud</target>
         <target state="translated">Cierre definitivo. La violación sigue siendo consultable pero ya no puede cambiar de estado.</target>
       </trans-unit>
       <trans-unit id="breach.text.reject-hint" datatype="html">
-        <source>Rejet terminal. Utilise pour un faux positif, un doublon, ou un événement non-RGPD.</source>
+        <source>Rejet terminal. À utiliser pour un faux positif, un doublon, ou un événement non-RGPD.</source>
         <target state="translated">Rechazo definitivo. Úselo para un falso positivo, un duplicado o un evento ajeno al RGPD.</target>
       </trans-unit>
       <trans-unit id="breach.text.close-label" datatype="html">
@@ -17261,7 +17511,7 @@ historial de 12 meses</target>
         <target state="translated">Actualizado</target>
       </trans-unit>
       <trans-unit id="pdca.detail.steps-empty" datatype="html">
-        <source>Aucune étape pour l'instant. Clique sur Ajouter une étape pour démarrer ton cycle Plan → Do → Check → Act.</source>
+        <source>Aucune étape pour l'instant. Cliquez sur Ajouter une étape pour démarrer votre cycle Plan → Do → Check → Act.</source>
         <target state="translated">Aún no hay etapas. Haz clic en Añadir una etapa para iniciar tu ciclo Plan → Do → Check → Act.</target>
       </trans-unit>
       <trans-unit id="pdca.detail.not-found" datatype="html">
@@ -17289,7 +17539,7 @@ historial de 12 meses</target>
         <target state="translated">Nuevo ciclo PDCA</target>
       </trans-unit>
       <trans-unit id="pdca.create.subtitle" datatype="html">
-        <source>Décris brièvement le problème ou l'objectif. Les étapes Plan / Do / Check / Act pourront être ajoutées ensuite.</source>
+        <source>Décrivez brièvement le problème ou l'objectif. Les étapes Plan / Do / Check / Act pourront être ajoutées ensuite.</source>
         <target state="translated">Describe brevemente el problema o el objetivo. Las etapas Plan / Do / Check / Act se podrán añadir después.</target>
       </trans-unit>
       <trans-unit id="pdca.create.cycle-title-label" datatype="html">
@@ -17317,7 +17567,7 @@ historial de 12 meses</target>
         <target state="translated">Añadir una etapa</target>
       </trans-unit>
       <trans-unit id="pdca.step.subtitle" datatype="html">
-        <source>Décris l'action concrète et choisis sa phase dans le cycle PDCA.</source>
+        <source>Décrivez l'action concrète et choisissez sa phase dans le cycle PDCA.</source>
         <target state="translated">Describe la acción concreta y elige su fase en el ciclo PDCA.</target>
       </trans-unit>
       <trans-unit id="pdca.step.title-label" datatype="html">
@@ -17505,7 +17755,7 @@ historial de 12 meses</target>
         <target state="translated">Nueva auditoría 5S</target>
       </trans-unit>
       <trans-unit id="fives.create.hint" datatype="html">
-        <source>Définis la zone à auditer et la date prévue. Les scores Seiri · Seiton · Seiso · Seiketsu · Shitsuke seront saisis lors de l'audit terrain.</source>
+        <source>Définissez la zone à auditer et la date prévue. Les scores Seiri · Seiton · Seiso · Seiketsu · Shitsuke seront saisis lors de l'audit terrain.</source>
         <target state="translated">Define la zona a auditar y la fecha prevista. Las puntuaciones Seiri · Seiton · Seiso · Seiketsu · Shitsuke se registrarán durante la auditoría de campo.</target>
       </trans-unit>
       <trans-unit id="fives.create.zone-placeholder" datatype="html">
@@ -17793,7 +18043,7 @@ historial de 12 meses</target>
         <target state="translated">Esta subcausa se vinculará a</target>
       </trans-unit>
       <trans-unit id="ishikawa.cause.hint" datatype="html">
-        <source>Choisis la branche (M) et formule la cause de façon concise. Le scoring racine sera ajusté plus tard par l'analyse 5 Pourquoi.</source>
+        <source>Choisissez la branche (M) et formulez la cause de façon concise. Le scoring racine sera ajusté plus tard par l'analyse 5 Pourquoi.</source>
         <target state="translated">Elija la rama (M) y formule la causa de forma concisa. La puntuación raíz se ajustará más tarde mediante el análisis de los 5 Porqués.</target>
       </trans-unit>
       <trans-unit id="ishikawa.cause.branch-label" datatype="html">
@@ -18529,7 +18779,7 @@ historial de 12 meses</target>
         <target state="translated">Se unió el</target>
       </trans-unit>
       <trans-unit id="circles.detail.no-member" datatype="html">
-        <source>Aucun membre. Clique sur Ajouter un membre pour construire l'équipe.</source>
+        <source>Aucun membre. Cliquez sur Ajouter un membre pour construire l'équipe.</source>
         <target state="translated">Ningún miembro. Haga clic en Añadir miembro para formar el equipo.</target>
       </trans-unit>
       <trans-unit id="circles.detail.schedule-meeting" datatype="html">
@@ -18605,7 +18855,7 @@ historial de 12 meses</target>
         <target state="translated">Nuevo círculo de calidad</target>
       </trans-unit>
       <trans-unit id="circles.create.subtitle" datatype="html">
-        <source>Crée le groupe (5-10 personnes recommandé). Les membres, réunions et propositions seront ajoutés ensuite.</source>
+        <source>Créez le groupe (5-10 personnes recommandé). Les membres, réunions et propositions seront ajoutés ensuite.</source>
         <target state="translated">Crea el grupo (se recomiendan 5-10 personas). Los miembros, reuniones y propuestas se añadirán después.</target>
       </trans-unit>
       <trans-unit id="circles.create.name-label" datatype="html">
@@ -19737,7 +19987,7 @@ historial de 12 meses</target>
         <target state="translated">Declarar una no conformidad</target>
       </trans-unit>
       <trans-unit id="nc.create.hint" datatype="html">
-        <source>Saisis l'essentiel sur le terrain : la NC pourra être analysée et résolue ensuite. Hors-ligne, elle est mise en attente et synchronisée au retour du réseau.</source>
+        <source>Saisissez l'essentiel sur le terrain : la NC pourra être analysée et résolue ensuite. Hors-ligne, elle est mise en attente et synchronisée au retour du réseau.</source>
         <target state="translated">Captura lo esencial en el campo: la NC podrá analizarse y resolverse después. Sin conexión, se pone en cola y se sincroniza al volver la red.</target>
       </trans-unit>
       <trans-unit id="nc.create.category" datatype="html">
@@ -20093,7 +20343,7 @@ historial de 12 meses</target>
         <target state="translated">Resolver la no conformidad</target>
       </trans-unit>
       <trans-unit id="nc.resolve.hint" datatype="html">
-        <source>Décris l'action menée et la preuve d'efficacité pour clôturer la résolution de</source>
+        <source>Décrivez l'action menée et la preuve d'efficacité pour clôturer la résolution de</source>
         <target state="translated">Describe la acción realizada y la prueba de eficacia para cerrar la resolución de</target>
       </trans-unit>
       <trans-unit id="nc.resolve.note-label" datatype="html">
@@ -20569,7 +20819,7 @@ historial de 12 meses</target>
         <target state="translated">Tasa/cuota de IA superada para este inquilino: inténtelo más tarde.</target>
       </trans-unit>
       <trans-unit id="nlq-explore.err-unavailable" datatype="html">
-        <source>L'assistant IA est momentanément indisponible (modèle en cours de chargement ?). Réessaie dans un instant.</source>
+        <source>L'assistant IA est momentanément indisponible (modèle en cours de chargement ?). Réessayez dans un instant.</source>
         <target state="translated">El asistente de IA no está disponible por el momento (¿cargando el modelo?). Inténtelo de nuevo en breve.</target>
       </trans-unit>
       <trans-unit id="nlq-explore.err-generic" datatype="html">
@@ -20887,8 +21137,8 @@ historial de 12 meses</target>
         <target state="translated">Cinco métodos. Un único repositorio.</target>
       </trans-unit>
       <trans-unit id="home.hero.slogan" datatype="html">
-        <source>One platform. Five methods. Every industry.</source>
-        <target state="translated">One platform. Five methods. Every industry.</target>
+        <source>Une plateforme. Cinq méthodes. Tous les secteurs.</source>
+        <target state="translated">Una plataforma. Cinco métodos. Todos los sectores.</target>
       </trans-unit>
       <trans-unit id="home.hero.proof-methods" datatype="html">
         <source>5 méthodes fondamentales</source>
@@ -20949,18 +21199,6 @@ historial de 12 meses</target>
       <trans-unit id="home.kpi.audits-planned" datatype="html">
         <source>Audits planifiés</source>
         <target state="translated">Auditorías planificadas</target>
-      </trans-unit>
-      <trans-unit id="home.kpi.illustrative" datatype="html">
-        <source>Valeurs indicatives</source>
-        <target state="translated">Valores indicativos</target>
-      </trans-unit>
-      <trans-unit id="home.kpi.trend-up" datatype="html">
-        <source>en hausse</source>
-        <target state="translated">al alza</target>
-      </trans-unit>
-      <trans-unit id="home.kpi.trend-down" datatype="html">
-        <source>en baisse</source>
-        <target state="translated">a la baja</target>
       </trans-unit>
       <trans-unit id="home.actions.title" datatype="html">
         <source>Actions rapides</source>
@@ -21509,7 +21747,7 @@ historial de 12 meses</target>
         <target state="translated">Se produjo un error al procesar la pregunta.</target>
       </trans-unit>
       <trans-unit id="nlq.ask.err-unavailable" datatype="html">
-        <source>L'assistant IA est momentanément indisponible (modèle en cours de chargement ?). Réessaie dans un instant.</source>
+        <source>L'assistant IA est momentanément indisponible (modèle en cours de chargement ?). Réessayez dans un instant.</source>
         <target state="translated">El asistente de IA no está disponible temporalmente (¿modelo cargándose?). Inténtalo de nuevo en un momento.</target>
       </trans-unit>
       <trans-unit id="nlq.ask.err-untranslatable" datatype="html">
@@ -22993,8 +23231,8 @@ historial de 12 meses</target>
         <target state="translated">Cuadros de mando de proveedores, auditorías, no conformidades, certificados.</target>
       </trans-unit>
       <trans-unit id="suppliers.list.title" datatype="html">
-        <source>Supplier Quality</source>
-        <target state="translated">Supplier Quality</target>
+        <source>Qualité fournisseurs</source>
+        <target state="translated">Calidad de proveedores</target>
       </trans-unit>
       <trans-unit id="suppliers.type.component" datatype="html">
         <source>Composant</source>
@@ -23317,7 +23555,7 @@ historial de 12 meses</target>
         <target state="translated">Ej.: ISO_9001, IATF_16949, ISO_27001</target>
       </trans-unit>
       <trans-unit id="audits.create.subtitle" datatype="html">
-        <source>Définis le périmètre, le type et la date de l'audit. La checklist et les findings seront ajoutés ensuite.</source>
+        <source>Définissez le périmètre, le type et la date de l'audit. La checklist et les findings seront ajoutés ensuite.</source>
         <target state="translated">Define el alcance, el tipo y la fecha de la auditoría. La lista de verificación y los hallazgos se añadirán después.</target>
       </trans-unit>
       <trans-unit id="audits.create.success" datatype="html">
@@ -23357,7 +23595,7 @@ historial de 12 meses</target>
         <target state="translated">Lista de verificación (<x id="INTERPOLATION"/>)</target>
       </trans-unit>
       <trans-unit id="audits.detail.checklist-empty" datatype="html">
-        <source>Aucune question. Clique sur</source>
+        <source>Aucune question. Cliquez sur</source>
         <target state="translated">No hay preguntas. Haz clic en</target>
       </trans-unit>
       <trans-unit id="audits.detail.col-clause" datatype="html">
@@ -23645,7 +23883,7 @@ historial de 12 meses</target>
         <target state="translated">Auditorías</target>
       </trans-unit>
       <trans-unit id="audits.response.choose" datatype="html">
-        <source>Choisis Conforme ou NC.</source>
+        <source>Choisissez Conforme ou NC.</source>
         <target state="translated">Elige Conforme o NC.</target>
       </trans-unit>
       <trans-unit id="audits.response.conformant" datatype="html">
@@ -23665,7 +23903,7 @@ historial de 12 meses</target>
         <target state="translated">Respuesta / Observación (opcional)</target>
       </trans-unit>
       <trans-unit id="audits.response.observation-placeholder" datatype="html">
-        <source>Ce que tu as observé sur le terrain, références aux preuves rassemblées…</source>
+        <source>Ce que vous avez observé sur le terrain, références aux preuves rassemblées…</source>
         <target state="translated">Lo que observaste en el terreno, referencias a las evidencias recopiladas…</target>
       </trans-unit>
       <trans-unit id="audits.response.save-error" datatype="html">
@@ -24189,12 +24427,12 @@ historial de 12 meses</target>
         <target state="translated">Nuevo proyecto</target>
       </trans-unit>
       <trans-unit id="fmea.list.subtitle" datatype="html">
-        <source>Toute RPN supérieure à 200 exige une action corrective.</source>
-        <target state="translated">Todo RPN superior a 200 exige una acción correctiva.</target>
+        <source>Au-delà du seuil RPN critique de chaque projet (<x id="INTERPOLATION"/> par défaut), une action corrective est exigée.</source>
+        <target state="translated">Todo RPN superior al umbral crítico de su proyecto (<x id="INTERPOLATION"/> por defecto) exige una acción correctiva.</target>
       </trans-unit>
       <trans-unit id="fmea.list.title" datatype="html">
-        <source>FMEA — Risk Management</source>
-        <target state="translated">AMFE — Gestión de riesgos</target>
+        <source>AMDEC — Analyse des risques</source>
+        <target state="translated">AMFE — Análisis de riesgos</target>
       </trans-unit>
       <trans-unit id="fmea.type.bow-tie" datatype="html">
         <source>Bow-tie</source>

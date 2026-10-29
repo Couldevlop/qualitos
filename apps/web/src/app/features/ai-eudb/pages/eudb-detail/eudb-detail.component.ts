@@ -77,7 +77,7 @@ export class EudbDetailComponent implements OnInit {
   submit(r: EudbView): void {
     const userId = this.auth.snapshot()?.userId;
     if (!userId) {
-      this.snack.open('Session expirée — veuillez vous reconnecter.', 'OK', { duration: 4000 });
+      this.snack.open('Session expirée — veuillez vous reconnecter.', $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     const ref = this.dialog.open(ConfirmDialogComponent, {
@@ -90,7 +90,7 @@ export class EudbDetailComponent implements OnInit {
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
       this.svc.submit(r.id, { submittedByUserId: userId }).subscribe({
-        next: () => { this.snack.open('Soumis à EUDB.', 'OK', { duration: 2200 }); this.refresh$.next(); },
+        next: () => { this.snack.open('Soumis à EUDB.', $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); },
         error: err => this.fail(err, 'Soumission impossible.')
       });
     });
@@ -132,7 +132,7 @@ export class EudbDetailComponent implements OnInit {
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
       this.svc.delete(r.id).subscribe({
-        next: () => { this.snack.open('Enregistrement supprimé.', 'OK', { duration: 2200 }); this.router.navigate(['/ai-eudb']); },
+        next: () => { this.snack.open('Enregistrement supprimé.', $localize`:@@common.ok:OK`, { duration: 2200 }); this.router.navigate(['/ai-eudb']); },
         error: err => this.fail(err, 'Suppression impossible.')
       });
     });
@@ -150,6 +150,6 @@ export class EudbDetailComponent implements OnInit {
   private fail(err: unknown, fallback: string): void {
     // eslint-disable-next-line no-console
     console.warn('[eudb-detail] action failed', (err as any)?.status, (err as any)?.error?.title);
-    this.snack.open(safeErrorMessage(err, fallback), 'OK', { duration: 4000 });
+    this.snack.open(safeErrorMessage(err, fallback), $localize`:@@common.ok:OK`, { duration: 4000 });
   }
 }

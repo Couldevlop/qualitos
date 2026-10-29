@@ -156,7 +156,7 @@ export class FivesDetailComponent implements OnInit {
           console.warn('[fives-detail] delete failed', err?.status, err?.error?.title);
           this.snack.open(
             safeErrorMessage(err, $localize`:@@fives.detail.delete-error:Erreur lors de la suppression.`),
-            'OK', { duration: 4000 }
+            $localize`:@@common.ok:OK`, { duration: 4000 }
           );
         }
       });
@@ -189,7 +189,7 @@ export class FivesDetailComponent implements OnInit {
           console.warn('[fives-detail] score failed', err?.status, err?.error?.title);
           this.snack.open(
             safeErrorMessage(err, $localize`:@@fives.detail.score-error:Erreur lors de l'enregistrement.`),
-            'OK', { duration: 4000 }
+            $localize`:@@common.ok:OK`, { duration: 4000 }
           );
         }
       });
@@ -217,7 +217,7 @@ export class FivesDetailComponent implements OnInit {
         console.warn('[fives-detail] transition failed', action, err?.status, err?.error?.title);
         this.snack.open(
           safeErrorMessage(err, $localize`:@@fives.detail.transition-error:Erreur lors de la transition.`),
-          'OK', { duration: 4000 }
+          $localize`:@@common.ok:OK`, { duration: 4000 }
         );
       }
     });

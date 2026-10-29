@@ -18,7 +18,7 @@
     <mat-label i18n="@@audits.response.observation">Réponse / Observation (optionnel)</mat-label>
     <textarea matInput formControlName="response" rows="3"
               i18n-placeholder="@@audits.response.observation-placeholder"
-              placeholder="Ce que tu as observé sur le terrain, références aux preuves rassemblées…"></textarea>
+              placeholder="Ce que vous avez observé sur le terrain, références aux preuves rassemblées…"></textarea>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
@@ -27,7 +27,7 @@
       <mat-option [value]="true" i18n="@@audits.response.conformant">Conforme</mat-option>
       <mat-option [value]="false" i18n="@@audits.response.non-conformant">Non conforme</mat-option>
     </mat-select>
-    <mat-error *ngIf="form.controls.conformant.hasError('required')" i18n="@@audits.response.choose">Choisis Conforme ou NC.</mat-error>
+    <mat-error *ngIf="form.controls.conformant.hasError('required')" i18n="@@audits.response.choose">Choisissez Conforme ou NC.</mat-error>
   </mat-form-field>
 
 </qos-form-dialog>

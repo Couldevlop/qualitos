@@ -97,7 +97,7 @@ export class IshikawaCauseDialogComponent {
           console.warn('[ishikawa-cause-dialog] addCause failed', err?.status, err?.error?.title);
           this.snack.open(
             safeErrorMessage(err, $localize`:@@common.error-add:Erreur lors de l'ajout.`),
-            'OK', { duration: 4000 }
+            $localize`:@@common.ok:OK`, { duration: 4000 }
           );
         }
       });

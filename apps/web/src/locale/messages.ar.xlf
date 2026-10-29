@@ -10550,6 +10550,256 @@ Portail clients</source>
         <source>Entreprise</source>
         <target state="translated">المؤسسات</target>
       </trans-unit>
+      <trans-unit id="home.kpi.open-nc-internal" datatype="html">
+        <source>Non-conformités internes ouvertes</source>
+        <target state="translated">حالات عدم المطابقة الداخلية المفتوحة</target>
+      </trans-unit>
+      <trans-unit id="home.kpi.fives-sample" datatype="html">
+        <source>Sur <x id="count"/> audits terminés</source>
+        <target state="translated">على <x id="count"/> تدقيقات مكتملة</target>
+      </trans-unit>
+      <trans-unit id="home.kpi.fives-none" datatype="html">
+        <source>Aucun audit terminé</source>
+        <target state="translated">لا يوجد تدقيق مكتمل</target>
+      </trans-unit>
+      <trans-unit id="home.kpi.unavailable" datatype="html">
+        <source>Indisponible — ouvrir le module</source>
+        <target state="translated">غير متاح — افتح الوحدة</target>
+      </trans-unit>
+      <trans-unit id="dashboard.exec.generated-at" datatype="html">
+        <source>Données du <x id="INTERPOLATION"/></source>
+        <target state="translated">بيانات بتاريخ <x id="INTERPOLATION"/></target>
+      </trans-unit>
+      <trans-unit id="dashboard.exec.trend-empty-title" datatype="html">
+        <source>Pas encore de mesure</source>
+        <target state="translated">لا توجد قياسات بعد</target>
+      </trans-unit>
+      <trans-unit id="dashboard.exec.trend-empty-hint" datatype="html">
+        <source>La courbe se trace dès que les indicateurs de qualité reçoivent leurs premières valeurs.</source>
+        <target state="translated">يظهر المنحنى بمجرد أن تتلقى مؤشرات الجودة قيمها الأولى.</target>
+      </trans-unit>
+      <trans-unit id="dashboard.exec.norms-tracked-count" datatype="html">
+        <source>Normes suivies : <x id="count"/></source>
+        <target state="translated">المعايير المتابعة: <x id="count"/></target>
+      </trans-unit>
+      <trans-unit id="dashboard.chart.overall-quality" datatype="html">
+        <source>Qualité globale</source>
+        <target state="translated">الجودة الإجمالية</target>
+      </trans-unit>
+      <trans-unit id="dashboard.chart.target" datatype="html">
+        <source>Cible</source>
+        <target state="translated">الهدف</target>
+      </trans-unit>
+      <trans-unit id="dashboard.chart.defects" datatype="html">
+        <source>Défauts</source>
+        <target state="translated">العيوب</target>
+      </trans-unit>
+      <trans-unit id="dashboard.chart.cumulative" datatype="html">
+        <source>Cumul</source>
+        <target state="translated">التراكمي</target>
+      </trans-unit>
+      <trans-unit id="dashboard.chart.cumulative-pct" datatype="html">
+        <source>Cumul %</source>
+        <target state="translated">التراكمي %</target>
+      </trans-unit>
+      <trans-unit id="dashboard.csv.indicator" datatype="html">
+        <source>Indicateur</source>
+        <target state="translated">المؤشر</target>
+      </trans-unit>
+      <trans-unit id="dashboard.csv.value" datatype="html">
+        <source>Valeur</source>
+        <target state="translated">القيمة</target>
+      </trans-unit>
+      <trans-unit id="dashboard.csv.unit" datatype="html">
+        <source>Unité</source>
+        <target state="translated">الوحدة</target>
+      </trans-unit>
+      <trans-unit id="dashboard.csv.target" datatype="html">
+        <source>Cible</source>
+        <target state="translated">الهدف</target>
+      </trans-unit>
+      <trans-unit id="dashboard.csv.trend" datatype="html">
+        <source>Variation</source>
+        <target state="translated">التغير</target>
+      </trans-unit>
+      <trans-unit id="dashboard.csv.state" datatype="html">
+        <source>État</source>
+        <target state="translated">الحالة</target>
+      </trans-unit>
+      <trans-unit id="restricted.title" datatype="html">
+        <source>Accès réservé à l'administrateur</source>
+        <target state="translated">الوصول مقصور على المسؤول</target>
+      </trans-unit>
+      <trans-unit id="restricted.hint" datatype="html">
+        <source>Cette page relève de l'administration de votre organisation. Si vous en avez besoin, demandez à votre administrateur de vous attribuer le rôle correspondant.</source>
+        <target state="translated">تخص هذه الصفحة إدارة مؤسستك. إذا كنت بحاجة إليها، فاطلب من المسؤول منحك الدور المناسب.</target>
+      </trans-unit>
+      <trans-unit id="paginator.items-per-page" datatype="html">
+        <source>Éléments par page :</source>
+        <target state="translated">العناصر في كل صفحة:</target>
+      </trans-unit>
+      <trans-unit id="paginator.next" datatype="html">
+        <source>Page suivante</source>
+        <target state="translated">الصفحة التالية</target>
+      </trans-unit>
+      <trans-unit id="paginator.previous" datatype="html">
+        <source>Page précédente</source>
+        <target state="translated">الصفحة السابقة</target>
+      </trans-unit>
+      <trans-unit id="paginator.first" datatype="html">
+        <source>Première page</source>
+        <target state="translated">الصفحة الأولى</target>
+      </trans-unit>
+      <trans-unit id="paginator.last" datatype="html">
+        <source>Dernière page</source>
+        <target state="translated">الصفحة الأخيرة</target>
+      </trans-unit>
+      <trans-unit id="paginator.range-empty" datatype="html">
+        <source>0 sur <x id="total"/></source>
+        <target state="translated">0 من <x id="total"/></target>
+      </trans-unit>
+      <trans-unit id="paginator.range" datatype="html">
+        <source><x id="start"/> – <x id="end"/> sur <x id="total"/></source>
+        <target state="translated"><x id="start"/> – <x id="end"/> من <x id="total"/></target>
+      </trans-unit>
+      <trans-unit id="training.path-detail.passing" datatype="html">
+        <source>Seuil de réussite ≥ <x id="INTERPOLATION"/> %</source>
+        <target state="translated">عتبة النجاح ≥ <x id="INTERPOLATION"/> %</target>
+      </trans-unit>
+      <trans-unit id="training.path-detail.validity" datatype="html">
+        <source>Validité <x id="INTERPOLATION"/> mois</source>
+        <target state="translated">الصلاحية <x id="INTERPOLATION"/> شهرًا</target>
+      </trans-unit>
+      <trans-unit id="complaint-nlp.input.placeholder" datatype="html">
+        <source>Produit cassé à la réception
+Livraison en retard
+…</source>
+        <target state="translated">منتج مكسور عند الاستلام
+تأخر التسليم
+…</target>
+      </trans-unit>
+      <trans-unit id="anomaly.form.context-placeholder" datatype="html">
+        <source>presse-2 / ligne 3</source>
+        <target state="translated">مكبس-2 / خط 3</target>
+      </trans-unit>
+      <trans-unit id="calibration.equipment.code-placeholder" datatype="html">
+        <source>Ex. : CAL-PIED-001</source>
+        <target state="translated">مثال: CAL-GAUGE-001</target>
+      </trans-unit>
+      <trans-unit id="calibration.plan.procedure-placeholder" datatype="html">
+        <source>Ex. : MO-CAL-014 rév. C</source>
+        <target state="translated">مثال: MO-CAL-014 مراجعة C</target>
+      </trans-unit>
+      <trans-unit id="calibration.plan.tolerance-placeholder" datatype="html">
+        <source>Ex. : ± 0,02 mm sur toute l'étendue</source>
+        <target state="translated">مثال: ± 0.02 مم على كامل النطاق</target>
+      </trans-unit>
+      <trans-unit id="calibration.plan.accreditation-placeholder" datatype="html">
+        <source>Ex. : COFRAC 2-1234</source>
+        <target state="translated">مثال: COFRAC 2-1234</target>
+      </trans-unit>
+      <trans-unit id="calibration.record.provider-placeholder" datatype="html">
+        <source>Ex. : laboratoire accrédité COFRAC</source>
+        <target state="translated">مثال: مختبر معتمد من COFRAC</target>
+      </trans-unit>
+      <trans-unit id="ehs.report.location-placeholder" datatype="html">
+        <source>Atelier B, zone 3…</source>
+        <target state="translated">الورشة B، المنطقة 3…</target>
+      </trans-unit>
+      <trans-unit id="iot.device.code-placeholder" datatype="html">
+        <source>Ex. : FRIGO-PHARMA-01</source>
+        <target state="translated">مثال: PHARMA-FRIDGE-01</target>
+      </trans-unit>
+      <trans-unit id="iot.device.location-placeholder" datatype="html">
+        <source>Ex. : Pharmacie — réserve froide</source>
+        <target state="translated">مثال: الصيدلية – المخزن البارد</target>
+      </trans-unit>
+      <trans-unit id="iot.telemetry.metric-placeholder" datatype="html">
+        <source>Ex. : temperature</source>
+        <target state="translated">مثال: temperature</target>
+      </trans-unit>
+      <trans-unit id="iot.telemetry.unit-placeholder" datatype="html">
+        <source>Ex. : °C</source>
+        <target state="translated">مثال: °C</target>
+      </trans-unit>
+      <trans-unit id="iot.telemetry.event-placeholder" datatype="html">
+        <source>Ex. : ALARME_PORTE_OUVERTE</source>
+        <target state="translated">مثال: DOOR_OPEN_ALARM</target>
+      </trans-unit>
+      <trans-unit id="iot.threshold.metric-placeholder" datatype="html">
+        <source>Ex. : temperature</source>
+        <target state="translated">مثال: temperature</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.cause.weight-placeholder" datatype="html">
+        <source>Ex. : 0.85</source>
+        <target state="translated">مثال: 0.85</target>
+      </trans-unit>
+      <trans-unit id="retention.rule.label-placeholder" datatype="html">
+        <source>Bulletins de paie salariés</source>
+        <target state="translated">قسائم رواتب الموظفين</target>
+      </trans-unit>
+      <trans-unit id="storyboard.form.period-placeholder" datatype="html">
+        <source>Mai 2026</source>
+        <target state="translated">مايو 2026</target>
+      </trans-unit>
+      <trans-unit id="storyboard.form.scope-placeholder" datatype="html">
+        <source>Site de Lyon, atelier mécanique</source>
+        <target state="translated">موقع ليون، ورشة الميكانيك</target>
+      </trans-unit>
+      <trans-unit id="suppliers.cert.standard-placeholder" datatype="html">
+        <source>Ex. : iso-9001, iatf-16949, as9100</source>
+        <target state="translated">مثال: iso-9001, iatf-16949, as9100</target>
+      </trans-unit>
+      <trans-unit id="training.path-dialog.code-placeholder" datatype="html">
+        <source>Ex. : yellow-belt-quality</source>
+        <target state="translated">مثال: yellow-belt-quality</target>
+      </trans-unit>
+      <trans-unit id="training.skill-dialog.code-placeholder" datatype="html">
+        <source>Ex. : iso-9001-internal-auditor</source>
+        <target state="translated">مثال: iso-9001-internal-auditor</target>
+      </trans-unit>
+      <trans-unit id="transfers.dialog.countries-placeholder" datatype="html">
+        <source>USA
+Inde</source>
+        <target state="translated">الولايات المتحدة
+الهند</target>
+      </trans-unit>
+      <trans-unit id="transfers.dialog.safeguards-placeholder" datatype="html">
+        <source>SCC 2021 modules 2/3, mesures supplémentaires (chiffrement, contrôles d'accès), audit annuel…</source>
+        <target state="translated">البنود التعاقدية القياسية 2021 الوحدتان 2/3، تدابير إضافية (التشفير، ضوابط الوصول)، تدقيق سنوي…</target>
+      </trans-unit>
+      <trans-unit id="transfers.dialog.derogation-placeholder" datatype="html">
+        <source>Cas Art. 49 invoqué (intérêt vital, contrat, motif d'intérêt public, …). Caractère exceptionnel et non répétitif documenté.</source>
+        <target state="translated">الحالة المستند إليها من المادة 49 (مصلحة حيوية، عقد، مصلحة عامة، …). الطابع الاستثنائي وغير المتكرر موثق.</target>
+      </trans-unit>
+      <trans-unit id="transfers.dialog.categories-placeholder" datatype="html">
+        <source>Identité prospects
+Coordonnées professionnelles</source>
+        <target state="translated">هوية العملاء المحتملين
+بيانات الاتصال المهنية</target>
+      </trans-unit>
+      <trans-unit id="privacy-notices.dialog.content-placeholder" datatype="html">
+        <source># Politique de confidentialité
+
+## Identité du responsable
+...</source>
+        <target state="translated"># سياسة الخصوصية
+
+## هوية المسؤول عن المعالجة
+...</target>
+      </trans-unit>
+      <trans-unit id="doc-gen.form.org-placeholder" datatype="html">
+        <source>ACME Industrie</source>
+        <target state="translated">ACME للصناعة</target>
+      </trans-unit>
+      <trans-unit id="doc-gen.form.size-placeholder" datatype="html">
+        <source>PME</source>
+        <target state="translated">شركة صغيرة ومتوسطة</target>
+      </trans-unit>
+      <trans-unit id="webhooks.form.name-placeholder" datatype="html">
+        <source>ERP production</source>
+        <target state="translated">نظام ERP للإنتاج</target>
+      </trans-unit>
       <trans-unit id="directory.picker.label" datatype="html">
         <source>Personne</source>
         <target state="translated">الشخص</target>
@@ -15561,7 +15811,7 @@ santé</source>
         <target state="translated">إغلاق نهائي. يبقى الانتهاك قابلاً للاطلاع لكن لا يمكن تغيير حالته.</target>
       </trans-unit>
       <trans-unit id="breach.text.reject-hint" datatype="html">
-        <source>Rejet terminal. Utilise pour un faux positif, un doublon, ou un événement non-RGPD.</source>
+        <source>Rejet terminal. À utiliser pour un faux positif, un doublon, ou un événement non-RGPD.</source>
         <target state="translated">رفض نهائي. يُستخدَم لإيجابية خاطئة أو تكرار أو حدث غير خاضع للائحة العامة.</target>
       </trans-unit>
       <trans-unit id="breach.text.close-label" datatype="html">
@@ -17261,7 +17511,7 @@ historique 12 mois</source>
         <target state="translated">آخر تحديث</target>
       </trans-unit>
       <trans-unit id="pdca.detail.steps-empty" datatype="html">
-        <source>Aucune étape pour l'instant. Clique sur Ajouter une étape pour démarrer ton cycle Plan → Do → Check → Act.</source>
+        <source>Aucune étape pour l'instant. Cliquez sur Ajouter une étape pour démarrer votre cycle Plan → Do → Check → Act.</source>
         <target state="translated">لا توجد خطوات بعد. انقر على إضافة خطوة لبدء دورة Plan → Do → Check → Act.</target>
       </trans-unit>
       <trans-unit id="pdca.detail.not-found" datatype="html">
@@ -17289,7 +17539,7 @@ historique 12 mois</source>
         <target state="translated">دورة PDCA جديدة</target>
       </trans-unit>
       <trans-unit id="pdca.create.subtitle" datatype="html">
-        <source>Décris brièvement le problème ou l'objectif. Les étapes Plan / Do / Check / Act pourront être ajoutées ensuite.</source>
+        <source>Décrivez brièvement le problème ou l'objectif. Les étapes Plan / Do / Check / Act pourront être ajoutées ensuite.</source>
         <target state="translated">صِف المشكلة أو الهدف بإيجاز. يمكن إضافة خطوات Plan / Do / Check / Act لاحقًا.</target>
       </trans-unit>
       <trans-unit id="pdca.create.cycle-title-label" datatype="html">
@@ -17317,7 +17567,7 @@ historique 12 mois</source>
         <target state="translated">إضافة خطوة</target>
       </trans-unit>
       <trans-unit id="pdca.step.subtitle" datatype="html">
-        <source>Décris l'action concrète et choisis sa phase dans le cycle PDCA.</source>
+        <source>Décrivez l'action concrète et choisissez sa phase dans le cycle PDCA.</source>
         <target state="translated">صِف الإجراء الملموس واختر مرحلته في دورة PDCA.</target>
       </trans-unit>
       <trans-unit id="pdca.step.title-label" datatype="html">
@@ -17505,7 +17755,7 @@ historique 12 mois</source>
         <target state="translated">تدقيق 5S جديد</target>
       </trans-unit>
       <trans-unit id="fives.create.hint" datatype="html">
-        <source>Définis la zone à auditer et la date prévue. Les scores Seiri · Seiton · Seiso · Seiketsu · Shitsuke seront saisis lors de l'audit terrain.</source>
+        <source>Définissez la zone à auditer et la date prévue. Les scores Seiri · Seiton · Seiso · Seiketsu · Shitsuke seront saisis lors de l'audit terrain.</source>
         <target state="translated">حدّد المنطقة المراد تدقيقها والتاريخ المقرر. ستُدخَل درجات Seiri · Seiton · Seiso · Seiketsu · Shitsuke أثناء التدقيق الميداني.</target>
       </trans-unit>
       <trans-unit id="fives.create.zone-placeholder" datatype="html">
@@ -17793,7 +18043,7 @@ historique 12 mois</source>
         <target state="translated">سيُربط هذا السبب الفرعي بـ</target>
       </trans-unit>
       <trans-unit id="ishikawa.cause.hint" datatype="html">
-        <source>Choisis la branche (M) et formule la cause de façon concise. Le scoring racine sera ajusté plus tard par l'analyse 5 Pourquoi.</source>
+        <source>Choisissez la branche (M) et formulez la cause de façon concise. Le scoring racine sera ajusté plus tard par l'analyse 5 Pourquoi.</source>
         <target state="translated">اختر الفرع (M) وصِغ السبب بإيجاز. سيُعدَّل تقييم السبب الجذري لاحقًا عبر تحليل 5 لماذا.</target>
       </trans-unit>
       <trans-unit id="ishikawa.cause.branch-label" datatype="html">
@@ -18529,7 +18779,7 @@ historique 12 mois</source>
         <target state="translated">تاريخ الانضمام</target>
       </trans-unit>
       <trans-unit id="circles.detail.no-member" datatype="html">
-        <source>Aucun membre. Clique sur Ajouter un membre pour construire l'équipe.</source>
+        <source>Aucun membre. Cliquez sur Ajouter un membre pour construire l'équipe.</source>
         <target state="translated">لا يوجد أعضاء. انقر على «إضافة عضو» لبناء الفريق.</target>
       </trans-unit>
       <trans-unit id="circles.detail.schedule-meeting" datatype="html">
@@ -18605,7 +18855,7 @@ historique 12 mois</source>
         <target state="translated">حلقة جودة جديدة</target>
       </trans-unit>
       <trans-unit id="circles.create.subtitle" datatype="html">
-        <source>Crée le groupe (5-10 personnes recommandé). Les membres, réunions et propositions seront ajoutés ensuite.</source>
+        <source>Créez le groupe (5-10 personnes recommandé). Les membres, réunions et propositions seront ajoutés ensuite.</source>
         <target state="translated">أنشئ المجموعة (يُنصح بـ 5-10 أشخاص). ستُضاف الأعضاء والاجتماعات والمقترحات لاحقاً.</target>
       </trans-unit>
       <trans-unit id="circles.create.name-label" datatype="html">
@@ -19737,7 +19987,7 @@ historique 12 mois</source>
         <target state="translated">الإبلاغ عن عدم مطابقة</target>
       </trans-unit>
       <trans-unit id="nc.create.hint" datatype="html">
-        <source>Saisis l'essentiel sur le terrain : la NC pourra être analysée et résolue ensuite. Hors-ligne, elle est mise en attente et synchronisée au retour du réseau.</source>
+        <source>Saisissez l'essentiel sur le terrain : la NC pourra être analysée et résolue ensuite. Hors-ligne, elle est mise en attente et synchronisée au retour du réseau.</source>
         <target state="translated">سجّل الأساسيات ميدانيًا: يمكن تحليل عدم المطابقة وحلّها لاحقًا. دون اتصال، تُدرَج في قائمة الانتظار وتُزامَن عند عودة الشبكة.</target>
       </trans-unit>
       <trans-unit id="nc.create.category" datatype="html">
@@ -20093,7 +20343,7 @@ historique 12 mois</source>
         <target state="translated">حل عدم المطابقة</target>
       </trans-unit>
       <trans-unit id="nc.resolve.hint" datatype="html">
-        <source>Décris l'action menée et la preuve d'efficacité pour clôturer la résolution de</source>
+        <source>Décrivez l'action menée et la preuve d'efficacité pour clôturer la résolution de</source>
         <target state="translated">صِف الإجراء المُتّخذ ودليل الفعالية لإغلاق حل</target>
       </trans-unit>
       <trans-unit id="nc.resolve.note-label" datatype="html">
@@ -20569,7 +20819,7 @@ historique 12 mois</source>
         <target state="translated">تم تجاوز معدّل/حصة الذكاء الاصطناعي لهذا المستأجر — أعد المحاولة لاحقًا.</target>
       </trans-unit>
       <trans-unit id="nlq-explore.err-unavailable" datatype="html">
-        <source>L'assistant IA est momentanément indisponible (modèle en cours de chargement ?). Réessaie dans un instant.</source>
+        <source>L'assistant IA est momentanément indisponible (modèle en cours de chargement ?). Réessayez dans un instant.</source>
         <target state="translated">مساعد الذكاء الاصطناعي غير متاح مؤقتًا (هل النموذج قيد التحميل؟). أعد المحاولة بعد قليل.</target>
       </trans-unit>
       <trans-unit id="nlq-explore.err-generic" datatype="html">
@@ -20887,8 +21137,8 @@ historique 12 mois</source>
         <target state="translated">خمس منهجيات. مرجع واحد.</target>
       </trans-unit>
       <trans-unit id="home.hero.slogan" datatype="html">
-        <source>One platform. Five methods. Every industry.</source>
-        <target state="translated">One platform. Five methods. Every industry.</target>
+        <source>Une plateforme. Cinq méthodes. Tous les secteurs.</source>
+        <target state="translated">منصة واحدة. خمس طرق. كل القطاعات.</target>
       </trans-unit>
       <trans-unit id="home.hero.proof-methods" datatype="html">
         <source>5 méthodes fondamentales</source>
@@ -20949,18 +21199,6 @@ historique 12 mois</source>
       <trans-unit id="home.kpi.audits-planned" datatype="html">
         <source>Audits planifiés</source>
         <target state="translated">عمليات التدقيق المخططة</target>
-      </trans-unit>
-      <trans-unit id="home.kpi.illustrative" datatype="html">
-        <source>Valeurs indicatives</source>
-        <target state="translated">قيم إرشادية</target>
-      </trans-unit>
-      <trans-unit id="home.kpi.trend-up" datatype="html">
-        <source>en hausse</source>
-        <target state="translated">في ارتفاع</target>
-      </trans-unit>
-      <trans-unit id="home.kpi.trend-down" datatype="html">
-        <source>en baisse</source>
-        <target state="translated">في انخفاض</target>
       </trans-unit>
       <trans-unit id="home.actions.title" datatype="html">
         <source>Actions rapides</source>
@@ -21509,7 +21747,7 @@ historique 12 mois</source>
         <target state="translated">حدث خطأ أثناء معالجة السؤال.</target>
       </trans-unit>
       <trans-unit id="nlq.ask.err-unavailable" datatype="html">
-        <source>L'assistant IA est momentanément indisponible (modèle en cours de chargement ?). Réessaie dans un instant.</source>
+        <source>L'assistant IA est momentanément indisponible (modèle en cours de chargement ?). Réessayez dans un instant.</source>
         <target state="translated">المساعد بالذكاء الاصطناعي غير متاح مؤقتًا (هل يجري تحميل النموذج؟). أعد المحاولة بعد لحظات.</target>
       </trans-unit>
       <trans-unit id="nlq.ask.err-untranslatable" datatype="html">
@@ -22993,8 +23231,8 @@ historique 12 mois</source>
         <target state="translated">بطاقات أداء الموردين، عمليات التدقيق، حالات عدم المطابقة، الشهادات.</target>
       </trans-unit>
       <trans-unit id="suppliers.list.title" datatype="html">
-        <source>Supplier Quality</source>
-        <target state="translated">Supplier Quality</target>
+        <source>Qualité fournisseurs</source>
+        <target state="translated">جودة الموردين</target>
       </trans-unit>
       <trans-unit id="suppliers.type.component" datatype="html">
         <source>Composant</source>
@@ -23317,7 +23555,7 @@ historique 12 mois</source>
         <target state="translated">مثال: ISO_9001، IATF_16949، ISO_27001</target>
       </trans-unit>
       <trans-unit id="audits.create.subtitle" datatype="html">
-        <source>Définis le périmètre, le type et la date de l'audit. La checklist et les findings seront ajoutés ensuite.</source>
+        <source>Définissez le périmètre, le type et la date de l'audit. La checklist et les findings seront ajoutés ensuite.</source>
         <target state="translated">حدّد نطاق التدقيق ونوعه وتاريخه. ستُضاف قائمة التحقّق والملاحظات لاحقًا.</target>
       </trans-unit>
       <trans-unit id="audits.create.success" datatype="html">
@@ -23357,7 +23595,7 @@ historique 12 mois</source>
         <target state="translated">قائمة التحقّق (<x id="INTERPOLATION"/>)</target>
       </trans-unit>
       <trans-unit id="audits.detail.checklist-empty" datatype="html">
-        <source>Aucune question. Clique sur</source>
+        <source>Aucune question. Cliquez sur</source>
         <target state="translated">لا توجد أسئلة. انقر على</target>
       </trans-unit>
       <trans-unit id="audits.detail.col-clause" datatype="html">
@@ -23645,7 +23883,7 @@ historique 12 mois</source>
         <target state="translated">التدقيقات</target>
       </trans-unit>
       <trans-unit id="audits.response.choose" datatype="html">
-        <source>Choisis Conforme ou NC.</source>
+        <source>Choisissez Conforme ou NC.</source>
         <target state="translated">اختر مطابق أو NC.</target>
       </trans-unit>
       <trans-unit id="audits.response.conformant" datatype="html">
@@ -23665,7 +23903,7 @@ historique 12 mois</source>
         <target state="translated">الإجابة / الملاحظة (اختياري)</target>
       </trans-unit>
       <trans-unit id="audits.response.observation-placeholder" datatype="html">
-        <source>Ce que tu as observé sur le terrain, références aux preuves rassemblées…</source>
+        <source>Ce que vous avez observé sur le terrain, références aux preuves rassemblées…</source>
         <target state="translated">ما لاحظته ميدانيًا، والإشارات إلى الأدلّة المجمّعة…</target>
       </trans-unit>
       <trans-unit id="audits.response.save-error" datatype="html">
@@ -24189,12 +24427,12 @@ historique 12 mois</source>
         <target state="translated">مشروع جديد</target>
       </trans-unit>
       <trans-unit id="fmea.list.subtitle" datatype="html">
-        <source>Toute RPN supérieure à 200 exige une action corrective.</source>
-        <target state="translated">كل RPN يتجاوز 200 يستلزم إجراءً تصحيحيًا.</target>
+        <source>Au-delà du seuil RPN critique de chaque projet (<x id="INTERPOLATION"/> par défaut), une action corrective est exigée.</source>
+        <target state="translated">كل RPN يتجاوز العتبة الحرجة لمشروعه (<x id="INTERPOLATION"/> افتراضيًا) يستلزم إجراءً تصحيحيًا.</target>
       </trans-unit>
       <trans-unit id="fmea.list.title" datatype="html">
-        <source>FMEA — Risk Management</source>
-        <target state="translated">FMEA — إدارة المخاطر</target>
+        <source>AMDEC — Analyse des risques</source>
+        <target state="translated">FMEA — تحليل المخاطر</target>
       </trans-unit>
       <trans-unit id="fmea.type.bow-tie" datatype="html">
         <source>Bow-tie</source>

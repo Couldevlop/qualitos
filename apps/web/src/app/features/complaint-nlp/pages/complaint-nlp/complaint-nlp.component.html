@@ -13,7 +13,7 @@
         <mat-form-field appearance="outline" class="full">
           <mat-label i18n="@@complaintnlp.texts-label">Une réclamation par ligne</mat-label>
           <textarea matInput rows="8" formControlName="textsText"
-                    placeholder="Produit cassé à la réception&#10;Livraison en retard&#10;…"></textarea>
+                    placeholder="Produit cassé à la réception&#10;Livraison en retard&#10;…" i18n-placeholder="@@complaint-nlp.input.placeholder"></textarea>
         </mat-form-field>
         <div class="actions">
           <button mat-raised-button color="primary" type="submit" [disabled]="loading || form.invalid">

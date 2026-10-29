@@ -11,7 +11,7 @@
   <mat-form-field appearance="outline" class="full">
     <mat-label i18n="@@iot.telemetry.metric">Métrique</mat-label>
     <input matInput formControlName="metric" maxlength="100" required
-           placeholder="Ex. : temperature">
+           placeholder="Ex. : temperature" i18n-placeholder="@@iot.telemetry.metric-placeholder">
   </mat-form-field>
 
   <div class="known" *ngIf="data.knownMetrics.length">
@@ -28,14 +28,14 @@
 
     <mat-form-field appearance="outline" class="col">
       <mat-label i18n="@@iot.telemetry.unit">Unité</mat-label>
-      <input matInput formControlName="unit" maxlength="32" placeholder="Ex. : °C">
+      <input matInput formControlName="unit" maxlength="32" placeholder="Ex. : °C" i18n-placeholder="@@iot.telemetry.unit-placeholder">
     </mat-form-field>
   </div>
 
   <mat-form-field appearance="outline" class="full">
     <mat-label i18n="@@iot.telemetry.value-text">Valeur textuelle</mat-label>
     <input matInput formControlName="valueText" maxlength="500"
-           placeholder="Ex. : ALARME_PORTE_OUVERTE">
+           placeholder="Ex. : ALARME_PORTE_OUVERTE" i18n-placeholder="@@iot.telemetry.event-placeholder">
   </mat-form-field>
 
   <p class="hint error" *ngIf="form.hasError('valueRequired')"

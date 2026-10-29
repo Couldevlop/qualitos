@@ -47,11 +47,11 @@ export class CyiMitigateDialogComponent {
     })
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
-        next: i => { this.snack.open('Incident endigué.', 'OK', { duration: 2200 }); this.dialogRef.close(i); },
+        next: i => { this.snack.open('Incident endigué.', $localize`:@@common.ok:OK`, { duration: 2200 }); this.dialogRef.close(i); },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[cyi-mitigate] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Endiguement impossible.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, 'Endiguement impossible.'), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

@@ -63,7 +63,7 @@ export class CirclesMeetingDialogComponent {
           console.warn('[circles-meeting-dialog] failed', err?.status, err?.error?.title);
           this.snack.open(
             safeErrorMessage(err, $localize`:@@circles.meeting.error:Erreur lors de la planification.`),
-            'OK', { duration: 4000 }
+            $localize`:@@common.ok:OK`, { duration: 4000 }
           );
         }
       });

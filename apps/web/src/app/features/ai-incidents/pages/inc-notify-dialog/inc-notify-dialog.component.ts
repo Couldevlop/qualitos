@@ -45,11 +45,11 @@ export class IncNotifyDialogComponent {
     })
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
-        next: i => { this.snack.open('Régulateur notifié.', 'OK', { duration: 2500 }); this.dialogRef.close(i); },
+        next: i => { this.snack.open('Régulateur notifié.', $localize`:@@common.ok:OK`, { duration: 2500 }); this.dialogRef.close(i); },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[inc-notify] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Notification impossible.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, 'Notification impossible.'), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

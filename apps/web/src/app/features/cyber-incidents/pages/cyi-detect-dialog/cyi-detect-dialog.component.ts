@@ -68,19 +68,19 @@ export class CyiDetectDialogComponent {
     const now = Date.now();
     const detectedMs = new Date(v.detectedAt).getTime();
     if (detectedMs > now) {
-      this.snack.open('La date de détection ne peut pas être dans le futur.', 'OK', { duration: 4000 });
+      this.snack.open('La date de détection ne peut pas être dans le futur.', $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     if (v.occurredAt) {
       const occMs = new Date(v.occurredAt).getTime();
       if (occMs > detectedMs) {
-        this.snack.open('La date de survenue doit être ≤ à la date de détection.', 'OK', { duration: 4000 });
+        this.snack.open('La date de survenue doit être ≤ à la date de détection.', $localize`:@@common.ok:OK`, { duration: 4000 });
         return;
       }
     }
     const userId = this.auth.snapshot()?.userId;
     if (!userId) {
-      this.snack.open('Session expirée — veuillez vous reconnecter.', 'OK', { duration: 4000 });
+      this.snack.open('Session expirée — veuillez vous reconnecter.', $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     this.submitting = true;
@@ -103,7 +103,7 @@ export class CyiDetectDialogComponent {
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[cyi-detect] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Enregistrement impossible.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, 'Enregistrement impossible.'), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

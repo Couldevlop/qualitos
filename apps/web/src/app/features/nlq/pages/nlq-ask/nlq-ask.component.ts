@@ -119,7 +119,7 @@ export class NlqAskComponent {
 
   private messageFor(err: HttpErrorResponse): string {
     if (err.status === 502 || err.status === 503) {
-      return $localize`:@@nlq.ask.err-unavailable:L'assistant IA est momentanément indisponible (modèle en cours de chargement ?). Réessaie dans un instant.`;
+      return $localize`:@@nlq.ask.err-unavailable:L'assistant IA est momentanément indisponible (modèle en cours de chargement ?). Réessayez dans un instant.`;
     }
     if (err.status === 422 || err.status === 400) {
       return $localize`:@@nlq.ask.err-untranslatable:La question n'a pas pu être traduite en requête sûre. Reformule-la plus simplement.`;

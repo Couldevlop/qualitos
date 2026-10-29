@@ -59,7 +59,7 @@ export class CyiNotificationDialogComponent {
     if (this.form.invalid || this.submitting) { this.form.markAllAsTouched(); return; }
     const v = this.form.getRawValue();
     if (new Date(v.sentAt).getTime() > Date.now()) {
-      this.snack.open('La date d\'envoi ne peut pas être dans le futur.', 'OK', { duration: 4000 });
+      this.snack.open('La date d\'envoi ne peut pas être dans le futur.', $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     this.submitting = true;
@@ -71,11 +71,11 @@ export class CyiNotificationDialogComponent {
     op$
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
-        next: i => { this.snack.open('Notification enregistrée.', 'OK', { duration: 2200 }); this.dialogRef.close(i); },
+        next: i => { this.snack.open('Notification enregistrée.', $localize`:@@common.ok:OK`, { duration: 2200 }); this.dialogRef.close(i); },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[cyi-notif] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Enregistrement impossible.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, 'Enregistrement impossible.'), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

@@ -52,4 +52,42 @@ TRANSLATIONS = {
     'enum.billing-tier.standard': ('Standard', 'Standard', 'Estándar', 'قياسي', 'スタンダード', '标准版'),
     'enum.billing-tier.pro': ('Pro', 'Pro', 'Pro', 'احترافي', 'プロ', '专业版'),
     'enum.billing-tier.enterprise': ('Entreprise', 'Enterprise', 'Empresa', 'المؤسسات', 'エンタープライズ', '企业版'),
+
+    # Accueil : indicateurs lus dans les modules (plus de valeurs inventées).
+    'home.kpi.open-nc-internal': ('Non-conformités internes ouvertes', 'Open internal non-conformances', 'No conformidades internas abiertas', 'حالات عدم المطابقة الداخلية المفتوحة', '未対応の社内不適合', '未结内部不合格项'),
+    'home.kpi.fives-sample': ('Sur {$count} audits terminés', 'Across {$count} completed audits', 'Sobre {$count} auditorías finalizadas', 'على {$count} تدقيقات مكتملة', '完了した監査 {$count} 件', '基于 {$count} 次已完成审核'),
+    'home.kpi.fives-none': ('Aucun audit terminé', 'No completed audit', 'Ninguna auditoría finalizada', 'لا يوجد تدقيق مكتمل', '完了した監査はありません', '暂无已完成审核'),
+    'home.kpi.unavailable': ('Indisponible — ouvrir le module', 'Unavailable — open the module', 'No disponible — abrir el módulo', 'غير متاح — افتح الوحدة', '取得できません — モジュールを開く', '暂不可用 — 打开模块'),
+
+    # Tableau de bord exécutif.
+    'dashboard.exec.generated-at': ('Données du {$INTERPOLATION}', 'Data as of {$INTERPOLATION}', 'Datos del {$INTERPOLATION}', 'بيانات بتاريخ {$INTERPOLATION}', '{$INTERPOLATION} 時点のデータ', '数据时间：{$INTERPOLATION}'),
+    'dashboard.exec.trend-empty-title': ('Pas encore de mesure', 'No measurement yet', 'Aún no hay mediciones', 'لا توجد قياسات بعد', 'まだ測定値がありません', '暂无测量数据'),
+    'dashboard.exec.trend-empty-hint': ('La courbe se trace dès que les indicateurs de qualité reçoivent leurs premières valeurs.', 'The curve appears as soon as the quality indicators receive their first values.', 'La curva aparece en cuanto los indicadores de calidad reciben sus primeros valores.', 'يظهر المنحنى بمجرد أن تتلقى مؤشرات الجودة قيمها الأولى.', '品質指標に最初の値が入ると曲線が表示されます。', '质量指标获得首批数值后即会绘制曲线。'),
+    'dashboard.exec.norms-tracked-count': ('Normes suivies : {$count}', 'Standards tracked: {$count}', 'Normas seguidas: {$count}', 'المعايير المتابعة: {$count}', '追跡中の規格：{$count}', '跟踪的标准：{$count}'),
+    'dashboard.chart.overall-quality': ('Qualité globale', 'Overall quality', 'Calidad global', 'الجودة الإجمالية', '総合品質', '整体质量'),
+    'dashboard.chart.target': ('Cible', 'Target', 'Objetivo', 'الهدف', '目標', '目标'),
+    'dashboard.chart.defects': ('Défauts', 'Defects', 'Defectos', 'العيوب', '不具合', '缺陷'),
+    'dashboard.chart.cumulative': ('Cumul', 'Cumulative', 'Acumulado', 'التراكمي', '累積', '累计'),
+    'dashboard.chart.cumulative-pct': ('Cumul %', 'Cumulative %', 'Acumulado %', 'التراكمي %', '累積 %', '累计 %'),
+    'dashboard.csv.indicator': ('Indicateur', 'Indicator', 'Indicador', 'المؤشر', '指標', '指标'),
+    'dashboard.csv.value': ('Valeur', 'Value', 'Valor', 'القيمة', '値', '数值'),
+    'dashboard.csv.unit': ('Unité', 'Unit', 'Unidad', 'الوحدة', '単位', '单位'),
+    'dashboard.csv.target': ('Cible', 'Target', 'Objetivo', 'الهدف', '目標', '目标'),
+    'dashboard.csv.trend': ('Variation', 'Change', 'Variación', 'التغير', '変化', '变化'),
+    'dashboard.csv.state': ('État', 'Status', 'Estado', 'الحالة', '状態', '状态'),
+
+    # Écran « accès réservé » (garde de rôle).
+    'restricted.title': ("Accès réservé à l'administrateur", 'Restricted to administrators', 'Acceso reservado al administrador', 'الوصول مقصور على المسؤول', '管理者専用ページです', '仅限管理员访问'),
+    'restricted.hint': ("Cette page relève de l'administration de votre organisation. Si vous en avez besoin, demandez à votre administrateur de vous attribuer le rôle correspondant.", "This page belongs to your organisation's administration. If you need it, ask your administrator to grant you the matching role.",'Esta página forma parte de la administración de su organización. Si la necesita, pida a su administrador que le asigne el rol correspondiente.', 'تخص هذه الصفحة إدارة مؤسستك. إذا كنت بحاجة إليها، فاطلب من المسؤول منحك الدور المناسب.', 'このページは組織の管理機能です。必要な場合は、管理者に該当するロールの付与を依頼してください。', '此页面属于贵组织的管理功能。如需使用，请联系管理员为您分配相应角色。'),
+    # Paginateur Material (MatPaginatorIntl global).
+    'paginator.items-per-page': ('Éléments par page :', 'Items per page:', 'Elementos por página:', 'العناصر في كل صفحة:', '1ページあたりの件数：', '每页条数：'),
+    'paginator.next': ('Page suivante', 'Next page', 'Página siguiente', 'الصفحة التالية', '次のページ', '下一页'),
+    'paginator.previous': ('Page précédente', 'Previous page', 'Página anterior', 'الصفحة السابقة', '前のページ', '上一页'),
+    'paginator.first': ('Première page', 'First page', 'Primera página', 'الصفحة الأولى', '最初のページ', '第一页'),
+    'paginator.last': ('Dernière page', 'Last page', 'Última página', 'الصفحة الأخيرة', '最後のページ', '最后一页'),
+    'paginator.range-empty': ('0 sur {$total}', '0 of {$total}', '0 de {$total}', '0 من {$total}', '{$total} 件中 0 件', '共 {$total} 条，显示 0 条'),
+    'paginator.range': ('{$start} – {$end} sur {$total}', '{$start} – {$end} of {$total}', '{$start} – {$end} de {$total}', '{$start} – {$end} من {$total}', '{$total} 件中 {$start} – {$end} 件', '第 {$start} – {$end} 条，共 {$total} 条'),
+    # Parcours de formation.
+    'training.path-detail.passing': ('Seuil de réussite ≥ {$INTERPOLATION} %', 'Pass mark ≥ {$INTERPOLATION} %', 'Umbral de aprobación ≥ {$INTERPOLATION} %', 'عتبة النجاح ≥ {$INTERPOLATION} %', '合格基準 ≥ {$INTERPOLATION} %', '通过线 ≥ {$INTERPOLATION} %'),
+    'training.path-detail.validity': ('Validité {$INTERPOLATION} mois', 'Valid for {$INTERPOLATION} months', 'Validez {$INTERPOLATION} meses', 'الصلاحية {$INTERPOLATION} شهرًا', '有効期間 {$INTERPOLATION} か月', '有效期 {$INTERPOLATION} 个月'),
 }

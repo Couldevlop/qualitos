@@ -56,11 +56,11 @@ export class CyiLinkBreachDialogComponent {
     this.svc.linkBreach(this.data.id, { breachId: this.form.getRawValue().breachId.trim() })
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
-        next: i => { this.snack.open('Violation RGPD liée.', 'OK', { duration: 2200 }); this.dialogRef.close(i); },
+        next: i => { this.snack.open('Violation RGPD liée.', $localize`:@@common.ok:OK`, { duration: 2200 }); this.dialogRef.close(i); },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[cyi-link] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Liaison impossible.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, 'Liaison impossible.'), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

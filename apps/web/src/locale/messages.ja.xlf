@@ -10550,6 +10550,256 @@ Portail clients</source>
         <source>Entreprise</source>
         <target state="translated">エンタープライズ</target>
       </trans-unit>
+      <trans-unit id="home.kpi.open-nc-internal" datatype="html">
+        <source>Non-conformités internes ouvertes</source>
+        <target state="translated">未対応の社内不適合</target>
+      </trans-unit>
+      <trans-unit id="home.kpi.fives-sample" datatype="html">
+        <source>Sur <x id="count"/> audits terminés</source>
+        <target state="translated">完了した監査 <x id="count"/> 件</target>
+      </trans-unit>
+      <trans-unit id="home.kpi.fives-none" datatype="html">
+        <source>Aucun audit terminé</source>
+        <target state="translated">完了した監査はありません</target>
+      </trans-unit>
+      <trans-unit id="home.kpi.unavailable" datatype="html">
+        <source>Indisponible — ouvrir le module</source>
+        <target state="translated">取得できません — モジュールを開く</target>
+      </trans-unit>
+      <trans-unit id="dashboard.exec.generated-at" datatype="html">
+        <source>Données du <x id="INTERPOLATION"/></source>
+        <target state="translated"><x id="INTERPOLATION"/> 時点のデータ</target>
+      </trans-unit>
+      <trans-unit id="dashboard.exec.trend-empty-title" datatype="html">
+        <source>Pas encore de mesure</source>
+        <target state="translated">まだ測定値がありません</target>
+      </trans-unit>
+      <trans-unit id="dashboard.exec.trend-empty-hint" datatype="html">
+        <source>La courbe se trace dès que les indicateurs de qualité reçoivent leurs premières valeurs.</source>
+        <target state="translated">品質指標に最初の値が入ると曲線が表示されます。</target>
+      </trans-unit>
+      <trans-unit id="dashboard.exec.norms-tracked-count" datatype="html">
+        <source>Normes suivies : <x id="count"/></source>
+        <target state="translated">追跡中の規格：<x id="count"/></target>
+      </trans-unit>
+      <trans-unit id="dashboard.chart.overall-quality" datatype="html">
+        <source>Qualité globale</source>
+        <target state="translated">総合品質</target>
+      </trans-unit>
+      <trans-unit id="dashboard.chart.target" datatype="html">
+        <source>Cible</source>
+        <target state="translated">目標</target>
+      </trans-unit>
+      <trans-unit id="dashboard.chart.defects" datatype="html">
+        <source>Défauts</source>
+        <target state="translated">不具合</target>
+      </trans-unit>
+      <trans-unit id="dashboard.chart.cumulative" datatype="html">
+        <source>Cumul</source>
+        <target state="translated">累積</target>
+      </trans-unit>
+      <trans-unit id="dashboard.chart.cumulative-pct" datatype="html">
+        <source>Cumul %</source>
+        <target state="translated">累積 %</target>
+      </trans-unit>
+      <trans-unit id="dashboard.csv.indicator" datatype="html">
+        <source>Indicateur</source>
+        <target state="translated">指標</target>
+      </trans-unit>
+      <trans-unit id="dashboard.csv.value" datatype="html">
+        <source>Valeur</source>
+        <target state="translated">値</target>
+      </trans-unit>
+      <trans-unit id="dashboard.csv.unit" datatype="html">
+        <source>Unité</source>
+        <target state="translated">単位</target>
+      </trans-unit>
+      <trans-unit id="dashboard.csv.target" datatype="html">
+        <source>Cible</source>
+        <target state="translated">目標</target>
+      </trans-unit>
+      <trans-unit id="dashboard.csv.trend" datatype="html">
+        <source>Variation</source>
+        <target state="translated">変化</target>
+      </trans-unit>
+      <trans-unit id="dashboard.csv.state" datatype="html">
+        <source>État</source>
+        <target state="translated">状態</target>
+      </trans-unit>
+      <trans-unit id="restricted.title" datatype="html">
+        <source>Accès réservé à l'administrateur</source>
+        <target state="translated">管理者専用ページです</target>
+      </trans-unit>
+      <trans-unit id="restricted.hint" datatype="html">
+        <source>Cette page relève de l'administration de votre organisation. Si vous en avez besoin, demandez à votre administrateur de vous attribuer le rôle correspondant.</source>
+        <target state="translated">このページは組織の管理機能です。必要な場合は、管理者に該当するロールの付与を依頼してください。</target>
+      </trans-unit>
+      <trans-unit id="paginator.items-per-page" datatype="html">
+        <source>Éléments par page :</source>
+        <target state="translated">1ページあたりの件数：</target>
+      </trans-unit>
+      <trans-unit id="paginator.next" datatype="html">
+        <source>Page suivante</source>
+        <target state="translated">次のページ</target>
+      </trans-unit>
+      <trans-unit id="paginator.previous" datatype="html">
+        <source>Page précédente</source>
+        <target state="translated">前のページ</target>
+      </trans-unit>
+      <trans-unit id="paginator.first" datatype="html">
+        <source>Première page</source>
+        <target state="translated">最初のページ</target>
+      </trans-unit>
+      <trans-unit id="paginator.last" datatype="html">
+        <source>Dernière page</source>
+        <target state="translated">最後のページ</target>
+      </trans-unit>
+      <trans-unit id="paginator.range-empty" datatype="html">
+        <source>0 sur <x id="total"/></source>
+        <target state="translated"><x id="total"/> 件中 0 件</target>
+      </trans-unit>
+      <trans-unit id="paginator.range" datatype="html">
+        <source><x id="start"/> – <x id="end"/> sur <x id="total"/></source>
+        <target state="translated"><x id="total"/> 件中 <x id="start"/> – <x id="end"/> 件</target>
+      </trans-unit>
+      <trans-unit id="training.path-detail.passing" datatype="html">
+        <source>Seuil de réussite ≥ <x id="INTERPOLATION"/> %</source>
+        <target state="translated">合格基準 ≥ <x id="INTERPOLATION"/> %</target>
+      </trans-unit>
+      <trans-unit id="training.path-detail.validity" datatype="html">
+        <source>Validité <x id="INTERPOLATION"/> mois</source>
+        <target state="translated">有効期間 <x id="INTERPOLATION"/> か月</target>
+      </trans-unit>
+      <trans-unit id="complaint-nlp.input.placeholder" datatype="html">
+        <source>Produit cassé à la réception
+Livraison en retard
+…</source>
+        <target state="translated">受け取り時に製品が破損
+配送の遅れ
+…</target>
+      </trans-unit>
+      <trans-unit id="anomaly.form.context-placeholder" datatype="html">
+        <source>presse-2 / ligne 3</source>
+        <target state="translated">プレス2 / ライン3</target>
+      </trans-unit>
+      <trans-unit id="calibration.equipment.code-placeholder" datatype="html">
+        <source>Ex. : CAL-PIED-001</source>
+        <target state="translated">例：CAL-GAUGE-001</target>
+      </trans-unit>
+      <trans-unit id="calibration.plan.procedure-placeholder" datatype="html">
+        <source>Ex. : MO-CAL-014 rév. C</source>
+        <target state="translated">例：MO-CAL-014 改訂C</target>
+      </trans-unit>
+      <trans-unit id="calibration.plan.tolerance-placeholder" datatype="html">
+        <source>Ex. : ± 0,02 mm sur toute l'étendue</source>
+        <target state="translated">例：全範囲で ± 0.02 mm</target>
+      </trans-unit>
+      <trans-unit id="calibration.plan.accreditation-placeholder" datatype="html">
+        <source>Ex. : COFRAC 2-1234</source>
+        <target state="translated">例：COFRAC 2-1234</target>
+      </trans-unit>
+      <trans-unit id="calibration.record.provider-placeholder" datatype="html">
+        <source>Ex. : laboratoire accrédité COFRAC</source>
+        <target state="translated">例：COFRAC認定試験所</target>
+      </trans-unit>
+      <trans-unit id="ehs.report.location-placeholder" datatype="html">
+        <source>Atelier B, zone 3…</source>
+        <target state="translated">作業場B、ゾーン3…</target>
+      </trans-unit>
+      <trans-unit id="iot.device.code-placeholder" datatype="html">
+        <source>Ex. : FRIGO-PHARMA-01</source>
+        <target state="translated">例：PHARMA-FRIDGE-01</target>
+      </trans-unit>
+      <trans-unit id="iot.device.location-placeholder" datatype="html">
+        <source>Ex. : Pharmacie — réserve froide</source>
+        <target state="translated">例：薬局 – 冷蔵保管庫</target>
+      </trans-unit>
+      <trans-unit id="iot.telemetry.metric-placeholder" datatype="html">
+        <source>Ex. : temperature</source>
+        <target state="translated">例：temperature</target>
+      </trans-unit>
+      <trans-unit id="iot.telemetry.unit-placeholder" datatype="html">
+        <source>Ex. : °C</source>
+        <target state="translated">例：°C</target>
+      </trans-unit>
+      <trans-unit id="iot.telemetry.event-placeholder" datatype="html">
+        <source>Ex. : ALARME_PORTE_OUVERTE</source>
+        <target state="translated">例：DOOR_OPEN_ALARM</target>
+      </trans-unit>
+      <trans-unit id="iot.threshold.metric-placeholder" datatype="html">
+        <source>Ex. : temperature</source>
+        <target state="translated">例：temperature</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.cause.weight-placeholder" datatype="html">
+        <source>Ex. : 0.85</source>
+        <target state="translated">例：0.85</target>
+      </trans-unit>
+      <trans-unit id="retention.rule.label-placeholder" datatype="html">
+        <source>Bulletins de paie salariés</source>
+        <target state="translated">従業員の給与明細</target>
+      </trans-unit>
+      <trans-unit id="storyboard.form.period-placeholder" datatype="html">
+        <source>Mai 2026</source>
+        <target state="translated">2026年5月</target>
+      </trans-unit>
+      <trans-unit id="storyboard.form.scope-placeholder" datatype="html">
+        <source>Site de Lyon, atelier mécanique</source>
+        <target state="translated">リヨン工場、機械加工作業場</target>
+      </trans-unit>
+      <trans-unit id="suppliers.cert.standard-placeholder" datatype="html">
+        <source>Ex. : iso-9001, iatf-16949, as9100</source>
+        <target state="translated">例：iso-9001, iatf-16949, as9100</target>
+      </trans-unit>
+      <trans-unit id="training.path-dialog.code-placeholder" datatype="html">
+        <source>Ex. : yellow-belt-quality</source>
+        <target state="translated">例：yellow-belt-quality</target>
+      </trans-unit>
+      <trans-unit id="training.skill-dialog.code-placeholder" datatype="html">
+        <source>Ex. : iso-9001-internal-auditor</source>
+        <target state="translated">例：iso-9001-internal-auditor</target>
+      </trans-unit>
+      <trans-unit id="transfers.dialog.countries-placeholder" datatype="html">
+        <source>USA
+Inde</source>
+        <target state="translated">米国
+インド</target>
+      </trans-unit>
+      <trans-unit id="transfers.dialog.safeguards-placeholder" datatype="html">
+        <source>SCC 2021 modules 2/3, mesures supplémentaires (chiffrement, contrôles d'accès), audit annuel…</source>
+        <target state="translated">SCC 2021 モジュール2/3、追加措置（暗号化、アクセス制御）、年次監査…</target>
+      </trans-unit>
+      <trans-unit id="transfers.dialog.derogation-placeholder" datatype="html">
+        <source>Cas Art. 49 invoqué (intérêt vital, contrat, motif d'intérêt public, …). Caractère exceptionnel et non répétitif documenté.</source>
+        <target state="translated">援用した第49条の事由（重大な利益、契約、公益上の理由など）。例外的かつ非反復的であることを記録。</target>
+      </trans-unit>
+      <trans-unit id="transfers.dialog.categories-placeholder" datatype="html">
+        <source>Identité prospects
+Coordonnées professionnelles</source>
+        <target state="translated">見込み客の身元
+業務上の連絡先</target>
+      </trans-unit>
+      <trans-unit id="privacy-notices.dialog.content-placeholder" datatype="html">
+        <source># Politique de confidentialité
+
+## Identité du responsable
+...</source>
+        <target state="translated"># プライバシーポリシー
+
+## 管理者の身元
+...</target>
+      </trans-unit>
+      <trans-unit id="doc-gen.form.org-placeholder" datatype="html">
+        <source>ACME Industrie</source>
+        <target state="translated">ACME工業</target>
+      </trans-unit>
+      <trans-unit id="doc-gen.form.size-placeholder" datatype="html">
+        <source>PME</source>
+        <target state="translated">中小企業</target>
+      </trans-unit>
+      <trans-unit id="webhooks.form.name-placeholder" datatype="html">
+        <source>ERP production</source>
+        <target state="translated">生産ERP</target>
+      </trans-unit>
       <trans-unit id="directory.picker.label" datatype="html">
         <source>Personne</source>
         <target state="translated">担当者</target>
@@ -15560,7 +15810,7 @@ santé</source>
         <target state="translated">最終的な終了。侵害は閲覧可能なままですが、状態を変更できなくなります。</target>
       </trans-unit>
       <trans-unit id="breach.text.reject-hint" datatype="html">
-        <source>Rejet terminal. Utilise pour un faux positif, un doublon, ou un événement non-RGPD.</source>
+        <source>Rejet terminal. À utiliser pour un faux positif, un doublon, ou un événement non-RGPD.</source>
         <target state="translated">最終的な却下。誤検知、重複、またはGDPR非該当の事象に使用します。</target>
       </trans-unit>
       <trans-unit id="breach.text.close-label" datatype="html">
@@ -17260,7 +17510,7 @@ historique 12 mois</source>
         <target state="translated">更新</target>
       </trans-unit>
       <trans-unit id="pdca.detail.steps-empty" datatype="html">
-        <source>Aucune étape pour l'instant. Clique sur Ajouter une étape pour démarrer ton cycle Plan → Do → Check → Act.</source>
+        <source>Aucune étape pour l'instant. Cliquez sur Ajouter une étape pour démarrer votre cycle Plan → Do → Check → Act.</source>
         <target state="translated">ステップはまだありません。ステップを追加をクリックして Plan → Do → Check → Act サイクルを開始してください。</target>
       </trans-unit>
       <trans-unit id="pdca.detail.not-found" datatype="html">
@@ -17288,7 +17538,7 @@ historique 12 mois</source>
         <target state="translated">新規 PDCA サイクル</target>
       </trans-unit>
       <trans-unit id="pdca.create.subtitle" datatype="html">
-        <source>Décris brièvement le problème ou l'objectif. Les étapes Plan / Do / Check / Act pourront être ajoutées ensuite.</source>
+        <source>Décrivez brièvement le problème ou l'objectif. Les étapes Plan / Do / Check / Act pourront être ajoutées ensuite.</source>
         <target state="translated">問題または目標を簡潔に記述してください。Plan / Do / Check / Act のステップは後で追加できます。</target>
       </trans-unit>
       <trans-unit id="pdca.create.cycle-title-label" datatype="html">
@@ -17316,7 +17566,7 @@ historique 12 mois</source>
         <target state="translated">ステップを追加</target>
       </trans-unit>
       <trans-unit id="pdca.step.subtitle" datatype="html">
-        <source>Décris l'action concrète et choisis sa phase dans le cycle PDCA.</source>
+        <source>Décrivez l'action concrète et choisissez sa phase dans le cycle PDCA.</source>
         <target state="translated">具体的なアクションを記述し、PDCAサイクル内のフェーズを選択してください。</target>
       </trans-unit>
       <trans-unit id="pdca.step.title-label" datatype="html">
@@ -17504,7 +17754,7 @@ historique 12 mois</source>
         <target state="translated">新規 5S 監査</target>
       </trans-unit>
       <trans-unit id="fives.create.hint" datatype="html">
-        <source>Définis la zone à auditer et la date prévue. Les scores Seiri · Seiton · Seiso · Seiketsu · Shitsuke seront saisis lors de l'audit terrain.</source>
+        <source>Définissez la zone à auditer et la date prévue. Les scores Seiri · Seiton · Seiso · Seiketsu · Shitsuke seront saisis lors de l'audit terrain.</source>
         <target state="translated">監査対象のゾーンと予定日を設定してください。整理・整頓・清掃・清潔・躾のスコアは現場監査時に入力します。</target>
       </trans-unit>
       <trans-unit id="fives.create.zone-placeholder" datatype="html">
@@ -17792,7 +18042,7 @@ historique 12 mois</source>
         <target state="translated">このサブ要因は次に紐づけられます</target>
       </trans-unit>
       <trans-unit id="ishikawa.cause.hint" datatype="html">
-        <source>Choisis la branche (M) et formule la cause de façon concise. Le scoring racine sera ajusté plus tard par l'analyse 5 Pourquoi.</source>
+        <source>Choisissez la branche (M) et formulez la cause de façon concise. Le scoring racine sera ajusté plus tard par l'analyse 5 Pourquoi.</source>
         <target state="translated">枝（M）を選び、原因を簡潔に記述してください。根本原因スコアは後でなぜなぜ分析により調整されます。</target>
       </trans-unit>
       <trans-unit id="ishikawa.cause.branch-label" datatype="html">
@@ -18528,7 +18778,7 @@ historique 12 mois</source>
         <target state="translated">参加日</target>
       </trans-unit>
       <trans-unit id="circles.detail.no-member" datatype="html">
-        <source>Aucun membre. Clique sur Ajouter un membre pour construire l'équipe.</source>
+        <source>Aucun membre. Cliquez sur Ajouter un membre pour construire l'équipe.</source>
         <target state="translated">メンバーがいません。「メンバーを追加」をクリックしてチームを構成してください。</target>
       </trans-unit>
       <trans-unit id="circles.detail.schedule-meeting" datatype="html">
@@ -18604,7 +18854,7 @@ historique 12 mois</source>
         <target state="translated">新規QCサークル</target>
       </trans-unit>
       <trans-unit id="circles.create.subtitle" datatype="html">
-        <source>Crée le groupe (5-10 personnes recommandé). Les membres, réunions et propositions seront ajoutés ensuite.</source>
+        <source>Créez le groupe (5-10 personnes recommandé). Les membres, réunions et propositions seront ajoutés ensuite.</source>
         <target state="translated">グループを作成します（5～10名を推奨）。メンバー・会議・提案は後で追加します。</target>
       </trans-unit>
       <trans-unit id="circles.create.name-label" datatype="html">
@@ -19736,7 +19986,7 @@ historique 12 mois</source>
         <target state="translated">不適合を報告</target>
       </trans-unit>
       <trans-unit id="nc.create.hint" datatype="html">
-        <source>Saisis l'essentiel sur le terrain : la NC pourra être analysée et résolue ensuite. Hors-ligne, elle est mise en attente et synchronisée au retour du réseau.</source>
+        <source>Saisissez l'essentiel sur le terrain : la NC pourra être analysée et résolue ensuite. Hors-ligne, elle est mise en attente et synchronisée au retour du réseau.</source>
         <target state="translated">現場で要点を記録します。不適合は後で分析・解決できます。オフライン時はキューに入り、ネットワーク回復時に同期されます。</target>
       </trans-unit>
       <trans-unit id="nc.create.category" datatype="html">
@@ -20092,7 +20342,7 @@ historique 12 mois</source>
         <target state="translated">不適合を解決</target>
       </trans-unit>
       <trans-unit id="nc.resolve.hint" datatype="html">
-        <source>Décris l'action menée et la preuve d'efficacité pour clôturer la résolution de</source>
+        <source>Décrivez l'action menée et la preuve d'efficacité pour clôturer la résolution de</source>
         <target state="translated">実施した処置と有効性の証拠を記述して解決をクローズします：</target>
       </trans-unit>
       <trans-unit id="nc.resolve.note-label" datatype="html">
@@ -20568,7 +20818,7 @@ historique 12 mois</source>
         <target state="translated">このテナントのAIレート/クォータを超過しました。後で再試行してください。</target>
       </trans-unit>
       <trans-unit id="nlq-explore.err-unavailable" datatype="html">
-        <source>L'assistant IA est momentanément indisponible (modèle en cours de chargement ?). Réessaie dans un instant.</source>
+        <source>L'assistant IA est momentanément indisponible (modèle en cours de chargement ?). Réessayez dans un instant.</source>
         <target state="translated">AIアシスタントは一時的に利用できません（モデル読み込み中？）。しばらくして再試行してください。</target>
       </trans-unit>
       <trans-unit id="nlq-explore.err-generic" datatype="html">
@@ -20886,8 +21136,8 @@ historique 12 mois</source>
         <target state="translated">5つの手法。ひとつの基準。</target>
       </trans-unit>
       <trans-unit id="home.hero.slogan" datatype="html">
-        <source>One platform. Five methods. Every industry.</source>
-        <target state="translated">One platform. Five methods. Every industry.</target>
+        <source>Une plateforme. Cinq méthodes. Tous les secteurs.</source>
+        <target state="translated">ひとつのプラットフォーム。5つの手法。あらゆる業界へ。</target>
       </trans-unit>
       <trans-unit id="home.hero.proof-methods" datatype="html">
         <source>5 méthodes fondamentales</source>
@@ -20948,18 +21198,6 @@ historique 12 mois</source>
       <trans-unit id="home.kpi.audits-planned" datatype="html">
         <source>Audits planifiés</source>
         <target state="translated">計画済み監査</target>
-      </trans-unit>
-      <trans-unit id="home.kpi.illustrative" datatype="html">
-        <source>Valeurs indicatives</source>
-        <target state="translated">参考値</target>
-      </trans-unit>
-      <trans-unit id="home.kpi.trend-up" datatype="html">
-        <source>en hausse</source>
-        <target state="translated">上昇傾向</target>
-      </trans-unit>
-      <trans-unit id="home.kpi.trend-down" datatype="html">
-        <source>en baisse</source>
-        <target state="translated">下降傾向</target>
       </trans-unit>
       <trans-unit id="home.actions.title" datatype="html">
         <source>Actions rapides</source>
@@ -21508,7 +21746,7 @@ historique 12 mois</source>
         <target state="translated">質問の処理中にエラーが発生しました。</target>
       </trans-unit>
       <trans-unit id="nlq.ask.err-unavailable" datatype="html">
-        <source>L'assistant IA est momentanément indisponible (modèle en cours de chargement ?). Réessaie dans un instant.</source>
+        <source>L'assistant IA est momentanément indisponible (modèle en cours de chargement ?). Réessayez dans un instant.</source>
         <target state="translated">AIアシスタントは一時的に利用できません（モデル読み込み中の可能性）。少し待って再試行してください。</target>
       </trans-unit>
       <trans-unit id="nlq.ask.err-untranslatable" datatype="html">
@@ -22992,8 +23230,8 @@ historique 12 mois</source>
         <target state="translated">サプライヤースコアカード、監査、不適合、証明書。</target>
       </trans-unit>
       <trans-unit id="suppliers.list.title" datatype="html">
-        <source>Supplier Quality</source>
-        <target state="translated">Supplier Quality</target>
+        <source>Qualité fournisseurs</source>
+        <target state="translated">サプライヤー品質</target>
       </trans-unit>
       <trans-unit id="suppliers.type.component" datatype="html">
         <source>Composant</source>
@@ -23316,7 +23554,7 @@ historique 12 mois</source>
         <target state="translated">例：ISO_9001、IATF_16949、ISO_27001</target>
       </trans-unit>
       <trans-unit id="audits.create.subtitle" datatype="html">
-        <source>Définis le périmètre, le type et la date de l'audit. La checklist et les findings seront ajoutés ensuite.</source>
+        <source>Définissez le périmètre, le type et la date de l'audit. La checklist et les findings seront ajoutés ensuite.</source>
         <target state="translated">監査の範囲、種類、日付を定義します。チェックリストと指摘事項は後で追加します。</target>
       </trans-unit>
       <trans-unit id="audits.create.success" datatype="html">
@@ -23356,7 +23594,7 @@ historique 12 mois</source>
         <target state="translated">チェックリスト (<x id="INTERPOLATION"/>)</target>
       </trans-unit>
       <trans-unit id="audits.detail.checklist-empty" datatype="html">
-        <source>Aucune question. Clique sur</source>
+        <source>Aucune question. Cliquez sur</source>
         <target state="translated">質問はありません。クリック</target>
       </trans-unit>
       <trans-unit id="audits.detail.col-clause" datatype="html">
@@ -23644,7 +23882,7 @@ historique 12 mois</source>
         <target state="translated">監査</target>
       </trans-unit>
       <trans-unit id="audits.response.choose" datatype="html">
-        <source>Choisis Conforme ou NC.</source>
+        <source>Choisissez Conforme ou NC.</source>
         <target state="translated">「適合」または「NC」を選択してください。</target>
       </trans-unit>
       <trans-unit id="audits.response.conformant" datatype="html">
@@ -23664,7 +23902,7 @@ historique 12 mois</source>
         <target state="translated">回答／所見（任意）</target>
       </trans-unit>
       <trans-unit id="audits.response.observation-placeholder" datatype="html">
-        <source>Ce que tu as observé sur le terrain, références aux preuves rassemblées…</source>
+        <source>Ce que vous avez observé sur le terrain, références aux preuves rassemblées…</source>
         <target state="translated">現場で観察した内容、収集した証拠への参照…</target>
       </trans-unit>
       <trans-unit id="audits.response.save-error" datatype="html">
@@ -24188,12 +24426,12 @@ historique 12 mois</source>
         <target state="translated">新しいプロジェクト</target>
       </trans-unit>
       <trans-unit id="fmea.list.subtitle" datatype="html">
-        <source>Toute RPN supérieure à 200 exige une action corrective.</source>
-        <target state="translated">RPN が 200 を超える場合は是正処置が必要です。</target>
+        <source>Au-delà du seuil RPN critique de chaque projet (<x id="INTERPOLATION"/> par défaut), une action corrective est exigée.</source>
+        <target state="translated">RPN がプロジェクトの重大しきい値（既定値 <x id="INTERPOLATION"/>）を超える場合は是正処置が必要です。</target>
       </trans-unit>
       <trans-unit id="fmea.list.title" datatype="html">
-        <source>FMEA — Risk Management</source>
-        <target state="translated">FMEA — リスクマネジメント</target>
+        <source>AMDEC — Analyse des risques</source>
+        <target state="translated">FMEA — リスク分析</target>
       </trans-unit>
       <trans-unit id="fmea.type.bow-tie" datatype="html">
         <source>Bow-tie</source>

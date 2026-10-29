@@ -98,11 +98,11 @@ export class DpiaEditDialogComponent {
     })
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
-        next: d => { this.snack.open('DPIA mise à jour.', 'OK', { duration: 2500 }); this.dialogRef.close(d); },
+        next: d => { this.snack.open('DPIA mise à jour.', $localize`:@@common.ok:OK`, { duration: 2500 }); this.dialogRef.close(d); },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[dpia-edit] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Erreur lors de la mise à jour.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, 'Erreur lors de la mise à jour.'), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

@@ -87,7 +87,7 @@ export class EhsDetailComponent implements OnInit {
   investigate(i: IncidentView): void {
     const ownerUserId = this.auth.snapshot()?.userId;
     this.svc.investigate(i.id, { ownerUserId }).subscribe({
-      next: () => { this.snack.open('Incident en investigation.', 'OK', { duration: 2200 }); this.refresh$.next(); },
+      next: () => { this.snack.open('Incident en investigation.', $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); },
       error: err => this.fail(err, 'Passage en investigation impossible.')
     });
   }
@@ -175,6 +175,6 @@ export class EhsDetailComponent implements OnInit {
   private fail(err: unknown, fallback: string): void {
     // eslint-disable-next-line no-console
     console.warn('[ehs-detail] action failed', (err as any)?.status, (err as any)?.error?.title);
-    this.snack.open(safeErrorMessage(err, fallback), 'OK', { duration: 4000 });
+    this.snack.open(safeErrorMessage(err, fallback), $localize`:@@common.ok:OK`, { duration: 4000 });
   }
 }

@@ -182,7 +182,7 @@ export class CapaDetailComponent implements OnInit {
               : err?.status === 409
               ? $localize`:@@capa.evidence.limit:Le dossier a atteint sa limite de preuves, ou il est clôturé.`
               : safeErrorMessage(err, $localize`:@@capa.evidence.error:Échec de l'ajout de la preuve.`);
-          this.snack.open(msg, 'OK', { duration: 5000 });
+          this.snack.open(msg, $localize`:@@common.ok:OK`, { duration: 5000 });
         }
       });
   }
@@ -212,7 +212,7 @@ export class CapaDetailComponent implements OnInit {
             console.warn('[capa-detail] deleteEvidence failed', err?.status, err?.error?.type);
             this.snack.open(
               safeErrorMessage(err, $localize`:@@capa.evidence.remove-error:Échec du retrait de la preuve.`),
-              'OK', { duration: 4000 });
+              $localize`:@@common.ok:OK`, { duration: 4000 });
           }
         });
     });
@@ -329,7 +329,7 @@ export class CapaDetailComponent implements OnInit {
           // eslint-disable-next-line no-console
           console.warn('[capa-detail] uploadActionEvidence failed', err?.status, err?.error?.type);
           if (this.isStorageDisabled(err)) { this.evidenceStorageDisabled$.next(true); return; }
-          this.snack.open(this.evidenceRefusal(err), 'OK', { duration: 5000 });
+          this.snack.open(this.evidenceRefusal(err), $localize`:@@common.ok:OK`, { duration: 5000 });
         }
       });
   }
@@ -361,7 +361,7 @@ export class CapaDetailComponent implements OnInit {
             console.warn('[capa-detail] deleteActionEvidence failed', err?.status, err?.error?.type);
             this.snack.open(
               safeErrorMessage(err, $localize`:@@capa.evidence.remove-error:Échec du retrait de la preuve.`),
-              'OK', { duration: 4000 });
+              $localize`:@@common.ok:OK`, { duration: 4000 });
           }
         });
     });

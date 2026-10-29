@@ -12,7 +12,7 @@
     <span><span i18n="@@ishikawa.cause.parent-prefix">Cette sous-cause sera rattachée à</span> <strong>« {{ data.parent.label }} »</strong>.</span>
   </p>
 
-  <p class="hint" *ngIf="!data.parent" i18n="@@ishikawa.cause.hint">Choisis la branche (M) et formule la cause de façon concise.
+  <p class="hint" *ngIf="!data.parent" i18n="@@ishikawa.cause.hint">Choisissez la branche (M) et formulez la cause de façon concise.
      Le scoring racine sera ajusté plus tard par l'analyse 5 Pourquoi.</p>
 
   <mat-form-field appearance="outline" class="full">
@@ -41,7 +41,7 @@
   <mat-form-field appearance="outline" class="full">
     <mat-label i18n="@@ishikawa.cause.score-label">Score racine (0 → 1, optionnel)</mat-label>
     <input matInput formControlName="rootCauseScore" type="number"
-           min="0" max="1" step="0.05" placeholder="Ex. : 0.85">
+           min="0" max="1" step="0.05" placeholder="Ex. : 0.85" i18n-placeholder="@@ishikawa.cause.weight-placeholder">
     <mat-hint i18n="@@ishikawa.cause.score-hint">Probabilité estimée que ce soit une cause racine.</mat-hint>
   </mat-form-field>
 

@@ -63,7 +63,7 @@ export class FivesCreateDialogComponent {
           console.warn('[fives-create] failed', err?.status, err?.error?.title);
           this.snack.open(
             safeErrorMessage(err, $localize`:@@common.error-create:Erreur lors de la création.`),
-            'OK',
+            $localize`:@@common.ok:OK`,
             { duration: 4000 }
           );
         }

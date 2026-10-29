@@ -44,11 +44,11 @@ export class CyiSeverityDialogComponent {
     this.svc.updateSeverity(this.data.id, { severity: this.form.getRawValue().severity })
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
-        next: i => { this.snack.open('Sévérité mise à jour.', 'OK', { duration: 2200 }); this.dialogRef.close(i); },
+        next: i => { this.snack.open('Sévérité mise à jour.', $localize`:@@common.ok:OK`, { duration: 2200 }); this.dialogRef.close(i); },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[cyi-severity] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Mise à jour impossible.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, 'Mise à jour impossible.'), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }
