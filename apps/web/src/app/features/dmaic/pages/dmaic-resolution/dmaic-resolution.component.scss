@@ -197,6 +197,86 @@
   }
 }
 
+// En-tête de la fiche, calqué sur le gabarit DMAIC : un bloc centré de largeur
+// bornée, l'identité de la réclamation à gauche (colonne large), son numéro et
+// ses dates à droite (colonne étroite). Aucun champ ne s'étire sur toute la page.
+.entete {
+  width: 100%;
+  max-width: 60rem;
+  margin-inline: auto;
+
+  &__head {
+    margin-bottom: var(--qos-space-4);
+    text-align: center;
+
+    .bloc__lead {
+      margin-inline: auto;
+    }
+  }
+
+  &__titre {
+    margin: 0;
+    font-size: var(--qos-fs-xl);
+    font-weight: var(--qos-fw-semibold);
+    line-height: 1.3;
+  }
+
+  &__grille {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    gap: var(--qos-space-4) var(--qos-space-6);
+    align-items: start;
+  }
+
+  &__col {
+    display: grid;
+    gap: var(--qos-space-3);
+    min-width: 0;
+
+    > * {
+      min-width: 0;
+    }
+  }
+
+  &__qualif {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--qos-space-3) var(--qos-space-4);
+    margin-top: var(--qos-space-4);
+    padding-top: var(--qos-space-4);
+    border-top: 1px solid var(--qos-border-subtle);
+  }
+
+  .equipe {
+    margin-top: 0;
+  }
+
+  .equipe .sous-titre {
+    margin-top: 0;
+  }
+}
+
+// Les actions du projet, alignées sur le bandeau des phases qui les suit.
+.actions {
+  display: flex;
+  justify-content: flex-end;
+
+  &:empty {
+    display: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .entete__grille,
+  .entete__qualif {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .actions {
+    justify-content: stretch;
+  }
+}
+
 .champs {
   display: grid;
   gap: var(--qos-space-3) var(--qos-space-4);

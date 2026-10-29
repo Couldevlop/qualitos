@@ -56,7 +56,7 @@ TRANSLATIONS = {
         'アクションの予定日を作成日より前にすることはできません。', '行动的计划日期不能早于其创建日期。'),
 
     # ----- reclamation -----
-    'dmaic.res.claim': ('Réclamation', 'Claim', 'Reclamación', 'الشكوى', 'クレーム', '投诉'),
+    'dmaic.res.header-title': ('DMAIC Résolution de problème', 'DMAIC problem solving', 'DMAIC resolución de problemas', 'DMAIC حل المشكلات', 'DMAIC 問題解決', 'DMAIC 问题解决'),
     'dmaic.res.client': ('Client ou projet', 'Customer or project', 'Cliente o proyecto', 'العميل أو المشروع', '顧客またはプロジェクト', '客户或项目'),
     'dmaic.res.claim-number': ('N° de réclamation', 'Claim number', 'N.º de reclamación', 'رقم الشكوى', 'クレーム番号', '投诉编号'),
     'dmaic.res.owner': ('Propriétaire du problème', 'Problem owner', 'Responsable del problema', 'مالك المشكلة', '問題の責任者', '问题负责人'),

@@ -11212,9 +11212,9 @@ Coordonnées professionnelles</source>
         <source>Une action ne peut pas être prévue avant sa date de création.</source>
         <target state="translated">لا يمكن التخطيط لإجراء قبل تاريخ إنشائه.</target>
       </trans-unit>
-      <trans-unit id="dmaic.res.claim" datatype="html">
-        <source>Réclamation</source>
-        <target state="translated">الشكوى</target>
+      <trans-unit id="dmaic.res.header-title" datatype="html">
+        <source>DMAIC Résolution de problème</source>
+        <target state="translated">DMAIC حل المشكلات</target>
       </trans-unit>
       <trans-unit id="dmaic.res.client" datatype="html">
         <source>Client ou projet</source>
