@@ -2,6 +2,7 @@
 .head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .head h1 { margin: 0 0 4px; font-size: 22px; }
 .head p  { margin: 0; color: var(--mat-sys-on-surface-variant, rgba(0,0,0,0.6)); font-size: 13px; }
+.head .usage { margin-top: 2px; color: var(--qos-fg-tertiary, var(--qos-fg-secondary)); font-style: italic; }
 
 .filters { display: flex; gap: 12px; flex-wrap: wrap; }
 .filters mat-form-field { min-width: 180px; }

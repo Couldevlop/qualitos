@@ -28,8 +28,7 @@ export class DmaicCreateDialogComponent {
     specLowerLimit: [null as number | null],
     specUpperLimit: [null as number | null],
     specTarget:     [null as number | null],
-    specUnit: ['', [Validators.maxLength(50)]],
-    estimatedSavingsEur: [null as number | null]
+    specUnit: ['', [Validators.maxLength(50)]]
   });
 
   constructor(
@@ -62,8 +61,7 @@ export class DmaicCreateDialogComponent {
       specLowerLimit: v.specLowerLimit ?? undefined,
       specUpperLimit: v.specUpperLimit ?? undefined,
       specTarget:     v.specTarget     ?? undefined,
-      specUnit: v.specUnit?.trim() || undefined,
-      estimatedSavingsEur: v.estimatedSavingsEur ?? undefined
+      specUnit: v.specUnit?.trim() || undefined
     })
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({

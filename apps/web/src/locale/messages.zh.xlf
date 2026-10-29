@@ -11098,6 +11098,118 @@ Portail clients</source>
         <source>Valeurs de la plateforme rétablies.</source>
         <target state="translated">已恢复平台默认值。</target>
       </trans-unit>
+      <trans-unit id="dmaic.detail.advance-blocked" datatype="html">
+        <source>Répondez à toutes les questions de la phase et enregistrez la fiche pour passer à la suivante.</source>
+        <target state="translated">回答本阶段的所有问题并保存表单后，才能进入下一阶段。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.col-operator" datatype="html">
+        <source>Mesuré par</source>
+        <target state="translated">测量人</target>
+      </trans-unit>
+      <trans-unit id="dmaic.list.usage" datatype="html">
+        <source>Pour les réclamations clients critiques et les projets d'amélioration continue</source>
+        <target state="translated">用于关键客户投诉和持续改进项目</target>
+      </trans-unit>
+      <trans-unit id="dmaic.measure.operator" datatype="html">
+        <source>Personne qui mesure</source>
+        <target state="translated">测量人员</target>
+      </trans-unit>
+      <trans-unit id="dmaic.measure.saved-many" datatype="html">
+        <source><x id="count"/> mesures enregistrées.</source>
+        <target state="translated">已保存 <x id="count"/> 个测量值。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.measure.value-add" datatype="html">
+        <source>Ajouter une valeur</source>
+        <target state="translated">添加数值</target>
+      </trans-unit>
+      <trans-unit id="dmaic.measure.value-remove" datatype="html">
+        <source>Retirer cette valeur</source>
+        <target state="translated">移除此数值</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.attachment-add" datatype="html">
+        <source>Joindre un document</source>
+        <target state="translated">附加文档</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.attachment-remove" datatype="html">
+        <source>Retirer le document</source>
+        <target state="translated">移除文档</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.attachment.alt" datatype="html">
+        <source>Document <x id="rank"/></source>
+        <target state="translated">文档 <x id="rank"/></target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.attachment.bad-type" datatype="html">
+        <source>Format refusé : image, PDF, Word, Excel ou PowerPoint uniquement.</source>
+        <target state="translated">格式被拒绝：仅限图片、PDF、Word、Excel 或 PowerPoint。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.attachments" datatype="html">
+        <source>Pièces jointes de la phase</source>
+        <target state="translated">阶段附件</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.attachments-lead" datatype="html">
+        <source>Cinq documents au plus : image, PDF, Word, Excel ou PowerPoint, 10 Mo chacun. Un document est enregistré dès qu'il est versé.</source>
+        <target state="translated">最多五个文档：图片、PDF、Word、Excel 或 PowerPoint，每个不超过 10 MB。文档上传后即保存。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.capa-add" datatype="html">
+        <source>Ajouter une CAPA</source>
+        <target state="translated">添加 CAPA</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.capa-description" datatype="html">
+        <source>Action du plan d'actions DMAIC « <x id="project"/> ».</source>
+        <target state="translated">DMAIC 行动计划“<x id="project"/>”中的行动。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.capa-open" datatype="html">
+        <source>Voir la CAPA</source>
+        <target state="translated">查看 CAPA</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.cpk-check" datatype="html">
+        <source>Étude Cp/Cpk et carte de contrôle</source>
+        <target state="translated">Cp/Cpk 研究和控制图</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.cpk-register" datatype="html">
+        <source>Créer l'étude dans le registre</source>
+        <target state="translated">在登记册中创建研究</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.grr-check" datatype="html">
+        <source>Gage R&amp;R</source>
+        <target state="translated">Gage R&amp;R</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.grr-register" datatype="html">
+        <source>Créer l'étude dans le registre</source>
+        <target state="translated">在登记册中创建研究</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.measures-check" datatype="html">
+        <source>Mesures</source>
+        <target state="translated">测量</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.missing" datatype="html">
+        <source>réponse(s) à enregistrer avant de passer à la phase suivante.</source>
+        <target state="translated">个回答需保存后才能进入下一阶段。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.phase.analyze" datatype="html">
+        <source>Analyser</source>
+        <target state="translated">分析</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.phase.control" datatype="html">
+        <source>Contrôler</source>
+        <target state="translated">控制</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.phase.define" datatype="html">
+        <source>Définir</source>
+        <target state="translated">定义</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.phase.improve" datatype="html">
+        <source>Améliorer</source>
+        <target state="translated">改进</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.phase.measure" datatype="html">
+        <source>Mesurer</source>
+        <target state="translated">测量</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.phases" datatype="html">
+        <source>Phases du projet</source>
+        <target state="translated">项目阶段</target>
+      </trans-unit>
       <trans-unit id="nav.doc-gen-ia" datatype="html">
         <source>Génération doc IA</source>
         <target state="translated">AI 文档生成</target>

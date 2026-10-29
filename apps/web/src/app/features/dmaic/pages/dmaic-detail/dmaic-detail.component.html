@@ -17,9 +17,6 @@
           <span class="dim" *ngIf="p.championId" data-test="dmaic-champion">
             <span i18n="@@dmaic.detail.champion-prefix">Champion :</span> <qos-person-name [accountId]="p.championId"></qos-person-name>
           </span>
-          <span *ngIf="p.estimatedSavingsEur" class="dim">
-            <span i18n="@@dmaic.detail.savings-prefix">Économies estimées :</span> {{ p.estimatedSavingsEur | number:'1.0-0' }} €
-          </span>
         </div>
       </div>
 
@@ -27,8 +24,9 @@
         <button mat-stroked-button (click)="openEdit(p)" i18n-matTooltip="@@common.edit" matTooltip="Modifier">
           <mat-icon>edit</mat-icon> <span i18n="@@common.edit">Modifier</span>
         </button>
-        <button mat-flat-button color="primary"
-                [disabled]="p.status !== 'ACTIVE' || p.phase === 'CONTROL'"
+        <button mat-flat-button color="primary" data-test="avancer"
+                [disabled]="p.status !== 'ACTIVE' || p.phase === 'CONTROL' || missing.length > 0"
+                [matTooltip]="missing.length ? advanceBlockedHint : ''"
                 (click)="advance(p)">
           <mat-icon>skip_next</mat-icon> <span i18n="@@dmaic.detail.advance">Avancer</span>
         </button>
@@ -48,28 +46,22 @@
       </div>
     </header>
 
-    <mat-tab-group class="onglets" mat-stretch-tabs="false" animationDuration="0ms"
-                   [selectedIndex]="tabIndex" (selectedIndexChange)="onTab($event)">
-      <mat-tab label="Pilotage" i18n-label="@@dmaic.detail.tab-pilotage">
-        <div class="onglet pilotage">
-        <ol class="phase-stepper">
-          <li *ngFor="let ph of phases; let i = index"
-              [class.current]="i === phaseIndex(p.phase)"
-              [class.done]="i < phaseIndex(p.phase)">
-            <span class="step-idx">{{ i + 1 }}</span>
-            <span class="step-label">{{ ph | statusLabel }}</span>
-          </li>
-        </ol>
+    <!-- L'en-tête de la réclamation, puis les phases en ligne et la phase ouverte (ADR 0101). -->
+    <qos-dmaic-resolution class="pilotage" [projectId]="p.id" [problemStatement]="p.problemStatement ?? null"
+                          [projectTitle]="p.title" [projectPhase]="p.status === 'COMPLETED' ? 'CONTROL' : p.phase"
+                          [spec]="{ lsl: p.specLowerLimit ?? null, usl: p.specUpperLimit ?? null }"
+                          (missingChange)="onMissing($event)">
+      <div qosCharter *ngIf="p.problemStatement || p.goalStatement">
+        <mat-card *ngIf="p.problemStatement || p.goalStatement" class="charter-card">
+          <mat-card-header><mat-card-title i18n="@@dmaic.detail.charter">Charter</mat-card-title></mat-card-header>
+          <mat-card-content>
+            <p *ngIf="p.problemStatement"><strong i18n="@@dmaic.detail.problem-label">Problème :</strong> {{ p.problemStatement }}</p>
+            <p *ngIf="p.goalStatement"><strong i18n="@@dmaic.detail.goal-label">Objectif :</strong> {{ p.goalStatement }}</p>
+          </mat-card-content>
+        </mat-card>
 
-        <div class="grid">
-          <mat-card *ngIf="p.problemStatement || p.goalStatement" class="charter-card">
-            <mat-card-header><mat-card-title i18n="@@dmaic.detail.charter">Charter</mat-card-title></mat-card-header>
-            <mat-card-content>
-              <p *ngIf="p.problemStatement"><strong i18n="@@dmaic.detail.problem-label">Problème :</strong> {{ p.problemStatement }}</p>
-              <p *ngIf="p.goalStatement"><strong i18n="@@dmaic.detail.goal-label">Objectif :</strong> {{ p.goalStatement }}</p>
-            </mat-card-content>
-          </mat-card>
-
+      </div>
+      <div qosMeasures class="grid grid--measures">
           <mat-card class="spec-card">
             <mat-card-header><mat-card-title i18n="@@dmaic.detail.specs">Spécifications</mat-card-title></mat-card-header>
             <mat-card-content>
@@ -81,28 +73,8 @@
             </mat-card-content>
           </mat-card>
 
-          <mat-card class="capability-card">
-            <mat-card-header><mat-card-title i18n="@@dmaic.detail.capability">Capabilité (Cp / Cpk)</mat-card-title></mat-card-header>
-            <mat-card-content>
-              <div *ngIf="capability; else noCap" class="cap-grid">
-                <div><span class="dim" i18n="@@dmaic.detail.sample">Échantillon</span><strong>{{ capability.sampleSize }}</strong></div>
-                <div><span class="dim" i18n="@@dmaic.detail.mean">Moyenne</span><strong>{{ capability.mean | number:'1.3-3' }}</strong></div>
-                <div><span class="dim">σ</span><strong>{{ capability.stdDev | number:'1.3-3' }}</strong></div>
-                <div><span class="dim">Cp</span><strong>{{ capability.cp | number:'1.2-2' }}</strong></div>
-                <div><span class="dim">Cpk</span><strong [class.bad]="(capability.cpk ?? 0) < 1">{{ capability.cpk | number:'1.2-2' }}</strong></div>
-                <div><span class="dim" i18n="@@dmaic.detail.sigma-level">Niveau σ</span><strong>{{ capability.sigmaLevel | number:'1.2-2' }}</strong></div>
-                <div class="full-row" *ngIf="capability.interpretation">
-                  <em>{{ capability.interpretation }}</em>
-                </div>
-                <div class="full-row warns" *ngIf="capability.warnings?.length">
-                  <ul><li *ngFor="let w of capability.warnings">{{ w }}</li></ul>
-                </div>
-              </div>
-              <ng-template #noCap><p class="dim" i18n="@@dmaic.detail.no-capability">Données insuffisantes pour le calcul.</p></ng-template>
-            </mat-card-content>
-          </mat-card>
-        </div>
-
+      </div>
+      <div qosMeasures>
         <mat-card class="measures-card">
           <mat-card-header class="card-head">
             <mat-card-title><span i18n="@@dmaic.detail.measures-title">Mesures</span> ({{ measures.length }})</mat-card-title>
@@ -118,9 +90,9 @@
                   <strong>{{ m.value }}</strong>
                 </td>
               </ng-container>
-              <ng-container matColumnDef="subgroupId">
-                <th mat-header-cell *matHeaderCellDef i18n="@@dmaic.detail.col-subgroup">Sous-groupe</th>
-                <td mat-cell *matCellDef="let m">{{ m.subgroupId || '—' }}</td>
+              <ng-container matColumnDef="operatorId">
+                <th mat-header-cell *matHeaderCellDef i18n="@@dmaic.detail.col-operator">Mesuré par</th>
+                <td mat-cell *matCellDef="let m"><qos-person-name [accountId]="m.operatorId"></qos-person-name></td>
               </ng-container>
               <ng-container matColumnDef="recordedAt">
                 <th mat-header-cell *matHeaderCellDef i18n="@@common.date">Date</th>
@@ -142,54 +114,30 @@
           </mat-card-content>
         </mat-card>
 
-        <mat-card class="pokayoke-card">
-          <mat-card-header class="card-head">
-            <mat-card-title>Poka-Yoke ({{ assignments.length }})</mat-card-title>
-            <button mat-stroked-button color="primary" (click)="openAddPokaYoke()">
-              <mat-icon>add</mat-icon> <span i18n="@@dmaic.detail.assign-pokayoke">Assigner un Poka-Yoke</span>
-            </button>
-          </mat-card-header>
-          <mat-card-content>
-            <table mat-table [dataSource]="assignments" *ngIf="assignments.length; else emptyA">
-              <ng-container matColumnDef="deviceCode">
-                <th mat-header-cell *matHeaderCellDef i18n="@@dmaic.detail.col-code">Code</th>
-                <td mat-cell *matCellDef="let a"><code>{{ a.deviceCode }}</code></td>
-              </ng-container>
-              <ng-container matColumnDef="deviceName">
-                <th mat-header-cell *matHeaderCellDef i18n="@@common.name">Nom</th>
-                <td mat-cell *matCellDef="let a">{{ a.deviceName }}</td>
-              </ng-container>
-              <ng-container matColumnDef="deviceType">
-                <th mat-header-cell *matHeaderCellDef i18n="@@common.type">Type</th>
-                <td mat-cell *matCellDef="let a">{{ a.deviceType | statusLabel }}</td>
-              </ng-container>
-              <ng-container matColumnDef="status">
-                <th mat-header-cell *matHeaderCellDef i18n="@@common.status">Statut</th>
-                <td mat-cell *matCellDef="let a"><span [class]="assignmentBadge(a.status)">{{ a.status | statusLabel }}</span></td>
-              </ng-container>
-              <ng-container matColumnDef="note">
-                <th mat-header-cell *matHeaderCellDef i18n="@@dmaic.detail.col-note">Note</th>
-                <td mat-cell *matCellDef="let a">
-                  <span class="dim">{{ a.note || '—' }}</span>
-                  <button mat-icon-button (click)="removeAssignment(a)" i18n-matTooltip="@@common.delete" matTooltip="Supprimer" class="row-action">
-                    <mat-icon>delete</mat-icon>
-                  </button>
-                </td>
-              </ng-container>
-              <tr mat-header-row *matHeaderRowDef="assignmentColumns"></tr>
-              <tr mat-row *matRowDef="let row; columns: assignmentColumns"></tr>
-            </table>
-            <ng-template #emptyA><p class="dim empty" i18n="@@dmaic.detail.pokayoke-empty">Aucun Poka-Yoke assigné.</p></ng-template>
-          </mat-card-content>
-        </mat-card>
-        </div>
-      </mat-tab>
-      <mat-tab label="Fiche de résolution" i18n-label="@@dmaic.detail.tab-resolution">
-        <ng-template matTabContent>
-          <qos-dmaic-resolution class="onglet" [projectId]="p.id" [problemStatement]="p.problemStatement ?? null"></qos-dmaic-resolution>
-        </ng-template>
-      </mat-tab>
-    </mat-tab-group>
+      </div>
+      <div qosCapability>
+          <mat-card class="capability-card">
+            <mat-card-header><mat-card-title i18n="@@dmaic.detail.capability">Capabilité (Cp / Cpk)</mat-card-title></mat-card-header>
+            <mat-card-content>
+              <div *ngIf="capability; else noCap" class="cap-grid">
+                <div><span class="dim" i18n="@@dmaic.detail.sample">Échantillon</span><strong>{{ capability.sampleSize }}</strong></div>
+                <div><span class="dim" i18n="@@dmaic.detail.mean">Moyenne</span><strong>{{ capability.mean | number:'1.3-3' }}</strong></div>
+                <div><span class="dim">σ</span><strong>{{ capability.stdDev | number:'1.3-3' }}</strong></div>
+                <div><span class="dim">Cp</span><strong>{{ capability.cp | number:'1.2-2' }}</strong></div>
+                <div><span class="dim">Cpk</span><strong [class.bad]="(capability.cpk ?? 0) < 1">{{ capability.cpk | number:'1.2-2' }}</strong></div>
+                <div><span class="dim" i18n="@@dmaic.detail.sigma-level">Niveau σ</span><strong>{{ capability.sigmaLevel | number:'1.2-2' }}</strong></div>
+                <div class="full-row" *ngIf="capability.interpretation">
+                  <em>{{ capability.interpretation }}</em>
+                </div>
+                <div class="full-row warns" *ngIf="capability.warnings?.length">
+                  <ul><li *ngFor="let w of capability.warnings">{{ w }}</li></ul>
+                </div>
+              </div>
+              <ng-template #noCap><p class="dim" i18n="@@dmaic.detail.no-capability">Données insuffisantes pour le calcul.</p></ng-template>
+            </mat-card-content>
+          </mat-card>
+      </div>
+    </qos-dmaic-resolution>
 
   </section>
 </ng-container>

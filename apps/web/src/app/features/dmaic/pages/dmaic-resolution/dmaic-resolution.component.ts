@@ -1,5 +1,5 @@
 import { HttpResponse } from '@angular/common/http';
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -11,10 +11,17 @@ import { AuthzService } from '../../../../core/authz/authz.service';
 import { DirectoryUser } from '../../../../core/directory/directory.types';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { ConfirmDialogComponent } from '../../../../shared/ui/confirm-dialog/confirm-dialog.component';
+import {
+  CapaCreateDialogComponent,
+  CapaCreateDialogData,
+  CapaOpened
+} from '../../../capa/pages/capa-create-dialog/capa-create-dialog.component';
 import { IshikawaService } from '../../../ishikawa/ishikawa.service';
+import { DmaicPhase } from '../../dmaic.types';
 import {
   ANSWER_TYPE_LABEL,
   BRANCH_TEXT,
+  PHASE_TEXT,
   SECTION_TEXT,
   SectionText,
   TOPIC_LABEL,
@@ -24,6 +31,8 @@ import {
 import { DmaicResolutionService } from '../../resolution/dmaic-resolution.service';
 import {
   ACTION_STATUSES,
+  ATTACHMENTS_PER_PHASE,
+  ATTACHMENT_TYPES,
   ANSWER_CHOICES,
   ActionLine,
   AnswerCode,
@@ -43,15 +52,6 @@ import {
   emptyContent
 } from '../../resolution/dmaic-resolution.types';
 
-/** Une entrée du sommaire : une ancre de la fiche et son avancement. */
-interface NavEntry {
-  id: string;
-  letter: string;
-  label: string;
-  done: number;
-  total: number;
-}
-
 interface TopicGroup {
   topic: DefineTopic | null;
   label: string | null;
@@ -66,8 +66,9 @@ interface IshikawaOption {
 /**
  * La fiche de résolution d'un projet DMAIC (ADR 0101) : le classeur client à
  * l'écran, d'un seul tenant. Réclamation, questionnaire de chaque phase et sa
- * synthèse, 5 pourquoi, plan d'actions, photos ; un sommaire collant mène à
- * chaque partie en un clic.
+ * synthèse, 5 pourquoi, plan d'actions, photos et pièces jointes. Les phases se
+ * lisent une à une, depuis le bandeau : on ouvre celles que le projet a
+ * atteintes, et on y revient pour les corriger ; les suivantes restent fermées.
  *
  * <p>La fiche se tient en brouillon et s'enregistre d'un bloc. Les photos, elles,
  * partent tout de suite : un fichier n'attend pas un bouton. Le rapport client
@@ -87,6 +88,33 @@ export class DmaicResolutionComponent implements OnInit, OnDestroy {
   @Input({ required: true }) projectId!: string;
   /** Le problème de la charte : il devient l'effet du diagramme d'Ishikawa créé depuis la fiche. */
   @Input() problemStatement: string | null = null;
+  /** Le titre du projet : la référence d'une étude SPC créée depuis la fiche. */
+  @Input() projectTitle: string | null = null;
+  /** Les limites de spécification du projet, reprises par une étude SPC. */
+  @Input() spec: { lsl: number | null; usl: number | null } | null = null;
+
+  /** La phase où en est le projet : on ouvre les phases jusqu'à elle, pas au-delà. */
+  @Input()
+  set projectPhase(phase: DmaicPhase | null) {
+    const next = phase ?? 'DEFINE';
+    const advanced = next !== this.currentPhase;
+    this.currentPhase = next;
+    if (advanced) this.view = next;
+    this.emitMissing();
+  }
+
+  /**
+   * Ce qui manque, dans la fiche ENREGISTRÉE, pour passer à la phase suivante :
+   * le serveur refuse d'avancer tant que la liste n'est pas vide.
+   */
+  @Output() readonly missingChange = new EventEmitter<string[]>();
+
+  readonly phases: readonly DmaicPhase[] = ['DEFINE', 'MEASURE', 'ANALYZE', 'IMPROVE', 'CONTROL'];
+  currentPhase: DmaicPhase = 'DEFINE';
+  /** La phase affichée. */
+  view: DmaicPhase = 'DEFINE';
+  missingSaved: string[] = [];
+  readonly attachmentAccept = ATTACHMENT_TYPES.join(',');
 
   readonly limits = RESOLUTION_LIMITS;
   readonly branches = WHY_BRANCHES;
@@ -191,16 +219,7 @@ export class DmaicResolutionComponent implements OnInit, OnDestroy {
 
   choicesOf(q: SheetQuestion): readonly AnswerCode[] { return ANSWER_CHOICES[q.answerType]; }
 
-  summaryOf(section: SheetSection): string | null {
-    switch (section) {
-      case 'MEASURE': return this.draft.measureSummary;
-      case 'CONTAIN': return this.draft.containmentMeasures;
-      case 'ANALYZE': return this.draft.rootCause;
-      case 'IMPROVE': return this.draft.retainedSolutions;
-      case 'CONTROL': return this.draft.surveillancePlan;
-      default: return null;
-    }
-  }
+  summaryOf(section: SheetSection): string | null { return summaryIn(this.draft, section); }
 
   setSummary(section: SheetSection, value: string): void {
     switch (section) {
@@ -215,46 +234,57 @@ export class DmaicResolutionComponent implements OnInit, OnDestroy {
   get severities() { return this.sheet?.settings.severities ?? []; }
   get failureTypes() { return this.sheet?.settings.failureTypes ?? []; }
 
-  /** Le sommaire, avec l'avancement de chaque partie : ce qui est rempli sur ce qui est demandé. */
-  get nav(): NavEntry[] {
-    const d = this.draft;
-    const filled = (v: unknown) => v !== null && v !== undefined && String(v).trim() !== '';
-    const claim = [d.clientName, d.claimNumber, d.problemOwner, d.openedOn, d.severity, d.failureTypeCode, d.customerSymptoms];
-    const entries: NavEntry[] = [{
-      id: 'res-claim', letter: '#', label: $localize`:@@dmaic.res.claim:Réclamation`,
-      done: claim.filter(filled).length + (d.team.length ? 1 : 0), total: claim.length + 1
-    }];
-    for (const s of this.sections) {
-      const qs = this.questionsOf(s);
-      const hasSummary = SECTION_TEXT[s].summary !== null;
-      entries.push({
-        id: 'res-' + s.toLowerCase(), letter: SECTION_TEXT[s].letter, label: SECTION_TEXT[s].title,
-        done: qs.filter(q => filled(d.answers[q.code])).length + (hasSummary && filled(this.summaryOf(s)) ? 1 : 0),
-        total: qs.length + (hasSummary ? 1 : 0)
-      });
-      if (s === 'ANALYZE') {
-        entries.push({
-          id: 'res-whys', letter: '5', label: $localize`:@@dmaic.res.whys:5 pourquoi`,
-          done: WHY_BRANCHES.filter(b => this.chainsOf(b).length).length, total: WHY_BRANCHES.length
-        });
-      }
-      if (s === 'IMPROVE') {
-        entries.push({
-          id: 'res-actions', letter: '✓', label: $localize`:@@dmaic.res.actions:Plan d'actions`,
-          done: d.actions.filter(a => a.status === 'CLOSED').length, total: d.actions.length
-        });
-      }
-    }
-    entries.push({
-      id: 'res-photos', letter: '▣', label: $localize`:@@dmaic.res.photos:Photos`,
-      done: this.sheet?.photos.length ?? 0, total: RESOLUTION_LIMITS.photoSlots
-    });
-    return entries;
+  // ---------- Phases ----------
+
+  phaseIndex(phase: DmaicPhase): number { return this.phases.indexOf(phase); }
+  phaseLetter(phase: DmaicPhase): string { return PHASE_TEXT[phase].letter; }
+  phaseLabel(phase: DmaicPhase): string { return PHASE_TEXT[phase].label; }
+
+  /** On n'ouvre qu'une phase déjà atteinte. */
+  show(phase: DmaicPhase): void {
+    if (this.phaseIndex(phase) <= this.phaseIndex(this.currentPhase)) this.view = phase;
   }
 
-  goTo(id: string): void {
-    const reduce = typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
-    document.getElementById(id)?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+  /** Les parties de la fiche que couvre une phase : « Analyser » contient et analyse. */
+  sectionsOf(phase: DmaicPhase): SheetSection[] {
+    return PHASE_SECTIONS[phase].filter(s => this.sections.includes(s));
+  }
+
+  askedIn(phase: DmaicPhase): number {
+    return this.sectionsOf(phase).reduce((n, s) => n + this.questionsOf(s).length + (SECTION_TEXT[s].summary ? 1 : 0), 0);
+  }
+
+  answeredIn(phase: DmaicPhase): number {
+    return this.askedIn(phase) - missingOf(this.sheet, this.draft, this.sectionsOf(phase)).length;
+  }
+
+  /** Les cinq emplacements de pièces jointes de la phase affichée : 11-15 pour Définir… */
+  get attachmentSlots(): number[] {
+    const base = (this.phaseIndex(this.view) + 1) * 10;
+    return Array.from({ length: ATTACHMENTS_PER_PHASE }, (_, i) => base + i + 1);
+  }
+
+  isImage(type: string): boolean { return PHOTO_TYPES.includes(type); }
+
+  attachmentAlt(slot: number): string {
+    return $localize`:@@dmaic.res.attachment.alt:Document ${slot % 10}:rank:`;
+  }
+
+  /** Ce que reprend une étude SPC créée depuis la fiche : la pièce et les limites du projet. */
+  get studyParams(): Record<string, string> {
+    const params: Record<string, string> = { dmaic: this.projectId };
+    if (this.projectTitle) params['ref'] = this.projectTitle;
+    if (this.spec?.lsl !== null && this.spec?.lsl !== undefined) params['lsl'] = String(this.spec.lsl);
+    if (this.spec?.usl !== null && this.spec?.usl !== undefined) params['usl'] = String(this.spec.usl);
+    return params;
+  }
+
+  private emitMissing(): void {
+    if (!this.sheet) return;
+    const missing = missingOf(this.sheet, this.sheet.content, this.sectionsOf(this.currentPhase));
+    this.missingSaved = missing;
+    // Hors du rendu en cours : le parent lit la liste dans le même cycle (NG0100).
+    queueMicrotask(() => this.missingChange.emit(missing));
   }
 
   // ---------- Réponses ----------
@@ -328,11 +358,36 @@ export class DmaicResolutionComponent implements OnInit, OnDestroy {
     if (!this.canAddAction) return;
     this.draft.actions = [...this.draft.actions, {
       createdOn: new Date().toISOString().slice(0, 10), action: null, responsible: null, status: 'OPEN',
-      plannedOn: null, doneOn: null, percent: 0, notes: null
+      plannedOn: null, doneOn: null, percent: 0, notes: null, capaId: null
     }];
   }
 
   removeAction(line: ActionLine): void { this.draft.actions = this.draft.actions.filter(a => a !== line); }
+
+  /**
+   * Ouvre une CAPA pour l'action : la fenêtre de création de la CAPA, préremplie
+   * de l'action, du projet et de l'échéance. Le dossier créé alimente le registre
+   * CAPA ; son lien est enregistré aussitôt avec la fiche.
+   */
+  openCapa(line: ActionLine): void {
+    if (!this.canEdit || line.capaId || !line.action?.trim()) return;
+    const data: CapaCreateDialogData = {
+      source: { type: 'INTERNAL', reference: this.projectTitle ?? this.sheet?.projectTitle ?? 'DMAIC' },
+      prefill: {
+        title: line.action.trim().slice(0, 200),
+        description: $localize`:@@dmaic.res.capa-description:Action du plan d'actions DMAIC « ${this.projectTitle ?? this.sheet?.projectTitle ?? ''}:project: ».`,
+        type: 'CORRECTIVE',
+        dueDate: line.plannedOn ?? undefined
+      }
+    };
+    this.dialog.open<CapaCreateDialogComponent, CapaCreateDialogData, CapaOpened>(CapaCreateDialogComponent, {
+      data, autoFocus: 'first-tabbable', restoreFocus: true, panelClass: 'qos-dialog-panel'
+    }).afterClosed().subscribe(opened => {
+      if (!opened) return;
+      line.capaId = opened.capaId;
+      this.save();
+    });
+  }
 
   // ---------- Brouillon ----------
 
@@ -418,8 +473,11 @@ export class DmaicResolutionComponent implements OnInit, OnDestroy {
     const file = input.files?.[0];
     input.value = '';
     if (!file || !this.canEdit) return;
-    if (!PHOTO_TYPES.includes(file.type)) {
-      this.snack.open($localize`:@@dmaic.res.photo.bad-type:Format refusé : JPEG, PNG, GIF ou WEBP uniquement.`, undefined, { duration: 5000 });
+    const attachment = slot > RESOLUTION_LIMITS.photoSlots;
+    if (!(attachment ? ATTACHMENT_TYPES : PHOTO_TYPES).includes(file.type)) {
+      this.snack.open(attachment
+        ? $localize`:@@dmaic.res.attachment.bad-type:Format refusé : image, PDF, Word, Excel ou PowerPoint uniquement.`
+        : $localize`:@@dmaic.res.photo.bad-type:Format refusé : JPEG, PNG, GIF ou WEBP uniquement.`, undefined, { duration: 5000 });
       return;
     }
     if (file.size > RESOLUTION_LIMITS.photoBytes) {
@@ -514,8 +572,6 @@ export class DmaicResolutionComponent implements OnInit, OnDestroy {
 
   trackByIndex(index: number): number { return index; }
 
-  trackByNav(_: number, e: NavEntry): string { return e.id; }
-
   private take(s: ResolutionSheet): void {
     this.sheet = s;
     this.draft = withEditableWhys(structuredClone(s.content));
@@ -525,6 +581,7 @@ export class DmaicResolutionComponent implements OnInit, OnDestroy {
     this.groups = Object.fromEntries(this.sections.map(sec => [sec, this.buildGroups(sec)]));
     this.remarks = Object.fromEntries(s.photos.map(p => [p.slot, p.remark ?? '']));
     this.syncTeamIds();
+    this.emitMissing();
   }
 
   private putPhoto(photo: SheetPhoto): void {
@@ -540,6 +597,44 @@ export class DmaicResolutionComponent implements OnInit, OnDestroy {
 
   private fail(err: unknown, fallback: string): void {
     this.snack.open(safeErrorMessage(err, fallback), undefined, { duration: 5000 });
+  }
+}
+
+/** Les parties de la fiche que couvre chaque phase du projet. */
+const PHASE_SECTIONS: Readonly<Record<DmaicPhase, SheetSection[]>> = {
+  DEFINE: ['DEFINE'],
+  MEASURE: ['MEASURE'],
+  ANALYZE: ['CONTAIN', 'ANALYZE'],
+  IMPROVE: ['IMPROVE'],
+  CONTROL: ['CONTROL']
+};
+
+/**
+ * Les questions sans réponse et les synthèses vides de ces parties, par leur
+ * libellé : la règle même du serveur, qui refuse d'avancer tant qu'il en reste.
+ */
+export function missingOf(sheet: ResolutionSheet | null, c: ResolutionContent, sections: SheetSection[]): string[] {
+  if (!sheet) return [];
+  const blank = (v: string | null | undefined) => (v ?? '').trim() === '';
+  const out: string[] = [];
+  for (const s of sections) {
+    for (const q of sheet.settings.questions.filter(x => x.section === s)) {
+      if (blank(c.answers[q.code])) out.push(q.label);
+    }
+    const label = SECTION_TEXT[s].summary;
+    if (label && blank(summaryIn(c, s))) out.push(label);
+  }
+  return out;
+}
+
+function summaryIn(c: ResolutionContent, section: SheetSection): string | null {
+  switch (section) {
+    case 'MEASURE': return c.measureSummary;
+    case 'CONTAIN': return c.containmentMeasures;
+    case 'ANALYZE': return c.rootCause;
+    case 'IMPROVE': return c.retainedSolutions;
+    case 'CONTROL': return c.surveillancePlan;
+    default: return null;
   }
 }
 
@@ -596,9 +691,13 @@ export function clean(c: ResolutionContent): ResolutionContent {
       plannedOn: text(a.plannedOn),
       doneOn: text(a.doneOn),
       percent: a.percent ?? 0,
-      notes: text(a.notes)
+      notes: text(a.notes),
+      capaId: a.capaId ?? null
     })),
-    ishikawaId: text(c.ishikawaId)
+    ishikawaId: text(c.ishikawaId),
+    measuresEnabled: !!c.measuresEnabled,
+    capabilityStudy: !!c.capabilityStudy,
+    gageRrStudy: !!c.gageRrStudy
   };
 }
 

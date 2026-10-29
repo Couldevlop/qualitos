@@ -132,7 +132,24 @@ export class GageRrStudyComponent implements OnInit {
 
   ngOnInit(): void {
     this.id = this.route.snapshot.paramMap.get('id');
-    if (this.id) this.charger();
+    if (this.id) this.charger(); else this.prefillFromProject();
+  }
+
+  /** Une étude ouverte depuis un projet DMAIC reprend sa pièce et ses limites de spécification. */
+  private prefillFromProject(): void {
+    const q = this.route.snapshot?.queryParamMap;
+    if (!q) return;
+    const num = (key: string): number | null => {
+      const raw = q.get(key);
+      const v = raw === null || raw.trim() === '' ? NaN : Number(raw);
+      return Number.isFinite(v) ? v : null;
+    };
+    const ref = (q.get('ref') ?? '').trim().slice(0, 120);
+    if (ref) this.form.controls.partReference.setValue(ref);
+    const lsl = num('lsl');
+    const usl = num('usl');
+    if (lsl !== null) this.form.controls.lsl.setValue(lsl);
+    if (usl !== null) this.form.controls.usl.setValue(usl);
   }
 
   charger(): void {

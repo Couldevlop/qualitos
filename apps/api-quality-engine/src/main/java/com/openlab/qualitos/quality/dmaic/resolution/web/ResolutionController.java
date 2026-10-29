@@ -72,12 +72,13 @@ public class ResolutionController {
     @ResponseStatus(HttpStatus.CREATED)
     @RequiresPermission(Permission.DMAIC_MANAGE)
     @Transactional
-    @Operation(summary = "Put a photo in one of the six slots, replacing the one already there")
+    @Operation(summary = "Put a photo (slots 1-6) or a phase attachment (slots 11-55) in a slot, replacing the one there")
     public ResolutionDto.PhotoView uploadPhoto(@PathVariable UUID projectId, @PathVariable int slot,
                                                @RequestParam("file") MultipartFile file,
                                                @RequestParam(value = "remark", required = false) String remark)
             throws IOException {
-        return service.uploadPhoto(projectId, slot, file.getContentType(), file.getBytes(), remark);
+        return service.uploadPhoto(projectId, slot, file.getContentType(), file.getBytes(), remark,
+                file.getOriginalFilename());
     }
 
     @PatchMapping("/photos/{slot}")

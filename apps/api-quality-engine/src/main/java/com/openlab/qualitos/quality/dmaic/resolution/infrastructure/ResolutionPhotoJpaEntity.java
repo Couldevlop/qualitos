@@ -36,7 +36,7 @@ public class ResolutionPhotoJpaEntity {
     @Column(name = "object_key", nullable = false, length = 400, unique = true)
     private String objectKey;
 
-    @Column(name = "content_type", nullable = false, length = 50)
+    @Column(name = "content_type", nullable = false, length = 100)
     private String contentType;
 
     @Column(name = "size_bytes", nullable = false)

@@ -22,7 +22,6 @@ import { DmaicEditDialogComponent } from '../dmaic-edit-dialog/dmaic-edit-dialog
 import { DmaicMeasureDialogComponent } from '../dmaic-measure-dialog/dmaic-measure-dialog.component';
 import { DmaicPokaYokeDialogComponent } from '../dmaic-pokayoke-dialog/dmaic-pokayoke-dialog.component';
 
-const TAB_RESOLUTION = 'fiche';
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 @Component({
@@ -35,8 +34,10 @@ export class DmaicDetailComponent implements OnInit {
 
   readonly phases: DmaicPhase[] = ['DEFINE', 'MEASURE', 'ANALYZE', 'IMPROVE', 'CONTROL'];
 
-  /** L'onglet ouvert : `?onglet=fiche` mène droit à la fiche de résolution. */
-  tabIndex = 0;
+  /** Ce qui manque à la phase en cours (fiche enregistrée) : tant qu'il en reste, on n'avance pas. */
+  missing: string[] = [];
+  readonly advanceBlockedHint =
+    $localize`:@@dmaic.detail.advance-blocked:Répondez à toutes les questions de la phase et enregistrez la fiche pour passer à la suivante.`;
 
   project$!: Observable<DmaicProjectResponse | null>;
   private readonly loadingState$ = new BehaviorSubject<boolean>(false);
@@ -48,7 +49,7 @@ export class DmaicDetailComponent implements OnInit {
   assignments: AssignmentResponse[] = [];
   capability: CapabilityResponse | null = null;
 
-  readonly measureColumns    = ['value', 'subgroupId', 'recordedAt', 'sourceRef'];
+  readonly measureColumns    = ['value', 'operatorId', 'recordedAt', 'sourceRef'];
   readonly assignmentColumns = ['deviceCode', 'deviceName', 'deviceType', 'status', 'note'];
 
   private readonly refresh$ = new BehaviorSubject<void>(undefined);
@@ -63,7 +64,6 @@ export class DmaicDetailComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.tabIndex = this.route.snapshot.queryParamMap.get('onglet') === TAB_RESOLUTION ? 1 : 0;
     this.project$ = this.route.paramMap.pipe(
       tap(() => { this.errorState$.next(null); this.loadingState$.next(true); }),
       switchMap(p => {
@@ -99,15 +99,8 @@ export class DmaicDetailComponent implements OnInit {
     );
   }
 
-  /** Garde l'onglet dans l'adresse, pour qu'un lien ou un retour arrière y ramène. */
-  onTab(index: number): void {
-    this.tabIndex = index;
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: { onglet: index === 1 ? TAB_RESOLUTION : null },
-      queryParamsHandling: 'merge',
-      replaceUrl: true
-    });
+  onMissing(list: string[]): void {
+    this.missing = list;
   }
 
   /** Mesures du projet, dans l'ordre de relevé : celui du calcul de capabilité. */

@@ -110,3 +110,12 @@ const ACTION_STATUS_LABEL: Readonly<Record<ActionStatus, string>> = {
 
 export const answerLabel = (code: string): string => ANSWER_LABEL[code as AnswerCode] ?? code;
 export const actionStatusLabel = (code: string): string => ACTION_STATUS_LABEL[code as ActionStatus] ?? code;
+
+/** Les cinq phases du projet, telles que le bandeau les nomme. */
+export const PHASE_TEXT: Readonly<Record<string, { letter: string; label: string }>> = {
+  DEFINE: { letter: 'D', label: $localize`:@@dmaic.res.phase.define:Définir` },
+  MEASURE: { letter: 'M', label: $localize`:@@dmaic.res.phase.measure:Mesurer` },
+  ANALYZE: { letter: 'A', label: $localize`:@@dmaic.res.phase.analyze:Analyser` },
+  IMPROVE: { letter: 'I', label: $localize`:@@dmaic.res.phase.improve:Améliorer` },
+  CONTROL: { letter: 'C', label: $localize`:@@dmaic.res.phase.control:Contrôler` }
+};

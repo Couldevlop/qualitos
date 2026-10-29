@@ -1,6 +1,6 @@
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
@@ -21,10 +21,14 @@ import { STUB_PERSON, provideDirectoryStub } from '../../../../core/directory/te
 import { PersonNameModule } from '../../../../shared/person-name/person-name.module';
 
 /** La fiche de résolution a ses propres tests : ici, seul son onglet compte. */
-@Component({ selector: 'qos-dmaic-resolution', template: '<p data-test="fiche">fiche {{ projectId }}</p>', standalone: false })
+@Component({ selector: 'qos-dmaic-resolution', template: '<p data-test="fiche">fiche {{ projectId }} {{ projectPhase }}</p><ng-content></ng-content>', standalone: false })
 class ResolutionStubComponent {
   @Input() projectId = '';
   @Input() problemStatement: string | null = null;
+  @Input() projectTitle = '';
+  @Input() projectPhase: string | null = null;
+  @Input() spec: unknown = null;
+  @Output() missingChange = new EventEmitter<string[]>();
 }
 
 /**
@@ -135,7 +139,6 @@ describe('DmaicDetailComponent', () => {
     const el: HTMLElement = fixture.nativeElement;
     expect(el.querySelector('h1')?.textContent).toContain('Rebut ligne A');
     expect(el.querySelector('.meta-row')?.textContent).toContain('Mesurer');
-    expect(el.querySelector('.phase-stepper')?.textContent).toContain('Améliorer');
     expect(el.querySelector('.cap-grid')?.textContent).toContain('40');
     expect(component.capability?.cpk).toBe(1.45);
   });
@@ -209,11 +212,8 @@ describe('DmaicDetailComponent', () => {
 
     fixture.detectChanges();
     flushDetail(project({ phase: 'ANALYZE' }));
-    const steps = (fixture.nativeElement as HTMLElement).querySelectorAll('.phase-stepper li');
-    expect(steps.length).toBe(5);
-    expect(steps[2].classList.contains('current')).toBeTrue();
-    expect(steps[0].classList.contains('done')).toBeTrue();
-    expect(steps[4].classList.contains('done')).toBeFalse();
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('[data-test="fiche"]')?.textContent).toContain('ANALYZE');
   });
 
   it('avance la phase puis recharge l\'état serveur', () => {
@@ -326,9 +326,6 @@ describe('DmaicDetailComponent', () => {
 
     const el: HTMLElement = fixture.nativeElement;
     expect(el.querySelector('.measures-card')?.textContent).toContain('9.99');
-    expect(el.querySelector('.measures-card')?.textContent).toContain('g1');
-    expect(el.querySelector('.pokayoke-card')?.textContent).toContain('PK-INT-001');
-    expect(el.querySelector('.pokayoke-card')?.textContent).toContain('pilote atelier');
     expect(el.querySelectorAll('.empty').length).toBe(0);
   });
 
@@ -413,27 +410,22 @@ describe('DmaicDetailComponent', () => {
     expect(component.assignmentBadge('VERIFIED')).toBe('assign assign-verified');
   });
 
-  it("ouvre la fiche de résolution par l'adresse, et garde l'onglet dans l'adresse", async () => {
-    routeQuery = { onglet: 'fiche' };
-    const nav = spyOn(TestBed.inject(Router), 'navigate').and.resolveTo(true);
+  it('affiche toujours la fiche, à la phase du projet', () => {
     fixture.detectChanges();
-    flushDetail();
-    await fixture.whenStable();
+    flushDetail(project({ phase: 'MEASURE' }));
     fixture.detectChanges();
-    expect(component.tabIndex).toBe(1);
-    expect(fixture.nativeElement.querySelector('[data-test="fiche"]')?.textContent).toContain(ID);
-
-    component.onTab(0);
-    expect(component.tabIndex).toBe(0);
-    expect(nav).toHaveBeenCalledWith([], jasmine.objectContaining({ queryParams: { onglet: null }, replaceUrl: true }));
-    component.onTab(1);
-    expect(nav).toHaveBeenCalledWith([], jasmine.objectContaining({ queryParams: { onglet: 'fiche' } }));
+    expect(fixture.nativeElement.querySelector('[data-test="fiche"]')?.textContent).toContain('MEASURE');
   });
 
-  it('ouvre le pilotage par défaut', () => {
+  it('bloque le passage à la phase suivante tant que la fiche est incomplète', () => {
     fixture.detectChanges();
     flushDetail();
-    expect(component.tabIndex).toBe(0);
-    expect(fixture.nativeElement.querySelector('[data-test="fiche"]')).toBeNull();
+    component.onMissing(['DEF-01']);
+    fixture.detectChanges();
+    const btn = fixture.nativeElement.querySelector('[data-test="avancer"]') as HTMLButtonElement;
+    expect(btn.disabled).toBeTrue();
+    component.onMissing([]);
+    fixture.detectChanges();
+    expect(btn.disabled).toBeFalse();
   });
 });

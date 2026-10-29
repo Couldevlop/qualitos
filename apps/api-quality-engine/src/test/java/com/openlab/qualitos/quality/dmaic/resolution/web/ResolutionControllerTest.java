@@ -114,7 +114,7 @@ class ResolutionControllerTest {
     @ValueSource(strings = {"QUALITY_MANAGER", "QUALITY_DIRECTOR", "ADMIN_TENANT", "SUPER_ADMIN"})
     void lesProfilsDePilotageEcrivent(String role) throws Exception {
         when(service.save(eq(PROJET), any())).thenReturn(vue());
-        when(service.uploadPhoto(eq(PROJET), eq(2), eq("image/png"), any(), eq("Vue")))
+        when(service.uploadPhoto(eq(PROJET), eq(2), eq("image/png"), any(), eq("Vue"), eq("p.png")))
                 .thenReturn(new ResolutionDto.PhotoView(2, "image/png", 3, "Vue", "https://s3.test/k"));
         when(service.updateRemark(PROJET, 2, "Autre"))
                 .thenReturn(new ResolutionDto.PhotoView(2, "image/png", 3, "Autre", "https://s3.test/k"));
