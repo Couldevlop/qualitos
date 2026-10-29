@@ -1,7 +1,5 @@
 package com.openlab.qualitos.quality.dmaic.resolution.application;
 
-import com.openlab.qualitos.quality.dmaic.resolution.domain.DefineTopic;
-
 import java.time.LocalDate;
 import java.util.List;
 
@@ -10,25 +8,43 @@ import java.util.List;
  * classeur), déjà résolu en texte : le moteur de mise en page n'a plus aucune
  * règle métier à connaître.
  *
- * @param definition les réponses de la phase « Définir », rubrique par rubrique
+ * <p>Ce qu'il reprend de chaque phase est celui du modèle client : les trois
+ * questions clés de « Définir », la synthèse des mesures, le plan temporaire et
+ * les mesures conservatoires, le diagramme d'Ishikawa et les 5 pourquoi, les
+ * solutions retenues et leur plan d'actions, enfin le plan de surveillance.
+ *
+ * @param define         les questions clés de « Définir » (problème, pièce ou lot, quantité)
+ * @param containmentPlan la réponse au plan d'action temporaire de confinement
+ * @param ishikawaCauses les causes du diagramme lié : catégorie → cause
+ * @param bestSolutions  la réponse « meilleures solutions sélectionnées »
+ * @param surveillance   la réponse « le plan de surveillance élimine-t-il la récurrence ? »
  */
 public record ClaimReport(String clientName, String claimNumber, String projectName, String ownerName,
                           LocalDate openedOn, LocalDate closedOn, String severity, String failureType,
-                          String customerSymptoms, List<Topic> definition, String problemStatement,
-                          String measureSummary, String containmentMeasures, String rootCause,
-                          String retainedSolutions, String surveillancePlan) {
+                          List<Answer> define, String measureSummary, String containmentPlan,
+                          String containmentMeasures, List<Answer> ishikawaCauses, List<Why> whys,
+                          String rootCause, String bestSolutions, List<Action> actions, String surveillance) {
 
     public ClaimReport {
-        definition = List.copyOf(definition);
+        define = List.copyOf(define);
+        ishikawaCauses = List.copyOf(ishikawaCauses);
+        whys = List.copyOf(whys);
+        actions = List.copyOf(actions);
     }
 
-    /** Une rubrique (Quoi, Qui…) et ses questions répondues. */
-    public record Topic(DefineTopic topic, List<Answer> answers) {
-        public Topic {
-            answers = List.copyOf(answers);
+    /** Une question et sa réponse, déjà en clair. */
+    public record Answer(String question, String answer) {
+    }
+
+    /** Une chaîne de 5 pourquoi : son axe, son constat, ses pourquoi, sa cause racine et son action. */
+    public record Why(String branch, String cause, List<String> whys, boolean rootCause, String action) {
+        public Why {
+            whys = List.copyOf(whys);
         }
     }
 
-    public record Answer(String question, String answer) {
+    /** Une ligne du plan d'actions, telle que le client la lit. */
+    public record Action(String action, String responsible, String status, LocalDate plannedOn,
+                         LocalDate doneOn, int percent) {
     }
 }

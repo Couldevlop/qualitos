@@ -95,8 +95,7 @@ describe('DmaicCreateDialogComponent', () => {
       championId: '',
       specLowerLimit: 9.95,
       specUpperLimit: 10.05,
-      specUnit: '  mm  ',
-      estimatedSavingsEur: 84000
+      specUnit: '  mm  '
     });
     component.submit();
 
@@ -109,7 +108,8 @@ describe('DmaicCreateDialogComponent', () => {
     expect(req.request.body.championId).toBeUndefined();
     expect(req.request.body.specUnit).toBe('mm');
     expect(req.request.body.specLowerLimit).toBe(9.95);
-    expect(req.request.body.estimatedSavingsEur).toBe(84000);
+    // Les économies estimées ne se saisissent plus à la création.
+    expect(req.request.body.estimatedSavingsEur).toBeUndefined();
 
     req.flush(created);
     expect(dialogRef.close).toHaveBeenCalledWith(created);

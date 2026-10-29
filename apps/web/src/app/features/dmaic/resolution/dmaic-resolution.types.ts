@@ -52,6 +52,18 @@ export const RESOLUTION_LIMITS = {
 
 export const PHOTO_TYPES: readonly string[] = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
 
+/** Une pièce jointe de phase admet aussi le PDF et les documents Office. */
+export const ATTACHMENT_TYPES: readonly string[] = [
+  ...PHOTO_TYPES,
+  'application/pdf',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+];
+
+/** Cinq pièces jointes par phase : emplacements 11-15 (Définir) … 51-55 (Contrôler). */
+export const ATTACHMENTS_PER_PHASE = 5;
+
 /** Une personne de l'annuaire : son compte, et son nom recopié pour l'affichage et le rapport. */
 export interface Person {
   accountId: string;
@@ -101,6 +113,8 @@ export interface ActionLine {
   doneOn: string | null;
   percent: number;
   notes: string | null;
+  /** Le dossier CAPA ouvert pour cette action, ou null. */
+  capaId: string | null;
 }
 
 export interface ResolutionContent {
@@ -122,6 +136,12 @@ export interface ResolutionContent {
   whys: WhyChain[];
   actions: ActionLine[];
   ishikawaId: string | null;
+  /** « Mesurer » : la fenêtre des mesures est ouverte dans la phase. */
+  measuresEnabled: boolean;
+  /** « Analyser » : une étude Cp/Cpk et carte de contrôle est menée. */
+  capabilityStudy: boolean;
+  /** « Analyser » : une étude Gage R&R est menée. */
+  gageRrStudy: boolean;
 }
 
 export interface SheetPhoto {
@@ -150,6 +170,6 @@ export function emptyContent(): ResolutionContent {
     clientName: null, claimNumber: null, problemOwner: null, team: [], openedOn: null, closedOn: null,
     severity: null, failureTypeCode: null, customerSymptoms: null, answers: {}, measureSummary: null,
     containmentMeasures: null, rootCause: null, retainedSolutions: null, surveillancePlan: null,
-    whys: [], actions: [], ishikawaId: null
+    whys: [], actions: [], ishikawaId: null, measuresEnabled: false, capabilityStudy: false, gageRrStudy: false
   };
 }

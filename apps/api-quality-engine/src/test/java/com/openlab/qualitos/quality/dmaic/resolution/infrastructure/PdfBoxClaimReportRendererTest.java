@@ -1,7 +1,6 @@
 package com.openlab.qualitos.quality.dmaic.resolution.infrastructure;
 
 import com.openlab.qualitos.quality.dmaic.resolution.application.ClaimReport;
-import com.openlab.qualitos.quality.dmaic.resolution.domain.DefineTopic;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
@@ -9,7 +8,6 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,17 +21,20 @@ class PdfBoxClaimReportRendererTest {
     final PdfBoxClaimReportRenderer renderer = new PdfBoxClaimReportRenderer();
 
     static ClaimReport rapport(String surveillance) {
-        List<ClaimReport.Topic> definition = new ArrayList<>();
-        for (DefineTopic t : DefineTopic.values()) {
-            definition.add(new ClaimReport.Topic(t, t == DefineTopic.WHAT
-                    ? List.of(new ClaimReport.Answer("Quel est le problème ?", "Fissure à la base du carter"))
-                    : List.of()));
-        }
         return new ClaimReport("Acme Industrie", "CL-2026-042", "Fissures carter", "Alice Martin",
                 LocalDate.of(2026, 10, 1), LocalDate.of(2026, 10, 20), "1 - Sévère",
                 "V10 - Defect - Linear, cracks, tears, seams, broken, etc. and a much longer tail that is cut",
-                "Le client signale des fissures — « à réception »", definition, "Carters fissurés en sortie de fonderie",
-                null, "Tri à 100 % du stock", "Outil usé\nAbsence de compteur", "Nouvel outil", surveillance);
+                List.of(new ClaimReport.Answer("Quel est le problème et comment a-t-il été identifié ?",
+                                "Fissure à la base du carter"),
+                        new ClaimReport.Answer("Quelle est la quantité ?", null)),
+                null, "Tri à 100 % du stock", "Isolement des lots",
+                List.of(new ClaimReport.Answer("Machines", "Outil usé")),
+                List.of(new ClaimReport.Why("Pourquoi le problème est-il survenu ?", "Bavure",
+                        List.of("Outil usé", "Absence de compteur"), true, "Compteur de coups")),
+                "Absence de compteur", "Nouvel outil",
+                List.of(new ClaimReport.Action("Changer l'outil", "Bob", "En cours", LocalDate.of(2026, 10, 5),
+                        null, 50)),
+                surveillance);
     }
 
     static String texte(byte[] pdf) throws IOException {
@@ -48,8 +49,11 @@ class PdfBoxClaimReportRendererTest {
 
         assertThat(t).contains("Rapport d'action corrective client DMAIC", "Acme Industrie", "CL-2026-042",
                 "Alice Martin", "01/10/2026", "20/10/2026", "1 - Sévère", "Fissure à la base du carter",
-                "Carters fissurés en sortie de fonderie", "Tri à 100 % du stock", "Absence de compteur",
-                "Contrôle horaire", "étape 1", "étape 2", "étape 3", "étape 4", "étape 5", "Quoi", "Combien");
+                "Tri à 100 % du stock", "Isolement des lots", "Machines : Outil usé", "Pourquoi 2 : Absence de compteur",
+                "cause racine", "Compteur de coups", "Nouvel outil", "1. Changer l'outil", "Responsable : Bob",
+                "05/10/2026", "Avancement : 50 %", "Contrôle horaire", "étape 1", "étape 2", "étape 3", "étape 4",
+                "étape 5", "Plan d'action temporaire", "Diagramme d'Ishikawa", "5 pourquoi", "Plan d'actions",
+                "Le plan de surveillance élimine-t-il");
         assertThat(t).contains(PdfBoxClaimReportRenderer.EMPTY);
     }
 
@@ -66,12 +70,8 @@ class PdfBoxClaimReportRendererTest {
 
     @Test
     void unRapportViergeSortQuandMeme() throws IOException {
-        List<ClaimReport.Topic> vide = new ArrayList<>();
-        for (DefineTopic t : DefineTopic.values()) {
-            vide.add(new ClaimReport.Topic(t, List.of()));
-        }
-        String t = texte(renderer.render(new ClaimReport(null, null, "Projet", null, null, null, null, null, null,
-                vide, null, null, null, null, null, null)));
+        String t = texte(renderer.render(new ClaimReport(null, null, "Projet", null, null, null, null, null,
+                List.of(), null, null, null, List.of(), List.of(), null, null, List.of(), null)));
 
         assertThat(t).contains("Projet", PdfBoxClaimReportRenderer.EMPTY);
     }

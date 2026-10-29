@@ -5,21 +5,7 @@
   <button mat-button type="button" (click)="load()" i18n="@@common.retry">Réessayer</button>
 </p>
 
-<div class="res" *ngIf="sheet && !failed">
-
-  <!-- Sommaire : chaque partie à un clic, avec son avancement. -->
-  <nav class="res__nav" i18n-aria-label="@@dmaic.res.nav" aria-label="Sommaire de la fiche">
-    <ol>
-      <li *ngFor="let e of nav; trackBy: trackByNav">
-        <button type="button" class="nav-item" (click)="goTo(e.id)" [attr.data-test]="'nav-' + e.id">
-          <span class="nav-item__letter" aria-hidden="true">{{ e.letter }}</span>
-          <span class="nav-item__label">{{ e.label }}</span>
-          <span class="nav-item__count" *ngIf="e.total"
-                [class.nav-item__count--full]="e.done === e.total">{{ e.done }}/{{ e.total }}</span>
-        </button>
-      </li>
-    </ol>
-  </nav>
+<div class="res res--phases" *ngIf="sheet && !failed">
 
   <div class="res__main">
 
@@ -116,9 +102,28 @@
       </mat-form-field>
     </section>
 
-    <!-- ===== Les phases ===== -->
-    <ng-container *ngFor="let s of sections">
-      <section class="bloc" [id]="'res-' + s.toLowerCase()" [attr.aria-labelledby]="'res-t-' + s">
+    <!-- ===== Les phases, en ligne : on ouvre celles déjà atteintes ===== -->
+    <ol class="phase-stepper" i18n-aria-label="@@dmaic.res.phases" aria-label="Phases du projet">
+      <li *ngFor="let ph of phases; let i = index"
+          [class.done]="i < phaseIndex(currentPhase)" [class.current]="i === phaseIndex(currentPhase)"
+          [class.selected]="ph === view">
+        <button type="button" class="step" [disabled]="i > phaseIndex(currentPhase)" (click)="show(ph)"
+                [attr.aria-current]="ph === view ? 'step' : null" [attr.data-test]="'phase-' + ph">
+          <span class="step-idx">{{ phaseLetter(ph) }}</span>
+          <span class="step-label">{{ phaseLabel(ph) }}</span>
+          <span class="step-count" *ngIf="i <= phaseIndex(currentPhase)">{{ answeredIn(ph) }}/{{ askedIn(ph) }}</span>
+          <mat-icon *ngIf="i > phaseIndex(currentPhase)" class="step-lock" aria-hidden="true">lock</mat-icon>
+        </button>
+      </li>
+    </ol>
+
+    <p class="manque" *ngIf="view === currentPhase && missingSaved.length" role="status" data-test="manque">
+      <mat-icon aria-hidden="true">info</mat-icon>
+      <span>{{ missingSaved.length }} <span i18n="@@dmaic.res.missing">réponse(s) à enregistrer avant de passer à la phase suivante.</span></span>
+    </p>
+
+    <!-- ===== La phase ouverte ===== -->
+      <section class="bloc" *ngFor="let s of sectionsOf(view)" [id]="'res-' + s.toLowerCase()" [attr.aria-labelledby]="'res-t-' + s">
         <header class="bloc__head">
           <span class="bloc__letter bloc__letter--phase" aria-hidden="true">{{ sectionText(s).letter }}</span>
           <div>
@@ -130,6 +135,16 @@
             </details>
           </div>
         </header>
+
+        <ng-content *ngIf="s === 'DEFINE'" select="[qosCharter]"></ng-content>
+
+        <ng-container *ngIf="s === 'MEASURE'">
+          <mat-checkbox [(ngModel)]="draft.measuresEnabled" [disabled]="!canEdit" data-test="mesures-coche"
+                        i18n="@@dmaic.res.measures-check">Mesures</mat-checkbox>
+          <div class="extra" *ngIf="draft.measuresEnabled" data-test="mesures">
+            <ng-content select="[qosMeasures]"></ng-content>
+          </div>
+        </ng-container>
 
         <div *ngFor="let g of groupsOf(s)" class="groupe">
           <h3 class="sous-titre" *ngIf="g.label">{{ g.label }}</h3>
@@ -158,6 +173,12 @@
           </ol>
         </div>
 
+        <mat-form-field *ngIf="sectionText(s).summary" appearance="outline" subscriptSizing="dynamic" class="champ-large synthese">
+          <mat-label>{{ sectionText(s).summary }}</mat-label>
+          <textarea matInput rows="3" [ngModel]="summaryOf(s)" (ngModelChange)="setSummary(s, $event)"
+                    [maxlength]="limits.summary" [disabled]="!canEdit" [attr.data-test]="'synthese-' + s"></textarea>
+        </mat-form-field>
+
         <ng-container *ngIf="s === 'ANALYZE'">
           <div class="ishikawa">
             <mat-form-field appearance="outline" subscriptSizing="dynamic">
@@ -175,6 +196,28 @@
               <mat-icon>account_tree</mat-icon> <span i18n="@@dmaic.res.ishikawa-new">Créer un diagramme</span>
             </button>
           </div>
+
+          <div class="etudes">
+            <div class="etude">
+              <mat-checkbox [(ngModel)]="draft.capabilityStudy" [disabled]="!canEdit" data-test="cpk-coche"
+                            i18n="@@dmaic.res.cpk-check">Étude Cp/Cpk et carte de contrôle</mat-checkbox>
+              <a mat-button *ngIf="draft.capabilityStudy" [routerLink]="['/spc', 'cartes', 'nouvelle']"
+                 [queryParams]="studyParams" data-test="cpk-registre">
+                <mat-icon>add_chart</mat-icon> <span i18n="@@dmaic.res.cpk-register">Créer l'étude dans le registre</span>
+              </a>
+            </div>
+            <div class="etude">
+              <mat-checkbox [(ngModel)]="draft.gageRrStudy" [disabled]="!canEdit" data-test="grr-coche"
+                            i18n="@@dmaic.res.grr-check">Gage R&amp;R</mat-checkbox>
+              <a mat-button *ngIf="draft.gageRrStudy" [routerLink]="['/spc', 'gage-rr', 'nouvelle']"
+                 [queryParams]="studyParams" data-test="grr-registre">
+                <mat-icon>straighten</mat-icon> <span i18n="@@dmaic.res.grr-register">Créer l'étude dans le registre</span>
+              </a>
+            </div>
+          </div>
+          <div class="extra" *ngIf="draft.capabilityStudy">
+            <ng-content select="[qosCapability]"></ng-content>
+          </div>
         </ng-container>
 
         <mat-form-field *ngIf="sectionText(s).summary" appearance="outline" subscriptSizing="dynamic" class="champ-large synthese">
@@ -185,7 +228,7 @@
       </section>
 
       <!-- ===== 5 pourquoi, à la suite de l'analyse ===== -->
-      <section *ngIf="s === 'ANALYZE'" class="bloc" id="res-whys" aria-labelledby="res-whys-t">
+      <section *ngIf="view === 'ANALYZE'" class="bloc" id="res-whys" aria-labelledby="res-whys-t">
         <header class="bloc__head">
           <span class="bloc__letter" aria-hidden="true">5</span>
           <div>
@@ -238,7 +281,7 @@
       </section>
 
       <!-- ===== Plan d'actions, à la suite de l'amélioration ===== -->
-      <section *ngIf="s === 'IMPROVE'" class="bloc" id="res-actions" aria-labelledby="res-actions-t">
+      <section *ngIf="view === 'IMPROVE'" class="bloc" id="res-actions" aria-labelledby="res-actions-t">
         <header class="bloc__head">
           <span class="bloc__letter" aria-hidden="true">✓</span>
           <div class="bloc__head-texte">
@@ -297,14 +340,21 @@
                 <input matInput [(ngModel)]="a.notes" [maxlength]="limits.actionText" [disabled]="!canEdit">
               </mat-form-field>
             </div>
+            <div class="action__capa">
+              <a mat-button *ngIf="a.capaId" [routerLink]="['/capa', a.capaId]" [attr.data-test]="'capa-open-' + i">
+                <mat-icon>open_in_new</mat-icon> <span i18n="@@dmaic.res.capa-open">Voir la CAPA</span>
+              </a>
+              <button mat-stroked-button type="button" color="primary" *ngIf="!a.capaId && canEdit"
+                      [disabled]="!a.action?.trim() || saving" (click)="openCapa(a)" [attr.data-test]="'capa-add-' + i">
+                <mat-icon>add_task</mat-icon> <span i18n="@@dmaic.res.capa-add">Ajouter une CAPA</span>
+              </button>
+            </div>
             <div class="avancement" aria-hidden="true"><span [style.width.%]="a.percent"></span></div>
           </li>
         </ol>
       </section>
-    </ng-container>
-
     <!-- ===== Photos ===== -->
-    <section class="bloc" id="res-photos" aria-labelledby="res-photos-t">
+    <section class="bloc" id="res-photos" *ngIf="view === 'DEFINE'" aria-labelledby="res-photos-t">
       <header class="bloc__head">
         <span class="bloc__letter" aria-hidden="true">▣</span>
         <div>
@@ -343,6 +393,37 @@
             <ng-template #noPhoto>
               <div class="photo__vide photo__vide--lecture"><span><span i18n="@@dmaic.res.photo.none">Pas de photo</span> {{ slot }}</span></div>
             </ng-template>
+          </ng-template>
+          <mat-progress-bar *ngIf="photoBusy.has(slot)" mode="indeterminate"></mat-progress-bar>
+        </li>
+      </ul>
+    </section>
+
+    <!-- ===== Pièces jointes de la phase ===== -->
+    <section class="bloc" id="res-pieces" aria-labelledby="res-pieces-t">
+      <header class="bloc__head">
+        <span class="bloc__letter" aria-hidden="true">⎘</span>
+        <div>
+          <h2 class="bloc__titre" id="res-pieces-t" i18n="@@dmaic.res.attachments">Pièces jointes de la phase</h2>
+          <p class="bloc__lead" i18n="@@dmaic.res.attachments-lead">Cinq documents au plus : image, PDF, Word, Excel ou PowerPoint, 10 Mo chacun. Un document est enregistré dès qu'il est versé.</p>
+        </div>
+      </header>
+      <ul class="pieces">
+        <li class="piece" *ngFor="let slot of attachmentSlots" [attr.data-test]="'piece-' + slot">
+          <ng-container *ngIf="photoAt(slot) as ph; else emptyPiece">
+            <mat-icon aria-hidden="true">{{ isImage(ph.contentType) ? 'image' : 'description' }}</mat-icon>
+            <a class="piece__nom" [href]="ph.url" target="_blank" rel="noopener noreferrer">{{ ph.remark || attachmentAlt(slot) }}</a>
+            <button mat-icon-button type="button" color="warn" *ngIf="canEdit" (click)="removePhoto(slot)"
+                    [disabled]="photoBusy.has(slot)" i18n-aria-label="@@dmaic.res.attachment-remove" aria-label="Retirer le document">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </ng-container>
+          <ng-template #emptyPiece>
+            <label class="piece__vide" *ngIf="canEdit" [class.is-busy]="photoBusy.has(slot)">
+              <input type="file" [accept]="attachmentAccept" (change)="onFile(slot, $event)" [disabled]="photoBusy.has(slot)"
+                     [attr.data-test]="'piece-input-' + slot">
+              <mat-icon aria-hidden="true">attach_file</mat-icon> <span i18n="@@dmaic.res.attachment-add">Joindre un document</span>
+            </label>
           </ng-template>
           <mat-progress-bar *ngIf="photoBusy.has(slot)" mode="indeterminate"></mat-progress-bar>
         </li>

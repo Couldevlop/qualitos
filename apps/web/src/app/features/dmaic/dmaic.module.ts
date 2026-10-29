@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 
+import { CapaCreateDialogModule } from '../capa/capa-create-dialog.module';
 import { SharedModule } from '../../shared/shared.module';
 import { UiModule } from '../../shared/ui/ui.module';
 import { PersonNameModule } from '../../shared/person-name/person-name.module';
@@ -29,6 +30,6 @@ const routes: Routes = [
     DmaicPokaYokeDialogComponent,
     DmaicResolutionComponent
   ],
-  imports: [PersonNameModule, UserPickerModule, SharedModule, UiModule, FormsModule, RouterModule.forChild(routes)]
+  imports: [CapaCreateDialogModule, PersonNameModule, UserPickerModule, SharedModule, UiModule, FormsModule, RouterModule.forChild(routes)]
 })
 export class DmaicModule {}

@@ -1,3 +1,4 @@
+import { DmaicPhase } from '../../dmaic.types';
 import { HttpHeaders, HttpResponse } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
@@ -23,7 +24,7 @@ import {
   SheetPhoto,
   emptyContent
 } from '../../resolution/dmaic-resolution.types';
-import { DmaicResolutionComponent, clean } from './dmaic-resolution.component';
+import { DmaicResolutionComponent, clean, missingOf } from './dmaic-resolution.component';
 
 const PROJET = '11111111-1111-4111-8111-111111111111';
 
@@ -107,6 +108,13 @@ describe('DmaicResolutionComponent', () => {
     fixture.detectChanges();
   }
 
+  /** Ouvre une phase : la fiche n'affiche que celle qu'on regarde. */
+  function voir(phase: DmaicPhase): void {
+    component.projectPhase = 'CONTROL';
+    component.view = phase;
+    fixture.detectChanges();
+  }
+
   function confirmer(reponse: boolean): jasmine.Spy {
     return spyOn(TestBed.inject(MatDialog), 'open').and.returnValue({
       afterClosed: () => of(reponse)
@@ -118,15 +126,18 @@ describe('DmaicResolutionComponent', () => {
     expect(svc.sheet).toHaveBeenCalledWith(PROJET);
     expect(un('etat')?.textContent).toContain('Fiche vierge');
     expect(component.sections).toEqual(['DEFINE', 'MEASURE', 'CONTAIN', 'ANALYZE', 'IMPROVE', 'CONTROL']);
-    expect(component.nav.map(e => e.id)).toEqual(['res-claim', 'res-define', 'res-measure', 'res-contain',
-      'res-analyze', 'res-whys', 'res-improve', 'res-actions', 'res-control', 'res-photos']);
-    expect(component.nav[1]).toEqual(jasmine.objectContaining({ letter: 'D', done: 0, total: 3 }));
+    expect(component.phases).toEqual(['DEFINE', 'MEASURE', 'ANALYZE', 'IMPROVE', 'CONTROL']);
+    expect(component.view).toBe('DEFINE');
+    expect(component.answeredIn('DEFINE')).toBe(0);
     expect(un('rapport')?.hasAttribute('disabled')).toBeTrue();
     expect(component.ishikawas).toEqual([{ id: 'ish-1', label: 'Rebut' }]);
     expect(component.dirty).toBeFalse();
     expect(un('enregistrer')).toBeNull();
+    voir('MEASURE');
     expect(un('q-MES-01')?.textContent).toContain('Moyen de mesure vérifié ?');
+    voir('ANALYZE');
     expect(un('choix-CON-01-UNKNOWN')?.textContent).toContain('Inconnu');
+    voir('CONTROL');
     expect(un('choix-CTL-04-NA')?.textContent).toContain('Sans objet');
   });
 
@@ -149,6 +160,7 @@ describe('DmaicResolutionComponent', () => {
 
   it('une réponse fermée se donne et se retire d\'un clic ; elle part en code', async () => {
     await setup();
+    voir('MEASURE');
     un('choix-MES-01-YES')!.click();
     fixture.detectChanges();
     expect(component.draft.answers['MES-01']).toBe('YES');
@@ -228,6 +240,7 @@ describe('DmaicResolutionComponent', () => {
     expect(component.canEdit).toBeFalse();
     expect(component.teamPicker.disabled).toBeTrue();
     expect(un('etat')?.textContent).toContain('Lecture seule');
+    voir('MEASURE');
     expect(un('choix-MES-01-NO')?.hasAttribute('disabled')).toBeTrue();
     component.toggleAnswer('MES-01', 'NO');
     expect(component.draft.answers['MES-01']).toBe('YES');
@@ -235,6 +248,7 @@ describe('DmaicResolutionComponent', () => {
     component.save();
     expect(svc.save).not.toHaveBeenCalled();
     expect(un('enregistrer')).toBeNull();
+    voir('DEFINE');
     expect(un('photo-input-1')).toBeNull();
     expect(un('photo-1')?.textContent).toContain('Pas de photo');
     droits.next(true);
@@ -284,7 +298,6 @@ describe('DmaicResolutionComponent', () => {
     component.removeWhy(c, 4);
     expect(c.whys.length).toBe(4);
     expect(clean(component.draft).whys.find(w => w.branch === 'OCCURRENCE')?.whys).toEqual(['Pourquoi 1']);
-    expect(component.nav.find(e => e.id === 'res-whys')).toEqual(jasmine.objectContaining({ done: 2, total: 3 }));
 
     component.removeChain(c);
     expect(component.chainsOf('OCCURRENCE')).toEqual([]);
@@ -295,12 +308,12 @@ describe('DmaicResolutionComponent', () => {
 
   it('tient le plan d\'actions : ajout daté du jour, retrait, cent actions au plus', async () => {
     await setup();
+    voir('IMPROVE');
     un('action-ajout')!.click();
     expect(component.draft.actions[0]).toEqual(jasmine.objectContaining({
       status: 'OPEN', percent: 0, createdOn: new Date().toISOString().slice(0, 10)
     }));
     component.draft.actions[0].status = 'CLOSED';
-    expect(component.nav.find(e => e.id === 'res-actions')).toEqual(jasmine.objectContaining({ done: 1, total: 1 }));
     component.removeAction(component.draft.actions[0]);
     expect(component.draft.actions).toEqual([]);
     for (let i = 0; i < 110; i++) component.addAction();
@@ -342,7 +355,6 @@ describe('DmaicResolutionComponent', () => {
     expect(component.photoBusy.has(2)).toBeFalse();
     fixture.detectChanges();
     expect(un('photo-2')?.querySelector('img')?.getAttribute('alt')).toBe('vue de face');
-    expect(component.nav.find(e => e.id === 'res-photos')).toEqual(jasmine.objectContaining({ done: 1, total: 6 }));
   });
 
   it('dit que le stockage est éteint, ou que le versement a échoué', async () => {
@@ -449,6 +461,7 @@ describe('DmaicResolutionComponent', () => {
     component.problemStatement = '  Fuite au joint  ';
     ishikawa.createDiagram.and.returnValue(of({ id: 'ish-9', problemStatement: 'Fuite au joint' } as IshikawaDiagramResponse));
     svc.save.and.returnValue(of(fiche({ saved: true }, { ishikawaId: 'ish-9' })));
+    voir('ANALYZE');
     un('ishikawa-create')!.click();
 
     expect(ishikawa.createDiagram).toHaveBeenCalledWith(jasmine.objectContaining({
@@ -478,24 +491,73 @@ describe('DmaicResolutionComponent', () => {
     expect(ishikawa.createDiagram).not.toHaveBeenCalled();
   });
 
-  it('mène à une partie de la fiche depuis le sommaire', async () => {
+  it('ouvre les phases passées et la phase en cours, jamais celles qui suivent', async () => {
     await setup();
-    const defile = spyOn(Element.prototype, 'scrollIntoView');
-    const cible = document.createElement('div');
-    cible.id = 'res-measure';
-    document.body.appendChild(cible);
-    un('nav-res-measure')!.click();
-    expect(defile).toHaveBeenCalledWith(jasmine.objectContaining({ block: 'start' }));
-    cible.remove();
+    component.projectPhase = 'ANALYZE';
+    fixture.detectChanges();
+    expect(component.view).toBe('ANALYZE');
+    component.show('IMPROVE');
+    expect(component.view).toBe('ANALYZE');
+    un('phase-DEFINE')!.click();
+    expect(component.view).toBe('DEFINE');
+    fixture.detectChanges();
+    expect(un('phase-CONTROL')?.hasAttribute('disabled')).toBeTrue();
+    expect(component.phaseLetter('IMPROVE')).toBe('I');
     expect(component.trackByIndex(3)).toBe(3);
     expect(component.photoAlt(4)).toBe('Photo 4');
+  });
+
+  it('signale les réponses qui manquent à la phase en cours', async () => {
+    await setup();
+    const manque = jasmine.createSpy('manque');
+    component.missingChange.subscribe(manque);
+    component.projectPhase = 'DEFINE';
+    await Promise.resolve();
+    expect(manque).toHaveBeenCalled();
+    expect((manque.calls.mostRecent().args[0] as string[]).length).toBeGreaterThan(0);
+    const complet = missingOf(component.sheet!, { ...component.sheet!.content,
+      answers: Object.fromEntries(component.questionsOf('DEFINE').map(q => [q.code, 'x'])) }, ['DEFINE']);
+    expect(complet).toEqual([]);
+  });
+
+  it('verse une pièce jointe PDF dans les emplacements de la phase', async () => {
+    await setup();
+    expect(component.attachmentSlots).toEqual([11, 12, 13, 14, 15]);
+    const pdf = new File(['x'], 'plan.pdf', { type: 'application/pdf' });
+    svc.uploadPhoto.and.returnValue(of(photo(11, 'plan.pdf')));
+    component.onFile(11, { target: { files: [pdf], value: 'x' } } as unknown as Event);
+    expect(svc.uploadPhoto).toHaveBeenCalledWith(PROJET, 11, pdf, null);
+    const exe = new File(['x'], 'a.exe', { type: 'application/x-msdownload' });
+    component.onFile(12, { target: { files: [exe], value: 'x' } } as unknown as Event);
+    expect(svc.uploadPhoto).toHaveBeenCalledTimes(1);
+  });
+
+  it('les études Cp/Cpk et Gage R&R partent pré-remplies du projet', async () => {
+    await setup();
+    component.projectTitle = 'Rebut';
+    component.spec = { lsl: 9.9, usl: 10.1 };
+    expect(component.studyParams).toEqual(jasmine.objectContaining({ dmaic: PROJET, lsl: '9.9', usl: '10.1' }));
+  });
+
+  it('crée une CAPA depuis une action, puis garde son lien', async () => {
+    await setup();
+    component.addAction();
+    const ligne = component.draft.actions[0];
+    ligne.action = 'Changer le gabarit';
+    svc.save.and.returnValue(of(fiche()));
+    spyOn(TestBed.inject(MatDialog), 'open').and.returnValue({
+      afterClosed: () => of({ capaId: 'capa-9' })
+    } as MatDialogRef<unknown>);
+    component.openCapa(ligne);
+    expect(ligne.capaId).toBe('capa-9');
+    expect(svc.save).toHaveBeenCalled();
   });
 
   it('clean() rogne les textes, efface les vides et range les réponses', () => {
     const c = clean({
       ...emptyContent(), clientName: '  ', claimNumber: ' CL-7 ', answers: { 'Z-1': 'x', 'A-1': ' ', 'B-2': 'YES' },
       actions: [{ createdOn: '', action: ' a ', responsible: null, status: 'OPEN', plannedOn: null, doneOn: null,
-        percent: null as unknown as number, notes: '' }]
+        percent: null as unknown as number, notes: '', capaId: null }]
     });
     expect(c.clientName).toBeNull();
     expect(c.claimNumber).toBe('CL-7');

@@ -2,7 +2,6 @@ package com.openlab.qualitos.quality.dmaic.resolution.infrastructure;
 
 import com.openlab.qualitos.quality.dmaic.resolution.application.ClaimReport;
 import com.openlab.qualitos.quality.dmaic.resolution.application.ResolutionPorts;
-import com.openlab.qualitos.quality.dmaic.resolution.domain.DefineTopic;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -17,12 +16,11 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Met en page le rapport d'action corrective client, dans l'ordre de la feuille
  * « Client Claim Rapport » du classeur : en-tête de la réclamation, puis les
- * cinq étapes D, M, A, I, C.
+ * cinq étapes D, M, A, I, C, chacune avec ce qu'en reprend le modèle client.
  *
  * <p>Une rubrique vide est écrite « Non renseigné » plutôt que tue : le client
  * doit voir ce qui manque, pas deviner.
@@ -49,13 +47,6 @@ public class PdfBoxClaimReportRenderer implements ResolutionPorts.ClaimReportRen
 
     private static final DateTimeFormatter DATE = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-    private static final Map<DefineTopic, String> TOPICS = Map.of(
-            DefineTopic.WHAT, "Quoi",
-            DefineTopic.WHO, "Qui",
-            DefineTopic.WHY, "Pourquoi",
-            DefineTopic.WHERE, "Où",
-            DefineTopic.WHEN, "Quand",
-            DefineTopic.HOW_MANY, "Combien");
 
     static final String EMPTY = "Non renseigné";
 
@@ -74,39 +65,64 @@ public class PdfBoxClaimReportRenderer implements ResolutionPorts.ClaimReportRen
             header(w, r);
 
             w.step("D : Définir — étape 1");
-            w.label("Symptôme(s) de défaut ou de tendance tels que reportés par le client");
-            w.body(r.customerSymptoms());
-            w.label("Définition du problème");
-            for (ClaimReport.Topic t : r.definition()) {
-                w.sub(TOPICS.get(t.topic()));
-                if (t.answers().isEmpty()) {
-                    w.body(null);
-                }
-                for (ClaimReport.Answer a : t.answers()) {
-                    w.paragraph(a.question(), MUTED, w.regular, 8.5f);
-                    w.body(a.answer());
-                }
-            }
-            w.label("Énoncé du problème");
-            w.body(r.problemStatement());
+            answers(w, r.define());
 
             w.step("M : Mesurer — étape 2");
-            w.label("Synthèse des informations, données et faits relatés");
+            w.label("Synthèse des mesures");
             w.body(r.measureSummary());
 
-            w.step("A : Analyser — mesures conservatoires — étape 3");
-            w.label("Actions immédiates mises en place pour préserver le client du problème");
+            w.step("A : Analyser — étape 3");
+            w.label("Plan d'action temporaire pour contenir le problème");
+            w.body(r.containmentPlan());
+            w.label("Mesures conservatoires");
             w.body(r.containmentMeasures());
-            w.label("Causes racines");
+            w.label("Diagramme d'Ishikawa");
+            if (r.ishikawaCauses().isEmpty()) {
+                w.body(null);
+            }
+            for (ClaimReport.Answer c : r.ishikawaCauses()) {
+                w.paragraph(c.question() + " : " + c.answer(), INK, w.regular, 9.5f);
+            }
+            w.y -= 6;
+            w.label("5 pourquoi");
+            if (r.whys().isEmpty()) {
+                w.body(null);
+            }
+            for (ClaimReport.Why why : r.whys()) {
+                w.sub(why.branch() + (why.rootCause() ? " — cause racine" : ""));
+                w.paragraph("Constat : " + orEmpty(why.cause()), INK, w.regular, 9.5f);
+                for (int i = 0; i < why.whys().size(); i++) {
+                    w.paragraph("Pourquoi " + (i + 1) + " : " + why.whys().get(i), INK, w.regular, 9.5f);
+                }
+                if (why.action() != null && !why.action().isBlank()) {
+                    w.paragraph("Action : " + why.action(), INK, w.regular, 9.5f);
+                }
+                w.y -= 6;
+            }
+            w.label("Cause racine");
             w.body(r.rootCause());
 
             w.step("I : Améliorer — étape 4");
-            w.label("Solutions retenues et mises en place");
-            w.body(r.retainedSolutions());
+            w.label("Meilleures solutions sélectionnées");
+            w.body(r.bestSolutions());
+            w.label("Plan d'actions");
+            if (r.actions().isEmpty()) {
+                w.body(null);
+            }
+            int n = 1;
+            for (ClaimReport.Action a : r.actions()) {
+                w.paragraph(n++ + ". " + orEmpty(a.action()), INK, w.bold, 9.5f);
+                w.paragraph("Responsable : " + orEmpty(a.responsible()) + "  ·  Statut : " + orEmpty(a.status())
+                        + "  ·  Prévue le : " + orEmpty(date(a.plannedOn())) + "  ·  Réalisée le : "
+                        + orEmpty(date(a.doneOn())) + "  ·  Avancement : " + a.percent() + " %",
+                        MUTED, w.regular, 8.5f);
+                w.y -= 4;
+            }
 
             w.step("C : Contrôler — étape 5");
-            w.label("Vérification des solutions et plan de surveillance");
-            w.body(r.surveillancePlan());
+            answers(w, List.of(new ClaimReport.Answer(
+                    "Le plan de surveillance élimine-t-il ou minimise-t-il la récurrence, et comment est-ce mesuré ?",
+                    r.surveillance())));
 
             w.flux.close();
             ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -115,6 +131,21 @@ public class PdfBoxClaimReportRenderer implements ResolutionPorts.ClaimReportRen
         } catch (IOException e) {
             throw new UncheckedIOException("claim report rendering failed", e);
         }
+    }
+
+    /** Une question du modèle, puis sa réponse (ou « Non renseigné »). */
+    private static void answers(Writer w, List<ClaimReport.Answer> answers) throws IOException {
+        if (answers.isEmpty()) {
+            w.body(null);
+        }
+        for (ClaimReport.Answer a : answers) {
+            w.label(a.question());
+            w.body(a.answer());
+        }
+    }
+
+    private static String orEmpty(String s) {
+        return s == null || s.isBlank() ? EMPTY : s;
     }
 
     private static void header(Writer w, ClaimReport r) throws IOException {

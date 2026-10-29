@@ -49,10 +49,10 @@ public final class ResolutionWebDto {
 
     public record ActionRequest(LocalDate createdOn, @Size(max = 1000) String action, @Valid PersonRequest responsible,
                                 @NotNull ActionStatus status, LocalDate plannedOn, LocalDate doneOn,
-                                @Min(0) @Max(100) int percent, @Size(max = 1000) String notes) {
+                                @Min(0) @Max(100) int percent, @Size(max = 1000) String notes, UUID capaId) {
         ActionLine toDomain() {
             return new ActionLine(createdOn, action, responsible == null ? null : responsible.toDomain(), status,
-                    plannedOn, doneOn, percent, notes);
+                    plannedOn, doneOn, percent, notes, capaId);
         }
     }
 
@@ -67,7 +67,8 @@ public final class ResolutionWebDto {
                                @Size(max = 4000) String surveillancePlan,
                                @Size(max = 30) List<@Valid @NotNull WhyRequest> whys,
                                @Size(max = 100) List<@Valid @NotNull ActionRequest> actions,
-                               UUID ishikawaId) {
+                               UUID ishikawaId, boolean measuresEnabled, boolean capabilityStudy,
+                               boolean gageRrStudy) {
         ResolutionContent toDomain() {
             return new ResolutionContent(clientName, claimNumber,
                     problemOwner == null ? null : problemOwner.toDomain(),
@@ -76,7 +77,7 @@ public final class ResolutionWebDto {
                     containmentMeasures, rootCause, retainedSolutions, surveillancePlan,
                     whys == null ? List.of() : whys.stream().map(WhyRequest::toDomain).toList(),
                     actions == null ? List.of() : actions.stream().map(ActionRequest::toDomain).toList(),
-                    ishikawaId);
+                    ishikawaId, measuresEnabled, capabilityStudy, gageRrStudy);
         }
     }
 

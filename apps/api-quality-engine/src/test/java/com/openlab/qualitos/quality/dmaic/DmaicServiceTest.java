@@ -155,6 +155,29 @@ class DmaicServiceTest {
     }
 
     @Test
+    void advance_incompletePhase_isBlocked() {
+        DmaicProject p = project(DmaicStatus.ACTIVE, DmaicPhase.DEFINE);
+        when(projectRepo.findByIdAndTenantId(p.getId(), TENANT)).thenReturn(Optional.of(p));
+        service.setPhaseGate((id, phase) -> phase == DmaicPhase.DEFINE ? List.of("Qui est concerné ?") : List.of());
+        assertThatThrownBy(() -> service.advancePhase(p.getId()))
+                .isInstanceOf(DmaicStateException.class)
+                .hasMessageContaining("1 réponse(s) manquante(s)")
+                .hasMessageContaining("Qui est concerné ?");
+        assertThat(p.getPhase()).isEqualTo(DmaicPhase.DEFINE);
+        verify(projectRepo, never()).save(any());
+    }
+
+    @Test
+    void advance_completePhase_passesTheGate() {
+        DmaicProject p = project(DmaicStatus.ACTIVE, DmaicPhase.MEASURE);
+        when(projectRepo.findByIdAndTenantId(p.getId(), TENANT)).thenReturn(Optional.of(p));
+        when(projectRepo.save(p)).thenReturn(p);
+        service.setPhaseGate((id, phase) -> List.of());
+        service.advancePhase(p.getId());
+        assertThat(p.getPhase()).isEqualTo(DmaicPhase.ANALYZE);
+    }
+
+    @Test
     void advance_notActive_throws() {
         DmaicProject p = project(DmaicStatus.ON_HOLD, DmaicPhase.MEASURE);
         when(projectRepo.findByIdAndTenantId(p.getId(), TENANT)).thenReturn(Optional.of(p));

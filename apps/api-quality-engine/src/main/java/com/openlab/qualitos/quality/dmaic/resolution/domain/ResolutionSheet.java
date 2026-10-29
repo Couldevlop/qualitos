@@ -91,7 +91,7 @@ public final class ResolutionSheet {
                 trim(saisie.surveillancePlan(), SUMMARY_MAX, "surveillancePlan"),
                 whys(saisie.whys()),
                 actions(saisie.actions()),
-                saisie.ishikawaId());
+                saisie.ishikawaId(), saisie.measuresEnabled(), saisie.capabilityStudy(), saisie.gageRrStudy());
         this.updatedAt = now;
     }
 
@@ -183,7 +183,8 @@ public final class ResolutionSheet {
                 throw new ResolutionValidationException("actions", "Progress is between 0 and 100 %");
             }
             clean.add(new ActionLine(a.createdOn(), action, person(a.responsible(), "actions"), a.status(),
-                    a.plannedOn(), a.doneOn(), a.percent(), trim(a.notes(), ACTION_TEXT_MAX, "actions")));
+                    a.plannedOn(), a.doneOn(), a.percent(), trim(a.notes(), ACTION_TEXT_MAX, "actions"),
+                    a.capaId()));
         }
         return clean;
     }

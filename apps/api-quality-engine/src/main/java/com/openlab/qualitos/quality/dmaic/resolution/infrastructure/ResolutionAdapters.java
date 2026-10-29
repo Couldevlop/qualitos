@@ -16,6 +16,7 @@ import com.openlab.qualitos.quality.dmaic.resolution.domain.ResolutionSheet;
 import com.openlab.qualitos.quality.dmaic.resolution.domain.SeverityLevel;
 import com.openlab.qualitos.quality.dmaic.resolution.domain.SheetPhoto;
 import com.openlab.qualitos.quality.dmaic.resolution.domain.SheetQuestion;
+import com.openlab.qualitos.quality.ishikawa.CauseCategory;
 import com.openlab.qualitos.quality.ishikawa.IshikawaDiagramRepository;
 import com.openlab.qualitos.quality.nonconformity.storage.ObjectStorage;
 import com.openlab.qualitos.quality.nonconformity.storage.StorageDisabledException;
@@ -25,6 +26,7 @@ import java.net.URL;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -293,5 +295,25 @@ final class ResolutionAdapters {
         public boolean exists(UUID tenantId, UUID ishikawaId) {
             return diagrams.findByIdAndTenantId(ishikawaId, tenantId).isPresent();
         }
+
+        @Override
+        public List<ResolutionPorts.CauseLine> causes(UUID tenantId, UUID ishikawaId) {
+            return diagrams.findByIdAndTenantId(ishikawaId, tenantId)
+                    .map(d -> d.getCauses().stream()
+                            .map(c -> new ResolutionPorts.CauseLine(CATEGORIES.getOrDefault(c.getCategory(),
+                                    String.valueOf(c.getCategory())), c.getLabel()))
+                            .toList())
+                    .orElse(List.of());
+        }
+
+        private static final Map<CauseCategory, String> CATEGORIES = Map.of(
+                CauseCategory.METHODS, "Méthodes",
+                CauseCategory.MANPOWER, "Main-d'œuvre",
+                CauseCategory.MACHINES, "Machines",
+                CauseCategory.MATERIALS, "Matières",
+                CauseCategory.MEASUREMENTS, "Mesures",
+                CauseCategory.ENVIRONMENT, "Milieu",
+                CauseCategory.MANAGEMENT, "Management",
+                CauseCategory.MONEY, "Moyens financiers");
     }
 }

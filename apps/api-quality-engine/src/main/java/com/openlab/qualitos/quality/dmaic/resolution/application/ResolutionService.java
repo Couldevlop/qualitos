@@ -1,7 +1,7 @@
 package com.openlab.qualitos.quality.dmaic.resolution.application;
 
 import com.openlab.qualitos.quality.dmaic.resolution.domain.AnswerType;
-import com.openlab.qualitos.quality.dmaic.resolution.domain.DefineTopic;
+import com.openlab.qualitos.quality.dmaic.resolution.domain.ActionStatus;
 import com.openlab.qualitos.quality.dmaic.resolution.domain.FailureType;
 import com.openlab.qualitos.quality.dmaic.resolution.domain.ResolutionContent;
 import com.openlab.qualitos.quality.dmaic.resolution.domain.ResolutionNotFoundException;
@@ -12,6 +12,7 @@ import com.openlab.qualitos.quality.dmaic.resolution.domain.SeverityLevel;
 import com.openlab.qualitos.quality.dmaic.resolution.domain.SheetPhoto;
 import com.openlab.qualitos.quality.dmaic.resolution.domain.SheetQuestion;
 import com.openlab.qualitos.quality.dmaic.resolution.domain.SheetSection;
+import com.openlab.qualitos.quality.dmaic.resolution.domain.WhyBranch;
 import com.openlab.qualitos.quality.nonconformity.storage.UploadedBinaryGuard;
 
 import java.time.Clock;
@@ -122,6 +123,16 @@ public class ResolutionService {
      */
     public ResolutionDto.PhotoView uploadPhoto(UUID projectId, int slot, String contentType, byte[] content,
                                                String remark) {
+        return uploadPhoto(projectId, slot, contentType, content, remark, null);
+    }
+
+    /**
+     * Comme {@link #uploadPhoto(UUID, int, String, byte[], String)} ; sans remarque,
+     * une pièce jointe de phase prend le nom (assaini) du fichier déposé, pour qu'on
+     * la reconnaisse dans la liste.
+     */
+    public ResolutionDto.PhotoView uploadPhoto(UUID projectId, int slot, String contentType, byte[] content,
+                                               String remark, String fileName) {
         UUID tenant = context.requireTenantId();
         UUID actor = context.requireActorId();
         project(tenant, projectId);
@@ -134,14 +145,19 @@ public class ResolutionService {
                     "A photo is at most " + (SheetPhoto.MAX_SIZE_BYTES / (1024 * 1024)) + " MB");
         }
         String type = UploadedBinaryGuard.normalizeType(contentType);
-        String extension = UploadedBinaryGuard.extensionOf(SheetPhoto.ALLOWED_TYPES, type);
+        String extension = UploadedBinaryGuard.extensionOf(SheetPhoto.typesFor(slot), type);
         if (extension == null) {
-            throw new ResolutionValidationException("file", "Allowed photo types: JPEG, PNG, GIF, WEBP");
+            throw new ResolutionValidationException("file", SheetPhoto.isAttachmentSlot(slot)
+                    ? "Allowed attachment types: JPEG, PNG, GIF, WEBP, PDF, DOCX, XLSX, PPTX"
+                    : "Allowed photo types: JPEG, PNG, GIF, WEBP");
         }
         if (!UploadedBinaryGuard.magicBytesMatch(type, content)) {
             throw new ResolutionValidationException("file", "The file content does not match its declared type");
         }
         String cleanRemark = SheetPhoto.cleanRemark(remark);
+        if (cleanRemark == null && SheetPhoto.isAttachmentSlot(slot)) {
+            cleanRemark = SheetPhoto.cleanRemark(UploadedBinaryGuard.sanitizeFilename(fileName));
+        }
         photos.find(tenant, projectId, slot).ifPresent(previous -> {
             photos.delete(previous);
             storage.delete(previous.objectKey());
@@ -174,6 +190,53 @@ public class ResolutionService {
         audit.photoRemoved(photo, actor);
     }
 
+    // ---------- complétude d'une phase ----------
+
+    /**
+     * Ce qui manque encore aux parties de la fiche que couvre une phase : chaque
+     * question sans réponse et chaque synthèse vide, par son libellé. Toutes les
+     * questions d'une phase doivent être répondues pour passer à la suivante.
+     */
+    public List<String> missing(UUID projectId, List<SheetSection> sections) {
+        UUID tenant = context.requireTenantId();
+        project(tenant, projectId);
+        ResolutionContent c = sheets.findByProject(tenant, projectId)
+                .map(ResolutionSheet::getContent)
+                .orElseGet(ResolutionContent::empty);
+        return missing(settingsOf(tenant), c, sections);
+    }
+
+    static List<String> missing(ResolutionSettings settings, ResolutionContent c, List<SheetSection> sections) {
+        List<String> manque = new ArrayList<>();
+        for (SheetSection section : sections) {
+            for (SheetQuestion q : settings.questions()) {
+                String value = c.answers().get(q.code());
+                if (q.section() == section && (value == null || value.isBlank())) {
+                    manque.add(q.label());
+                }
+            }
+            String synthese = switch (section) {
+                case MEASURE -> c.measureSummary();
+                case CONTAIN -> c.containmentMeasures();
+                case ANALYZE -> c.rootCause();
+                case IMPROVE -> c.retainedSolutions();
+                case CONTROL -> c.surveillancePlan();
+                case DEFINE -> "-";
+            };
+            if (synthese == null || synthese.isBlank()) {
+                manque.add(SUMMARY_LABELS.get(section));
+            }
+        }
+        return manque;
+    }
+
+    private static final Map<SheetSection, String> SUMMARY_LABELS = Map.of(
+            SheetSection.MEASURE, "Synthèse des mesures",
+            SheetSection.CONTAIN, "Mesures conservatoires",
+            SheetSection.ANALYZE, "Cause racine",
+            SheetSection.IMPROVE, "Solutions retenues",
+            SheetSection.CONTROL, "Plan de surveillance");
+
     // ---------- rapport client ----------
 
     public byte[] claimReport(UUID projectId) {
@@ -183,27 +246,62 @@ public class ResolutionService {
         ResolutionContent c = sheets.findByProject(tenant, projectId)
                 .map(ResolutionSheet::getContent)
                 .orElseGet(ResolutionContent::empty);
+        List<ClaimReport.Answer> causes = c.ishikawaId() == null ? List.of()
+                : ishikawas.causes(tenant, c.ishikawaId()).stream()
+                        .map(k -> new ClaimReport.Answer(k.category(), k.label())).toList();
         return renderer.render(new ClaimReport(c.clientName(), c.claimNumber(), project.title(),
                 c.problemOwner() == null ? null : c.problemOwner().name(), c.openedOn(), c.closedOn(),
                 severityLabel(settings, c.severity()), failureTypeLabel(settings, c.failureTypeCode()),
-                c.customerSymptoms(), definition(settings, c), project.problemStatement(), c.measureSummary(),
-                c.containmentMeasures(), c.rootCause(), c.retainedSolutions(), c.surveillancePlan()));
+                answers(settings, c, REPORT_DEFINE), c.measureSummary(), answer(settings, c, REPORT_CONTAINMENT),
+                c.containmentMeasures(), causes, whys(c), c.rootCause(), answer(settings, c, REPORT_SOLUTIONS),
+                actions(c), answer(settings, c, REPORT_SURVEILLANCE)));
     }
 
-    /** Rubrique par rubrique, les questions de « Définir » qui ont une réponse. */
-    static List<ClaimReport.Topic> definition(ResolutionSettings settings, ResolutionContent c) {
-        List<ClaimReport.Topic> topics = new ArrayList<>();
-        for (DefineTopic topic : DefineTopic.values()) {
-            List<ClaimReport.Answer> answers = new ArrayList<>();
-            for (SheetQuestion q : settings.questions()) {
-                String value = c.answers().get(q.code());
-                if (q.section() == SheetSection.DEFINE && q.topic() == topic && value != null) {
-                    answers.add(new ClaimReport.Answer(q.label(), readable(q.answerType(), value)));
-                }
-            }
-            topics.add(new ClaimReport.Topic(topic, answers));
+    /** Les questions que le modèle de rapport client reprend, par leur code de catalogue. */
+    static final List<String> REPORT_DEFINE = List.of("DEF-01", "DEF-03", "DEF-14");
+    static final String REPORT_CONTAINMENT = "CON-04";
+    static final String REPORT_SOLUTIONS = "AME-04";
+    static final String REPORT_SURVEILLANCE = "CTL-05";
+
+    /** Les questions demandées, avec leur libellé du catalogue ; une question retirée du catalogue est omise. */
+    static List<ClaimReport.Answer> answers(ResolutionSettings settings, ResolutionContent c, List<String> codes) {
+        List<ClaimReport.Answer> out = new ArrayList<>();
+        for (String code : codes) {
+            settings.question(code).ifPresent(q -> out.add(new ClaimReport.Answer(q.label(),
+                    readableOrNull(q.answerType(), c.answers().get(code)))));
         }
-        return topics;
+        return out;
+    }
+
+    static String answer(ResolutionSettings settings, ResolutionContent c, String code) {
+        return settings.question(code).map(q -> readableOrNull(q.answerType(), c.answers().get(code))).orElse(null);
+    }
+
+    private static String readableOrNull(AnswerType type, String value) {
+        return value == null || value.isBlank() ? null : readable(type, value);
+    }
+
+    private static final Map<WhyBranch, String> BRANCHES = Map.of(
+            WhyBranch.OCCURRENCE, "Pourquoi le problème est-il survenu ?",
+            WhyBranch.DETECTION, "Pourquoi n'a-t-il pas été détecté ?",
+            WhyBranch.SYSTEMIC, "Pourquoi le système l'a-t-il permis ?");
+
+    private static final Map<ActionStatus, String> STATUSES = Map.of(
+            ActionStatus.OPEN, "Ouverte",
+            ActionStatus.IN_PROGRESS, "En cours",
+            ActionStatus.IN_REVIEW, "En revue",
+            ActionStatus.CLOSED, "Clôturée");
+
+    static List<ClaimReport.Why> whys(ResolutionContent c) {
+        return c.whys().stream().map(w -> new ClaimReport.Why(BRANCHES.get(w.branch()), w.cause(),
+                w.whys() == null ? List.of() : w.whys().stream().filter(x -> x != null && !x.isBlank()).toList(),
+                w.rootCause(), w.action())).toList();
+    }
+
+    static List<ClaimReport.Action> actions(ResolutionContent c) {
+        return c.actions().stream().map(a -> new ClaimReport.Action(a.action(),
+                a.responsible() == null ? null : a.responsible().name(), STATUSES.get(a.status()),
+                a.plannedOn(), a.doneOn(), a.percent())).toList();
     }
 
     /** Le code d'une liste fermée, en clair pour le client. */
@@ -264,7 +362,8 @@ public class ResolutionService {
         ResolutionContent visible = new ResolutionContent(c.clientName(), c.claimNumber(), c.problemOwner(),
                 c.team(), c.openedOn(), c.closedOn(), c.severity(), c.failureTypeCode(), c.customerSymptoms(),
                 posees, c.measureSummary(), c.containmentMeasures(), c.rootCause(), c.retainedSolutions(),
-                c.surveillancePlan(), c.whys(), c.actions(), c.ishikawaId());
+                c.surveillancePlan(), c.whys(), c.actions(), c.ishikawaId(), c.measuresEnabled(),
+                c.capabilityStudy(), c.gageRrStudy());
         // Stockage éteint : la fiche reste lisible, sans ses photos, plutôt que de
         // répondre 503 pour un complément.
         List<ResolutionDto.PhotoView> photoViews = storage.available()

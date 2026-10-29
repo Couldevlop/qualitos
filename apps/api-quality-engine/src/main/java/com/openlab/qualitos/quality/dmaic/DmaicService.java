@@ -20,6 +20,8 @@ public class DmaicService {
     private final PokaYokeDeviceRepository deviceRepository;
     private final PokaYokeAssignmentRepository assignmentRepository;
     private final CapabilityCalculator capabilityCalculator;
+    /** La fiche de résolution, qui dit ce qui manque à une phase ; absente : pas de verrou. */
+    private DmaicPhaseGate phaseGate;
 
     public DmaicService(DmaicProjectRepository projectRepository,
                         ProcessMeasureRepository measureRepository,
@@ -31,6 +33,11 @@ public class DmaicService {
         this.deviceRepository = deviceRepository;
         this.assignmentRepository = assignmentRepository;
         this.capabilityCalculator = capabilityCalculator;
+    }
+
+    @org.springframework.beans.factory.annotation.Autowired(required = false)
+    public void setPhaseGate(DmaicPhaseGate phaseGate) {
+        this.phaseGate = phaseGate;
     }
 
     // ===== Projects =====
@@ -97,6 +104,12 @@ public class DmaicService {
         DmaicProject p = loadProject(id);
         if (p.getStatus() != DmaicStatus.ACTIVE) {
             throw new DmaicStateException("Only ACTIVE projects can advance phase");
+        }
+        // Une phase dont le questionnaire n'est pas rempli bloque la suivante.
+        List<String> manque = phaseGate == null ? List.of() : phaseGate.missing(id, p.getPhase());
+        if (!manque.isEmpty()) {
+            throw new DmaicStateException("La phase n'est pas complète : " + manque.size()
+                    + " réponse(s) manquante(s), dont « " + manque.get(0) + " »");
         }
         DmaicPhase next = p.getPhase().next();
         if (next == null) {

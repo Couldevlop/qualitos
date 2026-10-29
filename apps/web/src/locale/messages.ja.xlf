@@ -11098,6 +11098,118 @@ Portail clients</source>
         <source>Valeurs de la plateforme rétablies.</source>
         <target state="translated">プラットフォームの既定値に戻しました。</target>
       </trans-unit>
+      <trans-unit id="dmaic.detail.advance-blocked" datatype="html">
+        <source>Répondez à toutes les questions de la phase et enregistrez la fiche pour passer à la suivante.</source>
+        <target state="translated">次のフェーズに進むには、このフェーズのすべての質問に回答し、シートを保存してください。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.col-operator" datatype="html">
+        <source>Mesuré par</source>
+        <target state="translated">測定者</target>
+      </trans-unit>
+      <trans-unit id="dmaic.list.usage" datatype="html">
+        <source>Pour les réclamations clients critiques et les projets d'amélioration continue</source>
+        <target state="translated">重大な顧客クレームと継続的改善プロジェクトのために</target>
+      </trans-unit>
+      <trans-unit id="dmaic.measure.operator" datatype="html">
+        <source>Personne qui mesure</source>
+        <target state="translated">測定者</target>
+      </trans-unit>
+      <trans-unit id="dmaic.measure.saved-many" datatype="html">
+        <source><x id="count"/> mesures enregistrées.</source>
+        <target state="translated"><x id="count"/> 件の測定値を保存しました。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.measure.value-add" datatype="html">
+        <source>Ajouter une valeur</source>
+        <target state="translated">値を追加</target>
+      </trans-unit>
+      <trans-unit id="dmaic.measure.value-remove" datatype="html">
+        <source>Retirer cette valeur</source>
+        <target state="translated">この値を削除</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.attachment-add" datatype="html">
+        <source>Joindre un document</source>
+        <target state="translated">文書を添付</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.attachment-remove" datatype="html">
+        <source>Retirer le document</source>
+        <target state="translated">文書を削除</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.attachment.alt" datatype="html">
+        <source>Document <x id="rank"/></source>
+        <target state="translated">文書 <x id="rank"/></target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.attachment.bad-type" datatype="html">
+        <source>Format refusé : image, PDF, Word, Excel ou PowerPoint uniquement.</source>
+        <target state="translated">形式が拒否されました：画像、PDF、Word、Excel、PowerPoint のみ。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.attachments" datatype="html">
+        <source>Pièces jointes de la phase</source>
+        <target state="translated">フェーズの添付ファイル</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.attachments-lead" datatype="html">
+        <source>Cinq documents au plus : image, PDF, Word, Excel ou PowerPoint, 10 Mo chacun. Un document est enregistré dès qu'il est versé.</source>
+        <target state="translated">最大5件：画像、PDF、Word、Excel、PowerPoint、各10MBまで。アップロードした時点で保存されます。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.capa-add" datatype="html">
+        <source>Ajouter une CAPA</source>
+        <target state="translated">CAPA を追加</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.capa-description" datatype="html">
+        <source>Action du plan d'actions DMAIC « <x id="project"/> ».</source>
+        <target state="translated">DMAIC 行動計画「<x id="project"/>」のアクション。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.capa-open" datatype="html">
+        <source>Voir la CAPA</source>
+        <target state="translated">CAPA を表示</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.cpk-check" datatype="html">
+        <source>Étude Cp/Cpk et carte de contrôle</source>
+        <target state="translated">Cp/Cpk 調査と管理図</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.cpk-register" datatype="html">
+        <source>Créer l'étude dans le registre</source>
+        <target state="translated">登録簿に調査を作成</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.grr-check" datatype="html">
+        <source>Gage R&amp;R</source>
+        <target state="translated">Gage R&amp;R</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.grr-register" datatype="html">
+        <source>Créer l'étude dans le registre</source>
+        <target state="translated">登録簿に調査を作成</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.measures-check" datatype="html">
+        <source>Mesures</source>
+        <target state="translated">測定</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.missing" datatype="html">
+        <source>réponse(s) à enregistrer avant de passer à la phase suivante.</source>
+        <target state="translated">件の回答を保存すると次のフェーズに進めます。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.phase.analyze" datatype="html">
+        <source>Analyser</source>
+        <target state="translated">分析</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.phase.control" datatype="html">
+        <source>Contrôler</source>
+        <target state="translated">管理</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.phase.define" datatype="html">
+        <source>Définir</source>
+        <target state="translated">定義</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.phase.improve" datatype="html">
+        <source>Améliorer</source>
+        <target state="translated">改善</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.phase.measure" datatype="html">
+        <source>Mesurer</source>
+        <target state="translated">測定</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.phases" datatype="html">
+        <source>Phases du projet</source>
+        <target state="translated">プロジェクトのフェーズ</target>
+      </trans-unit>
       <trans-unit id="nav.doc-gen-ia" datatype="html">
         <source>Génération doc IA</source>
         <target state="translated">AI 文書生成</target>

@@ -11098,6 +11098,118 @@ Portal de clientes</target>
         <source>Valeurs de la plateforme rétablies.</source>
         <target state="translated">Valores de la plataforma restablecidos.</target>
       </trans-unit>
+      <trans-unit id="dmaic.detail.advance-blocked" datatype="html">
+        <source>Répondez à toutes les questions de la phase et enregistrez la fiche pour passer à la suivante.</source>
+        <target state="translated">Responda a todas las preguntas de la fase y guarde la ficha para pasar a la siguiente.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.col-operator" datatype="html">
+        <source>Mesuré par</source>
+        <target state="translated">Medido por</target>
+      </trans-unit>
+      <trans-unit id="dmaic.list.usage" datatype="html">
+        <source>Pour les réclamations clients critiques et les projets d'amélioration continue</source>
+        <target state="translated">Para reclamaciones críticas de clientes y proyectos de mejora continua</target>
+      </trans-unit>
+      <trans-unit id="dmaic.measure.operator" datatype="html">
+        <source>Personne qui mesure</source>
+        <target state="translated">Persona que mide</target>
+      </trans-unit>
+      <trans-unit id="dmaic.measure.saved-many" datatype="html">
+        <source><x id="count"/> mesures enregistrées.</source>
+        <target state="translated"><x id="count"/> medidas guardadas.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.measure.value-add" datatype="html">
+        <source>Ajouter une valeur</source>
+        <target state="translated">Añadir un valor</target>
+      </trans-unit>
+      <trans-unit id="dmaic.measure.value-remove" datatype="html">
+        <source>Retirer cette valeur</source>
+        <target state="translated">Quitar este valor</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.attachment-add" datatype="html">
+        <source>Joindre un document</source>
+        <target state="translated">Adjuntar un documento</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.attachment-remove" datatype="html">
+        <source>Retirer le document</source>
+        <target state="translated">Quitar el documento</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.attachment.alt" datatype="html">
+        <source>Document <x id="rank"/></source>
+        <target state="translated">Documento <x id="rank"/></target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.attachment.bad-type" datatype="html">
+        <source>Format refusé : image, PDF, Word, Excel ou PowerPoint uniquement.</source>
+        <target state="translated">Formato rechazado: solo imagen, PDF, Word, Excel o PowerPoint.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.attachments" datatype="html">
+        <source>Pièces jointes de la phase</source>
+        <target state="translated">Adjuntos de la fase</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.attachments-lead" datatype="html">
+        <source>Cinq documents au plus : image, PDF, Word, Excel ou PowerPoint, 10 Mo chacun. Un document est enregistré dès qu'il est versé.</source>
+        <target state="translated">Hasta cinco documentos: imagen, PDF, Word, Excel o PowerPoint, 10 MB cada uno. Un documento se guarda en cuanto se sube.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.capa-add" datatype="html">
+        <source>Ajouter une CAPA</source>
+        <target state="translated">Añadir una CAPA</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.capa-description" datatype="html">
+        <source>Action du plan d'actions DMAIC « <x id="project"/> ».</source>
+        <target state="translated">Acción del plan de acciones DMAIC «<x id="project"/>».</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.capa-open" datatype="html">
+        <source>Voir la CAPA</source>
+        <target state="translated">Ver la CAPA</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.cpk-check" datatype="html">
+        <source>Étude Cp/Cpk et carte de contrôle</source>
+        <target state="translated">Estudio Cp/Cpk y gráfico de control</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.cpk-register" datatype="html">
+        <source>Créer l'étude dans le registre</source>
+        <target state="translated">Crear el estudio en el registro</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.grr-check" datatype="html">
+        <source>Gage R&amp;R</source>
+        <target state="translated">Gage R&amp;R</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.grr-register" datatype="html">
+        <source>Créer l'étude dans le registre</source>
+        <target state="translated">Crear el estudio en el registro</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.measures-check" datatype="html">
+        <source>Mesures</source>
+        <target state="translated">Medidas</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.missing" datatype="html">
+        <source>réponse(s) à enregistrer avant de passer à la phase suivante.</source>
+        <target state="translated">respuesta(s) por guardar antes de pasar a la fase siguiente.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.phase.analyze" datatype="html">
+        <source>Analyser</source>
+        <target state="translated">Analizar</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.phase.control" datatype="html">
+        <source>Contrôler</source>
+        <target state="translated">Controlar</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.phase.define" datatype="html">
+        <source>Définir</source>
+        <target state="translated">Definir</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.phase.improve" datatype="html">
+        <source>Améliorer</source>
+        <target state="translated">Mejorar</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.phase.measure" datatype="html">
+        <source>Mesurer</source>
+        <target state="translated">Medir</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.phases" datatype="html">
+        <source>Phases du projet</source>
+        <target state="translated">Fases del proyecto</target>
+      </trans-unit>
       <trans-unit id="nav.doc-gen-ia" datatype="html">
         <source>Génération doc IA</source>
         <target state="translated">Generación de docs IA</target>

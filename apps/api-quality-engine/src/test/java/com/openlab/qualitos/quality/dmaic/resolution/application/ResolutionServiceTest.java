@@ -268,6 +268,8 @@ class ResolutionServiceTest {
         answers.put("DEF-04", "YES");
         answers.put("DEF-12", "UNKNOWN");
         answers.put("MES-01", "NO");
+        answers.put("CON-04", "Confiner le stock");
+        answers.put("CTL-05", "Audit mensuel du taux de rebut");
         service.save(PROJET, contenu(answers));
 
         byte[] pdf = service.claimReport(PROJET);
@@ -276,16 +278,19 @@ class ResolutionServiceTest {
         ClaimReport r = rendu[0];
         assertThat(r.clientName()).isEqualTo("Acme");
         assertThat(r.projectName()).isEqualTo("Fissures carter");
-        assertThat(r.problemStatement()).isEqualTo("Carters fissurés");
         assertThat(r.ownerName()).isEqualTo("Alice");
         assertThat(r.severity()).isEqualTo("1 - Sévère");
         assertThat(r.failureType()).startsWith("V10 - Defect - Linear");
-        assertThat(r.definition()).extracting(ClaimReport.Topic::topic).containsExactly(DefineTopic.values());
-        assertThat(r.definition().get(0).answers()).extracting(ClaimReport.Answer::answer)
-                .containsExactly("Fissure à la base", "Oui");
-        assertThat(r.definition().get(4).answers()).extracting(ClaimReport.Answer::answer).containsExactly("Inconnu");
+        // Les trois questions clés de « Définir » du modèle client, avec leur libellé.
+        assertThat(r.define()).extracting(ClaimReport.Answer::question).hasSize(3);
+        assertThat(r.define()).extracting(ClaimReport.Answer::answer).containsExactly("Fissure à la base", null, null);
         assertThat(r.containmentMeasures()).isEqualTo("Tri");
-        assertThat(r.surveillancePlan()).isEqualTo("Contrôle");
+        assertThat(r.containmentPlan()).isEqualTo("Confiner le stock");
+        assertThat(r.bestSolutions()).isNull();
+        assertThat(r.surveillance()).isEqualTo("Audit mensuel du taux de rebut");
+        assertThat(r.actions()).extracting(ClaimReport.Action::action, ClaimReport.Action::status)
+                .containsExactly(org.assertj.core.groups.Tuple.tuple("Changer", "Ouverte"));
+        assertThat(r.ishikawaCauses()).isEmpty();
     }
 
     @Test
@@ -296,7 +301,8 @@ class ResolutionServiceTest {
         assertThat(rendu[0].severity()).isNull();
         assertThat(rendu[0].failureType()).isNull();
         assertThat(rendu[0].ownerName()).isNull();
-        assertThat(rendu[0].definition()).allSatisfy(t -> assertThat(t.answers()).isEmpty());
+        assertThat(rendu[0].define()).allSatisfy(a -> assertThat(a.answer()).isNull());
+        assertThat(rendu[0].whys()).isEmpty();
     }
 
     @Test
@@ -420,5 +426,59 @@ class ResolutionServiceTest {
         public void delete(String key) {
             objects.remove(key);
         }
+    }
+
+    // ---------- complétude d'une phase ----------
+
+    @Test
+    void unePhaseIncompleteDitCeQuiManque() {
+        List<String> vide = service.missing(PROJET, List.of(SheetSection.MEASURE));
+        // Trois questions et la synthèse des mesures.
+        assertThat(vide).hasSize(4).contains("Synthèse des mesures");
+
+        Map<String, String> answers = new HashMap<>();
+        answers.put("MES-01", "YES");
+        answers.put("MES-02", "Zéro défaut");
+        answers.put("MES-03", "2 %");
+        service.save(PROJET, contenu(answers));
+
+        // « Mesures » est rempli dans contenu(...) : la phase est complète.
+        assertThat(service.missing(PROJET, List.of(SheetSection.MEASURE))).isEmpty();
+        assertThat(service.missing(PROJET, List.of(SheetSection.DEFINE))).hasSize(14);
+    }
+
+    @Test
+    void lesCasesDesPhasesEtLeLienCapaSontGardes() {
+        ResolutionContent c = contenu(Map.of());
+        UUID capa = UUID.randomUUID();
+        ResolutionContent coche = new ResolutionContent(c.clientName(), c.claimNumber(), c.problemOwner(), c.team(),
+                c.openedOn(), c.closedOn(), c.severity(), c.failureTypeCode(), c.customerSymptoms(), c.answers(),
+                c.measureSummary(), c.containmentMeasures(), c.rootCause(), c.retainedSolutions(),
+                c.surveillancePlan(), c.whys(),
+                List.of(new ActionLine(null, "Changer", null, ActionStatus.OPEN, null, null, 0, null, capa)),
+                null, true, true, false);
+
+        ResolutionContent vu = service.save(PROJET, coche).content();
+
+        assertThat(vu.measuresEnabled()).isTrue();
+        assertThat(vu.capabilityStudy()).isTrue();
+        assertThat(vu.gageRrStudy()).isFalse();
+        assertThat(vu.actions().get(0).capaId()).isEqualTo(capa);
+    }
+
+    @Test
+    void unePieceJointeDePhaseAdmetLePdfEtPrendLeNomDuFichier() {
+        byte[] pdfBytes = {0x25, 0x50, 0x44, 0x46, 0x2D, 0x31};
+
+        ResolutionDto.PhotoView v = service.uploadPhoto(PROJET, 21, "application/pdf", pdfBytes, null,
+                "C:\\docs\\plan de mesure.pdf");
+
+        assertThat(v.slot()).isEqualTo(21);
+        assertThat(v.remark()).isEqualTo("plan_de_mesure.pdf");
+        // Un emplacement de photo refuse toujours le PDF, et 16 n'existe pas.
+        assertThatThrownBy(() -> service.uploadPhoto(PROJET, 2, "application/pdf", pdfBytes, null))
+                .isInstanceOf(ResolutionValidationException.class);
+        assertThatThrownBy(() -> service.uploadPhoto(PROJET, 16, "application/pdf", pdfBytes, null))
+                .isInstanceOf(ResolutionValidationException.class);
     }
 }

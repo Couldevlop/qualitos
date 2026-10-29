@@ -74,6 +74,15 @@ public final class ResolutionPorts {
     /** Le diagramme d'Ishikawa lié doit exister chez CE client. */
     public interface Ishikawas {
         boolean exists(UUID tenantId, UUID ishikawaId);
+
+        /** Les causes du diagramme, pour le rapport client ; aucune quand il n'existe pas chez ce client. */
+        default List<CauseLine> causes(UUID tenantId, UUID ishikawaId) {
+            return List.of();
+        }
+    }
+
+    /** Une cause d'Ishikawa : sa catégorie en clair et son libellé. */
+    public record CauseLine(String category, String label) {
     }
 
     /**

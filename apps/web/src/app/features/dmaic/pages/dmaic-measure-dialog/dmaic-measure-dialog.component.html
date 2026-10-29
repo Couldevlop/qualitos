@@ -7,17 +7,27 @@
   (submitted)="submit()"
   (cancelled)="cancel()">
 
-  <mat-form-field appearance="outline" class="full">
-    <mat-label i18n="@@dmaic.detail.col-value">Valeur</mat-label>
-    <input matInput formControlName="value" type="number" step="any" required>
-  </mat-form-field>
+  <div formArrayName="values" class="valeurs">
+    <div class="valeur" *ngFor="let c of values.controls; let i = index">
+      <mat-form-field appearance="outline" class="col">
+        <mat-label><span i18n="@@dmaic.detail.col-value">Valeur</span> {{ values.length > 1 ? i + 1 : '' }}</mat-label>
+        <input matInput [formControlName]="i" type="number" step="any" required [attr.data-test]="'valeur-' + i">
+      </mat-form-field>
+      <button mat-icon-button type="button" *ngIf="values.length > 1" (click)="removeValue(i)"
+              i18n-aria-label="@@dmaic.measure.value-remove" aria-label="Retirer cette valeur">
+        <mat-icon>remove_circle_outline</mat-icon>
+      </button>
+    </div>
+    <button mat-button type="button" color="primary" (click)="addValue()" [disabled]="values.length >= maxValues"
+            data-test="valeur-ajout">
+      <mat-icon>add</mat-icon> <span i18n="@@dmaic.measure.value-add">Ajouter une valeur</span>
+    </button>
+  </div>
 
   <div class="row">
-    <mat-form-field appearance="outline" class="col">
-      <mat-label i18n="@@dmaic.detail.col-subgroup">Sous-groupe</mat-label>
-      <input matInput formControlName="subgroupId" maxlength="100"
-             i18n-placeholder="@@dmaic.measure.subgroup-placeholder" placeholder="Ex. : équipe-A, machine-3">
-    </mat-form-field>
+    <qos-user-picker class="col" formControlName="operatorId" required
+                     label="Personne qui mesure" i18n-label="@@dmaic.measure.operator"
+                     data-test="mesureur"></qos-user-picker>
     <mat-form-field appearance="outline" class="col">
       <mat-label i18n="@@dmaic.measure.datetime-label">Date / heure</mat-label>
       <input matInput formControlName="recordedAt" type="datetime-local">

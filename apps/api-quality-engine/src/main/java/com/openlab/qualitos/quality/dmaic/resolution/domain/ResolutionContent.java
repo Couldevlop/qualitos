@@ -19,13 +19,29 @@ import java.util.stream.Collectors;
  * vérité pour la charte et le rapport.
  *
  * @param answers code de question → réponse (texte, ou code {@code YES}/{@code NO}…)
+ * @param measuresEnabled  « Mesurer » : la fenêtre des mesures est ouverte dans la phase
+ * @param capabilityStudy  « Analyser » : une étude Cp/Cpk et carte de contrôle est menée
+ * @param gageRrStudy      « Analyser » : une étude Gage R&R est menée
  */
 public record ResolutionContent(String clientName, String claimNumber, Person problemOwner, List<Person> team,
                                 LocalDate openedOn, LocalDate closedOn, Integer severity, String failureTypeCode,
                                 String customerSymptoms, Map<String, String> answers, String measureSummary,
                                 String containmentMeasures, String rootCause, String retainedSolutions,
                                 String surveillancePlan, List<WhyChain> whys, List<ActionLine> actions,
-                                UUID ishikawaId) {
+                                UUID ishikawaId, boolean measuresEnabled, boolean capabilityStudy,
+                                boolean gageRrStudy) {
+
+    /** Une fiche sans les cases des phases (toutes décochées). */
+    public ResolutionContent(String clientName, String claimNumber, Person problemOwner, List<Person> team,
+                             LocalDate openedOn, LocalDate closedOn, Integer severity, String failureTypeCode,
+                             String customerSymptoms, Map<String, String> answers, String measureSummary,
+                             String containmentMeasures, String rootCause, String retainedSolutions,
+                             String surveillancePlan, List<WhyChain> whys, List<ActionLine> actions,
+                             UUID ishikawaId) {
+        this(clientName, claimNumber, problemOwner, team, openedOn, closedOn, severity, failureTypeCode,
+                customerSymptoms, answers, measureSummary, containmentMeasures, rootCause, retainedSolutions,
+                surveillancePlan, whys, actions, ishikawaId, false, false, false);
+    }
 
     /**
      * Copies non modifiables qui TOLÈRENT un élément nul : une saisie mal formée
