@@ -78,6 +78,21 @@
                 <artifactId>lz4-java</artifactId>
                 <version>1.11.4</version>
             </dependency>
+            <!-- CVE-2026-108106 et CVE-2026-93451 (déni de service, dépassement de
+                 tampon, HIGH) : snappy-java 1.1.10.7, tiré transitivement
+                 (kafka-clients), corrigé en 1.1.10.9. -->
+            <dependency>
+                <groupId>org.xerial.snappy</groupId>
+                <artifactId>snappy-java</artifactId>
+                <version>1.1.10.9</version>
+            </dependency>
+            <!-- CVE-2026-102554 (déni de service, HIGH) : guava 33.2.1-jre, tiré
+                 transitivement, corrigé en 33.7.2. -->
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>33.7.2-jre</version>
+            </dependency>
             <dependency>
                 <groupId>io.jsonwebtoken</groupId>
                 <artifactId>jjwt-api</artifactId>
