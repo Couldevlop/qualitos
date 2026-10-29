@@ -16,6 +16,7 @@
       <span *ngIf="eyebrow" class="qos-page-header__eyebrow">{{ eyebrow }}</span>
       <h1 class="qos-page-header__title">{{ title }}</h1>
       <p *ngIf="subtitle" class="qos-page-header__subtitle">{{ subtitle }}</p>
+      <div class="qos-page-header__subtitle qos-page-header__subtitle--rich"><ng-content select="[qosSubtitle]"></ng-content></div>
       <div class="qos-page-header__meta">
         <ng-content select="[qosMeta]"></ng-content>
       </div>

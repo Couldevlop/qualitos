@@ -85,7 +85,7 @@
         </mat-form-field>
         <mat-form-field appearance="outline">
           <mat-label i18n="@@spc.study.subgroup-size">Taille du sous-groupe (n)</mat-label>
-          <mat-select formControlName="subgroupSize" data-test="taille">
+          <mat-select formControlName="subgroupSize" required data-test="taille">
             <mat-option *ngFor="let s of subgroupSizes" [value]="s">{{ s }}</mat-option>
           </mat-select>
         </mat-form-field>

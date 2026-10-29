@@ -86,7 +86,7 @@ export class DashboardEditorComponent implements OnInit, OnDestroy {
             next: l => { this.setLayout(l); this.loading = false; },
             error: () => {
               this.loading = false;
-              this.snack.open($localize`:@@dbb.editor.notFound:Tableau de bord introuvable`, 'OK');
+              this.snack.open($localize`:@@dbb.editor.notFound:Tableau de bord introuvable`, $localize`:@@common.ok:OK`);
             }
           });
         } else {
@@ -198,7 +198,7 @@ export class DashboardEditorComponent implements OnInit, OnDestroy {
     const widget = this.catalog.createWidget(type, this.svc.generateId(), 0, y);
     this.addItem(widget);
     this.snack.open(
-      $localize`:@@dbb.editor.added:Widget ajouté`, 'OK', { duration: 1500 });
+      $localize`:@@dbb.editor.added:Widget ajouté`, $localize`:@@common.ok:OK`, { duration: 1500 });
   }
 
   private addItem(widget: Widget): void {
@@ -259,12 +259,12 @@ export class DashboardEditorComponent implements OnInit, OnDestroy {
         this.isNew = false;
         this.saving = false;
         this.snack.open(
-          $localize`:@@dbb.editor.saved:Tableau de bord enregistré`, 'OK', { duration: 2500 });
+          $localize`:@@dbb.editor.saved:Tableau de bord enregistré`, $localize`:@@common.ok:OK`, { duration: 2500 });
       },
       error: () => {
         this.saving = false;
         this.snack.open(
-          $localize`:@@dbb.editor.saveFailed:Échec de l'enregistrement`, 'OK', { duration: 3500 });
+          $localize`:@@dbb.editor.saveFailed:Échec de l'enregistrement`, $localize`:@@common.ok:OK`, { duration: 3500 });
       }
     });
   }
@@ -275,7 +275,7 @@ export class DashboardEditorComponent implements OnInit, OnDestroy {
    */
   exportPdf(): void {
     if (!this.layout.id) {
-      this.snack.open('Enregistrez le tableau de bord avant de l\'exporter.', 'OK', { duration: 3500 });
+      this.snack.open('Enregistrez le tableau de bord avant de l\'exporter.', $localize`:@@common.ok:OK`, { duration: 3500 });
       return;
     }
     this.exporting = true;
@@ -284,11 +284,11 @@ export class DashboardEditorComponent implements OnInit, OnDestroy {
         this.triggerDownload(result.blob, result.fileName);
         this.exporting = false;
         this.snack.open(
-          `PDF signé exporté (code ${result.verificationCode}).`, 'OK', { duration: 4000 });
+          `PDF signé exporté (code ${result.verificationCode}).`, $localize`:@@common.ok:OK`, { duration: 4000 });
       },
       error: () => {
         this.exporting = false;
-        this.snack.open('Échec de l\'export PDF.', 'OK', { duration: 3500 });
+        this.snack.open('Échec de l\'export PDF.', $localize`:@@common.ok:OK`, { duration: 3500 });
       }
     });
   }

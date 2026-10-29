@@ -100,7 +100,7 @@ TRANSLATIONS = {
     'suppliers.list.col-last-audit': ('Dernier audit', 'Last audit', 'Última auditoría', 'آخر تدقيق', '最終監査', '最近审核'),
     'suppliers.list.new-supplier': ('Nouveau fournisseur', 'New supplier', 'Nuevo proveedor', 'مورّد جديد', '新規サプライヤー', '新建供应商'),
     'suppliers.list.subtitle': ('Scorecards fournisseurs, audits, non-conformités, certificats.', 'Supplier scorecards, audits, non-conformities, certificates.', 'Cuadros de mando de proveedores, auditorías, no conformidades, certificados.', 'بطاقات أداء الموردين، عمليات التدقيق، حالات عدم المطابقة، الشهادات.', 'サプライヤースコアカード、監査、不適合、証明書。', '供应商记分卡、审核、不符合项、证书。'),
-    'suppliers.list.title': ('Supplier Quality', 'Supplier Quality', 'Supplier Quality', 'Supplier Quality', 'Supplier Quality', 'Supplier Quality'),
+    'suppliers.list.title': ('Qualité fournisseurs', 'Supplier quality', 'Calidad de proveedores', 'جودة الموردين', 'サプライヤー品質', '供应商质量'),
     'suppliers.type.component': ('Composant', 'Component', 'Componente', 'مكوّن', 'コンポーネント', '组件'),
     'suppliers.type.contract-manufacturer': ('Sous-traitant', 'Contract manufacturer', 'Subcontratista', 'مُصنِّع متعاقد', '受託製造業者', '代工厂商'),
     'suppliers.type.logistics': ('Logistique', 'Logistics', 'Logística', 'الخدمات اللوجستية', '物流', '物流'),

@@ -67,7 +67,7 @@ export class FivesEditDialogComponent {
           console.warn('[fives-edit] failed', err?.status, err?.error?.title);
           this.snack.open(
             safeErrorMessage(err, $localize`:@@fives.edit.update-error:Erreur lors de la mise à jour.`),
-            'OK', { duration: 4000 }
+            $localize`:@@common.ok:OK`, { duration: 4000 }
           );
         }
       });

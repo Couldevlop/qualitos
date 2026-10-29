@@ -54,18 +54,18 @@ export class IncDetectDialogComponent {
     const v = this.form.getRawValue();
     // OWASP A04 — detectedAt >= occurredAt
     if (new Date(v.detectedAt) < new Date(v.occurredAt)) {
-      this.snack.open('La date de détection doit être ≥ à la date d\'occurrence.', 'OK', { duration: 4000 });
+      this.snack.open('La date de détection doit être ≥ à la date d\'occurrence.', $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     // detectedAt et occurredAt pas dans le futur
     const now = Date.now();
     if (new Date(v.detectedAt).getTime() > now || new Date(v.occurredAt).getTime() > now) {
-      this.snack.open('Les dates ne peuvent pas être dans le futur.', 'OK', { duration: 4000 });
+      this.snack.open('Les dates ne peuvent pas être dans le futur.', $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     const createdByUserId = this.auth.snapshot()?.userId;
     if (!createdByUserId) {
-      this.snack.open('Session expirée — veuillez vous reconnecter.', 'OK', { duration: 4000 });
+      this.snack.open('Session expirée — veuillez vous reconnecter.', $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     this.submitting = true;
@@ -82,11 +82,11 @@ export class IncDetectDialogComponent {
     })
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
-        next: i => { this.snack.open('Incident signalé.', 'OK', { duration: 2500 }); this.dialogRef.close(i); },
+        next: i => { this.snack.open('Incident signalé.', $localize`:@@common.ok:OK`, { duration: 2500 }); this.dialogRef.close(i); },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[inc-detect] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Erreur lors du signalement.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, 'Erreur lors du signalement.'), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

@@ -212,6 +212,43 @@ $qos-danger-700:   #b91c1c;
  * 4. Typographie, espace, rayons, motion.
  * ============================================================ */
 :root {
+  /* Alias de compatibilité : noms employés par des écrans sans avoir jamais
+     été déclarés (le repli codé en dur de chaque var() s'appliquait, en clair
+     comme en sombre). Ils renvoient aux jetons thémés : déclarés sur :root,
+     ils suivent le thème actif. À migrer vers les noms canoniques puis retirer. */
+  --qos-text-primary: var(--qos-fg-primary);
+  --qos-text-secondary: var(--qos-fg-secondary);
+  --qos-text-tertiary: var(--qos-fg-tertiary);
+  --qos-text-muted: var(--qos-fg-tertiary);
+  --qos-fg: var(--qos-fg-primary);
+  --qos-fg-muted: var(--qos-fg-tertiary);
+  --qos-text-xs: var(--qos-fs-xs);
+  --qos-text-sm: var(--qos-fs-sm);
+  --qos-text-base: var(--qos-fs-base);
+  --qos-text-2xl: var(--qos-fs-2xl);
+  --qos-lh-relaxed: var(--qos-lh-loose);
+  --qos-border: var(--qos-border-default);
+  --qos-bg-surface: var(--qos-bg-elevated);
+  --qos-surface-1: var(--qos-bg-elevated);
+  --qos-surface-raised: var(--qos-bg-elevated);
+  --qos-surface-2: var(--qos-bg-subtle);
+  --qos-surface-subtle: var(--qos-bg-subtle);
+  --qos-surface-3: var(--qos-bg-sunken);
+  --qos-surface-muted: var(--qos-bg-sunken);
+  --qos-surface-hover: var(--qos-bg-hover);
+  --qos-accent: var(--qos-accent-bg);
+  --qos-primary: var(--qos-accent-bg);
+  --qos-accent-soft: var(--qos-accent-bg-soft);
+  --qos-danger: var(--qos-danger-fg);
+  --qos-danger-bg: var(--qos-danger-bg-soft);
+  --qos-danger-soft: var(--qos-danger-bg-soft);
+  --qos-success: var(--qos-success-fg);
+  --qos-success-500: var(--qos-success-fg);
+  --qos-warning: var(--qos-warn-fg);
+  --qos-warning-fg: var(--qos-warn-fg);
+  --qos-warning-border: var(--qos-warn-fg);
+  --qos-warn-500: var(--qos-warn-fg);
+
   /* Type scale */
   --qos-font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto,
                    'Helvetica Neue', Arial, sans-serif;

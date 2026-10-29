@@ -9,3 +9,11 @@
  * qu'à ces rôles, le serveur refuse les autres en 403.
  */
 export const TENANT_ADMIN_ROLES: readonly string[] = ['admin_tenant', 'admin', 'tenant_admin'];
+
+/**
+ * Les rôles qui ouvrent la console d'administration (`/admin`, §16) : ceux de
+ * l'administrateur du client, plus le super administrateur de l'éditeur. La
+ * barre de navigation n'affiche ses entrées qu'à ces rôles, et la garde de
+ * route mène les autres à l'écran « accès réservé ».
+ */
+export const ADMIN_CONSOLE_ROLES: readonly string[] = ['ADMIN', 'ADMIN_TENANT', 'TENANT_ADMIN', 'SUPER_ADMIN'];

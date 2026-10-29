@@ -16,18 +16,22 @@
              i18n-placeholder="@@fmea.create.code-placeholder"
              placeholder="Ex. : PFMEA-ASM-A">
       <mat-hint i18n="@@fmea.create.code-hint">A-Z, 0-9, point, tiret, underscore</mat-hint>
+      <mat-error *ngIf="form.controls.code.hasError('required')" i18n="@@common.required-field">Champ obligatoire</mat-error>
+      <mat-error *ngIf="form.controls.code.hasError('pattern')" i18n="@@common.invalid-code">Caractères autorisés : A-Z, 0-9, point, tiret, underscore.</mat-error>
     </mat-form-field>
     <mat-form-field appearance="outline" class="col">
       <mat-label i18n="@@common.type">Type</mat-label>
       <mat-select formControlName="type" required>
         <mat-option *ngFor="let t of types" [value]="t.value">{{ t.label }}</mat-option>
       </mat-select>
+      <mat-error *ngIf="form.controls.type.hasError('required')" i18n="@@common.required-field">Champ obligatoire</mat-error>
     </mat-form-field>
   </div>
 
   <mat-form-field appearance="outline" class="full">
     <mat-label i18n="@@common.name">Nom</mat-label>
     <input matInput formControlName="name" maxlength="250" required>
+    <mat-error *ngIf="form.controls.name.hasError('required')" i18n="@@common.required-field">Champ obligatoire</mat-error>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
@@ -40,6 +44,8 @@
   <mat-form-field appearance="outline" class="full">
     <mat-label i18n="@@fmea.create.rpn-threshold">Seuil RPN critique</mat-label>
     <input matInput formControlName="criticalRpnThreshold" type="number" min="1" max="1000" required>
+    <mat-error *ngIf="form.controls.criticalRpnThreshold.hasError('required')" i18n="@@common.required-field">Champ obligatoire</mat-error>
+    <mat-error *ngIf="form.controls.criticalRpnThreshold.hasError('min') || form.controls.criticalRpnThreshold.hasError('max')" i18n="@@fmea.create.rpn-threshold-range">Seuil entre 1 et 1000.</mat-error>
     <mat-hint i18n="@@fmea.create.rpn-threshold-hint">RPN = Sévérité × Occurrence × Détection. Items ≥ seuil = CRITIQUES.</mat-hint>
   </mat-form-field>
 

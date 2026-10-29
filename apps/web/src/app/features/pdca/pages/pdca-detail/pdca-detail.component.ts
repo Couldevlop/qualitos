@@ -174,7 +174,7 @@ export class PdcaDetailComponent implements OnInit {
           // eslint-disable-next-line no-console
           console.warn('[pdca-detail] uploadStepEvidence failed', err?.status, err?.error?.type);
           if (this.isStorageDisabled(err)) { this.evidenceStorageDisabled$.next(true); return; }
-          this.snack.open(this.evidenceRefusal(err), 'OK', { duration: 5000 });
+          this.snack.open(this.evidenceRefusal(err), $localize`:@@common.ok:OK`, { duration: 5000 });
         }
       });
   }
@@ -211,7 +211,7 @@ export class PdcaDetailComponent implements OnInit {
             console.warn('[pdca-detail] deleteStepEvidence failed', err?.status, err?.error?.type);
             this.snack.open(
               safeErrorMessage(err, $localize`:@@pdca.evidence.remove-error:Échec du retrait de la preuve.`),
-              'OK', { duration: 4000 });
+              $localize`:@@common.ok:OK`, { duration: 4000 });
           }
         });
     });
@@ -306,7 +306,7 @@ export class PdcaDetailComponent implements OnInit {
           // eslint-disable-next-line no-console
           console.warn('[pdca-detail] advance failed', err?.status, err?.error?.title);
           this.snack.open(safeErrorMessage(err, $localize`:@@pdca.detail.advance-error:Erreur lors de l'avancement.`),
-            'OK', { duration: 4000 });
+            $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }
@@ -326,7 +326,7 @@ export class PdcaDetailComponent implements OnInit {
           // eslint-disable-next-line no-console
           console.warn('[pdca-detail] cancel failed', err?.status, err?.error?.title);
           this.snack.open(safeErrorMessage(err, $localize`:@@pdca.detail.cancel-error:Erreur lors de l'annulation.`),
-            'OK', { duration: 4000 });
+            $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

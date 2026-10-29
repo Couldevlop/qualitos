@@ -11,7 +11,7 @@
 .title-block h1 { margin: 0; font-size: 22px; font-weight: 600; line-height: 1.3; max-width: 760px; }
 .title-block .eyebrow {
   margin: 4px 0 0;
-  color: var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.55));
+  color: var(--qos-fg-secondary);
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -20,7 +20,7 @@
 .actions { display: flex; gap: 8px; flex-wrap: wrap; }
 
 .state-row { display: flex; align-items: center; gap: 12px; padding: 16px; }
-.state-row.error { color: var(--mat-sys-error, #b3261e); }
+.state-row.error { color: var(--qos-danger-fg); }
 
 .info-card, .action-unique { margin-bottom: 16px; }
 
@@ -36,14 +36,14 @@
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.55));
+  color: var(--qos-fg-secondary);
 }
 .info-value { font-size: 14px; font-family: 'IBM Plex Mono', monospace; word-break: break-word; }
 
 .description {
   margin: 0;
   padding: 12px 16px;
-  background: var(--mat-sys-surface-container-low, rgba(0, 0, 0, 0.03));
+  background: var(--qos-bg-subtle);
   border-radius: 8px;
   font-size: 14px;
   line-height: 1.5;
@@ -52,7 +52,7 @@
 .empty {
   padding: 24px;
   text-align: center;
-  color: var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.55));
+  color: var(--qos-fg-secondary);
 }
 
 .badge {
@@ -61,21 +61,21 @@
   border-radius: 12px;
   font-size: 12px;
   font-weight: 600;
-  background: var(--mat-sys-secondary-container, rgba(0, 0, 0, 0.08));
+  background: var(--qos-bg-sunken);
 }
-.badge-open        { background: #e3f2fd; color: #0d47a1; }
-.badge-in_progress { background: #fff3e0; color: #e65100; }
-.badge-resolved    { background: #e8f5e9; color: #1b5e20; }
-.badge-closed      { background: #e0f7fa; color: #006064; }
-.badge-rejected    { background: #fbe9e7; color: #b71c1c; }
-.badge-pending     { background: #f5f5f5; color: #424242; }
-.badge-done        { background: #e8f5e9; color: #1b5e20; }
+.badge-open        { background: var(--qos-accent-bg-soft); color: var(--qos-accent-fg-soft); }
+.badge-in_progress { background: var(--qos-warn-bg-soft); color: var(--qos-warn-fg); }
+.badge-resolved    { background: var(--qos-success-bg-soft); color: var(--qos-success-fg); }
+.badge-closed      { background: var(--qos-accent-bg-soft); color: var(--qos-accent-fg-soft); }
+.badge-rejected    { background: var(--qos-danger-bg-soft); color: var(--qos-danger-fg); }
+.badge-pending     { background: var(--qos-bg-sunken); color: var(--qos-fg-primary); }
+.badge-done        { background: var(--qos-success-bg-soft); color: var(--qos-success-fg); }
 
 .effectiveness-block {
   margin-top: 16px;
   padding: 16px;
-  background: #fff8e1;
-  border-left: 4px solid #f9a825;
+  background: var(--qos-warn-bg-soft);
+  border-left: 4px solid var(--qos-warn-fg);
   border-radius: 8px;
 }
 
@@ -121,7 +121,7 @@
   font-size: 14px;
   line-height: 1.5;
 }
-.effectiveness-prompt mat-icon { color: #f9a825; flex-shrink: 0; }
+.effectiveness-prompt mat-icon { color: var(--qos-warn-fg); flex-shrink: 0; }
 .effectiveness-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 
 .crit {
@@ -132,13 +132,13 @@
   font-weight: 700;
   letter-spacing: 0.03em;
 }
-.crit-low      { background: #e3f2fd; color: #0d47a1; }
-.crit-medium   { background: #fff3e0; color: #e65100; }
-.crit-high     { background: #fbe9e7; color: #b71c1c; }
-.crit-critical { background: #b71c1c; color: #fff; }
+.crit-low      { background: var(--qos-accent-bg-soft); color: var(--qos-accent-fg-soft); }
+.crit-medium   { background: var(--qos-warn-bg-soft); color: var(--qos-warn-fg); }
+.crit-high     { background: var(--qos-danger-bg-soft); color: var(--qos-danger-fg); }
+.crit-critical { background: var(--qos-danger-fg); color: var(--qos-fg-inverse); }
 
 /* ANO-011 — avancement des actions */
-.action-done { color: var(--qos-success, #16a34a); vertical-align: middle; }
+.action-done { color: var(--qos-success); vertical-align: middle; }
 
 /* L'ecart d'origine s'affiche desormais dans l'encart « Source » de l'en-tete,
    a la suite du type et de la reference : il se met a la ligne plutot que d'etre
@@ -156,7 +156,7 @@
   font-size: 13px;
 }
 
-.muted { color: var(--qos-text-muted, #6b7280); }
+.muted { color: var(--qos-text-muted); }
 
 /* --- Preuve de l'action (ADR 0052) -------------------------------------------- */
 .action-evidence {
@@ -172,7 +172,7 @@
   font-size: 18px;
   width: 18px;
   height: 18px;
-  color: var(--qos-text-muted, #6b7280);
+  color: var(--qos-text-muted);
 }
 
 .action-evidence__name {
@@ -196,13 +196,13 @@
   margin-left: auto;
   font-size: 13px;
   font-weight: 600;
-  color: var(--qos-text-muted, #6b7280);
+  color: var(--qos-text-muted);
 }
 
 .evidences-card .hint {
   margin: 0 0 12px;
   font-size: 13px;
-  color: var(--qos-text-muted, #6b7280);
+  color: var(--qos-text-muted);
 }
 
 .evidence-list {
@@ -219,15 +219,15 @@
   align-items: center;
   gap: 12px;
   padding: 8px 12px;
-  border: 1px solid var(--qos-border, rgba(0, 0, 0, 0.12));
-  border-radius: var(--qos-radius-md, 10px);
-  background: var(--qos-bg-elevated, #fff);
+  border: 1px solid var(--qos-border);
+  border-radius: var(--qos-radius-md);
+  background: var(--qos-bg-elevated);
 }
 
 /* La ligne en cours de retrait s'efface : l'action est engagée, pas encore acquise. */
 .evidence.removing { opacity: 0.5; pointer-events: none; }
 
-.evidence__icon { color: var(--qos-text-muted, #6b7280); flex: none; }
+.evidence__icon { color: var(--qos-text-muted); flex: none; }
 
 .evidence__body { display: flex; flex-direction: column; min-width: 0; flex: 1; }
 
@@ -238,7 +238,7 @@
   white-space: nowrap;
 }
 
-.evidence__meta { font-size: 12px; color: var(--qos-text-muted, #6b7280); }
+.evidence__meta { font-size: 12px; color: var(--qos-text-muted); }
 
 /* L'input natif reste dans le DOM (le bouton le déclenche) mais hors du flux. */
 .hidden-file { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
@@ -247,7 +247,7 @@
 .evidences-card .locked {
   margin: 8px 0 0;
   font-size: 13px;
-  color: var(--qos-text-muted, #6b7280);
+  color: var(--qos-text-muted);
 }
 
 // Une CAPA, son action (ADR 0088) : lue et avancée, jamais une liste à remplir.

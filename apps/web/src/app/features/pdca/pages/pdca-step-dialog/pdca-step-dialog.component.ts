@@ -70,7 +70,7 @@ export class PdcaStepDialogComponent {
           console.warn('[pdca-step-dialog] addStep failed', err?.status, err?.error?.title);
           this.snack.open(
             safeErrorMessage(err, $localize`:@@pdca.step.add-error:Erreur lors de l'ajout.`),
-            'OK', { duration: 4000 }
+            $localize`:@@common.ok:OK`, { duration: 4000 }
           );
         }
       });

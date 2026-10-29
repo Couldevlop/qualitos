@@ -50,7 +50,7 @@
   background: var(--qos-bg-elevated);
   border: 1px solid var(--qos-border-subtle);
   border-radius: var(--qos-radius-lg);
-  overflow: hidden;
+  overflow-x: auto;
 
   mat-progress-bar { position: absolute; inset: 0 0 auto 0; z-index: 2; }
 }

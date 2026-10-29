@@ -1,6 +1,8 @@
 import { FormBuilder } from '@angular/forms';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 
+import { KpisService } from '../../../kpis/kpis.service';
+import { KpiResponse, MeasurementResponse } from '../../../kpis/kpis.types';
 import { AnomalyDetectComponent } from './anomaly-detect.component';
 import { AnomalyService } from '../../anomaly.service';
 import { AnomalyDetectRequest, AnomalyDetectResponse } from '../../anomaly.types';
@@ -13,6 +15,7 @@ import { AnomalyDetectRequest, AnomalyDetectResponse } from '../../anomaly.types
 describe('AnomalyDetectComponent — ouverture de CAPA', () => {
 
   let anomaly: jasmine.SpyObj<AnomalyService>;
+  let kpiService: jasmine.SpyObj<KpisService>;
   let component: AnomalyDetectComponent;
 
   const response: AnomalyDetectResponse = {
@@ -28,8 +31,9 @@ describe('AnomalyDetectComponent — ouverture de CAPA', () => {
 
   beforeEach(() => {
     anomaly = jasmine.createSpyObj<AnomalyService>('AnomalyService', ['detect', 'explain']);
+    kpiService = jasmine.createSpyObj<KpisService>('KpisService', ['list', 'listMeasurements']);
     anomaly.detect.and.returnValue(of(response));
-    component = new AnomalyDetectComponent(new FormBuilder(), anomaly);
+    component = new AnomalyDetectComponent(new FormBuilder(), anomaly, kpiService);
     component.form.patchValue({ matrixText: '1, 2\n2, 4\n12, -8' });
   });
 
@@ -80,5 +84,68 @@ describe('AnomalyDetectComponent — ouverture de CAPA', () => {
 
     // Cas normal : un dossier actif couvre déjà ce sujet.
     expect(component.result?.capaId).toBeNull();
+  });
+});
+
+describe('AnomalyDetectComponent — matrice tirée des indicateurs', () => {
+  const kpi = (id: string, code: string): KpiResponse => ({
+    id, tenantId: 't', code, name: 'Indicateur ' + code, direction: 'HIGHER_IS_BETTER',
+    status: 'ACTIVE', createdBy: 'u', createdAt: '', updatedAt: ''
+  });
+  const m = (periodStart: string, value: number) => ({ periodStart, value } as MeasurementResponse);
+  const page = (content: MeasurementResponse[]) =>
+    ({ content, totalElements: content.length, totalPages: 1, number: 0, size: content.length });
+
+  let anomaly: jasmine.SpyObj<AnomalyService>;
+  let kpiService: jasmine.SpyObj<KpisService>;
+  let component: AnomalyDetectComponent;
+
+  beforeEach(() => {
+    anomaly = jasmine.createSpyObj<AnomalyService>('AnomalyService', ['detect', 'explain']);
+    kpiService = jasmine.createSpyObj<KpisService>('KpisService', ['list', 'listMeasurements']);
+    kpiService.list.and.returnValue(of({ content: [kpi('a', 'TRS'), kpi('b', 'REBUT')], totalElements: 2, totalPages: 1, number: 0, size: 2 }));
+    component = new AnomalyDetectComponent(new FormBuilder(), anomaly, kpiService);
+    component.ngOnInit();
+  });
+
+  it('propose les indicateurs actifs du catalogue', () => {
+    expect(kpiService.list).toHaveBeenCalledWith(0, 100, 'ACTIVE');
+    expect(component.kpis.map(k => k.code)).toEqual(['TRS', 'REBUT']);
+  });
+
+  it('exige deux indicateurs : l\'analyse est multivariée', () => {
+    component.kpiSelection.setValue(['a']);
+    component.loadFromKpis();
+    expect(kpiService.listMeasurements).not.toHaveBeenCalled();
+    expect(component.error).toContain('deux indicateurs');
+  });
+
+  it('remplit la matrice sur les périodes communes et nomme les variables', () => {
+    kpiService.listMeasurements.and.callFake((id: string) => of(page(id === 'a'
+      ? [m('2026-02', 82), m('2026-01', 80), m('2026-03', 85)]
+      : [m('2026-01', 3), m('2026-03', 9)])));
+    component.kpiSelection.setValue(['a', 'b']);
+    component.loadFromKpis();
+
+    expect(component.form.value.matrixText).toBe('80, 3\n85, 9');
+    expect(component.columnNames).toEqual(['TRS', 'REBUT']);
+    expect(component.form.value.subject).toBe('Indicateur TRS / Indicateur REBUT');
+    expect(component.sourceInfo).toContain('2');
+    expect(component.variableLabel(1)).toBe('REBUT');
+    expect(component.topFeatureLabel({ index: 0, score: 1, isAnomaly: true, topFeature: 0 })).toBe('TRS');
+  });
+
+  it('revient aux rangs quand la matrice est retapée à la main', () => {
+    component.columnNames = ['TRS'];
+    component.onManualEdit();
+    expect(component.variableLabel(0)).toBe('Variable 1');
+    expect(component.variablesPerSample(3)).toContain('3 variable');
+  });
+
+  it('reste utilisable si le catalogue ne répond pas', () => {
+    kpiService.list.and.returnValue(throwError(() => new Error('down')));
+    const c = new AnomalyDetectComponent(new FormBuilder(), anomaly, kpiService);
+    c.ngOnInit();
+    expect(c.kpis).toEqual([]);
   });
 });

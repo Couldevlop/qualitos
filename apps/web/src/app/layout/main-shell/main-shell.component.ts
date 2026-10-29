@@ -4,6 +4,7 @@ import { Observable, Subscription, combineLatest, of } from 'rxjs';
 import { catchError, filter, map, shareReplay, startWith, tap } from 'rxjs/operators';
 
 import { AuthService, AuthUser } from '../../core/auth/auth.service';
+import { ADMIN_CONSOLE_ROLES } from '../../core/auth/tenant-admin';
 import { NotificationView } from '../../core/notifications/notification.types';
 import { NotificationsService } from '../../core/notifications/notifications.service';
 import { ConnectivityService } from '../../core/offline/connectivity.service';
@@ -11,6 +12,7 @@ import { OfflineQueueService } from '../../core/offline/offline-queue.service';
 import { EditionService } from '../../core/edition/edition.service';
 import { Edition } from '../../core/edition/edition.types';
 import { TenantModulesService } from '../../features/admin/tenant-modules.service';
+import { ThemePreference, ThemeService } from '../../core/theme/theme.service';
 import { NavHit, searchNav } from './nav-search';
 
 export interface NavItem {
@@ -53,9 +55,10 @@ export interface NavSection {
 
 /**
  * Rôles habilités à l'administration du tenant (§16). Le serveur reste l'autorité :
- * cette liste ne sert qu'à ne pas afficher un lien qui mènerait à un 403.
+ * cette liste ne sert qu'à ne pas afficher un lien qui mènerait à un 403. Ce sont
+ * les mêmes que ceux de la garde de la route `/admin`.
  */
-const ADMIN_ROLES = ['ADMIN', 'ADMIN_TENANT', 'SUPER_ADMIN'];
+const ADMIN_ROLES = [...ADMIN_CONSOLE_ROLES];
 
 @Component({
   selector: 'qos-main-shell',
@@ -188,6 +191,9 @@ export class MainShellComponent implements OnInit, OnDestroy {
         { label: $localize`:@@nav.nc-externe:NC externe (Réclamations)`,  route: '/nc/externe',  icon: 'campaign',            module: 'capa' },
         // Le troisieme ecart : celui que l'on recoit d'un fournisseur, suivi
         // jusqu'a son 8D. Il vit avec le module fournisseurs, pas avec la CAPA.
+        // Le registre des fournisseurs le precede : c'est le meme geste
+        // (evaluer le fournisseur, puis traiter ses ecarts).
+        { label: $localize`:@@nav.fournisseurs:Fournisseurs`,      route: '/suppliers',      icon: 'factory', module: 'supplier' },
         { label: $localize`:@@nav.nc-fournisseurs:NC fournisseurs`, route: '/suppliers/non-conformites', icon: 'local_shipping', module: 'supplier' },
         // La CAPA suit immediatement la non-conformite parce que c'est la
         // suite du meme geste : on constate un ecart, puis on le traite. La
@@ -219,7 +225,11 @@ export class MainShellComponent implements OnInit, OnDestroy {
         { label: $localize`:@@nav.risques-fmea:Risques (FMEA)`,     route: '/fmea',      icon: 'warning', module: 'risk' },
         { label: $localize`:@@nav.documents:GED`,                   route: '/documents', icon: 'description', module: 'docs' },
         { label: $localize`:@@nav.moc:MOC`, route: '/changes', icon: 'change_circle', module: 'change' },
-        { label: $localize`:@@nav.ehs:EHS`,                         route: '/ehs',       icon: 'health_and_safety', module: 'ehs' }
+        { label: $localize`:@@nav.ehs:EHS`,                         route: '/ehs',       icon: 'health_and_safety', module: 'ehs' },
+        // La formation est une activite courante (habiliter, recycler), pas un
+        // referentiel : elle rejoint les operations, avec sa matrice.
+        { label: $localize`:@@nav.formation:Formation`,            route: '/training',       icon: 'school', module: 'training' },
+        { label: $localize`:@@nav.competences:Matrice de compétences`, route: '/training/competences', icon: 'grid_on', module: 'training' }
       ]
     },
     {
@@ -231,9 +241,6 @@ export class MainShellComponent implements OnInit, OnDestroy {
         { label: $localize`:@@nav.doc-gen-ia:Génération doc IA`,    route: '/standards-doc-gen', icon: 'auto_awesome', module: 'standards' },
         { label: $localize`:@@nav.packs-sectoriels:Packs sectoriels`, route: '/industry-packs', icon: 'category', module: 'industry' },
         { label: $localize`:@@nav.marketplace:Marketplace`,         route: '/marketplace',    icon: 'storefront', module: 'industry' },
-        { label: $localize`:@@nav.fournisseurs:Fournisseurs`,      route: '/suppliers',      icon: 'local_shipping', module: 'supplier' },
-        { label: $localize`:@@nav.formation:Formation`,            route: '/training',       icon: 'school', module: 'training' },
-        { label: $localize`:@@nav.competences:Matrice de compétences`, route: '/training/competences', icon: 'grid_on', module: 'training' },
         { label: $localize`:@@nav.academy:Academy`,                route: '/academy',        icon: 'cast_for_education', module: 'training' },
         { label: $localize`:@@nav.mon-apprentissage:Mon apprentissage`, route: '/learning',  icon: 'military_tech' },
         { label: $localize`:@@nav.integrations:Intégrations`,      route: '/itsm',           icon: 'hub', module: 'itsm' }
@@ -371,6 +378,9 @@ export class MainShellComponent implements OnInit, OnDestroy {
   online$!: Observable<boolean>;
   pendingSync$!: Observable<number>;
 
+  /** Préférence de thème, reprise dans le menu du profil sur téléphone. */
+  themePreference$!: Observable<ThemePreference>;
+
   /** Notifications in-app : pastille de non-lues + contenu du menu de la cloche. */
   unreadCount$!: Observable<number>;
   notifications: NotificationView[] = [];
@@ -383,11 +393,13 @@ export class MainShellComponent implements OnInit, OnDestroy {
     private readonly notificationsService: NotificationsService,
     private readonly router: Router,
     private readonly modules: TenantModulesService,
-    private readonly editions: EditionService
+    private readonly editions: EditionService,
+    private readonly theme: ThemeService
   ) {}
 
   ngOnInit(): void {
     this.user$ = this.auth.user();
+    this.themePreference$ = this.theme.preference();
     // Les modules du tenant décident de ce qui est montré, au même titre que les
     // rôles. Un échec de chargement ne doit pas vider la navigation : on retombe
     // sur « inconnu », c'est-à-dire sur l'affichage complet, et le serveur reste
@@ -483,9 +495,26 @@ export class MainShellComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Sur téléphone, le champ est replié derrière un bouton : il se déploie sur
+   * toute la barre et reçoit le focus. Le focus attend le rendu suivant, le
+   * champ n'étant affiché qu'une fois la classe posée sur la barre.
+   */
+  searchExpanded = false;
+
+  expandSearch(): void {
+    this.searchExpanded = true;
+    setTimeout(() => this.searchInput?.nativeElement.focus());
+  }
+
   /** Le champ perd le focus : la liste se referme, la saisie reste. */
   closeSearch(): void {
     this.searchOpen = false;
+    this.searchExpanded = false;
+  }
+
+  setTheme(preference: ThemePreference): void {
+    this.theme.setPreference(preference);
   }
 
   openHit(hit: NavHit): void {
@@ -495,6 +524,7 @@ export class MainShellComponent implements OnInit, OnDestroy {
   }
 
   private resetSearch(): void {
+    this.searchExpanded = false;
     this.searchQuery = '';
     this.searchHits = [];
     this.activeHit = -1;

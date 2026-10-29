@@ -59,7 +59,7 @@
 .table-wrap {
   background: var(--qos-bg-elevated, #fff);
   border: 1px solid var(--qos-border-subtle, #e0e0e0);
-  border-radius: var(--qos-radius-lg, 14px); overflow: hidden;
+  border-radius: var(--qos-radius-lg, 14px); overflow-x: auto;
 }
 table { width: 100%; }
 .dim { color: rgba(0,0,0,0.55); font-size: 12px; display: block; margin-top: 2px; }

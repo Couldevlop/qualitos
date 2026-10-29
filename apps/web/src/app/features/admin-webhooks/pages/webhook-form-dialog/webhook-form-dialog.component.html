@@ -11,7 +11,7 @@
     <mat-form-field appearance="outline">
       <mat-label i18n="@@common.name">Nom</mat-label>
       <input matInput formControlName="name" maxlength="255" autocomplete="off"
-             placeholder="ERP production" />
+             placeholder="ERP production" i18n-placeholder="@@webhooks.form.name-placeholder" />
       <mat-hint i18n="@@admin.webhooks.form-name-hint">Sert à identifier le consommateur dans les journaux.</mat-hint>
       <mat-error *ngIf="form.controls.name.hasError('required')"
                  i18n="@@common.required-field">Champ obligatoire</mat-error>

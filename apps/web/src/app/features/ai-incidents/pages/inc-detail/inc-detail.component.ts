@@ -68,11 +68,11 @@ export class IncDetailComponent implements OnInit {
   startInvestigation(i: AiIncView): void {
     const lead = this.auth.snapshot()?.userId;
     if (!lead) {
-      this.snack.open('Session expirée — veuillez vous reconnecter.', 'OK', { duration: 4000 });
+      this.snack.open('Session expirée — veuillez vous reconnecter.', $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     this.svc.startInvestigation(i.id, { investigationLeadUserId: lead }).subscribe({
-      next: () => { this.snack.open('Investigation démarrée.', 'OK', { duration: 2200 }); this.refresh$.next(); },
+      next: () => { this.snack.open('Investigation démarrée.', $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); },
       error: err => this.fail(err, 'Démarrage impossible.')
     });
   }
@@ -106,7 +106,7 @@ export class IncDetailComponent implements OnInit {
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
       this.svc.delete(i.id).subscribe({
-        next: () => { this.snack.open('Incident supprimé.', 'OK', { duration: 2200 }); this.router.navigate(['/ai-incidents']); },
+        next: () => { this.snack.open('Incident supprimé.', $localize`:@@common.ok:OK`, { duration: 2200 }); this.router.navigate(['/ai-incidents']); },
         error: err => this.fail(err, 'Suppression impossible.')
       });
     });
@@ -126,6 +126,6 @@ export class IncDetailComponent implements OnInit {
   private fail(err: unknown, fallback: string): void {
     // eslint-disable-next-line no-console
     console.warn('[inc-detail] action failed', (err as any)?.status, (err as any)?.error?.title);
-    this.snack.open(safeErrorMessage(err, fallback), 'OK', { duration: 4000 });
+    this.snack.open(safeErrorMessage(err, fallback), $localize`:@@common.ok:OK`, { duration: 4000 });
   }
 }

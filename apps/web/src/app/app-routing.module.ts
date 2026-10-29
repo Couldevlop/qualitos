@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
+import { RESTRICTED_ACCESS_PATH, roleGuard } from './core/auth/role.guard';
+import { ADMIN_CONSOLE_ROLES } from './core/auth/tenant-admin';
 import { MainShellComponent } from './layout/main-shell/main-shell.component';
 
 const routes: Routes = [
@@ -321,7 +323,17 @@ const routes: Routes = [
         // Console d'administration du tenant (§10.4, §16) : activation des modules,
         // et à terme les autres surfaces d'administration déjà exposées par l'API.
         path: 'admin',
+        // Garde de rôle (§16) : sans elle, une page d'administration ouverte par
+        // son adresse échouait sur une erreur générique au lieu de dire pourquoi.
+        canActivate: [roleGuard],
+        data: { roles: ADMIN_CONSOLE_ROLES },
         loadChildren: () => import('./features/admin/admin.module').then(m => m.AdminModule)
+      },
+      {
+        // Écran « accès réservé », où mène la garde de rôle.
+        path: RESTRICTED_ACCESS_PATH,
+        loadChildren: () => import('./features/restricted-access/restricted-access.module')
+          .then(m => m.RestrictedAccessModule)
       },
       {
         // File d'attente offline (§15.2-15.3) — accessible depuis le chip de

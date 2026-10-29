@@ -46,14 +46,14 @@ export class CertificateViewComponent implements OnInit {
           this.safeHtml = this.sanitizer.bypassSecurityTrustHtml(cert.htmlContent);
         },
         error: () => this.snack.open(
-          $localize`:@@academy.error.cert:Certificat indisponible.`, 'OK', { duration: 4000 })
+          $localize`:@@academy.error.cert:Certificat indisponible.`, $localize`:@@common.ok:OK`, { duration: 4000 })
       });
   }
 
   copyVerifyUrl(): void {
     if (this.certificate && navigator.clipboard) {
       navigator.clipboard.writeText(this.certificate.verifyUrl).then(() =>
-        this.snack.open($localize`:@@academy.cert.copied:Lien de vérification copié.`, 'OK', { duration: 2500 }));
+        this.snack.open($localize`:@@academy.cert.copied:Lien de vérification copié.`, $localize`:@@common.ok:OK`, { duration: 2500 }));
     }
   }
 

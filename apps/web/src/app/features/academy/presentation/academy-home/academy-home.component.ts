@@ -49,7 +49,7 @@ export class AcademyHomeComponent implements OnInit {
       .pipe(finalize(() => (this.loadingCourses = false)))
       .subscribe({
         next: page => (this.courses = page.content),
-        error: () => this.snack.open($localize`:@@academy.error.courses:Impossible de charger le catalogue.`, 'OK', { duration: 4000 })
+        error: () => this.snack.open($localize`:@@academy.error.courses:Impossible de charger le catalogue.`, $localize`:@@common.ok:OK`, { duration: 4000 })
       });
   }
 
@@ -83,7 +83,7 @@ export class AcademyHomeComponent implements OnInit {
           const msg = err?.status === 409
             ? $localize`:@@academy.error.alreadyEnrolled:Vous êtes déjà inscrit à ce cours.`
             : $localize`:@@academy.error.enroll:L'inscription a échoué.`;
-          this.snack.open(msg, 'OK', { duration: 4000 });
+          this.snack.open(msg, $localize`:@@common.ok:OK`, { duration: 4000 });
           this.loadEnrollments();
         }
       });

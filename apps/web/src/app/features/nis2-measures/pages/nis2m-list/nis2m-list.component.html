@@ -41,56 +41,58 @@
   <div *ngIf="loading$ | async" class="banner banner-info" i18n="@@common.loading">Chargement…</div>
   <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
 
-  <table mat-table [dataSource]="(rows$ | async) ?? []" class="qos-table" *ngIf="(rows$ | async)?.length; else empty">
+  <div class="table-wrap" *ngIf="(rows$ | async)?.length; else empty">
+    <table mat-table [dataSource]="(rows$ | async) ?? []" class="qos-table">
 
-    <ng-container matColumnDef="reference">
-      <th mat-header-cell *matHeaderCellDef i18n="@@nis2-measures.list.col-reference">Référence</th>
-      <td mat-cell *matCellDef="let r"><code>{{ r.reference }}</code></td>
-    </ng-container>
+      <ng-container matColumnDef="reference">
+        <th mat-header-cell *matHeaderCellDef i18n="@@nis2-measures.list.col-reference">Référence</th>
+        <td mat-cell *matCellDef="let r"><code>{{ r.reference }}</code></td>
+      </ng-container>
 
-    <ng-container matColumnDef="category">
-      <th mat-header-cell *matHeaderCellDef i18n="@@nis2-measures.list.col-category">Catégorie</th>
-      <td mat-cell *matCellDef="let r"><span class="cat-pill">{{ catLabel(r.category) }}</span></td>
-    </ng-container>
+      <ng-container matColumnDef="category">
+        <th mat-header-cell *matHeaderCellDef i18n="@@nis2-measures.list.col-category">Catégorie</th>
+        <td mat-cell *matCellDef="let r"><span class="cat-pill">{{ catLabel(r.category) }}</span></td>
+      </ng-container>
 
-    <ng-container matColumnDef="title">
-      <th mat-header-cell *matHeaderCellDef i18n="@@common.title">Titre</th>
-      <td mat-cell *matCellDef="let r">{{ r.title }}</td>
-    </ng-container>
+      <ng-container matColumnDef="title">
+        <th mat-header-cell *matHeaderCellDef i18n="@@common.title">Titre</th>
+        <td mat-cell *matCellDef="let r">{{ r.title }}</td>
+      </ng-container>
 
-    <ng-container matColumnDef="maturity">
-      <th mat-header-cell *matHeaderCellDef i18n="@@nis2-measures.list.col-maturity">Maturité</th>
-      <td mat-cell *matCellDef="let r"><span class="maturity">{{ r.maturityLevel }}/5</span></td>
-    </ng-container>
+      <ng-container matColumnDef="maturity">
+        <th mat-header-cell *matHeaderCellDef i18n="@@nis2-measures.list.col-maturity">Maturité</th>
+        <td mat-cell *matCellDef="let r"><span class="maturity">{{ r.maturityLevel }}/5</span></td>
+      </ng-container>
 
-    <ng-container matColumnDef="risk">
-      <th mat-header-cell *matHeaderCellDef i18n="@@nis2-measures.list.col-residual-risk">Risque résiduel</th>
-      <td mat-cell *matCellDef="let r"><span [class]="riskBadge(r.residualRiskRating)">{{ r.residualRiskRating }}</span></td>
-    </ng-container>
+      <ng-container matColumnDef="risk">
+        <th mat-header-cell *matHeaderCellDef i18n="@@nis2-measures.list.col-residual-risk">Risque résiduel</th>
+        <td mat-cell *matCellDef="let r"><span [class]="riskBadge(r.residualRiskRating)">{{ r.residualRiskRating }}</span></td>
+      </ng-container>
 
-    <ng-container matColumnDef="status">
-      <th mat-header-cell *matHeaderCellDef i18n="@@common.status">Statut</th>
-      <td mat-cell *matCellDef="let r">
-        <span [class]="statusBadge(r.status)">{{ r.status | statusLabel }}</span>
-      </td>
-    </ng-container>
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef i18n="@@common.status">Statut</th>
+        <td mat-cell *matCellDef="let r">
+          <span [class]="statusBadge(r.status)">{{ r.status | statusLabel }}</span>
+        </td>
+      </ng-container>
 
-    <ng-container matColumnDef="nextReview">
-      <th mat-header-cell *matHeaderCellDef i18n="@@nis2-measures.list.col-next-review">Prochaine revue</th>
-      <td mat-cell *matCellDef="let r">
-        <ng-container *ngIf="r.nextReviewDueAt; else noReview">
-          <span *ngIf="r.reviewOverdue" class="flag flag-overdue">
-            <mat-icon>warning</mat-icon> {{ r.nextReviewDueAt | slice:0:10 }}
-          </span>
-          <span *ngIf="!r.reviewOverdue">{{ r.nextReviewDueAt | slice:0:10 }}</span>
-        </ng-container>
-        <ng-template #noReview><span class="dim">—</span></ng-template>
-      </td>
-    </ng-container>
+      <ng-container matColumnDef="nextReview">
+        <th mat-header-cell *matHeaderCellDef i18n="@@nis2-measures.list.col-next-review">Prochaine revue</th>
+        <td mat-cell *matCellDef="let r">
+          <ng-container *ngIf="r.nextReviewDueAt; else noReview">
+            <span *ngIf="r.reviewOverdue" class="flag flag-overdue">
+              <mat-icon>warning</mat-icon> {{ r.nextReviewDueAt | slice:0:10 }}
+            </span>
+            <span *ngIf="!r.reviewOverdue">{{ r.nextReviewDueAt | slice:0:10 }}</span>
+          </ng-container>
+          <ng-template #noReview><span class="dim">—</span></ng-template>
+        </td>
+      </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="columns"></tr>
-    <tr mat-row *matRowDef="let row; columns: columns" (click)="open(row)" class="row-link"></tr>
-  </table>
+      <tr mat-header-row *matHeaderRowDef="columns"></tr>
+      <tr mat-row *matRowDef="let row; columns: columns" (click)="open(row)" class="row-link"></tr>
+    </table>
+  </div>
 
   <ng-template #empty>
     <div *ngIf="!(loading$ | async)" class="empty">

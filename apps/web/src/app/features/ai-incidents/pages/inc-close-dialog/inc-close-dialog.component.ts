@@ -51,11 +51,11 @@ export class IncCloseDialogComponent {
     op$
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
-        next: i => { this.snack.open(this.data.mode === 'CLOSE' ? 'Incident clôturé.' : 'Incident rejeté.', 'OK', { duration: 2500 }); this.dialogRef.close(i); },
+        next: i => { this.snack.open(this.data.mode === 'CLOSE' ? 'Incident clôturé.' : 'Incident rejeté.', $localize`:@@common.ok:OK`, { duration: 2500 }); this.dialogRef.close(i); },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[inc-close] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Opération impossible.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, 'Opération impossible.'), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

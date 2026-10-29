@@ -11,6 +11,7 @@ import { safeErrorMessage } from '../../../../core/http/error-message';
 import { PdcaService } from '../../pdca.service';
 import { PdcaCycleResponse, PdcaStatus, SpringPage } from '../../pdca.types';
 import { PdcaCreateDialogComponent } from '../pdca-create-dialog/pdca-create-dialog.component';
+import { searchRows } from '../../../../shared/ui/list-search/list-filter';
 
 // OWASP A03 — clamp paging params so a tampered URL / browser state can't
 // request 10 000 000 rows from the API.
@@ -38,6 +39,9 @@ export class PdcaListComponent implements OnInit {
   totalElements = 0;
 
   cycles$!: Observable<PdcaCycleResponse[]>;
+  /** Lignes affichées : la page chargée, filtrée par la recherche. */
+  visibleCycles$!: Observable<PdcaCycleResponse[]>;
+  readonly search = new FormControl('', { nonNullable: true });
   // Init à FALSE : la table (gated par *ngIf="loading===false") doit pouvoir se
   // monter pour abonner cycles$ et déclencher le chargement. Init à true créait un
   // DEADLOCK (table jamais montée → API jamais appelée → finalize jamais exécuté →
@@ -95,6 +99,7 @@ export class PdcaListComponent implements OnInit {
       // refCount:false garde la source chaude : l'appel se termine une seule fois.
       shareReplay({ bufferSize: 1, refCount: false })
     );
+    this.visibleCycles$ = searchRows(this.cycles$, this.search, c => [c.title, c.description]);
   }
 
   onPage(e: PageEvent): void {

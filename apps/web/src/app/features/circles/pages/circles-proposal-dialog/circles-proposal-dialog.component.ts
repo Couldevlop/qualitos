@@ -65,7 +65,7 @@ export class CirclesProposalDialogComponent {
           console.warn('[circles-proposal-dialog] failed', err?.status, err?.error?.title);
           this.snack.open(
             safeErrorMessage(err, $localize`:@@circles.proposal.error:Erreur lors de l'enregistrement.`),
-            'OK', { duration: 4000 }
+            $localize`:@@common.ok:OK`, { duration: 4000 }
           );
         }
       });

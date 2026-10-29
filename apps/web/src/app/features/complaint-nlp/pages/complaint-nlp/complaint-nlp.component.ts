@@ -1,6 +1,10 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { finalize } from 'rxjs/operators';
+
+import { complaintLine } from '../../../../shared/ai-sources/series';
+import { NcService } from '../../../nc/nc.service';
 
 import { ComplaintNlpService } from '../../complaint-nlp.service';
 import { ComplaintAnalyzeResponse, ComplaintInsight } from '../../complaint-nlp.types';
@@ -36,7 +40,43 @@ export class ComplaintNlpComponent {
   error: string | null = null;
   private texts: string[] = [];
 
-  constructor(private readonly fb: FormBuilder, private readonly nlp: ComplaintNlpService) {}
+  /** Nombre de réclamations reprises au plus : la page d'analyse reste lisible. */
+  static readonly SOURCE_SIZE = 50;
+
+  sourceLoading = false;
+  sourceInfo: string | null = null;
+
+  constructor(
+    private readonly fb: FormBuilder,
+    private readonly nlp: ComplaintNlpService,
+    private readonly nc: NcService
+  ) {}
+
+  /**
+   * Reprend les réclamations clients enregistrées (NC d'origine externe), les
+   * plus récentes d'abord : titre et description, une réclamation par ligne.
+   */
+  loadComplaints(): void {
+    this.sourceLoading = true;
+    this.sourceInfo = null;
+    this.error = null;
+    this.nc.listNcs(0, ComplaintNlpComponent.SOURCE_SIZE, { origin: 'EXTERNAL' })
+      .pipe(finalize(() => (this.sourceLoading = false)))
+      .subscribe({
+        next: page => {
+          const lines = page.content.map(n => complaintLine(n.title, n.description));
+          this.form.patchValue({ textsText: lines.join('\n') });
+          const count = lines.length;
+          const total = page.totalElements;
+          this.sourceInfo = count === 0
+            ? $localize`:@@complaintnlp.source-none:Aucune réclamation client enregistrée pour l'instant.`
+            : $localize`:@@complaintnlp.source-loaded:${count}:count: réclamation(s) reprise(s) sur ${total}:total: enregistrée(s).`;
+        },
+        error: () => {
+          this.error = $localize`:@@complaintnlp.source-error:Impossible de charger les réclamations enregistrées.`;
+        }
+      });
+  }
 
   loadExample(): void {
     this.form.patchValue({ textsText: this.example });

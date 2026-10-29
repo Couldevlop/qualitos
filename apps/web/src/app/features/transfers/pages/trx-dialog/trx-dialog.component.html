@@ -36,7 +36,7 @@
   <mat-form-field appearance="outline" class="full">
     <mat-label i18n="@@transfers.dialog.dest-countries">Pays de destination (un par ligne)</mat-label>
     <textarea matInput formControlName="destinationCountries" rows="2"
-              placeholder="USA&#10;Inde"></textarea>
+              placeholder="USA&#10;Inde" i18n-placeholder="@@transfers.dialog.countries-placeholder"></textarea>
   </mat-form-field>
 
   <h3 class="section" i18n="@@transfers.dialog.mechanism-section">Mécanisme légal (Chap. V)</h3>
@@ -50,7 +50,7 @@
   <mat-form-field appearance="outline" class="full" *ngIf="!isDerogation()">
     <mat-label i18n="@@transfers.dialog.safeguards-desc">Description des garanties (obligatoire hors Art. 45/49)</mat-label>
     <textarea matInput formControlName="safeguardsDescription" rows="4" maxlength="4000"
-              placeholder="SCC 2021 modules 2/3, mesures supplémentaires (chiffrement, contrôles d'accès), audit annuel…"></textarea>
+              placeholder="SCC 2021 modules 2/3, mesures supplémentaires (chiffrement, contrôles d'accès), audit annuel…" i18n-placeholder="@@transfers.dialog.safeguards-placeholder"></textarea>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
@@ -65,14 +65,14 @@
   <mat-form-field appearance="outline" class="full" *ngIf="isDerogation()">
     <mat-label i18n="@@transfers.dialog.derogation-justif">Justification Art. 49 (obligatoire)</mat-label>
     <textarea matInput formControlName="derogationJustification" rows="4" maxlength="4000" required
-              placeholder="Cas Art. 49 invoqué (intérêt vital, contrat, motif d'intérêt public, …). Caractère exceptionnel et non répétitif documenté."></textarea>
+              placeholder="Cas Art. 49 invoqué (intérêt vital, contrat, motif d'intérêt public, …). Caractère exceptionnel et non répétitif documenté." i18n-placeholder="@@transfers.dialog.derogation-placeholder"></textarea>
   </mat-form-field>
 
   <h3 class="section" i18n="@@transfers.dialog.transferred-data">Données transférées</h3>
   <mat-form-field appearance="outline" class="full">
     <mat-label i18n="@@transfers.dialog.data-categories">Catégories de données (une par ligne)</mat-label>
     <textarea matInput formControlName="dataCategories" rows="2"
-              placeholder="Identité prospects&#10;Coordonnées professionnelles"></textarea>
+              placeholder="Identité prospects&#10;Coordonnées professionnelles" i18n-placeholder="@@transfers.dialog.categories-placeholder"></textarea>
   </mat-form-field>
 
   <h3 class="section" i18n="@@transfers.dialog.links">Liens</h3>

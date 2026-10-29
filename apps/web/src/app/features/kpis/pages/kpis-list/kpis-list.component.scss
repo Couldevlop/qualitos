@@ -1,32 +1,29 @@
 .kpis-list { padding: 24px; display: flex; flex-direction: column; gap: 16px; }
-.head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.head h1 { margin: 0 0 4px; font-size: 22px; }
-.head p  { margin: 0; color: rgba(0,0,0,0.6); font-size: 13px; }
 
 .filters { display: flex; gap: 12px; flex-wrap: wrap; }
 .filters mat-form-field { min-width: min(200px, 100%); }
 
 .banner { padding: 10px 14px; border-radius: 8px; font-size: 13px; }
-.banner-error { background: #fbe9e7; color: #b71c1c; }
-.banner-info  { background: #e3f2fd; color: #0d47a1; }
+.banner-error { background: var(--qos-danger-bg-soft); color: var(--qos-danger-fg); }
 
-.table-wrap { background: var(--qos-bg-elevated); border: 1px solid var(--qos-border-subtle); border-radius: var(--qos-radius-lg); overflow: hidden; }
-.title-link { color: var(--mat-sys-primary, #1565c0); cursor: pointer; font-weight: 600; }
+.title-link { color: var(--qos-fg-link); cursor: pointer; font-weight: 600; }
 .title-link:hover { text-decoration: underline; }
-.dim { color: rgba(0,0,0,0.5); font-size: 11px; }
+.dim { color: var(--qos-fg-tertiary); font-size: 11px; }
 small.dim { display: block; margin-top: 2px; }
 .row-clickable { cursor: pointer; }
-.row-clickable:hover { background: rgba(0,0,0,0.025); }
+.row-clickable:hover { background: var(--qos-bg-hover); }
 
 code { font-family: 'IBM Plex Mono','Fira Code',monospace; font-size: 12px; }
 
 .badge, .dir {
   display: inline-block; padding: 2px 10px; border-radius: 12px;
-  font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+  font-size: 12px; font-weight: 600;
 }
-.badge-draft    { background: #f5f5f5; color: #424242; }
-.badge-active   { background: #e8f5e9; color: #1b5e20; }
-.badge-archived { background: #fbe9e7; color: #b71c1c; }
+.badge-draft    { background: var(--qos-bg-sunken); color: var(--qos-fg-secondary); }
+.badge-active   { background: var(--qos-success-bg-soft); color: var(--qos-success-fg); }
+.badge-archived { background: var(--qos-danger-bg-soft); color: var(--qos-danger-fg); }
 
-.dir-up   { background: #e8f5e9; color: #1b5e20; }
-.dir-down { background: #e3f2fd; color: #0d47a1; }
+.dir-up   { background: var(--qos-success-bg-soft); color: var(--qos-success-fg); }
+.dir-down { background: var(--qos-accent-bg-soft); color: var(--qos-accent-fg-soft); }
+
+.empty-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }

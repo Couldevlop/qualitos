@@ -1,16 +1,10 @@
 <div class="academy-page">
-  <header class="page-header">
-    <div class="title-row">
-      <mat-icon class="hero-icon">school</mat-icon>
-      <div>
-        <h1 i18n="@@academy.home.title">QualitOS Academy</h1>
-        <p class="subtitle" i18n="@@academy.home.subtitle">
+  <qos-page-header title="QualitOS Academy" i18n-title="@@academy.home.title">
+    <p qosSubtitle i18n="@@academy.home.subtitle">
           Montez en compétence : parcours par rôle et secteur, quiz notés, badges et ceintures qualité,
           certificats signés et vérifiables.
         </p>
-      </div>
-    </div>
-  </header>
+  </qos-page-header>
 
   <mat-tab-group animationDuration="200ms" class="academy-tabs">
     <!-- ===== Catalogue ===== -->
@@ -74,7 +68,11 @@
         </div>
         <div class="enrollment-list" *ngIf="!loadingEnrollments">
           <article class="enrollment-card" *ngFor="let e of enrollments; trackBy: trackById"
-                   (click)="openEnrollment(e)">
+                   (click)="openEnrollment(e)"
+                   (keydown.enter)="openEnrollment(e)"
+                   (keydown.space)="$event.preventDefault(); openEnrollment(e)"
+                   tabindex="0" role="link"
+                   [attr.aria-label]="(e.status | statusLabel) + ' — ' + e.progressPct + ' %' | openLabel">
             <div class="enr-status status-{{ e.status.toLowerCase() }}">{{ e.status | statusLabel }}</div>
             <div class="enr-body">
               <mat-progress-bar mode="determinate" [value]="e.progressPct"></mat-progress-bar>

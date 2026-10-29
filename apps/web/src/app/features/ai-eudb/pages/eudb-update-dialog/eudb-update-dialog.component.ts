@@ -37,7 +37,7 @@ export class EudbUpdateDialogComponent {
     if (this.form.invalid || this.submitting) { this.form.markAllAsTouched(); return; }
     const v = this.form.getRawValue();
     if (new Date(v.updateDate).getTime() > Date.now()) {
-      this.snack.open('La date de mise à jour ne peut pas être dans le futur.', 'OK', { duration: 4000 });
+      this.snack.open('La date de mise à jour ne peut pas être dans le futur.', $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     this.submitting = true;
@@ -47,11 +47,11 @@ export class EudbUpdateDialogComponent {
     })
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
-        next: r => { this.snack.open('Mise à jour déclarée.', 'OK', { duration: 2200 }); this.dialogRef.close(r); },
+        next: r => { this.snack.open('Mise à jour déclarée.', $localize`:@@common.ok:OK`, { duration: 2200 }); this.dialogRef.close(r); },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[eudb-update] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Déclaration impossible.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, 'Déclaration impossible.'), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

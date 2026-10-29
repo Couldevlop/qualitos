@@ -21,6 +21,8 @@
   </mat-card>
 
   <mat-card class="filter-card">
+    <qos-list-search [control]="search"></qos-list-search>
+
     <mat-form-field appearance="outline" class="status-filter">
       <mat-label i18n="@@common.filter-by-status">Filtrer par statut</mat-label>
       <mat-select [formControl]="statusFilter">
@@ -36,7 +38,7 @@
   </div>
 
   <mat-card class="table-card" *ngIf="(loading$ | async) === false && (error$ | async) === null">
-    <table mat-table [dataSource]="(audits$ | async) ?? []" class="t">
+    <table mat-table [dataSource]="(visibleAudits$ | async) ?? []" class="t">
       <ng-container matColumnDef="zone">
         <th mat-header-cell *matHeaderCellDef i18n="@@common.zone">Zone</th>
         <td mat-cell *matCellDef="let a">
@@ -58,11 +60,11 @@
       </ng-container>
       <ng-container matColumnDef="scheduledAt">
         <th mat-header-cell *matHeaderCellDef i18n="@@fives.list.col-scheduled">Planifié</th>
-        <td mat-cell *matCellDef="let a">{{ a.scheduledAt ? (a.scheduledAt | date:'short') : '—' }}</td>
+        <td mat-cell *matCellDef="let a">{{ a.scheduledAt ? (a.scheduledAt | date:'mediumDate') : '—' }}</td>
       </ng-container>
       <ng-container matColumnDef="updatedAt">
         <th mat-header-cell *matHeaderCellDef i18n="@@fives.list.col-updated">MAJ</th>
-        <td mat-cell *matCellDef="let a">{{ a.updatedAt | date:'short' }}</td>
+        <td mat-cell *matCellDef="let a">{{ a.updatedAt | date:'mediumDate' }}</td>
       </ng-container>
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"
@@ -70,8 +72,11 @@
           (click)="openAudit(row)"
           (keydown.enter)="openAudit(row)"
           tabindex="0" role="button"
-          [attr.aria-label]="'Ouvrir ' + row.zone"></tr>
+          [attr.aria-label]="row.zone | openLabel"></tr>
     </table>
+    <p class="empty" *ngIf="search.value && (audits$ | async)?.length && (visibleAudits$ | async)?.length === 0"
+       i18n="@@list-search.no-match">Aucune ligne de cette page ne correspond à la recherche.</p>
+
     <p class="empty" *ngIf="(audits$ | async)?.length === 0" i18n="@@fives.list.empty">Aucun audit pour ce filtre.</p>
 
     <mat-paginator [length]="totalElements"

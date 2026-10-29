@@ -70,12 +70,12 @@ export class LearningHomeComponent implements OnInit {
       next: () => {
         this.snack.open(
           $localize`:@@learning.completed-toast:Parcours marqué comme terminé. Progression mise à jour.`,
-          'OK', { duration: 3500 });
+          $localize`:@@common.ok:OK`, { duration: 3500 });
         this.load();
       },
       error: err => this.snack.open(
         safeErrorMessage(err, $localize`:@@learning.complete-error:Échec de l'enregistrement.`),
-        'OK', { duration: 4000 })
+        $localize`:@@common.ok:OK`, { duration: 4000 })
     });
   }
 

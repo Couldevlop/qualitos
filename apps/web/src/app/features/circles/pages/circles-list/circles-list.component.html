@@ -52,7 +52,7 @@
           (click)="openCircle(row)"
           (keydown.enter)="openCircle(row)"
           tabindex="0" role="button"
-          [attr.aria-label]="'Ouvrir ' + row.name"></tr>
+          [attr.aria-label]="row.name | openLabel"></tr>
     </table>
     <p class="empty" *ngIf="(circles$ | async)?.length === 0" i18n="@@circles.list.empty">Aucun cercle.</p>
 

@@ -12,7 +12,7 @@
   <mat-form-field appearance="outline" class="full">
     <mat-label i18n="@@iot.telemetry.metric">Métrique</mat-label>
     <input matInput formControlName="metric" maxlength="100" required
-           placeholder="Ex. : temperature">
+           placeholder="Ex. : temperature" i18n-placeholder="@@iot.threshold.metric-placeholder">
   </mat-form-field>
 
   <div class="known" *ngIf="data.knownMetrics.length">

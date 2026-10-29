@@ -1,13 +1,11 @@
 <section class="kpis-list">
-  <header class="head">
-    <div>
-      <h1 i18n="@@kpis.list.title">Catalogue KPI</h1>
-      <p i18n="@@kpis.list.subtitle">Indicateurs qualité, seuils, fréquences — fiche par KPI avec tendance et mesures.</p>
-    </div>
-    <button mat-flat-button color="primary" (click)="openCreate()">
+  <qos-page-header
+    title="Catalogue KPI" i18n-title="@@kpis.list.title"
+    subtitle="Indicateurs qualité, seuils, fréquences — fiche par KPI avec tendance et mesures." i18n-subtitle="@@kpis.list.subtitle">
+    <button qosActions mat-flat-button color="primary" type="button" (click)="openCreate()">
       <mat-icon>add</mat-icon> <span i18n="@@kpis.list.new">Nouveau KPI</span>
     </button>
-  </header>
+  </qos-page-header>
 
   <div class="filters">
     <mat-form-field appearance="outline">
@@ -24,7 +22,8 @@
   </div>
 
   <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
-  <div *ngIf="loading$ | async" class="banner banner-info" i18n="@@common.loading">Chargement…</div>
+  <mat-progress-bar *ngIf="loading$ | async" mode="indeterminate"
+                    aria-label="Chargement…" i18n-aria-label="@@common.loading"></mat-progress-bar>
 
   <div class="table-wrap mat-elevation-z1">
     <table mat-table [dataSource]="(kpis$ | async) ?? []">
@@ -72,8 +71,24 @@
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns" class="row-clickable" (click)="open(row)"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns" class="row-clickable clickable-row" (click)="open(row)"
+          (keydown.enter)="open(row)" (keydown.space)="$event.preventDefault(); open(row)"
+          tabindex="0" role="button" [attr.aria-label]="row.name | openLabel"></tr>
     </table>
+    <div class="qos-empty" role="status"
+         *ngIf="!(loading$ | async) && !(error$ | async) && (kpis$ | async)?.length === 0">
+      <span class="qos-empty__icon"><mat-icon aria-hidden="true">insights</mat-icon></span>
+      <span class="qos-empty__title" *ngIf="hasFilters" i18n="@@kpis.list.empty-filtered-title">Aucun KPI pour ces filtres</span>
+      <span class="qos-empty__title" *ngIf="!hasFilters" i18n="@@kpis.list.empty-title">Aucun KPI au catalogue</span>
+      <span class="qos-empty__hint" i18n="@@kpis.list.empty-hint">Chaque KPI porte sa formule, ses seuils, sa source et son propriétaire avant d'être affiché.</span>
+      <div class="qos-empty__cta empty-actions">
+        <button *ngIf="hasFilters" mat-stroked-button type="button" (click)="resetFilters()"
+                i18n="@@common.reset-filters">Réinitialiser les filtres</button>
+        <button mat-flat-button color="primary" type="button" (click)="openCreate()">
+          <mat-icon>add</mat-icon> <span i18n="@@kpis.list.new">Nouveau KPI</span>
+        </button>
+      </div>
+    </div>
 
     <mat-paginator
       [length]="totalElements"

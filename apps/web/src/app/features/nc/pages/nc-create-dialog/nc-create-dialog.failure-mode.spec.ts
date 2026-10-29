@@ -96,7 +96,7 @@ describe('NcCreateDialogComponent — produit et mode de défaillance', () => {
     expect(component.productChosen).toBeFalse();
     expect(fixture.nativeElement.querySelector('.failure-mode')).toBeNull();
 
-    component.form.patchValue({ productId: 'p-1' });
+    component.form.patchValue({ category: 'PROCESS', severity: 'MAJOR', productId: 'p-1' });
     fixture.detectChanges();
 
     expect(component.productChosen).toBeTrue();
@@ -110,7 +110,7 @@ describe('NcCreateDialogComponent — produit et mode de défaillance', () => {
     fixture.detectChanges();
     tick();
 
-    component.form.patchValue({ productId: 'p-1', title: 'Bavure sur alésage' });
+    component.form.patchValue({ category: 'PROCESS', severity: 'MAJOR', productId: 'p-1', title: 'Bavure sur alésage' });
     component.refreshSuggestions();
     tick();
     fixture.detectChanges();
@@ -126,7 +126,7 @@ describe('NcCreateDialogComponent — produit et mode de défaillance', () => {
     fixture.detectChanges();
     tick();
 
-    component.form.patchValue({
+    component.form.patchValue({ category: 'PROCESS', severity: 'MAJOR',
       productId: 'p-1', title: 'Bavure', description: 'constatée au poste 20'
     });
     component.refreshSuggestions();
@@ -140,7 +140,7 @@ describe('NcCreateDialogComponent — produit et mode de défaillance', () => {
     fixture.detectChanges();
     tick();
 
-    component.form.patchValue({ productId: 'p-1', title: '' });
+    component.form.patchValue({ category: 'PROCESS', severity: 'MAJOR', productId: 'p-1', title: '' });
     component.refreshSuggestions();
     tick();
 
@@ -152,7 +152,7 @@ describe('NcCreateDialogComponent — produit et mode de défaillance', () => {
     fixture.detectChanges();
     tick();
 
-    component.form.patchValue({
+    component.form.patchValue({ category: 'PROCESS', severity: 'MAJOR',
       title: 'Bavure', description: 'Bavure relevée au contrôle final.',
       productId: 'p-1', failureMode: component.noFailureMode
     });
@@ -171,7 +171,7 @@ describe('NcCreateDialogComponent — produit et mode de défaillance', () => {
     fixture.detectChanges();
     tick();
 
-    component.form.patchValue({
+    component.form.patchValue({ category: 'PROCESS', severity: 'MAJOR',
       title: 'Bavure', description: 'Bavure relevée au contrôle final.',
       productId: 'p-1', failureMode: 'i-1'
     });
@@ -186,7 +186,7 @@ describe('NcCreateDialogComponent — produit et mode de défaillance', () => {
     fixture.detectChanges();
     tick();
 
-    component.form.patchValue({ productId: 'p-1', title: 'Bavure', failureMode: 'i-1' });
+    component.form.patchValue({ category: 'PROCESS', severity: 'MAJOR', productId: 'p-1', title: 'Bavure', failureMode: 'i-1' });
     component.refreshSuggestions();
     tick();
 

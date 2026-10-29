@@ -34,60 +34,62 @@
   <div *ngIf="loading$ | async" class="banner banner-info" i18n="@@common.loading">Chargement…</div>
   <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
 
-  <table mat-table [dataSource]="(rows$ | async) ?? []" class="qos-table" *ngIf="(rows$ | async)?.length; else empty">
+  <div class="table-wrap" *ngIf="(rows$ | async)?.length; else empty">
+    <table mat-table [dataSource]="(rows$ | async) ?? []" class="qos-table">
 
-    <ng-container matColumnDef="reference">
-      <th mat-header-cell *matHeaderCellDef i18n="@@breach.list.col-reference">Référence</th>
-      <td mat-cell *matCellDef="let r"><code>{{ r.internalReference }}</code></td>
-    </ng-container>
+      <ng-container matColumnDef="reference">
+        <th mat-header-cell *matHeaderCellDef i18n="@@breach.list.col-reference">Référence</th>
+        <td mat-cell *matCellDef="let r"><code>{{ r.internalReference }}</code></td>
+      </ng-container>
 
-    <ng-container matColumnDef="title">
-      <th mat-header-cell *matHeaderCellDef i18n="@@common.title">Titre</th>
-      <td mat-cell *matCellDef="let r">{{ r.title }}</td>
-    </ng-container>
+      <ng-container matColumnDef="title">
+        <th mat-header-cell *matHeaderCellDef i18n="@@common.title">Titre</th>
+        <td mat-cell *matCellDef="let r">{{ r.title }}</td>
+      </ng-container>
 
-    <ng-container matColumnDef="severity">
-      <th mat-header-cell *matHeaderCellDef i18n="@@breach.list.col-severity">Sévérité</th>
-      <td mat-cell *matCellDef="let r"><span [class]="severityBadge(r.severity)">{{ r.severity | severityLabel }}</span></td>
-    </ng-container>
+      <ng-container matColumnDef="severity">
+        <th mat-header-cell *matHeaderCellDef i18n="@@breach.list.col-severity">Sévérité</th>
+        <td mat-cell *matCellDef="let r"><span [class]="severityBadge(r.severity)">{{ r.severity | severityLabel }}</span></td>
+      </ng-container>
 
-    <ng-container matColumnDef="subjects">
-      <th mat-header-cell *matHeaderCellDef i18n="@@breach.list.col-subjects">Personnes</th>
-      <td mat-cell *matCellDef="let r" class="num">{{ r.affectedSubjectsCount | number }}</td>
-    </ng-container>
+      <ng-container matColumnDef="subjects">
+        <th mat-header-cell *matHeaderCellDef i18n="@@breach.list.col-subjects">Personnes</th>
+        <td mat-cell *matCellDef="let r" class="num">{{ r.affectedSubjectsCount | number }}</td>
+      </ng-container>
 
-    <ng-container matColumnDef="status">
-      <th mat-header-cell *matHeaderCellDef i18n="@@common.status">Statut</th>
-      <td mat-cell *matCellDef="let r"><span [class]="statusBadge(r.status)">{{ r.status | statusLabel }}</span></td>
-    </ng-container>
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef i18n="@@common.status">Statut</th>
+        <td mat-cell *matCellDef="let r"><span [class]="statusBadge(r.status)">{{ r.status | statusLabel }}</span></td>
+      </ng-container>
 
-    <ng-container matColumnDef="dpa">
-      <th mat-header-cell *matHeaderCellDef i18n="@@breach.list.col-dpa">CNIL (72h)</th>
-      <td mat-cell *matCellDef="let r">
-        <span *ngIf="r.dpaNotifiedAt" class="status-ok">✓ {{ r.dpaNotifiedAt | slice:0:10 }}</span>
-        <span *ngIf="!r.dpaNotifiedAt && r.dpaOverdue" class="flag flag-overdue">
-          <mat-icon>warning</mat-icon> <span i18n="@@breach.list.overdue">Retard</span>
-        </span>
-        <span *ngIf="!r.dpaNotifiedAt && !r.dpaOverdue" class="dim">{{ r.dpaDeadlineAt | slice:0:10 }}</span>
-      </td>
-    </ng-container>
-
-    <ng-container matColumnDef="subjectsNotif">
-      <th mat-header-cell *matHeaderCellDef>Art. 34</th>
-      <td mat-cell *matCellDef="let r">
-        <ng-container *ngIf="r.subjectNotificationRequired; else notReq">
-          <span *ngIf="r.subjectsNotifiedAt" class="status-ok">✓ {{ r.subjectsNotifiedAt | slice:0:10 }}</span>
-          <span *ngIf="!r.subjectsNotifiedAt" class="flag flag-pending">
-            <mat-icon>info</mat-icon> <span i18n="@@breach.list.required">Requise</span>
+      <ng-container matColumnDef="dpa">
+        <th mat-header-cell *matHeaderCellDef i18n="@@breach.list.col-dpa">CNIL (72h)</th>
+        <td mat-cell *matCellDef="let r">
+          <span *ngIf="r.dpaNotifiedAt" class="status-ok">✓ {{ r.dpaNotifiedAt | slice:0:10 }}</span>
+          <span *ngIf="!r.dpaNotifiedAt && r.dpaOverdue" class="flag flag-overdue">
+            <mat-icon>warning</mat-icon> <span i18n="@@breach.list.overdue">Retard</span>
           </span>
-        </ng-container>
-        <ng-template #notReq><span class="dim" i18n="@@breach.list.not-required">non requise</span></ng-template>
-      </td>
-    </ng-container>
+          <span *ngIf="!r.dpaNotifiedAt && !r.dpaOverdue" class="dim">{{ r.dpaDeadlineAt | slice:0:10 }}</span>
+        </td>
+      </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="columns"></tr>
-    <tr mat-row *matRowDef="let row; columns: columns" (click)="open(row)" class="row-link"></tr>
-  </table>
+      <ng-container matColumnDef="subjectsNotif">
+        <th mat-header-cell *matHeaderCellDef>Art. 34</th>
+        <td mat-cell *matCellDef="let r">
+          <ng-container *ngIf="r.subjectNotificationRequired; else notReq">
+            <span *ngIf="r.subjectsNotifiedAt" class="status-ok">✓ {{ r.subjectsNotifiedAt | slice:0:10 }}</span>
+            <span *ngIf="!r.subjectsNotifiedAt" class="flag flag-pending">
+              <mat-icon>info</mat-icon> <span i18n="@@breach.list.required">Requise</span>
+            </span>
+          </ng-container>
+          <ng-template #notReq><span class="dim" i18n="@@breach.list.not-required">non requise</span></ng-template>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="columns"></tr>
+      <tr mat-row *matRowDef="let row; columns: columns" (click)="open(row)" class="row-link"></tr>
+    </table>
+  </div>
 
   <ng-template #empty>
     <div *ngIf="!(loading$ | async)" class="empty">

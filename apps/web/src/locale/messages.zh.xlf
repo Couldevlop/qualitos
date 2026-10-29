@@ -4707,8 +4707,8 @@ Portail clients</source>
         <target state="translated">数据矩阵</target>
       </trans-unit>
       <trans-unit id="anomaly.detect.matrix-label" datatype="html">
-        <source>Échantillons (une ligne par échantillon, features séparées par virgule ou espace)</source>
-        <target state="translated">样本（每行一个样本，特征用逗号或空格分隔）</target>
+        <source>Données manuelles : une ligne par échantillon, variables séparées par virgule ou espace</source>
+        <target state="translated">手动数据：每行一个样本，变量以逗号或空格分隔</target>
       </trans-unit>
       <trans-unit id="anomaly.detect.method-label" datatype="html">
         <source>Méthode</source>
@@ -4759,8 +4759,8 @@ Portail clients</source>
         <target state="translated">— 通过随机划分隔离稀有点。稳健，无分布假设。</target>
       </trans-unit>
       <trans-unit id="anomaly.detect.help-reconstruction" datatype="html">
-        <source>— erreur de reconstruction sur les axes principaux (auto-encodeur linéaire). Indique la feature la plus en cause.</source>
-        <target state="translated">— 主成分轴上的重构误差（线性自编码器）。指出贡献最大的特征。</target>
+        <source>— erreur de reconstruction sur les axes principaux (auto-encodeur linéaire). Indique la variable la plus en cause.</source>
+        <target state="translated">— 主轴上的重构误差（线性自编码器）。指出影响最大的变量。</target>
       </trans-unit>
       <trans-unit id="anomaly.detect.card-anomalies" datatype="html">
         <source>Anomalies détectées</source>
@@ -4811,12 +4811,8 @@ Portail clients</source>
         <target state="translated">分数</target>
       </trans-unit>
       <trans-unit id="anomaly.detect.col-top-feature" datatype="html">
-        <source>Feature dominante</source>
-        <target state="translated">主要特征</target>
-      </trans-unit>
-      <trans-unit id="anomaly.detect.feature-prefix" datatype="html">
-        <source>Feature</source>
-        <target state="translated">特征</target>
+        <source>Variable dominante</source>
+        <target state="translated">主导变量</target>
       </trans-unit>
       <trans-unit id="anomaly.detect.col-explain" datatype="html">
         <source>Explication</source>
@@ -4847,16 +4843,16 @@ Portail clients</source>
         <target state="translated">基准</target>
       </trans-unit>
       <trans-unit id="anomaly.detect.explain-legend" datatype="html">
-        <source>Barres rouges = features qui rendent l'échantillon anormal ; bleues = vers la normale.</source>
-        <target state="translated">红色条 = 使样本异常的特征；蓝色 = 趋向正常。</target>
+        <source>Barres rouges = variables qui rendent l'échantillon anormal ; bleues = vers la normale.</source>
+        <target state="translated">红色条 = 使样本异常的变量；蓝色 = 趋向正常。</target>
       </trans-unit>
       <trans-unit id="anomaly.detect.err-no-data" datatype="html">
         <source>Saisissez au moins un échantillon (une ligne de nombres).</source>
         <target state="translated">请至少输入一个样本（一行数字）。</target>
       </trans-unit>
       <trans-unit id="anomaly.detect.err-ragged" datatype="html">
-        <source>Toutes les lignes doivent avoir le même nombre de features (≥ 1).</source>
-        <target state="translated">所有行必须具有相同数量的特征（≥ 1）。</target>
+        <source>Toutes les lignes doivent avoir le même nombre de variables (≥ 1).</source>
+        <target state="translated">所有行的变量数必须相同（≥ 1）。</target>
       </trans-unit>
       <trans-unit id="anomaly.detect.subject-label" datatype="html">
         <source>Ce que décrit la matrice</source>
@@ -7711,8 +7707,8 @@ Portail clients</source>
         <target state="translated">投诉</target>
       </trans-unit>
       <trans-unit id="complaintnlp.texts-label" datatype="html">
-        <source>Une réclamation par ligne</source>
-        <target state="translated">每行一条投诉</target>
+        <source>Données manuelles : une réclamation par ligne</source>
+        <target state="translated">手动数据：每行一条投诉</target>
       </trans-unit>
       <trans-unit id="complaintnlp.run" datatype="html">
         <source>Analyser</source>
@@ -10381,6 +10377,708 @@ Portail clients</source>
       <trans-unit id="dashboard.annot.delete-error" datatype="html">
         <source>Suppression refusée.</source>
         <target state="translated">删除被拒绝。</target>
+      </trans-unit>
+      <trans-unit id="shell.search.open-aria" datatype="html">
+        <source>Rechercher un écran</source>
+        <target state="translated">搜索界面</target>
+      </trans-unit>
+      <trans-unit id="theme.toggle.aria" datatype="html">
+        <source>Préférence de thème</source>
+        <target state="translated">主题偏好</target>
+      </trans-unit>
+      <trans-unit id="theme.toggle.light" datatype="html">
+        <source>Thème clair</source>
+        <target state="translated">浅色主题</target>
+      </trans-unit>
+      <trans-unit id="theme.toggle.system" datatype="html">
+        <source>Suivre le système</source>
+        <target state="translated">跟随系统</target>
+      </trans-unit>
+      <trans-unit id="theme.toggle.dark" datatype="html">
+        <source>Thème sombre</source>
+        <target state="translated">深色主题</target>
+      </trans-unit>
+      <trans-unit id="common.open-item" datatype="html">
+        <source>Ouvrir <x id="name"/></source>
+        <target state="translated">打开 <x id="name"/></target>
+      </trans-unit>
+      <trans-unit id="enum.ishikawa-mode.six-m" datatype="html">
+        <source>6M</source>
+        <target state="translated">6M</target>
+      </trans-unit>
+      <trans-unit id="enum.ishikawa-mode.seven-m" datatype="html">
+        <source>7M</source>
+        <target state="translated">7M</target>
+      </trans-unit>
+      <trans-unit id="enum.ishikawa-mode.eight-m" datatype="html">
+        <source>8M</source>
+        <target state="translated">8M</target>
+      </trans-unit>
+      <trans-unit id="enum.module.pdca" datatype="html">
+        <source>Cycles PDCA</source>
+        <target state="translated">PDCA 循环</target>
+      </trans-unit>
+      <trans-unit id="enum.module.ishikawa" datatype="html">
+        <source>Diagrammes d'Ishikawa</source>
+        <target state="translated">石川图</target>
+      </trans-unit>
+      <trans-unit id="enum.module.fives" datatype="html">
+        <source>Audits 5S</source>
+        <target state="translated">5S 审核</target>
+      </trans-unit>
+      <trans-unit id="enum.module.circle" datatype="html">
+        <source>Cercles de qualité</source>
+        <target state="translated">质量圈</target>
+      </trans-unit>
+      <trans-unit id="enum.module.dmaic" datatype="html">
+        <source>DMAIC et Poka-Yoke</source>
+        <target state="translated">DMAIC 与防错</target>
+      </trans-unit>
+      <trans-unit id="enum.module.capa" datatype="html">
+        <source>CAPA</source>
+        <target state="translated">CAPA</target>
+      </trans-unit>
+      <trans-unit id="enum.module.docs" datatype="html">
+        <source>Maîtrise documentaire</source>
+        <target state="translated">文件控制</target>
+      </trans-unit>
+      <trans-unit id="enum.module.audit" datatype="html">
+        <source>Gestion des audits</source>
+        <target state="translated">审核管理</target>
+      </trans-unit>
+      <trans-unit id="enum.module.risk" datatype="html">
+        <source>Risques et AMDEC</source>
+        <target state="translated">风险与 FMEA</target>
+      </trans-unit>
+      <trans-unit id="enum.module.product" datatype="html">
+        <source>Référentiel produit</source>
+        <target state="translated">产品参考库</target>
+      </trans-unit>
+      <trans-unit id="enum.module.controlplan" datatype="html">
+        <source>Plan de surveillance</source>
+        <target state="translated">控制计划</target>
+      </trans-unit>
+      <trans-unit id="enum.module.supplier" datatype="html">
+        <source>Qualité fournisseurs</source>
+        <target state="translated">供应商质量</target>
+      </trans-unit>
+      <trans-unit id="enum.module.training" datatype="html">
+        <source>Formation et compétences</source>
+        <target state="translated">培训与能力</target>
+      </trans-unit>
+      <trans-unit id="enum.module.change" datatype="html">
+        <source>Gestion des changements</source>
+        <target state="translated">变更管理</target>
+      </trans-unit>
+      <trans-unit id="enum.module.complaints" datatype="html">
+        <source>Réclamations clients</source>
+        <target state="translated">客户投诉</target>
+      </trans-unit>
+      <trans-unit id="enum.module.calibration" datatype="html">
+        <source>Étalonnage et équipements</source>
+        <target state="translated">校准与设备</target>
+      </trans-unit>
+      <trans-unit id="enum.module.ehs" datatype="html">
+        <source>Incidents HSE</source>
+        <target state="translated">EHS 事件</target>
+      </trans-unit>
+      <trans-unit id="enum.module.standards" datatype="html">
+        <source>Standards Hub</source>
+        <target state="translated">Standards Hub</target>
+      </trans-unit>
+      <trans-unit id="enum.module.kpi" datatype="html">
+        <source>Moteur de KPI</source>
+        <target state="translated">KPI 引擎</target>
+      </trans-unit>
+      <trans-unit id="enum.module.industry" datatype="html">
+        <source>Packs sectoriels</source>
+        <target state="translated">行业包</target>
+      </trans-unit>
+      <trans-unit id="enum.module.iot" datatype="html">
+        <source>Hub IoT</source>
+        <target state="translated">物联网中心</target>
+      </trans-unit>
+      <trans-unit id="enum.module.auditlog" datatype="html">
+        <source>Journal d'audit</source>
+        <target state="translated">审计日志</target>
+      </trans-unit>
+      <trans-unit id="enum.module.blockchain" datatype="html">
+        <source>Ancrage blockchain</source>
+        <target state="translated">区块链锚定</target>
+      </trans-unit>
+      <trans-unit id="enum.module.webhooks" datatype="html">
+        <source>Webhooks sortants</source>
+        <target state="translated">出站 Webhook</target>
+      </trans-unit>
+      <trans-unit id="enum.module.itsm" datatype="html">
+        <source>Connecteurs ITSM</source>
+        <target state="translated">ITSM 连接器</target>
+      </trans-unit>
+      <trans-unit id="enum.module-category.methodes" datatype="html">
+        <source>Méthodes qualité</source>
+        <target state="translated">质量方法</target>
+      </trans-unit>
+      <trans-unit id="enum.module-category.transverse" datatype="html">
+        <source>Modules transverses</source>
+        <target state="translated">横向模块</target>
+      </trans-unit>
+      <trans-unit id="enum.module-category.platform" datatype="html">
+        <source>Plateforme</source>
+        <target state="translated">平台</target>
+      </trans-unit>
+      <trans-unit id="enum.module-category.integrations" datatype="html">
+        <source>Intégrations</source>
+        <target state="translated">集成</target>
+      </trans-unit>
+      <trans-unit id="enum.billing-tier.free" datatype="html">
+        <source>Gratuit</source>
+        <target state="translated">免费</target>
+      </trans-unit>
+      <trans-unit id="enum.billing-tier.standard" datatype="html">
+        <source>Standard</source>
+        <target state="translated">标准版</target>
+      </trans-unit>
+      <trans-unit id="enum.billing-tier.pro" datatype="html">
+        <source>Pro</source>
+        <target state="translated">专业版</target>
+      </trans-unit>
+      <trans-unit id="enum.billing-tier.enterprise" datatype="html">
+        <source>Entreprise</source>
+        <target state="translated">企业版</target>
+      </trans-unit>
+      <trans-unit id="home.kpi.open-nc-internal" datatype="html">
+        <source>Non-conformités internes ouvertes</source>
+        <target state="translated">未结内部不合格项</target>
+      </trans-unit>
+      <trans-unit id="home.kpi.fives-sample" datatype="html">
+        <source>Sur <x id="count"/> audits terminés</source>
+        <target state="translated">基于 <x id="count"/> 次已完成审核</target>
+      </trans-unit>
+      <trans-unit id="home.kpi.fives-none" datatype="html">
+        <source>Aucun audit terminé</source>
+        <target state="translated">暂无已完成审核</target>
+      </trans-unit>
+      <trans-unit id="home.kpi.unavailable" datatype="html">
+        <source>Indisponible — ouvrir le module</source>
+        <target state="translated">暂不可用 — 打开模块</target>
+      </trans-unit>
+      <trans-unit id="dashboard.exec.generated-at" datatype="html">
+        <source>Données du <x id="INTERPOLATION"/></source>
+        <target state="translated">数据时间：<x id="INTERPOLATION"/></target>
+      </trans-unit>
+      <trans-unit id="dashboard.exec.trend-empty-title" datatype="html">
+        <source>Pas encore de mesure</source>
+        <target state="translated">暂无测量数据</target>
+      </trans-unit>
+      <trans-unit id="dashboard.exec.trend-empty-hint" datatype="html">
+        <source>La courbe se trace dès que les indicateurs de qualité reçoivent leurs premières valeurs.</source>
+        <target state="translated">质量指标获得首批数值后即会绘制曲线。</target>
+      </trans-unit>
+      <trans-unit id="dashboard.exec.norms-tracked-count" datatype="html">
+        <source>Normes suivies : <x id="count"/></source>
+        <target state="translated">跟踪的标准：<x id="count"/></target>
+      </trans-unit>
+      <trans-unit id="dashboard.chart.overall-quality" datatype="html">
+        <source>Qualité globale</source>
+        <target state="translated">整体质量</target>
+      </trans-unit>
+      <trans-unit id="dashboard.chart.target" datatype="html">
+        <source>Cible</source>
+        <target state="translated">目标</target>
+      </trans-unit>
+      <trans-unit id="dashboard.chart.defects" datatype="html">
+        <source>Défauts</source>
+        <target state="translated">缺陷</target>
+      </trans-unit>
+      <trans-unit id="dashboard.chart.cumulative" datatype="html">
+        <source>Cumul</source>
+        <target state="translated">累计</target>
+      </trans-unit>
+      <trans-unit id="dashboard.chart.cumulative-pct" datatype="html">
+        <source>Cumul %</source>
+        <target state="translated">累计 %</target>
+      </trans-unit>
+      <trans-unit id="dashboard.csv.indicator" datatype="html">
+        <source>Indicateur</source>
+        <target state="translated">指标</target>
+      </trans-unit>
+      <trans-unit id="dashboard.csv.value" datatype="html">
+        <source>Valeur</source>
+        <target state="translated">数值</target>
+      </trans-unit>
+      <trans-unit id="dashboard.csv.unit" datatype="html">
+        <source>Unité</source>
+        <target state="translated">单位</target>
+      </trans-unit>
+      <trans-unit id="dashboard.csv.target" datatype="html">
+        <source>Cible</source>
+        <target state="translated">目标</target>
+      </trans-unit>
+      <trans-unit id="dashboard.csv.trend" datatype="html">
+        <source>Variation</source>
+        <target state="translated">变化</target>
+      </trans-unit>
+      <trans-unit id="dashboard.csv.state" datatype="html">
+        <source>État</source>
+        <target state="translated">状态</target>
+      </trans-unit>
+      <trans-unit id="restricted.title" datatype="html">
+        <source>Accès réservé à l'administrateur</source>
+        <target state="translated">仅限管理员访问</target>
+      </trans-unit>
+      <trans-unit id="restricted.hint" datatype="html">
+        <source>Cette page relève de l'administration de votre organisation. Si vous en avez besoin, demandez à votre administrateur de vous attribuer le rôle correspondant.</source>
+        <target state="translated">此页面属于贵组织的管理功能。如需使用，请联系管理员为您分配相应角色。</target>
+      </trans-unit>
+      <trans-unit id="paginator.items-per-page" datatype="html">
+        <source>Éléments par page :</source>
+        <target state="translated">每页条数：</target>
+      </trans-unit>
+      <trans-unit id="paginator.next" datatype="html">
+        <source>Page suivante</source>
+        <target state="translated">下一页</target>
+      </trans-unit>
+      <trans-unit id="paginator.previous" datatype="html">
+        <source>Page précédente</source>
+        <target state="translated">上一页</target>
+      </trans-unit>
+      <trans-unit id="paginator.first" datatype="html">
+        <source>Première page</source>
+        <target state="translated">第一页</target>
+      </trans-unit>
+      <trans-unit id="paginator.last" datatype="html">
+        <source>Dernière page</source>
+        <target state="translated">最后一页</target>
+      </trans-unit>
+      <trans-unit id="paginator.range-empty" datatype="html">
+        <source>0 sur <x id="total"/></source>
+        <target state="translated">共 <x id="total"/> 条，显示 0 条</target>
+      </trans-unit>
+      <trans-unit id="paginator.range" datatype="html">
+        <source><x id="start"/> – <x id="end"/> sur <x id="total"/></source>
+        <target state="translated">第 <x id="start"/> – <x id="end"/> 条，共 <x id="total"/> 条</target>
+      </trans-unit>
+      <trans-unit id="training.path-detail.passing" datatype="html">
+        <source>Seuil de réussite ≥ <x id="INTERPOLATION"/> %</source>
+        <target state="translated">通过线 ≥ <x id="INTERPOLATION"/> %</target>
+      </trans-unit>
+      <trans-unit id="training.path-detail.validity" datatype="html">
+        <source>Validité <x id="INTERPOLATION"/> mois</source>
+        <target state="translated">有效期 <x id="INTERPOLATION"/> 个月</target>
+      </trans-unit>
+      <trans-unit id="nc.create.blocked-category" datatype="html">
+        <source>Choisissez la catégorie pour pouvoir déclarer.</source>
+        <target state="translated">请选择类别后再上报。</target>
+      </trans-unit>
+      <trans-unit id="nc.create.blocked-severity" datatype="html">
+        <source>Choisissez la sévérité pour pouvoir déclarer.</source>
+        <target state="translated">请选择严重程度后再上报。</target>
+      </trans-unit>
+      <trans-unit id="nc.create.category-required" datatype="html">
+        <source>Choisissez une catégorie.</source>
+        <target state="translated">请选择类别。</target>
+      </trans-unit>
+      <trans-unit id="nc.create.severity-required" datatype="html">
+        <source>Choisissez une sévérité.</source>
+        <target state="translated">请选择严重程度。</target>
+      </trans-unit>
+      <trans-unit id="nc.create.photo-take" datatype="html">
+        <source>Prendre une photo</source>
+        <target state="translated">拍照</target>
+      </trans-unit>
+      <trans-unit id="nc.create.photo-choose" datatype="html">
+        <source>Choisir des photos</source>
+        <target state="translated">选择照片</target>
+      </trans-unit>
+      <trans-unit id="nc.create.photo-remove-tooltip" datatype="html">
+        <source>Retirer cette photo</source>
+        <target state="translated">移除此照片</target>
+      </trans-unit>
+      <trans-unit id="nc.create.photo-remove-aria" datatype="html">
+        <source>Retirer <x id="name"/></source>
+        <target state="translated">移除 <x id="name"/></target>
+      </trans-unit>
+      <trans-unit id="nc.create.photo-progress" datatype="html">
+        <source>Envoi des photos</source>
+        <target state="translated">正在上传照片</target>
+      </trans-unit>
+      <trans-unit id="nc.create.photo-limit" datatype="html">
+        <source>Dix photos au maximum par déclaration.</source>
+        <target state="translated">每次上报最多十张照片。</target>
+      </trans-unit>
+      <trans-unit id="nc.create.photo-type" datatype="html">
+        <source>Format non accepté — JPEG, PNG, WebP ou HEIC.</source>
+        <target state="translated">格式不受支持 — 仅限 JPEG、PNG、WebP 或 HEIC。</target>
+      </trans-unit>
+      <trans-unit id="nc.create.photo-too-large" datatype="html">
+        <source>Photo trop lourde — 10 Mo au maximum.</source>
+        <target state="translated">照片过大 — 最大 10 MB。</target>
+      </trans-unit>
+      <trans-unit id="nc.create.success-offline-photos" datatype="html">
+        <source>NC enregistrée hors-ligne — les photos n'ont pas pu être jointes : ajoutez-les depuis la fiche au retour du réseau.</source>
+        <target state="translated">不合格项已离线保存 — 照片无法附加：请在网络恢复后从详情页添加。</target>
+      </trans-unit>
+      <trans-unit id="nc.create.success-with-photos" datatype="html">
+        <source>Non-conformité déclarée, photos jointes.</source>
+        <target state="translated">不合格项已上报，照片已附加。</target>
+      </trans-unit>
+      <trans-unit id="nc.create.success-partial-photos" datatype="html">
+        <source>Non-conformité déclarée, mais des photos n'ont pas pu être envoyées — ajoutez-les depuis la fiche.</source>
+        <target state="translated">不合格项已上报，但部分照片未能发送 — 请从详情页添加。</target>
+      </trans-unit>
+      <trans-unit id="list-search.label" datatype="html">
+        <source>Rechercher</source>
+        <target state="translated">搜索</target>
+      </trans-unit>
+      <trans-unit id="list-search.hint" datatype="html">
+        <source>Filtre les lignes de la page affichée.</source>
+        <target state="translated">筛选当前页面的行。</target>
+      </trans-unit>
+      <trans-unit id="list-search.clear" datatype="html">
+        <source>Effacer la recherche</source>
+        <target state="translated">清除搜索</target>
+      </trans-unit>
+      <trans-unit id="list-search.no-match" datatype="html">
+        <source>Aucune ligne de cette page ne correspond à la recherche.</source>
+        <target state="translated">本页没有与搜索匹配的行。</target>
+      </trans-unit>
+      <trans-unit id="common.invalid-email" datatype="html">
+        <source>Adresse e-mail invalide.</source>
+        <target state="translated">电子邮件地址无效。</target>
+      </trans-unit>
+      <trans-unit id="common.invalid-code" datatype="html">
+        <source>Caractères autorisés : A-Z, 0-9, point, tiret, underscore.</source>
+        <target state="translated">允许的字符：A-Z、0-9、点、连字符、下划线。</target>
+      </trans-unit>
+      <trans-unit id="common.invalid-country" datatype="html">
+        <source>Code pays ISO à deux lettres majuscules (FR, DE…).</source>
+        <target state="translated">两位大写 ISO 国家代码（FR、DE…）。</target>
+      </trans-unit>
+      <trans-unit id="fmea.create.rpn-threshold-range" datatype="html">
+        <source>Seuil entre 1 et 1000.</source>
+        <target state="translated">阈值须在 1 到 1000 之间。</target>
+      </trans-unit>
+      <trans-unit id="documents.create.owner-required" datatype="html">
+        <source>Choisissez le propriétaire du document.</source>
+        <target state="translated">请选择文档负责人。</target>
+      </trans-unit>
+      <trans-unit id="ai-source.manual" datatype="html">
+        <source>Données manuelles</source>
+        <target state="translated">手动数据</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.source-label" datatype="html">
+        <source>Source des mesures</source>
+        <target state="translated">测量数据来源</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.source-none" datatype="html">
+        <source>Aucun indicateur actif au catalogue : saisissez les mesures.</source>
+        <target state="translated">目录中没有启用的指标：请手动输入测量值。</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.source-too-few" datatype="html">
+        <source><x id="count"/> mesure(s) seulement pour cet indicateur : il en faut au moins 4.</source>
+        <target state="translated">该指标仅有 <x id="count"/> 个测量值：至少需要 4 个。</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.source-loaded" datatype="html">
+        <source><x id="count"/> mesures chargées, du <x id="from"/> au <x id="to"/>.</source>
+        <target state="translated">已加载 <x id="count"/> 个测量值，从 <x id="from"/> 到 <x id="to"/>。</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.source-error" datatype="html">
+        <source>Impossible de charger les mesures de cet indicateur.</source>
+        <target state="translated">无法加载该指标的测量值。</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.source-label" datatype="html">
+        <source>Indicateurs à croiser</source>
+        <target state="translated">要交叉分析的指标</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.source-hint" datatype="html">
+        <source>Une ligne par période mesurée pour tous les indicateurs choisis.</source>
+        <target state="translated">每个所有选定指标均有测量值的周期一行。</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.source-none" datatype="html">
+        <source>Aucun indicateur actif au catalogue : saisissez la matrice.</source>
+        <target state="translated">目录中没有启用的指标：请手动输入矩阵。</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.source-load" datatype="html">
+        <source>Charger les mesures</source>
+        <target state="translated">加载测量值</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.source-pick-two" datatype="html">
+        <source>Choisissez au moins deux indicateurs : l'analyse est multivariée.</source>
+        <target state="translated">请至少选择两个指标：这是多变量分析。</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.source-no-common" datatype="html">
+        <source>Ces indicateurs n'ont aucune période mesurée en commun.</source>
+        <target state="translated">这些指标没有共同的测量周期。</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.source-loaded" datatype="html">
+        <source><x id="rows"/> période(s) communes à <x id="count"/> indicateurs.</source>
+        <target state="translated"><x id="count"/> 个指标共有 <x id="rows"/> 个周期。</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.source-error" datatype="html">
+        <source>Impossible de charger les mesures des indicateurs choisis.</source>
+        <target state="translated">无法加载所选指标的测量值。</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.columns" datatype="html">
+        <source>Variables :</source>
+        <target state="translated">变量：</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.variable-prefix" datatype="html">
+        <source>Variable</source>
+        <target state="translated">变量</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.variables-per-sample" datatype="html">
+        <source><x id="count"/> variable(s) par échantillon</source>
+        <target state="translated">每个样本 <x id="count"/> 个变量</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.source-load" datatype="html">
+        <source>Charger les réclamations clients</source>
+        <target state="translated">加载客户投诉</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.source-none" datatype="html">
+        <source>Aucune réclamation client enregistrée pour l'instant.</source>
+        <target state="translated">目前尚无已登记的客户投诉。</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.source-loaded" datatype="html">
+        <source><x id="count"/> réclamation(s) reprise(s) sur <x id="total"/> enregistrée(s).</source>
+        <target state="translated">已加载 <x id="count"/> 条投诉（共登记 <x id="total"/> 条）。</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.source-error" datatype="html">
+        <source>Impossible de charger les réclamations enregistrées.</source>
+        <target state="translated">无法加载已登记的投诉。</target>
+      </trans-unit>
+      <trans-unit id="status.f.open" datatype="html">
+        <source>Ouverte</source>
+        <target state="translated">已开启</target>
+      </trans-unit>
+      <trans-unit id="status.f.closed" datatype="html">
+        <source>Clôturée</source>
+        <target state="translated">已关闭</target>
+      </trans-unit>
+      <trans-unit id="status.f.cancelled" datatype="html">
+        <source>Annulée</source>
+        <target state="translated">已取消</target>
+      </trans-unit>
+      <trans-unit id="status.f.resolved" datatype="html">
+        <source>Résolue</source>
+        <target state="translated">已解决</target>
+      </trans-unit>
+      <trans-unit id="status.f.rejected" datatype="html">
+        <source>Rejetée</source>
+        <target state="translated">已拒绝</target>
+      </trans-unit>
+      <trans-unit id="status.f.verified" datatype="html">
+        <source>Vérifiée</source>
+        <target state="translated">已验证</target>
+      </trans-unit>
+      <trans-unit id="status.f.validated" datatype="html">
+        <source>Validée</source>
+        <target state="translated">已确认</target>
+      </trans-unit>
+      <trans-unit id="status.f.archived" datatype="html">
+        <source>Archivée</source>
+        <target state="translated">已归档</target>
+      </trans-unit>
+      <trans-unit id="status.f.completed" datatype="html">
+        <source>Terminée</source>
+        <target state="translated">已完成</target>
+      </trans-unit>
+      <trans-unit id="status.f.approved" datatype="html">
+        <source>Approuvée</source>
+        <target state="translated">已批准</target>
+      </trans-unit>
+      <trans-unit id="common.reset-filters" datatype="html">
+        <source>Réinitialiser les filtres</source>
+        <target state="translated">重置筛选</target>
+      </trans-unit>
+      <trans-unit id="suppliers.list.empty-filtered-title" datatype="html">
+        <source>Aucun fournisseur pour ces filtres</source>
+        <target state="translated">没有符合这些筛选条件的供应商</target>
+      </trans-unit>
+      <trans-unit id="suppliers.list.empty-title" datatype="html">
+        <source>Aucun fournisseur référencé</source>
+        <target state="translated">尚未登记任何供应商</target>
+      </trans-unit>
+      <trans-unit id="suppliers.list.empty-hint" datatype="html">
+        <source>Référencez vos fournisseurs pour suivre leur score, leurs audits et leurs non-conformités.</source>
+        <target state="translated">登记您的供应商，以跟踪其评分、审核和不符合项。</target>
+      </trans-unit>
+      <trans-unit id="fmea.list.empty-filtered-title" datatype="html">
+        <source>Aucun projet AMDEC pour ces filtres</source>
+        <target state="translated">没有符合这些筛选条件的 FMEA 项目</target>
+      </trans-unit>
+      <trans-unit id="fmea.list.empty-title" datatype="html">
+        <source>Aucun projet AMDEC</source>
+        <target state="translated">尚无 FMEA 项目</target>
+      </trans-unit>
+      <trans-unit id="fmea.list.empty-hint" datatype="html">
+        <source>Créez un projet pour coter les modes de défaillance d'un processus, d'une conception ou d'un service.</source>
+        <target state="translated">创建项目，为流程、设计或服务的失效模式评分。</target>
+      </trans-unit>
+      <trans-unit id="kpis.list.empty-filtered-title" datatype="html">
+        <source>Aucun KPI pour ces filtres</source>
+        <target state="translated">没有符合这些筛选条件的 KPI</target>
+      </trans-unit>
+      <trans-unit id="kpis.list.empty-title" datatype="html">
+        <source>Aucun KPI au catalogue</source>
+        <target state="translated">目录中没有 KPI</target>
+      </trans-unit>
+      <trans-unit id="kpis.list.empty-hint" datatype="html">
+        <source>Chaque KPI porte sa formule, ses seuils, sa source et son propriétaire avant d'être affiché.</source>
+        <target state="translated">每个 KPI 在显示前都具备公式、阈值、来源和负责人。</target>
+      </trans-unit>
+      <trans-unit id="training.home.paths-empty-title" datatype="html">
+        <source>Aucun parcours</source>
+        <target state="translated">没有学习路径</target>
+      </trans-unit>
+      <trans-unit id="training.home.paths-empty-filtered" datatype="html">
+        <source>Aucun parcours ne porte ce statut.</source>
+        <target state="translated">没有处于该状态的学习路径。</target>
+      </trans-unit>
+      <trans-unit id="training.home.skills-empty-title" datatype="html">
+        <source>Aucune compétence</source>
+        <target state="translated">没有技能</target>
+      </trans-unit>
+      <trans-unit id="training.home.skills-empty-filtered" datatype="html">
+        <source>Aucune compétence dans cette catégorie.</source>
+        <target state="translated">该类别中没有技能。</target>
+      </trans-unit>
+      <trans-unit id="training.home.enrollments-empty-title" datatype="html">
+        <source>Aucune inscription</source>
+        <target state="translated">没有报名</target>
+      </trans-unit>
+      <trans-unit id="training.home.enrollments-empty-hint" datatype="html">
+        <source>Inscrivez-vous à un parcours pour suivre votre progression et obtenir son certificat.</source>
+        <target state="translated">报名学习路径，跟踪进度并获得证书。</target>
+      </trans-unit>
+      <trans-unit id="complaint-nlp.input.placeholder" datatype="html">
+        <source>Produit cassé à la réception
+Livraison en retard
+…</source>
+        <target state="translated">收货时产品破损
+交货延迟
+…</target>
+      </trans-unit>
+      <trans-unit id="anomaly.form.context-placeholder" datatype="html">
+        <source>presse-2 / ligne 3</source>
+        <target state="translated">压机-2 / 3号线</target>
+      </trans-unit>
+      <trans-unit id="calibration.equipment.code-placeholder" datatype="html">
+        <source>Ex. : CAL-PIED-001</source>
+        <target state="translated">例如：CAL-GAUGE-001</target>
+      </trans-unit>
+      <trans-unit id="calibration.plan.procedure-placeholder" datatype="html">
+        <source>Ex. : MO-CAL-014 rév. C</source>
+        <target state="translated">例如：MO-CAL-014 C 版</target>
+      </trans-unit>
+      <trans-unit id="calibration.plan.tolerance-placeholder" datatype="html">
+        <source>Ex. : ± 0,02 mm sur toute l'étendue</source>
+        <target state="translated">例如：全量程 ± 0.02 mm</target>
+      </trans-unit>
+      <trans-unit id="calibration.plan.accreditation-placeholder" datatype="html">
+        <source>Ex. : COFRAC 2-1234</source>
+        <target state="translated">例如：COFRAC 2-1234</target>
+      </trans-unit>
+      <trans-unit id="calibration.record.provider-placeholder" datatype="html">
+        <source>Ex. : laboratoire accrédité COFRAC</source>
+        <target state="translated">例如：COFRAC 认可实验室</target>
+      </trans-unit>
+      <trans-unit id="ehs.report.location-placeholder" datatype="html">
+        <source>Atelier B, zone 3…</source>
+        <target state="translated">B 车间，3 区…</target>
+      </trans-unit>
+      <trans-unit id="iot.device.code-placeholder" datatype="html">
+        <source>Ex. : FRIGO-PHARMA-01</source>
+        <target state="translated">例如：PHARMA-FRIDGE-01</target>
+      </trans-unit>
+      <trans-unit id="iot.device.location-placeholder" datatype="html">
+        <source>Ex. : Pharmacie — réserve froide</source>
+        <target state="translated">例如：药房 – 冷藏库</target>
+      </trans-unit>
+      <trans-unit id="iot.telemetry.metric-placeholder" datatype="html">
+        <source>Ex. : temperature</source>
+        <target state="translated">例如：temperature</target>
+      </trans-unit>
+      <trans-unit id="iot.telemetry.unit-placeholder" datatype="html">
+        <source>Ex. : °C</source>
+        <target state="translated">例如：°C</target>
+      </trans-unit>
+      <trans-unit id="iot.telemetry.event-placeholder" datatype="html">
+        <source>Ex. : ALARME_PORTE_OUVERTE</source>
+        <target state="translated">例如：DOOR_OPEN_ALARM</target>
+      </trans-unit>
+      <trans-unit id="iot.threshold.metric-placeholder" datatype="html">
+        <source>Ex. : temperature</source>
+        <target state="translated">例如：temperature</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.cause.weight-placeholder" datatype="html">
+        <source>Ex. : 0.85</source>
+        <target state="translated">例如：0.85</target>
+      </trans-unit>
+      <trans-unit id="retention.rule.label-placeholder" datatype="html">
+        <source>Bulletins de paie salariés</source>
+        <target state="translated">员工工资单</target>
+      </trans-unit>
+      <trans-unit id="storyboard.form.period-placeholder" datatype="html">
+        <source>Mai 2026</source>
+        <target state="translated">2026年5月</target>
+      </trans-unit>
+      <trans-unit id="storyboard.form.scope-placeholder" datatype="html">
+        <source>Site de Lyon, atelier mécanique</source>
+        <target state="translated">里昂工厂，机加工车间</target>
+      </trans-unit>
+      <trans-unit id="suppliers.cert.standard-placeholder" datatype="html">
+        <source>Ex. : iso-9001, iatf-16949, as9100</source>
+        <target state="translated">例如：iso-9001, iatf-16949, as9100</target>
+      </trans-unit>
+      <trans-unit id="training.path-dialog.code-placeholder" datatype="html">
+        <source>Ex. : yellow-belt-quality</source>
+        <target state="translated">例如：yellow-belt-quality</target>
+      </trans-unit>
+      <trans-unit id="training.skill-dialog.code-placeholder" datatype="html">
+        <source>Ex. : iso-9001-internal-auditor</source>
+        <target state="translated">例如：iso-9001-internal-auditor</target>
+      </trans-unit>
+      <trans-unit id="transfers.dialog.countries-placeholder" datatype="html">
+        <source>USA
+Inde</source>
+        <target state="translated">美国
+印度</target>
+      </trans-unit>
+      <trans-unit id="transfers.dialog.safeguards-placeholder" datatype="html">
+        <source>SCC 2021 modules 2/3, mesures supplémentaires (chiffrement, contrôles d'accès), audit annuel…</source>
+        <target state="translated">SCC 2021 模块 2/3、补充措施（加密、访问控制）、年度审核…</target>
+      </trans-unit>
+      <trans-unit id="transfers.dialog.derogation-placeholder" datatype="html">
+        <source>Cas Art. 49 invoqué (intérêt vital, contrat, motif d'intérêt public, …). Caractère exceptionnel et non répétitif documenté.</source>
+        <target state="translated">援引的第49条情形（重大利益、合同、公共利益理由等）。已记录其例外性和非重复性。</target>
+      </trans-unit>
+      <trans-unit id="transfers.dialog.categories-placeholder" datatype="html">
+        <source>Identité prospects
+Coordonnées professionnelles</source>
+        <target state="translated">潜在客户身份
+工作联系方式</target>
+      </trans-unit>
+      <trans-unit id="privacy-notices.dialog.content-placeholder" datatype="html">
+        <source># Politique de confidentialité
+
+## Identité du responsable
+...</source>
+        <target state="translated"># 隐私政策
+
+## 控制者身份
+...</target>
+      </trans-unit>
+      <trans-unit id="doc-gen.form.org-placeholder" datatype="html">
+        <source>ACME Industrie</source>
+        <target state="translated">ACME 工业</target>
+      </trans-unit>
+      <trans-unit id="doc-gen.form.size-placeholder" datatype="html">
+        <source>PME</source>
+        <target state="translated">中小企业</target>
+      </trans-unit>
+      <trans-unit id="webhooks.form.name-placeholder" datatype="html">
+        <source>ERP production</source>
+        <target state="translated">生产 ERP</target>
       </trans-unit>
       <trans-unit id="directory.picker.label" datatype="html">
         <source>Personne</source>
@@ -15393,7 +16091,7 @@ santé</source>
         <target state="translated">终结性关闭。违规事件仍可查看但无法再更改状态。</target>
       </trans-unit>
       <trans-unit id="breach.text.reject-hint" datatype="html">
-        <source>Rejet terminal. Utilise pour un faux positif, un doublon, ou un événement non-RGPD.</source>
+        <source>Rejet terminal. À utiliser pour un faux positif, un doublon, ou un événement non-RGPD.</source>
         <target state="translated">终结性驳回。用于误报、重复或非 GDPR 事件。</target>
       </trans-unit>
       <trans-unit id="breach.text.close-label" datatype="html">
@@ -17093,7 +17791,7 @@ historique 12 mois</source>
         <target state="translated">更新</target>
       </trans-unit>
       <trans-unit id="pdca.detail.steps-empty" datatype="html">
-        <source>Aucune étape pour l'instant. Clique sur Ajouter une étape pour démarrer ton cycle Plan → Do → Check → Act.</source>
+        <source>Aucune étape pour l'instant. Cliquez sur Ajouter une étape pour démarrer votre cycle Plan → Do → Check → Act.</source>
         <target state="translated">暂无步骤。点击添加步骤以开始您的 Plan → Do → Check → Act 循环。</target>
       </trans-unit>
       <trans-unit id="pdca.detail.not-found" datatype="html">
@@ -17121,7 +17819,7 @@ historique 12 mois</source>
         <target state="translated">新建 PDCA 循环</target>
       </trans-unit>
       <trans-unit id="pdca.create.subtitle" datatype="html">
-        <source>Décris brièvement le problème ou l'objectif. Les étapes Plan / Do / Check / Act pourront être ajoutées ensuite.</source>
+        <source>Décrivez brièvement le problème ou l'objectif. Les étapes Plan / Do / Check / Act pourront être ajoutées ensuite.</source>
         <target state="translated">简要描述问题或目标。Plan / Do / Check / Act 步骤可稍后添加。</target>
       </trans-unit>
       <trans-unit id="pdca.create.cycle-title-label" datatype="html">
@@ -17149,7 +17847,7 @@ historique 12 mois</source>
         <target state="translated">添加步骤</target>
       </trans-unit>
       <trans-unit id="pdca.step.subtitle" datatype="html">
-        <source>Décris l'action concrète et choisis sa phase dans le cycle PDCA.</source>
+        <source>Décrivez l'action concrète et choisissez sa phase dans le cycle PDCA.</source>
         <target state="translated">描述具体行动并选择其在 PDCA 循环中的阶段。</target>
       </trans-unit>
       <trans-unit id="pdca.step.title-label" datatype="html">
@@ -17337,7 +18035,7 @@ historique 12 mois</source>
         <target state="translated">新建 5S 审核</target>
       </trans-unit>
       <trans-unit id="fives.create.hint" datatype="html">
-        <source>Définis la zone à auditer et la date prévue. Les scores Seiri · Seiton · Seiso · Seiketsu · Shitsuke seront saisis lors de l'audit terrain.</source>
+        <source>Définissez la zone à auditer et la date prévue. Les scores Seiri · Seiton · Seiso · Seiketsu · Shitsuke seront saisis lors de l'audit terrain.</source>
         <target state="translated">定义待审核的区域和计划日期。Seiri · Seiton · Seiso · Seiketsu · Shitsuke 评分将在现场审核时录入。</target>
       </trans-unit>
       <trans-unit id="fives.create.zone-placeholder" datatype="html">
@@ -17625,7 +18323,7 @@ historique 12 mois</source>
         <target state="translated">此子原因将关联到</target>
       </trans-unit>
       <trans-unit id="ishikawa.cause.hint" datatype="html">
-        <source>Choisis la branche (M) et formule la cause de façon concise. Le scoring racine sera ajusté plus tard par l'analyse 5 Pourquoi.</source>
+        <source>Choisissez la branche (M) et formulez la cause de façon concise. Le scoring racine sera ajusté plus tard par l'analyse 5 Pourquoi.</source>
         <target state="translated">选择分支（M）并简洁地描述原因。根本原因评分稍后将通过5个为什么分析进行调整。</target>
       </trans-unit>
       <trans-unit id="ishikawa.cause.branch-label" datatype="html">
@@ -18361,7 +19059,7 @@ historique 12 mois</source>
         <target state="translated">加入时间</target>
       </trans-unit>
       <trans-unit id="circles.detail.no-member" datatype="html">
-        <source>Aucun membre. Clique sur Ajouter un membre pour construire l'équipe.</source>
+        <source>Aucun membre. Cliquez sur Ajouter un membre pour construire l'équipe.</source>
         <target state="translated">暂无成员。点击「添加成员」以组建团队。</target>
       </trans-unit>
       <trans-unit id="circles.detail.schedule-meeting" datatype="html">
@@ -18437,7 +19135,7 @@ historique 12 mois</source>
         <target state="translated">新建质量圈</target>
       </trans-unit>
       <trans-unit id="circles.create.subtitle" datatype="html">
-        <source>Crée le groupe (5-10 personnes recommandé). Les membres, réunions et propositions seront ajoutés ensuite.</source>
+        <source>Créez le groupe (5-10 personnes recommandé). Les membres, réunions et propositions seront ajoutés ensuite.</source>
         <target state="translated">创建小组（建议5-10人）。成员、会议和提案稍后添加。</target>
       </trans-unit>
       <trans-unit id="circles.create.name-label" datatype="html">
@@ -19569,7 +20267,7 @@ historique 12 mois</source>
         <target state="translated">上报不合格项</target>
       </trans-unit>
       <trans-unit id="nc.create.hint" datatype="html">
-        <source>Saisis l'essentiel sur le terrain : la NC pourra être analysée et résolue ensuite. Hors-ligne, elle est mise en attente et synchronisée au retour du réseau.</source>
+        <source>Saisissez l'essentiel sur le terrain : la NC pourra être analysée et résolue ensuite. Hors-ligne, elle est mise en attente et synchronisée au retour du réseau.</source>
         <target state="translated">在现场录入要点：不合格项可稍后分析和解决。离线时将进入队列，网络恢复后同步。</target>
       </trans-unit>
       <trans-unit id="nc.create.category" datatype="html">
@@ -19620,17 +20318,9 @@ historique 12 mois</source>
         <source>Impossible de récupérer la position.</source>
         <target state="translated">无法获取位置。</target>
       </trans-unit>
-      <trans-unit id="nc.create.photos" datatype="html">
-        <source>Photos — URLs (une par ligne)</source>
-        <target state="translated">照片 — URL（每行一个）</target>
-      </trans-unit>
-      <trans-unit id="nc.create.photos-placeholder" datatype="html">
-        <source>https://… (une URL par ligne)</source>
-        <target state="translated">https://…（每行一个 URL）</target>
-      </trans-unit>
       <trans-unit id="nc.create.photos-hint" datatype="html">
-        <source>L'envoi de fichiers depuis l'appareil arrivera prochainement.</source>
-        <target state="translated">从设备上传文件功能即将推出。</target>
+        <source>Photos du constat — JPEG, PNG, WebP ou HEIC, 10 Mo et dix photos au maximum. Elles sont envoyées une fois la NC déclarée.</source>
+        <target state="translated">现场照片 — JPEG、PNG、WebP 或 HEIC，最多 10 MB、十张。不合格项上报后发送。</target>
       </trans-unit>
       <trans-unit id="nc.create.section-observation" datatype="html">
         <source>Le constat</source>
@@ -19925,7 +20615,7 @@ historique 12 mois</source>
         <target state="translated">解决不合格项</target>
       </trans-unit>
       <trans-unit id="nc.resolve.hint" datatype="html">
-        <source>Décris l'action menée et la preuve d'efficacité pour clôturer la résolution de</source>
+        <source>Décrivez l'action menée et la preuve d'efficacité pour clôturer la résolution de</source>
         <target state="translated">描述已采取的措施及有效性证据，以关闭以下项的解决：</target>
       </trans-unit>
       <trans-unit id="nc.resolve.note-label" datatype="html">
@@ -20401,7 +21091,7 @@ historique 12 mois</source>
         <target state="translated">该租户的 AI 速率/配额已超出 — 请稍后重试。</target>
       </trans-unit>
       <trans-unit id="nlq-explore.err-unavailable" datatype="html">
-        <source>L'assistant IA est momentanément indisponible (modèle en cours de chargement ?). Réessaie dans un instant.</source>
+        <source>L'assistant IA est momentanément indisponible (modèle en cours de chargement ?). Réessayez dans un instant.</source>
         <target state="translated">AI 助手暂时不可用（模型加载中？）。请稍后重试。</target>
       </trans-unit>
       <trans-unit id="nlq-explore.err-generic" datatype="html">
@@ -20719,8 +21409,8 @@ historique 12 mois</source>
         <target state="translated">五种方法。一个共同基准。</target>
       </trans-unit>
       <trans-unit id="home.hero.slogan" datatype="html">
-        <source>One platform. Five methods. Every industry.</source>
-        <target state="translated">One platform. Five methods. Every industry.</target>
+        <source>Une plateforme. Cinq méthodes. Tous les secteurs.</source>
+        <target state="translated">一个平台。五种方法。覆盖所有行业。</target>
       </trans-unit>
       <trans-unit id="home.hero.proof-methods" datatype="html">
         <source>5 méthodes fondamentales</source>
@@ -20781,18 +21471,6 @@ historique 12 mois</source>
       <trans-unit id="home.kpi.audits-planned" datatype="html">
         <source>Audits planifiés</source>
         <target state="translated">已计划审核</target>
-      </trans-unit>
-      <trans-unit id="home.kpi.illustrative" datatype="html">
-        <source>Valeurs indicatives</source>
-        <target state="translated">示意值</target>
-      </trans-unit>
-      <trans-unit id="home.kpi.trend-up" datatype="html">
-        <source>en hausse</source>
-        <target state="translated">上升</target>
-      </trans-unit>
-      <trans-unit id="home.kpi.trend-down" datatype="html">
-        <source>en baisse</source>
-        <target state="translated">下降</target>
       </trans-unit>
       <trans-unit id="home.actions.title" datatype="html">
         <source>Actions rapides</source>
@@ -21341,7 +22019,7 @@ historique 12 mois</source>
         <target state="translated">处理问题时出错。</target>
       </trans-unit>
       <trans-unit id="nlq.ask.err-unavailable" datatype="html">
-        <source>L'assistant IA est momentanément indisponible (modèle en cours de chargement ?). Réessaie dans un instant.</source>
+        <source>L'assistant IA est momentanément indisponible (modèle en cours de chargement ?). Réessayez dans un instant.</source>
         <target state="translated">AI 助手暂时不可用（模型加载中？）。请稍后重试。</target>
       </trans-unit>
       <trans-unit id="nlq.ask.err-untranslatable" datatype="html">
@@ -22825,8 +23503,8 @@ historique 12 mois</source>
         <target state="translated">供应商记分卡、审核、不符合项、证书。</target>
       </trans-unit>
       <trans-unit id="suppliers.list.title" datatype="html">
-        <source>Supplier Quality</source>
-        <target state="translated">Supplier Quality</target>
+        <source>Qualité fournisseurs</source>
+        <target state="translated">供应商质量</target>
       </trans-unit>
       <trans-unit id="suppliers.type.component" datatype="html">
         <source>Composant</source>
@@ -23149,7 +23827,7 @@ historique 12 mois</source>
         <target state="translated">例：ISO_9001、IATF_16949、ISO_27001</target>
       </trans-unit>
       <trans-unit id="audits.create.subtitle" datatype="html">
-        <source>Définis le périmètre, le type et la date de l'audit. La checklist et les findings seront ajoutés ensuite.</source>
+        <source>Définissez le périmètre, le type et la date de l'audit. La checklist et les findings seront ajoutés ensuite.</source>
         <target state="translated">定义审核的范围、类型和日期。检查清单和发现项将在之后添加。</target>
       </trans-unit>
       <trans-unit id="audits.create.success" datatype="html">
@@ -23189,7 +23867,7 @@ historique 12 mois</source>
         <target state="translated">检查清单 (<x id="INTERPOLATION"/>)</target>
       </trans-unit>
       <trans-unit id="audits.detail.checklist-empty" datatype="html">
-        <source>Aucune question. Clique sur</source>
+        <source>Aucune question. Cliquez sur</source>
         <target state="translated">暂无问题。点击</target>
       </trans-unit>
       <trans-unit id="audits.detail.col-clause" datatype="html">
@@ -23477,7 +24155,7 @@ historique 12 mois</source>
         <target state="translated">审核</target>
       </trans-unit>
       <trans-unit id="audits.response.choose" datatype="html">
-        <source>Choisis Conforme ou NC.</source>
+        <source>Choisissez Conforme ou NC.</source>
         <target state="translated">请选择“符合”或“NC”。</target>
       </trans-unit>
       <trans-unit id="audits.response.conformant" datatype="html">
@@ -23497,7 +24175,7 @@ historique 12 mois</source>
         <target state="translated">回复 / 观察（可选）</target>
       </trans-unit>
       <trans-unit id="audits.response.observation-placeholder" datatype="html">
-        <source>Ce que tu as observé sur le terrain, références aux preuves rassemblées…</source>
+        <source>Ce que vous avez observé sur le terrain, références aux preuves rassemblées…</source>
         <target state="translated">你在现场的观察、对所收集证据的引用……</target>
       </trans-unit>
       <trans-unit id="audits.response.save-error" datatype="html">
@@ -24021,12 +24699,12 @@ historique 12 mois</source>
         <target state="translated">新建项目</target>
       </trans-unit>
       <trans-unit id="fmea.list.subtitle" datatype="html">
-        <source>Toute RPN supérieure à 200 exige une action corrective.</source>
-        <target state="translated">RPN 超过 200 时必须采取纠正措施。</target>
+        <source>Au-delà du seuil RPN critique de chaque projet (<x id="INTERPOLATION"/> par défaut), une action corrective est exigée.</source>
+        <target state="translated">RPN 超过所属项目的临界阈值（默认 <x id="INTERPOLATION"/>）时必须采取纠正措施。</target>
       </trans-unit>
       <trans-unit id="fmea.list.title" datatype="html">
-        <source>FMEA — Risk Management</source>
-        <target state="translated">FMEA — 风险管理</target>
+        <source>AMDEC — Analyse des risques</source>
+        <target state="translated">FMEA — 风险分析</target>
       </trans-unit>
       <trans-unit id="fmea.type.bow-tie" datatype="html">
         <source>Bow-tie</source>

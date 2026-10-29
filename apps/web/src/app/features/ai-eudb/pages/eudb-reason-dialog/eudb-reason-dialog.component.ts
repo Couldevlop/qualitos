@@ -59,13 +59,13 @@ export class EudbReasonDialogComponent {
       .subscribe({
         next: r => {
           this.snack.open(this.data.mode === 'REJECT' ? 'Enregistrement rejeté.' : 'Enregistrement retiré.',
-                          'OK', { duration: 2200 });
+                          $localize`:@@common.ok:OK`, { duration: 2200 });
           this.dialogRef.close(r);
         },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[eudb-reason] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Opération impossible.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, 'Opération impossible.'), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

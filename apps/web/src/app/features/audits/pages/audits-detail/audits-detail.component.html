@@ -2,7 +2,8 @@
 
   <header class="page-header">
     <div class="title-block">
-      <button mat-icon-button (click)="goBack()" i18n-matTooltip="@@audits.detail.back-tooltip" matTooltip="Retour à la liste">
+      <button mat-icon-button (click)="goBack()" i18n-matTooltip="@@audits.detail.back-tooltip" matTooltip="Retour à la liste"
+              aria-label="Retour à la liste" i18n-aria-label="@@audits.detail.back-tooltip">
         <mat-icon>arrow_back</mat-icon>
       </button>
       <div>
@@ -164,7 +165,7 @@
             <tr mat-row *matRowDef="let row; columns: checklistColumns;"></tr>
           </table>
           <p class="empty" *ngIf="!(p.checklist?.length)" i18n="@@audits.detail.checklist-empty">
-            Aucune question. Clique sur <strong>Ajouter une question</strong> pour
+            Aucune question. Cliquez sur <strong>Ajouter une question</strong> pour
             commencer à construire la checklist.
           </p>
         </mat-card-content>

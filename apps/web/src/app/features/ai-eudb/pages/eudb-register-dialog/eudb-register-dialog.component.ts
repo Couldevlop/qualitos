@@ -38,7 +38,7 @@ export class EudbRegisterDialogComponent {
     if (this.form.invalid || this.submitting) { this.form.markAllAsTouched(); return; }
     const v = this.form.getRawValue();
     if (new Date(v.registrationDate).getTime() > Date.now()) {
-      this.snack.open('La date d\'enregistrement ne peut pas être dans le futur.', 'OK', { duration: 4000 });
+      this.snack.open('La date d\'enregistrement ne peut pas être dans le futur.', $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     this.submitting = true;
@@ -48,11 +48,11 @@ export class EudbRegisterDialogComponent {
     })
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
-        next: r => { this.snack.open('Enregistrement validé.', 'OK', { duration: 2200 }); this.dialogRef.close(r); },
+        next: r => { this.snack.open('Enregistrement validé.', $localize`:@@common.ok:OK`, { duration: 2200 }); this.dialogRef.close(r); },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[eudb-register] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Marquage impossible.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, 'Marquage impossible.'), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

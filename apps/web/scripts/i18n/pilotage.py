@@ -50,7 +50,7 @@ TRANSLATIONS = {
     # langue — un utilisateur francais lisait jusqu'ici une phrase anglaise en
     # capitales sur toute la largeur de son ecran d'accueil.
     'home.welcome.title': ('Cinq méthodes. Un seul référentiel.', 'Five methods. One single repository.', 'Cinco métodos. Un único repositorio.', 'خمس منهجيات. مرجع واحد.', '5つの手法。ひとつの基準。', '五种方法。一个共同基准。'),
-    'home.hero.slogan': ('One platform. Five methods. Every industry.', 'One platform. Five methods. Every industry.', 'One platform. Five methods. Every industry.', 'One platform. Five methods. Every industry.', 'One platform. Five methods. Every industry.', 'One platform. Five methods. Every industry.'),
+    'home.hero.slogan': ('Une plateforme. Cinq méthodes. Tous les secteurs.', 'One platform. Five methods. Every industry.', 'Una plataforma. Cinco métodos. Todos los sectores.', 'منصة واحدة. خمس طرق. كل القطاعات.', 'ひとつのプラットフォーム。5つの手法。あらゆる業界へ。', '一个平台。五种方法。覆盖所有行业。'),
     'home.hero.proof-methods': ('5 méthodes fondamentales', '5 fundamental methods', '5 métodos fundamentales', '5 منهجيات أساسية', '5つの基本手法', '5 种基础方法'),
     'home.hero.proof-standards': ('60+ normes outillées', '60+ standards covered', '60+ normas cubiertas', 'أكثر من 60 معياراً', '60以上の規格に対応', '覆盖 60+ 标准'),
     'home.hero.proof-ai': ('IA explicable', 'Explainable AI', 'IA explicable', 'ذكاء اصطناعي قابل للتفسير', '説明可能なAI', '可解释的人工智能'),
@@ -67,9 +67,6 @@ TRANSLATIONS = {
     'home.kpi.open-nc': ('Non-conformités ouvertes', 'Open non-conformances', 'No conformidades abiertas', 'حالات عدم المطابقة المفتوحة', '未対応の不適合', '未结不合格项'),
     'home.kpi.fives-score': ('Score 5S moyen', 'Average 5S score', 'Puntuación 5S media', 'متوسط درجة 5S', '平均5Sスコア', '平均 5S 得分'),
     'home.kpi.audits-planned': ('Audits planifiés', 'Planned audits', 'Auditorías planificadas', 'عمليات التدقيق المخططة', '計画済み監査', '已计划审核'),
-    'home.kpi.illustrative': ('Valeurs indicatives', 'Illustrative values', 'Valores indicativos', 'قيم إرشادية', '参考値', '示意值'),
-    'home.kpi.trend-up': ('en hausse', 'trending up', 'al alza', 'في ارتفاع', '上昇傾向', '上升'),
-    'home.kpi.trend-down': ('en baisse', 'trending down', 'a la baja', 'في انخفاض', '下降傾向', '下降'),
     'home.actions.title': ('Actions rapides', 'Quick actions', 'Acciones rápidas', 'إجراءات سريعة', 'クイックアクション', '快捷操作'),
     'home.actions.new-pdca': ('Créer un cycle PDCA', 'Create a PDCA cycle', 'Crear un ciclo PDCA', 'إنشاء دورة PDCA', 'PDCAサイクルを作成', '创建 PDCA 循环'),
     'home.actions.new-audit': ('Lancer un audit 5S', 'Start a 5S audit', 'Iniciar una auditoría 5S', 'بدء تدقيق 5S', '5S監査を開始', '启动 5S 审核'),
@@ -206,7 +203,7 @@ TRANSLATIONS = {
     'nlq.ask.answer': ('Réponse', "Answer", "Respuesta", "الإجابة", "回答", "回答"),
     'nlq.ask.confidence-prefix': ('Confiance', "Confidence", "Confianza", "درجة الثقة", "信頼度", "置信度"),
     'nlq.ask.err-generic': ('Une erreur est survenue lors du traitement de la question.', "An error occurred while processing the question.", "Se produjo un error al procesar la pregunta.", "حدث خطأ أثناء معالجة السؤال.", "質問の処理中にエラーが発生しました。", "处理问题时出错。"),
-    'nlq.ask.err-unavailable': ("L'assistant IA est momentanément indisponible (modèle en cours de chargement ?). Réessaie dans un instant.", "The AI assistant is temporarily unavailable (model loading?). Try again shortly.", "El asistente de IA no está disponible temporalmente (¿modelo cargándose?). Inténtalo de nuevo en un momento.", "المساعد بالذكاء الاصطناعي غير متاح مؤقتًا (هل يجري تحميل النموذج؟). أعد المحاولة بعد لحظات.", "AIアシスタントは一時的に利用できません（モデル読み込み中の可能性）。少し待って再試行してください。", "AI 助手暂时不可用（模型加载中？）。请稍后重试。"),
+    'nlq.ask.err-unavailable': ("L'assistant IA est momentanément indisponible (modèle en cours de chargement ?). Réessayez dans un instant.", "The AI assistant is temporarily unavailable (model loading?). Try again shortly.", "El asistente de IA no está disponible temporalmente (¿modelo cargándose?). Inténtalo de nuevo en un momento.", "المساعد بالذكاء الاصطناعي غير متاح مؤقتًا (هل يجري تحميل النموذج؟). أعد المحاولة بعد لحظات.", "AIアシスタントは一時的に利用できません（モデル読み込み中の可能性）。少し待って再試行してください。", "AI 助手暂时不可用（模型加载中？）。请稍后重试。"),
     'nlq.ask.err-untranslatable': ("La question n'a pas pu être traduite en requête sûre. Reformule-la plus simplement.", "The question could not be translated into a safe query. Try rephrasing it more simply.", "No se pudo traducir la pregunta a una consulta segura. Reformúlala de forma más sencilla.", "تعذّر تحويل السؤال إلى استعلام آمن. أعد صياغته بشكل أبسط.", "質問を安全なクエリに変換できませんでした。もっと簡単に言い換えてください。", "无法将问题转换为安全查询。请用更简单的方式重新表述。"),
     'nlq.ask.example-1': ('Combien de CAPA par statut ?', "How many CAPA by status?", "¿Cuántas CAPA por estado?", "كم عدد CAPA حسب الحالة؟", "ステータス別のCAPA件数は？", "各状态下有多少 CAPA？"),
     'nlq.ask.example-2': ('Nombre de diagrammes Ishikawa par statut', "Number of Ishikawa diagrams by status", "Número de diagramas Ishikawa por estado", "عدد مخططات إيشيكاوا حسب الحالة", "ステータス別の特性要因図の数", "各状态下的石川图数量"),

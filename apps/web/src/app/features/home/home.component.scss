@@ -154,6 +154,25 @@
   gap: var(--qos-space-4);
 }
 
+/* Carte KPI cliquable : mène au module qui fournit la valeur. */
+.home-stat {
+  color: inherit;
+  text-decoration: none;
+  grid-template-areas:
+    'icon value'
+    'icon label'
+    'hint hint';
+  transition: border-color var(--qos-motion-fast), box-shadow var(--qos-motion-fast);
+
+  &:hover { border-color: var(--qos-border-default); box-shadow: var(--qos-shadow-sm); }
+}
+.home-stat__hint {
+  grid-area: hint;
+  margin-top: var(--qos-space-2);
+  font-size: var(--qos-fs-xs);
+  color: var(--qos-fg-tertiary);
+}
+
 /* ------------------------------------------------------------------ *
  * Cartes méthodes — cliquables, accent au survol.
  * ------------------------------------------------------------------ */

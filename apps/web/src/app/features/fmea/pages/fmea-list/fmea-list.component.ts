@@ -8,12 +8,13 @@ import { catchError, finalize, map, shareReplay, startWith, switchMap, tap } fro
 
 import { deferredView } from '../../../../core/rx/deferred-view';
 import { safeErrorMessage } from '../../../../core/http/error-message';
-import { FmeaService } from '../../fmea.service';
+import { FmeaService, SEUIL_RPN_PAR_DEFAUT } from '../../fmea.service';
 import { FmeaProjectPage, FmeaProjectResponse, FmeaStatus, FmeaType } from '../../fmea.types';
 import { FmeaCreateDialogComponent } from '../fmea-create-dialog/fmea-create-dialog.component';
 import {
   FmeaReferenceDialogComponent
 } from '../fmea-reference-dialog/fmea-reference-dialog.component';
+import { searchRows } from '../../../../shared/ui/list-search/list-filter';
 
 const PAGE_SIZE_OPTIONS = [10, 20, 50, 100];
 const MAX_PAGE_SIZE = 100;
@@ -30,6 +31,8 @@ const EMPTY_PAGE = { content: [], totalElements: 0, totalPages: 0, number: 0, si
 export class FmeaListComponent implements OnInit {
 
   readonly displayedColumns = ['code', 'name', 'type', 'status', 'criticalRpnThreshold', 'revision'];
+  /** Seuil appliqué à un projet qui n'en fixe pas : cité dans le sous-titre. */
+  readonly defaultRpnThreshold = SEUIL_RPN_PAR_DEFAUT;
 
   readonly statuses: FmeaStatus[] = ['DRAFT', 'ACTIVE', 'ARCHIVED'];
   readonly types: FmeaType[] = ['PROCESS_FMEA', 'DESIGN_FMEA', 'SYSTEM_FMEA', 'SERVICE_FMEA', 'BOW_TIE'];
@@ -43,6 +46,9 @@ export class FmeaListComponent implements OnInit {
   totalElements = 0;
 
   projects$!: Observable<FmeaProjectResponse[]>;
+  /** Lignes affichées : la page chargée, filtrée par la recherche. */
+  visibleProjects$!: Observable<FmeaProjectResponse[]>;
+  readonly search = new FormControl('', { nonNullable: true });
   private readonly loadingState$ = new BehaviorSubject<boolean>(false);
   readonly loading$ = deferredView(this.loadingState$);
   private readonly errorState$ = new BehaviorSubject<string | null>(null);
@@ -85,6 +91,7 @@ export class FmeaListComponent implements OnInit {
       }),
       shareReplay({ bufferSize: 1, refCount: true })
     );
+    this.visibleProjects$ = searchRows(this.projects$, this.search, p => [p.code, p.name, p.scope]);
   }
 
   onPage(e: PageEvent): void {
@@ -117,6 +124,16 @@ export class FmeaListComponent implements OnInit {
         this.refresh$.next();
       }
     });
+  }
+
+  /** Un filtre serveur est posé : la liste vide l'est peut-être à cause de lui. */
+  get hasFilters(): boolean {
+    return !!this.statusFilter.value || !!this.typeFilter.value;
+  }
+
+  resetFilters(): void {
+    this.statusFilter.setValue('');
+    this.typeFilter.setValue('');
   }
 
   open(p: FmeaProjectResponse): void { this.router.navigate(['/fmea', p.id]); }

@@ -54,6 +54,11 @@ export class DashboardService {
     this.reload$.next();
   }
 
+  /** Horodatage de l'agrégat servi ; `null` quand l'API n'a rien rendu. */
+  getGeneratedAt(): Observable<string | null> {
+    return this.overview$.pipe(map(d => d.generatedAt || null));
+  }
+
   getExecutiveKpis(): Observable<KpiCard[]> {
     return this.overview$.pipe(map(d => d.kpis.map(toKpiCard)));
   }

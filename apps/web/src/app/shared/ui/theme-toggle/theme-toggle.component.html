@@ -1,4 +1,4 @@
-<div class="qos-theme-toggle" role="radiogroup" aria-label="Préférence de thème" *ngIf="preference$ | async as pref">
+<div class="qos-theme-toggle" role="radiogroup" aria-label="Préférence de thème" i18n-aria-label="@@theme.toggle.aria" *ngIf="preference$ | async as pref">
   <button
     type="button"
     role="radio"
@@ -6,7 +6,8 @@
     [class.qos-theme-toggle__btn--active]="pref === 'light'"
     class="qos-theme-toggle__btn"
     (click)="set('light')"
-    title="Thème clair">
+    title="Thème clair"
+    i18n-title="@@theme.toggle.light">
     <span class="material-symbols-outlined" aria-hidden="true">light_mode</span>
   </button>
   <button
@@ -16,7 +17,8 @@
     [class.qos-theme-toggle__btn--active]="pref === 'system'"
     class="qos-theme-toggle__btn"
     (click)="set('system')"
-    title="Suivre le système">
+    title="Suivre le système"
+    i18n-title="@@theme.toggle.system">
     <span class="material-symbols-outlined" aria-hidden="true">desktop_windows</span>
   </button>
   <button
@@ -26,7 +28,8 @@
     [class.qos-theme-toggle__btn--active]="pref === 'dark'"
     class="qos-theme-toggle__btn"
     (click)="set('dark')"
-    title="Thème sombre">
+    title="Thème sombre"
+    i18n-title="@@theme.toggle.dark">
     <span class="material-symbols-outlined" aria-hidden="true">dark_mode</span>
   </button>
 </div>

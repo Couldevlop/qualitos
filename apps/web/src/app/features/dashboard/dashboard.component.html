@@ -6,27 +6,13 @@
     subtitle="Vue 360° de la performance, de la conformité et des risques — à destination de la Direction Qualité." i18n-subtitle="@@dashboard.exec.subtitle">
 
     <ng-container qosMeta>
-      <span class="qos-text-tertiary qos-row-2">
+      <span class="qos-text-tertiary qos-row-2" *ngIf="generatedAt$ | async as generatedAt">
         <span class="material-symbols-outlined" aria-hidden="true">schedule</span>
-        <span i18n="@@dashboard.exec.updated-ago">Mis à jour il y a 2 min</span>
-      </span>
-      <span class="qos-text-tertiary qos-row-2">
-        <span class="material-symbols-outlined" aria-hidden="true">domain</span>
-        <span i18n="@@dashboard.exec.scope">Périmètre — Groupe Acme</span>
+        <span i18n="@@dashboard.exec.generated-at">Données du {{ generatedAt | date:'medium' }}</span>
       </span>
     </ng-container>
 
     <ng-container qosActions>
-      <div class="qos-period-picker" role="tablist" aria-label="Période" i18n-aria-label="@@dashboard.exec.period-aria">
-        <button
-          *ngFor="let p of periods"
-          type="button"
-          role="tab"
-          class="qos-period-picker__btn"
-          [class.qos-period-picker__btn--active]="selectedPeriod === p"
-          [attr.aria-selected]="selectedPeriod === p"
-          (click)="selectedPeriod = p">{{ p }}</button>
-      </div>
       <div class="qos-timetravel" role="group" aria-label="Voyage dans le temps" i18n-aria-label="@@dashboard.tt.aria">
         <span class="material-symbols-outlined qos-timetravel__icon" aria-hidden="true">history</span>
         <label class="qos-timetravel__label" for="ttDate" i18n="@@dashboard.tt.label">État au</label>
@@ -128,10 +114,18 @@
       title="Tendance qualité globale" i18n-title="@@dashboard.exec.trend-title"
       subtitle="12 mois — % conformité produit / service vs cible" i18n-subtitle="@@dashboard.exec.trend-subtitle"
       icon="show_chart">
-      <ng-container qosActions>
+      <ng-container qosActions *ngIf="trendHasData$ | async">
         <qos-status-pill label="Live · OK" i18n-label="@@dashboard.exec.live-ok" tone="success"></qos-status-pill>
       </ng-container>
-      <qos-echart [option]="(trendOption$ | async) ?? null" [height]="280"></qos-echart>
+      <qos-echart *ngIf="trendHasData$ | async; else trendEmpty"
+                  [option]="(trendOption$ | async) ?? null" [height]="280"></qos-echart>
+      <ng-template #trendEmpty>
+        <div class="qos-empty" role="status">
+          <span class="qos-empty__icon"><span class="material-symbols-outlined" aria-hidden="true">show_chart</span></span>
+          <span class="qos-empty__title" i18n="@@dashboard.exec.trend-empty-title">Pas encore de mesure</span>
+          <span class="qos-empty__hint" i18n="@@dashboard.exec.trend-empty-hint">La courbe se trace dès que les indicateurs de qualité reçoivent leurs premières valeurs.</span>
+        </div>
+      </ng-template>
 
       <details class="qos-annot-disclosure">
         <summary>
@@ -193,8 +187,8 @@
       title="Heatmap conformité" i18n-title="@@dashboard.exec.heatmap-title"
       subtitle="Score par norme et par section — drill-down disponible" i18n-subtitle="@@dashboard.exec.heatmap-subtitle"
       icon="grid_view">
-      <ng-container qosActions>
-        <qos-status-pill label="5 normes suivies" i18n-label="@@dashboard.exec.norms-tracked" tone="accent"></qos-status-pill>
+      <ng-container qosActions *ngIf="alignments$ | async as bars">
+        <qos-status-pill *ngIf="bars.length" [label]="normsTrackedLabel(bars.length)" tone="accent"></qos-status-pill>
       </ng-container>
       <qos-echart [option]="(heatmapOption$ | async) ?? null" [height]="280"></qos-echart>
     </qos-panel>
@@ -213,7 +207,7 @@
             <div class="qos-risks__head">
               <span class="qos-risks__title">{{ r.title }}</span>
               <qos-status-pill
-                [label]="r.severity | uppercase"
+                [label]="severityText(r.severity)"
                 [tone]="severityTone(r.severity)"
                 [dot]="false">
               </qos-status-pill>
@@ -226,7 +220,7 @@
               </span>
               <span *ngIf="r.due" class="qos-row-2">
                 <span class="material-symbols-outlined" aria-hidden="true">event</span>
-                {{ r.due }}
+                {{ r.due | date:'mediumDate' }}
               </span>
             </div>
           </div>

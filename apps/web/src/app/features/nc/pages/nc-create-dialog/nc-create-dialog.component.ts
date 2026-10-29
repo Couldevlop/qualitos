@@ -2,8 +2,8 @@ import { Component, Inject, OnInit, Optional } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { of } from 'rxjs';
-import { catchError, finalize, map, switchMap } from 'rxjs/operators';
+import { from, Observable, of } from 'rxjs';
+import { catchError, concatMap, finalize, map, switchMap, tap, toArray } from 'rxjs/operators';
 
 import { AuthService } from '../../../../core/auth/auth.service';
 import { safeErrorMessage } from '../../../../core/http/error-message';
@@ -65,17 +65,34 @@ export class NcCreateDialogComponent implements OnInit {
   readonly categories: NcCategory[] = ['PRODUCT', 'PROCESS', 'DOCUMENTATION', 'SUPPLIER', 'SAFETY', 'ENVIRONMENT', 'OTHER'];
   readonly severities: NcSeverity[] = ['MINOR', 'MAJOR', 'CRITICAL'];
 
+  /**
+   * Photos choisies AVANT que la NC existe : elles ne partent qu'après la
+   * création, le serveur classant une photo sous une NC identifiée.
+   */
+  photos: File[] = [];
+
+  /** Photos déjà déposées, pour dire où en est l'envoi. */
+  uploaded = 0;
+
+  /** Mêmes limites que le serveur (NcPhotoService) : 10 Mo, JPEG/PNG/WebP/HEIC. */
+  readonly maxPhotoBytes = 10 * 1024 * 1024;
+  readonly maxPhotos = 10;
+  readonly acceptedPhotoTypes = 'image/jpeg,image/png,image/webp,image/heic';
+
+  /**
+   * Catégorie et sévérité partent vides : une valeur pré-remplie (« Majeure »)
+   * était validée sans être lue, et faussait la criticité des NC déclarées.
+   */
   readonly form = this.fb.nonNullable.group({
     title: ['', [Validators.required, Validators.maxLength(255)]],
-    category: ['PROCESS' as NcCategory, [Validators.required]],
-    severity: ['MAJOR' as NcSeverity, [Validators.required]],
+    category: [null as NcCategory | null, [Validators.required]],
+    severity: [null as NcSeverity | null, [Validators.required]],
     zone: ['', [Validators.maxLength(255)]],
     // Obligatoire : un titre seul ne dit ni ce qui a été constaté, ni où, ni
     // ce que ça a produit — l'analyse de cause racine partirait de rien.
     description: ['', [Validators.required]],
     geoLat: [null as number | null],
     geoLng: [null as number | null],
-    photoUrls: [''],
     productId: [''],
     /** '' = pas encore répondu, 'NONE' = aucun mode, sinon l'identifiant de la ligne. */
     failureMode: ['']
@@ -100,7 +117,7 @@ export class NcCreateDialogComponent implements OnInit {
   /**
    * Ce qui empêche de déclarer, nommé plutôt que laissé à deviner.
    *
-   * <p>Le formulaire n'a que deux champs obligatoires sans valeur par défaut :
+   * <p>Le formulaire a quatre champs obligatoires sans valeur par défaut :
    * on peut donc dire LEQUEL manque, ce qui vaut mieux qu'un « des champs
    * obligatoires restent à renseigner » que l'utilisateur devrait traduire en
    * parcourant l'écran. Les erreurs des champs jamais touchés ne s'affichant
@@ -112,6 +129,12 @@ export class NcCreateDialogComponent implements OnInit {
     }
     if (this.form.controls.description.invalid) {
       return $localize`:@@nc.create.blocked-description:Renseignez la description pour pouvoir déclarer.`;
+    }
+    if (this.form.controls.category.invalid) {
+      return $localize`:@@nc.create.blocked-category:Choisissez la catégorie pour pouvoir déclarer.`;
+    }
+    if (this.form.controls.severity.invalid) {
+      return $localize`:@@nc.create.blocked-severity:Choisissez la sévérité pour pouvoir déclarer.`;
     }
     return undefined;   // repli générique du gabarit
   }
@@ -210,21 +233,20 @@ export class NcCreateDialogComponent implements OnInit {
     const reporterId = this.auth.snapshot()?.userId;
     this.submitting = true;
     const {
-      title, category, severity, zone, description, geoLat, geoLng, photoUrls,
+      title, category, severity, zone, description, geoLat, geoLng,
       productId, failureMode
     } = this.form.getRawValue();
-    const cleanedPhotos = this.cleanPhotoUrls(photoUrls);
     this.nc
       .createNc({
         title: title.trim(),
-        category,
-        severity,
+        // Non nuls ici : le formulaire est valide (required).
+        category: category as NcCategory,
+        severity: severity as NcSeverity,
         zone: zone?.trim() || undefined,
         description: description.trim(),
         origin: this.origin,
         geoLat: geoLat ?? undefined,
         geoLng: geoLng ?? undefined,
-        photoUrls: cleanedPhotos || undefined,
         detectedAt: new Date().toISOString(),
         reporterId: reporterId || undefined,
         productId: productId || undefined,
@@ -232,13 +254,14 @@ export class NcCreateDialogComponent implements OnInit {
           ? failureMode
           : undefined
       })
-      .pipe(finalize(() => (this.submitting = false)))
+      .pipe(
+        // La NC d'abord, ses photos ensuite : l'inverse n'existe pas.
+        switchMap(created => this.uploadPhotos(created).pipe(map(() => created))),
+        finalize(() => (this.submitting = false))
+      )
       .subscribe({
         next: created => {
-          const msg = created.pendingSync
-            ? $localize`:@@nc.create.success-offline:NC enregistrée hors-ligne — elle sera synchronisée au retour du réseau.`
-            : $localize`:@@nc.create.success:Non-conformité déclarée.`;
-          this.snack.open(msg, $localize`:@@common.ok:OK`, { duration: 3000 });
+          this.snack.open(this.doneMessage(created), $localize`:@@common.ok:OK`, { duration: 4000 });
           this.dialogRef.close(created);
         },
         error: err => {
@@ -246,7 +269,7 @@ export class NcCreateDialogComponent implements OnInit {
           console.warn('[nc-create] failed', err?.status, err?.error?.title);
           this.snack.open(
             safeErrorMessage(err, $localize`:@@common.error-create:Erreur lors de la création.`),
-            'OK',
+            $localize`:@@common.ok:OK`,
             { duration: 4000 }
           );
         }
@@ -257,12 +280,95 @@ export class NcCreateDialogComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  /** Normalise le textarea : une URL par ligne, espaces et lignes vides retirés. */
-  private cleanPhotoUrls(raw: string): string {
-    return raw
-      .split(/\r?\n/)
-      .map(s => s.trim())
-      .filter(Boolean)
-      .join('\n');
+  /**
+   * Ajoute les photos prises ou choisies, en refusant tout de suite ce que le
+   * serveur refuserait : une photo rejetée après la création serait perdue.
+   */
+  onPhotosSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const picked = Array.from(input.files ?? []);
+    // Réinitialise pour autoriser la re-sélection de la même photo.
+    input.value = '';
+
+    for (const file of picked) {
+      if (this.photos.length >= this.maxPhotos) {
+        this.snack.open(
+          $localize`:@@nc.create.photo-limit:Dix photos au maximum par déclaration.`,
+          $localize`:@@common.ok:OK`, { duration: 4000 });
+        return;
+      }
+      if (!this.acceptedPhotoTypes.split(',').includes(file.type)) {
+        this.snack.open(
+          $localize`:@@nc.create.photo-type:Format non accepté — JPEG, PNG, WebP ou HEIC.`,
+          $localize`:@@common.ok:OK`, { duration: 4000 });
+        continue;
+      }
+      if (file.size > this.maxPhotoBytes) {
+        this.snack.open(
+          $localize`:@@nc.create.photo-too-large:Photo trop lourde — 10 Mo au maximum.`,
+          $localize`:@@common.ok:OK`, { duration: 4000 });
+        continue;
+      }
+      this.photos = [...this.photos, file];
+    }
+  }
+
+  removePhoto(file: File): void {
+    this.photos = this.photos.filter(f => f !== file);
+  }
+
+  removePhotoAria(name: string): string {
+    return $localize`:@@nc.create.photo-remove-aria:Retirer ${name}:name:`;
+  }
+
+  /** Taille lisible, en Ko ou Mo selon l'ordre de grandeur. */
+  formatSize(bytes: number): string {
+    return bytes >= 1024 * 1024
+      ? `${(bytes / (1024 * 1024)).toFixed(1)} Mo`
+      : `${Math.max(1, Math.round(bytes / 1024))} Ko`;
+  }
+
+  /**
+   * Dépose les photos une à une sur la NC créée.
+   *
+   * <p>Une NC mise en file hors-ligne n'a pas encore d'identifiant serveur et
+   * un fichier ne se met pas en file : ses photos ne partent pas, et le message
+   * de fin le dit. Un échec d'envoi ne détruit pas la NC, déjà déclarée.
+   */
+  private uploadPhotos(created: NcResponse): Observable<unknown> {
+    if (this.photos.length === 0 || created.pendingSync) {
+      return of(null);
+    }
+    this.uploaded = 0;
+    return from(this.photos).pipe(
+      concatMap(file =>
+        this.nc.uploadPhoto(created.id, file).pipe(
+          tap(() => this.uploaded++),
+          catchError(err => {
+            // eslint-disable-next-line no-console
+            console.warn('[nc-create] uploadPhoto failed', err?.status, err?.error?.type);
+            return of(null);
+          })
+        )
+      ),
+      toArray()
+    );
+  }
+
+  /** Le message dit ce qui est réellement joint, pas ce qui était prévu. */
+  private doneMessage(created: NcResponse): string {
+    const total = this.photos.length;
+    if (created.pendingSync) {
+      return total === 0
+        ? $localize`:@@nc.create.success-offline:NC enregistrée hors-ligne — elle sera synchronisée au retour du réseau.`
+        : $localize`:@@nc.create.success-offline-photos:NC enregistrée hors-ligne — les photos n'ont pas pu être jointes : ajoutez-les depuis la fiche au retour du réseau.`;
+    }
+    if (total === 0) {
+      return $localize`:@@nc.create.success:Non-conformité déclarée.`;
+    }
+    if (this.uploaded === total) {
+      return $localize`:@@nc.create.success-with-photos:Non-conformité déclarée, photos jointes.`;
+    }
+    return $localize`:@@nc.create.success-partial-photos:Non-conformité déclarée, mais des photos n'ont pas pu être envoyées — ajoutez-les depuis la fiche.`;
   }
 }

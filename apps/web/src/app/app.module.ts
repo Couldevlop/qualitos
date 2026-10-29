@@ -15,6 +15,8 @@ import { ApiInterceptor } from './core/http/api.interceptor';
 import { MainShellModule } from './layout/main-shell/main-shell.module';
 import { MAT_DIALOG_DEFAULT_OPTIONS } from '@angular/material/dialog';
 import { QOS_DIALOG_DEFAULTS } from './core/ui/dialog-defaults';
+import { MatPaginatorIntl } from '@angular/material/paginator';
+import { QosPaginatorIntl } from './shared/i18n/paginator-intl';
 
 @NgModule({
   declarations: [AppComponent],
@@ -46,7 +48,9 @@ import { QOS_DIALOG_DEFAULTS } from './core/ui/dialog-defaults';
     // Ces options REMPLACENT celles de Material au lieu de s'y ajouter : on part
     // donc de MatDialogConfig, sans quoi `role: 'dialog'` et `ariaModal` disparaissent
     // et la fenêtre n'est plus annoncée comme un dialogue.
-    { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: QOS_DIALOG_DEFAULTS }
+    { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: QOS_DIALOG_DEFAULTS },
+    // Paginateur traduit pour toutes les listes (il restait en anglais partout).
+    { provide: MatPaginatorIntl, useClass: QosPaginatorIntl }
   ],
   bootstrap: [AppComponent]
 })

@@ -3,7 +3,8 @@
   <header class="page-header">
     <div class="title-block">
       <button mat-icon-button (click)="goBack()"
-              i18n-matTooltip="@@pdca.detail.back-tooltip" matTooltip="Retour à la liste">
+              i18n-matTooltip="@@pdca.detail.back-tooltip" matTooltip="Retour à la liste"
+              aria-label="Retour à la liste" i18n-aria-label="@@pdca.detail.back-tooltip">
         <mat-icon>arrow_back</mat-icon>
       </button>
       <div>
@@ -174,8 +175,8 @@
           </table>
 
           <p class="empty" *ngIf="c.steps.length === 0" i18n="@@pdca.detail.steps-empty">
-            Aucune étape pour l'instant. Clique sur <strong>Ajouter une étape</strong>
-            pour démarrer ton cycle Plan → Do → Check → Act.
+            Aucune étape pour l'instant. Cliquez sur <strong>Ajouter une étape</strong>
+            pour démarrer votre cycle Plan → Do → Check → Act.
           </p>
         </mat-card-content>
       </mat-card>

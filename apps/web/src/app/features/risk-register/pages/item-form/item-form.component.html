@@ -39,7 +39,7 @@
         <mat-form-field appearance="outline" class="plein">
           <mat-label *ngIf="isRisk" i18n="@@rr.form.risk-title">Intitulé du risque</mat-label>
           <mat-label *ngIf="!isRisk" i18n="@@rr.form.opportunity-title">Intitulé de l'opportunité</mat-label>
-          <input matInput formControlName="title" maxlength="255" data-test="intitule"
+          <input matInput formControlName="title" required maxlength="255" data-test="intitule"
                  [placeholder]="isRisk ? riskTitlePlaceholder : opportunityTitlePlaceholder">
           <mat-error *ngIf="form.get('title')?.hasError('required')" i18n="@@rr.form.required">Champ obligatoire.</mat-error>
           <mat-error *ngIf="serverError('title') as e">{{ e }}</mat-error>
@@ -48,14 +48,14 @@
         <div class="deux">
           <mat-form-field appearance="outline">
             <mat-label i18n="@@rr.col.type">Type</mat-label>
-            <mat-select formControlName="type" data-test="type">
+            <mat-select formControlName="type" required data-test="type">
               <mat-option *ngFor="let t of types" [value]="t.value">{{ t.label }}</mat-option>
             </mat-select>
           </mat-form-field>
 
           <mat-form-field appearance="outline">
             <mat-label i18n="@@rr.col.process">Processus</mat-label>
-            <input matInput formControlName="process" maxlength="120" [matAutocomplete]="autoProcessus"
+            <input matInput formControlName="process" required maxlength="120" [matAutocomplete]="autoProcessus"
                    data-test="processus">
             <mat-autocomplete #autoProcessus="matAutocomplete">
               <mat-option *ngFor="let p of filtered(suggestions.processes, 'process')" [value]="p">{{ p }}</mat-option>
@@ -126,7 +126,7 @@
         <div class="deux">
           <mat-form-field appearance="outline">
             <mat-label i18n="@@rr.form.source">Source</mat-label>
-            <mat-select formControlName="origin" data-test="origine">
+            <mat-select formControlName="origin" required data-test="origine">
               <mat-option *ngFor="let o of origins" [value]="o.value">{{ o.label }}</mat-option>
             </mat-select>
             <mat-hint *ngIf="originLocked" i18n="@@rr.form.origin-locked">Fixée par l'objet dont le risque est issu.</mat-hint>
@@ -179,13 +179,13 @@
         <div class="deux deux--serre" *ngIf="isRisk">
           <mat-form-field appearance="outline">
             <mat-label i18n="@@rr.severity">Gravité</mat-label>
-            <mat-select formControlName="grossSeverity" data-test="gravite">
+            <mat-select formControlName="grossSeverity" required data-test="gravite">
               <mat-option *ngFor="let n of severities" [value]="n.value">{{ n.label }}</mat-option>
             </mat-select>
           </mat-form-field>
           <mat-form-field appearance="outline">
             <mat-label i18n="@@rr.probability">Probabilité</mat-label>
-            <mat-select formControlName="grossProbability" data-test="probabilite">
+            <mat-select formControlName="grossProbability" required data-test="probabilite">
               <mat-option *ngFor="let n of probabilities" [value]="n.value">{{ n.label }}</mat-option>
             </mat-select>
           </mat-form-field>
@@ -193,13 +193,13 @@
         <div class="deux deux--serre" *ngIf="!isRisk">
           <mat-form-field appearance="outline">
             <mat-label i18n="@@rr.gain">Gain attendu</mat-label>
-            <mat-select formControlName="gain" data-test="gain">
+            <mat-select formControlName="gain" required data-test="gain">
               <mat-option *ngFor="let n of gains" [value]="n.value">{{ n.label }}</mat-option>
             </mat-select>
           </mat-form-field>
           <mat-form-field appearance="outline">
             <mat-label i18n="@@rr.feasibility">Faisabilité</mat-label>
-            <mat-select formControlName="feasibility" data-test="faisabilite">
+            <mat-select formControlName="feasibility" required data-test="faisabilite">
               <mat-option *ngFor="let n of feasibilities" [value]="n.value">{{ n.label }}</mat-option>
             </mat-select>
           </mat-form-field>
@@ -249,7 +249,7 @@
         <h2 class="carte__titre" *ngIf="!isRisk" i18n="@@rr.form.implementation">Mise en œuvre</h2>
         <mat-form-field appearance="outline" class="plein">
           <mat-label i18n="@@rr.form.decision">Décision</mat-label>
-          <mat-select formControlName="decision" data-test="decision">
+          <mat-select formControlName="decision" required data-test="decision">
             <mat-option *ngFor="let d of decisions" [value]="d.value">{{ d.label }}</mat-option>
           </mat-select>
         </mat-form-field>

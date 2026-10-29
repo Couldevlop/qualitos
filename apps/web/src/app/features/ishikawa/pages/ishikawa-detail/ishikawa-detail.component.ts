@@ -186,7 +186,7 @@ export class IshikawaDetailComponent implements OnInit {
           console.warn('[ishikawa-detail] delete failed', err?.status, err?.error?.title);
           this.snack.open(
             safeErrorMessage(err, $localize`:@@common.error-delete:Erreur lors de la suppression.`),
-            'OK', { duration: 4000 }
+            $localize`:@@common.ok:OK`, { duration: 4000 }
           );
         }
       });
@@ -289,7 +289,7 @@ export class IshikawaDetailComponent implements OnInit {
           console.warn('[ishikawa-detail] convertToPdca failed', err?.status);
           this.snack.open(
             safeErrorMessage(err, $localize`:@@ishikawa.detail.convert-error:Échec de la conversion en PDCA.`),
-            'Fermer', { duration: 4000 });
+            $localize`:@@common.close:Fermer`, { duration: 4000 });
         }
       });
   }
@@ -311,7 +311,7 @@ export class IshikawaDetailComponent implements OnInit {
         console.warn('[ishikawa-detail] suggestCauses failed', err?.status);
         this.snack.open(
           safeErrorMessage(err, $localize`:@@ishikawa.detail.suggest-unavailable:Suggestion IA indisponible (ai-service / Ollama).`),
-          'Fermer', { duration: 4000 });
+          $localize`:@@common.close:Fermer`, { duration: 4000 });
       }
     });
   }
@@ -332,7 +332,7 @@ export class IshikawaDetailComponent implements OnInit {
       },
       error: err => {
         this.addingKey = null;
-        this.snack.open(safeErrorMessage(err, $localize`:@@common.add-failed:Ajout impossible.`), 'Fermer', { duration: 3500 });
+        this.snack.open(safeErrorMessage(err, $localize`:@@common.add-failed:Ajout impossible.`), $localize`:@@common.close:Fermer`, { duration: 3500 });
       }
     });
   }

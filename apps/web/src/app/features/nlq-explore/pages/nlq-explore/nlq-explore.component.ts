@@ -166,7 +166,7 @@ export class NlqExploreComponent {
       case 413: return $localize`:@@nlq-explore.err-too-large:Question trop volumineuse (garde-fou IA).`;
       case 429: return $localize`:@@nlq-explore.err-quota:Débit/quota IA dépassé pour ce tenant — réessayez plus tard.`;
       case 502:
-      case 503: return $localize`:@@nlq-explore.err-unavailable:L'assistant IA est momentanément indisponible (modèle en cours de chargement ?). Réessaie dans un instant.`;
+      case 503: return $localize`:@@nlq-explore.err-unavailable:L'assistant IA est momentanément indisponible (modèle en cours de chargement ?). Réessayez dans un instant.`;
       default:  return $localize`:@@nlq-explore.err-generic:Une erreur est survenue lors du traitement de la question (HTTP ${err.status}:status:).`;
     }
   }

@@ -100,6 +100,16 @@ export class KpisListComponent implements OnInit {
     });
   }
 
+  /** Un filtre est posé (le statut « Actif » l'est d'office) : la liste vide l'est peut-être à cause de lui. */
+  get hasFilters(): boolean {
+    return !!this.statusFilter.value || !!this.categoryFilter.value;
+  }
+
+  resetFilters(): void {
+    this.statusFilter.setValue('');
+    this.categoryFilter.setValue('');
+  }
+
   open(k: KpiResponse): void { this.router.navigate(['/kpis', k.id]); }
 
   directionLabel(d: KpiDirection): string {

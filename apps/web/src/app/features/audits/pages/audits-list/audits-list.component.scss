@@ -6,7 +6,6 @@
 .filter-card { padding: 16px; margin-bottom: 16px; }
 .status-filter { width: min(220px, 100%); }
 .state-row { display: flex; align-items: center; gap: 12px; padding: 24px 0; }
-.table-card { padding: 0; overflow: hidden; }
 .t { width: 100%; }
 .cell {
   display: flex; flex-direction: column;
@@ -38,4 +37,12 @@
 .clickable-row:focus-visible {
   outline: 2px solid var(--mat-sys-primary, #1976d2);
   outline-offset: -2px;
+}
+
+/* Recherche et filtres sur une ligne (mat-card est une colonne par défaut). */
+.filter-card {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: var(--qos-space-3);
+  align-items: flex-start;
 }

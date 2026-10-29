@@ -94,7 +94,7 @@
   </aside>
 
   <div class="qos-shell__main">
-    <header class="qos-topbar">
+    <header class="qos-topbar" [class.qos-topbar--search-open]="searchExpanded">
       <button
         type="button"
         class="qos-topbar__icon-btn qos-topbar__menu"
@@ -102,6 +102,17 @@
         aria-label="Basculer la navigation"
         i18n-aria-label="@@shell.toggle-nav.aria">
         <span class="material-symbols-outlined" aria-hidden="true">menu</span>
+      </button>
+
+      <!-- Sur téléphone, la recherche se replie en un bouton : le champ, même
+           réduit, recouvrait le sélecteur de langue et le bouton du menu. -->
+      <button
+        type="button"
+        class="qos-topbar__icon-btn qos-topbar__search-toggle"
+        (click)="expandSearch()"
+        aria-label="Rechercher un écran"
+        i18n-aria-label="@@shell.search.open-aria">
+        <span class="material-symbols-outlined" aria-hidden="true">search</span>
       </button>
 
       <!-- Recherche d'écran : propose les entrées de menu visibles qui
@@ -236,6 +247,32 @@
               <span class="qos-user__name">{{ user.displayName }}</span>
               <span class="qos-user__roles">{{ user.roles.join(' · ') }}</span>
             </div>
+            <!-- Thème : sur téléphone, le sélecteur quitte la barre du haut et
+                 se retrouve ici. Masqué sur grand écran, où la barre le porte. -->
+            <ng-container *ngIf="themePreference$ | async as pref">
+              <div class="qos-user__theme" role="group"
+                   aria-label="Préférence de thème" i18n-aria-label="@@theme.toggle.aria"
+                   (click)="$event.stopPropagation()">
+                <button mat-menu-item type="button" role="menuitemradio"
+                        [attr.aria-checked]="pref === 'light'"
+                        (click)="setTheme('light')">
+                  <span class="material-symbols-outlined" aria-hidden="true">light_mode</span>
+                  <span i18n="@@theme.toggle.light">Thème clair</span>
+                </button>
+                <button mat-menu-item type="button" role="menuitemradio"
+                        [attr.aria-checked]="pref === 'system'"
+                        (click)="setTheme('system')">
+                  <span class="material-symbols-outlined" aria-hidden="true">desktop_windows</span>
+                  <span i18n="@@theme.toggle.system">Suivre le système</span>
+                </button>
+                <button mat-menu-item type="button" role="menuitemradio"
+                        [attr.aria-checked]="pref === 'dark'"
+                        (click)="setTheme('dark')">
+                  <span class="material-symbols-outlined" aria-hidden="true">dark_mode</span>
+                  <span i18n="@@theme.toggle.dark">Thème sombre</span>
+                </button>
+              </div>
+            </ng-container>
             <a mat-menu-item routerLink="/learning">
               <span class="material-symbols-outlined" aria-hidden="true">military_tech</span>
               <span i18n="@@nav.mon-apprentissage">Mon apprentissage</span>

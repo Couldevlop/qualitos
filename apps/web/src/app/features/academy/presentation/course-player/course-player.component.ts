@@ -82,7 +82,7 @@ export class CoursePlayerComponent implements OnInit {
           this.doneLessons.add(lessonId);
         },
         error: () => this.snack.open(
-          $localize`:@@academy.error.lesson:Échec de la validation de la leçon.`, 'OK', { duration: 4000 })
+          $localize`:@@academy.error.lesson:Échec de la validation de la leçon.`, $localize`:@@common.ok:OK`, { duration: 4000 })
       });
   }
 
@@ -116,10 +116,10 @@ export class CoursePlayerComponent implements OnInit {
           const msg = res.passed
             ? $localize`:@@academy.quiz.passed:Quiz réussi (${res.score}:score:%) !`
             : $localize`:@@academy.quiz.failed:Quiz échoué (${res.score}:score:%). Réessayez.`;
-          this.snack.open(msg, 'OK', { duration: 4000 });
+          this.snack.open(msg, $localize`:@@common.ok:OK`, { duration: 4000 });
         },
         error: () => this.snack.open(
-          $localize`:@@academy.error.quiz:Échec de la soumission du quiz.`, 'OK', { duration: 4000 })
+          $localize`:@@academy.error.quiz:Échec de la soumission du quiz.`, $localize`:@@common.ok:OK`, { duration: 4000 })
       });
   }
 
@@ -132,6 +132,6 @@ export class CoursePlayerComponent implements OnInit {
   }
 
   private fail(message: string): void {
-    this.snack.open(message, 'OK', { duration: 5000 });
+    this.snack.open(message, $localize`:@@common.ok:OK`, { duration: 5000 });
   }
 }

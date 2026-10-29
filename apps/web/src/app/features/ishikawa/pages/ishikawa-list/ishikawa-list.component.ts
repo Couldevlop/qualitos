@@ -11,6 +11,7 @@ import { safeErrorMessage } from '../../../../core/http/error-message';
 import { IshikawaService } from '../../ishikawa.service';
 import { IshikawaDiagramResponse, IshikawaPage, IshikawaStatus } from '../../ishikawa.types';
 import { IshikawaCreateDialogComponent } from '../ishikawa-create-dialog/ishikawa-create-dialog.component';
+import { searchRows } from '../../../../shared/ui/list-search/list-filter';
 
 const PAGE_SIZE_OPTIONS = [10, 20, 50, 100];
 const MAX_PAGE_SIZE = 100;
@@ -36,6 +37,9 @@ export class IshikawaListComponent implements OnInit {
   totalElements = 0;
 
   diagrams$!: Observable<IshikawaDiagramResponse[]>;
+  /** Lignes affichées : la page chargée, filtrée par la recherche. */
+  visibleDiagrams$!: Observable<IshikawaDiagramResponse[]>;
+  readonly search = new FormControl('', { nonNullable: true });
   private readonly loadingState$ = new BehaviorSubject<boolean>(false);
   readonly loading$ = deferredView(this.loadingState$);
   private readonly errorState$ = new BehaviorSubject<string | null>(null);
@@ -79,6 +83,7 @@ export class IshikawaListComponent implements OnInit {
       }),
       shareReplay({ bufferSize: 1, refCount: false }) // refCount:false : evite la boucle de teardown quand *ngIf loading masque la table
     );
+    this.visibleDiagrams$ = searchRows(this.diagrams$, this.search, d => [d.problemStatement, d.description]);
   }
 
   onPage(e: PageEvent): void {

@@ -527,8 +527,13 @@
     flex-wrap: nowrap;
     overflow-x: auto;
     gap: var(--qos-space-1);
+    // Élément de grille : sans min-width 0, il prend la largeur de ses vues
+    // rapides et pousse la page hors de l'écran au lieu de défiler.
+    min-width: 0;
+    max-width: 100%;
+    -webkit-overflow-scrolling: touch;
 
-    .views { flex-direction: row; }
+    .views { flex-direction: row; flex: 0 0 auto; }
     .views .nav-item { white-space: nowrap; width: auto; }
     .nav-heading, .tree { display: none; }
     .nav-foot { margin: 0; padding: 0; border: 0; }

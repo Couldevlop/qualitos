@@ -125,25 +125,25 @@
         </mat-form-field>
         <mat-form-field appearance="outline">
           <mat-label i18n="@@spc.gage-rr.study.operator-count">Opérateurs (k)</mat-label>
-          <mat-select formControlName="operatorCount" data-test="k">
+          <mat-select formControlName="operatorCount" required data-test="k">
             <mat-option *ngFor="let v of operatorCounts" [value]="v">{{ v }}</mat-option>
           </mat-select>
         </mat-form-field>
         <mat-form-field appearance="outline">
           <mat-label i18n="@@spc.gage-rr.study.part-count">Pièces (n)</mat-label>
-          <mat-select formControlName="partCount" data-test="n">
+          <mat-select formControlName="partCount" required data-test="n">
             <mat-option *ngFor="let v of partCounts" [value]="v">{{ v }}</mat-option>
           </mat-select>
         </mat-form-field>
         <mat-form-field appearance="outline">
           <mat-label i18n="@@spc.gage-rr.study.trial-count">Essais (r)</mat-label>
-          <mat-select formControlName="trialCount" data-test="r">
+          <mat-select formControlName="trialCount" required data-test="r">
             <mat-option *ngFor="let v of trialCounts" [value]="v">{{ v }}</mat-option>
           </mat-select>
         </mat-form-field>
         <mat-form-field appearance="outline">
           <mat-label i18n="@@spc.gage-rr.col.multiplier">Multiplicateur σ</mat-label>
-          <mat-select formControlName="sigmaMultiplier" data-test="multiplicateur">
+          <mat-select formControlName="sigmaMultiplier" required data-test="multiplicateur">
             <mat-option *ngFor="let v of multipliers" [value]="v">{{ v }} σ</mat-option>
           </mat-select>
         </mat-form-field>

@@ -135,7 +135,7 @@ export class CirclesDetailComponent implements OnInit {
           console.warn('[circles-detail] delete failed', err?.status, err?.error?.title);
           this.snack.open(
             safeErrorMessage(err, $localize`:@@circles.detail.delete-error:Erreur lors de la suppression.`),
-            'OK', { duration: 4000 }
+            $localize`:@@common.ok:OK`, { duration: 4000 }
           );
         }
       });
@@ -216,7 +216,7 @@ export class CirclesDetailComponent implements OnInit {
       error: err => {
         // eslint-disable-next-line no-console
         console.warn('[circles-detail] reviewProposal failed', err?.status);
-        this.snack.open(safeErrorMessage(err, $localize`:@@circles.proposal.action-error:Erreur lors de l'action.`), 'OK', { duration: 4000 });
+        this.snack.open(safeErrorMessage(err, $localize`:@@circles.proposal.action-error:Erreur lors de l'action.`), $localize`:@@common.ok:OK`, { duration: 4000 });
       }
     });
   }
@@ -232,7 +232,7 @@ export class CirclesDetailComponent implements OnInit {
       error: err => {
         // eslint-disable-next-line no-console
         console.warn('[circles-detail] approveProposal failed', err?.status);
-        this.snack.open(safeErrorMessage(err, $localize`:@@circles.proposal.action-error:Erreur lors de l'action.`), 'OK', { duration: 4000 });
+        this.snack.open(safeErrorMessage(err, $localize`:@@circles.proposal.action-error:Erreur lors de l'action.`), $localize`:@@common.ok:OK`, { duration: 4000 });
       }
     });
   }
@@ -252,7 +252,7 @@ export class CirclesDetailComponent implements OnInit {
           error: err => {
             // eslint-disable-next-line no-console
             console.warn('[circles-detail] rejectProposal failed', err?.status);
-            this.snack.open(safeErrorMessage(err, $localize`:@@circles.proposal.action-error:Erreur lors de l'action.`), 'OK', { duration: 4000 });
+            this.snack.open(safeErrorMessage(err, $localize`:@@circles.proposal.action-error:Erreur lors de l'action.`), $localize`:@@common.ok:OK`, { duration: 4000 });
           }
         });
       });
@@ -267,7 +267,7 @@ export class CirclesDetailComponent implements OnInit {
       error: err => {
         // eslint-disable-next-line no-console
         console.warn('[circles-detail] implementProposal failed', err?.status);
-        this.snack.open(safeErrorMessage(err, $localize`:@@circles.proposal.action-error:Erreur lors de l'action.`), 'OK', { duration: 4000 });
+        this.snack.open(safeErrorMessage(err, $localize`:@@circles.proposal.action-error:Erreur lors de l'action.`), $localize`:@@common.ok:OK`, { duration: 4000 });
       }
     });
   }
@@ -287,7 +287,7 @@ export class CirclesDetailComponent implements OnInit {
           error: err => {
             // eslint-disable-next-line no-console
             console.warn('[circles-detail] recordImpact failed', err?.status);
-            this.snack.open(safeErrorMessage(err, $localize`:@@circles.proposal.action-error:Erreur lors de l'action.`), 'OK', { duration: 4000 });
+            this.snack.open(safeErrorMessage(err, $localize`:@@circles.proposal.action-error:Erreur lors de l'action.`), $localize`:@@common.ok:OK`, { duration: 4000 });
           }
         });
       });
@@ -319,7 +319,7 @@ export class CirclesDetailComponent implements OnInit {
         console.warn('[circles-detail] transition failed', action, err?.status, err?.error?.title);
         this.snack.open(
           safeErrorMessage(err, $localize`:@@circles.detail.transition-error:Erreur lors de la transition.`),
-          'OK', { duration: 4000 }
+          $localize`:@@common.ok:OK`, { duration: 4000 }
         );
       }
     });

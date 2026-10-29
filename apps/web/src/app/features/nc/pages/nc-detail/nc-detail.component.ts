@@ -190,7 +190,7 @@ export class NcDetailComponent implements OnInit {
           console.warn('[nc-detail] create ishikawa failed', err?.status, err?.error?.title);
           this.snack.open(
             safeErrorMessage(err, $localize`:@@nc.detail.ishikawa-error:Impossible d'ouvrir le diagramme d'Ishikawa.`),
-            'OK', { duration: 4000 });
+            $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }
@@ -245,7 +245,7 @@ export class NcDetailComponent implements OnInit {
           console.warn('[nc-detail] create five-whys failed', err?.status, err?.error?.title);
           this.snack.open(
             safeErrorMessage(err, $localize`:@@nc.detail.five-whys-error:Impossible d'ouvrir l'analyse des 5 Pourquoi.`),
-            'OK', { duration: 4000 });
+            $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }
@@ -312,7 +312,7 @@ export class NcDetailComponent implements OnInit {
               : err?.status === 409
               ? $localize`:@@nc.photos.upload-closed:Impossible d'ajouter une photo à une non-conformité clôturée ou annulée.`
               : safeErrorMessage(err, $localize`:@@nc.photos.upload-error:Échec de l'ajout de la photo.`);
-          this.snack.open(msg, 'OK', { duration: 4000 });
+          this.snack.open(msg, $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }
@@ -421,7 +421,7 @@ export class NcDetailComponent implements OnInit {
             console.warn('[nc-detail] deletePhoto failed', err?.status, err?.error?.type);
             this.snack.open(
               safeErrorMessage(err, $localize`:@@nc.photos.delete-error:Échec de la suppression de la photo.`),
-              'OK', { duration: 4000 });
+              $localize`:@@common.ok:OK`, { duration: 4000 });
           }
         });
     });
@@ -588,7 +588,7 @@ export class NcDetailComponent implements OnInit {
         console.warn('[nc-detail] transition failed', action, err?.status, err?.error?.title);
         this.snack.open(
           safeErrorMessage(err, $localize`:@@nc.detail.transition-error:Erreur lors de la transition.`),
-          'OK', { duration: 4000 });
+          $localize`:@@common.ok:OK`, { duration: 4000 });
       }
     });
   }

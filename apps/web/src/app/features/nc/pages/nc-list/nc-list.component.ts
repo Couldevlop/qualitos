@@ -11,6 +11,7 @@ import { safeErrorMessage } from '../../../../core/http/error-message';
 import { NcService } from '../../nc.service';
 import { NcCategory, NcOrigin, NcPage, NcResponse, NcSeverity, NcStatistics, NcStatus } from '../../nc.types';
 import { NcCreateDialogComponent } from '../nc-create-dialog/nc-create-dialog.component';
+import { searchRows } from '../../../../shared/ui/list-search/list-filter';
 
 const PAGE_SIZE_OPTIONS = [10, 20, 50, 100];
 const MAX_PAGE_SIZE = 100;
@@ -57,6 +58,9 @@ export class NcListComponent implements OnInit {
   totalElements = 0;
 
   ncs$!: Observable<NcResponse[]>;
+  /** Lignes affichées : la page chargée, filtrée par la recherche. */
+  visibleNcs$!: Observable<NcResponse[]>;
+  readonly search = new FormControl('', { nonNullable: true });
   private readonly loadingState$ = new BehaviorSubject<boolean>(false);
   readonly loading$ = deferredView(this.loadingState$);
   private readonly errorState$ = new BehaviorSubject<string | null>(null);
@@ -164,6 +168,7 @@ export class NcListComponent implements OnInit {
       }),
       shareReplay({ bufferSize: 1, refCount: false }) // refCount:false : evite la boucle de teardown quand *ngIf loading masque la table
     );
+    this.visibleNcs$ = searchRows(this.ncs$, this.search, n => [n.reference, n.title, n.zone, n.reporterName]);
   }
 
   onPage(e: PageEvent): void {

@@ -1,7 +1,13 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import type { EChartsCoreOption } from 'echarts/core';
+import { forkJoin, of } from 'rxjs';
+import { catchError, finalize } from 'rxjs/operators';
+
+import { alignMatrix } from '../../../../shared/ai-sources/series';
+import { KpisService } from '../../../kpis/kpis.service';
+import { KpiResponse } from '../../../kpis/kpis.types';
 
 import { AnomalyService } from '../../anomaly.service';
 import {
@@ -13,7 +19,8 @@ import {
 
 /**
  * Détection d'anomalies non-supervisée multivariée (§3.4, §12.1) : l'utilisateur
- * saisit une matrice (une ligne = un échantillon, features séparées par virgule/espace)
+ * part des indicateurs du catalogue (une ligne par période commune, une colonne par
+ * indicateur) ou saisit une matrice (variables séparées par virgule/espace)
  * et choisit la méthode (Isolation Forest ou reconstruction par ACP) ; l'IA calcule un
  * score d'anomalie par échantillon et marque les plus anormaux (quantile de contamination
  * ou seuil explicite). Le graphe met en évidence les échantillons hors-norme.
@@ -24,7 +31,7 @@ import {
   styleUrls: ['./anomaly-detect.component.scss'],
   standalone: false
 })
-export class AnomalyDetectComponent {
+export class AnomalyDetectComponent implements OnInit {
 
   readonly form = this.fb.group({
     matrixText: ['', [Validators.required]],
@@ -66,9 +73,82 @@ export class AnomalyDetectComponent {
   explainChartOption: EChartsCoreOption | null = null;
   explainingIndex: number | null = null;
 
-  constructor(private readonly fb: FormBuilder, private readonly anomaly: AnomalyService) {}
+  /** Indicateurs actifs, proposés comme variables de la matrice. */
+  kpis: KpiResponse[] = [];
+  readonly kpiSelection = new FormControl<string[]>([], { nonNullable: true });
+  sourceLoading = false;
+  sourceInfo: string | null = null;
+  /** Nom de chaque colonne quand la matrice vient du catalogue ; vide en saisie libre. */
+  columnNames: string[] = [];
+
+  constructor(
+    private readonly fb: FormBuilder,
+    private readonly anomaly: AnomalyService,
+    private readonly kpiService: KpisService
+  ) {}
+
+  ngOnInit(): void {
+    // Le catalogue est une aide : s'il ne répond pas, la saisie libre reste.
+    this.kpiService.list(0, 100, 'ACTIVE').pipe(catchError(() => of(null)))
+      .subscribe(page => (this.kpis = page?.content ?? []));
+  }
+
+  /**
+   * Construit la matrice à partir des indicateurs choisis : une ligne par
+   * période mesurée pour TOUS, une colonne par indicateur.
+   */
+  loadFromKpis(): void {
+    const chosen = this.kpis.filter(k => this.kpiSelection.value.includes(k.id));
+    if (chosen.length < 2) {
+      this.error = $localize`:@@anomaly.detect.source-pick-two:Choisissez au moins deux indicateurs : l'analyse est multivariée.`;
+      return;
+    }
+    this.error = null;
+    this.sourceInfo = null;
+    this.sourceLoading = true;
+    forkJoin(chosen.map(k => this.kpiService.listMeasurements(k.id, 0, 200)))
+      .pipe(finalize(() => (this.sourceLoading = false)))
+      .subscribe({
+        next: pages => {
+          const aligned = alignMatrix(pages.map(p => p.content));
+          this.columnNames = chosen.map(k => k.code);
+          this.form.patchValue({
+            matrixText: aligned.rows.map(row => row.join(', ')).join('\n'),
+            subject: this.form.value.subject?.trim()
+              ? this.form.value.subject
+              : chosen.map(k => k.name).join(' / ').slice(0, 120)
+          });
+          const rows = aligned.rows.length;
+          const count = chosen.length;
+          this.sourceInfo = rows === 0
+            ? $localize`:@@anomaly.detect.source-no-common:Ces indicateurs n'ont aucune période mesurée en commun.`
+            : $localize`:@@anomaly.detect.source-loaded:${rows}:rows: période(s) communes à ${count}:count: indicateurs.`;
+        },
+        error: () => {
+          this.error = $localize`:@@anomaly.detect.source-error:Impossible de charger les mesures des indicateurs choisis.`;
+        }
+      });
+  }
+
+  /** Nom d'une variable : le code de l'indicateur, sinon son rang. */
+  variableLabel(index: number): string {
+    return this.columnNames[index]
+      ?? $localize`:@@anomaly.detect.variable-prefix:Variable` + ` ${index + 1}`;
+  }
+
+  variablesPerSample(count: number): string {
+    return $localize`:@@anomaly.detect.variables-per-sample:${count}:count: variable(s) par échantillon`;
+  }
+
+  /** Une saisie à la main ne porte plus les noms des indicateurs. */
+  onManualEdit(): void {
+    this.columnNames = [];
+    this.sourceInfo = null;
+  }
 
   loadExample(): void {
+    this.columnNames = [];
+    this.sourceInfo = null;
     this.form.patchValue({
       matrixText: this.example,
       method: 'isolation_forest',
@@ -102,7 +182,7 @@ export class AnomalyDetectComponent {
     }
     const width = matrix[0].length;
     if (width === 0 || matrix.some(row => row.length !== width)) {
-      this.error = $localize`:@@anomaly.detect.err-ragged:Toutes les lignes doivent avoir le même nombre de features (≥ 1).`;
+      this.error = $localize`:@@anomaly.detect.err-ragged:Toutes les lignes doivent avoir le même nombre de variables (≥ 1).`;
       return;
     }
     if (matrix.some(row => row.some(v => !Number.isFinite(v)))) {
@@ -165,11 +245,9 @@ export class AnomalyDetectComponent {
       : $localize`:@@anomaly.detect.method-iforest:Isolation Forest`;
   }
 
-  /** Libellé de la feature dominante (mode reconstruction) ; tiret si absent. */
+  /** Libellé de la variable dominante (mode reconstruction) ; tiret si absent. */
   topFeatureLabel(p: AnomalyPoint): string {
-    return p.topFeature == null
-      ? '—'
-      : $localize`:@@anomaly.detect.feature-prefix:Feature` + ` #${p.topFeature + 1}`;
+    return p.topFeature == null ? '—' : this.variableLabel(p.topFeature);
   }
 
   /** Demande l'explication SHAP du score d'anomalie de l'échantillon `index`. */
@@ -193,8 +271,8 @@ export class AnomalyDetectComponent {
   }
 
   private buildExplainChart(res: AnomalyExplainResponse): EChartsCoreOption {
-    const pushColor = '#DC2626';   // pousse vers l'anormalité (contribution > 0)
-    const pullColor = '#2563EB';   // pousse vers la normalité (contribution < 0)
+    const pushColor = cssToken('--qos-danger-fg', '#b91c1c');   // pousse vers l'anormalité (contribution > 0)
+    const pullColor = cssToken('--qos-chart-1', '#1d4ed8');   // pousse vers la normalité (contribution < 0)
     // Trié par contribution croissante pour un affichage barres horizontales lisible.
     const sorted = [...(res.contributions ?? [])].sort((a, b) => a.contribution - b.contribution);
     return {
@@ -203,7 +281,7 @@ export class AnomalyDetectComponent {
       xAxis: { type: 'value', name: 'Contribution' },
       yAxis: {
         type: 'category',
-        data: sorted.map(c => `Feature #${c.feature + 1}`)
+        data: sorted.map(c => this.variableLabel(c.feature))
       },
       series: [{
         type: 'bar',
@@ -276,4 +354,13 @@ export class AnomalyDetectComponent {
       default:  return $localize`:@@anomaly.detect.err-generic:Échec de la détection (HTTP ${err.status}:status:).`;
     }
   }
+}
+
+/** Valeur d'un jeton du thème courant, ou le repli si le document n'en a pas. */
+function cssToken(name: string, fallback: string): string {
+  if (typeof document === 'undefined') {
+    return fallback;
+  }
+  const value = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  return value || fallback;
 }

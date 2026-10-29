@@ -138,16 +138,37 @@ const LABELS: Readonly<Record<string, string>> = {
   WITHDRAWN: $localize`:@@status.withdrawn:Retiré`,
 };
 
+/** Genre grammatical de l'objet qualifié : « un audit ouvert », « une NC ouverte ». */
+export type StatusGender = 'm' | 'f';
+
+/**
+ * Accords au féminin, pour les objets féminins (non-conformité, réclamation,
+ * action). Un code absent ici garde le libellé de {@link LABELS}, épicène ou
+ * sans accord (« En cours », « Action définie »).
+ */
+const FEMININE: Readonly<Record<string, string>> = {
+  OPEN: $localize`:@@status.f.open:Ouverte`,
+  CLOSED: $localize`:@@status.f.closed:Clôturée`,
+  CANCELLED: $localize`:@@status.f.cancelled:Annulée`,
+  RESOLVED: $localize`:@@status.f.resolved:Résolue`,
+  REJECTED: $localize`:@@status.f.rejected:Rejetée`,
+  VERIFIED: $localize`:@@status.f.verified:Vérifiée`,
+  VALIDATED: $localize`:@@status.f.validated:Validée`,
+  ARCHIVED: $localize`:@@status.f.archived:Archivée`,
+  COMPLETED: $localize`:@@status.f.completed:Terminée`,
+  APPROVED: $localize`:@@status.f.approved:Approuvée`
+};
+
 /**
  * Le libellé d'un code de statut. Un code inconnu de la table n'est pas laissé
  * en capitales : il se lit en minuscules, mots séparés, première lettre
  * majuscule — lisible en attendant son entrée dans la table.
  */
-export function statusLabel(code: string | null | undefined): string {
+export function statusLabel(code: string | null | undefined, gender: StatusGender = 'm'): string {
   if (!code) {
     return '—';
   }
-  const known = LABELS[code];
+  const known = (gender === 'f' ? FEMININE[code] : undefined) ?? LABELS[code];
   if (known) {
     return known;
   }

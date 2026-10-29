@@ -1,25 +1,21 @@
 <section class="qos-page">
-  <header class="team-head">
-    <div>
-      <p class="team-eyebrow" i18n="@@admin.team.eyebrow">Administration</p>
-      <h1 i18n="@@admin.team.title">Équipe &amp; habilitations</h1>
-      <p class="team-sub" i18n="@@admin.team.subtitle">
+  <qos-page-header
+    eyebrow="Administration" i18n-eyebrow="@@admin.team.eyebrow"
+    title="Équipe &amp; habilitations" i18n-title="@@admin.team.title">
+    <p qosSubtitle i18n="@@admin.team.subtitle">
         Composez votre équipe qualité : qui accède à la plateforme, et avec quels rôles.
         L'autorisation est appliquée par le serveur — cet écran ne fait qu'en donner la clé.
       </p>
-    </div>
-    <div class="team-actions">
-      <button mat-stroked-button type="button" (click)="reload()" [disabled]="loading">
+      <button qosActions mat-stroked-button type="button" (click)="reload()" [disabled]="loading">
         <mat-icon aria-hidden="true">refresh</mat-icon>
         <span i18n="@@common.refresh">Actualiser</span>
       </button>
-      <button mat-flat-button color="primary" type="button" (click)="openInvite()" [disabled]="inviting"
+      <button qosActions mat-flat-button color="primary" type="button" (click)="openInvite()" [disabled]="inviting"
               data-test="inviter">
         <mat-icon aria-hidden="true">person_add</mat-icon>
         <span i18n="@@admin.team.invite">Inviter un membre</span>
       </button>
-    </div>
-  </header>
+  </qos-page-header>
 
   <!-- Inviter : le compte de connexion est créé dans l'organisation, avec ses rôles. -->
   <form class="team-invite" *ngIf="inviting" [formGroup]="inviteForm" (ngSubmit)="sendInvite()" novalidate
@@ -28,7 +24,7 @@
     <div class="team-invite__champs">
       <mat-form-field appearance="outline">
         <mat-label i18n="@@admin.team.invite-email">Adresse e-mail</mat-label>
-        <input matInput type="email" formControlName="email" autocomplete="off" data-test="invite-email">
+        <input matInput type="email" formControlName="email" autocomplete="off" required data-test="invite-email">
         <mat-error *ngIf="inviteForm.controls.email.invalid" i18n="@@admin.team.invite-email-invalid">Une adresse e-mail valide est attendue.</mat-error>
       </mat-form-field>
       <mat-form-field appearance="outline">

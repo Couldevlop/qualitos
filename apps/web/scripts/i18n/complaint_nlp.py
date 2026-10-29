@@ -8,7 +8,7 @@ TRANSLATIONS = {
     'complaintnlp.subtitle': ("Sentiment, catégorie et criticité de chaque réclamation — détection des cas critiques par l'IA.", 'Sentiment, category and criticality of each complaint — critical cases flagged by AI.', 'Sentimiento, categoría y criticidad de cada reclamación — casos críticos detectados por IA.', 'المشاعر والفئة والأهمية لكل شكوى — يكشف الذكاء الاصطناعي الحالات الحرجة.', '各クレームの感情・カテゴリ・重大度 — 重要案件をAIが検出。', '每条投诉的情感、类别和严重性 — 由AI标记关键案例。'),
 
     'complaintnlp.input-panel': ('Réclamations', 'Complaints', 'Reclamaciones', 'الشكاوى', 'クレーム', '投诉'),
-    'complaintnlp.texts-label': ('Une réclamation par ligne', 'One complaint per line', 'Una reclamación por línea', 'شكوى واحدة لكل سطر', '1行に1件のクレーム', '每行一条投诉'),
+    'complaintnlp.texts-label': ('Données manuelles : une réclamation par ligne', 'Manual data: one complaint per line', 'Datos manuales: una reclamación por línea', 'بيانات يدوية: شكوى واحدة في كل سطر', '手動データ：1行に1件の苦情', '手动数据：每行一条投诉'),
     'complaintnlp.run': ('Analyser', 'Analyze', 'Analizar', 'تحليل', '分析', '分析'),
     'complaintnlp.running': ('Analyse…', 'Analyzing…', 'Analizando…', 'جارٍ التحليل…', '分析中…', '分析中…'),
     'complaintnlp.example': ('Exemple', 'Example', 'Ejemplo', 'مثال', '例', '示例'),
