@@ -302,6 +302,7 @@
 .champ-large {
   display: block;
   width: 100%;
+  max-width: 48rem;
   margin-top: var(--qos-space-3);
 }
 
@@ -362,7 +363,11 @@ mat-form-field {
 }
 
 .groupe + .groupe {
-  margin-top: var(--qos-space-2);
+  margin-top: var(--qos-space-1);
+}
+
+.groupe .sous-titre {
+  margin: var(--qos-space-3) 0 var(--qos-space-1);
 }
 
 .questions {
@@ -371,12 +376,14 @@ mat-form-field {
   list-style: none;
 }
 
+// Une question par ligne, serrée : le libellé prend la place, la réponse une
+// colonne bornée, pour qu'aucun champ ne s'étire sur toute la fiche.
 .question {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
-  gap: var(--qos-space-4);
+  grid-template-columns: minmax(0, 1fr) minmax(12rem, 26rem);
+  gap: var(--qos-space-3);
   align-items: center;
-  padding: var(--qos-space-3) 0;
+  padding: var(--qos-space-1) 0;
   border-top: 1px solid var(--qos-border-subtle);
 
   &__label {
@@ -396,8 +403,8 @@ mat-form-field {
   gap: var(--qos-space-2);
 
   &__btn {
-    min-width: 5.5rem;
-    min-height: 2.5rem;
+    min-width: 4.5rem;
+    min-height: 2rem;
     padding: 0 var(--qos-space-3);
     border: 1px solid var(--qos-border-strong);
     border-radius: var(--qos-radius-pill);
@@ -422,23 +429,13 @@ mat-form-field {
       opacity: 0.75;
     }
 
+    // Le choix retenu se voit en gris, sans couleur de jugement : un « non »
+    // est parfois la bonne réponse, il ne doit pas paraître en faute.
     &--on {
-      border-color: var(--qos-accent-bg);
-      background: var(--qos-accent-bg-soft);
-      color: var(--qos-accent-fg-soft);
+      border-color: var(--qos-fg-secondary);
+      background: var(--qos-border-strong);
+      color: var(--qos-fg-primary);
       font-weight: var(--qos-fw-semibold);
-    }
-
-    &--on.choix__btn--yes {
-      border-color: var(--qos-success-fg);
-      background: var(--qos-success-bg-soft);
-      color: var(--qos-success-fg);
-    }
-
-    &--on.choix__btn--no {
-      border-color: var(--qos-danger-fg);
-      background: var(--qos-danger-bg-soft);
-      color: var(--qos-danger-fg);
     }
   }
 }

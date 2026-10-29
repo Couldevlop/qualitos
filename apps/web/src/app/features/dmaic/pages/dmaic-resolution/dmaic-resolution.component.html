@@ -173,7 +173,6 @@
                   <div class="choix" role="radiogroup" [attr.aria-labelledby]="'ql-' + q.code">
                     <button *ngFor="let c of choicesOf(q)" type="button" class="choix__btn" role="radio"
                             [class.choix__btn--on]="draft.answers[q.code] === c"
-                            [class.choix__btn--yes]="c === 'YES'" [class.choix__btn--no]="c === 'NO'"
                             [attr.aria-checked]="draft.answers[q.code] === c" [disabled]="!canEdit"
                             (click)="toggleAnswer(q.code, c)" [attr.data-test]="'choix-' + q.code + '-' + c">
                       {{ answerLabel(c) }}
