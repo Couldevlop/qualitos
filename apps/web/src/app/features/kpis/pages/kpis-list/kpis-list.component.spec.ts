@@ -187,6 +187,6 @@ describe('KpisListComponent (service doublé)', () => {
   it('retire l’indicateur de chargement une fois la réponse reçue', async () => {
     build();
     await settle();
-    expect((fixture.nativeElement as HTMLElement).querySelector('.banner-info')).toBeNull();
+    expect((fixture.nativeElement as HTMLElement).querySelector('mat-progress-bar')).toBeNull();
   });
 });

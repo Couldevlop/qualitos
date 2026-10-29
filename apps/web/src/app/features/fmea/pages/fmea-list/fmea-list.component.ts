@@ -126,6 +126,16 @@ export class FmeaListComponent implements OnInit {
     });
   }
 
+  /** Un filtre serveur est posé : la liste vide l'est peut-être à cause de lui. */
+  get hasFilters(): boolean {
+    return !!this.statusFilter.value || !!this.typeFilter.value;
+  }
+
+  resetFilters(): void {
+    this.statusFilter.setValue('');
+    this.typeFilter.setValue('');
+  }
+
   open(p: FmeaProjectResponse): void { this.router.navigate(['/fmea', p.id]); }
 
   typeLabel(t: FmeaType): string {

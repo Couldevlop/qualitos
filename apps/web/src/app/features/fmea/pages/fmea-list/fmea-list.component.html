@@ -1,25 +1,20 @@
 <section class="fmea-list">
-  <header class="head">
-    <div>
-      <h1 i18n="@@fmea.list.title">AMDEC — Analyse des risques</h1>
-      <!-- L'ecran enonce la regle, et non l'outillage : au-dela du seuil critique
-           du projet, le RPN impose une action corrective. Le seuil est propre a
-           chaque projet (colonne « Seuil RPN critique ») : citer 200 seul
-           contredisait un projet regle a 150. -->
-      <p i18n="@@fmea.list.subtitle">Au-delà du seuil RPN critique de chaque projet ({{ defaultRpnThreshold }} par défaut), une action corrective est exigée.</p>
-    </div>
-    <div class="head-actions">
-      <!-- Le barème avant la saisie : coter S, O et D sans l'échelle sous les
-           yeux, c'est produire des RPN qui ne se comparent pas entre eux. -->
-      <button mat-stroked-button type="button" (click)="openReference()">
-        <mat-icon>menu_book</mat-icon>
-        <span i18n="@@fmea.reference.open">Référentiel de cotation</span>
-      </button>
-      <button mat-flat-button color="primary" (click)="openCreate()">
-        <mat-icon>add</mat-icon> <span i18n="@@fmea.list.new-project">Nouveau projet</span>
-      </button>
-    </div>
-  </header>
+  <qos-page-header title="AMDEC — Analyse des risques" i18n-title="@@fmea.list.title">
+    <!-- L'ecran enonce la regle, et non l'outillage : au-dela du seuil critique
+         du projet, le RPN impose une action corrective. Le seuil est propre a
+         chaque projet (colonne « Seuil RPN critique ») : citer 200 seul
+         contredisait un projet regle a 150. -->
+    <p qosSubtitle i18n="@@fmea.list.subtitle">Au-delà du seuil RPN critique de chaque projet ({{ defaultRpnThreshold }} par défaut), une action corrective est exigée.</p>
+    <!-- Le barème avant la saisie : coter S, O et D sans l'échelle sous les
+         yeux, c'est produire des RPN qui ne se comparent pas entre eux. -->
+    <button qosActions mat-stroked-button type="button" (click)="openReference()">
+      <mat-icon>menu_book</mat-icon>
+      <span i18n="@@fmea.reference.open">Référentiel de cotation</span>
+    </button>
+    <button qosActions mat-flat-button color="primary" type="button" (click)="openCreate()">
+      <mat-icon>add</mat-icon> <span i18n="@@fmea.list.new-project">Nouveau projet</span>
+    </button>
+  </qos-page-header>
 
   <div class="filters">
     <qos-list-search [control]="search"></qos-list-search>
@@ -41,7 +36,8 @@
   </div>
 
   <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
-  <div *ngIf="loading$ | async" class="banner banner-info" i18n="@@common.loading">Chargement…</div>
+  <mat-progress-bar *ngIf="loading$ | async" mode="indeterminate"
+                    aria-label="Chargement…" i18n-aria-label="@@common.loading"></mat-progress-bar>
 
   <div class="table-wrap mat-elevation-z1">
     <table mat-table [dataSource]="(visibleProjects$ | async) ?? []">
@@ -85,7 +81,22 @@
     </table>
     <p class="empty" *ngIf="search.value && (projects$ | async)?.length && (visibleProjects$ | async)?.length === 0"
        i18n="@@list-search.no-match">Aucune ligne de cette page ne correspond à la recherche.</p>
-
+    <div class="qos-empty" role="status"
+         *ngIf="!(loading$ | async) && !(error$ | async) && (projects$ | async)?.length === 0">
+      <span class="qos-empty__icon"><mat-icon aria-hidden="true">warning_amber</mat-icon></span>
+      <ng-container *ngIf="hasFilters; else noProject">
+        <span class="qos-empty__title" i18n="@@fmea.list.empty-filtered-title">Aucun projet AMDEC pour ces filtres</span>
+        <button class="qos-empty__cta" mat-stroked-button type="button" (click)="resetFilters()"
+                i18n="@@common.reset-filters">Réinitialiser les filtres</button>
+      </ng-container>
+      <ng-template #noProject>
+        <span class="qos-empty__title" i18n="@@fmea.list.empty-title">Aucun projet AMDEC</span>
+        <span class="qos-empty__hint" i18n="@@fmea.list.empty-hint">Créez un projet pour coter les modes de défaillance d'un processus, d'une conception ou d'un service.</span>
+        <button class="qos-empty__cta" mat-flat-button color="primary" type="button" (click)="openCreate()">
+          <mat-icon>add</mat-icon> <span i18n="@@fmea.list.new-project">Nouveau projet</span>
+        </button>
+      </ng-template>
+    </div>
 
     <mat-paginator
       [length]="totalElements"

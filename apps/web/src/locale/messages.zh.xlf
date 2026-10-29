@@ -10846,6 +10846,110 @@ Portail clients</source>
         <source>Impossible de charger les réclamations enregistrées.</source>
         <target state="translated">无法加载已登记的投诉。</target>
       </trans-unit>
+      <trans-unit id="status.f.open" datatype="html">
+        <source>Ouverte</source>
+        <target state="translated">已开启</target>
+      </trans-unit>
+      <trans-unit id="status.f.closed" datatype="html">
+        <source>Clôturée</source>
+        <target state="translated">已关闭</target>
+      </trans-unit>
+      <trans-unit id="status.f.cancelled" datatype="html">
+        <source>Annulée</source>
+        <target state="translated">已取消</target>
+      </trans-unit>
+      <trans-unit id="status.f.resolved" datatype="html">
+        <source>Résolue</source>
+        <target state="translated">已解决</target>
+      </trans-unit>
+      <trans-unit id="status.f.rejected" datatype="html">
+        <source>Rejetée</source>
+        <target state="translated">已拒绝</target>
+      </trans-unit>
+      <trans-unit id="status.f.verified" datatype="html">
+        <source>Vérifiée</source>
+        <target state="translated">已验证</target>
+      </trans-unit>
+      <trans-unit id="status.f.validated" datatype="html">
+        <source>Validée</source>
+        <target state="translated">已确认</target>
+      </trans-unit>
+      <trans-unit id="status.f.archived" datatype="html">
+        <source>Archivée</source>
+        <target state="translated">已归档</target>
+      </trans-unit>
+      <trans-unit id="status.f.completed" datatype="html">
+        <source>Terminée</source>
+        <target state="translated">已完成</target>
+      </trans-unit>
+      <trans-unit id="status.f.approved" datatype="html">
+        <source>Approuvée</source>
+        <target state="translated">已批准</target>
+      </trans-unit>
+      <trans-unit id="common.reset-filters" datatype="html">
+        <source>Réinitialiser les filtres</source>
+        <target state="translated">重置筛选</target>
+      </trans-unit>
+      <trans-unit id="suppliers.list.empty-filtered-title" datatype="html">
+        <source>Aucun fournisseur pour ces filtres</source>
+        <target state="translated">没有符合这些筛选条件的供应商</target>
+      </trans-unit>
+      <trans-unit id="suppliers.list.empty-title" datatype="html">
+        <source>Aucun fournisseur référencé</source>
+        <target state="translated">尚未登记任何供应商</target>
+      </trans-unit>
+      <trans-unit id="suppliers.list.empty-hint" datatype="html">
+        <source>Référencez vos fournisseurs pour suivre leur score, leurs audits et leurs non-conformités.</source>
+        <target state="translated">登记您的供应商，以跟踪其评分、审核和不符合项。</target>
+      </trans-unit>
+      <trans-unit id="fmea.list.empty-filtered-title" datatype="html">
+        <source>Aucun projet AMDEC pour ces filtres</source>
+        <target state="translated">没有符合这些筛选条件的 FMEA 项目</target>
+      </trans-unit>
+      <trans-unit id="fmea.list.empty-title" datatype="html">
+        <source>Aucun projet AMDEC</source>
+        <target state="translated">尚无 FMEA 项目</target>
+      </trans-unit>
+      <trans-unit id="fmea.list.empty-hint" datatype="html">
+        <source>Créez un projet pour coter les modes de défaillance d'un processus, d'une conception ou d'un service.</source>
+        <target state="translated">创建项目，为流程、设计或服务的失效模式评分。</target>
+      </trans-unit>
+      <trans-unit id="kpis.list.empty-filtered-title" datatype="html">
+        <source>Aucun KPI pour ces filtres</source>
+        <target state="translated">没有符合这些筛选条件的 KPI</target>
+      </trans-unit>
+      <trans-unit id="kpis.list.empty-title" datatype="html">
+        <source>Aucun KPI au catalogue</source>
+        <target state="translated">目录中没有 KPI</target>
+      </trans-unit>
+      <trans-unit id="kpis.list.empty-hint" datatype="html">
+        <source>Chaque KPI porte sa formule, ses seuils, sa source et son propriétaire avant d'être affiché.</source>
+        <target state="translated">每个 KPI 在显示前都具备公式、阈值、来源和负责人。</target>
+      </trans-unit>
+      <trans-unit id="training.home.paths-empty-title" datatype="html">
+        <source>Aucun parcours</source>
+        <target state="translated">没有学习路径</target>
+      </trans-unit>
+      <trans-unit id="training.home.paths-empty-filtered" datatype="html">
+        <source>Aucun parcours ne porte ce statut.</source>
+        <target state="translated">没有处于该状态的学习路径。</target>
+      </trans-unit>
+      <trans-unit id="training.home.skills-empty-title" datatype="html">
+        <source>Aucune compétence</source>
+        <target state="translated">没有技能</target>
+      </trans-unit>
+      <trans-unit id="training.home.skills-empty-filtered" datatype="html">
+        <source>Aucune compétence dans cette catégorie.</source>
+        <target state="translated">该类别中没有技能。</target>
+      </trans-unit>
+      <trans-unit id="training.home.enrollments-empty-title" datatype="html">
+        <source>Aucune inscription</source>
+        <target state="translated">没有报名</target>
+      </trans-unit>
+      <trans-unit id="training.home.enrollments-empty-hint" datatype="html">
+        <source>Inscrivez-vous à un parcours pour suivre votre progression et obtenir son certificat.</source>
+        <target state="translated">报名学习路径，跟踪进度并获得证书。</target>
+      </trans-unit>
       <trans-unit id="complaint-nlp.input.placeholder" datatype="html">
         <source>Produit cassé à la réception
 Livraison en retard

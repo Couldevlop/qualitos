@@ -10846,6 +10846,110 @@ Portail clients</source>
         <source>Impossible de charger les réclamations enregistrées.</source>
         <target state="translated">تعذر تحميل الشكاوى المسجلة.</target>
       </trans-unit>
+      <trans-unit id="status.f.open" datatype="html">
+        <source>Ouverte</source>
+        <target state="translated">مفتوحة</target>
+      </trans-unit>
+      <trans-unit id="status.f.closed" datatype="html">
+        <source>Clôturée</source>
+        <target state="translated">مغلقة</target>
+      </trans-unit>
+      <trans-unit id="status.f.cancelled" datatype="html">
+        <source>Annulée</source>
+        <target state="translated">ملغاة</target>
+      </trans-unit>
+      <trans-unit id="status.f.resolved" datatype="html">
+        <source>Résolue</source>
+        <target state="translated">محلولة</target>
+      </trans-unit>
+      <trans-unit id="status.f.rejected" datatype="html">
+        <source>Rejetée</source>
+        <target state="translated">مرفوضة</target>
+      </trans-unit>
+      <trans-unit id="status.f.verified" datatype="html">
+        <source>Vérifiée</source>
+        <target state="translated">تم التحقق منها</target>
+      </trans-unit>
+      <trans-unit id="status.f.validated" datatype="html">
+        <source>Validée</source>
+        <target state="translated">معتمدة</target>
+      </trans-unit>
+      <trans-unit id="status.f.archived" datatype="html">
+        <source>Archivée</source>
+        <target state="translated">مؤرشفة</target>
+      </trans-unit>
+      <trans-unit id="status.f.completed" datatype="html">
+        <source>Terminée</source>
+        <target state="translated">مكتملة</target>
+      </trans-unit>
+      <trans-unit id="status.f.approved" datatype="html">
+        <source>Approuvée</source>
+        <target state="translated">موافق عليها</target>
+      </trans-unit>
+      <trans-unit id="common.reset-filters" datatype="html">
+        <source>Réinitialiser les filtres</source>
+        <target state="translated">إعادة تعيين عوامل التصفية</target>
+      </trans-unit>
+      <trans-unit id="suppliers.list.empty-filtered-title" datatype="html">
+        <source>Aucun fournisseur pour ces filtres</source>
+        <target state="translated">لا يوجد مورد لعوامل التصفية هذه</target>
+      </trans-unit>
+      <trans-unit id="suppliers.list.empty-title" datatype="html">
+        <source>Aucun fournisseur référencé</source>
+        <target state="translated">لا يوجد مورد مسجل</target>
+      </trans-unit>
+      <trans-unit id="suppliers.list.empty-hint" datatype="html">
+        <source>Référencez vos fournisseurs pour suivre leur score, leurs audits et leurs non-conformités.</source>
+        <target state="translated">سجّل مورديك لمتابعة درجاتهم وعمليات تدقيقهم وحالات عدم المطابقة لديهم.</target>
+      </trans-unit>
+      <trans-unit id="fmea.list.empty-filtered-title" datatype="html">
+        <source>Aucun projet AMDEC pour ces filtres</source>
+        <target state="translated">لا يوجد مشروع FMEA لعوامل التصفية هذه</target>
+      </trans-unit>
+      <trans-unit id="fmea.list.empty-title" datatype="html">
+        <source>Aucun projet AMDEC</source>
+        <target state="translated">لا يوجد مشروع FMEA</target>
+      </trans-unit>
+      <trans-unit id="fmea.list.empty-hint" datatype="html">
+        <source>Créez un projet pour coter les modes de défaillance d'un processus, d'une conception ou d'un service.</source>
+        <target state="translated">أنشئ مشروعًا لتقييم أنماط الإخفاق في عملية أو تصميم أو خدمة.</target>
+      </trans-unit>
+      <trans-unit id="kpis.list.empty-filtered-title" datatype="html">
+        <source>Aucun KPI pour ces filtres</source>
+        <target state="translated">لا يوجد مؤشر أداء لعوامل التصفية هذه</target>
+      </trans-unit>
+      <trans-unit id="kpis.list.empty-title" datatype="html">
+        <source>Aucun KPI au catalogue</source>
+        <target state="translated">لا يوجد مؤشر أداء في الكتالوج</target>
+      </trans-unit>
+      <trans-unit id="kpis.list.empty-hint" datatype="html">
+        <source>Chaque KPI porte sa formule, ses seuils, sa source et son propriétaire avant d'être affiché.</source>
+        <target state="translated">يحمل كل مؤشر أداء صيغته وعتباته ومصدره ومالكه قبل عرضه.</target>
+      </trans-unit>
+      <trans-unit id="training.home.paths-empty-title" datatype="html">
+        <source>Aucun parcours</source>
+        <target state="translated">لا يوجد مسار</target>
+      </trans-unit>
+      <trans-unit id="training.home.paths-empty-filtered" datatype="html">
+        <source>Aucun parcours ne porte ce statut.</source>
+        <target state="translated">لا يوجد مسار بهذه الحالة.</target>
+      </trans-unit>
+      <trans-unit id="training.home.skills-empty-title" datatype="html">
+        <source>Aucune compétence</source>
+        <target state="translated">لا توجد كفاءة</target>
+      </trans-unit>
+      <trans-unit id="training.home.skills-empty-filtered" datatype="html">
+        <source>Aucune compétence dans cette catégorie.</source>
+        <target state="translated">لا توجد كفاءة في هذه الفئة.</target>
+      </trans-unit>
+      <trans-unit id="training.home.enrollments-empty-title" datatype="html">
+        <source>Aucune inscription</source>
+        <target state="translated">لا يوجد تسجيل</target>
+      </trans-unit>
+      <trans-unit id="training.home.enrollments-empty-hint" datatype="html">
+        <source>Inscrivez-vous à un parcours pour suivre votre progression et obtenir son certificat.</source>
+        <target state="translated">سجّل في مسار لمتابعة تقدمك والحصول على شهادته.</target>
+      </trans-unit>
       <trans-unit id="complaint-nlp.input.placeholder" datatype="html">
         <source>Produit cassé à la réception
 Livraison en retard

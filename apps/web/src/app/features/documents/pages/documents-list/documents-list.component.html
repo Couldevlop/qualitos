@@ -17,8 +17,10 @@
       </li>
     </ul>
 
-    <h2 class="nav-heading" i18n="@@documents.nav.folders">Arborescence</h2>
-    <ul class="tree" role="tree" aria-label="Arborescence" i18n-aria-label="@@documents.nav.folders">
+    <!-- Intitulé, pas titre : un h2 placé avant le h1 de la page cassait
+         l'ordre des titres lu par les lecteurs d'écran. -->
+    <p class="nav-heading" id="ged-tree-heading" i18n="@@documents.nav.folders">Arborescence</p>
+    <ul class="tree" role="tree" aria-labelledby="ged-tree-heading">
       <ng-container *ngFor="let row of folderRows; trackBy: trackByFolder">
         <li *ngIf="isVisible(row)" role="treeitem"
             [attr.aria-expanded]="row.hasChildren ? !collapsed.has(row.folder.id) : null"

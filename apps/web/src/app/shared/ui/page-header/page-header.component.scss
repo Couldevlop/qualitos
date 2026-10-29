@@ -76,6 +76,12 @@
   line-height: var(--qos-lh-normal);
 }
 
+/* Sous-titre projeté (balises, variantes selon le rôle) : même typographie. */
+.qos-page-header__subtitle--rich {
+  &:empty { display: none; }
+  ::ng-deep > * { margin: 0; }
+}
+
 .qos-page-header__meta {
   display: flex;
   align-items: center;

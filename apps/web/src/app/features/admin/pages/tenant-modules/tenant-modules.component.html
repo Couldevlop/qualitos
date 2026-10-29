@@ -1,26 +1,23 @@
 <section class="admin-modules">
-  <header class="head">
-    <div>
-      <h1 i18n="@@admin.modules.title">Modules du tenant</h1>
-      <!-- Le texte disait « Activez… » à tout le monde, y compris à ceux qui n'en
-           ont pas le pouvoir. Chaque lecteur lit désormais ce qui le concerne. -->
-      <p *ngIf="canManage$ | async; else readOnlyHint" i18n="@@admin.modules.subtitle-admin">
+  <qos-page-header title="Modules du tenant" i18n-title="@@admin.modules.title">
+    <!-- Le texte disait « Activez… » à tout le monde, y compris à ceux qui n'en
+         ont pas le pouvoir. Chaque lecteur lit désormais ce qui le concerne. -->
+    <p qosSubtitle *ngIf="canManage$ | async; else readOnlyHint" i18n="@@admin.modules.subtitle-admin">
         Ouvrez pour ce tenant les modules qui lui reviennent. La désactivation est
         immédiate et réversible ; les modules du socle restent toujours actifs.
       </p>
-      <ng-template #readOnlyHint>
-        <p i18n="@@admin.modules.subtitle-readonly">
+    <ng-template #readOnlyHint>
+        <p qosSubtitle i18n="@@admin.modules.subtitle-readonly">
           Voici les modules dont dispose votre organisation. Le socle standard est
           inclus d'office ; l'ouverture des autres modules relève de l'éditeur de la
           plateforme — adressez-lui votre demande.
         </p>
       </ng-template>
-    </div>
-    <div class="tenant-tier" *ngIf="summary$ | async as s">
+    <div qosMeta class="tenant-tier" *ngIf="summary$ | async as s">
       <span class="tenant-tier__label" i18n="@@admin.modules.tenant-tier">Palier du tenant</span>
       <span class="qos-badge qos-badge--accent">{{ s.tenantTier | enumLabel:'billingTier' }}</span>
     </div>
-  </header>
+  </qos-page-header>
 
   <div class="tiles" *ngIf="tiles$ | async as tiles">
     <div class="tile" *ngFor="let t of tiles" [attr.data-tone]="t.tone">

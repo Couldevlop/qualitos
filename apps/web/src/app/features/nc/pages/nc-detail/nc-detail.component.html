@@ -3,7 +3,8 @@
   <header class="page-header">
     <div class="title-block">
       <button mat-icon-button (click)="goBack()"
-              i18n-matTooltip="@@nc.detail.back-tooltip" matTooltip="Retour à la liste">
+              i18n-matTooltip="@@nc.detail.back-tooltip" matTooltip="Retour à la liste"
+              aria-label="Retour à la liste" i18n-aria-label="@@nc.detail.back-tooltip">
         <mat-icon>arrow_back</mat-icon>
       </button>
       <div>
@@ -134,7 +135,7 @@
           <div class="info-grid">
             <div class="info-item">
               <span class="info-label" i18n="@@common.status">Statut</span>
-              <span [class]="statusBadgeClass(n.status)">{{ n.status | statusLabel }}</span>
+              <span [class]="statusBadgeClass(n.status)">{{ n.status | statusLabel:'f' }}</span>
             </div>
             <div class="info-item">
               <span class="info-label" i18n="@@nc.create.severity">Sévérité</span>

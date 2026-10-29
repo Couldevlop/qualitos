@@ -112,6 +112,16 @@ export class SuppliersListComponent implements OnInit {
     });
   }
 
+  /** Un filtre serveur est posé : la liste vide l'est peut-être à cause de lui. */
+  get hasFilters(): boolean {
+    return !!this.statusFilter.value || !!this.typeFilter.value;
+  }
+
+  resetFilters(): void {
+    this.statusFilter.setValue('');
+    this.typeFilter.setValue('');
+  }
+
   open(s: SupplierResponse): void { this.router.navigate(['/suppliers', s.id]); }
 
   scoreClass(score: number, status: SupplierStatus): string {

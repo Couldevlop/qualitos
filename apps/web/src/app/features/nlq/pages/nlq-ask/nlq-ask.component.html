@@ -1,16 +1,10 @@
 <div class="nlq-page">
-  <header class="page-header">
-    <div class="title-row">
-      <mat-icon class="hero-icon" aria-hidden="true">forum</mat-icon>
-      <div>
-        <h1 i18n="@@nlq.ask.title">Assistant — Question en langage naturel</h1>
-        <p class="subtitle" i18n="@@nlq.ask.subtitle">
+  <qos-page-header title="Assistant — Question en langage naturel" i18n-title="@@nlq.ask.title">
+    <p qosSubtitle i18n="@@nlq.ask.subtitle">
           Posez une question sur vos données qualité. L'IA la traduit en requête
           <strong>sécurisée</strong> (lecture seule, filtrée par tenant) et vous répond.
         </p>
-      </div>
-    </div>
-  </header>
+  </qos-page-header>
 
   <mat-card class="ask-card" appearance="outlined">
     <form [formGroup]="form" (ngSubmit)="ask()" role="search" aria-label="Question en langage naturel" i18n-aria-label="@@nlq.ask.form-aria">

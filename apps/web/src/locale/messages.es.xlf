@@ -10846,6 +10846,110 @@ Portal de clientes</target>
         <source>Impossible de charger les réclamations enregistrées.</source>
         <target state="translated">No se pudieron cargar las reclamaciones registradas.</target>
       </trans-unit>
+      <trans-unit id="status.f.open" datatype="html">
+        <source>Ouverte</source>
+        <target state="translated">Abierta</target>
+      </trans-unit>
+      <trans-unit id="status.f.closed" datatype="html">
+        <source>Clôturée</source>
+        <target state="translated">Cerrada</target>
+      </trans-unit>
+      <trans-unit id="status.f.cancelled" datatype="html">
+        <source>Annulée</source>
+        <target state="translated">Cancelada</target>
+      </trans-unit>
+      <trans-unit id="status.f.resolved" datatype="html">
+        <source>Résolue</source>
+        <target state="translated">Resuelta</target>
+      </trans-unit>
+      <trans-unit id="status.f.rejected" datatype="html">
+        <source>Rejetée</source>
+        <target state="translated">Rechazada</target>
+      </trans-unit>
+      <trans-unit id="status.f.verified" datatype="html">
+        <source>Vérifiée</source>
+        <target state="translated">Verificada</target>
+      </trans-unit>
+      <trans-unit id="status.f.validated" datatype="html">
+        <source>Validée</source>
+        <target state="translated">Validada</target>
+      </trans-unit>
+      <trans-unit id="status.f.archived" datatype="html">
+        <source>Archivée</source>
+        <target state="translated">Archivada</target>
+      </trans-unit>
+      <trans-unit id="status.f.completed" datatype="html">
+        <source>Terminée</source>
+        <target state="translated">Terminada</target>
+      </trans-unit>
+      <trans-unit id="status.f.approved" datatype="html">
+        <source>Approuvée</source>
+        <target state="translated">Aprobada</target>
+      </trans-unit>
+      <trans-unit id="common.reset-filters" datatype="html">
+        <source>Réinitialiser les filtres</source>
+        <target state="translated">Restablecer los filtros</target>
+      </trans-unit>
+      <trans-unit id="suppliers.list.empty-filtered-title" datatype="html">
+        <source>Aucun fournisseur pour ces filtres</source>
+        <target state="translated">Ningún proveedor para estos filtros</target>
+      </trans-unit>
+      <trans-unit id="suppliers.list.empty-title" datatype="html">
+        <source>Aucun fournisseur référencé</source>
+        <target state="translated">Ningún proveedor registrado</target>
+      </trans-unit>
+      <trans-unit id="suppliers.list.empty-hint" datatype="html">
+        <source>Référencez vos fournisseurs pour suivre leur score, leurs audits et leurs non-conformités.</source>
+        <target state="translated">Registre sus proveedores para seguir su puntuación, sus auditorías y sus no conformidades.</target>
+      </trans-unit>
+      <trans-unit id="fmea.list.empty-filtered-title" datatype="html">
+        <source>Aucun projet AMDEC pour ces filtres</source>
+        <target state="translated">Ningún proyecto AMFE para estos filtros</target>
+      </trans-unit>
+      <trans-unit id="fmea.list.empty-title" datatype="html">
+        <source>Aucun projet AMDEC</source>
+        <target state="translated">Ningún proyecto AMFE</target>
+      </trans-unit>
+      <trans-unit id="fmea.list.empty-hint" datatype="html">
+        <source>Créez un projet pour coter les modes de défaillance d'un processus, d'une conception ou d'un service.</source>
+        <target state="translated">Cree un proyecto para evaluar los modos de fallo de un proceso, un diseño o un servicio.</target>
+      </trans-unit>
+      <trans-unit id="kpis.list.empty-filtered-title" datatype="html">
+        <source>Aucun KPI pour ces filtres</source>
+        <target state="translated">Ningún KPI para estos filtros</target>
+      </trans-unit>
+      <trans-unit id="kpis.list.empty-title" datatype="html">
+        <source>Aucun KPI au catalogue</source>
+        <target state="translated">Ningún KPI en el catálogo</target>
+      </trans-unit>
+      <trans-unit id="kpis.list.empty-hint" datatype="html">
+        <source>Chaque KPI porte sa formule, ses seuils, sa source et son propriétaire avant d'être affiché.</source>
+        <target state="translated">Cada KPI lleva su fórmula, sus umbrales, su fuente y su responsable antes de mostrarse.</target>
+      </trans-unit>
+      <trans-unit id="training.home.paths-empty-title" datatype="html">
+        <source>Aucun parcours</source>
+        <target state="translated">Ningún itinerario</target>
+      </trans-unit>
+      <trans-unit id="training.home.paths-empty-filtered" datatype="html">
+        <source>Aucun parcours ne porte ce statut.</source>
+        <target state="translated">Ningún itinerario tiene este estado.</target>
+      </trans-unit>
+      <trans-unit id="training.home.skills-empty-title" datatype="html">
+        <source>Aucune compétence</source>
+        <target state="translated">Ninguna competencia</target>
+      </trans-unit>
+      <trans-unit id="training.home.skills-empty-filtered" datatype="html">
+        <source>Aucune compétence dans cette catégorie.</source>
+        <target state="translated">Ninguna competencia en esta categoría.</target>
+      </trans-unit>
+      <trans-unit id="training.home.enrollments-empty-title" datatype="html">
+        <source>Aucune inscription</source>
+        <target state="translated">Ninguna inscripción</target>
+      </trans-unit>
+      <trans-unit id="training.home.enrollments-empty-hint" datatype="html">
+        <source>Inscrivez-vous à un parcours pour suivre votre progression et obtenir son certificat.</source>
+        <target state="translated">Inscríbase en un itinerario para seguir su progreso y obtener su certificado.</target>
+      </trans-unit>
       <trans-unit id="complaint-nlp.input.placeholder" datatype="html">
         <source>Produit cassé à la réception
 Livraison en retard

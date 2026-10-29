@@ -1,10 +1,8 @@
 <section class="training-home">
-  <header class="head">
-    <div>
-      <h1 i18n="@@training.home.title">Formation & Compétences</h1>
-      <p i18n="@@training.home.subtitle">Parcours, compétences, matrice utilisateur.</p>
-    </div>
-  </header>
+  <qos-page-header
+    title="Formation & Compétences" i18n-title="@@training.home.title"
+    subtitle="Parcours, compétences, matrice utilisateur." i18n-subtitle="@@training.home.subtitle">
+  </qos-page-header>
 
   <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
 
@@ -60,6 +58,18 @@
           (keydown.enter)="openPath(row)" (keydown.space)="$event.preventDefault(); openPath(row)"
           tabindex="0" role="button" [attr.aria-label]="row.name | openLabel"></tr>
             </table>
+            <div class="qos-empty" role="status" *ngIf="(paths$ | async)?.length === 0">
+              <span class="qos-empty__icon"><mat-icon aria-hidden="true">route</mat-icon></span>
+              <span class="qos-empty__title" i18n="@@training.home.paths-empty-title">Aucun parcours</span>
+              <span class="qos-empty__hint" *ngIf="pathStatusFilter.value" i18n="@@training.home.paths-empty-filtered">Aucun parcours ne porte ce statut.</span>
+              <div class="qos-empty__cta empty-actions">
+                <button *ngIf="pathStatusFilter.value" mat-stroked-button type="button" (click)="pathStatusFilter.setValue('')"
+                        i18n="@@common.reset-filters">Réinitialiser les filtres</button>
+                <button mat-flat-button color="primary" type="button" (click)="openPathCreate()">
+                  <mat-icon>add</mat-icon> <span i18n="@@training.home.new-path">Nouveau parcours</span>
+                </button>
+              </div>
+            </div>
             <mat-paginator
               [length]="pathTotal" [pageIndex]="pathIndex" [pageSize]="pathSize"
               [pageSizeOptions]="pageSizeOptions" (page)="onPathPage($event)"
@@ -107,6 +117,18 @@
               <tr mat-header-row *matHeaderRowDef="skillColumns"></tr>
               <tr mat-row *matRowDef="let row; columns: skillColumns"></tr>
             </table>
+            <div class="qos-empty" role="status" *ngIf="(skills$ | async)?.length === 0">
+              <span class="qos-empty__icon"><mat-icon aria-hidden="true">psychology</mat-icon></span>
+              <span class="qos-empty__title" i18n="@@training.home.skills-empty-title">Aucune compétence</span>
+              <span class="qos-empty__hint" *ngIf="skillCategoryFilter.value" i18n="@@training.home.skills-empty-filtered">Aucune compétence dans cette catégorie.</span>
+              <div class="qos-empty__cta empty-actions">
+                <button *ngIf="skillCategoryFilter.value" mat-stroked-button type="button" (click)="skillCategoryFilter.setValue('')"
+                        i18n="@@common.reset-filters">Réinitialiser les filtres</button>
+                <button mat-flat-button color="primary" type="button" (click)="openSkillCreate()">
+                  <mat-icon>add</mat-icon> <span i18n="@@training.home.new-skill">Nouvelle compétence</span>
+                </button>
+              </div>
+            </div>
             <mat-paginator
               [length]="skillTotal" [pageIndex]="skillIndex" [pageSize]="skillSize"
               [pageSizeOptions]="pageSizeOptions" (page)="onSkillPage($event)"
@@ -148,7 +170,7 @@
               </ng-container>
               <ng-container matColumnDef="enrolledOn">
                 <th mat-header-cell *matHeaderCellDef i18n="@@training.home.col-enrolled-on">Inscrit le</th>
-                <td mat-cell *matCellDef="let e">{{ e.enrolledOn }}</td>
+                <td mat-cell *matCellDef="let e">{{ e.enrolledOn | date:'mediumDate' }}</td>
               </ng-container>
               <ng-container matColumnDef="finalScore">
                 <th mat-header-cell *matHeaderCellDef i18n="@@training.home.col-final-score">Score final</th>
@@ -176,6 +198,14 @@
               <tr mat-header-row *matHeaderRowDef="enrollColumns"></tr>
               <tr mat-row *matRowDef="let row; columns: enrollColumns"></tr>
             </table>
+            <div class="qos-empty" role="status" *ngIf="(enrollments$ | async)?.length === 0">
+              <span class="qos-empty__icon"><mat-icon aria-hidden="true">school</mat-icon></span>
+              <span class="qos-empty__title" i18n="@@training.home.enrollments-empty-title">Aucune inscription</span>
+              <span class="qos-empty__hint" i18n="@@training.home.enrollments-empty-hint">Inscrivez-vous à un parcours pour suivre votre progression et obtenir son certificat.</span>
+              <button class="qos-empty__cta" mat-flat-button color="primary" type="button" (click)="openEnroll()">
+                <mat-icon>school</mat-icon> <span i18n="@@training.home.enroll">S'inscrire à un parcours</span>
+              </button>
+            </div>
             <mat-paginator
               [length]="enrollTotal" [pageIndex]="enrollIndex" [pageSize]="enrollSize"
               [pageSizeOptions]="pageSizeOptions" (page)="onEnrollPage($event)"
