@@ -10514,9 +10514,9 @@ Customer portal</target>
         <source>Une action ne peut pas être prévue avant sa date de création.</source>
         <target state="translated">An action cannot be planned before its creation date.</target>
       </trans-unit>
-      <trans-unit id="dmaic.res.claim" datatype="html">
-        <source>Réclamation</source>
-        <target state="translated">Claim</target>
+      <trans-unit id="dmaic.res.header-title" datatype="html">
+        <source>DMAIC Résolution de problème</source>
+        <target state="translated">DMAIC problem solving</target>
       </trans-unit>
       <trans-unit id="dmaic.res.client" datatype="html">
         <source>Client ou projet</source>

@@ -141,6 +141,25 @@ describe('DmaicResolutionComponent', () => {
     expect(un('choix-CTL-04-NA')?.textContent).toContain('Sans objet');
   });
 
+  it('dispose l\'en-tête comme le gabarit, et les actions juste au-dessus des phases', async () => {
+    await setup();
+    const el = fixture.nativeElement as HTMLElement;
+    const [gauche, droite] = Array.from(el.querySelectorAll('.entete__col'));
+    expect(gauche.querySelector('[data-test="client"]')).not.toBeNull();
+    expect(gauche.querySelector('[data-test="owner"]')).not.toBeNull();
+    expect(gauche.querySelector('.equipe')).not.toBeNull();
+    expect(droite.querySelector('[data-test="claim"]')).not.toBeNull();
+    expect(droite.querySelector('[data-test="opened"]')).not.toBeNull();
+    expect(droite.querySelector('[data-test="closed"]')).not.toBeNull();
+    expect(el.querySelector('.entete__qualif [data-test="failure"]')).not.toBeNull();
+
+    const actions = el.querySelectorAll('.actions');
+    expect(actions.length).toBe(1);
+    const stepper = el.querySelector('.phase-stepper') as HTMLElement;
+    expect(actions[0].compareDocumentPosition(stepper) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(el.querySelector('.entete')!.compareDocumentPosition(actions[0]) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
   it('range « Définir » en rubriques, les questions sans rubrique à la fin', async () => {
     await setup();
     const groupes = component.groupsOf('DEFINE');

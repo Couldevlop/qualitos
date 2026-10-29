@@ -1,3 +1,8 @@
+<!-- Une seule place à la fois : au-dessus des phases quand la fiche est là, en tête
+     sinon, pour que le projet reste pilotable même si la fiche ne se charge pas. -->
+<ng-template #actions><div class="actions"><ng-content select="[qosActions]"></ng-content></div></ng-template>
+<ng-container *ngIf="!sheet || failed" [ngTemplateOutlet]="actions"></ng-container>
+
 <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
 
 <p class="echec" *ngIf="failed" role="alert">
@@ -25,37 +30,64 @@
       <p class="res__hint" *ngIf="dirty" data-test="rapport-aide">{{ reportDirtyHint }}</p>
     </div>
 
-    <!-- ===== Réclamation ===== -->
-    <section class="bloc" id="res-claim" aria-labelledby="res-claim-t">
-      <header class="bloc__head">
-        <span class="bloc__letter" aria-hidden="true">#</span>
-        <div>
-          <h2 class="bloc__titre" id="res-claim-t" i18n="@@dmaic.res.claim">Réclamation</h2>
-          <p class="bloc__lead" *ngIf="sheet.problemStatement">{{ sheet.problemStatement }}</p>
-        </div>
+    <!-- ===== En-tête : la disposition du gabarit DMAIC, un bloc centré, l'identité
+         de la réclamation à gauche, son numéro et ses dates à droite ===== -->
+    <section class="bloc entete" id="res-claim" aria-labelledby="res-claim-t">
+      <header class="entete__head">
+        <h2 class="entete__titre" id="res-claim-t" i18n="@@dmaic.res.header-title">DMAIC Résolution de problème</h2>
+        <p class="bloc__lead" *ngIf="sheet.problemStatement">{{ sheet.problemStatement }}</p>
       </header>
 
-      <div class="champs champs--3">
-        <mat-form-field appearance="outline" subscriptSizing="dynamic">
-          <mat-label i18n="@@dmaic.res.client">Client ou projet</mat-label>
-          <input matInput [(ngModel)]="draft.clientName" [maxlength]="limits.short" [disabled]="!canEdit" data-test="client">
-        </mat-form-field>
-        <mat-form-field appearance="outline" subscriptSizing="dynamic">
-          <mat-label i18n="@@dmaic.res.claim-number">N° de réclamation</mat-label>
-          <input matInput [(ngModel)]="draft.claimNumber" [maxlength]="limits.claim" [disabled]="!canEdit" data-test="claim">
-        </mat-form-field>
-        <qos-user-picker label="Propriétaire du problème" i18n-label="@@dmaic.res.owner"
-                         [ngModel]="draft.problemOwner?.accountId ?? null" [disabled]="!canEdit"
-                         (userSelected)="onOwner($event)" data-test="owner"></qos-user-picker>
+      <div class="entete__grille">
+        <div class="entete__col">
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <mat-label i18n="@@dmaic.res.client">Client ou projet</mat-label>
+            <input matInput [(ngModel)]="draft.clientName" [maxlength]="limits.short" [disabled]="!canEdit" data-test="client">
+          </mat-form-field>
+          <qos-user-picker label="Propriétaire du problème" i18n-label="@@dmaic.res.owner"
+                           [ngModel]="draft.problemOwner?.accountId ?? null" [disabled]="!canEdit"
+                           (userSelected)="onOwner($event)" data-test="owner"></qos-user-picker>
 
-        <mat-form-field appearance="outline" subscriptSizing="dynamic">
-          <mat-label i18n="@@dmaic.res.opened-on">Date de création</mat-label>
-          <input matInput type="date" [(ngModel)]="draft.openedOn" [disabled]="!canEdit" data-test="opened">
-        </mat-form-field>
-        <mat-form-field appearance="outline" subscriptSizing="dynamic">
-          <mat-label i18n="@@dmaic.res.closed-on">Date de fermeture</mat-label>
-          <input matInput type="date" [(ngModel)]="draft.closedOn" [min]="draft.openedOn ?? ''" [disabled]="!canEdit" data-test="closed">
-        </mat-form-field>
+          <div class="equipe">
+            <h3 class="sous-titre">
+              <span i18n="@@dmaic.res.team">Membres de l'équipe</span>
+              <span class="dim">{{ draft.team.length }}/{{ limits.team }}</span>
+            </h3>
+            <ul class="equipe__liste" *ngIf="draft.team.length; else noTeam">
+              <li *ngFor="let m of draft.team" class="personne" data-test="team-member">
+                <mat-icon aria-hidden="true">person</mat-icon>
+                <span class="personne__nom">{{ m.name }}</span>
+                <button mat-icon-button type="button" *ngIf="canEdit" (click)="removeTeam(m.accountId)"
+                        i18n-aria-label="@@dmaic.res.team-remove" aria-label="Retirer de l'équipe">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </li>
+            </ul>
+            <ng-template #noTeam><p class="dim" i18n="@@dmaic.res.team-empty">Personne pour l'instant.</p></ng-template>
+            <qos-user-picker *ngIf="canEdit && draft.team.length < limits.team" class="equipe__ajout"
+                             label="Ajouter un membre" i18n-label="@@dmaic.res.team-add"
+                             [formControl]="teamPicker" [excludeIds]="teamIds"
+                             (userSelected)="addTeam($event)" data-test="team-picker"></qos-user-picker>
+          </div>
+        </div>
+
+        <div class="entete__col">
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <mat-label i18n="@@dmaic.res.claim-number">N° de réclamation</mat-label>
+            <input matInput [(ngModel)]="draft.claimNumber" [maxlength]="limits.claim" [disabled]="!canEdit" data-test="claim">
+          </mat-form-field>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <mat-label i18n="@@dmaic.res.opened-on">Date de création</mat-label>
+            <input matInput type="date" [(ngModel)]="draft.openedOn" [disabled]="!canEdit" data-test="opened">
+          </mat-form-field>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <mat-label i18n="@@dmaic.res.closed-on">Date de fermeture</mat-label>
+            <input matInput type="date" [(ngModel)]="draft.closedOn" [min]="draft.openedOn ?? ''" [disabled]="!canEdit" data-test="closed">
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="entete__qualif">
         <mat-form-field appearance="outline" subscriptSizing="dynamic">
           <mat-label i18n="@@dmaic.res.severity">Sévérité</mat-label>
           <mat-select [(ngModel)]="draft.severity" [disabled]="!canEdit" data-test="severity">
@@ -63,36 +95,13 @@
             <mat-option *ngFor="let s of severities" [value]="s.level">{{ s.level }} · {{ s.label }}</mat-option>
           </mat-select>
         </mat-form-field>
-      </div>
-
-      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="champ-large">
-        <mat-label i18n="@@dmaic.res.failure-type">Type de défaillance</mat-label>
-        <mat-select [(ngModel)]="draft.failureTypeCode" [disabled]="!canEdit" data-test="failure">
-          <mat-option [value]="null" i18n="@@dmaic.res.none">— Non renseignée —</mat-option>
-          <mat-option *ngFor="let f of failureTypes" [value]="f.code">{{ f.code }} · {{ f.label }}</mat-option>
-        </mat-select>
-      </mat-form-field>
-
-      <div class="equipe">
-        <h3 class="sous-titre">
-          <span i18n="@@dmaic.res.team">Membres de l'équipe</span>
-          <span class="dim">{{ draft.team.length }}/{{ limits.team }}</span>
-        </h3>
-        <ul class="equipe__liste" *ngIf="draft.team.length; else noTeam">
-          <li *ngFor="let m of draft.team" class="personne" data-test="team-member">
-            <mat-icon aria-hidden="true">person</mat-icon>
-            <span class="personne__nom">{{ m.name }}</span>
-            <button mat-icon-button type="button" *ngIf="canEdit" (click)="removeTeam(m.accountId)"
-                    i18n-aria-label="@@dmaic.res.team-remove" aria-label="Retirer de l'équipe">
-              <mat-icon>close</mat-icon>
-            </button>
-          </li>
-        </ul>
-        <ng-template #noTeam><p class="dim" i18n="@@dmaic.res.team-empty">Personne pour l'instant.</p></ng-template>
-        <qos-user-picker *ngIf="canEdit && draft.team.length < limits.team" class="equipe__ajout"
-                         label="Ajouter un membre" i18n-label="@@dmaic.res.team-add"
-                         [formControl]="teamPicker" [excludeIds]="teamIds"
-                         (userSelected)="addTeam($event)" data-test="team-picker"></qos-user-picker>
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label i18n="@@dmaic.res.failure-type">Type de défaillance</mat-label>
+          <mat-select [(ngModel)]="draft.failureTypeCode" [disabled]="!canEdit" data-test="failure">
+            <mat-option [value]="null" i18n="@@dmaic.res.none">— Non renseignée —</mat-option>
+            <mat-option *ngFor="let f of failureTypes" [value]="f.code">{{ f.code }} · {{ f.label }}</mat-option>
+          </mat-select>
+        </mat-form-field>
       </div>
 
       <mat-form-field appearance="outline" subscriptSizing="dynamic" class="champ-large">
@@ -101,6 +110,9 @@
                   [disabled]="!canEdit" data-test="symptoms"></textarea>
       </mat-form-field>
     </section>
+
+    <!-- Les actions du projet, juste au-dessus des phases : à portée sans remonter la page. -->
+    <ng-container *ngTemplateOutlet="actions"></ng-container>
 
     <!-- ===== Les phases, en ligne : on ouvre celles déjà atteintes ===== -->
     <ol class="phase-stepper" i18n-aria-label="@@dmaic.res.phases" aria-label="Phases du projet">

@@ -19,8 +19,14 @@
           </span>
         </div>
       </div>
+    </header>
 
-      <div class="toolbar">
+    <!-- L'en-tête de la réclamation, puis les actions et les phases en ligne, puis la phase ouverte (ADR 0101). -->
+    <qos-dmaic-resolution class="pilotage" [projectId]="p.id" [problemStatement]="p.problemStatement ?? null"
+                          [projectTitle]="p.title" [projectPhase]="p.status === 'COMPLETED' ? 'CONTROL' : p.phase"
+                          [spec]="{ lsl: p.specLowerLimit ?? null, usl: p.specUpperLimit ?? null }"
+                          (missingChange)="onMissing($event)">
+      <div class="toolbar" qosActions>
         <button mat-stroked-button (click)="openEdit(p)" i18n-matTooltip="@@common.edit" matTooltip="Modifier">
           <mat-icon>edit</mat-icon> <span i18n="@@common.edit">Modifier</span>
         </button>
@@ -44,13 +50,6 @@
           <mat-icon>delete</mat-icon> <span i18n="@@common.delete">Supprimer</span>
         </button>
       </div>
-    </header>
-
-    <!-- L'en-tête de la réclamation, puis les phases en ligne et la phase ouverte (ADR 0101). -->
-    <qos-dmaic-resolution class="pilotage" [projectId]="p.id" [problemStatement]="p.problemStatement ?? null"
-                          [projectTitle]="p.title" [projectPhase]="p.status === 'COMPLETED' ? 'CONTROL' : p.phase"
-                          [spec]="{ lsl: p.specLowerLimit ?? null, usl: p.specUpperLimit ?? null }"
-                          (missingChange)="onMissing($event)">
       <div qosCharter *ngIf="p.problemStatement || p.goalStatement">
         <mat-card *ngIf="p.problemStatement || p.goalStatement" class="charter-card">
           <mat-card-header><mat-card-title i18n="@@dmaic.detail.charter">Charter</mat-card-title></mat-card-header>
