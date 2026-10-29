@@ -155,6 +155,14 @@ export class SupplierNcListComponent implements OnInit, OnDestroy {
     }).afterClosed().subscribe(nc => { if (nc) this.refresh$.next(); });
   }
 
+  /** Ouvre la NC pour la modifier : tous ses champs, statut compris. */
+  edit(nc: NonConformityResponse): void {
+    this.dialog.open(SuppliersNcDialogComponent, {
+      data: { supplierId: nc.supplierId, nc }, autoFocus: 'first-tabbable', restoreFocus: true,
+      panelClass: 'qos-dialog-panel'
+    }).afterClosed().subscribe(saved => { if (saved) this.refresh$.next(); });
+  }
+
   setStatus(nc: NonConformityResponse, status: NonConformityStatus): void {
     if (status === nc.status) return;
     this.patch(nc, { status }, { status: nc.status });

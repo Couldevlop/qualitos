@@ -7,6 +7,17 @@
     subtitle="Regroupement par densité (TF-IDF + DBSCAN) pour révéler les patterns récurrents de NC.">
   </qos-page-header>
 
+  <nav class="onglets" role="tablist" i18n-aria-label="@@nccluster.tabs" aria-label="Registres de non-conformités">
+    <button type="button" role="tab" class="onglet" [class.onglet--actif]="scope === 'external'"
+            [attr.aria-selected]="scope === 'external'" (click)="setScope('external')" data-test="onglet-externes">
+      <span i18n="@@nccluster.tab-external">NC externes (fournisseurs)</span>
+    </button>
+    <button type="button" role="tab" class="onglet" [class.onglet--actif]="scope === 'internal'"
+            [attr.aria-selected]="scope === 'internal'" (click)="setScope('internal')" data-test="onglet-internes">
+      <span i18n="@@nccluster.tab-internal">NC internes</span>
+    </button>
+  </nav>
+
   <div class="nc-grid">
     <!-- Saisie -->
     <qos-panel i18n-title="@@nccluster.input-panel" title="Non-conformités" icon="report_problem" class="nc-input">
@@ -35,6 +46,12 @@
             <mat-icon>hub</mat-icon>
             <span *ngIf="!loading" i18n="@@nccluster.run">Regrouper</span>
             <span *ngIf="loading" i18n="@@nccluster.running">Regroupement…</span>
+          </button>
+          <button mat-stroked-button type="button" (click)="loadRegister()" [disabled]="loading || loadingRegister"
+                  data-test="charger-registre">
+            <mat-icon>download</mat-icon>
+            <span *ngIf="scope === 'external'" i18n="@@nccluster.load-external">Reprendre les NC fournisseurs</span>
+            <span *ngIf="scope === 'internal'" i18n="@@nccluster.load-internal">Reprendre les NC internes</span>
           </button>
           <button mat-button type="button" (click)="loadExample()" [disabled]="loading">
             <mat-icon>science</mat-icon> <span i18n="@@nccluster.example">Exemple</span>

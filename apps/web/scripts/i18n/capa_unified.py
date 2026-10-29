@@ -145,4 +145,5 @@ TRANSLATIONS = {
     'audits.detail.finding-capa-ref': (
         '{$audit} / constat {$rank}', '{$audit} / finding {$rank}', '{$audit} / hallazgo {$rank}',
         '{$audit} / الملاحظة {$rank}', '{$audit} / 所見 {$rank}', '{$audit} / 发现项 {$rank}'),
+    'capa.list.filter-criticity': ('Filtrer par criticité', 'Filter by criticality', 'Filtrar por criticidad', 'تصفية حسب الأهمية', '重要度で絞り込み', '按严重程度筛选'),
 }

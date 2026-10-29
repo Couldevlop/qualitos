@@ -24,8 +24,9 @@ public class CapaController {
     @GetMapping("/cases")
     public Page<CapaDto.CaseResponse> list(
             @RequestParam(required = false) CapaStatus status,
+            @RequestParam(required = false) CapaCriticity criticity,
             @PageableDefault(size = 20) Pageable pageable) {
-        return service.findAll(status, pageable);
+        return criticity == null ? service.findAll(status, pageable) : service.findAll(status, criticity, pageable);
     }
 
     @PostMapping("/cases")

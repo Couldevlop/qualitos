@@ -273,6 +273,25 @@ class SupplierServiceTest {
     }
 
     @Test
+    void addNc_canBeEnteredAlreadyClosedOrCanceled() {
+        when(supplierRepo.findById(SUP)).thenReturn(Optional.of(supplier()));
+        when(ncRepo.save(any())).thenAnswer(inv -> {
+            SupplierNonConformity nc = inv.getArgument(0);
+            nc.setId(CHILD); nc.setCreatedAt(Instant.now()); nc.setUpdatedAt(Instant.now()); return nc;
+        });
+        SupplierDto.NonConformityResponse closed = service.addNonConformity(SUP,
+                new SupplierDto.CreateNonConformityRequest(null, null, NonConformitySeverity.MINOR,
+                        LocalDate.parse("2026-05-01"), "PN-1", 1, null, null, NonConformityStatus.RESOLVED));
+        assertThat(closed.status()).isEqualTo(NonConformityStatus.RESOLVED);
+        assertThat(closed.resolvedOn()).isNotNull();
+        SupplierDto.NonConformityResponse canceled = service.addNonConformity(SUP,
+                new SupplierDto.CreateNonConformityRequest(null, null, NonConformitySeverity.MINOR,
+                        LocalDate.parse("2026-05-01"), "PN-1", 1, null, null, NonConformityStatus.REJECTED));
+        assertThat(canceled.status()).isEqualTo(NonConformityStatus.REJECTED);
+        assertThat(canceled.resolvedOn()).isNull();
+    }
+
+    @Test
     void updateNc_marksEightDReceivedAndKeepsOtherFields() {
         Supplier s = supplier();
         when(supplierRepo.findById(SUP)).thenReturn(Optional.of(s));

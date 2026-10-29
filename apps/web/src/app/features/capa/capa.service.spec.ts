@@ -289,6 +289,14 @@ describe('CapaService (API réelle)', () => {
     req.flush({ content: [], totalElements: 0, totalPages: 0, number: 0, size: 50 });
   });
 
+  it('transmet le filtre de criticité au serveur, et rien sans filtre', () => {
+    service.listCases(0, 50, undefined, 'CRITICAL').subscribe();
+    const req = http.expectOne(r => r.url === base);
+    expect(req.request.params.get('criticity')).toBe('CRITICAL');
+    expect(req.request.params.has('status')).toBeFalse();
+    req.flush({ content: [], totalElements: 0, totalPages: 0, number: 0, size: 50 });
+  });
+
   it('lit un cas par son identifiant', (done) => {
     service.getCase('c1').subscribe(c => {
       expect(c.id).toBe('c1');

@@ -10,6 +10,7 @@ import {
   ClosureBlocker,
   CapaEvidence,
   CapaPage,
+  CapaCriticity,
   CapaStatus,
   CreateCapaActionRequest,
   OpenCapaRequest,
@@ -41,12 +42,13 @@ export class CapaService {
 
   constructor(private readonly http: HttpClient) {}
 
-  listCases(page = 0, size = 50, status?: CapaStatus): Observable<CapaPage> {
+  listCases(page = 0, size = 50, status?: CapaStatus, criticity?: CapaCriticity): Observable<CapaPage> {
     if (environment.useMockApi) {
-      return of(this.mockPage(status)).pipe(delay(150));
+      return of(this.mockPage(status, criticity)).pipe(delay(150));
     }
     let params = new HttpParams().set('page', page).set('size', size);
     if (status) params = params.set('status', status);
+    if (criticity) params = params.set('criticity', criticity);
     return this.http.get<CapaPage>(this.endpoint, { params });
   }
 
@@ -407,8 +409,8 @@ export class CapaService {
     return this.http.patch<CapaCaseResponse>(`${this.endpoint}/${id}/${pathSegment}`, {});
   }
 
-  private mockPage(status?: CapaStatus): CapaPage {
-    const filtered = status ? this.mockStore.filter(c => c.status === status) : this.mockStore;
+  private mockPage(status?: CapaStatus, criticity?: CapaCriticity): CapaPage {
+    const filtered = this.mockStore.filter(c => (!status || c.status === status) && (!criticity || c.criticity === criticity));
     return {
       content: filtered, totalElements: filtered.length, totalPages: 1,
       number: 0, size: filtered.length

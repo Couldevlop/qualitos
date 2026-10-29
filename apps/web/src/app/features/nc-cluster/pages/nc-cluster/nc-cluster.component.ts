@@ -1,9 +1,21 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
+import { NcService } from '../../../nc/nc.service';
+import { SuppliersService } from '../../../suppliers/suppliers.service';
 import { NcClusterService } from '../../nc-cluster.service';
 import { NcCluster, NcClusterResponse } from '../../nc-cluster.types';
+
+/** Deux registres, deux fenêtres : les NC fournisseurs (externes) et les NC internes. */
+export type NcScope = 'external' | 'internal';
+
+/** NC lues du registre pour un regroupement : les plus récentes, une page serveur. */
+export const REGISTER_SIZE = 100;
+
+interface ScopeState { text: string; texts: string[]; result: NcClusterResponse | null; error: string | null; }
 
 /**
  * Clustering de non-conformités (§4.3, §12.1) : l'utilisateur colle une liste de NC (une par
@@ -34,12 +46,67 @@ export class NcClusterComponent {
     'Capteur de température défaillant chambre froide'
   ].join('\n');
 
+  scope: NcScope = 'external';
   loading = false;
+  loadingRegister = false;
   result: NcClusterResponse | null = null;
   error: string | null = null;
   private texts: string[] = [];
+  /** Ce que chaque fenêtre garde quand on passe à l'autre. */
+  private readonly saved: Partial<Record<NcScope, ScopeState>> = {};
 
-  constructor(private readonly fb: FormBuilder, private readonly nc: NcClusterService) {}
+  constructor(
+    private readonly fb: FormBuilder,
+    private readonly nc: NcClusterService,
+    private readonly suppliers: SuppliersService,
+    private readonly internal: NcService
+  ) {}
+
+  setScope(scope: NcScope): void {
+    if (scope === this.scope || this.loading) return;
+    this.saved[this.scope] = { text: this.form.value.textsText ?? '', texts: this.texts, result: this.result, error: this.error };
+    this.scope = scope;
+    const back = this.saved[scope];
+    this.form.patchValue({ textsText: back?.text ?? '' });
+    this.texts = back?.texts ?? [];
+    this.result = back?.result ?? null;
+    this.error = back?.error ?? null;
+  }
+
+  /** Reprend les NC du registre de la fenêtre : une par ligne, prêtes à regrouper. */
+  loadRegister(): void {
+    if (this.loadingRegister) return;
+    this.loadingRegister = true;
+    this.error = null;
+    const scope = this.scope;
+    this.registerTexts(scope).subscribe({
+      next: texts => {
+        this.loadingRegister = false;
+        if (scope !== this.scope) return;
+        if (!texts.length) {
+          this.error = $localize`:@@nccluster.register-empty:Le registre ne contient aucune non-conformité.`;
+          return;
+        }
+        this.form.patchValue({ textsText: texts.join('\n') });
+      },
+      error: () => {
+        this.loadingRegister = false;
+        if (scope === this.scope) {
+          this.error = $localize`:@@nccluster.register-error:Le registre ne se lit pas pour le moment.`;
+        }
+      }
+    });
+  }
+
+  private registerTexts(scope: NcScope): Observable<string[]> {
+    const line = (...parts: (string | null | undefined)[]) =>
+      parts.map(p => (p ?? '').replace(/\s+/g, ' ').trim()).filter(p => p.length > 0).join(' — ');
+    return scope === 'external'
+      ? this.suppliers.listAllNcs({}, 0, REGISTER_SIZE).pipe(
+          map(page => page.content.map(n => line(n.description, n.partNumber)).filter(t => t.length > 0)))
+      : this.internal.listNcs(0, REGISTER_SIZE).pipe(
+          map(page => page.content.map(n => line(n.title, n.description)).filter(t => t.length > 0)));
+  }
 
   loadExample(): void {
     this.form.patchValue({ textsText: this.example, threshold: 0.35, minSamples: 2 });

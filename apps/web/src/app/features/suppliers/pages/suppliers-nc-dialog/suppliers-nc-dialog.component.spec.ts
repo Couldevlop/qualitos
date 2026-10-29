@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormBuilder } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
@@ -18,7 +19,7 @@ describe('SuppliersNcDialogComponent', () => {
   let snack: jasmine.SpyObj<MatSnackBar>;
 
   beforeEach(async () => {
-    svc = jasmine.createSpyObj<SuppliersService>('SuppliersService', ['addNc']);
+    svc = jasmine.createSpyObj<SuppliersService>('SuppliersService', ['addNc', 'updateNc']);
     ref = jasmine.createSpyObj('MatDialogRef', ['close']);
     snack = jasmine.createSpyObj<MatSnackBar>('MatSnackBar', ['open']);
     await TestBed.configureTestingModule({
@@ -68,11 +69,43 @@ describe('SuppliersNcDialogComponent', () => {
     component.submit();
 
     expect(svc.addNc).toHaveBeenCalledWith('s-1', {
-      detectedOn: '2026-10-20', severity: 'CRITICAL', partNumber: 'PN-7781-A', partQuantity: 40,
+      status: 'OPEN', detectedOn: '2026-10-20', severity: 'CRITICAL', partNumber: 'PN-7781-A', partQuantity: 40,
       eightDRequested: true, eightDReceived: false, lotReference: 'L-12', description: undefined
     });
     expect(ref.close).toHaveBeenCalledWith(created);
     expect(component.submitting).toBeFalse();
+  });
+
+  it('se saisit ouverte par défaut, ou déjà clôturée ou annulée', () => {
+    expect(component.form.controls.status.value).toBe('OPEN');
+    expect(component.statuses.map(st => st.value)).toEqual(['OPEN', 'RESOLVED', 'REJECTED']);
+    expect(component.editing).toBeFalse();
+    svc.addNc.and.returnValue(of({ id: 'n-2' } as NonConformityResponse));
+    fill({ status: 'REJECTED' });
+    component.submit();
+    expect(svc.addNc.calls.mostRecent().args[1].status).toBe('REJECTED');
+  });
+
+  it('ouvre une NC existante pour la modifier, champs vidés compris', () => {
+    const nc = {
+      id: 'n-7', supplierId: 's-1', status: 'IN_REVIEW', detectedOn: '2026-10-01', severity: 'MINOR',
+      partNumber: 'PN-1', partQuantity: 3, lotReference: 'L-1', description: 'Rayure',
+      eightDRequested: true, eightDReceived: false
+    } as NonConformityResponse;
+    const edit = new SuppliersNcDialogComponent(TestBed.inject(FormBuilder), svc, snack, ref, { supplierId: 's-1', nc });
+    expect(edit.editing).toBeTrue();
+    expect(edit.form.getRawValue()).toEqual(jasmine.objectContaining({
+      status: 'IN_REVIEW', partNumber: 'PN-1', partQuantity: 3, lotReference: 'L-1', eightDRequested: true
+    }));
+    expect(edit.statuses.map(st => st.value)).toEqual(['OPEN', 'IN_REVIEW', 'RESOLVED', 'REJECTED']);
+    svc.updateNc.and.returnValue(of(nc));
+    edit.form.patchValue({ status: 'RESOLVED', description: '  ' });
+    edit.submit();
+    expect(svc.updateNc).toHaveBeenCalledWith('s-1', 'n-7', jasmine.objectContaining({
+      status: 'RESOLVED', description: '', lotReference: 'L-1', partNumber: 'PN-1'
+    }));
+    expect(svc.addNc).not.toHaveBeenCalled();
+    expect(ref.close).toHaveBeenCalledWith(nc);
   });
 
   it('reste ouverte et prévient si l\'enregistrement échoue', () => {

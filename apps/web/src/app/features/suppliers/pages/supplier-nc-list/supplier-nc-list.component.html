@@ -137,7 +137,12 @@
 
         <ng-container matColumnDef="report">
           <th mat-header-cell *matHeaderCellDef i18n="@@suppliers.nc-list.col-report">Rapport</th>
-          <td mat-cell *matCellDef="let nc">
+          <td mat-cell *matCellDef="let nc" class="row-actions">
+            <button mat-icon-button type="button" (click)="edit(nc)" data-test="modifier-nc"
+                    i18n-aria-label="@@suppliers.nc.edit-aria" aria-label="Modifier la non-conformité"
+                    i18n-matTooltip="@@common.edit" matTooltip="Modifier">
+              <mat-icon aria-hidden="true">edit</mat-icon>
+            </button>
             <button mat-stroked-button type="button" class="report-btn" (click)="downloadReport(nc)" data-test="rapport-nc"
                     i18n-aria-label="@@suppliers.nc.report-aria" aria-label="Télécharger la fiche NC en PDF">
               <mat-icon aria-hidden="true">picture_as_pdf</mat-icon> <span i18n="@@suppliers.nc-list.report">Fiche PDF</span>

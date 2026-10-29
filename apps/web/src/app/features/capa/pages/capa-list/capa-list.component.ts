@@ -37,6 +37,8 @@ export class CapaListComponent implements OnInit {
   private readonly names = new AccountNames(this.directory);
   readonly statusFilter = new FormControl<CapaStatus | ''>('');
   readonly statuses: CapaStatus[] = ['OPEN', 'IN_PROGRESS', 'RESOLVED', 'CLOSED', 'REJECTED'];
+  readonly criticityFilter = new FormControl<CapaCriticity | ''>('');
+  readonly criticities: CapaCriticity[] = ['CRITICAL', 'HIGH', 'MEDIUM', 'LOW'];
 
   readonly pageSizeOptions = PAGE_SIZE_OPTIONS;
   pageIndex = 0;
@@ -65,12 +67,13 @@ export class CapaListComponent implements OnInit {
     this.openCreateFromLink();
     this.cases$ = combineLatest([
       this.statusFilter.valueChanges.pipe(startWith(this.statusFilter.value)),
+      this.criticityFilter.valueChanges.pipe(startWith(this.criticityFilter.value)),
       this.page$,
       this.refresh$
     ]).pipe(
       tap(() => { this.errorState$.next(null); this.loadingState$.next(true); }),
-      switchMap(([status, p]) =>
-        this.svc.listCases(p.index, p.size, status || undefined).pipe(
+      switchMap(([status, criticity, p]) =>
+        this.svc.listCases(p.index, p.size, status || undefined, criticity || undefined).pipe(
           catchError(err => {
             // eslint-disable-next-line no-console
             console.warn('[capa-list] listCases failed', err?.status, err?.error?.title);

@@ -209,7 +209,9 @@ public class SupplierService {
         nc.setPartQuantity(req.partQuantity());
         nc.setEightDRequested(Boolean.TRUE.equals(req.eightDRequested()));
         nc.setEightDReceived(Boolean.TRUE.equals(req.eightDReceived()));
-        nc.setStatus(NonConformityStatus.OPEN);
+        NonConformityStatus status = req.status() == null ? NonConformityStatus.OPEN : req.status();
+        nc.setStatus(status);
+        if (status == NonConformityStatus.RESOLVED) nc.setResolvedOn(LocalDate.now(clock));
         SupplierNonConformity saved = ncRepo.save(nc);
         scoringService.recompute(s);
         return toResponse(saved, s, 0);
