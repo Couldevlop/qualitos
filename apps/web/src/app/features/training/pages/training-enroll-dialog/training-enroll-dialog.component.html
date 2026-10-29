@@ -10,9 +10,9 @@
   <mat-form-field appearance="outline" class="full">
     <mat-label i18n="@@training.enroll-dialog.status-filter">Filtre statut</mat-label>
     <mat-select [formControl]="statusFilter">
-      <mat-option [value]="'DRAFT'">DRAFT</mat-option>
-      <mat-option [value]="'ACTIVE'">ACTIVE</mat-option>
-      <mat-option [value]="'ARCHIVED'">ARCHIVED</mat-option>
+      <mat-option [value]="'DRAFT'">{{ 'DRAFT' | statusLabel }}</mat-option>
+      <mat-option [value]="'ACTIVE'">{{ 'ACTIVE' | statusLabel }}</mat-option>
+      <mat-option [value]="'ARCHIVED'">{{ 'ARCHIVED' | statusLabel }}</mat-option>
     </mat-select>
   </mat-form-field>
 

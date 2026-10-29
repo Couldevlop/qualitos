@@ -38,23 +38,25 @@
         <h2 id="home-kpis-title" i18n="@@home.kpis.title">Indicateurs clés</h2>
         <p i18n="@@home.kpis.subtitle">Vue d’ensemble — détail dans le tableau de bord.</p>
       </div>
-      <span class="home-section__note" i18n="@@home.kpi.illustrative">Valeurs indicatives</span>
     </header>
 
-    <div class="home-stats">
-      <article class="qos-stat" *ngFor="let s of stats; trackBy: trackByLabel">
+    <div class="home-stats" *ngIf="stats$ | async as stats; else statsLoading">
+      <a class="qos-stat home-stat" *ngFor="let s of stats; trackBy: trackByLabel"
+         [routerLink]="s.route">
         <span class="qos-stat__icon" [attr.data-tone]="s.tone">
-          <mat-icon>{{ s.icon }}</mat-icon>
+          <mat-icon aria-hidden="true">{{ s.icon }}</mat-icon>
         </span>
-        <span class="qos-stat__value">{{ s.value }}</span>
+        <span class="qos-stat__value">{{ s.value ?? '—' }}</span>
         <span class="qos-stat__label">{{ s.label }}</span>
-        <span class="qos-stat__trend" *ngIf="s.trend"
-              [class.qos-stat__trend--down]="s.trend.dir === 'down'">
-          <mat-icon aria-hidden="true">{{ s.trend.dir === 'up' ? 'trending_up' : 'trending_down' }}</mat-icon>
-          {{ s.trend.label }}
-        </span>
-      </article>
+        <span class="home-stat__hint" *ngIf="s.hint">{{ s.hint }}</span>
+        <span class="home-stat__hint" *ngIf="s.value === null && !s.hint"
+              i18n="@@home.kpi.unavailable">Indisponible — ouvrir le module</span>
+      </a>
     </div>
+    <ng-template #statsLoading>
+      <mat-progress-bar mode="indeterminate"
+                        aria-label="Chargement" i18n-aria-label="@@common.loading-aria"></mat-progress-bar>
+    </ng-template>
   </section>
 
   <!-- Les 5 méthodes — cartes cliquables. -->

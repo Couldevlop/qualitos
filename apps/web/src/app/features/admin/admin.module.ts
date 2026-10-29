@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { MatMenuModule } from '@angular/material/menu';
 import { RouterModule, Routes } from '@angular/router';
 
+import { roleGuard } from '../../core/auth/role.guard';
 import { SharedModule } from '../../shared/shared.module';
 import { UiModule } from '../../shared/ui/ui.module';
 import { UserPickerModule } from '../../shared/user-picker/user-picker.module';
@@ -52,7 +53,7 @@ const routes: Routes = [
   // La licence d'une installation on-premise (ADR 0082).
   { path: 'licence', component: LicenseComponent },
   // Les clients de la plateforme et leur création (éditeur, ADR 0079).
-  { path: 'clients', component: ClientsComponent },
+  { path: 'clients', component: ClientsComponent, canActivate: [roleGuard], data: { roles: ['SUPER_ADMIN'] } },
   // Les autres surfaces d'administration sont des modules paresseux distincts,
   // déclarés ICI plutôt qu'à la racine : sans cela, la route `admin` de
   // app-routing.module.ts capterait `/admin/api-keys` par correspondance de préfixe

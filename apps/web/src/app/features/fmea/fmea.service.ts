@@ -36,7 +36,7 @@ import {
  * `FmeaProject.SEUIL_RPN_PAR_DEFAUT` côté serveur : si les deux divergent, le
  * mode démonstration ment sur ce que fera la vraie API.
  */
-const SEUIL_RPN_PAR_DEFAUT = 200;
+export const SEUIL_RPN_PAR_DEFAUT = 200;
 
 @Injectable({ providedIn: 'root' })
 export class FmeaService {

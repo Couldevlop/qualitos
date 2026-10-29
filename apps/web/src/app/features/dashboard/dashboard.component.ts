@@ -4,7 +4,9 @@ import { BehaviorSubject, Observable, Subject, combineLatest, of } from 'rxjs';
 import { catchError, map, shareReplay, take, takeUntil } from 'rxjs/operators';
 import type { EChartsCoreOption } from 'echarts/core';
 
+import { ThemeService } from '../../core/theme/theme.service';
 import { EchartPointSelection } from '../../shared/ui/echart/echart.component';
+import { ncCategoryLabel, severityLabel } from '../../shared/ui/severity-label/severity-labels';
 import { DashboardService } from './dashboard.service';
 import {
   AiPrediction, AlignmentBar, ComplianceHeatCell, DefectByCategory,
@@ -46,6 +48,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   };
 
   kpis$!: Observable<KpiCard[]>;
+  /** Horodatage réel de l'agrégat (remplace un « il y a 2 min » écrit en dur). */
+  generatedAt$!: Observable<string | null>;
+  /** La courbe de tendance a-t-elle au moins un point mesuré ? */
+  trendHasData$!: Observable<boolean>;
   alignments$!: Observable<AlignmentBar[]>;
   topRisks$!: Observable<TopRisk[]>;
   predictions$!: Observable<AiPrediction[]>;
@@ -67,17 +73,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
   /** Date sélectionnée pour le time-travel (format <input type=date>). */
   timeTravelDate = '';
 
-  readonly periods = ['7 jours', '30 jours', '90 jours', '12 mois'];
-  selectedPeriod = '30 jours';
-
   private defects: DefectByCategory[] = [];
+  /** Libellé affiché d'une catégorie du Pareto → code de la catégorie (cross-filter). */
+  private paretoCodes = new Map<string, string>();
   private readonly destroy$ = new Subject<void>();
 
   constructor(
     private readonly svc: DashboardService,
     private readonly crossFilter: CrossFilterService,
     private readonly timeTravel: TimeTravelService,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly theme: ThemeService
   ) {}
 
   // ---- Actions de l'en-tête (boutons auparavant inertes) --------------------
@@ -92,7 +98,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
    */
   exportKpisCsv(): void {
     this.kpis$.pipe(take(1)).subscribe(kpis => {
-      const header = ['Indicateur', 'Valeur', 'Unité', 'Cible', 'Variation', 'État'];
+      const header = [
+        $localize`:@@dashboard.csv.indicator:Indicateur`,
+        $localize`:@@dashboard.csv.value:Valeur`,
+        $localize`:@@dashboard.csv.unit:Unité`,
+        $localize`:@@dashboard.csv.target:Cible`,
+        $localize`:@@dashboard.csv.trend:Variation`,
+        $localize`:@@dashboard.csv.state:État`
+      ];
       const rows = kpis.map(k => [
         k.label, String(k.value), k.unit ?? '', k.target ?? '', k.trend ?? '', k.state
       ]);
@@ -131,6 +144,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.svc.refresh();
 
     this.kpis$        = this.svc.getExecutiveKpis().pipe(shareReplay(1));
+    this.generatedAt$ = this.svc.getGeneratedAt().pipe(shareReplay(1));
     this.alignments$  = this.svc.getAlignmentBars().pipe(shareReplay(1));
     this.topRisks$    = this.svc.getTopRisks().pipe(shareReplay(1));
     this.predictions$ = this.svc.getAiPredictions().pipe(shareReplay(1));
@@ -149,14 +163,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     defects$.pipe(takeUntil(this.destroy$)).subscribe(d => (this.defects = d));
 
-    // Les options réagissent au filtre courant (surbrillance / atténuation).
-    this.trendOption$ = trend$.pipe(map(p => this.toTrendOption(p)));
+    // Les options réagissent au filtre courant (surbrillance / atténuation) et au
+    // thème : les couleurs propres à la page sont relues dans les tokens.
+    const mode$ = this.theme.mode();
+    this.trendHasData$ = trend$.pipe(map(p => p.length > 0));
+    this.trendOption$ = combineLatest([trend$, mode$]).pipe(map(([p]) => this.toTrendOption(p)));
 
-    this.paretoOption$ = combineLatest([defects$, this.crossFilter.filter$]).pipe(
+    this.paretoOption$ = combineLatest([defects$, this.crossFilter.filter$, mode$]).pipe(
       map(([d, f]) => this.toParetoOption(d, f))
     );
 
-    this.heatmapOption$ = heat$.pipe(map(h => this.toHeatmapOption(h)));
+    this.heatmapOption$ = combineLatest([heat$, mode$]).pipe(map(([h]) => this.toHeatmapOption(h)));
 
     this.drilldown$ = this.crossFilter.filter$.pipe(
       map(f => (f ? this.svc.getDefectSubcategoriesSync(f.value) : null))
@@ -177,9 +194,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   /** Clic sur une barre/segment du Pareto → applique le cross-filter. */
   onParetoSelect(sel: EchartPointSelection): void {
     if (!sel.category) return;
+    // L'axe porte le libellé traduit ; le filtre, lui, garde le code de la catégorie.
     this.crossFilter.apply({
       dimension: DashboardComponent.DIM_CATEGORY,
-      value: sel.category,
+      value: this.paretoCodes.get(sel.category) ?? sel.category,
       label: sel.category
     });
   }
@@ -237,6 +255,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return 'danger';
   }
 
+  /** Nombre de normes réellement adoptées, lu dans l'agrégat (et non écrit en dur). */
+  normsTrackedLabel(count: number): string {
+    return $localize`:@@dashboard.exec.norms-tracked-count:Normes suivies : ${count}:count:`;
+  }
+
+  /** Libellé traduit d'une gravité (« Critique »), jamais le code en capitales. */
+  severityText(s: TopRisk['severity']): string {
+    return severityLabel(s.toUpperCase());
+  }
+
   severityTone(s: TopRisk['severity']): 'danger' | 'warn' | 'neutral' {
     if (s === 'critical') return 'danger';
     if (s === 'high')     return 'warn';
@@ -256,34 +284,46 @@ export class DashboardComponent implements OnInit, OnDestroy {
    * Options ECharts.
    * ============================================================ */
 
+  /** Valeur d'un token du design system, relue au moment de construire l'option. */
+  private token(name: string): string {
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  }
+
+  /**
+   * Bornes de l'axe des pourcentages : un pas rond (5, 10 ou 20) et un minimum
+   * multiple de ce pas. Un minimum fixé à 85 donnait des graduations
+   * irrégulières (100, 99, 96, 93…).
+   */
+  static percentAxis(values: number[]): { min: number; max: number; interval: number } {
+    const lowest = values.length ? Math.max(0, Math.min(...values, 100)) : 0;
+    const span = 100 - lowest;
+    const interval = span <= 20 ? 5 : span <= 50 ? 10 : 20;
+    const min = Math.max(0, Math.floor((lowest - 1) / interval) * interval);
+    return { min: Math.min(min, 100 - interval), max: 100, interval };
+  }
+
   private toTrendOption(points: QualityTrendPoint[]): EChartsCoreOption {
+    const axis = DashboardComponent.percentAxis(points.flatMap(p => [p.value, p.target]));
     return {
       tooltip: { trigger: 'axis' },
-      legend: { right: 0, top: 0, icon: 'circle', textStyle: { fontSize: 11 } },
+      legend: { bottom: 0, icon: 'circle', textStyle: { fontSize: 11 } },
+      grid: { top: 16, bottom: 48, left: 8, right: 16, containLabel: true },
       xAxis: { type: 'category', boundaryGap: false, data: points.map(p => p.month) },
-      yAxis: { type: 'value', min: 85, max: 100, axisLabel: { formatter: '{value} %' } },
+      yAxis: { type: 'value', ...axis, axisLabel: { formatter: '{value} %' } },
       series: [
         {
-          name: 'Qualité globale',
+          name: $localize`:@@dashboard.chart.overall-quality:Qualité globale`,
           type: 'line',
           smooth: true,
           symbol: 'circle',
           symbolSize: 6,
           lineStyle: { width: 2.5 },
-          areaStyle: {
-            opacity: 0.12,
-            color: {
-              type: 'linear', x: 0, y: 0, x2: 0, y2: 1,
-              colorStops: [
-                { offset: 0, color: 'rgba(37, 99, 235, 0.36)' },
-                { offset: 1, color: 'rgba(37, 99, 235, 0)' }
-              ]
-            }
-          },
+          // Sans couleur imposée, l'aire reprend celle de la série (token du thème).
+          areaStyle: { opacity: 0.12 },
           data: points.map(p => p.value)
         },
         {
-          name: 'Cible',
+          name: $localize`:@@dashboard.chart.target:Cible`,
           type: 'line',
           smooth: true,
           symbol: 'none',
@@ -295,6 +335,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   private toParetoOption(defects: DefectByCategory[], filter: CrossFilter | null): EChartsCoreOption {
+    const labels = defects.map(d => ncCategoryLabel(d.category));
+    this.paretoCodes = new Map(labels.map((label, i) => [label, defects[i].category]));
     const total = defects.reduce((s, d) => s + d.count, 0) || 1;
     let acc = 0;
     const cumulative = defects.map(d => {
@@ -311,35 +353,46 @@ export class DashboardComponent implements OnInit, OnDestroy {
         itemStyle: { opacity: dimmed ? 0.3 : 1 }
       };
     });
+    const defectsName = $localize`:@@dashboard.chart.defects:Défauts`;
     return {
       tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
-      legend: { right: 0, top: 0, icon: 'circle', textStyle: { fontSize: 11 } },
-      xAxis: { type: 'category', data: defects.map(d => d.category) },
+      // Légende sous le graphique : en haut à droite, elle chevauchait le titre
+      // de l'axe « Cumul % ».
+      legend: { bottom: 0, icon: 'circle', textStyle: { fontSize: 11 } },
+      grid: { top: 40, bottom: 48, left: 8, right: 8, containLabel: true },
+      // `interval: 0` : chaque catégorie garde son libellé (2 sur 5 disparaissaient),
+      // tronqué au besoin plutôt que masqué.
+      xAxis: {
+        type: 'category', data: labels,
+        axisLabel: { interval: 0, width: 72, overflow: 'truncate', hideOverlap: false }
+      },
       yAxis: [
-        { type: 'value', name: 'Défauts', position: 'left' },
+        { type: 'value', name: defectsName, position: 'left', minInterval: 1 },
         {
-          type: 'value', name: 'Cumul %', position: 'right',
-          min: 0, max: 100, axisLabel: { formatter: '{value} %' }
+          type: 'value', name: $localize`:@@dashboard.chart.cumulative-pct:Cumul %`, position: 'right',
+          min: 0, max: 100, interval: 20, axisLabel: { formatter: '{value} %' }
         }
       ],
       series: [
         {
-          name: 'Défauts', type: 'bar',
+          name: defectsName, type: 'bar',
           data: barData,
           itemStyle: { borderRadius: [6, 6, 0, 0] },
           barWidth: 28,
           cursor: 'pointer'
         },
         {
-          name: 'Cumul', type: 'line', yAxisIndex: 1,
+          name: $localize`:@@dashboard.chart.cumulative:Cumul`, type: 'line', yAxisIndex: 1,
           smooth: true, symbol: 'circle', symbolSize: 6,
           lineStyle: { width: 2 },
           data: cumulative,
           markLine: {
             silent: true,
             symbol: 'none',
-            lineStyle: { type: 'dashed', color: 'rgba(245, 158, 11, 0.6)' },
-            data: [{ yAxis: 80, label: { formatter: '80 %' } }]
+            lineStyle: { type: 'dashed', color: this.token('--qos-chart-3'), opacity: 0.7 },
+            // Libellé posé au début de la ligne, dans le graphique : à son bout, il
+            // recouvrait la graduation « 80 % » de l'axe de droite.
+            data: [{ yAxis: 80, label: { formatter: '80 %', position: 'insideStartTop' } }]
           }
         }
       ]
@@ -372,7 +425,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       visualMap: {
         min: 0, max: 100, calculable: false, orient: 'horizontal',
         left: 'center', bottom: 0, itemHeight: 100, itemWidth: 10,
-        inRange: { color: ['#fee2e2', '#fde68a', '#bbf7d0', '#10b981'] },
+        inRange: { color: [this.token('--qos-chart-4'), this.token('--qos-chart-3'), this.token('--qos-chart-2')] },
         textStyle: { fontSize: 10 }
       },
       series: [{
@@ -380,7 +433,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         data,
         label: { show: true, formatter: (p: { value: number[] }) => p.value[2] + '%', fontSize: 10 },
         itemStyle: { borderRadius: 4, borderWidth: 1, borderColor: 'transparent' },
-        emphasis: { itemStyle: { borderColor: 'rgba(0,0,0,0.2)' } }
+        emphasis: { itemStyle: { borderColor: this.token('--qos-border-strong') } }
       }]
     };
   }

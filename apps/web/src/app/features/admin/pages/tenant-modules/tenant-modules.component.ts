@@ -36,6 +36,8 @@ interface SummaryTile {
 export class TenantModulesComponent implements OnInit {
 
   readonly displayedColumns = ['module', 'category', 'status', 'tier', 'validity', 'actions'];
+  /** Paliers proposés au sélecteur, dans l'ordre croissant. */
+  readonly billingTiers: readonly BillingTier[] = TIER_ORDER;
 
   rows$!: Observable<ModuleRow[]>;
   summary$!: Observable<TenantModuleSummary | null>;

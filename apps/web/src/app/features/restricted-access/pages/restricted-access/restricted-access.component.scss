@@ -1,0 +1,24 @@
+.restricted {
+  display: flex;
+  justify-content: center;
+  padding-top: var(--qos-space-12);
+}
+
+.restricted__box { max-width: 560px; }
+
+.restricted__path {
+  max-width: 100%;
+  padding: var(--qos-space-1) var(--qos-space-2);
+  border-radius: var(--qos-radius-sm);
+  background: var(--qos-bg-subtle);
+  color: var(--qos-fg-secondary);
+  font-size: var(--qos-fs-xs);
+  overflow-wrap: anywhere;
+}
+
+.restricted__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--qos-space-2);
+}

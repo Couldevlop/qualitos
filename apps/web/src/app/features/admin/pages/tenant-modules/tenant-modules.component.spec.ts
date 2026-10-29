@@ -97,6 +97,17 @@ describe('TenantModulesComponent (qui peut agir)', () => {
     const texte = (fixture.nativeElement as HTMLElement).textContent ?? '';
 
     expect(texte).toContain('PDCA');
-    expect(texte).toContain('IOT');
+    expect(texte).toContain('Hub IoT');
+  });
+
+  it('affiche les modules, catégories et paliers traduits, jamais leurs codes', () => {
+    fixture.detectChanges();
+    const texte = (fixture.nativeElement as HTMLElement).textContent ?? '';
+
+    expect(texte).toContain('Cycles PDCA');
+    expect(texte).toContain('Modules transverses');
+    expect(texte).not.toContain('transverse ');
+    expect(texte).not.toContain('STANDARD');
+    expect(texte).toContain('Standard');
   });
 });

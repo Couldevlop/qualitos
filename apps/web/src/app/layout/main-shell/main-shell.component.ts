@@ -4,6 +4,7 @@ import { Observable, Subscription, combineLatest, of } from 'rxjs';
 import { catchError, filter, map, shareReplay, startWith, tap } from 'rxjs/operators';
 
 import { AuthService, AuthUser } from '../../core/auth/auth.service';
+import { ADMIN_CONSOLE_ROLES } from '../../core/auth/tenant-admin';
 import { NotificationView } from '../../core/notifications/notification.types';
 import { NotificationsService } from '../../core/notifications/notifications.service';
 import { ConnectivityService } from '../../core/offline/connectivity.service';
@@ -54,9 +55,10 @@ export interface NavSection {
 
 /**
  * Rôles habilités à l'administration du tenant (§16). Le serveur reste l'autorité :
- * cette liste ne sert qu'à ne pas afficher un lien qui mènerait à un 403.
+ * cette liste ne sert qu'à ne pas afficher un lien qui mènerait à un 403. Ce sont
+ * les mêmes que ceux de la garde de la route `/admin`.
  */
-const ADMIN_ROLES = ['ADMIN', 'ADMIN_TENANT', 'SUPER_ADMIN'];
+const ADMIN_ROLES = [...ADMIN_CONSOLE_ROLES];
 
 @Component({
   selector: 'qos-main-shell',

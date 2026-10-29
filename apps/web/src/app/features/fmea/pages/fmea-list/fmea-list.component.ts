@@ -8,7 +8,7 @@ import { catchError, finalize, map, shareReplay, startWith, switchMap, tap } fro
 
 import { deferredView } from '../../../../core/rx/deferred-view';
 import { safeErrorMessage } from '../../../../core/http/error-message';
-import { FmeaService } from '../../fmea.service';
+import { FmeaService, SEUIL_RPN_PAR_DEFAUT } from '../../fmea.service';
 import { FmeaProjectPage, FmeaProjectResponse, FmeaStatus, FmeaType } from '../../fmea.types';
 import { FmeaCreateDialogComponent } from '../fmea-create-dialog/fmea-create-dialog.component';
 import {
@@ -30,6 +30,8 @@ const EMPTY_PAGE = { content: [], totalElements: 0, totalPages: 0, number: 0, si
 export class FmeaListComponent implements OnInit {
 
   readonly displayedColumns = ['code', 'name', 'type', 'status', 'criticalRpnThreshold', 'revision'];
+  /** Seuil appliqué à un projet qui n'en fixe pas : cité dans le sous-titre. */
+  readonly defaultRpnThreshold = SEUIL_RPN_PAR_DEFAUT;
 
   readonly statuses: FmeaStatus[] = ['DRAFT', 'ACTIVE', 'ARCHIVED'];
   readonly types: FmeaType[] = ['PROCESS_FMEA', 'DESIGN_FMEA', 'SYSTEM_FMEA', 'SERVICE_FMEA', 'BOW_TIE'];

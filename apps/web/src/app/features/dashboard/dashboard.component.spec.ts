@@ -195,4 +195,49 @@ describe('DashboardComponent', () => {
     // L'URL temporaire est libérée : pas de fuite mémoire à chaque export.
     expect(revokeSpy).toHaveBeenCalledWith('blob:fake');
   });
+
+  it('traduit la gravité d’un risque au lieu de l’afficher en capitales anglaises', () => {
+    expect(component.severityText('critical')).toBe('Critique');
+    expect(component.severityText('high')).toBe('Élevée');
+    expect(component.severityText('medium')).toBe('Moyenne');
+  });
+
+  it('gradue l’axe des pourcentages par pas réguliers', () => {
+    expect(DashboardComponent.percentAxis([91, 95, 97])).toEqual({ min: 90, max: 100, interval: 5 });
+    expect(DashboardComponent.percentAxis([62, 80])).toEqual({ min: 60, max: 100, interval: 10 });
+    expect(DashboardComponent.percentAxis([])).toEqual({ min: 0, max: 100, interval: 20 });
+  });
+
+  it('affiche les catégories du Pareto traduites et garde le code dans le filtre croisé', () => {
+    let option: { xAxis?: { data?: string[] } } = {};
+    component.paretoOption$.subscribe(o => (option = o as typeof option));
+    TestBed.inject(HttpTestingController)
+      .expectOne(`${environment.apiBaseUrl}/api/v1/dashboards/executive`)
+      .flush({
+        kpis: [], qualityTrend: [], topRisks: [], alignment: [], generatedAt: '2026-05-15T00:00:00Z',
+        defectsByCategory: [{ category: 'PROCESS', count: 5 }, { category: 'SUPPLIER', count: 2 }]
+      });
+    expect(option.xAxis?.data).toEqual(['Processus', 'Fournisseur']);
+    component.onParetoSelect({ category: 'Processus' });
+    expect(crossFilter.snapshot()).toEqual(jasmine.objectContaining({ value: 'PROCESS', label: 'Processus' }));
+  });
+
+  it('ne signale « Live » que si la courbe a au moins un point, et date l’agrégat', () => {
+    let hasData: boolean | undefined;
+    let generatedAt: string | null | undefined;
+    component.trendHasData$.subscribe(v => (hasData = v));
+    component.generatedAt$.subscribe(v => (generatedAt = v));
+    TestBed.inject(HttpTestingController)
+      .expectOne(`${environment.apiBaseUrl}/api/v1/dashboards/executive`)
+      .flush({
+        kpis: [], qualityTrend: [], defectsByCategory: [], topRisks: [], alignment: [],
+        generatedAt: '2026-05-15T00:00:00Z'
+      });
+    expect(hasData).toBeFalse();
+    expect(generatedAt).toBe('2026-05-15T00:00:00Z');
+  });
+
+  it('compte les normes suivies à partir de l’agrégat', () => {
+    expect(component.normsTrackedLabel(3)).toBe('Normes suivies : 3');
+  });
 });

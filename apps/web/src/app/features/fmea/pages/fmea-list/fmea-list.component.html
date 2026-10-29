@@ -1,10 +1,12 @@
 <section class="fmea-list">
   <header class="head">
     <div>
-      <h1 i18n="@@fmea.list.title">FMEA — Risk Management</h1>
-      <!-- L'ecran enonce la regle, et non l'outillage : au-dela de 200, le RPN
-           impose une action corrective. C'est ce que le lecteur doit retenir. -->
-      <p i18n="@@fmea.list.subtitle">Toute RPN supérieure à 200 exige une action corrective.</p>
+      <h1 i18n="@@fmea.list.title">AMDEC — Analyse des risques</h1>
+      <!-- L'ecran enonce la regle, et non l'outillage : au-dela du seuil critique
+           du projet, le RPN impose une action corrective. Le seuil est propre a
+           chaque projet (colonne « Seuil RPN critique ») : citer 200 seul
+           contredisait un projet regle a 150. -->
+      <p i18n="@@fmea.list.subtitle">Au-delà du seuil RPN critique de chaque projet ({{ defaultRpnThreshold }} par défaut), une action corrective est exigée.</p>
     </div>
     <div class="head-actions">
       <!-- Le barème avant la saisie : coter S, O et D sans l'échelle sous les
