@@ -186,11 +186,10 @@ describe('MainShellComponent (navigation model)', () => {
     // signataires choisis a la soumission (ADR 0099). Puis a 14 : + Parametres DMAIC (ADR 0101).
     // Non-conformite passe a 5 : + NC fournisseurs, a cote des NC interne et externe.
     // Administration passe a 15 : + Fournisseur d'IA (ADR 0102).
-    // Methodes passe a 7 : + Ishikawa, de nouveau dans la barre laterale.
     // Non-conformite passe a 6 : + Fournisseurs, a cote de leurs NC. Formation
     // et Matrice de competences passent des Referentiels (11 -> 8) aux
     // Operations (9 -> 11).
-    expect(labels).toEqual([7, 7, 7, 2, 1, 6, 1, 11, 8, 1, 15]);
+    expect(labels).toEqual([7, 6, 7, 2, 1, 6, 1, 11, 8, 1, 15]);
   });
 
   it('le registre des risques a son groupe, juste apres la non-conformite', () => {
@@ -234,12 +233,13 @@ describe('MainShellComponent (navigation model)', () => {
       .forEach(r => expect(allRoutes).withContext(r).toContain(r));
   });
 
-  it('propose Ishikawa dans les methodes, mais pas les 5 Pourquoi', () => {
-    // Ishikawa a une liste propre, atteignable en un clic. Les 5 Pourquoi,
-    // eux, partent toujours d'un ecart constate : on y entre par la fiche NC.
-    const methodes = component.sections.find(s => s.items.some(i => i.route === '/pdca'))!;
-    expect(methodes.items.map(i => i.route)).toContain('/ishikawa');
+  it('ne propose plus Ishikawa ni les 5 Pourquoi dans la barre laterale', () => {
+    // Les deux methodes ne partent jamais de rien : elles cherchent la cause
+    // d'un ecart deja constate. On y entre donc par la fiche de non-conformite,
+    // qui les ouvre (ou les cree) sur son propre sujet. Une entree de menu
+    // laissait croire a une analyse hors sol, sans NC rattachee.
     const allRoutes = component.sections.flatMap(s => s.items.map(i => i.route));
+    expect(allRoutes).not.toContain('/ishikawa');
     expect(allRoutes).not.toContain('/five-whys');
   });
 

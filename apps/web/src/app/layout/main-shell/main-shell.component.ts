@@ -131,9 +131,6 @@ export class MainShellComponent implements OnInit, OnDestroy {
       items: [
         { label: $localize`:@@nav.pdca:PDCA`,         route: '/pdca',     icon: 'autorenew', module: 'pdca' },
         { label: $localize`:@@nav.5s:5S`,             route: '/fives',    icon: 'check_circle', module: 'fives' },
-        // Ishikawa a sa liste : on y retrouve les diagrammes déjà ouverts (depuis
-        // une NC ou non) en un clic, au lieu de repasser par la fiche d'un écart.
-        { label: $localize`:@@nav.ishikawa:Ishikawa`, route: '/ishikawa', icon: 'device_hub', module: 'ishikawa' },
         { label: $localize`:@@nav.dmaic:DMAIC`,       route: '/dmaic',    icon: 'analytics', module: 'dmaic' },
         { label: $localize`:@@nav.cercles:Cercles`,   route: '/circles',  icon: 'groups', module: 'circle' },
         // Pas d'attribut `module` : la boîte à idées ne dépend pas de
@@ -183,9 +180,10 @@ export class MainShellComponent implements OnInit, OnDestroy {
     },
 
     {
-      // Les 5 Pourquoi n'ont pas d'entrée : ils creusent la cause d'un écart
-      // déjà constaté et s'ouvrent depuis la fiche de non-conformité. Ishikawa,
-      // lui, a sa liste dans « Méthodes qualité ».
+      // Ni Ishikawa ni les 5 Pourquoi n'ont d'entrée ici, et c'est voulu : ces
+      // deux analyses partent d'un écart déjà constaté. On les ouvre depuis la
+      // fiche de non-conformité, qui les crée sur son propre sujet et les
+      // rattache. Une entrée de menu laissait croire à une analyse hors sol.
       label: $localize`:@@nav.non-conformite:Non-conformité`,
       collapsible: true,
       items: [
