@@ -138,8 +138,7 @@ describe('NcCreateDialogComponent', () => {
   it('nettoie les champs optionnels vides plutôt que d\'envoyer des chaînes blanches', () => {
     component.form.patchValue({ category: 'PROCESS', severity: 'MAJOR',
       title: '  Étiquetage lot manquant  ', zone: '   ',
-      description: '  Sachet sorti de ligne sans étiquette de lot.  ',
-      photoUrls: '  \n \n'
+      description: '  Sachet sorti de ligne sans étiquette de lot.  '
     });
     component.submit();
 
@@ -214,7 +213,7 @@ describe('NcCreateDialogComponent', () => {
     expect(snackSpy.calls.mostRecent().args[0]).toContain('10 Mo');
   });
 
-  it('plafonne à dix photos et permet d'en retirer une', () => {
+  it("plafonne à dix photos et permet d'en retirer une", () => {
     const snackSpy = spyOn(TestBed.inject(MatSnackBar), 'open');
     pick(...Array.from({ length: 11 }, (_, i) => photo(`p${i}.jpg`)));
     expect(component.photos.length).toBe(component.maxPhotos);
