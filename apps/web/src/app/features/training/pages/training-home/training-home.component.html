@@ -56,7 +56,9 @@
                 <td mat-cell *matCellDef="let p"><span [class]="pathStatusBadge(p.status)">{{ p.status | statusLabel }}</span></td>
               </ng-container>
               <tr mat-header-row *matHeaderRowDef="pathColumns"></tr>
-              <tr mat-row *matRowDef="let row; columns: pathColumns" class="row-clickable" (click)="openPath(row)"></tr>
+              <tr mat-row *matRowDef="let row; columns: pathColumns" class="row-clickable clickable-row" (click)="openPath(row)"
+          (keydown.enter)="openPath(row)" (keydown.space)="$event.preventDefault(); openPath(row)"
+          tabindex="0" role="button" [attr.aria-label]="row.name | openLabel"></tr>
             </table>
             <mat-paginator
               [length]="pathTotal" [pageIndex]="pathIndex" [pageSize]="pathSize"

@@ -11,6 +11,7 @@ import { OfflineQueueService } from '../../core/offline/offline-queue.service';
 import { EditionService } from '../../core/edition/edition.service';
 import { Edition } from '../../core/edition/edition.types';
 import { TenantModulesService } from '../../features/admin/tenant-modules.service';
+import { ThemePreference, ThemeService } from '../../core/theme/theme.service';
 import { NavHit, searchNav } from './nav-search';
 
 export interface NavItem {
@@ -371,6 +372,9 @@ export class MainShellComponent implements OnInit, OnDestroy {
   online$!: Observable<boolean>;
   pendingSync$!: Observable<number>;
 
+  /** Préférence de thème, reprise dans le menu du profil sur téléphone. */
+  themePreference$!: Observable<ThemePreference>;
+
   /** Notifications in-app : pastille de non-lues + contenu du menu de la cloche. */
   unreadCount$!: Observable<number>;
   notifications: NotificationView[] = [];
@@ -383,11 +387,13 @@ export class MainShellComponent implements OnInit, OnDestroy {
     private readonly notificationsService: NotificationsService,
     private readonly router: Router,
     private readonly modules: TenantModulesService,
-    private readonly editions: EditionService
+    private readonly editions: EditionService,
+    private readonly theme: ThemeService
   ) {}
 
   ngOnInit(): void {
     this.user$ = this.auth.user();
+    this.themePreference$ = this.theme.preference();
     // Les modules du tenant décident de ce qui est montré, au même titre que les
     // rôles. Un échec de chargement ne doit pas vider la navigation : on retombe
     // sur « inconnu », c'est-à-dire sur l'affichage complet, et le serveur reste
@@ -483,9 +489,26 @@ export class MainShellComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Sur téléphone, le champ est replié derrière un bouton : il se déploie sur
+   * toute la barre et reçoit le focus. Le focus attend le rendu suivant, le
+   * champ n'étant affiché qu'une fois la classe posée sur la barre.
+   */
+  searchExpanded = false;
+
+  expandSearch(): void {
+    this.searchExpanded = true;
+    setTimeout(() => this.searchInput?.nativeElement.focus());
+  }
+
   /** Le champ perd le focus : la liste se referme, la saisie reste. */
   closeSearch(): void {
     this.searchOpen = false;
+    this.searchExpanded = false;
+  }
+
+  setTheme(preference: ThemePreference): void {
+    this.theme.setPreference(preference);
   }
 
   openHit(hit: NavHit): void {
@@ -495,6 +518,7 @@ export class MainShellComponent implements OnInit, OnDestroy {
   }
 
   private resetSearch(): void {
+    this.searchExpanded = false;
     this.searchQuery = '';
     this.searchHits = [];
     this.activeHit = -1;

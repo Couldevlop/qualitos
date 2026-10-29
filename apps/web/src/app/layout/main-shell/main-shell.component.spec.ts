@@ -10,6 +10,7 @@ import { NotificationView } from '../../core/notifications/notification.types';
 import { NotificationsService } from '../../core/notifications/notifications.service';
 import { ConnectivityService } from '../../core/offline/connectivity.service';
 import { OfflineQueueService } from '../../core/offline/offline-queue.service';
+import { ThemePreference, ThemeService } from '../../core/theme/theme.service';
 import { MainShellComponent } from './main-shell.component';
 
 /** Dépendances observables du shell, exposées aux tests qui les inspectent. */
@@ -21,6 +22,7 @@ interface ShellHarness {
   events: Subject<unknown>;
   auth: jasmine.SpyObj<AuthService>;
   modules: jasmine.SpyObj<TenantModulesService>;
+  theme: jasmine.SpyObj<ThemeService>;
 }
 
 function notification(overrides: Partial<NotificationView> = {}): NotificationView {
@@ -68,10 +70,13 @@ function harness(): ShellHarness {
   const editions = jasmine.createSpyObj<EditionService>('EditionService', ['edition']);
   editions.edition.and.returnValue(of<Edition>('SAAS'));
 
+  const theme = jasmine.createSpyObj<ThemeService>('ThemeService', ['preference', 'setPreference']);
+  theme.preference.and.returnValue(of<ThemePreference>('system'));
+
   return {
     component: new MainShellComponent(
-      auth, connectivity, offline, notifications, router, modules, editions),
-    notifications, router, auth, modules, events
+      auth, connectivity, offline, notifications, router, modules, editions, theme),
+    notifications, router, auth, modules, events, theme
   };
 }
 
@@ -705,5 +710,41 @@ describe("MainShellComponent (recherche d'écran)", () => {
 
   it('affiche un raccourci adapté à la plateforme', () => {
     expect(['⌘K', 'Ctrl K']).toContain(h.component.searchShortcut);
+  });
+});
+
+describe('MainShellComponent (barre du haut sur téléphone)', () => {
+  beforeEach(() => localStorage.clear());
+
+  it('déploie la recherche repliée puis la replie quand le champ perd le focus', () => {
+    const shell = harness().component;
+    expect(shell.searchExpanded).toBeFalse();
+
+    shell.expandSearch();
+    expect(shell.searchExpanded).toBeTrue();
+
+    shell.closeSearch();
+    expect(shell.searchExpanded).toBeFalse();
+    expect(shell.searchOpen).toBeFalse();
+  });
+
+  it('replie aussi la recherche quand on ouvre un écran proposé', () => {
+    const h = harness();
+    h.component.expandSearch();
+    h.component.openHit({ item: { label: 'NC', route: '/nc/interne', icon: 'report' }, section: 'Non-conformité' });
+    expect(h.component.searchExpanded).toBeFalse();
+    expect(h.router.navigateByUrl).toHaveBeenCalledWith('/nc/interne');
+  });
+
+  it('reprend la préférence de thème et la modifie depuis le menu du profil', () => {
+    const h = harness();
+    h.component.ngOnInit();
+    let pref: string | undefined;
+    h.component.themePreference$.subscribe(p => (pref = p));
+    expect(pref).toBe('system');
+
+    h.component.setTheme('dark');
+    expect(h.theme.setPreference).toHaveBeenCalledWith('dark');
+    h.component.ngOnDestroy();
   });
 });

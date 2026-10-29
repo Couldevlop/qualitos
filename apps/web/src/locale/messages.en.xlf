@@ -10382,6 +10382,174 @@ Customer portal</target>
         <source>Suppression refusée.</source>
         <target state="translated">Deletion refused.</target>
       </trans-unit>
+      <trans-unit id="shell.search.open-aria" datatype="html">
+        <source>Rechercher un écran</source>
+        <target state="translated">Search for a screen</target>
+      </trans-unit>
+      <trans-unit id="theme.toggle.aria" datatype="html">
+        <source>Préférence de thème</source>
+        <target state="translated">Theme preference</target>
+      </trans-unit>
+      <trans-unit id="theme.toggle.light" datatype="html">
+        <source>Thème clair</source>
+        <target state="translated">Light theme</target>
+      </trans-unit>
+      <trans-unit id="theme.toggle.system" datatype="html">
+        <source>Suivre le système</source>
+        <target state="translated">Follow system</target>
+      </trans-unit>
+      <trans-unit id="theme.toggle.dark" datatype="html">
+        <source>Thème sombre</source>
+        <target state="translated">Dark theme</target>
+      </trans-unit>
+      <trans-unit id="common.open-item" datatype="html">
+        <source>Ouvrir <x id="name"/></source>
+        <target state="translated">Open <x id="name"/></target>
+      </trans-unit>
+      <trans-unit id="enum.ishikawa-mode.six-m" datatype="html">
+        <source>6M</source>
+        <target state="translated">6M</target>
+      </trans-unit>
+      <trans-unit id="enum.ishikawa-mode.seven-m" datatype="html">
+        <source>7M</source>
+        <target state="translated">7M</target>
+      </trans-unit>
+      <trans-unit id="enum.ishikawa-mode.eight-m" datatype="html">
+        <source>8M</source>
+        <target state="translated">8M</target>
+      </trans-unit>
+      <trans-unit id="enum.module.pdca" datatype="html">
+        <source>Cycles PDCA</source>
+        <target state="translated">PDCA cycles</target>
+      </trans-unit>
+      <trans-unit id="enum.module.ishikawa" datatype="html">
+        <source>Diagrammes d'Ishikawa</source>
+        <target state="translated">Ishikawa diagrams</target>
+      </trans-unit>
+      <trans-unit id="enum.module.fives" datatype="html">
+        <source>Audits 5S</source>
+        <target state="translated">5S audits</target>
+      </trans-unit>
+      <trans-unit id="enum.module.circle" datatype="html">
+        <source>Cercles de qualité</source>
+        <target state="translated">Quality circles</target>
+      </trans-unit>
+      <trans-unit id="enum.module.dmaic" datatype="html">
+        <source>DMAIC et Poka-Yoke</source>
+        <target state="translated">DMAIC and Poka-Yoke</target>
+      </trans-unit>
+      <trans-unit id="enum.module.capa" datatype="html">
+        <source>CAPA</source>
+        <target state="translated">CAPA</target>
+      </trans-unit>
+      <trans-unit id="enum.module.docs" datatype="html">
+        <source>Maîtrise documentaire</source>
+        <target state="translated">Document control</target>
+      </trans-unit>
+      <trans-unit id="enum.module.audit" datatype="html">
+        <source>Gestion des audits</source>
+        <target state="translated">Audit management</target>
+      </trans-unit>
+      <trans-unit id="enum.module.risk" datatype="html">
+        <source>Risques et AMDEC</source>
+        <target state="translated">Risks and FMEA</target>
+      </trans-unit>
+      <trans-unit id="enum.module.product" datatype="html">
+        <source>Référentiel produit</source>
+        <target state="translated">Product referential</target>
+      </trans-unit>
+      <trans-unit id="enum.module.controlplan" datatype="html">
+        <source>Plan de surveillance</source>
+        <target state="translated">Control plan</target>
+      </trans-unit>
+      <trans-unit id="enum.module.supplier" datatype="html">
+        <source>Qualité fournisseurs</source>
+        <target state="translated">Supplier quality</target>
+      </trans-unit>
+      <trans-unit id="enum.module.training" datatype="html">
+        <source>Formation et compétences</source>
+        <target state="translated">Training and competency</target>
+      </trans-unit>
+      <trans-unit id="enum.module.change" datatype="html">
+        <source>Gestion des changements</source>
+        <target state="translated">Change management</target>
+      </trans-unit>
+      <trans-unit id="enum.module.complaints" datatype="html">
+        <source>Réclamations clients</source>
+        <target state="translated">Customer complaints</target>
+      </trans-unit>
+      <trans-unit id="enum.module.calibration" datatype="html">
+        <source>Étalonnage et équipements</source>
+        <target state="translated">Calibration and equipment</target>
+      </trans-unit>
+      <trans-unit id="enum.module.ehs" datatype="html">
+        <source>Incidents HSE</source>
+        <target state="translated">EHS incidents</target>
+      </trans-unit>
+      <trans-unit id="enum.module.standards" datatype="html">
+        <source>Standards Hub</source>
+        <target state="translated">Standards Hub</target>
+      </trans-unit>
+      <trans-unit id="enum.module.kpi" datatype="html">
+        <source>Moteur de KPI</source>
+        <target state="translated">KPI engine</target>
+      </trans-unit>
+      <trans-unit id="enum.module.industry" datatype="html">
+        <source>Packs sectoriels</source>
+        <target state="translated">Industry packs</target>
+      </trans-unit>
+      <trans-unit id="enum.module.iot" datatype="html">
+        <source>Hub IoT</source>
+        <target state="translated">IoT hub</target>
+      </trans-unit>
+      <trans-unit id="enum.module.auditlog" datatype="html">
+        <source>Journal d'audit</source>
+        <target state="translated">Audit log</target>
+      </trans-unit>
+      <trans-unit id="enum.module.blockchain" datatype="html">
+        <source>Ancrage blockchain</source>
+        <target state="translated">Blockchain anchoring</target>
+      </trans-unit>
+      <trans-unit id="enum.module.webhooks" datatype="html">
+        <source>Webhooks sortants</source>
+        <target state="translated">Outbound webhooks</target>
+      </trans-unit>
+      <trans-unit id="enum.module.itsm" datatype="html">
+        <source>Connecteurs ITSM</source>
+        <target state="translated">ITSM connectors</target>
+      </trans-unit>
+      <trans-unit id="enum.module-category.methodes" datatype="html">
+        <source>Méthodes qualité</source>
+        <target state="translated">Quality methods</target>
+      </trans-unit>
+      <trans-unit id="enum.module-category.transverse" datatype="html">
+        <source>Modules transverses</source>
+        <target state="translated">Cross-functional modules</target>
+      </trans-unit>
+      <trans-unit id="enum.module-category.platform" datatype="html">
+        <source>Plateforme</source>
+        <target state="translated">Platform</target>
+      </trans-unit>
+      <trans-unit id="enum.module-category.integrations" datatype="html">
+        <source>Intégrations</source>
+        <target state="translated">Integrations</target>
+      </trans-unit>
+      <trans-unit id="enum.billing-tier.free" datatype="html">
+        <source>Gratuit</source>
+        <target state="translated">Free</target>
+      </trans-unit>
+      <trans-unit id="enum.billing-tier.standard" datatype="html">
+        <source>Standard</source>
+        <target state="translated">Standard</target>
+      </trans-unit>
+      <trans-unit id="enum.billing-tier.pro" datatype="html">
+        <source>Pro</source>
+        <target state="translated">Pro</target>
+      </trans-unit>
+      <trans-unit id="enum.billing-tier.enterprise" datatype="html">
+        <source>Entreprise</source>
+        <target state="translated">Enterprise</target>
+      </trans-unit>
       <trans-unit id="directory.picker.label" datatype="html">
         <source>Personne</source>
         <target state="translated">Person</target>

@@ -70,7 +70,7 @@
           (click)="openAudit(row)"
           (keydown.enter)="openAudit(row)"
           tabindex="0" role="button"
-          [attr.aria-label]="'Ouvrir ' + row.zone"></tr>
+          [attr.aria-label]="row.zone | openLabel"></tr>
     </table>
     <p class="empty" *ngIf="(audits$ | async)?.length === 0" i18n="@@fives.list.empty">Aucun audit pour ce filtre.</p>
 

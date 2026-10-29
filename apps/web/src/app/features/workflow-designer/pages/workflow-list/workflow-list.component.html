@@ -35,7 +35,7 @@
       <article class="wf-card" *ngFor="let wf of workflows"
                (click)="open(wf)" (keydown.enter)="open(wf)"
                tabindex="0" role="button"
-               [attr.aria-label]="'Ouvrir ' + wf.name">
+               [attr.aria-label]="wf.name | openLabel">
         <div class="wf-card-head">
           <mat-icon class="wf-card-icon">account_tree</mat-icon>
           <span [class]="statusBadgeClass(wf.status)">{{ wf.status | statusLabel }}</span>

@@ -11,6 +11,7 @@ import { IconNoTranslateModule } from '../icon-no-translate/icon-no-translate.mo
 import { RouterModule } from '@angular/router';
 
 import { EchartComponent } from './echart/echart.component';
+import { EnumLabelPipe, OpenLabelPipe } from './enum-label/enum-label.pipe';
 import { FormDialogComponent } from './form-dialog/form-dialog.component';
 import { KpiCardComponent } from './kpi-card/kpi-card.component';
 import { LicenseBannerComponent } from './license-banner/license-banner.component';
@@ -36,7 +37,9 @@ const COMPONENTS = [
   LicenseBannerComponent,
   StatusLabelPipe,
   SeverityLabelPipe,
-  NcCategoryLabelPipe
+  NcCategoryLabelPipe,
+  EnumLabelPipe,
+  OpenLabelPipe
 ];
 
 /**

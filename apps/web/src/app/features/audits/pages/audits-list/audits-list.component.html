@@ -52,7 +52,7 @@
           (click)="openPlan(row)"
           (keydown.enter)="openPlan(row)"
           tabindex="0" role="button"
-          [attr.aria-label]="'Ouvrir ' + row.title"></tr>
+          [attr.aria-label]="row.title | openLabel"></tr>
     </table>
     <p class="empty" *ngIf="(plans$ | async)?.length === 0" i18n="@@audits.list.empty">Aucun plan pour ce filtre.</p>
 

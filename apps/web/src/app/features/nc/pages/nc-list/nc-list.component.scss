@@ -11,7 +11,6 @@
 .filter-field { width: min(220px, 100%); }
 .state-row { display: flex; align-items: center; gap: 12px; padding: 24px 0; }
 .state-row.error { color: var(--mat-sys-error, #b3261e); padding: 16px 0; }
-.table-card { padding: 0; overflow: hidden; }
 .t { width: 100%; }
 .cell {
   display: flex; flex-direction: column;

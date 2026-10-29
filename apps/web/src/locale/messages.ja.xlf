@@ -10382,6 +10382,174 @@ Portail clients</source>
         <source>Suppression refusée.</source>
         <target state="translated">削除が拒否されました。</target>
       </trans-unit>
+      <trans-unit id="shell.search.open-aria" datatype="html">
+        <source>Rechercher un écran</source>
+        <target state="translated">画面を検索</target>
+      </trans-unit>
+      <trans-unit id="theme.toggle.aria" datatype="html">
+        <source>Préférence de thème</source>
+        <target state="translated">テーマの設定</target>
+      </trans-unit>
+      <trans-unit id="theme.toggle.light" datatype="html">
+        <source>Thème clair</source>
+        <target state="translated">ライトテーマ</target>
+      </trans-unit>
+      <trans-unit id="theme.toggle.system" datatype="html">
+        <source>Suivre le système</source>
+        <target state="translated">システムに従う</target>
+      </trans-unit>
+      <trans-unit id="theme.toggle.dark" datatype="html">
+        <source>Thème sombre</source>
+        <target state="translated">ダークテーマ</target>
+      </trans-unit>
+      <trans-unit id="common.open-item" datatype="html">
+        <source>Ouvrir <x id="name"/></source>
+        <target state="translated"><x id="name"/> を開く</target>
+      </trans-unit>
+      <trans-unit id="enum.ishikawa-mode.six-m" datatype="html">
+        <source>6M</source>
+        <target state="translated">6M</target>
+      </trans-unit>
+      <trans-unit id="enum.ishikawa-mode.seven-m" datatype="html">
+        <source>7M</source>
+        <target state="translated">7M</target>
+      </trans-unit>
+      <trans-unit id="enum.ishikawa-mode.eight-m" datatype="html">
+        <source>8M</source>
+        <target state="translated">8M</target>
+      </trans-unit>
+      <trans-unit id="enum.module.pdca" datatype="html">
+        <source>Cycles PDCA</source>
+        <target state="translated">PDCAサイクル</target>
+      </trans-unit>
+      <trans-unit id="enum.module.ishikawa" datatype="html">
+        <source>Diagrammes d'Ishikawa</source>
+        <target state="translated">特性要因図</target>
+      </trans-unit>
+      <trans-unit id="enum.module.fives" datatype="html">
+        <source>Audits 5S</source>
+        <target state="translated">5S監査</target>
+      </trans-unit>
+      <trans-unit id="enum.module.circle" datatype="html">
+        <source>Cercles de qualité</source>
+        <target state="translated">QCサークル</target>
+      </trans-unit>
+      <trans-unit id="enum.module.dmaic" datatype="html">
+        <source>DMAIC et Poka-Yoke</source>
+        <target state="translated">DMAICとポカヨケ</target>
+      </trans-unit>
+      <trans-unit id="enum.module.capa" datatype="html">
+        <source>CAPA</source>
+        <target state="translated">CAPA</target>
+      </trans-unit>
+      <trans-unit id="enum.module.docs" datatype="html">
+        <source>Maîtrise documentaire</source>
+        <target state="translated">文書管理</target>
+      </trans-unit>
+      <trans-unit id="enum.module.audit" datatype="html">
+        <source>Gestion des audits</source>
+        <target state="translated">監査管理</target>
+      </trans-unit>
+      <trans-unit id="enum.module.risk" datatype="html">
+        <source>Risques et AMDEC</source>
+        <target state="translated">リスクとFMEA</target>
+      </trans-unit>
+      <trans-unit id="enum.module.product" datatype="html">
+        <source>Référentiel produit</source>
+        <target state="translated">製品マスター</target>
+      </trans-unit>
+      <trans-unit id="enum.module.controlplan" datatype="html">
+        <source>Plan de surveillance</source>
+        <target state="translated">コントロールプラン</target>
+      </trans-unit>
+      <trans-unit id="enum.module.supplier" datatype="html">
+        <source>Qualité fournisseurs</source>
+        <target state="translated">サプライヤー品質</target>
+      </trans-unit>
+      <trans-unit id="enum.module.training" datatype="html">
+        <source>Formation et compétences</source>
+        <target state="translated">教育と力量</target>
+      </trans-unit>
+      <trans-unit id="enum.module.change" datatype="html">
+        <source>Gestion des changements</source>
+        <target state="translated">変更管理</target>
+      </trans-unit>
+      <trans-unit id="enum.module.complaints" datatype="html">
+        <source>Réclamations clients</source>
+        <target state="translated">顧客苦情</target>
+      </trans-unit>
+      <trans-unit id="enum.module.calibration" datatype="html">
+        <source>Étalonnage et équipements</source>
+        <target state="translated">校正と設備</target>
+      </trans-unit>
+      <trans-unit id="enum.module.ehs" datatype="html">
+        <source>Incidents HSE</source>
+        <target state="translated">EHSインシデント</target>
+      </trans-unit>
+      <trans-unit id="enum.module.standards" datatype="html">
+        <source>Standards Hub</source>
+        <target state="translated">Standards Hub</target>
+      </trans-unit>
+      <trans-unit id="enum.module.kpi" datatype="html">
+        <source>Moteur de KPI</source>
+        <target state="translated">KPIエンジン</target>
+      </trans-unit>
+      <trans-unit id="enum.module.industry" datatype="html">
+        <source>Packs sectoriels</source>
+        <target state="translated">業界パック</target>
+      </trans-unit>
+      <trans-unit id="enum.module.iot" datatype="html">
+        <source>Hub IoT</source>
+        <target state="translated">IoTハブ</target>
+      </trans-unit>
+      <trans-unit id="enum.module.auditlog" datatype="html">
+        <source>Journal d'audit</source>
+        <target state="translated">監査ログ</target>
+      </trans-unit>
+      <trans-unit id="enum.module.blockchain" datatype="html">
+        <source>Ancrage blockchain</source>
+        <target state="translated">ブロックチェーン・アンカリング</target>
+      </trans-unit>
+      <trans-unit id="enum.module.webhooks" datatype="html">
+        <source>Webhooks sortants</source>
+        <target state="translated">送信Webhook</target>
+      </trans-unit>
+      <trans-unit id="enum.module.itsm" datatype="html">
+        <source>Connecteurs ITSM</source>
+        <target state="translated">ITSMコネクタ</target>
+      </trans-unit>
+      <trans-unit id="enum.module-category.methodes" datatype="html">
+        <source>Méthodes qualité</source>
+        <target state="translated">品質手法</target>
+      </trans-unit>
+      <trans-unit id="enum.module-category.transverse" datatype="html">
+        <source>Modules transverses</source>
+        <target state="translated">横断モジュール</target>
+      </trans-unit>
+      <trans-unit id="enum.module-category.platform" datatype="html">
+        <source>Plateforme</source>
+        <target state="translated">プラットフォーム</target>
+      </trans-unit>
+      <trans-unit id="enum.module-category.integrations" datatype="html">
+        <source>Intégrations</source>
+        <target state="translated">連携</target>
+      </trans-unit>
+      <trans-unit id="enum.billing-tier.free" datatype="html">
+        <source>Gratuit</source>
+        <target state="translated">無料</target>
+      </trans-unit>
+      <trans-unit id="enum.billing-tier.standard" datatype="html">
+        <source>Standard</source>
+        <target state="translated">スタンダード</target>
+      </trans-unit>
+      <trans-unit id="enum.billing-tier.pro" datatype="html">
+        <source>Pro</source>
+        <target state="translated">プロ</target>
+      </trans-unit>
+      <trans-unit id="enum.billing-tier.enterprise" datatype="html">
+        <source>Entreprise</source>
+        <target state="translated">エンタープライズ</target>
+      </trans-unit>
       <trans-unit id="directory.picker.label" datatype="html">
         <source>Personne</source>
         <target state="translated">担当者</target>

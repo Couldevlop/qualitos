@@ -69,7 +69,8 @@
 
 /* Les tableaux peuvent être larges (URL + chips d'évènements) : le défilement
    horizontal reste confiné au tableau, jamais à la page. */
-.table-wrap { overflow-x: auto; }
+// Le cadre est porté par le panneau parent : pas de seconde bordure.
+.table-wrap { background: transparent; border: 0; border-radius: 0; }
 
 .sub-cell { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .sub-cell__name { font-weight: 600; }

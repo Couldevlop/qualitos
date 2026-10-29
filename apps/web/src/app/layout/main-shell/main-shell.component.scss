@@ -433,6 +433,42 @@
   pointer-events: none;
 }
 
+/* Bouton de recherche replié : visible sur téléphone seulement. */
+.qos-topbar__search-toggle { display: none; }
+
+/* Le thème est réglé depuis la barre sur grand écran : ces entrées du menu de
+   profil ne servent que sur téléphone, où la barre n'a plus la place. */
+.qos-user__theme { display: none; }
+
+/*
+ * Téléphone (< 600 px). Mesuré à 390 px : le champ de recherche, même réduit,
+ * recouvrait le sélecteur de langue (la langue ne se changeait plus) et son
+ * raccourci « Ctrl K » chevauchait le bouton du menu. La recherche se replie en
+ * un bouton qui déploie le champ sur toute la barre ; le sélecteur de thème
+ * passe dans le menu du profil.
+ */
+@media (max-width: 599px) {
+  .qos-topbar { padding: 0 var(--qos-space-3); gap: var(--qos-space-2); }
+  .qos-topbar__search-toggle { display: inline-flex; }
+  .qos-topbar__search { display: none; }
+  .qos-topbar__kbd { display: none; }
+  .qos-topbar__actions { margin-left: auto; gap: var(--qos-space-1); }
+  .qos-topbar__actions qos-theme-toggle { display: none; }
+  .qos-user__theme { display: block; border-bottom: 1px solid var(--qos-border-subtle); }
+
+  .qos-topbar--search-open .qos-topbar__search {
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: var(--qos-space-3);
+    right: var(--qos-space-3);
+    transform: translateY(-50%);
+    max-width: none;
+    z-index: 2;
+  }
+  .qos-topbar--search-open .qos-topbar__search-input { padding-right: var(--qos-space-3); }
+}
+
 .qos-topbar__actions {
   display: flex;
   align-items: center;

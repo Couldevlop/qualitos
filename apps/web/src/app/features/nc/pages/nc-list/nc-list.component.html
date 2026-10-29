@@ -115,7 +115,7 @@
           (click)="openNc(row)"
           (keydown.enter)="openNc(row)"
           tabindex="0" role="button"
-          [attr.aria-label]="'Ouvrir ' + row.reference"></tr>
+          [attr.aria-label]="row.reference | openLabel"></tr>
     </table>
     <p class="empty" *ngIf="(ncs$ | async)?.length === 0" i18n="@@nc.list.empty">Aucune non-conformité pour ce filtre.</p>
 

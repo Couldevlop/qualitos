@@ -212,7 +212,7 @@
             <th mat-header-cell *matHeaderCellDef></th>
             <td mat-cell *matCellDef="let d">
               <button mat-icon-button (click)="open(d)"
-                      [attr.aria-label]="'Ouvrir ' + d.standardCode">
+                      [attr.aria-label]="d.standardCode | openLabel">
                 <mat-icon>open_in_new</mat-icon>
               </button>
             </td>

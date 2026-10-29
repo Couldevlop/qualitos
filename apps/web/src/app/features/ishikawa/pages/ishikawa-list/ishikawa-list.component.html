@@ -63,7 +63,7 @@
           (click)="openDiagram(row)"
           (keydown.enter)="openDiagram(row)"
           tabindex="0" role="button"
-          [attr.aria-label]="'Ouvrir ' + row.problemStatement"></tr>
+          [attr.aria-label]="row.problemStatement | openLabel"></tr>
     </table>
     <p class="empty" *ngIf="(diagrams$ | async)?.length === 0" i18n="@@ishikawa.list.empty">Aucun diagramme pour ce filtre.</p>
 

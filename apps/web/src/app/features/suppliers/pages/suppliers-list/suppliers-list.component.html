@@ -72,7 +72,9 @@
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns" class="row-clickable" (click)="open(row)"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns" class="row-clickable clickable-row" (click)="open(row)"
+          (keydown.enter)="open(row)" (keydown.space)="$event.preventDefault(); open(row)"
+          tabindex="0" role="button" [attr.aria-label]="row.name | openLabel"></tr>
     </table>
 
     <mat-paginator

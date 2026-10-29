@@ -820,6 +820,17 @@ body { overflow-wrap: break-word; }
   overscroll-behavior-x: contain;
 }
 
+/* Cadre de tableau partagé : bordure, fond élevé et défilement horizontal DANS
+ * le cadre. Les listes ne redéclarent plus ce cadre (et surtout plus
+ * `overflow: hidden`, qui rognait les colonnes sur mobile sans défilement). */
+.table-wrap {
+  background: var(--qos-bg-elevated);
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: var(--qos-radius-lg);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+}
+
 /* ---- États : loading / empty / error premium et réutilisables ---- */
 .state-row {
   display: flex;
