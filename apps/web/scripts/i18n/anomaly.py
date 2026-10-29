@@ -8,7 +8,7 @@ TRANSLATIONS = {
     'anomaly.detect.subtitle': ("Détection multivariée par Isolation Forest ou reconstruction (ACP) — au-delà des règles SPC univariées.", 'Multivariate detection via Isolation Forest or reconstruction (PCA) — beyond univariate SPC rules.', 'Detección multivariante por Isolation Forest o reconstrucción (ACP) — más allá de las reglas SPC univariantes.', 'كشف متعدد المتغيرات عبر Isolation Forest أو إعادة البناء (ACP) — يتجاوز قواعد SPC أحادية المتغير.', 'Isolation Forest または再構成（PCA）による多変量検出 — 単変量SPCルールを超える検出。', '通过 Isolation Forest 或重构（PCA）进行多变量检测 — 超越单变量SPC规则。'),
 
     'anomaly.detect.matrix-panel': ('Matrice de données', 'Data matrix', 'Matriz de datos', 'مصفوفة البيانات', 'データ行列', '数据矩阵'),
-    'anomaly.detect.matrix-label': ('Échantillons (une ligne par échantillon, features séparées par virgule ou espace)', 'Samples (one row per sample, features separated by comma or space)', 'Muestras (una fila por muestra, características separadas por coma o espacio)', 'العينات (سطر لكل عينة، الميزات مفصولة بفاصلة أو مسافة)', 'サンプル（1行 = 1サンプル、特徴量はカンマまたはスペースで区切る）', '样本（每行一个样本，特征用逗号或空格分隔）'),
+    'anomaly.detect.matrix-label': ('Données manuelles : une ligne par échantillon, variables séparées par virgule ou espace', 'Manual data: one row per sample, variables separated by comma or space', 'Datos manuales: una fila por muestra, variables separadas por coma o espacio', 'بيانات يدوية: صف لكل عينة، والمتغيرات مفصولة بفاصلة أو مسافة', '手動データ：1行に1サンプル、変数はカンマまたはスペース区切り', '手动数据：每行一个样本，变量以逗号或空格分隔'),
     'anomaly.detect.method-label': ('Méthode', 'Method', 'Método', 'الطريقة', '手法', '方法'),
     'anomaly.detect.method-iforest': ('Isolation Forest', 'Isolation Forest', 'Isolation Forest', 'Isolation Forest', 'Isolation Forest', 'Isolation Forest'),
     'anomaly.detect.method-reconstruction': ('Reconstruction (ACP)', 'Reconstruction (PCA)', 'Reconstrucción (ACP)', 'إعادة البناء (ACP)', '再構成（PCA）', '重构（PCA）'),
@@ -22,7 +22,7 @@ TRANSLATIONS = {
 
     'anomaly.detect.help-panel': ('Quelle méthode ?', 'Which method?', '¿Qué método?', 'أيّ طريقة؟', 'どの手法？', '选择哪种方法？'),
     'anomaly.detect.help-iforest': ('— isole les points rares par partitions aléatoires. Robuste, sans hypothèse de distribution.', '— isolates rare points via random partitions. Robust, with no distribution assumption.', '— aísla los puntos raros mediante particiones aleatorias. Robusto, sin hipótesis de distribución.', '— يعزل النقاط النادرة عبر تقسيمات عشوائية. متين، دون افتراض توزيع.', '— ランダム分割で稀な点を分離。分布を仮定せず頑健。', '— 通过随机划分隔离稀有点。稳健，无分布假设。'),
-    'anomaly.detect.help-reconstruction': ('— erreur de reconstruction sur les axes principaux (auto-encodeur linéaire). Indique la feature la plus en cause.', '— reconstruction error on principal axes (linear autoencoder). Highlights the most contributing feature.', '— error de reconstrucción en los ejes principales (autocodificador lineal). Señala la característica más implicada.', '— خطأ إعادة البناء على المحاور الرئيسية (مُرمِّز ذاتي خطي). يُبرز الميزة الأكثر تأثيرًا.', '— 主成分軸上の再構成誤差（線形オートエンコーダ）。最も寄与する特徴量を示す。', '— 主成分轴上的重构误差（线性自编码器）。指出贡献最大的特征。'),
+    'anomaly.detect.help-reconstruction': ('— erreur de reconstruction sur les axes principaux (auto-encodeur linéaire). Indique la variable la plus en cause.', '— reconstruction error on the principal axes (linear autoencoder). Points to the variable most involved.', '— error de reconstrucción en los ejes principales (autocodificador lineal). Indica la variable más implicada.', '— خطأ إعادة البناء على المحاور الرئيسية (مشفر تلقائي خطي). يشير إلى المتغير الأكثر تسببًا.', '— 主軸上の再構成誤差（線形オートエンコーダ）。最も関与する変数を示します。', '— 主轴上的重构误差（线性自编码器）。指出影响最大的变量。'),
 
     'anomaly.detect.card-anomalies': ('Anomalies détectées', 'Anomalies detected', 'Anomalías detectadas', 'الحالات الشاذة المكتشفة', '検出された異常', '检测到的异常'),
     'anomaly.detect.card-method': ('Méthode', 'Method', 'Método', 'الطريقة', '手法', '方法'),
@@ -38,8 +38,7 @@ TRANSLATIONS = {
     'anomaly.detect.no-anomaly': ('Aucune anomalie au seuil retenu : les échantillons sont homogènes 🎉', 'No anomaly at the chosen threshold: the samples are homogeneous 🎉', 'Ninguna anomalía en el umbral elegido: las muestras son homogéneas 🎉', 'لا توجد حالات شاذة عند العتبة المختارة: العينات متجانسة 🎉', '選択したしきい値で異常なし：サンプルは均質です 🎉', '在所选阈值下无异常：样本是同质的 🎉'),
     'anomaly.detect.col-sample': ('Échantillon', 'Sample', 'Muestra', 'العينة', 'サンプル', '样本'),
     'anomaly.detect.col-score': ('Score', 'Score', 'Puntuación', 'الدرجة', 'スコア', '分数'),
-    'anomaly.detect.col-top-feature': ('Feature dominante', 'Top feature', 'Característica dominante', 'الميزة الأبرز', '主要特徴量', '主要特征'),
-    'anomaly.detect.feature-prefix': ('Feature', 'Feature', 'Característica', 'الميزة', '特徴量', '特征'),
+    'anomaly.detect.col-top-feature': ('Variable dominante', 'Main variable', 'Variable dominante', 'المتغير المهيمن', '主要変数', '主导变量'),
     'anomaly.detect.col-explain': ('Explication', 'Explanation', 'Explicación', 'التفسير', '説明', '解释'),
     'anomaly.detect.explain-btn': ('Pourquoi ?', 'Why?', '¿Por qué?', 'لماذا؟', 'なぜ？', '为什么？'),
     'anomaly.detect.explain-panel': ('Explication (SHAP)', 'Explanation (SHAP)', 'Explicación (SHAP)', 'التفسير (SHAP)', '説明（SHAP）', '解释（SHAP）'),
@@ -47,10 +46,10 @@ TRANSLATIONS = {
     'anomaly.detect.explain-intro': ('Échantillon', 'Sample', 'Muestra', 'العينة', 'サンプル', '样本'),
     'anomaly.detect.explain-score': ('score', 'score', 'puntuación', 'الدرجة', 'スコア', '分数'),
     'anomaly.detect.explain-base': ('base', 'base', 'base', 'الأساس', 'ベース', '基准'),
-    'anomaly.detect.explain-legend': ("Barres rouges = features qui rendent l'échantillon anormal ; bleues = vers la normale.", 'Red bars = features making the sample anomalous; blue = toward normal.', 'Barras rojas = características que hacen anómala la muestra; azules = hacia lo normal.', 'الأشرطة الحمراء = الميزات التي تجعل العينة شاذة؛ الزرقاء = نحو الطبيعي.', '赤いバー = サンプルを異常にする特徴量、青 = 正常方向。', '红色条 = 使样本异常的特征；蓝色 = 趋向正常。'),
+    'anomaly.detect.explain-legend': ("Barres rouges = variables qui rendent l'échantillon anormal ; bleues = vers la normale.", 'Red bars = variables that make the sample anomalous; blue = towards normal.', 'Barras rojas = variables que hacen anómala la muestra; azules = hacia lo normal.', 'الأشرطة الحمراء = متغيرات تجعل العينة شاذة؛ الزرقاء = نحو الطبيعي.', '赤いバー＝サンプルを異常にする変数、青＝正常方向。', '红色条 = 使样本异常的变量；蓝色 = 趋向正常。'),
 
     'anomaly.detect.err-no-data': ('Saisissez au moins un échantillon (une ligne de nombres).', 'Enter at least one sample (a row of numbers).', 'Introduzca al menos una muestra (una fila de números).', 'أدخل عينة واحدة على الأقل (سطر من الأرقام).', '少なくとも1つのサンプル（数値の行）を入力してください。', '请至少输入一个样本（一行数字）。'),
-    'anomaly.detect.err-ragged': ('Toutes les lignes doivent avoir le même nombre de features (≥ 1).', 'All rows must have the same number of features (≥ 1).', 'Todas las filas deben tener el mismo número de características (≥ 1).', 'يجب أن تحتوي جميع الأسطر على العدد نفسه من الميزات (≥ 1).', 'すべての行は同じ数の特徴量（≥ 1）を持つ必要があります。', '所有行必须具有相同数量的特征（≥ 1）。'),
+    'anomaly.detect.err-ragged': ('Toutes les lignes doivent avoir le même nombre de variables (≥ 1).', 'All rows must have the same number of variables (≥ 1).', 'Todas las filas deben tener el mismo número de variables (≥ 1).', 'يجب أن تحتوي جميع الصفوف على العدد نفسه من المتغيرات (≥ 1).', 'すべての行の変数の数は同じでなければなりません（1以上）。', '所有行的变量数必须相同（≥ 1）。'),
     'anomaly.detect.subject-label': (
         'Ce que décrit la matrice', 'What the matrix describes', 'Lo que describe la matriz',
         'ما تصفه المصفوفة', '行列が表す対象', '该矩阵描述的对象'),

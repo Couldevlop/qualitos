@@ -50,6 +50,8 @@
       <mat-select formControlName="category" required>
         <mat-option *ngFor="let c of categories" [value]="c">{{ c | ncCategoryLabel }}</mat-option>
       </mat-select>
+      <mat-error *ngIf="form.controls.category.hasError('required')"
+                 i18n="@@nc.create.category-required">Choisissez une catégorie.</mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="outline">
@@ -57,6 +59,8 @@
       <mat-select formControlName="severity" required>
         <mat-option *ngFor="let s of severities" [value]="s">{{ s | severityLabel }}</mat-option>
       </mat-select>
+      <mat-error *ngIf="form.controls.severity.hasError('required')"
+                 i18n="@@nc.create.severity-required">Choisissez une sévérité.</mat-error>
     </mat-form-field>
   </div>
 
@@ -140,12 +144,52 @@
 
   <h3 class="qfd-section" i18n="@@nc.create.section-attachments">Pièces</h3>
 
-  <mat-form-field appearance="outline" class="full">
-    <mat-label i18n="@@nc.create.photos">Photos — URLs (une par ligne)</mat-label>
-    <textarea matInput formControlName="photoUrls" rows="3"
-              i18n-placeholder="@@nc.create.photos-placeholder"
-              placeholder="https://… (une URL par ligne)"></textarea>
-    <mat-hint i18n="@@nc.create.photos-hint">L'envoi de fichiers depuis l'appareil arrivera prochainement.</mat-hint>
-  </mat-form-field>
+  <div class="photos full">
+    <p class="photos__hint" i18n="@@nc.create.photos-hint">
+      Photos du constat — JPEG, PNG, WebP ou HEIC, 10 Mo et dix photos au maximum.
+      Elles sont envoyées une fois la NC déclarée.
+    </p>
+
+    <ul class="photos__list" *ngIf="photos.length">
+      <li class="photo" *ngFor="let f of photos">
+        <mat-icon class="photo__icon" aria-hidden="true">image</mat-icon>
+        <span class="photo__name">{{ f.name }}</span>
+        <span class="photo__size">{{ formatSize(f.size) }}</span>
+        <button mat-icon-button type="button"
+                [disabled]="submitting"
+                (click)="removePhoto(f)"
+                i18n-matTooltip="@@nc.create.photo-remove-tooltip" matTooltip="Retirer cette photo"
+                [attr.aria-label]="removePhotoAria(f.name)">
+          <mat-icon>close</mat-icon>
+        </button>
+      </li>
+    </ul>
+
+    <!-- Deux entrées : l'appareil photo au poste (capture), la galerie pour une
+         photo déjà prise. `capture` seul interdirait la galerie sur mobile. -->
+    <input type="file" class="hidden-file" #cameraInput accept="image/*" capture="environment"
+           (change)="onPhotosSelected($event)" aria-hidden="true" tabindex="-1">
+    <input type="file" class="hidden-file" #galleryInput multiple [accept]="acceptedPhotoTypes"
+           (change)="onPhotosSelected($event)" aria-hidden="true" tabindex="-1">
+    <div class="photos__actions">
+      <button mat-stroked-button color="primary" type="button"
+              [disabled]="submitting || photos.length >= maxPhotos"
+              (click)="cameraInput.click()">
+        <mat-icon aria-hidden="true">photo_camera</mat-icon>
+        <span i18n="@@nc.create.photo-take">Prendre une photo</span>
+      </button>
+      <button mat-stroked-button type="button"
+              [disabled]="submitting || photos.length >= maxPhotos"
+              (click)="galleryInput.click()">
+        <mat-icon aria-hidden="true">add_photo_alternate</mat-icon>
+        <span i18n="@@nc.create.photo-choose">Choisir des photos</span>
+      </button>
+    </div>
+
+    <p class="photos__progress" *ngIf="submitting && photos.length" role="status">
+      <ng-container i18n="@@nc.create.photo-progress">Envoi des photos</ng-container>
+      {{ uploaded }} / {{ photos.length }}
+    </p>
+  </div>
 
 </qos-form-dialog>

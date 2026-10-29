@@ -55,3 +55,11 @@
   }
   .empty { color: var(--qos-fg-secondary, #64748b); font-style: italic; margin: 8px 0; }
 }
+
+/* Recherche et filtres sur une ligne (mat-card est une colonne par défaut). */
+.filter-card {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: var(--qos-space-3);
+  align-items: flex-start;
+}

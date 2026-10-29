@@ -10,6 +10,8 @@
   </qos-page-header>
 
   <mat-card class="filter-card">
+    <qos-list-search [control]="search"></qos-list-search>
+
     <mat-form-field appearance="outline" class="status-filter">
       <mat-label i18n="@@common.filter-by-status">Filtrer par statut</mat-label>
       <mat-select [formControl]="statusFilter">
@@ -30,7 +32,7 @@
   </div>
 
   <mat-card class="table-card" *ngIf="(loading$ | async) === false && (error$ | async) === null">
-    <table mat-table [dataSource]="(cycles$ | async) ?? []" class="cycles-table">
+    <table mat-table [dataSource]="(visibleCycles$ | async) ?? []" class="cycles-table">
 
       <ng-container matColumnDef="title">
         <th mat-header-cell *matHeaderCellDef i18n="@@common.title">Titre</th>
@@ -68,6 +70,9 @@
           role="button"
           [attr.aria-label]="row.title | openLabel"></tr>
     </table>
+    <p class="empty" *ngIf="search.value && (cycles$ | async)?.length && (visibleCycles$ | async)?.length === 0"
+       i18n="@@list-search.no-match">Aucune ligne de cette page ne correspond à la recherche.</p>
+
 
     <p class="empty" *ngIf="(cycles$ | async)?.length === 0" i18n="@@pdca.list.empty">
       Aucun cycle pour ce filtre.

@@ -71,3 +71,65 @@
   color: var(--qos-fg-tertiary);
   font-size: var(--qos-text-sm);
 }
+
+/* Photos du constat : choisies avant la déclaration, envoyées juste après. */
+.photos {
+  margin: 0 0 var(--qos-space-4);
+}
+
+.photos__hint {
+  margin: 0 0 var(--qos-space-3);
+  font-size: var(--qos-fs-sm);
+  line-height: 1.5;
+  color: var(--qos-fg-secondary);
+}
+
+.photos__list {
+  list-style: none;
+  margin: 0 0 var(--qos-space-3);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.photo {
+  display: flex;
+  align-items: center;
+  gap: var(--qos-space-3);
+  padding: 4px 4px 4px 12px;
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: var(--qos-radius-md);
+  background: var(--qos-bg-elevated);
+}
+
+.photo__icon { flex: none; color: var(--qos-fg-tertiary); }
+
+.photo__name {
+  flex: 1;
+  min-width: 0;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.photo__size {
+  flex: none;
+  font-size: var(--qos-fs-sm);
+  color: var(--qos-fg-tertiary);
+}
+
+.photos__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--qos-space-2);
+}
+
+.photos__progress {
+  margin: var(--qos-space-2) 0 0;
+  font-size: var(--qos-fs-sm);
+  color: var(--qos-fg-secondary);
+}
+
+.hidden-file { display: none; }

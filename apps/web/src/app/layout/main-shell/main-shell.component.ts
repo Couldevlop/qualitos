@@ -131,6 +131,9 @@ export class MainShellComponent implements OnInit, OnDestroy {
       items: [
         { label: $localize`:@@nav.pdca:PDCA`,         route: '/pdca',     icon: 'autorenew', module: 'pdca' },
         { label: $localize`:@@nav.5s:5S`,             route: '/fives',    icon: 'check_circle', module: 'fives' },
+        // Ishikawa a sa liste : on y retrouve les diagrammes déjà ouverts (depuis
+        // une NC ou non) en un clic, au lieu de repasser par la fiche d'un écart.
+        { label: $localize`:@@nav.ishikawa:Ishikawa`, route: '/ishikawa', icon: 'device_hub', module: 'ishikawa' },
         { label: $localize`:@@nav.dmaic:DMAIC`,       route: '/dmaic',    icon: 'analytics', module: 'dmaic' },
         { label: $localize`:@@nav.cercles:Cercles`,   route: '/circles',  icon: 'groups', module: 'circle' },
         // Pas d'attribut `module` : la boîte à idées ne dépend pas de
@@ -180,10 +183,9 @@ export class MainShellComponent implements OnInit, OnDestroy {
     },
 
     {
-      // Ni Ishikawa ni les 5 Pourquoi n'ont d'entrée ici, et c'est voulu : ces
-      // deux analyses partent d'un écart déjà constaté. On les ouvre depuis la
-      // fiche de non-conformité, qui les crée sur son propre sujet et les
-      // rattache. Une entrée de menu laissait croire à une analyse hors sol.
+      // Les 5 Pourquoi n'ont pas d'entrée : ils creusent la cause d'un écart
+      // déjà constaté et s'ouvrent depuis la fiche de non-conformité. Ishikawa,
+      // lui, a sa liste dans « Méthodes qualité ».
       label: $localize`:@@nav.non-conformite:Non-conformité`,
       collapsible: true,
       items: [
@@ -191,6 +193,9 @@ export class MainShellComponent implements OnInit, OnDestroy {
         { label: $localize`:@@nav.nc-externe:NC externe (Réclamations)`,  route: '/nc/externe',  icon: 'campaign',            module: 'capa' },
         // Le troisieme ecart : celui que l'on recoit d'un fournisseur, suivi
         // jusqu'a son 8D. Il vit avec le module fournisseurs, pas avec la CAPA.
+        // Le registre des fournisseurs le precede : c'est le meme geste
+        // (evaluer le fournisseur, puis traiter ses ecarts).
+        { label: $localize`:@@nav.fournisseurs:Fournisseurs`,      route: '/suppliers',      icon: 'factory', module: 'supplier' },
         { label: $localize`:@@nav.nc-fournisseurs:NC fournisseurs`, route: '/suppliers/non-conformites', icon: 'local_shipping', module: 'supplier' },
         // La CAPA suit immediatement la non-conformite parce que c'est la
         // suite du meme geste : on constate un ecart, puis on le traite. La
@@ -222,7 +227,11 @@ export class MainShellComponent implements OnInit, OnDestroy {
         { label: $localize`:@@nav.risques-fmea:Risques (FMEA)`,     route: '/fmea',      icon: 'warning', module: 'risk' },
         { label: $localize`:@@nav.documents:GED`,                   route: '/documents', icon: 'description', module: 'docs' },
         { label: $localize`:@@nav.moc:MOC`, route: '/changes', icon: 'change_circle', module: 'change' },
-        { label: $localize`:@@nav.ehs:EHS`,                         route: '/ehs',       icon: 'health_and_safety', module: 'ehs' }
+        { label: $localize`:@@nav.ehs:EHS`,                         route: '/ehs',       icon: 'health_and_safety', module: 'ehs' },
+        // La formation est une activite courante (habiliter, recycler), pas un
+        // referentiel : elle rejoint les operations, avec sa matrice.
+        { label: $localize`:@@nav.formation:Formation`,            route: '/training',       icon: 'school', module: 'training' },
+        { label: $localize`:@@nav.competences:Matrice de compétences`, route: '/training/competences', icon: 'grid_on', module: 'training' }
       ]
     },
     {
@@ -234,9 +243,6 @@ export class MainShellComponent implements OnInit, OnDestroy {
         { label: $localize`:@@nav.doc-gen-ia:Génération doc IA`,    route: '/standards-doc-gen', icon: 'auto_awesome', module: 'standards' },
         { label: $localize`:@@nav.packs-sectoriels:Packs sectoriels`, route: '/industry-packs', icon: 'category', module: 'industry' },
         { label: $localize`:@@nav.marketplace:Marketplace`,         route: '/marketplace',    icon: 'storefront', module: 'industry' },
-        { label: $localize`:@@nav.fournisseurs:Fournisseurs`,      route: '/suppliers',      icon: 'local_shipping', module: 'supplier' },
-        { label: $localize`:@@nav.formation:Formation`,            route: '/training',       icon: 'school', module: 'training' },
-        { label: $localize`:@@nav.competences:Matrice de compétences`, route: '/training/competences', icon: 'grid_on', module: 'training' },
         { label: $localize`:@@nav.academy:Academy`,                route: '/academy',        icon: 'cast_for_education', module: 'training' },
         { label: $localize`:@@nav.mon-apprentissage:Mon apprentissage`, route: '/learning',  icon: 'military_tech' },
         { label: $localize`:@@nav.integrations:Intégrations`,      route: '/itsm',           icon: 'hub', module: 'itsm' }

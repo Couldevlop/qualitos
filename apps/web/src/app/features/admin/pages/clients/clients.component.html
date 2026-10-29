@@ -50,19 +50,19 @@
     <form *ngIf="step === 1" [formGroup]="companyForm" (ngSubmit)="next()" class="assistant__champs" novalidate>
       <mat-form-field appearance="outline" class="large">
         <mat-label i18n="@@admin.clients.name">Nom de l'organisation</mat-label>
-        <input matInput formControlName="name" (input)="suggestSlug()" data-test="client-nom"
+        <input matInput formControlName="name" (input)="suggestSlug()" required data-test="client-nom"
                i18n-placeholder="@@admin.clients.name-placeholder" placeholder="Hôpital Saint-Jean">
         <mat-error *ngIf="companyForm.controls.name.hasError('required')" i18n="@@rr.form.required">Champ obligatoire.</mat-error>
       </mat-form-field>
       <mat-form-field appearance="outline">
         <mat-label i18n="@@admin.clients.slug">Identifiant</mat-label>
-        <input matInput formControlName="slug" data-test="client-slug">
+        <input matInput formControlName="slug" required data-test="client-slug">
         <mat-hint i18n="@@admin.clients.slug-hint">Minuscules, chiffres et tirets ; il ne change plus.</mat-hint>
         <mat-error *ngIf="companyForm.controls.slug.invalid" i18n="@@admin.clients.slug-invalid">3 à 63 caractères : minuscules, chiffres et tirets.</mat-error>
       </mat-form-field>
       <mat-form-field appearance="outline">
         <mat-label i18n="@@admin.clients.plan">Offre</mat-label>
-        <mat-select formControlName="plan" data-test="client-offre">
+        <mat-select formControlName="plan" required data-test="client-offre">
           <mat-option *ngFor="let p of plans" [value]="p">{{ p }}</mat-option>
         </mat-select>
       </mat-form-field>
@@ -102,7 +102,7 @@
       <div class="assistant__champs">
         <mat-form-field appearance="outline" class="large">
           <mat-label i18n="@@admin.team.invite-email">Adresse e-mail</mat-label>
-          <input matInput type="email" formControlName="email" autocomplete="off" data-test="admin-email">
+          <input matInput type="email" formControlName="email" autocomplete="off" required data-test="admin-email">
           <mat-error *ngIf="adminForm.controls.email.invalid" i18n="@@admin.team.invite-email-invalid">Une adresse e-mail valide est attendue.</mat-error>
         </mat-form-field>
         <mat-form-field appearance="outline">

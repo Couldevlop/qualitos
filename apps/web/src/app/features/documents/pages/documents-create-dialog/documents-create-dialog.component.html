@@ -18,18 +18,22 @@
              i18n-placeholder="@@documents.create.code-placeholder"
              placeholder="Ex. : POL-QUAL-001">
       <mat-hint i18n="@@documents.create.code-hint">A-Z, 0-9, point, tiret, underscore</mat-hint>
+      <mat-error *ngIf="form.controls.code.hasError('required')" i18n="@@common.required-field">Champ obligatoire</mat-error>
+      <mat-error *ngIf="form.controls.code.hasError('pattern')" i18n="@@common.invalid-code">Caractères autorisés : A-Z, 0-9, point, tiret, underscore.</mat-error>
     </mat-form-field>
     <mat-form-field appearance="outline" class="col">
       <mat-label i18n="@@common.type">Type</mat-label>
       <mat-select formControlName="type" required>
         <mat-option *ngFor="let t of types" [value]="t.value">{{ t.label }}</mat-option>
       </mat-select>
+      <mat-error *ngIf="form.controls.type.hasError('required')" i18n="@@common.required-field">Champ obligatoire</mat-error>
     </mat-form-field>
   </div>
 
   <mat-form-field appearance="outline" class="full">
     <mat-label i18n="@@common.title">Titre</mat-label>
     <input matInput formControlName="title" maxlength="255" required>
+    <mat-error *ngIf="form.controls.title.hasError('required')" i18n="@@common.required-field">Champ obligatoire</mat-error>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
@@ -58,6 +62,9 @@
 
   <qos-user-picker class="full" formControlName="ownerId" required
                    label="Propriétaire" i18n-label="@@documents.list.col-owner"></qos-user-picker>
+  <p class="field-error" role="alert"
+     *ngIf="form.controls.ownerId.touched && form.controls.ownerId.hasError('required')"
+     i18n="@@documents.create.owner-required">Choisissez le propriétaire du document.</p>
 
   <mat-checkbox formControlName="mandatoryRead" i18n="@@documents.create.mandatory-read">
     Lecture obligatoire — chaque utilisateur cible devra acquitter la version publiée.

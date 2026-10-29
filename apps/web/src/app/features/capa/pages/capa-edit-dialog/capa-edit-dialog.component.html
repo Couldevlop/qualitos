@@ -12,6 +12,8 @@
   <mat-form-field appearance="outline" class="full">
     <mat-label i18n="@@common.title">Titre</mat-label>
     <input matInput formControlName="title" maxlength="255" required>
+    <mat-error *ngIf="form.controls.title.hasError('required')" i18n="@@common.required-field">Champ obligatoire</mat-error>
+    <mat-error *ngIf="form.controls.title.hasError('maxlength')" i18n="@@common.maxlength-255">255 caractères maximum.</mat-error>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
@@ -22,9 +24,10 @@
   <div class="row">
     <mat-form-field appearance="outline" class="col">
       <mat-label i18n="@@capa.create.criticity">Criticité</mat-label>
-      <mat-select formControlName="criticity">
-        <mat-option *ngFor="let c of criticities" [value]="c">{{ c }}</mat-option>
+      <mat-select formControlName="criticity" required>
+        <mat-option *ngFor="let c of criticities" [value]="c">{{ c | severityLabel }}</mat-option>
       </mat-select>
+      <mat-error *ngIf="form.controls.criticity.hasError('required')" i18n="@@common.required-field">Champ obligatoire</mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="col">

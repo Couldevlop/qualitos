@@ -4707,8 +4707,8 @@ Customer portal</target>
         <target state="translated">Data matrix</target>
       </trans-unit>
       <trans-unit id="anomaly.detect.matrix-label" datatype="html">
-        <source>Échantillons (une ligne par échantillon, features séparées par virgule ou espace)</source>
-        <target state="translated">Samples (one row per sample, features separated by comma or space)</target>
+        <source>Données manuelles : une ligne par échantillon, variables séparées par virgule ou espace</source>
+        <target state="translated">Manual data: one row per sample, variables separated by comma or space</target>
       </trans-unit>
       <trans-unit id="anomaly.detect.method-label" datatype="html">
         <source>Méthode</source>
@@ -4759,8 +4759,8 @@ Customer portal</target>
         <target state="translated">— isolates rare points via random partitions. Robust, with no distribution assumption.</target>
       </trans-unit>
       <trans-unit id="anomaly.detect.help-reconstruction" datatype="html">
-        <source>— erreur de reconstruction sur les axes principaux (auto-encodeur linéaire). Indique la feature la plus en cause.</source>
-        <target state="translated">— reconstruction error on principal axes (linear autoencoder). Highlights the most contributing feature.</target>
+        <source>— erreur de reconstruction sur les axes principaux (auto-encodeur linéaire). Indique la variable la plus en cause.</source>
+        <target state="translated">— reconstruction error on the principal axes (linear autoencoder). Points to the variable most involved.</target>
       </trans-unit>
       <trans-unit id="anomaly.detect.card-anomalies" datatype="html">
         <source>Anomalies détectées</source>
@@ -4811,12 +4811,8 @@ Customer portal</target>
         <target state="translated">Score</target>
       </trans-unit>
       <trans-unit id="anomaly.detect.col-top-feature" datatype="html">
-        <source>Feature dominante</source>
-        <target state="translated">Top feature</target>
-      </trans-unit>
-      <trans-unit id="anomaly.detect.feature-prefix" datatype="html">
-        <source>Feature</source>
-        <target state="translated">Feature</target>
+        <source>Variable dominante</source>
+        <target state="translated">Main variable</target>
       </trans-unit>
       <trans-unit id="anomaly.detect.col-explain" datatype="html">
         <source>Explication</source>
@@ -4847,16 +4843,16 @@ Customer portal</target>
         <target state="translated">base</target>
       </trans-unit>
       <trans-unit id="anomaly.detect.explain-legend" datatype="html">
-        <source>Barres rouges = features qui rendent l'échantillon anormal ; bleues = vers la normale.</source>
-        <target state="translated">Red bars = features making the sample anomalous; blue = toward normal.</target>
+        <source>Barres rouges = variables qui rendent l'échantillon anormal ; bleues = vers la normale.</source>
+        <target state="translated">Red bars = variables that make the sample anomalous; blue = towards normal.</target>
       </trans-unit>
       <trans-unit id="anomaly.detect.err-no-data" datatype="html">
         <source>Saisissez au moins un échantillon (une ligne de nombres).</source>
         <target state="translated">Enter at least one sample (a row of numbers).</target>
       </trans-unit>
       <trans-unit id="anomaly.detect.err-ragged" datatype="html">
-        <source>Toutes les lignes doivent avoir le même nombre de features (≥ 1).</source>
-        <target state="translated">All rows must have the same number of features (≥ 1).</target>
+        <source>Toutes les lignes doivent avoir le même nombre de variables (≥ 1).</source>
+        <target state="translated">All rows must have the same number of variables (≥ 1).</target>
       </trans-unit>
       <trans-unit id="anomaly.detect.subject-label" datatype="html">
         <source>Ce que décrit la matrice</source>
@@ -7711,8 +7707,8 @@ Customer portal</target>
         <target state="translated">Complaints</target>
       </trans-unit>
       <trans-unit id="complaintnlp.texts-label" datatype="html">
-        <source>Une réclamation par ligne</source>
-        <target state="translated">One complaint per line</target>
+        <source>Données manuelles : une réclamation par ligne</source>
+        <target state="translated">Manual data: one complaint per line</target>
       </trans-unit>
       <trans-unit id="complaintnlp.run" datatype="html">
         <source>Analyser</source>
@@ -10669,6 +10665,186 @@ Customer portal</target>
       <trans-unit id="training.path-detail.validity" datatype="html">
         <source>Validité <x id="INTERPOLATION"/> mois</source>
         <target state="translated">Valid for <x id="INTERPOLATION"/> months</target>
+      </trans-unit>
+      <trans-unit id="nc.create.blocked-category" datatype="html">
+        <source>Choisissez la catégorie pour pouvoir déclarer.</source>
+        <target state="translated">Choose the category to report.</target>
+      </trans-unit>
+      <trans-unit id="nc.create.blocked-severity" datatype="html">
+        <source>Choisissez la sévérité pour pouvoir déclarer.</source>
+        <target state="translated">Choose the severity to report.</target>
+      </trans-unit>
+      <trans-unit id="nc.create.category-required" datatype="html">
+        <source>Choisissez une catégorie.</source>
+        <target state="translated">Choose a category.</target>
+      </trans-unit>
+      <trans-unit id="nc.create.severity-required" datatype="html">
+        <source>Choisissez une sévérité.</source>
+        <target state="translated">Choose a severity.</target>
+      </trans-unit>
+      <trans-unit id="nc.create.photo-take" datatype="html">
+        <source>Prendre une photo</source>
+        <target state="translated">Take a photo</target>
+      </trans-unit>
+      <trans-unit id="nc.create.photo-choose" datatype="html">
+        <source>Choisir des photos</source>
+        <target state="translated">Choose photos</target>
+      </trans-unit>
+      <trans-unit id="nc.create.photo-remove-tooltip" datatype="html">
+        <source>Retirer cette photo</source>
+        <target state="translated">Remove this photo</target>
+      </trans-unit>
+      <trans-unit id="nc.create.photo-remove-aria" datatype="html">
+        <source>Retirer <x id="name"/></source>
+        <target state="translated">Remove <x id="name"/></target>
+      </trans-unit>
+      <trans-unit id="nc.create.photo-progress" datatype="html">
+        <source>Envoi des photos</source>
+        <target state="translated">Uploading photos</target>
+      </trans-unit>
+      <trans-unit id="nc.create.photo-limit" datatype="html">
+        <source>Dix photos au maximum par déclaration.</source>
+        <target state="translated">Ten photos maximum per report.</target>
+      </trans-unit>
+      <trans-unit id="nc.create.photo-type" datatype="html">
+        <source>Format non accepté — JPEG, PNG, WebP ou HEIC.</source>
+        <target state="translated">Format not accepted — JPEG, PNG, WebP or HEIC.</target>
+      </trans-unit>
+      <trans-unit id="nc.create.photo-too-large" datatype="html">
+        <source>Photo trop lourde — 10 Mo au maximum.</source>
+        <target state="translated">Photo too large — 10 MB maximum.</target>
+      </trans-unit>
+      <trans-unit id="nc.create.success-offline-photos" datatype="html">
+        <source>NC enregistrée hors-ligne — les photos n'ont pas pu être jointes : ajoutez-les depuis la fiche au retour du réseau.</source>
+        <target state="translated">NC saved offline — the photos could not be attached: add them from the record once the network is back.</target>
+      </trans-unit>
+      <trans-unit id="nc.create.success-with-photos" datatype="html">
+        <source>Non-conformité déclarée, photos jointes.</source>
+        <target state="translated">Non-conformance reported, photos attached.</target>
+      </trans-unit>
+      <trans-unit id="nc.create.success-partial-photos" datatype="html">
+        <source>Non-conformité déclarée, mais des photos n'ont pas pu être envoyées — ajoutez-les depuis la fiche.</source>
+        <target state="translated">Non-conformance reported, but some photos could not be sent — add them from the record.</target>
+      </trans-unit>
+      <trans-unit id="list-search.label" datatype="html">
+        <source>Rechercher</source>
+        <target state="translated">Search</target>
+      </trans-unit>
+      <trans-unit id="list-search.hint" datatype="html">
+        <source>Filtre les lignes de la page affichée.</source>
+        <target state="translated">Filters the rows of the displayed page.</target>
+      </trans-unit>
+      <trans-unit id="list-search.clear" datatype="html">
+        <source>Effacer la recherche</source>
+        <target state="translated">Clear search</target>
+      </trans-unit>
+      <trans-unit id="list-search.no-match" datatype="html">
+        <source>Aucune ligne de cette page ne correspond à la recherche.</source>
+        <target state="translated">No row on this page matches the search.</target>
+      </trans-unit>
+      <trans-unit id="common.invalid-email" datatype="html">
+        <source>Adresse e-mail invalide.</source>
+        <target state="translated">Invalid email address.</target>
+      </trans-unit>
+      <trans-unit id="common.invalid-code" datatype="html">
+        <source>Caractères autorisés : A-Z, 0-9, point, tiret, underscore.</source>
+        <target state="translated">Allowed characters: A-Z, 0-9, dot, hyphen, underscore.</target>
+      </trans-unit>
+      <trans-unit id="common.invalid-country" datatype="html">
+        <source>Code pays ISO à deux lettres majuscules (FR, DE…).</source>
+        <target state="translated">Two-letter uppercase ISO country code (FR, DE…).</target>
+      </trans-unit>
+      <trans-unit id="fmea.create.rpn-threshold-range" datatype="html">
+        <source>Seuil entre 1 et 1000.</source>
+        <target state="translated">Threshold between 1 and 1000.</target>
+      </trans-unit>
+      <trans-unit id="documents.create.owner-required" datatype="html">
+        <source>Choisissez le propriétaire du document.</source>
+        <target state="translated">Choose the document owner.</target>
+      </trans-unit>
+      <trans-unit id="ai-source.manual" datatype="html">
+        <source>Données manuelles</source>
+        <target state="translated">Manual data</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.source-label" datatype="html">
+        <source>Source des mesures</source>
+        <target state="translated">Source of measurements</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.source-none" datatype="html">
+        <source>Aucun indicateur actif au catalogue : saisissez les mesures.</source>
+        <target state="translated">No active indicator in the catalogue: enter the measurements.</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.source-too-few" datatype="html">
+        <source><x id="count"/> mesure(s) seulement pour cet indicateur : il en faut au moins 4.</source>
+        <target state="translated">Only <x id="count"/> measurement(s) for this indicator: at least 4 are needed.</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.source-loaded" datatype="html">
+        <source><x id="count"/> mesures chargées, du <x id="from"/> au <x id="to"/>.</source>
+        <target state="translated"><x id="count"/> measurements loaded, from <x id="from"/> to <x id="to"/>.</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.source-error" datatype="html">
+        <source>Impossible de charger les mesures de cet indicateur.</source>
+        <target state="translated">Unable to load the measurements of this indicator.</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.source-label" datatype="html">
+        <source>Indicateurs à croiser</source>
+        <target state="translated">Indicators to combine</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.source-hint" datatype="html">
+        <source>Une ligne par période mesurée pour tous les indicateurs choisis.</source>
+        <target state="translated">One row per period measured for all the chosen indicators.</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.source-none" datatype="html">
+        <source>Aucun indicateur actif au catalogue : saisissez la matrice.</source>
+        <target state="translated">No active indicator in the catalogue: enter the matrix.</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.source-load" datatype="html">
+        <source>Charger les mesures</source>
+        <target state="translated">Load the measurements</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.source-pick-two" datatype="html">
+        <source>Choisissez au moins deux indicateurs : l'analyse est multivariée.</source>
+        <target state="translated">Choose at least two indicators: the analysis is multivariate.</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.source-no-common" datatype="html">
+        <source>Ces indicateurs n'ont aucune période mesurée en commun.</source>
+        <target state="translated">These indicators have no measured period in common.</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.source-loaded" datatype="html">
+        <source><x id="rows"/> période(s) communes à <x id="count"/> indicateurs.</source>
+        <target state="translated"><x id="rows"/> period(s) shared by <x id="count"/> indicators.</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.source-error" datatype="html">
+        <source>Impossible de charger les mesures des indicateurs choisis.</source>
+        <target state="translated">Unable to load the measurements of the chosen indicators.</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.columns" datatype="html">
+        <source>Variables :</source>
+        <target state="translated">Variables:</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.variable-prefix" datatype="html">
+        <source>Variable</source>
+        <target state="translated">Variable</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.variables-per-sample" datatype="html">
+        <source><x id="count"/> variable(s) par échantillon</source>
+        <target state="translated"><x id="count"/> variable(s) per sample</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.source-load" datatype="html">
+        <source>Charger les réclamations clients</source>
+        <target state="translated">Load customer complaints</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.source-none" datatype="html">
+        <source>Aucune réclamation client enregistrée pour l'instant.</source>
+        <target state="translated">No customer complaint recorded yet.</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.source-loaded" datatype="html">
+        <source><x id="count"/> réclamation(s) reprise(s) sur <x id="total"/> enregistrée(s).</source>
+        <target state="translated"><x id="count"/> complaint(s) loaded out of <x id="total"/> recorded.</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.source-error" datatype="html">
+        <source>Impossible de charger les réclamations enregistrées.</source>
+        <target state="translated">Unable to load the recorded complaints.</target>
       </trans-unit>
       <trans-unit id="complaint-nlp.input.placeholder" datatype="html">
         <source>Produit cassé à la réception
@@ -20038,17 +20214,9 @@ declared income
         <source>Impossible de récupérer la position.</source>
         <target state="translated">Unable to retrieve the location.</target>
       </trans-unit>
-      <trans-unit id="nc.create.photos" datatype="html">
-        <source>Photos — URLs (une par ligne)</source>
-        <target state="translated">Photos — URLs (one per line)</target>
-      </trans-unit>
-      <trans-unit id="nc.create.photos-placeholder" datatype="html">
-        <source>https://… (une URL par ligne)</source>
-        <target state="translated">https://… (one URL per line)</target>
-      </trans-unit>
       <trans-unit id="nc.create.photos-hint" datatype="html">
-        <source>L'envoi de fichiers depuis l'appareil arrivera prochainement.</source>
-        <target state="translated">Uploading files from the device is coming soon.</target>
+        <source>Photos du constat — JPEG, PNG, WebP ou HEIC, 10 Mo et dix photos au maximum. Elles sont envoyées une fois la NC déclarée.</source>
+        <target state="translated">Photos of the observation — JPEG, PNG, WebP or HEIC, up to 10 MB and ten photos. They are sent once the NC is reported.</target>
       </trans-unit>
       <trans-unit id="nc.create.section-observation" datatype="html">
         <source>Le constat</source>

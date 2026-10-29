@@ -42,3 +42,10 @@ mat-dialog-content { padding-top: 8px; display: flex; flex-direction: column; ga
 mat-checkbox { margin: 4px 0 8px; }
 mat-dialog-actions { padding: 12px 0 0; gap: 8px; }
 mat-dialog-actions button[type='submit'] { display: inline-flex; align-items: center; gap: 6px; }
+
+/* Erreur du propriétaire : le sélecteur d'annuaire ne porte pas de mat-error. */
+.field-error {
+  margin: calc(-1 * var(--qos-space-3)) 0 var(--qos-space-3);
+  font-size: var(--qos-fs-xs);
+  color: var(--qos-danger-fg);
+}

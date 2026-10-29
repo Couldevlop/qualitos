@@ -114,3 +114,17 @@
 .dash {
   color: var(--qos-fg-secondary, #94a3b8);
 }
+
+/* Ce que la source a chargé, dit en clair. */
+.source-info {
+  margin: calc(-1 * var(--qos-space-2)) 0 var(--qos-space-3);
+  font-size: var(--qos-fs-sm);
+  color: var(--qos-fg-secondary);
+}
+
+.source-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--qos-space-3);
+  margin-bottom: var(--qos-space-3);
+}

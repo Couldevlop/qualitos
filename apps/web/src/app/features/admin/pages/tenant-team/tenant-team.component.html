@@ -28,7 +28,7 @@
     <div class="team-invite__champs">
       <mat-form-field appearance="outline">
         <mat-label i18n="@@admin.team.invite-email">Adresse e-mail</mat-label>
-        <input matInput type="email" formControlName="email" autocomplete="off" data-test="invite-email">
+        <input matInput type="email" formControlName="email" autocomplete="off" required data-test="invite-email">
         <mat-error *ngIf="inviteForm.controls.email.invalid" i18n="@@admin.team.invite-email-invalid">Une adresse e-mail valide est attendue.</mat-error>
       </mat-form-field>
       <mat-form-field appearance="outline">

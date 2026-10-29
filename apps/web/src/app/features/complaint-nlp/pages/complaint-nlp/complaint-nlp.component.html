@@ -10,8 +10,20 @@
   <div class="nlp-grid">
     <qos-panel i18n-title="@@complaintnlp.input-panel" title="Réclamations" icon="forum" class="nlp-input">
       <form [formGroup]="form" (ngSubmit)="run()">
+        <!-- Source d'abord : les réclamations déjà enregistrées (NC externes).
+             La saisie libre reste possible ci-dessous. -->
+        <div class="source-row">
+          <button mat-stroked-button color="primary" type="button" (click)="loadComplaints()"
+                  [disabled]="sourceLoading || loading">
+            <mat-icon aria-hidden="true">download</mat-icon>
+            <span i18n="@@complaintnlp.source-load">Charger les réclamations clients</span>
+          </button>
+        </div>
+        <mat-progress-bar *ngIf="sourceLoading" mode="indeterminate"></mat-progress-bar>
+        <p class="source-info" *ngIf="sourceInfo" role="status">{{ sourceInfo }}</p>
+
         <mat-form-field appearance="outline" class="full">
-          <mat-label i18n="@@complaintnlp.texts-label">Une réclamation par ligne</mat-label>
+          <mat-label i18n="@@complaintnlp.texts-label">Données manuelles : une réclamation par ligne</mat-label>
           <textarea matInput rows="8" formControlName="textsText"
                     placeholder="Produit cassé à la réception&#10;Livraison en retard&#10;…" i18n-placeholder="@@complaint-nlp.input.placeholder"></textarea>
         </mat-form-field>

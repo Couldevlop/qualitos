@@ -124,3 +124,11 @@
 .tile[data-tone='success'] { border-left-color: var(--qos-success-fg); }
 .tile[data-tone='warn']    { border-left-color: var(--qos-warn-fg); }
 .tile[data-tone='danger']  { border-left-color: var(--qos-danger-fg); }
+
+/* Recherche et filtres sur une ligne (mat-card est une colonne par défaut). */
+.filter-card {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: var(--qos-space-3);
+  align-items: flex-start;
+}

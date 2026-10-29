@@ -76,7 +76,7 @@ describe('NcCreateDialogComponent — origine héritée de la liste', () => {
 
   it('transmet au serveur l\'origine de la liste appelante', async () => {
     const component = await monte({ origin: 'EXTERNAL' as NcOrigin });
-    component.form.patchValue({
+    component.form.patchValue({ category: 'PROCESS', severity: 'MAJOR',
       title: 'Retard fournisseur',
       description: 'Livraison du lot 88 reçue avec quinze jours de retard.'
     });
@@ -92,7 +92,7 @@ describe('NcCreateDialogComponent — origine héritée de la liste', () => {
     // Entrée historique `/nc`, qui montre les deux origines : c'est au serveur
     // de trancher, et surtout pas au dialogue d'inventer un défaut divergent.
     const component = await monte(null);
-    component.form.patchValue({
+    component.form.patchValue({ category: 'PROCESS', severity: 'MAJOR',
       title: 'Écart de process',
       description: 'Paramètre de four relevé hors plage au poste 12.'
     });

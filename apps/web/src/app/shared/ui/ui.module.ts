@@ -3,7 +3,9 @@ import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
@@ -14,6 +16,7 @@ import { EchartComponent } from './echart/echart.component';
 import { EnumLabelPipe, OpenLabelPipe } from './enum-label/enum-label.pipe';
 import { FormDialogComponent } from './form-dialog/form-dialog.component';
 import { KpiCardComponent } from './kpi-card/kpi-card.component';
+import { ListSearchComponent } from './list-search/list-search.component';
 import { LicenseBannerComponent } from './license-banner/license-banner.component';
 import { LocaleSwitcherComponent } from './locale-switcher/locale-switcher.component';
 import { PageHeaderComponent } from './page-header/page-header.component';
@@ -35,6 +38,7 @@ const COMPONENTS = [
   FormDialogComponent,
   ScopeNoteComponent,
   LicenseBannerComponent,
+  ListSearchComponent,
   StatusLabelPipe,
   SeverityLabelPipe,
   NcCategoryLabelPipe,
@@ -50,7 +54,7 @@ const COMPONENTS = [
   declarations: COMPONENTS,
   imports: [
     CommonModule, RouterModule, ReactiveFormsModule,
-    MatButtonModule, MatDialogModule, MatIconModule, MatMenuModule,
+    MatButtonModule, MatDialogModule, MatFormFieldModule, MatIconModule, MatInputModule, MatMenuModule,
     MatProgressSpinnerModule,
     IconNoTranslateModule
   ],

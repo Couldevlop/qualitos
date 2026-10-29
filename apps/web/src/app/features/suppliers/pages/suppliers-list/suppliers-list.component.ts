@@ -11,6 +11,7 @@ import { safeErrorMessage } from '../../../../core/http/error-message';
 import { SuppliersService } from '../../suppliers.service';
 import { SupplierPage, SupplierResponse, SupplierStatus, SupplierType } from '../../suppliers.types';
 import { SuppliersCreateDialogComponent } from '../suppliers-create-dialog/suppliers-create-dialog.component';
+import { searchRows } from '../../../../shared/ui/list-search/list-filter';
 
 const PAGE_SIZE_OPTIONS = [10, 20, 50, 100];
 const MAX_PAGE_SIZE = 100;
@@ -43,6 +44,9 @@ export class SuppliersListComponent implements OnInit {
   totalElements = 0;
 
   suppliers$!: Observable<SupplierResponse[]>;
+  /** Lignes affichées : la page chargée, filtrée par la recherche. */
+  visibleSuppliers$!: Observable<SupplierResponse[]>;
+  readonly search = new FormControl('', { nonNullable: true });
   private readonly loadingState$ = new BehaviorSubject<boolean>(false);
   readonly loading$ = deferredView(this.loadingState$);
   private readonly errorState$ = new BehaviorSubject<string | null>(null);
@@ -85,6 +89,7 @@ export class SuppliersListComponent implements OnInit {
       }),
       shareReplay({ bufferSize: 1, refCount: true })
     );
+    this.visibleSuppliers$ = searchRows(this.suppliers$, this.search, s => [s.code, s.name, s.countryCode, s.contactEmail]);
   }
 
   onPage(e: PageEvent): void {

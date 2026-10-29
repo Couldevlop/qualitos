@@ -1,0 +1,22 @@
+:host {
+  display: block;
+  flex: 1 1 260px;
+  min-width: 0;
+  max-width: 420px;
+}
+
+.qos-list-search {
+  width: 100%;
+
+  mat-icon[matPrefix] {
+    margin: 0 var(--qos-space-2) 0 var(--qos-space-3);
+    color: var(--qos-fg-tertiary);
+  }
+}
+
+@media (max-width: 599px) {
+  :host {
+    max-width: none;
+    flex-basis: 100%;
+  }
+}

@@ -11,6 +11,8 @@
   </header>
 
   <mat-card class="filter-card">
+    <qos-list-search [control]="search"></qos-list-search>
+
     <mat-form-field appearance="outline" class="status-filter">
       <mat-label i18n="@@common.filter-by-status">Filtrer par statut</mat-label>
       <mat-select [formControl]="statusFilter">
@@ -31,7 +33,7 @@
   </div>
 
   <mat-card class="table-card" *ngIf="(loading$ | async) === false && (error$ | async) === null">
-    <table mat-table [dataSource]="(diagrams$ | async) ?? []" class="t">
+    <table mat-table [dataSource]="(visibleDiagrams$ | async) ?? []" class="t">
       <ng-container matColumnDef="problem">
         <th mat-header-cell *matHeaderCellDef i18n="@@ishikawa.list.col-problem">Problème</th>
         <td mat-cell *matCellDef="let d">
@@ -65,6 +67,9 @@
           tabindex="0" role="button"
           [attr.aria-label]="row.problemStatement | openLabel"></tr>
     </table>
+    <p class="empty" *ngIf="search.value && (diagrams$ | async)?.length && (visibleDiagrams$ | async)?.length === 0"
+       i18n="@@list-search.no-match">Aucune ligne de cette page ne correspond à la recherche.</p>
+
     <p class="empty" *ngIf="(diagrams$ | async)?.length === 0" i18n="@@ishikawa.list.empty">Aucun diagramme pour ce filtre.</p>
 
     <mat-paginator [length]="totalElements"

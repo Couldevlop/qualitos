@@ -74,3 +74,11 @@
   text-align: center;
   color: var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.6));
 }
+
+/* Recherche et filtres sur une ligne (mat-card est une colonne par défaut). */
+.filter-card {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: var(--qos-space-3);
+  align-items: flex-start;
+}

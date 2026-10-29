@@ -9,6 +9,8 @@
   </qos-page-header>
 
   <mat-card class="filter-card">
+    <qos-list-search [control]="search"></qos-list-search>
+
     <mat-form-field appearance="outline" class="status-filter">
       <mat-label i18n="@@common.filter-by-status">Filtrer par statut</mat-label>
       <mat-select [formControl]="statusFilter">
@@ -24,7 +26,7 @@
   </div>
 
   <mat-card class="table-card" *ngIf="(loading$ | async) === false && (error$ | async) === null">
-    <table mat-table [dataSource]="(plans$ | async) ?? []" class="t">
+    <table mat-table [dataSource]="(visiblePlans$ | async) ?? []" class="t">
       <ng-container matColumnDef="title">
         <th mat-header-cell *matHeaderCellDef i18n="@@common.title">Titre</th>
         <td mat-cell *matCellDef="let a">
@@ -54,6 +56,9 @@
           tabindex="0" role="button"
           [attr.aria-label]="row.title | openLabel"></tr>
     </table>
+    <p class="empty" *ngIf="search.value && (plans$ | async)?.length && (visiblePlans$ | async)?.length === 0"
+       i18n="@@list-search.no-match">Aucune ligne de cette page ne correspond à la recherche.</p>
+
     <p class="empty" *ngIf="(plans$ | async)?.length === 0" i18n="@@audits.list.empty">Aucun plan pour ce filtre.</p>
 
     <mat-paginator [length]="totalElements"

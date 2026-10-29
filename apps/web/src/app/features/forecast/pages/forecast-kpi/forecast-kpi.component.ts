@@ -1,8 +1,13 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import type { EChartsCoreOption } from 'echarts/core';
+import { of } from 'rxjs';
+import { catchError, finalize } from 'rxjs/operators';
 
+import { toSeries } from '../../../../shared/ai-sources/series';
+import { KpisService } from '../../../kpis/kpis.service';
+import { KpiResponse } from '../../../kpis/kpis.types';
 import { ForecastService } from '../../forecast.service';
 import { ForecastDirection, ForecastResponse } from '../../forecast.types';
 
@@ -18,7 +23,7 @@ import { ForecastDirection, ForecastResponse } from '../../forecast.types';
   styleUrls: ['./forecast-kpi.component.scss'],
   standalone: false
 })
-export class ForecastKpiComponent {
+export class ForecastKpiComponent implements OnInit {
 
   readonly form = this.fb.group({
     valuesText: ['', [Validators.required]],
@@ -37,7 +42,65 @@ export class ForecastKpiComponent {
   chartOption: EChartsCoreOption | null = null;
   private history: number[] = [];
 
-  constructor(private readonly fb: FormBuilder, private readonly forecast: ForecastService) {}
+  /** Valeur du sélecteur de source pour la saisie libre. */
+  static readonly MANUAL = 'manual';
+  readonly manual = ForecastKpiComponent.MANUAL;
+
+  /** Indicateurs actifs du catalogue, proposés comme source de la série. */
+  kpis: KpiResponse[] = [];
+  readonly source = new FormControl<string>(ForecastKpiComponent.MANUAL, { nonNullable: true });
+  sourceLoading = false;
+  /** Ce qui a été chargé, dit en clair (nombre de mesures, période). */
+  sourceInfo: string | null = null;
+
+  constructor(
+    private readonly fb: FormBuilder,
+    private readonly forecast: ForecastService,
+    private readonly kpiService: KpisService
+  ) {}
+
+  ngOnInit(): void {
+    // Le catalogue est une aide : s'il ne répond pas, la saisie libre reste.
+    this.kpiService.list(0, 100, 'ACTIVE').pipe(catchError(() => of(null)))
+      .subscribe(page => (this.kpis = page?.content ?? []));
+  }
+
+  /** Remplit la série, la cible et le sens depuis l'indicateur choisi. */
+  onSourceChange(id: string): void {
+    this.sourceInfo = null;
+    if (id === ForecastKpiComponent.MANUAL) {
+      return;
+    }
+    const kpi = this.kpis.find(k => k.id === id);
+    if (!kpi) {
+      return;
+    }
+    this.sourceLoading = true;
+    this.error = null;
+    this.kpiService.listMeasurements(kpi.id, 0, 200)
+      .pipe(finalize(() => (this.sourceLoading = false)))
+      .subscribe({
+        next: page => {
+          const series = toSeries(page.content);
+          this.form.patchValue({
+            valuesText: series.values.join(', '),
+            target: kpi.targetValue ?? this.form.value.target ?? null,
+            direction: kpi.direction === 'LOWER_IS_BETTER' ? 'at_most' : 'at_least'
+          });
+          const count = series.values.length;
+          this.sourceInfo = count < 4
+            ? $localize`:@@forecast.kpi.source-too-few:${count}:count: mesure(s) seulement pour cet indicateur : il en faut au moins 4.`
+            : $localize`:@@forecast.kpi.source-loaded:${count}:count: mesures chargées, du ${this.day(series.from)}:from: au ${this.day(series.to)}:to:.`;
+        },
+        error: () => {
+          this.error = $localize`:@@forecast.kpi.source-error:Impossible de charger les mesures de cet indicateur.`;
+        }
+      });
+  }
+
+  private day(iso: string | null): string {
+    return iso ? iso.slice(0, 10) : '—';
+  }
 
   loadExample(): void {
     this.form.patchValue({

@@ -16,17 +16,21 @@
                i18n-placeholder="@@suppliers.create.code-placeholder"
                placeholder="Ex. : STEEL-FR-001">
         <mat-hint i18n="@@documents.create.code-hint">A-Z, 0-9, point, tiret, underscore</mat-hint>
+        <mat-error *ngIf="form.controls.code.hasError('required')" i18n="@@common.required-field">Champ obligatoire</mat-error>
+        <mat-error *ngIf="form.controls.code.hasError('pattern')" i18n="@@common.invalid-code">Caractères autorisés : A-Z, 0-9, point, tiret, underscore.</mat-error>
       </mat-form-field>
       <mat-form-field appearance="outline" class="col col-country">
         <mat-label i18n="@@suppliers.create.country">Pays (ISO-2)</mat-label>
         <input matInput formControlName="countryCode" maxlength="2"
                placeholder="FR, DE, US…">
+        <mat-error *ngIf="form.controls.countryCode.hasError('pattern')" i18n="@@common.invalid-country">Code pays ISO à deux lettres majuscules (FR, DE…).</mat-error>
       </mat-form-field>
     </div>
 
     <mat-form-field appearance="outline" class="full">
       <mat-label i18n="@@suppliers.create.legal-name">Raison sociale</mat-label>
       <input matInput formControlName="name" maxlength="250" required>
+      <mat-error *ngIf="form.controls.name.hasError('required')" i18n="@@common.required-field">Champ obligatoire</mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="full">
@@ -34,11 +38,13 @@
       <mat-select formControlName="supplierType" required>
         <mat-option *ngFor="let t of types" [value]="t.value">{{ t.label }}</mat-option>
       </mat-select>
+      <mat-error *ngIf="form.controls.supplierType.hasError('required')" i18n="@@common.required-field">Champ obligatoire</mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="full">
       <mat-label i18n="@@suppliers.create.contact-email">Email contact qualité</mat-label>
       <input matInput formControlName="contactEmail" type="email" maxlength="320">
+      <mat-error *ngIf="form.controls.contactEmail.hasError('email')" i18n="@@common.invalid-email">Adresse e-mail invalide.</mat-error>
     </mat-form-field>
 
 </qos-form-dialog>

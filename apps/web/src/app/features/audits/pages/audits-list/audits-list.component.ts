@@ -12,6 +12,7 @@ import { AuditsService } from '../../audits.service';
 import { auditTypeLabel } from '../../audits.labels';
 import { AuditPlanResponse, AuditStatus, AuditsPage } from '../../audits.types';
 import { AuditsCreateDialogComponent } from '../audits-create-dialog/audits-create-dialog.component';
+import { searchRows } from '../../../../shared/ui/list-search/list-filter';
 
 const PAGE_SIZE_OPTIONS = [10, 20, 50, 100];
 const MAX_PAGE_SIZE = 100;
@@ -38,6 +39,9 @@ export class AuditsListComponent implements OnInit {
   totalElements = 0;
 
   plans$!: Observable<AuditPlanResponse[]>;
+  /** Lignes affichées : la page chargée, filtrée par la recherche. */
+  visiblePlans$!: Observable<AuditPlanResponse[]>;
+  readonly search = new FormControl('', { nonNullable: true });
   private readonly loadingState$ = new BehaviorSubject<boolean>(false);
   readonly loading$ = deferredView(this.loadingState$);
   private readonly errorState$ = new BehaviorSubject<string | null>(null);
@@ -79,6 +83,7 @@ export class AuditsListComponent implements OnInit {
       }),
       shareReplay({ bufferSize: 1, refCount: false }) // refCount:false : evite la boucle de teardown quand *ngIf loading masque la table
     );
+    this.visiblePlans$ = searchRows(this.plans$, this.search, a => [a.title, a.scope, a.standard]);
   }
 
   onPage(e: PageEvent): void {

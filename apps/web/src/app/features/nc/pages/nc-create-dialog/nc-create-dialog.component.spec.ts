@@ -83,11 +83,25 @@ describe('NcCreateDialogComponent', () => {
     http.verify();
   });
 
-  it('propose des valeurs par défaut exploitables en une saisie terrain', () => {
-    expect(component.form.controls.category.value).toBe('PROCESS');
-    expect(component.form.controls.severity.value).toBe('MAJOR');
+  it('laisse catégorie et sévérité vides : une criticité pré-remplie serait validée sans être lue', () => {
+    expect(component.form.controls.category.value).toBeNull();
+    expect(component.form.controls.severity.value).toBeNull();
     expect(component.categories.length).toBe(7);
     expect(component.severities).toEqual(['MINOR', 'MAJOR', 'CRITICAL']);
+  });
+
+  it('exige la catégorie et la sévérité, et dit laquelle manque', () => {
+    component.form.patchValue({ title: 'NC', description: 'Constat.' });
+    expect(component.blockedReason).toContain('catégorie');
+    component.form.patchValue({ category: 'PROCESS' });
+    expect(component.blockedReason).toContain('sévérité');
+
+    component.submit();
+    http.expectNone(endpoint);
+    expect(component.form.controls.severity.touched).toBeTrue();
+
+    component.form.patchValue({ severity: 'MINOR' });
+    expect(component.blockedReason).toBeUndefined();
   });
 
   it('exige un titre avant tout envoi', () => {
@@ -114,7 +128,7 @@ describe('NcCreateDialogComponent', () => {
     component.form.controls.title.setValue('x'.repeat(256));
     expect(component.form.controls.title.hasError('maxlength')).toBeTrue();
 
-    component.form.patchValue({ title: 'OK', description: 'Constat valide.' });
+    component.form.patchValue({ category: 'PROCESS', severity: 'MAJOR', title: 'OK', description: 'Constat valide.' });
     component.form.controls.zone.setValue('z'.repeat(256));
     expect(component.form.controls.zone.hasError('maxlength')).toBeTrue();
     component.submit();
@@ -122,7 +136,7 @@ describe('NcCreateDialogComponent', () => {
   });
 
   it('nettoie les champs optionnels vides plutôt que d\'envoyer des chaînes blanches', () => {
-    component.form.patchValue({
+    component.form.patchValue({ category: 'PROCESS', severity: 'MAJOR',
       title: '  Étiquetage lot manquant  ', zone: '   ',
       description: '  Sachet sorti de ligne sans étiquette de lot.  ',
       photoUrls: '  \n \n'
@@ -146,22 +160,76 @@ describe('NcCreateDialogComponent', () => {
     expect(dialogRef.close).toHaveBeenCalledWith(created);
   });
 
-  it('normalise le bloc photos : une URL par ligne, sans ligne vide ni espaces', () => {
-    component.form.patchValue({
-      title: 'NC',
-      description: 'Constat photographié sur place.',
-      photoUrls: '  https://a/1.jpg  \n\n   \n https://a/2.jpg\n'
-    });
+  const photo = (name: string, type = 'image/jpeg', size = 1024): File =>
+    new File([new Uint8Array(size)], name, { type });
+
+  const pick = (...files: File[]): void => {
+    const input = { files, value: 'x' } as unknown as HTMLInputElement;
+    component.onPhotosSelected({ target: input } as unknown as Event);
+  };
+
+  it('envoie les photos choisies une fois la NC créée, puis le dit', () => {
+    const snackSpy = spyOn(TestBed.inject(MatSnackBar), 'open');
+    pick(photo('a.jpg'), photo('b.png', 'image/png'));
+    expect(component.photos.length).toBe(2);
+
+    component.form.patchValue({ category: 'PRODUCT', severity: 'MINOR', title: 'NC', description: 'Constat photographié.' });
     component.submit();
 
     const req = http.expectOne(endpoint);
-    expect(req.request.body.photoUrls).toBe('https://a/1.jpg\nhttps://a/2.jpg');
+    expect(req.request.body.photoUrls).toBeUndefined();
     req.flush(created);
+
+    const first = http.expectOne(`${endpoint}/srv-1/photos`);
+    expect(first.request.body instanceof FormData).toBeTrue();
+    first.flush({ id: 'p1' });
+    http.expectOne(`${endpoint}/srv-1/photos`).flush({ id: 'p2' });
+
+    expect(component.uploaded).toBe(2);
+    expect(dialogRef.close).toHaveBeenCalledWith(created);
+    expect(snackSpy.calls.mostRecent().args[0]).toContain('photos jointes');
+  });
+
+  it("garde la NC déclarée quand une photo échoue, et invite à la rejoindre depuis la fiche", () => {
+    const snackSpy = spyOn(TestBed.inject(MatSnackBar), 'open');
+    pick(photo('a.jpg'));
+    component.form.patchValue({ category: 'PRODUCT', severity: 'MINOR', title: 'NC', description: 'Constat.' });
+    component.submit();
+
+    http.expectOne(endpoint).flush(created);
+    http.expectOne(`${endpoint}/srv-1/photos`).flush('boom', { status: 500, statusText: 'KO' });
+
+    expect(dialogRef.close).toHaveBeenCalledWith(created);
+    expect(snackSpy.calls.mostRecent().args[0]).toContain('depuis la fiche');
+  });
+
+  it('refuse tout de suite un format ou un poids que le serveur refuserait', () => {
+    const snackSpy = spyOn(TestBed.inject(MatSnackBar), 'open');
+    pick(photo('doc.pdf', 'application/pdf'));
+    expect(component.photos.length).toBe(0);
+    expect(snackSpy.calls.mostRecent().args[0]).toContain('Format non accepté');
+
+    pick(photo('lourde.jpg', 'image/jpeg', component.maxPhotoBytes + 1));
+    expect(component.photos.length).toBe(0);
+    expect(snackSpy.calls.mostRecent().args[0]).toContain('10 Mo');
+  });
+
+  it('plafonne à dix photos et permet d'en retirer une', () => {
+    const snackSpy = spyOn(TestBed.inject(MatSnackBar), 'open');
+    pick(...Array.from({ length: 11 }, (_, i) => photo(`p${i}.jpg`)));
+    expect(component.photos.length).toBe(component.maxPhotos);
+    expect(snackSpy.calls.mostRecent().args[0]).toContain('Dix photos');
+
+    component.removePhoto(component.photos[0]);
+    expect(component.photos.length).toBe(component.maxPhotos - 1);
+    expect(component.removePhotoAria('a.jpg')).toContain('a.jpg');
+    expect(component.formatSize(2048)).toBe('2 Ko');
+    expect(component.formatSize(3 * 1024 * 1024)).toBe('3.0 Mo');
   });
 
   it('reste utilisable sans session : la NC part sans déclarant plutôt que d\'être bloquée', () => {
     currentUser = null;
-    component.form.patchValue({ title: 'NC anonyme', description: 'Constat sans session.' });
+    component.form.patchValue({ category: 'PROCESS', severity: 'MAJOR', title: 'NC anonyme', description: 'Constat sans session.' });
     component.submit();
 
     const req = http.expectOne(endpoint);
@@ -173,7 +241,7 @@ describe('NcCreateDialogComponent', () => {
   it('hors-ligne : annonce la mise en file au lieu d\'une création confirmée', async () => {
     connectivity.online = false;
     const snackSpy = spyOn(TestBed.inject(MatSnackBar), 'open');
-    component.form.patchValue({
+    component.form.patchValue({ category: 'PROCESS',
       title: 'Zone blanche', severity: 'CRITICAL', description: 'Constat hors couverture réseau.'
     });
     component.submit();
@@ -188,8 +256,21 @@ describe('NcCreateDialogComponent', () => {
       .toContain('synchronisée au retour du réseau');
   });
 
+  it("hors-ligne : n'envoie pas les photos (un fichier ne se met pas en file) et le dit", async () => {
+    connectivity.online = false;
+    const snackSpy = spyOn(TestBed.inject(MatSnackBar), 'open');
+    pick(photo('a.jpg'));
+    component.form.patchValue({ category: 'PROCESS', severity: 'MAJOR', title: 'Zone blanche', description: 'Constat.' });
+    component.submit();
+    await new Promise<void>(resolve => setTimeout(resolve, 0));
+
+    http.expectNone(endpoint);
+    http.expectNone(req => req.url.endsWith('/photos'));
+    expect(snackSpy.calls.mostRecent().args[0]).toContain("photos n'ont pas pu être jointes");
+  });
+
   it('ignore un second envoi tant que le premier est en vol (anti double-déclaration)', () => {
-    component.form.patchValue({ title: 'NC', description: 'Constat en double clic.' });
+    component.form.patchValue({ category: 'PROCESS', severity: 'MAJOR', title: 'NC', description: 'Constat en double clic.' });
     component.submit();
     component.submit();
 
@@ -199,7 +280,7 @@ describe('NcCreateDialogComponent', () => {
 
   it('garde le dialogue ouvert quand le serveur refuse la saisie (400)', () => {
     const snackSpy = spyOn(TestBed.inject(MatSnackBar), 'open');
-    component.form.patchValue({ title: 'NC', description: 'Constat refusé par le serveur.' });
+    component.form.patchValue({ category: 'PROCESS', severity: 'MAJOR', title: 'NC', description: 'Constat refusé par le serveur.' });
     component.submit();
     http.expectOne(endpoint).flush(
       { title: 'ConstraintViolation: nc.title' }, { status: 400, statusText: 'Bad Request' });
@@ -264,7 +345,7 @@ describe('NcCreateDialogComponent', () => {
   });
 
   it('retire la position posée sur la fiche', () => {
-    component.form.patchValue({ geoLat: 48.1, geoLng: 2.2 });
+    component.form.patchValue({ category: 'PROCESS', severity: 'MAJOR', geoLat: 48.1, geoLng: 2.2 });
     component.clearLocation();
     expect(component.form.controls.geoLat.value).toBeNull();
     expect(component.form.controls.geoLng.value).toBeNull();
@@ -273,7 +354,7 @@ describe('NcCreateDialogComponent', () => {
   it("laisse le serveur trancher l’origine quand la liste n’en impose aucune", () => {
     // Entrée historique `/nc`, qui montre les deux origines : aucune n'est
     // impliquée par l'écran, et le serveur applique son défaut.
-    component.form.patchValue({ title: 'NC', description: 'Constat sans origine imposée.' });
+    component.form.patchValue({ category: 'PROCESS', severity: 'MAJOR', title: 'NC', description: 'Constat sans origine imposée.' });
     component.submit();
 
     const req = http.expectOne(endpoint);
@@ -282,7 +363,7 @@ describe('NcCreateDialogComponent', () => {
   });
 
   it('joint la position au corps de la déclaration quand elle est renseignée', () => {
-    component.form.patchValue({
+    component.form.patchValue({ category: 'PROCESS', severity: 'MAJOR',
       title: 'NC géolocalisée', description: 'Constat relevé sur zone.',
       geoLat: 48.856612, geoLng: 2.35222
     });

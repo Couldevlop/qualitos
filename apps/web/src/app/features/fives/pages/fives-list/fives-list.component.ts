@@ -12,6 +12,7 @@ import { safeErrorMessage } from '../../../../core/http/error-message';
 import { FivesService } from '../../fives.service';
 import { FiveSAuditResponse, FiveSAuditStatus, FiveSPage } from '../../fives.types';
 import { FivesCreateDialogComponent } from '../fives-create-dialog/fives-create-dialog.component';
+import { searchRows } from '../../../../shared/ui/list-search/list-filter';
 
 const PAGE_SIZE_OPTIONS = [10, 20, 50, 100];
 const MAX_PAGE_SIZE = 100;
@@ -37,6 +38,9 @@ export class FivesListComponent implements OnInit {
   totalElements = 0;
 
   audits$!: Observable<FiveSAuditResponse[]>;
+  /** Lignes affichées : la page chargée, filtrée par la recherche. */
+  visibleAudits$!: Observable<FiveSAuditResponse[]>;
+  readonly search = new FormControl('', { nonNullable: true });
   private readonly loadingState$ = new BehaviorSubject<boolean>(false);
   readonly loading$ = deferredView(this.loadingState$);
   private readonly errorState$ = new BehaviorSubject<string | null>(null);
@@ -91,6 +95,7 @@ export class FivesListComponent implements OnInit {
       )),
       shareReplay({ bufferSize: 1, refCount: false })
     );
+    this.visibleAudits$ = searchRows(this.audits$, this.search, a => [a.zone, a.description]);
   }
 
   /**

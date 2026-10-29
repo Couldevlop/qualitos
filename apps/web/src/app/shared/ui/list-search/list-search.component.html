@@ -1,0 +1,10 @@
+<mat-form-field appearance="outline" class="qos-list-search" subscriptSizing="dynamic">
+  <mat-label>{{ label }}</mat-label>
+  <mat-icon matPrefix aria-hidden="true">search</mat-icon>
+  <input matInput type="search" [formControl]="control" autocomplete="off" enterkeyhint="search">
+  <button mat-icon-button matSuffix type="button" *ngIf="control.value"
+          (click)="clear()" [attr.aria-label]="clearLabel">
+    <mat-icon aria-hidden="true">close</mat-icon>
+  </button>
+  <mat-hint>{{ hint }}</mat-hint>
+</mat-form-field>
