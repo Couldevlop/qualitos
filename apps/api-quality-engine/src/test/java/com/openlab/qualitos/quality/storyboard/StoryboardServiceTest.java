@@ -153,6 +153,74 @@ class StoryboardServiceTest {
         assertThat(r.unverifiedNumbers()).isEmpty();
     }
 
+    private StoryboardDto.StoryboardRequest exampleRequest() {
+        return new StoryboardDto.StoryboardRequest("Mai 2026", "Site de Lyon, atelier mécanique", List.of(
+                new StoryboardDto.IndicatorPoint("Taux de NC", "1,8", "-12 %", "< 2", "%"),
+                new StoryboardDto.IndicatorPoint("Délai moyen de clôture CAPA", "26", "stable", "< 30", "j"),
+                new StoryboardDto.IndicatorPoint("First Pass Yield", "97,4", "+1,2 pt", "> 98", "%"),
+                new StoryboardDto.IndicatorPoint("Audits réalisés vs planifiés", "8/10", "2 retards", "10/10", null)));
+    }
+
+    /** Le récit rendu en préproduction : tous ses nombres viennent des données, et il est faux. */
+    @Test
+    void errors_catchAStoryMadeOfTrueNumbers() {
+        List<String> errors = StoryboardService.errors(
+                "Le taux de non-conformité ( NC) est passé de 1,8 % à -12 %, un écart positif par rapport "
+                        + "à la cible fixée (-2 %). Le délai moyen de clôture des CAPA a connu une légère "
+                        + "progression, passant de 26 jours à 26 j. Le First Pass Yield a connu une légère "
+                        + "baisse à 97,4 %.", exampleRequest());
+        assertThat(errors).anySatisfy(e -> assertThat(e).contains("chiffres absents").contains("-2"));
+        assertThat(errors).anySatisfy(e -> assertThat(e).contains("« de 1,8 % à -12 % »"));
+        assertThat(errors).anySatisfy(e -> assertThat(e).contains("« de 26 jours à 26 j »"));
+        assertThat(errors).anySatisfy(e -> assertThat(e).contains("First Pass Yield").contains("+1,2 pt"));
+        assertThat(errors).hasSize(4);
+    }
+
+    @Test
+    void errors_acceptAFaithfulStory() {
+        assertThat(StoryboardService.errors(
+                "En mai 2026, le taux de NC recule de 12 % et s'établit à 1,8 %, sous la cible de 2 %. "
+                        + "Le délai moyen de clôture CAPA reste à 26 j. Le First Pass Yield est en hausse "
+                        + "de 1,2 pt à 97,4 %, encore sous la cible de 98 %. Les audits, 8/10, comptent 2 retards.",
+                exampleRequest())).isEmpty();
+        assertThat(StoryboardService.errors(
+                StoryboardService.factualNarrative(exampleRequest()), exampleRequest())).isEmpty();
+    }
+
+    @Test
+    void errors_flagAMoveOnAStableIndicator_andTheWrongSign() {
+        assertThat(StoryboardService.errors("Le délai moyen de clôture CAPA augmente, à 26 j.", exampleRequest()))
+                .singleElement().asString().contains("stable");
+        assertThat(StoryboardService.unverifiedNumbers("Tendance +12 % du taux de NC.", exampleRequest()))
+                .containsExactly("+12");
+        assertThat(StoryboardService.unverifiedNumbers("Entre 14-12 % du taux de NC.", exampleRequest()))
+                .containsExactly("14");
+    }
+
+    @Test
+    void direction_readsTheTrend() {
+        assertThat(StoryboardService.direction("-12 %")).isEqualTo(-1);
+        assertThat(StoryboardService.direction("+1,2 pt")).isEqualTo(1);
+        assertThat(StoryboardService.direction("−3")).isEqualTo(-1);
+        assertThat(StoryboardService.direction("stable")).isZero();
+        assertThat(StoryboardService.direction("en hausse")).isEqualTo(1);
+        assertThat(StoryboardService.direction("en baisse")).isEqualTo(-1);
+        assertThat(StoryboardService.direction("2 retards")).isNull();
+        assertThat(StoryboardService.direction(" ")).isNull();
+        assertThat(StoryboardService.direction(null)).isNull();
+    }
+
+    @Test
+    void aWrongDirection_triggersTheCorrection_thenTheFactualNarrative() {
+        when(ai.complete(anyString(), anyString(), anyInt()))
+                .thenReturn(new AiCompletionResult("Le First Pass Yield baisse à 97,4 %.", "ollama", 1, 1));
+        StoryboardDto.StoryboardResponse r = service.generate(exampleRequest());
+        assertThat(r.mode()).isEqualTo("factual");
+        ArgumentCaptor<String> user = ArgumentCaptor.forClass(String.class);
+        verify(ai, org.mockito.Mockito.times(2)).complete(anyString(), user.capture(), anyInt());
+        assertThat(user.getAllValues().get(1)).contains("« First Pass Yield » a pour tendance +1,2 pt");
+    }
+
     @Test
     void factualNarrative_saysOnlyWhatTheDataSays() {
         String text = StoryboardService.factualNarrative(sampleRequest());

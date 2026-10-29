@@ -32,6 +32,18 @@ public class StoryboardService {
             java.util.regex.Pattern.compile("^(<=|>=|<|>|≤|≥)\\s*(\\d+(?:[.,]\\d+)?)$");
     private static final java.util.regex.Pattern FRACTION =
             java.util.regex.Pattern.compile("^(\\d+(?:[.,]\\d+)?)\\s*/\\s*(\\d+(?:[.,]\\d+)?)$");
+    /** Un nombre et son signe collé ; « 10-12 » n'est pas un -12 (le tiret suit un chiffre). */
+    private static final java.util.regex.Pattern SIGNED =
+            java.util.regex.Pattern.compile("(?<![\\w,.])([-+−])?(\\d+(?:[.,]\\d+)?)");
+    /** « de 3 % à 1,8 % » : une valeur antérieure, que les données ne fournissent jamais. */
+    private static final java.util.regex.Pattern TRANSITION = java.util.regex.Pattern.compile(
+            "\\bde\\s+[-+−]?(\\d+(?:[.,]\\d+)?)\\s*(?:%|j|jours?|pts?|points?)?\\s+à\\s+[-+−]?\\d+(?:[.,]\\d+)?"
+                    + "(?:\\s*(?:%|j|jours?|pts?|points?)(?!\\w))?",
+            java.util.regex.Pattern.CASE_INSENSITIVE | java.util.regex.Pattern.UNICODE_CASE);
+    private static final java.util.regex.Pattern UP = java.util.regex.Pattern.compile(
+            "hausse|augment|accroiss|croissance|grimp|\\bmont[ée]");
+    private static final java.util.regex.Pattern DOWN = java.util.regex.Pattern.compile(
+            "baisse|diminu|recul|\\bchut");
 
     private final AiGatewayClient ai;
 
@@ -44,23 +56,101 @@ public class StoryboardService {
         String user = buildUserPrompt(request);
         AiCompletionResult r = ai.complete(system, user, MAX_TOKENS);
         String narrative = text(r);
-        List<String> unknown = unverifiedNumbers(narrative, request);
-        if (unknown.isEmpty()) {
+        List<String> errors = errors(narrative, request);
+        if (errors.isEmpty()) {
             return response(narrative, r.provider(), request, List.of(), "ai");
         }
-        // Une seconde demande, au même fournisseur, qui nomme les chiffres inventés.
+        // Une seconde demande, au même fournisseur, qui nomme les erreurs relevées.
         AiCompletionResult retry = ai.complete(system, user
-                + "\n\nTon récit précédent contenait des chiffres absents des données : "
-                + String.join(", ", unknown)
-                + ". Réécris-le sans aucun de ces chiffres, en n'utilisant que les valeurs "
-                + "données ci-dessus.", MAX_TOKENS);
+                + "\n\nTon récit précédent comportait des erreurs : " + String.join(" ; ", errors)
+                + ". Réécris-le en n'utilisant que les valeurs données ci-dessus, sans valeur "
+                + "antérieure ni évolution « de X à Y », et en respectant le sens de chaque tendance.",
+                MAX_TOKENS);
         String corrected = text(retry);
-        if (!corrected.isEmpty() && unverifiedNumbers(corrected, request).isEmpty()) {
+        if (!corrected.isEmpty() && errors(corrected, request).isEmpty()) {
             return response(corrected, retry.provider(), request, List.of(), "ai-corrected");
         }
-        // Deux fois des chiffres inventés : on ne publie pas un récit faux, le moteur
-        // rédige le récit factuel à partir des mêmes données.
+        // Deux fois un récit faux : on ne le publie pas, le moteur rédige le récit
+        // factuel à partir des mêmes données.
         return response(factualNarrative(request), retry.provider(), request, List.of(), "factual");
+    }
+
+    /**
+     * Ce qui rend un récit faux alors même que ses nombres viennent des données : un
+     * chiffre absent (ou de signe inversé), une évolution « de X à Y » que les données ne
+     * contiennent pas (elles n'ont aucune valeur antérieure), un sens contraire à la
+     * tendance fournie. Vide : le récit peut être publié.
+     */
+    static List<String> errors(String narrative, StoryboardDto.StoryboardRequest request) {
+        List<String> errors = new java.util.ArrayList<>();
+        List<String> unknown = unverifiedNumbers(narrative, request);
+        if (!unknown.isEmpty()) {
+            errors.add("chiffres absents des données : " + String.join(", ", unknown));
+        }
+        // « en hausse de 1,2 pt à 97,4 % » part d'une tendance fournie : ce n'est pas une valeur antérieure.
+        java.util.Set<Double> trends = new java.util.HashSet<>();
+        for (StoryboardDto.IndicatorPoint p : request.points()) {
+            if (p.trend() != null) {
+                NUMBER.matcher(p.trend()).results().forEach(m -> trends.add(num(m.group())));
+            }
+        }
+        TRANSITION.matcher(narrative).results()
+                .filter(m -> !trends.contains(num(m.group(1))))
+                .forEach(m -> errors.add("évolution inventée « " + m.group().strip() + " »"));
+        for (String sentence : narrative.split("(?<=[.!?])\\s+")) {
+            StoryboardDto.IndicatorPoint p = onlyIndicatorOf(sentence, request);
+            if (p == null) {
+                continue;
+            }
+            Integer trend = direction(p.trend());
+            String s = sentence.toLowerCase(java.util.Locale.ROOT);
+            boolean up = UP.matcher(s).find();
+            boolean down = DOWN.matcher(s).find();
+            boolean wrong = trend != null && (trend == 0 ? up || down : trend > 0 ? down && !up : up && !down);
+            if (wrong) {
+                errors.add("« " + p.label().strip() + " » a pour tendance " + p.trend().strip()
+                        + ", le récit dit le contraire");
+            }
+        }
+        return errors;
+    }
+
+    /** L'indicateur dont parle une phrase, par son libellé ou sa valeur ; null s'il y en a zéro ou plusieurs. */
+    private static StoryboardDto.IndicatorPoint onlyIndicatorOf(String sentence, StoryboardDto.StoryboardRequest request) {
+        String s = sentence.toLowerCase(java.util.Locale.ROOT);
+        java.util.Set<Double> numbers = new java.util.HashSet<>();
+        NUMBER.matcher(sentence).results().forEach(m -> numbers.add(num(m.group())));
+        StoryboardDto.IndicatorPoint found = null;
+        for (StoryboardDto.IndicatorPoint p : request.points()) {
+            java.util.regex.Matcher v = NUMBER.matcher(p.value());
+            boolean byValue = v.find() && numbers.contains(num(v.group()));
+            if (byValue || s.contains(p.label().strip().toLowerCase(java.util.Locale.ROOT))) {
+                if (found != null) {
+                    return null;
+                }
+                found = p;
+            }
+        }
+        return found;
+    }
+
+    /** Sens d'une tendance fournie : +1, -1, 0 pour « stable » ; null quand elle ne se lit pas. */
+    static Integer direction(String trend) {
+        if (trend == null || trend.isBlank()) {
+            return null;
+        }
+        String t = trend.strip().toLowerCase(java.util.Locale.ROOT);
+        if (t.contains("stable")) {
+            return 0;
+        }
+        java.util.regex.Matcher signed = SIGNED.matcher(t);
+        if (signed.find() && signed.group(1) != null) {
+            return signed.group(1).equals("+") ? 1 : -1;
+        }
+        if (UP.matcher(t).find()) {
+            return 1;
+        }
+        return DOWN.matcher(t).find() ? -1 : null;
     }
 
     private static StoryboardDto.StoryboardResponse response(String narrative, String provider,
@@ -198,12 +288,20 @@ public class StoryboardService {
         for (StoryboardDto.IndicatorPoint p : request.points()) {
             sources.append(' ').append(p.value()).append(' ').append(p.trend()).append(' ').append(p.target());
         }
-        NUMBER.matcher(sources).results().forEach(m -> known.add(num(m.group())));
+        SIGNED.matcher(sources).results().forEach(m -> known.add(signed(m)));
         java.util.Set<String> unknown = new java.util.LinkedHashSet<>();
-        NUMBER.matcher(narrative).results()
-                .filter(m -> !known.contains(num(m.group())))
-                .forEach(m -> unknown.add(m.group()));
+        // Un nombre sans signe peut reprendre une tendance négative (« recule de 12 % ») ;
+        // un nombre signé doit avoir le signe des données (« -2 % » pour une cible « < 2 » est faux).
+        SIGNED.matcher(narrative).results()
+                .filter(m -> m.group(1) != null ? !known.contains(signed(m))
+                        : !known.contains(num(m.group(2))) && !known.contains(-num(m.group(2))))
+                .forEach(m -> unknown.add(m.group().strip()));
         return List.copyOf(unknown);
+    }
+
+    private static double signed(java.util.regex.MatchResult m) {
+        double x = num(m.group(2));
+        return m.group(1) == null || m.group(1).equals("+") ? x : -x;
     }
 
     private static double num(String s) {
