@@ -1,6 +1,5 @@
 <qos-form-dialog
-  i18n-title="@@suppliers.nc.title"
-  title="Nouvelle non-conformité fournisseur"
+  [title]="editing ? editTitle : createTitle"
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
@@ -8,6 +7,13 @@
   submitLabel="Enregistrer"
   (submitted)="submit()"
   (cancelled)="cancel()">
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label i18n="@@common.status">Statut</mat-label>
+      <mat-select formControlName="status" required data-test="statut-nc">
+        <mat-option *ngFor="let st of statuses" [value]="st.value">{{ st.label }}</mat-option>
+      </mat-select>
+    </mat-form-field>
 
     <div class="row">
       <mat-form-field appearance="outline" class="col">

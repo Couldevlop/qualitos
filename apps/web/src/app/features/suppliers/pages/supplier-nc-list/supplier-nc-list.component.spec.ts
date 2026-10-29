@@ -199,6 +199,18 @@ describe('SupplierNcListComponent', () => {
       expect(snack.open).toHaveBeenCalled();
     }));
 
+    it('ouvre une NC pour la modifier, et recharge une fois enregistrée', fakeAsync(() => {
+      init();
+      const before = svc.listAllNcs.calls.count();
+      dialog.open.and.returnValue({ afterClosed: () => of(component.rows[0]) } as never);
+      component.edit(component.rows[0]);
+      const [cmp, cfg] = dialog.open.calls.mostRecent().args as [unknown, { data: { supplierId: string; nc: unknown } }];
+      expect(cmp).toBe(SuppliersNcDialogComponent);
+      expect(cfg.data.nc).toBe(component.rows[0]);
+      expect(cfg.data.supplierId).toBe(component.rows[0].supplierId);
+      expect(svc.listAllNcs.calls.count()).toBe(before + 1);
+    }));
+
     it('ne propose pas de créer une NC hors d\'un fournisseur', fakeAsync(() => {
       init();
       component.create();

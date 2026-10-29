@@ -102,8 +102,17 @@ public final class SupplierDto {
             @NotBlank @Size(max = 100) String partNumber,
             @NotNull @Min(1) @Max(MAX_PART_QUANTITY) Integer partQuantity,
             Boolean eightDRequested,
-            Boolean eightDReceived
-    ) {}
+            Boolean eightDReceived,
+            // Absent : ouverte. Une NC se saisit aussi déjà clôturée ou annulée.
+            NonConformityStatus status
+    ) {
+        public CreateNonConformityRequest(String lotReference, String description, NonConformitySeverity severity,
+                                          LocalDate detectedOn, String partNumber, Integer partQuantity,
+                                          Boolean eightDRequested, Boolean eightDReceived) {
+            this(lotReference, description, severity, detectedOn, partNumber, partQuantity,
+                    eightDRequested, eightDReceived, null);
+        }
+    }
 
     /** Mise à jour partielle : un champ absent reste tel quel. */
     public record UpdateNonConformityRequest(

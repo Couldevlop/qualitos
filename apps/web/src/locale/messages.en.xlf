@@ -7374,6 +7374,10 @@ Customer portal</target>
         <source><x id="audit"/> / constat <x id="rank"/></source>
         <target state="translated"><x id="audit"/> / finding <x id="rank"/></target>
       </trans-unit>
+      <trans-unit id="capa.list.filter-criticity" datatype="html">
+        <source>Filtrer par criticité</source>
+        <target state="translated">Filter by criticality</target>
+      </trans-unit>
       <trans-unit id="common.yes" datatype="html">
         <source>Oui</source>
         <target state="translated">Yes</target>
@@ -20244,6 +20248,34 @@ declared income
         <source>Échec du clustering (HTTP <x id="status"/>).</source>
         <target state="translated">Clustering failed (HTTP <x id="status"/>).</target>
       </trans-unit>
+      <trans-unit id="nccluster.tabs" datatype="html">
+        <source>Registres de non-conformités</source>
+        <target state="translated">Non-conformity registers</target>
+      </trans-unit>
+      <trans-unit id="nccluster.tab-external" datatype="html">
+        <source>NC externes (fournisseurs)</source>
+        <target state="translated">External NCs (suppliers)</target>
+      </trans-unit>
+      <trans-unit id="nccluster.tab-internal" datatype="html">
+        <source>NC internes</source>
+        <target state="translated">Internal NCs</target>
+      </trans-unit>
+      <trans-unit id="nccluster.load-external" datatype="html">
+        <source>Reprendre les NC fournisseurs</source>
+        <target state="translated">Load supplier NCs</target>
+      </trans-unit>
+      <trans-unit id="nccluster.load-internal" datatype="html">
+        <source>Reprendre les NC internes</source>
+        <target state="translated">Load internal NCs</target>
+      </trans-unit>
+      <trans-unit id="nccluster.register-empty" datatype="html">
+        <source>Le registre ne contient aucune non-conformité.</source>
+        <target state="translated">The register contains no non-conformity.</target>
+      </trans-unit>
+      <trans-unit id="nccluster.register-error" datatype="html">
+        <source>Le registre ne se lit pas pour le moment.</source>
+        <target state="translated">The register cannot be read right now.</target>
+      </trans-unit>
       <trans-unit id="nav.nlq-explore" datatype="html">
         <source>Exploration NLQ</source>
         <target state="translated">NLQ explorer</target>
@@ -30517,6 +30549,30 @@ India (service centre)</target>
       <trans-unit id="documents.suppliers.load-error" datatype="html">
         <source>Les documents fournisseurs n'ont pas pu être chargés.</source>
         <target state="translated">Supplier documents could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.status-open" datatype="html">
+        <source>Ouverte</source>
+        <target state="translated">Open</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.status-review" datatype="html">
+        <source>En revue</source>
+        <target state="translated">In review</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.status-closed" datatype="html">
+        <source>Clôturée</source>
+        <target state="translated">Closed</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.status-canceled" datatype="html">
+        <source>Annulée</source>
+        <target state="translated">Canceled</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.edit-title" datatype="html">
+        <source>Modifier la non-conformité fournisseur</source>
+        <target state="translated">Edit the supplier non-conformity</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.edit-aria" datatype="html">
+        <source>Modifier la non-conformité</source>
+        <target state="translated">Edit the non-conformity</target>
       </trans-unit>
       <trans-unit id="nav.admin-team" datatype="html">
         <source>Équipe &amp; habilitations</source>

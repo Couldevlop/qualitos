@@ -135,6 +135,16 @@ class CapaControllerTest {
     }
 
     @Test @WithMockUser(roles = "QUALITY_MANAGER")
+    void list_withCriticityFilter() throws Exception {
+        when(service.findAll(eq(CapaStatus.CLOSED), eq(CapaCriticity.HIGH), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of(caseResp(CapaStatus.CLOSED))));
+        mockMvc.perform(get("/api/v1/capa/cases").param("status", "CLOSED").param("criticity", "HIGH"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].status").value("CLOSED"));
+        verify(service, never()).findAll(any(), any(Pageable.class));
+    }
+
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void create_returns201() throws Exception {
         when(service.createCase(any())).thenReturn(caseResp(CapaStatus.OPEN));
         CapaDto.CreateCaseRequest req = new CapaDto.CreateCaseRequest(

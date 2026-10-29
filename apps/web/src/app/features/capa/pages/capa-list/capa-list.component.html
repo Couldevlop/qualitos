@@ -20,6 +20,13 @@
         <mat-option *ngFor="let s of statuses" [value]="s">{{ s | statusLabel }}</mat-option>
       </mat-select>
     </mat-form-field>
+    <mat-form-field appearance="outline" class="status-filter">
+      <mat-label i18n="@@capa.list.filter-criticity">Filtrer par criticité</mat-label>
+      <mat-select [formControl]="criticityFilter" data-test="filtre-criticite">
+        <mat-option [value]="''" i18n="@@common.all">Toutes</mat-option>
+        <mat-option *ngFor="let c of criticities" [value]="c">{{ criticityLabel(c) }}</mat-option>
+      </mat-select>
+    </mat-form-field>
   </mat-card>
 
   <div class="state-row" *ngIf="loading$ | async">

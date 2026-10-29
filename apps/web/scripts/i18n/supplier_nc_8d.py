@@ -96,4 +96,10 @@ TRANSLATIONS = {
     'documents.suppliers.empty': ("Aucun document n'a encore été joint à un fournisseur.", 'No document has been attached to a supplier yet.', 'Aún no se ha adjuntado ningún documento a un proveedor.', 'لم يُرفق أي مستند بمورد بعد.', 'サプライヤーに添付された文書はまだありません。', '尚未向任何供应商附加文件。'),
     'documents.suppliers.empty-filtered': ('Aucun document ne correspond à ces filtres.', 'No document matches these filters.', 'Ningún documento coincide con estos filtros.', 'لا يوجد مستند يطابق عوامل التصفية هذه.', 'この条件に一致する文書はありません。', '没有符合这些筛选条件的文件。'),
     'documents.suppliers.load-error': ("Les documents fournisseurs n'ont pas pu être chargés.", 'Supplier documents could not be loaded.', 'No se pudieron cargar los documentos de proveedores.', 'تعذّر تحميل مستندات الموردين.', 'サプライヤー文書を読み込めませんでした。', '无法加载供应商文件。'),
+    'suppliers.nc.status-open': ('Ouverte', 'Open', 'Abierta', 'مفتوحة', '未対応', '未关闭'),
+    'suppliers.nc.status-review': ('En revue', 'In review', 'En revisión', 'قيد المراجعة', 'レビュー中', '审核中'),
+    'suppliers.nc.status-closed': ('Clôturée', 'Closed', 'Cerrada', 'مغلقة', '完了', '已关闭'),
+    'suppliers.nc.status-canceled': ('Annulée', 'Canceled', 'Anulada', 'ملغاة', '取消', '已取消'),
+    'suppliers.nc.edit-title': ('Modifier la non-conformité fournisseur', 'Edit the supplier non-conformity', 'Modificar la no conformidad del proveedor', 'تعديل عدم مطابقة المورد', 'サプライヤー不適合を編集', '编辑供应商不合格项'),
+    'suppliers.nc.edit-aria': ('Modifier la non-conformité', 'Edit the non-conformity', 'Modificar la no conformidad', 'تعديل عدم المطابقة', '不適合を編集', '编辑不合格项'),
 }

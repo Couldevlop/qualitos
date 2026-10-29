@@ -163,6 +163,14 @@ export class SuppliersDetailComponent implements OnInit {
     ref.afterClosed().subscribe(nc => { if (nc) this.refresh$.next(); });
   }
 
+  /** Ouvre la NC pour la modifier : tous ses champs, statut compris. */
+  editNc(s: SupplierResponse, nc: NonConformityResponse): void {
+    this.dialog.open(SuppliersNcDialogComponent, {
+      data: { supplierId: s.id, nc }, autoFocus: 'first-tabbable', restoreFocus: true,
+      panelClass: 'qos-dialog-panel'
+    }).afterClosed().subscribe(saved => { if (saved) this.refresh$.next(); });
+  }
+
   openCert(s: SupplierResponse): void {
     const ref = this.dialog.open(SuppliersCertDialogComponent, {
       data: { supplierId: s.id }, autoFocus: 'first-tabbable', restoreFocus: true,

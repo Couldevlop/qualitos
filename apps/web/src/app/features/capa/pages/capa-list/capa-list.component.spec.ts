@@ -90,6 +90,20 @@ describe('CapaListComponent', () => {
     expect(getByAccount.calls.allArgs()).toEqual([['kc-1'], ['9c1f2b7e-0000-4000-8000-000000000000']]);
   });
 
+  it('filtre la liste par criticité, en plus du statut', async () => {
+    const list = spyOn(TestBed.inject(CapaService), 'listCases').and.returnValue(of({
+      content: [], totalElements: 0, totalPages: 0, number: 0, size: 20
+    }));
+    fixture.detectChanges();
+    const sub = component.cases$.subscribe();
+    component.statusFilter.setValue('OPEN');
+    component.criticityFilter.setValue('HIGH');
+    expect(list.calls.mostRecent().args.slice(2)).toEqual(['OPEN', 'HIGH']);
+    component.criticityFilter.setValue('');
+    expect(list.calls.mostRecent().args.slice(2)).toEqual(['OPEN', undefined]);
+    sub.unsubscribe();
+  });
+
   it('computes badge classes from status and criticity', () => {
     expect(component.statusBadge('IN_PROGRESS')).toBe('badge badge-in_progress');
     expect(component.criticityBadge('CRITICAL')).toBe('crit crit-critical');

@@ -104,6 +104,8 @@ export interface NonConformityResponse {
 export type NonConformityPage = SpringPage<NonConformityResponse>;
 
 export interface CreateNonConformityRequest {
+  /** Ouverte par défaut ; une NC se saisit aussi déjà clôturée ou annulée. */
+  status?: NonConformityStatus;
   lotReference?: string;
   description?: string;
   severity: NonConformitySeverity;

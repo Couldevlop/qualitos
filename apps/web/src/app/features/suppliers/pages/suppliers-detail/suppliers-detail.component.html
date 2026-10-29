@@ -157,6 +157,11 @@
           <ng-container matColumnDef="ncActions">
             <th mat-header-cell *matHeaderCellDef></th>
             <td mat-cell *matCellDef="let nc" class="row-actions">
+              <button mat-icon-button type="button" (click)="editNc(s, nc)" data-test="modifier-nc"
+                      i18n-aria-label="@@suppliers.nc.edit-aria" aria-label="Modifier la non-conformité"
+                      i18n-matTooltip="@@common.edit" matTooltip="Modifier">
+                <mat-icon aria-hidden="true">edit</mat-icon>
+              </button>
               <button mat-button type="button" class="doc-btn" (click)="openNcDocuments(s, nc)" data-test="documents-nc"
                       [attr.aria-label]="documentsAria(nc.documentCount)"
                       i18n-matTooltip="@@suppliers.nc.documents-tooltip" matTooltip="8D, preuves de CAPA…">

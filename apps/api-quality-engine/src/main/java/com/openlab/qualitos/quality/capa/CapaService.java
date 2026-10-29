@@ -65,15 +65,26 @@ public class CapaService {
 
     @Transactional(readOnly = true)
     public Page<CapaDto.CaseResponse> findAll(CapaStatus status, Pageable pageable) {
+        return findAll(status, null, pageable);
+    }
+
+    /** Le registre filtré par statut et par criticité, en base : la pagination reste juste. */
+    @Transactional(readOnly = true)
+    public Page<CapaDto.CaseResponse> findAll(CapaStatus status, CapaCriticity criticity, Pageable pageable) {
         UUID tenantId = requireTenantId();
         Optional<UUID> seulement = CapaScope.restriction(scope);
         if (seulement.isPresent()) {
-            return caseRepository.findConcerning(tenantId, status, seulement.get(), pageable)
+            return caseRepository.findConcerning(tenantId, status, criticity, seulement.get(), pageable)
                     .map(c -> toResponse(c, false));
         }
-        Page<CapaCase> page = status != null
-                ? caseRepository.findByTenantIdAndStatus(tenantId, status, pageable)
-                : caseRepository.findByTenantId(tenantId, pageable);
+        Page<CapaCase> page;
+        if (criticity != null) {
+            page = caseRepository.search(tenantId, status, criticity, pageable);
+        } else {
+            page = status != null
+                    ? caseRepository.findByTenantIdAndStatus(tenantId, status, pageable)
+                    : caseRepository.findByTenantId(tenantId, pageable);
+        }
         return page.map(c -> toResponse(c, false));
     }
 

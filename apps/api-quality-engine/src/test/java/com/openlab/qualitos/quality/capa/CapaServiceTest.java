@@ -87,6 +87,16 @@ class CapaServiceTest {
         assertThat(r.getContent().get(0).status()).isEqualTo(CapaStatus.CLOSED);
     }
 
+    @Test
+    void findAll_byCriticity_filtersInTheDatabase() {
+        Pageable p = PageRequest.of(0, 10);
+        when(caseRepo.search(TENANT, CapaStatus.OPEN, CapaCriticity.CRITICAL, p))
+                .thenReturn(new PageImpl<>(List.of(capa(TENANT, CapaStatus.OPEN))));
+        assertThat(service.findAll(CapaStatus.OPEN, CapaCriticity.CRITICAL, p).getContent()).hasSize(1);
+        verify(caseRepo, never()).findByTenantIdAndStatus(any(), any(), any());
+        verify(caseRepo, never()).findByTenantId(any(), any());
+    }
+
     // --- findById ---
     @Test
     void findById_found() {
