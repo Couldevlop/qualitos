@@ -15,9 +15,13 @@ name: CD préproduction
 # ne peut pas s'appuyer sur `latest` : deux déploiements successifs seraient
 # indiscernables, et un retour arrière impossible à désigner.
 
+# Plus de déclencheur `push` propre : ce workflow est APPELÉ par la CI (job
+# `deploy-preprod` de ci.yml), une fois tous les contrôles verts sur `main`.
+# Auparavant, CI et CD partaient en parallèle sur le même commit : les images
+# étaient construites deux fois (image-scan de la CI, puis ici) et publiées même
+# quand la CI échouait. Un commit = un seul pipeline, qui ne publie que du vert.
 on:
-  push:
-    branches: [main]
+  workflow_call:
   # Permet de rejouer un déploiement sans nouveau commit (reprise après incident).
   workflow_dispatch:
     inputs:

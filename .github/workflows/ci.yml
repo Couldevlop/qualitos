@@ -3,7 +3,8 @@ name: CI
 # Pipeline conforme à CLAUDE.md §14.2 :
 # commit → lint → SAST → tests (>85%) → SCA → build → image scan → ...
 # Cette étape couvre : lint, tests unitaires + couverture JaCoCo, SAST (Semgrep), SCA (OWASP DC).
-# Le scan d'image conteneur et la signature Cosign sont déclenchés sur main/develop uniquement.
+# Le scan d'image conteneur tourne sur develop ; sur main, il fait partie du job
+# deploy-preprod, qui construit, scanne et publie les images une fois tout vert.
 
 on:
   push:
@@ -519,7 +520,10 @@ jobs:
     # 50 min : l'image web compile désormais les 6 locales (AOT ×6, ~15-20 min
     # de build Docker) avant le scan.
     timeout-minutes: 50
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+    # Pas sur `main` : le job deploy-preprod (cd-preprod.yml) y construit et
+    # scanne exactement ces images avant de les publier. Les construire ici
+    # aussi doublait ~20 min de build Docker par commit.
+    if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
     strategy:
       fail-fast: false
       matrix:
@@ -731,3 +735,73 @@ jobs:
           path: dast-stack.log
           if-no-files-found: warn
           retention-days: 7
+
+  # ---------------------------------------------------------------------------
+  # Périmètre perf : le gate k6 ne tourne que si le moteur (ou ce qu'il charge
+  # au démarrage) a changé — même filtre que l'ancien déclencheur `paths`.
+  # ---------------------------------------------------------------------------
+  changes:
+    name: Périmètre modifié
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      perf: ${{ steps.diff.outputs.perf }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+
+      - name: Fichiers modifiés
+        id: diff
+        env:
+          BASE: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          # Premier push d'une branche : `before` vaut 0000… — on joue la prudence.
+          if ! git cat-file -e "$BASE^{commit}" 2>/dev/null; then
+            echo "perf=true" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          if git diff --name-only "$BASE" HEAD | grep -qE '^(apps/api-quality-engine/|\.github/workflows/perf-k6\.yml$|docker-compose\.dev\.yml$|infra/keycloak/)'; then
+            echo "perf=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "perf=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  perf-k6:
+    name: Perf
+    needs: changes
+    if: needs.changes.outputs.perf == 'true'
+    uses: ./.github/workflows/perf-k6.yml
+    permissions:
+      contents: read
+
+  # ---------------------------------------------------------------------------
+  # Déploiement continu préprod : construit, scanne (bloquant) et publie les
+  # images UNIQUEMENT si tous les contrôles ci-dessus sont verts. Le cluster tire
+  # ensuite les images de ce commit (infra/k8s/auto-deploy.sh).
+  # `!cancelled()` + test des résultats : un job sauté (perf hors périmètre,
+  # OWASP DC désactivé) n'empêche pas le déploiement, un job rouge si.
+  # ---------------------------------------------------------------------------
+  deploy-preprod:
+    name: CD préprod
+    needs:
+      - build-test
+      - secrets-scan
+      - infra-onprem
+      - sast-semgrep
+      - sca-trivy-deps
+      - sca-owasp
+      - frontend-build
+      - ai-service-tests
+      - ai-vision-5s-tests
+      - e2e-smoke
+      - dast-zap
+      - perf-k6
+    if: >-
+      !cancelled() && github.event_name == 'push' && github.ref == 'refs/heads/main' &&
+      !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled')
+    uses: ./.github/workflows/cd-preprod.yml
+    permissions:
+      contents: read
+      packages: write
+      id-token: write

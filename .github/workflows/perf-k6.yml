@@ -6,26 +6,16 @@ name: Perf (k6 SLO)
 # docker-compose.dev.yml, mint un token de démo, exécute k6 (grafana/k6) et
 # publie le résumé JSON. k6 sort en code != 0 si un SLO est dépassé → job ROUGE.
 #
-# Déclenché sur push/PR vers main/develop UNIQUEMENT quand le périmètre perf ou
-# le moteur changent (chemin filtré), plus un déclenchement manuel avec profil
-# de charge paramétrable. Sur les forks (pas de Docker buildkit garanti), le job
+# Lancé par la CI UNIQUEMENT quand le périmètre perf ou le moteur changent
+# (détection dans le job `changes` de ci.yml), plus un déclenchement manuel avec
+# profil de charge paramétrable. Sur les forks (pas de Docker buildkit garanti), le job
 # reste exécutable car il ne dépend d'aucun secret.
 
+# Appelé par la CI (job `perf-k6` de ci.yml) quand le moteur ou le périmètre
+# perf changent, plutôt que lancé en workflow séparé à chaque push et PR : un
+# commit ne déclenche plus qu'un seul pipeline.
 on:
-  push:
-    branches: [main, develop]
-    paths:
-      - 'apps/api-quality-engine/**'
-      - '.github/workflows/perf-k6.yml'
-      - 'docker-compose.dev.yml'
-      - 'infra/keycloak/**'
-  pull_request:
-    branches: [main, develop]
-    paths:
-      - 'apps/api-quality-engine/**'
-      - '.github/workflows/perf-k6.yml'
-      - 'docker-compose.dev.yml'
-      - 'infra/keycloak/**'
+  workflow_call:
   workflow_dispatch:
     inputs:
       vus:
@@ -36,10 +26,6 @@ on:
         description: 'Durée du palier (ex. 30s, 1m)'
         required: false
         default: '30s'
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read
