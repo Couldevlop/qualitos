@@ -15,6 +15,7 @@ import { DirectoryUser } from '../../../../core/directory/directory.types';
 import { SharedModule } from '../../../../shared/shared.module';
 import { UiModule } from '../../../../shared/ui/ui.module';
 import { UserPickerModule } from '../../../../shared/user-picker/user-picker.module';
+import { CapaCreateDialogData } from '../../../capa/pages/capa-create-dialog/capa-create-dialog.component';
 import { IshikawaService } from '../../../ishikawa/ishikawa.service';
 import { IshikawaDiagramResponse, IshikawaPage } from '../../../ishikawa/ishikawa.types';
 import { DmaicResolutionService } from '../../resolution/dmaic-resolution.service';
@@ -115,6 +116,14 @@ describe('DmaicResolutionComponent', () => {
     fixture.detectChanges();
   }
 
+  /** Une ligne d'action telle que la fiche la tient, sans passer par la fenêtre CAPA. */
+  function ajouterLigne(containment = false): void {
+    component.draft.actions = [...component.draft.actions, {
+      createdOn: null, action: null, responsible: null, status: 'OPEN', plannedOn: null, doneOn: null,
+      percent: 0, notes: null, capaId: null, containment
+    }];
+  }
+
   function confirmer(reponse: boolean): jasmine.Spy {
     return spyOn(TestBed.inject(MatDialog), 'open').and.returnValue({
       afterClosed: () => of(reponse)
@@ -153,7 +162,7 @@ describe('DmaicResolutionComponent', () => {
     expect(droite.querySelector('[data-test="closed"]')).not.toBeNull();
     expect(el.querySelector('.entete__qualif [data-test="failure"]')).not.toBeNull();
 
-    const actions = el.querySelectorAll('.actions');
+    const actions = el.querySelectorAll('.barre-projet');
     expect(actions.length).toBe(1);
     const stepper = el.querySelector('.phase-stepper') as HTMLElement;
     expect(actions[0].compareDocumentPosition(stepper) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
@@ -231,7 +240,7 @@ describe('DmaicResolutionComponent', () => {
     await setup();
     component.draft.openedOn = '2026-10-10';
     component.draft.closedOn = '2026-10-01';
-    component.addAction();
+    ajouterLigne();
     component.draft.actions[0].percent = 120;
     component.draft.actions[0].createdOn = '2026-10-10';
     component.draft.actions[0].plannedOn = '2026-10-02';
@@ -298,7 +307,7 @@ describe('DmaicResolutionComponent', () => {
     for (let i = 0; i < 20; i++) component.addTeam({ ...personne(3), accountId: 'a' + i });
     expect(component.draft.team.length).toBe(15);
 
-    component.addAction();
+    ajouterLigne();
     component.onResponsible(component.draft.actions[0], STUB_PERSON);
     expect(component.draft.actions[0].responsible).toEqual({ accountId: STUB_PERSON.accountId, name: STUB_PERSON.displayName });
     component.onResponsible(component.draft.actions[0], null);
@@ -325,19 +334,68 @@ describe('DmaicResolutionComponent', () => {
     expect(component.canAddChain).toBeFalse();
   });
 
-  it('tient le plan d\'actions : ajout daté du jour, retrait, cent actions au plus', async () => {
+  it('« Ajouter une action » ouvre la fenêtre CAPA ; la ligne reprend ce qui y est saisi', async () => {
     await setup();
     voir('IMPROVE');
+    svc.save.and.returnValue(of(fiche()));
+    const open = spyOn(TestBed.inject(MatDialog), 'open').and.returnValue({
+      afterClosed: () => of({
+        capaId: 'capa-1',
+        action: { title: 'Changer le gabarit', ownerId: 'kc-1', ownerName: 'Alice', dueDate: '2026-11-30' }
+      })
+    } as MatDialogRef<unknown>);
     un('action-ajout')!.click();
-    expect(component.draft.actions[0]).toEqual(jasmine.objectContaining({
-      status: 'OPEN', percent: 0, createdOn: new Date().toISOString().slice(0, 10)
-    }));
-    component.draft.actions[0].status = 'CLOSED';
+
+    const data = open.calls.mostRecent().args[1]!.data as CapaCreateDialogData;
+    expect(data.prefill?.type).toBe('CORRECTIVE');
+    expect(component.draft.actions).toEqual([jasmine.objectContaining({
+      action: 'Changer le gabarit', responsible: { accountId: 'kc-1', name: 'Alice' }, plannedOn: '2026-11-30',
+      capaId: 'capa-1', containment: false, status: 'OPEN', percent: 0, createdOn: new Date().toISOString().slice(0, 10)
+    })]);
+    expect(svc.save).toHaveBeenCalled();
+    expect(component.improveActions.length).toBe(1);
+    expect(component.containmentActions).toEqual([]);
+  });
+
+  it('une fenêtre CAPA fermée sans créer n\'ajoute aucune action', async () => {
+    await setup();
+    spyOn(TestBed.inject(MatDialog), 'open').and.returnValue({ afterClosed: () => of(undefined) } as MatDialogRef<unknown>);
+    component.addAction(true);
+    expect(component.draft.actions).toEqual([]);
+    expect(svc.save).not.toHaveBeenCalled();
+  });
+
+  it('l\'action de confinement se range dans Analyser et suffit à tenir le confinement', async () => {
+    await setup();
+    voir('ANALYZE');
+    svc.save.and.returnValue(of(fiche()));
+    const open = spyOn(TestBed.inject(MatDialog), 'open').and.returnValue({
+      afterClosed: () => of({ capaId: 'capa-2', action: { title: 'Trier le stock' } })
+    } as MatDialogRef<unknown>);
+    expect(missingOf(component.sheet, component.draft, ['CONTAIN'])).toContain('Action de confinement');
+    un('confinement-ajout')!.click();
+    fixture.detectChanges();
+
+    const data = open.calls.mostRecent().args[1]!.data as CapaCreateDialogData;
+    expect(data.prefill?.description).toContain('confinement');
+    expect(component.containmentActions).toEqual([jasmine.objectContaining({
+      action: 'Trier le stock', responsible: null, plannedOn: null, capaId: 'capa-2', containment: true
+    })]);
+    expect(component.improveActions).toEqual([]);
+    expect(fixture.nativeElement.querySelectorAll('[data-test="confinement"]').length).toBe(1);
+    expect(missingOf(component.sheet, component.draft, ['CONTAIN'])).not.toContain('Action de confinement');
+  });
+
+  it('retire une action et s\'arrête à cent actions', async () => {
+    await setup();
+    ajouterLigne();
     component.removeAction(component.draft.actions[0]);
     expect(component.draft.actions).toEqual([]);
-    for (let i = 0; i < 110; i++) component.addAction();
-    expect(component.draft.actions.length).toBe(100);
+    for (let i = 0; i < 100; i++) ajouterLigne();
     expect(component.canAddAction).toBeFalse();
+    const open = spyOn(TestBed.inject(MatDialog), 'open');
+    component.addAction();
+    expect(open).not.toHaveBeenCalled();
     expect(component.actionStatusLabel('IN_REVIEW')).toBe('En revue');
   });
 
@@ -349,7 +407,7 @@ describe('DmaicResolutionComponent', () => {
     }
     component.setSummary('DEFINE', 'rien');
     expect(component.summaryOf('DEFINE')).toBeNull();
-    expect(component.sectionText('CONTAIN').summary).toBe('Mesures conservatoires');
+    expect(component.sectionText('CONTAIN').summary).toBe('Action de confinement');
     expect(component.draft.surveillancePlan).toBe('texte CONTROL');
   });
 
@@ -560,7 +618,7 @@ describe('DmaicResolutionComponent', () => {
 
   it('crée une CAPA depuis une action, puis garde son lien', async () => {
     await setup();
-    component.addAction();
+    ajouterLigne();
     const ligne = component.draft.actions[0];
     ligne.action = 'Changer le gabarit';
     svc.save.and.returnValue(of(fiche()));

@@ -34,10 +34,12 @@ TRANSLATIONS = {
     'nccluster.err-unavailable': ('Service IA momentanément indisponible (disjoncteur ouvert).', 'AI service temporarily unavailable (circuit breaker open).', 'Servicio de IA temporalmente no disponible (disyuntor abierto).', 'خدمة الذكاء الاصطناعي غير متاحة مؤقتًا (قاطع الدائرة مفتوح).', 'AIサービスは一時的に利用できません（サーキットブレーカー作動中）。', 'AI 服务暂时不可用（断路器已打开）。'),
     'nccluster.err-generic': ('Échec du clustering (HTTP {$status}).', 'Clustering failed (HTTP {$status}).', 'Fallo de la agrupación (HTTP {$status}).', 'فشل التجميع (HTTP {$status}).', 'クラスタリングに失敗しました（HTTP {$status}）。', '聚类失败（HTTP {$status}）。'),
     'nccluster.tabs': ('Registres de non-conformités', 'Non-conformity registers', 'Registros de no conformidades', 'سجلات عدم المطابقة', '不適合の登録簿', '不合格项登记册'),
-    'nccluster.tab-external': ('NC externes (fournisseurs)', 'External NCs (suppliers)', 'NC externas (proveedores)', 'حالات عدم المطابقة الخارجية (الموردون)', '外部不適合（サプライヤー）', '外部不合格项（供应商）'),
+    'nccluster.tab-suppliers': ('NC fournisseurs', 'Supplier NCs', 'NC de proveedores', 'حالات عدم المطابقة لدى الموردين', 'サプライヤー不適合', '供应商不合格项'),
+    'nccluster.tab-complaints': ('NC externes (réclamations)', 'External NCs (complaints)', 'NC externas (reclamaciones)', 'حالات عدم المطابقة الخارجية (الشكاوى)', '外部不適合（クレーム）', '外部不合格项（投诉）'),
     'nccluster.tab-internal': ('NC internes', 'Internal NCs', 'NC internas', 'حالات عدم المطابقة الداخلية', '内部不適合', '内部不合格项'),
     'nccluster.load-external': ('Reprendre les NC fournisseurs', 'Load supplier NCs', 'Cargar las NC de proveedores', 'تحميل حالات عدم مطابقة الموردين', 'サプライヤー不適合を読み込む', '载入供应商不合格项'),
     'nccluster.load-internal': ('Reprendre les NC internes', 'Load internal NCs', 'Cargar las NC internas', 'تحميل حالات عدم المطابقة الداخلية', '内部不適合を読み込む', '载入内部不合格项'),
+    'nccluster.load-complaints': ('Reprendre les réclamations', 'Load complaints', 'Cargar las reclamaciones', 'تحميل الشكاوى', 'クレームを読み込む', '载入投诉'),
     'nccluster.register-empty': ('Le registre ne contient aucune non-conformité.', 'The register contains no non-conformity.', 'El registro no contiene ninguna no conformidad.', 'لا يحتوي السجل على أي حالة عدم مطابقة.', '登録簿に不適合はありません。', '登记册中没有不合格项。'),
     'nccluster.register-error': ('Le registre ne se lit pas pour le moment.', 'The register cannot be read right now.', 'El registro no se puede leer por ahora.', 'تعذّرت قراءة السجل حاليًا.', '現在、登録簿を読み込めません。', '暂时无法读取登记册。'),
 }

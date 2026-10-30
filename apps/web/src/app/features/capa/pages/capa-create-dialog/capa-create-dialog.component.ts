@@ -49,6 +49,8 @@ export interface CapaCreateSource {
 /** Ce que rend la fenêtre : l'identifiant du dossier, plus ce que l'écran d'origine y a joint. */
 export interface CapaOpened {
   capaId: string;
+  /** L'action telle qu'elle vient d'être saisie, pour l'écran qui reprend la ligne. */
+  action?: { title: string; ownerId?: string; ownerName?: string; dueDate?: string };
 }
 
 export interface CapaCreateDialogData {
@@ -305,7 +307,10 @@ export class CapaCreateDialogComponent implements OnInit {
       .subscribe({
         next: opened => {
           this.snack.open(this.doneMessage(), $localize`:@@common.ok:OK`, { duration: 2500 });
-          this.dialogRef.close(opened);
+          this.dialogRef.close({
+            ...opened,
+            action: { title: request.title, ownerId: request.ownerId, ownerName: request.ownerName, dueDate: request.dueDate }
+          });
         },
         error: err => {
           // eslint-disable-next-line no-console

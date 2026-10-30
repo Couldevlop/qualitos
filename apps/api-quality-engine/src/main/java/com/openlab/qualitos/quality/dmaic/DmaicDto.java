@@ -42,7 +42,8 @@ public final class DmaicDto {
     ) {}
 
     public record AddMeasureRequest(
-            @NotNull Double value,
+            // Facultative : un relevé peut être noté avant que sa valeur soit connue.
+            Double value,
             @Size(max = 100) String subgroupId,
             @Size(max = 255) String sourceRef,
             Instant recordedAt,

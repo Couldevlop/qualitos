@@ -1,6 +1,5 @@
 <qos-form-dialog
   i18n-title="@@dmaic.measure.title" title="Nouvelle mesure"
-  i18n-subtitle="@@dmaic.measure.subtitle" subtitle="Mesure d'un point caractéristique du procédé (Y critique). Sera utilisée pour le calcul des indices de capabilité Cp/Cpk."
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
@@ -11,7 +10,7 @@
     <div class="valeur" *ngFor="let c of values.controls; let i = index">
       <mat-form-field appearance="outline" class="col">
         <mat-label><span i18n="@@dmaic.detail.col-value">Valeur</span> {{ values.length > 1 ? i + 1 : '' }}</mat-label>
-        <input matInput [formControlName]="i" type="number" step="any" required [attr.data-test]="'valeur-' + i">
+        <input matInput [formControlName]="i" type="number" step="any" [attr.data-test]="'valeur-' + i">
       </mat-form-field>
       <button mat-icon-button type="button" *ngIf="values.length > 1" (click)="removeValue(i)"
               i18n-aria-label="@@dmaic.measure.value-remove" aria-label="Retirer cette valeur">

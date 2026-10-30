@@ -1,6 +1,6 @@
 <!-- Une seule place à la fois : au-dessus des phases quand la fiche est là, en tête
      sinon, pour que le projet reste pilotable même si la fiche ne se charge pas. -->
-<ng-template #actions><div class="actions"><ng-content select="[qosActions]"></ng-content></div></ng-template>
+<ng-template #actions><div class="barre-projet"><ng-content select="[qosActions]"></ng-content></div></ng-template>
 <ng-container *ngIf="!sheet || failed" [ngTemplateOutlet]="actions"></ng-container>
 
 <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
@@ -184,12 +184,6 @@
           </ol>
         </div>
 
-        <mat-form-field *ngIf="sectionText(s).summary" appearance="outline" subscriptSizing="dynamic" class="champ-large synthese">
-          <mat-label>{{ sectionText(s).summary }}</mat-label>
-          <textarea matInput rows="3" [ngModel]="summaryOf(s)" (ngModelChange)="setSummary(s, $event)"
-                    [maxlength]="limits.summary" [disabled]="!canEdit" [attr.data-test]="'synthese-' + s"></textarea>
-        </mat-form-field>
-
         <ng-container *ngIf="s === 'ANALYZE'">
           <div class="ishikawa">
             <mat-form-field appearance="outline" subscriptSizing="dynamic">
@@ -230,6 +224,38 @@
             <ng-content select="[qosCapability]"></ng-content>
           </div>
         </ng-container>
+
+        <!-- Les actions de confinement : chacune ouvre sa CAPA, comme le plan d'actions. -->
+        <div class="confinement" *ngIf="s === 'CONTAIN'">
+          <div class="confinement__tete">
+            <h3 class="sous-titre" i18n="@@dmaic.res.containment-actions">Actions de confinement</h3>
+            <button mat-stroked-button type="button" color="primary" *ngIf="canEdit" [disabled]="!canAddAction"
+                    (click)="addAction(true)" data-test="confinement-ajout">
+              <mat-icon>add</mat-icon> <span i18n="@@dmaic.res.containment-add">Ajouter une action de confinement</span>
+            </button>
+          </div>
+          <p class="dim" *ngIf="!containmentActions.length" i18n="@@dmaic.res.containment-empty">Aucune action de confinement.</p>
+          <ul class="confinement__liste" *ngIf="containmentActions.length">
+            <li class="confinement__ligne" *ngFor="let a of containmentActions" data-test="confinement">
+              <span class="confinement__texte">{{ a.action }}</span>
+              <span class="dim" *ngIf="a.responsible">{{ a.responsible.name }}</span>
+              <span class="dim" *ngIf="a.plannedOn">{{ a.plannedOn | date:'mediumDate' }}</span>
+              <mat-form-field appearance="outline" subscriptSizing="dynamic" class="confinement__statut">
+                <mat-label i18n="@@common.status">Statut</mat-label>
+                <mat-select [(ngModel)]="a.status" [disabled]="!canEdit">
+                  <mat-option *ngFor="let st of actionStatuses" [value]="st">{{ actionStatusLabel(st) }}</mat-option>
+                </mat-select>
+              </mat-form-field>
+              <a mat-button *ngIf="a.capaId" [routerLink]="['/capa', a.capaId]">
+                <mat-icon>open_in_new</mat-icon> <span i18n="@@dmaic.res.capa-open">Voir la CAPA</span>
+              </a>
+              <button mat-icon-button type="button" *ngIf="canEdit" (click)="removeAction(a)"
+                      i18n-aria-label="@@dmaic.res.action-remove" aria-label="Retirer l'action">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </li>
+          </ul>
+        </div>
 
         <mat-form-field *ngIf="sectionText(s).summary" appearance="outline" subscriptSizing="dynamic" class="champ-large synthese">
           <mat-label>{{ sectionText(s).summary }}</mat-label>
@@ -305,10 +331,10 @@
           </button>
         </header>
 
-        <p class="dim" *ngIf="!draft.actions.length" i18n="@@dmaic.res.actions-empty">Aucune action. Ajoutez la première pour piloter les solutions retenues.</p>
+        <p class="dim" *ngIf="!improveActions.length" i18n="@@dmaic.res.actions-empty">Aucune action. Ajoutez la première pour piloter les solutions retenues.</p>
 
         <ol class="actions">
-          <li class="action" *ngFor="let a of draft.actions; let i = index" data-test="action">
+          <li class="action" *ngFor="let a of improveActions; let i = index" data-test="action">
             <div class="action__tete">
               <span class="action__num">{{ i + 1 }}</span>
               <mat-form-field appearance="outline" subscriptSizing="dynamic" class="action__texte">
@@ -345,10 +371,6 @@
               <mat-form-field appearance="outline" subscriptSizing="dynamic">
                 <mat-label i18n="@@dmaic.res.created-on">Créée le</mat-label>
                 <input matInput type="date" [(ngModel)]="a.createdOn" [disabled]="!canEdit">
-              </mat-form-field>
-              <mat-form-field appearance="outline" subscriptSizing="dynamic" class="champs__large">
-                <mat-label i18n="@@dmaic.res.notes">Notes</mat-label>
-                <input matInput [(ngModel)]="a.notes" [maxlength]="limits.actionText" [disabled]="!canEdit">
               </mat-form-field>
             </div>
             <div class="action__capa">

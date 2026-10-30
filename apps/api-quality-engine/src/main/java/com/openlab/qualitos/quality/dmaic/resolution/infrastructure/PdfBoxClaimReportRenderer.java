@@ -74,7 +74,7 @@ public class PdfBoxClaimReportRenderer implements ResolutionPorts.ClaimReportRen
             w.step("A : Analyser — étape 3");
             w.label("Plan d'action temporaire pour contenir le problème");
             w.body(r.containmentPlan());
-            w.label("Mesures conservatoires");
+            w.label("Actions de confinement");
             w.body(r.containmentMeasures());
             w.label("Diagramme d'Ishikawa");
             if (r.ishikawaCauses().isEmpty()) {

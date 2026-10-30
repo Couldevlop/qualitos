@@ -448,6 +448,33 @@ class ResolutionServiceTest {
     }
 
     @Test
+    void leConfinementSeTientParSaSyntheseOuParUneActionDeConfinement() {
+        ResolutionContent c = contenu(Map.of());
+        ActionLine amelioration = new ActionLine(null, "Changer", null, ActionStatus.OPEN, null, null, 0, null);
+        ActionLine confinement = new ActionLine(null, "Trier le stock", new Person(ACTEUR, "Alice"),
+                ActionStatus.OPEN, null, null, 0, null, null, true);
+        ResolutionContent sansSynthese = new ResolutionContent(c.clientName(), c.claimNumber(), c.problemOwner(),
+                c.team(), c.openedOn(), c.closedOn(), c.severity(), c.failureTypeCode(), c.customerSymptoms(),
+                c.answers(), c.measureSummary(), null, c.rootCause(), c.retainedSolutions(), c.surveillancePlan(),
+                c.whys(), List.of(amelioration), null);
+        service.save(PROJET, sansSynthese);
+        assertThat(service.missing(PROJET, List.of(SheetSection.CONTAIN))).contains("Action de confinement");
+
+        ResolutionContent avecAction = new ResolutionContent(c.clientName(), c.claimNumber(), c.problemOwner(),
+                c.team(), c.openedOn(), c.closedOn(), c.severity(), c.failureTypeCode(), c.customerSymptoms(),
+                c.answers(), c.measureSummary(), null, c.rootCause(), c.retainedSolutions(), c.surveillancePlan(),
+                c.whys(), List.of(amelioration, confinement), null);
+        assertThat(service.save(PROJET, avecAction).content().actions())
+                .extracting(ActionLine::containment).containsExactly(false, true);
+        assertThat(service.missing(PROJET, List.of(SheetSection.CONTAIN))).doesNotContain("Action de confinement");
+
+        // Le rapport range chaque action à sa place : le confinement d'un côté, le plan de l'autre.
+        assertThat(ResolutionService.containment(avecAction)).isEqualTo("• Trier le stock — Alice");
+        assertThat(ResolutionService.actions(avecAction)).extracting(ClaimReport.Action::action)
+                .containsExactly("Changer");
+    }
+
+    @Test
     void lesCasesDesPhasesEtLeLienCapaSontGardes() {
         ResolutionContent c = contenu(Map.of());
         UUID capa = UUID.randomUUID();

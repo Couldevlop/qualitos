@@ -11313,8 +11313,8 @@ Coordonnées professionnelles</source>
         <target state="translated">يسبق الاحتواء التحليل: ما دام السبب لم يُعالَج، فإنه يحمي العميل من المنتجات المشتبه بها، بما فيها تلك التي ما زالت قيد التصنيع.</target>
       </trans-unit>
       <trans-unit id="dmaic.res.section.contain-summary" datatype="html">
-        <source>Mesures conservatoires</source>
-        <target state="translated">الإجراءات الاحتوائية</target>
+        <source>Action de confinement</source>
+        <target state="translated">إجراء الاحتواء</target>
       </trans-unit>
       <trans-unit id="dmaic.res.section.analyze" datatype="html">
         <source>Analyser — les causes</source>
@@ -11859,6 +11859,22 @@ Coordonnées professionnelles</source>
       <trans-unit id="dmaic.res.capa-description" datatype="html">
         <source>Action du plan d'actions DMAIC « <x id="project"/> ».</source>
         <target state="translated">إجراء من خطة إجراءات DMAIC «<x id="project"/>».</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.capa-containment-description" datatype="html">
+        <source>Action de confinement du projet DMAIC « <x id="project"/> ».</source>
+        <target state="translated">إجراء احتواء لمشروع DMAIC «<x id="project"/>».</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.containment-actions" datatype="html">
+        <source>Actions de confinement</source>
+        <target state="translated">إجراءات الاحتواء</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.containment-add" datatype="html">
+        <source>Ajouter une action de confinement</source>
+        <target state="translated">إضافة إجراء احتواء</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.containment-empty" datatype="html">
+        <source>Aucune action de confinement.</source>
+        <target state="translated">لا يوجد إجراء احتواء.</target>
       </trans-unit>
       <trans-unit id="dmaic.res.capa-open" datatype="html">
         <source>Voir la CAPA</source>
@@ -18367,8 +18383,8 @@ historique 12 mois</source>
         <target state="translated">مشاريع DMAIC</target>
       </trans-unit>
       <trans-unit id="dmaic.list.subtitle" datatype="html">
-        <source>Six Sigma — Define / Measure / Analyze / Improve / Control + Poka-Yoke.</source>
-        <target state="translated">Six Sigma — Define / Measure / Analyze / Improve / Control + Poka-Yoke.</target>
+        <source>Six Sigma — Define / Measure / Analyze / Improve / Control.</source>
+        <target state="translated">Six Sigma — Define / Measure / Analyze / Improve / Control.</target>
       </trans-unit>
       <trans-unit id="dmaic.list.new-project" datatype="html">
         <source>Nouveau projet</source>
@@ -20942,9 +20958,13 @@ historique 12 mois</source>
         <source>Registres de non-conformités</source>
         <target state="translated">سجلات عدم المطابقة</target>
       </trans-unit>
-      <trans-unit id="nccluster.tab-external" datatype="html">
-        <source>NC externes (fournisseurs)</source>
-        <target state="translated">حالات عدم المطابقة الخارجية (الموردون)</target>
+      <trans-unit id="nccluster.tab-suppliers" datatype="html">
+        <source>NC fournisseurs</source>
+        <target state="translated">حالات عدم المطابقة لدى الموردين</target>
+      </trans-unit>
+      <trans-unit id="nccluster.tab-complaints" datatype="html">
+        <source>NC externes (réclamations)</source>
+        <target state="translated">حالات عدم المطابقة الخارجية (الشكاوى)</target>
       </trans-unit>
       <trans-unit id="nccluster.tab-internal" datatype="html">
         <source>NC internes</source>
@@ -20957,6 +20977,10 @@ historique 12 mois</source>
       <trans-unit id="nccluster.load-internal" datatype="html">
         <source>Reprendre les NC internes</source>
         <target state="translated">تحميل حالات عدم المطابقة الداخلية</target>
+      </trans-unit>
+      <trans-unit id="nccluster.load-complaints" datatype="html">
+        <source>Reprendre les réclamations</source>
+        <target state="translated">تحميل الشكاوى</target>
       </trans-unit>
       <trans-unit id="nccluster.register-empty" datatype="html">
         <source>Le registre ne contient aucune non-conformité.</source>

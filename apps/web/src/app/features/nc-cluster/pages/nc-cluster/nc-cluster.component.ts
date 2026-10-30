@@ -9,8 +9,11 @@ import { SuppliersService } from '../../../suppliers/suppliers.service';
 import { NcClusterService } from '../../nc-cluster.service';
 import { NcCluster, NcClusterResponse } from '../../nc-cluster.types';
 
-/** Deux registres, deux fenêtres : les NC fournisseurs (externes) et les NC internes. */
-export type NcScope = 'external' | 'internal';
+/**
+ * Trois registres, trois fenêtres : les NC fournisseurs, les NC externes nées
+ * des réclamations clients, et les NC internes.
+ */
+export type NcScope = 'external' | 'complaints' | 'internal';
 
 /** NC lues du registre pour un regroupement : les plus récentes, une page serveur. */
 export const REGISTER_SIZE = 100;
@@ -101,11 +104,13 @@ export class NcClusterComponent {
   private registerTexts(scope: NcScope): Observable<string[]> {
     const line = (...parts: (string | null | undefined)[]) =>
       parts.map(p => (p ?? '').replace(/\s+/g, ' ').trim()).filter(p => p.length > 0).join(' — ');
-    return scope === 'external'
-      ? this.suppliers.listAllNcs({}, 0, REGISTER_SIZE).pipe(
-          map(page => page.content.map(n => line(n.description, n.partNumber)).filter(t => t.length > 0)))
-      : this.internal.listNcs(0, REGISTER_SIZE).pipe(
-          map(page => page.content.map(n => line(n.title, n.description)).filter(t => t.length > 0)));
+    if (scope === 'external') {
+      return this.suppliers.listAllNcs({}, 0, REGISTER_SIZE).pipe(
+        map(page => page.content.map(n => line(n.description, n.partNumber)).filter(t => t.length > 0)));
+    }
+    // Le registre NC tient les deux origines : chaque fenêtre ne lit que la sienne.
+    return this.internal.listNcs(0, REGISTER_SIZE, { origin: scope === 'complaints' ? 'EXTERNAL' : 'INTERNAL' }).pipe(
+      map(page => page.content.map(n => line(n.title, n.description)).filter(t => t.length > 0)));
   }
 
   loadExample(): void {

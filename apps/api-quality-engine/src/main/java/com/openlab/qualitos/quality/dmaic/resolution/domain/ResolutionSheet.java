@@ -184,7 +184,7 @@ public final class ResolutionSheet {
             }
             clean.add(new ActionLine(a.createdOn(), action, person(a.responsible(), "actions"), a.status(),
                     a.plannedOn(), a.doneOn(), a.percent(), trim(a.notes(), ACTION_TEXT_MAX, "actions"),
-                    a.capaId()));
+                    a.capaId(), a.containment()));
         }
         return clean;
     }

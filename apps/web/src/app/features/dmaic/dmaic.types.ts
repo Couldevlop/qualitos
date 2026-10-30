@@ -80,7 +80,8 @@ export interface UpdateDmaicProjectRequest {
 }
 
 export interface AddMeasureRequest {
-  value: number;
+  /** Facultative : un relevé peut être noté avant que sa valeur soit connue. */
+  value: number | null;
   subgroupId?: string;
   sourceRef?: string;
   recordedAt?: string;
@@ -91,7 +92,7 @@ export interface AddMeasureRequest {
 export interface MeasureResponse {
   id: string;
   projectId: string;
-  value: number;
+  value: number | null;
   subgroupId?: string;
   sourceRef?: string;
   recordedAt?: string;

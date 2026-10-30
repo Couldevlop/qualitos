@@ -202,7 +202,11 @@ describe('CapaCreateDialogComponent — fenêtre unique', () => {
       ownerId: 'kc-amina', ownerName: 'Amina Dridi', dueDate: DEMAIN,
       sourceType: 'COMPLAINT', sourceRef: 'REC-12', verificationRequired: false
     });
-    expect(ref.close).toHaveBeenCalledWith({ capaId: 'c1' });
+    // L'écran d'origine reçoit l'action saisie, pour la reprendre dans sa propre liste.
+    expect(ref.close).toHaveBeenCalledWith({
+      capaId: 'c1',
+      action: { title: 'Recalibrer la sonde', ownerId: 'kc-amina', ownerName: 'Amina Dridi', dueDate: DEMAIN }
+    });
     expect(snack.open.calls.mostRecent().args[0]).toBe('CAPA créée.');
     expect(component.submitting).toBeFalse();
   });
@@ -225,7 +229,7 @@ describe('CapaCreateDialogComponent — fenêtre unique', () => {
     expect(capa.uploadEvidence.calls.argsFor(0)[0]).toBe('c1');
     expect(component.uploaded).toBe(1);
     expect(snack.open.calls.mostRecent().args[0]).toContain('pas pu être déposées');
-    expect(ref.close).toHaveBeenCalledWith({ capaId: 'c1' });
+    expect(ref.close).toHaveBeenCalledWith(jasmine.objectContaining({ capaId: 'c1' }));
   });
 
   it('annonce le dépôt complet quand toutes les pièces sont parties', async () => {
@@ -308,7 +312,7 @@ describe('CapaCreateDialogComponent — fenêtre unique', () => {
     expect(envoye.sourceType).toBeUndefined();
     expect(envoye.sourceRef).toBeUndefined();
     expect(capa.openCase).not.toHaveBeenCalled();
-    expect(ref.close).toHaveBeenCalledWith({ capaId: 'c-nc' });
+    expect(ref.close).toHaveBeenCalledWith(jasmine.objectContaining({ capaId: 'c-nc' }));
   });
 
   it('depuis un risque : criticité de la cotation, propriétaire proposé s\'il est EXACTEMENT dans l\'annuaire', async () => {
@@ -408,7 +412,7 @@ describe('CapaCreateDialogComponent — fenêtre unique', () => {
       assigneeId: 'kc-amina', assigneeName: 'Amina Dridi', dueDate: DEMAIN
     });
     expect(capa.openCase).not.toHaveBeenCalled();
-    expect(ref.close).toHaveBeenCalledWith({ capaId: 'c9' });
+    expect(ref.close).toHaveBeenCalledWith(jasmine.objectContaining({ capaId: 'c9' }));
     expect(snack.open.calls.mostRecent().args[0]).toBe('Action définie.');
   });
 

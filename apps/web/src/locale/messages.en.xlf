@@ -11313,8 +11313,8 @@ Business contact details</target>
         <target state="translated">Containment comes before analysis: until the cause is dealt with, it protects the customer from suspect products, including those still being made.</target>
       </trans-unit>
       <trans-unit id="dmaic.res.section.contain-summary" datatype="html">
-        <source>Mesures conservatoires</source>
-        <target state="translated">Containment measures</target>
+        <source>Action de confinement</source>
+        <target state="translated">Containment action</target>
       </trans-unit>
       <trans-unit id="dmaic.res.section.analyze" datatype="html">
         <source>Analyser — les causes</source>
@@ -11859,6 +11859,22 @@ Business contact details</target>
       <trans-unit id="dmaic.res.capa-description" datatype="html">
         <source>Action du plan d'actions DMAIC « <x id="project"/> ».</source>
         <target state="translated">Action from the DMAIC action plan "<x id="project"/>".</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.capa-containment-description" datatype="html">
+        <source>Action de confinement du projet DMAIC « <x id="project"/> ».</source>
+        <target state="translated">Containment action of the DMAIC project "<x id="project"/>".</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.containment-actions" datatype="html">
+        <source>Actions de confinement</source>
+        <target state="translated">Containment actions</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.containment-add" datatype="html">
+        <source>Ajouter une action de confinement</source>
+        <target state="translated">Add containment action</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.containment-empty" datatype="html">
+        <source>Aucune action de confinement.</source>
+        <target state="translated">No containment action.</target>
       </trans-unit>
       <trans-unit id="dmaic.res.capa-open" datatype="html">
         <source>Voir la CAPA</source>
@@ -18367,8 +18383,8 @@ declared income
         <target state="translated">DMAIC projects</target>
       </trans-unit>
       <trans-unit id="dmaic.list.subtitle" datatype="html">
-        <source>Six Sigma — Define / Measure / Analyze / Improve / Control + Poka-Yoke.</source>
-        <target state="translated">Six Sigma — Define / Measure / Analyze / Improve / Control + Poka-Yoke.</target>
+        <source>Six Sigma — Define / Measure / Analyze / Improve / Control.</source>
+        <target state="translated">Six Sigma — Define / Measure / Analyze / Improve / Control.</target>
       </trans-unit>
       <trans-unit id="dmaic.list.new-project" datatype="html">
         <source>Nouveau projet</source>
@@ -20942,9 +20958,13 @@ declared income
         <source>Registres de non-conformités</source>
         <target state="translated">Non-conformity registers</target>
       </trans-unit>
-      <trans-unit id="nccluster.tab-external" datatype="html">
-        <source>NC externes (fournisseurs)</source>
-        <target state="translated">External NCs (suppliers)</target>
+      <trans-unit id="nccluster.tab-suppliers" datatype="html">
+        <source>NC fournisseurs</source>
+        <target state="translated">Supplier NCs</target>
+      </trans-unit>
+      <trans-unit id="nccluster.tab-complaints" datatype="html">
+        <source>NC externes (réclamations)</source>
+        <target state="translated">External NCs (complaints)</target>
       </trans-unit>
       <trans-unit id="nccluster.tab-internal" datatype="html">
         <source>NC internes</source>
@@ -20957,6 +20977,10 @@ declared income
       <trans-unit id="nccluster.load-internal" datatype="html">
         <source>Reprendre les NC internes</source>
         <target state="translated">Load internal NCs</target>
+      </trans-unit>
+      <trans-unit id="nccluster.load-complaints" datatype="html">
+        <source>Reprendre les réclamations</source>
+        <target state="translated">Load complaints</target>
       </trans-unit>
       <trans-unit id="nccluster.register-empty" datatype="html">
         <source>Le registre ne contient aucune non-conformité.</source>

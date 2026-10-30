@@ -191,12 +191,12 @@ export class DmaicService {
 
   capability(projectId: string): Observable<CapabilityResponse> {
     if (environment.useMockApi) {
-      const arr = this.mockMeasures[projectId] ?? [];
-      const n = arr.length;
+      const values = (this.mockMeasures[projectId] ?? [])
+        .map(m => m.value).filter((v): v is number => v !== null);
+      const n = values.length;
       if (n < 2) {
         return of({ sampleSize: n, warnings: ['Au moins 2 mesures requises.'] }).pipe(delay(120));
       }
-      const values = arr.map(m => m.value);
       const mean = values.reduce((a, b) => a + b, 0) / n;
       const variance = values.reduce((s, v) => s + (v - mean) ** 2, 0) / (n - 1);
       const stdDev = Math.sqrt(variance);

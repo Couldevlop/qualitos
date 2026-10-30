@@ -64,6 +64,15 @@ describe('NcClusterComponent', () => {
     expect(internal.listNcs).not.toHaveBeenCalled();
   });
 
+  it('reprend les réclamations clients, les seules NC d\'origine externe, dans leur propre fenêtre', () => {
+    un('onglet-reclamations')!.click();
+    expect(component.scope).toBe('complaints');
+    un('charger-registre')!.click();
+    expect(internal.listNcs).toHaveBeenCalledWith(0, REGISTER_SIZE, { origin: 'EXTERNAL' });
+    expect(suppliers.listAllNcs).not.toHaveBeenCalled();
+    expect(component.form.value.textsText).toBe('Rayure — capot');
+  });
+
   it('reprend les NC internes dans leur fenêtre, et chaque fenêtre garde son résultat', () => {
     cluster.cluster.and.returnValue(of(response));
     component.form.patchValue({ textsText: 'a\nb\nc' });
@@ -75,7 +84,7 @@ describe('NcClusterComponent', () => {
     expect(component.result).toBeNull();
     expect(component.form.value.textsText).toBe('');
     component.loadRegister();
-    expect(internal.listNcs).toHaveBeenCalledWith(0, REGISTER_SIZE);
+    expect(internal.listNcs).toHaveBeenCalledWith(0, REGISTER_SIZE, { origin: 'INTERNAL' });
     expect(component.form.value.textsText).toBe('Rayure — capot');
 
     component.setScope('external');
