@@ -166,7 +166,7 @@ TRANSLATIONS = {
     'ishikawa.cause.score-hint': ('Probabilité estimée que ce soit une cause racine.', 'Estimated probability that this is a root cause.', 'Probabilidad estimada de que sea una causa raíz.', 'الاحتمال المُقدَّر أن يكون سببًا جذريًا.', 'これが根本原因である推定確率。', '其为根本原因的估计概率。'),
     'ishikawa.cause.added': ('Cause ajoutée.', 'Cause added.', 'Causa añadida.', 'تمت إضافة السبب.', '原因を追加しました。', '原因已添加。'),
     'dmaic.list.title': ('Projets DMAIC', 'DMAIC projects', 'Proyectos DMAIC', 'مشاريع DMAIC', 'DMAICプロジェクト', 'DMAIC项目'),
-    'dmaic.list.subtitle': ('Six Sigma — Define / Measure / Analyze / Improve / Control + Poka-Yoke.', 'Six Sigma — Define / Measure / Analyze / Improve / Control + Poka-Yoke.', 'Six Sigma — Define / Measure / Analyze / Improve / Control + Poka-Yoke.', 'Six Sigma — Define / Measure / Analyze / Improve / Control + Poka-Yoke.', 'シックスシグマ — Define / Measure / Analyze / Improve / Control + ポカヨケ。', '六西格玛 — Define / Measure / Analyze / Improve / Control + 防错。'),
+    'dmaic.list.subtitle': ('Six Sigma — Define / Measure / Analyze / Improve / Control.', 'Six Sigma — Define / Measure / Analyze / Improve / Control.', 'Six Sigma — Define / Measure / Analyze / Improve / Control.', 'Six Sigma — Define / Measure / Analyze / Improve / Control.', 'シックスシグマ — Define / Measure / Analyze / Improve / Control + ポカヨケ。', '六西格玛 — Define / Measure / Analyze / Improve / Control + 防错。'),
     'dmaic.list.new-project': ('Nouveau projet', 'New project', 'Nuevo proyecto', 'مشروع جديد', '新規プロジェクト', '新建项目'),
     'dmaic.list.phase': ('Phase', 'Phase', 'Fase', 'المرحلة', 'フェーズ', '阶段'),
     'dmaic.list.all-phases': ('Toutes', 'All', 'Todas', 'الكل', 'すべて', '全部'),

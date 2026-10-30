@@ -31,7 +31,7 @@ describe('DmaicMeasureDialogComponent', () => {
   const USER = '11111111-1111-1111-1111-111111111111';
   const OTHER = '22222222-2222-2222-2222-222222222222';
 
-  const saved = (id: string, value: number): MeasureResponse => ({
+  const saved = (id: string, value: number | null): MeasureResponse => ({
     id, projectId: PROJECT_ID, value, createdAt: '2026-07-02T08:00:00Z'
   });
 
@@ -69,12 +69,10 @@ describe('DmaicMeasureDialogComponent', () => {
     environment.useMockApi = prevMock;
   });
 
-  it('la personne qui mesure est, par défaut, soi-même ; la valeur est obligatoire', async () => {
+  it('la personne qui mesure est, par défaut, soi-même ; la valeur est facultative', async () => {
     await setup();
     expect(component.form.controls.operatorId.value).toBe(USER);
     expect(component.values.length).toBe(1);
-    expect(component.form.invalid).toBeTrue();
-    component.values.at(0).setValue(10.02);
     expect(component.form.valid).toBeTrue();
   });
 
@@ -121,13 +119,26 @@ describe('DmaicMeasureDialogComponent', () => {
     expect(component.submitting).toBeFalse();
   });
 
-  it('une valeur vide bloque tout l\'envoi', async () => {
+  it('ignore les cases vides : seules les valeurs saisies partent', async () => {
     await setup();
     component.addValue();
     component.values.at(0).setValue(1);
     component.submit();
-    http.expectNone(url);
-    expect(component.submitting).toBeFalse();
+    const only = http.expectOne(url);
+    expect(only.request.body.value).toBe(1);
+    only.flush(saved('m1', 1));
+    expect(dialogRef.close).toHaveBeenCalledWith([saved('m1', 1)]);
+  });
+
+  it('sans aucune valeur, enregistre un seul relevé, sans valeur', async () => {
+    await setup();
+    component.addValue();
+    component.form.patchValue({ sourceRef: 'OF-9' });
+    component.submit();
+    const only = http.expectOne(url);
+    expect(only.request.body).toEqual(jasmine.objectContaining({ value: null, sourceRef: 'OF-9' }));
+    only.flush(saved('m1', null));
+    expect(dialogRef.close).toHaveBeenCalledWith([saved('m1', null)]);
   });
 
   it('en cas d\'échec en cours de série, rend les mesures déjà enregistrées', async () => {

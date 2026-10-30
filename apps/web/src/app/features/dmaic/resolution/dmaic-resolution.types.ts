@@ -115,6 +115,8 @@ export interface ActionLine {
   notes: string | null;
   /** Le dossier CAPA ouvert pour cette action, ou null. */
   capaId: string | null;
+  /** Une action de confinement (phase Analyser) plutôt qu'une action du plan d'amélioration. */
+  containment?: boolean;
 }
 
 export interface ResolutionContent {

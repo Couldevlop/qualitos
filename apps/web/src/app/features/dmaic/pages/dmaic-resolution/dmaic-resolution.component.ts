@@ -354,12 +354,45 @@ export class DmaicResolutionComponent implements OnInit, OnDestroy {
 
   get canAddAction(): boolean { return this.draft.actions.length < RESOLUTION_LIMITS.actions; }
 
-  addAction(): void {
-    if (!this.canAddAction) return;
-    this.draft.actions = [...this.draft.actions, {
-      createdOn: new Date().toISOString().slice(0, 10), action: null, responsible: null, status: 'OPEN',
-      plannedOn: null, doneOn: null, percent: 0, notes: null, capaId: null
-    }];
+  /** Le plan d'actions de la phase Améliorer. */
+  get improveActions(): ActionLine[] { return this.draft.actions.filter(a => !a.containment); }
+
+  /** Les actions de confinement, tenues dans la phase Analyser. */
+  get containmentActions(): ActionLine[] { return this.draft.actions.filter(a => a.containment); }
+
+  /**
+   * Une action naît de sa CAPA : la fenêtre « Nouvelle CAPA » s'ouvre aussitôt,
+   * et la ligne reprend ce qui y a été saisi (intitulé, responsable, échéance)
+   * avec le lien vers le dossier. La fiche s'enregistre dans la foulée, pour que
+   * ce lien ne se perde pas. Fermer la fenêtre n'ajoute rien.
+   */
+  addAction(containment = false): void {
+    if (!this.canEdit || !this.canAddAction) return;
+    const project = this.projectTitle ?? this.sheet?.projectTitle ?? '';
+    const data: CapaCreateDialogData = {
+      source: { type: 'INTERNAL', reference: project || 'DMAIC' },
+      prefill: {
+        // Un dossier CAPA n'est jamais de pur confinement : il se clôture par une correction.
+        type: 'CORRECTIVE',
+        description: containment
+          ? $localize`:@@dmaic.res.capa-containment-description:Action de confinement du projet DMAIC « ${project}:project: ».`
+          : $localize`:@@dmaic.res.capa-description:Action du plan d'actions DMAIC « ${project}:project: ».`
+      }
+    };
+    this.dialog.open<CapaCreateDialogComponent, CapaCreateDialogData, CapaOpened>(CapaCreateDialogComponent, {
+      data, autoFocus: 'first-tabbable', restoreFocus: true, panelClass: 'qos-dialog-panel'
+    }).afterClosed().subscribe(opened => {
+      if (!opened) return;
+      const saisie = opened.action;
+      this.draft.actions = [...this.draft.actions, {
+        createdOn: new Date().toISOString().slice(0, 10),
+        action: saisie?.title ?? null,
+        responsible: saisie?.ownerId ? { accountId: saisie.ownerId, name: saisie.ownerName || saisie.ownerId } : null,
+        status: 'OPEN', plannedOn: saisie?.dueDate ?? null, doneOn: null, percent: 0, notes: null,
+        capaId: opened.capaId, containment
+      }];
+      this.save();
+    });
   }
 
   removeAction(line: ActionLine): void { this.draft.actions = this.draft.actions.filter(a => a !== line); }
@@ -622,7 +655,9 @@ export function missingOf(sheet: ResolutionSheet | null, c: ResolutionContent, s
       if (blank(c.answers[q.code])) out.push(q.label);
     }
     const label = SECTION_TEXT[s].summary;
-    if (label && blank(summaryIn(c, s))) out.push(label);
+    // Le confinement se tient par sa synthèse ou par une action de confinement.
+    const confine = s === 'CONTAIN' && (c.actions ?? []).some(a => a.containment);
+    if (label && blank(summaryIn(c, s)) && !confine) out.push(label);
   }
   return out;
 }
@@ -692,7 +727,8 @@ export function clean(c: ResolutionContent): ResolutionContent {
       doneOn: text(a.doneOn),
       percent: a.percent ?? 0,
       notes: text(a.notes),
-      capaId: a.capaId ?? null
+      capaId: a.capaId ?? null,
+      containment: !!a.containment
     })),
     ishikawaId: text(c.ishikawaId),
     measuresEnabled: !!c.measuresEnabled,

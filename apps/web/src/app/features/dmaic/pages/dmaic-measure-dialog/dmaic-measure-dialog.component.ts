@@ -65,11 +65,10 @@ export class DmaicMeasureDialogComponent {
       return;
     }
     const v = this.form.getRawValue();
-    const values = v.values.filter((x): x is number => x !== null && Number.isFinite(x));
-    if (!values.length || values.length !== v.values.length) {
-      this.snack.open($localize`:@@dmaic.measure.value-required:Une valeur numérique est requise.`, $localize`:@@common.ok:OK`, { duration: 4000 });
-      return;
-    }
+    // La valeur est facultative : les cases vides sont ignorées, et un relevé
+    // sans aucune valeur s'enregistre quand même, une fois, sans valeur.
+    const filled = v.values.filter((x): x is number => x !== null && Number.isFinite(x));
+    const values: (number | null)[] = filled.length ? filled : [null];
     this.submitting = true;
     const done: MeasureResponse[] = [];
     // Les mesures partent dans l'ordre de saisie : c'est l'ordre du calcul de capabilité.
@@ -101,6 +100,6 @@ export class DmaicMeasureDialogComponent {
   cancel(): void { this.dialogRef.close(); }
 
   private valueControl(): FormControl<number | null> {
-    return new FormControl<number | null>(null, { validators: [Validators.required] });
+    return new FormControl<number | null>(null);
   }
 }

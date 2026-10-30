@@ -120,7 +120,7 @@ TRANSLATIONS = {
         'يسبق الاحتواء التحليل: ما دام السبب لم يُعالَج، فإنه يحمي العميل من المنتجات المشتبه بها، بما فيها تلك التي ما زالت قيد التصنيع.',
         '封じ込めは分析より先に行います。原因が処置されるまで、製造中のものも含め、疑わしい製品から顧客を守ります。',
         '遏制先于分析：在原因得到处理之前，它保护客户免受可疑产品影响，包括仍在生产中的产品。'),
-    'dmaic.res.section.contain-summary': ('Mesures conservatoires', 'Containment measures', 'Medidas de contención', 'الإجراءات الاحتوائية', '暫定処置', '临时措施'),
+    'dmaic.res.section.contain-summary': ('Action de confinement', 'Containment action', 'Acción de contención', 'إجراء الاحتواء', '封じ込め処置', '围堵措施'),
     'dmaic.res.section.analyze': (
         'Analyser — les causes', 'Analyse — the causes', 'Analizar — las causas', 'التحليل — الأسباب', '分析 — 原因', '分析 — 原因'),
     'dmaic.res.section.analyze-lead': (
@@ -413,6 +413,10 @@ TRANSLATIONS = {
     'dmaic.res.attachments-lead': ("Cinq documents au plus : image, PDF, Word, Excel ou PowerPoint, 10 Mo chacun. Un document est enregistré dès qu'il est versé.", 'Up to five documents: image, PDF, Word, Excel or PowerPoint, 10 MB each. A document is saved as soon as it is uploaded.', 'Hasta cinco documentos: imagen, PDF, Word, Excel o PowerPoint, 10 MB cada uno. Un documento se guarda en cuanto se sube.', 'خمسة مستندات كحد أقصى: صورة أو PDF أو Word أو Excel أو PowerPoint، بحجم 10 ميغابايت لكل منها. يُحفظ المستند فور رفعه.', '最大5件：画像、PDF、Word、Excel、PowerPoint、各10MBまで。アップロードした時点で保存されます。', '最多五个文档：图片、PDF、Word、Excel 或 PowerPoint，每个不超过 10 MB。文档上传后即保存。'),
     'dmaic.res.capa-add': ('Ajouter une CAPA', 'Add a CAPA', 'Añadir una CAPA', 'إضافة إجراء CAPA', 'CAPA を追加', '添加 CAPA'),
     'dmaic.res.capa-description': ("Action du plan d'actions DMAIC « {$project} ».", 'Action from the DMAIC action plan "{$project}".', 'Acción del plan de acciones DMAIC «{$project}».', 'إجراء من خطة إجراءات DMAIC «{$project}».', 'DMAIC 行動計画「{$project}」のアクション。', 'DMAIC 行动计划“{$project}”中的行动。'),
+    'dmaic.res.capa-containment-description': ("Action de confinement du projet DMAIC « {$project} ».", 'Containment action of the DMAIC project "{$project}".', 'Acción de contención del proyecto DMAIC «{$project}».', 'إجراء احتواء لمشروع DMAIC «{$project}».', 'DMAIC プロジェクト「{$project}」の封じ込め処置。', 'DMAIC 项目“{$project}”的围堵措施。'),
+    'dmaic.res.containment-actions': ('Actions de confinement', 'Containment actions', 'Acciones de contención', 'إجراءات الاحتواء', '封じ込め処置', '围堵措施'),
+    'dmaic.res.containment-add': ('Ajouter une action de confinement', 'Add containment action', 'Añadir una acción de contención', 'إضافة إجراء احتواء', '封じ込め処置を追加', '添加围堵措施'),
+    'dmaic.res.containment-empty': ('Aucune action de confinement.', 'No containment action.', 'Ninguna acción de contención.', 'لا يوجد إجراء احتواء.', '封じ込め処置はありません。', '暂无围堵措施。'),
     'dmaic.res.capa-open': ('Voir la CAPA', 'View the CAPA', 'Ver la CAPA', 'عرض إجراء CAPA', 'CAPA を表示', '查看 CAPA'),
     'dmaic.res.cpk-check': ('Étude Cp/Cpk et carte de contrôle', 'Cp/Cpk study and control chart', 'Estudio Cp/Cpk y gráfico de control', 'دراسة Cp/Cpk وخريطة التحكم', 'Cp/Cpk 調査と管理図', 'Cp/Cpk 研究和控制图'),
     'dmaic.res.cpk-register': ("Créer l'étude dans le registre", 'Create the study in the register', 'Crear el estudio en el registro', 'إنشاء الدراسة في السجل', '登録簿に調査を作成', '在登记册中创建研究'),

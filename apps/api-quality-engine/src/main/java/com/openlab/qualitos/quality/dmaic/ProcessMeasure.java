@@ -27,7 +27,8 @@ public class ProcessMeasure {
     @JoinColumn(name = "project_id", nullable = false, updatable = false)
     private DmaicProject project;
 
-    @Column(nullable = false)
+    /** Null tant que la valeur n'est pas relevée ; la capabilité ne compte que les valeurs connues. */
+    @Column
     private Double value;
 
     /** Identifiant de sous-groupe (rationnel) — utile pour cartes X-R. Null = mesure individuelle. */

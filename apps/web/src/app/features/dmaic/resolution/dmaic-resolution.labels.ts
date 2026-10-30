@@ -38,7 +38,7 @@ export const SECTION_TEXT: Readonly<Record<SheetSection, SectionText>> = {
     title: $localize`:@@dmaic.res.section.contain:Analyser — contenir le problème`,
     lead: $localize`:@@dmaic.res.section.contain-lead:Mesures conservatoires pour contenir le problème jusqu'à ce que les actions correctives définitives soient en place.`,
     more: $localize`:@@dmaic.res.section.contain-more:Le confinement passe avant l'analyse : tant que la cause n'est pas traitée, il protège le client des produits suspects, y compris ceux encore en fabrication.`,
-    summary: $localize`:@@dmaic.res.section.contain-summary:Mesures conservatoires`
+    summary: $localize`:@@dmaic.res.section.contain-summary:Action de confinement`
   },
   ANALYZE: {
     letter: 'A',

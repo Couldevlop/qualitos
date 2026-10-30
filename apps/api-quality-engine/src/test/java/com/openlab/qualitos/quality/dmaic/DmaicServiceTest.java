@@ -345,6 +345,20 @@ class DmaicServiceTest {
         assertThat(r).isSameAs(expected);
     }
 
+    @Test
+    void computeCapability_ignoresAMeasureWithoutValue() {
+        DmaicProject p = project(DmaicStatus.ACTIVE, DmaicPhase.MEASURE);
+        ProcessMeasure m1 = measure(p, 15.0); ProcessMeasure sansValeur = measure(p, null);
+        when(projectRepo.findByIdAndTenantId(p.getId(), TENANT)).thenReturn(Optional.of(p));
+        when(measureRepo.findByProjectIdOrderByRecordedAtAsc(p.getId())).thenReturn(List.of(m1, sansValeur));
+        DmaicDto.CapabilityResponse expected = new DmaicDto.CapabilityResponse(
+                1, 15.0, 0.0, 15.0, 15.0, null, null, null,
+                null, null, null, null, null, "ok", List.of());
+        when(calculator.compute(List.of(15.0), null, null, null)).thenReturn(expected);
+
+        assertThat(service.computeCapability(p.getId())).isSameAs(expected);
+    }
+
     // --- devices ---
     @Test
     void listDevices_noFilter() {
@@ -558,7 +572,7 @@ class DmaicServiceTest {
         return p;
     }
 
-    private ProcessMeasure measure(DmaicProject p, double value) {
+    private ProcessMeasure measure(DmaicProject p, Double value) {
         ProcessMeasure m = new ProcessMeasure();
         m.setId(UUID.randomUUID());
         m.setProject(p);

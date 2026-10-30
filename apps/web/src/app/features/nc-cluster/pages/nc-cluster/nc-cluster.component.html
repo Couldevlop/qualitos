@@ -10,7 +10,11 @@
   <nav class="onglets" role="tablist" i18n-aria-label="@@nccluster.tabs" aria-label="Registres de non-conformités">
     <button type="button" role="tab" class="onglet" [class.onglet--actif]="scope === 'external'"
             [attr.aria-selected]="scope === 'external'" (click)="setScope('external')" data-test="onglet-externes">
-      <span i18n="@@nccluster.tab-external">NC externes (fournisseurs)</span>
+      <span i18n="@@nccluster.tab-suppliers">NC fournisseurs</span>
+    </button>
+    <button type="button" role="tab" class="onglet" [class.onglet--actif]="scope === 'complaints'"
+            [attr.aria-selected]="scope === 'complaints'" (click)="setScope('complaints')" data-test="onglet-reclamations">
+      <span i18n="@@nccluster.tab-complaints">NC externes (réclamations)</span>
     </button>
     <button type="button" role="tab" class="onglet" [class.onglet--actif]="scope === 'internal'"
             [attr.aria-selected]="scope === 'internal'" (click)="setScope('internal')" data-test="onglet-internes">
@@ -52,6 +56,7 @@
             <mat-icon>download</mat-icon>
             <span *ngIf="scope === 'external'" i18n="@@nccluster.load-external">Reprendre les NC fournisseurs</span>
             <span *ngIf="scope === 'internal'" i18n="@@nccluster.load-internal">Reprendre les NC internes</span>
+            <span *ngIf="scope === 'complaints'" i18n="@@nccluster.load-complaints">Reprendre les réclamations</span>
           </button>
           <button mat-button type="button" (click)="loadExample()" [disabled]="loading">
             <mat-icon>science</mat-icon> <span i18n="@@nccluster.example">Exemple</span>

@@ -86,7 +86,7 @@
               <ng-container matColumnDef="value">
                 <th mat-header-cell *matHeaderCellDef i18n="@@dmaic.detail.col-value">Valeur</th>
                 <td mat-cell *matCellDef="let m">
-                  <strong>{{ m.value }}</strong>
+                  <strong>{{ m.value ?? '—' }}</strong>
                 </td>
               </ng-container>
               <ng-container matColumnDef="operatorId">

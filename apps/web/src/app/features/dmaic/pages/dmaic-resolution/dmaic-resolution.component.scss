@@ -257,7 +257,7 @@
 }
 
 // Les actions du projet, alignées sur le bandeau des phases qui les suit.
-.actions {
+.barre-projet {
   display: flex;
   justify-content: flex-end;
 
@@ -272,7 +272,7 @@
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .actions {
+  .barre-projet {
     justify-content: stretch;
   }
 }
@@ -287,7 +287,8 @@
   }
 
   &--4 {
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));
+    max-width: 56rem;
   }
 
   &__large {
@@ -380,7 +381,7 @@ mat-form-field {
 // colonne bornée, pour qu'aucun champ ne s'étire sur toute la fiche.
 .question {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(12rem, 26rem);
+  grid-template-columns: minmax(0, 1fr) minmax(10rem, 20rem);
   gap: var(--qos-space-3);
   align-items: center;
   padding: var(--qos-space-1) 0;
@@ -448,13 +449,59 @@ mat-form-field {
   margin-top: var(--qos-space-4);
 
   mat-form-field {
-    flex: 1 1 18rem;
-    max-width: 32rem;
+    flex: 1 1 14rem;
+    max-width: 22rem;
   }
 }
 
 .synthese {
   margin-top: var(--qos-space-4);
+  // Les synthèses de phase gardent toute la largeur : c'est là qu'on rédige.
+  max-width: none;
+}
+
+.confinement {
+  margin-top: var(--qos-space-4);
+
+  &__tete {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--qos-space-2);
+
+    .sous-titre {
+      margin: 0;
+    }
+  }
+
+  &__liste {
+    display: grid;
+    gap: var(--qos-space-1);
+    margin: var(--qos-space-2) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__ligne {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--qos-space-2) var(--qos-space-3);
+    padding: var(--qos-space-1) 0;
+    border-top: 1px solid var(--qos-border-subtle);
+    font-size: var(--qos-fs-sm);
+  }
+
+  &__texte {
+    flex: 1 1 14rem;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  &__statut {
+    width: 11rem;
+  }
 }
 
 // ----- 5 pourquoi -----
@@ -562,6 +609,7 @@ mat-form-field {
   &__texte {
     flex: 1;
     min-width: 0;
+    max-width: 48rem;
   }
 }
 

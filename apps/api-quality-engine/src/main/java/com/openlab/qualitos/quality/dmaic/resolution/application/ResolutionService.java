@@ -1,5 +1,6 @@
 package com.openlab.qualitos.quality.dmaic.resolution.application;
 
+import com.openlab.qualitos.quality.dmaic.resolution.domain.ActionLine;
 import com.openlab.qualitos.quality.dmaic.resolution.domain.AnswerType;
 import com.openlab.qualitos.quality.dmaic.resolution.domain.ActionStatus;
 import com.openlab.qualitos.quality.dmaic.resolution.domain.FailureType;
@@ -223,7 +224,10 @@ public class ResolutionService {
                 case CONTROL -> c.surveillancePlan();
                 case DEFINE -> "-";
             };
-            if (synthese == null || synthese.isBlank()) {
+            // Le confinement se tient par sa synthèse ou par une action de confinement.
+            boolean confine = section == SheetSection.CONTAIN
+                    && c.actions().stream().anyMatch(ActionLine::containment);
+            if ((synthese == null || synthese.isBlank()) && !confine) {
                 manque.add(SUMMARY_LABELS.get(section));
             }
         }
@@ -232,7 +236,7 @@ public class ResolutionService {
 
     private static final Map<SheetSection, String> SUMMARY_LABELS = Map.of(
             SheetSection.MEASURE, "Synthèse des mesures",
-            SheetSection.CONTAIN, "Mesures conservatoires",
+            SheetSection.CONTAIN, "Action de confinement",
             SheetSection.ANALYZE, "Cause racine",
             SheetSection.IMPROVE, "Solutions retenues",
             SheetSection.CONTROL, "Plan de surveillance");
@@ -253,7 +257,7 @@ public class ResolutionService {
                 c.problemOwner() == null ? null : c.problemOwner().name(), c.openedOn(), c.closedOn(),
                 severityLabel(settings, c.severity()), failureTypeLabel(settings, c.failureTypeCode()),
                 answers(settings, c, REPORT_DEFINE), c.measureSummary(), answer(settings, c, REPORT_CONTAINMENT),
-                c.containmentMeasures(), causes, whys(c), c.rootCause(), answer(settings, c, REPORT_SOLUTIONS),
+                containment(c), causes, whys(c), c.rootCause(), answer(settings, c, REPORT_SOLUTIONS),
                 actions(c), answer(settings, c, REPORT_SURVEILLANCE)));
     }
 
@@ -298,8 +302,19 @@ public class ResolutionService {
                 w.rootCause(), w.action())).toList();
     }
 
+    /** La synthèse du confinement, suivie de ses actions, une par ligne. */
+    static String containment(ResolutionContent c) {
+        List<String> lines = new ArrayList<>();
+        if (c.containmentMeasures() != null && !c.containmentMeasures().isBlank()) {
+            lines.add(c.containmentMeasures().strip());
+        }
+        c.actions().stream().filter(ActionLine::containment).forEach(a -> lines.add("• " + a.action()
+                + (a.responsible() == null || a.responsible().name() == null ? "" : " — " + a.responsible().name())));
+        return lines.isEmpty() ? null : String.join("\n", lines);
+    }
+
     static List<ClaimReport.Action> actions(ResolutionContent c) {
-        return c.actions().stream().map(a -> new ClaimReport.Action(a.action(),
+        return c.actions().stream().filter(a -> !a.containment()).map(a -> new ClaimReport.Action(a.action(),
                 a.responsible() == null ? null : a.responsible().name(), STATUSES.get(a.status()),
                 a.plannedOn(), a.doneOn(), a.percent())).toList();
     }

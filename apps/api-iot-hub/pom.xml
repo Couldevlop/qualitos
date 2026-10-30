@@ -65,6 +65,16 @@
             <artifactId>logstash-logback-encoder</artifactId>
             <version>8.1</version>
             <scope>runtime</scope>
+            <!-- 8.1 déclare jackson-databind 2.18.3 (CVE-2026-54512/54513/68497/
+                 91776/91777, HIGH). Maven le remplace déjà par la 2.21.7 gérée par
+                 Boot, mais le scan SCA lit la version déclarée : on retire cette
+                 déclaration, databind arrive par spring-boot-jackson2. -->
+            <exclusions>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>

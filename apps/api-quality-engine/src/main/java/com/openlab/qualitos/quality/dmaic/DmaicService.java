@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -196,7 +197,7 @@ public class DmaicService {
     public DmaicDto.CapabilityResponse computeCapability(UUID projectId) {
         DmaicProject p = loadProject(projectId);
         List<Double> values = measureRepository.findByProjectIdOrderByRecordedAtAsc(projectId).stream()
-                .map(ProcessMeasure::getValue).toList();
+                .map(ProcessMeasure::getValue).filter(Objects::nonNull).toList();
         return capabilityCalculator.compute(values,
                 p.getSpecLowerLimit(), p.getSpecUpperLimit(), p.getSpecTarget());
     }

@@ -11313,8 +11313,8 @@ Coordonnées professionnelles</source>
         <target state="translated">遏制先于分析：在原因得到处理之前，它保护客户免受可疑产品影响，包括仍在生产中的产品。</target>
       </trans-unit>
       <trans-unit id="dmaic.res.section.contain-summary" datatype="html">
-        <source>Mesures conservatoires</source>
-        <target state="translated">临时措施</target>
+        <source>Action de confinement</source>
+        <target state="translated">围堵措施</target>
       </trans-unit>
       <trans-unit id="dmaic.res.section.analyze" datatype="html">
         <source>Analyser — les causes</source>
@@ -11859,6 +11859,22 @@ Coordonnées professionnelles</source>
       <trans-unit id="dmaic.res.capa-description" datatype="html">
         <source>Action du plan d'actions DMAIC « <x id="project"/> ».</source>
         <target state="translated">DMAIC 行动计划“<x id="project"/>”中的行动。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.capa-containment-description" datatype="html">
+        <source>Action de confinement du projet DMAIC « <x id="project"/> ».</source>
+        <target state="translated">DMAIC 项目“<x id="project"/>”的围堵措施。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.containment-actions" datatype="html">
+        <source>Actions de confinement</source>
+        <target state="translated">围堵措施</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.containment-add" datatype="html">
+        <source>Ajouter une action de confinement</source>
+        <target state="translated">添加围堵措施</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.containment-empty" datatype="html">
+        <source>Aucune action de confinement.</source>
+        <target state="translated">暂无围堵措施。</target>
       </trans-unit>
       <trans-unit id="dmaic.res.capa-open" datatype="html">
         <source>Voir la CAPA</source>
@@ -18367,7 +18383,7 @@ historique 12 mois</source>
         <target state="translated">DMAIC项目</target>
       </trans-unit>
       <trans-unit id="dmaic.list.subtitle" datatype="html">
-        <source>Six Sigma — Define / Measure / Analyze / Improve / Control + Poka-Yoke.</source>
+        <source>Six Sigma — Define / Measure / Analyze / Improve / Control.</source>
         <target state="translated">六西格玛 — Define / Measure / Analyze / Improve / Control + 防错。</target>
       </trans-unit>
       <trans-unit id="dmaic.list.new-project" datatype="html">
@@ -20942,9 +20958,13 @@ historique 12 mois</source>
         <source>Registres de non-conformités</source>
         <target state="translated">不合格项登记册</target>
       </trans-unit>
-      <trans-unit id="nccluster.tab-external" datatype="html">
-        <source>NC externes (fournisseurs)</source>
-        <target state="translated">外部不合格项（供应商）</target>
+      <trans-unit id="nccluster.tab-suppliers" datatype="html">
+        <source>NC fournisseurs</source>
+        <target state="translated">供应商不合格项</target>
+      </trans-unit>
+      <trans-unit id="nccluster.tab-complaints" datatype="html">
+        <source>NC externes (réclamations)</source>
+        <target state="translated">外部不合格项（投诉）</target>
       </trans-unit>
       <trans-unit id="nccluster.tab-internal" datatype="html">
         <source>NC internes</source>
@@ -20957,6 +20977,10 @@ historique 12 mois</source>
       <trans-unit id="nccluster.load-internal" datatype="html">
         <source>Reprendre les NC internes</source>
         <target state="translated">载入内部不合格项</target>
+      </trans-unit>
+      <trans-unit id="nccluster.load-complaints" datatype="html">
+        <source>Reprendre les réclamations</source>
+        <target state="translated">载入投诉</target>
       </trans-unit>
       <trans-unit id="nccluster.register-empty" datatype="html">
         <source>Le registre ne contient aucune non-conformité.</source>
