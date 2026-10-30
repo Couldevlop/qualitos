@@ -337,7 +337,8 @@ describe('DmaicResolutionComponent', () => {
   it('« Ajouter une action » ouvre la fenêtre CAPA ; la ligne reprend ce qui y est saisi', async () => {
     await setup();
     voir('IMPROVE');
-    svc.save.and.returnValue(of(fiche()));
+    // Le serveur renvoie la fiche telle qu'enregistrée : la ligne ajoutée y figure.
+    svc.save.and.callFake((_id, content) => of(fiche({ saved: true }, content)));
     const open = spyOn(TestBed.inject(MatDialog), 'open').and.returnValue({
       afterClosed: () => of({
         capaId: 'capa-1',
@@ -368,7 +369,8 @@ describe('DmaicResolutionComponent', () => {
   it('l\'action de confinement se range dans Analyser et suffit à tenir le confinement', async () => {
     await setup();
     voir('ANALYZE');
-    svc.save.and.returnValue(of(fiche()));
+    // Le serveur renvoie la fiche telle qu'enregistrée : la ligne ajoutée y figure.
+    svc.save.and.callFake((_id, content) => of(fiche({ saved: true }, content)));
     const open = spyOn(TestBed.inject(MatDialog), 'open').and.returnValue({
       afterClosed: () => of({ capaId: 'capa-2', action: { title: 'Trier le stock' } })
     } as MatDialogRef<unknown>);

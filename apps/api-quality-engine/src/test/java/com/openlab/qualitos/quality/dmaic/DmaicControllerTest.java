@@ -190,9 +190,18 @@ class DmaicControllerTest {
     }
 
     @Test @WithMockUser
-    void addMeasure_missingValue_returns400() throws Exception {
+    void addMeasure_withoutValue_returns201() throws Exception {
+        when(service.addMeasure(eq(PROJECT), any())).thenReturn(measureResp());
         mockMvc.perform(post("/api/v1/dmaic/projects/{id}/measures", PROJECT).with(csrf())
                         .contentType(MediaType.APPLICATION_JSON).content("{}"))
+                .andExpect(status().isCreated());
+    }
+
+    @Test @WithMockUser
+    void addMeasure_subgroupTooLong_returns400() throws Exception {
+        mockMvc.perform(post("/api/v1/dmaic/projects/{id}/measures", PROJECT).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"subgroupId\":\"" + "x".repeat(101) + "\"}"))
                 .andExpect(status().isBadRequest());
     }
 
