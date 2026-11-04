@@ -1,0 +1,21 @@
+// Un filtre, une liste : la fenêtre reste étroite, les libellés sont longs.
+
+:host {
+  display: block;
+}
+
+.full {
+  display: block;
+  width: 100%;
+  min-width: min(480px, 100%);
+}
+
+.echec {
+  margin: 0;
+  color: var(--qos-danger-fg);
+}
+
+.dim {
+  margin: 0;
+  color: var(--qos-fg-tertiary);
+}

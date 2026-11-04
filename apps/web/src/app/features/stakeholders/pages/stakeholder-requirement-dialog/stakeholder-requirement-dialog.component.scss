@@ -1,0 +1,30 @@
+// Douze champs dont un seul est obligatoire : deux colonnes pour les paires qui
+// se lisent ensemble (risque / niveau, maîtrise / indicateur), une seule pour
+// l'exigence elle-même, qui est la raison d'être de la fenêtre.
+
+:host {
+  display: block;
+}
+
+.full {
+  display: block;
+  width: 100%;
+  min-width: min(560px, 100%);
+}
+
+.deux {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  gap: 0 var(--qos-space-3);
+
+  mat-form-field {
+    min-width: 0;
+  }
+}
+
+.aide {
+  margin: 0 0 var(--qos-space-2);
+  color: var(--qos-fg-tertiary);
+  font-size: var(--qos-fs-sm);
+  line-height: 1.5;
+}
