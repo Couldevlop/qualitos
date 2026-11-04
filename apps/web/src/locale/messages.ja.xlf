@@ -17457,6 +17457,10 @@ historique 12 mois</source>
         <source>score de cause racine</source>
         <target state="translated">根本原因スコア</target>
       </trans-unit>
+      <trans-unit id="kpi.target" datatype="html">
+        <source>Cible</source>
+        <target state="translated">目標</target>
+      </trans-unit>
       <trans-unit id="nav.marketplace" datatype="html">
         <source>Marketplace</source>
         <target state="translated">マーケットプレイス</target>
@@ -28113,6 +28117,778 @@ historique 12 mois</source>
         <source>Statut du procédé</source>
         <target state="translated">工程の状態</target>
       </trans-unit>
+      <trans-unit id="nav.stakeholders" datatype="html">
+        <source>Parties prenantes</source>
+        <target state="translated">利害関係者</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.title" datatype="html">
+        <source>Parties prenantes</source>
+        <target state="translated">利害関係者</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.subtitle" datatype="html">
+        <source>Contexte de l'organisme : qui attend quoi de vous, et comment vous vous en assurez.</source>
+        <target state="translated">組織の状況：誰が何を期待しているのか、そしてそれをどう確かめるのか。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.new" datatype="html">
+        <source>Nouvelle partie prenante</source>
+        <target state="translated">新しい利害関係者</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.load-failed" datatype="html">
+        <source>Le registre des parties prenantes n'a pas pu être chargé.</source>
+        <target state="translated">利害関係者の登録簿を読み込めませんでした。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.sheet-failed" datatype="html">
+        <source>La fiche n'a pas pu être ouverte.</source>
+        <target state="translated">シートを開けませんでした。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.sheet.aria" datatype="html">
+        <source>Fiche de la partie prenante</source>
+        <target state="translated">利害関係者シート</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.tile.total" datatype="html">
+        <source>Parties prenantes</source>
+        <target state="translated">利害関係者</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.tile.sides" datatype="html">
+        <source>Internes / externes</source>
+        <target state="translated">内部／外部</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.tile.critical" datatype="html">
+        <source>Criticité élevée</source>
+        <target state="translated">重要度：高</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.tile.overdue" datatype="html">
+        <source>Revues en retard</source>
+        <target state="translated">期限超過のレビュー</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.tile.to-determine" datatype="html">
+        <source>Pertinence à trancher</source>
+        <target state="translated">関連性は未決定</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.tile.to-reassess" datatype="html">
+        <source>Exigences à réévaluer</source>
+        <target state="translated">再評価が必要な要求事項</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.tabs" datatype="html">
+        <source>Vues du registre</source>
+        <target state="translated">登録簿のビュー</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.tab.register" datatype="html">
+        <source>Registre</source>
+        <target state="translated">登録簿</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.tab.matrix" datatype="html">
+        <source>Matrice d'évaluation</source>
+        <target state="translated">評価マトリクス</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.tab.assistant" datatype="html">
+        <source>Assistant IA</source>
+        <target state="translated">AI アシスタント</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.filters" datatype="html">
+        <source>Filtrer le registre des parties prenantes</source>
+        <target state="translated">利害関係者の登録簿を絞り込む</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.filter.search" datatype="html">
+        <source>Rechercher une partie prenante</source>
+        <target state="translated">利害関係者を検索</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.filter.side" datatype="html">
+        <source>Interne / externe</source>
+        <target state="translated">内部／外部</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.filter.clear" datatype="html">
+        <source>Effacer les filtres</source>
+        <target state="translated">絞り込みを解除</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.col.name" datatype="html">
+        <source>Partie prenante</source>
+        <target state="translated">利害関係者</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.col.category" datatype="html">
+        <source>Catégorie</source>
+        <target state="translated">カテゴリー</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.col.criticality" datatype="html">
+        <source>Criticité</source>
+        <target state="translated">重要度</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.col.relevance" datatype="html">
+        <source>Pertinence</source>
+        <target state="translated">関連性</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.col.requirements" datatype="html">
+        <source>Exigences</source>
+        <target state="translated">要求事項</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.col.review" datatype="html">
+        <source>Dernière revue</source>
+        <target state="translated">最終レビュー</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.review-overdue" datatype="html">
+        <source>Réévaluation en retard</source>
+        <target state="translated">再評価が期限超過</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.empty" datatype="html">
+        <source>Aucune partie prenante inscrite. Ajoutez-en une, ou demandez une liste à l'assistant IA.</source>
+        <target state="translated">登録された利害関係者はまだありません。追加するか、AI アシスタントに一覧を求めてください。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.empty-filtered" datatype="html">
+        <source>Aucune partie prenante ne correspond à ces filtres.</source>
+        <target state="translated">この絞り込みに該当する利害関係者はありません。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.category.customers" datatype="html">
+        <source>Clients et utilisateurs finaux</source>
+        <target state="translated">顧客およびエンドユーザー</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.category.suppliers" datatype="html">
+        <source>Fournisseurs et sous-traitants</source>
+        <target state="translated">供給者および外注先</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.category.employees" datatype="html">
+        <source>Collaborateurs et représentants du personnel</source>
+        <target state="translated">従業員および従業員代表</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.category.governance" datatype="html">
+        <source>Direction et actionnaires</source>
+        <target state="translated">経営層および株主</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.category.regulators" datatype="html">
+        <source>Autorités réglementaires</source>
+        <target state="translated">規制当局</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.category.certification" datatype="html">
+        <source>Organismes de certification et d'accréditation</source>
+        <target state="translated">認証機関および認定機関</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.category.partners" datatype="html">
+        <source>Partenaires commerciaux</source>
+        <target state="translated">事業パートナー</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.category.providers" datatype="html">
+        <source>Prestataires de services</source>
+        <target state="translated">サービス提供者</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.category.financial" datatype="html">
+        <source>Assureurs et partenaires financiers</source>
+        <target state="translated">保険会社および金融パートナー</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.category.communities" datatype="html">
+        <source>Communautés locales et acteurs externes</source>
+        <target state="translated">地域社会および外部関係者</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.category.other" datatype="html">
+        <source>Autres parties intéressées</source>
+        <target state="translated">その他の利害関係者</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.side.internal" datatype="html">
+        <source>Interne</source>
+        <target state="translated">内部</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.side.external" datatype="html">
+        <source>Externe</source>
+        <target state="translated">外部</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.impact.low" datatype="html">
+        <source>Faible</source>
+        <target state="translated">低</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.impact.medium" datatype="html">
+        <source>Moyen</source>
+        <target state="translated">中</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.impact.high" datatype="html">
+        <source>Élevé</source>
+        <target state="translated">高</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.relevance.relevant" datatype="html">
+        <source>Pertinente</source>
+        <target state="translated">関連あり</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.relevance.not-relevant" datatype="html">
+        <source>Non pertinente</source>
+        <target state="translated">関連なし</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.relevance.to-determine" datatype="html">
+        <source>À déterminer</source>
+        <target state="translated">未決定</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.nature.contractual" datatype="html">
+        <source>Contractuel</source>
+        <target state="translated">契約上</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.nature.regulatory" datatype="html">
+        <source>Réglementaire</source>
+        <target state="translated">法規上</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.nature.normative" datatype="html">
+        <source>Normatif</source>
+        <target state="translated">規格上</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.nature.voluntary" datatype="html">
+        <source>Volontaire</source>
+        <target state="translated">自主的</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.nature.internal" datatype="html">
+        <source>Interne</source>
+        <target state="translated">社内</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.status.to-analyse" datatype="html">
+        <source>À analyser</source>
+        <target state="translated">分析待ち</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.status.applicable" datatype="html">
+        <source>Applicable</source>
+        <target state="translated">適用</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.status.controlled" datatype="html">
+        <source>Maîtrisée</source>
+        <target state="translated">管理下</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.status.to-reassess" datatype="html">
+        <source>À réévaluer</source>
+        <target state="translated">再評価が必要</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.section.identification" datatype="html">
+        <source>Identification</source>
+        <target state="translated">識別</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.section.analysis" datatype="html">
+        <source>Analyse</source>
+        <target state="translated">分析</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.section.steering" datatype="html">
+        <source>Pilotage</source>
+        <target state="translated">運営管理</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.section.requirements" datatype="html">
+        <source>Exigences</source>
+        <target state="translated">要求事項</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.field.name" datatype="html">
+        <source>Nom ou raison sociale</source>
+        <target state="translated">名称または商号</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.field.category" datatype="html">
+        <source>Catégorie</source>
+        <target state="translated">カテゴリー</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.field.contact" datatype="html">
+        <source>Coordonnées</source>
+        <target state="translated">連絡先</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.field.sites" datatype="html">
+        <source>Sites concernés</source>
+        <target state="translated">対象サイト</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.field.needs" datatype="html">
+        <source>Besoins et attentes</source>
+        <target state="translated">ニーズおよび期待</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.field.requirements-summary" datatype="html">
+        <source>Exigences applicables</source>
+        <target state="translated">適用される要求事項</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.field.relevance" datatype="html">
+        <source>Pertinence pour le système qualité</source>
+        <target state="translated">品質システムにとっての関連性</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.field.owner" datatype="html">
+        <source>Responsable interne de la relation</source>
+        <target state="translated">関係の社内責任者</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.field.justification" datatype="html">
+        <source>Justification de la pertinence ou de la non-pertinence</source>
+        <target state="translated">関連性あり／なしの根拠</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.field.risks" datatype="html">
+        <source>Risques et opportunités associés</source>
+        <target state="translated">関連するリスクおよび機会</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.field.quality-impact" datatype="html">
+        <source>Impact qualité</source>
+        <target state="translated">品質への影響</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.field.regulatory-impact" datatype="html">
+        <source>Impact réglementaire</source>
+        <target state="translated">法規への影響</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.field.controls" datatype="html">
+        <source>Mesures de maîtrise</source>
+        <target state="translated">管理手段</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.field.indicators" datatype="html">
+        <source>Indicateurs de suivi</source>
+        <target state="translated">モニタリング指標</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.field.documents" datatype="html">
+        <source>Documents de référence</source>
+        <target state="translated">参照文書</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.field.actions" datatype="html">
+        <source>Actions associées</source>
+        <target state="translated">関連する処置</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.field.next-review" datatype="html">
+        <source>Prochaine réévaluation</source>
+        <target state="translated">次回の再評価</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.reviewed-on" datatype="html">
+        <source>Dernière revue le</source>
+        <target state="translated">最終レビュー日</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.never-reviewed" datatype="html">
+        <source>Jamais revue.</source>
+        <target state="translated">レビュー履歴はありません。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.mark-reviewed" datatype="html">
+        <source>Marquer comme revue</source>
+        <target state="translated">レビュー済みにする</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.reviewed" datatype="html">
+        <source>Revue enregistrée à la date du jour.</source>
+        <target state="translated">本日の日付でレビューを記録しました。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.review-failed" datatype="html">
+        <source>La revue n'a pas pu être enregistrée.</source>
+        <target state="translated">レビューを記録できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.pending" datatype="html">
+        <source>Fiche modifiée</source>
+        <target state="translated">シートが変更されています</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.saved" datatype="html">
+        <source>Fiche enregistrée.</source>
+        <target state="translated">シートを保存しました。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.save-failed" datatype="html">
+        <source>La fiche n'a pas pu être enregistrée.</source>
+        <target state="translated">シートを保存できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.problem.name" datatype="html">
+        <source>Une partie prenante se désigne par un nom.</source>
+        <target state="translated">利害関係者は名称で特定します。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.problem.justification" datatype="html">
+        <source>Dites pourquoi elle est pertinente, ou pourquoi elle ne l'est pas : un auditeur vient lire cette décision.</source>
+        <target state="translated">関連ありとした理由、あるいは関連なしとした理由を書いてください。監査員がこの判断を読みに来ます。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirements-help" datatype="html">
+        <source>Ce que cette partie prenante attend, d'où cela vient, et comment vous vous en assurez. Chaque ligne se rattache à un risque, un écart, un audit ou un document.</source>
+        <target state="translated">この利害関係者が期待すること、その出どころ、そしてそれをどう確かめるのか。各行はリスク、不適合、監査、文書のいずれかに結び付きます。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirements-empty" datatype="html">
+        <source>Aucune exigence pour le moment. Ajoutez-en une, ou importez un contrat depuis l'assistant IA.</source>
+        <target state="translated">要求事項はまだありません。追加するか、AI アシスタントから契約書を取り込んでください。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.add-requirement" datatype="html">
+        <source>Ajouter une exigence</source>
+        <target state="translated">要求事項を追加</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement-added" datatype="html">
+        <source>Exigence ajoutée.</source>
+        <target state="translated">要求事項を追加しました。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement-failed" datatype="html">
+        <source>L'exigence n'a pas pu être ajoutée.</source>
+        <target state="translated">要求事項を追加できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.status-failed" datatype="html">
+        <source>Le statut n'a pas pu être changé.</source>
+        <target state="translated">ステータスを変更できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement-remove" datatype="html">
+        <source>Retirer</source>
+        <target state="translated">削除</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement-remove-title" datatype="html">
+        <source>Retirer cette exigence ?</source>
+        <target state="translated">この要求事項を削除しますか？</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement-remove-message" datatype="html">
+        <source>Elle disparaîtra de la fiche, ainsi que ses rattachements.</source>
+        <target state="translated">シートから消え、その関連付けも失われます。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement-remove-failed" datatype="html">
+        <source>L'exigence n'a pas pu être retirée.</source>
+        <target state="translated">要求事項を削除できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.create-action" datatype="html">
+        <source>Créer une action</source>
+        <target state="translated">処置を作成</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.see-capa" datatype="html">
+        <source>Voir la CAPA</source>
+        <target state="translated">CAPA を表示</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.capa-opened" datatype="html">
+        <source>CAPA ouverte ; l'exigence repasse à réévaluer.</source>
+        <target state="translated">CAPA を開きました。要求事項は「再評価が必要」に戻ります。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.capa-failed" datatype="html">
+        <source>La CAPA n'a pas pu être ouverte.</source>
+        <target state="translated">CAPA を開けませんでした。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.capa-no-account" datatype="html">
+        <source>Impossible d'identifier votre compte.</source>
+        <target state="translated">お使いのアカウントを特定できません。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.link.risk" datatype="html">
+        <source>Risque</source>
+        <target state="translated">リスク</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.link.nc" datatype="html">
+        <source>Écart</source>
+        <target state="translated">不適合</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.link.audit" datatype="html">
+        <source>Audit</source>
+        <target state="translated">監査</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.link.document" datatype="html">
+        <source>Document</source>
+        <target state="translated">文書</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.linked" datatype="html">
+        <source>Exigence rattachée.</source>
+        <target state="translated">要求事項を関連付けました。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.link-failed" datatype="html">
+        <source>Le rattachement a échoué.</source>
+        <target state="translated">関連付けに失敗しました。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.link.title-risk" datatype="html">
+        <source>Rattacher à un risque</source>
+        <target state="translated">リスクに関連付ける</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.link.title-nc" datatype="html">
+        <source>Rattacher à un écart</source>
+        <target state="translated">不適合に関連付ける</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.link.title-audit" datatype="html">
+        <source>Rattacher à un audit</source>
+        <target state="translated">監査に関連付ける</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.link.title-document" datatype="html">
+        <source>Rattacher à un document</source>
+        <target state="translated">文書に関連付ける</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.link.subtitle" datatype="html">
+        <source>Exigence : <x id="exigence"/></source>
+        <target state="translated">要求事項：<x id="exigence"/></target>
+      </trans-unit>
+      <trans-unit id="stakeholders.link.filter" datatype="html">
+        <source>Filtrer la liste</source>
+        <target state="translated">一覧を絞り込む</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.link.submit" datatype="html">
+        <source>Rattacher</source>
+        <target state="translated">関連付ける</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.link.choose" datatype="html">
+        <source>Choisissez la cible dans la liste.</source>
+        <target state="translated">一覧から対象を選んでください。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.link.loading" datatype="html">
+        <source>Chargement de la liste…</source>
+        <target state="translated">一覧を読み込んでいます…</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.link.load-failed" datatype="html">
+        <source>La liste n'a pas pu être chargée ; fermez la fenêtre et réessayez.</source>
+        <target state="translated">一覧を読み込めませんでした。ウィンドウを閉じて再度お試しください。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.link.none" datatype="html">
+        <source>Il n'y a rien à rattacher : ce module ne contient encore aucun élément.</source>
+        <target state="translated">関連付ける対象がありません。このモジュールにはまだ項目がありません。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.link.no-match" datatype="html">
+        <source>Aucun élément ne correspond à ce filtre.</source>
+        <target state="translated">この絞り込みに該当する項目はありません。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.create.title" datatype="html">
+        <source>Inscrire une partie prenante</source>
+        <target state="translated">利害関係者を登録する</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.create.subtitle" datatype="html">
+        <source>Trois champs suffisent : sa fiche s'ouvre ensuite pour l'analyse.</source>
+        <target state="translated">入力は三つの項目だけです。その後、分析のためにシートが開きます。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.create.submit" datatype="html">
+        <source>Inscrire</source>
+        <target state="translated">登録</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.create.need-name" datatype="html">
+        <source>Donnez le nom ou la raison sociale de la partie prenante.</source>
+        <target state="translated">利害関係者の名称または商号を入力してください。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.create.name-too-long" datatype="html">
+        <source>Le nom dépasse la longueur acceptée.</source>
+        <target state="translated">名称が許容される長さを超えています。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.create.done" datatype="html">
+        <source>Partie prenante inscrite ; complétez son analyse.</source>
+        <target state="translated">利害関係者を登録しました。分析を記入してください。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.create.failed" datatype="html">
+        <source>La partie prenante n'a pas pu être inscrite.</source>
+        <target state="translated">利害関係者を登録できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement.title" datatype="html">
+        <source>Ajouter une exigence</source>
+        <target state="translated">要求事項を追加する</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement.subtitle" datatype="html">
+        <source>Ce que <x id="nom"/> attend, et comment vous vous en assurez.</source>
+        <target state="translated"><x id="nom"/> が期待すること、そしてそれをどう確かめるのか。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement.text" datatype="html">
+        <source>Exigence</source>
+        <target state="translated">要求事項</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement.optional" datatype="html">
+        <source>Les champs qui suivent se complètent au fil de l'analyse : rien n'empêche d'ajouter l'exigence maintenant et de dire plus tard qui la suit.</source>
+        <target state="translated">以下の項目は分析の進み方に合わせて埋めていきます。いま要求事項を追加し、担当は後から決めても構いません。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement.need" datatype="html">
+        <source>Besoin ou attente d'origine</source>
+        <target state="translated">元となるニーズまたは期待</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement.origin" datatype="html">
+        <source>Origine (contrat, texte, clause)</source>
+        <target state="translated">出どころ（契約、法令、条項）</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement.nature" datatype="html">
+        <source>Nature de l'obligation</source>
+        <target state="translated">義務の性質</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement.no-nature" datatype="html">
+        <source>Non précisée</source>
+        <target state="translated">指定なし</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement.risk" datatype="html">
+        <source>Risque si elle n'est pas tenue</source>
+        <target state="translated">満たされない場合のリスク</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement.risk-level" datatype="html">
+        <source>Niveau de risque</source>
+        <target state="translated">リスクレベル</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement.no-level" datatype="html">
+        <source>Non coté</source>
+        <target state="translated">未評価</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement.control" datatype="html">
+        <source>Mesure de maîtrise</source>
+        <target state="translated">管理手段</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement.indicator" datatype="html">
+        <source>Indicateur de suivi</source>
+        <target state="translated">モニタリング指標</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement.responsible" datatype="html">
+        <source>Responsable du suivi</source>
+        <target state="translated">フォローアップの責任者</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement.evidence" datatype="html">
+        <source>Preuve attendue</source>
+        <target state="translated">期待される証拠</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement.need-text" datatype="html">
+        <source>Énoncez l'exigence : c'est la seule chose indispensable ici.</source>
+        <target state="translated">要求事項を書いてください。ここで欠かせないのはそれだけです。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement.too-long" datatype="html">
+        <source>L'exigence dépasse la longueur acceptée ; résumez-la et détaillez dans la preuve.</source>
+        <target state="translated">要求事項が許容される長さを超えています。要約し、詳細は証拠欄に書いてください。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.matrix.help" datatype="html">
+        <source>Deux cotations par partie prenante : ce qu'elle pèse sur la qualité, ce qu'elle pèse au titre de la réglementation. Elles ne se compensent pas — la criticité retient la plus élevée des deux, et c'est le serveur qui la calcule.</source>
+        <target state="translated">利害関係者ごとに二つの評価：品質への重みと、法規上の重み。両者は打ち消し合いません。重要度は高いほうを採り、その算出はサーバーが行います。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.matrix.read-only" datatype="html">
+        <source>Vous consultez la cotation ; sa modification relève du pilotage qualité.</source>
+        <target state="translated">評価は閲覧のみです。変更は品質管理の担当です。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.matrix.empty" datatype="html">
+        <source>Aucune partie prenante à coter pour le moment.</source>
+        <target state="translated">現時点で評価する利害関係者はありません。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.matrix.grid-title" datatype="html">
+        <source>Répartition des parties prenantes</source>
+        <target state="translated">利害関係者の分布</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.matrix.grid-caption" datatype="html">
+        <source>Lignes : impact réglementaire. Colonnes : impact qualité.</source>
+        <target state="translated">行：法規への影響。列：品質への影響。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.matrix.pending" datatype="html">
+        <source>Lignes recotées, en attente d'enregistrement : <x id="nombre"/></source>
+        <target state="translated">再評価して未保存の行：<x id="nombre"/></target>
+      </trans-unit>
+      <trans-unit id="stakeholders.matrix.recalculated" datatype="html">
+        <source>recalculée à l'enregistrement</source>
+        <target state="translated">保存時に再計算されます</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.matrix.save" datatype="html">
+        <source>Enregistrer la cotation</source>
+        <target state="translated">評価を保存</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.matrix.saved" datatype="html">
+        <source>Cotation enregistrée ; la criticité a été recalculée.</source>
+        <target state="translated">評価を保存しました。重要度を再計算しました。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.matrix.save-failed" datatype="html">
+        <source>La cotation n'a pas pu être enregistrée.</source>
+        <target state="translated">評価を保存できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.contract" datatype="html">
+        <source>L'assistant propose ; il n'inscrit rien. Chaque proposition reste une proposition jusqu'à ce que vous l'acceptiez, une par une.</source>
+        <target state="translated">アシスタントは提案するだけで、何も登録しません。各提案は、あなたが一件ずつ受け入れるまで提案のままです。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.suggest-title" datatype="html">
+        <source>Qui oublie-t-on ?</source>
+        <target state="translated">誰を見落としているか</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.suggest-help" datatype="html">
+        <source>Décrivez votre activité : l'assistant propose les familles de parties intéressées qu'un organisme comme le vôtre doit prendre en compte.</source>
+        <target state="translated">事業内容を説明してください。あなたのような組織が考慮すべき利害関係者の類型をアシスタントが提案します。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.sector" datatype="html">
+        <source>Secteur d'activité</source>
+        <target state="translated">業種</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.characteristics" datatype="html">
+        <source>Caractéristiques (sites, clients, contraintes)</source>
+        <target state="translated">特徴（拠点、顧客、制約）</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.need-sector" datatype="html">
+        <source>Dites dans quel secteur vous êtes : sans cela, il n'y a rien à proposer qui vous concerne.</source>
+        <target state="translated">どの業種かを書いてください。それがないと、あなたに関係する提案はできません。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.suggest" datatype="html">
+        <source>Proposer des parties prenantes</source>
+        <target state="translated">利害関係者を提案させる</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.suggest-failed" datatype="html">
+        <source>Les suggestions n'ont pas pu être obtenues.</source>
+        <target state="translated">提案を取得できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.nothing-to-suggest" datatype="html">
+        <source>Rien à proposer : votre registre couvre déjà ce que cette description laisse voir.</source>
+        <target state="translated">提案はありません。この説明から見える範囲は、すでに登録簿が網羅しています。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.already" datatype="html">
+        <source>Déjà au registre</source>
+        <target state="translated">すでに登録済み</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.do-register" datatype="html">
+        <source>Inscrire</source>
+        <target state="translated">登録</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.registered" datatype="html">
+        <source>Partie prenante inscrite.</source>
+        <target state="translated">利害関係者を登録しました。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.extract-title" datatype="html">
+        <source>Les exigences d'un document</source>
+        <target state="translated">文書に含まれる要求事項</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.extract-help" datatype="html">
+        <source>Collez un contrat, un cahier des charges ou un texte réglementaire : l'assistant en relève les exigences, chacune avec le passage qui la prouve.</source>
+        <target state="translated">契約書、仕様書、法令の文面を貼り付けてください。アシスタントが要求事項を抜き出し、それぞれに根拠となる引用を添えます。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.document-name" datatype="html">
+        <source>Nom du document</source>
+        <target state="translated">文書の名称</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.document-text" datatype="html">
+        <source>Texte du document</source>
+        <target state="translated">文書の本文</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.need-document" datatype="html">
+        <source>Collez au moins <x id="minimum"/> caractères du document : en dessous, il n'y a rien à lire.</source>
+        <target state="translated">文書を <x id="minimum"/> 文字以上貼り付けてください。それ未満では読み取るものがありません。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.extract" datatype="html">
+        <source>Relever les exigences</source>
+        <target state="translated">要求事項を抜き出す</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.extract-failed" datatype="html">
+        <source>Les exigences n'ont pas pu être extraites.</source>
+        <target state="translated">要求事項を抽出できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.nothing-extracted" datatype="html">
+        <source>Rien à proposer : ce texte ne porte aucune exigence identifiable.</source>
+        <target state="translated">提案はありません。この文面に特定できる要求事項は含まれていません。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.target" datatype="html">
+        <source>Partie prenante qui porte ces exigences</source>
+        <target state="translated">これらの要求事項を負う利害関係者</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.need-target" datatype="html">
+        <source>Choisissez la partie prenante qui porte ces exigences.</source>
+        <target state="translated">これらの要求事項を負う利害関係者を選んでください。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.open-sheet" datatype="html">
+        <source>Ouvrir sa fiche</source>
+        <target state="translated">そのシートを開く</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.changes-title" datatype="html">
+        <source>Ce qui a changé</source>
+        <target state="translated">何が変わったか</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.changes-help" datatype="html">
+        <source>Deux versions d'un même texte : l'assistant dit ce qui a bougé et ce que cela pèse. À vous de désigner les exigences que ce changement remet en cause.</source>
+        <target state="translated">同じ文面の二つの版：何が動き、それがどれほど重いかをアシスタントが示します。この変更によって見直しが必要な要求事項を指定するのは、あなたです。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.previous-text" datatype="html">
+        <source>Version précédente</source>
+        <target state="translated">前の版</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.current-text" datatype="html">
+        <source>Version en vigueur</source>
+        <target state="translated">現行の版</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.need-two-versions" datatype="html">
+        <source>Collez les deux versions, au moins <x id="minimum"/> caractères chacune : il n'y a pas de comparaison possible autrement.</source>
+        <target state="translated">二つの版を、それぞれ <x id="minimum"/> 文字以上貼り付けてください。そうでなければ比較はできません。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.detect" datatype="html">
+        <source>Comparer les deux versions</source>
+        <target state="translated">二つの版を比較する</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.detect-failed" datatype="html">
+        <source>Les changements n'ont pas pu être analysés.</source>
+        <target state="translated">変更点を分析できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.nothing-changed" datatype="html">
+        <source>Rien à signaler : ces deux versions ne diffèrent sur aucune exigence.</source>
+        <target state="translated">報告すべき点はありません。この二つの版は、どの要求事項でも違いがありません。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.reassess-target" datatype="html">
+        <source>Partie prenante concernée</source>
+        <target state="translated">対象となる利害関係者</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.no-requirement" datatype="html">
+        <source>Cette partie prenante ne porte encore aucune exigence à réévaluer.</source>
+        <target state="translated">この利害関係者には、再評価できる要求事項がまだありません。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.need-selection" datatype="html">
+        <source>Cochez les exigences que ce changement remet en cause.</source>
+        <target state="translated">この変更によって見直しが必要な要求事項にチェックを入れてください。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.mark" datatype="html">
+        <source>Marquer comme à réévaluer</source>
+        <target state="translated">「再評価が必要」にする</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.marked" datatype="html">
+        <source>Exigences marquées à réévaluer.</source>
+        <target state="translated">要求事項を「再評価が必要」にしました。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.mark-failed" datatype="html">
+        <source>Les exigences n'ont pas pu être marquées.</source>
+        <target state="translated">要求事項を記録できませんでした。</target>
+      </trans-unit>
       <trans-unit id="standards-extras.actions" datatype="html">
         <source>Actions</source>
         <target state="translated">操作</target>
@@ -31698,6 +32474,10 @@ Inde (centre de service)</source>
       <trans-unit id="tv.trend.target" datatype="html">
         <source>Cible</source>
         <target state="translated">目標</target>
+      </trans-unit>
+      <trans-unit id="tv.loaded-at" datatype="html">
+        <source>Relevé de</source>
+        <target state="translated">取得時刻</target>
       </trans-unit>
       <trans-unit id="tv.card.confidence" datatype="html">
         <source>Confiance <x id="INTERPOLATION"/> %</source>
