@@ -20990,6 +20990,158 @@ historique 12 mois</source>
         <source>Le registre ne se lit pas pour le moment.</source>
         <target state="translated">تعذّرت قراءة السجل حاليًا.</target>
       </trans-unit>
+      <trans-unit id="nav.admin-nc" datatype="html">
+        <source>Natures de NC</source>
+        <target state="translated">أنواع حالات عدم المطابقة</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.title" datatype="html">
+        <source>Natures de non-conformité</source>
+        <target state="translated">أنواع حالات عدم المطابقة</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.subtitle" datatype="html">
+        <source>Sous chaque catégorie, les natures d'écart que vous rencontrez.</source>
+        <target state="translated">تحت كل فئة، أنواع الانحراف التي تواجهها.</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.scope" datatype="html">
+        <source>Une nature se reconnaît à son code : en changer le libellé ne déclasse pas les écarts déjà classés ; la retirer laisse les anciens porter leur code.</source>
+        <target state="translated">يُعرَف النوع برمزه: تغيير تسميته لا يُلغي تصنيف الانحرافات المصنَّفة سابقًا؛ وحذفه يُبقي القديمة حاملةً لرمزها.</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.defaults" datatype="html">
+        <source>Ce sont aujourd’hui les natures de la plateforme, transverses à tous les secteurs.</source>
+        <target state="translated">هذه حاليًا أنواع المنصة، وهي مشتركة بين جميع القطاعات.</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.catalogue" datatype="html">
+        <source>Catalogue</source>
+        <target state="translated">الدليل</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.catalogue-help" datatype="html">
+        <source>Les natures de chaque catégorie, dans l’ordre où la saisie les proposera.</source>
+        <target state="translated">أنواع كل فئة، بالترتيب الذي سيعرضها به نموذج الإدخال.</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.categories" datatype="html">
+        <source>Catégories</source>
+        <target state="translated">الفئات</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.code" datatype="html">
+        <source>Code</source>
+        <target state="translated">الرمز</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.code-placeholder" datatype="html">
+        <source>Ex. : PRD-DIM</source>
+        <target state="translated">مثال: PRD-DIM</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.label" datatype="html">
+        <source>Nature de l'écart</source>
+        <target state="translated">نوع الانحراف</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.label-placeholder" datatype="html">
+        <source>Ex. : Cote ou tolérance hors spécification</source>
+        <target state="translated">مثال: مقاس أو سماحية خارج المواصفة</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.add" datatype="html">
+        <source>Ajouter une nature</source>
+        <target state="translated">إضافة نوع</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.remove" datatype="html">
+        <source>Retirer cette nature</source>
+        <target state="translated">إزالة هذا النوع</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.category-empty" datatype="html">
+        <source>Aucune nature pour cette catégorie : la saisie n’y proposera rien.</source>
+        <target state="translated">لا يوجد نوع لهذه الفئة: لن يعرض نموذج الإدخال شيئًا هنا.</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.pending" datatype="html">
+        <source>Catalogue modifié</source>
+        <target state="translated">تم تعديل الدليل</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.problem.empty" datatype="html">
+        <source>Le catalogue ne peut pas être vide. Rétablissez celui de la plateforme.</source>
+        <target state="translated">لا يمكن أن يكون الدليل فارغًا. استعد دليل المنصة.</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.problem.too-many" datatype="html">
+        <source>Pas plus de <x id="INTERPOLATION"/> natures.</source>
+        <target state="translated">لا أكثر من <x id="INTERPOLATION"/> نوعًا.</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.problem.code" datatype="html">
+        <source>Un code s’écrit en capitales, chiffres, tiret ou point (ex. : PRD-DIM).</source>
+        <target state="translated">يُكتَب الرمز بحروف كبيرة وأرقام وشَرطة أو نقطة (مثال: PRD-DIM).</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.problem.label" datatype="html">
+        <source>Chaque nature a un libellé.</source>
+        <target state="translated">لكل نوع تسمية.</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.problem.duplicate" datatype="html">
+        <source>Deux natures portent le même code.</source>
+        <target state="translated">نوعان يحملان الرمز نفسه.</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.problem.empty-category" datatype="html">
+        <source>Catégorie sans aucune nature : <x id="INTERPOLATION"/> — la saisie n’y proposerait rien.</source>
+        <target state="translated">فئة بلا أي نوع: <x id="INTERPOLATION"/> — لن يعرض نموذج الإدخال شيئًا فيها.</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.load-failed" datatype="html">
+        <source>Le catalogue des natures n’a pas pu être chargé.</source>
+        <target state="translated">تعذّر تحميل دليل الأنواع.</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.save-failed" datatype="html">
+        <source>Le catalogue n’a pas pu être enregistré.</source>
+        <target state="translated">تعذّر حفظ الدليل.</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.saved" datatype="html">
+        <source>Catalogue des natures enregistré.</source>
+        <target state="translated">تم حفظ دليل الأنواع.</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.reset-action" datatype="html">
+        <source>Catalogue de la plateforme</source>
+        <target state="translated">دليل المنصة</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.reset" datatype="html">
+        <source>Rétablir</source>
+        <target state="translated">استعادة</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.reset-title" datatype="html">
+        <source>Rétablir le catalogue de la plateforme ?</source>
+        <target state="translated">استعادة دليل المنصة؟</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.reset-message" datatype="html">
+        <source>Votre catalogue sera remplacé par celui de la plateforme. Les écarts déjà classés gardent leur code.</source>
+        <target state="translated">سيُستبدَل دليلك بدليل المنصة. تحتفظ الانحرافات المصنَّفة سابقًا برمزها.</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.reset-done" datatype="html">
+        <source>Catalogue de la plateforme rétabli.</source>
+        <target state="translated">تمت استعادة دليل المنصة.</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.reset-failed" datatype="html">
+        <source>Le catalogue n’a pas pu être rétabli.</source>
+        <target state="translated">تعذّرت استعادة الدليل.</target>
+      </trans-unit>
+      <trans-unit id="nc.create.subcategory" datatype="html">
+        <source>Nature de l'écart</source>
+        <target state="translated">نوع الانحراف</target>
+      </trans-unit>
+      <trans-unit id="nc.create.subcategory-none" datatype="html">
+        <source>— À classer —</source>
+        <target state="translated">— للتصنيف —</target>
+      </trans-unit>
+      <trans-unit id="nc.list.filter-subcategory" datatype="html">
+        <source>Nature</source>
+        <target state="translated">النوع</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.supplier-required" datatype="html">
+        <source>Choisissez le fournisseur concerné.</source>
+        <target state="translated">اختر المورّد المعني.</target>
+      </trans-unit>
+      <trans-unit id="capa.open.containment-hint" datatype="html">
+        <source>Mesure immédiate : elle contient l'effet. Le dossier reste correctif — sa clôture demandera une action qui supprime la cause.</source>
+        <target state="translated">إجراء فوري: يحتوي الأثر. يبقى الملف تصحيحيًا — وسيقتضي إغلاقه إجراءً يُزيل السبب.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.complete-hint" datatype="html">
+        <source>Le projet se clôture quand toute la fiche est renseignée et que chaque action est à 100 %.</source>
+        <target state="translated">يُغلَق المشروع عندما تكون البطاقة كاملة وكل إجراء بنسبة 100٪.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.missing-marked" datatype="html">
+        <source>champ(s) à renseigner, signalés en rouge ci-dessous.</source>
+        <target state="translated">حقل/حقول يجب تعبئتها، مُعلَّمة بالأحمر أدناه.</target>
+      </trans-unit>
       <trans-unit id="nav.nlq-explore" datatype="html">
         <source>Exploration NLQ</source>
         <target state="translated">استكشاف NLQ</target>

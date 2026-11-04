@@ -20990,6 +20990,158 @@ declared income
         <source>Le registre ne se lit pas pour le moment.</source>
         <target state="translated">The register cannot be read right now.</target>
       </trans-unit>
+      <trans-unit id="nav.admin-nc" datatype="html">
+        <source>Natures de NC</source>
+        <target state="translated">NC natures</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.title" datatype="html">
+        <source>Natures de non-conformité</source>
+        <target state="translated">Non-conformity natures</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.subtitle" datatype="html">
+        <source>Sous chaque catégorie, les natures d'écart que vous rencontrez.</source>
+        <target state="translated">Under each category, the natures of deviation you encounter.</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.scope" datatype="html">
+        <source>Une nature se reconnaît à son code : en changer le libellé ne déclasse pas les écarts déjà classés ; la retirer laisse les anciens porter leur code.</source>
+        <target state="translated">A nature is identified by its code: changing its label does not unclassify deviations already classified; removing it leaves the old ones carrying their code.</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.defaults" datatype="html">
+        <source>Ce sont aujourd’hui les natures de la plateforme, transverses à tous les secteurs.</source>
+        <target state="translated">These are currently the platform natures, common to every sector.</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.catalogue" datatype="html">
+        <source>Catalogue</source>
+        <target state="translated">Catalogue</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.catalogue-help" datatype="html">
+        <source>Les natures de chaque catégorie, dans l’ordre où la saisie les proposera.</source>
+        <target state="translated">The natures of each category, in the order the entry form will offer them.</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.categories" datatype="html">
+        <source>Catégories</source>
+        <target state="translated">Categories</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.code" datatype="html">
+        <source>Code</source>
+        <target state="translated">Code</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.code-placeholder" datatype="html">
+        <source>Ex. : PRD-DIM</source>
+        <target state="translated">E.g. PRD-DIM</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.label" datatype="html">
+        <source>Nature de l'écart</source>
+        <target state="translated">Nature of the deviation</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.label-placeholder" datatype="html">
+        <source>Ex. : Cote ou tolérance hors spécification</source>
+        <target state="translated">E.g. Dimension or tolerance out of specification</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.add" datatype="html">
+        <source>Ajouter une nature</source>
+        <target state="translated">Add a nature</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.remove" datatype="html">
+        <source>Retirer cette nature</source>
+        <target state="translated">Remove this nature</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.category-empty" datatype="html">
+        <source>Aucune nature pour cette catégorie : la saisie n’y proposera rien.</source>
+        <target state="translated">No nature for this category: the entry form will offer nothing here.</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.pending" datatype="html">
+        <source>Catalogue modifié</source>
+        <target state="translated">Catalogue changed</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.problem.empty" datatype="html">
+        <source>Le catalogue ne peut pas être vide. Rétablissez celui de la plateforme.</source>
+        <target state="translated">The catalogue cannot be empty. Restore the platform one.</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.problem.too-many" datatype="html">
+        <source>Pas plus de <x id="INTERPOLATION"/> natures.</source>
+        <target state="translated">No more than <x id="INTERPOLATION"/> natures.</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.problem.code" datatype="html">
+        <source>Un code s’écrit en capitales, chiffres, tiret ou point (ex. : PRD-DIM).</source>
+        <target state="translated">A code is written in capitals, digits, hyphen or dot (e.g. PRD-DIM).</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.problem.label" datatype="html">
+        <source>Chaque nature a un libellé.</source>
+        <target state="translated">Every nature has a label.</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.problem.duplicate" datatype="html">
+        <source>Deux natures portent le même code.</source>
+        <target state="translated">Two natures carry the same code.</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.problem.empty-category" datatype="html">
+        <source>Catégorie sans aucune nature : <x id="INTERPOLATION"/> — la saisie n’y proposerait rien.</source>
+        <target state="translated">Category without any nature: <x id="INTERPOLATION"/> — the entry form would offer nothing there.</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.load-failed" datatype="html">
+        <source>Le catalogue des natures n’a pas pu être chargé.</source>
+        <target state="translated">The nature catalogue could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.save-failed" datatype="html">
+        <source>Le catalogue n’a pas pu être enregistré.</source>
+        <target state="translated">The catalogue could not be saved.</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.saved" datatype="html">
+        <source>Catalogue des natures enregistré.</source>
+        <target state="translated">Nature catalogue saved.</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.reset-action" datatype="html">
+        <source>Catalogue de la plateforme</source>
+        <target state="translated">Platform catalogue</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.reset" datatype="html">
+        <source>Rétablir</source>
+        <target state="translated">Restore</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.reset-title" datatype="html">
+        <source>Rétablir le catalogue de la plateforme ?</source>
+        <target state="translated">Restore the platform catalogue?</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.reset-message" datatype="html">
+        <source>Votre catalogue sera remplacé par celui de la plateforme. Les écarts déjà classés gardent leur code.</source>
+        <target state="translated">Your catalogue will be replaced by the platform one. Deviations already classified keep their code.</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.reset-done" datatype="html">
+        <source>Catalogue de la plateforme rétabli.</source>
+        <target state="translated">Platform catalogue restored.</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.reset-failed" datatype="html">
+        <source>Le catalogue n’a pas pu être rétabli.</source>
+        <target state="translated">The catalogue could not be restored.</target>
+      </trans-unit>
+      <trans-unit id="nc.create.subcategory" datatype="html">
+        <source>Nature de l'écart</source>
+        <target state="translated">Nature of the deviation</target>
+      </trans-unit>
+      <trans-unit id="nc.create.subcategory-none" datatype="html">
+        <source>— À classer —</source>
+        <target state="translated">— To be classified —</target>
+      </trans-unit>
+      <trans-unit id="nc.list.filter-subcategory" datatype="html">
+        <source>Nature</source>
+        <target state="translated">Nature</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.supplier-required" datatype="html">
+        <source>Choisissez le fournisseur concerné.</source>
+        <target state="translated">Choose the supplier concerned.</target>
+      </trans-unit>
+      <trans-unit id="capa.open.containment-hint" datatype="html">
+        <source>Mesure immédiate : elle contient l'effet. Le dossier reste correctif — sa clôture demandera une action qui supprime la cause.</source>
+        <target state="translated">Immediate measure: it contains the effect. The case stays corrective — closing it will require an action that removes the cause.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.complete-hint" datatype="html">
+        <source>Le projet se clôture quand toute la fiche est renseignée et que chaque action est à 100 %.</source>
+        <target state="translated">The project closes once the whole sheet is filled in and every action is at 100%.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.missing-marked" datatype="html">
+        <source>champ(s) à renseigner, signalés en rouge ci-dessous.</source>
+        <target state="translated">field(s) to fill in, marked in red below.</target>
+      </trans-unit>
       <trans-unit id="nav.nlq-explore" datatype="html">
         <source>Exploration NLQ</source>
         <target state="translated">NLQ explorer</target>
