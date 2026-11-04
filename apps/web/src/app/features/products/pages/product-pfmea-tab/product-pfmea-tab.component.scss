@@ -1,7 +1,7 @@
-.state-row { display: flex; justify-content: center; padding: var(--qos-space-8) 0; }
+.state-row { display: flex; justify-content: center; padding: var(--qos-space-6) 0; }
 
 .empty {
-  padding: var(--qos-space-8) 0;
+  padding: var(--qos-space-6) 0;
   text-align: center;
   color: var(--qos-fg-tertiary);
 }
@@ -29,5 +29,5 @@
 .pfmea-actions {
   display: flex;
   justify-content: flex-end;
-  margin-bottom: 12px;
+  margin-bottom: var(--qos-space-3);
 }

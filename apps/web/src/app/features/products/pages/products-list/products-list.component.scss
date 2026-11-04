@@ -6,10 +6,12 @@
 
 .status-filter { min-width: min(200px, 100%); }
 
-.state-row { display: flex; justify-content: center; padding: var(--qos-space-8) 0; }
+.state-row { display: flex; justify-content: center; padding: var(--qos-space-6) 0; }
 
 .empty {
-  padding: var(--qos-space-10) 0;
+  // 40 px pour annoncer une liste vide : l'absence occupait plus de hauteur
+  // que la liste qu'elle remplace.
+  padding: var(--qos-space-6) 0;
   text-align: center;
   color: var(--qos-fg-tertiary);
 }
