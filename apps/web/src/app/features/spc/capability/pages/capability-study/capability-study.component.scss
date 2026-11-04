@@ -7,9 +7,13 @@
   --spc-input-bg: color-mix(in srgb, var(--qos-warn-bg-soft) 70%, var(--qos-bg-elevated));
 }
 
+// Ces blocs sont des cartes maison : elles n'ont pas vu passer les marges
+// intérieures resserrées sur `mat-card`. À 20 px de marge et 20 px entre
+// blocs, une étude tenait sur deux écrans et demi là où l'opérateur veut voir
+// la saisie et le verdict de capabilité d'un seul regard.
 .bloc {
-  margin-bottom: var(--qos-space-5);
-  padding: var(--qos-space-5);
+  margin-bottom: var(--qos-space-3);
+  padding: var(--qos-space-3) var(--qos-space-4);
   border-radius: var(--qos-radius-lg);
   background: var(--qos-bg-elevated);
   border: 1px solid var(--qos-border-subtle);
@@ -17,7 +21,7 @@
   min-width: 0;
 
   h2 {
-    margin: 0 0 var(--qos-space-4);
+    margin: 0 0 var(--qos-space-3);
     font-size: var(--qos-fs-md);
     font-weight: var(--qos-fw-semibold);
     color: var(--qos-fg-primary);
@@ -51,7 +55,7 @@
 
 .champs {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
   gap: 0 var(--qos-space-4);
 }
 
@@ -197,19 +201,21 @@
 
 .kpis {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr));
   gap: var(--qos-space-3);
 }
 
 .kpi {
-  padding: var(--qos-space-4);
+  padding: var(--qos-space-3);
   border-radius: var(--qos-radius-md);
   background: var(--qos-bg-subtle);
 
   b {
     display: block;
     font-family: var(--qos-font-mono);
-    font-size: var(--qos-fs-2xl);
+    // Un chiffre à 24 px sur une tuile de 10 rem forçait la tuile à une
+    // hauteur de bandeau ; `fs-xl` reste lisible de loin sans voler la ligne.
+    font-size: var(--qos-fs-xl);
     font-weight: var(--qos-fw-semibold);
     line-height: var(--qos-lh-snug);
     color: var(--qos-fg-primary);
@@ -448,8 +454,8 @@
 .cartes {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
-  gap: var(--qos-space-4) var(--qos-space-5);
-  margin-top: var(--qos-space-5);
+  gap: var(--qos-space-3) var(--qos-space-4);
+  margin-top: var(--qos-space-3);
 }
 
 .carte-bloc {
@@ -467,7 +473,7 @@
 
 .lectures {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
   gap: var(--qos-space-3);
   margin-top: var(--qos-space-4);
 
