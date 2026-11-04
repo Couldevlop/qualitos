@@ -34,7 +34,7 @@
 
 .grille {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
   gap: 0 var(--qos-space-3);
 }
 
