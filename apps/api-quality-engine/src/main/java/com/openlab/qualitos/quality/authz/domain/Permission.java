@@ -85,7 +85,19 @@ public enum Permission {
 
     // ---------- formation (ADR 0098) ----------
     /** Tenir la matrice de compétences : opérateurs, compétences, formateurs, niveaux. */
-    TRAINING_MANAGE("training.manage", "training", pilotage());
+    TRAINING_MANAGE("training.manage", "training", pilotage()),
+
+    // ---------- parties intéressées (ADR 0104) ----------
+    /**
+     * Tenir le registre des parties intéressées : inscrire, analyser, coter,
+     * et porter leurs exigences.
+     *
+     * <p>Un acte de pilotage : déterminer les parties intéressées pertinentes,
+     * c'est fixer le périmètre du système de management (ISO 9001 §4.2). La
+     * LECTURE, elle, reste ouverte à tout authentifié — chacun doit pouvoir
+     * savoir à quoi l'organisme s'est engagé.
+     */
+    STAKEHOLDER_MANAGE("stakeholder.manage", "stakeholder", pilotage());
 
     private final String code;
     private final String module;

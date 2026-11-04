@@ -179,6 +179,8 @@ import com.openlab.qualitos.quality.spc.capability.domain.SpcValidationException
 import com.openlab.qualitos.quality.authz.domain.AuthzNotFoundException;
 import com.openlab.qualitos.quality.authz.domain.AuthzValidationException;
 import com.openlab.qualitos.quality.riskregister.domain.RegisterNotFoundException;
+import com.openlab.qualitos.quality.stakeholders.domain.StakeholderNotFoundException;
+import com.openlab.qualitos.quality.stakeholders.domain.StakeholderValidationException;
 import com.openlab.qualitos.quality.riskregister.domain.RegisterValidationException;
 import com.openlab.qualitos.quality.ideas.domain.IdeaNotFoundException;
 import com.openlab.qualitos.quality.ideas.domain.IdeaStateException;
@@ -638,6 +640,24 @@ public class GlobalExceptionHandler {
                 "Cet élément vient d'être modifié par quelqu'un d'autre : rechargez puis recommencez.");
         problem.setType(URI.create("https://qualitos.io/errors/concurrent-update"));
         problem.setTitle("Concurrent Update");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(StakeholderNotFoundException.class)
+    public ProblemDetail handleStakeholderNotFound(StakeholderNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/stakeholder-not-found"));
+        problem.setTitle("Stakeholder Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(StakeholderValidationException.class)
+    public ProblemDetail handleStakeholderValidation(StakeholderValidationException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/stakeholder-invalid"));
+        problem.setTitle("Invalid Stakeholder Data");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }

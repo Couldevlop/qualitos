@@ -248,4 +248,35 @@ class HexagonalArchitectureTest {
             .because("Le cas d'usage 8D agrège par un PORT : s'il touchait lui-même les modules "
                    + "CAPA, Ishikawa, 5 pourquoi, PFMEA ou control plan, il ne serait plus "
                    + "testable sans base.");
+
+    @ArchTest
+    static final ArchRule stakeholders_domain_has_no_framework_deps =
+        noClasses()
+            .that().resideInAPackage("..stakeholders.domain..")
+            .should().dependOnClassesThat().resideInAnyPackage(
+                "..stakeholders.infrastructure..",
+                "..stakeholders.web..",
+                "org.springframework..",
+                "jakarta.persistence..",
+                "jakarta.validation..",
+                "org.hibernate..",
+                "com.fasterxml.jackson..")
+            .because("Domaine du registre des parties intéressées (ADR 0104) : la criticité, la "
+                   + "justification de pertinence et les règles d'exigence se testent sans base.");
+
+    @ArchTest
+    static final ArchRule stakeholders_application_touches_other_modules_by_a_port =
+        noClasses()
+            .that().resideInAPackage("..stakeholders.application..")
+            .should().dependOnClassesThat().resideInAnyPackage(
+                "..stakeholders.infrastructure..",
+                "..stakeholders.web..",
+                "..capa..",
+                "..aigateway..",
+                "org.springframework..",
+                "jakarta.persistence..",
+                "org.hibernate..",
+                "com.fasterxml.jackson..")
+            .because("Le cas d'usage ouvre une CAPA et interroge l'IA par des PORTS : s'il touchait "
+                   + "lui-même ces modules, il ne serait testable ni sans base ni sans modèle.");
 }
