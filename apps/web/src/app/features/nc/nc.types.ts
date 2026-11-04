@@ -13,6 +13,27 @@ export type NcCategory =
 export type NcSeverity = 'MINOR' | 'MAJOR' | 'CRITICAL';
 
 /**
+ * Une NATURE d'écart, sous sa catégorie : « Cote hors spécification » sous
+ * Produit, « Étalonnage hors validité » sous Processus.
+ *
+ * <p>C'est une donnée du client, pas une énumération du code : les natures
+ * d'écart d'une usine ne sont pas celles d'un CHU, et la plateforme livre
+ * seulement un catalogue de départ transverse (§18.2 #9).
+ */
+export interface NcSubcategory {
+  code: string;
+  category: NcCategory;
+  label: string;
+}
+
+/** Le catalogue en vigueur et son origine. */
+export interface NcSubcategoryCatalogue {
+  entries: NcSubcategory[];
+  /** Vrai quand ce sont les valeurs de la plateforme, faute de réglage du client. */
+  defaults: boolean;
+}
+
+/**
  * D'où vient la non-conformité (§4.3). Une NC détectée par l'organisation
  * elle-même et une NC signalée du dehors — client, fournisseur, autorité,
  * certificateur — n'ont ni les mêmes délais ni les mêmes destinataires.
@@ -42,6 +63,11 @@ export interface NcResponse {
   title: string;
   description?: string;
   category: NcCategory;
+  /**
+   * La nature fine de l'écart, par son code de catalogue. Absente sur les NC
+   * saisies avant ce classement, ou que personne n'a encore classées.
+   */
+  subcategoryCode?: string;
   severity: NcSeverity;
   status: NcStatus;
   origin: NcOrigin;
@@ -101,6 +127,8 @@ export interface CreateNcRequest {
   title: string;
   description?: string;
   category: NcCategory;
+  /** La nature fine, par son code de catalogue. Facultative : on classe finement après. */
+  subcategoryCode?: string;
   severity: NcSeverity;
   detectedAt?: string;
   zone?: string;
@@ -122,6 +150,8 @@ export interface UpdateNcRequest {
   description?: string;
   origin?: NcOrigin;
   category?: NcCategory;
+  /** La nature fine. Chaîne vide = effacer le classement fin ; absente = inchangée. */
+  subcategoryCode?: string;
   severity?: NcSeverity;
   zone?: string;
   geoLat?: number;

@@ -7,6 +7,7 @@ import com.openlab.qualitos.quality.capa.CapaSourceType;
 import com.openlab.qualitos.quality.common.CurrentUser;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.common.TenantContext;
+import com.openlab.qualitos.quality.nonconformity.subcategory.NcSubcategoryCatalog;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -42,13 +43,17 @@ public class NcService {
     private final ApplicationEventPublisher events;
     /** Sans « voir toutes les NC », on ne voit que celles qu'on a déclarées (ADR 0081). */
     private final RecordScope scope;
+    /** Le catalogue qui dit si une nature d'écart existe, et sous quelle catégorie. */
+    private final NcSubcategoryCatalog subcategories;
 
     public NcService(NonConformityRepository repository, CapaService capaService,
-                     ApplicationEventPublisher events, RecordScope scope) {
+                     ApplicationEventPublisher events, RecordScope scope,
+                     NcSubcategoryCatalog subcategories) {
         this.repository = repository;
         this.capaService = capaService;
         this.events = events;
         this.scope = scope;
+        this.subcategories = subcategories;
     }
 
     /**
@@ -60,7 +65,8 @@ public class NcService {
      */
     @Transactional(readOnly = true)
     public Page<NcDto.Response> findAll(NcStatus status, NcSeverity severity, NcCategory category,
-                                        NcOrigin origin, UUID productId, Pageable pageable) {
+                                        String subcategoryCode, NcOrigin origin, UUID productId,
+                                        Pageable pageable) {
         UUID tenantId = requireTenantId();
         Optional<UUID> seulement = NcScope.restriction(scope);
         Specification<NonConformity> spec = (root, query, cb) -> {
@@ -70,6 +76,9 @@ public class NcService {
             if (status != null)   predicates.add(cb.equal(root.get("status"), status));
             if (severity != null) predicates.add(cb.equal(root.get("severity"), severity));
             if (category != null) predicates.add(cb.equal(root.get("category"), category));
+            if (subcategoryCode != null && !subcategoryCode.isBlank()) {
+                predicates.add(cb.equal(root.get("subcategoryCode"), subcategoryCode.strip()));
+            }
             if (origin != null)   predicates.add(cb.equal(root.get("origin"), origin));
             // Filtré en base avec le tenant, jamais après coup en Java : trier une
             // page déjà découpée donnerait des pages incomplètes.
@@ -100,6 +109,9 @@ public class NcService {
         nc.setTitle(request.title());
         nc.setDescription(request.description());
         nc.setCategory(request.category());
+        // Vérifié ici, pas dans l'écran : l'API est publique et la file
+        // hors-ligne du mobile rejoue par le même chemin.
+        nc.setSubcategoryCode(subcategories.resolve(request.subcategoryCode(), request.category()));
         nc.setSeverity(request.severity());
         nc.setStatus(NcStatus.OPEN);
         nc.setOrigin(NcOrigin.orDefault(request.origin()));
@@ -161,6 +173,15 @@ public class NcService {
         if (request.title() != null) nc.setTitle(request.title());
         if (request.description() != null) nc.setDescription(request.description());
         if (request.category() != null) nc.setCategory(request.category());
+        // La nature se revérifie contre la catégorie EFFECTIVE après coup : changer
+        // la catégorie sans changer la nature laisserait un classement incohérent.
+        if (request.subcategoryCode() != null) {
+            nc.setSubcategoryCode(request.subcategoryCode().isBlank()
+                    ? null
+                    : subcategories.resolve(request.subcategoryCode(), nc.getCategory()));
+        } else if (request.category() != null && nc.getSubcategoryCode() != null) {
+            nc.setSubcategoryCode(subcategories.resolve(nc.getSubcategoryCode(), nc.getCategory()));
+        }
         if (request.severity() != null) nc.setSeverity(request.severity());
         if (request.zone() != null) nc.setZone(request.zone());
         if (request.geoLat() != null) nc.setGeoLat(request.geoLat());
@@ -313,7 +334,8 @@ public class NcService {
     private NcDto.Response toResponse(NonConformity nc) {
         return new NcDto.Response(
                 nc.getId(), nc.getTenantId(), nc.getReference(), nc.getTitle(), nc.getDescription(),
-                nc.getCategory(), nc.getSeverity(), nc.getStatus(), nc.getOrigin(), nc.getDetectedAt(),
+                nc.getCategory(), nc.getSubcategoryCode(), nc.getSeverity(), nc.getStatus(),
+                nc.getOrigin(), nc.getDetectedAt(),
                 nc.getZone(), nc.getGeoLat(), nc.getGeoLng(), nc.getPhotoUrls(),
                 nc.getReporterId(), nc.getReporterName(), nc.getProductId(), nc.getFmeaItemId(),
                 nc.getCapaCaseId(), nc.getRootCause(), nc.getResolutionNote(),

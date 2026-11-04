@@ -41,6 +41,7 @@ class NcServiceTest {
     @Mock org.springframework.context.ApplicationEventPublisher events;
     /** Sans réglage, Mockito rend Optional.empty() : l'utilisateur voit tout (ADR 0081). */
     @Mock RecordScope scope;
+    @Mock com.openlab.qualitos.quality.nonconformity.subcategory.NcSubcategoryCatalog subcategories;
     @InjectMocks NcService service;
 
     static final UUID TENANT = UUID.randomUUID();
@@ -116,6 +117,79 @@ class NcServiceTest {
         verifyNoInteractions(repo);
     }
 
+    // --- sous-catégorie : la nature fine de l'écart ---
+
+    @Test
+    void create_verifieLaNatureAupresDuCatalogue() {
+        when(repo.countByTenantIdAndReferenceStartingWith(eq(TENANT), anyString())).thenReturn(0L);
+        when(repo.existsByTenantIdAndReference(eq(TENANT), anyString())).thenReturn(false);
+        when(repo.saveAndFlush(any())).thenAnswer(inv -> inv.getArgument(0));
+        when(subcategories.resolve("prd-dim", NcCategory.PRODUCT)).thenReturn("PRD-DIM");
+
+        NcDto.Response r = service.create(new NcDto.CreateRequest(
+                "Joint", "détail", NcCategory.PRODUCT, "prd-dim", NcSeverity.MAJOR,
+                Instant.now(), null, null, null, null, REPORTER, null, null, null));
+
+        // Le code enregistré est celui que le catalogue rend, pas celui saisi :
+        // la casse se normalise une fois pour toutes.
+        assertThat(r.subcategoryCode()).isEqualTo("PRD-DIM");
+    }
+
+    @Test
+    void create_natureRefusee_remonteLErreur() {
+        when(subcategories.resolve("PAS-UN-CODE", NcCategory.PRODUCT))
+                .thenThrow(new NcValidationException("Unknown non-conformity subcategory: PAS-UN-CODE"));
+
+        assertThatThrownBy(() -> service.create(new NcDto.CreateRequest(
+                "Joint", "détail", NcCategory.PRODUCT, "PAS-UN-CODE", NcSeverity.MAJOR,
+                Instant.now(), null, null, null, null, REPORTER, null, null, null)))
+                .isInstanceOf(NcValidationException.class);
+        verify(repo, never()).saveAndFlush(any());
+    }
+
+    @Test
+    void update_chaineVide_effaceLeClassementFin() {
+        NonConformity n = nc(TENANT, NcStatus.OPEN);
+        n.setSubcategoryCode("PRD-DIM");
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+        when(repo.save(n)).thenReturn(n);
+
+        service.update(n.getId(), new NcDto.UpdateRequest(null, null, null, "", null, null, null, null,
+                null, null, null, null));
+
+        assertThat(n.getSubcategoryCode()).isNull();
+        verifyNoInteractions(subcategories);
+    }
+
+    @Test
+    void update_changerDeCategorie_revalideLaNatureEnPlace() {
+        // Reclasser un écart produit en écart fournisseur sans toucher à sa nature
+        // laisserait une nature produit sous une catégorie fournisseur.
+        NonConformity n = nc(TENANT, NcStatus.OPEN);
+        n.setSubcategoryCode("PRD-DIM");
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+        when(subcategories.resolve("PRD-DIM", NcCategory.SUPPLIER))
+                .thenThrow(new NcValidationException("belongs to category PRODUCT"));
+
+        assertThatThrownBy(() -> service.update(n.getId(), new NcDto.UpdateRequest(
+                null, null, NcCategory.SUPPLIER, null, null, null, null, null, null, null, null, null)))
+                .isInstanceOf(NcValidationException.class);
+    }
+
+    @Test
+    void update_natureAbsente_neTouchePasAuClassement() {
+        NonConformity n = nc(TENANT, NcStatus.OPEN);
+        n.setSubcategoryCode("PRD-DIM");
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+        when(repo.save(n)).thenReturn(n);
+
+        service.update(n.getId(), new NcDto.UpdateRequest("t2", null, null, null, null, null, null, null,
+                null, null, null, null));
+
+        assertThat(n.getSubcategoryCode()).isEqualTo("PRD-DIM");
+        verifyNoInteractions(subcategories);
+    }
+
     // --- findAll : filtres portés par une spécification ---
     //
     // Les huit tests précédents énuméraient les combinaisons de la cascade de
@@ -132,7 +206,7 @@ class NcServiceTest {
         when(repo.findAll(ArgumentMatchers.<Specification<NonConformity>>any(), eq(p)))
                 .thenReturn(new PageImpl<>(java.util.List.of(nc(TENANT, NcStatus.OPEN))));
 
-        Page<NcDto.Response> r = service.findAll(null, null, null, null, null, p);
+        Page<NcDto.Response> r = service.findAll(null, null, null, null, null, null, p);
 
         assertThat(r.getContent()).hasSize(1);
         assertThat(r.getContent().get(0).status()).isEqualTo(NcStatus.OPEN);
@@ -144,7 +218,7 @@ class NcServiceTest {
         TenantContext.clear();
         Pageable p = PageRequest.of(0, 10);
 
-        assertThatThrownBy(() -> service.findAll(null, null, null, null, null, p))
+        assertThatThrownBy(() -> service.findAll(null, null, null, null, null, null, p))
                 .isInstanceOf(MissingTenantContextException.class);
         verifyNoInteractions(repo);
     }
@@ -178,7 +252,7 @@ class NcServiceTest {
         when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
         when(repo.save(n)).thenReturn(n);
         service.update(n.getId(), new NcDto.UpdateRequest(
-                "t2", "d2", NcCategory.SUPPLIER, NcSeverity.CRITICAL, "zoneB", 1.0, 2.0, "u1\nu2",
+                "t2", "d2", NcCategory.SUPPLIER, null, NcSeverity.CRITICAL, "zoneB", 1.0, 2.0, "u1\nu2",
                 NcOrigin.EXTERNAL, null, null));
         assertThat(n.getTitle()).isEqualTo("t2");
         assertThat(n.getCategory()).isEqualTo(NcCategory.SUPPLIER);
@@ -195,7 +269,7 @@ class NcServiceTest {
         NonConformity n = nc(TENANT, NcStatus.CLOSED);
         when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
         assertThatThrownBy(() -> service.update(n.getId(),
-                new NcDto.UpdateRequest("x", null, null, null, null, null, null, null, null, null, null)))
+                new NcDto.UpdateRequest("x", null, null, null, null, null, null, null, null, null, null, null)))
                 .isInstanceOf(NcStateException.class);
     }
 
@@ -204,7 +278,7 @@ class NcServiceTest {
         NonConformity n = nc(TENANT, NcStatus.CANCELLED);
         when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
         assertThatThrownBy(() -> service.update(n.getId(),
-                new NcDto.UpdateRequest("x", null, null, null, null, null, null, null, null, null, null)))
+                new NcDto.UpdateRequest("x", null, null, null, null, null, null, null, null, null, null, null)))
                 .isInstanceOf(NcStateException.class);
     }
 
@@ -415,7 +489,7 @@ class NcServiceTest {
         when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
 
         assertThatThrownBy(() -> service.update(n.getId(), new NcDto.UpdateRequest(
-                "autre titre", null, null, null, null, null, null, null, null, null, null)))
+                "autre titre", null, null, null, null, null, null, null, null, null, null, null)))
                 .isInstanceOf(NcStateException.class)
                 .hasMessageContaining("REJECTED");
     }
@@ -436,7 +510,7 @@ class NcServiceTest {
     // --- helpers ---
     private NcDto.CreateRequest req() {
         return new NcDto.CreateRequest(
-                "Joint torique défectueux", "détail", NcCategory.PRODUCT, NcSeverity.MAJOR,
+                "Joint torique défectueux", "détail", NcCategory.PRODUCT, null, NcSeverity.MAJOR,
                 Instant.now(), "Atelier 3", 48.85, 2.35, "https://s/p1.jpg", REPORTER, null, null, null);
     }
 

@@ -103,10 +103,13 @@ describe('CapaCreateDialogComponent — fenêtre unique', () => {
 
   // --- les champs ------------------------------------------------------------
 
-  it('ne propose que corrective ou préventive : l\'endiguement seul ne se clôturerait jamais', async () => {
+  it("propose l'endiguement d'abord, puis corrective et préventive", async () => {
     await setup();
-    expect(component.natures.map(n => n.value)).toEqual(['CORRECTIVE', 'PREVENTIVE']);
+    // L'endiguement est ce qu'on fait le jour même, avant de connaître la cause :
+    // il vient en tête, dans l'ordre du terrain.
+    expect(component.natures.map(n => n.value)).toEqual(['CONTAINMENT', 'CORRECTIVE', 'PREVENTIVE']);
     expect(component.form.controls.type.value).toBe('CORRECTIVE');
+    expect(component.isContainment).toBeFalse();
     expect(component.criticities.map(c => c.value)).toEqual(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL']);
     expect(component.criticities.every(c => !!c.label)).toBeTrue();
   });

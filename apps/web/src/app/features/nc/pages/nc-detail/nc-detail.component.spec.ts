@@ -91,8 +91,9 @@ describe('NcDetailComponent — section photos', () => {
 
   beforeEach(async () => {
     svc = jasmine.createSpyObj<NcService>('NcService', [
-      'getNc', 'listPhotos', 'uploadPhoto', 'deletePhoto', 'analyzePhotoVision'
+      'getNc', 'listPhotos', 'uploadPhoto', 'deletePhoto', 'analyzePhotoVision', 'subcategories'
     ]);
+    svc.subcategories.and.returnValue(of({ entries: [], defaults: true }));
     connectivity = new FakeConnectivity();
 
     await TestBed.configureTestingModule({
@@ -450,8 +451,9 @@ describe('NcDetailComponent — workflow et escalade CAPA', () => {
     currentUser = { userId: 'u1' };
     svc = jasmine.createSpyObj<NcService>('NcService', [
       'getNc', 'listPhotos', 'startAnalysis', 'defineAction', 'close', 'cancel',
-      'escalateToCapa', 'uploadPhoto', 'deletePhoto', 'analyzePhotoVision'
+      'escalateToCapa', 'uploadPhoto', 'deletePhoto', 'analyzePhotoVision', 'subcategories'
     ]);
+    svc.subcategories.and.returnValue(of({ entries: [], defaults: true }));
     svc.listPhotos.and.returnValue(of([]));
 
     await TestBed.configureTestingModule({
@@ -768,8 +770,9 @@ describe('NcDetailComponent — entrée 5 Pourquoi', () => {
   async function configure(existing: FiveWhysAnalysis[]): Promise<void> {
     fiveWhys = fiveWhysSpy(existing);
     ishikawa = ishikawaSpy();
-    svc = jasmine.createSpyObj<NcService>('NcService', ['getNc', 'listPhotos']);
+    svc = jasmine.createSpyObj<NcService>('NcService', ['getNc', 'listPhotos', 'subcategories']);
     svc.listPhotos.and.returnValue(of([]));
+    svc.subcategories.and.returnValue(of({ entries: [], defaults: true }));
 
     TestBed.resetTestingModule();
     await TestBed.configureTestingModule({
@@ -926,8 +929,9 @@ describe('NcDetailComponent — entrée Ishikawa', () => {
 
   async function configure(existing: IshikawaDiagramResponse[]): Promise<void> {
     ishikawa = ishikawaSpy(existing);
-    svc = jasmine.createSpyObj<NcService>('NcService', ['getNc', 'listPhotos']);
+    svc = jasmine.createSpyObj<NcService>('NcService', ['getNc', 'listPhotos', 'subcategories']);
     svc.listPhotos.and.returnValue(of([]));
+    svc.subcategories.and.returnValue(of({ entries: [], defaults: true }));
 
     TestBed.resetTestingModule();
     await TestBed.configureTestingModule({

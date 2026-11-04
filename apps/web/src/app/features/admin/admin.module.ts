@@ -18,6 +18,7 @@ import { DocumentSettingsComponent } from './pages/document-settings/document-se
 import { SpcSettingsComponent } from './pages/spc-settings/spc-settings.component';
 import { AiPolicyComponent } from './pages/ai-policy/ai-policy.component';
 import { DmaicSettingsComponent } from './pages/dmaic-settings/dmaic-settings.component';
+import { NcSettingsComponent } from './pages/nc-settings/nc-settings.component';
 import { CompetencyWorkshopsComponent } from './pages/competency-workshops/competency-workshops.component';
 import { RolesMatrixComponent } from './pages/roles-matrix/roles-matrix.component';
 import { TenantModulesComponent } from './pages/tenant-modules/tenant-modules.component';
@@ -46,6 +47,8 @@ const routes: Routes = [
   { path: 'spc', component: SpcSettingsComponent },
   // Le questionnaire, les types de défaillance et les sévérités de la fiche DMAIC (ADR 0101).
   { path: 'dmaic', component: DmaicSettingsComponent },
+  // Les natures d'écart, sous chaque catégorie de non-conformité (ADR 0103).
+  { path: 'nc', component: NcSettingsComponent },
   // Le fournisseur des appels LLM du tenant, et sa souveraineté (ADR 0102).
   { path: 'ia', component: AiPolicyComponent },
   // Les ateliers de la matrice de compétences (ADR 0098).
@@ -83,7 +86,7 @@ const routes: Routes = [
 @NgModule({
   declarations: [TenantModulesComponent, TenantTeamComponent, RolesMatrixComponent, CircuitsComponent, ClientsComponent, LicenseComponent,
     MocSettingsComponent, DocumentSettingsComponent, SpcSettingsComponent, DmaicSettingsComponent, CompetencyWorkshopsComponent,
-    AiPolicyComponent, CredentialRevealComponent],
+    AiPolicyComponent, CredentialRevealComponent, NcSettingsComponent],
   // UserPickerModule : les titulaires des rôles MOC se choisissent dans l'annuaire (ADR 0091).
   imports: [SharedModule, UiModule, FormsModule, DragDropModule, MatMenuModule,
     UserPickerModule, PersonNameModule, RouterModule.forChild(routes)]

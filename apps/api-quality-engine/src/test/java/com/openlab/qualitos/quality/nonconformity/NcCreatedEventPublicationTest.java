@@ -52,7 +52,8 @@ class NcCreatedEventPublicationTest {
     void setUp() {
         repo = mock(NonConformityRepository.class);
         events = mock(ApplicationEventPublisher.class);
-        service = new NcService(repo, mock(CapaService.class), events, viewAll -> Optional.empty());
+        service = new NcService(repo, mock(CapaService.class), events, viewAll -> Optional.empty(),
+                mock(com.openlab.qualitos.quality.nonconformity.subcategory.NcSubcategoryCatalog.class));
         TenantContext.setTenantId(CONTEXT_TENANT.toString());
     }
 
@@ -111,7 +112,7 @@ class NcCreatedEventPublicationTest {
             return nc;
         });
 
-        service.create(new NcDto.CreateRequest("Retard de livraison", null, NcCategory.PROCESS,
+        service.create(new NcDto.CreateRequest("Retard de livraison", null, NcCategory.PROCESS, null,
                 NcSeverity.MINOR, DETECTED, null, null, null, null, REPORTER, null, null, null));
 
         ArgumentCaptor<NcCreatedEvent> captor = ArgumentCaptor.forClass(NcCreatedEvent.class);
@@ -126,7 +127,7 @@ class NcCreatedEventPublicationTest {
         // rendrait des pages trouées et un total faux.
         when(repo.findAll(any(Specification.class), any(PageRequest.class))).thenReturn(Page.empty());
 
-        service.findAll(null, null, null, null, PRODUCT, PageRequest.of(0, 10));
+        service.findAll(null, null, null, null, null, PRODUCT, PageRequest.of(0, 10));
 
         ArgumentCaptor<Specification<NonConformity>> captor = ArgumentCaptor.forClass(Specification.class);
         verify(repo).findAll(captor.capture(), any(PageRequest.class));
@@ -149,7 +150,7 @@ class NcCreatedEventPublicationTest {
 
     private NcDto.CreateRequest createRequest() {
         return new NcDto.CreateRequest("Bavure sur alésage", "constatée au poste 20",
-                NcCategory.PRODUCT, NcSeverity.MAJOR, DETECTED, "Atelier 3", null, null, null,
+                NcCategory.PRODUCT, null, NcSeverity.MAJOR, DETECTED, "Atelier 3", null, null, null,
                 REPORTER, null, PRODUCT, FMEA_ITEM);
     }
 }

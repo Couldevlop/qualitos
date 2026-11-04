@@ -95,7 +95,7 @@ class RecordScopeIntegrationTest {
     }
 
     UUID declarer(String titre) {
-        return dans(() -> ncs.create(new NcDto.CreateRequest(titre, "Constat", NcCategory.PROCESS, NcSeverity.MINOR,
+        return dans(() -> ncs.create(new NcDto.CreateRequest(titre, "Constat", NcCategory.PROCESS, null, NcSeverity.MINOR,
                 Instant.now(), null, null, null, null, null, null, null, null))).id();
     }
 
@@ -112,7 +112,7 @@ class RecordScopeIntegrationTest {
         UUID autre = declarer("Écart fournisseur");
 
         connecte(marie, "USER");
-        assertThat(dans(() -> ncs.findAll(null, null, null, null, null, PageRequest.of(0, 50))).getContent())
+        assertThat(dans(() -> ncs.findAll(null, null, null, null, null, null, PageRequest.of(0, 50))).getContent())
                 .extracting(NcDto.Response::id).containsExactly(sienne);
         assertThat(dans(() -> ncs.findById(sienne)).id()).isEqualTo(sienne);
         // Ce qu'on ne voit pas n'existe pas : ni lecture ni action.
@@ -123,7 +123,7 @@ class RecordScopeIntegrationTest {
 
         // Le manager garde « voir tout ».
         connecte(paul, "QUALITY_MANAGER");
-        assertThat(dans(() -> ncs.findAll(null, null, null, null, null, PageRequest.of(0, 50))).getContent())
+        assertThat(dans(() -> ncs.findAll(null, null, null, null, null, null, PageRequest.of(0, 50))).getContent())
                 .extracting(NcDto.Response::id).contains(sienne, autre);
         assertThat(dans(() -> ncs.statistics(null)).total()).isGreaterThanOrEqualTo(2);
     }
@@ -161,7 +161,7 @@ class RecordScopeIntegrationTest {
                 new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(
                         "service", "n/a", List.of(new SimpleGrantedAuthority("ROLE_USER"))));
 
-        assertThat(dans(() -> ncs.findAll(null, null, null, null, null, PageRequest.of(0, 50))).getContent())
+        assertThat(dans(() -> ncs.findAll(null, null, null, null, null, null, PageRequest.of(0, 50))).getContent())
                 .isEmpty();
     }
 }

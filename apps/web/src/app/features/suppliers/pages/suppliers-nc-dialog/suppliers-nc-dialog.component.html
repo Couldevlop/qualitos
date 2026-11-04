@@ -8,6 +8,16 @@
   (submitted)="submit()"
   (cancelled)="cancel()">
 
+    <!-- Ouverte depuis le registre transverse, la fenêtre demande d'abord DE QUI
+         il s'agit : le reste de la fiche n'a pas de sens sans fournisseur. -->
+    <mat-form-field appearance="outline" class="full" *ngIf="choosingSupplier">
+      <mat-label i18n="@@suppliers.nc-list.filter-supplier">Fournisseur</mat-label>
+      <mat-select formControlName="supplierId" required data-test="fournisseur-nc">
+        <mat-option *ngFor="let s of suppliers" [value]="s.id">{{ s.code }} — {{ s.name }}</mat-option>
+      </mat-select>
+      <mat-error i18n="@@suppliers.nc.supplier-required">Choisissez le fournisseur concerné.</mat-error>
+    </mat-form-field>
+
     <mat-form-field appearance="outline" class="full">
       <mat-label i18n="@@common.status">Statut</mat-label>
       <mat-select formControlName="status" required data-test="statut-nc">

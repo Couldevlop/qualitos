@@ -30,9 +30,11 @@
         <button mat-stroked-button (click)="openEdit(p)" i18n-matTooltip="@@common.edit" matTooltip="Modifier">
           <mat-icon>edit</mat-icon> <span i18n="@@common.edit">Modifier</span>
         </button>
+        <!-- Volontairement ACTIF quand il manque des réponses : le clic signale
+             alors les champs à renseigner, au lieu de laisser chercher. -->
         <button mat-flat-button color="primary" data-test="avancer"
-                [disabled]="p.status !== 'ACTIVE' || p.phase === 'CONTROL' || missing.length > 0"
-                [matTooltip]="missing.length ? advanceBlockedHint : ''"
+                [disabled]="p.status !== 'ACTIVE'"
+                [matTooltip]="advanceHint(p)"
                 (click)="advance(p)">
           <mat-icon>skip_next</mat-icon> <span i18n="@@dmaic.detail.advance">Avancer</span>
         </button>

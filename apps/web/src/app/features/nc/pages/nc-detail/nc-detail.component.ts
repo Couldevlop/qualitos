@@ -19,7 +19,15 @@ import { FiveWhysAnalysis } from '../../../five-whys/five-whys.types';
 import { IshikawaService } from '../../../ishikawa/ishikawa.service';
 import { IshikawaDiagramResponse } from '../../../ishikawa/ishikawa.types';
 import { NcService } from '../../nc.service';
-import { NcPhoto, NcResponse, NcSeverity, NcStatus, VisionAnalysis, VisionScore } from '../../nc.types';
+import {
+  NcPhoto,
+  NcResponse,
+  NcSeverity,
+  NcStatus,
+  NcSubcategory,
+  VisionAnalysis,
+  VisionScore
+} from '../../nc.types';
 import {
   NcRejectDialogComponent,
   NcRejectDialogData
@@ -116,7 +124,19 @@ export class NcDetailComponent implements OnInit {
     private readonly ishikawa: IshikawaService
   ) {}
 
+  /** Le catalogue des natures, pour traduire le code porté par la NC. */
+  subcategories: NcSubcategory[] = [];
+
+  /** Le libellé d'une nature ; son code si le client l'a retirée de son catalogue. */
+  subcategoryLabel(code: string | undefined): string {
+    if (!code) return '';
+    return this.subcategories.find(s => s.code === code)?.label ?? code;
+  }
+
   ngOnInit(): void {
+    // Une aide à la lecture : son absence laisse voir le code, pas une page vide.
+    this.svc.subcategories().pipe(catchError(() => of({ entries: [] as NcSubcategory[], defaults: true })))
+      .subscribe(c => (this.subcategories = c.entries));
     const raw = this.route.snapshot.paramMap.get('id') ?? '';
     if (!UUID_RE.test(raw) && !this.isMockId(raw)) {
       this.snack.open($localize`:@@common.invalid-id:Identifiant invalide.`, $localize`:@@common.ok:OK`, { duration: 3000 });

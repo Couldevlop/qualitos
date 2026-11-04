@@ -26,8 +26,10 @@ describe('NcListComponent (origine portée par la route)', () => {
   };
 
   function setup(routeOrigin: string | null): void {
-    svc = jasmine.createSpyObj<NcService>('NcService', ['listNcs', 'statistics']);
+    svc = jasmine.createSpyObj<NcService>('NcService', ['listNcs', 'statistics', 'subcategories']);
     svc.listNcs.and.returnValue(of(emptyPage));
+    // Le catalogue des natures, lu à l'ouverture pour le filtre et la colonne.
+    svc.subcategories.and.returnValue(of({ entries: [], defaults: true }));
     // Les tuiles d'en-tête appellent `statistics` dès l'affichage : sans cette
     // doublure, l'écran tombe avant d'avoir demandé sa liste.
     svc.statistics.and.returnValue(of({

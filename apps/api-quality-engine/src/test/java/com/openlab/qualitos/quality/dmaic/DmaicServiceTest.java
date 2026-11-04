@@ -149,16 +149,43 @@ class DmaicServiceTest {
         DmaicProject p = project(DmaicStatus.ACTIVE, DmaicPhase.CONTROL);
         when(projectRepo.findByIdAndTenantId(p.getId(), TENANT)).thenReturn(Optional.of(p));
         when(projectRepo.save(p)).thenReturn(p);
+        service.setPhaseGate(gate(phase -> List.of(), List.of()));
         service.advancePhase(p.getId());
         assertThat(p.getStatus()).isEqualTo(DmaicStatus.COMPLETED);
         assertThat(p.getCompletedAt()).isNotNull();
     }
 
     @Test
+    void advance_control_sansVerrou_completes() {
+        // Aucun verrou branché (test unitaire du service seul) : rien ne s'oppose.
+        DmaicProject p = project(DmaicStatus.ACTIVE, DmaicPhase.CONTROL);
+        when(projectRepo.findByIdAndTenantId(p.getId(), TENANT)).thenReturn(Optional.of(p));
+        when(projectRepo.save(p)).thenReturn(p);
+        service.advancePhase(p.getId());
+        assertThat(p.getStatus()).isEqualTo(DmaicStatus.COMPLETED);
+    }
+
+    @Test
+    void advance_control_actionsInachevees_neClotPas() {
+        // Clore, c'est déclarer le problème résolu : une action à 60 % l'interdit.
+        DmaicProject p = project(DmaicStatus.ACTIVE, DmaicPhase.CONTROL);
+        when(projectRepo.findByIdAndTenantId(p.getId(), TENANT)).thenReturn(Optional.of(p));
+        service.setPhaseGate(gate(phase -> List.of(),
+                List.of("Action à 60 % : « Changer l'outil »", "Plan de surveillance")));
+        assertThatThrownBy(() -> service.advancePhase(p.getId()))
+                .isInstanceOf(DmaicStateException.class)
+                .hasMessageContaining("2 point(s) à solder")
+                .hasMessageContaining("Changer l'outil");
+        assertThat(p.getStatus()).isEqualTo(DmaicStatus.ACTIVE);
+        assertThat(p.getPhase()).isEqualTo(DmaicPhase.CONTROL);
+        verify(projectRepo, never()).save(any());
+    }
+
+    @Test
     void advance_incompletePhase_isBlocked() {
         DmaicProject p = project(DmaicStatus.ACTIVE, DmaicPhase.DEFINE);
         when(projectRepo.findByIdAndTenantId(p.getId(), TENANT)).thenReturn(Optional.of(p));
-        service.setPhaseGate((id, phase) -> phase == DmaicPhase.DEFINE ? List.of("Qui est concerné ?") : List.of());
+        service.setPhaseGate(gate(phase -> phase == DmaicPhase.DEFINE ? List.of("Qui est concerné ?") : List.of(), List.of()));
         assertThatThrownBy(() -> service.advancePhase(p.getId()))
                 .isInstanceOf(DmaicStateException.class)
                 .hasMessageContaining("1 réponse(s) manquante(s)")
@@ -172,7 +199,7 @@ class DmaicServiceTest {
         DmaicProject p = project(DmaicStatus.ACTIVE, DmaicPhase.MEASURE);
         when(projectRepo.findByIdAndTenantId(p.getId(), TENANT)).thenReturn(Optional.of(p));
         when(projectRepo.save(p)).thenReturn(p);
-        service.setPhaseGate((id, phase) -> List.of());
+        service.setPhaseGate(gate(phase -> List.of(), List.of()));
         service.advancePhase(p.getId());
         assertThat(p.getPhase()).isEqualTo(DmaicPhase.ANALYZE);
     }
@@ -560,6 +587,25 @@ class DmaicServiceTest {
     }
 
     // --- helpers ---
+    /**
+     * Un verrou de phases dont on choisit les deux réponses : ce qui manque à une
+     * phase, et ce qui empêche de clore.
+     */
+    private static DmaicPhaseGate gate(java.util.function.Function<DmaicPhase, List<String>> manque,
+                                       List<String> empecheClore) {
+        return new DmaicPhaseGate() {
+            @Override
+            public List<String> missing(java.util.UUID projectId, DmaicPhase phase) {
+                return manque.apply(phase);
+            }
+
+            @Override
+            public List<String> blockingCompletion(java.util.UUID projectId) {
+                return empecheClore;
+            }
+        };
+    }
+
     private DmaicProject project(DmaicStatus status, DmaicPhase phase) {
         DmaicProject p = new DmaicProject();
         p.setId(UUID.randomUUID());

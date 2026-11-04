@@ -181,8 +181,12 @@ public class CapaService {
         a.setTitle(titre);
         a.setDescription(description);
         a.setStatus(CapaActionStatus.PENDING);
-        a.setActionType(request.type() == CapaType.PREVENTIVE
-                ? CapaActionType.PREVENTIVE : CapaActionType.CORRECTIVE);
+        // La nature de l'action, telle qu'elle a été choisie ; à défaut, celle que
+        // le type du dossier implique.
+        a.setActionType(request.actionType() != null
+                ? request.actionType()
+                : (request.type() == CapaType.PREVENTIVE
+                        ? CapaActionType.PREVENTIVE : CapaActionType.CORRECTIVE));
         a.setAssigneeId(request.ownerId());
         a.setAssigneeName(pilote);
         a.setDecidedOn(LocalDate.now());

@@ -142,6 +142,13 @@ export interface OpenCapaRequest {
   description?: string;
   /** Corrective ou préventive : un dossier qui ne ferait qu'endiguer ne se clôturerait jamais. */
   type: Exclude<CapaType, 'CONTAINMENT'>;
+  /**
+   * La nature de l'ACTION du dossier, quand elle diffère de celle du dossier :
+   * une mesure d'endiguement se tient dans un dossier correctif, qui restera
+   * clôturable quand la cause sera traitée (ISO 9001 §10.2, 8D étape D3).
+   * Absente, elle se déduit du type du dossier.
+   */
+  actionType?: CapaActionType;
   criticity: CapaCriticity;
   sourceType?: CapaSourceType;
   sourceRef?: string;

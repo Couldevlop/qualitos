@@ -29,6 +29,13 @@ public final class NcDto {
              */
             @NotBlank String description,
             @NotNull NcCategory category,
+            /**
+             * La nature fine de l'écart, sous sa catégorie : le code d'une entrée
+             * du catalogue du client. Facultative — un écart se saisit d'abord et
+             * se classe finement ensuite. Un code inconnu, ou rattaché à une autre
+             * catégorie, est refusé (400).
+             */
+            @Size(max = 30) String subcategoryCode,
             @NotNull NcSeverity severity,
             @NotNull Instant detectedAt,
             @Size(max = 255) String zone,
@@ -60,6 +67,12 @@ public final class NcDto {
                      message = "description must not be blank when provided")
             String description,
             NcCategory category,
+            /**
+             * Absent = inchangé, comme tout le reste de cette requête partielle.
+             * La chaîne vide EFFACE le classement fin : reclasser un écart dont on
+             * a compris qu'il relevait d'autre chose doit être possible.
+             */
+            @Size(max = 30) String subcategoryCode,
             NcSeverity severity,
             @Size(max = 255) String zone,
             @DecimalMin("-90.0") @DecimalMax("90.0") Double geoLat,
@@ -100,6 +113,8 @@ public final class NcDto {
             String title,
             String description,
             NcCategory category,
+            /** Le code de la nature fine ; l'écran le traduit par le catalogue. */
+            String subcategoryCode,
             NcSeverity severity,
             NcStatus status,
             NcOrigin origin,

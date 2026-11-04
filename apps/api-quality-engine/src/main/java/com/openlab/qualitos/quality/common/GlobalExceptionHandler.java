@@ -185,6 +185,7 @@ import com.openlab.qualitos.quality.ideas.domain.IdeaStateException;
 import com.openlab.qualitos.quality.ideas.domain.VoteClosedException;
 import com.openlab.qualitos.quality.nonconformity.NcNotFoundException;
 import com.openlab.qualitos.quality.nonconformity.NcStateException;
+import com.openlab.qualitos.quality.nonconformity.NcValidationException;
 import com.openlab.qualitos.quality.nonconformity.NcPhotoNotFoundException;
 import com.openlab.qualitos.quality.nonconformity.NcPhotoTooLargeException;
 import com.openlab.qualitos.quality.nonconformity.NcPhotoValidationException;
@@ -712,6 +713,15 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/non-conformity-invalid-state"));
         problem.setTitle("Invalid Non-Conformity State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(NcValidationException.class)
+    public ProblemDetail handleNcValidation(NcValidationException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/non-conformity-invalid"));
+        problem.setTitle("Invalid Non-Conformity Data");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }

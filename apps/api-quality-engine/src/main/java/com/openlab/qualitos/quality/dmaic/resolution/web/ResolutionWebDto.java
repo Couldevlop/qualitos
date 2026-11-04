@@ -1,6 +1,8 @@
 package com.openlab.qualitos.quality.dmaic.resolution.web;
 
+import com.openlab.qualitos.quality.dmaic.resolution.domain.ActionCriticity;
 import com.openlab.qualitos.quality.dmaic.resolution.domain.ActionLine;
+import com.openlab.qualitos.quality.dmaic.resolution.domain.ActionNature;
 import com.openlab.qualitos.quality.dmaic.resolution.domain.ActionStatus;
 import com.openlab.qualitos.quality.dmaic.resolution.domain.AnswerType;
 import com.openlab.qualitos.quality.dmaic.resolution.domain.DefineTopic;
@@ -50,10 +52,10 @@ public final class ResolutionWebDto {
     public record ActionRequest(LocalDate createdOn, @Size(max = 1000) String action, @Valid PersonRequest responsible,
                                 @NotNull ActionStatus status, LocalDate plannedOn, LocalDate doneOn,
                                 @Min(0) @Max(100) int percent, @Size(max = 1000) String notes, UUID capaId,
-                                boolean containment) {
+                                boolean containment, ActionNature nature, ActionCriticity criticity) {
         ActionLine toDomain() {
             return new ActionLine(createdOn, action, responsible == null ? null : responsible.toDomain(), status,
-                    plannedOn, doneOn, percent, notes, capaId, containment);
+                    plannedOn, doneOn, percent, notes, capaId, containment, nature, criticity);
         }
     }
 

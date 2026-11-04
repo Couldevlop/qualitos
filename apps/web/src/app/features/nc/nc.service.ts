@@ -22,6 +22,8 @@ import {
   RejectNcRequest,
   ResolveNcRequest,
   SaveEightDRequest,
+  NcSubcategory,
+  NcSubcategoryCatalogue,
   StartAnalysisNcRequest,
   UpdateNcRequest,
   VisionAnalysis
@@ -31,11 +33,32 @@ export interface NcListFilters {
   status?: NcStatus;
   severity?: NcSeverity;
   category?: NcCategory;
+  /** La nature fine, par son code de catalogue. */
+  subcategoryCode?: string;
   /** Interne, externe, ou absent pour les deux. */
   origin?: NcOrigin;
   /** NC d'un produit donné : sert l'onglet « NC liées » de sa fiche. */
   productId?: string;
 }
+
+/**
+ * Quelques natures d'écart pour la démonstration hors serveur (`useMockApi`).
+ *
+ * <p>Ce n'est PAS le catalogue : celui-ci vit côté serveur, où il est propre à
+ * chaque client. Le recopier ici en entier créerait deux sources de vérité, et
+ * c'est la copie du navigateur qui finirait par mentir.
+ */
+const MOCK_SUBCATEGORIES: NcSubcategory[] = [
+  { code: 'PRD-DIM', category: 'PRODUCT', label: 'Cote ou tolérance hors spécification' },
+  { code: 'PRD-ASP', category: 'PRODUCT', label: 'Aspect, finition ou état de surface' },
+  { code: 'PRC-DER', category: 'PROCESS', label: 'Dérive de paramètre ou sortie des limites de contrôle' },
+  { code: 'PRC-PRO', category: 'PROCESS', label: 'Procédure ou mode opératoire non respecté' },
+  { code: 'DOC-MAN', category: 'DOCUMENTATION', label: 'Enregistrement ou preuve manquante' },
+  { code: 'FOU-REC', category: 'SUPPLIER', label: 'Matière ou pièce réceptionnée non conforme' },
+  { code: 'SEC-PRQ', category: 'SAFETY', label: "Presqu'accident ou situation dangereuse" },
+  { code: 'ENV-DEC', category: 'ENVIRONMENT', label: 'Gestion ou tri des déchets non conforme' },
+  { code: 'AUT-REC', category: 'OTHER', label: 'Réclamation client ou usager' }
+];
 
 @Injectable({ providedIn: 'root' })
 export class NcService {
@@ -58,9 +81,31 @@ export class NcService {
     if (filters.status) params = params.set('status', filters.status);
     if (filters.severity) params = params.set('severity', filters.severity);
     if (filters.category) params = params.set('category', filters.category);
+    if (filters.subcategoryCode) params = params.set('subcategoryCode', filters.subcategoryCode);
     if (filters.origin) params = params.set('origin', filters.origin);
     if (filters.productId) params = params.set('productId', filters.productId);
     return this.http.get<NcPage>(this.endpoint, { params });
+  }
+
+  /**
+   * Le catalogue des natures d'écart du client, ou celui de la plateforme faute
+   * de réglage. Lu par chaque formulaire de saisie.
+   */
+  subcategories(): Observable<NcSubcategoryCatalogue> {
+    if (environment.useMockApi) {
+      return of({ entries: MOCK_SUBCATEGORIES, defaults: true }).pipe(delay(80));
+    }
+    return this.http.get<NcSubcategoryCatalogue>(`${this.endpoint}/subcategories`);
+  }
+
+  /** Remplace le catalogue du client — réservé à l'administrateur du client. */
+  replaceSubcategories(entries: NcSubcategory[]): Observable<NcSubcategoryCatalogue> {
+    return this.http.put<NcSubcategoryCatalogue>(`${this.endpoint}/subcategories`, { entries });
+  }
+
+  /** Revient au catalogue de la plateforme. */
+  resetSubcategories(): Observable<NcSubcategoryCatalogue> {
+    return this.http.post<NcSubcategoryCatalogue>(`${this.endpoint}/subcategories/reset`, {});
   }
 
   /**
@@ -92,6 +137,7 @@ export class NcService {
         title: input.title,
         description: input.description,
         category: input.category,
+        subcategoryCode: input.subcategoryCode,
         severity: input.severity,
         status: 'OPEN',
         origin: input.origin ?? 'INTERNAL',
@@ -125,6 +171,7 @@ export class NcService {
         if (input.title !== undefined) n.title = input.title;
         if (input.description !== undefined) n.description = input.description;
         if (input.category !== undefined) n.category = input.category;
+        if (input.subcategoryCode !== undefined) n.subcategoryCode = input.subcategoryCode || undefined;
         if (input.severity !== undefined) n.severity = input.severity;
         if (input.zone !== undefined) n.zone = input.zone;
         if (input.geoLat !== undefined) n.geoLat = input.geoLat;

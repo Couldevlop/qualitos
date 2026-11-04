@@ -28,12 +28,14 @@ class PdfBoxClaimReportRendererTest {
                                 "Fissure à la base du carter"),
                         new ClaimReport.Answer("Quelle est la quantité ?", null)),
                 null, "Tri à 100 % du stock", "Isolement des lots",
+                List.of(new ClaimReport.Action("Trier le stock suspect", "Endiguement", "Élevée", "Alice",
+                        "Clôturée", LocalDate.of(2026, 9, 30), LocalDate.of(2026, 9, 30), 100)),
                 List.of(new ClaimReport.Answer("Machines", "Outil usé")),
                 List.of(new ClaimReport.Why("Pourquoi le problème est-il survenu ?", "Bavure",
                         List.of("Outil usé", "Absence de compteur"), true, "Compteur de coups")),
                 "Absence de compteur", "Nouvel outil",
-                List.of(new ClaimReport.Action("Changer l'outil", "Bob", "En cours", LocalDate.of(2026, 10, 5),
-                        null, 50)),
+                List.of(new ClaimReport.Action("Changer l'outil", "Corrective", "Moyenne", "Bob", "En cours",
+                        LocalDate.of(2026, 10, 5), null, 50)),
                 surveillance);
     }
 
@@ -50,10 +52,15 @@ class PdfBoxClaimReportRendererTest {
         assertThat(t).contains("Rapport d'action corrective client DMAIC", "Acme Industrie", "CL-2026-042",
                 "Alice Martin", "01/10/2026", "20/10/2026", "1 - Sévère", "Fissure à la base du carter",
                 "Tri à 100 % du stock", "Isolement des lots", "Machines : Outil usé", "Pourquoi 2 : Absence de compteur",
-                "cause racine", "Compteur de coups", "Nouvel outil", "1. Changer l'outil", "Responsable : Bob",
-                "05/10/2026", "Avancement : 50 %", "Contrôle horaire", "étape 1", "étape 2", "étape 3", "étape 4",
-                "étape 5", "Plan d'action temporaire", "Diagramme d'Ishikawa", "5 pourquoi", "Plan d'actions",
+                "cause racine", "Compteur de coups", "Nouvel outil", "Contrôle horaire",
+                "étape 1", "étape 2", "étape 3", "étape 4", "étape 5",
+                "Plan d'action temporaire", "Diagramme d'Ishikawa", "5 pourquoi", "Plan d'actions",
                 "Le plan de surveillance élimine-t-il");
+        // Les actions sortent en TABLEAU, aux colonnes du registre CAPA : le
+        // confinement en phase Analyser, le plan d'actions en phase Améliorer.
+        assertThat(t).contains("Intitulé Nature Criticité Statut Responsable Échéance");
+        assertThat(t).contains("Trier le stock suspect Endiguement Élevée Clôturée Alice 30/09/2026");
+        assertThat(t).contains("Changer l'outil Corrective Moyenne En cours Bob 05/10/2026");
         assertThat(t).contains(PdfBoxClaimReportRenderer.EMPTY);
     }
 
@@ -71,7 +78,7 @@ class PdfBoxClaimReportRendererTest {
     @Test
     void unRapportViergeSortQuandMeme() throws IOException {
         String t = texte(renderer.render(new ClaimReport(null, null, "Projet", null, null, null, null, null,
-                List.of(), null, null, null, List.of(), List.of(), null, null, List.of(), null)));
+                List.of(), null, null, null, List.of(), List.of(), List.of(), null, null, List.of(), null)));
 
         assertThat(t).contains("Projet", PdfBoxClaimReportRenderer.EMPTY);
     }

@@ -1,0 +1,159 @@
+// Natures de non-conformité : une catégorie à la fois, une ligne par nature.
+// Même grammaire visuelle que « Paramètres DMAIC » — l'administrateur passe de
+// l'un à l'autre, et deux grammaires pour un même geste se paient en hésitation.
+
+:host {
+  display: block;
+}
+
+.echec {
+  display: flex;
+  align-items: center;
+  gap: var(--qos-space-2);
+  color: var(--qos-danger-fg);
+}
+
+.portee {
+  max-width: 60rem;
+  margin: 0;
+  padding: var(--qos-space-2) var(--qos-space-3);
+  border-radius: var(--qos-radius-md);
+  background: var(--qos-accent-bg-soft);
+  color: var(--qos-fg-primary);
+  font-size: var(--qos-fs-sm);
+}
+
+.bloc {
+  min-width: 0;
+  padding: var(--qos-space-4);
+  border-radius: var(--qos-radius-lg);
+  background: var(--qos-bg-elevated);
+  border: 1px solid var(--qos-border-subtle);
+  box-shadow: var(--qos-shadow-xs);
+
+  &__titre {
+    margin: 0;
+    font-size: var(--qos-fs-md);
+    font-weight: var(--qos-fw-semibold);
+  }
+
+  &__aide {
+    margin: var(--qos-space-1) 0 var(--qos-space-3);
+    font-size: var(--qos-fs-sm);
+    color: var(--qos-fg-secondary);
+  }
+}
+
+.categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--qos-space-1);
+  margin-bottom: var(--qos-space-3);
+}
+
+.categorie {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--qos-space-2);
+  min-height: 2rem;
+  padding: 0 var(--qos-space-3);
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: var(--qos-radius-pill);
+  background: transparent;
+  color: var(--qos-fg-primary);
+  font: inherit;
+  font-size: var(--qos-fs-sm);
+  white-space: nowrap;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid var(--qos-accent-bg);
+    outline-offset: 2px;
+  }
+
+  &--on {
+    border-color: var(--qos-accent-bg);
+    background: var(--qos-accent-bg-soft);
+    color: var(--qos-accent-fg-soft);
+    font-weight: var(--qos-fw-semibold);
+  }
+
+  &__nb {
+    font-size: var(--qos-fs-xs);
+    font-variant-numeric: tabular-nums;
+    color: var(--qos-fg-secondary);
+
+    // Une catégorie vide est un cul-de-sac à la saisie : elle se signale sur
+    // l'onglet, pas seulement dans la barre d'erreurs en bas de page.
+    &--vide {
+      color: var(--qos-danger-fg);
+      font-weight: var(--qos-fw-semibold);
+    }
+  }
+}
+
+.lignes {
+  display: grid;
+  gap: var(--qos-space-2);
+  margin: 0 0 var(--qos-space-3);
+  padding: 0;
+  list-style: none;
+}
+
+.ligne {
+  display: grid;
+  grid-template-columns: 9rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--qos-space-2);
+  min-width: 0;
+
+  > * {
+    min-width: 0;
+  }
+}
+
+.vide {
+  margin: 0 0 var(--qos-space-3);
+  color: var(--qos-danger-fg);
+  font-size: var(--qos-fs-sm);
+}
+
+.barre {
+  position: sticky;
+  bottom: var(--qos-space-3);
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--qos-space-3);
+  padding: var(--qos-space-3) var(--qos-space-4);
+  border-radius: var(--qos-radius-lg);
+  background: var(--qos-bg-elevated);
+  border: 1px solid var(--qos-border-subtle);
+  box-shadow: var(--qos-shadow-md);
+
+  &__problemes {
+    margin: 0;
+    padding-left: var(--qos-space-5);
+    color: var(--qos-danger-fg);
+    font-size: var(--qos-fs-sm);
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--qos-space-2);
+    margin-left: auto;
+  }
+}
+
+@media (max-width: 720px) {
+  .ligne {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .ligne__code {
+    grid-column: 1 / -1;
+  }
+}

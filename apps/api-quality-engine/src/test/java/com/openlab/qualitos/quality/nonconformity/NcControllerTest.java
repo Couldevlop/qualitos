@@ -48,7 +48,7 @@ class NcControllerTest {
 
     @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void list_returns200() throws Exception {
-        when(service.findAll(any(), any(), any(), any(), any(), any(Pageable.class)))
+        when(service.findAll(any(), any(), any(), any(), any(), any(), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of(resp(NcStatus.OPEN))));
         mockMvc.perform(get("/api/v1/nc"))
                 .andExpect(status().isOk())
@@ -57,7 +57,7 @@ class NcControllerTest {
 
     @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void list_withFilters() throws Exception {
-        when(service.findAll(eq(NcStatus.OPEN), eq(NcSeverity.MAJOR), eq(NcCategory.PRODUCT), any(), any(), any(Pageable.class)))
+        when(service.findAll(eq(NcStatus.OPEN), eq(NcSeverity.MAJOR), eq(NcCategory.PRODUCT), any(), any(), any(), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of(resp(NcStatus.OPEN))));
         mockMvc.perform(get("/api/v1/nc")
                         .param("status", "OPEN").param("severity", "MAJOR").param("category", "PRODUCT"))
@@ -69,7 +69,7 @@ class NcControllerTest {
     void create_returns201() throws Exception {
         when(service.create(any())).thenReturn(resp(NcStatus.OPEN));
         NcDto.CreateRequest req = new NcDto.CreateRequest(
-                "t", "Bavure constatee au poste 20", NcCategory.PRODUCT, NcSeverity.MAJOR,
+                "t", "Bavure constatee au poste 20", NcCategory.PRODUCT, null, NcSeverity.MAJOR,
                 Instant.now(), null, null, null, null, REPORTER, null, null, null);
         mockMvc.perform(post("/api/v1/nc").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -293,7 +293,7 @@ class NcControllerTest {
     void create_missingTenant_returns403() throws Exception {
         when(service.create(any())).thenThrow(new MissingTenantContextException());
         NcDto.CreateRequest req = new NcDto.CreateRequest(
-                "t", "Bavure constatee au poste 20", NcCategory.PRODUCT, NcSeverity.MAJOR,
+                "t", "Bavure constatee au poste 20", NcCategory.PRODUCT, null, NcSeverity.MAJOR,
                 Instant.now(), null, null, null, null, REPORTER, null, null, null);
         mockMvc.perform(post("/api/v1/nc").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -346,7 +346,7 @@ class NcControllerTest {
     private NcDto.Response resp(NcStatus s) {
         return new NcDto.Response(
                 NC, TENANT, "NC-2026-0001", "t", null,
-                NcCategory.PRODUCT, NcSeverity.MAJOR, s, NcOrigin.INTERNAL, Instant.now(),
+                NcCategory.PRODUCT, null, NcSeverity.MAJOR, s, NcOrigin.INTERNAL, Instant.now(),
                 null, null, null, null, REPORTER, "Ada Lovelace", null, null, null, null, null,
                 null, null, null, null, Instant.now(), Instant.now());
     }
