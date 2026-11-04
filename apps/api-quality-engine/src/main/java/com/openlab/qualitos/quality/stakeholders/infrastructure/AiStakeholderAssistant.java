@@ -2,8 +2,10 @@ package com.openlab.qualitos.quality.stakeholders.infrastructure;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.openlab.qualitos.quality.ai.guard.AiGuardException;
 import com.openlab.qualitos.quality.aigateway.AiCompletionResult;
 import com.openlab.qualitos.quality.aigateway.AiGatewayClient;
+import com.openlab.qualitos.quality.aigateway.AiRequestRejectedException;
 import com.openlab.qualitos.quality.stakeholders.application.StakeholderPorts;
 import com.openlab.qualitos.quality.stakeholders.domain.ImpactLevel;
 import com.openlab.qualitos.quality.stakeholders.domain.MandatoryNature;
@@ -40,8 +42,23 @@ public class AiStakeholderAssistant implements StakeholderPorts.Assistant {
     static final int MAX_REQUIREMENTS = 20;
     static final int MAX_CHANGES = 15;
 
-    /** Le texte envoyé au modèle est borné : un contrat entier coûte sans servir. */
-    static final int MAX_DOCUMENT_CHARS = 24_000;
+    /**
+     * Le texte envoyé au modèle est borné : un contrat entier coûte sans servir.
+     *
+     * <p>Cette borne n'est pas libre. L'invite assemblée — consigne système comprise —
+     * doit tenir sous {@code qualitos.ai.guard.max-prompt-chars} (20 000, ADR 0017),
+     * qui est aussi la borne de {@code ai-service}. On réserve de quoi loger la consigne
+     * système (~1 200 caractères) et l'en-tête du document, d'où 17 000. Au-delà,
+     * l'appel était refusé en bloc : l'utilisateur voyait « rien trouvé » sur un
+     * document parfaitement lisible.
+     */
+    static final int MAX_DOCUMENT_CHARS = StakeholderPorts.Assistant.DOCUMENT_MAX;
+
+    /**
+     * Comparer deux versions envoie deux textes dans la même invite : chacun n'a donc
+     * droit qu'à la moitié du budget, moins les deux en-têtes de version.
+     */
+    static final int MAX_COMPARED_CHARS = StakeholderPorts.Assistant.COMPARED_MAX;
 
     private final AiGatewayClient ai;
     private final ObjectMapper mapper;
@@ -126,11 +143,16 @@ public class AiStakeholderAssistant implements StakeholderPorts.Assistant {
     @Override
     public List<StakeholderPorts.ExtractedRequirement> extractRequirements(String documentName,
                                                                             String documentText) {
-        String prompt = "Document : " + documentName + "\n\n--- Texte ---\n" + clip(documentText);
+        // Le texte effectivement soumis : c'est à CELUI-LÀ que les citations seront
+        // confrontées, pas au document d'origine. Confronter à ce que le modèle n'a
+        // pas vu rejetterait des citations exactes tombées après la troncature.
+        String submitted = clip(documentText, MAX_DOCUMENT_CHARS);
+        String prompt = "Document : " + documentName + "\n\n--- Texte ---\n" + submitted;
         JsonNode root = ask(EXTRACT_SYSTEM, prompt, 2000, "extractRequirements");
         if (root == null) {
             return List.of();
         }
+        String haystack = flatten(submitted);
         List<StakeholderPorts.ExtractedRequirement> out = new ArrayList<>();
         for (JsonNode node : root.path("requirements")) {
             if (out.size() >= MAX_REQUIREMENTS) {
@@ -141,6 +163,17 @@ public class AiStakeholderAssistant implements StakeholderPorts.Assistant {
             // Pas de citation, pas d'exigence : un humain n'aurait aucun moyen
             // de contrôler ce qu'on lui propose de faire entrer au registre.
             if (quote == null || requirement == null) {
+                continue;
+            }
+            // Et une citation qui ne figure PAS dans le document n'est pas une
+            // citation : c'est l'apparence d'une preuve. Le document vient d'un
+            // tiers et traverse l'invite ; un contrat qui s'y adresse au modèle
+            // obtiendrait sinon une exigence inventée, munie d'un passage inventé
+            // — exactement l'élément sur lequel le relecteur s'appuie pour valider
+            // (OWASP LLM01/LLM02). C'est la seule vérification locale et certaine
+            // dont on dispose, elle ne coûte rien, elle est faite.
+            if (!haystack.contains(flatten(quote))) {
+                log.warn("[stakeholders] extractRequirements : citation absente du document, exigence écartée");
                 continue;
             }
             out.add(new StakeholderPorts.ExtractedRequirement(quote, text(node, "reference"),
@@ -175,8 +208,8 @@ public class AiStakeholderAssistant implements StakeholderPorts.Assistant {
     public List<StakeholderPorts.DetectedChange> detectChanges(String documentName, String previousText,
                                                                 String currentText) {
         String prompt = "Document : " + documentName
-                + "\n\n--- Version précédente ---\n" + clip(previousText)
-                + "\n\n--- Version en vigueur ---\n" + clip(currentText);
+                + "\n\n--- Version précédente ---\n" + clip(previousText, MAX_COMPARED_CHARS)
+                + "\n\n--- Version en vigueur ---\n" + clip(currentText, MAX_COMPARED_CHARS);
         JsonNode root = ask(CHANGES_SYSTEM, prompt, 1800, "detectChanges");
         if (root == null) {
             return List.of();
@@ -221,6 +254,13 @@ public class AiStakeholderAssistant implements StakeholderPorts.Assistant {
                 return null;
             }
             return mapper.readTree(body.substring(start, end + 1));
+        } catch (AiGuardException | AiRequestRejectedException e) {
+            // Un plafond atteint, un quota épuisé, un disjoncteur ouvert, une invite
+            // refusée : ce ne sont pas des réponses illisibles, ce sont des refus, et
+            // ils ont leur code HTTP (413/429/503/422, ADR 0017). Les confondre avec
+            // « rien trouvé » rendait un abus de débit indiscernable d'un document
+            // sans exigence, et ne laissait qu'une ligne de journal (OWASP LLM04, A09).
+            throw e;
         } catch (Exception e) {
             // Une panne de l'IA ne doit pas casser un écran de registre : on ne
             // propose rien, ce qui se voit, et l'utilisateur réessaie.
@@ -273,8 +313,21 @@ public class AiStakeholderAssistant implements StakeholderPorts.Assistant {
         }
     }
 
-    private static String clip(String text) {
+    private static String clip(String text, int max) {
         String t = text.strip();
-        return t.length() <= MAX_DOCUMENT_CHARS ? t : t.substring(0, MAX_DOCUMENT_CHARS);
+        return t.length() <= max ? t : t.substring(0, max);
+    }
+
+    /**
+     * Replie un texte pour comparer une citation à son document : espaces, sauts de
+     * ligne et tabulations réduits à une espace unique, casse ignorée.
+     *
+     * <p>Un modèle recopie fidèlement les mots et bien plus rarement la mise en page
+     * — une césure, une double espace, une majuscule de début de ligne. Comparer les
+     * chaînes brutes écarterait des citations authentiques ; c'est la présence du
+     * passage qu'on vérifie, pas sa typographie.
+     */
+    private static String flatten(String text) {
+        return text.replaceAll("\\s+", " ").strip().toLowerCase(Locale.ROOT);
     }
 }

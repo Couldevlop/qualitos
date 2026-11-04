@@ -1,5 +1,6 @@
 package com.openlab.qualitos.quality.stakeholders.web;
 
+import com.openlab.qualitos.quality.stakeholders.application.StakeholderPorts;
 import com.openlab.qualitos.quality.stakeholders.application.StakeholderService;
 import com.openlab.qualitos.quality.stakeholders.domain.ImpactLevel;
 import com.openlab.qualitos.quality.stakeholders.domain.MandatoryNature;
@@ -129,12 +130,12 @@ public final class StakeholderWebDto {
 
     /** Le texte d'un document à analyser. Il est transmis, jamais stocké. */
     public record ExtractRequest(@Size(max = 255) String documentName,
-                                 @NotBlank @Size(max = 200_000) String documentText) {}
+                                 @NotBlank @Size(max = StakeholderPorts.Assistant.DOCUMENT_MAX) String documentText) {}
 
     /** Les deux versions d'un même document. */
     public record ChangesRequest(@Size(max = 255) String documentName,
-                                 @NotBlank @Size(max = 200_000) String previousText,
-                                 @NotBlank @Size(max = 200_000) String currentText) {}
+                                 @NotBlank @Size(max = StakeholderPorts.Assistant.COMPARED_MAX) String previousText,
+                                 @NotBlank @Size(max = StakeholderPorts.Assistant.COMPARED_MAX) String currentText) {}
 
     /** Les exigences qu'un changement remet en cause, désignées par un humain. */
     public record ReassessRequest(@NotNull @NotEmpty @Size(max = Stakeholder.REQUIREMENTS_MAX)

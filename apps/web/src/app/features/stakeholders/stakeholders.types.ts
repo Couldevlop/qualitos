@@ -54,7 +54,16 @@ export const STAKEHOLDER_LIMITS = {
   requirement: 500,
   requirements: 100,
   /** Sous ce seuil, il n'y a rien à lire : l'IA inventerait. */
-  documentMin: 40
+  documentMin: 40,
+  /**
+   * Le texte d'un document soumis à l'assistant. Aligné sur
+   * `StakeholderPorts.Assistant.DOCUMENT_MAX` : au-delà, la passerelle IA refuse
+   * l'invite entière, et l'utilisateur lirait « rien trouvé » sur un document
+   * parfaitement lisible. Mieux vaut l'arrêter à la saisie.
+   */
+  document: 17_000,
+  /** Chacune des deux versions comparées : elles partagent la même invite. */
+  comparedDocument: 8_000
 } as const;
 
 /** Une personne de l'annuaire : son compte, et son nom recopié. */

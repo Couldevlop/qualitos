@@ -84,7 +84,8 @@ export class StakeholderAssistantComponent {
   readonly maxSector = 200;
   readonly maxCharacteristics = 1000;
   readonly maxDocumentName = 255;
-  readonly maxDocumentText = 200_000;
+  readonly maxDocumentText = STAKEHOLDER_LIMITS.document;
+  readonly maxComparedText = STAKEHOLDER_LIMITS.comparedDocument;
 
   readonly categoryLabel = categoryLabel;
   readonly sideLabel = sideLabel;

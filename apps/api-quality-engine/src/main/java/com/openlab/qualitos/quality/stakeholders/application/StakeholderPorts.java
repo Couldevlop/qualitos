@@ -58,6 +58,28 @@ public final class StakeholderPorts {
     public interface Assistant {
 
         /**
+         * Le texte d'un document soumis à l'assistant, en caractères.
+         *
+         * <p>La borne vient de la chaîne, pas d'un choix de confort : l'invite
+         * assemblée doit tenir sous {@code qualitos.ai.guard.max-prompt-chars}
+         * (20 000, ADR 0017), qui est aussi la borne de {@code ai-service}. On
+         * réserve la consigne système et l'en-tête du document.
+         *
+         * <p>Elle est déclarée ici pour que le contrat d'API et l'écran annoncent
+         * la MÊME valeur. Quand ils annonçaient 200 000, l'utilisateur collait un
+         * contrat entier et l'appel partait pour être refusé en bloc par la
+         * passerelle : il lisait « aucune exigence trouvée » sur un document
+         * parfaitement lisible.
+         */
+        int DOCUMENT_MAX = 17_000;
+
+        /**
+         * Chacune des deux versions comparées. Elles voyagent dans la même invite,
+         * donc chacune n'a droit qu'à la moitié du budget, en-têtes déduits.
+         */
+        int COMPARED_MAX = 8_000;
+
+        /**
          * Des parties intéressées plausibles pour ce secteur et cette
          * organisation. Aucune n'est inscrite : l'écran les propose une à une.
          */

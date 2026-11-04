@@ -31,14 +31,19 @@ public class StakeholderRepositoryAdapter implements StakeholderRepository {
 
     @Override
     public Stakeholder save(Stakeholder stakeholder) {
-        StakeholderJpaEntity e = repository.findById(stakeholder.id()).orElseGet(() -> {
-            StakeholderJpaEntity neuf = new StakeholderJpaEntity();
-            neuf.setId(stakeholder.id());
-            neuf.setTenantId(stakeholder.tenantId());
-            neuf.setCreatedAt(Instant.now());
-            neuf.setCreatedBy(CurrentUser.userId().orElse(null));
-            return neuf;
-        });
+        // findByIdAndTenantId, et non findById : la convention de l'ADR 0001 vaut
+        // aussi quand l'agrégat vient déjà d'un chargement filtré. Une barrière
+        // qui ne coûte rien se garde.
+        StakeholderJpaEntity e = repository
+                .findByIdAndTenantId(stakeholder.id(), stakeholder.tenantId())
+                .orElseGet(() -> {
+                    StakeholderJpaEntity neuf = new StakeholderJpaEntity();
+                    neuf.setId(stakeholder.id());
+                    neuf.setTenantId(stakeholder.tenantId());
+                    neuf.setCreatedAt(Instant.now());
+                    neuf.setCreatedBy(CurrentUser.userId().orElse(null));
+                    return neuf;
+                });
         e.setName(stakeholder.name());
         e.setCategory(stakeholder.category());
         e.setSide(stakeholder.side());
@@ -90,6 +95,9 @@ public class StakeholderRepositoryAdapter implements StakeholderRepository {
                 row.setId(r.id());
                 row.setStakeholder(e);
             }
+            // Le tenant vient de la fiche parente, jamais d'une requête : c'est
+            // lui qui place la ligne sous la politique de cloisonnement.
+            row.setTenantId(e.getTenantId());
             row.setPosition(i);
             row.setNeed(r.need());
             row.setRequirement(r.requirement());
@@ -133,7 +141,8 @@ public class StakeholderRepositoryAdapter implements StakeholderRepository {
 
     @Override
     public void delete(Stakeholder stakeholder) {
-        repository.findById(stakeholder.id()).ifPresent(repository::delete);
+        repository.findByIdAndTenantId(stakeholder.id(), stakeholder.tenantId())
+                .ifPresent(repository::delete);
     }
 
     static Stakeholder toDomain(StakeholderJpaEntity e) {

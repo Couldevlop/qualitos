@@ -11,7 +11,10 @@ class CompletionRequestSchema(BaseModel):
     system_prompt: str = Field(
         default="You are a QualitOS quality assistant.", max_length=4000
     )
-    user_prompt: str = Field(..., min_length=1, max_length=8000)
+    # Plafond aligné sur qualitos.ai.guard.max-prompt-chars côté moteur
+    # (20 000, ADR 0017). Deux bornes différentes sur le même flux donnaient un
+    # refus 422 systématique dès 8 000 caractères, soit tout contrat réel.
+    user_prompt: str = Field(..., min_length=1, max_length=20000)
     provider: ProviderName = DEFAULT_PROVIDER
     max_tokens: int = Field(default=512, ge=1, le=8192)
     temperature: float = Field(default=0.2, ge=0.0, le=2.0)

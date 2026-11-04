@@ -52,6 +52,7 @@ import com.openlab.qualitos.quality.ai.guard.AiPromptTooLargeException;
 import com.openlab.qualitos.quality.ai.guard.AiQuotaExceededException;
 import com.openlab.qualitos.quality.ai.guard.AiRateLimitExceededException;
 import com.openlab.qualitos.quality.aigateway.AiGatewayException;
+import com.openlab.qualitos.quality.aigateway.AiRequestRejectedException;
 import com.openlab.qualitos.quality.aigateway.NlqUntranslatableException;
 import com.openlab.qualitos.quality.airouting.domain.AiProviderNotConfiguredException;
 import com.openlab.qualitos.quality.airouting.domain.InvalidAiProviderException;
@@ -1109,6 +1110,19 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_GATEWAY, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/ai-gateway-unavailable"));
         problem.setTitle("AI Gateway Unavailable");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    /**
+     * La passerelle IA a répondu et refuse la requête. 422, pas 502 : le service va
+     * bien, c'est la demande qui ne passe pas, et l'appelant peut la corriger.
+     */
+    @ExceptionHandler(AiRequestRejectedException.class)
+    public ProblemDetail handleAiRequestRejected(AiRequestRejectedException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/ai-request-rejected"));
+        problem.setTitle("AI Request Rejected");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }

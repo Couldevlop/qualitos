@@ -202,11 +202,11 @@
     </mat-form-field>
     <mat-form-field appearance="outline" subscriptSizing="dynamic" class="large">
       <mat-label i18n="@@stakeholders.assistant.previous-text">Version précédente</mat-label>
-      <textarea matInput rows="4" [(ngModel)]="previousText" [maxlength]="maxDocumentText" data-test="texte-precedent"></textarea>
+      <textarea matInput rows="4" [(ngModel)]="previousText" [maxlength]="maxComparedText" data-test="texte-precedent"></textarea>
     </mat-form-field>
     <mat-form-field appearance="outline" subscriptSizing="dynamic" class="large">
       <mat-label i18n="@@stakeholders.assistant.current-text">Version en vigueur</mat-label>
-      <textarea matInput rows="4" [(ngModel)]="currentText" [maxlength]="maxDocumentText" data-test="texte-courant"></textarea>
+      <textarea matInput rows="4" [(ngModel)]="currentText" [maxlength]="maxComparedText" data-test="texte-courant"></textarea>
     </mat-form-field>
   </div>
 

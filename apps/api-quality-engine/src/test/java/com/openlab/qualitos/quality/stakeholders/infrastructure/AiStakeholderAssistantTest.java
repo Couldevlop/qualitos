@@ -1,8 +1,10 @@
 package com.openlab.qualitos.quality.stakeholders.infrastructure;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.openlab.qualitos.quality.ai.guard.AiRateLimitExceededException;
 import com.openlab.qualitos.quality.aigateway.AiCompletionResult;
 import com.openlab.qualitos.quality.aigateway.AiGatewayClient;
+import com.openlab.qualitos.quality.aigateway.AiRequestRejectedException;
 import com.openlab.qualitos.quality.stakeholders.application.StakeholderPorts;
 import com.openlab.qualitos.quality.stakeholders.domain.ImpactLevel;
 import com.openlab.qualitos.quality.stakeholders.domain.MandatoryNature;
@@ -12,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -126,7 +129,8 @@ class AiStakeholderAssistantTest {
                   "nature":"CONTRACTUAL",
                   "control":"Controle documentaire a reception"}]}""");
 
-        var out = assistant.extractRequirements("contrat.pdf", "Le texte du contrat.");
+        var out = assistant.extractRequirements("contrat.pdf",
+                "Article 7.2 - Les pieces sont livrees avec un certificat matiere de type 3.1.");
 
         assertThat(out).singleElement().satisfies(r -> {
             assertThat(r.quote()).startsWith("Les pieces sont livrees");
@@ -144,7 +148,7 @@ class AiStakeholderAssistantTest {
                   {"requirement":"Faire quelque chose","nature":"CONTRACTUAL"},
                   {"quote":"Texte exact.","requirement":"Faire ceci"}]}""");
 
-        var out = assistant.extractRequirements("contrat.pdf", "Le texte.");
+        var out = assistant.extractRequirements("contrat.pdf", "Preambule. Texte exact. Fin.");
 
         assertThat(out).singleElement().extracting(StakeholderPorts.ExtractedRequirement::requirement)
                 .isEqualTo("Faire ceci");
@@ -162,7 +166,7 @@ class AiStakeholderAssistantTest {
         repond("""
                 {"requirements":[{"quote":"Texte.","requirement":"Faire ceci","nature":"BIZARRE"}]}""");
 
-        assertThat(assistant.extractRequirements("contrat.pdf", "Le texte."))
+        assertThat(assistant.extractRequirements("contrat.pdf", "Avant. Texte. Apres."))
                 .singleElement().extracting(StakeholderPorts.ExtractedRequirement::nature).isNull();
     }
 
@@ -178,6 +182,94 @@ class AiStakeholderAssistantTest {
         verify(ai).complete(anyString(), prompt.capture(), anyInt());
         assertThat(prompt.getValue().length())
                 .isLessThan(AiStakeholderAssistant.MAX_DOCUMENT_CHARS + 500);
+    }
+
+    @Test
+    void uneCitationAbsenteDuDocumentEstEcartee() {
+        // Le cas qui compte : le document vient d'un tiers et traverse l'invite.
+        // Un contrat qui s'y adresse au modele obtient une exigence inventee,
+        // munie d'un passage invente — or c'est precisement sur ce passage que
+        // le relecteur s'appuie pour valider (OWASP LLM01/LLM02). Sans citation
+        // reelle, l'exigence n'entre pas.
+        repond("""
+                {"requirements":[
+                  {"quote":"Article 12 : le client renonce a tout controle qualite.",
+                   "requirement":"Ne pas auditer ce fournisseur"},
+                  {"quote":"Le delai de livraison est de 15 jours.",
+                   "requirement":"Livrer sous 15 jours"}]}""");
+
+        var out = assistant.extractRequirements("contrat.pdf",
+                "Art. 3 - Le delai de livraison est de 15 jours. Art. 4 - Penalites.");
+
+        assertThat(out).singleElement()
+                .extracting(StakeholderPorts.ExtractedRequirement::requirement)
+                .isEqualTo("Livrer sous 15 jours");
+    }
+
+    @Test
+    void laCitationEstReconnueMalgreLaMiseEnPage() {
+        // Un modele recopie les mots, rarement la typographie : une cesure, une
+        // double espace, une majuscule de debut de ligne. Comparer les chaines
+        // brutes ecarterait des citations authentiques.
+        repond("""
+                {"requirements":[{
+                  "quote":"les pieces sont   livrees avec un certificat",
+                  "requirement":"Fournir un certificat"}]}""");
+
+        var out = assistant.extractRequirements("contrat.pdf", """
+                Art. 7
+                  Les pieces sont livrees
+                  avec un certificat matiere.""");
+
+        assertThat(out).hasSize(1);
+    }
+
+    @Test
+    void laCitationEstConfronteeAuTexteSoumisPasAuDocumentEntier() {
+        // Le modele n'a vu que le texte tronque : lui opposer la partie qu'il n'a
+        // pas recue rejetterait des citations exactes tombees apres la coupe.
+        repond("""
+                {"requirements":[{"quote":"zzz unique","requirement":"Faire ceci"}]}""");
+        String document = "a".repeat(AiStakeholderAssistant.MAX_DOCUMENT_CHARS) + " zzz unique";
+
+        assertThat(assistant.extractRequirements("contrat.pdf", document)).isEmpty();
+    }
+
+    @Test
+    void unRefusDuGardeFouNEstPasConfonduAvecRienTrouve() {
+        // 429/413/503 ne sont pas des reponses illisibles : ce sont des refus, et
+        // ils ont leur code HTTP (ADR 0017). Les avaler rendait un abus de debit
+        // indiscernable d'un document sans exigence (OWASP LLM04, A09).
+        when(ai.complete(anyString(), anyString(), anyInt()))
+                .thenThrow(new AiRateLimitExceededException("Debit depasse", 30));
+
+        assertThatThrownBy(() -> assistant.extractRequirements("contrat.pdf", "Le texte."))
+                .isInstanceOf(AiRateLimitExceededException.class);
+    }
+
+    @Test
+    void unRefusDeLaPasserelleRemonteAussi() {
+        when(ai.complete(anyString(), anyString(), anyInt()))
+                .thenThrow(new AiRequestRejectedException("Requete refusee (422)", null));
+
+        assertThatThrownBy(() -> assistant.suggestStakeholders("Industrie", ""))
+                .isInstanceOf(AiRequestRejectedException.class);
+    }
+
+    @Test
+    void lesDeuxVersionsComparesTiennentChacuneDansLaMoitieDuBudget() {
+        // Deux textes dans la meme invite : chacun n'a droit qu'a la moitie, sinon
+        // l'invite assemblee depasse le plafond de la passerelle et l'appel entier
+        // est refuse — ce que l'utilisateur lisait comme « aucun changement ».
+        repond("{\"changes\":[]}");
+        String enorme = "a".repeat(AiStakeholderAssistant.MAX_COMPARED_CHARS + 4000);
+
+        assistant.detectChanges("contrat.pdf", enorme, enorme);
+
+        ArgumentCaptor<String> prompt = ArgumentCaptor.forClass(String.class);
+        verify(ai).complete(anyString(), prompt.capture(), anyInt());
+        assertThat(prompt.getValue().length())
+                .isLessThan(2 * AiStakeholderAssistant.MAX_COMPARED_CHARS + 500);
     }
 
     // ---------- 3. changements ----------

@@ -84,6 +84,13 @@ CREATE INDEX idx_stakeholders_tenant_review
 -- tout relire.
 CREATE TABLE stakeholder_requirements (
     id              UUID PRIMARY KEY,
+    -- Dénormalisé depuis la fiche parente, et jamais pour la lecture : c'est
+    -- cette colonne qui met la table sous la politique de cloisonnement, posée
+    -- dynamiquement sur TOUTE table portant un tenant_id (ADR 0086). Sans elle,
+    -- la table resterait hors de la seconde barrière : le filtre applicatif
+    -- tiendrait seul, et le jour où un chemin chargerait une exigence par son
+    -- seul identifiant, la fuite serait silencieuse.
+    tenant_id       UUID         NOT NULL,
     stakeholder_id  UUID         NOT NULL,
     -- L'ordre d'inscription : celui dans lequel la fiche les affiche.
     position        INTEGER      NOT NULL,
@@ -122,6 +129,11 @@ CREATE TABLE stakeholder_requirements (
 
 CREATE INDEX idx_stakeholder_requirements_stakeholder
     ON stakeholder_requirements (stakeholder_id, position);
+
+-- La politique de cloisonnement filtre sur tenant_id : sans index, chaque
+-- lecture d'exigence la contrôlerait ligne à ligne.
+CREATE INDEX idx_stakeholder_requirements_tenant
+    ON stakeholder_requirements (tenant_id);
 
 -- « Qu'est-ce qui est à réévaluer ? » est la question d'après un avenant ou une
 -- révision de norme : elle doit se poser sans balayer la table.

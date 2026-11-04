@@ -126,9 +126,16 @@ public class CapaService {
      * le corps quand le dossier s'ouvre depuis l'un d'eux. Le tenant vient du
      * jeton, comme partout.
      *
-     * <p>L'endiguement est refusé : un dossier dont l'unique action ne fait
-     * qu'endiguer ne pourrait jamais être clos (ISO 9001 §10.2), il naîtrait
-     * bloqué. Une échéance passée l'est aussi : le dossier naîtrait en retard.
+     * <p>L'endiguement est refusé comme <b>type de dossier</b> : un dossier dont
+     * la finalité se limite à endiguer ne pourrait jamais être clos (ISO 9001
+     * §10.2). Il reste permis comme <b>nature de la première action</b>
+     * ({@code actionType}) — endiguer le jour même puis traiter la cause est
+     * l'étape D3 de la 8D. Le dossier naît alors avec un motif de blocage
+     * {@code CONTAINMENT_ONLY}, que la réponse d'ouverture porte (elle est
+     * détaillée) : l'ouvrant voit donc immédiatement qu'il lui reste à ajouter
+     * l'action corrective, plutôt que de le découvrir à la clôture.
+     *
+     * <p>Une échéance passée est refusée : le dossier naîtrait en retard.
      */
     public CapaDto.CaseResponse openCase(CapaDto.OpenCaseRequest request,
                                          CapaSourceType sourceType, String sourceRef) {
@@ -137,8 +144,9 @@ public class CapaService {
         }
         if (request.type() == null || request.type() == CapaType.CONTAINMENT) {
             throw new CapaValidationException(
-                    "A CAPA carries a single corrective or preventive action: containment alone "
-                    + "would never allow closing it");
+                    "A CAPA case is corrective or preventive: a case whose very purpose is "
+                    + "containment could never be closed. Containment is allowed as the nature "
+                    + "of the action (actionType), not as the type of the case");
         }
         if (request.criticity() == null) {
             throw new CapaValidationException("Criticity is required");

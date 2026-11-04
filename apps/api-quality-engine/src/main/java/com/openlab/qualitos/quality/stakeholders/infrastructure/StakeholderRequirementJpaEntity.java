@@ -33,6 +33,15 @@ public class StakeholderRequirementJpaEntity {
     @Id
     private UUID id;
 
+    /**
+     * Recopié de la fiche parente, jamais lu pour filtrer : c'est cette colonne
+     * qui place la table sous la politique de cloisonnement PostgreSQL, posée
+     * dynamiquement sur toute table qui en porte une (ADR 0086). Le filtre
+     * applicatif passe, lui, par l'agrégat parent.
+     */
+    @Column(name = "tenant_id", nullable = false)
+    private UUID tenantId;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "stakeholder_id", nullable = false)
     private StakeholderJpaEntity stakeholder;
