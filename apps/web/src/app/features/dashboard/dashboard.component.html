@@ -80,10 +80,20 @@
     </ng-container>
   </section>
 
-  <!-- KPI grid -->
+  <!--
+    KPI grid.
+
+    Les indicateurs HORS TOLÉRANCE prennent deux colonnes et le grand cran de
+    taille. La hiérarchie vient de l'état, pas du rang dans la liste : l'ordre
+    renvoyé par le serveur n'est pas garanti porteur de sens, et mettre en
+    avant les deux premières tuiles reviendrait à insister au hasard. Ce qu'un
+    directeur qualité doit voir en premier, c'est ce qui sort des limites.
+  -->
   <section class="qos-dashboard__kpis" aria-label="Indicateurs stratégiques" i18n-aria-label="@@dashboard.exec.kpis-aria">
     <qos-kpi-card
       *ngFor="let k of (kpis$ | async) ?? []"
+      [class.qos-dashboard__kpi--alerte]="k.state === 'bad'"
+      [size]="k.state === 'bad' ? 'lg' : 'md'"
       [label]="k.label"
       [value]="k.value"
       [unit]="k.unit"

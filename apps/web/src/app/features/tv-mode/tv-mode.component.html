@@ -1,10 +1,22 @@
 <div class="tv" [class.tv--fullscreen]="fullscreen">
 
-  <!-- Bandeau supérieur : titre de la slide + horloge + état rotation -->
+  <!-- Le bandeau porte ce qu'un tableau de poste affiche : de quoi on parle, et
+       à quelle heure. Les commandes, elles, ne servent qu'à quelqu'un qui est
+       devant un clavier : elles restent effacées et reviennent au survol ou au
+       focus. Un écran mural ne doit pas dépenser son haut de cadre en
+       télécommande. -->
   <header class="tv__bar">
-    <div class="tv__brand">
-      <span class="material-symbols-outlined tv__brand-icon" aria-hidden="true">tv</span>
-      <span class="tv__brand-text" i18n="@@tv.brand">QualitOS · Salle qualité</span>
+    <div class="tv__ident" *ngIf="current as slide">
+      <h1 class="tv__title">{{ slide.title }}</h1>
+      <p class="tv__subtitle">{{ slide.subtitle }}</p>
+    </div>
+
+    <div class="tv__status">
+      <span class="tv__clock qos-mono">{{ clock | date:'HH:mm' }}</span>
+      <span class="tv__fresh" *ngIf="loadedAt">
+        <span i18n="@@tv.loaded-at">Relevé de</span>
+        <span class="qos-mono">{{ loadedAt | date:'HH:mm' }}</span>
+      </span>
     </div>
 
     <div class="tv__controls" role="toolbar" aria-label="Commandes Mode TV" i18n-aria-label="@@tv.toolbar.aria">
@@ -41,13 +53,6 @@
     </div>
   </header>
 
-  <!-- Barre de progression de la slide courante -->
-  <div class="tv__progress" *ngIf="!loading && !error && slides.length > 1"
-       role="progressbar" aria-label="Avancement de la slide" i18n-aria-label="@@tv.progress.aria"
-       [attr.aria-valuenow]="progress" aria-valuemin="0" aria-valuemax="100">
-    <span class="tv__progress-fill" [style.width.%]="progress"></span>
-  </div>
-
   <!-- Chargement -->
   <div class="tv__state" *ngIf="loading">
     <mat-spinner diameter="56"></mat-spinner>
@@ -61,13 +66,8 @@
     <button type="button" class="tv__retry" (click)="load()" i18n="@@tv.retry">Réessayer</button>
   </div>
 
-  <!-- Scène : slide courante -->
+  <!-- Scène : la slide courante occupe tout ce qui reste. -->
   <main class="tv__stage" *ngIf="!loading && !error && current as slide">
-
-    <div class="tv__heading">
-      <h1 class="tv__title">{{ slide.title }}</h1>
-      <p class="tv__subtitle">{{ slide.subtitle }}</p>
-    </div>
 
     <!-- Slide KPIs -->
     <section class="tv__kpis" *ngIf="slide.kind === 'kpis'">
@@ -90,9 +90,12 @@
       <qos-echart [option]="slide.option" [height]="520"></qos-echart>
     </section>
 
-    <!-- Slide Risques -->
+    <!-- Slide Risques : le rang se lit, il n'est pas décoratif — ces risques
+         sont classés par gravité, donc la position dans la liste est une
+         information. -->
     <section class="tv__list" *ngIf="slide.kind === 'risks'">
-      <article class="tv__row" *ngFor="let r of slide.risks; trackBy: trackById">
+      <article class="tv__row" *ngFor="let r of slide.risks; let i = index; trackBy: trackById">
+        <span class="tv__rank qos-mono" aria-hidden="true">{{ i + 1 }}</span>
         <qos-status-pill [tone]="severityTone(r.severity)" [label]="r.severity"></qos-status-pill>
         <div class="tv__row-main">
           <span class="tv__row-title">{{ r.title }}</span>
@@ -102,15 +105,22 @@
       </article>
     </section>
 
-    <!-- Slide Prévisions IA -->
+    <!-- Slide Prévisions IA : la confiance se voit avant de se lire. -->
     <section class="tv__cards" *ngIf="slide.kind === 'predictions'">
       <article class="tv__card tv__card--{{ p.state }}"
                *ngFor="let p of slide.predictions; trackBy: trackById">
-        <span class="material-symbols-outlined tv__card-icon" aria-hidden="true">{{ predictionIcon(p.kind) }}</span>
-        <span class="tv__card-title">{{ p.title }}</span>
+        <span class="tv__card-head">
+          <span class="material-symbols-outlined tv__card-icon" aria-hidden="true">{{ predictionIcon(p.kind) }}</span>
+          <span class="tv__card-title">{{ p.title }}</span>
+        </span>
         <span class="tv__card-detail">{{ p.detail }}</span>
         <span class="tv__card-foot">
-          <span class="tv__card-conf" i18n="@@tv.card.confidence">Confiance {{ confidencePct(p.confidence) }} %</span>
+          <span class="tv__card-conf">
+            <span class="tv__gauge" aria-hidden="true">
+              <span class="tv__gauge-fill" [style.width.%]="confidencePct(p.confidence)"></span>
+            </span>
+            <span i18n="@@tv.card.confidence">Confiance {{ confidencePct(p.confidence) }} %</span>
+          </span>
           <span class="tv__card-horizon">{{ p.horizon }}</span>
         </span>
       </article>
@@ -122,14 +132,18 @@
     </section>
   </main>
 
-  <!-- Pied : indicateurs de slides (puces cliquables) -->
-  <footer class="tv__dots" *ngIf="!loading && !error && slides.length > 1">
+  <!-- Le rail : une case par slide, celle en cours se remplit au rythme de la
+       rotation. Position et temps restant dans un seul objet, lisible de loin —
+       les puces de 14 px qu'il remplace ne se voyaient pas à trois mètres. -->
+  <footer class="tv__rail" *ngIf="!loading && !error && slides.length > 1"
+          aria-label="Avancement de la slide" i18n-aria-label="@@tv.progress.aria">
     <button type="button"
             *ngFor="let s of slides; let i = index; trackBy: trackBySlide"
-            class="tv__dot" [class.tv__dot--active]="i === index"
+            class="tv__seg" [class.tv__seg--on]="i === index"
             (click)="goTo(i)"
             [attr.aria-label]="s.title"
             [attr.aria-current]="i === index ? 'true' : null">
+      <span class="tv__seg-fill" aria-hidden="true" [style.width.%]="segmentFill(i)"></span>
     </button>
   </footer>
 </div>

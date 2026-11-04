@@ -32375,10 +32375,6 @@ Inde (centre de service)</source>
         <source>Mode TV / Salle qualité</source>
         <target state="translated">TVモード／品質ルーム</target>
       </trans-unit>
-      <trans-unit id="tv.brand" datatype="html">
-        <source>QualitOS · Salle qualité</source>
-        <target state="translated">QualitOS · 品質ルーム</target>
-      </trans-unit>
       <trans-unit id="tv.toolbar.aria" datatype="html">
         <source>Commandes Mode TV</source>
         <target state="translated">TVモードのコントロール</target>

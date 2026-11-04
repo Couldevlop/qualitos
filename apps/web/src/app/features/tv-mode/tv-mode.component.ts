@@ -44,8 +44,27 @@ export class TvModeComponent implements OnInit, OnDestroy {
   /** Plein écran courant (Fullscreen API). */
   fullscreen = false;
 
-  /** Avancement de la slide courante (0..100), pour la barre de progression. */
+  /** Avancement de la slide courante (0..100), pour le rail de rotation. */
   progress = 0;
+
+  /**
+   * L'heure, affichée au bandeau.
+   *
+   * <p>Un tableau mural sans horloge laisse planer un doute que personne ne
+   * lève : l'écran est-il figé depuis ce matin ? Elle tourne sur son propre
+   * minuteur, indépendant de la rotation, pour ne pas se figer en pause.
+   */
+  clock = new Date();
+
+  /**
+   * Quand les indicateurs affichés ont été reçus.
+   *
+   * <p>C'est la fraîcheur de *ce qui est à l'écran*, pas celle de l'agrégat
+   * serveur : l'API de construction des slides ne renvoie pas son horodatage,
+   * et inventer une fraîcheur sur un écran qualité serait un enregistrement
+   * faux.
+   */
+  loadedAt: Date | null = null;
 
   /** Libellés a11y/UI (binding dynamique → $localize côté TS). */
   readonly playLabel = $localize`:@@tv.a11y.play:Reprendre la rotation`;
@@ -56,8 +75,11 @@ export class TvModeComponent implements OnInit, OnDestroy {
 
   private dataSub?: Subscription;
   private timerId: ReturnType<typeof setInterval> | null = null;
+  private clockId: ReturnType<typeof setInterval> | null = null;
   /** Pas du timer de progression (ms). */
   private static readonly TICK_MS = 100;
+  /** Pas de l'horloge : la minute affichée n'a pas besoin de mieux. */
+  private static readonly CLOCK_MS = 1000;
 
   constructor(
     private readonly svc: TvModeService,
@@ -67,11 +89,13 @@ export class TvModeComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.load();
+    this.startClock();
   }
 
   ngOnDestroy(): void {
     this.dataSub?.unsubscribe();
     this.stopTimer();
+    this.stopClock();
   }
 
   /** (Re)charge les slides depuis le dashboard exécutif. */
@@ -83,6 +107,7 @@ export class TvModeComponent implements OnInit, OnDestroy {
       next: slides => {
         this.slides = slides;
         this.index = clampIndex(this.index, slides.length);
+        this.loadedAt = new Date();
         this.loading = false;
         this.restartRotation();
         this.cdr.markForCheck();
@@ -203,6 +228,48 @@ export class TvModeComponent implements OnInit, OnDestroy {
       clearInterval(this.timerId);
       this.timerId = null;
     }
+  }
+
+  /**
+   * L'horloge tourne en propre, et pas sur le minuteur de rotation.
+   *
+   * <p>Accrochée à la rotation, elle se figerait à la mise en pause : une
+   * horloge arrêtée sur un mur est pire que pas d'horloge, parce qu'on la croit.
+   */
+  private startClock(): void {
+    this.zone.runOutsideAngular(() => {
+      this.clockId = setInterval(() => {
+        const now = new Date();
+        if (now.getMinutes() === this.clock.getMinutes()
+            && now.getHours() === this.clock.getHours()) {
+          return;
+        }
+        this.zone.run(() => {
+          this.clock = now;
+          this.cdr.markForCheck();
+        });
+      }, TvModeComponent.CLOCK_MS);
+    });
+  }
+
+  private stopClock(): void {
+    if (this.clockId !== null) {
+      clearInterval(this.clockId);
+      this.clockId = null;
+    }
+  }
+
+  /**
+   * Le remplissage de la case d'une slide sur le rail, en pourcentage.
+   *
+   * <p>Les slides déjà passées sont pleines, celle en cours se remplit, les
+   * suivantes sont vides : la position dans le cycle et le temps restant se
+   * lisent d'un seul coup d'œil.
+   */
+  segmentFill(i: number): number {
+    if (i < this.index) return 100;
+    if (i > this.index) return 0;
+    return this.progress;
   }
 
   /* ============================================================

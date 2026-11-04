@@ -1,27 +1,80 @@
 /* Mode TV / Salle qualité (§7.3).
- * Thème mural sombre, contraste fort, gros chiffres lisibles à distance.
- * Indépendant du thème clair/sombre de l'app : un écran mural reste sombre. */
+ *
+ * La référence n'est pas une présentation : c'est le tableau de poste accroché
+ * au mur d'un atelier. On le lit debout, en trois secondes, à cinq mètres. Tout
+ * ce qui n'est pas une donnée sort du cadre — la télécommande s'effleure, elle
+ * ne s'expose pas.
+ *
+ * Un écran mural reste sombre quel que soit le thème de l'application. */
 
 :host {
-  --tv-bg: #0b1220;
-  --tv-bg-elev: #131c2e;
-  --tv-border: rgba(148, 163, 184, 0.22);
-  --tv-fg: #f1f5f9;
-  --tv-fg-dim: #94a3b8;
-  --tv-accent: #38bdf8;
-  --tv-good: #34d399;
-  --tv-warn: #fbbf24;
-  --tv-bad: #f87171;
-
   display: block;
   height: 100%;
 }
 
 .tv {
+  /* ---- la palette murale ---- */
+  --tv-bg: #0a0f1a;
+  --tv-bg-elev: #141b2b;
+  --tv-bg-sunk: #070b13;
+  --tv-border: rgba(148, 163, 184, 0.2);
+  --tv-fg: #f8fafc;
+  /* Relevé depuis #94a3b8 : sur ce fond, l'ancien gris passait sous 4,5:1. */
+  --tv-fg-dim: #a9b6ca;
+  --tv-accent: #4cc3f5;
+  --tv-good: #4ade80;
+  --tv-warn: #fbbf24;
+  --tv-bad: #f87171;
+
+  /* ---- le pont de jetons ----
+   *
+   * Les composants partagés (tuile d'indicateur, pastille d'état, graphique)
+   * lisent les jetons `--qos-*`. Sans ce pont ils prenaient ceux du thème clair
+   * de l'application : des cartes BLANCHES sur un mur noir. L'ancien
+   * `color-scheme: light` posé en `::ng-deep` ne corrigeait rien — cette
+   * propriété n'a aucun effet sur des variables CSS.
+   *
+   * Comme les variables CSS sont héritées, les redéfinir ici suffit : aucun
+   * `::ng-deep` n'est nécessaire, et chaque composant garde son propre style. */
+  --qos-bg-app: var(--tv-bg);
+  --qos-bg-elevated: var(--tv-bg-elev);
+  --qos-bg-sunken: var(--tv-bg-sunk);
+  --qos-bg-hover: rgba(255, 255, 255, 0.06);
+  --qos-border-subtle: var(--tv-border);
+  --qos-border-default: rgba(148, 163, 184, 0.34);
+  --qos-fg-primary: var(--tv-fg);
+  --qos-fg-secondary: var(--tv-fg-dim);
+  --qos-fg-tertiary: #7f8da3;
+  --qos-success-fg: var(--tv-good);
+  --qos-warn-fg: var(--tv-warn);
+  --qos-danger-fg: var(--tv-bad);
+  --qos-accent-fg-soft: var(--tv-accent);
+  --qos-accent-bg-soft: rgba(76, 195, 245, 0.18);
+  --qos-success-bg-soft: rgba(74, 222, 128, 0.16);
+  --qos-warn-bg-soft: rgba(251, 191, 36, 0.16);
+  --qos-danger-bg-soft: rgba(248, 113, 113, 0.16);
+  /* Les jetons de graphique, pour que la courbe de tendance passe elle aussi en
+   * palette murale. Le composant les lit sur son élément hôte, donc ces
+   * redéfinitions l'atteignent par héritage. Séries un cran plus vives que le
+   * thème sombre du bureau : vues de loin, elles doivent se distinguer. */
+  --qos-chart-grid: #1b2433;
+  --qos-chart-axis: #8c99ab;
+  --qos-chart-1: var(--tv-accent);
+  --qos-chart-2: var(--tv-good);
+  --qos-chart-3: var(--tv-warn);
+  --qos-chart-4: var(--tv-bad);
+  --qos-chart-5: #b79cff;
+  --qos-chart-6: #2ee0f0;
+  /* Les chiffres doivent porter à cinq mètres : l'échelle du bureau ne suffit
+   * pas, on relève le plus grand cran pour cet écran seulement. */
+  --qos-fs-4xl: clamp(34px, 5.2vw, 72px);
+
   display: flex;
   flex-direction: column;
   min-height: calc(100vh - 5rem);
-  background: radial-gradient(120% 120% at 50% 0%, #16233c 0%, var(--tv-bg) 60%);
+  /* Fond plat : le dégradé radial coûtait du contraste sans porter aucune
+   * information. */
+  background: var(--tv-bg);
   color: var(--tv-fg);
   border-radius: 16px;
   overflow: hidden;
@@ -34,30 +87,74 @@
   }
 }
 
-/* ---- Bandeau de commandes ---- */
+/* ---- Bandeau : de quoi on parle, et à quelle heure ---- */
 .tv__bar {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  align-items: flex-start;
+  gap: clamp(1rem, 2vw, 2rem);
   flex-wrap: wrap;
-  gap: 1rem;
 }
 
-.tv__brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
+/* Aligné à gauche, pas centré : un titre centré en très gras suivi d'un
+ * sous-titre centré, c'est la diapositive de séminaire — et cela repousse la
+ * donnée vers le bas du cadre. */
+.tv__ident {
+  flex: 1;
+  min-width: 0;
+}
+
+.tv__title {
+  margin: 0;
   font-weight: 700;
-  letter-spacing: 0.02em;
-  font-size: clamp(1rem, 1.4vw, 1.35rem);
+  letter-spacing: -0.015em;
+  font-size: clamp(1.5rem, 2.6vw, 2.4rem);
+  line-height: 1.12;
 }
 
-.tv__brand-icon { color: var(--tv-accent); font-size: 1.8em; }
+.tv__subtitle {
+  margin: 0.2rem 0 0;
+  color: var(--tv-fg-dim);
+  font-size: clamp(0.95rem, 1.3vw, 1.25rem);
+  max-width: 70ch;
+}
 
+.tv__status {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.15rem;
+  flex: none;
+}
+
+.tv__clock {
+  font-size: clamp(1.5rem, 2.6vw, 2.4rem);
+  font-weight: 600;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.tv__fresh {
+  display: inline-flex;
+  gap: 0.35rem;
+  color: var(--tv-fg-dim);
+  font-size: clamp(0.8rem, 1vw, 1rem);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- Télécommande : effacée, revient au survol ou au focus ---- */
 .tv__controls {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
+  flex: none;
+  opacity: 0;
+  transition: opacity var(--qos-motion-base);
+
+  /* Au clavier, le focus la révèle : jamais de cible focalisable invisible. */
+  .tv:hover &,
+  &:focus-within {
+    opacity: 1;
+  }
 }
 
 .tv__btn {
@@ -71,9 +168,9 @@
   background: var(--tv-bg-elev);
   color: var(--tv-fg);
   cursor: pointer;
-  transition: background 120ms ease, transform 120ms ease;
+  transition: background var(--qos-motion-fast);
 
-  &:hover:not(:disabled) { background: #1c2940; transform: translateY(-1px); }
+  &:hover:not(:disabled) { background: #1c2940; }
   &:disabled { opacity: 0.4; cursor: default; }
   &:focus-visible { outline: 2px solid var(--tv-accent); outline-offset: 2px; }
 
@@ -100,22 +197,7 @@
   &:focus-visible { outline: 2px solid var(--tv-accent); outline-offset: 2px; }
 }
 
-/* ---- Barre de progression ---- */
-.tv__progress {
-  height: 5px;
-  border-radius: 999px;
-  background: rgba(148, 163, 184, 0.18);
-  overflow: hidden;
-}
-
-.tv__progress-fill {
-  display: block;
-  height: 100%;
-  background: linear-gradient(90deg, var(--tv-accent), var(--tv-good));
-  transition: width 100ms linear;
-}
-
-/* ---- États (loading / error) ---- */
+/* ---- États (chargement / erreur) ---- */
 .tv__state {
   flex: 1;
   display: flex;
@@ -140,7 +222,8 @@
   font-size: 1rem;
   cursor: pointer;
 
-  &:hover { background: rgba(56, 189, 248, 0.12); }
+  &:hover { background: rgba(76, 195, 245, 0.12); }
+  &:focus-visible { outline: 2px solid var(--tv-accent); outline-offset: 2px; }
 }
 
 /* ---- Scène ---- */
@@ -148,36 +231,16 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: clamp(1rem, 2vw, 2rem);
   min-height: 0;
 }
 
-.tv__heading { text-align: center; }
-
-.tv__title {
-  margin: 0;
-  font-weight: 800;
-  letter-spacing: -0.01em;
-  font-size: clamp(1.8rem, 3.4vw, 3rem);
-  line-height: 1.1;
-}
-
-.tv__subtitle {
-  margin: 0.35rem 0 0;
-  color: var(--tv-fg-dim);
-  font-size: clamp(1rem, 1.6vw, 1.5rem);
-}
-
-/* ---- Slide KPIs : grille de grosses cartes ---- */
+/* ---- Slide KPIs ---- */
 .tv__kpis {
   flex: 1;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(clamp(220px, 22vw, 340px), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, clamp(220px, 22vw, 340px)), 1fr));
   gap: clamp(0.75rem, 1.5vw, 1.5rem);
   align-content: center;
-
-  /* On force un fond clair lisible sur les cartes KPI du design system. */
-  ::ng-deep qos-kpi-card { color-scheme: light; }
 }
 
 /* ---- Slide tendance ---- */
@@ -192,7 +255,7 @@
   qos-echart { flex: 1; display: block; }
 }
 
-/* ---- Slide risques (liste) ---- */
+/* ---- Slide risques ---- */
 .tv__list {
   flex: 1;
   display: flex;
@@ -211,11 +274,23 @@
   padding: clamp(0.85rem, 1.6vw, 1.4rem) clamp(1rem, 2vw, 1.75rem);
 }
 
+/* Le rang porte du sens — la liste est classée par gravité. */
+.tv__rank {
+  flex: none;
+  width: 2ch;
+  text-align: right;
+  font-size: clamp(1.1rem, 1.8vw, 1.7rem);
+  font-weight: 600;
+  color: var(--tv-fg-dim);
+  font-variant-numeric: tabular-nums;
+}
+
 .tv__row-main { flex: 1; display: flex; flex-direction: column; gap: 0.25rem; min-width: 0; }
 
 .tv__row-title {
-  font-weight: 700;
+  font-weight: 600;
   font-size: clamp(1.1rem, 1.8vw, 1.6rem);
+  overflow-wrap: anywhere;
 }
 
 .tv__row-meta {
@@ -224,17 +299,18 @@
 }
 
 .tv__row-due {
+  flex: none;
   font-variant-numeric: tabular-nums;
   font-weight: 600;
   color: var(--tv-warn);
   font-size: clamp(1rem, 1.4vw, 1.3rem);
 }
 
-/* ---- Slide prévisions IA (cartes) ---- */
+/* ---- Slide prévisions IA ---- */
 .tv__cards {
   flex: 1;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(clamp(260px, 26vw, 420px), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, clamp(260px, 26vw, 420px)), 1fr));
   gap: clamp(0.75rem, 1.5vw, 1.5rem);
   align-content: center;
 }
@@ -254,20 +330,62 @@
   &--bad  { border-left-color: var(--tv-bad); }
 }
 
-.tv__card-icon { font-size: 2rem; color: var(--tv-accent); }
-.tv__card-title { font-weight: 700; font-size: clamp(1.1rem, 1.7vw, 1.5rem); }
+.tv__card-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  min-width: 0;
+}
+
+.tv__card-icon { font-size: 1.75rem; color: var(--tv-accent); flex: none; }
+
+.tv__card-title {
+  font-weight: 600;
+  font-size: clamp(1.1rem, 1.7vw, 1.5rem);
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
 .tv__card-detail { color: var(--tv-fg-dim); font-size: clamp(0.95rem, 1.3vw, 1.2rem); }
 
 .tv__card-foot {
   margin-top: auto;
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
+  align-items: flex-end;
   gap: 1rem;
   font-size: clamp(0.9rem, 1.2vw, 1.1rem);
 }
 
-.tv__card-conf { font-weight: 700; }
+/* La confiance se voit avant de se lire : une prévision à 40 % et une à 90 %
+ * s'écrivaient pareil, en gras, et se valaient donc à l'œil. */
+.tv__card-conf {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-weight: 600;
+}
+
+.tv__gauge {
+  display: block;
+  width: clamp(5rem, 9vw, 9rem);
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.25);
+  overflow: hidden;
+}
+
+.tv__gauge-fill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--tv-accent);
+
+  .tv__card--good & { background: var(--tv-good); }
+  .tv__card--warn & { background: var(--tv-warn); }
+  .tv__card--bad &  { background: var(--tv-bad); }
+}
+
 .tv__card-horizon { color: var(--tv-fg-dim); }
 
 /* ---- Slide vide ---- */
@@ -280,30 +398,52 @@
 
 .tv__empty-icon { font-size: 6rem; color: var(--tv-fg-dim); opacity: 0.5; }
 
-/* ---- Puces de slides ---- */
-.tv__dots {
+/* ---- Rail de rotation ----
+ *
+ * Il remplace à la fois le filet de progression et les puces de 14 px : la
+ * position dans le cycle et le temps restant se lisent dans un seul objet,
+ * cette fois visible à trois mètres. */
+.tv__rail {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.6rem;
+  align-items: stretch;
+  gap: 4px;
+  flex: none;
 }
 
-.tv__dot {
-  width: 0.85rem;
-  height: 0.85rem;
-  border-radius: 999px;
-  border: none;
-  background: rgba(148, 163, 184, 0.4);
-  cursor: pointer;
+.tv__seg {
+  flex: 1;
+  height: 14px;
+  min-width: 1.5rem;
   padding: 0;
-  transition: background 120ms ease, transform 120ms ease;
+  border: none;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.22);
+  cursor: pointer;
+  position: relative;
 
-  &--active { background: var(--tv-accent); transform: scale(1.25); }
-  &:focus-visible { outline: 2px solid var(--tv-accent); outline-offset: 2px; }
+  /* Pas d'`overflow: hidden` ici : il rognerait la zone de clic ci-dessous.
+   * Le remplissage se découpe par son propre arrondi. */
+
+  /* La case mesure 14 px de haut mais se clique sur 44 px : la cible tactile
+   * s'étend de part et d'autre sans épaissir le trait. */
+  &::after {
+    content: '';
+    position: absolute;
+    inset: -15px 0;
+  }
+
+  &--on { background: rgba(148, 163, 184, 0.34); }
+  &:focus-visible { outline: 2px solid var(--tv-accent); outline-offset: 3px; }
+}
+
+.tv__seg-fill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--tv-accent);
+  transition: width var(--qos-motion-fast) linear;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .tv__progress-fill,
-  .tv__btn,
-  .tv__dot { transition: none; }
+  .tv__seg-fill { transition: none; }
 }

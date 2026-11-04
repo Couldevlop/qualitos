@@ -89,6 +89,15 @@
   @media (max-width: 600px)  { grid-template-columns: 1fr; }
 }
 
+/* L'indicateur hors tolérance occupe deux colonnes : la hiérarchie se fait par
+ * la place, pas par une couleur de plus. En une seule colonne il n'y a rien à
+ * élargir, la règle ne s'applique plus. */
+.qos-dashboard__kpi--alerte {
+  grid-column: span 2;
+
+  @media (max-width: 600px) { grid-column: auto; }
+}
+
 /* ============================================================
  * Rows multi-panneaux (12 colonnes implicites).
  * ============================================================ */

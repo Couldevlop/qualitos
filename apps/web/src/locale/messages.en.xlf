@@ -32376,10 +32376,6 @@ India (service centre)</target>
         <source>Mode TV / Salle qualité</source>
         <target state="translated">TV mode / Quality room</target>
       </trans-unit>
-      <trans-unit id="tv.brand" datatype="html">
-        <source>QualitOS · Salle qualité</source>
-        <target state="translated">QualitOS · Quality room</target>
-      </trans-unit>
       <trans-unit id="tv.toolbar.aria" datatype="html">
         <source>Commandes Mode TV</source>
         <target state="translated">TV mode controls</target>
