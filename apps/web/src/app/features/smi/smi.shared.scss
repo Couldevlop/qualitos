@@ -4,9 +4,13 @@
 // toujours aussi écrit (légende, nom accessible de chaque case) — la couleur
 // seule ne suffit pas (WCAG 1.4.1).
 
+// La carte du SMI est maison : elle ne passait donc pas par les surcharges
+// Material et gardait 20 px de marge intérieure quand toute carte de la
+// plateforme est descendue à 12/16 px. Trois cartes côte à côte, cela faisait
+// 24 px de hauteur inutile par rangée et une colonne de risques coupée en bas.
 @mixin carte {
   .carte {
-    padding: var(--qos-space-5);
+    padding: var(--qos-space-3) var(--qos-space-4);
     border-radius: var(--qos-radius-lg);
     background: var(--qos-bg-elevated);
     border: 1px solid var(--qos-border-subtle);
@@ -14,8 +18,10 @@
     min-width: 0;
 
     &__titre {
-      margin: 0 0 var(--qos-space-4);
-      font-size: var(--qos-fs-md, 16px);
+      margin: 0 0 var(--qos-space-3);
+      // Le repli à 16 px datait d'avant le jeton et rouvrait l'ancien rythme
+      // sur tout navigateur qui n'avait pas encore chargé la feuille de thème.
+      font-size: var(--qos-fs-md);
       font-weight: var(--qos-fw-semibold);
       color: var(--qos-fg-primary);
       line-height: 1.35;
@@ -61,9 +67,12 @@
     font-size: var(--qos-fs-sm);
   }
 
+  // Ce tableau est en HTML natif : il échappe aux hauteurs de ligne posées sur
+  // les classes Material. Sans ce resserrage, la matrice des exigences gardait
+  // des lignes de 52 px au milieu de registres passés à 40 px.
   thead th {
     text-align: left;
-    padding: var(--qos-space-3) var(--qos-space-4);
+    padding: var(--qos-space-2) var(--qos-space-3);
     background: var(--qos-fg-primary);
     color: var(--qos-fg-inverse);
     font-size: var(--qos-fs-xs);
@@ -73,7 +82,7 @@
 
   tbody td,
   tbody th {
-    padding: var(--qos-space-3) var(--qos-space-4);
+    padding: var(--qos-space-2) var(--qos-space-3);
     border-top: 1px solid var(--qos-border-subtle);
     vertical-align: middle;
     text-align: left;
@@ -89,9 +98,11 @@
     color: var(--qos-fg-tertiary);
   }
 
+  // Un tableau vide n'a pas besoin d'occuper la place d'un tableau plein : à
+  // 32 px de marge, le message de vide poussait le bloc suivant hors de vue.
   .aucun {
     text-align: center;
-    padding: var(--qos-space-8);
+    padding: var(--qos-space-6);
     color: var(--qos-fg-secondary);
   }
 }
