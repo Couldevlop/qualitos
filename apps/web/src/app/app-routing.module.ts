@@ -51,6 +51,12 @@ const routes: Routes = [
         loadChildren: () => import('./features/smi/smi.module').then(m => m.SmiModule)
       },
       {
+        // Registre des parties intéressées (ISO 9001 §4.2, ADR 0104).
+        path: 'stakeholders',
+        loadChildren: () => import('./features/stakeholders/stakeholders.module')
+          .then(m => m.StakeholdersModule)
+      },
+      {
         path: 'risques',
         loadChildren: () => import('./features/risk-register/risk-register.module')
           .then(m => m.RiskRegisterModule)

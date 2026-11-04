@@ -116,6 +116,11 @@ export class MainShellComponent implements OnInit, OnDestroy {
         { label: $localize`:@@nav.tableau-de-bord:Tableau de bord`, route: '/dashboard',         icon: 'dashboard' },
         // Pas d'attribut `module` : le SMI ne fait que relire les autres modules.
         { label: $localize`:@@nav.smi:Tableau de bord SMI`, route: '/smi',                    icon: 'hub' },
+        // Le contexte de l'organisme (ISO 9001 §4.2) : qui attend quoi de vous.
+        // Pas d'attribut `module` : le registre des parties intéressées est le
+        // socle du système qualité, pas une option — c'est le serveur qui tranche
+        // qui peut l'écrire.
+        { label: $localize`:@@nav.stakeholders:Parties prenantes`, route: '/stakeholders', icon: 'groups' },
         { label: $localize`:@@nav.mes-dashboards:Mes dashboards`,   route: '/dashboard-builder', icon: 'dashboard_customize' },
         { label: $localize`:@@nav.tv-mode:Mode TV / Salle qualité`, route: '/tv',                icon: 'tv' },
         { label: $localize`:@@nav.indicateurs-kpi:Indicateurs (KPI)`, route: '/kpis',            icon: 'monitoring', module: 'kpi' },
