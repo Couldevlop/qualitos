@@ -1,0 +1,129 @@
+// Le module « Parties prenantes » : tuiles, onglets, et un tiroir pour la fiche.
+// Densité « poste de travail » : c'est un registre qu'un responsable qualité
+// tient ouvert, pas une page de présentation.
+
+:host {
+  display: block;
+}
+
+.shell {
+  min-height: 100%;
+  background: transparent;
+}
+
+// Le tiroir prend la largeur d'une fiche lisible, et toute la largeur sous
+// 720 px : à moins de cela, deux colonnes de formulaire se chevauchent.
+.tiroir {
+  width: min(760px, 100%);
+  background: var(--qos-bg-app);
+  border-left: 1px solid var(--qos-border-subtle);
+}
+
+.echec {
+  display: flex;
+  align-items: center;
+  gap: var(--qos-space-2);
+  margin: 0;
+  color: var(--qos-danger-fg);
+}
+
+// ---------- tuiles ----------
+
+.tuiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr));
+  gap: var(--qos-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tuile {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  padding: var(--qos-space-2) var(--qos-space-3);
+  border-radius: var(--qos-radius-md);
+  background: var(--qos-bg-elevated);
+  border: 1px solid var(--qos-border-subtle);
+
+  &__valeur {
+    font-size: var(--qos-fs-lg);
+    font-weight: var(--qos-fw-semibold);
+    font-variant-numeric: tabular-nums;
+    line-height: 1.1;
+  }
+
+  &__libelle {
+    font-size: var(--qos-fs-xs);
+    color: var(--qos-fg-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  // Un nombre qui doit alerter porte son liseré ET sa couleur de texte : la
+  // couleur seule ne se voit pas en déficience chromatique (WCAG 1.4.1).
+  &--alerte {
+    border-color: var(--qos-danger-fg);
+
+    .tuile__valeur {
+      color: var(--qos-danger-fg);
+    }
+  }
+
+  &--attention {
+    border-color: var(--qos-warn-fg);
+
+    .tuile__valeur {
+      color: var(--qos-warn-fg);
+    }
+  }
+}
+
+// ---------- onglets ----------
+
+.onglets {
+  display: flex;
+  gap: var(--qos-space-1);
+  overflow-x: auto;
+  border-bottom: 1px solid var(--qos-border-subtle);
+}
+
+.onglet {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--qos-space-2);
+  min-height: 2.25rem;
+  padding: 0 var(--qos-space-3);
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: none;
+  color: var(--qos-fg-secondary);
+  font: inherit;
+  font-size: var(--qos-fs-sm);
+  white-space: nowrap;
+  cursor: pointer;
+
+  mat-icon {
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+  }
+
+  &:hover {
+    color: var(--qos-fg-primary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--qos-accent-bg);
+    outline-offset: -2px;
+  }
+
+  &--on {
+    color: var(--qos-accent-fg-soft);
+    border-bottom-color: var(--qos-accent-bg);
+    font-weight: var(--qos-fw-semibold);
+  }
+}

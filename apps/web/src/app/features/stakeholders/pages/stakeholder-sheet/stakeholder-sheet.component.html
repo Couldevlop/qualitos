@@ -1,0 +1,280 @@
+<div class="fiche">
+
+  <header class="fiche__tete">
+    <div class="fiche__identite">
+      <h2 class="fiche__nom">{{ sheet.name }}</h2>
+      <p class="fiche__sous">
+        <span>{{ categoryLabel(sheet.category) }}</span>
+        <span aria-hidden="true">·</span>
+        <span>{{ sideLabel(sheet.side) }}</span>
+        <span aria-hidden="true">·</span>
+        <span [class]="impactChip(criticality)">{{ impactLabel(criticality) }}</span>
+      </p>
+    </div>
+    <button mat-icon-button type="button" (click)="close()" data-test="fermer"
+            i18n-aria-label="@@common.close" aria-label="Fermer">
+      <mat-icon>close</mat-icon>
+    </button>
+  </header>
+
+  <!-- ===== 1. Identification ===== -->
+  <section class="bloc" aria-labelledby="pi-identification">
+    <h3 class="bloc__titre" id="pi-identification" i18n="@@stakeholders.section.identification">Identification</h3>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="large">
+      <mat-label i18n="@@stakeholders.field.name">Nom ou raison sociale</mat-label>
+      <input matInput [(ngModel)]="draft.name" [maxlength]="limits.name" [disabled]="!canManage"
+             data-test="nom">
+    </mat-form-field>
+
+    <div class="deux">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label i18n="@@stakeholders.field.category">Catégorie</mat-label>
+        <mat-select [(ngModel)]="draft.category" [disabled]="!canManage" data-test="categorie">
+          <mat-option *ngFor="let c of categories" [value]="c">{{ categoryLabel(c) }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label i18n="@@stakeholders.filter.side">Interne / externe</mat-label>
+        <mat-select [(ngModel)]="draft.side" [disabled]="!canManage" data-test="cote">
+          <mat-option value="INTERNAL">{{ sideLabel('INTERNAL') }}</mat-option>
+          <mat-option value="EXTERNAL">{{ sideLabel('EXTERNAL') }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="large">
+      <mat-label i18n="@@common.description">Description</mat-label>
+      <textarea matInput rows="2" [(ngModel)]="draft.description" [maxlength]="limits.text"
+                [disabled]="!canManage"></textarea>
+    </mat-form-field>
+
+    <div class="deux">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label i18n="@@stakeholders.field.contact">Coordonnées</mat-label>
+        <input matInput [(ngModel)]="draft.contact" [maxlength]="limits.line" [disabled]="!canManage">
+      </mat-form-field>
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label i18n="@@stakeholders.field.sites">Sites concernés</mat-label>
+        <input matInput [(ngModel)]="draft.sites" [maxlength]="limits.line" [disabled]="!canManage">
+      </mat-form-field>
+    </div>
+  </section>
+
+  <!-- ===== 2. Analyse ===== -->
+  <section class="bloc" aria-labelledby="pi-analyse">
+    <h3 class="bloc__titre" id="pi-analyse" i18n="@@stakeholders.section.analysis">Analyse</h3>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="large">
+      <mat-label i18n="@@stakeholders.field.needs">Besoins et attentes</mat-label>
+      <textarea matInput rows="2" [(ngModel)]="draft.needs" [maxlength]="limits.text"
+                [disabled]="!canManage" data-test="besoins"></textarea>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="large">
+      <mat-label i18n="@@stakeholders.field.requirements-summary">Exigences applicables</mat-label>
+      <textarea matInput rows="2" [(ngModel)]="draft.requirementsSummary" [maxlength]="limits.text"
+                [disabled]="!canManage"></textarea>
+    </mat-form-field>
+
+    <div class="deux">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label i18n="@@stakeholders.field.relevance">Pertinence pour le système qualité</mat-label>
+        <mat-select [(ngModel)]="draft.relevance" [disabled]="!canManage" data-test="pertinence">
+          <mat-option *ngFor="let r of relevances" [value]="r">{{ relevanceLabel(r) }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <qos-user-picker label="Responsable interne de la relation" i18n-label="@@stakeholders.field.owner"
+                       [ngModel]="draft.owner?.accountId ?? null" [disabled]="!canManage"
+                       (userSelected)="onOwner($event)" data-test="responsable"></qos-user-picker>
+    </div>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="large">
+      <mat-label i18n="@@stakeholders.field.justification">Justification de la pertinence ou de la non-pertinence</mat-label>
+      <textarea matInput rows="2" [(ngModel)]="draft.relevanceJustification" [maxlength]="limits.text"
+                [disabled]="!canManage" data-test="justification"></textarea>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="large">
+      <mat-label i18n="@@stakeholders.field.risks">Risques et opportunités associés</mat-label>
+      <textarea matInput rows="2" [(ngModel)]="draft.risksAndOpportunities" [maxlength]="limits.text"
+                [disabled]="!canManage"></textarea>
+    </mat-form-field>
+
+    <!-- Deux cotations, pas une : elles ne se compensent pas. La criticité est
+         CALCULÉE et affichée, jamais saisie — sinon elle se périme. -->
+    <div class="cotation">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label i18n="@@stakeholders.field.quality-impact">Impact qualité</mat-label>
+        <mat-select [(ngModel)]="draft.qualityImpact" [disabled]="!canManage" data-test="impact-qualite">
+          <mat-option *ngFor="let i of impacts" [value]="i">{{ impactLabel(i) }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label i18n="@@stakeholders.field.regulatory-impact">Impact réglementaire</mat-label>
+        <mat-select [(ngModel)]="draft.regulatoryImpact" [disabled]="!canManage" data-test="impact-reglementaire">
+          <mat-option *ngFor="let i of impacts" [value]="i">{{ impactLabel(i) }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <p class="cotation__resultat">
+        <span class="cotation__libelle" i18n="@@stakeholders.col.criticality">Criticité</span>
+        <span [class]="impactChip(criticality)" data-test="criticite">{{ impactLabel(criticality) }}</span>
+      </p>
+    </div>
+  </section>
+
+  <!-- ===== 3. Pilotage ===== -->
+  <section class="bloc" aria-labelledby="pi-pilotage">
+    <h3 class="bloc__titre" id="pi-pilotage" i18n="@@stakeholders.section.steering">Pilotage</h3>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="large">
+      <mat-label i18n="@@stakeholders.field.controls">Mesures de maîtrise</mat-label>
+      <textarea matInput rows="2" [(ngModel)]="draft.controls" [maxlength]="limits.text"
+                [disabled]="!canManage"></textarea>
+    </mat-form-field>
+
+    <div class="deux">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label i18n="@@stakeholders.field.indicators">Indicateurs de suivi</mat-label>
+        <input matInput [(ngModel)]="draft.indicators" [maxlength]="limits.line" [disabled]="!canManage">
+      </mat-form-field>
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label i18n="@@stakeholders.field.documents">Documents de référence</mat-label>
+        <input matInput [(ngModel)]="draft.documents" [maxlength]="limits.line" [disabled]="!canManage">
+      </mat-form-field>
+    </div>
+
+    <div class="deux">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label i18n="@@stakeholders.field.actions">Actions associées</mat-label>
+        <input matInput [(ngModel)]="draft.actions" [maxlength]="limits.line" [disabled]="!canManage">
+      </mat-form-field>
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label i18n="@@stakeholders.field.next-review">Prochaine réévaluation</mat-label>
+        <input matInput type="date" [(ngModel)]="draft.nextReviewOn" [disabled]="!canManage"
+               data-test="prochaine-revue">
+      </mat-form-field>
+    </div>
+
+    <p class="revue">
+      <span *ngIf="sheet.lastReviewedOn; else jamais">
+        <span i18n="@@stakeholders.reviewed-on">Dernière revue le</span>
+        {{ sheet.lastReviewedOn | date:'mediumDate' }}
+      </span>
+      <ng-template #jamais>
+        <span class="dim" i18n="@@stakeholders.never-reviewed">Jamais revue.</span>
+      </ng-template>
+      <button mat-stroked-button type="button" *ngIf="canManage" (click)="markReviewed()"
+              [disabled]="saving" data-test="marquer-revue">
+        <mat-icon>task_alt</mat-icon>
+        <span i18n="@@stakeholders.mark-reviewed">Marquer comme revue</span>
+      </button>
+    </p>
+  </section>
+
+  <!-- ===== 4. Exigences ===== -->
+  <section class="bloc" aria-labelledby="pi-exigences">
+    <header class="bloc__head">
+      <div>
+        <h3 class="bloc__titre" id="pi-exigences" i18n="@@stakeholders.section.requirements">Exigences</h3>
+        <p class="bloc__aide" i18n="@@stakeholders.requirements-help">
+          Ce que cette partie prenante attend, d'où cela vient, et comment vous vous en assurez.
+          Chaque ligne se rattache à un risque, un écart, un audit ou un document.
+        </p>
+      </div>
+      <button mat-stroked-button color="primary" type="button" *ngIf="canManage"
+              (click)="addRequirement()" data-test="ajouter-exigence">
+        <mat-icon>add</mat-icon>
+        <span i18n="@@stakeholders.add-requirement">Ajouter une exigence</span>
+      </button>
+    </header>
+
+    <p class="dim" *ngIf="!requirements.length" i18n="@@stakeholders.requirements-empty">
+      Aucune exigence pour le moment. Ajoutez-en une, ou importez un contrat depuis l'assistant IA.
+    </p>
+
+    <ul class="exigences" *ngIf="requirements.length">
+      <li class="exigence" *ngFor="let r of requirements; trackBy: trackByRequirement"
+          data-test="exigence">
+        <div class="exigence__tete">
+          <div class="exigence__texte">
+            <strong>{{ r.requirement }}</strong>
+            <small class="dim" *ngIf="r.origin">{{ r.origin }}</small>
+          </div>
+          <span [class]="statusChip(r.status)">{{ requirementStatusLabel(r.status) }}</span>
+        </div>
+
+        <p class="exigence__meta">
+          <span *ngIf="r.nature">{{ natureLabel(r.nature) }}</span>
+          <span *ngIf="r.riskLevel" [class]="impactChip(r.riskLevel)">{{ impactLabel(r.riskLevel) }}</span>
+          <span *ngIf="r.responsible">{{ r.responsible }}</span>
+          <span *ngIf="r.indicator">{{ r.indicator }}</span>
+        </p>
+
+        <div class="exigence__actions" *ngIf="canManage">
+          <mat-form-field appearance="outline" subscriptSizing="dynamic" class="exigence__statut">
+            <mat-label i18n="@@common.status">Statut</mat-label>
+            <mat-select [value]="r.status" (selectionChange)="setStatus(r, $event.value)"
+                        data-test="statut-exigence">
+              <mat-option *ngFor="let s of statuses" [value]="s">{{ requirementStatusLabel(s) }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <span class="exigence__liens">
+            <button mat-button type="button" (click)="link(r, 'RISK')" [class.lie]="r.riskId"
+                    data-test="lier-risque">
+              <mat-icon aria-hidden="true">warning</mat-icon>
+              <span i18n="@@stakeholders.link.risk">Risque</span>
+            </button>
+            <button mat-button type="button" (click)="link(r, 'NON_CONFORMITY')" [class.lie]="r.ncId"
+                    data-test="lier-nc">
+              <mat-icon aria-hidden="true">report_problem</mat-icon>
+              <span i18n="@@stakeholders.link.nc">Écart</span>
+            </button>
+            <button mat-button type="button" (click)="link(r, 'AUDIT')" [class.lie]="r.auditId"
+                    data-test="lier-audit">
+              <mat-icon aria-hidden="true">fact_check</mat-icon>
+              <span i18n="@@stakeholders.link.audit">Audit</span>
+            </button>
+            <button mat-button type="button" (click)="link(r, 'DOCUMENT')" [class.lie]="r.documentId"
+                    data-test="lier-document">
+              <mat-icon aria-hidden="true">description</mat-icon>
+              <span i18n="@@stakeholders.link.document">Document</span>
+            </button>
+          </span>
+
+          <a mat-button *ngIf="r.capaId" [routerLink]="['/capa', r.capaId]" data-test="voir-capa">
+            <mat-icon aria-hidden="true">open_in_new</mat-icon>
+            <span i18n="@@stakeholders.see-capa">Voir la CAPA</span>
+          </a>
+          <button mat-stroked-button color="primary" type="button" *ngIf="!r.capaId"
+                  (click)="openCapa(r)" data-test="creer-action">
+            <mat-icon aria-hidden="true">add_task</mat-icon>
+            <span i18n="@@stakeholders.create-action">Créer une action</span>
+          </button>
+
+          <button mat-icon-button type="button" color="warn" (click)="removeRequirement(r)"
+                  i18n-aria-label="@@stakeholders.requirement-remove" aria-label="Retirer"
+                  data-test="retirer-exigence">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <!-- Barre d'enregistrement : n'apparaît qu'avec des changements. -->
+  <div class="barre" *ngIf="dirty && canManage" role="status">
+    <ul class="barre__problemes" *ngIf="problems.length" data-test="problemes">
+      <li *ngFor="let p of problems">{{ p }}</li>
+    </ul>
+    <span *ngIf="!problems.length" i18n="@@stakeholders.pending">Fiche modifiée</span>
+    <span class="barre__actions">
+      <button mat-stroked-button type="button" (click)="discard()" [disabled]="saving"
+              data-test="annuler" i18n="@@authz.matrix.discard">Annuler les changements</button>
+      <button mat-flat-button color="primary" type="button" (click)="save()"
+              [disabled]="saving || problems.length > 0" data-test="enregistrer"
+              i18n="@@common.save">Enregistrer</button>
+    </span>
+  </div>
+</div>

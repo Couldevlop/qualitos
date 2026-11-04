@@ -1,0 +1,103 @@
+<mat-drawer-container class="shell" [hasBackdrop]="true" autosize>
+
+  <!-- La fiche s'ouvre PAR-DESSUS la liste : on la lit, on la corrige, on
+       revient. Une navigation ferait perdre le filtre et la position. -->
+  <mat-drawer class="tiroir" mode="over" position="end" [opened]="!!openSheet"
+              (closedStart)="closeSheet(false)" i18n-aria-label="@@stakeholders.sheet.aria"
+              aria-label="Fiche de la partie prenante">
+    <qos-stakeholder-sheet *ngIf="openSheet" [sheet]="openSheet" [canManage]="canManage"
+                           (saved)="onSheetSaved($event)" (closed)="closeSheet($event)">
+    </qos-stakeholder-sheet>
+  </mat-drawer>
+
+  <mat-drawer-content>
+    <div class="qos-page">
+      <qos-page-header
+        title="Parties prenantes" i18n-title="@@stakeholders.title"
+        subtitle="Contexte de l'organisme : qui attend quoi de vous, et comment vous vous en assurez."
+        i18n-subtitle="@@stakeholders.subtitle">
+        <ng-container qosActions>
+          <button mat-flat-button color="primary" type="button" *ngIf="canManage"
+                  (click)="create()" data-test="nouvelle-partie">
+            <mat-icon>group_add</mat-icon>
+            <span i18n="@@stakeholders.new">Nouvelle partie prenante</span>
+          </button>
+        </ng-container>
+      </qos-page-header>
+
+      <!-- Les tuiles disent ce qu'une revue de direction regarde d'abord :
+           ce qui est critique, ce qui n'est pas à jour, ce qui n'est pas tranché. -->
+      <ul class="tuiles" *ngIf="statistics as s" data-test="tuiles">
+        <li class="tuile">
+          <span class="tuile__valeur">{{ s.total }}</span>
+          <span class="tuile__libelle" i18n="@@stakeholders.tile.total">Parties prenantes</span>
+        </li>
+        <li class="tuile">
+          <span class="tuile__valeur">{{ s.internal }} / {{ s.external }}</span>
+          <span class="tuile__libelle" i18n="@@stakeholders.tile.sides">Internes / externes</span>
+        </li>
+        <li class="tuile" [class.tuile--alerte]="s.critical > 0">
+          <span class="tuile__valeur">{{ s.critical }}</span>
+          <span class="tuile__libelle" i18n="@@stakeholders.tile.critical">Criticité élevée</span>
+        </li>
+        <li class="tuile" [class.tuile--alerte]="s.overdue > 0">
+          <span class="tuile__valeur">{{ s.overdue }}</span>
+          <span class="tuile__libelle" i18n="@@stakeholders.tile.overdue">Revues en retard</span>
+        </li>
+        <li class="tuile" [class.tuile--attention]="s.toDetermine > 0">
+          <span class="tuile__valeur">{{ s.toDetermine }}</span>
+          <span class="tuile__libelle" i18n="@@stakeholders.tile.to-determine">Pertinence à trancher</span>
+        </li>
+        <li class="tuile" [class.tuile--attention]="s.requirementsToReassess > 0">
+          <span class="tuile__valeur">{{ s.requirementsToReassess }}</span>
+          <span class="tuile__libelle" i18n="@@stakeholders.tile.to-reassess">Exigences à réévaluer</span>
+        </li>
+      </ul>
+
+      <!-- Trois vues des MÊMES fiches : des onglets, pas trois routes. -->
+      <nav class="onglets" role="tablist" i18n-aria-label="@@stakeholders.tabs"
+           aria-label="Vues du registre">
+        <button type="button" role="tab" class="onglet" [class.onglet--on]="tab === 'register'"
+                [attr.aria-selected]="tab === 'register'" (click)="tab = 'register'"
+                data-test="onglet-registre">
+          <mat-icon aria-hidden="true">list_alt</mat-icon>
+          <span i18n="@@stakeholders.tab.register">Registre</span>
+        </button>
+        <button type="button" role="tab" class="onglet" [class.onglet--on]="tab === 'matrix'"
+                [attr.aria-selected]="tab === 'matrix'" (click)="tab = 'matrix'"
+                data-test="onglet-matrice">
+          <mat-icon aria-hidden="true">grid_on</mat-icon>
+          <span i18n="@@stakeholders.tab.matrix">Matrice d'évaluation</span>
+        </button>
+        <button type="button" role="tab" class="onglet" [class.onglet--on]="tab === 'assistant'"
+                [attr.aria-selected]="tab === 'assistant'" (click)="tab = 'assistant'"
+                data-test="onglet-assistant">
+          <mat-icon aria-hidden="true">auto_awesome</mat-icon>
+          <span i18n="@@stakeholders.tab.assistant">Assistant IA</span>
+        </button>
+      </nav>
+
+      <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+
+      <p class="echec" *ngIf="failed" role="alert">
+        <span i18n="@@stakeholders.load-failed">Le registre des parties prenantes n'a pas pu être chargé.</span>
+        <button mat-button type="button" (click)="load()" i18n="@@common.retry">Réessayer</button>
+      </p>
+
+      <ng-container *ngIf="!failed" [ngSwitch]="tab">
+        <qos-stakeholder-register *ngSwitchCase="'register'" [rows]="rows" [loading]="loading"
+                                  [side]="side" [search]="search"
+                                  (filtersChange)="onFilters($event)" (opened)="open($event)">
+        </qos-stakeholder-register>
+
+        <qos-stakeholder-matrix *ngSwitchCase="'matrix'" [rows]="rows" [canManage]="canManage"
+                                (rated)="onRated($event)">
+        </qos-stakeholder-matrix>
+
+        <qos-stakeholder-assistant *ngSwitchCase="'assistant'" [rows]="rows"
+                                   (registered)="onSuggestionAccepted()" (opened)="open($event)">
+        </qos-stakeholder-assistant>
+      </ng-container>
+    </div>
+  </mat-drawer-content>
+</mat-drawer-container>
