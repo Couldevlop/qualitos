@@ -1,11 +1,18 @@
+/* Le registre pose son en-tête et sa barre de filtres en pixels : ces valeurs
+   dataient d'avant les jetons et rouvraient l'ancien rythme sur l'écran le plus
+   consulté du module. Un h1 de 24 px au-dessus de lignes de 40 px faisait d'un
+   registre une page de couverture ; la barre de filtres reprenait 16 px de
+   marge intérieure là où le socle la descend à 8/12 px, et sa marge basse
+   doublait la gouttière de `.qos-page`. Trois audits de plus à l'écran. */
 .page-header {
-  display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-bottom: 16px;
-  h1 { margin: 0 0 4px; font-size: 24px; font-weight: 600; }
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--qos-space-4); margin-bottom: 0;
+  h1 { margin: 0; font-size: var(--qos-fs-xl); font-weight: var(--qos-fw-semibold); }
   p  { margin: 0; color: var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.6)); }
 }
-.filter-card { padding: 16px; margin-bottom: 16px; }
+.filter-card { margin-bottom: 0; }
 .status-filter { width: min(220px, 100%); }
-.state-row { display: flex; align-items: center; gap: 12px; padding: 24px 0; }
+.state-row { display: flex; align-items: center; gap: var(--qos-space-3); padding: var(--qos-space-3) 0; }
 .t { width: 100%; }
 .cell {
   display: flex; flex-direction: column;
@@ -25,7 +32,7 @@
 .score-high { color: #2e7d32; }
 .score-mid  { color: #ef6c00; }
 .score-low  { color: #c62828; }
-.empty { padding: 32px; text-align: center; color: var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.6)); }
+.empty { padding: var(--qos-space-8); text-align: center; color: var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.6)); }
 
 .clickable-row {
   cursor: pointer;
