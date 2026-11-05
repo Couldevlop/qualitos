@@ -69,6 +69,45 @@ spec:
               service:
                 name: api-core
                 port: { name: http }
+          # Marque du client (identite, theme, logo) : api-core, et hors
+          # @SaasOnly parce qu'une installation chez le client porte aussi sa
+          # marque. Sans cette regle, le SPA chargeait son theme depuis le
+          # moteur qualite, qui ne connait pas le chemin : la page restait aux
+          # couleurs par defaut sans qu'aucune erreur ne soit visible.
+          - path: /api/v1/branding
+            pathType: Prefix
+            backend:
+              service:
+                name: api-core
+                port: { name: http }
+          # Les trois surfaces des cabinets partenaires (ADR 0106) vivent dans
+          # api-core, a cote de /api/v1/tenants : un cabinet et ses consultants
+          # sont des donnees de PLATEFORME, pas de moteur qualite.
+          #
+          # Trois regles et non un prefixe /api/v1/partner : avec pathType
+          # Prefix, Kubernetes compare des SEGMENTS de chemin, donc
+          # /api/v1/partner ne couvrirait pas /api/v1/partner-firms ni
+          # /api/v1/partner-access, qui partiraient au fourre-tout /api et
+          # repondraient 404 — la console des cabinets serait muette alors que
+          # le domaine est complet et teste.
+          - path: /api/v1/partner-firms
+            pathType: Prefix
+            backend:
+              service:
+                name: api-core
+                port: { name: http }
+          - path: /api/v1/partner-access
+            pathType: Prefix
+            backend:
+              service:
+                name: api-core
+                port: { name: http }
+          - path: /api/v1/partner
+            pathType: Prefix
+            backend:
+              service:
+                name: api-core
+                port: { name: http }
           - path: /api/v1/iot
             pathType: Prefix
             backend:

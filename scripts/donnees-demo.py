@@ -702,6 +702,40 @@ def parties_prenantes(c):
                 'revue actee sur la fiche client')
 
 
+def nc_et_ishikawa(c):
+    """Les deux ensemble : l'arete de poisson part de la NC interne creee ici.
+
+    Les separer en deux sections demanderait de retrouver la NC d'un passage
+    precedent, et une section doit pouvoir se rejouer seule.
+    """
+    interne, _ = non_conformites(c)
+    ishikawa(c, interne)
+
+
+# L'ordre de ce dictionnaire EST l'ordre d'execution quand on demande « tout » :
+# certaines sections s'appuient sur les activations de modules posees par la
+# premiere. Les cles sont les noms que `--sections` accepte.
+SECTIONS = {
+    'modules': modules,
+    'produits-amdec': produits_et_amdec,
+    'parties-prenantes': parties_prenantes,
+    'pdca': cycle_pdca,
+    'audits-5s': audits_5s,
+    'nc-ishikawa': nc_et_ishikawa,
+    'audits': audits,
+    'documents': documents,
+    'fournisseurs': fournisseurs,
+    'kpis': kpis,
+    'cercles-idees': cercles_et_idees,
+    'formation': formation,
+    'equipements': equipements,
+    'ehs': ehs,
+    'changements': changements,
+    'dmaic': dmaic,
+    'iot': iot,
+}
+
+
 def main():
     analyseur = argparse.ArgumentParser(description=__doc__)
     analyseur.add_argument('--api', default='http://localhost:8082')
@@ -711,7 +745,21 @@ def main():
     analyseur.add_argument('--utilisateur', default='demo')
     analyseur.add_argument('--secret', default='demo')
     analyseur.add_argument('--langue', default='fr')
+    analyseur.add_argument(
+        '--sections', default='tout',
+        help='Sections a peupler, separees par des virgules (defaut : tout). '
+             'Utile pour completer un seul module sur une instance deja peuplee, '
+             'sans recreer un jeu complet. Noms disponibles : '
+             + ', '.join(SECTIONS))
     options = analyseur.parse_args()
+
+    demandees = [n.strip() for n in options.sections.split(',') if n.strip()]
+    if demandees == ['tout']:
+        demandees = list(SECTIONS)
+    inconnues = [n for n in demandees if n not in SECTIONS]
+    if inconnues:
+        sys.exit('Section inconnue : %s. Disponibles : %s'
+                 % (', '.join(inconnues), ', '.join(SECTIONS)))
 
     print('QualitOS — donnees de demonstration')
     print('API %s, utilisateur %s, suffixe %s' % (options.api, options.utilisateur, SUFFIXE))
@@ -725,24 +773,9 @@ def main():
     c = Client(options.api, acces, options.langue)
     debut = time.time()
 
-    modules(c)
-    produits_et_amdec(c)
-    parties_prenantes(c)
-    cycle_pdca(c)
-    audits_5s(c)
-    interne, _ = non_conformites(c)
-    ishikawa(c, interne)
-    audits(c)
-    documents(c)
-    fournisseurs(c)
-    kpis(c)
-    cercles_et_idees(c)
-    formation(c)
-    equipements(c)
-    ehs(c)
-    changements(c)
-    dmaic(c)
-    iot(c)
+    print('Sections : %s' % ', '.join(demandees))
+    for nom in demandees:
+        SECTIONS[nom](c)
     # Un refus ATTENDU n'est pas une anomalie : activer un module est reserve a
     # l'administration du client, et ce script tourne sous un compte de pilotage
     # qualite. Les confondre ferait rendre 1 a chaque passage, et le code de sortie
