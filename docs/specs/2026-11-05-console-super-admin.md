@@ -462,3 +462,45 @@ nomenclatures du client, écran dans le paramétrage du client, six descripteurs
 d'entrée. Famille **client** (§7) : la reprise existe en on-premise, où elle est
 même le premier geste après l'installation. Dépend du lot 6 (habilitations : qui
 a le droit d'importer) pour l'écran, mais le moteur est parallélisable.
+
+---
+
+## 10. Correction du 2026-11-05 — le catalogue des modules existe déjà
+
+La demande « le super administrateur doit voir tous les modules qui existent sur
+la plateforme » a d'abord été traitée comme un manque côté serveur : table
+`platform_modules`, entité, service, route. **C'était un doublon**, et il a été
+retiré avant d'être livré.
+
+Le catalogue existe : `ModuleCatalog` (api-quality-engine,
+`tenantmodules/domain`), 25 entrées, exposées par
+`GET /api/v1/tenant-modules/catalog`. Il porte plus que des libellés — le
+**palier minimal** de chaque module et ses **dépendances** (`risk` exige `capa` ;
+`controlplan` exige `risk` et `product` ; `standards` exige `docs` et `audit`).
+Ce sont des règles de domaine, et leur place est le code, pas une table de
+paramétrage : une dépendance mal saisie produirait un module activé qui ne
+fonctionne pas.
+
+Vérifié : les **20 codes** sur lesquels la navigation Angular garde
+(`main-shell.component.ts`, attribut `module`) sont tous présents dans ce
+catalogue. Il n'y a donc pas de dérive à corriger entre ce qui s'accorde et ce
+qui s'ouvre.
+
+**Ce qui manquait est donc uniquement l'écran.** Le lot 1 ajoute une vue
+« Modules de la plateforme » dans la console, alimentée par cette route — pas une
+seconde source de vérité.
+
+Deux dettes relevées au passage, à traiter dans leur lot :
+
+- `module_prices.module_code` et `subscriptions.module_code` (api-core) ne sont
+  **pas** confrontés au catalogue de l'engine : un tarif peut être posé sur un
+  code qui n'existe pas. À reprendre au **lot 7** (abonnement), où le code de
+  module est déjà manipulé.
+- La navigation Angular porte les 20 codes en dur. Les faire venir du catalogue
+  est l'objet du **lot 1, tâche 4**, et c'est ce qui rend la désactivation d'un
+  module visible sans livraison.
+
+**Leçon de méthode, écrite ici parce qu'elle se reproduira :** avant d'ajouter
+une table qui « manque », chercher le concept sous ses autres noms dans les
+autres services. Trois colonnes parlaient de modules dans api-core sans jamais
+nommer le catalogue ; c'est l'engine qui le tenait.
