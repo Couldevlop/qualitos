@@ -29398,6 +29398,26 @@ declared income
         <source>Décrivez votre activité : l'assistant propose les familles de parties intéressées qu'un organisme comme le vôtre doit prendre en compte.</source>
         <target state="translated">Describe your activity: the assistant proposes the families of interested parties that an organization like yours must take into account.</target>
       </trans-unit>
+      <trans-unit id="stakeholders.sector.aerospace" datatype="html">
+        <source>Aéronautique</source>
+        <target state="translated">Aerospace</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.sector.automotive" datatype="html">
+        <source>Automobile</source>
+        <target state="translated">Automotive</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.sector.food" datatype="html">
+        <source>Agroalimentaire</source>
+        <target state="translated">Food industry</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.sector.medical-devices" datatype="html">
+        <source>Dispositifs médicaux</source>
+        <target state="translated">Medical devices</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.sector.services" datatype="html">
+        <source>Services</source>
+        <target state="translated">Services</target>
+      </trans-unit>
       <trans-unit id="stakeholders.assistant.sector" datatype="html">
         <source>Secteur d'activité</source>
         <target state="translated">Sector of activity</target>

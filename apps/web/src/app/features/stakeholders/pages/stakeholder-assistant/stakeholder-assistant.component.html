@@ -20,9 +20,11 @@
   <div class="saisie">
     <mat-form-field appearance="outline" subscriptSizing="dynamic">
       <mat-label i18n="@@stakeholders.assistant.sector">Secteur d'activité</mat-label>
-      <input matInput [(ngModel)]="sector" [maxlength]="maxSector" data-test="secteur">
+      <mat-select [(ngModel)]="sector" data-test="secteur">
+        <mat-option *ngFor="let s of sectors" [value]="s">{{ s }}</mat-option>
+      </mat-select>
     </mat-form-field>
-    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="large">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
       <mat-label i18n="@@stakeholders.assistant.characteristics">Caractéristiques (sites, clients, contraintes)</mat-label>
       <textarea matInput rows="2" [(ngModel)]="characteristics" [maxlength]="maxCharacteristics"
                 data-test="caracteristiques"></textarea>

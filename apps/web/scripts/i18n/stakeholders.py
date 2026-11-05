@@ -668,6 +668,21 @@ TRANSLATIONS = {
         '事業内容を説明してください。あなたのような組織が考慮すべき利害関係者の類型を'
         'アシスタントが提案します。',
         '描述您的业务：助手会提出像您这样的组织应当考虑的相关方类别。'),
+    'stakeholders.sector.aerospace': (
+        'Aéronautique', 'Aerospace', 'Aeronáutica',
+        'الطيران', '航空宇宙', '航空航天'),
+    'stakeholders.sector.automotive': (
+        'Automobile', 'Automotive', 'Automoción',
+        'السيارات', '自動車', '汽车'),
+    'stakeholders.sector.food': (
+        'Agroalimentaire', 'Food industry', 'Agroalimentario',
+        'الصناعات الغذائية', '食品', '食品'),
+    'stakeholders.sector.medical-devices': (
+        'Dispositifs médicaux', 'Medical devices', 'Productos sanitarios',
+        'الأجهزة الطبية', '医療機器', '医疗器械'),
+    'stakeholders.sector.services': (
+        'Services', 'Services', 'Servicios',
+        'الخدمات', 'サービス', '服务'),
     'stakeholders.assistant.sector': (
         "Secteur d'activité", 'Sector of activity', 'Sector de actividad',
         'قطاع النشاط', '業種', '行业'),
