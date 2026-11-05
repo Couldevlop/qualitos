@@ -11,6 +11,8 @@ TRANSLATIONS = {
     'nav.stakeholders': (
         'Parties prenantes', 'Stakeholders', 'Partes interesadas',
         'الأطراف المعنية', '利害関係者', '相关方'),
+    'stakeholders.export': (
+        'Exporter', 'Export', 'Exportar', 'تصدير', 'エクスポート', '导出'),
     'stakeholders.title': (
         'Parties prenantes', 'Stakeholders', 'Partes interesadas',
         'الأطراف المعنية', '利害関係者', '相关方'),
@@ -84,6 +86,9 @@ TRANSLATIONS = {
     'stakeholders.filter.side': (
         'Interne / externe', 'Internal / external', 'Interna / externa',
         'داخلي / خارجي', '内部／外部', '内部／外部'),
+    'stakeholders.filter.criticality': (
+        'Niveau de risque', 'Risk level', 'Nivel de riesgo',
+        'مستوى الخطر', 'リスクレベル', '风险等级'),
     'stakeholders.filter.clear': (
         'Effacer les filtres', 'Clear filters', 'Borrar los filtros',
         'مسح عوامل التصفية', '絞り込みを解除', '清除筛选'),
@@ -92,6 +97,9 @@ TRANSLATIONS = {
         'الطرف المعني', '利害関係者', '相关方'),
     'stakeholders.col.category': (
         'Catégorie', 'Category', 'Categoría', 'الفئة', 'カテゴリー', '类别'),
+    'stakeholders.col.side': (
+        'Interne / externe', 'Internal / external', 'Interna / externa',
+        'داخلي / خارجي', '内部／外部', '内部／外部'),
     'stakeholders.col.criticality': (
         'Criticité', 'Criticality', 'Criticidad', 'الأهمية', '重要度', '关键性'),
     'stakeholders.col.relevance': (
@@ -396,6 +404,8 @@ TRANSLATIONS = {
         'Écart', 'Deviation', 'Desviación', 'انحراف', '不適合', '偏差'),
     'stakeholders.link.audit': (
         'Audit', 'Audit', 'Auditoría', 'تدقيق', '監査', '审核'),
+    'stakeholders.link.capa': (
+        'Action', 'Action', 'Acción', 'إجراء', 'アクション', '措施'),
     'stakeholders.link.document': (
         'Document', 'Document', 'Documento', 'وثيقة', '文書', '文件'),
     'stakeholders.linked': (

@@ -50,8 +50,18 @@ public record CapabilityCalculation(
         Double centerOffset,
         Double centeringPercent) {
 
-    /** Le nombre de sous-groupes d'une étude, colonnes « SG 01 » à « SG 20 » du classeur. */
-    public static final int SUBGROUPS = 20;
+    /**
+     * Les bornes du nombre de sous-groupes d'une étude.
+     *
+     * <p>Le classeur de référence en comptait vingt, et vingt avait été figé
+     * des deux côtés : une étude de douze sous-groupes — le cas courant d'une
+     * collecte en cours — était refusée. La règle de l'art (« vingt à
+     * vingt-cinq sous-groupes ») est un plancher de CONFIANCE, que l'écran
+     * rappelle, pas une taille de grille.
+     */
+    public static final int MIN_SUBGROUPS = 2;
+    public static final int DEFAULT_SUBGROUPS = 20;
+    public static final int MAX_SUBGROUPS = 40;
 
     public CapabilityCalculation {
         subgroupMeans = Collections.unmodifiableList(new ArrayList<>(subgroupMeans));
@@ -61,17 +71,23 @@ public record CapabilityCalculation(
     /**
      * Calcule l'étude.
      *
-     * @param measurements {@code n} lignes (échantillons) de {@link #SUBGROUPS}
-     *                     cellules (sous-groupes), une cellule vide valant {@code null}
+     * @param measurements {@code n} lignes (échantillons) d'autant de cellules
+     *                     que l'étude compte de sous-groupes, une cellule vide
+     *                     valant {@code null}
      */
     public static CapabilityCalculation of(double lsl, double usl, int n, List<List<Double>> measurements) {
         SpcConstants k = SpcConstants.forSubgroupSize(n);
-        List<Double> moyennes = new ArrayList<>(SUBGROUPS);
-        List<Double> etendues = new ArrayList<>(SUBGROUPS);
+        // La largeur est celle de la ligne la plus longue : une grille en escalier
+        // ne perd pas ses dernieres colonnes, ses sous-groupes incomplets sont
+        // simplement ecartes plus bas, comme une cellule vide.
+        int colonnes = measurements == null ? 0 : measurements.stream()
+                .filter(java.util.Objects::nonNull).mapToInt(List::size).max().orElse(0);
+        List<Double> moyennes = new ArrayList<>(colonnes);
+        List<Double> etendues = new ArrayList<>(colonnes);
         double sommeMoyennes = 0;
         double sommeEtendues = 0;
         int m = 0;
-        for (int c = 0; c < SUBGROUPS; c++) {
+        for (int c = 0; c < colonnes; c++) {
             double somme = 0;
             double min = Double.POSITIVE_INFINITY;
             double max = Double.NEGATIVE_INFINITY;

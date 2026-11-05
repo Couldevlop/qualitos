@@ -28026,6 +28026,22 @@ historique 12 mois</source>
         <source>Mesures par sous-groupe</source>
         <target state="translated">القياسات حسب المجموعة الفرعية</target>
       </trans-unit>
+      <trans-unit id="spc.study.subgroup-count" datatype="html">
+        <source><x id="INTERPOLATION"/> sous-groupe(s)</source>
+        <target state="translated"><x id="INTERPOLATION"/> مجموعة فرعية</target>
+      </trans-unit>
+      <trans-unit id="spc.study.subgroup-add" datatype="html">
+        <source>Ajouter un sous-groupe</source>
+        <target state="translated">إضافة مجموعة فرعية</target>
+      </trans-unit>
+      <trans-unit id="spc.study.subgroup-remove" datatype="html">
+        <source>Retirer le dernier sous-groupe (il doit être vide)</source>
+        <target state="translated">إزالة المجموعة الفرعية الأخيرة (يجب أن تكون فارغة)</target>
+      </trans-unit>
+      <trans-unit id="spc.study.few-subgroups" datatype="html">
+        <source>Moins de 20 sous-groupes : les limites de contrôle restent indicatives.</source>
+        <target state="translated">أقل من 20 مجموعة فرعية: تبقى حدود التحكم إرشادية.</target>
+      </trans-unit>
       <trans-unit id="spc.study.sample" datatype="html">
         <source>Échantillon</source>
         <target state="translated">العينة</target>
@@ -28346,6 +28362,10 @@ historique 12 mois</source>
         <source>Parties prenantes</source>
         <target state="translated">الأطراف المعنية</target>
       </trans-unit>
+      <trans-unit id="stakeholders.export" datatype="html">
+        <source>Exporter</source>
+        <target state="translated">تصدير</target>
+      </trans-unit>
       <trans-unit id="stakeholders.title" datatype="html">
         <source>Parties prenantes</source>
         <target state="translated">الأطراف المعنية</target>
@@ -28422,6 +28442,10 @@ historique 12 mois</source>
         <source>Interne / externe</source>
         <target state="translated">داخلي / خارجي</target>
       </trans-unit>
+      <trans-unit id="stakeholders.filter.criticality" datatype="html">
+        <source>Niveau de risque</source>
+        <target state="translated">مستوى الخطر</target>
+      </trans-unit>
       <trans-unit id="stakeholders.filter.clear" datatype="html">
         <source>Effacer les filtres</source>
         <target state="translated">مسح عوامل التصفية</target>
@@ -28433,6 +28457,10 @@ historique 12 mois</source>
       <trans-unit id="stakeholders.col.category" datatype="html">
         <source>Catégorie</source>
         <target state="translated">الفئة</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.col.side" datatype="html">
+        <source>Interne / externe</source>
+        <target state="translated">داخلي / خارجي</target>
       </trans-unit>
       <trans-unit id="stakeholders.col.criticality" datatype="html">
         <source>Criticité</source>
@@ -28769,6 +28797,10 @@ historique 12 mois</source>
       <trans-unit id="stakeholders.link.audit" datatype="html">
         <source>Audit</source>
         <target state="translated">تدقيق</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.link.capa" datatype="html">
+        <source>Action</source>
+        <target state="translated">إجراء</target>
       </trans-unit>
       <trans-unit id="stakeholders.link.document" datatype="html">
         <source>Document</source>

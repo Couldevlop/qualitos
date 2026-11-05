@@ -21,5 +21,14 @@ public interface StakeholderRepository {
     /** Deux fiches de même nom dans la même famille sont un doublon, pas une nuance. */
     boolean nameTaken(UUID tenantId, StakeholderCategory category, String name, UUID exceptId);
 
+    /**
+     * Les fiches dont une exigence est rattachée à ce dossier CAPA.
+     *
+     * <p>Sert la boucle de retour de clôture : on ne sait pas, depuis le module
+     * CAPA, quelle partie intéressée a ouvert le dossier, et balayer tout le
+     * registre pour le retrouver serait un parcours complet à chaque clôture.
+     */
+    List<Stakeholder> findByCapa(UUID tenantId, UUID capaId);
+
     void delete(Stakeholder stakeholder);
 }

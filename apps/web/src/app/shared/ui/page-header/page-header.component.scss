@@ -74,6 +74,13 @@
   color: var(--qos-fg-secondary);
   max-width: 64ch;
   line-height: var(--qos-lh-normal);
+  // Un sous-titre de 70 caracteres laissait son dernier mot seul sur la
+  // seconde ligne (« ... how you make sure of it. » -> « it. ») : une veuve,
+  // qui se lit comme un defaut d'affichage. `pretty` demande au moteur de
+  // repartir la derniere ligne au lieu de la remplir, et vaut pour TOUS les
+  // en-tetes de la plateforme. Les moteurs qui l'ignorent reviennent au
+  // comportement d'avant, sans degradation.
+  text-wrap: pretty;
 }
 
 /* Sous-titre projeté (balises, variantes selon le rôle) : même typographie. */

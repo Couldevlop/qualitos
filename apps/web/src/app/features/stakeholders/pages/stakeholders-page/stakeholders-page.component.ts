@@ -7,6 +7,7 @@ import { catchError, finalize, switchMap, tap } from 'rxjs/operators';
 import { AuthzService } from '../../../../core/authz/authz.service';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { StakeholdersService } from '../../stakeholders.service';
+import { categoryLabel, impactLabel, sideLabel } from '../../stakeholders.labels';
 import {
   StakeholderCategory,
   StakeholderRow,
@@ -145,4 +146,63 @@ export class StakeholdersPageComponent implements OnInit {
   private fail(err: unknown, fallback: string): void {
     this.snack.open(safeErrorMessage(err, fallback), $localize`:@@common.ok:OK`, { duration: 5000 });
   }
+
+  /**
+   * Le registre, tel qu'il est filtré à l'écran, en CSV.
+   *
+   * <p>Point par point ce que demande une revue de direction : qui, de quelle
+   * catégorie, de quel côté, à quelle criticité, revu quand. L'export se fait
+   * depuis les lignes déjà chargées — il est donc disponible hors ligne
+   * (`CLAUDE.md` §15.2) et n'ajoute aucun aller-retour pour reformater ce que
+   * l'utilisateur a sous les yeux.
+   *
+   * <p>Point-virgule et BOM UTF-8 : le fichier s'ouvre directement dans Excel
+   * en locale française.
+   */
+  exportRegister(): void {
+    const header = [
+      $localize`:@@stakeholders.col.name:Partie prenante`,
+      $localize`:@@stakeholders.col.category:Catégorie`,
+      $localize`:@@stakeholders.col.side:Interne / externe`,
+      $localize`:@@stakeholders.field.quality-impact:Impact qualité`,
+      $localize`:@@stakeholders.field.regulatory-impact:Impact réglementaire`,
+      $localize`:@@stakeholders.col.criticality:Criticité`,
+      $localize`:@@stakeholders.col.requirements:Exigences`,
+      $localize`:@@stakeholders.col.review:Dernière revue`
+    ];
+    const lignes = this.rows.map(r => [
+      r.name,
+      categoryLabel(r.category),
+      sideLabel(r.side),
+      impactLabel(r.qualityImpact),
+      impactLabel(r.regulatoryImpact),
+      impactLabel(r.criticality),
+      String(r.requirementCount ?? 0),
+      r.lastReviewedOn ?? ''
+    ]);
+    const csv = [header, ...lignes].map(cells => cells.map(csvCell).join(';')).join('\r\n');
+    const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const lien = document.createElement('a');
+    lien.href = url;
+    lien.download = `qualitos-parties-prenantes-${new Date().toISOString().slice(0, 10)}.csv`;
+    lien.click();
+    URL.revokeObjectURL(url);
+  }
+}
+
+
+/**
+ * Une cellule CSV, échappée ET désamorcée.
+ *
+ * <p>Un nom de partie prenante commençant par `=`, `+`, `-` ou `@` est une
+ * FORMULE pour Excel : « =cmd|'/c calc'!A1 » s'exécute à l'ouverture du
+ * fichier. Un guillemet d'ouverture suffit à ce que le tableur lise du texte.
+ * Le registre accueille des noms saisis par d'autres : il ne peut pas les
+ * recopier tels quels dans un fichier qu'un tiers ouvrira.
+ */
+export function csvCell(value: string): string {
+  const texte = String(value ?? '');
+  const desamorce = /^[=+\-@\t\r]/.test(texte) ? `'${texte}` : texte;
+  return `"${desamorce.replace(/"/g, '""')}"`;
 }

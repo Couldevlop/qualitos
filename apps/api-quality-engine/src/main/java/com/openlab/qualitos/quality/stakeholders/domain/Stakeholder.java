@@ -279,6 +279,34 @@ public class Stakeholder {
         return replace(requirementId, r -> r.withCapa(capaId));
     }
 
+    /**
+     * Le dossier {@code capaId} est clôturé : l'exigence qu'il traitait est
+     * maîtrisée.
+     *
+     * <p>C'est la boucle de retour de l'ouverture d'action. Ouvrir fait passer
+     * l'exigence « à réévaluer » ({@link StakeholderRequirement#withCapa}) ;
+     * clôturer la rend maîtrisée, sans que personne ait à tenir deux tableaux
+     * à jour. Seule une exigence encore « à réévaluer » bascule : si quelqu'un
+     * l'a entre-temps replacée « applicable » parce que l'écart courait encore,
+     * la clôture du dossier ne vient pas écraser ce jugement.
+     *
+     * @return {@code true} si une exigence a changé d'état
+     */
+    public boolean closeCapa(UUID capaId) {
+        if (capaId == null) {
+            return false;
+        }
+        boolean changed = false;
+        for (int i = 0; i < requirements.size(); i++) {
+            StakeholderRequirement r = requirements.get(i);
+            if (capaId.equals(r.capaId()) && r.status() == RequirementStatus.TO_REASSESS) {
+                requirements.set(i, r.withStatus(RequirementStatus.CONTROLLED));
+                changed = true;
+            }
+        }
+        return changed;
+    }
+
     public void removeRequirement(UUID requirementId) {
         boolean removed = requirements.removeIf(r -> r.id().equals(requirementId));
         if (!removed) {

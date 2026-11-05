@@ -77,10 +77,19 @@ class Client:
         """Remplacer une valeur entiere est un PUT : la reponse a une question l'est."""
         return self._appelle('PUT', chemin, corps, quoi)
 
+    def lit(self, chemin, quoi):
+        """Une lecture, pour retrouver les objets auxquels on va se rattacher.
+
+        Un rattachement se fait vers un objet QUI EXISTE : fabriquer un
+        identifiant produirait un lien qui ne mene nulle part, et c'est
+        precisement ce qu'on veut eprouver.
+        """
+        return self._appelle('GET', chemin, None, quoi)
+
     def _appelle(self, methode, chemin, corps, quoi):
         requete = urllib.request.Request(
             self.api + chemin,
-            data=json.dumps(corps).encode('utf8'),
+            data=None if corps is None else json.dumps(corps).encode('utf8'),
             method=methode,
             headers={
                 'Authorization': 'Bearer ' + self.jeton,
@@ -465,6 +474,234 @@ def iot(c):
     }, 'equipement IoT')
 
 
+
+def parties_prenantes(c):
+    """Le registre des parties interessees (ISO 9001 4.2), passe en revue.
+
+    Cinq fiches, choisies pour qu ensemble elles touchent TOUT ce que le module
+    sait faire -- et non cinq variantes de la meme. De haut en bas :
+
+    1. Client donneur d ordre : la fiche complete, cotee critique, avec une
+       exigence contractuelle maitrisee, preuves a l appui.
+    2. Autorite reglementaire : cote reglementaire maximal, exigence opposable
+       par un texte, rattachee au document qui la porte.
+    3. Fournisseur : l exigence qui n est pas tenue -- on ouvre une action
+       depuis sa fiche, ce qui la fait repasser « a reevaluer » et cree le
+       dossier CAPA ; la cloturer la rendra maitrisee sans intervention.
+    4. Collaborateurs : interne, revue en RETARD (date passee), pour que la
+       tuile « revues en retard » et l alerte du registre aient de quoi dire.
+    5. Communaute locale : pertinence ECARTEE et justifiee -- le cas qu on
+       oublie toujours de tester, et que l auditeur demande en premier.
+
+    Les rattachements visent de VRAIS objets, relus depuis les modules qui les
+    portent : risque, ecart, audit, document. C est la connexion transverse du
+    cahier des charges, et c est elle qui casse en silence si un module change
+    de contrat.
+    """
+    print('\nParties prenantes')
+
+    # Les cibles de rattachement, relues chez leurs modules. Un module vide ou
+    # non active rend simplement None : la fiche se cree quand meme, sans lien.
+    def premier(reponse, dans_page=False):
+        if not reponse:
+            return None
+        lignes = reponse.get('content', []) if dans_page else reponse
+        return lignes[0]['id'] if lignes else None
+
+    risque = premier(c.lit('/api/v1/risk-register/risks', 'lecture des risques'))
+    ecart = premier(c.lit('/api/v1/nc?page=0&size=1', 'lecture des ecarts'), True)
+    audit = premier(c.lit('/api/v1/audits/plans?page=0&size=1', 'lecture des audits'), True)
+    document = premier(c.lit('/api/v1/documents?page=0&size=1', 'lecture des documents'), True)
+
+    fiches = []
+    for nom, categorie, cote in [
+        ('Aeronef Systemes SAS', 'CUSTOMERS', 'EXTERNAL'),
+        ('DGAC - autorite de surveillance', 'REGULATORS', 'EXTERNAL'),
+        ('Metalux Traitements de surface', 'SUPPLIERS', 'EXTERNAL'),
+        ('Collaborateurs et representants du personnel', 'EMPLOYEES', 'INTERNAL'),
+        ('Riverains de la zone industrielle Nord', 'LOCAL_COMMUNITIES', 'EXTERNAL'),
+    ]:
+        fiche = c.poste('/api/v1/stakeholders',
+                        {'name': '%s (%s)' % (nom, SUFFIXE), 'category': categorie, 'side': cote},
+                        'partie prenante %s' % nom[:26])
+        fiches.append(fiche)
+
+    client, autorite, fournisseur, personnel, riverains = fiches
+
+    # ---- 1. le client : fiche complete, critique sur les deux axes
+    if client:
+        c.met('/api/v1/stakeholders/%s' % client['id'], {
+            'description': 'Donneur d ordre aeronautique, 62 % du chiffre d affaires.',
+            'contact': 'qualite.fournisseurs@aeronef-systemes.example',
+            'sites': 'Site de Blagnac, site de Nantes',
+            'needs': 'Pieces conformes au plan, livrees a date, avec dossier de navigabilite.',
+            'requirementsSummary': 'AS9100D, exigences client specifiques, PPAP a chaque evolution.',
+            'relevance': 'RELEVANT',
+            'relevanceJustification': 'Premier client en volume ; une defaillance arrete la ligne.',
+            'risksAndOpportunities': 'Risque : perte de la qualification fournisseur. '
+                                     'Opportunite : contrat cadre sur la gamme suivante.',
+            'qualityImpact': 'HIGH', 'regulatoryImpact': 'HIGH',
+            'owner': {'accountId': c.sujet, 'name': 'Pilote qualite'},
+            'controls': 'Revue de contrat trimestrielle, AQF, audit fournisseur annuel.',
+            'indicators': 'Taux de service, PPM client, retards de livraison',
+            'documents': 'Contrat C-2026-114, cahier des charges CDC-AS-07',
+            'actions': 'Plan de surveillance renforce sur la cote critique',
+            'nextReviewOn': jour(180),
+        }, 'analyse de la fiche client')
+        exigence = c.poste('/api/v1/stakeholders/%s/requirements' % client['id'], {
+            'need': 'Etre livre a date, sans rupture de ligne',
+            'requirement': 'Taux de service >= 98 % mesure mensuellement, sur reference et quantite.',
+            'origin': 'Contrat C-2026-114, article 7',
+            'nature': 'CONTRACTUAL',
+            'risk': 'Penalites de retard et perte de la qualification fournisseur',
+            'riskLevel': 'HIGH',
+            'control': 'Revue hebdomadaire du carnet, stock de securite sur les references A',
+            'indicator': 'Taux de service mensuel',
+            'responsible': 'Directeur des operations',
+            'evidence': 'Releve mensuel du taux de service, accuses de reception',
+            'status': 'CONTROLLED',
+        }, 'exigence contractuelle du client')
+        if exigence and risque:
+            c.met('/api/v1/stakeholders/%s/requirements/%s/link' % (client['id'], exigence['id']),
+                  {'link': 'RISK', 'target': risque}, 'exigence rattachee a un risque')
+        if exigence and audit:
+            c.met('/api/v1/stakeholders/%s/requirements/%s/link' % (client['id'], exigence['id']),
+                  {'link': 'AUDIT', 'target': audit}, 'exigence rattachee a un audit')
+
+    # ---- 2. l autorite : l exigence opposable par un texte
+    if autorite:
+        c.met('/api/v1/stakeholders/%s' % autorite['id'], {
+            'description': 'Autorite de surveillance des organismes de production.',
+            'needs': 'Conformite au reglement et tenue des enregistrements de navigabilite.',
+            'relevance': 'RELEVANT',
+            'relevanceJustification': 'Detient l agrement sans lequel l activite cesse.',
+            'qualityImpact': 'MEDIUM', 'regulatoryImpact': 'HIGH',
+            'owner': {'accountId': c.sujet, 'name': 'Pilote qualite'},
+            'controls': 'Veille reglementaire mensuelle, audit interne dedie.',
+            'indicators': 'Ecarts releves en audit de surveillance',
+            'nextReviewOn': jour(90),
+        }, 'analyse de la fiche autorite')
+        exigence = c.poste('/api/v1/stakeholders/%s/requirements' % autorite['id'], {
+            'need': 'Pouvoir reconstituer l historique d une piece livree',
+            'requirement': 'Conserver les enregistrements de production 10 ans apres livraison.',
+            'origin': 'Part 21 sous-partie G',
+            'nature': 'REGULATORY',
+            'risk': 'Suspension de l agrement de production',
+            'riskLevel': 'HIGH',
+            'control': 'Archivage numerique signe, plan de conservation documente',
+            'indicator': 'Taux de dossiers complets a l archivage',
+            'responsible': 'Responsable assurance qualite',
+            'evidence': 'Plan de conservation, journal d archivage',
+            'status': 'APPLICABLE',
+        }, 'exigence reglementaire de l autorite')
+        if exigence and document:
+            c.met('/api/v1/stakeholders/%s/requirements/%s/link' % (autorite['id'], exigence['id']),
+                  {'link': 'DOCUMENT', 'target': document},
+                  'exigence rattachee a un document')
+
+    # ---- 3. le fournisseur : l exigence non tenue, et l action qui s ouvre
+    if fournisseur:
+        c.met('/api/v1/stakeholders/%s' % fournisseur['id'], {
+            'description': 'Sous-traitant de traitement de surface, procede special.',
+            'needs': 'Commandes fermes et specifications stables.',
+            'requirementsSummary': 'NADCAP CP, certificat matiere 3.1 a chaque lot.',
+            'relevance': 'RELEVANT',
+            'relevanceJustification': 'Procede special non realisable en interne.',
+            'risksAndOpportunities': 'Risque : rupture de la chaine de traitement.',
+            'qualityImpact': 'HIGH', 'regulatoryImpact': 'MEDIUM',
+            'owner': {'accountId': c.sujet, 'name': 'Pilote qualite'},
+            'controls': 'Audit fournisseur annuel, controle a reception renforce.',
+            'indicators': 'Taux de conformite matiere, delai de traitement des NC',
+            'nextReviewOn': jour(120),
+        }, 'analyse de la fiche fournisseur')
+        exigence = c.poste('/api/v1/stakeholders/%s/requirements' % fournisseur['id'], {
+            'need': 'Disposer de la preuve de conformite du traitement',
+            'requirement': 'Fournir un certificat de conformite 3.1 pour chaque lot livre.',
+            'origin': 'Cahier des charges CDC-TS-03',
+            'nature': 'CONTRACTUAL',
+            'risk': 'Lot non liberable, retard de livraison en cascade',
+            'riskLevel': 'MEDIUM',
+            'control': 'Controle documentaire a reception, blocage du lot sans certificat',
+            'indicator': 'Taux de lots recus avec certificat',
+            'responsible': 'Responsable achats',
+            'evidence': 'Certificats archives par numero de lot',
+            'status': 'APPLICABLE',
+        }, 'exigence du fournisseur')
+        if exigence:
+            if ecart:
+                c.met('/api/v1/stakeholders/%s/requirements/%s/link'
+                      % (fournisseur['id'], exigence['id']),
+                      {'link': 'NON_CONFORMITY', 'target': ecart},
+                      'exigence rattachee a un ecart')
+            # L exigence n est pas tenue : on ouvre une action DEPUIS la fiche.
+            # Elle repasse « a reevaluer » dans la meme reponse -- c est la regle
+            # du module, et c est ce que l ecran doit montrer.
+            c.poste('/api/v1/stakeholders/%s/requirements/%s/capa'
+                    % (fournisseur['id'], exigence['id']),
+                    {'title': 'Obtenir les certificats 3.1 manquants et securiser la reception',
+                     'ownerId': c.sujet, 'ownerName': 'Pilote qualite',
+                     'dueDate': jour(45)},
+                    'action ouverte depuis l exigence')
+
+    # ---- 4. le personnel : interne, et une revue en retard
+    if personnel:
+        c.met('/api/v1/stakeholders/%s' % personnel['id'], {
+            'description': 'Salaries et instances representatives du personnel.',
+            'needs': 'Conditions de travail sures, competences entretenues, information.',
+            'relevance': 'RELEVANT',
+            'relevanceJustification': 'La conformite se tient par les personnes qui l appliquent.',
+            'qualityImpact': 'MEDIUM', 'regulatoryImpact': 'MEDIUM',
+            'owner': {'accountId': c.sujet, 'name': 'Pilote qualite'},
+            'controls': 'Plan de formation annuel, reunions CSSCT.',
+            'indicators': 'Taux de completion des formations, accidents declares',
+            # DELIBEREMENT dans le passe : c est ce qui alimente la tuile
+            # « revues en retard » et l alerte du registre.
+            'nextReviewOn': jour(-30),
+        }, 'analyse de la fiche personnel (revue en retard)')
+        c.poste('/api/v1/stakeholders/%s/requirements' % personnel['id'], {
+            'need': 'Travailler sur des postes dont les risques sont evalues',
+            'requirement': 'Tenir le document unique a jour et le reviser a chaque changement.',
+            'origin': 'Code du travail, art. R4121-1',
+            'nature': 'REGULATORY',
+            'risk': 'Sanction et accident du travail',
+            'riskLevel': 'HIGH',
+            'control': 'Revue annuelle du DUERP, mise a jour a chaque modification de poste',
+            'indicator': 'Date de derniere revision du DUERP',
+            'responsible': 'Responsable HSE',
+            'evidence': 'DUERP date et signe',
+            'status': 'TO_REASSESS',
+        }, 'exigence a reevaluer du personnel')
+
+    # ---- 5. les riverains : la pertinence ECARTEE, justifiee
+    if riverains:
+        c.met('/api/v1/stakeholders/%s' % riverains['id'], {
+            'description': 'Habitants et associations de la zone industrielle Nord.',
+            'needs': 'Nuisances sonores et olfactives contenues.',
+            'relevance': 'NOT_RELEVANT',
+            'relevanceJustification': 'Aucune exigence portant sur le systeme de management de '
+                                      'la qualite : le sujet est traite par le systeme '
+                                      'environnemental, qui a son propre registre.',
+            'qualityImpact': 'LOW', 'regulatoryImpact': 'LOW',
+            'owner': {'accountId': c.sujet, 'name': 'Pilote qualite'},
+            'nextReviewOn': jour(365),
+        }, 'analyse de la fiche riverains (ecartee)')
+
+    # ---- la cotation par la matrice : le MEME calcul, vu autrement
+    cotes = {f['id']: {'qualityImpact': q, 'regulatoryImpact': r}
+             for f, q, r in zip(fiches,
+                                ['HIGH', 'MEDIUM', 'HIGH', 'MEDIUM', 'LOW'],
+                                ['HIGH', 'HIGH', 'MEDIUM', 'MEDIUM', 'LOW'])
+             if f}
+    if cotes:
+        c.met('/api/v1/stakeholders/ratings', {'ratings': cotes},
+              'cotation par la matrice d evaluation')
+
+    # ---- une revue actee : la fiche client vient d etre revue
+    if client:
+        c.poste('/api/v1/stakeholders/%s/review' % client['id'], {},
+                'revue actee sur la fiche client')
+
+
 def main():
     analyseur = argparse.ArgumentParser(description=__doc__)
     analyseur.add_argument('--api', default='http://localhost:8082')
@@ -490,6 +727,7 @@ def main():
 
     modules(c)
     produits_et_amdec(c)
+    parties_prenantes(c)
     cycle_pdca(c)
     audits_5s(c)
     interne, _ = non_conformites(c)

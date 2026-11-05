@@ -134,6 +134,13 @@ public class StakeholderRepositoryAdapter implements StakeholderRepository {
     }
 
     @Override
+    public List<Stakeholder> findByCapa(UUID tenantId, UUID capaId) {
+        return repository.findByCapa(tenantId, capaId).stream()
+                .map(StakeholderRepositoryAdapter::toDomain)
+                .toList();
+    }
+
+    @Override
     public boolean nameTaken(UUID tenantId, StakeholderCategory category, String name, UUID exceptId) {
         return repository.findByTenantIdAndCategoryAndNameIgnoreCase(tenantId, category, name).stream()
                 .anyMatch(e -> exceptId == null || !e.getId().equals(exceptId));

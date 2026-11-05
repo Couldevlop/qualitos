@@ -1,7 +1,22 @@
 import { CalculationView, CapabilityStatus, Measurement } from './spc-capability.types';
 
-/** Les sous-groupes d'une étude : colonnes « SG 01 » à « SG 20 » du classeur. */
-export const SUBGROUPS = 20;
+/**
+ * Les sous-groupes d'une étude : les colonnes « SG 01 », « SG 02 »… de la grille.
+ *
+ * <p>Le classeur de référence en comptait vingt, et vingt était devenu une
+ * contrainte : une étude s'ouvrait avec vingt colonnes, ni plus ni moins, et le
+ * serveur refusait tout le reste. Or la règle de l'art — vingt à vingt-cinq
+ * sous-groupes pour asseoir des limites de contrôle — est un PLANCHER de
+ * confiance, pas une taille imposée : on relève souvent douze sous-groupes
+ * pendant la collecte, et trente sur une campagne longue. Le plancher reste
+ * donc dit à l'écran ({@link RELIABLE_SUBGROUPS}) au lieu d'être imposé.
+ */
+export const DEFAULT_SUBGROUPS = 20;
+export const MIN_SUBGROUPS = 2;
+export const MAX_SUBGROUPS = 40;
+
+/** En dessous, les limites de contrôle restent indicatives : on le dit, on n'interdit pas. */
+export const RELIABLE_SUBGROUPS = 20;
 export const MIN_SUBGROUP_SIZE = 2;
 export const MAX_SUBGROUP_SIZE = 10;
 
@@ -50,7 +65,10 @@ export function computeCapability(lsl: number | null, usl: number | null, n: num
   let sumMeans = 0;
   let sumRanges = 0;
   let m = 0;
-  for (let c = 0; c < SUBGROUPS; c++) {
+  // La largeur est celle de la grille reçue : c'est l'étude qui dit combien de
+  // sous-groupes elle porte, pas une constante.
+  const columns = grid[0]?.length ?? 0;
+  for (let c = 0; c < columns; c++) {
     const col: number[] = [];
     for (let r = 0; r < n; r++) {
       const v = grid[r]?.[c];
@@ -108,18 +126,19 @@ export function classify(cpk: number, capable: number, watch: number): Capabilit
   return cpk >= watch ? 'WATCH' : 'NOT_CAPABLE';
 }
 
-/** Une grille vide de `n` lignes. */
-export function emptyGrid(n: number): Measurement[][] {
-  return Array.from({ length: n }, () => Array<Measurement>(SUBGROUPS).fill(null));
+/** Une grille vide de `n` lignes sur `columns` sous-groupes. */
+export function emptyGrid(n: number, columns: number = DEFAULT_SUBGROUPS): Measurement[][] {
+  return Array.from({ length: n }, () => Array<Measurement>(columns).fill(null));
 }
 
 /**
  * La grille à `n` lignes : les lignes en trop sont retirées, les manquantes
  * ajoutées vides. Changer la taille du sous-groupe ne perd pas ce qui reste.
  */
-export function resizeGrid(grid: Measurement[][], n: number): Measurement[][] {
+export function resizeGrid(grid: Measurement[][], n: number,
+                           columns: number = grid[0]?.length ?? DEFAULT_SUBGROUPS): Measurement[][] {
   return Array.from({ length: n }, (_, r) =>
-    Array.from({ length: SUBGROUPS }, (_, c) => grid[r]?.[c] ?? null));
+    Array.from({ length: columns }, (_, c) => grid[r]?.[c] ?? null));
 }
 
 /** Lit une cellule saisie : virgule ou point décimal ; vide ou illisible vaut `null`. */
@@ -169,12 +188,18 @@ export function displayDigits(decimals: number): { mean: number; range: number }
  * de la grille est ignoré ; chaque cellule se relit ensuite par `parseMeasurement`.
  */
 export function pasteBlock(grid: string[][], r0: number, c0: number, text: string): string[][] {
-  const next = grid.map(row => [...row]);
-  text.replace(/\r/g, '').replace(/\n+$/, '').split('\n').forEach((line, i) =>
+  // Un bloc collé depuis un tableur apporte SA largeur. L'ignorer silencieusement
+  // perdait des colonnes entières ; on étend donc la grille jusqu'à ce qu'elle
+  // tienne le bloc, dans la limite admise.
+  const lines = text.replace(/\r/g, '').replace(/\n+$/, '').split('\n');
+  const widest = lines.reduce((w, line) => Math.max(w, line.split('\t').length), 0);
+  const wanted = Math.min(MAX_SUBGROUPS, Math.max(grid[0]?.length ?? 0, c0 + widest));
+  const next = grid.map(row => Array.from({ length: wanted }, (_, c) => row[c] ?? ''));
+  lines.forEach((line, i) =>
     line.split('\t').forEach((cell, j) => {
       const r = r0 + i;
       const c = c0 + j;
-      if (r < next.length && c < SUBGROUPS) next[r][c] = cell.trim();
+      if (r < next.length && c < (next[r]?.length ?? 0)) next[r][c] = cell.trim();
     }));
   return next;
 }

@@ -215,6 +215,57 @@ export class StakeholderSheetComponent implements OnChanges {
    * <p>Un champ d'identifiant libre serait inutilisable : personne ne connaît
    * par cœur l'UUID d'un risque.
    */
+  /**
+   * Les rattachements ÉTABLIS d'une exigence, chacun avec la route qui ouvre
+   * l'objet visé.
+   *
+   * <p>Jusqu'ici un rattachement ne se voyait que sur le bouton qui l'avait
+   * créé, et seulement pour qui pouvait le modifier : un auditeur en lecture
+   * ne pouvait pas savoir quel contrat fonde l'exigence qu'il lit, ni l'ouvrir.
+   * Or c'est le sens du lien — « chaque exigence renvoie vers le document qui
+   * la définit ou la justifie ». Les liens sortants sont donc rendus pour
+   * tout le monde, séparément du geste qui les pose.
+   */
+  establishedLinks(requirement: StakeholderRequirement): { label: string; icon: string; route: unknown[] }[] {
+    const liens: { label: string; icon: string; route: unknown[] }[] = [];
+    if (requirement.riskId) {
+      liens.push({
+        label: $localize`:@@stakeholders.link.risk:Risque`,
+        icon: 'warning',
+        route: ['/risques', requirement.riskId]
+      });
+    }
+    if (requirement.ncId) {
+      liens.push({
+        label: $localize`:@@stakeholders.link.nc:Écart`,
+        icon: 'report_problem',
+        route: ['/nc', requirement.ncId]
+      });
+    }
+    if (requirement.auditId) {
+      liens.push({
+        label: $localize`:@@stakeholders.link.audit:Audit`,
+        icon: 'fact_check',
+        route: ['/audits', requirement.auditId]
+      });
+    }
+    if (requirement.documentId) {
+      liens.push({
+        label: $localize`:@@stakeholders.link.document:Document`,
+        icon: 'description',
+        route: ['/documents', requirement.documentId]
+      });
+    }
+    if (requirement.capaId) {
+      liens.push({
+        label: $localize`:@@stakeholders.link.capa:Action`,
+        icon: 'add_task',
+        route: ['/capa', requirement.capaId]
+      });
+    }
+    return liens;
+  }
+
   link(requirement: StakeholderRequirement, kind: RequirementLink): void {
     if (!this.canManage) return;
     const data: StakeholderLinkDialogData = { kind, requirement: requirement.requirement };

@@ -506,3 +506,24 @@
     color: var(--qos-danger-fg);
   }
 }
+
+// Le reglage du nombre de sous-groupes, au-dessus de la grille qu'il commande.
+.sous-groupes {
+  display: flex;
+  align-items: center;
+  gap: var(--qos-space-2);
+  margin-bottom: var(--qos-space-2);
+
+  &__compte {
+    font-size: var(--qos-fs-xs);
+    font-weight: var(--qos-fw-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--qos-fg-tertiary);
+  }
+
+  &__plancher {
+    font-size: var(--qos-fs-xs);
+    color: var(--qos-warning-fg, var(--qos-fg-secondary));
+  }
+}

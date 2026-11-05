@@ -28026,6 +28026,22 @@ declared income
         <source>Mesures par sous-groupe</source>
         <target state="translated">Measurements by subgroup</target>
       </trans-unit>
+      <trans-unit id="spc.study.subgroup-count" datatype="html">
+        <source><x id="INTERPOLATION"/> sous-groupe(s)</source>
+        <target state="translated"><x id="INTERPOLATION"/> subgroup(s)</target>
+      </trans-unit>
+      <trans-unit id="spc.study.subgroup-add" datatype="html">
+        <source>Ajouter un sous-groupe</source>
+        <target state="translated">Add a subgroup</target>
+      </trans-unit>
+      <trans-unit id="spc.study.subgroup-remove" datatype="html">
+        <source>Retirer le dernier sous-groupe (il doit être vide)</source>
+        <target state="translated">Remove the last subgroup (it must be empty)</target>
+      </trans-unit>
+      <trans-unit id="spc.study.few-subgroups" datatype="html">
+        <source>Moins de 20 sous-groupes : les limites de contrôle restent indicatives.</source>
+        <target state="translated">Fewer than 20 subgroups: the control limits remain indicative.</target>
+      </trans-unit>
       <trans-unit id="spc.study.sample" datatype="html">
         <source>Échantillon</source>
         <target state="translated">Sample</target>
@@ -28346,6 +28362,10 @@ declared income
         <source>Parties prenantes</source>
         <target state="translated">Stakeholders</target>
       </trans-unit>
+      <trans-unit id="stakeholders.export" datatype="html">
+        <source>Exporter</source>
+        <target state="translated">Export</target>
+      </trans-unit>
       <trans-unit id="stakeholders.title" datatype="html">
         <source>Parties prenantes</source>
         <target state="translated">Stakeholders</target>
@@ -28422,6 +28442,10 @@ declared income
         <source>Interne / externe</source>
         <target state="translated">Internal / external</target>
       </trans-unit>
+      <trans-unit id="stakeholders.filter.criticality" datatype="html">
+        <source>Niveau de risque</source>
+        <target state="translated">Risk level</target>
+      </trans-unit>
       <trans-unit id="stakeholders.filter.clear" datatype="html">
         <source>Effacer les filtres</source>
         <target state="translated">Clear filters</target>
@@ -28433,6 +28457,10 @@ declared income
       <trans-unit id="stakeholders.col.category" datatype="html">
         <source>Catégorie</source>
         <target state="translated">Category</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.col.side" datatype="html">
+        <source>Interne / externe</source>
+        <target state="translated">Internal / external</target>
       </trans-unit>
       <trans-unit id="stakeholders.col.criticality" datatype="html">
         <source>Criticité</source>
@@ -28769,6 +28797,10 @@ declared income
       <trans-unit id="stakeholders.link.audit" datatype="html">
         <source>Audit</source>
         <target state="translated">Audit</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.link.capa" datatype="html">
+        <source>Action</source>
+        <target state="translated">Action</target>
       </trans-unit>
       <trans-unit id="stakeholders.link.document" datatype="html">
         <source>Document</source>

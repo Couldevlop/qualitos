@@ -42,7 +42,27 @@ public final class SpcStudyWebDto {
             @NotNull Double lsl,
             @NotNull Double usl,
             @NotNull @Min(2) @Max(10) Integer subgroupSize,
-            @NotNull @Size(min = 2, max = 10) List<@NotNull @Size(min = 20, max = 20) List<Double>> measurements) {}
+            @NotNull @Size(min = 2, max = 10) List<@NotNull @Size(min = 2, max = 40) List<Double>> measurements) {
+
+        /**
+         * Toutes les lignes ont la meme largeur.
+         *
+         * <p>La borne 20..20 d'avant l'imposait par accident ; en la relachant,
+         * il faut la dire. Une grille en escalier ferait porter a un sous-groupe
+         * moins d'echantillons que sa taille annoncee, et le calcul l'ecarterait
+         * sans rien dire a celui qui a saisi.
+         */
+        @com.fasterxml.jackson.annotation.JsonIgnore
+        @jakarta.validation.constraints.AssertTrue(
+                message = "chaque ligne compte le meme nombre de sous-groupes")
+        public boolean isGrilleRectangulaire() {
+            if (measurements == null || measurements.isEmpty() || measurements.get(0) == null) {
+                return true;
+            }
+            int colonnes = measurements.get(0).size();
+            return measurements.stream().allMatch(l -> l != null && l.size() == colonnes);
+        }
+    }
 
     public record ActionPlanRequest(@NotNull Boolean actionPlan) {}
 

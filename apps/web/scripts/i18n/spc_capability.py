@@ -738,6 +738,10 @@ TRANSLATIONS = {
         'La limite supérieure est obligatoire.', 'The upper limit is required.', 'El límite superior es obligatorio.',
         'الحد الأعلى إلزامي.', '上限規格は必須です。', '上限为必填项。'),
     'spc.study.measurements': ('Mesures par sous-groupe', 'Measurements by subgroup', 'Mediciones por subgrupo', 'القياسات حسب المجموعة الفرعية', 'サブグループ別の測定値', '按子组的测量值'),
+    'spc.study.subgroup-count': ('{$INTERPOLATION} sous-groupe(s)', '{$INTERPOLATION} subgroup(s)', '{$INTERPOLATION} subgrupo(s)', '{$INTERPOLATION} مجموعة فرعية', '{$INTERPOLATION} 件のサブグループ', '{$INTERPOLATION} 个子组'),
+    'spc.study.subgroup-add': ('Ajouter un sous-groupe', 'Add a subgroup', 'Añadir un subgrupo', 'إضافة مجموعة فرعية', 'サブグループを追加', '添加子组'),
+    'spc.study.subgroup-remove': ('Retirer le dernier sous-groupe (il doit être vide)', 'Remove the last subgroup (it must be empty)', 'Quitar el último subgrupo (debe estar vacío)', 'إزالة المجموعة الفرعية الأخيرة (يجب أن تكون فارغة)', '最後のサブグループを削除（空である必要）', '移除最后一个子组（必须为空）'),
+    'spc.study.few-subgroups': ('Moins de 20 sous-groupes : les limites de contrôle restent indicatives.', 'Fewer than 20 subgroups: the control limits remain indicative.', 'Menos de 20 subgrupos: los límites de control son indicativos.', 'أقل من 20 مجموعة فرعية: تبقى حدود التحكم إرشادية.', 'サブグループが20未満：管理限界は参考値です。', '子组少于 20 个：控制限仅供参考。'),
     'spc.study.sample': ('Échantillon', 'Sample', 'Muestra', 'العينة', 'サンプル', '样本'),
     'spc.study.cell-aria': (
         'Échantillon {$sample}, sous-groupe {$subgroup}', 'Sample {$sample}, subgroup {$subgroup}',

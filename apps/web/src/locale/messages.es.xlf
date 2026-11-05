@@ -28026,6 +28026,22 @@ historial de 12 meses</target>
         <source>Mesures par sous-groupe</source>
         <target state="translated">Mediciones por subgrupo</target>
       </trans-unit>
+      <trans-unit id="spc.study.subgroup-count" datatype="html">
+        <source><x id="INTERPOLATION"/> sous-groupe(s)</source>
+        <target state="translated"><x id="INTERPOLATION"/> subgrupo(s)</target>
+      </trans-unit>
+      <trans-unit id="spc.study.subgroup-add" datatype="html">
+        <source>Ajouter un sous-groupe</source>
+        <target state="translated">Añadir un subgrupo</target>
+      </trans-unit>
+      <trans-unit id="spc.study.subgroup-remove" datatype="html">
+        <source>Retirer le dernier sous-groupe (il doit être vide)</source>
+        <target state="translated">Quitar el último subgrupo (debe estar vacío)</target>
+      </trans-unit>
+      <trans-unit id="spc.study.few-subgroups" datatype="html">
+        <source>Moins de 20 sous-groupes : les limites de contrôle restent indicatives.</source>
+        <target state="translated">Menos de 20 subgrupos: los límites de control son indicativos.</target>
+      </trans-unit>
       <trans-unit id="spc.study.sample" datatype="html">
         <source>Échantillon</source>
         <target state="translated">Muestra</target>
@@ -28346,6 +28362,10 @@ historial de 12 meses</target>
         <source>Parties prenantes</source>
         <target state="translated">Partes interesadas</target>
       </trans-unit>
+      <trans-unit id="stakeholders.export" datatype="html">
+        <source>Exporter</source>
+        <target state="translated">Exportar</target>
+      </trans-unit>
       <trans-unit id="stakeholders.title" datatype="html">
         <source>Parties prenantes</source>
         <target state="translated">Partes interesadas</target>
@@ -28422,6 +28442,10 @@ historial de 12 meses</target>
         <source>Interne / externe</source>
         <target state="translated">Interna / externa</target>
       </trans-unit>
+      <trans-unit id="stakeholders.filter.criticality" datatype="html">
+        <source>Niveau de risque</source>
+        <target state="translated">Nivel de riesgo</target>
+      </trans-unit>
       <trans-unit id="stakeholders.filter.clear" datatype="html">
         <source>Effacer les filtres</source>
         <target state="translated">Borrar los filtros</target>
@@ -28433,6 +28457,10 @@ historial de 12 meses</target>
       <trans-unit id="stakeholders.col.category" datatype="html">
         <source>Catégorie</source>
         <target state="translated">Categoría</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.col.side" datatype="html">
+        <source>Interne / externe</source>
+        <target state="translated">Interna / externa</target>
       </trans-unit>
       <trans-unit id="stakeholders.col.criticality" datatype="html">
         <source>Criticité</source>
@@ -28769,6 +28797,10 @@ historial de 12 meses</target>
       <trans-unit id="stakeholders.link.audit" datatype="html">
         <source>Audit</source>
         <target state="translated">Auditoría</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.link.capa" datatype="html">
+        <source>Action</source>
+        <target state="translated">Acción</target>
       </trans-unit>
       <trans-unit id="stakeholders.link.document" datatype="html">
         <source>Document</source>

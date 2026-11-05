@@ -56,6 +56,33 @@ public class StakeholderService {
         this.clock = clock;
     }
 
+    // ---------- retours des autres modules ----------
+
+    /**
+     * Un dossier CAPA vient d'être clôturé : les exigences qu'il traitait
+     * redeviennent maîtrisées.
+     *
+     * <p>Appelé par l'écouteur d'événements, hors requête HTTP : le client est
+     * donc donné en argument et non lu dans le jeton — il n'y en a pas. Le
+     * dossier qu'aucune exigence ne porte ne coûte qu'une requête indexée et
+     * ne produit aucune écriture.
+     *
+     * @return le nombre de fiches effectivement modifiées
+     */
+    public int onCapaClosed(UUID tenantId, UUID capaId) {
+        if (tenantId == null || capaId == null) {
+            return 0;
+        }
+        int touched = 0;
+        for (Stakeholder stakeholder : repository.findByCapa(tenantId, capaId)) {
+            if (stakeholder.closeCapa(capaId)) {
+                repository.save(stakeholder);
+                touched++;
+            }
+        }
+        return touched;
+    }
+
     // ---------- registre ----------
 
     /**

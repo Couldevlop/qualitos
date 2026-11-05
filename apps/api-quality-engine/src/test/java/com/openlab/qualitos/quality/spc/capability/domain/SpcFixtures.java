@@ -38,7 +38,7 @@ public final class SpcFixtures {
     public static List<List<Double>> emptyGrid(int n) {
         List<List<Double>> grille = new ArrayList<>();
         for (int r = 0; r < n; r++) {
-            grille.add(new ArrayList<>(java.util.Collections.nCopies(CapabilityCalculation.SUBGROUPS, (Double) null)));
+            grille.add(new ArrayList<>(java.util.Collections.nCopies(CapabilityCalculation.DEFAULT_SUBGROUPS, (Double) null)));
         }
         return grille;
     }

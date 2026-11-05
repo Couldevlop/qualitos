@@ -260,3 +260,24 @@
     margin-left: auto;
   }
 }
+
+/* Les liens sortants d'une exigence : une ligne discrete, sous ses metadonnees. */
+.exigence__ouvrir {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--qos-space-1);
+  margin: var(--qos-space-1) 0 0;
+
+  a {
+    --mdc-text-button-label-text-color: var(--qos-fg-link);
+    font-size: var(--qos-fs-xs);
+  }
+}
+
+.exigence__ouvrir-sortie {
+  font-size: 0.9rem;
+  width: 0.9rem;
+  height: 0.9rem;
+  opacity: 0.6;
+}

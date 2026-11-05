@@ -174,10 +174,19 @@ public final class CapabilityStudy {
             throw new SpcValidationException("measurements",
                     "La grille doit compter une ligne par échantillon du sous-groupe (" + n + ").");
         }
+        // Toutes les lignes ont la MÊME largeur : une grille en escalier ferait
+        // porter à un sous-groupe moins d'échantillons que sa taille annoncée,
+        // et le calcul l'écarterait en silence.
+        int colonnes = grille.isEmpty() || grille.get(0) == null ? 0 : grille.get(0).size();
+        if (colonnes < CapabilityCalculation.MIN_SUBGROUPS || colonnes > CapabilityCalculation.MAX_SUBGROUPS) {
+            throw new SpcValidationException("measurements",
+                    "Le nombre de sous-groupes va de " + CapabilityCalculation.MIN_SUBGROUPS
+                            + " à " + CapabilityCalculation.MAX_SUBGROUPS + ".");
+        }
         for (List<Double> ligne : grille) {
-            if (ligne == null || ligne.size() != CapabilityCalculation.SUBGROUPS) {
+            if (ligne == null || ligne.size() != colonnes) {
                 throw new SpcValidationException("measurements",
-                        "Chaque ligne compte " + CapabilityCalculation.SUBGROUPS + " sous-groupes.");
+                        "Chaque ligne compte le même nombre de sous-groupes (" + colonnes + ").");
             }
             for (Double v : ligne) {
                 if (v != null && (!Double.isFinite(v) || Math.abs(v) > MEASUREMENT_MAX)) {
