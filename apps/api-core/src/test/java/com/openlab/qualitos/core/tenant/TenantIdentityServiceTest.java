@@ -2,6 +2,7 @@ package com.openlab.qualitos.core.tenant;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -25,16 +26,27 @@ class TenantIdentityServiceTest {
 
     private TenantRepository tenants;
     private TenantIdentityRepository identities;
+    private TenantLogoRepository logos;
     private TenantIdentityService service;
 
     @BeforeEach
     void setUp() {
         tenants = mock(TenantRepository.class);
         identities = mock(TenantIdentityRepository.class);
-        service = new TenantIdentityService(tenants, identities);
+        logos = mock(TenantLogoRepository.class);
+        service = new TenantIdentityService(tenants, identities, logos);
+        when(logos.save(any(TenantLogo.class))).thenAnswer(i -> i.getArgument(0));
         when(tenants.existsById(TENANT)).thenReturn(true);
         when(identities.save(any(TenantIdentity.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
+    }
+
+    /** Un PNG minimal : signature valide, remplissage quelconque. */
+    private static byte[] png() {
+        byte[] octets = new byte[64];
+        byte[] signature = {(byte) 0x89, 80, 78, 71, 0x0D, 0x0A, 0x1A, 0x0A};
+        System.arraycopy(signature, 0, octets, 0, signature.length);
+        return octets;
     }
 
     private static TenantIdentityDto.Request request() {
@@ -68,6 +80,7 @@ class TenantIdentityServiceTest {
         service.save(TENANT, request());
 
         // La clé primaire EST le tenant : un client a une identité, pas une liste.
+        assertThat(existing.getTenantId()).isEqualTo(TENANT);
         assertThat(existing.getSlogan()).isEqualTo("La qualité, mesurée");
         verify(identities).save(existing);
     }
@@ -162,41 +175,102 @@ class TenantIdentityServiceTest {
     }
 
     @Test
-    void leLogoEstSignaleParSaPresenceEtJamaisParSonChemin() {
+    void leLogoEstSignaleParSaPresenceEtJamaisParSesOctets() {
         TenantIdentity existing = new TenantIdentity();
         existing.setTenantId(TENANT);
-        existing.setLogoObjectKey("tenants/a1/logo.png");
-        existing.setLogoContentType("image/png");
         when(identities.findById(TENANT)).thenReturn(Optional.of(existing));
+        when(logos.existsById(TENANT)).thenReturn(true);
 
         TenantIdentityDto.Response read = service.get(TENANT);
 
-        // Le chemin de stockage ne sort jamais : l'écran passe par la route du
-        // logo, pas par l'objet.
+        // Les octets ne sortent jamais par la : l'ecran apprend qu'un logo
+        // existe et passe par la route dediee, que le navigateur met en cache.
         assertThat(read.logoAvailable()).isTrue();
+    }
+
+    @Test
+    void unLogoPoseSansRienDAutreSAfficheQuandMeme() {
+        // Le cas reel : l'administrateur televerse son logo puis quitte l'ecran
+        // sans remplir le reste. Sans ce chemin, le logo semblerait perdu.
+        when(identities.findById(TENANT)).thenReturn(Optional.empty());
+        when(logos.existsById(TENANT)).thenReturn(true);
+
+        assertThat(service.get(TENANT).logoAvailable()).isTrue();
     }
 
     @Test
     void lEnregistrementDuLogoNeTouchePasAuResteDeLIdentite() {
         TenantIdentity existing = new TenantIdentity();
         existing.setTenantId(TENANT);
-        existing.setSlogan("Slogan conservé");
+        existing.setSlogan("Slogan conserve");
         when(identities.findById(TENANT)).thenReturn(Optional.of(existing));
 
-        service.saveLogo(TENANT, "tenants/a1/logo.webp", "image/webp");
+        service.saveLogo(TENANT, "image/png", png());
 
-        assertThat(existing.getLogoObjectKey()).isEqualTo("tenants/a1/logo.webp");
-        assertThat(existing.getLogoContentType()).isEqualTo("image/webp");
-        assertThat(existing.getSlogan()).isEqualTo("Slogan conservé");
+        // Remplacer un logo n'ecrit pas une ligne d'identite : tables separees.
+        verify(identities, never()).save(any());
+        assertThat(existing.getSlogan()).isEqualTo("Slogan conserve");
     }
 
     @Test
-    void leLogoDUnClientInconnuEstRefuse() {
+    void leLogoEnregistreSonTypeNormaliseSonPoidsEtSonEmpreinte() {
+        service.saveLogo(TENANT, "IMAGE/PNG; charset=binary", png());
+
+        ArgumentCaptor<TenantLogo> capture = ArgumentCaptor.forClass(TenantLogo.class);
+        verify(logos).save(capture.capture());
+        TenantLogo saved = capture.getValue();
+        // Le type stocke est celui qu'a VALIDE la politique, pas celui qu'a
+        // annonce le client : c'est lui qui sera renvoye en Content-Type.
+        assertThat(saved.getContentType()).isEqualTo("image/png");
+        assertThat(saved.getSizeBytes()).isEqualTo(64);
+        assertThat(saved.getSha256()).matches("^[0-9a-f]{64}$");
+        assertThat(saved.getTenantId()).isEqualTo(TENANT);
+    }
+
+    @Test
+    void deuxTeleversementsIdentiquesDonnentLaMemeEmpreinte() {
+        // C'est ce qui permet au navigateur de ne pas reteecharger un logo
+        // inchange (ETag), et de reconnaitre un envoi en double.
+        assertThat(service.saveLogo(TENANT, "image/png", png()))
+                .isEqualTo(service.saveLogo(TENANT, "image/png", png()));
+    }
+
+    @Test
+    void unLogoRefuseParLaPolitiqueNEstPasEnregistre() {
+        assertThatThrownBy(() -> service.saveLogo(TENANT, "image/svg+xml", png()))
+                .isInstanceOf(LogoRejectedException.class);
+        verify(logos, never()).save(any());
+    }
+
+    @Test
+    void leLogoSeRelitEtSeRetire() {
+        TenantLogo logo = new TenantLogo();
+        logo.setTenantId(TENANT);
+        when(logos.findById(TENANT)).thenReturn(Optional.of(logo));
+
+        assertThat(service.logo(TENANT)).contains(logo);
+
+        service.deleteLogo(TENANT);
+        verify(logos).deleteById(TENANT);
+        // Retirer le logo ne touche pas a l'identite : slogan et couleurs restent.
+        verify(identities, never()).delete(any());
+    }
+
+    @Test
+    void sansLogoLaLectureRendUnVideEtNonUneErreur() {
+        when(logos.findById(TENANT)).thenReturn(Optional.empty());
+
+        assertThat(service.logo(TENANT)).isEmpty();
+    }
+
+    @Test
+    void laLectureEtLeRetraitDuLogoDUnClientInconnuSontRefuses() {
         UUID absent = UUID.fromString("00000000-0000-0000-0000-0000000000ff");
         when(tenants.existsById(absent)).thenReturn(false);
 
-        assertThatThrownBy(() -> service.saveLogo(absent, "k", "image/png"))
-                .isInstanceOf(TenantNotFoundException.class);
+        assertThatThrownBy(() -> service.logo(absent)).isInstanceOf(TenantNotFoundException.class);
+        assertThatThrownBy(() -> service.deleteLogo(absent)).isInstanceOf(TenantNotFoundException.class);
+        verify(logos, never()).deleteById(any());
     }
 
     @Test
@@ -211,35 +285,6 @@ class TenantIdentityServiceTest {
         for (TenantTheme theme : TenantTheme.values()) {
             assertThat(TenantTheme.of(theme.name())).isEqualTo(theme);
         }
-    }
-
-    @Test
-    void laCleDeLObjetEtSonTypeSeLisentPourServirLeFichier() {
-        TenantIdentity existing = new TenantIdentity();
-        existing.setTenantId(TENANT);
-        existing.setLogoObjectKey("tenants/a1/logo.png");
-        existing.setLogoContentType("image/png");
-        when(identities.findById(TENANT)).thenReturn(Optional.of(existing));
-
-        assertThat(service.logoObjectKey(TENANT)).isEqualTo("tenants/a1/logo.png");
-        assertThat(service.logoContentType(TENANT)).isEqualTo("image/png");
-    }
-
-    @Test
-    void sansLogoEnregistreLaCleEstAbsenteSansErreur() {
-        when(identities.findById(TENANT)).thenReturn(Optional.empty());
-
-        assertThat(service.logoObjectKey(TENANT)).isNull();
-        assertThat(service.logoContentType(TENANT)).isNull();
-    }
-
-    @Test
-    void laCleDUnLogoDeClientInconnuEstRefusee() {
-        UUID absent = UUID.fromString("00000000-0000-0000-0000-0000000000ff");
-        when(tenants.existsById(absent)).thenReturn(false);
-
-        assertThatThrownBy(() -> service.logoObjectKey(absent))
-                .isInstanceOf(TenantNotFoundException.class);
     }
 
     @Test

@@ -7,10 +7,11 @@ import jakarta.validation.constraints.Size;
 /**
  * Ce qui entre et ce qui sort de l'identité d'un client.
  *
- * <p>Le chemin de stockage du logo ne figure dans aucune réponse : l'écran
- * apprend seulement qu'un logo existe ({@code logoAvailable}) et passe par la
- * route dédiée pour l'obtenir. Exposer la clé d'objet donnerait à lire le plan
- * du stockage, et inviterait à le contacter directement.
+ * <p>Les octets du logo ne figurent dans aucune réponse : l'écran apprend
+ * seulement qu'un logo existe ({@code logoAvailable}) et passe par la route
+ * dédiée pour l'obtenir. Un logo encodé dans la réponse d'identité
+ * alourdirait de 512 Kio une lecture faite à chaque ouverture d'écran, et
+ * priverait le navigateur de son cache.
  */
 public sealed interface TenantIdentityDto permits TenantIdentityDto.Request, TenantIdentityDto.Response {
 
@@ -54,7 +55,7 @@ public sealed interface TenantIdentityDto permits TenantIdentityDto.Request, Ten
             boolean logoAvailable
     ) implements TenantIdentityDto {
 
-        static Response from(TenantIdentity identity) {
+        static Response from(TenantIdentity identity, boolean logoAvailable) {
             return new Response(
                     identity.getSlogan(), identity.getLegalName(), identity.getLegalForm(),
                     identity.getRegistrationNumber(), identity.getVatNumber(),
@@ -63,13 +64,22 @@ public sealed interface TenantIdentityDto permits TenantIdentityDto.Request, Ten
                     identity.getContactEmail(), identity.getContactPhone(),
                     identity.getPrimaryColor(), identity.getSecondaryColor(),
                     identity.getThemeCode(),
-                    identity.getLogoObjectKey() != null);
+                    logoAvailable);
         }
 
         /** L'identité du socle : ce que voit un client qui n'a rien encore choisi. */
         static Response blank() {
             return new Response(null, null, null, null, null, null, null, null, null, null,
                     null, null, null, null, TenantTheme.AIRY_LIGHT, false);
+        }
+
+        /**
+         * Le cas du client qui a posé son logo sans rien remplir d'autre : le
+         * logo doit s'afficher quand même, sinon le téléversement semble perdu.
+         */
+        static Response blankWithLogo() {
+            return new Response(null, null, null, null, null, null, null, null, null, null,
+                    null, null, null, null, TenantTheme.AIRY_LIGHT, true);
         }
     }
 }

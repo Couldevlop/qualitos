@@ -3,6 +3,10 @@ package com.openlab.qualitos.core.tenant;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.HexFormat;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -26,17 +30,23 @@ public class TenantIdentityService {
 
     private final TenantRepository tenants;
     private final TenantIdentityRepository identities;
+    private final TenantLogoRepository logos;
 
-    public TenantIdentityService(TenantRepository tenants, TenantIdentityRepository identities) {
+    public TenantIdentityService(TenantRepository tenants, TenantIdentityRepository identities,
+                                 TenantLogoRepository logos) {
         this.tenants = tenants;
         this.identities = identities;
+        this.logos = logos;
     }
 
     public TenantIdentityDto.Response get(UUID tenantId) {
         requireTenant(tenantId);
+        boolean logoAvailable = logos.existsById(tenantId);
         return identities.findById(tenantId)
-                .map(TenantIdentityDto.Response::from)
-                .orElseGet(TenantIdentityDto.Response::blank);
+                .map(identity -> TenantIdentityDto.Response.from(identity, logoAvailable))
+                .orElseGet(() -> logoAvailable
+                        ? TenantIdentityDto.Response.blankWithLogo()
+                        : TenantIdentityDto.Response.blank());
     }
 
     @Transactional
@@ -64,31 +74,53 @@ public class TenantIdentityService {
         identity.setSecondaryColor(request.secondaryColor());
         identity.setThemeCode(theme);
 
-        return TenantIdentityDto.Response.from(identities.save(identity));
+        return TenantIdentityDto.Response.from(identities.save(identity), logos.existsById(tenantId));
     }
 
     /**
      * Enregistre le logo téléversé, et ne touche à rien d'autre : remplacer un
      * logo ne doit pas effacer un slogan.
+     *
+     * <p>Le type ANNONCÉ n'est pas celui qui est enregistré : {@link LogoPolicy}
+     * rend le type normalisé, après l'avoir confronté aux premiers octets.
+     *
+     * @return l'empreinte du contenu enregistré (sert l'ETag de la route)
      */
     @Transactional
-    public void saveLogo(UUID tenantId, String objectKey, String contentType) {
+    public String saveLogo(UUID tenantId, String declaredContentType, byte[] content) {
         requireTenant(tenantId);
-        TenantIdentity identity = identities.findById(tenantId).orElseGet(TenantIdentity::new);
-        identity.setTenantId(tenantId);
-        identity.setLogoObjectKey(objectKey);
-        identity.setLogoContentType(contentType);
-        identities.save(identity);
+        String contentType = LogoPolicy.check(declaredContentType, content);
+
+        TenantLogo logo = logos.findById(tenantId).orElseGet(TenantLogo::new);
+        logo.setTenantId(tenantId);
+        logo.setContentType(contentType);
+        logo.setSizeBytes(content.length);
+        logo.setSha256(sha256(content));
+        logo.setContent(content);
+        return logos.save(logo).getSha256();
     }
 
-    /** La clé de l'objet, pour le service qui sert le fichier. Jamais exposée en API. */
-    public String logoObjectKey(UUID tenantId) {
+    /** Le logo d'un client, s'il en a posé un. Vide sinon — ce n'est pas une erreur. */
+    public Optional<TenantLogo> logo(UUID tenantId) {
         requireTenant(tenantId);
-        return identities.findById(tenantId).map(TenantIdentity::getLogoObjectKey).orElse(null);
+        return logos.findById(tenantId);
     }
 
-    public String logoContentType(UUID tenantId) {
-        return identities.findById(tenantId).map(TenantIdentity::getLogoContentType).orElse(null);
+    /** Retire le logo. L'identité — slogan, couleurs, mentions — reste intacte. */
+    @Transactional
+    public void deleteLogo(UUID tenantId) {
+        requireTenant(tenantId);
+        logos.deleteById(tenantId);
+    }
+
+    private static String sha256(byte[] content) {
+        try {
+            return HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(content));
+        // SHA-256 est exigé de toute implémentation de la plateforme Java : ce
+        // bras ne s'emprunte pas, et aucun test ne peut l'atteindre.
+        } catch (NoSuchAlgorithmException impossible) {
+            throw new IllegalStateException("SHA-256 indisponible", impossible);
+        }
     }
 
     private void requireTenant(UUID tenantId) {

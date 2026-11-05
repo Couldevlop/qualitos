@@ -21,6 +21,9 @@ import java.util.UUID;
  * L'identité d'un client : ce qui habille son espace et ce qui figure sur ses
  * documents signés.
  *
+ * <p>Le logo lui-même est dans {@link TenantLogo} : ses octets n'ont pas à
+ * voyager avec le slogan et les couleurs, relus eux à chaque ouverture d'écran.
+ *
  * <p>Table séparée de {@code tenants} à dessein : {@code tenants} est lu à
  * chaque requête par tous les services (routage, facturation, accès), l'identité
  * une fois par session pour l'affichage. La clé primaire est le
@@ -37,15 +40,6 @@ public class TenantIdentity {
     @Id
     @Column(name = "tenant_id", updatable = false, nullable = false)
     private UUID tenantId;
-
-    /** Clé de l'objet dans le stockage. Ne sort jamais de l'API. */
-    @Size(max = 512)
-    @Column(name = "logo_object_key", length = 512)
-    private String logoObjectKey;
-
-    @Size(max = 64)
-    @Column(name = "logo_content_type", length = 64)
-    private String logoContentType;
 
     @Size(max = 160)
     @Column(name = "slogan", length = 160)
@@ -119,12 +113,6 @@ public class TenantIdentity {
     public UUID getTenantId() { return tenantId; }
     public void setTenantId(UUID tenantId) { this.tenantId = tenantId; }
 
-    public String getLogoObjectKey() { return logoObjectKey; }
-    public void setLogoObjectKey(String logoObjectKey) { this.logoObjectKey = logoObjectKey; }
-
-    public String getLogoContentType() { return logoContentType; }
-    public void setLogoContentType(String logoContentType) { this.logoContentType = logoContentType; }
-
     public String getSlogan() { return slogan; }
     public void setSlogan(String slogan) { this.slogan = slogan; }
 
@@ -169,7 +157,4 @@ public class TenantIdentity {
 
     public TenantTheme getThemeCode() { return themeCode; }
     public void setThemeCode(TenantTheme themeCode) { this.themeCode = themeCode; }
-
-    public Instant getCreatedAt() { return createdAt; }
-    public Instant getUpdatedAt() { return updatedAt; }
 }
