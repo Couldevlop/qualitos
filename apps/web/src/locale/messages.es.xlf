@@ -7762,6 +7762,10 @@ Portal de clientes</target>
         <source>Couleur secondaire</source>
         <target state="translated">Color secundario</target>
       </trans-unit>
+      <trans-unit id="admin.clients.color-default" datatype="html">
+        <source>Celle du thème</source>
+        <target state="translated">La del tema</target>
+      </trans-unit>
       <trans-unit id="admin.clients.color-note" datatype="html">
         <source>Une couleur illisible sur le fond du thème est refusée par le serveur : le contraste prime sur la charte.</source>
         <target state="translated">Un color ilegible sobre el fondo del tema es rechazado por el servidor: el contraste prevalece sobre la identidad gráfica.</target>

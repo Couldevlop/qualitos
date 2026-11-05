@@ -7762,6 +7762,10 @@ Portail clients</source>
         <source>Couleur secondaire</source>
         <target state="translated">辅助色</target>
       </trans-unit>
+      <trans-unit id="admin.clients.color-default" datatype="html">
+        <source>Celle du thème</source>
+        <target state="translated">主题色</target>
+      </trans-unit>
       <trans-unit id="admin.clients.color-note" datatype="html">
         <source>Une couleur illisible sur le fond du thème est refusée par le serveur : le contraste prime sur la charte.</source>
         <target state="translated">在主题背景上不可读的颜色会被服务器拒绝：对比度优先于品牌规范。</target>
