@@ -53,6 +53,10 @@
       {
         "name": "external_auditor",
         "description": "Auditeur tiers, accès limité dans le temps"
+      },
+      {
+        "name": "consultant",
+        "description": "Consultant d'un cabinet partenaire : il n'appartient a aucun client, et n'entre chez l'un d'eux que si ce client a accorde un acces"
       }
     ]
   },
@@ -247,6 +251,24 @@
           "query-users"
         ]
       }
+    },
+    {
+      "username": "consultante",
+      "email": "claire@qualiconseil.fr",
+      "firstName": "Claire",
+      "lastName": "Vasseur",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "consultante",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "consultant"
+      ]
     }
   ],
   "authenticationFlows": [
