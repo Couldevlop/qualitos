@@ -35,16 +35,20 @@
               placeholder="Méthode, ressources, critère de fin…"></textarea>
   </mat-form-field>
 
-  <!-- Nature : corrective quand l'écart s'est produit, préventive quand il
-       menace. L'endiguement seul n'est pas proposé : il arrête l'effet sans
-       supprimer la cause, et un dossier qui ne porterait que lui ne se
-       clôturerait jamais (ISO 9001 §10.2). -->
+  <!-- Nature de l'action : l'endiguement arrête l'effet, le correctif et le
+       préventif suppriment la cause. L'endiguement vient EN PREMIER parce que
+       c'est ce qu'on fait d'abord, le jour même (ISO 9001 §10.2 a, 8D étape D3).
+       Le dossier qui le porte reste correctif pour pouvoir être clos : un
+       dossier de pur endiguement ne se clôturerait jamais. -->
   <div class="nature">
     <span class="nature__titre" id="capa-open-nature" i18n="@@capa.open.nature">Nature</span>
     <mat-radio-group formControlName="type" class="nature__choix" aria-labelledby="capa-open-nature"
                      data-test="capa-nature">
       <mat-radio-button *ngFor="let n of natures" [value]="n.value">{{ n.label }}</mat-radio-button>
     </mat-radio-group>
+    <p class="nature__aide" *ngIf="isContainment" data-test="capa-endiguement-aide"
+       i18n="@@capa.open.containment-hint">Mesure immédiate : elle contient l'effet. Le dossier reste
+      correctif — sa clôture demandera une action qui supprime la cause.</p>
   </div>
 
   <div class="row">

@@ -417,15 +417,37 @@ describe('DmaicDetailComponent', () => {
     expect(fixture.nativeElement.querySelector('[data-test="fiche"]')?.textContent).toContain('MEASURE');
   });
 
-  it('bloque le passage à la phase suivante tant que la fiche est incomplète', () => {
+  it("n'avance pas tant que la fiche est incomplète, et le dit au lieu de s'éteindre", () => {
+    // Le bouton reste CLIQUABLE : un bouton grisé ne dit pas quelles réponses
+    // manquent sur une page de trente questions. Le clic signale les champs.
     fixture.detectChanges();
     flushDetail();
     component.onMissing(['DEF-01']);
     fixture.detectChanges();
     const btn = fixture.nativeElement.querySelector('[data-test="avancer"]') as HTMLButtonElement;
-    expect(btn.disabled).toBeTrue();
+    expect(btn.disabled).toBeFalse();
+
+    btn.click();
+    http.expectNone(`${base}/projects/${ID}/advance`);
+
     component.onMissing([]);
     fixture.detectChanges();
+    btn.click();
+    http.expectOne(`${base}/projects/${ID}/advance`).flush(project({ phase: 'MEASURE' }));
+    // L'avance recharge toute la fiche (projet, mesures, poka-yoke,
+    // capabilite) : on repond a ce rechargement, sinon le banc s'acheve sur des
+    // requetes en vol et verify() echoue pour cette raison-la.
+    flushDetail(project({ phase: 'MEASURE' }));
+  });
+
+  it('propose de clôturer le projet quand il est en phase « Contrôler »', () => {
+    fixture.detectChanges();
+    flushDetail(project({ phase: 'CONTROL' }));
+    fixture.detectChanges();
+    const btn = fixture.nativeElement.querySelector('[data-test="avancer"]') as HTMLButtonElement;
+    // Le bouton était éteint en phase « Contrôler » : la clôture était
+    // inatteignable depuis l'écran.
     expect(btn.disabled).toBeFalse();
+    expect(btn.textContent).toContain('Clôturer');
   });
 });

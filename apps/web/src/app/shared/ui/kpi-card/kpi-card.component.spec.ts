@@ -125,9 +125,10 @@ describe('KpiCardComponent', () => {
       .toBe('DPMO: 3.4 ppm');
   });
 
-  it('n\'affiche la ligne de tendance et de cible que si elles existent', () => {
+  it('n\'affiche la tendance et la cible que si elles existent', () => {
     render({ value: 12 });
-    expect(el().querySelector('.qos-kpi__meta')).toBeNull();
+    expect(el().querySelector('.qos-kpi__trend')).toBeNull();
+    expect(el().querySelector('.qos-kpi__target')).toBeNull();
 
     render({ trend: 1.2 });
     expect(el().querySelector('.qos-kpi__trend')).not.toBeNull();
@@ -190,5 +191,81 @@ describe('KpiCardComponent', () => {
     render({ label: 'Niveau Sigma', value: 'σ 4,2' });
 
     expect(el().querySelector('.qos-kpi__value')?.textContent).toContain('σ 4,2');
+  });
+
+  // ---- Règle de mesure ---------------------------------------------------------
+  //
+  // C'est le dispositif qui rend la tuile lisible : la valeur se juge CONTRE sa
+  // cible, pas dans l'absolu. Les positions doivent donc rester fidèles aux
+  // seules données affichées — aucune échelle inventée.
+
+  it('dessine la règle dès qu\'il y a une valeur chiffrée et une cible', () => {
+    render({ value: 2.8, target: 3.2, unit: '% CA' });
+
+    expect(component.hasRail).toBeTrue();
+    expect(el().querySelector('.qos-kpi__rail')).not.toBeNull();
+    expect(el().querySelector('.qos-kpi__rail-target')).not.toBeNull();
+    expect(el().querySelector('.qos-kpi__rail-dot')).not.toBeNull();
+  });
+
+  it('place la valeur avant la cible quand elle lui est inférieure', () => {
+    render({ value: 2.8, target: 3.2 });
+
+    expect(component.valuePercent).toBeLessThan(component.targetPercent);
+  });
+
+  it('place la valeur après la cible quand elle la dépasse', () => {
+    // Un indicateur au-dessus de sa cible doit SE VOIR au-delà du repère : le
+    // dépassement est précisément ce qu'on vient lire.
+    render({ value: 10, target: 5 });
+
+    expect(component.valuePercent).toBeGreaterThan(component.targetPercent);
+  });
+
+  it('laisse de l\'air au bout de la règle plutôt que de coller au bord', () => {
+    // Un point collé à l'extrémité se lit comme un maximum atteint, ce que la
+    // donnée ne dit pas.
+    render({ value: 100, target: 80 });
+
+    expect(component.valuePercent).toBeLessThan(100);
+    expect(component.valuePercent).toBeGreaterThan(70);
+  });
+
+  it('ramène une valeur négative au début de la règle sans sortir du cadre', () => {
+    render({ value: -5, target: 10 });
+
+    expect(component.valuePercent).toBe(0);
+  });
+
+  it('renonce à la règle sans cible, et retombe sur le liseré d\'état', () => {
+    render({ value: 42, state: 'bad' });
+
+    expect(component.hasRail).toBeFalse();
+    expect(el().querySelector('.qos-kpi__rail')).toBeNull();
+    expect(el().querySelector('article')!.classList).toContain('qos-kpi--no-rail');
+  });
+
+  it('renonce à la règle sur une valeur textuelle, qu\'elle ne sait pas situer', () => {
+    render({ value: 'σ 4,2', target: 5 });
+
+    expect(component.hasRail).toBeFalse();
+    expect(el().querySelector('.qos-kpi__rail')).toBeNull();
+  });
+
+  it('renonce à la règle pendant le chargement', () => {
+    render({ value: 2.8, target: 3.2, loading: true });
+
+    expect(component.hasRail).toBeFalse();
+  });
+
+  it('énonce la cible dans le libellé accessible, puisque la règle est muette', () => {
+    // La règle porte `aria-hidden` : un graphique ne se lit pas à voix haute.
+    // Son unique information doit donc être dite en mots, sinon elle est perdue.
+    render({ label: 'COQ', value: 2.8, unit: '% CA', target: 3.2 });
+
+    const label = el().querySelector('article')!.getAttribute('aria-label')!;
+    expect(label).toContain('COQ: 2.8 % CA');
+    expect(label).toContain('3.2');
+    expect(el().querySelector('.qos-kpi__rail')!.getAttribute('aria-hidden')).toBe('true');
   });
 });

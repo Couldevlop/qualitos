@@ -4,7 +4,6 @@
 TRANSLATIONS = {
     'nav.tv-mode': ('Mode TV / Salle qualité', 'TV mode / Quality room', 'Modo TV / Sala de calidad', 'وضع التلفزيون / قاعة الجودة', 'TVモード／品質ルーム', '电视模式 / 质量室'),
 
-    'tv.brand': ('QualitOS · Salle qualité', 'QualitOS · Quality room', 'QualitOS · Sala de calidad', 'QualitOS · قاعة الجودة', 'QualitOS · 品質ルーム', 'QualitOS · 质量室'),
 
     'tv.toolbar.aria': ('Commandes Mode TV', 'TV mode controls', 'Controles del modo TV', 'عناصر تحكم وضع التلفزيون', 'TVモードのコントロール', '电视模式控制'),
     'tv.interval.label': ('Intervalle', 'Interval', 'Intervalo', 'الفاصل', '間隔', '间隔'),
@@ -34,6 +33,10 @@ TRANSLATIONS = {
 
     'tv.trend.series': ('Qualité globale', 'Overall quality', 'Calidad global', 'الجودة الإجمالية', '全体品質', '整体质量'),
     'tv.trend.target': ('Cible', 'Target', 'Objetivo', 'الهدف', '目標', '目标'),
+
+    # Fraîcheur de ce qui est à l'écran, pour qu'un tableau mural ne laisse
+    # pas croire qu'il est figé depuis le matin.
+    'tv.loaded-at': ('Relevé de', 'Read at', 'Lectura de', 'قراءة في', '取得時刻', '采集于'),
 
     'tv.card.confidence': ('Confiance {$INTERPOLATION} %', 'Confidence {$INTERPOLATION} %', 'Confianza {$INTERPOLATION} %', 'الثقة {$INTERPOLATION} %', '信頼度 {$INTERPOLATION} %', '置信度 {$INTERPOLATION} %'),
 }

@@ -45,6 +45,7 @@ class NcReporterNameTest {
     @Mock ApplicationEventPublisher events;
     /** Sans réglage, Mockito rend Optional.empty() : l'utilisateur voit tout (ADR 0081). */
     @Mock RecordScope scope;
+    @Mock com.openlab.qualitos.quality.nonconformity.subcategory.NcSubcategoryCatalog subcategories;
     @InjectMocks NcService service;
 
     private static final UUID TENANT = UUID.randomUUID();
@@ -80,7 +81,7 @@ class NcReporterNameTest {
 
     private NcDto.CreateRequest request() {
         return new NcDto.CreateRequest(
-                "Joint torique défectueux", "détail", NcCategory.PRODUCT, NcSeverity.MAJOR,
+                "Joint torique défectueux", "détail", NcCategory.PRODUCT, null, NcSeverity.MAJOR,
                 Instant.now(), "Atelier 3", 48.85, 2.35, null, BODY_REPORTER, null, null, null);
     }
 

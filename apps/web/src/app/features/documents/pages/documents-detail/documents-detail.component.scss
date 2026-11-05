@@ -1,7 +1,15 @@
-.documents-detail { padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+/* La fiche posait une gouttière fixe de 24 px et sa propre pile, en doublon
+   de `.qos-page` qu'elle porte désormais : c'était la seule marge de la GED
+   qui ne respirait pas avec la fenêtre. Le titre reprend le jeton d'en-tête
+   de page — à 22 px il dépassait de deux pixels tous les autres h1. */
+.documents-detail { min-width: 0; }
 
-.head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
-.head h1 { margin: 4px 0; font-size: 22px; display: flex; align-items: center; gap: 12px; }
+.head { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--qos-space-4); flex-wrap: wrap; }
+.head h1 {
+  margin: 0;
+  font-size: var(--qos-fs-xl);
+  display: flex; align-items: center; gap: var(--qos-space-3);
+}
 .head code {
   display: inline-block; padding: 2px 10px;
   background: #f5f5f5; border-radius: 6px;
@@ -17,7 +25,7 @@
 .toolbar { display: flex; gap: 8px; flex-wrap: wrap; }
 .toolbar button { display: inline-flex; align-items: center; gap: 6px; }
 
-.banner { padding: 10px 14px; border-radius: 8px; font-size: 13px; }
+.banner { padding: var(--qos-space-2) var(--qos-space-3); border-radius: var(--qos-radius-md); font-size: var(--qos-fs-sm); }
 .banner-error { background: #fbe9e7; color: #b71c1c; }
 .banner-info  { background: #e3f2fd; color: #0d47a1; }
 
@@ -43,7 +51,7 @@
 }
 
 .facts {
-  display: flex; flex-wrap: wrap; gap: var(--qos-space-2) var(--qos-space-8);
+  display: flex; flex-wrap: wrap; gap: var(--qos-space-2) var(--qos-space-5);
   margin: var(--qos-space-3) 0 0; font-size: var(--qos-fs-sm);
   dt { color: var(--qos-fg-secondary); font-size: var(--qos-fs-xs); }
   dd { margin: 2px 0 0; }

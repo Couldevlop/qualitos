@@ -126,6 +126,15 @@ public class AiGatewayClient {
                     intValue(resp.get("tokens_used")),
                     intValue(resp.get("latency_ms")));
         } catch (RestClientException e) {
+            if (e instanceof HttpClientErrorException http) {
+                // La passerelle a répondu : elle refuse la requête (texte trop long,
+                // invite suspectée d'injection, champ hors bornes). Ce n'est pas une
+                // panne, le disjoncteur n'a pas à la compter — sinon un utilisateur
+                // ferme tout le chemin IA de son organisation en répétant un refus.
+                guard.recordSuccess(ctx.tenantId());
+                throw new AiRequestRejectedException(
+                        "Requête refusée par la passerelle IA (" + http.getStatusCode().value() + ")", e);
+            }
             guard.recordFailure(ctx.tenantId());
             throw new AiGatewayException("Passerelle IA indisponible : " + e.getMessage(), e);
         }

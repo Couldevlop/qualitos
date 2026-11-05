@@ -2,11 +2,13 @@
    deux écrans qui listent des projets doivent se lire pareil, sinon chacun
    réapprend la même chose à son lecteur. */
 
+/* Cet écran posait sa propre gouttière fixe de 24 px : il était le seul du
+   module à ne pas suivre `.qos-page`, donc le seul dont la marge ne respirait
+   pas avec la fenêtre — 48 px mangés sur un téléphone de 390 px. La structure
+   (gouttière fluide, largeur maximale, pile espacée) vient maintenant du
+   socle ; il ne reste ici que ce qui est propre à la liste de projets. */
 .apqp-projets {
-  padding: var(--qos-space-5, 24px);
-  display: flex;
-  flex-direction: column;
-  gap: var(--qos-space-4, 16px);
+  min-width: 0;
 }
 
 .head {
@@ -18,8 +20,10 @@
 }
 
 .head h1 {
-  margin: 0 0 4px;
-  font-size: 22px;
+  margin: 0;
+  /* Le jeton d'en-tête de page : à 22 px, ce titre dépassait tous les autres
+     h1 de la plateforme sans qu'on sache dire pourquoi. */
+  font-size: var(--qos-fs-xl);
   /* Interlignage explicite : sans lui, les jambages des majuscules accentuées se
      font rogner. */
   line-height: 1.35;
@@ -51,9 +55,9 @@
 }
 
 .banner {
-  padding: 10px 14px;
-  border-radius: 8px;
-  font-size: 13px;
+  padding: var(--qos-space-2) var(--qos-space-3);
+  border-radius: var(--qos-radius-md);
+  font-size: var(--qos-fs-sm);
 }
 
 .banner-error { background: #fbe9e7; color: #b71c1c; }

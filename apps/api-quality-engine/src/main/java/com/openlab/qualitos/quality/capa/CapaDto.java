@@ -51,6 +51,16 @@ public final class CapaDto {
             @NotBlank @Size(max = 255) String title,
             @Size(max = 4000) String description,
             @NotNull CapaType type,
+            /**
+             * La nature de l'ACTION du dossier, quand elle diffère de celle du
+             * dossier : une mesure d'endiguement prise le jour même se tient dans
+             * un dossier correctif, qui restera clôturable quand la cause sera
+             * traitée (ISO 9001 §10.2, étape D3 de la 8D).
+             *
+             * <p>Absente, elle se déduit du type du dossier — le cas de presque
+             * toutes les ouvertures.
+             */
+            CapaActionType actionType,
             @NotNull CapaCriticity criticity,
             CapaSourceType sourceType,
             @Size(max = 255) String sourceRef,
@@ -61,7 +71,20 @@ public final class CapaDto {
             UUID verificationAssigneeId,
             @Size(max = 255) String verificationAssigneeName,
             @Size(max = 4000) String verificationInstructions
-    ) {}
+    ) {
+        /**
+         * L'ouverture sans nature d'action explicite — la forme de presque tous
+         * les appelants : l'action prend la nature que le type du dossier implique.
+         */
+        public OpenCaseRequest(String title, String description, CapaType type, CapaCriticity criticity,
+                               CapaSourceType sourceType, String sourceRef, UUID ownerId, String ownerName,
+                               LocalDate dueDate, Boolean verificationRequired, UUID verificationAssigneeId,
+                               String verificationAssigneeName, String verificationInstructions) {
+            this(title, description, type, null, criticity, sourceType, sourceRef, ownerId, ownerName,
+                    dueDate, verificationRequired, verificationAssigneeId, verificationAssigneeName,
+                    verificationInstructions);
+        }
+    }
 
     /**
      * Mise à jour PARTIELLE : un champ nul veut dire « ne touche pas ».

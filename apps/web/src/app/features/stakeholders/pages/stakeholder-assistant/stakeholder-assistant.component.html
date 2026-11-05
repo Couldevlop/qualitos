@@ -1,0 +1,284 @@
+<!-- Le contrat de l'écran, écrit une fois et en haut : rien de ce qui suit ne
+     s'enregistre sans un geste de l'utilisateur, action par action. -->
+<p class="contrat" role="note" i18n="@@stakeholders.assistant.contract">
+  L'assistant propose ; il n'inscrit rien. Chaque proposition reste une proposition jusqu'à ce que
+  vous l'acceptiez, une par une.
+</p>
+
+<!-- ===== 1. Suggérer des parties prenantes ===== -->
+<section class="bloc" aria-labelledby="pi-a-suggestions">
+  <header class="bloc__head">
+    <h3 class="bloc__titre" id="pi-a-suggestions" i18n="@@stakeholders.assistant.suggest-title">
+      Qui oublie-t-on ?
+    </h3>
+    <p class="bloc__aide" i18n="@@stakeholders.assistant.suggest-help">
+      Décrivez votre activité : l'assistant propose les familles de parties intéressées qu'un
+      organisme comme le vôtre doit prendre en compte.
+    </p>
+  </header>
+
+  <div class="saisie">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label i18n="@@stakeholders.assistant.sector">Secteur d'activité</mat-label>
+      <input matInput [(ngModel)]="sector" [maxlength]="maxSector" data-test="secteur">
+    </mat-form-field>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="large">
+      <mat-label i18n="@@stakeholders.assistant.characteristics">Caractéristiques (sites, clients, contraintes)</mat-label>
+      <textarea matInput rows="2" [(ngModel)]="characteristics" [maxlength]="maxCharacteristics"
+                data-test="caracteristiques"></textarea>
+    </mat-form-field>
+  </div>
+
+  <p class="blocage" *ngIf="suggestBlocked as motif" data-test="blocage-suggestions">
+    <mat-icon aria-hidden="true">info</mat-icon>
+    <span>{{ motif }}</span>
+  </p>
+
+  <button mat-flat-button color="primary" type="button" (click)="suggest()"
+          [disabled]="!!suggestBlocked || suggesting" data-test="proposer">
+    <mat-icon aria-hidden="true">auto_awesome</mat-icon>
+    <span i18n="@@stakeholders.assistant.suggest">Proposer des parties prenantes</span>
+  </button>
+
+  <mat-progress-bar *ngIf="suggesting" mode="indeterminate"></mat-progress-bar>
+
+  <p class="echec" *ngIf="suggestError" role="alert" data-test="echec-suggestions">{{ suggestError }}</p>
+
+  <!-- Une liste vide est une RÉPONSE : on le dit, ce n'est pas une panne. -->
+  <p class="dim" *ngIf="suggestions && !suggestions.length" data-test="suggestions-vides"
+     i18n="@@stakeholders.assistant.nothing-to-suggest">
+     Rien à proposer : votre registre couvre déjà ce que cette description laisse voir.
+  </p>
+
+  <ul class="propositions" *ngIf="suggestions?.length" data-test="suggestions">
+    <li class="proposition" *ngFor="let row of suggestions; trackBy: trackBySuggestion">
+      <div class="proposition__texte">
+        <strong>{{ row.suggestion.name }}</strong>
+        <small class="dim">{{ categoryLabel(row.suggestion.category) }}</small>
+        <!-- La justification est ce qui rend la proposition discutable. -->
+        <p class="proposition__motif" *ngIf="row.suggestion.rationale">
+          {{ row.suggestion.rationale }}
+        </p>
+      </div>
+
+      <div class="proposition__actions">
+        <span class="deja" *ngIf="row.duplicate" data-test="deja-inscrite"
+              i18n="@@stakeholders.assistant.already">Déjà au registre</span>
+
+        <span class="fait" *ngIf="!row.duplicate && row.registered" data-test="inscrite">
+          <mat-icon aria-hidden="true">check</mat-icon>
+          <span i18n="@@stakeholders.assistant.registered">Partie prenante inscrite.</span>
+        </span>
+
+        <ng-container *ngIf="!row.duplicate && !row.registered">
+          <mat-form-field appearance="outline" subscriptSizing="dynamic" class="cote">
+            <mat-label i18n="@@stakeholders.filter.side">Interne / externe</mat-label>
+            <mat-select [(ngModel)]="row.side" [attr.data-test]="'cote-' + row.suggestion.name">
+              <mat-option value="INTERNAL">{{ sideLabel('INTERNAL') }}</mat-option>
+              <mat-option value="EXTERNAL">{{ sideLabel('EXTERNAL') }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <button mat-stroked-button color="primary" type="button" (click)="register(row)"
+                  [disabled]="row.busy" data-test="inscrire">
+            <mat-icon aria-hidden="true">group_add</mat-icon>
+            <span i18n="@@stakeholders.assistant.do-register">Inscrire</span>
+          </button>
+        </ng-container>
+      </div>
+    </li>
+  </ul>
+</section>
+
+<!-- ===== 2. Extraire les exigences d'un document ===== -->
+<section class="bloc" aria-labelledby="pi-a-exigences">
+  <header class="bloc__head">
+    <h3 class="bloc__titre" id="pi-a-exigences" i18n="@@stakeholders.assistant.extract-title">
+      Les exigences d'un document
+    </h3>
+    <p class="bloc__aide" i18n="@@stakeholders.assistant.extract-help">
+      Collez un contrat, un cahier des charges ou un texte réglementaire : l'assistant en relève les
+      exigences, chacune avec le passage qui la prouve.
+    </p>
+  </header>
+
+  <div class="saisie">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label i18n="@@stakeholders.assistant.document-name">Nom du document</mat-label>
+      <input matInput [(ngModel)]="documentName" [maxlength]="maxDocumentName" data-test="nom-document">
+    </mat-form-field>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="large">
+      <mat-label i18n="@@stakeholders.assistant.document-text">Texte du document</mat-label>
+      <textarea matInput rows="5" [(ngModel)]="documentText" [maxlength]="maxDocumentText" data-test="texte-document"></textarea>
+    </mat-form-field>
+  </div>
+
+  <p class="blocage" *ngIf="extractBlocked as motif" data-test="blocage-extraction">
+    <mat-icon aria-hidden="true">info</mat-icon>
+    <span>{{ motif }}</span>
+  </p>
+
+  <button mat-flat-button color="primary" type="button" (click)="extract()"
+          [disabled]="!!extractBlocked || extracting" data-test="extraire">
+    <mat-icon aria-hidden="true">find_in_page</mat-icon>
+    <span i18n="@@stakeholders.assistant.extract">Relever les exigences</span>
+  </button>
+
+  <mat-progress-bar *ngIf="extracting" mode="indeterminate"></mat-progress-bar>
+
+  <p class="echec" *ngIf="extractError" role="alert" data-test="echec-extraction">{{ extractError }}</p>
+
+  <p class="dim" *ngIf="extracted && !extracted.length" data-test="extraction-vide"
+     i18n="@@stakeholders.assistant.nothing-extracted">
+     Rien à proposer : ce texte ne porte aucune exigence identifiable.
+  </p>
+
+  <ng-container *ngIf="extracted?.length">
+    <!-- Une exigence appartient à quelqu'un : il faut dire à qui avant d'ajouter. -->
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="destinataire">
+      <mat-label i18n="@@stakeholders.assistant.target">Partie prenante qui porte ces exigences</mat-label>
+      <mat-select [(ngModel)]="extractTargetId" data-test="destinataire">
+        <mat-option *ngFor="let row of rows" [value]="row.id">{{ row.name }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <p class="blocage" *ngIf="addBlocked as motif" data-test="blocage-destinataire">
+      <mat-icon aria-hidden="true">info</mat-icon>
+      <span>{{ motif }}</span>
+    </p>
+
+    <button mat-button type="button" *ngIf="extractTargetId" (click)="openTarget()"
+            data-test="ouvrir-fiche">
+      <mat-icon aria-hidden="true">open_in_new</mat-icon>
+      <span i18n="@@stakeholders.assistant.open-sheet">Ouvrir sa fiche</span>
+    </button>
+
+    <ul class="propositions" data-test="exigences-extraites">
+      <li class="proposition" *ngFor="let row of extracted; trackBy: trackByExtracted">
+        <div class="proposition__texte">
+          <strong>{{ row.extracted.requirement }}</strong>
+          <!-- La citation est TOUJOURS affichée : sans elle, rien ne distingue une
+               exigence lue dans le document d'une exigence inventée. -->
+          <blockquote class="citation" data-test="citation">{{ row.extracted.quote }}</blockquote>
+          <p class="proposition__meta">
+            <span *ngIf="row.extracted.reference">{{ row.extracted.reference }}</span>
+            <span *ngIf="row.extracted.nature">{{ natureLabel(row.extracted.nature) }}</span>
+            <span *ngIf="row.extracted.control">{{ row.extracted.control }}</span>
+          </p>
+        </div>
+
+        <div class="proposition__actions">
+          <span class="fait" *ngIf="row.added" data-test="ajoutee">
+            <mat-icon aria-hidden="true">check</mat-icon>
+            <span i18n="@@stakeholders.requirement-added">Exigence ajoutée.</span>
+          </span>
+          <button mat-stroked-button color="primary" type="button" *ngIf="!row.added"
+                  (click)="add(row)" [disabled]="row.busy || !!addBlocked" data-test="ajouter">
+            <mat-icon aria-hidden="true">add</mat-icon>
+            <span i18n="@@common.add">Ajouter</span>
+          </button>
+        </div>
+      </li>
+    </ul>
+  </ng-container>
+</section>
+
+<!-- ===== 3. Ce qui a changé entre deux versions ===== -->
+<section class="bloc" aria-labelledby="pi-a-changements">
+  <header class="bloc__head">
+    <h3 class="bloc__titre" id="pi-a-changements" i18n="@@stakeholders.assistant.changes-title">
+      Ce qui a changé
+    </h3>
+    <p class="bloc__aide" i18n="@@stakeholders.assistant.changes-help">
+      Deux versions d'un même texte : l'assistant dit ce qui a bougé et ce que cela pèse. À vous de
+      désigner les exigences que ce changement remet en cause.
+    </p>
+  </header>
+
+  <div class="saisie">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label i18n="@@stakeholders.assistant.document-name">Nom du document</mat-label>
+      <input matInput [(ngModel)]="changeDocumentName" [maxlength]="maxDocumentName"
+             data-test="nom-document-change">
+    </mat-form-field>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="large">
+      <mat-label i18n="@@stakeholders.assistant.previous-text">Version précédente</mat-label>
+      <textarea matInput rows="4" [(ngModel)]="previousText" [maxlength]="maxComparedText" data-test="texte-precedent"></textarea>
+    </mat-form-field>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="large">
+      <mat-label i18n="@@stakeholders.assistant.current-text">Version en vigueur</mat-label>
+      <textarea matInput rows="4" [(ngModel)]="currentText" [maxlength]="maxComparedText" data-test="texte-courant"></textarea>
+    </mat-form-field>
+  </div>
+
+  <p class="blocage" *ngIf="detectBlocked as motif" data-test="blocage-changements">
+    <mat-icon aria-hidden="true">info</mat-icon>
+    <span>{{ motif }}</span>
+  </p>
+
+  <button mat-flat-button color="primary" type="button" (click)="detect()"
+          [disabled]="!!detectBlocked || detecting" data-test="comparer">
+    <mat-icon aria-hidden="true">difference</mat-icon>
+    <span i18n="@@stakeholders.assistant.detect">Comparer les deux versions</span>
+  </button>
+
+  <mat-progress-bar *ngIf="detecting" mode="indeterminate"></mat-progress-bar>
+
+  <p class="echec" *ngIf="changeError" role="alert" data-test="echec-changements">{{ changeError }}</p>
+
+  <p class="dim" *ngIf="detected && !detected.length" data-test="changements-vides"
+     i18n="@@stakeholders.assistant.nothing-changed">
+     Rien à signaler : ces deux versions ne diffèrent sur aucune exigence.
+  </p>
+
+  <ul class="changements" *ngIf="detected?.length" data-test="changements">
+    <li class="changement" *ngFor="let c of detected; trackBy: trackByChange">
+      <div class="changement__tete">
+        <strong>{{ c.title }}</strong>
+        <span *ngIf="c.impact" [class]="impactChip(c.impact)">{{ impactLabel(c.impact) }}</span>
+      </div>
+      <p class="changement__detail" *ngIf="c.detail">{{ c.detail }}</p>
+      <small class="dim" *ngIf="c.source">{{ c.source }}</small>
+    </li>
+  </ul>
+
+  <!-- La suite est humaine : désigner les exigences remises en cause. -->
+  <ng-container *ngIf="detected?.length">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="destinataire">
+      <mat-label i18n="@@stakeholders.assistant.reassess-target">Partie prenante concernée</mat-label>
+      <mat-select [ngModel]="reassessTargetId" (ngModelChange)="onReassessTarget($event)"
+                  data-test="partie-concernee">
+        <mat-option *ngFor="let row of rows" [value]="row.id">{{ row.name }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-progress-bar *ngIf="reassessLoading" mode="indeterminate"></mat-progress-bar>
+
+    <p class="echec" *ngIf="reassessError" role="alert" data-test="echec-fiche">{{ reassessError }}</p>
+
+    <p class="dim" *ngIf="reassessTargetId && !reassessLoading && !reassessRequirements.length"
+       data-test="sans-exigence" i18n="@@stakeholders.assistant.no-requirement">
+       Cette partie prenante ne porte encore aucune exigence à réévaluer.
+    </p>
+
+    <ul class="exigences" *ngIf="reassessRequirements.length" data-test="exigences-a-cocher">
+      <li *ngFor="let r of reassessRequirements; trackBy: trackByRequirement">
+        <mat-checkbox [checked]="isSelected(r.id)" (change)="toggleRequirement(r.id)"
+                      [attr.data-test]="'cocher-' + r.id">
+          <span>{{ r.requirement }}</span>
+          <small class="dim">{{ requirementStatusLabel(r.status) }}</small>
+        </mat-checkbox>
+      </li>
+    </ul>
+
+    <p class="blocage" *ngIf="markBlocked as motif" data-test="blocage-marquage">
+      <mat-icon aria-hidden="true">info</mat-icon>
+      <span>{{ motif }}</span>
+    </p>
+
+    <button mat-flat-button color="primary" type="button" (click)="markToReassess()"
+            [disabled]="!!markBlocked || marking" data-test="marquer">
+      <mat-icon aria-hidden="true">flag</mat-icon>
+      <span i18n="@@stakeholders.assistant.mark">Marquer comme à réévaluer</span>
+    </button>
+  </ng-container>
+</section>

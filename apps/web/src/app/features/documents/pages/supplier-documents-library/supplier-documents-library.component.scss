@@ -1,11 +1,11 @@
 /* Les pièces des fournisseurs, lues depuis la GED : une table sobre, le fichier
    en tête, son porteur à un clic. */
 
+/* `.qos-page` pose déjà la gouttière fluide, la largeur maximale et la pile :
+   la marge fixe de 24 px redéclarée ici l'écrasait et faisait de cet écran le
+   seul de la GED dont la marge ne respirait pas avec la fenêtre. */
 .library {
-  padding: var(--qos-space-6, 24px);
-  display: flex;
-  flex-direction: column;
-  gap: var(--qos-space-4);
+  min-width: 0;
 }
 
 .head {
@@ -42,7 +42,7 @@
   button { display: inline-flex; align-items: center; gap: 6px; }
 }
 
-.banner { padding: 10px 14px; border-radius: var(--qos-radius-md, 8px); font-size: var(--qos-fs-sm); }
+.banner { padding: var(--qos-space-2) var(--qos-space-3); border-radius: var(--qos-radius-md); font-size: var(--qos-fs-sm); }
 .banner-error { background: var(--qos-danger-bg, #fbe9e7); color: var(--qos-danger-fg); }
 
 .table-wrap {
@@ -96,7 +96,7 @@ code { font-family: 'IBM Plex Mono', 'Fira Code', monospace; font-size: 12px; }
   flex-direction: column;
   align-items: center;
   gap: var(--qos-space-2);
-  padding: var(--qos-space-8, 40px) var(--qos-space-4);
+  padding: var(--qos-space-6) var(--qos-space-4);
   color: var(--qos-fg-secondary);
 
   mat-icon { font-size: 36px; width: 36px; height: 36px; color: var(--qos-fg-tertiary); }

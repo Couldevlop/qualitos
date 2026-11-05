@@ -50,6 +50,7 @@ class NcOriginTest {
     @Mock org.springframework.context.ApplicationEventPublisher events;
     /** Sans réglage, Mockito rend Optional.empty() : l'utilisateur voit tout (ADR 0081). */
     @Mock RecordScope scope;
+    @Mock com.openlab.qualitos.quality.nonconformity.subcategory.NcSubcategoryCatalog subcategories;
     @InjectMocks NcService service;
 
     private static final UUID TENANT = UUID.randomUUID();
@@ -59,7 +60,7 @@ class NcOriginTest {
 
     private NcDto.CreateRequest request(NcOrigin origin) {
         return new NcDto.CreateRequest(
-                "Joint défectueux", "détail", NcCategory.PRODUCT, NcSeverity.MAJOR,
+                "Joint défectueux", "détail", NcCategory.PRODUCT, null, NcSeverity.MAJOR,
                 Instant.now(), "Atelier 3", null, null, null, null, origin, null, null);
     }
 
@@ -106,7 +107,7 @@ class NcOriginTest {
         when(repo.findAll(any(Specification.class), eq(page)))
                 .thenReturn(new PageImpl<>(List.of(externe)));
 
-        var result = service.findAll(null, null, null, NcOrigin.EXTERNAL, null, page);
+        var result = service.findAll(null, null, null, null, NcOrigin.EXTERNAL, null, page);
 
         assertThat(result.getContent()).hasSize(1);
         assertThat(result.getContent().get(0).origin()).isEqualTo(NcOrigin.EXTERNAL);
@@ -119,7 +120,7 @@ class NcOriginTest {
         when(repo.findAll(any(Specification.class), eq(page)))
                 .thenReturn(new PageImpl<>(List.of()));
 
-        service.findAll(null, null, null, null, null, page);
+        service.findAll(null, null, null, null, null, null, page);
 
         // Le filtre est bâti dans tous les cas : c'est la spécification qui décide
         // d'ignorer un critère nul, et non une cascade de branches par combinaison.

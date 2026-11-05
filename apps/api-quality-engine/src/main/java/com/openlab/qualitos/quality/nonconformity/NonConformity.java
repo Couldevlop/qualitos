@@ -36,6 +36,18 @@ public class NonConformity {
     @Column(nullable = false, length = 30)
     private NcCategory category;
 
+    /**
+     * La nature fine de l'écart, sous sa catégorie — le code d'une entrée du
+     * catalogue du client (voir {@code NcSubcategoryCatalog}).
+     *
+     * <p>Facultative : un écart se saisit d'abord, souvent sur le terrain, et se
+     * classe finement ensuite. Un code conservé alors que le client a retiré
+     * l'entrée de son catalogue reste affiché tel quel : effacer un classement
+     * passé pour cause de changement de nomenclature réécrirait l'histoire.
+     */
+    @Column(name = "subcategory_code", length = 30)
+    private String subcategoryCode;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private NcSeverity severity;

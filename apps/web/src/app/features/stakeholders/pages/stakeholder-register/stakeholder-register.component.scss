@@ -1,0 +1,91 @@
+// Le registre en tableau dense : on y balaie vingt lignes, pas trois.
+
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--qos-space-3);
+  min-width: 0;
+}
+
+.filtres {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--qos-space-2) var(--qos-space-3);
+
+  &__recherche {
+    flex: 1 1 18rem;
+    min-width: 0;
+    max-width: 28rem;
+  }
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+// La catégorie est longue : elle tronque plutôt que d'élargir le tableau.
+.categorie {
+  max-width: 20ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dim {
+  color: var(--qos-fg-tertiary);
+}
+
+.retard {
+  display: block;
+  color: var(--qos-warn-fg);
+  font-size: var(--qos-fs-xs);
+}
+
+// Les jetons du module. Le libellé est toujours écrit à côté : la couleur ne
+// porte jamais seule l'information (WCAG 1.4.1).
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 10px;
+  border-radius: var(--qos-radius-pill);
+  font-size: var(--qos-fs-xs);
+  font-weight: var(--qos-fw-semibold);
+  white-space: nowrap;
+  background: var(--qos-bg-sunken);
+  color: var(--qos-fg-secondary);
+
+  &--danger {
+    background: var(--qos-danger-bg-soft);
+    color: var(--qos-danger-fg);
+  }
+
+  &--warn {
+    background: var(--qos-warn-bg-soft);
+    color: var(--qos-warn-fg);
+  }
+
+  &--ok {
+    background: var(--qos-success-bg-soft);
+    color: var(--qos-success-fg);
+  }
+
+  &--accent {
+    background: var(--qos-accent-bg-soft);
+    color: var(--qos-accent-fg-soft);
+  }
+}
+
+.clickable-row {
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid var(--qos-accent-bg);
+    outline-offset: -2px;
+  }
+}

@@ -15,6 +15,7 @@ import java.util.List;
  *
  * @param define         les questions clés de « Définir » (problème, pièce ou lot, quantité)
  * @param containmentPlan la réponse au plan d'action temporaire de confinement
+ * @param containmentActions les actions de confinement, en tableau
  * @param ishikawaCauses les causes du diagramme lié : catégorie → cause
  * @param bestSolutions  la réponse « meilleures solutions sélectionnées »
  * @param surveillance   la réponse « le plan de surveillance élimine-t-il la récurrence ? »
@@ -22,11 +23,13 @@ import java.util.List;
 public record ClaimReport(String clientName, String claimNumber, String projectName, String ownerName,
                           LocalDate openedOn, LocalDate closedOn, String severity, String failureType,
                           List<Answer> define, String measureSummary, String containmentPlan,
-                          String containmentMeasures, List<Answer> ishikawaCauses, List<Why> whys,
+                          String containmentMeasures, List<Action> containmentActions,
+                          List<Answer> ishikawaCauses, List<Why> whys,
                           String rootCause, String bestSolutions, List<Action> actions, String surveillance) {
 
     public ClaimReport {
         define = List.copyOf(define);
+        containmentActions = List.copyOf(containmentActions);
         ishikawaCauses = List.copyOf(ishikawaCauses);
         whys = List.copyOf(whys);
         actions = List.copyOf(actions);
@@ -43,8 +46,15 @@ public record ClaimReport(String clientName, String claimNumber, String projectN
         }
     }
 
-    /** Une ligne du plan d'actions, telle que le client la lit. */
-    public record Action(String action, String responsible, String status, LocalDate plannedOn,
-                         LocalDate doneOn, int percent) {
+    /**
+     * Une ligne d'actions, telle que le client la lit — les colonnes du registre
+     * CAPA : intitulé, nature, criticité, statut, responsable, échéance.
+     *
+     * <p>Les mêmes colonnes pour le confinement et pour le plan d'amélioration :
+     * un lecteur qui a appris à lire le premier tableau lit le second sans
+     * réapprendre.
+     */
+    public record Action(String action, String type, String criticity, String responsible, String status,
+                         LocalDate plannedOn, LocalDate doneOn, int percent) {
     }
 }

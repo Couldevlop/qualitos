@@ -147,12 +147,24 @@ export class SupplierNcListComponent implements OnInit, OnDestroy {
 
   onPage(e: PageEvent): void { this.page$.next(e.pageIndex); }
 
+  /**
+   * Ouvre une NC fournisseur. Depuis la fiche d'un fournisseur, c'est le sien ;
+   * depuis le registre transverse, la fenêtre demande lequel — on y arrive en
+   * ayant constaté un écart, pas en ayant déjà navigué vers un fournisseur.
+   */
   create(): void {
-    if (!this.scopedSupplierId) return;
+    const data = this.scopedSupplierId
+      ? { supplierId: this.scopedSupplierId }
+      : { suppliers: this.suppliers };
     this.dialog.open(SuppliersNcDialogComponent, {
-      data: { supplierId: this.scopedSupplierId }, autoFocus: 'first-tabbable', restoreFocus: true,
+      data, autoFocus: 'first-tabbable', restoreFocus: true,
       panelClass: 'qos-dialog-panel'
     }).afterClosed().subscribe(nc => { if (nc) this.refresh$.next(); });
+  }
+
+  /** Sans fournisseur chargé, il n'y a rien à choisir : le bouton attendrait. */
+  get canCreate(): boolean {
+    return !!this.scopedSupplierId || this.suppliers.length > 0;
   }
 
   /** Ouvre la NC pour la modifier : tous ses champs, statut compris. */

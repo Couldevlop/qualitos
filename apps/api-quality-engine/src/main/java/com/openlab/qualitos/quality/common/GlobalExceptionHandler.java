@@ -52,6 +52,7 @@ import com.openlab.qualitos.quality.ai.guard.AiPromptTooLargeException;
 import com.openlab.qualitos.quality.ai.guard.AiQuotaExceededException;
 import com.openlab.qualitos.quality.ai.guard.AiRateLimitExceededException;
 import com.openlab.qualitos.quality.aigateway.AiGatewayException;
+import com.openlab.qualitos.quality.aigateway.AiRequestRejectedException;
 import com.openlab.qualitos.quality.aigateway.NlqUntranslatableException;
 import com.openlab.qualitos.quality.airouting.domain.AiProviderNotConfiguredException;
 import com.openlab.qualitos.quality.airouting.domain.InvalidAiProviderException;
@@ -179,12 +180,15 @@ import com.openlab.qualitos.quality.spc.capability.domain.SpcValidationException
 import com.openlab.qualitos.quality.authz.domain.AuthzNotFoundException;
 import com.openlab.qualitos.quality.authz.domain.AuthzValidationException;
 import com.openlab.qualitos.quality.riskregister.domain.RegisterNotFoundException;
+import com.openlab.qualitos.quality.stakeholders.domain.StakeholderNotFoundException;
+import com.openlab.qualitos.quality.stakeholders.domain.StakeholderValidationException;
 import com.openlab.qualitos.quality.riskregister.domain.RegisterValidationException;
 import com.openlab.qualitos.quality.ideas.domain.IdeaNotFoundException;
 import com.openlab.qualitos.quality.ideas.domain.IdeaStateException;
 import com.openlab.qualitos.quality.ideas.domain.VoteClosedException;
 import com.openlab.qualitos.quality.nonconformity.NcNotFoundException;
 import com.openlab.qualitos.quality.nonconformity.NcStateException;
+import com.openlab.qualitos.quality.nonconformity.NcValidationException;
 import com.openlab.qualitos.quality.nonconformity.NcPhotoNotFoundException;
 import com.openlab.qualitos.quality.nonconformity.NcPhotoTooLargeException;
 import com.openlab.qualitos.quality.nonconformity.NcPhotoValidationException;
@@ -641,6 +645,24 @@ public class GlobalExceptionHandler {
         return problem;
     }
 
+    @ExceptionHandler(StakeholderNotFoundException.class)
+    public ProblemDetail handleStakeholderNotFound(StakeholderNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/stakeholder-not-found"));
+        problem.setTitle("Stakeholder Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(StakeholderValidationException.class)
+    public ProblemDetail handleStakeholderValidation(StakeholderValidationException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/stakeholder-invalid"));
+        problem.setTitle("Invalid Stakeholder Data");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
     @ExceptionHandler(RegisterNotFoundException.class)
     public ProblemDetail handleRegisterNotFound(RegisterNotFoundException ex) {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
@@ -712,6 +734,15 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/non-conformity-invalid-state"));
         problem.setTitle("Invalid Non-Conformity State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(NcValidationException.class)
+    public ProblemDetail handleNcValidation(NcValidationException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/non-conformity-invalid"));
+        problem.setTitle("Invalid Non-Conformity Data");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }
@@ -1079,6 +1110,19 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_GATEWAY, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/ai-gateway-unavailable"));
         problem.setTitle("AI Gateway Unavailable");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    /**
+     * La passerelle IA a répondu et refuse la requête. 422, pas 502 : le service va
+     * bien, c'est la demande qui ne passe pas, et l'appelant peut la corriger.
+     */
+    @ExceptionHandler(AiRequestRejectedException.class)
+    public ProblemDetail handleAiRequestRejected(AiRequestRejectedException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/ai-request-rejected"));
+        problem.setTitle("AI Request Rejected");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }

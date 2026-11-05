@@ -17,7 +17,7 @@
         <ng-template #plural><ng-container i18n="@@suppliers.nc-list.count-many">{{ totalElements }} non-conformités</ng-container></ng-template>
       </p>
     </div>
-    <button *ngIf="scopedSupplierId" mat-flat-button color="primary" type="button" (click)="create()" data-test="nouvelle-nc">
+    <button *ngIf="canCreate" mat-flat-button color="primary" type="button" (click)="create()" data-test="nouvelle-nc">
       <mat-icon aria-hidden="true">add</mat-icon> <span i18n="@@suppliers.detail.new-nc">Nouvelle NC</span>
     </button>
   </header>

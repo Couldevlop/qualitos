@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -18,6 +18,7 @@ import {
   MeasureResponse,
   PokaYokeAssignmentStatus
 } from '../../dmaic.types';
+import { DmaicResolutionComponent } from '../dmaic-resolution/dmaic-resolution.component';
 import { DmaicEditDialogComponent } from '../dmaic-edit-dialog/dmaic-edit-dialog.component';
 import { DmaicMeasureDialogComponent } from '../dmaic-measure-dialog/dmaic-measure-dialog.component';
 import { DmaicPokaYokeDialogComponent } from '../dmaic-pokayoke-dialog/dmaic-pokayoke-dialog.component';
@@ -38,6 +39,13 @@ export class DmaicDetailComponent implements OnInit {
   missing: string[] = [];
   readonly advanceBlockedHint =
     $localize`:@@dmaic.detail.advance-blocked:Répondez à toutes les questions de la phase et enregistrez la fiche pour passer à la suivante.`;
+  /**
+   * Clore demande plus qu'avancer : toute la fiche renseignée ET toutes les
+   * actions à 100 %. Le serveur le vérifie ; le dire ici évite d'essayer pour
+   * rien.
+   */
+  readonly completeHint =
+    $localize`:@@dmaic.detail.complete-hint:Le projet se clôture quand toute la fiche est renseignée et que chaque action est à 100 %.`;
 
   project$!: Observable<DmaicProjectResponse | null>;
   private readonly loadingState$ = new BehaviorSubject<boolean>(false);
@@ -99,8 +107,17 @@ export class DmaicDetailComponent implements OnInit {
     );
   }
 
+  /** La fiche de résolution de la page : on lui demande de signaler ses manques. */
+  @ViewChild(DmaicResolutionComponent) resolution?: DmaicResolutionComponent;
+
   onMissing(list: string[]): void {
     this.missing = list;
+  }
+
+  /** Ce que dit l'infobulle du bouton, selon ce qui l'attend. */
+  advanceHint(p: DmaicProjectResponse): string {
+    if (p.phase === 'CONTROL') return this.completeHint;
+    return this.missing.length ? this.advanceBlockedHint : '';
   }
 
   /** Mesures du projet, dans l'ordre de relevé : celui du calcul de capabilité. */
@@ -146,7 +163,18 @@ export class DmaicDetailComponent implements OnInit {
     ref.afterClosed().subscribe(updated => { if (updated) this.refresh$.next(); });
   }
 
+  /**
+   * Avance d'une phase. Quand la phase n'est pas complète, le bouton ne reste
+   * pas simplement éteint : la fiche signale en rouge les champs à renseigner
+   * et amène l'utilisateur sur le premier. Sur une page de trente questions,
+   * un bouton grisé ne dit pas lesquelles manquent.
+   */
   advance(p: DmaicProjectResponse): void {
+    if (this.missing.length) {
+      this.resolution?.markMissing();
+      this.snack.open(this.advanceBlockedHint, $localize`:@@common.ok:OK`, { duration: 5000 });
+      return;
+    }
     this.svc.advance(p.id).subscribe({
       next: () => { this.snack.open($localize`:@@dmaic.detail.phase-advanced:Phase avancée.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); },
       error: err => this.fail(err, $localize`:@@dmaic.detail.advance-failed:Avance impossible.`)

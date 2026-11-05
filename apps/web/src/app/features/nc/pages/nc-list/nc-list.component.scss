@@ -132,3 +132,15 @@
   gap: var(--qos-space-3);
   align-items: flex-start;
 }
+
+// La nature sous sa catégorie : une ligne secondaire, pas une colonne de plus.
+// Une treizième colonne aurait rendu le tableau illisible sur un portable.
+.nature {
+  display: block;
+  max-width: 22ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--qos-fg-tertiary);
+  font-size: var(--qos-fs-xs);
+}

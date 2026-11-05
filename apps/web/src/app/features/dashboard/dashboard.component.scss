@@ -1,7 +1,11 @@
+/* Le tableau de bord déclare sa propre pile et n'héritait donc pas du rythme
+ * de `.qos-page` : 32 px entre chaque bande repoussaient la deuxième rangée de
+ * panneaux sous la ligne de flottaison d'un 1080p, où l'on ne voyait que la
+ * rangée d'indicateurs. Même gouttière que le reste de l'application. */
 .qos-dashboard {
   display: flex;
   flex-direction: column;
-  gap: var(--qos-space-8);
+  gap: var(--qos-space-4);
 }
 
 /* ============================================================
@@ -85,6 +89,15 @@
   @media (max-width: 600px)  { grid-template-columns: 1fr; }
 }
 
+/* L'indicateur hors tolérance occupe deux colonnes : la hiérarchie se fait par
+ * la place, pas par une couleur de plus. En une seule colonne il n'y a rien à
+ * élargir, la règle ne s'applique plus. */
+.qos-dashboard__kpi--alerte {
+  grid-column: span 2;
+
+  @media (max-width: 600px) { grid-column: auto; }
+}
+
 /* ============================================================
  * Rows multi-panneaux (12 colonnes implicites).
  * ============================================================ */
@@ -113,7 +126,7 @@
     grid-template-columns: 4px 1fr auto;
     align-items: center;
     gap: var(--qos-space-3);
-    padding: var(--qos-space-3) 0;
+    padding: var(--qos-space-2) 0;
     border-bottom: 1px solid var(--qos-border-subtle);
     transition: background var(--qos-motion-fast);
 
@@ -185,12 +198,12 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--qos-space-3);
+  gap: var(--qos-space-2);
 
   &__item {
     display: flex;
     gap: var(--qos-space-3);
-    padding: var(--qos-space-3);
+    padding: var(--qos-space-2) var(--qos-space-3);
     border: 1px solid var(--qos-border-subtle);
     border-radius: var(--qos-radius-md);
     background: var(--qos-bg-sunken);
@@ -201,8 +214,8 @@
 
   &__icon {
     flex-shrink: 0;
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
     border-radius: var(--qos-radius-md);
     display: inline-flex;
     align-items: center;
@@ -231,7 +244,7 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--qos-space-4);
+  gap: var(--qos-space-3);
 
   &__row {
     display: flex;
@@ -310,11 +323,15 @@
   }
 }
 
+/* Ce bandeau et sa grille étaient chiffrés en `rem` à la main, donc sourds au
+ * rythme de la plateforme : un bandeau de 16/20 px de marge au-dessus de la
+ * rangée d'indicateurs la poussait entièrement hors du premier écran dès qu'on
+ * demandait un état passé. Les valeurs passent par les jetons d'espace. */
 .qos-tt-banner {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-  padding: 1rem 1.25rem;
+  gap: var(--qos-space-2);
+  padding: var(--qos-space-3) var(--qos-space-4);
   border: 1px solid var(--qos-accent-soft, rgba(37, 99, 235, 0.3));
   border-radius: var(--qos-radius-lg, 14px);
   background: var(--qos-accent-soft, rgba(37, 99, 235, 0.08));
@@ -333,22 +350,24 @@
 
 .qos-tt-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 0.75rem;
+  /* `min(100%, …)` pour qu'une colonne de 180 px ne force jamais un
+     débordement horizontal sur un écran de 390 px. */
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 11rem), 1fr));
+  gap: var(--qos-space-2);
 }
 
 .qos-tt-kpi {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
-  padding: 0.625rem 0.75rem;
+  gap: var(--qos-space-1);
+  padding: var(--qos-space-2) var(--qos-space-3);
   border-radius: var(--qos-radius-md);
   background: var(--qos-bg-surface);
   border: 1px solid var(--qos-border-subtle);
 
   &--absent { opacity: 0.6; }
   &__name { font-size: 0.75rem; color: var(--qos-fg-tertiary); }
-  &__value { font-size: 1.25rem; font-weight: 600; color: var(--qos-fg-primary); }
+  &__value { font-size: var(--qos-fs-lg); font-weight: var(--qos-fw-semibold); color: var(--qos-fg-primary); }
   &__value--na { color: var(--qos-fg-tertiary); font-weight: 500; }
   &__unit { font-size: 0.8125rem; font-weight: 400; color: var(--qos-fg-tertiary); }
 }
@@ -392,8 +411,8 @@
 }
 
 .qos-drill {
-  margin-top: 1rem;
-  padding-top: 0.75rem;
+  margin-top: var(--qos-space-3);
+  padding-top: var(--qos-space-2);
   border-top: 1px dashed var(--qos-border-subtle);
 
   &__crumb {
@@ -440,9 +459,9 @@
 }
 
 .qos-annot-disclosure {
-  margin-top: 1rem;
+  margin-top: var(--qos-space-3);
   border-top: 1px solid var(--qos-border-subtle);
-  padding-top: 0.5rem;
+  padding-top: var(--qos-space-2);
 
   summary {
     display: inline-flex;

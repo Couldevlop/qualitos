@@ -12,7 +12,7 @@
 
 .sous-titre {
   margin: 0 0 var(--qos-space-2, 8px);
-  font-size: 0.9375rem;
+  font-size: var(--qos-fs-md);
   font-weight: 600;
 }
 
@@ -21,7 +21,7 @@
 .choix {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--qos-space-5, 20px);
+  gap: var(--qos-space-4);
   margin-bottom: var(--qos-space-2, 8px);
 }
 

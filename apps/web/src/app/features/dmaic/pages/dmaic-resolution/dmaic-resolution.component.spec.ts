@@ -124,6 +124,70 @@ describe('DmaicResolutionComponent', () => {
     }];
   }
 
+  // ---------- signalement des champs manquants ----------
+
+  it("signale en rouge les questions sans réponse de la phase en cours", async () => {
+    await setup();
+
+    const manque = component.markMissing();
+
+    expect(manque).toBeTrue();
+    // La phase affichée revient sur celle du projet : signaler des champs qu'on
+    // ne voit pas ne sert à rien.
+    expect(component.view).toBe(component.currentPhase);
+    expect(component.missingCodes.has('DEF-01')).toBeTrue();
+    fixture.detectChanges();
+    expect(hote().querySelector('.question--manque')).not.toBeNull();
+    expect(hote().querySelector('[data-test="manque-signale"]')?.textContent).toContain('rouge');
+  });
+
+  it("éteint le rouge d'une question dès qu'on y répond", async () => {
+    await setup();
+    component.markMissing();
+    expect(component.missingCodes.has('DEF-01')).toBeTrue();
+
+    component.setAnswer('DEF-01', 'Fissure du carter');
+
+    expect(component.missingCodes.has('DEF-01')).toBeFalse();
+    fixture.detectChanges();
+    expect(hote().querySelector('[data-test="q-DEF-01"]')?.classList).not.toContain('question--manque');
+  });
+
+  it("signale aussi la synthèse vide d'une phase, et l'éteint quand elle est écrite", async () => {
+    await setup();
+    voir('MEASURE');
+    component.currentPhase = 'MEASURE';
+    component.draft.measureSummary = null;
+
+    component.markMissing();
+
+    expect(component.missingSummaries.has('MEASURE')).toBeTrue();
+    component.setSummary('MEASURE', 'Capabilité à 1,1');
+    expect(component.missingSummaries.has('MEASURE')).toBeFalse();
+  });
+
+  it("ne signale rien quand la phase est complète", async () => {
+    await setup();
+    for (const q of component.questionsOf('DEFINE')) {
+      component.draft.answers = { ...component.draft.answers, [q.code]: 'Réponse' };
+    }
+
+    expect(component.markMissing()).toBeFalse();
+    expect(component.missingCodes.size).toBe(0);
+  });
+
+  it("repart sans rouge quand la fiche est rechargée", async () => {
+    await setup();
+    component.markMissing();
+    expect(component.missingCodes.size).toBeGreaterThan(0);
+
+    component.load();
+    await fixture.whenStable();
+
+    expect(component.missingCodes.size).toBe(0);
+    expect(component.missingSummaries.size).toBe(0);
+  });
+
   function confirmer(reponse: boolean): jasmine.Spy {
     return spyOn(TestBed.inject(MatDialog), 'open').and.returnValue({
       afterClosed: () => of(reponse)
@@ -150,17 +214,23 @@ describe('DmaicResolutionComponent', () => {
     expect(un('choix-CTL-04-NA')?.textContent).toContain('Sans objet');
   });
 
-  it('dispose l\'en-tête comme le gabarit, et les actions juste au-dessus des phases', async () => {
+  it("tient l'en-tête en trois colonnes compactes, et les actions juste au-dessus des phases", async () => {
     await setup();
     const el = fixture.nativeElement as HTMLElement;
-    const [gauche, droite] = Array.from(el.querySelectorAll('.entete__col'));
-    expect(gauche.querySelector('[data-test="client"]')).not.toBeNull();
-    expect(gauche.querySelector('[data-test="owner"]')).not.toBeNull();
-    expect(gauche.querySelector('.equipe')).not.toBeNull();
-    expect(droite.querySelector('[data-test="claim"]')).not.toBeNull();
-    expect(droite.querySelector('[data-test="opened"]')).not.toBeNull();
-    expect(droite.querySelector('[data-test="closed"]')).not.toBeNull();
-    expect(el.querySelector('.entete__qualif [data-test="failure"]')).not.toBeNull();
+    const colonnes = Array.from(el.querySelectorAll('.entete__col'));
+    // Identité, références et dates, qualification : trois colonnes de même
+    // poids, au lieu de deux colonnes inégales suivies d'un bandeau à part.
+    expect(colonnes.length).toBe(3);
+    const [identite, references, qualification] = colonnes;
+    expect(identite.querySelector('[data-test="client"]')).not.toBeNull();
+    expect(identite.querySelector('[data-test="owner"]')).not.toBeNull();
+    expect(references.querySelector('[data-test="claim"]')).not.toBeNull();
+    expect(references.querySelector('[data-test="opened"]')).not.toBeNull();
+    expect(references.querySelector('[data-test="closed"]')).not.toBeNull();
+    expect(qualification.querySelector('[data-test="severity"]')).not.toBeNull();
+    expect(qualification.querySelector('[data-test="failure"]')).not.toBeNull();
+    // L'équipe passe sous la grille, en pastilles sur une ligne.
+    expect(el.querySelector('.entete .equipe')).not.toBeNull();
 
     const actions = el.querySelectorAll('.barre-projet');
     expect(actions.length).toBe(1);
@@ -314,7 +384,7 @@ describe('DmaicResolutionComponent', () => {
     expect(component.draft.actions[0].responsible).toBeNull();
   });
 
-  it('tient les chaînes de 5 pourquoi, cinq pourquoi au plus, trente chaînes au plus', async () => {
+  it("tient l'en-tête en trois colonnes compactes, et les actions juste au-dessus des phases", async () => {
     await setup(fiche({}, { whys: [{ branch: 'SYSTEMIC', cause: 'c', whys: [], rootCause: true, action: null }] }));
     expect(component.chainsOf('SYSTEMIC')[0].whys).toEqual(['']);
     component.addChain('OCCURRENCE');

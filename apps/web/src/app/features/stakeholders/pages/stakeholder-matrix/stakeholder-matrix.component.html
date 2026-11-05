@@ -1,0 +1,118 @@
+<p class="aide" i18n="@@stakeholders.matrix.help">
+  Deux cotations par partie prenante : ce qu'elle pèse sur la qualité, ce qu'elle pèse au titre
+  de la réglementation. Elles ne se compensent pas — la criticité retient la plus élevée des deux,
+  et c'est le serveur qui la calcule.
+</p>
+
+<p class="aide" *ngIf="!canManage" data-test="lecture-seule" i18n="@@stakeholders.matrix.read-only">
+  Vous consultez la cotation ; sa modification relève du pilotage qualité.
+</p>
+
+<p class="dim" *ngIf="!rows.length" data-test="vide" i18n="@@stakeholders.matrix.empty">
+  Aucune partie prenante à coter pour le moment.
+</p>
+
+<ng-container *ngIf="rows.length">
+
+  <!-- La répartition : neuf cases, qui disent d'un regard où se concentre
+       l'enjeu. Le réglementaire en lignes, du plus élevé au plus faible. -->
+  <section class="grille" aria-labelledby="pi-grille">
+    <h3 class="grille__titre" id="pi-grille" i18n="@@stakeholders.matrix.grid-title">
+      Répartition des parties prenantes
+    </h3>
+    <table class="grille__table">
+      <caption class="grille__legende" i18n="@@stakeholders.matrix.grid-caption">
+        Lignes : impact réglementaire. Colonnes : impact qualité.
+      </caption>
+      <thead>
+        <tr>
+          <th scope="col"><span class="sr-only" i18n="@@stakeholders.field.regulatory-impact">Impact réglementaire</span></th>
+          <th scope="col" *ngFor="let i of impacts">{{ impactLabel(i) }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let ligne of grid">
+          <th scope="row">{{ impactLabel(ligne[0].regulatory) }}</th>
+          <td *ngFor="let cell of ligne; trackBy: trackByCell"
+              [class.grille__case--peuplee]="cell.count > 0"
+              [attr.data-test]="'case-' + cell.quality + '-' + cell.regulatory">
+            {{ cell.count }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <div class="qos-scroll-x">
+    <table class="cotation">
+      <thead>
+        <tr>
+          <th scope="col" i18n="@@stakeholders.col.name">Partie prenante</th>
+          <th scope="col" i18n="@@stakeholders.col.category">Catégorie</th>
+          <th scope="col" i18n="@@stakeholders.field.quality-impact">Impact qualité</th>
+          <th scope="col" i18n="@@stakeholders.field.regulatory-impact">Impact réglementaire</th>
+          <th scope="col" i18n="@@stakeholders.col.criticality">Criticité</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of rows; trackBy: trackById" [class.ligne--modifiee]="pending(row)"
+            data-test="ligne">
+          <th scope="row">{{ row.name }}</th>
+          <td class="categorie">{{ categoryLabel(row.category) }}</td>
+
+          <td>
+            <mat-form-field *ngIf="canManage" appearance="outline" subscriptSizing="dynamic"
+                            class="note">
+              <mat-label i18n="@@stakeholders.field.quality-impact">Impact qualité</mat-label>
+              <mat-select [value]="level(row, 'qualityImpact')"
+                          (selectionChange)="onLevel(row, 'qualityImpact', $event.value)"
+                          [attr.data-test]="'qualite-' + row.id">
+                <mat-option *ngFor="let i of impacts" [value]="i">{{ impactLabel(i) }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <span *ngIf="!canManage" [class]="impactChip(row.qualityImpact)">
+              {{ impactLabel(row.qualityImpact) }}
+            </span>
+          </td>
+
+          <td>
+            <mat-form-field *ngIf="canManage" appearance="outline" subscriptSizing="dynamic"
+                            class="note">
+              <mat-label i18n="@@stakeholders.field.regulatory-impact">Impact réglementaire</mat-label>
+              <mat-select [value]="level(row, 'regulatoryImpact')"
+                          (selectionChange)="onLevel(row, 'regulatoryImpact', $event.value)"
+                          [attr.data-test]="'reglementaire-' + row.id">
+                <mat-option *ngFor="let i of impacts" [value]="i">{{ impactLabel(i) }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <span *ngIf="!canManage" [class]="impactChip(row.regulatoryImpact)">
+              {{ impactLabel(row.regulatoryImpact) }}
+            </span>
+          </td>
+
+          <!-- Jamais saisie : le serveur la déduit des deux impacts. Une ligne
+               recotée le dit, plutôt que d'afficher par avance une valeur qui
+               ne correspond encore à rien d'enregistré. -->
+          <td class="nowrap">
+            <span [class]="impactChip(row.criticality)">{{ impactLabel(row.criticality) }}</span>
+            <small class="attente" *ngIf="pending(row)" data-test="recalcul"
+                   i18n="@@stakeholders.matrix.recalculated">recalculée à l'enregistrement</small>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- La barre n'apparaît qu'avec des lignes recotées : un bouton d'enregistrement
+       toujours visible sur un écran intact invite à enregistrer pour rien. -->
+  <div class="barre" *ngIf="canManage && pendingCount" role="status" data-test="barre">
+    <span>{{ pendingMessage }}</span>
+    <span class="barre__actions">
+      <button mat-stroked-button type="button" (click)="reset()" [disabled]="saving"
+              data-test="annuler" i18n="@@authz.matrix.discard">Annuler les changements</button>
+      <button mat-flat-button color="primary" type="button" (click)="save()" [disabled]="saving"
+              data-test="enregistrer" i18n="@@stakeholders.matrix.save">Enregistrer la cotation</button>
+    </span>
+  </div>
+
+</ng-container>

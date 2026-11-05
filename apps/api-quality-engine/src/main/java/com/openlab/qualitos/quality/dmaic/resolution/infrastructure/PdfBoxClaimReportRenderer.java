@@ -74,8 +74,10 @@ public class PdfBoxClaimReportRenderer implements ResolutionPorts.ClaimReportRen
             w.step("A : Analyser — étape 3");
             w.label("Plan d'action temporaire pour contenir le problème");
             w.body(r.containmentPlan());
-            w.label("Actions de confinement");
+            w.label("Mesures conservatoires");
             w.body(r.containmentMeasures());
+            w.label("Actions de confinement");
+            actionTable(w, r.containmentActions());
             w.label("Diagramme d'Ishikawa");
             if (r.ishikawaCauses().isEmpty()) {
                 w.body(null);
@@ -105,19 +107,8 @@ public class PdfBoxClaimReportRenderer implements ResolutionPorts.ClaimReportRen
             w.step("I : Améliorer — étape 4");
             w.label("Meilleures solutions sélectionnées");
             w.body(r.bestSolutions());
-            w.label("Plan d'actions");
-            if (r.actions().isEmpty()) {
-                w.body(null);
-            }
-            int n = 1;
-            for (ClaimReport.Action a : r.actions()) {
-                w.paragraph(n++ + ". " + orEmpty(a.action()), INK, w.bold, 9.5f);
-                w.paragraph("Responsable : " + orEmpty(a.responsible()) + "  ·  Statut : " + orEmpty(a.status())
-                        + "  ·  Prévue le : " + orEmpty(date(a.plannedOn())) + "  ·  Réalisée le : "
-                        + orEmpty(date(a.doneOn())) + "  ·  Avancement : " + a.percent() + " %",
-                        MUTED, w.regular, 8.5f);
-                w.y -= 4;
-            }
+            w.label("Plan d'actions (dossiers CAPA)");
+            actionTable(w, r.actions());
 
             w.step("C : Contrôler — étape 5");
             answers(w, List.of(new ClaimReport.Answer(
@@ -131,6 +122,43 @@ public class PdfBoxClaimReportRenderer implements ResolutionPorts.ClaimReportRen
         } catch (IOException e) {
             throw new UncheckedIOException("claim report rendering failed", e);
         }
+    }
+
+    /**
+     * Les actions en TABLEAU, aux colonnes du registre CAPA : intitulé, nature,
+     * criticité, statut, responsable, échéance.
+     *
+     * <p>En paragraphes, le lecteur devait reconstruire mentalement la colonne
+     * qu'il cherchait, ligne après ligne. Le tableau la lui donne : c'est la même
+     * lecture que dans l'application, donc rien à réapprendre.
+     *
+     * <p>L'intitulé passe à la ligne dans sa colonne ; la hauteur de la ligne
+     * suit. Un tableau qui ne tient pas sur la page se poursuit à la suivante,
+     * en-tête réécrit.
+     */
+    private static void actionTable(Writer w, List<ClaimReport.Action> actions) throws IOException {
+        if (actions.isEmpty()) {
+            w.body(null);
+            return;
+        }
+        float[] widths = {0.34f, 0.13f, 0.12f, 0.12f, 0.17f, 0.12f};
+        String[] headers = {"Intitulé", "Nature", "Criticité", "Statut", "Responsable", "Échéance"};
+        w.tableHead(headers, widths);
+        for (ClaimReport.Action a : actions) {
+            w.tableRow(new String[]{
+                    orEmpty(a.action()),
+                    orDash(a.type()),
+                    orDash(a.criticity()),
+                    orDash(a.status()),
+                    orDash(a.responsible()),
+                    orDash(date(a.plannedOn()))}, widths, headers);
+        }
+        w.y -= 6;
+    }
+
+    /** Une case vide se lit « — » : dans un tableau, « Non renseigné » déborde. */
+    private static String orDash(String s) {
+        return s == null || s.isBlank() ? "—" : s;
     }
 
     /** Une question du modèle, puis sa réponse (ou « Non renseigné »). */
@@ -266,6 +294,111 @@ public class PdfBoxClaimReportRenderer implements ResolutionPorts.ClaimReportRen
             flux.setNonStrokingColor(PANEL[0], PANEL[1], PANEL[2]);
             flux.addRect(MARGIN, y - height, CONTENT_W, height);
             flux.fill();
+        }
+
+        /** La hauteur d'une ligne de tableau : une ligne de texte, un peu d'air. */
+        private static final float ROW_PAD = 5f;
+        private static final float ROW_LINE = 11f;
+        private static final float CELL_FONT = 8.5f;
+
+        /** Le filet et les libellés de l'en-tête du tableau. */
+        void tableHead(String[] headers, float[] widths) throws IOException {
+            room(46);
+            float x = MARGIN;
+            float height = ROW_LINE + 2 * ROW_PAD;
+            flux.setNonStrokingColor(PANEL[0], PANEL[1], PANEL[2]);
+            flux.addRect(MARGIN, y - height, CONTENT_W, height);
+            flux.fill();
+            for (int i = 0; i < headers.length; i++) {
+                at(bold, 7.5f, MUTED, x + 4, y - ROW_PAD - ROW_LINE + 3, headers[i]);
+                x += widths[i] * CONTENT_W;
+            }
+            y -= height;
+            line();
+        }
+
+        /**
+         * Une ligne : chaque case passe à la ligne dans sa colonne, et la hauteur
+         * de la ligne suit la case la plus haute. Une ligne qui ne tient pas sur
+         * la page ouvre la suivante et réécrit l'en-tête.
+         */
+        void tableRow(String[] cells, float[] widths, String[] headers) throws IOException {
+            List<List<String>> wrapped = new ArrayList<>(cells.length);
+            int lignes = 1;
+            for (int i = 0; i < cells.length; i++) {
+                List<String> parts = wrapTo(cells[i], widths[i] * CONTENT_W - 8, CELL_FONT);
+                wrapped.add(parts);
+                lignes = Math.max(lignes, parts.size());
+            }
+            float height = lignes * ROW_LINE + 2 * ROW_PAD;
+            if (y - height < MARGIN) {
+                newPage();
+                tableHead(headers, widths);
+            }
+            float x = MARGIN;
+            for (int i = 0; i < wrapped.size(); i++) {
+                float cellY = y - ROW_PAD - ROW_LINE + 3;
+                for (String part : wrapped.get(i)) {
+                    at(regular, CELL_FONT, INK, x + 4, cellY, part);
+                    cellY -= ROW_LINE;
+                }
+                x += widths[i] * CONTENT_W;
+            }
+            y -= height;
+            line();
+        }
+
+        /**
+         * Les mots trop longs pour une colonne, coupés caractère à caractère : une
+         * référence sans espace (« PN-7781-A-REV-C-LOT-20260421 ») débordait de sa
+         * case et chevauchait la voisine.
+         */
+        private List<String> couper(String[] mots, float width, float size) throws IOException {
+            List<String> sortie = new ArrayList<>(mots.length);
+            for (String mot : mots) {
+                String reste = mot;
+                while (regular.getStringWidth(reste) / 1000 * size > width && reste.length() > 1) {
+                    int coupe = reste.length();
+                    while (coupe > 1 && regular.getStringWidth(reste.substring(0, coupe)) / 1000 * size > width) {
+                        coupe--;
+                    }
+                    sortie.add(reste.substring(0, coupe));
+                    reste = reste.substring(coupe);
+                }
+                sortie.add(reste);
+            }
+            return sortie;
+        }
+
+        /** Le filet fin qui sépare deux lignes de tableau. */
+        private void line() throws IOException {
+            flux.setStrokingColor(0.88f, 0.89f, 0.92f);
+            flux.setLineWidth(0.6f);
+            flux.moveTo(MARGIN, y);
+            flux.lineTo(WIDTH - MARGIN, y);
+            flux.stroke();
+        }
+
+        /** Le texte découpé pour tenir dans une largeur donnée, à la police des cases. */
+        private List<String> wrapTo(String s, float width, float size) throws IOException {
+            List<String> parts = new ArrayList<>();
+            String rest = sanitize(s == null ? "" : s).strip();
+            if (rest.isEmpty()) {
+                parts.add("");
+                return parts;
+            }
+            StringBuilder ligne = new StringBuilder();
+            for (String mot : couper(rest.split("\s+"), width, size)) {
+                String essai = ligne.isEmpty() ? mot : ligne + " " + mot;
+                if (regular.getStringWidth(essai) / 1000 * size > width && !ligne.isEmpty()) {
+                    parts.add(ligne.toString());
+                    ligne = new StringBuilder(mot);
+                } else {
+                    ligne = new StringBuilder(essai);
+                }
+            }
+            parts.add(ligne.toString());
+            return parts;
         }
 
         void rule() throws IOException {

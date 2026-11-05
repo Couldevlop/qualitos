@@ -152,6 +152,11 @@ describe('NcListComponent — chargement, filtres et pagination', () => {
     http.match(r => r.url === `${endpoint}/statistics`)
         .filter(r => !r.cancelled)
         .forEach(r => r.flush(stats()));
+    // Le catalogue des natures est lu une fois à l'ouverture, pour le filtre et
+    // la colonne : même traitement que les tuiles, ce banc parle de la LISTE.
+    http.match(r => r.url === `${endpoint}/subcategories`)
+        .filter(r => !r.cancelled)
+        .forEach(r => r.flush({ entries: [], defaults: true }));
     http.verify();
   });
 
@@ -248,6 +253,36 @@ describe('NcListComponent — chargement, filtres et pagination', () => {
     req = http.expectOne(r => r.url === endpoint);
     expect(req.request.params.get('category')).toBe('SAFETY');
     req.flush(page([]));
+  });
+
+  it("filtre sur la nature de l'écart, et l'oublie quand la catégorie change", () => {
+    start();
+    http.expectOne(r => r.url === endpoint).flush(page([]));
+    component.subcategories = [
+      { code: 'PRC-DER', category: 'PROCESS', label: 'Dérive de paramètre' },
+      { code: 'PRD-DIM', category: 'PRODUCT', label: 'Cote hors spécification' }
+    ];
+
+    component.subcategoryFilter.setValue('PRC-DER');
+    const req = http.expectOne(r => r.url === endpoint);
+    expect(req.request.params.get('subcategoryCode')).toBe('PRC-DER');
+    req.flush(page([]));
+
+    // Une nature d'une autre catégorie ne ramènerait jamais rien : on l'oublie.
+    component.categoryFilter.setValue('PRODUCT');
+    const requetes = http.match(r => r.url === endpoint).filter(r => !r.cancelled);
+    expect(requetes[requetes.length - 1].request.params.has('subcategoryCode')).toBeFalse();
+    requetes.forEach(r => r.flush(page([])));
+  });
+
+  it("traduit la nature par le catalogue, et montre le code quand elle a été retirée", () => {
+    start();
+    http.expectOne(r => r.url === endpoint).flush(page([]));
+    component.subcategories = [{ code: 'PRC-DER', category: 'PROCESS', label: 'Dérive de paramètre' }];
+
+    expect(component.subcategoryLabel('PRC-DER')).toBe('Dérive de paramètre');
+    expect(component.subcategoryLabel('PRC-DISPARU')).toBe('PRC-DISPARU');
+    expect(component.subcategoryLabel(undefined)).toBe('—');
   });
 
   it('revenir à « Tous » retire le filtre de la requête', () => {

@@ -1,0 +1,90 @@
+<qos-form-dialog
+  title="Ajouter une exigence" i18n-title="@@stakeholders.requirement.title"
+  [subtitle]="subtitle"
+  [formGroup]="form"
+  [submitDisabled]="form.invalid"
+  [blockedReason]="blockedReason"
+  submitLabel="Ajouter" i18n-submitLabel="@@common.add"
+  submitIcon="add"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@stakeholders.requirement.text">Exigence</mat-label>
+    <textarea matInput rows="2" formControlName="requirement"
+              [maxlength]="limits.requirement" data-test="exigence"></textarea>
+  </mat-form-field>
+
+  <p class="aide" i18n="@@stakeholders.requirement.optional">
+    Les champs qui suivent se complètent au fil de l'analyse : rien n'empêche d'ajouter
+    l'exigence maintenant et de dire plus tard qui la suit.
+  </p>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@stakeholders.requirement.need">Besoin ou attente d'origine</mat-label>
+    <input matInput formControlName="need" [maxlength]="limits.line">
+  </mat-form-field>
+
+  <div class="deux">
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@stakeholders.requirement.origin">Origine (contrat, texte, clause)</mat-label>
+      <input matInput formControlName="origin" [maxlength]="limits.line" data-test="origine">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@stakeholders.requirement.nature">Nature de l'obligation</mat-label>
+      <mat-select formControlName="nature" data-test="nature">
+        <mat-option [value]="null" i18n="@@stakeholders.requirement.no-nature">Non précisée</mat-option>
+        <mat-option *ngFor="let n of natures" [value]="n">{{ natureLabel(n) }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class="deux">
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@stakeholders.requirement.risk">Risque si elle n'est pas tenue</mat-label>
+      <input matInput formControlName="risk" [maxlength]="limits.line">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@stakeholders.requirement.risk-level">Niveau de risque</mat-label>
+      <mat-select formControlName="riskLevel" data-test="niveau-risque">
+        <mat-option [value]="null" i18n="@@stakeholders.requirement.no-level">Non coté</mat-option>
+        <mat-option *ngFor="let i of impacts" [value]="i">{{ impactLabel(i) }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class="deux">
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@stakeholders.requirement.control">Mesure de maîtrise</mat-label>
+      <input matInput formControlName="control" [maxlength]="limits.line">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@stakeholders.requirement.indicator">Indicateur de suivi</mat-label>
+      <input matInput formControlName="indicator" [maxlength]="limits.line">
+    </mat-form-field>
+  </div>
+
+  <!-- Une personne se choisit dans l'annuaire et s'affiche par son nom : un
+       champ libre laisserait deux orthographes devenir deux responsables. -->
+  <qos-user-picker class="full" formControlName="responsibleId"
+                   label="Responsable du suivi" i18n-label="@@stakeholders.requirement.responsible"
+                   (userSelected)="onResponsible($event)" data-test="responsable"></qos-user-picker>
+
+  <div class="deux">
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@stakeholders.requirement.evidence">Preuve attendue</mat-label>
+      <input matInput formControlName="evidence" [maxlength]="limits.line">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@common.status">Statut</mat-label>
+      <mat-select formControlName="status" data-test="statut">
+        <mat-option *ngFor="let s of statuses" [value]="s">{{ requirementStatusLabel(s) }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+</qos-form-dialog>

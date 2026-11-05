@@ -1,0 +1,196 @@
+// La matrice d'évaluation : une grille de répartition, puis la cotation ligne
+// à ligne. Densité « poste de travail » : on cote vingt lignes à la suite.
+
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--qos-space-3);
+  min-width: 0;
+}
+
+.aide {
+  margin: 0;
+  max-width: 78ch;
+  color: var(--qos-fg-secondary);
+  font-size: var(--qos-fs-sm);
+  line-height: 1.5;
+}
+
+.dim {
+  margin: 0;
+  color: var(--qos-fg-tertiary);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+// ---------- grille de répartition ----------
+
+.grille {
+  &__titre {
+    margin: 0 0 var(--qos-space-2);
+    font-size: var(--qos-fs-sm);
+    font-weight: var(--qos-fw-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--qos-fg-tertiary);
+  }
+
+  &__legende {
+    caption-side: bottom;
+    padding-top: var(--qos-space-1);
+    color: var(--qos-fg-tertiary);
+    font-size: var(--qos-fs-xs);
+    text-align: left;
+  }
+
+  &__table {
+    border-collapse: collapse;
+
+    th,
+    td {
+      min-width: 5.5rem;
+      padding: var(--qos-space-1) var(--qos-space-2);
+      border: 1px solid var(--qos-border-subtle);
+      font-size: var(--qos-fs-sm);
+      text-align: center;
+    }
+
+    th {
+      background: var(--qos-bg-sunken);
+      color: var(--qos-fg-secondary);
+      font-weight: var(--qos-fw-semibold);
+    }
+
+    td {
+      font-variant-numeric: tabular-nums;
+      color: var(--qos-fg-tertiary);
+    }
+  }
+
+  // Une case habitée se lit par son fond ET par son chiffre : rien ne repose
+  // sur la seule couleur (WCAG 1.4.1).
+  &__case--peuplee {
+    background: var(--qos-accent-bg-soft);
+    color: var(--qos-accent-fg-soft);
+    font-weight: var(--qos-fw-semibold);
+  }
+}
+
+// ---------- cotation ----------
+
+.cotation {
+  width: 100%;
+  border-collapse: collapse;
+
+  th,
+  td {
+    padding: var(--qos-space-1) var(--qos-space-2);
+    border-bottom: 1px solid var(--qos-border-subtle);
+    text-align: left;
+    vertical-align: middle;
+  }
+
+  thead th {
+    font-size: var(--qos-fs-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--qos-fg-tertiary);
+    white-space: nowrap;
+  }
+
+  tbody th {
+    font-weight: var(--qos-fw-semibold);
+  }
+}
+
+.note {
+  min-width: 9rem;
+}
+
+.categorie {
+  max-width: 20ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--qos-fg-secondary);
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+.ligne--modifiee {
+  background: var(--qos-warn-bg-soft);
+}
+
+.attente {
+  display: block;
+  color: var(--qos-warn-fg);
+  font-size: var(--qos-fs-xs);
+}
+
+// ---------- barre d'enregistrement ----------
+
+.barre {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--qos-space-2);
+  padding: var(--qos-space-2) var(--qos-space-3);
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: var(--qos-radius-md);
+  background: var(--qos-bg-elevated);
+  box-shadow: var(--qos-shadow-sm);
+
+  &__actions {
+    display: inline-flex;
+    gap: var(--qos-space-2);
+  }
+}
+
+// Les jetons de criticité, repris du registre : le libellé est toujours écrit à
+// côté, la couleur ne porte jamais seule l'information (WCAG 1.4.1).
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 10px;
+  border-radius: var(--qos-radius-pill);
+  font-size: var(--qos-fs-xs);
+  font-weight: var(--qos-fw-semibold);
+  white-space: nowrap;
+  background: var(--qos-bg-sunken);
+  color: var(--qos-fg-secondary);
+
+  &--danger {
+    background: var(--qos-danger-bg-soft);
+    color: var(--qos-danger-fg);
+  }
+
+  &--warn {
+    background: var(--qos-warn-bg-soft);
+    color: var(--qos-warn-fg);
+  }
+
+  &--ok {
+    background: var(--qos-success-bg-soft);
+    color: var(--qos-success-fg);
+  }
+
+  &--accent {
+    background: var(--qos-accent-bg-soft);
+    color: var(--qos-accent-fg-soft);
+  }
+}

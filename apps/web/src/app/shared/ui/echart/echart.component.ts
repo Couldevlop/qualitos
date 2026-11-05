@@ -189,11 +189,20 @@ export class EchartComponent implements AfterViewInit, OnChanges, OnDestroy {
     };
   }
 
-  /** Lit les CSS custom properties à chaud — réagit au switch de thème. */
+  /**
+   * Lit les CSS custom properties à chaud — réagit au changement de thème.
+   *
+   * <p>La lecture se fait sur **l'élément hôte**, pas sur `documentElement`.
+   * Les jetons étant héritée, les deux donnent le même résultat sur une page
+   * ordinaire ; mais quand un écran redéfinit la palette localement — le mode
+   * TV impose un fond mural sombre quel que soit le thème de l'application —
+   * seule la lecture sur l'hôte la voit. Lue à la racine, la courbe restait en
+   * couleurs claires sur un mur noir.
+   */
   private readTokens(): ChartTokens {
-    const root = getComputedStyle(document.documentElement);
+    const scope = getComputedStyle(this.host.nativeElement);
     const read = (name: string, fallback: string) =>
-      (root.getPropertyValue(name).trim() || fallback);
+      (scope.getPropertyValue(name).trim() || fallback);
     return {
       fontFamily: read('--qos-font-sans', 'Inter, sans-serif'),
       fgPrimary:  read('--qos-fg-primary', '#0F172A'),

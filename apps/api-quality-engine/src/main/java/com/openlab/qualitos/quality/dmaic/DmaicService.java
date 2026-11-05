@@ -114,7 +114,15 @@ public class DmaicService {
         }
         DmaicPhase next = p.getPhase().next();
         if (next == null) {
-            // Transition CONTROL -> COMPLETED
+            // Transition CONTROL -> COMPLETED. Clore, ce n'est pas avancer d'un
+            // cran de plus : c'est déclarer le problème résolu. Il y faut toute la
+            // fiche renseignée ET toutes les actions à 100 % — un projet clos sur
+            // un plan d'actions à 60 % affirme une résolution que rien ne soutient.
+            List<String> empeche = phaseGate == null ? List.of() : phaseGate.blockingCompletion(id);
+            if (!empeche.isEmpty()) {
+                throw new DmaicStateException("Le projet ne peut pas être clos : " + empeche.size()
+                        + " point(s) à solder, dont « " + empeche.get(0) + " »");
+            }
             p.setStatus(DmaicStatus.COMPLETED);
             p.setCompletedAt(Instant.now());
         } else {

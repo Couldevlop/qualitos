@@ -12,7 +12,7 @@ import { FmeaItemResponse } from '../../../fmea/fmea.types';
 import { ProductsService } from '../../../products/products.service';
 import { FailureModeSuggestion, ProductResponse } from '../../../products/products.types';
 import { NcService } from '../../nc.service';
-import { NcCategory, NcOrigin, NcResponse, NcSeverity } from '../../nc.types';
+import { NcCategory, NcOrigin, NcResponse, NcSeverity, NcSubcategory } from '../../nc.types';
 
 /**
  * Ce que la liste appelante transmet au dialogue.
@@ -65,6 +65,9 @@ export class NcCreateDialogComponent implements OnInit {
   readonly categories: NcCategory[] = ['PRODUCT', 'PROCESS', 'DOCUMENTATION', 'SUPPLIER', 'SAFETY', 'ENVIRONMENT', 'OTHER'];
   readonly severities: NcSeverity[] = ['MINOR', 'MAJOR', 'CRITICAL'];
 
+  /** Le catalogue des natures d'écart du client ; vide si le serveur ne répond pas. */
+  subcategories: NcSubcategory[] = [];
+
   /**
    * Photos choisies AVANT que la NC existe : elles ne partent qu'après la
    * création, le serveur classant une photo sous une NC identifiée.
@@ -94,6 +97,12 @@ export class NcCreateDialogComponent implements OnInit {
     geoLat: [null as number | null],
     geoLng: [null as number | null],
     productId: [''],
+    /**
+     * La nature fine de l'écart. FACULTATIVE : un écart se saisit sur le terrain,
+     * souvent dans l'urgence, et se classe finement ensuite. L'exiger ferait
+     * choisir au hasard.
+     */
+    subcategoryCode: [''],
     /** '' = pas encore répondu, 'NONE' = aucun mode, sinon l'identifiant de la ligne. */
     failureMode: ['']
   });
@@ -144,6 +153,31 @@ export class NcCreateDialogComponent implements OnInit {
     // doit pas empêcher de déclarer un défaut constaté au poste.
     this.productsService.list().pipe(catchError(() => of([] as ProductResponse[])))
       .subscribe(products => (this.products = products));
+    // Comme le référentiel produit : une aide au classement, pas un préalable.
+    // Son indisponibilité ne doit pas empêcher de déclarer un écart constaté.
+    this.nc.subcategories().pipe(catchError(() => of({ entries: [] as NcSubcategory[], defaults: true })))
+      .subscribe(c => (this.subcategories = c.entries));
+  }
+
+  /**
+   * Les natures proposées : celles de la catégorie choisie, et aucune avant
+   * qu'elle le soit — soixante natures toutes catégories confondues ne se
+   * parcourent pas.
+   */
+  get subcategoryChoices(): NcSubcategory[] {
+    const category = this.form.getRawValue().category;
+    return category ? this.subcategories.filter(s => s.category === category) : [];
+  }
+
+  /**
+   * Changer de catégorie efface la nature : une nature de Produit sous une
+   * catégorie Processus serait refusée par le serveur, et l'utilisateur ne
+   * saurait pas pourquoi.
+   */
+  onCategoryChange(): void {
+    if (this.form.getRawValue().subcategoryCode) {
+      this.form.patchValue({ subcategoryCode: '' });
+    }
   }
 
   /**
@@ -233,7 +267,7 @@ export class NcCreateDialogComponent implements OnInit {
     const reporterId = this.auth.snapshot()?.userId;
     this.submitting = true;
     const {
-      title, category, severity, zone, description, geoLat, geoLng,
+      title, category, subcategoryCode, severity, zone, description, geoLat, geoLng,
       productId, failureMode
     } = this.form.getRawValue();
     this.nc
@@ -241,6 +275,7 @@ export class NcCreateDialogComponent implements OnInit {
         title: title.trim(),
         // Non nuls ici : le formulaire est valide (required).
         category: category as NcCategory,
+        subcategoryCode: subcategoryCode || undefined,
         severity: severity as NcSeverity,
         zone: zone?.trim() || undefined,
         description: description.trim(),

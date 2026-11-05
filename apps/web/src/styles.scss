@@ -253,6 +253,78 @@ mat-icon.material-symbols-outlined {
 }
 .mat-mdc-form-field-subscript-wrapper { font-size: var(--qos-fs-xs); }
 
+/* ---- Densité des champs et des cartes ----
+ *
+ * Angular Material est livré avec le thème préconstruit : les mixins de densité
+ * Sass ne sont donc pas disponibles ici (il faudrait définir un thème complet).
+ * La densité se pose donc sur les classes internes, ce qui marche aussi bien à
+ * condition de déplacer AUSSI l'étiquette flottante — sinon elle se décroche du
+ * cadre réduit. Les trois règles vont ensemble ; n'en changer qu'une casse
+ * l'alignement.
+ *
+ * Mesure : un champ passe de 56 à 44 px, une carte de 24 à 14 px de marge
+ * intérieure. Sur un formulaire de dix champs, c'est 120 px regagnés — une
+ * section entière qui cesse d'être sous la ligne de flottaison. */
+.mat-mdc-form-field {
+  --qos-field-height: 44px;
+  font-size: var(--qos-fs-sm);
+}
+
+.mat-mdc-form-field .mat-mdc-form-field-infix {
+  min-height: var(--qos-field-height);
+  padding-top: 11px;
+  padding-bottom: 9px;
+}
+
+/* L'étiquette suit le cadre : centrée au repos, remontée sur le filet en haut. */
+.mat-mdc-text-field-wrapper .mat-mdc-floating-label {
+  top: calc(var(--qos-field-height) / 2);
+}
+
+.mat-mdc-text-field-wrapper.mdc-text-field--outlined
+  .mdc-notched-outline--upgraded .mdc-floating-label--float-above {
+  --mat-mdc-form-field-label-transform:
+    translateY(calc(-1 * var(--qos-field-height) / 2 + 2px)) scale(0.75);
+}
+
+/* Une zone de texte garde sa hauteur de lignes : la densité ne doit pas rogner
+   un constat de trois lignes à une. */
+.mat-mdc-form-field:has(textarea) .mat-mdc-form-field-infix {
+  min-height: auto;
+}
+
+/* Cartes : moins de marge intérieure, mêmes filets. */
+.mat-mdc-card-content,
+.mat-mdc-card > .mat-mdc-card-content {
+  padding: var(--qos-space-3) var(--qos-space-4);
+}
+
+.mat-mdc-card-header {
+  padding: var(--qos-space-3) var(--qos-space-4) 0;
+}
+
+.mat-mdc-card-title {
+  font-size: var(--qos-fs-md);
+  font-weight: var(--qos-fw-semibold);
+  letter-spacing: -0.01em;
+}
+
+/* Boutons : hauteur de barre d'outils, pas de hauteur de page d'accueil. */
+.mat-mdc-button,
+.mat-mdc-outlined-button,
+.mat-mdc-unelevated-button,
+.mat-mdc-raised-button {
+  --mat-button-text-container-height: 36px;
+  --mat-button-outlined-container-height: 36px;
+  --mat-button-filled-container-height: 36px;
+  --mat-button-protected-container-height: 36px;
+  font-size: var(--qos-fs-sm);
+}
+
+/* Onglets plus bas : une rangée d'onglets de 48 px au-dessus d'un tableau dense
+   déséquilibrait la page. */
+.mat-mdc-tab-header { --mat-tab-container-height: 40px; }
+
 /* ---- Paginator : surface transparente, filet haut subtil. ---- */
 .mat-mdc-paginator {
   background: transparent;
@@ -352,9 +424,15 @@ mat-icon.material-symbols-outlined {
 // Gouttière FLUIDE : une marge de 40 px fixe, confortable sur un écran large,
 // mangeait un cinquième de la largeur d'un téléphone. `clamp` la fait respirer
 // avec la fenêtre, sans palier visible ni point de rupture à maintenir.
+// Densité « poste de travail » : QualitOS n'est pas une page de présentation,
+// c'est un outil qu'un responsable qualité tient ouvert toute la journée. Sur
+// un 1080p il voyait trois lignes de tableau avant de devoir défiler : la
+// gouttière, le rythme vertical et la hauteur des lignes ont été resserrés
+// d'environ un tiers. Les valeurs restent FLUIDES — elles respirent sur un
+// écran large et ne mangent pas un téléphone.
 .qos-page {
-  padding: clamp(20px, 2.4vw, 32px) clamp(16px, 3.2vw, 40px);
-  max-width: 1440px;
+  padding: clamp(14px, 1.5vw, 22px) clamp(14px, 2.2vw, 28px);
+  max-width: 1680px;
   margin: 0 auto;
 }
 
@@ -691,9 +769,20 @@ body { overflow-wrap: break-word; }
   border-bottom-color: var(--qos-border-subtle) !important;
 }
 
-/* Lignes aérées : un peu plus de hauteur de respiration. */
-.mat-mdc-header-row { min-height: 44px; }
-.mat-mdc-row { min-height: 52px; }
+/* Lignes DENSES : c'est un registre, pas une liste de lecture. 52 px de ligne
+   ne laissaient voir que trois ou quatre écarts sur un écran de portable, là où
+   un responsable qualité en balaie vingt. Les cellules gardent assez d'air pour
+   que la cible tactile reste atteignable (règle 640 px plus haut). */
+.mat-mdc-header-row { min-height: 36px; }
+.mat-mdc-row { min-height: 40px; }
+
+.mat-mdc-header-cell,
+.mat-mdc-cell {
+  padding-top: var(--qos-space-1);
+  padding-bottom: var(--qos-space-1);
+}
+
+.mat-mdc-cell { font-size: var(--qos-fs-sm); }
 
 .mat-mdc-row {
   transition: background-color var(--qos-motion-fast);
@@ -723,7 +812,7 @@ body { overflow-wrap: break-word; }
 .qos-page {
   display: flex;
   flex-direction: column;
-  gap: var(--qos-space-6);
+  gap: var(--qos-space-4);
 }
 
 /* En-tête de page legacy : titre + sous-titre à gauche, actions à droite. */
@@ -732,15 +821,15 @@ body { overflow-wrap: break-word; }
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  gap: var(--qos-space-6);
+  gap: var(--qos-space-4);
   flex-wrap: wrap;
   margin: 0;
-  padding-bottom: var(--qos-space-5);
+  padding-bottom: var(--qos-space-3);
   border-bottom: 1px solid var(--qos-border-subtle);
 
   h1 {
-    margin: 0 0 var(--qos-space-1);
-    font-size: var(--qos-fs-2xl);
+    margin: 0;
+    font-size: var(--qos-fs-xl);
     font-weight: var(--qos-fw-semibold);
     letter-spacing: -0.02em;
     line-height: var(--qos-lh-tight);
@@ -750,9 +839,9 @@ body { overflow-wrap: break-word; }
   p {
     margin: 0;
     color: var(--qos-fg-secondary);
-    font-size: var(--qos-fs-md);
-    line-height: var(--qos-lh-normal);
-    max-width: 70ch;
+    font-size: var(--qos-fs-sm);
+    line-height: var(--qos-lh-snug);
+    max-width: 80ch;
   }
 
   /* Zone d'actions : les boutons/menus à droite restent groupés et alignés.
@@ -798,11 +887,11 @@ body { overflow-wrap: break-word; }
  * repassent d'eux-mêmes à la ligne au lieu de déborder. */
 .filter-card,
 .filter-card.mat-mdc-card {
-  padding: var(--qos-space-4) var(--qos-space-5);
+  padding: var(--qos-space-2) var(--qos-space-3);
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: var(--qos-space-4);
+  gap: var(--qos-space-2) var(--qos-space-3);
   flex-wrap: wrap;
 
   /* Champs de filtre compacts : on masque la réserve de message d'aide
@@ -837,7 +926,7 @@ body { overflow-wrap: break-word; }
   align-items: center;
   justify-content: center;
   gap: var(--qos-space-3);
-  padding: var(--qos-space-12) var(--qos-space-6);
+  padding: var(--qos-space-8) var(--qos-space-6);
   color: var(--qos-fg-secondary);
   font-size: var(--qos-fs-sm);
 }
@@ -851,7 +940,7 @@ body { overflow-wrap: break-word; }
   justify-content: center;
   text-align: center;
   gap: var(--qos-space-2);
-  padding: var(--qos-space-12) var(--qos-space-6);
+  padding: var(--qos-space-8) var(--qos-space-6);
   color: var(--qos-fg-secondary);
   font-size: var(--qos-fs-sm);
   line-height: var(--qos-lh-normal);

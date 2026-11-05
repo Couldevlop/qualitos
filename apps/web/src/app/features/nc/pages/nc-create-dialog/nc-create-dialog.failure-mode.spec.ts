@@ -3,7 +3,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 
 import { AuthService } from '../../../../core/auth/auth.service';
 import { SharedModule } from '../../../../shared/shared.module';
@@ -61,7 +61,9 @@ describe('NcCreateDialogComponent — produit et mode de défaillance', () => {
     products = jasmine.createSpyObj<ProductsService>('ProductsService',
       ['list', 'failureModeSuggestions']);
     fmea = jasmine.createSpyObj<FmeaService>('FmeaService', ['list', 'listItems']);
-    nc = jasmine.createSpyObj<NcService>('NcService', ['createNc']);
+    nc = jasmine.createSpyObj<NcService>('NcService', ['createNc', 'subcategories']);
+    // Le catalogue des natures : une aide au classement, chargée à l'ouverture.
+    nc.subcategories.and.returnValue(of({ entries: [], defaults: true }));
 
     products.list.and.returnValue(of([product]));
     fmea.list.and.returnValue(of({
@@ -191,6 +193,79 @@ describe('NcCreateDialogComponent — produit et mode de défaillance', () => {
     tick();
 
     expect(component.form.getRawValue().failureMode).toBe('');
+  }));
+
+  // --- nature de l'écart, sous sa catégorie -------------------------------
+
+  it("ne propose les natures qu'une fois la catégorie choisie", fakeAsync(() => {
+    nc.subcategories.and.returnValue(of({
+      entries: [
+        { code: 'PRD-DIM', category: 'PRODUCT', label: 'Cote hors spécification' },
+        { code: 'PRC-DER', category: 'PROCESS', label: 'Dérive de paramètre' }
+      ],
+      defaults: true
+    }));
+    fixture.detectChanges();
+    tick();
+    fixture.detectChanges();
+
+    // Soixante natures toutes catégories confondues ne se parcourent pas.
+    expect(component.subcategoryChoices).toEqual([]);
+    expect(fixture.nativeElement.querySelector('[data-test="nc-nature"]')).toBeNull();
+
+    component.form.patchValue({ category: 'PROCESS' });
+    fixture.detectChanges();
+
+    expect(component.subcategoryChoices.map(x => x.code)).toEqual(['PRC-DER']);
+    expect(fixture.nativeElement.querySelector('[data-test="nc-nature"]')).not.toBeNull();
+  }));
+
+  it("efface la nature quand on change de catégorie", fakeAsync(() => {
+    nc.subcategories.and.returnValue(of({
+      entries: [{ code: 'PRD-DIM', category: 'PRODUCT', label: 'Cote' }], defaults: true
+    }));
+    fixture.detectChanges();
+    tick();
+    component.form.patchValue({ category: 'PRODUCT', subcategoryCode: 'PRD-DIM' });
+
+    component.form.patchValue({ category: 'PROCESS' });
+    component.onCategoryChange();
+
+    // Une nature de Produit sous une catégorie Processus serait refusée par le
+    // serveur, sans que l'utilisateur sache pourquoi.
+    expect(component.form.getRawValue().subcategoryCode).toBe('');
+  }));
+
+  it("envoie la nature choisie, et rien quand elle est laissée à classer", fakeAsync(() => {
+    nc.subcategories.and.returnValue(of({
+      entries: [{ code: 'PRD-DIM', category: 'PRODUCT', label: 'Cote' }], defaults: true
+    }));
+    nc.createNc.and.returnValue(of({ id: 'nc-1' } as unknown as NcResponse));
+    fixture.detectChanges();
+    tick();
+
+    component.form.patchValue({
+      title: 'Cote hors tolérance', description: 'Constaté au poste 20',
+      category: 'PRODUCT', severity: 'MAJOR', subcategoryCode: 'PRD-DIM'
+    });
+    component.submit();
+    tick();
+    expect(nc.createNc.calls.mostRecent().args[0].subcategoryCode).toBe('PRD-DIM');
+
+    component.form.patchValue({ subcategoryCode: '' });
+    component.submit();
+    tick();
+    expect(nc.createNc.calls.mostRecent().args[0].subcategoryCode).toBeUndefined();
+  }));
+
+  it("reste utilisable quand le catalogue des natures est indisponible", fakeAsync(() => {
+    nc.subcategories.and.returnValue(throwError(() => ({ status: 503 })));
+
+    fixture.detectChanges();
+    tick();
+
+    expect(component.subcategories).toEqual([]);
+    expect(component.subcategoryChoices).toEqual([]);
   }));
 
   it('reste utilisable quand le référentiel produit est indisponible', fakeAsync(() => {

@@ -22,7 +22,7 @@
 }
 
 .aide {
-  margin: var(--qos-space-4) 0 0;
+  margin: var(--qos-space-3) 0 0;
   font-size: var(--qos-fs-sm);
   color: var(--qos-fg-secondary);
   line-height: 1.5;
@@ -42,7 +42,7 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--qos-space-3);
-  margin-bottom: var(--qos-space-5);
+  margin-bottom: var(--qos-space-3);
 }
 
 .normes {
@@ -153,9 +153,12 @@
     color: var(--qos-fg-secondary);
   }
 
+  // Un chiffre à 32 px donnait à quatre tuiles la hauteur d'un bandeau de
+  // présentation ; `fs-2xl` reste fluide (20 → 24 px) et lisible de loin en
+  // mode TV sans redescendre la tendance qualité sous la ligne de flottaison.
   &__valeur {
     margin: 0;
-    font-size: var(--qos-fs-3xl);
+    font-size: var(--qos-fs-2xl);
     font-weight: var(--qos-fw-bold);
     line-height: 1.15;
     color: var(--qos-fg-primary);
@@ -450,8 +453,8 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--qos-space-4);
-  margin-top: var(--qos-space-5);
-  padding: var(--qos-space-5) var(--qos-space-6);
+  margin-top: var(--qos-space-3);
+  padding: var(--qos-space-3) var(--qos-space-4);
   border-radius: var(--qos-radius-lg);
   background: var(--qos-accent-bg-soft);
   border: 1px solid color-mix(in srgb, var(--qos-accent-bg) 30%, transparent);
@@ -474,8 +477,10 @@
     gap: var(--qos-space-1);
   }
 
+  // Ce passage est un lien, pas un titre de page : à 20 px il concurrençait le
+  // h1 de l'écran et faisait du bas de page un second en-tête.
   &__titre {
-    font-size: var(--qos-fs-xl);
+    font-size: var(--qos-fs-md);
     font-weight: var(--qos-fw-semibold);
     color: var(--qos-accent-fg-soft);
     line-height: 1.3;

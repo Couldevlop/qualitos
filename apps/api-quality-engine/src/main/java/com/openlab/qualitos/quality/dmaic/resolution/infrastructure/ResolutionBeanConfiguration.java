@@ -48,15 +48,29 @@ public class ResolutionBeanConfiguration {
                 clock);
     }
 
-    /** Le verrou des phases du projet : la fiche dit ce qui manque à chacune. */
+    /**
+     * Le verrou des phases du projet : la fiche dit ce qui manque à chacune, et
+     * ce qui manque pour clore.
+     */
     @Bean
     public DmaicPhaseGate dmaicResolutionPhaseGate(ResolutionService resolution) {
-        return (projectId, phase) -> resolution.missing(projectId, switch (phase) {
-            case DEFINE -> List.of(SheetSection.DEFINE);
-            case MEASURE -> List.of(SheetSection.MEASURE);
-            case ANALYZE -> List.of(SheetSection.CONTAIN, SheetSection.ANALYZE);
-            case IMPROVE -> List.of(SheetSection.IMPROVE);
-            case CONTROL -> List.of(SheetSection.CONTROL);
-        });
+        return new DmaicPhaseGate() {
+            @Override
+            public List<String> missing(java.util.UUID projectId,
+                                        com.openlab.qualitos.quality.dmaic.DmaicPhase phase) {
+                return resolution.missing(projectId, switch (phase) {
+                    case DEFINE -> List.of(SheetSection.DEFINE);
+                    case MEASURE -> List.of(SheetSection.MEASURE);
+                    case ANALYZE -> List.of(SheetSection.CONTAIN, SheetSection.ANALYZE);
+                    case IMPROVE -> List.of(SheetSection.IMPROVE);
+                    case CONTROL -> List.of(SheetSection.CONTROL);
+                });
+            }
+
+            @Override
+            public List<String> blockingCompletion(java.util.UUID projectId) {
+                return resolution.completionBlockers(projectId);
+            }
+        };
     }
 }

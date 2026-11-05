@@ -61,6 +61,10 @@ describe('NcCreateDialogComponent — origine héritée de la liste', () => {
     http = TestBed.inject(HttpTestingController);
     const fixture = TestBed.createComponent(NcCreateDialogComponent);
     fixture.detectChanges();
+    // Le catalogue des natures d'ecart (V154) part des l'ouverture : on y
+    // repond ici, sinon chaque banc finirait sur une requete en vol.
+    http.expectOne(`${environment.apiBaseUrl}/api/v1/nc/subcategories`)
+      .flush({ entries: [], defaults: true });
     return fixture.componentInstance;
   }
 

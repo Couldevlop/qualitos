@@ -447,6 +447,99 @@ class ResolutionServiceTest {
         assertThat(service.missing(PROJET, List.of(SheetSection.DEFINE))).hasSize(14);
     }
 
+    // ---------- clôture du projet ----------
+
+    @Test
+    void cloreExigeToutLeQuestionnaireEtDesActionsAchevees() {
+        // Une fiche vierge : tout manque, et l'absence d'action se dit à part.
+        service.save(PROJET, vide());
+
+        List<String> empeche = service.completionBlockers(PROJET);
+
+        assertThat(empeche).contains("Aucune action : un problème ne se clôt pas sans action");
+        assertThat(empeche).hasSizeGreaterThan(20);
+    }
+
+    @Test
+    void uneActionInacheveeEmpecheDeClore() {
+        Map<String, String> toutes = toutesLesReponses();
+        ResolutionContent c = avecActions(toutes,
+                new ActionLine(null, "Changer l'outil", null, ActionStatus.OPEN, null, null, 60, null));
+        service.save(PROJET, c);
+
+        assertThat(service.completionBlockers(PROJET))
+                .containsExactly("Action à 60 % : « Changer l'outil »");
+    }
+
+    @Test
+    void uneActionDeConfinementCompteAussiDansLaCloture() {
+        // Endiguer n'exempte pas : une mesure conservatoire laissée en route est
+        // une protection qu'on croit en place et qui ne l'est pas.
+        Map<String, String> toutes = toutesLesReponses();
+        ResolutionContent c = avecActions(toutes,
+                new ActionLine(null, "Changer", null, ActionStatus.CLOSED, null, null, 100, null),
+                new ActionLine(null, "Trier le stock", null, ActionStatus.OPEN, null, null, 40, null, null, true));
+        service.save(PROJET, c);
+
+        assertThat(service.completionBlockers(PROJET))
+                .containsExactly("Action à 40 % : « Trier le stock »");
+    }
+
+    @Test
+    void uneFicheCompleteEtDesActionsA100PermettentDeClore() {
+        Map<String, String> toutes = toutesLesReponses();
+        ResolutionContent c = avecActions(toutes,
+                new ActionLine(null, "Changer l'outil", null, ActionStatus.CLOSED, null, null, 100, null));
+        service.save(PROJET, c);
+
+        assertThat(service.completionBlockers(PROJET)).isEmpty();
+    }
+
+    @Test
+    void uneActionSansIntituleSeDesigneQuandMeme() {
+        // Le domaine refuse d'ENREGISTRER une action sans intitulé ; une fiche
+        // ancienne peut en porter une. Le message doit rester lisible.
+        ResolutionContent c = avecActions(toutesLesReponses(),
+                new ActionLine(null, null, null, ActionStatus.OPEN, null, null, 0, null));
+
+        assertThat(ResolutionService.completionBlockers(
+                com.openlab.qualitos.quality.dmaic.resolution.domain.ResolutionSettings.platformDefaults(), c))
+                .containsExactly("Action à 0 % : « sans intitulé »");
+    }
+
+    @Test
+    void unTresLongIntituleEstAbregeDansLeMessage() {
+        Map<String, String> toutes = toutesLesReponses();
+        ResolutionContent c = avecActions(toutes,
+                new ActionLine(null, "A".repeat(200), null, ActionStatus.OPEN, null, null, 10, null));
+        service.save(PROJET, c);
+
+        assertThat(service.completionBlockers(PROJET)).singleElement()
+                .asString().hasSizeLessThan(120).endsWith("… »");
+    }
+
+    /** Toutes les réponses du questionnaire de la plateforme, pour ne tester que les actions. */
+    private Map<String, String> toutesLesReponses() {
+        Map<String, String> answers = new java.util.HashMap<>();
+        for (com.openlab.qualitos.quality.dmaic.resolution.domain.SheetQuestion q
+                : com.openlab.qualitos.quality.dmaic.resolution.domain.ResolutionDefaults.QUESTIONS) {
+            answers.put(q.code(), q.answerType()
+                    == com.openlab.qualitos.quality.dmaic.resolution.domain.AnswerType.TEXT ? "Réponse" : "YES");
+        }
+        return answers;
+    }
+
+    private static ResolutionContent avecActions(Map<String, String> answers, ActionLine... actions) {
+        return new ResolutionContent("Acme", "CL-7", new Person(ACTEUR, "Alice"), List.of(),
+                LocalDate.of(2026, 10, 1), null, 1, "V10", "Fissure", answers, "Mesures", "Tri", "Outil",
+                "Nouvel outil", "Contrôle", List.of(), List.of(actions), null);
+    }
+
+    private static ResolutionContent vide() {
+        return new ResolutionContent(null, null, null, List.of(), null, null, null, null, null, Map.of(),
+                null, null, null, null, null, List.of(), List.of(), null);
+    }
+
     @Test
     void leConfinementSeTientParSaSyntheseOuParUneActionDeConfinement() {
         ResolutionContent c = contenu(Map.of());
@@ -469,7 +562,8 @@ class ResolutionServiceTest {
         assertThat(service.missing(PROJET, List.of(SheetSection.CONTAIN))).doesNotContain("Action de confinement");
 
         // Le rapport range chaque action à sa place : le confinement d'un côté, le plan de l'autre.
-        assertThat(ResolutionService.containment(avecAction)).isEqualTo("• Trier le stock — Alice");
+        assertThat(ResolutionService.containmentActions(avecAction)).extracting(ClaimReport.Action::action)
+                .containsExactly("Trier le stock");
         assertThat(ResolutionService.actions(avecAction)).extracting(ClaimReport.Action::action)
                 .containsExactly("Changer");
     }

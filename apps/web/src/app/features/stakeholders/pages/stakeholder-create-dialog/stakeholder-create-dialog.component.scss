@@ -1,0 +1,11 @@
+// Trois champs en colonne : la fenêtre reste étroite, et se lit d'un regard.
+
+:host {
+  display: block;
+}
+
+.full {
+  display: block;
+  width: 100%;
+  min-width: min(420px, 100%);
+}

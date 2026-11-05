@@ -1,6 +1,9 @@
 .product-tabs { margin-top: var(--qos-space-4); }
 
-.tab-body { padding: var(--qos-space-6) 0; }
+/* L'onglet rouvrait 24 px au-dessus de son contenu, juste sous une rangée
+   d'onglets déjà descendue à 40 px : l'en-tête du tableau du plan de contrôle
+   démarrait 64 px sous le titre de l'onglet qui l'annonce. */
+.tab-body { padding: var(--qos-space-3) 0; }
 
 .tab-actions {
   display: flex;
@@ -10,8 +13,8 @@
 
 .summary {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: var(--qos-space-5);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr));
+  gap: var(--qos-space-3);
   margin: 0;
 
   dt {
@@ -28,7 +31,7 @@
 .sub-table { width: 100%; }
 
 .empty {
-  padding: var(--qos-space-8) 0;
+  padding: var(--qos-space-6) 0;
   text-align: center;
   color: var(--qos-fg-tertiary);
 }

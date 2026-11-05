@@ -114,6 +114,13 @@ export class DmaicResolutionComponent implements OnInit, OnDestroy {
   /** La phase affichée. */
   view: DmaicPhase = 'DEFINE';
   missingSaved: string[] = [];
+  /**
+   * Les questions et synthèses à renseigner, signalées en rouge après une
+   * tentative d'avancer. Vides tant que personne n'a essayé : un formulaire
+   * rouge à l'ouverture reproche à l'utilisateur de ne pas avoir commencé.
+   */
+  missingCodes = new Set<string>();
+  missingSummaries = new Set<SheetSection>();
   readonly attachmentAccept = ATTACHMENT_TYPES.join(',');
 
   readonly limits = RESOLUTION_LIMITS;
@@ -222,6 +229,9 @@ export class DmaicResolutionComponent implements OnInit, OnDestroy {
   summaryOf(section: SheetSection): string | null { return summaryIn(this.draft, section); }
 
   setSummary(section: SheetSection, value: string): void {
+    if (value.trim() !== '' && this.missingSummaries.delete(section)) {
+      this.missingSummaries = new Set(this.missingSummaries);
+    }
     switch (section) {
       case 'MEASURE': this.draft.measureSummary = value; break;
       case 'CONTAIN': this.draft.containmentMeasures = value; break;
@@ -279,6 +289,50 @@ export class DmaicResolutionComponent implements OnInit, OnDestroy {
     return params;
   }
 
+  /**
+   * Signale en rouge ce qu'il reste à renseigner dans la phase en cours, et
+   * amène l'utilisateur sur le premier champ concerné.
+   *
+   * <p>Appelée quand on a cliqué « Avancer » alors que la phase n'est pas
+   * complète. Un bouton simplement éteint laissait chercher : la page peut
+   * compter trente questions, et rien ne disait lesquelles.
+   *
+   * @return vrai s'il manque quelque chose
+   */
+  markMissing(): boolean {
+    this.view = this.currentPhase;
+    const codes = new Set<string>();
+    const sums = new Set<SheetSection>();
+    for (const s of this.sectionsOf(this.currentPhase)) {
+      for (const q of this.questionsOf(s)) {
+        if ((this.draft.answers[q.code] ?? '').trim() === '') codes.add(q.code);
+      }
+      // Le confinement se tient par sa synthèse OU par une action de confinement.
+      const confine = s === 'CONTAIN' && this.draft.actions.some(a => a.containment);
+      if (SECTION_TEXT[s].summary && (summaryIn(this.draft, s) ?? '').trim() === '' && !confine) {
+        sums.add(s);
+      }
+    }
+    this.missingCodes = codes;
+    this.missingSummaries = sums;
+    // Hors du rendu en cours : le parent appelle depuis son propre cycle (NG0100).
+    queueMicrotask(() => this.focusFirstMissing());
+    return codes.size > 0 || sums.size > 0;
+  }
+
+  /** Le premier champ rouge, amené à l'écran et prêt à la frappe. */
+  private focusFirstMissing(): void {
+    const premier = document.querySelector<HTMLElement>('.question--manque, .synthese--manque');
+    if (!premier) return;
+    premier.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    premier.querySelector<HTMLElement>('textarea, input, button')?.focus({ preventScroll: true });
+  }
+
+  /** Une réponse donnée éteint son rouge : le signal suit la saisie. */
+  private clearMissing(code: string): void {
+    if (this.missingCodes.delete(code)) this.missingCodes = new Set(this.missingCodes);
+  }
+
   private emitMissing(): void {
     if (!this.sheet) return;
     const missing = missingOf(this.sheet, this.sheet.content, this.sectionsOf(this.currentPhase));
@@ -293,7 +347,12 @@ export class DmaicResolutionComponent implements OnInit, OnDestroy {
 
   setAnswer(code: string, value: string | null): void {
     const answers = { ...this.draft.answers };
-    if (value === null || value.trim() === '') delete answers[code]; else answers[code] = value;
+    if (value === null || value.trim() === '') {
+      delete answers[code];
+    } else {
+      answers[code] = value;
+      this.clearMissing(code);
+    }
     this.draft.answers = answers;
   }
 
@@ -372,8 +431,11 @@ export class DmaicResolutionComponent implements OnInit, OnDestroy {
     const data: CapaCreateDialogData = {
       source: { type: 'INTERNAL', reference: project || 'DMAIC' },
       prefill: {
-        // Un dossier CAPA n'est jamais de pur confinement : il se clôture par une correction.
-        type: 'CORRECTIVE',
+        // La NATURE proposée suit la place de l'action : une action de la phase
+        // Analyser endigue, une action du plan d'amélioration corrige. Le dossier
+        // ouvert reste correctif dans les deux cas — c'est la fenêtre CAPA qui
+        // s'en charge —, sans quoi il ne se clôturerait jamais.
+        type: containment ? 'CONTAINMENT' : 'CORRECTIVE',
         description: containment
           ? $localize`:@@dmaic.res.capa-containment-description:Action de confinement du projet DMAIC « ${project}:project: ».`
           : $localize`:@@dmaic.res.capa-description:Action du plan d'actions DMAIC « ${project}:project: ».`
@@ -389,7 +451,10 @@ export class DmaicResolutionComponent implements OnInit, OnDestroy {
         action: saisie?.title ?? null,
         responsible: saisie?.ownerId ? { accountId: saisie.ownerId, name: saisie.ownerName || saisie.ownerId } : null,
         status: 'OPEN', plannedOn: saisie?.dueDate ?? null, doneOn: null, percent: 0, notes: null,
-        capaId: opened.capaId, containment
+        capaId: opened.capaId, containment,
+        // Recopiées du dossier : le rapport client les lit en colonne.
+        nature: saisie?.nature ?? (containment ? 'CONTAINMENT' : 'CORRECTIVE'),
+        criticity: saisie?.criticity ?? null
       }];
       this.save();
     });
@@ -418,6 +483,8 @@ export class DmaicResolutionComponent implements OnInit, OnDestroy {
     }).afterClosed().subscribe(opened => {
       if (!opened) return;
       line.capaId = opened.capaId;
+      line.nature = opened.action?.nature ?? line.nature ?? 'CORRECTIVE';
+      line.criticity = opened.action?.criticity ?? line.criticity ?? null;
       this.save();
     });
   }
@@ -613,6 +680,9 @@ export class DmaicResolutionComponent implements OnInit, OnDestroy {
       || SECTION_TEXT[sec].summary !== null);
     this.groups = Object.fromEntries(this.sections.map(sec => [sec, this.buildGroups(sec)]));
     this.remarks = Object.fromEntries(s.photos.map(p => [p.slot, p.remark ?? '']));
+    // Une fiche rechargée repart sans rouge : ce qui a été enregistré est à jour.
+    this.missingCodes = new Set();
+    this.missingSummaries = new Set();
     this.syncTeamIds();
     this.emitMissing();
   }
@@ -728,7 +798,9 @@ export function clean(c: ResolutionContent): ResolutionContent {
       percent: a.percent ?? 0,
       notes: text(a.notes),
       capaId: a.capaId ?? null,
-      containment: !!a.containment
+      containment: !!a.containment,
+      nature: a.nature ?? null,
+      criticity: a.criticity ?? null
     })),
     ishikawaId: text(c.ishikawaId),
     measuresEnabled: !!c.measuresEnabled,

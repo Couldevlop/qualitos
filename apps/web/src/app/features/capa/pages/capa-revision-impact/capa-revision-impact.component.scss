@@ -1,4 +1,6 @@
-.impact-card { margin-top: var(--qos-space-6); }
+// `.qos-page` gouttière déjà cette carte : la marge haute s'y ajoutait et
+// creusait 40 px entre l'impact de révision et le bloc qui le précède.
+.impact-card { margin-top: var(--qos-space-2); }
 
 .impact-list {
   list-style: none;

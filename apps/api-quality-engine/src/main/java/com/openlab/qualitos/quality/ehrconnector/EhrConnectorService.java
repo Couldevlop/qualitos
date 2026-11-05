@@ -216,6 +216,9 @@ public class EhrConnectorService {
                 truncate(title, 255),
                 description,
                 NcCategory.SAFETY,
+                // La nature fine se classe à la main : un code codé ici ferait
+                // échouer l'import chez un client qui a sa propre nomenclature.
+                null,   // subcategoryCode
                 severity,
                 detectedAt,
                 null,   // zone

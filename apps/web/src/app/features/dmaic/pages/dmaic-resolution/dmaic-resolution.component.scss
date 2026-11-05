@@ -197,40 +197,56 @@
   }
 }
 
-// En-tête de la fiche, calqué sur le gabarit DMAIC : un bloc centré de largeur
-// bornée, l'identité de la réclamation à gauche (colonne large), son numéro et
-// ses dates à droite (colonne étroite). Aucun champ ne s'étire sur toute la page.
+// En-tête de la réclamation : une BANDE compacte, pas une page. Trois colonnes
+// de même poids — identité, références et dates, qualification —, l'équipe en
+// pastilles sur une ligne, les symptômes sur toute la largeur. La version
+// précédente centrait un grand titre et empilait les champs en deux colonnes
+// inégales : elle occupait un écran entier avant la première question.
 .entete {
   width: 100%;
-  max-width: 60rem;
-  margin-inline: auto;
+  padding: var(--qos-space-4);
 
   &__head {
-    margin-bottom: var(--qos-space-4);
-    text-align: center;
-
-    .bloc__lead {
-      margin-inline: auto;
-    }
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: var(--qos-space-2) var(--qos-space-3);
+    margin-bottom: var(--qos-space-3);
+    padding-bottom: var(--qos-space-2);
+    border-bottom: 1px solid var(--qos-border-subtle);
   }
 
   &__titre {
     margin: 0;
-    font-size: var(--qos-fs-xl);
+    font-size: var(--qos-fs-md);
     font-weight: var(--qos-fw-semibold);
-    line-height: 1.3;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+    color: var(--qos-fg-tertiary);
+  }
+
+  // Le problème du projet se lit en continuité du titre, pas en pavé.
+  &__lead {
+    flex: 1 1 20rem;
+    min-width: 0;
+    margin: 0;
+    font-size: var(--qos-fs-sm);
+    font-weight: var(--qos-fw-medium);
+    color: var(--qos-fg-primary);
+    overflow-wrap: anywhere;
   }
 
   &__grille {
     display: grid;
-    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
-    gap: var(--qos-space-4) var(--qos-space-6);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+    gap: var(--qos-space-2) var(--qos-space-3);
     align-items: start;
   }
 
   &__col {
     display: grid;
-    gap: var(--qos-space-3);
+    gap: var(--qos-space-2);
     min-width: 0;
 
     > * {
@@ -238,21 +254,22 @@
     }
   }
 
-  &__qualif {
+  // Les deux dates côte à côte : ce sont deux bornes d'un même intervalle.
+  &__dates {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--qos-space-3) var(--qos-space-4);
-    margin-top: var(--qos-space-4);
-    padding-top: var(--qos-space-4);
-    border-top: 1px solid var(--qos-border-subtle);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 7.5rem), 1fr));
+    gap: var(--qos-space-2);
+    min-width: 0;
   }
 
   .equipe {
-    margin-top: 0;
+    margin-top: var(--qos-space-3);
+    padding-top: var(--qos-space-3);
+    border-top: 1px solid var(--qos-border-subtle);
   }
 
-  .equipe .sous-titre {
-    margin-top: 0;
+  .champ-large {
+    margin-top: var(--qos-space-3);
   }
 }
 
@@ -267,8 +284,7 @@
 }
 
 @media (max-width: 720px) {
-  .entete__grille,
-  .entete__qualif {
+  .entete__grille {
     grid-template-columns: minmax(0, 1fr);
   }
 
@@ -324,37 +340,64 @@ mat-form-field {
 .equipe {
   margin-top: var(--qos-space-2);
 
-  &__liste {
+  &__titre {
+    display: flex;
+    align-items: baseline;
+    gap: var(--qos-space-2);
+    margin: 0 0 var(--qos-space-2);
+    font-size: var(--qos-fs-xs);
+    font-weight: var(--qos-fw-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--qos-fg-tertiary);
+  }
+
+  // Une ligne de pastilles qui passe à la ligne : quinze personnes empilées
+  // verticalement repoussaient le questionnaire hors de l'écran.
+  &__pastilles {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--qos-space-2);
-    margin: 0 0 var(--qos-space-3);
+    align-items: center;
+    gap: var(--qos-space-1) var(--qos-space-2);
+    margin: 0 0 var(--qos-space-2);
     padding: 0;
     list-style: none;
   }
 
   &__ajout {
     display: block;
-    max-width: 24rem;
+    max-width: 20rem;
   }
 }
 
-.personne {
+.pastille {
   display: inline-flex;
   align-items: center;
   gap: var(--qos-space-1);
   max-width: 100%;
-  padding: 2px 2px 2px var(--qos-space-2);
+  padding: 1px 1px 1px var(--qos-space-2);
   border-radius: var(--qos-radius-pill);
   background: var(--qos-accent-bg-soft);
-  font-size: var(--qos-fs-sm);
+  font-size: var(--qos-fs-xs);
 
   mat-icon {
     flex: none;
-    width: 18px;
-    height: 18px;
-    font-size: 18px;
+    width: 16px;
+    height: 16px;
+    font-size: 16px;
     color: var(--qos-accent-fg-soft);
+  }
+
+  .mat-mdc-icon-button {
+    width: 24px;
+    height: 24px;
+    padding: 0;
+
+    mat-icon {
+      width: 14px;
+      height: 14px;
+      font-size: 14px;
+    }
   }
 
   &__nom {
@@ -395,6 +438,51 @@ mat-form-field {
 
   &__reponse {
     min-width: 0;
+  }
+
+  // Signalée en rouge après une tentative d'avancer : un liseré à gauche, le
+  // libellé en rouge, et le champ encadré. Le liseré porte autant que la
+  // couleur — la couleur seule ne se voit pas en déficience chromatique
+  // (WCAG 1.4.1).
+  &--manque {
+    position: relative;
+    padding-left: var(--qos-space-3);
+    border-radius: var(--qos-radius-sm);
+    background: var(--qos-danger-bg-soft);
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 2px auto 2px 0;
+      width: 3px;
+      border-radius: 3px;
+      background: var(--qos-danger-fg);
+    }
+
+    .question__label {
+      color: var(--qos-danger-fg);
+      font-weight: var(--qos-fw-medium);
+    }
+
+    .mat-mdc-form-field {
+      --mat-form-field-outlined-outline-color: var(--qos-danger-fg);
+      --mat-form-field-outlined-hover-outline-color: var(--qos-danger-fg);
+    }
+
+    .choix__btn {
+      border-color: var(--qos-danger-fg);
+    }
+  }
+}
+
+// La synthèse manquante, signalée comme une question : même liseré, même
+// encadrement rouge.
+.synthese--manque {
+  --mat-form-field-outlined-outline-color: var(--qos-danger-fg);
+  --mat-form-field-outlined-hover-outline-color: var(--qos-danger-fg);
+
+  .mat-mdc-floating-label {
+    color: var(--qos-danger-fg);
   }
 }
 
@@ -921,6 +1009,14 @@ mat-form-field {
   background: var(--qos-warn-bg-soft);
   color: var(--qos-warn-fg);
   font-size: var(--qos-fs-sm);
+
+  // Après une tentative d'avancer, le bandeau passe en rouge : il ne rappelle
+  // plus une règle, il désigne un blocage.
+  &--signale {
+    background: var(--qos-danger-bg-soft);
+    color: var(--qos-danger-fg);
+    font-weight: var(--qos-fw-medium);
+  }
 }
 
 .extra {

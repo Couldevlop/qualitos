@@ -582,7 +582,13 @@ jobs:
   # ---------------------------------------------------------------------------
   e2e-smoke:
     name: E2E smoke (Playwright)
-    runs-on: ubuntu-latest
+    # Runner EPINGLE, volontairement. `ubuntu-latest` est passe a Ubuntu 26.04 le
+    # 2026-11-05 et `playwright install` s'y arrete net : « ERROR: Playwright does
+    # not support chromium on ubuntu26.04-x64 » (version verrouillee : 1.60.0).
+    # Le job echouait donc pour une raison etrangere au code, et bloquait le
+    # deploiement de preproduction. A rouvrir quand Playwright annonce 26.04 :
+    # monter la version et revenir a ubuntu-latest. Revue : 2026-12-15.
+    runs-on: ubuntu-24.04
     timeout-minutes: 25
 
     defaults:

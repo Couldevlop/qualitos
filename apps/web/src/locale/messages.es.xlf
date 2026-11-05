@@ -17458,6 +17458,10 @@ historial de 12 meses</target>
         <source>score de cause racine</source>
         <target state="translated">puntuación de causa raíz</target>
       </trans-unit>
+      <trans-unit id="kpi.target" datatype="html">
+        <source>Cible</source>
+        <target state="translated">Objetivo</target>
+      </trans-unit>
       <trans-unit id="nav.marketplace" datatype="html">
         <source>Marketplace</source>
         <target state="translated">Marketplace</target>
@@ -20989,6 +20993,162 @@ historial de 12 meses</target>
       <trans-unit id="nccluster.register-error" datatype="html">
         <source>Le registre ne se lit pas pour le moment.</source>
         <target state="translated">El registro no se puede leer por ahora.</target>
+      </trans-unit>
+      <trans-unit id="nav.admin-nc" datatype="html">
+        <source>Natures de NC</source>
+        <target state="translated">Naturalezas de NC</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.title" datatype="html">
+        <source>Natures de non-conformité</source>
+        <target state="translated">Naturalezas de no conformidad</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.subtitle" datatype="html">
+        <source>Sous chaque catégorie, les natures d'écart que vous rencontrez.</source>
+        <target state="translated">Bajo cada categoría, las naturalezas de desviación que encuentra.</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.scope" datatype="html">
+        <source>Une nature se reconnaît à son code : en changer le libellé ne déclasse pas les écarts déjà classés ; la retirer laisse les anciens porter leur code.</source>
+        <target state="translated">Una naturaleza se reconoce por su código: cambiar su etiqueta no desclasifica las desviaciones ya clasificadas; retirarla deja que las antiguas conserven su código.</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.defaults" datatype="html">
+        <source>Ce sont aujourd’hui les natures de la plateforme, transverses à tous les secteurs.</source>
+        <target state="translated">Actualmente son las naturalezas de la plataforma, transversales a todos los sectores.</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.catalogue" datatype="html">
+        <source>Catalogue</source>
+        <target state="translated">Catálogo</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.catalogue-help" datatype="html">
+        <source>Les natures de chaque catégorie, dans l’ordre où la saisie les proposera.</source>
+        <target state="translated">Las naturalezas de cada categoría, en el orden en que el formulario las propondrá.</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.categories" datatype="html">
+        <source>Catégories</source>
+        <target state="translated">Categorías</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.code" datatype="html">
+        <source>Code</source>
+        <target state="translated">Código</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.code-placeholder" datatype="html">
+        <source>Ex. : PRD-DIM</source>
+        <target state="translated">Ej.: PRD-DIM</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.label" datatype="html">
+        <source>Nature de l'écart</source>
+        <target state="translated">Naturaleza de la desviación</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.label-placeholder" datatype="html">
+        <source>Ex. : Cote ou tolérance hors spécification</source>
+        <target state="translated">Ej.: Cota o tolerancia fuera de especificación</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.add" datatype="html">
+        <source>Ajouter une nature</source>
+        <target state="translated">Añadir una naturaleza</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.remove" datatype="html">
+        <source>Retirer cette nature</source>
+        <target state="translated">Retirar esta naturaleza</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.category-empty" datatype="html">
+        <source>Aucune nature pour cette catégorie : la saisie n’y proposera rien.</source>
+        <target state="translated">Ninguna naturaleza para esta categoría: el formulario no propondrá nada aquí.</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.pending" datatype="html">
+        <source>Catalogue modifié</source>
+        <target state="translated">Catálogo modificado</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.problem.empty" datatype="html">
+        <source>Le catalogue ne peut pas être vide. Rétablissez celui de la plateforme.</source>
+        <target state="translated">El catálogo no puede estar vacío. Restablezca el de la plataforma.</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.problem.too-many" datatype="html">
+        <source>Pas plus de <x id="INTERPOLATION"/> natures.</source>
+        <target state="translated">No más de <x id="INTERPOLATION"/> naturalezas.</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.problem.code" datatype="html">
+        <source>Un code s’écrit en capitales, chiffres, tiret ou point (ex. : PRD-DIM).</source>
+        <target state="translated">Un código se escribe en mayúsculas, cifras, guion o punto (ej.: PRD-DIM).</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.problem.label" datatype="html">
+        <source>Chaque nature a un libellé.</source>
+        <target state="translated">Cada naturaleza tiene una etiqueta.</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.problem.duplicate" datatype="html">
+        <source>Deux natures portent le même code.</source>
+        <target state="translated">Dos naturalezas llevan el mismo código.</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.problem.empty-category" datatype="html">
+        <source>Catégorie sans aucune nature : <x id="INTERPOLATION"/> — la saisie n’y proposerait rien.</source>
+        <target state="translated">Categoría sin ninguna naturaleza: <x id="INTERPOLATION"/> — el formulario no propondría nada.</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.load-failed" datatype="html">
+        <source>Le catalogue des natures n’a pas pu être chargé.</source>
+        <target state="translated">No se ha podido cargar el catálogo de naturalezas.</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.save-failed" datatype="html">
+        <source>Le catalogue n’a pas pu être enregistré.</source>
+        <target state="translated">No se ha podido guardar el catálogo.</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.saved" datatype="html">
+        <source>Catalogue des natures enregistré.</source>
+        <target state="translated">Catálogo de naturalezas guardado.</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.reset-action" datatype="html">
+        <source>Catalogue de la plateforme</source>
+        <target state="translated">Catálogo de la plataforma</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.reset" datatype="html">
+        <source>Rétablir</source>
+        <target state="translated">Restablecer</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.reset-title" datatype="html">
+        <source>Rétablir le catalogue de la plateforme ?</source>
+        <target state="translated">¿Restablecer el catálogo de la plataforma?</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.reset-message" datatype="html">
+        <source>Votre catalogue sera remplacé par celui de la plateforme. Les écarts déjà classés gardent leur code.</source>
+        <target state="translated">Su catálogo será reemplazado por el de la plataforma. Las desviaciones ya clasificadas conservan su código.</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.reset-done" datatype="html">
+        <source>Catalogue de la plateforme rétabli.</source>
+        <target state="translated">Catálogo de la plataforma restablecido.</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.reset-failed" datatype="html">
+        <source>Le catalogue n’a pas pu être rétabli.</source>
+        <target state="translated">No se ha podido restablecer el catálogo.</target>
+      </trans-unit>
+      <trans-unit id="nc.create.subcategory" datatype="html">
+        <source>Nature de l'écart</source>
+        <target state="translated">Naturaleza de la desviación</target>
+      </trans-unit>
+      <trans-unit id="nc.create.subcategory-none" datatype="html">
+        <source>— À classer —</source>
+        <target state="translated">— Por clasificar —</target>
+      </trans-unit>
+      <trans-unit id="nc.list.filter-subcategory" datatype="html">
+        <source>Nature</source>
+        <target state="translated">Naturaleza</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.supplier-required" datatype="html">
+        <source>Choisissez le fournisseur concerné.</source>
+        <target state="translated">Elija el proveedor afectado.</target>
+      </trans-unit>
+      <trans-unit id="capa.open.containment-hint" datatype="html">
+        <source>Mesure immédiate : elle contient l'effet. Le dossier reste correctif — sa clôture demandera une action qui supprime la cause.</source>
+        <target state="translated">Medida inmediata: contiene el efecto. El expediente sigue siendo correctivo — su cierre exigirá una acción que elimine la causa.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.complete-hint" datatype="html">
+        <source>Le projet se clôture quand toute la fiche est renseignée et que chaque action est à 100 %.</source>
+        <target state="translated">El proyecto se cierra cuando toda la ficha está completa y cada acción está al 100 %.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.complete" datatype="html">
+        <source>Clôturer</source>
+        <target state="translated">Cerrar</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.missing-marked" datatype="html">
+        <source>champ(s) à renseigner, signalés en rouge ci-dessous.</source>
+        <target state="translated">campo(s) a rellenar, señalados en rojo más abajo.</target>
       </trans-unit>
       <trans-unit id="nav.nlq-explore" datatype="html">
         <source>Exploration NLQ</source>
@@ -27962,6 +28122,778 @@ historial de 12 meses</target>
         <source>Statut du procédé</source>
         <target state="translated">Estado del proceso</target>
       </trans-unit>
+      <trans-unit id="nav.stakeholders" datatype="html">
+        <source>Parties prenantes</source>
+        <target state="translated">Partes interesadas</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.title" datatype="html">
+        <source>Parties prenantes</source>
+        <target state="translated">Partes interesadas</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.subtitle" datatype="html">
+        <source>Contexte de l'organisme : qui attend quoi de vous, et comment vous vous en assurez.</source>
+        <target state="translated">Contexto de la organización: quién espera qué de usted y cómo se asegura de ello.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.new" datatype="html">
+        <source>Nouvelle partie prenante</source>
+        <target state="translated">Nueva parte interesada</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.load-failed" datatype="html">
+        <source>Le registre des parties prenantes n'a pas pu être chargé.</source>
+        <target state="translated">No se pudo cargar el registro de partes interesadas.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.sheet-failed" datatype="html">
+        <source>La fiche n'a pas pu être ouverte.</source>
+        <target state="translated">No se pudo abrir la ficha.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.sheet.aria" datatype="html">
+        <source>Fiche de la partie prenante</source>
+        <target state="translated">Ficha de la parte interesada</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.tile.total" datatype="html">
+        <source>Parties prenantes</source>
+        <target state="translated">Partes interesadas</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.tile.sides" datatype="html">
+        <source>Internes / externes</source>
+        <target state="translated">Internas / externas</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.tile.critical" datatype="html">
+        <source>Criticité élevée</source>
+        <target state="translated">Criticidad alta</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.tile.overdue" datatype="html">
+        <source>Revues en retard</source>
+        <target state="translated">Revisiones atrasadas</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.tile.to-determine" datatype="html">
+        <source>Pertinence à trancher</source>
+        <target state="translated">Pertinencia por decidir</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.tile.to-reassess" datatype="html">
+        <source>Exigences à réévaluer</source>
+        <target state="translated">Requisitos por reevaluar</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.tabs" datatype="html">
+        <source>Vues du registre</source>
+        <target state="translated">Vistas del registro</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.tab.register" datatype="html">
+        <source>Registre</source>
+        <target state="translated">Registro</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.tab.matrix" datatype="html">
+        <source>Matrice d'évaluation</source>
+        <target state="translated">Matriz de evaluación</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.tab.assistant" datatype="html">
+        <source>Assistant IA</source>
+        <target state="translated">Asistente de IA</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.filters" datatype="html">
+        <source>Filtrer le registre des parties prenantes</source>
+        <target state="translated">Filtrar el registro de partes interesadas</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.filter.search" datatype="html">
+        <source>Rechercher une partie prenante</source>
+        <target state="translated">Buscar una parte interesada</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.filter.side" datatype="html">
+        <source>Interne / externe</source>
+        <target state="translated">Interna / externa</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.filter.clear" datatype="html">
+        <source>Effacer les filtres</source>
+        <target state="translated">Borrar los filtros</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.col.name" datatype="html">
+        <source>Partie prenante</source>
+        <target state="translated">Parte interesada</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.col.category" datatype="html">
+        <source>Catégorie</source>
+        <target state="translated">Categoría</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.col.criticality" datatype="html">
+        <source>Criticité</source>
+        <target state="translated">Criticidad</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.col.relevance" datatype="html">
+        <source>Pertinence</source>
+        <target state="translated">Pertinencia</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.col.requirements" datatype="html">
+        <source>Exigences</source>
+        <target state="translated">Requisitos</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.col.review" datatype="html">
+        <source>Dernière revue</source>
+        <target state="translated">Última revisión</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.review-overdue" datatype="html">
+        <source>Réévaluation en retard</source>
+        <target state="translated">Reevaluación atrasada</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.empty" datatype="html">
+        <source>Aucune partie prenante inscrite. Ajoutez-en une, ou demandez une liste à l'assistant IA.</source>
+        <target state="translated">Ninguna parte interesada registrada. Añada una o pida una lista al asistente de IA.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.empty-filtered" datatype="html">
+        <source>Aucune partie prenante ne correspond à ces filtres.</source>
+        <target state="translated">Ninguna parte interesada coincide con estos filtros.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.category.customers" datatype="html">
+        <source>Clients et utilisateurs finaux</source>
+        <target state="translated">Clientes y usuarios finales</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.category.suppliers" datatype="html">
+        <source>Fournisseurs et sous-traitants</source>
+        <target state="translated">Proveedores y subcontratistas</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.category.employees" datatype="html">
+        <source>Collaborateurs et représentants du personnel</source>
+        <target state="translated">Colaboradores y representantes del personal</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.category.governance" datatype="html">
+        <source>Direction et actionnaires</source>
+        <target state="translated">Dirección y accionistas</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.category.regulators" datatype="html">
+        <source>Autorités réglementaires</source>
+        <target state="translated">Autoridades reglamentarias</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.category.certification" datatype="html">
+        <source>Organismes de certification et d'accréditation</source>
+        <target state="translated">Organismos de certificación y acreditación</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.category.partners" datatype="html">
+        <source>Partenaires commerciaux</source>
+        <target state="translated">Socios comerciales</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.category.providers" datatype="html">
+        <source>Prestataires de services</source>
+        <target state="translated">Prestadores de servicios</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.category.financial" datatype="html">
+        <source>Assureurs et partenaires financiers</source>
+        <target state="translated">Aseguradoras y socios financieros</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.category.communities" datatype="html">
+        <source>Communautés locales et acteurs externes</source>
+        <target state="translated">Comunidades locales y actores externos</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.category.other" datatype="html">
+        <source>Autres parties intéressées</source>
+        <target state="translated">Otras partes interesadas</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.side.internal" datatype="html">
+        <source>Interne</source>
+        <target state="translated">Interna</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.side.external" datatype="html">
+        <source>Externe</source>
+        <target state="translated">Externa</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.impact.low" datatype="html">
+        <source>Faible</source>
+        <target state="translated">Bajo</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.impact.medium" datatype="html">
+        <source>Moyen</source>
+        <target state="translated">Medio</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.impact.high" datatype="html">
+        <source>Élevé</source>
+        <target state="translated">Alto</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.relevance.relevant" datatype="html">
+        <source>Pertinente</source>
+        <target state="translated">Pertinente</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.relevance.not-relevant" datatype="html">
+        <source>Non pertinente</source>
+        <target state="translated">No pertinente</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.relevance.to-determine" datatype="html">
+        <source>À déterminer</source>
+        <target state="translated">Por determinar</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.nature.contractual" datatype="html">
+        <source>Contractuel</source>
+        <target state="translated">Contractual</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.nature.regulatory" datatype="html">
+        <source>Réglementaire</source>
+        <target state="translated">Reglamentario</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.nature.normative" datatype="html">
+        <source>Normatif</source>
+        <target state="translated">Normativo</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.nature.voluntary" datatype="html">
+        <source>Volontaire</source>
+        <target state="translated">Voluntario</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.nature.internal" datatype="html">
+        <source>Interne</source>
+        <target state="translated">Interno</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.status.to-analyse" datatype="html">
+        <source>À analyser</source>
+        <target state="translated">Por analizar</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.status.applicable" datatype="html">
+        <source>Applicable</source>
+        <target state="translated">Aplicable</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.status.controlled" datatype="html">
+        <source>Maîtrisée</source>
+        <target state="translated">Controlado</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.status.to-reassess" datatype="html">
+        <source>À réévaluer</source>
+        <target state="translated">Por reevaluar</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.section.identification" datatype="html">
+        <source>Identification</source>
+        <target state="translated">Identificación</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.section.analysis" datatype="html">
+        <source>Analyse</source>
+        <target state="translated">Análisis</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.section.steering" datatype="html">
+        <source>Pilotage</source>
+        <target state="translated">Gestión</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.section.requirements" datatype="html">
+        <source>Exigences</source>
+        <target state="translated">Requisitos</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.field.name" datatype="html">
+        <source>Nom ou raison sociale</source>
+        <target state="translated">Nombre o razón social</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.field.category" datatype="html">
+        <source>Catégorie</source>
+        <target state="translated">Categoría</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.field.contact" datatype="html">
+        <source>Coordonnées</source>
+        <target state="translated">Datos de contacto</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.field.sites" datatype="html">
+        <source>Sites concernés</source>
+        <target state="translated">Centros afectados</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.field.needs" datatype="html">
+        <source>Besoins et attentes</source>
+        <target state="translated">Necesidades y expectativas</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.field.requirements-summary" datatype="html">
+        <source>Exigences applicables</source>
+        <target state="translated">Requisitos aplicables</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.field.relevance" datatype="html">
+        <source>Pertinence pour le système qualité</source>
+        <target state="translated">Pertinencia para el sistema de calidad</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.field.owner" datatype="html">
+        <source>Responsable interne de la relation</source>
+        <target state="translated">Responsable interno de la relación</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.field.justification" datatype="html">
+        <source>Justification de la pertinence ou de la non-pertinence</source>
+        <target state="translated">Justificación de la pertinencia o de la no pertinencia</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.field.risks" datatype="html">
+        <source>Risques et opportunités associés</source>
+        <target state="translated">Riesgos y oportunidades asociados</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.field.quality-impact" datatype="html">
+        <source>Impact qualité</source>
+        <target state="translated">Impacto en la calidad</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.field.regulatory-impact" datatype="html">
+        <source>Impact réglementaire</source>
+        <target state="translated">Impacto reglamentario</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.field.controls" datatype="html">
+        <source>Mesures de maîtrise</source>
+        <target state="translated">Medidas de control</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.field.indicators" datatype="html">
+        <source>Indicateurs de suivi</source>
+        <target state="translated">Indicadores de seguimiento</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.field.documents" datatype="html">
+        <source>Documents de référence</source>
+        <target state="translated">Documentos de referencia</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.field.actions" datatype="html">
+        <source>Actions associées</source>
+        <target state="translated">Acciones asociadas</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.field.next-review" datatype="html">
+        <source>Prochaine réévaluation</source>
+        <target state="translated">Próxima reevaluación</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.reviewed-on" datatype="html">
+        <source>Dernière revue le</source>
+        <target state="translated">Última revisión el</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.never-reviewed" datatype="html">
+        <source>Jamais revue.</source>
+        <target state="translated">Nunca revisada.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.mark-reviewed" datatype="html">
+        <source>Marquer comme revue</source>
+        <target state="translated">Marcar como revisada</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.reviewed" datatype="html">
+        <source>Revue enregistrée à la date du jour.</source>
+        <target state="translated">Revisión registrada con la fecha de hoy.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.review-failed" datatype="html">
+        <source>La revue n'a pas pu être enregistrée.</source>
+        <target state="translated">No se pudo registrar la revisión.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.pending" datatype="html">
+        <source>Fiche modifiée</source>
+        <target state="translated">Ficha modificada</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.saved" datatype="html">
+        <source>Fiche enregistrée.</source>
+        <target state="translated">Ficha guardada.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.save-failed" datatype="html">
+        <source>La fiche n'a pas pu être enregistrée.</source>
+        <target state="translated">No se pudo guardar la ficha.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.problem.name" datatype="html">
+        <source>Une partie prenante se désigne par un nom.</source>
+        <target state="translated">Una parte interesada se designa con un nombre.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.problem.justification" datatype="html">
+        <source>Dites pourquoi elle est pertinente, ou pourquoi elle ne l'est pas : un auditeur vient lire cette décision.</source>
+        <target state="translated">Indique por qué es pertinente, o por qué no lo es: un auditor vendrá a leer esa decisión.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirements-help" datatype="html">
+        <source>Ce que cette partie prenante attend, d'où cela vient, et comment vous vous en assurez. Chaque ligne se rattache à un risque, un écart, un audit ou un document.</source>
+        <target state="translated">Lo que espera esta parte interesada, de dónde viene y cómo se asegura de ello. Cada línea se vincula a un riesgo, una desviación, una auditoría o un documento.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirements-empty" datatype="html">
+        <source>Aucune exigence pour le moment. Ajoutez-en une, ou importez un contrat depuis l'assistant IA.</source>
+        <target state="translated">Ningún requisito por ahora. Añada uno o importe un contrato desde el asistente de IA.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.add-requirement" datatype="html">
+        <source>Ajouter une exigence</source>
+        <target state="translated">Añadir un requisito</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement-added" datatype="html">
+        <source>Exigence ajoutée.</source>
+        <target state="translated">Requisito añadido.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement-failed" datatype="html">
+        <source>L'exigence n'a pas pu être ajoutée.</source>
+        <target state="translated">No se pudo añadir el requisito.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.status-failed" datatype="html">
+        <source>Le statut n'a pas pu être changé.</source>
+        <target state="translated">No se pudo cambiar el estado.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement-remove" datatype="html">
+        <source>Retirer</source>
+        <target state="translated">Retirar</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement-remove-title" datatype="html">
+        <source>Retirer cette exigence ?</source>
+        <target state="translated">¿Retirar este requisito?</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement-remove-message" datatype="html">
+        <source>Elle disparaîtra de la fiche, ainsi que ses rattachements.</source>
+        <target state="translated">Desaparecerá de la ficha, junto con sus vínculos.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement-remove-failed" datatype="html">
+        <source>L'exigence n'a pas pu être retirée.</source>
+        <target state="translated">No se pudo retirar el requisito.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.create-action" datatype="html">
+        <source>Créer une action</source>
+        <target state="translated">Crear una acción</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.see-capa" datatype="html">
+        <source>Voir la CAPA</source>
+        <target state="translated">Ver la CAPA</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.capa-opened" datatype="html">
+        <source>CAPA ouverte ; l'exigence repasse à réévaluer.</source>
+        <target state="translated">CAPA abierta; el requisito vuelve a «por reevaluar».</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.capa-failed" datatype="html">
+        <source>La CAPA n'a pas pu être ouverte.</source>
+        <target state="translated">No se pudo abrir la CAPA.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.capa-no-account" datatype="html">
+        <source>Impossible d'identifier votre compte.</source>
+        <target state="translated">No se pudo identificar su cuenta.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.link.risk" datatype="html">
+        <source>Risque</source>
+        <target state="translated">Riesgo</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.link.nc" datatype="html">
+        <source>Écart</source>
+        <target state="translated">Desviación</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.link.audit" datatype="html">
+        <source>Audit</source>
+        <target state="translated">Auditoría</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.link.document" datatype="html">
+        <source>Document</source>
+        <target state="translated">Documento</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.linked" datatype="html">
+        <source>Exigence rattachée.</source>
+        <target state="translated">Requisito vinculado.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.link-failed" datatype="html">
+        <source>Le rattachement a échoué.</source>
+        <target state="translated">El vínculo falló.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.link.title-risk" datatype="html">
+        <source>Rattacher à un risque</source>
+        <target state="translated">Vincular a un riesgo</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.link.title-nc" datatype="html">
+        <source>Rattacher à un écart</source>
+        <target state="translated">Vincular a una desviación</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.link.title-audit" datatype="html">
+        <source>Rattacher à un audit</source>
+        <target state="translated">Vincular a una auditoría</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.link.title-document" datatype="html">
+        <source>Rattacher à un document</source>
+        <target state="translated">Vincular a un documento</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.link.subtitle" datatype="html">
+        <source>Exigence : <x id="exigence"/></source>
+        <target state="translated">Requisito: <x id="exigence"/></target>
+      </trans-unit>
+      <trans-unit id="stakeholders.link.filter" datatype="html">
+        <source>Filtrer la liste</source>
+        <target state="translated">Filtrar la lista</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.link.submit" datatype="html">
+        <source>Rattacher</source>
+        <target state="translated">Vincular</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.link.choose" datatype="html">
+        <source>Choisissez la cible dans la liste.</source>
+        <target state="translated">Elija el destino en la lista.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.link.loading" datatype="html">
+        <source>Chargement de la liste…</source>
+        <target state="translated">Cargando la lista…</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.link.load-failed" datatype="html">
+        <source>La liste n'a pas pu être chargée ; fermez la fenêtre et réessayez.</source>
+        <target state="translated">No se pudo cargar la lista; cierre la ventana e inténtelo de nuevo.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.link.none" datatype="html">
+        <source>Il n'y a rien à rattacher : ce module ne contient encore aucun élément.</source>
+        <target state="translated">No hay nada que vincular: este módulo aún no contiene ningún elemento.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.link.no-match" datatype="html">
+        <source>Aucun élément ne correspond à ce filtre.</source>
+        <target state="translated">Ningún elemento coincide con este filtro.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.create.title" datatype="html">
+        <source>Inscrire une partie prenante</source>
+        <target state="translated">Registrar una parte interesada</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.create.subtitle" datatype="html">
+        <source>Trois champs suffisent : sa fiche s'ouvre ensuite pour l'analyse.</source>
+        <target state="translated">Bastan tres campos: su ficha se abre después para el análisis.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.create.submit" datatype="html">
+        <source>Inscrire</source>
+        <target state="translated">Registrar</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.create.need-name" datatype="html">
+        <source>Donnez le nom ou la raison sociale de la partie prenante.</source>
+        <target state="translated">Indique el nombre o la razón social de la parte interesada.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.create.name-too-long" datatype="html">
+        <source>Le nom dépasse la longueur acceptée.</source>
+        <target state="translated">El nombre supera la longitud admitida.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.create.done" datatype="html">
+        <source>Partie prenante inscrite ; complétez son analyse.</source>
+        <target state="translated">Parte interesada registrada; complete su análisis.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.create.failed" datatype="html">
+        <source>La partie prenante n'a pas pu être inscrite.</source>
+        <target state="translated">No se pudo registrar la parte interesada.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement.title" datatype="html">
+        <source>Ajouter une exigence</source>
+        <target state="translated">Añadir un requisito</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement.subtitle" datatype="html">
+        <source>Ce que <x id="nom"/> attend, et comment vous vous en assurez.</source>
+        <target state="translated">Lo que <x id="nom"/> espera y cómo se asegura de ello.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement.text" datatype="html">
+        <source>Exigence</source>
+        <target state="translated">Requisito</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement.optional" datatype="html">
+        <source>Les champs qui suivent se complètent au fil de l'analyse : rien n'empêche d'ajouter l'exigence maintenant et de dire plus tard qui la suit.</source>
+        <target state="translated">Los campos siguientes se completan a lo largo del análisis: nada impide añadir el requisito ahora e indicar más tarde quién lo sigue.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement.need" datatype="html">
+        <source>Besoin ou attente d'origine</source>
+        <target state="translated">Necesidad o expectativa de origen</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement.origin" datatype="html">
+        <source>Origine (contrat, texte, clause)</source>
+        <target state="translated">Origen (contrato, texto, cláusula)</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement.nature" datatype="html">
+        <source>Nature de l'obligation</source>
+        <target state="translated">Naturaleza de la obligación</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement.no-nature" datatype="html">
+        <source>Non précisée</source>
+        <target state="translated">Sin especificar</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement.risk" datatype="html">
+        <source>Risque si elle n'est pas tenue</source>
+        <target state="translated">Riesgo si no se cumple</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement.risk-level" datatype="html">
+        <source>Niveau de risque</source>
+        <target state="translated">Nivel de riesgo</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement.no-level" datatype="html">
+        <source>Non coté</source>
+        <target state="translated">Sin calificar</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement.control" datatype="html">
+        <source>Mesure de maîtrise</source>
+        <target state="translated">Medida de control</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement.indicator" datatype="html">
+        <source>Indicateur de suivi</source>
+        <target state="translated">Indicador de seguimiento</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement.responsible" datatype="html">
+        <source>Responsable du suivi</source>
+        <target state="translated">Responsable del seguimiento</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement.evidence" datatype="html">
+        <source>Preuve attendue</source>
+        <target state="translated">Evidencia esperada</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement.need-text" datatype="html">
+        <source>Énoncez l'exigence : c'est la seule chose indispensable ici.</source>
+        <target state="translated">Enuncie el requisito: es lo único indispensable aquí.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement.too-long" datatype="html">
+        <source>L'exigence dépasse la longueur acceptée ; résumez-la et détaillez dans la preuve.</source>
+        <target state="translated">El requisito supera la longitud admitida; resúmalo y detalle en la evidencia.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.matrix.help" datatype="html">
+        <source>Deux cotations par partie prenante : ce qu'elle pèse sur la qualité, ce qu'elle pèse au titre de la réglementation. Elles ne se compensent pas — la criticité retient la plus élevée des deux, et c'est le serveur qui la calcule.</source>
+        <target state="translated">Dos calificaciones por parte interesada: lo que pesa en la calidad y lo que pesa en términos reglamentarios. No se compensan: la criticidad retiene la mayor de las dos, y la calcula el servidor.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.matrix.read-only" datatype="html">
+        <source>Vous consultez la cotation ; sa modification relève du pilotage qualité.</source>
+        <target state="translated">Está consultando la calificación; su modificación corresponde a la gestión de la calidad.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.matrix.empty" datatype="html">
+        <source>Aucune partie prenante à coter pour le moment.</source>
+        <target state="translated">Ninguna parte interesada por calificar por ahora.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.matrix.grid-title" datatype="html">
+        <source>Répartition des parties prenantes</source>
+        <target state="translated">Distribución de las partes interesadas</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.matrix.grid-caption" datatype="html">
+        <source>Lignes : impact réglementaire. Colonnes : impact qualité.</source>
+        <target state="translated">Filas: impacto reglamentario. Columnas: impacto en la calidad.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.matrix.pending" datatype="html">
+        <source>Lignes recotées, en attente d'enregistrement : <x id="nombre"/></source>
+        <target state="translated">Líneas recalificadas pendientes de guardar: <x id="nombre"/></target>
+      </trans-unit>
+      <trans-unit id="stakeholders.matrix.recalculated" datatype="html">
+        <source>recalculée à l'enregistrement</source>
+        <target state="translated">recalculada al guardar</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.matrix.save" datatype="html">
+        <source>Enregistrer la cotation</source>
+        <target state="translated">Guardar la calificación</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.matrix.saved" datatype="html">
+        <source>Cotation enregistrée ; la criticité a été recalculée.</source>
+        <target state="translated">Calificación guardada; la criticidad se ha recalculado.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.matrix.save-failed" datatype="html">
+        <source>La cotation n'a pas pu être enregistrée.</source>
+        <target state="translated">No se pudo guardar la calificación.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.contract" datatype="html">
+        <source>L'assistant propose ; il n'inscrit rien. Chaque proposition reste une proposition jusqu'à ce que vous l'acceptiez, une par une.</source>
+        <target state="translated">El asistente propone; no registra nada. Cada propuesta sigue siendo una propuesta hasta que la acepte, una por una.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.suggest-title" datatype="html">
+        <source>Qui oublie-t-on ?</source>
+        <target state="translated">¿A quién olvidamos?</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.suggest-help" datatype="html">
+        <source>Décrivez votre activité : l'assistant propose les familles de parties intéressées qu'un organisme comme le vôtre doit prendre en compte.</source>
+        <target state="translated">Describa su actividad: el asistente propone las familias de partes interesadas que una organización como la suya debe tener en cuenta.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.sector" datatype="html">
+        <source>Secteur d'activité</source>
+        <target state="translated">Sector de actividad</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.characteristics" datatype="html">
+        <source>Caractéristiques (sites, clients, contraintes)</source>
+        <target state="translated">Características (centros, clientes, restricciones)</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.need-sector" datatype="html">
+        <source>Dites dans quel secteur vous êtes : sans cela, il n'y a rien à proposer qui vous concerne.</source>
+        <target state="translated">Indique en qué sector está: sin eso, no hay nada que proponerle que le concierna.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.suggest" datatype="html">
+        <source>Proposer des parties prenantes</source>
+        <target state="translated">Proponer partes interesadas</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.suggest-failed" datatype="html">
+        <source>Les suggestions n'ont pas pu être obtenues.</source>
+        <target state="translated">No se pudieron obtener las sugerencias.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.nothing-to-suggest" datatype="html">
+        <source>Rien à proposer : votre registre couvre déjà ce que cette description laisse voir.</source>
+        <target state="translated">Nada que proponer: su registro ya cubre lo que esta descripción permite ver.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.already" datatype="html">
+        <source>Déjà au registre</source>
+        <target state="translated">Ya está en el registro</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.do-register" datatype="html">
+        <source>Inscrire</source>
+        <target state="translated">Registrar</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.registered" datatype="html">
+        <source>Partie prenante inscrite.</source>
+        <target state="translated">Parte interesada registrada.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.extract-title" datatype="html">
+        <source>Les exigences d'un document</source>
+        <target state="translated">Los requisitos de un documento</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.extract-help" datatype="html">
+        <source>Collez un contrat, un cahier des charges ou un texte réglementaire : l'assistant en relève les exigences, chacune avec le passage qui la prouve.</source>
+        <target state="translated">Pegue un contrato, un pliego de condiciones o un texto reglamentario: el asistente extrae los requisitos, cada uno con el pasaje que lo prueba.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.document-name" datatype="html">
+        <source>Nom du document</source>
+        <target state="translated">Nombre del documento</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.document-text" datatype="html">
+        <source>Texte du document</source>
+        <target state="translated">Texto del documento</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.need-document" datatype="html">
+        <source>Collez au moins <x id="minimum"/> caractères du document : en dessous, il n'y a rien à lire.</source>
+        <target state="translated">Pegue al menos <x id="minimum"/> caracteres del documento: por debajo, no hay nada que leer.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.extract" datatype="html">
+        <source>Relever les exigences</source>
+        <target state="translated">Extraer los requisitos</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.extract-failed" datatype="html">
+        <source>Les exigences n'ont pas pu être extraites.</source>
+        <target state="translated">No se pudieron extraer los requisitos.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.nothing-extracted" datatype="html">
+        <source>Rien à proposer : ce texte ne porte aucune exigence identifiable.</source>
+        <target state="translated">Nada que proponer: este texto no contiene ningún requisito identificable.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.target" datatype="html">
+        <source>Partie prenante qui porte ces exigences</source>
+        <target state="translated">Parte interesada que sostiene estos requisitos</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.need-target" datatype="html">
+        <source>Choisissez la partie prenante qui porte ces exigences.</source>
+        <target state="translated">Elija la parte interesada que sostiene estos requisitos.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.open-sheet" datatype="html">
+        <source>Ouvrir sa fiche</source>
+        <target state="translated">Abrir su ficha</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.changes-title" datatype="html">
+        <source>Ce qui a changé</source>
+        <target state="translated">Lo que ha cambiado</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.changes-help" datatype="html">
+        <source>Deux versions d'un même texte : l'assistant dit ce qui a bougé et ce que cela pèse. À vous de désigner les exigences que ce changement remet en cause.</source>
+        <target state="translated">Dos versiones de un mismo texto: el asistente indica qué se movió y cuánto pesa. A usted le corresponde señalar los requisitos que este cambio cuestiona.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.previous-text" datatype="html">
+        <source>Version précédente</source>
+        <target state="translated">Versión anterior</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.current-text" datatype="html">
+        <source>Version en vigueur</source>
+        <target state="translated">Versión vigente</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.need-two-versions" datatype="html">
+        <source>Collez les deux versions, au moins <x id="minimum"/> caractères chacune : il n'y a pas de comparaison possible autrement.</source>
+        <target state="translated">Pegue las dos versiones, al menos <x id="minimum"/> caracteres cada una: de lo contrario no hay comparación posible.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.detect" datatype="html">
+        <source>Comparer les deux versions</source>
+        <target state="translated">Comparar las dos versiones</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.detect-failed" datatype="html">
+        <source>Les changements n'ont pas pu être analysés.</source>
+        <target state="translated">No se pudieron analizar los cambios.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.nothing-changed" datatype="html">
+        <source>Rien à signaler : ces deux versions ne diffèrent sur aucune exigence.</source>
+        <target state="translated">Nada que señalar: estas dos versiones no difieren en ningún requisito.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.reassess-target" datatype="html">
+        <source>Partie prenante concernée</source>
+        <target state="translated">Parte interesada afectada</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.no-requirement" datatype="html">
+        <source>Cette partie prenante ne porte encore aucune exigence à réévaluer.</source>
+        <target state="translated">Esta parte interesada aún no sostiene ningún requisito por reevaluar.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.need-selection" datatype="html">
+        <source>Cochez les exigences que ce changement remet en cause.</source>
+        <target state="translated">Marque los requisitos que este cambio cuestiona.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.mark" datatype="html">
+        <source>Marquer comme à réévaluer</source>
+        <target state="translated">Marcar como por reevaluar</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.marked" datatype="html">
+        <source>Exigences marquées à réévaluer.</source>
+        <target state="translated">Requisitos marcados como por reevaluar.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.mark-failed" datatype="html">
+        <source>Les exigences n'ont pas pu être marquées.</source>
+        <target state="translated">No se pudieron marcar los requisitos.</target>
+      </trans-unit>
       <trans-unit id="standards-extras.actions" datatype="html">
         <source>Actions</source>
         <target state="translated">Acciones</target>
@@ -31448,10 +32380,6 @@ India (centro de servicio)</target>
         <source>Mode TV / Salle qualité</source>
         <target state="translated">Modo TV / Sala de calidad</target>
       </trans-unit>
-      <trans-unit id="tv.brand" datatype="html">
-        <source>QualitOS · Salle qualité</source>
-        <target state="translated">QualitOS · Sala de calidad</target>
-      </trans-unit>
       <trans-unit id="tv.toolbar.aria" datatype="html">
         <source>Commandes Mode TV</source>
         <target state="translated">Controles del modo TV</target>
@@ -31547,6 +32475,10 @@ India (centro de servicio)</target>
       <trans-unit id="tv.trend.target" datatype="html">
         <source>Cible</source>
         <target state="translated">Objetivo</target>
+      </trans-unit>
+      <trans-unit id="tv.loaded-at" datatype="html">
+        <source>Relevé de</source>
+        <target state="translated">Lectura de</target>
       </trans-unit>
       <trans-unit id="tv.card.confidence" datatype="html">
         <source>Confiance <x id="INTERPOLATION"/> %</source>

@@ -1,0 +1,45 @@
+<qos-form-dialog
+  [title]="title"
+  [subtitle]="subtitle"
+  [formGroup]="form"
+  [submitDisabled]="form.controls.target.invalid"
+  [blockedReason]="blockedReason"
+  submitLabel="Rattacher" i18n-submitLabel="@@stakeholders.link.submit"
+  submitIcon="link"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
+
+  <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+
+  <p class="echec" *ngIf="failed" role="alert" data-test="echec"
+     i18n="@@stakeholders.link.load-failed">
+    La liste n'a pas pu être chargée ; fermez la fenêtre et réessayez.
+  </p>
+
+  <ng-container *ngIf="!loading && !failed">
+    <p class="dim" *ngIf="!targets.length" data-test="vide" i18n="@@stakeholders.link.none">
+      Il n'y a rien à rattacher : ce module ne contient encore aucun élément.
+    </p>
+
+    <ng-container *ngIf="targets.length">
+      <mat-form-field appearance="outline" class="full">
+        <mat-label i18n="@@stakeholders.link.filter">Filtrer la liste</mat-label>
+        <input matInput formControlName="filter" data-test="filtre">
+        <mat-icon matSuffix aria-hidden="true">search</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full">
+        <mat-label>{{ targetLabel }}</mat-label>
+        <mat-select formControlName="target" data-test="cible">
+          <mat-option *ngFor="let t of filtered" [value]="t.id">{{ t.label }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <p class="dim" *ngIf="!filtered.length" data-test="sans-correspondance"
+         i18n="@@stakeholders.link.no-match">
+        Aucun élément ne correspond à ce filtre.
+      </p>
+    </ng-container>
+  </ng-container>
+
+</qos-form-dialog>

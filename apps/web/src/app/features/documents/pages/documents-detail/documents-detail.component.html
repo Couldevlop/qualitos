@@ -1,5 +1,5 @@
 <ng-container *ngIf="document$ | async as d; else fallback">
-  <section class="documents-detail">
+  <section class="documents-detail qos-page">
 
     <header class="head">
       <div class="meta">
@@ -157,7 +157,7 @@
 </ng-container>
 
 <ng-template #fallback>
-  <section class="documents-detail">
+  <section class="documents-detail qos-page">
     <div *ngIf="loading$ | async" class="banner banner-info" i18n="@@common.loading">Chargement…</div>
     <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
   </section>

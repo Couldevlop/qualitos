@@ -1,0 +1,253 @@
+// Les trois assistants, en trois blocs lisibles de haut en bas : on décrit, on
+// demande, on accepte proposition par proposition.
+
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--qos-space-4);
+  min-width: 0;
+}
+
+.contrat {
+  margin: 0;
+  padding: var(--qos-space-2) var(--qos-space-3);
+  border-left: 3px solid var(--qos-accent-bg);
+  border-radius: var(--qos-radius-sm);
+  background: var(--qos-accent-bg-soft);
+  color: var(--qos-accent-fg-soft);
+  font-size: var(--qos-fs-sm);
+  line-height: 1.5;
+}
+
+.bloc {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--qos-space-2);
+  min-width: 0;
+  padding: var(--qos-space-3);
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: var(--qos-radius-md);
+  background: var(--qos-bg-elevated);
+
+  &__head {
+    min-width: 0;
+  }
+
+  &__titre {
+    margin: 0;
+    font-size: var(--qos-fs-md);
+    font-weight: var(--qos-fw-semibold);
+  }
+
+  &__aide {
+    margin: var(--qos-space-1) 0 0;
+    max-width: 78ch;
+    color: var(--qos-fg-secondary);
+    font-size: var(--qos-fs-sm);
+    line-height: 1.5;
+  }
+}
+
+.saisie {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  gap: var(--qos-space-2) var(--qos-space-3);
+  width: 100%;
+
+  mat-form-field {
+    min-width: 0;
+  }
+
+  .large {
+    grid-column: 1 / -1;
+  }
+}
+
+.destinataire {
+  min-width: min(22rem, 100%);
+}
+
+// Ce qui empêche l'appel ou l'acceptation, dit en clair : un bouton grisé sans
+// motif laisse l'utilisateur chercher.
+.blocage {
+  display: flex;
+  align-items: center;
+  gap: var(--qos-space-2);
+  margin: 0;
+  color: var(--qos-fg-secondary);
+  font-size: var(--qos-fs-sm);
+
+  mat-icon {
+    flex: none;
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+    color: var(--qos-fg-tertiary);
+  }
+}
+
+.echec {
+  margin: 0;
+  color: var(--qos-danger-fg);
+}
+
+.dim {
+  margin: 0;
+  color: var(--qos-fg-tertiary);
+}
+
+// ---------- propositions ----------
+
+.propositions,
+.changements,
+.exigences {
+  display: flex;
+  flex-direction: column;
+  gap: var(--qos-space-2);
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.proposition {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--qos-space-2) var(--qos-space-3);
+  padding: var(--qos-space-2) var(--qos-space-3);
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: var(--qos-radius-sm);
+  background: var(--qos-bg-app);
+
+  &__texte {
+    flex: 1 1 22rem;
+    min-width: 0;
+
+    small {
+      display: block;
+    }
+  }
+
+  &__motif {
+    margin: var(--qos-space-1) 0 0;
+    color: var(--qos-fg-secondary);
+    font-size: var(--qos-fs-sm);
+    line-height: 1.5;
+  }
+
+  &__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--qos-space-1) var(--qos-space-2);
+    margin: var(--qos-space-1) 0 0;
+    color: var(--qos-fg-tertiary);
+    font-size: var(--qos-fs-xs);
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--qos-space-2);
+  }
+}
+
+.cote {
+  min-width: 9rem;
+}
+
+// La citation : c'est elle qui rend l'exigence extraite vérifiable.
+.citation {
+  margin: var(--qos-space-1) 0 0;
+  padding-left: var(--qos-space-2);
+  border-left: 2px solid var(--qos-border-subtle);
+  color: var(--qos-fg-secondary);
+  font-size: var(--qos-fs-sm);
+  font-style: italic;
+  line-height: 1.5;
+}
+
+.deja {
+  color: var(--qos-fg-tertiary);
+  font-size: var(--qos-fs-sm);
+}
+
+.fait {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--qos-space-1);
+  color: var(--qos-success-fg);
+  font-size: var(--qos-fs-sm);
+
+  mat-icon {
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+  }
+}
+
+// ---------- changements ----------
+
+.changement {
+  padding: var(--qos-space-2) var(--qos-space-3);
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: var(--qos-radius-sm);
+  background: var(--qos-bg-app);
+
+  &__tete {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--qos-space-2);
+  }
+
+  &__detail {
+    margin: var(--qos-space-1) 0 0;
+    color: var(--qos-fg-secondary);
+    font-size: var(--qos-fs-sm);
+    line-height: 1.5;
+  }
+}
+
+.exigences small {
+  display: block;
+  color: var(--qos-fg-tertiary);
+  font-size: var(--qos-fs-xs);
+}
+
+// Les jetons d'impact, repris du registre : le libellé est toujours écrit à
+// côté, la couleur ne porte jamais seule l'information (WCAG 1.4.1).
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 10px;
+  border-radius: var(--qos-radius-pill);
+  font-size: var(--qos-fs-xs);
+  font-weight: var(--qos-fw-semibold);
+  white-space: nowrap;
+  background: var(--qos-bg-sunken);
+  color: var(--qos-fg-secondary);
+
+  &--danger {
+    background: var(--qos-danger-bg-soft);
+    color: var(--qos-danger-fg);
+  }
+
+  &--warn {
+    background: var(--qos-warn-bg-soft);
+    color: var(--qos-warn-fg);
+  }
+
+  &--ok {
+    background: var(--qos-success-bg-soft);
+    color: var(--qos-success-fg);
+  }
+
+  &--accent {
+    background: var(--qos-accent-bg-soft);
+    color: var(--qos-accent-fg-soft);
+  }
+}

@@ -71,9 +71,34 @@ describe('SupplierNcListComponent', () => {
       expect(component.suppliers).toEqual([supplier]);
       expect(host().querySelectorAll('tr.mat-mdc-row').length).toBe(2);
       expect(host().querySelector('[data-test="filtre-fournisseur"]')).not.toBeNull();
-      expect(host().querySelector('[data-test="nouvelle-nc"]')).toBeNull();
+      // Le registre transverse ouvre lui aussi une NC : on y arrive en ayant
+      // constaté un écart, pas en ayant déjà navigué vers un fournisseur.
+      expect(host().querySelector('[data-test="nouvelle-nc"]')).not.toBeNull();
       expect(component.heading).toContain('fournisseurs');
       expect(host().textContent).toContain('2 non-conformités');
+    }));
+
+    it('ouvre une NC en faisant choisir le fournisseur', fakeAsync(() => {
+      init();
+      dialog.open.and.returnValue({ afterClosed: () => of(nc('c')) } as never);
+
+      (host().querySelector('[data-test="nouvelle-nc"]') as HTMLButtonElement).click();
+
+      // La fenêtre reçoit les fournisseurs, pas un identifiant : c'est elle qui
+      // demande lequel.
+      const [, config] = dialog.open.calls.mostRecent().args as [unknown, { data: { suppliers: SupplierResponse[] } }];
+      expect(config.data.suppliers).toEqual([supplier]);
+      tick(150);
+      // La liste se recharge : la NC créée doit apparaître sans action de plus.
+      expect(svc.listAllNcs).toHaveBeenCalledTimes(2);
+    }));
+
+    it("ne propose pas d'ouvrir une NC quand aucun fournisseur n'est chargé", fakeAsync(() => {
+      svc.list.and.returnValue(of({ content: [], totalElements: 0, totalPages: 0, number: 0, size: 0 }));
+      init();
+
+      expect(component.canCreate).toBeFalse();
+      expect(host().querySelector('[data-test="nouvelle-nc"]')).toBeNull();
     }));
 
     it('filtre, revient en page 0, et efface les filtres', fakeAsync(() => {
@@ -209,12 +234,6 @@ describe('SupplierNcListComponent', () => {
       expect(cfg.data.nc).toBe(component.rows[0]);
       expect(cfg.data.supplierId).toBe(component.rows[0].supplierId);
       expect(svc.listAllNcs.calls.count()).toBe(before + 1);
-    }));
-
-    it('ne propose pas de créer une NC hors d\'un fournisseur', fakeAsync(() => {
-      init();
-      component.create();
-      expect(dialog.open).not.toHaveBeenCalled();
     }));
 
     it('donne les classes des pastilles et un libellé accessible aux pièces jointes', fakeAsync(() => {

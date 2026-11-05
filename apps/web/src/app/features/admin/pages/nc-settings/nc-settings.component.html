@@ -1,0 +1,96 @@
+<div class="qos-page">
+  <qos-page-header
+    title="Natures de non-conformité" i18n-title="@@nc.settings.title"
+    subtitle="Sous chaque catégorie, les natures d'écart que vous rencontrez."
+    i18n-subtitle="@@nc.settings.subtitle">
+    <ng-container qosActions>
+      <a mat-stroked-button routerLink="/nc">
+        <mat-icon>report_problem</mat-icon> <span i18n="@@nc.list.title">Non-conformités</span>
+      </a>
+      <button mat-stroked-button type="button" color="warn" (click)="retablir()"
+              [disabled]="defaults || saving || loading" data-test="retablir">
+        <mat-icon>restart_alt</mat-icon>
+        <span i18n="@@nc.settings.reset-action">Catalogue de la plateforme</span>
+      </button>
+    </ng-container>
+  </qos-page-header>
+
+  <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+
+  <p class="echec" *ngIf="failed" role="alert">
+    <span i18n="@@nc.settings.load-failed">Le catalogue des natures n'a pas pu être chargé.</span>
+    <button mat-button type="button" (click)="charger()" i18n="@@common.retry">Réessayer</button>
+  </p>
+
+  <ng-container *ngIf="!failed && !loading">
+    <p class="portee">
+      <ng-container i18n="@@nc.settings.scope">Une nature se reconnaît à son code : en changer le libellé ne déclasse pas les écarts déjà classés ; la retirer laisse les anciens porter leur code.</ng-container>
+      <ng-container *ngIf="defaults"> <ng-container i18n="@@nc.settings.defaults">Ce sont aujourd'hui les natures de la plateforme, transverses à tous les secteurs.</ng-container></ng-container>
+    </p>
+
+    <section class="bloc" aria-labelledby="nc-natures">
+      <header class="bloc__head">
+        <div>
+          <h2 class="bloc__titre" id="nc-natures" i18n="@@nc.settings.catalogue">Catalogue</h2>
+          <p class="bloc__aide">
+            <span i18n="@@nc.settings.catalogue-help">Les natures de chaque catégorie, dans l'ordre où la saisie les proposera.</span>
+            {{ entries.length }}/{{ limits.entries }}
+          </p>
+        </div>
+      </header>
+
+      <div class="categories" role="tablist" i18n-aria-label="@@nc.settings.categories" aria-label="Catégories">
+        <button *ngFor="let c of categories" type="button" role="tab" class="categorie"
+                [class.categorie--on]="c === category" [attr.aria-selected]="c === category"
+                (click)="category = c" [attr.data-test]="'categorie-' + c">
+          {{ c | ncCategoryLabel }}
+          <span class="categorie__nb" [class.categorie__nb--vide]="compte(c) === 0">{{ compte(c) }}</span>
+        </button>
+      </div>
+
+      <ol class="lignes" role="tabpanel">
+        <li class="ligne" *ngFor="let e of courantes; let i = index; trackBy: trackByIndex" data-test="nature">
+          <mat-form-field appearance="outline" subscriptSizing="dynamic" class="ligne__code">
+            <mat-label i18n="@@nc.settings.code">Code</mat-label>
+            <input matInput [ngModel]="e.code" (ngModelChange)="majCode(e, $event)" [maxlength]="limits.code"
+                   i18n-placeholder="@@nc.settings.code-placeholder" placeholder="Ex. : PRD-DIM">
+          </mat-form-field>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic" class="ligne__libelle">
+            <mat-label i18n="@@nc.settings.label">Nature de l'écart</mat-label>
+            <input matInput [ngModel]="e.label" (ngModelChange)="majLibelle(e, $event)" [maxlength]="limits.label"
+                   i18n-placeholder="@@nc.settings.label-placeholder"
+                   placeholder="Ex. : Cote ou tolérance hors spécification">
+          </mat-form-field>
+          <button mat-icon-button type="button" color="warn" (click)="retirer(e)"
+                  i18n-aria-label="@@nc.settings.remove" aria-label="Retirer cette nature">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </li>
+      </ol>
+
+      <p class="vide" *ngIf="!courantes.length" i18n="@@nc.settings.category-empty">
+        Aucune nature pour cette catégorie : la saisie n'y proposera rien.
+      </p>
+
+      <button mat-stroked-button type="button" (click)="ajouter()"
+              [disabled]="entries.length >= limits.entries" data-test="ajouter-nature">
+        <mat-icon>add</mat-icon> <span i18n="@@nc.settings.add">Ajouter une nature</span>
+      </button>
+    </section>
+  </ng-container>
+
+  <!-- Barre d'enregistrement : n'apparaît qu'avec des changements. -->
+  <div class="barre" *ngIf="dirty" role="status">
+    <ul class="barre__problemes" *ngIf="problemes.length" data-test="problemes">
+      <li *ngFor="let p of problemes">{{ p }}</li>
+    </ul>
+    <span *ngIf="!problemes.length" i18n="@@nc.settings.pending">Catalogue modifié</span>
+    <span class="barre__actions">
+      <button mat-stroked-button type="button" (click)="annuler()" [disabled]="saving"
+              data-test="annuler" i18n="@@authz.matrix.discard">Annuler les changements</button>
+      <button mat-flat-button color="primary" type="button" (click)="enregistrer()"
+              [disabled]="saving || problemes.length > 0" data-test="enregistrer"
+              i18n="@@common.save">Enregistrer</button>
+    </span>
+  </div>
+</div>

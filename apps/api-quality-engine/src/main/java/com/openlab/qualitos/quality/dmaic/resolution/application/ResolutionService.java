@@ -1,6 +1,8 @@
 package com.openlab.qualitos.quality.dmaic.resolution.application;
 
+import com.openlab.qualitos.quality.dmaic.resolution.domain.ActionCriticity;
 import com.openlab.qualitos.quality.dmaic.resolution.domain.ActionLine;
+import com.openlab.qualitos.quality.dmaic.resolution.domain.ActionNature;
 import com.openlab.qualitos.quality.dmaic.resolution.domain.AnswerType;
 import com.openlab.qualitos.quality.dmaic.resolution.domain.ActionStatus;
 import com.openlab.qualitos.quality.dmaic.resolution.domain.FailureType;
@@ -207,6 +209,42 @@ public class ResolutionService {
         return missing(settingsOf(tenant), c, sections);
     }
 
+    /**
+     * Ce qui empêche de clore le projet : la fiche ENTIÈRE doit être renseignée,
+     * et chaque action — plan d'amélioration comme confinement — être à 100 %.
+     *
+     * <p>On lit la fiche enregistrée, jamais un brouillon : ce qui n'est pas
+     * enregistré n'existe pas pour l'auditeur.
+     */
+    public List<String> completionBlockers(UUID projectId) {
+        UUID tenant = context.requireTenantId();
+        project(tenant, projectId);
+        ResolutionContent c = sheets.findByProject(tenant, projectId)
+                .map(ResolutionSheet::getContent)
+                .orElseGet(ResolutionContent::empty);
+        return completionBlockers(settingsOf(tenant), c);
+    }
+
+    static List<String> completionBlockers(ResolutionSettings settings, ResolutionContent c) {
+        List<String> raisons = new ArrayList<>(missing(settings, c, List.of(SheetSection.values())));
+        if (c.actions().isEmpty()) {
+            raisons.add("Aucune action : un problème ne se clôt pas sans action");
+            return raisons;
+        }
+        for (ActionLine a : c.actions()) {
+            if (a.percent() < 100) {
+                raisons.add("Action à " + a.percent() + " % : « " + intitule(a) + " »");
+            }
+        }
+        return raisons;
+    }
+
+    /** De quoi reconnaître l'action dans le message, sans noyer le lecteur. */
+    private static String intitule(ActionLine a) {
+        String texte = a.action() == null || a.action().isBlank() ? "sans intitulé" : a.action().strip();
+        return texte.length() > 80 ? texte.substring(0, 79) + "…" : texte;
+    }
+
     static List<String> missing(ResolutionSettings settings, ResolutionContent c, List<SheetSection> sections) {
         List<String> manque = new ArrayList<>();
         for (SheetSection section : sections) {
@@ -257,8 +295,9 @@ public class ResolutionService {
                 c.problemOwner() == null ? null : c.problemOwner().name(), c.openedOn(), c.closedOn(),
                 severityLabel(settings, c.severity()), failureTypeLabel(settings, c.failureTypeCode()),
                 answers(settings, c, REPORT_DEFINE), c.measureSummary(), answer(settings, c, REPORT_CONTAINMENT),
-                containment(c), causes, whys(c), c.rootCause(), answer(settings, c, REPORT_SOLUTIONS),
-                actions(c), answer(settings, c, REPORT_SURVEILLANCE)));
+                c.containmentMeasures(), containmentActions(c), causes, whys(c), c.rootCause(),
+                answer(settings, c, REPORT_SOLUTIONS), actions(c),
+                answer(settings, c, REPORT_SURVEILLANCE)));
     }
 
     /** Les questions que le modèle de rapport client reprend, par leur code de catalogue. */
@@ -302,22 +341,33 @@ public class ResolutionService {
                 w.rootCause(), w.action())).toList();
     }
 
-    /** La synthèse du confinement, suivie de ses actions, une par ligne. */
-    static String containment(ResolutionContent c) {
-        List<String> lines = new ArrayList<>();
-        if (c.containmentMeasures() != null && !c.containmentMeasures().isBlank()) {
-            lines.add(c.containmentMeasures().strip());
-        }
-        c.actions().stream().filter(ActionLine::containment).forEach(a -> lines.add("• " + a.action()
-                + (a.responsible() == null || a.responsible().name() == null ? "" : " — " + a.responsible().name())));
-        return lines.isEmpty() ? null : String.join("\n", lines);
+    /** Les actions de confinement, en tableau, comme le plan d'amélioration. */
+    static List<ClaimReport.Action> containmentActions(ResolutionContent c) {
+        return c.actions().stream().filter(ActionLine::containment).map(ResolutionService::reportAction).toList();
     }
 
+    /** Le plan d'actions de la phase Améliorer, en tableau. */
     static List<ClaimReport.Action> actions(ResolutionContent c) {
-        return c.actions().stream().filter(a -> !a.containment()).map(a -> new ClaimReport.Action(a.action(),
-                a.responsible() == null ? null : a.responsible().name(), STATUSES.get(a.status()),
-                a.plannedOn(), a.doneOn(), a.percent())).toList();
+        return c.actions().stream().filter(a -> !a.containment()).map(ResolutionService::reportAction).toList();
     }
+
+    private static ClaimReport.Action reportAction(ActionLine a) {
+        return new ClaimReport.Action(a.action(), NATURES.get(a.effectiveNature()),
+                a.criticity() == null ? null : CRITICITIES.get(a.criticity()),
+                a.responsible() == null ? null : a.responsible().name(), STATUSES.get(a.status()),
+                a.plannedOn(), a.doneOn(), a.percent());
+    }
+
+    private static final Map<ActionNature, String> NATURES = Map.of(
+            ActionNature.CONTAINMENT, "Endiguement",
+            ActionNature.CORRECTIVE, "Corrective",
+            ActionNature.PREVENTIVE, "Préventive");
+
+    private static final Map<ActionCriticity, String> CRITICITIES = Map.of(
+            ActionCriticity.LOW, "Faible",
+            ActionCriticity.MEDIUM, "Moyenne",
+            ActionCriticity.HIGH, "Élevée",
+            ActionCriticity.CRITICAL, "Critique");
 
     /** Le code d'une liste fermée, en clair pour le client. */
     static String readable(AnswerType type, String value) {

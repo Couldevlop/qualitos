@@ -47,11 +47,22 @@
   <div class="qos-field-row">
     <mat-form-field appearance="outline">
       <mat-label i18n="@@nc.create.category">Catégorie</mat-label>
-      <mat-select formControlName="category" required>
+      <mat-select formControlName="category" required (selectionChange)="onCategoryChange()">
         <mat-option *ngFor="let c of categories" [value]="c">{{ c | ncCategoryLabel }}</mat-option>
       </mat-select>
       <mat-error *ngIf="form.controls.category.hasError('required')"
                  i18n="@@nc.create.category-required">Choisissez une catégorie.</mat-error>
+    </mat-form-field>
+
+    <!-- La NATURE de l'écart, sous sa catégorie. Facultative, et proposée
+         seulement une fois la catégorie choisie : soixante natures toutes
+         catégories confondues ne se parcourent pas. -->
+    <mat-form-field appearance="outline" *ngIf="subcategoryChoices.length">
+      <mat-label i18n="@@nc.create.subcategory">Nature de l'écart</mat-label>
+      <mat-select formControlName="subcategoryCode" data-test="nc-nature">
+        <mat-option value="" i18n="@@nc.create.subcategory-none">— À classer —</mat-option>
+        <mat-option *ngFor="let s of subcategoryChoices" [value]="s.code">{{ s.label }}</mat-option>
+      </mat-select>
     </mat-form-field>
 
     <mat-form-field appearance="outline">

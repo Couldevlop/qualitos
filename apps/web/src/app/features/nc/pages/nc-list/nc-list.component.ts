@@ -9,7 +9,16 @@ import { catchError, finalize, map, shareReplay, startWith, switchMap, tap } fro
 import { deferredView } from '../../../../core/rx/deferred-view';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { NcService } from '../../nc.service';
-import { NcCategory, NcOrigin, NcPage, NcResponse, NcSeverity, NcStatistics, NcStatus } from '../../nc.types';
+import {
+  NcCategory,
+  NcOrigin,
+  NcPage,
+  NcResponse,
+  NcSeverity,
+  NcStatistics,
+  NcStatus,
+  NcSubcategory
+} from '../../nc.types';
 import { NcCreateDialogComponent } from '../nc-create-dialog/nc-create-dialog.component';
 import { searchRows } from '../../../../shared/ui/list-search/list-filter';
 
@@ -40,6 +49,11 @@ export class NcListComponent implements OnInit {
   readonly statusFilter = new FormControl<NcStatus | ''>('');
   readonly severityFilter = new FormControl<NcSeverity | ''>('');
   readonly categoryFilter = new FormControl<NcCategory | ''>('');
+  /** La nature fine de l'écart : le filtre qui dit « lesquelles exactement ». */
+  readonly subcategoryFilter = new FormControl<string>('', { nonNullable: true });
+
+  /** Le catalogue des natures, pour le filtre et pour traduire la colonne. */
+  subcategories: NcSubcategory[] = [];
 
   /**
    * Statuts proposés au filtre. `RESOLVED` en est volontairement absent : c'est
@@ -53,6 +67,19 @@ export class NcListComponent implements OnInit {
   readonly categories: NcCategory[] = ['PRODUCT', 'PROCESS', 'DOCUMENTATION', 'SUPPLIER', 'SAFETY', 'ENVIRONMENT', 'OTHER'];
 
   readonly pageSizeOptions = PAGE_SIZE_OPTIONS;
+
+  /** Les natures proposées au filtre : celles de la catégorie choisie, sinon toutes. */
+  get subcategoryChoices(): NcSubcategory[] {
+    const category = this.categoryFilter.value;
+    return category ? this.subcategories.filter(s => s.category === category) : this.subcategories;
+  }
+
+  /** Le libellé d'une nature ; son code si le client l'a retirée de son catalogue. */
+  subcategoryLabel(code: string | undefined): string {
+    if (!code) return '—';
+    return this.subcategories.find(s => s.code === code)?.label ?? code;
+  }
+
   pageIndex = 0;
   pageSize = 20;
   totalElements = 0;
@@ -120,6 +147,17 @@ export class NcListComponent implements OnInit {
   private readonly statsReload$ = new BehaviorSubject<void>(undefined);
 
   ngOnInit(): void {
+    // Le catalogue sert le filtre et la traduction de la colonne : son absence
+    // n'empêche pas de lire la liste, elle laisse seulement voir les codes.
+    this.svc.subcategories().pipe(catchError(() => of({ entries: [] as NcSubcategory[], defaults: true })))
+      .subscribe(c => (this.subcategories = c.entries));
+
+    // Changer de catégorie efface la nature : une nature d'une autre catégorie
+    // ne ramènerait jamais rien.
+    this.categoryFilter.valueChanges.subscribe(() => {
+      if (this.subcategoryFilter.value) this.subcategoryFilter.setValue('');
+    });
+
     // Les tuiles vivent hors du flux de la liste : les filtres n'ont pas à les
     // recalculer (un dénombrement filtré par lui-même ne dirait plus rien), mais
     // une déclaration, si.
@@ -140,14 +178,16 @@ export class NcListComponent implements OnInit {
       this.statusFilter.valueChanges.pipe(startWith(this.statusFilter.value)),
       this.severityFilter.valueChanges.pipe(startWith(this.severityFilter.value)),
       this.categoryFilter.valueChanges.pipe(startWith(this.categoryFilter.value)),
+      this.subcategoryFilter.valueChanges.pipe(startWith(this.subcategoryFilter.value)),
       this.page$
     ]).pipe(
       tap(() => { this.errorState$.next(null); this.loadingState$.next(true); }),
-      switchMap(([status, severity, category, p]) =>
+      switchMap(([status, severity, category, subcategoryCode, p]) =>
         this.svc.listNcs(p.index, p.size, {
           status: status || undefined,
           severity: severity || undefined,
           category: category || undefined,
+          subcategoryCode: subcategoryCode || undefined,
           origin: this.origin ?? undefined
         }).pipe(
           catchError(err => {

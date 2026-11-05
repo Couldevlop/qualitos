@@ -4,7 +4,7 @@
   gap: var(--qos-space-4);
   align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: var(--qos-space-5);
+  margin-bottom: var(--qos-space-3);
 }
 
 .subtitle {
@@ -58,8 +58,10 @@
 
 .eff-table { width: 100%; }
 
+/* Un état vide n'a pas à prendre la hauteur d'un tableau rempli : à 32 px
+   il repoussait seul le reste de la page hors du premier écran. */
 .empty {
-  padding: var(--qos-space-8) 0;
+  padding: var(--qos-space-6) 0;
   text-align: center;
   color: var(--qos-fg-tertiary);
 }

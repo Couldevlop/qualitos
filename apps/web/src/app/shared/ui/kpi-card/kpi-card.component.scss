@@ -1,76 +1,81 @@
+/* La tuile d'indicateur.
+ *
+ * Un seul objet porte la couleur : la règle de mesure. Pas d'ombre sous chaque
+ * carte, pas de soulèvement au survol, pas de liseré en plus — douze tuiles
+ * identiques qui bougent toutes au passage de la souris ne hiérarchisent rien.
+ * La seule chose qui accroche l'œil doit être l'écart à la cible. */
+
 :host { display: block; }
 
 .qos-kpi {
   display: flex;
   flex-direction: column;
-  gap: var(--qos-space-3);
-  padding: var(--qos-space-5) var(--qos-space-6);
+  gap: var(--qos-space-2);
+  padding: var(--qos-space-4) var(--qos-space-5);
   background: var(--qos-bg-elevated);
   border: 1px solid var(--qos-border-subtle);
   border-radius: var(--qos-radius-lg);
-  box-shadow: var(--qos-shadow-xs);
-  transition: border-color var(--qos-motion-fast),
-              box-shadow var(--qos-motion-fast),
-              transform var(--qos-motion-fast);
+  transition: border-color var(--qos-motion-fast);
   position: relative;
   overflow: hidden;
 
-  /* Trait latéral coloré selon l'état (signal subtil) */
-  &::before {
+  &:hover { border-color: var(--qos-border-default); }
+
+  /* Repli pour les indicateurs SANS cible : la règle est impossible, l'état
+   * revient sur un liseré. Exactement un dispositif d'état par tuile. */
+  &--no-rail::before {
     content: '';
     position: absolute;
     inset: 0 auto 0 0;
     width: 3px;
     background: transparent;
-    transition: background var(--qos-motion-fast);
   }
 
-  &:hover {
-    border-color: var(--qos-border-default);
-    box-shadow: var(--qos-shadow-md);
-    transform: translateY(-1px);
-  }
+  &--no-rail#{&}--good::before { background: var(--qos-success-fg); }
+  &--no-rail#{&}--warn::before { background: var(--qos-warn-fg); }
+  &--no-rail#{&}--bad::before  { background: var(--qos-danger-fg); }
 
-  &--good::before { background: var(--qos-success-fg); }
-  &--warn::before { background: var(--qos-warn-fg); }
-  &--bad::before  { background: var(--qos-danger-fg); }
-
-  &--sm { padding: var(--qos-space-4); gap: var(--qos-space-2); }
-  &--lg { padding: var(--qos-space-6) var(--qos-space-8); gap: var(--qos-space-4); }
+  &--sm { padding: var(--qos-space-3) var(--qos-space-4); gap: var(--qos-space-1); }
+  &--lg { padding: var(--qos-space-5) var(--qos-space-6); gap: var(--qos-space-3); }
 }
 
 .qos-kpi__head {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: var(--qos-space-2);
 }
 
+/* Le libellé est une phrase, pas une étiquette de chrome : ni capitales, ni
+ * interlettrage élargi. Un dashboard entier en petites capitales traquées se
+ * lit comme un gabarit, et le nom de l'indicateur devient illisible. */
 .qos-kpi__label {
-  font-size: var(--qos-fs-xs);
+  font-size: var(--qos-fs-sm);
   font-weight: var(--qos-fw-medium);
   color: var(--qos-fg-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
   line-height: var(--qos-lh-snug);
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .qos-kpi__icon {
-  color: var(--qos-fg-tertiary);
-  font-size: 22px;
+  color: var(--qos-border-default);
+  font-size: 18px;
+  flex: none;
 }
 
 .qos-kpi__body {
   display: flex;
   flex-direction: column;
   gap: var(--qos-space-2);
+  min-width: 0;
 }
 
 .qos-kpi__value-row {
   display: flex;
   align-items: baseline;
   gap: var(--qos-space-2);
-  flex-wrap: wrap;
+  min-width: 0;
 }
 
 .qos-kpi__value {
@@ -89,21 +94,71 @@
   font-size: var(--qos-fs-sm);
   color: var(--qos-fg-tertiary);
   font-weight: var(--qos-fw-medium);
+  white-space: nowrap;
 }
 
-.qos-kpi__meta {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: var(--qos-space-3);
-  font-size: var(--qos-fs-xs);
-  color: var(--qos-fg-tertiary);
+/* ---------- la règle de mesure ---------- */
+
+.qos-kpi__rail {
+  position: relative;
+  height: 6px;
+  margin-top: var(--qos-space-1);
+  border-radius: var(--qos-radius-pill);
+  background: var(--qos-bg-sunken);
+
+  .qos-kpi--sm & { height: 4px; }
+  .qos-kpi--lg & { height: 10px; }
 }
+
+.qos-kpi__rail-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: var(--qos-radius-pill);
+  background: var(--qos-fg-tertiary);
+  transition: width var(--qos-motion-base);
+
+  .qos-kpi--good & { background: var(--qos-success-fg); }
+  .qos-kpi--warn & { background: var(--qos-warn-fg); }
+  .qos-kpi--bad &  { background: var(--qos-danger-fg); }
+}
+
+/* Le repère de cible traverse la règle de part en part : c'est une limite, pas
+ * une graduation parmi d'autres. */
+.qos-kpi__rail-target {
+  position: absolute;
+  top: -4px;
+  bottom: -4px;
+  width: 2px;
+  margin-left: -1px;
+  border-radius: 1px;
+  background: var(--qos-fg-primary);
+}
+
+.qos-kpi__rail-dot {
+  position: absolute;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  margin: -5px 0 0 -5px;
+  border-radius: 50%;
+  background: var(--qos-fg-tertiary);
+  box-shadow: 0 0 0 2px var(--qos-bg-elevated);
+
+  .qos-kpi--good & { background: var(--qos-success-fg); }
+  .qos-kpi--warn & { background: var(--qos-warn-fg); }
+  .qos-kpi--bad &  { background: var(--qos-danger-fg); }
+  .qos-kpi--lg &   { width: 14px; height: 14px; margin: -7px 0 0 -7px; }
+}
+
+/* ---------- tendance et cible ---------- */
 
 .qos-kpi__trend {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
+  margin-left: auto;
+  flex: none;
+  font-size: var(--qos-fs-xs);
   font-weight: var(--qos-fw-semibold);
   padding: 2px 8px;
   border-radius: var(--qos-radius-pill);
@@ -117,15 +172,17 @@
 }
 
 .qos-kpi__target {
+  margin: 0;
+  font-size: var(--qos-fs-xs);
   color: var(--qos-fg-tertiary);
-  .qos-mono { color: var(--qos-fg-secondary); font-weight: var(--qos-fw-medium); }
+  font-variant-numeric: tabular-nums;
 }
 
 .qos-kpi__desc {
   font-size: var(--qos-fs-xs);
   color: var(--qos-fg-tertiary);
   line-height: var(--qos-lh-snug);
-  margin-top: var(--qos-space-1);
+  margin: 0;
 }
 
 /* Skeletons */
@@ -147,4 +204,8 @@
 @keyframes qos-shimmer {
   0%   { background-position: 200% 0; }
   100% { background-position: -200% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .qos-kpi__skeleton { animation: none; }
 }

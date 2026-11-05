@@ -53,6 +53,17 @@
         <mat-option *ngFor="let c of categories" [value]="c">{{ c | ncCategoryLabel }}</mat-option>
       </mat-select>
     </mat-form-field>
+
+    <!-- La nature fine : « 412 NC de processus » ne dit pas s'il s'agit de
+         dérives de paramètre ou d'étalonnages périmés, et c'est cette
+         distinction-là qui décide de l'action. -->
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" *ngIf="subcategoryChoices.length">
+      <mat-label i18n="@@nc.list.filter-subcategory">Nature</mat-label>
+      <mat-select [formControl]="subcategoryFilter" data-test="filtre-nature">
+        <mat-option [value]="''" i18n="@@common.all">Tous</mat-option>
+        <mat-option *ngFor="let s of subcategoryChoices" [value]="s.code">{{ s.label }}</mat-option>
+      </mat-select>
+    </mat-form-field>
   </mat-card>
 
   <div class="state-row" *ngIf="loading$ | async">
@@ -87,7 +98,11 @@
       </ng-container>
       <ng-container matColumnDef="category">
         <th mat-header-cell *matHeaderCellDef i18n="@@nc.list.col-category">Catégorie</th>
-        <td mat-cell *matCellDef="let n">{{ n.category | ncCategoryLabel }}</td>
+        <td mat-cell *matCellDef="let n">
+          {{ n.category | ncCategoryLabel }}
+          <small class="nature" *ngIf="n.subcategoryCode" [title]="subcategoryLabel(n.subcategoryCode)"
+                 data-test="nature">{{ subcategoryLabel(n.subcategoryCode) }}</small>
+        </td>
       </ng-container>
       <ng-container matColumnDef="severity">
         <th mat-header-cell *matHeaderCellDef i18n="@@nc.list.col-severity">Sévérité</th>

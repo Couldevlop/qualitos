@@ -1,0 +1,34 @@
+<qos-form-dialog
+  title="Inscrire une partie prenante" i18n-title="@@stakeholders.create.title"
+  subtitle="Trois champs suffisent : sa fiche s'ouvre ensuite pour l'analyse."
+  i18n-subtitle="@@stakeholders.create.subtitle"
+  [formGroup]="form"
+  [submitting]="submitting"
+  [submitDisabled]="form.invalid"
+  [blockedReason]="blockedReason"
+  submitLabel="Inscrire" i18n-submitLabel="@@stakeholders.create.submit"
+  submitIcon="group_add"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@stakeholders.field.name">Nom ou raison sociale</mat-label>
+    <input matInput formControlName="name" [maxlength]="limits.name" data-test="nom">
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@stakeholders.field.category">Catégorie</mat-label>
+    <mat-select formControlName="category" data-test="categorie">
+      <mat-option *ngFor="let c of categories" [value]="c">{{ categoryLabel(c) }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@stakeholders.filter.side">Interne / externe</mat-label>
+    <mat-select formControlName="side" data-test="cote">
+      <mat-option value="INTERNAL">{{ sideLabel('INTERNAL') }}</mat-option>
+      <mat-option value="EXTERNAL">{{ sideLabel('EXTERNAL') }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+</qos-form-dialog>

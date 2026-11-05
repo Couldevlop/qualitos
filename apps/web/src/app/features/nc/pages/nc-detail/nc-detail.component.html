@@ -143,7 +143,10 @@
             </div>
             <div class="info-item">
               <span class="info-label" i18n="@@nc.create.category">Catégorie</span>
-              <span class="info-value">{{ n.category | ncCategoryLabel }}</span>
+              <span class="info-value">
+                {{ n.category | ncCategoryLabel }}
+                <small class="dim" *ngIf="n.subcategoryCode" data-test="nature">{{ subcategoryLabel(n.subcategoryCode) }}</small>
+              </span>
             </div>
             <div class="info-item" *ngIf="n.zone">
               <span class="info-label" i18n="@@common.zone">Zone</span>

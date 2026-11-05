@@ -12,13 +12,13 @@
 
 .kpis {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr));
-  gap: var(--qos-space-3);
-  margin-bottom: var(--qos-space-5);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 10.5rem), 1fr));
+  gap: var(--qos-space-2);
+  margin-bottom: 0;
 }
 
 .kpi {
-  padding: var(--qos-space-4);
+  padding: var(--qos-space-3);
   border-radius: var(--qos-radius-lg);
   background: var(--qos-bg-elevated);
   border: 1px solid var(--qos-border-subtle);
@@ -27,7 +27,9 @@
   b {
     display: block;
     font-family: var(--qos-font-mono);
-    font-size: var(--qos-fs-2xl);
+    // Un chiffre à 24 px sur une tuile de 10 rem forçait la tuile à une
+    // hauteur de bandeau ; `fs-xl` reste lisible de loin sans voler la ligne.
+    font-size: var(--qos-fs-xl);
     font-weight: var(--qos-fw-semibold);
     line-height: var(--qos-lh-snug);
     color: var(--qos-fg-primary);
@@ -195,7 +197,7 @@ tbody td {
 
 .aucun {
   text-align: center;
-  padding: var(--qos-space-8);
+  padding: var(--qos-space-6);
   color: var(--qos-fg-secondary);
 }
 

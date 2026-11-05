@@ -12,7 +12,7 @@
 
 .onglets {
   display: flex;
-  gap: var(--qos-space-6);
+  gap: var(--qos-space-4);
   border-bottom: 1px solid var(--qos-border-subtle);
   margin-bottom: var(--qos-space-4);
 }
@@ -139,7 +139,7 @@ tbody td {
 
 .aucun {
   text-align: center;
-  padding: var(--qos-space-8);
+  padding: var(--qos-space-6);
   color: var(--qos-fg-secondary);
 }
 

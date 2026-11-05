@@ -12,6 +12,10 @@ export type AnswerType = 'TEXT' | 'YES_NO' | 'YES_NO_NA' | 'YES_NO_UNKNOWN';
 export type AnswerCode = 'YES' | 'NO' | 'NA' | 'UNKNOWN';
 export type WhyBranch = 'OCCURRENCE' | 'DETECTION' | 'SYSTEMIC';
 export type ActionStatus = 'OPEN' | 'IN_PROGRESS' | 'IN_REVIEW' | 'CLOSED';
+/** La nature de l'action, telle que son dossier CAPA la porte. */
+export type ActionNature = 'CONTAINMENT' | 'CORRECTIVE' | 'PREVENTIVE';
+/** La criticité de l'action, telle que son dossier CAPA la porte. */
+export type ActionCriticity = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
 
 export const SHEET_SECTIONS: readonly SheetSection[] = ['DEFINE', 'MEASURE', 'CONTAIN', 'ANALYZE', 'IMPROVE', 'CONTROL'];
 export const DEFINE_TOPICS: readonly DefineTopic[] = ['WHAT', 'WHO', 'WHY', 'WHERE', 'WHEN', 'HOW_MANY'];
@@ -117,6 +121,14 @@ export interface ActionLine {
   capaId: string | null;
   /** Une action de confinement (phase Analyser) plutôt qu'une action du plan d'amélioration. */
   containment?: boolean;
+  /**
+   * La nature portée par le dossier CAPA, recopiée à l'ouverture : le rapport
+   * client la lit sans interroger le module CAPA, et elle reste celle d'alors
+   * même si le dossier a été requalifié depuis.
+   */
+  nature?: ActionNature | null;
+  /** La criticité portée par le dossier CAPA, recopiée de même. */
+  criticity?: ActionCriticity | null;
 }
 
 export interface ResolutionContent {

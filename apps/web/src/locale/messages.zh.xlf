@@ -17458,6 +17458,10 @@ historique 12 mois</source>
         <source>score de cause racine</source>
         <target state="translated">根本原因评分</target>
       </trans-unit>
+      <trans-unit id="kpi.target" datatype="html">
+        <source>Cible</source>
+        <target state="translated">目标</target>
+      </trans-unit>
       <trans-unit id="nav.marketplace" datatype="html">
         <source>Marketplace</source>
         <target state="translated">应用市场</target>
@@ -20989,6 +20993,162 @@ historique 12 mois</source>
       <trans-unit id="nccluster.register-error" datatype="html">
         <source>Le registre ne se lit pas pour le moment.</source>
         <target state="translated">暂时无法读取登记册。</target>
+      </trans-unit>
+      <trans-unit id="nav.admin-nc" datatype="html">
+        <source>Natures de NC</source>
+        <target state="translated">不符合性质</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.title" datatype="html">
+        <source>Natures de non-conformité</source>
+        <target state="translated">不符合性质</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.subtitle" datatype="html">
+        <source>Sous chaque catégorie, les natures d'écart que vous rencontrez.</source>
+        <target state="translated">在每个类别下，列出您实际遇到的偏差性质。</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.scope" datatype="html">
+        <source>Une nature se reconnaît à son code : en changer le libellé ne déclasse pas les écarts déjà classés ; la retirer laisse les anciens porter leur code.</source>
+        <target state="translated">性质以其代码识别：更改名称不会使已分类的偏差失去分类；删除后，旧记录仍保留其代码。</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.defaults" datatype="html">
+        <source>Ce sont aujourd’hui les natures de la plateforme, transverses à tous les secteurs.</source>
+        <target state="translated">目前使用的是平台自带的性质，适用于所有行业。</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.catalogue" datatype="html">
+        <source>Catalogue</source>
+        <target state="translated">目录</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.catalogue-help" datatype="html">
+        <source>Les natures de chaque catégorie, dans l’ordre où la saisie les proposera.</source>
+        <target state="translated">各类别的性质，按录入界面提示的顺序排列。</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.categories" datatype="html">
+        <source>Catégories</source>
+        <target state="translated">类别</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.code" datatype="html">
+        <source>Code</source>
+        <target state="translated">代码</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.code-placeholder" datatype="html">
+        <source>Ex. : PRD-DIM</source>
+        <target state="translated">例：PRD-DIM</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.label" datatype="html">
+        <source>Nature de l'écart</source>
+        <target state="translated">偏差性质</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.label-placeholder" datatype="html">
+        <source>Ex. : Cote ou tolérance hors spécification</source>
+        <target state="translated">例：尺寸或公差超出规格</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.add" datatype="html">
+        <source>Ajouter une nature</source>
+        <target state="translated">添加性质</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.remove" datatype="html">
+        <source>Retirer cette nature</source>
+        <target state="translated">删除该性质</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.category-empty" datatype="html">
+        <source>Aucune nature pour cette catégorie : la saisie n’y proposera rien.</source>
+        <target state="translated">该类别下没有性质：录入界面将无可选项。</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.pending" datatype="html">
+        <source>Catalogue modifié</source>
+        <target state="translated">目录已修改</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.problem.empty" datatype="html">
+        <source>Le catalogue ne peut pas être vide. Rétablissez celui de la plateforme.</source>
+        <target state="translated">目录不能为空。请恢复平台目录。</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.problem.too-many" datatype="html">
+        <source>Pas plus de <x id="INTERPOLATION"/> natures.</source>
+        <target state="translated">性质最多 <x id="INTERPOLATION"/> 条。</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.problem.code" datatype="html">
+        <source>Un code s’écrit en capitales, chiffres, tiret ou point (ex. : PRD-DIM).</source>
+        <target state="translated">代码使用大写字母、数字、连字符或点号（例：PRD-DIM）。</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.problem.label" datatype="html">
+        <source>Chaque nature a un libellé.</source>
+        <target state="translated">每条性质都需要名称。</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.problem.duplicate" datatype="html">
+        <source>Deux natures portent le même code.</source>
+        <target state="translated">有两条性质使用了相同的代码。</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.problem.empty-category" datatype="html">
+        <source>Catégorie sans aucune nature : <x id="INTERPOLATION"/> — la saisie n’y proposerait rien.</source>
+        <target state="translated">没有任何性质的类别：<x id="INTERPOLATION"/> — 录入界面将无可选项。</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.load-failed" datatype="html">
+        <source>Le catalogue des natures n’a pas pu être chargé.</source>
+        <target state="translated">无法加载性质目录。</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.save-failed" datatype="html">
+        <source>Le catalogue n’a pas pu être enregistré.</source>
+        <target state="translated">无法保存目录。</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.saved" datatype="html">
+        <source>Catalogue des natures enregistré.</source>
+        <target state="translated">性质目录已保存。</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.reset-action" datatype="html">
+        <source>Catalogue de la plateforme</source>
+        <target state="translated">平台目录</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.reset" datatype="html">
+        <source>Rétablir</source>
+        <target state="translated">恢复</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.reset-title" datatype="html">
+        <source>Rétablir le catalogue de la plateforme ?</source>
+        <target state="translated">要恢复平台目录吗？</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.reset-message" datatype="html">
+        <source>Votre catalogue sera remplacé par celui de la plateforme. Les écarts déjà classés gardent leur code.</source>
+        <target state="translated">您的目录将被平台目录替换。已分类的偏差保留其代码。</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.reset-done" datatype="html">
+        <source>Catalogue de la plateforme rétabli.</source>
+        <target state="translated">已恢复平台目录。</target>
+      </trans-unit>
+      <trans-unit id="nc.settings.reset-failed" datatype="html">
+        <source>Le catalogue n’a pas pu être rétabli.</source>
+        <target state="translated">无法恢复目录。</target>
+      </trans-unit>
+      <trans-unit id="nc.create.subcategory" datatype="html">
+        <source>Nature de l'écart</source>
+        <target state="translated">偏差性质</target>
+      </trans-unit>
+      <trans-unit id="nc.create.subcategory-none" datatype="html">
+        <source>— À classer —</source>
+        <target state="translated">— 待分类 —</target>
+      </trans-unit>
+      <trans-unit id="nc.list.filter-subcategory" datatype="html">
+        <source>Nature</source>
+        <target state="translated">性质</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.supplier-required" datatype="html">
+        <source>Choisissez le fournisseur concerné.</source>
+        <target state="translated">请选择相关供应商。</target>
+      </trans-unit>
+      <trans-unit id="capa.open.containment-hint" datatype="html">
+        <source>Mesure immédiate : elle contient l'effet. Le dossier reste correctif — sa clôture demandera une action qui supprime la cause.</source>
+        <target state="translated">即时措施：遏制影响。案卷仍为纠正性——结案需要一项消除原因的措施。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.complete-hint" datatype="html">
+        <source>Le projet se clôture quand toute la fiche est renseignée et que chaque action est à 100 %.</source>
+        <target state="translated">当整张表单填写完毕且每项措施达到 100 % 时，项目方可结案。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.complete" datatype="html">
+        <source>Clôturer</source>
+        <target state="translated">结案</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.missing-marked" datatype="html">
+        <source>champ(s) à renseigner, signalés en rouge ci-dessous.</source>
+        <target state="translated">处待填写字段，已在下方以红色标出。</target>
       </trans-unit>
       <trans-unit id="nav.nlq-explore" datatype="html">
         <source>Exploration NLQ</source>
@@ -27962,6 +28122,778 @@ historique 12 mois</source>
         <source>Statut du procédé</source>
         <target state="translated">过程状态</target>
       </trans-unit>
+      <trans-unit id="nav.stakeholders" datatype="html">
+        <source>Parties prenantes</source>
+        <target state="translated">相关方</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.title" datatype="html">
+        <source>Parties prenantes</source>
+        <target state="translated">相关方</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.subtitle" datatype="html">
+        <source>Contexte de l'organisme : qui attend quoi de vous, et comment vous vous en assurez.</source>
+        <target state="translated">组织环境：谁对您有何期望，以及您如何加以确认。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.new" datatype="html">
+        <source>Nouvelle partie prenante</source>
+        <target state="translated">新增相关方</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.load-failed" datatype="html">
+        <source>Le registre des parties prenantes n'a pas pu être chargé.</source>
+        <target state="translated">无法加载相关方登记册。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.sheet-failed" datatype="html">
+        <source>La fiche n'a pas pu être ouverte.</source>
+        <target state="translated">无法打开该档案。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.sheet.aria" datatype="html">
+        <source>Fiche de la partie prenante</source>
+        <target state="translated">相关方档案</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.tile.total" datatype="html">
+        <source>Parties prenantes</source>
+        <target state="translated">相关方</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.tile.sides" datatype="html">
+        <source>Internes / externes</source>
+        <target state="translated">内部／外部</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.tile.critical" datatype="html">
+        <source>Criticité élevée</source>
+        <target state="translated">高关键性</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.tile.overdue" datatype="html">
+        <source>Revues en retard</source>
+        <target state="translated">逾期复评</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.tile.to-determine" datatype="html">
+        <source>Pertinence à trancher</source>
+        <target state="translated">相关性待定</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.tile.to-reassess" datatype="html">
+        <source>Exigences à réévaluer</source>
+        <target state="translated">待重新评估的要求</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.tabs" datatype="html">
+        <source>Vues du registre</source>
+        <target state="translated">登记册视图</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.tab.register" datatype="html">
+        <source>Registre</source>
+        <target state="translated">登记册</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.tab.matrix" datatype="html">
+        <source>Matrice d'évaluation</source>
+        <target state="translated">评估矩阵</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.tab.assistant" datatype="html">
+        <source>Assistant IA</source>
+        <target state="translated">AI 助手</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.filters" datatype="html">
+        <source>Filtrer le registre des parties prenantes</source>
+        <target state="translated">筛选相关方登记册</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.filter.search" datatype="html">
+        <source>Rechercher une partie prenante</source>
+        <target state="translated">搜索相关方</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.filter.side" datatype="html">
+        <source>Interne / externe</source>
+        <target state="translated">内部／外部</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.filter.clear" datatype="html">
+        <source>Effacer les filtres</source>
+        <target state="translated">清除筛选</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.col.name" datatype="html">
+        <source>Partie prenante</source>
+        <target state="translated">相关方</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.col.category" datatype="html">
+        <source>Catégorie</source>
+        <target state="translated">类别</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.col.criticality" datatype="html">
+        <source>Criticité</source>
+        <target state="translated">关键性</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.col.relevance" datatype="html">
+        <source>Pertinence</source>
+        <target state="translated">相关性</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.col.requirements" datatype="html">
+        <source>Exigences</source>
+        <target state="translated">要求</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.col.review" datatype="html">
+        <source>Dernière revue</source>
+        <target state="translated">最近一次复评</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.review-overdue" datatype="html">
+        <source>Réévaluation en retard</source>
+        <target state="translated">重新评估已逾期</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.empty" datatype="html">
+        <source>Aucune partie prenante inscrite. Ajoutez-en une, ou demandez une liste à l'assistant IA.</source>
+        <target state="translated">尚未登记任何相关方。请添加一个，或向 AI 助手索取建议清单。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.empty-filtered" datatype="html">
+        <source>Aucune partie prenante ne correspond à ces filtres.</source>
+        <target state="translated">没有符合这些筛选条件的相关方。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.category.customers" datatype="html">
+        <source>Clients et utilisateurs finaux</source>
+        <target state="translated">客户与最终用户</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.category.suppliers" datatype="html">
+        <source>Fournisseurs et sous-traitants</source>
+        <target state="translated">供应商与分包方</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.category.employees" datatype="html">
+        <source>Collaborateurs et représentants du personnel</source>
+        <target state="translated">员工与职工代表</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.category.governance" datatype="html">
+        <source>Direction et actionnaires</source>
+        <target state="translated">管理层与股东</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.category.regulators" datatype="html">
+        <source>Autorités réglementaires</source>
+        <target state="translated">监管机构</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.category.certification" datatype="html">
+        <source>Organismes de certification et d'accréditation</source>
+        <target state="translated">认证与认可机构</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.category.partners" datatype="html">
+        <source>Partenaires commerciaux</source>
+        <target state="translated">商业伙伴</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.category.providers" datatype="html">
+        <source>Prestataires de services</source>
+        <target state="translated">服务提供方</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.category.financial" datatype="html">
+        <source>Assureurs et partenaires financiers</source>
+        <target state="translated">保险公司与金融伙伴</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.category.communities" datatype="html">
+        <source>Communautés locales et acteurs externes</source>
+        <target state="translated">当地社区与外部方</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.category.other" datatype="html">
+        <source>Autres parties intéressées</source>
+        <target state="translated">其他相关方</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.side.internal" datatype="html">
+        <source>Interne</source>
+        <target state="translated">内部</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.side.external" datatype="html">
+        <source>Externe</source>
+        <target state="translated">外部</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.impact.low" datatype="html">
+        <source>Faible</source>
+        <target state="translated">低</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.impact.medium" datatype="html">
+        <source>Moyen</source>
+        <target state="translated">中</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.impact.high" datatype="html">
+        <source>Élevé</source>
+        <target state="translated">高</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.relevance.relevant" datatype="html">
+        <source>Pertinente</source>
+        <target state="translated">相关</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.relevance.not-relevant" datatype="html">
+        <source>Non pertinente</source>
+        <target state="translated">不相关</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.relevance.to-determine" datatype="html">
+        <source>À déterminer</source>
+        <target state="translated">待确定</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.nature.contractual" datatype="html">
+        <source>Contractuel</source>
+        <target state="translated">合同性</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.nature.regulatory" datatype="html">
+        <source>Réglementaire</source>
+        <target state="translated">法规性</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.nature.normative" datatype="html">
+        <source>Normatif</source>
+        <target state="translated">标准性</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.nature.voluntary" datatype="html">
+        <source>Volontaire</source>
+        <target state="translated">自愿性</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.nature.internal" datatype="html">
+        <source>Interne</source>
+        <target state="translated">内部</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.status.to-analyse" datatype="html">
+        <source>À analyser</source>
+        <target state="translated">待分析</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.status.applicable" datatype="html">
+        <source>Applicable</source>
+        <target state="translated">适用</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.status.controlled" datatype="html">
+        <source>Maîtrisée</source>
+        <target state="translated">已受控</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.status.to-reassess" datatype="html">
+        <source>À réévaluer</source>
+        <target state="translated">待重新评估</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.section.identification" datatype="html">
+        <source>Identification</source>
+        <target state="translated">识别</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.section.analysis" datatype="html">
+        <source>Analyse</source>
+        <target state="translated">分析</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.section.steering" datatype="html">
+        <source>Pilotage</source>
+        <target state="translated">管控</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.section.requirements" datatype="html">
+        <source>Exigences</source>
+        <target state="translated">要求</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.field.name" datatype="html">
+        <source>Nom ou raison sociale</source>
+        <target state="translated">名称或法定名称</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.field.category" datatype="html">
+        <source>Catégorie</source>
+        <target state="translated">类别</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.field.contact" datatype="html">
+        <source>Coordonnées</source>
+        <target state="translated">联系方式</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.field.sites" datatype="html">
+        <source>Sites concernés</source>
+        <target state="translated">涉及场所</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.field.needs" datatype="html">
+        <source>Besoins et attentes</source>
+        <target state="translated">需求与期望</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.field.requirements-summary" datatype="html">
+        <source>Exigences applicables</source>
+        <target state="translated">适用要求</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.field.relevance" datatype="html">
+        <source>Pertinence pour le système qualité</source>
+        <target state="translated">对质量体系的相关性</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.field.owner" datatype="html">
+        <source>Responsable interne de la relation</source>
+        <target state="translated">关系的内部负责人</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.field.justification" datatype="html">
+        <source>Justification de la pertinence ou de la non-pertinence</source>
+        <target state="translated">相关或不相关的理由</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.field.risks" datatype="html">
+        <source>Risques et opportunités associés</source>
+        <target state="translated">相关风险与机遇</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.field.quality-impact" datatype="html">
+        <source>Impact qualité</source>
+        <target state="translated">质量影响</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.field.regulatory-impact" datatype="html">
+        <source>Impact réglementaire</source>
+        <target state="translated">法规影响</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.field.controls" datatype="html">
+        <source>Mesures de maîtrise</source>
+        <target state="translated">控制措施</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.field.indicators" datatype="html">
+        <source>Indicateurs de suivi</source>
+        <target state="translated">监测指标</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.field.documents" datatype="html">
+        <source>Documents de référence</source>
+        <target state="translated">参考文件</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.field.actions" datatype="html">
+        <source>Actions associées</source>
+        <target state="translated">相关措施</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.field.next-review" datatype="html">
+        <source>Prochaine réévaluation</source>
+        <target state="translated">下次重新评估</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.reviewed-on" datatype="html">
+        <source>Dernière revue le</source>
+        <target state="translated">最近复评于</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.never-reviewed" datatype="html">
+        <source>Jamais revue.</source>
+        <target state="translated">尚未复评。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.mark-reviewed" datatype="html">
+        <source>Marquer comme revue</source>
+        <target state="translated">标记为已复评</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.reviewed" datatype="html">
+        <source>Revue enregistrée à la date du jour.</source>
+        <target state="translated">已按今日日期记录复评。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.review-failed" datatype="html">
+        <source>La revue n'a pas pu être enregistrée.</source>
+        <target state="translated">无法记录复评。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.pending" datatype="html">
+        <source>Fiche modifiée</source>
+        <target state="translated">档案已修改</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.saved" datatype="html">
+        <source>Fiche enregistrée.</source>
+        <target state="translated">档案已保存。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.save-failed" datatype="html">
+        <source>La fiche n'a pas pu être enregistrée.</source>
+        <target state="translated">无法保存档案。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.problem.name" datatype="html">
+        <source>Une partie prenante se désigne par un nom.</source>
+        <target state="translated">相关方须以名称标识。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.problem.justification" datatype="html">
+        <source>Dites pourquoi elle est pertinente, ou pourquoi elle ne l'est pas : un auditeur vient lire cette décision.</source>
+        <target state="translated">说明其为何相关或为何不相关：审核员会来查阅这一判断。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirements-help" datatype="html">
+        <source>Ce que cette partie prenante attend, d'où cela vient, et comment vous vous en assurez. Chaque ligne se rattache à un risque, un écart, un audit ou un document.</source>
+        <target state="translated">该相关方期望什么、来源何处，以及您如何加以确认。每一行都可关联到风险、偏差、审核或文件。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirements-empty" datatype="html">
+        <source>Aucune exigence pour le moment. Ajoutez-en une, ou importez un contrat depuis l'assistant IA.</source>
+        <target state="translated">暂无要求。请添加一项，或从 AI 助手导入一份合同。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.add-requirement" datatype="html">
+        <source>Ajouter une exigence</source>
+        <target state="translated">添加要求</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement-added" datatype="html">
+        <source>Exigence ajoutée.</source>
+        <target state="translated">要求已添加。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement-failed" datatype="html">
+        <source>L'exigence n'a pas pu être ajoutée.</source>
+        <target state="translated">无法添加该要求。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.status-failed" datatype="html">
+        <source>Le statut n'a pas pu être changé.</source>
+        <target state="translated">无法更改状态。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement-remove" datatype="html">
+        <source>Retirer</source>
+        <target state="translated">移除</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement-remove-title" datatype="html">
+        <source>Retirer cette exigence ?</source>
+        <target state="translated">要移除此要求吗？</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement-remove-message" datatype="html">
+        <source>Elle disparaîtra de la fiche, ainsi que ses rattachements.</source>
+        <target state="translated">它及其关联将从档案中消失。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement-remove-failed" datatype="html">
+        <source>L'exigence n'a pas pu être retirée.</source>
+        <target state="translated">无法移除该要求。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.create-action" datatype="html">
+        <source>Créer une action</source>
+        <target state="translated">创建措施</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.see-capa" datatype="html">
+        <source>Voir la CAPA</source>
+        <target state="translated">查看 CAPA</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.capa-opened" datatype="html">
+        <source>CAPA ouverte ; l'exigence repasse à réévaluer.</source>
+        <target state="translated">已开启 CAPA；该要求回到“待重新评估”。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.capa-failed" datatype="html">
+        <source>La CAPA n'a pas pu être ouverte.</source>
+        <target state="translated">无法开启 CAPA。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.capa-no-account" datatype="html">
+        <source>Impossible d'identifier votre compte.</source>
+        <target state="translated">无法识别您的账户。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.link.risk" datatype="html">
+        <source>Risque</source>
+        <target state="translated">风险</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.link.nc" datatype="html">
+        <source>Écart</source>
+        <target state="translated">偏差</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.link.audit" datatype="html">
+        <source>Audit</source>
+        <target state="translated">审核</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.link.document" datatype="html">
+        <source>Document</source>
+        <target state="translated">文件</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.linked" datatype="html">
+        <source>Exigence rattachée.</source>
+        <target state="translated">要求已关联。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.link-failed" datatype="html">
+        <source>Le rattachement a échoué.</source>
+        <target state="translated">关联失败。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.link.title-risk" datatype="html">
+        <source>Rattacher à un risque</source>
+        <target state="translated">关联到风险</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.link.title-nc" datatype="html">
+        <source>Rattacher à un écart</source>
+        <target state="translated">关联到偏差</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.link.title-audit" datatype="html">
+        <source>Rattacher à un audit</source>
+        <target state="translated">关联到审核</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.link.title-document" datatype="html">
+        <source>Rattacher à un document</source>
+        <target state="translated">关联到文件</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.link.subtitle" datatype="html">
+        <source>Exigence : <x id="exigence"/></source>
+        <target state="translated">要求：<x id="exigence"/></target>
+      </trans-unit>
+      <trans-unit id="stakeholders.link.filter" datatype="html">
+        <source>Filtrer la liste</source>
+        <target state="translated">筛选列表</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.link.submit" datatype="html">
+        <source>Rattacher</source>
+        <target state="translated">关联</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.link.choose" datatype="html">
+        <source>Choisissez la cible dans la liste.</source>
+        <target state="translated">请从列表中选择目标。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.link.loading" datatype="html">
+        <source>Chargement de la liste…</source>
+        <target state="translated">正在加载列表…</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.link.load-failed" datatype="html">
+        <source>La liste n'a pas pu être chargée ; fermez la fenêtre et réessayez.</source>
+        <target state="translated">无法加载列表；请关闭窗口后重试。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.link.none" datatype="html">
+        <source>Il n'y a rien à rattacher : ce module ne contient encore aucun élément.</source>
+        <target state="translated">没有可关联的对象：该模块尚无任何条目。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.link.no-match" datatype="html">
+        <source>Aucun élément ne correspond à ce filtre.</source>
+        <target state="translated">没有符合此筛选条件的条目。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.create.title" datatype="html">
+        <source>Inscrire une partie prenante</source>
+        <target state="translated">登记相关方</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.create.subtitle" datatype="html">
+        <source>Trois champs suffisent : sa fiche s'ouvre ensuite pour l'analyse.</source>
+        <target state="translated">只需三个字段：随后会打开其档案以便分析。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.create.submit" datatype="html">
+        <source>Inscrire</source>
+        <target state="translated">登记</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.create.need-name" datatype="html">
+        <source>Donnez le nom ou la raison sociale de la partie prenante.</source>
+        <target state="translated">请填写相关方的名称或法定名称。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.create.name-too-long" datatype="html">
+        <source>Le nom dépasse la longueur acceptée.</source>
+        <target state="translated">名称超出允许长度。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.create.done" datatype="html">
+        <source>Partie prenante inscrite ; complétez son analyse.</source>
+        <target state="translated">相关方已登记；请完成其分析。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.create.failed" datatype="html">
+        <source>La partie prenante n'a pas pu être inscrite.</source>
+        <target state="translated">无法登记该相关方。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement.title" datatype="html">
+        <source>Ajouter une exigence</source>
+        <target state="translated">添加要求</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement.subtitle" datatype="html">
+        <source>Ce que <x id="nom"/> attend, et comment vous vous en assurez.</source>
+        <target state="translated"><x id="nom"/> 期望什么，以及您如何加以确认。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement.text" datatype="html">
+        <source>Exigence</source>
+        <target state="translated">要求</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement.optional" datatype="html">
+        <source>Les champs qui suivent se complètent au fil de l'analyse : rien n'empêche d'ajouter l'exigence maintenant et de dire plus tard qui la suit.</source>
+        <target state="translated">以下字段可随分析推进逐步填写：现在添加要求、稍后再指定跟踪人完全可以。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement.need" datatype="html">
+        <source>Besoin ou attente d'origine</source>
+        <target state="translated">原始需求或期望</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement.origin" datatype="html">
+        <source>Origine (contrat, texte, clause)</source>
+        <target state="translated">来源（合同、条文、条款）</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement.nature" datatype="html">
+        <source>Nature de l'obligation</source>
+        <target state="translated">义务性质</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement.no-nature" datatype="html">
+        <source>Non précisée</source>
+        <target state="translated">未指明</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement.risk" datatype="html">
+        <source>Risque si elle n'est pas tenue</source>
+        <target state="translated">未满足时的风险</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement.risk-level" datatype="html">
+        <source>Niveau de risque</source>
+        <target state="translated">风险等级</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement.no-level" datatype="html">
+        <source>Non coté</source>
+        <target state="translated">未评级</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement.control" datatype="html">
+        <source>Mesure de maîtrise</source>
+        <target state="translated">控制措施</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement.indicator" datatype="html">
+        <source>Indicateur de suivi</source>
+        <target state="translated">监测指标</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement.responsible" datatype="html">
+        <source>Responsable du suivi</source>
+        <target state="translated">跟踪负责人</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement.evidence" datatype="html">
+        <source>Preuve attendue</source>
+        <target state="translated">预期证据</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement.need-text" datatype="html">
+        <source>Énoncez l'exigence : c'est la seule chose indispensable ici.</source>
+        <target state="translated">请写出要求：这里唯一不可或缺的就是它。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirement.too-long" datatype="html">
+        <source>L'exigence dépasse la longueur acceptée ; résumez-la et détaillez dans la preuve.</source>
+        <target state="translated">要求超出允许长度；请精简，并把细节写入证据栏。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.matrix.help" datatype="html">
+        <source>Deux cotations par partie prenante : ce qu'elle pèse sur la qualité, ce qu'elle pèse au titre de la réglementation. Elles ne se compensent pas — la criticité retient la plus élevée des deux, et c'est le serveur qui la calcule.</source>
+        <target state="translated">每个相关方有两项评级：对质量的权重，以及法规层面的权重。两者不相互抵消——关键性取其较高者，并由服务器计算。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.matrix.read-only" datatype="html">
+        <source>Vous consultez la cotation ; sa modification relève du pilotage qualité.</source>
+        <target state="translated">您正在查看评级；修改权属于质量管理。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.matrix.empty" datatype="html">
+        <source>Aucune partie prenante à coter pour le moment.</source>
+        <target state="translated">目前没有需要评级的相关方。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.matrix.grid-title" datatype="html">
+        <source>Répartition des parties prenantes</source>
+        <target state="translated">相关方分布</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.matrix.grid-caption" datatype="html">
+        <source>Lignes : impact réglementaire. Colonnes : impact qualité.</source>
+        <target state="translated">行：法规影响。列：质量影响。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.matrix.pending" datatype="html">
+        <source>Lignes recotées, en attente d'enregistrement : <x id="nombre"/></source>
+        <target state="translated">已重新评级、待保存的行：<x id="nombre"/></target>
+      </trans-unit>
+      <trans-unit id="stakeholders.matrix.recalculated" datatype="html">
+        <source>recalculée à l'enregistrement</source>
+        <target state="translated">保存时重新计算</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.matrix.save" datatype="html">
+        <source>Enregistrer la cotation</source>
+        <target state="translated">保存评级</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.matrix.saved" datatype="html">
+        <source>Cotation enregistrée ; la criticité a été recalculée.</source>
+        <target state="translated">评级已保存；关键性已重新计算。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.matrix.save-failed" datatype="html">
+        <source>La cotation n'a pas pu être enregistrée.</source>
+        <target state="translated">无法保存评级。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.contract" datatype="html">
+        <source>L'assistant propose ; il n'inscrit rien. Chaque proposition reste une proposition jusqu'à ce que vous l'acceptiez, une par une.</source>
+        <target state="translated">助手只提出建议，不写入任何内容。每条建议在您逐条接受之前，始终只是建议。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.suggest-title" datatype="html">
+        <source>Qui oublie-t-on ?</source>
+        <target state="translated">我们遗漏了谁？</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.suggest-help" datatype="html">
+        <source>Décrivez votre activité : l'assistant propose les familles de parties intéressées qu'un organisme comme le vôtre doit prendre en compte.</source>
+        <target state="translated">描述您的业务：助手会提出像您这样的组织应当考虑的相关方类别。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.sector" datatype="html">
+        <source>Secteur d'activité</source>
+        <target state="translated">行业</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.characteristics" datatype="html">
+        <source>Caractéristiques (sites, clients, contraintes)</source>
+        <target state="translated">特征（场所、客户、约束）</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.need-sector" datatype="html">
+        <source>Dites dans quel secteur vous êtes : sans cela, il n'y a rien à proposer qui vous concerne.</source>
+        <target state="translated">请说明您所处的行业：否则无法提出与您相关的建议。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.suggest" datatype="html">
+        <source>Proposer des parties prenantes</source>
+        <target state="translated">提出相关方建议</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.suggest-failed" datatype="html">
+        <source>Les suggestions n'ont pas pu être obtenues.</source>
+        <target state="translated">无法获取建议。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.nothing-to-suggest" datatype="html">
+        <source>Rien à proposer : votre registre couvre déjà ce que cette description laisse voir.</source>
+        <target state="translated">无建议：您的登记册已覆盖此描述所反映的范围。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.already" datatype="html">
+        <source>Déjà au registre</source>
+        <target state="translated">已在登记册中</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.do-register" datatype="html">
+        <source>Inscrire</source>
+        <target state="translated">登记</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.registered" datatype="html">
+        <source>Partie prenante inscrite.</source>
+        <target state="translated">相关方已登记。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.extract-title" datatype="html">
+        <source>Les exigences d'un document</source>
+        <target state="translated">文件中的要求</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.extract-help" datatype="html">
+        <source>Collez un contrat, un cahier des charges ou un texte réglementaire : l'assistant en relève les exigences, chacune avec le passage qui la prouve.</source>
+        <target state="translated">粘贴合同、规格书或法规条文：助手会摘出各项要求，并为每项附上作为依据的原文。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.document-name" datatype="html">
+        <source>Nom du document</source>
+        <target state="translated">文件名称</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.document-text" datatype="html">
+        <source>Texte du document</source>
+        <target state="translated">文件正文</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.need-document" datatype="html">
+        <source>Collez au moins <x id="minimum"/> caractères du document : en dessous, il n'y a rien à lire.</source>
+        <target state="translated">请至少粘贴 <x id="minimum"/> 个字符的文件内容：少于此数便无内容可读。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.extract" datatype="html">
+        <source>Relever les exigences</source>
+        <target state="translated">摘出要求</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.extract-failed" datatype="html">
+        <source>Les exigences n'ont pas pu être extraites.</source>
+        <target state="translated">无法提取要求。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.nothing-extracted" datatype="html">
+        <source>Rien à proposer : ce texte ne porte aucune exigence identifiable.</source>
+        <target state="translated">无建议：该文本未包含可识别的要求。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.target" datatype="html">
+        <source>Partie prenante qui porte ces exigences</source>
+        <target state="translated">承载这些要求的相关方</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.need-target" datatype="html">
+        <source>Choisissez la partie prenante qui porte ces exigences.</source>
+        <target state="translated">请选择承载这些要求的相关方。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.open-sheet" datatype="html">
+        <source>Ouvrir sa fiche</source>
+        <target state="translated">打开其档案</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.changes-title" datatype="html">
+        <source>Ce qui a changé</source>
+        <target state="translated">有哪些变化</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.changes-help" datatype="html">
+        <source>Deux versions d'un même texte : l'assistant dit ce qui a bougé et ce que cela pèse. À vous de désigner les exigences que ce changement remet en cause.</source>
+        <target state="translated">同一文本的两个版本：助手说明改动之处及其分量。至于此变化会牵动哪些要求，由您指定。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.previous-text" datatype="html">
+        <source>Version précédente</source>
+        <target state="translated">上一版本</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.current-text" datatype="html">
+        <source>Version en vigueur</source>
+        <target state="translated">现行版本</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.need-two-versions" datatype="html">
+        <source>Collez les deux versions, au moins <x id="minimum"/> caractères chacune : il n'y a pas de comparaison possible autrement.</source>
+        <target state="translated">请粘贴两个版本，每个至少 <x id="minimum"/> 个字符：否则无法比较。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.detect" datatype="html">
+        <source>Comparer les deux versions</source>
+        <target state="translated">比较两个版本</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.detect-failed" datatype="html">
+        <source>Les changements n'ont pas pu être analysés.</source>
+        <target state="translated">无法分析变化。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.nothing-changed" datatype="html">
+        <source>Rien à signaler : ces deux versions ne diffèrent sur aucune exigence.</source>
+        <target state="translated">无可报告：这两个版本在任何要求上都没有差异。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.reassess-target" datatype="html">
+        <source>Partie prenante concernée</source>
+        <target state="translated">涉及的相关方</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.no-requirement" datatype="html">
+        <source>Cette partie prenante ne porte encore aucune exigence à réévaluer.</source>
+        <target state="translated">该相关方尚无可重新评估的要求。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.need-selection" datatype="html">
+        <source>Cochez les exigences que ce changement remet en cause.</source>
+        <target state="translated">请勾选受此变化影响的要求。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.mark" datatype="html">
+        <source>Marquer comme à réévaluer</source>
+        <target state="translated">标记为待重新评估</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.marked" datatype="html">
+        <source>Exigences marquées à réévaluer.</source>
+        <target state="translated">要求已标记为待重新评估。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.mark-failed" datatype="html">
+        <source>Les exigences n'ont pas pu être marquées.</source>
+        <target state="translated">无法标记这些要求。</target>
+      </trans-unit>
       <trans-unit id="standards-extras.actions" datatype="html">
         <source>Actions</source>
         <target state="translated">操作</target>
@@ -31448,10 +32380,6 @@ Inde (centre de service)</source>
         <source>Mode TV / Salle qualité</source>
         <target state="translated">电视模式 / 质量室</target>
       </trans-unit>
-      <trans-unit id="tv.brand" datatype="html">
-        <source>QualitOS · Salle qualité</source>
-        <target state="translated">QualitOS · 质量室</target>
-      </trans-unit>
       <trans-unit id="tv.toolbar.aria" datatype="html">
         <source>Commandes Mode TV</source>
         <target state="translated">电视模式控制</target>
@@ -31547,6 +32475,10 @@ Inde (centre de service)</source>
       <trans-unit id="tv.trend.target" datatype="html">
         <source>Cible</source>
         <target state="translated">目标</target>
+      </trans-unit>
+      <trans-unit id="tv.loaded-at" datatype="html">
+        <source>Relevé de</source>
+        <target state="translated">采集于</target>
       </trans-unit>
       <trans-unit id="tv.card.confidence" datatype="html">
         <source>Confiance <x id="INTERPOLATION"/> %</source>

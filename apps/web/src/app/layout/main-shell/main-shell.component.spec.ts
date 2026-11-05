@@ -189,7 +189,12 @@ describe('MainShellComponent (navigation model)', () => {
     // Non-conformite passe a 6 : + Fournisseurs, a cote de leurs NC. Formation
     // et Matrice de competences passent des Referentiels (11 -> 8) aux
     // Operations (9 -> 11).
-    expect(labels).toEqual([7, 6, 7, 2, 1, 6, 1, 11, 8, 1, 15]);
+    // Pilotage passe a 8 : + Parties prenantes (ADR 0104), le registre du
+    // contexte de l'organisme (ISO 9001 4.2) -- sans attribut `module` : c'est
+    // un socle du systeme qualite, pas une option activable.
+    // Administration passe a 16 : + Natures de NC (ADR 0103), le catalogue des
+    // sous-categories d'ecart que chaque client regle lui-meme.
+    expect(labels).toEqual([8, 6, 7, 2, 1, 6, 1, 11, 8, 1, 16]);
   });
 
   it('le registre des risques a son groupe, juste apres la non-conformite', () => {

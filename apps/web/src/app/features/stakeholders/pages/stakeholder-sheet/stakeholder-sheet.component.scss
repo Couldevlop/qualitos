@@ -1,0 +1,262 @@
+// La fiche d'une partie prenante, dans le tiroir : quatre sections, un rythme
+// serré, et une barre d'enregistrement collée en bas qui ne gêne pas la lecture.
+
+:host {
+  display: block;
+  min-height: 100%;
+}
+
+.fiche {
+  display: flex;
+  flex-direction: column;
+  gap: var(--qos-space-3);
+  padding: var(--qos-space-4);
+  padding-bottom: var(--qos-space-10);
+}
+
+.fiche__tete {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--qos-space-3);
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  margin: calc(-1 * var(--qos-space-4));
+  margin-bottom: 0;
+  padding: var(--qos-space-3) var(--qos-space-4);
+  background: var(--qos-bg-app);
+  border-bottom: 1px solid var(--qos-border-subtle);
+}
+
+.fiche__identite {
+  flex: 1;
+  min-width: 0;
+}
+
+.fiche__nom {
+  margin: 0;
+  font-size: var(--qos-fs-lg);
+  font-weight: var(--qos-fw-semibold);
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.fiche__sous {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--qos-space-2);
+  margin: var(--qos-space-1) 0 0;
+  font-size: var(--qos-fs-sm);
+  color: var(--qos-fg-secondary);
+}
+
+.bloc {
+  display: flex;
+  flex-direction: column;
+  gap: var(--qos-space-2);
+  min-width: 0;
+  padding: var(--qos-space-3) var(--qos-space-4);
+  border-radius: var(--qos-radius-lg);
+  background: var(--qos-bg-elevated);
+  border: 1px solid var(--qos-border-subtle);
+
+  &__head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--qos-space-3);
+    flex-wrap: wrap;
+  }
+
+  &__titre {
+    margin: 0;
+    font-size: var(--qos-fs-xs);
+    font-weight: var(--qos-fw-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--qos-fg-tertiary);
+  }
+
+  &__aide {
+    max-width: 52ch;
+    margin: var(--qos-space-1) 0 0;
+    font-size: var(--qos-fs-sm);
+    color: var(--qos-fg-secondary);
+  }
+}
+
+// Deux champs côte à côte, qui repassent en colonne quand le tiroir rétrécit.
+.deux {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  gap: var(--qos-space-2);
+  min-width: 0;
+
+  > * {
+    min-width: 0;
+  }
+}
+
+.large {
+  width: 100%;
+}
+
+// La criticité se LIT, elle ne se saisit pas : elle se périmerait.
+.cotation {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+  align-items: center;
+  gap: var(--qos-space-2);
+
+  &__resultat {
+    display: flex;
+    align-items: center;
+    gap: var(--qos-space-2);
+    margin: 0;
+  }
+
+  &__libelle {
+    font-size: var(--qos-fs-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--qos-fg-tertiary);
+  }
+}
+
+.revue {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--qos-space-3);
+  margin: 0;
+  font-size: var(--qos-fs-sm);
+}
+
+.dim {
+  color: var(--qos-fg-tertiary);
+}
+
+// ---------- exigences ----------
+
+.exigences {
+  display: flex;
+  flex-direction: column;
+  gap: var(--qos-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.exigence {
+  min-width: 0;
+  padding: var(--qos-space-2) var(--qos-space-3);
+  border-radius: var(--qos-radius-md);
+  background: var(--qos-bg-sunken);
+  border: 1px solid var(--qos-border-subtle);
+
+  &__tete {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--qos-space-2);
+  }
+
+  &__texte {
+    min-width: 0;
+    font-size: var(--qos-fs-sm);
+    overflow-wrap: anywhere;
+
+    small {
+      display: block;
+      font-size: var(--qos-fs-xs);
+    }
+  }
+
+  &__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--qos-space-1) var(--qos-space-2);
+    margin: var(--qos-space-1) 0 0;
+    font-size: var(--qos-fs-xs);
+    color: var(--qos-fg-tertiary);
+
+    &:empty {
+      display: none;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--qos-space-1) var(--qos-space-2);
+    margin-top: var(--qos-space-2);
+  }
+
+  &__statut {
+    width: 10rem;
+  }
+
+  &__liens {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+  }
+}
+
+// Un rattachement déjà posé se voit : le bouton porte l'accent et une coche
+// visuelle par le fond, pas seulement par la couleur du texte.
+.lie {
+  background: var(--qos-accent-bg-soft);
+  color: var(--qos-accent-fg-soft);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 10px;
+  border-radius: var(--qos-radius-pill);
+  font-size: var(--qos-fs-xs);
+  font-weight: var(--qos-fw-semibold);
+  white-space: nowrap;
+  background: var(--qos-bg-sunken);
+  color: var(--qos-fg-secondary);
+
+  &--danger { background: var(--qos-danger-bg-soft); color: var(--qos-danger-fg); }
+  &--warn   { background: var(--qos-warn-bg-soft);   color: var(--qos-warn-fg); }
+  &--ok     { background: var(--qos-success-bg-soft); color: var(--qos-success-fg); }
+  &--accent { background: var(--qos-accent-bg-soft); color: var(--qos-accent-fg-soft); }
+}
+
+// ---------- barre d'enregistrement ----------
+
+.barre {
+  position: sticky;
+  bottom: var(--qos-space-2);
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--qos-space-3);
+  padding: var(--qos-space-2) var(--qos-space-3);
+  border-radius: var(--qos-radius-lg);
+  background: var(--qos-bg-elevated);
+  border: 1px solid var(--qos-border-subtle);
+  box-shadow: var(--qos-shadow-md);
+
+  &__problemes {
+    margin: 0;
+    padding-left: var(--qos-space-5);
+    color: var(--qos-danger-fg);
+    font-size: var(--qos-fs-sm);
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--qos-space-2);
+    margin-left: auto;
+  }
+}

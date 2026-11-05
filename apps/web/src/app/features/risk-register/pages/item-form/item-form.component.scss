@@ -26,7 +26,10 @@
 }
 
 .carte {
-  padding: var(--qos-space-5);
+  // Carte maison : elle n'a pas vu passer les marges resserrées sur
+  // `mat-card` et gardait 20 px, soit une évaluation de risque qui se
+  // terminait sous la ligne de flottaison.
+  padding: var(--qos-space-3) var(--qos-space-4);
   border-radius: var(--qos-radius-lg);
   background: var(--qos-bg-elevated);
   border: 1px solid var(--qos-border-subtle);

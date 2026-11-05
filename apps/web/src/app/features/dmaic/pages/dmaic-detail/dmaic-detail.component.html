@@ -30,11 +30,17 @@
         <button mat-stroked-button (click)="openEdit(p)" i18n-matTooltip="@@common.edit" matTooltip="Modifier">
           <mat-icon>edit</mat-icon> <span i18n="@@common.edit">Modifier</span>
         </button>
+        <!-- Volontairement ACTIF quand il manque des réponses : le clic signale
+             alors les champs à renseigner, au lieu de laisser chercher. -->
         <button mat-flat-button color="primary" data-test="avancer"
-                [disabled]="p.status !== 'ACTIVE' || p.phase === 'CONTROL' || missing.length > 0"
-                [matTooltip]="missing.length ? advanceBlockedHint : ''"
+                [disabled]="p.status !== 'ACTIVE'"
+                [matTooltip]="advanceHint(p)"
                 (click)="advance(p)">
-          <mat-icon>skip_next</mat-icon> <span i18n="@@dmaic.detail.advance">Avancer</span>
+          <!-- En phase « Contrôler », avancer CLOT le projet : le bouton le dit,
+               sans quoi l'on clôt un projet en croyant passer à la suite. -->
+          <mat-icon>{{ p.phase === 'CONTROL' ? 'task_alt' : 'skip_next' }}</mat-icon>
+          <span *ngIf="p.phase !== 'CONTROL'" i18n="@@dmaic.detail.advance">Avancer</span>
+          <span *ngIf="p.phase === 'CONTROL'" i18n="@@dmaic.detail.complete">Clôturer</span>
         </button>
         <button mat-stroked-button *ngIf="p.status === 'ACTIVE'" (click)="hold(p)">
           <mat-icon>pause</mat-icon> <span i18n="@@dmaic.detail.hold">Pause</span>

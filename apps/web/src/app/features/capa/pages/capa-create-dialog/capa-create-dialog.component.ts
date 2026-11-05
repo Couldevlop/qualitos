@@ -12,10 +12,17 @@ import { DirectoryUser } from '../../../../core/directory/directory.types';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { CAPA_CRITICITIES, CAPA_SOURCES, capaSourceLabel } from '../../capa.labels';
 import { CapaService } from '../../capa.service';
-import { CapaCriticity, CapaSourceType, OpenCapaRequest } from '../../capa.types';
+import { CapaActionType, CapaCriticity, CapaSourceType, CapaType, OpenCapaRequest } from '../../capa.types';
 
-/** Nature d'une CAPA : l'endiguement seul ne se clôturerait jamais (ISO 9001 §10.2). */
-export type CapaNature = OpenCapaRequest['type'];
+/**
+ * Nature de l'action que porte la CAPA : endiguement, corrective ou préventive.
+ *
+ * <p>L'endiguement qualifie l'ACTION, pas le dossier : un dossier de pur
+ * endiguement ne se clôturerait jamais (ISO 9001 §10.2), il naîtrait bloqué.
+ * Choisi ici, il ouvre donc un dossier correctif dont l'action est typée
+ * endiguement — la distinction même que porte l'étape D3 de la 8D.
+ */
+export type CapaNature = CapaActionType;
 
 /** Ce qu'un autre écran peut proposer à la création — l'utilisateur garde la main sur tout. */
 export interface CapaCreatePrefill {
@@ -49,8 +56,19 @@ export interface CapaCreateSource {
 /** Ce que rend la fenêtre : l'identifiant du dossier, plus ce que l'écran d'origine y a joint. */
 export interface CapaOpened {
   capaId: string;
-  /** L'action telle qu'elle vient d'être saisie, pour l'écran qui reprend la ligne. */
-  action?: { title: string; ownerId?: string; ownerName?: string; dueDate?: string };
+  /**
+   * L'action telle qu'elle vient d'être saisie, pour l'écran qui reprend la
+   * ligne — nature et criticité comprises : la fiche DMAIC les recopie pour que
+   * son rapport client les lise sans interroger le module CAPA.
+   */
+  action?: {
+    title: string;
+    ownerId?: string;
+    ownerName?: string;
+    dueDate?: string;
+    nature?: CapaActionType;
+    criticity?: CapaCriticity;
+  };
 }
 
 export interface CapaCreateDialogData {
@@ -109,7 +127,13 @@ export class CapaCreateDialogComponent implements OnInit {
   readonly acceptedTypes =
     'application/pdf,image/jpeg,image/png,image/webp,image/heic,.docx,.xlsx';
 
+  /**
+   * L'endiguement d'abord : c'est l'action qu'on prend le jour même, avant même
+   * de connaître la cause. Le mettre en tête, c'est suivre l'ordre réel du
+   * terrain plutôt que l'ordre alphabétique d'une énumération.
+   */
   readonly natures: { value: CapaNature; label: string }[] = [
+    { value: 'CONTAINMENT', label: $localize`:@@capa.action-type.containment:Endiguement` },
     { value: 'CORRECTIVE', label: $localize`:@@capa.type.corrective:Corrective` },
     { value: 'PREVENTIVE', label: $localize`:@@capa.type.preventive:Préventive` }
   ];
@@ -243,6 +267,11 @@ export class CapaCreateDialogComponent implements OnInit {
     return this.data.mode === 'define-action';
   }
 
+  /** L'endiguement est choisi : on explique que le dossier reste correctif. */
+  get isContainment(): boolean {
+    return this.form.controls.type.value === 'CONTAINMENT';
+  }
+
   get dialogTitle(): string {
     return this.isDefineAction
       ? $localize`:@@capa.open.define-title:Définir l'action`
@@ -281,10 +310,14 @@ export class CapaCreateDialogComponent implements OnInit {
     }
     const v = this.form.getRawValue();
     this.submitting = true;
+    // L'endiguement qualifie l'ACTION ; le DOSSIER, lui, reste correctif pour
+    // rester clôturable (ISO 9001 §10.2).
+    const containment = v.type === 'CONTAINMENT';
     const request: OpenCapaRequest = {
       title: v.title.trim(),
       description: v.description.trim() || undefined,
-      type: v.type,
+      type: containment ? 'CORRECTIVE' : (v.type as Exclude<CapaType, 'CONTAINMENT'>),
+      actionType: v.type,
       criticity: v.criticity,
       ownerId: v.assigneeId,
       ownerName: this.names.get(v.assigneeId),
@@ -309,7 +342,10 @@ export class CapaCreateDialogComponent implements OnInit {
           this.snack.open(this.doneMessage(), $localize`:@@common.ok:OK`, { duration: 2500 });
           this.dialogRef.close({
             ...opened,
-            action: { title: request.title, ownerId: request.ownerId, ownerName: request.ownerName, dueDate: request.dueDate }
+            action: {
+              title: request.title, ownerId: request.ownerId, ownerName: request.ownerName,
+              dueDate: request.dueDate, nature: v.type, criticity: v.criticity
+            }
           });
         },
         error: err => {
@@ -355,7 +391,8 @@ export class CapaCreateDialogComponent implements OnInit {
       return this.capa.addAction(caseId, {
         title: request.title,
         description: request.description,
-        actionType: request.type,
+        // La nature CHOISIE, endiguement compris : c'est l'action qu'on définit.
+        actionType: request.actionType ?? request.type,
         assigneeId: request.ownerId,
         assigneeName: request.ownerName,
         dueDate: request.dueDate
