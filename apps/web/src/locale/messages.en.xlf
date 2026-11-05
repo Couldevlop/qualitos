@@ -28027,8 +28027,8 @@ declared income
         <target state="translated">Measurements by subgroup</target>
       </trans-unit>
       <trans-unit id="spc.study.subgroup-count" datatype="html">
-        <source><x id="INTERPOLATION"/> sous-groupe(s)</source>
-        <target state="translated"><x id="INTERPOLATION"/> subgroup(s)</target>
+        <source><x id="COUNT"/> sous-groupe(s)</source>
+        <target state="translated"><x id="COUNT"/> subgroup(s)</target>
       </trans-unit>
       <trans-unit id="spc.study.subgroup-add" datatype="html">
         <source>Ajouter un sous-groupe</source>
@@ -29503,8 +29503,8 @@ declared income
         <target state="translated">Standards to compare</target>
       </trans-unit>
       <trans-unit id="standards-extras.coverage.shared-count" datatype="html">
-        <source>&lt;x id="count"/&gt; norme(s)</source>
-        <target state="translated">&lt;x id="count"/&gt; standard(s)</target>
+        <source><x id="count"/> norme(s)</source>
+        <target state="translated"><x id="count"/> standard(s)</target>
       </trans-unit>
       <trans-unit id="standards-extras.coverage.shared-only" datatype="html">
         <source>Clauses mutualisables uniquement</source>
@@ -29591,8 +29591,8 @@ declared income
         <target state="translated">Priority</target>
       </trans-unit>
       <trans-unit id="standards-extras.report.coverage-aria" datatype="html">
-        <source>Couverture des exigences de la clause &lt;x id="clause"/&gt;</source>
-        <target state="translated">Requirement coverage for clause &lt;x id="clause"/&gt;</target>
+        <source>Couverture des exigences de la clause <x id="clause"/></source>
+        <target state="translated">Requirement coverage for clause <x id="clause"/></target>
       </trans-unit>
       <trans-unit id="standards-extras.report.error" datatype="html">
         <source>Ce rapport d'audit blanc IA est introuvable.</source>
@@ -29823,8 +29823,8 @@ declared income
         <target state="translated">Adopt →</target>
       </trans-unit>
       <trans-unit id="standards.list.adopt-success" datatype="html">
-        <source>${s.code} adopté — roadmap générée</source>
-        <target state="translated">${s.code} adopted — roadmap generated</target>
+        <source><x id="code"/> adopté — roadmap générée</source>
+        <target state="translated"><x id="code"/> adopted — roadmap generated</target>
       </trans-unit>
       <trans-unit id="standards.list.adopt-conflict" datatype="html">
         <source>Norme déjà adoptée</source>
@@ -30019,8 +30019,8 @@ declared income
         <target state="translated">Owner</target>
       </trans-unit>
       <trans-unit id="standards.detail.stage-updated" datatype="html">
-        <source>Étape ${stage.stepNumber} → ${status}</source>
-        <target state="translated">Stage ${stage.stepNumber} → ${status}</target>
+        <source>Étape <x id="step"/> → <x id="status"/></source>
+        <target state="translated">Stage <x id="step"/> → <x id="status"/></target>
       </trans-unit>
       <trans-unit id="standards.detail.stage-update-error" datatype="html">
         <source>Échec de la mise à jour</source>
@@ -30331,8 +30331,8 @@ declared income
         <target state="translated">Unable to download the template</target>
       </trans-unit>
       <trans-unit id="standards.detail.ai-draft-success" datatype="html">
-        <source>Brouillon généré (${r.provider}, ${r.latencyMs} ms)</source>
-        <target state="translated">Draft generated (${r.provider}, ${r.latencyMs} ms)</target>
+        <source>Brouillon généré (<x id="provider"/>, <x id="latency"/> ms)</source>
+        <target state="translated">Draft generated (<x id="provider"/>, <x id="latency"/> ms)</target>
       </trans-unit>
       <trans-unit id="standards.detail.ai-draft-unavailable" datatype="html">
         <source>Génération IA indisponible (ai-service / Ollama)</source>
@@ -30579,8 +30579,8 @@ declared income
         <target state="translated">Archive this activity?</target>
       </trans-unit>
       <trans-unit id="ropa.detail.archive-confirm-message" datatype="html">
-        <source>« ${a.name} » sera marquée ARCHIVED. La fiche reste consultable pour les contrôles CNIL/EDPB.</source>
-        <target state="translated">"${a.name}" will be marked ARCHIVED. The record remains accessible for CNIL/EDPB inspections.</target>
+        <source>« <x id="name"/> » sera marquée ARCHIVED. La fiche reste consultable pour les contrôles CNIL/EDPB.</source>
+        <target state="translated">"<x id="name"/>" will be marked ARCHIVED. The record remains accessible for CNIL/EDPB inspections.</target>
       </trans-unit>
       <trans-unit id="ropa.detail.archived" datatype="html">
         <source>Activité archivée.</source>
@@ -30599,8 +30599,8 @@ declared income
         <target state="translated">Delete this activity?</target>
       </trans-unit>
       <trans-unit id="ropa.detail.delete-confirm-message" datatype="html">
-        <source>Suppression définitive de « ${a.name} ». Cette action est irréversible et ne devrait être utilisée que pour un brouillon créé par erreur.</source>
-        <target state="translated">Permanent deletion of "${a.name}". This action is irreversible and should only be used for a draft created by mistake.</target>
+        <source>Suppression définitive de « <x id="name"/> ». Cette action est irréversible et ne devrait être utilisée que pour un brouillon créé par erreur.</source>
+        <target state="translated">Permanent deletion of "<x id="name"/>". This action is irreversible and should only be used for a draft created by mistake.</target>
       </trans-unit>
       <trans-unit id="ropa.detail.deleted" datatype="html">
         <source>Activité supprimée.</source>
@@ -30961,8 +30961,8 @@ India (service centre)</target>
         <target state="translated">Search failed.</target>
       </trans-unit>
       <trans-unit id="consents.search.maintenance-result" datatype="html">
-        <source>Maintenance : ${r.expired} consentement(s) expiré(s).</source>
-        <target state="translated">Maintenance: ${r.expired} consent(s) expired.</target>
+        <source>Maintenance : <x id="count"/> consentement(s) expiré(s).</source>
+        <target state="translated">Maintenance: <x id="count"/> consent(s) expired.</target>
       </trans-unit>
       <trans-unit id="consents.search.maintenance-error" datatype="html">
         <source>Maintenance impossible.</source>
