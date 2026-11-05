@@ -140,4 +140,46 @@ describe('ThemeService', () => {
     service.mode().subscribe(m => (mode = m));
     expect(mode).toBe('dark');
   });
+
+  describe('applyOrganisationDefault — le theme choisi par le client', () => {
+
+    it("s'applique a qui n'a rien demande", () => {
+      const { service, ctx } = build({ prefersDark: false });
+
+      service.applyOrganisationDefault('dark');
+
+      expect(service.currentMode()).toBe('dark');
+      expect(ctx.classes.has('qos-theme-dark')).toBeTrue();
+    });
+
+    it('remplace le systeme d exploitation, pas la personne', () => {
+      // Elle a demande le clair : un theme sombre pose depuis la console de
+      // l'editeur ne doit pas le lui reprendre. Ce serait defaire un reglage
+      // d'accessibilite a distance.
+      const { service, ctx } = build({ stored: 'light', prefersDark: true });
+
+      service.applyOrganisationDefault('dark');
+
+      expect(service.currentMode()).toBe('light');
+      expect(ctx.classes.has('qos-theme-light')).toBeTrue();
+    });
+
+    it('respecte aussi « je suis le systeme », qui est un choix', () => {
+      // « rien d'enregistre » et « j'ai choisi de suivre le systeme » ont la
+      // meme valeur en memoire : seule la presence en storage les distingue.
+      const { service } = build({ stored: 'system', prefersDark: false });
+
+      service.applyOrganisationDefault('dark');
+
+      expect(service.currentMode()).toBe('light');
+    });
+
+    it("ne s'enregistre pas : le jour ou le client change, l'ecran suit", () => {
+      const { service, ctx } = build({ prefersDark: false });
+
+      service.applyOrganisationDefault('dark');
+
+      expect(ctx.storage.getItem(STORAGE_KEY)).toBeNull();
+    });
+  });
 });

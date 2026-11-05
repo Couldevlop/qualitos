@@ -1,6 +1,7 @@
 import { NavigationEnd, Router } from '@angular/router';
 import { NEVER, Observable, Subject, of } from 'rxjs';
 
+import { BrandingService } from '../../core/branding/branding.service';
 import { EditionService } from '../../core/edition/edition.service';
 import { Edition } from '../../core/edition/edition.types';
 import { TenantModulesService } from '../../features/admin/tenant-modules.service';
@@ -73,9 +74,14 @@ function harness(): ShellHarness {
   const theme = jasmine.createSpyObj<ThemeService>('ThemeService', ['preference', 'setPreference']);
   theme.preference.and.returnValue(of<ThemePreference>('system'));
 
+  // La marque du client : la coquille la demande au chargement. Elle n'a rien a
+  // dire sur la navigation, elle ne doit donc rien exiger de ces tests.
+  const branding = jasmine.createSpyObj<BrandingService>('BrandingService', ['load']);
+  branding.load.and.returnValue(of(null));
+
   return {
     component: new MainShellComponent(
-      auth, connectivity, offline, notifications, router, modules, editions, theme),
+      auth, connectivity, offline, notifications, router, modules, editions, theme, branding),
     notifications, router, auth, modules, events, theme
   };
 }

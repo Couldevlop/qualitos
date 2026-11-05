@@ -1,0 +1,84 @@
+/* ============================================================
+ * Les quatre thèmes livrés, au choix du client (spécification console de
+ * l'éditeur, D4). `BrandingService` pose l'une de ces classes sur <html> au
+ * chargement, d'après ce que le client a choisi à sa création.
+ *
+ * Ces classes ne touchent NI les couleurs de marque — surchargées en ligne par
+ * le service, jeton par jeton — NI le mode clair/sombre, qui reste le choix de
+ * la personne (`qos-theme-light` / `qos-theme-dark`). Elles ne règlent que ce
+ * qu'un thème a de structurel : la densité et la dureté des contrastes.
+ *
+ * Pourquoi redéfinir les jetons d'espace plutôt que d'écrire des règles par
+ * composant : les écrans consomment déjà `--qos-space-*` et `--qos-fs-*`. Les
+ * réduire d'un cran resserre tout l'espace d'un coup, sans toucher un seul
+ * composant et sans créer une seconde famille de règles à maintenir.
+ * ============================================================ */
+
+/* ---------- Clair aéré : le défaut, rien à faire ----------
+   La classe existe quand même, pour qu'un thème choisi se LISE dans le DOM
+   (recette, capture d'écran, rapport d'incident) et ne soit pas déduit d'une
+   absence. */
+:root.qos-client-airy {
+  --qos-client-theme: 'airy-light';
+}
+
+/* ---------- Clair dense : le poste de travail d'un service qualité ----------
+   Un cran d'espace en moins partout, interlignes resserrés : plus de lignes de
+   registre visibles sans défilement. Les tailles de texte ne bougent pas — la
+   densité se gagne sur le blanc, jamais sur la lisibilité des caractères. */
+:root.qos-client-dense {
+  --qos-client-theme: 'dense-light';
+
+  --qos-space-2:  6px;
+  --qos-space-3:  10px;
+  --qos-space-4:  12px;
+  --qos-space-5:  16px;
+  --qos-space-6:  20px;
+  --qos-space-8:  26px;
+  --qos-space-10: 32px;
+  --qos-space-12: 40px;
+  --qos-space-16: 52px;
+
+  --qos-lh-normal: 1.45;
+  --qos-lh-loose:  1.6;
+
+  --qos-topbar-height: 52px;
+}
+
+/* ---------- Sombre ----------
+   Le mode lui-même est posé par `ThemeService` (classe `qos-theme-dark`), qui
+   connaît la préférence de la personne. Ce thème ne règle donc rien de plus :
+   il ne porte que son marqueur, pour que le choix du client se lise dans le
+   DOM même quand la personne a demandé le clair. */
+:root.qos-client-dark {
+  --qos-client-theme: 'dark';
+}
+
+/* ---------- Contraste renforcé : atelier, extérieur, lumière difficile ----------
+   Filets plus francs, textes secondaires remontés vers le texte principal,
+   anneau de focus épaissi. On ne force pas le noir pur sur blanc pur : le
+   contraste maximal fatigue à la journée, et WCAG 2.2 AAA demande 7:1, pas 21:1. */
+:root.qos-client-contrast {
+  --qos-client-theme: 'high-contrast';
+
+  --qos-fg-secondary: var(--qos-fg-primary);
+  --qos-fg-tertiary:  var(--qos-fg-secondary);
+  --qos-border-default: var(--qos-fg-tertiary);
+  /* L'anneau de focus devient franc : le halo translucide du socle se perd
+     sous une lumière rasante, qui est exactement le cas d'usage de ce thème. */
+  --qos-ring-focus: 0 0 0 3px var(--qos-border-focus);
+
+  --qos-fw-regular: 500;
+  --qos-fw-medium:  600;
+}
+
+/* Un filet de séparation doit se voir : en contraste renforcé il prend la
+   couleur du texte tertiaire au lieu d'un gris de fond. */
+:root.qos-client-contrast {
+  hr,
+  .mat-divider,
+  .mat-mdc-card,
+  .mat-mdc-table .mat-mdc-row {
+    border-color: var(--qos-border-default);
+  }
+}
