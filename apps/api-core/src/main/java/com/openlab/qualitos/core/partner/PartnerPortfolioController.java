@@ -53,15 +53,34 @@ public class PartnerPortfolioController {
      * crée rien : une personne dont aucune fiche ne porte le courriel reste
      * sans portefeuille, et c'est au cabinet de l'inscrire — la route ne doit
      * pas pouvoir servir à s'inviter dans un cabinet.
+     *
+     * <p><b>Le courriel doit être VÉRIFIÉ par le fournisseur d'identité.</b>
+     * C'est le courriel qui désigne la fiche : un courriel simplement
+     * déclaré laisserait quiconque sait le nom d'un consultant se poser sur sa
+     * fiche en s'inscrivant sous son adresse, et hériter de tout son
+     * portefeuille. On échoue donc fermé — un jeton sans {@code email_verified}
+     * à vrai ne rattache rien, et la personne est dans le même cas que celle
+     * qu'aucune fiche n'attend : c'est à son cabinet de l'inscrire.
      */
     @PostMapping("/link")
     @Operation(summary = "Link the signed-in account to its consultant record")
     public ResponseEntity<PartnerDto.ConsultantResponse> link(@AuthenticationPrincipal Jwt jwt) {
         UUID account = CurrentUser.userId().orElse(null);
-        String email = jwt == null ? null : jwt.getClaimAsString("email");
+        String email = emailVerifie(jwt);
         return service.linkAccount(account, email)
                 .map(PartnerDto.ConsultantResponse::from)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.noContent().build());
+    }
+
+    /**
+     * Le courriel du jeton, <b>seulement</b> si le fournisseur d'identité le
+     * dit vérifié. Rend {@code null} sinon : le service ne rattachera rien.
+     */
+    private static String emailVerifie(Jwt jwt) {
+        if (jwt == null || !Boolean.TRUE.equals(jwt.getClaimAsBoolean("email_verified"))) {
+            return null;
+        }
+        return jwt.getClaimAsString("email");
     }
 }
