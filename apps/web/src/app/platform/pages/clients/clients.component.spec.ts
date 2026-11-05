@@ -4,12 +4,12 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
 
-import { SharedModule } from '../../../../shared/shared.module';
-import { UiModule } from '../../../../shared/ui/ui.module';
-import { ModuleCatalogEntry, OnboardResponse, TenantSummary } from '../../admin.types';
+import { SharedModule } from '../../../shared/shared.module';
+import { UiModule } from '../../../shared/ui/ui.module';
+import { ModuleCatalogEntry, OnboardResponse, TenantSummary } from '../../../features/admin/admin.types';
 import { ClientsService } from '../../clients.service';
-import { CredentialRevealComponent } from '../../components/credential-reveal/credential-reveal.component';
-import { TenantModulesService } from '../../tenant-modules.service';
+import { CredentialRevealComponent } from '../../../shared/credential-reveal/credential-reveal.component';
+import { TenantModulesService } from '../../../features/admin/tenant-modules.service';
 import { ClientsComponent, familles, slugify } from './clients.component';
 
 /** Mot de passe provisoire FACTICE des bancs : un motif sans entropie, passé par une

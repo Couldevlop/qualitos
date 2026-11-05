@@ -9,9 +9,8 @@ import { SharedModule } from '../../shared/shared.module';
 import { UiModule } from '../../shared/ui/ui.module';
 import { UserPickerModule } from '../../shared/user-picker/user-picker.module';
 import { PersonNameModule } from '../../shared/person-name/person-name.module';
-import { CredentialRevealComponent } from './components/credential-reveal/credential-reveal.component';
+import { CredentialRevealModule } from '../../shared/credential-reveal/credential-reveal.module';
 import { CircuitsComponent } from './pages/circuits/circuits.component';
-import { ClientsComponent } from './pages/clients/clients.component';
 import { LicenseComponent } from './pages/license/license.component';
 import { MocSettingsComponent } from './pages/moc-settings/moc-settings.component';
 import { DocumentSettingsComponent } from './pages/document-settings/document-settings.component';
@@ -56,7 +55,6 @@ const routes: Routes = [
   // La licence d'une installation on-premise (ADR 0082).
   { path: 'licence', component: LicenseComponent },
   // Les clients de la plateforme et leur création (éditeur, ADR 0079).
-  { path: 'clients', component: ClientsComponent, canActivate: [roleGuard], data: { roles: ['SUPER_ADMIN'] } },
   // Les autres surfaces d'administration sont des modules paresseux distincts,
   // déclarés ICI plutôt qu'à la racine : sans cela, la route `admin` de
   // app-routing.module.ts capterait `/admin/api-keys` par correspondance de préfixe
@@ -84,11 +82,11 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [TenantModulesComponent, TenantTeamComponent, RolesMatrixComponent, CircuitsComponent, ClientsComponent, LicenseComponent,
+  declarations: [TenantModulesComponent, TenantTeamComponent, RolesMatrixComponent, CircuitsComponent, LicenseComponent,
     MocSettingsComponent, DocumentSettingsComponent, SpcSettingsComponent, DmaicSettingsComponent, CompetencyWorkshopsComponent,
-    AiPolicyComponent, CredentialRevealComponent, NcSettingsComponent],
+    AiPolicyComponent, NcSettingsComponent],
   // UserPickerModule : les titulaires des rôles MOC se choisissent dans l'annuaire (ADR 0091).
   imports: [SharedModule, UiModule, FormsModule, DragDropModule, MatMenuModule,
-    UserPickerModule, PersonNameModule, RouterModule.forChild(routes)]
+    UserPickerModule, PersonNameModule, CredentialRevealModule, RouterModule.forChild(routes)]
 })
 export class AdminModule {}

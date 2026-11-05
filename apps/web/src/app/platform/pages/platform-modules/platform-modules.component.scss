@@ -1,0 +1,113 @@
+/* Catalogue des modules : une liste à lire, pas une grille à manipuler. Les
+   familles sont séparées par leur titre, et chaque module tient sur deux lignes
+   au plus — nom, code, palier, puis ce qu'il exige. */
+
+.chiffres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 18px;
+  color: var(--qos-fg-secondary);
+  font-size: 0.84rem;
+}
+
+.chiffres__sep {
+  color: var(--qos-fg-tertiary);
+}
+
+.erreur {
+  margin: 0 0 16px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--qos-bg-sunken);
+  color: var(--qos-fg-primary);
+  font-size: 0.86rem;
+}
+
+.attente,
+.vide {
+  margin: 12px 0;
+  color: var(--qos-fg-secondary);
+  font-size: 0.88rem;
+}
+
+.famille {
+  margin-bottom: 26px;
+}
+
+.famille__titre {
+  margin: 0 0 10px;
+  /* Hauteur de ligne généreuse : les majuscules accentuées (« Méthodes ») se
+     faisaient rogner en haut avec la valeur par défaut. */
+  line-height: 1.4;
+  font-size: 1rem;
+  font-weight: 650;
+  letter-spacing: 0.01em;
+}
+
+.modules {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.module {
+  padding: 11px 13px;
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: 10px;
+  background: var(--qos-bg-elevated);
+}
+
+.module__tete {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 9px;
+}
+
+.module__nom {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.module__code {
+  padding: 1px 6px;
+  border-radius: 5px;
+  background: var(--qos-bg-sunken);
+  color: var(--qos-fg-secondary);
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 0.74rem;
+}
+
+.module__socle,
+.module__palier {
+  margin-left: auto;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.module__socle {
+  background: var(--qos-accent-bg-soft);
+  color: var(--qos-accent-fg-soft);
+}
+
+.module__palier {
+  background: var(--qos-bg-sunken);
+  color: var(--qos-fg-secondary);
+}
+
+.module__requis {
+  margin: 7px 0 0;
+  color: var(--qos-fg-secondary);
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+
+.module__requis-liste {
+  color: var(--qos-fg-primary);
+}

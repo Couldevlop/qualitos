@@ -22629,6 +22629,98 @@ historique 12 mois</source>
         <source>Impossible d'annuler cette inscription.</source>
         <target state="translated">この登録を取り消せません。</target>
       </trans-unit>
+      <trans-unit id="platform.brand.console" datatype="html">
+        <source>Console éditeur</source>
+        <target state="translated">提供元コンソール</target>
+      </trans-unit>
+      <trans-unit id="platform.nav.aria" datatype="html">
+        <source>Navigation de la console</source>
+        <target state="translated">コンソールのナビゲーション</target>
+      </trans-unit>
+      <trans-unit id="platform.topbar.badge" datatype="html">
+        <source>Administration de la plateforme</source>
+        <target state="translated">プラットフォーム管理</target>
+      </trans-unit>
+      <trans-unit id="platform.nav.clients" datatype="html">
+        <source>Clients</source>
+        <target state="translated">顧客</target>
+      </trans-unit>
+      <trans-unit id="platform.nav.clients.hint" datatype="html">
+        <source>Créer un client, son identité, ses modules</source>
+        <target state="translated">顧客の作成、そのアイデンティティとモジュール</target>
+      </trans-unit>
+      <trans-unit id="platform.nav.modules" datatype="html">
+        <source>Catalogue des modules</source>
+        <target state="translated">モジュールカタログ</target>
+      </trans-unit>
+      <trans-unit id="platform.nav.modules.hint" datatype="html">
+        <source>Ce que la plateforme sait livrer</source>
+        <target state="translated">プラットフォームが提供できるもの</target>
+      </trans-unit>
+      <trans-unit id="platform.nav.scope" datatype="html">
+        <source>Cette console n’ouvre aucun écran qualité : les données d’un client se consultent depuis le compte de ce client.</source>
+        <target state="translated">このコンソールは品質画面を開きません。顧客のデータはその顧客のアカウントから参照します。</target>
+      </trans-unit>
+      <trans-unit id="platform.user.logout" datatype="html">
+        <source>Se déconnecter</source>
+        <target state="translated">ログアウト</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.title" datatype="html">
+        <source>Catalogue des modules</source>
+        <target state="translated">モジュールカタログ</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.subtitle" datatype="html">
+        <source>Tout ce que la plateforme sait livrer : le palier minimal de chaque module et ce qu’il exige d’autre pour fonctionner.</source>
+        <target state="translated">プラットフォームが提供できるすべて：各モジュールの最低プランと、動作に必要な前提。</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.reload" datatype="html">
+        <source>Recharger</source>
+        <target state="translated">再読み込み</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.count" datatype="html">
+        <source><x id="INTERPOLATION"/> modules au catalogue</source>
+        <target state="translated">カタログに <x id="INTERPOLATION"/> 件のモジュール</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.core-count" datatype="html">
+        <source>dont <x id="INTERPOLATION"/> acquis d’office</source>
+        <target state="translated">うち <x id="INTERPOLATION"/> 件は標準で付与</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.loading" datatype="html">
+        <source>Chargement du catalogue…</source>
+        <target state="translated">カタログを読み込み中…</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.core" datatype="html">
+        <source>Acquis d’office</source>
+        <target state="translated">標準付与</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.requires" datatype="html">
+        <source>Exige :</source>
+        <target state="translated">前提：</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.empty" datatype="html">
+        <source>Le moteur qualité n’a renvoyé aucun module. Vérifiez qu’il est joignable.</source>
+        <target state="translated">品質エンジンがモジュールを返しませんでした。到達可能か確認してください。</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.load-failed" datatype="html">
+        <source>Le catalogue des modules n’a pas pu être chargé.</source>
+        <target state="translated">モジュールカタログを読み込めませんでした。</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.family.methodes" datatype="html">
+        <source>Méthodes de la qualité</source>
+        <target state="translated">品質手法</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.family.transverse" datatype="html">
+        <source>Modules transverses</source>
+        <target state="translated">横断モジュール</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.family.platform" datatype="html">
+        <source>Plateforme</source>
+        <target state="translated">プラットフォーム</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.family.integrations" datatype="html">
+        <source>Intégrations</source>
+        <target state="translated">連携</target>
+      </trans-unit>
       <trans-unit id="nav.produits" datatype="html">
         <source>Produits</source>
         <target state="translated">製品</target>

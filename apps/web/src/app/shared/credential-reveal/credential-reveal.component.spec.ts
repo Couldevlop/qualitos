@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 
-import { SharedModule } from '../../../../shared/shared.module';
+import { SharedModule } from '../shared.module';
 import { CredentialRevealComponent } from './credential-reveal.component';
 
 /** Mot de passe provisoire FACTICE des bancs : un motif sans entropie, passé par une

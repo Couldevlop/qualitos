@@ -22630,6 +22630,98 @@ historique 12 mois</source>
         <source>Impossible d'annuler cette inscription.</source>
         <target state="translated">تعذّر إلغاء هذا التسجيل.</target>
       </trans-unit>
+      <trans-unit id="platform.brand.console" datatype="html">
+        <source>Console éditeur</source>
+        <target state="translated">وحدة تحكم الناشر</target>
+      </trans-unit>
+      <trans-unit id="platform.nav.aria" datatype="html">
+        <source>Navigation de la console</source>
+        <target state="translated">التنقل في وحدة التحكم</target>
+      </trans-unit>
+      <trans-unit id="platform.topbar.badge" datatype="html">
+        <source>Administration de la plateforme</source>
+        <target state="translated">إدارة المنصة</target>
+      </trans-unit>
+      <trans-unit id="platform.nav.clients" datatype="html">
+        <source>Clients</source>
+        <target state="translated">العملاء</target>
+      </trans-unit>
+      <trans-unit id="platform.nav.clients.hint" datatype="html">
+        <source>Créer un client, son identité, ses modules</source>
+        <target state="translated">إنشاء عميل وهويته ووحداته</target>
+      </trans-unit>
+      <trans-unit id="platform.nav.modules" datatype="html">
+        <source>Catalogue des modules</source>
+        <target state="translated">كتالوج الوحدات</target>
+      </trans-unit>
+      <trans-unit id="platform.nav.modules.hint" datatype="html">
+        <source>Ce que la plateforme sait livrer</source>
+        <target state="translated">ما يمكن للمنصة تقديمه</target>
+      </trans-unit>
+      <trans-unit id="platform.nav.scope" datatype="html">
+        <source>Cette console n’ouvre aucun écran qualité : les données d’un client se consultent depuis le compte de ce client.</source>
+        <target state="translated">لا تفتح وحدة التحكم هذه أي شاشة جودة: تُستعرض بيانات العميل من حساب ذلك العميل.</target>
+      </trans-unit>
+      <trans-unit id="platform.user.logout" datatype="html">
+        <source>Se déconnecter</source>
+        <target state="translated">تسجيل الخروج</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.title" datatype="html">
+        <source>Catalogue des modules</source>
+        <target state="translated">كتالوج الوحدات</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.subtitle" datatype="html">
+        <source>Tout ce que la plateforme sait livrer : le palier minimal de chaque module et ce qu’il exige d’autre pour fonctionner.</source>
+        <target state="translated">كل ما يمكن للمنصة تقديمه: الحد الأدنى من الفئة لكل وحدة وما تتطلبه للعمل.</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.reload" datatype="html">
+        <source>Recharger</source>
+        <target state="translated">إعادة التحميل</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.count" datatype="html">
+        <source><x id="INTERPOLATION"/> modules au catalogue</source>
+        <target state="translated"><x id="INTERPOLATION"/> وحدة في الكتالوج</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.core-count" datatype="html">
+        <source>dont <x id="INTERPOLATION"/> acquis d’office</source>
+        <target state="translated">منها <x id="INTERPOLATION"/> مُمنوحة تلقائيًا</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.loading" datatype="html">
+        <source>Chargement du catalogue…</source>
+        <target state="translated">جارٍ تحميل الكتالوج…</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.core" datatype="html">
+        <source>Acquis d’office</source>
+        <target state="translated">مُمنوحة تلقائيًا</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.requires" datatype="html">
+        <source>Exige :</source>
+        <target state="translated">يتطلب:</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.empty" datatype="html">
+        <source>Le moteur qualité n’a renvoyé aucun module. Vérifiez qu’il est joignable.</source>
+        <target state="translated">لم يُرجع محرك الجودة أي وحدة. تحقّق من إمكانية الوصول إليه.</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.load-failed" datatype="html">
+        <source>Le catalogue des modules n’a pas pu être chargé.</source>
+        <target state="translated">لم يتم تحميل كتالوج الوحدات.</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.family.methodes" datatype="html">
+        <source>Méthodes de la qualité</source>
+        <target state="translated">أساليب الجودة</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.family.transverse" datatype="html">
+        <source>Modules transverses</source>
+        <target state="translated">الوحدات المشتركة</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.family.platform" datatype="html">
+        <source>Plateforme</source>
+        <target state="translated">المنصة</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.family.integrations" datatype="html">
+        <source>Intégrations</source>
+        <target state="translated">التكاملات</target>
+      </trans-unit>
       <trans-unit id="nav.produits" datatype="html">
         <source>Produits</source>
         <target state="translated">المنتجات</target>

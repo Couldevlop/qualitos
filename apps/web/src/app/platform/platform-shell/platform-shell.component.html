@@ -1,0 +1,70 @@
+<div class="qos-platform">
+
+  <aside class="qos-platform__nav" aria-label="Navigation de la console"
+         i18n-aria-label="@@platform.nav.aria">
+
+    <div class="qos-platform__brand">
+      <img class="qos-platform__logo" src="assets/brand/logo-mark.png"
+           alt="QualitOS" width="34" height="34">
+      <div class="qos-platform__brand-text">
+        <strong>QualitOS</strong>
+        <!-- Le repère n'est pas décoratif : il doit être impossible de croire
+             qu'on regarde les données d'un client. -->
+        <small i18n="@@platform.brand.console">Console éditeur</small>
+      </div>
+    </div>
+
+    <nav class="qos-platform__links">
+      <a *ngFor="let entry of entries"
+         class="qos-platform__link"
+         [routerLink]="entry.route"
+         routerLinkActive="qos-platform__link--active">
+        <span class="material-symbols-outlined qos-platform__link-icon"
+              aria-hidden="true">{{ entry.icon }}</span>
+        <span class="qos-platform__link-text">
+          <span class="qos-platform__link-label">{{ entry.label }}</span>
+          <span class="qos-platform__link-hint">{{ entry.hint }}</span>
+        </span>
+      </a>
+    </nav>
+
+    <p class="qos-platform__scope" i18n="@@platform.nav.scope">
+      Cette console n’ouvre aucun écran qualité : les données d’un client se
+      consultent depuis le compte de ce client.
+    </p>
+  </aside>
+
+  <div class="qos-platform__main">
+
+    <header class="qos-platform__topbar">
+      <span class="qos-platform__badge" i18n="@@platform.topbar.badge">
+        Administration de la plateforme
+      </span>
+
+      <ng-container *ngIf="user$ | async as user">
+        <button type="button" class="qos-platform__user"
+                [matMenuTriggerFor]="userMenu"
+                [attr.aria-label]="'Profil ' + user.displayName">
+          <span class="qos-platform__avatar">{{ initials(user.displayName) }}</span>
+          <span class="qos-platform__user-name">{{ user.displayName }}</span>
+          <span class="material-symbols-outlined" aria-hidden="true">expand_more</span>
+        </button>
+
+        <mat-menu #userMenu="matMenu" xPosition="before">
+          <div class="qos-platform__user-head" (click)="$event.stopPropagation()">
+            <span class="qos-platform__user-head-name">{{ user.displayName }}</span>
+            <span class="qos-platform__user-head-roles">{{ user.roles.join(' · ') }}</span>
+          </div>
+          <button mat-menu-item type="button" (click)="logout()">
+            <span class="material-symbols-outlined" aria-hidden="true">logout</span>
+            <span i18n="@@platform.user.logout">Se déconnecter</span>
+          </button>
+        </mat-menu>
+      </ng-container>
+    </header>
+
+    <main class="qos-platform__content">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

@@ -265,14 +265,12 @@ export class MainShellComponent implements OnInit, OnDestroy {
       label: $localize`:@@nav.administration:Administration`,
       collapsible: true,
       items: [
-        {
-          // L'éditeur seulement : créer une organisation, ses modules, son administrateur.
-          label: $localize`:@@nav.admin-clients:Clients`,
-          route: '/admin/clients',
-          icon: 'domain_add',
-          roles: ['SUPER_ADMIN'],
-          edition: 'SAAS'
-        },
+        // L'entrée « Clients » a quitté cette navigation : créer une
+        // organisation est le travail de l'éditeur, et il le fait depuis sa
+        // console (/platform/clients). La laisser ici mélangeait le
+        // paramétrage DU client — tout le reste de cette section — avec
+        // l'administration DE la plateforme, et un administrateur de client y
+        // voyait une entrée qui ne lui répondait que par un refus.
         {
           // La licence de l'installation on-premise : échéance, modules, utilisateurs.
           label: $localize`:@@nav.admin-license:Licence`,

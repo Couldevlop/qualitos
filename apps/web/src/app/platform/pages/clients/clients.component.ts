@@ -3,10 +3,10 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { finalize } from 'rxjs/operators';
 
-import { safeErrorMessage } from '../../../../core/http/error-message';
-import { ModuleCatalogEntry, OnboardResponse, TenantPlan, TenantSummary } from '../../admin.types';
+import { safeErrorMessage } from '../../../core/http/error-message';
+import { ModuleCatalogEntry, OnboardResponse, TenantPlan, TenantSummary } from '../../../features/admin/admin.types';
 import { ClientsService } from '../../clients.service';
-import { TenantModulesService } from '../../tenant-modules.service';
+import { TenantModulesService } from '../../../features/admin/tenant-modules.service';
 
 /** Les étapes de l'assistant, dans l'ordre : c'est une vraie séquence. */
 export type WizardStep = 1 | 2 | 3;

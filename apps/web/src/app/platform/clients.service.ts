@@ -2,8 +2,8 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { environment } from '../../../environments/environment';
-import { OnboardRequest, OnboardResponse, TenantPage } from './admin.types';
+import { environment } from '../../environments/environment';
+import { OnboardRequest, OnboardResponse, TenantPage } from '../features/admin/admin.types';
 
 /**
  * Les clients de la plateforme, côté éditeur (super administrateur).

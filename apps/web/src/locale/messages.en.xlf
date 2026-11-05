@@ -22630,6 +22630,98 @@ declared income
         <source>Impossible d'annuler cette inscription.</source>
         <target state="translated">Cannot cancel this enrollment.</target>
       </trans-unit>
+      <trans-unit id="platform.brand.console" datatype="html">
+        <source>Console éditeur</source>
+        <target state="translated">Publisher console</target>
+      </trans-unit>
+      <trans-unit id="platform.nav.aria" datatype="html">
+        <source>Navigation de la console</source>
+        <target state="translated">Console navigation</target>
+      </trans-unit>
+      <trans-unit id="platform.topbar.badge" datatype="html">
+        <source>Administration de la plateforme</source>
+        <target state="translated">Platform administration</target>
+      </trans-unit>
+      <trans-unit id="platform.nav.clients" datatype="html">
+        <source>Clients</source>
+        <target state="translated">Clients</target>
+      </trans-unit>
+      <trans-unit id="platform.nav.clients.hint" datatype="html">
+        <source>Créer un client, son identité, ses modules</source>
+        <target state="translated">Create a client, its identity, its modules</target>
+      </trans-unit>
+      <trans-unit id="platform.nav.modules" datatype="html">
+        <source>Catalogue des modules</source>
+        <target state="translated">Module catalogue</target>
+      </trans-unit>
+      <trans-unit id="platform.nav.modules.hint" datatype="html">
+        <source>Ce que la plateforme sait livrer</source>
+        <target state="translated">What the platform can deliver</target>
+      </trans-unit>
+      <trans-unit id="platform.nav.scope" datatype="html">
+        <source>Cette console n’ouvre aucun écran qualité : les données d’un client se consultent depuis le compte de ce client.</source>
+        <target state="translated">This console opens no quality screen: a client’s data is viewed from that client’s own account.</target>
+      </trans-unit>
+      <trans-unit id="platform.user.logout" datatype="html">
+        <source>Se déconnecter</source>
+        <target state="translated">Sign out</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.title" datatype="html">
+        <source>Catalogue des modules</source>
+        <target state="translated">Module catalogue</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.subtitle" datatype="html">
+        <source>Tout ce que la plateforme sait livrer : le palier minimal de chaque module et ce qu’il exige d’autre pour fonctionner.</source>
+        <target state="translated">Everything the platform can deliver: each module’s minimum tier and what else it requires to work.</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.reload" datatype="html">
+        <source>Recharger</source>
+        <target state="translated">Reload</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.count" datatype="html">
+        <source><x id="INTERPOLATION"/> modules au catalogue</source>
+        <target state="translated"><x id="INTERPOLATION"/> modules in the catalogue</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.core-count" datatype="html">
+        <source>dont <x id="INTERPOLATION"/> acquis d’office</source>
+        <target state="translated">of which <x id="INTERPOLATION"/> granted by default</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.loading" datatype="html">
+        <source>Chargement du catalogue…</source>
+        <target state="translated">Loading the catalogue…</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.core" datatype="html">
+        <source>Acquis d’office</source>
+        <target state="translated">Granted by default</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.requires" datatype="html">
+        <source>Exige :</source>
+        <target state="translated">Requires:</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.empty" datatype="html">
+        <source>Le moteur qualité n’a renvoyé aucun module. Vérifiez qu’il est joignable.</source>
+        <target state="translated">The quality engine returned no module. Check that it is reachable.</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.load-failed" datatype="html">
+        <source>Le catalogue des modules n’a pas pu être chargé.</source>
+        <target state="translated">The module catalogue could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.family.methodes" datatype="html">
+        <source>Méthodes de la qualité</source>
+        <target state="translated">Quality methods</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.family.transverse" datatype="html">
+        <source>Modules transverses</source>
+        <target state="translated">Cross-cutting modules</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.family.platform" datatype="html">
+        <source>Plateforme</source>
+        <target state="translated">Platform</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.family.integrations" datatype="html">
+        <source>Intégrations</source>
+        <target state="translated">Integrations</target>
+      </trans-unit>
       <trans-unit id="nav.produits" datatype="html">
         <source>Produits</source>
         <target state="translated">Products</target>

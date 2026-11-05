@@ -1,0 +1,254 @@
+/* =============================================================================
+   Coquille de la console de l'éditeur.
+
+   Volontairement sobre et DIFFÉRENTE de la coquille du métier : on doit voir en
+   un dixième de seconde qu'on n'est pas chez un client. La différence passe par
+   la teinte du bandeau et la largeur des entrées, pas par une seconde identité
+   graphique — tout vient des jetons du design system (`--qos-*`), donc la
+   console suit le thème clair / sombre comme le reste.
+   ============================================================================= */
+
+.qos-platform {
+  display: grid;
+  /* Plus large que la navigation du métier : chaque entrée porte une phrase qui
+     dit ce qu'elle fait. Une console d'administration est utilisée rarement, par
+     peu de gens : l'explicite y vaut mieux que le compact. */
+  grid-template-columns: 288px 1fr;
+  min-height: 100vh;
+  background: var(--qos-bg-app);
+  color: var(--qos-fg-primary);
+}
+
+/* ---------------------------------------------------------------- navigation */
+
+.qos-platform__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 18px 14px;
+  background: var(--qos-bg-sidebar);
+  border-right: 1px solid var(--qos-border-sidebar);
+}
+
+.qos-platform__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 2px 6px 14px;
+  border-bottom: 1px solid var(--qos-border-sidebar);
+}
+
+.qos-platform__logo {
+  flex: none;
+  border-radius: 8px;
+}
+
+.qos-platform__brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+  min-width: 0;
+
+  strong {
+    color: var(--qos-fg-sidebar-active);
+    font-size: 0.95rem;
+    letter-spacing: 0.01em;
+  }
+
+  small {
+    /* Le repère « Console éditeur ». Il porte l'accent parce qu'il est la
+       seule chose qui distingue cette fenêtre de celle d'un client. */
+    color: var(--qos-fg-sidebar-active);
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    opacity: 0.82;
+  }
+}
+
+.qos-platform__links {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.qos-platform__link {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  padding: 10px 11px;
+  border-radius: 9px;
+  color: var(--qos-fg-sidebar);
+  text-decoration: none;
+  transition: background 120ms ease, color 120ms ease;
+
+  &:hover {
+    background: var(--qos-bg-sidebar-hover);
+    color: var(--qos-fg-sidebar-active);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--qos-border-focus);
+    outline-offset: 1px;
+  }
+
+  &--active {
+    background: var(--qos-bg-sidebar-active);
+    color: var(--qos-fg-sidebar-active);
+  }
+}
+
+.qos-platform__link-icon {
+  flex: none;
+  font-size: 20px;
+  line-height: 22px;
+}
+
+.qos-platform__link-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.qos-platform__link-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  /* Pas de rognage des hauts de lettres : la hauteur de ligne doit laisser
+     respirer les accents (É de « Éditeur »). */
+  line-height: 1.35;
+}
+
+.qos-platform__link-hint {
+  font-size: 0.74rem;
+  line-height: 1.35;
+  opacity: 0.72;
+}
+
+.qos-platform__scope {
+  margin: auto 6px 0;
+  padding-top: 14px;
+  border-top: 1px solid var(--qos-border-sidebar);
+  color: var(--qos-fg-sidebar);
+  font-size: 0.72rem;
+  line-height: 1.45;
+  opacity: 0.82;
+}
+
+/* ------------------------------------------------------------------ contenu */
+
+.qos-platform__main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.qos-platform__topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 0 20px;
+  height: 56px;
+  background: var(--qos-bg-elevated);
+  border-bottom: 1px solid var(--qos-border-subtle);
+}
+
+.qos-platform__badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--qos-accent-bg-soft);
+  color: var(--qos-accent-fg-soft);
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.qos-platform__user {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px 5px 5px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: none;
+  color: var(--qos-fg-primary);
+  cursor: pointer;
+
+  &:hover {
+    background: var(--qos-bg-hover);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--qos-border-focus);
+    outline-offset: 1px;
+  }
+}
+
+.qos-platform__avatar {
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--qos-accent-bg);
+  color: var(--qos-accent-fg);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.qos-platform__user-name {
+  font-size: 0.84rem;
+  font-weight: 600;
+}
+
+.qos-platform__user-head {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--qos-border-subtle);
+}
+
+.qos-platform__user-head-name {
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+
+.qos-platform__user-head-roles {
+  color: var(--qos-fg-tertiary);
+  font-size: 0.74rem;
+}
+
+.qos-platform__content {
+  flex: 1;
+  min-width: 0;
+  padding: 22px 24px 32px;
+}
+
+/* ------------------------------------------------------------------- étroit */
+
+/* La console se consulte sur un poste. Sur un écran étroit, la navigation passe
+   au-dessus du contenu plutôt que de disparaître derrière un tiroir : deux
+   entrées ne justifient pas un mécanisme d'ouverture. */
+@media (max-width: 900px) {
+  .qos-platform {
+    grid-template-columns: 1fr;
+  }
+
+  .qos-platform__nav {
+    border-right: none;
+    border-bottom: 1px solid var(--qos-border-sidebar);
+  }
+
+  .qos-platform__scope {
+    margin-top: 10px;
+  }
+
+  .qos-platform__content {
+    padding: 16px 14px 24px;
+  }
+}
