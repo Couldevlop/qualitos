@@ -162,3 +162,38 @@ export interface OnboardResponse {
   invitationSent: boolean;
   modules: ModuleOutcome[];
 }
+
+/**
+ * Les quatre thèmes livrés. Liste fermée côté serveur (`TenantTheme`) : un
+ * éditeur de jetons libre laisserait composer un espace illisible, et le
+ * serveur refuse de toute façon un code inconnu.
+ */
+export type TenantTheme = 'DENSE_LIGHT' | 'AIRY_LIGHT' | 'DARK' | 'HIGH_CONTRAST';
+
+/** L'identité d'un client telle qu'on la pose. Un champ vide se pose à `null`. */
+export interface TenantIdentityRequest {
+  slogan: string | null;
+  legalName: string | null;
+  legalForm: string | null;
+  registrationNumber: string | null;
+  vatNumber: string | null;
+  addressLine1: string | null;
+  addressLine2: string | null;
+  postalCode: string | null;
+  city: string | null;
+  countryCode: string | null;
+  contactEmail: string | null;
+  contactPhone: string | null;
+  primaryColor: string | null;
+  secondaryColor: string | null;
+  themeCode: TenantTheme;
+}
+
+/**
+ * L'identité telle qu'elle revient. Les octets du logo n'y sont pas : l'écran
+ * apprend qu'il en existe un et le demande à la route dédiée, qui a un cache.
+ */
+export interface TenantIdentityResponse extends Omit<TenantIdentityRequest, 'themeCode'> {
+  themeCode: TenantTheme;
+  logoAvailable: boolean;
+}

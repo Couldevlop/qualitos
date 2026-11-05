@@ -7690,6 +7690,130 @@ Customer portal</target>
         <source>Refus impossible.</source>
         <target state="translated">Rejection failed.</target>
       </trans-unit>
+      <trans-unit id="admin.clients.step-identity" datatype="html">
+        <source>Identité</source>
+        <target state="translated">Identity</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.identity-help" datatype="html">
+        <source>Tout est facultatif : le client complétera depuis sa propre console. Ce qui est posé ici s'affiche dès sa première connexion.</source>
+        <target state="translated">Everything is optional: the client will complete it from their own console. What is set here appears at their very first sign-in.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.slogan" datatype="html">
+        <source>Signature</source>
+        <target state="translated">Tagline</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.slogan-hint" datatype="html">
+        <source>Une ligne, sous le nom.</source>
+        <target state="translated">One line, under the name.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.legal-name" datatype="html">
+        <source>Raison sociale</source>
+        <target state="translated">Legal name</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.legal-form" datatype="html">
+        <source>Forme juridique</source>
+        <target state="translated">Legal form</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.registration" datatype="html">
+        <source>Numéro d'immatriculation</source>
+        <target state="translated">Registration number</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.vat" datatype="html">
+        <source>Numéro de TVA</source>
+        <target state="translated">VAT number</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.address" datatype="html">
+        <source>Adresse</source>
+        <target state="translated">Address</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.postal-code" datatype="html">
+        <source>Code postal</source>
+        <target state="translated">Postal code</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.city" datatype="html">
+        <source>Ville</source>
+        <target state="translated">City</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.country" datatype="html">
+        <source>Pays (ISO, 2 lettres)</source>
+        <target state="translated">Country (ISO, 2 letters)</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.country-invalid" datatype="html">
+        <source>Deux lettres, par exemple FR.</source>
+        <target state="translated">Two letters, for example FR.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.contact-email" datatype="html">
+        <source>Contact — e-mail</source>
+        <target state="translated">Contact — email</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.contact-phone" datatype="html">
+        <source>Contact — téléphone</source>
+        <target state="translated">Contact — phone</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.brand" datatype="html">
+        <source>Marque</source>
+        <target state="translated">Brand</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.primary-color" datatype="html">
+        <source>Couleur principale</source>
+        <target state="translated">Primary colour</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.secondary-color" datatype="html">
+        <source>Couleur secondaire</source>
+        <target state="translated">Secondary colour</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.color-note" datatype="html">
+        <source>Une couleur illisible sur le fond du thème est refusée par le serveur : le contraste prime sur la charte.</source>
+        <target state="translated">A colour unreadable against the theme background is refused by the server: contrast outranks the brand guide.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.logo" datatype="html">
+        <source>Logo</source>
+        <target state="translated">Logo</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.logo-remove" datatype="html">
+        <source>Retirer le logo</source>
+        <target state="translated">Remove the logo</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.logo-hint" datatype="html">
+        <source>PNG, JPEG ou WebP, 512 Ko au plus.</source>
+        <target state="translated">PNG, JPEG or WebP, 512 KB at most.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.logo-type" datatype="html">
+        <source>Formats acceptés : PNG, JPEG, WebP.</source>
+        <target state="translated">Accepted formats: PNG, JPEG, WebP.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.logo-size" datatype="html">
+        <source>Le logo ne doit pas dépasser 512 Ko.</source>
+        <target state="translated">The logo must not exceed 512 KB.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.theme" datatype="html">
+        <source>Thème</source>
+        <target state="translated">Theme</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.theme-airy" datatype="html">
+        <source>Clair aéré — par défaut</source>
+        <target state="translated">Light and airy — default</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.theme-dense" datatype="html">
+        <source>Clair dense — poste de travail</source>
+        <target state="translated">Light and dense — workstation</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.theme-dark" datatype="html">
+        <source>Sombre</source>
+        <target state="translated">Dark</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.theme-contrast" datatype="html">
+        <source>Contraste renforcé — atelier, extérieur</source>
+        <target state="translated">High contrast — workshop, outdoors</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.identity-failed" datatype="html">
+        <source>L'identité n'a pas été enregistrée : reprenez-la depuis la fiche du client.</source>
+        <target state="translated">The identity was not saved: set it again from the client record.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.logo-failed" datatype="html">
+        <source>Le logo n'a pas été déposé : reprenez-le depuis la fiche du client.</source>
+        <target state="translated">The logo was not uploaded: upload it again from the client record.</target>
+      </trans-unit>
       <trans-unit id="nav.complaints-nlp" datatype="html">
         <source>Réclamations IA</source>
         <target state="translated">AI complaints</target>
@@ -11211,6 +11335,10 @@ Business contact details</target>
       <trans-unit id="dmaic.res.problem.planned" datatype="html">
         <source>Une action ne peut pas être prévue avant sa date de création.</source>
         <target state="translated">An action cannot be planned before its creation date.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.closed" datatype="html">
+        <source>Clôturé</source>
+        <target state="translated">Closed</target>
       </trans-unit>
       <trans-unit id="dmaic.res.header-title" datatype="html">
         <source>DMAIC Résolution de problème</source>
@@ -18439,8 +18567,8 @@ declared income
         <target state="translated">Resume</target>
       </trans-unit>
       <trans-unit id="dmaic.detail.charter" datatype="html">
-        <source>Charter</source>
-        <target state="translated">Charter</target>
+        <source>Charte du projet</source>
+        <target state="translated">Project charter</target>
       </trans-unit>
       <trans-unit id="dmaic.detail.problem-label" datatype="html">
         <source>Problème :</source>

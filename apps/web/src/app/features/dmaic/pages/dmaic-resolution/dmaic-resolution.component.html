@@ -34,9 +34,14 @@
          — identité, références et dates, qualification — puis les symptômes sur
          toute la largeur. Regroupée ainsi, elle tient en un coup d'œil au lieu
          d'occuper un écran entier avant la première question. ===== -->
-    <section class="bloc entete" id="res-claim" aria-labelledby="res-claim-t">
+    <section class="bloc entete" [class.entete--close]="projectClosed" id="res-claim"
+             aria-labelledby="res-claim-t" [attr.data-test]="projectClosed ? 'entete-close' : null">
       <header class="entete__head">
-        <h2 class="entete__titre" id="res-claim-t" i18n="@@dmaic.res.header-title">DMAIC Résolution de problème</h2>
+        <h2 class="entete__titre" id="res-claim-t">
+          <mat-icon *ngIf="projectClosed" class="entete__sceau" aria-hidden="true">verified</mat-icon>
+          <span i18n="@@dmaic.res.header-title">DMAIC Résolution de problème</span>
+          <span class="entete__etat" *ngIf="projectClosed" i18n="@@dmaic.res.closed">Clôturé</span>
+        </h2>
         <p class="entete__lead" *ngIf="sheet.problemStatement">{{ sheet.problemStatement }}</p>
       </header>
 
@@ -176,7 +181,7 @@
               <span class="question__label" [id]="'ql-' + q.code">{{ q.label }}</span>
               <div class="question__reponse">
                 <mat-form-field *ngIf="q.answerType === 'TEXT'; else closed" appearance="outline" subscriptSizing="dynamic">
-                  <textarea matInput rows="2" [attr.aria-labelledby]="'ql-' + q.code"
+                  <textarea matInput rows="1" [attr.aria-labelledby]="'ql-' + q.code"
                             [ngModel]="answerOf(q.code)" (ngModelChange)="setAnswer(q.code, $event)"
                             [maxlength]="limits.answer" [disabled]="!canEdit"></textarea>
                 </mat-form-field>

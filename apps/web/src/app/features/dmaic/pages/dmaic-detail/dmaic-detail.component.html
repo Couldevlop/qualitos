@@ -24,6 +24,7 @@
     <!-- L'en-tête de la réclamation, puis les actions et les phases en ligne, puis la phase ouverte (ADR 0101). -->
     <qos-dmaic-resolution class="pilotage" [projectId]="p.id" [problemStatement]="p.problemStatement ?? null"
                           [projectTitle]="p.title" [projectPhase]="p.status === 'COMPLETED' ? 'CONTROL' : p.phase"
+                          [projectClosed]="p.status === 'COMPLETED'"
                           [spec]="{ lsl: p.specLowerLimit ?? null, usl: p.specUpperLimit ?? null }"
                           (missingChange)="onMissing($event)">
       <div class="toolbar" qosActions>
@@ -58,7 +59,7 @@
       </div>
       <div qosCharter *ngIf="p.problemStatement || p.goalStatement">
         <mat-card *ngIf="p.problemStatement || p.goalStatement" class="charter-card">
-          <mat-card-header><mat-card-title i18n="@@dmaic.detail.charter">Charter</mat-card-title></mat-card-header>
+          <mat-card-header><mat-card-title i18n="@@dmaic.detail.charter">Charte du projet</mat-card-title></mat-card-header>
           <mat-card-content>
             <p *ngIf="p.problemStatement"><strong i18n="@@dmaic.detail.problem-label">Problème :</strong> {{ p.problemStatement }}</p>
             <p *ngIf="p.goalStatement"><strong i18n="@@dmaic.detail.goal-label">Objectif :</strong> {{ p.goalStatement }}</p>

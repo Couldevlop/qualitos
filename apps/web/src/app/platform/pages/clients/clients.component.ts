@@ -1,15 +1,22 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { finalize } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { catchError, finalize, map, switchMap } from 'rxjs/operators';
 
 import { safeErrorMessage } from '../../../core/http/error-message';
-import { ModuleCatalogEntry, OnboardResponse, TenantPlan, TenantSummary } from '../../../features/admin/admin.types';
+import {
+  ModuleCatalogEntry, OnboardResponse, TenantIdentityRequest, TenantPlan, TenantSummary, TenantTheme
+} from '../../../features/admin/admin.types';
 import { ClientsService } from '../../clients.service';
 import { TenantModulesService } from '../../../features/admin/tenant-modules.service';
 
 /** Les étapes de l'assistant, dans l'ordre : c'est une vraie séquence. */
-export type WizardStep = 1 | 2 | 3;
+export type WizardStep = 1 | 2 | 3 | 4;
+
+/** Les types d'image que le serveur accepte pour un logo, et la taille qu'il borne. */
+export const LOGO_TYPES: readonly string[] = ['image/png', 'image/jpeg', 'image/webp'];
+export const LOGO_MAX_BYTES = 512 * 1024;
 
 export interface ModuleFamily {
   category: string;
@@ -34,6 +41,7 @@ export interface ModuleFamily {
 export class ClientsComponent implements OnInit {
 
   readonly plans: TenantPlan[] = ['STARTER', 'PRO', 'ENTERPRISE'];
+  readonly themes: readonly TenantTheme[] = ['AIRY_LIGHT', 'DENSE_LIGHT', 'DARK', 'HIGH_CONTRAST'];
 
   clients: TenantSummary[] = [];
   loading = false;
@@ -47,12 +55,46 @@ export class ClientsComponent implements OnInit {
   creating = false;
   result: OnboardResponse | null = null;
 
+  /** Le logo choisi, gardé en mémoire jusqu'à ce que le client existe et ait un identifiant. */
+  logoFile: File | null = null;
+  logoName: string | null = null;
+  logoError: string | null = null;
+
+  /** Ce qui a échoué APRÈS la création : le client existe, son habillage non. */
+  identityWarning: string | null = null;
+  logoWarning: string | null = null;
+
   private catalog: ModuleCatalogEntry[] = [];
 
   readonly companyForm = this.fb.nonNullable.group({
     name: ['', [Validators.required, Validators.maxLength(255)]],
     slug: ['', [Validators.required, Validators.pattern(/^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$/)]],
     plan: ['STARTER' as TenantPlan, Validators.required]
+  });
+
+  /**
+   * L'identité et le thème, posés à la création.
+   *
+   * <p>Tout y est facultatif sauf le thème : un client se crée en trente
+   * secondes quand il faut aller vite, et se complète ensuite depuis sa
+   * propre console. Les bornes reprennent celles du serveur ; les motifs
+   * acceptent le vide, sans quoi un champ laissé de côté bloquerait l'étape.
+   */
+  readonly identityForm = this.fb.nonNullable.group({
+    slogan: ['', Validators.maxLength(160)],
+    legalName: ['', Validators.maxLength(255)],
+    legalForm: ['', Validators.maxLength(64)],
+    registrationNumber: ['', Validators.maxLength(64)],
+    vatNumber: ['', Validators.maxLength(32)],
+    addressLine1: ['', Validators.maxLength(255)],
+    postalCode: ['', Validators.maxLength(16)],
+    city: ['', Validators.maxLength(128)],
+    countryCode: ['', Validators.pattern(/^([A-Za-z]{2})?$/)],
+    contactEmail: ['', [Validators.email, Validators.maxLength(254)]],
+    contactPhone: ['', Validators.maxLength(32)],
+    primaryColor: ['', Validators.pattern(/^(#[0-9a-fA-F]{6})?$/)],
+    secondaryColor: ['', Validators.pattern(/^(#[0-9a-fA-F]{6})?$/)],
+    themeCode: ['AIRY_LIGHT' as TenantTheme, Validators.required]
   });
 
   readonly adminForm = this.fb.nonNullable.group({
@@ -89,7 +131,13 @@ export class ClientsComponent implements OnInit {
     this.result = null;
     this.selected = new Set();
     this.companyForm.reset();
+    this.identityForm.reset();
     this.adminForm.reset();
+    this.logoFile = null;
+    this.logoName = null;
+    this.logoError = null;
+    this.identityWarning = null;
+    this.logoWarning = null;
     if (!this.catalog.length) {
       this.modules.catalog().subscribe({
         next: c => {
@@ -121,8 +169,48 @@ export class ClientsComponent implements OnInit {
       }
       this.step = 2;
     } else if (this.step === 2) {
+      if (this.identityForm.invalid) {
+        this.identityForm.markAllAsTouched();
+        return;
+      }
       this.step = 3;
+    } else if (this.step === 3) {
+      this.step = 4;
     }
+  }
+
+  /**
+   * Le logo choisi : refusé ici s'il ne peut pas convenir, pour ne pas
+   * découvrir à la création qu'il est trop lourd.
+   *
+   * <p>Ce contrôle est un confort, pas une garantie : le serveur vérifie le
+   * type par les octets du fichier et non par ce que le navigateur déclare.
+   */
+  pickLogo(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files && input.files.length ? input.files[0] : null;
+    this.logoFile = null;
+    this.logoName = null;
+    this.logoError = null;
+    if (!file) {
+      return;
+    }
+    if (!LOGO_TYPES.includes(file.type)) {
+      this.logoError = $localize`:@@admin.clients.logo-type:Formats acceptés : PNG, JPEG, WebP.`;
+      return;
+    }
+    if (file.size > LOGO_MAX_BYTES) {
+      this.logoError = $localize`:@@admin.clients.logo-size:Le logo ne doit pas dépasser 512 Ko.`;
+      return;
+    }
+    this.logoFile = file;
+    this.logoName = file.name;
+  }
+
+  clearLogo(): void {
+    this.logoFile = null;
+    this.logoName = null;
+    this.logoError = null;
   }
 
   back(): void {
@@ -166,10 +254,15 @@ export class ClientsComponent implements OnInit {
     const c = this.companyForm.getRawValue();
     const a = this.adminForm.getRawValue();
     this.creating = true;
+    this.identityWarning = null;
+    this.logoWarning = null;
     this.service.onboard({
       name: c.name.trim(), slug: c.slug.trim(), plan: c.plan, modules: [...this.selected].sort(),
       admin: { email: a.email.trim(), firstName: a.firstName.trim() || null, lastName: a.lastName.trim() || null }
-    }).pipe(finalize(() => this.creating = false)).subscribe({
+    }).pipe(
+      switchMap(r => this.applyIdentity(r.tenant.id).pipe(map(() => r))),
+      finalize(() => this.creating = false)
+    ).subscribe({
       next: r => {
         this.result = r;
         this.wizard = false;
@@ -179,6 +272,74 @@ export class ClientsComponent implements OnInit {
         safeErrorMessage(err, $localize`:@@admin.clients.create-failed:La création du client a échoué.`),
         undefined, { duration: 6000 })
     });
+  }
+
+  /**
+   * L'identité, puis le logo, une fois le client créé.
+   *
+   * <p>Un refus n'annule rien : le client existe, son compte administrateur
+   * aussi, et ses identifiants doivent s'afficher. Faire échouer la création
+   * entière parce qu'un logo a déplu obligerait à tout recommencer avec un
+   * identifiant d'adresse déjà pris. L'écart est donc dit, pas caché.
+   */
+  private applyIdentity(tenantId: string): Observable<void> {
+    const identite = this.identityPayload();
+    const identite$ = identite
+      ? this.service.saveIdentity(tenantId, identite).pipe(
+          map(() => void 0),
+          catchError((err: unknown) => {
+            this.identityWarning = safeErrorMessage(
+              err, $localize`:@@admin.clients.identity-failed:L'identité n'a pas été enregistrée : reprenez-la depuis la fiche du client.`);
+            return of(void 0);
+          }))
+      : of(void 0);
+
+    return identite$.pipe(switchMap(() => {
+      const logo = this.logoFile;
+      if (!logo) {
+        return of(void 0);
+      }
+      return this.service.saveLogo(tenantId, logo).pipe(
+        map(() => void 0),
+        catchError((err: unknown) => {
+          this.logoWarning = safeErrorMessage(
+            err, $localize`:@@admin.clients.logo-failed:Le logo n'a pas été déposé : reprenez-le depuis la fiche du client.`);
+          return of(void 0);
+        }));
+    }));
+  }
+
+  /** Ce qu'on envoie, ou rien du tout si l'étape a été passée sans y toucher. */
+  private identityPayload(): TenantIdentityRequest | null {
+    const v = this.identityForm.getRawValue();
+    const net = (x: string): string | null => {
+      const t = x.trim();
+      return t.length ? t : null;
+    };
+    const corps: TenantIdentityRequest = {
+      slogan: net(v.slogan), legalName: net(v.legalName), legalForm: net(v.legalForm),
+      registrationNumber: net(v.registrationNumber), vatNumber: net(v.vatNumber),
+      addressLine1: net(v.addressLine1), addressLine2: null,
+      postalCode: net(v.postalCode), city: net(v.city),
+      countryCode: net(v.countryCode)?.toUpperCase() ?? null,
+      contactEmail: net(v.contactEmail), contactPhone: net(v.contactPhone),
+      primaryColor: net(v.primaryColor), secondaryColor: net(v.secondaryColor),
+      themeCode: v.themeCode
+    };
+    const renseigne = Object.entries(corps).some(([cle, val]) => cle !== 'themeCode' && val !== null);
+    // Le thème par défaut tout seul ne vaut pas un appel : c'est déjà ce que
+    // le serveur donne à un client qui n'a rien choisi.
+    return renseigne || corps.themeCode !== 'AIRY_LIGHT' ? corps : null;
+  }
+
+  /** Le libellé d'un thème, pour ne pas montrer `HIGH_CONTRAST` à un humain. */
+  themeLabel(theme: TenantTheme): string {
+    switch (theme) {
+      case 'DENSE_LIGHT': return $localize`:@@admin.clients.theme-dense:Clair dense — poste de travail`;
+      case 'DARK': return $localize`:@@admin.clients.theme-dark:Sombre`;
+      case 'HIGH_CONTRAST': return $localize`:@@admin.clients.theme-contrast:Contraste renforcé — atelier, extérieur`;
+      default: return $localize`:@@admin.clients.theme-airy:Clair aéré — par défaut`;
+    }
   }
 
   requiredText(m: ModuleCatalogEntry): string {

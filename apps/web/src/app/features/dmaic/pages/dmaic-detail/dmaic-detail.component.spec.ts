@@ -28,6 +28,7 @@ class ResolutionStubComponent {
   @Input() projectTitle = '';
   @Input() projectPhase: string | null = null;
   @Input() spec: unknown = null;
+  @Input() projectClosed = false;
   @Output() missingChange = new EventEmitter<string[]>();
 }
 

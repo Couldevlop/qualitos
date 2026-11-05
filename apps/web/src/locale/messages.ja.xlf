@@ -7690,6 +7690,130 @@ Portail clients</source>
         <source>Refus impossible.</source>
         <target state="translated">却下できませんでした。</target>
       </trans-unit>
+      <trans-unit id="admin.clients.step-identity" datatype="html">
+        <source>Identité</source>
+        <target state="translated">アイデンティティ</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.identity-help" datatype="html">
+        <source>Tout est facultatif : le client complétera depuis sa propre console. Ce qui est posé ici s'affiche dès sa première connexion.</source>
+        <target state="translated">すべて任意です。顧客は自身のコンソールで補完できます。ここで設定した内容は初回ログインから表示されます。</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.slogan" datatype="html">
+        <source>Signature</source>
+        <target state="translated">キャッチフレーズ</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.slogan-hint" datatype="html">
+        <source>Une ligne, sous le nom.</source>
+        <target state="translated">名称の下に一行。</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.legal-name" datatype="html">
+        <source>Raison sociale</source>
+        <target state="translated">商号</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.legal-form" datatype="html">
+        <source>Forme juridique</source>
+        <target state="translated">法人形態</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.registration" datatype="html">
+        <source>Numéro d'immatriculation</source>
+        <target state="translated">登記番号</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.vat" datatype="html">
+        <source>Numéro de TVA</source>
+        <target state="translated">付加価値税番号</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.address" datatype="html">
+        <source>Adresse</source>
+        <target state="translated">住所</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.postal-code" datatype="html">
+        <source>Code postal</source>
+        <target state="translated">郵便番号</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.city" datatype="html">
+        <source>Ville</source>
+        <target state="translated">市区町村</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.country" datatype="html">
+        <source>Pays (ISO, 2 lettres)</source>
+        <target state="translated">国（ISO 2文字）</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.country-invalid" datatype="html">
+        <source>Deux lettres, par exemple FR.</source>
+        <target state="translated">2文字、例：FR。</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.contact-email" datatype="html">
+        <source>Contact — e-mail</source>
+        <target state="translated">連絡先 — メール</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.contact-phone" datatype="html">
+        <source>Contact — téléphone</source>
+        <target state="translated">連絡先 — 電話</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.brand" datatype="html">
+        <source>Marque</source>
+        <target state="translated">ブランド</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.primary-color" datatype="html">
+        <source>Couleur principale</source>
+        <target state="translated">メインカラー</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.secondary-color" datatype="html">
+        <source>Couleur secondaire</source>
+        <target state="translated">サブカラー</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.color-note" datatype="html">
+        <source>Une couleur illisible sur le fond du thème est refusée par le serveur : le contraste prime sur la charte.</source>
+        <target state="translated">テーマの背景で判読できない色はサーバーが拒否します。コントラストはブランド規定に優先します。</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.logo" datatype="html">
+        <source>Logo</source>
+        <target state="translated">ロゴ</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.logo-remove" datatype="html">
+        <source>Retirer le logo</source>
+        <target state="translated">ロゴを削除</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.logo-hint" datatype="html">
+        <source>PNG, JPEG ou WebP, 512 Ko au plus.</source>
+        <target state="translated">PNG、JPEG、WebP、最大512 KB。</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.logo-type" datatype="html">
+        <source>Formats acceptés : PNG, JPEG, WebP.</source>
+        <target state="translated">対応形式：PNG、JPEG、WebP。</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.logo-size" datatype="html">
+        <source>Le logo ne doit pas dépasser 512 Ko.</source>
+        <target state="translated">ロゴは512 KBを超えてはなりません。</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.theme" datatype="html">
+        <source>Thème</source>
+        <target state="translated">テーマ</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.theme-airy" datatype="html">
+        <source>Clair aéré — par défaut</source>
+        <target state="translated">明るく余白のある表示 — 既定</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.theme-dense" datatype="html">
+        <source>Clair dense — poste de travail</source>
+        <target state="translated">明るく高密度 — 作業端末</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.theme-dark" datatype="html">
+        <source>Sombre</source>
+        <target state="translated">ダーク</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.theme-contrast" datatype="html">
+        <source>Contraste renforcé — atelier, extérieur</source>
+        <target state="translated">高コントラスト — 作業場、屋外</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.identity-failed" datatype="html">
+        <source>L'identité n'a pas été enregistrée : reprenez-la depuis la fiche du client.</source>
+        <target state="translated">アイデンティティは保存されませんでした。顧客カードから設定し直してください。</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.logo-failed" datatype="html">
+        <source>Le logo n'a pas été déposé : reprenez-le depuis la fiche du client.</source>
+        <target state="translated">ロゴはアップロードされませんでした。顧客カードから再度アップロードしてください。</target>
+      </trans-unit>
       <trans-unit id="nav.complaints-nlp" datatype="html">
         <source>Réclamations IA</source>
         <target state="translated">AIクレーム</target>
@@ -11211,6 +11335,10 @@ Coordonnées professionnelles</source>
       <trans-unit id="dmaic.res.problem.planned" datatype="html">
         <source>Une action ne peut pas être prévue avant sa date de création.</source>
         <target state="translated">アクションの予定日を作成日より前にすることはできません。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.closed" datatype="html">
+        <source>Clôturé</source>
+        <target state="translated">完了</target>
       </trans-unit>
       <trans-unit id="dmaic.res.header-title" datatype="html">
         <source>DMAIC Résolution de problème</source>
@@ -18438,7 +18566,7 @@ historique 12 mois</source>
         <target state="translated">再開</target>
       </trans-unit>
       <trans-unit id="dmaic.detail.charter" datatype="html">
-        <source>Charter</source>
+        <source>Charte du projet</source>
         <target state="translated">チャーター</target>
       </trans-unit>
       <trans-unit id="dmaic.detail.problem-label" datatype="html">

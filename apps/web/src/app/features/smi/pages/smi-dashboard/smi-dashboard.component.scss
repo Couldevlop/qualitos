@@ -234,9 +234,13 @@
   justify-content: space-between;
   gap: var(--qos-space-3);
   flex-wrap: wrap;
+  // L'air sous l'en-tete appartient a l'EN-TETE, pas au seul titre : quand la
+  // bascule Brut/Residuel est la plus haute des deux, c'est elle qui touchait
+  // la matrice, le titre gardant son espace pour lui.
+  margin-bottom: var(--qos-space-4);
 
   .carte__titre {
-    margin-bottom: var(--qos-space-3);
+    margin-bottom: 0;
   }
 }
 

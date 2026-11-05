@@ -179,7 +179,7 @@ TRANSLATIONS = {
     'dmaic.detail.advance': ('Avancer', 'Advance', 'Avanzar', 'تقدّم', '進める', '推进'),
     'dmaic.detail.hold': ('Pause', 'Hold', 'Pausar', 'إيقاف مؤقت', '保留', '暂停'),
     'dmaic.detail.resume': ('Reprendre', 'Resume', 'Reanudar', 'استئناف', '再開', '恢复'),
-    'dmaic.detail.charter': ('Charter', 'Charter', 'Acta', 'ميثاق المشروع', 'チャーター', '项目章程'),
+    'dmaic.detail.charter': ('Charte du projet', 'Project charter', 'Acta de proyecto', 'ميثاق المشروع', 'チャーター', '项目章程'),
     'dmaic.detail.problem-label': ('Problème :', 'Problem:', 'Problema:', 'المشكلة:', '問題：', '问题：'),
     'dmaic.detail.goal-label': ('Objectif :', 'Goal:', 'Objetivo:', 'الهدف:', '目標：', '目标：'),
     'dmaic.detail.specs': ('Spécifications', 'Specifications', 'Especificaciones', 'المواصفات', '仕様', '规格'),
