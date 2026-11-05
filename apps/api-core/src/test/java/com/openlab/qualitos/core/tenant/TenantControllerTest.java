@@ -49,6 +49,11 @@ class TenantControllerTest {
     @MockitoBean
     private TenantOnboardingService onboardingService;
 
+    // L'identite du client (logo, slogan, mentions legales, theme) : le
+    // controleur la sert depuis ce service.
+    @MockitoBean
+    private TenantIdentityService identityService;
+
     // JwtDecoder est requis par SecurityConfig (oauth2ResourceServer)
     // TenantJwtFilter est créé via SecurityConfig.tenantJwtFilter(JwtDecoder)
     @MockitoBean

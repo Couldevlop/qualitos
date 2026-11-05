@@ -4,6 +4,8 @@ import com.openlab.qualitos.core.edition.SaasOnly;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -27,12 +29,17 @@ import java.util.UUID;
 @SaasOnly
 public class TenantController {
 
+    private static final Logger log = LoggerFactory.getLogger(TenantController.class);
+
     private final TenantService tenantService;
     private final TenantOnboardingService onboarding;
+    private final TenantIdentityService identityService;
 
-    public TenantController(TenantService tenantService, TenantOnboardingService onboarding) {
+    public TenantController(TenantService tenantService, TenantOnboardingService onboarding,
+                            TenantIdentityService identityService) {
         this.tenantService = tenantService;
         this.onboarding = onboarding;
+        this.identityService = identityService;
     }
 
     /**
@@ -85,6 +92,31 @@ public class TenantController {
             @PathVariable UUID id,
             @Valid @RequestBody TenantDto.UpdateRequest request) {
         return ResponseEntity.ok(tenantService.update(id, request));
+    }
+
+    /**
+     * L'identité du client : ce qui habille son espace et ce qui figure sur ses
+     * documents. Lecture ouverte au super administrateur comme le reste de ce
+     * contrôleur ; l'application d'un client lit la sienne par la route de
+     * marque, qui n'expose pas les mentions légales d'un autre.
+     */
+    @GetMapping("/{id}/identity")
+    @Operation(summary = "Read a tenant's visual and legal identity")
+    public ResponseEntity<TenantIdentityDto.Response> getIdentity(@PathVariable UUID id) {
+        return ResponseEntity.ok(identityService.get(id));
+    }
+
+    @PutMapping("/{id}/identity")
+    @Operation(summary = "Set a tenant's visual and legal identity")
+    public ResponseEntity<TenantIdentityDto.Response> putIdentity(
+            @PathVariable UUID id,
+            @Valid @RequestBody TenantIdentityDto.Request request) {
+        TenantIdentityDto.Response saved = identityService.save(id, request);
+        // Journalisation structuree, comme le reste d'api-core. La piste d'audit
+        // scellee inter-clients est l'objet du lot 3 de la console : tant qu'elle
+        // n'existe pas, ne pas faire croire qu'une ecriture d'editeur y figure.
+        log.info("tenant.identity.updated tenant_id={} theme={}", id, saved.themeCode());
+        return ResponseEntity.ok(saved);
     }
 
     @DeleteMapping("/{id}")
