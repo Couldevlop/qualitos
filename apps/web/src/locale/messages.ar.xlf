@@ -21063,8 +21063,8 @@ historique 12 mois</source>
         <target state="translated">لا يمكن أن يكون الدليل فارغًا. استعد دليل المنصة.</target>
       </trans-unit>
       <trans-unit id="nc.settings.problem.too-many" datatype="html">
-        <source>Pas plus de <x id="INTERPOLATION"/> natures.</source>
-        <target state="translated">لا أكثر من <x id="INTERPOLATION"/> نوعًا.</target>
+        <source>Pas plus de <x id="max"/> natures.</source>
+        <target state="translated">لا أكثر من <x id="max"/> نوعًا.</target>
       </trans-unit>
       <trans-unit id="nc.settings.problem.code" datatype="html">
         <source>Un code s’écrit en capitales, chiffres, tiret ou point (ex. : PRD-DIM).</source>
@@ -21079,8 +21079,8 @@ historique 12 mois</source>
         <target state="translated">نوعان يحملان الرمز نفسه.</target>
       </trans-unit>
       <trans-unit id="nc.settings.problem.empty-category" datatype="html">
-        <source>Catégorie sans aucune nature : <x id="INTERPOLATION"/> — la saisie n’y proposerait rien.</source>
-        <target state="translated">فئة بلا أي نوع: <x id="INTERPOLATION"/> — لن يعرض نموذج الإدخال شيئًا فيها.</target>
+        <source>Catégorie sans aucune nature : <x id="count"/> — la saisie n’y proposerait rien.</source>
+        <target state="translated">فئة بلا أي نوع: <x id="count"/> — لن يعرض نموذج الإدخال شيئًا فيها.</target>
       </trans-unit>
       <trans-unit id="nc.settings.load-failed" datatype="html">
         <source>Le catalogue des natures n’a pas pu être chargé.</source>

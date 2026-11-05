@@ -37,7 +37,7 @@
 # `latest-dev` dans le job pytest de la CI : à relever ensemble.
 # ai-vision-5s et l'inférence edge restent en 3.14 : onnxruntime n'a pas de roue
 # 3.15. Elles ne sont ni scannées ni livrées par la CD.
-FROM cgr.dev/chainguard/python:latest-dev@sha256:c179c7d8e23caed59a51ff74d4742f8f8d3f16af4c33c40acaf8d3ee07234592 AS builder
+FROM cgr.dev/chainguard/python:latest-dev@sha256:29ab100be9f9be1ec5e31d7b7c384134171ee8f052e24e2285e697538c199aa6 AS builder
 # Les images Chainguard démarrent en nonroot ; l'étage de construction a besoin
 # d'écrire dans /deps. Cela ne concerne QUE le builder — le runtime plus bas
 # conserve l'utilisateur nonroot par défaut.
@@ -81,7 +81,7 @@ RUN python -m pip install --no-cache-dir --upgrade pip \
     "psycopg[binary]>=3.2"
 
 # -------- runtime stage (Chainguard — surface minimale, nonroot, sans shell) ----
-FROM cgr.dev/chainguard/python:latest@sha256:fd6d0771e8ec99b1710dfc3d72ca19ba2ff6b14f72b7978922ab0c8acb72c3f3
+FROM cgr.dev/chainguard/python:latest@sha256:31dd69d84fe5235fe18f8ceb5b76620e6f44a0ce1f9b0d3a46c491576f8b453b
 WORKDIR /app
 
 # site-packages tiers + code applicatif.

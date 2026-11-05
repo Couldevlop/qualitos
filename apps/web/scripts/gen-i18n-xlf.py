@@ -121,6 +121,54 @@ def reject_literal_interpolations(translations: dict) -> None:
             "ICU et l'ecran traduit leve a l'execution.\n"
             + details)
 
+NAMED_PLACEHOLDER_RE = re.compile(r"\}:([A-Za-z_][A-Za-z0-9_]*):")
+
+
+def reject_placeholder_mismatch(translations: dict) -> None:
+    """Les noms d'espaces reserves des tables doivent etre ceux du code.
+
+    POURQUOI CE CONTROLE. Un message ecrit
+    ``$localize`:@@id:Pas plus de ${n}:max: natures.``` nomme son espace
+    reserve ``max`` ; la table doit donc ecrire ``{$max}``. Ecrire
+    ``{$INTERPOLATION}`` passe ici, passe ``--check``, passe ``build:prod``
+    (qui ne construit PAS les locales) -- et echoue seulement au build
+    localise, c'est-a-dire dans le job d'image de la CD, apres la fusion :
+    « There is a placeholder name mismatch with the translation provided ».
+    Mesure du 2026-11-05 : deux unites ainsi ecrites ont bloque le
+    deploiement de preproduction, et le defaut n'etait visible nulle part
+    plus tot. Ce controle le ramene a une seconde de generation.
+    """
+    used: dict = {}
+    id_re = re.compile(r"@@([A-Za-z0-9._-]+):(.*?)`", re.S)
+    for root, _dirs, files in os.walk(SRC_APP):
+        for fn in files:
+            if not fn.endswith((".html", ".ts")):
+                continue
+            text = io.open(os.path.join(root, fn), encoding="utf-8", errors="replace").read()
+            for match in id_re.finditer(text):
+                names = set(NAMED_PLACEHOLDER_RE.findall(match.group(2)))
+                if names:
+                    used.setdefault(match.group(1), set()).update(names)
+    faulty = []
+    for unit_id, names in sorted(used.items()):
+        row = translations.get(unit_id)
+        if not row:
+            continue
+        present = set()
+        for value in row:
+            present.update(PLACEHOLDER_RE.findall(value))
+        if present and not names.issubset(present):
+            faulty.append("  - %s : le code nomme %s, la table ecrit %s"
+                          % (unit_id, sorted(names), sorted(present)))
+    if faulty:
+        sys.exit(
+            "ERREUR : nom d'espace reserve divergent dans "
+            + str(len(faulty)) + " unite(s).\n"
+            "Le build localise refuse la traduction ; le build de production,"
+            " lui, ne le voit pas. Ecrire {$nom}, avec le nom du code.\n"
+            + "\n".join(faulty))
+
+
 def esc(s: str) -> str:
     s = s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
     # Après échappement, restaure les placeholders {$nom} en éléments <x/> XLIFF.
@@ -130,6 +178,7 @@ def esc(s: str) -> str:
 def write_xlf(translations: dict) -> None:
     reject_literal_interpolations(translations)
     reject_escaped_entities(translations)
+    reject_placeholder_mismatch(translations)
     os.makedirs(OUT_DIR, exist_ok=True)
     for idx, lang in enumerate(LANGS, start=1):
         path = os.path.join(OUT_DIR, "messages.%s.xlf" % lang)

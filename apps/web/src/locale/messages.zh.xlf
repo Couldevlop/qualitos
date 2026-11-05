@@ -21063,8 +21063,8 @@ historique 12 mois</source>
         <target state="translated">目录不能为空。请恢复平台目录。</target>
       </trans-unit>
       <trans-unit id="nc.settings.problem.too-many" datatype="html">
-        <source>Pas plus de <x id="INTERPOLATION"/> natures.</source>
-        <target state="translated">性质最多 <x id="INTERPOLATION"/> 条。</target>
+        <source>Pas plus de <x id="max"/> natures.</source>
+        <target state="translated">性质最多 <x id="max"/> 条。</target>
       </trans-unit>
       <trans-unit id="nc.settings.problem.code" datatype="html">
         <source>Un code s’écrit en capitales, chiffres, tiret ou point (ex. : PRD-DIM).</source>
@@ -21079,8 +21079,8 @@ historique 12 mois</source>
         <target state="translated">有两条性质使用了相同的代码。</target>
       </trans-unit>
       <trans-unit id="nc.settings.problem.empty-category" datatype="html">
-        <source>Catégorie sans aucune nature : <x id="INTERPOLATION"/> — la saisie n’y proposerait rien.</source>
-        <target state="translated">没有任何性质的类别：<x id="INTERPOLATION"/> — 录入界面将无可选项。</target>
+        <source>Catégorie sans aucune nature : <x id="count"/> — la saisie n’y proposerait rien.</source>
+        <target state="translated">没有任何性质的类别：<x id="count"/> — 录入界面将无可选项。</target>
       </trans-unit>
       <trans-unit id="nc.settings.load-failed" datatype="html">
         <source>Le catalogue des natures n’a pas pu être chargé.</source>

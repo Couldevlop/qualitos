@@ -21062,8 +21062,8 @@ historique 12 mois</source>
         <target state="translated">カタログを空にはできません。プラットフォームのカタログを復元してください。</target>
       </trans-unit>
       <trans-unit id="nc.settings.problem.too-many" datatype="html">
-        <source>Pas plus de <x id="INTERPOLATION"/> natures.</source>
-        <target state="translated">性質は最大 <x id="INTERPOLATION"/> 件までです。</target>
+        <source>Pas plus de <x id="max"/> natures.</source>
+        <target state="translated">性質は最大 <x id="max"/> 件までです。</target>
       </trans-unit>
       <trans-unit id="nc.settings.problem.code" datatype="html">
         <source>Un code s’écrit en capitales, chiffres, tiret ou point (ex. : PRD-DIM).</source>
@@ -21078,8 +21078,8 @@ historique 12 mois</source>
         <target state="translated">2 つの性質が同じコードを持っています。</target>
       </trans-unit>
       <trans-unit id="nc.settings.problem.empty-category" datatype="html">
-        <source>Catégorie sans aucune nature : <x id="INTERPOLATION"/> — la saisie n’y proposerait rien.</source>
-        <target state="translated">性質が 1 つもないカテゴリー: <x id="INTERPOLATION"/> — 入力画面では何も提示されません。</target>
+        <source>Catégorie sans aucune nature : <x id="count"/> — la saisie n’y proposerait rien.</source>
+        <target state="translated">性質が 1 つもないカテゴリー: <x id="count"/> — 入力画面では何も提示されません。</target>
       </trans-unit>
       <trans-unit id="nc.settings.load-failed" datatype="html">
         <source>Le catalogue des natures n’a pas pu être chargé.</source>
