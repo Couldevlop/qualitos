@@ -29031,8 +29031,16 @@ historique 12 mois</source>
         <target state="translated">无法获取建议。</target>
       </trans-unit>
       <trans-unit id="stakeholders.assistant.nothing-to-suggest" datatype="html">
-        <source>Rien à proposer : votre registre couvre déjà ce que cette description laisse voir.</source>
-        <target state="translated">无建议：您的登记册已覆盖此描述所反映的范围。</target>
+        <source>L'assistant n'a rien proposé : soit votre registre couvre déjà ce que cette description laisse voir, soit il n'a pas pu répondre. Réessayez, ou précisez votre activité.</source>
+        <target state="translated">助手没有给出建议：可能是您的登记册已覆盖此描述所反映的范围，也可能是助手无法作答。请重试，或更具体地描述您的活动。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.edit" datatype="html">
+        <source>Corriger</source>
+        <target state="translated">修改</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.reject" datatype="html">
+        <source>Rejeter</source>
+        <target state="translated">拒绝</target>
       </trans-unit>
       <trans-unit id="stakeholders.assistant.already" datatype="html">
         <source>Déjà au registre</source>

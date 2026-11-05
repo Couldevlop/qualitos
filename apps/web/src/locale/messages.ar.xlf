@@ -29031,8 +29031,16 @@ historique 12 mois</source>
         <target state="translated">لم تتمكّن الاقتراحات من الوصول.</target>
       </trans-unit>
       <trans-unit id="stakeholders.assistant.nothing-to-suggest" datatype="html">
-        <source>Rien à proposer : votre registre couvre déjà ce que cette description laisse voir.</source>
-        <target state="translated">لا يوجد ما يُقترح: سجلك يغطي بالفعل ما يُظهره هذا الوصف.</target>
+        <source>L'assistant n'a rien proposé : soit votre registre couvre déjà ce que cette description laisse voir, soit il n'a pas pu répondre. Réessayez, ou précisez votre activité.</source>
+        <target state="translated">لم يقترح المساعد شيئًا: إمّا أن سجلك يغطي بالفعل ما يُظهره هذا الوصف، أو أنه لم يتمكن من الإجابة. أعد المحاولة أو حدّد نشاطك بدقة أكبر.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.edit" datatype="html">
+        <source>Corriger</source>
+        <target state="translated">تصحيح</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.reject" datatype="html">
+        <source>Rejeter</source>
+        <target state="translated">رفض</target>
       </trans-unit>
       <trans-unit id="stakeholders.assistant.already" datatype="html">
         <source>Déjà au registre</source>

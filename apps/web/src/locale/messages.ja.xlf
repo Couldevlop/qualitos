@@ -29030,8 +29030,16 @@ historique 12 mois</source>
         <target state="translated">提案を取得できませんでした。</target>
       </trans-unit>
       <trans-unit id="stakeholders.assistant.nothing-to-suggest" datatype="html">
-        <source>Rien à proposer : votre registre couvre déjà ce que cette description laisse voir.</source>
-        <target state="translated">提案はありません。この説明から見える範囲は、すでに登録簿が網羅しています。</target>
+        <source>L'assistant n'a rien proposé : soit votre registre couvre déjà ce que cette description laisse voir, soit il n'a pas pu répondre. Réessayez, ou précisez votre activité.</source>
+        <target state="translated">アシスタントからの提案はありません。この説明から見える範囲をすでに登録簿が網羅しているか、アシスタントが応答できなかったかのいずれかです。再試行するか、活動内容をより具体的に記述してください。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.edit" datatype="html">
+        <source>Corriger</source>
+        <target state="translated">修正</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.reject" datatype="html">
+        <source>Rejeter</source>
+        <target state="translated">却下</target>
       </trans-unit>
       <trans-unit id="stakeholders.assistant.already" datatype="html">
         <source>Déjà au registre</source>

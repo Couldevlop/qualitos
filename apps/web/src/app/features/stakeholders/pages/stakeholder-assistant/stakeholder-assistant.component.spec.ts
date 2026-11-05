@@ -157,6 +157,93 @@ describe('StakeholderAssistantComponent', () => {
     });
   });
 
+  it('une proposition presque juste se CORRIGE avant d etre inscrite', () => {
+    // La rejeter pour la ressaisir a la main perdrait le travail de
+    // l'assistant ; l'inscrire telle quelle obligerait a la corriger apres.
+    svc.suggest.and.returnValue(of([
+      { name: 'ANSM', category: 'REGULATORS', rationale: null }
+    ]));
+    component.sector = 'Santé';
+    component.suggest();
+    const ligne = component.suggestions![0];
+
+    component.toggleEdit(ligne);
+    expect(ligne.editing).toBeTrue();
+    ligne.name = '  Agence nationale de sécurité du médicament  ';
+    ligne.category = 'CERTIFICATION_BODIES';
+
+    svc.create.and.returnValue(of({ id: 'pi-1' } as StakeholderSheet));
+    component.register(ligne);
+
+    expect(svc.create).toHaveBeenCalledWith({
+      name: 'Agence nationale de sécurité du médicament',
+      category: 'CERTIFICATION_BODIES',
+      side: 'EXTERNAL'
+    });
+  });
+
+  it('refermer la correction REMET ce qui avait été proposé', () => {
+    svc.suggest.and.returnValue(of([
+      { name: 'ANSM', category: 'REGULATORS', rationale: null }
+    ]));
+    component.sector = 'Santé';
+    component.suggest();
+    const ligne = component.suggestions![0];
+
+    component.toggleEdit(ligne);
+    ligne.name = 'frappe en cours';
+    component.toggleEdit(ligne);
+
+    expect(ligne.editing).toBeFalse();
+    expect(ligne.name).toBe('ANSM');
+    expect(ligne.category).toBe('REGULATORS');
+  });
+
+  it('un nom vide rouvre la correction au lieu d inscrire une fiche sans nom', () => {
+    svc.suggest.and.returnValue(of([
+      { name: 'ANSM', category: 'REGULATORS', rationale: null }
+    ]));
+    component.sector = 'Santé';
+    component.suggest();
+    const ligne = component.suggestions![0];
+    ligne.name = '   ';
+
+    component.register(ligne);
+
+    expect(svc.create).not.toHaveBeenCalled();
+    expect(ligne.editing).toBeTrue();
+  });
+
+  it('une proposition hors sujet se REJETTE, et rien n est écrit', () => {
+    svc.suggest.and.returnValue(of([
+      { name: 'ANSM', category: 'REGULATORS', rationale: null },
+      { name: 'Riverains', category: 'LOCAL_COMMUNITIES', rationale: null }
+    ]));
+    component.sector = 'Santé';
+    component.suggest();
+
+    component.reject(component.suggestions![1]);
+
+    expect(component.suggestions!.map(r => r.name)).toEqual(['ANSM']);
+    expect(svc.create).not.toHaveBeenCalled();
+  });
+
+  it('ni corriger ni rejeter pendant un enregistrement en cours', () => {
+    svc.suggest.and.returnValue(of([
+      { name: 'ANSM', category: 'REGULATORS', rationale: null }
+    ]));
+    component.sector = 'Santé';
+    component.suggest();
+    const ligne = component.suggestions![0];
+    ligne.busy = true;
+
+    component.toggleEdit(ligne);
+    component.reject(ligne);
+
+    expect(ligne.editing).toBeFalse();
+    expect(component.suggestions!.length).toBe(1);
+  });
+
   it('sans secteur, ne demande rien et DIT pourquoi', () => {
     component.suggest();
 
