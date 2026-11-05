@@ -207,6 +207,10 @@ export class StakeholderAssistantComponent {
     }).pipe(finalize(() => (row.busy = false))).subscribe({
       next: sheet => {
         row.registered = true;
+        // La fiche existe : la correction n'a plus de prise sur elle. Laisser
+        // les deux champs ouverts donnait a croire qu'on pouvait encore la
+        // retoucher ici, alors qu'elle ne se modifie plus que dans sa fiche.
+        row.editing = false;
         this.snack.open($localize`:@@stakeholders.assistant.registered:Partie prenante inscrite.`,
           undefined, { duration: 2500 });
         this.registered.emit();

@@ -182,6 +182,26 @@ describe('StakeholderAssistantComponent', () => {
     });
   });
 
+  it('une fois inscrite, la correction se referme : elle n a plus de prise', () => {
+    // Vu à l'écran : la ligne inscrite gardait ses deux champs ouverts, ce qui
+    // donnait à croire qu'on pouvait encore la retoucher là. La fiche existe :
+    // elle ne se modifie plus que dans la fiche.
+    svc.suggest.and.returnValue(of([
+      { name: 'Clients donneurs d ordre', category: 'CUSTOMERS', rationale: null }
+    ]));
+    component.sector = 'Traitement de surface';
+    component.suggest();
+    const ligne = component.suggestions![0];
+    component.toggleEdit(ligne);
+    ligne.name = 'Donneurs d ordre aéronautiques';
+
+    svc.create.and.returnValue(of({ id: 'pi-9' } as StakeholderSheet));
+    component.register(ligne);
+
+    expect(ligne.registered).toBeTrue();
+    expect(ligne.editing).toBeFalse();
+  });
+
   it('refermer la correction REMET ce qui avait été proposé', () => {
     svc.suggest.and.returnValue(of([
       { name: 'ANSM', category: 'REGULATORS', rationale: null }
