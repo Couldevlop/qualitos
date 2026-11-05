@@ -193,8 +193,11 @@ describe('MainShellComponent (navigation model)', () => {
     // contexte de l'organisme (ISO 9001 4.2) -- sans attribut `module` : c'est
     // un socle du systeme qualite, pas une option activable.
     // Administration passe a 16 : + Natures de NC (ADR 0103), le catalogue des
-    // sous-categories d'ecart que chaque client regle lui-meme.
-    expect(labels).toEqual([8, 6, 7, 2, 1, 6, 1, 11, 8, 1, 16]);
+    // sous-categories d'ecart que chaque client regle lui-meme. Puis retombe a
+    // 15 : Clients quitte cette section pour la console de l'editeur
+    // (/platform/clients, ADR 0105). Cette section est le parametrage DU
+    // client ; creer une organisation est l'administration DE la plateforme.
+    expect(labels).toEqual([8, 6, 7, 2, 1, 6, 1, 11, 8, 1, 15]);
   });
 
   it('le registre des risques a son groupe, juste apres la non-conformite', () => {
@@ -609,16 +612,34 @@ describe('MainShellComponent (visibilité par rôle)', () => {
     expect(routes).toContain('/pdca');
     expect(routes).toContain('/compliance');
   });
-  it('montre la console éditeur en SaaS et la licence en on-premise, jamais les deux (ADR 0082)', () => {
+  it('montre la licence en on-premise seulement (ADR 0082)', () => {
     const routes = (edition: Edition | null) => make().filterSections(['SUPER_ADMIN', 'ADMIN_TENANT'], null, edition)
       .flatMap(sec => sec.items.map(i => i.route));
-    expect(routes('SAAS')).toContain('/admin/clients');
-    expect(routes('SAAS')).not.toContain('/admin/licence');
     expect(routes('ONPREM')).toContain('/admin/licence');
-    expect(routes('ONPREM')).not.toContain('/admin/clients');
-    // Édition encore inconnue : rien n'est retiré.
-    expect(routes(null)).toContain('/admin/clients');
+    expect(routes('SAAS')).not.toContain('/admin/licence');
+    // Édition encore inconnue : rien n'est retiré. Mieux vaut une entrée de
+    // trop le temps du chargement qu'une barre qui se vide puis se remplit.
     expect(routes(null)).toContain('/admin/licence');
+  });
+
+  it('ne porte plus aucune entrée de la console éditeur (ADR 0105)', () => {
+    // La contrepartie du test précédent : « Clients » était l'entrée réservée à
+    // l'éditeur, et elle a quitté cette navigation pour sa propre console. Ce
+    // qui reste sous /admin est le paramétrage DU client, et rien d'autre.
+    const routes = make().filterSections(['SUPER_ADMIN'], null, 'SAAS')
+      .flatMap(sec => sec.items.map(i => i.route));
+    expect(routes).not.toContain('/admin/clients');
+    expect(routes.filter(r => r.startsWith('/platform'))).toEqual([]);
+  });
+
+  it('garde une entrée réservée en SaaS pour chaque édition filtrable', () => {
+    // Le filtre par édition doit continuer de retirer ce qui ne vaut que pour
+    // une édition : l'éprouver dans les DEUX sens, sinon seul le bras ONPREM
+    // serait exercé et une régression du bras SAAS passerait inaperçue.
+    const shell = make();
+    const avecEntreeSaas = shell.filterSections(['SUPER_ADMIN'], null, 'SAAS')
+      .flatMap(sec => sec.items.filter(i => i.edition === 'ONPREM'));
+    expect(avecEntreeSaas).toEqual([]);
   });
 });
 

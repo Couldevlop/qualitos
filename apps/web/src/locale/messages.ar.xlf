@@ -7690,6 +7690,130 @@ Portail clients</source>
         <source>Refus impossible.</source>
         <target state="translated">تعذّر الرفض.</target>
       </trans-unit>
+      <trans-unit id="admin.clients.step-identity" datatype="html">
+        <source>Identité</source>
+        <target state="translated">الهوية</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.identity-help" datatype="html">
+        <source>Tout est facultatif : le client complétera depuis sa propre console. Ce qui est posé ici s'affiche dès sa première connexion.</source>
+        <target state="translated">كل شيء اختياري: سيكملها العميل من وحدة التحكم الخاصة به. ما يُحدَّد هنا يظهر منذ أول تسجيل دخول.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.slogan" datatype="html">
+        <source>Signature</source>
+        <target state="translated">الشعار</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.slogan-hint" datatype="html">
+        <source>Une ligne, sous le nom.</source>
+        <target state="translated">سطر واحد تحت الاسم.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.legal-name" datatype="html">
+        <source>Raison sociale</source>
+        <target state="translated">الاسم القانوني</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.legal-form" datatype="html">
+        <source>Forme juridique</source>
+        <target state="translated">الشكل القانوني</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.registration" datatype="html">
+        <source>Numéro d'immatriculation</source>
+        <target state="translated">رقم التسجيل</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.vat" datatype="html">
+        <source>Numéro de TVA</source>
+        <target state="translated">رقم ضريبة القيمة المضافة</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.address" datatype="html">
+        <source>Adresse</source>
+        <target state="translated">العنوان</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.postal-code" datatype="html">
+        <source>Code postal</source>
+        <target state="translated">الرمز البريدي</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.city" datatype="html">
+        <source>Ville</source>
+        <target state="translated">المدينة</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.country" datatype="html">
+        <source>Pays (ISO, 2 lettres)</source>
+        <target state="translated">البلد (ISO، حرفان)</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.country-invalid" datatype="html">
+        <source>Deux lettres, par exemple FR.</source>
+        <target state="translated">حرفان، مثل FR.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.contact-email" datatype="html">
+        <source>Contact — e-mail</source>
+        <target state="translated">جهة الاتصال — البريد الإلكتروني</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.contact-phone" datatype="html">
+        <source>Contact — téléphone</source>
+        <target state="translated">جهة الاتصال — الهاتف</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.brand" datatype="html">
+        <source>Marque</source>
+        <target state="translated">العلامة</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.primary-color" datatype="html">
+        <source>Couleur principale</source>
+        <target state="translated">اللون الأساسي</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.secondary-color" datatype="html">
+        <source>Couleur secondaire</source>
+        <target state="translated">اللون الثانوي</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.color-note" datatype="html">
+        <source>Une couleur illisible sur le fond du thème est refusée par le serveur : le contraste prime sur la charte.</source>
+        <target state="translated">يرفض الخادم أي لون غير مقروء على خلفية السمة: التباين يسبق دليل العلامة.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.logo" datatype="html">
+        <source>Logo</source>
+        <target state="translated">الشعار المصوَّر</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.logo-remove" datatype="html">
+        <source>Retirer le logo</source>
+        <target state="translated">إزالة الشعار</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.logo-hint" datatype="html">
+        <source>PNG, JPEG ou WebP, 512 Ko au plus.</source>
+        <target state="translated">PNG أو JPEG أو WebP، 512 كيلوبايت كحد أقصى.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.logo-type" datatype="html">
+        <source>Formats acceptés : PNG, JPEG, WebP.</source>
+        <target state="translated">الصيغ المقبولة: PNG وJPEG وWebP.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.logo-size" datatype="html">
+        <source>Le logo ne doit pas dépasser 512 Ko.</source>
+        <target state="translated">يجب ألا يتجاوز الشعار 512 كيلوبايت.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.theme" datatype="html">
+        <source>Thème</source>
+        <target state="translated">السمة</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.theme-airy" datatype="html">
+        <source>Clair aéré — par défaut</source>
+        <target state="translated">فاتح وفسيح — الافتراضي</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.theme-dense" datatype="html">
+        <source>Clair dense — poste de travail</source>
+        <target state="translated">فاتح وكثيف — محطة العمل</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.theme-dark" datatype="html">
+        <source>Sombre</source>
+        <target state="translated">داكن</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.theme-contrast" datatype="html">
+        <source>Contraste renforcé — atelier, extérieur</source>
+        <target state="translated">تباين عالٍ — الورشة والخارج</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.identity-failed" datatype="html">
+        <source>L'identité n'a pas été enregistrée : reprenez-la depuis la fiche du client.</source>
+        <target state="translated">لم تُحفظ الهوية: أعِد ضبطها من بطاقة العميل.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.logo-failed" datatype="html">
+        <source>Le logo n'a pas été déposé : reprenez-le depuis la fiche du client.</source>
+        <target state="translated">لم يُرفع الشعار: أعِد رفعه من بطاقة العميل.</target>
+      </trans-unit>
       <trans-unit id="nav.complaints-nlp" datatype="html">
         <source>Réclamations IA</source>
         <target state="translated">الشكاوى بالذكاء الاصطناعي</target>
@@ -11211,6 +11335,10 @@ Coordonnées professionnelles</source>
       <trans-unit id="dmaic.res.problem.planned" datatype="html">
         <source>Une action ne peut pas être prévue avant sa date de création.</source>
         <target state="translated">لا يمكن التخطيط لإجراء قبل تاريخ إنشائه.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.closed" datatype="html">
+        <source>Clôturé</source>
+        <target state="translated">مغلق</target>
       </trans-unit>
       <trans-unit id="dmaic.res.header-title" datatype="html">
         <source>DMAIC Résolution de problème</source>
@@ -18439,7 +18567,7 @@ historique 12 mois</source>
         <target state="translated">استئناف</target>
       </trans-unit>
       <trans-unit id="dmaic.detail.charter" datatype="html">
-        <source>Charter</source>
+        <source>Charte du projet</source>
         <target state="translated">ميثاق المشروع</target>
       </trans-unit>
       <trans-unit id="dmaic.detail.problem-label" datatype="html">
@@ -22629,6 +22757,98 @@ historique 12 mois</source>
       <trans-unit id="training.enroll.cancel-error" datatype="html">
         <source>Impossible d'annuler cette inscription.</source>
         <target state="translated">تعذّر إلغاء هذا التسجيل.</target>
+      </trans-unit>
+      <trans-unit id="platform.brand.console" datatype="html">
+        <source>Console éditeur</source>
+        <target state="translated">وحدة تحكم الناشر</target>
+      </trans-unit>
+      <trans-unit id="platform.nav.aria" datatype="html">
+        <source>Navigation de la console</source>
+        <target state="translated">التنقل في وحدة التحكم</target>
+      </trans-unit>
+      <trans-unit id="platform.topbar.badge" datatype="html">
+        <source>Administration de la plateforme</source>
+        <target state="translated">إدارة المنصة</target>
+      </trans-unit>
+      <trans-unit id="platform.nav.clients" datatype="html">
+        <source>Clients</source>
+        <target state="translated">العملاء</target>
+      </trans-unit>
+      <trans-unit id="platform.nav.clients.hint" datatype="html">
+        <source>Créer un client, son identité, ses modules</source>
+        <target state="translated">إنشاء عميل وهويته ووحداته</target>
+      </trans-unit>
+      <trans-unit id="platform.nav.modules" datatype="html">
+        <source>Catalogue des modules</source>
+        <target state="translated">كتالوج الوحدات</target>
+      </trans-unit>
+      <trans-unit id="platform.nav.modules.hint" datatype="html">
+        <source>Ce que la plateforme sait livrer</source>
+        <target state="translated">ما يمكن للمنصة تقديمه</target>
+      </trans-unit>
+      <trans-unit id="platform.nav.scope" datatype="html">
+        <source>Cette console n’ouvre aucun écran qualité : les données d’un client se consultent depuis le compte de ce client.</source>
+        <target state="translated">لا تفتح وحدة التحكم هذه أي شاشة جودة: تُستعرض بيانات العميل من حساب ذلك العميل.</target>
+      </trans-unit>
+      <trans-unit id="platform.user.logout" datatype="html">
+        <source>Se déconnecter</source>
+        <target state="translated">تسجيل الخروج</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.title" datatype="html">
+        <source>Catalogue des modules</source>
+        <target state="translated">كتالوج الوحدات</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.subtitle" datatype="html">
+        <source>Tout ce que la plateforme sait livrer : le palier minimal de chaque module et ce qu’il exige d’autre pour fonctionner.</source>
+        <target state="translated">كل ما يمكن للمنصة تقديمه: الحد الأدنى من الفئة لكل وحدة وما تتطلبه للعمل.</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.reload" datatype="html">
+        <source>Recharger</source>
+        <target state="translated">إعادة التحميل</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.count" datatype="html">
+        <source><x id="INTERPOLATION"/> modules au catalogue</source>
+        <target state="translated"><x id="INTERPOLATION"/> وحدة في الكتالوج</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.core-count" datatype="html">
+        <source>dont <x id="INTERPOLATION"/> acquis d’office</source>
+        <target state="translated">منها <x id="INTERPOLATION"/> مُمنوحة تلقائيًا</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.loading" datatype="html">
+        <source>Chargement du catalogue…</source>
+        <target state="translated">جارٍ تحميل الكتالوج…</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.core" datatype="html">
+        <source>Acquis d’office</source>
+        <target state="translated">مُمنوحة تلقائيًا</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.requires" datatype="html">
+        <source>Exige :</source>
+        <target state="translated">يتطلب:</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.empty" datatype="html">
+        <source>Le moteur qualité n’a renvoyé aucun module. Vérifiez qu’il est joignable.</source>
+        <target state="translated">لم يُرجع محرك الجودة أي وحدة. تحقّق من إمكانية الوصول إليه.</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.load-failed" datatype="html">
+        <source>Le catalogue des modules n’a pas pu être chargé.</source>
+        <target state="translated">لم يتم تحميل كتالوج الوحدات.</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.family.methodes" datatype="html">
+        <source>Méthodes de la qualité</source>
+        <target state="translated">أساليب الجودة</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.family.transverse" datatype="html">
+        <source>Modules transverses</source>
+        <target state="translated">الوحدات المشتركة</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.family.platform" datatype="html">
+        <source>Plateforme</source>
+        <target state="translated">المنصة</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.family.integrations" datatype="html">
+        <source>Intégrations</source>
+        <target state="translated">التكاملات</target>
       </trans-unit>
       <trans-unit id="nav.produits" datatype="html">
         <source>Produits</source>
@@ -27806,6 +28026,22 @@ historique 12 mois</source>
         <source>Mesures par sous-groupe</source>
         <target state="translated">القياسات حسب المجموعة الفرعية</target>
       </trans-unit>
+      <trans-unit id="spc.study.subgroup-count" datatype="html">
+        <source><x id="INTERPOLATION"/> sous-groupe(s)</source>
+        <target state="translated"><x id="INTERPOLATION"/> مجموعة فرعية</target>
+      </trans-unit>
+      <trans-unit id="spc.study.subgroup-add" datatype="html">
+        <source>Ajouter un sous-groupe</source>
+        <target state="translated">إضافة مجموعة فرعية</target>
+      </trans-unit>
+      <trans-unit id="spc.study.subgroup-remove" datatype="html">
+        <source>Retirer le dernier sous-groupe (il doit être vide)</source>
+        <target state="translated">إزالة المجموعة الفرعية الأخيرة (يجب أن تكون فارغة)</target>
+      </trans-unit>
+      <trans-unit id="spc.study.few-subgroups" datatype="html">
+        <source>Moins de 20 sous-groupes : les limites de contrôle restent indicatives.</source>
+        <target state="translated">أقل من 20 مجموعة فرعية: تبقى حدود التحكم إرشادية.</target>
+      </trans-unit>
       <trans-unit id="spc.study.sample" datatype="html">
         <source>Échantillon</source>
         <target state="translated">العينة</target>
@@ -28126,6 +28362,10 @@ historique 12 mois</source>
         <source>Parties prenantes</source>
         <target state="translated">الأطراف المعنية</target>
       </trans-unit>
+      <trans-unit id="stakeholders.export" datatype="html">
+        <source>Exporter</source>
+        <target state="translated">تصدير</target>
+      </trans-unit>
       <trans-unit id="stakeholders.title" datatype="html">
         <source>Parties prenantes</source>
         <target state="translated">الأطراف المعنية</target>
@@ -28202,6 +28442,10 @@ historique 12 mois</source>
         <source>Interne / externe</source>
         <target state="translated">داخلي / خارجي</target>
       </trans-unit>
+      <trans-unit id="stakeholders.filter.criticality" datatype="html">
+        <source>Niveau de risque</source>
+        <target state="translated">مستوى الخطر</target>
+      </trans-unit>
       <trans-unit id="stakeholders.filter.clear" datatype="html">
         <source>Effacer les filtres</source>
         <target state="translated">مسح عوامل التصفية</target>
@@ -28213,6 +28457,10 @@ historique 12 mois</source>
       <trans-unit id="stakeholders.col.category" datatype="html">
         <source>Catégorie</source>
         <target state="translated">الفئة</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.col.side" datatype="html">
+        <source>Interne / externe</source>
+        <target state="translated">داخلي / خارجي</target>
       </trans-unit>
       <trans-unit id="stakeholders.col.criticality" datatype="html">
         <source>Criticité</source>
@@ -28550,6 +28798,10 @@ historique 12 mois</source>
         <source>Audit</source>
         <target state="translated">تدقيق</target>
       </trans-unit>
+      <trans-unit id="stakeholders.link.capa" datatype="html">
+        <source>Action</source>
+        <target state="translated">إجراء</target>
+      </trans-unit>
       <trans-unit id="stakeholders.link.document" datatype="html">
         <source>Document</source>
         <target state="translated">وثيقة</target>
@@ -28779,8 +29031,16 @@ historique 12 mois</source>
         <target state="translated">لم تتمكّن الاقتراحات من الوصول.</target>
       </trans-unit>
       <trans-unit id="stakeholders.assistant.nothing-to-suggest" datatype="html">
-        <source>Rien à proposer : votre registre couvre déjà ce que cette description laisse voir.</source>
-        <target state="translated">لا يوجد ما يُقترح: سجلك يغطي بالفعل ما يُظهره هذا الوصف.</target>
+        <source>L'assistant n'a rien proposé : soit votre registre couvre déjà ce que cette description laisse voir, soit il n'a pas pu répondre. Réessayez, ou précisez votre activité.</source>
+        <target state="translated">لم يقترح المساعد شيئًا: إمّا أن سجلك يغطي بالفعل ما يُظهره هذا الوصف، أو أنه لم يتمكن من الإجابة. أعد المحاولة أو حدّد نشاطك بدقة أكبر.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.edit" datatype="html">
+        <source>Corriger</source>
+        <target state="translated">تصحيح</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.reject" datatype="html">
+        <source>Rejeter</source>
+        <target state="translated">رفض</target>
       </trans-unit>
       <trans-unit id="stakeholders.assistant.already" datatype="html">
         <source>Déjà au registre</source>

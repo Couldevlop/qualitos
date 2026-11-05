@@ -115,6 +115,25 @@
         </button>
       </div>
 
+      <!-- Le nombre de sous-groupes appartient a l'etude : on l'ajuste ici, et le
+           plancher de la regle de l'art est RAPPELE, jamais impose. -->
+      <div class="sous-groupes">
+        <span class="sous-groupes__compte" data-test="nb-sous-groupes"
+              i18n="@@spc.study.subgroup-count">{{ subgroupCount // i18n(ph="count") }} sous-groupe(s)</span>
+        <button mat-icon-button type="button" (click)="removeSubgroup()" [disabled]="!canRemoveSubgroup"
+                data-test="retirer-sg" i18n-matTooltip="@@spc.study.subgroup-remove"
+                matTooltip="Retirer le dernier sous-groupe (il doit etre vide)">
+          <mat-icon>remove</mat-icon>
+        </button>
+        <button mat-icon-button type="button" (click)="addSubgroup()" [disabled]="!canAddSubgroup"
+                data-test="ajouter-sg" i18n-matTooltip="@@spc.study.subgroup-add"
+                matTooltip="Ajouter un sous-groupe">
+          <mat-icon>add</mat-icon>
+        </button>
+        <span class="sous-groupes__plancher" *ngIf="fewSubgroups" data-test="plancher-sg"
+              i18n="@@spc.study.few-subgroups">Moins de 20 sous-groupes : les limites de controle restent indicatives.</span>
+      </div>
+
       <div class="saisie" [class.saisie--formules]="showFormulas">
         <!-- La colonne de gauche porte la grille puis, juste dessous, les cartes X̄ et R :
              à côté du panneau des formules, plus haut que la grille, aucun vide ne reste. -->

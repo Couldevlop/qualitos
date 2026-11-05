@@ -4,6 +4,7 @@ import com.openlab.qualitos.core.billing.ModuleActivationFailedException;
 import com.openlab.qualitos.core.billing.SubscriptionNotFoundException;
 import com.openlab.qualitos.core.billing.invoice.InvoiceNotFoundException;
 import com.openlab.qualitos.core.tenant.TenantAlreadyExistsException;
+import com.openlab.qualitos.core.tenant.LogoRejectedException;
 import com.openlab.qualitos.core.tenant.TenantNotFoundException;
 import com.openlab.qualitos.core.user.UserAlreadyExistsException;
 import com.openlab.qualitos.core.user.UserNotFoundException;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import java.net.URI;
 import java.time.Instant;
@@ -284,6 +286,40 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/conflicting-state"));
         problem.setTitle("Conflicting State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(LogoRejectedException.class)
+    public ProblemDetail handleLogoRejected(LogoRejectedException ex) {
+        // Trois refus, trois statuts, parce qu'ils demandent trois gestes
+        // differents : convertir le fichier, le reduire, ou verifier ce qu'on
+        // envoie. Les trois en 400 obligeraient a lire le message pour savoir
+        // lequel -- et un client programmatique ne lit pas les messages.
+        HttpStatus status = switch (ex.getReason()) {
+            case TYPE -> HttpStatus.UNSUPPORTED_MEDIA_TYPE;
+            case SIZE -> HttpStatus.PAYLOAD_TOO_LARGE;
+            case CONTENT -> HttpStatus.BAD_REQUEST;
+        };
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(status, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/logo-rejected"));
+        problem.setTitle("Logo Rejected");
+        problem.setProperty("reason", ex.getReason().name());
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ProblemDetail handleMaxUploadSize(MaxUploadSizeExceededException ex) {
+        // Le conteneur a coupe avant que le controleur ne voie le fichier :
+        // sans ce handler, un televersement trop gros ressemblait a une panne
+        // (500) alors que c'est un refus que l'appelant peut corriger.
+        log.warn("upload.too-large limite={}", ex.getMaxUploadSize());
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.PAYLOAD_TOO_LARGE, "fichier trop volumineux");
+        problem.setType(URI.create("https://qualitos.io/errors/logo-rejected"));
+        problem.setTitle("Payload Too Large");
+        problem.setProperty("reason", "SIZE");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }

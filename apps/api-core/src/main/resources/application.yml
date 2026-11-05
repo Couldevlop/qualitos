@@ -1,6 +1,14 @@
 spring:
   application:
     name: api-core
+  # Le seul televersement d'api-core est le logo d'un client, borne a 512 Kio
+  # par LogoPolicy. La borne du conteneur est posee juste au-dessus : un
+  # fichier refuse est ainsi coupe AVANT d'etre mis en memoire, au lieu de
+  # l'etre apres par le controle applicatif.
+  servlet:
+    multipart:
+      max-file-size: 600KB
+      max-request-size: 1MB
   # Boot 4 sérialise en Jackson 3 par défaut ; le code et ses ObjectMapper
   # sont encore en Jackson 2 (ADR 0100) : les réponses HTTP doivent passer
   # par le même moteur que le reste de l'application.

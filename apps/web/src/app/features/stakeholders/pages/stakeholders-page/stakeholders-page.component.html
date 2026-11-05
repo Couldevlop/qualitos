@@ -17,6 +17,11 @@
         subtitle="Contexte de l'organisme : qui attend quoi de vous, et comment vous vous en assurez."
         i18n-subtitle="@@stakeholders.subtitle">
         <ng-container qosActions>
+          <button mat-stroked-button type="button" (click)="exportRegister()"
+                  [disabled]="!rows.length" data-test="exporter">
+            <mat-icon>download</mat-icon>
+            <span i18n="@@stakeholders.export">Exporter</span>
+          </button>
           <button mat-flat-button color="primary" type="button" *ngIf="canManage"
                   (click)="create()" data-test="nouvelle-partie">
             <mat-icon>group_add</mat-icon>

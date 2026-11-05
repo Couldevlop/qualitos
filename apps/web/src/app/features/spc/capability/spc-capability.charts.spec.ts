@@ -1,4 +1,4 @@
-import { SUBGROUPS, computeCapability, emptyGrid } from './spc-capability.calc';
+import { DEFAULT_SUBGROUPS, computeCapability, emptyGrid } from './spc-capability.calc';
 import { completeValues, controlChart, distribution } from './spc-capability.charts';
 import { GOLDEN_GRID, GOLDEN_LSL, GOLDEN_USL } from './spc-capability.fixtures';
 
@@ -22,7 +22,30 @@ describe('spc-capability.charts', () => {
       expect(g.lines[0].y).toBeLessThan(g.lines[2].y);
       expect(g.ticks.length).toBe(5);
       expect(g.points[0].x).toBe(g.left);
-      expect(g.xLabels.map(l => l.label)).toEqual([1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 20]);
+      // L'axe porte les sous-groupes DE CETTE etude, quatre ici : une graduation
+      // sur deux, et toujours la derniere.
+      expect(g.xLabels.map(l => l.label)).toEqual([1, 3, 4]);
+    });
+
+    it('etale l axe sur le nombre de sous-groupes de l etude', () => {
+      // Une largeur figee a vingt ecrasait une etude de douze releves sur la
+      // moitie gauche du cadre.
+      const douze = controlChart(Array.from({ length: 12 }, (_, i) => 6 + i % 3), 10, 7, 4)!;
+      expect(douze.points.length).toBe(12);
+      expect(douze.points[0].x).toBe(douze.left);
+      expect(douze.points[11].x).toBe(douze.right);
+      expect(douze.xLabels[douze.xLabels.length - 1].label).toBe(12);
+
+      const trente = controlChart(Array.from({ length: 30 }, () => 8), 10, 8, 6)!;
+      expect(trente.points[29].x).toBe(trente.right);
+    });
+
+    it('pose un sous-groupe unique au milieu du cadre', () => {
+      // Un seul point ne definit pas d echelle : le diviser par zero donnerait
+      // un x infini, et le trace disparaitrait sans message.
+      const un = controlChart([8], 10, 8, 6)!;
+      expect(Number.isFinite(un.points[0].x)).toBeTrue();
+      expect(un.points[0].x).toBe((un.left + un.right) / 2);
     });
 
     it('trace la tolérance sur la carte et l\'inclut dans l\'échelle', () => {
@@ -56,10 +79,10 @@ describe('spc-capability.charts', () => {
 
   describe('completeValues', () => {
     it('ne garde que les mesures des sous-groupes complets', () => {
-      expect(completeValues(GOLDEN_GRID, 5).length).toBe(5 * SUBGROUPS);
+      expect(completeValues(GOLDEN_GRID, 5).length).toBe(5 * DEFAULT_SUBGROUPS);
       const g = GOLDEN_GRID.map(r => [...r]);
       g[1][3] = null;
-      expect(completeValues(g, 5).length).toBe(5 * (SUBGROUPS - 1));
+      expect(completeValues(g, 5).length).toBe(5 * (DEFAULT_SUBGROUPS - 1));
       expect(completeValues(emptyGrid(3), 3)).toEqual([]);
     });
   });

@@ -431,6 +431,28 @@ class StakeholderServiceTest {
                 .isInstanceOf(StakeholderValidationException.class);
     }
 
+    @Test
+    void laClotureDUnDossierRequalifieLesExigencesQuIlTraitait() {
+        UUID id = service.create("Client A", StakeholderCategory.CUSTOMERS,
+                StakeholderSide.EXTERNAL).id();
+        UUID exigence = service.addRequirement(id, exigence("Tracer les lots")).id();
+        UUID capa = service.openCapa(id, exigence, "Remettre la traçabilité", ACTEUR, "Alice",
+                AUJOURDHUI.plusDays(30)).capaId();
+
+        assertThat(service.onCapaClosed(TENANT, capa)).isEqualTo(1);
+        assertThat(service.get(id).requirements().get(0).status())
+                .isEqualTo(RequirementStatus.CONTROLLED);
+    }
+
+    @Test
+    void laClotureDUnDossierSansExigenceNEcritRien() {
+        service.create("Client A", StakeholderCategory.CUSTOMERS, StakeholderSide.EXTERNAL);
+
+        assertThat(service.onCapaClosed(TENANT, UUID.randomUUID())).isZero();
+        assertThat(service.onCapaClosed(TENANT, null)).isZero();
+        assertThat(service.onCapaClosed(null, UUID.randomUUID())).isZero();
+    }
+
     // ---------- aides ----------
 
     private static String longText() {
@@ -553,6 +575,14 @@ class StakeholderServiceTest {
                     .filter(s -> s.category() == category)
                     .filter(s -> s.name().toLowerCase(Locale.ROOT).equals(name.toLowerCase(Locale.ROOT)))
                     .anyMatch(s -> exceptId == null || !s.id().equals(exceptId));
+        }
+
+        @Override
+        public List<Stakeholder> findByCapa(UUID tenantId, UUID capaId) {
+            return parId.values().stream()
+                    .filter(s -> s.tenantId().equals(tenantId))
+                    .filter(s -> s.requirements().stream().anyMatch(r -> capaId.equals(r.capaId())))
+                    .toList();
         }
 
         @Override

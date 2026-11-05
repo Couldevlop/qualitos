@@ -211,6 +211,18 @@
           <span *ngIf="r.indicator">{{ r.indicator }}</span>
         </p>
 
+        <!-- Les liens SORTANTS : visibles de tous, y compris en lecture seule.
+             C'est par eux qu'on remonte au contrat qui fonde l'exigence ou au
+             dossier ouvert pour la tenir. -->
+        <p class="exigence__ouvrir" *ngIf="establishedLinks(r).length" data-test="liens-sortants">
+          <a mat-button *ngFor="let l of establishedLinks(r)" [routerLink]="l.route"
+             [attr.data-test]="'ouvrir-' + l.icon">
+            <mat-icon aria-hidden="true">{{ l.icon }}</mat-icon>
+            <span>{{ l.label }}</span>
+            <mat-icon class="exigence__ouvrir-sortie" aria-hidden="true">open_in_new</mat-icon>
+          </a>
+        </p>
+
         <div class="exigence__actions" *ngIf="canManage">
           <mat-form-field appearance="outline" subscriptSizing="dynamic" class="exigence__statut">
             <mat-label i18n="@@common.status">Statut</mat-label>
@@ -243,10 +255,6 @@
             </button>
           </span>
 
-          <a mat-button *ngIf="r.capaId" [routerLink]="['/capa', r.capaId]" data-test="voir-capa">
-            <mat-icon aria-hidden="true">open_in_new</mat-icon>
-            <span i18n="@@stakeholders.see-capa">Voir la CAPA</span>
-          </a>
           <button mat-stroked-button color="primary" type="button" *ngIf="!r.capaId"
                   (click)="openCapa(r)" data-test="creer-action">
             <mat-icon aria-hidden="true">add_task</mat-icon>

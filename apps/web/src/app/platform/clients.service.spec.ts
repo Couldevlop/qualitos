@@ -2,8 +2,8 @@ import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 
-import { environment } from '../../../environments/environment';
-import { OnboardRequest } from './admin.types';
+import { environment } from '../../environments/environment';
+import { OnboardRequest } from '../features/admin/admin.types';
 import { ClientsService } from './clients.service';
 
 /** Les clients de la plateforme : la liste paginée, récente d'abord, et l'accueil d'un client. */

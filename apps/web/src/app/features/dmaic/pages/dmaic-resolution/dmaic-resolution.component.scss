@@ -206,9 +206,38 @@
   width: 100%;
   padding: var(--qos-space-4);
 
+  // Un projet clos : vert, et dit en toutes lettres. La couleur seule ne se
+  // voit pas en déficience chromatique (WCAG 1.4.1), d'où le sceau et le mot.
+  &--close {
+    border-left: 3px solid var(--qos-success-fg);
+    background: var(--qos-success-bg-soft);
+
+    .entete__titre,
+    .entete__sceau {
+      color: var(--qos-success-fg);
+    }
+  }
+
+  &__sceau {
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+  }
+
+  &__etat {
+    padding: 1px var(--qos-space-2);
+    border-radius: var(--qos-radius-pill);
+    background: var(--qos-success-fg);
+    color: var(--qos-bg-elevated);
+    font-size: var(--qos-fs-xs);
+    font-weight: var(--qos-fw-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
   &__head {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     flex-wrap: wrap;
     gap: var(--qos-space-2) var(--qos-space-3);
     margin-bottom: var(--qos-space-3);
@@ -295,7 +324,7 @@
 
 .champs {
   display: grid;
-  gap: var(--qos-space-3) var(--qos-space-4);
+  gap: var(--qos-space-2) var(--qos-space-3);
   min-width: 0;
 
   &--3 {
@@ -320,7 +349,7 @@
   display: block;
   width: 100%;
   max-width: 48rem;
-  margin-top: var(--qos-space-3);
+  margin-top: var(--qos-space-2);
 }
 
 mat-form-field {
@@ -331,7 +360,7 @@ mat-form-field {
   display: flex;
   align-items: baseline;
   gap: var(--qos-space-2);
-  margin: var(--qos-space-4) 0 var(--qos-space-2);
+  margin: var(--qos-space-2) 0 var(--qos-space-1);
   font-size: var(--qos-fs-sm);
   font-weight: var(--qos-fw-semibold);
   color: var(--qos-fg-primary);
@@ -411,7 +440,7 @@ mat-form-field {
 }
 
 .groupe .sous-titre {
-  margin: var(--qos-space-3) 0 var(--qos-space-1);
+  margin: var(--qos-space-2) 0 0;
 }
 
 .questions {
@@ -425,9 +454,9 @@ mat-form-field {
 .question {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(10rem, 20rem);
-  gap: var(--qos-space-3);
+  gap: var(--qos-space-2);
   align-items: center;
-  padding: var(--qos-space-1) 0;
+  padding: 1px 0;
   border-top: 1px solid var(--qos-border-subtle);
 
   &__label {
@@ -1096,5 +1125,23 @@ mat-form-field {
 
   mat-progress-bar {
     flex-basis: 100%;
+  }
+}
+
+// Une question à texte libre tenait sur deux lignes de saisie, soit plus du
+// double de la hauteur d'une question à choix. Les phases Définir et Mesurer,
+// qui n'ont presque que du texte libre, occupaient ainsi trois écrans là où
+// deux suffisent. Une ligne, et la poignée de redimensionnement pour qui a
+// besoin de plus.
+.question__reponse .mat-mdc-form-field {
+  textarea.mat-mdc-input-element {
+    min-height: 1.6rem;
+    line-height: 1.4;
+    resize: vertical;
+  }
+
+  .mat-mdc-text-field-wrapper {
+    padding-top: 2px;
+    padding-bottom: 2px;
   }
 }

@@ -15,7 +15,9 @@ import { StakeholdersService } from '../../stakeholders.service';
 import {
   DetectedChange,
   ExtractedRequirement,
+  STAKEHOLDER_CATEGORIES,
   STAKEHOLDER_LIMITS,
+  StakeholderCategory,
   StakeholderRequirement,
   StakeholderRow,
   StakeholderSide,
@@ -31,6 +33,19 @@ export interface SuggestionRow {
   duplicate: boolean;
   busy: boolean;
   registered: boolean;
+  /**
+   * La proposition est ouverte a la correction : nom et famille.
+   *
+   * <p>Une suggestion est une PROPOSITION. L'inscrire telle quelle quand elle
+   * est presque juste obligeait a la corriger ensuite dans la fiche ; la
+   * rejeter pour la ressaisir a la main perdait le travail de l'assistant.
+   * On la corrige donc sur place, avant de l'inscrire.
+   */
+  editing: boolean;
+  /** Le nom retenu : celui propose, ou celui qu'on a corrige. */
+  name: string;
+  /** La famille retenue, modifiable comme le nom. */
+  category: StakeholderCategory;
 }
 
 /** Une exigence extraite, avec l'état de son inscription. */
@@ -82,6 +97,8 @@ export class StakeholderAssistantComponent {
    * qu'en retour d'un appel refusé après trente secondes d'attente.
    */
   readonly maxSector = 200;
+  readonly maxName = STAKEHOLDER_LIMITS.name;
+  readonly categories = STAKEHOLDER_CATEGORIES;
   readonly maxCharacteristics = 1000;
   readonly maxDocumentName = 255;
   readonly maxDocumentText = STAKEHOLDER_LIMITS.document;
@@ -156,6 +173,9 @@ export class StakeholderAssistantComponent {
           suggestion,
           side: this.guessSide(suggestion),
           duplicate: this.alreadyRegistered(suggestion.name),
+          editing: false,
+          name: suggestion.name,
+          category: suggestion.category,
           busy: false,
           registered: false
         }))),
@@ -172,14 +192,25 @@ export class StakeholderAssistantComponent {
     if (row.duplicate || row.registered || row.busy) {
       return;
     }
+    const name = row.name.trim();
+    if (!name) {
+      // Un nom vide n'est pas une correction, c'est un oubli : on garde la
+      // ligne ouverte plutot que d'inscrire une fiche sans nom.
+      row.editing = true;
+      return;
+    }
     row.busy = true;
     this.svc.create({
-      name: row.suggestion.name,
-      category: row.suggestion.category,
+      name,
+      category: row.category,
       side: row.side
     }).pipe(finalize(() => (row.busy = false))).subscribe({
       next: sheet => {
         row.registered = true;
+        // La fiche existe : la correction n'a plus de prise sur elle. Laisser
+        // les deux champs ouverts donnait a croire qu'on pouvait encore la
+        // retoucher ici, alors qu'elle ne se modifie plus que dans sa fiche.
+        row.editing = false;
         this.snack.open($localize`:@@stakeholders.assistant.registered:Partie prenante inscrite.`,
           undefined, { duration: 2500 });
         this.registered.emit();
@@ -357,6 +388,37 @@ export class StakeholderAssistantComponent {
   }
 
   // ================= internes =================
+
+  /**
+   * Ouvre ou referme la correction d'une proposition.
+   *
+   * <p>Refermer REMET les valeurs proposees : on annule une correction en
+   * cours, on ne la valide pas par inadvertance en repliant le bloc.
+   */
+  toggleEdit(row: SuggestionRow): void {
+    if (row.registered || row.duplicate || row.busy) {
+      return;
+    }
+    if (row.editing) {
+      row.name = row.suggestion.name;
+      row.category = row.suggestion.category;
+    }
+    row.editing = !row.editing;
+  }
+
+  /**
+   * Ecarte une proposition : elle quitte la liste, rien n'est ecrit.
+   *
+   * <p>C'est le troisieme geste que demande la demarche — confirmer, corriger,
+   * rejeter. Sans lui, une proposition hors sujet restait a l'ecran et il
+   * fallait relancer l'assistant pour s'en debarrasser.
+   */
+  reject(row: SuggestionRow): void {
+    if (!this.suggestions || row.busy) {
+      return;
+    }
+    this.suggestions = this.suggestions.filter(r => r !== row);
+  }
 
   trackBySuggestion(_index: number, row: SuggestionRow): string {
     return row.suggestion.name;

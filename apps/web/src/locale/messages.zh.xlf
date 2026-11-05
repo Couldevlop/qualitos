@@ -7690,6 +7690,130 @@ Portail clients</source>
         <source>Refus impossible.</source>
         <target state="translated">驳回失败。</target>
       </trans-unit>
+      <trans-unit id="admin.clients.step-identity" datatype="html">
+        <source>Identité</source>
+        <target state="translated">标识</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.identity-help" datatype="html">
+        <source>Tout est facultatif : le client complétera depuis sa propre console. Ce qui est posé ici s'affiche dès sa première connexion.</source>
+        <target state="translated">一切均为可选：客户可在自己的控制台中补全。此处设置的内容在其首次登录时即可见。</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.slogan" datatype="html">
+        <source>Signature</source>
+        <target state="translated">标语</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.slogan-hint" datatype="html">
+        <source>Une ligne, sous le nom.</source>
+        <target state="translated">名称下方的一行文字。</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.legal-name" datatype="html">
+        <source>Raison sociale</source>
+        <target state="translated">法定名称</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.legal-form" datatype="html">
+        <source>Forme juridique</source>
+        <target state="translated">法律形式</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.registration" datatype="html">
+        <source>Numéro d'immatriculation</source>
+        <target state="translated">注册号</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.vat" datatype="html">
+        <source>Numéro de TVA</source>
+        <target state="translated">增值税号</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.address" datatype="html">
+        <source>Adresse</source>
+        <target state="translated">地址</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.postal-code" datatype="html">
+        <source>Code postal</source>
+        <target state="translated">邮政编码</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.city" datatype="html">
+        <source>Ville</source>
+        <target state="translated">城市</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.country" datatype="html">
+        <source>Pays (ISO, 2 lettres)</source>
+        <target state="translated">国家（ISO 两位字母）</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.country-invalid" datatype="html">
+        <source>Deux lettres, par exemple FR.</source>
+        <target state="translated">两位字母，例如 FR。</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.contact-email" datatype="html">
+        <source>Contact — e-mail</source>
+        <target state="translated">联系人 — 邮箱</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.contact-phone" datatype="html">
+        <source>Contact — téléphone</source>
+        <target state="translated">联系人 — 电话</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.brand" datatype="html">
+        <source>Marque</source>
+        <target state="translated">品牌</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.primary-color" datatype="html">
+        <source>Couleur principale</source>
+        <target state="translated">主色</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.secondary-color" datatype="html">
+        <source>Couleur secondaire</source>
+        <target state="translated">辅助色</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.color-note" datatype="html">
+        <source>Une couleur illisible sur le fond du thème est refusée par le serveur : le contraste prime sur la charte.</source>
+        <target state="translated">在主题背景上不可读的颜色会被服务器拒绝：对比度优先于品牌规范。</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.logo" datatype="html">
+        <source>Logo</source>
+        <target state="translated">标志</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.logo-remove" datatype="html">
+        <source>Retirer le logo</source>
+        <target state="translated">移除标志</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.logo-hint" datatype="html">
+        <source>PNG, JPEG ou WebP, 512 Ko au plus.</source>
+        <target state="translated">PNG、JPEG 或 WebP，最大 512 KB。</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.logo-type" datatype="html">
+        <source>Formats acceptés : PNG, JPEG, WebP.</source>
+        <target state="translated">支持的格式：PNG、JPEG、WebP。</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.logo-size" datatype="html">
+        <source>Le logo ne doit pas dépasser 512 Ko.</source>
+        <target state="translated">标志不得超过 512 KB。</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.theme" datatype="html">
+        <source>Thème</source>
+        <target state="translated">主题</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.theme-airy" datatype="html">
+        <source>Clair aéré — par défaut</source>
+        <target state="translated">浅色宽松 — 默认</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.theme-dense" datatype="html">
+        <source>Clair dense — poste de travail</source>
+        <target state="translated">浅色紧凑 — 工作台</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.theme-dark" datatype="html">
+        <source>Sombre</source>
+        <target state="translated">深色</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.theme-contrast" datatype="html">
+        <source>Contraste renforcé — atelier, extérieur</source>
+        <target state="translated">高对比度 — 车间、户外</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.identity-failed" datatype="html">
+        <source>L'identité n'a pas été enregistrée : reprenez-la depuis la fiche du client.</source>
+        <target state="translated">标识未保存：请从客户档案中重新设置。</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.logo-failed" datatype="html">
+        <source>Le logo n'a pas été déposé : reprenez-le depuis la fiche du client.</source>
+        <target state="translated">标志未上传：请从客户档案中重新上传。</target>
+      </trans-unit>
       <trans-unit id="nav.complaints-nlp" datatype="html">
         <source>Réclamations IA</source>
         <target state="translated">AI投诉</target>
@@ -11211,6 +11335,10 @@ Coordonnées professionnelles</source>
       <trans-unit id="dmaic.res.problem.planned" datatype="html">
         <source>Une action ne peut pas être prévue avant sa date de création.</source>
         <target state="translated">行动的计划日期不能早于其创建日期。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.closed" datatype="html">
+        <source>Clôturé</source>
+        <target state="translated">已结案</target>
       </trans-unit>
       <trans-unit id="dmaic.res.header-title" datatype="html">
         <source>DMAIC Résolution de problème</source>
@@ -18439,7 +18567,7 @@ historique 12 mois</source>
         <target state="translated">恢复</target>
       </trans-unit>
       <trans-unit id="dmaic.detail.charter" datatype="html">
-        <source>Charter</source>
+        <source>Charte du projet</source>
         <target state="translated">项目章程</target>
       </trans-unit>
       <trans-unit id="dmaic.detail.problem-label" datatype="html">
@@ -22629,6 +22757,98 @@ historique 12 mois</source>
       <trans-unit id="training.enroll.cancel-error" datatype="html">
         <source>Impossible d'annuler cette inscription.</source>
         <target state="translated">无法取消此报名。</target>
+      </trans-unit>
+      <trans-unit id="platform.brand.console" datatype="html">
+        <source>Console éditeur</source>
+        <target state="translated">发行方控制台</target>
+      </trans-unit>
+      <trans-unit id="platform.nav.aria" datatype="html">
+        <source>Navigation de la console</source>
+        <target state="translated">控制台导航</target>
+      </trans-unit>
+      <trans-unit id="platform.topbar.badge" datatype="html">
+        <source>Administration de la plateforme</source>
+        <target state="translated">平台管理</target>
+      </trans-unit>
+      <trans-unit id="platform.nav.clients" datatype="html">
+        <source>Clients</source>
+        <target state="translated">客户</target>
+      </trans-unit>
+      <trans-unit id="platform.nav.clients.hint" datatype="html">
+        <source>Créer un client, son identité, ses modules</source>
+        <target state="translated">创建客户及其标识与模块</target>
+      </trans-unit>
+      <trans-unit id="platform.nav.modules" datatype="html">
+        <source>Catalogue des modules</source>
+        <target state="translated">模块目录</target>
+      </trans-unit>
+      <trans-unit id="platform.nav.modules.hint" datatype="html">
+        <source>Ce que la plateforme sait livrer</source>
+        <target state="translated">平台可交付的内容</target>
+      </trans-unit>
+      <trans-unit id="platform.nav.scope" datatype="html">
+        <source>Cette console n’ouvre aucun écran qualité : les données d’un client se consultent depuis le compte de ce client.</source>
+        <target state="translated">本控制台不打开任何质量界面：客户数据需从该客户自己的账户查看。</target>
+      </trans-unit>
+      <trans-unit id="platform.user.logout" datatype="html">
+        <source>Se déconnecter</source>
+        <target state="translated">退出登录</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.title" datatype="html">
+        <source>Catalogue des modules</source>
+        <target state="translated">模块目录</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.subtitle" datatype="html">
+        <source>Tout ce que la plateforme sait livrer : le palier minimal de chaque module et ce qu’il exige d’autre pour fonctionner.</source>
+        <target state="translated">平台可交付的全部内容：每个模块的最低档位及其运行所需的前置模块。</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.reload" datatype="html">
+        <source>Recharger</source>
+        <target state="translated">重新加载</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.count" datatype="html">
+        <source><x id="INTERPOLATION"/> modules au catalogue</source>
+        <target state="translated">目录中有 <x id="INTERPOLATION"/> 个模块</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.core-count" datatype="html">
+        <source>dont <x id="INTERPOLATION"/> acquis d’office</source>
+        <target state="translated">其中 <x id="INTERPOLATION"/> 个为默认包含</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.loading" datatype="html">
+        <source>Chargement du catalogue…</source>
+        <target state="translated">正在加载目录…</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.core" datatype="html">
+        <source>Acquis d’office</source>
+        <target state="translated">默认包含</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.requires" datatype="html">
+        <source>Exige :</source>
+        <target state="translated">需要：</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.empty" datatype="html">
+        <source>Le moteur qualité n’a renvoyé aucun module. Vérifiez qu’il est joignable.</source>
+        <target state="translated">质量引擎未返回任何模块。请确认其可访问。</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.load-failed" datatype="html">
+        <source>Le catalogue des modules n’a pas pu être chargé.</source>
+        <target state="translated">无法加载模块目录。</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.family.methodes" datatype="html">
+        <source>Méthodes de la qualité</source>
+        <target state="translated">质量方法</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.family.transverse" datatype="html">
+        <source>Modules transverses</source>
+        <target state="translated">横向模块</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.family.platform" datatype="html">
+        <source>Plateforme</source>
+        <target state="translated">平台</target>
+      </trans-unit>
+      <trans-unit id="platform.modules.family.integrations" datatype="html">
+        <source>Intégrations</source>
+        <target state="translated">集成</target>
       </trans-unit>
       <trans-unit id="nav.produits" datatype="html">
         <source>Produits</source>
@@ -27806,6 +28026,22 @@ historique 12 mois</source>
         <source>Mesures par sous-groupe</source>
         <target state="translated">按子组的测量值</target>
       </trans-unit>
+      <trans-unit id="spc.study.subgroup-count" datatype="html">
+        <source><x id="INTERPOLATION"/> sous-groupe(s)</source>
+        <target state="translated"><x id="INTERPOLATION"/> 个子组</target>
+      </trans-unit>
+      <trans-unit id="spc.study.subgroup-add" datatype="html">
+        <source>Ajouter un sous-groupe</source>
+        <target state="translated">添加子组</target>
+      </trans-unit>
+      <trans-unit id="spc.study.subgroup-remove" datatype="html">
+        <source>Retirer le dernier sous-groupe (il doit être vide)</source>
+        <target state="translated">移除最后一个子组（必须为空）</target>
+      </trans-unit>
+      <trans-unit id="spc.study.few-subgroups" datatype="html">
+        <source>Moins de 20 sous-groupes : les limites de contrôle restent indicatives.</source>
+        <target state="translated">子组少于 20 个：控制限仅供参考。</target>
+      </trans-unit>
       <trans-unit id="spc.study.sample" datatype="html">
         <source>Échantillon</source>
         <target state="translated">样本</target>
@@ -28126,6 +28362,10 @@ historique 12 mois</source>
         <source>Parties prenantes</source>
         <target state="translated">相关方</target>
       </trans-unit>
+      <trans-unit id="stakeholders.export" datatype="html">
+        <source>Exporter</source>
+        <target state="translated">导出</target>
+      </trans-unit>
       <trans-unit id="stakeholders.title" datatype="html">
         <source>Parties prenantes</source>
         <target state="translated">相关方</target>
@@ -28202,6 +28442,10 @@ historique 12 mois</source>
         <source>Interne / externe</source>
         <target state="translated">内部／外部</target>
       </trans-unit>
+      <trans-unit id="stakeholders.filter.criticality" datatype="html">
+        <source>Niveau de risque</source>
+        <target state="translated">风险等级</target>
+      </trans-unit>
       <trans-unit id="stakeholders.filter.clear" datatype="html">
         <source>Effacer les filtres</source>
         <target state="translated">清除筛选</target>
@@ -28213,6 +28457,10 @@ historique 12 mois</source>
       <trans-unit id="stakeholders.col.category" datatype="html">
         <source>Catégorie</source>
         <target state="translated">类别</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.col.side" datatype="html">
+        <source>Interne / externe</source>
+        <target state="translated">内部／外部</target>
       </trans-unit>
       <trans-unit id="stakeholders.col.criticality" datatype="html">
         <source>Criticité</source>
@@ -28550,6 +28798,10 @@ historique 12 mois</source>
         <source>Audit</source>
         <target state="translated">审核</target>
       </trans-unit>
+      <trans-unit id="stakeholders.link.capa" datatype="html">
+        <source>Action</source>
+        <target state="translated">措施</target>
+      </trans-unit>
       <trans-unit id="stakeholders.link.document" datatype="html">
         <source>Document</source>
         <target state="translated">文件</target>
@@ -28779,8 +29031,16 @@ historique 12 mois</source>
         <target state="translated">无法获取建议。</target>
       </trans-unit>
       <trans-unit id="stakeholders.assistant.nothing-to-suggest" datatype="html">
-        <source>Rien à proposer : votre registre couvre déjà ce que cette description laisse voir.</source>
-        <target state="translated">无建议：您的登记册已覆盖此描述所反映的范围。</target>
+        <source>L'assistant n'a rien proposé : soit votre registre couvre déjà ce que cette description laisse voir, soit il n'a pas pu répondre. Réessayez, ou précisez votre activité.</source>
+        <target state="translated">助手没有给出建议：可能是您的登记册已覆盖此描述所反映的范围，也可能是助手无法作答。请重试，或更具体地描述您的活动。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.edit" datatype="html">
+        <source>Corriger</source>
+        <target state="translated">修改</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.assistant.reject" datatype="html">
+        <source>Rejeter</source>
+        <target state="translated">拒绝</target>
       </trans-unit>
       <trans-unit id="stakeholders.assistant.already" datatype="html">
         <source>Déjà au registre</source>

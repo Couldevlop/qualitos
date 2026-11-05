@@ -1,14 +1,35 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
+import { PLATFORM_PATH, businessRoutesGuard, platformGuard } from './core/auth/platform.guard';
 import { RESTRICTED_ACCESS_PATH, roleGuard } from './core/auth/role.guard';
 import { ADMIN_CONSOLE_ROLES } from './core/auth/tenant-admin';
 import { MainShellComponent } from './layout/main-shell/main-shell.component';
 
 const routes: Routes = [
   {
+    // La console de l'éditeur : sa propre coquille, hors de la coquille métier.
+    //
+    // Déclarée AVANT la route '' : celle-ci capture tout, y compris son
+    // caractère générique final, et la console n'aurait jamais été atteinte.
+    //
+    // La console ne partage rien avec la coquille métier — ni navigation, ni
+    // gardes de module, ni chip de synchronisation. C'est ce qui rend
+    // structurellement impossible d'y afficher un écran qualité, là où filtrer
+    // une navigation n'aurait fait que masquer des entrées encore atteignables
+    // par leur adresse.
+    path: PLATFORM_PATH,
+    canActivate: [platformGuard],
+    loadChildren: () => import('./platform/platform.module').then(m => m.PlatformModule)
+  },
+  {
     path: '',
     component: MainShellComponent,
+    // La même frontière, dans l'autre sens : l'éditeur n'entre pas dans les
+    // écrans d'un client. Son jeton ne porte aucun client, donc ce qu'un écran
+    // métier afficherait ne serait les données de personne — ce qui est plus
+    // trompeur qu'un refus.
+    canActivate: [businessRoutesGuard],
     children: [
       { path: '', pathMatch: 'full', redirectTo: 'home' },
       {

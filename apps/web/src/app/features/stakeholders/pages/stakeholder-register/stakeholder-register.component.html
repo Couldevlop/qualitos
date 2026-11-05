@@ -16,6 +16,15 @@
     </mat-select>
   </mat-form-field>
 
+  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+    <mat-label i18n="@@stakeholders.filter.criticality">Niveau de risque</mat-label>
+    <mat-select [value]="criticality" (selectionChange)="onCriticality($event.value)"
+                data-test="filtre-criticite">
+      <mat-option value="" i18n="@@common.all">Tous</mat-option>
+      <mat-option *ngFor="let c of criticalities" [value]="c">{{ impactLabel(c) }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
   <button *ngIf="hasFilters" mat-button type="button" (click)="clear()" data-test="effacer-filtres">
     <mat-icon aria-hidden="true">filter_alt_off</mat-icon>
     <span i18n="@@stakeholders.filter.clear">Effacer les filtres</span>
@@ -24,7 +33,7 @@
 
 <div class="table-wrap">
   <div class="qos-scroll-x">
-    <table mat-table [dataSource]="rows" [trackBy]="trackById">
+    <table mat-table [dataSource]="visibleRows" [trackBy]="trackById">
       <ng-container matColumnDef="name">
         <th mat-header-cell *matHeaderCellDef i18n="@@stakeholders.col.name">Partie prenante</th>
         <td mat-cell *matCellDef="let row">
@@ -80,7 +89,7 @@
     </table>
   </div>
 
-  <div class="empty" *ngIf="!loading && rows.length === 0" data-test="vide">
+  <div class="empty" *ngIf="!loading && visibleRows.length === 0" data-test="vide">
     <mat-icon aria-hidden="true">groups</mat-icon>
     <p *ngIf="hasFilters; else aucune" i18n="@@stakeholders.empty-filtered">
       Aucune partie prenante ne correspond à ces filtres.

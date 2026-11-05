@@ -1,4 +1,4 @@
-import { CONSTANT_ROWS, SUBGROUPS, SUBGROUP_SIZES, classify, computeCapability, resizeGrid } from './spc-capability.calc';
+import { CONSTANT_ROWS, DEFAULT_SUBGROUPS, SUBGROUP_SIZES, classify, computeCapability, resizeGrid } from './spc-capability.calc';
 import { SPC_EXAMPLES, TURNING_EXAMPLE, WORKBOOK_EXAMPLE } from './spc-capability.examples';
 import { GOLDEN, GOLDEN_GRID, GOLDEN_LSL, GOLDEN_USL } from './spc-capability.fixtures';
 
@@ -15,7 +15,7 @@ describe('spc-capability.examples', () => {
     for (const ex of SPC_EXAMPLES) {
       expect(SUBGROUP_SIZES).toContain(ex.subgroupSize);
       expect(ex.grid.length).toBe(ex.subgroupSize);
-      expect(ex.grid.every(r => r.length === SUBGROUPS && r.every(v => Number.isFinite(v)))).toBeTrue();
+      expect(ex.grid.every(r => r.length === DEFAULT_SUBGROUPS && r.every(v => Number.isFinite(v)))).toBeTrue();
       expect(ex.usl).toBeGreaterThan(ex.lsl);
       expect(ex.partReference.trim()).not.toBe('');
     }
@@ -32,7 +32,7 @@ describe('spc-capability.examples', () => {
 
   it('donne un procédé décentré, non maîtrisé, au sous-groupe 14 hors limites', () => {
     const c = calc(TURNING_EXAMPLE);
-    expect(c.completeSubgroups).toBe(SUBGROUPS);
+    expect(c.completeSubgroups).toBe(DEFAULT_SUBGROUPS);
     expect(c.cp!).toBeCloseTo(1.42, 2);
     expect(c.cpk!).toBeCloseTo(0.66, 2);
     expect(c.cpu!).toBeLessThan(c.cpl!);

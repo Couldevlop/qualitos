@@ -14,7 +14,8 @@ import {
   ConfirmDialogComponent, ConfirmDialogData
 } from '../../../../../shared/ui/confirm-dialog/confirm-dialog.component';
 import {
-  CONSTANT_ROWS, MAX_SUBGROUP_SIZE, SUBGROUPS, SUBGROUP_SIZES, classify, computeCapability, displayDigits,
+  CONSTANT_ROWS, DEFAULT_SUBGROUPS, MAX_SUBGROUPS, MAX_SUBGROUP_SIZE, MIN_SUBGROUPS, RELIABLE_SUBGROUPS,
+  SUBGROUP_SIZES, classify, computeCapability, displayDigits,
   measurementDecimals, parseMeasurement, pasteBlock
 } from '../../spc-capability.calc';
 import { completeValues } from '../../spc-capability.charts';
@@ -54,8 +55,8 @@ export class CapabilityStudyComponent implements OnInit {
   readonly subgroupSizes = SUBGROUP_SIZES;
   readonly constantRows = CONSTANT_ROWS;
   readonly examples = SPC_EXAMPLES;
-  readonly columns = Array.from({ length: SUBGROUPS }, (_, i) => i);
-  readonly columnLabels = this.columns.map(i => `SG ${String(i + 1).padStart(2, '0')}`);
+  readonly minSubgroups = MIN_SUBGROUPS;
+  readonly maxSubgroups = MAX_SUBGROUPS;
   readonly yes = $localize`:@@spc.study.yes:OUI`;
   readonly no = $localize`:@@spc.study.no:NON`;
   readonly xbarLabel = $localize`:@@spc.study.xbar-aria:Carte X̄ : moyenne de chaque sous-groupe et limites de contrôle`;
@@ -72,7 +73,7 @@ export class CapabilityStudyComponent implements OnInit {
   watchThreshold = 1.33;
 
   /** Le texte des cellules, ligne par échantillon. */
-  raw: string[][] = Array.from({ length: MAX_SUBGROUP_SIZE }, () => Array<string>(SUBGROUPS).fill(''));
+  raw: string[][] = Array.from({ length: MAX_SUBGROUP_SIZE }, () => Array<string>(DEFAULT_SUBGROUPS).fill(''));
 
   calc!: CalculationView;
   readings: CapabilityReadings | null = null;
@@ -171,6 +172,53 @@ export class CapabilityStudyComponent implements OnInit {
 
   get rows(): number[] {
     return Array.from({ length: this.n }, (_, i) => i);
+  }
+
+  /** Les sous-groupes de CETTE étude : la largeur de sa grille, rien d'autre. */
+  get subgroupCount(): number {
+    return this.raw[0]?.length ?? 0;
+  }
+
+  get columns(): number[] {
+    return Array.from({ length: this.subgroupCount }, (_, i) => i);
+  }
+
+  get columnLabels(): string[] {
+    return this.columns.map(i => `SG ${String(i + 1).padStart(2, '0')}`);
+  }
+
+  /**
+   * L'étude porte moins de sous-groupes que la règle de l'art n'en demande.
+   *
+   * <p>On le DIT, on ne l'interdit pas : une étude en cours de collecte est
+   * légitime, et ses limites de contrôle se resserreront. Les cacher
+   * obligerait à attendre vingt relevés pour voir quoi que ce soit.
+   */
+  get fewSubgroups(): boolean {
+    return this.subgroupCount > 0 && this.subgroupCount < RELIABLE_SUBGROUPS;
+  }
+
+  get canAddSubgroup(): boolean {
+    return this.canManage && this.subgroupCount < MAX_SUBGROUPS;
+  }
+
+  /** Le dernier sous-groupe ne se retire que vide : on ne jette pas des mesures d'un clic. */
+  get canRemoveSubgroup(): boolean {
+    const c = this.subgroupCount - 1;
+    return this.canManage && this.subgroupCount > MIN_SUBGROUPS
+      && this.raw.every(row => (row[c] ?? '').trim() === '');
+  }
+
+  addSubgroup(): void {
+    if (!this.canAddSubgroup) return;
+    this.raw = this.raw.map(row => [...row, '']);
+    this.recompute();
+  }
+
+  removeSubgroup(): void {
+    if (!this.canRemoveSubgroup) return;
+    this.raw = this.raw.map(row => row.slice(0, -1));
+    this.recompute();
   }
 
   /** Les décimales des X̄ et des R, suivant la résolution des mesures saisies. */
@@ -379,8 +427,11 @@ export class CapabilityStudyComponent implements OnInit {
     this.capableThreshold = s.capableThreshold;
     this.watchThreshold = s.watchThreshold;
     this.leaderName = s.leaderName;
+    // La largeur vient de l'etude enregistree : une etude de douze sous-groupes
+    // se rouvre avec douze colonnes, pas vingt dont huit vides.
+    const largeur = sheet.measurements[0]?.length || DEFAULT_SUBGROUPS;
     this.raw = Array.from({ length: MAX_SUBGROUP_SIZE }, (_, r) =>
-      Array.from({ length: SUBGROUPS }, (_, c) => {
+      Array.from({ length: largeur }, (_, c) => {
         const v = sheet.measurements[r]?.[c];
         return v === null || v === undefined ? '' : String(v);
       }));
@@ -401,8 +452,9 @@ export class CapabilityStudyComponent implements OnInit {
   }
 
   private applyExample(ex: SpcExample): void {
+    const largeur = ex.grid[0]?.length || DEFAULT_SUBGROUPS;
     this.raw = Array.from({ length: MAX_SUBGROUP_SIZE }, (_, r) =>
-      Array.from({ length: SUBGROUPS }, (_, c) => {
+      Array.from({ length: largeur }, (_, c) => {
         const v = ex.grid[r]?.[c];
         return v === null || v === undefined ? '' : String(v);
       }));

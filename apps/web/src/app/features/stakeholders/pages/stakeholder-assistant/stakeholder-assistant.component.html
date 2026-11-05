@@ -47,14 +47,35 @@
   <!-- Une liste vide est une RÉPONSE : on le dit, ce n'est pas une panne. -->
   <p class="dim" *ngIf="suggestions && !suggestions.length" data-test="suggestions-vides"
      i18n="@@stakeholders.assistant.nothing-to-suggest">
-     Rien à proposer : votre registre couvre déjà ce que cette description laisse voir.
+     L'assistant n'a rien proposé : soit votre registre couvre déjà ce que cette
+     description laisse voir, soit il n'a pas pu répondre. Réessayez, ou précisez
+     votre activité.
   </p>
 
   <ul class="propositions" *ngIf="suggestions?.length" data-test="suggestions">
     <li class="proposition" *ngFor="let row of suggestions; trackBy: trackBySuggestion">
       <div class="proposition__texte">
-        <strong>{{ row.suggestion.name }}</strong>
-        <small class="dim">{{ categoryLabel(row.suggestion.category) }}</small>
+        <ng-container *ngIf="!row.editing">
+          <strong>{{ row.name }}</strong>
+          <small class="dim">{{ categoryLabel(row.category) }}</small>
+        </ng-container>
+
+        <!-- Corriger sur place : une proposition presque juste se rattrape
+             avant l'inscription, sans la rejeter ni la ressaisir. -->
+        <div class="proposition__correction" *ngIf="row.editing">
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <mat-label i18n="@@stakeholders.field.name">Nom ou raison sociale</mat-label>
+            <input matInput [(ngModel)]="row.name" [maxlength]="maxName"
+                   [attr.data-test]="'nom-' + row.suggestion.name">
+          </mat-form-field>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <mat-label i18n="@@stakeholders.col.category">Catégorie</mat-label>
+            <mat-select [(ngModel)]="row.category"
+                        [attr.data-test]="'categorie-' + row.suggestion.name">
+              <mat-option *ngFor="let c of categories" [value]="c">{{ categoryLabel(c) }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
         <!-- La justification est ce qui rend la proposition discutable. -->
         <p class="proposition__motif" *ngIf="row.suggestion.rationale">
           {{ row.suggestion.rationale }}
@@ -82,6 +103,17 @@
                   [disabled]="row.busy" data-test="inscrire">
             <mat-icon aria-hidden="true">group_add</mat-icon>
             <span i18n="@@stakeholders.assistant.do-register">Inscrire</span>
+          </button>
+          <button mat-button type="button" (click)="toggleEdit(row)" [disabled]="row.busy"
+                  data-test="corriger">
+            <mat-icon aria-hidden="true">edit</mat-icon>
+            <span *ngIf="!row.editing" i18n="@@stakeholders.assistant.edit">Corriger</span>
+            <span *ngIf="row.editing" i18n="@@common.cancel">Annuler</span>
+          </button>
+          <button mat-button type="button" (click)="reject(row)" [disabled]="row.busy"
+                  data-test="rejeter">
+            <mat-icon aria-hidden="true">close</mat-icon>
+            <span i18n="@@stakeholders.assistant.reject">Rejeter</span>
           </button>
         </ng-container>
       </div>

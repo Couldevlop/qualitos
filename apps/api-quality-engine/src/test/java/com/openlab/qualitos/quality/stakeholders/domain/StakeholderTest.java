@@ -322,6 +322,50 @@ class StakeholderTest {
     }
 
     @Test
+    void cloturerLeDossierRendLExigenceMaitrisee() {
+        // La boucle de retour : ouvrir fait passer « à réévaluer », clôturer
+        // rend maîtrisée. Personne n'a deux tableaux à tenir.
+        Stakeholder s = fiche();
+        UUID id = s.addRequirement(exigence("Tracer les lots")).id();
+        UUID capa = UUID.randomUUID();
+        s.attachCapa(id, capa);
+
+        assertThat(s.closeCapa(capa)).isTrue();
+        assertThat(s.requirement(id)).get()
+                .extracting(StakeholderRequirement::status)
+                .isEqualTo(RequirementStatus.CONTROLLED);
+    }
+
+    @Test
+    void laClotureNEcrasePasUnJugementHumainPosteriieur() {
+        // Quelqu'un a replacé l'exigence « applicable » parce que l'écart
+        // courait encore : la clôture du dossier ne doit pas passer par-dessus.
+        Stakeholder s = fiche();
+        UUID id = s.addRequirement(exigence("Tracer les lots")).id();
+        UUID capa = UUID.randomUUID();
+        s.attachCapa(id, capa);
+        s.setRequirementStatus(id, RequirementStatus.APPLICABLE);
+
+        assertThat(s.closeCapa(capa)).isFalse();
+        assertThat(s.requirement(id)).get()
+                .extracting(StakeholderRequirement::status)
+                .isEqualTo(RequirementStatus.APPLICABLE);
+    }
+
+    @Test
+    void laClotureDUnDossierEtrangerOuNulNeChangeRien() {
+        Stakeholder s = fiche();
+        UUID id = s.addRequirement(exigence("Tracer les lots")).id();
+        s.attachCapa(id, UUID.randomUUID());
+
+        assertThat(s.closeCapa(UUID.randomUUID())).isFalse();
+        assertThat(s.closeCapa(null)).isFalse();
+        assertThat(s.requirement(id)).get()
+                .extracting(StakeholderRequirement::status)
+                .isEqualTo(RequirementStatus.TO_REASSESS);
+    }
+
+    @Test
     void unRattachementCapaSansDossierEstRefuse() {
         Stakeholder s = fiche();
         UUID id = s.addRequirement(exigence("Tracer les lots")).id();

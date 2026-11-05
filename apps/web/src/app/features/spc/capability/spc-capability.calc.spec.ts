@@ -1,5 +1,5 @@
 import {
-  SUBGROUPS, SUBGROUP_SIZES, classify, computeCapability, constantsFor, displayDigits, emptyGrid,
+  DEFAULT_SUBGROUPS, SUBGROUP_SIZES, classify, computeCapability, constantsFor, displayDigits, emptyGrid,
   measurementDecimals, parseMeasurement, pasteBlock, resizeGrid
 } from './spc-capability.calc';
 import { GOLDEN, GOLDEN_GRID, GOLDEN_LSL, GOLDEN_USL } from './spc-capability.fixtures';
@@ -16,7 +16,7 @@ describe('spc-capability.calc', () => {
 
     it('compte les 20 sous-groupes complets', () => {
       expect(c.completeSubgroups).toBe(20);
-      expect(c.subgroupMeans.length).toBe(SUBGROUPS);
+      expect(c.subgroupMeans.length).toBe(DEFAULT_SUBGROUPS);
       expect(c.subgroupMeans[0]).toBeCloseTo(498.6, 6);
       expect(c.subgroupRanges[0]).toBe(7);
     });
@@ -77,7 +77,7 @@ describe('spc-capability.calc', () => {
   });
 
   it('laisse les indices nuls sans dispersion', () => {
-    const plat: Measurement[][] = Array.from({ length: 2 }, () => Array<Measurement>(SUBGROUPS).fill(500));
+    const plat: Measurement[][] = Array.from({ length: 2 }, () => Array<Measurement>(DEFAULT_SUBGROUPS).fill(500));
     const c = computeCapability(GOLDEN_LSL, GOLDEN_USL, 2, plat);
     expect(c.sigma).toBe(0);
     expect(c.cp).toBeNull();
@@ -120,7 +120,7 @@ describe('spc-capability.calc', () => {
   it('crée une grille vide et la redimensionne sans perdre ce qui reste', () => {
     const g = emptyGrid(3);
     expect(g.length).toBe(3);
-    expect(g.every(r => r.length === SUBGROUPS && r.every(v => v === null))).toBeTrue();
+    expect(g.every(r => r.length === DEFAULT_SUBGROUPS && r.every(v => v === null))).toBeTrue();
     const r = resizeGrid(GOLDEN_GRID, 3);
     expect(r.length).toBe(3);
     expect(r[2]).toEqual(GOLDEN_GRID[2]);
@@ -140,7 +140,7 @@ describe('spc-capability.calc', () => {
   });
 
   it('colle un bloc de tableur à partir d\'une cellule, sans déborder', () => {
-    const raw = Array.from({ length: 2 }, () => Array<string>(SUBGROUPS).fill(''));
+    const raw = Array.from({ length: 2 }, () => Array<string>(DEFAULT_SUBGROUPS).fill(''));
     const next = pasteBlock(raw, 0, 18, '1\t2\t3\r\n4\t 5 \t6\n\n');
     expect(next[0][18]).toBe('1');
     expect(next[0][19]).toBe('2');

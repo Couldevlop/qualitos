@@ -1,0 +1,56 @@
+<div class="qos-page">
+  <qos-page-header
+    title="Catalogue des modules" i18n-title="@@platform.modules.title"
+    subtitle="Tout ce que la plateforme sait livrer : le palier minimal de chaque module et ce qu’il exige d’autre pour fonctionner."
+    i18n-subtitle="@@platform.modules.subtitle">
+    <ng-container qosActions>
+      <button mat-stroked-button type="button" (click)="reload()" [disabled]="loading$ | async"
+              data-test="recharger">
+        <mat-icon>refresh</mat-icon>
+        <span i18n="@@platform.modules.reload">Recharger</span>
+      </button>
+    </ng-container>
+  </qos-page-header>
+
+  <p class="chiffres" *ngIf="total" data-test="chiffres">
+    <span i18n="@@platform.modules.count">{{ total }} modules au catalogue</span>
+    <span class="chiffres__sep" aria-hidden="true">·</span>
+    <!-- Un module cœur est acquis d'office : le dire évite de le chercher dans
+         la liste de ce qu'on accorde. -->
+    <span i18n="@@platform.modules.core-count">dont {{ coreCount }} acquis d’office</span>
+  </p>
+
+  <p class="erreur" *ngIf="error" role="alert" data-test="erreur">{{ error }}</p>
+
+  <p class="attente" *ngIf="loading$ | async" data-test="chargement"
+     i18n="@@platform.modules.loading">Chargement du catalogue…</p>
+
+  <section class="famille" *ngFor="let family of families" [attr.aria-labelledby]="'famille-' + family.key">
+    <h2 class="famille__titre" [id]="'famille-' + family.key">{{ family.label }}</h2>
+
+    <ul class="modules">
+      <li class="module" *ngFor="let entry of family.entries" [attr.data-code]="entry.code">
+        <div class="module__tete">
+          <span class="module__nom">{{ entry.name }}</span>
+          <code class="module__code">{{ entry.code }}</code>
+          <span class="module__socle" *ngIf="entry.coreModule"
+                i18n="@@platform.modules.core">Acquis d’office</span>
+          <span class="module__palier" *ngIf="!entry.coreModule">{{ entry.minimumTier }}</span>
+        </div>
+
+        <p class="module__requis" *ngIf="entry.dependencies.length">
+          <span i18n="@@platform.modules.requires">Exige&nbsp;:</span>
+          <span class="module__requis-liste">
+            <span *ngFor="let code of entry.dependencies; let last = last">{{ labelOf(code) }}<span
+              *ngIf="!last">, </span></span>
+          </span>
+        </p>
+      </li>
+    </ul>
+  </section>
+
+  <p class="vide" *ngIf="!(loading$ | async) && !error && !total" data-test="vide"
+     i18n="@@platform.modules.empty">
+    Le moteur qualité n’a renvoyé aucun module. Vérifiez qu’il est joignable.
+  </p>
+</div>

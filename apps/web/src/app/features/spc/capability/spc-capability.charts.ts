@@ -1,4 +1,3 @@
-import { SUBGROUPS } from './spc-capability.calc';
 import { Measurement } from './spc-capability.types';
 
 /**
@@ -69,7 +68,14 @@ export function controlChart(values: (number | null)[], ucl: number | null, cl: 
   });
   const longest = Math.max(...ticks.map(t => t.value.toFixed(digits).length));
   const left = Math.max(CL_, Math.ceil(longest * MONO_CHAR + TICK_GAP));
-  const x = (i: number) => left + (CW - left - CR) * i / (SUBGROUPS - 1);
+  // L'axe suit le nombre de sous-groupes DE CETTE ETUDE, qui est libre : une
+  // largeur fixee a vingt ecrasait une etude de douze releves sur la moitie
+  // gauche du cadre et en faisait deborder une de trente. Un seul sous-groupe
+  // ne definit pas d'echelle : on le pose au milieu.
+  const colonnes = values.length;
+  const x = (i: number) => colonnes > 1
+    ? left + (CW - left - CR) * i / (colonnes - 1)
+    : left + (CW - left - CR) / 2;
   const points = pts.map(p => ({ index: p.i, value: p.v, x: x(p.i), y: y(p.v), out: p.v > ucl || p.v < lcl }));
   return {
     width: CW, height: CH, left, right: CW - CR,
@@ -82,8 +88,8 @@ export function controlChart(values: (number | null)[], ucl: number | null, cl: 
     ],
     specs: tolerances.map(t => ({ ...t, y: y(t.value) })),
     ticks,
-    xLabels: Array.from({ length: SUBGROUPS }, (_, i) => i)
-      .filter(i => i % 2 === 0 || i === SUBGROUPS - 1)
+    xLabels: Array.from({ length: colonnes }, (_, i) => i)
+      .filter(i => i % 2 === 0 || i === colonnes - 1)
       .map(i => ({ label: i + 1, x: x(i) }))
   };
 }
@@ -118,7 +124,8 @@ const BINS = 30;
 /** Les mesures des sous-groupes complets : celles qui entrent dans le calcul. */
 export function completeValues(grid: Measurement[][], n: number): number[] {
   const out: number[] = [];
-  for (let c = 0; c < SUBGROUPS; c++) {
+  const colonnes = grid[0]?.length ?? 0;
+  for (let c = 0; c < colonnes; c++) {
     const col: number[] = [];
     for (let r = 0; r < n; r++) {
       const v = grid[r]?.[c];

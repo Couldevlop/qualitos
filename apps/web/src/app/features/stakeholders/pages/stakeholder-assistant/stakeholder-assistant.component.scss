@@ -9,6 +9,7 @@
 }
 
 .contrat {
+  border-left: 4px solid var(--qos-success-fg);
   margin: 0;
   padding: var(--qos-space-2) var(--qos-space-3);
   border-left: 3px solid var(--qos-accent-bg);
@@ -27,6 +28,10 @@
   min-width: 0;
   padding: var(--qos-space-3);
   border: 1px solid var(--qos-border-subtle);
+  // La cote verte de la maquette : elle marque, d'un regard et sur toute la
+  // hauteur, ce qui vient de l'assistant et non du registre. C'est la meme
+  // distinction que porte la phrase « l'assistant propose, il n'inscrit rien ».
+  border-left: 4px solid var(--qos-success-fg);
   border-radius: var(--qos-radius-md);
   background: var(--qos-bg-elevated);
 
@@ -250,4 +255,14 @@
     background: var(--qos-accent-bg-soft);
     color: var(--qos-accent-fg-soft);
   }
+}
+
+/* La correction d'une proposition : deux champs, cote a cote tant qu'il y a
+   la place, empiles sur un ecran etroit. */
+.proposition__correction {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--qos-space-2);
+
+  mat-form-field { min-width: 14rem; flex: 1 1 14rem; }
 }

@@ -189,7 +189,52 @@ class CapabilityStudyTest {
     }
 
     @Test
-    void laGrilleAUneLigneParEchantillonEtVingtSousGroupes() {
+    @DisplayName("une etude se mene avec le nombre de sous-groupes qu'elle a, pas vingt pile")
+    void leNombreDeSousGroupesEstLibreEntreSesBornes() {
+        // Le cas qui etait refuse : une collecte en cours, douze sous-groupes.
+        CapabilityStudy douze = etude(avec(c -> {
+            c.grille = tronquee(12);
+            return c;
+        }));
+        assertThat(douze.getMeasurements().get(0)).hasSize(12);
+        assertThat(douze.getCpk()).isNotNull();
+
+        // Et les bornes tiennent des deux cotes.
+        refuse(avec(c -> { c.grille = tronquee(1); return c; }), "measurements");
+        refuse(avec(c -> { c.grille = elargie(41); return c; }), "measurements");
+        // Une grille en escalier : refusee, sinon un sous-groupe porterait moins
+        // d'echantillons que sa taille annoncee, et le calcul l'ecarterait en silence.
+        refuse(avec(c -> {
+            c.grille = tronquee(12);
+            c.grille.set(2, new ArrayList<>(c.grille.get(2).subList(0, 11)));
+            return c;
+        }), "measurements");
+    }
+
+    /** La grille du classeur, ramenee a {@code colonnes} sous-groupes. */
+    private static List<List<Double>> tronquee(int colonnes) {
+        List<List<Double>> grille = new ArrayList<>();
+        for (List<Double> ligne : SpcFixtures.goldenGrid()) {
+            grille.add(new ArrayList<>(ligne.subList(0, Math.min(colonnes, ligne.size()))));
+        }
+        return grille;
+    }
+
+    /** La grille du classeur, prolongee a {@code colonnes} sous-groupes. */
+    private static List<List<Double>> elargie(int colonnes) {
+        List<List<Double>> grille = new ArrayList<>();
+        for (List<Double> ligne : SpcFixtures.goldenGrid()) {
+            List<Double> large = new ArrayList<>(ligne);
+            while (large.size() < colonnes) {
+                large.add(ligne.get(large.size() % ligne.size()));
+            }
+            grille.add(large);
+        }
+        return grille;
+    }
+
+    @Test
+    void laGrilleAUneLigneParEchantillonEtMemeLargeurPartout() {
         refuse(avec(c -> { c.grille = null; return c; }), "measurements");
         refuse(avec(c -> { c.n = 4; return c; }), "measurements");
         refuse(avec(c -> {

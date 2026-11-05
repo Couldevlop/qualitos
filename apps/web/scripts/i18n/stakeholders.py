@@ -11,6 +11,8 @@ TRANSLATIONS = {
     'nav.stakeholders': (
         'Parties prenantes', 'Stakeholders', 'Partes interesadas',
         'الأطراف المعنية', '利害関係者', '相关方'),
+    'stakeholders.export': (
+        'Exporter', 'Export', 'Exportar', 'تصدير', 'エクスポート', '导出'),
     'stakeholders.title': (
         'Parties prenantes', 'Stakeholders', 'Partes interesadas',
         'الأطراف المعنية', '利害関係者', '相关方'),
@@ -84,6 +86,9 @@ TRANSLATIONS = {
     'stakeholders.filter.side': (
         'Interne / externe', 'Internal / external', 'Interna / externa',
         'داخلي / خارجي', '内部／外部', '内部／外部'),
+    'stakeholders.filter.criticality': (
+        'Niveau de risque', 'Risk level', 'Nivel de riesgo',
+        'مستوى الخطر', 'リスクレベル', '风险等级'),
     'stakeholders.filter.clear': (
         'Effacer les filtres', 'Clear filters', 'Borrar los filtros',
         'مسح عوامل التصفية', '絞り込みを解除', '清除筛选'),
@@ -92,6 +97,9 @@ TRANSLATIONS = {
         'الطرف المعني', '利害関係者', '相关方'),
     'stakeholders.col.category': (
         'Catégorie', 'Category', 'Categoría', 'الفئة', 'カテゴリー', '类别'),
+    'stakeholders.col.side': (
+        'Interne / externe', 'Internal / external', 'Interna / externa',
+        'داخلي / خارجي', '内部／外部', '内部／外部'),
     'stakeholders.col.criticality': (
         'Criticité', 'Criticality', 'Criticidad', 'الأهمية', '重要度', '关键性'),
     'stakeholders.col.relevance': (
@@ -396,6 +404,8 @@ TRANSLATIONS = {
         'Écart', 'Deviation', 'Desviación', 'انحراف', '不適合', '偏差'),
     'stakeholders.link.audit': (
         'Audit', 'Audit', 'Auditoría', 'تدقيق', '監査', '审核'),
+    'stakeholders.link.capa': (
+        'Action', 'Action', 'Acción', 'إجراء', 'アクション', '措施'),
     'stakeholders.link.document': (
         'Document', 'Document', 'Documento', 'وثيقة', '文書', '文件'),
     'stakeholders.linked': (
@@ -683,12 +693,24 @@ TRANSLATIONS = {
         'No se pudieron obtener las sugerencias.', 'لم تتمكّن الاقتراحات من الوصول.',
         '提案を取得できませんでした。', '无法获取建议。'),
     'stakeholders.assistant.nothing-to-suggest': (
-        'Rien à proposer : votre registre couvre déjà ce que cette description laisse voir.',
-        'Nothing to propose: your register already covers what this description shows.',
-        'Nada que proponer: su registro ya cubre lo que esta descripción permite ver.',
-        'لا يوجد ما يُقترح: سجلك يغطي بالفعل ما يُظهره هذا الوصف.',
-        '提案はありません。この説明から見える範囲は、すでに登録簿が網羅しています。',
-        '无建议：您的登记册已覆盖此描述所反映的范围。'),
+        "L'assistant n'a rien proposé : soit votre registre couvre déjà ce que cette "
+        "description laisse voir, soit il n'a pas pu répondre. Réessayez, ou précisez "
+        'votre activité.',
+        'The assistant proposed nothing: either your register already covers what this '
+        'description shows, or it could not answer. Try again, or describe your activity '
+        'more precisely.',
+        'El asistente no ha propuesto nada: o su registro ya cubre lo que esta descripción '
+        'permite ver, o no ha podido responder. Vuelva a intentarlo o precise su actividad.',
+        'لم يقترح المساعد شيئًا: إمّا أن سجلك يغطي بالفعل ما يُظهره هذا الوصف، أو أنه لم يتمكن '
+        'من الإجابة. أعد المحاولة أو حدّد نشاطك بدقة أكبر.',
+        'アシスタントからの提案はありません。この説明から見える範囲をすでに登録簿が網羅しているか、'
+        'アシスタントが応答できなかったかのいずれかです。再試行するか、活動内容をより具体的に記述してください。',
+        '助手没有给出建议：可能是您的登记册已覆盖此描述所反映的范围，也可能是助手无法作答。'
+        '请重试，或更具体地描述您的活动。'),
+    'stakeholders.assistant.edit': (
+        'Corriger', 'Edit', 'Corregir', 'تصحيح', '修正', '修改'),
+    'stakeholders.assistant.reject': (
+        'Rejeter', 'Reject', 'Rechazar', 'رفض', '却下', '拒绝'),
     'stakeholders.assistant.already': (
         'Déjà au registre', 'Already in the register', 'Ya está en el registro',
         'موجود بالسجل سلفًا', 'すでに登録済み', '已在登记册中'),

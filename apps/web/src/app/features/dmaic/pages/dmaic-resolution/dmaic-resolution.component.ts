@@ -93,6 +93,17 @@ export class DmaicResolutionComponent implements OnInit, OnDestroy {
   /** Les limites de spécification du projet, reprises par une étude SPC. */
   @Input() spec: { lsl: number | null; usl: number | null } | null = null;
 
+  /**
+   * Le projet est clos.
+   *
+   * <p>L'en-tête passe alors au vert. Ce n'est pas une décoration : une fiche
+   * close se lit, se cite et s'exporte longtemps après, et rien d'autre ne
+   * disait d'un coup d'œil qu'on regarde un dossier terminé plutôt qu'un
+   * dossier en cours — la lecture seule, elle, se confond avec un simple
+   * défaut de droits.
+   */
+  @Input() projectClosed = false;
+
   /** La phase où en est le projet : on ouvre les phases jusqu'à elle, pas au-delà. */
   @Input()
   set projectPhase(phase: DmaicPhase | null) {

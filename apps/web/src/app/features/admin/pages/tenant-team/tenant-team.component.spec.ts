@@ -8,7 +8,7 @@ import { UiModule } from '../../../../shared/ui/ui.module';
 import { TenantUser } from '../../admin.types';
 import { TenantTeamService } from '../../tenant-team.service';
 import { TenantTeamComponent } from './tenant-team.component';
-import { CredentialRevealComponent } from '../../components/credential-reveal/credential-reveal.component';
+import { CredentialRevealComponent } from '../../../../shared/credential-reveal/credential-reveal.component';
 
 /** Mot de passe provisoire FACTICE des bancs : un motif sans entropie, passé par une
  *  constante — l'analyse de secrets ne voit ainsi aucune affectation littérale. */

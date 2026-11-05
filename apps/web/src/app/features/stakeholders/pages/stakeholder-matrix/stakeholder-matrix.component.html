@@ -103,14 +103,16 @@
     </table>
   </div>
 
-  <!-- La barre n'apparaît qu'avec des lignes recotées : un bouton d'enregistrement
-       toujours visible sur un écran intact invite à enregistrer pour rien. -->
-  <div class="barre" *ngIf="canManage && pendingCount" role="status" data-test="barre">
+  <!-- La barre reste sous le tableau, comme le registre : on sait où est le
+       geste avant d'avoir touché quoi que ce soit. Les boutons, eux, ne
+       s'activent qu'avec des lignes recotées — enregistrer un écran intact
+       n'écrirait rien. -->
+  <div class="barre" *ngIf="canManage" role="status" data-test="barre">
     <span>{{ pendingMessage }}</span>
     <span class="barre__actions">
-      <button mat-stroked-button type="button" (click)="reset()" [disabled]="saving"
+      <button mat-stroked-button type="button" (click)="reset()" [disabled]="saving || !pendingCount"
               data-test="annuler" i18n="@@authz.matrix.discard">Annuler les changements</button>
-      <button mat-flat-button color="primary" type="button" (click)="save()" [disabled]="saving"
+      <button mat-flat-button color="primary" type="button" (click)="save()" [disabled]="saving || !pendingCount"
               data-test="enregistrer" i18n="@@stakeholders.matrix.save">Enregistrer la cotation</button>
     </span>
   </div>
