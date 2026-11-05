@@ -122,6 +122,12 @@ def reject_literal_interpolations(translations: dict) -> None:
             + details)
 
 NAMED_PLACEHOLDER_RE = re.compile(r"\}:([A-Za-z_][A-Za-z0-9_]*):")
+# La MEME chose dans un gabarit : `{{ x // i18n(ph="count") }}`. Angular met
+# le nom en capitales dans ce cas, et le laisse tel quel dans le cas TS.
+TEMPLATE_PH_RE = re.compile(r'i18n\(ph="([A-Za-z0-9_]+)"\)')
+# Le marqueur d'un message de gabarit, attribut compris : i18n="@@id",
+# i18n-title="@@id", i18n-matTooltip="@@id".
+TEMPLATE_MSG_ID_RE = re.compile(r'i18n(?:-[a-zA-Z]+)?="@@([A-Za-z0-9._-]+)"')
 
 
 def reject_placeholder_mismatch(translations: dict) -> None:
@@ -137,6 +143,18 @@ def reject_placeholder_mismatch(translations: dict) -> None:
     Mesure du 2026-11-05 : deux unites ainsi ecrites ont bloque le
     deploiement de preproduction, et le defaut n'etait visible nulle part
     plus tot. Ce controle le ramene a une seconde de generation.
+
+    DEUX ELARGISSEMENTS, apres une seconde panne le meme jour.
+
+    1. Les GABARITS nomment autrement : `{{ x // i18n(ph="count") }}`, et
+       Angular met alors le nom en capitales (COUNT). La premiere version de ce
+       controle ne lisait que la forme TypeScript ``${x}:nom:``, de sorte que
+       `spc.study.subgroup-count` -- un gabarit -- a passe la generation, passe
+       --check, et casse l'image web en CD.
+    2. Une table qui n'ecrit AUCUN espace reserve etait exemptee. Or le defaut
+       est le meme en pire : la valeur n'apparait nulle part dans la langue
+       traduite, et le texte brut de l'expression (``${a.name}``) s'affiche a
+       l'ecran. Quatre unites etaient dans ce cas.
     """
     used: dict = {}
     id_re = re.compile(r"@@([A-Za-z0-9._-]+):(.*?)`", re.S)
@@ -149,6 +167,18 @@ def reject_placeholder_mismatch(translations: dict) -> None:
                 names = set(NAMED_PLACEHOLDER_RE.findall(match.group(2)))
                 if names:
                     used.setdefault(match.group(1), set()).update(names)
+            if not fn.endswith(".html"):
+                continue
+            # Forme gabarit. Le message s'arrete au marqueur suivant : au-dela,
+            # les espaces reserves appartiennent a un autre message.
+            for match in TEMPLATE_MSG_ID_RE.finditer(text):
+                suite = text[match.end():]
+                suivant = TEMPLATE_MSG_ID_RE.search(suite)
+                if suivant:
+                    suite = suite[:suivant.start()]
+                names = {n.upper() for n in TEMPLATE_PH_RE.findall(suite)}
+                if names:
+                    used.setdefault(match.group(1), set()).update(names)
     faulty = []
     for unit_id, names in sorted(used.items()):
         row = translations.get(unit_id)
@@ -157,9 +187,11 @@ def reject_placeholder_mismatch(translations: dict) -> None:
         present = set()
         for value in row:
             present.update(PLACEHOLDER_RE.findall(value))
-        if present and not names.issubset(present):
+        # Pas de `present and ...` : une table SANS aucun espace reserve est
+        # le cas le plus grave, pas une exemption (cf. elargissement 2).
+        if not names.issubset(present):
             faulty.append("  - %s : le code nomme %s, la table ecrit %s"
-                          % (unit_id, sorted(names), sorted(present)))
+                          % (unit_id, sorted(names), sorted(present) or ["aucun"]))
     if faulty:
         sys.exit(
             "ERREUR : nom d'espace reserve divergent dans "
