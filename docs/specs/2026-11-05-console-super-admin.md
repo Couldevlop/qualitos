@@ -111,6 +111,8 @@ remplacer.
 | **6** | Équipe qualité et habilitations de l'admin client, bornées au périmètre souscrit | 1 |
 | **7** | Abonnement à la création, compteurs d'usage, écran de compteur côté client (§8) | 1 |
 | **8** | Moteur de reprise de données du client : modèles Excel engendrés, contrôle à blanc, écriture transactionnelle (§9) | 6 pour l'écran, moteur parallélisable |
+| **9** | Politique de mots de passe : royaume, expiration 60 j, rotation 30 j de l’admin, écran « Mon compte » (§11) | — |
+| **10** | Onglet Requêtes de réinitialisation : courriel + pièce signée + contreseings N+1/N+2 (§11.3) | 9, 6 |
 
 ## 5. Invariants qui s'appliquent à tous les lots
 
@@ -504,3 +506,131 @@ Deux dettes relevées au passage, à traiter dans leur lot :
 une table qui « manque », chercher le concept sous ses autres noms dans les
 autres services. Trois colonnes parlaient de modules dans api-core sans jamais
 nommer le catalogue ; c'est l'engine qui le tenait.
+
+---
+
+## 11. Ajout du 2026-11-05 — mots de passe : renforcement demandé
+
+> Demande : « tout nouveau utilisateur doit être obligé de changer son mot de
+> passe obligatoirement. Chaque utilisateur peut demander la réinitialisation de
+> son mot de passe s'il l'a oublié, on ne doit pas mettre le même mot de passe et
+> chaque deux mois, on force tous les utilisateurs à changer le mot de passe et
+> vérifier la solidité du mot de passe. L'admin du tenant doit changer son mot de
+> passe chaque mois et il a la possibilité via son interface de réinitialiser un
+> mot de passe avec demande explicite dans son onglet requête, dans cet onglet on
+> doit voir le mail et la pièce jointe signée au moins par n+1 et n+2 et uploadée
+> dans le système. »
+
+### 11.1 Où la règle vit, et pourquoi pas dans notre code
+
+Les mots de passe de QualitOS sont tenus par **Keycloak** ; aucun hachage, aucune
+comparaison, aucun historique de mot de passe n'entre dans nos bases. Écrire
+nous-mêmes « ce mot de passe a déjà servi » supposerait de conserver des
+empreintes de mots de passe hors du magasin d'identités — c'est précisément la
+faute que l'on reproche aux applications maison. La règle est donc **de la
+politique de royaume**, posée par configuration et vérifiée par un test, et notre
+code ne fait que ce que Keycloak ne sait pas faire.
+
+Partage des rôles :
+
+| Exigence | Tenue par | Mécanisme |
+| --- | --- | --- |
+| Changement obligatoire à la première connexion | Keycloak | action requise `UPDATE_PASSWORD` posée à la création du compte |
+| Mot de passe oublié | Keycloak | flux *Forgot password*, jeton à usage unique, durée de vie 15 min |
+| Interdiction de reposer le même | Keycloak | politique `passwordHistory(5)` — les cinq derniers refusés |
+| Solidité | Keycloak | `length(12)`, `upperCase(1)`, `lowerCase(1)`, `digits(1)`, `specialChars(1)`, `notUsername`, `notEmail`, `maxLength(128)` |
+| Expiration à 60 jours, tout le monde | Keycloak | `forceExpiredPasswordChange(60)` |
+| Expiration à 30 jours, admin de client | **QualitOS** | la politique de royaume est globale : Keycloak ne sait pas « 30 jours pour ce rôle ». Une tâche planifiée pose `UPDATE_PASSWORD` sur les comptes `admin_tenant` dont le mot de passe a plus de 30 jours |
+| Réinitialisation par l'admin, sur demande motivée | **QualitOS** | onglet Requêtes, §11.3 |
+
+Conséquence de forme : la politique est **dans le royaume importé**
+(`infra/keycloak/realm-qualitos.json`) et un test la relit, sinon elle se perdra
+au prochain réimport — un royaume reconstruit sans la politique rendrait toutes
+les règles ci-dessus silencieusement inopérantes, et rien ne le signalerait.
+
+### 11.2 Les deux choses que notre code ajoute
+
+**(a) L'échéance à 30 jours de l'admin de client.** Une tâche planifiée
+quotidienne (`PasswordRotationJob`) interroge l'API d'administration Keycloak,
+liste les comptes porteurs du rôle `admin_tenant`, lit la date de création de
+leur justificatif de mot de passe et, au-delà de 30 jours, ajoute l'action
+requise `UPDATE_PASSWORD`. Idempotente : si l'action est déjà posée, on ne fait
+rien. Chaque pose est un événement de piste d'audit scellé — sans quoi un admin
+qui se plaint d'être « déconnecté sans raison » n'a aucune trace à consulter.
+
+**(b) Le refus du mot de passe oublié quand il n'y a pas de courriel.** En
+on-premise sans SMTP, le flux *Forgot password* échoue en silence côté Keycloak :
+l'utilisateur voit « courriel envoyé » et n'en reçoit jamais. La page de
+connexion de QualitOS n'affiche le lien *Mot de passe oublié* que si le royaume
+déclare un expéditeur ; sinon elle affiche « demandez la réinitialisation à
+l'administrateur de votre organisation », ce qui est exactement le chemin de
+§11.3. C'est la règle on-premise de §7 appliquée à l'authentification.
+
+### 11.3 L'onglet Requêtes de l'admin de client
+
+Une réinitialisation faite par un humain sur un autre humain est le chemin
+d'attaque le plus court d'une plateforme qualité : il suffit d'un appel
+téléphonique convaincant. L'onglet n'existe donc pas pour fluidifier le geste,
+mais pour le **rendre impossible sans preuve**.
+
+Une demande (`password_reset_request`) porte :
+
+- **le demandeur**, choisi dans l'annuaire — jamais un identifiant saisi à la
+  main (règle « personne = utilisateur ») ;
+- **le motif**, texte obligatoire ;
+- **le courriel de la demande**, déposé tel quel (`.eml`, `.msg` ou texte), rendu
+  à l'écran comme pièce consultable et non comme fichier à ouvrir ;
+- **la pièce jointe signée**, PDF ou image, contrôlée comme un dépôt de GED :
+  type vérifié par signature d'octets et non par l'extension annoncée, taille
+  bornée, SHA-256 calculé et conservé ;
+- **deux contreseings au moins**, le N+1 et le N+2 du demandeur, posés *dans le
+  système* par ces deux personnes, sur l'empreinte de la demande et de ses
+  pièces.
+
+Le contreseing dans le système n'est pas un doublon de la signature manuscrite
+portée par la pièce jointe : la pièce prouve que la hiérarchie a signé un
+document, le contreseing prouve **que ce sont bien ces comptes-là qui l'ont
+déposé, et que le document n'a pas changé depuis**. Un scan signé, seul, se
+photocopie.
+
+Règles du moteur, refus explicites plutôt que bouton grisé :
+
+1. Un contresignataire ne peut pas être le demandeur.
+2. Les deux contresignataires sont distincts.
+3. Aucun des deux n'est l'administrateur qui exécutera la réinitialisation —
+   sinon le contrôle est tenu par celui qu'il contrôle.
+4. Tant que les deux contreseings ne sont pas là, la demande est `EN_ATTENTE` et
+   la réinitialisation est refusée côté serveur (403), pas seulement masquée.
+5. L'exécution est une action critique : second facteur exigé, événement scellé,
+   ancrage (`CLAUDE.md` §18.2.5).
+6. Une demande exécutée ne se rejoue pas : elle passe `EXECUTEE`, et le jeton
+   Keycloak est à usage unique.
+7. Une demande dort au plus 14 jours, puis `EXPIREE` — une demande ancienne
+   approuvée pour un contexte disparu est un blanc-seing.
+
+L'exécution ne pose pas un mot de passe : elle demande à Keycloak d'envoyer une
+action `UPDATE_PASSWORD` à l'utilisateur, ou produit un lien à usage unique remis
+de la main à la main quand il n'y a pas de courriel. **L'administrateur ne
+connaît à aucun moment le mot de passe d'un de ses utilisateurs** — c'est ce qui
+distingue une réinitialisation d'une usurpation.
+
+### 11.4 Ce que l'écran montre
+
+Côté client, deux surfaces :
+
+- **Mon compte** : l'échéance de mon mot de passe (« à renouveler dans 12
+  jours »), le bouton de changement qui mène au formulaire Keycloak, et la
+  politique énoncée en clair — une règle de solidité qu'on découvre par un refus
+  est une mauvaise règle.
+- **Paramétrage › Requêtes** (admin de client) : la liste des demandes avec leur
+  état, le détail d'une demande (courriel, pièce, contreseings, qui et quand), et
+  l'exécution. Les paliers de l'énoncé (60 jours, 30 jours, historique de cinq,
+  14 jours de péremption) sont **paramétrables par client** et figés sur la
+  demande au moment où elle est déposée, comme toute règle métier chiffrée.
+
+### 11.5 Lots
+
+| Lot | Contenu | Dépend de |
+| --- | --- | --- |
+| **9** | Politique de royaume (solidité, historique, 60 jours, `UPDATE_PASSWORD` à la création), lien *Mot de passe oublié* conditionné à l'expéditeur, tâche des 30 jours de l'admin, écran « Mon compte » | — (parallélisable) |
+| **10** | Onglet Requêtes : entité, dépôt contrôlé du courriel et de la pièce, contreseings N+1/N+2, exécution sous second facteur, écran | 9, 6 pour les habilitations |

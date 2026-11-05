@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
@@ -310,6 +311,77 @@ class TenantControllerTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(CORPS.replace("\"capa\"", "\"../x\"")))
                     .andExpect(status().isBadRequest());
+        }
+    }
+
+    @Nested
+    @DisplayName("Le logo d'un client, pose par l'editeur")
+    class LogoDuClient {
+
+        /** Un PNG minimal : signature valide, remplissage quelconque. */
+        private MockMultipartFile fichier(String contentType) {
+            byte[] octets = new byte[64];
+            byte[] signature = {(byte) 0x89, 80, 78, 71, 0x0D, 0x0A, 0x1A, 0x0A};
+            System.arraycopy(signature, 0, octets, 0, signature.length);
+            return new MockMultipartFile("file", "marque.png", contentType, octets);
+        }
+
+        @Test
+        @DisplayName("L'editeur pose le logo au provisionnement, avant que le client ait un seul membre connecte")
+        void poseLeLogo() throws Exception {
+            // C'est la raison d'etre de cette route : a la creation, aucun membre
+            // du client n'a de jeton, donc la route de marque -- qui lit le client
+            // DANS le jeton -- ne peut pas servir.
+            given(identityService.saveLogo(eq(TENANT_ID), any(), any())).willReturn("abc");
+
+            mockMvc.perform(multipart("/api/v1/tenants/" + TENANT_ID + "/identity/logo")
+                            .file(fichier("image/png")).with(superAdminJwt()))
+                    .andExpect(status().isNoContent());
+        }
+
+        @Test
+        @DisplayName("Un administrateur de client ne pose pas le logo d'un client par cette route")
+        void refuseALAdministrateurDeClient() throws Exception {
+            mockMvc.perform(multipart("/api/v1/tenants/" + TENANT_ID + "/identity/logo")
+                            .file(fichier("image/png"))
+                            .with(jwt().authorities(new SimpleGrantedAuthority("ROLE_ADMIN_TENANT"))))
+                    .andExpect(status().isForbidden());
+        }
+
+        @Test
+        @DisplayName("La politique de televersement s'applique aussi a cette route : un SVG est refuse en 415")
+        void appliqueLaPolitique() throws Exception {
+            // La garantie qui justifie de doubler la route : la politique est
+            // tenue par le SERVICE, donc les deux routes la subissent, et aucune
+            // ne peut etre resserree sans l'autre.
+            given(identityService.saveLogo(eq(TENANT_ID), any(), any()))
+                    .willThrow(new LogoRejectedException(LogoRejectedException.Reason.TYPE,
+                            "type de fichier refuse : image/svg+xml"));
+
+            mockMvc.perform(multipart("/api/v1/tenants/" + TENANT_ID + "/identity/logo")
+                            .file(fichier("image/svg+xml")).with(superAdminJwt()))
+                    .andExpect(status().isUnsupportedMediaType());
+        }
+
+        @Test
+        @DisplayName("Le logo se retire sans toucher au reste de l'identite")
+        void retireLeLogo() throws Exception {
+            doNothing().when(identityService).deleteLogo(TENANT_ID);
+
+            mockMvc.perform(delete("/api/v1/tenants/" + TENANT_ID + "/identity/logo")
+                            .with(superAdminJwt()))
+                    .andExpect(status().isNoContent());
+        }
+
+        @Test
+        @DisplayName("Le logo d'un client inconnu est refuse en 404")
+        void clientInconnu() throws Exception {
+            given(identityService.saveLogo(eq(TENANT_ID), any(), any()))
+                    .willThrow(new TenantNotFoundException(TENANT_ID));
+
+            mockMvc.perform(multipart("/api/v1/tenants/" + TENANT_ID + "/identity/logo")
+                            .file(fichier("image/png")).with(superAdminJwt()))
+                    .andExpect(status().isNotFound());
         }
     }
 }
