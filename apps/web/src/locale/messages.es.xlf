@@ -21142,6 +21142,10 @@ historial de 12 meses</target>
         <source>Le projet se clôture quand toute la fiche est renseignée et que chaque action est à 100 %.</source>
         <target state="translated">El proyecto se cierra cuando toda la ficha está completa y cada acción está al 100 %.</target>
       </trans-unit>
+      <trans-unit id="dmaic.detail.complete" datatype="html">
+        <source>Clôturer</source>
+        <target state="translated">Cerrar</target>
+      </trans-unit>
       <trans-unit id="dmaic.res.missing-marked" datatype="html">
         <source>champ(s) à renseigner, signalés en rouge ci-dessous.</source>
         <target state="translated">campo(s) a rellenar, señalados en rojo más abajo.</target>

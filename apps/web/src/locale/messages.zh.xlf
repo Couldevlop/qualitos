@@ -21142,6 +21142,10 @@ historique 12 mois</source>
         <source>Le projet se clôture quand toute la fiche est renseignée et que chaque action est à 100 %.</source>
         <target state="translated">当整张表单填写完毕且每项措施达到 100 % 时，项目方可结案。</target>
       </trans-unit>
+      <trans-unit id="dmaic.detail.complete" datatype="html">
+        <source>Clôturer</source>
+        <target state="translated">结案</target>
+      </trans-unit>
       <trans-unit id="dmaic.res.missing-marked" datatype="html">
         <source>champ(s) à renseigner, signalés en rouge ci-dessous.</source>
         <target state="translated">处待填写字段，已在下方以红色标出。</target>

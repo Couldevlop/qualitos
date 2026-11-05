@@ -434,6 +434,10 @@ describe('DmaicDetailComponent', () => {
     fixture.detectChanges();
     btn.click();
     http.expectOne(`${base}/projects/${ID}/advance`).flush(project({ phase: 'MEASURE' }));
+    // L'avance recharge toute la fiche (projet, mesures, poka-yoke,
+    // capabilite) : on repond a ce rechargement, sinon le banc s'acheve sur des
+    // requetes en vol et verify() echoue pour cette raison-la.
+    flushDetail(project({ phase: 'MEASURE' }));
   });
 
   it('propose de clôturer le projet quand il est en phase « Contrôler »', () => {

@@ -186,6 +186,13 @@ TRANSLATIONS = {
         'يُغلَق المشروع عندما تكون البطاقة كاملة وكل إجراء بنسبة 100٪.',
         'シートがすべて記入され、各アクションが 100 % になった時点でプロジェクトを終結できます。',
         '当整张表单填写完毕且每项措施达到 100 % 时，项目方可结案。'),
+    'dmaic.detail.complete': (
+        'Clôturer',
+        'Close',
+        'Cerrar',
+        'إغلاق',
+        '終結',
+        '结案'),
     'dmaic.res.missing-marked': (
         'champ(s) à renseigner, signalés en rouge ci-dessous.',
         'field(s) to fill in, marked in red below.',

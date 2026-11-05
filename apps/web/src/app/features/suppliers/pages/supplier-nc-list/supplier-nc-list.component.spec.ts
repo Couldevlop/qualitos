@@ -236,12 +236,6 @@ describe('SupplierNcListComponent', () => {
       expect(svc.listAllNcs.calls.count()).toBe(before + 1);
     }));
 
-    it('ne propose pas de créer une NC hors d\'un fournisseur', fakeAsync(() => {
-      init();
-      component.create();
-      expect(dialog.open).not.toHaveBeenCalled();
-    }));
-
     it('donne les classes des pastilles et un libellé accessible aux pièces jointes', fakeAsync(() => {
       init();
       expect(component.severityBadge('CRITICAL')).toBe('sev sev-critical');

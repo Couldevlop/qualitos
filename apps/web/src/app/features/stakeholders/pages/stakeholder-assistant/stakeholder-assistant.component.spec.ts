@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { of, throwError } from 'rxjs';
@@ -46,7 +47,11 @@ describe('StakeholderAssistantComponent', () => {
 
     await TestBed.resetTestingModule().configureTestingModule({
       declarations: [StakeholderAssistantComponent],
-      imports: [SharedModule, UiModule, NoopAnimationsModule],
+      // FormsModule, comme le module de production : l'écran pilote ses champs
+      // en [(ngModel)], et SharedModule n'apporte que ReactiveFormsModule — sans
+      // quoi NgControlStatus se greffe sur l'attribut ngModel sans trouver de
+      // NgControl (NG0201) et le gabarit ne se rend pas du tout.
+      imports: [SharedModule, UiModule, FormsModule, NoopAnimationsModule],
       providers: [
         { provide: StakeholdersService, useValue: svc },
         { provide: MatSnackBar, useValue: snack }

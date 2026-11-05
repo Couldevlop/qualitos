@@ -76,6 +76,11 @@ describe('NcCreateDialogComponent', () => {
     component = fixture.componentInstance;
     http = TestBed.inject(HttpTestingController);
     fixture.detectChanges();
+    // Le catalogue des natures d'écart (V154) part dès l'ouverture du
+    // formulaire : on y répond ici, sinon chaque banc s'achèverait sur une
+    // requête en vol et http.verify() échouerait pour une raison étrangère au
+    // comportement vérifié.
+    http.expectOne(`${endpoint}/subcategories`).flush({ entries: [], defaults: true });
   });
 
   afterEach(() => {

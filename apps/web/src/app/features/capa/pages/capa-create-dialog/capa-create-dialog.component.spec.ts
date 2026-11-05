@@ -200,7 +200,11 @@ describe('CapaCreateDialogComponent — fenêtre unique', () => {
 
     const envoye = capa.openCase.calls.mostRecent().args[0] as OpenCapaRequest;
     expect(envoye).toEqual({
-      title: 'Recalibrer la sonde', description: undefined, type: 'PREVENTIVE', criticity: 'HIGH',
+      title: 'Recalibrer la sonde', description: undefined, type: 'PREVENTIVE',
+      // La nature de l'ACTION accompagne le type du DOSSIER : ici les deux
+      // coincident, mais un endiguement les separe (dossier correctif, action
+      // d'endiguement).
+      actionType: 'PREVENTIVE', criticity: 'HIGH',
       // Le NOM de l'annuaire, et non l'adresse.
       ownerId: 'kc-amina', ownerName: 'Amina Dridi', dueDate: DEMAIN,
       sourceType: 'COMPLAINT', sourceRef: 'REC-12', verificationRequired: false
@@ -208,7 +212,12 @@ describe('CapaCreateDialogComponent — fenêtre unique', () => {
     // L'écran d'origine reçoit l'action saisie, pour la reprendre dans sa propre liste.
     expect(ref.close).toHaveBeenCalledWith({
       capaId: 'c1',
-      action: { title: 'Recalibrer la sonde', ownerId: 'kc-amina', ownerName: 'Amina Dridi', dueDate: DEMAIN }
+      // Nature et criticite voyagent avec l'action : la fiche DMAIC les recopie
+      // dans son rapport client sans reinterroger le module CAPA.
+      action: {
+        title: 'Recalibrer la sonde', ownerId: 'kc-amina', ownerName: 'Amina Dridi',
+        dueDate: DEMAIN, nature: 'PREVENTIVE', criticity: 'HIGH'
+      }
     });
     expect(snack.open.calls.mostRecent().args[0]).toBe('CAPA créée.');
     expect(component.submitting).toBeFalse();

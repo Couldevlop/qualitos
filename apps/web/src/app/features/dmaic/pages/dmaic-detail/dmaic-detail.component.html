@@ -36,7 +36,11 @@
                 [disabled]="p.status !== 'ACTIVE'"
                 [matTooltip]="advanceHint(p)"
                 (click)="advance(p)">
-          <mat-icon>skip_next</mat-icon> <span i18n="@@dmaic.detail.advance">Avancer</span>
+          <!-- En phase « Contrôler », avancer CLOT le projet : le bouton le dit,
+               sans quoi l'on clôt un projet en croyant passer à la suite. -->
+          <mat-icon>{{ p.phase === 'CONTROL' ? 'task_alt' : 'skip_next' }}</mat-icon>
+          <span *ngIf="p.phase !== 'CONTROL'" i18n="@@dmaic.detail.advance">Avancer</span>
+          <span *ngIf="p.phase === 'CONTROL'" i18n="@@dmaic.detail.complete">Clôturer</span>
         </button>
         <button mat-stroked-button *ngIf="p.status === 'ACTIVE'" (click)="hold(p)">
           <mat-icon>pause</mat-icon> <span i18n="@@dmaic.detail.hold">Pause</span>
