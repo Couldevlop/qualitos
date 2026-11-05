@@ -21063,8 +21063,8 @@ historial de 12 meses</target>
         <target state="translated">El catálogo no puede estar vacío. Restablezca el de la plataforma.</target>
       </trans-unit>
       <trans-unit id="nc.settings.problem.too-many" datatype="html">
-        <source>Pas plus de <x id="INTERPOLATION"/> natures.</source>
-        <target state="translated">No más de <x id="INTERPOLATION"/> naturalezas.</target>
+        <source>Pas plus de <x id="max"/> natures.</source>
+        <target state="translated">No más de <x id="max"/> naturalezas.</target>
       </trans-unit>
       <trans-unit id="nc.settings.problem.code" datatype="html">
         <source>Un code s’écrit en capitales, chiffres, tiret ou point (ex. : PRD-DIM).</source>
@@ -21079,8 +21079,8 @@ historial de 12 meses</target>
         <target state="translated">Dos naturalezas llevan el mismo código.</target>
       </trans-unit>
       <trans-unit id="nc.settings.problem.empty-category" datatype="html">
-        <source>Catégorie sans aucune nature : <x id="INTERPOLATION"/> — la saisie n’y proposerait rien.</source>
-        <target state="translated">Categoría sin ninguna naturaleza: <x id="INTERPOLATION"/> — el formulario no propondría nada.</target>
+        <source>Catégorie sans aucune nature : <x id="count"/> — la saisie n’y proposerait rien.</source>
+        <target state="translated">Categoría sin ninguna naturaleza: <x id="count"/> — el formulario no propondría nada.</target>
       </trans-unit>
       <trans-unit id="nc.settings.load-failed" datatype="html">
         <source>Le catalogue des natures n’a pas pu être chargé.</source>

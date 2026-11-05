@@ -85,9 +85,9 @@ TRANSLATIONS = {
         'カタログを空にはできません。プラットフォームのカタログを復元してください。',
         '目录不能为空。请恢复平台目录。'),
     'nc.settings.problem.too-many': (
-        'Pas plus de {$INTERPOLATION} natures.', 'No more than {$INTERPOLATION} natures.',
-        'No más de {$INTERPOLATION} naturalezas.', 'لا أكثر من {$INTERPOLATION} نوعًا.',
-        '性質は最大 {$INTERPOLATION} 件までです。', '性质最多 {$INTERPOLATION} 条。'),
+        'Pas plus de {$max} natures.', 'No more than {$max} natures.',
+        'No más de {$max} naturalezas.', 'لا أكثر من {$max} نوعًا.',
+        '性質は最大 {$max} 件までです。', '性质最多 {$max} 条。'),
     'nc.settings.problem.code': (
         'Un code s’écrit en capitales, chiffres, tiret ou point (ex. : PRD-DIM).',
         'A code is written in capitals, digits, hyphen or dot (e.g. PRD-DIM).',
@@ -104,12 +104,12 @@ TRANSLATIONS = {
         'Dos naturalezas llevan el mismo código.', 'نوعان يحملان الرمز نفسه.',
         '2 つの性質が同じコードを持っています。', '有两条性质使用了相同的代码。'),
     'nc.settings.problem.empty-category': (
-        'Catégorie sans aucune nature : {$INTERPOLATION} — la saisie n’y proposerait rien.',
-        'Category without any nature: {$INTERPOLATION} — the entry form would offer nothing there.',
-        'Categoría sin ninguna naturaleza: {$INTERPOLATION} — el formulario no propondría nada.',
-        'فئة بلا أي نوع: {$INTERPOLATION} — لن يعرض نموذج الإدخال شيئًا فيها.',
-        '性質が 1 つもないカテゴリー: {$INTERPOLATION} — 入力画面では何も提示されません。',
-        '没有任何性质的类别：{$INTERPOLATION} — 录入界面将无可选项。'),
+        'Catégorie sans aucune nature : {$count} — la saisie n’y proposerait rien.',
+        'Category without any nature: {$count} — the entry form would offer nothing there.',
+        'Categoría sin ninguna naturaleza: {$count} — el formulario no propondría nada.',
+        'فئة بلا أي نوع: {$count} — لن يعرض نموذج الإدخال شيئًا فيها.',
+        '性質が 1 つもないカテゴリー: {$count} — 入力画面では何も提示されません。',
+        '没有任何性质的类别：{$count} — 录入界面将无可选项。'),
 
     # --- enregistrement et rétablissement -----------------------------------
     'nc.settings.load-failed': (

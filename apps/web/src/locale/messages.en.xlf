@@ -21063,8 +21063,8 @@ declared income
         <target state="translated">The catalogue cannot be empty. Restore the platform one.</target>
       </trans-unit>
       <trans-unit id="nc.settings.problem.too-many" datatype="html">
-        <source>Pas plus de <x id="INTERPOLATION"/> natures.</source>
-        <target state="translated">No more than <x id="INTERPOLATION"/> natures.</target>
+        <source>Pas plus de <x id="max"/> natures.</source>
+        <target state="translated">No more than <x id="max"/> natures.</target>
       </trans-unit>
       <trans-unit id="nc.settings.problem.code" datatype="html">
         <source>Un code s’écrit en capitales, chiffres, tiret ou point (ex. : PRD-DIM).</source>
@@ -21079,8 +21079,8 @@ declared income
         <target state="translated">Two natures carry the same code.</target>
       </trans-unit>
       <trans-unit id="nc.settings.problem.empty-category" datatype="html">
-        <source>Catégorie sans aucune nature : <x id="INTERPOLATION"/> — la saisie n’y proposerait rien.</source>
-        <target state="translated">Category without any nature: <x id="INTERPOLATION"/> — the entry form would offer nothing there.</target>
+        <source>Catégorie sans aucune nature : <x id="count"/> — la saisie n’y proposerait rien.</source>
+        <target state="translated">Category without any nature: <x id="count"/> — the entry form would offer nothing there.</target>
       </trans-unit>
       <trans-unit id="nc.settings.load-failed" datatype="html">
         <source>Le catalogue des natures n’a pas pu être chargé.</source>
