@@ -203,7 +203,9 @@ describe('MainShellComponent (navigation model)', () => {
     // 15 : Clients quitte cette section pour la console de l'editeur
     // (/platform/clients, ADR 0105). Cette section est le parametrage DU
     // client ; creer une organisation est l'administration DE la plateforme.
-    expect(labels).toEqual([8, 6, 7, 2, 1, 6, 1, 11, 8, 1, 15]);
+    // 16 : Cabinets rejoint l'administration (ADR 0106) — l'octroi d'un acces a
+    // un cabinet partenaire est un parametrage du client, pas de l'editeur.
+    expect(labels).toEqual([8, 6, 7, 2, 1, 6, 1, 11, 8, 1, 16]);
   });
 
   it('le registre des risques a son groupe, juste apres la non-conformite', () => {

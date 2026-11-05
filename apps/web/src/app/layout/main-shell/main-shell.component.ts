@@ -336,6 +336,14 @@ export class MainShellComponent implements OnInit, OnDestroy {
           roles: ADMIN_ROLES
         },
         {
+          // Les cabinets partenaires et leurs accès (ADR 0106) : l'éditeur
+          // propose, l'administrateur du client accorde et fixe le terme.
+          label: $localize`:@@nav.admin-firms:Cabinets`,
+          route: '/admin/cabinets',
+          icon: 'handshake',
+          roles: ADMIN_ROLES
+        },
+        {
           // Le fournisseur des appels LLM du tenant (ADR 0102) : local et souverain, ou externe.
           label: $localize`:@@nav.admin-ai:Fournisseur d'IA`,
           route: '/admin/ia',

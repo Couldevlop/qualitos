@@ -148,6 +148,56 @@ public class GlobalExceptionHandler {
         return problem;
     }
 
+    // ---------- domaine partenaire ----------
+    //
+    // Les refus du domaine partenaire portent leur raison en clair : « votre
+    // cabinet est suspendu » et « votre mission s'est terminee le 12 » appellent
+    // deux gestes differents, et un 403 nu les confond.
+
+    @ExceptionHandler({
+            com.openlab.qualitos.core.partner.PartnerExceptions.FirmNotFound.class,
+            com.openlab.qualitos.core.partner.PartnerExceptions.ConsultantNotFound.class,
+            com.openlab.qualitos.core.partner.PartnerExceptions.EngagementNotFound.class
+    })
+    public ProblemDetail handlePartnerNotFound(RuntimeException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/partner-not-found"));
+        problem.setTitle("Partner Resource Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler({
+            com.openlab.qualitos.core.partner.PartnerExceptions.FirmAlreadyExists.class,
+            com.openlab.qualitos.core.partner.PartnerExceptions.ConsultantAlreadyExists.class,
+            com.openlab.qualitos.core.partner.PartnerExceptions.EngagementAlreadyLive.class,
+            com.openlab.qualitos.core.partner.PartnerExceptions.EngagementNotDecidable.class
+    })
+    public ProblemDetail handlePartnerConflict(RuntimeException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/partner-conflict"));
+        problem.setTitle("Partner Conflict");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    /**
+     * L'acces d'un cabinet est refuse : 403, avec la raison.
+     *
+     * <p>Pas 404 : l'appelant est authentifie et sait deja que ce client
+     * existe — le lui cacher ne protegerait rien et l'empecherait de comprendre
+     * qu'il doit demander un accord.
+     */
+    @ExceptionHandler(com.openlab.qualitos.core.partner.PartnerExceptions.AccessNotGranted.class)
+    public ProblemDetail handlePartnerAccess(
+            com.openlab.qualitos.core.partner.PartnerExceptions.AccessNotGranted ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/partner-access-denied"));
+        problem.setTitle("Partner Access Not Granted");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ProblemDetail handleValidation(MethodArgumentNotValidException ex) {
         Map<String, String> errors = ex.getBindingResult().getFieldErrors().stream()

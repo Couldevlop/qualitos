@@ -44,7 +44,7 @@ export class PlatformShellComponent {
    * La navigation de la console.
    *
    * <p>Seules les entrées qui mènent à un écran livré y figurent. Lister les six
-   * surfaces prévues produirait quatre liens morts, et un lien mort dans une
+   * surfaces prévues produirait trois liens morts, et un lien mort dans une
    * console d'administration se lit comme une panne.
    */
   readonly entries: readonly PlatformNavEntry[] = [
@@ -53,6 +53,12 @@ export class PlatformShellComponent {
       route: '/platform/clients',
       icon: 'apartment',
       hint: $localize`:@@platform.nav.clients.hint:Créer un client, son identité, ses modules`
+    },
+    {
+      label: $localize`:@@platform.nav.firms:Cabinets`,
+      route: '/platform/cabinets',
+      icon: 'handshake',
+      hint: $localize`:@@platform.nav.firms.hint:Cabinets partenaires, consultants, clients proposés`
     },
     {
       label: $localize`:@@platform.nav.modules:Catalogue des modules`,

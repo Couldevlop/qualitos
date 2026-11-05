@@ -1,7 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { PLATFORM_PATH, businessRoutesGuard, platformGuard } from './core/auth/platform.guard';
+import { PARTNER_PATH, PLATFORM_PATH, businessRoutesGuard, partnerGuard, platformGuard }
+  from './core/auth/platform.guard';
 import { RESTRICTED_ACCESS_PATH, roleGuard } from './core/auth/role.guard';
 import { ADMIN_CONSOLE_ROLES } from './core/auth/tenant-admin';
 import { MainShellComponent } from './layout/main-shell/main-shell.component';
@@ -21,6 +22,17 @@ const routes: Routes = [
     path: PLATFORM_PATH,
     canActivate: [platformGuard],
     loadChildren: () => import('./platform/platform.module').then(m => m.PlatformModule)
+  },
+  {
+    // La console d'un cabinet partenaire. Declaree ici pour la meme raison que
+    // celle de l'editeur : la route '' capture tout.
+    //
+    // Un consultant n'appartient a aucun client. Sa console ne lui montre donc
+    // pas des ecrans metier mais la liste des clients qui lui ont ACCORDE un
+    // acces, et c'est depuis cette liste qu'il entre quelque part.
+    path: PARTNER_PATH,
+    canActivate: [partnerGuard],
+    loadChildren: () => import('./partner/partner.module').then(m => m.PartnerModule)
   },
   {
     path: '',

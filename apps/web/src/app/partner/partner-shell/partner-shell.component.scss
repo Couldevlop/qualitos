@@ -1,0 +1,144 @@
+/* =============================================================================
+   Coquille de la console d'un cabinet.
+
+   Elle n'a pas de navigation latérale : il n'y a qu'une page. En poser une
+   vide, ou avec une seule entrée, aurait occupé 288 px d'écran pour ne rien
+   dire — et suggéré que d'autres entrées devaient s'y trouver.
+
+   Comme la console de l'éditeur, tout vient des jetons (`--qos-*`) : la console
+   suit le thème clair / sombre du poste. Ce qui la distingue, c'est le repère
+   « Console cabinet » du bandeau, pas une seconde identité graphique.
+   ============================================================================= */
+
+.qos-partner {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--qos-bg-app);
+  color: var(--qos-fg-primary);
+}
+
+/* ------------------------------------------------------------------ bandeau */
+
+.qos-partner__topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 0 20px;
+  height: 56px;
+  background: var(--qos-bg-elevated);
+  border-bottom: 1px solid var(--qos-border-subtle);
+}
+
+.qos-partner__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.qos-partner__logo {
+  flex: none;
+  border-radius: 8px;
+}
+
+.qos-partner__brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.3;
+  min-width: 0;
+
+  strong {
+    font-size: 0.95rem;
+    letter-spacing: 0.01em;
+  }
+
+  small {
+    /* Le repère porte l'accent : c'est la seule chose qui distingue cette
+       fenêtre de celle d'un client. */
+    color: var(--qos-accent-fg-soft);
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+}
+
+/* --------------------------------------------------------------- profil */
+
+.qos-partner__user {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px 5px 5px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: none;
+  color: var(--qos-fg-primary);
+  cursor: pointer;
+
+  &:hover {
+    background: var(--qos-bg-hover);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--qos-border-focus);
+    outline-offset: 1px;
+  }
+}
+
+.qos-partner__avatar {
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--qos-accent-bg);
+  color: var(--qos-accent-fg);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.qos-partner__user-name {
+  font-size: 0.84rem;
+  font-weight: 600;
+}
+
+.qos-partner__user-head {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--qos-border-subtle);
+}
+
+.qos-partner__user-head-name {
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+
+.qos-partner__user-head-roles {
+  color: var(--qos-fg-tertiary);
+  font-size: 0.74rem;
+}
+
+/* ------------------------------------------------------------------ contenu */
+
+.qos-partner__content {
+  flex: 1;
+  min-width: 0;
+  padding: 22px 24px 32px;
+}
+
+@media (max-width: 900px) {
+  .qos-partner__content {
+    padding: 16px 14px 24px;
+  }
+
+  /* Sur un téléphone, le nom complet pousse le bandeau hors de l'écran :
+     l'initiale et le menu suffisent, le nom est redonné dans le menu. */
+  .qos-partner__user-name {
+    display: none;
+  }
+}

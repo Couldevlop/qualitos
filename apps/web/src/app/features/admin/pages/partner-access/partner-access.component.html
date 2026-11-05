@@ -1,0 +1,163 @@
+<div class="qos-page">
+  <qos-page-header
+    title="Cabinets" i18n-title="@@partner.access.title"
+    subtitle="Qui, hors de votre organisation, peut entrer dans vos données — et jusqu’à quand."
+    i18n-subtitle="@@partner.access.subtitle">
+    <ng-container qosActions>
+      <button mat-stroked-button type="button" (click)="charger()" [disabled]="loading"
+              data-test="recharger">
+        <mat-icon>refresh</mat-icon>
+        <span i18n="@@partner.access.reload">Recharger</span>
+      </button>
+    </ng-container>
+  </qos-page-header>
+
+  <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+
+  <p class="echec" *ngIf="failed" role="alert" data-test="echec">
+    <span i18n="@@partner.access.load-failed">La liste des cabinets n’a pas pu être chargée.</span>
+    <button mat-button type="button" (click)="charger()" i18n="@@common.retry">Réessayer</button>
+  </p>
+
+  <ng-container *ngIf="!failed && !loading">
+
+    <p class="portee" i18n="@@partner.access.scope">
+      Un cabinet n’entre chez vous que si vous l’accordez, et son accès prend fin de lui-même
+      à la date que vous fixez. Vous pouvez le reprendre à tout moment&nbsp;; chaque décision
+      reste dans l’historique.
+    </p>
+
+    <!-- En attente : la seule chose à faire sur cet écran, donc en tête. -->
+    <section class="bloc" *ngIf="pending.length" aria-labelledby="cab-attente">
+      <h2 class="bloc__titre" id="cab-attente" i18n="@@partner.access.pending">
+        En attente de votre décision
+      </h2>
+
+      <ul class="accords">
+        <li class="accord accord--attente" *ngFor="let a of pending" [attr.data-id]="a.id"
+            data-test="attente">
+          <div class="accord__tete">
+            <span class="accord__cabinet">{{ a.firmName || a.firmId }}</span>
+            <span class="accord__portee">{{ scopeLabel(a.scope) }}</span>
+          </div>
+
+          <p class="accord__objet" *ngIf="a.purpose">{{ a.purpose }}</p>
+
+          <!-- Le formulaire n'apparaît qu'au moment d'accorder : affiché
+               d'emblée pour chaque proposition, il donnerait à croire que
+               l'octroi est l'issue attendue. -->
+          <div class="accord__gestes" *ngIf="grantingId !== a.id">
+            <button mat-flat-button type="button" (click)="ouvrirOctroi(a)"
+                    [disabled]="busyId === a.id" [attr.data-test]="'accorder-' + a.id">
+              <mat-icon>key</mat-icon>
+              <span i18n="@@partner.access.grant-action">Accorder un accès</span>
+            </button>
+            <button mat-stroked-button type="button" (click)="refuser(a)"
+                    [disabled]="busyId === a.id" [attr.data-test]="'refuser-' + a.id">
+              <span i18n="@@partner.access.decline-action">Refuser</span>
+            </button>
+          </div>
+
+          <form class="octroi" *ngIf="grantingId === a.id" (ngSubmit)="accorder(a)"
+                data-test="formulaire-octroi">
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="octroi__portee">
+              <mat-label i18n="@@partner.access.scope-label">Ce que le cabinet pourra faire</mat-label>
+              <mat-select [(ngModel)]="draft.scope" name="scope" data-test="portee">
+                <mat-option value="READ" i18n="@@partner.scope.read">Consultation</mat-option>
+                <mat-option value="INTERVENE" i18n="@@partner.scope.intervene">Intervention</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="octroi__terme">
+              <mat-label i18n="@@partner.access.ends-on">Terme de l’accès</mat-label>
+              <input matInput type="date" [(ngModel)]="draft.endsOn" name="endsOn"
+                     data-test="terme" required>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="octroi__objet">
+              <mat-label i18n="@@partner.access.purpose">Objet de la mission</mat-label>
+              <input matInput [(ngModel)]="draft.purpose" name="purpose" maxlength="300"
+                     i18n-placeholder="@@partner.access.purpose-placeholder"
+                     placeholder="Ex. : préparation de l’audit ISO 9001" data-test="objet">
+            </mat-form-field>
+
+            <p class="octroi__avis" i18n="@@partner.access.term-help">
+              Un accès sans terme est un accès oublié&nbsp;: la date est obligatoire, et celle
+              proposée est à trois mois.
+            </p>
+
+            <div class="octroi__gestes">
+              <button mat-flat-button type="submit" [disabled]="!draftValid || busyId === a.id"
+                      data-test="confirmer-octroi">
+                <span i18n="@@partner.access.grant-confirm">Accorder</span>
+              </button>
+              <button mat-button type="button" (click)="annulerOctroi()"
+                      data-test="annuler-octroi" i18n="@@common.cancel">Annuler</button>
+            </div>
+          </form>
+        </li>
+      </ul>
+    </section>
+
+    <!-- Accordés -->
+    <section class="bloc" *ngIf="granted.length" aria-labelledby="cab-accordes">
+      <h2 class="bloc__titre" id="cab-accordes" i18n="@@partner.access.granted-section">
+        Accès accordés
+      </h2>
+
+      <ul class="accords">
+        <li class="accord" *ngFor="let a of granted" [attr.data-id]="a.id" data-test="accorde">
+          <div class="accord__tete">
+            <span class="accord__cabinet">{{ a.firmName || a.firmId }}</span>
+            <span class="accord__portee"
+                  [class.accord__portee--ecriture]="a.scope === 'INTERVENE'">
+              {{ scopeLabel(a.scope) }}
+            </span>
+            <span class="accord__etat" [class.accord__etat--ouvert]="a.openToday">
+              {{ statusLabel(a) }}
+            </span>
+          </div>
+
+          <p class="accord__objet" *ngIf="a.purpose">{{ a.purpose }}</p>
+
+          <p class="accord__dates">
+            <span i18n="@@partner.access.from">Du</span>
+            <strong>{{ a.startsOn | date: 'mediumDate' }}</strong>
+            <span i18n="@@partner.access.to">au</span>
+            <strong>{{ a.endsOn | date: 'mediumDate' }}</strong>
+          </p>
+
+          <div class="accord__gestes">
+            <button mat-stroked-button type="button" color="warn" (click)="reprendre(a)"
+                    [disabled]="busyId === a.id" [attr.data-test]="'reprendre-' + a.id">
+              <mat-icon>lock</mat-icon>
+              <span i18n="@@partner.access.revoke-action">Reprendre</span>
+            </button>
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <!-- Historique -->
+    <section class="bloc" *ngIf="history.length" aria-labelledby="cab-historique">
+      <h2 class="bloc__titre" id="cab-historique" i18n="@@partner.access.history">
+        Décisions passées
+      </h2>
+
+      <ul class="passe">
+        <li class="passe__ligne" *ngFor="let a of history" [attr.data-id]="a.id"
+            data-test="historique">
+          <span class="passe__cabinet">{{ a.firmName || a.firmId }}</span>
+          <span class="passe__etat">{{ statusLabel(a) }}</span>
+          <span class="passe__date">{{ (a.revokedAt || a.decidedAt) | date: 'mediumDate' }}</span>
+        </li>
+      </ul>
+    </section>
+
+    <p class="vide" *ngIf="!engagements.length" data-test="vide"
+       i18n="@@partner.access.empty">
+      Aucun cabinet n’a été proposé à votre organisation. Un cabinet partenaire est déclaré
+      par l’éditeur de la plateforme&nbsp;; vous décidez ensuite s’il entre chez vous.
+    </p>
+  </ng-container>
+</div>

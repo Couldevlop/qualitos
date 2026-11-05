@@ -1,0 +1,55 @@
+<div class="qos-page">
+  <qos-page-header
+    title="Mon portefeuille" i18n-title="@@partner.portfolio.title"
+    subtitle="Les clients qui vous ont ouvert un accès, et jusqu’à quand."
+    i18n-subtitle="@@partner.portfolio.subtitle">
+    <ng-container qosActions>
+      <button mat-stroked-button type="button" (click)="reload()" [disabled]="loading$ | async"
+              data-test="recharger">
+        <mat-icon>refresh</mat-icon>
+        <span i18n="@@partner.portfolio.reload">Recharger</span>
+      </button>
+    </ng-container>
+  </qos-page-header>
+
+  <p class="erreur" *ngIf="error" role="alert" data-test="erreur">{{ error }}</p>
+
+  <p class="attente" *ngIf="loading$ | async" data-test="chargement"
+     i18n="@@partner.portfolio.loading">Chargement de votre portefeuille…</p>
+
+  <!-- Le compte existe mais aucune fiche ne le réclame : ce n'est pas une
+       panne, c'est une inscription qui manque côté cabinet. Le message doit
+       dire à qui s'adresser, sans quoi la personne cherche de son côté. -->
+  <p class="avis" *ngIf="unlinked && !error" data-test="non-rattache"
+     i18n="@@partner.portfolio.unlinked">
+    Votre compte n’est rattaché à aucun cabinet. Demandez à votre cabinet de vous inscrire
+    avec l’adresse de courriel de ce compte.
+  </p>
+
+  <ul class="missions" *ngIf="engagements.length" data-test="missions">
+    <li class="mission" *ngFor="let accord of engagements" [attr.data-tenant]="accord.tenantId">
+      <div class="mission__tete">
+        <span class="mission__client">{{ accord.tenantName || accord.tenantId }}</span>
+        <span class="mission__portee"
+              [class.mission__portee--ecriture]="accord.scope === 'INTERVENE'">
+          {{ scopeLabel(accord) }}
+        </span>
+      </div>
+
+      <p class="mission__objet" *ngIf="accord.purpose">{{ accord.purpose }}</p>
+
+      <p class="mission__terme">
+        <span i18n="@@partner.portfolio.until">Jusqu’au</span>
+        <!-- Le terme est en évidence : c'est la seule date qui compte pour une
+             personne qui planifie son intervention. -->
+        <strong>{{ accord.endsOn | date: 'mediumDate' }}</strong>
+      </p>
+    </li>
+  </ul>
+
+  <p class="vide" *ngIf="!(loading$ | async) && !error && !unlinked && !engagements.length"
+     data-test="vide" i18n="@@partner.portfolio.empty">
+    Aucun client ne vous a ouvert d’accès aujourd’hui. Un accès prend fin à sa date de terme,
+    sans préavis&nbsp;: si une mission vient de se terminer, elle a quitté cette liste.
+  </p>
+</div>

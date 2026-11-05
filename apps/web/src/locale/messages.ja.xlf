@@ -21190,8 +21190,8 @@ historique 12 mois</source>
         <target state="translated">カタログを空にはできません。プラットフォームのカタログを復元してください。</target>
       </trans-unit>
       <trans-unit id="nc.settings.problem.too-many" datatype="html">
-        <source>Pas plus de <x id="INTERPOLATION"/> natures.</source>
-        <target state="translated">性質は最大 <x id="INTERPOLATION"/> 件までです。</target>
+        <source>Pas plus de <x id="max"/> natures.</source>
+        <target state="translated">性質は最大 <x id="max"/> 件までです。</target>
       </trans-unit>
       <trans-unit id="nc.settings.problem.code" datatype="html">
         <source>Un code s’écrit en capitales, chiffres, tiret ou point (ex. : PRD-DIM).</source>
@@ -21206,8 +21206,8 @@ historique 12 mois</source>
         <target state="translated">2 つの性質が同じコードを持っています。</target>
       </trans-unit>
       <trans-unit id="nc.settings.problem.empty-category" datatype="html">
-        <source>Catégorie sans aucune nature : <x id="INTERPOLATION"/> — la saisie n’y proposerait rien.</source>
-        <target state="translated">性質が 1 つもないカテゴリー: <x id="INTERPOLATION"/> — 入力画面では何も提示されません。</target>
+        <source>Catégorie sans aucune nature : <x id="count"/> — la saisie n’y proposerait rien.</source>
+        <target state="translated">性質が 1 つもないカテゴリー: <x id="count"/> — 入力画面では何も提示されません。</target>
       </trans-unit>
       <trans-unit id="nc.settings.load-failed" datatype="html">
         <source>Le catalogue des natures n’a pas pu être chargé.</source>
@@ -21500,6 +21500,394 @@ historique 12 mois</source>
       <trans-unit id="offline.queue.empty-hint" datatype="html">
         <source>Les audits 5S saisis hors connexion apparaîtront ici jusqu'à leur synchronisation.</source>
         <target state="translated">オフラインで記録された5S監査は、同期されるまでここに表示されます。</target>
+      </trans-unit>
+      <trans-unit id="partner.scope.read" datatype="html">
+        <source>Consultation</source>
+        <target state="translated">閲覧</target>
+      </trans-unit>
+      <trans-unit id="partner.scope.intervene" datatype="html">
+        <source>Intervention</source>
+        <target state="translated">実務介入</target>
+      </trans-unit>
+      <trans-unit id="partner.status.proposed" datatype="html">
+        <source>En attente de votre décision</source>
+        <target state="translated">あなたの判断待ち</target>
+      </trans-unit>
+      <trans-unit id="partner.status.open" datatype="html">
+        <source>Ouvert</source>
+        <target state="translated">有効</target>
+      </trans-unit>
+      <trans-unit id="partner.status.scheduled" datatype="html">
+        <source>Accordé, hors période</source>
+        <target state="translated">許可済み（期間外）</target>
+      </trans-unit>
+      <trans-unit id="partner.status.declined" datatype="html">
+        <source>Refusé</source>
+        <target state="translated">却下</target>
+      </trans-unit>
+      <trans-unit id="partner.status.revoked" datatype="html">
+        <source>Repris</source>
+        <target state="translated">取り消し</target>
+      </trans-unit>
+      <trans-unit id="partner.brand.console" datatype="html">
+        <source>Console cabinet</source>
+        <target state="translated">事務所コンソール</target>
+      </trans-unit>
+      <trans-unit id="partner.user.logout" datatype="html">
+        <source>Se déconnecter</source>
+        <target state="translated">ログアウト</target>
+      </trans-unit>
+      <trans-unit id="partner.portfolio.title" datatype="html">
+        <source>Mon portefeuille</source>
+        <target state="translated">マイポートフォリオ</target>
+      </trans-unit>
+      <trans-unit id="partner.portfolio.subtitle" datatype="html">
+        <source>Les clients qui vous ont ouvert un accès, et jusqu’à quand.</source>
+        <target state="translated">アクセスを許可しているクライアントと、その期限。</target>
+      </trans-unit>
+      <trans-unit id="partner.portfolio.reload" datatype="html">
+        <source>Recharger</source>
+        <target state="translated">再読み込み</target>
+      </trans-unit>
+      <trans-unit id="partner.portfolio.loading" datatype="html">
+        <source>Chargement de votre portefeuille…</source>
+        <target state="translated">ポートフォリオを読み込み中…</target>
+      </trans-unit>
+      <trans-unit id="partner.portfolio.until" datatype="html">
+        <source>Jusqu’au</source>
+        <target state="translated">期限</target>
+      </trans-unit>
+      <trans-unit id="partner.portfolio.unlinked" datatype="html">
+        <source>Votre compte n’est rattaché à aucun cabinet. Demandez à votre cabinet de vous inscrire avec l’adresse de courriel de ce compte.</source>
+        <target state="translated">お使いのアカウントはどの事務所にも紐づいていません。このアカウントのメールアドレスで登録するよう、所属事務所に依頼してください。</target>
+      </trans-unit>
+      <trans-unit id="partner.portfolio.empty" datatype="html">
+        <source>Aucun client ne vous a ouvert d’accès aujourd’hui. Un accès prend fin à sa date de terme, sans préavis : si une mission vient de se terminer, elle a quitté cette liste.</source>
+        <target state="translated">本日アクセスが開いているクライアントはありません。アクセスは予告なく終了日に閉じます。終了した案件はこの一覧から消えます。</target>
+      </trans-unit>
+      <trans-unit id="partner.portfolio.link-failed" datatype="html">
+        <source>Votre compte n’a pas pu être rattaché à votre cabinet.</source>
+        <target state="translated">お使いのアカウントを事務所に紐づけられませんでした。</target>
+      </trans-unit>
+      <trans-unit id="partner.portfolio.load-failed" datatype="html">
+        <source>Votre portefeuille n’a pas pu être chargé.</source>
+        <target state="translated">ポートフォリオを読み込めませんでした。</target>
+      </trans-unit>
+      <trans-unit id="partner.access.title" datatype="html">
+        <source>Cabinets</source>
+        <target state="translated">事務所</target>
+      </trans-unit>
+      <trans-unit id="partner.access.subtitle" datatype="html">
+        <source>Qui, hors de votre organisation, peut entrer dans vos données — et jusqu’à quand.</source>
+        <target state="translated">組織外の誰が自社データに入れるのか、そしていつまでか。</target>
+      </trans-unit>
+      <trans-unit id="partner.access.reload" datatype="html">
+        <source>Recharger</source>
+        <target state="translated">再読み込み</target>
+      </trans-unit>
+      <trans-unit id="partner.access.scope" datatype="html">
+        <source>Un cabinet n’entre chez vous que si vous l’accordez, et son accès prend fin de lui-même à la date que vous fixez. Vous pouvez le reprendre à tout moment ; chaque décision reste dans l’historique.</source>
+        <target state="translated">事務所が入れるのは、あなたが許可した場合だけです。アクセスはあなたが定めた日に自動で終わります。いつでも取り消せ、すべての判断は履歴に残ります。</target>
+      </trans-unit>
+      <trans-unit id="partner.access.pending" datatype="html">
+        <source>En attente de votre décision</source>
+        <target state="translated">あなたの判断待ち</target>
+      </trans-unit>
+      <trans-unit id="partner.access.grant-action" datatype="html">
+        <source>Accorder un accès</source>
+        <target state="translated">アクセスを許可</target>
+      </trans-unit>
+      <trans-unit id="partner.access.decline-action" datatype="html">
+        <source>Refuser</source>
+        <target state="translated">却下</target>
+      </trans-unit>
+      <trans-unit id="partner.access.scope-label" datatype="html">
+        <source>Ce que le cabinet pourra faire</source>
+        <target state="translated">事務所にできること</target>
+      </trans-unit>
+      <trans-unit id="partner.access.ends-on" datatype="html">
+        <source>Terme de l’accès</source>
+        <target state="translated">アクセス終了日</target>
+      </trans-unit>
+      <trans-unit id="partner.access.purpose" datatype="html">
+        <source>Objet de la mission</source>
+        <target state="translated">案件の目的</target>
+      </trans-unit>
+      <trans-unit id="partner.access.purpose-placeholder" datatype="html">
+        <source>Ex. : préparation de l’audit ISO 9001</source>
+        <target state="translated">例：ISO 9001 監査の準備</target>
+      </trans-unit>
+      <trans-unit id="partner.access.term-help" datatype="html">
+        <source>Un accès sans terme est un accès oublié : la date est obligatoire, et celle proposée est à trois mois.</source>
+        <target state="translated">期限のないアクセスは忘れられたアクセスです。日付は必須で、既定値は3か月後です。</target>
+      </trans-unit>
+      <trans-unit id="partner.access.grant-confirm" datatype="html">
+        <source>Accorder</source>
+        <target state="translated">許可する</target>
+      </trans-unit>
+      <trans-unit id="partner.access.granted" datatype="html">
+        <source>Accès accordé, et il prendra fin de lui-même à son terme.</source>
+        <target state="translated">アクセスを許可しました。期限日に自動で終了します。</target>
+      </trans-unit>
+      <trans-unit id="partner.access.grant-failed" datatype="html">
+        <source>L’accès n’a pas pu être accordé.</source>
+        <target state="translated">アクセスを許可できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="partner.access.declined" datatype="html">
+        <source>Proposition refusée. Aucun accès n’a été ouvert.</source>
+        <target state="translated">提案を却下しました。アクセスは開かれていません。</target>
+      </trans-unit>
+      <trans-unit id="partner.access.decline-failed" datatype="html">
+        <source>La proposition n’a pas pu être refusée.</source>
+        <target state="translated">提案を却下できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="partner.access.granted-section" datatype="html">
+        <source>Accès accordés</source>
+        <target state="translated">許可済みのアクセス</target>
+      </trans-unit>
+      <trans-unit id="partner.access.from" datatype="html">
+        <source>Du</source>
+        <target state="translated">開始</target>
+      </trans-unit>
+      <trans-unit id="partner.access.to" datatype="html">
+        <source>au</source>
+        <target state="translated">終了</target>
+      </trans-unit>
+      <trans-unit id="partner.access.revoke-action" datatype="html">
+        <source>Reprendre</source>
+        <target state="translated">取り消す</target>
+      </trans-unit>
+      <trans-unit id="partner.access.revoke-title" datatype="html">
+        <source>Reprendre cet accès ?</source>
+        <target state="translated">このアクセスを取り消しますか？</target>
+      </trans-unit>
+      <trans-unit id="partner.access.revoke-message" datatype="html">
+        <source>Le cabinet perdra l’accès immédiatement. La décision reste dans l’historique.</source>
+        <target state="translated">事務所は直ちにアクセスを失います。判断は履歴に残ります。</target>
+      </trans-unit>
+      <trans-unit id="partner.access.revoked" datatype="html">
+        <source>Accès repris.</source>
+        <target state="translated">アクセスを取り消しました。</target>
+      </trans-unit>
+      <trans-unit id="partner.access.revoke-failed" datatype="html">
+        <source>L’accès n’a pas pu être repris.</source>
+        <target state="translated">アクセスを取り消せませんでした。</target>
+      </trans-unit>
+      <trans-unit id="partner.access.history" datatype="html">
+        <source>Décisions passées</source>
+        <target state="translated">過去の判断</target>
+      </trans-unit>
+      <trans-unit id="partner.access.load-failed" datatype="html">
+        <source>La liste des cabinets n’a pas pu être chargée.</source>
+        <target state="translated">事務所の一覧を読み込めませんでした。</target>
+      </trans-unit>
+      <trans-unit id="partner.access.empty" datatype="html">
+        <source>Aucun cabinet n’a été proposé à votre organisation. Un cabinet partenaire est déclaré par l’éditeur de la plateforme ; vous décidez ensuite s’il entre chez vous.</source>
+        <target state="translated">あなたの組織にはまだ事務所が提案されていません。提携事務所はプラットフォーム提供者が登録し、受け入れるかはあなたが決めます。</target>
+      </trans-unit>
+      <trans-unit id="platform.nav.firms" datatype="html">
+        <source>Cabinets</source>
+        <target state="translated">事務所</target>
+      </trans-unit>
+      <trans-unit id="platform.nav.firms.hint" datatype="html">
+        <source>Cabinets partenaires, consultants, clients proposés</source>
+        <target state="translated">提携事務所、コンサルタント、提案したクライアント</target>
+      </trans-unit>
+      <trans-unit id="nav.admin-firms" datatype="html">
+        <source>Cabinets</source>
+        <target state="translated">事務所</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.title" datatype="html">
+        <source>Cabinets partenaires</source>
+        <target state="translated">提携事務所</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.subtitle" datatype="html">
+        <source>Les cabinets qui interviennent chez vos clients, leurs consultants, et les clients qui leur ont été proposés.</source>
+        <target state="translated">クライアント先で稼働する事務所、その コンサルタント、提案したクライアント。</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.reload" datatype="html">
+        <source>Recharger</source>
+        <target state="translated">再読み込み</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.new" datatype="html">
+        <source>Nouveau cabinet</source>
+        <target state="translated">新しい事務所</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.scope" datatype="html">
+        <source>Vous déclarez un cabinet et lui proposez des clients. Vous n’ouvrez aucun accès : chaque client décide lui-même d’accorder, et fixe le terme.</source>
+        <target state="translated">事務所を登録し、クライアントを提案します。アクセスは開きません。許可するかと期限は各クライアントが決めます。</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.name" datatype="html">
+        <source>Raison sociale</source>
+        <target state="translated">法人名</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.slug" datatype="html">
+        <source>Repère</source>
+        <target state="translated">識別名</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.slug-placeholder" datatype="html">
+        <source>Ex. : qualiconseil</source>
+        <target state="translated">例：qualiconseil</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.slug-hint" datatype="html">
+        <source>Minuscules, chiffres et tirets. Définitif.</source>
+        <target state="translated">小文字・数字・ハイフン。変更できません。</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.registration" datatype="html">
+        <source>Numéro d’immatriculation</source>
+        <target state="translated">登録番号</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.contact-email" datatype="html">
+        <source>Courriel de contact</source>
+        <target state="translated">連絡先メール</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.contact-phone" datatype="html">
+        <source>Téléphone</source>
+        <target state="translated">電話</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.create" datatype="html">
+        <source>Créer le cabinet</source>
+        <target state="translated">事務所を作成</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.create-failed" datatype="html">
+        <source>Le cabinet n’a pas pu être créé.</source>
+        <target state="translated">事務所を作成できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.deactivate-title" datatype="html">
+        <source>Désactiver ce cabinet ?</source>
+        <target state="translated">この事務所を無効にしますか？</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.deactivate-message" datatype="html">
+        <source>Ses consultants perdront immédiatement tous leurs accès. Les accords des clients sont conservés et reprendront effet si vous le réactivez.</source>
+        <target state="translated">所属コンサルタントはすべてのアクセスを直ちに失います。クライアントの合意は保持され、再有効化すれば再び効力を持ちます。</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.deactivate-action" datatype="html">
+        <source>Désactiver</source>
+        <target state="translated">無効にする</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.activate-action" datatype="html">
+        <source>Réactiver</source>
+        <target state="translated">再有効化</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.inactive" datatype="html">
+        <source>Inactif</source>
+        <target state="translated">無効</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.toggle-failed" datatype="html">
+        <source>L’état du cabinet n’a pas pu être changé.</source>
+        <target state="translated">事務所の状態を変更できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.consultant-count" datatype="html">
+        <source><x id="INTERPOLATION"/> consultants</source>
+        <target state="translated">コンサルタント <x id="INTERPOLATION"/> 名</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.granted-count" datatype="html">
+        <source><x id="INTERPOLATION"/> missions</source>
+        <target state="translated">案件 <x id="INTERPOLATION"/> 件</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.consultants" datatype="html">
+        <source>Consultants</source>
+        <target state="translated">コンサルタント</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.linked" datatype="html">
+        <source>Rattaché</source>
+        <target state="translated">紐づけ済み</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.pending-link" datatype="html">
+        <source>Jamais connecté</source>
+        <target state="translated">未ログイン</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.suspend" datatype="html">
+        <source>Suspendre</source>
+        <target state="translated">停止</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.restore" datatype="html">
+        <source>Rétablir</source>
+        <target state="translated">復帰</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.no-consultant" datatype="html">
+        <source>Aucun consultant inscrit dans ce cabinet.</source>
+        <target state="translated">この事務所にはコンサルタントが登録されていません。</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.consultant-name" datatype="html">
+        <source>Nom du consultant</source>
+        <target state="translated">コンサルタント名</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.consultant-email" datatype="html">
+        <source>Courriel</source>
+        <target state="translated">メール</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.consultant-email-hint" datatype="html">
+        <source>Celui de son compte : c’est par là que le rattachement se fait.</source>
+        <target state="translated">本人のアカウントのメール。これで紐づけが行われます。</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.add-consultant" datatype="html">
+        <source>Inscrire</source>
+        <target state="translated">登録</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.consultant-added" datatype="html">
+        <source>Consultant inscrit. Son accès s’ouvrira à sa première connexion, par ce courriel.</source>
+        <target state="translated">コンサルタントを登録しました。このメールアドレスで初回ログインした時点でアクセスが開きます。</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.consultant-failed" datatype="html">
+        <source>Le consultant n’a pas pu être inscrit.</source>
+        <target state="translated">コンサルタントを登録できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.consultant-toggle-failed" datatype="html">
+        <source>L’état du consultant n’a pas pu être changé.</source>
+        <target state="translated">コンサルタントの状態を変更できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.consultants-failed" datatype="html">
+        <source>Les consultants n’ont pas pu être chargés.</source>
+        <target state="translated">コンサルタントを読み込めませんでした。</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.portfolio" datatype="html">
+        <source>Portefeuille</source>
+        <target state="translated">ポートフォリオ</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.portfolio-failed" datatype="html">
+        <source>Le portefeuille n’a pas pu être chargé.</source>
+        <target state="translated">ポートフォリオを読み込めませんでした。</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.no-mission" datatype="html">
+        <source>Aucun client proposé à ce cabinet.</source>
+        <target state="translated">この事務所に提案したクライアントはありません。</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.client" datatype="html">
+        <source>Client</source>
+        <target state="translated">クライアント</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.proposed-scope" datatype="html">
+        <source>Portée demandée</source>
+        <target state="translated">要求する範囲</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.proposed-purpose" datatype="html">
+        <source>Objet de la mission</source>
+        <target state="translated">案件の目的</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.propose" datatype="html">
+        <source>Proposer</source>
+        <target state="translated">提案する</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.proposed" datatype="html">
+        <source>Client proposé. Aucun accès n’est ouvert : son administrateur décide.</source>
+        <target state="translated">クライアントを提案しました。アクセスは開きません。判断はその管理者が行います。</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.propose-failed" datatype="html">
+        <source>Le client n’a pas pu être proposé.</source>
+        <target state="translated">クライアントを提案できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.awaiting" datatype="html">
+        <source>En attente du client</source>
+        <target state="translated">クライアントの判断待ち</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.load-failed" datatype="html">
+        <source>La liste des cabinets n’a pas pu être chargée.</source>
+        <target state="translated">事務所の一覧を読み込めませんでした。</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.empty" datatype="html">
+        <source>Aucun cabinet partenaire n’est déclaré. Un cabinet regroupe des consultants externes à qui vos clients peuvent ouvrir un accès daté.</source>
+        <target state="translated">提携事務所は未登録です。事務所は外部コンサルタントをまとめる単位で、クライアントは期限付きのアクセスを開けます。</target>
       </trans-unit>
       <trans-unit id="pdca.detail.col-evidence" datatype="html">
         <source>Preuve</source>
@@ -28026,8 +28414,8 @@ historique 12 mois</source>
         <target state="translated">サブグループ別の測定値</target>
       </trans-unit>
       <trans-unit id="spc.study.subgroup-count" datatype="html">
-        <source><x id="INTERPOLATION"/> sous-groupe(s)</source>
-        <target state="translated"><x id="INTERPOLATION"/> 件のサブグループ</target>
+        <source><x id="COUNT"/> sous-groupe(s)</source>
+        <target state="translated"><x id="COUNT"/> 件のサブグループ</target>
       </trans-unit>
       <trans-unit id="spc.study.subgroup-add" datatype="html">
         <source>Ajouter un sous-groupe</source>
@@ -29502,8 +29890,8 @@ historique 12 mois</source>
         <target state="translated">比較する規格</target>
       </trans-unit>
       <trans-unit id="standards-extras.coverage.shared-count" datatype="html">
-        <source>&lt;x id="count"/&gt; norme(s)</source>
-        <target state="translated">&lt;x id="count"/&gt; 件の規格</target>
+        <source><x id="count"/> norme(s)</source>
+        <target state="translated"><x id="count"/> 件の規格</target>
       </trans-unit>
       <trans-unit id="standards-extras.coverage.shared-only" datatype="html">
         <source>Clauses mutualisables uniquement</source>
@@ -29590,8 +29978,8 @@ historique 12 mois</source>
         <target state="translated">優先度</target>
       </trans-unit>
       <trans-unit id="standards-extras.report.coverage-aria" datatype="html">
-        <source>Couverture des exigences de la clause &lt;x id="clause"/&gt;</source>
-        <target state="translated">箇条 &lt;x id="clause"/&gt; の要求事項カバレッジ</target>
+        <source>Couverture des exigences de la clause <x id="clause"/></source>
+        <target state="translated">箇条 <x id="clause"/> の要求事項カバレッジ</target>
       </trans-unit>
       <trans-unit id="standards-extras.report.error" datatype="html">
         <source>Ce rapport d'audit blanc IA est introuvable.</source>
@@ -29822,8 +30210,8 @@ historique 12 mois</source>
         <target state="translated">導入 →</target>
       </trans-unit>
       <trans-unit id="standards.list.adopt-success" datatype="html">
-        <source>${s.code} adopté — roadmap générée</source>
-        <target state="translated">${s.code} を導入しました — ロードマップを生成しました</target>
+        <source><x id="code"/> adopté — roadmap générée</source>
+        <target state="translated"><x id="code"/> を導入しました — ロードマップを生成しました</target>
       </trans-unit>
       <trans-unit id="standards.list.adopt-conflict" datatype="html">
         <source>Norme déjà adoptée</source>
@@ -30018,8 +30406,8 @@ historique 12 mois</source>
         <target state="translated">責任者</target>
       </trans-unit>
       <trans-unit id="standards.detail.stage-updated" datatype="html">
-        <source>Étape ${stage.stepNumber} → ${status}</source>
-        <target state="translated">ステップ ${stage.stepNumber} → ${status}</target>
+        <source>Étape <x id="step"/> → <x id="status"/></source>
+        <target state="translated">ステップ <x id="step"/> → <x id="status"/></target>
       </trans-unit>
       <trans-unit id="standards.detail.stage-update-error" datatype="html">
         <source>Échec de la mise à jour</source>
@@ -30330,8 +30718,8 @@ historique 12 mois</source>
         <target state="translated">テンプレートをダウンロードできません</target>
       </trans-unit>
       <trans-unit id="standards.detail.ai-draft-success" datatype="html">
-        <source>Brouillon généré (${r.provider}, ${r.latencyMs} ms)</source>
-        <target state="translated">下書きを生成しました（${r.provider}、${r.latencyMs} ms）</target>
+        <source>Brouillon généré (<x id="provider"/>, <x id="latency"/> ms)</source>
+        <target state="translated">下書きを生成しました（<x id="provider"/>、<x id="latency"/> ms）</target>
       </trans-unit>
       <trans-unit id="standards.detail.ai-draft-unavailable" datatype="html">
         <source>Génération IA indisponible (ai-service / Ollama)</source>
@@ -30578,8 +30966,8 @@ historique 12 mois</source>
         <target state="translated">このアクティビティをアーカイブしますか？</target>
       </trans-unit>
       <trans-unit id="ropa.detail.archive-confirm-message" datatype="html">
-        <source>« ${a.name} » sera marquée ARCHIVED. La fiche reste consultable pour les contrôles CNIL/EDPB.</source>
-        <target state="translated">「${a.name}」は ARCHIVED にマークされます。記録は CNIL/EDPB の検査のため引き続き参照できます。</target>
+        <source>« <x id="name"/> » sera marquée ARCHIVED. La fiche reste consultable pour les contrôles CNIL/EDPB.</source>
+        <target state="translated">「<x id="name"/>」は ARCHIVED にマークされます。記録は CNIL/EDPB の検査のため引き続き参照できます。</target>
       </trans-unit>
       <trans-unit id="ropa.detail.archived" datatype="html">
         <source>Activité archivée.</source>
@@ -30598,8 +30986,8 @@ historique 12 mois</source>
         <target state="translated">このアクティビティを削除しますか？</target>
       </trans-unit>
       <trans-unit id="ropa.detail.delete-confirm-message" datatype="html">
-        <source>Suppression définitive de « ${a.name} ». Cette action est irréversible et ne devrait être utilisée que pour un brouillon créé par erreur.</source>
-        <target state="translated">「${a.name}」を完全に削除します。この操作は元に戻せず、誤って作成された下書きにのみ使用してください。</target>
+        <source>Suppression définitive de « <x id="name"/> ». Cette action est irréversible et ne devrait être utilisée que pour un brouillon créé par erreur.</source>
+        <target state="translated">「<x id="name"/>」を完全に削除します。この操作は元に戻せず、誤って作成された下書きにのみ使用してください。</target>
       </trans-unit>
       <trans-unit id="ropa.detail.deleted" datatype="html">
         <source>Activité supprimée.</source>
@@ -30960,8 +31348,8 @@ Inde (centre de service)</source>
         <target state="translated">検索できません。</target>
       </trans-unit>
       <trans-unit id="consents.search.maintenance-result" datatype="html">
-        <source>Maintenance : ${r.expired} consentement(s) expiré(s).</source>
-        <target state="translated">メンテナンス：${r.expired} 件の同意が失効しました。</target>
+        <source>Maintenance : <x id="count"/> consentement(s) expiré(s).</source>
+        <target state="translated">メンテナンス：<x id="count"/> 件の同意が失効しました。</target>
       </trans-unit>
       <trans-unit id="consents.search.maintenance-error" datatype="html">
         <source>Maintenance impossible.</source>

@@ -16,7 +16,7 @@ TRANSLATIONS = {
     'standards.list.col-family': ('Famille', 'Family', 'Familia', 'العائلة', 'ファミリー', '系列'),
     'standards.list.col-recert': ('Recert.', 'Recert.', 'Recert.', 'إعادة الاعتماد', '再認証', '再认证'),
     'standards.list.adopt': ('Adopter →', 'Adopt →', 'Adoptar →', 'اعتماد →', '導入 →', '采用 →'),
-    'standards.list.adopt-success': ('${s.code} adopté — roadmap générée', '${s.code} adopted — roadmap generated', '${s.code} adoptada — hoja de ruta generada', 'تم اعتماد ${s.code} — تم إنشاء خارطة الطريق', '${s.code} を導入しました — ロードマップを生成しました', '已采用 ${s.code} — 已生成路线图'),
+    'standards.list.adopt-success': ('{$code} adopté — roadmap générée', '{$code} adopted — roadmap generated', '{$code} adoptada — hoja de ruta generada', 'تم اعتماد {$code} — تم إنشاء خارطة الطريق', '{$code} を導入しました — ロードマップを生成しました', '已采用 {$code} — 已生成路线图'),
     'standards.list.adopt-conflict': ('Norme déjà adoptée', 'Standard already adopted', 'Norma ya adoptada', 'المعيار معتمد بالفعل', '規格は既に導入済みです', '该标准已采用'),
     'standards.list.adopt-error': ("Échec de l'adoption", 'Adoption failed', 'Error en la adopción', 'فشل الاعتماد', '導入に失敗しました', '采用失败'),
 
@@ -77,7 +77,7 @@ TRANSLATIONS = {
     'standards.detail.roadmap-col-stage': ('Étape', 'Stage', 'Etapa', 'المرحلة', 'ステップ', '阶段'),
     'standards.detail.roadmap-col-duration': ('Durée', 'Duration', 'Duración', 'المدة', '期間', '工期'),
     'standards.detail.roadmap-col-responsible': ('Responsable', 'Owner', 'Responsable', 'المسؤول', '責任者', '负责人'),
-    'standards.detail.stage-updated': ('Étape ${stage.stepNumber} → ${status}', 'Stage ${stage.stepNumber} → ${status}', 'Etapa ${stage.stepNumber} → ${status}', 'المرحلة ${stage.stepNumber} ← ${status}', 'ステップ ${stage.stepNumber} → ${status}', '阶段 ${stage.stepNumber} → ${status}'),
+    'standards.detail.stage-updated': ('Étape {$step} → {$status}', 'Stage {$step} → {$status}', 'Etapa {$step} → {$status}', 'المرحلة {$step} ← {$status}', 'ステップ {$step} → {$status}', '阶段 {$step} → {$status}'),
     'standards.detail.stage-update-error': ('Échec de la mise à jour', 'Update failed', 'Error en la actualización', 'فشل التحديث', '更新に失敗しました', '更新失败'),
 
     # ---- standards : audit blanc ----
@@ -167,7 +167,7 @@ TRANSLATIONS = {
     # ---- standards : divers TS ----
     'standards.detail.load-error': ("Impossible de charger l'adoption.", 'Unable to load the adoption.', 'No se pudo cargar la adopción.', 'تعذّر تحميل الاعتماد.', '導入を読み込めません。', '无法加载采用。'),
     'standards.detail.template-download-error': ('Téléchargement du modèle impossible', 'Unable to download the template', 'No se pudo descargar la plantilla', 'تعذّر تنزيل القالب', 'テンプレートをダウンロードできません', '无法下载模板'),
-    'standards.detail.ai-draft-success': ('Brouillon généré (${r.provider}, ${r.latencyMs} ms)', 'Draft generated (${r.provider}, ${r.latencyMs} ms)', 'Borrador generado (${r.provider}, ${r.latencyMs} ms)', 'تم إنشاء المسودة (${r.provider}، ${r.latencyMs} مللي ثانية)', '下書きを生成しました（${r.provider}、${r.latencyMs} ms）', '已生成草稿（${r.provider}，${r.latencyMs} 毫秒）'),
+    'standards.detail.ai-draft-success': ('Brouillon généré ({$provider}, {$latency} ms)', 'Draft generated ({$provider}, {$latency} ms)', 'Borrador generado ({$provider}, {$latency} ms)', 'تم إنشاء المسودة ({$provider}، {$latency} مللي ثانية)', '下書きを生成しました（{$provider}、{$latency} ms）', '已生成草稿（{$provider}，{$latency} 毫秒）'),
     'standards.detail.ai-draft-unavailable': ('Génération IA indisponible (ai-service / Ollama)', 'AI generation unavailable (ai-service / Ollama)', 'Generación con IA no disponible (ai-service / Ollama)', 'توليد الذكاء الاصطناعي غير متاح (ai-service / Ollama)', 'AI生成を利用できません（ai-service / Ollama）', 'AI 生成不可用（ai-service / Ollama）'),
     'standards.detail.obligation-mandatory': ('Obligatoire', 'Mandatory', 'Obligatorio', 'إلزامي', '必須', '强制'),
     'standards.detail.obligation-recommended': ('Recommandé', 'Recommended', 'Recomendado', 'موصى به', '推奨', '推荐'),
@@ -235,12 +235,12 @@ TRANSLATIONS = {
     'ropa.detail.activated': ('Activité activée.', 'Activity activated.', 'Actividad activada.', 'تم تفعيل النشاط.', 'アクティビティを有効化しました。', '活动已激活。'),
     'ropa.detail.activate-error': ('Activation impossible.', 'Activation failed.', 'No se pudo activar.', 'تعذّر التفعيل.', '有効化できません。', '无法激活。'),
     'ropa.detail.archive-confirm-title': ('Archiver cette activité ?', 'Archive this activity?', '¿Archivar esta actividad?', 'أرشفة هذا النشاط؟', 'このアクティビティをアーカイブしますか？', '归档此活动？'),
-    'ropa.detail.archive-confirm-message': ('« ${a.name} » sera marquée ARCHIVED. La fiche reste consultable pour les contrôles CNIL/EDPB.', '"${a.name}" will be marked ARCHIVED. The record remains accessible for CNIL/EDPB inspections.', '« ${a.name} » se marcará como ARCHIVED. La ficha sigue siendo consultable para los controles CNIL/EDPB.', 'سيتم وضع علامة ARCHIVED على « ${a.name} ». يظل السجل متاحًا لعمليات التفتيش من CNIL/EDPB.', '「${a.name}」は ARCHIVED にマークされます。記録は CNIL/EDPB の検査のため引き続き参照できます。', '“${a.name}” 将被标记为 ARCHIVED。该记录仍可供 CNIL/EDPB 检查查阅。'),
+    'ropa.detail.archive-confirm-message': ('« {$name} » sera marquée ARCHIVED. La fiche reste consultable pour les contrôles CNIL/EDPB.', '"{$name}" will be marked ARCHIVED. The record remains accessible for CNIL/EDPB inspections.', '« {$name} » se marcará como ARCHIVED. La ficha sigue siendo consultable para los controles CNIL/EDPB.', 'سيتم وضع علامة ARCHIVED على « {$name} ». يظل السجل متاحًا لعمليات التفتيش من CNIL/EDPB.', '「{$name}」は ARCHIVED にマークされます。記録は CNIL/EDPB の検査のため引き続き参照できます。', '“{$name}” 将被标记为 ARCHIVED。该记录仍可供 CNIL/EDPB 检查查阅。'),
     'ropa.detail.archived': ('Activité archivée.', 'Activity archived.', 'Actividad archivada.', 'تمت أرشفة النشاط.', 'アクティビティをアーカイブしました。', '活动已归档。'),
     'ropa.detail.archive-error': ('Archivage impossible.', 'Archiving failed.', 'No se pudo archivar.', 'تعذّرت الأرشفة.', 'アーカイブできません。', '无法归档。'),
     'ropa.detail.cannot-delete-active': ("Impossible de supprimer une activité ACTIVE — archivez-la d'abord.", 'Cannot delete an ACTIVE activity — archive it first.', 'No se puede eliminar una actividad ACTIVE — archívela primero.', 'لا يمكن حذف نشاط نشط (ACTIVE) — قم بأرشفته أولاً.', 'ACTIVE のアクティビティは削除できません — 先にアーカイブしてください。', '无法删除 ACTIVE 活动 — 请先归档。'),
     'ropa.detail.delete-confirm-title': ('Supprimer cette activité ?', 'Delete this activity?', '¿Eliminar esta actividad?', 'حذف هذا النشاط؟', 'このアクティビティを削除しますか？', '删除此活动？'),
-    'ropa.detail.delete-confirm-message': ('Suppression définitive de « ${a.name} ». Cette action est irréversible et ne devrait être utilisée que pour un brouillon créé par erreur.', 'Permanent deletion of "${a.name}". This action is irreversible and should only be used for a draft created by mistake.', 'Eliminación definitiva de « ${a.name} ». Esta acción es irreversible y solo debería utilizarse para un borrador creado por error.', 'حذف نهائي لـ « ${a.name} ». هذا الإجراء لا رجعة فيه ويجب استخدامه فقط لمسودة أُنشئت عن طريق الخطأ.', '「${a.name}」を完全に削除します。この操作は元に戻せず、誤って作成された下書きにのみ使用してください。', '永久删除“${a.name}”。此操作不可逆，仅应用于误建的草稿。'),
+    'ropa.detail.delete-confirm-message': ('Suppression définitive de « {$name} ». Cette action est irréversible et ne devrait être utilisée que pour un brouillon créé par erreur.', 'Permanent deletion of "{$name}". This action is irreversible and should only be used for a draft created by mistake.', 'Eliminación definitiva de « {$name} ». Esta acción es irreversible y solo debería utilizarse para un borrador creado por error.', 'حذف نهائي لـ « {$name} ». هذا الإجراء لا رجعة فيه ويجب استخدامه فقط لمسودة أُنشئت عن طريق الخطأ.', '「{$name}」を完全に削除します。この操作は元に戻せず、誤って作成された下書きにのみ使用してください。', '永久删除“{$name}”。此操作不可逆，仅应用于误建的草稿。'),
     'ropa.detail.deleted': ('Activité supprimée.', 'Activity deleted.', 'Actividad eliminada.', 'تم حذف النشاط.', 'アクティビティを削除しました。', '活动已删除。'),
     'ropa.detail.delete-error': ('Suppression impossible.', 'Deletion failed.', 'No se pudo eliminar.', 'تعذّر الحذف.', '削除できません。', '无法删除。'),
 
@@ -333,7 +333,7 @@ TRANSLATIONS = {
     'consents.search.enter-identifier': ('Renseignez un identifiant.', 'Enter an identifier.', 'Introduzca un identificador.', 'أدخل معرّفًا.', '識別子を入力してください。', '请输入标识符。'),
     'consents.search.enter-purpose': ('Renseignez un code de finalité.', 'Enter a purpose code.', 'Introduzca un código de finalidad.', 'أدخل رمز غرض.', '目的コードを入力してください。', '请输入目的代码。'),
     'consents.search.search-error': ('Recherche impossible.', 'Search failed.', 'Búsqueda imposible.', 'تعذّر البحث.', '検索できません。', '搜索失败。'),
-    'consents.search.maintenance-result': ('Maintenance : ${r.expired} consentement(s) expiré(s).', 'Maintenance: ${r.expired} consent(s) expired.', 'Mantenimiento: ${r.expired} consentimiento(s) expirado(s).', 'الصيانة: انتهت صلاحية ${r.expired} موافقة/موافقات.', 'メンテナンス：${r.expired} 件の同意が失効しました。', '维护：${r.expired} 项同意已过期。'),
+    'consents.search.maintenance-result': ('Maintenance : {$count} consentement(s) expiré(s).', 'Maintenance: {$count} consent(s) expired.', 'Mantenimiento: {$count} consentimiento(s) expirado(s).', 'الصيانة: انتهت صلاحية {$count} موافقة/موافقات.', 'メンテナンス：{$count} 件の同意が失効しました。', '维护：{$count} 项同意已过期。'),
     'consents.search.maintenance-error': ('Maintenance impossible.', 'Maintenance failed.', 'Mantenimiento imposible.', 'تعذّرت الصيانة.', 'メンテナンスできません。', '维护失败。'),
 
     # ---- consents : detail ----

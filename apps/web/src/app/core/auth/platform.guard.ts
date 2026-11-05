@@ -11,6 +11,15 @@ export const PLATFORM_CONSOLE_ROLES: readonly string[] = ['SUPER_ADMIN'];
 export const PLATFORM_PATH = 'platform';
 
 /**
+ * Le rôle d'un consultant de cabinet. Comme l'éditeur, il n'appartient à aucun
+ * client — et pour la même raison, il n'a rien à faire dans les écrans métier.
+ */
+export const PARTNER_CONSOLE_ROLES: readonly string[] = ['CONSULTANT'];
+
+/** Adresse de la console d'un cabinet. */
+export const PARTNER_PATH = 'partner';
+
+/**
  * La frontière, côté console : seul l'éditeur entre dans `/platform`.
  *
  * <p>Elle ne remplace pas le serveur, qui refuse en 403 ce que l'écran aurait
@@ -19,6 +28,22 @@ export const PLATFORM_PATH = 'platform';
  */
 export const platformGuard: CanActivateFn = (_route, state: RouterStateSnapshot) => {
   if (inject(AuthService).hasAnyRole(PLATFORM_CONSOLE_ROLES)) {
+    return true;
+  }
+  return inject(Router).createUrlTree(['/' + RESTRICTED_ACCESS_PATH], {
+    queryParams: { from: state.url }
+  });
+};
+
+/**
+ * La frontière de la console d'un cabinet : seul un consultant y entre.
+ *
+ * <p>Même raisonnement que pour l'éditeur, et même garde-fou : le serveur
+ * refuse de toute façon, mais arriver sur une console vide dont chaque appel
+ * échoue ne dit à personne ce qui ne va pas.
+ */
+export const partnerGuard: CanActivateFn = (_route, state: RouterStateSnapshot) => {
+  if (inject(AuthService).hasAnyRole(PARTNER_CONSOLE_ROLES)) {
     return true;
   }
   return inject(Router).createUrlTree(['/' + RESTRICTED_ACCESS_PATH], {
@@ -46,8 +71,18 @@ export const platformGuard: CanActivateFn = (_route, state: RouterStateSnapshot)
  * dans la coquille métier.
  */
 export const businessRoutesGuard: CanActivateFn = () => {
-  if (inject(AuthService).hasAnyRole(PLATFORM_CONSOLE_ROLES)) {
-    return inject(Router).createUrlTree(['/' + PLATFORM_PATH]);
+  const auth = inject(AuthService);
+  const router = inject(Router);
+  if (auth.hasAnyRole(PLATFORM_CONSOLE_ROLES)) {
+    return router.createUrlTree(['/' + PLATFORM_PATH]);
+  }
+  // Un consultant est dans le même cas que l'éditeur, mot pour mot : son jeton
+  // ne porte pas de client. Ouvrir « les non-conformités » sous son compte ne
+  // montrerait les non-conformités de personne — et surtout pas celles du
+  // client chez qui il est censé intervenir, qui ne s'atteignent que par un
+  // accord enregistré.
+  if (auth.hasAnyRole(PARTNER_CONSOLE_ROLES)) {
+    return router.createUrlTree(['/' + PARTNER_PATH]);
   }
   return true;
 };

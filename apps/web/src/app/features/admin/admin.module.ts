@@ -18,6 +18,7 @@ import { SpcSettingsComponent } from './pages/spc-settings/spc-settings.componen
 import { AiPolicyComponent } from './pages/ai-policy/ai-policy.component';
 import { DmaicSettingsComponent } from './pages/dmaic-settings/dmaic-settings.component';
 import { NcSettingsComponent } from './pages/nc-settings/nc-settings.component';
+import { PartnerAccessComponent } from './pages/partner-access/partner-access.component';
 import { CompetencyWorkshopsComponent } from './pages/competency-workshops/competency-workshops.component';
 import { RolesMatrixComponent } from './pages/roles-matrix/roles-matrix.component';
 import { TenantModulesComponent } from './pages/tenant-modules/tenant-modules.component';
@@ -50,6 +51,10 @@ const routes: Routes = [
   { path: 'nc', component: NcSettingsComponent },
   // Le fournisseur des appels LLM du tenant, et sa souveraineté (ADR 0102).
   { path: 'ia', component: AiPolicyComponent },
+  // Les cabinets partenaires et leurs accès (ADR 0106). L'écran est ICI, chez le
+  // client, et non dans la console de l'éditeur : l'éditeur propose un cabinet,
+  // seul l'administrateur du client lui ouvre — et le reprend.
+  { path: 'cabinets', component: PartnerAccessComponent },
   // Les ateliers de la matrice de compétences (ADR 0098).
   { path: 'competences', component: CompetencyWorkshopsComponent },
   // La licence d'une installation on-premise (ADR 0082).
@@ -84,7 +89,7 @@ const routes: Routes = [
 @NgModule({
   declarations: [TenantModulesComponent, TenantTeamComponent, RolesMatrixComponent, CircuitsComponent, LicenseComponent,
     MocSettingsComponent, DocumentSettingsComponent, SpcSettingsComponent, DmaicSettingsComponent, CompetencyWorkshopsComponent,
-    AiPolicyComponent, NcSettingsComponent],
+    AiPolicyComponent, NcSettingsComponent, PartnerAccessComponent],
   // UserPickerModule : les titulaires des rôles MOC se choisissent dans l'annuaire (ADR 0091).
   imports: [SharedModule, UiModule, FormsModule, DragDropModule, MatMenuModule,
     UserPickerModule, PersonNameModule, CredentialRevealModule, RouterModule.forChild(routes)]

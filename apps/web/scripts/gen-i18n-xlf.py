@@ -121,6 +121,86 @@ def reject_literal_interpolations(translations: dict) -> None:
             "ICU et l'ecran traduit leve a l'execution.\n"
             + details)
 
+NAMED_PLACEHOLDER_RE = re.compile(r"\}:([A-Za-z_][A-Za-z0-9_]*):")
+# La MEME chose dans un gabarit : `{{ x // i18n(ph="count") }}`. Angular met
+# le nom en capitales dans ce cas, et le laisse tel quel dans le cas TS.
+TEMPLATE_PH_RE = re.compile(r'i18n\(ph="([A-Za-z0-9_]+)"\)')
+# Le marqueur d'un message de gabarit, attribut compris : i18n="@@id",
+# i18n-title="@@id", i18n-matTooltip="@@id".
+TEMPLATE_MSG_ID_RE = re.compile(r'i18n(?:-[a-zA-Z]+)?="@@([A-Za-z0-9._-]+)"')
+
+
+def reject_placeholder_mismatch(translations: dict) -> None:
+    """Les noms d'espaces reserves des tables doivent etre ceux du code.
+
+    POURQUOI CE CONTROLE. Un message ecrit
+    ``$localize`:@@id:Pas plus de ${n}:max: natures.``` nomme son espace
+    reserve ``max`` ; la table doit donc ecrire ``{$max}``. Ecrire
+    ``{$INTERPOLATION}`` passe ici, passe ``--check``, passe ``build:prod``
+    (qui ne construit PAS les locales) -- et echoue seulement au build
+    localise, c'est-a-dire dans le job d'image de la CD, apres la fusion :
+    « There is a placeholder name mismatch with the translation provided ».
+    Mesure du 2026-11-05 : deux unites ainsi ecrites ont bloque le
+    deploiement de preproduction, et le defaut n'etait visible nulle part
+    plus tot. Ce controle le ramene a une seconde de generation.
+
+    DEUX ELARGISSEMENTS, apres une seconde panne le meme jour.
+
+    1. Les GABARITS nomment autrement : `{{ x // i18n(ph="count") }}`, et
+       Angular met alors le nom en capitales (COUNT). La premiere version de ce
+       controle ne lisait que la forme TypeScript ``${x}:nom:``, de sorte que
+       `spc.study.subgroup-count` -- un gabarit -- a passe la generation, passe
+       --check, et casse l'image web en CD.
+    2. Une table qui n'ecrit AUCUN espace reserve etait exemptee. Or le defaut
+       est le meme en pire : la valeur n'apparait nulle part dans la langue
+       traduite, et le texte brut de l'expression (``${a.name}``) s'affiche a
+       l'ecran. Quatre unites etaient dans ce cas.
+    """
+    used: dict = {}
+    id_re = re.compile(r"@@([A-Za-z0-9._-]+):(.*?)`", re.S)
+    for root, _dirs, files in os.walk(SRC_APP):
+        for fn in files:
+            if not fn.endswith((".html", ".ts")):
+                continue
+            text = io.open(os.path.join(root, fn), encoding="utf-8", errors="replace").read()
+            for match in id_re.finditer(text):
+                names = set(NAMED_PLACEHOLDER_RE.findall(match.group(2)))
+                if names:
+                    used.setdefault(match.group(1), set()).update(names)
+            if not fn.endswith(".html"):
+                continue
+            # Forme gabarit. Le message s'arrete au marqueur suivant : au-dela,
+            # les espaces reserves appartiennent a un autre message.
+            for match in TEMPLATE_MSG_ID_RE.finditer(text):
+                suite = text[match.end():]
+                suivant = TEMPLATE_MSG_ID_RE.search(suite)
+                if suivant:
+                    suite = suite[:suivant.start()]
+                names = {n.upper() for n in TEMPLATE_PH_RE.findall(suite)}
+                if names:
+                    used.setdefault(match.group(1), set()).update(names)
+    faulty = []
+    for unit_id, names in sorted(used.items()):
+        row = translations.get(unit_id)
+        if not row:
+            continue
+        present = set()
+        for value in row:
+            present.update(PLACEHOLDER_RE.findall(value))
+        # Pas de `present and ...` : une table SANS aucun espace reserve est
+        # le cas le plus grave, pas une exemption (cf. elargissement 2).
+        if not names.issubset(present):
+            faulty.append("  - %s : le code nomme %s, la table ecrit %s"
+                          % (unit_id, sorted(names), sorted(present) or ["aucun"]))
+    if faulty:
+        sys.exit(
+            "ERREUR : nom d'espace reserve divergent dans "
+            + str(len(faulty)) + " unite(s).\n"
+            "Le build localise refuse la traduction ; le build de production,"
+            " lui, ne le voit pas. Ecrire {$nom}, avec le nom du code.\n"
+            + "\n".join(faulty))
+
+
 def esc(s: str) -> str:
     s = s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
     # Après échappement, restaure les placeholders {$nom} en éléments <x/> XLIFF.
@@ -130,6 +210,7 @@ def esc(s: str) -> str:
 def write_xlf(translations: dict) -> None:
     reject_literal_interpolations(translations)
     reject_escaped_entities(translations)
+    reject_placeholder_mismatch(translations)
     os.makedirs(OUT_DIR, exist_ok=True)
     for idx, lang in enumerate(LANGS, start=1):
         path = os.path.join(OUT_DIR, "messages.%s.xlf" % lang)

@@ -1,0 +1,255 @@
+/* Cabinets partenaires : une liste de cartes qui se déplient. Un cabinet se
+   consulte rarement, mais quand on l'ouvre on veut tout — ses consultants et
+   son portefeuille — sans changer de page. */
+
+.echec {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 0;
+  font-size: 0.88rem;
+}
+
+.portee,
+.vide {
+  margin: 0 0 18px;
+  max-width: 72ch;
+  color: var(--qos-fg-secondary);
+  font-size: 0.86rem;
+  line-height: 1.55;
+}
+
+/* ----------------------------------------------------------------- création */
+
+.creation {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 13px;
+  margin-bottom: 20px;
+  padding: 15px 16px;
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: 11px;
+  background: var(--qos-bg-elevated);
+}
+
+.creation__titre,
+.creation__gestes {
+  grid-column: 1 / -1;
+}
+
+.creation__titre {
+  margin: 0;
+  line-height: 1.4;
+  font-size: 0.98rem;
+  font-weight: 650;
+}
+
+.creation__gestes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* ----------------------------------------------------------------- cabinets */
+
+.cabinets {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cabinet {
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: 11px;
+  background: var(--qos-bg-elevated);
+
+  /* Un cabinet inactif n'ouvre plus rien : la carte doit le dire avant d'être
+     lue, sans pour autant devenir illisible. */
+  &--inactif {
+    opacity: 0.74;
+  }
+}
+
+.cabinet__tete {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 13px;
+}
+
+.cabinet__bascule {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 4px 6px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: none;
+  color: var(--qos-fg-primary);
+  cursor: pointer;
+  text-align: left;
+
+  &:hover {
+    background: var(--qos-bg-hover);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--qos-border-focus);
+    outline-offset: 1px;
+  }
+}
+
+.cabinet__nom {
+  line-height: 1.4;
+  font-size: 0.95rem;
+  font-weight: 650;
+}
+
+.cabinet__repere {
+  padding: 1px 6px;
+  border-radius: 5px;
+  background: var(--qos-bg-sunken);
+  color: var(--qos-fg-secondary);
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 0.74rem;
+}
+
+.cabinet__chiffre {
+  color: var(--qos-fg-secondary);
+  font-size: 0.8rem;
+}
+
+.cabinet__etat {
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: var(--qos-bg-sunken);
+  color: var(--qos-fg-secondary);
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.cabinet__tete > button[mat-stroked-button] {
+  margin-left: auto;
+}
+
+/* ------------------------------------------------------------------ détail */
+
+.detail {
+  padding: 2px 13px 14px;
+  border-top: 1px solid var(--qos-border-subtle);
+}
+
+.detail__bloc {
+  margin-top: 14px;
+}
+
+.detail__titre {
+  margin: 0 0 8px;
+  line-height: 1.4;
+  font-size: 0.88rem;
+  font-weight: 650;
+  letter-spacing: 0.01em;
+}
+
+.detail__vide {
+  margin: 0 0 10px;
+  color: var(--qos-fg-secondary);
+  font-size: 0.83rem;
+}
+
+.personnes,
+.missions {
+  display: grid;
+  gap: 2px;
+  margin: 0 0 12px;
+  padding: 0;
+  list-style: none;
+}
+
+.personne,
+.mission {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px;
+  border-radius: 7px;
+  font-size: 0.84rem;
+
+  &:nth-child(odd) {
+    background: var(--qos-bg-sunken);
+  }
+}
+
+.personne__nom,
+.mission__client {
+  font-weight: 600;
+}
+
+.personne__courriel,
+.mission__terme {
+  color: var(--qos-fg-tertiary);
+  font-size: 0.79rem;
+}
+
+.mission__terme {
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+}
+
+.personne__etat,
+.mission__portee,
+.mission__etat {
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--qos-bg-elevated);
+  border: 1px solid var(--qos-border-subtle);
+  color: var(--qos-fg-secondary);
+  font-size: 0.71rem;
+  font-weight: 600;
+}
+
+.personne__etat--attente {
+  color: var(--qos-fg-tertiary);
+}
+
+.mission__etat--ouvert {
+  background: var(--qos-accent-bg-soft);
+  border-color: transparent;
+  color: var(--qos-accent-fg-soft);
+}
+
+.personne > button[mat-button] {
+  margin-left: auto;
+}
+
+/* --------------------------------------------------------------- formulaire */
+
+.ajout {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  align-items: start;
+  gap: 11px;
+  padding: 12px;
+  border-radius: 9px;
+  background: var(--qos-bg-sunken);
+
+  button {
+    /* Le bouton s'aligne sur la ligne des champs plutôt que sur leur haut :
+       sans cela il flotte au-dessus des libellés. */
+    margin-top: 7px;
+    justify-self: start;
+  }
+}
+
+@media (max-width: 720px) {
+  .cabinet__tete > button[mat-stroked-button],
+  .personne > button[mat-button],
+  .mission__terme {
+    margin-left: 0;
+  }
+}

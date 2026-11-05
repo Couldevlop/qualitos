@@ -21191,8 +21191,8 @@ historial de 12 meses</target>
         <target state="translated">El catálogo no puede estar vacío. Restablezca el de la plataforma.</target>
       </trans-unit>
       <trans-unit id="nc.settings.problem.too-many" datatype="html">
-        <source>Pas plus de <x id="INTERPOLATION"/> natures.</source>
-        <target state="translated">No más de <x id="INTERPOLATION"/> naturalezas.</target>
+        <source>Pas plus de <x id="max"/> natures.</source>
+        <target state="translated">No más de <x id="max"/> naturalezas.</target>
       </trans-unit>
       <trans-unit id="nc.settings.problem.code" datatype="html">
         <source>Un code s’écrit en capitales, chiffres, tiret ou point (ex. : PRD-DIM).</source>
@@ -21207,8 +21207,8 @@ historial de 12 meses</target>
         <target state="translated">Dos naturalezas llevan el mismo código.</target>
       </trans-unit>
       <trans-unit id="nc.settings.problem.empty-category" datatype="html">
-        <source>Catégorie sans aucune nature : <x id="INTERPOLATION"/> — la saisie n’y proposerait rien.</source>
-        <target state="translated">Categoría sin ninguna naturaleza: <x id="INTERPOLATION"/> — el formulario no propondría nada.</target>
+        <source>Catégorie sans aucune nature : <x id="count"/> — la saisie n’y proposerait rien.</source>
+        <target state="translated">Categoría sin ninguna naturaleza: <x id="count"/> — el formulario no propondría nada.</target>
       </trans-unit>
       <trans-unit id="nc.settings.load-failed" datatype="html">
         <source>Le catalogue des natures n’a pas pu être chargé.</source>
@@ -21501,6 +21501,394 @@ historial de 12 meses</target>
       <trans-unit id="offline.queue.empty-hint" datatype="html">
         <source>Les audits 5S saisis hors connexion apparaîtront ici jusqu'à leur synchronisation.</source>
         <target state="translated">Las auditorías 5S registradas sin conexión aparecerán aquí hasta su sincronización.</target>
+      </trans-unit>
+      <trans-unit id="partner.scope.read" datatype="html">
+        <source>Consultation</source>
+        <target state="translated">Consulta</target>
+      </trans-unit>
+      <trans-unit id="partner.scope.intervene" datatype="html">
+        <source>Intervention</source>
+        <target state="translated">Intervención</target>
+      </trans-unit>
+      <trans-unit id="partner.status.proposed" datatype="html">
+        <source>En attente de votre décision</source>
+        <target state="translated">Pendiente de su decisión</target>
+      </trans-unit>
+      <trans-unit id="partner.status.open" datatype="html">
+        <source>Ouvert</source>
+        <target state="translated">Abierto</target>
+      </trans-unit>
+      <trans-unit id="partner.status.scheduled" datatype="html">
+        <source>Accordé, hors période</source>
+        <target state="translated">Concedido, fuera del periodo</target>
+      </trans-unit>
+      <trans-unit id="partner.status.declined" datatype="html">
+        <source>Refusé</source>
+        <target state="translated">Rechazado</target>
+      </trans-unit>
+      <trans-unit id="partner.status.revoked" datatype="html">
+        <source>Repris</source>
+        <target state="translated">Retirado</target>
+      </trans-unit>
+      <trans-unit id="partner.brand.console" datatype="html">
+        <source>Console cabinet</source>
+        <target state="translated">Consola del despacho</target>
+      </trans-unit>
+      <trans-unit id="partner.user.logout" datatype="html">
+        <source>Se déconnecter</source>
+        <target state="translated">Cerrar sesión</target>
+      </trans-unit>
+      <trans-unit id="partner.portfolio.title" datatype="html">
+        <source>Mon portefeuille</source>
+        <target state="translated">Mi cartera</target>
+      </trans-unit>
+      <trans-unit id="partner.portfolio.subtitle" datatype="html">
+        <source>Les clients qui vous ont ouvert un accès, et jusqu’à quand.</source>
+        <target state="translated">Los clientes que le han abierto un acceso, y hasta cuándo.</target>
+      </trans-unit>
+      <trans-unit id="partner.portfolio.reload" datatype="html">
+        <source>Recharger</source>
+        <target state="translated">Recargar</target>
+      </trans-unit>
+      <trans-unit id="partner.portfolio.loading" datatype="html">
+        <source>Chargement de votre portefeuille…</source>
+        <target state="translated">Cargando su cartera…</target>
+      </trans-unit>
+      <trans-unit id="partner.portfolio.until" datatype="html">
+        <source>Jusqu’au</source>
+        <target state="translated">Hasta el</target>
+      </trans-unit>
+      <trans-unit id="partner.portfolio.unlinked" datatype="html">
+        <source>Votre compte n’est rattaché à aucun cabinet. Demandez à votre cabinet de vous inscrire avec l’adresse de courriel de ce compte.</source>
+        <target state="translated">Su cuenta no está vinculada a ningún despacho. Pida a su despacho que le registre con la dirección de correo de esta cuenta.</target>
+      </trans-unit>
+      <trans-unit id="partner.portfolio.empty" datatype="html">
+        <source>Aucun client ne vous a ouvert d’accès aujourd’hui. Un accès prend fin à sa date de terme, sans préavis : si une mission vient de se terminer, elle a quitté cette liste.</source>
+        <target state="translated">Ningún cliente le tiene hoy un acceso abierto. Un acceso termina en su fecha de fin, sin preaviso: si una misión acaba de terminar, ha salido de esta lista.</target>
+      </trans-unit>
+      <trans-unit id="partner.portfolio.link-failed" datatype="html">
+        <source>Votre compte n’a pas pu être rattaché à votre cabinet.</source>
+        <target state="translated">No se ha podido vincular su cuenta a su despacho.</target>
+      </trans-unit>
+      <trans-unit id="partner.portfolio.load-failed" datatype="html">
+        <source>Votre portefeuille n’a pas pu être chargé.</source>
+        <target state="translated">No se ha podido cargar su cartera.</target>
+      </trans-unit>
+      <trans-unit id="partner.access.title" datatype="html">
+        <source>Cabinets</source>
+        <target state="translated">Despachos</target>
+      </trans-unit>
+      <trans-unit id="partner.access.subtitle" datatype="html">
+        <source>Qui, hors de votre organisation, peut entrer dans vos données — et jusqu’à quand.</source>
+        <target state="translated">Quién, fuera de su organización, puede entrar en sus datos — y hasta cuándo.</target>
+      </trans-unit>
+      <trans-unit id="partner.access.reload" datatype="html">
+        <source>Recharger</source>
+        <target state="translated">Recargar</target>
+      </trans-unit>
+      <trans-unit id="partner.access.scope" datatype="html">
+        <source>Un cabinet n’entre chez vous que si vous l’accordez, et son accès prend fin de lui-même à la date que vous fixez. Vous pouvez le reprendre à tout moment ; chaque décision reste dans l’historique.</source>
+        <target state="translated">Un despacho solo entra si usted lo concede, y su acceso termina por sí mismo en la fecha que fije. Puede retirarlo en cualquier momento; cada decisión queda en el historial.</target>
+      </trans-unit>
+      <trans-unit id="partner.access.pending" datatype="html">
+        <source>En attente de votre décision</source>
+        <target state="translated">Pendiente de su decisión</target>
+      </trans-unit>
+      <trans-unit id="partner.access.grant-action" datatype="html">
+        <source>Accorder un accès</source>
+        <target state="translated">Conceder un acceso</target>
+      </trans-unit>
+      <trans-unit id="partner.access.decline-action" datatype="html">
+        <source>Refuser</source>
+        <target state="translated">Rechazar</target>
+      </trans-unit>
+      <trans-unit id="partner.access.scope-label" datatype="html">
+        <source>Ce que le cabinet pourra faire</source>
+        <target state="translated">Lo que podrá hacer el despacho</target>
+      </trans-unit>
+      <trans-unit id="partner.access.ends-on" datatype="html">
+        <source>Terme de l’accès</source>
+        <target state="translated">Fin del acceso</target>
+      </trans-unit>
+      <trans-unit id="partner.access.purpose" datatype="html">
+        <source>Objet de la mission</source>
+        <target state="translated">Objeto de la misión</target>
+      </trans-unit>
+      <trans-unit id="partner.access.purpose-placeholder" datatype="html">
+        <source>Ex. : préparation de l’audit ISO 9001</source>
+        <target state="translated">Ej.: preparación de la auditoría ISO 9001</target>
+      </trans-unit>
+      <trans-unit id="partner.access.term-help" datatype="html">
+        <source>Un accès sans terme est un accès oublié : la date est obligatoire, et celle proposée est à trois mois.</source>
+        <target state="translated">Un acceso sin fin es un acceso olvidado: la fecha es obligatoria, y la propuesta está a tres meses.</target>
+      </trans-unit>
+      <trans-unit id="partner.access.grant-confirm" datatype="html">
+        <source>Accorder</source>
+        <target state="translated">Conceder</target>
+      </trans-unit>
+      <trans-unit id="partner.access.granted" datatype="html">
+        <source>Accès accordé, et il prendra fin de lui-même à son terme.</source>
+        <target state="translated">Acceso concedido; terminará por sí mismo en su fecha de fin.</target>
+      </trans-unit>
+      <trans-unit id="partner.access.grant-failed" datatype="html">
+        <source>L’accès n’a pas pu être accordé.</source>
+        <target state="translated">No se ha podido conceder el acceso.</target>
+      </trans-unit>
+      <trans-unit id="partner.access.declined" datatype="html">
+        <source>Proposition refusée. Aucun accès n’a été ouvert.</source>
+        <target state="translated">Propuesta rechazada. No se ha abierto ningún acceso.</target>
+      </trans-unit>
+      <trans-unit id="partner.access.decline-failed" datatype="html">
+        <source>La proposition n’a pas pu être refusée.</source>
+        <target state="translated">No se ha podido rechazar la propuesta.</target>
+      </trans-unit>
+      <trans-unit id="partner.access.granted-section" datatype="html">
+        <source>Accès accordés</source>
+        <target state="translated">Accesos concedidos</target>
+      </trans-unit>
+      <trans-unit id="partner.access.from" datatype="html">
+        <source>Du</source>
+        <target state="translated">Del</target>
+      </trans-unit>
+      <trans-unit id="partner.access.to" datatype="html">
+        <source>au</source>
+        <target state="translated">al</target>
+      </trans-unit>
+      <trans-unit id="partner.access.revoke-action" datatype="html">
+        <source>Reprendre</source>
+        <target state="translated">Retirar</target>
+      </trans-unit>
+      <trans-unit id="partner.access.revoke-title" datatype="html">
+        <source>Reprendre cet accès ?</source>
+        <target state="translated">¿Retirar este acceso?</target>
+      </trans-unit>
+      <trans-unit id="partner.access.revoke-message" datatype="html">
+        <source>Le cabinet perdra l’accès immédiatement. La décision reste dans l’historique.</source>
+        <target state="translated">El despacho perderá el acceso de inmediato. La decisión queda en el historial.</target>
+      </trans-unit>
+      <trans-unit id="partner.access.revoked" datatype="html">
+        <source>Accès repris.</source>
+        <target state="translated">Acceso retirado.</target>
+      </trans-unit>
+      <trans-unit id="partner.access.revoke-failed" datatype="html">
+        <source>L’accès n’a pas pu être repris.</source>
+        <target state="translated">No se ha podido retirar el acceso.</target>
+      </trans-unit>
+      <trans-unit id="partner.access.history" datatype="html">
+        <source>Décisions passées</source>
+        <target state="translated">Decisiones pasadas</target>
+      </trans-unit>
+      <trans-unit id="partner.access.load-failed" datatype="html">
+        <source>La liste des cabinets n’a pas pu être chargée.</source>
+        <target state="translated">No se ha podido cargar la lista de despachos.</target>
+      </trans-unit>
+      <trans-unit id="partner.access.empty" datatype="html">
+        <source>Aucun cabinet n’a été proposé à votre organisation. Un cabinet partenaire est déclaré par l’éditeur de la plateforme ; vous décidez ensuite s’il entre chez vous.</source>
+        <target state="translated">No se ha propuesto ningún despacho a su organización. El editor de la plataforma declara un despacho asociado; después usted decide si entra.</target>
+      </trans-unit>
+      <trans-unit id="platform.nav.firms" datatype="html">
+        <source>Cabinets</source>
+        <target state="translated">Despachos</target>
+      </trans-unit>
+      <trans-unit id="platform.nav.firms.hint" datatype="html">
+        <source>Cabinets partenaires, consultants, clients proposés</source>
+        <target state="translated">Despachos asociados, consultores, clientes propuestos</target>
+      </trans-unit>
+      <trans-unit id="nav.admin-firms" datatype="html">
+        <source>Cabinets</source>
+        <target state="translated">Despachos</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.title" datatype="html">
+        <source>Cabinets partenaires</source>
+        <target state="translated">Despachos asociados</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.subtitle" datatype="html">
+        <source>Les cabinets qui interviennent chez vos clients, leurs consultants, et les clients qui leur ont été proposés.</source>
+        <target state="translated">Los despachos que intervienen en sus clientes, sus consultores y los clientes que se les han propuesto.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.reload" datatype="html">
+        <source>Recharger</source>
+        <target state="translated">Recargar</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.new" datatype="html">
+        <source>Nouveau cabinet</source>
+        <target state="translated">Nuevo despacho</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.scope" datatype="html">
+        <source>Vous déclarez un cabinet et lui proposez des clients. Vous n’ouvrez aucun accès : chaque client décide lui-même d’accorder, et fixe le terme.</source>
+        <target state="translated">Usted declara un despacho y le propone clientes. No abre ningún acceso: cada cliente decide concederlo y fija el plazo.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.name" datatype="html">
+        <source>Raison sociale</source>
+        <target state="translated">Razón social</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.slug" datatype="html">
+        <source>Repère</source>
+        <target state="translated">Identificador</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.slug-placeholder" datatype="html">
+        <source>Ex. : qualiconseil</source>
+        <target state="translated">Ej.: qualiconseil</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.slug-hint" datatype="html">
+        <source>Minuscules, chiffres et tirets. Définitif.</source>
+        <target state="translated">Minúsculas, cifras y guiones. Definitivo.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.registration" datatype="html">
+        <source>Numéro d’immatriculation</source>
+        <target state="translated">Número de registro</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.contact-email" datatype="html">
+        <source>Courriel de contact</source>
+        <target state="translated">Correo de contacto</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.contact-phone" datatype="html">
+        <source>Téléphone</source>
+        <target state="translated">Teléfono</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.create" datatype="html">
+        <source>Créer le cabinet</source>
+        <target state="translated">Crear el despacho</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.create-failed" datatype="html">
+        <source>Le cabinet n’a pas pu être créé.</source>
+        <target state="translated">No se ha podido crear el despacho.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.deactivate-title" datatype="html">
+        <source>Désactiver ce cabinet ?</source>
+        <target state="translated">¿Desactivar este despacho?</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.deactivate-message" datatype="html">
+        <source>Ses consultants perdront immédiatement tous leurs accès. Les accords des clients sont conservés et reprendront effet si vous le réactivez.</source>
+        <target state="translated">Sus consultores perderán de inmediato todos sus accesos. Los acuerdos de los clientes se conservan y volverán a surtir efecto si lo reactiva.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.deactivate-action" datatype="html">
+        <source>Désactiver</source>
+        <target state="translated">Desactivar</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.activate-action" datatype="html">
+        <source>Réactiver</source>
+        <target state="translated">Reactivar</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.inactive" datatype="html">
+        <source>Inactif</source>
+        <target state="translated">Inactivo</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.toggle-failed" datatype="html">
+        <source>L’état du cabinet n’a pas pu être changé.</source>
+        <target state="translated">No se ha podido cambiar el estado del despacho.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.consultant-count" datatype="html">
+        <source><x id="INTERPOLATION"/> consultants</source>
+        <target state="translated"><x id="INTERPOLATION"/> consultores</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.granted-count" datatype="html">
+        <source><x id="INTERPOLATION"/> missions</source>
+        <target state="translated"><x id="INTERPOLATION"/> misiones</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.consultants" datatype="html">
+        <source>Consultants</source>
+        <target state="translated">Consultores</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.linked" datatype="html">
+        <source>Rattaché</source>
+        <target state="translated">Vinculado</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.pending-link" datatype="html">
+        <source>Jamais connecté</source>
+        <target state="translated">Nunca conectado</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.suspend" datatype="html">
+        <source>Suspendre</source>
+        <target state="translated">Suspender</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.restore" datatype="html">
+        <source>Rétablir</source>
+        <target state="translated">Restablecer</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.no-consultant" datatype="html">
+        <source>Aucun consultant inscrit dans ce cabinet.</source>
+        <target state="translated">Ningún consultor registrado en este despacho.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.consultant-name" datatype="html">
+        <source>Nom du consultant</source>
+        <target state="translated">Nombre del consultor</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.consultant-email" datatype="html">
+        <source>Courriel</source>
+        <target state="translated">Correo electrónico</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.consultant-email-hint" datatype="html">
+        <source>Celui de son compte : c’est par là que le rattachement se fait.</source>
+        <target state="translated">El de su cuenta: es así como se realiza la vinculación.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.add-consultant" datatype="html">
+        <source>Inscrire</source>
+        <target state="translated">Registrar</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.consultant-added" datatype="html">
+        <source>Consultant inscrit. Son accès s’ouvrira à sa première connexion, par ce courriel.</source>
+        <target state="translated">Consultor registrado. Su acceso se abrirá en su primera conexión, mediante este correo.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.consultant-failed" datatype="html">
+        <source>Le consultant n’a pas pu être inscrit.</source>
+        <target state="translated">No se ha podido registrar al consultor.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.consultant-toggle-failed" datatype="html">
+        <source>L’état du consultant n’a pas pu être changé.</source>
+        <target state="translated">No se ha podido cambiar el estado del consultor.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.consultants-failed" datatype="html">
+        <source>Les consultants n’ont pas pu être chargés.</source>
+        <target state="translated">No se han podido cargar los consultores.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.portfolio" datatype="html">
+        <source>Portefeuille</source>
+        <target state="translated">Cartera</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.portfolio-failed" datatype="html">
+        <source>Le portefeuille n’a pas pu être chargé.</source>
+        <target state="translated">No se ha podido cargar la cartera.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.no-mission" datatype="html">
+        <source>Aucun client proposé à ce cabinet.</source>
+        <target state="translated">Ningún cliente propuesto a este despacho.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.client" datatype="html">
+        <source>Client</source>
+        <target state="translated">Cliente</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.proposed-scope" datatype="html">
+        <source>Portée demandée</source>
+        <target state="translated">Alcance solicitado</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.proposed-purpose" datatype="html">
+        <source>Objet de la mission</source>
+        <target state="translated">Objeto de la misión</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.propose" datatype="html">
+        <source>Proposer</source>
+        <target state="translated">Proponer</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.proposed" datatype="html">
+        <source>Client proposé. Aucun accès n’est ouvert : son administrateur décide.</source>
+        <target state="translated">Cliente propuesto. No se abre ningún acceso: su administrador decide.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.propose-failed" datatype="html">
+        <source>Le client n’a pas pu être proposé.</source>
+        <target state="translated">No se ha podido proponer el cliente.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.awaiting" datatype="html">
+        <source>En attente du client</source>
+        <target state="translated">Pendiente del cliente</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.load-failed" datatype="html">
+        <source>La liste des cabinets n’a pas pu être chargée.</source>
+        <target state="translated">No se ha podido cargar la lista de despachos.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.empty" datatype="html">
+        <source>Aucun cabinet partenaire n’est déclaré. Un cabinet regroupe des consultants externes à qui vos clients peuvent ouvrir un accès daté.</source>
+        <target state="translated">No hay ningún despacho asociado declarado. Un despacho agrupa consultores externos a los que sus clientes pueden abrir un acceso con fecha.</target>
       </trans-unit>
       <trans-unit id="pdca.detail.col-evidence" datatype="html">
         <source>Preuve</source>
@@ -28027,8 +28415,8 @@ historial de 12 meses</target>
         <target state="translated">Mediciones por subgrupo</target>
       </trans-unit>
       <trans-unit id="spc.study.subgroup-count" datatype="html">
-        <source><x id="INTERPOLATION"/> sous-groupe(s)</source>
-        <target state="translated"><x id="INTERPOLATION"/> subgrupo(s)</target>
+        <source><x id="COUNT"/> sous-groupe(s)</source>
+        <target state="translated"><x id="COUNT"/> subgrupo(s)</target>
       </trans-unit>
       <trans-unit id="spc.study.subgroup-add" datatype="html">
         <source>Ajouter un sous-groupe</source>
@@ -29503,8 +29891,8 @@ historial de 12 meses</target>
         <target state="translated">Normas a comparar</target>
       </trans-unit>
       <trans-unit id="standards-extras.coverage.shared-count" datatype="html">
-        <source>&lt;x id="count"/&gt; norme(s)</source>
-        <target state="translated">&lt;x id="count"/&gt; norma(s)</target>
+        <source><x id="count"/> norme(s)</source>
+        <target state="translated"><x id="count"/> norma(s)</target>
       </trans-unit>
       <trans-unit id="standards-extras.coverage.shared-only" datatype="html">
         <source>Clauses mutualisables uniquement</source>
@@ -29591,8 +29979,8 @@ historial de 12 meses</target>
         <target state="translated">Prioridad</target>
       </trans-unit>
       <trans-unit id="standards-extras.report.coverage-aria" datatype="html">
-        <source>Couverture des exigences de la clause &lt;x id="clause"/&gt;</source>
-        <target state="translated">Cobertura de los requisitos de la cláusula &lt;x id="clause"/&gt;</target>
+        <source>Couverture des exigences de la clause <x id="clause"/></source>
+        <target state="translated">Cobertura de los requisitos de la cláusula <x id="clause"/></target>
       </trans-unit>
       <trans-unit id="standards-extras.report.error" datatype="html">
         <source>Ce rapport d'audit blanc IA est introuvable.</source>
@@ -29823,8 +30211,8 @@ historial de 12 meses</target>
         <target state="translated">Adoptar →</target>
       </trans-unit>
       <trans-unit id="standards.list.adopt-success" datatype="html">
-        <source>${s.code} adopté — roadmap générée</source>
-        <target state="translated">${s.code} adoptada — hoja de ruta generada</target>
+        <source><x id="code"/> adopté — roadmap générée</source>
+        <target state="translated"><x id="code"/> adoptada — hoja de ruta generada</target>
       </trans-unit>
       <trans-unit id="standards.list.adopt-conflict" datatype="html">
         <source>Norme déjà adoptée</source>
@@ -30019,8 +30407,8 @@ historial de 12 meses</target>
         <target state="translated">Responsable</target>
       </trans-unit>
       <trans-unit id="standards.detail.stage-updated" datatype="html">
-        <source>Étape ${stage.stepNumber} → ${status}</source>
-        <target state="translated">Etapa ${stage.stepNumber} → ${status}</target>
+        <source>Étape <x id="step"/> → <x id="status"/></source>
+        <target state="translated">Etapa <x id="step"/> → <x id="status"/></target>
       </trans-unit>
       <trans-unit id="standards.detail.stage-update-error" datatype="html">
         <source>Échec de la mise à jour</source>
@@ -30331,8 +30719,8 @@ historial de 12 meses</target>
         <target state="translated">No se pudo descargar la plantilla</target>
       </trans-unit>
       <trans-unit id="standards.detail.ai-draft-success" datatype="html">
-        <source>Brouillon généré (${r.provider}, ${r.latencyMs} ms)</source>
-        <target state="translated">Borrador generado (${r.provider}, ${r.latencyMs} ms)</target>
+        <source>Brouillon généré (<x id="provider"/>, <x id="latency"/> ms)</source>
+        <target state="translated">Borrador generado (<x id="provider"/>, <x id="latency"/> ms)</target>
       </trans-unit>
       <trans-unit id="standards.detail.ai-draft-unavailable" datatype="html">
         <source>Génération IA indisponible (ai-service / Ollama)</source>
@@ -30579,8 +30967,8 @@ historial de 12 meses</target>
         <target state="translated">¿Archivar esta actividad?</target>
       </trans-unit>
       <trans-unit id="ropa.detail.archive-confirm-message" datatype="html">
-        <source>« ${a.name} » sera marquée ARCHIVED. La fiche reste consultable pour les contrôles CNIL/EDPB.</source>
-        <target state="translated">« ${a.name} » se marcará como ARCHIVED. La ficha sigue siendo consultable para los controles CNIL/EDPB.</target>
+        <source>« <x id="name"/> » sera marquée ARCHIVED. La fiche reste consultable pour les contrôles CNIL/EDPB.</source>
+        <target state="translated">« <x id="name"/> » se marcará como ARCHIVED. La ficha sigue siendo consultable para los controles CNIL/EDPB.</target>
       </trans-unit>
       <trans-unit id="ropa.detail.archived" datatype="html">
         <source>Activité archivée.</source>
@@ -30599,8 +30987,8 @@ historial de 12 meses</target>
         <target state="translated">¿Eliminar esta actividad?</target>
       </trans-unit>
       <trans-unit id="ropa.detail.delete-confirm-message" datatype="html">
-        <source>Suppression définitive de « ${a.name} ». Cette action est irréversible et ne devrait être utilisée que pour un brouillon créé par erreur.</source>
-        <target state="translated">Eliminación definitiva de « ${a.name} ». Esta acción es irreversible y solo debería utilizarse para un borrador creado por error.</target>
+        <source>Suppression définitive de « <x id="name"/> ». Cette action est irréversible et ne devrait être utilisée que pour un brouillon créé par erreur.</source>
+        <target state="translated">Eliminación definitiva de « <x id="name"/> ». Esta acción es irreversible y solo debería utilizarse para un borrador creado por error.</target>
       </trans-unit>
       <trans-unit id="ropa.detail.deleted" datatype="html">
         <source>Activité supprimée.</source>
@@ -30961,8 +31349,8 @@ India (centro de servicio)</target>
         <target state="translated">Búsqueda imposible.</target>
       </trans-unit>
       <trans-unit id="consents.search.maintenance-result" datatype="html">
-        <source>Maintenance : ${r.expired} consentement(s) expiré(s).</source>
-        <target state="translated">Mantenimiento: ${r.expired} consentimiento(s) expirado(s).</target>
+        <source>Maintenance : <x id="count"/> consentement(s) expiré(s).</source>
+        <target state="translated">Mantenimiento: <x id="count"/> consentimiento(s) expirado(s).</target>
       </trans-unit>
       <trans-unit id="consents.search.maintenance-error" datatype="html">
         <source>Maintenance impossible.</source>
