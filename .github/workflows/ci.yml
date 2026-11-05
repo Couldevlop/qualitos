@@ -705,7 +705,22 @@ jobs:
           rules_file_name: '.zap/rules.tsv'
           allow_issue_writing: false
           fail_action: false
-          cmd_options: '-z "-Xmx8g"'
+          # -T 20 : BORNE LE SCAN LUI-MEME a 20 minutes.
+          #
+          # Sans cette borne, ZAP n'a aucune limite interne : il s'arrete quand il
+          # a fini. Le meme arbre a ete scanne en 19 min sur une PR et tournait
+          # encore a 35 min sur le push de fusion correspondant (run 42036709480),
+          # ou le delai du job l'a tue — emportant avec lui le scan d'image et le
+          # deploiement de preprod, tous deux verts par ailleurs. Un scan tue ne
+          # rend AUCUN rapport : on perd la mesure en plus du temps.
+          #
+          # Avec -T, ZAP arrete son balayage actif au bout de 20 minutes et ECRIT
+          # SON RAPPORT. Le portail ci-dessous l'evalue normalement : une alerte
+          # HIGH deja trouvee bloque toujours. On echange une couverture de scan
+          # eventuellement incomplete — signalee dans l'artefact — contre un
+          # resultat qui existe, ce qui vaut mieux qu'une couverture complete une
+          # fois sur deux. Revue : 2027-05-05.
+          cmd_options: '-z "-Xmx8g" -T 20'
           artifact_name: zap-api-scan-report
 
       # --- Gate : échec UNIQUEMENT sur alerte de risque HIGH (riskcode=3) ------
