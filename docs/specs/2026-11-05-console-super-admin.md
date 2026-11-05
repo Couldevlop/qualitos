@@ -109,6 +109,8 @@ remplacer.
 | **4** | Statistiques par client / module / cabinet | 1, 2 |
 | **5** | Chiffrement par client (clé Vault, colonnes sensibles) puis base dédiée pour les régulés | — (parallélisable) |
 | **6** | Équipe qualité et habilitations de l'admin client, bornées au périmètre souscrit | 1 |
+| **7** | Abonnement à la création, compteurs d'usage, écran de compteur côté client (§8) | 1 |
+| **8** | Moteur de reprise de données du client : modèles Excel engendrés, contrôle à blanc, écriture transactionnelle (§9) | 6 pour l'écran, moteur parallélisable |
 
 ## 5. Invariants qui s'appliquent à tous les lots
 
@@ -194,3 +196,269 @@ value_set_entry  (tenant_id, set_code, code, label_fr…label_zh, position,
 Le socle est un lot court ; la migration des écrans est un travail au long cours,
 mesurable (nombre de `mat-select` encore nourris en dur), à mener module par module
 sans jamais laisser un écran à moitié migré.
+
+---
+
+## 7. Ajout du 2026-11-05 — on-premise : la règle qui évite de casser plus tard
+
+### 7.1 Le piège, rencontré au premier commit du lot 1
+
+L'identité d'un client (logo, slogan, couleurs, mentions légales) a d'abord été
+posée sous `/api/v1/tenants/{id}/identity`, parce que c'est le super
+administrateur qui provisionne un client. Deux conséquences, toutes deux
+silencieuses :
+
+- `/api/v1/tenants/**` porte `@SaasOnly` (ADR 0082) : en on-premise, la route
+  **répond 404**. Un client on-premise — celui qui a le plus de raisons de poser
+  SA marque sur SON installation — n'aurait eu aucun chemin pour le faire ;
+- la route est réservée au rôle de l'éditeur : en SaaS, un **administrateur de
+  client** aurait dû demander à l'éditeur de changer son slogan, alors que tout
+  paramétrage lui revient (`feedback_parametrage_admin_tenant`).
+
+Le défaut n'aurait été vu qu'à la première installation on-premise, c'est-à-dire
+après la vente.
+
+### 7.2 La règle
+
+> **Une surface d'API appartient à exactement une des deux familles, et le
+> choix se fait à l'écriture, pas à la relecture.**
+
+| Famille | Chemin | `@SaasOnly` | Qui | Existe en on-premise |
+| --- | --- | --- | --- | --- |
+| **Éditeur** | `/api/v1/platform/**`, `/api/v1/tenants/**` | oui | `SUPER_ADMIN` | non (404) |
+| **Client** | tout le reste | non | rôles du client | oui |
+
+Trois corollaires qui tranchent les cas réels :
+
+1. **Toute capacité dont un client a besoin pour s'administrer lui-même vit dans
+   la famille « client »**, même si l'éditeur s'en sert aussi pour dépanner. Le
+   dépannage se fait alors avec le rôle `SUPER_ADMIN` sur la route du client, pas
+   avec une seconde route. Deux routes pour une capacité, c'est deux contrôles
+   d'accès à tenir en phase, donc un qui dérivera.
+2. **La famille « éditeur » ne contient que ce qui n'a aucun sens hors SaaS** :
+   créer un client, facturer, comparer des clients entre eux, gérer un cabinet.
+   En on-premise, il n'y a qu'un client et personne à facturer.
+3. **Un écran de la console de l'éditeur n'est jamais le seul chemin vers une
+   donnée du client.** Sinon l'installation on-premise perd la donnée avec
+   l'écran.
+
+### 7.3 Ce que cela change pour les lots
+
+- Lot 1 : l'identité et le logo vivent sous `/api/v1/branding` (famille client,
+  hors `@SaasOnly`) ; `/api/v1/tenants/{id}/identity` reste pour le
+  provisionnement par l'éditeur. **Fait.**
+- Lot 3 : le paramétrage **central** (de la plateforme) est famille éditeur ; le
+  paramétrage **du client** est famille client. Ce ne sont pas les mêmes écrans
+  et ce ne sont pas les mêmes tables.
+- Lot 4 : les statistiques inter-clients sont famille éditeur ; les statistiques
+  d'un client sur lui-même existent déjà côté client et n'y montent pas.
+- Lot 5 : le chiffrement par client doit fonctionner **sans Vault** en
+  on-premise (coffre local scellé, même interface). Une installation qui ne peut
+  pas chiffrer est une installation qui ne peut pas être vendue aux régulés, et
+  ce sont eux qui installent chez eux.
+- Lot 6 : les habilitations de l'équipe qualité sont famille client — en
+  on-premise, c'est le seul endroit où elles existent.
+
+### 7.4 Comment c'est tenu
+
+Un test de garde, et non une relecture : `OnPremEditionRoutesTest` énumère les
+contrôleurs portant `@SaasOnly` et échoue si l'un d'eux expose un chemin hors de
+la liste des préfixes de la famille éditeur. Ajouter une route d'éditeur sous un
+chemin de client casse le banc, pas la vente.
+
+---
+
+## 8. Ajout du 2026-11-05 — l'abonnement à la création du client
+
+### 8.1 La demande
+
+À la création d'un client, pouvoir l'associer à un **type d'abonnement** pour
+les clients SaaS, la facturation se faisant **par nombre d'utilisateurs, par
+site et par module**. Et faire mieux que les leaders, avec une particularité qui
+marque la différenciation.
+
+### 8.2 Ce qui existe déjà (ne pas réinventer)
+
+Le socle de facturation est en place (PR #134) : `Subscription`, `ModulePrice`,
+`BillingTier` (`FREE`, `STANDARD`, `PRO`, `ENTERPRISE`), `ModuleActivationPort`,
+et `Tenant.Plan`. Ce qui manque n'est pas le moteur, c'est **la forme
+commerciale** et son **branchement à la création**.
+
+### 8.3 Ce que font les leaders, et pourquoi c'est critiquable
+
+L'étude stratégique (`docs/QualitOS_Etude_Strategique_Approfondie_Nov2026.docx`)
+situe les packs à 1 200 / 2 400 / 4 500 € par mois, avec « extension tarifaire
+par site ou par utilisateur avancé ».
+
+Le marché facture **au siège nommé**, souvent avec un plancher annuel :
+MasterControl et ETQ vendent des licences par utilisateur nommé, engagement
+pluriannuel, modules en supplément. L'effet pervers est connu et mesurable : le
+client **rationne les comptes**. L'opérateur de terrain qui devrait déclarer une
+non-conformité ne le fait pas parce qu'il n'a pas de licence ; le responsable
+qualité saisit à sa place, deux jours plus tard, de mémoire. **Le modèle
+tarifaire dégrade la donnée qualité qu'il est censé servir.**
+
+### 8.4 La proposition QualitOS : trois axes, et un seul compté
+
+La facturation reste **par utilisateur, par site et par module** comme demandé,
+mais avec une distinction que personne ne fait :
+
+> **Seuls les utilisateurs qui PILOTENT sont comptés. Ceux qui ALIMENTENT sont
+> gratuits et illimités.**
+
+| Rôle | Ce qu'il fait | Compté |
+| --- | --- | --- |
+| **Contributeur** | déclare une NC, remplit un audit 5S, propose une idée, suit une formation, consulte ses tâches | **non — illimité** |
+| **Pilote** | crée et pilote des cycles, valide, signe, configure, exploite les tableaux de bord | **oui** |
+
+Pourquoi c'est un avantage et pas un cadeau :
+
+- **La valeur de la plateforme croît avec le nombre de contributeurs**, pas avec
+  le nombre de licences. Un QMS nourri par 400 opérateurs vaut mieux qu'un QMS
+  nourri par 12 ; c'est le volume de données qui fait fonctionner la détection
+  d'anomalies, le regroupement de NC et les prévisions. Facturer le contributeur,
+  c'est facturer notre propre carburant.
+- **Le client cesse de rationner.** Argument de vente frontal face à
+  MasterControl : « chez eux, chaque opérateur coûte ; chez nous, aucun ».
+- **Le coût marginal d'un contributeur est réel mais faible** (stockage de
+  photos, notifications), et il est couvert par les axes site et module.
+
+Les deux autres axes portent la valeur :
+
+- **par site** : un site, c'est un périmètre d'audit, une hiérarchie ISA-95, des
+  équipements, une piste d'audit séparée — un coût de plateforme réel ;
+- **par module** : le client paie ce qu'il a activé, et **la désactivation prend
+  effet à la période suivante sans perte de données** (§4, lot 1).
+
+### 8.5 La particularité qui marque la différenciation
+
+**Le palier est atteint par l'usage, pas négocié à l'avance.** La plateforme
+mesure en continu les pilotes actifs, les sites et les modules, et expose au
+client **son propre compteur** dans son paramétrage — le même chiffre que celui
+qui facture. Trois conséquences :
+
+1. **Aucune surprise de facture** : le client voit venir le franchissement de
+   palier avant qu'il n'arrive, avec la date et le montant.
+2. **Aucun audit de licence** — la pratique que tout acheteur de logiciel
+   d'entreprise redoute. Il n'y a rien à auditer : le compteur est le même des
+   deux côtés, et il est dans la piste d'audit.
+3. **Le dépassement n'interrompt pas le service.** Un pilote de plus un jour
+   d'audit ne bloque pas l'audit : il est enregistré, facturé au prorata, et dit.
+   Bloquer un travail qualité pour une question de licence, c'est transformer un
+   problème commercial en incident qualité.
+
+### 8.6 Conception
+
+- À la création d'un client (écran Clients, lot 1) : choix du **palier**, du
+  **nombre de sites**, et des **modules souscrits**. Le palier borne le nombre de
+  pilotes ; les contributeurs ne sont pas bornés.
+- `Subscription` gagne `siteCount` et `pilotSeats` ; `BillingTier` conserve ses
+  quatre valeurs et porte désormais un plafond de pilotes **par défaut**,
+  surchargeable par client (un contrat se négocie, le code ne doit pas l'empêcher).
+- Un compteur `UsageSnapshot` quotidien (pilotes actifs, sites, modules actifs)
+  alimente à la fois la facture et l'écran du client. **Même source, même
+  chiffre** — c'est tout l'intérêt.
+- En on-premise : pas d'abonnement, une **licence** (`MemberLimit` existant).
+  L'écran de compteur reste, pour que le client sache où il en est de sa licence.
+
+### 8.7 Lot
+
+**Lot 7** — abonnement à la création, compteurs d'usage, écran de compteur côté
+client. Dépend du lot 1 (écran Clients) et réutilise le socle de facturation.
+
+---
+
+## 9. Ajout du 2026-11-05 — reprise de données par le client
+
+### 9.1 La demande
+
+Le client doit pouvoir faire **lui-même** sa reprise de données depuis son
+onglet paramétrage : **télécharger des modèles Excel**, les remplir, les
+**téléverser**. Les fichiers doivent être **contrôlés par un moteur** pour que
+n'importe quoi ne puisse pas y être glissé et compromettre la sécurité ou
+l'intégrité des données.
+
+### 9.2 Pourquoi c'est un module et non un écran
+
+Une reprise de données est l'opération la plus dangereuse qu'un client puisse
+faire sur sa propre plateforme, et pour trois raisons distinctes :
+
+- **sécurité** — un classeur est un format exécutable : macros, liens externes,
+  objets OLE, formules qui appellent le système (`=cmd|…!A1` dans DDE), et le
+  tableur du poste qui l'ouvre fait le reste. Le fichier téléversé est aussi
+  **relu par un humain** ensuite, souvent hors de la plateforme ;
+- **intégrité** — une ligne mal typée, un code en double, un responsable
+  inexistant, une date impossible : acceptée, elle contamine un référentiel que
+  des mois de travail prendront pour vrai. Une NC importée avec le mauvais site
+  faussera les indicateurs de deux sites ;
+- **irréversibilité perçue** — un import de 4 000 lignes qui échoue à la
+  ligne 3 999 après avoir écrit 3 998 lignes laisse un référentiel dans un état
+  que personne ne sait décrire.
+
+### 9.3 Décision D6 — le moteur de reprise
+
+> **Un import est une transaction, précédée d'un contrôle à blanc dont le client
+> voit le résultat avant d'autoriser l'écriture.** Rien n'est écrit tant qu'il
+> n'a pas vu ce qui va l'être.
+
+Quatre étapes, dans cet ordre, et aucune n'est optionnelle :
+
+| # | Étape | Ce qui est refusé |
+| --- | --- | --- |
+| 1 | **Recevabilité du fichier** | type hors allow-list, poids, contenu démenti par les premiers octets, **macros** (`.xlsm`, `vbaProject.bin`), liens externes, objets incorporés, bombe de décompression (ratio, nombre d'entrées, taille déclarée) |
+| 2 | **Conformité au modèle** | colonnes manquantes ou en trop, modèle d'une autre version, feuille renommée, en-têtes déplacés |
+| 3 | **Contrôle ligne à ligne, à blanc** | type, format, obligation, longueur, valeur hors nomenclature du client, référence inexistante (site, utilisateur, module), doublon dans le fichier, doublon avec l'existant, cohérence entre champs (date de clôture avant ouverture) |
+| 4 | **Écriture** | tout ou rien, dans une transaction, après autorisation explicite du client sur le rapport de l'étape 3 |
+
+Ce qui fait le moteur, et non une validation de formulaire :
+
+- **Les modèles sont engendrés depuis le serveur**, pas stockés comme fichiers.
+  Un modèle porte les **nomenclatures du client** (ses catégories de NC, ses
+  sites, ses natures de problème — §6) en listes de validation, et son **numéro
+  de version**. Un modèle téléchargé le mois dernier, dont les nomenclatures ont
+  changé depuis, est **reconnu comme périmé** à l'étape 2 plutôt que d'importer
+  des valeurs qui n'existent plus.
+- **Le rapport de contrôle est un classeur lui-même** : le fichier du client,
+  rendu avec une colonne de verdict et le motif par ligne. C'est ce qui rend
+  l'erreur corrigeable sans nous écrire.
+- **Aucune formule n'est évaluée.** Les cellules sont lues en **valeur brute**,
+  jamais en valeur calculée : une cellule dont la valeur dépend d'une formule est
+  refusée, pas devinée. C'est la contrepartie du refus des macros : accepter la
+  formule et refuser la macro serait une demi-mesure.
+- **Le texte importé est neutralisé à la sortie, pas à l'entrée** : une cellule
+  qui commence par `=`, `+`, `-` ou `@` est stockée telle quelle (c'est peut-être
+  un code d'article) mais **préfixée à l'export** pour qu'un tableur ne
+  l'interprète pas. L'injection de formule dans un CSV est une faille dont la
+  victime est le poste du collègue qui ouvre le fichier.
+- **Chaque import est un événement de piste d'audit scellé** : qui, quand, quel
+  fichier (empreinte), quel modèle, combien de lignes, et le rapport conservé.
+  Une reprise de données est précisément ce qu'un auditeur demandera à retracer.
+
+### 9.4 Périmètre d'entrée (le reste suit la même mécanique)
+
+Les six référentiels dont la reprise est demandée en premier, parce que tout le
+reste en dépend : **sites**, **utilisateurs de l'équipe qualité**,
+**nomenclatures** (catégories et natures), **documents de la GED** (métadonnées),
+**non-conformités historiques**, **équipements et plans de calibration**.
+
+Un septième entrant ne demande aucun développement de moteur : un descripteur
+de modèle (colonnes, types, références, règles de cohérence) et son adaptateur
+d'écriture.
+
+### 9.5 Ce qui n'est PAS fait
+
+- Pas de reprise **incrémentale** ni de synchronisation continue : c'est un
+  connecteur, pas un import (§13 de `CLAUDE.md`).
+- Pas de **retour arrière** d'un import validé : l'étape 3 existe pour que la
+  question ne se pose pas. Un import refusé n'a rien écrit ; un import accepté
+  l'a été sur un rapport lu.
+- Pas d'import de **pièces jointes en masse** dans ce lot.
+
+### 9.6 Lot
+
+**Lot 8** — moteur de reprise (recevabilité, conformité au modèle, contrôle à
+blanc, écriture transactionnelle), génération des modèles depuis les
+nomenclatures du client, écran dans le paramétrage du client, six descripteurs
+d'entrée. Famille **client** (§7) : la reprise existe en on-premise, où elle est
+même le premier geste après l'installation. Dépend du lot 6 (habilitations : qui
+a le droit d'importer) pour l'écran, mais le moteur est parallélisable.
