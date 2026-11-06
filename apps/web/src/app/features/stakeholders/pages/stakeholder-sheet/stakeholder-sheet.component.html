@@ -246,9 +246,13 @@
             </td>
 
             <td class="exigences__statut" [attr.data-statut]="r.status">
+              <!-- Pas de `mat-label` ici : l'en-tete de colonne dit deja « Statut »,
+                   et le libelle flottant le repetait au-dessus de chaque valeur.
+                   Le nom accessible passe par `aria-label`, de sorte qu'un lecteur
+                   d'ecran annonce toujours de quel champ il s'agit. -->
               <mat-form-field *ngIf="canManage" appearance="outline" subscriptSizing="dynamic">
-                <mat-label i18n="@@common.status">Statut</mat-label>
                 <mat-select [value]="r.status" (selectionChange)="setStatus(r, $event.value)"
+                            i18n-aria-label="@@common.status" aria-label="Statut"
                             data-test="statut-exigence">
                   <mat-option *ngFor="let s of statuses" [value]="s">{{ requirementStatusLabel(s) }}</mat-option>
                 </mat-select>
