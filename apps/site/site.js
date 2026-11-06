@@ -33,6 +33,8 @@
   if (!form || !retour) return;
 
   var ADRESSE = 'contact@qualitos.fr';
+  var ECHEC = 'L’envoi n’a pas abouti. Votre messagerie s’ouvre avec la demande déjà '
+    + 'rédigée ; vous pouvez aussi écrire à ' + ADRESSE + '.';
 
   var INTITULES = {
     nom: 'Nom', fonction: 'Fonction', organisation: 'Organisation',
@@ -61,7 +63,7 @@
    * existe, il suffit de renseigner `data-endpoint` sur le formulaire : la
    * branche au-dessus prend le relais, sans toucher au reste.
    */
-  function parCourriel(v) {
+  function parCourriel(v, texte) {
     var corps = Object.keys(INTITULES)
       .filter(function (k) { return v[k]; })
       .map(function (k) { return INTITULES[k] + ' : ' + v[k]; })
@@ -74,7 +76,10 @@
       + '?subject=' + encodeURIComponent(sujet)
       + '&body=' + encodeURIComponent(corps);
 
-    dire('Votre messagerie s’ouvre avec la demande déjà rédigée. '
+    // Le message vient de l'appelant quand il a quelque chose de plus précis à
+    // dire — « l'envoi n'a pas abouti » plutôt que « votre messagerie s'ouvre ».
+    // Sans cela, le repli écrasait la seule phrase qui expliquait pourquoi.
+    dire(texte || 'Votre messagerie s’ouvre avec la demande déjà rédigée. '
       + 'Il ne reste qu’à l’envoyer. Si rien ne s’ouvre, écrivez directement à ' + ADRESSE + '.');
   }
 
@@ -105,16 +110,31 @@
       body: JSON.stringify(v)
     })
       .then(function (r) {
-        if (!r.ok) throw new Error('HTTP ' + r.status);
-        form.reset();
-        dire('Demande reçue. Nous vous répondons sous un jour ouvré.');
+        return r.json().catch(function () { return {}; })
+          .then(function (corps) { return { ok: r.ok, statut: r.status, corps: corps }; });
+      })
+      .then(function (reponse) {
+        if (reponse.ok) {
+          form.reset();
+          dire('Demande reçue. Nous vous répondons sous un jour ouvré.');
+          return;
+        }
+
+        // Une saisie refusée (4xx) n'est pas une panne : le serveur dit quel
+        // champ reprendre, et basculer sur la messagerie ne ferait qu'envoyer
+        // la même saisie fautive par un autre chemin.
+        if (reponse.statut >= 400 && reponse.statut < 500) {
+          dire(reponse.corps.message || 'La demande n’a pas été acceptée. Vérifiez vos coordonnées.');
+          return;
+        }
+
+        // 5xx : c'est chez nous. Ce qui vient d'être écrit ne doit pas être
+        // perdu — la messagerie s'ouvre avec les champs déjà remplis.
+        parCourriel(v, ECHEC);
       })
       .catch(function () {
-        // Un échec réseau ne doit pas faire perdre ce qui vient d'être écrit :
-        // on bascule sur le courriel, avec les champs déjà remplis.
-        dire('L’envoi n’a pas abouti. Votre messagerie s’ouvre avec la demande ; '
-          + 'vous pouvez aussi écrire à ' + ADRESSE + '.');
-        parCourriel(v);
+        // Réseau coupé : même issue, pour la même raison.
+        parCourriel(v, ECHEC);
       })
       .then(function () { bouton.disabled = false; });
   });

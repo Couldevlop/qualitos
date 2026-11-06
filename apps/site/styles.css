@@ -611,6 +611,10 @@ img { max-width: 100%; height: auto; }
 .champ select:focus-visible,
 .champ textarea:focus-visible { border-color: var(--bleu); }
 
+/* Hors de l'ecran, et non display:none : certains automates ignorent les
+   champs caches par la feuille de style, mais remplissent ceux-ci. */
+.piege { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
 .formulaire__pied { margin-top: 1.6rem; display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; }
 .formulaire__pied .bouton { flex: 0 0 auto; }
 .formulaire__note { font-size: var(--t-xs); color: var(--encre-douce); margin: 0; max-width: 34ch; }

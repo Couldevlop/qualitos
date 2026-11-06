@@ -1,0 +1,183 @@
+# =============================================================================
+# qualitos.fr — le site de présentation, et le formulaire qui lui répond.
+#
+# Volontairement SÉPARÉ de l'application : namespace propre, images propres,
+# ingress propre. Le site public et la démonstration partagent une machine,
+# rien d'autre. Redéployer l'un ne touche pas l'autre, et une page vitrine n'a
+# aucune raison de pouvoir joindre la base de la plateforme.
+#
+# Appliqué par infra/k8s/site/deploy.sh, qui remplace __TAG__.
+# Prérequis : les enregistrements DNS de qualitos.fr et www.qualitos.fr
+# pointent sur le nœud (cf. docs/runbooks/site-qualitos-fr.md).
+# =============================================================================
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: qualitos-site
+  labels:
+    app.kubernetes.io/part-of: qualitos
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: site
+  namespace: qualitos-site
+  labels: { app: site }
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: site }
+  template:
+    metadata:
+      labels: { app: site }
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 101
+        seccompProfile: { type: RuntimeDefault }
+      containers:
+        - name: nginx
+          image: ghcr.io/couldevlop/qualitos/site:__TAG__
+          imagePullPolicy: IfNotPresent
+          ports: [{ name: http, containerPort: 8080 }]
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false   # nginx écrit ses caches sous /tmp
+            capabilities: { drop: ["ALL"] }
+          readinessProbe:
+            httpGet: { path: /healthz, port: http }
+            initialDelaySeconds: 2
+            periodSeconds: 10
+          livenessProbe:
+            httpGet: { path: /healthz, port: http }
+            initialDelaySeconds: 10
+            periodSeconds: 30
+          resources:
+            # Servir six fichiers statiques ne demande rien. Les bornes sont là
+            # pour que ce service ne puisse jamais prendre les ressources de la
+            # préproduction, qui tourne sur la même machine.
+            requests: { cpu: 10m, memory: 24Mi }
+            limits:   { cpu: 200m, memory: 128Mi }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: site
+  namespace: qualitos-site
+spec:
+  selector: { app: site }
+  ports: [{ name: http, port: 80, targetPort: http }]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: site-contact
+  namespace: qualitos-site
+  labels: { app: site-contact }
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: site-contact }
+  template:
+    metadata:
+      labels: { app: site-contact }
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        seccompProfile: { type: RuntimeDefault }
+      containers:
+        - name: contact
+          image: ghcr.io/couldevlop/qualitos/site-contact:__TAG__
+          imagePullPolicy: IfNotPresent
+          ports: [{ name: http, containerPort: 8080 }]
+          # Les identifiants du relais vivent dans un secret créé à la main sur
+          # le nœud, jamais dans le dépôt (§18.2.3). Sans lui, le service refuse
+          # de démarrer — c'est voulu : mieux vaut un pod qui ne part pas qu'un
+          # formulaire qui dit « merci » sans rien envoyer.
+          envFrom:
+            - secretRef: { name: site-contact-smtp }
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: { drop: ["ALL"] }
+          readinessProbe:
+            httpGet: { path: /healthz, port: http }
+            initialDelaySeconds: 3
+            periodSeconds: 10
+          livenessProbe:
+            httpGet: { path: /healthz, port: http }
+            initialDelaySeconds: 15
+            periodSeconds: 30
+          resources:
+            requests: { cpu: 10m, memory: 64Mi }
+            limits:   { cpu: 300m, memory: 256Mi }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: site-contact
+  namespace: qualitos-site
+spec:
+  selector: { app: site-contact }
+  ports: [{ name: http, port: 80, targetPort: http }]
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: qualitos-site
+  namespace: qualitos-site
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    # www renvoie vers le domaine nu, en 308. Deux adresses pour la même page,
+    # c'est deux pages aux yeux d'un moteur de recherche, et la balise
+    # canonique de index.html désigne déjà le domaine nu.
+    nginx.ingress.kubernetes.io/from-to-www-redirect: "true"
+    # Le formulaire n'accepte que de petites demandes ; le service les borne à
+    # 32 ko. 64 ko ici laisse de la marge et ferme la porte au reste.
+    nginx.ingress.kubernetes.io/proxy-body-size: 64k
+    # CSP PROPRE AU SITE. Le contrôleur partagé impose une politique globale
+    # (ConfigMap ingress-nginx/web-security-headers) qui nomme les domaines
+    # d'AUTRES projets du cluster ; son `more_set_headers` écraserait celle que
+    # pose nginx dans l'image. On la réécrit donc ici, au niveau `location`, qui
+    # s'exécute après le server-snippet du contrôleur. Même mécanisme que pour
+    # l'application, pour la même raison.
+    #
+    # Le site n'exécute qu'un script, le sien, et n'appelle que sa propre
+    # origine : la politique peut être étroite, sans 'unsafe-inline' ni
+    # 'unsafe-eval'. Les seules origines tierces sont les polices Google.
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      more_set_headers "Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'";
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts: [qualitos.fr, www.qualitos.fr]
+      secretName: qualitos-fr-tls
+  rules:
+    - host: qualitos.fr
+      http:
+        paths:
+          # Le formulaire AVANT la règle fourre-tout : sans cet ordre, /api/contact
+          # irait au serveur de fichiers, qui répondrait 404 à chaque demande.
+          - path: /api/contact
+            pathType: Prefix
+            backend:
+              service:
+                name: site-contact
+                port: { name: http }
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: site
+                port: { name: http }
+    - host: www.qualitos.fr
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: site
+                port: { name: http }

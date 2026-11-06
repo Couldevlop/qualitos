@@ -83,6 +83,17 @@ log "déploiement de $TAG en $ENVIRONMENT"
 export KUBECONFIG="${KUBECONFIG:-/etc/rancher/k3s/k3s.yaml}"
 
 if ./infra/k8s/deploy.sh "$ENVIRONMENT" "$TAG"; then
+  # Le site de présentation (qualitos.fr) suit la même version, dans son propre
+  # namespace. Il passe APRÈS l'application : si les deux ne peuvent pas être
+  # déployés, c'est la démonstration qui doit l'être.
+  #
+  # Son échec N'EMPÊCHE PAS d'enregistrer l'état : l'application, elle, est en
+  # place, et rejouer tout le déploiement à cause d'une page vitrine coûterait
+  # plus qu'il ne rapporte. L'échec reste visible dans le journal du minuteur.
+  if [ "${QOS_DEPLOY_SITE:-1}" = "1" ]; then
+    ./infra/k8s/site/deploy.sh "$TAG" || log "ATTENTION : le site n'a pas pu être déployé en $TAG"
+  fi
+
   echo "$TAG" > "$STATE"
   log "déploiement de $TAG terminé"
 else

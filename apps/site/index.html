@@ -894,7 +894,7 @@
         </ul>
       </div>
 
-      <form class="formulaire" id="formulaire-contact" data-endpoint="" novalidate>
+      <form class="formulaire" id="formulaire-contact" data-endpoint="/api/contact" novalidate>
         <h3>Demander une démonstration</h3>
         <p>Nous répondons sous un jour ouvré. Pas de séquence de relances automatiques.</p>
 
@@ -945,6 +945,15 @@
             <textarea id="besoin" name="besoin"
                       placeholder="La norme que vous visez, le module qui vous manque, ce qui vous coûte le plus de temps aujourd'hui…"></textarea>
           </div>
+        </div>
+
+        <!-- Piege a robots. Aucun humain ne le voit ni ne l'atteint au clavier ;
+             un automate qui remplit tout le remplit aussi. Le service repond
+             alors « recu » sans rien envoyer. aria-hidden ET tabindex : masquer
+             a l'oeil ne suffit pas, un lecteur d'ecran le dicterait. -->
+        <div class="piege" aria-hidden="true">
+          <label for="piege">Ne rien saisir ici</label>
+          <input id="piege" name="piege" type="text" tabindex="-1" autocomplete="off">
         </div>
 
         <div class="formulaire__pied">
