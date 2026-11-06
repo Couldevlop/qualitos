@@ -262,7 +262,7 @@
       "credentials": [
         {
           "type": "password",
-          "value": "consultante",
+          "value": "${QOS_LOCAL_CONSULTANT_PASSWORD}",
           "temporary": false
         }
       ],
