@@ -1,3 +1,7 @@
 -r requirements.txt
-pytest==8.3.4
+# pytest 9 et pytest-cov 7 : les versions 8.x / 5.x ne déclarent pas le support
+# de la mineure de Python servie par l'image de base (cf. Dockerfile), et les
+# tests doivent tourner sur l'interpréteur réellement livré.
+pytest==9.2.0
+pytest-cov==7.1.0
 httpx==0.28.1

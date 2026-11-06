@@ -24,75 +24,78 @@ démonstrations exactement comme aujourd'hui.
 Dans l'espace client OVH → **Noms de domaine → qualitos.fr → Zone DNS**, créer
 ou modifier **deux** enregistrements :
 
-**Où en est le domaine aujourd'hui** (zone relevée le 2026-11-06) :
+**La zone, relevée le 2026-11-06** — et ce qu'il advient de chaque ligne :
+
+| Enregistrement                    | Valeur                        | Sort        |
+| --------------------------------- | ----------------------------- | ----------- |
+| `NS qualitos.fr`                  | `dns103` / `ns103.ovh.net`    | garder      |
+| `A qualitos.fr`                   | `213.186.33.5`                | **→ 62.238.11.20** |
+| `A www.qualitos.fr`               | `213.186.33.5`                | **→ 62.238.11.20** |
+| `TXT qualitos.fr`                 | `"1\|www.qualitos.fr"`        | **disparaît** avec la redirection |
+| `TXT www.qualitos.fr`             | `"3\|welcome"`                | **disparaît** avec la page d'accueil OVH |
+| `CNAME ftp.qualitos.fr`           | `qualitos.fr`                 | laisser (inoffensif) |
+| `MX qualitos.fr`                  | `mx0..mx3.mail.ovh.net`       | **ne pas toucher** |
+| `SPF qualitos.fr`                 | `v=spf1 include:mx.ovh.com ~all` | **ne pas toucher** |
+| `SRV _autodiscover._tcp`          | `zimbra1.mail.ovh.net`        | **ne pas toucher** |
+| `CNAME ovhmo-selector-1._domainkey` | `…5079319.cy.dkim.mail.ovh.net` | **ne pas toucher** |
+| `CNAME ovhmo-selector-2._domainkey` | `…5079320.cy.dkim.mail.ovh.net` | **ne pas toucher** |
+
+Les six dernières lignes font fonctionner `contact@qualitos.fr`. Déplacer un
+enregistrement A ne les concerne pas : A et MX sont indépendants.
+
+Les deux `ovhmo-selector-*._domainkey` sont la **signature DKIM** de la boîte.
+Elles méritent un avertissement à part parce qu'elles ne sont pas rangées avec
+le courrier : l'interface OVH les affiche dans le même écran **Redirection** que
+les deux redirections à supprimer, juste au-dessus. Les emporter dans le même
+geste ne casse pas l'envoi — c'est pire : les messages partent toujours, non
+signés, et finissent en indésirables sans que rien ne le signale. Vérifié le
+2026-11-06, les deux alias répondent bien.
+
+Les deux `TXT` en `1|…` et `3|…` ne sont **pas** à supprimer à la main. Ce sont
+des marqueurs qu'OVH pose et réécrit lui-même : les effacer dans la zone les
+fait revenir. On retire la fonction qui les a créés, et ils partent avec elle.
+
+**Attention à l'ordre** : retirer la redirection peut emporter l'enregistrement
+A du domaine nu. S'il a disparu, il faut alors le **créer** et non le modifier.
+
+État visé :
 
 ```
-NS    qualitos.fr        ns103.ovh.net, dns103.ovh.net   ← zone éditable chez OVH
-A     qualitos.fr        213.186.33.5                    ← hébergement mutualisé OVH
-A     www.qualitos.fr    213.186.33.5
-TXT   qualitos.fr        "1|www.qualitos.fr"             ← marqueur d'une REDIRECTION OVH active
-MX    qualitos.fr        mx0..mx3.mail.ovh.net           ← MX Plan en place
-TXT   qualitos.fr        "v=spf1 include:mx.ovh.com ~all"
+A      qualitos.fr        62.238.11.20     TTL 600
+A      www.qualitos.fr    62.238.11.20     TTL 600
+MX, SPF, SRV, NS                            inchangés
 ```
-
-> **Deux domaines, deux zones — ne pas les confondre.** `openlabconsulting.com`,
-> qui porte la préproduction, est géré chez **Cloudflare**
-> (`algin`/`jamie.ns.cloudflare.com`). `qualitos.fr`, lui, est géré chez
-> **OVH** : c'est dans l'espace client OVH qu'on l'édite, pas dans Cloudflare.
-> Vérifié le 2026-11-06 auprès de deux résolveurs indépendants et par le SOA
-> (`dns103.ovh.net`, `tech@ovh.net`). Si `qualitos.fr` apparaît dans le tableau
-> de bord Cloudflare, c'est qu'il y a été ajouté sans que les serveurs de noms
-> aient été basculés : Cloudflare l'affiche alors en attente et ne sert rien.
->
-> Noter aussi que `preprod.qualitos.openlabconsulting.com` pointe **directement**
-> sur `62.238.11.20` : enregistrement en *DNS only* (nuage gris), sans proxy
-> Cloudflare. C'est cette absence de proxy qui laisse cert-manager résoudre son
-> défi HTTP-01, et qui laisse l'adresse réelle du visiteur arriver jusqu'au
-> service. **Décision du 2026-11-06 : on garde ce fonctionnement.** Derrière un
-> proxy Cloudflare, l'adresse vue par le service deviendrait celle du réseau de
-> diffusion, et la limite de débit du formulaire traiterait tous les visiteurs
-> comme un seul — cinq envois en tout, puis un refus pour tout le monde. Y
-> passer demanderait de lire `CF-Connecting-IP` et d'imposer le mode SSL
-> « Full (strict) ».
 
 Il n'y a **rien à router** : `213.186.33.5` est l'adresse d'un hébergement
 mutualisé OVH, pas une machine à nous, et on ne renvoie pas de trafic depuis
 elle. C'est le NOM qu'on déplace. Deux gestes, **dans cet ordre** :
 
-1. **Supprimer la redirection web.** Le `TXT "1|www.qualitos.fr"` est le
-   marqueur qu'OVH écrit quand une redirection est active — c'est elle qui
-   produit le `302` du domaine nu vers `www`. Tant qu'elle existe, elle
-   court-circuite la zone et réécrit les enregistrements A.
-   *Espace client → Noms de domaine → qualitos.fr → onglet **Redirection** →
-   supprimer.*
+1. **Supprimer les DEUX redirections**, dans le même écran.
+   *Espace client → Noms de domaine → qualitos.fr → onglet **Redirection**.*
+   Relevé le 2026-11-06, cet écran liste exactement :
 
-2. **Modifier les deux enregistrements A** (ci-dessous). Ils existent déjà : les
-   **modifier**, ne pas en ajouter. Deux A pour un même nom répartissent le
-   trafic entre les deux, et une visite sur deux tomberait sur l'ancienne page.
-   *Espace client → Noms de domaine → qualitos.fr → onglet **Zone DNS**.*
+   | Domaine             | Type                      | Cible             | Geste |
+   | ------------------- | ------------------------- | ----------------- | ----- |
+   | `qualitos.fr`       | Redirection **visible**   | `www.qualitos.fr` | **supprimer** |
+   | `www.qualitos.fr`   | Redirection **invisible** | `welcome`         | **supprimer** |
+   | `ftp.qualitos.fr`   | Vers un domaine (CNAME)   | `qualitos.fr`     | laisser |
+   | `ovhmo-selector-1…` | Vers un domaine (CNAME)   | `…dkim.mail.ovh.net` | **ne pas toucher** |
+   | `ovhmo-selector-2…` | Vers un domaine (CNAME)   | `…dkim.mail.ovh.net` | **ne pas toucher** |
 
-Si l'interface refuse de modifier le A — c'est le cas quand le domaine est
-rattaché à un hébergement — détacher d'abord le domaine du multisite de
-l'hébergement : *Hébergements → (votre offre) → Multisite → supprimer
-`qualitos.fr` et `www.qualitos.fr`*.
+   Les deux premières lignes seulement. C'est bien d'ici que part la page
+   d'accueil `welcome` de `www` — pas du **Multisite** de l'hébergement, où on
+   la chercherait d'instinct : OVH l'a posée comme une redirection « invisible »
+   (un cadre qui affiche une autre page sans changer l'adresse), et c'est la
+   même interface qui la retire.
 
-> **Le courrier n'est pas concerné.** Les MX sont des enregistrements
-> indépendants des A : déplacer le site ne touche pas à `contact@qualitos.fr`,
-> qui continue d'arriver chez OVH. Ne pas y toucher.
-
-| Type | Sous-domaine | Cible          | TTL |
-| ---- | ------------ | -------------- | --- |
-| A    | *(vide)*     | `62.238.11.20` | 600 |
-| A    | `www`        | `62.238.11.20` | 600 |
+2. **Poser les deux A** vers `62.238.11.20`.
+   *Noms de domaine → qualitos.fr → onglet **Zone DNS**.*
 
 Le sous-domaine vide désigne le domaine nu (`qualitos.fr`). Si un enregistrement
 A existe déjà vers une page de redirection OVH ou un hébergement « Start10M »,
 **le modifier** plutôt qu'en ajouter un second : deux A pour un même nom
 répartissent le trafic entre les deux, et une visite sur deux tomberait sur
 l'ancienne page.
-
-Si une **redirection** OVH (type « Redirection web ») est active sur le domaine,
-la supprimer : elle court-circuite la zone DNS.
 
 Vérifier la propagation avant d'aller plus loin — tant qu'elle n'est pas faite,
 le certificat ne peut pas être émis :

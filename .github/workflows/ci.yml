@@ -528,11 +528,11 @@ jobs:
       # l'interpréteur testé est celui qui sera livré.
       - name: Tests (dans l'image de base du runtime)
         run: |
-          docker run --rm --user root --entrypoint /bin/sh             -v "$PWD/apps/site-contact:/src:ro"             python:3.13-alpine -c '
+          docker run --rm --user root --entrypoint /bin/sh             -v "$PWD/apps/site-contact:/src:ro"             cgr.dev/chainguard/python:latest-dev@sha256:29ab100be9f9be1ec5e31d7b7c384134171ee8f052e24e2285e697538c199aa6 -c '
               set -eu
               python -V
               mkdir -p /w && cd /w && cp -r /src/. . && rm -rf .pytest_cache
-              python -m pip install --quiet --no-cache-dir -r requirements-dev.txt pytest-cov
+              python -m pip install --quiet --no-cache-dir --only-binary=:all: -r requirements-dev.txt
               python -m pytest -p no:cacheprovider --cov=app --cov-report=term-missing --cov-fail-under=98
             '
 

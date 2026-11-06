@@ -1,2 +1,19 @@
-fastapi==0.115.6
-uvicorn[standard]==0.34.0
+# Dépendances d'exécution, figées à la version exacte : ce service est public et
+# sans authentification, on veut savoir précisément ce qui tourne.
+#
+# starlette est une dépendance TRANSITIVE de fastapi, épinglée ici malgré tout.
+# Raison mesurée : fastapi n'exige qu'un plancher (>= 0.46), si bien qu'un
+# fastapi figé laissait pip installer la starlette 0.41.3 résolue au moment du
+# premier build — trois CVE HIGH (déni de service par fusion d'en-têtes Range,
+# SSRF via chemins UNC, limites de request.form() ignorées) qui ont fait échouer
+# le scan Trivy de la CD. Le plancher du paquet parent ne protège pas l'enfant :
+# on épingle les deux.
+fastapi==0.162.0
+starlette==1.10.0
+
+# uvicorn SANS l'extra [standard] : il tirerait httptools, websockets, uvloop,
+# watchfiles, python-dotenv et pyyaml. Aucun ne sert ici — le service encaisse
+# quelques dizaines de requêtes par jour, n'ouvre pas de WebSocket et ne lit pas
+# de fichier de configuration. Chaque paquet retiré est une CVE qu'on n'aura
+# pas à traiter.
+uvicorn==0.54.0
