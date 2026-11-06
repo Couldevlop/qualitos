@@ -86,7 +86,7 @@ def construis(expediteur: Expediteur | None = None, debit: Debit | None = None) 
         if len(brut) > TAILLE_MAX_OCTETS:
             return JSONResponse(
                 {"message": "Demande trop volumineuse."},
-                status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+                status_code=status.HTTP_413_CONTENT_TOO_LARGE,
             )
 
         try:
@@ -109,7 +109,7 @@ def construis(expediteur: Expediteur | None = None, debit: Debit | None = None) 
         except DemandeInvalide as refus:
             return JSONResponse(
                 {"champ": refus.champ, "message": f"Champ « {refus.champ} » : {refus.raison}."},
-                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             )
 
         try:

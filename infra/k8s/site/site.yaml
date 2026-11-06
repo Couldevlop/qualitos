@@ -84,7 +84,13 @@ spec:
     spec:
       securityContext:
         runAsNonRoot: true
-        runAsUser: 10001
+        # 65532 = l'utilisateur nonroot des images Chainguard, sur lesquelles ce
+        # service est construit (cf. apps/site-contact/Dockerfile). Un UID écrit
+        # ici qui ne serait pas celui de l'image ferait tourner le conteneur
+        # sous un compte inexistant : cela marche tant que rien n'a besoin d'un
+        # home ni d'un nom d'utilisateur, et casse le jour où quelque chose en a
+        # besoin, loin d'ici.
+        runAsUser: 65532
         seccompProfile: { type: RuntimeDefault }
       containers:
         - name: contact

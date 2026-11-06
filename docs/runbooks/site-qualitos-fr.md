@@ -33,13 +33,23 @@ ou modifier **deux** enregistrements :
 | `A www.qualitos.fr`               | `213.186.33.5`                | **→ 62.238.11.20** |
 | `TXT qualitos.fr`                 | `"1\|www.qualitos.fr"`        | **disparaît** avec la redirection |
 | `TXT www.qualitos.fr`             | `"3\|welcome"`                | **disparaît** avec la page d'accueil OVH |
-| `CNAME ftp.qualitos.fr`           | `qualitos.fr`                 | supprimer (facultatif) |
+| `CNAME ftp.qualitos.fr`           | `qualitos.fr`                 | laisser (inoffensif) |
 | `MX qualitos.fr`                  | `mx0..mx3.mail.ovh.net`       | **ne pas toucher** |
 | `SPF qualitos.fr`                 | `v=spf1 include:mx.ovh.com ~all` | **ne pas toucher** |
 | `SRV _autodiscover._tcp`          | `zimbra1.mail.ovh.net`        | **ne pas toucher** |
+| `CNAME ovhmo-selector-1._domainkey` | `…5079319.cy.dkim.mail.ovh.net` | **ne pas toucher** |
+| `CNAME ovhmo-selector-2._domainkey` | `…5079320.cy.dkim.mail.ovh.net` | **ne pas toucher** |
 
-Les quatre dernières lignes font fonctionner `contact@qualitos.fr`. Déplacer un
+Les six dernières lignes font fonctionner `contact@qualitos.fr`. Déplacer un
 enregistrement A ne les concerne pas : A et MX sont indépendants.
+
+Les deux `ovhmo-selector-*._domainkey` sont la **signature DKIM** de la boîte.
+Elles méritent un avertissement à part parce qu'elles ne sont pas rangées avec
+le courrier : l'interface OVH les affiche dans le même écran **Redirection** que
+les deux redirections à supprimer, juste au-dessus. Les emporter dans le même
+geste ne casse pas l'envoi — c'est pire : les messages partent toujours, non
+signés, et finissent en indésirables sans que rien ne le signale. Vérifié le
+2026-11-06, les deux alias répondent bien.
 
 Les deux `TXT` en `1|…` et `3|…` ne sont **pas** à supprimer à la main. Ce sont
 des marqueurs qu'OVH pose et réécrit lui-même : les effacer dans la zone les
@@ -58,17 +68,27 @@ MX, SPF, SRV, NS                            inchangés
 
 Il n'y a **rien à router** : `213.186.33.5` est l'adresse d'un hébergement
 mutualisé OVH, pas une machine à nous, et on ne renvoie pas de trafic depuis
-elle. C'est le NOM qu'on déplace. Trois gestes, **dans cet ordre** :
+elle. C'est le NOM qu'on déplace. Deux gestes, **dans cet ordre** :
 
-1. **Supprimer la redirection** du domaine nu vers `www` (marqueur `"1|www…"`).
+1. **Supprimer les DEUX redirections**, dans le même écran.
    *Espace client → Noms de domaine → qualitos.fr → onglet **Redirection**.*
+   Relevé le 2026-11-06, cet écran liste exactement :
 
-2. **Retirer la page d'accueil OVH** sur `www` (marqueur `"3|welcome"`), via le
-   multisite de l'hébergement ou la redirection, selon l'offre.
-   *Hébergements → votre offre → **Multisite** → retirer `qualitos.fr` et
-   `www.qualitos.fr`.*
+   | Domaine             | Type                      | Cible             | Geste |
+   | ------------------- | ------------------------- | ----------------- | ----- |
+   | `qualitos.fr`       | Redirection **visible**   | `www.qualitos.fr` | **supprimer** |
+   | `www.qualitos.fr`   | Redirection **invisible** | `welcome`         | **supprimer** |
+   | `ftp.qualitos.fr`   | Vers un domaine (CNAME)   | `qualitos.fr`     | laisser |
+   | `ovhmo-selector-1…` | Vers un domaine (CNAME)   | `…dkim.mail.ovh.net` | **ne pas toucher** |
+   | `ovhmo-selector-2…` | Vers un domaine (CNAME)   | `…dkim.mail.ovh.net` | **ne pas toucher** |
 
-3. **Poser les deux A** vers `62.238.11.20`.
+   Les deux premières lignes seulement. C'est bien d'ici que part la page
+   d'accueil `welcome` de `www` — pas du **Multisite** de l'hébergement, où on
+   la chercherait d'instinct : OVH l'a posée comme une redirection « invisible »
+   (un cadre qui affiche une autre page sans changer l'adresse), et c'est la
+   même interface qui la retire.
+
+2. **Poser les deux A** vers `62.238.11.20`.
    *Noms de domaine → qualitos.fr → onglet **Zone DNS**.*
 
 Le sous-domaine vide désigne le domaine nu (`qualitos.fr`). Si un enregistrement
@@ -76,9 +96,6 @@ A existe déjà vers une page de redirection OVH ou un hébergement « Start10M 
 **le modifier** plutôt qu'en ajouter un second : deux A pour un même nom
 répartissent le trafic entre les deux, et une visite sur deux tomberait sur
 l'ancienne page.
-
-Si une **redirection** OVH (type « Redirection web ») est active sur le domaine,
-la supprimer : elle court-circuite la zone DNS.
 
 Vérifier la propagation avant d'aller plus loin — tant qu'elle n'est pas faite,
 le certificat ne peut pas être émis :
