@@ -165,10 +165,14 @@
     text-align: left;
   }
 
+  // Un quadrillage complet, comme un tableau de tableur : chaque cellule porte
+  // ses quatre cotes. Avec les seuls filets horizontaux, l'oeil ne savait pas
+  // ou finissait « Statut » et ou commencait « Liens » sur une ligne haute,
+  // et les colonnes se lisaient de travers.
   th,
   td {
     padding: var(--qos-space-1) var(--qos-space-2);
-    border-bottom: 1px solid var(--qos-border-subtle);
+    border: 1px solid var(--qos-border-subtle);
     text-align: left;
     vertical-align: top;
   }
@@ -179,24 +183,31 @@
   // n'aurait rien suivi.)
   thead th {
     background: var(--qos-bg-sunken);
-    color: var(--qos-fg-tertiary);
+    color: var(--qos-fg-secondary);
     font-size: var(--qos-fs-xs);
     font-weight: var(--qos-fw-semibold);
     text-transform: uppercase;
     letter-spacing: 0.05em;
     white-space: nowrap;
+    // La bande d'en-tete est franche : c'est elle qui donne au tableau son
+    // arete haute et qui nomme les colonnes du quadrillage.
+    border-color: var(--qos-border-strong);
+    border-bottom-width: 2px;
+  }
+
+  // Une ligne sur deux teintee : sur un tableau large, c'est ce qui empeche de
+  // sauter d'une ligne a l'autre en relisant la colonne « Liens ». Le survol
+  // reste plus marque que le zebrage, sans quoi on ne saurait plus quelle
+  // ligne la souris designe.
+  tbody tr:nth-child(even) {
+    background: var(--qos-bg-subtle);
   }
 
   tbody tr {
     transition: background-color var(--qos-motion-fast);
 
     &:hover {
-      background: var(--qos-bg-subtle);
-    }
-
-    &:last-child th,
-    &:last-child td {
-      border-bottom: 0;
+      background: var(--qos-bg-sunken);
     }
   }
 
@@ -227,14 +238,46 @@
     &:empty {
       display: none;
     }
+
+    // Nature, responsable et indicateur sont TROIS faits distincts. Sans
+    // jalon entre eux ils se lisaient comme une seule phrase --
+    // « ContractuelDirecteur des operationsTaux de service mensuel » -- et
+    // c'est justement cette ligne qu'on parcourt pour situer l'exigence.
+    // Le point median est pose en CSS, donc jamais lu a voix haute par un
+    // lecteur d'ecran, qui entend les trois valeurs separees de toute facon.
+    span + span::before {
+      content: '·';
+      // De l'air des DEUX cotes : colle au mot precedent, le point se lit
+      // comme une ponctuation de ce mot et non comme une separation.
+      margin: 0 var(--qos-space-2) 0 var(--qos-space-1);
+      color: var(--qos-fg-tertiary);
+    }
   }
 
+  // ---------- mise en forme conditionnelle ----------
+  //
+  // La teinte est posee sur la CELLULE, par l'attribut que le gabarit ecrit, et
+  // non par une classe calculee dans le composant : la correspondance
+  // niveau -> couleur se lit alors d'un seul endroit, a cote du quadrillage
+  // qu'elle habille. Elle reste SOUS le zebrage et le survol en opacite, pour
+  // que la ligne survolee se distingue encore.
+  //
+  // La couleur ne porte jamais l'information seule : le libelle (« Eleve »,
+  // « Maitrisee ») est ecrit dans la cellule (WCAG 1.4.1).
   &__risque {
     white-space: nowrap;
+
+    &[data-niveau='HIGH'] { background: var(--qos-danger-bg-soft); }
+    &[data-niveau='MEDIUM'] { background: var(--qos-warn-bg-soft); }
+    &[data-niveau='LOW'] { background: var(--qos-success-bg-soft); }
   }
 
   &__statut {
     width: 10.5rem;
+
+    &[data-statut='CONTROLLED'] { background: var(--qos-success-bg-soft); }
+    &[data-statut='TO_REASSESS'] { background: var(--qos-warn-bg-soft); }
+    &[data-statut='APPLICABLE'] { background: var(--qos-accent-bg-soft); }
 
     .mat-mdc-form-field {
       width: 100%;
