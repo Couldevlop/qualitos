@@ -33,16 +33,31 @@ TAILLE_MAX_OCTETS = 32 * 1024
 
 
 def adresse_appelante(requete: Request) -> str:
-    """L'adresse du visiteur, telle que le proxy la rapporte.
+    """L'adresse du visiteur, telle que l'ingress l'a CONSTATÉE.
 
-    Derrière l'ingress, l'adresse de connexion est toujours celle du proxy :
-    sans lire X-Forwarded-For, la limite de débit s'appliquerait au proxy et
-    donc à tout le monde à la fois. On ne prend que le PREMIER maillon, celui
-    que le proxy a lui-même constaté.
+    Derrière un proxy, l'adresse de connexion est toujours celle du proxy :
+    sans lire l'entête transmise, la limite de débit s'appliquerait au proxy,
+    donc à tout le monde à la fois.
+
+    Mais l'entête n'est pas une source sûre. `X-Forwarded-For` est une LISTE que
+    chaque maillon ALLONGE PAR LA DROITE : le maillon de gauche est celui que
+    l'appelant a écrit lui-même, et il écrit ce qu'il veut. Lire la gauche, c'est
+    laisser un robot changer d'identité à chaque requête et ne plus être limité
+    du tout — la borne existerait encore, elle ne bornerait plus personne.
+
+    On lit donc la DROITE : la dernière valeur est celle qu'ajoute l'ingress, à
+    partir de l'adresse de la connexion qu'il a réellement reçue. Elle n'est pas
+    falsifiable par l'appelant.
+
+    Si un jour un second proxy s'intercale, cette valeur devient l'adresse du
+    proxy interne et tout le monde partage à nouveau un seul compteur : la
+    limite se resserre au lieu de s'ouvrir. C'est le bon sens de l'erreur.
     """
     transmise = requete.headers.get("x-forwarded-for", "")
     if transmise:
-        return transmise.split(",")[0].strip()
+        maillons = [m.strip() for m in transmise.split(",") if m.strip()]
+        if maillons:
+            return maillons[-1]
     return requete.client.host if requete.client else "inconnue"
 
 

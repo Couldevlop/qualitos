@@ -199,7 +199,18 @@ Il est public et sans authentification. Quatre bornes, toutes testées
 (`apps/site-contact/tests/`) :
 
 - **Cinq demandes par heure et par adresse**, lue dans `X-Forwarded-For` — sans
-  quoi tout le monde partagerait le quota du proxy.
+  quoi tout le monde partagerait le quota du proxy. C'est le **dernier** maillon
+  de la liste qui est retenu, pas le premier : la liste s'allonge par la droite,
+  et le maillon de gauche est celui que l'appelant a écrit lui-même. Le lire
+  laisserait un robot changer d'identité à chaque requête, et la borne ne
+  bornerait plus personne.
+
+  > Cela suppose **un seul proxy de confiance** devant le service, qui ajoute
+  > l'adresse réelle de la connexion (`$proxy_add_x_forwarded_for`, le défaut
+  > d'ingress-nginx). Si le contrôleur passait un jour à
+  > `use-forwarded-headers: true`, ou si un second proxy s'intercalait,
+  > relire cette hypothèse. L'erreur, dans ce cas, resserre la limite au lieu de
+  > l'ouvrir — tout le monde partagerait un compteur — ce qui se voit.
 - **Un piège à robots** : un champ invisible que le formulaire laisse vide. S'il
   revient rempli, le service répond « reçu » sans rien envoyer. Lui dire qu'il
   a été repéré ne ferait que lui apprendre à mieux se cacher.

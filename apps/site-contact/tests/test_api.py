@@ -103,10 +103,33 @@ def test_la_limite_de_debit_s_applique(espion):
     assert len(espion.envoyees) == 2
 
 
-def test_la_limite_distingue_les_adresses_transmises_par_le_proxy(espion):
-    """Sans lire X-Forwarded-For, tout le monde partagerait le quota du proxy."""
+def test_la_limite_distingue_les_adresses_constatees_par_le_proxy(espion):
+    """Sans lire l'entête, tout le monde partagerait le quota du proxy."""
     client = TestClient(construis(expediteur=espion, debit=Debit(1, 3600)))
     premier = client.post("/api/contact", json=DEMANDE, headers={"x-forwarded-for": "1.2.3.4"})
-    second = client.post("/api/contact", json=DEMANDE, headers={"x-forwarded-for": "5.6.7.8, 1.2.3.4"})
+    autre = client.post("/api/contact", json=DEMANDE, headers={"x-forwarded-for": "5.6.7.8"})
     rejoue = client.post("/api/contact", json=DEMANDE, headers={"x-forwarded-for": "1.2.3.4"})
-    assert [premier.status_code, second.status_code, rejoue.status_code] == [202, 202, 429]
+    assert [premier.status_code, autre.status_code, rejoue.status_code] == [202, 202, 429]
+
+
+def test_un_appelant_ne_peut_pas_se_renommer_en_prefixant_l_entete(espion):
+    """La liste s'allonge PAR LA DROITE : la gauche est ce que l'appelant écrit.
+
+    Lire la gauche laisserait un robot changer d'identité à chaque requête, et
+    la limite de débit ne limiterait plus personne. C'est la dernière valeur,
+    celle que l'ingress ajoute d'après la connexion reçue, qui fait foi.
+    """
+    client = TestClient(construis(expediteur=espion, debit=Debit(1, 3600)))
+    vrai = client.post("/api/contact", json=DEMANDE, headers={"x-forwarded-for": "9.9.9.9"})
+    # Même appelant (9.9.9.9 reste à droite), mais il se prétend quelqu'un d'autre.
+    deguise = client.post(
+        "/api/contact", json=DEMANDE, headers={"x-forwarded-for": "1.1.1.1, 9.9.9.9"}
+    )
+    assert vrai.status_code == 202
+    assert deguise.status_code == 429
+
+
+def test_une_entete_vide_retombe_sur_l_adresse_de_connexion(espion):
+    client = TestClient(construis(expediteur=espion, debit=Debit(1, 3600)))
+    assert client.post("/api/contact", json=DEMANDE, headers={"x-forwarded-for": " , "}).status_code == 202
+    assert client.post("/api/contact", json=DEMANDE, headers={"x-forwarded-for": " , "}).status_code == 429
