@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Le registre des études de capabilité SPC (Cp / Cpk, cartes X̄ – R).
+ * Le registre des études de capabilité SPC (Cp / Cpk, cartes X̄ – R et X̄ – S).
  *
  * <p><b>Lire est ouvert à tout authentifié ; écrire demande l'action
  * {@code spc.manage}</b>, accordée par défaut aux profils de pilotage et
@@ -43,7 +43,7 @@ import java.util.UUID;
 @RequestMapping("/api/v1/spc/studies")
 @PreAuthorize("isAuthenticated()")
 @RequiresModule("dmaic")
-@Tag(name = "SPC studies", description = "Process capability studies (Cp / Cpk) on X-bar / R charts")
+@Tag(name = "SPC studies", description = "Process capability studies (Cp / Cpk) on X-bar / R and X-bar / S charts")
 public class SpcStudyController {
 
     private final SpcStudyService service;

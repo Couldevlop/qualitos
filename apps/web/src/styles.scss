@@ -5,6 +5,9 @@
  */
 
 @use 'styles/tokens';
+/* Les quatre thèmes au choix du client : posés APRÈS les jetons du socle, dont
+   ils resserrent ou durcissent certaines valeurs. */
+@use 'styles/client-themes';
 
 /* ============================================================
  * Reset / base.

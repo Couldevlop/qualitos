@@ -122,6 +122,14 @@ public class SecurityConfig {
                 // « reste » : élargir ce chemin doit se voir dans ce fichier.
                 .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/v1/directory/**").authenticated()
                 .requestMatchers("/api/v1/directory/**").denyAll()
+                // Cabinets partenaires. Les trois chemins sont nommes ici, et pas
+                // laisses au « reste » : la frontiere entre qui CONSTITUE un
+                // portefeuille, qui ACCORDE un acces et qui en BENEFICIE doit se lire
+                // dans ce fichier, pas seulement dans trois @PreAuthorize disperses.
+                .requestMatchers("/api/v1/partner-firms/**").hasRole("SUPER_ADMIN")
+                .requestMatchers("/api/v1/partner-access/**")
+                    .hasAnyRole("ADMIN", "ADMIN_TENANT")
+                .requestMatchers("/api/v1/partner/**").hasRole("CONSULTANT")
                 // Tout le reste nécessite une authentification
                 .anyRequest().authenticated()
             )

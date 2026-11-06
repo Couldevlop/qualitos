@@ -75,6 +75,7 @@ services:
       JAVA_OPTS_APPEND: -Dkeycloak.import.replace-placeholders=true
       QOS_LOCAL_SUPERADMIN_PASSWORD: ${QOS_LOCAL_SUPERADMIN_PASSWORD:?a definir dans .env (cf. .env.example) - aucun defaut, un mot de passe super_admin ne se devine pas}
       QOS_LOCAL_ADMIN_PASSWORD: ${QOS_LOCAL_ADMIN_PASSWORD:?a definir dans .env (cf. .env.example) - aucun defaut, un mot de passe admin_tenant ne se devine pas}
+      QOS_LOCAL_CONSULTANT_PASSWORD: ${QOS_LOCAL_CONSULTANT_PASSWORD:?a definir dans .env (cf. .env.example) - aucun defaut, le compte de cabinet lit le dossier qualite d'un client}
       KC_DB: postgres
       KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
       KC_DB_USERNAME: qualitos

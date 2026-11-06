@@ -7762,6 +7762,10 @@ Customer portal</target>
         <source>Couleur secondaire</source>
         <target state="translated">Secondary colour</target>
       </trans-unit>
+      <trans-unit id="admin.clients.color-default" datatype="html">
+        <source>Celle du thème</source>
+        <target state="translated">The theme's own</target>
+      </trans-unit>
       <trans-unit id="admin.clients.color-note" datatype="html">
         <source>Une couleur illisible sur le fond du thème est refusée par le serveur : le contraste prime sur la charte.</source>
         <target state="translated">A colour unreadable against the theme background is refused by the server: contrast outranks the brand guide.</target>
@@ -10806,13 +10810,9 @@ Customer portal</target>
         <source>Choisissez une sévérité.</source>
         <target state="translated">Choose a severity.</target>
       </trans-unit>
-      <trans-unit id="nc.create.photo-take" datatype="html">
-        <source>Prendre une photo</source>
-        <target state="translated">Take a photo</target>
-      </trans-unit>
       <trans-unit id="nc.create.photo-choose" datatype="html">
-        <source>Choisir des photos</source>
-        <target state="translated">Choose photos</target>
+        <source>Ajouter des photos</source>
+        <target state="translated">Add photos</target>
       </trans-unit>
       <trans-unit id="nc.create.photo-remove-tooltip" datatype="html">
         <source>Retirer cette photo</source>
@@ -21247,8 +21247,12 @@ declared income
         <target state="translated">The catalogue could not be restored.</target>
       </trans-unit>
       <trans-unit id="nc.create.subcategory" datatype="html">
-        <source>Nature de l'écart</source>
-        <target state="translated">Nature of the deviation</target>
+        <source>Sous-catégorie</source>
+        <target state="translated">Sub-category</target>
+      </trans-unit>
+      <trans-unit id="nc.create.subcategory-hint" datatype="html">
+        <source>Choisissez d’abord une catégorie.</source>
+        <target state="translated">Choose a category first.</target>
       </trans-unit>
       <trans-unit id="nc.create.subcategory-none" datatype="html">
         <source>— À classer —</source>
@@ -21265,6 +21269,10 @@ declared income
       <trans-unit id="capa.open.containment-hint" datatype="html">
         <source>Mesure immédiate : elle contient l'effet. Le dossier reste correctif — sa clôture demandera une action qui supprime la cause.</source>
         <target state="translated">Immediate measure: it contains the effect. The case stays corrective — closing it will require an action that removes the cause.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.blockers" datatype="html">
+        <source>Ce qui empêche encore d’aller plus loin :</source>
+        <target state="translated">What still stands in the way:</target>
       </trans-unit>
       <trans-unit id="dmaic.detail.complete-hint" datatype="html">
         <source>Le projet se clôture quand toute la fiche est renseignée et que chaque action est à 100 %.</source>
@@ -21501,6 +21509,394 @@ declared income
       <trans-unit id="offline.queue.empty-hint" datatype="html">
         <source>Les audits 5S saisis hors connexion apparaîtront ici jusqu'à leur synchronisation.</source>
         <target state="translated">5S audits captured offline will appear here until they are synchronized.</target>
+      </trans-unit>
+      <trans-unit id="partner.scope.read" datatype="html">
+        <source>Consultation</source>
+        <target state="translated">Read-only</target>
+      </trans-unit>
+      <trans-unit id="partner.scope.intervene" datatype="html">
+        <source>Intervention</source>
+        <target state="translated">Intervention</target>
+      </trans-unit>
+      <trans-unit id="partner.status.proposed" datatype="html">
+        <source>En attente de votre décision</source>
+        <target state="translated">Awaiting your decision</target>
+      </trans-unit>
+      <trans-unit id="partner.status.open" datatype="html">
+        <source>Ouvert</source>
+        <target state="translated">Open</target>
+      </trans-unit>
+      <trans-unit id="partner.status.scheduled" datatype="html">
+        <source>Accordé, hors période</source>
+        <target state="translated">Granted, outside its dates</target>
+      </trans-unit>
+      <trans-unit id="partner.status.declined" datatype="html">
+        <source>Refusé</source>
+        <target state="translated">Declined</target>
+      </trans-unit>
+      <trans-unit id="partner.status.revoked" datatype="html">
+        <source>Repris</source>
+        <target state="translated">Revoked</target>
+      </trans-unit>
+      <trans-unit id="partner.brand.console" datatype="html">
+        <source>Console cabinet</source>
+        <target state="translated">Firm console</target>
+      </trans-unit>
+      <trans-unit id="partner.user.logout" datatype="html">
+        <source>Se déconnecter</source>
+        <target state="translated">Sign out</target>
+      </trans-unit>
+      <trans-unit id="partner.portfolio.title" datatype="html">
+        <source>Mon portefeuille</source>
+        <target state="translated">My portfolio</target>
+      </trans-unit>
+      <trans-unit id="partner.portfolio.subtitle" datatype="html">
+        <source>Les clients qui vous ont ouvert un accès, et jusqu’à quand.</source>
+        <target state="translated">The clients who have granted you access, and until when.</target>
+      </trans-unit>
+      <trans-unit id="partner.portfolio.reload" datatype="html">
+        <source>Recharger</source>
+        <target state="translated">Reload</target>
+      </trans-unit>
+      <trans-unit id="partner.portfolio.loading" datatype="html">
+        <source>Chargement de votre portefeuille…</source>
+        <target state="translated">Loading your portfolio…</target>
+      </trans-unit>
+      <trans-unit id="partner.portfolio.until" datatype="html">
+        <source>Jusqu’au</source>
+        <target state="translated">Until</target>
+      </trans-unit>
+      <trans-unit id="partner.portfolio.unlinked" datatype="html">
+        <source>Votre compte n’est rattaché à aucun cabinet. Demandez à votre cabinet de vous inscrire avec l’adresse de courriel de ce compte.</source>
+        <target state="translated">Your account is not linked to any firm. Ask your firm to register you with this account’s email address.</target>
+      </trans-unit>
+      <trans-unit id="partner.portfolio.empty" datatype="html">
+        <source>Aucun client ne vous a ouvert d’accès aujourd’hui. Un accès prend fin à sa date de terme, sans préavis : si une mission vient de se terminer, elle a quitté cette liste.</source>
+        <target state="translated">No client has an open access for you today. An access ends on its end date, with no notice: if an engagement has just ended, it has left this list.</target>
+      </trans-unit>
+      <trans-unit id="partner.portfolio.link-failed" datatype="html">
+        <source>Votre compte n’a pas pu être rattaché à votre cabinet.</source>
+        <target state="translated">Your account could not be linked to your firm.</target>
+      </trans-unit>
+      <trans-unit id="partner.portfolio.load-failed" datatype="html">
+        <source>Votre portefeuille n’a pas pu être chargé.</source>
+        <target state="translated">Your portfolio could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="partner.access.title" datatype="html">
+        <source>Cabinets</source>
+        <target state="translated">Partner firms</target>
+      </trans-unit>
+      <trans-unit id="partner.access.subtitle" datatype="html">
+        <source>Qui, hors de votre organisation, peut entrer dans vos données — et jusqu’à quand.</source>
+        <target state="translated">Who, outside your organisation, may enter your data — and until when.</target>
+      </trans-unit>
+      <trans-unit id="partner.access.reload" datatype="html">
+        <source>Recharger</source>
+        <target state="translated">Reload</target>
+      </trans-unit>
+      <trans-unit id="partner.access.scope" datatype="html">
+        <source>Un cabinet n’entre chez vous que si vous l’accordez, et son accès prend fin de lui-même à la date que vous fixez. Vous pouvez le reprendre à tout moment ; chaque décision reste dans l’historique.</source>
+        <target state="translated">A firm only enters your space if you grant it, and its access ends by itself on the date you set. You can revoke it at any time; every decision stays in the history.</target>
+      </trans-unit>
+      <trans-unit id="partner.access.pending" datatype="html">
+        <source>En attente de votre décision</source>
+        <target state="translated">Awaiting your decision</target>
+      </trans-unit>
+      <trans-unit id="partner.access.grant-action" datatype="html">
+        <source>Accorder un accès</source>
+        <target state="translated">Grant access</target>
+      </trans-unit>
+      <trans-unit id="partner.access.decline-action" datatype="html">
+        <source>Refuser</source>
+        <target state="translated">Decline</target>
+      </trans-unit>
+      <trans-unit id="partner.access.scope-label" datatype="html">
+        <source>Ce que le cabinet pourra faire</source>
+        <target state="translated">What the firm will be able to do</target>
+      </trans-unit>
+      <trans-unit id="partner.access.ends-on" datatype="html">
+        <source>Terme de l’accès</source>
+        <target state="translated">Access end date</target>
+      </trans-unit>
+      <trans-unit id="partner.access.purpose" datatype="html">
+        <source>Objet de la mission</source>
+        <target state="translated">Purpose of the engagement</target>
+      </trans-unit>
+      <trans-unit id="partner.access.purpose-placeholder" datatype="html">
+        <source>Ex. : préparation de l’audit ISO 9001</source>
+        <target state="translated">E.g. preparing the ISO 9001 audit</target>
+      </trans-unit>
+      <trans-unit id="partner.access.term-help" datatype="html">
+        <source>Un accès sans terme est un accès oublié : la date est obligatoire, et celle proposée est à trois mois.</source>
+        <target state="translated">An access with no end date is a forgotten access: the date is mandatory, and the one suggested is three months out.</target>
+      </trans-unit>
+      <trans-unit id="partner.access.grant-confirm" datatype="html">
+        <source>Accorder</source>
+        <target state="translated">Grant</target>
+      </trans-unit>
+      <trans-unit id="partner.access.granted" datatype="html">
+        <source>Accès accordé, et il prendra fin de lui-même à son terme.</source>
+        <target state="translated">Access granted, and it will end by itself on its end date.</target>
+      </trans-unit>
+      <trans-unit id="partner.access.grant-failed" datatype="html">
+        <source>L’accès n’a pas pu être accordé.</source>
+        <target state="translated">Access could not be granted.</target>
+      </trans-unit>
+      <trans-unit id="partner.access.declined" datatype="html">
+        <source>Proposition refusée. Aucun accès n’a été ouvert.</source>
+        <target state="translated">Proposal declined. No access was opened.</target>
+      </trans-unit>
+      <trans-unit id="partner.access.decline-failed" datatype="html">
+        <source>La proposition n’a pas pu être refusée.</source>
+        <target state="translated">The proposal could not be declined.</target>
+      </trans-unit>
+      <trans-unit id="partner.access.granted-section" datatype="html">
+        <source>Accès accordés</source>
+        <target state="translated">Granted accesses</target>
+      </trans-unit>
+      <trans-unit id="partner.access.from" datatype="html">
+        <source>Du</source>
+        <target state="translated">From</target>
+      </trans-unit>
+      <trans-unit id="partner.access.to" datatype="html">
+        <source>au</source>
+        <target state="translated">to</target>
+      </trans-unit>
+      <trans-unit id="partner.access.revoke-action" datatype="html">
+        <source>Reprendre</source>
+        <target state="translated">Revoke</target>
+      </trans-unit>
+      <trans-unit id="partner.access.revoke-title" datatype="html">
+        <source>Reprendre cet accès ?</source>
+        <target state="translated">Revoke this access?</target>
+      </trans-unit>
+      <trans-unit id="partner.access.revoke-message" datatype="html">
+        <source>Le cabinet perdra l’accès immédiatement. La décision reste dans l’historique.</source>
+        <target state="translated">The firm will lose access immediately. The decision stays in the history.</target>
+      </trans-unit>
+      <trans-unit id="partner.access.revoked" datatype="html">
+        <source>Accès repris.</source>
+        <target state="translated">Access revoked.</target>
+      </trans-unit>
+      <trans-unit id="partner.access.revoke-failed" datatype="html">
+        <source>L’accès n’a pas pu être repris.</source>
+        <target state="translated">Access could not be revoked.</target>
+      </trans-unit>
+      <trans-unit id="partner.access.history" datatype="html">
+        <source>Décisions passées</source>
+        <target state="translated">Past decisions</target>
+      </trans-unit>
+      <trans-unit id="partner.access.load-failed" datatype="html">
+        <source>La liste des cabinets n’a pas pu être chargée.</source>
+        <target state="translated">The list of firms could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="partner.access.empty" datatype="html">
+        <source>Aucun cabinet n’a été proposé à votre organisation. Un cabinet partenaire est déclaré par l’éditeur de la plateforme ; vous décidez ensuite s’il entre chez vous.</source>
+        <target state="translated">No firm has been proposed to your organisation. A partner firm is declared by the platform publisher; you then decide whether it enters your space.</target>
+      </trans-unit>
+      <trans-unit id="platform.nav.firms" datatype="html">
+        <source>Cabinets</source>
+        <target state="translated">Partner firms</target>
+      </trans-unit>
+      <trans-unit id="platform.nav.firms.hint" datatype="html">
+        <source>Cabinets partenaires, consultants, clients proposés</source>
+        <target state="translated">Partner firms, consultants, proposed clients</target>
+      </trans-unit>
+      <trans-unit id="nav.admin-firms" datatype="html">
+        <source>Cabinets</source>
+        <target state="translated">Partner firms</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.title" datatype="html">
+        <source>Cabinets partenaires</source>
+        <target state="translated">Partner firms</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.subtitle" datatype="html">
+        <source>Les cabinets qui interviennent chez vos clients, leurs consultants, et les clients qui leur ont été proposés.</source>
+        <target state="translated">The firms that work at your clients’ sites, their consultants, and the clients they have been proposed.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.reload" datatype="html">
+        <source>Recharger</source>
+        <target state="translated">Reload</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.new" datatype="html">
+        <source>Nouveau cabinet</source>
+        <target state="translated">New firm</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.scope" datatype="html">
+        <source>Vous déclarez un cabinet et lui proposez des clients. Vous n’ouvrez aucun accès : chaque client décide lui-même d’accorder, et fixe le terme.</source>
+        <target state="translated">You declare a firm and propose clients to it. You open no access: each client decides to grant it, and sets the end date.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.name" datatype="html">
+        <source>Raison sociale</source>
+        <target state="translated">Legal name</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.slug" datatype="html">
+        <source>Repère</source>
+        <target state="translated">Handle</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.slug-placeholder" datatype="html">
+        <source>Ex. : qualiconseil</source>
+        <target state="translated">E.g. qualiconseil</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.slug-hint" datatype="html">
+        <source>Minuscules, chiffres et tirets. Définitif.</source>
+        <target state="translated">Lower case, digits and hyphens. Permanent.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.registration" datatype="html">
+        <source>Numéro d’immatriculation</source>
+        <target state="translated">Registration number</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.contact-email" datatype="html">
+        <source>Courriel de contact</source>
+        <target state="translated">Contact email</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.contact-phone" datatype="html">
+        <source>Téléphone</source>
+        <target state="translated">Phone</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.create" datatype="html">
+        <source>Créer le cabinet</source>
+        <target state="translated">Create the firm</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.create-failed" datatype="html">
+        <source>Le cabinet n’a pas pu être créé.</source>
+        <target state="translated">The firm could not be created.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.deactivate-title" datatype="html">
+        <source>Désactiver ce cabinet ?</source>
+        <target state="translated">Deactivate this firm?</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.deactivate-message" datatype="html">
+        <source>Ses consultants perdront immédiatement tous leurs accès. Les accords des clients sont conservés et reprendront effet si vous le réactivez.</source>
+        <target state="translated">Its consultants will immediately lose all their accesses. The clients’ agreements are kept and will take effect again if you reactivate it.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.deactivate-action" datatype="html">
+        <source>Désactiver</source>
+        <target state="translated">Deactivate</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.activate-action" datatype="html">
+        <source>Réactiver</source>
+        <target state="translated">Reactivate</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.inactive" datatype="html">
+        <source>Inactif</source>
+        <target state="translated">Inactive</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.toggle-failed" datatype="html">
+        <source>L’état du cabinet n’a pas pu être changé.</source>
+        <target state="translated">The firm’s state could not be changed.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.consultant-count" datatype="html">
+        <source><x id="INTERPOLATION"/> consultants</source>
+        <target state="translated"><x id="INTERPOLATION"/> consultants</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.granted-count" datatype="html">
+        <source><x id="INTERPOLATION"/> missions</source>
+        <target state="translated"><x id="INTERPOLATION"/> engagements</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.consultants" datatype="html">
+        <source>Consultants</source>
+        <target state="translated">Consultants</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.linked" datatype="html">
+        <source>Rattaché</source>
+        <target state="translated">Linked</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.pending-link" datatype="html">
+        <source>Jamais connecté</source>
+        <target state="translated">Never signed in</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.suspend" datatype="html">
+        <source>Suspendre</source>
+        <target state="translated">Suspend</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.restore" datatype="html">
+        <source>Rétablir</source>
+        <target state="translated">Restore</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.no-consultant" datatype="html">
+        <source>Aucun consultant inscrit dans ce cabinet.</source>
+        <target state="translated">No consultant registered in this firm.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.consultant-name" datatype="html">
+        <source>Nom du consultant</source>
+        <target state="translated">Consultant’s name</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.consultant-email" datatype="html">
+        <source>Courriel</source>
+        <target state="translated">Email</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.consultant-email-hint" datatype="html">
+        <source>Celui de son compte : c’est par là que le rattachement se fait.</source>
+        <target state="translated">The one on their account: that is how the link is made.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.add-consultant" datatype="html">
+        <source>Inscrire</source>
+        <target state="translated">Register</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.consultant-added" datatype="html">
+        <source>Consultant inscrit. Son accès s’ouvrira à sa première connexion, par ce courriel.</source>
+        <target state="translated">Consultant registered. Their access will open at their first sign-in, through this email address.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.consultant-failed" datatype="html">
+        <source>Le consultant n’a pas pu être inscrit.</source>
+        <target state="translated">The consultant could not be registered.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.consultant-toggle-failed" datatype="html">
+        <source>L’état du consultant n’a pas pu être changé.</source>
+        <target state="translated">The consultant’s state could not be changed.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.consultants-failed" datatype="html">
+        <source>Les consultants n’ont pas pu être chargés.</source>
+        <target state="translated">The consultants could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.portfolio" datatype="html">
+        <source>Portefeuille</source>
+        <target state="translated">Portfolio</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.portfolio-failed" datatype="html">
+        <source>Le portefeuille n’a pas pu être chargé.</source>
+        <target state="translated">The portfolio could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.no-mission" datatype="html">
+        <source>Aucun client proposé à ce cabinet.</source>
+        <target state="translated">No client proposed to this firm.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.client" datatype="html">
+        <source>Client</source>
+        <target state="translated">Client</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.proposed-scope" datatype="html">
+        <source>Portée demandée</source>
+        <target state="translated">Requested scope</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.proposed-purpose" datatype="html">
+        <source>Objet de la mission</source>
+        <target state="translated">Purpose of the engagement</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.propose" datatype="html">
+        <source>Proposer</source>
+        <target state="translated">Propose</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.proposed" datatype="html">
+        <source>Client proposé. Aucun accès n’est ouvert : son administrateur décide.</source>
+        <target state="translated">Client proposed. No access is open: their administrator decides.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.propose-failed" datatype="html">
+        <source>Le client n’a pas pu être proposé.</source>
+        <target state="translated">The client could not be proposed.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.awaiting" datatype="html">
+        <source>En attente du client</source>
+        <target state="translated">Awaiting the client</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.load-failed" datatype="html">
+        <source>La liste des cabinets n’a pas pu être chargée.</source>
+        <target state="translated">The list of firms could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.empty" datatype="html">
+        <source>Aucun cabinet partenaire n’est déclaré. Un cabinet regroupe des consultants externes à qui vos clients peuvent ouvrir un accès daté.</source>
+        <target state="translated">No partner firm is declared. A firm groups external consultants to whom your clients can open a dated access.</target>
       </trans-unit>
       <trans-unit id="pdca.detail.col-evidence" datatype="html">
         <source>Preuve</source>
@@ -27946,10 +28342,6 @@ declared income
         <source>Étude de capabilité <x id="part"/></source>
         <target state="translated">Capability study <x id="part"/></target>
       </trans-unit>
-      <trans-unit id="spc.study.subtitle" datatype="html">
-        <source>Cartes de contrôle X̄ – R. Saisissez les mesures dans les cellules jaunes ; tout le reste se calcule.</source>
-        <target state="translated">X̄ – R control charts. Enter the measurements in the yellow cells; everything else is calculated.</target>
-      </trans-unit>
       <trans-unit id="spc.study.back" datatype="html">
         <source>Registre</source>
         <target state="translated">Register</target>
@@ -28002,9 +28394,73 @@ declared income
         <source>USL (limite supérieure)</source>
         <target state="translated">USL (upper limit)</target>
       </trans-unit>
-      <trans-unit id="spc.study.subgroup-size" datatype="html">
-        <source>Taille du sous-groupe (n)</source>
-        <target state="translated">Subgroup size (n)</target>
+      <trans-unit id="spc.study.sample-size" datatype="html">
+        <source>Taille d'échantillon (n)</source>
+        <target state="translated">Sample size (n)</target>
+      </trans-unit>
+      <trans-unit id="spc.study.subgroup-count-label" datatype="html">
+        <source>Nombre de sous-groupes</source>
+        <target state="translated">Number of subgroups</target>
+      </trans-unit>
+      <trans-unit id="spc.study.few-subgroups2" datatype="html">
+        <source>Moins de <x id="FLOOR"/> sous-groupes : les limites de contrôle restent indicatives.</source>
+        <target state="translated">Fewer than <x id="FLOOR"/> subgroups: the control limits remain indicative.</target>
+      </trans-unit>
+      <trans-unit id="spc.study.grid-recap" datatype="html">
+        <source>Grille : <x id="SIZE"/> mesures par sous-groupe × <x id="COUNT"/> sous-groupes.</source>
+        <target state="translated">Grid: <x id="SIZE"/> measurements per subgroup × <x id="COUNT"/> subgroups.</target>
+      </trans-unit>
+      <trans-unit id="spc.study.shrink-title" datatype="html">
+        <source>Retirer des sous-groupes saisis ?</source>
+        <target state="translated">Remove subgroups that hold measurements?</target>
+      </trans-unit>
+      <trans-unit id="spc.study.shrink-message" datatype="html">
+        <source>Les sous-groupes retirés portent des mesures : elles seront perdues. Rien n'est enregistré tant que vous n'enregistrez pas l'étude.</source>
+        <target state="translated">The removed subgroups hold measurements: they will be lost. Nothing is saved until you save the study.</target>
+      </trans-unit>
+      <trans-unit id="spc.study.shrink-confirm" datatype="html">
+        <source>Retirer les sous-groupes</source>
+        <target state="translated">Remove the subgroups</target>
+      </trans-unit>
+      <trans-unit id="spc.study.size-unsupported" datatype="html">
+        <source>Taille d'échantillon hors domaine : les constantes des cartes de contrôle ne sont tabulées que de 2 à <x id="MAX"/> mesures. Rien n'est calculé, pour ne pas afficher un indice faux.</source>
+        <target state="translated">Sample size out of range: the control chart constants are only tabulated from 2 to <x id="MAX"/> measurements. Nothing is computed, so as not to show a false index.</target>
+      </trans-unit>
+      <trans-unit id="spc.study.chart-none" datatype="html">
+        <source>Hors domaine : aucune carte applicable.</source>
+        <target state="translated">Out of range: no applicable chart.</target>
+      </trans-unit>
+      <trans-unit id="spc.study.chart-range" datatype="html">
+        <source>Carte X̄ – R (σ = R̄ / d2), jusqu'à <x id="max"/> mesures.</source>
+        <target state="translated">X̄ – R chart (σ = R̄ / d2), up to <x id="max"/> measurements.</target>
+      </trans-unit>
+      <trans-unit id="spc.study.chart-stdev" datatype="html">
+        <source>Carte X̄ – S (σ = s̄ / c4) : au-delà de <x id="max"/> mesures, l'étendue estime mal σ.</source>
+        <target state="translated">X̄ – S chart (σ = s̄ / c4): beyond <x id="max"/> measurements, the range estimates σ poorly.</target>
+      </trans-unit>
+      <trans-unit id="spc.study.sigma2" datatype="html">
+        <source>Sigma</source>
+        <target state="translated">Sigma</target>
+      </trans-unit>
+      <trans-unit id="spc.study.dispersion-chart" datatype="html">
+        <source>Carte</source>
+        <target state="translated">Chart</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.group-dispersion" datatype="html">
+        <source>Carte</source>
+        <target state="translated">Chart</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.constants-range" datatype="html">
+        <source>Table des constantes — carte X̄ – R</source>
+        <target state="translated">Constants table — X̄ – R chart</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.constants-stdev" datatype="html">
+        <source>Table des constantes — carte X̄ – S</source>
+        <target state="translated">Constants table — X̄ – S chart</target>
+      </trans-unit>
+      <trans-unit id="spc.study.subtitle2" datatype="html">
+        <source>Cartes de contrôle X̄ – R et X̄ – S. Saisissez les mesures dans les cellules jaunes ; tout le reste se calcule.</source>
+        <target state="translated">X̄ – R and X̄ – S control charts. Enter the measurements in the yellow cells; everything else is computed.</target>
       </trans-unit>
       <trans-unit id="spc.study.part-required" datatype="html">
         <source>La référence de la pièce est obligatoire.</source>
@@ -28025,22 +28481,6 @@ declared income
       <trans-unit id="spc.study.measurements" datatype="html">
         <source>Mesures par sous-groupe</source>
         <target state="translated">Measurements by subgroup</target>
-      </trans-unit>
-      <trans-unit id="spc.study.subgroup-count" datatype="html">
-        <source><x id="COUNT"/> sous-groupe(s)</source>
-        <target state="translated"><x id="COUNT"/> subgroup(s)</target>
-      </trans-unit>
-      <trans-unit id="spc.study.subgroup-add" datatype="html">
-        <source>Ajouter un sous-groupe</source>
-        <target state="translated">Add a subgroup</target>
-      </trans-unit>
-      <trans-unit id="spc.study.subgroup-remove" datatype="html">
-        <source>Retirer le dernier sous-groupe (il doit être vide)</source>
-        <target state="translated">Remove the last subgroup (it must be empty)</target>
-      </trans-unit>
-      <trans-unit id="spc.study.few-subgroups" datatype="html">
-        <source>Moins de 20 sous-groupes : les limites de contrôle restent indicatives.</source>
-        <target state="translated">Fewer than 20 subgroups: the control limits remain indicative.</target>
       </trans-unit>
       <trans-unit id="spc.study.sample" datatype="html">
         <source>Échantillon</source>
@@ -28069,10 +28509,6 @@ declared income
       <trans-unit id="spc.study.grand-mean" datatype="html">
         <source>Moyenne X̿</source>
         <target state="translated">Mean X̿</target>
-      </trans-unit>
-      <trans-unit id="spc.study.sigma" datatype="html">
-        <source>Sigma (R̄ / d2)</source>
-        <target state="translated">Sigma (R̄ / d2)</target>
       </trans-unit>
       <trans-unit id="spc.study.controlled" datatype="html">
         <source>Procédé maîtrisé :</source>
@@ -28109,10 +28545,6 @@ declared income
       <trans-unit id="spc.study.xbar-chart" datatype="html">
         <source>Carte X̄</source>
         <target state="translated">X̄ chart</target>
-      </trans-unit>
-      <trans-unit id="spc.study.range-chart" datatype="html">
-        <source>Carte R</source>
-        <target state="translated">R chart</target>
       </trans-unit>
       <trans-unit id="spc.study.xbar-aria" datatype="html">
         <source>Carte X̄ : moyenne de chaque sous-groupe et limites de contrôle</source>
@@ -28177,10 +28609,6 @@ declared income
       <trans-unit id="spc.formula.control-limit" datatype="html">
         <source>Limite de contrôle</source>
         <target state="translated">Control limit</target>
-      </trans-unit>
-      <trans-unit id="spc.formula.group-range" datatype="html">
-        <source>Carte R</source>
-        <target state="translated">R chart</target>
       </trans-unit>
       <trans-unit id="spc.chart.no-data" datatype="html">
         <source>Aucune donnée à tracer.</source>
@@ -28350,10 +28778,6 @@ declared income
         <source>Formules</source>
         <target state="translated">Formulas</target>
       </trans-unit>
-      <trans-unit id="spc.formula.constants-title" datatype="html">
-        <source>Table des constantes SPC</source>
-        <target state="translated">SPC constants table</target>
-      </trans-unit>
       <trans-unit id="spc.study.process-status" datatype="html">
         <source>Statut du procédé</source>
         <target state="translated">Process status</target>
@@ -28473,6 +28897,18 @@ declared income
       <trans-unit id="stakeholders.col.requirements" datatype="html">
         <source>Exigences</source>
         <target state="translated">Requirements</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.col.requirement" datatype="html">
+        <source>Exigence</source>
+        <target state="translated">Requirement</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.col.risk" datatype="html">
+        <source>Risque</source>
+        <target state="translated">Risk</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.col.links" datatype="html">
+        <source>Liens</source>
+        <target state="translated">Links</target>
       </trans-unit>
       <trans-unit id="stakeholders.col.review" datatype="html">
         <source>Dernière revue</source>
@@ -28729,6 +29165,10 @@ declared income
       <trans-unit id="stakeholders.requirements-help" datatype="html">
         <source>Ce que cette partie prenante attend, d'où cela vient, et comment vous vous en assurez. Chaque ligne se rattache à un risque, un écart, un audit ou un document.</source>
         <target state="translated">What this stakeholder expects, where it comes from, and how you make sure of it. Each line links to a risk, a deviation, an audit or a document.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirements-caption" datatype="html">
+        <source>Une ligne par exigence : ce qui est attendu, ce que cela fait peser, où elle en est, et à quoi elle est rattachée.</source>
+        <target state="translated">One row per requirement: what is expected, what it weighs, where it stands, and what it is linked to.</target>
       </trans-unit>
       <trans-unit id="stakeholders.requirements-empty" datatype="html">
         <source>Aucune exigence pour le moment. Ajoutez-en une, ou importez un contrat depuis l'assistant IA.</source>
@@ -29009,6 +29449,26 @@ declared income
       <trans-unit id="stakeholders.assistant.suggest-help" datatype="html">
         <source>Décrivez votre activité : l'assistant propose les familles de parties intéressées qu'un organisme comme le vôtre doit prendre en compte.</source>
         <target state="translated">Describe your activity: the assistant proposes the families of interested parties that an organization like yours must take into account.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.sector.aerospace" datatype="html">
+        <source>Aéronautique</source>
+        <target state="translated">Aerospace</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.sector.automotive" datatype="html">
+        <source>Automobile</source>
+        <target state="translated">Automotive</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.sector.food" datatype="html">
+        <source>Agroalimentaire</source>
+        <target state="translated">Food industry</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.sector.medical-devices" datatype="html">
+        <source>Dispositifs médicaux</source>
+        <target state="translated">Medical devices</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.sector.services" datatype="html">
+        <source>Services</source>
+        <target state="translated">Services</target>
       </trans-unit>
       <trans-unit id="stakeholders.assistant.sector" datatype="html">
         <source>Secteur d'activité</source>

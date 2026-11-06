@@ -1,6 +1,8 @@
 import {
-  DEFAULT_SUBGROUPS, SUBGROUP_SIZES, classify, computeCapability, constantsFor, displayDigits, emptyGrid,
-  measurementDecimals, parseMeasurement, pasteBlock, resizeGrid
+  DEFAULT_SUBGROUPS, MAX_SUBGROUPS, MAX_SUBGROUP_SIZE, RANGE_CHART_MAX, SAMPLE_SIZES,
+  STDEV_CONSTANT_ROWS, SUBGROUP_COUNTS, c4, chartFactors, classify, computeCapability, dispersionOf,
+  displayDigits, emptyGrid, gammaHalf, measurementDecimals, parseMeasurement, pasteBlock, resizeGrid,
+  stdevConstants
 } from './spc-capability.calc';
 import { GOLDEN, GOLDEN_GRID, GOLDEN_LSL, GOLDEN_USL } from './spc-capability.fixtures';
 import { Measurement } from './spc-capability.types';
@@ -40,7 +42,9 @@ describe('spc-capability.calc', () => {
       expect(c.meanLcl!).toBeCloseTo(GOLDEN.meanLcl, 3);
       expect(c.rangeUcl!).toBeCloseTo(GOLDEN.rangeUcl, 2);
       expect(c.rangeLcl!).toBe(0);
-      expect([c.d2, c.a2, c.d3, c.d4]).toEqual([2.33, 0.58, 0, 2.11]);
+      expect(c.dispersionChart).toBe('RANGE');
+      expect([c.sigmaDivisor, c.meanFactor, c.dispersionLower, c.dispersionUpper])
+        .toEqual([2.33, 0.58, 0, 2.11]);
     });
 
     it('rend la dispersion et le centrage', () => {
@@ -73,7 +77,7 @@ describe('spc-capability.calc', () => {
     expect(c.grandMean).toBeNull();
     expect(c.cpk).toBeNull();
     expect(c.meanUcl).toBeNull();
-    expect(c.d2).toBe(2.33);
+    expect(c.sigmaDivisor).toBe(2.33);
   });
 
   it('laisse les indices nuls sans dispersion', () => {
@@ -102,12 +106,128 @@ describe('spc-capability.calc', () => {
     expect(c.centeringPercent).toBeNull();
   });
 
-  it('expose les constantes de n = 2 à 10, et refuse les autres tailles', () => {
-    expect(SUBGROUP_SIZES).toEqual([2, 3, 4, 5, 6, 7, 8, 9, 10]);
-    expect(constantsFor(2)).toEqual({ d2: 1.13, a2: 1.88, d3: 0, d4: 3.27 });
-    expect(constantsFor(10)).toEqual({ d2: 3.08, a2: 0.31, d3: 0.223, d4: 1.78 });
-    expect(() => constantsFor(1)).toThrowError(RangeError);
-    expect(() => constantsFor(11)).toThrowError(RangeError);
+  it('propose les tailles d\u2019\u00e9chantillon de 2 \u00e0 25', () => {
+    expect(SAMPLE_SIZES.length).toBe(24);
+    expect(SAMPLE_SIZES[0]).toBe(2);
+    expect(SAMPLE_SIZES[SAMPLE_SIZES.length - 1]).toBe(MAX_SUBGROUP_SIZE);
+    expect(MAX_SUBGROUP_SIZE).toBe(25);
+    expect(RANGE_CHART_MAX).toBe(10);
+  });
+
+  it('propose les sous-groupes un \u00e0 un jusqu\u2019\u00e0 20, puis par paliers jusqu\u2019\u00e0 100', () => {
+    expect(SUBGROUP_COUNTS.slice(0, 19)).toEqual([
+      2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
+    ]);
+    expect(SUBGROUP_COUNTS.slice(19)).toEqual([25, 30, 40, 50, 60, 80, 100]);
+    expect(MAX_SUBGROUPS).toBe(100);
+  });
+
+  it('choisit la carte X\u0304 \u2013 R jusqu\u2019\u00e0 dix mesures, la carte X\u0304 \u2013 S au-del\u00e0', () => {
+    for (let n = 2; n <= RANGE_CHART_MAX; n++) {
+      expect(chartFactors(n).chart).toBe('RANGE');
+    }
+    for (let n = RANGE_CHART_MAX + 1; n <= MAX_SUBGROUP_SIZE; n++) {
+      expect(chartFactors(n).chart).toBe('STDEV');
+    }
+    expect(chartFactors(2)).toEqual({
+      n: 2, chart: 'RANGE', sigmaDivisor: 1.13, meanFactor: 1.88,
+      dispersionLower: 0, dispersionUpper: 3.27
+    });
+    expect(chartFactors(10)).toEqual({
+      n: 10, chart: 'RANGE', sigmaDivisor: 3.08, meanFactor: 0.31,
+      dispersionLower: 0.223, dispersionUpper: 1.78
+    });
+  });
+
+  it('refuse une taille hors du domaine des deux tables, sans rien calculer', () => {
+    expect(() => chartFactors(1)).toThrowError(RangeError);
+    expect(() => chartFactors(26)).toThrowError(RangeError);
+    expect(() => chartFactors(5.5)).toThrowError(RangeError);
+  });
+
+  /**
+   * Le banc des constantes de la carte X\u0304 \u2013 S : les valeurs CALCUL\u00c9ES sont
+   * confront\u00e9es aux valeurs PUBLI\u00c9ES (Montgomery, « Introduction to Statistical
+   * Quality Control », annexe VI ; ASTM STP-15D), imprim\u00e9es \u00e0 trois d\u00e9cimales.
+   */
+  it('calcule c4, A3, B3 et B4 conform\u00e9ment \u00e0 la table publi\u00e9e', () => {
+    const publiee: [number, number, number, number, number][] = [
+      [2, 0.7979, 2.659, 0, 3.267],
+      [5, 0.94, 1.427, 0, 2.089],
+      [10, 0.9727, 0.975, 0.284, 1.716],
+      [11, 0.9754, 0.927, 0.321, 1.679],
+      [12, 0.9776, 0.886, 0.354, 1.646],
+      [15, 0.9823, 0.789, 0.428, 1.572],
+      [20, 0.9869, 0.68, 0.51, 1.49],
+      [25, 0.9896, 0.606, 0.565, 1.435]
+    ];
+    for (const [n, c, a3, b3, b4] of publiee) {
+      const k = stdevConstants(n);
+      expect(k.c4).toBeCloseTo(c, 3);
+      expect(k.a3).toBeCloseTo(a3, 3);
+      expect(k.b3).toBeCloseTo(b3, 3);
+      expect(k.b4).toBeCloseTo(b4, 3);
+    }
+    expect(STDEV_CONSTANT_ROWS.map(r => r.n)).toEqual([...SAMPLE_SIZES]);
+  });
+
+  it('d\u00e9roule \u0393(k / 2) depuis \u0393(1) = 1 et \u0393(1/2) = \u221a\u03c0', () => {
+    expect(gammaHalf(1)).toBeCloseTo(Math.sqrt(Math.PI), 12);
+    expect(gammaHalf(2)).toBe(1);
+    expect(gammaHalf(10)).toBeCloseTo(24, 9);
+    expect(gammaHalf(11)).toBeCloseTo(52.34277778, 6);
+    expect(c4(2)).toBeCloseTo(0.797884561, 9);
+  });
+
+  it('mesure la dispersion par l\u2019\u00e9tendue ou par l\u2019\u00e9cart-type, selon la carte', () => {
+    expect(dispersionOf([10, 11, 12, 13, 14], 'RANGE')).toBe(4);
+    // Onze mesures de moyenne 20 : \u03a3(x \u2212 x\u0304)\u00b2 = 10, donc s = \u221a(10 / 10) = 1.
+    expect(dispersionOf([21, 21, 21, 21, 21, 19, 19, 19, 19, 19, 20], 'STDEV')).toBeCloseTo(1, 12);
+    expect(dispersionOf([7, 7, 7], 'RANGE')).toBe(0);
+    expect(dispersionOf([7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7], 'STDEV')).toBe(0);
+  });
+
+  /**
+   * Le chemin dor\u00e9 de la carte X\u0304 \u2013 S, calcul\u00e9 \u00e0 la main (m\u00eames valeurs que
+   * le banc serveur `CapabilityCalculationTest#cheminDoreCarteS`) : deux
+   * sous-groupes de onze mesures d\u2019\u00e9cart-type exactement 1, X\u0304\u0304 = 21,
+   * c4(11) = 0,975350, A3 = 0,927394, B3 = 0,321280, B4 = 1,678720, donc
+   * \u03c3 = 1 / c4 = 1,0252729 et Cp = Cpk = 12 / (6 \u03c3) = 1,9507002.
+   */
+  it('rend, sur la carte X\u0304 \u2013 S, les valeurs calcul\u00e9es \u00e0 la main', () => {
+    const ecarts = [1, 1, 1, 1, 1, -1, -1, -1, -1, -1, 0];
+    const grille: Measurement[][] = ecarts.map(e => [20 + e, 22 + e]);
+
+    const c = computeCapability(15, 27, 11, grille);
+
+    expect(c.dispersionChart).toBe('STDEV');
+    expect(c.completeSubgroups).toBe(2);
+    expect(c.subgroupMeans).toEqual([20, 22]);
+    expect(c.subgroupRanges[0]!).toBeCloseTo(1, 12);
+    expect(c.meanRange!).toBeCloseTo(1, 12);
+    expect(c.sigma!).toBeCloseTo(1.0252729, 6);
+    expect(c.cp!).toBeCloseTo(1.9507002, 6);
+    expect(c.cpk!).toBeCloseTo(1.9507002, 6);
+    expect(c.meanUcl!).toBeCloseTo(21.9273942, 6);
+    expect(c.meanLcl!).toBeCloseTo(20.0726058, 6);
+    expect(c.rangeUcl!).toBeCloseTo(1.6787199, 6);
+    expect(c.rangeLcl!).toBeCloseTo(0.3212801, 6);
+    expect(c.dispersionPercent!).toBeCloseTo(51.2636449, 6);
+    expect(c.centerOffset!).toBeCloseTo(0, 12);
+  });
+
+  it('calcule cent sous-groupes comme vingt', () => {
+    const grille: Measurement[][] = [
+      Array<Measurement>(MAX_SUBGROUPS).fill(9),
+      Array<Measurement>(MAX_SUBGROUPS).fill(11)
+    ];
+
+    const c = computeCapability(5, 15, 2, grille);
+
+    expect(c.completeSubgroups).toBe(100);
+    expect(c.grandMean!).toBeCloseTo(10, 12);
+    expect(c.meanRange!).toBeCloseTo(2, 12);
+    expect(c.sigma!).toBeCloseTo(2 / 1.13, 9);
   });
 
   it('classe un Cpk au regard des seuils', () => {

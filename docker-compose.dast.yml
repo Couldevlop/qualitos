@@ -31,7 +31,11 @@ services:
       # (compose dev). Tmpfs : pas de volume nommé, base éphémère (jetable après scan).
       - "55432:5432"
     tmpfs:
-      - /var/lib/postgresql/data
+      # Bornee a 512 Mo : un tmpfs sans taille peut prendre la MOITIE de la RAM
+      # de l'hote. Sur le runner, cette memoire se dispute celle du tas de ZAP
+      # et de celui de l'engine — et c'est la VM entiere qui tombe, pas le
+      # conteneur. La base d'un scan jetable tient tres largement dedans.
+      - /var/lib/postgresql/data:size=512m
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U qualitos -d qualitos_quality"]
       interval: 5s
@@ -55,6 +59,11 @@ services:
       KEYCLOAK_URL: http://keycloak-absent:8080
       KEYCLOAK_REALM: qualitos
       SPRING_PROFILES_ACTIVE: dev
+      # Sans borne, la JVM prend 25 % de la RAM VISIBLE (4 Go sur un runner de
+      # 16) et les garde une fois prise. Cette instance ne sert qu'a repondre a
+      # un scan : 1 Go suffit, et les 3 Go rendus manquaient ailleurs.
+      JAVA_TOOL_OPTIONS: "-Xmx1g"
+
     ports:
       # 8092 (hôte) → 8082 (conteneur) : 8082 est pris par la stack dev.
       - "8092:8082"

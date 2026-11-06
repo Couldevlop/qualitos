@@ -7762,6 +7762,10 @@ Portail clients</source>
         <source>Couleur secondaire</source>
         <target state="translated">اللون الثانوي</target>
       </trans-unit>
+      <trans-unit id="admin.clients.color-default" datatype="html">
+        <source>Celle du thème</source>
+        <target state="translated">لون السمة</target>
+      </trans-unit>
       <trans-unit id="admin.clients.color-note" datatype="html">
         <source>Une couleur illisible sur le fond du thème est refusée par le serveur : le contraste prime sur la charte.</source>
         <target state="translated">يرفض الخادم أي لون غير مقروء على خلفية السمة: التباين يسبق دليل العلامة.</target>
@@ -10806,13 +10810,9 @@ Portail clients</source>
         <source>Choisissez une sévérité.</source>
         <target state="translated">اختر درجة الخطورة.</target>
       </trans-unit>
-      <trans-unit id="nc.create.photo-take" datatype="html">
-        <source>Prendre une photo</source>
-        <target state="translated">التقاط صورة</target>
-      </trans-unit>
       <trans-unit id="nc.create.photo-choose" datatype="html">
-        <source>Choisir des photos</source>
-        <target state="translated">اختيار صور</target>
+        <source>Ajouter des photos</source>
+        <target state="translated">إضافة صور</target>
       </trans-unit>
       <trans-unit id="nc.create.photo-remove-tooltip" datatype="html">
         <source>Retirer cette photo</source>
@@ -21247,8 +21247,12 @@ historique 12 mois</source>
         <target state="translated">تعذّرت استعادة الدليل.</target>
       </trans-unit>
       <trans-unit id="nc.create.subcategory" datatype="html">
-        <source>Nature de l'écart</source>
-        <target state="translated">نوع الانحراف</target>
+        <source>Sous-catégorie</source>
+        <target state="translated">الفئة الفرعية</target>
+      </trans-unit>
+      <trans-unit id="nc.create.subcategory-hint" datatype="html">
+        <source>Choisissez d’abord une catégorie.</source>
+        <target state="translated">اختر فئة أولاً.</target>
       </trans-unit>
       <trans-unit id="nc.create.subcategory-none" datatype="html">
         <source>— À classer —</source>
@@ -21265,6 +21269,10 @@ historique 12 mois</source>
       <trans-unit id="capa.open.containment-hint" datatype="html">
         <source>Mesure immédiate : elle contient l'effet. Le dossier reste correctif — sa clôture demandera une action qui supprime la cause.</source>
         <target state="translated">إجراء فوري: يحتوي الأثر. يبقى الملف تصحيحيًا — وسيقتضي إغلاقه إجراءً يُزيل السبب.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.blockers" datatype="html">
+        <source>Ce qui empêche encore d’aller plus loin :</source>
+        <target state="translated">ما يحول دون المضي قدمًا:</target>
       </trans-unit>
       <trans-unit id="dmaic.detail.complete-hint" datatype="html">
         <source>Le projet se clôture quand toute la fiche est renseignée et que chaque action est à 100 %.</source>
@@ -21501,6 +21509,394 @@ historique 12 mois</source>
       <trans-unit id="offline.queue.empty-hint" datatype="html">
         <source>Les audits 5S saisis hors connexion apparaîtront ici jusqu'à leur synchronisation.</source>
         <target state="translated">ستظهر تدقيقات 5S المسجّلة دون اتصال هنا حتى تتم مزامنتها.</target>
+      </trans-unit>
+      <trans-unit id="partner.scope.read" datatype="html">
+        <source>Consultation</source>
+        <target state="translated">قراءة فقط</target>
+      </trans-unit>
+      <trans-unit id="partner.scope.intervene" datatype="html">
+        <source>Intervention</source>
+        <target state="translated">تدخّل</target>
+      </trans-unit>
+      <trans-unit id="partner.status.proposed" datatype="html">
+        <source>En attente de votre décision</source>
+        <target state="translated">في انتظار قرارك</target>
+      </trans-unit>
+      <trans-unit id="partner.status.open" datatype="html">
+        <source>Ouvert</source>
+        <target state="translated">مفتوح</target>
+      </trans-unit>
+      <trans-unit id="partner.status.scheduled" datatype="html">
+        <source>Accordé, hors période</source>
+        <target state="translated">ممنوح، خارج المدة</target>
+      </trans-unit>
+      <trans-unit id="partner.status.declined" datatype="html">
+        <source>Refusé</source>
+        <target state="translated">مرفوض</target>
+      </trans-unit>
+      <trans-unit id="partner.status.revoked" datatype="html">
+        <source>Repris</source>
+        <target state="translated">مسحوب</target>
+      </trans-unit>
+      <trans-unit id="partner.brand.console" datatype="html">
+        <source>Console cabinet</source>
+        <target state="translated">لوحة المكتب</target>
+      </trans-unit>
+      <trans-unit id="partner.user.logout" datatype="html">
+        <source>Se déconnecter</source>
+        <target state="translated">تسجيل الخروج</target>
+      </trans-unit>
+      <trans-unit id="partner.portfolio.title" datatype="html">
+        <source>Mon portefeuille</source>
+        <target state="translated">محفظتي</target>
+      </trans-unit>
+      <trans-unit id="partner.portfolio.subtitle" datatype="html">
+        <source>Les clients qui vous ont ouvert un accès, et jusqu’à quand.</source>
+        <target state="translated">العملاء الذين منحوك وصولًا، وإلى متى.</target>
+      </trans-unit>
+      <trans-unit id="partner.portfolio.reload" datatype="html">
+        <source>Recharger</source>
+        <target state="translated">إعادة التحميل</target>
+      </trans-unit>
+      <trans-unit id="partner.portfolio.loading" datatype="html">
+        <source>Chargement de votre portefeuille…</source>
+        <target state="translated">جارٍ تحميل محفظتك…</target>
+      </trans-unit>
+      <trans-unit id="partner.portfolio.until" datatype="html">
+        <source>Jusqu’au</source>
+        <target state="translated">حتى</target>
+      </trans-unit>
+      <trans-unit id="partner.portfolio.unlinked" datatype="html">
+        <source>Votre compte n’est rattaché à aucun cabinet. Demandez à votre cabinet de vous inscrire avec l’adresse de courriel de ce compte.</source>
+        <target state="translated">حسابك غير مرتبط بأي مكتب. اطلب من مكتبك تسجيلك بعنوان البريد الإلكتروني لهذا الحساب.</target>
+      </trans-unit>
+      <trans-unit id="partner.portfolio.empty" datatype="html">
+        <source>Aucun client ne vous a ouvert d’accès aujourd’hui. Un accès prend fin à sa date de terme, sans préavis : si une mission vient de se terminer, elle a quitté cette liste.</source>
+        <target state="translated">لا يوجد اليوم أي عميل بوصول مفتوح لك. ينتهي الوصول في تاريخ انتهائه دون إشعار: فإذا انتهت مهمة للتو فقد خرجت من هذه القائمة.</target>
+      </trans-unit>
+      <trans-unit id="partner.portfolio.link-failed" datatype="html">
+        <source>Votre compte n’a pas pu être rattaché à votre cabinet.</source>
+        <target state="translated">تعذّر ربط حسابك بمكتبك.</target>
+      </trans-unit>
+      <trans-unit id="partner.portfolio.load-failed" datatype="html">
+        <source>Votre portefeuille n’a pas pu être chargé.</source>
+        <target state="translated">تعذّر تحميل محفظتك.</target>
+      </trans-unit>
+      <trans-unit id="partner.access.title" datatype="html">
+        <source>Cabinets</source>
+        <target state="translated">المكاتب</target>
+      </trans-unit>
+      <trans-unit id="partner.access.subtitle" datatype="html">
+        <source>Qui, hors de votre organisation, peut entrer dans vos données — et jusqu’à quand.</source>
+        <target state="translated">من يمكنه، من خارج مؤسستك، الدخول إلى بياناتك — وإلى متى.</target>
+      </trans-unit>
+      <trans-unit id="partner.access.reload" datatype="html">
+        <source>Recharger</source>
+        <target state="translated">إعادة التحميل</target>
+      </trans-unit>
+      <trans-unit id="partner.access.scope" datatype="html">
+        <source>Un cabinet n’entre chez vous que si vous l’accordez, et son accès prend fin de lui-même à la date que vous fixez. Vous pouvez le reprendre à tout moment ; chaque décision reste dans l’historique.</source>
+        <target state="translated">لا يدخل أي مكتب إلى بياناتك إلا إذا منحته ذلك، وينتهي وصوله من تلقاء نفسه في التاريخ الذي تحدده. ويمكنك سحبه في أي وقت؛ ويبقى كل قرار في السجل.</target>
+      </trans-unit>
+      <trans-unit id="partner.access.pending" datatype="html">
+        <source>En attente de votre décision</source>
+        <target state="translated">في انتظار قرارك</target>
+      </trans-unit>
+      <trans-unit id="partner.access.grant-action" datatype="html">
+        <source>Accorder un accès</source>
+        <target state="translated">منح وصول</target>
+      </trans-unit>
+      <trans-unit id="partner.access.decline-action" datatype="html">
+        <source>Refuser</source>
+        <target state="translated">رفض</target>
+      </trans-unit>
+      <trans-unit id="partner.access.scope-label" datatype="html">
+        <source>Ce que le cabinet pourra faire</source>
+        <target state="translated">ما سيتمكن المكتب من فعله</target>
+      </trans-unit>
+      <trans-unit id="partner.access.ends-on" datatype="html">
+        <source>Terme de l’accès</source>
+        <target state="translated">تاريخ انتهاء الوصول</target>
+      </trans-unit>
+      <trans-unit id="partner.access.purpose" datatype="html">
+        <source>Objet de la mission</source>
+        <target state="translated">موضوع المهمة</target>
+      </trans-unit>
+      <trans-unit id="partner.access.purpose-placeholder" datatype="html">
+        <source>Ex. : préparation de l’audit ISO 9001</source>
+        <target state="translated">مثال: التحضير لتدقيق ISO 9001</target>
+      </trans-unit>
+      <trans-unit id="partner.access.term-help" datatype="html">
+        <source>Un accès sans terme est un accès oublié : la date est obligatoire, et celle proposée est à trois mois.</source>
+        <target state="translated">الوصول بلا أجل هو وصول منسيّ: التاريخ إلزامي، والمقترح بعد ثلاثة أشهر.</target>
+      </trans-unit>
+      <trans-unit id="partner.access.grant-confirm" datatype="html">
+        <source>Accorder</source>
+        <target state="translated">منح</target>
+      </trans-unit>
+      <trans-unit id="partner.access.granted" datatype="html">
+        <source>Accès accordé, et il prendra fin de lui-même à son terme.</source>
+        <target state="translated">تم منح الوصول، وسينتهي من تلقاء نفسه في أجله.</target>
+      </trans-unit>
+      <trans-unit id="partner.access.grant-failed" datatype="html">
+        <source>L’accès n’a pas pu être accordé.</source>
+        <target state="translated">تعذّر منح الوصول.</target>
+      </trans-unit>
+      <trans-unit id="partner.access.declined" datatype="html">
+        <source>Proposition refusée. Aucun accès n’a été ouvert.</source>
+        <target state="translated">تم رفض الاقتراح. لم يُفتح أي وصول.</target>
+      </trans-unit>
+      <trans-unit id="partner.access.decline-failed" datatype="html">
+        <source>La proposition n’a pas pu être refusée.</source>
+        <target state="translated">تعذّر رفض الاقتراح.</target>
+      </trans-unit>
+      <trans-unit id="partner.access.granted-section" datatype="html">
+        <source>Accès accordés</source>
+        <target state="translated">الأوصال الممنوحة</target>
+      </trans-unit>
+      <trans-unit id="partner.access.from" datatype="html">
+        <source>Du</source>
+        <target state="translated">من</target>
+      </trans-unit>
+      <trans-unit id="partner.access.to" datatype="html">
+        <source>au</source>
+        <target state="translated">إلى</target>
+      </trans-unit>
+      <trans-unit id="partner.access.revoke-action" datatype="html">
+        <source>Reprendre</source>
+        <target state="translated">سحب</target>
+      </trans-unit>
+      <trans-unit id="partner.access.revoke-title" datatype="html">
+        <source>Reprendre cet accès ?</source>
+        <target state="translated">سحب هذا الوصول؟</target>
+      </trans-unit>
+      <trans-unit id="partner.access.revoke-message" datatype="html">
+        <source>Le cabinet perdra l’accès immédiatement. La décision reste dans l’historique.</source>
+        <target state="translated">سيفقد المكتب الوصول فورًا. ويبقى القرار في السجل.</target>
+      </trans-unit>
+      <trans-unit id="partner.access.revoked" datatype="html">
+        <source>Accès repris.</source>
+        <target state="translated">تم سحب الوصول.</target>
+      </trans-unit>
+      <trans-unit id="partner.access.revoke-failed" datatype="html">
+        <source>L’accès n’a pas pu être repris.</source>
+        <target state="translated">تعذّر سحب الوصول.</target>
+      </trans-unit>
+      <trans-unit id="partner.access.history" datatype="html">
+        <source>Décisions passées</source>
+        <target state="translated">القرارات السابقة</target>
+      </trans-unit>
+      <trans-unit id="partner.access.load-failed" datatype="html">
+        <source>La liste des cabinets n’a pas pu être chargée.</source>
+        <target state="translated">تعذّر تحميل قائمة المكاتب.</target>
+      </trans-unit>
+      <trans-unit id="partner.access.empty" datatype="html">
+        <source>Aucun cabinet n’a été proposé à votre organisation. Un cabinet partenaire est déclaré par l’éditeur de la plateforme ; vous décidez ensuite s’il entre chez vous.</source>
+        <target state="translated">لم يُقترح أي مكتب على مؤسستك. يُسجّل المكتب الشريك من قبل ناشر المنصّة؛ ثم تقرّر أنت ما إذا كان يدخل إليك.</target>
+      </trans-unit>
+      <trans-unit id="platform.nav.firms" datatype="html">
+        <source>Cabinets</source>
+        <target state="translated">المكاتب</target>
+      </trans-unit>
+      <trans-unit id="platform.nav.firms.hint" datatype="html">
+        <source>Cabinets partenaires, consultants, clients proposés</source>
+        <target state="translated">المكاتب الشريكة والمستشارون والعملاء المقترحون</target>
+      </trans-unit>
+      <trans-unit id="nav.admin-firms" datatype="html">
+        <source>Cabinets</source>
+        <target state="translated">المكاتب</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.title" datatype="html">
+        <source>Cabinets partenaires</source>
+        <target state="translated">المكاتب الشريكة</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.subtitle" datatype="html">
+        <source>Les cabinets qui interviennent chez vos clients, leurs consultants, et les clients qui leur ont été proposés.</source>
+        <target state="translated">المكاتب التي تتدخل لدى عملائك، ومستشاروها، والعملاء الذين اقتُرحوا لها.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.reload" datatype="html">
+        <source>Recharger</source>
+        <target state="translated">إعادة التحميل</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.new" datatype="html">
+        <source>Nouveau cabinet</source>
+        <target state="translated">مكتب جديد</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.scope" datatype="html">
+        <source>Vous déclarez un cabinet et lui proposez des clients. Vous n’ouvrez aucun accès : chaque client décide lui-même d’accorder, et fixe le terme.</source>
+        <target state="translated">أنت تسجّل المكتب وتقترح له عملاء. ولا تفتح أي وصول: كل عميل يقرّر المنح بنفسه ويحدّد الأجل.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.name" datatype="html">
+        <source>Raison sociale</source>
+        <target state="translated">الاسم القانوني</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.slug" datatype="html">
+        <source>Repère</source>
+        <target state="translated">المعرّف</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.slug-placeholder" datatype="html">
+        <source>Ex. : qualiconseil</source>
+        <target state="translated">مثال: qualiconseil</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.slug-hint" datatype="html">
+        <source>Minuscules, chiffres et tirets. Définitif.</source>
+        <target state="translated">حروف صغيرة وأرقام وشرطات. نهائي.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.registration" datatype="html">
+        <source>Numéro d’immatriculation</source>
+        <target state="translated">رقم التسجيل</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.contact-email" datatype="html">
+        <source>Courriel de contact</source>
+        <target state="translated">بريد التواصل</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.contact-phone" datatype="html">
+        <source>Téléphone</source>
+        <target state="translated">الهاتف</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.create" datatype="html">
+        <source>Créer le cabinet</source>
+        <target state="translated">إنشاء المكتب</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.create-failed" datatype="html">
+        <source>Le cabinet n’a pas pu être créé.</source>
+        <target state="translated">تعذّر إنشاء المكتب.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.deactivate-title" datatype="html">
+        <source>Désactiver ce cabinet ?</source>
+        <target state="translated">تعطيل هذا المكتب؟</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.deactivate-message" datatype="html">
+        <source>Ses consultants perdront immédiatement tous leurs accès. Les accords des clients sont conservés et reprendront effet si vous le réactivez.</source>
+        <target state="translated">سيفقد مستشاروه جميع أوصالهم فورًا. وتُحفظ اتفاقات العملاء وتعود إلى السريان إذا أعدت تنشيطه.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.deactivate-action" datatype="html">
+        <source>Désactiver</source>
+        <target state="translated">تعطيل</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.activate-action" datatype="html">
+        <source>Réactiver</source>
+        <target state="translated">إعادة التنشيط</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.inactive" datatype="html">
+        <source>Inactif</source>
+        <target state="translated">غير نشط</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.toggle-failed" datatype="html">
+        <source>L’état du cabinet n’a pas pu être changé.</source>
+        <target state="translated">تعذّر تغيير حالة المكتب.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.consultant-count" datatype="html">
+        <source><x id="INTERPOLATION"/> consultants</source>
+        <target state="translated"><x id="INTERPOLATION"/> مستشارين</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.granted-count" datatype="html">
+        <source><x id="INTERPOLATION"/> missions</source>
+        <target state="translated"><x id="INTERPOLATION"/> مهام</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.consultants" datatype="html">
+        <source>Consultants</source>
+        <target state="translated">المستشارون</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.linked" datatype="html">
+        <source>Rattaché</source>
+        <target state="translated">مرتبط</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.pending-link" datatype="html">
+        <source>Jamais connecté</source>
+        <target state="translated">لم يسجّل الدخول قطّ</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.suspend" datatype="html">
+        <source>Suspendre</source>
+        <target state="translated">تعليق</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.restore" datatype="html">
+        <source>Rétablir</source>
+        <target state="translated">إعادة</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.no-consultant" datatype="html">
+        <source>Aucun consultant inscrit dans ce cabinet.</source>
+        <target state="translated">لا يوجد مستشار مسجّل في هذا المكتب.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.consultant-name" datatype="html">
+        <source>Nom du consultant</source>
+        <target state="translated">اسم المستشار</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.consultant-email" datatype="html">
+        <source>Courriel</source>
+        <target state="translated">البريد الإلكتروني</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.consultant-email-hint" datatype="html">
+        <source>Celui de son compte : c’est par là que le rattachement se fait.</source>
+        <target state="translated">بريد حسابه: فهو ما يتم به الربط.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.add-consultant" datatype="html">
+        <source>Inscrire</source>
+        <target state="translated">تسجيل</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.consultant-added" datatype="html">
+        <source>Consultant inscrit. Son accès s’ouvrira à sa première connexion, par ce courriel.</source>
+        <target state="translated">تم تسجيل المستشار. سيُفتح وصوله عند أول تسجيل دخول له، عبر هذا البريد.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.consultant-failed" datatype="html">
+        <source>Le consultant n’a pas pu être inscrit.</source>
+        <target state="translated">تعذّر تسجيل المستشار.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.consultant-toggle-failed" datatype="html">
+        <source>L’état du consultant n’a pas pu être changé.</source>
+        <target state="translated">تعذّر تغيير حالة المستشار.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.consultants-failed" datatype="html">
+        <source>Les consultants n’ont pas pu être chargés.</source>
+        <target state="translated">تعذّر تحميل المستشارين.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.portfolio" datatype="html">
+        <source>Portefeuille</source>
+        <target state="translated">المحفظة</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.portfolio-failed" datatype="html">
+        <source>Le portefeuille n’a pas pu être chargé.</source>
+        <target state="translated">تعذّر تحميل المحفظة.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.no-mission" datatype="html">
+        <source>Aucun client proposé à ce cabinet.</source>
+        <target state="translated">لم يُقترح أي عميل لهذا المكتب.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.client" datatype="html">
+        <source>Client</source>
+        <target state="translated">العميل</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.proposed-scope" datatype="html">
+        <source>Portée demandée</source>
+        <target state="translated">النطاق المطلوب</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.proposed-purpose" datatype="html">
+        <source>Objet de la mission</source>
+        <target state="translated">موضوع المهمة</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.propose" datatype="html">
+        <source>Proposer</source>
+        <target state="translated">اقتراح</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.proposed" datatype="html">
+        <source>Client proposé. Aucun accès n’est ouvert : son administrateur décide.</source>
+        <target state="translated">تم اقتراح العميل. لا يُفتح أي وصول: مسؤوله هو من يقرّر.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.propose-failed" datatype="html">
+        <source>Le client n’a pas pu être proposé.</source>
+        <target state="translated">تعذّر اقتراح العميل.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.awaiting" datatype="html">
+        <source>En attente du client</source>
+        <target state="translated">في انتظار العميل</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.load-failed" datatype="html">
+        <source>La liste des cabinets n’a pas pu être chargée.</source>
+        <target state="translated">تعذّر تحميل قائمة المكاتب.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.empty" datatype="html">
+        <source>Aucun cabinet partenaire n’est déclaré. Un cabinet regroupe des consultants externes à qui vos clients peuvent ouvrir un accès daté.</source>
+        <target state="translated">لا يوجد أي مكتب شريك مسجّل. يجمع المكتب مستشارين خارجيين يمكن لعملائك فتح وصول مؤقّت لهم.</target>
       </trans-unit>
       <trans-unit id="pdca.detail.col-evidence" datatype="html">
         <source>Preuve</source>
@@ -27946,10 +28342,6 @@ historique 12 mois</source>
         <source>Étude de capabilité <x id="part"/></source>
         <target state="translated">دراسة القدرة <x id="part"/></target>
       </trans-unit>
-      <trans-unit id="spc.study.subtitle" datatype="html">
-        <source>Cartes de contrôle X̄ – R. Saisissez les mesures dans les cellules jaunes ; tout le reste se calcule.</source>
-        <target state="translated">مخططات التحكم X̄ – R. أدخل القياسات في الخلايا الصفراء؛ ويُحسب كل ما تبقى تلقائياً.</target>
-      </trans-unit>
       <trans-unit id="spc.study.back" datatype="html">
         <source>Registre</source>
         <target state="translated">السجل</target>
@@ -28002,9 +28394,73 @@ historique 12 mois</source>
         <source>USL (limite supérieure)</source>
         <target state="translated">USL (الحد الأعلى)</target>
       </trans-unit>
-      <trans-unit id="spc.study.subgroup-size" datatype="html">
-        <source>Taille du sous-groupe (n)</source>
-        <target state="translated">حجم المجموعة الفرعية (n)</target>
+      <trans-unit id="spc.study.sample-size" datatype="html">
+        <source>Taille d'échantillon (n)</source>
+        <target state="translated">حجم العينة (n)</target>
+      </trans-unit>
+      <trans-unit id="spc.study.subgroup-count-label" datatype="html">
+        <source>Nombre de sous-groupes</source>
+        <target state="translated">عدد المجموعات الفرعية</target>
+      </trans-unit>
+      <trans-unit id="spc.study.few-subgroups2" datatype="html">
+        <source>Moins de <x id="FLOOR"/> sous-groupes : les limites de contrôle restent indicatives.</source>
+        <target state="translated">أقل من <x id="FLOOR"/> مجموعة فرعية: تبقى حدود التحكم إرشادية.</target>
+      </trans-unit>
+      <trans-unit id="spc.study.grid-recap" datatype="html">
+        <source>Grille : <x id="SIZE"/> mesures par sous-groupe × <x id="COUNT"/> sous-groupes.</source>
+        <target state="translated">الشبكة: <x id="SIZE"/> قياسًا لكل مجموعة × <x id="COUNT"/> مجموعة.</target>
+      </trans-unit>
+      <trans-unit id="spc.study.shrink-title" datatype="html">
+        <source>Retirer des sous-groupes saisis ?</source>
+        <target state="translated">إزالة مجموعات فرعية مسجلة؟</target>
+      </trans-unit>
+      <trans-unit id="spc.study.shrink-message" datatype="html">
+        <source>Les sous-groupes retirés portent des mesures : elles seront perdues. Rien n'est enregistré tant que vous n'enregistrez pas l'étude.</source>
+        <target state="translated">المجموعات المحذوفة تحمل قياسات: ستُفقد. لا يُحفظ شيء حتى تحفظ الدراسة.</target>
+      </trans-unit>
+      <trans-unit id="spc.study.shrink-confirm" datatype="html">
+        <source>Retirer les sous-groupes</source>
+        <target state="translated">إزالة المجموعات</target>
+      </trans-unit>
+      <trans-unit id="spc.study.size-unsupported" datatype="html">
+        <source>Taille d'échantillon hors domaine : les constantes des cartes de contrôle ne sont tabulées que de 2 à <x id="MAX"/> mesures. Rien n'est calculé, pour ne pas afficher un indice faux.</source>
+        <target state="translated">حجم العينة خارج النطاق: ثوابت مخططات التحكم مجدولة من 2 إلى <x id="MAX"/> قياسًا فقط. لا يُحسب شيء حتى لا يُعرض مؤشر خاطئ.</target>
+      </trans-unit>
+      <trans-unit id="spc.study.chart-none" datatype="html">
+        <source>Hors domaine : aucune carte applicable.</source>
+        <target state="translated">خارج النطاق: لا يوجد مخطط مناسب.</target>
+      </trans-unit>
+      <trans-unit id="spc.study.chart-range" datatype="html">
+        <source>Carte X̄ – R (σ = R̄ / d2), jusqu'à <x id="max"/> mesures.</source>
+        <target state="translated">مخطط X̄ – R (σ = R̄ / d2)، حتى <x id="max"/> قياسًا.</target>
+      </trans-unit>
+      <trans-unit id="spc.study.chart-stdev" datatype="html">
+        <source>Carte X̄ – S (σ = s̄ / c4) : au-delà de <x id="max"/> mesures, l'étendue estime mal σ.</source>
+        <target state="translated">مخطط X̄ – S (σ = s̄ / c4): بعد <x id="max"/> قياسًا، يقدر المدى σ بشكل سيئ.</target>
+      </trans-unit>
+      <trans-unit id="spc.study.sigma2" datatype="html">
+        <source>Sigma</source>
+        <target state="translated">سيغما</target>
+      </trans-unit>
+      <trans-unit id="spc.study.dispersion-chart" datatype="html">
+        <source>Carte</source>
+        <target state="translated">مخطط</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.group-dispersion" datatype="html">
+        <source>Carte</source>
+        <target state="translated">مخطط</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.constants-range" datatype="html">
+        <source>Table des constantes — carte X̄ – R</source>
+        <target state="translated">جدول الثوابت — مخطط X̄ – R</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.constants-stdev" datatype="html">
+        <source>Table des constantes — carte X̄ – S</source>
+        <target state="translated">جدول الثوابت — مخطط X̄ – S</target>
+      </trans-unit>
+      <trans-unit id="spc.study.subtitle2" datatype="html">
+        <source>Cartes de contrôle X̄ – R et X̄ – S. Saisissez les mesures dans les cellules jaunes ; tout le reste se calcule.</source>
+        <target state="translated">مخططا التحكم X̄ – R و X̄ – S. أدخل القياسات في الخلايا الصفراء؛ ويُحسب كل ما عدا ذلك.</target>
       </trans-unit>
       <trans-unit id="spc.study.part-required" datatype="html">
         <source>La référence de la pièce est obligatoire.</source>
@@ -28025,22 +28481,6 @@ historique 12 mois</source>
       <trans-unit id="spc.study.measurements" datatype="html">
         <source>Mesures par sous-groupe</source>
         <target state="translated">القياسات حسب المجموعة الفرعية</target>
-      </trans-unit>
-      <trans-unit id="spc.study.subgroup-count" datatype="html">
-        <source><x id="COUNT"/> sous-groupe(s)</source>
-        <target state="translated"><x id="COUNT"/> مجموعة فرعية</target>
-      </trans-unit>
-      <trans-unit id="spc.study.subgroup-add" datatype="html">
-        <source>Ajouter un sous-groupe</source>
-        <target state="translated">إضافة مجموعة فرعية</target>
-      </trans-unit>
-      <trans-unit id="spc.study.subgroup-remove" datatype="html">
-        <source>Retirer le dernier sous-groupe (il doit être vide)</source>
-        <target state="translated">إزالة المجموعة الفرعية الأخيرة (يجب أن تكون فارغة)</target>
-      </trans-unit>
-      <trans-unit id="spc.study.few-subgroups" datatype="html">
-        <source>Moins de 20 sous-groupes : les limites de contrôle restent indicatives.</source>
-        <target state="translated">أقل من 20 مجموعة فرعية: تبقى حدود التحكم إرشادية.</target>
       </trans-unit>
       <trans-unit id="spc.study.sample" datatype="html">
         <source>Échantillon</source>
@@ -28069,10 +28509,6 @@ historique 12 mois</source>
       <trans-unit id="spc.study.grand-mean" datatype="html">
         <source>Moyenne X̿</source>
         <target state="translated">المتوسط X̿</target>
-      </trans-unit>
-      <trans-unit id="spc.study.sigma" datatype="html">
-        <source>Sigma (R̄ / d2)</source>
-        <target state="translated">سيغما (R̄ / d2)</target>
       </trans-unit>
       <trans-unit id="spc.study.controlled" datatype="html">
         <source>Procédé maîtrisé :</source>
@@ -28109,10 +28545,6 @@ historique 12 mois</source>
       <trans-unit id="spc.study.xbar-chart" datatype="html">
         <source>Carte X̄</source>
         <target state="translated">مخطط X̄</target>
-      </trans-unit>
-      <trans-unit id="spc.study.range-chart" datatype="html">
-        <source>Carte R</source>
-        <target state="translated">مخطط R</target>
       </trans-unit>
       <trans-unit id="spc.study.xbar-aria" datatype="html">
         <source>Carte X̄ : moyenne de chaque sous-groupe et limites de contrôle</source>
@@ -28177,10 +28609,6 @@ historique 12 mois</source>
       <trans-unit id="spc.formula.control-limit" datatype="html">
         <source>Limite de contrôle</source>
         <target state="translated">حد التحكم</target>
-      </trans-unit>
-      <trans-unit id="spc.formula.group-range" datatype="html">
-        <source>Carte R</source>
-        <target state="translated">مخطط R</target>
       </trans-unit>
       <trans-unit id="spc.chart.no-data" datatype="html">
         <source>Aucune donnée à tracer.</source>
@@ -28350,10 +28778,6 @@ historique 12 mois</source>
         <source>Formules</source>
         <target state="translated">الصيغ</target>
       </trans-unit>
-      <trans-unit id="spc.formula.constants-title" datatype="html">
-        <source>Table des constantes SPC</source>
-        <target state="translated">جدول ثوابت SPC</target>
-      </trans-unit>
       <trans-unit id="spc.study.process-status" datatype="html">
         <source>Statut du procédé</source>
         <target state="translated">حالة العملية</target>
@@ -28473,6 +28897,18 @@ historique 12 mois</source>
       <trans-unit id="stakeholders.col.requirements" datatype="html">
         <source>Exigences</source>
         <target state="translated">المتطلبات</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.col.requirement" datatype="html">
+        <source>Exigence</source>
+        <target state="translated">المتطلب</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.col.risk" datatype="html">
+        <source>Risque</source>
+        <target state="translated">الخطر</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.col.links" datatype="html">
+        <source>Liens</source>
+        <target state="translated">الارتباطات</target>
       </trans-unit>
       <trans-unit id="stakeholders.col.review" datatype="html">
         <source>Dernière revue</source>
@@ -28729,6 +29165,10 @@ historique 12 mois</source>
       <trans-unit id="stakeholders.requirements-help" datatype="html">
         <source>Ce que cette partie prenante attend, d'où cela vient, et comment vous vous en assurez. Chaque ligne se rattache à un risque, un écart, un audit ou un document.</source>
         <target state="translated">ما يتوقعه هذا الطرف المعني، ومن أين يأتي، وكيف تتحقق منه. يرتبط كل سطر بخطر أو انحراف أو تدقيق أو وثيقة.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirements-caption" datatype="html">
+        <source>Une ligne par exigence : ce qui est attendu, ce que cela fait peser, où elle en est, et à quoi elle est rattachée.</source>
+        <target state="translated">سطر واحد لكل متطلب: ما هو المتوقَّع، وما يترتّب عليه، وفي أي مرحلة هو، وبماذا يرتبط.</target>
       </trans-unit>
       <trans-unit id="stakeholders.requirements-empty" datatype="html">
         <source>Aucune exigence pour le moment. Ajoutez-en une, ou importez un contrat depuis l'assistant IA.</source>
@@ -29009,6 +29449,26 @@ historique 12 mois</source>
       <trans-unit id="stakeholders.assistant.suggest-help" datatype="html">
         <source>Décrivez votre activité : l'assistant propose les familles de parties intéressées qu'un organisme comme le vôtre doit prendre en compte.</source>
         <target state="translated">اوصف نشاطك: يقترح المساعد عائلات الأطراف المعنية التي يجب على منظمة مثل منظمتك أن تأخذها في الحسبان.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.sector.aerospace" datatype="html">
+        <source>Aéronautique</source>
+        <target state="translated">الطيران</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.sector.automotive" datatype="html">
+        <source>Automobile</source>
+        <target state="translated">السيارات</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.sector.food" datatype="html">
+        <source>Agroalimentaire</source>
+        <target state="translated">الصناعات الغذائية</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.sector.medical-devices" datatype="html">
+        <source>Dispositifs médicaux</source>
+        <target state="translated">الأجهزة الطبية</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.sector.services" datatype="html">
+        <source>Services</source>
+        <target state="translated">الخدمات</target>
       </trans-unit>
       <trans-unit id="stakeholders.assistant.sector" datatype="html">
         <source>Secteur d'activité</source>

@@ -1,0 +1,195 @@
+/* Cabinets : trois blocs dans l'ordre où ils se lisent — ce qui attend une
+   décision, ce qui est ouvert, ce qui a été décidé. Peu de lignes, mais chacune
+   porte une décision de sécurité : on les présente en cartes, pas en tableau. */
+
+.echec {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 0;
+  color: var(--qos-fg-primary);
+  font-size: 0.88rem;
+}
+
+.portee,
+.vide {
+  margin: 0 0 20px;
+  max-width: 72ch;
+  color: var(--qos-fg-secondary);
+  font-size: 0.86rem;
+  line-height: 1.55;
+}
+
+.bloc {
+  margin-bottom: 26px;
+}
+
+.bloc__titre {
+  margin: 0 0 10px;
+  /* Hauteur de ligne généreuse : « Décisions passées » et « En attente » ne
+     doivent pas se faire rogner les accents. */
+  line-height: 1.4;
+  font-size: 1rem;
+  font-weight: 650;
+  letter-spacing: 0.01em;
+}
+
+/* ------------------------------------------------------------------ accords */
+
+.accords {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.accord {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 13px 14px;
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: 10px;
+  background: var(--qos-bg-elevated);
+
+  /* Une proposition en attente se distingue : c'est la seule qui demande un
+     geste, et elle doit se voir avant d'être lue. */
+  &--attente {
+    border-left: 3px solid var(--qos-accent-bg);
+  }
+}
+
+.accord__tete {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 9px;
+}
+
+.accord__cabinet {
+  line-height: 1.4;
+  font-size: 0.95rem;
+  font-weight: 650;
+}
+
+.accord__portee,
+.accord__etat {
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: var(--qos-bg-sunken);
+  color: var(--qos-fg-secondary);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.accord__portee--ecriture,
+.accord__etat--ouvert {
+  background: var(--qos-accent-bg-soft);
+  color: var(--qos-accent-fg-soft);
+}
+
+.accord__etat {
+  margin-left: auto;
+}
+
+.accord__objet {
+  margin: 0;
+  color: var(--qos-fg-secondary);
+  font-size: 0.84rem;
+  line-height: 1.5;
+}
+
+.accord__dates {
+  margin: 0;
+  color: var(--qos-fg-secondary);
+  font-size: 0.82rem;
+
+  strong {
+    margin: 0 5px;
+    color: var(--qos-fg-primary);
+    font-weight: 650;
+  }
+}
+
+.accord__gestes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+/* ------------------------------------------------------------------- octroi */
+
+.octroi {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) minmax(160px, 200px);
+  gap: 12px;
+  margin-top: 4px;
+  padding: 13px;
+  border-radius: 9px;
+  background: var(--qos-bg-sunken);
+}
+
+.octroi__objet,
+.octroi__avis,
+.octroi__gestes {
+  grid-column: 1 / -1;
+}
+
+.octroi__avis {
+  margin: 0;
+  color: var(--qos-fg-secondary);
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+.octroi__gestes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* --------------------------------------------------------------- historique */
+
+.passe {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.passe__ligne {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 10px;
+  padding: 7px 10px;
+  border-radius: 7px;
+  color: var(--qos-fg-secondary);
+  font-size: 0.83rem;
+
+  &:nth-child(odd) {
+    background: var(--qos-bg-sunken);
+  }
+}
+
+.passe__cabinet {
+  color: var(--qos-fg-primary);
+  font-weight: 600;
+}
+
+.passe__date {
+  margin-left: auto;
+  color: var(--qos-fg-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 720px) {
+  .octroi {
+    grid-template-columns: 1fr;
+  }
+}

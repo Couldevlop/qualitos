@@ -139,33 +139,90 @@
 
 // ---------- exigences ----------
 
+// Le cadre du tableau : une surface à lui, un filet, et son PROPRE défilement
+// horizontal. La règle globale `.qos-scroll-x` ne porte que dans `.qos-page` —
+// le tiroir est hors de cette page, et sans ce défilement local les colonnes
+// de droite se coupaient à 760 px de tiroir.
 .exigences {
-  display: flex;
-  flex-direction: column;
-  gap: var(--qos-space-2);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.exigence {
   min-width: 0;
-  padding: var(--qos-space-2) var(--qos-space-3);
-  border-radius: var(--qos-radius-md);
-  background: var(--qos-bg-sunken);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
   border: 1px solid var(--qos-border-subtle);
+  border-radius: var(--qos-radius-md);
+  background: var(--qos-bg-app);
 
-  &__tete {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: var(--qos-space-2);
+  &__table {
+    width: 100%;
+    min-width: 44rem;
+    border-collapse: collapse;
   }
 
-  &__texte {
-    min-width: 0;
+  &__legende {
+    caption-side: bottom;
+    padding: var(--qos-space-1) var(--qos-space-2);
+    color: var(--qos-fg-tertiary);
+    font-size: var(--qos-fs-xs);
+    text-align: left;
+  }
+
+  // Un quadrillage complet, comme un tableau de tableur : chaque cellule porte
+  // ses quatre cotes. Avec les seuls filets horizontaux, l'oeil ne savait pas
+  // ou finissait « Statut » et ou commencait « Liens » sur une ligne haute,
+  // et les colonnes se lisaient de travers.
+  th,
+  td {
+    padding: var(--qos-space-1) var(--qos-space-2);
+    border: 1px solid var(--qos-border-subtle);
+    text-align: left;
+    vertical-align: top;
+  }
+
+  // Les en-têtes : une bande sobre et creusée, qui donne au tableau son arête
+  // haute. (Pas de `position: sticky` ici : le cadre ne défile pas
+  // verticalement — c'est le tiroir qui défile — et un en-tête collé au cadre
+  // n'aurait rien suivi.)
+  thead th {
+    background: var(--qos-bg-sunken);
+    color: var(--qos-fg-secondary);
+    font-size: var(--qos-fs-xs);
+    font-weight: var(--qos-fw-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+    // La bande d'en-tete est franche : c'est elle qui donne au tableau son
+    // arete haute et qui nomme les colonnes du quadrillage.
+    border-color: var(--qos-border-strong);
+    border-bottom-width: 2px;
+  }
+
+  // Une ligne sur deux teintee : sur un tableau large, c'est ce qui empeche de
+  // sauter d'une ligne a l'autre en relisant la colonne « Liens ». Le survol
+  // reste plus marque que le zebrage, sans quoi on ne saurait plus quelle
+  // ligne la souris designe.
+  tbody tr:nth-child(even) {
+    background: var(--qos-bg-subtle);
+  }
+
+  tbody tr {
+    transition: background-color var(--qos-motion-fast);
+
+    &:hover {
+      background: var(--qos-bg-sunken);
+    }
+  }
+
+  // L'exigence elle-même : la colonne qui porte le sens, donc celle qui prend
+  // la place restante. Son origine et ses métadonnées en dessous, en retrait.
+  &__sujet {
+    width: 40%;
+    min-width: 16rem;
+    font-weight: var(--qos-fw-regular);
     font-size: var(--qos-fs-sm);
     overflow-wrap: anywhere;
+
+    strong {
+      font-weight: var(--qos-fw-semibold);
+    }
 
     small {
       display: block;
@@ -176,34 +233,106 @@
   &__meta {
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
     gap: var(--qos-space-1) var(--qos-space-2);
-    margin: var(--qos-space-1) 0 0;
-    font-size: var(--qos-fs-xs);
-    color: var(--qos-fg-tertiary);
 
     &:empty {
       display: none;
     }
+
+    // Nature, responsable et indicateur sont TROIS faits distincts. Sans
+    // jalon entre eux ils se lisaient comme une seule phrase --
+    // « ContractuelDirecteur des operationsTaux de service mensuel » -- et
+    // c'est justement cette ligne qu'on parcourt pour situer l'exigence.
+    // Le point median est pose en CSS, donc jamais lu a voix haute par un
+    // lecteur d'ecran, qui entend les trois valeurs separees de toute facon.
+    span + span::before {
+      content: '·';
+      // De l'air des DEUX cotes : colle au mot precedent, le point se lit
+      // comme une ponctuation de ce mot et non comme une separation.
+      margin: 0 var(--qos-space-2) 0 var(--qos-space-1);
+      color: var(--qos-fg-tertiary);
+    }
   }
 
-  &__actions {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--qos-space-1) var(--qos-space-2);
-    margin-top: var(--qos-space-2);
+  // ---------- mise en forme conditionnelle ----------
+  //
+  // La teinte est posee sur la CELLULE, par l'attribut que le gabarit ecrit, et
+  // non par une classe calculee dans le composant : la correspondance
+  // niveau -> couleur se lit alors d'un seul endroit, a cote du quadrillage
+  // qu'elle habille. Elle reste SOUS le zebrage et le survol en opacite, pour
+  // que la ligne survolee se distingue encore.
+  //
+  // La couleur ne porte jamais l'information seule : le libelle (« Eleve »,
+  // « Maitrisee ») est ecrit dans la cellule (WCAG 1.4.1).
+  &__risque {
+    white-space: nowrap;
+
+    &[data-niveau='HIGH'] { background: var(--qos-danger-bg-soft); }
+    &[data-niveau='MEDIUM'] { background: var(--qos-warn-bg-soft); }
+    &[data-niveau='LOW'] { background: var(--qos-success-bg-soft); }
   }
 
   &__statut {
-    width: 10rem;
+    width: 10.5rem;
+
+    &[data-statut='CONTROLLED'] { background: var(--qos-success-bg-soft); }
+    &[data-statut='TO_REASSESS'] { background: var(--qos-warn-bg-soft); }
+    &[data-statut='APPLICABLE'] { background: var(--qos-accent-bg-soft); }
+
+    .mat-mdc-form-field {
+      width: 100%;
+    }
   }
 
+  // Les liens : les rattachements déjà posés d'abord, les gestes ensuite.
   &__liens {
+    min-width: 14rem;
+  }
+
+  &__ouvrir,
+  &__poser {
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
     gap: 2px;
   }
+
+  &__ouvrir {
+    margin-bottom: var(--qos-space-1);
+
+    a {
+      --mdc-text-button-label-text-color: var(--qos-fg-link);
+      font-size: var(--qos-fs-xs);
+    }
+  }
+
+  &__sortie {
+    font-size: 0.9rem;
+    width: 0.9rem;
+    height: 0.9rem;
+    opacity: 0.6;
+  }
+
+  // La colonne de retrait : juste la largeur du bouton, et jamais un libellé
+  // qui laisserait croire à une colonne de données.
+  &__colonne-retrait {
+    width: 1%;
+    white-space: nowrap;
+  }
+}
+
+// Un libellé réservé aux lecteurs d'écran : l'en-tête de la colonne d'actions
+// existe pour eux, mais n'a rien à montrer à l'œil.
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 // Un rattachement déjà posé se voit : le bouton porte l'accent et une coche
@@ -259,25 +388,4 @@
     gap: var(--qos-space-2);
     margin-left: auto;
   }
-}
-
-/* Les liens sortants d'une exigence : une ligne discrete, sous ses metadonnees. */
-.exigence__ouvrir {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--qos-space-1);
-  margin: var(--qos-space-1) 0 0;
-
-  a {
-    --mdc-text-button-label-text-color: var(--qos-fg-link);
-    font-size: var(--qos-fs-xs);
-  }
-}
-
-.exigence__ouvrir-sortie {
-  font-size: 0.9rem;
-  width: 0.9rem;
-  height: 0.9rem;
-  opacity: 0.6;
 }

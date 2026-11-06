@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 
-import { safeErrorMessage } from './error-message';
+import { gateReasons, safeErrorMessage } from './error-message';
 
 /**
  * La traduction d'une erreur HTTP en phrase montrée à l'utilisateur.
@@ -42,6 +42,61 @@ describe('safeErrorMessage', () => {
 
     expect(message).toContain('reconnect');
     expect(message).not.toContain('droits');
+  });
+
+  // ---------- le canal declare des messages pour l'utilisateur ----------
+
+  it('affiche le message que le serveur a RÉDIGÉ pour l’utilisateur', () => {
+    // Sans ce canal, un refus de clôture DMAIC — « 3 point(s) à solder » —
+    // devenait « État incompatible, rechargez la page » : un conseil faux,
+    // puisque recharger ne solde aucune action.
+    const err = new HttpErrorResponse({
+      status: 409,
+      error: { detail: 'org.hibernate.X', userMessage: 'Le projet ne peut pas être clos : 3 point(s) à solder.' }
+    });
+
+    expect(safeErrorMessage(err, FALLBACK)).toBe('Le projet ne peut pas être clos : 3 point(s) à solder.');
+  });
+
+  it('refuse un userMessage qui ressemble à une trace, et retombe sur le générique', () => {
+    // Le canal est déclaré, pas aveugle : un serveur qui y déverserait une pile
+    // d'appels ne doit pas la projeter à l'écran.
+    const trace = new HttpErrorResponse({
+      status: 409,
+      error: { userMessage: 'NullPointerException\n\tat com.openlab.Svc.close(Svc.java:42)' }
+    });
+    const bavard = new HttpErrorResponse({ status: 409, error: { userMessage: 'x'.repeat(301) } });
+
+    expect(safeErrorMessage(trace, FALLBACK)).toContain('État incompatible');
+    expect(safeErrorMessage(bavard, FALLBACK)).toContain('État incompatible');
+  });
+
+  it('ne lit JAMAIS detail, message ou title', () => {
+    const err = new HttpErrorResponse({
+      status: 409,
+      error: { detail: 'uk_secret', message: 'SQLState 23505', title: 'ConstraintViolation' }
+    });
+
+    const rendu = safeErrorMessage(err, FALLBACK);
+    expect(rendu).not.toContain('uk_secret');
+    expect(rendu).not.toContain('23505');
+    expect(rendu).not.toContain('Constraint');
+  });
+
+  it('rend les raisons énumérées, et seulement celles qui sont lisibles', () => {
+    const err = new HttpErrorResponse({
+      status: 409,
+      error: {
+        reasons: ['Action à 60 % : « Revoir le gabarit »', '', 'at com.openlab.Svc.close(Svc.java:42)', 42]
+      }
+    });
+
+    expect(gateReasons(err)).toEqual(['Action à 60 % : « Revoir le gabarit »']);
+  });
+
+  it('rend une liste vide quand le serveur n’énumère rien', () => {
+    expect(gateReasons(erreur(409))).toEqual([]);
+    expect(gateReasons(new HttpErrorResponse({ status: 409, error: { reasons: 'pas un tableau' } }))).toEqual([]);
   });
 
   // ---------- le reste de la table ----------

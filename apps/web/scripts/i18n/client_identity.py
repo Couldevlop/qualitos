@@ -62,6 +62,9 @@ TRANSLATIONS = {
     'admin.clients.secondary-color': (
         'Couleur secondaire', 'Secondary colour', 'Color secundario', 'اللون الثانوي',
         'サブカラー', '辅助色'),
+    'admin.clients.color-default': (
+        'Celle du thème', "The theme's own", 'La del tema', 'لون السمة',
+        'テーマの色', '主题色'),
     'admin.clients.color-note': (
         'Une couleur illisible sur le fond du thème est refusée par le serveur : le contraste '
         'prime sur la charte.',

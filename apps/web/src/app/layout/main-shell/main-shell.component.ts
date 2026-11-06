@@ -9,6 +9,7 @@ import { NotificationView } from '../../core/notifications/notification.types';
 import { NotificationsService } from '../../core/notifications/notifications.service';
 import { ConnectivityService } from '../../core/offline/connectivity.service';
 import { OfflineQueueService } from '../../core/offline/offline-queue.service';
+import { BrandingService } from '../../core/branding/branding.service';
 import { EditionService } from '../../core/edition/edition.service';
 import { Edition } from '../../core/edition/edition.types';
 import { TenantModulesService } from '../../features/admin/tenant-modules.service';
@@ -335,6 +336,14 @@ export class MainShellComponent implements OnInit, OnDestroy {
           roles: ADMIN_ROLES
         },
         {
+          // Les cabinets partenaires et leurs accès (ADR 0106) : l'éditeur
+          // propose, l'administrateur du client accorde et fixe le terme.
+          label: $localize`:@@nav.admin-firms:Cabinets`,
+          route: '/admin/cabinets',
+          icon: 'handshake',
+          roles: ADMIN_ROLES
+        },
+        {
           // Le fournisseur des appels LLM du tenant (ADR 0102) : local et souverain, ou externe.
           label: $localize`:@@nav.admin-ai:Fournisseur d'IA`,
           route: '/admin/ia',
@@ -404,11 +413,17 @@ export class MainShellComponent implements OnInit, OnDestroy {
     private readonly router: Router,
     private readonly modules: TenantModulesService,
     private readonly editions: EditionService,
-    private readonly theme: ThemeService
+    private readonly theme: ThemeService,
+    private readonly branding: BrandingService
   ) {}
 
   ngOnInit(): void {
     this.user$ = this.auth.user();
+    // La marque du client : son theme et ses couleurs. Charge ici et pas dans un
+    // initializer parce qu'elle demande un jeton, qui n'existe pas encore au
+    // demarrage de l'application. Un echec ne rend rien et ne casse rien : on
+    // reste sur les jetons du socle.
+    this.branding.load().subscribe();
     this.themePreference$ = this.theme.preference();
     // Les modules du tenant décident de ce qui est montré, au même titre que les
     // rôles. Un échec de chargement ne doit pas vider la navigation : on retombe

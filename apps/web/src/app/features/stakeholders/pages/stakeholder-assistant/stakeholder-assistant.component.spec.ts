@@ -264,6 +264,30 @@ describe('StakeholderAssistantComponent', () => {
     expect(component.suggestions!.length).toBe(1);
   });
 
+  it('le secteur se CHOISIT dans une liste fermée, il ne se tape pas', () => {
+    // Une saisie libre laissait passer un secteur vague ou mal orthographié :
+    // l'assistant répondait alors à côté sans que rien ne le signale.
+    const el = fixture.nativeElement as HTMLElement;
+    const champ = el.querySelector('[data-test="secteur"]');
+
+    expect(champ).not.toBeNull();
+    expect(champ!.tagName.toLowerCase()).toBe('mat-select');
+    expect(el.querySelector('input[data-test="secteur"]')).toBeNull();
+    expect(component.sectors.length).toBe(5);
+    expect(component.sectors[0]).toBe('Aéronautique');
+  });
+
+  it('le secteur et les caractéristiques tiennent sur la MÊME ligne', () => {
+    // La maquette les met côte à côte : ce sont deux moitiés d'une même
+    // description. La classe `large` occupait toute la largeur de la grille et
+    // renvoyait les caractéristiques à la ligne suivante.
+    const saisie = (fixture.nativeElement as HTMLElement).querySelector('.saisie')!;
+    const champs = saisie.querySelectorAll('mat-form-field');
+
+    expect(champs.length).toBe(2);
+    champs.forEach(champ => expect(champ.classList.contains('large')).toBeFalse());
+  });
+
   it('sans secteur, ne demande rien et DIT pourquoi', () => {
     component.suggest();
 

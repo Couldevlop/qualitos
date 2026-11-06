@@ -297,3 +297,34 @@
     padding: var(--qos-space-4);
   }
 }
+
+// Le refus du serveur, énuméré. Un avertissement, pas une erreur : rien n'est
+// cassé, il reste des points à solder.
+.blocage {
+  margin: 0 0 var(--qos-space-4);
+  padding: var(--qos-space-3) var(--qos-space-4);
+  border: 1px solid var(--qos-warning-border, var(--qos-border-strong));
+  border-left-width: 3px;
+  border-radius: var(--qos-radius-md);
+  background: var(--qos-warning-bg-soft, var(--qos-bg-subtle));
+
+  &__titre {
+    margin: 0 0 var(--qos-space-2);
+    font-weight: var(--qos-fw-semibold);
+    color: var(--qos-fg-primary);
+  }
+
+  &__liste {
+    margin: 0;
+    padding-left: var(--qos-space-5);
+    color: var(--qos-fg-secondary);
+    line-height: 1.6;
+
+    // Une phase entiere peut compter quarante points a solder. Sans hauteur
+    // bornee, le refus repousse le projet lui-meme hors de l'ecran : on lit la
+    // liste et on ne retrouve plus ce qu'on etait venu faire. Elle defile.
+    max-height: 18rem;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+}

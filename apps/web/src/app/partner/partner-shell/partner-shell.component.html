@@ -1,0 +1,40 @@
+<div class="qos-partner">
+
+  <header class="qos-partner__topbar">
+    <div class="qos-partner__brand">
+      <img class="qos-partner__logo" src="assets/brand/logo-mark.png"
+           alt="QualitOS" width="30" height="30">
+      <div class="qos-partner__brand-text">
+        <strong>QualitOS</strong>
+        <!-- Le repère n'est pas décoratif : il doit être impossible de croire
+             qu'on regarde son propre espace. -->
+        <small i18n="@@partner.brand.console">Console cabinet</small>
+      </div>
+    </div>
+
+    <ng-container *ngIf="user$ | async as user">
+      <button type="button" class="qos-partner__user"
+              [matMenuTriggerFor]="userMenu"
+              [attr.aria-label]="'Profil ' + user.displayName">
+        <span class="qos-partner__avatar">{{ initials(user.displayName) }}</span>
+        <span class="qos-partner__user-name">{{ user.displayName }}</span>
+        <span class="material-symbols-outlined" aria-hidden="true">expand_more</span>
+      </button>
+
+      <mat-menu #userMenu="matMenu" xPosition="before">
+        <div class="qos-partner__user-head" (click)="$event.stopPropagation()">
+          <span class="qos-partner__user-head-name">{{ user.displayName }}</span>
+          <span class="qos-partner__user-head-roles">{{ user.roles.join(' · ') }}</span>
+        </div>
+        <button mat-menu-item type="button" (click)="logout()">
+          <span class="material-symbols-outlined" aria-hidden="true">logout</span>
+          <span i18n="@@partner.user.logout">Se déconnecter</span>
+        </button>
+      </mat-menu>
+    </ng-container>
+  </header>
+
+  <main class="qos-partner__content">
+    <router-outlet></router-outlet>
+  </main>
+</div>

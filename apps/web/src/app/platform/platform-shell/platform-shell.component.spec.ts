@@ -49,7 +49,7 @@ describe('PlatformShellComponent', () => {
     .map(el => el.textContent!.trim());
 
   it('n’affiche que des entrées d’administration de plateforme', () => {
-    expect(liens()).toEqual(['Clients', 'Catalogue des modules']);
+    expect(liens()).toEqual(['Clients', 'Cabinets', 'Catalogue des modules']);
   });
 
   it('ne mène vers aucun écran qualité', () => {
@@ -61,9 +61,9 @@ describe('PlatformShellComponent', () => {
   });
 
   it('ne liste aucune entrée qui ne mène nulle part', () => {
-    // Les quatre surfaces prévues (cabinets, paramétrage central, piste
-    // d’audit, statistiques) arrivent dans leurs lots. Les annoncer avant
-    // produirait quatre liens morts, et un lien mort dans une console
+    // Les trois surfaces prévues (paramétrage central, piste d’audit,
+    // statistiques) arrivent dans leurs lots. Les annoncer avant
+    // produirait trois liens morts, et un lien mort dans une console
     // d’administration se lit comme une panne.
     expect(component.entries.every(e => e.route && e.label && e.hint)).toBeTrue();
   });

@@ -156,7 +156,20 @@ export class NcCreateDialogComponent implements OnInit {
     // Comme le référentiel produit : une aide au classement, pas un préalable.
     // Son indisponibilité ne doit pas empêcher de déclarer un écart constaté.
     this.nc.subcategories().pipe(catchError(() => of({ entries: [] as NcSubcategory[], defaults: true })))
-      .subscribe(c => (this.subcategories = c.entries));
+      .subscribe(c => {
+        this.subcategories = c.entries;
+        // Le catalogue arrive après coup : sans ce rappel, un champ ouvert sur
+        // une catégorie déjà choisie resterait éteint.
+        this.syncSubcategoryState();
+      });
+    // L'etat du champ suit la CATEGORIE, pas le clic qui la change : branche sur
+    // l'evenement du gabarit, il restait eteint des que la categorie etait posee
+    // autrement -- par un brouillon rechargé, ou par du code. C'est la valeur qui
+    // commande, l'evenement n'en est qu'une des causes.
+    // (Pas de desabonnement : le formulaire appartient au composant et disparait
+    // avec lui, comme les deux abonnements ci-dessus.)
+    this.form.controls.category.valueChanges.subscribe(() => this.syncSubcategoryState());
+    this.syncSubcategoryState();
   }
 
   /**
@@ -177,6 +190,28 @@ export class NcCreateDialogComponent implements OnInit {
   onCategoryChange(): void {
     if (this.form.getRawValue().subcategoryCode) {
       this.form.patchValue({ subcategoryCode: '' });
+    }
+    this.syncSubcategoryState();
+  }
+
+  /**
+   * Le champ de sous-catégorie est PRÉSENT dès l'ouverture, et désactivé tant
+   * qu'aucune catégorie n'est choisie.
+   *
+   * <p>Il n'apparaissait qu'une fois la catégorie retenue. Personne ne cherche
+   * un champ dont rien n'annonce l'existence : le déclarant laissait la
+   * sous-catégorie vide en croyant qu'il n'y en avait pas pour sa catégorie, et
+   * les NC arrivaient non classées dans le registre.
+   *
+   * <p>L'état passe par le CONTRÔLE, pas par un {@code [disabled]} de gabarit :
+   * sur un formulaire réactif, cette liaison est ignorée et Angular l'avertit.
+   */
+  private syncSubcategoryState(): void {
+    const champ = this.form.controls.subcategoryCode;
+    if (this.subcategoryChoices.length) {
+      if (champ.disabled) champ.enable({ emitEvent: false });
+    } else if (champ.enabled) {
+      champ.disable({ emitEvent: false });
     }
   }
 

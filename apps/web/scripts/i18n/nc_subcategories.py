@@ -155,8 +155,12 @@ TRANSLATIONS = {
 
     # --- saisie et registre des NC ------------------------------------------
     'nc.create.subcategory': (
-        "Nature de l'écart", 'Nature of the deviation', 'Naturaleza de la desviación',
-        'نوع الانحراف', '逸脱の性質', '偏差性质'),
+        'Sous-catégorie', 'Sub-category', 'Subcategoría',
+        'الفئة الفرعية', 'サブカテゴリ', '子类别'),
+    'nc.create.subcategory-hint': (
+        'Choisissez d’abord une catégorie.', 'Choose a category first.',
+        'Elija primero una categoría.', 'اختر فئة أولاً.',
+        'まずカテゴリを選んでください。', '请先选择类别。'),
     'nc.create.subcategory-none': (
         '— À classer —', '— To be classified —', '— Por clasificar —',
         '— للتصنيف —', '— 未分類 —', '— 待分类 —'),
@@ -179,6 +183,13 @@ TRANSLATIONS = {
         'إجراء فوري: يحتوي الأثر. يبقى الملف تصحيحيًا — وسيقتضي إغلاقه إجراءً يُزيل السبب.',
         '即時措置：影響を封じ込めます。案件は是正のままで、終結には原因を除去する処置が必要です。',
         '即时措施：遏制影响。案卷仍为纠正性——结案需要一项消除原因的措施。'),
+    'dmaic.detail.blockers': (
+        'Ce qui empêche encore d’aller plus loin :',
+        'What still stands in the way:',
+        'Lo que aún lo impide:',
+        'ما يحول دون المضي قدمًا:',
+        '先に進めない理由：',
+        '仍然阻碍继续的原因：'),
     'dmaic.detail.complete-hint': (
         'Le projet se clôture quand toute la fiche est renseignée et que chaque action est à 100 %.',
         'The project closes once the whole sheet is filled in and every action is at 100%.',

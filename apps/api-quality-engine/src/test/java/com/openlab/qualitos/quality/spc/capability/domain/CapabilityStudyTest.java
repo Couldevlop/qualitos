@@ -185,7 +185,10 @@ class CapabilityStudyTest {
     @Test
     void laTailleDuSousGroupeEstObligatoireEtDansLaTable() {
         refuse(avec(c -> { c.n = null; return c; }), "subgroupSize");
-        refuse(avec(c -> { c.n = 11; return c; }), "subgroupSize");
+        // Onze echantillons par sous-groupe est desormais admis (carte X̄ - S) ;
+        // vingt-six sort du domaine des deux cartes, et c'est la taille qui est refusee.
+        refuse(avec(c -> { c.n = 26; return c; }), "subgroupSize");
+        refuse(avec(c -> { c.n = 1; return c; }), "subgroupSize");
     }
 
     @Test
@@ -201,7 +204,7 @@ class CapabilityStudyTest {
 
         // Et les bornes tiennent des deux cotes.
         refuse(avec(c -> { c.grille = tronquee(1); return c; }), "measurements");
-        refuse(avec(c -> { c.grille = elargie(41); return c; }), "measurements");
+        refuse(avec(c -> { c.grille = elargie(101); return c; }), "measurements");
         // Une grille en escalier : refusee, sinon un sous-groupe porterait moins
         // d'echantillons que sa taille annoncee, et le calcul l'ecarterait en silence.
         refuse(avec(c -> {

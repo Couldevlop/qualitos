@@ -135,19 +135,43 @@
         <legend i18n="@@admin.clients.brand">Marque</legend>
         <div class="marque__couleurs">
           <label class="couleur">
-            <span i18n="@@admin.clients.primary-color">Couleur principale</span>
-            <input type="color" formControlName="primaryColor" data-test="client-couleur-1">
+            <span class="couleur__nom" i18n="@@admin.clients.primary-color">Couleur principale</span>
+            <span class="couleur__pastille">
+              <input type="color" formControlName="primaryColor" data-test="client-couleur-1">
+            </span>
+            <!-- La valeur en clair : un aplat de couleur ne se recopie pas dans
+                 une charte graphique, un code hexadecimal si. -->
+            <!-- Tant que rien n'est choisi, le champ natif affiche du NOIR : sans ce
+                 mot, l'ecran laisse croire que le noir a été retenu. -->
+            <code class="couleur__code" *ngIf="identityForm.controls.primaryColor.value as hex; else primaryColorDefaut">{{ hex }}</code>
+            <ng-template #primaryColorDefaut>
+              <span class="couleur__code couleur__code--defaut"
+                    i18n="@@admin.clients.color-default">Celle du thème</span>
+            </ng-template>
           </label>
           <label class="couleur">
-            <span i18n="@@admin.clients.secondary-color">Couleur secondaire</span>
-            <input type="color" formControlName="secondaryColor">
+            <span class="couleur__nom" i18n="@@admin.clients.secondary-color">Couleur secondaire</span>
+            <span class="couleur__pastille">
+              <input type="color" formControlName="secondaryColor">
+            </span>
+            <!-- Tant que rien n'est choisi, le champ natif affiche du NOIR : sans ce
+                 mot, l'ecran laisse croire que le noir a été retenu. -->
+            <code class="couleur__code" *ngIf="identityForm.controls.secondaryColor.value as hex; else secondaryColorDefaut">{{ hex }}</code>
+            <ng-template #secondaryColorDefaut>
+              <span class="couleur__code couleur__code--defaut"
+                    i18n="@@admin.clients.color-default">Celle du thème</span>
+            </ng-template>
           </label>
           <p class="marque__note" i18n="@@admin.clients.color-note">Une couleur illisible sur le fond du thème est refusée par le serveur : le contraste prime sur la charte.</p>
         </div>
 
         <div class="marque__logo">
           <label class="logo__choix">
+            <mat-icon aria-hidden="true">add_photo_alternate</mat-icon>
             <span i18n="@@admin.clients.logo">Logo</span>
+            <!-- Le champ natif reste dans l'arbre, il n'est que masque a l'oeil :
+                 c'est lui qui porte le clavier, le focus et le lecteur d'ecran.
+                 Le remplacer par un bouton qui le declenche couterait tout cela. -->
             <input type="file" accept="image/png,image/jpeg,image/webp" (change)="pickLogo($event)" data-test="client-logo">
           </label>
           <p class="logo__nom" *ngIf="logoName" data-test="logo-nom">

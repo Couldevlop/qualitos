@@ -30,6 +30,7 @@ import sys
 import time
 import urllib.error
 import urllib.request
+import unicodedata
 import uuid
 from datetime import date, datetime, timedelta, timezone
 
@@ -513,17 +514,70 @@ def parties_prenantes(c):
     audit = premier(c.lit('/api/v1/audits/plans?page=0&size=1', 'lecture des audits'), True)
     document = premier(c.lit('/api/v1/documents?page=0&size=1', 'lecture des documents'), True)
 
+    # Les fiches portent leur VRAI nom, sans le suffixe horodate du reste du
+    # script : un registre de parties interessees qui afficherait
+    # « Client SAS (1105182933) » ne se montre pas. La rejouabilite est tenue
+    # autrement -- on relit le registre et on REPREND la fiche qui porte deja ce
+    # nom au lieu d en creer une seconde. Un second passage met donc a jour, ce
+    # qui est justement le geste attendu sur un registre revu periodiquement.
+    def cle(nom):
+        # Comparaison SANS accent ni casse : les passages anterieurs du script
+        # ecrivaient « Aeronef Systemes SAS ». Comparer les chaines telles
+        # quelles creerait un doublon accentue a cote de l ancienne fiche au
+        # lieu de la renommer.
+        sans = unicodedata.normalize('NFKD', nom.split(' (')[0])
+        sans = ''.join(ch for ch in sans if not unicodedata.combining(ch))
+        # Les tirets aussi : « DGAC - autorite » et « DGAC — autorite »
+        # designent la meme partie interessee, et seule la typographie change.
+        for tiret in (u'—', u'–', u'‑'):
+            sans = sans.replace(tiret, '-')
+        return ' '.join(sans.lower().split())
+
+    def exigence_de(fiche, corps, quoi):
+        """Inscrit une exigence, ou REPREND celle qui porte deja ce texte.
+
+        Sans cela, chaque passage du script en ajoutait une copie : apres trois
+        passages la fiche en affichait trois identiques, et l action ouverte
+        depuis la troisieme creait une troisieme CAPA. Un registre d exigences
+        qui grossit a chaque execution n est pas un jeu de demonstration, c est
+        un defaut visible a l ecran.
+
+        Le module n expose pas de mise a jour complete d une exigence -- on
+        reprend donc celle qui existe telle quelle, et les gestes qui suivent
+        (rattachement, action) s appliquent dessus.
+        """
+        detail = c.lit('/api/v1/stakeholders/%s' % fiche['id'], 'relecture de la fiche')
+        for inscrite in (detail or {}).get('requirements', []):
+            if cle(inscrite.get('requirement', '')) == cle(corps['requirement']):
+                print('  DEJA %-46s reprise' % quoi)
+                return inscrite
+        return c.poste('/api/v1/stakeholders/%s/requirements' % fiche['id'], corps, quoi)
+
+    deja = {}
+    lu = c.lit('/api/v1/stakeholders?page=0&size=200', 'lecture du registre')
+    # Le registre se rend en LISTE, la ou d autres modules rendent une page :
+    # on accepte les deux plutot que de parier sur l un.
+    lignes = lu.get('content', []) if isinstance(lu, dict) else (lu or [])
+    for ligne in lignes:
+        # Un passage anterieur a pu laisser un nom suffixe : on le reconnait par
+        # son debut, et la mise a jour ci-dessous le renomme proprement.
+        deja.setdefault(cle(ligne['name']), ligne)
+
     fiches = []
     for nom, categorie, cote in [
-        ('Aeronef Systemes SAS', 'CUSTOMERS', 'EXTERNAL'),
-        ('DGAC - autorite de surveillance', 'REGULATORS', 'EXTERNAL'),
-        ('Metalux Traitements de surface', 'SUPPLIERS', 'EXTERNAL'),
-        ('Collaborateurs et representants du personnel', 'EMPLOYEES', 'INTERNAL'),
-        ('Riverains de la zone industrielle Nord', 'LOCAL_COMMUNITIES', 'EXTERNAL'),
+        (u'Aéronef Systèmes SAS', 'CUSTOMERS', 'EXTERNAL'),
+        (u'DGAC — autorité de surveillance', 'REGULATORS', 'EXTERNAL'),
+        (u'Metalux Traitements de surface', 'SUPPLIERS', 'EXTERNAL'),
+        (u'Collaborateurs et représentants du personnel', 'EMPLOYEES', 'INTERNAL'),
+        (u'Riverains de la zone industrielle Nord', 'LOCAL_COMMUNITIES', 'EXTERNAL'),
     ]:
-        fiche = c.poste('/api/v1/stakeholders',
-                        {'name': '%s (%s)' % (nom, SUFFIXE), 'category': categorie, 'side': cote},
-                        'partie prenante %s' % nom[:26])
+        corps = {'name': nom, 'category': categorie, 'side': cote}
+        existante = deja.get(cle(nom))
+        if existante:
+            fiche = c.met('/api/v1/stakeholders/%s' % existante['id'], corps,
+                          'fiche reprise %s' % nom[:26]) or existante
+        else:
+            fiche = c.poste('/api/v1/stakeholders', corps, 'partie prenante %s' % nom[:26])
         fiches.append(fiche)
 
     client, autorite, fournisseur, personnel, riverains = fiches
@@ -531,34 +585,34 @@ def parties_prenantes(c):
     # ---- 1. le client : fiche complete, critique sur les deux axes
     if client:
         c.met('/api/v1/stakeholders/%s' % client['id'], {
-            'description': 'Donneur d ordre aeronautique, 62 % du chiffre d affaires.',
+            'description': u'Donneur d’ordre aéronautique, 62 % du chiffre d’affaires.',
             'contact': 'qualite.fournisseurs@aeronef-systemes.example',
             'sites': 'Site de Blagnac, site de Nantes',
-            'needs': 'Pieces conformes au plan, livrees a date, avec dossier de navigabilite.',
-            'requirementsSummary': 'AS9100D, exigences client specifiques, PPAP a chaque evolution.',
+            'needs': u'Pièces conformes au plan, livrées à date, avec dossier de navigabilité.',
+            'requirementsSummary': u'AS9100D, exigences client spécifiques, PPAP à chaque évolution.',
             'relevance': 'RELEVANT',
-            'relevanceJustification': 'Premier client en volume ; une defaillance arrete la ligne.',
+            'relevanceJustification': u'Premier client en volume ; une défaillance arrête la ligne.',
             'risksAndOpportunities': 'Risque : perte de la qualification fournisseur. '
-                                     'Opportunite : contrat cadre sur la gamme suivante.',
+                                     u'Opportunité : contrat cadre sur la gamme suivante.',
             'qualityImpact': 'HIGH', 'regulatoryImpact': 'HIGH',
-            'owner': {'accountId': c.sujet, 'name': 'Pilote qualite'},
+            'owner': {'accountId': c.sujet, 'name': u'Pilote qualité'},
             'controls': 'Revue de contrat trimestrielle, AQF, audit fournisseur annuel.',
             'indicators': 'Taux de service, PPM client, retards de livraison',
             'documents': 'Contrat C-2026-114, cahier des charges CDC-AS-07',
-            'actions': 'Plan de surveillance renforce sur la cote critique',
+            'actions': u'Plan de surveillance renforcé sur la cote critique',
             'nextReviewOn': jour(180),
         }, 'analyse de la fiche client')
-        exigence = c.poste('/api/v1/stakeholders/%s/requirements' % client['id'], {
-            'need': 'Etre livre a date, sans rupture de ligne',
-            'requirement': 'Taux de service >= 98 % mesure mensuellement, sur reference et quantite.',
+        exigence = exigence_de(client, {
+            'need': u'Être livré à date, sans rupture de ligne',
+            'requirement': u'Taux de service ≥ 98 % mesuré mensuellement, sur référence et quantité.',
             'origin': 'Contrat C-2026-114, article 7',
             'nature': 'CONTRACTUAL',
-            'risk': 'Penalites de retard et perte de la qualification fournisseur',
+            'risk': u'Pénalités de retard et perte de la qualification fournisseur',
             'riskLevel': 'HIGH',
-            'control': 'Revue hebdomadaire du carnet, stock de securite sur les references A',
+            'control': u'Revue hebdomadaire du carnet, stock de sécurité sur les références A',
             'indicator': 'Taux de service mensuel',
-            'responsible': 'Directeur des operations',
-            'evidence': 'Releve mensuel du taux de service, accuses de reception',
+            'responsible': u'Directeur des opérations',
+            'evidence': u'Relevé mensuel du taux de service, accusés de réception',
             'status': 'CONTROLLED',
         }, 'exigence contractuelle du client')
         if exigence and risque:
@@ -571,27 +625,27 @@ def parties_prenantes(c):
     # ---- 2. l autorite : l exigence opposable par un texte
     if autorite:
         c.met('/api/v1/stakeholders/%s' % autorite['id'], {
-            'description': 'Autorite de surveillance des organismes de production.',
-            'needs': 'Conformite au reglement et tenue des enregistrements de navigabilite.',
+            'description': u'Autorité de surveillance des organismes de production.',
+            'needs': u'Conformité au règlement et tenue des enregistrements de navigabilité.',
             'relevance': 'RELEVANT',
-            'relevanceJustification': 'Detient l agrement sans lequel l activite cesse.',
+            'relevanceJustification': u'Détient l’agrément sans lequel l’activité cesse.',
             'qualityImpact': 'MEDIUM', 'regulatoryImpact': 'HIGH',
-            'owner': {'accountId': c.sujet, 'name': 'Pilote qualite'},
-            'controls': 'Veille reglementaire mensuelle, audit interne dedie.',
-            'indicators': 'Ecarts releves en audit de surveillance',
+            'owner': {'accountId': c.sujet, 'name': u'Pilote qualité'},
+            'controls': u'Veille réglementaire mensuelle, audit interne dédié.',
+            'indicators': u'Écarts relevés en audit de surveillance',
             'nextReviewOn': jour(90),
         }, 'analyse de la fiche autorite')
-        exigence = c.poste('/api/v1/stakeholders/%s/requirements' % autorite['id'], {
-            'need': 'Pouvoir reconstituer l historique d une piece livree',
-            'requirement': 'Conserver les enregistrements de production 10 ans apres livraison.',
-            'origin': 'Part 21 sous-partie G',
+        exigence = exigence_de(autorite, {
+            'need': u'Pouvoir reconstituer l’historique d’une pièce livrée',
+            'requirement': u'Conserver les enregistrements de production 10 ans après livraison.',
+            'origin': 'Part 21, sous-partie G',
             'nature': 'REGULATORY',
-            'risk': 'Suspension de l agrement de production',
+            'risk': u'Suspension de l’agrément de production',
             'riskLevel': 'HIGH',
-            'control': 'Archivage numerique signe, plan de conservation documente',
-            'indicator': 'Taux de dossiers complets a l archivage',
-            'responsible': 'Responsable assurance qualite',
-            'evidence': 'Plan de conservation, journal d archivage',
+            'control': u'Archivage numérique signé, plan de conservation documenté',
+            'indicator': u'Taux de dossiers complets à l’archivage',
+            'responsible': u'Responsable assurance qualité',
+            'evidence': u'Plan de conservation, journal d’archivage',
             'status': 'APPLICABLE',
         }, 'exigence reglementaire de l autorite')
         if exigence and document:
@@ -602,29 +656,29 @@ def parties_prenantes(c):
     # ---- 3. le fournisseur : l exigence non tenue, et l action qui s ouvre
     if fournisseur:
         c.met('/api/v1/stakeholders/%s' % fournisseur['id'], {
-            'description': 'Sous-traitant de traitement de surface, procede special.',
-            'needs': 'Commandes fermes et specifications stables.',
-            'requirementsSummary': 'NADCAP CP, certificat matiere 3.1 a chaque lot.',
+            'description': u'Sous-traitant de traitement de surface, procédé spécial.',
+            'needs': u'Commandes fermes et spécifications stables.',
+            'requirementsSummary': u'NADCAP CP, certificat matière 3.1 à chaque lot.',
             'relevance': 'RELEVANT',
-            'relevanceJustification': 'Procede special non realisable en interne.',
-            'risksAndOpportunities': 'Risque : rupture de la chaine de traitement.',
+            'relevanceJustification': u'Procédé spécial non réalisable en interne.',
+            'risksAndOpportunities': u'Risque : rupture de la chaîne de traitement.',
             'qualityImpact': 'HIGH', 'regulatoryImpact': 'MEDIUM',
-            'owner': {'accountId': c.sujet, 'name': 'Pilote qualite'},
-            'controls': 'Audit fournisseur annuel, controle a reception renforce.',
-            'indicators': 'Taux de conformite matiere, delai de traitement des NC',
+            'owner': {'accountId': c.sujet, 'name': u'Pilote qualité'},
+            'controls': u'Audit fournisseur annuel, contrôle à réception renforcé.',
+            'indicators': u'Taux de conformité matière, délai de traitement des NC',
             'nextReviewOn': jour(120),
         }, 'analyse de la fiche fournisseur')
-        exigence = c.poste('/api/v1/stakeholders/%s/requirements' % fournisseur['id'], {
-            'need': 'Disposer de la preuve de conformite du traitement',
-            'requirement': 'Fournir un certificat de conformite 3.1 pour chaque lot livre.',
+        exigence = exigence_de(fournisseur, {
+            'need': u'Disposer de la preuve de conformité du traitement',
+            'requirement': u'Fournir un certificat de conformité 3.1 pour chaque lot livré.',
             'origin': 'Cahier des charges CDC-TS-03',
             'nature': 'CONTRACTUAL',
-            'risk': 'Lot non liberable, retard de livraison en cascade',
+            'risk': u'Lot non libérable, retard de livraison en cascade',
             'riskLevel': 'MEDIUM',
-            'control': 'Controle documentaire a reception, blocage du lot sans certificat',
-            'indicator': 'Taux de lots recus avec certificat',
-            'responsible': 'Responsable achats',
-            'evidence': 'Certificats archives par numero de lot',
+            'control': u'Contrôle documentaire à réception, blocage du lot sans certificat',
+            'indicator': u'Taux de lots reçus avec certificat',
+            'responsible': u'Responsable achats',
+            'evidence': u'Certificats archivés par numéro de lot',
             'status': 'APPLICABLE',
         }, 'exigence du fournisseur')
         if exigence:
@@ -636,39 +690,44 @@ def parties_prenantes(c):
             # L exigence n est pas tenue : on ouvre une action DEPUIS la fiche.
             # Elle repasse « a reevaluer » dans la meme reponse -- c est la regle
             # du module, et c est ce que l ecran doit montrer.
-            c.poste('/api/v1/stakeholders/%s/requirements/%s/capa'
-                    % (fournisseur['id'], exigence['id']),
-                    {'title': 'Obtenir les certificats 3.1 manquants et securiser la reception',
-                     'ownerId': c.sujet, 'ownerName': 'Pilote qualite',
-                     'dueDate': jour(45)},
-                    'action ouverte depuis l exigence')
+            if exigence.get('capaId'):
+                # Une action est deja ouverte sur cette exigence : en reposter
+                # une creerait un second dossier CAPA pour le meme ecart.
+                print('  DEJA %-46s action en place' % 'action depuis l exigence')
+            else:
+                c.poste('/api/v1/stakeholders/%s/requirements/%s/capa'
+                        % (fournisseur['id'], exigence['id']),
+                        {'title': u'Obtenir les certificats 3.1 manquants et sécuriser la réception',
+                         'ownerId': c.sujet, 'ownerName': u'Pilote qualité',
+                         'dueDate': jour(45)},
+                        'action ouverte depuis l exigence')
 
     # ---- 4. le personnel : interne, et une revue en retard
     if personnel:
         c.met('/api/v1/stakeholders/%s' % personnel['id'], {
-            'description': 'Salaries et instances representatives du personnel.',
-            'needs': 'Conditions de travail sures, competences entretenues, information.',
+            'description': u'Salariés et instances représentatives du personnel.',
+            'needs': u'Conditions de travail sûres, compétences entretenues, information.',
             'relevance': 'RELEVANT',
-            'relevanceJustification': 'La conformite se tient par les personnes qui l appliquent.',
+            'relevanceJustification': u'La conformité se tient par les personnes qui l’appliquent.',
             'qualityImpact': 'MEDIUM', 'regulatoryImpact': 'MEDIUM',
-            'owner': {'accountId': c.sujet, 'name': 'Pilote qualite'},
-            'controls': 'Plan de formation annuel, reunions CSSCT.',
-            'indicators': 'Taux de completion des formations, accidents declares',
+            'owner': {'accountId': c.sujet, 'name': u'Pilote qualité'},
+            'controls': u'Plan de formation annuel, réunions CSSCT.',
+            'indicators': u'Taux de complétion des formations, accidents déclarés',
             # DELIBEREMENT dans le passe : c est ce qui alimente la tuile
             # « revues en retard » et l alerte du registre.
             'nextReviewOn': jour(-30),
         }, 'analyse de la fiche personnel (revue en retard)')
-        c.poste('/api/v1/stakeholders/%s/requirements' % personnel['id'], {
-            'need': 'Travailler sur des postes dont les risques sont evalues',
-            'requirement': 'Tenir le document unique a jour et le reviser a chaque changement.',
+        exigence_de(personnel, {
+            'need': u'Travailler sur des postes dont les risques sont évalués',
+            'requirement': u'Tenir le document unique à jour et le réviser à chaque changement.',
             'origin': 'Code du travail, art. R4121-1',
             'nature': 'REGULATORY',
             'risk': 'Sanction et accident du travail',
             'riskLevel': 'HIGH',
-            'control': 'Revue annuelle du DUERP, mise a jour a chaque modification de poste',
-            'indicator': 'Date de derniere revision du DUERP',
+            'control': u'Revue annuelle du DUERP, mise à jour à chaque modification de poste',
+            'indicator': u'Date de dernière révision du DUERP',
             'responsible': 'Responsable HSE',
-            'evidence': 'DUERP date et signe',
+            'evidence': u'DUERP daté et signé',
             'status': 'TO_REASSESS',
         }, 'exigence a reevaluer du personnel')
 
@@ -678,11 +737,11 @@ def parties_prenantes(c):
             'description': 'Habitants et associations de la zone industrielle Nord.',
             'needs': 'Nuisances sonores et olfactives contenues.',
             'relevance': 'NOT_RELEVANT',
-            'relevanceJustification': 'Aucune exigence portant sur le systeme de management de '
-                                      'la qualite : le sujet est traite par le systeme '
+            'relevanceJustification': u'Aucune exigence portant sur le système de management de '
+                                      u'la qualité : le sujet est traité par le système '
                                       'environnemental, qui a son propre registre.',
             'qualityImpact': 'LOW', 'regulatoryImpact': 'LOW',
-            'owner': {'accountId': c.sujet, 'name': 'Pilote qualite'},
+            'owner': {'accountId': c.sujet, 'name': u'Pilote qualité'},
             'nextReviewOn': jour(365),
         }, 'analyse de la fiche riverains (ecartee)')
 
@@ -702,6 +761,40 @@ def parties_prenantes(c):
                 'revue actee sur la fiche client')
 
 
+def nc_et_ishikawa(c):
+    """Les deux ensemble : l'arete de poisson part de la NC interne creee ici.
+
+    Les separer en deux sections demanderait de retrouver la NC d'un passage
+    precedent, et une section doit pouvoir se rejouer seule.
+    """
+    interne, _ = non_conformites(c)
+    ishikawa(c, interne)
+
+
+# L'ordre de ce dictionnaire EST l'ordre d'execution quand on demande « tout » :
+# certaines sections s'appuient sur les activations de modules posees par la
+# premiere. Les cles sont les noms que `--sections` accepte.
+SECTIONS = {
+    'modules': modules,
+    'produits-amdec': produits_et_amdec,
+    'parties-prenantes': parties_prenantes,
+    'pdca': cycle_pdca,
+    'audits-5s': audits_5s,
+    'nc-ishikawa': nc_et_ishikawa,
+    'audits': audits,
+    'documents': documents,
+    'fournisseurs': fournisseurs,
+    'kpis': kpis,
+    'cercles-idees': cercles_et_idees,
+    'formation': formation,
+    'equipements': equipements,
+    'ehs': ehs,
+    'changements': changements,
+    'dmaic': dmaic,
+    'iot': iot,
+}
+
+
 def main():
     analyseur = argparse.ArgumentParser(description=__doc__)
     analyseur.add_argument('--api', default='http://localhost:8082')
@@ -711,7 +804,21 @@ def main():
     analyseur.add_argument('--utilisateur', default='demo')
     analyseur.add_argument('--secret', default='demo')
     analyseur.add_argument('--langue', default='fr')
+    analyseur.add_argument(
+        '--sections', default='tout',
+        help='Sections a peupler, separees par des virgules (defaut : tout). '
+             'Utile pour completer un seul module sur une instance deja peuplee, '
+             'sans recreer un jeu complet. Noms disponibles : '
+             + ', '.join(SECTIONS))
     options = analyseur.parse_args()
+
+    demandees = [n.strip() for n in options.sections.split(',') if n.strip()]
+    if demandees == ['tout']:
+        demandees = list(SECTIONS)
+    inconnues = [n for n in demandees if n not in SECTIONS]
+    if inconnues:
+        sys.exit('Section inconnue : %s. Disponibles : %s'
+                 % (', '.join(inconnues), ', '.join(SECTIONS)))
 
     print('QualitOS — donnees de demonstration')
     print('API %s, utilisateur %s, suffixe %s' % (options.api, options.utilisateur, SUFFIXE))
@@ -725,24 +832,9 @@ def main():
     c = Client(options.api, acces, options.langue)
     debut = time.time()
 
-    modules(c)
-    produits_et_amdec(c)
-    parties_prenantes(c)
-    cycle_pdca(c)
-    audits_5s(c)
-    interne, _ = non_conformites(c)
-    ishikawa(c, interne)
-    audits(c)
-    documents(c)
-    fournisseurs(c)
-    kpis(c)
-    cercles_et_idees(c)
-    formation(c)
-    equipements(c)
-    ehs(c)
-    changements(c)
-    dmaic(c)
-    iot(c)
+    print('Sections : %s' % ', '.join(demandees))
+    for nom in demandees:
+        SECTIONS[nom](c)
     # Un refus ATTENDU n'est pas une anomalie : activer un module est reserve a
     # l'administration du client, et ce script tourne sous un compte de pilotage
     # qualite. Les confondre ferait rendre 1 a chaque passage, et le code de sortie

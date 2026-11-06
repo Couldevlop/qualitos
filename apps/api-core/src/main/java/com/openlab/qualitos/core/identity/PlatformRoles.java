@@ -34,10 +34,19 @@ public final class PlatformRoles {
 
     public static final String SUPER_ADMIN = "super_admin";
 
+    /**
+     * Le consultant d'un cabinet partenaire. Comme {@link #SUPER_ADMIN}, il
+     * n'est PAS attribuable par un administrateur de client : il appartient au
+     * cabinet, et c'est l'editeur qui le pose. Un client qui pourrait l'accorder
+     * ferait entrer un tiers dans son espace sans qu'aucun accord ne l'ait
+     * autorise — ce que tout le domaine partenaire existe pour empecher.
+     */
+    public static final String CONSULTANT = "consultant";
+
     /** Tous les rôles de plateforme du realm, attribuables ou non. */
     public static final Set<String> KNOWN = Set.of(
-            SUPER_ADMIN, "admin_tenant", "quality_director", "quality_manager", "auditor", "user",
-            "external_auditor");
+            SUPER_ADMIN, CONSULTANT, "admin_tenant", "quality_director", "quality_manager",
+            "auditor", "user", "external_auditor");
 
     /**
      * Anciens noms, ramenés à celui du realm : {@code ADMIN} des premières

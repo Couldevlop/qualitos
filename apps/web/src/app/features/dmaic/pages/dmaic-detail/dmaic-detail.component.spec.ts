@@ -20,8 +20,24 @@ import { DmaicDetailComponent } from './dmaic-detail.component';
 import { STUB_PERSON, provideDirectoryStub } from '../../../../core/directory/testing/directory.stub';
 import { PersonNameModule } from '../../../../shared/person-name/person-name.module';
 
-/** La fiche de résolution a ses propres tests : ici, seul son onglet compte. */
-@Component({ selector: 'qos-dmaic-resolution', template: '<p data-test="fiche">fiche {{ projectId }} {{ projectPhase }}</p><ng-content></ng-content>', standalone: false })
+/**
+ * La fiche de résolution a ses propres tests : ici, seul son onglet compte.
+ *
+ * La doublure reprend les MÊMES quatre fentes que le vrai gabarit, et surtout
+ * pas un `<ng-content>` fourre-tout. Avec un fourre-tout, elle acceptait des
+ * enfants que le vrai composant jette en silence : un panneau sans attribut de
+ * fente passait les tests et n'atteignait jamais l'écran. Une doublure plus
+ * permissive que l'original ne teste rien.
+ */
+@Component({
+  selector: 'qos-dmaic-resolution',
+  template: `<p data-test="fiche">fiche {{ projectId }} {{ projectPhase }}</p>
+    <ng-content select="[qosActions]"></ng-content>
+    <ng-content select="[qosCharter]"></ng-content>
+    <ng-content select="[qosMeasures]"></ng-content>
+    <ng-content select="[qosCapability]"></ng-content>`,
+  standalone: false,
+})
 class ResolutionStubComponent {
   @Input() projectId = '';
   @Input() problemStatement: string | null = null;
@@ -257,6 +273,40 @@ describe('DmaicDetailComponent', () => {
     http.expectNone(`${base}/projects/${ID}`);
     expect((fixture.nativeElement as HTMLElement).querySelector('.meta-row')?.textContent)
       .toContain('Mesurer');
+  });
+
+  it('ÉNUMÈRE ce que le serveur reproche quand la clôture est refusée', () => {
+    // Le refus arrivait sous la forme « État incompatible — rechargez la page » :
+    // un conseil faux, puisque recharger ne solde aucune action, et sans dire
+    // lequel des points reste à solder. L'écran ne savait pas le dire, parce que
+    // l'avancement des actions n'est connu que du serveur.
+    fixture.detectChanges();
+    flushDetail();
+
+    component.advance(project({ phase: 'CONTROL' }));
+    http.expectOne(`${base}/projects/${ID}/advance`).flush({
+      title: 'DMAIC Gate Not Passed',
+      userMessage: 'Le projet ne peut pas être clos : 2 point(s) à solder.',
+      reasons: ['Action à 60 % : « Revoir le gabarit »', 'Action à 0 % : « Former l’équipe »']
+    }, { status: 409, statusText: 'Conflict' });
+    fixture.detectChanges();
+
+    const panneau = (fixture.nativeElement as HTMLElement).querySelector('[data-test="blocage"]');
+    expect(panneau).withContext('la liste reste à l’écran, pas quatre secondes').not.toBeNull();
+    expect(panneau!.textContent).toContain('Revoir le gabarit');
+    expect(panneau!.textContent).toContain('Former l’équipe');
+  });
+
+  it('efface les reproches précédents avant de réessayer', () => {
+    // Sinon l'utilisateur solde un point, réessaie, et relit la liste d'avant.
+    fixture.detectChanges();
+    flushDetail();
+    component.blockers = ['Action à 60 % : « Revoir le gabarit »'];
+
+    component.advance(project({ phase: 'CONTROL' }));
+    expect(component.blockers).toEqual([]);
+    http.expectOne(`${base}/projects/${ID}/advance`).flush(project({ status: 'COMPLETED' }));
+    flushDetail();
   });
 
   it('n\'annule le projet qu\'après confirmation explicite', () => {

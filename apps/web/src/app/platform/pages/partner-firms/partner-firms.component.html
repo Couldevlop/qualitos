@@ -1,0 +1,210 @@
+<div class="qos-page">
+  <qos-page-header
+    title="Cabinets partenaires" i18n-title="@@platform.firms.title"
+    subtitle="Les cabinets qui interviennent chez vos clients, leurs consultants, et les clients qui leur ont été proposés."
+    i18n-subtitle="@@platform.firms.subtitle">
+    <ng-container qosActions>
+      <button mat-flat-button type="button" (click)="ouvrirCreation()" [disabled]="creating || busy"
+              data-test="nouveau">
+        <mat-icon>add</mat-icon>
+        <span i18n="@@platform.firms.new">Nouveau cabinet</span>
+      </button>
+      <button mat-stroked-button type="button" (click)="charger()" [disabled]="loading"
+              data-test="recharger">
+        <mat-icon>refresh</mat-icon>
+        <span i18n="@@platform.firms.reload">Recharger</span>
+      </button>
+    </ng-container>
+  </qos-page-header>
+
+  <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+
+  <p class="echec" *ngIf="failed" role="alert" data-test="echec">
+    <span i18n="@@platform.firms.load-failed">La liste des cabinets n’a pas pu être chargée.</span>
+    <button mat-button type="button" (click)="charger()" i18n="@@common.retry">Réessayer</button>
+  </p>
+
+  <p class="portee" i18n="@@platform.firms.scope">
+    Vous déclarez un cabinet et lui proposez des clients. Vous n’ouvrez aucun accès&nbsp;:
+    chaque client décide lui-même d’accorder, et fixe le terme.
+  </p>
+
+  <!-- Création -->
+  <form class="creation" *ngIf="creating" (ngSubmit)="creer()" data-test="formulaire-cabinet">
+    <h2 class="creation__titre" i18n="@@platform.firms.new">Nouveau cabinet</h2>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label i18n="@@platform.firms.name">Raison sociale</mat-label>
+      <input matInput [(ngModel)]="draft.name" name="name" maxlength="160" required
+             data-test="nom">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label i18n="@@platform.firms.slug">Repère</mat-label>
+      <input matInput [(ngModel)]="draft.slug" name="slug" maxlength="40" required
+             i18n-placeholder="@@platform.firms.slug-placeholder" placeholder="Ex. : qualiconseil"
+             data-test="repere">
+      <!-- Le repère ne se corrige plus : le dire AVANT la création, pas après. -->
+      <mat-hint i18n="@@platform.firms.slug-hint">Minuscules, chiffres et tirets. Définitif.</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label i18n="@@platform.firms.registration">Numéro d’immatriculation</mat-label>
+      <input matInput [(ngModel)]="draft.registrationNumber" name="registration" maxlength="40"
+             data-test="immatriculation">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label i18n="@@platform.firms.contact-email">Courriel de contact</mat-label>
+      <input matInput type="email" [(ngModel)]="draft.contactEmail" name="email" maxlength="200"
+             data-test="courriel">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label i18n="@@platform.firms.contact-phone">Téléphone</mat-label>
+      <input matInput [(ngModel)]="draft.contactPhone" name="phone" maxlength="40"
+             data-test="telephone">
+    </mat-form-field>
+
+    <div class="creation__gestes">
+      <button mat-flat-button type="submit" [disabled]="!firmDraftValid || busy"
+              data-test="confirmer-cabinet" i18n="@@platform.firms.create">Créer le cabinet</button>
+      <button mat-button type="button" (click)="annulerCreation()" data-test="annuler-cabinet"
+              i18n="@@common.cancel">Annuler</button>
+    </div>
+  </form>
+
+  <!-- Liste -->
+  <ul class="cabinets" *ngIf="firms.length">
+    <li class="cabinet" *ngFor="let f of firms" [attr.data-id]="f.id"
+        [class.cabinet--inactif]="!f.active" data-test="cabinet">
+      <div class="cabinet__tete">
+        <button class="cabinet__bascule" type="button" (click)="basculerDetail(f)"
+                [attr.aria-expanded]="openFirmId === f.id" [attr.data-test]="'ouvrir-' + f.id">
+          <mat-icon aria-hidden="true">{{ openFirmId === f.id ? 'expand_less' : 'expand_more' }}</mat-icon>
+          <span class="cabinet__nom">{{ f.name }}</span>
+          <code class="cabinet__repere">{{ f.slug }}</code>
+        </button>
+
+        <span class="cabinet__chiffre">
+          <ng-container i18n="@@platform.firms.consultant-count">{{ f.consultantCount }} consultants</ng-container>
+        </span>
+        <span class="cabinet__chiffre">
+          <ng-container i18n="@@platform.firms.granted-count">{{ f.grantedCount }} missions</ng-container>
+        </span>
+        <span class="cabinet__etat" *ngIf="!f.active"
+              i18n="@@platform.firms.inactive">Inactif</span>
+
+        <button mat-stroked-button type="button" (click)="basculer(f)" [disabled]="busy"
+                [color]="f.active ? 'warn' : undefined" [attr.data-test]="'basculer-' + f.id">
+          <span *ngIf="f.active" i18n="@@platform.firms.deactivate-action">Désactiver</span>
+          <span *ngIf="!f.active" i18n="@@platform.firms.activate-action">Réactiver</span>
+        </button>
+      </div>
+
+      <!-- Détail du cabinet déplié -->
+      <div class="detail" *ngIf="openFirmId === f.id" data-test="detail">
+        <mat-progress-bar *ngIf="detailLoading" mode="indeterminate"></mat-progress-bar>
+
+        <!-- Consultants -->
+        <section class="detail__bloc" aria-labelledby="cab-consultants">
+          <h3 class="detail__titre" id="cab-consultants"
+              i18n="@@platform.firms.consultants">Consultants</h3>
+
+          <ul class="personnes" *ngIf="consultants.length">
+            <li class="personne" *ngFor="let c of consultants" [attr.data-id]="c.id"
+                data-test="consultant">
+              <span class="personne__nom">{{ c.displayName }}</span>
+              <span class="personne__courriel">{{ c.email }}</span>
+              <!-- « Rattaché » dit que la personne s'est connectée au moins une
+                   fois : sans ce repère, on ne sait pas si l'inscription a pris. -->
+              <span class="personne__etat" *ngIf="c.linked"
+                    i18n="@@platform.firms.linked">Rattaché</span>
+              <span class="personne__etat personne__etat--attente" *ngIf="!c.linked"
+                    i18n="@@platform.firms.pending-link">Jamais connecté</span>
+              <button mat-button type="button" (click)="basculerConsultant(c)" [disabled]="busy"
+                      [attr.data-test]="'bascule-consultant-' + c.id">
+                <span *ngIf="c.active" i18n="@@platform.firms.suspend">Suspendre</span>
+                <span *ngIf="!c.active" i18n="@@platform.firms.restore">Rétablir</span>
+              </button>
+            </li>
+          </ul>
+
+          <p class="detail__vide" *ngIf="!consultants.length && !detailLoading"
+             i18n="@@platform.firms.no-consultant">Aucun consultant inscrit dans ce cabinet.</p>
+
+          <form class="ajout" (ngSubmit)="inscrire()" data-test="formulaire-consultant">
+            <mat-form-field appearance="outline" subscriptSizing="dynamic">
+              <mat-label i18n="@@platform.firms.consultant-name">Nom du consultant</mat-label>
+              <input matInput [(ngModel)]="consultantName" name="consultantName" maxlength="160"
+                     data-test="consultant-nom">
+            </mat-form-field>
+            <mat-form-field appearance="outline" subscriptSizing="dynamic">
+              <mat-label i18n="@@platform.firms.consultant-email">Courriel</mat-label>
+              <input matInput type="email" [(ngModel)]="consultantEmail" name="consultantEmail"
+                     maxlength="200" data-test="consultant-courriel">
+              <mat-hint i18n="@@platform.firms.consultant-email-hint">
+                Celui de son compte&nbsp;: c’est par là que le rattachement se fait.
+              </mat-hint>
+            </mat-form-field>
+            <button mat-flat-button type="submit" [disabled]="!consultantValid || busy"
+                    data-test="inscrire" i18n="@@platform.firms.add-consultant">Inscrire</button>
+          </form>
+        </section>
+
+        <!-- Portefeuille -->
+        <section class="detail__bloc" aria-labelledby="cab-portefeuille">
+          <h3 class="detail__titre" id="cab-portefeuille"
+              i18n="@@platform.firms.portfolio">Portefeuille</h3>
+
+          <ul class="missions" *ngIf="portfolio.length">
+            <li class="mission" *ngFor="let a of portfolio" [attr.data-id]="a.id"
+                data-test="mission">
+              <span class="mission__client">{{ a.tenantName || clientName(a.tenantId) }}</span>
+              <span class="mission__portee">{{ scopeLabel(a.scope) }}</span>
+              <span class="mission__etat" [class.mission__etat--ouvert]="a.openToday">
+                {{ statusLabel(a) }}
+              </span>
+              <span class="mission__terme" *ngIf="a.endsOn">{{ a.endsOn | date: 'mediumDate' }}</span>
+            </li>
+          </ul>
+
+          <p class="detail__vide" *ngIf="!portfolio.length && !detailLoading"
+             i18n="@@platform.firms.no-mission">Aucun client proposé à ce cabinet.</p>
+
+          <form class="ajout" (ngSubmit)="proposer()" data-test="formulaire-proposition">
+            <mat-form-field appearance="outline" subscriptSizing="dynamic">
+              <mat-label i18n="@@platform.firms.client">Client</mat-label>
+              <mat-select [(ngModel)]="proposeTenantId" name="tenantId" data-test="proposition-client">
+                <mat-option *ngFor="let c of clients" [value]="c.id">{{ c.name }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" subscriptSizing="dynamic">
+              <mat-label i18n="@@platform.firms.proposed-scope">Portée demandée</mat-label>
+              <mat-select [(ngModel)]="proposeScope" name="proposeScope" data-test="proposition-portee">
+                <mat-option value="READ" i18n="@@partner.scope.read">Consultation</mat-option>
+                <mat-option value="INTERVENE" i18n="@@partner.scope.intervene">Intervention</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" subscriptSizing="dynamic">
+              <mat-label i18n="@@platform.firms.proposed-purpose">Objet de la mission</mat-label>
+              <input matInput [(ngModel)]="proposePurpose" name="proposePurpose" maxlength="300"
+                     data-test="proposition-objet">
+            </mat-form-field>
+
+            <button mat-flat-button type="submit" [disabled]="!proposeValid || busy"
+                    data-test="proposer" i18n="@@platform.firms.propose">Proposer</button>
+          </form>
+        </section>
+      </div>
+    </li>
+  </ul>
+
+  <p class="vide" *ngIf="!firms.length && !loading && !failed" data-test="vide"
+     i18n="@@platform.firms.empty">
+    Aucun cabinet partenaire n’est déclaré. Un cabinet regroupe des consultants externes à qui
+    vos clients peuvent ouvrir un accès daté.
+  </p>
+</div>

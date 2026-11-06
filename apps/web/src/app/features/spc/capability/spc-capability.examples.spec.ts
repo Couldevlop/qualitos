@@ -1,4 +1,6 @@
-import { CONSTANT_ROWS, DEFAULT_SUBGROUPS, SUBGROUP_SIZES, classify, computeCapability, resizeGrid } from './spc-capability.calc';
+import {
+  DEFAULT_SUBGROUPS, RANGE_CONSTANT_ROWS, SAMPLE_SIZES, classify, computeCapability, resizeGrid
+} from './spc-capability.calc';
 import { SPC_EXAMPLES, TURNING_EXAMPLE, WORKBOOK_EXAMPLE } from './spc-capability.examples';
 import { GOLDEN, GOLDEN_GRID, GOLDEN_LSL, GOLDEN_USL } from './spc-capability.fixtures';
 
@@ -13,7 +15,7 @@ describe('spc-capability.examples', () => {
   it('a deux exemples complets, de forme valide', () => {
     expect(SPC_EXAMPLES.map(e => e.id)).toEqual(['workbook', 'turning']);
     for (const ex of SPC_EXAMPLES) {
-      expect(SUBGROUP_SIZES).toContain(ex.subgroupSize);
+      expect(SAMPLE_SIZES).toContain(ex.subgroupSize);
       expect(ex.grid.length).toBe(ex.subgroupSize);
       expect(ex.grid.every(r => r.length === DEFAULT_SUBGROUPS && r.every(v => Number.isFinite(v)))).toBeTrue();
       expect(ex.usl).toBeGreaterThan(ex.lsl);
@@ -44,7 +46,8 @@ describe('spc-capability.examples', () => {
   });
 
   it('expose la table des constantes ligne à ligne', () => {
-    expect(CONSTANT_ROWS.map(r => r.n)).toEqual(SUBGROUP_SIZES);
-    expect(CONSTANT_ROWS.find(r => r.n === 5)).toEqual({ n: 5, d2: 2.33, a2: 0.58, d3: 0, d4: 2.11 });
+    expect(RANGE_CONSTANT_ROWS.map(r => r.n)).toEqual([2, 3, 4, 5, 6, 7, 8, 9, 10]);
+    expect(RANGE_CONSTANT_ROWS.find(r => r.n === 5))
+      .toEqual({ n: 5, d2: 2.33, a2: 0.58, d3: 0, d4: 2.11 });
   });
 });

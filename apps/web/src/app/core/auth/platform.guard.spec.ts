@@ -3,7 +3,7 @@ import { ActivatedRouteSnapshot, Router, RouterStateSnapshot, UrlTree, provideRo
 
 import { AuthService } from './auth.service';
 import { RESTRICTED_ACCESS_PATH } from './role.guard';
-import { businessRoutesGuard, platformGuard } from './platform.guard';
+import { businessRoutesGuard, partnerGuard, platformGuard } from './platform.guard';
 
 /**
  * La frontière entre la console de l'éditeur et les écrans d'un client, tenue
@@ -15,7 +15,7 @@ import { businessRoutesGuard, platformGuard } from './platform.guard';
  * est trompeur plutôt qu'inutile : son jeton ne porte aucun client, donc ce que
  * l'écran afficherait ne serait les données de personne.
  */
-describe('frontière console éditeur / écrans client', () => {
+describe('frontière consoles (éditeur, cabinet) / écrans client', () => {
   let auth: jasmine.SpyObj<AuthService>;
 
   beforeEach(() => {
@@ -67,10 +67,36 @@ describe('frontière console éditeur / écrans client', () => {
       expect(run()).toBeTrue();
     });
 
-    it('ne consulte que le rôle de l’éditeur, et aucun autre', () => {
+    it('renvoie un consultant vers la console de son cabinet', () => {
+      // Un consultant est dans le même cas que l'éditeur : son jeton ne porte
+      // aucun client. Ouvrir « les non-conformités » sous son compte ne
+      // montrerait les non-conformités de personne.
+      auth.hasAnyRole.and.callFake((roles: readonly string[]) => roles.includes('CONSULTANT'));
+      expect(serialize(run())).toBe('/partner');
+    });
+
+    it('ne consulte que les deux rôles sans client, et aucun autre', () => {
       auth.hasAnyRole.and.returnValue(false);
       run();
-      expect(auth.hasAnyRole).toHaveBeenCalledOnceWith(['SUPER_ADMIN']);
+      expect(auth.hasAnyRole.calls.allArgs()).toEqual([[['SUPER_ADMIN']], [['CONSULTANT']]]);
+    });
+  });
+
+  describe('partnerGuard', () => {
+    const run = (url = '/partner/portefeuille') =>
+      TestBed.runInInjectionContext(() => partnerGuard(
+        {} as ActivatedRouteSnapshot, { url } as RouterStateSnapshot));
+
+    it('ouvre la console du cabinet à un consultant', () => {
+      auth.hasAnyRole.and.returnValue(true);
+      expect(run()).toBeTrue();
+      expect(auth.hasAnyRole).toHaveBeenCalledWith(['CONSULTANT']);
+    });
+
+    it('la refuse à qui n’est pas consultant, en gardant l’adresse', () => {
+      auth.hasAnyRole.and.returnValue(false);
+      expect(serialize(run('/partner/portefeuille')))
+        .toBe(`/${RESTRICTED_ACCESS_PATH}?from=%2Fpartner%2Fportefeuille`);
     });
   });
 });

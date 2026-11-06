@@ -694,13 +694,6 @@ TRANSLATIONS = {
     'spc.study.title-edit': (
         'Étude de capabilité {$part}', 'Capability study {$part}', 'Estudio de capacidad {$part}',
         'دراسة القدرة {$part}', '工程能力調査 {$part}', '能力研究 {$part}'),
-    'spc.study.subtitle': (
-        'Cartes de contrôle X̄ – R. Saisissez les mesures dans les cellules jaunes ; tout le reste se calcule.',
-        'X̄ – R control charts. Enter the measurements in the yellow cells; everything else is calculated.',
-        'Gráficos de control X̄ – R. Introduzca las mediciones en las celdas amarillas; todo lo demás se calcula.',
-        'مخططات التحكم X̄ – R. أدخل القياسات في الخلايا الصفراء؛ ويُحسب كل ما تبقى تلقائياً.',
-        'X̄ – R 管理図。黄色のセルに測定値を入力してください。その他はすべて自動計算されます。',
-        'X̄ – R 控制图。在黄色单元格中输入测量值，其余内容自动计算。'),
     'spc.study.back': ('Registre', 'Register', 'Registro', 'السجل', '台帳', '登记簿'),
     'spc.study.save': ("Enregistrer l'étude", 'Save the study', 'Guardar el estudio', 'حفظ الدراسة', '調査を保存', '保存研究'),
     'spc.study.saved': ('Étude enregistrée.', 'Study saved.', 'Estudio guardado.', 'تم حفظ الدراسة.', '調査を保存しました。', '研究已保存。'),
@@ -724,7 +717,23 @@ TRANSLATIONS = {
     'spc.study.machine': ('N° de machine', 'Machine no.', 'N.º de máquina', 'رقم الآلة', '設備番号', '设备编号'),
     'spc.study.lsl': ('LSL (limite inférieure)', 'LSL (lower limit)', 'LSL (límite inferior)', 'LSL (الحد الأدنى)', 'LSL（下限規格）', 'LSL（下限）'),
     'spc.study.usl': ('USL (limite supérieure)', 'USL (upper limit)', 'USL (límite superior)', 'USL (الحد الأعلى)', 'USL（上限規格）', 'USL（上限）'),
-    'spc.study.subgroup-size': ('Taille du sous-groupe (n)', 'Subgroup size (n)', 'Tamaño del subgrupo (n)', 'حجم المجموعة الفرعية (n)', 'サブグループサイズ (n)', '子组大小 (n)'),
+    'spc.study.sample-size': ("Taille d'échantillon (n)", 'Sample size (n)', 'Tamaño de muestra (n)', 'حجم العينة (n)', 'サンプルサイズ (n)', '样本大小 (n)'),
+    'spc.study.subgroup-count-label': ('Nombre de sous-groupes', 'Number of subgroups', 'Número de subgrupos', 'عدد المجموعات الفرعية', 'サブグループ数', '子组数量'),
+    'spc.study.few-subgroups2': ('Moins de {$FLOOR} sous-groupes : les limites de contrôle restent indicatives.', 'Fewer than {$FLOOR} subgroups: the control limits remain indicative.', 'Menos de {$FLOOR} subgrupos: los límites de control son indicativos.', 'أقل من {$FLOOR} مجموعة فرعية: تبقى حدود التحكم إرشادية.', 'サブグループが {$FLOOR} 未満：管理限界は参考値です。', '子组少于 {$FLOOR} 个：控制限仅供参考。'),
+    'spc.study.grid-recap': ('Grille : {$SIZE} mesures par sous-groupe × {$COUNT} sous-groupes.', 'Grid: {$SIZE} measurements per subgroup × {$COUNT} subgroups.', 'Cuadrícula: {$SIZE} mediciones por subgrupo × {$COUNT} subgrupos.', 'الشبكة: {$SIZE} قياسًا لكل مجموعة × {$COUNT} مجموعة.', 'グリッド：1 サブグループ {$SIZE} 測定 × {$COUNT} サブグループ。', '网格：每子组 {$SIZE} 个测量值 × {$COUNT} 个子组。'),
+    'spc.study.shrink-title': ('Retirer des sous-groupes saisis ?', 'Remove subgroups that hold measurements?', '¿Quitar subgrupos con mediciones?', 'إزالة مجموعات فرعية مسجلة؟', '入力済みのサブグループを削除しますか？', '删除已录入的子组？'),
+    'spc.study.shrink-message': ("Les sous-groupes retirés portent des mesures : elles seront perdues. Rien n'est enregistré tant que vous n'enregistrez pas l'étude.", 'The removed subgroups hold measurements: they will be lost. Nothing is saved until you save the study.', 'Los subgrupos quitados contienen mediciones: se perderán. Nada se guarda hasta que guarde el estudio.', 'المجموعات المحذوفة تحمل قياسات: ستُفقد. لا يُحفظ شيء حتى تحفظ الدراسة.', '削除するサブグループには測定値があり、失われます。研究を保存するまで何も保存されません。', '被删除的子组包含测量值，将丢失。在保存研究前不会保存任何内容。'),
+    'spc.study.shrink-confirm': ('Retirer les sous-groupes', 'Remove the subgroups', 'Quitar los subgrupos', 'إزالة المجموعات', 'サブグループを削除', '删除子组'),
+    'spc.study.size-unsupported': ("Taille d'échantillon hors domaine : les constantes des cartes de contrôle ne sont tabulées que de 2 à {$MAX} mesures. Rien n'est calculé, pour ne pas afficher un indice faux.", 'Sample size out of range: the control chart constants are only tabulated from 2 to {$MAX} measurements. Nothing is computed, so as not to show a false index.', 'Tamaño de muestra fuera de rango: las constantes de los gráficos de control solo están tabuladas de 2 a {$MAX} mediciones. No se calcula nada, para no mostrar un índice falso.', 'حجم العينة خارج النطاق: ثوابت مخططات التحكم مجدولة من 2 إلى {$MAX} قياسًا فقط. لا يُحسب شيء حتى لا يُعرض مؤشر خاطئ.', 'サンプルサイズが範囲外：管理図の係数は 2 から {$MAX} 測定までしか表にありません。誤った指数を表示しないため、何も計算しません。', '样本大小超出范围：控制图常数仅列表到 2 至 {$MAX} 个测量值。为避免显示错误指数，不进行计算。'),
+    'spc.study.chart-none': ('Hors domaine : aucune carte applicable.', 'Out of range: no applicable chart.', 'Fuera de rango: ningún gráfico aplicable.', 'خارج النطاق: لا يوجد مخطط مناسب.', '範囲外：適用できる管理図はありません。', '超出范围：无适用的控制图。'),
+    'spc.study.chart-range': ("Carte X̄ – R (σ = R̄ / d2), jusqu'à {$max} mesures.", 'X̄ – R chart (σ = R̄ / d2), up to {$max} measurements.', 'Gráfico X̄ – R (σ = R̄ / d2), hasta {$max} mediciones.', 'مخطط X̄ – R (σ = R̄ / d2)، حتى {$max} قياسًا.', 'X̄ – R 管理図 (σ = R̄ / d2)、{$max} 測定まで。', 'X̄ – R 控制图 (σ = R̄ / d2)，最多 {$max} 个测量值。'),
+    'spc.study.chart-stdev': ("Carte X̄ – S (σ = s̄ / c4) : au-delà de {$max} mesures, l'étendue estime mal σ.", 'X̄ – S chart (σ = s̄ / c4): beyond {$max} measurements, the range estimates σ poorly.', 'Gráfico X̄ – S (σ = s̄ / c4): más allá de {$max} mediciones, el rango estima mal σ.', 'مخطط X̄ – S (σ = s̄ / c4): بعد {$max} قياسًا، يقدر المدى σ بشكل سيئ.', 'X̄ – S 管理図 (σ = s̄ / c4)：{$max} 測定を超えると範囲は σ をよく推定できません。', 'X̄ – S 控制图 (σ = s̄ / c4)：超过 {$max} 个测量值时，极差对 σ 的估计较差。'),
+    'spc.study.sigma2': ('Sigma', 'Sigma', 'Sigma', 'سيغما', 'シグマ', '西格玛'),
+    'spc.study.dispersion-chart': ('Carte', 'Chart', 'Gráfico', 'مخطط', '管理図', '控制图'),
+    'spc.formula.group-dispersion': ('Carte', 'Chart', 'Gráfico', 'مخطط', '管理図', '控制图'),
+    'spc.formula.constants-range': ('Table des constantes — carte X̄ – R', 'Constants table — X̄ – R chart', 'Tabla de constantes — gráfico X̄ – R', 'جدول الثوابت — مخطط X̄ – R', '定数表 — X̄ – R 管理図', '常数表 — X̄ – R 控制图'),
+    'spc.formula.constants-stdev': ('Table des constantes — carte X̄ – S', 'Constants table — X̄ – S chart', 'Tabla de constantes — gráfico X̄ – S', 'جدول الثوابت — مخطط X̄ – S', '定数表 — X̄ – S 管理図', '常数表 — X̄ – S 控制图'),
+    'spc.study.subtitle2': ("Cartes de contrôle X̄ – R et X̄ – S. Saisissez les mesures dans les cellules jaunes ; tout le reste se calcule.", 'X̄ – R and X̄ – S control charts. Enter the measurements in the yellow cells; everything else is computed.', 'Gráficos de control X̄ – R y X̄ – S. Introduzca las mediciones en las celdas amarillas; todo lo demás se calcula.', 'مخططا التحكم X̄ – R و X̄ – S. أدخل القياسات في الخلايا الصفراء؛ ويُحسب كل ما عدا ذلك.', 'X̄ – R および X̄ – S 管理図。黄色のセルに測定値を入力すると、他はすべて計算されます。', 'X̄ – R 和 X̄ – S 控制图。在黄色单元格中录入测量值，其余全部自动计算。'),
     'spc.study.part-required': (
         'La référence de la pièce est obligatoire.', 'The part reference is required.', 'La referencia de la pieza es obligatoria.',
         'مرجع القطعة إلزامي.', '部品番号は必須です。', '零件编号为必填项。'),
@@ -738,14 +747,6 @@ TRANSLATIONS = {
         'La limite supérieure est obligatoire.', 'The upper limit is required.', 'El límite superior es obligatorio.',
         'الحد الأعلى إلزامي.', '上限規格は必須です。', '上限为必填项。'),
     'spc.study.measurements': ('Mesures par sous-groupe', 'Measurements by subgroup', 'Mediciones por subgrupo', 'القياسات حسب المجموعة الفرعية', 'サブグループ別の測定値', '按子组的测量值'),
-    # Le gabarit NOMME cet emplacement (`// i18n(ph="count")`) : la table doit
-    # porter le meme nom, sans quoi `npm run build:i18n` refuse la traduction
-    # (« placeholder name mismatch ») -- et c'est le SEUL build qui le voit,
-    # le build de developpement ne traduisant pas.
-    'spc.study.subgroup-count': ('{$COUNT} sous-groupe(s)', '{$COUNT} subgroup(s)', '{$COUNT} subgrupo(s)', '{$COUNT} مجموعة فرعية', '{$COUNT} 件のサブグループ', '{$COUNT} 个子组'),
-    'spc.study.subgroup-add': ('Ajouter un sous-groupe', 'Add a subgroup', 'Añadir un subgrupo', 'إضافة مجموعة فرعية', 'サブグループを追加', '添加子组'),
-    'spc.study.subgroup-remove': ('Retirer le dernier sous-groupe (il doit être vide)', 'Remove the last subgroup (it must be empty)', 'Quitar el último subgrupo (debe estar vacío)', 'إزالة المجموعة الفرعية الأخيرة (يجب أن تكون فارغة)', '最後のサブグループを削除（空である必要）', '移除最后一个子组（必须为空）'),
-    'spc.study.few-subgroups': ('Moins de 20 sous-groupes : les limites de contrôle restent indicatives.', 'Fewer than 20 subgroups: the control limits remain indicative.', 'Menos de 20 subgrupos: los límites de control son indicativos.', 'أقل من 20 مجموعة فرعية: تبقى حدود التحكم إرشادية.', 'サブグループが20未満：管理限界は参考値です。', '子组少于 20 个：控制限仅供参考。'),
     'spc.study.sample': ('Échantillon', 'Sample', 'Muestra', 'العينة', 'サンプル', '样本'),
     'spc.study.cell-aria': (
         'Échantillon {$sample}, sous-groupe {$subgroup}', 'Sample {$sample}, subgroup {$subgroup}',
@@ -762,7 +763,6 @@ TRANSLATIONS = {
     'spc.study.results': ('Résultats', 'Results', 'Resultados', 'النتائج', '結果', '结果'),
     'spc.study.threshold': ('seuil', 'threshold', 'umbral', 'العتبة', 'しきい値', '阈值'),
     'spc.study.grand-mean': ('Moyenne X̿', 'Mean X̿', 'Media X̿', 'المتوسط X̿', '平均 X̿', '均值 X̿'),
-    'spc.study.sigma': ('Sigma (R̄ / d2)', 'Sigma (R̄ / d2)', 'Sigma (R̄ / d2)', 'سيغما (R̄ / d2)', 'シグマ (R̄ / d2)', '西格玛 (R̄ / d2)'),
     'spc.study.controlled': ('Procédé maîtrisé :', 'Process under control:', 'Proceso bajo control:', 'العملية تحت السيطرة:', '工程は管理状態：', '过程受控：'),
     'spc.study.not-controlled': ('Procédé non maîtrisé :', 'Process not under control:', 'Proceso fuera de control:', 'العملية خارج السيطرة:', '工程は管理外：', '过程不受控：'),
     'spc.study.watch': ('Procédé à surveiller :', 'Process to watch:', 'Proceso a vigilar:', 'العملية تحت المراقبة:', '工程は要監視：', '过程需关注：'),
@@ -775,7 +775,6 @@ TRANSLATIONS = {
     'spc.study.hide-formulas': ('Masquer les formules', 'Hide the formulas', 'Ocultar las fórmulas', 'إخفاء الصيغ', '計算式を隠す', '隐藏公式'),
     'spc.study.show-formulas': ('Voir les formules', 'Show the formulas', 'Ver las fórmulas', 'عرض الصيغ', '計算式を表示', '显示公式'),
     'spc.study.xbar-chart': ('Carte X̄', 'X̄ chart', 'Gráfico X̄', 'مخطط X̄', 'X̄ 管理図', 'X̄ 控制图'),
-    'spc.study.range-chart': ('Carte R', 'R chart', 'Gráfico R', 'مخطط R', 'R 管理図', 'R 控制图'),
     'spc.study.xbar-aria': (
         'Carte X̄ : moyenne de chaque sous-groupe et limites de contrôle',
         'X̄ chart: mean of each subgroup and control limits',
@@ -838,7 +837,6 @@ TRANSLATIONS = {
     'spc.formula.lsl': ('Limite inférieure', 'Lower limit', 'Límite inferior', 'الحد الأدنى', '下限規格', '下限'),
     'spc.formula.group-xbar': ('Carte X̄', 'X̄ chart', 'Gráfico X̄', 'مخطط X̄', 'X̄ 管理図', 'X̄ 控制图'),
     'spc.formula.control-limit': ('Limite de contrôle', 'Control limit', 'Límite de control', 'حد التحكم', '管理限界', '控制限'),
-    'spc.formula.group-range': ('Carte R', 'R chart', 'Gráfico R', 'مخطط R', 'R 管理図', 'R 控制图'),
 
     # ----- graphiques -----
     'spc.chart.no-data': ('Aucune donnée à tracer.', 'No data to plot.', 'No hay datos que trazar.', 'لا توجد بيانات للرسم.', '描画するデータがありません。', '没有可绘制的数据。'),
@@ -1012,8 +1010,5 @@ TRANSLATIONS = {
         'グリッドが空です。測定値を入力するか、サンプルデータを読み込んでください。',
         '网格为空：请输入测量值或加载一个示例数据集。'),
     'spc.formula.title': ('Formules', 'Formulas', 'Fórmulas', 'الصيغ', '計算式', '公式'),
-    'spc.formula.constants-title': (
-        'Table des constantes SPC', 'SPC constants table', 'Tabla de constantes SPC',
-        'جدول ثوابت SPC', 'SPC 定数表', 'SPC 常数表'),
     'spc.study.process-status': ('Statut du procédé', 'Process status', 'Estado del proceso', 'حالة العملية', '工程の状態', '过程状态'),
 }

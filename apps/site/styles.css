@@ -1,0 +1,708 @@
+/* ==========================================================================
+   QualitOS — site de présentation
+   --------------------------------------------------------------------------
+   La page est une FEUILLE DE RELEVÉ. Les filets ne décorent pas : ils bornent,
+   comme une limite de tolérance borne une mesure. L'orange ne colore pas : il
+   signale, comme un point hors limites signale une dérive. C'est le vocabulaire
+   du métier qu'on présente, et il tient le dessin de bout en bout.
+   ========================================================================== */
+
+/* ---------- jetons ---------- */
+:root {
+  /* Les trois couleurs du logo, et rien de plus. */
+  --marine: #12305f;
+  --marine-sombre: #0b1e3f;
+  --bleu: #1f62c4;
+  --bleu-clair: #e8effa;
+  --signal: #f5901f;
+  --signal-sombre: #b9690a;
+
+  --encre: #0f1d33;
+  --encre-douce: #42536e;
+  --papier: #ffffff;
+  --papier-froid: #f2f5fa;
+  --filet: #c9d6e8;
+  --filet-fort: #9db4d4;
+
+  --mesure: 72ch;
+
+  /* Échelle typographique : quarte juste (1.333), posée une fois. */
+  --t-xs: 0.8125rem;
+  --t-s: 0.9375rem;
+  --t-base: 1.0625rem;
+  --t-m: 1.25rem;
+  --t-l: 1.5rem;
+  --t-xl: clamp(1.9rem, 3.2vw, 2.9rem);
+  --t-xxl: clamp(2.6rem, 6.2vw, 5rem);
+
+  --pas: 1.5rem;
+  --marge-section: clamp(3rem, 5.5vw, 5.25rem);
+
+  --police-titre: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
+  --police-texte: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  /* Le mono ne sert QU'aux nombres et aux références de clause : une valeur
+     mesurée s'aligne en colonne, un libellé non. */
+  --police-nombre: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+}
+
+/* ---------- socle ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
+body {
+  margin: 0;
+  background: var(--papier);
+  color: var(--encre);
+  font-family: var(--police-texte);
+  font-size: var(--t-base);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--police-titre);
+  color: var(--marine);
+  line-height: 1.08;
+  letter-spacing: -0.022em;
+  margin: 0;
+  text-wrap: balance;
+}
+
+p { margin: 0 0 1em; max-width: var(--mesure); }
+p:last-child { margin-bottom: 0; }
+
+a { color: var(--bleu); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+a:hover { color: var(--marine); }
+
+:focus-visible {
+  outline: 3px solid var(--signal);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+img { max-width: 100%; height: auto; }
+
+.num {
+  font-family: var(--police-nombre);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+}
+
+.saut-contenu {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  padding: 0.75rem 1.25rem;
+  background: var(--marine);
+  color: #fff;
+  z-index: 100;
+}
+.saut-contenu:focus { left: 0; }
+
+.enveloppe {
+  width: min(100% - 2.5rem, 1200px);
+  margin-inline: auto;
+}
+
+/* scroll-margin : l'entete est collante. Sans cette marge, suivre une ancre
+   depose le titre de la section DESSOUS, et on croit avoir atterri trop loin. */
+.section { padding-block: var(--marge-section); scroll-margin-top: 5rem; }
+.section--froide { background: var(--papier-froid); }
+.section--marine {
+  background: var(--marine-sombre);
+  color: #dbe5f4;
+}
+.section--marine h2,
+.section--marine h3 { color: #fff; }
+.section--marine a { color: #9dc0f5; }
+
+/* ---------- en-tête ---------- */
+.entete {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  /* Opaque, et sans flou. Au-dessus d'une section marine, un blanc a 94 %
+     laissait remonter le texte defile : une salissure, pas une transparence. */
+  background: #fff;
+  border-bottom: 1px solid var(--filet);
+}
+
+.entete__barre {
+  display: flex;
+  align-items: center;
+  gap: var(--pas);
+  min-height: 4.25rem;
+}
+
+.marque { display: flex; align-items: center; gap: 0.7rem; margin-right: auto; text-decoration: none; }
+/* Le fichier d'origine est le verrouillage complet : hexagone, nom et cinq
+   pictogrammes, pour 1,2 Mo. Reduit a la taille d'une barre, rien n'y etait
+   lisible et le nom y etait dit deux fois. On sert donc l'hexagone seul,
+   decoupe une fois pour toutes (assets/qualitos-marque.png, 67 ko) plutot que
+   de faire telecharger l'affiche entiere pour en montrer un sixieme.
+   width/height sont poses sur la balise : la place est reservee avant que
+   l'image n'arrive, et la page ne saute pas. */
+.marque__sceau { flex: none; width: 2.75rem; height: 2.75rem; }
+.pied__barre .marque__sceau { width: 3rem; height: 3rem; background: #fff; border-radius: 10px; }
+.marque__nom {
+  font-family: var(--police-titre);
+  font-weight: 700;
+  font-size: 1.3rem;
+  letter-spacing: -0.03em;
+  color: var(--marine);
+}
+.marque__nom b { color: var(--signal); font-weight: 700; }
+.marque__suite {
+  display: block;
+  font-family: var(--police-texte);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  color: var(--encre-douce);
+  text-transform: uppercase;
+}
+
+.nav { display: flex; align-items: center; gap: 1.6rem; }
+.nav a {
+  color: var(--encre);
+  font-size: var(--t-s);
+  font-weight: 500;
+  text-decoration: none;
+  padding-block: 0.4rem;
+  border-bottom: 2px solid transparent;
+}
+.nav a:hover { border-bottom-color: var(--signal); color: var(--marine); }
+
+.nav__bascule {
+  display: none;
+  border: 1px solid var(--filet-fort);
+  background: #fff;
+  border-radius: 4px;
+  padding: 0.55rem 0.8rem;
+  font: inherit;
+  font-size: var(--t-s);
+  cursor: pointer;
+}
+
+/* ---------- boutons ---------- */
+.bouton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1.5rem;
+  border: 2px solid transparent;
+  border-radius: 3px;
+  font-family: var(--police-texte);
+  font-size: var(--t-s);
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 140ms ease, color 140ms ease, border-color 140ms ease;
+}
+.bouton--signal {
+  background: var(--signal);
+  color: #20150a;
+  border-color: var(--signal);
+}
+.bouton--signal:hover { background: var(--signal-sombre); border-color: var(--signal-sombre); color: #fff; }
+.bouton--trait {
+  background: transparent;
+  color: var(--marine);
+  border-color: var(--filet-fort);
+}
+.bouton--trait:hover { border-color: var(--marine); color: var(--marine); background: var(--bleu-clair); }
+.section--marine .bouton--trait { color: #fff; border-color: #51719e; }
+.section--marine .bouton--trait:hover { background: rgba(255, 255, 255, 0.08); border-color: #fff; }
+
+/* ==========================================================================
+   HÉROS — le titre vit DANS une bande de tolérance
+   ========================================================================== */
+.heros {
+  position: relative;
+  padding-block: clamp(2.5rem, 5vw, 4.25rem) clamp(2rem, 4vw, 3.25rem);
+  background:
+    linear-gradient(180deg, var(--papier) 0%, var(--papier-froid) 100%);
+  overflow: hidden;
+}
+
+/* Le quadrillage d'une feuille de relevé, très en retrait. */
+.heros::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(31, 98, 196, 0.055) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(31, 98, 196, 0.055) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, #000 35%, transparent 100%);
+  pointer-events: none;
+}
+
+.heros__contenu { position: relative; }
+
+.bande {
+  position: relative;
+  padding-block: clamp(1.5rem, 2.6vw, 2.25rem);
+  border-top: 1px solid var(--filet-fort);
+  border-bottom: 1px solid var(--filet-fort);
+}
+
+/* Les deux limites portent leur nom, comme sur une carte de contrôle. */
+.bande__limite {
+  position: absolute;
+  left: 0;
+  font-family: var(--police-nombre);
+  font-size: var(--t-xs);
+  letter-spacing: 0.06em;
+  color: var(--encre-douce);
+  background: var(--papier-froid);
+  padding-right: 0.6rem;
+}
+.bande__limite--haute { top: -0.72em; }
+.bande__limite--basse { bottom: -0.72em; }
+
+.heros h1 {
+  font-size: var(--t-xxl);
+  font-weight: 700;
+  max-width: 17ch;
+  margin-bottom: 1.25rem;
+}
+.heros h1 em {
+  font-style: normal;
+  color: var(--signal);
+}
+
+.heros__chapo {
+  font-size: var(--t-m);
+  color: var(--encre-douce);
+  max-width: 56ch;
+  margin-bottom: 2rem;
+}
+
+.heros__actions { display: flex; flex-wrap: wrap; gap: 0.85rem; }
+
+/* La trace de mesure : dessinée une fois, c'est le seul mouvement de la page. */
+.trace {
+  display: block;
+  width: 100%;
+  height: clamp(90px, 13vw, 150px);
+  margin-top: 2.5rem;
+}
+.trace__ligne {
+  fill: none;
+  stroke: var(--bleu);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  stroke-dasharray: 1400;
+  stroke-dashoffset: 1400;
+  animation: tracer 2.6s cubic-bezier(0.22, 0.61, 0.36, 1) 0.35s forwards;
+}
+.trace__limite { stroke: var(--filet-fort); stroke-width: 1; stroke-dasharray: 5 5; }
+.trace__moyenne { stroke: var(--filet-fort); stroke-width: 1; }
+.trace__point { fill: var(--bleu); opacity: 0; animation: paraitre 0.4s ease 2.5s forwards; }
+.trace__point--hors {
+  fill: var(--signal);
+  r: 6;
+  animation: paraitre 0.4s ease 2.7s forwards;
+}
+.trace__etiquette {
+  font-family: var(--police-nombre);
+  font-size: 12px;
+  fill: var(--signal-sombre);
+  opacity: 0;
+  animation: paraitre 0.5s ease 3s forwards;
+}
+.trace__legende { font-family: var(--police-nombre); font-size: 11px; fill: var(--encre-douce); }
+
+@keyframes tracer { to { stroke-dashoffset: 0; } }
+@keyframes paraitre { to { opacity: 1; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .trace__ligne { stroke-dashoffset: 0; animation: none; }
+  .trace__point, .trace__point--hors, .trace__etiquette { opacity: 1; animation: none; }
+}
+
+/* Les cinq méthodes, en pied de héros : des colonnes séparées par des filets,
+   pas une chaîne de mots reliés par des points médians. */
+.methodes-rapides {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  margin-top: 2.75rem;
+  border-top: 1px solid var(--filet);
+}
+.methodes-rapides div {
+  padding: 1.1rem 1.1rem 0 0;
+  border-right: 1px solid var(--filet);
+}
+.methodes-rapides div:last-child { border-right: 0; }
+.methodes-rapides dt {
+  font-family: var(--police-titre);
+  font-weight: 700;
+  font-size: var(--t-base);
+  color: var(--marine);
+  margin-bottom: 0.15rem;
+}
+.methodes-rapides dd {
+  margin: 0;
+  font-size: var(--t-xs);
+  color: var(--encre-douce);
+  line-height: 1.45;
+}
+
+/* ---------- titres de section ---------- */
+.titre-section { margin-bottom: 1.75rem; max-width: 62ch; }
+.titre-section h2 { font-size: var(--t-xl); font-weight: 700; margin-bottom: 0.6rem; }
+.titre-section p { font-size: var(--t-m); color: var(--encre-douce); }
+.section--marine .titre-section p { color: #a9bcd8; }
+
+/* ---------- le constat : deux colonnes qui s'opposent ---------- */
+.constat { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(1.75rem, 3.2vw, 3rem); align-items: start; }
+
+.liste-constat { list-style: none; margin: 0; padding: 0; }
+
+/* Le filet de gauche porte l'information que des numeros ne portaient pas :
+   la colonne du constat est grise, celle de la reponse est orange. Rien a lire,
+   la couleur dit de quel cote de la page on se trouve. */
+.liste-constat li {
+  padding: 0.7rem 0 0.7rem 1.1rem;
+  border-bottom: 1px solid var(--filet);
+  border-left: 2px solid var(--filet-fort);
+}
+.liste-constat li:first-child { border-top: 1px solid var(--filet); }
+.liste-constat--reponse li { border-left-color: var(--signal); }
+.liste-constat strong { color: var(--marine); font-weight: 600; }
+.liste-constat span { color: var(--encre-douce); font-size: var(--t-s); }
+
+/* ---------- le référentiel commun ---------- */
+.referentiel { display: grid; grid-template-columns: 1fr 1.05fr; gap: clamp(1.75rem, 3.2vw, 3rem); align-items: center; }
+.referentiel svg { width: 100%; height: auto; }
+
+.chaine { list-style: none; margin: 1.25rem 0 0; padding: 0; }
+.chaine li {
+  padding: 0.85rem 0 0.85rem 1.4rem;
+  border-left: 2px solid var(--filet);
+  font-size: var(--t-s);
+  color: var(--encre-douce);
+}
+.chaine li strong { color: var(--marine); font-weight: 600; display: block; font-size: var(--t-base); }
+.chaine li:nth-child(odd) { border-left-color: var(--bleu); }
+.chaine li:nth-child(even) { border-left-color: var(--signal); }
+
+/* ---------- grille de modules ---------- */
+.modules {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(255px, 1fr));
+  gap: 0;
+  border-top: 1px solid var(--filet);
+  border-left: 1px solid var(--filet);
+}
+.module {
+  padding: 1.2rem;
+  border-right: 1px solid var(--filet);
+  border-bottom: 1px solid var(--filet);
+  background: var(--papier);
+}
+.module h3 { font-size: var(--t-base); font-weight: 700; margin-bottom: 0.45rem; }
+.module p { font-size: var(--t-s); color: var(--encre-douce); margin: 0; }
+.module__clause {
+  display: block;
+  margin-top: 0.75rem;
+  font-family: var(--police-nombre);
+  font-size: var(--t-xs);
+  color: var(--bleu);
+}
+
+/* ---------- normes ---------- */
+.normes-grille { display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(1.75rem, 3.2vw, 3rem); }
+
+.familles-normes { display: grid; gap: 1.05rem; }
+.famille-norme { border-top: 2px solid var(--signal); padding-top: 0.85rem; }
+.famille-norme h3 { font-size: var(--t-s); font-weight: 700; color: #fff; margin-bottom: 0.5rem; }
+.famille-norme p { font-size: var(--t-s); color: #a9bcd8; margin: 0; }
+
+.etapes-certif { list-style: none; margin: 0; padding: 0; counter-reset: etape; }
+/* Ici la numérotation dit quelque chose : une certification EST une séquence,
+   et l'ordre des étapes est contraignant. */
+.etapes-certif li {
+  counter-increment: etape;
+  display: grid;
+  grid-template-columns: 2.6rem 1fr auto;
+  gap: 1rem;
+  align-items: baseline;
+  padding: 0.7rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  font-size: var(--t-s);
+}
+.etapes-certif li::before {
+  content: counter(etape, decimal-leading-zero);
+  font-family: var(--police-nombre);
+  font-size: var(--t-xs);
+  color: var(--signal);
+}
+.etapes-certif .duree { font-family: var(--police-nombre); font-size: var(--t-xs); color: #8aa3c6; }
+
+/* ---------- IA ---------- */
+.ia-exemples { display: grid; grid-template-columns: repeat(auto-fit, minmax(255px, 1fr)); gap: 1.5rem 1.75rem; }
+.ia-exemple { border-top: 2px solid var(--bleu); padding-top: 1rem; }
+.ia-exemple h3 { font-size: var(--t-base); margin-bottom: 0.5rem; }
+.ia-exemple p { font-size: var(--t-s); color: var(--encre-douce); }
+.ia-exemple q {
+  display: block;
+  margin-top: 0.75rem;
+  padding-left: 1rem;
+  border-left: 2px solid var(--signal);
+  font-size: var(--t-s);
+  color: var(--marine);
+  font-style: italic;
+  quotes: '«\00a0' '\00a0»';
+}
+
+/* ---------- par métier ---------- */
+.metiers { display: grid; grid-template-columns: repeat(auto-fit, minmax(265px, 1fr)); gap: 0; border-left: 1px solid var(--filet); }
+.metier { padding: 1.3rem; border-right: 1px solid var(--filet); }
+.metier h3 { font-size: var(--t-m); margin-bottom: 0.3rem; }
+.metier__sous { font-size: var(--t-xs); color: var(--signal-sombre); margin-bottom: 1rem; font-weight: 600; }
+.metier ul { list-style: none; margin: 0; padding: 0; }
+.metier li {
+  font-size: var(--t-s);
+  color: var(--encre-douce);
+  padding: 0.5rem 0 0.5rem 1.35rem;
+  position: relative;
+}
+.metier li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 1.05em;
+  width: 0.7rem;
+  height: 1px;
+  background: var(--signal);
+}
+
+/* ---------- secteurs ---------- */
+.secteurs { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+.secteur {
+  padding: 0.55rem 1rem;
+  border: 1px solid var(--filet-fort);
+  border-radius: 999px;
+  font-size: var(--t-s);
+  color: var(--marine);
+  background: #fff;
+}
+.secteur b { font-weight: 600; }
+.secteur span { color: var(--encre-douce); }
+
+/* ---------- déploiement ---------- */
+.deploiements { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.25rem; }
+.deploiement { border: 1px solid var(--filet); padding: 1.3rem; background: #fff; }
+.deploiement h3 { font-size: var(--t-m); margin-bottom: 0.6rem; }
+.deploiement p { font-size: var(--t-s); color: var(--encre-douce); }
+.deploiement--retenu { border-color: var(--signal); border-width: 2px; }
+
+.socle-securite { list-style: none; margin: 1.75rem 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1.25rem 2rem; }
+.socle-securite li { font-size: var(--t-s); color: var(--encre-douce); padding-top: 0.8rem; border-top: 1px solid var(--filet); }
+.socle-securite strong { display: block; color: var(--marine); font-weight: 600; }
+
+/* ---------- qui construit ---------- */
+.equipe { display: grid; grid-template-columns: 1.15fr 1fr; gap: clamp(1.75rem, 3.2vw, 3rem); align-items: start; }
+
+.profil h3 { font-size: var(--t-l); color: var(--marine); margin: 0 0 0.3rem; }
+.profil__role { color: var(--signal-sombre); font-size: var(--t-s); font-weight: 500; margin: 0 0 1rem; }
+
+.profil__parcours { list-style: none; margin: 0 0 1rem; padding: 0; }
+.profil__parcours li {
+  display: grid;
+  gap: 0.15rem;
+  padding: 0.55rem 0 0.55rem 1.1rem;
+  border-left: 2px solid var(--filet-fort);
+  border-bottom: 1px solid var(--filet);
+  font-size: var(--t-s);
+  color: var(--encre);
+}
+/* Le poste en cours porte le filet de la marque : c'est la seule ligne du
+   parcours qui parle au present. */
+.profil__parcours li:first-child { border-left-color: var(--bleu); border-top: 1px solid var(--filet); }
+.profil__parcours .ou { color: var(--encre-douce); font-size: var(--t-xs); }
+
+.profil__titres { font-size: var(--t-xs); color: var(--encre-douce); max-width: 46ch; margin: 0; }
+
+/* ---------- FAQ ---------- */
+.faq { max-width: 860px; }
+.faq details {
+  border-bottom: 1px solid var(--filet);
+}
+.faq details:first-of-type { border-top: 1px solid var(--filet); }
+.faq summary {
+  cursor: pointer;
+  padding: 1rem 2.5rem 1rem 0;
+  font-family: var(--police-titre);
+  font-weight: 600;
+  font-size: var(--t-m);
+  color: var(--marine);
+  list-style: none;
+  position: relative;
+}
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after {
+  content: '';
+  position: absolute;
+  right: 0.5rem;
+  top: 1.75rem;
+  width: 0.8rem;
+  height: 2px;
+  background: var(--signal);
+}
+.faq summary::before {
+  content: '';
+  position: absolute;
+  right: 0.89rem;
+  top: 1.35rem;
+  width: 2px;
+  height: 0.8rem;
+  background: var(--signal);
+  transition: transform 160ms ease;
+}
+.faq details[open] summary::before { transform: scaleY(0); }
+.faq details p { padding-bottom: 1.15rem; color: var(--encre-douce); }
+
+/* ---------- contact ---------- */
+.contact { display: grid; grid-template-columns: 1fr 1.15fr; gap: clamp(1.75rem, 3.2vw, 3rem); align-items: start; }
+
+.coordonnees { list-style: none; margin: 1.5rem 0 0; padding: 0; }
+.coordonnees li { padding: 0.8rem 0; border-top: 1px solid rgba(255, 255, 255, 0.14); }
+.coordonnees .intitule { display: block; font-size: var(--t-xs); color: #8aa3c6; margin-bottom: 0.2rem; }
+.coordonnees a { font-size: var(--t-m); color: #fff; text-decoration: none; border-bottom: 2px solid var(--signal); }
+.coordonnees a:hover { color: var(--signal); }
+
+.formulaire { background: #fff; padding: clamp(1.75rem, 3vw, 2.5rem); border-radius: 4px; }
+.formulaire h3 { font-size: var(--t-l); margin-bottom: 0.4rem; }
+.formulaire > p { font-size: var(--t-s); color: var(--encre-douce); margin-bottom: 1.25rem; }
+
+.champs { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem; }
+.champ { display: flex; flex-direction: column; gap: 0.35rem; }
+.champ--large { grid-column: 1 / -1; }
+.champ label { font-size: var(--t-s); font-weight: 600; color: var(--marine); }
+.champ .aide { font-size: var(--t-xs); color: var(--encre-douce); font-weight: 400; }
+.champ input,
+.champ select,
+.champ textarea {
+  /* width/min-width : un champ a une largeur intrinseque heritee de l'epoque
+     des formulaires en colonnes (une vingtaine de caracteres). Sans ces deux
+     lignes, c'est elle qui fixe la largeur minimale de la colonne, et le
+     formulaire deborde l'ecran d'un telephone au lieu de s'y plier. */
+  width: 100%;
+  min-width: 0;
+  font: inherit;
+  font-size: var(--t-s);
+  padding: 0.7rem 0.8rem;
+  border: 1px solid var(--filet-fort);
+  border-radius: 3px;
+  background: #fff;
+  color: var(--encre);
+}
+.champ textarea { resize: vertical; min-height: 7rem; }
+.champ input:focus-visible,
+.champ select:focus-visible,
+.champ textarea:focus-visible { border-color: var(--bleu); }
+
+.formulaire__pied { margin-top: 1.6rem; display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; }
+.formulaire__pied .bouton { flex: 0 0 auto; }
+.formulaire__note { font-size: var(--t-xs); color: var(--encre-douce); margin: 0; max-width: 34ch; }
+
+.retour {
+  margin-top: 1.25rem;
+  padding: 0.9rem 1.1rem;
+  border-left: 3px solid var(--signal);
+  background: #fff6ea;
+  font-size: var(--t-s);
+  color: var(--encre);
+}
+.retour[hidden] { display: none; }
+
+/* ---------- pied ---------- */
+.pied {
+  border-top: 1px solid var(--filet);
+  padding-block: 2rem;
+  font-size: var(--t-s);
+  color: var(--encre-douce);
+}
+.pied__plan {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.6rem;
+  padding-bottom: 1.5rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+}
+.pied__plan a { color: #cddaee; text-decoration: none; font-size: var(--t-s); padding-block: 0.3rem; }
+.pied__plan a:hover { color: #fff; text-decoration: underline; }
+
+.pied__barre p { margin: 0; }
+.pied__barre { display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: center; justify-content: space-between; }
+.pied a { color: var(--encre-douce); }
+
+/* ---------- adaptation ---------- */
+@media (max-width: 960px) {
+  .constat, .referentiel, .normes-grille, .contact, .equipe { grid-template-columns: 1fr; }
+  .methodes-rapides { grid-template-columns: repeat(2, 1fr); }
+  .methodes-rapides div:nth-child(2n) { border-right: 0; }
+  .methodes-rapides div { border-bottom: 1px solid var(--filet); padding-bottom: 1rem; }
+}
+
+@media (max-width: 1040px) {
+  .nav {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    background: #fff;
+    border-bottom: 1px solid var(--filet);
+    padding: 0.5rem 1.25rem 1.25rem;
+  }
+  .nav--ouverte { display: flex; }
+  /* 44 px de haut au minimum : c'est la taille d'un doigt, pas celle d'un mot. */
+  .nav a { min-height: 44px; display: flex; align-items: center; border-bottom: 1px solid var(--filet); }
+  .nav .bouton { margin-top: 0.75rem; justify-content: center; }
+  .nav__bascule { display: inline-flex; min-height: 44px; }
+  .champs { grid-template-columns: 1fr; }
+  .methodes-rapides { grid-template-columns: 1fr; }
+  .methodes-rapides div { border-right: 0; }
+  .metiers, .modules { border-left: 0; }
+  .metier, .module { border-right: 0; }
+}
+
+/* ---------- tres petits ecrans ---------- */
+@media (max-width: 560px) {
+  /* Sans bordure laterale, le retrait interieur n'aligne plus rien : il
+     decale juste le texte par rapport au reste de la page. */
+  .metier, .module { padding-inline: 0; }
+  .metiers, .modules { gap: 1.25rem; }
+  .deploiement { padding: 1.1rem; }
+  .formulaire { padding: 1.25rem; }
+  .etapes-certif li { gap: 0.6rem; font-size: var(--t-xs); }
+  /* Les libelles de limite deviennent illisibles sous 560 px et chevauchent le
+     titre : les filets suffisent a dire la bande. Le titre, lui, reste. */
+  .bande__limite { display: none; }
+  .pied__barre { flex-direction: column; align-items: flex-start; gap: 1rem; }
+  /* La signature sous le nom se brisait en trois lignes dans une barre de
+     telephone : elle encombrait plus qu'elle ne disait. */
+  .marque__suite { display: none; }
+  /* Un appel a l'action prend toute la largeur : la cible est le pouce. */
+  .heros__actions { display: grid; gap: 0.6rem; }
+  .heros__actions .bouton { justify-content: center; }
+}
+
+@media (max-width: 380px) {
+  :root { --t-xxl: 2.1rem; --t-xl: 1.65rem; }
+  .enveloppe { width: min(100% - 1.75rem, 1200px); }
+}

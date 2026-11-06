@@ -97,6 +97,27 @@ export class StakeholderAssistantComponent {
    * qu'en retour d'un appel refusé après trente secondes d'attente.
    */
   readonly maxSector = 200;
+
+  /**
+   * Les secteurs proposés à l'assistant, en liste fermée.
+   *
+   * <p>C'est du <b>vocabulaire d'écran</b>, pas une règle métier : la liste ne
+   * sert qu'à formuler la demande faite au modèle, et aucun comportement de la
+   * plateforme n'en dépend. Une liste fermée vaut mieux qu'une saisie libre ici
+   * parce qu'un secteur mal orthographié ou trop vague rend des propositions
+   * à côté, sans que rien ne le signale.
+   *
+   * <p><b>À reprendre</b> quand les packs sectoriels (CLAUDE.md §5) seront
+   * branchés : la liste devra venir du pack actif du client, et non d'ici --
+   * sans quoi un hôpital ou une banque n'y trouve pas son secteur.
+   */
+  readonly sectors: readonly string[] = [
+    $localize`:@@stakeholders.sector.aerospace:Aéronautique`,
+    $localize`:@@stakeholders.sector.automotive:Automobile`,
+    $localize`:@@stakeholders.sector.food:Agroalimentaire`,
+    $localize`:@@stakeholders.sector.medical-devices:Dispositifs médicaux`,
+    $localize`:@@stakeholders.sector.services:Services`,
+  ];
   readonly maxName = STAKEHOLDER_LIMITS.name;
   readonly categories = STAKEHOLDER_CATEGORIES;
   readonly maxCharacteristics = 1000;

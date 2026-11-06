@@ -3,13 +3,19 @@ package com.openlab.qualitos.quality.spc.capability.domain;
 import java.util.Map;
 
 /**
- * Les constantes des cartes X̄ – R, par taille de sous-groupe.
+ * Les constantes de la carte X̄ – R, par taille d'échantillon.
  *
  * <p>Ce sont des données brutes de tables statistiques, pas des calculs : les
  * valeurs de n = 2 à 5 sont celles du classeur de référence
  * ({@code docs/spc/SPC Cp Cpk Study Template.xlsx}), arrondies comme lui ; au-delà,
  * les tables usuelles. Les reprendre à l'identique est ce qui fait qu'une étude
  * saisie ici donne le même Cpk que le classeur qu'elle remplace.
+ *
+ * <p><b>La table s'arrête à dix, et c'est voulu.</b> L'étendue n'utilise que la
+ * plus petite et la plus grande des {@code n} mesures : passé une dizaine, elle
+ * estime σ trop mal pour qu'une table soit publiée. Un sous-groupe plus large
+ * se conduit sur la carte X̄ – S ({@link StdevConstants}) ; c'est
+ * {@link ChartFactors} qui choisit.
  *
  * @param d2 estimateur de sigma : σ = R̄ / d2
  * @param a2 limites de la carte X̄ : X̿ ± A2 × R̄
@@ -32,12 +38,13 @@ public record SpcConstants(double d2, double a2, double d3, double d4) {
             9, new SpcConstants(2.97, 0.34, 0.184, 1.82),
             10, new SpcConstants(3.08, 0.31, 0.223, 1.78));
 
-    /** Les constantes d'une taille de sous-groupe admise (2 à 10). */
+    /** Les constantes d'une taille d'échantillon couverte par la carte X̄ – R (2 à 10). */
     public static SpcConstants forSubgroupSize(int n) {
         SpcConstants c = TABLE.get(n);
         if (c == null) {
             throw new SpcValidationException("subgroupSize",
-                    "La taille du sous-groupe va de " + MIN_SUBGROUP_SIZE + " à " + MAX_SUBGROUP_SIZE + ".");
+                    "La carte X̄ – R va de " + MIN_SUBGROUP_SIZE + " à " + MAX_SUBGROUP_SIZE
+                            + " mesures par sous-groupe.");
         }
         return c;
     }

@@ -41,8 +41,8 @@ public final class SpcStudyWebDto {
             boolean actionPlan,
             @NotNull Double lsl,
             @NotNull Double usl,
-            @NotNull @Min(2) @Max(10) Integer subgroupSize,
-            @NotNull @Size(min = 2, max = 10) List<@NotNull @Size(min = 2, max = 40) List<Double>> measurements) {
+            @NotNull @Min(2) @Max(25) Integer subgroupSize,
+            @NotNull @Size(min = 2, max = 25) List<@NotNull @Size(min = 2, max = 100) List<Double>> measurements) {
 
         /**
          * Toutes les lignes ont la meme largeur.

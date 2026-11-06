@@ -4,6 +4,7 @@ import com.openlab.qualitos.quality.common.MethodSecurityTestConfig;
 import com.openlab.qualitos.quality.spc.capability.application.SpcStudyDto;
 import com.openlab.qualitos.quality.spc.capability.application.SpcStudyService;
 import com.openlab.qualitos.quality.spc.capability.domain.CapabilityStatus;
+import com.openlab.qualitos.quality.spc.capability.domain.DispersionChart;
 import com.openlab.qualitos.quality.spc.capability.domain.SpcNotFoundException;
 import com.openlab.qualitos.quality.spc.capability.domain.SpcValidationException;
 import org.junit.jupiter.api.Tag;
@@ -79,7 +80,8 @@ class SpcStudyControllerTest {
     static SpcStudyDto.StudySheet fiche() {
         return new SpcStudyDto.StudySheet(ligne(), 475, 525, 5, List.of(),
                 new SpcStudyDto.CalculationView(List.of(), List.of(), 20, 9980.6, 499.03, 10.55, 4.5279,
-                        1.84, 1.912, 1.769, 1.769, 505.149, 492.911, 22.261, 0.0, 2.33, 0.58, 0, 2.11,
+                        1.84, 1.912, 1.769, 1.769, 505.149, 492.911, 22.261, 0.0,
+                        DispersionChart.RANGE, 2.33, 0.58, 0, 2.11,
                         54.3, -0.97, 3.88));
     }
 
@@ -202,7 +204,7 @@ class SpcStudyControllerTest {
     void uneGrilleMalFormeeEstRefuseeAvantLeService() throws Exception {
         String sansReference = corps().replace("\"partReference\":\"Shaft AX\"", "\"partReference\":\"\"");
         String ligneCourte = corps().replaceFirst("\\[500,", "[");
-        String tailleHorsTable = corps().replace("\"subgroupSize\":5", "\"subgroupSize\":11");
+        String tailleHorsTable = corps().replace("\"subgroupSize\":5", "\"subgroupSize\":26");
         for (String c : List.of(sansReference, ligneCourte, tailleHorsTable)) {
             mockMvc.perform(post(BASE).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(c))
                     .andExpect(status().isBadRequest());

@@ -1,6 +1,7 @@
 import { NavigationEnd, Router } from '@angular/router';
 import { NEVER, Observable, Subject, of } from 'rxjs';
 
+import { BrandingService } from '../../core/branding/branding.service';
 import { EditionService } from '../../core/edition/edition.service';
 import { Edition } from '../../core/edition/edition.types';
 import { TenantModulesService } from '../../features/admin/tenant-modules.service';
@@ -73,9 +74,14 @@ function harness(): ShellHarness {
   const theme = jasmine.createSpyObj<ThemeService>('ThemeService', ['preference', 'setPreference']);
   theme.preference.and.returnValue(of<ThemePreference>('system'));
 
+  // La marque du client : la coquille la demande au chargement. Elle n'a rien a
+  // dire sur la navigation, elle ne doit donc rien exiger de ces tests.
+  const branding = jasmine.createSpyObj<BrandingService>('BrandingService', ['load']);
+  branding.load.and.returnValue(of(null));
+
   return {
     component: new MainShellComponent(
-      auth, connectivity, offline, notifications, router, modules, editions, theme),
+      auth, connectivity, offline, notifications, router, modules, editions, theme, branding),
     notifications, router, auth, modules, events, theme
   };
 }
@@ -197,7 +203,9 @@ describe('MainShellComponent (navigation model)', () => {
     // 15 : Clients quitte cette section pour la console de l'editeur
     // (/platform/clients, ADR 0105). Cette section est le parametrage DU
     // client ; creer une organisation est l'administration DE la plateforme.
-    expect(labels).toEqual([8, 6, 7, 2, 1, 6, 1, 11, 8, 1, 15]);
+    // 16 : Cabinets rejoint l'administration (ADR 0106) — l'octroi d'un acces a
+    // un cabinet partenaire est un parametrage du client, pas de l'editeur.
+    expect(labels).toEqual([8, 6, 7, 2, 1, 6, 1, 11, 8, 1, 16]);
   });
 
   it('le registre des risques a son groupe, juste apres la non-conformite', () => {

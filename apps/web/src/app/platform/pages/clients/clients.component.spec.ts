@@ -220,6 +220,64 @@ describe('ClientsComponent', () => {
     expect(component.identityWarning).toBeNull();
   });
 
+  it('la couleur choisie se lit AUSSI en clair, pas seulement en aplat', async () => {
+    // Un aplat de couleur ne se recopie pas dans une charte graphique, et deux
+    // bleus voisins ne se distinguent pas à l'œil : sans le code hexadécimal
+    // affiché, l'écran ne dit pas ce qui a été choisi.
+    await setup();
+    await creerAvecIdentite();
+    component.step = 2;
+    component.identityForm.patchValue({ primaryColor: '#1A73E8', secondaryColor: '#0F9D58' });
+    fixture.detectChanges();
+
+    const codes = Array.from(hote().querySelectorAll('.couleur__code'))
+      .map(e => e.textContent!.trim());
+    expect(codes).toEqual(['#1A73E8', '#0F9D58']);
+  });
+
+  it('sans couleur choisie, l’écran DIT que c’est celle du thème', async () => {
+    // Un `input type="color"` vide affiche du noir. Laisser la pastille noire
+    // sans un mot laisse croire que le noir a été retenu, et le client partirait
+    // en production avec une charte qu’il n’a jamais demandée.
+    await setup();
+    await creerAvecIdentite();
+    component.step = 2;
+    fixture.detectChanges();
+
+    expect(component.identityForm.controls.primaryColor.value).toBe('');
+    const mentions = Array.from(hote().querySelectorAll('.couleur__code--defaut'));
+    expect(mentions.length).toBe(2);
+    expect(mentions[0].textContent!.trim()).toBe('Celle du thème');
+  });
+
+  it('le champ de logo reste dans l’arbre, masqué mais atteignable au clavier', async () => {
+    // Il est masqué à l'œil au profit de la zone de dépôt. Le remplacer par un
+    // bouton qui le déclenche le sortirait de l'ordre de tabulation et du
+    // lecteur d'écran : l'habillage ne doit rien retirer.
+    await setup();
+    await creerAvecIdentite();
+    component.step = 2;
+    fixture.detectChanges();
+
+    const champ = hote().querySelector<HTMLInputElement>('[data-test="client-logo"]')!;
+    expect(champ).not.toBeNull();
+    expect(champ.type).toBe('file');
+    expect(champ.hidden).withContext('masqué par la CSS, jamais par [hidden]').toBeFalse();
+    expect(champ.closest('.logo__choix')).not.toBeNull();
+  });
+
+  it('chaque sélecteur de couleur reste cliquable par son libellé', async () => {
+    // La pastille enveloppe le champ natif ; si l'enveloppe sortait du <label>,
+    // cliquer le libellé n'ouvrirait plus le nuancier.
+    await setup();
+    await creerAvecIdentite();
+    component.step = 2;
+    fixture.detectChanges();
+
+    const pastilles = hote().querySelectorAll('.couleur .couleur__pastille input[type="color"]');
+    expect(pastilles.length).toBe(2);
+  });
+
   it('un thème choisi suffit à poser l’identité, même sans un seul champ rempli', async () => {
     await setup();
     await creerAvecIdentite();

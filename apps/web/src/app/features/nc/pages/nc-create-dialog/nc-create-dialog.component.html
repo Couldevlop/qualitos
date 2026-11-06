@@ -57,12 +57,19 @@
     <!-- La NATURE de l'écart, sous sa catégorie. Facultative, et proposée
          seulement une fois la catégorie choisie : soixante natures toutes
          catégories confondues ne se parcourent pas. -->
-    <mat-form-field appearance="outline" *ngIf="subcategoryChoices.length">
-      <mat-label i18n="@@nc.create.subcategory">Nature de l'écart</mat-label>
+    <!-- Toujours PRESENT, desactive tant qu'aucune categorie n'est choisie.
+         Il n'apparaissait qu'une fois la categorie retenue : personne ne
+         cherche un champ dont rien n'annonce l'existence, et le declarant
+         laissait la sous-categorie vide en croyant qu'il n'y en avait pas. -->
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label i18n="@@nc.create.subcategory">Sous-catégorie</mat-label>
       <mat-select formControlName="subcategoryCode" data-test="nc-nature">
         <mat-option value="" i18n="@@nc.create.subcategory-none">— À classer —</mat-option>
         <mat-option *ngFor="let s of subcategoryChoices" [value]="s.code">{{ s.label }}</mat-option>
       </mat-select>
+      <mat-hint *ngIf="!subcategoryChoices.length" i18n="@@nc.create.subcategory-hint">
+        Choisissez d’abord une catégorie.
+      </mat-hint>
     </mat-form-field>
 
     <mat-form-field appearance="outline">
@@ -176,24 +183,20 @@
       </li>
     </ul>
 
-    <!-- Deux entrées : l'appareil photo au poste (capture), la galerie pour une
-         photo déjà prise. `capture` seul interdirait la galerie sur mobile. -->
-    <input type="file" class="hidden-file" #cameraInput accept="image/*" capture="environment"
-           (change)="onPhotosSelected($event)" aria-hidden="true" tabindex="-1">
+    <!-- Une seule entrée. Il y en avait deux, « Prendre une photo » (champ
+         `capture`) et « Choisir des photos », qui ouvraient le MÊME sélecteur de
+         fichier sur un poste fixe : deux boutons pour un seul geste, dont l'un
+         promettait un appareil photo que l'ordinateur n'a pas. Le champ sans
+         `capture` laisse de toute façon le téléphone proposer l'appareil photo
+         à côté de la galerie : on ne perd rien sur le terrain. -->
     <input type="file" class="hidden-file" #galleryInput multiple [accept]="acceptedPhotoTypes"
            (change)="onPhotosSelected($event)" aria-hidden="true" tabindex="-1">
     <div class="photos__actions">
       <button mat-stroked-button color="primary" type="button"
               [disabled]="submitting || photos.length >= maxPhotos"
-              (click)="cameraInput.click()">
-        <mat-icon aria-hidden="true">photo_camera</mat-icon>
-        <span i18n="@@nc.create.photo-take">Prendre une photo</span>
-      </button>
-      <button mat-stroked-button type="button"
-              [disabled]="submitting || photos.length >= maxPhotos"
-              (click)="galleryInput.click()">
+              (click)="galleryInput.click()" data-test="nc-photo-ajouter">
         <mat-icon aria-hidden="true">add_photo_alternate</mat-icon>
-        <span i18n="@@nc.create.photo-choose">Choisir des photos</span>
+        <span i18n="@@nc.create.photo-choose">Ajouter des photos</span>
       </button>
     </div>
 

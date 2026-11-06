@@ -166,15 +166,139 @@ describe('CapabilityStudyComponent', () => {
     expect(component.meanOut(19)).toBeFalse();
   });
 
-  it('change la taille du sous-groupe sans perdre les lignes masquées', async () => {
+  it('change la taille d\'échantillon sans perdre les lignes masquées', async () => {
     await setup();
     remplir();
     component.form.controls.subgroupSize.setValue(3);
     fixture.detectChanges();
     expect(component.rows.length).toBe(3);
-    expect(component.calc.d2).toBe(1.69);
+    expect(component.calc.sigmaDivisor).toBe(1.69);
     component.form.controls.subgroupSize.setValue(5);
     expect(component.calc.cpk!).toBeCloseTo(GOLDEN.cpk, 3);
+  });
+
+  it('passe à la carte X\u0304 – S au-delà de dix mesures, et le dit', async () => {
+    await setup();
+    expect(component.rangeChart).toBeTrue();
+    expect(component.dispersionSymbol).toBe('R');
+    expect(component.meanDispersionSymbol).toBe('R̄');
+    expect(component.factorNames).toEqual({ sigma: 'd2', mean: 'A2', lower: 'D3', upper: 'D4' });
+    expect(un('carte-retenue')?.textContent).toContain('X̄ – R');
+    expect(un('constantes')).not.toBeNull();
+    expect(un('constantes-s')).toBeNull();
+
+    component.form.controls.subgroupSize.setValue(12);
+    fixture.detectChanges();
+
+    expect(component.rangeChart).toBeFalse();
+    expect(component.dispersionSymbol).toBe('S');
+    expect(component.meanDispersionSymbol).toBe('s̄');
+    expect(component.factorNames).toEqual({ sigma: 'c4', mean: 'A3', lower: 'B3', upper: 'B4' });
+    expect(component.calc.sigmaDivisor).toBeCloseTo(0.9776, 3);
+    expect(un('carte-retenue')?.textContent).toContain('X̄ – S');
+    expect(un('constantes')).toBeNull();
+    expect(un('constante-s-12')?.getAttribute('aria-current')).toBe('true');
+    expect(un('constantes-s')?.textContent).toContain('0.9776');
+    expect(hote().querySelectorAll('[data-test^="constante-s-"]').length).toBe(24);
+  });
+
+  it('refuse de calculer une taille hors du domaine des deux cartes', async () => {
+    await setup();
+    component.form.controls.subgroupSize.setValue(26);
+    fixture.detectChanges();
+
+    expect(component.unsupportedSize).toBeTrue();
+    expect(component.calc.cpk).toBeNull();
+    expect(component.readings).toBeNull();
+    expect(component.values).toEqual([]);
+    expect(un('taille-hors-domaine')?.textContent).toContain('25');
+    expect(component.chartHint()).toContain('Hors domaine');
+
+    component.save();
+    expect(service.create).not.toHaveBeenCalled();
+
+    component.form.controls.subgroupSize.setValue(5);
+    expect(component.unsupportedSize).toBeFalse();
+  });
+
+  it('règle le nombre de sous-groupes dans la liste, jusqu\'à cent', async () => {
+    await setup();
+    expect(component.subgroupCount).toBe(20);
+    expect(component.subgroupCountOptions.slice(0, 19)).toEqual([
+      2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
+    ]);
+    expect(component.subgroupCountOptions.slice(19)).toEqual([25, 30, 40, 50, 60, 80, 100]);
+
+    component.onSubgroupCount(100);
+    fixture.detectChanges();
+
+    expect(component.subgroupCount).toBe(100);
+    expect(component.columns.length).toBe(100);
+    expect(component.raw[0].length).toBe(100);
+    expect(un('rappel-grille')?.textContent).toContain('100');
+    expect(dialog.open).not.toHaveBeenCalled();
+  });
+
+  it('réduit sans rien demander quand les sous-groupes retirés sont vides', async () => {
+    await setup();
+    component.onSubgroupCount(6);
+    fixture.detectChanges();
+
+    expect(dialog.open).not.toHaveBeenCalled();
+    expect(component.subgroupCount).toBe(6);
+    expect(component.columns.length).toBe(6);
+    expect(component.fewSubgroups).toBeTrue();
+    expect(un('plancher-sg')?.textContent).toContain('20');
+  });
+
+  it('demande confirmation avant de retirer des sous-groupes saisis, et respecte le refus', async () => {
+    await setup();
+    remplir();
+    confirme = false;
+
+    component.onSubgroupCount(3);
+    fixture.detectChanges();
+
+    expect(dialog.open).toHaveBeenCalled();
+    expect(component.subgroupCount).toBe(20);
+    expect(component.raw[0].length).toBe(20);
+
+    confirme = true;
+    component.onSubgroupCount(3);
+    fixture.detectChanges();
+
+    expect(component.subgroupCount).toBe(3);
+    expect(component.raw[0].length).toBe(3);
+    expect(component.calc.completeSubgroups).toBe(3);
+  });
+
+  it('ne règle pas le nombre de sous-groupes en consultation seule', async () => {
+    await setup({ canManage: false });
+    component.onSubgroupCount(8);
+    expect(component.subgroupCount).toBe(20);
+    expect(component.raw[0].length).toBe(20);
+  });
+
+  it('ignore un nombre de sous-groupes inchangé ou hors bornes', async () => {
+    await setup();
+    component.onSubgroupCount(20);
+    component.onSubgroupCount(1);
+    component.onSubgroupCount(101);
+    expect(component.subgroupCount).toBe(20);
+    expect(component.raw[0].length).toBe(20);
+  });
+
+  it('ajoute à la liste une largeur qui n\'est pas un palier', async () => {
+    await setup();
+    // Un bloc collé depuis un tableur, une étude reprise : 22 n'est pas un palier.
+    component.onSubgroupCount(22);
+    fixture.detectChanges();
+
+    expect(component.subgroupCount).toBe(22);
+    expect(component.raw[0].length).toBe(22);
+    expect(component.subgroupCountOptions).toContain(22);
+    expect(component.subgroupCountOptions.indexOf(22)).toBe(19);
+    expect(component.subgroupCountOptions[20]).toBe(25);
   });
 
   it('tient les pastilles de statut et la table des constantes avant toute mesure', async () => {
