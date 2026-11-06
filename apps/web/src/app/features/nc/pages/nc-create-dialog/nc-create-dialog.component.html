@@ -176,24 +176,20 @@
       </li>
     </ul>
 
-    <!-- Deux entrées : l'appareil photo au poste (capture), la galerie pour une
-         photo déjà prise. `capture` seul interdirait la galerie sur mobile. -->
-    <input type="file" class="hidden-file" #cameraInput accept="image/*" capture="environment"
-           (change)="onPhotosSelected($event)" aria-hidden="true" tabindex="-1">
+    <!-- Une seule entrée. Il y en avait deux, « Prendre une photo » (champ
+         `capture`) et « Choisir des photos », qui ouvraient le MÊME sélecteur de
+         fichier sur un poste fixe : deux boutons pour un seul geste, dont l'un
+         promettait un appareil photo que l'ordinateur n'a pas. Le champ sans
+         `capture` laisse de toute façon le téléphone proposer l'appareil photo
+         à côté de la galerie : on ne perd rien sur le terrain. -->
     <input type="file" class="hidden-file" #galleryInput multiple [accept]="acceptedPhotoTypes"
            (change)="onPhotosSelected($event)" aria-hidden="true" tabindex="-1">
     <div class="photos__actions">
       <button mat-stroked-button color="primary" type="button"
               [disabled]="submitting || photos.length >= maxPhotos"
-              (click)="cameraInput.click()">
-        <mat-icon aria-hidden="true">photo_camera</mat-icon>
-        <span i18n="@@nc.create.photo-take">Prendre une photo</span>
-      </button>
-      <button mat-stroked-button type="button"
-              [disabled]="submitting || photos.length >= maxPhotos"
-              (click)="galleryInput.click()">
+              (click)="galleryInput.click()" data-test="nc-photo-ajouter">
         <mat-icon aria-hidden="true">add_photo_alternate</mat-icon>
-        <span i18n="@@nc.create.photo-choose">Choisir des photos</span>
+        <span i18n="@@nc.create.photo-choose">Ajouter des photos</span>
       </button>
     </div>
 

@@ -10810,13 +10810,9 @@ Portail clients</source>
         <source>Choisissez une sévérité.</source>
         <target state="translated">重大度を選択してください。</target>
       </trans-unit>
-      <trans-unit id="nc.create.photo-take" datatype="html">
-        <source>Prendre une photo</source>
-        <target state="translated">写真を撮る</target>
-      </trans-unit>
       <trans-unit id="nc.create.photo-choose" datatype="html">
-        <source>Choisir des photos</source>
-        <target state="translated">写真を選択</target>
+        <source>Ajouter des photos</source>
+        <target state="translated">写真を追加</target>
       </trans-unit>
       <trans-unit id="nc.create.photo-remove-tooltip" datatype="html">
         <source>Retirer cette photo</source>
@@ -21268,6 +21264,10 @@ historique 12 mois</source>
       <trans-unit id="capa.open.containment-hint" datatype="html">
         <source>Mesure immédiate : elle contient l'effet. Le dossier reste correctif — sa clôture demandera une action qui supprime la cause.</source>
         <target state="translated">即時措置：影響を封じ込めます。案件は是正のままで、終結には原因を除去する処置が必要です。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.blockers" datatype="html">
+        <source>Ce qui empêche encore d’aller plus loin :</source>
+        <target state="translated">先に進めない理由：</target>
       </trans-unit>
       <trans-unit id="dmaic.detail.complete-hint" datatype="html">
         <source>Le projet se clôture quand toute la fiche est renseignée et que chaque action est à 100 %.</source>

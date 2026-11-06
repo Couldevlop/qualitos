@@ -218,6 +218,22 @@ describe('NcCreateDialogComponent', () => {
     expect(snackSpy.calls.mostRecent().args[0]).toContain('10 Mo');
   });
 
+  it("n'offre QU'UN geste pour joindre une photo", () => {
+    // Il y en avait deux, « Prendre une photo » et « Choisir des photos ». Sur un
+    // poste fixe ils ouvraient le même sélecteur de fichier : deux boutons pour
+    // un seul geste, dont l'un promettait un appareil photo absent de la machine.
+    fixture.detectChanges();
+    const hote = fixture.nativeElement as HTMLElement;
+    const champs = hote.querySelectorAll('.photos input[type="file"]');
+
+    expect(champs.length).withContext('un seul champ de fichier').toBe(1);
+    expect(champs[0].hasAttribute('capture'))
+      .withContext('sans `capture`, le téléphone propose appareil photo ET galerie')
+      .toBeFalse();
+    expect(hote.querySelectorAll('.photos__actions button').length).toBe(1);
+    expect(hote.querySelector('[data-test="nc-photo-ajouter"]')).not.toBeNull();
+  });
+
   it("plafonne à dix photos et permet d'en retirer une", () => {
     const snackSpy = spyOn(TestBed.inject(MatSnackBar), 'open');
     pick(...Array.from({ length: 11 }, (_, i) => photo(`p${i}.jpg`)));

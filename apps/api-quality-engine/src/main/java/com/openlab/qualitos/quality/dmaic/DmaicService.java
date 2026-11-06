@@ -109,8 +109,8 @@ public class DmaicService {
         // Une phase dont le questionnaire n'est pas rempli bloque la suivante.
         List<String> manque = phaseGate == null ? List.of() : phaseGate.missing(id, p.getPhase());
         if (!manque.isEmpty()) {
-            throw new DmaicStateException("La phase n'est pas complète : " + manque.size()
-                    + " réponse(s) manquante(s), dont « " + manque.get(0) + " »");
+            throw new DmaicGateException("La phase n'est pas complète : " + manque.size()
+                    + " réponse(s) manquante(s).", manque);
         }
         DmaicPhase next = p.getPhase().next();
         if (next == null) {
@@ -120,8 +120,10 @@ public class DmaicService {
             // un plan d'actions à 60 % affirme une résolution que rien ne soutient.
             List<String> empeche = phaseGate == null ? List.of() : phaseGate.blockingCompletion(id);
             if (!empeche.isEmpty()) {
-                throw new DmaicStateException("Le projet ne peut pas être clos : " + empeche.size()
-                        + " point(s) à solder, dont « " + empeche.get(0) + " »");
+                // La LISTE voyage, pas seulement son premier élément : un projet
+                // bloqué par cinq points se soldait sinon cinq fois, à l'aveugle.
+                throw new DmaicGateException("Le projet ne peut pas être clos : " + empeche.size()
+                        + " point(s) à solder.", empeche);
             }
             p.setStatus(DmaicStatus.COMPLETED);
             p.setCompletedAt(Instant.now());

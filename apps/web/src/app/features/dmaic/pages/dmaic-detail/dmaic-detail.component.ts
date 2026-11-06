@@ -7,7 +7,7 @@ import { catchError, finalize, map, shareReplay, switchMap, tap } from 'rxjs/ope
 
 import { deferredView } from '../../../../core/rx/deferred-view';
 import { ConfirmDialogComponent } from '../../../../shared/ui/confirm-dialog/confirm-dialog.component';
-import { safeErrorMessage } from '../../../../core/http/error-message';
+import { gateReasons, safeErrorMessage } from '../../../../core/http/error-message';
 import { DmaicService } from '../../dmaic.service';
 import {
   AssignmentResponse,
@@ -37,6 +37,17 @@ export class DmaicDetailComponent implements OnInit {
 
   /** Ce qui manque à la phase en cours (fiche enregistrée) : tant qu'il en reste, on n'avance pas. */
   missing: string[] = [];
+
+  /**
+   * Ce que le SERVEUR a refusé, énuméré.
+   *
+   * <p>Distinct de {@link missing}, qui est ce que l'écran sait avant d'essayer.
+   * Clore exige en plus toute la fiche et chaque action à 100 % : l'écran ne
+   * connaît pas l'avancement des actions, seul le serveur le sait. Son refus
+   * arrivait sous la forme « État incompatible — rechargez la page », un conseil
+   * faux et sans la moindre indication de ce qu'il fallait solder.
+   */
+  blockers: string[] = [];
   readonly advanceBlockedHint =
     $localize`:@@dmaic.detail.advance-blocked:Répondez à toutes les questions de la phase et enregistrez la fiche pour passer à la suivante.`;
   /**
@@ -175,9 +186,15 @@ export class DmaicDetailComponent implements OnInit {
       this.snack.open(this.advanceBlockedHint, $localize`:@@common.ok:OK`, { duration: 5000 });
       return;
     }
+    this.blockers = [];
     this.svc.advance(p.id).subscribe({
       next: () => { this.snack.open($localize`:@@dmaic.detail.phase-advanced:Phase avancée.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); },
-      error: err => this.fail(err, $localize`:@@dmaic.detail.advance-failed:Avance impossible.`)
+      error: err => {
+        // Le serveur énumère ce qui bloque ; l'écran le POSE sous le bouton.
+        // Une infobulle de quatre secondes ne permet pas de solder trois points.
+        this.blockers = gateReasons(err);
+        this.fail(err, $localize`:@@dmaic.detail.advance-failed:Avance impossible.`);
+      }
     });
   }
 

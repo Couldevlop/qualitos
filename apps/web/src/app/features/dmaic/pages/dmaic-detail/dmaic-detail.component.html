@@ -57,6 +57,19 @@
           <mat-icon>delete</mat-icon> <span i18n="@@common.delete">Supprimer</span>
         </button>
       </div>
+
+      <!-- Le refus du serveur, en clair et persistant. Il arrivait sous forme
+           d'un message generique de quatre secondes, qui ne disait ni ce qui
+           bloquait ni quoi faire. -->
+      <div class="blocage" *ngIf="blockers.length" role="alert" data-test="blocage">
+        <p class="blocage__titre" i18n="@@dmaic.detail.blockers">
+          Ce qui empêche encore d’aller plus loin&nbsp;:
+        </p>
+        <ul class="blocage__liste">
+          <li *ngFor="let b of blockers">{{ b }}</li>
+        </ul>
+      </div>
+
       <div qosCharter *ngIf="p.problemStatement || p.goalStatement">
         <mat-card *ngIf="p.problemStatement || p.goalStatement" class="charter-card">
           <mat-card-header><mat-card-title i18n="@@dmaic.detail.charter">Charte du projet</mat-card-title></mat-card-header>

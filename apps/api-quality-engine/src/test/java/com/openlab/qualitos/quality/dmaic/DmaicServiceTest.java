@@ -172,10 +172,14 @@ class DmaicServiceTest {
         when(projectRepo.findByIdAndTenantId(p.getId(), TENANT)).thenReturn(Optional.of(p));
         service.setPhaseGate(gate(phase -> List.of(),
                 List.of("Action à 60 % : « Changer l'outil »", "Plan de surveillance")));
+        // La LISTE voyage, pas seulement son premier élément : un projet bloqué
+        // par deux points se soldait sinon deux fois, à l'aveugle.
         assertThatThrownBy(() -> service.advancePhase(p.getId()))
-                .isInstanceOf(DmaicStateException.class)
+                .isInstanceOf(DmaicGateException.class)
                 .hasMessageContaining("2 point(s) à solder")
-                .hasMessageContaining("Changer l'outil");
+                .asInstanceOf(org.assertj.core.api.InstanceOfAssertFactories.type(DmaicGateException.class))
+                .extracting(DmaicGateException::reasons, org.assertj.core.api.InstanceOfAssertFactories.list(String.class))
+                .containsExactly("Action à 60 % : « Changer l'outil »", "Plan de surveillance");
         assertThat(p.getStatus()).isEqualTo(DmaicStatus.ACTIVE);
         assertThat(p.getPhase()).isEqualTo(DmaicPhase.CONTROL);
         verify(projectRepo, never()).save(any());
@@ -187,9 +191,11 @@ class DmaicServiceTest {
         when(projectRepo.findByIdAndTenantId(p.getId(), TENANT)).thenReturn(Optional.of(p));
         service.setPhaseGate(gate(phase -> phase == DmaicPhase.DEFINE ? List.of("Qui est concerné ?") : List.of(), List.of()));
         assertThatThrownBy(() -> service.advancePhase(p.getId()))
-                .isInstanceOf(DmaicStateException.class)
+                .isInstanceOf(DmaicGateException.class)
                 .hasMessageContaining("1 réponse(s) manquante(s)")
-                .hasMessageContaining("Qui est concerné ?");
+                .asInstanceOf(org.assertj.core.api.InstanceOfAssertFactories.type(DmaicGateException.class))
+                .extracting(DmaicGateException::reasons, org.assertj.core.api.InstanceOfAssertFactories.list(String.class))
+                .containsExactly("Qui est concerné ?");
         assertThat(p.getPhase()).isEqualTo(DmaicPhase.DEFINE);
         verify(projectRepo, never()).save(any());
     }

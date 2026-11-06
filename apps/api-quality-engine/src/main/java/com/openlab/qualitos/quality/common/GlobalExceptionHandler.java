@@ -18,6 +18,7 @@ import com.openlab.qualitos.quality.capa.CapaValidationException;
 import com.openlab.qualitos.quality.fmeascale.FmeaScaleValidationException;
 import com.openlab.qualitos.quality.circle.CircleMeetingNotFoundException;
 import com.openlab.qualitos.quality.dmaic.DmaicProjectNotFoundException;
+import com.openlab.qualitos.quality.dmaic.DmaicGateException;
 import com.openlab.qualitos.quality.dmaic.DmaicStateException;
 import com.openlab.qualitos.quality.dmaic.PokaYokeAssignmentNotFoundException;
 import com.openlab.qualitos.quality.dmaic.PokaYokeDeviceNotFoundException;
@@ -1328,6 +1329,31 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/pokayoke-assignment-not-found"));
         problem.setTitle("Poka-Yoke Assignment Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    /**
+     * Un refus de passage de phase ou de clôture : l'utilisateur doit savoir ce
+     * qui manque.
+     *
+     * <p>{@code userMessage} et {@code reasons} sont le canal <b>déclaré</b> des
+     * messages destinés à l'utilisateur. L'écran n'affiche jamais le {@code
+     * detail} d'un ProblemDetail quelconque — il pourrait porter un nom de
+     * classe, une contrainte JPA ou une trace. Il affiche ces deux propriétés,
+     * et seulement elles, parce que leur contenu est rédigé pour être lu.
+     *
+     * <p>Déclaré avant {@link #handleDmaicState} : Spring choisit le gestionnaire
+     * du type le plus spécifique, mais l'ordre de lecture doit montrer que
+     * celui-ci prime, sans quoi la sous-classe paraîtrait sans effet.
+     */
+    @ExceptionHandler(DmaicGateException.class)
+    public ProblemDetail handleDmaicGate(DmaicGateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/dmaic-gate"));
+        problem.setTitle("DMAIC Gate Not Passed");
+        problem.setProperty("userMessage", ex.getMessage());
+        problem.setProperty("reasons", ex.reasons());
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }

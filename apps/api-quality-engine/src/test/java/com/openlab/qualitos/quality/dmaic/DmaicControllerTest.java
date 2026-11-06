@@ -146,6 +146,24 @@ class DmaicControllerTest {
     }
 
     @Test @WithMockUser
+    void advance_gateNotPassed_dit_ce_qui_bloque() throws Exception {
+        // Le 409 nu se traduisait à l'écran par « État incompatible — rechargez la
+        // page » : un conseil faux, puisque recharger ne solde aucune action. Les
+        // deux propriétés ci-dessous sont le canal DÉCLARÉ des messages destinés
+        // à l'utilisateur ; l'écran n'affiche rien d'autre du corps d'erreur.
+        when(service.advancePhase(PROJECT)).thenThrow(new DmaicGateException(
+                "Le projet ne peut pas être clos : 2 point(s) à solder.",
+                java.util.List.of("Action à 60 % : « Revoir le gabarit »", "Plan de surveillance")));
+
+        mockMvc.perform(patch("/api/v1/dmaic/projects/{id}/advance", PROJECT).with(csrf()))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.userMessage")
+                        .value("Le projet ne peut pas être clos : 2 point(s) à solder."))
+                .andExpect(jsonPath("$.reasons.length()").value(2))
+                .andExpect(jsonPath("$.reasons[0]").value("Action à 60 % : « Revoir le gabarit »"));
+    }
+
+    @Test @WithMockUser
     void hold_success() throws Exception {
         when(service.hold(PROJECT)).thenReturn(projectResp(DmaicStatus.ON_HOLD, DmaicPhase.MEASURE));
         mockMvc.perform(patch("/api/v1/dmaic/projects/{id}/hold", PROJECT).with(csrf()))

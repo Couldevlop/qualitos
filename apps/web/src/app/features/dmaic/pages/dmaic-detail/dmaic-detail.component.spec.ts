@@ -259,6 +259,40 @@ describe('DmaicDetailComponent', () => {
       .toContain('Mesurer');
   });
 
+  it('ÉNUMÈRE ce que le serveur reproche quand la clôture est refusée', () => {
+    // Le refus arrivait sous la forme « État incompatible — rechargez la page » :
+    // un conseil faux, puisque recharger ne solde aucune action, et sans dire
+    // lequel des points reste à solder. L'écran ne savait pas le dire, parce que
+    // l'avancement des actions n'est connu que du serveur.
+    fixture.detectChanges();
+    flushDetail();
+
+    component.advance(project({ phase: 'CONTROL' }));
+    http.expectOne(`${base}/projects/${ID}/advance`).flush({
+      title: 'DMAIC Gate Not Passed',
+      userMessage: 'Le projet ne peut pas être clos : 2 point(s) à solder.',
+      reasons: ['Action à 60 % : « Revoir le gabarit »', 'Action à 0 % : « Former l’équipe »']
+    }, { status: 409, statusText: 'Conflict' });
+    fixture.detectChanges();
+
+    const panneau = (fixture.nativeElement as HTMLElement).querySelector('[data-test="blocage"]');
+    expect(panneau).withContext('la liste reste à l’écran, pas quatre secondes').not.toBeNull();
+    expect(panneau!.textContent).toContain('Revoir le gabarit');
+    expect(panneau!.textContent).toContain('Former l’équipe');
+  });
+
+  it('efface les reproches précédents avant de réessayer', () => {
+    // Sinon l'utilisateur solde un point, réessaie, et relit la liste d'avant.
+    fixture.detectChanges();
+    flushDetail();
+    component.blockers = ['Action à 60 % : « Revoir le gabarit »'];
+
+    component.advance(project({ phase: 'CONTROL' }));
+    expect(component.blockers).toEqual([]);
+    http.expectOne(`${base}/projects/${ID}/advance`).flush(project({ status: 'COMPLETED' }));
+    flushDetail();
+  });
+
   it('n\'annule le projet qu\'après confirmation explicite', () => {
     fixture.detectChanges();
     flushDetail();
