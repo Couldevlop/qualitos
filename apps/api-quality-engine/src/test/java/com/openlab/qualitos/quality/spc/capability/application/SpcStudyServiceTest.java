@@ -77,10 +77,12 @@ class SpcStudyServiceTest {
         assertThat(creee.measurements()).hasSize(5);
         assertThat(creee.calculation().completeSubgroups()).isEqualTo(20);
         assertThat(creee.calculation().grandMean()).isEqualTo(499.03, org.assertj.core.api.Assertions.within(1e-9));
-        assertThat(creee.calculation().d2()).isEqualTo(2.33);
-        assertThat(creee.calculation().a2()).isEqualTo(0.58);
-        assertThat(creee.calculation().d3()).isZero();
-        assertThat(creee.calculation().d4()).isEqualTo(2.11);
+        assertThat(creee.calculation().dispersionChart())
+                .isEqualTo(com.openlab.qualitos.quality.spc.capability.domain.DispersionChart.RANGE);
+        assertThat(creee.calculation().sigmaDivisor()).isEqualTo(2.33);
+        assertThat(creee.calculation().meanFactor()).isEqualTo(0.58);
+        assertThat(creee.calculation().dispersionLower()).isZero();
+        assertThat(creee.calculation().dispersionUpper()).isEqualTo(2.11);
         assertThat(creee.calculation().meanUcl()).isNotNull();
         assertThat(creee.calculation().rangeUcl()).isNotNull();
         assertThat(creee.calculation().rangeLcl()).isZero();

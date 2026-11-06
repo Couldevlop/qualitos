@@ -2,8 +2,8 @@
   <qos-page-header
     eyebrow="SPC · Cartes de contrôle" i18n-eyebrow="@@spc.register.eyebrow"
     [title]="title"
-    subtitle="Cartes de contrôle X̄ – R. Saisissez les mesures dans les cellules jaunes ; tout le reste se calcule."
-    i18n-subtitle="@@spc.study.subtitle">
+    subtitle="Cartes de contrôle X̄ – R et X̄ – S. Saisissez les mesures dans les cellules jaunes ; tout le reste se calcule."
+    i18n-subtitle="@@spc.study.subtitle2">
     <ng-container qosActions>
       <button mat-stroked-button type="button" (click)="back()" data-test="retour">
         <mat-icon>arrow_back</mat-icon>
@@ -83,13 +83,30 @@
           <mat-hint class="hint-erreur" *ngIf="limitsInvalid" data-test="limites-invalides"
                     i18n="@@spc.study.error.limits">La limite supérieure (USL) doit dépasser la limite inférieure (LSL).</mat-hint>
         </mat-form-field>
-        <mat-form-field appearance="outline">
-          <mat-label i18n="@@spc.study.subgroup-size">Taille du sous-groupe (n)</mat-label>
+        <!-- Deux réglages distincts : combien de mesures par prélèvement (les lignes),
+             et combien de prélèvements composent l'étude (les colonnes). -->
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label i18n="@@spc.study.sample-size">Taille d'échantillon (n)</mat-label>
           <mat-select formControlName="subgroupSize" required data-test="taille">
-            <mat-option *ngFor="let s of subgroupSizes" [value]="s">{{ s }}</mat-option>
+            <mat-option *ngFor="let s of sampleSizes" [value]="s">{{ s }}</mat-option>
           </mat-select>
+          <mat-hint data-test="carte-retenue">{{ chartHint() }}</mat-hint>
+        </mat-form-field>
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label i18n="@@spc.study.subgroup-count-label">Nombre de sous-groupes</mat-label>
+          <mat-select [value]="subgroupCount" [disabled]="!canManage" data-test="nb-sous-groupes"
+                      (selectionChange)="onSubgroupCount($event.value)">
+            <mat-option *ngFor="let c of subgroupCountOptions" [value]="c">{{ c }}</mat-option>
+          </mat-select>
+          <mat-hint *ngIf="fewSubgroups" data-test="plancher-sg"
+                    i18n="@@spc.study.few-subgroups2">Moins de {{ reliableSubgroups // i18n(ph="floor") }} sous-groupes : les limites de contrôle restent indicatives.</mat-hint>
         </mat-form-field>
       </form>
+
+      <p class="erreur" *ngIf="unsupportedSize" role="alert" data-test="taille-hors-domaine">
+        <mat-icon>error</mat-icon>
+        <span i18n="@@spc.study.size-unsupported">Taille d'échantillon hors domaine : les constantes des cartes de contrôle ne sont tabulées que de 2 à {{ maxSampleSize // i18n(ph="max") }} mesures. Rien n'est calculé, pour ne pas afficher un indice faux.</span>
+      </p>
     </section>
 
     <!-- ---------- mesures et formules ---------- -->
@@ -115,24 +132,9 @@
         </button>
       </div>
 
-      <!-- Le nombre de sous-groupes appartient a l'etude : on l'ajuste ici, et le
-           plancher de la regle de l'art est RAPPELE, jamais impose. -->
-      <div class="sous-groupes">
-        <span class="sous-groupes__compte" data-test="nb-sous-groupes"
-              i18n="@@spc.study.subgroup-count">{{ subgroupCount // i18n(ph="count") }} sous-groupe(s)</span>
-        <button mat-icon-button type="button" (click)="removeSubgroup()" [disabled]="!canRemoveSubgroup"
-                data-test="retirer-sg" i18n-matTooltip="@@spc.study.subgroup-remove"
-                matTooltip="Retirer le dernier sous-groupe (il doit etre vide)">
-          <mat-icon>remove</mat-icon>
-        </button>
-        <button mat-icon-button type="button" (click)="addSubgroup()" [disabled]="!canAddSubgroup"
-                data-test="ajouter-sg" i18n-matTooltip="@@spc.study.subgroup-add"
-                matTooltip="Ajouter un sous-groupe">
-          <mat-icon>add</mat-icon>
-        </button>
-        <span class="sous-groupes__plancher" *ngIf="fewSubgroups" data-test="plancher-sg"
-              i18n="@@spc.study.few-subgroups">Moins de 20 sous-groupes : les limites de controle restent indicatives.</span>
-      </div>
+      <!-- Le nombre de sous-groupes et la taille d'echantillon se reglent dans
+           l'identification, chacun dans sa liste : ici, on ne fait que le rappeler. -->
+      <p class="note" data-test="rappel-grille" i18n="@@spc.study.grid-recap">Grille : {{ n // i18n(ph="size") }} mesures par sous-groupe × {{ subgroupCount // i18n(ph="count") }} sous-groupes.</p>
 
       <div class="saisie" [class.saisie--formules]="showFormulas">
         <!-- La colonne de gauche porte la grille puis, juste dessous, les cartes X̄ et R :
@@ -164,7 +166,7 @@
                   </td>
                 </tr>
                 <tr class="calculee">
-                  <th scope="row" class="entete-ligne">R</th>
+                  <th scope="row" class="entete-ligne">{{ dispersionSymbol }}</th>
                   <td *ngFor="let c of columns" [class.hors]="rangeOut(c)" [attr.data-test]="'etendue-' + c">
                     {{ num(calc.subgroupRanges[c], digits.range) }}
                   </td>
@@ -191,7 +193,7 @@
                                      data-test="carte-x"></qos-spc-control-chart>
             </section>
             <section class="carte-bloc" aria-labelledby="titre-carte-r">
-              <h3 id="titre-carte-r" i18n="@@spc.study.range-chart">Carte R</h3>
+              <h3 id="titre-carte-r"><ng-container i18n="@@spc.study.dispersion-chart">Carte</ng-container> {{ dispersionSymbol }}</h3>
               <qos-spc-control-chart [values]="calc.subgroupRanges" [ucl]="calc.rangeUcl" [cl]="calc.meanRange"
                                      [lcl]="calc.rangeLcl" [label]="rangeLabel" [digits]="digits.mean" data-test="carte-r"></qos-spc-control-chart>
             </section>
@@ -204,8 +206,10 @@
                aria-labelledby="titre-formules">
           <h3 id="titre-formules" i18n="@@spc.formula.title">Formules</h3>
 
-          <table class="constantes" data-test="constantes">
-            <caption i18n="@@spc.formula.constants-title">Table des constantes SPC</caption>
+          <!-- La table de la carte EN VIGUEUR : afficher d2/A2/D3/D4 alors que le
+               calcul tourne sur c4/A3/B3/B4 ferait lire les mauvais facteurs. -->
+          <table class="constantes" *ngIf="rangeChart" data-test="constantes">
+            <caption i18n="@@spc.formula.constants-range">Table des constantes — carte X̄ – R</caption>
             <thead>
               <tr>
                 <th scope="col">n</th>
@@ -216,7 +220,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let k of constantRows" [class.actif]="k.n === n"
+              <tr *ngFor="let k of rangeConstantRows" [class.actif]="k.n === n"
                   [attr.aria-current]="k.n === n ? 'true' : null" [attr.data-test]="'constante-' + k.n">
                 <th scope="row">{{ k.n }}</th>
                 <td>{{ k.d2 }}</td>
@@ -227,15 +231,38 @@
             </tbody>
           </table>
 
+          <table class="constantes" *ngIf="!rangeChart" data-test="constantes-s">
+            <caption i18n="@@spc.formula.constants-stdev">Table des constantes — carte X̄ – S</caption>
+            <thead>
+              <tr>
+                <th scope="col">n</th>
+                <th scope="col">c4</th>
+                <th scope="col">A3</th>
+                <th scope="col">B3</th>
+                <th scope="col">B4</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let k of stdevConstantRows" [class.actif]="k.n === n"
+                  [attr.aria-current]="k.n === n ? 'true' : null" [attr.data-test]="'constante-s-' + k.n">
+                <th scope="row">{{ k.n }}</th>
+                <td>{{ fixed(k.c4, 4) }}</td>
+                <td>{{ fixed(k.a3, 3) }}</td>
+                <td>{{ fixed(k.b3, 3) }}</td>
+                <td>{{ fixed(k.b4, 3) }}</td>
+              </tr>
+            </tbody>
+          </table>
+
           <table class="calculs">
             <tbody>
               <tr class="groupe"><th colspan="3" i18n="@@spc.formula.group-means">Moyennes et dispersion</th></tr>
               <tr><th>Σ X̄</th><td class="formule" i18n="@@spc.formula.sum-means">Somme des X̄</td><td class="valeur" data-test="formule-somme">{{ num(calc.sumOfMeans, digits.mean) }}</td></tr>
               <tr><th>X̿</th><td class="formule">Σ X̄ / {{ calc.completeSubgroups }}</td><td class="valeur" data-test="formule-moyenne">{{ num(calc.grandMean, 3) }}</td></tr>
-              <tr><th>R̄</th><td class="formule">Σ R / {{ calc.completeSubgroups }}</td><td class="valeur" data-test="formule-etendue">{{ num(calc.meanRange, 3) }}</td></tr>
-              <tr><th>SIGMA</th><td class="formule">R̄ / d2</td><td class="valeur" data-test="formule-sigma">{{ num(calc.sigma, 4) }}</td></tr>
-              <tr><th>3 SIGMA</th><td class="formule">3 × R̄ / d2</td><td class="valeur" data-test="formule-3sigma">{{ num(calc.sigma === null ? null : 3 * calc.sigma, 3) }}</td></tr>
-              <tr><th>6 SIGMA</th><td class="formule">6 × R̄ / d2</td><td class="valeur" data-test="formule-6sigma">{{ num(calc.sigma === null ? null : 6 * calc.sigma, 3) }}</td></tr>
+              <tr><th>{{ meanDispersionSymbol }}</th><td class="formule">Σ {{ dispersionSymbol }} / {{ calc.completeSubgroups }}</td><td class="valeur" data-test="formule-etendue">{{ num(calc.meanRange, 3) }}</td></tr>
+              <tr><th>SIGMA</th><td class="formule">{{ meanDispersionSymbol }} / {{ factorNames.sigma }}</td><td class="valeur" data-test="formule-sigma">{{ num(calc.sigma, 4) }}</td></tr>
+              <tr><th>3 SIGMA</th><td class="formule">3 × {{ meanDispersionSymbol }} / {{ factorNames.sigma }}</td><td class="valeur" data-test="formule-3sigma">{{ num(calc.sigma === null ? null : 3 * calc.sigma, 3) }}</td></tr>
+              <tr><th>6 SIGMA</th><td class="formule">6 × {{ meanDispersionSymbol }} / {{ factorNames.sigma }}</td><td class="valeur" data-test="formule-6sigma">{{ num(calc.sigma === null ? null : 6 * calc.sigma, 3) }}</td></tr>
 
               <tr class="groupe"><th colspan="3" i18n="@@spc.formula.group-capability">Capabilité</th></tr>
               <tr><th>USL</th><td class="formule" i18n="@@spc.formula.usl">Limite supérieure</td><td class="valeur">{{ num(usl, 2) }}</td></tr>
@@ -245,15 +272,15 @@
               <tr><th>CPL</th><td class="formule">(X̿ − LSL) / 3 SIGMA</td><td class="valeur" data-test="formule-cpl">{{ num(calc.cpl) }}</td></tr>
               <tr class="cle"><th>Cpk</th><td class="formule">MIN (CPU, CPL)</td><td class="valeur" data-test="formule-cpk">{{ num(calc.cpk) }}</td></tr>
 
-              <tr class="groupe"><th colspan="3"><ng-container i18n="@@spc.formula.group-xbar">Carte X̄</ng-container> (A2 = {{ calc.a2 }})</th></tr>
-              <tr><th>UCL</th><td class="formule">X̿ + A2 × R̄</td><td class="valeur" data-test="formule-x-ucl">{{ num(calc.meanUcl) }}</td></tr>
-              <tr><th>LCL</th><td class="formule">X̿ − A2 × R̄</td><td class="valeur" data-test="formule-x-lcl">{{ num(calc.meanLcl) }}</td></tr>
+              <tr class="groupe"><th colspan="3"><ng-container i18n="@@spc.formula.group-xbar">Carte X̄</ng-container> ({{ factorNames.mean }} = {{ fixed(calc.meanFactor, 3) }})</th></tr>
+              <tr><th>UCL</th><td class="formule">X̿ + {{ factorNames.mean }} × {{ meanDispersionSymbol }}</td><td class="valeur" data-test="formule-x-ucl">{{ num(calc.meanUcl) }}</td></tr>
+              <tr><th>LCL</th><td class="formule">X̿ − {{ factorNames.mean }} × {{ meanDispersionSymbol }}</td><td class="valeur" data-test="formule-x-lcl">{{ num(calc.meanLcl) }}</td></tr>
               <tr><th i18n="@@spc.formula.control-limit">Limite de contrôle</th><td class="formule">UCL − LCL</td>
                 <td class="valeur" data-test="formule-x-ecart">{{ num(calc.meanUcl === null || calc.meanLcl === null ? null : calc.meanUcl - calc.meanLcl) }}</td></tr>
 
-              <tr class="groupe"><th colspan="3"><ng-container i18n="@@spc.formula.group-range">Carte R</ng-container> (D3 = {{ calc.d3 }}, D4 = {{ calc.d4 }})</th></tr>
-              <tr><th>UCL</th><td class="formule">D4 × R̄</td><td class="valeur" data-test="formule-r-ucl">{{ num(calc.rangeUcl) }}</td></tr>
-              <tr><th>LCL</th><td class="formule">D3 × R̄</td><td class="valeur" data-test="formule-r-lcl">{{ num(calc.rangeLcl) }}</td></tr>
+              <tr class="groupe"><th colspan="3"><ng-container i18n="@@spc.formula.group-dispersion">Carte</ng-container> {{ dispersionSymbol }} ({{ factorNames.lower }} = {{ fixed(calc.dispersionLower, 3) }}, {{ factorNames.upper }} = {{ fixed(calc.dispersionUpper, 3) }})</th></tr>
+              <tr><th>UCL</th><td class="formule">{{ factorNames.upper }} × {{ meanDispersionSymbol }}</td><td class="valeur" data-test="formule-r-ucl">{{ num(calc.rangeUcl) }}</td></tr>
+              <tr><th>LCL</th><td class="formule">{{ factorNames.lower }} × {{ meanDispersionSymbol }}</td><td class="valeur" data-test="formule-r-lcl">{{ num(calc.rangeLcl) }}</td></tr>
             </tbody>
           </table>
 
@@ -284,7 +311,7 @@
         </div>
         <div class="kpi" data-test="kpi-sigma">
           <b>{{ num(calc.sigma, 3) }}</b>
-          <span i18n="@@spc.study.sigma">Sigma (R̄ / d2)</span>
+          <span><ng-container i18n="@@spc.study.sigma2">Sigma</ng-container> ({{ meanDispersionSymbol }} / {{ factorNames.sigma }})</span>
         </div>
       </div>
 

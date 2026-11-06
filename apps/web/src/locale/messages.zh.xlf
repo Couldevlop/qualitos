@@ -28342,10 +28342,6 @@ historique 12 mois</source>
         <source>Étude de capabilité <x id="part"/></source>
         <target state="translated">能力研究 <x id="part"/></target>
       </trans-unit>
-      <trans-unit id="spc.study.subtitle" datatype="html">
-        <source>Cartes de contrôle X̄ – R. Saisissez les mesures dans les cellules jaunes ; tout le reste se calcule.</source>
-        <target state="translated">X̄ – R 控制图。在黄色单元格中输入测量值，其余内容自动计算。</target>
-      </trans-unit>
       <trans-unit id="spc.study.back" datatype="html">
         <source>Registre</source>
         <target state="translated">登记簿</target>
@@ -28398,9 +28394,73 @@ historique 12 mois</source>
         <source>USL (limite supérieure)</source>
         <target state="translated">USL（上限）</target>
       </trans-unit>
-      <trans-unit id="spc.study.subgroup-size" datatype="html">
-        <source>Taille du sous-groupe (n)</source>
-        <target state="translated">子组大小 (n)</target>
+      <trans-unit id="spc.study.sample-size" datatype="html">
+        <source>Taille d'échantillon (n)</source>
+        <target state="translated">样本大小 (n)</target>
+      </trans-unit>
+      <trans-unit id="spc.study.subgroup-count-label" datatype="html">
+        <source>Nombre de sous-groupes</source>
+        <target state="translated">子组数量</target>
+      </trans-unit>
+      <trans-unit id="spc.study.few-subgroups2" datatype="html">
+        <source>Moins de <x id="FLOOR"/> sous-groupes : les limites de contrôle restent indicatives.</source>
+        <target state="translated">子组少于 <x id="FLOOR"/> 个：控制限仅供参考。</target>
+      </trans-unit>
+      <trans-unit id="spc.study.grid-recap" datatype="html">
+        <source>Grille : <x id="SIZE"/> mesures par sous-groupe × <x id="COUNT"/> sous-groupes.</source>
+        <target state="translated">网格：每子组 <x id="SIZE"/> 个测量值 × <x id="COUNT"/> 个子组。</target>
+      </trans-unit>
+      <trans-unit id="spc.study.shrink-title" datatype="html">
+        <source>Retirer des sous-groupes saisis ?</source>
+        <target state="translated">删除已录入的子组？</target>
+      </trans-unit>
+      <trans-unit id="spc.study.shrink-message" datatype="html">
+        <source>Les sous-groupes retirés portent des mesures : elles seront perdues. Rien n'est enregistré tant que vous n'enregistrez pas l'étude.</source>
+        <target state="translated">被删除的子组包含测量值，将丢失。在保存研究前不会保存任何内容。</target>
+      </trans-unit>
+      <trans-unit id="spc.study.shrink-confirm" datatype="html">
+        <source>Retirer les sous-groupes</source>
+        <target state="translated">删除子组</target>
+      </trans-unit>
+      <trans-unit id="spc.study.size-unsupported" datatype="html">
+        <source>Taille d'échantillon hors domaine : les constantes des cartes de contrôle ne sont tabulées que de 2 à <x id="MAX"/> mesures. Rien n'est calculé, pour ne pas afficher un indice faux.</source>
+        <target state="translated">样本大小超出范围：控制图常数仅列表到 2 至 <x id="MAX"/> 个测量值。为避免显示错误指数，不进行计算。</target>
+      </trans-unit>
+      <trans-unit id="spc.study.chart-none" datatype="html">
+        <source>Hors domaine : aucune carte applicable.</source>
+        <target state="translated">超出范围：无适用的控制图。</target>
+      </trans-unit>
+      <trans-unit id="spc.study.chart-range" datatype="html">
+        <source>Carte X̄ – R (σ = R̄ / d2), jusqu'à <x id="max"/> mesures.</source>
+        <target state="translated">X̄ – R 控制图 (σ = R̄ / d2)，最多 <x id="max"/> 个测量值。</target>
+      </trans-unit>
+      <trans-unit id="spc.study.chart-stdev" datatype="html">
+        <source>Carte X̄ – S (σ = s̄ / c4) : au-delà de <x id="max"/> mesures, l'étendue estime mal σ.</source>
+        <target state="translated">X̄ – S 控制图 (σ = s̄ / c4)：超过 <x id="max"/> 个测量值时，极差对 σ 的估计较差。</target>
+      </trans-unit>
+      <trans-unit id="spc.study.sigma2" datatype="html">
+        <source>Sigma</source>
+        <target state="translated">西格玛</target>
+      </trans-unit>
+      <trans-unit id="spc.study.dispersion-chart" datatype="html">
+        <source>Carte</source>
+        <target state="translated">控制图</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.group-dispersion" datatype="html">
+        <source>Carte</source>
+        <target state="translated">控制图</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.constants-range" datatype="html">
+        <source>Table des constantes — carte X̄ – R</source>
+        <target state="translated">常数表 — X̄ – R 控制图</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.constants-stdev" datatype="html">
+        <source>Table des constantes — carte X̄ – S</source>
+        <target state="translated">常数表 — X̄ – S 控制图</target>
+      </trans-unit>
+      <trans-unit id="spc.study.subtitle2" datatype="html">
+        <source>Cartes de contrôle X̄ – R et X̄ – S. Saisissez les mesures dans les cellules jaunes ; tout le reste se calcule.</source>
+        <target state="translated">X̄ – R 和 X̄ – S 控制图。在黄色单元格中录入测量值，其余全部自动计算。</target>
       </trans-unit>
       <trans-unit id="spc.study.part-required" datatype="html">
         <source>La référence de la pièce est obligatoire.</source>
@@ -28421,22 +28481,6 @@ historique 12 mois</source>
       <trans-unit id="spc.study.measurements" datatype="html">
         <source>Mesures par sous-groupe</source>
         <target state="translated">按子组的测量值</target>
-      </trans-unit>
-      <trans-unit id="spc.study.subgroup-count" datatype="html">
-        <source><x id="COUNT"/> sous-groupe(s)</source>
-        <target state="translated"><x id="COUNT"/> 个子组</target>
-      </trans-unit>
-      <trans-unit id="spc.study.subgroup-add" datatype="html">
-        <source>Ajouter un sous-groupe</source>
-        <target state="translated">添加子组</target>
-      </trans-unit>
-      <trans-unit id="spc.study.subgroup-remove" datatype="html">
-        <source>Retirer le dernier sous-groupe (il doit être vide)</source>
-        <target state="translated">移除最后一个子组（必须为空）</target>
-      </trans-unit>
-      <trans-unit id="spc.study.few-subgroups" datatype="html">
-        <source>Moins de 20 sous-groupes : les limites de contrôle restent indicatives.</source>
-        <target state="translated">子组少于 20 个：控制限仅供参考。</target>
       </trans-unit>
       <trans-unit id="spc.study.sample" datatype="html">
         <source>Échantillon</source>
@@ -28465,10 +28509,6 @@ historique 12 mois</source>
       <trans-unit id="spc.study.grand-mean" datatype="html">
         <source>Moyenne X̿</source>
         <target state="translated">均值 X̿</target>
-      </trans-unit>
-      <trans-unit id="spc.study.sigma" datatype="html">
-        <source>Sigma (R̄ / d2)</source>
-        <target state="translated">西格玛 (R̄ / d2)</target>
       </trans-unit>
       <trans-unit id="spc.study.controlled" datatype="html">
         <source>Procédé maîtrisé :</source>
@@ -28505,10 +28545,6 @@ historique 12 mois</source>
       <trans-unit id="spc.study.xbar-chart" datatype="html">
         <source>Carte X̄</source>
         <target state="translated">X̄ 控制图</target>
-      </trans-unit>
-      <trans-unit id="spc.study.range-chart" datatype="html">
-        <source>Carte R</source>
-        <target state="translated">R 控制图</target>
       </trans-unit>
       <trans-unit id="spc.study.xbar-aria" datatype="html">
         <source>Carte X̄ : moyenne de chaque sous-groupe et limites de contrôle</source>
@@ -28573,10 +28609,6 @@ historique 12 mois</source>
       <trans-unit id="spc.formula.control-limit" datatype="html">
         <source>Limite de contrôle</source>
         <target state="translated">控制限</target>
-      </trans-unit>
-      <trans-unit id="spc.formula.group-range" datatype="html">
-        <source>Carte R</source>
-        <target state="translated">R 控制图</target>
       </trans-unit>
       <trans-unit id="spc.chart.no-data" datatype="html">
         <source>Aucune donnée à tracer.</source>
@@ -28745,10 +28777,6 @@ historique 12 mois</source>
       <trans-unit id="spc.formula.title" datatype="html">
         <source>Formules</source>
         <target state="translated">公式</target>
-      </trans-unit>
-      <trans-unit id="spc.formula.constants-title" datatype="html">
-        <source>Table des constantes SPC</source>
-        <target state="translated">SPC 常数表</target>
       </trans-unit>
       <trans-unit id="spc.study.process-status" datatype="html">
         <source>Statut du procédé</source>

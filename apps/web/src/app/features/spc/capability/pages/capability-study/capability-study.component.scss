@@ -118,6 +118,16 @@
 }
 
 .grille {
+  // La première colonne reste visible quand la grille défile : avec jusqu'à
+  // cent sous-groupes, savoir si l'on lit l'échantillon 3 ou la ligne R est la
+  // seule chose qui rend le défilement utilisable.
+  //
+  // `position: sticky` était déjà posé, mais la colonne se lisait à travers :
+  // `--qos-bg-subtle` est une teinte TRANSLUCIDE (rgba …, 0.025), et les
+  // cellules jaunes passaient dessous. On empile donc la teinte sur une base
+  // opaque, et une ombre portée à droite montre que la colonne est figée.
+  --spc-fige-fond: linear-gradient(var(--qos-bg-subtle), var(--qos-bg-subtle)),
+    linear-gradient(var(--qos-bg-elevated), var(--qos-bg-elevated));
   border-collapse: collapse;
   font-family: var(--qos-font-mono);
   font-size: var(--qos-fs-xs);
@@ -140,11 +150,21 @@
   .entete-ligne {
     position: sticky;
     left: 0;
-    z-index: 1;
+    z-index: 2;
     padding: var(--qos-space-2) var(--qos-space-3);
-    background: var(--qos-bg-subtle);
+    background: var(--spc-fige-fond);
     color: var(--qos-fg-secondary);
     text-align: left;
+    // `border-collapse: collapse` abandonne la bordure d'une cellule figée :
+    // on la redessine en ombre, avec la séparation juste derrière.
+    box-shadow:
+      inset -1px 0 0 0 var(--qos-border-subtle),
+      8px 0 10px -8px var(--qos-border-strong);
+  }
+
+  // L'en-tête de la colonne figée passe devant les en-têtes qui défilent.
+  thead .entete-ligne {
+    z-index: 3;
   }
 }
 
@@ -507,23 +527,3 @@
   }
 }
 
-// Le reglage du nombre de sous-groupes, au-dessus de la grille qu'il commande.
-.sous-groupes {
-  display: flex;
-  align-items: center;
-  gap: var(--qos-space-2);
-  margin-bottom: var(--qos-space-2);
-
-  &__compte {
-    font-size: var(--qos-fs-xs);
-    font-weight: var(--qos-fw-semibold);
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--qos-fg-tertiary);
-  }
-
-  &__plancher {
-    font-size: var(--qos-fs-xs);
-    color: var(--qos-warning-fg, var(--qos-fg-secondary));
-  }
-}

@@ -28342,10 +28342,6 @@ historique 12 mois</source>
         <source>Étude de capabilité <x id="part"/></source>
         <target state="translated">دراسة القدرة <x id="part"/></target>
       </trans-unit>
-      <trans-unit id="spc.study.subtitle" datatype="html">
-        <source>Cartes de contrôle X̄ – R. Saisissez les mesures dans les cellules jaunes ; tout le reste se calcule.</source>
-        <target state="translated">مخططات التحكم X̄ – R. أدخل القياسات في الخلايا الصفراء؛ ويُحسب كل ما تبقى تلقائياً.</target>
-      </trans-unit>
       <trans-unit id="spc.study.back" datatype="html">
         <source>Registre</source>
         <target state="translated">السجل</target>
@@ -28398,9 +28394,73 @@ historique 12 mois</source>
         <source>USL (limite supérieure)</source>
         <target state="translated">USL (الحد الأعلى)</target>
       </trans-unit>
-      <trans-unit id="spc.study.subgroup-size" datatype="html">
-        <source>Taille du sous-groupe (n)</source>
-        <target state="translated">حجم المجموعة الفرعية (n)</target>
+      <trans-unit id="spc.study.sample-size" datatype="html">
+        <source>Taille d'échantillon (n)</source>
+        <target state="translated">حجم العينة (n)</target>
+      </trans-unit>
+      <trans-unit id="spc.study.subgroup-count-label" datatype="html">
+        <source>Nombre de sous-groupes</source>
+        <target state="translated">عدد المجموعات الفرعية</target>
+      </trans-unit>
+      <trans-unit id="spc.study.few-subgroups2" datatype="html">
+        <source>Moins de <x id="FLOOR"/> sous-groupes : les limites de contrôle restent indicatives.</source>
+        <target state="translated">أقل من <x id="FLOOR"/> مجموعة فرعية: تبقى حدود التحكم إرشادية.</target>
+      </trans-unit>
+      <trans-unit id="spc.study.grid-recap" datatype="html">
+        <source>Grille : <x id="SIZE"/> mesures par sous-groupe × <x id="COUNT"/> sous-groupes.</source>
+        <target state="translated">الشبكة: <x id="SIZE"/> قياسًا لكل مجموعة × <x id="COUNT"/> مجموعة.</target>
+      </trans-unit>
+      <trans-unit id="spc.study.shrink-title" datatype="html">
+        <source>Retirer des sous-groupes saisis ?</source>
+        <target state="translated">إزالة مجموعات فرعية مسجلة؟</target>
+      </trans-unit>
+      <trans-unit id="spc.study.shrink-message" datatype="html">
+        <source>Les sous-groupes retirés portent des mesures : elles seront perdues. Rien n'est enregistré tant que vous n'enregistrez pas l'étude.</source>
+        <target state="translated">المجموعات المحذوفة تحمل قياسات: ستُفقد. لا يُحفظ شيء حتى تحفظ الدراسة.</target>
+      </trans-unit>
+      <trans-unit id="spc.study.shrink-confirm" datatype="html">
+        <source>Retirer les sous-groupes</source>
+        <target state="translated">إزالة المجموعات</target>
+      </trans-unit>
+      <trans-unit id="spc.study.size-unsupported" datatype="html">
+        <source>Taille d'échantillon hors domaine : les constantes des cartes de contrôle ne sont tabulées que de 2 à <x id="MAX"/> mesures. Rien n'est calculé, pour ne pas afficher un indice faux.</source>
+        <target state="translated">حجم العينة خارج النطاق: ثوابت مخططات التحكم مجدولة من 2 إلى <x id="MAX"/> قياسًا فقط. لا يُحسب شيء حتى لا يُعرض مؤشر خاطئ.</target>
+      </trans-unit>
+      <trans-unit id="spc.study.chart-none" datatype="html">
+        <source>Hors domaine : aucune carte applicable.</source>
+        <target state="translated">خارج النطاق: لا يوجد مخطط مناسب.</target>
+      </trans-unit>
+      <trans-unit id="spc.study.chart-range" datatype="html">
+        <source>Carte X̄ – R (σ = R̄ / d2), jusqu'à <x id="max"/> mesures.</source>
+        <target state="translated">مخطط X̄ – R (σ = R̄ / d2)، حتى <x id="max"/> قياسًا.</target>
+      </trans-unit>
+      <trans-unit id="spc.study.chart-stdev" datatype="html">
+        <source>Carte X̄ – S (σ = s̄ / c4) : au-delà de <x id="max"/> mesures, l'étendue estime mal σ.</source>
+        <target state="translated">مخطط X̄ – S (σ = s̄ / c4): بعد <x id="max"/> قياسًا، يقدر المدى σ بشكل سيئ.</target>
+      </trans-unit>
+      <trans-unit id="spc.study.sigma2" datatype="html">
+        <source>Sigma</source>
+        <target state="translated">سيغما</target>
+      </trans-unit>
+      <trans-unit id="spc.study.dispersion-chart" datatype="html">
+        <source>Carte</source>
+        <target state="translated">مخطط</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.group-dispersion" datatype="html">
+        <source>Carte</source>
+        <target state="translated">مخطط</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.constants-range" datatype="html">
+        <source>Table des constantes — carte X̄ – R</source>
+        <target state="translated">جدول الثوابت — مخطط X̄ – R</target>
+      </trans-unit>
+      <trans-unit id="spc.formula.constants-stdev" datatype="html">
+        <source>Table des constantes — carte X̄ – S</source>
+        <target state="translated">جدول الثوابت — مخطط X̄ – S</target>
+      </trans-unit>
+      <trans-unit id="spc.study.subtitle2" datatype="html">
+        <source>Cartes de contrôle X̄ – R et X̄ – S. Saisissez les mesures dans les cellules jaunes ; tout le reste se calcule.</source>
+        <target state="translated">مخططا التحكم X̄ – R و X̄ – S. أدخل القياسات في الخلايا الصفراء؛ ويُحسب كل ما عدا ذلك.</target>
       </trans-unit>
       <trans-unit id="spc.study.part-required" datatype="html">
         <source>La référence de la pièce est obligatoire.</source>
@@ -28421,22 +28481,6 @@ historique 12 mois</source>
       <trans-unit id="spc.study.measurements" datatype="html">
         <source>Mesures par sous-groupe</source>
         <target state="translated">القياسات حسب المجموعة الفرعية</target>
-      </trans-unit>
-      <trans-unit id="spc.study.subgroup-count" datatype="html">
-        <source><x id="COUNT"/> sous-groupe(s)</source>
-        <target state="translated"><x id="COUNT"/> مجموعة فرعية</target>
-      </trans-unit>
-      <trans-unit id="spc.study.subgroup-add" datatype="html">
-        <source>Ajouter un sous-groupe</source>
-        <target state="translated">إضافة مجموعة فرعية</target>
-      </trans-unit>
-      <trans-unit id="spc.study.subgroup-remove" datatype="html">
-        <source>Retirer le dernier sous-groupe (il doit être vide)</source>
-        <target state="translated">إزالة المجموعة الفرعية الأخيرة (يجب أن تكون فارغة)</target>
-      </trans-unit>
-      <trans-unit id="spc.study.few-subgroups" datatype="html">
-        <source>Moins de 20 sous-groupes : les limites de contrôle restent indicatives.</source>
-        <target state="translated">أقل من 20 مجموعة فرعية: تبقى حدود التحكم إرشادية.</target>
       </trans-unit>
       <trans-unit id="spc.study.sample" datatype="html">
         <source>Échantillon</source>
@@ -28465,10 +28509,6 @@ historique 12 mois</source>
       <trans-unit id="spc.study.grand-mean" datatype="html">
         <source>Moyenne X̿</source>
         <target state="translated">المتوسط X̿</target>
-      </trans-unit>
-      <trans-unit id="spc.study.sigma" datatype="html">
-        <source>Sigma (R̄ / d2)</source>
-        <target state="translated">سيغما (R̄ / d2)</target>
       </trans-unit>
       <trans-unit id="spc.study.controlled" datatype="html">
         <source>Procédé maîtrisé :</source>
@@ -28505,10 +28545,6 @@ historique 12 mois</source>
       <trans-unit id="spc.study.xbar-chart" datatype="html">
         <source>Carte X̄</source>
         <target state="translated">مخطط X̄</target>
-      </trans-unit>
-      <trans-unit id="spc.study.range-chart" datatype="html">
-        <source>Carte R</source>
-        <target state="translated">مخطط R</target>
       </trans-unit>
       <trans-unit id="spc.study.xbar-aria" datatype="html">
         <source>Carte X̄ : moyenne de chaque sous-groupe et limites de contrôle</source>
@@ -28573,10 +28609,6 @@ historique 12 mois</source>
       <trans-unit id="spc.formula.control-limit" datatype="html">
         <source>Limite de contrôle</source>
         <target state="translated">حد التحكم</target>
-      </trans-unit>
-      <trans-unit id="spc.formula.group-range" datatype="html">
-        <source>Carte R</source>
-        <target state="translated">مخطط R</target>
       </trans-unit>
       <trans-unit id="spc.chart.no-data" datatype="html">
         <source>Aucune donnée à tracer.</source>
@@ -28745,10 +28777,6 @@ historique 12 mois</source>
       <trans-unit id="spc.formula.title" datatype="html">
         <source>Formules</source>
         <target state="translated">الصيغ</target>
-      </trans-unit>
-      <trans-unit id="spc.formula.constants-title" datatype="html">
-        <source>Table des constantes SPC</source>
-        <target state="translated">جدول ثوابت SPC</target>
       </trans-unit>
       <trans-unit id="spc.study.process-status" datatype="html">
         <source>Statut du procédé</source>

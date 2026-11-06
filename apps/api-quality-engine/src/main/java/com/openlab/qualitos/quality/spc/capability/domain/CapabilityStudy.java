@@ -88,7 +88,7 @@ public final class CapabilityStudy {
         Objects.requireNonNull(tenantId, "tenantId");
         Objects.requireNonNull(thresholds, "thresholds");
         CapabilityStudy etude = new CapabilityStudy(null, tenantId, null, null, null, null, null, null,
-                null, false, 0, 0, SpcConstants.MIN_SUBGROUP_SIZE, List.of(), 0, 0, thresholds,
+                null, false, 0, 0, ChartFactors.MIN_SUBGROUP_SIZE, List.of(), 0, 0, thresholds,
                 createdBy, now, now);
         etude.apply(details, now);
         return etude;
@@ -136,10 +136,10 @@ public final class CapabilityStudy {
             throw new SpcValidationException("usl", "La limite supérieure doit dépasser la limite inférieure.");
         }
         if (d.subgroupSize() == null) {
-            throw new SpcValidationException("subgroupSize", "La taille du sous-groupe est obligatoire.");
+            throw new SpcValidationException("subgroupSize", "La taille d'échantillon est obligatoire.");
         }
         int n = d.subgroupSize();
-        SpcConstants.forSubgroupSize(n);
+        ChartFactors.forSubgroupSize(n);
         List<List<Double>> grille = requireGrid(d.measurements(), n);
 
         CapabilityCalculation calcul = CapabilityCalculation.of(basse, haute, n, grille);

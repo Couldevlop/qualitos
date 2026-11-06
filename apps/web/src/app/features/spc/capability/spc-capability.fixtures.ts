@@ -53,7 +53,9 @@ export function sheet(over: Partial<StudySummary> = {}): StudySheet {
     measurements: GOLDEN_GRID.map(r => [...r]),
     calculation: {
       subgroupMeans: [], subgroupRanges: [], completeSubgroups: 20,
-      ...GOLDEN, d2: 2.33, a2: 0.58, d3: 0, d4: 2.11
+      ...GOLDEN,
+      dispersionChart: 'RANGE', sigmaDivisor: 2.33, meanFactor: 0.58,
+      dispersionLower: 0, dispersionUpper: 2.11
     }
   };
 }

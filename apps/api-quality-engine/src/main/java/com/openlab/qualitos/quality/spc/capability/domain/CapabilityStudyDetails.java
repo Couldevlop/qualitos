@@ -10,7 +10,8 @@ import java.util.UUID;
  * <p>Le meneur de l'étude est une personne de l'annuaire : son compte
  * ({@code leaderUserId}) et son nom recopié pour l'affichage.
  *
- * @param measurements {@code subgroupSize} lignes de 20 cellules, une cellule vide valant {@code null}
+ * @param measurements {@code subgroupSize} lignes (une par mesure du sous-groupe) d'autant de
+ *                     cellules que l'étude compte de sous-groupes, une cellule vide valant {@code null}
  */
 public record CapabilityStudyDetails(
         String partReference,

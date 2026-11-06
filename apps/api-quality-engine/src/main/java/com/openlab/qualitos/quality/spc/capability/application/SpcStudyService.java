@@ -143,7 +143,8 @@ public class SpcStudyService {
                 c.sumOfMeans(), c.grandMean(), c.meanRange(), c.sigma(),
                 c.cp(), c.cpu(), c.cpl(), c.cpk(),
                 c.meanUcl(), c.meanLcl(), c.rangeUcl(), c.rangeLcl(),
-                c.constants().d2(), c.constants().a2(), c.constants().d3(), c.constants().d4(),
+                c.factors().chart(), c.factors().sigmaDivisor(), c.factors().meanFactor(),
+                c.factors().dispersionLower(), c.factors().dispersionUpper(),
                 c.dispersionPercent(), c.centerOffset(), c.centeringPercent());
         return new SpcStudyDto.StudySheet(ligne(e), e.getLsl(), e.getUsl(), e.getSubgroupSize(),
                 e.getMeasurements(), calcul);

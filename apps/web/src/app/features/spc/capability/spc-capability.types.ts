@@ -10,6 +10,17 @@ export type CapabilityStatus = 'CAPABLE' | 'WATCH' | 'NOT_CAPABLE';
 /** Une cellule de la grille : une mesure, ou rien. */
 export type Measurement = number | null;
 
+/**
+ * La carte qui mesure la dispersion d'un sous-groupe (ADR 0107).
+ *
+ * - `RANGE` : carte X̄ – R, dispersion = étendue max − min, σ = R̄ / d2.
+ *   Valide jusqu'à dix mesures par sous-groupe, là où s'arrêtent les tables de
+ *   d2, A2, D3 et D4.
+ * - `STDEV` : carte X̄ – S, dispersion = écart-type d'échantillon s
+ *   (diviseur n − 1), σ = s̄ / c4. De onze à vingt-cinq mesures.
+ */
+export type DispersionChart = 'RANGE' | 'STDEV';
+
 export interface StudySummary {
   id: string;
   partReference: string;
@@ -28,6 +39,14 @@ export interface StudySummary {
   updatedAt: string;
 }
 
+/**
+ * Les valeurs du tableau des formules.
+ *
+ * `subgroupRanges`, `meanRange`, `rangeUcl` et `rangeLcl` portent la dispersion
+ * de la carte retenue : l'étendue sur une carte X̄ – R, l'écart-type
+ * d'échantillon sur une carte X̄ – S. Les noms sont ceux du contrat d'origine,
+ * gardés pour ne rien casser ; `dispersionChart` dit lequel des deux s'applique.
+ */
 export interface CalculationView {
   subgroupMeans: (number | null)[];
   subgroupRanges: (number | null)[];
@@ -44,10 +63,15 @@ export interface CalculationView {
   meanLcl: number | null;
   rangeUcl: number | null;
   rangeLcl: number | null;
-  d2: number;
-  a2: number;
-  d3: number;
-  d4: number;
+  dispersionChart: DispersionChart;
+  /** d2 (carte R) ou c4 (carte S). */
+  sigmaDivisor: number;
+  /** A2 (carte R) ou A3 (carte S). */
+  meanFactor: number;
+  /** D3 (carte R) ou B3 (carte S). */
+  dispersionLower: number;
+  /** D4 (carte R) ou B4 (carte S). */
+  dispersionUpper: number;
   dispersionPercent: number | null;
   centerOffset: number | null;
   centeringPercent: number | null;

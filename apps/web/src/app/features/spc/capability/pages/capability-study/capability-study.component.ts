@@ -14,8 +14,9 @@ import {
   ConfirmDialogComponent, ConfirmDialogData
 } from '../../../../../shared/ui/confirm-dialog/confirm-dialog.component';
 import {
-  CONSTANT_ROWS, DEFAULT_SUBGROUPS, MAX_SUBGROUPS, MAX_SUBGROUP_SIZE, MIN_SUBGROUPS, RELIABLE_SUBGROUPS,
-  SUBGROUP_SIZES, classify, computeCapability, displayDigits,
+  DEFAULT_SUBGROUPS, MAX_SUBGROUPS, MAX_SUBGROUP_SIZE, MIN_SUBGROUPS, RANGE_CHART_MAX,
+  RANGE_CONSTANT_ROWS, RELIABLE_SUBGROUPS, SAMPLE_SIZES, STDEV_CONSTANT_ROWS, SUBGROUP_COUNTS,
+  MIN_SUBGROUP_SIZE, classify, computeCapability, displayDigits,
   measurementDecimals, parseMeasurement, pasteBlock
 } from '../../spc-capability.calc';
 import { completeValues } from '../../spc-capability.charts';
@@ -40,9 +41,16 @@ const DEFAULT_SUBGROUP_SIZE = 5;
  * enregistré vient toujours de lui. Une étude nouvelle prend les seuils du
  * client ; une étude enregistrée garde ceux qu'elle avait à sa création.
  *
- * <p>La grille garde le texte saisi (10 lignes au plus) : réduire la taille du
- * sous-groupe ne perd pas les lignes masquées, et « 49, » en cours de frappe
+ * <p>La grille garde le texte saisi (25 lignes au plus) : réduire la taille
+ * d'échantillon ne perd pas les lignes masquées, et « 49, » en cours de frappe
  * n'est pas réécrit.
+ *
+ * <p>Deux réglages indépendants, et l'écran les sépare enfin (ADR 0107) : la
+ * TAILLE D'ÉCHANTILLON — combien de pièces on mesure à chaque prélèvement,
+ * c'est-à-dire le nombre de lignes de la grille — et le NOMBRE DE SOUS-GROUPES
+ * — combien de prélèvements composent l'étude, c'est-à-dire le nombre de
+ * colonnes. Les confondre sous un seul libellé « taille du sous-groupe » était
+ * la source du malentendu.
  */
 @Component({
   selector: 'qos-spc-capability-study',
@@ -52,11 +60,15 @@ const DEFAULT_SUBGROUP_SIZE = 5;
 })
 export class CapabilityStudyComponent implements OnInit {
 
-  readonly subgroupSizes = SUBGROUP_SIZES;
-  readonly constantRows = CONSTANT_ROWS;
+  readonly sampleSizes = SAMPLE_SIZES;
+  readonly rangeConstantRows = RANGE_CONSTANT_ROWS;
+  readonly stdevConstantRows = STDEV_CONSTANT_ROWS;
+  readonly rangeChartMax = RANGE_CHART_MAX;
   readonly examples = SPC_EXAMPLES;
   readonly minSubgroups = MIN_SUBGROUPS;
   readonly maxSubgroups = MAX_SUBGROUPS;
+  readonly reliableSubgroups = RELIABLE_SUBGROUPS;
+  readonly maxSampleSize = MAX_SUBGROUP_SIZE;
   readonly yes = $localize`:@@spc.study.yes:OUI`;
   readonly no = $localize`:@@spc.study.no:NON`;
   readonly xbarLabel = $localize`:@@spc.study.xbar-aria:Carte X̄ : moyenne de chaque sous-groupe et limites de contrôle`;
@@ -69,11 +81,23 @@ export class CapabilityStudyComponent implements OnInit {
   saving = false;
   showFormulas = true;
 
+  /** La taille d'échantillon sort du domaine des deux cartes : rien n'est calculé. */
+  unsupportedSize = false;
+
   capableThreshold = 1.67;
   watchThreshold = 1.33;
 
   /** Le texte des cellules, ligne par échantillon. */
   raw: string[][] = Array.from({ length: MAX_SUBGROUP_SIZE }, () => Array<string>(DEFAULT_SUBGROUPS).fill(''));
+
+  /**
+   * Le nombre de sous-groupes de l'étude : la largeur de la grille.
+   *
+   * <p>C'est un champ et non un calcul tiré de {@link raw} parce que la liste
+   * déroulante y écrit : quand l'utilisateur réduit l'étude et refuse de perdre
+   * ses mesures, on remet l'ancienne valeur ici, et la liste se recale.
+   */
+  subgroupCount = DEFAULT_SUBGROUPS;
 
   calc!: CalculationView;
   readings: CapabilityReadings | null = null;
@@ -166,17 +190,70 @@ export class CapabilityStudyComponent implements OnInit {
     });
   }
 
+  /** La taille d'échantillon : combien de mesures composent un prélèvement. */
   get n(): number {
     return Number(this.form.controls.subgroupSize.value) || DEFAULT_SUBGROUP_SIZE;
   }
 
+  /**
+   * Les lignes de la grille : une par mesure du prélèvement.
+   *
+   * <p>Bornées par la hauteur réelle de {@link raw} : une taille d'échantillon
+   * hors domaine ne doit pas faire lire une ligne qui n'existe pas.
+   */
   get rows(): number[] {
-    return Array.from({ length: this.n }, (_, i) => i);
+    return Array.from({ length: Math.min(this.n, this.raw.length) }, (_, i) => i);
   }
 
-  /** Les sous-groupes de CETTE étude : la largeur de sa grille, rien d'autre. */
-  get subgroupCount(): number {
-    return this.raw[0]?.length ?? 0;
+  /** La carte que la taille d'échantillon impose : X̄ – R jusqu'à dix, X̄ – S au-delà. */
+  get rangeChart(): boolean {
+    return this.calc.dispersionChart === 'RANGE';
+  }
+
+  /**
+   * Ce que la taille d'échantillon implique, dit sous le champ : la carte
+   * retenue et l'estimateur de σ. L'utilisateur choisit un nombre de mesures,
+   * pas une carte — mais il doit voir laquelle son choix entraîne.
+   */
+  chartHint(): string {
+    if (this.unsupportedSize) {
+      return $localize`:@@spc.study.chart-none:Hors domaine : aucune carte applicable.`;
+    }
+    const max = `${this.rangeChartMax}`;
+    return this.rangeChart
+      ? $localize`:@@spc.study.chart-range:Carte X̄ – R (σ = R̄ / d2), jusqu'à ${max}:max: mesures.`
+      : $localize`:@@spc.study.chart-stdev:Carte X̄ – S (σ = s̄ / c4) : au-delà de ${max}:max: mesures, l'étendue estime mal σ.`;
+  }
+
+  /** « R » ou « S » : le symbole de la dispersion, dans la grille et les formules. */
+  get dispersionSymbol(): string {
+    return this.rangeChart ? 'R' : 'S';
+  }
+
+  /** « R̄ » ou « s̄ » : la dispersion moyenne. */
+  get meanDispersionSymbol(): string {
+    return this.rangeChart ? 'R̄' : 's̄';
+  }
+
+  /** Les noms des facteurs de la carte en vigueur, pour les libellés de formules. */
+  get factorNames(): { sigma: string; mean: string; lower: string; upper: string } {
+    return this.rangeChart
+      ? { sigma: 'd2', mean: 'A2', lower: 'D3', upper: 'D4' }
+      : { sigma: 'c4', mean: 'A3', lower: 'B3', upper: 'B4' };
+  }
+
+  /**
+   * Les nombres de sous-groupes proposés : les paliers, plus la largeur courante
+   * si elle n'en fait pas partie (une étude reprise, un bloc collé depuis un
+   * tableur). Sans cela, une étude de vingt-deux sous-groupes s'afficherait vide.
+   */
+  get subgroupCountOptions(): number[] {
+    const paliers = [...SUBGROUP_COUNTS];
+    if (this.subgroupCount >= MIN_SUBGROUPS && !paliers.includes(this.subgroupCount)) {
+      paliers.push(this.subgroupCount);
+      paliers.sort((a, b) => a - b);
+    }
+    return paliers;
   }
 
   get columns(): number[] {
@@ -198,26 +275,49 @@ export class CapabilityStudyComponent implements OnInit {
     return this.subgroupCount > 0 && this.subgroupCount < RELIABLE_SUBGROUPS;
   }
 
-  get canAddSubgroup(): boolean {
-    return this.canManage && this.subgroupCount < MAX_SUBGROUPS;
+  /**
+   * Règle le nombre de sous-groupes depuis la liste déroulante.
+   *
+   * <p>Élargir n'enlève rien. Réduire sur des colonnes vides n'enlève rien non
+   * plus. Réduire sur des colonnes SAISIES demande confirmation : on ne jette
+   * pas des mesures d'un clic, et refuser remet la liste sur l'ancienne valeur.
+   */
+  onSubgroupCount(count: number): void {
+    const precedent = this.subgroupCount;
+    if (!this.canManage || count === precedent
+      || count < MIN_SUBGROUPS || count > MAX_SUBGROUPS) {
+      return;
+    }
+    this.subgroupCount = count;
+    if (count > precedent || !this.wouldLoseMeasurements(count)) {
+      this.resize(count);
+      return;
+    }
+    this.dialog.open<ConfirmDialogComponent, ConfirmDialogData, boolean>(ConfirmDialogComponent, {
+      data: {
+        title: $localize`:@@spc.study.shrink-title:Retirer des sous-groupes saisis ?`,
+        message: $localize`:@@spc.study.shrink-message:Les sous-groupes retirés portent des mesures : elles seront perdues. Rien n'est enregistré tant que vous n'enregistrez pas l'étude.`,
+        confirmLabel: $localize`:@@spc.study.shrink-confirm:Retirer les sous-groupes`
+      },
+      autoFocus: false,
+      restoreFocus: true
+    }).afterClosed().subscribe(ok => {
+      if (ok) {
+        this.resize(count);
+        return;
+      }
+      this.subgroupCount = precedent;
+    });
   }
 
-  /** Le dernier sous-groupe ne se retire que vide : on ne jette pas des mesures d'un clic. */
-  get canRemoveSubgroup(): boolean {
-    const c = this.subgroupCount - 1;
-    return this.canManage && this.subgroupCount > MIN_SUBGROUPS
-      && this.raw.every(row => (row[c] ?? '').trim() === '');
+  /** Les colonnes au-delà de `count` portent au moins une mesure saisie. */
+  private wouldLoseMeasurements(count: number): boolean {
+    return this.raw.some(row => row.slice(count).some(v => v.trim() !== ''));
   }
 
-  addSubgroup(): void {
-    if (!this.canAddSubgroup) return;
-    this.raw = this.raw.map(row => [...row, '']);
-    this.recompute();
-  }
-
-  removeSubgroup(): void {
-    if (!this.canRemoveSubgroup) return;
-    this.raw = this.raw.map(row => row.slice(0, -1));
+  private resize(count: number): void {
+    this.raw = this.raw.map(row => Array.from({ length: count }, (_, c) => row[c] ?? ''));
+    this.subgroupCount = count;
     this.recompute();
   }
 
@@ -284,6 +384,7 @@ export class CapabilityStudyComponent implements OnInit {
     if (!/[\t\n]/.test(text)) return;
     event.preventDefault();
     this.raw = pasteBlock(this.raw, r, c, text);
+    this.subgroupCount = this.raw[0]?.length ?? 0;
     this.recompute();
   }
 
@@ -350,7 +451,7 @@ export class CapabilityStudyComponent implements OnInit {
   save(): void {
     this.fieldError = null;
     if (!this.canManage || this.saving) return;
-    if (this.form.invalid || this.limitsInvalid) {
+    if (this.form.invalid || this.limitsInvalid || this.unsupportedSize) {
       this.form.markAllAsTouched();
       return;
     }
@@ -413,6 +514,18 @@ export class CapabilityStudyComponent implements OnInit {
   fixed(v: number, digits = 2): string { return v.toFixed(digits); }
 
   private recompute(): void {
+    // Hors du domaine des deux cartes, on ne calcule RIEN et on le dit : un Cpk
+    // tiré d'une constante inexistante serait un chiffre faux présenté comme un
+    // résultat. Le cas n'arrive pas depuis la liste déroulante ; il arriverait
+    // d'une fiche venue d'ailleurs, et l'écran doit alors rester honnête.
+    const n = this.n;
+    this.unsupportedSize = !Number.isInteger(n) || n < MIN_SUBGROUP_SIZE || n > MAX_SUBGROUP_SIZE;
+    if (this.unsupportedSize) {
+      this.calc = computeCapability(null, null, DEFAULT_SUBGROUP_SIZE, []);
+      this.readings = null;
+      this.values = [];
+      return;
+    }
     const lsl = this.lsl;
     const usl = this.usl;
     const valid = lsl !== null && usl !== null && usl > lsl;
@@ -435,6 +548,7 @@ export class CapabilityStudyComponent implements OnInit {
         const v = sheet.measurements[r]?.[c];
         return v === null || v === undefined ? '' : String(v);
       }));
+    this.subgroupCount = largeur;
     this.form.setValue({
       characteristic: s.characteristic ?? '',
       specification: s.specification ?? '',
@@ -458,6 +572,7 @@ export class CapabilityStudyComponent implements OnInit {
         const v = ex.grid[r]?.[c];
         return v === null || v === undefined ? '' : String(v);
       }));
+    this.subgroupCount = largeur;
     this.form.patchValue({
       characteristic: ex.characteristic,
       specification: ex.specification,

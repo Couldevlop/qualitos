@@ -5,16 +5,25 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Le calcul d'une étude de capabilité X̄ – R, formule par formule.
+ * Le calcul d'une étude de capabilité, formule par formule.
  *
  * <p>Les formules sont celles du classeur de référence
- * ({@code docs/spc/SPC Cp Cpk Study Template.xlsx}) :
+ * ({@code docs/spc/SPC Cp Cpk Study Template.xlsx}), écrites une fois pour les
+ * deux cartes ({@link ChartFactors}) :
  * <ul>
- *   <li>X̄ et R par sous-groupe, puis X̿ = Σ X̄ / m et R̄ = Σ R / m ;</li>
- *   <li>σ = R̄ / d2 ; Cp = (USL − LSL) / 6σ ; CPU = (USL − X̿) / 3σ ;
+ *   <li>X̄ et la dispersion (R ou s) par sous-groupe, puis X̿ = Σ X̄ / m et la
+ *       dispersion moyenne = Σ dispersion / m ;</li>
+ *   <li>σ = dispersion moyenne / d2 (carte R) ou / c4 (carte S) ;
+ *       Cp = (USL − LSL) / 6σ ; CPU = (USL − X̿) / 3σ ;
  *       CPL = (X̿ − LSL) / 3σ ; Cpk = min(CPU, CPL) ;</li>
- *   <li>carte X̄ : X̿ ± A2 × R̄ ; carte R : D4 × R̄ et D3 × R̄.</li>
+ *   <li>carte X̄ : X̿ ± A2 × R̄ (ou ± A3 × s̄) ; carte de dispersion : entre
+ *       D3 × R̄ et D4 × R̄ (ou B3 × s̄ et B4 × s̄).</li>
  * </ul>
+ *
+ * <p><b>Les composantes nommées « range » portent la dispersion de la carte
+ * retenue</b> : l'étendue sur une carte R, l'écart-type d'échantillon sur une
+ * carte S. Le nom est celui du contrat d'origine, gardé pour ne pas casser les
+ * lecteurs ; {@link #factors()} dit de quelle carte il s'agit.
  *
  * <p><b>Seuls les sous-groupes complets comptent.</b> Un sous-groupe à qui il
  * manque une mesure n'a ni moyenne ni étendue comparables aux autres ; le
@@ -28,7 +37,7 @@ import java.util.List;
  */
 public record CapabilityCalculation(
         int subgroupSize,
-        SpcConstants constants,
+        ChartFactors factors,
         List<Double> subgroupMeans,
         List<Double> subgroupRanges,
         int completeSubgroups,
@@ -58,10 +67,15 @@ public record CapabilityCalculation(
      * collecte en cours — était refusée. La règle de l'art (« vingt à
      * vingt-cinq sous-groupes ») est un plancher de CONFIANCE, que l'écran
      * rappelle, pas une taille de grille.
+     *
+     * <p>Le plafond n'est pas statistique : aucune formule ne se dégrade quand
+     * les relevés s'accumulent, au contraire. Il ne protège que la taille du
+     * corps de requête et la largeur de la grille affichable. Cent sous-groupes
+     * de vingt-cinq mesures, c'est 2 500 nombres : une campagne longue y tient.
      */
     public static final int MIN_SUBGROUPS = 2;
     public static final int DEFAULT_SUBGROUPS = 20;
-    public static final int MAX_SUBGROUPS = 40;
+    public static final int MAX_SUBGROUPS = 100;
 
     public CapabilityCalculation {
         subgroupMeans = Collections.unmodifiableList(new ArrayList<>(subgroupMeans));
@@ -76,7 +90,7 @@ public record CapabilityCalculation(
      *                     valant {@code null}
      */
     public static CapabilityCalculation of(double lsl, double usl, int n, List<List<Double>> measurements) {
-        SpcConstants k = SpcConstants.forSubgroupSize(n);
+        ChartFactors k = ChartFactors.forSubgroupSize(n);
         // La largeur est celle de la ligne la plus longue : une grille en escalier
         // ne perd pas ses dernieres colonnes, ses sous-groupes incomplets sont
         // simplement ecartes plus bas, comme une cellule vide.
@@ -88,26 +102,24 @@ public record CapabilityCalculation(
         double sommeEtendues = 0;
         int m = 0;
         for (int c = 0; c < colonnes; c++) {
+            double[] relevees = new double[n];
             double somme = 0;
-            double min = Double.POSITIVE_INFINITY;
-            double max = Double.NEGATIVE_INFINITY;
             int presentes = 0;
             for (int r = 0; r < n; r++) {
                 Double v = cell(measurements, r, c);
                 if (v != null) {
+                    relevees[presentes] = v;
                     somme += v;
-                    min = Math.min(min, v);
-                    max = Math.max(max, v);
                     presentes++;
                 }
             }
             if (presentes == n) {
                 double moyenne = somme / n;
-                double etendue = max - min;
+                double dispersion = k.dispersionOf(relevees);
                 moyennes.add(moyenne);
-                etendues.add(etendue);
+                etendues.add(dispersion);
                 sommeMoyennes += moyenne;
-                sommeEtendues += etendue;
+                sommeEtendues += dispersion;
                 m++;
             } else {
                 moyennes.add(null);
@@ -121,7 +133,7 @@ public record CapabilityCalculation(
         }
         double xbb = sommeMoyennes / m;
         double rb = sommeEtendues / m;
-        double sigma = rb / k.d2();
+        double sigma = rb / k.sigmaDivisor();
         double tolerance = usl - lsl;
         double milieu = (usl + lsl) / 2;
         double decalage = xbb - milieu;
@@ -134,8 +146,8 @@ public record CapabilityCalculation(
                 disperse ? tolerance / (6 * sigma) : null,
                 cpu, cpl,
                 disperse ? Math.min(cpu, cpl) : null,
-                xbb + k.a2() * rb, xbb - k.a2() * rb,
-                k.d4() * rb, k.d3() * rb,
+                xbb + k.meanFactor() * rb, xbb - k.meanFactor() * rb,
+                k.dispersionUpper() * rb, k.dispersionLower() * rb,
                 limitesValides ? 6 * sigma / tolerance * 100 : null,
                 decalage,
                 limitesValides ? Math.abs(decalage) / (tolerance / 2) * 100 : null);

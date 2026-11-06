@@ -1,4 +1,4 @@
-import { CalculationView, CapabilityStatus, Measurement } from './spc-capability.types';
+import { CalculationView, CapabilityStatus, DispersionChart, Measurement } from './spc-capability.types';
 
 /**
  * Les sous-groupes d'une étude : les colonnes « SG 01 », « SG 02 »… de la grille.
@@ -10,25 +10,70 @@ import { CalculationView, CapabilityStatus, Measurement } from './spc-capability
  * confiance, pas une taille imposée : on relève souvent douze sous-groupes
  * pendant la collecte, et trente sur une campagne longue. Le plancher reste
  * donc dit à l'écran ({@link RELIABLE_SUBGROUPS}) au lieu d'être imposé.
+ *
+ * <p>Le plafond n'a rien de statistique : plus de relevés ne dégrade aucune
+ * formule, au contraire. Il ne borne que la largeur de la grille affichable et
+ * la taille du corps de requête.
  */
 export const DEFAULT_SUBGROUPS = 20;
 export const MIN_SUBGROUPS = 2;
-export const MAX_SUBGROUPS = 40;
+export const MAX_SUBGROUPS = 100;
+
+/**
+ * Les nombres de sous-groupes proposés dans la liste déroulante.
+ *
+ * <p>Un par un jusqu'à vingt — le plancher de la règle de l'art, donc la zone
+ * où choisir exactement son nombre a un sens — puis par paliers jusqu'à cent,
+ * pour qu'une campagne longue se règle d'un clic au lieu de quatre-vingts. Un
+ * nombre intermédiaire reste atteignable : un bloc collé depuis un tableur
+ * apporte sa largeur, et l'écran l'ajoute alors à la liste.
+ */
+export const SUBGROUP_COUNTS: readonly number[] = [
+  ...Array.from({ length: 19 }, (_, i) => i + MIN_SUBGROUPS), 25, 30, 40, 50, 60, 80, 100
+];
 
 /** En dessous, les limites de contrôle restent indicatives : on le dit, on n'interdit pas. */
 export const RELIABLE_SUBGROUPS = 20;
 export const MIN_SUBGROUP_SIZE = 2;
-export const MAX_SUBGROUP_SIZE = 10;
 
-interface Constants { d2: number; a2: number; d3: number; d4: number }
+/** La dernière taille d'échantillon où l'étendue reste un estimateur recommandé de σ. */
+export const RANGE_CHART_MAX = 10;
+
+/** La dernière taille d'échantillon tabulée, cartes X̄ – R et X̄ – S confondues. */
+export const MAX_SUBGROUP_SIZE = 25;
+
+export interface RangeConstants { d2: number; a2: number; d3: number; d4: number }
+export interface StdevConstantsRow { c4: number; a3: number; b3: number; b4: number }
 
 /**
- * Les constantes des cartes X̄ – R. Données brutes de tables statistiques :
+ * Les facteurs de la carte retenue, sous un nom neutre : la même structure que
+ * `ChartFactors` côté serveur, pour que les formules de capabilité ne soient
+ * écrites qu'une fois, quelle que soit la carte.
+ */
+export interface ChartFactors {
+  n: number;
+  chart: DispersionChart;
+  /** d2 (carte R) ou c4 (carte S) : σ = dispersion moyenne / ce diviseur. */
+  sigmaDivisor: number;
+  /** A2 (carte R) ou A3 (carte S) : limites X̿ ± facteur × dispersion moyenne. */
+  meanFactor: number;
+  /** D3 (carte R) ou B3 (carte S). */
+  dispersionLower: number;
+  /** D4 (carte R) ou B4 (carte S). */
+  dispersionUpper: number;
+}
+
+/**
+ * Les constantes de la carte X̄ – R. Données brutes de tables statistiques :
  * n = 2 à 5 comme le classeur de référence, les tables usuelles au-delà. La
  * même table que le serveur (`SpcConstants`) — c'est ce qui fait que le Cpk
  * affiché pendant la saisie est celui qui sera enregistré.
+ *
+ * <p>Elle s'arrête à dix parce que l'étendue n'utilise que deux des n mesures :
+ * au-delà, elle estime σ trop mal pour qu'une table soit publiée. Un échantillon
+ * plus large se conduit sur la carte X̄ – S ({@link stdevConstants}).
  */
-const CONSTANTS: Record<number, Constants> = {
+const CONSTANTS: Record<number, RangeConstants> = {
   2: { d2: 1.13, a2: 1.88, d3: 0, d4: 3.27 },
   3: { d2: 1.69, a2: 1.02, d3: 0, d4: 2.57 },
   4: { d2: 2.06, a2: 0.73, d3: 0, d4: 2.29 },
@@ -40,26 +85,98 @@ const CONSTANTS: Record<number, Constants> = {
   10: { d2: 3.08, a2: 0.31, d3: 0.223, d4: 1.78 }
 };
 
-export const SUBGROUP_SIZES = Object.keys(CONSTANTS).map(Number);
+/**
+ * Γ(k / 2) pour un entier k ≥ 1, par récurrence exacte depuis Γ(1) = 1 et
+ * Γ(1/2) = √π. Aucune bibliothèque : n est entier, donc n/2 est entier ou
+ * demi-entier.
+ */
+export function gammaHalf(k: number): number {
+  const entier = k % 2 === 0;
+  let valeur = entier ? 1 : Math.sqrt(Math.PI);
+  const cible = k / 2;
+  for (let x = entier ? 1 : 0.5; x < cible; x += 1) valeur *= x;
+  return valeur;
+}
 
-/** La table des constantes, telle que le classeur l'affiche à droite de la grille. */
-export const CONSTANT_ROWS: readonly ({ n: number } & Constants)[] =
-  SUBGROUP_SIZES.map(n => ({ n, ...CONSTANTS[n] }));
+/** c4(n) = √(2 / (n − 1)) × Γ(n / 2) / Γ((n − 1) / 2). */
+export function c4(n: number): number {
+  return Math.sqrt(2 / (n - 1)) * gammaHalf(n) / gammaHalf(n - 1);
+}
 
-export function constantsFor(n: number): Constants {
-  const k = CONSTANTS[n];
-  if (!k) throw new RangeError(`subgroup size ${n}`);
-  return k;
+/**
+ * Les constantes de la carte X̄ – S, CALCULÉES et non recopiées : c4, A3, B3 et
+ * B4 ont une définition fermée exacte, et les tables publiées (Montgomery,
+ * <i>Introduction to Statistical Quality Control</i>, annexe VI ; ASTM STP-15D)
+ * n'en sont que l'impression arrondie. Les calculer supprime le risque de
+ * transcription sur quinze lignes — et c'est la même formule que le serveur
+ * (`StdevConstants`), donc le même Cpk de part et d'autre.
+ */
+export function stdevConstants(n: number): StdevConstantsRow {
+  const c = c4(n);
+  const spread = 3 * Math.sqrt(1 - c * c) / c;
+  return { c4: c, a3: 3 / (c * Math.sqrt(n)), b3: Math.max(0, 1 - spread), b4: 1 + spread };
+}
+
+/** Les tailles d'échantillon admises : 2 à 25, les deux cartes réunies. */
+export const SAMPLE_SIZES: readonly number[] =
+  Array.from({ length: MAX_SUBGROUP_SIZE - MIN_SUBGROUP_SIZE + 1 }, (_, i) => i + MIN_SUBGROUP_SIZE);
+
+/** La table de la carte X̄ – R, telle que le classeur l'affiche à droite de la grille. */
+export const RANGE_CONSTANT_ROWS: readonly ({ n: number } & RangeConstants)[] =
+  Object.keys(CONSTANTS).map(Number).map(n => ({ n, ...CONSTANTS[n] }));
+
+/** La table de la carte X̄ – S, affichée à la place de la précédente quand elle s'applique. */
+export const STDEV_CONSTANT_ROWS: readonly ({ n: number } & StdevConstantsRow)[] =
+  SAMPLE_SIZES.map(n => ({ n, ...stdevConstants(n) }));
+
+/**
+ * La carte qui convient à une taille d'échantillon.
+ *
+ * <p>C'est le seul endroit qui tranche, et il n'improvise pas : hors du domaine
+ * des deux tables, il lève — mieux vaut un écran qui dit « pas calculable »
+ * qu'un Cpk tiré d'un d2 qui n'existe pas.
+ */
+export function chartFactors(n: number): ChartFactors {
+  if (!Number.isInteger(n) || n < MIN_SUBGROUP_SIZE || n > MAX_SUBGROUP_SIZE) {
+    throw new RangeError(`sample size ${n}`);
+  }
+  if (n <= RANGE_CHART_MAX) {
+    const k = CONSTANTS[n];
+    return {
+      n, chart: 'RANGE', sigmaDivisor: k.d2, meanFactor: k.a2,
+      dispersionLower: k.d3, dispersionUpper: k.d4
+    };
+  }
+  const k = stdevConstants(n);
+  return {
+    n, chart: 'STDEV', sigmaDivisor: k.c4, meanFactor: k.a3,
+    dispersionLower: k.b3, dispersionUpper: k.b4
+  };
+}
+
+/**
+ * La dispersion d'un sous-groupe complet, dans l'unité de la carte : l'étendue
+ * max − min (carte R), ou l'écart-type d'échantillon s, diviseur n − 1 (carte S).
+ */
+export function dispersionOf(values: readonly number[], chart: DispersionChart): number {
+  if (chart === 'RANGE') return Math.max(...values) - Math.min(...values);
+  const moyenne = values.reduce((a, b) => a + b, 0) / values.length;
+  const carres = values.reduce((a, v) => a + (v - moyenne) ** 2, 0);
+  return Math.sqrt(carres / (values.length - 1));
 }
 
 /**
  * Le calcul d'une étude, formule par formule, comme le serveur
  * (`CapabilityCalculation`) : seuls les sous-groupes complets comptent, et
  * les indices restent nuls sans sous-groupe complet ou sans dispersion.
+ *
+ * <p>`subgroupRanges` et `meanRange` portent la dispersion de la carte retenue :
+ * l'étendue sur une carte R, l'écart-type d'échantillon sur une carte S. Les
+ * noms sont ceux du contrat d'origine ; `chart` dit lequel des deux.
  */
 export function computeCapability(lsl: number | null, usl: number | null, n: number,
                                   grid: Measurement[][]): CalculationView {
-  const k = constantsFor(n);
+  const k = chartFactors(n);
   const means: (number | null)[] = [];
   const ranges: (number | null)[] = [];
   let sumMeans = 0;
@@ -76,7 +193,7 @@ export function computeCapability(lsl: number | null, usl: number | null, n: num
     }
     if (col.length === n) {
       const mean = col.reduce((a, b) => a + b, 0) / n;
-      const range = Math.max(...col) - Math.min(...col);
+      const range = dispersionOf(col, k.chart);
       means.push(mean);
       ranges.push(range);
       sumMeans += mean;
@@ -92,14 +209,15 @@ export function computeCapability(lsl: number | null, usl: number | null, n: num
     sumOfMeans: null, grandMean: null, meanRange: null, sigma: null,
     cp: null, cpu: null, cpl: null, cpk: null,
     meanUcl: null, meanLcl: null, rangeUcl: null, rangeLcl: null,
-    d2: k.d2, a2: k.a2, d3: k.d3, d4: k.d4,
+    dispersionChart: k.chart, sigmaDivisor: k.sigmaDivisor, meanFactor: k.meanFactor,
+    dispersionLower: k.dispersionLower, dispersionUpper: k.dispersionUpper,
     dispersionPercent: null, centerOffset: null, centeringPercent: null
   };
   if (m === 0) return base;
 
   const xbb = sumMeans / m;
   const rb = sumRanges / m;
-  const sigma = rb / k.d2;
+  const sigma = rb / k.sigmaDivisor;
   const limits = lsl !== null && usl !== null && Number.isFinite(lsl) && Number.isFinite(usl);
   const tol = limits ? (usl as number) - (lsl as number) : NaN;
   const spread = sigma > 0;
@@ -112,8 +230,8 @@ export function computeCapability(lsl: number | null, usl: number | null, n: num
     cp: spread && limits ? tol / (6 * sigma) : null,
     cpu, cpl,
     cpk: cpu !== null && cpl !== null ? Math.min(cpu, cpl) : null,
-    meanUcl: xbb + k.a2 * rb, meanLcl: xbb - k.a2 * rb,
-    rangeUcl: k.d4 * rb, rangeLcl: k.d3 * rb,
+    meanUcl: xbb + k.meanFactor * rb, meanLcl: xbb - k.meanFactor * rb,
+    rangeUcl: k.dispersionUpper * rb, rangeLcl: k.dispersionLower * rb,
     dispersionPercent: limits && tol > 0 ? 6 * sigma / tol * 100 : null,
     centerOffset: offset,
     centeringPercent: offset !== null && tol > 0 ? Math.abs(offset) / (tol / 2) * 100 : null
@@ -133,7 +251,7 @@ export function emptyGrid(n: number, columns: number = DEFAULT_SUBGROUPS): Measu
 
 /**
  * La grille à `n` lignes : les lignes en trop sont retirées, les manquantes
- * ajoutées vides. Changer la taille du sous-groupe ne perd pas ce qui reste.
+ * ajoutées vides. Changer la taille d'échantillon ne perd pas ce qui reste.
  */
 export function resizeGrid(grid: Measurement[][], n: number,
                            columns: number = grid[0]?.length ?? DEFAULT_SUBGROUPS): Measurement[][] {
