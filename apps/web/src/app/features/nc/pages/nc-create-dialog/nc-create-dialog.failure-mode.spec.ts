@@ -209,15 +209,24 @@ describe('NcCreateDialogComponent — produit et mode de défaillance', () => {
     tick();
     fixture.detectChanges();
 
-    // Soixante natures toutes catégories confondues ne se parcourent pas.
+    // Soixante natures toutes catégories confondues ne se parcourent pas : le
+    // champ ne PROPOSE rien tant que la catégorie n'est pas choisie.
+    //
+    // Mais il reste VISIBLE, désactivé. Le faire disparaître revenait à cacher
+    // qu'il existe : on ne devine pas un champ absent, et personne ne choisit
+    // une catégorie pour voir si quelque chose apparaît. L'indication sous le
+    // champ dit quoi faire.
     expect(component.subcategoryChoices).toEqual([]);
-    expect(fixture.nativeElement.querySelector('[data-test="nc-nature"]')).toBeNull();
+    const champ = fixture.nativeElement.querySelector('[data-test="nc-nature"]');
+    expect(champ).not.toBeNull();
+    expect(component.form.controls.subcategoryCode.disabled).toBe(true);
 
     component.form.patchValue({ category: 'PROCESS' });
     fixture.detectChanges();
 
     expect(component.subcategoryChoices.map(x => x.code)).toEqual(['PRC-DER']);
     expect(fixture.nativeElement.querySelector('[data-test="nc-nature"]')).not.toBeNull();
+    expect(component.form.controls.subcategoryCode.enabled).toBe(true);
   }));
 
   it("efface la nature quand on change de catégorie", fakeAsync(() => {

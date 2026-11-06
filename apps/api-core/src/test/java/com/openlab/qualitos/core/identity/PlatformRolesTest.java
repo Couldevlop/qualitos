@@ -44,6 +44,12 @@ class PlatformRolesTest {
     void chaqueRoleConnuEstUnRoleDuRealm() {
         assertThat(PlatformRoles.KNOWN).containsExactlyInAnyOrderElementsOf(Set.of(
                 "super_admin", "admin_tenant", "quality_director", "quality_manager", "auditor", "user",
-                "external_auditor"));
+                "external_auditor",
+                // Le cabinet partenaire (ADR 0106) : un consultant n'appartient a
+                // aucun client et n'a pas de `tenant_id`. Le role existe dans
+                // `infra/keycloak/realm-export.json` ; cette liste en est la copie,
+                // et c'est tout l'objet du banc -- ajouter un role sans le declarer
+                // au royaume le rendrait inattribuable.
+                "consultant"));
     }
 }

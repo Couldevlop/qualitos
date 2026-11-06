@@ -162,6 +162,13 @@ export class NcCreateDialogComponent implements OnInit {
         // une catégorie déjà choisie resterait éteint.
         this.syncSubcategoryState();
       });
+    // L'etat du champ suit la CATEGORIE, pas le clic qui la change : branche sur
+    // l'evenement du gabarit, il restait eteint des que la categorie etait posee
+    // autrement -- par un brouillon rechargé, ou par du code. C'est la valeur qui
+    // commande, l'evenement n'en est qu'une des causes.
+    // (Pas de desabonnement : le formulaire appartient au composant et disparait
+    // avec lui, comme les deux abonnements ci-dessus.)
+    this.form.controls.category.valueChanges.subscribe(() => this.syncSubcategoryState());
     this.syncSubcategoryState();
   }
 
