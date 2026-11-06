@@ -24,17 +24,41 @@ démonstrations exactement comme aujourd'hui.
 Dans l'espace client OVH → **Noms de domaine → qualitos.fr → Zone DNS**, créer
 ou modifier **deux** enregistrements :
 
-**Où en est le domaine aujourd'hui** (mesuré le 2026-11-06) :
+**Où en est le domaine aujourd'hui** (zone relevée le 2026-11-06) :
 
 ```
-qualitos.fr      → 213.186.33.5, HTTP 302 vers www.qualitos.fr   (serveur « openresty »)
-www.qualitos.fr  → 213.186.33.5, HTTP 200
+NS    qualitos.fr        ns103.ovh.net, dns103.ovh.net   ← zone éditable chez OVH
+A     qualitos.fr        213.186.33.5                    ← hébergement mutualisé OVH
+A     www.qualitos.fr    213.186.33.5
+TXT   qualitos.fr        "1|www.qualitos.fr"             ← marqueur d'une REDIRECTION OVH active
+MX    qualitos.fr        mx0..mx3.mail.ovh.net           ← MX Plan en place
+TXT   qualitos.fr        "v=spf1 include:mx.ovh.com ~all"
 ```
 
-`213.186.33.5` est l'adresse d'un hébergement mutualisé OVH : le domaine sert
-aujourd'hui une page OVH, pas notre site. Les deux enregistrements existent
-donc déjà et sont à **modifier**, pas à ajouter — et la redirection du domaine
-nu vers `www` est à supprimer, sinon elle court-circuite la zone.
+Il n'y a **rien à router** : `213.186.33.5` est l'adresse d'un hébergement
+mutualisé OVH, pas une machine à nous, et on ne renvoie pas de trafic depuis
+elle. C'est le NOM qu'on déplace. Deux gestes, **dans cet ordre** :
+
+1. **Supprimer la redirection web.** Le `TXT "1|www.qualitos.fr"` est le
+   marqueur qu'OVH écrit quand une redirection est active — c'est elle qui
+   produit le `302` du domaine nu vers `www`. Tant qu'elle existe, elle
+   court-circuite la zone et réécrit les enregistrements A.
+   *Espace client → Noms de domaine → qualitos.fr → onglet **Redirection** →
+   supprimer.*
+
+2. **Modifier les deux enregistrements A** (ci-dessous). Ils existent déjà : les
+   **modifier**, ne pas en ajouter. Deux A pour un même nom répartissent le
+   trafic entre les deux, et une visite sur deux tomberait sur l'ancienne page.
+   *Espace client → Noms de domaine → qualitos.fr → onglet **Zone DNS**.*
+
+Si l'interface refuse de modifier le A — c'est le cas quand le domaine est
+rattaché à un hébergement — détacher d'abord le domaine du multisite de
+l'hébergement : *Hébergements → (votre offre) → Multisite → supprimer
+`qualitos.fr` et `www.qualitos.fr`*.
+
+> **Le courrier n'est pas concerné.** Les MX sont des enregistrements
+> indépendants des A : déplacer le site ne touche pas à `contact@qualitos.fr`,
+> qui continue d'arriver chez OVH. Ne pas y toucher.
 
 | Type | Sous-domaine | Cible          | TTL |
 | ---- | ------------ | -------------- | --- |
@@ -65,11 +89,12 @@ rapides ; il pourra être remonté à 3600 une fois tout vérifié.
 
 ## 2. La boîte contact@qualitos.fr
 
-Le formulaire envoie un vrai courriel : il faut une boîte et son mot de passe.
+**Faite.** La boîte existe et les MX d'OVH sont en place dans la zone. Il ne
+reste qu'à donner son mot de passe au service, à l'étape suivante.
 
-OVH fournit **MX Plan** gratuitement avec un domaine `.fr`. Dans l'espace client
-→ **Emails → qualitos.fr → Comptes e-mail → Ajouter un compte** : créer
-`contact@qualitos.fr`, noter le mot de passe.
+Pour mémoire, si elle devait être recréée : espace client → **Emails →
+qualitos.fr → Comptes e-mail → Ajouter un compte** (MX Plan, gratuit avec un
+`.fr`).
 
 Les réglages SMTP d'OVH :
 
@@ -85,15 +110,28 @@ Les réglages SMTP d'OVH :
 > la boîte ne reçoit rien. C'est `Reply-To` qui porte l'adresse du visiteur :
 > répondre depuis la boîte tombe donc bien chez lui.
 
-Pendant qu'on y est, vérifier que la zone DNS contient bien les entrées **MX** et
-l'enregistrement **SPF** posés par OVH à la création du MX Plan. Sans SPF, les
-messages partis de la boîte arriveront en indésirables.
+Les **MX** (`mx0` à `mx3.mail.ovh.net`) et le **SPF**
+(`v=spf1 include:mx.ovh.com ~all`) sont **déjà en place** dans la zone : rien à
+faire de ce côté, et surtout rien à y changer en déplaçant les A.
+
+Il n'y a pas d'enregistrement **DMARC**. Ce n'est pas bloquant — SPF suffit pour
+que les messages partent et arrivent — mais en ajouter un améliore la
+délivrabilité le jour où le volume monte :
+
+```
+TXT   _dmarc   "v=DMARC1; p=none; rua=mailto:contact@qualitos.fr"
+```
 
 ---
 
 ## 3. Le secret du relais, sur le nœud
 
-Il est créé **une fois**, à la main, et n'est pas versionné (§18.2.3) :
+Il est créé **une fois**, à la main, et n'est pas versionné (§18.2.3).
+
+Le mot de passe est **saisi à l'invite**, jamais écrit dans la ligne de
+commande : une ligne tapée reste dans l'historique du shell, et une ligne
+collée dans un outil reste dans sa trace. `read -rs` ne l'affiche pas et ne le
+garde nulle part.
 
 ```bash
 ssh root@62.238.11.20
@@ -101,26 +139,27 @@ export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
 
 kubectl create namespace qualitos-site 2>/dev/null || true
 
-kubectl -n qualitos-site create secret generic site-contact-smtp \
-  --from-literal=SMTP_HOTE=ssl0.ovh.net \
-  --from-literal=SMTP_PORT=465 \
-  --from-literal=SMTP_UTILISATEUR=contact@qualitos.fr \
-  --from-literal=SMTP_MOT_DE_PASSE='<mot de passe de la boîte>' \
-  --from-literal=SMTP_EXPEDITEUR=contact@qualitos.fr \
-  --from-literal=SMTP_DESTINATAIRE=contact@qualitos.fr
+read -rsp 'Mot de passe de contact@qualitos.fr : ' MDP && echo
+kubectl -n qualitos-site create secret generic site-contact-smtp   --from-literal=SMTP_HOTE=ssl0.ovh.net   --from-literal=SMTP_PORT=465   --from-literal=SMTP_UTILISATEUR=contact@qualitos.fr   --from-literal=SMTP_MOT_DE_PASSE="$MDP"   --from-literal=SMTP_EXPEDITEUR=contact@qualitos.fr   --from-literal=SMTP_DESTINATAIRE=contact@qualitos.fr
+unset MDP
 ```
 
 Le service **refuse de démarrer** si ce secret manque ou s'il est incomplet.
 C'est voulu : un formulaire qui répond « merci » sans que rien ne parte est la
 pire des pannes, parce qu'elle est invisible là où elle coûte le plus.
 
-Pour changer le mot de passe plus tard :
+Pour changer le mot de passe plus tard : supprimer le secret, le recréer avec
+la commande ci-dessus, puis redémarrer le service — il ne lit sa configuration
+qu'au démarrage.
 
 ```bash
 kubectl -n qualitos-site delete secret site-contact-smtp
-# …recréer avec la commande ci-dessus…
+# …recréer…
 kubectl -n qualitos-site rollout restart deployment/site-contact
 ```
+
+Et refaire l'envoi d'essai du §6 : c'est le seul contrôle qui prouve que la
+chaîne complète tient.
 
 ---
 
