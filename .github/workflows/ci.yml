@@ -682,6 +682,12 @@ jobs:
           echo "GET /v3/api-docs -> HTTP $code ($(wc -c < /tmp/openapi.json) octets)"
           test "$code" = "200"
 
+      # Laisse une trace de ce qui reste AVANT le scan. Quand le runner meurt en
+      # cours de route, son journal s'arrête net et il ne reste rien à lire :
+      # cette ligne est la seule mesure dont on disposera la prochaine fois.
+      - name: Mémoire disponible avant le scan
+        run: free -m
+
       # --- Scan API (actif, ciblé OpenAPI) -----------------------------------
       # On ne scanne QUE l'API via sa spec OpenAPI : la racine HTTP renvoie 401
       # (auth requise) — un baseline/spider y est inutile et échoue (« spider error
@@ -692,11 +698,19 @@ jobs:
       # écrit son rapport par défaut (report_json.json) et le relit ensuite ; un nom
       # custom casse l'action (« report_json.json does not exist »).
       # allow_issue_writing:false : pas de création d'issue GitHub.
-      # -z "-Xmx8g" : zap.sh prend par défaut 1/4 de la mémoire du runner (~3 Go
+      # -z "-Xmx5g" : zap.sh prend par défaut 1/4 de la mémoire du runner (~3 Go
       # utiles sur 16), et l'add-on insights arrête ZAP à 95 % du tas
       # (insights.memHigh / insights.exitAuto) : le scan actif de la spec OpenAPI,
       # qui grossit à chaque module, s'interrompait sans rapport. Un -Xmx passé en
       # option ZAP est repris par zap.sh comme taille de tas.
+      #
+      # 5 Go et pas 8 : à 8, les runs 42204518362 et 42211177109 sont morts au
+      # même endroit, vers la 14e minute de scan, sur « The runner has received a
+      # shutdown signal » — ce n'est pas ZAP qui s'arrête, c'est la VM. Le total
+      # demandé dépassait ses 16 Go : 8 pour ZAP, jusqu'à 4 pour l'engine, plus
+      # le tmpfs de Postgres, qui est de la RAM. L'engine est désormais borné à
+      # 1 Go et le tmpfs à 512 Mo (docker-compose.dast.yml) ; avec 5 Go ici, le
+      # budget tient, tas d'insights compris.
       - name: ZAP API scan (OpenAPI /v3/api-docs)
         uses: zaproxy/action-api-scan@77dfa9a647bb0f583e39d4df8531634d6ddd8df4 # v0.9.0
         with:
@@ -720,7 +734,7 @@ jobs:
           # eventuellement incomplete — signalee dans l'artefact — contre un
           # resultat qui existe, ce qui vaut mieux qu'une couverture complete une
           # fois sur deux. Revue : 2027-05-05.
-          cmd_options: '-z "-Xmx8g" -T 20'
+          cmd_options: '-z "-Xmx5g" -T 20'
           artifact_name: zap-api-scan-report
 
       # --- Gate : échec UNIQUEMENT sur alerte de risque HIGH (riskcode=3) ------
