@@ -28870,6 +28870,18 @@ declared income
         <source>Exigences</source>
         <target state="translated">Requirements</target>
       </trans-unit>
+      <trans-unit id="stakeholders.col.requirement" datatype="html">
+        <source>Exigence</source>
+        <target state="translated">Requirement</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.col.risk" datatype="html">
+        <source>Risque</source>
+        <target state="translated">Risk</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.col.links" datatype="html">
+        <source>Liens</source>
+        <target state="translated">Links</target>
+      </trans-unit>
       <trans-unit id="stakeholders.col.review" datatype="html">
         <source>Dernière revue</source>
         <target state="translated">Last review</target>
@@ -29125,6 +29137,10 @@ declared income
       <trans-unit id="stakeholders.requirements-help" datatype="html">
         <source>Ce que cette partie prenante attend, d'où cela vient, et comment vous vous en assurez. Chaque ligne se rattache à un risque, un écart, un audit ou un document.</source>
         <target state="translated">What this stakeholder expects, where it comes from, and how you make sure of it. Each line links to a risk, a deviation, an audit or a document.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirements-caption" datatype="html">
+        <source>Une ligne par exigence : ce qui est attendu, ce que cela fait peser, où elle en est, et à quoi elle est rattachée.</source>
+        <target state="translated">One row per requirement: what is expected, what it weighs, where it stands, and what it is linked to.</target>
       </trans-unit>
       <trans-unit id="stakeholders.requirements-empty" datatype="html">
         <source>Aucune exigence pour le moment. Ajoutez-en une, ou importez un contrat depuis l'assistant IA.</source>

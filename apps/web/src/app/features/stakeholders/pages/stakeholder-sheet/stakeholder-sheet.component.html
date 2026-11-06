@@ -193,82 +193,123 @@
       Aucune exigence pour le moment. Ajoutez-en une, ou importez un contrat depuis l'assistant IA.
     </p>
 
-    <ul class="exigences" *ngIf="requirements.length">
-      <li class="exigence" *ngFor="let r of requirements; trackBy: trackByRequirement"
-          data-test="exigence">
-        <div class="exigence__tete">
-          <div class="exigence__texte">
-            <strong>{{ r.requirement }}</strong>
-            <small class="dim" *ngIf="r.origin">{{ r.origin }}</small>
-          </div>
-          <span [class]="statusChip(r.status)">{{ requirementStatusLabel(r.status) }}</span>
-        </div>
+    <!-- Un TABLEAU, et non une pile de cartes. Quatre exigences empilées en
+         cartes occupaient déjà tout le bas du tiroir : on ne voyait plus
+         l'ensemble, et les statuts ne s'alignaient pas d'une ligne à l'autre,
+         ce qui est précisément ce qu'on vient lire ici. En colonnes, dix
+         exigences se balaient d'un regard et la colonne « Statut » se compare
+         verticalement. Les gestes restent sur la ligne qu'ils concernent. -->
+    <div class="exigences" *ngIf="requirements.length">
+      <table class="exigences__table">
+        <caption class="exigences__legende" i18n="@@stakeholders.requirements-caption">
+          Une ligne par exigence : ce qui est attendu, ce que cela fait peser, où elle en est,
+          et à quoi elle est rattachée.
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col" i18n="@@stakeholders.col.requirement">Exigence</th>
+            <th scope="col" i18n="@@stakeholders.col.risk">Risque</th>
+            <th scope="col" i18n="@@common.status">Statut</th>
+            <th scope="col" i18n="@@stakeholders.col.links">Liens</th>
+            <th scope="col" class="exigences__colonne-retrait" *ngIf="canManage">
+              <span class="sr-only" i18n="@@common.actions">Actions</span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let r of requirements; trackBy: trackByRequirement" data-test="exigence">
+            <!-- La première cellule est l'en-tête DE LA LIGNE : un lecteur
+                 d'écran annonce ainsi l'exigence concernée avec chaque cellule
+                 qui suit, sans quoi ce sont des valeurs sans sujet. -->
+            <th scope="row" class="exigences__sujet">
+              <strong>{{ r.requirement }}</strong>
+              <small class="dim" *ngIf="r.origin">{{ r.origin }}</small>
+              <small class="dim exigences__meta">
+                <span *ngIf="r.nature">{{ natureLabel(r.nature) }}</span>
+                <span *ngIf="r.responsible">{{ r.responsible }}</span>
+                <span *ngIf="r.indicator">{{ r.indicator }}</span>
+              </small>
+            </th>
 
-        <p class="exigence__meta">
-          <span *ngIf="r.nature">{{ natureLabel(r.nature) }}</span>
-          <span *ngIf="r.riskLevel" [class]="impactChip(r.riskLevel)">{{ impactLabel(r.riskLevel) }}</span>
-          <span *ngIf="r.responsible">{{ r.responsible }}</span>
-          <span *ngIf="r.indicator">{{ r.indicator }}</span>
-        </p>
+            <!-- Le libellé est toujours écrit : la couleur seule ne se voit pas
+                 en déficience chromatique (WCAG 1.4.1). -->
+            <td class="exigences__risque">
+              <span *ngIf="r.riskLevel; else sansRisque" [class]="impactChip(r.riskLevel)">
+                {{ impactLabel(r.riskLevel) }}
+              </span>
+              <ng-template #sansRisque><span class="dim">—</span></ng-template>
+            </td>
 
-        <!-- Les liens SORTANTS : visibles de tous, y compris en lecture seule.
-             C'est par eux qu'on remonte au contrat qui fonde l'exigence ou au
-             dossier ouvert pour la tenir. -->
-        <p class="exigence__ouvrir" *ngIf="establishedLinks(r).length" data-test="liens-sortants">
-          <a mat-button *ngFor="let l of establishedLinks(r)" [routerLink]="l.route"
-             [attr.data-test]="'ouvrir-' + l.icon">
-            <mat-icon aria-hidden="true">{{ l.icon }}</mat-icon>
-            <span>{{ l.label }}</span>
-            <mat-icon class="exigence__ouvrir-sortie" aria-hidden="true">open_in_new</mat-icon>
-          </a>
-        </p>
+            <td class="exigences__statut">
+              <mat-form-field *ngIf="canManage" appearance="outline" subscriptSizing="dynamic">
+                <mat-label i18n="@@common.status">Statut</mat-label>
+                <mat-select [value]="r.status" (selectionChange)="setStatus(r, $event.value)"
+                            data-test="statut-exigence">
+                  <mat-option *ngFor="let s of statuses" [value]="s">{{ requirementStatusLabel(s) }}</mat-option>
+                </mat-select>
+              </mat-form-field>
+              <span *ngIf="!canManage" [class]="statusChip(r.status)" data-test="statut-lecture">
+                {{ requirementStatusLabel(r.status) }}
+              </span>
+            </td>
 
-        <div class="exigence__actions" *ngIf="canManage">
-          <mat-form-field appearance="outline" subscriptSizing="dynamic" class="exigence__statut">
-            <mat-label i18n="@@common.status">Statut</mat-label>
-            <mat-select [value]="r.status" (selectionChange)="setStatus(r, $event.value)"
-                        data-test="statut-exigence">
-              <mat-option *ngFor="let s of statuses" [value]="s">{{ requirementStatusLabel(s) }}</mat-option>
-            </mat-select>
-          </mat-form-field>
+            <td class="exigences__liens">
+              <!-- Les liens SORTANTS : visibles de tous, y compris en lecture
+                   seule. C'est par eux qu'on remonte au contrat qui fonde
+                   l'exigence ou au dossier ouvert pour la tenir. -->
+              <span class="exigences__ouvrir" *ngIf="establishedLinks(r).length"
+                    data-test="liens-sortants">
+                <a mat-button *ngFor="let l of establishedLinks(r)" [routerLink]="l.route"
+                   [attr.data-test]="'ouvrir-' + l.icon">
+                  <mat-icon aria-hidden="true">{{ l.icon }}</mat-icon>
+                  <span>{{ l.label }}</span>
+                  <mat-icon class="exigences__sortie" aria-hidden="true">open_in_new</mat-icon>
+                </a>
+              </span>
 
-          <span class="exigence__liens">
-            <button mat-button type="button" (click)="link(r, 'RISK')" [class.lie]="r.riskId"
-                    data-test="lier-risque">
-              <mat-icon aria-hidden="true">warning</mat-icon>
-              <span i18n="@@stakeholders.link.risk">Risque</span>
-            </button>
-            <button mat-button type="button" (click)="link(r, 'NON_CONFORMITY')" [class.lie]="r.ncId"
-                    data-test="lier-nc">
-              <mat-icon aria-hidden="true">report_problem</mat-icon>
-              <span i18n="@@stakeholders.link.nc">Écart</span>
-            </button>
-            <button mat-button type="button" (click)="link(r, 'AUDIT')" [class.lie]="r.auditId"
-                    data-test="lier-audit">
-              <mat-icon aria-hidden="true">fact_check</mat-icon>
-              <span i18n="@@stakeholders.link.audit">Audit</span>
-            </button>
-            <button mat-button type="button" (click)="link(r, 'DOCUMENT')" [class.lie]="r.documentId"
-                    data-test="lier-document">
-              <mat-icon aria-hidden="true">description</mat-icon>
-              <span i18n="@@stakeholders.link.document">Document</span>
-            </button>
-          </span>
+              <!-- Les gestes de rattachement, groupés comme dans la maquette :
+                   rattacher, puis ouvrir une action. Un rattachement déjà posé
+                   porte l'accent sur son bouton. -->
+              <span class="exigences__poser" *ngIf="canManage">
+                <button mat-button type="button" (click)="link(r, 'RISK')" [class.lie]="r.riskId"
+                        data-test="lier-risque">
+                  <mat-icon aria-hidden="true">warning</mat-icon>
+                  <span i18n="@@stakeholders.link.risk">Risque</span>
+                </button>
+                <button mat-button type="button" (click)="link(r, 'NON_CONFORMITY')" [class.lie]="r.ncId"
+                        data-test="lier-nc">
+                  <mat-icon aria-hidden="true">report_problem</mat-icon>
+                  <span i18n="@@stakeholders.link.nc">Écart</span>
+                </button>
+                <button mat-button type="button" (click)="link(r, 'AUDIT')" [class.lie]="r.auditId"
+                        data-test="lier-audit">
+                  <mat-icon aria-hidden="true">fact_check</mat-icon>
+                  <span i18n="@@stakeholders.link.audit">Audit</span>
+                </button>
+                <button mat-button type="button" (click)="link(r, 'DOCUMENT')" [class.lie]="r.documentId"
+                        data-test="lier-document">
+                  <mat-icon aria-hidden="true">description</mat-icon>
+                  <span i18n="@@stakeholders.link.document">Document</span>
+                </button>
+                <button mat-stroked-button color="primary" type="button" *ngIf="!r.capaId"
+                        (click)="openCapa(r)" data-test="creer-action">
+                  <mat-icon aria-hidden="true">add_task</mat-icon>
+                  <span i18n="@@stakeholders.create-action">Créer une action</span>
+                </button>
+              </span>
+            </td>
 
-          <button mat-stroked-button color="primary" type="button" *ngIf="!r.capaId"
-                  (click)="openCapa(r)" data-test="creer-action">
-            <mat-icon aria-hidden="true">add_task</mat-icon>
-            <span i18n="@@stakeholders.create-action">Créer une action</span>
-          </button>
-
-          <button mat-icon-button type="button" color="warn" (click)="removeRequirement(r)"
-                  i18n-aria-label="@@stakeholders.requirement-remove" aria-label="Retirer"
-                  data-test="retirer-exigence">
-            <mat-icon>delete</mat-icon>
-          </button>
-        </div>
-      </li>
-    </ul>
+            <td class="exigences__colonne-retrait" *ngIf="canManage">
+              <button mat-icon-button type="button" color="warn" (click)="removeRequirement(r)"
+                      i18n-aria-label="@@stakeholders.requirement-remove" aria-label="Retirer"
+                      data-test="retirer-exigence">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </section>
 
   <!-- Barre d'enregistrement : n'apparaît qu'avec des changements. -->

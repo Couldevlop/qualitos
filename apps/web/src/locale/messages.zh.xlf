@@ -28870,6 +28870,18 @@ historique 12 mois</source>
         <source>Exigences</source>
         <target state="translated">要求</target>
       </trans-unit>
+      <trans-unit id="stakeholders.col.requirement" datatype="html">
+        <source>Exigence</source>
+        <target state="translated">要求</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.col.risk" datatype="html">
+        <source>Risque</source>
+        <target state="translated">风险</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.col.links" datatype="html">
+        <source>Liens</source>
+        <target state="translated">关联</target>
+      </trans-unit>
       <trans-unit id="stakeholders.col.review" datatype="html">
         <source>Dernière revue</source>
         <target state="translated">最近一次复评</target>
@@ -29125,6 +29137,10 @@ historique 12 mois</source>
       <trans-unit id="stakeholders.requirements-help" datatype="html">
         <source>Ce que cette partie prenante attend, d'où cela vient, et comment vous vous en assurez. Chaque ligne se rattache à un risque, un écart, un audit ou un document.</source>
         <target state="translated">该相关方期望什么、来源何处，以及您如何加以确认。每一行都可关联到风险、偏差、审核或文件。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.requirements-caption" datatype="html">
+        <source>Une ligne par exigence : ce qui est attendu, ce que cela fait peser, où elle en est, et à quoi elle est rattachée.</source>
+        <target state="translated">每项要求一行：期望什么、带来什么影响、进展到哪一步，以及关联到什么。</target>
       </trans-unit>
       <trans-unit id="stakeholders.requirements-empty" datatype="html">
         <source>Aucune exigence pour le moment. Ajoutez-en une, ou importez un contrat depuis l'assistant IA.</source>

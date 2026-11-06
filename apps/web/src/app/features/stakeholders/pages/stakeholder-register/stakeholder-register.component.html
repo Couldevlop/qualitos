@@ -82,9 +82,13 @@
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="columns; sticky: true"></tr>
+      <!-- La ligne s'ouvre à la souris ET au clavier. `Espace` défile la page
+           par défaut : sans ce `preventDefault`, la fiche s'ouvrait en même
+           temps que le registre sautait d'un écran sous elle. -->
       <tr mat-row *matRowDef="let row; columns: columns" class="clickable-row" tabindex="0"
           [attr.aria-label]="row.name" (click)="opened.emit(row.id)"
-          (keydown.enter)="opened.emit(row.id)" (keydown.space)="opened.emit(row.id)"
+          (keydown.enter)="opened.emit(row.id)"
+          (keydown.space)="$event.preventDefault(); opened.emit(row.id)"
           data-test="ligne"></tr>
     </table>
   </div>

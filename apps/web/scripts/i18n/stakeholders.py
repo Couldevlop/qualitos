@@ -106,6 +106,13 @@ TRANSLATIONS = {
         'Pertinence', 'Relevance', 'Pertinencia', 'الأهمية النسبية', '関連性', '相关性'),
     'stakeholders.col.requirements': (
         'Exigences', 'Requirements', 'Requisitos', 'المتطلبات', '要求事項', '要求'),
+    # Colonnes du tableau des exigences, dans la fiche.
+    'stakeholders.col.requirement': (
+        'Exigence', 'Requirement', 'Requisito', 'المتطلب', '要求事項', '要求'),
+    'stakeholders.col.risk': (
+        'Risque', 'Risk', 'Riesgo', 'الخطر', 'リスク', '风险'),
+    'stakeholders.col.links': (
+        'Liens', 'Links', 'Vínculos', 'الارتباطات', '関連付け', '关联'),
     'stakeholders.col.review': (
         'Dernière revue', 'Last review', 'Última revisión',
         'آخر مراجعة', '最終レビュー', '最近一次复评'),
@@ -337,6 +344,17 @@ TRANSLATIONS = {
         'この利害関係者が期待すること、その出どころ、そしてそれをどう確かめるのか。各行はリスク、'
         '不適合、監査、文書のいずれかに結び付きます。',
         '该相关方期望什么、来源何处，以及您如何加以确认。每一行都可关联到风险、偏差、审核或文件。'),
+    'stakeholders.requirements-caption': (
+        'Une ligne par exigence : ce qui est attendu, ce que cela fait peser, où elle en est, '
+        'et à quoi elle est rattachée.',
+        'One row per requirement: what is expected, what it weighs, where it stands, and what '
+        'it is linked to.',
+        'Una fila por requisito: lo que se espera, lo que pesa, en qué punto está y a qué está '
+        'vinculado.',
+        'سطر واحد لكل متطلب: ما هو المتوقَّع، وما يترتّب عليه، وفي أي مرحلة هو، وبماذا يرتبط.',
+        '要求事項ごとに1行：何が期待されているか、何を負うか、どこまで進んでいるか、'
+        '何に結び付いているか。',
+        '每项要求一行：期望什么、带来什么影响、进展到哪一步，以及关联到什么。'),
     'stakeholders.requirements-empty': (
         "Aucune exigence pour le moment. Ajoutez-en une, ou importez un contrat depuis "
         "l'assistant IA.",

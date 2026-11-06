@@ -110,4 +110,19 @@ describe('StakeholderRegisterComponent', () => {
   it('suit les lignes par leur identifiant', () => {
     expect(component.trackById(0, ROWS[0])).toBe('a');
   });
+
+  it('ouvre une ligne au clavier, sans laisser Espace défiler la page', () => {
+    const ouvertes: string[] = [];
+    component.opened.subscribe(id => ouvertes.push(id));
+    const ligne = fixture.nativeElement.querySelector('[data-test="ligne"]') as HTMLElement;
+    expect(ligne.getAttribute('tabindex')).withContext('la ligne est atteignable au clavier').toBe('0');
+
+    ligne.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+    const espace = new KeyboardEvent('keydown', { key: ' ', bubbles: true, cancelable: true });
+    ligne.dispatchEvent(espace);
+
+    expect(ouvertes).toEqual(['a', 'a']);
+    // Sans cela, la fiche s'ouvre ET le registre saute d'un écran sous elle.
+    expect(espace.defaultPrevented).toBeTrue();
+  });
 });
