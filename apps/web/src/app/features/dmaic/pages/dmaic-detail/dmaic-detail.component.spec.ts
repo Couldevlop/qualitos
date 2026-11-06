@@ -20,8 +20,24 @@ import { DmaicDetailComponent } from './dmaic-detail.component';
 import { STUB_PERSON, provideDirectoryStub } from '../../../../core/directory/testing/directory.stub';
 import { PersonNameModule } from '../../../../shared/person-name/person-name.module';
 
-/** La fiche de résolution a ses propres tests : ici, seul son onglet compte. */
-@Component({ selector: 'qos-dmaic-resolution', template: '<p data-test="fiche">fiche {{ projectId }} {{ projectPhase }}</p><ng-content></ng-content>', standalone: false })
+/**
+ * La fiche de résolution a ses propres tests : ici, seul son onglet compte.
+ *
+ * La doublure reprend les MÊMES quatre fentes que le vrai gabarit, et surtout
+ * pas un `<ng-content>` fourre-tout. Avec un fourre-tout, elle acceptait des
+ * enfants que le vrai composant jette en silence : un panneau sans attribut de
+ * fente passait les tests et n'atteignait jamais l'écran. Une doublure plus
+ * permissive que l'original ne teste rien.
+ */
+@Component({
+  selector: 'qos-dmaic-resolution',
+  template: `<p data-test="fiche">fiche {{ projectId }} {{ projectPhase }}</p>
+    <ng-content select="[qosActions]"></ng-content>
+    <ng-content select="[qosCharter]"></ng-content>
+    <ng-content select="[qosMeasures]"></ng-content>
+    <ng-content select="[qosCapability]"></ng-content>`,
+  standalone: false,
+})
 class ResolutionStubComponent {
   @Input() projectId = '';
   @Input() problemStatement: string | null = null;

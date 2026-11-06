@@ -319,5 +319,12 @@
     padding-left: var(--qos-space-5);
     color: var(--qos-fg-secondary);
     line-height: 1.6;
+
+    // Une phase entiere peut compter quarante points a solder. Sans hauteur
+    // bornee, le refus repousse le projet lui-meme hors de l'ecran : on lit la
+    // liste et on ne retrouve plus ce qu'on etait venu faire. Elle defile.
+    max-height: 18rem;
+    overflow-y: auto;
+    overscroll-behavior: contain;
   }
 }

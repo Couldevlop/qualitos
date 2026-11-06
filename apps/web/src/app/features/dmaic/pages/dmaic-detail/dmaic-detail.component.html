@@ -21,6 +21,24 @@
       </div>
     </header>
 
+    <!-- Le refus du serveur, en clair et persistant. Il arrivait sous forme d'un
+         message generique de quatre secondes, qui ne disait ni ce qui bloquait ni
+         quoi faire.
+
+         Il est pose ICI, hors de <qos-dmaic-resolution>, et non a cote du bouton
+         qui le declenche : ce composant ne projette que les attributs qosActions,
+         qosCharter, qosMeasures et qosCapability. Un enfant sans l'un d'eux n'est
+         projete nulle part et Angular le jette en silence -- le panneau existait
+         dans le gabarit et n'atteignait jamais l'ecran. -->
+    <div class="blocage" *ngIf="blockers.length" role="alert" data-test="blocage">
+      <p class="blocage__titre" i18n="@@dmaic.detail.blockers">
+        Ce qui empêche encore d’aller plus loin&nbsp;:
+      </p>
+      <ul class="blocage__liste">
+        <li *ngFor="let b of blockers">{{ b }}</li>
+      </ul>
+    </div>
+
     <!-- L'en-tête de la réclamation, puis les actions et les phases en ligne, puis la phase ouverte (ADR 0101). -->
     <qos-dmaic-resolution class="pilotage" [projectId]="p.id" [problemStatement]="p.problemStatement ?? null"
                           [projectTitle]="p.title" [projectPhase]="p.status === 'COMPLETED' ? 'CONTROL' : p.phase"
@@ -58,17 +76,6 @@
         </button>
       </div>
 
-      <!-- Le refus du serveur, en clair et persistant. Il arrivait sous forme
-           d'un message generique de quatre secondes, qui ne disait ni ce qui
-           bloquait ni quoi faire. -->
-      <div class="blocage" *ngIf="blockers.length" role="alert" data-test="blocage">
-        <p class="blocage__titre" i18n="@@dmaic.detail.blockers">
-          Ce qui empêche encore d’aller plus loin&nbsp;:
-        </p>
-        <ul class="blocage__liste">
-          <li *ngFor="let b of blockers">{{ b }}</li>
-        </ul>
-      </div>
 
       <div qosCharter *ngIf="p.problemStatement || p.goalStatement">
         <mat-card *ngIf="p.problemStatement || p.goalStatement" class="charter-card">
