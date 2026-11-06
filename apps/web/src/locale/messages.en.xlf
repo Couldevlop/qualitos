@@ -21247,8 +21247,12 @@ declared income
         <target state="translated">The catalogue could not be restored.</target>
       </trans-unit>
       <trans-unit id="nc.create.subcategory" datatype="html">
-        <source>Nature de l'écart</source>
-        <target state="translated">Nature of the deviation</target>
+        <source>Sous-catégorie</source>
+        <target state="translated">Sub-category</target>
+      </trans-unit>
+      <trans-unit id="nc.create.subcategory-hint" datatype="html">
+        <source>Choisissez d’abord une catégorie.</source>
+        <target state="translated">Choose a category first.</target>
       </trans-unit>
       <trans-unit id="nc.create.subcategory-none" datatype="html">
         <source>— À classer —</source>

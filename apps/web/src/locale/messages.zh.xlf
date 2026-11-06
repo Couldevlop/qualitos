@@ -21247,8 +21247,12 @@ historique 12 mois</source>
         <target state="translated">无法恢复目录。</target>
       </trans-unit>
       <trans-unit id="nc.create.subcategory" datatype="html">
-        <source>Nature de l'écart</source>
-        <target state="translated">偏差性质</target>
+        <source>Sous-catégorie</source>
+        <target state="translated">子类别</target>
+      </trans-unit>
+      <trans-unit id="nc.create.subcategory-hint" datatype="html">
+        <source>Choisissez d’abord une catégorie.</source>
+        <target state="translated">请先选择类别。</target>
       </trans-unit>
       <trans-unit id="nc.create.subcategory-none" datatype="html">
         <source>— À classer —</source>

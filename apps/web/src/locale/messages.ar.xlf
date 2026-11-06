@@ -21247,8 +21247,12 @@ historique 12 mois</source>
         <target state="translated">تعذّرت استعادة الدليل.</target>
       </trans-unit>
       <trans-unit id="nc.create.subcategory" datatype="html">
-        <source>Nature de l'écart</source>
-        <target state="translated">نوع الانحراف</target>
+        <source>Sous-catégorie</source>
+        <target state="translated">الفئة الفرعية</target>
+      </trans-unit>
+      <trans-unit id="nc.create.subcategory-hint" datatype="html">
+        <source>Choisissez d’abord une catégorie.</source>
+        <target state="translated">اختر فئة أولاً.</target>
       </trans-unit>
       <trans-unit id="nc.create.subcategory-none" datatype="html">
         <source>— À classer —</source>

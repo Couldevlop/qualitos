@@ -57,12 +57,19 @@
     <!-- La NATURE de l'écart, sous sa catégorie. Facultative, et proposée
          seulement une fois la catégorie choisie : soixante natures toutes
          catégories confondues ne se parcourent pas. -->
-    <mat-form-field appearance="outline" *ngIf="subcategoryChoices.length">
-      <mat-label i18n="@@nc.create.subcategory">Nature de l'écart</mat-label>
+    <!-- Toujours PRESENT, desactive tant qu'aucune categorie n'est choisie.
+         Il n'apparaissait qu'une fois la categorie retenue : personne ne
+         cherche un champ dont rien n'annonce l'existence, et le declarant
+         laissait la sous-categorie vide en croyant qu'il n'y en avait pas. -->
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label i18n="@@nc.create.subcategory">Sous-catégorie</mat-label>
       <mat-select formControlName="subcategoryCode" data-test="nc-nature">
         <mat-option value="" i18n="@@nc.create.subcategory-none">— À classer —</mat-option>
         <mat-option *ngFor="let s of subcategoryChoices" [value]="s.code">{{ s.label }}</mat-option>
       </mat-select>
+      <mat-hint *ngIf="!subcategoryChoices.length" i18n="@@nc.create.subcategory-hint">
+        Choisissez d’abord une catégorie.
+      </mat-hint>
     </mat-form-field>
 
     <mat-form-field appearance="outline">

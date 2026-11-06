@@ -234,6 +234,20 @@ describe('NcCreateDialogComponent', () => {
     expect(hote.querySelector('[data-test="nc-photo-ajouter"]')).not.toBeNull();
   });
 
+  it('annonce la sous-catégorie AVANT qu’une catégorie soit choisie', () => {
+    // Le champ n'apparaissait qu'une fois la catégorie retenue. Personne ne
+    // cherche un champ dont rien n'annonce l'existence : le déclarant laissait
+    // la sous-catégorie vide en croyant qu'il n'y en avait pas pour sa
+    // catégorie. Il est désormais présent, désactivé, et dit quoi faire.
+    fixture.detectChanges();
+    const hote = fixture.nativeElement as HTMLElement;
+
+    const champ = hote.querySelector('[data-test="nc-nature"]');
+    expect(champ).withContext('présent dès l’ouverture').not.toBeNull();
+    expect(champ!.getAttribute('aria-disabled')).toBe('true');
+    expect(hote.textContent).toContain('Choisissez d’abord une catégorie.');
+  });
+
   it("plafonne à dix photos et permet d'en retirer une", () => {
     const snackSpy = spyOn(TestBed.inject(MatSnackBar), 'open');
     pick(...Array.from({ length: 11 }, (_, i) => photo(`p${i}.jpg`)));

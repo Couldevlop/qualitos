@@ -155,8 +155,12 @@ TRANSLATIONS = {
 
     # --- saisie et registre des NC ------------------------------------------
     'nc.create.subcategory': (
-        "Nature de l'écart", 'Nature of the deviation', 'Naturaleza de la desviación',
-        'نوع الانحراف', '逸脱の性質', '偏差性质'),
+        'Sous-catégorie', 'Sub-category', 'Subcategoría',
+        'الفئة الفرعية', 'サブカテゴリ', '子类别'),
+    'nc.create.subcategory-hint': (
+        'Choisissez d’abord une catégorie.', 'Choose a category first.',
+        'Elija primero una categoría.', 'اختر فئة أولاً.',
+        'まずカテゴリを選んでください。', '请先选择类别。'),
     'nc.create.subcategory-none': (
         '— À classer —', '— To be classified —', '— Por clasificar —',
         '— للتصنيف —', '— 未分類 —', '— 待分类 —'),
