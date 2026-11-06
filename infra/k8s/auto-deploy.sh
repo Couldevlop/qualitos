@@ -90,8 +90,17 @@ if ./infra/k8s/deploy.sh "$ENVIRONMENT" "$TAG"; then
   # Son échec N'EMPÊCHE PAS d'enregistrer l'état : l'application, elle, est en
   # place, et rejouer tout le déploiement à cause d'une page vitrine coûterait
   # plus qu'il ne rapporte. L'échec reste visible dans le journal du minuteur.
+  #
+  # APPELÉ PAR `bash`, PAS EN EXÉCUTABLE. Ce n'est pas un détail de style : la
+  # première version écrivait `./infra/k8s/site/deploy.sh`, et ce fichier a été
+  # créé depuis un poste Windows, où le bit d'exécution n'existe pas. Git l'a
+  # donc enregistré en 100644, le nœud a répondu « Permission denied », le `||`
+  # ci-dessous a avalé l'erreur, et le site n'a jamais été déployé — sans que
+  # rien ne le dise ailleurs que dans le journal du minuteur. Le bit est remis à
+  # 100755, mais `bash` retire la question : un prochain script créé sous
+  # Windows ne pourra plus désactiver le site en silence.
   if [ "${QOS_DEPLOY_SITE:-1}" = "1" ]; then
-    ./infra/k8s/site/deploy.sh "$TAG" || log "ATTENTION : le site n'a pas pu être déployé en $TAG"
+    bash ./infra/k8s/site/deploy.sh "$TAG" || log "ATTENTION : le site n'a pas pu être déployé en $TAG"
   fi
 
   echo "$TAG" > "$STATE"

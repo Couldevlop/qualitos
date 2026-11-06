@@ -105,7 +105,29 @@ jobs:
       - name: ShellCheck
         run: |
           shellcheck --version
-          shellcheck -x -S warning infra/onprem/*.sh infra/onprem/compose/*.sh infra/onprem/bundle/*.sh infra/onprem/tests/run-tests.sh infra/k8s/deploy.sh infra/k8s/deps/render-realm.sh
+          shellcheck -x -S warning infra/onprem/*.sh infra/onprem/compose/*.sh infra/onprem/bundle/*.sh infra/onprem/tests/run-tests.sh infra/k8s/deploy.sh infra/k8s/auto-deploy.sh infra/k8s/site/deploy.sh infra/k8s/deps/render-realm.sh
+
+      - name: Bit d'exécution des scripts de déploiement
+        run: |
+          # POURQUOI CE CONTRÔLE. infra/k8s/site/deploy.sh a été livré en 100644,
+          # parce qu'il a été créé depuis un poste Windows où le bit d'exécution
+          # n'existe pas. Le minuteur du nœud l'appelait en `./…` : « Permission
+          # denied », avalé par le `||` qui protège le déploiement de
+          # l'application d'une panne de la page vitrine. Résultat : déploiement
+          # annoncé « terminé », site jamais mis en ligne, et une seule ligne
+          # dans le journal du minuteur pour le dire.
+          #
+          # Un mode de fichier ne se voit pas à la relecture d'un diff. Il se
+          # vérifie ici, ou il se découvre en production.
+          manque=0
+          for f in infra/k8s/deploy.sh infra/k8s/auto-deploy.sh infra/k8s/site/deploy.sh; do
+            mode=$(git ls-files -s "$f" | awk '{print $1}')
+            if [ "$mode" != "100755" ]; then
+              echo "::error file=$f::mode $mode au lieu de 100755 — git update-index --chmod=+x $f"
+              manque=1
+            fi
+          done
+          [ "$manque" = "0" ]
 
       - name: Bancs des scripts (faux cluster)
         run: bash infra/onprem/tests/run-tests.sh
