@@ -59,6 +59,10 @@ jobs:
           - { service: api-iot-hub,        context: ., dockerfile: apps/api-iot-hub/Dockerfile }
           - { service: ai-service,         context: apps/ai-service, dockerfile: apps/ai-service/Dockerfile }
           - { service: web,                context: apps/web,        dockerfile: apps/web/Dockerfile }
+          # Site de présentation (qualitos.fr) et son formulaire. Déployés dans
+          # leur propre namespace par infra/k8s/site/deploy.sh.
+          - { service: site,               context: apps/site,         dockerfile: apps/site/Dockerfile }
+          - { service: site-contact,       context: apps/site-contact, dockerfile: apps/site-contact/Dockerfile }
 
     steps:
       - name: Checkout

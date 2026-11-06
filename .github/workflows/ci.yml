@@ -510,6 +510,33 @@ jobs:
             '
 
   # ---------------------------------------------------------------------------
+  # Tests du formulaire de contact du site (apps/site-contact). Il est PUBLIC et
+  # SANS AUTHENTIFICATION : c'est précisément le genre de service dont une
+  # régression ne se voit pas — un piège à robots qui cesse de piéger, une
+  # limite de débit qui laisse tout passer, une injection d'en-tête qui rouvre.
+  # ---------------------------------------------------------------------------
+  site-contact-tests:
+    name: Formulaire de contact (pytest)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      # Dans l'image de base du runtime, comme les deux jobs précédents :
+      # l'interpréteur testé est celui qui sera livré.
+      - name: Tests (dans l'image de base du runtime)
+        run: |
+          docker run --rm --user root --entrypoint /bin/sh             -v "$PWD/apps/site-contact:/src:ro"             python:3.13-alpine -c '
+              set -eu
+              python -V
+              mkdir -p /w && cd /w && cp -r /src/. . && rm -rf .pytest_cache
+              python -m pip install --quiet --no-cache-dir -r requirements-dev.txt pytest-cov
+              python -m pytest -p no:cacheprovider --cov=app --cov-report=term-missing --cov-fail-under=98
+            '
+
+  # ---------------------------------------------------------------------------
   # Scan d'images conteneur (§14.2 ; règle §18.2.1 : aucune CVE Critique/Haute).
   # Build Docker + Trivy, uniquement sur push main/develop (étape lourde).
   # ignore-unfixed : ne bloque pas sur les CVE sans correctif disponible amont.
@@ -829,6 +856,7 @@ jobs:
       - frontend-build
       - ai-service-tests
       - ai-vision-5s-tests
+      - site-contact-tests
       - e2e-smoke
       - dast-zap
       - perf-k6

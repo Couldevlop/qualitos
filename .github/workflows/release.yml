@@ -90,6 +90,13 @@ jobs:
           - service: blockchain-service
             context: apps/blockchain-service
             dockerfile: apps/blockchain-service/Dockerfile
+          # Site de présentation (qualitos.fr) et son formulaire de contact.
+          - service: site
+            context: apps/site
+            dockerfile: apps/site/Dockerfile
+          - service: site-contact
+            context: apps/site-contact
+            dockerfile: apps/site-contact/Dockerfile
 
     steps:
       - name: Checkout
