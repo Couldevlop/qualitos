@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Logiciel qualité QMS : 5 méthodes, un référentiel | QualitOS</title>
+<meta name="description" content="QualitOS réunit PDCA, 5S, cercles qualité, DMAIC et Ishikawa dans une seule base : documents, CAPA, non-conformités, audits, SPC, normes ISO et IA explicable.">
+<link rel="canonical" href="https://qualitos.fr/">
+
+<meta property="og:site_name" content="QualitOS">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://qualitos.fr/">
+<meta property="og:title" content="QualitOS — The Quality Operating System">
+<meta property="og:description" content="Cinq méthodes qualité, un seul référentiel. Vos causes, vos actions, vos preuves et vos normes cessent d’être séparées.">
+<meta property="og:image" content="https://qualitos.fr/assets/og-qualitos.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Logo QualitOS, The Quality Operating System">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="icon" href="assets/favicon-64.png" sizes="64x64">
+<link rel="apple-touch-icon" href="assets/qualitos-marque.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+
+<!-- Donnees structurees : decrivent ce que la page contient REELLEMENT.
+     La FAQ ci-dessous est generee depuis les <details> de la page ; si une
+     question y change, regenerer ce bloc plutot que de le retoucher a la main. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "@id": "https://qualitos.fr/#organisation",
+  "name": "QualitOS",
+  "url": "https://qualitos.fr/",
+  "logo": "https://qualitos.fr/assets/qualitos-marque.png",
+  "description": "Plateforme de management de la qualite qui reunit PDCA, 5S, cercles de qualite, DMAIC et Ishikawa dans un referentiel unique.",
+  "email": "contact@qualitos.fr",
+  "telephone": "+33672447524",
+  "contactPoint": [
+    {
+      "@type": "ContactPoint",
+      "telephone": "+33672447524",
+      "email": "contact@qualitos.fr",
+      "contactType": "sales",
+      "availableLanguage": [
+        "fr",
+        "en"
+      ],
+      "areaServed": "FR"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "@id": "https://qualitos.fr/#logiciel",
+  "name": "QualitOS",
+  "applicationCategory": "BusinessApplication",
+  "applicationSubCategory": "Quality Management System",
+  "operatingSystem": "Navigateur web, iOS, Android",
+  "url": "https://qualitos.fr/",
+  "publisher": {
+    "@id": "https://qualitos.fr/#organisation"
+  },
+  "inLanguage": [
+    "fr",
+    "en",
+    "es",
+    "ar",
+    "ja",
+    "zh"
+  ],
+  "description": "Logiciel de management de la qualite multi-methodes : PDCA, 5S, cercles de qualite, DMAIC et Poka-Yoke, Ishikawa, avec gestion documentaire, CAPA, non-conformites, audits, AMDEC, cartes de controle SPC, referentiel de normes et intelligence artificielle explicable.",
+  "featureList": [
+    "PDCA",
+    "5S",
+    "Cercles de qualite",
+    "DMAIC et Poka-Yoke",
+    "Ishikawa",
+    "Gestion documentaire",
+    "CAPA",
+    "Non-conformites",
+    "Audits internes et fournisseurs",
+    "AMDEC et gestion des risques",
+    "Cartes de controle SPC et capabilite",
+    "Referentiel de normes ISO",
+    "Formation et competences",
+    "Metrologie et etalonnage"
+  ],
+  "offers": {
+    "@type": "Offer",
+    "availability": "https://schema.org/PreOrder",
+    "priceCurrency": "EUR",
+    "url": "https://qualitos.fr/#contact",
+    "description": "Tarification par module active. Demonstration sur demande."
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "@id": "https://qualitos.fr/#questions",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "En combien de temps a-t-on quelque chose d'utilisable ?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Quelques jours pour un périmètre de départ : une méthode, un site, vos documents et vos écarts en cours. Nous ouvrons volontairement peu de modules au début — une équipe adopte un outil qu'elle comprend, pas un catalogue. Les autres s'activent ensuite, un par un, au rythme où vous en avez besoin."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Faut-il abandonner nos outils existants ?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Non. QualitOS expose une interface de programmation documentée et des notifications sortantes, et se raccorde aux systèmes déjà en place : gestion de production, progiciel de gestion, gestion des services informatiques, gestion documentaire, dossier patient, messagerie d'entreprise. L'objectif est que la donnée arrive seule, pas qu'on la retape."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Nos données partent-elles à un fournisseur d'IA ?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Seulement si vous le décidez, et vous choisissez lequel. Chaque organisation épingle son fournisseur ; il n'y a pas de repli silencieux vers un autre. Si vous retenez l'option souveraine, les modèles tournent sur vos machines et aucun contenu ne sort de votre réseau. Dans tous les cas, les données personnelles sont masquées avant tout envoi et chaque appel est journalisé."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Est-ce adapté à un secteur très réglementé ?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "C'est précisément le terrain visé. Signature électronique conforme, piste d'audit inaltérable, validation documentée, gestion des versions et des lectures obligatoires : ce sont des exigences du socle, pas des options. Pour les contextes les plus contraints, l'installation dédiée sur votre infrastructure lève la question de l'hébergement."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Et si notre métier n'est dans aucune liste ?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Aucune logique sectorielle n'est écrite en dur dans le produit. Un secteur est un paquet de modèles de formulaires, d'indicateurs, de référentiels et de processus types. En écrire un pour un métier nouveau est un travail de configuration, pas de développement — comptez quelques semaines, et vous pouvez le faire vous-même."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Combien ça coûte ?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Le prix dépend des modules activés et du nombre de personnes qui s'en servent, et il est affiché avant l'engagement — pas de licence opaque négociée à l'année. Dites-nous votre périmètre et vos effectifs : vous aurez un chiffre, pas une fourchette."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Que se passe-t-il si nous arrêtons ?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Vous repartez avec tout : documents, enregistrements, preuves, journal d'audit, dans des formats ouverts et lisibles sans nous. Un système qualité contient vos obligations légales ; il ne peut pas être pris en otage."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Où en est le produit aujourd'hui ?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "La plateforme est développée et fonctionne : nous la faisons tourner tous les jours et nous pouvons vous la montrer en direct, sur des données réelles de démonstration. Nous cherchons maintenant les premiers utilisateurs qui veulent peser sur ce qui est construit ensuite — et qui en tirent les conditions qui vont avec."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body>
+
+<a class="saut-contenu" href="#contenu">Aller au contenu</a>
+
+<header class="entete">
+  <div class="enveloppe entete__barre">
+    <a class="marque" href="#">
+      <img class="marque__sceau" src="assets/qualitos-marque.png" alt="" width="256" height="256">
+      <span>
+        <span class="marque__nom">Qualit<b>OS</b></span>
+        <span class="marque__suite">The Quality Operating System</span>
+      </span>
+    </a>
+
+    <button class="nav__bascule" type="button" aria-expanded="false" aria-controls="nav">Menu</button>
+
+    <nav class="nav" id="nav" aria-label="Principale">
+      <a href="#referentiel">Le référentiel</a>
+      <a href="#modules">Modules</a>
+      <a href="#normes">Normes</a>
+      <a href="#ia">IA</a>
+      <a href="#metiers">Votre métier</a>
+      <a href="#securite">Sécurité</a>
+      <a href="#equipe">L’équipe</a>
+      <a href="#faq">Questions</a>
+      <a class="bouton bouton--signal" href="#contact">Demander une démo</a>
+    </nav>
+  </div>
+</header>
+
+<main id="contenu">
+
+<!-- ======================================================================
+     HÉROS
+     Le titre est posé dans une bande de tolérance, et une trace de mesure
+     la traverse : c'est l'objet qu'un responsable qualité regarde tous les
+     matins. Pas un grand chiffre sur un dégradé.
+     ====================================================================== -->
+<section class="heros">
+  <div class="enveloppe heros__contenu">
+
+    <div class="bande">
+      <span class="bande__limite bande__limite--haute num">LSS — limite supérieure</span>
+
+      <h1>Cinq méthodes qualité.<br>Un seul <em>référentiel</em>.</h1>
+
+      <p class="heros__chapo">
+        PDCA, 5S, cercles de qualité, DMAIC et Ishikawa écrivent dans la même base.
+        Une cause trouvée au tableau d'Ishikawa devient un cycle PDCA, une action
+        DMAIC devient un détrompeur, un audit 5S nourrit le cercle qualité — sans
+        ressaisie, et sans que personne ne reconstitue le lien à la main.
+      </p>
+
+      <div class="heros__actions">
+        <a class="bouton bouton--signal" href="#contact">Demander une démo</a>
+        <a class="bouton bouton--trait" href="#referentiel">Voir ce que ça couvre</a>
+      </div>
+
+      <span class="bande__limite bande__limite--basse num">LIS — limite inférieure</span>
+    </div>
+
+    <svg class="trace" viewBox="0 0 1200 160" role="img"
+         aria-label="Carte de contrôle : une série de mesures reste entre les limites, puis un point les franchit et devient orange.">
+      <line class="trace__limite" x1="0" y1="26" x2="1200" y2="26"></line>
+      <line class="trace__moyenne" x1="0" y1="80" x2="1200" y2="80"></line>
+      <line class="trace__limite" x1="0" y1="134" x2="1200" y2="134"></line>
+      <text class="trace__legende" x="4" y="76">X̄</text>
+
+      <polyline class="trace__ligne" points="20,86 80,74 140,92 200,70 260,88 320,66 380,95 440,72 500,60 560,84 620,55 680,78 740,48 800,69 860,40 920,62 980,30 1040,52 1100,16 1160,44"></polyline>
+
+      <circle class="trace__point" cx="440" cy="72" r="4"></circle>
+      <circle class="trace__point" cx="740" cy="48" r="4"></circle>
+      <circle class="trace__point" cx="980" cy="30" r="4"></circle>
+      <circle class="trace__point trace__point--hors" cx="1100" cy="16"></circle>
+      <text class="trace__etiquette" x="1020" y="12">dérive détectée</text>
+    </svg>
+
+    <dl class="methodes-rapides">
+      <div><dt>PDCA</dt><dd>Planifier, faire, vérifier, agir — et savoir quand un cycle patine.</dd></div>
+      <div><dt>5S</dt><dd>Audit terrain au téléphone, hors ligne, photo à l'appui.</dd></div>
+      <div><dt>Cercles</dt><dd>Réunions, comptes rendus, idées suivies jusqu'à leur effet.</dd></div>
+      <div><dt>DMAIC</dt><dd>Six Sigma, capabilité, cartes de contrôle, détrompeurs.</dd></div>
+      <div><dt>Ishikawa</dt><dd>Causes par famille, Pareto, cinq pourquoi, en collaboratif.</dd></div>
+    </dl>
+
+  </div>
+</section>
+
+<!-- ======================================================================
+     LE CONSTAT
+     ====================================================================== -->
+<section class="section section--froide">
+  <div class="enveloppe">
+    <div class="titre-section">
+      <h2>Le problème n'est pas que vous manquiez d'outils</h2>
+      <p>C'est qu'ils ne se parlent pas. Chaque méthode a fini dans son classeur, et c'est vous qui faites le lien.</p>
+    </div>
+
+    <div class="constat">
+      <div>
+        <h3>Ce que vit une direction qualité aujourd'hui</h3>
+        <ul class="liste-constat">
+          <li>
+            <span><strong>Le tableau d'Ishikawa est dans un PowerPoint.</strong>
+            Les causes retenues n'ont jamais rejoint le plan d'action.</span>
+          </li>
+          <li>
+            <span><strong>Les audits 5S sont sur papier,</strong>
+            retapés le soir, et leurs photos dorment dans un téléphone.</span>
+          </li>
+          <li>
+            <span><strong>Les CAPA vivent dans un tableur</strong>
+            que personne n'ouvre entre deux revues de direction.</span>
+          </li>
+          <li>
+            <span><strong>Les preuves pour l'audit se rassemblent en trois semaines,</strong>
+            à la main, parce qu'aucun écran ne sait quelle clause elles couvrent.</span>
+          </li>
+          <li>
+            <span><strong>La même non-conformité revient</strong>
+            et personne ne peut montrer qu'elle est déjà passée deux fois l'an dernier.</span>
+          </li>
+        </ul>
+      </div>
+
+      <div>
+        <h3>Ce que QualitOS change</h3>
+        <ul class="liste-constat liste-constat--reponse">
+          <li>
+            <span><strong>Une cause s'écrit une fois.</strong>
+            Elle porte ensuite les actions, les mesures et les preuves qui la traitent.</span>
+          </li>
+          <li>
+            <span><strong>L'audit se fait sur place, hors ligne.</strong>
+            Il remonte seul quand le réseau revient, photos comprises.</span>
+          </li>
+          <li>
+            <span><strong>Une CAPA a un responsable, une échéance et une mesure d'efficacité</strong>
+            relue à trois, six et douze mois.</span>
+          </li>
+          <li>
+            <span><strong>Le dossier d'audit se produit en un geste :</strong>
+            chaque clause porte ses preuves, datées et signées.</span>
+          </li>
+          <li>
+            <span><strong>Les écarts semblables se regroupent d'eux-mêmes,</strong>
+            et la récidive se voit avant la réclamation client.</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================
+     LE RÉFÉRENTIEL COMMUN — le vrai différenciateur
+     ====================================================================== -->
+<section class="section" id="referentiel">
+  <div class="enveloppe">
+    <div class="titre-section">
+      <h2>L'agrégation est dans la donnée, pas dans le menu</h2>
+      <p>
+        Beaucoup d'éditeurs juxtaposent des modules. Ici, les six objets du métier
+        sont liés dans la base : c'est ce qui permet de remonter d'une réclamation
+        client jusqu'à la machine, et de redescendre jusqu'à la preuve d'audit.
+      </p>
+    </div>
+
+    <div class="referentiel">
+      <svg viewBox="0 0 480 420" role="img"
+           aria-label="Six objets liés en anneau : problèmes, causes, actions, indicateurs, preuves et normes.">
+        <defs>
+          <marker id="fleche" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
+            <path d="M0,0 L7,3 L0,6 Z" fill="#9db4d4"></path>
+          </marker>
+        </defs>
+
+        <!-- L'anneau reprend l'hexagone du logo : six sommets, six objets.
+             Les sommets portent des gelules et non des disques : « Indicateurs »
+             ne tient pas dans un cercle qui garde la taille des autres, et une
+             coupure de mot au milieu d'un schema se lit comme un defaut. -->
+        <polygon points="240,34 420,129 420,291 240,386 60,291 60,129"
+                 fill="none" stroke="#c9d6e8" stroke-width="1.5"
+                 stroke-dasharray="6 6"></polygon>
+
+        <g stroke="#9db4d4" stroke-width="1.5" marker-end="url(#fleche)" fill="none">
+          <line x1="293" y1="62" x2="376" y2="106"></line>
+          <line x1="420" y1="154" x2="420" y2="266"></line>
+          <line x1="376" y1="314" x2="298" y2="355"></line>
+          <line x1="182" y1="355" x2="107" y2="316"></line>
+          <line x1="60" y1="266" x2="60" y2="154"></line>
+          <line x1="105" y1="105" x2="187" y2="62"></line>
+        </g>
+
+        <g font-family="Archivo, sans-serif" font-size="15" font-weight="600" fill="#12305f" text-anchor="middle">
+          <rect x="188" y="17" width="104" height="34" rx="17" fill="#e8effa" stroke="#1f62c4" stroke-width="2"></rect>
+          <text x="240" y="39">Problèmes</text>
+
+          <rect x="378" y="112" width="84" height="34" rx="17" fill="#e8effa" stroke="#1f62c4" stroke-width="2"></rect>
+          <text x="420" y="134">Causes</text>
+
+          <rect x="377" y="274" width="86" height="34" rx="17" fill="#fdf0de" stroke="#f5901f" stroke-width="2"></rect>
+          <text x="420" y="296">Actions</text>
+
+          <rect x="182" y="369" width="116" height="34" rx="17" fill="#e8effa" stroke="#1f62c4" stroke-width="2"></rect>
+          <text x="240" y="391">Indicateurs</text>
+
+          <rect x="15" y="274" width="90" height="34" rx="17" fill="#fdf0de" stroke="#f5901f" stroke-width="2"></rect>
+          <text x="60" y="296">Preuves</text>
+
+          <rect x="17" y="112" width="86" height="34" rx="17" fill="#e8effa" stroke="#1f62c4" stroke-width="2"></rect>
+          <text x="60" y="134">Normes</text>
+        </g>
+      </svg>
+
+      <div>
+        <h3>Ce que cela permet, concrètement</h3>
+        <ul class="chaine">
+          <li><strong>Une cause d'Ishikawa ouvre un cycle PDCA</strong>
+            sans ressaisie : le cycle sait d'où il vient, et le tableau sait qu'il est traité.</li>
+          <li><strong>Une action DMAIC devient un détrompeur</strong>
+            inscrit à la bibliothèque, réutilisable sur une autre ligne.</li>
+          <li><strong>Un audit 5S alimente un cercle de qualité</strong>
+            avec les zones qui reviennent, pas une impression générale.</li>
+          <li><strong>Une non-conformité devient un PDCA ou un projet DMAIC</strong>
+            selon sa gravité, et garde le fil jusqu'à la preuve d'efficacité.</li>
+          <li><strong>Chaque preuve sait quelle clause elle couvre</strong> —
+            ISO 9001, 13485, 27001, IATF… — et le taux de couverture se calcule seul.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================
+     MODULES TRANSVERSES
+     ====================================================================== -->
+<section class="section section--froide" id="modules">
+  <div class="enveloppe">
+    <div class="titre-section">
+      <h2>Le reste du système de management, dans la même base</h2>
+      <p>
+        Chaque module s'active ou se désactive pour votre organisation. Vous ne payez
+        pas ce que vous n'utilisez pas, et vous n'avez pas quinze écrans à faire adopter
+        le premier jour.
+      </p>
+    </div>
+
+    <div class="modules">
+      <article class="module">
+        <h3>Maîtrise documentaire</h3>
+        <p>Versions, circuit d'approbation, lecture obligatoire avec preuve, signature électronique.</p>
+        <span class="module__clause num">ISO 9001 §7.5</span>
+      </article>
+      <article class="module">
+        <h3>CAPA</h3>
+        <p>Actions correctives et préventives, escalade automatique, efficacité mesurée après coup.</p>
+        <span class="module__clause num">ISO 9001 §10.2</span>
+      </article>
+      <article class="module">
+        <h3>Non-conformités</h3>
+        <p>Saisie au poste avec photos et localisation, catégories et natures propres à votre métier.</p>
+        <span class="module__clause num">ISO 9001 §8.7</span>
+      </article>
+      <article class="module">
+        <h3>Audits</h3>
+        <p>Programme annuel, listes de contrôle, exécution hors ligne, rapport rédigé à partir des constats.</p>
+        <span class="module__clause num">ISO 19011</span>
+      </article>
+      <article class="module">
+        <h3>Risques et AMDEC</h3>
+        <p>Cotation, criticité, nœud papillon pour les risques majeurs, réévaluation à chaque donnée nouvelle.</p>
+        <span class="module__clause num">ISO 31000</span>
+      </article>
+      <article class="module">
+        <h3>Qualité fournisseurs</h3>
+        <p>Fiches de score, audits, certificats matière, écarts suivis jusqu'à la réponse 8D.</p>
+        <span class="module__clause num">ISO 9001 §8.4</span>
+      </article>
+      <article class="module">
+        <h3>Compétences et formation</h3>
+        <p>Matrices par poste, habilitations, rappels d'échéance, attestations vérifiables.</p>
+        <span class="module__clause num">ISO 9001 §7.2</span>
+      </article>
+      <article class="module">
+        <h3>Gestion des changements</h3>
+        <p>Demande, analyse d'impact, validation à plusieurs niveaux, documents et formations à reprendre.</p>
+        <span class="module__clause num">ISO 9001 §6.3</span>
+      </article>
+      <article class="module">
+        <h3>Réclamations clients</h3>
+        <p>Réception multi-canal, classement et tonalité analysés, lien direct vers la CAPA ouverte.</p>
+        <span class="module__clause num">ISO 10002</span>
+      </article>
+      <article class="module">
+        <h3>Métrologie</h3>
+        <p>Plans d'étalonnage, échéances, études R&amp;R de répétabilité et reproductibilité.</p>
+        <span class="module__clause num">ISO 9001 §7.1.5</span>
+      </article>
+      <article class="module">
+        <h3>Parties intéressées</h3>
+        <p>Registre, matrice d'évaluation, exigences rattachées aux risques, écarts, audits et documents.</p>
+        <span class="module__clause num">ISO 9001 §4.2</span>
+      </article>
+      <article class="module">
+        <h3>Santé, sécurité, environnement</h3>
+        <p>Les mêmes audits, écarts et actions, appliqués aux sujets SSE.</p>
+        <span class="module__clause num">ISO 14001 · 45001</span>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================
+     NORMES
+     ====================================================================== -->
+<section class="section section--marine" id="normes">
+  <div class="enveloppe">
+    <div class="titre-section">
+      <h2>Viser une certification, et savoir chaque jour où vous en êtes</h2>
+      <p>
+        Pour chaque norme : les exigences détaillées, les modèles de documents attendus,
+        les processus types, la feuille de route de certification, et le score de couverture
+        recalculé à chaque preuve déposée.
+      </p>
+    </div>
+
+    <div class="normes-grille">
+      <div class="familles-normes">
+        <div class="famille-norme">
+          <h3>Systèmes de management</h3>
+          <p>ISO 9001, 14001, 45001, 27001, 22301, 50001, 37001, 31000, 19011, 10002.</p>
+        </div>
+        <div class="famille-norme">
+          <h3>Industrie et aéronautique</h3>
+          <p>IATF 16949, AS9100 et EN 9100, NADCAP, VDA 6.3, API Q1, ISO 17025.</p>
+        </div>
+        <div class="famille-norme">
+          <h3>Santé et dispositifs médicaux</h3>
+          <p>ISO 13485, ISO 14971, ISO 15189, règlements MDR et IVDR, FDA 21 CFR Part 11 et 820, GAMP 5, HAS.</p>
+        </div>
+        <div class="famille-norme">
+          <h3>Agroalimentaire</h3>
+          <p>ISO 22000, FSSC 22000, IFS Food, BRCGS, GlobalG.A.P., HACCP du Codex.</p>
+        </div>
+        <div class="famille-norme">
+          <h3>Numérique et finance</h3>
+          <p>ISO 20000-1, 27017, 27018, 27701, SOC 2, PCI DSS, NIS 2, DORA, RGPD, AI Act.</p>
+        </div>
+        <div class="famille-norme">
+          <h3>Service public et formation</h3>
+          <p>ISO 21001, Qualiopi, ISO 18091, RGAA 4.1 et WCAG 2.2.</p>
+        </div>
+      </div>
+
+      <div>
+        <h3 style="font-size:1.25rem;margin-bottom:1.25rem;">La feuille de route, telle qu'un organisme la parcourt</h3>
+        <ol class="etapes-certif">
+          <li><span>Engagement de direction et périmètre</span><span class="duree">2–4 sem.</span></li>
+          <li><span>Diagnostic initial et écarts</span><span class="duree">3–5 sem.</span></li>
+          <li><span>Politique et objectifs mesurables</span><span class="duree">2 sem.</span></li>
+          <li><span>Contexte et parties intéressées</span><span class="duree">2–3 sem.</span></li>
+          <li><span>Risques, opportunités, plans de traitement</span><span class="duree">3–4 sem.</span></li>
+          <li><span>Cartographie des processus</span><span class="duree">4–6 sem.</span></li>
+          <li><span>Documentation du système</span><span class="duree">6–10 sem.</span></li>
+          <li><span>Sensibilisation et formation</span><span class="duree">4–6 sem.</span></li>
+          <li><span>Mise en œuvre sur le terrain</span><span class="duree">8–16 sem.</span></li>
+          <li><span>Premier cycle d'audits internes</span><span class="duree">4–8 sem.</span></li>
+          <li><span>Actions correctives et preuves d'efficacité</span><span class="duree">4–12 sem.</span></li>
+          <li><span>Revue de direction</span><span class="duree">1–2 sem.</span></li>
+          <li><span>Audit à blanc</span><span class="duree">1 sem.</span></li>
+          <li><span>Certification, étape 1 — revue documentaire</span><span class="duree">1–2 j.</span></li>
+          <li><span>Certification, étape 2 — audit sur site</span><span class="duree">2–5 j.</span></li>
+        </ol>
+        <p style="margin-top:1.5rem;font-size:0.9375rem;color:#a9bcd8;">
+          Avant l'audit réel, l'audit à blanc interroge votre dossier clause par clause,
+          confronte vos réponses aux preuves présentes, et rend un rapport d'écarts avec
+          le plan de remédiation déjà créé.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================
+     IA
+     ====================================================================== -->
+<section class="section" id="ia">
+  <div class="enveloppe">
+    <div class="titre-section">
+      <h2>Une IA qui montre son raisonnement, ou qui se tait</h2>
+      <p>
+        Elle propose, vous décidez. Chaque prédiction affiche ce qui l'a produite —
+        les variables qui pèsent, les documents cités — et aucune décision critique ne
+        part sans validation humaine signée.
+      </p>
+    </div>
+
+    <div class="ia-exemples">
+      <article class="ia-exemple">
+        <h3>Elle voit la dérive avant la pièce mauvaise</h3>
+        <p>Les huit règles de Nelson sur vos cartes de contrôle, complétées par une détection d'anomalies multivariée sur les signaux qui ne suivent pas une loi simple.</p>
+        <q>Le procédé de sertissage sortira des limites dans quatre jours au rythme actuel.</q>
+      </article>
+      <article class="ia-exemple">
+        <h3>Elle regroupe les écarts qui se ressemblent</h3>
+        <p>Les non-conformités se rassemblent par densité sur leur contenu réel, pas sur la catégorie cochée à la saisie.</p>
+        <q>Ces onze écarts de trois ateliers décrivent la même cause ; deux ont déjà une CAPA close.</q>
+      </article>
+      <article class="ia-exemple">
+        <h3>Elle lit la photo de l'audit 5S</h3>
+        <p>Encombrement, marquage au sol absent, équipement de protection manquant : repérés sur l'image, à confirmer par l'auditeur.</p>
+        <q>Zone B : trois emplacements non identifiés, deux allées encombrées.</q>
+      </article>
+      <article class="ia-exemple">
+        <h3>Elle répond en français à vos questions de données</h3>
+        <p>Posez la question, obtenez le chiffre et le graphique — la requête produite reste visible, et elle ne sort jamais du périmètre de votre organisation.</p>
+        <q>Combien de non-conformités fournisseur en mars sur l'usine de Tours ?</q>
+      </article>
+      <article class="ia-exemple">
+        <h3>Elle rédige le brouillon, vous gardez la plume</h3>
+        <p>Manuel qualité, procédures, comptes rendus de revue de direction : pré-remplis à partir de votre contexte, publiés seulement après validation.</p>
+        <q>Procédure de maîtrise documentaire, adaptée à vos trois sites et à votre nomenclature.</q>
+      </article>
+      <article class="ia-exemple">
+        <h3>Elle explique pourquoi elle a signalé</h3>
+        <p>Pour chaque alerte, la part de chaque variable dans le score — pas un verdict sans motif.</p>
+        <q>Ce point est signalé à 61 % par la température de bain, à 24 % par le temps de cycle.</q>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================
+     PAR MÉTIER
+     ====================================================================== -->
+<section class="section section--froide" id="metiers">
+  <div class="enveloppe">
+    <div class="titre-section">
+      <h2>Ce que vous y trouvez, selon votre poste</h2>
+      <p>Quatre personnes regardent le même système et n'y cherchent pas la même chose.</p>
+    </div>
+
+    <div class="metiers">
+      <article class="metier">
+        <h3>Directeur de site</h3>
+        <p class="metier__sous">Ce qui coûte, ce qui bloque, ce qui s'améliore</p>
+        <ul>
+          <li>Le coût d'obtention de la qualité décomposé en prévention, détection et défaillances</li>
+          <li>Un score par site et par atelier, comparable d'un mois sur l'autre</li>
+          <li>Les cinq risques critiques et les cinq actions en retard, sans demander un reporting</li>
+          <li>Un écran mural pour le hall ou la salle qualité</li>
+        </ul>
+      </article>
+
+      <article class="metier">
+        <h3>Directeur qualité et conformité</h3>
+        <p class="metier__sous">Être prêt pour l'audit, tous les jours</p>
+        <ul>
+          <li>Le taux de couverture par norme et par clause, recalculé à chaque preuve</li>
+          <li>Le dossier de certification produit en un geste, preuves liées et horodatées</li>
+          <li>Plusieurs référentiels menés ensemble, avec les preuves mutualisées entre normes communes</li>
+          <li>Une piste d'audit complète : qui a lu, qui a validé, quand, et sur quelle version</li>
+        </ul>
+      </article>
+
+      <article class="metier">
+        <h3>Manager qualité</h3>
+        <p class="metier__sous">Faire avancer, et voir ce qui patine</p>
+        <ul>
+          <li>Les cycles en cours, ceux qui n'ont pas bougé, et pourquoi</li>
+          <li>Les CAPA par responsable et par échéance, avec l'efficacité relue après coup</li>
+          <li>Les audits planifiés contre les audits réalisés</li>
+          <li>Les idées issues des cercles, suivies jusqu'à leur effet mesuré</li>
+        </ul>
+      </article>
+
+      <article class="metier">
+        <h3>Ingénieur qualité</h3>
+        <p class="metier__sous">Les outils, pour de vrai</p>
+        <ul>
+          <li>Cartes X̄–R et X̄–S, capabilité Cp, Cpk, Pp, Ppk, avec les constantes et les formules affichées</li>
+          <li>Études R&amp;R, AMDEC produit et processus, plans de surveillance</li>
+          <li>Ishikawa collaboratif, Pareto, cinq pourquoi, bibliothèque de détrompeurs</li>
+          <li>Import d'un bloc de mesures collé depuis un tableur</li>
+        </ul>
+      </article>
+    </div>
+
+    <div style="margin-top:3rem;">
+      <h3 style="margin-bottom:1rem;">Et selon votre secteur</h3>
+      <div class="secteurs">
+        <span class="secteur"><b>Industrie</b> <span>MSP, AMDEC, APQP, PPAP</span></span>
+        <span class="secteur"><b>Automobile</b> <span>IATF, VDA, 8D</span></span>
+        <span class="secteur"><b>Aéronautique</b> <span>AS9100, traçabilité matière</span></span>
+        <span class="secteur"><b>Santé</b> <span>événements indésirables, HAS</span></span>
+        <span class="secteur"><b>Pharmacie</b> <span>BPF, Part 11, dossiers de lot</span></span>
+        <span class="secteur"><b>Agroalimentaire</b> <span>HACCP, allergènes, traçabilité lot</span></span>
+        <span class="secteur"><b>Banque</b> <span>contrôles permanents, DORA</span></span>
+        <span class="secteur"><b>Informatique</b> <span>ITIL 4, ISO 20000, 27001</span></span>
+        <span class="secteur"><b>Énergie</b> <span>gestion d'actifs, ISO 50001</span></span>
+        <span class="secteur"><b>Construction</b> <span>ISO 19650, levée de réserves</span></span>
+        <span class="secteur"><b>Secteur public</b> <span>qualité d'accueil, RGAA</span></span>
+        <span class="secteur"><b>Formation</b> <span>Qualiopi, ISO 21001</span></span>
+      </div>
+      <p style="margin-top:1.25rem;font-size:0.9375rem;color:var(--encre-douce);">
+        Un secteur n'est jamais codé en dur : c'est un paquet de modèles, d'indicateurs et
+        de référentiels qu'on active, qu'on modifie, et qu'on peut écrire pour un métier
+        que nous ne connaissons pas encore.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================
+     DÉPLOIEMENT ET SÉCURITÉ
+     ====================================================================== -->
+<section class="section" id="securite">
+  <div class="enveloppe">
+    <div class="titre-section">
+      <h2>Chez nous, chez vous, ou les deux</h2>
+      <p>Le mode d'hébergement suit vos contraintes réglementaires, pas l'inverse.</p>
+    </div>
+
+    <div class="deploiements">
+      <article class="deploiement deploiement--retenu">
+        <h3>Service hébergé</h3>
+        <p>Mise en service rapide, mises à jour continues, sauvegardes et supervision incluses. Vos données restent isolées de celles des autres organisations, par la base elle-même et non par une condition dans le code.</p>
+      </article>
+      <article class="deploiement">
+        <h3>Sur votre infrastructure</h3>
+        <p>La plateforme entière tourne dans votre salle machine ou votre cloud privé. Une licence signée ouvre les modules couverts ; aucun appel sortant n'est nécessaire au fonctionnement.</p>
+      </article>
+      <article class="deploiement">
+        <h3>Hybride</h3>
+        <p>Le socle hébergé, les traitements sensibles chez vous. L'intelligence artificielle peut tourner entièrement sur vos machines, sans qu'aucun texte ne quitte votre réseau.</p>
+      </article>
+    </div>
+
+    <ul class="socle-securite">
+      <li><strong>Cloisonnement par organisation</strong>Imposé par la base de données, pas seulement par l'application.</li>
+      <li><strong>Journal inaltérable</strong>Chaque lecture, écriture, export et action d'IA est tracé et scellé.</li>
+      <li><strong>Signature et ancrage</strong>Les rapports critiques sont signés et leur empreinte ancrée, vérifiable ensuite.</li>
+      <li><strong>Cryptographie post-quantique</strong>Signatures et échanges de clés conformes aux standards publiés par le NIST en 2024.</li>
+      <li><strong>Authentification forte</strong>Second facteur imposé aux comptes d'administration, annuaire d'entreprise raccordable.</li>
+      <li><strong>Aucune donnée personnelle hors de l'UE</strong>Et aucune donnée personnelle inscrite dans un registre distribué.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ======================================================================
+     QUI CONSTRUIT — la credibilite tient a deux parcours, pas a un logo
+     ====================================================================== -->
+<section class="section section--froide" id="equipe">
+  <div class="enveloppe">
+    <div class="titre-section">
+      <h2>Qui construit QualitOS</h2>
+      <p>Un logiciel de qualité écrit par quelqu'un qui a passé dix ans à en
+      faire, et par quelqu'un qui construit des systèmes. Les deux, pas l'un
+      sans l'autre.</p>
+    </div>
+
+    <div class="equipe">
+      <article class="profil">
+        <h3>Ahmed El Mouatassim</h3>
+        <p class="profil__role">Le métier. Audits, conformité, procédés d'usinage et de montage.</p>
+        <ul class="profil__parcours">
+          <li><span>Coordinateur du département qualité</span><span class="ou">Liebherr Machines Bulle, Suisse — depuis 2024</span></li>
+          <li><span>Supply&nbsp;Chain &amp; Quality Manager</span><span class="ou">Airbus, Blagnac — 2023 à 2024</span></li>
+          <li><span>Quality Conformance Manager, pilote APQP du projet A321 New&nbsp;FAL</span><span class="ou">Airbus, en mission pour Expleo — 2021 à 2023</span></li>
+          <li><span>Ingénieur assurance qualité — FAI/DVI, PPAP, EN&nbsp;9102 et EN&nbsp;9145</span><span class="ou">VE Consulting — 2019 à 2021</span></li>
+          <li><span>Ingénieur qualité et R&amp;D, revêtements d'alliages</span><span class="ou">Laboratoire de mécanique — 2015 à 2018</span></li>
+        </ul>
+        <p class="profil__titres">Auditeur certifié CQI&nbsp;&amp;&nbsp;IRCA ISO&nbsp;9001 (Intertek SAI Global).
+        Master d'administration des entreprises, IAE Nice. Master 2 sciences et
+        technologies, université de Limoges.</p>
+      </article>
+
+      <article class="profil">
+        <h3>Waopron Coulibaly</h3>
+        <p class="profil__role">La construction. Plateforme, données, mise en production.</p>
+        <ul class="profil__parcours">
+          <li><span>Ingénieur développeur senior, full-stack et IA agentique</span><span class="ou">Conception et développement de la plateforme</span></li>
+          <li><span>Ingénieur data et DevOps</span><span class="ou">Flux de données, intégration continue, exploitation</span></li>
+        </ul>
+        <p class="profil__titres">Master en management et administration des
+        entreprises, IAE — université Côte d'Azur, Nice.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================
+     FAQ
+     ====================================================================== -->
+<section class="section" id="faq">
+  <div class="enveloppe">
+    <div class="titre-section">
+      <h2>Les questions qu'on nous pose</h2>
+      <p>Si la vôtre n'y est pas, écrivez-nous : la réponse viendra d'une personne, pas d'un formulaire.</p>
+    </div>
+
+    <div class="faq">
+      <details>
+        <summary>En combien de temps a-t-on quelque chose d'utilisable ?</summary>
+        <p>
+          Quelques jours pour un périmètre de départ : une méthode, un site, vos documents
+          et vos écarts en cours. Nous ouvrons volontairement peu de modules au début —
+          une équipe adopte un outil qu'elle comprend, pas un catalogue. Les autres
+          s'activent ensuite, un par un, au rythme où vous en avez besoin.
+        </p>
+      </details>
+
+      <details>
+        <summary>Faut-il abandonner nos outils existants ?</summary>
+        <p>
+          Non. QualitOS expose une interface de programmation documentée et des notifications
+          sortantes, et se raccorde aux systèmes déjà en place : gestion de production, progiciel
+          de gestion, gestion des services informatiques, gestion documentaire, dossier patient,
+          messagerie d'entreprise. L'objectif est que la donnée arrive seule, pas qu'on la retape.
+        </p>
+      </details>
+
+      <details>
+        <summary>Nos données partent-elles à un fournisseur d'IA ?</summary>
+        <p>
+          Seulement si vous le décidez, et vous choisissez lequel. Chaque organisation épingle
+          son fournisseur ; il n'y a pas de repli silencieux vers un autre. Si vous retenez
+          l'option souveraine, les modèles tournent sur vos machines et aucun contenu ne sort
+          de votre réseau. Dans tous les cas, les données personnelles sont masquées avant
+          tout envoi et chaque appel est journalisé.
+        </p>
+      </details>
+
+      <details>
+        <summary>Est-ce adapté à un secteur très réglementé ?</summary>
+        <p>
+          C'est précisément le terrain visé. Signature électronique conforme, piste d'audit
+          inaltérable, validation documentée, gestion des versions et des lectures obligatoires :
+          ce sont des exigences du socle, pas des options. Pour les contextes les plus
+          contraints, l'installation dédiée sur votre infrastructure lève la question de
+          l'hébergement.
+        </p>
+      </details>
+
+      <details>
+        <summary>Et si notre métier n'est dans aucune liste ?</summary>
+        <p>
+          Aucune logique sectorielle n'est écrite en dur dans le produit. Un secteur est un
+          paquet de modèles de formulaires, d'indicateurs, de référentiels et de processus
+          types. En écrire un pour un métier nouveau est un travail de configuration, pas de
+          développement — comptez quelques semaines, et vous pouvez le faire vous-même.
+        </p>
+      </details>
+
+      <details>
+        <summary>Combien ça coûte ?</summary>
+        <p>
+          Le prix dépend des modules activés et du nombre de personnes qui s'en servent, et
+          il est affiché avant l'engagement — pas de licence opaque négociée à l'année. Dites-nous
+          votre périmètre et vos effectifs : vous aurez un chiffre, pas une fourchette.
+        </p>
+      </details>
+
+      <details>
+        <summary>Que se passe-t-il si nous arrêtons ?</summary>
+        <p>
+          Vous repartez avec tout : documents, enregistrements, preuves, journal d'audit, dans
+          des formats ouverts et lisibles sans nous. Un système qualité contient vos obligations
+          légales ; il ne peut pas être pris en otage.
+        </p>
+      </details>
+
+      <details>
+        <summary>Où en est le produit aujourd'hui ?</summary>
+        <p>
+          La plateforme est développée et fonctionne : nous la faisons tourner tous les jours
+          et nous pouvons vous la montrer en direct, sur des données réelles de démonstration.
+          Nous cherchons maintenant les premiers utilisateurs qui veulent peser sur ce qui est
+          construit ensuite — et qui en tirent les conditions qui vont avec.
+        </p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================
+     CONTACT
+     ====================================================================== -->
+<section class="section section--marine" id="contact">
+  <div class="enveloppe">
+    <div class="contact">
+
+      <div>
+        <h2 style="font-size:var(--t-xl);margin-bottom:1rem;">Voyons-le sur vos propres cas</h2>
+        <p style="color:#a9bcd8;">
+          Une démonstration dure quarante minutes. Venez avec une non-conformité réelle, un
+          tableau d'Ishikawa que vous n'avez jamais su exploiter, ou la norme que vous visez.
+          Nous la déroulons dans le produit, en direct.
+        </p>
+        <p style="color:#a9bcd8;">
+          Si ce que vous voyez vous intéresse, nous parlons ensuite des conditions réservées
+          aux premières organisations qui nous rejoignent.
+        </p>
+
+        <ul class="coordonnees">
+          <li>
+            <span class="intitule">Courriel</span>
+            <a href="mailto:contact@qualitos.fr">contact@qualitos.fr</a>
+          </li>
+          <li>
+            <span class="intitule">Téléphone</span>
+            <a class="num" href="tel:+330672447524">+33 (0)6 72 44 75 24</a>
+          </li>
+        </ul>
+      </div>
+
+      <form class="formulaire" id="formulaire-contact" data-endpoint="" novalidate>
+        <h3>Demander une démonstration</h3>
+        <p>Nous répondons sous un jour ouvré. Pas de séquence de relances automatiques.</p>
+
+        <div class="champs">
+          <div class="champ">
+            <label for="nom">Nom et prénom</label>
+            <input id="nom" name="nom" type="text" autocomplete="name" required>
+          </div>
+          <div class="champ">
+            <label for="fonction">Fonction</label>
+            <input id="fonction" name="fonction" type="text" autocomplete="organization-title"
+                   placeholder="Directeur qualité, ingénieur qualité…">
+          </div>
+          <div class="champ">
+            <label for="organisation">Organisation</label>
+            <input id="organisation" name="organisation" type="text" autocomplete="organization" required>
+          </div>
+          <div class="champ">
+            <label for="courriel">Courriel professionnel</label>
+            <input id="courriel" name="courriel" type="email" autocomplete="email" required>
+          </div>
+          <div class="champ">
+            <label for="telephone">Téléphone <span class="aide">facultatif</span></label>
+            <input id="telephone" name="telephone" type="tel" autocomplete="tel">
+          </div>
+          <div class="champ">
+            <label for="secteur">Secteur</label>
+            <select id="secteur" name="secteur">
+              <option value="">À préciser</option>
+              <option>Industrie</option>
+              <option>Automobile</option>
+              <option>Aéronautique et défense</option>
+              <option>Santé et hôpital</option>
+              <option>Pharmacie et dispositifs médicaux</option>
+              <option>Agroalimentaire</option>
+              <option>Banque, finance, assurance</option>
+              <option>Informatique et services numériques</option>
+              <option>Énergie et réseaux</option>
+              <option>Construction</option>
+              <option>Transport et logistique</option>
+              <option>Secteur public</option>
+              <option>Formation et enseignement</option>
+              <option>Autre</option>
+            </select>
+          </div>
+          <div class="champ champ--large">
+            <label for="besoin">Ce que vous cherchez à régler</label>
+            <textarea id="besoin" name="besoin"
+                      placeholder="La norme que vous visez, le module qui vous manque, ce qui vous coûte le plus de temps aujourd'hui…"></textarea>
+          </div>
+        </div>
+
+        <div class="formulaire__pied">
+          <button class="bouton bouton--signal" type="submit">Envoyer la demande</button>
+          <p class="formulaire__note">
+            Vos coordonnées servent à vous répondre, et à rien d'autre.
+          </p>
+        </div>
+
+        <p class="retour" id="retour-formulaire" role="status" hidden></p>
+      </form>
+
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="pied">
+  <div class="enveloppe">
+    <!-- Le pied rejoue le plan complet : depuis n'importe quel endroit de la
+         page, toute section est a un clic, sans remonter chercher la barre. -->
+    <nav class="pied__plan" aria-label="Plan du site">
+      <a href="#referentiel">Le référentiel commun</a>
+      <a href="#modules">Les modules</a>
+      <a href="#normes">Normes et certification</a>
+      <a href="#ia">L’intelligence artificielle</a>
+      <a href="#metiers">Selon votre poste</a>
+      <a href="#securite">Déploiement et sécurité</a>
+      <a href="#equipe">L’équipe</a>
+      <a href="#faq">Questions fréquentes</a>
+      <a href="#contact">Demander une démonstration</a>
+    </nav>
+
+    <div class="pied__barre">
+      <img class="marque__sceau" src="assets/qualitos-marque.png" alt="QualitOS" width="256" height="256">
+      <p>Une plateforme qualité multi-méthodes, multi-secteurs, et qui vous rend vos données.</p>
+      <p>
+        <a href="mailto:contact@qualitos.fr">contact@qualitos.fr</a> —
+        <a class="num" href="tel:+330672447524">+33 (0)6 72 44 75 24</a>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script src="site.js"></script>
+</body>
+</html>

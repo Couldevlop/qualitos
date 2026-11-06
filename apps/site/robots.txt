@@ -1,0 +1,5 @@
+# QualitOS — site de présentation
+User-agent: *
+Allow: /
+
+Sitemap: https://qualitos.fr/sitemap.xml
