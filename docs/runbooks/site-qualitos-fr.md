@@ -35,6 +35,26 @@ MX    qualitos.fr        mx0..mx3.mail.ovh.net           ← MX Plan en place
 TXT   qualitos.fr        "v=spf1 include:mx.ovh.com ~all"
 ```
 
+> **Deux domaines, deux zones — ne pas les confondre.** `openlabconsulting.com`,
+> qui porte la préproduction, est géré chez **Cloudflare**
+> (`algin`/`jamie.ns.cloudflare.com`). `qualitos.fr`, lui, est géré chez
+> **OVH** : c'est dans l'espace client OVH qu'on l'édite, pas dans Cloudflare.
+> Vérifié le 2026-11-06 auprès de deux résolveurs indépendants et par le SOA
+> (`dns103.ovh.net`, `tech@ovh.net`). Si `qualitos.fr` apparaît dans le tableau
+> de bord Cloudflare, c'est qu'il y a été ajouté sans que les serveurs de noms
+> aient été basculés : Cloudflare l'affiche alors en attente et ne sert rien.
+>
+> Noter aussi que `preprod.qualitos.openlabconsulting.com` pointe **directement**
+> sur `62.238.11.20` : enregistrement en *DNS only* (nuage gris), sans proxy
+> Cloudflare. C'est cette absence de proxy qui laisse cert-manager résoudre son
+> défi HTTP-01, et qui laisse l'adresse réelle du visiteur arriver jusqu'au
+> service. **Décision du 2026-11-06 : on garde ce fonctionnement.** Derrière un
+> proxy Cloudflare, l'adresse vue par le service deviendrait celle du réseau de
+> diffusion, et la limite de débit du formulaire traiterait tous les visiteurs
+> comme un seul — cinq envois en tout, puis un refus pour tout le monde. Y
+> passer demanderait de lire `CF-Connecting-IP` et d'imposer le mode SSL
+> « Full (strict) ».
+
 Il n'y a **rien à router** : `213.186.33.5` est l'adresse d'un hébergement
 mutualisé OVH, pas une machine à nous, et on ne renvoie pas de trafic depuis
 elle. C'est le NOM qu'on déplace. Deux gestes, **dans cet ordre** :
