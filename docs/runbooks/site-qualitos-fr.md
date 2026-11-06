@@ -24,6 +24,18 @@ démonstrations exactement comme aujourd'hui.
 Dans l'espace client OVH → **Noms de domaine → qualitos.fr → Zone DNS**, créer
 ou modifier **deux** enregistrements :
 
+**Où en est le domaine aujourd'hui** (mesuré le 2026-11-06) :
+
+```
+qualitos.fr      → 213.186.33.5, HTTP 302 vers www.qualitos.fr   (serveur « openresty »)
+www.qualitos.fr  → 213.186.33.5, HTTP 200
+```
+
+`213.186.33.5` est l'adresse d'un hébergement mutualisé OVH : le domaine sert
+aujourd'hui une page OVH, pas notre site. Les deux enregistrements existent
+donc déjà et sont à **modifier**, pas à ajouter — et la redirection du domaine
+nu vers `www` est à supprimer, sinon elle court-circuite la zone.
+
 | Type | Sous-domaine | Cible          | TTL |
 | ---- | ------------ | -------------- | --- |
 | A    | *(vide)*     | `62.238.11.20` | 600 |
