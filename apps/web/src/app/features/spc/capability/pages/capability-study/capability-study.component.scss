@@ -162,9 +162,19 @@
       8px 0 10px -8px var(--qos-border-strong);
   }
 
-  // L'en-tête de la colonne figée passe devant les en-têtes qui défilent.
+  // L'en-tête de la colonne figée passe devant les en-têtes qui défilent, et
+  // reprend ici son fond opaque.
+  //
+  // Pourquoi le redire : `.entete-ligne` le posait deja, mais l'encapsulation
+  // Angular ajoute son attribut a CHAQUE maillon du selecteur. `.grille thead
+  // th` devient `.grille[a] thead[a] th[a]` -- trois attributs, deux elements
+  // -- et l'emporte sur `.grille[a] .entete-ligne[a]`, qui n'en a que deux. Le
+  // coin haut-gauche retombait donc sur la teinte TRANSLUCIDE des en-tetes, et
+  // « SG 06 » se lisait au travers du mot « Echantillon » des qu'on faisait
+  // defiler la grille. Avec `thead` dans le selecteur, la regle passe devant.
   thead .entete-ligne {
     z-index: 3;
+    background: var(--spc-fige-fond);
   }
 }
 
