@@ -201,9 +201,9 @@ def nouvelle():
 
 # chiffres communs, calculés et non recopiés
 NB = len(CAS)
-NB_BLOQ = sum(1 for c in CAS if c[5] == "Bloquant")
-NB_MAJ = sum(1 for c in CAS if c[5] == "Majeur")
-NB_MIN = sum(1 for c in CAS if c[5] == "Mineur")
+NB_BLOQ = sum(1 for c in CAS if c[4] == "Bloquant")
+NB_MAJ = sum(1 for c in CAS if c[4] == "Majeur")
+NB_MIN = sum(1 for c in CAS if c[4] == "Mineur")
 DOMAINES = []
 for c in CAS:
     if c[0] not in DOMAINES:

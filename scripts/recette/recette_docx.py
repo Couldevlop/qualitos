@@ -419,13 +419,13 @@ lignes = []
 for d in domaines:
     sous = [c for c in CAS if c[0] == d]
     lignes.append([d, len(sous),
-                   sum(1 for c in sous if c[5] == "Bloquant"),
-                   sum(1 for c in sous if c[5] == "Majeur"),
-                   sum(1 for c in sous if c[5] == "Mineur")])
+                   sum(1 for c in sous if c[4] == "Bloquant"),
+                   sum(1 for c in sous if c[4] == "Majeur"),
+                   sum(1 for c in sous if c[4] == "Mineur")])
 lignes.append(["TOTAL", len(CAS),
-               sum(1 for c in CAS if c[5] == "Bloquant"),
-               sum(1 for c in CAS if c[5] == "Majeur"),
-               sum(1 for c in CAS if c[5] == "Mineur")])
+               sum(1 for c in CAS if c[4] == "Bloquant"),
+               sum(1 for c in CAS if c[4] == "Majeur"),
+               sum(1 for c in CAS if c[4] == "Mineur")])
 tableau(["Domaine", "Cas", "Bloquants", "Majeurs", "Mineurs"], lignes,
         largeurs=[6.6, 2.0, 2.6, 2.4, 2.4])
 
