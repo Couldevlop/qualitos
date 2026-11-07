@@ -140,6 +140,35 @@ pas découvrir la rupture en production. Il est documenté comme déprécié dan
 l'OpenAPI, et il ne permet pas d'exprimer `PARTIAL` — ce qui est la bonne
 incitation à passer à `verdict`.
 
+### 6. Les deux lectures portent la portée du registre CAPA
+
+`GET /api/v1/capa/effectiveness/board` et
+`GET /api/v1/capa/effectiveness/cases/{capaId}/reviews` appliquent la **même
+portée par utilisateur** que le registre (ADR 0081) : sans « voir tous les
+dossiers », on ne voit que ceux qu'on pilote, dont on vérifie l'efficacité, ou
+dont une action nous est confiée.
+
+Ce n'était pas le cas du premier jet, qui ne filtrait que par client. Le défaut
+mérite d'être écrit, parce qu'il se reproduira : **un écran de synthèse est un
+chemin détourné vers les données qu'il résume.** Le plan de travail montrait
+référence, titre, criticité, pilote, critère et verdicts de tous les dossiers du
+client, et l'historique d'un dossier — qui a jugé, contre quel critère, avec
+quels relevés — était lisible par identifiant. Rien de cela n'ouvrait la
+frontière entre clients, mais tout contournait une règle que le registre tenait.
+
+Deux détails de mise en œuvre, parce qu'ils sont faciles à rater :
+
+- La restriction s'applique **en base**, par une seconde requête, et non par un
+  filtre sur une liste déjà chargée : tout le registre du client n'a pas à
+  voyager en mémoire pour qu'on n'en montre que trois lignes.
+- Le prédicat des actions est un `exists`, **pas** un filtre sur le `join
+  fetch` : filtrer la jointure ramenée livrerait le dossier avec les seules
+  actions de cet utilisateur, et son décompte « 1/1 faite » serait faux — le
+  dossier s'ouvrirait au jugement alors qu'une action reste à mener.
+
+Un dossier hors de portée répond **404**, pas une liste vide : une liste vide
+dit qu'il n'y a rien, pas qu'on n'a rien à y voir.
+
 ## Conséquences
 
 **Ce qu'on gagne.** Le milieu existe : une action qui progresse sans atteindre

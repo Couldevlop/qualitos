@@ -1,5 +1,8 @@
 package com.openlab.qualitos.quality.capa.effectiveness.application;
 
+import com.openlab.qualitos.quality.authz.application.RecordScope;
+import com.openlab.qualitos.quality.authz.domain.Permission;
+import com.openlab.qualitos.quality.capa.CapaNotFoundException;
 import com.openlab.qualitos.quality.capa.effectiveness.application.EvaluationCasePort.EvaluationCase;
 import com.openlab.qualitos.quality.capa.effectiveness.domain.EffectivenessReview;
 import com.openlab.qualitos.quality.capa.effectiveness.domain.EffectivenessVerdict;
@@ -12,11 +15,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
@@ -45,6 +53,7 @@ class EffectivenessBoardServiceTest {
     EvaluationCasePort cases;
     EffectivenessReviewPort reviews;
     TenantProvider tenants;
+    RecordScope scope;
     EffectivenessBoardService service;
 
     @BeforeEach
@@ -53,7 +62,16 @@ class EffectivenessBoardServiceTest {
         reviews = mock(EffectivenessReviewPort.class);
         tenants = mock(TenantProvider.class);
         when(tenants.requireTenantId()).thenReturn(TENANT);
-        service = new EffectivenessBoardService(cases, reviews, tenants);
+        // Par défaut, l'utilisateur voit tout le client : c'est le cas du
+        // manager qualité, et celui que la plupart des bancs décrivent. Les
+        // bancs de portée, eux, restreignent explicitement.
+        scope = mock(RecordScope.class);
+        when(scope.restrictTo(Permission.CAPA_VIEW_ALL)).thenReturn(Optional.empty());
+        // Le dossier est visible par défaut, comme il l'est pour qui voit tout.
+        // Le banc qui compte — `anHistoryIsRefusedOnACaseIAmNotAllowedToOpen` —
+        // le rend invisible explicitement, et c'est lui qui tient la règle.
+        when(cases.sees(any(), any(), any())).thenReturn(true);
+        service = new EffectivenessBoardService(cases, reviews, tenants, scope);
     }
 
     // --- une ligne, et ce qu'elle dit ---
@@ -308,7 +326,7 @@ class EffectivenessBoardServiceTest {
 
         service.board();
 
-        verify(cases).findInScope(TENANT);
+        verify(cases).findInScope(TENANT, Optional.empty());
         verify(reviews).findLastPerCase(TENANT);
         verify(reviews).countPerCase(TENANT);
         // Le défaut que ce test attrape : une lecture d'historique PAR LIGNE.
@@ -322,7 +340,7 @@ class EffectivenessBoardServiceTest {
         service.board();
 
         verify(tenants).requireTenantId();
-        verify(cases).findInScope(TENANT);
+        verify(cases).findInScope(TENANT, Optional.empty());
     }
 
     // --- l'historique d'un dossier ---
@@ -350,11 +368,65 @@ class EffectivenessBoardServiceTest {
         assertThat(service.history(capa)).isEmpty();
     }
 
+    // --- la portée par utilisateur (ADR 0081) ---
+
+    @Test
+    void withoutViewAllTheBoardAsksOnlyForTheCasesThatConcernMe() {
+        // LE défaut que ce banc attrape : un écran de synthèse qui montre plus
+        // que la liste dont il est la synthèse. Le registre CAPA est restreint,
+        // le plan de travail doit l'être de la même façon.
+        UUID moi = UUID.randomUUID();
+        when(scope.restrictTo(Permission.CAPA_VIEW_ALL)).thenReturn(Optional.of(moi));
+        donne(List.of(), Map.of(), Map.of());
+
+        service.board();
+
+        verify(cases).findInScope(TENANT, Optional.of(moi));
+    }
+
+    @Test
+    void theRestrictionIsAskedForWithTheViewAllActionOfTheCapaModule() {
+        // Et pas avec celle d'un autre module : chaque registre a la sienne, et
+        // se tromper d'action donnerait à quelqu'un la vue d'un module sur un
+        // autre.
+        donne(List.of(), Map.of(), Map.of());
+
+        service.board();
+
+        verify(scope).restrictTo(Permission.CAPA_VIEW_ALL);
+    }
+
+    @Test
+    void anHistoryIsRefusedOnACaseIAmNotAllowedToOpen() {
+        // 404 et non une liste vide : une liste vide dit qu'il n'y a rien, pas
+        // qu'on n'a rien à y voir. Et l'identifiant d'un dossier ne doit pas
+        // suffire à lire qui a jugé, contre quel critère, avec quels relevés.
+        UUID moi = UUID.randomUUID();
+        UUID capa = UUID.randomUUID();
+        when(scope.restrictTo(Permission.CAPA_VIEW_ALL)).thenReturn(Optional.of(moi));
+        when(cases.sees(TENANT, capa, Optional.of(moi))).thenReturn(false);
+
+        assertThatThrownBy(() -> service.history(capa))
+                .isInstanceOf(CapaNotFoundException.class);
+        verifyNoInteractions(reviews);
+    }
+
+    @Test
+    void anHistoryIsReadOnceTheCaseIsVisible() {
+        UUID capa = UUID.randomUUID();
+        when(cases.sees(TENANT, capa, Optional.empty())).thenReturn(true);
+        when(reviews.findByCase(TENANT, capa)).thenReturn(List.of());
+
+        assertThat(service.history(capa)).isEmpty();
+
+        verify(cases).sees(TENANT, capa, Optional.empty());
+    }
+
     // --- outillage ---
 
     private void donne(List<EvaluationCase> inScope, Map<UUID, EffectivenessReview> last,
                        Map<UUID, Integer> counts) {
-        when(cases.findInScope(TENANT)).thenReturn(inScope);
+        when(cases.findInScope(eq(TENANT), any())).thenReturn(inScope);
         when(reviews.findLastPerCase(TENANT)).thenReturn(last);
         when(reviews.countPerCase(TENANT)).thenReturn(counts);
     }

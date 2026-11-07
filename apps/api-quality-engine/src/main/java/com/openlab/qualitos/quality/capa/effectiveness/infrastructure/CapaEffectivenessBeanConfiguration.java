@@ -1,5 +1,6 @@
 package com.openlab.qualitos.quality.capa.effectiveness.infrastructure;
 
+import com.openlab.qualitos.quality.authz.application.RecordScope;
 import com.openlab.qualitos.quality.capa.effectiveness.application.CapaEffectivenessService;
 import com.openlab.qualitos.quality.capa.effectiveness.application.EffectivenessBoardService;
 import com.openlab.qualitos.quality.capa.effectiveness.application.EffectivenessReviewPort;
@@ -36,7 +37,8 @@ public class CapaEffectivenessBeanConfiguration {
     public EffectivenessBoardService effectivenessBoardService(
             EvaluationCasePort evaluationCases,
             EffectivenessReviewPort reviews,
-            @Qualifier("capaEffectivenessTenantContextProvider") TenantProvider tenantProvider) {
-        return new EffectivenessBoardService(evaluationCases, reviews, tenantProvider);
+            @Qualifier("capaEffectivenessTenantContextProvider") TenantProvider tenantProvider,
+            RecordScope scope) {
+        return new EffectivenessBoardService(evaluationCases, reviews, tenantProvider, scope);
     }
 }

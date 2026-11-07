@@ -2,6 +2,7 @@ package com.openlab.qualitos.quality.capa.effectiveness.application;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -23,8 +24,25 @@ public interface EvaluationCasePort {
      * <p>Non paginée, comme la mesure par récidive et pour la même raison : les
      * indicateurs portent sur l'ensemble, et un taux calculé sur une page
      * n'aurait aucun sens. Le service borne ensuite ce qu'il AFFICHE, et le dit.
+     *
+     * @param concerning vide : l'utilisateur voit tous les dossiers du client.
+     *                   Sinon, son identifiant — et il ne voit que les dossiers
+     *                   qui le concernent (ADR 0081). La portée n'est PAS
+     *                   décidée ici : le service la reçoit de {@code RecordScope}
+     *                   et la transmet, pour que la restriction s'applique en
+     *                   base plutôt qu'après coup sur une liste déjà chargée.
      */
-    List<EvaluationCase> findInScope(UUID tenantId);
+    List<EvaluationCase> findInScope(UUID tenantId, Optional<UUID> concerning);
+
+    /**
+     * L'utilisateur courant voit-il ce dossier ?
+     *
+     * <p>Posée avant de rendre un historique : ce qu'on ne voit pas n'existe
+     * pas, et un dossier hors de portée répond 404 (ADR 0081). Sans cette
+     * question, l'historique des évaluations d'un dossier serait lisible par
+     * identifiant alors que le dossier lui-même ne l'est pas.
+     */
+    boolean sees(UUID tenantId, UUID capaCaseId, Optional<UUID> concerning);
 
     /**
      * @param reference      la référence de l'origine ({@code sourceRef}) : la

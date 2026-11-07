@@ -85,6 +85,59 @@ public interface CapaCaseRepository extends JpaRepository<CapaCase, UUID> {
             @Param("excludedStatuses") Collection<CapaStatus> excludedStatuses);
 
     /**
+     * Le même périmètre, restreint aux dossiers qui CONCERNENT un utilisateur
+     * (ADR 0081) : il les pilote, il en vérifie l'efficacité, ou une de leurs
+     * actions lui est confiée.
+     *
+     * <p>Une seconde requête plutôt qu'un {@code :user is null} dans la
+     * précédente : c'est le choix déjà fait pour le registre paginé, et il évite
+     * de confier à chaque base le typage d'un paramètre nul.
+     *
+     * <p>Le {@code exists} porte sur les actions et non sur la jointure
+     * ramenée : filtrer sur {@code join fetch} restreindrait la COLLECTION
+     * chargée — le dossier arriverait avec les seules actions de cet
+     * utilisateur, et son décompte « 1/1 faite » serait faux.
+     */
+    @Query("""
+            select distinct c from CapaCase c
+            left join fetch c.actions
+            where c.tenantId = :tenantId
+              and c.status not in :excludedStatuses
+              and (c.ownerId = :user
+                   or c.verificationAssigneeId = :user
+                   or exists (select a.id from CapaAction a where a.capa = c and a.assigneeId = :user))
+            """)
+    List<CapaCase> findForEffectivenessBoardConcerning(
+            @Param("tenantId") UUID tenantId,
+            @Param("excludedStatuses") Collection<CapaStatus> excludedStatuses,
+            @Param("user") UUID user);
+
+    /** Le dossier existe-t-il dans ce client ? Sans le charger. */
+    boolean existsByIdAndTenantId(UUID id, UUID tenantId);
+
+    /**
+     * Ce dossier concerne-t-il cet utilisateur (ADR 0081) ?
+     *
+     * <p>Répondu en base, et non en chargeant le dossier pour interroger
+     * {@code CapaScope} : la question porte sur les actions, dont la collection
+     * est paresseuse — y répondre en mémoire demanderait une session ouverte et
+     * ramènerait tout le dossier pour ne rendre qu'un oui ou un non. Le
+     * prédicat est donc écrit ici, comme il l'est déjà pour le registre
+     * paginé ; {@code CapaScope.concerns} en reste la définition de référence,
+     * et les deux doivent changer ensemble.
+     */
+    @Query("""
+            select count(c.id) > 0 from CapaCase c
+            where c.id = :id
+              and c.tenantId = :tenantId
+              and (c.ownerId = :user
+                   or c.verificationAssigneeId = :user
+                   or exists (select a.id from CapaAction a where a.capa = c and a.assigneeId = :user))
+            """)
+    boolean existsConcerning(@Param("id") UUID id, @Param("tenantId") UUID tenantId,
+                             @Param("user") UUID user);
+
+    /**
      * Idempotence des CAPA auto-générées (ex. dérive IoT) : vrai si une CAPA
      * non terminale existe déjà pour la même origine. Évite le spam d'une CAPA
      * par mesure tant que la précédente n'est pas clôturée.

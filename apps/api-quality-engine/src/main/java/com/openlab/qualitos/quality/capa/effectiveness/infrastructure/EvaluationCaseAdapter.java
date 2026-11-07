@@ -18,6 +18,7 @@ import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -61,11 +62,31 @@ public class EvaluationCaseAdapter implements EvaluationCasePort {
     }
 
     @Override
-    public List<EvaluationCase> findInScope(UUID tenantId) {
+    public List<EvaluationCase> findInScope(UUID tenantId, Optional<UUID> concerning) {
         Map<UUID, Integer> openNc = openNonConformitiesPerCase(tenantId);
-        return capaCases.findForEffectivenessBoard(tenantId, OUT_OF_SCOPE).stream()
+        // La restriction s'applique EN BASE : filtrer après coup ferait voyager
+        // tout le registre du client dans la mémoire du serveur pour n'en
+        // montrer que quelques lignes, et chaque oubli de filtre deviendrait une
+        // fuite silencieuse.
+        List<CapaCase> cases = concerning
+                .map(user -> capaCases.findForEffectivenessBoardConcerning(
+                        tenantId, OUT_OF_SCOPE, user))
+                .orElseGet(() -> capaCases.findForEffectivenessBoard(tenantId, OUT_OF_SCOPE));
+        return cases.stream()
                 .map(c -> toPort(c, openNc.getOrDefault(c.getId(), 0)))
                 .toList();
+    }
+
+    @Override
+    public boolean sees(UUID tenantId, UUID capaCaseId, Optional<UUID> concerning) {
+        // Répondu en base. Charger le dossier pour interroger `CapaScope`
+        // demanderait une session ouverte — la collection d'actions est
+        // paresseuse — et ramènerait tout le dossier pour ne rendre qu'un oui
+        // ou un non. Le dépôt porte le prédicat, `CapaScope.concerns` en reste
+        // la définition de référence.
+        return concerning
+                .map(user -> capaCases.existsConcerning(capaCaseId, tenantId, user))
+                .orElseGet(() -> capaCases.existsByIdAndTenantId(capaCaseId, tenantId));
     }
 
     private Map<UUID, Integer> openNonConformitiesPerCase(UUID tenantId) {

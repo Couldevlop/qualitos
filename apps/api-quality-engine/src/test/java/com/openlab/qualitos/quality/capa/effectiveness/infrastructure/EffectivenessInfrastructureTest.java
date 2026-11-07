@@ -30,6 +30,7 @@ import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -188,7 +189,7 @@ class EffectivenessInfrastructureTest {
         action(c, CapaActionStatus.PENDING, CapaActionType.PREVENTIVE);
         cases.save(c);
 
-        EvaluationCasePort.EvaluationCase lu = port().findInScope(tenant).get(0);
+        EvaluationCasePort.EvaluationCase lu = port().findInScope(tenant, Optional.empty()).get(0);
 
         assertThat(lu.reference()).isEqualTo("CAPA-1");
         assertThat(lu.title()).isEqualTo("Dossier CAPA-1");
@@ -212,7 +213,7 @@ class EffectivenessInfrastructureTest {
         UUID tenant = UUID.randomUUID();
         cases.save(dossier(tenant, CapaStatus.OPEN, "CAPA-1"));
 
-        assertThat(port().findInScope(tenant).get(0).dueAt()).isNull();
+        assertThat(port().findInScope(tenant, Optional.empty()).get(0).dueAt()).isNull();
     }
 
     @Test
@@ -224,7 +225,7 @@ class EffectivenessInfrastructureTest {
         cases.save(dossier(tenant, CapaStatus.REJECTED, "CAPA-REJ"));
         cases.save(dossier(tenant, CapaStatus.OPEN, "CAPA-OK"));
 
-        assertThat(port().findInScope(tenant))
+        assertThat(port().findInScope(tenant, Optional.empty()))
                 .extracting(EvaluationCasePort.EvaluationCase::reference)
                 .containsExactly("CAPA-OK");
     }
@@ -280,7 +281,7 @@ class EffectivenessInfrastructureTest {
         CapaCase ailleurs = cases.save(dossier(autre, CapaStatus.OPEN, "CAPA-AUTRE"));
         nonConformities.save(ecart(autre, ailleurs.getId(), NcStatus.OPEN));
 
-        assertThat(port().findInScope(tenant))
+        assertThat(port().findInScope(tenant, Optional.empty()))
                 .extracting(EvaluationCasePort.EvaluationCase::reference)
                 .containsExactly("CAPA-MOI");
     }
@@ -292,10 +293,105 @@ class EffectivenessInfrastructureTest {
         action(c, CapaActionStatus.DONE, CapaActionType.CORRECTIVE);
         cases.save(c);
 
-        EvaluationCasePort.EvaluationCase lu = port().findInScope(tenant).get(0);
+        EvaluationCasePort.EvaluationCase lu = port().findInScope(tenant, Optional.empty()).get(0);
 
         assertThat(lu.closed()).isTrue();
         assertThat(lu.resolved()).isFalse();
+    }
+
+    // ------------------------------------- la portée par utilisateur (ADR 0081)
+
+    @Test
+    void sansVoirToutOnNeVoitQueLesDossiersQuiNousConcernent() {
+        // Les trois façons dont un dossier concerne quelqu'un : il le pilote, il
+        // en vérifie l'efficacité, ou une de ses actions lui est confiée. Une
+        // seule de ces trois branches oubliée dans la requête, et une personne
+        // perd de vue un dossier dont elle est responsable — le défaut inverse
+        // de la fuite, et tout aussi réel.
+        UUID tenant = UUID.randomUUID();
+        UUID moi = UUID.randomUUID();
+
+        CapaCase pilote = dossier(tenant, CapaStatus.RESOLVED, "CAPA-PILOTE");
+        pilote.setOwnerId(moi);
+        cases.save(pilote);
+
+        CapaCase verificateur = dossier(tenant, CapaStatus.RESOLVED, "CAPA-VERIF");
+        verificateur.setVerificationAssigneeId(moi);
+        cases.save(verificateur);
+
+        CapaCase actionConfiee = dossier(tenant, CapaStatus.OPEN, "CAPA-ACTION");
+        action(actionConfiee, CapaActionStatus.PENDING, CapaActionType.CORRECTIVE);
+        actionConfiee.getActions().get(0).setAssigneeId(moi);
+        cases.save(actionConfiee);
+
+        cases.save(dossier(tenant, CapaStatus.OPEN, "CAPA-AUTRUI"));
+
+        assertThat(port().findInScope(tenant, Optional.of(moi)))
+                .extracting(EvaluationCasePort.EvaluationCase::reference)
+                .containsExactlyInAnyOrder("CAPA-PILOTE", "CAPA-VERIF", "CAPA-ACTION");
+    }
+
+    @Test
+    void unDossierRestreintArriveAvecTOUTESSesActions() {
+        // Le piège de la requête restreinte : filtrer sur la jointure ramenée
+        // au lieu d'un `exists` livrerait le dossier avec les seules actions de
+        // cet utilisateur, et son décompte « 1/1 faite » serait faux — il
+        // s'ouvrirait au jugement alors qu'une action reste à mener.
+        UUID tenant = UUID.randomUUID();
+        UUID moi = UUID.randomUUID();
+        CapaCase c = dossier(tenant, CapaStatus.RESOLVED, "CAPA-MIXTE");
+        action(c, CapaActionStatus.DONE, CapaActionType.CORRECTIVE);
+        action(c, CapaActionStatus.PENDING, CapaActionType.PREVENTIVE);
+        c.getActions().get(0).setAssigneeId(moi);
+        cases.save(c);
+
+        EvaluationCasePort.EvaluationCase lu =
+                port().findInScope(tenant, Optional.of(moi)).get(0);
+
+        assertThat(lu.actionsTotal()).isEqualTo(2);
+        assertThat(lu.actionsDone()).isEqualTo(1);
+    }
+
+    @Test
+    void laRestrictionNeFranchitPasLaFrontiereDuClient() {
+        UUID tenant = UUID.randomUUID();
+        UUID autreClient = UUID.randomUUID();
+        UUID moi = UUID.randomUUID();
+        CapaCase ailleurs = dossier(autreClient, CapaStatus.RESOLVED, "CAPA-AILLEURS");
+        ailleurs.setOwnerId(moi);
+        cases.save(ailleurs);
+
+        assertThat(port().findInScope(tenant, Optional.of(moi))).isEmpty();
+    }
+
+    @Test
+    void unDossierHorsDePorteeNEstPasVu() {
+        UUID tenant = UUID.randomUUID();
+        UUID moi = UUID.randomUUID();
+        CapaCase mien = dossier(tenant, CapaStatus.RESOLVED, "CAPA-MIEN");
+        mien.setOwnerId(moi);
+        cases.save(mien);
+        CapaCase autrui = cases.save(dossier(tenant, CapaStatus.RESOLVED, "CAPA-AUTRUI"));
+
+        assertThat(port().sees(tenant, mien.getId(), Optional.of(moi))).isTrue();
+        assertThat(port().sees(tenant, autrui.getId(), Optional.of(moi))).isFalse();
+        // Sans restriction, tout dossier du client est vu.
+        assertThat(port().sees(tenant, autrui.getId(), Optional.empty())).isTrue();
+    }
+
+    @Test
+    void unDossierDUnAutreClientNEstJamaisVu() {
+        UUID tenant = UUID.randomUUID();
+        CapaCase ailleurs = cases.save(
+                dossier(UUID.randomUUID(), CapaStatus.RESOLVED, "CAPA-AILLEURS"));
+
+        assertThat(port().sees(tenant, ailleurs.getId(), Optional.empty())).isFalse();
+    }
+
+    @Test
+    void unIdentifiantInconnuNEstPasVu() {
+        assertThat(port().sees(UUID.randomUUID(), UUID.randomUUID(), Optional.empty()))
+                .isFalse();
     }
 
     // -------------------------------------------------------------- outillage
@@ -305,7 +401,7 @@ class EffectivenessInfrastructureTest {
     }
 
     private Map<String, EvaluationCasePort.EvaluationCase> parReference(UUID tenant) {
-        return port().findInScope(tenant).stream()
+        return port().findInScope(tenant, Optional.empty()).stream()
                 .collect(java.util.stream.Collectors.toMap(
                         EvaluationCasePort.EvaluationCase::reference, e -> e));
     }

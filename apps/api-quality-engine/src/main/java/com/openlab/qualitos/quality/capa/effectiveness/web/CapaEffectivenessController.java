@@ -56,10 +56,14 @@ public class CapaEffectivenessController {
      * mieux qu'un filtre — « ce qui est à juger » arrive en tête de la liste, et
      * personne n'a à savoir quel statut demander pour l'obtenir.
      *
-     * <p>Lecture ouverte à tout utilisateur authentifié du client, comme la
-     * mesure par récidive juste au-dessus : elle ne révèle rien de plus que le
-     * registre des CAPA, qui l'est déjà. Le client vient du jeton, jamais d'un
-     * paramètre (CLAUDE.md §18.2 #2).
+     * <p>Lecture ouverte à tout utilisateur authentifié du client, mais pas sur
+     * tous les dossiers : la portée du registre CAPA s'applique telle quelle
+     * (ADR 0081). Sans « voir tous les dossiers », on ne voit ici que ce qu'on
+     * voit sur la liste — ce qu'on pilote, ce qu'on vérifie, ce dont une action
+     * nous est confiée. Un écran de synthèse qui en montrerait davantage que la
+     * liste dont il est la synthèse serait le chemin détourné qui vide la règle.
+     * Le client, lui, vient du jeton, jamais d'un paramètre (CLAUDE.md
+     * §18.2 #2).
      */
     @GetMapping("/board")
     public EffectivenessBoardDto.Summary board() {
@@ -74,6 +78,10 @@ public class CapaEffectivenessController {
      * tous les historiques de tous les dossiers chargerait, pour un tableau,
      * l'intégralité d'une table qui ne cesse de grossir. Celui-ci se demande
      * dossier par dossier, quand on ouvre la fiche.
+     *
+     * <p>Un dossier hors de portée répond 404, comme sa propre fiche
+     * (ADR 0081) : l'identifiant d'un dossier ne doit pas suffire à lire qui a
+     * jugé, contre quel critère et avec quels relevés.
      */
     @GetMapping("/cases/{capaId}/reviews")
     public List<EffectivenessBoardDto.Review> history(@PathVariable UUID capaId) {

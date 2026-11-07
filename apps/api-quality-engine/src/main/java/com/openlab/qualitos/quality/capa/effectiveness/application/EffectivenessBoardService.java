@@ -1,5 +1,8 @@
 package com.openlab.qualitos.quality.capa.effectiveness.application;
 
+import com.openlab.qualitos.quality.authz.application.RecordScope;
+import com.openlab.qualitos.quality.capa.CapaNotFoundException;
+import com.openlab.qualitos.quality.capa.CapaScope;
 import com.openlab.qualitos.quality.capa.effectiveness.domain.EffectivenessReview;
 import com.openlab.qualitos.quality.capa.effectiveness.domain.EffectivenessVerdict;
 import com.openlab.qualitos.quality.capa.effectiveness.domain.EvaluationStage;
@@ -8,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -54,16 +58,29 @@ public class EffectivenessBoardService {
     private final EffectivenessReviewPort reviews;
     private final TenantProvider tenants;
 
+    /**
+     * Ce que l'utilisateur courant voit du registre CAPA (ADR 0081).
+     *
+     * <p>Le plan de travail n'échappe pas à la règle du module. Sans
+     * « voir tous les dossiers », on ne voit que les dossiers qu'on pilote, dont
+     * on vérifie l'efficacité, ou dont une action nous est confiée — ici comme
+     * sur le registre. Un écran de synthèse qui en montrerait plus que la liste
+     * dont il est la synthèse serait le chemin détourné qui vide la règle.
+     */
+    private final RecordScope scope;
+
     public EffectivenessBoardService(EvaluationCasePort cases, EffectivenessReviewPort reviews,
-                                     TenantProvider tenants) {
+                                     TenantProvider tenants, RecordScope scope) {
         this.cases = cases;
         this.reviews = reviews;
         this.tenants = tenants;
+        this.scope = scope;
     }
 
     public EffectivenessBoardDto.Summary board() {
         UUID tenantId = tenants.requireTenantId();
-        List<EvaluationCasePort.EvaluationCase> inScope = cases.findInScope(tenantId);
+        Optional<UUID> concerning = CapaScope.restriction(scope);
+        List<EvaluationCasePort.EvaluationCase> inScope = cases.findInScope(tenantId, concerning);
         Map<UUID, EffectivenessReview> last = reviews.findLastPerCase(tenantId);
         Map<UUID, Integer> counts = reviews.countPerCase(tenantId);
 
@@ -90,9 +107,22 @@ public class EffectivenessBoardService {
                 rows.size(), truncated, shown);
     }
 
-    /** L'historique complet d'un dossier, pour sa fiche. */
+    /**
+     * L'historique complet d'un dossier, pour sa fiche.
+     *
+     * <p>La portée est vérifiée AVANT de lire les évaluations, et un dossier
+     * hors de portée répond 404 comme sa propre fiche (ADR 0081) : sans cela,
+     * l'historique serait lisible par identifiant — qui a jugé, contre quel
+     * critère, avec quels relevés — sur un dossier que la personne n'a pas le
+     * droit d'ouvrir. « Vide » n'aurait pas suffi : une liste vide dit qu'il n'y
+     * a rien, pas qu'on n'a rien à y voir.
+     */
     public List<EffectivenessBoardDto.Review> history(UUID capaCaseId) {
         UUID tenantId = tenants.requireTenantId();
+        Optional<UUID> concerning = CapaScope.restriction(scope);
+        if (!cases.sees(tenantId, capaCaseId, concerning)) {
+            throw new CapaNotFoundException(capaCaseId);
+        }
         return reviews.findByCase(tenantId, capaCaseId).stream()
                 .map(EffectivenessBoardService::toReview)
                 .toList();

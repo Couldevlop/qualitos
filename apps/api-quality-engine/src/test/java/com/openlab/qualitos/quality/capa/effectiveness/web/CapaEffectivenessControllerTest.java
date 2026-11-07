@@ -1,5 +1,6 @@
 package com.openlab.qualitos.quality.capa.effectiveness.web;
 
+import com.openlab.qualitos.quality.capa.CapaNotFoundException;
 import com.openlab.qualitos.quality.capa.effectiveness.application.CapaEffectivenessDto;
 import com.openlab.qualitos.quality.capa.effectiveness.application.CapaEffectivenessService;
 import com.openlab.qualitos.quality.capa.effectiveness.application.EffectivenessBoardDto;
@@ -33,10 +34,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * L'API de l'efficacité CAPA.
  *
- * <p>Lecture ouverte à tout utilisateur authentifié du tenant : elle ne révèle
- * rien que la liste des CAPA ne révèle déjà. Ce que le banc protège, c'est la
- * borne de la fenêtre — un paramètre de requête finit toujours par recevoir une
- * valeur absurde — et le fait qu'un anonyme n'obtienne rien.
+ * <p>Lecture ouverte à tout utilisateur authentifié du client, mais sur les
+ * seuls dossiers que la portée du registre CAPA lui laisse voir (ADR 0081) —
+ * la restriction est tenue par le service, et ce banc protège ce que la couche
+ * web en fait : un dossier hors de portée répond 404, comme sa propre fiche.
+ *
+ * <p>Le reste tient à la borne de la fenêtre — un paramètre de requête finit
+ * toujours par recevoir une valeur absurde — et au fait qu'un anonyme
+ * n'obtienne rien.
  */
 @Tag("web")
 @WebMvcTest(controllers = CapaEffectivenessController.class)
@@ -252,5 +257,19 @@ class CapaEffectivenessControllerTest {
                 Instant.parse("2026-03-12T09:00:00Z"), MeasurementStatus.MEASURED,
                 12, 1, 92, false, 180, 180, Boolean.TRUE, true);
         return new CapaEffectivenessDto.Summary(6, 1, 0, 0, 71, 0, 0, false, List.of(row));
+    }
+
+    @Test
+    @WithMockUser(username = "lea", authorities = "ROLE_user")
+    void history_caseOutOfScope_returns404() throws Exception {
+        // Le service refuse par 404 un dossier que la personne n'a pas le droit
+        // d'ouvrir (ADR 0081). Ce qui compte ici, c'est que la couche web rende
+        // bien 404 et non 500 : un identifiant de dossier ne doit pas suffire à
+        // apprendre qui a jugé, contre quel critère et avec quels relevés.
+        UUID capa = UUID.randomUUID();
+        when(board.history(capa)).thenThrow(new CapaNotFoundException(capa));
+
+        mockMvc.perform(get("/api/v1/capa/effectiveness/cases/" + capa + "/reviews"))
+                .andExpect(status().isNotFound());
     }
 }
