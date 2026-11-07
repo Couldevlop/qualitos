@@ -134,3 +134,11 @@ tmp/
 *cles-privees*.properties
 *private-keys*.properties
 *.lic
+
+# Livrables de recette : regeneres par scripts/recette/construire.py, et le
+# classeur est rempli a la main pendant la campagne. Versionner un binaire
+# qu'on edite chaque jour n'apporte que des conflits ; le contenu, lui, est
+# versionne sous forme de code dans scripts/recette/.
+docs/recette/QualitOS-*.xlsx
+docs/recette/QualitOS-*.docx
+docs/recette/QualitOS-*.pptx
