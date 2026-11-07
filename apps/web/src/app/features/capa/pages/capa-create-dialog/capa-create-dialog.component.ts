@@ -170,7 +170,11 @@ export class CapaCreateDialogComponent implements OnInit {
     // tant que la question n'est pas tranchée — aucune réponse pré-cochée.
     verificationRequired: [null as boolean | null],
     verificationAssigneeId: [null as string | null],
-    verificationInstructions: ['', [Validators.maxLength(4000)]]
+    verificationInstructions: ['', [Validators.maxLength(4000)]],
+    // Le critère d'efficacité : facultatif à l'ouverture, mais c'est ici
+    // qu'il a le plus de valeur — posé avant la mesure, il ne peut pas
+    // être ajusté en voyant le résultat (ADR 0108).
+    effectivenessCriterion: ['', [Validators.maxLength(2000)]]
   });
 
   /** Le nom d'annuaire du vérificateur choisi, recopié dans le dossier avec son compte. */
@@ -325,6 +329,13 @@ export class CapaCreateDialogComponent implements OnInit {
     };
     if (!this.isDefineAction) {
       Object.assign(request, this.verificationDecision(v));
+      // La clé n'apparaît que si le critère est saisi. Poser
+      // `effectivenessCriterion: undefined` enverrait un champ vide au serveur
+      // et l'écran d'évaluation prendrait une chaîne vide pour un critère posé.
+      const critere = v.effectivenessCriterion.trim();
+      if (critere) {
+        request.effectivenessCriterion = critere;
+      }
     }
     if (!this.sourceLocked) {
       request.sourceType = v.sourceType;

@@ -16,7 +16,11 @@ import {
   OpenCapaRequest,
   UpdateCapaActionRequest,
   UpdateCapaCaseRequest,
-  CapaEffectivenessSummary
+  CapaEffectivenessSummary,
+  EffectivenessReview,
+  EvaluationBoard,
+  EvaluationRow,
+  RecordEffectivenessRequest
 } from './capa.types';
 
 @Injectable({ providedIn: 'root' })
@@ -511,6 +515,165 @@ export class CapaService {
     }
     const params = new HttpParams().set('months', months);
     return this.http.get<CapaEffectivenessSummary>(this.effectivenessEndpoint, { params });
+  }
+
+  /**
+   * Le plan de travail des évaluations (ADR 0108).
+   *
+   * Aucun paramètre, et c'est voulu : le tri par urgence remplace un filtre de
+   * statut. Ce qui est à juger arrive en tête, et personne n'a à savoir quel
+   * statut demander pour l'obtenir.
+   */
+  evaluationBoard(): Observable<EvaluationBoard> {
+    if (environment.useMockApi) {
+      return of(this.mockEvaluationBoard()).pipe(delay(150));
+    }
+    return this.http.get<EvaluationBoard>(`${this.effectivenessEndpoint}/board`);
+  }
+
+  /**
+   * L'historique complet des évaluations d'un dossier, du plus récent au plus ancien.
+   *
+   * Demandé dossier par dossier et non avec le tableau : afficher tous les
+   * historiques chargerait, pour un écran, une table qui ne cesse de grossir.
+   */
+  evaluationHistory(capaId: string): Observable<EffectivenessReview[]> {
+    if (environment.useMockApi) {
+      const row = this.mockEvaluationBoard().rows.find(r => r.capaId === capaId);
+      return of(row?.lastReview ? [row.lastReview] : []).pipe(delay(120));
+    }
+    return this.http.get<EffectivenessReview[]>(
+      `${this.effectivenessEndpoint}/cases/${capaId}/reviews`);
+  }
+
+  /**
+   * Rend un verdict d'efficacité sur un dossier.
+   *
+   * Distinct de `verifyEffectiveness`, qui porte l'ancien booléen et reste
+   * utilisé par la fiche du dossier : les deux formes vivent côte à côte côté
+   * serveur, et en fusionner une dans l'autre obligerait l'un des deux écrans à
+   * envoyer des champs qu'il ne connaît pas.
+   */
+  recordEffectiveness(
+    capaId: string,
+    input: RecordEffectivenessRequest
+  ): Observable<CapaCaseResponse> {
+    if (environment.useMockApi) {
+      const c = this.mockStore.find(x => x.id === capaId) ?? this.mockStore[0];
+      const now = new Date().toISOString();
+      c.effectivenessVerdict = input.verdict;
+      c.effectivenessVerified = input.verdict === 'EFFECTIVE';
+      c.effectivenessVerifiedAt = now;
+      c.updatedAt = now;
+      if (input.verdict === 'EFFECTIVE') {
+        c.status = 'CLOSED';
+        c.closedAt = now;
+      } else {
+        c.status = 'IN_PROGRESS';
+        c.resolvedAt = undefined;
+      }
+      return of(c).pipe(delay(140));
+    }
+    return this.http.patch<CapaCaseResponse>(
+      `${this.endpoint}/${capaId}/effectiveness`, input);
+  }
+
+  /**
+   * Un plan de travail de démonstration qui montre les cinq étapes.
+   *
+   * Les quatre chiffres sont calculés depuis les lignes, et non écrits à la
+   * main : une démonstration dont l'en-tête contredit le tableau apprend à
+   * l'utilisateur à ne pas faire confiance à l'en-tête.
+   */
+  private mockEvaluationBoard(): EvaluationBoard {
+    const rows: EvaluationRow[] = [
+      {
+        capaId: this.mockStore[0]?.id ?? 'demo-1',
+        reference: 'NC-2026-0024', title: 'Référence erronée sur 3 livraisons',
+        criticity: 'HIGH', ownerName: 'M. Alaoui',
+        stage: 'AWAITING_EVALUATION', evaluable: true,
+        actionsTotal: 1, actionsDone: 1,
+        criterion: 'Zéro erreur de référence sur 90 jours',
+        reviewCount: 0, closureBlocked: false, containmentOnly: false, openNcCount: 0,
+        updatedAt: new Date(Date.now() - 86_400_000).toISOString()
+      },
+      {
+        capaId: this.mockStore[1]?.id ?? 'demo-2',
+        reference: 'NC-2026-0027', title: 'Rebuts élevés sur la ligne 2',
+        criticity: 'CRITICAL', ownerName: 'K. Idrissi',
+        stage: 'COMPLEMENTARY_ACTION_EXPECTED', evaluable: false,
+        actionsTotal: 1, actionsDone: 1,
+        criterion: 'Taux de rebut ≤ 2 % sur 3 mois',
+        lastReview: {
+          id: 'demo-rev-1', verdict: 'PARTIAL',
+          criterion: 'Taux de rebut ≤ 2 % sur 3 mois',
+          baseline: '4,2 %', target: '≤ 2 %', observed: '3,1 %',
+          comment: 'Le recalibrage a réduit le rebut sans atteindre la cible.',
+          reviewerName: 'S. Benali',
+          reviewedAt: new Date(Date.now() - 5 * 86_400_000).toISOString()
+        },
+        reviewCount: 1, closureBlocked: false, containmentOnly: false, openNcCount: 0,
+        updatedAt: new Date(Date.now() - 5 * 86_400_000).toISOString()
+      },
+      {
+        capaId: this.mockStore[2]?.id ?? 'demo-3',
+        reference: 'NC-2026-0031', title: 'Écart de calibrage balance',
+        criticity: 'MEDIUM', ownerName: 'N. Chraibi',
+        stage: 'REOPENED', evaluable: false,
+        actionsTotal: 1, actionsDone: 0,
+        criterion: 'Aucun écart lors de 2 contrôles',
+        lastReview: {
+          id: 'demo-rev-2', verdict: 'INEFFECTIVE',
+          criterion: 'Aucun écart lors de 2 contrôles',
+          baseline: '0,8 g', target: '≤ 0,1 g', observed: '0,6 g',
+          reviewerName: 'N. Chraibi',
+          reviewedAt: new Date(Date.now() - 12 * 86_400_000).toISOString()
+        },
+        reviewCount: 2, closureBlocked: true, containmentOnly: true, openNcCount: 1,
+        updatedAt: new Date(Date.now() - 12 * 86_400_000).toISOString()
+      },
+      {
+        capaId: 'demo-4',
+        reference: 'NC-2026-0033', title: 'Étiquetage incomplet en expédition',
+        criticity: 'LOW', ownerName: 'L. Tazi',
+        stage: 'ACTIONS_IN_PROGRESS', evaluable: false,
+        actionsTotal: 1, actionsDone: 0,
+        reviewCount: 0, closureBlocked: false, containmentOnly: false, openNcCount: 0,
+        updatedAt: new Date(Date.now() - 20 * 86_400_000).toISOString()
+      },
+      {
+        capaId: 'demo-5',
+        reference: 'NC-2026-0019', title: 'Fournisseur hors délai (3 retards)',
+        criticity: 'MEDIUM', ownerName: 'L. Tazi',
+        stage: 'CLOSED_EFFECTIVE', evaluable: false,
+        actionsTotal: 1, actionsDone: 1,
+        criterion: 'Zéro retard sur 6 mois',
+        lastReview: {
+          id: 'demo-rev-3', verdict: 'EFFECTIVE',
+          criterion: 'Zéro retard sur 6 mois',
+          baseline: '3 retards', target: '0', observed: '0 retard',
+          comment: 'Aucun retard depuis 6 mois.',
+          reviewerName: 'L. Tazi',
+          reviewedAt: new Date(Date.now() - 40 * 86_400_000).toISOString()
+        },
+        reviewCount: 1, closureBlocked: false, containmentOnly: false, openNcCount: 0,
+        updatedAt: new Date(Date.now() - 40 * 86_400_000).toISOString()
+      }
+    ];
+    const evaluated = rows.filter(r => r.lastReview).length;
+    const effective = rows.filter(r => r.lastReview?.verdict === 'EFFECTIVE').length;
+    return {
+      effectiveRatePercent: evaluated ? Math.round((100 * effective) / evaluated) : undefined,
+      evaluated,
+      awaitingEvaluation: rows.filter(r => r.stage === 'AWAITING_EVALUATION').length,
+      stillOpen: rows.filter(r => r.stage !== 'CLOSED_EFFECTIVE').length,
+      reopened: rows.filter(r => r.stage === 'REOPENED').length,
+      partial: rows.filter(r => r.stage === 'COMPLEMENTARY_ACTION_EXPECTED').length,
+      missingCriterion: rows.filter(r => r.stage !== 'CLOSED_EFFECTIVE' && !r.criterion).length,
+      total: rows.length,
+      truncated: false,
+      rows
+    };
   }
 
   private mockEffectiveness(months: number): CapaEffectivenessSummary {

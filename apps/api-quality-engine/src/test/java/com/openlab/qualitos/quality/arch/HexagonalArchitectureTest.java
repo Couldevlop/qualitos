@@ -29,6 +29,40 @@ class HexagonalArchitectureTest {
                 + "et de paramétrage sans framework.");
 
     @ArchTest
+    static final ArchRule capa_effectiveness_domain_has_no_framework_deps =
+        noClasses()
+            .that().resideInAPackage("..capa.effectiveness.domain..")
+            .should().dependOnClassesThat().resideInAnyPackage(
+                "..capa.effectiveness.infrastructure..",
+                "..capa.effectiveness.application..",
+                "..capa.effectiveness.web..",
+                "org.springframework..",
+                "jakarta.persistence..",
+                "jakarta.validation..",
+                "org.hibernate..",
+                "com.fasterxml.jackson..")
+            .because("Domain (efficacite CAPA, ADR 0108) : le verdict, son etape et les regles "
+                + "d'ecriture d'une evaluation se tiennent sans framework. Ces regles sont "
+                + "appelees depuis CapaService, qui est annote Spring : si le domaine se mettait "
+                + "a dependre du contexte, elles ne seraient plus verifiables isolement.");
+
+    @ArchTest
+    static final ArchRule capa_effectiveness_application_has_no_framework_deps =
+        noClasses()
+            .that().resideInAPackage("..capa.effectiveness.application..")
+            .should().dependOnClassesThat().resideInAnyPackage(
+                "..capa.effectiveness.infrastructure..",
+                "..capa.effectiveness.web..",
+                "org.springframework..",
+                "jakarta.persistence..",
+                "org.hibernate..",
+                "com.fasterxml.jackson..")
+            .because("Application (efficacite CAPA) ne connait que ses ports. C'est la raison pour "
+                + "laquelle EffectivenessBoardService est declare dans une @Configuration plutot "
+                + "qu'annote @Service, et pourquoi 'evaluable' est une composante du DTO et non "
+                + "une methode annotee Jackson.");
+
+    @ArchTest
     static final ArchRule p5_dashboards_domain_has_no_framework_deps =
         noClasses()
             .that().resideInAPackage("..dashboards.domain..")

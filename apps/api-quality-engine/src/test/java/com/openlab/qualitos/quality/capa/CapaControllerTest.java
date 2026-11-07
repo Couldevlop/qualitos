@@ -19,6 +19,9 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
+import org.mockito.ArgumentCaptor;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -230,10 +233,62 @@ class CapaControllerTest {
 
     @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void effectiveness_missingField_returns400() throws Exception {
+        // Le refus d'un corps vide n'est plus porte par Jakarta mais par le
+        // service : depuis l'ADR 0108, la requete accepte DEUX formes — le
+        // verdict a trois etats, ou l'ancien booleen — et « exactement l'une
+        // des deux » ne s'exprime pas par un @NotNull sur l'une ou sur l'autre.
+        // La regle vit donc a un seul endroit, et sort toujours en 400.
+        when(service.verifyEffectiveness(eq(CAPA), any()))
+                .thenThrow(new CapaValidationException(
+                        "A verdict is required: EFFECTIVE, PARTIAL or INEFFECTIVE"));
+
         mockMvc.perform(patch("/api/v1/capa/cases/{id}/effectiveness", CAPA).with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{}"))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
+    void effectiveness_verdictPartiel_parvientAuService() throws Exception {
+        // La forme moderne traverse le controleur telle quelle : le verdict, les
+        // trois releves et le commentaire. Ce que le banc attrape, c'est un
+        // champ perdu en route — le cas ou l'ecran envoie une mesure que le
+        // serveur n'enregistre pas, et que personne ne remarque avant l'audit.
+        ArgumentCaptor<CapaDto.EffectivenessRequest> captor =
+                ArgumentCaptor.forClass(CapaDto.EffectivenessRequest.class);
+        when(service.verifyEffectiveness(eq(CAPA), any()))
+                .thenReturn(caseResp(CapaStatus.IN_PROGRESS));
+
+        mockMvc.perform(patch("/api/v1/capa/cases/{id}/effectiveness", CAPA).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"verdict":"PARTIAL","baseline":"7,4 %","target":"< 2 %",
+                                 "observed":"3,1 %","comment":"mesure du mois"}
+                                """))
+                .andExpect(status().isOk());
+
+        verify(service).verifyEffectiveness(eq(CAPA), captor.capture());
+        CapaDto.EffectivenessRequest recu = captor.getValue();
+        assertThat(recu.verdict()).isEqualTo(com.openlab.qualitos.quality.capa.effectiveness.domain.EffectivenessVerdict.PARTIAL);
+        assertThat(recu.effective()).isNull();
+        assertThat(recu.baseline()).isEqualTo("7,4 %");
+        assertThat(recu.target()).isEqualTo("< 2 %");
+        assertThat(recu.observed()).isEqualTo("3,1 %");
+        assertThat(recu.comment()).isEqualTo("mesure du mois");
+    }
+
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
+    void effectiveness_releveTropLong_estRefuseAvantLeService() throws Exception {
+        // Les bornes de taille, elles, restent a Jakarta : elles ne dependent
+        // d'aucune regle metier, et un releve de 200 caracteres n'a aucune
+        // raison d'atteindre la couche qui decide.
+        mockMvc.perform(patch("/api/v1/capa/cases/{id}/effectiveness", CAPA).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"verdict\":\"EFFECTIVE\",\"observed\":\""
+                                + "o".repeat(121) + "\"}"))
+                .andExpect(status().isBadRequest());
+
+        verify(service, never()).verifyEffectiveness(any(), any());
     }
 
     @Test @WithMockUser(roles = "QUALITY_MANAGER")
@@ -325,6 +380,7 @@ class CapaControllerTest {
                 CAPA, TENANT, "t", null, CapaType.CORRECTIVE, CapaCriticity.HIGH, CapaStatus.OPEN,
                 CapaSourceType.NON_CONFORMITY, "NC-2026-0018", OWNER, "a.diallo@client.test", null, null,
                 null, null, null, null,
+                null, null,
                 null, null, null, null,
                 Instant.now(), Instant.now(), List.of(),
                 new CapaDto.LinkedNonConformity(NC, "NC-2026-0018", "Étiquetage lot 4471 illisible"), List.of()));
@@ -367,6 +423,7 @@ class CapaControllerTest {
                 CAPA, TENANT, "t", null, CapaType.CORRECTIVE, CapaCriticity.HIGH, s,
                 CapaSourceType.NON_CONFORMITY, null, OWNER, null, null, null,
                 null, null, null, null,
+                null, null,
                 null, null, null, null,
                 Instant.now(), Instant.now(), List.of(), null, List.of());
     }

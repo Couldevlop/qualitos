@@ -402,7 +402,8 @@ class NcServiceTest {
         CapaDto.CaseResponse ouvert = new CapaDto.CaseResponse(capaId, TENANT, "t", null, CapaType.CORRECTIVE,
                 CapaCriticity.HIGH, com.openlab.qualitos.quality.capa.CapaStatus.OPEN,
                 CapaSourceType.NON_CONFORMITY, n.getReference(), OWNER, null, null, null, null, null, null,
-                null, null, null, null, null, null, null, java.util.List.of(), null, java.util.List.of());
+                null, null, null, null, null, null, null, null, null,
+                java.util.List.of(), null, java.util.List.of());
         when(capaService.openCase(demande, CapaSourceType.NON_CONFORMITY, n.getReference())).thenReturn(ouvert);
         when(repo.save(n)).thenReturn(n);
 

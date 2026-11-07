@@ -1,0 +1,344 @@
+<!--
+  Deux colonnes : le plan de travail à gauche, le dossier ouvert à droite.
+  Le tableau n'a aucun filtre de statut — le tri par urgence le remplace, et
+  « à juger » arrive en tête sans qu'on ait à le demander.
+-->
+<div class="state-row" *ngIf="loading" role="status">
+  <mat-progress-spinner mode="indeterminate" diameter="32"
+                        aria-label="Chargement" i18n-aria-label="@@common.loading-aria"></mat-progress-spinner>
+</div>
+
+<ng-container *ngIf="!loading && board as b">
+  <!--
+    Les quatre chiffres portent sur TOUT le périmètre, pas sur les lignes
+    affichées : un taux calculé sur une page se lirait comme un total.
+  -->
+  <div class="cards">
+    <div class="card">
+      <span class="value">{{ b.effectiveRatePercent !== undefined ? b.effectiveRatePercent + ' %' : '—' }}</span>
+      <span class="label" i18n="@@capa.evaluation.kpi-rate">Taux d'efficacité des actions</span>
+      <span class="hint" i18n="@@capa.evaluation.kpi-rate-hint">Sur les seuls dossiers déjà jugés</span>
+    </div>
+    <div class="card" [class.accent]="b.awaitingEvaluation > 0">
+      <span class="value">{{ b.awaitingEvaluation }}</span>
+      <span class="label" i18n="@@capa.evaluation.kpi-awaiting">Évaluations à faire</span>
+    </div>
+    <div class="card">
+      <span class="value">{{ b.stillOpen }}</span>
+      <span class="label" i18n="@@capa.evaluation.kpi-open">Dossiers encore ouverts</span>
+    </div>
+    <div class="card" [class.alarm]="b.reopened > 0">
+      <span class="value">{{ b.reopened }}</span>
+      <span class="label" i18n="@@capa.evaluation.kpi-reopened">Dossiers rouverts</span>
+      <span class="hint" i18n="@@capa.evaluation.kpi-reopened-hint">Jugés inefficaces</span>
+    </div>
+  </div>
+
+  <!--
+    Un dossier sans critère ne pourra pas être jugé le jour où ses actions
+    seront faites. L'avertissement arrive donc TANT QUE le critère est encore
+    posable — à l'échéance, il serait trop tard pour le poser « à l'avance ».
+  -->
+  <p class="notice" *ngIf="b.missingCriterion > 0">
+    <mat-icon aria-hidden="true">flag</mat-icon>
+    <!--
+      Deux messages plutôt qu'un pluriel ICU : l'accord au singulier et au
+      pluriel diffère dans les six langues, et une forme unique « dossier(s) »
+      se lit mal dans celle où l'on travaille.
+    -->
+    <span *ngIf="b.missingCriterion === 1" i18n="@@capa.evaluation.missing-criterion-one">
+      Un dossier ouvert n'a pas de critère d'efficacité — il se pose sur la fiche
+      du dossier, et il doit l'être avant le jugement.
+    </span>
+    <span *ngIf="b.missingCriterion > 1" i18n="@@capa.evaluation.missing-criterion-many">
+      {{ b.missingCriterion }} dossiers ouverts n'ont pas de critère d'efficacité —
+      il se pose sur la fiche du dossier, et il doit l'être avant le jugement.
+    </span>
+  </p>
+
+  <p class="notice" *ngIf="b.truncated" i18n="@@capa.evaluation.truncated">
+    Le périmètre dépasse la limite de lecture : seuls les dossiers les plus urgents
+    sont listés. Les quatre chiffres ci-dessus, eux, portent sur la totalité.
+  </p>
+
+  <p class="empty" *ngIf="b.rows.length === 0" i18n="@@capa.evaluation.none">
+    Aucun dossier à évaluer. Un dossier entre dans cette boucle dès qu'il est ouvert,
+    et se présente au jugement quand son action est menée à terme.
+  </p>
+
+  <div class="layout" *ngIf="b.rows.length > 0">
+
+    <!-- ---------------------------------------------------- le plan de travail -->
+    <section class="panel">
+      <h2 i18n="@@capa.evaluation.table-title">Dossiers et actions correctives</h2>
+
+      <div class="qos-scroll-x">
+        <table mat-table [dataSource]="b.rows" class="eval-table">
+
+          <ng-container matColumnDef="reference">
+            <th mat-header-cell *matHeaderCellDef i18n="@@capa.evaluation.col-case">Dossier</th>
+            <td mat-cell *matCellDef="let row">
+              <a [routerLink]="['/capa', row.capaId]" (click)="$event.stopPropagation()">
+                {{ row.reference || row.title }}
+              </a>
+              <div class="dim">{{ row.title }}</div>
+              <div class="dim" *ngIf="row.ownerName">{{ row.ownerName }}</div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="stage">
+            <th mat-header-cell *matHeaderCellDef i18n="@@capa.evaluation.col-stage">Étape</th>
+            <td mat-cell *matCellDef="let row">
+              <span class="badge" [ngClass]="stageClass(row.stage)">
+                <ng-container [ngSwitch]="row.stage">
+                  <span *ngSwitchCase="'AWAITING_EVALUATION'" i18n="@@capa.evaluation.stage-awaiting">En attente d'évaluation</span>
+                  <span *ngSwitchCase="'CLOSED_EFFECTIVE'" i18n="@@capa.evaluation.stage-closed">Clôturé</span>
+                  <span *ngSwitchCase="'COMPLEMENTARY_ACTION_EXPECTED'" i18n="@@capa.evaluation.stage-partial">Action complémentaire</span>
+                  <span *ngSwitchCase="'REOPENED'" i18n="@@capa.evaluation.stage-reopened">Rouvert</span>
+                  <span *ngSwitchDefault i18n="@@capa.evaluation.stage-in-progress">Actions en cours</span>
+                </ng-container>
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef i18n="@@capa.evaluation.col-actions">Actions</th>
+            <td mat-cell *matCellDef="let row">
+              <span i18n="@@capa.evaluation.actions-done">{{ row.actionsDone }}/{{ row.actionsTotal }} faites</span>
+              <div class="dim" *ngIf="!row.criterion" i18n="@@capa.evaluation.no-criterion-cell">
+                Critère à poser
+              </div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="verdict">
+            <th mat-header-cell *matHeaderCellDef i18n="@@capa.evaluation.col-verdict">Dernier verdict</th>
+            <td mat-cell *matCellDef="let row">
+              <span class="badge" *ngIf="row.lastReview" [ngClass]="verdictClass(row.lastReview.verdict)">
+                <ng-container [ngSwitch]="row.lastReview.verdict">
+                  <span *ngSwitchCase="'EFFECTIVE'" i18n="@@capa.evaluation.verdict-effective">Efficace</span>
+                  <span *ngSwitchCase="'PARTIAL'" i18n="@@capa.evaluation.verdict-partial">Partiellement</span>
+                  <span *ngSwitchDefault i18n="@@capa.evaluation.verdict-ineffective">Inefficace</span>
+                </ng-container>
+              </span>
+              <span class="dim" *ngIf="!row.lastReview" i18n="@@capa.evaluation.never-judged">Jamais évalué</span>
+              <div class="dim" *ngIf="row.reviewCount > 1">
+                <span i18n="@@capa.evaluation.review-count">{{ row.reviewCount }} évaluations</span>
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="columns"></tr>
+          <!--
+            La ligne est un bouton : cliquable, atteignable au clavier, et son
+            état sélectionné annoncé — le lecteur d'écran doit savoir quel
+            dossier le panneau de droite décrit.
+          -->
+          <tr mat-row *matRowDef="let row; columns: columns"
+              class="pick" tabindex="0" role="button"
+              [class.sel]="selected?.capaId === row.capaId"
+              [attr.aria-pressed]="selected?.capaId === row.capaId"
+              (click)="select(row)"
+              (keydown.enter)="select(row)"
+              (keydown.space)="select(row); $event.preventDefault()"></tr>
+        </table>
+      </div>
+
+      <p class="note" i18n="@@capa.evaluation.table-note">
+        L'étape et le décompte des actions sont calculés : un dossier ne se clôt
+        qu'après une évaluation jugée efficace.
+      </p>
+    </section>
+
+    <!-- ------------------------------------------------------ le dossier ouvert -->
+    <section class="panel" *ngIf="selected as row">
+      <h2>
+        {{ row.reference || row.title }}
+        <span class="badge" [ngClass]="stageClass(row.stage)">
+          <ng-container [ngSwitch]="row.stage">
+            <span *ngSwitchCase="'AWAITING_EVALUATION'" i18n="@@capa.evaluation.stage-awaiting">En attente d'évaluation</span>
+            <span *ngSwitchCase="'CLOSED_EFFECTIVE'" i18n="@@capa.evaluation.stage-closed">Clôturé</span>
+            <span *ngSwitchCase="'COMPLEMENTARY_ACTION_EXPECTED'" i18n="@@capa.evaluation.stage-partial">Action complémentaire</span>
+            <span *ngSwitchCase="'REOPENED'" i18n="@@capa.evaluation.stage-reopened">Rouvert</span>
+            <span *ngSwitchDefault i18n="@@capa.evaluation.stage-in-progress">Actions en cours</span>
+          </ng-container>
+        </span>
+      </h2>
+      <p class="dim">{{ row.title }}</p>
+
+      <!--
+        L'obstacle à la clôture est annoncé AVANT le clic : le serveur refusera,
+        et le découvrir après avoir saisi une mesure est inutilement pénible.
+      -->
+      <p class="blocked" *ngIf="row.closureBlocked">
+        <mat-icon aria-hidden="true">block</mat-icon>
+        <span *ngIf="row.containmentOnly" i18n="@@capa.evaluation.containment-only">
+          Ce dossier ne porte que des mesures d'endiguement : elles arrêtent l'effet
+          sans supprimer la cause. Un verdict « efficace » sera refusé.
+        </span>
+        <span *ngIf="row.openNcCount === 1" i18n="@@capa.evaluation.open-nc-one">
+          Un écart lié est encore ouvert : la clôture sera refusée tant qu'il n'est
+          pas traité.
+        </span>
+        <span *ngIf="row.openNcCount > 1" i18n="@@capa.evaluation.open-nc-many">
+          {{ row.openNcCount }} écarts liés sont encore ouverts : la clôture sera
+          refusée tant qu'il en reste.
+        </span>
+      </p>
+
+      <!-- L'historique : c'est la séquence que lit un auditeur, pas le dernier mot. -->
+      <h3 i18n="@@capa.evaluation.last-review-title">Dernière évaluation</h3>
+      <div class="review" *ngIf="row.lastReview as r">
+        <p>
+          <span class="badge" [ngClass]="verdictClass(r.verdict)">
+            <ng-container [ngSwitch]="r.verdict">
+              <span *ngSwitchCase="'EFFECTIVE'" i18n="@@capa.evaluation.verdict-effective">Efficace</span>
+              <span *ngSwitchCase="'PARTIAL'" i18n="@@capa.evaluation.verdict-partial">Partiellement</span>
+              <span *ngSwitchDefault i18n="@@capa.evaluation.verdict-ineffective">Inefficace</span>
+            </ng-container>
+          </span>
+          <span class="dim">
+            {{ r.reviewedAt | date:'dd/MM/yyyy' }}<ng-container *ngIf="r.reviewerName"> · {{ r.reviewerName }}</ng-container>
+          </span>
+        </p>
+        <!-- Le critère de l'évaluation, et non celui du dossier : c'est contre
+             CELUI-LÀ que le verdict a été rendu. -->
+        <p class="dim" *ngIf="r.criterion">
+          <span i18n="@@capa.evaluation.judged-against">Jugé contre :</span> {{ r.criterion }}
+        </p>
+        <dl class="readings">
+          <div><dt i18n="@@capa.evaluation.baseline">Avant</dt><dd>{{ r.baseline || '—' }}</dd></div>
+          <div><dt i18n="@@capa.evaluation.target">Cible</dt><dd>{{ r.target || '—' }}</dd></div>
+          <div><dt i18n="@@capa.evaluation.observed">Constaté</dt><dd>{{ r.observed || '—' }}</dd></div>
+        </dl>
+        <p *ngIf="r.comment">{{ r.comment }}</p>
+      </div>
+      <p class="dim" *ngIf="!row.lastReview" i18n="@@capa.evaluation.never-judged-long">
+        Ce dossier n'a jamais été évalué.
+      </p>
+
+      <!-- ------------------------------------------------- le formulaire, verrouillé ou non -->
+      <h3 i18n="@@capa.evaluation.form-title">Évaluer l'efficacité</h3>
+
+      <p class="lock" *ngIf="lockReason as reason">
+        <mat-icon aria-hidden="true">lock</mat-icon>
+        <ng-container [ngSwitch]="reason">
+          <ng-container *ngSwitchCase="'ACTIONS'">
+            <!--
+              Trois messages, parce que les trois cas ne disent pas la même
+              chose : aucune action n'est un dossier vide — il n'y a rien dont
+              juger l'effet — tandis qu'une action restante est un dossier en
+              cours. Les fondre dans un pluriel les confondrait.
+            -->
+            <span *ngIf="remaining === 0" i18n="@@capa.evaluation.lock-no-action">
+              Aucune action n'est encore portée par ce dossier : il n'y a rien dont
+              juger l'effet.
+            </span>
+            <span *ngIf="remaining === 1" i18n="@@capa.evaluation.lock-one-action">
+              Une action reste à mener : l'évaluation s'ouvrira quand elle sera faite.
+            </span>
+            <span *ngIf="remaining > 1" i18n="@@capa.evaluation.lock-many-actions">
+              {{ remaining }} actions restent à mener : l'évaluation s'ouvrira quand
+              elles seront faites.
+            </span>
+          </ng-container>
+          <span *ngSwitchCase="'NO_CRITERION'" i18n="@@capa.evaluation.lock-criterion">
+            Aucun critère d'efficacité n'est posé sur ce dossier. Il se pose sur sa
+            fiche, et il doit l'être avant le jugement : choisir le critère en
+            regardant le résultat ne juge plus rien.
+          </span>
+          <span *ngSwitchCase="'DONE'" i18n="@@capa.evaluation.lock-done">
+            Ce dossier est clôturé sur un verdict d'efficacité. Son historique reste
+            lisible ; il ne se rejuge pas.
+          </span>
+          <span *ngSwitchDefault i18n="@@capa.evaluation.lock-judged">
+            Ce dossier attend son action complémentaire. Il se présentera de nouveau
+            au jugement quand elle sera menée à terme.
+          </span>
+        </ng-container>
+      </p>
+
+      <form *ngIf="canJudge" class="form" [formGroup]="form" (ngSubmit)="submit()">
+        <!--
+          Le critère est AFFICHÉ, pas saisissable : il a été posé avant, et le
+          rendre modifiable ici reviendrait à l'ajuster en voyant la mesure.
+        -->
+        <div class="criterion">
+          <span class="field-label" i18n="@@capa.evaluation.criterion">Critère posé à l'ouverture</span>
+          <strong>{{ row.criterion }}</strong>
+        </div>
+
+        <div class="readings-form">
+          <mat-form-field appearance="outline">
+            <mat-label i18n="@@capa.evaluation.baseline">Avant</mat-label>
+            <input matInput formControlName="baseline" maxlength="120">
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label i18n="@@capa.evaluation.target">Cible</mat-label>
+            <input matInput formControlName="target" maxlength="120">
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label i18n="@@capa.evaluation.observed">Constaté</mat-label>
+            <input matInput formControlName="observed" maxlength="120" required>
+            <mat-hint i18n="@@capa.evaluation.observed-hint">Obligatoire : le verdict repose sur une mesure</mat-hint>
+          </mat-form-field>
+        </div>
+
+        <!--
+          Trois boutons plutôt qu'une liste déroulante : les trois réponses
+          possibles se lisent d'un coup, et leur couleur dit laquelle clôt.
+        -->
+        <div class="choices" role="group"
+             aria-label="Verdict d'efficacité" i18n-aria-label="@@capa.evaluation.verdict-aria">
+          <button type="button" *ngFor="let v of verdicts"
+                  class="choice" [ngClass]="verdictClass(v)"
+                  [attr.aria-pressed]="verdict === v"
+                  [class.on]="verdict === v"
+                  (click)="choose(v)">
+            <ng-container [ngSwitch]="v">
+              <span *ngSwitchCase="'EFFECTIVE'" i18n="@@capa.evaluation.verdict-effective">Efficace</span>
+              <span *ngSwitchCase="'PARTIAL'" i18n="@@capa.evaluation.verdict-partial">Partiellement</span>
+              <span *ngSwitchDefault i18n="@@capa.evaluation.verdict-ineffective">Inefficace</span>
+            </ng-container>
+          </button>
+        </div>
+
+        <!-- Ce que le verdict choisi va déclencher, dit avant de l'enregistrer. -->
+        <p class="outcome" *ngIf="verdict" [ngClass]="verdictClass(verdict)">
+          <ng-container [ngSwitch]="verdict">
+            <span *ngSwitchCase="'EFFECTIVE'" i18n="@@capa.evaluation.outcome-effective">
+              Le dossier sera clôturé.
+            </span>
+            <span *ngSwitchCase="'PARTIAL'" i18n="@@capa.evaluation.outcome-partial">
+              Le dossier repartira au travail : une action complémentaire est attendue.
+            </span>
+            <span *ngSwitchDefault i18n="@@capa.evaluation.outcome-ineffective">
+              Le dossier sera rouvert : l'analyse des causes est à reprendre
+              (5 Pourquoi, Ishikawa).
+            </span>
+          </ng-container>
+        </p>
+
+        <mat-form-field appearance="outline" class="full">
+          <mat-label i18n="@@capa.evaluation.comment">Commentaire</mat-label>
+          <textarea matInput formControlName="comment" rows="2" maxlength="4000"></textarea>
+        </mat-form-field>
+
+        <div class="form-actions">
+          <button mat-flat-button color="primary" type="submit" [disabled]="!complete || saving">
+            <span i18n="@@capa.evaluation.submit">Enregistrer l'évaluation</span>
+          </button>
+          <span class="dim" *ngIf="!complete" i18n="@@capa.evaluation.submit-hint">
+            Choisissez un verdict et saisissez le relevé constaté.
+          </span>
+        </div>
+      </form>
+    </section>
+
+    <section class="panel placeholder" *ngIf="!selected">
+      <p class="dim" i18n="@@capa.evaluation.pick-a-case">
+        Choisissez un dossier pour voir ses actions et évaluer leur efficacité.
+      </p>
+    </section>
+  </div>
+</ng-container>

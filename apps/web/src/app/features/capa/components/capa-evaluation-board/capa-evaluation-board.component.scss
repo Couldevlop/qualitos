@@ -1,0 +1,285 @@
+// Les couleurs viennent des jetons du design system : aucune valeur en dur,
+// pour que le mode sombre et les thèmes par client suivent sans retouche.
+
+.state-row {
+  display: flex;
+  justify-content: center;
+  padding: var(--qos-space-6) 0;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--qos-space-3);
+  margin-bottom: var(--qos-space-4);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--qos-space-3) var(--qos-space-4);
+  background: var(--qos-bg-surface);
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: var(--qos-radius-md);
+
+  .value {
+    font-size: 1.75rem;
+    line-height: 1.2;
+    font-weight: 600;
+  }
+
+  .label { color: var(--qos-fg-secondary); }
+  .hint {
+    font-size: 0.8125rem;
+    color: var(--qos-fg-tertiary);
+  }
+
+  // Un liseré, pas un fond : la carte reste lisible et le chiffre reste le
+  // sujet. Un aplat coloré ferait de la couleur le sujet.
+  &.accent { border-left: 3px solid var(--qos-accent-fg); }
+  &.alarm { border-left: 3px solid var(--qos-danger-fg); }
+}
+
+.notice,
+.empty,
+.note,
+.blocked,
+.lock {
+  margin: var(--qos-space-3) 0;
+  padding: var(--qos-space-2) var(--qos-space-3);
+  border-radius: var(--qos-radius-sm);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.notice {
+  display: flex;
+  gap: var(--qos-space-2);
+  align-items: flex-start;
+  background: var(--qos-info-bg);
+  color: var(--qos-fg-primary);
+  border-left: 3px solid var(--qos-info-fg);
+
+  mat-icon { color: var(--qos-info-fg); flex: 0 0 auto; }
+}
+
+.note {
+  background: var(--qos-bg-subtle);
+  color: var(--qos-fg-tertiary);
+}
+
+.empty {
+  color: var(--qos-fg-tertiary);
+}
+
+.blocked,
+.lock {
+  display: flex;
+  gap: var(--qos-space-2);
+  align-items: flex-start;
+  background: var(--qos-warning-bg);
+  color: var(--qos-fg-primary);
+  border-left: 3px solid var(--qos-warning-fg);
+
+  mat-icon { color: var(--qos-warning-fg); flex: 0 0 auto; }
+}
+
+// Le plan de travail et le dossier côte à côte, empilés sous 1000 px : à cette
+// largeur, deux colonnes rendent le tableau illisible et le formulaire étroit.
+.layout {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: var(--qos-space-4);
+  align-items: start;
+}
+
+@media (max-width: 1000px) {
+  .layout { grid-template-columns: 1fr; }
+}
+
+.panel {
+  padding: var(--qos-space-4);
+  background: var(--qos-bg-surface);
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: var(--qos-radius-md);
+
+  h2 {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--qos-space-2);
+    align-items: center;
+    margin: 0 0 var(--qos-space-1);
+    font-size: 1rem;
+    // Les grands titres se rognaient faute de place sous la ligne de base.
+    line-height: 1.45;
+  }
+
+  h3 {
+    margin: var(--qos-space-4) 0 var(--qos-space-2);
+    font-size: 0.875rem;
+    color: var(--qos-fg-secondary);
+  }
+}
+
+.panel.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 160px;
+  text-align: center;
+}
+
+.dim {
+  color: var(--qos-fg-tertiary);
+  font-size: 0.8125rem;
+}
+
+.eval-table {
+  width: 100%;
+
+  td { vertical-align: middle; }
+}
+
+tr.pick {
+  cursor: pointer;
+
+  &:hover { background: var(--qos-bg-subtle); }
+  &.sel { background: var(--qos-info-bg); }
+  // Le focus doit rester visible : la ligne est atteignable au clavier, et sans
+  // ce liseré rien ne dirait où l'on est.
+  &:focus-visible {
+    outline: 2px solid var(--qos-accent-fg);
+    outline-offset: -2px;
+  }
+}
+
+.badge {
+  display: inline-block;
+  padding: 2px var(--qos-space-2);
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+// Quatre tons, un par sens. Le même jeu sert aux étapes et aux verdicts, pour
+// qu'« efficace » et « clôturé » se reconnaissent du premier coup d'œil.
+.tone-ok { background: var(--qos-success-bg); color: var(--qos-success-fg); }
+.tone-warn { background: var(--qos-warning-bg); color: var(--qos-warning-fg); }
+.tone-bad { background: var(--qos-danger-bg); color: var(--qos-danger-fg); }
+.tone-info { background: var(--qos-info-bg); color: var(--qos-info-fg); }
+.tone-idle { background: var(--qos-bg-subtle); color: var(--qos-fg-tertiary); }
+
+.review {
+  padding: var(--qos-space-3);
+  background: var(--qos-bg-subtle);
+  border-radius: var(--qos-radius-sm);
+
+  p { margin: 0 0 var(--qos-space-2); }
+  p:last-child { margin-bottom: 0; }
+}
+
+.readings {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--qos-space-2);
+  margin: var(--qos-space-2) 0;
+
+  dt {
+    font-size: 0.75rem;
+    color: var(--qos-fg-tertiary);
+  }
+
+  dd {
+    margin: 0;
+    font-weight: 600;
+  }
+}
+
+.form {
+  display: block;
+}
+
+.criterion {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--qos-space-3);
+  margin-bottom: var(--qos-space-3);
+  background: var(--qos-bg-subtle);
+  border-radius: var(--qos-radius-sm);
+}
+
+.field-label {
+  font-size: 0.75rem;
+  color: var(--qos-fg-tertiary);
+}
+
+.readings-form {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--qos-space-2);
+}
+
+@media (max-width: 560px) {
+  .readings-form { grid-template-columns: 1fr; }
+}
+
+.full { width: 100%; }
+
+.choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--qos-space-2);
+  margin: var(--qos-space-2) 0;
+}
+
+.choice {
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  padding: var(--qos-space-2) var(--qos-space-3);
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: var(--qos-radius-sm);
+  background: var(--qos-bg-surface);
+  color: var(--qos-fg-primary);
+
+  &:focus-visible {
+    outline: 2px solid var(--qos-accent-fg);
+    outline-offset: 2px;
+  }
+
+  // Choisi : le bouton prend le ton de son verdict. Le liseré épais porte
+  // l'information en plus de la couleur, pour qui ne la distingue pas.
+  &.on {
+    border-width: 2px;
+    font-weight: 600;
+  }
+
+  &.on.tone-ok { border-color: var(--qos-success-fg); }
+  &.on.tone-warn { border-color: var(--qos-warning-fg); }
+  &.on.tone-bad { border-color: var(--qos-danger-fg); }
+}
+
+// Non choisi, le bouton reste neutre : trois boutons déjà colorés ne diraient
+// pas lequel est retenu.
+.choice:not(.on) {
+  background: var(--qos-bg-surface);
+  color: var(--qos-fg-primary);
+}
+
+.outcome {
+  margin: var(--qos-space-2) 0 var(--qos-space-3);
+  padding: var(--qos-space-2) var(--qos-space-3);
+  border-radius: var(--qos-radius-sm);
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--qos-space-3);
+  align-items: center;
+}

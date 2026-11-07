@@ -1,5 +1,7 @@
 package com.openlab.qualitos.quality.capa;
 
+import com.openlab.qualitos.quality.capa.effectiveness.domain.EffectivenessVerdict;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -70,7 +72,18 @@ public final class CapaDto {
             Boolean verificationRequired,
             UUID verificationAssigneeId,
             @Size(max = 255) String verificationAssigneeName,
-            @Size(max = 4000) String verificationInstructions
+            @Size(max = 4000) String verificationInstructions,
+            /**
+             * Le critère d'efficacité (ADR 0108) : la phrase qui dit à quoi on
+             * reconnaîtra que l'action a marché — « zéro erreur de référence sur
+             * 90 jours ».
+             *
+             * <p>Il part avec l'ouverture, et c'est tout l'objet. Sans lui, le
+             * critère se décidait au moment de juger, par la personne qui avait
+             * mené l'action, en regardant le résultat obtenu : un critère écrit
+             * après la mesure n'est pas un critère, c'est un commentaire.
+             */
+            @Size(max = 2000) String effectivenessCriterion
     ) {
         /**
          * L'ouverture sans nature d'action explicite — la forme de presque tous
@@ -82,7 +95,7 @@ public final class CapaDto {
                                String verificationAssigneeName, String verificationInstructions) {
             this(title, description, type, null, criticity, sourceType, sourceRef, ownerId, ownerName,
                     dueDate, verificationRequired, verificationAssigneeId, verificationAssigneeName,
-                    verificationInstructions);
+                    verificationInstructions, null);
         }
     }
 
@@ -103,10 +116,50 @@ public final class CapaDto {
             Boolean verificationRequired,
             UUID verificationAssigneeId,
             @Size(max = 255) String verificationAssigneeName,
-            @Size(max = 4000) String verificationInstructions
+            @Size(max = 4000) String verificationInstructions,
+            /** Le critère d'efficacité (ADR 0108) ; null ne touche pas à l'existant. */
+            @Size(max = 2000) String effectivenessCriterion
     ) {}
 
-    public record EffectivenessRequest(@NotNull Boolean effective) {}
+    /**
+     * L'évaluation d'efficacité (ADR 0108).
+     *
+     * <p><b>Deux façons de dire le verdict, et une seule à la fois.</b>
+     * {@code verdict} est la forme à employer ; {@code effective} est l'ancien
+     * champ booléen, conservé parce que l'API est publique et versionnée (§13.1)
+     * — un intégrateur qui envoie {@code {"effective": true}} depuis un ERP ne
+     * doit pas découvrir la rupture en production.
+     *
+     * <p>Fournir les deux, ou n'en fournir aucun, est refusé en 400. Le contrôle
+     * est au service et non ici : une annotation ne sait pas exprimer « exactement
+     * l'un des deux », et un message rédigé vaut mieux qu'un refus muet.
+     *
+     * <p>L'ancien champ ne permet pas d'exprimer {@code PARTIAL}, ce qui est la
+     * bonne incitation à passer à {@code verdict}.
+     *
+     * @param observed  ce qui a été CONSTATÉ ; obligatoire dès qu'on emploie
+     *                  {@code verdict} — on juge sur un relevé, ou on ne juge
+     *                  pas. Facultatif sur l'ancien champ, qui n'en demandait
+     *                  aucun : l'exiger casserait les appelants existants.
+     * @param baseline  la situation avant. Facultative : un problème nouveau n'a
+     *                  pas d'antériorité chiffrée.
+     * @param target    la cible. Facultative : le critère peut déjà la dire en
+     *                  toutes lettres.
+     */
+    public record EffectivenessRequest(
+            @Deprecated Boolean effective,
+            EffectivenessVerdict verdict,
+            @Size(max = 120) String baseline,
+            @Size(max = 120) String target,
+            @Size(max = 120) String observed,
+            @Size(max = 4000) String comment
+    ) {
+
+        /** L'ancienne forme, pour les appelants et les tests qui l'emploient encore. */
+        public EffectivenessRequest(Boolean effective) {
+            this(effective, null, null, null, null, null);
+        }
+    }
 
     /**
      * Création ET mise à jour partielle d'une action.
@@ -148,8 +201,18 @@ public final class CapaDto {
             LocalDate dueDate,
             Instant resolvedAt,
             Instant closedAt,
+            // Projection du dernier verdict (ADR 0108) : EFFECTIVE -> true, les
+            // deux autres -> false. Conservé parce que l'écran d'efficacité
+            // MESURÉE l'affiche à côté du taux de récidive, et parce que les
+            // dossiers antérieurs à l'ADR n'ont pas de verdict et n'en auront
+            // jamais. Ce n'est plus la source de vérité.
             Boolean effectivenessVerified,
             Instant effectivenessVerifiedAt,
+            // Le critère d'efficacité posé sur le dossier, et le dernier verdict
+            // rendu. Nuls ensemble sur un dossier jamais évalué ; le critère seul
+            // sur un dossier qui attend son jugement.
+            String effectivenessCriterion,
+            EffectivenessVerdict effectivenessVerdict,
             // L'EXIGENCE de vérification, à distinguer du constat qu'elle a eu
             // lieu. `null` = la question n'a pas été tranchée sur ce dossier.
             Boolean verificationRequired,

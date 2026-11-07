@@ -6703,8 +6703,8 @@ Portail clients</source>
         <target state="translated">CAPA 有效性</target>
       </trans-unit>
       <trans-unit id="capa.effectiveness.subtitle" datatype="html">
-        <source>Ce que le terrain dit des dossiers clos, et non ce qu'on avait déclaré à la clôture.</source>
-        <target state="translated">关于已关闭案件，现场给出的事实，而非结案时的声明。</target>
+        <source>Juger l'effet des actions sur leur critère, puis vérifier des mois plus tard ce que le terrain en a fait.</source>
+        <target state="translated">先依标准判定措施的成效，再于数月后核实现场的实际结果。</target>
       </trans-unit>
       <trans-unit id="capa.effectiveness.window-aria" datatype="html">
         <source>Fenêtre d'observation</source>
@@ -7153,6 +7153,270 @@ Portail clients</source>
       <trans-unit id="training.matrix.failed" datatype="html">
         <source>Impossible de charger la matrice de compétences.</source>
         <target state="translated">无法加载能力矩阵。</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.tab-evaluation" datatype="html">
+        <source>Évaluations</source>
+        <target state="translated">评价</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.tab-recurrence" datatype="html">
+        <source>Mesure par récidive</source>
+        <target state="translated">按复发测量</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.recurrence-intro" datatype="html">
+        <source>Ce que le terrain dit des dossiers clos, et non ce qu'on avait déclaré à la clôture.</source>
+        <target state="translated">关于已关闭案件，现场给出的事实，而非结案时的声明。</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.kpi-rate" datatype="html">
+        <source>Taux d'efficacité des actions</source>
+        <target state="translated">措施有效率</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.kpi-rate-hint" datatype="html">
+        <source>Sur les seuls dossiers déjà jugés</source>
+        <target state="translated">仅统计已判定的案件</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.kpi-awaiting" datatype="html">
+        <source>Évaluations à faire</source>
+        <target state="translated">待完成的评价</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.kpi-open" datatype="html">
+        <source>Dossiers encore ouverts</source>
+        <target state="translated">仍未关闭的案件</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.kpi-reopened" datatype="html">
+        <source>Dossiers rouverts</source>
+        <target state="translated">已重开的案件</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.kpi-reopened-hint" datatype="html">
+        <source>Jugés inefficaces</source>
+        <target state="translated">判定为无效</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.missing-criterion-one" datatype="html">
+        <source>Un dossier ouvert n'a pas de critère d'efficacité — il se pose sur la fiche du dossier, et il doit l'être avant le jugement.</source>
+        <target state="translated">有 1 个未关闭案件没有有效性判定标准——标准在案件卡中设定，且必须在判定之前确定。</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.missing-criterion-many" datatype="html">
+        <source><x id="INTERPOLATION"/> dossiers ouverts n'ont pas de critère d'efficacité — il se pose sur la fiche du dossier, et il doit l'être avant le jugement.</source>
+        <target state="translated">有 <x id="INTERPOLATION"/> 个未关闭案件没有有效性判定标准——标准在案件卡中设定，且必须在判定之前确定。</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.truncated" datatype="html">
+        <source>Le périmètre dépasse la limite de lecture : seuls les dossiers les plus urgents sont listés. Les quatre chiffres ci-dessus, eux, portent sur la totalité.</source>
+        <target state="translated">范围超出读取上限：列表仅显示最紧急的案件。但上方四个数字覆盖全部范围。</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.none" datatype="html">
+        <source>Aucun dossier à évaluer. Un dossier entre dans cette boucle dès qu'il est ouvert, et se présente au jugement quand son action est menée à terme.</source>
+        <target state="translated">没有需要评价的案件。案件自开立起即进入此循环，待其措施完成后提交判定。</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.load-failed" datatype="html">
+        <source>Impossible de charger les évaluations d'efficacité.</source>
+        <target state="translated">无法加载有效性评价。</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.save-failed" datatype="html">
+        <source>L'évaluation n'a pas pu être enregistrée.</source>
+        <target state="translated">无法保存评价。</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.table-title" datatype="html">
+        <source>Dossiers et actions correctives</source>
+        <target state="translated">案件与纠正措施</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.table-note" datatype="html">
+        <source>L'étape et le décompte des actions sont calculés : un dossier ne se clôt qu'après une évaluation jugée efficace.</source>
+        <target state="translated">阶段与措施计数均为自动计算：案件须经判定为有效的评价后方可关闭。</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.col-case" datatype="html">
+        <source>Dossier</source>
+        <target state="translated">案件</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.col-stage" datatype="html">
+        <source>Étape</source>
+        <target state="translated">阶段</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.col-actions" datatype="html">
+        <source>Actions</source>
+        <target state="translated">措施</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.col-verdict" datatype="html">
+        <source>Dernier verdict</source>
+        <target state="translated">最近判定</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.actions-done" datatype="html">
+        <source><x id="INTERPOLATION"/>/<x id="INTERPOLATION_1"/> faites</source>
+        <target state="translated"><x id="INTERPOLATION"/>/<x id="INTERPOLATION_1"/> 已完成</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.no-criterion-cell" datatype="html">
+        <source>Critère à poser</source>
+        <target state="translated">待设定标准</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.never-judged" datatype="html">
+        <source>Jamais évalué</source>
+        <target state="translated">尚未评价</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.review-count" datatype="html">
+        <source><x id="INTERPOLATION"/> évaluations</source>
+        <target state="translated"><x id="INTERPOLATION"/> 次评价</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.pick-a-case" datatype="html">
+        <source>Choisissez un dossier pour voir ses actions et évaluer leur efficacité.</source>
+        <target state="translated">选择一个案件以查看其措施并评价其有效性。</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.stage-awaiting" datatype="html">
+        <source>En attente d'évaluation</source>
+        <target state="translated">待评价</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.stage-closed" datatype="html">
+        <source>Clôturé</source>
+        <target state="translated">已关闭</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.stage-partial" datatype="html">
+        <source>Action complémentaire</source>
+        <target state="translated">补充措施</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.stage-reopened" datatype="html">
+        <source>Rouvert</source>
+        <target state="translated">已重开</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.stage-in-progress" datatype="html">
+        <source>Actions en cours</source>
+        <target state="translated">措施进行中</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.verdict-effective" datatype="html">
+        <source>Efficace</source>
+        <target state="translated">有效</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.verdict-partial" datatype="html">
+        <source>Partiellement</source>
+        <target state="translated">部分有效</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.verdict-ineffective" datatype="html">
+        <source>Inefficace</source>
+        <target state="translated">无效</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.verdict-aria" datatype="html">
+        <source>Verdict d'efficacité</source>
+        <target state="translated">有效性判定</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.containment-only" datatype="html">
+        <source>Ce dossier ne porte que des mesures d'endiguement : elles arrêtent l'effet sans supprimer la cause. Un verdict « efficace » sera refusé.</source>
+        <target state="translated">此案件仅包含围堵措施：它们止住了影响，却未消除原因。"有效"判定将被拒绝。</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.open-nc-one" datatype="html">
+        <source>Un écart lié est encore ouvert : la clôture sera refusée tant qu'il n'est pas traité.</source>
+        <target state="translated">有 1 项关联不符合项仍未关闭：在其处理完毕前，关闭将被拒绝。</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.open-nc-many" datatype="html">
+        <source><x id="INTERPOLATION"/> écarts liés sont encore ouverts : la clôture sera refusée tant qu'il en reste.</source>
+        <target state="translated">有 <x id="INTERPOLATION"/> 项关联不符合项仍未关闭：只要还剩一项，关闭即被拒绝。</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.last-review-title" datatype="html">
+        <source>Dernière évaluation</source>
+        <target state="translated">最近评价</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.never-judged-long" datatype="html">
+        <source>Ce dossier n'a jamais été évalué.</source>
+        <target state="translated">此案件尚未经过评价。</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.judged-against" datatype="html">
+        <source>Jugé contre :</source>
+        <target state="translated">判定依据：</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.baseline" datatype="html">
+        <source>Avant</source>
+        <target state="translated">实施前</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.target" datatype="html">
+        <source>Cible</source>
+        <target state="translated">目标</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.observed" datatype="html">
+        <source>Constaté</source>
+        <target state="translated">实测</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.form-title" datatype="html">
+        <source>Évaluer l'efficacité</source>
+        <target state="translated">评价有效性</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.criterion" datatype="html">
+        <source>Critère posé à l'ouverture</source>
+        <target state="translated">开立时设定的标准</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.observed-hint" datatype="html">
+        <source>Obligatoire : le verdict repose sur une mesure</source>
+        <target state="translated">必填：判定以实测值为依据</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.comment" datatype="html">
+        <source>Commentaire</source>
+        <target state="translated">备注</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.submit" datatype="html">
+        <source>Enregistrer l'évaluation</source>
+        <target state="translated">保存评价</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.submit-hint" datatype="html">
+        <source>Choisissez un verdict et saisissez le relevé constaté.</source>
+        <target state="translated">请选择判定并填写实测值。</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.outcome-effective" datatype="html">
+        <source>Le dossier sera clôturé.</source>
+        <target state="translated">案件将被关闭。</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.outcome-partial" datatype="html">
+        <source>Le dossier repartira au travail : une action complémentaire est attendue.</source>
+        <target state="translated">案件将重回处理：需补充一项措施。</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.outcome-ineffective" datatype="html">
+        <source>Le dossier sera rouvert : l'analyse des causes est à reprendre (5 Pourquoi, Ishikawa).</source>
+        <target state="translated">案件将被重开：须重做原因分析（5 why、鱼骨图）。</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.done-effective" datatype="html">
+        <source>Dossier clôturé : l'action est jugée efficace.</source>
+        <target state="translated">案件已关闭：措施判定为有效。</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.done-partial" datatype="html">
+        <source>Efficacité partielle : une action complémentaire est attendue sur le dossier.</source>
+        <target state="translated">部分有效：该案件需补充一项措施。</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.done-ineffective" datatype="html">
+        <source>Dossier rouvert : l'analyse des causes est à reprendre.</source>
+        <target state="translated">案件已重开：须重做原因分析。</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.lock-no-action" datatype="html">
+        <source>Aucune action n'est encore portée par ce dossier : il n'y a rien dont juger l'effet.</source>
+        <target state="translated">此案件尚无任何措施：没有可判定成效的对象。</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.lock-one-action" datatype="html">
+        <source>Une action reste à mener : l'évaluation s'ouvrira quand elle sera faite.</source>
+        <target state="translated">还剩 1 项措施：完成后即可开始评价。</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.lock-many-actions" datatype="html">
+        <source><x id="INTERPOLATION"/> actions restent à mener : l'évaluation s'ouvrira quand elles seront faites.</source>
+        <target state="translated">还剩 <x id="INTERPOLATION"/> 项措施：全部完成后即可开始评价。</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.lock-criterion" datatype="html">
+        <source>Aucun critère d'efficacité n'est posé sur ce dossier. Il se pose sur sa fiche, et il doit l'être avant le jugement : choisir le critère en regardant le résultat ne juge plus rien.</source>
+        <target state="translated">此案件未设定有效性判定标准。标准在案件卡中设定，且必须在判定之前确定：看到结果再挑标准，等于什么都没判定。</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.lock-done" datatype="html">
+        <source>Ce dossier est clôturé sur un verdict d'efficacité. Son historique reste lisible ; il ne se rejuge pas.</source>
+        <target state="translated">此案件已基于有效性判定关闭。其历史仍可查阅，但不再重新判定。</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.lock-judged" datatype="html">
+        <source>Ce dossier attend son action complémentaire. Il se présentera de nouveau au jugement quand elle sera menée à terme.</source>
+        <target state="translated">此案件正在等待其补充措施。该措施完成后，案件将再次提交判定。</target>
+      </trans-unit>
+      <trans-unit id="capa.criterion.label" datatype="html">
+        <source>Critère d'efficacité</source>
+        <target state="translated">有效性判定标准</target>
+      </trans-unit>
+      <trans-unit id="capa.criterion.hint" datatype="html">
+        <source>À quoi on reconnaîtra l'efficacité : « zéro erreur de référence sur 90 jours ».</source>
+        <target state="translated">如何判断有效：「90 天内零物料号差错」。</target>
+      </trans-unit>
+      <trans-unit id="capa.criterion.locked" datatype="html">
+        <source>Ce dossier a déjà été évalué : son critère ne change plus, les verdicts rendus l'ont été contre lui.</source>
+        <target state="translated">此案件已完成评价：其判定标准不再变更，已下的判定均以该标准为依据。</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.evaluate-link" datatype="html">
+        <source>Évaluer contre le critère, avec un verdict nuancé</source>
+        <target state="translated">按标准评价（三档判定）</target>
       </trans-unit>
       <trans-unit id="capa.evidence.title" datatype="html">
         <source>Preuves</source>

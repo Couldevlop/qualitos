@@ -45,7 +45,8 @@ export class CapaEditDialogComponent {
     // `null` = la question n'a pas été tranchée ; c'est distinct de `false`.
     verificationRequired: [null as boolean | null],
     verificationAssigneeId: [null as string | null],
-    verificationInstructions: ['', [Validators.maxLength(4000)]]
+    verificationInstructions: ['', [Validators.maxLength(4000)]],
+    effectivenessCriterion: ['', [Validators.maxLength(2000)]]
   });
 
   constructor(
@@ -63,12 +64,32 @@ export class CapaEditDialogComponent {
       dueDate: data.capa.dueDate ?? '',
       verificationRequired: data.capa.verificationRequired ?? null,
       verificationAssigneeId: data.capa.verificationAssigneeId ?? null,
-      verificationInstructions: data.capa.verificationInstructions ?? ''
+      verificationInstructions: data.capa.verificationInstructions ?? '',
+      effectivenessCriterion: data.capa.effectivenessCriterion ?? ''
     });
+    // Un dossier déjà jugé garde son critère : le serveur refuse le
+    // changement (409), et un champ qui accepte une saisie que le serveur
+    // rejettera fait découvrir la règle au pire moment.
+    if (this.critereFige) {
+      this.form.controls.effectivenessCriterion.disable();
+    }
     this.verifierName = data.capa.verificationAssigneeName || undefined;
     // La question, l'apparition du bloc « à qui » et ses validateurs sont tenus
     // par le bloc partagé `qos-capa-verification-fields` (remède NG0100 compris) :
     // ici, ne pas répondre laisse la question ouverte — pas de validateur.
+  }
+
+  /**
+   * Le critère est-il figé ?
+   *
+   * <p>Dès qu'un verdict a été rendu, oui. Les évaluations recopient le critère,
+   * donc le modifier ne réécrirait aucune trace — ce qui serait faussé, c'est le
+   * sens du dossier : déplacer la cible entre deux mesures ferait lire la suite
+   * des verdicts comme une progression alors qu'elle comparerait des choses
+   * différentes (ADR 0108).
+   */
+  get critereFige(): boolean {
+    return !!this.data.capa.effectivenessVerdict;
   }
 
   /**
@@ -104,7 +125,12 @@ export class CapaEditDialogComponent {
         verificationAssigneeName: v.verificationRequired === true
           ? this.nomDu(v.verificationAssigneeId) : undefined,
         verificationInstructions: v.verificationRequired === true
-          ? (v.verificationInstructions?.trim() || undefined) : undefined
+          ? (v.verificationInstructions?.trim() || undefined) : undefined,
+        // Figé : on ne l'envoie pas du tout. `getRawValue` rend la valeur des
+        // champs désactivés, et la renvoyer ferait refuser la mise à jour
+        // entière pour un champ que personne n'a touché.
+        effectivenessCriterion: this.critereFige
+          ? undefined : (v.effectivenessCriterion?.trim() || undefined)
       })
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({

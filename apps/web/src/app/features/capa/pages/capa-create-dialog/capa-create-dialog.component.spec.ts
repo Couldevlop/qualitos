@@ -186,6 +186,35 @@ describe('CapaCreateDialogComponent — fenêtre unique', () => {
     expect(capa.openCase).not.toHaveBeenCalled();
   });
 
+  // --- le critère d'efficacité (ADR 0108) -----------------------------------
+
+  it("emporte le critère d'efficacité posé à l'ouverture", async () => {
+    // C'est ici qu'il a le plus de valeur : posé avant la mesure, il ne peut
+    // pas être ajusté en voyant le résultat.
+    await setup();
+    capa.openCase.and.returnValue(of(ouvert()));
+    remplir();
+    component.form.controls.effectivenessCriterion
+      .setValue('  Zéro erreur de référence sur 90 jours  ');
+
+    component.submit();
+
+    const envoye = capa.openCase.calls.mostRecent().args[0] as OpenCapaRequest;
+    expect(envoye.effectivenessCriterion).toBe('Zéro erreur de référence sur 90 jours');
+  });
+
+  it("n'emporte aucune clé quand le critère est laissé vide", async () => {
+    await setup();
+    capa.openCase.and.returnValue(of(ouvert()));
+    remplir();
+    component.form.controls.effectivenessCriterion.setValue('   ');
+
+    component.submit();
+
+    const envoye = capa.openCase.calls.mostRecent().args[0] as OpenCapaRequest;
+    expect('effectivenessCriterion' in envoye).toBeFalse();
+  });
+
   // --- création libre -------------------------------------------------------
 
   it('crée le dossier et son action en une écriture, pilote nommé', async () => {

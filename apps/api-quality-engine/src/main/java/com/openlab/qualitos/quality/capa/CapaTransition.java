@@ -35,6 +35,19 @@ public enum CapaTransition {
      */
     EFFECTIVENESS_REJECTED("capa.case.effectiveness-rejected", EventType.CAPA_EFFECTIVENESS_VERIFIED,
             "Efficacité non démontrée : le dossier CAPA repart en traitement"),
+    /**
+     * Efficacité PARTIELLE (ADR 0108) : l'action a produit un effet réel sans
+     * atteindre le critère.
+     *
+     * <p>Comme {@code EFFECTIVENESS_REJECTED}, le dossier repart en traitement —
+     * et c'est la seule chose que les deux ont en commun. Ici la cause était la
+     * bonne et l'action ne va pas assez loin : on en ajoute une. Là, c'est la
+     * cause qu'il faut reprendre. Les confondre au journal reviendrait à
+     * effacer, pour l'auditeur, la différence entre un système qui affine et un
+     * système qui s'est trompé.
+     */
+    EFFECTIVENESS_PARTIAL("capa.case.effectiveness-partial", EventType.CAPA_EFFECTIVENESS_VERIFIED,
+            "Efficacité partielle : une action complémentaire est attendue sur le dossier CAPA"),
     REJECTED("capa.case.rejected", null,
             "Dossier CAPA rejeté"),
     DELETED("capa.case.deleted", null,

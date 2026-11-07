@@ -91,6 +91,13 @@
               <span class="info-label" i18n="@@capa.detail.resolved-at">Résolu le</span>
               <span class="info-value">{{ c.resolvedAt | date:'medium' }}</span>
             </div>
+            <!-- Le critère AVANT le constat, dans l'ordre où ils existent :
+                 on pose la cible, puis on dit si elle est atteinte. -->
+            <div class="info-item full" *ngIf="c.effectivenessCriterion"
+                 data-test="critere-efficacite">
+              <span class="info-label" i18n="@@capa.criterion.label">Critère d'efficacité</span>
+              <span class="info-value">{{ c.effectivenessCriterion }}</span>
+            </div>
             <div class="info-item" *ngIf="c.effectivenessVerified != null">
               <span class="info-label" i18n="@@capa.detail.effectiveness">Efficacité</span>
               <span [class]="c.effectivenessVerified ? 'badge badge-resolved' : 'badge badge-rejected'">
@@ -145,6 +152,18 @@
               <mat-icon>fact_check</mat-icon>
               <span><strong i18n="@@capa.detail.effectiveness-required">Vérification d'efficacité requise.</strong>
               <ng-container i18n="@@capa.detail.effectiveness-prompt">Les actions ont-elles produit l'effet attendu (ISO 9001 §10.2) ?</ng-container></span>
+            </p>
+            <!--
+              Ces deux boutons ne connaissent que « oui » et « non ». L'écran
+              d'évaluation, lui, sait dire « partiellement » — l'état d'une action
+              qui a réduit le problème sans l'effacer — et rend le verdict contre
+              le critère posé à l'avance (ADR 0108). Le lien est là pour que
+              personne ne doive trancher à la hache faute de savoir où aller.
+            -->
+            <p class="effectiveness-nuance">
+              <a routerLink="/capa/efficacite" i18n="@@capa.detail.evaluate-link">
+                Évaluer contre le critère, avec un verdict nuancé
+              </a>
             </p>
             <div class="effectiveness-actions" *qosCan="'capa.verify'">
               <button mat-stroked-button color="warn" type="button"

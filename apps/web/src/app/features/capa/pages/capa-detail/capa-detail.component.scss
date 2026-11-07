@@ -137,6 +137,13 @@
 .effectiveness-prompt mat-icon { color: var(--qos-warn-fg); flex-shrink: 0; }
 .effectiveness-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 
+/* Le renvoi vers le verdict nuance : discret, sous les deux boutons tranchants. */
+.effectiveness-nuance {
+  margin: 8px 0 0;
+  font-size: 0.85rem;
+}
+.effectiveness-nuance a { color: var(--qos-accent-fg); }
+
 .crit {
   display: inline-block;
   padding: 2px 10px;

@@ -30,6 +30,14 @@ export class CapaEffectivenessComponent implements OnInit {
   months = 6;
   loading = false;
 
+  /**
+   * L'onglet affiché. 0 = les évaluations, 1 = la mesure par récidive.
+   *
+   * <p>Les évaluations d'abord parce que c'est l'onglet où l'on AGIT : il porte
+   * la liste de ce qui attend un jugement. La mesure, elle, se consulte.
+   */
+  tab = 0;
+
   constructor(
     private readonly service: CapaService,
     private readonly snack: MatSnackBar

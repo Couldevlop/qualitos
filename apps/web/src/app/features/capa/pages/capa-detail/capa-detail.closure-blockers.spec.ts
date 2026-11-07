@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
-import { of, throwError } from 'rxjs';
+import { EMPTY, of, throwError } from 'rxjs';
 
 import { SharedModule } from '../../../../shared/shared.module';
 import { UiModule } from '../../../../shared/ui/ui.module';
@@ -16,6 +16,27 @@ import {
 import { ProductsService } from '../../../products/products.service';
 import { AuthzService } from '../../../../core/authz/authz.service';
 import { DirectoryService } from '../../../../core/directory/directory.service';
+
+
+/**
+ * Le mannequin de routeur, avec ce dont `routerLink` a besoin.
+ *
+ * <p>Pas seulement `navigate`. La fiche porte des liens déclaratifs — dont le
+ * renvoi vers l'évaluation d'efficacité — et la directive `routerLink` appelle
+ * `createUrlTree` puis `serializeUrl` pour calculer le `href`. Un mannequin qui
+ * n'expose que `navigate` fait tomber le banc sur « createUrlTree is not a
+ * function », une erreur qui ne dit rien de ce que le test vérifie.
+ */
+function routerDouble(): Router {
+  // `events` est une PROPRIÉTÉ et non une méthode : la directive s'y abonne
+  // pour repeindre la classe « active » à chaque navigation. `EMPTY` suffit —
+  // le banc ne navigue pas — mais l'absence du flux casse `ngOnChanges`.
+  const router = jasmine.createSpyObj<Router>('Router',
+    ['navigate', 'createUrlTree', 'serializeUrl'], { events: EMPTY });
+  router.createUrlTree.and.returnValue({} as never);
+  router.serializeUrl.and.returnValue('/');
+  return router;
+}
 
 /**
  * Ce qui s'oppose à la clôture, DIT avant le clic (§4.2).
@@ -82,7 +103,7 @@ describe('CapaDetailComponent — motifs de blocage de la clôture', () => {
         { provide: ProductsService, useValue: { revisionRequestsForTrigger: () => of([]) } },
         { provide: MatSnackBar, useValue: jasmine.createSpyObj<MatSnackBar>('MatSnackBar', ['open']) },
         { provide: MatDialog, useValue: jasmine.createSpyObj<MatDialog>('MatDialog', ['open']) },
-        { provide: Router, useValue: jasmine.createSpyObj<Router>('Router', ['navigate']) },
+        { provide: Router, useValue: routerDouble() },
         { provide: ActivatedRoute, useValue: { snapshot: { paramMap: convertToParamMap({ id: CASE_ID }) } } }
       ]
     }).compileComponents();

@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
-import { of, throwError } from 'rxjs';
+import { EMPTY, of, throwError } from 'rxjs';
 
 import { SharedModule } from '../../../../shared/shared.module';
 import { UiModule } from '../../../../shared/ui/ui.module';
@@ -64,7 +64,17 @@ describe('CapaDetailComponent — cycle de vie du dossier', () => {
     snack = jasmine.createSpyObj<MatSnackBar>('MatSnackBar', ['open']);
     dialog = jasmine.createSpyObj<MatDialog>('MatDialog', ['open']);
     dialog.open.and.returnValue({ afterClosed: () => of(true) } as never);
-    router = jasmine.createSpyObj<Router>('Router', ['navigate']);
+    // `createUrlTree` et `serializeUrl` en plus de `navigate` : la fiche porte
+    // des liens déclaratifs — dont le renvoi vers l'évaluation d'efficacité —
+    // et `routerLink` s'en sert pour calculer le `href`. Sans eux, le banc tombe
+    // sur « createUrlTree is not a function », une erreur qui ne dit rien de ce
+    // que le test vérifie.
+    // `events` est une propriété et non une méthode : la directive s'y abonne
+    // pour repeindre la classe « active ». `EMPTY` suffit, son absence non.
+    router = jasmine.createSpyObj<Router>('Router',
+      ['navigate', 'createUrlTree', 'serializeUrl'], { events: EMPTY });
+    router.createUrlTree.and.returnValue({} as never);
+    router.serializeUrl.and.returnValue('/');
 
     TestBed.resetTestingModule();
     await TestBed.configureTestingModule({

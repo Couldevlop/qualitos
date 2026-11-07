@@ -9,6 +9,9 @@ import { SharedModule } from '../../../../shared/shared.module';
 import { UiModule } from '../../../../shared/ui/ui.module';
 import { CapaService } from '../../capa.service';
 import { CapaEffectivenessRow, CapaEffectivenessSummary } from '../../capa.types';
+import {
+  CapaEvaluationBoardComponent
+} from '../../components/capa-evaluation-board/capa-evaluation-board.component';
 import { CapaEffectivenessComponent } from './capa-effectiveness.component';
 
 /**
@@ -41,10 +44,19 @@ describe('CapaEffectivenessComponent', () => {
   let snack: { open: jasmine.Spy };
 
   beforeEach(async () => {
-    service = jasmine.createSpyObj<CapaService>('CapaService', ['effectiveness']);
+    // `evaluationBoard` est dans la liste parce que le premier onglet de l'écran
+    // héberge le plan de travail des évaluations (ADR 0108) : sans elle, son
+    // ngOnInit appellerait une méthode absente du mannequin et le banc tomberait
+    // sur une erreur qui n'a rien à voir avec ce qu'il vérifie.
+    service = jasmine.createSpyObj<CapaService>('CapaService',
+      ['effectiveness', 'evaluationBoard']);
+    service.evaluationBoard.and.returnValue(of({
+      effectiveRatePercent: undefined, evaluated: 0, awaitingEvaluation: 0, stillOpen: 0,
+      reopened: 0, partial: 0, missingCriterion: 0, total: 0, truncated: false, rows: []
+    }));
     snack = { open: jasmine.createSpy('open') };
     await TestBed.configureTestingModule({
-      declarations: [CapaEffectivenessComponent],
+      declarations: [CapaEffectivenessComponent, CapaEvaluationBoardComponent],
       imports: [SharedModule, UiModule, MatButtonToggleModule, RouterTestingModule,
         NoopAnimationsModule],
       providers: [
@@ -57,6 +69,26 @@ describe('CapaEffectivenessComponent', () => {
     component = fixture.componentInstance;
   });
 
+  /**
+   * Ouvre l'onglet « Mesure par récidive » et rend son élément racine.
+   *
+   * <p>Deux raisons de borner les requêtes DOM à cet élément plutôt que
+   * d'interroger la page entière. D'abord la mesure vit maintenant dans le
+   * second onglet : sans ce basculement, son gabarit n'est jamais rendu et
+   * l'assertion échoue sur une absence qui n'est pas celle qu'elle vise.
+   * Ensuite les deux onglets portent les MÊMES classes d'état — `.empty`,
+   * `.notice`, `.card.alarm` — et Material garde attaché l'onglet déjà visité :
+   * une requête non bornée trouverait celle du voisin et le banc passerait au
+   * vert sans rien avoir vérifié.
+   */
+  function mesure(): HTMLElement {
+    component.tab = 1;
+    fixture.detectChanges();
+    const body = fixture.nativeElement.querySelector('.recurrence') as HTMLElement;
+    expect(body).withContext("l'onglet de mesure par récidive n'est pas rendu").toBeTruthy();
+    return body;
+  }
+
   it('demande six mois par défaut et affiche la synthèse', fakeAsync(() => {
     service.effectiveness.and.returnValue(of(summary()));
 
@@ -65,7 +97,7 @@ describe('CapaEffectivenessComponent', () => {
     fixture.detectChanges();
 
     expect(service.effectiveness).toHaveBeenCalledWith(6);
-    expect(fixture.nativeElement.textContent).toContain('92 %');
+    expect(mesure().textContent).toContain('92 %');
     expect(component.loading).toBeFalse();
   }));
 
@@ -94,7 +126,7 @@ describe('CapaEffectivenessComponent', () => {
     tick();
     fixture.detectChanges();
 
-    const texte = fixture.nativeElement.textContent;
+    const texte = mesure().textContent ?? '';
     expect(texte).toContain('Trop tôt pour conclure');
     expect(texte).not.toContain('%');
   }));
@@ -109,7 +141,7 @@ describe('CapaEffectivenessComponent', () => {
     tick();
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.textContent).toContain('Aucune occurrence antérieure');
+    expect(mesure().textContent).toContain('Aucune occurrence antérieure');
   }));
 
   it('signale un dossier déclaré efficace que la mesure dément', fakeAsync(() => {
@@ -122,9 +154,10 @@ describe('CapaEffectivenessComponent', () => {
     tick();
     fixture.detectChanges();
 
+    const body = mesure();
     expect(component.contradicted(dementie)).toBeTrue();
-    expect(fixture.nativeElement.querySelector('.contradicted')).toBeTruthy();
-    expect(fixture.nativeElement.querySelector('.card.alarm')).toBeTruthy();
+    expect(body.querySelector('.contradicted')).toBeTruthy();
+    expect(body.querySelector('.card.alarm')).toBeTruthy();
   }));
 
   it('avertit quand le périmètre a été tronqué', fakeAsync(() => {
@@ -134,7 +167,7 @@ describe('CapaEffectivenessComponent', () => {
     tick();
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector('.notice')).toBeTruthy();
+    expect(mesure().querySelector('.notice')).toBeTruthy();
   }));
 
   it('dit qu’un rapprochement par catégorie ne vaut qu’indication', fakeAsync(() => {
@@ -144,7 +177,7 @@ describe('CapaEffectivenessComponent', () => {
     tick();
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.textContent).toContain('Rapprochement par catégorie');
+    expect(mesure().textContent).toContain('Rapprochement par catégorie');
   }));
 
   it('affiche un état vide explicite quand rien n’est mesurable', fakeAsync(() => {
@@ -156,7 +189,7 @@ describe('CapaEffectivenessComponent', () => {
     tick();
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector('.empty')).toBeTruthy();
+    expect(mesure().querySelector('.empty')).toBeTruthy();
   }));
 
   it('cesse de faire patienter quand le chargement échoue', fakeAsync(() => {
@@ -173,6 +206,21 @@ describe('CapaEffectivenessComponent', () => {
     expect(component.observedMonths(row({ daysObserved: 59 }))).toBe(2);
     expect(component.windowMonths(row({ daysInWindow: 180 }))).toBe(6);
   });
+
+  it('ouvre sur le plan de travail, pas sur la mesure', fakeAsync(() => {
+    // L'onglet où l'on AGIT vient en premier : la mesure par récidive se
+    // consulte, le jugement se rend. Ouvrir sur la seconde ferait chercher
+    // l'action là où il n'y a que de la lecture.
+    service.effectiveness.and.returnValue(of(summary()));
+
+    fixture.detectChanges();
+    tick();
+    fixture.detectChanges();
+
+    expect(component.tab).toBe(0);
+    expect(fixture.nativeElement.querySelector('qos-capa-evaluation-board')).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('.recurrence')).toBeFalsy();
+  }));
 
   it('classe le taux par palier et non par nuance continue', () => {
     expect(component.rateClass(row({ ratePercent: 92 }))).toBe('rate-good');
