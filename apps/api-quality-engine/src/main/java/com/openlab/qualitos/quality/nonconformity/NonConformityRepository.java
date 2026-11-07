@@ -82,6 +82,32 @@ public interface NonConformityRepository
     long countByTenantIdAndCapaCaseIdAndStatusNotIn(UUID tenantId, UUID capaCaseId, java.util.Collection<NcStatus> statuses);
 
     /**
+     * Les écarts encore ouverts, comptés PAR dossier CAPA, en une requête
+     * (ADR 0108).
+     *
+     * <p>Le comptage par dossier existe déjà juste au-dessus, et suffit quand on
+     * regarde une fiche. Le plan de travail de l'efficacité, lui, affiche des
+     * dizaines de dossiers : l'appeler par ligne transformerait l'affichage d'un
+     * écran en dizaines d'allers-retours en base.
+     *
+     * <p>Rendu en {@code Object[]} — {@code [capaCaseId, count]} — faute de
+     * projection plus parlante sans créer un type dont la seule raison d'être
+     * serait de porter deux colonnes. L'adaptateur le transforme aussitôt en
+     * carte, et rien d'autre ne voit cette forme.
+     */
+    @org.springframework.data.jpa.repository.Query("""
+            select n.capaCaseId, count(n.id) from NonConformity n
+            where n.tenantId = :tenantId
+              and n.capaCaseId is not null
+              and n.status not in :settledStatuses
+            group by n.capaCaseId
+            """)
+    java.util.List<Object[]> countOpenPerCapaCase(
+            @org.springframework.data.repository.query.Param("tenantId") UUID tenantId,
+            @org.springframework.data.repository.query.Param("settledStatuses")
+            java.util.Collection<NcStatus> settledStatuses);
+
+    /**
      * Écart d'origine d'un dossier CAPA, pour l'afficher par son nom plutôt que
      * par un identifiant.
      *

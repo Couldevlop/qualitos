@@ -267,6 +267,8 @@ class AnomalyServiceTest {
         return new CapaDto.CaseResponse(id, TENANT, "t", "d", CapaType.CORRECTIVE,
                 CapaCriticity.LOW, CapaStatus.OPEN, CapaSourceType.ANOMALY, "anomaly:x",
                 null, null, null, null, null, null, null, null,
+                // efficacite : aucun critere pose, aucun verdict rendu
+                null, null,
                 // verification : non tranchee sur ce dossier
                 null, null, null, null,
                 null, null, List.of(), null, List.of());

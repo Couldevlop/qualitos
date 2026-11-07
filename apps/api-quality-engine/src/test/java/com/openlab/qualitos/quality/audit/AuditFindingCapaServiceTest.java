@@ -52,7 +52,7 @@ class AuditFindingCapaServiceTest {
         CapaDto.CaseResponse ouvert = new CapaDto.CaseResponse(capaId, TENANT, "t", null, CapaType.CORRECTIVE,
                 CapaCriticity.HIGH, com.openlab.qualitos.quality.capa.CapaStatus.OPEN, CapaSourceType.AUDIT,
                 null, UUID.randomUUID(), null, null, null, null, null, null, null, null, null, null, null,
-                null, null, java.util.List.of(), null, java.util.List.of());
+                null, null, null, null, java.util.List.of(), null, java.util.List.of());
         CapaDto.OpenCaseRequest demande = demande();
         when(capaService.openCase(demande, CapaSourceType.AUDIT, "AUD-2026-0003 / constat 2")).thenReturn(ouvert);
 

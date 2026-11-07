@@ -37,6 +37,8 @@ class CapaServiceTest {
     @Mock CapaEvidenceRepository evidenceRepo;
     /** Sans réglage, Mockito rend Optional.empty() : l'utilisateur voit tout (ADR 0081). */
     @Mock RecordScope scope;
+    /** L'historique des évaluations d'efficacité (ADR 0108). */
+    @Mock com.openlab.qualitos.quality.capa.effectiveness.application.EffectivenessReviewPort reviews;
     @InjectMocks CapaService service;
 
     static final UUID TENANT = UUID.randomUUID();
@@ -130,7 +132,7 @@ class CapaServiceTest {
         LocalDate due = LocalDate.now().plusDays(10);
         CapaDto.UpdateCaseRequest req = new CapaDto.UpdateCaseRequest(
                 "t2", "d2", CapaCriticity.CRITICAL, "ref2", rc, due,
-                null, null, null, null);
+                null, null, null, null, null);
         service.updateCase(c.getId(), req);
         assertThat(c.getTitle()).isEqualTo("t2");
         assertThat(c.getCriticity()).isEqualTo(CapaCriticity.CRITICAL);
@@ -144,7 +146,7 @@ class CapaServiceTest {
         when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
         assertThatThrownBy(() -> service.updateCase(c.getId(),
                 new CapaDto.UpdateCaseRequest("x", null, null, null, null, null,
-                        null, null, null, null)))
+                        null, null, null, null, null)))
                 .isInstanceOf(CapaStateException.class);
     }
 
@@ -154,7 +156,7 @@ class CapaServiceTest {
         when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
         assertThatThrownBy(() -> service.updateCase(c.getId(),
                 new CapaDto.UpdateCaseRequest("x", null, null, null, null, null,
-                        null, null, null, null)))
+                        null, null, null, null, null)))
                 .isInstanceOf(CapaStateException.class);
     }
 
@@ -164,7 +166,7 @@ class CapaServiceTest {
     private CapaDto.UpdateCaseRequest verification(Boolean exigee, UUID qui,
                                                    String nom, String consignes) {
         return new CapaDto.UpdateCaseRequest(null, null, null, null, null, null,
-                exigee, qui, nom, consignes);
+                exigee, qui, nom, consignes, null);
     }
 
     @Test
@@ -244,7 +246,7 @@ class CapaServiceTest {
 
         // La mise a jour est PARTIELLE : ne rien dire n'est pas dire « non ».
         service.updateCase(c.getId(), new CapaDto.UpdateCaseRequest(
-                "nouveau titre", null, null, null, null, null, null, null, null, null));
+                "nouveau titre", null, null, null, null, null, null, null, null, null, null));
 
         assertThat(c.getTitle()).isEqualTo("nouveau titre");
         assertThat(c.getVerificationRequired()).isTrue();
@@ -1470,5 +1472,317 @@ class CapaServiceTest {
         assertThat(service.findAll(null, PageRequest.of(0, 20)).getContent().get(0).closureBlockers())
                 .isNull();
         verifyNoInteractions(ncRepo);
+    }
+
+    // ============================================================================
+    // Verdict d'efficacite a trois etats (ADR 0108)
+    // ============================================================================
+    //
+    // Ce que ces tests protegent : le verdict PORTE ses consequences (clore, ou
+    // repartir au travail), le critere est RECOPIE dans l'evaluation au moment du
+    // jugement, et l'ancienne API continue de fonctionner a l'identique sans
+    // jamais produire le troisieme etat.
+
+    /** Identite authentifiee : l'auteur d'une evaluation se lit dans le jeton. */
+    private static void connecte(UUID userId, String nom) {
+        org.springframework.security.oauth2.jwt.Jwt jwt =
+                org.springframework.security.oauth2.jwt.Jwt.withTokenValue("t")
+                        .header("alg", "none").subject(userId.toString())
+                        .claim("name", nom).build();
+        org.springframework.security.core.context.SecurityContextHolder.getContext()
+                .setAuthentication(
+                        new org.springframework.security.oauth2.server.resource.authentication
+                                .JwtAuthenticationToken(jwt, List.of()));
+    }
+
+    @AfterEach
+    void deconnecte() {
+        org.springframework.security.core.context.SecurityContextHolder.clearContext();
+    }
+
+    private CapaCase aJuger(String critere) {
+        CapaCase c = capa(TENANT, CapaStatus.RESOLVED);
+        c.setEffectivenessCriterion(critere);
+        c.getActions().add(action(c, CapaActionStatus.DONE));
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        return c;
+    }
+
+    private static CapaDto.EffectivenessRequest verdict(com.openlab.qualitos.quality.capa.effectiveness.domain.EffectivenessVerdict v, String releve) {
+        return new CapaDto.EffectivenessRequest(null, v, "7,4 %", "< 2 %", releve, "mesure du mois");
+    }
+
+    private com.openlab.qualitos.quality.capa.effectiveness.domain.EffectivenessReview captureEvaluation() {
+        ArgumentCaptor<com.openlab.qualitos.quality.capa.effectiveness.domain.EffectivenessReview> captor = ArgumentCaptor.forClass(com.openlab.qualitos.quality.capa.effectiveness.domain.EffectivenessReview.class);
+        verify(reviews).save(captor.capture());
+        return captor.getValue();
+    }
+
+    @Test
+    void unVerdictEfficaceClotLeDossierEtConsigneSonEvaluation() {
+        UUID auteur = UUID.randomUUID();
+        connecte(auteur, "A. Diallo");
+        CapaCase c = aJuger("Moins de 2 % de rebuts sur 3 mois");
+        when(ncRepo.countByTenantIdAndCapaCaseIdAndStatusNotIn(any(), any(), any())).thenReturn(0L);
+        when(caseRepo.save(c)).thenReturn(c);
+
+        service.verifyEffectiveness(c.getId(), verdict(com.openlab.qualitos.quality.capa.effectiveness.domain.EffectivenessVerdict.EFFECTIVE, "1,1 %"));
+
+        assertThat(c.getStatus()).isEqualTo(CapaStatus.CLOSED);
+        assertThat(c.getClosedAt()).isNotNull();
+        assertThat(c.getEffectivenessVerified()).isTrue();
+        com.openlab.qualitos.quality.capa.effectiveness.domain.EffectivenessReview evaluation = captureEvaluation();
+        assertThat(evaluation.verdict()).isEqualTo(com.openlab.qualitos.quality.capa.effectiveness.domain.EffectivenessVerdict.EFFECTIVE);
+        assertThat(evaluation.observed()).isEqualTo("1,1 %");
+        assertThat(evaluation.baseline()).isEqualTo("7,4 %");
+        assertThat(evaluation.target()).isEqualTo("< 2 %");
+        assertThat(evaluation.comment()).isEqualTo("mesure du mois");
+        assertThat(evaluation.capaCaseId()).isEqualTo(c.getId());
+        assertThat(evaluation.tenantId()).isEqualTo(TENANT);
+        // L'auteur vient du JETON, jamais du corps de la requete (OWASP A01).
+        assertThat(evaluation.reviewerId()).isEqualTo(auteur);
+        assertThat(evaluation.reviewerName()).isEqualTo("A. Diallo");
+        verify(journal).record(c, CapaTransition.CLOSED);
+    }
+
+    @Test
+    void leCritereEstRecopieDansLEvaluationEtNonReference() {
+        // Recopie, pour que modifier le critere du dossier plus tard ne reecrive
+        // pas le jugement rendu contre l'ancien. C'est la difference entre un
+        // historique et une photographie de l'etat courant.
+        connecte(UUID.randomUUID(), "A. Diallo");
+        CapaCase c = aJuger("Moins de 2 % de rebuts sur 3 mois");
+        when(caseRepo.save(c)).thenReturn(c);
+
+        service.verifyEffectiveness(c.getId(), verdict(com.openlab.qualitos.quality.capa.effectiveness.domain.EffectivenessVerdict.PARTIAL, "3,1 %"));
+        c.setEffectivenessCriterion("un critere tout autre");
+
+        assertThat(captureEvaluation().criterion()).isEqualTo("Moins de 2 % de rebuts sur 3 mois");
+    }
+
+    @Test
+    void unVerdictPartielRepartLeDossierAuTravailSansLeClore() {
+        connecte(UUID.randomUUID(), "A. Diallo");
+        CapaCase c = aJuger("Moins de 2 % de rebuts sur 3 mois");
+        when(caseRepo.save(c)).thenReturn(c);
+
+        service.verifyEffectiveness(c.getId(), verdict(com.openlab.qualitos.quality.capa.effectiveness.domain.EffectivenessVerdict.PARTIAL, "3,1 %"));
+
+        assertThat(c.getStatus()).isEqualTo(CapaStatus.IN_PROGRESS);
+        assertThat(c.getResolvedAt()).isNull();
+        assertThat(c.getClosedAt()).isNull();
+        // L'ancien booleen ne sait dire que oui ou non : PARTIEL y vaut non.
+        assertThat(c.getEffectivenessVerified()).isFalse();
+        assertThat(c.getEffectivenessVerifiedAt()).isNotNull();
+        verify(journal).record(c, CapaTransition.EFFECTIVENESS_PARTIAL);
+    }
+
+    @Test
+    void unVerdictQuiNeClotPasNExigePasQueToutSoitFait() {
+        // Constater l'insuffisance n'est pas clore : exiger que toutes les actions
+        // soient faites empecherait de consigner que les actions en cours ne
+        // produisent pas l'effet attendu.
+        connecte(UUID.randomUUID(), "A. Diallo");
+        CapaCase c = capa(TENANT, CapaStatus.RESOLVED);
+        c.setEffectivenessCriterion("Moins de 2 % de rebuts");
+        c.getActions().add(action(c, CapaActionStatus.PENDING));
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(caseRepo.save(c)).thenReturn(c);
+
+        service.verifyEffectiveness(c.getId(), verdict(com.openlab.qualitos.quality.capa.effectiveness.domain.EffectivenessVerdict.PARTIAL, "5,0 %"));
+
+        assertThat(c.getStatus()).isEqualTo(CapaStatus.IN_PROGRESS);
+    }
+
+    @Test
+    void unVerdictPartielNEstPasRefusePourEndiguementSeul() {
+        connecte(UUID.randomUUID(), "A. Diallo");
+        CapaCase c = capa(TENANT, CapaStatus.RESOLVED);
+        c.setEffectivenessCriterion("Moins de 2 % de rebuts");
+        c.getActions().add(action(c, CapaActionStatus.DONE, CapaActionType.CONTAINMENT));
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(caseRepo.save(c)).thenReturn(c);
+
+        service.verifyEffectiveness(c.getId(), verdict(com.openlab.qualitos.quality.capa.effectiveness.domain.EffectivenessVerdict.PARTIAL, "5,0 %"));
+
+        assertThat(c.getStatus()).isEqualTo(CapaStatus.IN_PROGRESS);
+    }
+
+    @Test
+    void lesDeuxFormesEnsembleSontRefuseesPlutotQuArbitrees() {
+        // Deux jugements dans une meme requete disent que l'appelant ne sait pas
+        // lequel il envoie ; en choisir un pour lui enterrerait son defaut.
+        CapaCase c = aJuger("Moins de 2 % de rebuts");
+
+        assertThatThrownBy(() -> service.verifyEffectiveness(c.getId(),
+                new CapaDto.EffectivenessRequest(Boolean.TRUE, com.openlab.qualitos.quality.capa.effectiveness.domain.EffectivenessVerdict.EFFECTIVE,
+                        null, null, "1,1 %", null)))
+                .isInstanceOf(CapaValidationException.class)
+                .hasMessageContaining("not both");
+
+        verifyNoInteractions(reviews);
+        verify(caseRepo, never()).save(any());
+    }
+
+    @Test
+    void aucuneDesDeuxFormesEstRefuseeEnNommantLesTroisEtats() {
+        CapaCase c = aJuger("Moins de 2 % de rebuts");
+
+        assertThatThrownBy(() -> service.verifyEffectiveness(c.getId(),
+                new CapaDto.EffectivenessRequest(null, null, null, null, "1,1 %", null)))
+                .isInstanceOf(CapaValidationException.class)
+                .hasMessageContaining("EFFECTIVE")
+                .hasMessageContaining("PARTIAL")
+                .hasMessageContaining("INEFFECTIVE");
+
+        verifyNoInteractions(reviews);
+    }
+
+    @Test
+    void unVerdictSansReleveEstRefuse() {
+        // Un verdict sans mesure n'est pas un jugement, c'est une opinion.
+        CapaCase c = aJuger("Moins de 2 % de rebuts");
+
+        assertThatThrownBy(() -> service.verifyEffectiveness(c.getId(),
+                new CapaDto.EffectivenessRequest(null, com.openlab.qualitos.quality.capa.effectiveness.domain.EffectivenessVerdict.EFFECTIVE, null, null, "   ", null)))
+                .isInstanceOf(CapaValidationException.class)
+                .hasMessageContaining("observed");
+
+        verifyNoInteractions(reviews);
+        verify(caseRepo, never()).save(any());
+    }
+
+    @Test
+    void jugerSansCritereEstRefuseEtLeMessageDitOuLePoser() {
+        // Juger sans critere annonce revient a choisir le critere en regardant le
+        // resultat. Le refus nomme le geste a faire plutot que le champ vide.
+        CapaCase c = aJuger(null);
+
+        assertThatThrownBy(() -> service.verifyEffectiveness(c.getId(),
+                verdict(com.openlab.qualitos.quality.capa.effectiveness.domain.EffectivenessVerdict.EFFECTIVE, "1,1 %")))
+                .isInstanceOf(CapaValidationException.class)
+                .hasMessageContaining("criterion")
+                .hasMessageContaining("before evaluating");
+
+        verifyNoInteractions(reviews);
+        verify(caseRepo, never()).save(any());
+    }
+
+    @Test
+    void lAncienneApiContinueDeFonctionnerSurUnDossierSansCritere() {
+        // Exiger un critere de l'ancien booleen casserait les integrations
+        // existantes et rendrait inevaluables tous les dossiers ouverts avant
+        // cette fonctionnalite. On inscrit une mention explicite.
+        CapaCase c = aJuger(null);
+        when(ncRepo.countByTenantIdAndCapaCaseIdAndStatusNotIn(any(), any(), any())).thenReturn(0L);
+        when(caseRepo.save(c)).thenReturn(c);
+
+        service.verifyEffectiveness(c.getId(), new CapaDto.EffectivenessRequest(true));
+
+        assertThat(c.getStatus()).isEqualTo(CapaStatus.CLOSED);
+        com.openlab.qualitos.quality.capa.effectiveness.domain.EffectivenessReview evaluation = captureEvaluation();
+        assertThat(evaluation.criterion()).isEqualTo(CapaService.LEGACY_CRITERION);
+        assertThat(evaluation.observed()).isEqualTo(CapaService.LEGACY_OBSERVED);
+        assertThat(evaluation.verdict()).isEqualTo(com.openlab.qualitos.quality.capa.effectiveness.domain.EffectivenessVerdict.EFFECTIVE);
+    }
+
+    @Test
+    void lAncienneApiNeProduitJamaisLeTroisiemeEtat() {
+        // Traduire false en PARTIEL inventerait une nuance que l'appelant n'a pas
+        // exprimee, et inscrirait au registre un jugement que personne n'a rendu.
+        CapaCase c = aJuger("Moins de 2 % de rebuts");
+        when(caseRepo.save(c)).thenReturn(c);
+
+        service.verifyEffectiveness(c.getId(), new CapaDto.EffectivenessRequest(false));
+
+        assertThat(captureEvaluation().verdict()).isEqualTo(com.openlab.qualitos.quality.capa.effectiveness.domain.EffectivenessVerdict.INEFFECTIVE);
+        verify(journal).record(c, CapaTransition.EFFECTIVENESS_REJECTED);
+    }
+
+    @Test
+    void lAncienneApiHonoreLeCritereDuDossierQuandIlYEnA() {
+        CapaCase c = aJuger("Moins de 2 % de rebuts sur 3 mois");
+        when(caseRepo.save(c)).thenReturn(c);
+
+        service.verifyEffectiveness(c.getId(), new CapaDto.EffectivenessRequest(false));
+
+        assertThat(captureEvaluation().criterion()).isEqualTo("Moins de 2 % de rebuts sur 3 mois");
+    }
+
+    @Test
+    void laFicheDetailleeRendLeCritereEtLeDernierVerdict() {
+        CapaCase c = capa(TENANT, CapaStatus.IN_PROGRESS);
+        c.setEffectivenessCriterion("Moins de 2 % de rebuts");
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(reviews.findLastByCase(TENANT, c.getId())).thenReturn(Optional.of(
+                com.openlab.qualitos.quality.capa.effectiveness.domain.EffectivenessReview.record(UUID.randomUUID(), TENANT, c.getId(), com.openlab.qualitos.quality.capa.effectiveness.domain.EffectivenessVerdict.PARTIAL,
+                        "Moins de 2 % de rebuts", null, null, "3,1 %", null, null, null,
+                        Instant.now())));
+
+        CapaDto.CaseResponse r = service.findById(c.getId());
+
+        assertThat(r.effectivenessCriterion()).isEqualTo("Moins de 2 % de rebuts");
+        assertThat(r.effectivenessVerdict()).isEqualTo(com.openlab.qualitos.quality.capa.effectiveness.domain.EffectivenessVerdict.PARTIAL);
+    }
+
+    @Test
+    void laListePagineeNeVaPasChercherLeDernierVerdictParLigne() {
+        // Une requete par ligne pour une information que la liste n'affiche pas.
+        CapaCase c = capa(TENANT, CapaStatus.IN_PROGRESS);
+        when(caseRepo.findByTenantId(any(), any())).thenReturn(new PageImpl<>(List.of(c)));
+
+        service.findAll(null, PageRequest.of(0, 20));
+
+        verify(reviews, never()).findLastByCase(any(), any());
+    }
+
+    @Test
+    void leCritereSePoseALOuvertureEtSeModifieTantQuAucunJugementNEstRendu() {
+        CapaCase c = capa(TENANT, CapaStatus.OPEN);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(caseRepo.save(c)).thenReturn(c);
+        when(reviews.findByCase(TENANT, c.getId())).thenReturn(List.of());
+
+        service.updateCase(c.getId(), new CapaDto.UpdateCaseRequest(null, null, null, null, null,
+                null, null, null, null, null, "  Moins de 2 % de rebuts sur 3 mois  "));
+
+        assertThat(c.getEffectivenessCriterion()).isEqualTo("Moins de 2 % de rebuts sur 3 mois");
+    }
+
+    @Test
+    void leCritereNeSeModifiePlusDesQuUnJugementAEteRendu() {
+        // Les verdicts passes ont ete rendus CONTRE lui : le changer reecrirait
+        // apres coup la question a laquelle on a repondu.
+        CapaCase c = capa(TENANT, CapaStatus.IN_PROGRESS);
+        c.setEffectivenessCriterion("Moins de 2 % de rebuts");
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(reviews.findByCase(TENANT, c.getId())).thenReturn(List.of(
+                com.openlab.qualitos.quality.capa.effectiveness.domain.EffectivenessReview.record(UUID.randomUUID(), TENANT, c.getId(), com.openlab.qualitos.quality.capa.effectiveness.domain.EffectivenessVerdict.INEFFECTIVE,
+                        "Moins de 2 % de rebuts", null, null, "9 %", null, null, null,
+                        Instant.now())));
+
+        assertThatThrownBy(() -> service.updateCase(c.getId(),
+                new CapaDto.UpdateCaseRequest(null, null, null, null, null, null,
+                        null, null, null, null, "un critere tout autre")))
+                .isInstanceOf(CapaStateException.class)
+                .hasMessageContaining("already been evaluated");
+
+        assertThat(c.getEffectivenessCriterion()).isEqualTo("Moins de 2 % de rebuts");
+    }
+
+    @Test
+    void renvoyerLeMemeCritereNEstPasUneModification() {
+        // L'ecran poste souvent la fiche entiere : un PATCH qui renvoie le champ
+        // inchange ne doit pas etre refuse sur un dossier deja juge.
+        CapaCase c = capa(TENANT, CapaStatus.IN_PROGRESS);
+        c.setEffectivenessCriterion("Moins de 2 % de rebuts");
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(caseRepo.save(c)).thenReturn(c);
+
+        service.updateCase(c.getId(), new CapaDto.UpdateCaseRequest(null, null, null, null, null,
+                null, null, null, null, null, "Moins de 2 % de rebuts"));
+
+        assertThat(c.getEffectivenessCriterion()).isEqualTo("Moins de 2 % de rebuts");
+        verify(reviews, never()).findByCase(any(), any());
     }
 }

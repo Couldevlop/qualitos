@@ -1,6 +1,10 @@
 package com.openlab.qualitos.quality.capa;
 
 import com.openlab.qualitos.quality.authz.application.RecordScope;
+import com.openlab.qualitos.quality.capa.effectiveness.application.EffectivenessReviewPort;
+import com.openlab.qualitos.quality.capa.effectiveness.domain.EffectivenessReview;
+import com.openlab.qualitos.quality.capa.effectiveness.domain.EffectivenessVerdict;
+import com.openlab.qualitos.quality.common.CurrentUser;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.nonconformity.NcStatus;
 import com.openlab.qualitos.quality.nonconformity.NonConformityRepository;
@@ -42,18 +46,29 @@ public class CapaService {
     private final CapaEvidenceRepository evidenceRepository;
     /** Sans « voir tous les dossiers », on ne voit que ceux qui nous concernent (ADR 0081). */
     private final RecordScope scope;
+    /**
+     * L'historique des évaluations d'efficacité (ADR 0108).
+     *
+     * <p>Écriture seule depuis ici, et à travers un port : le dossier CAPA
+     * détient la machine à états, le contexte d'efficacité détient la trace du
+     * jugement. Deux endroits capables de changer le statut d'un dossier
+     * finiraient par en changer différemment.
+     */
+    private final EffectivenessReviewPort effectivenessReviews;
 
     public CapaService(CapaCaseRepository caseRepository, CapaActionRepository actionRepository,
                        CapaLifecycleJournal journal,
                        NonConformityRepository ncRepository,
                        CapaEvidenceRepository evidenceRepository,
-                       RecordScope scope) {
+                       RecordScope scope,
+                       EffectivenessReviewPort effectivenessReviews) {
         this.caseRepository = caseRepository;
         this.actionRepository = actionRepository;
         this.journal = journal;
         this.ncRepository = ncRepository;
         this.evidenceRepository = evidenceRepository;
         this.scope = scope;
+        this.effectivenessReviews = effectivenessReviews;
     }
 
     /**
@@ -179,6 +194,11 @@ public class CapaService {
         c.setOwnerName(pilote);
         c.setDueDate(request.dueDate());
         c.setStatus(CapaStatus.OPEN);
+        // Le critère d'efficacité part avec l'ouverture (ADR 0108) : c'est au
+        // moment où l'on décide de l'action qu'on décide à quoi on reconnaîtra
+        // qu'elle a marché. Écrit plus tard, il se choisit en regardant le
+        // résultat — et ce n'est plus un critère.
+        c.setEffectivenessCriterion(nettoyer(request.effectivenessCriterion()));
         // La décision de vérification, prise à l'ouverture : mêmes gardes que
         // la mise à jour, avant toute écriture — un refus ne laisse rien.
         appliquerVerification(c, request.verificationRequired(), request.verificationAssigneeId(),
@@ -219,11 +239,43 @@ public class CapaService {
         if (request.sourceRef() != null) c.setSourceRef(request.sourceRef());
         if (request.rootCauseId() != null) c.setRootCauseId(request.rootCauseId());
         if (request.dueDate() != null) c.setDueDate(request.dueDate());
+        if (request.effectivenessCriterion() != null) {
+            appliquerCritere(c, request.effectivenessCriterion());
+        }
         appliquerVerification(c, request.verificationRequired(), request.verificationAssigneeId(),
                 request.verificationAssigneeName(), request.verificationInstructions());
         CapaCase saved = caseRepository.save(c);
         journal.record(saved, CapaTransition.UPDATED);
         return toResponse(saved);
+    }
+
+    /**
+     * Le critère d'efficacité, modifiable tant qu'aucun jugement ne s'y appuie
+     * (ADR 0108).
+     *
+     * <p><b>Pourquoi un verrou.</b> Les évaluations recopient le critère, donc
+     * le modifier ici ne réécrit aucune trace — l'historique est sauf dans tous
+     * les cas. Ce qui ne l'est pas, c'est le sens du dossier : changer le critère
+     * après un premier verdict, c'est déplacer la cible entre deux mesures, et
+     * la suite des verdicts ne se lirait plus comme une progression mais comme
+     * une comparaison de choses différentes.
+     *
+     * <p>Un dossier jamais évalué, lui, se corrige librement : un critère mal
+     * formulé doit pouvoir être reformulé avant qu'il ne serve.
+     */
+    private void appliquerCritere(CapaCase c, String critere) {
+        String propre = nettoyer(critere);
+        if (java.util.Objects.equals(propre, c.getEffectivenessCriterion())) {
+            // Un PATCH qui renvoie le champ inchangé ne doit pas être refusé :
+            // l'écran poste souvent la fiche entière.
+            return;
+        }
+        if (!effectivenessReviews.findByCase(c.getTenantId(), c.getId()).isEmpty()) {
+            throw new CapaStateException(
+                    "This CAPA has already been evaluated: its effectiveness criterion can no "
+                    + "longer change, as past verdicts were rendered against it");
+        }
+        c.setEffectivenessCriterion(propre);
     }
 
     /**
@@ -327,13 +379,38 @@ public class CapaService {
         return toResponse(saved);
     }
 
+    /**
+     * L'évaluation d'efficacité d'un dossier (ADR 0108).
+     *
+     * <p><b>Trois verdicts, une seule machine à états.</b> {@code EFFECTIVE}
+     * clôt ; {@code PARTIAL} et {@code INEFFECTIVE} renvoient le dossier en
+     * traitement. Ce que chaque verdict entraîne est porté par
+     * {@link EffectivenessVerdict} et non par une suite de conditions ici :
+     * ajouter un verdict sans décider de son effet devient impossible à oublier.
+     *
+     * <p><b>Le verrou « toutes les actions réalisées » s'applique désormais à
+     * TOUTE évaluation</b>, et non plus à la seule clôture. Juger l'effet d'une
+     * action qu'on n'a pas menée n'a aucun sens, et consigner un refus
+     * d'efficacité sur un dossier inachevé ne voulait rien dire. C'est le verrou
+     * que décrit la maquette, désormais tenu par le serveur et pas seulement
+     * annoncé par l'écran.
+     *
+     * <p>Les autres garde-fous — pas d'endiguement seul, aucune non-conformité
+     * rattachée encore ouverte — ne concernent que {@code EFFECTIVE} : ils
+     * protègent la clôture, et rien d'autre.
+     */
     public CapaDto.CaseResponse verifyEffectiveness(UUID id, CapaDto.EffectivenessRequest request) {
         CapaCase c = loadCase(id);
+        EffectivenessVerdict verdict = resolveVerdict(request);
         if (c.getStatus() != CapaStatus.RESOLVED) {
             throw new CapaStateException("Effectiveness check requires status RESOLVED");
         }
-        boolean effective = Boolean.TRUE.equals(request.effective());
-        if (effective) {
+        // Les trois obstacles ci-dessous ne valent QUE pour un verdict qui clôt.
+        // Constater l'échec — INEFFICACE — ou l'insuffisance — PARTIEL — ne
+        // ferme rien : l'interdire empêcherait de consigner que les actions
+        // n'ont pas produit leur effet, et c'est précisément ce constat que la
+        // boucle d'amélioration a besoin d'écrire pour repartir.
+        if (verdict.closesCase()) {
             // Toutes les actions doivent être faites — y compris celles ajoutées
             // APRÈS la résolution. `resolveCase` l'a vérifié à son moment, mais
             // rien n'interdit d'ajouter une action à un dossier RESOLVED, et le
@@ -351,8 +428,6 @@ public class CapaService {
             // d'endiguement arrêtent l'effet et laissent la cause intacte
             // (ISO 9001 §10.2). Le clore reviendrait à inscrire au registre que
             // le problème est traité, alors qu'il reviendra dès la mesure levée.
-            // Le refus ne coûte rien aux dossiers antérieurs : ils portent tous
-            // des actions correctives, ce type n'ayant jamais pu être saisi avant.
             if (isContainmentOnly(c.getActions())) {
                 throw new CapaStateException(
                         "This CAPA carries containment actions only: they stop the effect "
@@ -370,20 +445,125 @@ public class CapaService {
                         + "close them before closing this CAPA");
             }
         }
-        c.setEffectivenessVerified(request.effective());
-        c.setEffectivenessVerifiedAt(Instant.now());
-        if (effective) {
+
+        Instant now = Instant.now();
+        // Le critère est RECOPIÉ dans l'évaluation. Juger sans critère annoncé
+        // revient à choisir le critère en regardant le résultat : le domaine
+        // refuse, et son refus dit quoi écrire et où.
+        EffectivenessReview review = EffectivenessReview.record(
+                UUID.randomUUID(), c.getTenantId(), c.getId(), verdict,
+                criterionOf(request, c),
+                request.baseline(), request.target(), observedOf(request),
+                request.comment(),
+                CurrentUser.userId().orElse(null),
+                CurrentUser.displayName().orElse(null),
+                now);
+        effectivenessReviews.save(review);
+
+        // L'ancien booléen devient la projection du verdict, et n'est plus écrit
+        // à la main. PARTIAL y vaut false : ce champ n'a jamais su dire autre
+        // chose que oui ou non.
+        c.setEffectivenessVerified(verdict.asLegacyVerifiedFlag());
+        c.setEffectivenessVerifiedAt(now);
+        if (verdict.closesCase()) {
             c.setStatus(CapaStatus.CLOSED);
-            c.setClosedAt(Instant.now());
+            c.setClosedAt(now);
         } else {
             c.setStatus(CapaStatus.IN_PROGRESS);
             c.setResolvedAt(null);
         }
         CapaCase saved = caseRepository.save(c);
-        // Une efficacité NON démontrée est un fait au moins aussi important que
-        // la clôture : elle dit que l'action corrective n'a pas produit son effet.
-        journal.record(saved, effective ? CapaTransition.CLOSED : CapaTransition.EFFECTIVENESS_REJECTED);
+        journal.record(saved, transitionFor(verdict));
         return toResponse(saved);
+    }
+
+    /**
+     * Le verdict de la requête, quelle que soit la forme employée.
+     *
+     * <p>Exactement l'un des deux champs : {@code verdict}, la forme à employer,
+     * ou {@code effective}, l'ancien booléen conservé pour les intégrations
+     * (§13.1). Les deux ensemble sont refusés plutôt qu'arbitrés — deux
+     * jugements dans une même requête disent que l'appelant ne sait pas lequel
+     * il envoie, et en choisir un pour lui enterrerait son défaut.
+     */
+    private static EffectivenessVerdict resolveVerdict(CapaDto.EffectivenessRequest request) {
+        boolean hasVerdict = request.verdict() != null;
+        boolean hasFlag = request.effective() != null;
+        if (hasVerdict == hasFlag) {
+            throw new CapaValidationException(hasVerdict
+                    ? "Provide either verdict or the deprecated effective flag, not both"
+                    : "A verdict is required: EFFECTIVE, PARTIAL or INEFFECTIVE");
+        }
+        return hasVerdict
+                ? request.verdict()
+                : EffectivenessVerdict.fromLegacyFlag(request.effective());
+    }
+
+    /**
+     * Le relevé constaté, obligatoire sur la forme moderne.
+     *
+     * <p>L'ancien champ booléen n'en demandait aucun : l'exiger de lui casserait
+     * les appelants existants. On inscrit alors une mention explicite plutôt
+     * qu'un vide — l'historique doit pouvoir expliquer, des années plus tard,
+     * pourquoi cette ligne-là ne porte pas de mesure.
+     */
+    private static String observedOf(CapaDto.EffectivenessRequest request) {
+        if (request.observed() != null && !request.observed().isBlank()) {
+            return request.observed();
+        }
+        if (request.verdict() != null) {
+            throw new CapaValidationException(
+                    "The observed reading is required: an effectiveness verdict rests on a measure");
+        }
+        return LEGACY_OBSERVED;
+    }
+
+    /**
+     * Ce qu'on inscrit comme relevé quand l'appel vient de l'ancienne API.
+     *
+     * <p>Une constante et non un littéral dispersé : c'est la valeur qu'un
+     * auditeur rencontrera dans l'historique, et elle doit se chercher.
+     */
+    static final String LEGACY_OBSERVED = "n/a (API héritée)";
+
+    /**
+     * Le critère contre lequel le verdict est rendu, recopié dans l'évaluation.
+     *
+     * <p>Sur la forme moderne, il est EXIGÉ et doit avoir été posé sur le
+     * dossier AVANT l'évaluation (ADR 0108) : juger sans critère annoncé revient
+     * à choisir le critère en regardant le résultat, et le refus dit où le
+     * poser. L'écran n'ouvre d'ailleurs le panneau d'évaluation que lorsqu'il
+     * est là — mais une règle tenue par le seul écran n'est pas une règle.
+     *
+     * <p>L'ancien booléen, lui, n'en a jamais demandé : l'exiger de lui
+     * casserait les intégrations existantes (§13.1) et rendrait inévaluables
+     * tous les dossiers ouverts avant cette fonctionnalité. On inscrit alors une
+     * mention explicite plutôt qu'un vide, pour que l'historique puisse
+     * expliquer, des années plus tard, pourquoi cette ligne-là n'en porte pas.
+     */
+    private static String criterionOf(CapaDto.EffectivenessRequest request, CapaCase c) {
+        String posed = c.getEffectivenessCriterion();
+        if (posed != null && !posed.isBlank()) {
+            return posed;
+        }
+        if (request.verdict() != null) {
+            throw new CapaValidationException(
+                    "No effectiveness criterion is set on this CAPA: define it on the case "
+                    + "before evaluating it, so the verdict is judged against a criterion "
+                    + "chosen in advance");
+        }
+        return LEGACY_CRITERION;
+    }
+
+    /** Ce qu'on inscrit comme critère quand l'appel vient de l'ancienne API. */
+    static final String LEGACY_CRITERION = "n/a (aucun critère posé — API héritée)";
+
+    private static CapaTransition transitionFor(EffectivenessVerdict verdict) {
+        return switch (verdict) {
+            case EFFECTIVE -> CapaTransition.CLOSED;
+            case PARTIAL -> CapaTransition.EFFECTIVENESS_PARTIAL;
+            case INEFFECTIVE -> CapaTransition.EFFECTIVENESS_REJECTED;
+        };
     }
 
     public CapaDto.CaseResponse rejectCase(UUID id) {
@@ -585,10 +765,13 @@ public class CapaService {
     }
 
     /**
-     * @param detailed résout l'écart d'origine ET les motifs de blocage — soit
-     *        une requête de plus par dossier. La liste paginée s'en passe :
-     *        vingt dossiers vaudraient vingt requêtes pour deux informations
-     *        que la liste n'affiche pas.
+     * @param detailed résout l'écart d'origine, les motifs de blocage ET le
+     *        dernier verdict d'efficacité — soit une requête de plus par
+     *        dossier chacun. La liste paginée s'en passe : vingt dossiers
+     *        vaudraient soixante requêtes pour des informations que la liste
+     *        n'affiche pas. Le plan de travail de l'efficacité, lui, les obtient
+     *        en une seule requête pour tout le tableau (voir
+     *        {@code EffectivenessReviewPort#findLastPerCase}).
      */
     private CapaDto.CaseResponse toResponse(CapaCase c, boolean detailed) {
         return new CapaDto.CaseResponse(
@@ -598,12 +781,28 @@ public class CapaService {
                 c.getRootCauseId(), c.getDueDate(),
                 c.getResolvedAt(), c.getClosedAt(),
                 c.getEffectivenessVerified(), c.getEffectivenessVerifiedAt(),
+                c.getEffectivenessCriterion(), detailed ? lastVerdict(c) : null,
                 c.getVerificationRequired(), c.getVerificationAssigneeId(),
                 c.getVerificationAssigneeName(), c.getVerificationInstructions(),
                 c.getCreatedAt(), c.getUpdatedAt(),
                 c.getActions().stream().map(this::toActionResponse).toList(),
                 detailed ? resolveSourceNc(c) : null,
                 detailed ? closureBlockers(c) : null);
+    }
+
+    /**
+     * Le dernier verdict d'efficacité du dossier, ou {@code null} s'il n'a
+     * jamais été évalué (ADR 0108).
+     *
+     * <p>Lu depuis l'historique plutôt que recopié sur le dossier. Une colonne
+     * de plus sur {@code capa_cases} serait plus rapide, et se désynchroniserait
+     * le premier jour où une évaluation serait enregistrée par un autre chemin :
+     * il y aurait alors deux réponses à la même question, dont une fausse.
+     */
+    private EffectivenessVerdict lastVerdict(CapaCase c) {
+        return effectivenessReviews.findLastByCase(c.getTenantId(), c.getId())
+                .map(EffectivenessReview::verdict)
+                .orElse(null);
     }
 
     private CapaDto.ActionResponse toActionResponse(CapaAction a) {

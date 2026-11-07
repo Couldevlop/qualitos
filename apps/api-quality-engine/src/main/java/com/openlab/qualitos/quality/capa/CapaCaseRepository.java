@@ -59,6 +59,32 @@ public interface CapaCaseRepository extends JpaRepository<CapaCase, UUID> {
     List<CapaCase> findByTenantIdAndStatusOrderByClosedAtDesc(UUID tenantId, CapaStatus status);
 
     /**
+     * Les dossiers qui entrent dans la boucle d'efficacité (ADR 0108) : tous
+     * ceux dont le statut n'est pas exclu — en pratique, tous sauf les dossiers
+     * rejetés, qui n'ont jamais été instruits et dont il n'y a rien à juger.
+     *
+     * <p><b>Les actions sont chargées AVEC le dossier</b> ({@code left join
+     * fetch}). Sans cela, le plan de travail déclenche une requête par ligne
+     * pour compter les actions réalisées — exactement le défaut que le port
+     * d'évaluation interdit dans son contrat. {@code distinct} est nécessaire
+     * parce que la jointure duplique le dossier autant de fois qu'il a
+     * d'actions.
+     *
+     * <p>Non paginée à dessein, comme la mesure par récidive : les indicateurs
+     * portent sur l'ensemble, et un taux calculé sur une page n'aurait aucun
+     * sens. C'est le service qui borne ce qu'il AFFICHE, et qui le dit.
+     */
+    @Query("""
+            select distinct c from CapaCase c
+            left join fetch c.actions
+            where c.tenantId = :tenantId
+              and c.status not in :excludedStatuses
+            """)
+    List<CapaCase> findForEffectivenessBoard(
+            @Param("tenantId") UUID tenantId,
+            @Param("excludedStatuses") Collection<CapaStatus> excludedStatuses);
+
+    /**
      * Idempotence des CAPA auto-générées (ex. dérive IoT) : vrai si une CAPA
      * non terminale existe déjà pour la même origine. Évite le spam d'une CAPA
      * par mesure tant que la précédente n'est pas clôturée.

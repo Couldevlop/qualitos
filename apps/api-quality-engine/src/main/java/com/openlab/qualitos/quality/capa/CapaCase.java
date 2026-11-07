@@ -84,6 +84,22 @@ public class CapaCase {
     private Instant effectivenessVerifiedAt;
 
     /**
+     * Le critère d'efficacité : la phrase qui dit à quoi on reconnaîtra que
+     * l'action a marché — « zéro erreur de référence sur 90 jours » (ADR 0108).
+     *
+     * <p>Il vit sur le DOSSIER et non sur l'évaluation parce qu'il doit précéder
+     * la mesure. Sans lui, le critère se décidait au moment de juger, par la
+     * personne qui avait mené l'action, en regardant le résultat obtenu : un
+     * critère écrit après la mesure n'est pas un critère, c'est un commentaire.
+     *
+     * <p>L'évaluation le RECOPIE dans son enregistrement. Le modifier ici ne
+     * doit pas réécrire celui sur lequel une évaluation passée s'est prononcée —
+     * même raison que {@code verificationAssigneeName}, recopié de l'annuaire.
+     */
+    @Column(name = "effectiveness_criterion", columnDefinition = "TEXT")
+    private String effectivenessCriterion;
+
+    /**
      * Une vérification d'efficacité est-elle EXIGÉE sur ce dossier ?
      *
      * <p>À distinguer de {@code effectivenessVerified}, qui dit si elle a eu

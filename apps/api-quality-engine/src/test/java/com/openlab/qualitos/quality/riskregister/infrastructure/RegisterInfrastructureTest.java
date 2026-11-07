@@ -335,6 +335,7 @@ class RegisterInfrastructureTest {
         CapaDto.CaseResponse reponse = new CapaDto.CaseResponse(capaId, TENANT, "Carte SPC", "desc",
                 CapaType.CORRECTIVE, CapaCriticity.HIGH, CapaStatus.OPEN, CapaSourceType.RISK, "R-014", pilote,
                 "A. Diallo", null, LocalDate.of(2026, 12, 1), null, null, null, null, null, null, null, null,
+                null, null,
                 T0, T0, List.of(), null, List.of());
         when(capaService.openCase(any(), eq(CapaSourceType.RISK), eq("R-014"))).thenReturn(reponse);
         Risk r = risque(UUID.randomUUID());

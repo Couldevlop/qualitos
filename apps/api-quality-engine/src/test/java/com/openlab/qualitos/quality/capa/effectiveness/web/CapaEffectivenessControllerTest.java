@@ -2,6 +2,10 @@ package com.openlab.qualitos.quality.capa.effectiveness.web;
 
 import com.openlab.qualitos.quality.capa.effectiveness.application.CapaEffectivenessDto;
 import com.openlab.qualitos.quality.capa.effectiveness.application.CapaEffectivenessService;
+import com.openlab.qualitos.quality.capa.effectiveness.application.EffectivenessBoardDto;
+import com.openlab.qualitos.quality.capa.effectiveness.application.EffectivenessBoardService;
+import com.openlab.qualitos.quality.capa.effectiveness.domain.EffectivenessVerdict;
+import com.openlab.qualitos.quality.capa.effectiveness.domain.EvaluationStage;
 import com.openlab.qualitos.quality.capa.effectiveness.domain.MeasurementStatus;
 import com.openlab.qualitos.quality.common.MethodSecurityTestConfig;
 import org.junit.jupiter.api.Tag;
@@ -46,6 +50,9 @@ class CapaEffectivenessControllerTest {
 
     @MockitoBean
     CapaEffectivenessService service;
+
+    @MockitoBean
+    EffectivenessBoardService board;
 
     @Test
     @WithMockUser(authorities = "ROLE_USER")
@@ -110,6 +117,133 @@ class CapaEffectivenessControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.rows").isEmpty())
                 .andExpect(jsonPath("$.averageRatePercent").doesNotExist());
+    }
+
+    // --- le plan de travail des évaluations (ADR 0108) ---
+
+    @Test
+    @WithMockUser(authorities = "ROLE_USER")
+    void itRendersTheEvaluationBoard() throws Exception {
+        when(board.board()).thenReturn(boardSummary());
+
+        mockMvc.perform(get(URL + "/board"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.effectiveRatePercent").value(50))
+                .andExpect(jsonPath("$.awaitingEvaluation").value(1))
+                .andExpect(jsonPath("$.missingCriterion").value(1))
+                .andExpect(jsonPath("$.total").value(2))
+                .andExpect(jsonPath("$.truncated").value(false))
+                .andExpect(jsonPath("$.rows[0].reference").value("CAPA-2026-0007"))
+                .andExpect(jsonPath("$.rows[0].stage").value("AWAITING_EVALUATION"))
+                .andExpect(jsonPath("$.rows[0].evaluable").value(true))
+                .andExpect(jsonPath("$.rows[0].criterion").value("< 2 ‰ sur 3 mois"))
+                .andExpect(jsonPath("$.rows[0].lastReview.verdict").value("PARTIAL"))
+                .andExpect(jsonPath("$.rows[0].lastReview.observed").value("3,1 ‰"))
+                .andExpect(jsonPath("$.rows[0].reviewCount").value(2));
+    }
+
+    @Test
+    @WithMockUser(authorities = "ROLE_USER")
+    void theBoardTakesNoParameterSoNoneCanBeWrong() throws Exception {
+        // Le tri par urgence remplace un filtre de statut : ce qui est à juger
+        // arrive en tête, et personne n'a à savoir quel statut demander. Un
+        // paramètre inconnu est donc ignoré, pas honoré par accident.
+        when(board.board()).thenReturn(boardSummary());
+
+        mockMvc.perform(get(URL + "/board").param("stage", "N'IMPORTE_QUOI"))
+                .andExpect(status().isOk());
+
+        verify(board).board();
+    }
+
+    @Test
+    @WithMockUser(authorities = "ROLE_USER")
+    void anEmptyBoardIsStillAValidAnswerToo() throws Exception {
+        when(board.board()).thenReturn(new EffectivenessBoardDto.Summary(
+                null, 0, 0, 0, 0, 0, 0, 0, false, List.of()));
+
+        mockMvc.perform(get(URL + "/board"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.rows").isEmpty())
+                .andExpect(jsonPath("$.effectiveRatePercent").doesNotExist());
+    }
+
+    @Test
+    @WithAnonymousUser
+    void anAnonymousCallerGetsNoBoard() throws Exception {
+        mockMvc.perform(get(URL + "/board")).andExpect(status().isUnauthorized());
+
+        verifyNoInteractions(board);
+    }
+
+    // --- l'historique d'un dossier ---
+
+    @Test
+    @WithMockUser(authorities = "ROLE_USER")
+    void itRendersTheHistoryOfACaseNewestFirst() throws Exception {
+        UUID capa = UUID.randomUUID();
+        when(board.history(capa)).thenReturn(List.of(
+                reviewOf(EffectivenessVerdict.EFFECTIVE, "1,1 ‰"),
+                reviewOf(EffectivenessVerdict.INEFFECTIVE, "9,2 ‰")));
+
+        mockMvc.perform(get(URL + "/cases/" + capa + "/reviews"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].verdict").value("EFFECTIVE"))
+                .andExpect(jsonPath("$[0].observed").value("1,1 ‰"))
+                .andExpect(jsonPath("$[0].reviewerName").value("A. Diallo"))
+                .andExpect(jsonPath("$[1].verdict").value("INEFFECTIVE"));
+    }
+
+    @Test
+    @WithMockUser(authorities = "ROLE_USER")
+    void aCaseNeverEvaluatedHasAnEmptyHistoryRatherThanAnError() throws Exception {
+        UUID capa = UUID.randomUUID();
+        when(board.history(capa)).thenReturn(List.of());
+
+        mockMvc.perform(get(URL + "/cases/" + capa + "/reviews"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isEmpty());
+    }
+
+    @Test
+    @WithMockUser(authorities = "ROLE_USER")
+    void anIdentifierThatIsNotOneIsRefusedWithoutReachingTheService() throws Exception {
+        mockMvc.perform(get(URL + "/cases/pas-un-identifiant/reviews"))
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(board);
+    }
+
+    @Test
+    @WithAnonymousUser
+    void anAnonymousCallerGetsNoHistory() throws Exception {
+        mockMvc.perform(get(URL + "/cases/" + UUID.randomUUID() + "/reviews"))
+                .andExpect(status().isUnauthorized());
+
+        verifyNoInteractions(board);
+    }
+
+    private EffectivenessBoardDto.Summary boardSummary() {
+        EffectivenessBoardDto.Row aJuger = new EffectivenessBoardDto.Row(
+                UUID.randomUUID(), "CAPA-2026-0007", "Dérive dimensionnelle", "HIGH",
+                "A. Diallo", EvaluationStage.AWAITING_EVALUATION, true, 2, 2,
+                "< 2 ‰ sur 3 mois", reviewOf(EffectivenessVerdict.PARTIAL, "3,1 ‰"), 2,
+                false, false, 0, Instant.parse("2026-11-05T09:00:00Z"));
+        EffectivenessBoardDto.Row clos = new EffectivenessBoardDto.Row(
+                UUID.randomUUID(), "CAPA-2026-0003", "Étiquetage", "LOW",
+                null, EvaluationStage.CLOSED_EFFECTIVE, false, 1, 1,
+                null, reviewOf(EffectivenessVerdict.EFFECTIVE, "0,8 ‰"), 1,
+                false, false, 0, Instant.parse("2026-10-02T09:00:00Z"));
+        return new EffectivenessBoardDto.Summary(50, 2, 1, 1, 0, 0, 1, 2, false,
+                List.of(aJuger, clos));
+    }
+
+    private static EffectivenessBoardDto.Review reviewOf(EffectivenessVerdict verdict,
+                                                          String observed) {
+        return new EffectivenessBoardDto.Review(UUID.randomUUID(), verdict,
+                "< 2 ‰ sur 3 mois", "7,4 ‰", "< 2 ‰", observed,
+                "Mesuré sur les lots 2411 à 2418", "A. Diallo",
+                Instant.parse("2026-11-06T10:15:00Z"));
     }
 
     private CapaEffectivenessDto.Summary summary() {
