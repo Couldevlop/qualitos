@@ -41,6 +41,22 @@
     <input matInput formControlName="sourceRef" maxlength="255">
   </mat-form-field>
 
+  <!--
+    Le critère d'efficacité (ADR 0108) : la phrase contre laquelle le verdict
+    sera rendu. Elle se pose ici tant que le dossier n'a pas été jugé.
+  -->
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@capa.criterion.label">Critère d'efficacité</mat-label>
+    <textarea matInput formControlName="effectivenessCriterion" rows="2" maxlength="2000"></textarea>
+    <mat-hint *ngIf="!critereFige" i18n="@@capa.criterion.hint">
+      À quoi on reconnaîtra l'efficacité : « zéro erreur de référence sur 90 jours ».
+    </mat-hint>
+    <mat-hint *ngIf="critereFige" i18n="@@capa.criterion.locked">
+      Ce dossier a déjà été évalué : son critère ne change plus, les verdicts rendus
+      l'ont été contre lui.
+    </mat-hint>
+  </mat-form-field>
+
   <!-- La vérification d'efficacité (ADR 0073) : le même bloc que la fenêtre
        d'ouverture. Ici, ne pas répondre laisse la question ouverte. -->
   <qos-capa-verification-fields [group]="form"

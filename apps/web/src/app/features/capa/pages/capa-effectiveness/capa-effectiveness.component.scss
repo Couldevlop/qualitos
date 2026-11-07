@@ -94,3 +94,20 @@
   width: 18px;
   height: 18px;
 }
+
+// Les onglets : le contenu respire sous la barre, et la ligne « fenêtre
+// d'observation » reste alignée à droite comme elle l'était dans l'en-tête.
+.tab-body {
+  padding-top: var(--qos-space-4);
+}
+
+.window-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--qos-space-4);
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: var(--qos-space-3);
+
+  .subtitle { margin: 0; max-width: 60ch; }
+}

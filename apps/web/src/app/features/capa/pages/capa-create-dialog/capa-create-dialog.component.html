@@ -102,6 +102,20 @@
          qu'on vienne : c'est la même décision de clôture partout, et un dossier
          né sans réponse ne se distinguerait plus d'un dossier délibérément jugé
          non vérifiable. Le même bloc que l'édition ; ici, il faut trancher. -->
+  <!--
+    Le critère d'efficacité, posé à l'ouverture (ADR 0108). Facultatif : tous
+    les dossiers ne naissent pas avec leur critère sous la main. Mais l'écran
+    d'évaluation refuse de juger sans lui, et le poser le jour du jugement
+    revient à choisir la cible en voyant le tir.
+  -->
+  <mat-form-field appearance="outline" class="full" *ngIf="!isDefineAction">
+    <mat-label i18n="@@capa.criterion.label">Critère d'efficacité</mat-label>
+    <textarea matInput formControlName="effectivenessCriterion" rows="2" maxlength="2000"></textarea>
+    <mat-hint i18n="@@capa.criterion.hint">
+      À quoi on reconnaîtra l'efficacité : « zéro erreur de référence sur 90 jours ».
+    </mat-hint>
+  </mat-form-field>
+
     <qos-capa-verification-fields [group]="form" [mandatory]="true"
                                   (verifierSelected)="onVerifier($event)"></qos-capa-verification-fields>
 

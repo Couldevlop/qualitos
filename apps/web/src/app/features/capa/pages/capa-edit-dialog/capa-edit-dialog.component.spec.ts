@@ -289,6 +289,70 @@ describe('CapaEditDialogComponent', () => {
     req.flush(existing);
   });
 
+  // ------------------------------------------- le critère d'efficacité (ADR 0108)
+
+  it("reprend le critère d'efficacité déjà posé", async () => {
+    await build({ capa: { ...existing, effectivenessCriterion: 'Zéro erreur sur 90 jours' } });
+
+    expect(component.form.controls.effectivenessCriterion.value)
+      .toBe('Zéro erreur sur 90 jours');
+    expect(component.critereFige).toBeFalse();
+  });
+
+  it("laisse le champ vide plutôt que « undefined » quand aucun critère n'est posé", async () => {
+    await build({ capa: existing });
+
+    expect(component.form.controls.effectivenessCriterion.value).toBe('');
+  });
+
+  it('envoie le critère, débarrassé de ses espaces', async () => {
+    await build({ capa: existing });
+    component.form.controls.effectivenessCriterion.setValue('  Rebut sous 2 % sur trois lots  ');
+
+    component.submit();
+
+    const req = http.expectOne(`${base}/c1`);
+    expect(req.request.body.effectivenessCriterion).toBe('Rebut sous 2 % sur trois lots');
+    req.flush(existing);
+  });
+
+  it("n'envoie rien quand le champ a été laissé vide", async () => {
+    await build({ capa: existing });
+
+    component.submit();
+
+    // Une chaîne vide poserait un critère illisible, et l'écran d'évaluation
+    // le prendrait pour un critère posé.
+    const req = http.expectOne(`${base}/c1`);
+    expect(req.request.body.effectivenessCriterion).toBeUndefined();
+    req.flush(existing);
+  });
+
+  it("verrouille le critère dès qu'un verdict a été rendu", async () => {
+    // Le serveur refuse le changement : un champ qui accepte une saisie que le
+    // serveur rejettera fait découvrir la règle au pire moment.
+    await build({ capa: { ...existing, effectivenessCriterion: 'Zéro erreur sur 90 jours',
+      effectivenessVerdict: 'PARTIAL' } });
+
+    expect(component.critereFige).toBeTrue();
+    expect(component.form.controls.effectivenessCriterion.disabled).toBeTrue();
+    expect(hote().textContent).toContain('son critère ne change plus');
+  });
+
+  it("n'envoie pas le critère figé, même s'il reste dans le formulaire", async () => {
+    // `getRawValue` rend la valeur des champs désactivés : la renvoyer ferait
+    // refuser la mise à jour entière pour un champ que personne n'a touché.
+    await build({ capa: { ...existing, effectivenessCriterion: 'Zéro erreur sur 90 jours',
+      effectivenessVerdict: 'EFFECTIVE' } });
+    component.form.controls.title.setValue('Autre titre');
+
+    component.submit();
+
+    const req = http.expectOne(`${base}/c1`);
+    expect(req.request.body.effectivenessCriterion).toBeUndefined();
+    req.flush(existing);
+  });
+
   /**
    * Rend la main a la boucle d'evenements.
    *

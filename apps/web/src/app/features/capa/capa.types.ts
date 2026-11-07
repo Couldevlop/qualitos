@@ -80,6 +80,22 @@ export interface CapaCaseResponse {
   resolvedAt?: string;
   closedAt?: string;
   effectivenessVerified?: boolean;
+  effectivenessVerifiedAt?: string;
+  /**
+   * Le critère d'efficacité, posé AVANT le jugement (ADR 0108).
+   *
+   * Il se modifie tant qu'aucune évaluation n'a été rendue, et plus après :
+   * les verdicts passés ont été rendus contre lui, et le changer réécrirait
+   * après coup la question à laquelle on a répondu.
+   */
+  effectivenessCriterion?: string;
+  /**
+   * Le dernier verdict rendu, ou absent si le dossier n'a jamais été évalué.
+   *
+   * Lu depuis l'historique côté serveur, et seulement sur la fiche détaillée :
+   * la liste paginée ne le porte pas, parce qu'elle ne l'affiche pas.
+   */
+  effectivenessVerdict?: EffectivenessVerdict;
   /**
    * Une vérification d'efficacité est-elle EXIGÉE ?
    *
@@ -165,6 +181,13 @@ export interface OpenCapaRequest {
   /** Son nom d'annuaire, recopié dans le dossier. */
   verificationAssigneeName?: string;
   verificationInstructions?: string;
+  /**
+   * Le critère d'efficacité, posé dès l'ouverture : la phrase qui dira à quoi
+   * on reconnaîtra que l'action a produit son effet. Posé ici, il précède la
+   * mesure ; posé le jour du jugement, il serait choisi en regardant le
+   * résultat (ADR 0108).
+   */
+  effectivenessCriterion?: string;
 }
 
 export type CapaActionStatus = 'PENDING' | 'IN_PROGRESS' | 'DONE';
@@ -241,6 +264,11 @@ export interface UpdateCapaCaseRequest {
   verificationAssigneeId?: string;
   verificationAssigneeName?: string;
   verificationInstructions?: string;
+  /**
+   * Le critère d'efficacité. Paramétré par l'admin du client ou posé par le
+   * manager à l'ouverture ; refusé par le serveur dès qu'un verdict existe.
+   */
+  effectivenessCriterion?: string;
 }
 
 /** Ce que le terrain dit d'une CAPA close, par opposition a ce qu'on avait declare. */
@@ -276,4 +304,110 @@ export interface CapaEffectivenessSummary {
   /** Le perimetre depassait la borne de lecture : les plus anciens sont ecartes. */
   truncated: boolean;
   rows: CapaEffectivenessRow[];
+}
+
+// ---- Évaluation de l'efficacité (ADR 0108) ----------------------------------
+
+/**
+ * Le verdict d'une évaluation d'efficacité.
+ *
+ * Trois états et non un booléen : `PARTIAL` est l'état qui manquait. Une action
+ * qui a réduit le problème sans le supprimer n'est ni efficace ni inefficace, et
+ * forcer le choix obligeait à mentir dans un sens ou dans l'autre — puis à clore
+ * un dossier qui méritait une action de plus, ou à rouvrir un dossier qui
+ * progressait.
+ */
+export type EffectivenessVerdict = 'EFFECTIVE' | 'PARTIAL' | 'INEFFECTIVE';
+
+/**
+ * Où en est un dossier dans la boucle d'évaluation.
+ *
+ * CALCULÉE par le serveur à chaque lecture, jamais stockée : une colonne serait
+ * plus rapide et fausse dès la première action terminée par un autre chemin.
+ * L'écran ne la recalcule donc pas non plus.
+ */
+export type EvaluationStage =
+  | 'ACTIONS_IN_PROGRESS'
+  | 'AWAITING_EVALUATION'
+  | 'CLOSED_EFFECTIVE'
+  | 'COMPLEMENTARY_ACTION_EXPECTED'
+  | 'REOPENED';
+
+/** Une évaluation rendue : le jugement, le critère contre lequel il l'a été, et sa mesure. */
+export interface EffectivenessReview {
+  id: string;
+  verdict: EffectivenessVerdict;
+  /** Recopié au moment du jugement : modifier le critère du dossier ne le réécrit pas. */
+  criterion?: string;
+  baseline?: string;
+  target?: string;
+  observed?: string;
+  comment?: string;
+  /** Recopié depuis l'annuaire : un compte désactivé n'efface pas le nom (jamais un UUID). */
+  reviewerName?: string;
+  reviewedAt: string;
+}
+
+/** Une ligne du plan de travail des évaluations. */
+export interface EvaluationRow {
+  capaId: string;
+  /** La référence de l'écart d'origine, telle que le dossier la porte. */
+  reference?: string;
+  title: string;
+  criticity?: string;
+  ownerName?: string;
+  stage: EvaluationStage;
+  /**
+   * Le panneau d'évaluation est-il ouvert sur cette ligne ?
+   *
+   * Donné par le serveur et non déduit de `stage` : la règle appartient au
+   * domaine, et la refaire ici en ferait une deuxième, qui divergerait.
+   */
+  evaluable: boolean;
+  actionsTotal: number;
+  actionsDone: number;
+  criterion?: string;
+  lastReview?: EffectivenessReview;
+  reviewCount: number;
+  /** Quelque chose s'oppose à la clôture : les deux champs suivants disent quoi. */
+  closureBlocked: boolean;
+  containmentOnly: boolean;
+  openNcCount: number;
+  updatedAt?: string;
+}
+
+/**
+ * Le plan de travail complet : quatre chiffres, puis les lignes.
+ *
+ * Les chiffres portent sur l'ENSEMBLE du périmètre, les lignes sont bornées.
+ * `truncated` le dit, pour qu'un tableau coupé ne se lise pas comme un total.
+ */
+export interface EvaluationBoard {
+  /** Absent — et non zéro — quand rien n'a encore été évalué. */
+  effectiveRatePercent?: number;
+  evaluated: number;
+  awaitingEvaluation: number;
+  stillOpen: number;
+  reopened: number;
+  partial: number;
+  /** Dossiers encore ouverts sans critère posé : à poser avant de pouvoir juger. */
+  missingCriterion: number;
+  total: number;
+  truncated: boolean;
+  rows: EvaluationRow[];
+}
+
+/**
+ * Ce qu'on envoie pour rendre un verdict.
+ *
+ * `observed` est obligatoire : un verdict sans mesure n'est pas un jugement.
+ * L'ancien champ booléen `effective` existe encore côté serveur pour les
+ * intégrations, mais l'écran n'envoie jamais que cette forme-ci.
+ */
+export interface RecordEffectivenessRequest {
+  verdict: EffectivenessVerdict;
+  baseline?: string;
+  target?: string;
+  observed: string;
+  comment?: string;
 }

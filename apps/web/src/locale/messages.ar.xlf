@@ -6703,8 +6703,8 @@ Portail clients</source>
         <target state="translated">فعالية الإجراءات التصحيحية</target>
       </trans-unit>
       <trans-unit id="capa.effectiveness.subtitle" datatype="html">
-        <source>Ce que le terrain dit des dossiers clos, et non ce qu'on avait déclaré à la clôture.</source>
-        <target state="translated">ما يقوله الواقع عن الملفات المغلقة، لا ما أُعلن عند الإغلاق.</target>
+        <source>Juger l'effet des actions sur leur critère, puis vérifier des mois plus tard ce que le terrain en a fait.</source>
+        <target state="translated">الحكم على أثر الإجراءات مقابل معيارها، ثم التحقق بعد أشهر مما فعله الواقع بها.</target>
       </trans-unit>
       <trans-unit id="capa.effectiveness.window-aria" datatype="html">
         <source>Fenêtre d'observation</source>
@@ -7153,6 +7153,270 @@ Portail clients</source>
       <trans-unit id="training.matrix.failed" datatype="html">
         <source>Impossible de charger la matrice de compétences.</source>
         <target state="translated">تعذّر تحميل مصفوفة الكفاءات.</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.tab-evaluation" datatype="html">
+        <source>Évaluations</source>
+        <target state="translated">التقييمات</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.tab-recurrence" datatype="html">
+        <source>Mesure par récidive</source>
+        <target state="translated">القياس بالتكرار</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.recurrence-intro" datatype="html">
+        <source>Ce que le terrain dit des dossiers clos, et non ce qu'on avait déclaré à la clôture.</source>
+        <target state="translated">ما يقوله الواقع عن الملفات المغلقة، لا ما أُعلن عند الإغلاق.</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.kpi-rate" datatype="html">
+        <source>Taux d'efficacité des actions</source>
+        <target state="translated">معدل فعالية الإجراءات</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.kpi-rate-hint" datatype="html">
+        <source>Sur les seuls dossiers déjà jugés</source>
+        <target state="translated">على الملفات التي صدر فيها حكم فقط</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.kpi-awaiting" datatype="html">
+        <source>Évaluations à faire</source>
+        <target state="translated">تقييمات مستحقة</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.kpi-open" datatype="html">
+        <source>Dossiers encore ouverts</source>
+        <target state="translated">ملفات لا تزال مفتوحة</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.kpi-reopened" datatype="html">
+        <source>Dossiers rouverts</source>
+        <target state="translated">ملفات أُعيد فتحها</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.kpi-reopened-hint" datatype="html">
+        <source>Jugés inefficaces</source>
+        <target state="translated">حُكم بعدم فعاليتها</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.missing-criterion-one" datatype="html">
+        <source>Un dossier ouvert n'a pas de critère d'efficacité — il se pose sur la fiche du dossier, et il doit l'être avant le jugement.</source>
+        <target state="translated">ملف مفتوح واحد بلا معيار فعالية — يُحدَّد في بطاقة الملف، ويجب تحديده قبل إصدار الحكم.</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.missing-criterion-many" datatype="html">
+        <source><x id="INTERPOLATION"/> dossiers ouverts n'ont pas de critère d'efficacité — il se pose sur la fiche du dossier, et il doit l'être avant le jugement.</source>
+        <target state="translated"><x id="INTERPOLATION"/> ملفات مفتوحة بلا معيار فعالية — يُحدَّد في بطاقة الملف، ويجب تحديده قبل إصدار الحكم.</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.truncated" datatype="html">
+        <source>Le périmètre dépasse la limite de lecture : seuls les dossiers les plus urgents sont listés. Les quatre chiffres ci-dessus, eux, portent sur la totalité.</source>
+        <target state="translated">يتجاوز النطاق حدّ القراءة: تُسرد الملفات الأكثر إلحاحًا فقط. أما الأرقام الأربعة أعلاه فتشمل الكل.</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.none" datatype="html">
+        <source>Aucun dossier à évaluer. Un dossier entre dans cette boucle dès qu'il est ouvert, et se présente au jugement quand son action est menée à terme.</source>
+        <target state="translated">لا يوجد ملف للتقييم. يدخل الملف هذه الحلقة بمجرد فتحه، ويُعرض للحكم عند إتمام إجرائه.</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.load-failed" datatype="html">
+        <source>Impossible de charger les évaluations d'efficacité.</source>
+        <target state="translated">تعذّر تحميل تقييمات الفعالية.</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.save-failed" datatype="html">
+        <source>L'évaluation n'a pas pu être enregistrée.</source>
+        <target state="translated">لم يتمكّن النظام من حفظ التقييم.</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.table-title" datatype="html">
+        <source>Dossiers et actions correctives</source>
+        <target state="translated">الملفات والإجراءات التصحيحية</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.table-note" datatype="html">
+        <source>L'étape et le décompte des actions sont calculés : un dossier ne se clôt qu'après une évaluation jugée efficace.</source>
+        <target state="translated">تُحسَب المرحلة وعدد الإجراءات تلقائيًا: لا يُغلق الملف إلا بعد تقييم يُحكم بفعاليته.</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.col-case" datatype="html">
+        <source>Dossier</source>
+        <target state="translated">الملف</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.col-stage" datatype="html">
+        <source>Étape</source>
+        <target state="translated">المرحلة</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.col-actions" datatype="html">
+        <source>Actions</source>
+        <target state="translated">الإجراءات</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.col-verdict" datatype="html">
+        <source>Dernier verdict</source>
+        <target state="translated">آخر حكم</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.actions-done" datatype="html">
+        <source><x id="INTERPOLATION"/>/<x id="INTERPOLATION_1"/> faites</source>
+        <target state="translated"><x id="INTERPOLATION"/>/<x id="INTERPOLATION_1"/> منجزة</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.no-criterion-cell" datatype="html">
+        <source>Critère à poser</source>
+        <target state="translated">معيار يجب تحديده</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.never-judged" datatype="html">
+        <source>Jamais évalué</source>
+        <target state="translated">لم يُقيَّم قط</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.review-count" datatype="html">
+        <source><x id="INTERPOLATION"/> évaluations</source>
+        <target state="translated"><x id="INTERPOLATION"/> تقييمات</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.pick-a-case" datatype="html">
+        <source>Choisissez un dossier pour voir ses actions et évaluer leur efficacité.</source>
+        <target state="translated">اختر ملفًا لعرض إجراءاته وتقييم فعاليتها.</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.stage-awaiting" datatype="html">
+        <source>En attente d'évaluation</source>
+        <target state="translated">في انتظار التقييم</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.stage-closed" datatype="html">
+        <source>Clôturé</source>
+        <target state="translated">مُغلق</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.stage-partial" datatype="html">
+        <source>Action complémentaire</source>
+        <target state="translated">إجراء تكميلي</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.stage-reopened" datatype="html">
+        <source>Rouvert</source>
+        <target state="translated">أُعيد فتحه</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.stage-in-progress" datatype="html">
+        <source>Actions en cours</source>
+        <target state="translated">إجراءات جارية</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.verdict-effective" datatype="html">
+        <source>Efficace</source>
+        <target state="translated">فعّال</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.verdict-partial" datatype="html">
+        <source>Partiellement</source>
+        <target state="translated">جزئيًا</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.verdict-ineffective" datatype="html">
+        <source>Inefficace</source>
+        <target state="translated">غير فعّال</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.verdict-aria" datatype="html">
+        <source>Verdict d'efficacité</source>
+        <target state="translated">حكم الفعالية</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.containment-only" datatype="html">
+        <source>Ce dossier ne porte que des mesures d'endiguement : elles arrêtent l'effet sans supprimer la cause. Un verdict « efficace » sera refusé.</source>
+        <target state="translated">لا يحمل هذا الملف سوى تدابير احتواء: توقف الأثر دون إزالة السبب. سيُرفض الحكم بـ«فعّال».</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.open-nc-one" datatype="html">
+        <source>Un écart lié est encore ouvert : la clôture sera refusée tant qu'il n'est pas traité.</source>
+        <target state="translated">لا تزال حالة عدم مطابقة مرتبطة مفتوحة: سيُرفض الإغلاق حتى معالجتها.</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.open-nc-many" datatype="html">
+        <source><x id="INTERPOLATION"/> écarts liés sont encore ouverts : la clôture sera refusée tant qu'il en reste.</source>
+        <target state="translated">لا تزال <x id="INTERPOLATION"/> حالات عدم مطابقة مرتبطة مفتوحة: سيُرفض الإغلاق ما بقيت واحدة منها.</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.last-review-title" datatype="html">
+        <source>Dernière évaluation</source>
+        <target state="translated">آخر تقييم</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.never-judged-long" datatype="html">
+        <source>Ce dossier n'a jamais été évalué.</source>
+        <target state="translated">لم يُقيَّم هذا الملف قط.</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.judged-against" datatype="html">
+        <source>Jugé contre :</source>
+        <target state="translated">حُكم عليه مقابل:</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.baseline" datatype="html">
+        <source>Avant</source>
+        <target state="translated">قبل</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.target" datatype="html">
+        <source>Cible</source>
+        <target state="translated">الهدف</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.observed" datatype="html">
+        <source>Constaté</source>
+        <target state="translated">المُلاحظ</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.form-title" datatype="html">
+        <source>Évaluer l'efficacité</source>
+        <target state="translated">تقييم الفعالية</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.criterion" datatype="html">
+        <source>Critère posé à l'ouverture</source>
+        <target state="translated">المعيار المُحدَّد عند الفتح</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.observed-hint" datatype="html">
+        <source>Obligatoire : le verdict repose sur une mesure</source>
+        <target state="translated">إلزامي: يستند الحكم إلى قياس</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.comment" datatype="html">
+        <source>Commentaire</source>
+        <target state="translated">تعليق</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.submit" datatype="html">
+        <source>Enregistrer l'évaluation</source>
+        <target state="translated">حفظ التقييم</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.submit-hint" datatype="html">
+        <source>Choisissez un verdict et saisissez le relevé constaté.</source>
+        <target state="translated">اختر حكمًا وأدخل القيمة المُلاحظة.</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.outcome-effective" datatype="html">
+        <source>Le dossier sera clôturé.</source>
+        <target state="translated">سيُغلق الملف.</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.outcome-partial" datatype="html">
+        <source>Le dossier repartira au travail : une action complémentaire est attendue.</source>
+        <target state="translated">يعود الملف إلى العمل: يُنتظر إجراء تكميلي.</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.outcome-ineffective" datatype="html">
+        <source>Le dossier sera rouvert : l'analyse des causes est à reprendre (5 Pourquoi, Ishikawa).</source>
+        <target state="translated">سيُعاد فتح الملف: يجب إعادة تحليل الأسباب (الأسباب الخمسة، إيشيكاوا).</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.done-effective" datatype="html">
+        <source>Dossier clôturé : l'action est jugée efficace.</source>
+        <target state="translated">أُغلق الملف: حُكم بفعالية الإجراء.</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.done-partial" datatype="html">
+        <source>Efficacité partielle : une action complémentaire est attendue sur le dossier.</source>
+        <target state="translated">فعالية جزئية: يُنتظر إجراء تكميلي على الملف.</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.done-ineffective" datatype="html">
+        <source>Dossier rouvert : l'analyse des causes est à reprendre.</source>
+        <target state="translated">أُعيد فتح الملف: يجب إعادة تحليل الأسباب.</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.lock-no-action" datatype="html">
+        <source>Aucune action n'est encore portée par ce dossier : il n'y a rien dont juger l'effet.</source>
+        <target state="translated">لا يحمل هذا الملف أي إجراء بعد: لا شيء يمكن الحكم على أثره.</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.lock-one-action" datatype="html">
+        <source>Une action reste à mener : l'évaluation s'ouvrira quand elle sera faite.</source>
+        <target state="translated">بقي إجراء واحد: يُفتح التقييم عند إتمامه.</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.lock-many-actions" datatype="html">
+        <source><x id="INTERPOLATION"/> actions restent à mener : l'évaluation s'ouvrira quand elles seront faites.</source>
+        <target state="translated">بقي <x id="INTERPOLATION"/> إجراءات: يُفتح التقييم عند إتمامها.</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.lock-criterion" datatype="html">
+        <source>Aucun critère d'efficacité n'est posé sur ce dossier. Il se pose sur sa fiche, et il doit l'être avant le jugement : choisir le critère en regardant le résultat ne juge plus rien.</source>
+        <target state="translated">لا يوجد معيار فعالية على هذا الملف. يُحدَّد في بطاقته، ويجب تحديده قبل الحكم: اختيار المعيار بعد رؤية النتيجة لا يحكم على شيء.</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.lock-done" datatype="html">
+        <source>Ce dossier est clôturé sur un verdict d'efficacité. Son historique reste lisible ; il ne se rejuge pas.</source>
+        <target state="translated">أُغلق هذا الملف بحكم فعالية. يبقى سجله قابلًا للقراءة؛ ولا يُعاد الحكم عليه.</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.lock-judged" datatype="html">
+        <source>Ce dossier attend son action complémentaire. Il se présentera de nouveau au jugement quand elle sera menée à terme.</source>
+        <target state="translated">ينتظر هذا الملف إجراءه التكميلي. وسيُعرض للحكم مرة أخرى عند إتمامه.</target>
+      </trans-unit>
+      <trans-unit id="capa.criterion.label" datatype="html">
+        <source>Critère d'efficacité</source>
+        <target state="translated">معيار الفعالية</target>
+      </trans-unit>
+      <trans-unit id="capa.criterion.hint" datatype="html">
+        <source>À quoi on reconnaîtra l'efficacité : « zéro erreur de référence sur 90 jours ».</source>
+        <target state="translated">كيف ستُعرف الفعالية: «صفر خطأ في المرجع خلال 90 يومًا».</target>
+      </trans-unit>
+      <trans-unit id="capa.criterion.locked" datatype="html">
+        <source>Ce dossier a déjà été évalué : son critère ne change plus, les verdicts rendus l'ont été contre lui.</source>
+        <target state="translated">سبق تقييم هذا الملف: لم يعد معياره يتغير، فالأحكام صدرت في مواجهته.</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.evaluate-link" datatype="html">
+        <source>Évaluer contre le critère, avec un verdict nuancé</source>
+        <target state="translated">التقييم في مواجهة المعيار، بحكم متدرّج</target>
       </trans-unit>
       <trans-unit id="capa.evidence.title" datatype="html">
         <source>Preuves</source>

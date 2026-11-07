@@ -6703,8 +6703,8 @@ Customer portal</target>
         <target state="translated">CAPA effectiveness</target>
       </trans-unit>
       <trans-unit id="capa.effectiveness.subtitle" datatype="html">
-        <source>Ce que le terrain dit des dossiers clos, et non ce qu'on avait déclaré à la clôture.</source>
-        <target state="translated">What the shop floor says about closed cases — not what was declared at closure.</target>
+        <source>Juger l'effet des actions sur leur critère, puis vérifier des mois plus tard ce que le terrain en a fait.</source>
+        <target state="translated">Judge the effect of actions against their criterion, then check months later what the shop floor made of them.</target>
       </trans-unit>
       <trans-unit id="capa.effectiveness.window-aria" datatype="html">
         <source>Fenêtre d'observation</source>
@@ -7153,6 +7153,270 @@ Customer portal</target>
       <trans-unit id="training.matrix.failed" datatype="html">
         <source>Impossible de charger la matrice de compétences.</source>
         <target state="translated">Could not load the competency matrix.</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.tab-evaluation" datatype="html">
+        <source>Évaluations</source>
+        <target state="translated">Evaluations</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.tab-recurrence" datatype="html">
+        <source>Mesure par récidive</source>
+        <target state="translated">Recurrence measurement</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.recurrence-intro" datatype="html">
+        <source>Ce que le terrain dit des dossiers clos, et non ce qu'on avait déclaré à la clôture.</source>
+        <target state="translated">What the shop floor says about closed cases — not what was declared at closure.</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.kpi-rate" datatype="html">
+        <source>Taux d'efficacité des actions</source>
+        <target state="translated">Action effectiveness rate</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.kpi-rate-hint" datatype="html">
+        <source>Sur les seuls dossiers déjà jugés</source>
+        <target state="translated">Across already judged cases only</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.kpi-awaiting" datatype="html">
+        <source>Évaluations à faire</source>
+        <target state="translated">Evaluations due</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.kpi-open" datatype="html">
+        <source>Dossiers encore ouverts</source>
+        <target state="translated">Cases still open</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.kpi-reopened" datatype="html">
+        <source>Dossiers rouverts</source>
+        <target state="translated">Reopened cases</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.kpi-reopened-hint" datatype="html">
+        <source>Jugés inefficaces</source>
+        <target state="translated">Judged ineffective</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.missing-criterion-one" datatype="html">
+        <source>Un dossier ouvert n'a pas de critère d'efficacité — il se pose sur la fiche du dossier, et il doit l'être avant le jugement.</source>
+        <target state="translated">One open case has no effectiveness criterion — it is set on the case itself, and must be set before the verdict.</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.missing-criterion-many" datatype="html">
+        <source><x id="INTERPOLATION"/> dossiers ouverts n'ont pas de critère d'efficacité — il se pose sur la fiche du dossier, et il doit l'être avant le jugement.</source>
+        <target state="translated"><x id="INTERPOLATION"/> open cases have no effectiveness criterion — it is set on the case itself, and must be set before the verdict.</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.truncated" datatype="html">
+        <source>Le périmètre dépasse la limite de lecture : seuls les dossiers les plus urgents sont listés. Les quatre chiffres ci-dessus, eux, portent sur la totalité.</source>
+        <target state="translated">The scope exceeds the read limit: only the most urgent cases are listed. The four figures above, however, cover the whole scope.</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.none" datatype="html">
+        <source>Aucun dossier à évaluer. Un dossier entre dans cette boucle dès qu'il est ouvert, et se présente au jugement quand son action est menée à terme.</source>
+        <target state="translated">No case to evaluate. A case enters this loop as soon as it is opened, and comes up for judgement once its action is complete.</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.load-failed" datatype="html">
+        <source>Impossible de charger les évaluations d'efficacité.</source>
+        <target state="translated">Could not load the effectiveness evaluations.</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.save-failed" datatype="html">
+        <source>L'évaluation n'a pas pu être enregistrée.</source>
+        <target state="translated">The evaluation could not be saved.</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.table-title" datatype="html">
+        <source>Dossiers et actions correctives</source>
+        <target state="translated">Cases and corrective actions</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.table-note" datatype="html">
+        <source>L'étape et le décompte des actions sont calculés : un dossier ne se clôt qu'après une évaluation jugée efficace.</source>
+        <target state="translated">The stage and the action counts are computed: a case closes only after an evaluation judged effective.</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.col-case" datatype="html">
+        <source>Dossier</source>
+        <target state="translated">Case</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.col-stage" datatype="html">
+        <source>Étape</source>
+        <target state="translated">Stage</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.col-actions" datatype="html">
+        <source>Actions</source>
+        <target state="translated">Actions</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.col-verdict" datatype="html">
+        <source>Dernier verdict</source>
+        <target state="translated">Last verdict</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.actions-done" datatype="html">
+        <source><x id="INTERPOLATION"/>/<x id="INTERPOLATION_1"/> faites</source>
+        <target state="translated"><x id="INTERPOLATION"/>/<x id="INTERPOLATION_1"/> done</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.no-criterion-cell" datatype="html">
+        <source>Critère à poser</source>
+        <target state="translated">Criterion to be set</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.never-judged" datatype="html">
+        <source>Jamais évalué</source>
+        <target state="translated">Never evaluated</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.review-count" datatype="html">
+        <source><x id="INTERPOLATION"/> évaluations</source>
+        <target state="translated"><x id="INTERPOLATION"/> evaluations</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.pick-a-case" datatype="html">
+        <source>Choisissez un dossier pour voir ses actions et évaluer leur efficacité.</source>
+        <target state="translated">Pick a case to see its actions and evaluate their effectiveness.</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.stage-awaiting" datatype="html">
+        <source>En attente d'évaluation</source>
+        <target state="translated">Awaiting evaluation</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.stage-closed" datatype="html">
+        <source>Clôturé</source>
+        <target state="translated">Closed</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.stage-partial" datatype="html">
+        <source>Action complémentaire</source>
+        <target state="translated">Further action</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.stage-reopened" datatype="html">
+        <source>Rouvert</source>
+        <target state="translated">Reopened</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.stage-in-progress" datatype="html">
+        <source>Actions en cours</source>
+        <target state="translated">Actions in progress</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.verdict-effective" datatype="html">
+        <source>Efficace</source>
+        <target state="translated">Effective</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.verdict-partial" datatype="html">
+        <source>Partiellement</source>
+        <target state="translated">Partially</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.verdict-ineffective" datatype="html">
+        <source>Inefficace</source>
+        <target state="translated">Ineffective</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.verdict-aria" datatype="html">
+        <source>Verdict d'efficacité</source>
+        <target state="translated">Effectiveness verdict</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.containment-only" datatype="html">
+        <source>Ce dossier ne porte que des mesures d'endiguement : elles arrêtent l'effet sans supprimer la cause. Un verdict « efficace » sera refusé.</source>
+        <target state="translated">This case carries containment measures only: they stop the effect without removing the cause. An "effective" verdict will be refused.</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.open-nc-one" datatype="html">
+        <source>Un écart lié est encore ouvert : la clôture sera refusée tant qu'il n'est pas traité.</source>
+        <target state="translated">One linked non-conformity is still open: closure will be refused until it is settled.</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.open-nc-many" datatype="html">
+        <source><x id="INTERPOLATION"/> écarts liés sont encore ouverts : la clôture sera refusée tant qu'il en reste.</source>
+        <target state="translated"><x id="INTERPOLATION"/> linked non-conformities are still open: closure will be refused while any remain.</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.last-review-title" datatype="html">
+        <source>Dernière évaluation</source>
+        <target state="translated">Last evaluation</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.never-judged-long" datatype="html">
+        <source>Ce dossier n'a jamais été évalué.</source>
+        <target state="translated">This case has never been evaluated.</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.judged-against" datatype="html">
+        <source>Jugé contre :</source>
+        <target state="translated">Judged against:</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.baseline" datatype="html">
+        <source>Avant</source>
+        <target state="translated">Before</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.target" datatype="html">
+        <source>Cible</source>
+        <target state="translated">Target</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.observed" datatype="html">
+        <source>Constaté</source>
+        <target state="translated">Observed</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.form-title" datatype="html">
+        <source>Évaluer l'efficacité</source>
+        <target state="translated">Evaluate effectiveness</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.criterion" datatype="html">
+        <source>Critère posé à l'ouverture</source>
+        <target state="translated">Criterion set at opening</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.observed-hint" datatype="html">
+        <source>Obligatoire : le verdict repose sur une mesure</source>
+        <target state="translated">Required: the verdict rests on a measurement</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.comment" datatype="html">
+        <source>Commentaire</source>
+        <target state="translated">Comment</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.submit" datatype="html">
+        <source>Enregistrer l'évaluation</source>
+        <target state="translated">Save the evaluation</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.submit-hint" datatype="html">
+        <source>Choisissez un verdict et saisissez le relevé constaté.</source>
+        <target state="translated">Pick a verdict and enter the observed reading.</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.outcome-effective" datatype="html">
+        <source>Le dossier sera clôturé.</source>
+        <target state="translated">The case will be closed.</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.outcome-partial" datatype="html">
+        <source>Le dossier repartira au travail : une action complémentaire est attendue.</source>
+        <target state="translated">The case goes back to work: a further action is expected.</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.outcome-ineffective" datatype="html">
+        <source>Le dossier sera rouvert : l'analyse des causes est à reprendre (5 Pourquoi, Ishikawa).</source>
+        <target state="translated">The case will be reopened: the root-cause analysis must be redone (5 Whys, Ishikawa).</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.done-effective" datatype="html">
+        <source>Dossier clôturé : l'action est jugée efficace.</source>
+        <target state="translated">Case closed: the action is judged effective.</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.done-partial" datatype="html">
+        <source>Efficacité partielle : une action complémentaire est attendue sur le dossier.</source>
+        <target state="translated">Partial effectiveness: a further action is expected on the case.</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.done-ineffective" datatype="html">
+        <source>Dossier rouvert : l'analyse des causes est à reprendre.</source>
+        <target state="translated">Case reopened: the root-cause analysis must be redone.</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.lock-no-action" datatype="html">
+        <source>Aucune action n'est encore portée par ce dossier : il n'y a rien dont juger l'effet.</source>
+        <target state="translated">This case carries no action yet: there is nothing whose effect could be judged.</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.lock-one-action" datatype="html">
+        <source>Une action reste à mener : l'évaluation s'ouvrira quand elle sera faite.</source>
+        <target state="translated">One action remains: the evaluation opens once it is done.</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.lock-many-actions" datatype="html">
+        <source><x id="INTERPOLATION"/> actions restent à mener : l'évaluation s'ouvrira quand elles seront faites.</source>
+        <target state="translated"><x id="INTERPOLATION"/> actions remain: the evaluation opens once they are done.</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.lock-criterion" datatype="html">
+        <source>Aucun critère d'efficacité n'est posé sur ce dossier. Il se pose sur sa fiche, et il doit l'être avant le jugement : choisir le critère en regardant le résultat ne juge plus rien.</source>
+        <target state="translated">No effectiveness criterion is set on this case. It is set on the case itself, and must be set before the verdict: picking the criterion after seeing the result judges nothing.</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.lock-done" datatype="html">
+        <source>Ce dossier est clôturé sur un verdict d'efficacité. Son historique reste lisible ; il ne se rejuge pas.</source>
+        <target state="translated">This case is closed on an effectiveness verdict. Its history stays readable; it is not judged again.</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.lock-judged" datatype="html">
+        <source>Ce dossier attend son action complémentaire. Il se présentera de nouveau au jugement quand elle sera menée à terme.</source>
+        <target state="translated">This case is waiting for its further action. It comes up for judgement again once that action is complete.</target>
+      </trans-unit>
+      <trans-unit id="capa.criterion.label" datatype="html">
+        <source>Critère d'efficacité</source>
+        <target state="translated">Effectiveness criterion</target>
+      </trans-unit>
+      <trans-unit id="capa.criterion.hint" datatype="html">
+        <source>À quoi on reconnaîtra l'efficacité : « zéro erreur de référence sur 90 jours ».</source>
+        <target state="translated">How effectiveness will be recognised: "zero reference errors over 90 days".</target>
+      </trans-unit>
+      <trans-unit id="capa.criterion.locked" datatype="html">
+        <source>Ce dossier a déjà été évalué : son critère ne change plus, les verdicts rendus l'ont été contre lui.</source>
+        <target state="translated">This case has already been evaluated: its criterion no longer changes, as the verdicts were rendered against it.</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.evaluate-link" datatype="html">
+        <source>Évaluer contre le critère, avec un verdict nuancé</source>
+        <target state="translated">Evaluate against the criterion, with a three-way verdict</target>
       </trans-unit>
       <trans-unit id="capa.evidence.title" datatype="html">
         <source>Preuves</source>

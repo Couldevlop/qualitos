@@ -8,6 +8,9 @@ import { CapaCreateDialogModule } from './capa-create-dialog.module';
 import { CapaVerificationFieldsModule } from './capa-verification-fields.module';
 import { UiModule } from '../../shared/ui/ui.module';
 import { UserPickerModule } from '../../shared/user-picker/user-picker.module';
+import {
+  CapaEvaluationBoardComponent
+} from './components/capa-evaluation-board/capa-evaluation-board.component';
 import { CapaDetailComponent } from './pages/capa-detail/capa-detail.component';
 import {
   CapaEffectivenessComponent
@@ -32,7 +35,12 @@ const routes: Routes = [
     CapaDetailComponent,
     CapaEditDialogComponent,
     CapaRevisionImpactComponent,
-    CapaEffectivenessComponent
+    CapaEffectivenessComponent,
+    // Le plan de travail des évaluations (ADR 0108), hébergé par le premier
+    // onglet de l'écran d'efficacité : la mesure par récidive et le jugement
+    // d'efficacité répondent à la même question, et les séparer en deux écrans
+    // les aurait laissées se contredire sans que personne ne les compare.
+    CapaEvaluationBoardComponent
   ],
   // MatButtonToggleModule n'est re-exporte ni par SharedModule ni par UiModule :
   // les specs l'importent d'elles-memes, seul le build de production le voit.

@@ -12,13 +12,20 @@ TRANSLATIONS = {
     'capa.effectiveness.title': (
         "Efficacité des CAPA", 'CAPA effectiveness', 'Eficacia de las CAPA',
         'فعالية الإجراءات التصحيحية', 'CAPA の有効性', 'CAPA 有效性'),
+    # Le sous-titre couvre desormais les DEUX onglets de l'ecran (ADR 0108) : le
+    # jugement d'efficacite et la mesure par recidive. L'ancienne phrase, qui ne
+    # parlait que de la seconde, est devenue `capa.effectiveness.recurrence-intro`
+    # et a suivi dans l'onglet qu'elle decrit.
     'capa.effectiveness.subtitle': (
-        "Ce que le terrain dit des dossiers clos, et non ce qu'on avait déclaré à la clôture.",
-        'What the shop floor says about closed cases — not what was declared at closure.',
-        'Lo que dice el terreno sobre los casos cerrados, no lo declarado al cierre.',
-        'ما يقوله الواقع عن الملفات المغلقة، لا ما أُعلن عند الإغلاق.',
-        'クローズ済み案件について現場が示す事実であり、クローズ時の申告ではありません。',
-        '关于已关闭案件，现场给出的事实，而非结案时的声明。'),
+        "Juger l'effet des actions sur leur critère, puis vérifier des mois plus tard ce que "
+        "le terrain en a fait.",
+        'Judge the effect of actions against their criterion, then check months later what the '
+        'shop floor made of them.',
+        'Juzgar el efecto de las acciones frente a su criterio y verificar meses después qué ha '
+        'hecho el terreno con ellas.',
+        'الحكم على أثر الإجراءات مقابل معيارها، ثم التحقق بعد أشهر مما فعله الواقع بها.',
+        '処置の効果を基準に照らして判定し、数か月後に現場での実績を検証します。',
+        '先依标准判定措施的成效，再于数月后核实现场的实际结果。'),
     'capa.effectiveness.window-aria': (
         "Fenêtre d'observation", 'Observation window', 'Ventana de observación',
         'نافذة الملاحظة', '観察期間', '观察窗口'),
