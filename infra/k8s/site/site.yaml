@@ -139,6 +139,15 @@ metadata:
     # www renvoie vers le domaine nu, en 308. Deux adresses pour la même page,
     # c'est deux pages aux yeux d'un moteur de recherche, et la balise
     # canonique de index.html désigne déjà le domaine nu.
+    #
+    # ATTENTION, cette annotation ne fait son travail QUE si `www.qualitos.fr`
+    # n'est pas déclaré dans `rules`. Le contrôleur fabrique lui-même le bloc
+    # serveur du sous-domaine www à partir de la règle du domaine nu ; une règle
+    # explicite pour www prend le dessus et sert la page. Mesuré en ligne le
+    # 2026-11-06 : la première version déclarait les deux hôtes, et
+    # `https://www.qualitos.fr/` répondait 200 avec la page au lieu du 308.
+    # www reste en revanche dans `tls.hosts`, sinon le certificat ne le couvre
+    # pas et la redirection échouerait avant d'avoir lieu.
     nginx.ingress.kubernetes.io/from-to-www-redirect: "true"
     # Le formulaire n'accepte que de petites demandes ; le service les borne à
     # 32 ko. 64 ko ici laisse de la marge et ferme la porte au reste.
@@ -172,15 +181,6 @@ spec:
               service:
                 name: site-contact
                 port: { name: http }
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: site
-                port: { name: http }
-    - host: www.qualitos.fr
-      http:
-        paths:
           - path: /
             pathType: Prefix
             backend:
