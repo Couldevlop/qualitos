@@ -103,6 +103,20 @@ spec:
           # formulaire qui dit « merci » sans rien envoyer.
           envFrom:
             - secretRef: { name: site-contact-smtp }
+          # Le port et le moment de la négociation TLS ne sont pas des secrets,
+          # et les laisser dans le secret créé à la main les rendait invisibles
+          # et intouchables depuis le dépôt. Posés ici, ils priment sur
+          # `envFrom` et se relisent.
+          #
+          # 587 + STARTTLS, et non 465 + TLS implicite : mesuré en ligne le
+          # 2026-11-07, l'hébergeur filtre le 465 et le 25 en sortie, le 587
+          # passe. Depuis le pod, le 465 expire au bout de quinze secondes
+          # tandis que le 587 reçoit bien la bannière « 220 » du relais OVH.
+          # Les deux ports sont chiffrés ; ils ne négocient simplement pas au
+          # même moment.
+          env:
+            - { name: SMTP_PORT, value: "587" }
+            - { name: SMTP_TLS_IMPLICITE, value: "0" }
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true

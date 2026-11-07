@@ -163,9 +163,15 @@ export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
 kubectl create namespace qualitos-site 2>/dev/null || true
 
 read -rsp 'Mot de passe de contact@qualitos.fr : ' MDP && echo
-kubectl -n qualitos-site create secret generic site-contact-smtp   --from-literal=SMTP_HOTE=ssl0.ovh.net   --from-literal=SMTP_PORT=465   --from-literal=SMTP_UTILISATEUR=contact@qualitos.fr   --from-literal=SMTP_MOT_DE_PASSE="$MDP"   --from-literal=SMTP_EXPEDITEUR=contact@qualitos.fr   --from-literal=SMTP_DESTINATAIRE=contact@qualitos.fr
+kubectl -n qualitos-site create secret generic site-contact-smtp   --from-literal=SMTP_HOTE=ssl0.ovh.net   --from-literal=SMTP_UTILISATEUR=contact@qualitos.fr   --from-literal=SMTP_MOT_DE_PASSE="$MDP"   --from-literal=SMTP_EXPEDITEUR=contact@qualitos.fr   --from-literal=SMTP_DESTINATAIRE=contact@qualitos.fr
 unset MDP
 ```
+
+**Le port n'est pas ici.** `SMTP_PORT` et `SMTP_TLS_IMPLICITE` sont posés dans
+`infra/k8s/site/site.yaml`, où ils se relisent et se versionnent : ce ne sont
+pas des secrets, et les garder dans celui-ci les rendait intouchables depuis le
+dépôt. Un secret existant qui porterait encore un `SMTP_PORT` n'est pas un
+problème — le `env` du manifeste prime sur l'`envFrom` du secret.
 
 Le service **refuse de démarrer** si ce secret manque ou s'il est incomplet.
 C'est voulu : un formulaire qui répond « merci » sans que rien ne parte est la
@@ -246,6 +252,34 @@ curl -s -X POST https://qualitos.fr/api/contact \
 Puis dans un navigateur : remplir le formulaire de la page et vérifier que le
 message arrive. **Le faire une fois après chaque changement de mot de passe de
 la boîte** — c'est le seul contrôle qui prouve que la chaîne complète tient.
+
+### Si l'envoi répond 502
+
+Le service journalise la raison, et elle ne sort jamais dans la réponse HTTP :
+
+```bash
+kubectl -n qualitos-site logs deployment/site-contact | grep -v healthz | tail
+```
+
+`envoi SMTP impossible : timed out` désigne le réseau, pas les identifiants :
+le relais n'a jamais répondu. **L'hébergeur filtre le 465 et le 25 en sortie**
+(mesuré le 2026-11-07) ; c'est pourquoi la configuration vise le 587. Pour
+refaire la mesure depuis le pod lui-même, là où elle compte :
+
+```bash
+kubectl -n qualitos-site exec deployment/site-contact -- python -c "
+import socket
+for p in (465, 587):
+    s = socket.socket(); s.settimeout(8)
+    try: s.connect(('ssl0.ovh.net', p)); print(p, s.recv(80)[:40])
+    except Exception as e: print(p, type(e).__name__, e)
+    finally: s.close()
+"
+```
+
+Une bannière `220 GARM-...` dit que le port passe. Un `TimeoutError` dit qu'il
+est filtré. Une erreur d'authentification, elle, viendrait du relais et se
+lirait `535` : c'est là, et seulement là, que le mot de passe est en cause.
 
 Et vérifier que la démonstration n'a pas bougé :
 
