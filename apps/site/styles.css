@@ -269,7 +269,10 @@ img { max-width: 100%; height: auto; }
 .heros h1 {
   font-size: var(--t-xxl);
   font-weight: 700;
-  max-width: 17ch;
+  /* Les coupures du titre sont posées à la main ; cette borne n'est là que
+     pour les téléphones étroits, où la plus longue des trois lignes doit
+     encore tenir. */
+  max-width: 21ch;
   margin-bottom: 1.25rem;
 }
 .heros h1 em {
@@ -328,27 +331,27 @@ img { max-width: 100%; height: auto; }
   .trace__point, .trace__point--hors, .trace__etiquette { opacity: 1; animation: none; }
 }
 
-/* Les cinq méthodes, en pied de héros : des colonnes séparées par des filets,
+/* La couverture, en pied de héros : des colonnes séparées par des filets,
    pas une chaîne de mots reliés par des points médians. */
-.methodes-rapides {
+.couverture-rapide {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   margin-top: 2.75rem;
   border-top: 1px solid var(--filet);
 }
-.methodes-rapides div {
+.couverture-rapide div {
   padding: 1.1rem 1.1rem 0 0;
   border-right: 1px solid var(--filet);
 }
-.methodes-rapides div:last-child { border-right: 0; }
-.methodes-rapides dt {
+.couverture-rapide div:last-child { border-right: 0; }
+.couverture-rapide dt {
   font-family: var(--police-titre);
   font-weight: 700;
   font-size: var(--t-base);
   color: var(--marine);
   margin-bottom: 0.15rem;
 }
-.methodes-rapides dd {
+.couverture-rapide dd {
   margin: 0;
   font-size: var(--t-xs);
   color: var(--encre-douce);
@@ -654,9 +657,9 @@ img { max-width: 100%; height: auto; }
 /* ---------- adaptation ---------- */
 @media (max-width: 960px) {
   .constat, .referentiel, .normes-grille, .contact, .equipe { grid-template-columns: 1fr; }
-  .methodes-rapides { grid-template-columns: repeat(2, 1fr); }
-  .methodes-rapides div:nth-child(2n) { border-right: 0; }
-  .methodes-rapides div { border-bottom: 1px solid var(--filet); padding-bottom: 1rem; }
+  .couverture-rapide { grid-template-columns: repeat(2, 1fr); }
+  .couverture-rapide div:nth-child(2n) { border-right: 0; }
+  .couverture-rapide div { border-bottom: 1px solid var(--filet); padding-bottom: 1rem; }
 }
 
 @media (max-width: 1040px) {
@@ -679,8 +682,8 @@ img { max-width: 100%; height: auto; }
   .nav .bouton { margin-top: 0.75rem; justify-content: center; }
   .nav__bascule { display: inline-flex; min-height: 44px; }
   .champs { grid-template-columns: 1fr; }
-  .methodes-rapides { grid-template-columns: 1fr; }
-  .methodes-rapides div { border-right: 0; }
+  .couverture-rapide { grid-template-columns: 1fr; }
+  .couverture-rapide div { border-right: 0; }
   .metiers, .modules { border-left: 0; }
   .metier, .module { border-right: 0; }
 }
