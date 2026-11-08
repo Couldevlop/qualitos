@@ -23418,6 +23418,298 @@ historique 12 mois</source>
         <source>Impossible d'annuler cette inscription.</source>
         <target state="translated">无法取消此报名。</target>
       </trans-unit>
+      <trans-unit id="platform.audit.title" datatype="html">
+        <source>Piste d'audit de la plateforme</source>
+        <target state="translated">平台审计追踪</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.subtitle" datatype="html">
+        <source>Les actes de l'éditeur sur les dossiers des clients : créations, modules, tarifs, accès accordés aux cabinets. Chaque acte est chaîné par empreinte et la base refuse de le modifier. C'est la piste qu'une autorité demande.</source>
+        <target state="translated">供应商对客户账户执行的操作：创建、模块、价格、授予事务所的访问权限。每项操作均以哈希链接，数据库拒绝对其修改。这正是监管机构所要求的追踪记录。</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.append-only" datatype="html">
+        <source>Registre inaltérable</source>
+        <target state="translated">仅可追加的登记簿</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.filter-action" datatype="html">
+        <source>Type d'acte</source>
+        <target state="translated">操作类型</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.filter-any-action" datatype="html">
+        <source>Tous les actes</source>
+        <target state="translated">所有操作</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.filter-tenant" datatype="html">
+        <source>Client visé</source>
+        <target state="translated">涉及的客户</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.filter-tenant-hint" datatype="html">
+        <source>Identifiant du client</source>
+        <target state="translated">客户标识</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.filter-actor" datatype="html">
+        <source>Auteur</source>
+        <target state="translated">操作人</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.filter-from" datatype="html">
+        <source>Depuis</source>
+        <target state="translated">起始</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.filter-to" datatype="html">
+        <source>Jusqu'à</source>
+        <target state="translated">截止</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.uuid-error" datatype="html">
+        <source>Identifiant attendu au format UUID.</source>
+        <target state="translated">标识需为 UUID 格式。</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.apply" datatype="html">
+        <source>Filtrer</source>
+        <target state="translated">筛选</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.reset" datatype="html">
+        <source>Réinitialiser</source>
+        <target state="translated">重置</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.criterion-tenant" datatype="html">
+        <source>Filtre appliqué : le client visé. Les autres critères sont ignorés par le serveur.</source>
+        <target state="translated">已应用的筛选：涉及的客户。服务器会忽略其他条件。</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.criterion-action" datatype="html">
+        <source>Filtre appliqué : le type d'acte. Les autres critères sont ignorés par le serveur.</source>
+        <target state="translated">已应用的筛选：操作类型。服务器会忽略其他条件。</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.criterion-actor" datatype="html">
+        <source>Filtre appliqué : l'auteur. Les autres critères sont ignorés par le serveur.</source>
+        <target state="translated">已应用的筛选：操作人。服务器会忽略其他条件。</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.criterion-period" datatype="html">
+        <source>Filtre appliqué : la période. Renseignez les deux bornes pour qu'elle soit prise en compte.</source>
+        <target state="translated">已应用的筛选：时间段。需填写起止两端才会生效。</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.criterion-none" datatype="html">
+        <source>Aucun filtre actif : toute la piste d'audit est affichée, du plus récent au plus ancien.</source>
+        <target state="translated">未启用筛选：显示完整审计追踪，按时间从新到旧。</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.col-seq" datatype="html">
+        <source>N°</source>
+        <target state="translated">序号</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.col-when" datatype="html">
+        <source>Survenu le</source>
+        <target state="translated">发生时间</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.col-actor" datatype="html">
+        <source>Auteur</source>
+        <target state="translated">操作人</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.col-action" datatype="html">
+        <source>Acte</source>
+        <target state="translated">操作</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.col-target" datatype="html">
+        <source>Cible</source>
+        <target state="translated">目标</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.col-hash" datatype="html">
+        <source>Empreinte</source>
+        <target state="translated">哈希</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.no-actor" datatype="html">
+        <source>La plateforme</source>
+        <target state="translated">平台</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.detail-aria" datatype="html">
+        <source>Afficher le détail de l'acte</source>
+        <target state="translated">查看操作详情</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.empty" datatype="html">
+        <source>Aucun acte ne correspond à ces critères.</source>
+        <target state="translated">没有符合这些条件的操作。</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.paginator-aria" datatype="html">
+        <source>Pagination de la piste d'audit</source>
+        <target state="translated">审计追踪分页</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.load-failed" datatype="html">
+        <source>La piste d'audit n'a pas pu être chargée.</source>
+        <target state="translated">无法加载审计追踪。</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.verify-title" datatype="html">
+        <source>Intégrité de la chaîne</source>
+        <target state="translated">链的完整性</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.verify-hint" datatype="html">
+        <source>Recalcule les empreintes, contrôle leur chaînage et compte les actes. Une rupture révèle une retouche ; un acte manquant se voit au comptage, qu'aucune empreinte ne montrerait.</source>
+        <target state="translated">重新计算哈希、检查其链接并统计操作数量。链条断裂说明存在改动；缺失的操作可通过计数发现，而哈希本身无法显示。</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.verify-all" datatype="html">
+        <source>Vérifier tout le journal</source>
+        <target state="translated">验证整个日志</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.verify-page" datatype="html">
+        <source>Sur la page affichée</source>
+        <target state="translated">仅当前显示页</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.verify-running" datatype="html">
+        <source>Vérification en cours…</source>
+        <target state="translated">正在验证…</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.verify-failed" datatype="html">
+        <source>La vérification d'intégrité a échoué.</source>
+        <target state="translated">完整性校验失败。</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.verdict-ok" datatype="html">
+        <source>Chaîne intacte</source>
+        <target state="translated">链条完好</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.verdict-ko" datatype="html">
+        <source>Chaîne rompue</source>
+        <target state="translated">链条断裂</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.verdict-count" datatype="html">
+        <source>Actes examinés</source>
+        <target state="translated">已检查的操作</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.verdict-scope-page" datatype="html">
+        <source> — page affichée seulement</source>
+        <target state="translated"> — 仅当前显示页</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.verdict-caveat" datatype="html">
+        <source>Aucune retouche détectée. La chaîne ne dit rien d'un acte qui n'aurait jamais été consigné.</source>
+        <target state="translated">未检测到改动。对于从未被记录的操作，链条无法提供任何信息。</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.export-title" datatype="html">
+        <source>Dossier d'audit</source>
+        <target state="translated">审计档案</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.export-hint" datatype="html">
+        <source>Tout le journal, son verdict d'intégrité et un sceau, dans un fichier vérifiable sans la plateforme. L'export est lui-même consigné.</source>
+        <target state="translated">整个日志、其完整性判定以及一枚印章，汇成一个无需平台即可验证的文件。导出本身也会被记录。</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.export" datatype="html">
+        <source>Exporter le dossier</source>
+        <target state="translated">导出档案</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.export-running" datatype="html">
+        <source>Export en cours…</source>
+        <target state="translated">正在导出…</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.export-failed" datatype="html">
+        <source>Le dossier d'audit n'a pas pu être exporté.</source>
+        <target state="translated">无法导出审计档案。</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.export-seal" datatype="html">
+        <source>Sceau du dernier dossier</source>
+        <target state="translated">最近一次档案的印章</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.detail-title" datatype="html">
+        <source>Détail de l'acte</source>
+        <target state="translated">操作详情</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.close-detail-aria" datatype="html">
+        <source>Fermer le détail</source>
+        <target state="translated">关闭详情</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.field-summary" datatype="html">
+        <source>Résumé</source>
+        <target state="translated">摘要</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.recorded-at" datatype="html">
+        <source>Enregistré</source>
+        <target state="translated">记录时间</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.field-tenant" datatype="html">
+        <source>Client concerné</source>
+        <target state="translated">涉及的客户</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.field-ip" datatype="html">
+        <source>Adresse d'origine</source>
+        <target state="translated">来源地址</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.field-agent" datatype="html">
+        <source>Logiciel employé</source>
+        <target state="translated">所用软件</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.field-hash" datatype="html">
+        <source>Empreinte</source>
+        <target state="translated">哈希</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.field-previous" datatype="html">
+        <source>Empreinte précédente</source>
+        <target state="translated">上一条哈希</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.chain-origin" datatype="html">
+        <source>Premier acte du registre</source>
+        <target state="translated">登记簿的首项操作</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.field-payload" datatype="html">
+        <source>Détail enregistré</source>
+        <target state="translated">已记录的详情</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.act.tenant-created" datatype="html">
+        <source>Client créé</source>
+        <target state="translated">已创建客户</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.act.tenant-updated" datatype="html">
+        <source>Client modifié</source>
+        <target state="translated">已修改客户</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.act.tenant-deactivated" datatype="html">
+        <source>Client désactivé</source>
+        <target state="translated">已停用客户</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.act.module-subscribed" datatype="html">
+        <source>Module ouvert</source>
+        <target state="translated">已开通模块</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.act.module-cancelled" datatype="html">
+        <source>Module fermé</source>
+        <target state="translated">已关闭模块</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.act.price-set" datatype="html">
+        <source>Tarif fixé</source>
+        <target state="translated">已设定价格</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.act.firm-created" datatype="html">
+        <source>Cabinet créé</source>
+        <target state="translated">已创建事务所</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.act.firm-updated" datatype="html">
+        <source>Cabinet modifié</source>
+        <target state="translated">已修改事务所</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.act.firm-active" datatype="html">
+        <source>Cabinet suspendu ou réactivé</source>
+        <target state="translated">已暂停或恢复事务所</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.act.consultant-added" datatype="html">
+        <source>Consultant rattaché</source>
+        <target state="translated">已关联顾问</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.act.consultant-active" datatype="html">
+        <source>Consultant désactivé ou réactivé</source>
+        <target state="translated">已停用或恢复顾问</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.act.engagement-proposed" datatype="html">
+        <source>Mission proposée</source>
+        <target state="translated">已提议委托</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.act.engagement-granted" datatype="html">
+        <source>Accès accordé à un cabinet</source>
+        <target state="translated">已向事务所授予访问权限</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.act.engagement-declined" datatype="html">
+        <source>Mission refusée</source>
+        <target state="translated">已拒绝委托</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.act.engagement-revoked" datatype="html">
+        <source>Accès retiré à un cabinet</source>
+        <target state="translated">已撤销事务所的访问权限</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.act.exported" datatype="html">
+        <source>Dossier d'audit exporté</source>
+        <target state="translated">已导出审计档案</target>
+      </trans-unit>
       <trans-unit id="platform.brand.console" datatype="html">
         <source>Console éditeur</source>
         <target state="translated">发行方控制台</target>

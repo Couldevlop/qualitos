@@ -23418,6 +23418,298 @@ declared income
         <source>Impossible d'annuler cette inscription.</source>
         <target state="translated">Cannot cancel this enrollment.</target>
       </trans-unit>
+      <trans-unit id="platform.audit.title" datatype="html">
+        <source>Piste d'audit de la plateforme</source>
+        <target state="translated">Platform audit trail</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.subtitle" datatype="html">
+        <source>Les actes de l'éditeur sur les dossiers des clients : créations, modules, tarifs, accès accordés aux cabinets. Chaque acte est chaîné par empreinte et la base refuse de le modifier. C'est la piste qu'une autorité demande.</source>
+        <target state="translated">The vendor’s acts on client accounts: creations, modules, prices, access granted to firms. Each act is hash-chained and the database refuses to alter it. This is the trail an authority asks for.</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.append-only" datatype="html">
+        <source>Registre inaltérable</source>
+        <target state="translated">Append-only register</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.filter-action" datatype="html">
+        <source>Type d'acte</source>
+        <target state="translated">Act type</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.filter-any-action" datatype="html">
+        <source>Tous les actes</source>
+        <target state="translated">All acts</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.filter-tenant" datatype="html">
+        <source>Client visé</source>
+        <target state="translated">Client concerned</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.filter-tenant-hint" datatype="html">
+        <source>Identifiant du client</source>
+        <target state="translated">Client identifier</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.filter-actor" datatype="html">
+        <source>Auteur</source>
+        <target state="translated">Author</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.filter-from" datatype="html">
+        <source>Depuis</source>
+        <target state="translated">From</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.filter-to" datatype="html">
+        <source>Jusqu'à</source>
+        <target state="translated">To</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.uuid-error" datatype="html">
+        <source>Identifiant attendu au format UUID.</source>
+        <target state="translated">Identifier must be a UUID.</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.apply" datatype="html">
+        <source>Filtrer</source>
+        <target state="translated">Filter</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.reset" datatype="html">
+        <source>Réinitialiser</source>
+        <target state="translated">Reset</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.criterion-tenant" datatype="html">
+        <source>Filtre appliqué : le client visé. Les autres critères sont ignorés par le serveur.</source>
+        <target state="translated">Filter applied: the client concerned. The server ignores the other criteria.</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.criterion-action" datatype="html">
+        <source>Filtre appliqué : le type d'acte. Les autres critères sont ignorés par le serveur.</source>
+        <target state="translated">Filter applied: the act type. The server ignores the other criteria.</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.criterion-actor" datatype="html">
+        <source>Filtre appliqué : l'auteur. Les autres critères sont ignorés par le serveur.</source>
+        <target state="translated">Filter applied: the author. The server ignores the other criteria.</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.criterion-period" datatype="html">
+        <source>Filtre appliqué : la période. Renseignez les deux bornes pour qu'elle soit prise en compte.</source>
+        <target state="translated">Filter applied: the period. Fill in both bounds for it to be taken into account.</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.criterion-none" datatype="html">
+        <source>Aucun filtre actif : toute la piste d'audit est affichée, du plus récent au plus ancien.</source>
+        <target state="translated">No filter active: the whole audit trail is shown, newest first.</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.col-seq" datatype="html">
+        <source>N°</source>
+        <target state="translated">No.</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.col-when" datatype="html">
+        <source>Survenu le</source>
+        <target state="translated">Occurred on</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.col-actor" datatype="html">
+        <source>Auteur</source>
+        <target state="translated">Author</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.col-action" datatype="html">
+        <source>Acte</source>
+        <target state="translated">Act</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.col-target" datatype="html">
+        <source>Cible</source>
+        <target state="translated">Target</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.col-hash" datatype="html">
+        <source>Empreinte</source>
+        <target state="translated">Hash</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.no-actor" datatype="html">
+        <source>La plateforme</source>
+        <target state="translated">The platform</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.detail-aria" datatype="html">
+        <source>Afficher le détail de l'acte</source>
+        <target state="translated">Show act details</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.empty" datatype="html">
+        <source>Aucun acte ne correspond à ces critères.</source>
+        <target state="translated">No act matches these criteria.</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.paginator-aria" datatype="html">
+        <source>Pagination de la piste d'audit</source>
+        <target state="translated">Audit trail pagination</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.load-failed" datatype="html">
+        <source>La piste d'audit n'a pas pu être chargée.</source>
+        <target state="translated">The audit trail could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.verify-title" datatype="html">
+        <source>Intégrité de la chaîne</source>
+        <target state="translated">Chain integrity</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.verify-hint" datatype="html">
+        <source>Recalcule les empreintes, contrôle leur chaînage et compte les actes. Une rupture révèle une retouche ; un acte manquant se voit au comptage, qu'aucune empreinte ne montrerait.</source>
+        <target state="translated">Recomputes the hashes, checks their chaining and counts the acts. A break reveals tampering; a missing act shows up in the count, which no hash would reveal.</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.verify-all" datatype="html">
+        <source>Vérifier tout le journal</source>
+        <target state="translated">Verify the whole log</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.verify-page" datatype="html">
+        <source>Sur la page affichée</source>
+        <target state="translated">On the displayed page</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.verify-running" datatype="html">
+        <source>Vérification en cours…</source>
+        <target state="translated">Verification in progress…</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.verify-failed" datatype="html">
+        <source>La vérification d'intégrité a échoué.</source>
+        <target state="translated">The integrity check failed.</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.verdict-ok" datatype="html">
+        <source>Chaîne intacte</source>
+        <target state="translated">Chain intact</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.verdict-ko" datatype="html">
+        <source>Chaîne rompue</source>
+        <target state="translated">Chain broken</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.verdict-count" datatype="html">
+        <source>Actes examinés</source>
+        <target state="translated">Acts examined</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.verdict-scope-page" datatype="html">
+        <source> — page affichée seulement</source>
+        <target state="translated"> — displayed page only</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.verdict-caveat" datatype="html">
+        <source>Aucune retouche détectée. La chaîne ne dit rien d'un acte qui n'aurait jamais été consigné.</source>
+        <target state="translated">No tampering detected. The chain says nothing about an act that was never recorded.</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.export-title" datatype="html">
+        <source>Dossier d'audit</source>
+        <target state="translated">Audit file</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.export-hint" datatype="html">
+        <source>Tout le journal, son verdict d'intégrité et un sceau, dans un fichier vérifiable sans la plateforme. L'export est lui-même consigné.</source>
+        <target state="translated">The whole log, its integrity verdict and a seal, in a file verifiable without the platform. The export is itself recorded.</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.export" datatype="html">
+        <source>Exporter le dossier</source>
+        <target state="translated">Export the file</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.export-running" datatype="html">
+        <source>Export en cours…</source>
+        <target state="translated">Export in progress…</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.export-failed" datatype="html">
+        <source>Le dossier d'audit n'a pas pu être exporté.</source>
+        <target state="translated">The audit file could not be exported.</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.export-seal" datatype="html">
+        <source>Sceau du dernier dossier</source>
+        <target state="translated">Seal of the latest file</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.detail-title" datatype="html">
+        <source>Détail de l'acte</source>
+        <target state="translated">Act details</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.close-detail-aria" datatype="html">
+        <source>Fermer le détail</source>
+        <target state="translated">Close the details</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.field-summary" datatype="html">
+        <source>Résumé</source>
+        <target state="translated">Summary</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.recorded-at" datatype="html">
+        <source>Enregistré</source>
+        <target state="translated">Recorded</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.field-tenant" datatype="html">
+        <source>Client concerné</source>
+        <target state="translated">Client concerned</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.field-ip" datatype="html">
+        <source>Adresse d'origine</source>
+        <target state="translated">Source address</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.field-agent" datatype="html">
+        <source>Logiciel employé</source>
+        <target state="translated">Software used</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.field-hash" datatype="html">
+        <source>Empreinte</source>
+        <target state="translated">Hash</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.field-previous" datatype="html">
+        <source>Empreinte précédente</source>
+        <target state="translated">Previous hash</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.chain-origin" datatype="html">
+        <source>Premier acte du registre</source>
+        <target state="translated">First act of the register</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.field-payload" datatype="html">
+        <source>Détail enregistré</source>
+        <target state="translated">Recorded details</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.act.tenant-created" datatype="html">
+        <source>Client créé</source>
+        <target state="translated">Client created</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.act.tenant-updated" datatype="html">
+        <source>Client modifié</source>
+        <target state="translated">Client updated</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.act.tenant-deactivated" datatype="html">
+        <source>Client désactivé</source>
+        <target state="translated">Client deactivated</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.act.module-subscribed" datatype="html">
+        <source>Module ouvert</source>
+        <target state="translated">Module opened</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.act.module-cancelled" datatype="html">
+        <source>Module fermé</source>
+        <target state="translated">Module closed</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.act.price-set" datatype="html">
+        <source>Tarif fixé</source>
+        <target state="translated">Price set</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.act.firm-created" datatype="html">
+        <source>Cabinet créé</source>
+        <target state="translated">Firm created</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.act.firm-updated" datatype="html">
+        <source>Cabinet modifié</source>
+        <target state="translated">Firm updated</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.act.firm-active" datatype="html">
+        <source>Cabinet suspendu ou réactivé</source>
+        <target state="translated">Firm suspended or reactivated</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.act.consultant-added" datatype="html">
+        <source>Consultant rattaché</source>
+        <target state="translated">Consultant attached</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.act.consultant-active" datatype="html">
+        <source>Consultant désactivé ou réactivé</source>
+        <target state="translated">Consultant deactivated or reactivated</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.act.engagement-proposed" datatype="html">
+        <source>Mission proposée</source>
+        <target state="translated">Engagement proposed</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.act.engagement-granted" datatype="html">
+        <source>Accès accordé à un cabinet</source>
+        <target state="translated">Access granted to a firm</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.act.engagement-declined" datatype="html">
+        <source>Mission refusée</source>
+        <target state="translated">Engagement declined</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.act.engagement-revoked" datatype="html">
+        <source>Accès retiré à un cabinet</source>
+        <target state="translated">Access revoked from a firm</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.act.exported" datatype="html">
+        <source>Dossier d'audit exporté</source>
+        <target state="translated">Audit file exported</target>
+      </trans-unit>
       <trans-unit id="platform.brand.console" datatype="html">
         <source>Console éditeur</source>
         <target state="translated">Publisher console</target>
