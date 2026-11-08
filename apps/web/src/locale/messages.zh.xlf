@@ -22436,6 +22436,18 @@ historique 12 mois</source>
         <source>Non-conformités ouvertes</source>
         <target state="translated">未结不合格项</target>
       </trans-unit>
+      <trans-unit id="home.kpi.open-nc-external" datatype="html">
+        <source>Réclamations clients ouvertes</source>
+        <target state="translated">未结客户投诉</target>
+      </trans-unit>
+      <trans-unit id="home.kpi.open-capa-major" datatype="html">
+        <source>CAPA majeures ouvertes</source>
+        <target state="translated">未结重大 CAPA</target>
+      </trans-unit>
+      <trans-unit id="home.kpi.capa-major-scope" datatype="html">
+        <source>Criticité haute et moyenne</source>
+        <target state="translated">严重度：高与中</target>
+      </trans-unit>
       <trans-unit id="home.kpi.fives-score" datatype="html">
         <source>Score 5S moyen</source>
         <target state="translated">平均 5S 得分</target>

@@ -22436,6 +22436,18 @@ historique 12 mois</source>
         <source>Non-conformités ouvertes</source>
         <target state="translated">حالات عدم المطابقة المفتوحة</target>
       </trans-unit>
+      <trans-unit id="home.kpi.open-nc-external" datatype="html">
+        <source>Réclamations clients ouvertes</source>
+        <target state="translated">شكاوى العملاء المفتوحة</target>
+      </trans-unit>
+      <trans-unit id="home.kpi.open-capa-major" datatype="html">
+        <source>CAPA majeures ouvertes</source>
+        <target state="translated">إجراءات CAPA الكبرى المفتوحة</target>
+      </trans-unit>
+      <trans-unit id="home.kpi.capa-major-scope" datatype="html">
+        <source>Criticité haute et moyenne</source>
+        <target state="translated">درجة خطورة عالية ومتوسطة</target>
+      </trans-unit>
       <trans-unit id="home.kpi.fives-score" datatype="html">
         <source>Score 5S moyen</source>
         <target state="translated">متوسط درجة 5S</target>

@@ -22436,6 +22436,18 @@ declared income
         <source>Non-conformités ouvertes</source>
         <target state="translated">Open non-conformances</target>
       </trans-unit>
+      <trans-unit id="home.kpi.open-nc-external" datatype="html">
+        <source>Réclamations clients ouvertes</source>
+        <target state="translated">Open customer complaints</target>
+      </trans-unit>
+      <trans-unit id="home.kpi.open-capa-major" datatype="html">
+        <source>CAPA majeures ouvertes</source>
+        <target state="translated">Open major CAPAs</target>
+      </trans-unit>
+      <trans-unit id="home.kpi.capa-major-scope" datatype="html">
+        <source>Criticité haute et moyenne</source>
+        <target state="translated">High and medium criticality</target>
+      </trans-unit>
       <trans-unit id="home.kpi.fives-score" datatype="html">
         <source>Score 5S moyen</source>
         <target state="translated">Average 5S score</target>
