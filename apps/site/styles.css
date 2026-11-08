@@ -269,10 +269,10 @@ img { max-width: 100%; height: auto; }
 .heros h1 {
   font-size: var(--t-xxl);
   font-weight: 700;
-  /* Les coupures du titre sont posées à la main ; cette borne n'est là que
-     pour les téléphones étroits, où la plus longue des trois lignes doit
-     encore tenir. */
-  max-width: 21ch;
+  /* La coupure du titre est posée à la main ; cette borne n'est là que pour
+     les téléphones étroits, où la plus longue des deux lignes — « Ce que votre
+     qualité fait de mieux, » — doit encore tenir sans se recouper. */
+  max-width: 36ch;
   margin-bottom: 1.25rem;
 }
 .heros h1 em {
