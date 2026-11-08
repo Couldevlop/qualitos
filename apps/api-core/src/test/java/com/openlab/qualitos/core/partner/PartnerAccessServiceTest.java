@@ -2,6 +2,7 @@ package com.openlab.qualitos.core.partner;
 
 import com.openlab.qualitos.core.tenant.Tenant;
 import com.openlab.qualitos.core.tenant.TenantRepository;
+import com.openlab.qualitos.core.platformaudit.PlatformAuditService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -43,6 +44,7 @@ class PartnerAccessServiceTest {
     private PartnerConsultantRepository consultants;
     private PartnerEngagementRepository engagements;
     private TenantRepository tenants;
+    private PlatformAuditService auditTrail;
     private PartnerAccessService service;
 
     @BeforeEach
@@ -51,8 +53,9 @@ class PartnerAccessServiceTest {
         consultants = mock(PartnerConsultantRepository.class);
         engagements = mock(PartnerEngagementRepository.class);
         tenants = mock(TenantRepository.class);
+        auditTrail = mock(PlatformAuditService.class);
         Clock clock = Clock.fixed(AUJOURD_HUI.atStartOfDay(ZoneOffset.UTC).toInstant(), ZoneOffset.UTC);
-        service = new PartnerAccessService(firms, consultants, engagements, tenants, clock);
+        service = new PartnerAccessService(firms, consultants, engagements, tenants, clock, auditTrail);
         when(engagements.save(any(PartnerEngagement.class))).thenAnswer(i -> i.getArgument(0));
         when(tenants.findById(CLIENT)).thenReturn(Optional.of(
                 Tenant.builder().id(CLIENT).slug("client").name("Metalux").build()));

@@ -3,6 +3,7 @@ package com.openlab.qualitos.core.partner;
 import com.openlab.qualitos.core.tenant.Tenant;
 import com.openlab.qualitos.core.tenant.TenantNotFoundException;
 import com.openlab.qualitos.core.tenant.TenantRepository;
+import com.openlab.qualitos.core.platformaudit.PlatformAuditService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.PageImpl;
@@ -42,6 +43,7 @@ class PartnerFirmServiceTest {
     private PartnerConsultantRepository consultants;
     private PartnerEngagementRepository engagements;
     private TenantRepository tenants;
+    private PlatformAuditService auditTrail;
     private PartnerFirmService service;
 
     @BeforeEach
@@ -50,8 +52,9 @@ class PartnerFirmServiceTest {
         consultants = mock(PartnerConsultantRepository.class);
         engagements = mock(PartnerEngagementRepository.class);
         tenants = mock(TenantRepository.class);
+        auditTrail = mock(PlatformAuditService.class);
         Clock clock = Clock.fixed(AUJOURD_HUI.atStartOfDay(ZoneOffset.UTC).toInstant(), ZoneOffset.UTC);
-        service = new PartnerFirmService(firms, consultants, engagements, tenants, clock);
+        service = new PartnerFirmService(firms, consultants, engagements, tenants, clock, auditTrail);
         when(firms.save(any(PartnerFirm.class))).thenAnswer(i -> {
             PartnerFirm f = i.getArgument(0);
             if (f.getId() == null) {

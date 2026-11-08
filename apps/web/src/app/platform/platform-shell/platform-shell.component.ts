@@ -61,6 +61,12 @@ export class PlatformShellComponent {
       hint: $localize`:@@platform.nav.firms.hint:Cabinets partenaires, consultants, clients proposés`
     },
     {
+      label: $localize`:@@platform.nav.audit:Piste d’audit`,
+      route: '/platform/piste-audit',
+      icon: 'receipt_long',
+      hint: $localize`:@@platform.nav.audit.hint:Les actes de l’éditeur sur les dossiers clients`
+    },
+    {
       label: $localize`:@@platform.nav.modules:Catalogue des modules`,
       route: '/platform/modules',
       icon: 'widgets',
