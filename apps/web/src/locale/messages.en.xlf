@@ -13317,8 +13317,8 @@ Business contact details</target>
         <target state="translated">It answers a single question: <x id="START_TAG_STRONG"/>at the current pace, will the indicator reach its target, and when?<x id="CLOSE_TAG_STRONG"/> Holt-Winters exponential smoothing extends the level, the trend and, where there is one, the seasonality of the series. The 95 % interval states the uncertainty: a forecast without an interval reads as a certainty it is not.</target>
       </trans-unit>
       <trans-unit id="forecast.kpi.role-when" datatype="html">
-        <source>Elle sert à décider <x id="START_TAG_EM"/>avant<x id="CLOSE_TAG_EM"/> l'échéance : relancer un cycle d'amélioration qui n'atteindra pas son objectif, renforcer une action dont l'effet s'essouffle, ou au contraire ne rien changer à ce qui converge. Sur une série courte ou erratique, la probabilité d'atteinte reste basse et l'intervalle large — c'est le signal qu'il n'y a pas encore de tendance à prolonger, pas une invitation à y lire une baisse.</source>
-        <target state="translated">It is there to decide <x id="START_TAG_EM"/>before<x id="CLOSE_TAG_EM"/> the deadline: restart an improvement cycle that will not meet its objective, strengthen an action whose effect is fading, or leave alone what is converging. On a short or erratic series the probability stays low and the interval wide — the signal that there is no trend to extend yet, not an invitation to read a decline into it.</target>
+        <source>Elle sert à décider <x id="START_EMPHASISED_TEXT"/>avant<x id="CLOSE_EMPHASISED_TEXT"/> l'échéance : relancer un cycle d'amélioration qui n'atteindra pas son objectif, renforcer une action dont l'effet s'essouffle, ou au contraire ne rien changer à ce qui converge. Sur une série courte ou erratique, la probabilité d'atteinte reste basse et l'intervalle large — c'est le signal qu'il n'y a pas encore de tendance à prolonger, pas une invitation à y lire une baisse.</source>
+        <target state="translated">It is there to decide <x id="START_EMPHASISED_TEXT"/>before<x id="CLOSE_EMPHASISED_TEXT"/> the deadline: restart an improvement cycle that will not meet its objective, strengthen an action whose effect is fading, or leave alone what is converging. On a short or erratic series the probability stays low and the interval wide — the signal that there is no trend to extend yet, not an invitation to read a decline into it.</target>
       </trans-unit>
       <trans-unit id="forecast.kpi.role-links-title" datatype="html">
         <source>Ce à quoi elle est reliée</source>
@@ -13337,8 +13337,8 @@ Business contact details</target>
         <target state="translated">Control charts (SPC)</target>
       </trans-unit>
       <trans-unit id="forecast.kpi.role-link-spc-text" datatype="html">
-        <source>Lecture complémentaire, et non concurrente. Les règles de Nelson disent que le procédé a <x id="START_TAG_EM"/>déjà<x id="CLOSE_TAG_EM"/> dérivé ; la prévision dit où la série va si rien ne change. L'une constate, l'autre projette.</source>
-        <target state="translated">A complementary reading, not a competing one. The Nelson rules say the process has <x id="START_TAG_EM"/>already<x id="CLOSE_TAG_EM"/> drifted; the forecast says where the series is heading if nothing changes. One observes, the other projects.</target>
+        <source>Lecture complémentaire, et non concurrente. Les règles de Nelson disent que le procédé a <x id="START_EMPHASISED_TEXT"/>déjà<x id="CLOSE_EMPHASISED_TEXT"/> dérivé ; la prévision dit où la série va si rien ne change. L'une constate, l'autre projette.</source>
+        <target state="translated">A complementary reading, not a competing one. The Nelson rules say the process has <x id="START_EMPHASISED_TEXT"/>already<x id="CLOSE_EMPHASISED_TEXT"/> drifted; the forecast says where the series is heading if nothing changes. One observes, the other projects.</target>
       </trans-unit>
       <trans-unit id="forecast.kpi.role-link-manual" datatype="html">
         <source>Ce qui reste à votre main</source>

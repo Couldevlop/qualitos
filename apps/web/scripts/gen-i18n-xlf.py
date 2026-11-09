@@ -130,6 +130,68 @@ TEMPLATE_PH_RE = re.compile(r'i18n\(ph="([A-Za-z0-9_]+)"\)')
 TEMPLATE_MSG_ID_RE = re.compile(r'i18n(?:-[a-zA-Z]+)?="@@([A-Za-z0-9._-]+)"')
 
 
+# Les balises en ligne qu'Angular ne nomme PAS d'apres leur nom de balise.
+# Ecrire {$START_TAG_EM} pour un <em> passe la generation et casse le build
+# localise : Angular attend {$START_EMPHASISED_TEXT}. Mesure du 2026-11-09 :
+# deux unites ainsi ecrites ont bloque la mise en production.
+BALISES_NOMMEES = {
+    "em": ("START_EMPHASISED_TEXT", "CLOSE_EMPHASISED_TEXT"),
+    "b": ("START_BOLD_TEXT", "CLOSE_BOLD_TEXT"),
+    "i": ("START_ITALIC_TEXT", "CLOSE_ITALIC_TEXT"),
+    "u": ("START_UNDERLINED_TEXT", "CLOSE_UNDERLINED_TEXT"),
+    "s": ("START_STRIKETHROUGH_TEXT", "CLOSE_STRIKETHROUGH_TEXT"),
+    "a": ("START_LINK", "CLOSE_LINK"),
+    "br": ("LINE_BREAK", None),
+}
+BALISE_OUVRANTE_RE = re.compile(r"<([a-zA-Z][a-zA-Z0-9-]*)(?=[\s>])")
+
+
+def _corps_du_message(texte: str, debut_attribut: int) -> str:
+    """Le contenu de l'element qui porte l'attribut i18n, balise fermante comprise.
+
+    On remonte au `<` de son nom de balise, puis on avance en comptant les
+    ouvertures et les fermetures du MEME nom : un <em> qui vit dans l'element
+    suivant n'appartient pas a ce message et ne doit pas etre exige ici.
+    """
+    ouvrant = texte.rfind("<", 0, debut_attribut)
+    if ouvrant < 0:
+        return ""
+    nom = BALISE_OUVRANTE_RE.match(texte, ouvrant)
+    if not nom:
+        return ""
+    nom = nom.group(1)
+    fin_ouvrante = texte.find(">", debut_attribut)
+    if fin_ouvrante < 0:
+        return ""
+    profondeur, i = 1, fin_ouvrante + 1
+    ouvre, ferme = "<" + nom, "</" + nom
+    while profondeur and i < len(texte):
+        suivant_o, suivant_f = texte.find(ouvre, i), texte.find(ferme, i)
+        if suivant_f < 0:
+            # Element sans fermeture (<input>, <img>, attribut i18n-placeholder) :
+            # on ne sait pas ou s'arrete le message, donc on n'exige rien. Mieux
+            # vaut ne rien dire que reclamer les balises du reste du fichier.
+            return ""
+        if 0 <= suivant_o < suivant_f:
+            profondeur, i = profondeur + 1, suivant_o + len(ouvre)
+        else:
+            profondeur, i = profondeur - 1, suivant_f + len(ferme)
+    return "" if profondeur else texte[fin_ouvrante + 1:i]
+
+
+def balises_attendues(corps: str) -> set:
+    """Les espaces reserves qu'Angular produira pour les balises en ligne du corps."""
+    attendus = set()
+    for balise in BALISE_OUVRANTE_RE.findall(corps) + re.findall(r"<(br)\s*/?>", corps):
+        noms = BALISES_NOMMEES.get(balise.lower())
+        if not noms:
+            continue
+        attendus.add(noms[0])
+        if noms[1] and ("</%s" % balise.lower()) in corps.lower():
+            attendus.add(noms[1])
+    return attendus
+
+
 def reject_placeholder_mismatch(translations: dict) -> None:
     """Les noms d'espaces reserves des tables doivent etre ceux du code.
 
@@ -177,6 +239,15 @@ def reject_placeholder_mismatch(translations: dict) -> None:
                 if suivant:
                     suite = suite[:suivant.start()]
                 names = {n.upper() for n in TEMPLATE_PH_RE.findall(suite)}
+                if names:
+                    used.setdefault(match.group(1), set()).update(names)
+            # Troisieme elargissement : les balises EN LIGNE du message
+            # (<em>, <a>, <br>...) sont elles aussi des espaces reserves, et
+            # Angular ne les nomme pas toutes d'apres leur nom de balise.
+            # Seulement la forme i18n="@@id" : avec i18n-title / i18n-label, le
+            # message est la VALEUR de l'attribut, pas le contenu de l'element.
+            for match in re.finditer(r'i18n="@@([A-Za-z0-9._-]+)"', text):
+                names = balises_attendues(_corps_du_message(text, match.start()))
                 if names:
                     used.setdefault(match.group(1), set()).update(names)
     faulty = []
