@@ -5394,6 +5394,62 @@ Portal de clientes</target>
         <source>Facultatif. Ce que ce livrable doit produire concrètement : c'est ce qu'on vérifiera.</source>
         <target state="translated">Opcional. Lo que debe producir concretamente este entregable: es lo que se verificará.</target>
       </trans-unit>
+      <trans-unit id="audits.detail.declare-nc" datatype="html">
+        <source>Déclarer la NC</source>
+        <target state="translated">Declarar la NC</target>
+      </trans-unit>
+      <trans-unit id="audits.detail.open-nc" datatype="html">
+        <source>Voir la NC</source>
+        <target state="translated">Ver la NC</target>
+      </trans-unit>
+      <trans-unit id="audits.declare-nc.title" datatype="html">
+        <source>Déclarer la non-conformité du constat</source>
+        <target state="translated">Declarar la no conformidad del hallazgo</target>
+      </trans-unit>
+      <trans-unit id="audits.declare-nc.subtitle" datatype="html">
+        <source>Le constat devient un écart du registre : il comptera dans les indicateurs, portera son analyse de cause et se clôra sur une preuve.</source>
+        <target state="translated">El hallazgo pasa al registro: contará en los indicadores, llevará su análisis de causa raíz y se cerrará con una prueba.</target>
+      </trans-unit>
+      <trans-unit id="audits.declare-nc.submit" datatype="html">
+        <source>Inscrire au registre</source>
+        <target state="translated">Inscribir en el registro</target>
+      </trans-unit>
+      <trans-unit id="audits.declare-nc.from" datatype="html">
+        <source>Constat d’audit</source>
+        <target state="translated">Hallazgo de auditoría</target>
+      </trans-unit>
+      <trans-unit id="audits.declare-nc.description" datatype="html">
+        <source>Description reprise</source>
+        <target state="translated">Descripción retomada</target>
+      </trans-unit>
+      <trans-unit id="audits.declare-nc.detected" datatype="html">
+        <source>Constaté le</source>
+        <target state="translated">Constatado el</target>
+      </trans-unit>
+      <trans-unit id="audits.declare-nc.nc-title" datatype="html">
+        <source>Intitulé de l’écart</source>
+        <target state="translated">Título de la no conformidad</target>
+      </trans-unit>
+      <trans-unit id="audits.declare-nc.nc-title-hint" datatype="html">
+        <source>Court et citable : c’est ce que lira la revue de direction.</source>
+        <target state="translated">Corto y citable: es lo que leerá la revisión por la dirección.</target>
+      </trans-unit>
+      <trans-unit id="audits.declare-nc.nc-title-required" datatype="html">
+        <source>Intitulé requis.</source>
+        <target state="translated">Título obligatorio.</target>
+      </trans-unit>
+      <trans-unit id="audits.declare-nc.saved" datatype="html">
+        <source>Écart <x id="reference"/> inscrit au registre.</source>
+        <target state="translated">No conformidad <x id="reference"/> inscrita en el registro.</target>
+      </trans-unit>
+      <trans-unit id="audits.declare-nc.already" datatype="html">
+        <source>Ce constat a déjà son écart au registre.</source>
+        <target state="translated">Este hallazgo ya tiene su registro de no conformidad.</target>
+      </trans-unit>
+      <trans-unit id="audits.declare-nc.error" datatype="html">
+        <source>L’écart n’a pas pu être inscrit au registre.</source>
+        <target state="translated">No se ha podido inscribir la no conformidad en el registro.</target>
+      </trans-unit>
       <trans-unit id="nav.audits-planning" datatype="html">
         <source>Planning audits</source>
         <target state="translated">Planificación de auditorías</target>
@@ -23761,6 +23817,14 @@ historial de 12 meses</target>
       <trans-unit id="platform.audit.act.exported" datatype="html">
         <source>Dossier d'audit exporté</source>
         <target state="translated">Expediente de auditoría exportado</target>
+      </trans-unit>
+      <trans-unit id="platform.nav.audit" datatype="html">
+        <source>Piste d’audit</source>
+        <target state="translated">Pista de auditoría</target>
+      </trans-unit>
+      <trans-unit id="platform.nav.audit.hint" datatype="html">
+        <source>Les actes de l’éditeur sur les dossiers clients</source>
+        <target state="translated">Las acciones del editor sobre las cuentas de clientes</target>
       </trans-unit>
       <trans-unit id="platform.brand.console" datatype="html">
         <source>Console éditeur</source>

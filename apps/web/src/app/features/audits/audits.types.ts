@@ -1,3 +1,5 @@
+import { NcCategory } from '../nc/nc.types';
+
 import { SpringPage } from '../pdca/pdca.types';
 
 export type AuditType = 'INTERNAL' | 'EXTERNAL' | 'SUPPLIER' | 'LPA' | 'CERTIFICATION' | 'SURVEILLANCE';
@@ -29,6 +31,8 @@ export interface FindingResponse {
   clauseRef?: string;
   photoUrl?: string;
   capaId?: string;
+  /** L'écart du registre ouvert pour instruire ce constat, s'il l'a été. */
+  ncId?: string;
   /** Auteur, lu par le serveur dans le jeton. Absent d'une réponse optimiste hors ligne. */
   raisedBy?: string;
   raisedAt: string;
@@ -36,6 +40,28 @@ export interface FindingResponse {
   updatedAt: string;
   /** true = déclaré hors-ligne, en attente de synchronisation (réponse optimiste). */
   pendingSync?: boolean;
+}
+
+/**
+ * L'écart inscrit au registre pour instruire un constat, et sa référence.
+ *
+ * <p>La CAPA et l'écart ne se remplacent pas : la CAPA est le plan d'action,
+ * l'écart est le fait constaté. Un constat peut porter les deux.
+ */
+export interface FindingNcResponse {
+  findingId: string;
+  ncId: string;
+  /** « NC-2026-0042 » — la désignation citable de l'écart. */
+  ncReference: string;
+  /** « AUD-2026-0003 / constat 2 » — ce que l'auditeur cite. */
+  sourceRef: string;
+}
+
+/** Ce qu'on demande pour déclarer l'écart d'un constat : tout le reste est repris. */
+export interface DeclareNcRequest {
+  title: string;
+  category: NcCategory;
+  subcategoryCode?: string;
 }
 
 /** La CAPA ouverte sur un constat (ADR 0088), et la référence qu'elle en porte. */

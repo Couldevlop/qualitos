@@ -599,7 +599,7 @@ public class AuditService {
                 f.getId(), f.getPlan().getId(),
                 f.getChecklistItem() != null ? f.getChecklistItem().getId() : null,
                 f.getType(), f.getDescription(), f.getClauseRef(), f.getPhotoUrl(),
-                f.getCapaId(), f.getRaisedBy(), f.getRaisedAt(),
+                f.getCapaId(), f.getNcId(), f.getRaisedBy(), f.getRaisedAt(),
                 f.getCreatedAt(), f.getUpdatedAt());
     }
 }

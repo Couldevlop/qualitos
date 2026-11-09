@@ -169,3 +169,14 @@
   align-self: flex-start;
   margin-top: var(--qos-space-1);
 }
+
+/* Écart du registre pour un constat : même grammaire que la CAPA ci-dessus. */
+.voir-nc {
+  font-size: var(--qos-fs-xs);
+  color: var(--qos-fg-link);
+}
+
+.declarer-nc {
+  align-self: flex-start;
+  margin-top: var(--qos-space-1);
+}

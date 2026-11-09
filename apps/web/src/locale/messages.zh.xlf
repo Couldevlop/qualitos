@@ -5394,6 +5394,62 @@ Portail clients</source>
         <source>Facultatif. Ce que ce livrable doit produire concrètement : c'est ce qu'on vérifiera.</source>
         <target state="translated">可选。该交付物具体应产出什么：这正是将被核查的内容。</target>
       </trans-unit>
+      <trans-unit id="audits.detail.declare-nc" datatype="html">
+        <source>Déclarer la NC</source>
+        <target state="translated">登记不符合项</target>
+      </trans-unit>
+      <trans-unit id="audits.detail.open-nc" datatype="html">
+        <source>Voir la NC</source>
+        <target state="translated">查看不符合项</target>
+      </trans-unit>
+      <trans-unit id="audits.declare-nc.title" datatype="html">
+        <source>Déclarer la non-conformité du constat</source>
+        <target state="translated">登记该发现项的不符合项</target>
+      </trans-unit>
+      <trans-unit id="audits.declare-nc.subtitle" datatype="html">
+        <source>Le constat devient un écart du registre : il comptera dans les indicateurs, portera son analyse de cause et se clôra sur une preuve.</source>
+        <target state="translated">发现项进入不符合项登记册：计入指标、附带根本原因分析，并以证据关闭。</target>
+      </trans-unit>
+      <trans-unit id="audits.declare-nc.submit" datatype="html">
+        <source>Inscrire au registre</source>
+        <target state="translated">登记入册</target>
+      </trans-unit>
+      <trans-unit id="audits.declare-nc.from" datatype="html">
+        <source>Constat d’audit</source>
+        <target state="translated">审核发现项</target>
+      </trans-unit>
+      <trans-unit id="audits.declare-nc.description" datatype="html">
+        <source>Description reprise</source>
+        <target state="translated">沿用的描述</target>
+      </trans-unit>
+      <trans-unit id="audits.declare-nc.detected" datatype="html">
+        <source>Constaté le</source>
+        <target state="translated">发现日期</target>
+      </trans-unit>
+      <trans-unit id="audits.declare-nc.nc-title" datatype="html">
+        <source>Intitulé de l’écart</source>
+        <target state="translated">不符合项标题</target>
+      </trans-unit>
+      <trans-unit id="audits.declare-nc.nc-title-hint" datatype="html">
+        <source>Court et citable : c’est ce que lira la revue de direction.</source>
+        <target state="translated">简短可引用：管理评审将阅读此标题。</target>
+      </trans-unit>
+      <trans-unit id="audits.declare-nc.nc-title-required" datatype="html">
+        <source>Intitulé requis.</source>
+        <target state="translated">标题为必填项。</target>
+      </trans-unit>
+      <trans-unit id="audits.declare-nc.saved" datatype="html">
+        <source>Écart <x id="reference"/> inscrit au registre.</source>
+        <target state="translated">不符合项 <x id="reference"/> 已登记入册。</target>
+      </trans-unit>
+      <trans-unit id="audits.declare-nc.already" datatype="html">
+        <source>Ce constat a déjà son écart au registre.</source>
+        <target state="translated">该发现项已有对应的不符合项记录。</target>
+      </trans-unit>
+      <trans-unit id="audits.declare-nc.error" datatype="html">
+        <source>L’écart n’a pas pu être inscrit au registre.</source>
+        <target state="translated">无法将不符合项登记入册。</target>
+      </trans-unit>
       <trans-unit id="nav.audits-planning" datatype="html">
         <source>Planning audits</source>
         <target state="translated">审核计划</target>
@@ -23761,6 +23817,14 @@ historique 12 mois</source>
       <trans-unit id="platform.audit.act.exported" datatype="html">
         <source>Dossier d'audit exporté</source>
         <target state="translated">已导出审计档案</target>
+      </trans-unit>
+      <trans-unit id="platform.nav.audit" datatype="html">
+        <source>Piste d’audit</source>
+        <target state="translated">审计轨迹</target>
+      </trans-unit>
+      <trans-unit id="platform.nav.audit.hint" datatype="html">
+        <source>Les actes de l’éditeur sur les dossiers clients</source>
+        <target state="translated">服务商对客户租户的操作</target>
       </trans-unit>
       <trans-unit id="platform.brand.console" datatype="html">
         <source>Console éditeur</source>

@@ -11,6 +11,7 @@ import { AuditsChecklistDialogComponent } from './pages/audits-checklist-dialog/
 import { AuditsCreateDialogComponent } from './pages/audits-create-dialog/audits-create-dialog.component';
 import { AuditsDetailComponent } from './pages/audits-detail/audits-detail.component';
 import { AuditsEditDialogComponent } from './pages/audits-edit-dialog/audits-edit-dialog.component';
+import { AuditsDeclareNcDialogComponent } from './pages/audits-declare-nc-dialog/audits-declare-nc-dialog.component';
 import { AuditsFindingDialogComponent } from './pages/audits-finding-dialog/audits-finding-dialog.component';
 import { ChecklistFromStandardDialogComponent } from './pages/checklist-from-standard-dialog/checklist-from-standard-dialog.component';
 import { AuditsListComponent } from './pages/audits-list/audits-list.component';
@@ -35,6 +36,7 @@ const routes: Routes = [
     AuditsResponseDialogComponent,
     AuditsEditDialogComponent,
     AuditsFindingDialogComponent,
+    AuditsDeclareNcDialogComponent,
     ChecklistFromStandardDialogComponent,
     AuditReportPanelComponent,
     AuditDocumentsPanelComponent

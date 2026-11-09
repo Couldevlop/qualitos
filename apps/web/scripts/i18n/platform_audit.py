@@ -300,4 +300,16 @@ TRANSLATIONS = {
     'platform.audit.act.exported': (
         "Dossier d'audit exporté", 'Audit file exported', 'Expediente de auditoría exportado',
         'تم تصدير ملف التدقيق', '監査ファイルをエクスポート', '已导出审计档案'),
+
+    # --- l'entrée de navigation de la console éditeur -------------------------
+    'platform.nav.audit': (
+        'Piste d’audit', 'Audit trail', 'Pista de auditoría',
+        'سجل التدقيق', '監査トレイル', '审计轨迹'),
+    'platform.nav.audit.hint': (
+        'Les actes de l’éditeur sur les dossiers clients',
+        'The publisher’s actions on client accounts',
+        'Las acciones del editor sobre las cuentas de clientes',
+        'إجراءات المزود على ملفات العملاء',
+        'ベンダーが顧客テナントに対して行った操作',
+        '服务商对客户租户的操作'),
 }

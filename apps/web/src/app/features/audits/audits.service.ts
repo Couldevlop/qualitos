@@ -20,7 +20,9 @@ import {
   ChecklistResponseRequest,
   CreateAuditPlanRequest,
   CreateChecklistItemRequest,
+  DeclareNcRequest,
   FindingCapaResponse,
+  FindingNcResponse,
   FindingResponse,
   UpdateAuditPlanRequest
 } from './audits.types';
@@ -366,6 +368,30 @@ export class AuditsService {
       return of({ findingId, capaId, sourceRef: plan?.reference ?? '' }).pipe(delay(150));
     }
     return this.http.post<FindingCapaResponse>(`${this.endpoint}/${planId}/findings/${findingId}/capa`, input);
+  }
+
+  /**
+   * Inscrit l'écart du constat au registre des non-conformités.
+   *
+   * <p>Le corps est court parce que tout le reste est repris du constat par le
+   * serveur : description, date de relevé, clause, gravité, origine de l'audit.
+   * En ligne seulement — un écart de registre porte une référence attribuée par
+   * le serveur, qui ne s'invente pas hors ligne.
+   */
+  declareFindingNc(planId: string, findingId: string,
+                   input: DeclareNcRequest): Observable<FindingNcResponse> {
+    if (environment.useMockApi) {
+      const plan = this.mockStore.find(p => p.id === planId);
+      const finding = plan?.findings?.find(f => f.id === findingId);
+      const ncId = 'nc-' + Math.random().toString(36).slice(2, 9);
+      if (finding) finding.ncId = ncId;
+      return of({
+        findingId, ncId, ncReference: 'NC-DEMO-' + ncId.slice(3, 7),
+        sourceRef: plan?.reference ?? ''
+      }).pipe(delay(150));
+    }
+    return this.http.post<FindingNcResponse>(
+      `${this.endpoint}/${planId}/findings/${findingId}/nc`, input);
   }
 
   // ---- offline (file d'attente + réponses optimistes) -------------------------

@@ -21,11 +21,21 @@ import {
   AuditsFindingDialogData
 } from '../audits-finding-dialog/audits-finding-dialog.component';
 import { auditTypeLabel, findingTypeLabel } from '../../audits.labels';
-import { AuditPlanResponse, AuditStatus, ChecklistItemResponse, FindingResponse } from '../../audits.types';
+import {
+  AuditPlanResponse,
+  AuditStatus,
+  ChecklistItemResponse,
+  FindingNcResponse,
+  FindingResponse
+} from '../../audits.types';
 import { leadAuditorDisplay } from '../../lead-auditor';
 import {
   CapaCreateDialogComponent, CapaCreateDialogData, CapaOpened
 } from '../../../capa/pages/capa-create-dialog/capa-create-dialog.component';
+import {
+  AuditsDeclareNcDialogComponent,
+  AuditsDeclareNcDialogData
+} from '../audits-declare-nc-dialog/audits-declare-nc-dialog.component';
 import {
   ChecklistFromStandardDialogComponent,
   ChecklistFromStandardDialogData
@@ -362,5 +372,30 @@ export class AuditsDetailComponent implements OnInit {
     this.dialog.open<CapaCreateDialogComponent, CapaCreateDialogData, CapaOpened>(CapaCreateDialogComponent, {
       data, autoFocus: 'first-tabbable', restoreFocus: true, panelClass: 'qos-dialog-panel'
     }).afterClosed().subscribe(opened => { if (opened) this.reload$.next(); });
+  }
+
+  // ---- écart du registre pour un constat -------------------------------------
+
+  /**
+   * Un constat non conforme encore absent du registre appelle le bouton.
+   *
+   * <p>Indépendant de la CAPA : un constat peut avoir son plan d'action sans que
+   * le fait soit inscrit au registre, et c'est précisément ce trou qu'on ferme.
+   * Un constat en attente de synchronisation, non : son identifiant n'existe pas
+   * encore côté serveur, et un écart de registre porte une référence attribuée.
+   */
+  canDeclareFindingNc(f: FindingResponse): boolean {
+    return (f.type === 'MINOR_NC' || f.type === 'MAJOR_NC') && !f.ncId && !f.pendingSync;
+  }
+
+  /** Ouvre la déclaration ; le serveur reprend du constat tout ce qu'il peut. */
+  declareFindingNc(p: AuditPlanResponse, f: FindingResponse): void {
+    const rang = (p.findings ?? []).findIndex(x => x.id === f.id) + 1;
+    const sourceRef = $localize`:@@audits.detail.finding-capa-ref:${p.reference}:audit: / constat ${rang}:rank:`;
+    this.dialog.open<AuditsDeclareNcDialogComponent, AuditsDeclareNcDialogData, FindingNcResponse>(
+      AuditsDeclareNcDialogComponent, {
+        data: { planId: p.id, finding: f, sourceRef },
+        autoFocus: 'first-tabbable', restoreFocus: true, panelClass: 'qos-dialog-panel'
+      }).afterClosed().subscribe(ouvert => { if (ouvert) this.reload$.next(); });
   }
 }
