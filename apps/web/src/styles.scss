@@ -1123,3 +1123,18 @@ gridster.qos-gridster {
     z-index: 4;
   }
 }
+
+/*
+ * Listes deroulantes a choix separes.
+ *
+ * Les natures de non-conformite se ressemblent par construction -- ce sont des
+ * variantes d'un meme ecart -- et une colonne de libelles proches se lit mal :
+ * l'oeil ne trouve pas ou s'arrete un choix et ou commence le suivant. Un filet
+ * entre les options suffit, sans toucher a la hauteur de la liste.
+ *
+ * La classe se pose via `panelClass` : le panneau d'un `mat-select` vit dans
+ * l'overlay, hors de la portee encapsulee du composant.
+ */
+.qos-select-panel--lignes .mat-mdc-option:not(:last-child) {
+  border-bottom: 1px solid var(--qos-border-subtle);
+}

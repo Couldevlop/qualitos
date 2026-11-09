@@ -59,7 +59,8 @@
          distinction-là qui décide de l'action. -->
     <mat-form-field appearance="outline" subscriptSizing="dynamic" *ngIf="subcategoryChoices.length">
       <mat-label i18n="@@nc.list.filter-subcategory">Nature</mat-label>
-      <mat-select [formControl]="subcategoryFilter" data-test="filtre-nature">
+      <mat-select [formControl]="subcategoryFilter" data-test="filtre-nature"
+                  panelClass="qos-select-panel--lignes">
         <mat-option [value]="''" i18n="@@common.all">Tous</mat-option>
         <mat-option *ngFor="let s of subcategoryChoices" [value]="s.code">{{ s.label }}</mat-option>
       </mat-select>
