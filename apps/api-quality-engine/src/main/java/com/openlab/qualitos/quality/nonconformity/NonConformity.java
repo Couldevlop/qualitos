@@ -115,6 +115,20 @@ public class NonConformity {
     @Column(name = "capa_case_id")
     private UUID capaCaseId;
 
+    /**
+     * Le cycle PDCA ouvert depuis cet écart, s'il l'a été (§3.6).
+     *
+     * <p>Le lien part d'ici et non du cycle : c'est la fiche de l'écart qu'on
+     * ouvre pour savoir s'il est traité, et une seconde conversion doit pouvoir
+     * être refusée sans parcourir tous les cycles du client.
+     */
+    @Column(name = "pdca_cycle_id")
+    private UUID pdcaCycleId;
+
+    /** Le projet DMAIC ouvert depuis cet écart, s'il l'a été (§3.6). */
+    @Column(name = "dmaic_project_id")
+    private UUID dmaicProjectId;
+
     @Column(name = "root_cause", columnDefinition = "TEXT")
     private String rootCause;
 

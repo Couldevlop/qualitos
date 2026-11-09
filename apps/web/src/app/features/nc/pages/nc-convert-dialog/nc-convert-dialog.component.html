@@ -1,0 +1,65 @@
+<qos-form-dialog
+  i18n-title="@@nc.convert.title"
+  title="Traiter cet écart"
+  [subtitle]="data.reference"
+  [formGroup]="form"
+  [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@nc.convert.submit"
+  submitLabel="Ouvrir le dossier"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
+
+  <!--
+    Ce que le cycle ou le projet reprendra de l'écart, en lecture : son intitulé
+    devient le leur, et l'énoncé du problème est construit par le serveur à
+    partir de la fiche. La fenêtre ne doit pas inviter à les réécrire ici — deux
+    énoncés du même problème divergeraient à la première correction.
+  -->
+  <dl class="repris" data-test="repris">
+    <div>
+      <dt i18n="@@nc.convert.from-nc">Écart repris</dt>
+      <dd>{{ data.title }}</dd>
+    </div>
+    <div>
+      <dt i18n="@@nc.create.severity">Sévérité</dt>
+      <dd data-test="gravite">{{ data.severity | severityLabel }}</dd>
+    </div>
+  </dl>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@nc.convert.method">Méthode</mat-label>
+    <mat-select formControlName="method" data-test="methode">
+      <mat-option value="PDCA" i18n="@@nc.convert.method-pdca">Cycle PDCA</mat-option>
+      <mat-option value="DMAIC" i18n="@@nc.convert.method-dmaic">Projet DMAIC</mat-option>
+    </mat-select>
+    <mat-hint *ngIf="!overridden && proposed === 'DMAIC'" i18n="@@nc.convert.why-dmaic">
+      Un écart critique demande des mesures et une phase de maîtrise : c'est un projet DMAIC.
+    </mat-hint>
+    <mat-hint *ngIf="!overridden && proposed === 'PDCA'" i18n="@@nc.convert.why-pdca">
+      Un écart mineur ou majeur se traite par un cycle : planifier, agir, vérifier, généraliser.
+    </mat-hint>
+    <mat-hint *ngIf="overridden" data-test="ecart-regle" i18n="@@nc.convert.overridden">
+      Ce n'est pas la méthode que la gravité appelait. C'est votre choix, il part tel quel.
+    </mat-hint>
+  </mat-form-field>
+
+  <qos-user-picker class="full" formControlName="pilotId" required data-test="pilote"
+                   i18n-label="@@nc.convert.pilot" label="Qui mène le travail"
+                   i18n-hint="@@nc.convert.pilot-hint"
+                   hint="Propriétaire du cycle, ou black belt du projet. Un dossier dont personne ne répond ne se revoit jamais."
+                   ></qos-user-picker>
+
+  <!-- L'échéance n'existe que pour un projet : un cycle PDCA n'en porte pas,
+       ses étapes ont les leurs. Un champ que le serveur ignorerait serait une
+       promesse non tenue. -->
+  <mat-form-field appearance="outline" class="full" *ngIf="dmaic">
+    <mat-label i18n="@@nc.convert.due-date">Échéance visée</mat-label>
+    <input matInput [matDatepicker]="echeance" formControlName="dueDate" data-test="echeance">
+    <mat-datepicker-toggle matIconSuffix [for]="echeance"
+                           i18n-aria-label="@@nc.convert.due-date-open"
+                           aria-label="Ouvrir le calendrier"></mat-datepicker-toggle>
+    <mat-datepicker #echeance></mat-datepicker>
+    <mat-hint i18n="@@nc.convert.due-date-hint">Facultative : le projet peut la fixer plus tard.</mat-hint>
+  </mat-form-field>
+
+</qos-form-dialog>

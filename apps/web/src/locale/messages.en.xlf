@@ -21482,6 +21482,106 @@ declared income
         <source>Le registre ne se lit pas pour le moment.</source>
         <target state="translated">The register cannot be read right now.</target>
       </trans-unit>
+      <trans-unit id="nc.convert.title" datatype="html">
+        <source>Traiter cet écart</source>
+        <target state="translated">Treat this finding</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.submit" datatype="html">
+        <source>Ouvrir le dossier</source>
+        <target state="translated">Open the case</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.from-nc" datatype="html">
+        <source>Écart repris</source>
+        <target state="translated">Finding carried over</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.method" datatype="html">
+        <source>Méthode</source>
+        <target state="translated">Method</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.method-pdca" datatype="html">
+        <source>Cycle PDCA</source>
+        <target state="translated">PDCA cycle</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.method-dmaic" datatype="html">
+        <source>Projet DMAIC</source>
+        <target state="translated">DMAIC project</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.why-dmaic" datatype="html">
+        <source>Un écart critique demande des mesures et une phase de maîtrise : c'est un projet DMAIC.</source>
+        <target state="translated">A critical finding calls for measurement and a control phase: that is a DMAIC project.</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.why-pdca" datatype="html">
+        <source>Un écart mineur ou majeur se traite par un cycle : planifier, agir, vérifier, généraliser.</source>
+        <target state="translated">A minor or major finding is treated by a cycle: plan, do, check, act.</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.overridden" datatype="html">
+        <source>Ce n'est pas la méthode que la gravité appelait. C'est votre choix, il part tel quel.</source>
+        <target state="translated">This is not the method the severity called for. It is your call, and it goes as is.</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.pilot" datatype="html">
+        <source>Qui mène le travail</source>
+        <target state="translated">Who leads the work</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.pilot-hint" datatype="html">
+        <source>Propriétaire du cycle, ou black belt du projet. Un dossier dont personne ne répond ne se revoit jamais.</source>
+        <target state="translated">Owner of the cycle, or black belt of the project. A case nobody answers for is never reviewed again.</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.due-date" datatype="html">
+        <source>Échéance visée</source>
+        <target state="translated">Target date</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.due-date-hint" datatype="html">
+        <source>Facultative : le projet peut la fixer plus tard.</source>
+        <target state="translated">Optional: the project can set it later.</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.due-date-open" datatype="html">
+        <source>Ouvrir le calendrier</source>
+        <target state="translated">Open the calendar</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.pdca-opened" datatype="html">
+        <source>Cycle PDCA ouvert.</source>
+        <target state="translated">PDCA cycle opened.</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.dmaic-opened" datatype="html">
+        <source>Projet DMAIC ouvert.</source>
+        <target state="translated">DMAIC project opened.</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.failed" datatype="html">
+        <source>Le dossier n'a pas pu être ouvert.</source>
+        <target state="translated">The case could not be opened.</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.convert" datatype="html">
+        <source>Traiter par une méthode</source>
+        <target state="translated">Treat by a method</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.convert-tooltip" datatype="html">
+        <source>Ouvrir le cycle ou le projet qui traitera ce que cet écart révèle</source>
+        <target state="translated">Open the cycle or project that will treat what this finding reveals</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.open-pdca" datatype="html">
+        <source>Voir le cycle PDCA</source>
+        <target state="translated">View the PDCA cycle</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.open-dmaic" datatype="html">
+        <source>Voir le projet DMAIC</source>
+        <target state="translated">View the DMAIC project</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.pdca-label" datatype="html">
+        <source>Cycle PDCA</source>
+        <target state="translated">PDCA cycle</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.pdca-link-open" datatype="html">
+        <source>Ouvrir le cycle</source>
+        <target state="translated">Open the cycle</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.dmaic-label" datatype="html">
+        <source>Projet DMAIC</source>
+        <target state="translated">DMAIC project</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.dmaic-link-open" datatype="html">
+        <source>Ouvrir le projet</source>
+        <target state="translated">Open the project</target>
+      </trans-unit>
       <trans-unit id="nav.admin-nc" datatype="html">
         <source>Natures de NC</source>
         <target state="translated">NC natures</target>

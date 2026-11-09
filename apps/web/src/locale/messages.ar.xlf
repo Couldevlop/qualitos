@@ -21482,6 +21482,106 @@ historique 12 mois</source>
         <source>Le registre ne se lit pas pour le moment.</source>
         <target state="translated">تعذّرت قراءة السجل حاليًا.</target>
       </trans-unit>
+      <trans-unit id="nc.convert.title" datatype="html">
+        <source>Traiter cet écart</source>
+        <target state="translated">معالجة هذا الانحراف</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.submit" datatype="html">
+        <source>Ouvrir le dossier</source>
+        <target state="translated">فتح الملف</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.from-nc" datatype="html">
+        <source>Écart repris</source>
+        <target state="translated">الانحراف المنقول</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.method" datatype="html">
+        <source>Méthode</source>
+        <target state="translated">الأسلوب</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.method-pdca" datatype="html">
+        <source>Cycle PDCA</source>
+        <target state="translated">دورة PDCA</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.method-dmaic" datatype="html">
+        <source>Projet DMAIC</source>
+        <target state="translated">مشروع DMAIC</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.why-dmaic" datatype="html">
+        <source>Un écart critique demande des mesures et une phase de maîtrise : c'est un projet DMAIC.</source>
+        <target state="translated">يتطلّب الانحراف الحرج قياسات ومرحلة ضبط: وهذا مشروع DMAIC.</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.why-pdca" datatype="html">
+        <source>Un écart mineur ou majeur se traite par un cycle : planifier, agir, vérifier, généraliser.</source>
+        <target state="translated">يُعالج الانحراف البسيط أو الجوهري بدورة: التخطيط، التنفيذ، التحقّق، التعميم.</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.overridden" datatype="html">
+        <source>Ce n'est pas la méthode que la gravité appelait. C'est votre choix, il part tel quel.</source>
+        <target state="translated">ليس هذا الأسلوب الذي تستدعيه الخطورة. القرار قرارك، ويُرسل كما هو.</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.pilot" datatype="html">
+        <source>Qui mène le travail</source>
+        <target state="translated">من يقود العمل</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.pilot-hint" datatype="html">
+        <source>Propriétaire du cycle, ou black belt du projet. Un dossier dont personne ne répond ne se revoit jamais.</source>
+        <target state="translated">مالك الدورة أو الحزام الأسود للمشروع. الملف الذي لا يتولّاه أحد لا يُراجع أبدًا.</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.due-date" datatype="html">
+        <source>Échéance visée</source>
+        <target state="translated">الموعد المستهدف</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.due-date-hint" datatype="html">
+        <source>Facultative : le projet peut la fixer plus tard.</source>
+        <target state="translated">اختياري: يمكن للمشروع تحديده لاحقًا.</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.due-date-open" datatype="html">
+        <source>Ouvrir le calendrier</source>
+        <target state="translated">فتح التقويم</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.pdca-opened" datatype="html">
+        <source>Cycle PDCA ouvert.</source>
+        <target state="translated">تم فتح دورة PDCA.</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.dmaic-opened" datatype="html">
+        <source>Projet DMAIC ouvert.</source>
+        <target state="translated">تم فتح مشروع DMAIC.</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.failed" datatype="html">
+        <source>Le dossier n'a pas pu être ouvert.</source>
+        <target state="translated">لم يتمكّن النظام من فتح الملف.</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.convert" datatype="html">
+        <source>Traiter par une méthode</source>
+        <target state="translated">المعالجة بأسلوب</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.convert-tooltip" datatype="html">
+        <source>Ouvrir le cycle ou le projet qui traitera ce que cet écart révèle</source>
+        <target state="translated">فتح الدورة أو المشروع الذي سيعالج ما يكشفه هذا الانحراف</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.open-pdca" datatype="html">
+        <source>Voir le cycle PDCA</source>
+        <target state="translated">عرض دورة PDCA</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.open-dmaic" datatype="html">
+        <source>Voir le projet DMAIC</source>
+        <target state="translated">عرض مشروع DMAIC</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.pdca-label" datatype="html">
+        <source>Cycle PDCA</source>
+        <target state="translated">دورة PDCA</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.pdca-link-open" datatype="html">
+        <source>Ouvrir le cycle</source>
+        <target state="translated">فتح الدورة</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.dmaic-label" datatype="html">
+        <source>Projet DMAIC</source>
+        <target state="translated">مشروع DMAIC</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.dmaic-link-open" datatype="html">
+        <source>Ouvrir le projet</source>
+        <target state="translated">فتح المشروع</target>
+      </trans-unit>
       <trans-unit id="nav.admin-nc" datatype="html">
         <source>Natures de NC</source>
         <target state="translated">أنواع حالات عدم المطابقة</target>

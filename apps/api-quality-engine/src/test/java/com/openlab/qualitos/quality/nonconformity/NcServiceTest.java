@@ -38,6 +38,8 @@ class NcServiceTest {
 
     @Mock NonConformityRepository repo;
     @Mock CapaService capaService;
+    @Mock com.openlab.qualitos.quality.pdca.PdcaService pdcaService;
+    @Mock com.openlab.qualitos.quality.dmaic.DmaicService dmaicService;
     @Mock org.springframework.context.ApplicationEventPublisher events;
     /** Sans réglage, Mockito rend Optional.empty() : l'utilisateur voit tout (ADR 0081). */
     @Mock RecordScope scope;

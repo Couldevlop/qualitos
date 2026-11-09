@@ -21482,6 +21482,106 @@ historique 12 mois</source>
         <source>Le registre ne se lit pas pour le moment.</source>
         <target state="translated">暂时无法读取登记册。</target>
       </trans-unit>
+      <trans-unit id="nc.convert.title" datatype="html">
+        <source>Traiter cet écart</source>
+        <target state="translated">处理该偏差</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.submit" datatype="html">
+        <source>Ouvrir le dossier</source>
+        <target state="translated">开立档案</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.from-nc" datatype="html">
+        <source>Écart repris</source>
+        <target state="translated">沿用的偏差</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.method" datatype="html">
+        <source>Méthode</source>
+        <target state="translated">方法</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.method-pdca" datatype="html">
+        <source>Cycle PDCA</source>
+        <target state="translated">PDCA 循环</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.method-dmaic" datatype="html">
+        <source>Projet DMAIC</source>
+        <target state="translated">DMAIC 项目</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.why-dmaic" datatype="html">
+        <source>Un écart critique demande des mesures et une phase de maîtrise : c'est un projet DMAIC.</source>
+        <target state="translated">严重偏差需要测量与控制阶段，因此属于 DMAIC 项目。</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.why-pdca" datatype="html">
+        <source>Un écart mineur ou majeur se traite par un cycle : planifier, agir, vérifier, généraliser.</source>
+        <target state="translated">轻微或重大偏差通过循环处理：计划、执行、检查、推行。</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.overridden" datatype="html">
+        <source>Ce n'est pas la méthode que la gravité appelait. C'est votre choix, il part tel quel.</source>
+        <target state="translated">这不是严重程度所对应的方法。这是您的选择，将按原样提交。</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.pilot" datatype="html">
+        <source>Qui mène le travail</source>
+        <target state="translated">由谁主导</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.pilot-hint" datatype="html">
+        <source>Propriétaire du cycle, ou black belt du projet. Un dossier dont personne ne répond ne se revoit jamais.</source>
+        <target state="translated">循环的责任人，或项目的黑带。无人负责的档案永远不会被复查。</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.due-date" datatype="html">
+        <source>Échéance visée</source>
+        <target state="translated">目标日期</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.due-date-hint" datatype="html">
+        <source>Facultative : le projet peut la fixer plus tard.</source>
+        <target state="translated">可选：项目可稍后设定。</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.due-date-open" datatype="html">
+        <source>Ouvrir le calendrier</source>
+        <target state="translated">打开日历</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.pdca-opened" datatype="html">
+        <source>Cycle PDCA ouvert.</source>
+        <target state="translated">PDCA 循环已开立。</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.dmaic-opened" datatype="html">
+        <source>Projet DMAIC ouvert.</source>
+        <target state="translated">DMAIC 项目已开立。</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.failed" datatype="html">
+        <source>Le dossier n'a pas pu être ouvert.</source>
+        <target state="translated">档案未能开立。</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.convert" datatype="html">
+        <source>Traiter par une méthode</source>
+        <target state="translated">按方法处理</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.convert-tooltip" datatype="html">
+        <source>Ouvrir le cycle ou le projet qui traitera ce que cet écart révèle</source>
+        <target state="translated">开立用于处理该偏差所揭示问题的循环或项目</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.open-pdca" datatype="html">
+        <source>Voir le cycle PDCA</source>
+        <target state="translated">查看 PDCA 循环</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.open-dmaic" datatype="html">
+        <source>Voir le projet DMAIC</source>
+        <target state="translated">查看 DMAIC 项目</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.pdca-label" datatype="html">
+        <source>Cycle PDCA</source>
+        <target state="translated">PDCA 循环</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.pdca-link-open" datatype="html">
+        <source>Ouvrir le cycle</source>
+        <target state="translated">打开循环</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.dmaic-label" datatype="html">
+        <source>Projet DMAIC</source>
+        <target state="translated">DMAIC 项目</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.dmaic-link-open" datatype="html">
+        <source>Ouvrir le projet</source>
+        <target state="translated">打开项目</target>
+      </trans-unit>
       <trans-unit id="nav.admin-nc" datatype="html">
         <source>Natures de NC</source>
         <target state="translated">不符合性质</target>

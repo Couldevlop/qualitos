@@ -236,7 +236,7 @@ class AuditFindingNcServiceTest {
     private static NcDto.Response reponse(UUID id, String reference) {
         return new NcDto.Response(id, TENANT, reference, "t", "d", NcCategory.DOCUMENTATION,
                 null, NcSeverity.MAJOR, NcStatus.OPEN, NcOrigin.INTERNAL, RELEVE, null, null, null,
-                null, null, null, null, null, null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null, null, null, null, null,
                 RELEVE, RELEVE);
     }
 

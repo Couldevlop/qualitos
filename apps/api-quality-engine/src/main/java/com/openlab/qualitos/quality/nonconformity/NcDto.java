@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.UUID;
 
 public final class NcDto {
@@ -106,6 +107,28 @@ public final class NcDto {
     public record RejectRequest(
             @NotBlank @Size(max = 2000) String reason) {}
 
+    /**
+     * Ouvrir, depuis cet écart, le cycle ou le projet qui le traitera (§3.6).
+     *
+     * <p>{@code method} peut rester nulle : la gravité donne alors la méthode
+     * ({@link NcMethod#fromSeverity}), ce qui est le cas courant. La renseigner
+     * est un choix explicite de la personne qui tient le dossier — un écart
+     * mineur sur un procédé déjà sous carte de contrôle peut mériter un DMAIC.
+     *
+     * <p>{@code pilotId} n'est pas facultatif, et c'est le point dur : un cycle
+     * ou un projet sans personne qui en répond ne se revoit jamais. L'écran le
+     * choisit dans l'annuaire, jamais en texte libre.
+     *
+     * @param method   la méthode voulue, ou {@code null} pour celle de la gravité
+     * @param pilotId  le compte qui mène le cycle (propriétaire) ou le projet (black belt)
+     * @param dueDate  l'échéance visée ; ignorée pour un cycle PDCA, qui n'en porte pas
+     */
+    public record ConvertRequest(
+            NcMethod method,
+            @NotNull(message = "Pilot is required") UUID pilotId,
+            LocalDate dueDate
+    ) {}
+
     public record Response(
             UUID id,
             UUID tenantId,
@@ -129,6 +152,10 @@ public final class NcDto {
             UUID productId,
             UUID fmeaItemId,
             UUID capaCaseId,
+            /** Le cycle PDCA ouvert depuis cet écart, s'il l'a été (§3.6). */
+            UUID pdcaCycleId,
+            /** Le projet DMAIC ouvert depuis cet écart, s'il l'a été (§3.6). */
+            UUID dmaicProjectId,
             String rootCause,
             String resolutionNote,
             Instant resolvedAt,
