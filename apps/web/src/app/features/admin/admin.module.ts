@@ -10,6 +10,7 @@ import { UiModule } from '../../shared/ui/ui.module';
 import { UserPickerModule } from '../../shared/user-picker/user-picker.module';
 import { PersonNameModule } from '../../shared/person-name/person-name.module';
 import { CredentialRevealModule } from '../../shared/credential-reveal/credential-reveal.module';
+import { CatalogsComponent } from './pages/catalogs/catalogs.component';
 import { CircuitsComponent } from './pages/circuits/circuits.component';
 import { LicenseComponent } from './pages/license/license.component';
 import { MocSettingsComponent } from './pages/moc-settings/moc-settings.component';
@@ -49,6 +50,8 @@ const routes: Routes = [
   { path: 'dmaic', component: DmaicSettingsComponent },
   // Les natures d'écart, sous chaque catégorie de non-conformité (ADR 0103).
   { path: 'nc', component: NcSettingsComponent },
+  // Les listes déroulantes de l'application, dans les mots du client (ADR 0111).
+  { path: 'listes', component: CatalogsComponent },
   // Le fournisseur des appels LLM du tenant, et sa souveraineté (ADR 0102).
   { path: 'ia', component: AiPolicyComponent },
   // Les cabinets partenaires et leurs accès (ADR 0106). L'écran est ICI, chez le
@@ -89,7 +92,7 @@ const routes: Routes = [
 @NgModule({
   declarations: [TenantModulesComponent, TenantTeamComponent, RolesMatrixComponent, CircuitsComponent, LicenseComponent,
     MocSettingsComponent, DocumentSettingsComponent, SpcSettingsComponent, DmaicSettingsComponent, CompetencyWorkshopsComponent,
-    AiPolicyComponent, NcSettingsComponent, PartnerAccessComponent],
+    AiPolicyComponent, NcSettingsComponent, PartnerAccessComponent, CatalogsComponent],
   // UserPickerModule : les titulaires des rôles MOC se choisissent dans l'annuaire (ADR 0091).
   imports: [SharedModule, UiModule, FormsModule, DragDropModule, MatMenuModule,
     UserPickerModule, PersonNameModule, CredentialRevealModule, RouterModule.forChild(routes)]

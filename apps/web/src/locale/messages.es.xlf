@@ -34216,6 +34216,214 @@ India (centro de servicio)</target>
         <source>Modifier la non-conformité</source>
         <target state="translated">Modificar la no conformidad</target>
       </trans-unit>
+      <trans-unit id="nav.admin-catalogs" datatype="html">
+        <source>Listes déroulantes</source>
+        <target state="translated">Listas desplegables</target>
+      </trans-unit>
+      <trans-unit id="catalogs.title" datatype="html">
+        <source>Listes déroulantes</source>
+        <target state="translated">Listas desplegables</target>
+      </trans-unit>
+      <trans-unit id="catalogs.subtitle" datatype="html">
+        <source>Les mots que prennent les listes de l'application, dans votre maison.</source>
+        <target state="translated">Las palabras que toman las listas de la aplicación, en su casa.</target>
+      </trans-unit>
+      <trans-unit id="catalogs.nav-label" datatype="html">
+        <source>Listes paramétrables</source>
+        <target state="translated">Listas configurables</target>
+      </trans-unit>
+      <trans-unit id="catalogs.scope" datatype="html">
+        <source>Une entrée se reconnaît à son code : en changer le libellé ne déclasse rien ; la retirer laisse les données déjà enregistrées porter leur code, affiché tel quel.</source>
+        <target state="translated">Una entrada se reconoce por su código: cambiar su etiqueta no reclasifica nada; retirarla deja los datos ya registrados con su código, mostrado tal cual.</target>
+      </trans-unit>
+      <trans-unit id="catalogs.defaults" datatype="html">
+        <source>Ce sont aujourd'hui les valeurs de la plateforme : vos écrans affichent leurs libellés traduits. Dès que vous enregistrez, ce sont vos mots qui s'affichent.</source>
+        <target state="translated">Hoy son los valores de la plataforma: sus pantallas muestran sus etiquetas traducidas. En cuanto guarde, se mostrarán sus palabras.</target>
+      </trans-unit>
+      <trans-unit id="catalogs.customised" datatype="html">
+        <source>Réglée par vous</source>
+        <target state="translated">Configurada por usted</target>
+      </trans-unit>
+      <trans-unit id="catalogs.customised-short" datatype="html">
+        <source>réglée</source>
+        <target state="translated">configurada</target>
+      </trans-unit>
+      <trans-unit id="catalogs.freedom.open" datatype="html">
+        <source>Liste libre : ajoutez, retirez, renommez, réordonnez.</source>
+        <target state="translated">Lista libre: añada, retire, renombre, reordene.</target>
+      </trans-unit>
+      <trans-unit id="catalogs.freedom.rename" datatype="html">
+        <source>Codes de la plateforme : renommez et réordonnez. Les valeurs commandent le comportement de l'application, elles ne s'ajoutent ni ne se retirent.</source>
+        <target state="translated">Códigos de la plataforma: renombre y reordene. Los valores rigen el comportamiento de la aplicación; no se añaden ni se retiran.</target>
+      </trans-unit>
+      <trans-unit id="catalogs.code" datatype="html">
+        <source>Code</source>
+        <target state="translated">Código</target>
+      </trans-unit>
+      <trans-unit id="catalogs.code-placeholder" datatype="html">
+        <source>Ex. : BLOC-A</source>
+        <target state="translated">Ej.: BLOC-A</target>
+      </trans-unit>
+      <trans-unit id="catalogs.label" datatype="html">
+        <source>Libellé</source>
+        <target state="translated">Etiqueta</target>
+      </trans-unit>
+      <trans-unit id="catalogs.label-placeholder" datatype="html">
+        <source>Ex. : Bloc opératoire A</source>
+        <target state="translated">Ej.: Quirófano A</target>
+      </trans-unit>
+      <trans-unit id="catalogs.add" datatype="html">
+        <source>Ajouter une entrée</source>
+        <target state="translated">Añadir una entrada</target>
+      </trans-unit>
+      <trans-unit id="catalogs.remove" datatype="html">
+        <source>Retirer cette entrée</source>
+        <target state="translated">Retirar esta entrada</target>
+      </trans-unit>
+      <trans-unit id="catalogs.move-up" datatype="html">
+        <source>Monter cette entrée</source>
+        <target state="translated">Subir esta entrada</target>
+      </trans-unit>
+      <trans-unit id="catalogs.move-down" datatype="html">
+        <source>Descendre cette entrée</source>
+        <target state="translated">Bajar esta entrada</target>
+      </trans-unit>
+      <trans-unit id="catalogs.pending" datatype="html">
+        <source>Liste modifiée</source>
+        <target state="translated">Lista modificada</target>
+      </trans-unit>
+      <trans-unit id="catalogs.saved" datatype="html">
+        <source>Liste enregistrée.</source>
+        <target state="translated">Lista guardada.</target>
+      </trans-unit>
+      <trans-unit id="catalogs.save-failed" datatype="html">
+        <source>La liste n'a pas pu être enregistrée.</source>
+        <target state="translated">La lista no se pudo guardar.</target>
+      </trans-unit>
+      <trans-unit id="catalogs.load-failed" datatype="html">
+        <source>Les listes déroulantes n'ont pas pu être chargées.</source>
+        <target state="translated">No se pudieron cargar las listas desplegables.</target>
+      </trans-unit>
+      <trans-unit id="catalogs.load-one-failed" datatype="html">
+        <source>Cette liste n'a pas pu être chargée.</source>
+        <target state="translated">Esta lista no se pudo cargar.</target>
+      </trans-unit>
+      <trans-unit id="catalogs.reset-action" datatype="html">
+        <source>Liste de la plateforme</source>
+        <target state="translated">Lista de la plataforma</target>
+      </trans-unit>
+      <trans-unit id="catalogs.reset" datatype="html">
+        <source>Rétablir</source>
+        <target state="translated">Restablecer</target>
+      </trans-unit>
+      <trans-unit id="catalogs.reset-title" datatype="html">
+        <source>Rétablir la liste de la plateforme ?</source>
+        <target state="translated">¿Restablecer la lista de la plataforma?</target>
+      </trans-unit>
+      <trans-unit id="catalogs.reset-message" datatype="html">
+        <source>Vos libellés seront remplacés par ceux de la plateforme. Les données déjà enregistrées gardent leur code.</source>
+        <target state="translated">Sus etiquetas se reemplazarán por las de la plataforma. Los datos ya registrados conservan su código.</target>
+      </trans-unit>
+      <trans-unit id="catalogs.reset-done" datatype="html">
+        <source>Liste de la plateforme rétablie.</source>
+        <target state="translated">Lista de la plataforma restablecida.</target>
+      </trans-unit>
+      <trans-unit id="catalogs.reset-failed" datatype="html">
+        <source>La liste n'a pas pu être rétablie.</source>
+        <target state="translated">La lista no se pudo restablecer.</target>
+      </trans-unit>
+      <trans-unit id="catalogs.leave-title" datatype="html">
+        <source>Abandonner vos changements ?</source>
+        <target state="translated">¿Descartar sus cambios?</target>
+      </trans-unit>
+      <trans-unit id="catalogs.leave-message" datatype="html">
+        <source>Cette liste a été modifiée sans être enregistrée. Ouvrir une autre liste perdra ces changements.</source>
+        <target state="translated">Esta lista se modificó sin guardarse. Abrir otra lista perderá esos cambios.</target>
+      </trans-unit>
+      <trans-unit id="catalogs.leave" datatype="html">
+        <source>Abandonner</source>
+        <target state="translated">Descartar</target>
+      </trans-unit>
+      <trans-unit id="catalogs.problem.empty" datatype="html">
+        <source>La liste ne peut pas être vide. Rétablissez celle de la plateforme.</source>
+        <target state="translated">La lista no puede estar vacía. Restablezca la de la plataforma.</target>
+      </trans-unit>
+      <trans-unit id="catalogs.problem.too-many" datatype="html">
+        <source>Pas plus de <x id="max"/> entrées.</source>
+        <target state="translated">No más de <x id="max"/> entradas.</target>
+      </trans-unit>
+      <trans-unit id="catalogs.problem.code" datatype="html">
+        <source>Un code s'écrit en capitales, chiffres, tiret ou souligné (ex. : BLOC-A).</source>
+        <target state="translated">Un código se escribe con mayúsculas, cifras, guion o subrayado (ej.: BLOC-A).</target>
+      </trans-unit>
+      <trans-unit id="catalogs.problem.label" datatype="html">
+        <source>Chaque entrée a un libellé.</source>
+        <target state="translated">Cada entrada tiene una etiqueta.</target>
+      </trans-unit>
+      <trans-unit id="catalogs.problem.duplicate" datatype="html">
+        <source>Deux entrées portent le même code.</source>
+        <target state="translated">Dos entradas tienen el mismo código.</target>
+      </trans-unit>
+      <trans-unit id="catalogs.problem.none-active" datatype="html">
+        <source>Au moins une entrée doit rester en service.</source>
+        <target state="translated">Al menos una entrada debe permanecer en servicio.</target>
+      </trans-unit>
+      <trans-unit id="catalogs.retire" datatype="html">
+        <source>Retirer des nouvelles saisies</source>
+        <target state="translated">Retirar de las nuevas entradas</target>
+      </trans-unit>
+      <trans-unit id="catalogs.reinstate" datatype="html">
+        <source>Remettre en service</source>
+        <target state="translated">Volver a poner en servicio</target>
+      </trans-unit>
+      <trans-unit id="catalogs.name.nc-category" datatype="html">
+        <source>Catégories de non-conformité</source>
+        <target state="translated">Categorías de no conformidad</target>
+      </trans-unit>
+      <trans-unit id="catalogs.name.audit-type" datatype="html">
+        <source>Types d'audit</source>
+        <target state="translated">Tipos de auditoría</target>
+      </trans-unit>
+      <trans-unit id="catalogs.name.supplier-type" datatype="html">
+        <source>Familles de fournisseurs</source>
+        <target state="translated">Familias de proveedores</target>
+      </trans-unit>
+      <trans-unit id="catalogs.name.ehs-incident-type" datatype="html">
+        <source>Types d'incident EHS</source>
+        <target state="translated">Tipos de incidente EHS</target>
+      </trans-unit>
+      <trans-unit id="catalogs.name.apqp-project-type" datatype="html">
+        <source>Types de projet APQP</source>
+        <target state="translated">Tipos de proyecto APQP</target>
+      </trans-unit>
+      <trans-unit id="catalogs.name.capa-nature" datatype="html">
+        <source>Natures de dossier CAPA</source>
+        <target state="translated">Naturalezas de expediente CAPA</target>
+      </trans-unit>
+      <trans-unit id="catalogs.name.moc-change-type" datatype="html">
+        <source>Types de modification</source>
+        <target state="translated">Tipos de modificación</target>
+      </trans-unit>
+      <trans-unit id="catalogs.name.ishikawa-category" datatype="html">
+        <source>Branches d'Ishikawa</source>
+        <target state="translated">Ramas de Ishikawa</target>
+      </trans-unit>
+      <trans-unit id="catalogs.name.kpi-frequency" datatype="html">
+        <source>Fréquences de mesure</source>
+        <target state="translated">Frecuencias de medición</target>
+      </trans-unit>
+      <trans-unit id="catalogs.name.pokayoke-mechanism" datatype="html">
+        <source>Mécanismes de détrompeur</source>
+        <target state="translated">Mecanismos antierror</target>
+      </trans-unit>
+      <trans-unit id="catalogs.name.fives-zone" datatype="html">
+        <source>Zones d'audit 5S</source>
+        <target state="translated">Zonas de auditoría 5S</target>
+      </trans-unit>
+      <trans-unit id="catalogs.name.stakeholder-sector" datatype="html">
+        <source>Secteurs de parties intéressées</source>
+        <target state="translated">Sectores de partes interesadas</target>
+      </trans-unit>
       <trans-unit id="nav.admin-team" datatype="html">
         <source>Équipe &amp; habilitations</source>
         <target state="translated">Equipo y permisos</target>
