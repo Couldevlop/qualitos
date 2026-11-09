@@ -13016,6 +13016,146 @@ Coordonnées professionnelles</source>
         <source>Impossible d'ouvrir l'analyse des 5 Pourquoi.</source>
         <target state="translated">تعذّر فتح تحليل الأسباب الخمسة.</target>
       </trans-unit>
+      <trans-unit id="fives.circle.title" datatype="html">
+        <source>Porter au cercle de qualité</source>
+        <target state="translated">الإحالة إلى حلقة الجودة</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.subtitle" datatype="html">
+        <source>L'audit dit ce qui ne va pas. Le cercle cherche comment y remédier.</source>
+        <target state="translated">يقول التدقيق ما الخلل. والحلقة تبحث في كيفية معالجته.</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.submit" datatype="html">
+        <source>Déposer l'idée</source>
+        <target state="translated">تقديم الفكرة</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.zone" datatype="html">
+        <source>Zone auditée</source>
+        <target state="translated">المنطقة المدقّقة</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.pillar" datatype="html">
+        <source>Pilier</source>
+        <target state="translated">الركن</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.score" datatype="html">
+        <source>Note relevée</source>
+        <target state="translated">الدرجة المسجّلة</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.circle" datatype="html">
+        <source>Cercle qui prend le sujet</source>
+        <target state="translated">الحلقة التي تتولّى الموضوع</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.circle-hint" datatype="html">
+        <source>Seuls les cercles actifs peuvent prendre une idée.</source>
+        <target state="translated">الحلقات النشطة وحدها يمكنها تولّي فكرة.</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.loading" datatype="html">
+        <source>Chargement des cercles…</source>
+        <target state="translated">جارٍ تحميل الحلقات…</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.load-failed" datatype="html">
+        <source>La liste des cercles n'a pas pu être chargée.</source>
+        <target state="translated">لم يتمكّن النظام من تحميل قائمة الحلقات.</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.none" datatype="html">
+        <source>Aucun cercle actif. Créez-en un, ou reprenez un cercle en pause, pour y porter ce sujet.</source>
+        <target state="translated">لا توجد حلقة نشطة. أنشئ واحدة أو استأنف حلقة موقوفة لإحالة هذا الموضوع.</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.idea" datatype="html">
+        <source>Ce qui est proposé</source>
+        <target state="translated">المقترَح</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.idea-hint" datatype="html">
+        <source>Une ligne, lisible à l'ordre du jour.</source>
+        <target state="translated">سطر واحد يُقرأ في جدول الأعمال.</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.title-default" datatype="html">
+        <source>Améliorer <x id="pillar"/> en zone <x id="zone"/></source>
+        <target state="translated">تحسين <x id="pillar"/> في منطقة <x id="zone"/></target>
+      </trans-unit>
+      <trans-unit id="fives.circle.detail" datatype="html">
+        <source>Ce que l'audit a constaté</source>
+        <target state="translated">ما لاحظه التدقيق</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.detail-hint" datatype="html">
+        <source>Reprise de la remarque de l'auditeur. Le cercle n'était pas sur place.</source>
+        <target state="translated">مأخوذ من ملاحظة المدقّق. لم تكن الحلقة حاضرة.</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.done" datatype="html">
+        <source>Idée déposée au cercle. Elle y arrive avec la note relevée.</source>
+        <target state="translated">تم تقديم الفكرة إلى الحلقة، وتصل مرفقة بالدرجة المسجّلة.</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.failed" datatype="html">
+        <source>L'idée n'a pas pu être déposée.</source>
+        <target state="translated">لم يتمكّن النظام من تقديم الفكرة.</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.to-circle" datatype="html">
+        <source>Porter au cercle</source>
+        <target state="translated">الإحالة إلى حلقة</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.to-circle-tooltip" datatype="html">
+        <source>Porter ce pilier à un cercle de qualité, avec sa note</source>
+        <target state="translated">إحالة هذا الركن إلى حلقة جودة، مع درجته</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.take" datatype="html">
+        <source>Importer une photo</source>
+        <target state="translated">إدراج صورة</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.tooltip" datatype="html">
+        <source>Importer la photo du constat fait sur ce pilier</source>
+        <target state="translated">إدراج صورة ما لوحظ على هذا الركن</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.done" datatype="html">
+        <source>Photo ajoutée au pilier.</source>
+        <target state="translated">أُضيفت الصورة إلى الركن.</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.queued" datatype="html">
+        <source>Photo conservée localement. Elle partira au retour du réseau.</source>
+        <target state="translated">حُفظت الصورة محلياً، وسترسل عند عودة الشبكة.</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.pending" datatype="html">
+        <source>En attente de réseau</source>
+        <target state="translated">في انتظار الشبكة</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.remove-title" datatype="html">
+        <source>Retirer cette photo ?</source>
+        <target state="translated">إزالة هذه الصورة؟</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.remove-message" datatype="html">
+        <source>La photo disparaîtra de l'audit. Le retrait est consigné au journal.</source>
+        <target state="translated">ستختفي الصورة من التدقيق، ويُسجَّل الحذف في السجل.</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.remove-aria" datatype="html">
+        <source>Retirer cette photo</source>
+        <target state="translated">إزالة هذه الصورة</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.remove-error" datatype="html">
+        <source>La photo n'a pas pu être retirée.</source>
+        <target state="translated">لم يتعذّر حذف الصورة.</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.err-type" datatype="html">
+        <source>Seules les photos (JPEG, PNG, WebP, HEIC) sont acceptées.</source>
+        <target state="translated">لا تُقبل سوى الصور (JPEG وPNG وWebP وHEIC).</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.err-too-large" datatype="html">
+        <source>Photo trop volumineuse (10 Mo maximum).</source>
+        <target state="translated">الصورة أكبر من الحد المسموح (10 ميغابايت).</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.err-quota" datatype="html">
+        <source>Plafond atteint : 10 Mo par photo, 5 photos par pilier, 40 Mo par audit.</source>
+        <target state="translated">بلغت الحد: 10 ميغابايت للصورة، و5 صور للركن، و40 ميغابايت للتدقيق.</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.err-state" datatype="html">
+        <source>Ce pilier doit d'abord être noté, et l'audit ne doit pas être annulé.</source>
+        <target state="translated">يجب تقييم هذا الركن أولاً، وألا يكون التدقيق ملغى.</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.err-storage" datatype="html">
+        <source>Le stockage des photos est momentanément indisponible.</source>
+        <target state="translated">تخزين الصور غير متاح مؤقتاً.</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.err-generic" datatype="html">
+        <source>La photo n'a pas pu être envoyée.</source>
+        <target state="translated">لم يتم إرسال الصورة.</target>
+      </trans-unit>
       <trans-unit id="nav.forecast" datatype="html">
         <source>Prévision KPI</source>
         <target state="translated">التنبؤ بمؤشرات الأداء</target>
@@ -29777,6 +29917,86 @@ historique 12 mois</source>
       <trans-unit id="spc.study.process-status" datatype="html">
         <source>Statut du procédé</source>
         <target state="translated">حالة العملية</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.panel" datatype="html">
+        <source>Prévision de dérive</source>
+        <target state="translated">توقّع الانحراف</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.horizon" datatype="html">
+        <source>Horizon (périodes)</source>
+        <target state="translated">الأفق (الفترات)</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.open-capa" datatype="html">
+        <source>Ouvrir une CAPA préventive si une sortie est annoncée</source>
+        <target state="translated">فتح CAPA وقائي إذا كان الخروج متوقعاً</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.run" datatype="html">
+        <source>Prévoir la dérive</source>
+        <target state="translated">توقّع الانحراف</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.running" datatype="html">
+        <source>Prévision…</source>
+        <target state="translated">جارٍ التوقّع…</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.no-breach" datatype="html">
+        <source>Aucune sortie des limites annoncée sur les <x id="horizon"/> prochaines périodes.</source>
+        <target state="translated">لا يُتوقَّع خروج عن حدود التحكم خلال الفترات <x id="horizon"/> القادمة.</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.breach-upper" datatype="html">
+        <source>Le procédé franchira sa limite supérieure dans <x id="steps"/> période(s).</source>
+        <target state="translated">ستتجاوز العملية حدّها الأعلى خلال <x id="steps"/> فترة.</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.breach-lower" datatype="html">
+        <source>Le procédé franchira sa limite inférieure dans <x id="steps"/> période(s).</source>
+        <target state="translated">ستتجاوز العملية حدّها الأدنى خلال <x id="steps"/> فترة.</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.conf-high" datatype="html">
+        <source>Confiance élevée</source>
+        <target state="translated">ثقة عالية</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.conf-medium" datatype="html">
+        <source>Confiance moyenne</source>
+        <target state="translated">ثقة متوسطة</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.conf-low" datatype="html">
+        <source>Confiance faible</source>
+        <target state="translated">ثقة منخفضة</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.trend" datatype="html">
+        <source><x id="trend"/> par période</source>
+        <target state="translated"><x id="trend"/> لكل فترة</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.points-used" datatype="html">
+        <source>mesures utilisées</source>
+        <target state="translated">قياسات مستخدمة</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.capa-link" datatype="html">
+        <source>CAPA préventive ouverte — voir le dossier</source>
+        <target state="translated">تم فتح CAPA وقائي — عرض الملف</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.col-step" datatype="html">
+        <source>Période</source>
+        <target state="translated">الفترة</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.col-value" datatype="html">
+        <source>Valeur projetée</source>
+        <target state="translated">القيمة المتوقعة</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.col-interval" datatype="html">
+        <source>Intervalle</source>
+        <target state="translated">المجال</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.col-risk" datatype="html">
+        <source>Risque de sortie</source>
+        <target state="translated">خطر الخروج</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.chart-projection" datatype="html">
+        <source>Projection</source>
+        <target state="translated">الإسقاط</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.err-min-four" datatype="html">
+        <source>Au moins 4 mesures sont nécessaires pour prévoir une dérive.</source>
+        <target state="translated">يلزم 4 قياسات على الأقل لتوقّع الانحراف.</target>
       </trans-unit>
       <trans-unit id="stakeholders.register-risk" datatype="html">
         <source>Inscrire le risque</source>

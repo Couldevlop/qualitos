@@ -37,6 +37,32 @@ public class SpcController {
      * ouvre une CAPA corrective (ADR 0016, {@code sourceType=SPC_ALERT}). Le tenant
      * vient du JWT (jamais du chemin/body).
      */
+    /**
+     * Prévision de sortie des limites sur une série fournie (§6.5).
+     *
+     * <p>La carte de contrôle dit si le procédé EST hors contrôle ; celle-ci dit
+     * quand il VA en sortir — la seule des deux réponses sur laquelle on peut
+     * encore agir.
+     */
+    @PostMapping("/forecast")
+    public SpcDto.ForecastResponse forecast(@Valid @RequestBody SpcDto.ForecastRequest request) {
+        return spcService.forecast(request);
+    }
+
+    /**
+     * Prévision de dérive d'un KPI : même série que la carte, projetée. Si
+     * {@code openCapa=true} et sortie annoncée, ouvre une CAPA <b>préventive</b>
+     * (l'écart n'est pas survenu). Le tenant vient du JWT (jamais du chemin/body).
+     */
+    @PostMapping("/kpi/{kpiId}/forecast")
+    public SpcDto.KpiForecastResponse forecastKpi(
+            @PathVariable UUID kpiId,
+            @RequestParam(defaultValue = "30") int limit,
+            @RequestParam(required = false) Integer horizon,
+            @RequestParam(defaultValue = "false") boolean openCapa) {
+        return spcService.forecastKpi(kpiId, limit, horizon, openCapa);
+    }
+
     @PostMapping("/kpi/{kpiId}/analyze")
     public SpcDto.KpiSpcResponse analyzeKpi(
             @PathVariable UUID kpiId,

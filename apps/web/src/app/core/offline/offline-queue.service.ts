@@ -12,6 +12,23 @@ export interface OfflineQueueEvent {
 }
 
 /**
+ * Ce qui part sur le réseau au moment du rejeu.
+ *
+ * <p>Pour une écriture ordinaire, c'est le corps JSON tel qu'il a été mis en
+ * file. Pour un envoi de fichier, le `FormData` est reconstruit ICI et non à
+ * l'enfilement : un `FormData` n'est pas clonable, il ne survivrait pas à
+ * IndexedDB ni à la fermeture de la PWA. Les octets, eux, y dorment en `Blob`.
+ */
+export function payloadOf(op: QueuedOperation): unknown {
+  if (!op.multipart) {
+    return op.body;
+  }
+  const form = new FormData();
+  form.append(op.multipart.field, op.body as Blob, op.multipart.filename);
+  return form;
+}
+
+/**
  * File d'attente des écritures hors-ligne (CLAUDE.md §15.2-15.3) :
  * une action terrain saisie sans réseau est persistée localement (IndexedDB)
  * puis **rejouée automatiquement** au retour de la connexion, dans l'ordre.
@@ -57,7 +74,8 @@ export class OfflineQueueService {
     method: QueuedOperation['method'],
     url: string,
     body: unknown,
-    label: string
+    label: string,
+    multipart?: QueuedOperation['multipart']
   ): Observable<QueuedOperation> {
     const op: QueuedOperation = {
       id: this.generateId(),
@@ -65,6 +83,7 @@ export class OfflineQueueService {
       url,
       body,
       label,
+      ...(multipart ? { multipart } : {}),
       queuedAt: new Date().toISOString(),
       // base = nombre d'ops déjà en file (survit à un reload : le rejeu au
       // démarrage repart au-dessus du max existant via refreshCount/seed).
@@ -109,7 +128,7 @@ export class OfflineQueueService {
       const ops = await this.store.loadAll();
       for (const op of ops) {
         try {
-          await firstValueFrom(this.http.request(op.method, op.url, { body: op.body }));
+          await firstValueFrom(this.http.request(op.method, op.url, { body: payloadOf(op) }));
           await this.store.remove(op.id);
           this.queueEvents.next({ type: 'replayed', operation: op });
         } catch (err: unknown) {

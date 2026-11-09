@@ -13016,6 +13016,146 @@ Coordonnées professionnelles</source>
         <source>Impossible d'ouvrir l'analyse des 5 Pourquoi.</source>
         <target state="translated">无法打开五问法分析。</target>
       </trans-unit>
+      <trans-unit id="fives.circle.title" datatype="html">
+        <source>Porter au cercle de qualité</source>
+        <target state="translated">提交品质圈</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.subtitle" datatype="html">
+        <source>L'audit dit ce qui ne va pas. Le cercle cherche comment y remédier.</source>
+        <target state="translated">审核指出问题所在，品质圈寻找改进办法。</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.submit" datatype="html">
+        <source>Déposer l'idée</source>
+        <target state="translated">提交想法</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.zone" datatype="html">
+        <source>Zone auditée</source>
+        <target state="translated">受审区域</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.pillar" datatype="html">
+        <source>Pilier</source>
+        <target state="translated">支柱</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.score" datatype="html">
+        <source>Note relevée</source>
+        <target state="translated">记录的评分</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.circle" datatype="html">
+        <source>Cercle qui prend le sujet</source>
+        <target state="translated">承接该议题的品质圈</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.circle-hint" datatype="html">
+        <source>Seuls les cercles actifs peuvent prendre une idée.</source>
+        <target state="translated">仅活跃的品质圈可承接想法。</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.loading" datatype="html">
+        <source>Chargement des cercles…</source>
+        <target state="translated">正在加载品质圈…</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.load-failed" datatype="html">
+        <source>La liste des cercles n'a pas pu être chargée.</source>
+        <target state="translated">未能加载品质圈列表。</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.none" datatype="html">
+        <source>Aucun cercle actif. Créez-en un, ou reprenez un cercle en pause, pour y porter ce sujet.</source>
+        <target state="translated">暂无活跃的品质圈。请新建一个，或恢复已暂停的品质圈，再提交该议题。</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.idea" datatype="html">
+        <source>Ce qui est proposé</source>
+        <target state="translated">所提议的内容</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.idea-hint" datatype="html">
+        <source>Une ligne, lisible à l'ordre du jour.</source>
+        <target state="translated">一行即可，便于列入议程。</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.title-default" datatype="html">
+        <source>Améliorer <x id="pillar"/> en zone <x id="zone"/></source>
+        <target state="translated">改善 <x id="zone"/> 区域的 <x id="pillar"/></target>
+      </trans-unit>
+      <trans-unit id="fives.circle.detail" datatype="html">
+        <source>Ce que l'audit a constaté</source>
+        <target state="translated">审核的发现</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.detail-hint" datatype="html">
+        <source>Reprise de la remarque de l'auditeur. Le cercle n'était pas sur place.</source>
+        <target state="translated">取自审核员的备注。品质圈当时不在现场。</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.done" datatype="html">
+        <source>Idée déposée au cercle. Elle y arrive avec la note relevée.</source>
+        <target state="translated">想法已提交品质圈，并附带所记录的评分。</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.failed" datatype="html">
+        <source>L'idée n'a pas pu être déposée.</source>
+        <target state="translated">未能提交该想法。</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.to-circle" datatype="html">
+        <source>Porter au cercle</source>
+        <target state="translated">提交品质圈</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.to-circle-tooltip" datatype="html">
+        <source>Porter ce pilier à un cercle de qualité, avec sa note</source>
+        <target state="translated">将该支柱连同评分提交品质圈</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.take" datatype="html">
+        <source>Importer une photo</source>
+        <target state="translated">导入照片</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.tooltip" datatype="html">
+        <source>Importer la photo du constat fait sur ce pilier</source>
+        <target state="translated">导入该支柱上观察情况的照片</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.done" datatype="html">
+        <source>Photo ajoutée au pilier.</source>
+        <target state="translated">照片已添加到该支柱。</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.queued" datatype="html">
+        <source>Photo conservée localement. Elle partira au retour du réseau.</source>
+        <target state="translated">照片已保存在本机，网络恢复后会自动上传。</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.pending" datatype="html">
+        <source>En attente de réseau</source>
+        <target state="translated">等待网络</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.remove-title" datatype="html">
+        <source>Retirer cette photo ?</source>
+        <target state="translated">移除这张照片？</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.remove-message" datatype="html">
+        <source>La photo disparaîtra de l'audit. Le retrait est consigné au journal.</source>
+        <target state="translated">照片将从审核中移除，该操作会记入日志。</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.remove-aria" datatype="html">
+        <source>Retirer cette photo</source>
+        <target state="translated">移除这张照片</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.remove-error" datatype="html">
+        <source>La photo n'a pas pu être retirée.</source>
+        <target state="translated">无法移除照片。</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.err-type" datatype="html">
+        <source>Seules les photos (JPEG, PNG, WebP, HEIC) sont acceptées.</source>
+        <target state="translated">仅接受照片（JPEG、PNG、WebP、HEIC）。</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.err-too-large" datatype="html">
+        <source>Photo trop volumineuse (10 Mo maximum).</source>
+        <target state="translated">照片过大（最多 10 MB）。</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.err-quota" datatype="html">
+        <source>Plafond atteint : 10 Mo par photo, 5 photos par pilier, 40 Mo par audit.</source>
+        <target state="translated">已达上限：每张 10 MB，每个支柱 5 张，每次审核 40 MB。</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.err-state" datatype="html">
+        <source>Ce pilier doit d'abord être noté, et l'audit ne doit pas être annulé.</source>
+        <target state="translated">请先为该支柱评分，且审核不能处于已取消状态。</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.err-storage" datatype="html">
+        <source>Le stockage des photos est momentanément indisponible.</source>
+        <target state="translated">照片存储暂时不可用。</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.err-generic" datatype="html">
+        <source>La photo n'a pas pu être envoyée.</source>
+        <target state="translated">照片发送失败。</target>
+      </trans-unit>
       <trans-unit id="nav.forecast" datatype="html">
         <source>Prévision KPI</source>
         <target state="translated">KPI预测</target>
@@ -29777,6 +29917,86 @@ historique 12 mois</source>
       <trans-unit id="spc.study.process-status" datatype="html">
         <source>Statut du procédé</source>
         <target state="translated">过程状态</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.panel" datatype="html">
+        <source>Prévision de dérive</source>
+        <target state="translated">漂移预测</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.horizon" datatype="html">
+        <source>Horizon (périodes)</source>
+        <target state="translated">预测范围（期）</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.open-capa" datatype="html">
+        <source>Ouvrir une CAPA préventive si une sortie est annoncée</source>
+        <target state="translated">若预测将越限则创建预防性CAPA</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.run" datatype="html">
+        <source>Prévoir la dérive</source>
+        <target state="translated">预测漂移</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.running" datatype="html">
+        <source>Prévision…</source>
+        <target state="translated">预测中…</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.no-breach" datatype="html">
+        <source>Aucune sortie des limites annoncée sur les <x id="horizon"/> prochaines périodes.</source>
+        <target state="translated">未来 <x id="horizon"/> 期内预计不会超出控制限。</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.breach-upper" datatype="html">
+        <source>Le procédé franchira sa limite supérieure dans <x id="steps"/> période(s).</source>
+        <target state="translated">过程将在 <x id="steps"/> 期后超出上限。</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.breach-lower" datatype="html">
+        <source>Le procédé franchira sa limite inférieure dans <x id="steps"/> période(s).</source>
+        <target state="translated">过程将在 <x id="steps"/> 期后低于下限。</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.conf-high" datatype="html">
+        <source>Confiance élevée</source>
+        <target state="translated">高置信度</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.conf-medium" datatype="html">
+        <source>Confiance moyenne</source>
+        <target state="translated">中等置信度</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.conf-low" datatype="html">
+        <source>Confiance faible</source>
+        <target state="translated">低置信度</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.trend" datatype="html">
+        <source><x id="trend"/> par période</source>
+        <target state="translated"><x id="trend"/> 每期</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.points-used" datatype="html">
+        <source>mesures utilisées</source>
+        <target state="translated">个测量值已使用</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.capa-link" datatype="html">
+        <source>CAPA préventive ouverte — voir le dossier</source>
+        <target state="translated">已创建预防性CAPA — 查看档案</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.col-step" datatype="html">
+        <source>Période</source>
+        <target state="translated">期</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.col-value" datatype="html">
+        <source>Valeur projetée</source>
+        <target state="translated">预测值</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.col-interval" datatype="html">
+        <source>Intervalle</source>
+        <target state="translated">区间</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.col-risk" datatype="html">
+        <source>Risque de sortie</source>
+        <target state="translated">越限风险</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.chart-projection" datatype="html">
+        <source>Projection</source>
+        <target state="translated">预测</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.err-min-four" datatype="html">
+        <source>Au moins 4 mesures sont nécessaires pour prévoir une dérive.</source>
+        <target state="translated">预测漂移至少需要4个测量值。</target>
       </trans-unit>
       <trans-unit id="stakeholders.register-risk" datatype="html">
         <source>Inscrire le risque</source>

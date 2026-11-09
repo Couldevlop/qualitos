@@ -23,6 +23,7 @@ from application.usecase import (
     RagIngestUseCase,
     RagQueryUseCase,
     SpcDetectUseCase,
+    SpcForecastUseCase,
     SupplierRiskUseCase,
     TranscribeUseCase,
 )
@@ -220,6 +221,10 @@ class Container:
     def spc_detect(self) -> SpcDetectUseCase:
         # Pure compute (no external adapters): the use case wraps the domain service.
         return SpcDetectUseCase()
+
+    def spc_forecast(self) -> SpcForecastUseCase:
+        # Calcul pur (Holt + lois normales sur les limites) : aucun adaptateur.
+        return SpcForecastUseCase()
 
     def anomaly_explain(self) -> AnomalyExplainUseCase:
         # Calcul pur (Kernel SHAP sur la forêt d'isolation) : aucun adaptateur externe.

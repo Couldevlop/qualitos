@@ -123,6 +123,61 @@
               <mat-progress-spinner *ngIf="saving[p.pillar]" mode="indeterminate" diameter="18"></mat-progress-spinner>
               <span i18n="@@common.save">Enregistrer</span>
             </button>
+
+            <!-- L'audit dit ce qui ne va pas ; le cercle cherche comment y
+                 remédier (§3.6). Offert seulement sur un audit terminé et un
+                 pilier noté : le serveur refuse le reste. -->
+            <button mat-stroked-button type="button" *ngIf="canPropose(a, p.pillar)"
+                    (click)="proposeToCircle(a, p)"
+                    [disabled]="proposing[p.pillar]"
+                    [attr.data-test]="'cercle-' + p.pillar"
+                    i18n-matTooltip="@@fives.detail.to-circle-tooltip"
+                    matTooltip="Porter ce pilier à un cercle de qualité, avec sa note">
+              <mat-icon *ngIf="!proposing[p.pillar]">groups</mat-icon>
+              <mat-progress-spinner *ngIf="proposing[p.pillar]" mode="indeterminate" diameter="18"></mat-progress-spinner>
+              <span i18n="@@fives.detail.to-circle">Porter au cercle</span>
+            </button>
+
+            <!-- La photo du constat (§3.2). Une note de 3/10 ne dit pas ce qui a
+                 été vu ; la photo le montre. On IMPORTE un fichier déjà pris,
+                 sans ouvrir l'appareil : l'auditeur photographie avec son
+                 téléphone comme il en a l'habitude, puis verse ce qu'il a
+                 retenu. Hors ligne, les octets attendent dans la file. -->
+            <input type="file" class="photo-input" hidden
+                   accept="image/jpeg,image/png,image/webp,image/heic"
+                   [attr.data-test]="'photo-input-' + p.pillar"
+                   #photoInput
+                   (change)="onPhotoFile($event, a, p.pillar)">
+            <button mat-stroked-button type="button" *ngIf="canPhotograph(a, p.pillar)"
+                    (click)="triggerPhotoPicker(photoInput, p.pillar)"
+                    [disabled]="photographing[p.pillar]"
+                    [attr.data-test]="'photo-' + p.pillar"
+                    i18n-matTooltip="@@fives.photo.tooltip"
+                    matTooltip="Importer la photo du constat fait sur ce pilier">
+              <mat-icon *ngIf="!photographing[p.pillar]">add_photo_alternate</mat-icon>
+              <mat-progress-spinner *ngIf="photographing[p.pillar]" mode="indeterminate" diameter="18"></mat-progress-spinner>
+              <span i18n="@@fives.photo.take">Importer une photo</span>
+            </button>
+
+            <div class="photo-strip" *ngIf="photosOf(p.pillar).length > 0"
+                 [attr.data-test]="'photo-strip-' + p.pillar">
+              <figure class="photo-thumb" *ngFor="let photo of photosOf(p.pillar)"
+                      [class.photo-thumb-pending]="photo.pendingSync">
+                <img [src]="photo.localUrl || photo.url" alt=""
+                     [attr.data-test]="'photo-thumb-' + p.pillar">
+                <figcaption *ngIf="photo.pendingSync" i18n="@@fives.photo.pending">
+                  En attente de réseau
+                </figcaption>
+                <button mat-icon-button class="photo-remove" type="button"
+                        *ngIf="canRemovePhoto(a) || photo.pendingSync"
+                        (click)="removePhoto(a, photo)"
+                        [attr.data-test]="'photo-remove-' + photo.id"
+                        i18n-aria-label="@@fives.photo.remove-aria"
+                        aria-label="Retirer cette photo">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </figure>
+            </div>
           </mat-card-content>
         </mat-card>
       </section>

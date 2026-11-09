@@ -4,7 +4,14 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { environment } from '../../../environments/environment';
-import { KpiOption, KpiSpcResponse, SpcAnalyzeRequest, SpcAnalyzeResponse } from './spc.types';
+import {
+  KpiOption,
+  KpiSpcForecastResponse,
+  KpiSpcResponse,
+  SpcAnalyzeRequest,
+  SpcAnalyzeResponse,
+  SpcForecastResponse
+} from './spc.types';
 
 interface KpiPage {
   content: Array<{ id: string; code: string; name: string; unit?: string }>;
@@ -43,5 +50,35 @@ export class SpcService {
     const params = new HttpParams().set('limit', limit).set('openCapa', openCapa);
     return this.http.post<KpiSpcResponse>(
       `${this.endpoint.replace('/analyze', '')}/kpi/${kpiId}/analyze`, {}, { params });
+  }
+
+  /**
+   * Prévision de sortie des limites sur une série saisie (§6.5).
+   *
+   * <p>La carte dit si le procédé EST hors contrôle ; celle-ci dit quand il VA
+   * en sortir — la seule des deux réponses sur laquelle on peut encore agir.
+   */
+  forecast(values: number[], horizon?: number, center?: number, sigma?: number,
+           threshold?: number): Observable<SpcForecastResponse> {
+    const body: Record<string, unknown> = { values };
+    if (horizon != null) body['horizon'] = horizon;
+    if (center != null) body['center'] = center;
+    if (sigma != null) body['sigma'] = sigma;
+    if (threshold != null) body['threshold'] = threshold;
+    return this.http.post<SpcForecastResponse>(
+      `${this.endpoint.replace('/analyze', '')}/forecast`, body);
+  }
+
+  /**
+   * Prévision de dérive d'un KPI : même série que la carte, projetée. Si
+   * `openCapa`, ouvre une CAPA PRÉVENTIVE sur sortie annoncée — l'ecart n'est
+   * pas survenu, et l'appeler correctif laisserait croire qu'il l'est.
+   */
+  forecastKpi(kpiId: string, limit: number, horizon: number,
+              openCapa: boolean): Observable<KpiSpcForecastResponse> {
+    const params = new HttpParams()
+      .set('limit', limit).set('horizon', horizon).set('openCapa', openCapa);
+    return this.http.post<KpiSpcForecastResponse>(
+      `${this.endpoint.replace('/analyze', '')}/kpi/${kpiId}/forecast`, {}, { params });
   }
 }

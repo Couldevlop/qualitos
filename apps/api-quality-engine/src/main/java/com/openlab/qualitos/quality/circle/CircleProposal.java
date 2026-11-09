@@ -78,6 +78,21 @@ public class CircleProposal {
     @Column(name = "impact_note", columnDefinition = "TEXT")
     private String impactNote;
 
+    /**
+     * D'ou vient l'idee, citee en clair : « Audit 5S zone Atelier B — Seiri note
+     * 2/5 le 2026-11-09 ».
+     *
+     * <p>Une citation plutot qu'une cle etrangere, comme au registre des
+     * risques : l'audit se cloture, se corrige, s'archive, et un lien dur se
+     * briserait sur une idee qui, elle, reste a traiter. {@code null} pour une
+     * idee deposee de la main de quelqu'un.
+     *
+     * <p>Jamais ecrite par l'appelant : le module qui porte l'idee la construit,
+     * sans quoi n'importe qui attribuerait une idee a un audit qui n'existe pas.
+     */
+    @Column(name = "origin_ref", length = 255, updatable = false)
+    private String originRef;
+
     @Column(name = "rejection_reason", columnDefinition = "TEXT")
     private String rejectionReason;
 

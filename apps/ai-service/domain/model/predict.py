@@ -48,6 +48,28 @@ class KpiForecast:
     points: list[KpiForecastPoint] = field(default_factory=list)
 
 
+@dataclass(frozen=True)
+class SeriesProjection:
+    """Où une série se dirige, indépendamment de la question posée dessus.
+
+    La prévision d'un KPI demande « la cible sera-t-elle atteinte ? » ; la carte
+    de contrôle demande « le procédé va-t-il sortir de ses limites ? ». Les deux
+    questions lisent la MÊME projection — niveau, tendance, σ résiduel, intervalles
+    — et une seconde implémentation de Holt finirait par répondre autrement à l'une
+    qu'à l'autre sur la même série.
+    """
+
+    n: int
+    level: float                 # niveau final (l) à la dernière observation
+    trend: float                 # tendance finale (b), par période
+    residual_sigma: float        # σ des erreurs one-step en échantillon
+    r2: float                    # qualité d'ajustement one-step, 0..1
+    confidence: str              # "low" | "medium" | "high"
+    model: str                   # "holt_linear" | "holt_winters_additive"
+    seasonal_period: int         # 0 = aucune
+    points: list[KpiForecastPoint] = field(default_factory=list)
+
+
 # ---- Supplier risk --------------------------------------------------------------
 
 @dataclass(frozen=True)

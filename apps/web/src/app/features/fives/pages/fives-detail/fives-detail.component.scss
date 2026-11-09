@@ -97,6 +97,64 @@
 .score-field { width: 130px; }
 .note-field  { flex: 1; min-width: min(220px, 100%); }
 
+/* Les photos de terrain : une bande de vignettes sous la ligne du pilier.
+   Elle prend toute la largeur de la carte pour passer à la ligne plutôt que de
+   comprimer le champ de note. */
+.photo-strip {
+  flex: 1 0 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.photo-thumb {
+  position: relative;
+  margin: 0;
+  width: 96px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--qos-bg-subtle, #f1f5f9);
+  border: 1px solid var(--qos-border-subtle, #e2e8f0);
+
+  img {
+    display: block;
+    width: 100%;
+    height: 72px;
+    object-fit: cover;
+  }
+
+  figcaption {
+    padding: 3px 6px;
+    font-size: 0.68rem;
+    line-height: 1.25;
+    color: var(--qos-fg-secondary, #64748b);
+    text-align: center;
+  }
+
+  /* La commande de retrait se superpose à l'image : sur un écran d'atelier, la
+     place manque pour une rangée de boutons sous chaque vignette. */
+  .photo-remove {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 28px;
+    height: 28px;
+    line-height: 28px;
+    background: rgba(15, 23, 42, 0.55);
+    color: #fff;
+
+    mat-icon { font-size: 18px; height: 18px; width: 18px; }
+  }
+}
+
+/* Une photo encore sur l'appareil se distingue d'une photo déposée : sans ce
+   repère, l'auditeur croirait son constat déjà transmis. */
+.photo-thumb-pending {
+  border-style: dashed;
+  border-color: var(--qos-warning, #d97706);
+}
+
 .pillar-score {
   display: inline-flex;
   align-items: center;

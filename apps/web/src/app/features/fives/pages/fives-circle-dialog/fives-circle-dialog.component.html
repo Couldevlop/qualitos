@@ -1,0 +1,57 @@
+<qos-form-dialog
+  i18n-title="@@fives.circle.title"
+  title="Porter au cercle de qualité"
+  i18n-subtitle="@@fives.circle.subtitle"
+  subtitle="L'audit dit ce qui ne va pas. Le cercle cherche comment y remédier."
+  [formGroup]="form"
+  [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@fives.circle.submit"
+  submitLabel="Déposer l'idée"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
+
+  <!-- Ce que l'idée reprendra du relevé, en lecture : c'est sur ces chiffres
+       qu'elle sera défendue en séance. Le serveur les cite lui-même ; la
+       fenêtre ne doit pas inviter à les réécrire. -->
+  <dl class="releve" data-test="releve">
+    <div>
+      <dt i18n="@@fives.circle.zone">Zone auditée</dt>
+      <dd>{{ data.zone }}</dd>
+    </div>
+    <div>
+      <dt i18n="@@fives.circle.pillar">Pilier</dt>
+      <dd>{{ data.pillarLabel }}</dd>
+    </div>
+    <div>
+      <dt i18n="@@fives.circle.score">Note relevée</dt>
+      <dd data-test="note-relevee">{{ data.score }} / 10</dd>
+    </div>
+  </dl>
+
+  <div *ngIf="loadError" class="bandeau bandeau--erreur" role="alert" data-test="erreur-cercles">{{ loadError }}</div>
+  <div *ngIf="loading" class="bandeau" i18n="@@fives.circle.loading">Chargement des cercles…</div>
+  <div *ngIf="empty" class="bandeau" role="status" data-test="aucun-cercle" i18n="@@fives.circle.none">
+    Aucun cercle actif. Créez-en un, ou reprenez un cercle en pause, pour y porter ce sujet.
+  </div>
+
+  <mat-form-field appearance="outline" class="full" *ngIf="!empty">
+    <mat-label i18n="@@fives.circle.circle">Cercle qui prend le sujet</mat-label>
+    <mat-select formControlName="circleId" required data-test="cercle">
+      <mat-option *ngFor="let c of (circles$ | async)" [value]="c.id">{{ c.name }}</mat-option>
+    </mat-select>
+    <mat-hint i18n="@@fives.circle.circle-hint">Seuls les cercles actifs peuvent prendre une idée.</mat-hint>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@fives.circle.idea">Ce qui est proposé</mat-label>
+    <input matInput formControlName="title" required maxlength="255" data-test="intitule">
+    <mat-hint i18n="@@fives.circle.idea-hint">Une ligne, lisible à l'ordre du jour.</mat-hint>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@fives.circle.detail">Ce que l'audit a constaté</mat-label>
+    <textarea matInput formControlName="description" rows="3" data-test="constat"></textarea>
+    <mat-hint i18n="@@fives.circle.detail-hint">Reprise de la remarque de l'auditeur. Le cercle n'était pas sur place.</mat-hint>
+  </mat-form-field>
+
+</qos-form-dialog>

@@ -462,6 +462,6 @@ class CircleControllerTest {
     private CircleDto.ProposalResponse proposalResp(ProposalStatus status) {
         return new CircleDto.ProposalResponse(
                 PROPOSAL, CIRCLE, null, "Idée", null, status, USER, null, null, null, null, null, null,
-                Instant.now(), Instant.now());
+                null, Instant.now(), Instant.now());
     }
 }

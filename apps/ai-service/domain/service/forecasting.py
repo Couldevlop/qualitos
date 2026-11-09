@@ -28,7 +28,7 @@ import math
 
 import numpy as np
 
-from domain.model.predict import KpiForecast, KpiForecastPoint
+from domain.model.predict import KpiForecast, KpiForecastPoint, SeriesProjection
 
 _MIN_POINTS = 4
 _Z95 = 1.959963984540054
@@ -80,6 +80,41 @@ def forecast(
         raise ValueError("direction must be 'at_least' or 'at_most'")
     if horizon < 1 or horizon > 60:
         raise ValueError("horizon must be within 1..60")
+    proj = project(values, horizon=horizon, seasonal_period=seasonal_period)
+
+    last = proj.points[-1]
+    spread = (last.high - last.low) / (2 * _Z95) or 1e-12
+    z = (target - last.value) / spread
+    p_above = 1.0 - _normal_cdf(z)
+    probability = p_above if direction == "at_least" else 1.0 - p_above
+
+    return KpiForecast(
+        n=proj.n, slope=proj.trend, intercept=proj.level,
+        residual_sigma=proj.residual_sigma, r2=proj.r2,
+        horizon=horizon, target=float(target), direction=direction,
+        probability=float(min(1.0, max(0.0, probability))), confidence=proj.confidence,
+        model=proj.model, seasonal_period=proj.seasonal_period,
+        points=proj.points,
+    )
+
+
+def project(
+    values: list[float],
+    *,
+    horizon: int = 6,
+    seasonal_period: int | None = None,
+) -> SeriesProjection:
+    """Projette la série par Holt / Holt-Winters, sans question posée dessus.
+
+    C'est le cœur commun de la prévision de KPI et de la prévision de sortie des
+    limites SPC : même ajustement, même σ résiduel, mêmes intervalles. Les deux
+    appelants lisent ensuite cette projection selon ce qui les intéresse — une
+    cible à atteindre, ou des limites à ne pas franchir.
+
+    :raises ValueError: série trop courte ou horizon invalide.
+    """
+    if horizon < 1 or horizon > 60:
+        raise ValueError("horizon must be within 1..60")
     if len(values) < _MIN_POINTS:
         raise ValueError(f"at least {_MIN_POINTS} data points are required")
 
@@ -121,26 +156,19 @@ def forecast(
         points.append(KpiForecastPoint(step=step, value=float(base),
                                        low=float(base - half), high=float(base + half)))
 
-    last = points[-1]
-    spread = (last.high - last.low) / (2 * _Z95) or 1e-12
-    z = (target - last.value) / spread
-    p_above = 1.0 - _normal_cdf(z)
-    probability = p_above if direction == "at_least" else 1.0 - p_above
-
-    if n < 8 or r2 < 0.2:
-        confidence = "low"
-    elif n < 15 or r2 < 0.5:
-        confidence = "medium"
-    else:
-        confidence = "high"
-
-    return KpiForecast(
-        n=n, slope=last_trend, intercept=last_level, residual_sigma=sigma, r2=float(r2),
-        horizon=horizon, target=float(target), direction=direction,
-        probability=float(min(1.0, max(0.0, probability))), confidence=confidence,
-        model=model_name, seasonal_period=m,
-        points=points,
+    return SeriesProjection(
+        n=n, level=last_level, trend=last_trend, residual_sigma=sigma, r2=float(r2),
+        confidence=_confidence(n, r2), model=model_name, seasonal_period=m, points=points,
     )
+
+
+def _confidence(n: int, r2: float) -> str:
+    """Peu de points ou mauvais ajustement : on le dit, plutôt que d'annoncer un chiffre."""
+    if n < 8 or r2 < 0.2:
+        return "low"
+    if n < 15 or r2 < 0.5:
+        return "medium"
+    return "high"
 
 
 # --- Holt (niveau + tendance) ----------------------------------------------------

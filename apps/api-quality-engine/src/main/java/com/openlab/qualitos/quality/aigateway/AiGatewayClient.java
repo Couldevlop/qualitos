@@ -233,6 +233,65 @@ public class AiGatewayClient {
     }
 
     /**
+     * Relaie une série de mesures vers la PRÉVISION de sortie des limites SPC
+     * (§6.5 : « le processus Y va sortir des limites dans N périodes »).
+     *
+     * <p>La carte de contrôle dit si le procédé EST hors contrôle ; cet appel-ci dit
+     * quand il VA l'être, ce qui est la seule des deux réponses sur laquelle un
+     * opérateur peut encore agir. Même garde-fou, même cloisonnement de débit par
+     * client que la détection : l'op est nommée {@code spc-forecast} pour que les
+     * deux chemins se comptent séparément dans les quotas.
+     *
+     * @param horizon   nombre de périodes à projeter (1..60) ; défaut serveur si null
+     * @param center    centre du procédé connu — avec {@code sigma} ou pas du tout
+     * @param sigma     σ du procédé connu (> 0)
+     * @param threshold risque à partir duquel une période est annoncée (0, 1]
+     */
+    @SuppressWarnings("unchecked")
+    public Map<String, Object> forecastSpc(List<Double> values, Integer horizon,
+                                           Double center, Double sigma, Double threshold) {
+        if (!TenantContext.hasTenant()) {
+            throw new MissingTenantContextException();
+        }
+        Consumer<HttpHeaders> auth = authHeaders(UUID.fromString(TenantContext.getTenantId()));
+        Map<String, Object> body = new HashMap<>();
+        body.put("values", values);
+        if (horizon != null) {
+            body.put("horizon", horizon);
+        }
+        if (center != null) {
+            body.put("center", center);
+        }
+        if (sigma != null) {
+            body.put("sigma", sigma);
+        }
+        if (threshold != null) {
+            body.put("threshold", threshold);
+        }
+        AiCallContext ctx = new AiCallContext(TenantContext.getTenantId(), "spc-forecast",
+                values == null ? 0 : values.size());
+        guard.check(ctx);
+        try {
+            Map<String, Object> resp = client.post()
+                    .uri("/v1/ai/spc/forecast")
+                    .headers(auth)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(body)
+                    .retrieve()
+                    .body(Map.class);
+            if (resp == null) {
+                throw new AiGatewayException("Réponse vide de la passerelle IA (prévision SPC)");
+            }
+            guard.recordSuccess(ctx.tenantId());
+            return resp;
+        } catch (RestClientException e) {
+            guard.recordFailure(ctx.tenantId());
+            throw new AiGatewayException(
+                    "Passerelle IA indisponible (prévision SPC) : " + e.getMessage(), e);
+        }
+    }
+
+    /**
      * Relaie une matrice multivariée vers la détection d'anomalies non-supervisée de
      * {@code ai-service} (§3.4, §12.1 : Isolation Forest ou reconstruction par ACP,
      * NumPy). Renvoie la réponse JSON brute (mappée par la couche application). Le tenant

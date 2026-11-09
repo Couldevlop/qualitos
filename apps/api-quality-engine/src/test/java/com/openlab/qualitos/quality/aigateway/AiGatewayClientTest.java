@@ -185,6 +185,38 @@ class AiGatewayClientTest {
     }
 
     @Test
+    void forecastSpc_success_returnsRawMap() {
+        AiGatewayClient c = clientReturning(200,
+                "{\"n\":4,\"will_breach\":true,\"first_breach_step\":3,"
+                        + "\"side\":\"upper\",\"limits\":{\"ucl\":13.0},\"points\":[]}");
+        Map<String, Object> resp = c.forecastSpc(List.of(10.0, 10.6, 11.2, 11.8), 12, null, null, null);
+        assertThat(resp.get("will_breach")).isEqualTo(true);
+        assertThat(resp.get("first_breach_step")).isEqualTo(3);
+    }
+
+    @Test
+    void forecastSpc_emptyBody_throws() {
+        AiGatewayClient c = clientReturning(200, "");
+        assertThatThrownBy(() -> c.forecastSpc(List.of(1.0, 2.0, 3.0, 4.0), null, null, null, null))
+                .isInstanceOf(AiGatewayException.class);
+    }
+
+    @Test
+    void forecastSpc_serverError_throws() {
+        AiGatewayClient c = clientReturning(500, "boom");
+        assertThatThrownBy(() -> c.forecastSpc(List.of(1.0, 2.0, 3.0, 4.0), null, null, null, null))
+                .isInstanceOf(AiGatewayException.class);
+    }
+
+    @Test
+    void forecastSpc_missingTenant_throws() {
+        TenantContext.clear();
+        AiGatewayClient c = new AiGatewayClient("http://localhost:" + port, 2000, 5000, "dev-claims", newGuard(), unusedTokenProvider(), InMemoryTenantAiPolicyRepository.noPolicy());
+        assertThatThrownBy(() -> c.forecastSpc(List.of(1.0, 2.0, 3.0, 4.0), null, null, null, null))
+                .isInstanceOf(MissingTenantContextException.class);
+    }
+
+    @Test
     void detectAnomaly_success_returnsRawMap() {
         AiGatewayClient c = clientReturning(200,
                 "{\"n\":3,\"n_features\":2,\"method\":\"isolation_forest\","

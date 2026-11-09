@@ -13016,6 +13016,146 @@ Datos de contacto profesionales</target>
         <source>Impossible d'ouvrir l'analyse des 5 Pourquoi.</source>
         <target state="translated">No se pudo abrir el análisis de los 5 Porqués.</target>
       </trans-unit>
+      <trans-unit id="fives.circle.title" datatype="html">
+        <source>Porter au cercle de qualité</source>
+        <target state="translated">Llevar al círculo de calidad</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.subtitle" datatype="html">
+        <source>L'audit dit ce qui ne va pas. Le cercle cherche comment y remédier.</source>
+        <target state="translated">La auditoría dice qué falla. El círculo busca cómo remediarlo.</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.submit" datatype="html">
+        <source>Déposer l'idée</source>
+        <target state="translated">Presentar la idea</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.zone" datatype="html">
+        <source>Zone auditée</source>
+        <target state="translated">Zona auditada</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.pillar" datatype="html">
+        <source>Pilier</source>
+        <target state="translated">Pilar</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.score" datatype="html">
+        <source>Note relevée</source>
+        <target state="translated">Puntuación registrada</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.circle" datatype="html">
+        <source>Cercle qui prend le sujet</source>
+        <target state="translated">Círculo que asume el tema</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.circle-hint" datatype="html">
+        <source>Seuls les cercles actifs peuvent prendre une idée.</source>
+        <target state="translated">Solo los círculos activos pueden asumir una idea.</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.loading" datatype="html">
+        <source>Chargement des cercles…</source>
+        <target state="translated">Cargando los círculos…</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.load-failed" datatype="html">
+        <source>La liste des cercles n'a pas pu être chargée.</source>
+        <target state="translated">No se pudo cargar la lista de círculos.</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.none" datatype="html">
+        <source>Aucun cercle actif. Créez-en un, ou reprenez un cercle en pause, pour y porter ce sujet.</source>
+        <target state="translated">Ningún círculo activo. Cree uno, o reactive un círculo en pausa, para llevar este tema.</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.idea" datatype="html">
+        <source>Ce qui est proposé</source>
+        <target state="translated">Lo que se propone</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.idea-hint" datatype="html">
+        <source>Une ligne, lisible à l'ordre du jour.</source>
+        <target state="translated">Una línea, legible en el orden del día.</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.title-default" datatype="html">
+        <source>Améliorer <x id="pillar"/> en zone <x id="zone"/></source>
+        <target state="translated">Mejorar <x id="pillar"/> en la zona <x id="zone"/></target>
+      </trans-unit>
+      <trans-unit id="fives.circle.detail" datatype="html">
+        <source>Ce que l'audit a constaté</source>
+        <target state="translated">Lo que constató la auditoría</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.detail-hint" datatype="html">
+        <source>Reprise de la remarque de l'auditeur. Le cercle n'était pas sur place.</source>
+        <target state="translated">Tomado de la observación del auditor. El círculo no estaba allí.</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.done" datatype="html">
+        <source>Idée déposée au cercle. Elle y arrive avec la note relevée.</source>
+        <target state="translated">Idea presentada al círculo. Llega con la puntuación registrada.</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.failed" datatype="html">
+        <source>L'idée n'a pas pu être déposée.</source>
+        <target state="translated">La idea no pudo presentarse.</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.to-circle" datatype="html">
+        <source>Porter au cercle</source>
+        <target state="translated">Llevar al círculo</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.to-circle-tooltip" datatype="html">
+        <source>Porter ce pilier à un cercle de qualité, avec sa note</source>
+        <target state="translated">Llevar este pilar a un círculo de calidad, con su puntuación</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.take" datatype="html">
+        <source>Importer une photo</source>
+        <target state="translated">Importar una foto</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.tooltip" datatype="html">
+        <source>Importer la photo du constat fait sur ce pilier</source>
+        <target state="translated">Importar la foto de lo observado en este pilar</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.done" datatype="html">
+        <source>Photo ajoutée au pilier.</source>
+        <target state="translated">Foto añadida al pilar.</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.queued" datatype="html">
+        <source>Photo conservée localement. Elle partira au retour du réseau.</source>
+        <target state="translated">Foto guardada localmente. Se enviará al volver la red.</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.pending" datatype="html">
+        <source>En attente de réseau</source>
+        <target state="translated">Esperando la red</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.remove-title" datatype="html">
+        <source>Retirer cette photo ?</source>
+        <target state="translated">¿Retirar esta foto?</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.remove-message" datatype="html">
+        <source>La photo disparaîtra de l'audit. Le retrait est consigné au journal.</source>
+        <target state="translated">La foto desaparecerá de la auditoría. La retirada queda registrada.</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.remove-aria" datatype="html">
+        <source>Retirer cette photo</source>
+        <target state="translated">Retirar esta foto</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.remove-error" datatype="html">
+        <source>La photo n'a pas pu être retirée.</source>
+        <target state="translated">No se ha podido retirar la foto.</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.err-type" datatype="html">
+        <source>Seules les photos (JPEG, PNG, WebP, HEIC) sont acceptées.</source>
+        <target state="translated">Solo se aceptan fotos (JPEG, PNG, WebP, HEIC).</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.err-too-large" datatype="html">
+        <source>Photo trop volumineuse (10 Mo maximum).</source>
+        <target state="translated">Foto demasiado grande (10 MB como máximo).</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.err-quota" datatype="html">
+        <source>Plafond atteint : 10 Mo par photo, 5 photos par pilier, 40 Mo par audit.</source>
+        <target state="translated">Límite alcanzado: 10 MB por foto, 5 fotos por pilar, 40 MB por auditoría.</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.err-state" datatype="html">
+        <source>Ce pilier doit d'abord être noté, et l'audit ne doit pas être annulé.</source>
+        <target state="translated">Este pilar debe puntuarse primero y la auditoría no debe estar anulada.</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.err-storage" datatype="html">
+        <source>Le stockage des photos est momentanément indisponible.</source>
+        <target state="translated">El almacenamiento de fotos no está disponible por el momento.</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.err-generic" datatype="html">
+        <source>La photo n'a pas pu être envoyée.</source>
+        <target state="translated">No se ha podido enviar la foto.</target>
+      </trans-unit>
       <trans-unit id="nav.forecast" datatype="html">
         <source>Prévision KPI</source>
         <target state="translated">Previsión de KPI</target>
@@ -29777,6 +29917,86 @@ historial de 12 meses</target>
       <trans-unit id="spc.study.process-status" datatype="html">
         <source>Statut du procédé</source>
         <target state="translated">Estado del proceso</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.panel" datatype="html">
+        <source>Prévision de dérive</source>
+        <target state="translated">Previsión de deriva</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.horizon" datatype="html">
+        <source>Horizon (périodes)</source>
+        <target state="translated">Horizonte (periodos)</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.open-capa" datatype="html">
+        <source>Ouvrir une CAPA préventive si une sortie est annoncée</source>
+        <target state="translated">Abrir una CAPA preventiva si se prevé una salida</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.run" datatype="html">
+        <source>Prévoir la dérive</source>
+        <target state="translated">Prever la deriva</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.running" datatype="html">
+        <source>Prévision…</source>
+        <target state="translated">Previendo…</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.no-breach" datatype="html">
+        <source>Aucune sortie des limites annoncée sur les <x id="horizon"/> prochaines périodes.</source>
+        <target state="translated">No se prevé ninguna salida de los límites en los próximos <x id="horizon"/> periodos.</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.breach-upper" datatype="html">
+        <source>Le procédé franchira sa limite supérieure dans <x id="steps"/> période(s).</source>
+        <target state="translated">El proceso superará su límite superior en <x id="steps"/> periodo(s).</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.breach-lower" datatype="html">
+        <source>Le procédé franchira sa limite inférieure dans <x id="steps"/> période(s).</source>
+        <target state="translated">El proceso superará su límite inferior en <x id="steps"/> periodo(s).</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.conf-high" datatype="html">
+        <source>Confiance élevée</source>
+        <target state="translated">Confianza alta</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.conf-medium" datatype="html">
+        <source>Confiance moyenne</source>
+        <target state="translated">Confianza media</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.conf-low" datatype="html">
+        <source>Confiance faible</source>
+        <target state="translated">Confianza baja</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.trend" datatype="html">
+        <source><x id="trend"/> par période</source>
+        <target state="translated"><x id="trend"/> por periodo</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.points-used" datatype="html">
+        <source>mesures utilisées</source>
+        <target state="translated">mediciones utilizadas</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.capa-link" datatype="html">
+        <source>CAPA préventive ouverte — voir le dossier</source>
+        <target state="translated">CAPA preventiva abierta — ver expediente</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.col-step" datatype="html">
+        <source>Période</source>
+        <target state="translated">Periodo</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.col-value" datatype="html">
+        <source>Valeur projetée</source>
+        <target state="translated">Valor proyectado</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.col-interval" datatype="html">
+        <source>Intervalle</source>
+        <target state="translated">Intervalo</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.col-risk" datatype="html">
+        <source>Risque de sortie</source>
+        <target state="translated">Riesgo de salida</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.chart-projection" datatype="html">
+        <source>Projection</source>
+        <target state="translated">Proyección</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.err-min-four" datatype="html">
+        <source>Au moins 4 mesures sont nécessaires pour prévoir une dérive.</source>
+        <target state="translated">Se necesitan al menos 4 mediciones para prever una deriva.</target>
       </trans-unit>
       <trans-unit id="stakeholders.register-risk" datatype="html">
         <source>Inscrire le risque</source>

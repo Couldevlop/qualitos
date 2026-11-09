@@ -1,11 +1,15 @@
 package com.openlab.qualitos.quality.fives;
 
+import com.openlab.qualitos.quality.circle.CircleDto;
+import com.openlab.qualitos.quality.circle.CircleService;
+import com.openlab.qualitos.quality.circle.ProposalStatus;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.common.TenantContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -21,6 +25,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -28,6 +33,7 @@ class FiveSServiceTest {
 
     @Mock FiveSAuditRepository auditRepository;
     @Mock FiveSAuditItemRepository itemRepository;
+    @Mock CircleService circleService;
     @InjectMocks FiveSService service;
 
     static final UUID TENANT = UUID.randomUUID();
@@ -254,6 +260,129 @@ class FiveSServiceTest {
     }
 
     // helpers
+    // --- un audit 5S alimente un cercle de qualite (§3.6) -------------------
+
+    /**
+     * « Un audit 5S peut alimenter un cercle de qualite. »
+     *
+     * <p>Ce que ces bancs tiennent : l'idee part de la note du pilier et la
+     * cite, parce qu'une idee defendue en seance sans son chiffre ne tient pas ;
+     * l'audit doit etre termine et le pilier note, parce qu'une note encore en
+     * saisie bouge ; et l'origine est construite ici, jamais recue, pour que
+     * personne ne rattache une idee a un audit qui n'existe pas.
+     */
+    private FiveSDto.ProposeToCircleRequest demande(UUID circle) {
+        return new FiveSDto.ProposeToCircleRequest(circle, FiveSPillar.SEIRI,
+                "Vider la zone de stockage intermediaire", "Encombrement constate en audit");
+    }
+
+    private CircleDto.ProposalResponse idee() {
+        return new CircleDto.ProposalResponse(UUID.randomUUID(), UUID.randomUUID(), null,
+                "Vider la zone", null, ProposalStatus.PROPOSED, UUID.randomUUID(), null,
+                null, null, null, null, null, "origine", Instant.now(), Instant.now());
+    }
+
+    @Test
+    void proposeToCircle_citeLaZoneLePilierEtSaNote() {
+        UUID circle = UUID.randomUUID();
+        FiveSAudit a = audit(TENANT, FiveSAuditStatus.COMPLETED);
+        a.setZone("Atelier B");
+        a.setCompletedAt(Instant.parse("2026-11-09T10:15:30Z"));
+        FiveSAuditItem it = item(a, FiveSPillar.SEIRI);
+        it.setScore(2);
+        when(auditRepository.findByIdAndTenantId(a.getId(), TENANT)).thenReturn(Optional.of(a));
+        when(itemRepository.findByAuditIdAndPillar(a.getId(), FiveSPillar.SEIRI))
+                .thenReturn(Optional.of(it));
+        when(circleService.addProposal(any(), any(), any())).thenReturn(idee());
+
+        service.proposeToCircle(a.getId(), demande(circle));
+
+        ArgumentCaptor<String> origine = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<CircleDto.ProposalRequest> req =
+                ArgumentCaptor.forClass(CircleDto.ProposalRequest.class);
+        verify(circleService).addProposal(eq(circle), req.capture(), origine.capture());
+        assertThat(origine.getValue())
+                .contains("Atelier B")
+                .contains("SEIRI")
+                .contains("2/10")
+                .contains("2026-11-09");
+        assertThat(req.getValue().title()).isEqualTo("Vider la zone de stockage intermediaire");
+        // L'idee ne s'accroche a aucune seance : elle arrive avant, et c'est au
+        // cercle de l'inscrire a l'ordre du jour.
+        assertThat(req.getValue().meetingId()).isNull();
+    }
+
+    @Test
+    void proposeToCircle_refuseUnAuditQuiNEstPasTermine() {
+        FiveSAudit a = audit(TENANT, FiveSAuditStatus.IN_PROGRESS);
+        when(auditRepository.findByIdAndTenantId(a.getId(), TENANT)).thenReturn(Optional.of(a));
+
+        assertThatThrownBy(() -> service.proposeToCircle(a.getId(), demande(UUID.randomUUID())))
+                .isInstanceOf(FiveSStateException.class)
+                .hasMessageContaining("COMPLETED");
+        verifyNoInteractions(circleService);
+    }
+
+    @Test
+    void proposeToCircle_refuseUnPilierSansNote() {
+        FiveSAudit a = audit(TENANT, FiveSAuditStatus.COMPLETED);
+        when(auditRepository.findByIdAndTenantId(a.getId(), TENANT)).thenReturn(Optional.of(a));
+        when(itemRepository.findByAuditIdAndPillar(a.getId(), FiveSPillar.SEIRI))
+                .thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> service.proposeToCircle(a.getId(), demande(UUID.randomUUID())))
+                .isInstanceOf(FiveSStateException.class)
+                .hasMessageContaining("no score");
+        verifyNoInteractions(circleService);
+    }
+
+    @Test
+    void proposeToCircle_refuseUnPilierDontLaNoteEstVide() {
+        // La ligne existe (une remarque a ete saisie) mais personne n'a note :
+        // l'idee n'aurait aucun chiffre a montrer.
+        FiveSAudit a = audit(TENANT, FiveSAuditStatus.COMPLETED);
+        FiveSAuditItem it = item(a, FiveSPillar.SEIRI);
+        it.setScore(null);
+        when(auditRepository.findByIdAndTenantId(a.getId(), TENANT)).thenReturn(Optional.of(a));
+        when(itemRepository.findByAuditIdAndPillar(a.getId(), FiveSPillar.SEIRI))
+                .thenReturn(Optional.of(it));
+
+        assertThatThrownBy(() -> service.proposeToCircle(a.getId(), demande(UUID.randomUUID())))
+                .isInstanceOf(FiveSStateException.class);
+        verifyNoInteractions(circleService);
+    }
+
+    @Test
+    void proposeToCircle_neSortPasDuClient() {
+        UUID id = UUID.randomUUID();
+        when(auditRepository.findByIdAndTenantId(id, TENANT)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> service.proposeToCircle(id, demande(UUID.randomUUID())))
+                .isInstanceOf(FiveSAuditNotFoundException.class);
+        verifyNoInteractions(circleService);
+    }
+
+    @Test
+    void proposeToCircle_rogneUneZoneAuNomFleuve() {
+        // La colonne fait 255 : une zone interminable ne doit pas faire echouer
+        // l'ecriture de l'idee.
+        FiveSAudit a = audit(TENANT, FiveSAuditStatus.COMPLETED);
+        a.setZone("Z".repeat(400));
+        FiveSAuditItem it = item(a, FiveSPillar.SEISO);
+        when(auditRepository.findByIdAndTenantId(a.getId(), TENANT)).thenReturn(Optional.of(a));
+        when(itemRepository.findByAuditIdAndPillar(a.getId(), FiveSPillar.SEISO))
+                .thenReturn(Optional.of(it));
+        when(circleService.addProposal(any(), any(), any())).thenReturn(idee());
+
+        service.proposeToCircle(a.getId(), new FiveSDto.ProposeToCircleRequest(
+                UUID.randomUUID(), FiveSPillar.SEISO, "Nettoyer", null));
+
+        ArgumentCaptor<String> origine = ArgumentCaptor.forClass(String.class);
+        verify(circleService).addProposal(any(), any(), origine.capture());
+        assertThat(origine.getValue().length()).isLessThanOrEqualTo(255);
+        assertThat(origine.getValue()).contains("SEISO");
+    }
+
     private FiveSAudit audit(UUID tenant, FiveSAuditStatus status) {
         FiveSAudit a = new FiveSAudit();
         a.setId(UUID.randomUUID());

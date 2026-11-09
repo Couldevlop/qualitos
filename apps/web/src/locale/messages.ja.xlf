@@ -13016,6 +13016,146 @@ Coordonnées professionnelles</source>
         <source>Impossible d'ouvrir l'analyse des 5 Pourquoi.</source>
         <target state="translated">なぜなぜ分析を開けませんでした。</target>
       </trans-unit>
+      <trans-unit id="fives.circle.title" datatype="html">
+        <source>Porter au cercle de qualité</source>
+        <target state="translated">品質サークルへ提起</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.subtitle" datatype="html">
+        <source>L'audit dit ce qui ne va pas. Le cercle cherche comment y remédier.</source>
+        <target state="translated">監査は何が悪いかを示します。サークルはその直し方を探します。</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.submit" datatype="html">
+        <source>Déposer l'idée</source>
+        <target state="translated">提案を登録</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.zone" datatype="html">
+        <source>Zone auditée</source>
+        <target state="translated">監査対象エリア</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.pillar" datatype="html">
+        <source>Pilier</source>
+        <target state="translated">柱</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.score" datatype="html">
+        <source>Note relevée</source>
+        <target state="translated">記録された点数</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.circle" datatype="html">
+        <source>Cercle qui prend le sujet</source>
+        <target state="translated">担当するサークル</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.circle-hint" datatype="html">
+        <source>Seuls les cercles actifs peuvent prendre une idée.</source>
+        <target state="translated">活動中のサークルのみが提案を受け取れます。</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.loading" datatype="html">
+        <source>Chargement des cercles…</source>
+        <target state="translated">サークルを読み込み中…</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.load-failed" datatype="html">
+        <source>La liste des cercles n'a pas pu être chargée.</source>
+        <target state="translated">サークルの一覧を読み込めませんでした。</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.none" datatype="html">
+        <source>Aucun cercle actif. Créez-en un, ou reprenez un cercle en pause, pour y porter ce sujet.</source>
+        <target state="translated">活動中のサークルがありません。新規に作成するか、停止中のサークルを再開してください。</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.idea" datatype="html">
+        <source>Ce qui est proposé</source>
+        <target state="translated">提案の内容</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.idea-hint" datatype="html">
+        <source>Une ligne, lisible à l'ordre du jour.</source>
+        <target state="translated">議題に載せて読める一行で。</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.title-default" datatype="html">
+        <source>Améliorer <x id="pillar"/> en zone <x id="zone"/></source>
+        <target state="translated">ゾーン<x id="zone"/>の<x id="pillar"/>を改善</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.detail" datatype="html">
+        <source>Ce que l'audit a constaté</source>
+        <target state="translated">監査が確認した内容</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.detail-hint" datatype="html">
+        <source>Reprise de la remarque de l'auditeur. Le cercle n'était pas sur place.</source>
+        <target state="translated">監査員の所見から取りました。サークルは現場にいませんでした。</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.done" datatype="html">
+        <source>Idée déposée au cercle. Elle y arrive avec la note relevée.</source>
+        <target state="translated">提案をサークルに登録しました。記録された点数とともに届きます。</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.failed" datatype="html">
+        <source>L'idée n'a pas pu être déposée.</source>
+        <target state="translated">提案を登録できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.to-circle" datatype="html">
+        <source>Porter au cercle</source>
+        <target state="translated">サークルへ提起</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.to-circle-tooltip" datatype="html">
+        <source>Porter ce pilier à un cercle de qualité, avec sa note</source>
+        <target state="translated">この柱を点数とともに品質サークルへ提起する</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.take" datatype="html">
+        <source>Importer une photo</source>
+        <target state="translated">写真を取り込む</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.tooltip" datatype="html">
+        <source>Importer la photo du constat fait sur ce pilier</source>
+        <target state="translated">この柱で確認した状態の写真を取り込みます</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.done" datatype="html">
+        <source>Photo ajoutée au pilier.</source>
+        <target state="translated">柱に写真を追加しました。</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.queued" datatype="html">
+        <source>Photo conservée localement. Elle partira au retour du réseau.</source>
+        <target state="translated">写真はローカルに保存しました。通信が戻り次第送信します。</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.pending" datatype="html">
+        <source>En attente de réseau</source>
+        <target state="translated">通信待ち</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.remove-title" datatype="html">
+        <source>Retirer cette photo ?</source>
+        <target state="translated">この写真を取り消しますか？</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.remove-message" datatype="html">
+        <source>La photo disparaîtra de l'audit. Le retrait est consigné au journal.</source>
+        <target state="translated">写真は監査から外れます。取り消しは台帳に記録されます。</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.remove-aria" datatype="html">
+        <source>Retirer cette photo</source>
+        <target state="translated">この写真を取り消す</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.remove-error" datatype="html">
+        <source>La photo n'a pas pu être retirée.</source>
+        <target state="translated">写真を取り消せませんでした。</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.err-type" datatype="html">
+        <source>Seules les photos (JPEG, PNG, WebP, HEIC) sont acceptées.</source>
+        <target state="translated">写真（JPEG・PNG・WebP・HEIC）のみ受け付けます。</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.err-too-large" datatype="html">
+        <source>Photo trop volumineuse (10 Mo maximum).</source>
+        <target state="translated">写真が大きすぎます（最大10MB）。</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.err-quota" datatype="html">
+        <source>Plafond atteint : 10 Mo par photo, 5 photos par pilier, 40 Mo par audit.</source>
+        <target state="translated">上限に達しました（1枚10MB、柱ごとに5枚、監査ごとに40MB）。</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.err-state" datatype="html">
+        <source>Ce pilier doit d'abord être noté, et l'audit ne doit pas être annulé.</source>
+        <target state="translated">まずこの柱を採点してください。監査が取消済みの場合は追加できません。</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.err-storage" datatype="html">
+        <source>Le stockage des photos est momentanément indisponible.</source>
+        <target state="translated">写真の保管先が一時的に利用できません。</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.err-generic" datatype="html">
+        <source>La photo n'a pas pu être envoyée.</source>
+        <target state="translated">写真を送信できませんでした。</target>
+      </trans-unit>
       <trans-unit id="nav.forecast" datatype="html">
         <source>Prévision KPI</source>
         <target state="translated">KPI予測</target>
@@ -29776,6 +29916,86 @@ historique 12 mois</source>
       <trans-unit id="spc.study.process-status" datatype="html">
         <source>Statut du procédé</source>
         <target state="translated">工程の状態</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.panel" datatype="html">
+        <source>Prévision de dérive</source>
+        <target state="translated">ドリフト予測</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.horizon" datatype="html">
+        <source>Horizon (périodes)</source>
+        <target state="translated">予測期間（期）</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.open-capa" datatype="html">
+        <source>Ouvrir une CAPA préventive si une sortie est annoncée</source>
+        <target state="translated">逸脱が予測された場合に予防CAPAを起票する</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.run" datatype="html">
+        <source>Prévoir la dérive</source>
+        <target state="translated">ドリフトを予測</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.running" datatype="html">
+        <source>Prévision…</source>
+        <target state="translated">予測中…</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.no-breach" datatype="html">
+        <source>Aucune sortie des limites annoncée sur les <x id="horizon"/> prochaines périodes.</source>
+        <target state="translated">今後 <x id="horizon"/> 期間において管理限界の逸脱は予測されていません。</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.breach-upper" datatype="html">
+        <source>Le procédé franchira sa limite supérieure dans <x id="steps"/> période(s).</source>
+        <target state="translated">工程は <x id="steps"/> 期間後に上限を超えます。</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.breach-lower" datatype="html">
+        <source>Le procédé franchira sa limite inférieure dans <x id="steps"/> période(s).</source>
+        <target state="translated">工程は <x id="steps"/> 期間後に下限を下回ります。</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.conf-high" datatype="html">
+        <source>Confiance élevée</source>
+        <target state="translated">信頼度：高</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.conf-medium" datatype="html">
+        <source>Confiance moyenne</source>
+        <target state="translated">信頼度：中</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.conf-low" datatype="html">
+        <source>Confiance faible</source>
+        <target state="translated">信頼度：低</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.trend" datatype="html">
+        <source><x id="trend"/> par période</source>
+        <target state="translated"><x id="trend"/> / 期</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.points-used" datatype="html">
+        <source>mesures utilisées</source>
+        <target state="translated">件の測定値を使用</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.capa-link" datatype="html">
+        <source>CAPA préventive ouverte — voir le dossier</source>
+        <target state="translated">予防CAPA起票済み — 記録を表示</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.col-step" datatype="html">
+        <source>Période</source>
+        <target state="translated">期</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.col-value" datatype="html">
+        <source>Valeur projetée</source>
+        <target state="translated">予測値</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.col-interval" datatype="html">
+        <source>Intervalle</source>
+        <target state="translated">区間</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.col-risk" datatype="html">
+        <source>Risque de sortie</source>
+        <target state="translated">逸脱リスク</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.chart-projection" datatype="html">
+        <source>Projection</source>
+        <target state="translated">予測</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.err-min-four" datatype="html">
+        <source>Au moins 4 mesures sont nécessaires pour prévoir une dérive.</source>
+        <target state="translated">ドリフトの予測には測定値が4件以上必要です。</target>
       </trans-unit>
       <trans-unit id="stakeholders.register-risk" datatype="html">
         <source>Inscrire le risque</source>

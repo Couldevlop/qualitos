@@ -8,7 +8,12 @@ import { of, throwError } from 'rxjs';
 import { SharedModule } from '../../../../shared/shared.module';
 import { UiModule } from '../../../../shared/ui/ui.module';
 import { SpcService } from '../../spc.service';
-import { KpiSpcResponse, SpcAnalyzeResponse } from '../../spc.types';
+import {
+  KpiSpcForecastResponse,
+  KpiSpcResponse,
+  SpcAnalyzeResponse,
+  SpcForecastResponse
+} from '../../spc.types';
 import { SpcAnalyzeComponent } from './spc-analyze.component';
 
 /**
@@ -35,7 +40,8 @@ describe('SpcAnalyzeComponent', () => {
   });
 
   async function setup(kpis: 'erreur' | { id: string; code: string; name: string }[] = []): Promise<void> {
-    spc = jasmine.createSpyObj<SpcService>('SpcService', ['listKpis', 'analyze', 'analyzeKpi']);
+    spc = jasmine.createSpyObj<SpcService>('SpcService',
+      ['listKpis', 'analyze', 'analyzeKpi', 'forecast', 'forecastKpi']);
     spc.listKpis.and.returnValue(kpis === 'erreur' ? throwError(() => ({ status: 500 })) : of(kpis));
     await TestBed.configureTestingModule({
       declarations: [SpcAnalyzeComponent],
@@ -180,5 +186,214 @@ describe('SpcAnalyzeComponent', () => {
     component.analyze();
     const serie = (component.chartOption as { series: Record<string, unknown>[] }).series[0];
     expect(serie['markLine']).toBeUndefined();
+  });
+
+  // --- prévision de sortie des limites (§6.5) ---
+
+  const PREVISION = (o: Partial<SpcForecastResponse> = {}): SpcForecastResponse => ({
+    n: 4, horizon: 6, threshold: 0.5, willBreach: true, firstBreachStep: 3, side: 'upper',
+    trend: 0.42, residualSigma: 0.2, r2: 0.95, confidence: 'high', model: 'holt_linear',
+    limits: { centerLine: 10, sigma: 0.15, ucl: 10.45, lcl: 9.55, estimated: true },
+    points: [
+      { step: 1, value: 10.2, low: 10.0, high: 10.4, pAboveUcl: 0.1, pBelowLcl: 0, pBreach: 0.1 },
+      { step: 2, value: 10.4, low: 10.1, high: 10.7, pAboveUcl: 0.35, pBelowLcl: 0, pBreach: 0.35 },
+      { step: 3, value: 10.6, low: 10.2, high: 11.0, pAboveUcl: 0.72, pBelowLcl: 0, pBreach: 0.72 }
+    ],
+    ...o
+  });
+
+  /** Amène l'écran à l'état « une série est analysée », prêt pour la prévision. */
+  async function serieAnalysee(): Promise<void> {
+    await setup();
+    spc.analyze.and.returnValue(of(RESULTAT()));
+    component.loadExample();
+    component.analyze();
+    fixture.detectChanges();
+  }
+
+  it('sans série analysée, le panneau de prévision reste absent', async () => {
+    await setup();
+    expect(component.canForecast).toBeFalse();
+    expect(hote().querySelector('[data-test="forecast-run"]')).toBeNull();
+  });
+
+  it('une série trop courte ne propose pas de prévision : 3 points ne datent pas une dérive', async () => {
+    await setup();
+    spc.analyze.and.returnValue(of(RESULTAT({ n: 3 })));
+    component.form.patchValue({ valuesText: '10 10.5 11' });
+    component.analyze();
+    fixture.detectChanges();
+    expect(component.canForecast).toBeFalse();
+    expect(hote().querySelector('[data-test="forecast-run"]')).toBeNull();
+  });
+
+  it('annonce la période de sortie, le côté franchi et la confiance, et trace la projection', async () => {
+    await serieAnalysee();
+    expect(component.canForecast).toBeTrue();
+    spc.forecast.and.returnValue(of(PREVISION()));
+
+    component.runForecast();
+    fixture.detectChanges();
+
+    // La prévision repart de la série affichée, avec la baseline saisie (ici aucune).
+    expect(spc.forecast).toHaveBeenCalledWith(
+      jasmine.any(Array), 6, undefined, undefined);
+    expect(spc.forecast.calls.mostRecent().args[0].length).toBe(11);
+
+    const texte = texte0();
+    expect(texte).toContain('Le procédé franchira sa limite supérieure dans 3 période(s).');
+    expect(texte).toContain('Confiance élevée');
+    expect(texte).toContain('+0.420 par période');
+    expect(texte).toContain('holt_linear');
+    // La projection se lit DANS la carte : l'axe est prolongé des périodes à venir.
+    const option = component.chartOption as {
+      xAxis: { data: string[] };
+      series: Array<{ name: string; data: Array<number | null> }>;
+    };
+    expect(option.xAxis.data.length).toBe(11 + 3);
+    expect(option.xAxis.data[13]).toBe('+3');
+    const projection = option.series[2];
+    expect(projection.name).toBe('Projection');
+    // Elle démarre au dernier point mesuré, sinon la courbe serait en l'air.
+    expect(projection.data[10]).toBe(13.6);
+    expect(projection.data[0]).toBeNull();
+    expect(projection.data[13]).toBe(10.6);
+    // La période au-delà du seuil se repère sans lire les chiffres.
+    expect(hote().querySelectorAll('tr.row-breach').length).toBe(1);
+    expect(texte).toContain('72 %');
+  });
+
+  it('une absence de sortie annoncée se dit sans inventer d’étape', async () => {
+    await serieAnalysee();
+    spc.forecast.and.returnValue(of(PREVISION({
+      willBreach: false, firstBreachStep: null, side: null, confidence: 'low'
+    })));
+
+    component.runForecast();
+    fixture.detectChanges();
+
+    const texte = texte0();
+    expect(texte).toContain('Aucune sortie des limites annoncée sur les 6 prochaines périodes.');
+    expect(texte).toContain('Confiance faible');
+    expect(texte).not.toContain('franchira');
+  });
+
+  it('annonce une sortie par le bas quand c’est la limite inférieure qui est franchie', async () => {
+    await serieAnalysee();
+    spc.forecast.and.returnValue(of(PREVISION({ side: 'lower', firstBreachStep: 2 })));
+    component.runForecast();
+    fixture.detectChanges();
+    expect(texte0()).toContain('Le procédé franchira sa limite inférieure dans 2 période(s).');
+  });
+
+  it('transmet la baseline saisie à la prévision : mêmes limites que la carte', async () => {
+    await setup();
+    spc.analyze.and.returnValue(of(RESULTAT()));
+    component.form.patchValue({ valuesText: '10 10.1 9.9 10.2 10.3', center: 10, sigma: 0.15 });
+    component.analyze();
+    spc.forecast.and.returnValue(of(PREVISION()));
+    component.forecastForm.patchValue({ horizon: 12 });
+
+    component.runForecast();
+
+    expect(spc.forecast).toHaveBeenCalledWith([10, 10.1, 9.9, 10.2, 10.3], 12, 10, 0.15);
+  });
+
+  it('depuis un KPI, la prévision passe par le KPI et peut ouvrir une CAPA préventive', async () => {
+    await setup([{ id: 'k1', code: 'K1', name: 'Taux de rebut' }]);
+    const reponseKpi: KpiSpcResponse = {
+      kpiId: 'k1', kpiCode: 'K1', kpiName: 'Taux de rebut',
+      periods: ['2026-10-01T00:00:00Z', '2026-10-02T00:00:00Z',
+                '2026-10-03T00:00:00Z', '2026-10-04T00:00:00Z'],
+      values: [10, 10.2, 10.3, 10.4], analysis: RESULTAT({ n: 4 }), capaId: null
+    };
+    spc.analyzeKpi.and.returnValue(of(reponseKpi));
+    component.kpiForm.patchValue({ kpiId: 'k1', limit: 20 });
+    component.analyzeKpi();
+    fixture.detectChanges();
+
+    const prevue: KpiSpcForecastResponse = {
+      kpiId: 'k1', kpiCode: 'K1', kpiName: 'Taux de rebut',
+      periods: reponseKpi.periods, values: reponseKpi.values,
+      forecast: PREVISION(), capaId: 'capa-prev-1'
+    };
+    spc.forecastKpi.and.returnValue(of(prevue));
+    component.forecastForm.patchValue({ horizon: 4, openCapa: true });
+    component.runForecast();
+    fixture.detectChanges();
+
+    expect(spc.forecastKpi).toHaveBeenCalledWith('k1', 20, 4, true);
+    expect(spc.forecast).not.toHaveBeenCalled();
+    expect(component.forecastCapaId).toBe('capa-prev-1');
+    const lien = hote().querySelector('[data-test="forecast-capa"]');
+    expect(lien).not.toBeNull();
+    expect(lien!.textContent).toContain('CAPA préventive ouverte');
+  });
+
+  it('une prévision KPI sans CAPA n’affiche aucun lien de dossier', async () => {
+    await setup([{ id: 'k1', code: 'K1', name: 'Taux de rebut' }]);
+    spc.analyzeKpi.and.returnValue(of({
+      kpiId: 'k1', kpiCode: 'K1', kpiName: 'Taux de rebut',
+      periods: ['a', 'b', 'c', 'd'], values: [1, 2, 3, 4],
+      analysis: RESULTAT({ n: 4 }), capaId: null
+    } as KpiSpcResponse));
+    component.kpiForm.patchValue({ kpiId: 'k1' });
+    component.analyzeKpi();
+    spc.forecastKpi.and.returnValue(of({
+      kpiId: 'k1', kpiCode: 'K1', kpiName: 'Taux de rebut',
+      periods: [], values: [], forecast: PREVISION(), capaId: null
+    } as KpiSpcForecastResponse));
+
+    component.runForecast();
+    fixture.detectChanges();
+
+    expect(component.forecastCapaId).toBeNull();
+    expect(hote().querySelector('[data-test="forecast-capa"]')).toBeNull();
+  });
+
+  it('un refus du serveur sur la prévision dit quoi faire, sans toucher à la carte', async () => {
+    await serieAnalysee();
+    const carteAvant = component.chartOption;
+
+    spc.forecast.and.returnValue(throwError(() => new HttpErrorResponse({ status: 422 })));
+    component.runForecast();
+    fixture.detectChanges();
+    expect(component.forecastError).toContain('Au moins 4 mesures');
+    expect(component.forecast).toBeNull();
+    expect(component.chartOption).toBe(carteAvant);
+    expect(hote().querySelector('[data-test="forecast-error"]')).not.toBeNull();
+
+    spc.forecast.and.returnValue(throwError(() => new HttpErrorResponse({ status: 429 })));
+    component.runForecast();
+    expect(component.forecastError).toContain('réessayez dans une minute');
+    expect(component.forecastLoading).toBeFalse();
+  });
+
+  it('ignore un second lancement de prévision, et un horizon hors bornes', async () => {
+    await serieAnalysee();
+    spc.forecast.and.returnValue(of(PREVISION()));
+
+    component.forecastLoading = true;
+    component.runForecast();
+    expect(spc.forecast).not.toHaveBeenCalled();
+
+    component.forecastLoading = false;
+    component.forecastForm.patchValue({ horizon: 61 });
+    component.runForecast();
+    expect(spc.forecast).not.toHaveBeenCalled();
+  });
+
+  /** Une nouvelle analyse remet le compteur à zéro : une prévision périmée serait un mensonge. */
+  it('relancer l’analyse efface la prévision précédente', async () => {
+    await serieAnalysee();
+    spc.forecast.and.returnValue(of(PREVISION()));
+    component.runForecast();
+    expect(component.forecast).not.toBeNull();
+
+    component.analyze();
+    fixture.detectChanges();
+    expect(component.forecast).toBeNull();
+    expect(component.forecastCapaId).toBeNull();
+    expect(texte0()).not.toContain('franchira');
   });
 });

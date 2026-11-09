@@ -10,7 +10,7 @@ from .rag_query import RagQueryUseCase, RagQueryRequest, RagQueryResult
 from .nlq_ask import NlqAskUseCase, NlqAskRequest
 from .federated_train_round import FederatedTrainRoundUseCase
 from .predict import KpiForecastUseCase, NcClusterUseCase, SupplierRiskUseCase
-from .spc_detect import SpcDetectUseCase
+from .spc_detect import SpcDetectUseCase, SpcForecastUseCase
 from .anomaly_detect import AnomalyDetectUseCase, AnomalyExplainUseCase
 from .complaint_analyze import ComplaintAnalyzeUseCase
 from .transcribe import TranscribeUseCase
@@ -53,5 +53,6 @@ __all__ = [
     "NlqAskRequest",
     "FederatedTrainRoundUseCase",
     "SpcDetectUseCase",
+    "SpcForecastUseCase",
     "AnomalyDetectUseCase",
 ]

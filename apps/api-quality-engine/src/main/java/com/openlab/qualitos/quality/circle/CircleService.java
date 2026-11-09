@@ -242,6 +242,22 @@ public class CircleService {
     // ===== Proposals =====
 
     public CircleDto.ProposalResponse addProposal(UUID circleId, CircleDto.ProposalRequest req) {
+        return addProposal(circleId, req, null);
+    }
+
+    /**
+     * Deposer une idee nee d'ailleurs — d'un audit 5S, par exemple (§3.6).
+     *
+     * <p>L'origine n'est pas un champ de la requete : elle est construite par le
+     * module qui porte l'idee. Un « vient de » que l'appelant ecrirait lui-meme
+     * rattacherait une idee a n'importe quoi, ce qu'une piste d'audit doit
+     * precisement empecher (§18.2) — meme raison que pour l'auteur.
+     *
+     * @param originRef l'origine citee, ou {@code null} pour une idee deposee
+     *                  de la main de quelqu'un
+     */
+    public CircleDto.ProposalResponse addProposal(UUID circleId, CircleDto.ProposalRequest req,
+                                                  String originRef) {
         QualityCircle c = loadCircle(circleId);
         if (c.getStatus() != CircleStatus.ACTIVE) {
             throw new CircleStateException("Proposals can only be added to ACTIVE circles");
@@ -257,6 +273,7 @@ public class CircleService {
         p.setProposedBy(CurrentUser.requireUserId());
         p.setProposedByName(CurrentUser.displayName().orElse(null));
         p.setStatus(ProposalStatus.PROPOSED);
+        p.setOriginRef(originRef);
         if (req.meetingId() != null) {
             CircleMeeting m = loadMeeting(circleId, req.meetingId());
             p.setMeeting(m);
@@ -519,7 +536,7 @@ public class CircleService {
                 p.getTitle(), p.getDescription(), p.getStatus(),
                 p.getProposedBy(), p.getValidatedBy(), p.getValidatedAt(),
                 p.getImplementedAt(), p.getMeasuredAt(),
-                p.getImpactNote(), p.getRejectionReason(),
+                p.getImpactNote(), p.getRejectionReason(), p.getOriginRef(),
                 p.getCreatedAt(), p.getUpdatedAt());
     }
 }
