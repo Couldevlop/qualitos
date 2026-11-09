@@ -77,6 +77,31 @@ class TenantCatalogControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = "USER")
+    void toutAuthentifieChargeLesListesRegleesEnUnAppel() throws Exception {
+        when(service.customised()).thenReturn(java.util.Map.of(
+                "fives-zone", List.of(CatalogEntry.of("BLOC-A", "Bloc A"))));
+
+        mockMvc.perform(get(BASE + "/custom"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$['fives-zone'][0].code").value("BLOC-A"))
+                .andExpect(jsonPath("$['fives-zone'][0].label").value("Bloc A"));
+    }
+
+    /** `custom` est un chemin, pas un nom de liste : il ne doit pas finir en 404. */
+    @Test
+    @WithMockUser(roles = "USER")
+    void leCheminDesListesRegleesNEstPasConfonduAvecUneListe() throws Exception {
+        when(service.customised()).thenReturn(java.util.Map.of());
+
+        mockMvc.perform(get(BASE + "/custom"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isEmpty());
+
+        verify(service, org.mockito.Mockito.never()).view(any());
+    }
+
+    @Test
     @WithMockUser(roles = "ADMIN_TENANT")
     void lAdministrateurRemplaceEtRetablit() throws Exception {
         when(service.replace(eq(CatalogId.FIVES_ZONE), anyList())).thenReturn(

@@ -1,3 +1,5 @@
+import { catalogLabel } from '../../../core/catalogs/catalog-overrides';
+
 /**
  * Libellés des niveaux de gravité renvoyés par l'API (LOW…CRITICAL pour les
  * incidents, MINOR…CRITICAL pour les non-conformités) et des catégories de NC.
@@ -35,7 +37,14 @@ export function severityLabel(code: string | null | undefined): string {
   return lookup(SEVERITIES, code);
 }
 
-/** Libellé d'une catégorie de non-conformité ; le code s'il est inconnu, un tiret s'il manque. */
+/**
+ * Libellé d'une catégorie de non-conformité ; le code s'il est inconnu, un tiret
+ * s'il manque.
+ *
+ * <p>Le mot du client passe devant (ADR 0111) : s'il a renommé « Fournisseur »
+ * en « Achats », c'est « Achats » qui s'affiche — partout, et pas seulement dans
+ * le formulaire de saisie.
+ */
 export function ncCategoryLabel(code: string | null | undefined): string {
-  return lookup(NC_CATEGORIES, code);
+  return catalogLabel('nc-category', code) ?? lookup(NC_CATEGORIES, code);
 }

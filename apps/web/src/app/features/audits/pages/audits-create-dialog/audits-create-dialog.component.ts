@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { catalogOptions } from '../../../../core/catalogs/catalog-overrides';
 import { AbstractControl, FormBuilder, ValidationErrors, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -46,7 +47,8 @@ export class AuditsCreateDialogComponent {
    */
   private leadAuditorName: string | undefined = this.auth.snapshot()?.displayName || undefined;
 
-  readonly types: { value: AuditType; label: string }[] = [
+  /** Les valeurs de la plateforme : le repli quand le client n'a rien réglé. */
+  private readonly typesPlateforme: { value: AuditType; label: string }[] = [
     { value: 'INTERNAL',      label: $localize`:@@audits.type.internal:Interne` },
     { value: 'EXTERNAL',      label: $localize`:@@audits.type.external:Externe` },
     { value: 'SUPPLIER',      label: $localize`:@@audits.type.supplier:Fournisseur` },
@@ -54,6 +56,9 @@ export class AuditsCreateDialogComponent {
     { value: 'CERTIFICATION', label: $localize`:@@audits.type.certification:Certification` },
     { value: 'SURVEILLANCE',  label: $localize`:@@audits.type.surveillance:Surveillance` }
   ];
+
+  /** Les types d'audit, dans l'ordre et les mots du client (ADR 0111). */
+  readonly types = catalogOptions<AuditType>('audit-type', this.typesPlateforme);
 
   readonly form = this.fb.nonNullable.group({
     title: ['', [Validators.required, Validators.maxLength(255)]],

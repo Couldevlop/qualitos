@@ -9,7 +9,11 @@
 
   <mat-form-field appearance="outline" class="full">
     <mat-label i18n="@@common.zone">Zone</mat-label>
-    <input matInput formControlName="zone" maxlength="200" required>
+    <input matInput formControlName="zone" maxlength="200" required
+           [matAutocomplete]="zonesClient">
+    <mat-autocomplete #zonesClient="matAutocomplete">
+      <mat-option *ngFor="let z of zonesProposees" [value]="z">{{ z }}</mat-option>
+    </mat-autocomplete>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">

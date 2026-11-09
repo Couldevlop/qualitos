@@ -4,6 +4,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { finalize } from 'rxjs/operators';
 
+import { catalogCodes } from '../../../../core/catalogs/catalog-overrides';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { FivesService } from '../../fives.service';
@@ -18,6 +19,19 @@ import { FiveSAuditResponse } from '../../fives.types';
 export class FivesCreateDialogComponent {
 
   submitting = false;
+
+  /**
+   * Les zones que le client a reglees (ADR 0111). La liste est ouverte : on les
+   * propose, on n'y enferme pas — une zone inattendue reste saisissable.
+   */
+  readonly zones = catalogCodes<string>('fives-zone', []);
+
+  /** Les zones proposees qui correspondent a ce qui est deja tape. */
+  get zonesProposees(): string[] {
+    const tape = (this.form?.controls.zone.value ?? '').trim().toLowerCase();
+    if (!tape) return this.zones;
+    return this.zones.filter(z => z.toLowerCase().includes(tape));
+  }
 
   readonly form = this.fb.nonNullable.group({
     zone: ['', [Validators.required, Validators.maxLength(200)]],

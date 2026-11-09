@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { catalogCodes } from '../../../../core/catalogs/catalog-overrides';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
@@ -32,7 +33,12 @@ export class EhsListComponent implements OnInit {
   readonly displayedColumns = ['code', 'title', 'type', 'severity', 'status', 'occurredAt'];
 
   readonly statuses: IncidentStatus[]   = ['REPORTED', 'INVESTIGATING', 'MITIGATED', 'CLOSED', 'CANCELLED'];
-  readonly types: IncidentType[]        = ['INJURY', 'NEAR_MISS', 'ENVIRONMENTAL', 'SECURITY', 'PROPERTY_DAMAGE', 'OTHER'];
+  /** Les valeurs de la plateforme : le repli quand le client n'a rien réglé. */
+  private readonly typesPlateforme: IncidentType[] =
+    ['INJURY', 'NEAR_MISS', 'ENVIRONMENTAL', 'SECURITY', 'PROPERTY_DAMAGE', 'OTHER'];
+
+  /** Dans l'ordre du client (ADR 0111). */
+  readonly types = catalogCodes<IncidentType>('ehs-incident-type', this.typesPlateforme);
   readonly severities: IncidentSeverity[] = ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'];
 
   readonly statusFilter   = new FormControl<IncidentStatus   | ''>('');

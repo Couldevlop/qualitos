@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { catalogCodes } from '../../../../core/catalogs/catalog-overrides';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { finalize } from 'rxjs/operators';
 
@@ -111,13 +112,17 @@ export class StakeholderAssistantComponent {
    * branchés : la liste devra venir du pack actif du client, et non d'ici --
    * sans quoi un hôpital ou une banque n'y trouve pas son secteur.
    */
-  readonly sectors: readonly string[] = [
+  /** Les valeurs de la plateforme : le repli quand le client n'a rien réglé. */
+  private readonly sectorsPlateforme: readonly string[] = [
     $localize`:@@stakeholders.sector.aerospace:Aéronautique`,
     $localize`:@@stakeholders.sector.automotive:Automobile`,
     $localize`:@@stakeholders.sector.food:Agroalimentaire`,
     $localize`:@@stakeholders.sector.medical-devices:Dispositifs médicaux`,
     $localize`:@@stakeholders.sector.services:Services`,
   ];
+
+  /** Dans l'ordre et les mots du client (ADR 0111). */
+  readonly sectors = catalogCodes<string>('stakeholder-sector', this.sectorsPlateforme);
   readonly maxName = STAKEHOLDER_LIMITS.name;
   readonly categories = STAKEHOLDER_CATEGORIES;
   readonly maxCharacteristics = 1000;

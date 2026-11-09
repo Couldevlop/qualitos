@@ -1,4 +1,5 @@
 import { PokaYokeMechanism, PokaYokeType } from './dmaic.types';
+import { catalogLabel, catalogOptions } from '../../core/catalogs/catalog-overrides';
 
 /**
  * Les mots des détrompeurs. Le serveur rend des codes (`PHYSICAL_SHAPE`,
@@ -31,6 +32,12 @@ const MECHANISM: Readonly<Record<PokaYokeMechanism, string>> = {
 
 export const POKAYOKE_TYPES: readonly PokaYokeType[] = ['PREVENTION', 'DETECTION'];
 
+/** Les mécanismes proposés à la saisie, dans l'ordre et les mots du client. */
+export function pokaYokeMechanismOptions(): Array<{ value: PokaYokeMechanism; label: string }> {
+  return catalogOptions('pokayoke-mechanism',
+    POKAYOKE_MECHANISMS.map(m => ({ value: m, label: MECHANISM[m] })));
+}
+
 export const POKAYOKE_MECHANISMS: readonly PokaYokeMechanism[] = [
   'PHYSICAL_SHAPE', 'INTERLOCK', 'LIMIT_SWITCH', 'SENSOR', 'VISION',
   'CHECKLIST', 'COLOR_CODING', 'POSITION_REFERENCE', 'COUNTER',
@@ -44,5 +51,6 @@ export function pokaYokeTypeLabel(code: PokaYokeType | string | null | undefined
 
 export function pokaYokeMechanismLabel(code: PokaYokeMechanism | string | null | undefined): string {
   if (!code) return '';
-  return MECHANISM[code as PokaYokeMechanism] ?? code;
+  // Le mot du client passe devant (ADR 0111).
+  return catalogLabel('pokayoke-mechanism', code) ?? MECHANISM[code as PokaYokeMechanism] ?? code;
 }

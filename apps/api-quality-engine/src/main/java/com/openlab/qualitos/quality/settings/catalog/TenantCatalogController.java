@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Les listes déroulantes paramétrables par le client.
@@ -46,6 +47,16 @@ public class TenantCatalogController {
     @Operation(summary = "Every catalogue open to tenant settings, with its state")
     public List<TenantCatalogService.Summary> list() {
         return service.summaries();
+    }
+
+    /**
+     * Les listes réglées par ce client, et elles seules. Un seul appel au
+     * démarrage de l'application, au lieu de douze.
+     */
+    @GetMapping("/custom")
+    @Operation(summary = "Only the catalogues this tenant has set, in one call")
+    public Map<String, List<CatalogEntry>> customised() {
+        return service.customised();
     }
 
     @GetMapping("/{catalogue}")

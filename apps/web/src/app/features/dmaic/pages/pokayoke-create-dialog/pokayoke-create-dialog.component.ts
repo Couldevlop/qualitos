@@ -1,4 +1,5 @@
 import { Component, Inject } from '@angular/core';
+import { catalogCodes } from '../../../../core/catalogs/catalog-overrides';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
@@ -50,7 +51,8 @@ const NOM_MAX = 255;
 export class PokaYokeCreateDialogComponent {
 
   readonly types: readonly PokaYokeType[] = POKAYOKE_TYPES;
-  readonly mechanisms: readonly PokaYokeMechanism[] = POKAYOKE_MECHANISMS;
+  /** Dans l'ordre du client (ADR 0111) ; les mots suivent par `pokaYokeMechanismLabel`. */
+  readonly mechanisms = catalogCodes<PokaYokeMechanism>('pokayoke-mechanism', POKAYOKE_MECHANISMS);
   readonly typeLabel = pokaYokeTypeLabel;
   readonly mechanismLabel = pokaYokeMechanismLabel;
   readonly nameMax = NOM_MAX;

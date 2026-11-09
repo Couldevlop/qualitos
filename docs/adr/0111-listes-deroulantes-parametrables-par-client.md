@@ -80,6 +80,26 @@ sans la liste, pas de saisie, et l'API publique comme la file hors-ligne passent
 par le même chemin. Changer exige `authz.manage`, comme tout paramétrage hors
 gestion des utilisateurs.
 
+**Comment les mots du client atteignent les écrans.** Les libellés sont rendus
+par des fonctions pures appelées depuis des gabarits, des tableaux et des
+exports : `auditTypeLabel(code)`, `ncCategoryLabel(code)`. Les rendre
+asynchrones demanderait de réécrire une quarantaine d'écrans pour ce qui tient
+dans une table de correspondance. Le réglage du client est donc **tenu en
+mémoire** (`core/catalogs/catalog-overrides.ts`), rempli **une fois** à
+l'ouverture de la session par un appel unique — `GET /settings/catalogs/custom`,
+qui ne rend que les listes effectivement réglées — et **oublié à la
+déconnexion** : un client ne lit jamais les mots d'un autre. Vide, tout retombe
+sur les libellés de l'écran, traduits en six langues : exactement l'état d'avant
+ce mécanisme. L'appel est rejoué après chaque enregistrement, pour que la
+nouvelle liste vaille immédiatement, et son échec n'est pas une panne.
+
+Deux fonctions suffisent aux écrans : `catalogOptions(liste, repli)` quand
+l'écran porte des couples code/libellé, `catalogCodes(liste, repli)` quand il
+porte un tableau de codes. Toutes deux prennent l'ordre et les mots du client,
+réduisent la liste aux codes que l'écran propose — un diagramme en 6M ne se voit
+pas offrir *Management* parce que le client l'a renommé — et n'y ramènent jamais
+une entrée que le client a mise hors service.
+
 ## Conséquences
 
 - Les douze listes relevées sont réglables, et la treizième coûtera une

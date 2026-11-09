@@ -1,4 +1,5 @@
 import { Component, Inject, OnInit, Optional } from '@angular/core';
+import { catalogCodes } from '../../../../core/catalogs/catalog-overrides';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -62,7 +63,12 @@ export class NcCreateDialogComponent implements OnInit {
   products: ProductResponse[] = [];
   suggestions: FailureModeChoice[] = [];
 
-  readonly categories: NcCategory[] = ['PRODUCT', 'PROCESS', 'DOCUMENTATION', 'SUPPLIER', 'SAFETY', 'ENVIRONMENT', 'OTHER'];
+  /** Les valeurs de la plateforme : le repli quand le client n'a rien réglé. */
+  private readonly categoriesPlateforme: NcCategory[] =
+    ['PRODUCT', 'PROCESS', 'DOCUMENTATION', 'SUPPLIER', 'SAFETY', 'ENVIRONMENT', 'OTHER'];
+
+  /** Dans l'ordre du client (ADR 0111) ; les libellés suivent par `ncCategoryLabel`. */
+  readonly categories = catalogCodes<NcCategory>('nc-category', this.categoriesPlateforme);
   readonly severities: NcSeverity[] = ['MINOR', 'MAJOR', 'CRITICAL'];
 
   /** Le catalogue des natures d'écart du client ; vide si le serveur ne répond pas. */

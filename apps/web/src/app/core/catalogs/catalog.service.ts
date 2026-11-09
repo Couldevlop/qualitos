@@ -1,9 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { catchError, map, shareReplay, tap } from 'rxjs/operators';
+import { catchError, map, shareReplay, switchMap, tap } from 'rxjs/operators';
 
 import { environment } from '../../../environments/environment';
+import { clearCatalogOverrides, setCatalogOverrides } from './catalog-overrides';
 import {
   Catalog,
   CatalogEntry,
@@ -40,6 +41,28 @@ export class CatalogService {
   private readonly cache = new Map<CatalogName, Observable<Catalog | null>>();
 
   constructor(private readonly http: HttpClient) {}
+
+  /**
+   * Charge, en UN appel, les listes que ce client a réglées, et les met à
+   * disposition des libellés synchrones des écrans (voir `catalog-overrides`).
+   *
+   * <p>Appelé une fois à l'ouverture de la session. Un échec n'est pas une
+   * panne : les écrans gardent leurs propres libellés traduits, c'est-à-dire
+   * exactement le comportement d'avant ce mécanisme.
+   */
+  preload(): Observable<void> {
+    return this.http.get<Partial<Record<CatalogName, CatalogEntry[]>>>(`${this.endpoint}/custom`)
+      .pipe(
+        tap(reglage => setCatalogOverrides(reglage ?? {})),
+        map(() => undefined),
+        catchError(() => of(undefined)));
+  }
+
+  /** Oublie le réglage chargé : à la déconnexion, un client ne lit pas les mots d'un autre. */
+  forget(): void {
+    clearCatalogOverrides();
+    this.invalidate();
+  }
 
   /** Toutes les listes ouvertes au paramétrage, avec leur état. */
   summaries(): Observable<CatalogSummary[]> {
@@ -79,16 +102,22 @@ export class CatalogService {
     }));
   }
 
-  /** Remplace une liste. L'ordre envoyé est l'ordre d'affichage. */
+  /**
+   * Remplace une liste. L'ordre envoyé est l'ordre d'affichage.
+   *
+   * <p>Le registre synchrone est rechargé aussitôt : sans cela, l'écran de
+   * paramétrage afficherait les nouveaux mots et le reste de l'application les
+   * anciens, jusqu'au prochain rechargement de page.
+   */
   replace(name: CatalogName, entries: CatalogEntryForm[]): Observable<Catalog> {
     return this.http.put<Catalog>(`${this.endpoint}/${name}`, { entries })
-      .pipe(tap(() => this.invalidate(name)));
+      .pipe(tap(() => this.invalidate(name)), switchMap(c => this.preload().pipe(map(() => c))));
   }
 
   /** Revient aux valeurs de la plateforme. */
   reset(name: CatalogName): Observable<Catalog> {
     return this.http.post<Catalog>(`${this.endpoint}/${name}/reset`, {})
-      .pipe(tap(() => this.invalidate(name)));
+      .pipe(tap(() => this.invalidate(name)), switchMap(c => this.preload().pipe(map(() => c))));
   }
 
   /** Vide le cache d'une liste, ou de toutes. */

@@ -1,4 +1,5 @@
 import { Component, Inject } from '@angular/core';
+import { catalogCodes } from '../../../../core/catalogs/catalog-overrides';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -20,6 +21,16 @@ export interface FivesEditDialogData {
 })
 export class FivesEditDialogComponent {
   submitting = false;
+
+  /** Les zones reglees par le client (ADR 0111) ; la liste reste ouverte. */
+  readonly zones = catalogCodes<string>('fives-zone', []);
+
+  /** Les zones proposees qui correspondent a ce qui est deja tape. */
+  get zonesProposees(): string[] {
+    const tape = (this.form?.controls.zone.value ?? '').trim().toLowerCase();
+    if (!tape) return this.zones;
+    return this.zones.filter(z => z.toLowerCase().includes(tape));
+  }
 
   readonly form = this.fb.nonNullable.group({
     zone: ['', [Validators.required, Validators.maxLength(200)]],

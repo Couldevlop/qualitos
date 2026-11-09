@@ -56,6 +56,28 @@ public class TenantCatalogService {
         return List.copyOf(resume);
     }
 
+    /**
+     * Les listes que ce client a réglées, et elles seules, en un seul appel.
+     *
+     * <p>C'est ce que l'application charge au démarrage. Un client qui n'a rien
+     * réglé reçoit un objet vide, et ses écrans gardent leurs propres libellés
+     * traduits : douze appels pour apprendre qu'il n'y a rien à savoir seraient
+     * douze appels de trop.
+     */
+    @Transactional(readOnly = true)
+    public Map<String, List<CatalogEntry>> customised() {
+        Map<String, List<CatalogEntry>> reglees = new LinkedHashMap<>();
+        UUID tenant = requireTenantId();
+        for (String slug : repository.findCustomisedCatalogues(tenant)) {
+            CatalogId.bySlug(slug).ifPresent(id -> reglees.put(id.slug(),
+                    repository.findByTenantIdAndCatalogueOrderByPositionAsc(tenant, id.slug())
+                            .stream()
+                            .map(l -> new CatalogEntry(l.getCode(), l.getLabel(), l.isActive()))
+                            .toList()));
+        }
+        return Map.copyOf(reglees);
+    }
+
     /** La liste en vigueur pour ce client, et d'où elle vient. */
     @Transactional(readOnly = true)
     public View view(CatalogId id) {

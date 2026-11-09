@@ -3,6 +3,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 
 import { environment } from '../../../environments/environment';
+import { catalogLabel, clearCatalogOverrides } from './catalog-overrides';
 import { CatalogService } from './catalog.service';
 import { Catalog, CatalogEntry, CatalogSummary } from './catalog.types';
 
@@ -116,6 +117,9 @@ describe('CatalogService', () => {
     httpMock.expectOne(`${base}/fives-zone`).flush(CATALOGUE({
       entries: [{ code: 'BLOC-B', label: 'Bloc B', active: true }]
     }));
+    // Enregistrer relit aussi le réglage tenu en mémoire pour les libellés
+    // synchrones des écrans (ADR 0111).
+    httpMock.expectOne(`${base}/custom`).flush({});
 
     let entrees: CatalogEntry[] | null = null;
     service.entries('fives-zone').subscribe(e => (entrees = e));
@@ -137,10 +141,13 @@ describe('CatalogService', () => {
     ] });
     put.flush(CATALOGUE());
 
+    httpMock.expectOne(`${base}/custom`).flush({});
+
     service.reset('fives-zone').subscribe();
     const post = httpMock.expectOne(`${base}/fives-zone/reset`);
     expect(post.request.method).toBe('POST');
     post.flush(CATALOGUE({ defaults: true }));
+    httpMock.expectOne(`${base}/custom`).flush({});
   });
 
   it('invalidate clears one catalogue, or all of them', () => {
@@ -158,5 +165,60 @@ describe('CatalogService', () => {
     service.invalidate();
     service.entries('audit-type').subscribe();
     httpMock.expectOne(`${base}/audit-type`).flush(CATALOGUE({ catalogue: 'audit-type' }));
+  });
+
+  describe('preload', () => {
+
+    afterEach(() => clearCatalogOverrides());
+
+    it('charge en un seul appel les listes reglees, pour les libelles synchrones', () => {
+      let fini = false;
+      service.preload().subscribe(() => (fini = true));
+      httpMock.expectOne(`${base}/custom`).flush({
+        'audit-type': [{ code: 'INTERNAL', label: 'Revue interne', active: true }]
+      });
+      expect(fini).toBeTrue();
+      expect(catalogLabel('audit-type', 'INTERNAL')).toBe('Revue interne');
+    });
+
+    it("n'est pas une panne quand le serveur refuse : les ecrans gardent leurs libelles", () => {
+      let fini = false;
+      service.preload().subscribe(() => (fini = true));
+      httpMock.expectOne(`${base}/custom`).flush('non', { status: 500, statusText: 'Server Error' });
+      expect(fini).toBeTrue();
+      expect(catalogLabel('audit-type', 'INTERNAL')).toBeNull();
+    });
+
+    it('oublie tout a la deconnexion', () => {
+      service.preload().subscribe();
+      httpMock.expectOne(`${base}/custom`).flush({
+        'audit-type': [{ code: 'INTERNAL', label: 'Revue interne', active: true }]
+      });
+      service.forget();
+      expect(catalogLabel('audit-type', 'INTERNAL')).toBeNull();
+    });
+
+    it('relit le reglage apres un enregistrement : la nouvelle liste vaut tout de suite', () => {
+      service.replace('audit-type', [{ code: 'INTERNAL', label: 'Revue interne' }]).subscribe();
+      httpMock.expectOne({ method: 'PUT', url: `${base}/audit-type` })
+        .flush(CATALOGUE({ catalogue: 'audit-type', mode: 'RENAME' }));
+      httpMock.expectOne(`${base}/custom`).flush({
+        'audit-type': [{ code: 'INTERNAL', label: 'Revue interne', active: true }]
+      });
+      expect(catalogLabel('audit-type', 'INTERNAL')).toBe('Revue interne');
+    });
+
+    it('relit le reglage apres un retablissement', () => {
+      service.preload().subscribe();
+      httpMock.expectOne(`${base}/custom`).flush({
+        'audit-type': [{ code: 'INTERNAL', label: 'Revue interne', active: true }]
+      });
+
+      service.reset('audit-type').subscribe();
+      httpMock.expectOne({ method: 'POST', url: `${base}/audit-type/reset` })
+        .flush(CATALOGUE({ catalogue: 'audit-type', defaults: true }));
+      httpMock.expectOne(`${base}/custom`).flush({});
+      expect(catalogLabel('audit-type', 'INTERNAL')).toBeNull();
+    });
   });
 });

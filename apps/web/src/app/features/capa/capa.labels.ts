@@ -1,3 +1,4 @@
+import { catalogLabel, catalogOptions } from '../../core/catalogs/catalog-overrides';
 import { CapaCriticity, CapaSourceType, CapaType } from './capa.types';
 
 /**
@@ -16,7 +17,15 @@ export const CAPA_TYPES: ReadonlyArray<{ value: CapaType; label: string }> = [
 /** Libellé lisible d'un type de dossier ; la valeur brute si elle est inconnue. */
 export function capaTypeLabel(type: CapaType | string | undefined | null): string {
   if (!type) return '—';
-  return CAPA_TYPES.find(t => t.value === type)?.label ?? String(type);
+  // Le mot du client passe devant (ADR 0111).
+  return catalogLabel('capa-nature', type)
+    ?? CAPA_TYPES.find(t => t.value === type)?.label
+    ?? String(type);
+}
+
+/** Les natures proposées à l'ouverture d'un dossier, dans les mots du client. */
+export function capaTypeOptions(): Array<{ value: CapaType; label: string }> {
+  return catalogOptions('capa-nature', CAPA_TYPES);
 }
 
 /** Libellés des criticités ; la liste et la fiche affichaient « HIGH », « CRITICAL ». */
