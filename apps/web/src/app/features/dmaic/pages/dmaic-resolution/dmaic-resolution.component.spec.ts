@@ -17,6 +17,8 @@ import { UiModule } from '../../../../shared/ui/ui.module';
 import { UserPickerModule } from '../../../../shared/user-picker/user-picker.module';
 import { CapaCreateDialogData } from '../../../capa/pages/capa-create-dialog/capa-create-dialog.component';
 import { IshikawaService } from '../../../ishikawa/ishikawa.service';
+import { DmaicService } from '../../dmaic.service';
+import { DeviceDetail } from '../../dmaic.types';
 import { IshikawaDiagramResponse, IshikawaPage } from '../../../ishikawa/ishikawa.types';
 import { DmaicResolutionService } from '../../resolution/dmaic-resolution.service';
 import {
@@ -70,6 +72,7 @@ describe('DmaicResolutionComponent', () => {
   let svc: jasmine.SpyObj<DmaicResolutionService>;
   let ishikawa: jasmine.SpyObj<IshikawaService>;
   let snack: jasmine.SpyObj<MatSnackBar>;
+  let dmaic: jasmine.SpyObj<DmaicService>;
   let droits: BehaviorSubject<boolean>;
   const hote = (): HTMLElement => fixture.nativeElement as HTMLElement;
   const un = (sel: string) => hote().querySelector<HTMLElement>(`[data-test="${sel}"]`);
@@ -84,6 +87,13 @@ describe('DmaicResolutionComponent', () => {
       totalElements: 1, totalPages: 1, number: 0, size: 50
     } as unknown as IshikawaPage));
     snack = jasmine.createSpyObj<MatSnackBar>('MatSnackBar', ['open']);
+    dmaic = jasmine.createSpyObj<DmaicService>('DmaicService', ['createDevice']);
+    dmaic.createDevice.and.returnValue(of({
+      id: 'dev-1', code: 'PY-ACME-001', name: 'Gabarit', type: 'PREVENTION',
+      mechanism: 'PHYSICAL_SHAPE', own: true,
+      sourceReference: 'origine', createdAt: '2026-11-09T08:00:00Z',
+      updatedAt: '2026-11-09T08:00:00Z'
+    } as DeviceDetail));
     droits = new BehaviorSubject<boolean>(peutModifier);
     const authz = jasmine.createSpyObj<AuthzService>('AuthzService', ['can']);
     authz.can.and.returnValue(droits.asObservable());
@@ -96,6 +106,7 @@ describe('DmaicResolutionComponent', () => {
         provideDirectoryStub(),
         { provide: DmaicResolutionService, useValue: svc },
         { provide: IshikawaService, useValue: ishikawa },
+        { provide: DmaicService, useValue: dmaic },
         { provide: AuthzService, useValue: authz },
         { provide: AuthService, useValue: { snapshot: () => ({ userId: 'u-1' }) } },
         { provide: MatSnackBar, useValue: snack }
@@ -700,6 +711,97 @@ describe('DmaicResolutionComponent', () => {
     component.openCapa(ligne);
     expect(ligne.capaId).toBe('capa-9');
     expect(svc.save).toHaveBeenCalled();
+  });
+
+  // ---------- une action devient un détrompeur de la bibliothèque ----------
+
+  /**
+   * « Une action DMAIC devient un détrompeur inscrit à la bibliothèque,
+   * réutilisable sur une autre ligne. »
+   *
+   * <p>Ce que ces bancs tiennent : l'origine citée porte le projet et le rang
+   * de l'action, et le projet voyage avec la demande pour que le dispositif
+   * soit posé et pas seulement inscrit ; la fiche n'enregistre rien, parce que
+   * c'est la citation qui tient le lien et qu'une fiche dont les lignes se
+   * renumérotent briserait un lien dur ; un échec se dit, et ne laisse pas le
+   * bouton éteint.
+   */
+  function ouvreLaFenetre(rendu: unknown): jasmine.Spy {
+    return spyOn(TestBed.inject(MatDialog), 'open').and.returnValue({
+      afterClosed: () => of(rendu)
+    } as MatDialogRef<unknown>);
+  }
+
+  it('inscrit une action comme détrompeur, et le déploie sur le projet', async () => {
+    await setup();
+    ajouterLigne();
+    const ligne = component.draft.actions[0];
+    ligne.action = 'Poser un gabarit asymétrique';
+    const ouvert = ouvreLaFenetre({
+      name: 'Poser un gabarit asymétrique', type: 'PREVENTION',
+      mechanism: 'PHYSICAL_SHAPE', sourceReference: 'origine', projectId: PROJET
+    });
+
+    component.inscribePokaYoke(ligne, 0);
+
+    const data = (ouvert.calls.mostRecent().args[1] as { data: Record<string, unknown> }).data;
+    expect(data).toEqual(jasmine.objectContaining({ projectId: PROJET, position: 1,
+      action: 'Poser un gabarit asymétrique' }));
+    expect(dmaic.createDevice).toHaveBeenCalledWith(jasmine.objectContaining({ projectId: PROJET }));
+    // La fiche n'a rien à enregistrer : c'est l'origine du dispositif qui tient
+    // le lien, pas un identifiant posé sur la ligne.
+    expect(svc.save).not.toHaveBeenCalled();
+    expect(snack.open).toHaveBeenCalled();
+    expect(component.inscribing.has(0)).toBeFalse();
+  });
+
+  it('n’inscrit rien depuis une action vide', async () => {
+    await setup();
+    ajouterLigne();
+    const ouvert = ouvreLaFenetre(undefined);
+
+    component.inscribePokaYoke(component.draft.actions[0], 0);
+
+    expect(ouvert).not.toHaveBeenCalled();
+    expect(dmaic.createDevice).not.toHaveBeenCalled();
+  });
+
+  it('n’inscrit rien quand on renonce à la fenêtre', async () => {
+    await setup();
+    ajouterLigne();
+    component.draft.actions[0].action = 'Poser un gabarit';
+    ouvreLaFenetre(undefined);
+
+    component.inscribePokaYoke(component.draft.actions[0], 0);
+
+    expect(dmaic.createDevice).not.toHaveBeenCalled();
+  });
+
+  it('n’inscrit rien sans le droit de pilotage', async () => {
+    await setup(fiche(), false);
+    component.draft.actions.push({ createdOn: null, action: 'Poser un gabarit', responsible: null,
+      status: 'OPEN', plannedOn: null, doneOn: null, percent: 0, notes: null, capaId: null });
+    const ouvert = ouvreLaFenetre(undefined);
+
+    component.inscribePokaYoke(component.draft.actions[0], 0);
+
+    expect(ouvert).not.toHaveBeenCalled();
+  });
+
+  it('dit l’échec et rend la main', async () => {
+    await setup();
+    ajouterLigne();
+    component.draft.actions[0].action = 'Poser un gabarit';
+    ouvreLaFenetre({ name: 'Gabarit', type: 'PREVENTION', mechanism: 'SENSOR',
+      sourceReference: 'origine', projectId: PROJET });
+    dmaic.createDevice.and.returnValue(throwError(() => ({ status: 500 })));
+
+    component.inscribePokaYoke(component.draft.actions[0], 0);
+
+    expect(snack.open).toHaveBeenCalled();
+    // Le bouton doit redevenir cliquable : un échec qui éteint la commande
+    // oblige à recharger la page.
+    expect(component.inscribing.has(0)).toBeFalse();
   });
 
   it('clean() rogne les textes, efface les vides et range les réponses', () => {

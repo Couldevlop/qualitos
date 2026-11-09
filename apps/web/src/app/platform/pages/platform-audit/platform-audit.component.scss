@@ -1,0 +1,181 @@
+/* Piste d'audit de la plateforme.
+   Mise en page jumelle de celle du journal d'un client
+   (features/admin-audit-log) : les deux écrans se lisent de la même façon, ce
+   qui évite d'apprendre deux fois la même grille. Colonne latérale pour
+   l'intégrité, l'export et le détail, qui replie sous le tableau en dessous de
+   1100 px. */
+
+.piste { padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+
+.tete { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.tete h1 { margin: 0 0 4px; font-size: 22px; }
+.tete p  { margin: 0; color: var(--qos-text-secondary); font-size: 13px; max-width: 68ch; }
+
+/* Grille fluide : les cinq critères tiennent sur une ligne en grand écran et se
+   réorganisent seuls, sans palier à maintenir. */
+.filtres {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  padding: 16px;
+  background: var(--qos-bg-elevated);
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: var(--qos-radius-lg);
+}
+
+.filtres__actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+.critere {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 12px;
+  color: var(--qos-text-secondary);
+}
+
+.bandeau { padding: 10px 14px; border-radius: 8px; font-size: 13px; }
+.bandeau--erreur { background: #fbe9e7; color: #b71c1c; }
+.bandeau--info   { background: #e3f2fd; color: #0d47a1; }
+
+.colonnes {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 16px;
+  align-items: start;
+}
+
+.tableau {
+  background: var(--qos-bg-elevated);
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: var(--qos-radius-lg);
+  overflow-x: auto;
+}
+
+.seq {
+  font-family: 'IBM Plex Mono', 'Fira Code', monospace;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--qos-text-secondary);
+}
+
+.auteur { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+.acte { display: flex; flex-direction: column; gap: 2px; }
+.acte__nom { font-weight: 600; }
+/* Le résumé est la phrase qu'un auditeur lit : tronquée à l'œil, entière au
+   détail. L'écraser sur une ligne vaut mieux qu'un tableau qui déborde. */
+.acte__resume {
+  font-size: 12px;
+  color: var(--qos-text-secondary);
+  max-width: 44ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cible { display: flex; flex-direction: column; gap: 2px; font-size: 13px; }
+
+.mono {
+  font-family: 'IBM Plex Mono', 'Fira Code', monospace;
+  font-size: 11px;
+  color: var(--qos-text-secondary);
+}
+
+.wrap { overflow-wrap: anywhere; white-space: normal; }
+
+.pale { color: var(--qos-text-secondary); font-size: 12px; }
+
+.qos-badge {
+  display: inline-block; padding: 2px 10px; border-radius: 12px;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+  background: var(--qos-bg-subtle); color: var(--qos-text-secondary);
+}
+.qos-badge[data-tone='accent'] { background: #e3f2fd; color: #0d47a1; }
+.qos-badge--accent             { background: #e3f2fd; color: #0d47a1; }
+
+/* La ligne ouverte dans le panneau de détail reste repérable pendant la lecture. */
+.ligne--choisie { background: var(--qos-bg-subtle); }
+
+.vide { padding: 24px; text-align: center; color: var(--qos-text-secondary); font-size: 13px; }
+
+.cote { display: flex; flex-direction: column; gap: 16px; }
+
+.panneau {
+  padding: 16px;
+  background: var(--qos-bg-elevated);
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: var(--qos-radius-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.panneau h2 { margin: 0; font-size: 15px; }
+.panneau h3 { margin: 4px 0 0; font-size: 13px; color: var(--qos-text-secondary); }
+.panneau__tete { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.panneau__aide { margin: 0; font-size: 12px; color: var(--qos-text-secondary); }
+.panneau__actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.verdict {
+  padding: 12px;
+  border-radius: 8px;
+  border-left: 3px solid var(--qos-border);
+  background: var(--qos-bg-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.verdict[data-intact='true']  { border-left-color: var(--qos-success-fg); }
+.verdict[data-intact='false'] { border-left-color: var(--qos-danger-fg); }
+.verdict__tete { display: flex; align-items: center; gap: 6px; font-size: 14px; }
+.verdict p { margin: 0; }
+
+.ruptures {
+  margin: 0; padding-left: 18px; font-size: 12px;
+  display: flex; flex-direction: column; gap: 4px;
+}
+
+.sceau { margin: 0; display: flex; flex-direction: column; gap: 4px; font-size: 12px; }
+
+/* Liste de faits : libellé court à gauche, valeur à droite, sans tableau. */
+.champs {
+  display: grid;
+  grid-template-columns: minmax(90px, auto) minmax(0, 1fr);
+  gap: 6px 12px;
+  margin: 0;
+  font-size: 13px;
+}
+.champs dt { color: var(--qos-text-secondary); font-size: 12px; }
+.champs dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+
+.charge {
+  margin: 0;
+  padding: 10px;
+  background: var(--qos-bg-subtle);
+  border-radius: 8px;
+  font-family: 'IBM Plex Mono', 'Fira Code', monospace;
+  font-size: 11px;
+  max-height: 260px;
+  overflow: auto;
+}
+
+/* Entête de la colonne d'actions : nécessaire aux lecteurs d'écran, inutile à l'œil. */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 1100px) {
+  .colonnes { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-width: 720px) {
+  .piste { padding: 16px; }
+  .tete { flex-direction: column; }
+}

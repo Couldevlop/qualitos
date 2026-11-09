@@ -111,6 +111,21 @@ public class NcController {
     }
 
     /**
+     * Ouvre depuis l'écart le cycle PDCA ou le projet DMAIC qui le traitera
+     * (§3.6). Sans méthode dans le corps, la gravité décide.
+     *
+     * <p>Même permission que l'escalade : le geste est de même nature — l'écart
+     * quitte la simple fiche pour un traitement qui engage des personnes et du
+     * temps.
+     */
+    @PostMapping("/{id}/convert")
+    @RequiresPermission(Permission.NC_ESCALATE)
+    public NcDto.Response convert(@PathVariable UUID id,
+                                  @Valid @RequestBody NcDto.ConvertRequest request) {
+        return service.convert(id, request);
+    }
+
+    /**
      * Dénombrements par statut, pour les tuiles d'en-tête de la liste.
      *
      * <p>{@code origin} suit celle de la liste affichée : les tuiles surmontent

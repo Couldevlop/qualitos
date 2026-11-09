@@ -29,6 +29,11 @@ import {
   VisionScore
 } from '../../nc.types';
 import {
+  NcConvertChoice,
+  NcConvertDialogComponent,
+  NcConvertDialogData
+} from '../nc-convert-dialog/nc-convert-dialog.component';
+import {
   NcRejectDialogComponent,
   NcRejectDialogData
 } from '../nc-reject-dialog/nc-reject-dialog.component';
@@ -580,6 +585,68 @@ export class NcDetailComponent implements OnInit {
     }).afterClosed().subscribe(opened => {
       // Rien n'a été créé si l'utilisateur a refermé : on ne recharge pas.
       if (opened) this.reload$.next();
+    });
+  }
+
+  /**
+   * Ouvre, depuis l'écart, le cycle PDCA ou le projet DMAIC qui le traitera
+   * (§3.6).
+   *
+   * <p>La CAPA traite l'écart lui-même : on contient, on corrige, on vérifie
+   * que ça a tenu. Elle ne couvre pas tout — un écart qui révèle un procédé
+   * instable demande des mesures et une phase de maîtrise, un écart qui révèle
+   * une pratique à corriger demande un cycle. Les deux modules existaient, sans
+   * porte depuis ici.
+   *
+   * <p>Si le travail est déjà ouvert, le bouton y emmène au lieu d'en proposer
+   * un second : deux chantiers sur le même écart le traiteraient deux fois, et
+   * chacun compterait dans les indicateurs.
+   */
+  convert(nc: NcResponse): void {
+    if (this.acting$.value) return;
+    if (nc.pdcaCycleId) {
+      this.router.navigate(['/pdca', nc.pdcaCycleId]);
+      return;
+    }
+    if (nc.dmaicProjectId) {
+      this.router.navigate(['/dmaic', nc.dmaicProjectId]);
+      return;
+    }
+    const data: NcConvertDialogData = {
+      reference: nc.reference, title: nc.title, severity: nc.severity
+    };
+    this.dialog.open<NcConvertDialogComponent, NcConvertDialogData, NcConvertChoice>(
+      NcConvertDialogComponent,
+      { data, autoFocus: 'first-tabbable', restoreFocus: true, panelClass: 'qos-dialog-panel' }
+    ).afterClosed().subscribe(choix => {
+      // Rien n'a été ouvert si l'utilisateur a refermé : on ne recharge pas.
+      if (!choix) return;
+      this.acting$.next(true);
+      this.svc.convert(nc.id, choix)
+        .pipe(finalize(() => this.acting$.next(false)))
+        .subscribe({
+          next: maj => {
+            this.snack.open(
+              choix.method === 'DMAIC'
+                ? $localize`:@@nc.convert.dmaic-opened:Projet DMAIC ouvert.`
+                : $localize`:@@nc.convert.pdca-opened:Cycle PDCA ouvert.`,
+              $localize`:@@common.ok:OK`, { duration: 3000 });
+            // On emmène où le travail se fait : s'arrêter sur la fiche de
+            // l'écart obligerait à retrouver à la main un dossier qu'on vient
+            // de créer.
+            const cible = maj.dmaicProjectId
+              ? ['/dmaic', maj.dmaicProjectId]
+              : maj.pdcaCycleId ? ['/pdca', maj.pdcaCycleId] : null;
+            if (cible) {
+              this.router.navigate(cible);
+            } else {
+              this.reload$.next();
+            }
+          },
+          error: err => this.snack.open(
+            safeErrorMessage(err, $localize`:@@nc.convert.failed:Le dossier n'a pas pu être ouvert.`),
+            $localize`:@@common.ok:OK`, { duration: 6000 })
+        });
     });
   }
 

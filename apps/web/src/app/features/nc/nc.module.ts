@@ -1,10 +1,14 @@
 import { NgModule } from '@angular/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 import { MatRadioModule } from '@angular/material/radio';
 import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../../shared/shared.module';
 import { CapaCreateDialogModule } from '../capa/capa-create-dialog.module';
 import { UiModule } from '../../shared/ui/ui.module';
+import { UserPickerModule } from '../../shared/user-picker/user-picker.module';
+import { NcConvertDialogComponent } from './pages/nc-convert-dialog/nc-convert-dialog.component';
 import { NcCreateDialogComponent } from './pages/nc-create-dialog/nc-create-dialog.component';
 import { NcDetailComponent } from './pages/nc-detail/nc-detail.component';
 import { NcEightDComponent } from './pages/nc-eightd/nc-eightd.component';
@@ -32,6 +36,7 @@ const routes: Routes = [
   declarations: [
     NcListComponent,
     NcDetailComponent,
+    NcConvertDialogComponent,
     NcCreateDialogComponent,
     NcRejectDialogComponent,
     NcResolveDialogComponent,
@@ -43,7 +48,11 @@ const routes: Routes = [
   // `CapaCreateDialogModule` : « Créer une CAPA » sur une NC ouvre LA fenetre
   // commune (ADR 0088). On importe ce module minuscule et non `CapaModule`, qui
   // aurait greffe les routes /capa sous /nc.
+  // `UserPickerModule` et le calendrier : ouvrir le cycle ou le projet qui
+  // traitera un ecart demande une personne choisie dans l'annuaire (jamais un
+  // texte libre) et, pour un projet DMAIC seul, une echeance visee.
   imports: [SharedModule, UiModule, MatRadioModule, CapaCreateDialogModule,
+            UserPickerModule, MatDatepickerModule, MatNativeDateModule,
             RouterModule.forChild(routes)]
 })
 export class NcModule {}

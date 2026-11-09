@@ -1,5 +1,7 @@
 package com.openlab.qualitos.core.billing;
 
+import com.openlab.qualitos.core.platformaudit.PlatformAuditAction;
+import com.openlab.qualitos.core.platformaudit.PlatformAuditService;
 import com.openlab.qualitos.core.tenant.TenantNotFoundException;
 import com.openlab.qualitos.core.tenant.TenantRepository;
 import org.springframework.stereotype.Service;
@@ -50,12 +52,15 @@ public class SubscriptionService {
     private final ModuleActivationPort activation;
     private final TenantRepository tenants;
     private final Clock clock;
+    private final PlatformAuditService auditTrail;
 
     public SubscriptionService(SubscriptionRepository subscriptions,
                                ModulePriceService prices,
                                ModuleActivationPort activation,
                                TenantRepository tenants,
-                               Clock clock) {
+                               Clock clock,
+                               PlatformAuditService auditTrail) {
+        this.auditTrail = auditTrail;
         this.subscriptions = subscriptions;
         this.prices = prices;
         this.activation = activation;
@@ -115,7 +120,17 @@ public class SubscriptionService {
                 .createdBy(actor)
                 .build();
 
-        return SubscriptionDto.View.from(subscriptions.save(subscription));
+        Subscription enregistre = subscriptions.save(subscription);
+        auditTrail.record(PlatformAuditAction.MODULE_SUBSCRIBED, "subscription",
+                enregistre.getId(), tenantId,
+                "Module ouvert : " + enregistre.getModuleCode() + " (palier "
+                        + enregistre.getBillingTier() + ", " + enregistre.getPeriod()
+                        + ") a " + enregistre.getAmountCents() + " " + enregistre.getCurrency(),
+                "{\"moduleCode\":\"" + enregistre.getModuleCode()
+                        + "\",\"tier\":\"" + enregistre.getBillingTier()
+                        + "\",\"period\":\"" + enregistre.getPeriod()
+                        + "\",\"amountCents\":" + enregistre.getAmountCents() + "}");
+        return SubscriptionDto.View.from(enregistre);
     }
 
     /**
@@ -152,7 +167,14 @@ public class SubscriptionService {
         // laisse vraiment l'abonnement intact.
         activation.deactivate(subscription.getTenantId(), subscription.getModuleCode());
         subscription.cancel(actor, Instant.now(clock));
-        return SubscriptionDto.View.from(subscriptions.save(subscription));
+        Subscription resilie = subscriptions.save(subscription);
+        auditTrail.record(PlatformAuditAction.MODULE_CANCELLED, "subscription",
+                resilie.getId(), tenantId,
+                "Module ferme : " + resilie.getModuleCode()
+                        + " (abonnement ouvert le " + resilie.getStartedOn() + ")",
+                "{\"moduleCode\":\"" + resilie.getModuleCode()
+                        + "\",\"startedOn\":\"" + resilie.getStartedOn() + "\"}");
+        return SubscriptionDto.View.from(resilie);
     }
 
     /**

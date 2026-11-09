@@ -1,0 +1,64 @@
+<qos-form-dialog
+  i18n-title="@@pokayoke.create.title"
+  title="Inscrire un détrompeur"
+  i18n-subtitle="@@pokayoke.create.subtitle"
+  subtitle="Une action qui empêche l'erreur de se produire devient un dispositif de votre bibliothèque, réutilisable sur un autre projet."
+  [formGroup]="form"
+  [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@pokayoke.create.submit"
+  submitLabel="Inscrire et déployer"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
+
+  <!-- L'origine est construite, pas saisie : une origine libre finirait vide ou
+       fausse, et un dispositif dont on ne sait plus d'où il vient ne se
+       réutilise pas en confiance. Elle est montrée, parce que la personne doit
+       voir ce que la bibliothèque retiendra. -->
+  <dl class="origine" data-test="origine">
+    <dt i18n="@@pokayoke.create.origin">Origine citée</dt>
+    <dd>{{ origin }}</dd>
+  </dl>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@pokayoke.create.name">Nom du dispositif</mat-label>
+    <input matInput formControlName="name" required [maxlength]="nameMax" data-test="nom">
+    <mat-hint i18n="@@pokayoke.create.name-hint">Repris de l'action, corrigez-le : il se lira seul dans la bibliothèque.</mat-hint>
+  </mat-form-field>
+
+  <div class="paire">
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@pokayoke.create.type">Il agit</mat-label>
+      <mat-select formControlName="type" required data-test="type">
+        <mat-option *ngFor="let t of types" [value]="t">{{ typeLabel(t) }}</mat-option>
+      </mat-select>
+      <mat-hint i18n="@@pokayoke.create.type-hint">Prévention : l'erreur devient impossible. Détection : elle est vue tout de suite.</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@pokayoke.create.mechanism">Par quel mécanisme</mat-label>
+      <mat-select formControlName="mechanism" required data-test="mecanisme">
+        <mat-option *ngFor="let m of mechanisms" [value]="m">{{ mechanismLabel(m) }}</mat-option>
+      </mat-select>
+      <mat-hint i18n="@@pokayoke.create.mechanism-hint">C'est par là que la bibliothèque se filtre.</mat-hint>
+    </mat-form-field>
+  </div>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@pokayoke.create.description">Comment il fonctionne</mat-label>
+    <textarea matInput formControlName="description" rows="3" data-test="description"></textarea>
+    <mat-hint i18n="@@pokayoke.create.description-hint">Repris du texte de l'action. Celui qui le réutilisera n'aura pas votre contexte.</mat-hint>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@pokayoke.create.industries">Où il s'applique</mat-label>
+    <input matInput formControlName="applicableIndustries"
+           i18n-placeholder="@@pokayoke.create.industries-placeholder"
+           placeholder="Lignes, ateliers ou secteurs concernés">
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@pokayoke.create.examples">Exemples de pose</mat-label>
+    <textarea matInput formControlName="examples" rows="2"></textarea>
+  </mat-form-field>
+
+</qos-form-dialog>

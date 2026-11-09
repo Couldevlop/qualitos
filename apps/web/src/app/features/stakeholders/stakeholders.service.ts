@@ -104,6 +104,21 @@ export class StakeholdersService {
       { title, ownerId, ownerName, dueDate });
   }
 
+  /**
+   * Inscrit au registre des risques le risque qu'une exigence fait courir.
+   *
+   * <p>Le corps est court parce que l'intitulé, la cause et l'effet sont tirés
+   * de l'exigence par le serveur : il la relit dans le client du jeton, et
+   * c'est la même phrase qui part au registre.
+   */
+  openRisk(id: string, requirementId: string, type: string, process: string, severity: number,
+           probability: number, ownerId: string,
+           ownerName: string): Observable<StakeholderRequirement> {
+    return this.http.post<StakeholderRequirement>(
+      `${this.endpoint}/${id}/requirements/${requirementId}/risk`,
+      { type, process, severity, probability, ownerId, ownerName });
+  }
+
   // ---------- assistant : propose, n'écrit pas ----------
 
   suggest(sector: string, characteristics: string): Observable<SuggestedStakeholder[]> {

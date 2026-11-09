@@ -92,6 +92,10 @@ export interface NcResponse {
    */
   fmeaItemId?: string;
   capaCaseId?: string;
+  /** Le cycle PDCA ouvert depuis cet ecart, s'il l'a ete. */
+  pdcaCycleId?: string;
+  /** Le projet DMAIC ouvert depuis cet ecart, s'il l'a ete. */
+  dmaicProjectId?: string;
   rootCause?: string;
   resolutionNote?: string;
   /** Pourquoi la réclamation a été écartée. */
@@ -224,6 +228,22 @@ export interface StartAnalysisNcRequest {
  * serveur la fixe, elle n'est pas lue dans le corps.
  */
 export type EscalateCapaNcRequest = OpenCapaRequest;
+
+/** Les deux methodes par lesquelles un ecart se traite (CLAUDE.md 3.6). */
+export type NcMethod = 'PDCA' | 'DMAIC';
+
+/**
+ * Ouvrir, depuis un ecart, le cycle ou le projet qui le traitera.
+ *
+ * <p>`method` absente : la gravite decide, cote serveur. `pilotId` ne l'est
+ * jamais -- un dossier dont personne ne repond ne se revoit pas. `dueDate` ne
+ * concerne que le projet DMAIC ; un cycle PDCA n'en porte pas.
+ */
+export interface ConvertNcRequest {
+  method?: NcMethod;
+  pilotId: string;
+  dueDate?: string | null;
+}
 
 /**
  * Dénombrements par statut, affichés en tuiles au-dessus d'une liste de NC.

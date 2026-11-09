@@ -133,6 +133,20 @@ export interface TenantSummary {
   updatedAt: string;
 }
 
+/**
+ * Ce que l'editeur peut corriger sur un client deja cree.
+ *
+ * <p>Le repere (`slug`) n'y figure pas : il nomme le client dans les URL, les
+ * jetons et les journaux, et le changer rendrait illisible tout ce qui a deja
+ * ete ecrit sous l'ancien. L'etat (`active`) y figure, parce que suspendre et
+ * reactiver sont la meme ecriture vue des deux cotes.
+ */
+export interface TenantUpdateRequest {
+  name: string;
+  plan: TenantPlan;
+  active?: boolean;
+}
+
 export interface TenantPage {
   content: TenantSummary[];
   totalElements: number;

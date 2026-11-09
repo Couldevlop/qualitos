@@ -4,7 +4,8 @@ import { Observable } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 import {
-  OnboardRequest, OnboardResponse, TenantIdentityRequest, TenantIdentityResponse, TenantPage
+  OnboardRequest, OnboardResponse, TenantIdentityRequest, TenantIdentityResponse, TenantPage,
+  TenantSummary, TenantUpdateRequest
 } from '../features/admin/admin.types';
 
 /**
@@ -28,6 +29,30 @@ export class ClientsService {
   /** L'entreprise, le compte de son premier administrateur, ses modules — en une fois. */
   onboard(input: OnboardRequest): Observable<OnboardResponse> {
     return this.http.post<OnboardResponse>(`${this.endpoint}/onboard`, input);
+  }
+
+  /**
+   * Corrige un client existant : son nom, son offre, son état.
+   *
+   * <p>Le serveur journalise l'écriture dans la piste d'audit de la plateforme
+   * (ADR 0109) : un changement d'offre est un acte commercial, et une
+   * réactivation rouvre l'accès de tout un établissement.
+   */
+  update(tenantId: string, input: TenantUpdateRequest): Observable<TenantSummary> {
+    return this.http.put<TenantSummary>(`${this.endpoint}/${tenantId}`, input);
+  }
+
+  /**
+   * Suspend un client : ses comptes n'entrent plus, ses données restent.
+   *
+   * <p>Il n'y a pas d'effacement, et c'est délibéré : les dossiers d'un client
+   * sont des preuves d'audit, souvent soumises à une durée de conservation
+   * réglementaire. Un bouton « supprimer » qui les emporterait rendrait
+   * l'éditeur responsable d'une destruction que personne ne peut annuler.
+   * La réactivation passe par {@link update} avec `active: true`.
+   */
+  suspend(tenantId: string): Observable<void> {
+    return this.http.delete<void>(`${this.endpoint}/${tenantId}`);
   }
 
   /**

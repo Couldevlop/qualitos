@@ -1,0 +1,66 @@
+<qos-form-dialog
+  i18n-title="@@audits.declare-nc.title"
+  title="Déclarer la non-conformité du constat"
+  i18n-subtitle="@@audits.declare-nc.subtitle"
+  subtitle="Le constat devient un écart du registre : il comptera dans les indicateurs, portera son analyse de cause et se clôra sur une preuve."
+  [formGroup]="form"
+  [submitting]="submitting"
+  [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@audits.declare-nc.submit"
+  submitLabel="Inscrire au registre"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
+
+  <!--
+    Ce que le serveur reprend du constat, montré en lecture. Le but n'est pas
+    décoratif : l'auteur doit voir ce qui va être inscrit SANS pouvoir le
+    réécrire — deux versions du même fait sont ce que ce chemin ferme.
+  -->
+  <dl class="repris" data-test="repris">
+    <div>
+      <dt i18n="@@audits.declare-nc.from">Constat d'audit</dt>
+      <dd>{{ data.sourceRef }}</dd>
+    </div>
+    <div>
+      <dt i18n="@@audits.declare-nc.description">Description reprise</dt>
+      <dd>{{ data.finding.description }}</dd>
+    </div>
+    <div *ngIf="data.finding.clauseRef">
+      <dt i18n="@@audits.detail.col-clause-finding">Clause</dt>
+      <dd>{{ data.finding.clauseRef }}</dd>
+    </div>
+    <div>
+      <dt i18n="@@nc.create.severity">Sévérité</dt>
+      <dd>{{ severityLabel }}</dd>
+    </div>
+    <div>
+      <dt i18n="@@audits.declare-nc.detected">Constaté le</dt>
+      <dd>{{ data.finding.raisedAt | date:'dd/MM/yyyy HH:mm' }}</dd>
+    </div>
+  </dl>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@audits.declare-nc.nc-title">Intitulé de l'écart</mat-label>
+    <input matInput formControlName="title" maxlength="255" required data-test="titre">
+    <mat-hint i18n="@@audits.declare-nc.nc-title-hint">Court et citable : c'est ce que lira la revue de direction.</mat-hint>
+    <mat-error *ngIf="form.controls.title.hasError('required')"
+               i18n="@@audits.declare-nc.nc-title-required">Intitulé requis.</mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@nc.create.category">Catégorie</mat-label>
+    <mat-select formControlName="category" data-test="categorie">
+      <mat-option *ngFor="let c of categories" [value]="c.value">{{ c.label }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full" *ngIf="subcategoryChoices.length">
+    <mat-label i18n="@@nc.create.subcategory">Sous-catégorie</mat-label>
+    <mat-select formControlName="subcategoryCode" data-test="nature"
+                panelClass="qos-select-panel--lignes">
+      <mat-option value="" i18n="@@nc.create.subcategory-none">— À classer —</mat-option>
+      <mat-option *ngFor="let s of subcategoryChoices" [value]="s.code">{{ s.label }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+</qos-form-dialog>

@@ -80,6 +80,17 @@ spec:
               service:
                 name: api-core
                 port: { name: http }
+          # Piste d'audit de la PLATEFORME : les actes de l'éditeur sur les
+          # dossiers clients. Elle vit dans api-core parce que c'est api-core qui
+          # exécute ces actes (clients, modules, tarifs, cabinets). Ne pas
+          # confondre avec /api/v1/audit, la piste de CHAQUE client, qui reste au
+          # moteur qualité par la règle fourre-tout.
+          - path: /api/v1/platform-audit
+            pathType: Prefix
+            backend:
+              service:
+                name: api-core
+                port: { name: http }
           # Les trois surfaces des cabinets partenaires (ADR 0106) vivent dans
           # api-core, a cote de /api/v1/tenants : un cabinet et ses consultants
           # sont des donnees de PLATEFORME, pas de moteur qualite.

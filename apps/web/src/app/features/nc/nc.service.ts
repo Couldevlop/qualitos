@@ -7,6 +7,7 @@ import { environment } from '../../../environments/environment';
 import { ConnectivityService } from '../../core/offline/connectivity.service';
 import { OfflineQueueService } from '../../core/offline/offline-queue.service';
 import {
+  ConvertNcRequest,
   CreateNcRequest,
   EightDDiscipline,
   EightDReport,
@@ -250,6 +251,38 @@ export class NcService {
       return of(this.mockStore[0]).pipe(delay(120));
     }
     return this.http.post<NcResponse>(`${this.endpoint}/${id}/escalate-capa`, input);
+  }
+
+  /**
+   * Ouvre, depuis l'ecart, le cycle PDCA ou le projet DMAIC qui le traitera
+   * (CLAUDE.md 3.6).
+   *
+   * <p>Sans `method`, c'est la gravite qui decide, cote serveur : la regle est
+   * tenue a un seul endroit, et l'ecran n'en garde qu'une copie pour l'annoncer
+   * avant d'agir.
+   *
+   * <p>Pas de file hors-ligne ici, a la difference de la creation d'un ecart :
+   * ouvrir un chantier d'amelioration n'est pas un geste de terrain, et la
+   * reponse differee ne pourrait pas rendre l'identifiant du cycle vers lequel
+   * l'ecran doit emmener l'utilisateur.
+   */
+  convert(id: string, input: ConvertNcRequest): Observable<NcResponse> {
+    if (environment.useMockApi) {
+      const n = this.mockStore.find(x => x.id === id);
+      if (n) {
+        const methode = input.method ?? (n.severity === 'CRITICAL' ? 'DMAIC' : 'PDCA');
+        const cree = methode.toLowerCase() + '-' + Math.random().toString(36).slice(2, 9);
+        if (methode === 'DMAIC') {
+          n.dmaicProjectId = cree;
+        } else {
+          n.pdcaCycleId = cree;
+        }
+        n.updatedAt = new Date().toISOString();
+        return of(n).pipe(delay(120));
+      }
+      return of(this.mockStore[0]).pipe(delay(120));
+    }
+    return this.http.post<NcResponse>(`${this.endpoint}/${id}/convert`, input);
   }
 
   // ---- photos (upload binaire, ONLINE-ONLY ce sprint) ------------------------

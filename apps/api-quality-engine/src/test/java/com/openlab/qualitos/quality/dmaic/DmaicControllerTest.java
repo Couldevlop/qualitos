@@ -257,6 +257,43 @@ class DmaicControllerTest {
                 .andExpect(jsonPath("$.content[0].code").value("PY-X"));
     }
 
+    // ---- inscrire un detrompeur a la bibliotheque -------------------------
+
+    private static final String DISPOSITIF = "{"
+            + "\"name\":\"Gabarit de montage asymetrique\","
+            + "\"type\":\"PREVENTION\","
+            + "\"mechanism\":\"PHYSICAL_SHAPE\","
+            + "\"sourceReference\":\"Projet DMAIC DM-2026-004 - action du 2026-11-02\"}";
+
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
+    void createDevice_returns201() throws Exception {
+        when(service.createDevice(any())).thenReturn(deviceDetail());
+        mockMvc.perform(post("/api/v1/dmaic/pokayoke").with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON).content(DISPOSITIF))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").value(DEVICE.toString()));
+    }
+
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
+    void createDevice_sansOrigine_returns400() throws Exception {
+        // Un dispositif sans origine n'est pas reutilisable en confiance : on ne
+        // sait plus d'ou il vient ni s'il a fait ses preuves.
+        mockMvc.perform(post("/api/v1/dmaic/pokayoke").with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\":\"Gabarit\",\"type\":\"PREVENTION\","
+                                + "\"mechanism\":\"PHYSICAL_SHAPE\"}"))
+                .andExpect(status().isBadRequest());
+        verify(service, never()).createDevice(any());
+    }
+
+    @Test @WithMockUser(roles = "USER")
+    void createDevice_sansLeDroitDePilotage_returns403() throws Exception {
+        mockMvc.perform(post("/api/v1/dmaic/pokayoke").with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON).content(DISPOSITIF))
+                .andExpect(status().isForbidden());
+        verify(service, never()).createDevice(any());
+    }
+
     @Test @WithMockUser
     void getDevice_found() throws Exception {
         when(service.getDevice(DEVICE)).thenReturn(deviceDetail());
@@ -350,13 +387,14 @@ class DmaicControllerTest {
 
     private DmaicDto.DeviceSummary deviceSummary() {
         return new DmaicDto.DeviceSummary(DEVICE, "PY-X", "Device X",
-                PokaYokeType.PREVENTION, PokaYokeMechanism.SENSOR, "all", "low");
+                PokaYokeType.PREVENTION, PokaYokeMechanism.SENSOR, "all", "low",
+                false, null);
     }
 
     private DmaicDto.DeviceDetail deviceDetail() {
         return new DmaicDto.DeviceDetail(DEVICE, "PY-X", "Device X", "desc",
                 PokaYokeType.PREVENTION, PokaYokeMechanism.SENSOR,
-                "all", "ex", "low", Instant.now(), Instant.now());
+                "all", "ex", "low", false, null, Instant.now(), Instant.now());
     }
 
     private DmaicDto.AssignmentResponse assignmentResp() {

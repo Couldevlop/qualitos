@@ -1,5 +1,7 @@
 package com.openlab.qualitos.core.billing;
 
+import com.openlab.qualitos.core.platformaudit.PlatformAuditAction;
+import com.openlab.qualitos.core.platformaudit.PlatformAuditService;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,11 +37,14 @@ public class ModulePriceService {
 
     private final ModulePriceRepository modulePrices;
     private final Clock clock;
+    private final PlatformAuditService auditTrail;
 
     // Constructeur unique, comme BillingProfileService : Spring l'utilise
     // directement, les tests lui fournissent leur propre horloge fixe par le
     // même constructeur.
-    public ModulePriceService(ModulePriceRepository modulePrices, Clock clock) {
+    public ModulePriceService(ModulePriceRepository modulePrices, Clock clock,
+                              PlatformAuditService auditTrail) {
+        this.auditTrail = auditTrail;
         this.modulePrices = modulePrices;
         this.clock = clock;
     }
@@ -91,11 +96,31 @@ public class ModulePriceService {
                         .period(command.period())
                         .build());
 
+        // Avant mutation : un changement de tarif sans son ancienne valeur
+        // n'explique rien a l'auditeur qui cherche pourquoi une facture a
+        // double. La ligne neuve n'a pas de montant anterieur, et le dit.
+        String avant = price.getUpdatedAt() == null
+                ? "(nouveau)"
+                : price.getAmountCents() + " " + price.getCurrency();
+
         price.setAmountCents(command.amountCents());
         price.setCurrency(command.currency());
         price.setUpdatedAt(now);
         price.setUpdatedBy(actor);
 
-        return ModulePriceDto.View.from(modulePrices.save(price));
+        ModulePrice enregistre = modulePrices.save(price);
+        auditTrail.record(PlatformAuditAction.MODULE_PRICE_SET, "module_price",
+                enregistre.getId(), null,
+                "Tarif fixe : module " + enregistre.getModuleCode()
+                        + " (palier " + enregistre.getBillingTier()
+                        + ", " + enregistre.getPeriod() + ") " + avant + " -> "
+                        + enregistre.getAmountCents() + " " + enregistre.getCurrency(),
+                "{\"moduleCode\":\"" + enregistre.getModuleCode()
+                        + "\",\"tier\":\"" + enregistre.getBillingTier()
+                        + "\",\"period\":\"" + enregistre.getPeriod()
+                        + "\",\"before\":\"" + avant
+                        + "\",\"amountCents\":" + enregistre.getAmountCents()
+                        + ",\"currency\":\"" + enregistre.getCurrency() + "\"}");
+        return ModulePriceDto.View.from(enregistre);
     }
 }

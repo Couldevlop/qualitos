@@ -216,6 +216,18 @@
                       <span i18n="@@audits.detail.create-capa">Créer une CAPA</span>
                     </button>
                   </ng-container>
+                  <!-- L'écart du registre : un constat non conforme n'est pas qu'un
+                       plan d'action, c'est un fait qui doit compter dans les
+                       indicateurs et porter son analyse de cause. -->
+                  <a *ngIf="f.ncId" class="voir-nc" data-test="voir-nc"
+                     [routerLink]="['/nc', f.ncId]" i18n="@@audits.detail.open-nc">Voir la NC</a>
+                  <ng-container *qosCan="'nc.create'">
+                    <button mat-stroked-button type="button" class="declarer-nc" data-test="declarer-nc"
+                            *ngIf="canDeclareFindingNc(f)" (click)="declareFindingNc(p, f)">
+                      <mat-icon aria-hidden="true">report_problem</mat-icon>
+                      <span i18n="@@audits.detail.declare-nc">Déclarer la NC</span>
+                    </button>
+                  </ng-container>
                   <!-- Un écart ou une observation peut révéler un risque ; un constat
                        de conformité, non. Le serveur relit le constat via son plan. -->
                   <a *ngIf="f.type === 'MINOR_NC' || f.type === 'MAJOR_NC' || f.type === 'OBSERVATION'"

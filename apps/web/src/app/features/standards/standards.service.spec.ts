@@ -9,7 +9,6 @@ import {
   AdoptionResponse,
   AlignmentReport,
   AuditBlancReport,
-  CertificationBlancReport,
   DocumentTemplate,
   DossierResponse,
   EvidenceResponse,
@@ -284,13 +283,7 @@ describe('StandardsService', () => {
       audit.flush({} as AuditBlancReport);
     });
 
-    it('déclenche la certification à blanc et le récit narratif en POST', () => {
-      service.runCertificationBlanc('a-1').subscribe();
-      const certif = http.expectOne(`${BASE}/adoptions/a-1/certification-blanc`);
-      expect(certif.request.method).toBe('POST');
-      expect(certif.request.body).toEqual({});
-      certif.flush({} as CertificationBlancReport);
-
+    it('déclenche le récit narratif en POST', () => {
       service.generateStoryboard('a-1').subscribe();
       const story = http.expectOne(`${BASE}/adoptions/a-1/storyboard`);
       expect(story.request.method).toBe('POST');

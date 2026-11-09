@@ -7,6 +7,10 @@ import com.openlab.qualitos.quality.capa.CapaSourceType;
 import com.openlab.qualitos.quality.common.CurrentUser;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.common.TenantContext;
+import com.openlab.qualitos.quality.dmaic.DmaicDto;
+import com.openlab.qualitos.quality.dmaic.DmaicService;
+import com.openlab.qualitos.quality.pdca.PdcaDto;
+import com.openlab.qualitos.quality.pdca.PdcaService;
 import com.openlab.qualitos.quality.nonconformity.subcategory.NcSubcategoryCatalog;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -33,6 +37,11 @@ import java.util.function.Function;
 @Transactional
 public class NcService {
 
+    /** Borne de l'intitulé d'un cycle PDCA comme d'un projet DMAIC, en base. */
+    private static final int TITRE_MAX = 255;
+    /** Borne de l'énoncé repris : large, mais la colonne n'est pas sans fond. */
+    private static final int ENONCE_MAX = 4000;
+
     private final NonConformityRepository repository;
     /**
      * Ouverture du dossier CAPA par le module CAPA lui-même (ADR 0088) : le
@@ -40,6 +49,13 @@ public class NcService {
      * depuis n'importe quel autre écran.
      */
     private final CapaService capaService;
+    /**
+     * Les deux méthodes par lesquelles un écart se traite (§3.6). Le cycle et le
+     * projet naissent par leur propre module : ils y gagnent leur numérotation,
+     * leurs étapes initiales et leur journal, comme depuis n'importe quel écran.
+     */
+    private final PdcaService pdcaService;
+    private final DmaicService dmaicService;
     private final ApplicationEventPublisher events;
     /** Sans « voir toutes les NC », on ne voit que celles qu'on a déclarées (ADR 0081). */
     private final RecordScope scope;
@@ -47,10 +63,13 @@ public class NcService {
     private final NcSubcategoryCatalog subcategories;
 
     public NcService(NonConformityRepository repository, CapaService capaService,
+                     PdcaService pdcaService, DmaicService dmaicService,
                      ApplicationEventPublisher events, RecordScope scope,
                      NcSubcategoryCatalog subcategories) {
         this.repository = repository;
         this.capaService = capaService;
+        this.pdcaService = pdcaService;
+        this.dmaicService = dmaicService;
         this.events = events;
         this.scope = scope;
         this.subcategories = subcategories;
@@ -293,6 +312,100 @@ public class NcService {
         return toResponse(repository.save(nc));
     }
 
+    /**
+     * Ouvre, depuis cet écart, la méthode qui le traitera (§3.6) : un cycle PDCA
+     * ou un projet DMAIC.
+     *
+     * <p>C'est le chemin qui manquait. Un écart partait en CAPA — une action
+     * corrective et sa vérification d'efficacité — mais la CAPA ne couvre pas
+     * tout : un écart qui révèle un procédé instable demande des mesures et une
+     * phase de maîtrise, un écart qui révèle une pratique à corriger demande un
+     * cycle. Ces deux chemins existaient, sans porte depuis l'écart.
+     *
+     * <p>La gravité propose la méthode ({@link NcMethod#fromSeverity}) ; la
+     * requête peut en imposer une autre. Le cycle ou le projet cite l'écart dans
+     * son intitulé et dans son énoncé : ouvert seul, il ne saurait plus d'où il
+     * vient, et la trace qui relie la cause à son traitement serait perdue.
+     *
+     * <p>Une seule conversion par écart, et ce n'est pas une limite technique :
+     * deux dossiers ouverts sur le même écart le traiteraient deux fois, et
+     * chacun compterait dans les indicateurs. Un écart écarté
+     * ({@link NcStatus#REJECTED}) ne se convertit pas non plus — on a jugé qu'il
+     * n'y avait rien à traiter.
+     *
+     * @return la fiche de l'écart, portant désormais le lien vers ce qui le traite
+     * @throws NcStateException si l'écart est déjà converti, ou a été écarté
+     */
+    public NcDto.Response convert(UUID id, NcDto.ConvertRequest request) {
+        // Sous verrou : deux onglets ne doivent pas ouvrir deux cycles dont le
+        // second effacerait le lien du premier.
+        NonConformity nc = loadForUpdate(id);
+        if (nc.getPdcaCycleId() != null) {
+            throw new NcStateException(
+                    "Non-conformity already converted to PDCA cycle " + nc.getPdcaCycleId());
+        }
+        if (nc.getDmaicProjectId() != null) {
+            throw new NcStateException(
+                    "Non-conformity already converted to DMAIC project " + nc.getDmaicProjectId());
+        }
+        if (nc.getStatus() == NcStatus.REJECTED) {
+            throw new NcStateException("A rejected non-conformity has nothing left to treat");
+        }
+
+        NcMethod method = request.method() != null
+                ? request.method()
+                : NcMethod.fromSeverity(nc.getSeverity());
+        if (method == NcMethod.DMAIC) {
+            DmaicDto.ProjectResponse projet = dmaicService.createProject(
+                    new DmaicDto.CreateProjectRequest(
+                            tronque("DMAIC — " + nc.getTitle(), TITRE_MAX),
+                            enonce(nc),
+                            "Supprimer la cause de l'écart " + nc.getReference()
+                                    + " et maintenir le procédé dans ses limites.",
+                            request.pilotId(), null, request.dueDate(),
+                            null, null, null, null, null));
+            nc.setDmaicProjectId(projet.id());
+        } else {
+            PdcaDto.CycleResponse cycle = pdcaService.createCycle(
+                    new PdcaDto.CreateCycleRequest(
+                            tronque("PDCA — " + nc.getTitle(), TITRE_MAX),
+                            enonce(nc), request.pilotId()));
+            nc.setPdcaCycleId(cycle.id());
+        }
+        return toResponse(repository.save(nc));
+    }
+
+    /**
+     * Ce que le cycle ou le projet reprend de l'écart : sa référence, sa gravité
+     * et sa description.
+     *
+     * <p>La description n'est pas recopiée au hasard : c'est elle que le pilote
+     * lit en ouvrant le dossier, et la lui faire ressaisir produirait deux
+     * énoncés du même problème, qui divergeraient à la première correction.
+     */
+    private static String enonce(NonConformity nc) {
+        StringBuilder texte = new StringBuilder()
+                .append("Issu de la non-conformité ").append(nc.getReference())
+                .append(" (gravité ").append(nc.getSeverity()).append(") : ")
+                .append(nc.getTitle()).append('.');
+        if (nc.getDescription() != null && !nc.getDescription().isBlank()) {
+            texte.append(' ').append(nc.getDescription().strip());
+        }
+        if (nc.getZone() != null && !nc.getZone().isBlank()) {
+            texte.append(" Zone : ").append(nc.getZone().strip()).append('.');
+        }
+        return tronque(texte.toString(), ENONCE_MAX);
+    }
+
+    /** Les intitulés sont bornés en base ; un titre d'écart long ne doit pas faire échouer la conversion. */
+    private static String tronque(String valeur, int max) {
+        if (valeur == null) {
+            return null;
+        }
+        String v = valeur.strip();
+        return v.length() <= max ? v : v.substring(0, max - 1).strip() + "…";
+    }
+
     // --- helpers ---
 
     /** NC-{année}-{séquence par tenant}, avec garde anti-collision. */
@@ -338,7 +451,8 @@ public class NcService {
                 nc.getOrigin(), nc.getDetectedAt(),
                 nc.getZone(), nc.getGeoLat(), nc.getGeoLng(), nc.getPhotoUrls(),
                 nc.getReporterId(), nc.getReporterName(), nc.getProductId(), nc.getFmeaItemId(),
-                nc.getCapaCaseId(), nc.getRootCause(), nc.getResolutionNote(),
+                nc.getCapaCaseId(), nc.getPdcaCycleId(), nc.getDmaicProjectId(),
+                nc.getRootCause(), nc.getResolutionNote(),
                 nc.getResolvedAt(), nc.getClosedAt(),
                 nc.getRejectionReason(), nc.getRejectedAt(),
                 nc.getCreatedAt(), nc.getUpdatedAt());

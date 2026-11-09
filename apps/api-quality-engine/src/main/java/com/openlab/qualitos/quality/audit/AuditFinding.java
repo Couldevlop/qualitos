@@ -45,6 +45,17 @@ public class AuditFinding {
     @Column(name = "capa_id")
     private UUID capaId;
 
+    /**
+     * L'écart ouvert au registre des non-conformités pour instruire ce constat.
+     *
+     * <p>Le lien vit ici et non sur la non-conformité : c'est la fiche d'audit
+     * qui doit savoir qu'un constat a déjà été instruit, pour ne pas reproposer
+     * le geste. Le registre des écarts, lui, se lit sans rien connaître des
+     * audits.
+     */
+    @Column(name = "nc_id")
+    private UUID ncId;
+
     @Column(name = "raised_by", nullable = false)
     private UUID raisedBy;
 

@@ -1,5 +1,7 @@
 package com.openlab.qualitos.core.partner;
 
+import com.openlab.qualitos.core.platformaudit.PlatformAuditAction;
+import com.openlab.qualitos.core.platformaudit.PlatformAuditService;
 import com.openlab.qualitos.core.tenant.Tenant;
 import com.openlab.qualitos.core.tenant.TenantRepository;
 import org.slf4j.Logger;
@@ -46,15 +48,20 @@ public class PartnerAccessService {
 
     private static final Logger log = LoggerFactory.getLogger(PartnerAccessService.class);
 
+    /** La nature de l'objet visé, telle qu'elle apparaît dans la piste d'audit. */
+    private static final String TARGET_TYPE = "partner_engagement";
+
     private final PartnerFirmRepository firms;
     private final PartnerConsultantRepository consultants;
     private final PartnerEngagementRepository engagements;
     private final TenantRepository tenants;
     private final Clock clock;
+    private final PlatformAuditService auditTrail;
 
     public PartnerAccessService(PartnerFirmRepository firms, PartnerConsultantRepository consultants,
                                 PartnerEngagementRepository engagements, TenantRepository tenants,
-                                Clock clock) {
+                                Clock clock, PlatformAuditService auditTrail) {
+        this.auditTrail = auditTrail;
         this.firms = firms;
         this.consultants = consultants;
         this.engagements = engagements;
@@ -104,6 +111,18 @@ public class PartnerAccessService {
                         + "ends_on={} actor={}",
                 engagementId, tenantId, accord.getFirmId(), accord.getScope(),
                 accord.getEndsOn(), actor);
+        // L'acte le plus sensible de tout api-core : un tiers obtient acces aux
+        // donnees qualite d'un client. C'est la premiere ligne qu'une autorite
+        // cherchera, et la portee accordee compte autant que la date.
+        auditTrail.record(PlatformAuditAction.PARTNER_ENGAGEMENT_GRANTED, TARGET_TYPE,
+                engagementId, tenantId,
+                "Acces accorde au cabinet " + accord.getFirmId() + " : portee "
+                        + accord.getScope() + ", terme "
+                        + (accord.getEndsOn() == null ? "sans terme" : accord.getEndsOn()),
+                "{\"firmId\":\"" + accord.getFirmId() + "\",\"scope\":\""
+                        + accord.getScope() + "\",\"endsOn\":"
+                        + (accord.getEndsOn() == null ? "null" : "\"" + accord.getEndsOn() + "\"")
+                        + "}");
         return describe(engagements.save(accord));
     }
 
@@ -119,6 +138,10 @@ public class PartnerAccessService {
         accord.setDecidedAt(Instant.now(clock));
         log.info("partner.engagement.declined engagement_id={} tenant_id={} actor={}",
                 engagementId, tenantId, actor);
+        auditTrail.record(PlatformAuditAction.PARTNER_ENGAGEMENT_DECLINED, TARGET_TYPE,
+                engagementId, tenantId,
+                "Mission refusee : cabinet " + accord.getFirmId(),
+                "{\"firmId\":\"" + accord.getFirmId() + "\"}");
         return describe(engagements.save(accord));
     }
 
@@ -141,6 +164,10 @@ public class PartnerAccessService {
         accord.setRevokedAt(Instant.now(clock));
         log.info("partner.engagement.revoked engagement_id={} tenant_id={} firm_id={} actor={}",
                 engagementId, tenantId, accord.getFirmId(), actor);
+        auditTrail.record(PlatformAuditAction.PARTNER_ENGAGEMENT_REVOKED, TARGET_TYPE,
+                engagementId, tenantId,
+                "Acces retire au cabinet " + accord.getFirmId(),
+                "{\"firmId\":\"" + accord.getFirmId() + "\"}");
         return describe(engagements.save(accord));
     }
 

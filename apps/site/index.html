@@ -11,8 +11,8 @@
 <meta property="og:locale" content="fr_FR">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://qualitos.fr/">
-<meta property="og:title" content="QualitOS — tout le management de la qualité">
-<meta property="og:description" content="Tout le management de la qualité, un seul référentiel. Vos causes, vos actions, vos preuves et vos normes cessent d’être séparées.">
+<meta property="og:title" content="QualitOS — The Quality Operating System">
+<meta property="og:description" content="Ce que votre qualité fait de mieux, QualitOS le relie. NC, audits, SMI, SPC, APQP, risques, fournisseurs : une qualité enfin connectée.">
 <meta property="og:image" content="https://qualitos.fr/assets/og-qualitos.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -219,40 +219,40 @@
   <div class="enveloppe heros__contenu">
 
     <div class="bande">
-      <span class="bande__limite bande__limite--haute num">LSS — limite supérieure</span>
-
-      <h1>Tout le management<br>de la qualité.<br>Un seul <em>référentiel</em>.</h1>
+      <h1>Ce que votre qualité fait de mieux,<br>QualitOS le <em>relie</em>.</h1>
 
       <p class="heros__chapo">
-        Les cinq méthodes — PDCA, 5S, cercles de qualité, DMAIC, Ishikawa — mais
-        aussi vos documents, vos écarts et leurs actions, vos audits, vos risques,
-        vos fournisseurs, vos compétences et les normes que vous visez. Un seul
-        dossier, de la réclamation du client jusqu'à la preuve que l'action a
-        produit son effet.
+        NC, audits, SMI, SPC, APQP, risques, fournisseurs : une qualité enfin
+        connectée. Pilotez la qualité de bout en bout, sans quitter QualitOS.
       </p>
 
       <div class="heros__actions">
         <a class="bouton bouton--signal" href="#contact">Demander une démo</a>
         <a class="bouton bouton--trait" href="#referentiel">Voir ce que ça couvre</a>
       </div>
-
-      <span class="bande__limite bande__limite--basse num">LIS — limite inférieure</span>
     </div>
 
-    <svg class="trace" viewBox="0 0 1200 160" role="img"
-         aria-label="Carte de contrôle : une série de mesures reste entre les limites, puis un point les franchit et devient orange.">
-      <line class="trace__limite" x1="0" y1="26" x2="1200" y2="26"></line>
-      <line class="trace__moyenne" x1="0" y1="80" x2="1200" y2="80"></line>
-      <line class="trace__limite" x1="0" y1="134" x2="1200" y2="134"></line>
-      <text class="trace__legende" x="4" y="76">X̄</text>
+    <!-- Les deux limites encadrent la carte : chacune dans sa gouttiere, au-dessus
+         de la ligne haute et au-dessous de la ligne basse, et non dans la bande ou
+         passent les mesures. Le point qui franchit la limite haute reste a droite,
+         la ou aucune etiquette ne l'attend : c'est le dessin qui doit se lire, pas
+         le texte qui doit s'ecarter. -->
+    <svg class="trace" viewBox="0 0 1200 170" role="img"
+         aria-label="Carte de contrôle : entre la limite supérieure et la limite inférieure, une série de mesures reste dans les limites, puis un point les franchit et devient orange.">
+      <text class="trace__borne" x="4" y="20">LSS — limite supérieure</text>
+      <line class="trace__limite" x1="0" y1="38" x2="1200" y2="38"></line>
+      <line class="trace__moyenne" x1="0" y1="90" x2="1200" y2="90"></line>
+      <text class="trace__legende" x="4" y="86">X̄</text>
+      <line class="trace__limite" x1="0" y1="142" x2="1200" y2="142"></line>
+      <text class="trace__borne" x="4" y="162">LIS — limite inférieure</text>
 
-      <polyline class="trace__ligne" points="20,86 80,74 140,92 200,70 260,88 320,66 380,95 440,72 500,60 560,84 620,55 680,78 740,48 800,69 860,40 920,62 980,30 1040,52 1100,16 1160,44"></polyline>
+      <polyline class="trace__ligne" points="20,96 80,84 140,102 200,80 260,98 320,76 380,104 440,82 500,71 560,94 620,66 680,88 740,59 800,79 860,51 920,73 980,42 1040,63 1100,28 1160,55"></polyline>
 
-      <circle class="trace__point" cx="440" cy="72" r="4"></circle>
-      <circle class="trace__point" cx="740" cy="48" r="4"></circle>
-      <circle class="trace__point" cx="980" cy="30" r="4"></circle>
-      <circle class="trace__point trace__point--hors" cx="1100" cy="16"></circle>
-      <text class="trace__etiquette" x="1020" y="12">dérive détectée</text>
+      <circle class="trace__point" cx="440" cy="82" r="4"></circle>
+      <circle class="trace__point" cx="740" cy="59" r="4"></circle>
+      <circle class="trace__point" cx="980" cy="42" r="4"></circle>
+      <circle class="trace__point trace__point--hors" cx="1100" cy="28"></circle>
+      <text class="trace__etiquette" x="1012" y="16">dérive détectée</text>
     </svg>
 
     <!-- Ce pied de héros disait les cinq méthodes, et le titre avec lui. Il dit
@@ -665,7 +665,7 @@
         <ul>
           <li>Cartes X̄–R et X̄–S, capabilité Cp, Cpk, Pp, Ppk, avec les constantes et les formules affichées</li>
           <li>Études R&amp;R, AMDEC produit et processus, plans de surveillance</li>
-          <li>Ishikawa collaboratif, Pareto, cinq pourquoi, bibliothèque de détrompeurs</li>
+          <li>Ishikawa collaboratif, Pareto, 5 pourquoi, bibliothèque de détrompeurs</li>
           <li>Import d'un bloc de mesures collé depuis un tableur</li>
         </ul>
       </article>

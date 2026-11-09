@@ -3,10 +3,10 @@ import { Observable, combineLatest, forkJoin, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 import { AuditsService } from '../audits/audits.service';
+import { CapaService } from '../capa/capa.service';
+import { CapaCriticity, CapaStatus } from '../capa/capa.types';
 import { FivesService } from '../fives/fives.service';
 import { NcService } from '../nc/nc.service';
-import { PdcaService } from '../pdca/pdca.service';
-import { PdcaStatus } from '../pdca/pdca.types';
 
 interface MethodCard {
   title: string;
@@ -40,9 +40,15 @@ interface QuickAction {
  * rapides + activité récente. Mise en scène sobre, beaucoup d'espace blanc,
  * tout via les tokens du design system.
  *
- * Les quatre indicateurs sont lus dans les modules eux-mêmes (cycles PDCA, NC
- * internes, audits 5S, plans d'audit) : aucun chiffre n'est écrit en dur. Une
- * valeur qui n'a pas pu être lue s'affiche « — », avec le lien vers le module.
+ * Les quatre indicateurs sont lus dans les modules eux-mêmes (réclamations
+ * clients, CAPA majeures, audits 5S, plans d'audit) : aucun chiffre n'est écrit
+ * en dur. Une valeur qui n'a pas pu être lue s'affiche « — », avec le lien vers
+ * le module.
+ *
+ * Ce qu'un dirigeant regarde ici, c'est ce qui sort de l'organisation et ce qui
+ * coûte cher : l'écart vu par le client, et les actions correctives dont la
+ * criticité engage. Le compte des cycles PDCA et des écarts internes, lui, est
+ * un volume d'activité : il appartient au tableau de bord de son module.
  */
 @Component({
   selector: 'qos-home',
@@ -83,28 +89,38 @@ export class HomeComponent implements OnInit {
       icon: 'groups', route: '/circles', available: true }
   ];
 
-  /** Statuts d'un cycle PDCA encore ouvert : tout sauf terminé ou annulé. */
-  static readonly ACTIVE_PDCA: readonly PdcaStatus[] = ['PLAN', 'DO', 'CHECK', 'ACT'];
+  /** Statuts d'une CAPA encore à traiter : ni résolue, ni clôturée, ni rejetée. */
+  static readonly OPEN_CAPA: readonly CapaStatus[] = ['OPEN', 'IN_PROGRESS'];
+  /** Niveaux de criticité qui engagent : ceux que la Direction suit nommément. */
+  static readonly MAJOR_CAPA: readonly CapaCriticity[] = ['HIGH', 'MEDIUM'];
   /** Audits 5S terminés pris en compte dans la moyenne affichée. */
   static readonly FIVES_SAMPLE = 100;
 
   stats$!: Observable<StatCard[]>;
 
   constructor(
-    private readonly pdca: PdcaService,
     private readonly nc: NcService,
+    private readonly capa: CapaService,
     private readonly fives: FivesService,
     private readonly audits: AuditsService
   ) {}
 
   ngOnInit(): void {
     // Chaque indicateur échoue seul : un module indisponible n'efface pas les autres.
-    const openPdca$ = forkJoin(HomeComponent.ACTIVE_PDCA.map(s => this.pdca.listCycles(0, 1, s))).pipe(
-      map(pages => String(pages.reduce((sum, p) => sum + p.totalElements, 0))),
+    const openNcExternal$ = this.nc.statistics('EXTERNAL').pipe(
+      map(s => String(s.open)),
       catchError(() => of(null))
     );
-    const openNc$ = this.nc.statistics('INTERNAL').pipe(
-      map(s => String(s.open)),
+    // Le serveur ne filtre qu'un statut et qu'une criticité par appel : on
+    // somme les quatre croisements plutôt que de compter côté client une page
+    // tronquée. `size: 1` suffit, seul `totalElements` est lu.
+    const combinaisons = HomeComponent.OPEN_CAPA.flatMap(
+      status => HomeComponent.MAJOR_CAPA.map(criticity => ({ status, criticity }))
+    );
+    const openMajorCapa$ = forkJoin(
+      combinaisons.map(c => this.capa.listCases(0, 1, c.status, c.criticity))
+    ).pipe(
+      map(pages => String(pages.reduce((sum, p) => sum + p.totalElements, 0))),
       catchError(() => of(null))
     );
     const fivesScore$ = this.fives.listAudits(0, HomeComponent.FIVES_SAMPLE, 'COMPLETED').pipe(
@@ -125,12 +141,13 @@ export class HomeComponent implements OnInit {
       catchError(() => of(null))
     );
 
-    this.stats$ = combineLatest([openPdca$, openNc$, fivesScore$, plannedAudits$]).pipe(
-      map(([pdca, nc, fives, audits]) => [
-        { label: $localize`:@@home.kpi.open-pdca:Cycles PDCA en cours`, value: pdca,
-          icon: 'autorenew', tone: 'accent', route: '/pdca' },
-        { label: $localize`:@@home.kpi.open-nc-internal:Non-conformités internes ouvertes`, value: nc,
-          icon: 'report_problem', tone: 'warn', route: '/nc/interne' },
+    this.stats$ = combineLatest([openNcExternal$, openMajorCapa$, fivesScore$, plannedAudits$]).pipe(
+      map(([ncExterne, capaMajeures, fives, audits]) => [
+        { label: $localize`:@@home.kpi.open-nc-external:Réclamations clients ouvertes`, value: ncExterne,
+          icon: 'campaign', tone: 'danger', route: '/nc/externe' },
+        { label: $localize`:@@home.kpi.open-capa-major:CAPA majeures ouvertes`, value: capaMajeures,
+          icon: 'engineering', tone: 'warn', route: '/capa',
+          hint: $localize`:@@home.kpi.capa-major-scope:Criticité haute et moyenne` },
         { label: $localize`:@@home.kpi.fives-score:Score 5S moyen`, value: fives.value,
           icon: 'check_circle', tone: 'success', route: '/fives',
           hint: fives.count

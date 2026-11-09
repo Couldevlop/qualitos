@@ -10,6 +10,7 @@ import {
   AssignmentResponse,
   CapabilityResponse,
   CreateDmaicProjectRequest,
+  CreateDeviceRequest,
   DeviceDetail,
   DeviceSummary,
   DeviceSummaryPage,
@@ -267,6 +268,37 @@ export class DmaicService {
       }).pipe(delay(120));
     }
     return this.http.get<DeviceDetail>(`${this.endpoint}/pokayoke/${id}`);
+  }
+
+  /**
+   * Inscrire un détrompeur à la bibliothèque du client — ce qu'une action
+   * d'amélioration devient quand elle a fait la preuve qu'elle empêche
+   * l'erreur, et qu'elle doit servir sur une autre ligne.
+   *
+   * <p>Le serveur attribue le code et, quand un projet est désigné, déploie le
+   * dispositif dessus dans le même mouvement.
+   */
+  createDevice(input: CreateDeviceRequest): Observable<DeviceDetail> {
+    if (environment.useMockApi) {
+      const now = new Date().toISOString();
+      const d: DeviceDetail = {
+        id: 'device-' + Math.random().toString(36).slice(2, 9),
+        code: 'PY-DEMO-' + String(this.mockDevices.length + 1).padStart(3, '0'),
+        name: input.name,
+        type: input.type,
+        mechanism: input.mechanism,
+        applicableIndustries: input.applicableIndustries,
+        implementationCost: input.implementationCost,
+        own: true,
+        sourceReference: input.sourceReference,
+        description: input.description,
+        examples: input.examples,
+        createdAt: now, updatedAt: now
+      };
+      this.mockDevices.push(d);
+      return of(d).pipe(delay(120));
+    }
+    return this.http.post<DeviceDetail>(`${this.endpoint}/pokayoke`, input);
   }
 
   // ---------- Assignments ----------

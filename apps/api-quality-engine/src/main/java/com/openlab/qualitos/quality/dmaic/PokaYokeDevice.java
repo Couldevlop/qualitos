@@ -25,6 +25,18 @@ public class PokaYokeDevice {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    /**
+     * Le client a qui ce dispositif appartient, ou {@code null} pour le catalogue
+     * de la plateforme, partage par tous (meme philosophie que le Standards Hub).
+     *
+     * <p>Un detrompeur ne d'une action DMAIC appartient au client qui l'a
+     * concu : le verser au catalogue partage reviendrait a montrer a tous la
+     * solution d'un seul. Il reste reutilisable sur ses autres lignes, et c'est
+     * tout ce que la promesse demande.
+     */
+    @Column(name = "tenant_id", updatable = false)
+    private UUID tenantId;
+
     @Column(nullable = false, unique = true, length = 100)
     private String code;
 
@@ -49,6 +61,17 @@ public class PokaYokeDevice {
     /** Exemples concrets (texte libre). */
     @Column(columnDefinition = "TEXT")
     private String examples;
+
+    /**
+     * D'ou vient ce dispositif, cite en clair : « action du projet DMAIC X ».
+     *
+     * <p>Une citation plutot qu'une cle etrangere, comme au registre des
+     * risques : la fiche de resolution evolue, ses lignes se renumerotent, et
+     * un lien dur se briserait sur un dispositif qui, lui, reste valable.
+     * {@code null} pour les dispositifs du catalogue de la plateforme.
+     */
+    @Column(name = "source_reference", length = 255)
+    private String sourceReference;
 
     /** Cout estimé d'implementation (faible/moyen/élevé) — pour aide a la priorisation. */
     @Column(name = "implementation_cost", length = 20)

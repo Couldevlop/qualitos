@@ -34,6 +34,16 @@ export const RISK_ORIGINS: ReadonlyArray<Choice<RegisterOrigin>> = [
   { value: 'CHANGE', label: $localize`:@@rr.origin.change:Changement (MOC)` }
 ];
 
+/**
+ * Les origines qu'on ne choisit pas à la main : elles naissent d'un autre
+ * écran. Elles ne figurent pas dans la liste du formulaire — s'en attribuer une
+ * à la saisie revendiquerait une provenance que rien ne porte — mais le
+ * registre doit savoir les nommer quand il les affiche.
+ */
+const ORIGINES_HERITEES: ReadonlyArray<Choice<RegisterOrigin>> = [
+  { value: 'STAKEHOLDER', label: $localize`:@@rr.origin.stakeholder:Exigence de partie intéressée` }
+];
+
 /** Une opportunité ne naît ni d'une AMDEC, ni d'une NC, ni d'un incident, ni d'un changement. */
 export const OPPORTUNITY_ORIGINS: ReadonlyArray<Choice<RegisterOrigin>> =
   RISK_ORIGINS.filter(o => ['DIRECT', 'MANAGEMENT_REVIEW', 'AUDIT', 'CUSTOMER_FEEDBACK', 'MONITORING']
@@ -159,7 +169,8 @@ export const CAPA_KINDS: ReadonlyArray<Choice<CapaKind>> = [
 
 export const capaKindLabel = (v: CapaKind | null | undefined) => find(CAPA_KINDS, v);
 export const typeLabel = (v: RegisterType | null | undefined) => find(TYPES, v);
-export const originLabel = (v: RegisterOrigin | null | undefined) => find(RISK_ORIGINS, v);
+export const originLabel = (v: RegisterOrigin | null | undefined) =>
+  find([...RISK_ORIGINS, ...ORIGINES_HERITEES], v);
 export const riskStatusLabel = (v: RiskStatus | null | undefined) => find(RISK_STATUSES, v);
 export const riskDecisionLabel = (v: RiskDecision | null | undefined) => find(RISK_DECISIONS, v);
 export const opportunityStatusLabel = (v: OpportunityStatus | null | undefined) => find(OPPORTUNITY_STATUSES, v);

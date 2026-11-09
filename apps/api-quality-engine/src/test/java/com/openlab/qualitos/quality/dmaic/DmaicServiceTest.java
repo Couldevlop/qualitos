@@ -6,6 +6,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -21,6 +22,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -396,7 +398,7 @@ class DmaicServiceTest {
     @Test
     void listDevices_noFilter() {
         Pageable p = PageRequest.of(0, 10);
-        when(deviceRepo.findAll(p)).thenReturn(new PageImpl<>(List.of(device("DEV-1", PokaYokeType.PREVENTION))));
+        when(deviceRepo.findVisible(TENANT, p)).thenReturn(new PageImpl<>(List.of(device("DEV-1", PokaYokeType.PREVENTION))));
         Page<DmaicDto.DeviceSummary> r = service.listDevices(null, null, p);
         assertThat(r.getContent()).hasSize(1);
     }
@@ -404,32 +406,32 @@ class DmaicServiceTest {
     @Test
     void listDevices_byType() {
         Pageable p = PageRequest.of(0, 10);
-        when(deviceRepo.findByType(PokaYokeType.DETECTION, p))
+        when(deviceRepo.findVisibleByType(TENANT, PokaYokeType.DETECTION, p))
                 .thenReturn(new PageImpl<>(List.of(device("DEV-DET", PokaYokeType.DETECTION))));
         service.listDevices(PokaYokeType.DETECTION, null, p);
-        verify(deviceRepo).findByType(PokaYokeType.DETECTION, p);
+        verify(deviceRepo).findVisibleByType(TENANT, PokaYokeType.DETECTION, p);
     }
 
     @Test
     void listDevices_byMechanism() {
         Pageable p = PageRequest.of(0, 10);
-        when(deviceRepo.findByMechanism(PokaYokeMechanism.SENSOR, p))
+        when(deviceRepo.findVisibleByMechanism(TENANT, PokaYokeMechanism.SENSOR, p))
                 .thenReturn(new PageImpl<>(List.of(device("DEV-SENSOR", PokaYokeType.DETECTION))));
         service.listDevices(null, PokaYokeMechanism.SENSOR, p);
-        verify(deviceRepo).findByMechanism(PokaYokeMechanism.SENSOR, p);
+        verify(deviceRepo).findVisibleByMechanism(TENANT, PokaYokeMechanism.SENSOR, p);
     }
 
     @Test
     void getDevice_byId() {
         PokaYokeDevice d = device("X", PokaYokeType.PREVENTION);
-        when(deviceRepo.findById(d.getId())).thenReturn(Optional.of(d));
+        when(deviceRepo.findVisibleById(d.getId(), TENANT)).thenReturn(Optional.of(d));
         assertThat(service.getDevice(d.getId()).id()).isEqualTo(d.getId());
     }
 
     @Test
     void getDevice_notFound() {
         UUID id = UUID.randomUUID();
-        when(deviceRepo.findById(id)).thenReturn(Optional.empty());
+        when(deviceRepo.findVisibleById(id, TENANT)).thenReturn(Optional.empty());
         assertThatThrownBy(() -> service.getDevice(id))
                 .isInstanceOf(PokaYokeDeviceNotFoundException.class);
     }
@@ -437,15 +439,148 @@ class DmaicServiceTest {
     @Test
     void getDeviceByCode_found() {
         PokaYokeDevice d = device("PY-ABC", PokaYokeType.PREVENTION);
-        when(deviceRepo.findByCode("PY-ABC")).thenReturn(Optional.of(d));
+        when(deviceRepo.findVisibleByCode("PY-ABC", TENANT)).thenReturn(Optional.of(d));
         assertThat(service.getDeviceByCode("PY-ABC").code()).isEqualTo("PY-ABC");
     }
 
     @Test
     void getDeviceByCode_notFound() {
-        when(deviceRepo.findByCode("nope")).thenReturn(Optional.empty());
+        when(deviceRepo.findVisibleByCode("nope", TENANT)).thenReturn(Optional.empty());
         assertThatThrownBy(() -> service.getDeviceByCode("nope"))
                 .isInstanceOf(PokaYokeDeviceNotFoundException.class);
+    }
+
+    // --- une action devient un detrompeur de la bibliotheque -----------------
+
+    /**
+     * « Une action DMAIC devient un detrompeur inscrit a la bibliotheque,
+     * reutilisable sur une autre ligne. »
+     *
+     * <p>Ce que ces bancs tiennent : le dispositif inscrit appartient au client
+     * et jamais au catalogue partage — la solution d'un seul n'a pas a
+     * s'afficher chez tous ; son code est attribue par le serveur, unique la ou
+     * cohabitent le catalogue et les bibliotheques ; et quand un projet est
+     * designe, le dispositif y est deploye dans le meme mouvement, sans quoi la
+     * bibliotheque se remplirait de solutions que personne n'a posees.
+     */
+    private DmaicDto.CreateDeviceRequest demandeDispositif(UUID projectId) {
+        return new DmaicDto.CreateDeviceRequest(
+                "  Gabarit de montage asymetrique  ", " Le capot ne rentre que dans le bon sens. ",
+                PokaYokeType.PREVENTION, PokaYokeMechanism.PHYSICAL_SHAPE,
+                "manufacturing", "ligne 2", "low",
+                " Projet DMAIC DM-2026-004 - action du 2026-11-02 ", projectId);
+    }
+
+    private PokaYokeDevice capteDispositif() {
+        when(deviceRepo.save(any())).thenAnswer(inv -> {
+            PokaYokeDevice d = inv.getArgument(0);
+            d.setId(UUID.randomUUID());
+            d.setCreatedAt(Instant.now());
+            d.setUpdatedAt(Instant.now());
+            return d;
+        });
+        return null;
+    }
+
+    @Test
+    void createDevice_appartientAuClientEtCiteSonOrigine() {
+        capteDispositif();
+
+        DmaicDto.DeviceDetail r = service.createDevice(demandeDispositif(null));
+
+        ArgumentCaptor<PokaYokeDevice> c = ArgumentCaptor.forClass(PokaYokeDevice.class);
+        verify(deviceRepo).save(c.capture());
+        assertThat(c.getValue().getTenantId()).isEqualTo(TENANT);
+        assertThat(c.getValue().getSourceReference())
+                .isEqualTo("Projet DMAIC DM-2026-004 - action du 2026-11-02");
+        assertThat(r.own()).isTrue();
+        assertThat(r.sourceReference()).isEqualTo("Projet DMAIC DM-2026-004 - action du 2026-11-02");
+    }
+
+    @Test
+    void createDevice_rogneLesBordsEtLaisseLesChampsVidesANull() {
+        capteDispositif();
+
+        service.createDevice(new DmaicDto.CreateDeviceRequest(
+                " Gabarit ", "   ", PokaYokeType.DETECTION, PokaYokeMechanism.SENSOR,
+                "", null, "  ", " origine ", null));
+
+        ArgumentCaptor<PokaYokeDevice> c = ArgumentCaptor.forClass(PokaYokeDevice.class);
+        verify(deviceRepo).save(c.capture());
+        assertThat(c.getValue().getName()).isEqualTo("Gabarit");
+        // Une chaine vide n'est pas une valeur : elle se lirait comme un champ
+        // renseigne alors que personne n'a rien ecrit.
+        assertThat(c.getValue().getDescription()).isNull();
+        assertThat(c.getValue().getApplicableIndustries()).isNull();
+        assertThat(c.getValue().getExamples()).isNull();
+        assertThat(c.getValue().getImplementationCost()).isNull();
+    }
+
+    @Test
+    void createDevice_numeroteLeCodeDansLaBibliothequeDuClient() {
+        capteDispositif();
+        when(deviceRepo.countByTenantId(TENANT)).thenReturn(4L);
+        when(deviceRepo.existsByCode(any())).thenReturn(false);
+
+        DmaicDto.DeviceDetail r = service.createDevice(demandeDispositif(null));
+
+        assertThat(r.code()).isEqualTo("PY-" + TENANT.toString().substring(0, 8).toUpperCase() + "-005");
+    }
+
+    @Test
+    void createDevice_passeUnCodeDejaPris() {
+        // Un dispositif supprime laisse un trou que le compteur ne voit pas :
+        // le code attendu est deja pris, et l'ecriture echouerait au lieu de se
+        // decaler.
+        capteDispositif();
+        when(deviceRepo.countByTenantId(TENANT)).thenReturn(1L);
+        String prefixe = "PY-" + TENANT.toString().substring(0, 8).toUpperCase();
+        when(deviceRepo.existsByCode(prefixe + "-002")).thenReturn(true);
+        when(deviceRepo.existsByCode(prefixe + "-003")).thenReturn(false);
+
+        assertThat(service.createDevice(demandeDispositif(null)).code())
+                .isEqualTo(prefixe + "-003");
+    }
+
+    @Test
+    void createDevice_deploieLeDispositifSurLeProjetDesigne() {
+        capteDispositif();
+        DmaicProject p = project(DmaicStatus.ACTIVE, DmaicPhase.IMPROVE);
+        when(projectRepo.findByIdAndTenantId(p.getId(), TENANT)).thenReturn(Optional.of(p));
+        when(deviceRepo.findVisibleById(any(), eq(TENANT))).thenAnswer(inv -> {
+            PokaYokeDevice d = new PokaYokeDevice();
+            d.setId(inv.getArgument(0));
+            d.setCode("PY-X");
+            d.setName("Gabarit");
+            d.setType(PokaYokeType.PREVENTION);
+            d.setMechanism(PokaYokeMechanism.PHYSICAL_SHAPE);
+            d.setTenantId(TENANT);
+            return Optional.of(d);
+        });
+        when(assignmentRepo.save(any())).thenAnswer(inv -> {
+            PokaYokeAssignment a = inv.getArgument(0);
+            a.setId(UUID.randomUUID());
+            a.setCreatedAt(Instant.now());
+            a.setUpdatedAt(Instant.now());
+            return a;
+        });
+
+        service.createDevice(demandeDispositif(p.getId()));
+
+        ArgumentCaptor<PokaYokeAssignment> c = ArgumentCaptor.forClass(PokaYokeAssignment.class);
+        verify(assignmentRepo).save(c.capture());
+        assertThat(c.getValue().getProject().getId()).isEqualTo(p.getId());
+        assertThat(c.getValue().getStatus()).isEqualTo(PokaYokeAssignmentStatus.PROPOSED);
+        assertThat(c.getValue().getNote()).isEqualTo("Projet DMAIC DM-2026-004 - action du 2026-11-02");
+    }
+
+    @Test
+    void createDevice_sansClientNEcritRien() {
+        TenantContext.clear();
+
+        assertThatThrownBy(() -> service.createDevice(demandeDispositif(null)))
+                .isInstanceOf(MissingTenantContextException.class);
+        verify(deviceRepo, never()).save(any());
     }
 
     // --- assignments ---
@@ -479,7 +614,7 @@ class DmaicServiceTest {
         DmaicProject p = project(DmaicStatus.ACTIVE, DmaicPhase.IMPROVE);
         PokaYokeDevice d = device("PY-1", PokaYokeType.PREVENTION);
         when(projectRepo.findByIdAndTenantId(p.getId(), TENANT)).thenReturn(Optional.of(p));
-        when(deviceRepo.findById(d.getId())).thenReturn(Optional.of(d));
+        when(deviceRepo.findVisibleById(d.getId(), TENANT)).thenReturn(Optional.of(d));
         when(assignmentRepo.save(any())).thenAnswer(inv -> {
             PokaYokeAssignment a = inv.getArgument(0);
             a.setId(UUID.randomUUID());
@@ -506,7 +641,7 @@ class DmaicServiceTest {
         DmaicProject p = project(DmaicStatus.ACTIVE, DmaicPhase.IMPROVE);
         UUID did = UUID.randomUUID();
         when(projectRepo.findByIdAndTenantId(p.getId(), TENANT)).thenReturn(Optional.of(p));
-        when(deviceRepo.findById(did)).thenReturn(Optional.empty());
+        when(deviceRepo.findVisibleById(did, TENANT)).thenReturn(Optional.empty());
         assertThatThrownBy(() -> service.assignDevice(p.getId(),
                 new DmaicDto.AssignPokaYokeRequest(did, null)))
                 .isInstanceOf(PokaYokeDeviceNotFoundException.class);

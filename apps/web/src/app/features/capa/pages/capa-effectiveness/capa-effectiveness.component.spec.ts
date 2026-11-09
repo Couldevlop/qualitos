@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testin
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { of, throwError } from 'rxjs';
 
@@ -42,14 +43,22 @@ describe('CapaEffectivenessComponent', () => {
   let component: CapaEffectivenessComponent;
   let service: jasmine.SpyObj<CapaService>;
   let snack: { open: jasmine.Spy };
+  /** Les parametres de l'adresse, que chaque banc peut poser avant le montage. */
+  let parametres: Record<string, string>;
 
   beforeEach(async () => {
     // `evaluationBoard` est dans la liste parce que le premier onglet de l'écran
     // héberge le plan de travail des évaluations (ADR 0108) : sans elle, son
     // ngOnInit appellerait une méthode absente du mannequin et le banc tomberait
     // sur une erreur qui n'a rien à voir avec ce qu'il vérifie.
+    parametres = {};
     service = jasmine.createSpyObj<CapaService>('CapaService',
       ['effectiveness', 'evaluationBoard']);
+    // `effectiveness` a elle aussi une reponse par defaut : les bancs qui ne
+    // s'interessent pas a la mesure par recidive montent quand meme l'ecran, et
+    // son ngOnInit l'appelle. Sans ce defaut, ils tombaient sur un mannequin
+    // muet -- une panne qui ne dit rien de ce qu'ils verifient.
+    service.effectiveness.and.returnValue(of(summary()));
     service.evaluationBoard.and.returnValue(of({
       effectiveRatePercent: undefined, evaluated: 0, awaitingEvaluation: 0, stillOpen: 0,
       reopened: 0, partial: 0, missingCriterion: 0, total: 0, truncated: false, rows: []
@@ -61,7 +70,15 @@ describe('CapaEffectivenessComponent', () => {
         NoopAnimationsModule],
       providers: [
         { provide: CapaService, useValue: service },
-        { provide: MatSnackBar, useValue: snack }
+        { provide: MatSnackBar, useValue: snack },
+        // L'adresse peut nommer le dossier a juger (`?capa=`) : le banc part
+        // d'une adresse nue, et le cas nomme a son propre fournisseur.
+        { provide: ActivatedRoute,
+          useValue: {
+            // Lu a la demande : un banc pose `parametres` puis monte le
+            // composant lui-meme, apres que ce fournisseur a ete enregistre.
+            snapshot: { get queryParamMap() { return convertToParamMap(parametres); } }
+          } }
       ]
     }).compileComponents();
 
@@ -228,4 +245,23 @@ describe('CapaEffectivenessComponent', () => {
     expect(component.rateClass(row({ ratePercent: 10 }))).toBe('rate-poor');
     expect(component.rateClass(row({ ratePercent: undefined }))).toBe('rate-unknown');
   });
+
+  // ---- arrivee depuis la fiche CAPA -------------------------------------------
+
+  it("ouvre l'onglet des evaluations sur le dossier nomme par l'adresse", () => {
+    // Le renvoi « Evaluer contre le critere » de la fiche CAPA passe
+    // `?capa=<id>` : l'ecran doit s'ouvrir sur CE dossier, pret a juger.
+    parametres = { capa: 'c-42' };
+    const f = TestBed.createComponent(CapaEffectivenessComponent);
+    f.detectChanges();
+
+    expect(f.componentInstance.focusCapaId).toBe('c-42');
+    expect(f.componentInstance.tab).toBe(0);
+  });
+
+  it("ne nomme aucun dossier quand l'adresse est nue", () => {
+    expect(component.focusCapaId).toBeUndefined();
+    expect(component.tab).toBe(0);
+  });
+
 });

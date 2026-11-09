@@ -87,6 +87,22 @@ describe('NcService (mock mode)', () => {
     });
   });
 
+  it('convertit un ecart majeur en cycle PDCA, sans methode demandee', (done) => {
+    // La gravite decide : majeur, donc un cycle.
+    service.convert('nc-1', { pilotId: 'u-9' }).subscribe(n => {
+      expect(n.pdcaCycleId).toBeTruthy();
+      expect(n.dmaicProjectId).toBeUndefined();
+      done();
+    });
+  });
+
+  it('convertit en projet DMAIC quand la methode est demandee', (done) => {
+    service.convert('nc-1', { method: 'DMAIC', pilotId: 'u-9' }).subscribe(n => {
+      expect(n.dmaicProjectId).toBeTruthy();
+      done();
+    });
+  });
+
   it('escalateToCapa links a CAPA case', (done) => {
     service.escalateToCapa('nc-1', { title: 'T', type: 'CORRECTIVE', criticity: 'HIGH', ownerId: 'owner-9', ownerName: 'A', dueDate: '2099-01-01' }).subscribe(n => {
       expect(n.capaCaseId).toBeTruthy();
@@ -253,6 +269,39 @@ describe('NcService (offline-first, API réelle)', () => {
   afterEach(() => {
     environment.useMockApi = prevMock;
     httpMock.verify();
+  });
+
+  it('convert poste la methode, le pilote et l’echeance', (done) => {
+    service.convert('nc-7', { method: 'DMAIC', pilotId: 'u-9', dueDate: '2027-03-01' })
+      .subscribe(n => {
+        expect(n.dmaicProjectId).toBe('projet-1');
+        done();
+      });
+
+    const req = httpMock.expectOne(`${endpoint}/nc-7/convert`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual({ method: 'DMAIC', pilotId: 'u-9', dueDate: '2027-03-01' });
+    req.flush({
+      id: 'nc-7', reference: 'NC-2026-0007', title: 't', category: 'PROCESS',
+      severity: 'CRITICAL', status: 'OPEN', origin: 'INTERNAL',
+      detectedAt: '2026-11-09T08:00:00Z', createdAt: '2026-11-09T08:00:00Z',
+      updatedAt: '2026-11-09T08:00:00Z', dmaicProjectId: 'projet-1'
+    });
+  });
+
+  it('convert ne met rien en file hors-ligne : il doit rendre le dossier ouvert', (done) => {
+    // Ouvrir un chantier d’amelioration n’est pas un geste de terrain, et une
+    // reponse differee ne pourrait pas rendre l’identifiant vers lequel l’ecran
+    // doit emmener l’utilisateur.
+    connectivity.online = false;
+
+    service.convert('nc-7', { pilotId: 'u-9' }).subscribe({
+      next: () => done.fail('la conversion ne doit pas repondre de facon optimiste'),
+      error: () => done()
+    });
+
+    httpMock.expectOne(`${endpoint}/nc-7/convert`).error(
+      new ProgressEvent('error'), { status: 0, statusText: 'offline' });
   });
 
   it('hors-ligne : createNc met en file et répond de façon optimiste', (done) => {
@@ -576,4 +625,5 @@ describe('NcService (offline-first, API réelle)', () => {
     req.flush({ type: 'https://qualitos.io/errors/vision-image-too-large' },
       { status: 413, statusText: 'Payload Too Large' });
   });
+
 });

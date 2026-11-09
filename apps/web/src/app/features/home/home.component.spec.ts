@@ -7,13 +7,14 @@ import { SharedModule } from '../../shared/shared.module';
 import { ActivityFeedModule } from '../activity-feed/activity-feed.module';
 import { ActivityFeedService } from '../activity-feed/activity-feed.service';
 import { AuditsService } from '../audits/audits.service';
+import { CapaService } from '../capa/capa.service';
+import { CapaCaseResponse, CapaPage } from '../capa/capa.types';
 import { FivesService } from '../fives/fives.service';
 import { NcService } from '../nc/nc.service';
 import { FiveSAuditResponse } from '../fives/fives.types';
 import { NcStatistics } from '../nc/nc.types';
-import { PdcaService } from '../pdca/pdca.service';
 import { AuditPlanResponse } from '../audits/audits.types';
-import { PdcaCycleResponse, SpringPage } from '../pdca/pdca.types';
+import { SpringPage } from '../pdca/pdca.types';
 import { HomeComponent } from './home.component';
 
 /** Page Spring minimale : seul le total et le contenu comptent ici. */
@@ -24,19 +25,21 @@ function page<T>(content: Partial<T>[], totalElements = content.length): SpringP
 describe('HomeComponent', () => {
   let component: HomeComponent;
   let fixture: ComponentFixture<HomeComponent>;
-  let pdca: jasmine.SpyObj<PdcaService>;
   let nc: jasmine.SpyObj<NcService>;
+  let capa: jasmine.SpyObj<CapaService>;
   let fives: jasmine.SpyObj<FivesService>;
   let audits: jasmine.SpyObj<AuditsService>;
 
   beforeEach(async () => {
-    pdca = jasmine.createSpyObj<PdcaService>('PdcaService', ['listCycles']);
-    // 3 cycles en Plan, 2 en Do, 1 en Check, 0 en Act : 6 cycles en cours.
-    const parStatut: Record<string, number> = { PLAN: 3, DO: 2, CHECK: 1, ACT: 0 };
-    pdca.listCycles.and.callFake((_p?: number, _s?: number, status?: string) =>
-      of(page<PdcaCycleResponse>([], parStatut[status ?? ''] ?? 0)));
     nc = jasmine.createSpyObj<NcService>('NcService', ['statistics']);
     nc.statistics.and.returnValue(of({ open: 6 } as NcStatistics));
+    capa = jasmine.createSpyObj<CapaService>('CapaService', ['listCases']);
+    // Quatre croisements statut x criticite : 4 + 3 + 2 + 1 = 10 CAPA majeures.
+    const parCroisement: Record<string, number> = {
+      'OPEN/HIGH': 4, 'OPEN/MEDIUM': 3, 'IN_PROGRESS/HIGH': 2, 'IN_PROGRESS/MEDIUM': 1
+    };
+    capa.listCases.and.callFake((_p?: number, _s?: number, status?: string, criticity?: string) =>
+      of(page<CapaCaseResponse>([], parCroisement[`${status}/${criticity}`] ?? 0) as CapaPage));
     fives = jasmine.createSpyObj<FivesService>('FivesService', ['listAudits']);
     fives.listAudits.and.returnValue(of(page<FiveSAuditResponse>([{ overallScore: 80 }, { overallScore: 91 }, {}])));
     audits = jasmine.createSpyObj<AuditsService>('AuditsService', ['listPlans']);
@@ -50,8 +53,8 @@ describe('HomeComponent', () => {
       imports: [SharedModule, ActivityFeedModule, NoopAnimationsModule],
       providers: [
         { provide: ActivityFeedService, useValue: feed },
-        { provide: PdcaService, useValue: pdca },
         { provide: NcService, useValue: nc },
+        { provide: CapaService, useValue: capa },
         { provide: FivesService, useValue: fives },
         { provide: AuditsService, useValue: audits },
         provideRouter([])
@@ -78,10 +81,14 @@ describe('HomeComponent', () => {
   it('lit les quatre indicateurs dans les modules, sans chiffre écrit en dur', () => {
     let values: (string | null)[] = [];
     component.stats$.subscribe(s => (values = s.map(c => c.value)));
-    // 3 + 2 + 1 + 0 cycles ouverts ; 6 NC internes ouvertes ; moyenne de 80 et 91
-    // (l'audit sans score est ignoré) ; 4 audits planifiés.
-    expect(values).toEqual(['6', '6', '86/100', '4']);
-    expect(nc.statistics).toHaveBeenCalledWith('INTERNAL');
+    // 6 reclamations clients ouvertes ; 4 + 3 + 2 + 1 CAPA majeures ouvertes ;
+    // moyenne de 80 et 91 (l'audit sans score est ignore) ; 4 audits planifies.
+    expect(values).toEqual(['6', '10', '86/100', '4']);
+    expect(nc.statistics).toHaveBeenCalledWith('EXTERNAL');
+    // La criticite basse et la criticite critique ne sont pas comptees ici :
+    // l'indicateur porte sur les deux niveaux que la Direction suit nommement.
+    expect(capa.listCases.calls.allArgs().map(a => `${a[2]}/${a[3]}`).sort())
+      .toEqual(['IN_PROGRESS/HIGH', 'IN_PROGRESS/MEDIUM', 'OPEN/HIGH', 'OPEN/MEDIUM']);
     expect(fives.listAudits).toHaveBeenCalledWith(0, HomeComponent.FIVES_SAMPLE, 'COMPLETED');
     expect(audits.listPlans).toHaveBeenCalledWith(0, 1, 'PLANNED');
     const stats = (fixture.nativeElement as HTMLElement).querySelectorAll('.qos-stat');
@@ -92,7 +99,7 @@ describe('HomeComponent', () => {
   it('chaque carte mène au module qui fournit la valeur', () => {
     const links = Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('a.home-stat'))
       .map(a => a.getAttribute('href'));
-    expect(links).toEqual(['/pdca', '/nc/interne', '/fives', '/audits']);
+    expect(links).toEqual(['/nc/externe', '/capa', '/fives', '/audits']);
   });
 
   it('affiche « — » pour un indicateur illisible, sans effacer les autres', () => {
@@ -102,7 +109,7 @@ describe('HomeComponent', () => {
     fixture.detectChanges();
     let values: (string | null)[] = [];
     component.stats$.subscribe(s => (values = s.map(c => c.value)));
-    expect(values).toEqual(['6', null, null, '4']);
+    expect(values).toEqual([null, '10', null, '4']);
     const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
     expect(text).toContain('—');
     expect(text).toContain('Aucun audit terminé');

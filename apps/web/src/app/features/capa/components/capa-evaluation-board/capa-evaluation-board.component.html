@@ -167,6 +167,17 @@
       <p class="dim">{{ row.title }}</p>
 
       <!--
+        Le critere du dossier s'ecrit UNE fois, ici. Il figurait a la fois dans
+        le bloc « Derniere evaluation » et dans un encadre du formulaire juste
+        en dessous : le lecteur lisait deux fois la meme phrase, et le second
+        encadre blanc coupait le formulaire en deux pour rien.
+      -->
+      <p class="critere" *ngIf="row.criterion">
+        <span class="field-label" i18n="@@capa.evaluation.criterion">Critère posé à l'ouverture</span>
+        <strong>{{ row.criterion }}</strong>
+      </p>
+
+      <!--
         L'obstacle à la clôture est annoncé AVANT le clic : le serveur refusera,
         et le découvrir après avoir saisi une mesure est inutilement pénible.
       -->
@@ -202,8 +213,10 @@
           </span>
         </p>
         <!-- Le critère de l'évaluation, et non celui du dossier : c'est contre
-             CELUI-LÀ que le verdict a été rendu. -->
-        <p class="dim" *ngIf="r.criterion">
+             CELUI-LÀ que le verdict a été rendu. On ne le répète que s'il
+             DIFFÈRE du critère courant — sinon c'est la même phrase deux fois,
+             et seule la différence porte une information. -->
+        <p class="dim" *ngIf="r.criterion && r.criterion !== row.criterion">
           <span i18n="@@capa.evaluation.judged-against">Jugé contre :</span> {{ r.criterion }}
         </p>
         <dl class="readings">
@@ -259,15 +272,6 @@
       </p>
 
       <form *ngIf="canJudge" class="form" [formGroup]="form" (ngSubmit)="submit()">
-        <!--
-          Le critère est AFFICHÉ, pas saisissable : il a été posé avant, et le
-          rendre modifiable ici reviendrait à l'ajuster en voyant la mesure.
-        -->
-        <div class="criterion">
-          <span class="field-label" i18n="@@capa.evaluation.criterion">Critère posé à l'ouverture</span>
-          <strong>{{ row.criterion }}</strong>
-        </div>
-
         <div class="readings-form">
           <mat-form-field appearance="outline">
             <mat-label i18n="@@capa.evaluation.baseline">Avant</mat-label>

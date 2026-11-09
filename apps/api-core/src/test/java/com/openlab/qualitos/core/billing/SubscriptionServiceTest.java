@@ -2,6 +2,7 @@ package com.openlab.qualitos.core.billing;
 
 import com.openlab.qualitos.core.tenant.TenantNotFoundException;
 import com.openlab.qualitos.core.tenant.TenantRepository;
+import com.openlab.qualitos.core.platformaudit.PlatformAuditService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,6 +38,7 @@ class SubscriptionServiceTest {
     @Mock ModulePriceService prices;
     @Mock ModuleActivationPort activation;
     @Mock TenantRepository tenants;
+    @Mock PlatformAuditService auditTrail;
 
     SubscriptionService service;
 
@@ -51,7 +53,7 @@ class SubscriptionServiceTest {
 
     @BeforeEach
     void setup() {
-        service = new SubscriptionService(repo, prices, activation, tenants, CLOCK);
+        service = new SubscriptionService(repo, prices, activation, tenants, CLOCK, auditTrail);
     }
 
     // ---------- souscription ----------

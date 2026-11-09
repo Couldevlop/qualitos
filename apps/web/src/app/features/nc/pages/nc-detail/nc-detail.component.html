@@ -51,6 +51,20 @@
             <span i18n="@@nc.detail.open-capa">Voir la CAPA</span>
           </a>
         </ng-template>
+        <!-- La CAPA traite l'écart ; le cycle ou le projet traite ce que l'écart
+             révèle (§3.6). La gravité propose la méthode, la fenêtre le dit, et
+             la personne qui tient le dossier peut en décider autrement. Quand le
+             travail est ouvert, le bouton y emmène. -->
+        <button mat-stroked-button (click)="convert(n)" data-test="convertir" *qosCan="'nc.escalate'"
+                [disabled]="(acting$ | async) || (!n.pdcaCycleId && !n.dmaicProjectId && !canEscalate(n.status))"
+                i18n-matTooltip="@@nc.detail.convert-tooltip"
+                matTooltip="Ouvrir le cycle ou le projet qui traitera ce que cet écart révèle">
+          <mat-icon>alt_route</mat-icon>
+          <span *ngIf="!n.pdcaCycleId && !n.dmaicProjectId"
+                i18n="@@nc.detail.convert">Traiter par une méthode</span>
+          <span *ngIf="n.pdcaCycleId" i18n="@@nc.detail.open-pdca">Voir le cycle PDCA</span>
+          <span *ngIf="n.dmaicProjectId" i18n="@@nc.detail.open-dmaic">Voir le projet DMAIC</span>
+        </button>
         <!-- L'analyse des 5 Pourquoi part d'un écart constaté : c'est d'ici
              qu'elle se déroule. Le compteur dit s'il y en a déjà une. -->
         <button mat-stroked-button class="five-whys-btn" (click)="openFiveWhys()"
@@ -181,6 +195,16 @@
             <div class="info-item" *ngIf="n.capaCaseId">
               <span class="info-label" i18n="@@nc.detail.capa-link">CAPA liée</span>
               <a class="info-value" [routerLink]="['/capa', n.capaCaseId]" i18n="@@nc.detail.capa-link-open">Ouvrir le dossier</a>
+            </div>
+            <div class="info-item" *ngIf="n.pdcaCycleId">
+              <span class="info-label" i18n="@@nc.detail.pdca-label">Cycle PDCA</span>
+              <a class="info-value" [routerLink]="['/pdca', n.pdcaCycleId]"
+                 data-test="lien-pdca" i18n="@@nc.detail.pdca-link-open">Ouvrir le cycle</a>
+            </div>
+            <div class="info-item" *ngIf="n.dmaicProjectId">
+              <span class="info-label" i18n="@@nc.detail.dmaic-label">Projet DMAIC</span>
+              <a class="info-value" [routerLink]="['/dmaic', n.dmaicProjectId]"
+                 data-test="lien-dmaic" i18n="@@nc.detail.dmaic-link-open">Ouvrir le projet</a>
             </div>
           </div>
 

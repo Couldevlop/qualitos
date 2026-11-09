@@ -20,6 +20,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -289,6 +290,57 @@ class NcControllerTest {
                 .andExpect(status().isConflict());
     }
 
+    // --- conversion : le cycle ou le projet qui traitera l'ecart (3.6) ---
+
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
+    void convertir_sansMethode_laisseLaGraviteDecider() throws Exception {
+        when(service.convert(eq(NC), any())).thenReturn(resp(NcStatus.UNDER_ANALYSIS));
+
+        mockMvc.perform(post("/api/v1/nc/{id}/convert", NC).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"pilotId\":\"" + OWNER + "\"}"))
+                .andExpect(status().isOk());
+
+        org.mockito.ArgumentCaptor<NcDto.ConvertRequest> cap =
+                org.mockito.ArgumentCaptor.forClass(NcDto.ConvertRequest.class);
+        verify(service).convert(eq(NC), cap.capture());
+        assertThat(cap.getValue().method()).isNull();
+        assertThat(cap.getValue().pilotId()).isEqualTo(OWNER);
+    }
+
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
+    void convertir_sansPilote_refuse() throws Exception {
+        // Un cycle ou un projet dont personne ne repond ne se revoit jamais.
+        mockMvc.perform(post("/api/v1/nc/{id}/convert", NC).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"method\":\"PDCA\"}"))
+                .andExpect(status().isBadRequest());
+        verifyNoInteractions(service);
+    }
+
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
+    void convertir_deuxFois_renvoie409() throws Exception {
+        when(service.convert(eq(NC), any()))
+                .thenThrow(new NcStateException("already converted to PDCA cycle"));
+
+        mockMvc.perform(post("/api/v1/nc/{id}/convert", NC).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"pilotId\":\"" + OWNER + "\"}"))
+                // 409 comme les autres transitions refusees : c'est l'ETAT de la
+                // ressource qui s'oppose, pas la forme de la requete.
+                .andExpect(status().isConflict());
+    }
+
+    @Test @WithMockUser(roles = "USER")
+    void convertir_parUnSimpleUtilisateur_refuse() throws Exception {
+        // Meme porte que l'escalade : le geste engage des personnes et du temps.
+        mockMvc.perform(post("/api/v1/nc/{id}/convert", NC).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"pilotId\":\"" + OWNER + "\"}"))
+                .andExpect(status().isForbidden());
+        verifyNoInteractions(service);
+    }
+
     @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void create_missingTenant_returns403() throws Exception {
         when(service.create(any())).thenThrow(new MissingTenantContextException());
@@ -348,7 +400,7 @@ class NcControllerTest {
                 NC, TENANT, "NC-2026-0001", "t", null,
                 NcCategory.PRODUCT, null, NcSeverity.MAJOR, s, NcOrigin.INTERNAL, Instant.now(),
                 null, null, null, null, REPORTER, "Ada Lovelace", null, null, null, null, null,
-                null, null, null, null, Instant.now(), Instant.now());
+                null, null, null, null, null, null, Instant.now(), Instant.now());
     }
 
     /**

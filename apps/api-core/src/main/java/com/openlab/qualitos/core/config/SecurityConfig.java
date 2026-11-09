@@ -109,6 +109,12 @@ public class SecurityConfig {
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                 // Gestion des tenants : Super Admin uniquement
                 .requestMatchers("/api/v1/tenants/**").hasRole("SUPER_ADMIN")
+                // Piste d'audit de la plateforme : l'éditeur, et lui seul. Nommée
+                // ici et pas laissée au « reste » : c'est le journal des actes de
+                // l'éditeur sur les dossiers de TOUS les clients, et le jour où
+                // quelqu'un voudra l'ouvrir à un autre rôle, la décision doit se
+                // prendre dans ce fichier, visible en revue.
+                .requestMatchers("/api/v1/platform-audit/**").hasRole("SUPER_ADMIN")
                 // Gestion des utilisateurs : Admin + Super Admin + Admin DU TENANT.
                 // ADMIN_TENANT était absent : un administrateur de tenant ne pouvait
                 // ni voir son équipe ni lui attribuer un rôle, alors que c'est

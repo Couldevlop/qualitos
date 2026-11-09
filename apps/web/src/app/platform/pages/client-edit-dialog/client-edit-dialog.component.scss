@@ -1,0 +1,21 @@
+/* Le repère : une information, pas un champ. La forme doit le dire. */
+.repere {
+  display: flex;
+  align-items: baseline;
+  gap: var(--qos-space-2);
+  margin: 0;
+  color: var(--qos-fg-secondary);
+  font-size: 0.875rem;
+
+  code {
+    font-family: var(--qos-font-mono, monospace);
+    color: var(--qos-fg-primary);
+  }
+
+  &__note {
+    color: var(--qos-fg-tertiary);
+    font-size: 0.75rem;
+  }
+}
+
+.full { width: 100%; }

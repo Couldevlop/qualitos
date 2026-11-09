@@ -52,7 +52,10 @@ class NcCreatedEventPublicationTest {
     void setUp() {
         repo = mock(NonConformityRepository.class);
         events = mock(ApplicationEventPublisher.class);
-        service = new NcService(repo, mock(CapaService.class), events, viewAll -> Optional.empty(),
+        service = new NcService(repo, mock(CapaService.class),
+                mock(com.openlab.qualitos.quality.pdca.PdcaService.class),
+                mock(com.openlab.qualitos.quality.dmaic.DmaicService.class),
+                events, viewAll -> Optional.empty(),
                 mock(com.openlab.qualitos.quality.nonconformity.subcategory.NcSubcategoryCatalog.class));
         TenantContext.setTenantId(CONTEXT_TENANT.toString());
     }

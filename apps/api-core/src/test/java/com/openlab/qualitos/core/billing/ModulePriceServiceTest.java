@@ -1,5 +1,6 @@
 package com.openlab.qualitos.core.billing;
 
+import com.openlab.qualitos.core.platformaudit.PlatformAuditService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,6 +27,7 @@ import static org.mockito.Mockito.when;
 class ModulePriceServiceTest {
 
     @Mock ModulePriceRepository repo;
+    @Mock PlatformAuditService auditTrail;
     ModulePriceService service;
 
     static final UUID ACTOR = UUID.randomUUID();
@@ -34,7 +36,7 @@ class ModulePriceServiceTest {
 
     @BeforeEach
     void setup() {
-        service = new ModulePriceService(repo, CLOCK);
+        service = new ModulePriceService(repo, CLOCK, auditTrail);
     }
 
     // ---------- priceOf : les deux tests du brief ----------

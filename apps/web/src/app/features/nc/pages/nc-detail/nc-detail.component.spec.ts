@@ -1024,3 +1024,148 @@ describe('NcDetailComponent — entrée Ishikawa', () => {
   });
 });
 
+/**
+ * « Une non-conformite devient un PDCA ou un projet DMAIC selon sa gravite. »
+ *
+ * <p>La CAPA traite l'ecart lui-meme ; le cycle ou le projet traite ce que
+ * l'ecart revele. Ce banc tient le chemin : la fenetre s'ouvre avec le contexte
+ * de l'ecart, l'ecran emmene la ou le travail se fait, et un ecart deja traite
+ * renvoie au dossier existant au lieu d'en proposer un second.
+ */
+describe('NcDetailComponent — conversion en cycle ou en projet', () => {
+  let fixture: ComponentFixture<NcDetailComponent>;
+  let component: NcDetailComponent;
+  let svc: jasmine.SpyObj<NcService>;
+  let router: Router;
+
+  const UUID = '55555555-5555-5555-5555-555555555555';
+
+  function setup(nc: NcResponse = buildNc({ id: UUID })): void {
+    svc.getNc.and.returnValue(of(nc));
+    fixture = TestBed.createComponent(NcDetailComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  }
+
+  function fenetreRend(choix: unknown): jasmine.Spy {
+    return spyOn(TestBed.inject(MatDialog), 'open')
+      .and.returnValue({ afterClosed: () => of(choix) } as never);
+  }
+
+  beforeEach(async () => {
+    svc = jasmine.createSpyObj<NcService>('NcService',
+      ['getNc', 'listPhotos', 'subcategories', 'convert']);
+    svc.subcategories.and.returnValue(of({ entries: [], defaults: true }));
+    svc.listPhotos.and.returnValue(of([]));
+
+    TestBed.resetTestingModule();
+    await TestBed.configureTestingModule({
+      declarations: [NcDetailComponent],
+      imports: [SharedModule, UiModule, NoopAnimationsModule],
+      providers: [
+        { provide: AuthzService, useValue: { can: () => of(true) } },
+        { provide: NcService, useValue: svc },
+        { provide: ConnectivityService, useValue: new FakeConnectivity() },
+        { provide: AuthService, useValue: { snapshot: () => ({ userId: 'u1' }) } },
+        { provide: FiveWhysService, useValue: fiveWhysSpy() },
+        { provide: IshikawaService, useValue: ishikawaSpy() },
+        { provide: ActivatedRoute, useValue: { snapshot: { paramMap: { get: () => UUID } } } }
+      ]
+    }).compileComponents();
+
+    router = TestBed.inject(Router);
+    spyOn(router, 'navigate').and.resolveTo(true);
+  });
+
+  it("ouvre la fenetre avec la reference, le titre et la gravite de l'ecart", () => {
+    const ouvre = fenetreRend(undefined);
+    setup(buildNc({ id: UUID, reference: 'NC-2026-0007', title: 'Bavure', severity: 'CRITICAL' }));
+
+    component.convert(buildNc({
+      id: UUID, reference: 'NC-2026-0007', title: 'Bavure', severity: 'CRITICAL'
+    }));
+
+    expect(ouvre.calls.mostRecent().args[1]).toEqual(jasmine.objectContaining({
+      data: { reference: 'NC-2026-0007', title: 'Bavure', severity: 'CRITICAL' }
+    }));
+  });
+
+  it("n'ecrit rien quand on renonce", () => {
+    fenetreRend(undefined);
+    setup();
+
+    component.convert(buildNc({ id: UUID }));
+
+    expect(svc.convert).not.toHaveBeenCalled();
+  });
+
+  it('ouvre le cycle et emmene dessus', () => {
+    fenetreRend({ method: 'PDCA', pilotId: 'u9', dueDate: null });
+    svc.convert.and.returnValue(of(buildNc({ id: UUID, pdcaCycleId: 'cycle-1' })));
+    setup();
+
+    component.convert(buildNc({ id: UUID }));
+
+    expect(svc.convert).toHaveBeenCalledWith(UUID,
+      { method: 'PDCA', pilotId: 'u9', dueDate: null });
+    // S'arreter sur la fiche obligerait a retrouver a la main un dossier qu'on
+    // vient de creer.
+    expect(router.navigate).toHaveBeenCalledWith(['/pdca', 'cycle-1']);
+  });
+
+  it('ouvre le projet et emmene dessus', () => {
+    fenetreRend({ method: 'DMAIC', pilotId: 'u9', dueDate: '2027-03-01' });
+    svc.convert.and.returnValue(of(buildNc({ id: UUID, dmaicProjectId: 'projet-1' })));
+    setup();
+
+    component.convert(buildNc({ id: UUID, severity: 'CRITICAL' }));
+
+    expect(router.navigate).toHaveBeenCalledWith(['/dmaic', 'projet-1']);
+  });
+
+  it('renvoie au cycle existant sans rien ouvrir de second', () => {
+    // Deux chantiers sur le meme ecart le traiteraient deux fois, et chacun
+    // compterait dans les indicateurs.
+    const ouvre = fenetreRend(undefined);
+    setup(buildNc({ id: UUID, pdcaCycleId: 'cycle-2' }));
+
+    component.convert(buildNc({ id: UUID, pdcaCycleId: 'cycle-2' }));
+
+    expect(ouvre).not.toHaveBeenCalled();
+    expect(svc.convert).not.toHaveBeenCalled();
+    expect(router.navigate).toHaveBeenCalledWith(['/pdca', 'cycle-2']);
+  });
+
+  it('renvoie au projet existant', () => {
+    const ouvre = fenetreRend(undefined);
+    setup(buildNc({ id: UUID, dmaicProjectId: 'projet-2' }));
+
+    component.convert(buildNc({ id: UUID, dmaicProjectId: 'projet-2' }));
+
+    expect(ouvre).not.toHaveBeenCalled();
+    expect(router.navigate).toHaveBeenCalledWith(['/dmaic', 'projet-2']);
+  });
+
+  it('libere le bouton et le dit quand le serveur refuse', () => {
+    fenetreRend({ method: 'PDCA', pilotId: 'u9', dueDate: null });
+    svc.convert.and.returnValue(throwError(() => new HttpErrorResponse({ status: 409 })));
+    const message = spyOn(TestBed.inject(MatSnackBar), 'open');
+    setup();
+
+    component.convert(buildNc({ id: UUID }));
+
+    expect(component.acting$.value).toBeFalse();
+    expect(message).toHaveBeenCalled();
+    expect(router.navigate).not.toHaveBeenCalled();
+  });
+
+  it('affiche le renvoi vers le cycle dans la fiche', () => {
+    fenetreRend(undefined);
+    setup(buildNc({ id: UUID, pdcaCycleId: 'cycle-3' }));
+
+    expect((fixture.nativeElement as HTMLElement)
+      .querySelector('[data-test="lien-pdca"]')).not.toBeNull();
+    expect((fixture.nativeElement as HTMLElement)
+      .querySelector('[data-test="lien-dmaic"]')).toBeNull();
+  });
+});

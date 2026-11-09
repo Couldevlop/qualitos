@@ -1,5 +1,6 @@
 package com.openlab.qualitos.quality.audit;
 
+import com.openlab.qualitos.quality.nonconformity.NcCategory;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -164,6 +165,21 @@ public final class AuditDto {
             Instant updatedAt
     ) {}
 
+    /**
+     * Ce qu'on demande pour déclarer l'écart d'un constat d'audit.
+     *
+     * <p>Trois champs, pas plus : tout ce qui est déjà écrit dans le constat —
+     * la description, la date, la clause, la gravité — est repris par le
+     * serveur. Le redemander ici serait l'occasion de deux versions du même
+     * fait, et c'est précisément ce que ce pont existe pour éviter.
+     */
+    public record DeclareNcRequest(
+            @NotBlank @Size(max = 255) String title,
+            @NotNull NcCategory category,
+            /** La nature fine, sous la catégorie. Facultative : on classe finement ensuite. */
+            @Size(max = 30) String subcategoryCode
+    ) {}
+
     public record FindingResponse(
             UUID id,
             UUID planId,
@@ -173,6 +189,8 @@ public final class AuditDto {
             String clauseRef,
             String photoUrl,
             UUID capaId,
+            /** L'écart ouvert au registre pour instruire ce constat, s'il l'a été. */
+            UUID ncId,
             UUID raisedBy,
             Instant raisedAt,
             Instant createdAt,

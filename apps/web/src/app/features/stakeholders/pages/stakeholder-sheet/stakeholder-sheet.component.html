@@ -300,6 +300,15 @@
                   <mat-icon aria-hidden="true">description</mat-icon>
                   <span i18n="@@stakeholders.link.document">Document</span>
                 </button>
+                <!-- Inscrire le risque, et non seulement le rattacher : l'analyse
+                     d'une exigence énonce souvent un risque que personne n'a
+                     encore porté au registre. Sans risque énoncé, rien à
+                     inscrire — le bouton ne s'affiche pas. -->
+                <button mat-stroked-button color="primary" type="button"
+                        *ngIf="!r.riskId && r.risk" (click)="openRisk(r)" data-test="inscrire-risque">
+                  <mat-icon aria-hidden="true">add_alert</mat-icon>
+                  <span i18n="@@stakeholders.register-risk">Inscrire le risque</span>
+                </button>
                 <button mat-stroked-button color="primary" type="button" *ngIf="!r.capaId"
                         (click)="openCapa(r)" data-test="creer-action">
                   <mat-icon aria-hidden="true">add_task</mat-icon>

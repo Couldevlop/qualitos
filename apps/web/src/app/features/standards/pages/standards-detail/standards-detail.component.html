@@ -198,7 +198,7 @@
         <p class="muted">{{ rm.doneStages }}/{{ rm.totalStages }} <span i18n="@@standards.detail.roadmap-stages-done">étapes terminées</span>
           ({{ rm.completionPercent | number:'1.0-0' }}%).</p>
         <table class="roadmap-table">
-          <thead><tr><th>#</th><th i18n="@@standards.detail.roadmap-col-stage">Étape</th><th i18n="@@standards.detail.roadmap-col-duration">Durée</th><th i18n="@@standards.detail.roadmap-col-responsible">Responsable</th><th i18n="@@common.status">Statut</th></tr></thead>
+          <thead><tr><th>#</th><th i18n="@@standards.detail.roadmap-col-stage">Étape</th><th i18n="@@standards.detail.roadmap-col-deadline">Échéance</th><th i18n="@@standards.detail.roadmap-col-responsible">Responsable</th><th i18n="@@common.status">Statut</th></tr></thead>
           <tbody>
             <tr *ngFor="let st of rm.stages" [class.done]="st.status === 'DONE'">
               <td>{{ st.stepNumber }}</td>
@@ -207,8 +207,30 @@
                 <div class="stage-deliv" *ngIf="st.deliverables">{{ st.deliverables }}</div>
                 <div class="stage-mod" *ngIf="st.involvedModules">⚙ {{ st.involvedModules }}</div>
               </td>
-              <td class="nowrap">{{ st.typicalDuration || '—' }}</td>
-              <td>{{ st.responsibleRole || '—' }}</td>
+              <!-- Une date au calendrier, pas une duree indicative : « 3-5 sem »
+                   ne dit pas quand l'etape doit etre finie. La duree type du
+                   modele reste en indication sous la case. -->
+              <td class="nowrap">
+                <mat-form-field appearance="outline" class="stage-date" subscriptSizing="dynamic">
+                  <input matInput [matDatepicker]="echeance" [value]="dateDeEcheance(st)"
+                         (dateChange)="changeStageDeadline(st, $event.value)"
+                         [attr.data-test]="'echeance-' + st.stepNumber">
+                  <mat-datepicker-toggle matIconSuffix [for]="echeance"
+                                         i18n-aria-label="@@standards.detail.roadmap-deadline-open"
+                                         aria-label="Ouvrir le calendrier"></mat-datepicker-toggle>
+                  <mat-datepicker #echeance></mat-datepicker>
+                  <mat-hint *ngIf="st.typicalDuration">{{ st.typicalDuration }}</mat-hint>
+                </mat-form-field>
+              </td>
+              <!-- Le responsable se choisit dans l'annuaire : une personne, pas
+                   un texte libre. Le role type du modele reste en indication. -->
+              <td class="stage-owner">
+                <qos-user-picker [ngModel]="st.assigneeId ?? null"
+                                 [ngModelOptions]="{ standalone: true }"
+                                 label="Responsable" i18n-label="@@standards.detail.roadmap-col-responsible"
+                                 [hint]="st.responsibleRole || ''"
+                                 (userSelected)="changeStageOwner(st, $event)"></qos-user-picker>
+              </td>
               <td>
                 <mat-form-field appearance="outline" class="status-select">
                   <mat-select [value]="st.status"
@@ -308,82 +330,6 @@
             </tr>
           </tbody>
         </table>
-      </div>
-    </mat-tab>
-
-    <!-- Onglet Certification à blanc -->
-    <mat-tab label="Certification à blanc" i18n-label="@@standards.detail.tab-cert-blanc">
-      <div class="tab-body">
-        <p class="muted" i18n="@@standards.detail.cert-intro">Simule l'audit de certification en 2 étapes (revue documentaire §4-7, audit terrain §8-10)
-          selon ISO/IEC 17021 : classement des non-conformités (majeures / mineures / observations),
-          décision de certification et émission d'un certificat à blanc signé et ancré.</p>
-        <button mat-raised-button color="primary" (click)="runCertificationBlanc()" [disabled]="runningCertBlanc">
-          <mat-icon>verified</mat-icon>
-          <span *ngIf="runningCertBlanc" i18n="@@standards.detail.cert-running">Simulation…</span>
-          <span *ngIf="!runningCertBlanc" i18n="@@standards.detail.cert-run">Lancer la certification à blanc</span>
-        </button>
-
-        <div *ngIf="certBlanc as cb" class="cb-result">
-          <div class="verdict" [ngClass]="decisionClass(cb.decision)">
-            <strong i18n="@@standards.detail.cert-decision-label">Décision :</strong> {{ cb.decisionLabel }}
-            <span class="verdict-sub">{{ cb.majorNonConformities }} <span i18n="@@standards.detail.cert-major-nc">NC majeure(s)</span> ·
-              {{ cb.minorNonConformities }} <span i18n="@@standards.detail.cert-minor-nc">mineure(s)</span> · {{ cb.observations }} <span i18n="@@standards.detail.cert-observations">observation(s)</span></span>
-          </div>
-
-          <div class="stage-row">
-            <mat-card class="stage-card" [ngClass]="cb.stage1.passed ? 'pass' : 'fail'">
-              <h4>① {{ cb.stage1.name }}</h4>
-              <span class="stage-state"><span *ngIf="cb.stage1.passed" i18n="@@standards.detail.cert-stage-passed">Franchie</span><span *ngIf="!cb.stage1.passed" i18n="@@standards.detail.cert-stage-failed">Non franchie</span>
-                · {{ cb.stage1.score | number:'1.0-0' }}%</span>
-              <p>{{ cb.stage1.summary }}</p>
-              <p class="watch" *ngIf="cb.stage1.watchPoints.length">
-                <span i18n="@@standards.detail.cert-watch-points">Points d'attention :</span> {{ cb.stage1.watchPoints.join(', ') }}</p>
-            </mat-card>
-            <mat-card class="stage-card" [ngClass]="cb.stage2.passed ? 'pass' : 'fail'">
-              <h4>② {{ cb.stage2.name }}</h4>
-              <span class="stage-state"><span *ngIf="cb.stage2.passed" i18n="@@standards.detail.cert-stage-passed">Franchie</span><span *ngIf="!cb.stage2.passed" i18n="@@standards.detail.cert-stage-failed">Non franchie</span>
-                · {{ cb.stage2.score | number:'1.0-0' }}%</span>
-              <p>{{ cb.stage2.summary }}</p>
-              <p class="watch" *ngIf="cb.stage2.watchPoints.length">
-                <span i18n="@@standards.detail.cert-watch-points">Points d'attention :</span> {{ cb.stage2.watchPoints.join(', ') }}</p>
-            </mat-card>
-          </div>
-
-          <!-- Certificat à blanc -->
-          <mat-card class="cert-card" *ngIf="cb.certificate as c">
-            <div class="cert-head">
-              <mat-icon>workspace_premium</mat-icon>
-              <div>
-                <h3 i18n="@@standards.detail.cert-certificate-title">Certificat à blanc</h3>
-                <span class="cert-num">{{ c.certificateNumber }}</span>
-              </div>
-            </div>
-            <p><span i18n="@@standards.detail.cert-norm">Norme :</span> <strong>{{ c.standardCode | uppercase }}</strong>
-              · <span i18n="@@standards.detail.cert-body">Organisme :</span> <strong>{{ c.certificationBody }}</strong></p>
-            <p><span i18n="@@standards.detail.cert-scope">Périmètre :</span> {{ c.scope }}</p>
-            <p><span i18n="@@standards.detail.cert-issued-at">Émis le</span> <strong>{{ c.issuedAt | date }}</strong>
-              · <span i18n="@@standards.detail.cert-expires-at">Valide jusqu'au</span> <strong>{{ c.expiresAt | date }}</strong></p>
-            <p class="cert-cond" *ngIf="c.conditions"><span i18n="@@standards.detail.cert-conditions">Conditions :</span> {{ c.conditions }}</p>
-            <p class="cert-disclaimer">{{ c.disclaimer }}</p>
-          </mat-card>
-
-          <!-- Liste des non-conformités -->
-          <h3 class="nc-title" *ngIf="cb.nonConformities.length" i18n="@@standards.detail.cert-nc-title">Non-conformités &amp; observations</h3>
-          <table class="findings-table" *ngIf="cb.nonConformities.length">
-            <thead><tr><th i18n="@@standards.detail.cert-nc-col-requirement">Exigence</th><th i18n="@@standards.detail.cert-nc-col-classification">Classement</th><th i18n="@@standards.detail.cert-nc-col-finding">Constat</th><th i18n="@@standards.detail.cert-nc-col-correction">Correction demandée</th></tr></thead>
-            <tbody>
-              <tr *ngFor="let nc of cb.nonConformities">
-                <td class="nowrap"><strong>{{ nc.requirementCode }}</strong><br><small>§{{ nc.sectionCode }}</small></td>
-                <td><span class="sev" [ngClass]="ncClass(nc.type)">{{ nc.type }}</span></td>
-                <td>{{ nc.requirementText }}</td>
-                <td>{{ nc.requiredCorrection }}</td>
-              </tr>
-            </tbody>
-          </table>
-
-          <p class="hash"><span i18n="@@standards.detail.cert-anchored-sha">Verdict ancré · SHA-256</span><code>{{ cb.sha256 }}</code></p>
-          <p class="hash"><span i18n="@@standards.detail.anchor-label">Ancrage</span><code>{{ cb.anchorTxRef }}</code></p>
-        </div>
       </div>
     </mat-tab>
 

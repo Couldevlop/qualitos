@@ -201,14 +201,16 @@ tr.pick {
   display: block;
 }
 
-.criterion {
+/*
+ * Le critere se lit en tete du panneau, sans encadre : il appartient au dossier
+ * et non au formulaire. L'encadre precedent ajoutait un second cadre blanc sous
+ * le bloc « Derniere evaluation », pour redire la meme phrase.
+ */
+.critere {
   display: flex;
   flex-direction: column;
   gap: 2px;
-  padding: var(--qos-space-3);
-  margin-bottom: var(--qos-space-3);
-  background: var(--qos-bg-subtle);
-  border-radius: var(--qos-radius-sm);
+  margin: 0 0 var(--qos-space-3);
 }
 
 .field-label {

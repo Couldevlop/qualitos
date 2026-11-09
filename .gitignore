@@ -135,10 +135,21 @@ tmp/
 *private-keys*.properties
 *.lic
 
-# Livrables de recette : regeneres par scripts/recette/construire.py, et le
-# classeur est rempli a la main pendant la campagne. Versionner un binaire
-# qu'on edite chaque jour n'apporte que des conflits ; le contenu, lui, est
-# versionne sous forme de code dans scripts/recette/.
-docs/recette/QualitOS-*.xlsx
-docs/recette/QualitOS-*.docx
-docs/recette/QualitOS-*.pptx
+# Documents de travail deposes dans docs/ (etudes, maquettes, recettes, captures,
+# classeurs) : ils circulent par courriel ou par le partage de fichiers, et le
+# depot ne les suit pas. Ce qui doit etre versionne s'ecrit en Markdown, et les
+# decisions dans docs/adr/. Les livrables de recette tombent sous la meme regle
+# pour une raison de plus : scripts/recette/construire.py les regenere, et le
+# classeur est rempli a la main pendant la campagne — versionner un binaire
+# qu'on edite chaque jour n'apporte que des conflits.
+docs/**/*.docx
+docs/**/*.xlsx
+docs/**/*.pptx
+docs/**/*.potx
+docs/**/*.pdf
+docs/**/*.html
+docs/**/*.png
+docs/**/*.PNG
+docs/**/*.jpg
+docs/**/*.jpeg
+docs/**/*.svg

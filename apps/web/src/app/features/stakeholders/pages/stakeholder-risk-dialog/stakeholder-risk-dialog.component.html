@@ -1,0 +1,80 @@
+<qos-form-dialog
+  i18n-title="@@stakeholders.risk.title"
+  title="Inscrire le risque au registre"
+  [subtitle]="subtitle"
+  [formGroup]="form"
+  [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@stakeholders.risk.submit"
+  submitLabel="Inscrire au registre"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
+
+  <!--
+    Ce que le registre reprend de l'exigence, en lecture : l'intitulé du risque
+    et sa cause sont déjà écrits, et la fenêtre ne doit pas inviter à les
+    réécrire ici.
+  -->
+  <dl class="repris" data-test="repris">
+    <div>
+      <dt i18n="@@stakeholders.risk.from-risk">Risque énoncé</dt>
+      <dd>{{ data.risk }}</dd>
+    </div>
+    <div>
+      <dt i18n="@@stakeholders.risk.from-requirement">Cause reprise (l'exigence)</dt>
+      <dd>{{ data.requirement }}</dd>
+    </div>
+  </dl>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@stakeholders.risk.kind">Nature du risque</mat-label>
+    <mat-select formControlName="type" data-test="nature">
+      <mat-option *ngFor="let t of types" [value]="t.value">{{ t.label }}</mat-option>
+    </mat-select>
+    <mat-hint i18n="@@stakeholders.risk.kind-hint">C'est elle qui range la ligne dans le registre.</mat-hint>
+  </mat-form-field>
+
+  <!--
+    Le processus et le propriétaire : le registre les exige de chacune de ses
+    lignes, et l'exigence ne les porte pas. La liste propose les processus déjà
+    employés pour que « Production » ne devienne pas « production ».
+  -->
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@rr.col.process">Processus</mat-label>
+    <input matInput formControlName="process" required maxlength="120"
+           [matAutocomplete]="autoProcessus" data-test="processus">
+    <mat-autocomplete #autoProcessus="matAutocomplete">
+      <mat-option *ngFor="let p of processes" [value]="p">{{ p }}</mat-option>
+    </mat-autocomplete>
+    <mat-hint i18n="@@stakeholders.risk.process-hint">Là où le risque se matérialise.</mat-hint>
+    <mat-error *ngIf="form.controls.process.hasError('required')"
+               i18n="@@rr.form.required">Champ obligatoire.</mat-error>
+  </mat-form-field>
+
+  <div class="cotation">
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@rr.severity">Gravité</mat-label>
+      <mat-select formControlName="severity" data-test="gravite">
+        <mat-option *ngFor="let n of severities" [value]="n.value">{{ n.label }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@rr.probability">Probabilité</mat-label>
+      <mat-select formControlName="probability" data-test="probabilite">
+        <mat-option *ngFor="let n of probabilities" [value]="n.value">{{ n.label }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <p class="cotation__score" data-test="score">
+      <span i18n="@@stakeholders.risk.score">Criticité brute</span>
+      <strong>{{ score }}</strong>
+    </p>
+  </div>
+
+  <qos-user-picker class="full" formControlName="ownerId" required data-test="proprietaire"
+                   i18n-label="@@rr.col.owner" label="Propriétaire"
+                   i18n-hint="@@stakeholders.risk.owner-hint"
+                   hint="La personne qui répond du risque en revue : le registre n'accepte pas de ligne sans elle."
+                   (userSelected)="ownerPicked($event)"></qos-user-picker>
+
+</qos-form-dialog>

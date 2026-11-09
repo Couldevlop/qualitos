@@ -161,7 +161,8 @@
               personne ne doive trancher à la hache faute de savoir où aller.
             -->
             <p class="effectiveness-nuance">
-              <a routerLink="/capa/efficacite" i18n="@@capa.detail.evaluate-link">
+              <a routerLink="/capa/efficacite" [queryParams]="{ capa: c.id }"
+                 i18n="@@capa.detail.evaluate-link">
                 Évaluer contre le critère, avec un verdict nuancé
               </a>
             </p>

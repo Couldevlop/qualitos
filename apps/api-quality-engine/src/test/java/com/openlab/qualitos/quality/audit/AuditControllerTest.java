@@ -402,7 +402,7 @@ class AuditControllerTest {
 
     private AuditDto.FindingResponse findingResp(FindingType t) {
         return new AuditDto.FindingResponse(
-                FINDING, PLAN, null, t, "d", null, null, null, LEAD,
+                FINDING, PLAN, null, t, "d", null, null, null, null, LEAD,
                 Instant.now(), Instant.now(), Instant.now());
     }
 }

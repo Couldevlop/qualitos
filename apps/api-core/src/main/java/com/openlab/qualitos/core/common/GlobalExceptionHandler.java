@@ -280,6 +280,22 @@ public class GlobalExceptionHandler {
         return problem;
     }
 
+    @ExceptionHandler(com.openlab.qualitos.core.platformaudit.PlatformAuditStateException.class)
+    public ProblemDetail handlePlatformAuditState(
+            com.openlab.qualitos.core.platformaudit.PlatformAuditStateException ex) {
+        // 400 et non 500 : une fenêtre de vérification mal bornée est une
+        // demande incorrecte, pas une panne de la piste d'audit. Le cas du
+        // compteur absent (migration non jouée) passe aussi par ici et mérite
+        // une trace — c'est le seul état où la plateforme refuse les actes
+        // sensibles faute de pouvoir les consigner.
+        log.warn("platform audit trail refused a request: {}", ex.getMessage());
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/platform-audit-state"));
+        problem.setTitle("Platform Audit Trail");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
     @ExceptionHandler(ModuleActivationFailedException.class)
     public ProblemDetail handleModuleActivationFailed(ModuleActivationFailedException ex) {
         // 502 et non 500 : la panne n'est pas ici. api-core a fait son travail —
@@ -392,6 +408,22 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ProblemDetail handleGeneric(Exception ex) {
+        // Spring MVC lève ses propres exceptions pour des demandes incorrectes
+        // — méthode HTTP non supportée (405), type de contenu refusé (415 ou
+        // 406), corps illisible (400) — et toutes implémentent ErrorResponse,
+        // en portant DÉJÀ le statut qui leur convient. Sans ce test, elles
+        // tombaient ici et sortaient en 500 « erreur inattendue » : un
+        // intégrateur qui appelait un GET en POST partait chercher une panne de
+        // serveur pour une faute d'appel. Le défaut touchait TOUTE surface
+        // d'api-core ; il a été vu en écrivant le banc qui vérifie que la piste
+        // d'audit n'expose aucune écriture.
+        if (ex instanceof org.springframework.web.ErrorResponse cadre) {
+            log.warn("rejected request: {}", ex.getMessage());
+            ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                    HttpStatus.valueOf(cadre.getStatusCode().value()), ex.getMessage());
+            problem.setProperty("timestamp", Instant.now());
+            return problem;
+        }
         log.error("Unhandled exception", ex);
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(
                 HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred");

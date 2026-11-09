@@ -43,15 +43,17 @@ public class StakeholderService {
     private final StakeholderRepository repository;
     private final StakeholderPorts.Context context;
     private final StakeholderPorts.CapaGateway capa;
+    private final StakeholderPorts.RiskGateway risks;
     private final StakeholderPorts.Assistant assistant;
     private final Clock clock;
 
     public StakeholderService(StakeholderRepository repository, StakeholderPorts.Context context,
-                              StakeholderPorts.CapaGateway capa, StakeholderPorts.Assistant assistant,
-                              Clock clock) {
+                              StakeholderPorts.CapaGateway capa, StakeholderPorts.RiskGateway risks,
+                              StakeholderPorts.Assistant assistant, Clock clock) {
         this.repository = repository;
         this.context = context;
         this.capa = capa;
+        this.risks = risks;
         this.assistant = assistant;
         this.clock = clock;
     }
@@ -254,6 +256,56 @@ public class StakeholderService {
                 + (r.origin() == null ? "" : " (origine : " + r.origin() + ")");
         UUID capaId = capa.open(reference, title, description, ownerId, ownerName, dueDate);
         StakeholderRequirement updated = s.attachCapa(requirementId, capaId);
+        repository.save(s);
+        return StakeholderDto.Requirement.of(updated);
+    }
+
+    /**
+     * Inscrit au registre des risques le risque qu'une exigence fait courir, et
+     * rattache la ligne à l'exigence.
+     *
+     * <p>C'est la troisième porte du référentiel transverse (§3.6), après la
+     * CAPA et le rattachement : une exigence analysée dit souvent « si on ne la
+     * tient pas, voilà ce qu'on risque », et cette phrase restait prisonnière
+     * du registre des parties intéressées. Elle entre maintenant là où les
+     * risques se cotent, se revoient et se traitent.
+     *
+     * <p>Le titre, la cause et l'effet viennent de l'exigence ; l'écran ne
+     * demande que ce que l'exigence ne contient pas et que le registre exige de
+     * toute ligne : la nature, les deux notes, le processus et la personne qui
+     * en répond. Une exigence sans risque énoncé est refusée : inscrire une
+     * ligne vide au registre serait du remplissage, pas une analyse.
+     */
+    public StakeholderDto.Requirement openRisk(UUID id, UUID requirementId, String type,
+                                               String process, int severity, int probability,
+                                               UUID ownerId, String ownerName) {
+        Stakeholder s = load(id);
+        StakeholderRequirement r = s.requirement(requirementId)
+                .orElseThrow(() -> new StakeholderValidationException(
+                        "Unknown requirement: " + requirementId));
+        if (r.riskId() != null) {
+            throw new StakeholderValidationException("This requirement already has a risk");
+        }
+        if (r.risk() == null) {
+            throw new StakeholderValidationException(
+                    "Say what is at stake on the requirement before registering the risk");
+        }
+        // Le registre n'accepte aucune ligne sans processus ni propriétaire : on
+        // le dit ici, dans la langue du module, plutôt que de laisser remonter
+        // une erreur de l'autre registre sur un champ que cet écran ne montre pas.
+        if (process == null || process.isBlank()) {
+            throw new StakeholderValidationException("A risk belongs to a process");
+        }
+        if (ownerId == null || ownerName == null || ownerName.isBlank()) {
+            throw new StakeholderValidationException("A risk needs the person who answers for it");
+        }
+        String originRef = s.name() + " / " + r.requirement();
+        String effect = r.riskLevel() == null ? r.risk()
+                : r.risk() + " (impact estime : " + r.riskLevel().name() + ")";
+        UUID riskId = risks.open(new StakeholderPorts.NewRisk(
+                originRef, r.risk(), r.requirement(), effect, type, process.strip(),
+                severity, probability, ownerId, ownerName.strip()));
+        StakeholderRequirement updated = s.linkRequirement(requirementId, RequirementLink.RISK, riskId);
         repository.save(s);
         return StakeholderDto.Requirement.of(updated);
     }

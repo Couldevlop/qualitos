@@ -98,7 +98,7 @@ describe('StakeholderSheetComponent', () => {
   async function build(canManage: boolean, sheet = fiche()): Promise<void> {
     svc = jasmine.createSpyObj<StakeholdersService>('StakeholdersService', [
       'update', 'markReviewed', 'addRequirement', 'setRequirementStatus',
-      'linkRequirement', 'removeRequirement', 'openCapa'
+      'linkRequirement', 'removeRequirement', 'openCapa', 'openRisk'
     ]);
     dialog = jasmine.createSpyObj<MatDialog>('MatDialog', ['open']);
     snack = jasmine.createSpyObj<MatSnackBar>('MatSnackBar', ['open']);
@@ -243,6 +243,7 @@ describe('StakeholderSheetComponent', () => {
       component.setStatus(exigence(), 'CONTROLLED');
       component.link(exigence(), 'RISK');
       component.openCapa(exigence());
+      component.openRisk(exigence());
       component.removeRequirement(exigence());
 
       expect(svc.update).not.toHaveBeenCalled();
@@ -251,6 +252,7 @@ describe('StakeholderSheetComponent', () => {
       expect(svc.setRequirementStatus).not.toHaveBeenCalled();
       expect(svc.linkRequirement).not.toHaveBeenCalled();
       expect(svc.openCapa).not.toHaveBeenCalled();
+      expect(svc.openRisk).not.toHaveBeenCalled();
       expect(svc.removeRequirement).not.toHaveBeenCalled();
       expect(dialog.open).not.toHaveBeenCalled();
     });
@@ -351,6 +353,62 @@ describe('StakeholderSheetComponent', () => {
       svc.openCapa.and.returnValue(throwError(() => new Error('refus')));
 
       component.openCapa(component.requirements[0]);
+
+      expect(snack.open).toHaveBeenCalled();
+    });
+
+    it('inscrit au registre le risque énoncé sur l’exigence', () => {
+      dialogRend({
+        type: 'QUALITY', process: 'Production', severity: 4, probability: 3,
+        ownerId: 'u-1', ownerName: 'Awa Diop'
+      });
+      svc.openRisk.and.returnValue(of(exigence({ riskId: 'rsk-1' })));
+
+      component.openRisk(component.requirements[0]);
+
+      expect(svc.openRisk).toHaveBeenCalledWith('pi-1', 'ex-1', 'QUALITY', 'Production', 4, 3,
+        'u-1', 'Awa Diop');
+      expect(component.requirements[0].riskId).toBe('rsk-1');
+      expect(snack.open).toHaveBeenCalled();
+    });
+
+    it('n’inscrit rien quand la fenêtre est refermée sans choix', () => {
+      dialogRend(undefined);
+
+      component.openRisk(component.requirements[0]);
+
+      expect(svc.openRisk).not.toHaveBeenCalled();
+    });
+
+    it('n’inscrit pas deux fois le risque d’une même exigence', async () => {
+      // La ligne existe déjà au registre : la réinscrire créerait deux fiches
+      // du même risque, cotées séparément.
+      await build(true, fiche([exigence({ riskId: 'rsk-1' })]));
+
+      component.openRisk(component.requirements[0]);
+
+      expect(dialog.open).not.toHaveBeenCalled();
+      expect(svc.openRisk).not.toHaveBeenCalled();
+    });
+
+    it('n’ouvre pas la fenêtre pour une exigence dont le risque n’est pas énoncé', async () => {
+      // Sans énoncé, il n'y a rien à inscrire : une ligne de registre vide ne
+      // se cote ni ne se revoit.
+      await build(true, fiche([exigence({ risk: null })]));
+
+      component.openRisk(component.requirements[0]);
+
+      expect(dialog.open).not.toHaveBeenCalled();
+    });
+
+    it('signale l’échec d’une inscription au registre', () => {
+      dialogRend({
+        type: 'QUALITY', process: 'Production', severity: 3, probability: 3,
+        ownerId: 'u-1', ownerName: 'Awa Diop'
+      });
+      svc.openRisk.and.returnValue(throwError(() => new Error('refus')));
+
+      component.openRisk(component.requirements[0]);
 
       expect(snack.open).toHaveBeenCalled();
     });

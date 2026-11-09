@@ -5394,6 +5394,62 @@ Portail clients</source>
         <source>Facultatif. Ce que ce livrable doit produire concrètement : c'est ce qu'on vérifiera.</source>
         <target state="translated">任意です。この成果物が具体的に生み出すもの。検証されるのはこれです。</target>
       </trans-unit>
+      <trans-unit id="audits.detail.declare-nc" datatype="html">
+        <source>Déclarer la NC</source>
+        <target state="translated">不適合を登録</target>
+      </trans-unit>
+      <trans-unit id="audits.detail.open-nc" datatype="html">
+        <source>Voir la NC</source>
+        <target state="translated">不適合を表示</target>
+      </trans-unit>
+      <trans-unit id="audits.declare-nc.title" datatype="html">
+        <source>Déclarer la non-conformité du constat</source>
+        <target state="translated">所見の不適合を登録</target>
+      </trans-unit>
+      <trans-unit id="audits.declare-nc.subtitle" datatype="html">
+        <source>Le constat devient un écart du registre : il comptera dans les indicateurs, portera son analyse de cause et se clôra sur une preuve.</source>
+        <target state="translated">所見は登録簿の不適合になります。指標に計上され、原因分析を伴い、証拠によって完了します。</target>
+      </trans-unit>
+      <trans-unit id="audits.declare-nc.submit" datatype="html">
+        <source>Inscrire au registre</source>
+        <target state="translated">登録簿に記載</target>
+      </trans-unit>
+      <trans-unit id="audits.declare-nc.from" datatype="html">
+        <source>Constat d’audit</source>
+        <target state="translated">監査所見</target>
+      </trans-unit>
+      <trans-unit id="audits.declare-nc.description" datatype="html">
+        <source>Description reprise</source>
+        <target state="translated">引き継がれる記述</target>
+      </trans-unit>
+      <trans-unit id="audits.declare-nc.detected" datatype="html">
+        <source>Constaté le</source>
+        <target state="translated">確認日</target>
+      </trans-unit>
+      <trans-unit id="audits.declare-nc.nc-title" datatype="html">
+        <source>Intitulé de l’écart</source>
+        <target state="translated">不適合の件名</target>
+      </trans-unit>
+      <trans-unit id="audits.declare-nc.nc-title-hint" datatype="html">
+        <source>Court et citable : c’est ce que lira la revue de direction.</source>
+        <target state="translated">短く引用しやすい表現で。経営レビューが読む文です。</target>
+      </trans-unit>
+      <trans-unit id="audits.declare-nc.nc-title-required" datatype="html">
+        <source>Intitulé requis.</source>
+        <target state="translated">件名は必須です。</target>
+      </trans-unit>
+      <trans-unit id="audits.declare-nc.saved" datatype="html">
+        <source>Écart <x id="reference"/> inscrit au registre.</source>
+        <target state="translated">不適合 <x id="reference"/> を登録簿に記載しました。</target>
+      </trans-unit>
+      <trans-unit id="audits.declare-nc.already" datatype="html">
+        <source>Ce constat a déjà son écart au registre.</source>
+        <target state="translated">この所見にはすでに登録簿の不適合があります。</target>
+      </trans-unit>
+      <trans-unit id="audits.declare-nc.error" datatype="html">
+        <source>L’écart n’a pas pu être inscrit au registre.</source>
+        <target state="translated">不適合を登録簿に記載できませんでした。</target>
+      </trans-unit>
       <trans-unit id="nav.audits-planning" datatype="html">
         <source>Planning audits</source>
         <target state="translated">監査スケジュール</target>
@@ -13111,6 +13167,46 @@ Coordonnées professionnelles</source>
       <trans-unit id="forecast.kpi.err-generic" datatype="html">
         <source>Échec de la prévision (HTTP <x id="status"/>).</source>
         <target state="translated">予測に失敗しました（HTTP <x id="status"/>）。</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.role-panel" datatype="html">
+        <source>À quoi sert cette prévision</source>
+        <target state="translated">この予測の目的</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.role-what" datatype="html">
+        <source>Elle répond à une seule question : <x id="START_TAG_STRONG"/>au rythme actuel, l'indicateur atteindra-t-il sa cible, et quand ?<x id="CLOSE_TAG_STRONG"/> Le lissage exponentiel Holt-Winters prolonge le niveau, la tendance et, s'il y en a une, la saisonnalité de la série. L'intervalle à 95 % dit l'incertitude : une prévision sans intervalle se lit comme une certitude qu'elle n'est pas.</source>
+        <target state="translated">答えるのは一つの問いだけです。<x id="START_TAG_STRONG"/>現在のペースで、この指標は目標に届くのか、そしていつか。<x id="CLOSE_TAG_STRONG"/>ホルト・ウィンタース指数平滑法が、系列の水準・トレンドおよび季節性（あれば）を延長します。95 % 区間は不確かさを示します。区間のない予測は、そうではない確信として読まれてしまいます。</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.role-when" datatype="html">
+        <source>Elle sert à décider <x id="START_TAG_EM"/>avant<x id="CLOSE_TAG_EM"/> l'échéance : relancer un cycle d'amélioration qui n'atteindra pas son objectif, renforcer une action dont l'effet s'essouffle, ou au contraire ne rien changer à ce qui converge. Sur une série courte ou erratique, la probabilité d'atteinte reste basse et l'intervalle large — c'est le signal qu'il n'y a pas encore de tendance à prolonger, pas une invitation à y lire une baisse.</source>
+        <target state="translated">期限を迎える<x id="START_TAG_EM"/>前<x id="CLOSE_TAG_EM"/>に判断するためのものです。目標に届かない改善サイクルを立て直す、効果が弱まった対策を強める、収束しているものには手を入れない。系列が短い、あるいは乱れている場合、達成確率は低く区間は広いままになります。これは延長すべき傾向がまだないという合図であって、低下と読み取るべき根拠ではありません。</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.role-links-title" datatype="html">
+        <source>Ce à quoi elle est reliée</source>
+        <target state="translated">どことつながっているか</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.role-link-kpi" datatype="html">
+        <source>Catalogue des indicateurs</source>
+        <target state="translated">指標カタログ</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.role-link-kpi-text" datatype="html">
+        <source>La source des mesures. Choisir un indicateur actif remplit la série, sa cible et le sens d'amélioration : aucune ressaisie, et le chiffre projeté porte sur la même définition que celui des tableaux de bord.</source>
+        <target state="translated">測定値の出どころです。有効な指標を選ぶと、系列・目標・改善の向きが入ります。再入力は不要で、予測値はダッシュボードと同じ定義に基づきます。</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.role-link-spc" datatype="html">
+        <source>Cartes de contrôle (SPC)</source>
+        <target state="translated">管理図（SPC）</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.role-link-spc-text" datatype="html">
+        <source>Lecture complémentaire, et non concurrente. Les règles de Nelson disent que le procédé a <x id="START_TAG_EM"/>déjà<x id="CLOSE_TAG_EM"/> dérivé ; la prévision dit où la série va si rien ne change. L'une constate, l'autre projette.</source>
+        <target state="translated">競合ではなく補完の読み方です。ネルソンのルールは工程が<x id="START_TAG_EM"/>すでに<x id="CLOSE_TAG_EM"/>外れたことを示し、予測は何も変えなければ系列がどこへ向かうかを示します。一方は確認し、他方は延長します。</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.role-link-manual" datatype="html">
+        <source>Ce qui reste à votre main</source>
+        <target state="translated">人の手に残ること</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.role-link-manual-text" datatype="html">
+        <source>La prévision n'ouvre rien d'elle-même : ni CAPA, ni cycle PDCA, ni projet DMAIC. Elle éclaire la décision, et c'est depuis le module concerné qu'on l'engage — une projection n'est pas un constat, et elle ne doit pas déclencher d'action au registre.</source>
+        <target state="translated">予測はそれ自体では何も起票しません。CAPA も PDCA サイクルも DMAIC プロジェクトも開きません。判断を助けるだけで、着手はそれぞれのモジュールから行います。予測は確認された事実ではなく、台帳に対策を登録する根拠にはなりません。</target>
       </trans-unit>
       <trans-unit id="nav.admin-documents" datatype="html">
         <source>Documentation</source>
@@ -21385,6 +21481,106 @@ historique 12 mois</source>
         <source>Le registre ne se lit pas pour le moment.</source>
         <target state="translated">現在、登録簿を読み込めません。</target>
       </trans-unit>
+      <trans-unit id="nc.convert.title" datatype="html">
+        <source>Traiter cet écart</source>
+        <target state="translated">この逸脱に対処</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.submit" datatype="html">
+        <source>Ouvrir le dossier</source>
+        <target state="translated">案件を開く</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.from-nc" datatype="html">
+        <source>Écart repris</source>
+        <target state="translated">引き継がれる逸脱</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.method" datatype="html">
+        <source>Méthode</source>
+        <target state="translated">手法</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.method-pdca" datatype="html">
+        <source>Cycle PDCA</source>
+        <target state="translated">PDCAサイクル</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.method-dmaic" datatype="html">
+        <source>Projet DMAIC</source>
+        <target state="translated">DMAICプロジェクト</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.why-dmaic" datatype="html">
+        <source>Un écart critique demande des mesures et une phase de maîtrise : c'est un projet DMAIC.</source>
+        <target state="translated">重大な逸脱には測定と管理フェーズが必要です。つまりDMAICプロジェクトです。</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.why-pdca" datatype="html">
+        <source>Un écart mineur ou majeur se traite par un cycle : planifier, agir, vérifier, généraliser.</source>
+        <target state="translated">軽微または重要な逸脱はサイクルで対処します。計画し、実行し、確認し、定着させる。</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.overridden" datatype="html">
+        <source>Ce n'est pas la méthode que la gravité appelait. C'est votre choix, il part tel quel.</source>
+        <target state="translated">重大度が示した手法とは異なります。あなたの判断として、そのまま送信されます。</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.pilot" datatype="html">
+        <source>Qui mène le travail</source>
+        <target state="translated">担当する人</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.pilot-hint" datatype="html">
+        <source>Propriétaire du cycle, ou black belt du projet. Un dossier dont personne ne répond ne se revoit jamais.</source>
+        <target state="translated">サイクルのオーナー、またはプロジェクトのブラックベルト。誰も責任を持たない案件は二度と見直されません。</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.due-date" datatype="html">
+        <source>Échéance visée</source>
+        <target state="translated">目標期日</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.due-date-hint" datatype="html">
+        <source>Facultative : le projet peut la fixer plus tard.</source>
+        <target state="translated">任意：プロジェクト側で後から設定できます。</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.due-date-open" datatype="html">
+        <source>Ouvrir le calendrier</source>
+        <target state="translated">カレンダーを開く</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.pdca-opened" datatype="html">
+        <source>Cycle PDCA ouvert.</source>
+        <target state="translated">PDCAサイクルを開きました。</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.dmaic-opened" datatype="html">
+        <source>Projet DMAIC ouvert.</source>
+        <target state="translated">DMAICプロジェクトを開きました。</target>
+      </trans-unit>
+      <trans-unit id="nc.convert.failed" datatype="html">
+        <source>Le dossier n'a pas pu être ouvert.</source>
+        <target state="translated">案件を開けませんでした。</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.convert" datatype="html">
+        <source>Traiter par une méthode</source>
+        <target state="translated">手法で対処</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.convert-tooltip" datatype="html">
+        <source>Ouvrir le cycle ou le projet qui traitera ce que cet écart révèle</source>
+        <target state="translated">この逸脱が明らかにしたものに対処するサイクルまたはプロジェクトを開く</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.open-pdca" datatype="html">
+        <source>Voir le cycle PDCA</source>
+        <target state="translated">PDCAサイクルを表示</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.open-dmaic" datatype="html">
+        <source>Voir le projet DMAIC</source>
+        <target state="translated">DMAICプロジェクトを表示</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.pdca-label" datatype="html">
+        <source>Cycle PDCA</source>
+        <target state="translated">PDCAサイクル</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.pdca-link-open" datatype="html">
+        <source>Ouvrir le cycle</source>
+        <target state="translated">サイクルを開く</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.dmaic-label" datatype="html">
+        <source>Projet DMAIC</source>
+        <target state="translated">DMAICプロジェクト</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.dmaic-link-open" datatype="html">
+        <source>Ouvrir le projet</source>
+        <target state="translated">プロジェクトを開く</target>
+      </trans-unit>
       <trans-unit id="nav.admin-nc" datatype="html">
         <source>Natures de NC</source>
         <target state="translated">NC の性質</target>
@@ -22435,6 +22631,18 @@ historique 12 mois</source>
         <source>Non-conformités ouvertes</source>
         <target state="translated">未対応の不適合</target>
       </trans-unit>
+      <trans-unit id="home.kpi.open-nc-external" datatype="html">
+        <source>Réclamations clients ouvertes</source>
+        <target state="translated">未対応の顧客苦情</target>
+      </trans-unit>
+      <trans-unit id="home.kpi.open-capa-major" datatype="html">
+        <source>CAPA majeures ouvertes</source>
+        <target state="translated">未完了の重要CAPA</target>
+      </trans-unit>
+      <trans-unit id="home.kpi.capa-major-scope" datatype="html">
+        <source>Criticité haute et moyenne</source>
+        <target state="translated">重要度：高・中</target>
+      </trans-unit>
       <trans-unit id="home.kpi.fives-score" datatype="html">
         <source>Score 5S moyen</source>
         <target state="translated">平均5Sスコア</target>
@@ -23417,6 +23625,306 @@ historique 12 mois</source>
         <source>Impossible d'annuler cette inscription.</source>
         <target state="translated">この登録を取り消せません。</target>
       </trans-unit>
+      <trans-unit id="platform.audit.title" datatype="html">
+        <source>Piste d'audit de la plateforme</source>
+        <target state="translated">プラットフォーム監査証跡</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.subtitle" datatype="html">
+        <source>Les actes de l'éditeur sur les dossiers des clients : créations, modules, tarifs, accès accordés aux cabinets. Chaque acte est chaîné par empreinte et la base refuse de le modifier. C'est la piste qu'une autorité demande.</source>
+        <target state="translated">ベンダーが顧客アカウントに対して行った行為（作成、モジュール、料金、事務所へのアクセス付与）。各行為はハッシュで連鎖され、データベースは変更を拒否します。当局が求める証跡です。</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.append-only" datatype="html">
+        <source>Registre inaltérable</source>
+        <target state="translated">追記専用台帳</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.filter-action" datatype="html">
+        <source>Type d'acte</source>
+        <target state="translated">行為の種別</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.filter-any-action" datatype="html">
+        <source>Tous les actes</source>
+        <target state="translated">すべての行為</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.filter-tenant" datatype="html">
+        <source>Client visé</source>
+        <target state="translated">対象の顧客</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.filter-tenant-hint" datatype="html">
+        <source>Identifiant du client</source>
+        <target state="translated">顧客の識別子</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.filter-actor" datatype="html">
+        <source>Auteur</source>
+        <target state="translated">実行者</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.filter-from" datatype="html">
+        <source>Depuis</source>
+        <target state="translated">開始</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.filter-to" datatype="html">
+        <source>Jusqu'à</source>
+        <target state="translated">終了</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.uuid-error" datatype="html">
+        <source>Identifiant attendu au format UUID.</source>
+        <target state="translated">識別子は UUID 形式で入力してください。</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.apply" datatype="html">
+        <source>Filtrer</source>
+        <target state="translated">絞り込む</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.reset" datatype="html">
+        <source>Réinitialiser</source>
+        <target state="translated">リセット</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.criterion-tenant" datatype="html">
+        <source>Filtre appliqué : le client visé. Les autres critères sont ignorés par le serveur.</source>
+        <target state="translated">適用中の絞り込み: 対象の顧客。他の条件はサーバーで無視されます。</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.criterion-action" datatype="html">
+        <source>Filtre appliqué : le type d'acte. Les autres critères sont ignorés par le serveur.</source>
+        <target state="translated">適用中の絞り込み: 行為の種別。他の条件はサーバーで無視されます。</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.criterion-actor" datatype="html">
+        <source>Filtre appliqué : l'auteur. Les autres critères sont ignorés par le serveur.</source>
+        <target state="translated">適用中の絞り込み: 実行者。他の条件はサーバーで無視されます。</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.criterion-period" datatype="html">
+        <source>Filtre appliqué : la période. Renseignez les deux bornes pour qu'elle soit prise en compte.</source>
+        <target state="translated">適用中の絞り込み: 期間。両端を入力すると有効になります。</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.criterion-none" datatype="html">
+        <source>Aucun filtre actif : toute la piste d'audit est affichée, du plus récent au plus ancien.</source>
+        <target state="translated">絞り込みなし: 監査証跡の全体を新しい順に表示しています。</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.col-seq" datatype="html">
+        <source>N°</source>
+        <target state="translated">番号</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.col-when" datatype="html">
+        <source>Survenu le</source>
+        <target state="translated">発生日時</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.col-actor" datatype="html">
+        <source>Auteur</source>
+        <target state="translated">実行者</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.col-action" datatype="html">
+        <source>Acte</source>
+        <target state="translated">行為</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.col-target" datatype="html">
+        <source>Cible</source>
+        <target state="translated">対象</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.col-hash" datatype="html">
+        <source>Empreinte</source>
+        <target state="translated">ハッシュ</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.no-actor" datatype="html">
+        <source>La plateforme</source>
+        <target state="translated">プラットフォーム</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.detail-aria" datatype="html">
+        <source>Afficher le détail de l'acte</source>
+        <target state="translated">行為の詳細を表示</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.empty" datatype="html">
+        <source>Aucun acte ne correspond à ces critères.</source>
+        <target state="translated">これらの条件に一致する行為はありません。</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.paginator-aria" datatype="html">
+        <source>Pagination de la piste d'audit</source>
+        <target state="translated">監査証跡のページ送り</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.load-failed" datatype="html">
+        <source>La piste d'audit n'a pas pu être chargée.</source>
+        <target state="translated">監査証跡を読み込めませんでした。</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.verify-title" datatype="html">
+        <source>Intégrité de la chaîne</source>
+        <target state="translated">チェーンの完全性</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.verify-hint" datatype="html">
+        <source>Recalcule les empreintes, contrôle leur chaînage et compte les actes. Une rupture révèle une retouche ; un acte manquant se voit au comptage, qu'aucune empreinte ne montrerait.</source>
+        <target state="translated">ハッシュを再計算し、連鎖を検査して行為の件数を数えます。連鎖の断絶は改変を示し、欠落した行為は件数で判明します（ハッシュだけでは分かりません）。</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.verify-all" datatype="html">
+        <source>Vérifier tout le journal</source>
+        <target state="translated">ログ全体を検証</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.verify-page" datatype="html">
+        <source>Sur la page affichée</source>
+        <target state="translated">表示中のページのみ</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.verify-running" datatype="html">
+        <source>Vérification en cours…</source>
+        <target state="translated">検証中…</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.verify-failed" datatype="html">
+        <source>La vérification d'intégrité a échoué.</source>
+        <target state="translated">完全性の検証に失敗しました。</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.verdict-ok" datatype="html">
+        <source>Chaîne intacte</source>
+        <target state="translated">チェーンは無傷</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.verdict-ko" datatype="html">
+        <source>Chaîne rompue</source>
+        <target state="translated">チェーンが断絶</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.verdict-count" datatype="html">
+        <source>Actes examinés</source>
+        <target state="translated">検証した行為</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.verdict-scope-page" datatype="html">
+        <source> — page affichée seulement</source>
+        <target state="translated"> — 表示中のページのみ</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.verdict-caveat" datatype="html">
+        <source>Aucune retouche détectée. La chaîne ne dit rien d'un acte qui n'aurait jamais été consigné.</source>
+        <target state="translated">改変は検出されませんでした。記録されなかった行為についてチェーンは何も示しません。</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.export-title" datatype="html">
+        <source>Dossier d'audit</source>
+        <target state="translated">監査ファイル</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.export-hint" datatype="html">
+        <source>Tout le journal, son verdict d'intégrité et un sceau, dans un fichier vérifiable sans la plateforme. L'export est lui-même consigné.</source>
+        <target state="translated">ログ全体、完全性の判定、そして封印を、プラットフォームなしで検証できるファイルにまとめます。エクスポート自体も記録されます。</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.export" datatype="html">
+        <source>Exporter le dossier</source>
+        <target state="translated">ファイルをエクスポート</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.export-running" datatype="html">
+        <source>Export en cours…</source>
+        <target state="translated">エクスポート中…</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.export-failed" datatype="html">
+        <source>Le dossier d'audit n'a pas pu être exporté.</source>
+        <target state="translated">監査ファイルをエクスポートできませんでした。</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.export-seal" datatype="html">
+        <source>Sceau du dernier dossier</source>
+        <target state="translated">最新ファイルの封印</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.detail-title" datatype="html">
+        <source>Détail de l'acte</source>
+        <target state="translated">行為の詳細</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.close-detail-aria" datatype="html">
+        <source>Fermer le détail</source>
+        <target state="translated">詳細を閉じる</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.field-summary" datatype="html">
+        <source>Résumé</source>
+        <target state="translated">概要</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.recorded-at" datatype="html">
+        <source>Enregistré</source>
+        <target state="translated">記録日時</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.field-tenant" datatype="html">
+        <source>Client concerné</source>
+        <target state="translated">対象の顧客</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.field-ip" datatype="html">
+        <source>Adresse d'origine</source>
+        <target state="translated">発信元アドレス</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.field-agent" datatype="html">
+        <source>Logiciel employé</source>
+        <target state="translated">使用したソフトウェア</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.field-hash" datatype="html">
+        <source>Empreinte</source>
+        <target state="translated">ハッシュ</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.field-previous" datatype="html">
+        <source>Empreinte précédente</source>
+        <target state="translated">直前のハッシュ</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.chain-origin" datatype="html">
+        <source>Premier acte du registre</source>
+        <target state="translated">台帳の最初の行為</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.field-payload" datatype="html">
+        <source>Détail enregistré</source>
+        <target state="translated">記録された詳細</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.act.tenant-created" datatype="html">
+        <source>Client créé</source>
+        <target state="translated">顧客を作成</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.act.tenant-updated" datatype="html">
+        <source>Client modifié</source>
+        <target state="translated">顧客を変更</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.act.tenant-deactivated" datatype="html">
+        <source>Client désactivé</source>
+        <target state="translated">顧客を無効化</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.act.module-subscribed" datatype="html">
+        <source>Module ouvert</source>
+        <target state="translated">モジュールを開放</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.act.module-cancelled" datatype="html">
+        <source>Module fermé</source>
+        <target state="translated">モジュールを停止</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.act.price-set" datatype="html">
+        <source>Tarif fixé</source>
+        <target state="translated">料金を設定</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.act.firm-created" datatype="html">
+        <source>Cabinet créé</source>
+        <target state="translated">事務所を作成</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.act.firm-updated" datatype="html">
+        <source>Cabinet modifié</source>
+        <target state="translated">事務所を変更</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.act.firm-active" datatype="html">
+        <source>Cabinet suspendu ou réactivé</source>
+        <target state="translated">事務所を停止または再開</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.act.consultant-added" datatype="html">
+        <source>Consultant rattaché</source>
+        <target state="translated">コンサルタントを登録</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.act.consultant-active" datatype="html">
+        <source>Consultant désactivé ou réactivé</source>
+        <target state="translated">コンサルタントを無効化または再開</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.act.engagement-proposed" datatype="html">
+        <source>Mission proposée</source>
+        <target state="translated">業務を提案</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.act.engagement-granted" datatype="html">
+        <source>Accès accordé à un cabinet</source>
+        <target state="translated">事務所にアクセスを付与</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.act.engagement-declined" datatype="html">
+        <source>Mission refusée</source>
+        <target state="translated">業務を辞退</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.act.engagement-revoked" datatype="html">
+        <source>Accès retiré à un cabinet</source>
+        <target state="translated">事務所のアクセスを取消</target>
+      </trans-unit>
+      <trans-unit id="platform.audit.act.exported" datatype="html">
+        <source>Dossier d'audit exporté</source>
+        <target state="translated">監査ファイルをエクスポート</target>
+      </trans-unit>
+      <trans-unit id="platform.nav.audit" datatype="html">
+        <source>Piste d’audit</source>
+        <target state="translated">監査トレイル</target>
+      </trans-unit>
+      <trans-unit id="platform.nav.audit.hint" datatype="html">
+        <source>Les actes de l’éditeur sur les dossiers clients</source>
+        <target state="translated">ベンダーが顧客テナントに対して行った操作</target>
+      </trans-unit>
       <trans-unit id="platform.brand.console" datatype="html">
         <source>Console éditeur</source>
         <target state="translated">提供元コンソール</target>
@@ -23508,6 +24016,230 @@ historique 12 mois</source>
       <trans-unit id="platform.modules.family.integrations" datatype="html">
         <source>Intégrations</source>
         <target state="translated">連携</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.edit" datatype="html">
+        <source>Corriger</source>
+        <target state="translated">修正</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.edit-title" datatype="html">
+        <source>Corriger le client</source>
+        <target state="translated">顧客を修正</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.plan-hint" datatype="html">
+        <source>L'offre borne les modules ouvrables ; elle ne ferme pas ceux déjà ouverts.</source>
+        <target state="translated">プランは開放できるモジュールの上限を定めるもので、既に開放済みのものを閉じることはありません。</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.slug-frozen" datatype="html">
+        <source>ne change plus</source>
+        <target state="translated">以後変更不可</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.saved" datatype="html">
+        <source>Client mis à jour.</source>
+        <target state="translated">顧客を更新しました。</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.save-failed" datatype="html">
+        <source>La correction n'a pas pu être enregistrée.</source>
+        <target state="translated">修正を保存できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.suspend" datatype="html">
+        <source>Suspendre</source>
+        <target state="translated">停止</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.resume" datatype="html">
+        <source>Réactiver</source>
+        <target state="translated">再開</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.suspend-title" datatype="html">
+        <source>Suspendre ce client ?</source>
+        <target state="translated">この顧客を停止しますか？</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.suspend-message" datatype="html">
+        <source>Ses utilisateurs ne pourront plus se connecter. Rien n'est effacé : ses dossiers, ses preuves et sa piste d'audit restent en place, et tout reprend si vous le réactivez.</source>
+        <target state="translated">所属ユーザーはサインインできなくなります。削除は行われません。記録、証拠、監査証跡はそのまま残り、再開すればすべて元に戻ります。</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.suspend-action" datatype="html">
+        <source>Suspendre</source>
+        <target state="translated">停止する</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.suspended" datatype="html">
+        <source>Client suspendu ; ses données sont conservées.</source>
+        <target state="translated">顧客を停止しました。データは保持されます。</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.suspend-failed" datatype="html">
+        <source>La suspension n'a pas pu être appliquée.</source>
+        <target state="translated">停止を適用できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.resumed" datatype="html">
+        <source>Client réactivé.</source>
+        <target state="translated">顧客を再開しました。</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.resume-failed" datatype="html">
+        <source>La réactivation n'a pas pu être appliquée.</source>
+        <target state="translated">再開を適用できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.edit" datatype="html">
+        <source>Corriger</source>
+        <target state="translated">修正</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.edit-title" datatype="html">
+        <source>Corriger le cabinet</source>
+        <target state="translated">事務所を修正</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.saved" datatype="html">
+        <source>Fiche du cabinet mise à jour.</source>
+        <target state="translated">事務所の情報を更新しました。</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.save-failed" datatype="html">
+        <source>La fiche du cabinet n’a pas pu être enregistrée.</source>
+        <target state="translated">事務所の情報を保存できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.group-core" datatype="html">
+        <source>Socle</source>
+        <target state="translated">基本機能</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.group-core-hint" datatype="html">
+        <source>Livré avec la plateforme : toujours actif, non facturé à l'unité.</source>
+        <target state="translated">プラットフォームに同梱：常時有効で、モジュール単位の課金はありません。</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.group-extra" datatype="html">
+        <source>Modules additionnels</source>
+        <target state="translated">追加モジュール</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.group-extra-hint" datatype="html">
+        <source>Ouverts, essayés ou fermés client par client, selon l'offre.</source>
+        <target state="translated">プランに応じて、顧客ごとに開放・試用・終了します。</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.type.prevention" datatype="html">
+        <source>Prévention</source>
+        <target state="translated">予防</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.type.detection" datatype="html">
+        <source>Détection</source>
+        <target state="translated">検知</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.mech.physical-shape" datatype="html">
+        <source>Forme physique</source>
+        <target state="translated">物理形状</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.mech.interlock" datatype="html">
+        <source>Verrouillage</source>
+        <target state="translated">インターロック</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.mech.limit-switch" datatype="html">
+        <source>Fin de course</source>
+        <target state="translated">リミットスイッチ</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.mech.sensor" datatype="html">
+        <source>Capteur</source>
+        <target state="translated">センサー</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.mech.vision" datatype="html">
+        <source>Vision</source>
+        <target state="translated">画像認識</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.mech.checklist" datatype="html">
+        <source>Liste de vérification</source>
+        <target state="translated">チェックリスト</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.mech.color-coding" datatype="html">
+        <source>Code couleur</source>
+        <target state="translated">色分け</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.mech.position-reference" datatype="html">
+        <source>Référence de position</source>
+        <target state="translated">位置基準</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.mech.counter" datatype="html">
+        <source>Comptage</source>
+        <target state="translated">カウント</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.mech.software-validation" datatype="html">
+        <source>Contrôle logiciel</source>
+        <target state="translated">ソフトウェア検証</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.mech.other" datatype="html">
+        <source>Autre</source>
+        <target state="translated">その他</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.create.title" datatype="html">
+        <source>Inscrire un détrompeur</source>
+        <target state="translated">ポカヨケを登録</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.create.subtitle" datatype="html">
+        <source>Une action qui empêche l'erreur de se produire devient un dispositif de votre bibliothèque, réutilisable sur un autre projet.</source>
+        <target state="translated">誤りを起こり得なくする対策は、ライブラリの装置となり、別のプロジェクトでも使えます。</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.create.submit" datatype="html">
+        <source>Inscrire et déployer</source>
+        <target state="translated">登録して配備</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.create.origin" datatype="html">
+        <source>Origine citée</source>
+        <target state="translated">記載される出所</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.create.origin-text" datatype="html">
+        <source>Projet DMAIC « <x id="project"/> » — action n° <x id="position"/> du plan d'actions</source>
+        <target state="translated">DMAICプロジェクト「<x id="project"/>」— 対策計画の第<x id="position"/>項</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.create.name" datatype="html">
+        <source>Nom du dispositif</source>
+        <target state="translated">装置の名称</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.create.name-hint" datatype="html">
+        <source>Repris de l'action, corrigez-le : il se lira seul dans la bibliothèque.</source>
+        <target state="translated">対策文から取りました。ライブラリでは単独で読まれるため、必要なら直してください。</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.create.type" datatype="html">
+        <source>Il agit</source>
+        <target state="translated">作用の仕方</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.create.type-hint" datatype="html">
+        <source>Prévention : l'erreur devient impossible. Détection : elle est vue tout de suite.</source>
+        <target state="translated">予防：誤りが起こり得なくなる。検知：すぐに見える。</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.create.mechanism" datatype="html">
+        <source>Par quel mécanisme</source>
+        <target state="translated">どの仕組みで</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.create.mechanism-hint" datatype="html">
+        <source>C’est par là que la bibliothèque se filtre.</source>
+        <target state="translated">ライブラリの絞り込みはここで行います。</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.create.description" datatype="html">
+        <source>Comment il fonctionne</source>
+        <target state="translated">仕組みの説明</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.create.description-hint" datatype="html">
+        <source>Repris du texte de l'action. Celui qui le réutilisera n'aura pas votre contexte.</source>
+        <target state="translated">対策文から取りました。再利用する人にあなたの文脈はありません。</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.create.industries" datatype="html">
+        <source>Où il s'applique</source>
+        <target state="translated">適用範囲</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.create.industries-placeholder" datatype="html">
+        <source>Lignes, ateliers ou secteurs concernés</source>
+        <target state="translated">対象のライン、工場、業種</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.create.examples" datatype="html">
+        <source>Exemples de pose</source>
+        <target state="translated">設置例</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.create.done" datatype="html">
+        <source>Détrompeur <x id="code"/> inscrit à la bibliothèque et déployé sur ce projet.</source>
+        <target state="translated">ポカヨケ <x id="code"/> をライブラリに登録し、本プロジェクトに配備しました。</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.create.failed" datatype="html">
+        <source>Le détrompeur n'a pas pu être inscrit.</source>
+        <target state="translated">ポカヨケを登録できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.pokayoke-add" datatype="html">
+        <source>Inscrire un détrompeur</source>
+        <target state="translated">ポカヨケを登録</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.pokayoke-tooltip" datatype="html">
+        <source>Inscrire cette action comme détrompeur réutilisable, et la déployer sur ce projet</source>
+        <target state="translated">この対策を再利用できるポカヨケとして登録し、本プロジェクトに配備する</target>
       </trans-unit>
       <trans-unit id="nav.produits" datatype="html">
         <source>Produits</source>
@@ -29045,6 +29777,62 @@ historique 12 mois</source>
         <source>Statut du procédé</source>
         <target state="translated">工程の状態</target>
       </trans-unit>
+      <trans-unit id="stakeholders.register-risk" datatype="html">
+        <source>Inscrire le risque</source>
+        <target state="translated">リスクを登録</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.risk.title" datatype="html">
+        <source>Inscrire le risque au registre</source>
+        <target state="translated">リスクを登録簿に記載</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.risk.subtitle" datatype="html">
+        <source>Exigence : <x id="exigence"/></source>
+        <target state="translated">要求事項：<x id="exigence"/></target>
+      </trans-unit>
+      <trans-unit id="stakeholders.risk.submit" datatype="html">
+        <source>Inscrire au registre</source>
+        <target state="translated">登録簿に記載</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.risk.from-risk" datatype="html">
+        <source>Risque énoncé</source>
+        <target state="translated">記載済みのリスク</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.risk.from-requirement" datatype="html">
+        <source>Cause reprise (l’exigence)</source>
+        <target state="translated">引き継がれる原因（要求事項）</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.risk.kind" datatype="html">
+        <source>Nature du risque</source>
+        <target state="translated">リスクの種別</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.risk.kind-hint" datatype="html">
+        <source>C’est elle qui range la ligne dans le registre.</source>
+        <target state="translated">このリスクが登録簿のどこに並ぶかを決めます。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.risk.process-hint" datatype="html">
+        <source>Là où le risque se matérialise.</source>
+        <target state="translated">リスクが現れる場所です。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.risk.score" datatype="html">
+        <source>Criticité brute</source>
+        <target state="translated">固有の重大度</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.risk.owner-hint" datatype="html">
+        <source>La personne qui répond du risque en revue : le registre n’accepte pas de ligne sans elle.</source>
+        <target state="translated">レビューでこのリスクに責任を負う担当者。登録簿は担当者のない行を受け付けません。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.risk-opened" datatype="html">
+        <source>Risque inscrit au registre ; l’exigence le cite.</source>
+        <target state="translated">リスクを登録簿に記載しました。要求事項がこれを参照します。</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.risk-failed" datatype="html">
+        <source>Le risque n’a pas pu être inscrit au registre.</source>
+        <target state="translated">リスクを登録簿に記載できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="rr.origin.stakeholder" datatype="html">
+        <source>Exigence de partie intéressée</source>
+        <target state="translated">利害関係者の要求事項</target>
+      </trans-unit>
       <trans-unit id="nav.stakeholders" datatype="html">
         <source>Parties prenantes</source>
         <target state="translated">利害関係者</target>
@@ -30732,6 +31520,22 @@ historique 12 mois</source>
       <trans-unit id="standards.detail.roadmap-col-stage" datatype="html">
         <source>Étape</source>
         <target state="translated">ステップ</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.roadmap-col-deadline" datatype="html">
+        <source>Échéance</source>
+        <target state="translated">期限</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.roadmap-deadline-open" datatype="html">
+        <source>Ouvrir le calendrier</source>
+        <target state="translated">カレンダーを開く</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.stage-owner-updated" datatype="html">
+        <source>Responsable de l'étape <x id="step"/> enregistré</source>
+        <target state="translated">ステップ <x id="step"/> の担当者を保存しました</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.stage-deadline-updated" datatype="html">
+        <source>Échéance de l'étape <x id="step"/> enregistrée</source>
+        <target state="translated">ステップ <x id="step"/> の期限を保存しました</target>
       </trans-unit>
       <trans-unit id="standards.detail.roadmap-col-duration" datatype="html">
         <source>Durée</source>

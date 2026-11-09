@@ -63,7 +63,8 @@
          laissait la sous-categorie vide en croyant qu'il n'y en avait pas. -->
     <mat-form-field appearance="outline" subscriptSizing="dynamic">
       <mat-label i18n="@@nc.create.subcategory">Sous-catégorie</mat-label>
-      <mat-select formControlName="subcategoryCode" data-test="nc-nature">
+      <mat-select formControlName="subcategoryCode" data-test="nc-nature"
+                  panelClass="qos-select-panel--lignes">
         <mat-option value="" i18n="@@nc.create.subcategory-none">— À classer —</mat-option>
         <mat-option *ngFor="let s of subcategoryChoices" [value]="s.code">{{ s.label }}</mat-option>
       </mat-select>

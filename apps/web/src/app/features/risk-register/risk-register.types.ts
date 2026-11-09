@@ -10,7 +10,7 @@ export type RegisterType = 'QUALITY' | 'ENVIRONMENT' | 'HEALTH_SAFETY' | 'INFORM
 
 export type RegisterOrigin =
   | 'DIRECT' | 'MANAGEMENT_REVIEW' | 'AUDIT' | 'CUSTOMER_FEEDBACK' | 'MONITORING'
-  | 'FMEA' | 'NON_CONFORMITY' | 'INCIDENT' | 'CHANGE';
+  | 'FMEA' | 'NON_CONFORMITY' | 'INCIDENT' | 'CHANGE' | 'STAKEHOLDER';
 
 /** Les origines qui pointent un objet réel de la plateforme, vérifié par le serveur. */
 export type RiskSourceOrigin = 'FMEA' | 'NON_CONFORMITY' | 'AUDIT' | 'CHANGE';

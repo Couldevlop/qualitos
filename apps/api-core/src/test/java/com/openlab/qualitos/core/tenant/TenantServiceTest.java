@@ -32,6 +32,13 @@ class TenantServiceTest {
     @Mock
     private TenantRepository tenantRepository;
 
+    // Le service consigne desormais chaque acte dans la piste d'audit de la
+    // plateforme. Simule ici : ce que ces appels portent est verifie par
+    // PlatformAuditWiringTest, qui est l'endroit ou cette liste se lit d'un
+    // trait.
+    @Mock
+    private com.openlab.qualitos.core.platformaudit.PlatformAuditService auditTrail;
+
     @InjectMocks
     private TenantService tenantService;
 

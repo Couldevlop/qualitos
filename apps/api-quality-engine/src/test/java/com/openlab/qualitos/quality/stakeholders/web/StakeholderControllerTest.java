@@ -267,6 +267,61 @@ class StakeholderControllerTest {
         verify(service).openCapa(ID, RID, "Remettre le taux de service", OWNER, "Alice Martin", DEMAIN);
     }
 
+    @Test
+    @WithMockUser(roles = "QUALITY_MANAGER")
+    void leRisqueDUneExigenceSInscritAuRegistre() throws Exception {
+        when(service.openRisk(eq(ID), eq(RID), eq("QUALITY"), eq("Production"), eq(4), eq(3),
+                eq(OWNER), any())).thenReturn(exigence());
+        String corps = json.writeValueAsString(new StakeholderWebDto.OpenRiskRequest(
+                "QUALITY", "Production", 4, 3, OWNER, "Alice Martin"));
+
+        mockMvc.perform(post(BASE + "/" + ID + "/requirements/" + RID + "/risk").with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON).content(corps))
+                .andExpect(status().isCreated());
+
+        verify(service).openRisk(ID, RID, "QUALITY", "Production", 4, 3, OWNER, "Alice Martin");
+    }
+
+    @Test
+    @WithMockUser(roles = "QUALITY_MANAGER")
+    void uneNoteHorsEchelleEstRefuseeAvantLeService() throws Exception {
+        // Les notes du registre vont de 1 à 5 : un 9 passé ici fabriquerait une
+        // cotation que les seuils de criticité ne savent pas lire.
+        mockMvc.perform(post(BASE + "/" + ID + "/requirements/" + RID + "/risk").with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"type\":\"QUALITY\",\"process\":\"Production\",\"severity\":9,"
+                                + "\"probability\":3,\"ownerId\":\"" + OWNER + "\",\"ownerName\":\"Alice\"}"))
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(service);
+    }
+
+    @Test
+    @WithMockUser(roles = "QUALITY_MANAGER")
+    void unRisqueSansProprietaireEstRefuseAvantLeService() throws Exception {
+        // Le registre affiche un propriétaire sur chaque ligne : une ligne sans
+        // personne qui en répond ne se revoit jamais.
+        mockMvc.perform(post(BASE + "/" + ID + "/requirements/" + RID + "/risk").with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"type\":\"QUALITY\",\"process\":\"Production\",\"severity\":3,"
+                                + "\"probability\":3}"))
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(service);
+    }
+
+    @Test
+    @WithMockUser(roles = "EXTERNAL_AUDITOR")
+    void unAuditeurTiersNInscritAucunRisque() throws Exception {
+        mockMvc.perform(post(BASE + "/" + ID + "/requirements/" + RID + "/risk").with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"type\":\"QUALITY\",\"process\":\"Production\",\"severity\":3,"
+                                + "\"probability\":3,\"ownerId\":\"" + OWNER + "\",\"ownerName\":\"Alice\"}"))
+                .andExpect(status().isForbidden());
+
+        verifyNoInteractions(service);
+    }
+
     // ---------- assistants IA ----------
 
     @Test

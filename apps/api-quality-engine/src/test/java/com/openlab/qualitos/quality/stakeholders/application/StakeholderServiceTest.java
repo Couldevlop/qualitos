@@ -45,6 +45,7 @@ class StakeholderServiceTest {
 
     private FakeRepository repository;
     private FakeCapa capa;
+    private FakeRisks risks;
     private FakeAssistant assistant;
     private StakeholderService service;
 
@@ -52,8 +53,9 @@ class StakeholderServiceTest {
     void setUp() {
         repository = new FakeRepository();
         capa = new FakeCapa();
+        risks = new FakeRisks();
         assistant = new FakeAssistant();
-        service = new StakeholderService(repository, new FakeContext(), capa, assistant,
+        service = new StakeholderService(repository, new FakeContext(), capa, risks, assistant,
                 Clock.fixed(MAINTENANT, ZoneOffset.UTC));
     }
 
@@ -453,6 +455,104 @@ class StakeholderServiceTest {
         assertThat(service.onCapaClosed(null, UUID.randomUUID())).isZero();
     }
 
+    // ---------- le risque d'une exigence, au registre ----------
+
+    @Test
+    void leRisqueDUneExigenceEntreAuRegistreEtLExigenceLeCite() {
+        UUID id = service.create("Client A", StakeholderCategory.CUSTOMERS,
+                StakeholderSide.EXTERNAL).id();
+        UUID exigence = service.addRequirement(id, exigence("Tracer les lots")).id();
+
+        StakeholderDto.Requirement apres = service.openRisk(id, exigence, "QUALITY", "Production",
+                4, 3, ACTEUR, "Alice");
+
+        assertThat(apres.riskId()).isNotNull();
+        // Ce que le registre lit : le risque énoncé sur l'exigence, pas l'exigence.
+        assertThat(risks.last.title()).isEqualTo("Retard de livraison");
+        assertThat(risks.last.cause()).isEqualTo("Tracer les lots");
+        assertThat(risks.last.originRef()).isEqualTo("Client A / Tracer les lots");
+        assertThat(risks.last.process()).isEqualTo("Production");
+        assertThat(risks.last.severity()).isEqualTo(4);
+        assertThat(risks.last.probability()).isEqualTo(3);
+        assertThat(risks.last.ownerId()).isEqualTo(ACTEUR);
+        assertThat(risks.last.ownerName()).isEqualTo("Alice");
+        // Le rattachement est enregistré, pas seulement renvoyé.
+        assertThat(service.get(id).requirements().get(0).riskId()).isEqualTo(apres.riskId());
+    }
+
+    @Test
+    void lImpactEstimeDeLExigenceAccompagneLEffetRedoute() {
+        UUID id = service.create("Client A", StakeholderCategory.CUSTOMERS,
+                StakeholderSide.EXTERNAL).id();
+        UUID exigence = service.addRequirement(id, exigence("Tracer les lots")).id();
+
+        service.openRisk(id, exigence, "QUALITY", "Production", 3, 3, ACTEUR, "Alice");
+
+        assertThat(risks.last.effect()).contains("Retard de livraison").contains("MEDIUM");
+    }
+
+    @Test
+    void uneExigenceSansRisqueEnonceNEcritRienAuRegistre() {
+        // Une ligne de registre dont l'énoncé serait vide ne se cote pas et ne
+        // se revoit pas : c'est du remplissage, et l'auditeur le verra.
+        UUID id = service.create("Client A", StakeholderCategory.CUSTOMERS,
+                StakeholderSide.EXTERNAL).id();
+        UUID exigence = service.addRequirement(id, new StakeholderRequirement(
+                null, null, "Tracer les lots", null, MandatoryNature.CONTRACTUAL, null, null,
+                null, null, null, null, RequirementStatus.APPLICABLE,
+                null, null, null, null, null)).id();
+
+        assertThatThrownBy(() -> service.openRisk(id, exigence, "QUALITY", "Production", 3, 3,
+                ACTEUR, "Alice")).isInstanceOf(StakeholderValidationException.class);
+        assertThat(risks.appels).isZero();
+    }
+
+    @Test
+    void unRisqueSansProcessusNEntrePasAuRegistre() {
+        // Le registre n'accepte aucune ligne sans processus : le refus se dit
+        // ici, sur le champ de cet écran, et non en 422 d'un autre module.
+        UUID id = service.create("Client A", StakeholderCategory.CUSTOMERS,
+                StakeholderSide.EXTERNAL).id();
+        UUID exigence = service.addRequirement(id, exigence("Tracer les lots")).id();
+
+        assertThatThrownBy(() -> service.openRisk(id, exigence, "QUALITY", "  ", 3, 3,
+                ACTEUR, "Alice")).isInstanceOf(StakeholderValidationException.class);
+        assertThat(risks.appels).isZero();
+    }
+
+    @Test
+    void unRisqueSansProprietaireNEntrePasAuRegistre() {
+        UUID id = service.create("Client A", StakeholderCategory.CUSTOMERS,
+                StakeholderSide.EXTERNAL).id();
+        UUID exigence = service.addRequirement(id, exigence("Tracer les lots")).id();
+
+        assertThatThrownBy(() -> service.openRisk(id, exigence, "QUALITY", "Production", 3, 3,
+                null, null)).isInstanceOf(StakeholderValidationException.class);
+        assertThat(risks.appels).isZero();
+    }
+
+    @Test
+    void uneExigenceNInscritPasDeuxFoisLeMemeRisque() {
+        UUID id = service.create("Client A", StakeholderCategory.CUSTOMERS,
+                StakeholderSide.EXTERNAL).id();
+        UUID exigence = service.addRequirement(id, exigence("Tracer les lots")).id();
+        service.openRisk(id, exigence, "QUALITY", "Production", 3, 3, ACTEUR, "Alice");
+
+        assertThatThrownBy(() -> service.openRisk(id, exigence, "QUALITY", "Production", 3, 3,
+                ACTEUR, "Alice")).isInstanceOf(StakeholderValidationException.class);
+        assertThat(risks.appels).isEqualTo(1);
+    }
+
+    @Test
+    void uneExigenceInconnueNInscritRien() {
+        UUID id = service.create("Client A", StakeholderCategory.CUSTOMERS,
+                StakeholderSide.EXTERNAL).id();
+
+        assertThatThrownBy(() -> service.openRisk(id, UUID.randomUUID(), "QUALITY", "Production",
+                3, 3, ACTEUR, "Alice")).isInstanceOf(StakeholderValidationException.class);
+        assertThat(risks.appels).isZero();
+    }
+
     // ---------- aides ----------
 
     private static String longText() {
@@ -511,6 +611,18 @@ class StakeholderServiceTest {
                          String ownerName, LocalDate dueDate) {
             this.lastReference = reference;
             this.lastDescription = description;
+            return UUID.randomUUID();
+        }
+    }
+
+    private static final class FakeRisks implements StakeholderPorts.RiskGateway {
+        private StakeholderPorts.NewRisk last;
+        private int appels;
+
+        @Override
+        public UUID open(StakeholderPorts.NewRisk risk) {
+            this.last = risk;
+            this.appels++;
             return UUID.randomUUID();
         }
     }

@@ -205,7 +205,10 @@ describe('MainShellComponent (navigation model)', () => {
     // client ; creer une organisation est l'administration DE la plateforme.
     // 16 : Cabinets rejoint l'administration (ADR 0106) — l'octroi d'un acces a
     // un cabinet partenaire est un parametrage du client, pas de l'editeur.
-    expect(labels).toEqual([8, 6, 7, 2, 1, 6, 1, 11, 8, 1, 16]);
+    // Operations passe a 14 et Referentiels retombe a 5 : le Standards Hub, la
+    // co-couverture IMS et la generation documentaire IA suivent desormais les
+    // audits, parce qu'un audit se prepare contre un referentiel.
+    expect(labels).toEqual([8, 6, 7, 2, 1, 6, 1, 14, 5, 1, 16]);
   });
 
   it('le registre des risques a son groupe, juste apres la non-conformite', () => {

@@ -1,5 +1,7 @@
 package com.openlab.qualitos.core.partner;
 
+import com.openlab.qualitos.core.platformaudit.PlatformAuditAction;
+import com.openlab.qualitos.core.platformaudit.PlatformAuditService;
 import com.openlab.qualitos.core.tenant.Tenant;
 import com.openlab.qualitos.core.tenant.TenantNotFoundException;
 import com.openlab.qualitos.core.tenant.TenantRepository;
@@ -38,10 +40,12 @@ public class PartnerFirmService {
     private final PartnerEngagementRepository engagements;
     private final TenantRepository tenants;
     private final Clock clock;
+    private final PlatformAuditService auditTrail;
 
     public PartnerFirmService(PartnerFirmRepository firms, PartnerConsultantRepository consultants,
                               PartnerEngagementRepository engagements, TenantRepository tenants,
-                              Clock clock) {
+                              Clock clock, PlatformAuditService auditTrail) {
+        this.auditTrail = auditTrail;
         this.firms = firms;
         this.consultants = consultants;
         this.engagements = engagements;
@@ -65,6 +69,10 @@ public class PartnerFirmService {
                 .active(true)
                 .build());
         log.info("partner.firm.created firm_id={} slug={}", firm.getId(), firm.getSlug());
+        auditTrail.record(PlatformAuditAction.PARTNER_FIRM_CREATED, "partner_firm",
+                firm.getId(), null,
+                "Cabinet cree : " + firm.getName() + " (" + firm.getSlug() + ")",
+                "{\"slug\":\"" + firm.getSlug() + "\"}");
         return describe(firm);
     }
 
@@ -84,13 +92,20 @@ public class PartnerFirmService {
         if (!firm.getSlug().equals(request.slug()) && firms.existsBySlug(request.slug())) {
             throw new PartnerExceptions.FirmAlreadyExists(request.slug());
         }
+        String avant = firm.getName() + " (" + firm.getSlug() + ")";
         firm.setSlug(request.slug());
         firm.setName(request.name());
         firm.setRegistrationNumber(blankToNull(request.registrationNumber()));
         firm.setContactEmail(blankToNull(request.contactEmail()));
         firm.setContactPhone(blankToNull(request.contactPhone()));
         log.info("partner.firm.updated firm_id={}", firmId);
-        return describe(firms.save(firm));
+        PartnerFirm enregistre = firms.save(firm);
+        auditTrail.record(PlatformAuditAction.PARTNER_FIRM_UPDATED, "partner_firm",
+                firmId, null,
+                "Cabinet modifie : " + avant + " -> " + enregistre.getName()
+                        + " (" + enregistre.getSlug() + ")",
+                null);
+        return describe(enregistre);
     }
 
     /**
@@ -107,6 +122,13 @@ public class PartnerFirmService {
         PartnerFirm firm = require(firmId);
         firm.setActive(active);
         log.info("partner.firm.{} firm_id={}", active ? "reactivated" : "suspended", firmId);
+        // Un acte, deux sens : la suspension coupe l'acces de tous les
+        // consultants du cabinet d'un coup. C'est exactement le genre de geste
+        // qu'un auditeur veut pouvoir dater.
+        auditTrail.record(PlatformAuditAction.PARTNER_FIRM_ACTIVE_CHANGED, "partner_firm",
+                firmId, null,
+                "Cabinet " + (active ? "reactive" : "suspendu") + " : " + firm.getName(),
+                "{\"active\":" + active + "}");
         return describe(firms.save(firm));
     }
 
@@ -135,6 +157,10 @@ public class PartnerFirmService {
                 .active(true)
                 .build());
         log.info("partner.consultant.added firm_id={} consultant_id={}", firmId, saved.getId());
+        auditTrail.record(PlatformAuditAction.PARTNER_CONSULTANT_ADDED, "partner_consultant",
+                saved.getId(), null,
+                "Consultant rattache au cabinet " + firmId + " : " + saved.getDisplayName(),
+                "{\"firmId\":\"" + firmId + "\"}");
         return PartnerDto.ConsultantResponse.from(saved);
     }
 
@@ -153,6 +179,11 @@ public class PartnerFirmService {
         consultant.setActive(active);
         log.info("partner.consultant.{} consultant_id={}",
                 active ? "reactivated" : "deactivated", consultantId);
+        auditTrail.record(PlatformAuditAction.PARTNER_CONSULTANT_ACTIVE_CHANGED,
+                "partner_consultant", consultantId, null,
+                "Consultant " + (active ? "reactive" : "desactive") + " : "
+                        + consultant.getDisplayName() + " (cabinet " + firmId + ")",
+                "{\"firmId\":\"" + firmId + "\",\"active\":" + active + "}");
         return PartnerDto.ConsultantResponse.from(consultants.save(consultant));
     }
 
@@ -182,6 +213,11 @@ public class PartnerFirmService {
                 .build());
         log.info("partner.engagement.proposed engagement_id={} firm_id={} tenant_id={} actor={}",
                 saved.getId(), firmId, tenant.getId(), actor);
+        auditTrail.record(PlatformAuditAction.PARTNER_ENGAGEMENT_PROPOSED, "partner_engagement",
+                saved.getId(), tenant.getId(),
+                "Mission proposee : cabinet " + firm.getName() + " chez " + tenant.getName()
+                        + " (portee " + saved.getScope() + ")",
+                "{\"firmId\":\"" + firmId + "\",\"scope\":\"" + saved.getScope() + "\"}");
         return PartnerDto.EngagementResponse.from(saved, tenant.getName(), firm.getName(), today());
     }
 

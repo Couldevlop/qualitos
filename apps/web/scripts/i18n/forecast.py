@@ -46,4 +46,57 @@ TRANSLATIONS = {
     'forecast.kpi.err-gateway': ('Passerelle IA indisponible (ai-service injoignable).', 'AI gateway unavailable (ai-service unreachable).', 'Pasarela de IA no disponible (ai-service inaccesible).', 'بوابة الذكاء الاصطناعي غير متاحة (ai-service غير قابل للوصول).', 'AIゲートウェイが利用できません（ai-service に到達不可）。', 'AI 网关不可用（无法连接 ai-service）。'),
     'forecast.kpi.err-unavailable': ('Service IA momentanément indisponible (disjoncteur ouvert).', 'AI service temporarily unavailable (circuit breaker open).', 'Servicio de IA temporalmente no disponible (disyuntor abierto).', 'خدمة الذكاء الاصطناعي غير متاحة مؤقتًا (قاطع الدائرة مفتوح).', 'AIサービスは一時的に利用できません（サーキットブレーカー作動中）。', 'AI 服务暂时不可用（断路器已打开）。'),
     'forecast.kpi.err-generic': ('Échec de la prévision (HTTP {$status}).', 'Forecast failed (HTTP {$status}).', 'Fallo de la previsión (HTTP {$status}).', 'فشل التنبؤ (HTTP {$status}).', '予測に失敗しました（HTTP {$status}）。', '预测失败（HTTP {$status}）。'),
+
+    # --- a quoi sert cet ecran, et ce a quoi il est relie -------------------
+    'forecast.kpi.role-panel': (
+        'À quoi sert cette prévision', 'What this forecast is for',
+        'Para qué sirve esta previsión', 'ما الغرض من هذا التوقّع',
+        'この予測の目的', '此预测的用途'),
+    'forecast.kpi.role-what': (
+        "Elle répond à une seule question : {$START_TAG_STRONG}au rythme actuel, l'indicateur atteindra-t-il sa cible, et quand ?{$CLOSE_TAG_STRONG} Le lissage exponentiel Holt-Winters prolonge le niveau, la tendance et, s'il y en a une, la saisonnalité de la série. L'intervalle à 95 % dit l'incertitude : une prévision sans intervalle se lit comme une certitude qu'elle n'est pas.",
+        'It answers a single question: {$START_TAG_STRONG}at the current pace, will the indicator reach its target, and when?{$CLOSE_TAG_STRONG} Holt-Winters exponential smoothing extends the level, the trend and, where there is one, the seasonality of the series. The 95 % interval states the uncertainty: a forecast without an interval reads as a certainty it is not.',
+        'Responde a una sola pregunta: {$START_TAG_STRONG}al ritmo actual, ¿alcanzará el indicador su objetivo, y cuándo?{$CLOSE_TAG_STRONG} El suavizado exponencial Holt-Winters prolonga el nivel, la tendencia y, si la hay, la estacionalidad de la serie. El intervalo del 95 % expresa la incertidumbre: una previsión sin intervalo se lee como una certeza que no es.',
+        'يجيب على سؤال واحد: {$START_TAG_STRONG}هل سيبلغ المؤشر هدفه بالوتيرة الحالية، ومتى؟{$CLOSE_TAG_STRONG} يمدّ تمهيد هولت-وينترز الأسّي مستوى السلسلة واتجاهها وموسميتها إن وُجدت. ويعبّر المجال بنسبة 95 % عن عدم اليقين: فالتوقّع بلا مجال يُقرأ كأنه يقين، وهو ليس كذلك.',
+        '答えるのは一つの問いだけです。{$START_TAG_STRONG}現在のペースで、この指標は目標に届くのか、そしていつか。{$CLOSE_TAG_STRONG}ホルト・ウィンタース指数平滑法が、系列の水準・トレンドおよび季節性（あれば）を延長します。95 % 区間は不確かさを示します。区間のない予測は、そうではない確信として読まれてしまいます。',
+        '它只回答一个问题：{$START_TAG_STRONG}按当前节奏，该指标能否达到目标，何时达到？{$CLOSE_TAG_STRONG} Holt-Winters 指数平滑法延伸序列的水平、趋势以及季节性（若存在）。95 % 区间表达不确定性：没有区间的预测会被读成一种它并不具备的确定性。'),
+    'forecast.kpi.role-when': (
+        "Elle sert à décider {$START_TAG_EM}avant{$CLOSE_TAG_EM} l'échéance : relancer un cycle d'amélioration qui n'atteindra pas son objectif, renforcer une action dont l'effet s'essouffle, ou au contraire ne rien changer à ce qui converge. Sur une série courte ou erratique, la probabilité d'atteinte reste basse et l'intervalle large — c'est le signal qu'il n'y a pas encore de tendance à prolonger, pas une invitation à y lire une baisse.",
+        'It is there to decide {$START_TAG_EM}before{$CLOSE_TAG_EM} the deadline: restart an improvement cycle that will not meet its objective, strengthen an action whose effect is fading, or leave alone what is converging. On a short or erratic series the probability stays low and the interval wide — the signal that there is no trend to extend yet, not an invitation to read a decline into it.',
+        'Sirve para decidir {$START_TAG_EM}antes{$CLOSE_TAG_EM} del vencimiento: relanzar un ciclo de mejora que no alcanzará su objetivo, reforzar una acción cuyo efecto se agota, o no tocar lo que converge. En una serie corta o errática, la probabilidad se mantiene baja y el intervalo ancho: es la señal de que aún no hay tendencia que prolongar, no una invitación a leer una caída.',
+        'وهي أداة للقرار {$START_TAG_EM}قبل{$CLOSE_TAG_EM} حلول الموعد: إعادة إطلاق دورة تحسين لن تبلغ هدفها، أو تعزيز إجراء خبا أثره، أو ترك ما يتقارب على حاله. وفي سلسلة قصيرة أو متقلّبة يبقى الاحتمال منخفضًا والمجال واسعًا، وهذا دليل على أنه لا يوجد اتجاه يمكن مدّه بعد، لا دعوة لقراءة انخفاض فيه.',
+        '期限を迎える{$START_TAG_EM}前{$CLOSE_TAG_EM}に判断するためのものです。目標に届かない改善サイクルを立て直す、効果が弱まった対策を強める、収束しているものには手を入れない。系列が短い、あるいは乱れている場合、達成確率は低く区間は広いままになります。これは延長すべき傾向がまだないという合図であって、低下と読み取るべき根拠ではありません。',
+        '它用于在到期{$START_TAG_EM}之前{$CLOSE_TAG_EM}作出决定：重启达不到目标的改进循环、加强效果正在减弱的措施，或者对正在收敛的指标不作改动。序列过短或波动剧烈时，达成概率偏低、区间偏宽——这是尚无趋势可供延伸的信号，而不是可以据此判定下降。'),
+    'forecast.kpi.role-links-title': (
+        'Ce à quoi elle est reliée', 'What it is connected to', 'Con qué está conectada',
+        'بماذا يرتبط', 'どことつながっているか', '它与什么相连'),
+    'forecast.kpi.role-link-kpi': (
+        'Catalogue des indicateurs', 'Indicator catalogue', 'Catálogo de indicadores',
+        'كتالوج المؤشرات', '指標カタログ', '指标目录'),
+    'forecast.kpi.role-link-kpi-text': (
+        "La source des mesures. Choisir un indicateur actif remplit la série, sa cible et le sens d'amélioration : aucune ressaisie, et le chiffre projeté porte sur la même définition que celui des tableaux de bord.",
+        'The source of the readings. Picking an active indicator fills in the series, its target and the direction of improvement: no retyping, and the projected figure rests on the same definition as the dashboards.',
+        'La fuente de las mediciones. Elegir un indicador activo rellena la serie, su objetivo y el sentido de mejora: sin volver a teclear, y la cifra proyectada se apoya en la misma definición que los paneles.',
+        'مصدر القياسات. اختيار مؤشّر نشط يملأ السلسلة وهدفها واتجاه التحسين: بلا إدخال مكرّر، ويستند الرقم المتوقّع إلى التعريف نفسه الذي تستخدمه لوحات المعلومات.',
+        '測定値の出どころです。有効な指標を選ぶと、系列・目標・改善の向きが入ります。再入力は不要で、予測値はダッシュボードと同じ定義に基づきます。',
+        '测量值的来源。选择一个启用的指标即可填入序列、目标值和改进方向：无需重新录入，预测数字与仪表盘采用同一定义。'),
+    'forecast.kpi.role-link-spc': (
+        'Cartes de contrôle (SPC)', 'Control charts (SPC)', 'Gráficos de control (SPC)',
+        'خرائط التحكّم (SPC)', '管理図（SPC）', '控制图（SPC）'),
+    'forecast.kpi.role-link-spc-text': (
+        "Lecture complémentaire, et non concurrente. Les règles de Nelson disent que le procédé a {$START_TAG_EM}déjà{$CLOSE_TAG_EM} dérivé ; la prévision dit où la série va si rien ne change. L'une constate, l'autre projette.",
+        'A complementary reading, not a competing one. The Nelson rules say the process has {$START_TAG_EM}already{$CLOSE_TAG_EM} drifted; the forecast says where the series is heading if nothing changes. One observes, the other projects.',
+        'Una lectura complementaria, no competidora. Las reglas de Nelson dicen que el proceso {$START_TAG_EM}ya{$CLOSE_TAG_EM} se ha desviado; la previsión dice hacia dónde va la serie si nada cambia. Una constata, la otra proyecta.',
+        'قراءة مكمّلة لا منافسة. قواعد نيلسون تقول إنّ العملية {$START_TAG_EM}قد{$CLOSE_TAG_EM} انحرفت فعلاً؛ أمّا التوقّع فيقول إلى أين تتّجه السلسلة إن لم يتغيّر شيء. الأولى تُثبت، والثانية تمدّ.',
+        '競合ではなく補完の読み方です。ネルソンのルールは工程が{$START_TAG_EM}すでに{$CLOSE_TAG_EM}外れたことを示し、予測は何も変えなければ系列がどこへ向かうかを示します。一方は確認し、他方は延長します。',
+        '这是互补的读法，而非相互替代。Nelson 规则说明过程{$START_TAG_EM}已经{$CLOSE_TAG_EM}发生偏移；预测说明若不作改变序列将走向何处。前者确认，后者外推。'),
+    'forecast.kpi.role-link-manual': (
+        'Ce qui reste à votre main', 'What stays in your hands', 'Lo que queda en sus manos',
+        'ما يبقى بيدك', '人の手に残ること', '仍由您掌握的部分'),
+    'forecast.kpi.role-link-manual-text': (
+        "La prévision n'ouvre rien d'elle-même : ni CAPA, ni cycle PDCA, ni projet DMAIC. Elle éclaire la décision, et c'est depuis le module concerné qu'on l'engage — une projection n'est pas un constat, et elle ne doit pas déclencher d'action au registre.",
+        'The forecast opens nothing by itself: no CAPA, no PDCA cycle, no DMAIC project. It informs the decision, and the decision is taken from the module concerned — a projection is not an observed fact, and it must not enter an action in the register.',
+        'La previsión no abre nada por sí misma: ni CAPA, ni ciclo PDCA, ni proyecto DMAIC. Informa la decisión, y esta se toma desde el módulo correspondiente: una proyección no es un hecho constatado y no debe inscribir una acción en el registro.',
+        'لا يفتح التوقّع شيئًا من تلقاء نفسه: لا إجراء CAPA ولا دورة PDCA ولا مشروع DMAIC. إنه يُنير القرار، والقرار يُتّخذ من الوحدة المعنيّة؛ فالتوقّع ليس واقعة مُثبتة ولا ينبغي أن يسجّل إجراءً في السجل.',
+        '予測はそれ自体では何も起票しません。CAPA も PDCA サイクルも DMAIC プロジェクトも開きません。判断を助けるだけで、着手はそれぞれのモジュールから行います。予測は確認された事実ではなく、台帳に対策を登録する根拠にはなりません。',
+        '预测本身不会开启任何事项：既不开 CAPA，也不开 PDCA 循环或 DMAIC 项目。它只为决策提供依据，而决策要在相应模块中发起——预测不是既成事实，不应据此在登记簿中登记措施。'),
 }

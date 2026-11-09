@@ -227,6 +227,13 @@ export class MainShellComponent implements OnInit, OnDestroy {
         { label: $localize`:@@nav.iot:Parc IoT`,                    route: '/iot',        icon: 'sensors', module: 'iot' },
         { label: $localize`:@@nav.audits:Audits`,                   route: '/audits',    icon: 'fact_check', module: 'audit' },
         { label: $localize`:@@nav.audits-planning:Planning audits`, route: '/audits/planning', icon: 'event_available', module: 'audit' },
+        // Le Standards Hub suit immediatement les audits : un audit se prepare
+        // contre un referentiel, et c'est la qu'on va chercher l'exigence, le
+        // modele de document et la feuille de route de certification. Le ranger
+        // avec les referentiels l'eloignait du geste qui l'appelle.
+        { label: $localize`:@@nav.standards-hub:Standards Hub`,     route: '/standards',      icon: 'workspace_premium', module: 'standards' },
+        { label: $localize`:@@nav.standards-ims:Co-couverture IMS`, route: '/standards-ims',  icon: 'grid_view', module: 'standards' },
+        { label: $localize`:@@nav.doc-gen-ia:Génération doc IA`,    route: '/standards-doc-gen', icon: 'auto_awesome', module: 'standards' },
         { label: $localize`:@@nav.produits:Produits`,               route: '/products',  icon: 'inventory_2', module: 'product' },
         { label: $localize`:@@nav.risques-fmea:Risques (FMEA)`,     route: '/fmea',      icon: 'warning', module: 'risk' },
         { label: $localize`:@@nav.documents:GED`,                   route: '/documents', icon: 'description', module: 'docs' },
@@ -242,9 +249,6 @@ export class MainShellComponent implements OnInit, OnDestroy {
       label: $localize`:@@nav.referentiels:Référentiels`,
       collapsible: true,
       items: [
-        { label: $localize`:@@nav.standards-hub:Standards Hub`,     route: '/standards',      icon: 'workspace_premium', module: 'standards' },
-        { label: $localize`:@@nav.standards-ims:Co-couverture IMS`, route: '/standards-ims',  icon: 'grid_view', module: 'standards' },
-        { label: $localize`:@@nav.doc-gen-ia:Génération doc IA`,    route: '/standards-doc-gen', icon: 'auto_awesome', module: 'standards' },
         { label: $localize`:@@nav.packs-sectoriels:Packs sectoriels`, route: '/industry-packs', icon: 'category', module: 'industry' },
         { label: $localize`:@@nav.marketplace:Marketplace`,         route: '/marketplace',    icon: 'storefront', module: 'industry' },
         { label: $localize`:@@nav.academy:Academy`,                route: '/academy',        icon: 'cast_for_education', module: 'training' },

@@ -1,0 +1,46 @@
+<qos-form-dialog
+  i18n-title="@@platform.firms.edit-title"
+  title="Corriger le cabinet"
+  [subtitle]="firm.slug"
+  [formGroup]="form"
+  [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@common.save"
+  submitLabel="Enregistrer"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@platform.firms.name">Raison sociale</mat-label>
+    <input matInput formControlName="name" required maxlength="255" data-test="cabinet-edit-nom">
+    <mat-error *ngIf="form.controls.name.hasError('required')"
+               i18n="@@rr.form.required">Champ obligatoire.</mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@platform.firms.registration">Numéro d’immatriculation</mat-label>
+    <input matInput formControlName="registrationNumber" maxlength="64"
+           data-test="cabinet-edit-immatriculation">
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@platform.firms.contact-email">Courriel de contact</mat-label>
+    <input matInput type="email" formControlName="contactEmail" maxlength="254"
+           data-test="cabinet-edit-courriel">
+    <mat-error *ngIf="form.controls.contactEmail.hasError('email')"
+               i18n="@@admin.team.invite-email-invalid">Une adresse e-mail valide est attendue.</mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@platform.firms.contact-phone">Téléphone</mat-label>
+    <input matInput formControlName="contactPhone" maxlength="32" data-test="cabinet-edit-telephone">
+  </mat-form-field>
+
+  <!-- Le repere nomme le cabinet dans les accords deja signes par des clients :
+       le corriger ferait mentir ces accords. Montre, jamais modifiable. -->
+  <p class="repere" data-test="cabinet-edit-repere">
+    <span i18n="@@platform.firms.slug">Repère</span>
+    <code>{{ firm.slug }}</code>
+    <span class="repere__note" i18n="@@platform.clients.slug-frozen">ne change plus</span>
+  </p>
+
+</qos-form-dialog>
