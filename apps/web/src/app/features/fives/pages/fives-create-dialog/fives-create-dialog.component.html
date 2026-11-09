@@ -15,8 +15,14 @@
   <mat-form-field appearance="outline" class="full">
     <mat-label i18n="@@common.zone">Zone</mat-label>
     <input matInput formControlName="zone" maxlength="200" required
+           [matAutocomplete]="zonesClient"
            i18n-placeholder="@@fives.create.zone-placeholder"
            placeholder="Ex. : Atelier mécanique A — ligne 1">
+    <mat-autocomplete #zonesClient="matAutocomplete">
+      <mat-option *ngFor="let z of zonesProposees" [value]="z">{{ z }}</mat-option>
+    </mat-autocomplete>
+    <mat-hint *ngIf="zones.length" i18n="@@fives.create.zone-hint">Les zones de votre
+      organisation sont proposées ; vous pouvez aussi en saisir une autre.</mat-hint>
     <mat-error *ngIf="form.controls.zone.hasError('required')" i18n="@@fives.create.zone-required">La zone est requise.</mat-error>
     <mat-error *ngIf="form.controls.zone.hasError('maxlength')" i18n="@@common.maxlength-200">200 caractères maximum.</mat-error>
   </mat-form-field>

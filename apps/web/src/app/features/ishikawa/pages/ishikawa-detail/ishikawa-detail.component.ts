@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { catalogLabel } from '../../../../core/catalogs/catalog-overrides';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -342,7 +343,8 @@ export class IshikawaDetailComponent implements OnInit {
   }
 
   categoryLabel(c: CauseCategory): string {
-    return this.CATEGORY_LABELS[c] ?? c;
+    // Le mot du client passe devant (ADR 0111).
+    return catalogLabel('ishikawa-category', c) ?? this.CATEGORY_LABELS[c] ?? c;
   }
 
   /**

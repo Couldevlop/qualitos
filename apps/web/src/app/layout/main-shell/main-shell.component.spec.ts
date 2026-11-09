@@ -1,4 +1,5 @@
 import { NavigationEnd, Router } from '@angular/router';
+import { CatalogService } from '../../core/catalogs/catalog.service';
 import { NEVER, Observable, Subject, of } from 'rxjs';
 
 import { BrandingService } from '../../core/branding/branding.service';
@@ -79,9 +80,15 @@ function harness(): ShellHarness {
   const branding = jasmine.createSpyObj<BrandingService>('BrandingService', ['load']);
   branding.load.and.returnValue(of(null));
 
+  // Les listes deroulantes reglees par le client : la coquille les precharge au
+  // demarrage (ADR 0111). Rien a dire sur la navigation non plus.
+  const catalogs = jasmine.createSpyObj<CatalogService>('CatalogService', ['preload']);
+  catalogs.preload.and.returnValue(of(undefined));
+
   return {
     component: new MainShellComponent(
-      auth, connectivity, offline, notifications, router, modules, editions, theme, branding),
+      auth, connectivity, offline, notifications, router, modules, editions, theme, branding,
+      catalogs),
     notifications, router, auth, modules, events, theme
   };
 }

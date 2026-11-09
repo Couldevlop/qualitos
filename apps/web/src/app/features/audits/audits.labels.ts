@@ -1,3 +1,4 @@
+import { catalogLabel, catalogOptions } from '../../core/catalogs/catalog-overrides';
 import { AuditType, FindingType } from './audits.types';
 
 /**
@@ -26,7 +27,15 @@ const FINDING_TYPES: Readonly<Record<FindingType, string>> = {
 /** Libellé d'un type d'audit ; la valeur brute si elle est inconnue, un tiret si elle manque. */
 export function auditTypeLabel(type: AuditType | string | undefined | null): string {
   if (!type) return '—';
-  return AUDIT_TYPES[type as AuditType] ?? String(type);
+  // Le mot du client passe devant (ADR 0111).
+  return catalogLabel('audit-type', type) ?? AUDIT_TYPES[type as AuditType] ?? String(type);
+}
+
+/** Les types d'audit proposés à la saisie, dans l'ordre et les mots du client. */
+export function auditTypeOptions(
+  fallback: ReadonlyArray<{ value: AuditType; label: string }>
+): Array<{ value: AuditType; label: string }> {
+  return catalogOptions('audit-type', fallback);
 }
 
 /** Libellé d'un type de constat ; la valeur brute si elle est inconnue, un tiret si elle manque. */

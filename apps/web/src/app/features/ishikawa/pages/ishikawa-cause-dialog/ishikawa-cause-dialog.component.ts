@@ -4,6 +4,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { finalize } from 'rxjs/operators';
 
+import { catalogOptions } from '../../../../core/catalogs/catalog-overrides';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { IshikawaService } from '../../ishikawa.service';
 import { CauseCategory, IshikawaCauseResponse, IshikawaMode } from '../../ishikawa.types';
@@ -65,9 +66,20 @@ export class IshikawaCauseDialogComponent {
       { value: 'MEASUREMENTS', label: 'Mesures' },
       { value: 'ENVIRONMENT',  label: 'Milieu' }
     ];
-    if (mode === 'SIX_M') return sixM;
-    if (mode === 'SEVEN_M') return [...sixM, { value: 'MANAGEMENT', label: 'Management' }];
-    return [...sixM, { value: 'MANAGEMENT', label: 'Management' }, { value: 'MONEY', label: 'Moyens financiers' }];
+    if (mode === 'SIX_M') return this.habiller(sixM);
+    if (mode === 'SEVEN_M') return this.habiller([...sixM, { value: 'MANAGEMENT', label: 'Management' }]);
+    return this.habiller(
+      [...sixM, { value: 'MANAGEMENT', label: 'Management' }, { value: 'MONEY', label: 'Moyens financiers' }]);
+  }
+
+  /**
+   * Reprend l'ordre et les mots du client (ADR 0111) sans jamais sortir du mode :
+   * un diagramme en 6M ne se voit pas offrir Management parce que le client l'a renomme.
+   */
+  private habiller(duMode: CategoryOption[]): CategoryOption[] {
+    const permis = new Set(duMode.map(o => o.value));
+    return catalogOptions<CauseCategory>('ishikawa-category', duMode)
+      .filter(o => permis.has(o.value));
   }
 
   submit(): void {

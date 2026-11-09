@@ -67,6 +67,32 @@ class TenantCatalogServiceTest {
         });
     }
 
+    /**
+     * Ce que l'application charge au démarrage : les listes réglées, et elles
+     * seules. Douze appels pour apprendre qu'il n'y a rien à savoir seraient
+     * douze appels de trop.
+     */
+    @Test
+    void lesListesRegleesSeChargentEnUnSeulAppel() {
+        assertThat(service.customised()).isEmpty();
+
+        service.replace(CatalogId.FIVES_ZONE, List.of(CatalogEntry.of("LIGNE-1", "Ligne 1")));
+        service.replace(CatalogId.AUDIT_TYPE, CatalogId.AUDIT_TYPE.defaults());
+
+        assertThat(service.customised()).containsOnlyKeys("fives-zone", "audit-type");
+        assertThat(service.customised().get("fives-zone"))
+                .containsExactly(CatalogEntry.of("LIGNE-1", "Ligne 1"));
+    }
+
+    @Test
+    void lesListesRegleesDUnClientNeFuientPasChezUnAutre() {
+        service.replace(CatalogId.FIVES_ZONE, List.of(CatalogEntry.of("MIEN", "Ma zone")));
+
+        TenantContext.setTenantId(AUTRE.toString());
+
+        assertThat(service.customised()).isEmpty();
+    }
+
     // ===== régler =====
 
     @Test

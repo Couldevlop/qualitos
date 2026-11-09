@@ -1,4 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
+import { catalogCodes } from '../../../../core/catalogs/catalog-overrides';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -34,7 +35,8 @@ export class DmaicPokaYokeDialogComponent implements OnInit {
   loadError: string | null = null;
 
   readonly types: readonly PokaYokeType[] = POKAYOKE_TYPES;
-  readonly mechanisms: readonly PokaYokeMechanism[] = POKAYOKE_MECHANISMS;
+  /** Dans l'ordre du client (ADR 0111) ; les mots suivent par `pokaYokeMechanismLabel`. */
+  readonly mechanisms = catalogCodes<PokaYokeMechanism>('pokayoke-mechanism', POKAYOKE_MECHANISMS);
 
   /** Des mots, jamais le code du serveur : un `PHYSICAL_SHAPE` n'apprend rien. */
   readonly typeLabel = pokaYokeTypeLabel;

@@ -1,4 +1,5 @@
 import { Component, Inject, OnInit, Optional } from '@angular/core';
+import { catalogOptions } from '../../../../core/catalogs/catalog-overrides';
 import { AbstractControl, FormBuilder, ValidationErrors, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -132,11 +133,15 @@ export class CapaCreateDialogComponent implements OnInit {
    * de connaître la cause. Le mettre en tête, c'est suivre l'ordre réel du
    * terrain plutôt que l'ordre alphabétique d'une énumération.
    */
-  readonly natures: { value: CapaNature; label: string }[] = [
+  /** Les valeurs de la plateforme : le repli quand le client n'a rien réglé. */
+  private readonly naturesPlateforme: { value: CapaNature; label: string }[] = [
     { value: 'CONTAINMENT', label: $localize`:@@capa.action-type.containment:Endiguement` },
     { value: 'CORRECTIVE', label: $localize`:@@capa.type.corrective:Corrective` },
     { value: 'PREVENTIVE', label: $localize`:@@capa.type.preventive:Préventive` }
   ];
+
+    /** Dans l'ordre et les mots du client (ADR 0111). */
+  readonly natures = catalogOptions<CapaNature>('capa-nature', this.naturesPlateforme);
   readonly criticities = CAPA_CRITICITIES;
   readonly sourceTypes = CAPA_SOURCES.filter(s => s.manual);
 

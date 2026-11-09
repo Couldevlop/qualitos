@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { catalogCodes } from '../../../../core/catalogs/catalog-overrides';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
@@ -30,10 +31,14 @@ export class SuppliersListComponent implements OnInit {
   readonly displayedColumns = ['code', 'name', 'country', 'type', 'status', 'score', 'lastAuditAt'];
 
   readonly statuses: SupplierStatus[] = ['PROSPECT', 'APPROVED', 'CONDITIONAL', 'SUSPENDED', 'BLACKLISTED'];
-  readonly types: SupplierType[] = [
+  /** Les valeurs de la plateforme : le repli quand le client n'a rien réglé. */
+  private readonly typesPlateforme: SupplierType[] = [
     'RAW_MATERIAL', 'COMPONENT', 'SERVICE', 'CONTRACT_MANUFACTURER',
     'SOFTWARE', 'LOGISTICS', 'OTHER'
   ];
+
+    /** Dans l'ordre et les mots du client (ADR 0111). */
+  readonly types = catalogCodes<SupplierType>('supplier-type', this.typesPlateforme);
 
   readonly statusFilter = new FormControl<SupplierStatus | ''>('');
   readonly typeFilter   = new FormControl<SupplierType   | ''>('');

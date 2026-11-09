@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { catalogOptions } from '../../../../core/catalogs/catalog-overrides';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -19,7 +20,8 @@ export class SuppliersCreateDialogComponent {
 
   submitting = false;
 
-  readonly types: { value: SupplierType; label: string }[] = [
+  /** Les valeurs de la plateforme : le repli quand le client n'a rien réglé. */
+  private readonly typesPlateforme: { value: SupplierType; label: string }[] = [
     { value: 'RAW_MATERIAL',          label: $localize`:@@suppliers.type.raw-material:Matière première` },
     { value: 'COMPONENT',             label: $localize`:@@suppliers.type.component:Composant` },
     { value: 'SERVICE',               label: $localize`:@@suppliers.type.service:Service` },
@@ -28,6 +30,9 @@ export class SuppliersCreateDialogComponent {
     { value: 'LOGISTICS',             label: $localize`:@@suppliers.type.logistics:Logistique` },
     { value: 'OTHER',                 label: $localize`:@@suppliers.type.other:Autre` }
   ];
+
+    /** Dans l'ordre et les mots du client (ADR 0111). */
+  readonly types = catalogOptions<SupplierType>('supplier-type', this.typesPlateforme);
 
   readonly form = this.fb.nonNullable.group({
     code: ['', [

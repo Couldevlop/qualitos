@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -25,7 +26,7 @@ import { ConfirmDialogComponent } from './ui/confirm-dialog/confirm-dialog.compo
 import { CanDirective } from '../core/authz/can.directive';
 
 const MATERIAL = [
-  MatButtonModule, MatCardModule, MatCheckboxModule, MatChipsModule, MatDialogModule,
+  MatAutocompleteModule, MatButtonModule, MatCardModule, MatCheckboxModule, MatChipsModule, MatDialogModule,
   MatFormFieldModule, MatIconModule, MatInputModule, MatPaginatorModule,
   MatProgressBarModule, MatProgressSpinnerModule, MatSelectModule, MatSnackBarModule,
   MatTableModule, MatTabsModule, MatTooltipModule

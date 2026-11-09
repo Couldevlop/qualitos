@@ -18685,6 +18685,10 @@ historique 12 mois</source>
         <source>Définissez la zone à auditer et la date prévue. Les scores Seiri · Seiton · Seiso · Seiketsu · Shitsuke seront saisis lors de l'audit terrain.</source>
         <target state="translated">監査対象のゾーンと予定日を設定してください。整理・整頓・清掃・清潔・躾のスコアは現場監査時に入力します。</target>
       </trans-unit>
+      <trans-unit id="fives.create.zone-hint" datatype="html">
+        <source>Les zones de votre organisation sont proposées ; vous pouvez aussi en saisir une autre.</source>
+        <target state="translated">組織に登録されたゾーンが候補として表示されます。別のゾーンを入力することもできます。</target>
+      </trans-unit>
       <trans-unit id="fives.create.zone-placeholder" datatype="html">
         <source>Ex. : Atelier mécanique A — ligne 1</source>
         <target state="translated">例：機械加工工場A — ライン1</target>

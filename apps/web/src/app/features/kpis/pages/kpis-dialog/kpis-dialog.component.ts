@@ -1,4 +1,5 @@
 import { Component, Inject, Optional } from '@angular/core';
+import { catalogCodes } from '../../../../core/catalogs/catalog-overrides';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -43,9 +44,13 @@ export class KpisDialogComponent {
       ? $localize`:@@common.save:Enregistrer`
       : $localize`:@@common.create:Créer`;
   }
-  readonly frequencies: KpiFrequency[] = [
+  /** Les valeurs de la plateforme : le repli quand le client n'a rien réglé. */
+  private readonly frequenciesPlateforme: KpiFrequency[] = [
     'REALTIME', 'DAILY', 'WEEKLY', 'MONTHLY', 'QUARTERLY', 'YEARLY', 'ON_DEMAND'
   ];
+
+    /** Dans l'ordre et les mots du client (ADR 0111). */
+  readonly frequencies = catalogCodes<KpiFrequency>('kpi-frequency', this.frequenciesPlateforme);
 
   constructor(
     private readonly fb: FormBuilder,

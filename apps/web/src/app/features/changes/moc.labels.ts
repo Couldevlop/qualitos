@@ -1,4 +1,5 @@
 import { safeErrorMessage } from '../../core/http/error-message';
+import { catalogLabel, catalogOptions } from '../../core/catalogs/catalog-overrides';
 import {
   ImpactDomain,
   ImpactLevel,
@@ -47,6 +48,7 @@ const DOMAIN: Record<ImpactDomain, string> = {
   TRAINING: $localize`:@@moc.domain.training:Formation`
 };
 
+/** Les mots de la plateforme ; ceux du client passent devant (ADR 0111). */
 const TYPE: Record<MocType, string> = {
   PERMANENT: $localize`:@@moc.type.permanent:Permanent`,
   TEMPORARY: $localize`:@@moc.type.temporary:Temporaire`
@@ -79,7 +81,14 @@ export const mocStatusLabel = (s: MocStatus): string => STATUS[s] ?? s;
 export const mocClassificationLabel = (c: MocClassification): string => CLASSIFICATION[c] ?? c;
 export const mocLevelLabel = (l: ImpactLevel): string => LEVEL[l] ?? l;
 export const mocDomainLabel = (d: ImpactDomain): string => DOMAIN[d] ?? d;
-export const mocTypeLabel = (t: MocType): string => TYPE[t] ?? t;
+export const mocTypeLabel = (t: MocType): string =>
+  catalogLabel('moc-change-type', t) ?? TYPE[t] ?? t;
+
+/** Les types de modification proposés à la saisie, dans les mots du client. */
+export function mocTypeOptions(): Array<{ value: MocType; label: string }> {
+  return catalogOptions('moc-change-type',
+    (Object.keys(TYPE) as MocType[]).map(t => ({ value: t, label: TYPE[t] })));
+}
 export const mocDecisionLabel = (d: ValidationDecision): string => DECISION[d] ?? d;
 export const mocHistoryLabel = (e: MocHistoryEvent): string => HISTORY[e] ?? e;
 

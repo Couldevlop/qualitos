@@ -1,4 +1,5 @@
 import { Component, Inject } from '@angular/core';
+import { catalogOptions } from '../../../../core/catalogs/catalog-overrides';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
@@ -37,12 +38,16 @@ export class ApqpProjectDialogComponent {
     description: ['', [Validators.maxLength(2000)]]
   });
 
-  readonly types: { value: ApqpProjectType; label: string }[] = [
+  /** Les valeurs de la plateforme : le repli quand le client n'a rien réglé. */
+  private readonly typesPlateforme: { value: ApqpProjectType; label: string }[] = [
     { value: 'NPI', label: $localize`:@@apqp.project.type.npi:NPI — nouveau produit` },
     { value: 'TOW', label: $localize`:@@apqp.project.type.tow:ToW — transfert d'activité` },
     { value: 'MAJOR_MODIFICATION', label: $localize`:@@apqp.project.type.major-modification:Modification majeure` },
     { value: 'OTHER', label: $localize`:@@apqp.project.type.other:Autre` }
   ];
+
+    /** Dans l'ordre et les mots du client (ADR 0111). */
+  readonly types = catalogOptions<ApqpProjectType>('apqp-project-type', this.typesPlateforme);
 
   readonly editing: boolean;
 

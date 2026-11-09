@@ -9,6 +9,7 @@ import { NotificationView } from '../../core/notifications/notification.types';
 import { NotificationsService } from '../../core/notifications/notifications.service';
 import { ConnectivityService } from '../../core/offline/connectivity.service';
 import { OfflineQueueService } from '../../core/offline/offline-queue.service';
+import { CatalogService } from '../../core/catalogs/catalog.service';
 import { BrandingService } from '../../core/branding/branding.service';
 import { EditionService } from '../../core/edition/edition.service';
 import { Edition } from '../../core/edition/edition.types';
@@ -426,7 +427,8 @@ export class MainShellComponent implements OnInit, OnDestroy {
     private readonly modules: TenantModulesService,
     private readonly editions: EditionService,
     private readonly theme: ThemeService,
-    private readonly branding: BrandingService
+    private readonly branding: BrandingService,
+    private readonly catalogs: CatalogService
   ) {}
 
   ngOnInit(): void {
@@ -436,6 +438,10 @@ export class MainShellComponent implements OnInit, OnDestroy {
     // demarrage de l'application. Un echec ne rend rien et ne casse rien : on
     // reste sur les jetons du socle.
     this.branding.load().subscribe();
+    // Les mots du client pour les listes déroulantes (ADR 0111). Ici, et pour la
+    // même raison que la marque : un jeton est nécessaire. Un échec ne casse
+    // rien — les écrans gardent leurs propres libellés traduits.
+    this.catalogs.preload().subscribe();
     this.themePreference$ = this.theme.preference();
     // Les modules du tenant décident de ce qui est montré, au même titre que les
     // rôles. Un échec de chargement ne doit pas vider la navigation : on retombe

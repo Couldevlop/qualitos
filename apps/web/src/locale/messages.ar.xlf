@@ -18686,6 +18686,10 @@ historique 12 mois</source>
         <source>Définissez la zone à auditer et la date prévue. Les scores Seiri · Seiton · Seiso · Seiketsu · Shitsuke seront saisis lors de l'audit terrain.</source>
         <target state="translated">حدّد المنطقة المراد تدقيقها والتاريخ المقرر. ستُدخَل درجات Seiri · Seiton · Seiso · Seiketsu · Shitsuke أثناء التدقيق الميداني.</target>
       </trans-unit>
+      <trans-unit id="fives.create.zone-hint" datatype="html">
+        <source>Les zones de votre organisation sont proposées ; vous pouvez aussi en saisir une autre.</source>
+        <target state="translated">تُقترح مناطق مؤسستك، ويمكنك أيضًا كتابة منطقة أخرى.</target>
+      </trans-unit>
       <trans-unit id="fives.create.zone-placeholder" datatype="html">
         <source>Ex. : Atelier mécanique A — ligne 1</source>
         <target state="translated">مثال: ورشة الميكانيكا A — الخط 1</target>

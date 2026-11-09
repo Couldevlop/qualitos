@@ -12,6 +12,14 @@ global:
   # quelle version tourne. La CI ne publie d'images que sur un tag vX.Y.Z.
   imageTag: ""
   imagePullPolicy: IfNotPresent
+  # NOEUD UNIQUE, memoire deja reservee : on arrete l'ancien pod avant de creer
+  # le nouveau. Sans cela le pod supplementaire reste Pending faute de memoire
+  # a reserver, et le deploiement n'aboutit pas (cf. commentaire du template).
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
   # Pas de imagePullSecrets : les paquets GHCR du projet sont publics,
   # verifie par un tirage anonyme depuis le noeud. En declarer un
   # inscrirait un jeton dans le cluster sans rien apporter.

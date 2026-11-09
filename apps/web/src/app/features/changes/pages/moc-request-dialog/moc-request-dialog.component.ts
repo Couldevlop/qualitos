@@ -1,4 +1,5 @@
 import { Component, Inject } from '@angular/core';
+import { catalogOptions } from '../../../../core/catalogs/catalog-overrides';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -25,10 +26,14 @@ export interface MocRequestDialogData {
 })
 export class MocRequestDialogComponent {
 
-  readonly types: { value: MocType; label: string }[] = [
+  /** Les valeurs de la plateforme : le repli quand le client n'a rien réglé. */
+  private readonly typesPlateforme: { value: MocType; label: string }[] = [
     { value: 'PERMANENT', label: mocTypeLabel('PERMANENT') },
     { value: 'TEMPORARY', label: mocTypeLabel('TEMPORARY') }
   ];
+
+    /** Dans l'ordre et les mots du client (ADR 0111). */
+  readonly types = catalogOptions<MocType>('moc-change-type', this.typesPlateforme);
 
   readonly form = this.fb.nonNullable.group({
     title: ['', [Validators.required, Validators.maxLength(250)]],

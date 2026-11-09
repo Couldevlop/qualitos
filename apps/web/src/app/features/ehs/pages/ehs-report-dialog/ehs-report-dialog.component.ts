@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { catalogOptions } from '../../../../core/catalogs/catalog-overrides';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -19,7 +20,8 @@ export class EhsReportDialogComponent {
 
   submitting = false;
 
-  readonly types: { value: IncidentType; label: string }[] = [
+  /** Les valeurs de la plateforme : le repli quand le client n'a rien réglé. */
+  private readonly typesPlateforme: { value: IncidentType; label: string }[] = [
     { value: 'INJURY',          label: $localize`:@@ehs.detail.type-injury:Accident corporel` },
     { value: 'NEAR_MISS',       label: $localize`:@@ehs.type.near-miss:Presque-accident` },
     { value: 'ENVIRONMENTAL',   label: $localize`:@@ehs.report.type-environmental:Environnement (déversement, pollution)` },
@@ -27,6 +29,9 @@ export class EhsReportDialogComponent {
     { value: 'PROPERTY_DAMAGE', label: $localize`:@@ehs.type.property-damage:Dommage matériel` },
     { value: 'OTHER',           label: $localize`:@@ehs.type.other:Autre` }
   ];
+
+    /** Dans l'ordre et les mots du client (ADR 0111). */
+  readonly types = catalogOptions<IncidentType>('ehs-incident-type', this.typesPlateforme);
   readonly severities: IncidentSeverity[] = ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'];
 
   readonly form = this.fb.nonNullable.group({

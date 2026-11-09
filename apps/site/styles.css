@@ -266,6 +266,9 @@ img { max-width: 100%; height: auto; }
   font-style: normal;
   color: var(--signal);
 }
+/* Le nom du produit, en italique : il se remarque dans l'accroche sans prendre
+   la couleur de signal, qui reste au verbe — l'accent principal du titre. */
+.heros h1 .nom-produit { font-style: italic; }
 
 .heros__chapo {
   font-size: var(--t-m);
@@ -484,19 +487,6 @@ img { max-width: 100%; height: auto; }
   background: var(--signal);
 }
 
-/* ---------- secteurs ---------- */
-.secteurs { display: flex; flex-wrap: wrap; gap: 0.6rem; }
-.secteur {
-  padding: 0.55rem 1rem;
-  border: 1px solid var(--filet-fort);
-  border-radius: 999px;
-  font-size: var(--t-s);
-  color: var(--marine);
-  background: #fff;
-}
-.secteur b { font-weight: 600; }
-.secteur span { color: var(--encre-douce); }
-
 /* ---------- déploiement ---------- */
 .deploiements { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.25rem; }
 .deploiement { border: 1px solid var(--filet); padding: 1.3rem; background: #fff; }
@@ -528,6 +518,10 @@ img { max-width: 100%; height: auto; }
    parcours qui parle au present. */
 .profil__parcours li:first-child { border-left-color: var(--bleu); border-top: 1px solid var(--filet); }
 .profil__parcours .ou { color: var(--encre-douce); font-size: var(--t-xs); }
+
+/* Une liste de competences n'a pas de "poste en cours" : le filet de marque de
+   la premiere ligne n'aurait rien a y distinguer. */
+.profil__parcours--traits li:first-child { border-left-color: var(--filet-fort); }
 
 .profil__titres { font-size: var(--t-xs); color: var(--encre-douce); max-width: 46ch; margin: 0; }
 
