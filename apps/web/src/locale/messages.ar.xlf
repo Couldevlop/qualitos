@@ -13317,8 +13317,8 @@ Coordonnées professionnelles</source>
         <target state="translated">يجيب على سؤال واحد: <x id="START_TAG_STRONG"/>هل سيبلغ المؤشر هدفه بالوتيرة الحالية، ومتى؟<x id="CLOSE_TAG_STRONG"/> يمدّ تمهيد هولت-وينترز الأسّي مستوى السلسلة واتجاهها وموسميتها إن وُجدت. ويعبّر المجال بنسبة 95 % عن عدم اليقين: فالتوقّع بلا مجال يُقرأ كأنه يقين، وهو ليس كذلك.</target>
       </trans-unit>
       <trans-unit id="forecast.kpi.role-when" datatype="html">
-        <source>Elle sert à décider <x id="START_TAG_EM"/>avant<x id="CLOSE_TAG_EM"/> l'échéance : relancer un cycle d'amélioration qui n'atteindra pas son objectif, renforcer une action dont l'effet s'essouffle, ou au contraire ne rien changer à ce qui converge. Sur une série courte ou erratique, la probabilité d'atteinte reste basse et l'intervalle large — c'est le signal qu'il n'y a pas encore de tendance à prolonger, pas une invitation à y lire une baisse.</source>
-        <target state="translated">وهي أداة للقرار <x id="START_TAG_EM"/>قبل<x id="CLOSE_TAG_EM"/> حلول الموعد: إعادة إطلاق دورة تحسين لن تبلغ هدفها، أو تعزيز إجراء خبا أثره، أو ترك ما يتقارب على حاله. وفي سلسلة قصيرة أو متقلّبة يبقى الاحتمال منخفضًا والمجال واسعًا، وهذا دليل على أنه لا يوجد اتجاه يمكن مدّه بعد، لا دعوة لقراءة انخفاض فيه.</target>
+        <source>Elle sert à décider <x id="START_EMPHASISED_TEXT"/>avant<x id="CLOSE_EMPHASISED_TEXT"/> l'échéance : relancer un cycle d'amélioration qui n'atteindra pas son objectif, renforcer une action dont l'effet s'essouffle, ou au contraire ne rien changer à ce qui converge. Sur une série courte ou erratique, la probabilité d'atteinte reste basse et l'intervalle large — c'est le signal qu'il n'y a pas encore de tendance à prolonger, pas une invitation à y lire une baisse.</source>
+        <target state="translated">وهي أداة للقرار <x id="START_EMPHASISED_TEXT"/>قبل<x id="CLOSE_EMPHASISED_TEXT"/> حلول الموعد: إعادة إطلاق دورة تحسين لن تبلغ هدفها، أو تعزيز إجراء خبا أثره، أو ترك ما يتقارب على حاله. وفي سلسلة قصيرة أو متقلّبة يبقى الاحتمال منخفضًا والمجال واسعًا، وهذا دليل على أنه لا يوجد اتجاه يمكن مدّه بعد، لا دعوة لقراءة انخفاض فيه.</target>
       </trans-unit>
       <trans-unit id="forecast.kpi.role-links-title" datatype="html">
         <source>Ce à quoi elle est reliée</source>
@@ -13337,8 +13337,8 @@ Coordonnées professionnelles</source>
         <target state="translated">خرائط التحكّم (SPC)</target>
       </trans-unit>
       <trans-unit id="forecast.kpi.role-link-spc-text" datatype="html">
-        <source>Lecture complémentaire, et non concurrente. Les règles de Nelson disent que le procédé a <x id="START_TAG_EM"/>déjà<x id="CLOSE_TAG_EM"/> dérivé ; la prévision dit où la série va si rien ne change. L'une constate, l'autre projette.</source>
-        <target state="translated">قراءة مكمّلة لا منافسة. قواعد نيلسون تقول إنّ العملية <x id="START_TAG_EM"/>قد<x id="CLOSE_TAG_EM"/> انحرفت فعلاً؛ أمّا التوقّع فيقول إلى أين تتّجه السلسلة إن لم يتغيّر شيء. الأولى تُثبت، والثانية تمدّ.</target>
+        <source>Lecture complémentaire, et non concurrente. Les règles de Nelson disent que le procédé a <x id="START_EMPHASISED_TEXT"/>déjà<x id="CLOSE_EMPHASISED_TEXT"/> dérivé ; la prévision dit où la série va si rien ne change. L'une constate, l'autre projette.</source>
+        <target state="translated">قراءة مكمّلة لا منافسة. قواعد نيلسون تقول إنّ العملية <x id="START_EMPHASISED_TEXT"/>قد<x id="CLOSE_EMPHASISED_TEXT"/> انحرفت فعلاً؛ أمّا التوقّع فيقول إلى أين تتّجه السلسلة إن لم يتغيّر شيء. الأولى تُثبت، والثانية تمدّ.</target>
       </trans-unit>
       <trans-unit id="forecast.kpi.role-link-manual" datatype="html">
         <source>Ce qui reste à votre main</source>

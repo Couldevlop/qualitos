@@ -13317,8 +13317,8 @@ Datos de contacto profesionales</target>
         <target state="translated">Responde a una sola pregunta: <x id="START_TAG_STRONG"/>al ritmo actual, ¿alcanzará el indicador su objetivo, y cuándo?<x id="CLOSE_TAG_STRONG"/> El suavizado exponencial Holt-Winters prolonga el nivel, la tendencia y, si la hay, la estacionalidad de la serie. El intervalo del 95 % expresa la incertidumbre: una previsión sin intervalo se lee como una certeza que no es.</target>
       </trans-unit>
       <trans-unit id="forecast.kpi.role-when" datatype="html">
-        <source>Elle sert à décider <x id="START_TAG_EM"/>avant<x id="CLOSE_TAG_EM"/> l'échéance : relancer un cycle d'amélioration qui n'atteindra pas son objectif, renforcer une action dont l'effet s'essouffle, ou au contraire ne rien changer à ce qui converge. Sur une série courte ou erratique, la probabilité d'atteinte reste basse et l'intervalle large — c'est le signal qu'il n'y a pas encore de tendance à prolonger, pas une invitation à y lire une baisse.</source>
-        <target state="translated">Sirve para decidir <x id="START_TAG_EM"/>antes<x id="CLOSE_TAG_EM"/> del vencimiento: relanzar un ciclo de mejora que no alcanzará su objetivo, reforzar una acción cuyo efecto se agota, o no tocar lo que converge. En una serie corta o errática, la probabilidad se mantiene baja y el intervalo ancho: es la señal de que aún no hay tendencia que prolongar, no una invitación a leer una caída.</target>
+        <source>Elle sert à décider <x id="START_EMPHASISED_TEXT"/>avant<x id="CLOSE_EMPHASISED_TEXT"/> l'échéance : relancer un cycle d'amélioration qui n'atteindra pas son objectif, renforcer une action dont l'effet s'essouffle, ou au contraire ne rien changer à ce qui converge. Sur une série courte ou erratique, la probabilité d'atteinte reste basse et l'intervalle large — c'est le signal qu'il n'y a pas encore de tendance à prolonger, pas une invitation à y lire une baisse.</source>
+        <target state="translated">Sirve para decidir <x id="START_EMPHASISED_TEXT"/>antes<x id="CLOSE_EMPHASISED_TEXT"/> del vencimiento: relanzar un ciclo de mejora que no alcanzará su objetivo, reforzar una acción cuyo efecto se agota, o no tocar lo que converge. En una serie corta o errática, la probabilidad se mantiene baja y el intervalo ancho: es la señal de que aún no hay tendencia que prolongar, no una invitación a leer una caída.</target>
       </trans-unit>
       <trans-unit id="forecast.kpi.role-links-title" datatype="html">
         <source>Ce à quoi elle est reliée</source>
@@ -13337,8 +13337,8 @@ Datos de contacto profesionales</target>
         <target state="translated">Gráficos de control (SPC)</target>
       </trans-unit>
       <trans-unit id="forecast.kpi.role-link-spc-text" datatype="html">
-        <source>Lecture complémentaire, et non concurrente. Les règles de Nelson disent que le procédé a <x id="START_TAG_EM"/>déjà<x id="CLOSE_TAG_EM"/> dérivé ; la prévision dit où la série va si rien ne change. L'une constate, l'autre projette.</source>
-        <target state="translated">Una lectura complementaria, no competidora. Las reglas de Nelson dicen que el proceso <x id="START_TAG_EM"/>ya<x id="CLOSE_TAG_EM"/> se ha desviado; la previsión dice hacia dónde va la serie si nada cambia. Una constata, la otra proyecta.</target>
+        <source>Lecture complémentaire, et non concurrente. Les règles de Nelson disent que le procédé a <x id="START_EMPHASISED_TEXT"/>déjà<x id="CLOSE_EMPHASISED_TEXT"/> dérivé ; la prévision dit où la série va si rien ne change. L'une constate, l'autre projette.</source>
+        <target state="translated">Una lectura complementaria, no competidora. Las reglas de Nelson dicen que el proceso <x id="START_EMPHASISED_TEXT"/>ya<x id="CLOSE_EMPHASISED_TEXT"/> se ha desviado; la previsión dice hacia dónde va la serie si nada cambia. Una constata, la otra proyecta.</target>
       </trans-unit>
       <trans-unit id="forecast.kpi.role-link-manual" datatype="html">
         <source>Ce qui reste à votre main</source>

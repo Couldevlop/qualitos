@@ -13317,8 +13317,8 @@ Coordonnées professionnelles</source>
         <target state="translated">答えるのは一つの問いだけです。<x id="START_TAG_STRONG"/>現在のペースで、この指標は目標に届くのか、そしていつか。<x id="CLOSE_TAG_STRONG"/>ホルト・ウィンタース指数平滑法が、系列の水準・トレンドおよび季節性（あれば）を延長します。95 % 区間は不確かさを示します。区間のない予測は、そうではない確信として読まれてしまいます。</target>
       </trans-unit>
       <trans-unit id="forecast.kpi.role-when" datatype="html">
-        <source>Elle sert à décider <x id="START_TAG_EM"/>avant<x id="CLOSE_TAG_EM"/> l'échéance : relancer un cycle d'amélioration qui n'atteindra pas son objectif, renforcer une action dont l'effet s'essouffle, ou au contraire ne rien changer à ce qui converge. Sur une série courte ou erratique, la probabilité d'atteinte reste basse et l'intervalle large — c'est le signal qu'il n'y a pas encore de tendance à prolonger, pas une invitation à y lire une baisse.</source>
-        <target state="translated">期限を迎える<x id="START_TAG_EM"/>前<x id="CLOSE_TAG_EM"/>に判断するためのものです。目標に届かない改善サイクルを立て直す、効果が弱まった対策を強める、収束しているものには手を入れない。系列が短い、あるいは乱れている場合、達成確率は低く区間は広いままになります。これは延長すべき傾向がまだないという合図であって、低下と読み取るべき根拠ではありません。</target>
+        <source>Elle sert à décider <x id="START_EMPHASISED_TEXT"/>avant<x id="CLOSE_EMPHASISED_TEXT"/> l'échéance : relancer un cycle d'amélioration qui n'atteindra pas son objectif, renforcer une action dont l'effet s'essouffle, ou au contraire ne rien changer à ce qui converge. Sur une série courte ou erratique, la probabilité d'atteinte reste basse et l'intervalle large — c'est le signal qu'il n'y a pas encore de tendance à prolonger, pas une invitation à y lire une baisse.</source>
+        <target state="translated">期限を迎える<x id="START_EMPHASISED_TEXT"/>前<x id="CLOSE_EMPHASISED_TEXT"/>に判断するためのものです。目標に届かない改善サイクルを立て直す、効果が弱まった対策を強める、収束しているものには手を入れない。系列が短い、あるいは乱れている場合、達成確率は低く区間は広いままになります。これは延長すべき傾向がまだないという合図であって、低下と読み取るべき根拠ではありません。</target>
       </trans-unit>
       <trans-unit id="forecast.kpi.role-links-title" datatype="html">
         <source>Ce à quoi elle est reliée</source>
@@ -13337,8 +13337,8 @@ Coordonnées professionnelles</source>
         <target state="translated">管理図（SPC）</target>
       </trans-unit>
       <trans-unit id="forecast.kpi.role-link-spc-text" datatype="html">
-        <source>Lecture complémentaire, et non concurrente. Les règles de Nelson disent que le procédé a <x id="START_TAG_EM"/>déjà<x id="CLOSE_TAG_EM"/> dérivé ; la prévision dit où la série va si rien ne change. L'une constate, l'autre projette.</source>
-        <target state="translated">競合ではなく補完の読み方です。ネルソンのルールは工程が<x id="START_TAG_EM"/>すでに<x id="CLOSE_TAG_EM"/>外れたことを示し、予測は何も変えなければ系列がどこへ向かうかを示します。一方は確認し、他方は延長します。</target>
+        <source>Lecture complémentaire, et non concurrente. Les règles de Nelson disent que le procédé a <x id="START_EMPHASISED_TEXT"/>déjà<x id="CLOSE_EMPHASISED_TEXT"/> dérivé ; la prévision dit où la série va si rien ne change. L'une constate, l'autre projette.</source>
+        <target state="translated">競合ではなく補完の読み方です。ネルソンのルールは工程が<x id="START_EMPHASISED_TEXT"/>すでに<x id="CLOSE_EMPHASISED_TEXT"/>外れたことを示し、予測は何も変えなければ系列がどこへ向かうかを示します。一方は確認し、他方は延長します。</target>
       </trans-unit>
       <trans-unit id="forecast.kpi.role-link-manual" datatype="html">
         <source>Ce qui reste à votre main</source>
