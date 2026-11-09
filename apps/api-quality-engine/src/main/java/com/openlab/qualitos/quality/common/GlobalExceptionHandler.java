@@ -36,6 +36,9 @@ import com.openlab.qualitos.quality.docs.DocumentSignatoryException;
 import com.openlab.qualitos.quality.docs.DocumentStateException;
 import com.openlab.qualitos.quality.docs.DocumentVersionNotFoundException;
 import com.openlab.qualitos.quality.fives.FiveSAuditNotFoundException;
+import com.openlab.qualitos.quality.fives.FiveSItemPhotoNotFoundException;
+import com.openlab.qualitos.quality.fives.FiveSItemPhotoTooLargeException;
+import com.openlab.qualitos.quality.fives.FiveSItemPhotoValidationException;
 import com.openlab.qualitos.quality.fives.FiveSStateException;
 import com.openlab.qualitos.quality.fivewhys.FiveWhysNotFoundException;
 import com.openlab.qualitos.quality.fivewhys.FiveWhysStateException;
@@ -365,6 +368,41 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/fives-invalid-state"));
         problem.setTitle("Invalid 5S Audit State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(FiveSItemPhotoNotFoundException.class)
+    public ProblemDetail handleFiveSPhotoNotFound(FiveSItemPhotoNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/fives-photo-not-found"));
+        problem.setTitle("5S Photo Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(FiveSItemPhotoValidationException.class)
+    public ProblemDetail handleFiveSPhotoValidation(FiveSItemPhotoValidationException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/fives-invalid-photo"));
+        problem.setTitle("Invalid 5S Photo");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    /**
+     * 413 et non 400 : la requête est valide, c'est sa TAILLE qui est refusée — par
+     * photo, par pilier, ou pour l'audit entier. Le message dit lequel des trois
+     * plafonds a parlé, sans quoi l'auditeur recommence avec une photo plus petite
+     * alors que c'est la sixième du pilier.
+     */
+    @ExceptionHandler(FiveSItemPhotoTooLargeException.class)
+    public ProblemDetail handleFiveSPhotoTooLarge(FiveSItemPhotoTooLargeException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.PAYLOAD_TOO_LARGE, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/fives-photo-too-large"));
+        problem.setTitle("5S Photo Too Large");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }

@@ -13096,6 +13096,66 @@ Coordonnées professionnelles</source>
         <source>Porter ce pilier à un cercle de qualité, avec sa note</source>
         <target state="translated">إحالة هذا الركن إلى حلقة جودة، مع درجته</target>
       </trans-unit>
+      <trans-unit id="fives.photo.take" datatype="html">
+        <source>Importer une photo</source>
+        <target state="translated">إدراج صورة</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.tooltip" datatype="html">
+        <source>Importer la photo du constat fait sur ce pilier</source>
+        <target state="translated">إدراج صورة ما لوحظ على هذا الركن</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.done" datatype="html">
+        <source>Photo ajoutée au pilier.</source>
+        <target state="translated">أُضيفت الصورة إلى الركن.</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.queued" datatype="html">
+        <source>Photo conservée localement. Elle partira au retour du réseau.</source>
+        <target state="translated">حُفظت الصورة محلياً، وسترسل عند عودة الشبكة.</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.pending" datatype="html">
+        <source>En attente de réseau</source>
+        <target state="translated">في انتظار الشبكة</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.remove-title" datatype="html">
+        <source>Retirer cette photo ?</source>
+        <target state="translated">إزالة هذه الصورة؟</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.remove-message" datatype="html">
+        <source>La photo disparaîtra de l'audit. Le retrait est consigné au journal.</source>
+        <target state="translated">ستختفي الصورة من التدقيق، ويُسجَّل الحذف في السجل.</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.remove-aria" datatype="html">
+        <source>Retirer cette photo</source>
+        <target state="translated">إزالة هذه الصورة</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.remove-error" datatype="html">
+        <source>La photo n'a pas pu être retirée.</source>
+        <target state="translated">لم يتعذّر حذف الصورة.</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.err-type" datatype="html">
+        <source>Seules les photos (JPEG, PNG, WebP, HEIC) sont acceptées.</source>
+        <target state="translated">لا تُقبل سوى الصور (JPEG وPNG وWebP وHEIC).</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.err-too-large" datatype="html">
+        <source>Photo trop volumineuse (10 Mo maximum).</source>
+        <target state="translated">الصورة أكبر من الحد المسموح (10 ميغابايت).</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.err-quota" datatype="html">
+        <source>Plafond atteint : 10 Mo par photo, 5 photos par pilier, 40 Mo par audit.</source>
+        <target state="translated">بلغت الحد: 10 ميغابايت للصورة، و5 صور للركن، و40 ميغابايت للتدقيق.</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.err-state" datatype="html">
+        <source>Ce pilier doit d'abord être noté, et l'audit ne doit pas être annulé.</source>
+        <target state="translated">يجب تقييم هذا الركن أولاً، وألا يكون التدقيق ملغى.</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.err-storage" datatype="html">
+        <source>Le stockage des photos est momentanément indisponible.</source>
+        <target state="translated">تخزين الصور غير متاح مؤقتاً.</target>
+      </trans-unit>
+      <trans-unit id="fives.photo.err-generic" datatype="html">
+        <source>La photo n'a pas pu être envoyée.</source>
+        <target state="translated">لم يتم إرسال الصورة.</target>
+      </trans-unit>
       <trans-unit id="nav.forecast" datatype="html">
         <source>Prévision KPI</source>
         <target state="translated">التنبؤ بمؤشرات الأداء</target>

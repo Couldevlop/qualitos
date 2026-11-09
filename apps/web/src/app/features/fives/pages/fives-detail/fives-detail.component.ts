@@ -10,7 +10,13 @@ import { deferredView } from '../../../../core/rx/deferred-view';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../../../shared/ui/confirm-dialog/confirm-dialog.component';
 import { FivesService } from '../../fives.service';
-import { FiveSAuditResponse, FiveSAuditStatus, FiveSPillar, VisionAnalysis } from '../../fives.types';
+import {
+  FiveSAuditResponse,
+  FiveSAuditStatus,
+  FiveSItemPhoto,
+  FiveSPillar,
+  VisionAnalysis
+} from '../../fives.types';
 import {
   FivesCircleChoice,
   FivesCircleDialogComponent,
@@ -60,6 +66,16 @@ export class FivesDetailComponent implements OnInit {
   /** Le dépôt d'une idée en cours, par pilier. */
   proposing: Record<FiveSPillar, boolean> = {} as Record<FiveSPillar, boolean>;
 
+  /**
+   * Les photos de terrain de l'audit, tous piliers confondus (§3.2).
+   *
+   * <p>Une seule liste, découpée par pilier à l'affichage : cinq requêtes pour
+   * cinq vignettes feraient cinq allers et retours sur un réseau d'atelier.
+   */
+  photos: FiveSItemPhoto[] = [];
+  /** La prise de vue en cours, par pilier. */
+  photographing: Record<FiveSPillar, boolean> = {} as Record<FiveSPillar, boolean>;
+
   /** Analyse Vision CV (§3.2) : état + dernier résultat. */
   readonly visionAnalyzing$ = new BehaviorSubject<boolean>(false);
   visionResult: VisionAnalysis | null = null;
@@ -86,6 +102,7 @@ export class FivesDetailComponent implements OnInit {
       });
       this.saving[p.pillar] = false;
       this.proposing[p.pillar] = false;
+      this.photographing[p.pillar] = false;
     }
   }
 
@@ -110,6 +127,9 @@ export class FivesDetailComponent implements OnInit {
       )),
       tap(a => {
         if (a) {
+          // En microtâche : charger les vignettes depuis le tap du flux qui rend
+          // la page ferait muter la vue pendant son propre cycle de contrôle.
+          queueMicrotask(() => this.loadPhotos());
           for (const p of this.pillars) {
             const item = a.items.find(i => i.pillar === p.pillar);
             if (item) {
@@ -253,6 +273,157 @@ export class FivesDetailComponent implements OnInit {
     if (audit.status !== 'COMPLETED') return false;
     const item = audit.items.find(i => i.pillar === pillar);
     return !!item && item.score != null;
+  }
+
+  // ---- photos de terrain (§3.2, §15.3) ---------------------------------------
+
+  /** Les types qu'un téléphone produit, et que le serveur accepte. */
+  private static readonly PHOTO_TYPES =
+    ['image/jpeg', 'image/png', 'image/webp', 'image/heic'];
+
+  /** Même plafond que le serveur : le dire tout de suite évite un aller-retour. */
+  private static readonly PHOTO_MAX_BYTES = 10 * 1024 * 1024;
+
+  /** Au plus cinq photos par pilier, comme le serveur. */
+  private static readonly PHOTO_MAX_PER_PILLAR = 5;
+
+  /** Les vignettes d'un pilier, dans l'ordre de prise. */
+  photosOf(pillar: FiveSPillar): FiveSItemPhoto[] {
+    return this.photos.filter(p => p.pillar === pillar);
+  }
+
+  /**
+   * Photographier suppose un pilier noté : la photo documente un constat, et
+   * un pilier qu'on n'a pas évalué n'en porte aucun. Un audit annulé n'accepte
+   * plus rien ; un audit clos, si — l'auditeur a pu photographier en zone
+   * blanche et la file ne se vide qu'au retour du réseau.
+   */
+  canPhotograph(audit: FiveSAuditResponse, pillar: FiveSPillar): boolean {
+    if (audit.status === 'CANCELLED') return false;
+    const item = audit.items.find(i => i.pillar === pillar);
+    if (!item || item.score == null) return false;
+    return this.photosOf(pillar).length < FivesDetailComponent.PHOTO_MAX_PER_PILLAR;
+  }
+
+  /** Retirer une preuve s'arrête à la clôture : un dossier qu'on vide ne prouve plus rien. */
+  canRemovePhoto(audit: FiveSAuditResponse): boolean {
+    return audit.status !== 'COMPLETED' && audit.status !== 'CANCELLED';
+  }
+
+  /** Ouvre l'appareil photo (ou le sélecteur de fichier sur un poste fixe). */
+  triggerPhotoPicker(input: HTMLInputElement, pillar: FiveSPillar): void {
+    if (this.photographing[pillar]) return;
+    input.click();
+  }
+
+  onPhotoFile(event: Event, audit: FiveSAuditResponse, pillar: FiveSPillar): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = ''; // permet de reprendre une photo du même nom
+    if (!file) return;
+    if (!FivesDetailComponent.PHOTO_TYPES.includes((file.type || '').toLowerCase())) {
+      this.snack.open(
+        $localize`:@@fives.photo.err-type:Seules les photos (JPEG, PNG, WebP, HEIC) sont acceptées.`,
+        $localize`:@@common.ok:OK`, { duration: 4000 });
+      return;
+    }
+    if (file.size > FivesDetailComponent.PHOTO_MAX_BYTES) {
+      this.snack.open(
+        $localize`:@@fives.photo.err-too-large:Photo trop volumineuse (10 Mo maximum).`,
+        $localize`:@@common.ok:OK`, { duration: 4000 });
+      return;
+    }
+    this.uploadPhoto(audit, pillar, file);
+  }
+
+  private uploadPhoto(audit: FiveSAuditResponse, pillar: FiveSPillar, file: File): void {
+    this.photographing[pillar] = true;
+    this.fives.uploadItemPhoto(audit.id, pillar, file)
+      .pipe(finalize(() => (this.photographing[pillar] = false)))
+      .subscribe({
+        next: photo => {
+          // La photo prise hors ligne n'existe que localement : on l'ajoute à la
+          // liste au lieu de relire le serveur, qui ne la connaît pas encore.
+          if (photo.pendingSync) {
+            this.photos = [...this.photos, photo];
+            this.snack.open(
+              $localize`:@@fives.photo.queued:Photo gardée sur l'appareil. Elle partira au retour du réseau.`,
+              $localize`:@@common.ok:OK`, { duration: 5000 });
+            return;
+          }
+          this.loadPhotos();
+          this.snack.open($localize`:@@fives.photo.done:Photo ajoutée au pilier.`,
+            $localize`:@@common.ok:OK`, { duration: 3000 });
+        },
+        error: err => {
+          // eslint-disable-next-line no-console
+          console.warn('[fives-detail] photo upload failed', err?.status, err?.error?.title);
+          this.snack.open(this.photoErrorMessage(err?.status),
+            $localize`:@@common.ok:OK`, { duration: 5000 });
+        }
+      });
+  }
+
+  removePhoto(audit: FiveSAuditResponse, photo: FiveSItemPhoto): void {
+    this.dialog.open(ConfirmDialogComponent, {
+      data: <ConfirmDialogData>{
+        title: $localize`:@@fives.photo.remove-title:Retirer cette photo ?`,
+        message: $localize`:@@fives.photo.remove-message:La photo disparaîtra de l'audit. Le retrait est consigné au journal.`,
+        confirmLabel: $localize`:@@common.delete:Supprimer`,
+        destructive: true
+      },
+      autoFocus: false,
+      restoreFocus: true
+    }).afterClosed().subscribe(confirmed => {
+      if (!confirmed) return;
+      // Une photo encore en file n'existe pas côté serveur : la demander
+      // reviendrait à faire échouer un retrait sur une ressource absente.
+      if (photo.pendingSync) {
+        this.photos = this.photos.filter(p => p.id !== photo.id);
+        return;
+      }
+      this.fives.deleteItemPhoto(audit.id, photo.id).subscribe({
+        next: () => this.loadPhotos(),
+        error: err => {
+          // eslint-disable-next-line no-console
+          console.warn('[fives-detail] photo delete failed', err?.status, err?.error?.title);
+          this.snack.open(
+            safeErrorMessage(err, $localize`:@@fives.photo.remove-error:La photo n'a pas pu être retirée.`),
+            $localize`:@@common.ok:OK`, { duration: 4000 });
+        }
+      });
+    });
+  }
+
+  /**
+   * Les vignettes du serveur, relues à chaque changement.
+   *
+   * <p>Les URL sont présignées pour un quart d'heure : les garder plus
+   * longtemps en mémoire afficherait des images mortes. Les photos encore en
+   * file, elles, sont conservées : le serveur ne les connaît pas.
+   */
+  private loadPhotos(): void {
+    const enAttente = this.photos.filter(p => p.pendingSync);
+    this.fives.listPhotos(this.auditId).subscribe({
+      next: photos => { this.photos = [...photos, ...enAttente]; },
+      error: err => {
+        // eslint-disable-next-line no-console
+        console.warn('[fives-detail] photo list failed', err?.status, err?.error?.title);
+        // On garde ce qui est en file : une liste vide laisserait croire que la
+        // photo prise à l'instant a été perdue.
+        this.photos = enAttente;
+      }
+    });
+  }
+
+  private photoErrorMessage(status?: number): string {
+    switch (status) {
+      case 409: return $localize`:@@fives.photo.err-state:Ce pilier doit d'abord être noté, et l'audit ne doit pas être annulé.`;
+      case 413: return $localize`:@@fives.photo.err-quota:Plafond atteint : 10 Mo par photo, 5 photos par pilier, 40 Mo par audit.`;
+      case 422: return $localize`:@@fives.photo.err-type:Seules les photos (JPEG, PNG, WebP, HEIC) sont acceptées.`;
+      case 503: return $localize`:@@fives.photo.err-storage:Le stockage des photos est momentanément indisponible.`;
+      default:  return $localize`:@@fives.photo.err-generic:La photo n'a pas pu être envoyée.`;
+    }
   }
 
   start(): void { this.transition('start'); }

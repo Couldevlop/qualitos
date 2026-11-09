@@ -17,6 +17,22 @@ export interface QueuedOperation {
   label: string;
   queuedAt: string;
   /**
+   * Envoi de fichier : décrit comment reconstituer le formulaire multipart au
+   * rejeu. Quand ce champ est présent, `body` est un `Blob` (la photo prise sur
+   * le terrain) et non du JSON.
+   *
+   * <p>Un `FormData` ne se stocke pas : il n'est pas clonable par IndexedDB. Un
+   * `Blob`, lui, s'y conserve tel quel, même après fermeture de la PWA. On garde
+   * donc les octets d'un côté et le nom du champ de l'autre, et c'est le rejeu
+   * qui les assemble.
+   */
+  multipart?: {
+    /** Nom de la partie attendue par l'API (« image »). */
+    field: string;
+    /** Nom de fichier à annoncer ; le serveur le neutralise de son côté. */
+    filename: string;
+  };
+  /**
    * Compteur monotone d'insertion : départage les opérations mises en file
    * dans la même seconde (queuedAt est à la seconde). Garantit un rejeu dans
    * l'ordre EXACT d'enfilement (create avant son score). Optionnel pour la

@@ -200,6 +200,23 @@ describe('FivesService (mock mode)', () => {
       });
     });
   });
+  it("en demonstration, l'apercu vient du fichier verse", (done) => {
+    const fichier = new File([new Uint8Array([0xff, 0xd8, 0xff])], 'zone.jpg',
+      { type: 'image/jpeg' });
+    service.uploadItemPhoto('5s-1', 'SEIRI', fichier).subscribe(photo => {
+      expect(photo.pillar).toBe('SEIRI');
+      expect(photo.localUrl).toContain('blob:');
+      service.listPhotos('5s-1').subscribe(liste => {
+        expect(liste.map(p => p.id)).toContain(photo.id);
+        service.deleteItemPhoto('5s-1', photo.id).subscribe(() => {
+          service.listPhotos('5s-1').subscribe(apres => {
+            expect(apres.length).toBe(0);
+            done();
+          });
+        });
+      });
+    });
+  });
 });
 
 /**
@@ -368,6 +385,27 @@ describe('FivesService (API réelle, en ligne)', () => {
     });
     req.flush({ id: 'p-1', circleId: 'c-1', title: 'Nettoyer', status: 'PROPOSED' });
   });
+  it('poste la photo en multipart sur le pilier, et lit les vignettes de l’audit', () => {
+    const fichier = new File([new Uint8Array([0xff, 0xd8, 0xff])], 'zone.jpg',
+      { type: 'image/jpeg' });
+
+    service.uploadItemPhoto('a1', 'SEITON', fichier).subscribe();
+    const envoi = httpMock.expectOne(`${base}/a1/photos/SEITON`);
+    expect(envoi.request.method).toBe('POST');
+    expect(envoi.request.body instanceof FormData).toBeTrue();
+    expect((envoi.request.body as FormData).get('image')).toBeTruthy();
+    envoi.flush({ id: 'p-1', auditId: 'a1', pillar: 'SEITON' });
+
+    service.listPhotos('a1').subscribe();
+    const lecture = httpMock.expectOne(`${base}/a1/photos`);
+    expect(lecture.request.method).toBe('GET');
+    lecture.flush([]);
+
+    service.deleteItemPhoto('a1', 'p-1').subscribe();
+    const retrait = httpMock.expectOne(`${base}/a1/photos/p-1`);
+    expect(retrait.request.method).toBe('DELETE');
+    retrait.flush(null);
+  });
 });
 
 describe('FivesService (offline-first, API réelle)', () => {
@@ -432,5 +470,50 @@ describe('FivesService (offline-first, API réelle)', () => {
     const req = httpMock.expectOne(`${environment.apiBaseUrl}/api/v1/fives/audits/a1/score`);
     expect(req.request.method).toBe('PUT');
     req.flush({ id: 'srv-1', auditId: 'a1', pillar: 'SEIRI', score: 9 });
+  });
+  it('hors-ligne : la photo attend dans la file, avec un apercu local', (done) => {
+    connectivity.online = false;
+    const fichier = new File([new Uint8Array([0xff, 0xd8, 0xff])], 'zone.jpg',
+      { type: 'image/jpeg' });
+
+    service.uploadItemPhoto('a1', 'SEIRI', fichier).subscribe(photo => {
+      expect(photo.pendingSync).toBeTrue();
+      expect(photo.localUrl).toContain('blob:');
+      expect(photo.sizeBytes).toBe(fichier.size);
+      // Rien ne part : c'est la file qui enverra au retour du reseau.
+      httpMock.expectNone(`${environment.apiBaseUrl}/api/v1/fives/audits/a1/photos/SEIRI`);
+      done();
+    });
+  });
+
+  it('coupure pendant l’envoi d’une photo : bascule en file au lieu d’echouer', (done) => {
+    connectivity.online = true;
+    const fichier = new File([new Uint8Array([0xff, 0xd8, 0xff])], 'zone.jpg',
+      { type: 'image/jpeg' });
+
+    service.uploadItemPhoto('a1', 'SEIRI', fichier).subscribe(photo => {
+      expect(photo.pendingSync).toBeTrue();
+      done();
+    });
+    const req = httpMock.expectOne(
+      `${environment.apiBaseUrl}/api/v1/fives/audits/a1/photos/SEIRI`);
+    req.error(new ProgressEvent('error'), { status: 0 });
+  });
+
+  it('une erreur applicative sur la photo remonte, elle ne part pas en file', (done) => {
+    connectivity.online = true;
+    const fichier = new File([new Uint8Array([0xff, 0xd8, 0xff])], 'zone.jpg',
+      { type: 'image/jpeg' });
+
+    service.uploadItemPhoto('a1', 'SEIRI', fichier).subscribe({
+      next: () => fail('un refus du serveur ne doit pas devenir une mise en file'),
+      error: err => {
+        expect(err.status).toBe(409);
+        done();
+      }
+    });
+    const req = httpMock.expectOne(
+      `${environment.apiBaseUrl}/api/v1/fives/audits/a1/photos/SEIRI`);
+    req.flush({ detail: 'no score' }, { status: 409, statusText: 'Conflict' });
   });
 });

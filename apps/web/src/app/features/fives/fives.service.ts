@@ -11,8 +11,10 @@ import {
   CreateFiveSAuditRequest,
   FiveSAuditResponse,
   FiveSAuditStatus,
+  FiveSItemPhoto,
   FiveSItemResponse,
   FiveSPage,
+  FiveSPillar,
   ProposeToCircleRequest,
   ScorePillarRequest,
   UpdateFiveSAuditRequest,
@@ -197,6 +199,55 @@ export class FivesService {
       `${this.endpoint}/${auditId}/circle-proposals`, input);
   }
 
+  // ---- photos de terrain (§3.2, §15.3) ---------------------------------------
+
+  /** Les photos de l'audit, tous piliers confondus, avec leurs URL présignées. */
+  listPhotos(auditId: string): Observable<FiveSItemPhoto[]> {
+    if (environment.useMockApi) {
+      return of([...this.mockPhotoStore(auditId)]).pipe(delay(120));
+    }
+    return this.http.get<FiveSItemPhoto[]>(`${this.endpoint}/${auditId}/photos`);
+  }
+
+  /**
+   * Verse une photo sur un pilier noté.
+   *
+   * <p>Hors ligne, les octets partent dans la file d'attente et l'écran reçoit
+   * un aperçu local : c'est le seul envoi de fichier de la plateforme qui se
+   * met en file, et il le doit au terrain. Une zone blanche est l'endroit même
+   * où l'on photographie, et refuser la prise de vue y viderait l'audit mobile
+   * de son sens. Le pilier est dans l'URL, jamais dans un identifiant de ligne :
+   * la notation, elle aussi en file, n'a pas encore d'identifiant serveur.
+   */
+  uploadItemPhoto(auditId: string, pillar: FiveSPillar, file: File): Observable<FiveSItemPhoto> {
+    if (environment.useMockApi) {
+      return of(this.mockAddPhoto(auditId, pillar, file)).pipe(delay(300));
+    }
+    if (!this.connectivity.isOnline()) {
+      return this.enqueuePhoto(auditId, pillar, file);
+    }
+    const form = new FormData();
+    form.append('image', file, file.name);
+    return this.http.post<FiveSItemPhoto>(
+      `${this.endpoint}/${auditId}/photos/${pillar}`, form
+    ).pipe(
+      catchError(err => this.isNetworkError(err)
+        ? this.enqueuePhoto(auditId, pillar, file)
+        : throwError(() => err))
+    );
+  }
+
+  /** Retire une photo. Refusé par le serveur sur un audit clos ou annulé. */
+  deleteItemPhoto(auditId: string, photoId: string): Observable<void> {
+    if (environment.useMockApi) {
+      const store = this.mockPhotoStore(auditId);
+      const i = store.findIndex(p => p.id === photoId);
+      if (i >= 0) store.splice(i, 1);
+      return of(undefined).pipe(delay(120));
+    }
+    return this.http.delete<void>(`${this.endpoint}/${auditId}/photos/${photoId}`);
+  }
+
   startAudit(id: string): Observable<FiveSAuditResponse> {
     return this.transition(id, 'IN_PROGRESS', 'start');
   }
@@ -262,9 +313,63 @@ export class FivesService {
       })));
   }
 
+  /**
+   * Met la photo en file, et rend tout de suite un aperçu local.
+   *
+   * <p>L'aperçu est un `blob:` du poste : sans lui l'auditeur ne verrait rien
+   * revenir et reprendrait la photo en croyant qu'elle n'est pas passée.
+   */
+  private enqueuePhoto(auditId: string, pillar: FiveSPillar, file: File): Observable<FiveSItemPhoto> {
+    return this.offlineQueue
+      .enqueue('POST', `${this.endpoint}/${auditId}/photos/${pillar}`, file,
+        `Photo 5S ${pillar}`, { field: 'image', filename: file.name })
+      .pipe(map(op => ({
+        id: 'offline-' + op.id,
+        auditId,
+        pillar,
+        contentType: file.type,
+        sizeBytes: file.size,
+        originalFilename: file.name,
+        createdAt: op.queuedAt,
+        localUrl: URL.createObjectURL(file),
+        pendingSync: true
+      })));
+  }
+
   /** status 0 = la requête n'a pas atteint le serveur (coupure pendant l'envoi). */
   private isNetworkError(err: unknown): boolean {
     return err instanceof HttpErrorResponse && err.status === 0;
+  }
+
+  /** Mémoire de photos par audit (mode démonstration uniquement). */
+  private readonly mockPhotoStores = new Map<string, FiveSItemPhoto[]>();
+
+  private mockPhotoStore(auditId: string): FiveSItemPhoto[] {
+    let store = this.mockPhotoStores.get(auditId);
+    if (!store) {
+      store = [];
+      this.mockPhotoStores.set(auditId, store);
+    }
+    return store;
+  }
+
+  /**
+   * En démonstration, l'aperçu vient du fichier lui-même : c'est la seule façon
+   * de montrer la vignette réelle sans serveur de stockage derrière.
+   */
+  private mockAddPhoto(auditId: string, pillar: FiveSPillar, file: File): FiveSItemPhoto {
+    const photo: FiveSItemPhoto = {
+      id: 'photo-' + Math.random().toString(36).slice(2, 9),
+      auditId,
+      pillar,
+      contentType: file.type,
+      sizeBytes: file.size,
+      originalFilename: file.name,
+      createdAt: new Date().toISOString(),
+      localUrl: URL.createObjectURL(file)
+    };
+    this.mockPhotoStore(auditId).push(photo);
+    return photo;
   }
 
   private mockPage(status?: FiveSAuditStatus): FiveSPage {

@@ -3,8 +3,8 @@ import { fakeAsync, flushMicrotasks, TestBed, tick } from '@angular/core/testing
 import { firstValueFrom, Subject } from 'rxjs';
 
 import { ConnectivityService } from './connectivity.service';
-import { OfflineQueueEvent, OfflineQueueService } from './offline-queue.service';
-import { InMemoryQueueStore, OfflineQueueStore } from './offline-queue.store';
+import { OfflineQueueEvent, OfflineQueueService, payloadOf } from './offline-queue.service';
+import { InMemoryQueueStore, OfflineQueueStore, QueuedOperation } from './offline-queue.store';
 
 /** Double de ConnectivityService pilotable par les tests. */
 class FakeConnectivity {
@@ -125,6 +125,55 @@ describe('OfflineQueueService', () => {
     expect(count).toBe(0);
     expect(events.some(e => e.type === 'replay-failed')).toBeTrue();
   }));
+
+  // --- envoi de fichier (photo 5S de terrain) ---------------------------------
+
+  it("garde les octets d'une photo et le nom du champ, sans FormData en file", fakeAsync(() => {
+    const photo = new File([new Uint8Array([0xff, 0xd8, 0xff])], 'zone.jpg', { type: 'image/jpeg' });
+    let op!: QueuedOperation;
+
+    service.enqueue('POST', '/api/v1/fives/audits/a1/photos/SEIRI', photo,
+        'Photo 5S SEIRI', { field: 'image', filename: 'zone.jpg' }).subscribe(o => (op = o));
+    flushMicrotasks();
+
+    // Un FormData n'est pas clonable : il ne survivrait ni a IndexedDB ni a la
+    // fermeture de la PWA. On garde le Blob, et le rejeu assemble le formulaire.
+    expect(op.body instanceof File).toBeTrue();
+    expect(op.multipart).toEqual({ field: 'image', filename: 'zone.jpg' });
+  }));
+
+  it('assemble le formulaire multipart au moment du rejeu', fakeAsync(() => {
+    const photo = new File([new Uint8Array([0xff, 0xd8, 0xff])], 'zone.jpg', { type: 'image/jpeg' });
+    service.enqueue('POST', '/api/v1/fives/audits/a1/photos/SEIRI', photo,
+        'Photo 5S SEIRI', { field: 'image', filename: 'zone.jpg' }).subscribe();
+    flushMicrotasks();
+
+    connectivity.setOnline(true);
+    flushMicrotasks();
+
+    const req = httpMock.expectOne('/api/v1/fives/audits/a1/photos/SEIRI');
+    expect(req.request.body instanceof FormData).toBeTrue();
+    // Le navigateur recopie le fichier en l'ajoutant au formulaire : on vérifie
+    // ce qui compte, le nom de la partie et les octets annoncés.
+    const partie = (req.request.body as FormData).get('image') as File;
+    expect(partie.name).toBe('zone.jpg');
+    expect(partie.type).toBe('image/jpeg');
+    expect(partie.size).toBe(photo.size);
+    req.flush({ id: 'p-1' });
+    flushMicrotasks();
+    tick();
+
+    expect(events.some(e => e.type === 'replayed')).toBeTrue();
+  }));
+
+  it("laisse le corps JSON intact quand l'operation n'est pas un envoi de fichier", () => {
+    const ordinaire: QueuedOperation = {
+      id: 'op-1', method: 'PUT', url: '/x', body: { score: 7 }, label: 'Score',
+      queuedAt: '2026-11-09T10:00:00.000Z'
+    };
+
+    expect(payloadOf(ordinaire)).toEqual({ score: 7 });
+  });
 
   it('ignore replay() quand hors-ligne', async () => {
     await firstValueFrom(service.enqueue('POST', '/x', {}, 'op'));

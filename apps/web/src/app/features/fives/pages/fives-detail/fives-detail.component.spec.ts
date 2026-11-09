@@ -59,9 +59,16 @@ describe('FivesDetailComponent — porter un pilier au cercle', () => {
   async function monter(a: FiveSAuditResponse): Promise<void> {
     svc = jasmine.createSpyObj<FivesService>('FivesService',
       ['getAudit', 'scorePillar', 'proposeToCircle', 'startAudit', 'completeAudit',
-       'cancelAudit', 'updateAudit', 'deleteAudit', 'analyzeAuditPhoto']);
+       'cancelAudit', 'updateAudit', 'deleteAudit', 'analyzeAuditPhoto',
+       'listPhotos', 'uploadItemPhoto', 'deleteItemPhoto']);
     svc.getAudit.and.returnValue(of(a));
     svc.proposeToCircle.and.returnValue(of(idee));
+    svc.listPhotos.and.returnValue(of([]));
+    svc.uploadItemPhoto.and.returnValue(of({
+      id: 'p-1', auditId: AUDIT, pillar: 'SEIRI', contentType: 'image/jpeg',
+      sizeBytes: 3, createdAt: '2026-11-09T10:00:00Z', url: 'https://objets.test/x'
+    }));
+    svc.deleteItemPhoto.and.returnValue(of(undefined));
     snack = jasmine.createSpyObj<MatSnackBar>('MatSnackBar', ['open']);
 
     await TestBed.resetTestingModule().configureTestingModule({
@@ -89,6 +96,188 @@ describe('FivesDetailComponent — porter un pilier au cercle', () => {
   }
 
   const seiri = () => component.pillars[0];
+
+  // ---------- la photo du constat (§3.2) ----------
+
+  const fichier = (nom = 'zone.jpg', type = 'image/jpeg', taille = 3) =>
+    new File([new Uint8Array(taille)], nom, { type });
+
+  const evenement = (f: File | null) => ({
+    target: { files: f ? [f] : [], value: 'x' }
+  } as unknown as Event);
+
+  it('offre l’import sur un pilier noté, et rien sur un pilier non noté', async () => {
+    const a = audit('IN_PROGRESS', [item('SEIRI', 2)]);
+    await monter(a);
+
+    expect(component.canPhotograph(a, 'SEIRI')).toBeTrue();
+    expect(component.canPhotograph(a, 'SEITON')).toBeFalse();
+    expect((fixture.nativeElement as HTMLElement)
+      .querySelector('[data-test="photo-SEIRI"]')).not.toBeNull();
+  });
+
+  it('n’offre rien sur un audit annulé, mais encore sur un audit terminé', async () => {
+    const annule = audit('CANCELLED', [item('SEIRI', 2)]);
+    await monter(annule);
+
+    expect(component.canPhotograph(annule, 'SEIRI')).toBeFalse();
+    // Une photo prise en zone blanche peut remonter après la clôture : la file
+    // ne se vide qu'au retour du réseau.
+    const termine = audit('COMPLETED', [item('SEIRI', 2)]);
+    expect(component.canPhotograph(termine, 'SEIRI')).toBeTrue();
+  });
+
+  it('s’arrête à cinq photos par pilier, comme le serveur', async () => {
+    const a = audit('IN_PROGRESS', [item('SEIRI', 2)]);
+    await monter(a);
+    component.photos = [1, 2, 3, 4, 5].map(n => ({
+      id: 'p' + n, auditId: AUDIT, pillar: 'SEIRI' as const, contentType: 'image/jpeg',
+      sizeBytes: 10, createdAt: '2026-11-09T10:00:00Z'
+    }));
+
+    expect(component.photosOf('SEIRI').length).toBe(5);
+    expect(component.canPhotograph(a, 'SEIRI')).toBeFalse();
+  });
+
+  it('refuse un fichier qui n’est pas une photo, sans appeler le serveur', async () => {
+    const a = audit('IN_PROGRESS', [item('SEIRI', 2)]);
+    await monter(a);
+
+    component.onPhotoFile(evenement(fichier('rapport.pdf', 'application/pdf')), a, 'SEIRI');
+
+    expect(svc.uploadItemPhoto).not.toHaveBeenCalled();
+    expect(snack.open).toHaveBeenCalled();
+  });
+
+  it('refuse une photo au-delà de 10 Mo avant de l’envoyer', async () => {
+    const a = audit('IN_PROGRESS', [item('SEIRI', 2)]);
+    await monter(a);
+
+    component.onPhotoFile(
+      evenement(fichier('panoramique.jpg', 'image/jpeg', 10 * 1024 * 1024 + 1)), a, 'SEIRI');
+
+    expect(svc.uploadItemPhoto).not.toHaveBeenCalled();
+  });
+
+  it('ne fait rien quand on referme le sélecteur sans choisir', async () => {
+    const a = audit('IN_PROGRESS', [item('SEIRI', 2)]);
+    await monter(a);
+
+    component.onPhotoFile(evenement(null), a, 'SEIRI');
+
+    expect(svc.uploadItemPhoto).not.toHaveBeenCalled();
+    expect(snack.open).not.toHaveBeenCalled();
+  });
+
+  it('verse la photo et relit les vignettes du serveur', async () => {
+    const a = audit('IN_PROGRESS', [item('SEIRI', 2)]);
+    await monter(a);
+    svc.listPhotos.calls.reset();
+
+    component.onPhotoFile(evenement(fichier()), a, 'SEIRI');
+
+    expect(svc.uploadItemPhoto).toHaveBeenCalledWith(AUDIT, 'SEIRI', jasmine.any(File));
+    expect(svc.listPhotos).toHaveBeenCalled();
+    expect(component.photographing['SEIRI']).toBeFalse();
+  });
+
+  it('une photo mise en file reste affichée, sans relecture du serveur', async () => {
+    const a = audit('IN_PROGRESS', [item('SEIRI', 2)]);
+    await monter(a);
+    svc.uploadItemPhoto.and.returnValue(of({
+      id: 'offline-1', auditId: AUDIT, pillar: 'SEIRI', contentType: 'image/jpeg',
+      sizeBytes: 3, createdAt: '2026-11-09T10:00:00Z',
+      localUrl: 'blob:local', pendingSync: true
+    }));
+    svc.listPhotos.calls.reset();
+
+    component.onPhotoFile(evenement(fichier()), a, 'SEIRI');
+
+    // Le serveur ne la connaît pas encore : la relire la ferait disparaître de
+    // l'écran, et l'auditeur reprendrait la photo.
+    expect(svc.listPhotos).not.toHaveBeenCalled();
+    expect(component.photosOf('SEIRI').map(p => p.id)).toEqual(['offline-1']);
+  });
+
+  it('dit l’échec du versement et rend la main', async () => {
+    const a = audit('IN_PROGRESS', [item('SEIRI', 2)]);
+    await monter(a);
+    svc.uploadItemPhoto.and.returnValue(throwError(() => ({ status: 413 })));
+
+    component.onPhotoFile(evenement(fichier()), a, 'SEIRI');
+
+    expect(snack.open).toHaveBeenCalled();
+    expect(component.photographing['SEIRI']).toBeFalse();
+  });
+
+  it('garde les photos en file quand la relecture échoue', async () => {
+    const a = audit('IN_PROGRESS', [item('SEIRI', 2)]);
+    await monter(a);
+    component.photos = [{
+      id: 'offline-1', auditId: AUDIT, pillar: 'SEIRI', contentType: 'image/jpeg',
+      sizeBytes: 3, createdAt: '2026-11-09T10:00:00Z', pendingSync: true
+    }];
+    svc.listPhotos.and.returnValue(throwError(() => ({ status: 500 })));
+    svc.uploadItemPhoto.and.returnValue(of({
+      id: 'p-1', auditId: AUDIT, pillar: 'SEITON', contentType: 'image/jpeg',
+      sizeBytes: 3, createdAt: '2026-11-09T10:00:00Z'
+    }));
+
+    component.onPhotoFile(evenement(fichier()), a, 'SEITON');
+
+    expect(component.photosOf('SEIRI').map(p => p.id)).toEqual(['offline-1']);
+  });
+
+  it('retirer une photo encore en file n’appelle pas le serveur', async () => {
+    const a = audit('IN_PROGRESS', [item('SEIRI', 2)]);
+    await monter(a);
+    const enFile = {
+      id: 'offline-1', auditId: AUDIT, pillar: 'SEIRI' as const, contentType: 'image/jpeg',
+      sizeBytes: 3, createdAt: '2026-11-09T10:00:00Z', pendingSync: true
+    };
+    component.photos = [enFile];
+    ouvreLaFenetre(true);
+
+    component.removePhoto(a, enFile);
+
+    expect(svc.deleteItemPhoto).not.toHaveBeenCalled();
+    expect(component.photosOf('SEIRI').length).toBe(0);
+  });
+
+  it('retirer une photo déposée passe par le serveur, après confirmation', async () => {
+    const a = audit('IN_PROGRESS', [item('SEIRI', 2)]);
+    await monter(a);
+    const deposee = {
+      id: 'p-1', auditId: AUDIT, pillar: 'SEIRI' as const, contentType: 'image/jpeg',
+      sizeBytes: 3, createdAt: '2026-11-09T10:00:00Z'
+    };
+    ouvreLaFenetre(true);
+
+    component.removePhoto(a, deposee);
+
+    expect(svc.deleteItemPhoto).toHaveBeenCalledWith(AUDIT, 'p-1');
+  });
+
+  it('renoncer à la confirmation ne retire rien', async () => {
+    const a = audit('IN_PROGRESS', [item('SEIRI', 2)]);
+    await monter(a);
+    ouvreLaFenetre(false);
+
+    component.removePhoto(a, {
+      id: 'p-1', auditId: AUDIT, pillar: 'SEIRI', contentType: 'image/jpeg',
+      sizeBytes: 3, createdAt: '2026-11-09T10:00:00Z'
+    });
+
+    expect(svc.deleteItemPhoto).not.toHaveBeenCalled();
+  });
+
+  it('on ne retire plus rien d’un audit clôturé, alors qu’on y verse encore', async () => {
+    const a = audit('COMPLETED', [item('SEIRI', 2)]);
+    await monter(a);
+
+    expect(component.canRemovePhoto(a)).toBeFalse();
+    expect(component.canPhotograph(a, 'SEIRI')).toBeTrue();
+  });
 
   // ---------- quand la commande existe ----------
 

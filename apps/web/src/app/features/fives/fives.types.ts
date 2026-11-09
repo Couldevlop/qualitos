@@ -33,6 +33,37 @@ export interface FiveSAuditResponse {
 
 export type FiveSPage = SpringPage<FiveSAuditResponse>;
 
+/**
+ * Photo prise sur le terrain, attachée à UN pilier de l'audit (§3.2).
+ *
+ * <p>Distincte du `photoUrl` texte de la ligne de notation, qui restait à taper
+ * à la main — personne ne saisit une adresse d'image au milieu d'un atelier. Le
+ * binaire vit en stockage objet ; `url` est présignée et ne vaut qu'un quart
+ * d'heure, donc elle ne se met jamais en cache.
+ */
+export interface FiveSItemPhoto {
+  id: string;
+  auditId: string;
+  pillar: FiveSPillar;
+  contentType: string;
+  sizeBytes: number;
+  originalFilename?: string;
+  uploadedBy?: string;
+  createdAt: string;
+  /** URL de lecture à durée de vie courte, renvoyée par le GET. */
+  url?: string;
+  /**
+   * Aperçu local d'une photo prise hors ligne, encore dans la file.
+   *
+   * <p>C'est un `blob:` du poste, jamais une adresse serveur : l'auditeur doit
+   * voir immédiatement ce qu'il vient de photographier, sinon il reprend la
+   * photo en croyant que rien n'a été pris.
+   */
+  localUrl?: string;
+  /** true = pris hors ligne, en attente de synchronisation. */
+  pendingSync?: boolean;
+}
+
 export interface CreateFiveSAuditRequest {
   zone: string;
   description?: string;
