@@ -1,5 +1,6 @@
 package com.openlab.qualitos.quality.fives;
 
+import com.openlab.qualitos.quality.circle.CircleDto;
 import com.openlab.qualitos.quality.visiongateway.VisionDto;
 import com.openlab.qualitos.quality.visiongateway.VisionGatewayClient;
 import com.openlab.qualitos.quality.visiongateway.VisionImageValidator;
@@ -64,6 +65,20 @@ public class FiveSController {
     public FiveSDto.ItemResponse score(@PathVariable UUID id,
                                        @Valid @RequestBody FiveSDto.ScoreRequest request) {
         return service.scorePillar(id, request);
+    }
+
+    /**
+     * Porter un pilier de cet audit a un cercle de qualite (§3.6).
+     *
+     * <p>Meme porte que le depot d'une idee dans un cercle : c'est le meme
+     * geste, vu depuis l'audit qui le motive.
+     */
+    @PostMapping("/audits/{id}/circle-proposals")
+    @ResponseStatus(HttpStatus.CREATED)
+    public CircleDto.ProposalResponse proposeToCircle(
+            @PathVariable UUID id,
+            @Valid @RequestBody FiveSDto.ProposeToCircleRequest request) {
+        return service.proposeToCircle(id, request);
     }
 
     @DeleteMapping("/audits/{id}")

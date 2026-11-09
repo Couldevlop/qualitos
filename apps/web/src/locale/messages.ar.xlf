@@ -13016,6 +13016,86 @@ Coordonnées professionnelles</source>
         <source>Impossible d'ouvrir l'analyse des 5 Pourquoi.</source>
         <target state="translated">تعذّر فتح تحليل الأسباب الخمسة.</target>
       </trans-unit>
+      <trans-unit id="fives.circle.title" datatype="html">
+        <source>Porter au cercle de qualité</source>
+        <target state="translated">الإحالة إلى حلقة الجودة</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.subtitle" datatype="html">
+        <source>L'audit dit ce qui ne va pas. Le cercle cherche comment y remédier.</source>
+        <target state="translated">يقول التدقيق ما الخلل. والحلقة تبحث في كيفية معالجته.</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.submit" datatype="html">
+        <source>Déposer l'idée</source>
+        <target state="translated">تقديم الفكرة</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.zone" datatype="html">
+        <source>Zone auditée</source>
+        <target state="translated">المنطقة المدقّقة</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.pillar" datatype="html">
+        <source>Pilier</source>
+        <target state="translated">الركن</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.score" datatype="html">
+        <source>Note relevée</source>
+        <target state="translated">الدرجة المسجّلة</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.circle" datatype="html">
+        <source>Cercle qui prend le sujet</source>
+        <target state="translated">الحلقة التي تتولّى الموضوع</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.circle-hint" datatype="html">
+        <source>Seuls les cercles actifs peuvent prendre une idée.</source>
+        <target state="translated">الحلقات النشطة وحدها يمكنها تولّي فكرة.</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.loading" datatype="html">
+        <source>Chargement des cercles…</source>
+        <target state="translated">جارٍ تحميل الحلقات…</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.load-failed" datatype="html">
+        <source>La liste des cercles n'a pas pu être chargée.</source>
+        <target state="translated">لم يتمكّن النظام من تحميل قائمة الحلقات.</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.none" datatype="html">
+        <source>Aucun cercle actif. Créez-en un, ou reprenez un cercle en pause, pour y porter ce sujet.</source>
+        <target state="translated">لا توجد حلقة نشطة. أنشئ واحدة أو استأنف حلقة موقوفة لإحالة هذا الموضوع.</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.idea" datatype="html">
+        <source>Ce qui est proposé</source>
+        <target state="translated">المقترَح</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.idea-hint" datatype="html">
+        <source>Une ligne, lisible à l'ordre du jour.</source>
+        <target state="translated">سطر واحد يُقرأ في جدول الأعمال.</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.title-default" datatype="html">
+        <source>Améliorer <x id="pillar"/> en zone <x id="zone"/></source>
+        <target state="translated">تحسين <x id="pillar"/> في منطقة <x id="zone"/></target>
+      </trans-unit>
+      <trans-unit id="fives.circle.detail" datatype="html">
+        <source>Ce que l'audit a constaté</source>
+        <target state="translated">ما لاحظه التدقيق</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.detail-hint" datatype="html">
+        <source>Reprise de la remarque de l'auditeur. Le cercle n'était pas sur place.</source>
+        <target state="translated">مأخوذ من ملاحظة المدقّق. لم تكن الحلقة حاضرة.</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.done" datatype="html">
+        <source>Idée déposée au cercle. Elle y arrive avec la note relevée.</source>
+        <target state="translated">تم تقديم الفكرة إلى الحلقة، وتصل مرفقة بالدرجة المسجّلة.</target>
+      </trans-unit>
+      <trans-unit id="fives.circle.failed" datatype="html">
+        <source>L'idée n'a pas pu être déposée.</source>
+        <target state="translated">لم يتمكّن النظام من تقديم الفكرة.</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.to-circle" datatype="html">
+        <source>Porter au cercle</source>
+        <target state="translated">الإحالة إلى حلقة</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.to-circle-tooltip" datatype="html">
+        <source>Porter ce pilier à un cercle de qualité, avec sa note</source>
+        <target state="translated">إحالة هذا الركن إلى حلقة جودة، مع درجته</target>
+      </trans-unit>
       <trans-unit id="nav.forecast" datatype="html">
         <source>Prévision KPI</source>
         <target state="translated">التنبؤ بمؤشرات الأداء</target>

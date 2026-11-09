@@ -184,6 +184,22 @@ describe('FivesService (mock mode)', () => {
       });
     });
   });
+  it('porte un pilier au cercle, et cite la zone et la note', (done) => {
+    service.listAudits().subscribe(page => {
+      const a = page.content[0];
+      service.scorePillar(a.id, { pillar: 'SEIRI', score: 3 }).subscribe(() => {
+        service.proposeToCircle(a.id, {
+          circleId: 'c-1', pillar: 'SEIRI', title: 'Vider la zone'
+        }).subscribe(idee => {
+          expect(idee.status).toBe('PROPOSED');
+          expect(idee.circleId).toBe('c-1');
+          expect(idee.originRef).toContain(a.zone);
+          expect(idee.originRef).toContain('3/10');
+          done();
+        });
+      });
+    });
+  });
 });
 
 /**
@@ -337,6 +353,20 @@ describe('FivesService (API réelle, en ligne)', () => {
       }
     });
     httpMock.expectOne(base).flush({ title: 'zone blank' }, { status: 400, statusText: 'Bad Request' });
+  });
+  it('poste l’idée sur l’audit, et ne la met jamais en file hors ligne', () => {
+    // Déposer une idée engage d'autres personnes : une demande qui repartirait
+    // des heures plus tard sur un cercle entre-temps archivé échouerait sans
+    // que personne ne le voie.
+    service.proposeToCircle('a1', {
+      circleId: 'c-1', pillar: 'SEISO', title: 'Nettoyer', description: 'Sol gras'
+    }).subscribe();
+    const req = httpMock.expectOne(`${base}/a1/circle-proposals`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual({
+      circleId: 'c-1', pillar: 'SEISO', title: 'Nettoyer', description: 'Sol gras'
+    });
+    req.flush({ id: 'p-1', circleId: 'c-1', title: 'Nettoyer', status: 'PROPOSED' });
   });
 });
 

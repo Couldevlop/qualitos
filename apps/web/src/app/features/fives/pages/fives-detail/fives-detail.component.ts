@@ -12,6 +12,11 @@ import { ConfirmDialogComponent, ConfirmDialogData } from '../../../../shared/ui
 import { FivesService } from '../../fives.service';
 import { FiveSAuditResponse, FiveSAuditStatus, FiveSPillar, VisionAnalysis } from '../../fives.types';
 import {
+  FivesCircleChoice,
+  FivesCircleDialogComponent,
+  FivesCircleDialogData
+} from '../fives-circle-dialog/fives-circle-dialog.component';
+import {
   FivesEditDialogComponent,
   FivesEditDialogData
 } from '../fives-edit-dialog/fives-edit-dialog.component';
@@ -52,6 +57,8 @@ export class FivesDetailComponent implements OnInit {
   /** Per-pillar score form (one FormGroup per pillar). */
   forms: Record<FiveSPillar, FormGroup> = {} as Record<FiveSPillar, FormGroup>;
   saving: Record<FiveSPillar, boolean> = {} as Record<FiveSPillar, boolean>;
+  /** Le dépôt d'une idée en cours, par pilier. */
+  proposing: Record<FiveSPillar, boolean> = {} as Record<FiveSPillar, boolean>;
 
   /** Analyse Vision CV (§3.2) : état + dernier résultat. */
   readonly visionAnalyzing$ = new BehaviorSubject<boolean>(false);
@@ -78,6 +85,7 @@ export class FivesDetailComponent implements OnInit {
         note: ['']
       });
       this.saving[p.pillar] = false;
+      this.proposing[p.pillar] = false;
     }
   }
 
@@ -193,6 +201,58 @@ export class FivesDetailComponent implements OnInit {
           );
         }
       });
+  }
+
+  /**
+   * Porter un pilier de cet audit à un cercle de qualité (§3.6).
+   *
+   * <p>Un audit dit ce qui ne va pas ; le cercle cherche comment y remédier.
+   * Le geste n'est offert que sur un audit terminé et un pilier noté : le
+   * serveur refuse le reste, et une commande qui échoue après coup vaut moins
+   * qu'une commande absente.
+   *
+   * <p>L'audit n'enregistre rien en retour : c'est l'origine citée par l'idée
+   * qui tient le lien. Un audit qui porterait la liste de ses idées devrait la
+   * tenir à jour quand elles sont rejetées, et il n'en sait rien.
+   */
+  proposeToCircle(audit: FiveSAuditResponse, row: PillarRow): void {
+    const item = audit.items.find(i => i.pillar === row.pillar);
+    if (!this.canPropose(audit, row.pillar) || !item || item.score == null) return;
+    const data: FivesCircleDialogData = {
+      zone: audit.zone,
+      pillar: row.pillar,
+      pillarLabel: row.label,
+      score: item.score,
+      note: item.note
+    };
+    this.dialog.open<FivesCircleDialogComponent, FivesCircleDialogData, FivesCircleChoice>(
+      FivesCircleDialogComponent,
+      { data, autoFocus: 'first-tabbable', restoreFocus: true, panelClass: 'qos-dialog-panel' }
+    ).afterClosed().subscribe(choix => {
+      if (!choix) return;
+      this.proposing[row.pillar] = true;
+      this.fives.proposeToCircle(audit.id, choix)
+        .pipe(finalize(() => (this.proposing[row.pillar] = false)))
+        .subscribe({
+          next: () => this.snack.open(
+            $localize`:@@fives.circle.done:Idée déposée au cercle. Elle y arrive avec la note relevée.`,
+            $localize`:@@common.ok:OK`, { duration: 5000 }),
+          error: err => {
+            // eslint-disable-next-line no-console
+            console.warn('[fives-detail] circle proposal failed', err?.status, err?.error?.title);
+            this.snack.open(
+              safeErrorMessage(err, $localize`:@@fives.circle.failed:L'idée n'a pas pu être déposée.`),
+              $localize`:@@common.ok:OK`, { duration: 5000 });
+          }
+        });
+    });
+  }
+
+  /** Un audit terminé, un pilier noté : sans quoi l'idée n'a pas de chiffre à montrer. */
+  canPropose(audit: FiveSAuditResponse, pillar: FiveSPillar): boolean {
+    if (audit.status !== 'COMPLETED') return false;
+    const item = audit.items.find(i => i.pillar === pillar);
+    return !!item && item.score != null;
   }
 
   start(): void { this.transition('start'); }

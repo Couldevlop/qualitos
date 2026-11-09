@@ -124,5 +124,7 @@ public final class CircleDto {
             ProposalStatus status, UUID proposedBy, UUID validatedBy,
             Instant validatedAt, Instant implementedAt, Instant measuredAt,
             String impactNote, String rejectionReason,
+            /** D'ou vient l'idee, citee en clair ; nul quand quelqu'un l'a deposee de sa main. */
+            String originRef,
             Instant createdAt, Instant updatedAt) {}
 }

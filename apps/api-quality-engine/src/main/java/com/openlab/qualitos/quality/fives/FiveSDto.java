@@ -34,6 +34,25 @@ public final class FiveSDto {
             @Size(max = 1024) String photoUrl
     ) {}
 
+    /**
+     * Porter un pilier de cet audit a un cercle de qualite (§3.6).
+     *
+     * <p>L'origine n'est pas demandee : le serveur la construit a partir de
+     * l'audit, de la zone, du pilier et de sa note. Une origine libre finirait
+     * vide ou fausse, et une idee dont on ne sait plus d'ou elle vient ne se
+     * defend pas en seance.
+     *
+     * @param circleId le cercle qui prendra l'idee ; il doit etre actif
+     * @param pillar   le pilier dont la note motive l'idee
+     * @param title    ce qui est propose, en une ligne
+     */
+    public record ProposeToCircleRequest(
+            @NotNull UUID circleId,
+            @NotNull FiveSPillar pillar,
+            @NotBlank @Size(max = 255) String title,
+            @Size(max = 4000) String description
+    ) {}
+
     public record AuditResponse(
             UUID id,
             UUID tenantId,

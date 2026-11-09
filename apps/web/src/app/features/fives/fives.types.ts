@@ -47,6 +47,20 @@ export interface ScorePillarRequest {
   photoUrl?: string;
 }
 
+/**
+ * Porter un pilier de cet audit à un cercle de qualité (§3.6).
+ *
+ * <p>L'origine n'est pas envoyée : le serveur la construit depuis l'audit, la
+ * zone, le pilier et sa note. Une origine écrite par l'écran rattacherait une
+ * idée à n'importe quoi.
+ */
+export interface ProposeToCircleRequest {
+  circleId: string;
+  pillar: FiveSPillar;
+  title: string;
+  description?: string;
+}
+
 export interface UpdateFiveSAuditRequest {
   zone?: string;
   description?: string;

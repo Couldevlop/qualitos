@@ -123,6 +123,20 @@
               <mat-progress-spinner *ngIf="saving[p.pillar]" mode="indeterminate" diameter="18"></mat-progress-spinner>
               <span i18n="@@common.save">Enregistrer</span>
             </button>
+
+            <!-- L'audit dit ce qui ne va pas ; le cercle cherche comment y
+                 remédier (§3.6). Offert seulement sur un audit terminé et un
+                 pilier noté : le serveur refuse le reste. -->
+            <button mat-stroked-button type="button" *ngIf="canPropose(a, p.pillar)"
+                    (click)="proposeToCircle(a, p)"
+                    [disabled]="proposing[p.pillar]"
+                    [attr.data-test]="'cercle-' + p.pillar"
+                    i18n-matTooltip="@@fives.detail.to-circle-tooltip"
+                    matTooltip="Porter ce pilier à un cercle de qualité, avec sa note">
+              <mat-icon *ngIf="!proposing[p.pillar]">groups</mat-icon>
+              <mat-progress-spinner *ngIf="proposing[p.pillar]" mode="indeterminate" diameter="18"></mat-progress-spinner>
+              <span i18n="@@fives.detail.to-circle">Porter au cercle</span>
+            </button>
           </mat-card-content>
         </mat-card>
       </section>

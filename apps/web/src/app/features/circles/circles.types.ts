@@ -126,6 +126,8 @@ export interface CircleProposalResponse {
   measuredAt?: string;
   impactNote?: string;
   rejectionReason?: string;
+  /** D'où vient l'idée, citée en clair (audit 5S, zone, pilier, note) ; absente si déposée à la main. */
+  originRef?: string;
   createdAt?: string;
   updatedAt?: string;
 }

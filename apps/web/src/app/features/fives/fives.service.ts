@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, delay, map } from 'rxjs/operators';
 
+import { CircleProposalResponse } from '../circles/circles.types';
 import { environment } from '../../../environments/environment';
 import { ConnectivityService } from '../../core/offline/connectivity.service';
 import { OfflineQueueService } from '../../core/offline/offline-queue.service';
@@ -12,6 +13,7 @@ import {
   FiveSAuditStatus,
   FiveSItemResponse,
   FiveSPage,
+  ProposeToCircleRequest,
   ScorePillarRequest,
   UpdateFiveSAuditRequest,
   VisionAnalysis
@@ -166,6 +168,33 @@ export class FivesService {
     return this.http.put<FiveSItemResponse>(`${this.endpoint}/${auditId}/score`, input).pipe(
       catchError(err => this.isNetworkError(err) ? this.enqueueScore(auditId, input) : throwError(() => err))
     );
+  }
+
+  /**
+   * Porter un pilier de cet audit à un cercle de qualité (§3.6).
+   *
+   * <p>Pas de file d'attente hors ligne, à la différence de la notation :
+   * déposer une idée dans un cercle engage d'autres personnes, et une demande
+   * qui repartirait des heures plus tard sur un cercil entre-temps archivé
+   * échouerait sans que personne ne le voie. L'audit, lui, reste consultable.
+   */
+  proposeToCircle(auditId: string, input: ProposeToCircleRequest): Observable<CircleProposalResponse> {
+    if (environment.useMockApi) {
+      const now = new Date().toISOString();
+      const audit = this.mockStore.find(a => a.id === auditId);
+      const item = audit?.items.find(i => i.pillar === input.pillar);
+      return of({
+        id: 'prop-' + Math.random().toString(36).slice(2, 9),
+        circleId: input.circleId,
+        title: input.title,
+        description: input.description,
+        status: 'PROPOSED',
+        originRef: `Audit 5S zone ${audit?.zone ?? ''} — ${input.pillar} noté ${item?.score ?? 0}/10`,
+        createdAt: now, updatedAt: now
+      } as CircleProposalResponse).pipe(delay(150));
+    }
+    return this.http.post<CircleProposalResponse>(
+      `${this.endpoint}/${auditId}/circle-proposals`, input);
   }
 
   startAudit(id: string): Observable<FiveSAuditResponse> {

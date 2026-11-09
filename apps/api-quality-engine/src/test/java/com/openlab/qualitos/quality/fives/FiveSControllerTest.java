@@ -3,6 +3,8 @@ package com.openlab.qualitos.quality.fives;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.openlab.qualitos.quality.circle.CircleDto;
+import com.openlab.qualitos.quality.circle.ProposalStatus;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.visiongateway.VisionDto;
 import com.openlab.qualitos.quality.visiongateway.VisionGatewayClient;
@@ -42,6 +44,8 @@ class FiveSControllerTest {
     static final UUID AUDIT = UUID.randomUUID();
     static final UUID TENANT = UUID.randomUUID();
     static final UUID AUDITOR = UUID.randomUUID();
+
+    static final UUID CIRCLE = UUID.randomUUID();
 
     @BeforeEach
     void setup() {
@@ -240,5 +244,64 @@ class FiveSControllerTest {
     private FiveSDto.AuditResponse resp(FiveSAuditStatus s) {
         return new FiveSDto.AuditResponse(AUDIT, TENANT, "Z", null, s, AUDITOR,
                 null, null, null, Instant.now(), Instant.now(), List.of());
+    }
+
+    // ---- porter un pilier au cercle de qualite -----------------------------
+
+    private static final String PROPOSITION = "{"
+            + "\"circleId\":\"%s\","
+            + "\"pillar\":\"SEIRI\","
+            + "\"title\":\"Vider la zone de stockage intermediaire\"}";
+
+    private CircleDto.ProposalResponse idee() {
+        return new CircleDto.ProposalResponse(UUID.randomUUID(), CIRCLE, null,
+                "Vider la zone", null, ProposalStatus.PROPOSED, UUID.randomUUID(), null,
+                null, null, null, null, null,
+                "Audit 5S zone Atelier B \u2014 SEIRI note 2/10", Instant.now(), Instant.now());
+    }
+
+    @Test @WithMockUser
+    void proposeToCircle_returns201() throws Exception {
+        when(service.proposeToCircle(eq(AUDIT), any())).thenReturn(idee());
+
+        mockMvc.perform(post("/api/v1/fives/audits/{id}/circle-proposals", AUDIT).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(String.format(PROPOSITION, CIRCLE)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.status").value("PROPOSED"))
+                .andExpect(jsonPath("$.originRef").value(
+                        "Audit 5S zone Atelier B \u2014 SEIRI note 2/10"));
+    }
+
+    @Test @WithMockUser
+    void proposeToCircle_sansCercle_returns400() throws Exception {
+        // Une idee sans cercle n'arrive nulle part.
+        mockMvc.perform(post("/api/v1/fives/audits/{id}/circle-proposals", AUDIT).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"pillar\":\"SEIRI\",\"title\":\"Vider\"}"))
+                .andExpect(status().isBadRequest());
+        verify(service, never()).proposeToCircle(any(), any());
+    }
+
+    @Test @WithMockUser
+    void proposeToCircle_auditPasTermine_returns409() throws Exception {
+        when(service.proposeToCircle(eq(AUDIT), any()))
+                .thenThrow(new FiveSStateException("Only a COMPLETED audit can feed a quality circle"));
+
+        mockMvc.perform(post("/api/v1/fives/audits/{id}/circle-proposals", AUDIT).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(String.format(PROPOSITION, CIRCLE)))
+                .andExpect(status().isConflict());
+    }
+
+    @Test @WithMockUser
+    void proposeToCircle_auditInconnu_returns404() throws Exception {
+        when(service.proposeToCircle(eq(AUDIT), any()))
+                .thenThrow(new FiveSAuditNotFoundException(AUDIT));
+
+        mockMvc.perform(post("/api/v1/fives/audits/{id}/circle-proposals", AUDIT).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(String.format(PROPOSITION, CIRCLE)))
+                .andExpect(status().isNotFound());
     }
 }
