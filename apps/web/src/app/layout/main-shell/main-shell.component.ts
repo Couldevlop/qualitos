@@ -340,6 +340,14 @@ export class MainShellComponent implements OnInit, OnDestroy {
           roles: ADMIN_ROLES
         },
         {
+          // Les listes déroulantes de l'application (ADR 0111) : le client en
+          // dit les mots, et ajoute ses propres valeurs là où le code le permet.
+          label: $localize`:@@nav.admin-catalogs:Listes déroulantes`,
+          route: '/admin/listes',
+          icon: 'list_alt',
+          roles: ADMIN_ROLES
+        },
+        {
           // Les cabinets partenaires et leurs accès (ADR 0106) : l'éditeur
           // propose, l'administrateur du client accorde et fixe le terme.
           label: $localize`:@@nav.admin-firms:Cabinets`,

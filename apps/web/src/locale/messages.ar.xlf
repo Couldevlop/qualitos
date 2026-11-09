@@ -34216,6 +34216,214 @@ Inde (centre de service)</source>
         <source>Modifier la non-conformité</source>
         <target state="translated">تعديل عدم المطابقة</target>
       </trans-unit>
+      <trans-unit id="nav.admin-catalogs" datatype="html">
+        <source>Listes déroulantes</source>
+        <target state="translated">القوائم المنسدلة</target>
+      </trans-unit>
+      <trans-unit id="catalogs.title" datatype="html">
+        <source>Listes déroulantes</source>
+        <target state="translated">القوائم المنسدلة</target>
+      </trans-unit>
+      <trans-unit id="catalogs.subtitle" datatype="html">
+        <source>Les mots que prennent les listes de l'application, dans votre maison.</source>
+        <target state="translated">الكلمات التي تتخذها قوائم التطبيق، بلغة مؤسستكم.</target>
+      </trans-unit>
+      <trans-unit id="catalogs.nav-label" datatype="html">
+        <source>Listes paramétrables</source>
+        <target state="translated">القوائم القابلة للتهيئة</target>
+      </trans-unit>
+      <trans-unit id="catalogs.scope" datatype="html">
+        <source>Une entrée se reconnaît à son code : en changer le libellé ne déclasse rien ; la retirer laisse les données déjà enregistrées porter leur code, affiché tel quel.</source>
+        <target state="translated">يُعرَّف العنصر برمزه: تغيير مسمّاه لا يعيد تصنيف شيء؛ وإزالته تترك البيانات المسجَّلة تحمل رمزها، معروضاً كما هو.</target>
+      </trans-unit>
+      <trans-unit id="catalogs.defaults" datatype="html">
+        <source>Ce sont aujourd'hui les valeurs de la plateforme : vos écrans affichent leurs libellés traduits. Dès que vous enregistrez, ce sont vos mots qui s'affichent.</source>
+        <target state="translated">هذه حالياً قيم المنصّة: تعرض شاشاتكم مسمّياتها المترجمة. وبمجرّد الحفظ، تُعرض كلماتكم.</target>
+      </trans-unit>
+      <trans-unit id="catalogs.customised" datatype="html">
+        <source>Réglée par vous</source>
+        <target state="translated">مهيّأة من قِبلكم</target>
+      </trans-unit>
+      <trans-unit id="catalogs.customised-short" datatype="html">
+        <source>réglée</source>
+        <target state="translated">مهيّأة</target>
+      </trans-unit>
+      <trans-unit id="catalogs.freedom.open" datatype="html">
+        <source>Liste libre : ajoutez, retirez, renommez, réordonnez.</source>
+        <target state="translated">قائمة حرّة: أضف، احذف، أعد التسمية، أعد الترتيب.</target>
+      </trans-unit>
+      <trans-unit id="catalogs.freedom.rename" datatype="html">
+        <source>Codes de la plateforme : renommez et réordonnez. Les valeurs commandent le comportement de l'application, elles ne s'ajoutent ni ne se retirent.</source>
+        <target state="translated">رموز المنصّة: أعد التسمية والترتيب. القيم تحكم سلوك التطبيق، فلا تُضاف ولا تُحذف.</target>
+      </trans-unit>
+      <trans-unit id="catalogs.code" datatype="html">
+        <source>Code</source>
+        <target state="translated">الرمز</target>
+      </trans-unit>
+      <trans-unit id="catalogs.code-placeholder" datatype="html">
+        <source>Ex. : BLOC-A</source>
+        <target state="translated">مثال: BLOC-A</target>
+      </trans-unit>
+      <trans-unit id="catalogs.label" datatype="html">
+        <source>Libellé</source>
+        <target state="translated">المسمّى</target>
+      </trans-unit>
+      <trans-unit id="catalogs.label-placeholder" datatype="html">
+        <source>Ex. : Bloc opératoire A</source>
+        <target state="translated">مثال: غرفة العمليات A</target>
+      </trans-unit>
+      <trans-unit id="catalogs.add" datatype="html">
+        <source>Ajouter une entrée</source>
+        <target state="translated">إضافة عنصر</target>
+      </trans-unit>
+      <trans-unit id="catalogs.remove" datatype="html">
+        <source>Retirer cette entrée</source>
+        <target state="translated">إزالة هذا العنصر</target>
+      </trans-unit>
+      <trans-unit id="catalogs.move-up" datatype="html">
+        <source>Monter cette entrée</source>
+        <target state="translated">تحريك العنصر لأعلى</target>
+      </trans-unit>
+      <trans-unit id="catalogs.move-down" datatype="html">
+        <source>Descendre cette entrée</source>
+        <target state="translated">تحريك العنصر لأسفل</target>
+      </trans-unit>
+      <trans-unit id="catalogs.pending" datatype="html">
+        <source>Liste modifiée</source>
+        <target state="translated">تم تعديل القائمة</target>
+      </trans-unit>
+      <trans-unit id="catalogs.saved" datatype="html">
+        <source>Liste enregistrée.</source>
+        <target state="translated">تم حفظ القائمة.</target>
+      </trans-unit>
+      <trans-unit id="catalogs.save-failed" datatype="html">
+        <source>La liste n'a pas pu être enregistrée.</source>
+        <target state="translated">لم يتم حفظ القائمة.</target>
+      </trans-unit>
+      <trans-unit id="catalogs.load-failed" datatype="html">
+        <source>Les listes déroulantes n'ont pas pu être chargées.</source>
+        <target state="translated">لم يتم تحميل القوائم المنسدلة.</target>
+      </trans-unit>
+      <trans-unit id="catalogs.load-one-failed" datatype="html">
+        <source>Cette liste n'a pas pu être chargée.</source>
+        <target state="translated">لم يتم تحميل هذه القائمة.</target>
+      </trans-unit>
+      <trans-unit id="catalogs.reset-action" datatype="html">
+        <source>Liste de la plateforme</source>
+        <target state="translated">قائمة المنصّة</target>
+      </trans-unit>
+      <trans-unit id="catalogs.reset" datatype="html">
+        <source>Rétablir</source>
+        <target state="translated">استعادة</target>
+      </trans-unit>
+      <trans-unit id="catalogs.reset-title" datatype="html">
+        <source>Rétablir la liste de la plateforme ?</source>
+        <target state="translated">استعادة قائمة المنصّة؟</target>
+      </trans-unit>
+      <trans-unit id="catalogs.reset-message" datatype="html">
+        <source>Vos libellés seront remplacés par ceux de la plateforme. Les données déjà enregistrées gardent leur code.</source>
+        <target state="translated">ستُستبدل مسمّياتكم بمسمّيات المنصّة. وتحتفظ البيانات المسجَّلة برمزها.</target>
+      </trans-unit>
+      <trans-unit id="catalogs.reset-done" datatype="html">
+        <source>Liste de la plateforme rétablie.</source>
+        <target state="translated">تمت استعادة قائمة المنصّة.</target>
+      </trans-unit>
+      <trans-unit id="catalogs.reset-failed" datatype="html">
+        <source>La liste n'a pas pu être rétablie.</source>
+        <target state="translated">لم يتم استعادة القائمة.</target>
+      </trans-unit>
+      <trans-unit id="catalogs.leave-title" datatype="html">
+        <source>Abandonner vos changements ?</source>
+        <target state="translated">التخلّي عن تعديلاتكم؟</target>
+      </trans-unit>
+      <trans-unit id="catalogs.leave-message" datatype="html">
+        <source>Cette liste a été modifiée sans être enregistrée. Ouvrir une autre liste perdra ces changements.</source>
+        <target state="translated">تم تعديل هذه القائمة دون حفظ. فتح قائمة أخرى سيُفقد هذه التعديلات.</target>
+      </trans-unit>
+      <trans-unit id="catalogs.leave" datatype="html">
+        <source>Abandonner</source>
+        <target state="translated">التخلّي</target>
+      </trans-unit>
+      <trans-unit id="catalogs.problem.empty" datatype="html">
+        <source>La liste ne peut pas être vide. Rétablissez celle de la plateforme.</source>
+        <target state="translated">لا يمكن أن تكون القائمة فارغة. استعيدوا قائمة المنصّة.</target>
+      </trans-unit>
+      <trans-unit id="catalogs.problem.too-many" datatype="html">
+        <source>Pas plus de <x id="max"/> entrées.</source>
+        <target state="translated">لا أكثر من <x id="max"/> عنصراً.</target>
+      </trans-unit>
+      <trans-unit id="catalogs.problem.code" datatype="html">
+        <source>Un code s'écrit en capitales, chiffres, tiret ou souligné (ex. : BLOC-A).</source>
+        <target state="translated">يُكتب الرمز بأحرف كبيرة وأرقام وشرطة أو شرطة سفلية (مثال: BLOC-A).</target>
+      </trans-unit>
+      <trans-unit id="catalogs.problem.label" datatype="html">
+        <source>Chaque entrée a un libellé.</source>
+        <target state="translated">لكل عنصر مسمّى.</target>
+      </trans-unit>
+      <trans-unit id="catalogs.problem.duplicate" datatype="html">
+        <source>Deux entrées portent le même code.</source>
+        <target state="translated">عنصران يحملان الرمز نفسه.</target>
+      </trans-unit>
+      <trans-unit id="catalogs.problem.none-active" datatype="html">
+        <source>Au moins une entrée doit rester en service.</source>
+        <target state="translated">يجب أن يبقى عنصر واحد على الأقل في الخدمة.</target>
+      </trans-unit>
+      <trans-unit id="catalogs.retire" datatype="html">
+        <source>Retirer des nouvelles saisies</source>
+        <target state="translated">إزالة من الإدخالات الجديدة</target>
+      </trans-unit>
+      <trans-unit id="catalogs.reinstate" datatype="html">
+        <source>Remettre en service</source>
+        <target state="translated">إعادة إلى الخدمة</target>
+      </trans-unit>
+      <trans-unit id="catalogs.name.nc-category" datatype="html">
+        <source>Catégories de non-conformité</source>
+        <target state="translated">فئات عدم المطابقة</target>
+      </trans-unit>
+      <trans-unit id="catalogs.name.audit-type" datatype="html">
+        <source>Types d'audit</source>
+        <target state="translated">أنواع التدقيق</target>
+      </trans-unit>
+      <trans-unit id="catalogs.name.supplier-type" datatype="html">
+        <source>Familles de fournisseurs</source>
+        <target state="translated">عائلات المورّدين</target>
+      </trans-unit>
+      <trans-unit id="catalogs.name.ehs-incident-type" datatype="html">
+        <source>Types d'incident EHS</source>
+        <target state="translated">أنواع حوادث الصحة والسلامة والبيئة</target>
+      </trans-unit>
+      <trans-unit id="catalogs.name.apqp-project-type" datatype="html">
+        <source>Types de projet APQP</source>
+        <target state="translated">أنواع مشاريع APQP</target>
+      </trans-unit>
+      <trans-unit id="catalogs.name.capa-nature" datatype="html">
+        <source>Natures de dossier CAPA</source>
+        <target state="translated">طبائع ملفات CAPA</target>
+      </trans-unit>
+      <trans-unit id="catalogs.name.moc-change-type" datatype="html">
+        <source>Types de modification</source>
+        <target state="translated">أنواع التغيير</target>
+      </trans-unit>
+      <trans-unit id="catalogs.name.ishikawa-category" datatype="html">
+        <source>Branches d'Ishikawa</source>
+        <target state="translated">فروع إيشيكاوا</target>
+      </trans-unit>
+      <trans-unit id="catalogs.name.kpi-frequency" datatype="html">
+        <source>Fréquences de mesure</source>
+        <target state="translated">تواتر القياس</target>
+      </trans-unit>
+      <trans-unit id="catalogs.name.pokayoke-mechanism" datatype="html">
+        <source>Mécanismes de détrompeur</source>
+        <target state="translated">آليات منع الخطأ</target>
+      </trans-unit>
+      <trans-unit id="catalogs.name.fives-zone" datatype="html">
+        <source>Zones d'audit 5S</source>
+        <target state="translated">مناطق تدقيق 5S</target>
+      </trans-unit>
+      <trans-unit id="catalogs.name.stakeholder-sector" datatype="html">
+        <source>Secteurs de parties intéressées</source>
+        <target state="translated">قطاعات الأطراف المعنيّة</target>
+      </trans-unit>
       <trans-unit id="nav.admin-team" datatype="html">
         <source>Équipe &amp; habilitations</source>
         <target state="translated">الفريق والصلاحيات</target>

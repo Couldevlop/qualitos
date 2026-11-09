@@ -1,0 +1,127 @@
+<div class="qos-page">
+  <qos-page-header
+    title="Listes déroulantes" i18n-title="@@catalogs.title"
+    subtitle="Les mots que prennent les listes de l'application, dans votre maison."
+    i18n-subtitle="@@catalogs.subtitle">
+    <ng-container qosActions>
+      <button mat-stroked-button type="button" color="warn" (click)="retablir()"
+              [disabled]="!selected || defaults || saving || loading" data-test="retablir">
+        <mat-icon>restart_alt</mat-icon>
+        <span i18n="@@catalogs.reset-action">Liste de la plateforme</span>
+      </button>
+    </ng-container>
+  </qos-page-header>
+
+  <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+
+  <p class="echec" *ngIf="failed" role="alert">
+    <span i18n="@@catalogs.load-failed">Les listes déroulantes n'ont pas pu être chargées.</span>
+    <button mat-button type="button" (click)="charger()" i18n="@@common.retry">Réessayer</button>
+  </p>
+
+  <ng-container *ngIf="!failed">
+    <p class="portee" i18n="@@catalogs.scope">
+      Une entrée se reconnaît à son code : en changer le libellé ne déclasse rien ; la retirer
+      laisse les données déjà enregistrées porter leur code, affiché tel quel.
+    </p>
+
+    <div class="grille">
+      <!-- Les listes ouvertes au paramétrage. -->
+      <nav class="listes" i18n-aria-label="@@catalogs.nav-label" aria-label="Listes paramétrables">
+        <button *ngFor="let s of summaries" type="button" class="liste"
+                [class.liste--on]="s.catalogue === selected"
+                [attr.aria-current]="s.catalogue === selected ? 'true' : null"
+                (click)="ouvrir(s.catalogue)" [attr.data-test]="'liste-' + s.catalogue">
+          <span class="liste__nom">{{ titre(s.catalogue) }}</span>
+          <span class="liste__etat">
+            <span class="liste__nb">{{ s.entryCount }}</span>
+            <span class="liste__reglee" *ngIf="!s.defaults"
+                  i18n-title="@@catalogs.customised" title="Réglée par vous"
+                  i18n="@@catalogs.customised-short">réglée</span>
+          </span>
+        </button>
+      </nav>
+
+      <section class="bloc" *ngIf="selected" aria-labelledby="catalogue-titre">
+        <header class="bloc__head">
+          <div>
+            <h2 class="bloc__titre" id="catalogue-titre">{{ titre(selected) }}</h2>
+            <p class="bloc__aide">
+              {{ liberte(mode) }}
+              <span class="bloc__compte">{{ entries.length }}/{{ limits.entries }}</span>
+            </p>
+            <p class="bloc__origine" *ngIf="defaults" i18n="@@catalogs.defaults">
+              Ce sont aujourd'hui les valeurs de la plateforme : vos écrans affichent leurs
+              libellés traduits. Dès que vous enregistrez, ce sont vos mots qui s'affichent.
+            </p>
+          </div>
+        </header>
+
+        <ol class="lignes">
+          <li class="ligne" [class.ligne--retiree]="!e.active"
+              *ngFor="let e of entries; let i = index; trackBy: trackByIndex" data-test="entree">
+            <span class="ligne__rang">
+              <button mat-icon-button type="button" (click)="monter(i)" [disabled]="i === 0"
+                      i18n-aria-label="@@catalogs.move-up" aria-label="Monter cette entrée">
+                <mat-icon>arrow_upward</mat-icon>
+              </button>
+              <button mat-icon-button type="button" (click)="descendre(i)"
+                      [disabled]="i === entries.length - 1"
+                      i18n-aria-label="@@catalogs.move-down" aria-label="Descendre cette entrée">
+                <mat-icon>arrow_downward</mat-icon>
+              </button>
+            </span>
+
+            <!-- Sur une liste adossée au code, le code est montré, pas saisi. -->
+            <span class="ligne__code-fixe" *ngIf="renameOnly">{{ e.code }}</span>
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="ligne__code"
+                            *ngIf="!renameOnly">
+              <mat-label i18n="@@catalogs.code">Code</mat-label>
+              <input matInput [ngModel]="e.code" (ngModelChange)="majCode(e, $event)"
+                     [maxlength]="limits.code"
+                     i18n-placeholder="@@catalogs.code-placeholder" placeholder="Ex. : BLOC-A">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="ligne__libelle">
+              <mat-label i18n="@@catalogs.label">Libellé</mat-label>
+              <input matInput [ngModel]="e.label" (ngModelChange)="majLibelle(e, $event)"
+                     [maxlength]="limits.label"
+                     i18n-placeholder="@@catalogs.label-placeholder" placeholder="Ex. : Bloc opératoire A">
+            </mat-form-field>
+
+            <button mat-icon-button type="button" *ngIf="!renameOnly"
+                    (click)="basculerService(e)" [attr.data-test]="'service-' + i"
+                    [attr.aria-label]="serviceLabel(e)" [matTooltip]="serviceLabel(e)">
+              <mat-icon>{{ e.active ? 'visibility' : 'visibility_off' }}</mat-icon>
+            </button>
+            <button mat-icon-button type="button" color="warn" *ngIf="!renameOnly"
+                    (click)="retirer(e)"
+                    i18n-aria-label="@@catalogs.remove" aria-label="Retirer cette entrée">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </li>
+        </ol>
+
+        <button mat-stroked-button type="button" *ngIf="!renameOnly" (click)="ajouter()"
+                [disabled]="entries.length >= limits.entries" data-test="ajouter">
+          <mat-icon>add</mat-icon> <span i18n="@@catalogs.add">Ajouter une entrée</span>
+        </button>
+      </section>
+    </div>
+  </ng-container>
+
+  <!-- Barre d'enregistrement : n'apparaît qu'avec des changements. -->
+  <div class="barre" *ngIf="dirty" role="status">
+    <ul class="barre__problemes" *ngIf="problemes.length" data-test="problemes">
+      <li *ngFor="let p of problemes">{{ p }}</li>
+    </ul>
+    <span *ngIf="!problemes.length" i18n="@@catalogs.pending">Liste modifiée</span>
+    <span class="barre__actions">
+      <button mat-stroked-button type="button" (click)="annuler()" [disabled]="saving"
+              data-test="annuler" i18n="@@authz.matrix.discard">Annuler les changements</button>
+      <button mat-flat-button color="primary" type="button" (click)="enregistrer()"
+              [disabled]="saving || problemes.length > 0" data-test="enregistrer"
+              i18n="@@common.save">Enregistrer</button>
+    </span>
+  </div>
+</div>

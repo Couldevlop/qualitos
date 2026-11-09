@@ -34215,6 +34215,214 @@ Inde (centre de service)</source>
         <source>Modifier la non-conformité</source>
         <target state="translated">不適合を編集</target>
       </trans-unit>
+      <trans-unit id="nav.admin-catalogs" datatype="html">
+        <source>Listes déroulantes</source>
+        <target state="translated">ドロップダウンの一覧</target>
+      </trans-unit>
+      <trans-unit id="catalogs.title" datatype="html">
+        <source>Listes déroulantes</source>
+        <target state="translated">ドロップダウンの一覧</target>
+      </trans-unit>
+      <trans-unit id="catalogs.subtitle" datatype="html">
+        <source>Les mots que prennent les listes de l'application, dans votre maison.</source>
+        <target state="translated">アプリケーションの一覧が自社で用いる言葉。</target>
+      </trans-unit>
+      <trans-unit id="catalogs.nav-label" datatype="html">
+        <source>Listes paramétrables</source>
+        <target state="translated">設定可能な一覧</target>
+      </trans-unit>
+      <trans-unit id="catalogs.scope" datatype="html">
+        <source>Une entrée se reconnaît à son code : en changer le libellé ne déclasse rien ; la retirer laisse les données déjà enregistrées porter leur code, affiché tel quel.</source>
+        <target state="translated">項目はコードで識別されます。表示名の変更は再分類を伴わず、削除しても既存データはコードをそのまま表示します。</target>
+      </trans-unit>
+      <trans-unit id="catalogs.defaults" datatype="html">
+        <source>Ce sont aujourd'hui les valeurs de la plateforme : vos écrans affichent leurs libellés traduits. Dès que vous enregistrez, ce sont vos mots qui s'affichent.</source>
+        <target state="translated">現在はプラットフォームの値です。画面には翻訳済みの表示名が出ます。保存すると自社の言葉が表示されます。</target>
+      </trans-unit>
+      <trans-unit id="catalogs.customised" datatype="html">
+        <source>Réglée par vous</source>
+        <target state="translated">自社で設定済み</target>
+      </trans-unit>
+      <trans-unit id="catalogs.customised-short" datatype="html">
+        <source>réglée</source>
+        <target state="translated">設定済み</target>
+      </trans-unit>
+      <trans-unit id="catalogs.freedom.open" datatype="html">
+        <source>Liste libre : ajoutez, retirez, renommez, réordonnez.</source>
+        <target state="translated">自由な一覧：追加・削除・改名・並べ替えができます。</target>
+      </trans-unit>
+      <trans-unit id="catalogs.freedom.rename" datatype="html">
+        <source>Codes de la plateforme : renommez et réordonnez. Les valeurs commandent le comportement de l'application, elles ne s'ajoutent ni ne se retirent.</source>
+        <target state="translated">プラットフォームのコード：改名と並べ替えのみ。値はアプリの動作を左右するため、追加も削除もできません。</target>
+      </trans-unit>
+      <trans-unit id="catalogs.code" datatype="html">
+        <source>Code</source>
+        <target state="translated">コード</target>
+      </trans-unit>
+      <trans-unit id="catalogs.code-placeholder" datatype="html">
+        <source>Ex. : BLOC-A</source>
+        <target state="translated">例：BLOC-A</target>
+      </trans-unit>
+      <trans-unit id="catalogs.label" datatype="html">
+        <source>Libellé</source>
+        <target state="translated">表示名</target>
+      </trans-unit>
+      <trans-unit id="catalogs.label-placeholder" datatype="html">
+        <source>Ex. : Bloc opératoire A</source>
+        <target state="translated">例：手術室A</target>
+      </trans-unit>
+      <trans-unit id="catalogs.add" datatype="html">
+        <source>Ajouter une entrée</source>
+        <target state="translated">項目を追加</target>
+      </trans-unit>
+      <trans-unit id="catalogs.remove" datatype="html">
+        <source>Retirer cette entrée</source>
+        <target state="translated">この項目を削除</target>
+      </trans-unit>
+      <trans-unit id="catalogs.move-up" datatype="html">
+        <source>Monter cette entrée</source>
+        <target state="translated">この項目を上へ</target>
+      </trans-unit>
+      <trans-unit id="catalogs.move-down" datatype="html">
+        <source>Descendre cette entrée</source>
+        <target state="translated">この項目を下へ</target>
+      </trans-unit>
+      <trans-unit id="catalogs.pending" datatype="html">
+        <source>Liste modifiée</source>
+        <target state="translated">一覧を変更しました</target>
+      </trans-unit>
+      <trans-unit id="catalogs.saved" datatype="html">
+        <source>Liste enregistrée.</source>
+        <target state="translated">一覧を保存しました。</target>
+      </trans-unit>
+      <trans-unit id="catalogs.save-failed" datatype="html">
+        <source>La liste n'a pas pu être enregistrée.</source>
+        <target state="translated">一覧を保存できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="catalogs.load-failed" datatype="html">
+        <source>Les listes déroulantes n'ont pas pu être chargées.</source>
+        <target state="translated">ドロップダウンの一覧を読み込めませんでした。</target>
+      </trans-unit>
+      <trans-unit id="catalogs.load-one-failed" datatype="html">
+        <source>Cette liste n'a pas pu être chargée.</source>
+        <target state="translated">この一覧を読み込めませんでした。</target>
+      </trans-unit>
+      <trans-unit id="catalogs.reset-action" datatype="html">
+        <source>Liste de la plateforme</source>
+        <target state="translated">プラットフォームの一覧</target>
+      </trans-unit>
+      <trans-unit id="catalogs.reset" datatype="html">
+        <source>Rétablir</source>
+        <target state="translated">元に戻す</target>
+      </trans-unit>
+      <trans-unit id="catalogs.reset-title" datatype="html">
+        <source>Rétablir la liste de la plateforme ?</source>
+        <target state="translated">プラットフォームの一覧に戻しますか？</target>
+      </trans-unit>
+      <trans-unit id="catalogs.reset-message" datatype="html">
+        <source>Vos libellés seront remplacés par ceux de la plateforme. Les données déjà enregistrées gardent leur code.</source>
+        <target state="translated">表示名はプラットフォームのものに置き換わります。既存データはコードを保持します。</target>
+      </trans-unit>
+      <trans-unit id="catalogs.reset-done" datatype="html">
+        <source>Liste de la plateforme rétablie.</source>
+        <target state="translated">プラットフォームの一覧に戻しました。</target>
+      </trans-unit>
+      <trans-unit id="catalogs.reset-failed" datatype="html">
+        <source>La liste n'a pas pu être rétablie.</source>
+        <target state="translated">一覧を元に戻せませんでした。</target>
+      </trans-unit>
+      <trans-unit id="catalogs.leave-title" datatype="html">
+        <source>Abandonner vos changements ?</source>
+        <target state="translated">変更を破棄しますか？</target>
+      </trans-unit>
+      <trans-unit id="catalogs.leave-message" datatype="html">
+        <source>Cette liste a été modifiée sans être enregistrée. Ouvrir une autre liste perdra ces changements.</source>
+        <target state="translated">この一覧は未保存のまま変更されています。別の一覧を開くと変更は失われます。</target>
+      </trans-unit>
+      <trans-unit id="catalogs.leave" datatype="html">
+        <source>Abandonner</source>
+        <target state="translated">破棄</target>
+      </trans-unit>
+      <trans-unit id="catalogs.problem.empty" datatype="html">
+        <source>La liste ne peut pas être vide. Rétablissez celle de la plateforme.</source>
+        <target state="translated">一覧を空にはできません。プラットフォームの一覧に戻してください。</target>
+      </trans-unit>
+      <trans-unit id="catalogs.problem.too-many" datatype="html">
+        <source>Pas plus de <x id="max"/> entrées.</source>
+        <target state="translated">項目は <x id="max"/> 件までです。</target>
+      </trans-unit>
+      <trans-unit id="catalogs.problem.code" datatype="html">
+        <source>Un code s'écrit en capitales, chiffres, tiret ou souligné (ex. : BLOC-A).</source>
+        <target state="translated">コードは大文字・数字・ハイフン・アンダースコアで書きます（例：BLOC-A）。</target>
+      </trans-unit>
+      <trans-unit id="catalogs.problem.label" datatype="html">
+        <source>Chaque entrée a un libellé.</source>
+        <target state="translated">各項目に表示名が必要です。</target>
+      </trans-unit>
+      <trans-unit id="catalogs.problem.duplicate" datatype="html">
+        <source>Deux entrées portent le même code.</source>
+        <target state="translated">同じコードの項目が2つあります。</target>
+      </trans-unit>
+      <trans-unit id="catalogs.problem.none-active" datatype="html">
+        <source>Au moins une entrée doit rester en service.</source>
+        <target state="translated">少なくとも1項目は有効のままにしてください。</target>
+      </trans-unit>
+      <trans-unit id="catalogs.retire" datatype="html">
+        <source>Retirer des nouvelles saisies</source>
+        <target state="translated">新規入力から外す</target>
+      </trans-unit>
+      <trans-unit id="catalogs.reinstate" datatype="html">
+        <source>Remettre en service</source>
+        <target state="translated">再び有効にする</target>
+      </trans-unit>
+      <trans-unit id="catalogs.name.nc-category" datatype="html">
+        <source>Catégories de non-conformité</source>
+        <target state="translated">不適合のカテゴリー</target>
+      </trans-unit>
+      <trans-unit id="catalogs.name.audit-type" datatype="html">
+        <source>Types d'audit</source>
+        <target state="translated">監査の種類</target>
+      </trans-unit>
+      <trans-unit id="catalogs.name.supplier-type" datatype="html">
+        <source>Familles de fournisseurs</source>
+        <target state="translated">サプライヤーの分類</target>
+      </trans-unit>
+      <trans-unit id="catalogs.name.ehs-incident-type" datatype="html">
+        <source>Types d'incident EHS</source>
+        <target state="translated">EHSインシデントの種類</target>
+      </trans-unit>
+      <trans-unit id="catalogs.name.apqp-project-type" datatype="html">
+        <source>Types de projet APQP</source>
+        <target state="translated">APQPプロジェクトの種類</target>
+      </trans-unit>
+      <trans-unit id="catalogs.name.capa-nature" datatype="html">
+        <source>Natures de dossier CAPA</source>
+        <target state="translated">CAPA案件の性質</target>
+      </trans-unit>
+      <trans-unit id="catalogs.name.moc-change-type" datatype="html">
+        <source>Types de modification</source>
+        <target state="translated">変更の種類</target>
+      </trans-unit>
+      <trans-unit id="catalogs.name.ishikawa-category" datatype="html">
+        <source>Branches d'Ishikawa</source>
+        <target state="translated">特性要因図の分類</target>
+      </trans-unit>
+      <trans-unit id="catalogs.name.kpi-frequency" datatype="html">
+        <source>Fréquences de mesure</source>
+        <target state="translated">測定の頻度</target>
+      </trans-unit>
+      <trans-unit id="catalogs.name.pokayoke-mechanism" datatype="html">
+        <source>Mécanismes de détrompeur</source>
+        <target state="translated">ポカヨケの機構</target>
+      </trans-unit>
+      <trans-unit id="catalogs.name.fives-zone" datatype="html">
+        <source>Zones d'audit 5S</source>
+        <target state="translated">5S監査のゾーン</target>
+      </trans-unit>
+      <trans-unit id="catalogs.name.stakeholder-sector" datatype="html">
+        <source>Secteurs de parties intéressées</source>
+        <target state="translated">利害関係者の業種</target>
+      </trans-unit>
       <trans-unit id="nav.admin-team" datatype="html">
         <source>Équipe &amp; habilitations</source>
         <target state="translated">チームと権限</target>

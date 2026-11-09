@@ -34216,6 +34216,214 @@ Inde (centre de service)</source>
         <source>Modifier la non-conformité</source>
         <target state="translated">编辑不合格项</target>
       </trans-unit>
+      <trans-unit id="nav.admin-catalogs" datatype="html">
+        <source>Listes déroulantes</source>
+        <target state="translated">下拉列表</target>
+      </trans-unit>
+      <trans-unit id="catalogs.title" datatype="html">
+        <source>Listes déroulantes</source>
+        <target state="translated">下拉列表</target>
+      </trans-unit>
+      <trans-unit id="catalogs.subtitle" datatype="html">
+        <source>Les mots que prennent les listes de l'application, dans votre maison.</source>
+        <target state="translated">应用列表在您单位里采用的用词。</target>
+      </trans-unit>
+      <trans-unit id="catalogs.nav-label" datatype="html">
+        <source>Listes paramétrables</source>
+        <target state="translated">可配置列表</target>
+      </trans-unit>
+      <trans-unit id="catalogs.scope" datatype="html">
+        <source>Une entrée se reconnaît à son code : en changer le libellé ne déclasse rien ; la retirer laisse les données déjà enregistrées porter leur code, affiché tel quel.</source>
+        <target state="translated">条目以代码为准：改名不会重新分类；删除后已有数据仍保留其代码并原样显示。</target>
+      </trans-unit>
+      <trans-unit id="catalogs.defaults" datatype="html">
+        <source>Ce sont aujourd'hui les valeurs de la plateforme : vos écrans affichent leurs libellés traduits. Dès que vous enregistrez, ce sont vos mots qui s'affichent.</source>
+        <target state="translated">目前为平台默认值：界面显示其已翻译的名称。保存后即显示您自己的用词。</target>
+      </trans-unit>
+      <trans-unit id="catalogs.customised" datatype="html">
+        <source>Réglée par vous</source>
+        <target state="translated">由您设置</target>
+      </trans-unit>
+      <trans-unit id="catalogs.customised-short" datatype="html">
+        <source>réglée</source>
+        <target state="translated">已设置</target>
+      </trans-unit>
+      <trans-unit id="catalogs.freedom.open" datatype="html">
+        <source>Liste libre : ajoutez, retirez, renommez, réordonnez.</source>
+        <target state="translated">自由列表：可添加、删除、改名、重排。</target>
+      </trans-unit>
+      <trans-unit id="catalogs.freedom.rename" datatype="html">
+        <source>Codes de la plateforme : renommez et réordonnez. Les valeurs commandent le comportement de l'application, elles ne s'ajoutent ni ne se retirent.</source>
+        <target state="translated">平台代码：可改名与重排。这些值决定应用行为，不可增删。</target>
+      </trans-unit>
+      <trans-unit id="catalogs.code" datatype="html">
+        <source>Code</source>
+        <target state="translated">代码</target>
+      </trans-unit>
+      <trans-unit id="catalogs.code-placeholder" datatype="html">
+        <source>Ex. : BLOC-A</source>
+        <target state="translated">例：BLOC-A</target>
+      </trans-unit>
+      <trans-unit id="catalogs.label" datatype="html">
+        <source>Libellé</source>
+        <target state="translated">名称</target>
+      </trans-unit>
+      <trans-unit id="catalogs.label-placeholder" datatype="html">
+        <source>Ex. : Bloc opératoire A</source>
+        <target state="translated">例：手术室A</target>
+      </trans-unit>
+      <trans-unit id="catalogs.add" datatype="html">
+        <source>Ajouter une entrée</source>
+        <target state="translated">添加条目</target>
+      </trans-unit>
+      <trans-unit id="catalogs.remove" datatype="html">
+        <source>Retirer cette entrée</source>
+        <target state="translated">删除此条目</target>
+      </trans-unit>
+      <trans-unit id="catalogs.move-up" datatype="html">
+        <source>Monter cette entrée</source>
+        <target state="translated">上移此条目</target>
+      </trans-unit>
+      <trans-unit id="catalogs.move-down" datatype="html">
+        <source>Descendre cette entrée</source>
+        <target state="translated">下移此条目</target>
+      </trans-unit>
+      <trans-unit id="catalogs.pending" datatype="html">
+        <source>Liste modifiée</source>
+        <target state="translated">列表已修改</target>
+      </trans-unit>
+      <trans-unit id="catalogs.saved" datatype="html">
+        <source>Liste enregistrée.</source>
+        <target state="translated">列表已保存。</target>
+      </trans-unit>
+      <trans-unit id="catalogs.save-failed" datatype="html">
+        <source>La liste n'a pas pu être enregistrée.</source>
+        <target state="translated">列表保存失败。</target>
+      </trans-unit>
+      <trans-unit id="catalogs.load-failed" datatype="html">
+        <source>Les listes déroulantes n'ont pas pu être chargées.</source>
+        <target state="translated">无法加载下拉列表。</target>
+      </trans-unit>
+      <trans-unit id="catalogs.load-one-failed" datatype="html">
+        <source>Cette liste n'a pas pu être chargée.</source>
+        <target state="translated">无法加载此列表。</target>
+      </trans-unit>
+      <trans-unit id="catalogs.reset-action" datatype="html">
+        <source>Liste de la plateforme</source>
+        <target state="translated">平台列表</target>
+      </trans-unit>
+      <trans-unit id="catalogs.reset" datatype="html">
+        <source>Rétablir</source>
+        <target state="translated">恢复</target>
+      </trans-unit>
+      <trans-unit id="catalogs.reset-title" datatype="html">
+        <source>Rétablir la liste de la plateforme ?</source>
+        <target state="translated">恢复平台列表？</target>
+      </trans-unit>
+      <trans-unit id="catalogs.reset-message" datatype="html">
+        <source>Vos libellés seront remplacés par ceux de la plateforme. Les données déjà enregistrées gardent leur code.</source>
+        <target state="translated">您的名称将被平台名称替换。已有数据保留其代码。</target>
+      </trans-unit>
+      <trans-unit id="catalogs.reset-done" datatype="html">
+        <source>Liste de la plateforme rétablie.</source>
+        <target state="translated">已恢复平台列表。</target>
+      </trans-unit>
+      <trans-unit id="catalogs.reset-failed" datatype="html">
+        <source>La liste n'a pas pu être rétablie.</source>
+        <target state="translated">列表恢复失败。</target>
+      </trans-unit>
+      <trans-unit id="catalogs.leave-title" datatype="html">
+        <source>Abandonner vos changements ?</source>
+        <target state="translated">放弃您的修改？</target>
+      </trans-unit>
+      <trans-unit id="catalogs.leave-message" datatype="html">
+        <source>Cette liste a été modifiée sans être enregistrée. Ouvrir une autre liste perdra ces changements.</source>
+        <target state="translated">此列表已修改但未保存。打开其他列表将丢失这些修改。</target>
+      </trans-unit>
+      <trans-unit id="catalogs.leave" datatype="html">
+        <source>Abandonner</source>
+        <target state="translated">放弃</target>
+      </trans-unit>
+      <trans-unit id="catalogs.problem.empty" datatype="html">
+        <source>La liste ne peut pas être vide. Rétablissez celle de la plateforme.</source>
+        <target state="translated">列表不能为空。请恢复平台列表。</target>
+      </trans-unit>
+      <trans-unit id="catalogs.problem.too-many" datatype="html">
+        <source>Pas plus de <x id="max"/> entrées.</source>
+        <target state="translated">最多 <x id="max"/> 个条目。</target>
+      </trans-unit>
+      <trans-unit id="catalogs.problem.code" datatype="html">
+        <source>Un code s'écrit en capitales, chiffres, tiret ou souligné (ex. : BLOC-A).</source>
+        <target state="translated">代码使用大写字母、数字、连字符或下划线（例：BLOC-A）。</target>
+      </trans-unit>
+      <trans-unit id="catalogs.problem.label" datatype="html">
+        <source>Chaque entrée a un libellé.</source>
+        <target state="translated">每个条目都要有名称。</target>
+      </trans-unit>
+      <trans-unit id="catalogs.problem.duplicate" datatype="html">
+        <source>Deux entrées portent le même code.</source>
+        <target state="translated">有两个条目使用了相同代码。</target>
+      </trans-unit>
+      <trans-unit id="catalogs.problem.none-active" datatype="html">
+        <source>Au moins une entrée doit rester en service.</source>
+        <target state="translated">至少须保留一个启用的条目。</target>
+      </trans-unit>
+      <trans-unit id="catalogs.retire" datatype="html">
+        <source>Retirer des nouvelles saisies</source>
+        <target state="translated">从新录入中移除</target>
+      </trans-unit>
+      <trans-unit id="catalogs.reinstate" datatype="html">
+        <source>Remettre en service</source>
+        <target state="translated">重新启用</target>
+      </trans-unit>
+      <trans-unit id="catalogs.name.nc-category" datatype="html">
+        <source>Catégories de non-conformité</source>
+        <target state="translated">不符合类别</target>
+      </trans-unit>
+      <trans-unit id="catalogs.name.audit-type" datatype="html">
+        <source>Types d'audit</source>
+        <target state="translated">审核类型</target>
+      </trans-unit>
+      <trans-unit id="catalogs.name.supplier-type" datatype="html">
+        <source>Familles de fournisseurs</source>
+        <target state="translated">供应商类别</target>
+      </trans-unit>
+      <trans-unit id="catalogs.name.ehs-incident-type" datatype="html">
+        <source>Types d'incident EHS</source>
+        <target state="translated">EHS事件类型</target>
+      </trans-unit>
+      <trans-unit id="catalogs.name.apqp-project-type" datatype="html">
+        <source>Types de projet APQP</source>
+        <target state="translated">APQP项目类型</target>
+      </trans-unit>
+      <trans-unit id="catalogs.name.capa-nature" datatype="html">
+        <source>Natures de dossier CAPA</source>
+        <target state="translated">CAPA档案性质</target>
+      </trans-unit>
+      <trans-unit id="catalogs.name.moc-change-type" datatype="html">
+        <source>Types de modification</source>
+        <target state="translated">变更类型</target>
+      </trans-unit>
+      <trans-unit id="catalogs.name.ishikawa-category" datatype="html">
+        <source>Branches d'Ishikawa</source>
+        <target state="translated">鱼骨图分支</target>
+      </trans-unit>
+      <trans-unit id="catalogs.name.kpi-frequency" datatype="html">
+        <source>Fréquences de mesure</source>
+        <target state="translated">测量频率</target>
+      </trans-unit>
+      <trans-unit id="catalogs.name.pokayoke-mechanism" datatype="html">
+        <source>Mécanismes de détrompeur</source>
+        <target state="translated">防错机构</target>
+      </trans-unit>
+      <trans-unit id="catalogs.name.fives-zone" datatype="html">
+        <source>Zones d'audit 5S</source>
+        <target state="translated">5S审核区域</target>
+      </trans-unit>
+      <trans-unit id="catalogs.name.stakeholder-sector" datatype="html">
+        <source>Secteurs de parties intéressées</source>
+        <target state="translated">相关方行业</target>
+      </trans-unit>
       <trans-unit id="nav.admin-team" datatype="html">
         <source>Équipe &amp; habilitations</source>
         <target state="translated">团队与权限</target>

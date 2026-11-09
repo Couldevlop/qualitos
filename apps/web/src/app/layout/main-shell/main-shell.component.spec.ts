@@ -208,7 +208,9 @@ describe('MainShellComponent (navigation model)', () => {
     // Operations passe a 14 et Referentiels retombe a 5 : le Standards Hub, la
     // co-couverture IMS et la generation documentaire IA suivent desormais les
     // audits, parce qu'un audit se prepare contre un referentiel.
-    expect(labels).toEqual([8, 6, 7, 2, 1, 6, 1, 14, 5, 1, 16]);
+    // 17 : Listes deroulantes rejoint l'administration (ADR 0111) -- un seul
+    // ecran pour les douze listes que le client met dans ses propres mots.
+    expect(labels).toEqual([8, 6, 7, 2, 1, 6, 1, 14, 5, 1, 17]);
   });
 
   it('le registre des risques a son groupe, juste apres la non-conformite', () => {
