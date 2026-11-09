@@ -29454,6 +29454,62 @@ declared income
         <source>Statut du procédé</source>
         <target state="translated">Process status</target>
       </trans-unit>
+      <trans-unit id="stakeholders.register-risk" datatype="html">
+        <source>Inscrire le risque</source>
+        <target state="translated">Register the risk</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.risk.title" datatype="html">
+        <source>Inscrire le risque au registre</source>
+        <target state="translated">Add the risk to the register</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.risk.subtitle" datatype="html">
+        <source>Exigence : <x id="exigence"/></source>
+        <target state="translated">Requirement: <x id="exigence"/></target>
+      </trans-unit>
+      <trans-unit id="stakeholders.risk.submit" datatype="html">
+        <source>Inscrire au registre</source>
+        <target state="translated">Add to the register</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.risk.from-risk" datatype="html">
+        <source>Risque énoncé</source>
+        <target state="translated">Stated risk</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.risk.from-requirement" datatype="html">
+        <source>Cause reprise (l’exigence)</source>
+        <target state="translated">Cause carried over (the requirement)</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.risk.kind" datatype="html">
+        <source>Nature du risque</source>
+        <target state="translated">Kind of risk</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.risk.kind-hint" datatype="html">
+        <source>C’est elle qui range la ligne dans le registre.</source>
+        <target state="translated">It is what files the entry in the register.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.risk.process-hint" datatype="html">
+        <source>Là où le risque se matérialise.</source>
+        <target state="translated">Where the risk materialises.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.risk.score" datatype="html">
+        <source>Criticité brute</source>
+        <target state="translated">Gross criticality</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.risk.owner-hint" datatype="html">
+        <source>La personne qui répond du risque en revue : le registre n’accepte pas de ligne sans elle.</source>
+        <target state="translated">The person who answers for the risk at review: the register takes no entry without one.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.risk-opened" datatype="html">
+        <source>Risque inscrit au registre ; l’exigence le cite.</source>
+        <target state="translated">Risk added to the register; the requirement now cites it.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.risk-failed" datatype="html">
+        <source>Le risque n’a pas pu être inscrit au registre.</source>
+        <target state="translated">The risk could not be added to the register.</target>
+      </trans-unit>
+      <trans-unit id="rr.origin.stakeholder" datatype="html">
+        <source>Exigence de partie intéressée</source>
+        <target state="translated">Interested-party requirement</target>
+      </trans-unit>
       <trans-unit id="nav.stakeholders" datatype="html">
         <source>Parties prenantes</source>
         <target state="translated">Stakeholders</target>

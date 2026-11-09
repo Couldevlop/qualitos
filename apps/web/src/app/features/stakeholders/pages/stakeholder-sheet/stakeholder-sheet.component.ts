@@ -36,6 +36,11 @@ import {
   StakeholderLinkDialogData
 } from '../stakeholder-link-dialog/stakeholder-link-dialog.component';
 import {
+  StakeholderRiskChoice,
+  StakeholderRiskDialogComponent,
+  StakeholderRiskDialogData
+} from '../stakeholder-risk-dialog/stakeholder-risk-dialog.component';
+import {
   StakeholderRequirementDialogComponent,
   StakeholderRequirementDialogData
 } from '../stakeholder-requirement-dialog/stakeholder-requirement-dialog.component';
@@ -312,6 +317,39 @@ export class StakeholderSheetComponent implements OnChanges {
           undefined, { duration: 4000 });
       },
       error: err => this.fail(err, $localize`:@@stakeholders.capa-failed:La CAPA n'a pas pu être ouverte.`)
+    });
+  }
+
+  /**
+   * Inscrit au registre des risques le risque qu'une exigence fait courir.
+   *
+   * <p>« Rattacher à un risque » suppose que la ligne existe déjà ; ici elle
+   * n'existe pas, et c'est le cas courant : l'analyse d'une exigence énonce un
+   * risque que personne n'a encore porté au registre. Il y entre avec sa
+   * cotation, sa référence et son journal, et l'exigence le cite.
+   */
+  openRisk(requirement: StakeholderRequirement): void {
+    if (!this.canManage || requirement.riskId || !requirement.risk) return;
+    const data: StakeholderRiskDialogData = {
+      requirement: requirement.requirement,
+      risk: requirement.risk,
+      riskLevel: requirement.riskLevel
+    };
+    this.dialog.open<StakeholderRiskDialogComponent, StakeholderRiskDialogData, StakeholderRiskChoice>(
+      StakeholderRiskDialogComponent,
+      { data, autoFocus: 'first-tabbable', restoreFocus: true, panelClass: 'qos-dialog-panel' }
+    ).afterClosed().subscribe(choix => {
+      if (!choix) return;
+      this.svc.openRisk(this.sheet.id, requirement.id, choix.type, choix.process, choix.severity,
+        choix.probability, choix.ownerId, choix.ownerName).subscribe({
+        next: updated => {
+          this.replace(updated);
+          this.snack.open($localize`:@@stakeholders.risk-opened:Risque inscrit au registre ; l'exigence le cite.`,
+            undefined, { duration: 4000 });
+        },
+        error: err => this.fail(err,
+          $localize`:@@stakeholders.risk-failed:Le risque n'a pas pu être inscrit au registre.`)
+      });
     });
   }
 

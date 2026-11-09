@@ -50,6 +50,49 @@ public final class StakeholderPorts {
     }
 
     /**
+     * Port vers le registre des risques : inscrire le risque qu'une exigence
+     * fait courir si elle n'est pas tenue.
+     *
+     * <p>La ligne est créée par le module du registre lui-même, comme depuis
+     * n'importe quel autre écran : elle naît donc avec sa référence, sa
+     * cotation, son journal et sa tracabilite. Le registre des parties
+     * intéressées n'écrit pas dans celui des risques ; il le lui demande.
+     */
+    public interface RiskGateway {
+
+        /**
+         * @param originRef ce qu'on lira dans le registre des risques pour savoir
+         *                  d'où vient la ligne : « Client X / exigence … »
+         * @return l'identifiant de la ligne inscrite
+         */
+        UUID open(NewRisk risk);
+    }
+
+    /**
+     * Le risque qu'une exigence fait courir.
+     *
+     * <p>Le titre, la cause et l'effet sont tirés de l'exigence, car les
+     * ressaisir produirait deux énoncés du même risque. L'écran apporte ce que
+     * l'exigence ne contient pas et que le registre exige de toute ligne : la
+     * nature, les deux notes, le processus concerné et la personne qui en
+     * répond.
+     *
+     * @param originRef   la citation de l'exigence, pour le registre des risques
+     * @param title       le risque en une ligne
+     * @param cause       ce qui le déclenche — ici, l'exigence elle-même
+     * @param effect      ce qu'on redoute si elle n'est pas tenue
+     * @param type        la nature du risque, par le nom de l'énumération du registre
+     * @param process     le processus où le risque se matérialise
+     * @param severity    la gravité, de 1 à 5
+     * @param probability la probabilité, de 1 à 5
+     * @param ownerId     le compte qui en répond
+     * @param ownerName   son nom d'annuaire, tel que le registre l'affichera
+     */
+    public record NewRisk(String originRef, String title, String cause, String effect, String type,
+                          String process, int severity, int probability, UUID ownerId,
+                          String ownerName) {}
+
+    /**
      * Port vers l'IA : elle PROPOSE, le responsable qualité décide. Rien de ce
      * que rend ce port n'entre dans le registre sans un appel de validation
      * explicite — c'est la règle de §12.3, et ici elle est structurelle : le

@@ -17,7 +17,13 @@ public enum RegisterOrigin {
     NON_CONFORMITY(false),
     INCIDENT(false),
     /** Analyse d'impact d'une demande de changement (MOC). */
-    CHANGE(false);
+    CHANGE(false),
+    /**
+     * Une exigence de partie intéressée dont le non-respect fait courir un
+     * risque (§4.2). La ligne du registre cite l'exigence, et l'exigence cite
+     * la ligne : c'est le même risque vu des deux bouts.
+     */
+    STAKEHOLDER(false);
 
     private final boolean forOpportunity;
 

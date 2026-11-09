@@ -171,6 +171,18 @@ public class StakeholderController {
                 request.ownerName(), request.dueDate());
     }
 
+    @PostMapping("/{id}/requirements/{requirementId}/risk")
+    @RequiresPermission(Permission.STAKEHOLDER_MANAGE)
+    @ResponseStatus(HttpStatus.CREATED)
+    @Transactional
+    @Operation(summary = "Register the risk a requirement would create if it were not met")
+    public StakeholderDto.Requirement openRisk(
+            @PathVariable UUID id, @PathVariable UUID requirementId,
+            @Valid @RequestBody StakeholderWebDto.OpenRiskRequest request) {
+        return service.openRisk(id, requirementId, request.type(), request.process(),
+                request.severity(), request.probability(), request.ownerId(), request.ownerName());
+    }
+
     @DeleteMapping("/{id}/requirements/{requirementId}")
     @RequiresPermission(Permission.STAKEHOLDER_MANAGE)
     @ResponseStatus(HttpStatus.NO_CONTENT)

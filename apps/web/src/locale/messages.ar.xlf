@@ -29454,6 +29454,62 @@ historique 12 mois</source>
         <source>Statut du procédé</source>
         <target state="translated">حالة العملية</target>
       </trans-unit>
+      <trans-unit id="stakeholders.register-risk" datatype="html">
+        <source>Inscrire le risque</source>
+        <target state="translated">تسجيل الخطر</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.risk.title" datatype="html">
+        <source>Inscrire le risque au registre</source>
+        <target state="translated">تسجيل الخطر في السجل</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.risk.subtitle" datatype="html">
+        <source>Exigence : <x id="exigence"/></source>
+        <target state="translated">المتطلب: <x id="exigence"/></target>
+      </trans-unit>
+      <trans-unit id="stakeholders.risk.submit" datatype="html">
+        <source>Inscrire au registre</source>
+        <target state="translated">التسجيل في السجل</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.risk.from-risk" datatype="html">
+        <source>Risque énoncé</source>
+        <target state="translated">الخطر المذكور</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.risk.from-requirement" datatype="html">
+        <source>Cause reprise (l’exigence)</source>
+        <target state="translated">السبب المنقول (المتطلب)</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.risk.kind" datatype="html">
+        <source>Nature du risque</source>
+        <target state="translated">نوع الخطر</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.risk.kind-hint" datatype="html">
+        <source>C’est elle qui range la ligne dans le registre.</source>
+        <target state="translated">هو ما يصنّف السجل داخل السجل العام.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.risk.process-hint" datatype="html">
+        <source>Là où le risque se matérialise.</source>
+        <target state="translated">حيث يتحقق الخطر.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.risk.score" datatype="html">
+        <source>Criticité brute</source>
+        <target state="translated">الخطورة الإجمالية</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.risk.owner-hint" datatype="html">
+        <source>La personne qui répond du risque en revue : le registre n’accepte pas de ligne sans elle.</source>
+        <target state="translated">الشخص المسؤول عن الخطر في المراجعة: لا يقبل السجل أي بند بدونه.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.risk-opened" datatype="html">
+        <source>Risque inscrit au registre ; l’exigence le cite.</source>
+        <target state="translated">تم تسجيل الخطر في السجل، والمتطلب يشير إليه الآن.</target>
+      </trans-unit>
+      <trans-unit id="stakeholders.risk-failed" datatype="html">
+        <source>Le risque n’a pas pu être inscrit au registre.</source>
+        <target state="translated">لم يتمكن النظام من تسجيل الخطر في السجل.</target>
+      </trans-unit>
+      <trans-unit id="rr.origin.stakeholder" datatype="html">
+        <source>Exigence de partie intéressée</source>
+        <target state="translated">متطلب طرف معني</target>
+      </trans-unit>
       <trans-unit id="nav.stakeholders" datatype="html">
         <source>Parties prenantes</source>
         <target state="translated">الأطراف المعنية</target>

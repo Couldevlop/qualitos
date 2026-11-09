@@ -13,6 +13,8 @@ import com.openlab.qualitos.quality.stakeholders.domain.StakeholderCategory;
 import com.openlab.qualitos.quality.stakeholders.domain.StakeholderRequirement;
 import com.openlab.qualitos.quality.stakeholders.domain.StakeholderSide;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -104,6 +106,22 @@ public final class StakeholderWebDto {
                                   @NotNull UUID ownerId,
                                   @Size(max = 255) String ownerName,
                                   @NotNull LocalDate dueDate) {}
+
+    /**
+     * Ce qu'il faut pour inscrire au registre le risque d'une exigence.
+     *
+     * <p>Rien de plus : le titre, la cause et l'effet sont tirés de l'exigence
+     * elle-même. Les notes vont de 1 à 5, comme dans tout le registre, et le
+     * processus comme le propriétaire sont obligatoires parce que le registre
+     * des risques n'accepte aucune ligne sans eux. Le propriétaire est une
+     * personne de l'annuaire (ADR 0092), pas un nom tapé.
+     */
+    public record OpenRiskRequest(@NotBlank @Size(max = 40) String type,
+                                  @NotBlank @Size(max = 120) String process,
+                                  @NotNull @Min(1) @Max(5) Integer severity,
+                                  @NotNull @Min(1) @Max(5) Integer probability,
+                                  @NotNull UUID ownerId,
+                                  @NotBlank @Size(max = 150) String ownerName) {}
 
     /** Les deux notes d'une ligne de la matrice d'évaluation. */
     public record RatingRequest(@NotNull ImpactLevel qualityImpact,

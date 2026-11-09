@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { RouterModule, Routes } from '@angular/router';
 
@@ -12,6 +13,7 @@ import { StakeholderLinkDialogComponent } from './pages/stakeholder-link-dialog/
 import { StakeholderMatrixComponent } from './pages/stakeholder-matrix/stakeholder-matrix.component';
 import { StakeholderRegisterComponent } from './pages/stakeholder-register/stakeholder-register.component';
 import { StakeholderRequirementDialogComponent } from './pages/stakeholder-requirement-dialog/stakeholder-requirement-dialog.component';
+import { StakeholderRiskDialogComponent } from './pages/stakeholder-risk-dialog/stakeholder-risk-dialog.component';
 import { StakeholderSheetComponent } from './pages/stakeholder-sheet/stakeholder-sheet.component';
 import { StakeholdersPageComponent } from './pages/stakeholders-page/stakeholders-page.component';
 
@@ -34,11 +36,12 @@ const routes: Routes = [
     StakeholderAssistantComponent,
     StakeholderCreateDialogComponent,
     StakeholderRequirementDialogComponent,
+    StakeholderRiskDialogComponent,
     StakeholderLinkDialogComponent
   ],
   imports: [
     SharedModule, UiModule, UserPickerModule, FormsModule,
-    MatSidenavModule,
+    MatAutocompleteModule, MatSidenavModule,
     RouterModule.forChild(routes)
   ]
 })
