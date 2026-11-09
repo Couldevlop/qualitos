@@ -36,6 +36,8 @@ import com.openlab.qualitos.quality.docs.DocumentSignatoryException;
 import com.openlab.qualitos.quality.docs.DocumentStateException;
 import com.openlab.qualitos.quality.docs.DocumentVersionNotFoundException;
 import com.openlab.qualitos.quality.fives.FiveSAuditNotFoundException;
+import com.openlab.qualitos.quality.settings.catalog.CatalogNotFoundException;
+import com.openlab.qualitos.quality.settings.catalog.CatalogValidationException;
 import com.openlab.qualitos.quality.fives.FiveSItemPhotoNotFoundException;
 import com.openlab.qualitos.quality.fives.FiveSItemPhotoTooLargeException;
 import com.openlab.qualitos.quality.fives.FiveSItemPhotoValidationException;
@@ -403,6 +405,31 @@ public class GlobalExceptionHandler {
                 HttpStatus.PAYLOAD_TOO_LARGE, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/fives-photo-too-large"));
         problem.setTitle("5S Photo Too Large");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(CatalogNotFoundException.class)
+    public ProblemDetail handleCatalogNotFound(CatalogNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/catalog-not-found"));
+        problem.setTitle("Unknown Settings Catalogue");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    /**
+     * 422 et non 400 : la requête est bien formée, c'est la liste proposée qui ne
+     * tient pas — code en double, liste vide, ou valeur ajoutée à une liste dont
+     * les codes sont ceux du code. Le message dit lequel des trois, sans quoi
+     * l'administrateur retire au hasard.
+     */
+    @ExceptionHandler(CatalogValidationException.class)
+    public ProblemDetail handleCatalogValidation(CatalogValidationException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/invalid-catalog"));
+        problem.setTitle("Invalid Settings Catalogue");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }
