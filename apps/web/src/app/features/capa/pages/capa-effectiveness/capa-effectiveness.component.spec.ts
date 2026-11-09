@@ -54,6 +54,11 @@ describe('CapaEffectivenessComponent', () => {
     parametres = {};
     service = jasmine.createSpyObj<CapaService>('CapaService',
       ['effectiveness', 'evaluationBoard']);
+    // `effectiveness` a elle aussi une reponse par defaut : les bancs qui ne
+    // s'interessent pas a la mesure par recidive montent quand meme l'ecran, et
+    // son ngOnInit l'appelle. Sans ce defaut, ils tombaient sur un mannequin
+    // muet -- une panne qui ne dit rien de ce qu'ils verifient.
+    service.effectiveness.and.returnValue(of(summary()));
     service.evaluationBoard.and.returnValue(of({
       effectiveRatePercent: undefined, evaluated: 0, awaitingEvaluation: 0, stillOpen: 0,
       reopened: 0, partial: 0, missingCriterion: 0, total: 0, truncated: false, rows: []
