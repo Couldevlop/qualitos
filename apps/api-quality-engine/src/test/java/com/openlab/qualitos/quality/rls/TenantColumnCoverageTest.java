@@ -83,7 +83,6 @@ class TenantColumnCoverageTest {
             "FiveSAuditItem",
             "IshikawaCause",
             "PdcaStep",
-            "PokaYokeDevice",
             "ProcessMeasure");
 
     @Test

@@ -33,6 +33,11 @@ public class PokaYokeDevice {
      * concu : le verser au catalogue partage reviendrait a montrer a tous la
      * solution d'un seul. Il reste reutilisable sur ses autres lignes, et c'est
      * tout ce que la promesse demande.
+     *
+     * <p>La colonne fait entrer la table dans la politique de cloisonnement
+     * (ADR 0086), qui laisse precisement passer les lignes partagees
+     * ({@code tenant_id} NULL) : le catalogue de la plateforme reste visible de
+     * tous, et chaque bibliotheque ne se voit que de son client.
      */
     @Column(name = "tenant_id", updatable = false)
     private UUID tenantId;
