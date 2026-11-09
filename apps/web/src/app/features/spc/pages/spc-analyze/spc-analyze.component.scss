@@ -181,3 +181,69 @@
   font-variant-numeric: tabular-nums;
   font-size: var(--qos-fs-xs);
 }
+
+// --- prévision de dérive (§6.5) ---------------------------------------------
+
+.forecast-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--qos-space-4);
+
+  .horizon-field {
+    width: 11rem;
+  }
+
+  .capa-check {
+    margin: 0;
+  }
+}
+
+// L'annonce est la première chose à lire : une ligne, un pictogramme qui dit
+// tout de suite s'il y a lieu de s'inquiéter.
+.forecast-headline {
+  display: flex;
+  align-items: center;
+  gap: var(--qos-space-3);
+  margin: var(--qos-space-3) 0 var(--qos-space-2);
+  font-size: var(--qos-fs-md);
+  font-weight: 600;
+  color: var(--qos-fg-primary);
+
+  mat-icon {
+    color: var(--qos-success-fg);
+  }
+
+  &.forecast-breach mat-icon {
+    color: var(--qos-danger-fg);
+  }
+}
+
+// L'IA suggère, l'humain décide : la confiance et la tendance accompagnent
+// toujours le chiffre annoncé (§12.3).
+.forecast-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--qos-space-2) var(--qos-space-5);
+  margin-bottom: var(--qos-space-4);
+  font-size: var(--qos-fs-sm);
+  color: var(--qos-fg-secondary);
+
+  .meta-item {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--qos-space-2);
+  }
+
+  mat-icon {
+    font-size: 1.125rem;
+    width: 1.125rem;
+    height: 1.125rem;
+  }
+}
+
+// La période qui franchit le seuil se repère sans lire les chiffres.
+.row-breach {
+  background: var(--qos-danger-bg-soft);
+}

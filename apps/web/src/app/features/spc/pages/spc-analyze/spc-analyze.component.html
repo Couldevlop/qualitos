@@ -119,6 +119,87 @@
     <qos-echart [option]="chartOption" [height]="360"></qos-echart>
   </qos-panel>
 
+  <!-- Prévision de sortie des limites (§6.5) : la carte dit si le procédé EST
+       hors contrôle, celle-ci dit quand il VA en sortir. -->
+  <qos-panel i18n-title="@@spc.forecast.panel" title="Prévision de dérive" icon="trending_up"
+             *ngIf="canForecast">
+    <form class="forecast-form" [formGroup]="forecastForm" (ngSubmit)="runForecast()">
+      <mat-form-field appearance="outline" class="horizon-field">
+        <mat-label i18n="@@spc.forecast.horizon">Horizon (périodes)</mat-label>
+        <input matInput type="number" formControlName="horizon" min="1" max="60"
+               data-test="forecast-horizon">
+      </mat-form-field>
+
+      <mat-checkbox formControlName="openCapa" class="capa-check"
+                    i18n="@@spc.forecast.open-capa">
+        Ouvrir une CAPA préventive si une sortie est annoncée
+      </mat-checkbox>
+
+      <button mat-flat-button color="primary" type="submit"
+              data-test="forecast-run"
+              [disabled]="forecastLoading || forecastForm.invalid">
+        <mat-icon>online_prediction</mat-icon>
+        <span *ngIf="!forecastLoading" i18n="@@spc.forecast.run">Prévoir la dérive</span>
+        <span *ngIf="forecastLoading" i18n="@@spc.forecast.running">Prévision…</span>
+      </button>
+    </form>
+
+    <p class="error" *ngIf="forecastError" data-test="forecast-error">{{ forecastError }}</p>
+
+    <ng-container *ngIf="forecast as f">
+      <p class="forecast-headline" data-test="forecast-headline"
+         [class.forecast-breach]="f.willBreach">
+        <mat-icon>{{ f.willBreach ? 'warning' : 'verified' }}</mat-icon>
+        <span>{{ forecastHeadline(f) }}</span>
+      </p>
+
+      <!-- L'IA suggère, l'humain décide (§12.3) : l'annonce ne vaut rien sans la
+           confiance, la tendance et le modèle qui la produisent. -->
+      <div class="forecast-meta">
+        <span class="sev" [ngClass]="confidenceClass(f.confidence)"
+              data-test="forecast-confidence">{{ confidenceLabel(f.confidence) }}</span>
+        <span class="meta-item" data-test="forecast-trend">
+          <mat-icon>show_chart</mat-icon> {{ trendLabel(f.trend) }}
+        </span>
+        <span class="meta-item">
+          <mat-icon>functions</mat-icon> R² {{ f.r2 | number:'1.0-3' }} · σ résiduel {{ f.residualSigma | number:'1.0-3' }}
+        </span>
+        <span class="meta-item">
+          <mat-icon>psychology</mat-icon> {{ f.model }} · {{ f.n }}
+          <span i18n="@@spc.forecast.points-used">mesures utilisées</span>
+        </span>
+      </div>
+
+      <a *ngIf="forecastCapaId" class="capa-link" data-test="forecast-capa"
+         [routerLink]="['/capa', forecastCapaId]">
+        <mat-icon>assignment_late</mat-icon>
+        <span i18n="@@spc.forecast.capa-link">CAPA préventive ouverte — voir le dossier</span>
+      </a>
+
+      <div class="table-scroll">
+        <table class="violations-table">
+          <thead>
+            <tr>
+              <th i18n="@@spc.forecast.col-step">Période</th>
+              <th i18n="@@spc.forecast.col-value">Valeur projetée</th>
+              <th i18n="@@spc.forecast.col-interval">Intervalle</th>
+              <th i18n="@@spc.forecast.col-risk">Risque de sortie</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let pt of f.points"
+                [class.row-breach]="pt.pBreach >= f.threshold">
+              <td class="nowrap">+{{ pt.step }}</td>
+              <td>{{ pt.value | number:'1.0-3' }}</td>
+              <td class="nowrap">{{ pt.low | number:'1.0-2' }} … {{ pt.high | number:'1.0-2' }}</td>
+              <td class="nowrap">{{ riskPercent(pt.pBreach) }} %</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </ng-container>
+  </qos-panel>
+
   <!-- Violations -->
   <qos-panel i18n-title="@@spc.analyze.nelson-rules" title="Règles de Nelson déclenchées" icon="rule" *ngIf="result as r">
     <p class="empty" *ngIf="r.violations.length === 0" i18n="@@spc.analyze.no-violation">

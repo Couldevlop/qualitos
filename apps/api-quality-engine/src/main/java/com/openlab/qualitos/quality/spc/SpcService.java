@@ -38,6 +38,15 @@ public class SpcService {
     /** SPC sur valeurs individuelles : ≥ 2 points requis (étendue mobile MR̄). */
     private static final int MIN_POINTS = 2;
 
+    /**
+     * Prévoir demande plus que décrire : ≥ 4 points.
+     *
+     * <p>Deux mesures suffisent à dessiner une carte ; elles ne suffisent pas à
+     * dater une dérive, parce qu'une tendance ajustée sur trois points ne dit
+     * rien de l'avenir. Mieux vaut refuser que donner une date inventée.
+     */
+    private static final int MIN_FORECAST_POINTS = 4;
+
     /** Statuts d'une CAPA encore active (anti-spam des CAPA auto-générées). */
     private static final List<CapaStatus> ACTIVE_CAPA_STATUSES =
             List.of(CapaStatus.OPEN, CapaStatus.IN_PROGRESS);
@@ -81,6 +90,133 @@ public class SpcService {
         return new SpcDto.KpiSpcResponse(
                 series.kpiId(), series.code(), series.name(), series.unit(),
                 periods, series.values(), analysis, capaId);
+    }
+
+    // ---- prévision de sortie des limites (§6.5) ----
+
+    public SpcDto.ForecastResponse forecast(SpcDto.ForecastRequest request) {
+        return toForecast(ai.forecastSpc(request.values(), request.horizon(),
+                request.center(), request.sigma(), request.threshold()));
+    }
+
+    /**
+     * Prévision SPC d'un KPI : même série que la carte de contrôle, projetée.
+     *
+     * <p>La carte dit si le procédé EST hors contrôle — et l'opérateur l'apprend
+     * quand les pièces sont faites. Ici on dit quand il VA en sortir, ce qui laisse
+     * encore le temps d'agir. Si {@code openCapa} et sortie annoncée, un dossier
+     * CAPA <b>préventif</b> est ouvert : l'écart n'est pas survenu, et l'appeler
+     * correctif laisserait croire qu'il l'est.
+     *
+     * <p>La référence du dossier est distincte de celle du correctif
+     * ({@code :forecast}) : une CAPA préventive ouverte sur une annonce ne doit pas
+     * empêcher le correctif quand la dérive, elle, se produit vraiment.
+     */
+    @Transactional
+    public SpcDto.KpiForecastResponse forecastKpi(UUID kpiId, int limit, Integer horizon,
+                                                  boolean openCapa) {
+        KpiDto.SpcSeries series = kpiService.spcSeries(kpiId, limit);
+        if (series.values().size() < MIN_FORECAST_POINTS) {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,
+                    "Au moins " + MIN_FORECAST_POINTS
+                            + " mesures sont nécessaires pour prévoir une dérive.");
+        }
+        SpcDto.ForecastResponse forecast =
+                toForecast(ai.forecastSpc(series.values(), horizon, null, null, null));
+
+        UUID capaId = (openCapa && forecast.willBreach())
+                ? openCapaForPredictedDrift(series, forecast)
+                : null;
+
+        List<String> periods = series.periods().stream().map(Instant::toString).toList();
+        return new SpcDto.KpiForecastResponse(
+                series.kpiId(), series.code(), series.name(), series.unit(),
+                periods, series.values(), forecast, capaId);
+    }
+
+    /**
+     * Ouvre une CAPA PRÉVENTIVE sur dérive annoncée, ou {@code null} si une CAPA
+     * active couvre déjà cette annonce.
+     *
+     * <p>La criticité suit la confiance de la prévision, et non le risque : annoncer
+     * « critique » sur une série de cinq points mobiliserait sur un chiffre que le
+     * modèle lui-même ne tient pas.
+     */
+    private UUID openCapaForPredictedDrift(KpiDto.SpcSeries series,
+                                           SpcDto.ForecastResponse forecast) {
+        UUID tenantId = UUID.fromString(TenantContext.getTenantId());
+        String sourceRef = "kpi:" + series.kpiId() + ":forecast";
+        if (capaCaseRepo.existsByTenantIdAndSourceTypeAndSourceRefAndStatusIn(
+                tenantId, CapaSourceType.SPC_ALERT, sourceRef, ACTIVE_CAPA_STATUSES)) {
+            return null; // une CAPA active couvre déjà cette annonce
+        }
+        String cote = "lower".equals(forecast.side()) ? "inférieure" : "supérieure";
+        String title = "SPC — dérive annoncée sur le KPI " + series.code();
+        String description = "Le procédé suivi par le KPI « " + series.name() + " » ("
+                + series.code() + ") devrait franchir sa limite " + cote + " dans "
+                + forecast.firstBreachStep() + " période(s), avec un risque de "
+                + Math.round(forecast.points().get(forecast.firstBreachStep() - 1).pBreach() * 100)
+                + " %. Tendance mesurée : " + arrondi(forecast.trend())
+                + " par période ; confiance de la prévision : " + forecast.confidence()
+                + " (" + forecast.n() + " mesures, R² " + arrondi(forecast.r2())
+                + "). L'écart n'est pas survenu : action préventive à décider, "
+                + "cause de la dérive à investiguer.";
+        CapaDto.CaseResponse capa = capaService.createCase(new CapaDto.CreateCaseRequest(
+                title, description, CapaType.PREVENTIVE, criticityOf(forecast),
+                CapaSourceType.SPC_ALERT, sourceRef, series.ownerId(), null, null));
+        return capa.id();
+    }
+
+    /** Confiance de la prévision → criticité : haute→HIGH, moyenne→MEDIUM, basse→LOW. */
+    private CapaCriticity criticityOf(SpcDto.ForecastResponse forecast) {
+        return switch (forecast.confidence() == null ? "" : forecast.confidence()) {
+            case "high" -> CapaCriticity.HIGH;
+            case "medium" -> CapaCriticity.MEDIUM;
+            default -> CapaCriticity.LOW;
+        };
+    }
+
+    /** Deux décimales : un dossier CAPA n'a pas à porter quinze chiffres de flottant. */
+    private static String arrondi(double v) {
+        return String.format(java.util.Locale.ROOT, "%.2f", v);
+    }
+
+    private SpcDto.ForecastResponse toForecast(Map<String, Object> resp) {
+        Map<String, Object> limitsNode = asMap(resp.get("limits"));
+        Object first = resp.get("first_breach_step");
+        return new SpcDto.ForecastResponse(
+                intVal(resp.get("n")),
+                intVal(resp.get("horizon")),
+                dbl(resp.get("threshold")),
+                bool(resp.get("will_breach")),
+                first instanceof Number n ? n.intValue() : null,
+                resp.get("side") == null ? null : resp.get("side").toString(),
+                dbl(resp.get("trend")),
+                dbl(resp.get("residual_sigma")),
+                dbl(resp.get("r2")),
+                str(resp.get("confidence")),
+                str(resp.get("model")),
+                new SpcDto.Limits(
+                        dbl(limitsNode.get("center_line")),
+                        dbl(limitsNode.get("sigma")),
+                        dbl(limitsNode.get("ucl")),
+                        dbl(limitsNode.get("lcl")),
+                        bool(limitsNode.get("estimated"))),
+                forecastPoints(resp.get("points")));
+    }
+
+    private List<SpcDto.ForecastPoint> forecastPoints(Object o) {
+        if (!(o instanceof List<?> l)) {
+            return List.of();
+        }
+        return l.stream().map(this::asMap).map(p -> new SpcDto.ForecastPoint(
+                intVal(p.get("step")),
+                dbl(p.get("value")),
+                dbl(p.get("low")),
+                dbl(p.get("high")),
+                dbl(p.get("p_above_ucl")),
+                dbl(p.get("p_below_lcl")),
+                dbl(p.get("p_breach")))).toList();
     }
 
     /** Ouvre une CAPA SPC_ALERT sur dérive, ou {@code null} si une CAPA active existe déjà. */

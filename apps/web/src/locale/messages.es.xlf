@@ -29918,6 +29918,86 @@ historial de 12 meses</target>
         <source>Statut du procédé</source>
         <target state="translated">Estado del proceso</target>
       </trans-unit>
+      <trans-unit id="spc.forecast.panel" datatype="html">
+        <source>Prévision de dérive</source>
+        <target state="translated">Previsión de deriva</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.horizon" datatype="html">
+        <source>Horizon (périodes)</source>
+        <target state="translated">Horizonte (periodos)</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.open-capa" datatype="html">
+        <source>Ouvrir une CAPA préventive si une sortie est annoncée</source>
+        <target state="translated">Abrir una CAPA preventiva si se prevé una salida</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.run" datatype="html">
+        <source>Prévoir la dérive</source>
+        <target state="translated">Prever la deriva</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.running" datatype="html">
+        <source>Prévision…</source>
+        <target state="translated">Previendo…</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.no-breach" datatype="html">
+        <source>Aucune sortie des limites annoncée sur les <x id="horizon"/> prochaines périodes.</source>
+        <target state="translated">No se prevé ninguna salida de los límites en los próximos <x id="horizon"/> periodos.</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.breach-upper" datatype="html">
+        <source>Le procédé franchira sa limite supérieure dans <x id="steps"/> période(s).</source>
+        <target state="translated">El proceso superará su límite superior en <x id="steps"/> periodo(s).</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.breach-lower" datatype="html">
+        <source>Le procédé franchira sa limite inférieure dans <x id="steps"/> période(s).</source>
+        <target state="translated">El proceso superará su límite inferior en <x id="steps"/> periodo(s).</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.conf-high" datatype="html">
+        <source>Confiance élevée</source>
+        <target state="translated">Confianza alta</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.conf-medium" datatype="html">
+        <source>Confiance moyenne</source>
+        <target state="translated">Confianza media</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.conf-low" datatype="html">
+        <source>Confiance faible</source>
+        <target state="translated">Confianza baja</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.trend" datatype="html">
+        <source><x id="trend"/> par période</source>
+        <target state="translated"><x id="trend"/> por periodo</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.points-used" datatype="html">
+        <source>mesures utilisées</source>
+        <target state="translated">mediciones utilizadas</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.capa-link" datatype="html">
+        <source>CAPA préventive ouverte — voir le dossier</source>
+        <target state="translated">CAPA preventiva abierta — ver expediente</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.col-step" datatype="html">
+        <source>Période</source>
+        <target state="translated">Periodo</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.col-value" datatype="html">
+        <source>Valeur projetée</source>
+        <target state="translated">Valor proyectado</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.col-interval" datatype="html">
+        <source>Intervalle</source>
+        <target state="translated">Intervalo</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.col-risk" datatype="html">
+        <source>Risque de sortie</source>
+        <target state="translated">Riesgo de salida</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.chart-projection" datatype="html">
+        <source>Projection</source>
+        <target state="translated">Proyección</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.err-min-four" datatype="html">
+        <source>Au moins 4 mesures sont nécessaires pour prévoir une dérive.</source>
+        <target state="translated">Se necesitan al menos 4 mediciones para prever una deriva.</target>
+      </trans-unit>
       <trans-unit id="stakeholders.register-risk" datatype="html">
         <source>Inscrire le risque</source>
         <target state="translated">Inscribir el riesgo</target>

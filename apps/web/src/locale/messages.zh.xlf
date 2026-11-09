@@ -29918,6 +29918,86 @@ historique 12 mois</source>
         <source>Statut du procédé</source>
         <target state="translated">过程状态</target>
       </trans-unit>
+      <trans-unit id="spc.forecast.panel" datatype="html">
+        <source>Prévision de dérive</source>
+        <target state="translated">漂移预测</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.horizon" datatype="html">
+        <source>Horizon (périodes)</source>
+        <target state="translated">预测范围（期）</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.open-capa" datatype="html">
+        <source>Ouvrir une CAPA préventive si une sortie est annoncée</source>
+        <target state="translated">若预测将越限则创建预防性CAPA</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.run" datatype="html">
+        <source>Prévoir la dérive</source>
+        <target state="translated">预测漂移</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.running" datatype="html">
+        <source>Prévision…</source>
+        <target state="translated">预测中…</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.no-breach" datatype="html">
+        <source>Aucune sortie des limites annoncée sur les <x id="horizon"/> prochaines périodes.</source>
+        <target state="translated">未来 <x id="horizon"/> 期内预计不会超出控制限。</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.breach-upper" datatype="html">
+        <source>Le procédé franchira sa limite supérieure dans <x id="steps"/> période(s).</source>
+        <target state="translated">过程将在 <x id="steps"/> 期后超出上限。</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.breach-lower" datatype="html">
+        <source>Le procédé franchira sa limite inférieure dans <x id="steps"/> période(s).</source>
+        <target state="translated">过程将在 <x id="steps"/> 期后低于下限。</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.conf-high" datatype="html">
+        <source>Confiance élevée</source>
+        <target state="translated">高置信度</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.conf-medium" datatype="html">
+        <source>Confiance moyenne</source>
+        <target state="translated">中等置信度</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.conf-low" datatype="html">
+        <source>Confiance faible</source>
+        <target state="translated">低置信度</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.trend" datatype="html">
+        <source><x id="trend"/> par période</source>
+        <target state="translated"><x id="trend"/> 每期</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.points-used" datatype="html">
+        <source>mesures utilisées</source>
+        <target state="translated">个测量值已使用</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.capa-link" datatype="html">
+        <source>CAPA préventive ouverte — voir le dossier</source>
+        <target state="translated">已创建预防性CAPA — 查看档案</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.col-step" datatype="html">
+        <source>Période</source>
+        <target state="translated">期</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.col-value" datatype="html">
+        <source>Valeur projetée</source>
+        <target state="translated">预测值</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.col-interval" datatype="html">
+        <source>Intervalle</source>
+        <target state="translated">区间</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.col-risk" datatype="html">
+        <source>Risque de sortie</source>
+        <target state="translated">越限风险</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.chart-projection" datatype="html">
+        <source>Projection</source>
+        <target state="translated">预测</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.err-min-four" datatype="html">
+        <source>Au moins 4 mesures sont nécessaires pour prévoir une dérive.</source>
+        <target state="translated">预测漂移至少需要4个测量值。</target>
+      </trans-unit>
       <trans-unit id="stakeholders.register-risk" datatype="html">
         <source>Inscrire le risque</source>
         <target state="translated">登记风险</target>

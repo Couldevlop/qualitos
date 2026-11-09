@@ -56,3 +56,57 @@ export interface KpiSpcResponse {
   analysis: SpcAnalyzeResponse;
   capaId?: string | null;
 }
+
+// --- prévision de sortie des limites (§6.5) ----------------------------------
+
+/**
+ * Une période à venir : où le procédé se dirige, et le risque qu'il sorte.
+ *
+ * <p>`pBreach` additionne les deux côtés — ils sont exclusifs, puisque la limite
+ * supérieure est au-dessus de l'inférieure.
+ */
+export interface SpcForecastPoint {
+  step: number;
+  value: number;
+  low: number;
+  high: number;
+  pAboveUcl: number;
+  pBelowLcl: number;
+  pBreach: number;
+}
+
+/**
+ * Prévision de dérive.
+ *
+ * <p>`firstBreachStep` est nul tant que le procédé reste dans ses limites sur
+ * tout l'horizon. `confidence`, `r2` et `trend` accompagnent le chiffre : un
+ * risque élevé sur une série courte n'est pas une prédiction, et l'écran doit
+ * pouvoir le dire (§12.3).
+ */
+export interface SpcForecastResponse {
+  n: number;
+  horizon: number;
+  threshold: number;
+  willBreach: boolean;
+  firstBreachStep?: number | null;
+  side?: 'upper' | 'lower' | null;
+  trend: number;
+  residualSigma: number;
+  r2: number;
+  confidence: 'low' | 'medium' | 'high';
+  model: string;
+  limits: SpcLimits;
+  points: SpcForecastPoint[];
+}
+
+/** Prévision SPC d'un KPI : la série réelle, la prévision, et l'éventuelle CAPA préventive. */
+export interface KpiSpcForecastResponse {
+  kpiId: string;
+  kpiCode: string;
+  kpiName: string;
+  unit?: string;
+  periods: string[];
+  values: number[];
+  forecast: SpcForecastResponse;
+  capaId?: string | null;
+}

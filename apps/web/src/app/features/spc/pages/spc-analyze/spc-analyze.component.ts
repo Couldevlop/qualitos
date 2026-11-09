@@ -2,9 +2,22 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import type { EChartsCoreOption } from 'echarts/core';
+import { Observable } from 'rxjs';
 
 import { SpcService } from '../../spc.service';
-import { KpiOption, KpiSpcResponse, SpcAnalyzeResponse } from '../../spc.types';
+import {
+  KpiOption,
+  KpiSpcForecastResponse,
+  KpiSpcResponse,
+  SpcAnalyzeResponse,
+  SpcForecastResponse
+} from '../../spc.types';
+
+/**
+ * Quatre mesures : le minimum pour qu'une tendance soit autre chose qu'un trait
+ * entre deux points. En dessous, le serveur refuse — l'écran le dit avant l'appel.
+ */
+const MIN_FORECAST_POINTS = 4;
 
 /**
  * Carte de contrôle SPC (§3.4, §12.1) : l'utilisateur saisit une série de mesures
@@ -45,6 +58,27 @@ export class SpcAnalyzeComponent implements OnInit {
 
   /** Contexte KPI courant (libellé + CAPA éventuelle) quand l'analyse vient d'un KPI. */
   kpiContext: { code: string; name: string; capaId?: string | null } | null = null;
+
+  /** Horizon de prévision, en périodes (§6.5). */
+  readonly forecastForm = this.fb.group({
+    horizon: [6, [Validators.required, Validators.min(1), Validators.max(60)]],
+    openCapa: [false]
+  });
+
+  forecast: SpcForecastResponse | null = null;
+  forecastLoading = false;
+  forecastError: string | null = null;
+  /** CAPA préventive ouverte par la prévision (distincte de celle de la carte). */
+  forecastCapaId: string | null = null;
+
+  /**
+   * Série du dernier calcul, conservée pour que la prévision reparte EXACTEMENT
+   * des mêmes mesures et des mêmes limites que la carte affichée : une prévision
+   * qui parlerait d'une autre série n'expliquerait pas la courbe sous les yeux.
+   */
+  private lastValues: number[] = [];
+  private lastLabels?: string[];
+  private lastKpi: { id: string; limit: number } | null = null;
 
   constructor(private readonly fb: FormBuilder, private readonly spc: SpcService) {}
 
@@ -99,6 +133,8 @@ export class SpcAnalyzeComponent implements OnInit {
     }).subscribe({
       next: res => {
         this.result = res;
+        this.lastValues = values;
+        this.lastLabels = undefined;
         this.chartOption = this.buildChart(res, values);
         this.loading = false;
       },
@@ -127,7 +163,10 @@ export class SpcAnalyzeComponent implements OnInit {
       next: res => {
         this.result = res.analysis;
         this.kpiContext = { code: res.kpiCode, name: res.kpiName, capaId: res.capaId };
-        this.chartOption = this.buildChart(res.analysis, res.values, res.periods.map(p => this.shortDate(p)));
+        this.lastValues = res.values;
+        this.lastLabels = res.periods.map(p => this.shortDate(p));
+        this.lastKpi = { id: kpiId, limit };
+        this.chartOption = this.buildChart(res.analysis, res.values, this.lastLabels);
         this.loading = false;
       },
       error: (err: HttpErrorResponse) => {
@@ -146,6 +185,98 @@ export class SpcAnalyzeComponent implements OnInit {
     this.result = null;
     this.chartOption = null;
     this.kpiContext = null;
+    this.lastKpi = null;
+    this.lastValues = [];
+    this.lastLabels = undefined;
+    this.forecast = null;
+    this.forecastError = null;
+    this.forecastCapaId = null;
+  }
+
+  /** Vrai dès qu'une série est chargée et assez longue pour qu'une projection ait un sens. */
+  get canForecast(): boolean {
+    return this.lastValues.length >= MIN_FORECAST_POINTS;
+  }
+
+  /**
+   * Prévision de sortie des limites sur la série affichée (§6.5).
+   *
+   * <p>Deux chemins, une seule lecture : depuis un KPI, le serveur retire la série
+   * et peut ouvrir une CAPA <b>préventive</b> ; en saisie manuelle, il n'y a rien à
+   * rattacher, donc rien à ouvrir.
+   */
+  runForecast(): void {
+    if (this.forecastLoading || !this.canForecast || this.forecastForm.invalid) {
+      return;
+    }
+    const horizon = this.forecastForm.value.horizon ?? 6;
+    this.forecastLoading = true;
+    this.forecastError = null;
+    this.forecast = null;
+    this.forecastCapaId = null;
+
+    const kpi = this.lastKpi;
+    const appel: Observable<SpcForecastResponse | KpiSpcForecastResponse> = kpi
+      ? this.spc.forecastKpi(kpi.id, kpi.limit, horizon, !!this.forecastForm.value.openCapa)
+      : this.spc.forecast(
+          this.lastValues, horizon,
+          this.form.value.center ?? undefined,
+          this.form.value.sigma ?? undefined);
+
+    appel.subscribe({
+      next: (res: SpcForecastResponse | KpiSpcForecastResponse) => {
+        const prevision = 'forecast' in res ? res.forecast : res;
+        this.forecast = prevision;
+        this.forecastCapaId = 'forecast' in res ? (res.capaId ?? null) : null;
+        this.forecastLoading = false;
+        if (this.result) {
+          this.chartOption = this.buildChart(
+            this.result, this.lastValues, this.lastLabels, prevision);
+        }
+      },
+      error: (err: HttpErrorResponse) => {
+        this.forecastLoading = false;
+        this.forecastError = err.status === 422
+          ? $localize`:@@spc.forecast.err-min-four:Au moins 4 mesures sont nécessaires pour prévoir une dérive.`
+          : this.messageFor(err);
+      }
+    });
+  }
+
+  /**
+   * Phrase de tête de la prévision : ce que l'écran doit dire d'abord, et rien de
+   * plus que ce que le modèle soutient.
+   */
+  forecastHeadline(f: SpcForecastResponse): string {
+    if (!f.willBreach || f.firstBreachStep == null) {
+      return $localize`:@@spc.forecast.no-breach:Aucune sortie des limites annoncée sur les ${f.horizon}:horizon: prochaines périodes.`;
+    }
+    const n = f.firstBreachStep;
+    return f.side === 'lower'
+      ? $localize`:@@spc.forecast.breach-lower:Le procédé franchira sa limite inférieure dans ${n}:steps: période(s).`
+      : $localize`:@@spc.forecast.breach-upper:Le procédé franchira sa limite supérieure dans ${n}:steps: période(s).`;
+  }
+
+  /** Confiance de la prévision : une annonce sans sa confiance n'est pas une prévision (§12.3). */
+  confidenceLabel(c: string): string {
+    return c === 'high' ? $localize`:@@spc.forecast.conf-high:Confiance élevée`
+      : c === 'medium' ? $localize`:@@spc.forecast.conf-medium:Confiance moyenne`
+      : $localize`:@@spc.forecast.conf-low:Confiance faible`;
+  }
+
+  confidenceClass(c: string): string {
+    return c === 'high' ? 'sev-min' : c === 'medium' ? 'sev-maj' : 'sev-crit';
+  }
+
+  /** Tendance par période, signée, pour que le sens de la dérive soit lisible. */
+  trendLabel(trend: number): string {
+    const v = (trend >= 0 ? '+' : '') + trend.toFixed(3);
+    return $localize`:@@spc.forecast.trend:${v}:trend: par période`;
+  }
+
+  /** Risque de sortie d'une période, en pourcentage entier. */
+  riskPercent(p: number): number {
+    return Math.round(p * 100);
   }
 
   /** ISO → libellé d'axe court (jj/mm). */
@@ -165,11 +296,16 @@ export class SpcAnalyzeComponent implements OnInit {
     return s;
   }
 
-  private buildChart(res: SpcAnalyzeResponse, values: number[], labels?: string[]): EChartsCoreOption {
+  private buildChart(res: SpcAnalyzeResponse, values: number[], labels?: string[],
+                     forecast?: SpcForecastResponse): EChartsCoreOption {
     const ooc = this.outOfControlIndices(res);
-    const categories = labels && labels.length === values.length
+    const base = labels && labels.length === values.length
       ? labels
       : values.map((_, i) => `${i + 1}`);
+    // Les périodes à venir prolongent l'axe : la projection doit se lire DANS la
+    // carte, sinon rien ne relie l'annonce aux limites qu'elle franchit.
+    const futur = (forecast?.points ?? []).map(pt => `+${pt.step}`);
+    const categories = [...base, ...futur];
     const oocPoints = values
       .map((v, i) => [i, v] as [number, number])
       .filter(([i]) => ooc.has(i));
@@ -188,9 +324,18 @@ export class SpcAnalyzeComponent implements OnInit {
     } : undefined;
     const measures = $localize`:@@spc.analyze.chart-measures:Mesures`;
     const outOfControl = $localize`:@@spc.analyze.chart-ooc:Hors contrôle`;
+    const projection = $localize`:@@spc.forecast.chart-projection:Projection`;
+    const legende = forecast ? [measures, outOfControl, projection] : [measures, outOfControl];
+    // La projection démarre au dernier point mesuré pour que la courbe soit continue.
+    const projData: Array<number | null> = forecast
+      ? [...values.map(() => null), ...forecast.points.map(pt => pt.value)]
+      : [];
+    if (forecast && values.length > 0) {
+      projData[values.length - 1] = values[values.length - 1];
+    }
     return {
       tooltip: { trigger: 'axis' },
-      legend: { data: [measures, outOfControl], top: 0 },
+      legend: { data: legende, top: 0 },
       // Place à droite pour les étiquettes UCL / CL / LCL, sinon coupées au bord du graphique.
       grid: { left: 48, right: 96, top: 48, bottom: 40 },
       xAxis: { type: 'category', data: categories, name: $localize`:@@spc.analyze.chart-point:Point`, boundaryGap: false },
@@ -213,7 +358,18 @@ export class SpcAnalyzeComponent implements OnInit {
           symbolSize: 13,
           itemStyle: { color: '#DC2626' },
           z: 5
-        }
+        },
+        ...(forecast ? [{
+          name: projection,
+          type: 'line' as const,
+          data: projData,
+          symbol: 'emptyCircle' as const,
+          symbolSize: 6,
+          connectNulls: true,
+          lineStyle: { width: 2, type: 'dashed' as const, color: '#7C3AED' },
+          itemStyle: { color: '#7C3AED' },
+          z: 4
+        }] : [])
       ]
     };
   }

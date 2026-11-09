@@ -29918,6 +29918,86 @@ historique 12 mois</source>
         <source>Statut du procédé</source>
         <target state="translated">حالة العملية</target>
       </trans-unit>
+      <trans-unit id="spc.forecast.panel" datatype="html">
+        <source>Prévision de dérive</source>
+        <target state="translated">توقّع الانحراف</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.horizon" datatype="html">
+        <source>Horizon (périodes)</source>
+        <target state="translated">الأفق (الفترات)</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.open-capa" datatype="html">
+        <source>Ouvrir une CAPA préventive si une sortie est annoncée</source>
+        <target state="translated">فتح CAPA وقائي إذا كان الخروج متوقعاً</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.run" datatype="html">
+        <source>Prévoir la dérive</source>
+        <target state="translated">توقّع الانحراف</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.running" datatype="html">
+        <source>Prévision…</source>
+        <target state="translated">جارٍ التوقّع…</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.no-breach" datatype="html">
+        <source>Aucune sortie des limites annoncée sur les <x id="horizon"/> prochaines périodes.</source>
+        <target state="translated">لا يُتوقَّع خروج عن حدود التحكم خلال الفترات <x id="horizon"/> القادمة.</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.breach-upper" datatype="html">
+        <source>Le procédé franchira sa limite supérieure dans <x id="steps"/> période(s).</source>
+        <target state="translated">ستتجاوز العملية حدّها الأعلى خلال <x id="steps"/> فترة.</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.breach-lower" datatype="html">
+        <source>Le procédé franchira sa limite inférieure dans <x id="steps"/> période(s).</source>
+        <target state="translated">ستتجاوز العملية حدّها الأدنى خلال <x id="steps"/> فترة.</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.conf-high" datatype="html">
+        <source>Confiance élevée</source>
+        <target state="translated">ثقة عالية</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.conf-medium" datatype="html">
+        <source>Confiance moyenne</source>
+        <target state="translated">ثقة متوسطة</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.conf-low" datatype="html">
+        <source>Confiance faible</source>
+        <target state="translated">ثقة منخفضة</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.trend" datatype="html">
+        <source><x id="trend"/> par période</source>
+        <target state="translated"><x id="trend"/> لكل فترة</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.points-used" datatype="html">
+        <source>mesures utilisées</source>
+        <target state="translated">قياسات مستخدمة</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.capa-link" datatype="html">
+        <source>CAPA préventive ouverte — voir le dossier</source>
+        <target state="translated">تم فتح CAPA وقائي — عرض الملف</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.col-step" datatype="html">
+        <source>Période</source>
+        <target state="translated">الفترة</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.col-value" datatype="html">
+        <source>Valeur projetée</source>
+        <target state="translated">القيمة المتوقعة</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.col-interval" datatype="html">
+        <source>Intervalle</source>
+        <target state="translated">المجال</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.col-risk" datatype="html">
+        <source>Risque de sortie</source>
+        <target state="translated">خطر الخروج</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.chart-projection" datatype="html">
+        <source>Projection</source>
+        <target state="translated">الإسقاط</target>
+      </trans-unit>
+      <trans-unit id="spc.forecast.err-min-four" datatype="html">
+        <source>Au moins 4 mesures sont nécessaires pour prévoir une dérive.</source>
+        <target state="translated">يلزم 4 قياسات على الأقل لتوقّع الانحراف.</target>
+      </trans-unit>
       <trans-unit id="stakeholders.register-risk" datatype="html">
         <source>Inscrire le risque</source>
         <target state="translated">تسجيل الخطر</target>
