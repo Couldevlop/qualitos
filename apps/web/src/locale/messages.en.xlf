@@ -23918,6 +23918,98 @@ declared income
         <source>Intégrations</source>
         <target state="translated">Integrations</target>
       </trans-unit>
+      <trans-unit id="platform.clients.edit" datatype="html">
+        <source>Corriger</source>
+        <target state="translated">Edit</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.edit-title" datatype="html">
+        <source>Corriger le client</source>
+        <target state="translated">Edit the client</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.plan-hint" datatype="html">
+        <source>L'offre borne les modules ouvrables ; elle ne ferme pas ceux déjà ouverts.</source>
+        <target state="translated">The plan caps which modules can be opened; it does not close those already open.</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.slug-frozen" datatype="html">
+        <source>ne change plus</source>
+        <target state="translated">cannot be changed</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.saved" datatype="html">
+        <source>Client mis à jour.</source>
+        <target state="translated">Client updated.</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.save-failed" datatype="html">
+        <source>La correction n'a pas pu être enregistrée.</source>
+        <target state="translated">The change could not be saved.</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.suspend" datatype="html">
+        <source>Suspendre</source>
+        <target state="translated">Suspend</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.resume" datatype="html">
+        <source>Réactiver</source>
+        <target state="translated">Reactivate</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.suspend-title" datatype="html">
+        <source>Suspendre ce client ?</source>
+        <target state="translated">Suspend this client?</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.suspend-message" datatype="html">
+        <source>Ses utilisateurs ne pourront plus se connecter. Rien n'est effacé : ses dossiers, ses preuves et sa piste d'audit restent en place, et tout reprend si vous le réactivez.</source>
+        <target state="translated">Its users will no longer be able to sign in. Nothing is deleted: its records, its evidence and its audit trail stay in place, and everything resumes if you reactivate it.</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.suspend-action" datatype="html">
+        <source>Suspendre</source>
+        <target state="translated">Suspend</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.suspended" datatype="html">
+        <source>Client suspendu ; ses données sont conservées.</source>
+        <target state="translated">Client suspended; its data is kept.</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.suspend-failed" datatype="html">
+        <source>La suspension n'a pas pu être appliquée.</source>
+        <target state="translated">The suspension could not be applied.</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.resumed" datatype="html">
+        <source>Client réactivé.</source>
+        <target state="translated">Client reactivated.</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.resume-failed" datatype="html">
+        <source>La réactivation n'a pas pu être appliquée.</source>
+        <target state="translated">The reactivation could not be applied.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.edit" datatype="html">
+        <source>Corriger</source>
+        <target state="translated">Edit</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.edit-title" datatype="html">
+        <source>Corriger le cabinet</source>
+        <target state="translated">Edit the firm</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.saved" datatype="html">
+        <source>Fiche du cabinet mise à jour.</source>
+        <target state="translated">Firm details updated.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.save-failed" datatype="html">
+        <source>La fiche du cabinet n’a pas pu être enregistrée.</source>
+        <target state="translated">The firm details could not be saved.</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.group-core" datatype="html">
+        <source>Socle</source>
+        <target state="translated">Core</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.group-core-hint" datatype="html">
+        <source>Livré avec la plateforme : toujours actif, non facturé à l'unité.</source>
+        <target state="translated">Shipped with the platform: always active, not billed per module.</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.group-extra" datatype="html">
+        <source>Modules additionnels</source>
+        <target state="translated">Additional modules</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.group-extra-hint" datatype="html">
+        <source>Ouverts, essayés ou fermés client par client, selon l'offre.</source>
+        <target state="translated">Opened, trialled or closed client by client, according to the plan.</target>
+      </trans-unit>
       <trans-unit id="nav.produits" datatype="html">
         <source>Produits</source>
         <target state="translated">Products</target>

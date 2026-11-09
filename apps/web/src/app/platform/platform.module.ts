@@ -7,7 +7,9 @@ import { CredentialRevealModule } from '../shared/credential-reveal/credential-r
 import { PersonNameModule } from '../shared/person-name/person-name.module';
 import { SharedModule } from '../shared/shared.module';
 import { UiModule } from '../shared/ui/ui.module';
+import { ClientEditDialogComponent } from './pages/client-edit-dialog/client-edit-dialog.component';
 import { ClientsComponent } from './pages/clients/clients.component';
+import { FirmEditDialogComponent } from './pages/firm-edit-dialog/firm-edit-dialog.component';
 import { PartnerFirmsComponent } from './pages/partner-firms/partner-firms.component';
 import { PlatformAuditComponent } from './pages/platform-audit/platform-audit.component';
 import { PlatformModulesComponent } from './pages/platform-modules/platform-modules.component';
@@ -65,8 +67,9 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [PlatformShellComponent, ClientsComponent, PlatformModulesComponent,
-    PartnerFirmsComponent, PlatformAuditComponent],
+  declarations: [PlatformShellComponent, ClientsComponent, ClientEditDialogComponent,
+    PlatformModulesComponent, PartnerFirmsComponent, FirmEditDialogComponent,
+    PlatformAuditComponent],
   // PersonNameModule : la piste d'audit garde l'identifiant de compte de
   // l'auteur d'un acte (un nom change, un acte consigné ne doit pas changer
   // avec lui) et l'écran le résout dans l'annuaire pour l'afficher.

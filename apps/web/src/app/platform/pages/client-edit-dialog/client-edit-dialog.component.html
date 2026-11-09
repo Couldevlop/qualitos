@@ -1,0 +1,37 @@
+<qos-form-dialog
+  i18n-title="@@platform.clients.edit-title"
+  title="Corriger le client"
+  [subtitle]="client.slug"
+  [formGroup]="form"
+  [submitDisabled]="form.invalid || unchanged"
+  i18n-submitLabel="@@common.save"
+  submitLabel="Enregistrer"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@admin.clients.name">Nom de l'organisation</mat-label>
+    <input matInput formControlName="name" required maxlength="255" data-test="client-edit-nom">
+    <mat-error *ngIf="form.controls.name.hasError('required')"
+               i18n="@@rr.form.required">Champ obligatoire.</mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@admin.clients.plan">Offre</mat-label>
+    <mat-select formControlName="plan" required data-test="client-edit-offre">
+      <mat-option *ngFor="let p of plans" [value]="p">{{ p }}</mat-option>
+    </mat-select>
+    <mat-hint i18n="@@platform.clients.plan-hint">
+      L'offre borne les modules ouvrables ; elle ne ferme pas ceux déjà ouverts.
+    </mat-hint>
+  </mat-form-field>
+
+  <!-- Le repere ne se corrige pas : il nomme le client partout ou son travail
+       a deja ete consigne. On le montre pour que l'editeur sache qui il corrige. -->
+  <p class="repere" data-test="client-edit-repere">
+    <span i18n="@@admin.clients.slug">Identifiant</span>
+    <code>{{ client.slug }}</code>
+    <span class="repere__note" i18n="@@platform.clients.slug-frozen">ne change plus</span>
+  </p>
+
+</qos-form-dialog>

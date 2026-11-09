@@ -23917,6 +23917,98 @@ historique 12 mois</source>
         <source>Intégrations</source>
         <target state="translated">連携</target>
       </trans-unit>
+      <trans-unit id="platform.clients.edit" datatype="html">
+        <source>Corriger</source>
+        <target state="translated">修正</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.edit-title" datatype="html">
+        <source>Corriger le client</source>
+        <target state="translated">顧客を修正</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.plan-hint" datatype="html">
+        <source>L'offre borne les modules ouvrables ; elle ne ferme pas ceux déjà ouverts.</source>
+        <target state="translated">プランは開放できるモジュールの上限を定めるもので、既に開放済みのものを閉じることはありません。</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.slug-frozen" datatype="html">
+        <source>ne change plus</source>
+        <target state="translated">以後変更不可</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.saved" datatype="html">
+        <source>Client mis à jour.</source>
+        <target state="translated">顧客を更新しました。</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.save-failed" datatype="html">
+        <source>La correction n'a pas pu être enregistrée.</source>
+        <target state="translated">修正を保存できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.suspend" datatype="html">
+        <source>Suspendre</source>
+        <target state="translated">停止</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.resume" datatype="html">
+        <source>Réactiver</source>
+        <target state="translated">再開</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.suspend-title" datatype="html">
+        <source>Suspendre ce client ?</source>
+        <target state="translated">この顧客を停止しますか？</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.suspend-message" datatype="html">
+        <source>Ses utilisateurs ne pourront plus se connecter. Rien n'est effacé : ses dossiers, ses preuves et sa piste d'audit restent en place, et tout reprend si vous le réactivez.</source>
+        <target state="translated">所属ユーザーはサインインできなくなります。削除は行われません。記録、証拠、監査証跡はそのまま残り、再開すればすべて元に戻ります。</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.suspend-action" datatype="html">
+        <source>Suspendre</source>
+        <target state="translated">停止する</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.suspended" datatype="html">
+        <source>Client suspendu ; ses données sont conservées.</source>
+        <target state="translated">顧客を停止しました。データは保持されます。</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.suspend-failed" datatype="html">
+        <source>La suspension n'a pas pu être appliquée.</source>
+        <target state="translated">停止を適用できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.resumed" datatype="html">
+        <source>Client réactivé.</source>
+        <target state="translated">顧客を再開しました。</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.resume-failed" datatype="html">
+        <source>La réactivation n'a pas pu être appliquée.</source>
+        <target state="translated">再開を適用できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.edit" datatype="html">
+        <source>Corriger</source>
+        <target state="translated">修正</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.edit-title" datatype="html">
+        <source>Corriger le cabinet</source>
+        <target state="translated">事務所を修正</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.saved" datatype="html">
+        <source>Fiche du cabinet mise à jour.</source>
+        <target state="translated">事務所の情報を更新しました。</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.save-failed" datatype="html">
+        <source>La fiche du cabinet n’a pas pu être enregistrée.</source>
+        <target state="translated">事務所の情報を保存できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.group-core" datatype="html">
+        <source>Socle</source>
+        <target state="translated">基本機能</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.group-core-hint" datatype="html">
+        <source>Livré avec la plateforme : toujours actif, non facturé à l'unité.</source>
+        <target state="translated">プラットフォームに同梱：常時有効で、モジュール単位の課金はありません。</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.group-extra" datatype="html">
+        <source>Modules additionnels</source>
+        <target state="translated">追加モジュール</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.group-extra-hint" datatype="html">
+        <source>Ouverts, essayés ou fermés client par client, selon l'offre.</source>
+        <target state="translated">プランに応じて、顧客ごとに開放・試用・終了します。</target>
+      </trans-unit>
       <trans-unit id="nav.produits" datatype="html">
         <source>Produits</source>
         <target state="translated">製品</target>

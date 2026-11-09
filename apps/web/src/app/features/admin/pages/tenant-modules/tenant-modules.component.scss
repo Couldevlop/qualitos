@@ -90,3 +90,38 @@
   .head { flex-direction: column; }
   .tenant-tier { align-items: flex-start; }
 }
+
+
+/* La coupure entre le socle et les modules additionnels. Elle doit se lire comme
+   un intertitre : plus lourde qu'une ligne, plus legere qu'un en-tete de tableau. */
+.groupe {
+  padding: var(--qos-space-4) var(--qos-space-3) var(--qos-space-2);
+  background: var(--qos-bg-sunken);
+  border-top: 1px solid var(--qos-border-subtle);
+
+  &__titre {
+    font-weight: var(--qos-fw-semibold);
+    color: var(--qos-fg-primary);
+    letter-spacing: 0.01em;
+  }
+
+  &__compte {
+    display: inline-block;
+    margin-left: var(--qos-space-2);
+    padding: 1px 8px;
+    border-radius: var(--qos-radius-pill);
+    background: var(--qos-bg-elevated);
+    color: var(--qos-fg-secondary);
+    font-size: var(--qos-fs-xs);
+    font-weight: var(--qos-fw-semibold);
+  }
+
+  &__aide {
+    display: block;
+    margin-top: 2px;
+    color: var(--qos-fg-tertiary);
+    font-size: var(--qos-fs-xs);
+  }
+}
+
+.groupe-row:first-of-type .groupe { border-top: 0; }

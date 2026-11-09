@@ -10,6 +10,9 @@ import {
 import { TenantSummary } from '../../../features/admin/admin.types';
 import { ConfirmDialogComponent } from '../../../shared/ui/confirm-dialog/confirm-dialog.component';
 import { ClientsService } from '../../clients.service';
+import {
+  FirmEditDialogComponent, FirmEditResult
+} from '../firm-edit-dialog/firm-edit-dialog.component';
 
 /** Le brouillon d'un cabinet. Le repère (`slug`) ne se corrige plus ensuite. */
 export interface FirmDraft {
@@ -141,6 +144,36 @@ export class PartnerFirmsComponent implements OnInit {
       },
       error: (err: unknown) => this.echec(err,
         $localize`:@@platform.firms.create-failed:Le cabinet n’a pas pu être créé.`)
+    });
+  }
+
+  // ---------- corriger la fiche ----------
+
+  /**
+   * Corrige la fiche d'un cabinet : raison sociale, immatriculation, contact.
+   *
+   * <p>Ces informations vieillissent — un cabinet déménage, change de référent,
+   * régularise son immatriculation — et la console ne savait que les saisir une
+   * fois. Le serveur acceptait déjà la correction et la consigne dans la piste
+   * d'audit de la plateforme ; il n'y manquait que le chemin pour la faire.
+   */
+  corriger(cabinet: PartnerFirm): void {
+    this.dialog.open<FirmEditDialogComponent, PartnerFirm, FirmEditResult>(
+      FirmEditDialogComponent,
+      { data: cabinet, panelClass: 'qos-dialog-panel', autoFocus: 'first-tabbable' }
+    ).afterClosed().subscribe(fiche => {
+      if (!fiche) return;
+      this.busy = true;
+      this.partner.updateFirm(cabinet.id, fiche).subscribe({
+        next: maj => {
+          this.firms = this.firms.map(f => f.id === maj.id ? maj : f);
+          this.busy = false;
+          this.snack.open($localize`:@@platform.firms.saved:Fiche du cabinet mise à jour.`,
+            undefined, { duration: 4000 });
+        },
+        error: (err: unknown) => this.echec(err,
+          $localize`:@@platform.firms.save-failed:La fiche du cabinet n’a pas pu être enregistrée.`)
+      });
     });
   }
 

@@ -277,7 +277,7 @@ img { max-width: 100%; height: auto; }
 .trace {
   display: block;
   width: 100%;
-  height: clamp(90px, 13vw, 150px);
+  height: clamp(104px, 14vw, 170px);
   margin-top: 2.5rem;
 }
 .trace__ligne {
@@ -306,7 +306,9 @@ img { max-width: 100%; height: auto; }
   animation: paraitre 0.5s ease 3s forwards;
 }
 .trace__legende { font-family: var(--police-nombre); font-size: 11px; fill: var(--encre-douce); }
-/* Les deux limites portent leur nom, posees sur les lignes qu'elles designent. */
+/* Les deux limites portent leur nom dans la gouttiere qui leur est reservee,
+   au-dessus de la ligne haute et au-dessous de la ligne basse : elles encadrent
+   la carte au lieu de se superposer aux mesures. */
 .trace__borne {
   font-family: var(--police-nombre);
   font-size: 11px;

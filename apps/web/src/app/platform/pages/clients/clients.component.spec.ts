@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
@@ -25,6 +26,12 @@ describe('ClientsComponent', () => {
   let service: jasmine.SpyObj<ClientsService>;
   let modules: jasmine.SpyObj<TenantModulesService>;
   let snack: jasmine.SpyObj<MatSnackBar>;
+  let dialog: jasmine.SpyObj<MatDialog>;
+
+  /** Ce que la prochaine fenêtre rendra en se fermant. */
+  function fenetreRend(valeur: unknown): void {
+    dialog.open.and.returnValue({ afterClosed: () => of(valeur) } as never);
+  }
 
   const hote = (): HTMLElement => fixture.nativeElement as HTMLElement;
 
@@ -54,7 +61,7 @@ describe('ClientsComponent', () => {
 
   async function setup(listFails = false): Promise<void> {
     service = jasmine.createSpyObj<ClientsService>('ClientsService',
-      ['list', 'onboard', 'saveIdentity', 'saveLogo']);
+      ['list', 'onboard', 'saveIdentity', 'saveLogo', 'update', 'suspend']);
     service.saveIdentity.and.returnValue(of(IDENTITE));
     service.saveLogo.and.returnValue(of(void 0));
     service.list.and.returnValue(listFails ? throwError(() => new Error('503'))
@@ -62,6 +69,8 @@ describe('ClientsComponent', () => {
     modules = jasmine.createSpyObj<TenantModulesService>('TenantModulesService', ['catalog']);
     modules.catalog.and.returnValue(of(CATALOGUE));
     snack = jasmine.createSpyObj<MatSnackBar>('MatSnackBar', ['open']);
+    dialog = jasmine.createSpyObj<MatDialog>('MatDialog', ['open']);
+    fenetreRend(undefined);
     await TestBed.configureTestingModule({
       declarations: [ClientsComponent, CredentialRevealComponent],
       imports: [SharedModule, UiModule, NoopAnimationsModule],
@@ -69,7 +78,8 @@ describe('ClientsComponent', () => {
         provideRouter([]),
         { provide: ClientsService, useValue: service },
         { provide: TenantModulesService, useValue: modules },
-        { provide: MatSnackBar, useValue: snack }
+        { provide: MatSnackBar, useValue: snack },
+        { provide: MatDialog, useValue: dialog }
       ]
     }).compileComponents();
     fixture = TestBed.createComponent(ClientsComponent);
@@ -369,5 +379,94 @@ describe('ClientsComponent', () => {
     expect(familles(CATALOGUE).find(f => f.category === 'qualite')!.modules.map(m => m.code)).toEqual(['capa', 'nc']);
     expect(slugify('  Hôpital — Saint Jean !! ')).toBe('hopital-saint-jean');
     expect(slugify('a'.repeat(80)).length).toBe(63);
+  });
+
+  // ---------- ce qu'on peut faire d'un client apres sa creation ----------
+
+  describe('la vie d’un client', () => {
+
+    beforeEach(async () => setup());
+
+    it('corrige le nom et l’offre, et met la ligne à jour sans recharger la liste', () => {
+      fenetreRend({ name: 'ACME Industries', plan: 'PRO' });
+      service.update.and.returnValue(of({ ...ACME, name: 'ACME Industries', plan: 'PRO' }));
+      service.list.calls.reset();
+
+      component.corriger(ACME);
+
+      expect(service.update).toHaveBeenCalledWith('t1', { name: 'ACME Industries', plan: 'PRO' });
+      expect(component.clients[0].name).toBe('ACME Industries');
+      expect(component.clients[0].plan).toBe('PRO');
+      expect(service.list).not.toHaveBeenCalled();
+    });
+
+    it('n’écrit rien quand la fenêtre de correction est refermée', () => {
+      fenetreRend(undefined);
+
+      component.corriger(ACME);
+
+      expect(service.update).not.toHaveBeenCalled();
+    });
+
+    it('dit pourquoi une correction n’est pas passée', () => {
+      fenetreRend({ name: 'ACME Industries', plan: 'PRO' });
+      service.update.and.returnValue(throwError(() => new Error('409')));
+
+      component.corriger(ACME);
+
+      expect(snack.open).toHaveBeenCalled();
+      expect(component.clients[0].name).withContext('la ligne reste telle quelle').toBe('ACME');
+    });
+
+    it('suspend un client actif seulement après confirmation', () => {
+      // Suspendre coupe l'accès d'un établissement entier : jamais sur un seul clic.
+      fenetreRend(false);
+
+      component.basculer(ACME);
+
+      expect(service.suspend).not.toHaveBeenCalled();
+    });
+
+    it('suspend le client confirmé, sans rien effacer', () => {
+      fenetreRend(true);
+      service.suspend.and.returnValue(of(void 0));
+
+      component.basculer(ACME);
+
+      expect(service.suspend).toHaveBeenCalledWith('t1');
+      expect(component.clients[0].active).toBeFalse();
+    });
+
+    it('réactive un client suspendu sans redemander confirmation', async () => {
+      const suspendu = { ...ACME, active: false };
+      // Le banc se remonte : `setup` configure un module de test, et on en veut
+      // un second avec une liste differente.
+      TestBed.resetTestingModule();
+      await setup();
+      component.clients = [suspendu];
+      dialog.open.calls.reset();
+      service.update.and.returnValue(of({ ...suspendu, active: true }));
+
+      component.basculer(suspendu);
+
+      expect(dialog.open).not.toHaveBeenCalled();
+      expect(service.update).toHaveBeenCalledWith('t1', { name: 'ACME', plan: 'STARTER', active: true });
+      expect(component.clients[0].active).toBeTrue();
+    });
+
+    it('signale l’échec d’une suspension', () => {
+      fenetreRend(true);
+      service.suspend.and.returnValue(throwError(() => new Error('503')));
+
+      component.basculer(ACME);
+
+      expect(snack.open).toHaveBeenCalled();
+      expect(component.clients[0].active).withContext('le client reste actif').toBeTrue();
+    });
+
+    it('offre les deux gestes sur chaque ligne', () => {
+      expect(hote().querySelector('[data-test="corriger-acme"]')).withContext('corriger').not.toBeNull();
+      expect(hote().querySelector('[data-test="basculer-acme"]')).withContext('suspendre').not.toBeNull();
+    });
   });
 });

@@ -23918,6 +23918,98 @@ historique 12 mois</source>
         <source>Intégrations</source>
         <target state="translated">التكاملات</target>
       </trans-unit>
+      <trans-unit id="platform.clients.edit" datatype="html">
+        <source>Corriger</source>
+        <target state="translated">تصحيح</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.edit-title" datatype="html">
+        <source>Corriger le client</source>
+        <target state="translated">تصحيح بيانات العميل</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.plan-hint" datatype="html">
+        <source>L'offre borne les modules ouvrables ; elle ne ferme pas ceux déjà ouverts.</source>
+        <target state="translated">تحدّ الخطة الوحدات القابلة للفتح، ولا تغلق ما سبق فتحه.</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.slug-frozen" datatype="html">
+        <source>ne change plus</source>
+        <target state="translated">لا يتغيّر بعد الآن</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.saved" datatype="html">
+        <source>Client mis à jour.</source>
+        <target state="translated">تم تحديث بيانات العميل.</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.save-failed" datatype="html">
+        <source>La correction n'a pas pu être enregistrée.</source>
+        <target state="translated">لم يتمكّن النظام من حفظ التصحيح.</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.suspend" datatype="html">
+        <source>Suspendre</source>
+        <target state="translated">تعليق</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.resume" datatype="html">
+        <source>Réactiver</source>
+        <target state="translated">إعادة التنشيط</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.suspend-title" datatype="html">
+        <source>Suspendre ce client ?</source>
+        <target state="translated">تعليق هذا العميل؟</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.suspend-message" datatype="html">
+        <source>Ses utilisateurs ne pourront plus se connecter. Rien n'est effacé : ses dossiers, ses preuves et sa piste d'audit restent en place, et tout reprend si vous le réactivez.</source>
+        <target state="translated">لن يتمكّن مستخدموه من تسجيل الدخول. لا يُحذف شيء: تبقى ملفاته وأدلّته ومسار تدقيقه في مكانها، ويعود كل شيء إذا أعدت تنشيطه.</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.suspend-action" datatype="html">
+        <source>Suspendre</source>
+        <target state="translated">تعليق</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.suspended" datatype="html">
+        <source>Client suspendu ; ses données sont conservées.</source>
+        <target state="translated">تم تعليق العميل؛ وتُحفظ بياناته.</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.suspend-failed" datatype="html">
+        <source>La suspension n'a pas pu être appliquée.</source>
+        <target state="translated">لم يتمكّن النظام من تطبيق التعليق.</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.resumed" datatype="html">
+        <source>Client réactivé.</source>
+        <target state="translated">تم إعادة تنشيط العميل.</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.resume-failed" datatype="html">
+        <source>La réactivation n'a pas pu être appliquée.</source>
+        <target state="translated">لم يتمكّن النظام من تطبيق إعادة التنشيط.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.edit" datatype="html">
+        <source>Corriger</source>
+        <target state="translated">تصحيح</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.edit-title" datatype="html">
+        <source>Corriger le cabinet</source>
+        <target state="translated">تصحيح بيانات المكتب</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.saved" datatype="html">
+        <source>Fiche du cabinet mise à jour.</source>
+        <target state="translated">تم تحديث بطاقة المكتب.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.save-failed" datatype="html">
+        <source>La fiche du cabinet n’a pas pu être enregistrée.</source>
+        <target state="translated">لم يتمكّن النظام من حفظ بطاقة المكتب.</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.group-core" datatype="html">
+        <source>Socle</source>
+        <target state="translated">الأساس</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.group-core-hint" datatype="html">
+        <source>Livré avec la plateforme : toujours actif, non facturé à l'unité.</source>
+        <target state="translated">يأتي مع المنصّة: يبقى مفعّلًا دائمًا، ولا يُفاتر لكل وحدة.</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.group-extra" datatype="html">
+        <source>Modules additionnels</source>
+        <target state="translated">الوحدات الإضافية</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.group-extra-hint" datatype="html">
+        <source>Ouverts, essayés ou fermés client par client, selon l'offre.</source>
+        <target state="translated">تُفتح أو تُجرَّب أو تُغلق لكل عميل على حدة، وفق الخطة.</target>
+      </trans-unit>
       <trans-unit id="nav.produits" datatype="html">
         <source>Produits</source>
         <target state="translated">المنتجات</target>

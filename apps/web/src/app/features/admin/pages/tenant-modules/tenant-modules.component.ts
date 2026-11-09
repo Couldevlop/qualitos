@@ -17,6 +17,17 @@ interface SummaryTile {
   tone: 'neutral' | 'success' | 'warn' | 'danger';
 }
 
+/** L'en-tête d'un bloc, posé dans le tableau comme une ligne à part entière. */
+export interface ModuleGroupRow {
+  group: 'CORE' | 'EXTRA';
+  label: string;
+  hint: string;
+  count: number;
+}
+
+/** Ce que le tableau affiche : des modules, et les deux en-têtes qui les séparent. */
+export type ModuleTableRow = ModuleRow | ModuleGroupRow;
+
 /**
  * Console d'administration — activation des modules du tenant (§10.4).
  *
@@ -26,6 +37,12 @@ interface SummaryTile {
  * Parti pris d'affichage : la liste part du CATALOGUE, pas des activations. Un module
  * jamais activé doit apparaître — sans quoi il serait impossible de l'activer depuis
  * l'interface. Les modules cœur sont montrés mais verrouillés.
+ *
+ * <p>Le tableau est coupé en deux blocs : le SOCLE, qui vient avec la plateforme
+ * et ne se ferme pas, puis les modules ADDITIONNELS, qui s'ouvrent, s'essaient et
+ * se ferment. Mêlés dans une seule liste, on cherchait longtemps ce qui était
+ * négociable : la question que se pose un éditeur devant cet écran est « que
+ * puis-je ouvrir à ce client ? », et la réponse doit se voir d'un coup d'œil.
  */
 @Component({
   selector: 'qos-tenant-modules',
@@ -40,6 +57,8 @@ export class TenantModulesComponent implements OnInit {
   readonly billingTiers: readonly BillingTier[] = TIER_ORDER;
 
   rows$!: Observable<ModuleRow[]>;
+  /** Les mêmes lignes, précédées de leur en-tête de bloc. */
+  groupedRows$!: Observable<ModuleTableRow[]>;
   summary$!: Observable<TenantModuleSummary | null>;
   tiles$!: Observable<SummaryTile[]>;
 
@@ -90,6 +109,7 @@ export class TenantModulesComponent implements OnInit {
     );
 
     this.rows$ = overview$.pipe(map(o => o.rows));
+    this.groupedRows$ = this.rows$.pipe(map(rows => TenantModulesComponent.grouper(rows)));
     this.summary$ = overview$.pipe(map(o => o.summary));
     this.tiles$ = overview$.pipe(map(o => this.toTiles(o.summary)));
   }
@@ -194,9 +214,49 @@ export class TenantModulesComponent implements OnInit {
     return TIER_ORDER.indexOf(tenantTier) >= TIER_ORDER.indexOf(row.entry.minimumTier);
   }
 
-  trackByCode(_index: number, row: ModuleRow): string {
-    return row.entry.code;
+  trackByCode(_index: number, row: ModuleTableRow): string {
+    return TenantModulesComponent.isGroupRow(row) ? 'groupe-' + row.group : row.entry.code;
   }
+
+  /**
+   * Coupe la liste en deux blocs, socle d'abord.
+   *
+   * <p>Un bloc vide n'a pas d'en-tête : annoncer « Modules additionnels » au-dessus
+   * de rien ferait croire à un chargement incomplet. L'ordre du catalogue est
+   * conservé à l'intérieur de chaque bloc — c'est celui que le serveur a choisi,
+   * et le réordonner ici le ferait diverger de la console de l'éditeur.
+   */
+  private static grouper(rows: ModuleRow[]): ModuleTableRow[] {
+    const socle = rows.filter(r => r.entry.coreModule);
+    const additionnels = rows.filter(r => !r.entry.coreModule);
+    const table: ModuleTableRow[] = [];
+    if (socle.length) {
+      table.push({
+        group: 'CORE',
+        label: $localize`:@@admin.modules.group-core:Socle`,
+        hint: $localize`:@@admin.modules.group-core-hint:Livré avec la plateforme : toujours actif, non facturé à l'unité.`,
+        count: socle.length
+      }, ...socle);
+    }
+    if (additionnels.length) {
+      table.push({
+        group: 'EXTRA',
+        label: $localize`:@@admin.modules.group-extra:Modules additionnels`,
+        hint: $localize`:@@admin.modules.group-extra-hint:Ouverts, essayés ou fermés client par client, selon l'offre.`,
+        count: additionnels.length
+      }, ...additionnels);
+    }
+    return table;
+  }
+
+  /** Vrai pour un en-tête de bloc : c'est le prédicat que le tableau interroge. */
+  static isGroupRow(row: ModuleTableRow): row is ModuleGroupRow {
+    return (row as ModuleGroupRow).group !== undefined;
+  }
+
+  /** Lié au gabarit : `when` reçoit l'index puis la ligne. */
+  readonly estEnTete = (_index: number, row: ModuleTableRow): boolean =>
+    TenantModulesComponent.isGroupRow(row);
 
   private toTiles(summary: TenantModuleSummary): SummaryTile[] {
     return [

@@ -562,4 +562,26 @@
     background: var(--qos-danger-bg-soft);
     color: var(--qos-danger-fg);
   }
+
+  /* Les gestes restent a droite de la ligne, groupes : ils agissent sur CE
+     client, et la distance visuelle avec le nom est ce qui evite de cliquer
+     sur la mauvaise ligne. Sur ecran etroit ils passent sous le texte. */
+  &__actions {
+    display: flex;
+    flex-shrink: 0;
+    gap: var(--qos-space-2);
+    margin-left: var(--qos-space-3);
+  }
+}
+
+@media (max-width: 720px) {
+  .client {
+    flex-wrap: wrap;
+
+    &__actions {
+      width: 100%;
+      margin-left: 0;
+      justify-content: flex-end;
+    }
+  }
 }

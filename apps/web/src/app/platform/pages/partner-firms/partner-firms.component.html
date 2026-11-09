@@ -95,6 +95,12 @@
         <span class="cabinet__etat" *ngIf="!f.active"
               i18n="@@platform.firms.inactive">Inactif</span>
 
+        <button mat-stroked-button type="button" (click)="corriger(f)" [disabled]="busy"
+                [attr.data-test]="'corriger-' + f.id">
+          <mat-icon aria-hidden="true">edit</mat-icon>
+          <span i18n="@@platform.firms.edit">Corriger</span>
+        </button>
+
         <button mat-stroked-button type="button" (click)="basculer(f)" [disabled]="busy"
                 [color]="f.active ? 'warn' : undefined" [attr.data-test]="'basculer-' + f.id">
           <span *ngIf="f.active" i18n="@@platform.firms.deactivate-action">Désactiver</span>

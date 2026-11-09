@@ -67,8 +67,8 @@ describe('PartnerFirmsComponent', () => {
   };
 
   const partner = jasmine.createSpyObj<PartnerService>('PartnerService',
-    ['listFirms', 'createFirm', 'setFirmActive', 'listConsultants', 'addConsultant',
-      'setConsultantActive', 'portfolioOf', 'propose']);
+    ['listFirms', 'createFirm', 'updateFirm', 'setFirmActive', 'listConsultants',
+      'addConsultant', 'setConsultantActive', 'portfolioOf', 'propose']);
   const clients = jasmine.createSpyObj<ClientsService>('ClientsService', ['list']);
   const dialog = jasmine.createSpyObj<MatDialog>('MatDialog', ['open']);
   const snack = jasmine.createSpyObj<MatSnackBar>('MatSnackBar', ['open']);
@@ -80,6 +80,7 @@ describe('PartnerFirmsComponent', () => {
   beforeEach(async () => {
     partner.listFirms.and.returnValue(of(page([cabinet()])));
     partner.createFirm.and.returnValue(of(cabinet({ id: 'f-2', slug: 'audit-plus' })));
+    partner.updateFirm.and.returnValue(of(cabinet({ name: 'QualiConseil & Associés' })));
     partner.setFirmActive.and.returnValue(of(cabinet({ active: false })));
     partner.listConsultants.and.returnValue(of([fiche()]));
     partner.addConsultant.and.returnValue(of(fiche({ id: 'c-2', linked: false })));
@@ -87,7 +88,7 @@ describe('PartnerFirmsComponent', () => {
     partner.portfolioOf.and.returnValue(of([accord()]));
     partner.propose.and.returnValue(of(accord({ id: 'e-2' })));
     clients.list.and.returnValue(of(clientsPage));
-    [partner.listFirms, partner.createFirm, partner.setFirmActive, partner.listConsultants,
+    [partner.listFirms, partner.createFirm, partner.updateFirm, partner.setFirmActive, partner.listConsultants,
       partner.addConsultant, partner.setConsultantActive, partner.portfolioOf, partner.propose,
       clients.list, dialog.open, snack.open].forEach(spy => spy.calls.reset());
     confirmeAvec(true);
@@ -351,5 +352,53 @@ describe('PartnerFirmsComponent', () => {
 
     expect(noeud('vide')).not.toBeNull();
     expect(fixture.nativeElement.textContent as string).toContain('accès daté');
+  });
+
+  // ---------- corriger la fiche ----------
+
+  describe('la fiche d’un cabinet se corrige', () => {
+
+    const fiche_corrigee = {
+      slug: 'qualiconseil', name: 'QualiConseil & Associés',
+      registrationNumber: '812 345 678', contactEmail: 'direction@qualiconseil.fr',
+      contactPhone: null
+    };
+
+    it('envoie la fiche rendue par la fenêtre et remplace la ligne affichée', () => {
+      dialog.open.and.returnValue(
+        { afterClosed: () => of(fiche_corrigee) } as MatDialogRef<unknown>);
+
+      component.corriger(cabinet());
+
+      expect(partner.updateFirm).toHaveBeenCalledWith('f-1', fiche_corrigee);
+      // La liste n'est pas rechargée : le serveur rend la fiche à jour, et un
+      // rechargement ferait repartir la page à zéro sous les yeux de l'éditeur.
+      expect(partner.listFirms).toHaveBeenCalledTimes(1);
+      expect(component.firms[0].name).toBe('QualiConseil & Associés');
+      expect(component.busy).toBeFalse();
+    });
+
+    it('n’écrit rien quand on renonce', () => {
+      dialog.open.and.returnValue({ afterClosed: () => of(undefined) } as MatDialogRef<unknown>);
+
+      component.corriger(cabinet());
+
+      expect(partner.updateFirm).not.toHaveBeenCalled();
+    });
+
+    it('libère les boutons et le dit quand l’écriture échoue', () => {
+      dialog.open.and.returnValue(
+        { afterClosed: () => of(fiche_corrigee) } as MatDialogRef<unknown>);
+      partner.updateFirm.and.returnValue(throwError(() => new Error('conflit')));
+
+      component.corriger(cabinet());
+
+      expect(component.busy).toBeFalse();
+      expect(snack.open).toHaveBeenCalled();
+    });
+
+    it('offre le geste sur chaque ligne', () => {
+      expect(noeud('corriger-f-1')).not.toBeNull();
+    });
   });
 });

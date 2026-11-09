@@ -134,3 +134,19 @@ tmp/
 *cles-privees*.properties
 *private-keys*.properties
 *.lic
+
+# Documents de travail depot dans docs/ (etudes, maquettes, recettes, captures,
+# classeurs) : ils circulent par courriel ou par le partage de fichiers, et le
+# depot ne les suit pas. Ce qui doit etre versionne s'ecrit en Markdown, et les
+# decisions dans docs/adr/.
+docs/**/*.docx
+docs/**/*.xlsx
+docs/**/*.pptx
+docs/**/*.potx
+docs/**/*.pdf
+docs/**/*.html
+docs/**/*.png
+docs/**/*.PNG
+docs/**/*.jpg
+docs/**/*.jpeg
+docs/**/*.svg

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable, of } from 'rxjs';
@@ -8,8 +9,12 @@ import { safeErrorMessage } from '../../../core/http/error-message';
 import {
   ModuleCatalogEntry, OnboardResponse, TenantIdentityRequest, TenantPlan, TenantSummary, TenantTheme
 } from '../../../features/admin/admin.types';
+import { ConfirmDialogComponent } from '../../../shared/ui/confirm-dialog/confirm-dialog.component';
 import { ClientsService } from '../../clients.service';
 import { TenantModulesService } from '../../../features/admin/tenant-modules.service';
+import {
+  ClientEditDialogComponent, ClientEditResult
+} from '../client-edit-dialog/client-edit-dialog.component';
 
 /** Les étapes de l'assistant, dans l'ordre : c'est une vraie séquence. */
 export type WizardStep = 1 | 2 | 3 | 4;
@@ -46,6 +51,9 @@ export class ClientsComponent implements OnInit {
   clients: TenantSummary[] = [];
   loading = false;
   failed = false;
+
+  /** Le client sur lequel une écriture est en cours : évite le double envoi. */
+  busyId: string | null = null;
 
   wizard = false;
   step: WizardStep = 1;
@@ -107,6 +115,7 @@ export class ClientsComponent implements OnInit {
     private readonly service: ClientsService,
     private readonly modules: TenantModulesService,
     private readonly fb: FormBuilder,
+    private readonly dialog: MatDialog,
     private readonly snack: MatSnackBar
   ) {}
 
@@ -121,6 +130,97 @@ export class ClientsComponent implements OnInit {
       next: page => this.clients = page.content,
       error: () => this.failed = true
     });
+  }
+
+  // ---------- la vie d'un client, apres sa creation ----------
+
+  /**
+   * Corrige le nom ou l'offre d'un client.
+   *
+   * <p>La liste n'etait que consultable : une raison sociale mal orthographiee
+   * restait sur tous les documents du client, et un changement d'offre
+   * demandait une ecriture en base. Les deux passent maintenant par une route
+   * que le serveur journalise.
+   */
+  corriger(client: TenantSummary): void {
+    this.dialog.open<ClientEditDialogComponent, TenantSummary, ClientEditResult>(
+      ClientEditDialogComponent, { data: client, panelClass: 'qos-dialog-panel', autoFocus: 'first-tabbable' }
+    ).afterClosed().subscribe(correction => {
+      if (!correction) return;
+      this.busyId = client.id;
+      this.service.update(client.id, correction)
+        .pipe(finalize(() => this.busyId = null))
+        .subscribe({
+          next: maj => {
+            this.remplacer(maj);
+            this.snack.open($localize`:@@platform.clients.saved:Client mis à jour.`, undefined, { duration: 4000 });
+          },
+          error: err => this.snack.open(
+            safeErrorMessage(err, $localize`:@@platform.clients.save-failed:La correction n'a pas pu être enregistrée.`),
+            undefined, { duration: 6000 })
+        });
+    });
+  }
+
+  /**
+   * Suspend un client, ou le reactive.
+   *
+   * <p>Suspendre coupe l'acces de tout un etablissement : on le demande, et le
+   * message dit ce que cela fait et ce que cela ne fait pas. Les donnees du
+   * client restent — ce sont des preuves d'audit, souvent soumises a une duree
+   * de conservation reglementaire — et l'acte est consigne dans la piste
+   * d'audit de la plateforme.
+   */
+  basculer(client: TenantSummary): void {
+    if (client.active) {
+      this.dialog.open(ConfirmDialogComponent, {
+        panelClass: 'qos-dialog-panel',
+        data: {
+          title: $localize`:@@platform.clients.suspend-title:Suspendre ce client ?`,
+          message: $localize`:@@platform.clients.suspend-message:Ses utilisateurs ne pourront plus se connecter. Rien n'est effacé : ses dossiers, ses preuves et sa piste d'audit restent en place, et tout reprend si vous le réactivez.`,
+          confirmLabel: $localize`:@@platform.clients.suspend-action:Suspendre`,
+          destructive: true
+        }
+      }).afterClosed().subscribe(ok => {
+        if (ok) this.suspendre(client);
+      });
+      return;
+    }
+    this.reactiver(client);
+  }
+
+  private suspendre(client: TenantSummary): void {
+    this.busyId = client.id;
+    this.service.suspend(client.id).pipe(finalize(() => this.busyId = null)).subscribe({
+      next: () => {
+        this.remplacer({ ...client, active: false });
+        this.snack.open($localize`:@@platform.clients.suspended:Client suspendu ; ses données sont conservées.`,
+          undefined, { duration: 5000 });
+      },
+      error: err => this.snack.open(
+        safeErrorMessage(err, $localize`:@@platform.clients.suspend-failed:La suspension n'a pas pu être appliquée.`),
+        undefined, { duration: 6000 })
+    });
+  }
+
+  private reactiver(client: TenantSummary): void {
+    this.busyId = client.id;
+    this.service.update(client.id, { name: client.name, plan: client.plan, active: true })
+      .pipe(finalize(() => this.busyId = null))
+      .subscribe({
+        next: maj => {
+          this.remplacer(maj);
+          this.snack.open($localize`:@@platform.clients.resumed:Client réactivé.`, undefined, { duration: 4000 });
+        },
+        error: err => this.snack.open(
+          safeErrorMessage(err, $localize`:@@platform.clients.resume-failed:La réactivation n'a pas pu être appliquée.`),
+          undefined, { duration: 6000 })
+      });
+  }
+
+  /** Remplace la ligne sur place : recharger toute la liste ferait sauter la lecture. */
+  private remplacer(maj: TenantSummary): void {
+    this.clients = this.clients.map(c => c.id === maj.id ? { ...c, ...maj } : c);
   }
 
   // ---------- assistant ----------

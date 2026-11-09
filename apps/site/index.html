@@ -232,26 +232,27 @@
       </div>
     </div>
 
-    <!-- Les deux limites nomment les lignes qu'elles designent, DANS le dessin :
-         portees par le bloc de titre, elles encadraient le texte et non la carte
-         de controle, et l'on pouvait lire « limite superieure » au-dessus d'un
-         titre qui n'a pas de limites. -->
-    <svg class="trace" viewBox="0 0 1200 160" role="img"
+    <!-- Les deux limites encadrent la carte : chacune dans sa gouttiere, au-dessus
+         de la ligne haute et au-dessous de la ligne basse, et non dans la bande ou
+         passent les mesures. Le point qui franchit la limite haute reste a droite,
+         la ou aucune etiquette ne l'attend : c'est le dessin qui doit se lire, pas
+         le texte qui doit s'ecarter. -->
+    <svg class="trace" viewBox="0 0 1200 170" role="img"
          aria-label="Carte de contrôle : entre la limite supérieure et la limite inférieure, une série de mesures reste dans les limites, puis un point les franchit et devient orange.">
-      <line class="trace__limite" x1="0" y1="26" x2="1200" y2="26"></line>
-      <line class="trace__moyenne" x1="0" y1="80" x2="1200" y2="80"></line>
-      <line class="trace__limite" x1="0" y1="134" x2="1200" y2="134"></line>
-      <text class="trace__borne" x="4" y="19">LSS — limite supérieure</text>
-      <text class="trace__legende" x="4" y="76">X̄</text>
-      <text class="trace__borne" x="4" y="149">LIS — limite inférieure</text>
+      <text class="trace__borne" x="4" y="20">LSS — limite supérieure</text>
+      <line class="trace__limite" x1="0" y1="38" x2="1200" y2="38"></line>
+      <line class="trace__moyenne" x1="0" y1="90" x2="1200" y2="90"></line>
+      <text class="trace__legende" x="4" y="86">X̄</text>
+      <line class="trace__limite" x1="0" y1="142" x2="1200" y2="142"></line>
+      <text class="trace__borne" x="4" y="162">LIS — limite inférieure</text>
 
-      <polyline class="trace__ligne" points="20,86 80,74 140,92 200,70 260,88 320,66 380,95 440,72 500,60 560,84 620,55 680,78 740,48 800,69 860,40 920,62 980,30 1040,52 1100,16 1160,44"></polyline>
+      <polyline class="trace__ligne" points="20,96 80,84 140,102 200,80 260,98 320,76 380,104 440,82 500,71 560,94 620,66 680,88 740,59 800,79 860,51 920,73 980,42 1040,63 1100,28 1160,55"></polyline>
 
-      <circle class="trace__point" cx="440" cy="72" r="4"></circle>
-      <circle class="trace__point" cx="740" cy="48" r="4"></circle>
-      <circle class="trace__point" cx="980" cy="30" r="4"></circle>
-      <circle class="trace__point trace__point--hors" cx="1100" cy="16"></circle>
-      <text class="trace__etiquette" x="1020" y="12">dérive détectée</text>
+      <circle class="trace__point" cx="440" cy="82" r="4"></circle>
+      <circle class="trace__point" cx="740" cy="59" r="4"></circle>
+      <circle class="trace__point" cx="980" cy="42" r="4"></circle>
+      <circle class="trace__point trace__point--hors" cx="1100" cy="28"></circle>
+      <text class="trace__etiquette" x="1012" y="16">dérive détectée</text>
     </svg>
 
     <dl class="methodes-rapides">
