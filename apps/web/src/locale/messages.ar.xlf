@@ -24110,6 +24110,138 @@ historique 12 mois</source>
         <source>Ouverts, essayés ou fermés client par client, selon l'offre.</source>
         <target state="translated">تُفتح أو تُجرَّب أو تُغلق لكل عميل على حدة، وفق الخطة.</target>
       </trans-unit>
+      <trans-unit id="pokayoke.type.prevention" datatype="html">
+        <source>Prévention</source>
+        <target state="translated">المنع</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.type.detection" datatype="html">
+        <source>Détection</source>
+        <target state="translated">الكشف</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.mech.physical-shape" datatype="html">
+        <source>Forme physique</source>
+        <target state="translated">الشكل المادي</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.mech.interlock" datatype="html">
+        <source>Verrouillage</source>
+        <target state="translated">التعشيق</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.mech.limit-switch" datatype="html">
+        <source>Fin de course</source>
+        <target state="translated">مفتاح نهاية الشوط</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.mech.sensor" datatype="html">
+        <source>Capteur</source>
+        <target state="translated">مستشعر</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.mech.vision" datatype="html">
+        <source>Vision</source>
+        <target state="translated">رؤية آلية</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.mech.checklist" datatype="html">
+        <source>Liste de vérification</source>
+        <target state="translated">قائمة تحقّق</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.mech.color-coding" datatype="html">
+        <source>Code couleur</source>
+        <target state="translated">ترميز لوني</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.mech.position-reference" datatype="html">
+        <source>Référence de position</source>
+        <target state="translated">مرجع الموضع</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.mech.counter" datatype="html">
+        <source>Comptage</source>
+        <target state="translated">العدّ</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.mech.software-validation" datatype="html">
+        <source>Contrôle logiciel</source>
+        <target state="translated">تحقّق برمجي</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.mech.other" datatype="html">
+        <source>Autre</source>
+        <target state="translated">أخرى</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.create.title" datatype="html">
+        <source>Inscrire un détrompeur</source>
+        <target state="translated">تسجيل أداة منع الخطأ</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.create.subtitle" datatype="html">
+        <source>Une action qui empêche l'erreur de se produire devient un dispositif de votre bibliothèque, réutilisable sur un autre projet.</source>
+        <target state="translated">الإجراء الذي يمنع وقوع الخطأ يصبح أداة في مكتبتك، قابلة لإعادة الاستخدام في مشروع آخر.</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.create.submit" datatype="html">
+        <source>Inscrire et déployer</source>
+        <target state="translated">التسجيل والنشر</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.create.origin" datatype="html">
+        <source>Origine citée</source>
+        <target state="translated">المصدر المذكور</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.create.origin-text" datatype="html">
+        <source>Projet DMAIC « <x id="project"/> » — action n° <x id="position"/> du plan d'actions</source>
+        <target state="translated">مشروع DMAIC «<x id="project"/>» — الإجراء رقم <x id="position"/> من خطة الإجراءات</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.create.name" datatype="html">
+        <source>Nom du dispositif</source>
+        <target state="translated">اسم الأداة</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.create.name-hint" datatype="html">
+        <source>Repris de l'action, corrigez-le : il se lira seul dans la bibliothèque.</source>
+        <target state="translated">مأخوذ من الإجراء، فصحّحه: سيُقرأ وحده في المكتبة.</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.create.type" datatype="html">
+        <source>Il agit</source>
+        <target state="translated">يعمل بـ</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.create.type-hint" datatype="html">
+        <source>Prévention : l'erreur devient impossible. Détection : elle est vue tout de suite.</source>
+        <target state="translated">المنع: يصبح الخطأ مستحيلًا. الكشف: يُرى فورًا.</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.create.mechanism" datatype="html">
+        <source>Par quel mécanisme</source>
+        <target state="translated">بأي آلية</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.create.mechanism-hint" datatype="html">
+        <source>C’est par là que la bibliothèque se filtre.</source>
+        <target state="translated">من هنا تُرشَّح المكتبة.</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.create.description" datatype="html">
+        <source>Comment il fonctionne</source>
+        <target state="translated">كيف تعمل</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.create.description-hint" datatype="html">
+        <source>Repris du texte de l'action. Celui qui le réutilisera n'aura pas votre contexte.</source>
+        <target state="translated">مأخوذ من نص الإجراء. من يعيد استخدامه لن يملك سياقك.</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.create.industries" datatype="html">
+        <source>Où il s'applique</source>
+        <target state="translated">حيث تنطبق</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.create.industries-placeholder" datatype="html">
+        <source>Lignes, ateliers ou secteurs concernés</source>
+        <target state="translated">الخطوط أو الورش أو القطاعات المعنيّة</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.create.examples" datatype="html">
+        <source>Exemples de pose</source>
+        <target state="translated">أمثلة على التركيب</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.create.done" datatype="html">
+        <source>Détrompeur <x id="code"/> inscrit à la bibliothèque et déployé sur ce projet.</source>
+        <target state="translated">تم تسجيل الأداة <x id="code"/> في المكتبة ونشرها على هذا المشروع.</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.create.failed" datatype="html">
+        <source>Le détrompeur n'a pas pu être inscrit.</source>
+        <target state="translated">لم يتمكّن النظام من تسجيل الأداة.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.pokayoke-add" datatype="html">
+        <source>Inscrire un détrompeur</source>
+        <target state="translated">تسجيل أداة منع الخطأ</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.pokayoke-tooltip" datatype="html">
+        <source>Inscrire cette action comme détrompeur réutilisable, et la déployer sur ce projet</source>
+        <target state="translated">تسجيل هذا الإجراء كأداة منع خطأ قابلة لإعادة الاستخدام، ونشرها على هذا المشروع</target>
+      </trans-unit>
       <trans-unit id="nav.produits" datatype="html">
         <source>Produits</source>
         <target state="translated">المنتجات</target>

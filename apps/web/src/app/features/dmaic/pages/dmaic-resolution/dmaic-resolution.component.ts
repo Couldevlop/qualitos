@@ -17,7 +17,13 @@ import {
   CapaOpened
 } from '../../../capa/pages/capa-create-dialog/capa-create-dialog.component';
 import { IshikawaService } from '../../../ishikawa/ishikawa.service';
+import { DmaicService } from '../../dmaic.service';
 import { DmaicPhase } from '../../dmaic.types';
+import {
+  PokaYokeCreateDialogComponent,
+  PokaYokeCreateDialogData,
+  PokaYokeCreated
+} from '../pokayoke-create-dialog/pokayoke-create-dialog.component';
 import {
   ANSWER_TYPE_LABEL,
   BRANCH_TEXT,
@@ -159,6 +165,8 @@ export class DmaicResolutionComponent implements OnInit, OnDestroy {
   failed = false;
   saving = false;
   downloading = false;
+  /** L'inscription en cours à la bibliothèque, par rang d'action. */
+  readonly inscribing = new Set<number>();
   creatingIshikawa = false;
   canEdit = false;
   readonly photoBusy = new Set<number>();
@@ -169,6 +177,7 @@ export class DmaicResolutionComponent implements OnInit, OnDestroy {
   constructor(
     private readonly svc: DmaicResolutionService,
     private readonly ishikawa: IshikawaService,
+    private readonly dmaic: DmaicService,
     private readonly auth: AuthService,
     private readonly authz: AuthzService,
     private readonly dialog: MatDialog,
@@ -497,6 +506,48 @@ export class DmaicResolutionComponent implements OnInit, OnDestroy {
       line.nature = opened.action?.nature ?? line.nature ?? 'CORRECTIVE';
       line.criticity = opened.action?.criticity ?? line.criticity ?? null;
       this.save();
+    });
+  }
+
+  /**
+   * Inscrire une action d'amélioration à la bibliothèque des détrompeurs.
+   *
+   * <p>Une action qui empêche l'erreur de se produire n'a pas à être réinventée
+   * sur la ligne voisine : elle devient un dispositif de la bibliothèque du
+   * client, que n'importe quel autre projet peut poser.
+   *
+   * <p>Le dispositif est déployé sur ce projet dans le même mouvement, et la
+   * fiche n'a rien à enregistrer : l'origine du dispositif cite le projet et le
+   * rang de l'action, et c'est cette citation qui tient le lien — une fiche
+   * dont les lignes se renumérotent briserait un lien dur.
+   */
+  inscribePokaYoke(line: ActionLine, index: number): void {
+    const texte = line.action?.trim();
+    if (!this.canEdit || !texte || this.inscribing.has(index)) return;
+    const data: PokaYokeCreateDialogData = {
+      projectId: this.projectId,
+      projectTitle: this.projectTitle ?? this.sheet?.projectTitle ?? '',
+      action: texte,
+      position: index + 1
+    };
+    this.dialog.open<PokaYokeCreateDialogComponent, PokaYokeCreateDialogData, PokaYokeCreated>(
+      PokaYokeCreateDialogComponent,
+      { data, autoFocus: 'first-tabbable', restoreFocus: true, panelClass: 'qos-dialog-panel' }
+    ).afterClosed().subscribe(demande => {
+      if (!demande) return;
+      this.inscribing.add(index);
+      this.dmaic.createDevice(demande).subscribe({
+        next: d => {
+          this.inscribing.delete(index);
+          this.snack.open(
+            $localize`:@@pokayoke.create.done:Détrompeur ${d.code}:code: inscrit à la bibliothèque et déployé sur ce projet.`,
+            undefined, { duration: 5000 });
+        },
+        error: err => {
+          this.inscribing.delete(index);
+          this.fail(err, $localize`:@@pokayoke.create.failed:Le détrompeur n'a pas pu être inscrit.`);
+        }
+      });
     });
   }
 

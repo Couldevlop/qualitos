@@ -1,5 +1,7 @@
 package com.openlab.qualitos.quality.dmaic;
 
+import com.openlab.qualitos.quality.authz.domain.Permission;
+import com.openlab.qualitos.quality.authz.web.RequiresPermission;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -96,6 +98,18 @@ public class DmaicController {
             @RequestParam(required = false) PokaYokeMechanism mechanism,
             @PageableDefault(size = 50) Pageable pageable) {
         return service.listDevices(type, mechanism, pageable);
+    }
+
+    /**
+     * Inscrire un detrompeur a la bibliotheque du client, et le deployer sur le
+     * projet designe. Un acte de pilotage : meme droit que la fiche de
+     * resolution dont l'action est issue.
+     */
+    @PostMapping("/pokayoke")
+    @ResponseStatus(HttpStatus.CREATED)
+    @RequiresPermission(Permission.DMAIC_MANAGE)
+    public DmaicDto.DeviceDetail createDevice(@Valid @RequestBody DmaicDto.CreateDeviceRequest req) {
+        return service.createDevice(req);
     }
 
     @GetMapping("/pokayoke/{id}")

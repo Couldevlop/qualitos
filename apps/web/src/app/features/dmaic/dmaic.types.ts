@@ -127,6 +127,30 @@ export interface DeviceSummary {
   mechanism: PokaYokeMechanism;
   applicableIndustries?: string;
   implementationCost?: string;
+  /** Vrai quand le dispositif vient de la bibliothèque du client, faux quand il vient du catalogue livré. */
+  own?: boolean;
+  /** D'où il vient, cité en clair : le projet et l'action dont il est né. */
+  sourceReference?: string;
+}
+
+/**
+ * Inscrire un détrompeur à la bibliothèque du client.
+ *
+ * <p>Le code n'est pas demandé : le serveur l'attribue, parce qu'il doit rester
+ * unique là où cohabitent le catalogue livré et les bibliothèques des clients.
+ */
+export interface CreateDeviceRequest {
+  name: string;
+  description?: string;
+  type: PokaYokeType;
+  mechanism: PokaYokeMechanism;
+  applicableIndustries?: string;
+  examples?: string;
+  implementationCost?: string;
+  /** L'origine, exigée : un dispositif sans origine n'est pas réutilisable en confiance. */
+  sourceReference: string;
+  /** Le projet sur lequel le déployer tout de suite, ou rien pour l'inscrire seulement. */
+  projectId?: string;
 }
 
 export type DeviceSummaryPage = SpringPage<DeviceSummary>;

@@ -14,6 +14,7 @@ import { DmaicListComponent } from './pages/dmaic-list/dmaic-list.component';
 import { DmaicMeasureDialogComponent } from './pages/dmaic-measure-dialog/dmaic-measure-dialog.component';
 import { DmaicPokaYokeDialogComponent } from './pages/dmaic-pokayoke-dialog/dmaic-pokayoke-dialog.component';
 import { DmaicResolutionComponent } from './pages/dmaic-resolution/dmaic-resolution.component';
+import { PokaYokeCreateDialogComponent } from './pages/pokayoke-create-dialog/pokayoke-create-dialog.component';
 
 const routes: Routes = [
   { path: '', component: DmaicListComponent },
@@ -28,7 +29,8 @@ const routes: Routes = [
     DmaicEditDialogComponent,
     DmaicMeasureDialogComponent,
     DmaicPokaYokeDialogComponent,
-    DmaicResolutionComponent
+    DmaicResolutionComponent,
+    PokaYokeCreateDialogComponent
   ],
   imports: [CapaCreateDialogModule, PersonNameModule, UserPickerModule, SharedModule, UiModule, FormsModule, RouterModule.forChild(routes)]
 })

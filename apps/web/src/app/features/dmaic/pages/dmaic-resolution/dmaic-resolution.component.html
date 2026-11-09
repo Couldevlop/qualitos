@@ -398,6 +398,16 @@
                       [disabled]="!a.action?.trim() || saving" (click)="openCapa(a)" [attr.data-test]="'capa-add-' + i">
                 <mat-icon>add_task</mat-icon> <span i18n="@@dmaic.res.capa-add">Ajouter une CAPA</span>
               </button>
+              <!-- Une action qui empêche l'erreur devient un détrompeur de la
+                   bibliothèque : la ligne voisine n'aura pas à la réinventer. -->
+              <button mat-stroked-button type="button" *ngIf="canEdit"
+                      [disabled]="!a.action?.trim() || inscribing.has(i)"
+                      (click)="inscribePokaYoke(a, i)" [attr.data-test]="'pokayoke-add-' + i"
+                      i18n-matTooltip="@@dmaic.res.pokayoke-tooltip"
+                      matTooltip="Inscrire cette action comme détrompeur réutilisable, et la déployer sur ce projet">
+                <mat-icon>shield</mat-icon>
+                <span i18n="@@dmaic.res.pokayoke-add">Inscrire un détrompeur</span>
+              </button>
             </div>
             <div class="avancement" aria-hidden="true"><span [style.width.%]="a.percent"></span></div>
           </li>

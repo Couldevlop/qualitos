@@ -8,6 +8,9 @@ import { finalize } from 'rxjs/operators';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { DmaicService } from '../../dmaic.service';
 import {
+  POKAYOKE_MECHANISMS, POKAYOKE_TYPES, pokaYokeMechanismLabel, pokaYokeTypeLabel
+} from '../../pokayoke.labels';
+import {
   AssignmentResponse,
   DeviceSummary,
   PokaYokeMechanism,
@@ -30,11 +33,12 @@ export class DmaicPokaYokeDialogComponent implements OnInit {
   loading = true;
   loadError: string | null = null;
 
-  readonly types: PokaYokeType[] = ['PREVENTION', 'DETECTION'];
-  readonly mechanisms: PokaYokeMechanism[] = [
-    'PHYSICAL_SHAPE','INTERLOCK','LIMIT_SWITCH','SENSOR','VISION',
-    'CHECKLIST','COLOR_CODING','POSITION_REFERENCE','COUNTER','SOFTWARE_VALIDATION','OTHER'
-  ];
+  readonly types: readonly PokaYokeType[] = POKAYOKE_TYPES;
+  readonly mechanisms: readonly PokaYokeMechanism[] = POKAYOKE_MECHANISMS;
+
+  /** Des mots, jamais le code du serveur : un `PHYSICAL_SHAPE` n'apprend rien. */
+  readonly typeLabel = pokaYokeTypeLabel;
+  readonly mechanismLabel = pokaYokeMechanismLabel;
 
   readonly typeFilter      = new FormControl<PokaYokeType | ''>('');
   readonly mechanismFilter = new FormControl<PokaYokeMechanism | ''>('');

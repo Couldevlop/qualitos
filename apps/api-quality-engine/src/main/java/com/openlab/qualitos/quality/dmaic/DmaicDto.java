@@ -98,6 +98,11 @@ public final class DmaicDto {
             Instant createdAt
     ) {}
 
+    /**
+     * @param own vrai quand le dispositif appartient au client, faux quand il
+     *            vient du catalogue partage de la plateforme. L'ecran le dit :
+     *            un detrompeur maison ne se lit pas comme une reference.
+     */
     public record DeviceSummary(
             UUID id,
             String code,
@@ -105,7 +110,35 @@ public final class DmaicDto {
             PokaYokeType type,
             PokaYokeMechanism mechanism,
             String applicableIndustries,
-            String implementationCost
+            String implementationCost,
+            boolean own,
+            String sourceReference
+    ) {}
+
+    /**
+     * Inscrire un detrompeur a la bibliotheque du client.
+     *
+     * <p>Le code n'est pas demande : il est attribue par le serveur, parce qu'il
+     * doit rester unique a l'echelle de la plateforme, ou cohabitent le
+     * catalogue partage et les bibliotheques de chaque client.
+     *
+     * @param sourceReference d'ou vient le dispositif, cite en clair. Exige :
+     *                        la promesse est qu'il naisse d'une action, et un
+     *                        dispositif sans origine n'est pas reutilisable en
+     *                        confiance.
+     * @param projectId       le projet sur lequel le deployer tout de suite,
+     *                        ou {@code null} pour l'inscrire seulement.
+     */
+    public record CreateDeviceRequest(
+            @NotBlank @Size(max = 255) String name,
+            @Size(max = 4000) String description,
+            @NotNull PokaYokeType type,
+            @NotNull PokaYokeMechanism mechanism,
+            @Size(max = 500) String applicableIndustries,
+            @Size(max = 4000) String examples,
+            @Size(max = 20) String implementationCost,
+            @NotBlank @Size(max = 255) String sourceReference,
+            UUID projectId
     ) {}
 
     public record DeviceDetail(
@@ -118,6 +151,8 @@ public final class DmaicDto {
             String applicableIndustries,
             String examples,
             String implementationCost,
+            boolean own,
+            String sourceReference,
             Instant createdAt,
             Instant updatedAt
     ) {}

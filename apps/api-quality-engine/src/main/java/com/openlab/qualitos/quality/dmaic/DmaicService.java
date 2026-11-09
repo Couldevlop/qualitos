@@ -217,31 +217,92 @@ public class DmaicService {
     @Transactional(readOnly = true)
     public Page<DmaicDto.DeviceSummary> listDevices(PokaYokeType type, PokaYokeMechanism mechanism,
                                                     Pageable pageable) {
+        UUID tenantId = requireTenantId();
         Page<PokaYokeDevice> page;
         if (type != null) {
-            page = deviceRepository.findByType(type, pageable);
+            page = deviceRepository.findVisibleByType(tenantId, type, pageable);
         } else if (mechanism != null) {
-            page = deviceRepository.findByMechanism(mechanism, pageable);
+            page = deviceRepository.findVisibleByMechanism(tenantId, mechanism, pageable);
         } else {
-            page = deviceRepository.findAll(pageable);
+            page = deviceRepository.findVisible(tenantId, pageable);
         }
         return page.map(d -> new DmaicDto.DeviceSummary(
                 d.getId(), d.getCode(), d.getName(), d.getType(), d.getMechanism(),
-                d.getApplicableIndustries(), d.getImplementationCost()));
+                d.getApplicableIndustries(), d.getImplementationCost(),
+                d.getTenantId() != null, d.getSourceReference()));
     }
 
     @Transactional(readOnly = true)
     public DmaicDto.DeviceDetail getDevice(UUID id) {
-        PokaYokeDevice d = deviceRepository.findById(id)
+        PokaYokeDevice d = deviceRepository.findVisibleById(id, requireTenantId())
                 .orElseThrow(() -> new PokaYokeDeviceNotFoundException(id));
         return toDeviceDetail(d);
     }
 
     @Transactional(readOnly = true)
     public DmaicDto.DeviceDetail getDeviceByCode(String code) {
-        PokaYokeDevice d = deviceRepository.findByCode(code)
+        PokaYokeDevice d = deviceRepository.findVisibleByCode(code, requireTenantId())
                 .orElseThrow(() -> new PokaYokeDeviceNotFoundException(code));
         return toDeviceDetail(d);
+    }
+
+    /**
+     * Inscrire un detrompeur a la bibliotheque du client — ce qu'une action
+     * d'amelioration devient quand elle a fait la preuve qu'elle empeche
+     * l'erreur : une solution reutilisable sur une autre ligne.
+     *
+     * <p>Le dispositif appartient au client, jamais au catalogue partage : la
+     * solution d'un seul n'a pas a s'afficher chez tous. Son code est attribue
+     * ici, parce qu'il doit rester unique la ou cohabitent le catalogue de la
+     * plateforme et les bibliotheques de chaque client.
+     *
+     * <p>Quand un projet est designe, le dispositif y est deploye dans le meme
+     * mouvement : inscrire sans deployer laisserait l'action a moitie faite, et
+     * la bibliotheque se remplirait de solutions que personne n'a posees.
+     */
+    public DmaicDto.DeviceDetail createDevice(DmaicDto.CreateDeviceRequest req) {
+        UUID tenantId = requireTenantId();
+        PokaYokeDevice d = new PokaYokeDevice();
+        d.setTenantId(tenantId);
+        d.setCode(nextDeviceCode(tenantId));
+        d.setName(req.name().trim());
+        d.setDescription(blankToNull(req.description()));
+        d.setType(req.type());
+        d.setMechanism(req.mechanism());
+        d.setApplicableIndustries(blankToNull(req.applicableIndustries()));
+        d.setExamples(blankToNull(req.examples()));
+        d.setImplementationCost(blankToNull(req.implementationCost()));
+        d.setSourceReference(req.sourceReference().trim());
+        PokaYokeDevice saved = deviceRepository.save(d);
+
+        if (req.projectId() != null) {
+            assignDevice(req.projectId(), new DmaicDto.AssignPokaYokeRequest(
+                    saved.getId(), saved.getSourceReference()));
+        }
+        return toDeviceDetail(saved);
+    }
+
+    /**
+     * Le prochain code libre de la bibliotheque du client.
+     *
+     * <p>Le compteur donne le numero attendu ; la boucle le passe tant qu'il est
+     * pris, parce qu'un dispositif supprime laisse un trou que le compteur ne
+     * voit pas, et qu'un code deja pris ferait echouer l'ecriture plutot que de
+     * se decaler.
+     */
+    private String nextDeviceCode(UUID tenantId) {
+        String prefixe = "PY-" + tenantId.toString().substring(0, 8).toUpperCase();
+        long n = deviceRepository.countByTenantId(tenantId) + 1;
+        String code = prefixe + "-" + String.format("%03d", n);
+        while (deviceRepository.existsByCode(code)) {
+            n++;
+            code = prefixe + "-" + String.format("%03d", n);
+        }
+        return code;
+    }
+
+    private static String blankToNull(String v) {
+        return v == null || v.isBlank() ? null : v.trim();
     }
 
     // ===== Assignments =====
@@ -260,7 +321,7 @@ public class DmaicService {
         if (p.getStatus() != DmaicStatus.ACTIVE) {
             throw new DmaicStateException("Poka-Yoke assignment only on ACTIVE projects");
         }
-        PokaYokeDevice d = deviceRepository.findById(req.deviceId())
+        PokaYokeDevice d = deviceRepository.findVisibleById(req.deviceId(), tenantId)
                 .orElseThrow(() -> new PokaYokeDeviceNotFoundException(req.deviceId()));
 
         PokaYokeAssignment a = new PokaYokeAssignment();
@@ -361,6 +422,7 @@ public class DmaicService {
                 d.getType(), d.getMechanism(),
                 d.getApplicableIndustries(), d.getExamples(),
                 d.getImplementationCost(),
+                d.getTenantId() != null, d.getSourceReference(),
                 d.getCreatedAt(), d.getUpdatedAt());
     }
 

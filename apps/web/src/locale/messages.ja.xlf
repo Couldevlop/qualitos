@@ -24109,6 +24109,138 @@ historique 12 mois</source>
         <source>Ouverts, essayés ou fermés client par client, selon l'offre.</source>
         <target state="translated">プランに応じて、顧客ごとに開放・試用・終了します。</target>
       </trans-unit>
+      <trans-unit id="pokayoke.type.prevention" datatype="html">
+        <source>Prévention</source>
+        <target state="translated">予防</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.type.detection" datatype="html">
+        <source>Détection</source>
+        <target state="translated">検知</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.mech.physical-shape" datatype="html">
+        <source>Forme physique</source>
+        <target state="translated">物理形状</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.mech.interlock" datatype="html">
+        <source>Verrouillage</source>
+        <target state="translated">インターロック</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.mech.limit-switch" datatype="html">
+        <source>Fin de course</source>
+        <target state="translated">リミットスイッチ</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.mech.sensor" datatype="html">
+        <source>Capteur</source>
+        <target state="translated">センサー</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.mech.vision" datatype="html">
+        <source>Vision</source>
+        <target state="translated">画像認識</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.mech.checklist" datatype="html">
+        <source>Liste de vérification</source>
+        <target state="translated">チェックリスト</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.mech.color-coding" datatype="html">
+        <source>Code couleur</source>
+        <target state="translated">色分け</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.mech.position-reference" datatype="html">
+        <source>Référence de position</source>
+        <target state="translated">位置基準</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.mech.counter" datatype="html">
+        <source>Comptage</source>
+        <target state="translated">カウント</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.mech.software-validation" datatype="html">
+        <source>Contrôle logiciel</source>
+        <target state="translated">ソフトウェア検証</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.mech.other" datatype="html">
+        <source>Autre</source>
+        <target state="translated">その他</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.create.title" datatype="html">
+        <source>Inscrire un détrompeur</source>
+        <target state="translated">ポカヨケを登録</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.create.subtitle" datatype="html">
+        <source>Une action qui empêche l'erreur de se produire devient un dispositif de votre bibliothèque, réutilisable sur un autre projet.</source>
+        <target state="translated">誤りを起こり得なくする対策は、ライブラリの装置となり、別のプロジェクトでも使えます。</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.create.submit" datatype="html">
+        <source>Inscrire et déployer</source>
+        <target state="translated">登録して配備</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.create.origin" datatype="html">
+        <source>Origine citée</source>
+        <target state="translated">記載される出所</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.create.origin-text" datatype="html">
+        <source>Projet DMAIC « <x id="project"/> » — action n° <x id="position"/> du plan d'actions</source>
+        <target state="translated">DMAICプロジェクト「<x id="project"/>」— 対策計画の第<x id="position"/>項</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.create.name" datatype="html">
+        <source>Nom du dispositif</source>
+        <target state="translated">装置の名称</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.create.name-hint" datatype="html">
+        <source>Repris de l'action, corrigez-le : il se lira seul dans la bibliothèque.</source>
+        <target state="translated">対策文から取りました。ライブラリでは単独で読まれるため、必要なら直してください。</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.create.type" datatype="html">
+        <source>Il agit</source>
+        <target state="translated">作用の仕方</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.create.type-hint" datatype="html">
+        <source>Prévention : l'erreur devient impossible. Détection : elle est vue tout de suite.</source>
+        <target state="translated">予防：誤りが起こり得なくなる。検知：すぐに見える。</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.create.mechanism" datatype="html">
+        <source>Par quel mécanisme</source>
+        <target state="translated">どの仕組みで</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.create.mechanism-hint" datatype="html">
+        <source>C’est par là que la bibliothèque se filtre.</source>
+        <target state="translated">ライブラリの絞り込みはここで行います。</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.create.description" datatype="html">
+        <source>Comment il fonctionne</source>
+        <target state="translated">仕組みの説明</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.create.description-hint" datatype="html">
+        <source>Repris du texte de l'action. Celui qui le réutilisera n'aura pas votre contexte.</source>
+        <target state="translated">対策文から取りました。再利用する人にあなたの文脈はありません。</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.create.industries" datatype="html">
+        <source>Où il s'applique</source>
+        <target state="translated">適用範囲</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.create.industries-placeholder" datatype="html">
+        <source>Lignes, ateliers ou secteurs concernés</source>
+        <target state="translated">対象のライン、工場、業種</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.create.examples" datatype="html">
+        <source>Exemples de pose</source>
+        <target state="translated">設置例</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.create.done" datatype="html">
+        <source>Détrompeur <x id="code"/> inscrit à la bibliothèque et déployé sur ce projet.</source>
+        <target state="translated">ポカヨケ <x id="code"/> をライブラリに登録し、本プロジェクトに配備しました。</target>
+      </trans-unit>
+      <trans-unit id="pokayoke.create.failed" datatype="html">
+        <source>Le détrompeur n'a pas pu être inscrit.</source>
+        <target state="translated">ポカヨケを登録できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.pokayoke-add" datatype="html">
+        <source>Inscrire un détrompeur</source>
+        <target state="translated">ポカヨケを登録</target>
+      </trans-unit>
+      <trans-unit id="dmaic.res.pokayoke-tooltip" datatype="html">
+        <source>Inscrire cette action comme détrompeur réutilisable, et la déployer sur ce projet</source>
+        <target state="translated">この対策を再利用できるポカヨケとして登録し、本プロジェクトに配備する</target>
+      </trans-unit>
       <trans-unit id="nav.produits" datatype="html">
         <source>Produits</source>
         <target state="translated">製品</target>
