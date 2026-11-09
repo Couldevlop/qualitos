@@ -16,6 +16,20 @@ metadata:
     {{- include "qualitos.labels" $ | nindent 4 }}
 spec:
   replicas: {{ $svc.replicas | default 1 }}
+  {{- /*
+  STRATEGIE DE REMPLACEMENT. Par defaut Kubernetes cree le nouveau pod AVANT
+  d'arreter l'ancien (maxSurge 25 %). Sur un noeud unique dont la memoire est
+  deja reservee a 97 %, ce pod supplementaire n'a nulle part ou aller : il reste
+  Pending, le chart attend, et le deploiement ne se termine jamais. Mesure du
+  2026-11-09 : api-quality-engine et ai-service Pending 84 minutes, etiquette de
+  deploiement figee, site de presentation gele avec elle. Poser maxSurge: 0 rend
+  la place avant de la reprendre, au prix de quelques secondes d'indisponibilite
+  — ce qui est le bon arbitrage en preproduction, et se regle par environnement.
+  */}}
+  {{- with ($svc.strategy | default $.Values.global.strategy) }}
+  strategy:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ $name }}

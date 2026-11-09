@@ -13,6 +13,11 @@ global:
   # Profil Spring 'prod' = logs JSON structurés (logback-spring.xml) ;
   # 'tls' (api-core) active le TLS hybride post-quantique (ADR 0015).
   springProfiles: "prod"
+  # Strategie de remplacement des pods, applicable a tous les services et
+  # surchargeable service par service (services.<nom>.strategy). Vide = le
+  # defaut de Kubernetes (RollingUpdate, maxSurge 25 %), qui suppose de la place
+  # pour un pod de plus. Voir values-preprod.yaml pour un noeud unique.
+  strategy: {}
   keycloak:
     # Keycloak est déployé à part (chart Bitnami ou opérateur) ou managé.
     url: http://keycloak.qualitos.svc.cluster.local:8080
