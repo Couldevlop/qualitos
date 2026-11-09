@@ -13112,6 +13112,46 @@ Coordonnées professionnelles</source>
         <source>Échec de la prévision (HTTP <x id="status"/>).</source>
         <target state="translated">预测失败（HTTP <x id="status"/>）。</target>
       </trans-unit>
+      <trans-unit id="forecast.kpi.role-panel" datatype="html">
+        <source>À quoi sert cette prévision</source>
+        <target state="translated">此预测的用途</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.role-what" datatype="html">
+        <source>Elle répond à une seule question : <x id="START_TAG_STRONG"/>au rythme actuel, l'indicateur atteindra-t-il sa cible, et quand ?<x id="CLOSE_TAG_STRONG"/> Le lissage exponentiel Holt-Winters prolonge le niveau, la tendance et, s'il y en a une, la saisonnalité de la série. L'intervalle à 95 % dit l'incertitude : une prévision sans intervalle se lit comme une certitude qu'elle n'est pas.</source>
+        <target state="translated">它只回答一个问题：<x id="START_TAG_STRONG"/>按当前节奏，该指标能否达到目标，何时达到？<x id="CLOSE_TAG_STRONG"/> Holt-Winters 指数平滑法延伸序列的水平、趋势以及季节性（若存在）。95 % 区间表达不确定性：没有区间的预测会被读成一种它并不具备的确定性。</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.role-when" datatype="html">
+        <source>Elle sert à décider <x id="START_TAG_EM"/>avant<x id="CLOSE_TAG_EM"/> l'échéance : relancer un cycle d'amélioration qui n'atteindra pas son objectif, renforcer une action dont l'effet s'essouffle, ou au contraire ne rien changer à ce qui converge. Sur une série courte ou erratique, la probabilité d'atteinte reste basse et l'intervalle large — c'est le signal qu'il n'y a pas encore de tendance à prolonger, pas une invitation à y lire une baisse.</source>
+        <target state="translated">它用于在到期<x id="START_TAG_EM"/>之前<x id="CLOSE_TAG_EM"/>作出决定：重启达不到目标的改进循环、加强效果正在减弱的措施，或者对正在收敛的指标不作改动。序列过短或波动剧烈时，达成概率偏低、区间偏宽——这是尚无趋势可供延伸的信号，而不是可以据此判定下降。</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.role-links-title" datatype="html">
+        <source>Ce à quoi elle est reliée</source>
+        <target state="translated">它与什么相连</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.role-link-kpi" datatype="html">
+        <source>Catalogue des indicateurs</source>
+        <target state="translated">指标目录</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.role-link-kpi-text" datatype="html">
+        <source>La source des mesures. Choisir un indicateur actif remplit la série, sa cible et le sens d'amélioration : aucune ressaisie, et le chiffre projeté porte sur la même définition que celui des tableaux de bord.</source>
+        <target state="translated">测量值的来源。选择一个启用的指标即可填入序列、目标值和改进方向：无需重新录入，预测数字与仪表盘采用同一定义。</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.role-link-spc" datatype="html">
+        <source>Cartes de contrôle (SPC)</source>
+        <target state="translated">控制图（SPC）</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.role-link-spc-text" datatype="html">
+        <source>Lecture complémentaire, et non concurrente. Les règles de Nelson disent que le procédé a <x id="START_TAG_EM"/>déjà<x id="CLOSE_TAG_EM"/> dérivé ; la prévision dit où la série va si rien ne change. L'une constate, l'autre projette.</source>
+        <target state="translated">这是互补的读法，而非相互替代。Nelson 规则说明过程<x id="START_TAG_EM"/>已经<x id="CLOSE_TAG_EM"/>发生偏移；预测说明若不作改变序列将走向何处。前者确认，后者外推。</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.role-link-manual" datatype="html">
+        <source>Ce qui reste à votre main</source>
+        <target state="translated">仍由您掌握的部分</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.role-link-manual-text" datatype="html">
+        <source>La prévision n'ouvre rien d'elle-même : ni CAPA, ni cycle PDCA, ni projet DMAIC. Elle éclaire la décision, et c'est depuis le module concerné qu'on l'engage — une projection n'est pas un constat, et elle ne doit pas déclencher d'action au registre.</source>
+        <target state="translated">预测本身不会开启任何事项：既不开 CAPA，也不开 PDCA 循环或 DMAIC 项目。它只为决策提供依据，而决策要在相应模块中发起——预测不是既成事实，不应据此在登记簿中登记措施。</target>
+      </trans-unit>
       <trans-unit id="nav.admin-documents" datatype="html">
         <source>Documentation</source>
         <target state="translated">文档管理</target>

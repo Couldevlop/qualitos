@@ -108,6 +108,63 @@
     </qos-kpi-card>
   </div>
 
+  <!--
+    À quoi sert cet écran, et ce à quoi il est relié.
+
+    La question revenait : « la prévision, c'est pour quoi faire, et d'où
+    viennent les chiffres ? ». Elle se pose ici, à côté du résultat, et non dans
+    une page d'aide que personne n'ouvre au moment où il la lirait. Le texte dit
+    aussi ce qui N'EST PAS automatique : la prévision n'ouvre ni CAPA ni cycle
+    PDCA d'elle-même, et laisser croire le contraire serait pire que se taire.
+  -->
+  <qos-panel i18n-title="@@forecast.kpi.role-panel" title="À quoi sert cette prévision" icon="help_outline"
+             class="forecast-role">
+    <p i18n="@@forecast.kpi.role-what">
+      Elle répond à une seule question : <strong>au rythme actuel, l'indicateur
+      atteindra-t-il sa cible, et quand ?</strong> Le lissage exponentiel
+      Holt-Winters prolonge le niveau, la tendance et, s'il y en a une, la
+      saisonnalité de la série. L'intervalle à 95 % dit l'incertitude : une
+      prévision sans intervalle se lit comme une certitude qu'elle n'est pas.
+    </p>
+    <p i18n="@@forecast.kpi.role-when">
+      Elle sert à décider <em>avant</em> l'échéance : relancer un cycle
+      d'amélioration qui n'atteindra pas son objectif, renforcer une action dont
+      l'effet s'essouffle, ou au contraire ne rien changer à ce qui converge.
+      Sur une série courte ou erratique, la probabilité d'atteinte reste basse et
+      l'intervalle large — c'est le signal qu'il n'y a pas encore de tendance à
+      prolonger, pas une invitation à y lire une baisse.
+    </p>
+
+    <h3 i18n="@@forecast.kpi.role-links-title">Ce à quoi elle est reliée</h3>
+    <dl class="role-liens">
+      <div>
+        <dt i18n="@@forecast.kpi.role-link-kpi">Catalogue des indicateurs</dt>
+        <dd i18n="@@forecast.kpi.role-link-kpi-text">
+          La source des mesures. Choisir un indicateur actif remplit la série, sa
+          cible et le sens d'amélioration : aucune ressaisie, et le chiffre
+          projeté porte sur la même définition que celui des tableaux de bord.
+        </dd>
+      </div>
+      <div>
+        <dt i18n="@@forecast.kpi.role-link-spc">Cartes de contrôle (SPC)</dt>
+        <dd i18n="@@forecast.kpi.role-link-spc-text">
+          Lecture complémentaire, et non concurrente. Les règles de Nelson disent
+          que le procédé a <em>déjà</em> dérivé ; la prévision dit où la série va
+          si rien ne change. L'une constate, l'autre projette.
+        </dd>
+      </div>
+      <div>
+        <dt i18n="@@forecast.kpi.role-link-manual">Ce qui reste à votre main</dt>
+        <dd i18n="@@forecast.kpi.role-link-manual-text">
+          La prévision n'ouvre rien d'elle-même : ni CAPA, ni cycle PDCA, ni
+          projet DMAIC. Elle éclaire la décision, et c'est depuis le module
+          concerné qu'on l'engage — une projection n'est pas un constat, et elle
+          ne doit pas déclencher d'action au registre.
+        </dd>
+      </div>
+    </dl>
+  </qos-panel>
+
   <!-- Graphe prévision -->
   <qos-panel i18n-title="@@forecast.kpi.chart-panel" title="Historique & prévision" icon="show_chart" *ngIf="chartOption">
     <qos-echart [option]="chartOption" [height]="380"></qos-echart>

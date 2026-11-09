@@ -106,3 +106,21 @@
   font-size: var(--qos-fs-sm);
   color: var(--qos-fg-secondary);
 }
+
+/*
+ * Le bloc qui dit a quoi sert l'ecran. Il se lit comme du texte courant : pas
+ * de cartes, pas de colonnes etroites -- c'est une explication, pas un tableau.
+ */
+.forecast-role {
+  p { margin: 0 0 var(--qos-space-3); line-height: 1.65; max-width: 80ch; }
+  h3 { margin: var(--qos-space-4) 0 var(--qos-space-2); font-size: 0.95rem; }
+}
+
+.role-liens {
+  display: grid;
+  gap: var(--qos-space-3);
+  margin: 0;
+
+  dt { font-weight: 600; margin-bottom: 2px; }
+  dd { margin: 0; color: var(--qos-fg-secondary); line-height: 1.6; max-width: 80ch; }
+}
