@@ -31038,6 +31038,22 @@ historique 12 mois</source>
         <source>Étape</source>
         <target state="translated">المرحلة</target>
       </trans-unit>
+      <trans-unit id="standards.detail.roadmap-col-deadline" datatype="html">
+        <source>Échéance</source>
+        <target state="translated">الموعد النهائي</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.roadmap-deadline-open" datatype="html">
+        <source>Ouvrir le calendrier</source>
+        <target state="translated">افتح التقويم</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.stage-owner-updated" datatype="html">
+        <source>Responsable de l'étape <x id="step"/> enregistré</source>
+        <target state="translated">تم حفظ مسؤول المرحلة <x id="step"/></target>
+      </trans-unit>
+      <trans-unit id="standards.detail.stage-deadline-updated" datatype="html">
+        <source>Échéance de l'étape <x id="step"/> enregistrée</source>
+        <target state="translated">تم حفظ الموعد النهائي للمرحلة <x id="step"/></target>
+      </trans-unit>
       <trans-unit id="standards.detail.roadmap-col-duration" datatype="html">
         <source>Durée</source>
         <target state="translated">المدة</target>

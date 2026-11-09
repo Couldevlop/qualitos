@@ -31038,6 +31038,22 @@ declared income
         <source>Étape</source>
         <target state="translated">Stage</target>
       </trans-unit>
+      <trans-unit id="standards.detail.roadmap-col-deadline" datatype="html">
+        <source>Échéance</source>
+        <target state="translated">Deadline</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.roadmap-deadline-open" datatype="html">
+        <source>Ouvrir le calendrier</source>
+        <target state="translated">Open the calendar</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.stage-owner-updated" datatype="html">
+        <source>Responsable de l'étape <x id="step"/> enregistré</source>
+        <target state="translated">Owner of stage <x id="step"/> saved</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.stage-deadline-updated" datatype="html">
+        <source>Échéance de l'étape <x id="step"/> enregistrée</source>
+        <target state="translated">Deadline of stage <x id="step"/> saved</target>
+      </trans-unit>
       <trans-unit id="standards.detail.roadmap-col-duration" datatype="html">
         <source>Durée</source>
         <target state="translated">Duration</target>

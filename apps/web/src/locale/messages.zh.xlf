@@ -31038,6 +31038,22 @@ historique 12 mois</source>
         <source>Étape</source>
         <target state="translated">阶段</target>
       </trans-unit>
+      <trans-unit id="standards.detail.roadmap-col-deadline" datatype="html">
+        <source>Échéance</source>
+        <target state="translated">截止日期</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.roadmap-deadline-open" datatype="html">
+        <source>Ouvrir le calendrier</source>
+        <target state="translated">打开日历</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.stage-owner-updated" datatype="html">
+        <source>Responsable de l'étape <x id="step"/> enregistré</source>
+        <target state="translated">已保存步骤 <x id="step"/> 的负责人</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.stage-deadline-updated" datatype="html">
+        <source>Échéance de l'étape <x id="step"/> enregistrée</source>
+        <target state="translated">已保存步骤 <x id="step"/> 的截止日期</target>
+      </trans-unit>
       <trans-unit id="standards.detail.roadmap-col-duration" datatype="html">
         <source>Durée</source>
         <target state="translated">工期</target>

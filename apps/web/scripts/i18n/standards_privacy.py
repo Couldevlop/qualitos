@@ -75,6 +75,10 @@ TRANSLATIONS = {
     # ---- standards : roadmap ----
     'standards.detail.roadmap-stages-done': ('étapes terminées', 'stages completed', 'etapas completadas', 'مراحل مكتملة', 'ステップ完了', '阶段已完成'),
     'standards.detail.roadmap-col-stage': ('Étape', 'Stage', 'Etapa', 'المرحلة', 'ステップ', '阶段'),
+    'standards.detail.roadmap-col-deadline': ('Échéance', 'Deadline', 'Plazo', 'الموعد النهائي', '期限', '截止日期'),
+    'standards.detail.roadmap-deadline-open': ('Ouvrir le calendrier', 'Open the calendar', 'Abrir el calendario', 'افتح التقويم', 'カレンダーを開く', '打开日历'),
+    'standards.detail.stage-owner-updated': ("Responsable de l'étape {$step} enregistré", 'Owner of stage {$step} saved', 'Responsable de la etapa {$step} guardado', 'تم حفظ مسؤول المرحلة {$step}', 'ステップ {$step} の担当者を保存しました', '已保存步骤 {$step} 的负责人'),
+    'standards.detail.stage-deadline-updated': ("Échéance de l'étape {$step} enregistrée", 'Deadline of stage {$step} saved', 'Plazo de la etapa {$step} guardado', 'تم حفظ الموعد النهائي للمرحلة {$step}', 'ステップ {$step} の期限を保存しました', '已保存步骤 {$step} 的截止日期'),
     'standards.detail.roadmap-col-duration': ('Durée', 'Duration', 'Duración', 'المدة', '期間', '工期'),
     'standards.detail.roadmap-col-responsible': ('Responsable', 'Owner', 'Responsable', 'المسؤول', '責任者', '负责人'),
     'standards.detail.stage-updated': ('Étape {$step} → {$status}', 'Stage {$step} → {$status}', 'Etapa {$step} → {$status}', 'المرحلة {$step} ← {$status}', 'ステップ {$step} → {$status}', '阶段 {$step} → {$status}'),

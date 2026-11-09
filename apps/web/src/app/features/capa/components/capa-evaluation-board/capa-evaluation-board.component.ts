@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
@@ -44,6 +44,13 @@ export class CapaEvaluationBoardComponent implements OnInit {
   board?: EvaluationBoard;
   loading = false;
   saving = false;
+
+  /**
+   * Le dossier à ouvrir d'emblée, quand on arrive d'une fiche CAPA par son
+   * renvoi « Évaluer contre le critère » : le lecteur y venait pour juger CE
+   * dossier, et le lui faire rechercher dans le tableau était un pas de trop.
+   */
+  @Input() focusCapaId?: string;
 
   /** La ligne ouverte dans le panneau de droite. */
   selected?: EvaluationRow;
@@ -91,6 +98,7 @@ export class CapaEvaluationBoardComponent implements OnInit {
         this.board = board;
         this.loading = false;
         this.resync();
+        this.openFocus();
       },
       error: () => {
         this.loading = false;
@@ -113,6 +121,16 @@ export class CapaEvaluationBoardComponent implements OnInit {
     const again = this.board?.rows.find(r => r.capaId === this.selected?.capaId);
     this.selected = again;
     if (!again) this.resetForm();
+  }
+
+  /**
+   * Ouvre le dossier demandé par l'adresse, une seule fois : au rechargement
+   * suivant, c'est le choix de l'utilisateur qui prime, pas l'URL d'arrivée.
+   */
+  private openFocus(): void {
+    if (!this.focusCapaId || this.selected) return;
+    const row = this.board?.rows.find(r => r.capaId === this.focusCapaId);
+    if (row) this.select(row);
   }
 
   select(row: EvaluationRow): void {

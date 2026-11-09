@@ -6,7 +6,7 @@ import { delay } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import {
   AdoptionResponse, AdoptionsPage, AdoptRequest, AiDraftResponse, AlignmentReport,
-  AuditBlancReport, CertificationBlancReport, ClauseRequest, DocumentTemplate, DossierResponse,
+  AuditBlancReport, ClauseRequest, DocumentTemplate, DossierResponse,
   EvidenceResponse, LinkEvidenceRequest, ProcessTemplate, RequirementRequest, RoadmapSummary,
   SectionRequest, StandardDetail, StandardRevision, StandardSummary, StandardsPage,
   StoryboardResponse, UpdateStageRequest
@@ -155,13 +155,6 @@ export class StandardsService {
 
   generateDossier(id: string): Observable<DossierResponse> {
     return this.http.post<DossierResponse>(`${this.baseEndpoint}/adoptions/${id}/dossier`, {});
-  }
-
-  // ---- Certification à blanc (§8.5 étapes 14-15) ----
-
-  runCertificationBlanc(id: string): Observable<CertificationBlancReport> {
-    return this.http.post<CertificationBlancReport>(
-      `${this.baseEndpoint}/adoptions/${id}/certification-blanc`, {});
   }
 
   /** Récit narratif IA de l'état d'avancement (§7.4). */

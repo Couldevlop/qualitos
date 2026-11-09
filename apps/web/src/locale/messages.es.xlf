@@ -31038,6 +31038,22 @@ historial de 12 meses</target>
         <source>Étape</source>
         <target state="translated">Etapa</target>
       </trans-unit>
+      <trans-unit id="standards.detail.roadmap-col-deadline" datatype="html">
+        <source>Échéance</source>
+        <target state="translated">Plazo</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.roadmap-deadline-open" datatype="html">
+        <source>Ouvrir le calendrier</source>
+        <target state="translated">Abrir el calendario</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.stage-owner-updated" datatype="html">
+        <source>Responsable de l'étape <x id="step"/> enregistré</source>
+        <target state="translated">Responsable de la etapa <x id="step"/> guardado</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.stage-deadline-updated" datatype="html">
+        <source>Échéance de l'étape <x id="step"/> enregistrée</source>
+        <target state="translated">Plazo de la etapa <x id="step"/> guardado</target>
+      </trans-unit>
       <trans-unit id="standards.detail.roadmap-col-duration" datatype="html">
         <source>Durée</source>
         <target state="translated">Duración</target>

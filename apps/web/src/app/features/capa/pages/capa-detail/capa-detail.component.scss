@@ -137,12 +137,24 @@
 .effectiveness-prompt mat-icon { color: var(--qos-warn-fg); flex-shrink: 0; }
 .effectiveness-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 
-/* Le renvoi vers le verdict nuance : discret, sous les deux boutons tranchants. */
+/*
+ * Le renvoi vers le verdict nuance, sous les deux boutons tranchants.
+ *
+ * L'accent sur le fond creme du bloc d'efficacite passait tout juste : le texte
+ * se lisait pale sur jaune. Il prend donc la couleur du texte courant, et c'est
+ * le soulignement qui dit que c'est un lien.
+ */
 .effectiveness-nuance {
   margin: 8px 0 0;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
+  font-weight: 600;
 }
-.effectiveness-nuance a { color: var(--qos-accent-fg); }
+.effectiveness-nuance a {
+  color: var(--qos-fg-primary);
+  text-decoration: underline;
+}
+.effectiveness-nuance a:hover,
+.effectiveness-nuance a:focus-visible { color: var(--qos-warn-fg); }
 
 .crit {
   display: inline-block;

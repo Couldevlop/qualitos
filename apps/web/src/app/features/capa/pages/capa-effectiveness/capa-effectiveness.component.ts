@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { ActivatedRoute } from '@angular/router';
 
 import { CapaService } from '../../capa.service';
 import { CapaEffectivenessRow, CapaEffectivenessSummary } from '../../capa.types';
@@ -38,12 +39,25 @@ export class CapaEffectivenessComponent implements OnInit {
    */
   tab = 0;
 
+  /**
+   * Le dossier nommé par `?capa=<id>` — le renvoi de la fiche CAPA l'y met.
+   * On arrive alors directement sur l'onglet des évaluations, dossier ouvert et
+   * fenêtre de jugement déployée : c'est ce que le lecteur venait faire.
+   */
+  focusCapaId?: string;
+
   constructor(
     private readonly service: CapaService,
-    private readonly snack: MatSnackBar
+    private readonly snack: MatSnackBar,
+    private readonly route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
+    const demande = this.route.snapshot.queryParamMap.get('capa');
+    if (demande) {
+      this.focusCapaId = demande;
+      this.tab = 0;
+    }
     this.reload();
   }
 

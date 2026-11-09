@@ -108,6 +108,38 @@ describe('CapaEvaluationBoardComponent', () => {
     expect(component.loading).toBeFalse();
   }));
 
+  it("ouvre d'emblee le dossier nomme par l'adresse, fenetre de jugement deployee",
+    fakeAsync(() => {
+      // On arrive de la fiche CAPA par « Evaluer contre le critere » : le lecteur
+      // venait juger CE dossier, pas le chercher dans le tableau.
+      component.focusCapaId = 'c-2';
+      donne(board({ rows: [row(), row({ capaId: 'c-2', reference: 'NC-2026-0031' })] }));
+
+      expect(component.selected?.capaId).toBe('c-2');
+      expect(component.canJudge).toBeTrue();
+    }));
+
+  it("ignore une adresse qui nomme un dossier absent du tableau", fakeAsync(() => {
+    component.focusCapaId = 'inconnu';
+    donne(board());
+
+    expect(component.selected).toBeUndefined();
+  }));
+
+  it("ne reaffiche pas le critere du dossier quand l'evaluation a ete rendue contre lui",
+    fakeAsync(() => {
+      // Le critere s'ecrit une fois, en tete du panneau. « Juge contre » ne
+      // revient que s'il DIFFERE -- seule la difference porte une information.
+      const critere = 'Zéro erreur de référence sur 90 jours';
+      donne(board({ rows: [row({ lastReview: review({ criterion: critere }) })] }));
+      component.select(component.board!.rows[0]);
+      fixture.detectChanges();
+
+      const texte: string = fixture.nativeElement.textContent;
+      expect(texte).not.toContain('Jugé contre');
+      expect(texte.match(new RegExp(critere, 'g'))?.length).toBe(1);
+    }));
+
   it('laisse le taux vide plutôt que de montrer zéro quand rien n’est jugé', fakeAsync(() => {
     // Zéro pour cent se lit « tout a échoué ». Vide se lit « rien n'a encore
     // été jugé », qui est la vérité d'un client qui démarre.

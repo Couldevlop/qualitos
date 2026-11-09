@@ -5,15 +5,17 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable } from 'rxjs';
 
 import { AuthService } from '../../../../core/auth/auth.service';
+import { DirectoryUser } from '../../../../core/directory/directory.types';
 import {
   TreeNodeDialogComponent, TreeNodeDialogData, TreeNodeResult
 } from '../tree-node-dialog/tree-node-dialog.component';
 import { StandardsService } from '../../standards.service';
 import {
-  AdoptionResponse, AiDraftResponse, AlignmentReport, AuditBlancReport, CertificationBlancReport,
+  AdoptionResponse, AiDraftResponse, AlignmentReport, AuditBlancReport,
   ClauseDetail, ClauseRequest, DocumentTemplate, DossierResponse, EvidenceResponse, EvidenceType,
   ProcessTemplate, RequirementDetail, RequirementRequest, RoadmapStageResponse, RoadmapSummary,
-  SectionDetail, SectionRequest, StageStatus, StandardDetail, StandardRevision, StoryboardResponse
+  SectionDetail, SectionRequest, StageStatus, StandardDetail, StandardRevision, StoryboardResponse,
+  UpdateStageRequest
 } from '../../standards.types';
 
 @Component({
@@ -41,9 +43,6 @@ export class StandardsDetailComponent implements OnInit {
   storyboard?: StoryboardResponse;
   generatingStoryboard = false;
 
-  certBlanc?: CertificationBlancReport;
-  runningCertBlanc = false;
-
   docTemplates: DocumentTemplate[] = [];
   processTemplates: ProcessTemplate[] = [];
   revisions: StandardRevision[] = [];
@@ -60,8 +59,13 @@ export class StandardsDetailComponent implements OnInit {
 
   // Onglet actif (piloté pour le saut « Couvrir cet écart »).
   selectedTab = 0;
-  /** Index de l'onglet « Mes preuves » dans le mat-tab-group (ordre statique). */
-  private readonly EVIDENCE_TAB_INDEX = 4;
+  /**
+   * Index de l'onglet « Mes preuves » dans le mat-tab-group (ordre statique) :
+   * Exigences, Bibliotheque, Cartographie, Roadmap, Audit blanc, Mes preuves.
+   * Il valait 4, soit l'onglet « Audit blanc » : « Couvrir cet ecart » laissait
+   * donc le lecteur sur la page d'ou il venait de cliquer.
+   */
+  private readonly EVIDENCE_TAB_INDEX = 5;
 
   readonly stageStatuses: StageStatus[] = ['NOT_STARTED', 'IN_PROGRESS', 'DONE', 'SKIPPED'];
   readonly evidenceTypes: EvidenceType[] = [
@@ -144,9 +148,53 @@ export class StandardsDetailComponent implements OnInit {
 
   changeStageStatus(stage: RoadmapStageResponse, status: StageStatus): void {
     if (stage.status === status) return;
-    this.svc.updateStage(this.adoptionId, stage.id, { status }).subscribe({
+    this.patchStage(stage, { status },
+      $localize`:@@standards.detail.stage-updated:Étape ${stage.stepNumber}:step: → ${status}:status:`);
+  }
+
+  /**
+   * Le responsable d'une étape est une personne de l'annuaire, choisie dans la
+   * liste déroulante — pas un rôle écrit à la main. Le rôle type du modèle
+   * (« Pilote certif », « Direction ») reste affiché en indication : il dit
+   * quelle fonction est attendue, l'annuaire dit qui l'assume ici.
+   */
+  changeStageOwner(stage: RoadmapStageResponse, user: DirectoryUser | null): void {
+    // Vider la case ne retire pas le responsable : le serveur n'applique que les
+    // champs renseignes, et un `null` y serait un appel sans effet. On s'abstient
+    // donc plutot que de laisser croire a un retrait qui n'a pas eu lieu.
+    const assigneeId = user?.accountId;
+    if (!assigneeId || stage.assigneeId === assigneeId) return;
+    this.patchStage(stage, { assigneeId },
+      $localize`:@@standards.detail.stage-owner-updated:Responsable de l'étape ${stage.stepNumber}:step: enregistré`);
+  }
+
+  /**
+   * L'échéance remplace la durée indicative du modèle : une durée (« 3-5 sem »)
+   * ne dit pas quand l'étape doit être finie, et c'est la seule chose qu'un
+   * pilote de certification a besoin de lire dans ce tableau.
+   */
+  changeStageDeadline(stage: RoadmapStageResponse, valeur: Date | null): void {
+    // Meme raison que pour le responsable : une echeance ne s'effface pas d'ici.
+    const plannedEndDate = StandardsDetailComponent.enDateIso(valeur);
+    if (!plannedEndDate || stage.plannedEndDate === plannedEndDate) return;
+    this.patchStage(stage, { plannedEndDate },
+      $localize`:@@standards.detail.stage-deadline-updated:Échéance de l'étape ${stage.stepNumber}:step: enregistrée`);
+  }
+
+  /** L'échéance du serveur en {@code Date} locale, pour le calendrier. */
+  dateDeEcheance(stage: RoadmapStageResponse): Date | null {
+    return StandardsDetailComponent.enDateLocale(stage.plannedEndDate);
+  }
+
+  /** Une seule écriture, un seul rechargement : les trois cases le partagent. */
+  private patchStage(
+    stage: RoadmapStageResponse,
+    patch: UpdateStageRequest,
+    message: string
+  ): void {
+    this.svc.updateStage(this.adoptionId, stage.id, patch).subscribe({
       next: () => {
-        this.snack.open($localize`:@@standards.detail.stage-updated:Étape ${stage.stepNumber}:step: → ${status}:status:`, $localize`:@@common.ok:OK`, { duration: 2000 });
+        this.snack.open(message, $localize`:@@common.ok:OK`, { duration: 2000 });
         this.svc.getRoadmap(this.adoptionId).subscribe({
           next: r => this.roadmap = r,
           error: e => console.warn('[standards-detail] getRoadmap reload failed', e?.status)
@@ -154,6 +202,26 @@ export class StandardsDetailComponent implements OnInit {
       },
       error: () => this.snack.open($localize`:@@standards.detail.stage-update-error:Échec de la mise à jour`, $localize`:@@common.close:Fermer`, { duration: 3000 })
     });
+  }
+
+  /**
+   * Le calendrier Material porte un {@code Date} ; le serveur attend
+   * « aaaa-mm-jj ». La conversion lit les composantes LOCALES : passer par
+   * {@code toISOString} reculerait la date d'un jour à l'ouest de Greenwich.
+   */
+  private static enDateIso(valeur: Date | null): string | null {
+    if (!(valeur instanceof Date) || Number.isNaN(valeur.getTime())) return null;
+    const mois = String(valeur.getMonth() + 1).padStart(2, '0');
+    const jour = String(valeur.getDate()).padStart(2, '0');
+    return `${valeur.getFullYear()}-${mois}-${jour}`;
+  }
+
+  /** L'inverse, composante par composante — même piège de fuseau. */
+  private static enDateLocale(valeur: string | null | undefined): Date | null {
+    if (!valeur) return null;
+    const parties = /^(\d{4})-(\d{2})-(\d{2})/.exec(valeur);
+    if (!parties) return null;
+    return new Date(+parties[1], +parties[2] - 1, +parties[3]);
   }
 
   // ---- Arborescence d'un référentiel du tenant (§8) ----
@@ -356,23 +424,6 @@ export class StandardsDetailComponent implements OnInit {
     a.download = this.dossier.fileName;
     a.click();
     URL.revokeObjectURL(url);
-  }
-
-  // ---- Certification à blanc ----
-
-  runCertificationBlanc(): void {
-    this.runningCertBlanc = true;
-    this.svc.runCertificationBlanc(this.adoptionId).subscribe({
-      next: r => {
-        this.certBlanc = r;
-        this.runningCertBlanc = false;
-        this.snack.open($localize`:@@standards.detail.cert-blanc-success:Certification à blanc simulée et ancrée`, $localize`:@@common.ok:OK`, { duration: 2500 });
-      },
-      error: () => {
-        this.runningCertBlanc = false;
-        this.snack.open($localize`:@@standards.detail.cert-blanc-error:Échec de la simulation`, $localize`:@@common.close:Fermer`, { duration: 3000 });
-      }
-    });
   }
 
   // ---- Bibliothèque documentaire ----
