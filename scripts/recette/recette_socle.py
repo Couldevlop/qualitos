@@ -20,7 +20,7 @@ SORTIE = os.path.join(RACINE, "docs", "recette")
 LOGO = os.path.join(RACINE, "apps", "site", "assets", "qualitos-marque.png")
 
 VERSION = "1.0"
-DATE = "2026-11-07"
+DATE = "2026-11-11"
 ENVIRONNEMENT = "Preproduction -- https://preprod.qualitos.openlabconsulting.com/fr/"
 
 # ---------------------------------------------------------------- la charte
