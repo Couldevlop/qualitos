@@ -29921,6 +29921,42 @@ historique 12 mois</source>
         <source>Statut du procédé</source>
         <target state="translated">工程の状態</target>
       </trans-unit>
+      <trans-unit id="spc.chart.nelson-flagged" datatype="html">
+        <source>Sous-groupes signalés par une règle de Nelson sans sortir des limites : <x id="count"/></source>
+        <target state="translated">管理限界内にとどまりながらネルソンルールで指摘されたサブグループ数：<x id="count"/></target>
+      </trans-unit>
+      <trans-unit id="spc.nelson.title" datatype="html">
+        <source>Règles de Nelson — détection automatique</source>
+        <target state="translated">ネルソンルール — 自動検出</target>
+      </trans-unit>
+      <trans-unit id="spc.nelson.scope" datatype="html">
+        <source>Analysées sur la carte X̄, contre ses propres limites (X̿ ± A2 × dispersion moyenne).</source>
+        <target state="translated">X̄ 管理図に対し、その管理限界（X̿ ± A2 × 平均バラツキ）で評価します。</target>
+      </trans-unit>
+      <trans-unit id="spc.nelson.loading" datatype="html">
+        <source>Analyse de la série en cours…</source>
+        <target state="translated">系列を解析中…</target>
+      </trans-unit>
+      <trans-unit id="spc.nelson.failed" datatype="html">
+        <source>La détection est momentanément indisponible : les limites et le Cpk de la carte restent exacts.</source>
+        <target state="translated">検出は一時的に利用できません。管理限界と Cpk はそのまま有効です。</target>
+      </trans-unit>
+      <trans-unit id="spc.nelson.retry" datatype="html">
+        <source>Relancer la détection</source>
+        <target state="translated">検出を再実行</target>
+      </trans-unit>
+      <trans-unit id="spc.nelson.none" datatype="html">
+        <source>Aucune des huit règles ne se déclenche : la série ne montre pas de cause spéciale.</source>
+        <target state="translated">8 つのルールはいずれも該当しません。系列に異常原因は見られません。</target>
+      </trans-unit>
+      <trans-unit id="spc.nelson.subgroups" datatype="html">
+        <source>Sous-groupes</source>
+        <target state="translated">サブグループ</target>
+      </trans-unit>
+      <trans-unit id="spc.nelson.human" datatype="html">
+        <source>L'IA signale, la décision reste humaine : une règle déclenchée s'investigue avant de conclure à une cause spéciale.</source>
+        <target state="translated">AI は指摘し、判断は人が行います。該当したルールは異常原因と結論づける前に調査します。</target>
+      </trans-unit>
       <trans-unit id="spc.forecast.panel" datatype="html">
         <source>Prévision de dérive</source>
         <target state="translated">ドリフト予測</target>

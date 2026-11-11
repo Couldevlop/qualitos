@@ -5,6 +5,8 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Subject, of } from 'rxjs';
+import { catchError, debounceTime, map, switchMap } from 'rxjs/operators';
 
 import { AuthzService } from '../../../../../core/authz/authz.service';
 import { personName } from '../../../../../core/directory/directory-names';
@@ -19,9 +21,14 @@ import {
   MIN_SUBGROUP_SIZE, classify, computeCapability, displayDigits,
   measurementDecimals, parseMeasurement, pasteBlock
 } from '../../spc-capability.calc';
+import { SpcService } from '../../../spc.service';
+import { SpcAnalyzeResponse, SpcViolation } from '../../../spc.types';
 import { completeValues } from '../../spc-capability.charts';
 import { SPC_EXAMPLES, SpcExample } from '../../spc-capability.examples';
 import { fmt, statusTone } from '../../spc-capability.labels';
+import {
+  NelsonSeries, nelsonSeries, rulesByColumn, seriesKey, severityTone, violationSubgroups
+} from '../../spc-capability.nelson';
 import { CapabilityReadings, capabilityReadings } from '../../spc-capability.readings';
 import { SpcCapabilityService } from '../../spc-capability.service';
 import {
@@ -29,6 +36,14 @@ import {
 } from '../../spc-capability.types';
 
 const DEFAULT_SUBGROUP_SIZE = 5;
+
+/**
+ * Le délai avant qu'une série modifiée parte à l'analyse : assez court pour
+ * que le signal suive la saisie, assez long pour qu'une colonne tapée chiffre
+ * par chiffre ne compte que pour un appel (OWASP LLM04 : les quotas IA sont
+ * comptés par client).
+ */
+const NELSON_DEBOUNCE_MS = 600;
 
 /**
  * Une étude de capabilité (maquette `docs/spc/Étude de capabilité procédé –
@@ -102,6 +117,19 @@ export class CapabilityStudyComponent implements OnInit {
   calc!: CalculationView;
   readings: CapabilityReadings | null = null;
   values: number[] = [];
+
+  /** L'analyse IA des règles de Nelson sur la carte X̄ (ADR 0018). */
+  nelson: SpcAnalyzeResponse | null = null;
+  /** Les règles déclenchées par sous-groupe : ce que la carte X̄ montre. */
+  nelsonRules: ReadonlyMap<number, string[]> = new Map();
+  nelsonLoading = false;
+  nelsonFailed = false;
+
+  /** Les colonnes de la dernière série analysée, pour nommer les sous-groupes. */
+  private nelsonColumns: number[] = [];
+  /** La série déjà demandée : une frappe qui ne change pas le tracé n'appelle rien. */
+  private nelsonKey: string | null = null;
+  private readonly nelsonAsk$ = new Subject<NelsonSeries>();
   /** Le message d'erreur d'un champ refusé par le serveur. */
   fieldError: { field: string; message: string } | null = null;
 
@@ -127,6 +155,7 @@ export class CapabilityStudyComponent implements OnInit {
     private readonly service: SpcCapabilityService,
     private readonly snack: MatSnackBar,
     private readonly dialog: MatDialog,
+    private readonly spc: SpcService,
     authz: AuthzService
   ) {
     authz.can('spc.manage').pipe(takeUntilDestroyed()).subscribe(v => {
@@ -134,6 +163,21 @@ export class CapabilityStudyComponent implements OnInit {
       this.applyAccess();
     });
     this.form.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => this.recompute());
+    // Un seul appel en vol : switchMap abandonne l'analyse d'une série que
+    // l'utilisateur vient de modifier, sinon une réponse en retard écraserait
+    // les règles de la série affichée.
+    this.nelsonAsk$.pipe(
+      debounceTime(NELSON_DEBOUNCE_MS),
+      switchMap(serie => this.spc
+        .analyze({ values: serie.values, center: serie.center, sigma: serie.sigma })
+        .pipe(
+          map(res => ({ serie, res: res as SpcAnalyzeResponse | null })),
+          // L'analyse est un PLUS : indisponible, la carte reste juste et le
+          // dit. Une erreur IA ne doit pas emporter l'étude de capabilité.
+          catchError(() => of({ serie, res: null }))
+        )),
+      takeUntilDestroyed()
+    ).subscribe(({ serie, res }) => this.applyNelson(serie, res));
     this.recompute();
   }
 
@@ -533,6 +577,83 @@ export class CapabilityStudyComponent implements OnInit {
     this.calc = computeCapability(valid ? lsl : null, valid ? usl : null, this.n, grid);
     this.values = completeValues(grid, this.n);
     this.readings = valid ? capabilityReadings(this.calc, lsl, usl, this.capableThreshold) : null;
+    this.askNelson();
+  }
+
+  // ---------- règles de Nelson (détection IA) ----------
+
+  /**
+   * Demande l'analyse des règles de Nelson sur la carte X̄ courante.
+   *
+   * <p>Automatique : la détection n'a pas à être déclenchée à la main, sinon
+   * elle ne tourne jamais. Mais elle ne repart que si le TRACÉ a changé —
+   * corriger la référence de la pièce ne consomme aucun appel IA.
+   */
+  private askNelson(): void {
+    const serie = nelsonSeries(this.calc);
+    if (!serie) {
+      this.resetNelson();
+      return;
+    }
+    const key = seriesKey(serie);
+    if (key === this.nelsonKey) return;
+    this.nelsonKey = key;
+    this.nelsonLoading = true;
+    this.nelsonFailed = false;
+    this.nelsonAsk$.next(serie);
+  }
+
+  /** Relance la détection après un échec (le serveur IA peut être revenu). */
+  retryNelson(): void {
+    this.nelsonKey = null;
+    this.askNelson();
+  }
+
+  private applyNelson(serie: NelsonSeries, res: SpcAnalyzeResponse | null): void {
+    this.nelsonLoading = false;
+    if (!res) {
+      this.nelsonFailed = true;
+      this.nelson = null;
+      this.nelsonRules = new Map();
+      this.nelsonColumns = [];
+      return;
+    }
+    this.nelsonFailed = false;
+    this.nelson = res;
+    this.nelsonColumns = serie.columns;
+    this.nelsonRules = rulesByColumn(res.violations, serie.columns);
+  }
+
+  private resetNelson(): void {
+    this.nelsonKey = null;
+    this.nelsonLoading = false;
+    this.nelsonFailed = false;
+    this.nelson = null;
+    this.nelsonRules = new Map();
+    this.nelsonColumns = [];
+  }
+
+  get nelsonViolations(): SpcViolation[] {
+    return this.nelson?.violations ?? [];
+  }
+
+  /** La carte a été analysée et aucune règle ne s'est déclenchée. */
+  get nelsonClean(): boolean {
+    return this.nelson !== null && this.nelsonViolations.length === 0;
+  }
+
+  /** Les sous-groupes visés par une règle, écrits « 7, 8, 9 ». */
+  violationPoints(v: SpcViolation): string {
+    return violationSubgroups(v, this.nelsonColumns).join(', ');
+  }
+
+  violationTone(v: SpcViolation): string {
+    return severityTone(v.severity);
+  }
+
+  /** Le titre de la règle, tel que le service le renvoie, sans rang technique. */
+  violationLabel(v: SpcViolation): string {
+    return (v.title ?? '').trim() || v.rule;
   }
 
   private reprendre(sheet: StudySheet): void {

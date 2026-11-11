@@ -53,6 +53,19 @@
   }
 }
 
+.zone {
+  line {
+    stroke: var(--qos-border-subtle);
+    stroke-width: 0.8;
+    stroke-dasharray: 2 4;
+  }
+
+  text {
+    fill: var(--qos-fg-tertiary);
+    font-size: 8px;
+  }
+}
+
 .trace {
   fill: none;
   stroke: var(--qos-fg-primary);
@@ -68,12 +81,34 @@
     fill: var(--qos-danger-fg);
     stroke: var(--qos-danger-fg);
   }
+
+  &--regle {
+    fill: var(--qos-warn-fg);
+    stroke: var(--qos-warn-fg);
+  }
+}
+
+.halo {
+  fill: none;
+  stroke: var(--qos-warn-fg);
+  stroke-width: 1.1;
+  stroke-dasharray: 3 2;
+}
+
+.regle {
+  fill: var(--qos-warn-fg);
+  font-size: 8px;
+  font-weight: 600;
 }
 
 .resume {
   margin: var(--qos-space-2) 0 0;
   font-size: var(--qos-fs-xs);
   color: var(--qos-danger-fg);
+
+  &--regle {
+    color: var(--qos-warn-fg);
+  }
 }
 
 .vide {

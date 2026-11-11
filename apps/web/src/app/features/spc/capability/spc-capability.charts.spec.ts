@@ -70,6 +70,30 @@ describe('spc-capability.charts', () => {
       expect(court.left).toBe(44);
     });
 
+    it('trace les zones ±1σ / ±2σ sur les limites de la carte', () => {
+      // σ se lit sur la carte : UCL − CL vaut 3σ, donc σ = 1 ici.
+      const g = controlChart([5, 6], 9, 6, 3)!;
+      expect(g.zones.map(z => z.label)).toEqual(['+2σ', '+1σ', '−1σ', '−2σ']);
+      expect(g.zones.map(z => z.value)).toEqual([8, 7, 5, 4]);
+      // Ordonnées croissantes vers le bas : +2σ au-dessus de −2σ.
+      expect(g.zones[0].y).toBeLessThan(g.zones[3].y);
+      // Encadrées par les limites, jamais au-delà.
+      expect(g.zones[0].y).toBeGreaterThan(g.lines[0].y);
+      expect(g.zones[3].y).toBeLessThan(g.lines[2].y);
+    });
+
+    it('ne trace aucune zone quand la carte n\'a pas de dispersion', () => {
+      expect(controlChart([2, 2], 2, 2, 2)!.zones).toEqual([]);
+    });
+
+    it('attache à chaque point les règles de Nelson qu\'on lui donne', () => {
+      const regles = new Map<number, string[]>([[0, ['N2']], [2, ['N5', 'N6']], [9, ['N1']]]);
+      const g = controlChart([5, null, 7, 6], 10, 6, 2, { usl: null, lsl: null }, 2, regles)!;
+      expect(g.points.map(p => p.rules)).toEqual([['N2'], ['N5', 'N6'], []]);
+      // Sans analyse, aucun point n'est marqué.
+      expect(controlChart([5, 6], 10, 6, 2)!.points.every(p => p.rules.length === 0)).toBeTrue();
+    });
+
     it('garde une échelle quand toutes les valeurs sont égales', () => {
       const g = controlChart([2, 2], 2, 2, 2)!;
       expect(g.points.every(p => Number.isFinite(p.y))).toBeTrue();

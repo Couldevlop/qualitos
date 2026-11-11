@@ -1011,4 +1011,51 @@ TRANSLATIONS = {
         '网格为空：请输入测量值或加载一个示例数据集。'),
     'spc.formula.title': ('Formules', 'Formulas', 'Fórmulas', 'الصيغ', '計算式', '公式'),
     'spc.study.process-status': ('Statut du procédé', 'Process status', 'Estado del proceso', 'حالة العملية', '工程の状態', '过程状态'),
+    # ----- règles de Nelson détectées par l'IA sur la carte X̄ -----
+    'spc.chart.nelson-flagged': (
+        'Sous-groupes signalés par une règle de Nelson sans sortir des limites : {$count}',
+        'Subgroups flagged by a Nelson rule while staying inside the limits: {$count}',
+        'Subgrupos señalados por una regla de Nelson sin salir de los límites: {$count}',
+        'المجموعات الفرعية التي أبلغت عنها قاعدة نيلسون دون خروجها عن الحدود: {$count}',
+        '管理限界内にとどまりながらネルソンルールで指摘されたサブグループ数：{$count}',
+        '未超出控制限但被纳尔逊规则标记的子组数：{$count}'),
+    'spc.nelson.title': (
+        'Règles de Nelson — détection automatique', 'Nelson rules — automatic detection',
+        'Reglas de Nelson — detección automática', 'قواعد نيلسون — كشف تلقائي',
+        'ネルソンルール — 自動検出', '纳尔逊规则 — 自动检测'),
+    'spc.nelson.scope': (
+        'Analysées sur la carte X̄, contre ses propres limites (X̿ ± A2 × dispersion moyenne).',
+        'Run on the X̄ chart, against its own limits (X̿ ± A2 × mean dispersion).',
+        'Analizadas en el gráfico X̄, frente a sus propios límites (X̿ ± A2 × dispersión media).',
+        'تُحلَّل على مخطط X̄ مقابل حدوده الخاصة (X̿ ± A2 × التشتت المتوسط).',
+        'X̄ 管理図に対し、その管理限界（X̿ ± A2 × 平均バラツキ）で評価します。',
+        '在 X̄ 图上分析，依据其自身控制限（X̿ ± A2 × 平均离散度）。'),
+    'spc.nelson.loading': (
+        'Analyse de la série en cours…', 'Analysing the series…', 'Analizando la serie…',
+        'جارٍ تحليل السلسلة…', '系列を解析中…', '正在分析该序列…'),
+    'spc.nelson.failed': (
+        'La détection est momentanément indisponible : les limites et le Cpk de la carte restent exacts.',
+        'Detection is momentarily unavailable: the chart limits and Cpk remain exact.',
+        'La detección no está disponible momentáneamente: los límites y el Cpk del gráfico siguen siendo exactos.',
+        'الكشف غير متاح مؤقتًا: تبقى حدود المخطط وقيمة Cpk صحيحة.',
+        '検出は一時的に利用できません。管理限界と Cpk はそのまま有効です。',
+        '检测暂时不可用：图表的控制限与 Cpk 仍然准确。'),
+    'spc.nelson.retry': (
+        'Relancer la détection', 'Run detection again', 'Reiniciar la detección',
+        'إعادة تشغيل الكشف', '検出を再実行', '重新运行检测'),
+    'spc.nelson.none': (
+        'Aucune des huit règles ne se déclenche : la série ne montre pas de cause spéciale.',
+        'None of the eight rules fires: the series shows no special cause.',
+        'Ninguna de las ocho reglas se activa: la serie no muestra causa especial.',
+        'لم تتحقق أي من القواعد الثماني: لا تُظهر السلسلة سببًا خاصًا.',
+        '8 つのルールはいずれも該当しません。系列に異常原因は見られません。',
+        '八条规则均未触发：该序列未显示特殊原因。'),
+    'spc.nelson.subgroups': ('Sous-groupes', 'Subgroups', 'Subgrupos', 'المجموعات الفرعية', 'サブグループ', '子组'),
+    'spc.nelson.human': (
+        "L'IA signale, la décision reste humaine : une règle déclenchée s'investigue avant de conclure à une cause spéciale.",
+        'The AI flags, the decision stays human: a rule that fires is investigated before concluding a special cause.',
+        'La IA señala, la decisión sigue siendo humana: una regla activada se investiga antes de concluir una causa especial.',
+        'الذكاء الاصطناعي يُنبّه والقرار يبقى بشريًا: تُستقصى القاعدة المتحققة قبل استنتاج سبب خاص.',
+        'AI は指摘し、判断は人が行います。該当したルールは異常原因と結論づける前に調査します。',
+        'AI 只作提示，决策仍由人做出：触发的规则应先调查，再判定为特殊原因。'),
 }
