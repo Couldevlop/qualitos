@@ -1,5 +1,15 @@
 # Fiche de recette — Gestion des changements (MOC), CAPA, audits, SMI
 
+> **Archive d'une campagne jouée, conservée telle quelle.** Cette fiche décrit le
+> produit à la version `main-f01c0c4b21a8` et les résultats obtenus alors. Elle
+> n'est **pas** mise à jour au fil des livraisons : la réécrire effacerait ce qui
+> a été réellement constaté ce jour-là, et une recette qu'on retouche après coup
+> ne prouve plus rien.
+>
+> Pour recetter l'état courant, c'est le cahier complet qu'il faut ouvrir — voir
+> [`README.md`](README.md). Ses comptes de recette sont ceux de cette fiche, à
+> dessein : les deux campagnes parlent des mêmes personnes.
+
 Environnement : préproduction, <https://preprod.qualitos.openlabconsulting.com/fr/>.
 Version recettée : `main-f01c0c4b21a8`.
 Références : ADR 0087 (MOC), 0088 (CAPA), 0089 (audits), 0090 (SMI), 0091 (annuaire), 0092 (personnes).

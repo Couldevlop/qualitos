@@ -1,117 +1,113 @@
 # Feuille de route vers 100 % — QualitOS
 
-> Établie 2026-06-19, base **~87 %** (cf. `AUDIT-realisation-2026-06-15.md`).
-> Principe : on attaque d'abord ce qui a **le plus de valeur** et qui est **indépendant** (parallélisable
-> sans collision), on garde pour la fin ce qui est **bloqué hors-code** (GPU / infra réelle / contenu humain).
-
-## Lecture rapide
-
-- Le **plafond atteignable par le code** est ~**95 %**. Les 5 % restants exigent des **prérequis externes**
-  (carte GPU, cluster managé, réseau Fabric, datasets, budget pentest) — listés en **Niveau 4**.
-- Chaque **vague** = un lot d'agents dont les périmètres de fichiers sont **disjoints** → exécutables en
-  parallèle. On intègre en série (revue anti-stub + CI verte) entre deux vagues.
-- **Convention anti-collision** (leçon des lots précédents) : numéros d'ADR **réservés à l'avance** par item ;
-  `docs/adr/README.md`, `docs/AUDIT-*`, et les XLF i18n sont des fichiers **partagés** → résolus à l'intégration,
-  pas par les agents.
+> **Relevé du 2026-11-11.** Révise la feuille de route du 2026-06-19, qui partait d'une base
+> de ~87 % et proposait trois vagues d'exécution. **Les trois vagues sont jouées.** Ce qui
+> suit distingue ce qui est fait, ce qui reste codable, et ce qui attend une ressource
+> extérieure.
+>
+> Chaque ligne « fait » nomme sa décision d'architecture ou son fichier : une feuille de
+> route qui s'auto-déclare avancée sans preuve ne sert qu'à se rassurer.
 
 ---
 
-## Niveau 1 — Différenciateurs commerciaux (ce qui nous distingue de MasterControl/ETQ)
+## 1. Ce que les trois vagues ont livré
 
-> Le plus fort levier de valeur. Tout est **codable maintenant** (dépendances déjà en place : AiGatewayClient/Ollama,
-> event-sourcing Kafka socle, ECharts/AG-Grid).
+### Vague A — différenciateurs (niveau 1 de la feuille précédente)
 
-| # | Item | Périmètre (propriété fichiers) | Dépend de | ADR |
-|---|------|-------------------------------|-----------|-----|
-| 1.1 | **Standards Hub — génération doc IA** (onglet 3 §8.8) : Manuel/Politique/Procédures pré-remplis par contexte tenant, workflow de validation humaine | `apps/api-quality-engine/.../standards` + `apps/ai-service` (prompt structuré) | AiGatewayClient (✅) | 0032 |
-| 1.2 | **Standards Hub — audit blanc IA avancé** (onglet 7 §8.4) : 30-100 questions ciblées clauses à risque, gap analysis + plan de remédiation auto | `apps/api-quality-engine/.../standards` + RAG ai-service | RAG Qdrant (✅) | 0033 |
-| 1.3 | **Dashboards interactifs premium** (§7.3) : cross-filtering, drill-down infini, annotations collaboratives | `apps/web/.../features/dashboard*` | ECharts (✅) | 0034 |
-| 1.4 | **Dashboards time-travel** (§7.3) : « état du dashboard au 15 mars » | `apps/web` + endpoint replay engine | event-sourcing Kafka socle (✅ OFF) | 0035 |
+| Item | État | Preuve |
+| --- | --- | --- |
+| Standards Hub — génération de documents normatifs par l'IA (§8.8) | **fait** | ADR 0032, puis ADR 0037 pour le dossier en lot ; écran `/standards-doc-gen` ; aucun document en dur, signature humaine obligatoire |
+| Standards Hub — audit blanc avancé (§8.4 onglet 7) | **fait** | ADR 0033 ; matière calculée depuis les preuves réelles du client, criticité par la règle ISO/IEC 17021-1 |
+| Tableaux de bord interactifs (§7.3) | **fait** | ADR 0034 (filtrage croisé, descente, annotations), ADR 0038 (glisser-déposer) |
+| Tableaux de bord — état à une date (§7.3) | **fait** | ADR 0035 ; état *as-of* calculé en SQL, « n/d » quand la donnée est absente plutôt qu'un zéro |
+| Export PDF d'un tableau de bord, signé et ancré | **fait** (non prévu alors) | ADR 0043 ; vérification publique par code |
 
-**Indépendance** : 1.1+1.2 (Standards, backend) ∥ 1.3+1.4 (Dashboards, web). Deux agents max par vague pour limiter
-les conflits XLF/routing web.
+### Vague B — complétude fonctionnelle (niveau 2)
 
----
+| Item | État | Preuve |
+| --- | --- | --- |
+| Packs sectoriels (§5) | **fait, avec une dette** | quatorze manifestes servis (`apps/api-quality-engine/src/main/resources/industry-packs/*.yml`) ; sept manifestes **enrichis** vivent dans `libs/industry-packs/packs/*.yaml` et ne sont **pas** sur le chemin de classe du moteur, qui ne dépend pas de cette bibliothèque. Deux sources, une seule servie : à réunir |
+| Formation, Academy et progression (§19.3) | **fait** | ADR 0036 ; ceintures, badges, parcours par rôle, export SCORM et xAPI côté serveur |
+| IoT — connecteur DICOM (§9.4) | **non fait** | `Protocol.java` propose la valeur DICOM, **aucun connecteur d'ingestion ne la sert**. C'est le seul protocole annoncé sans implémentation |
+| IoT — service Edge en veille longue (§9.5) | **partiel** | ADR 0030 : domaine (tampon de report, repli déterministe) et infrastructure (ONNX, stockage fichier) livrés et testés ; manifestes K3s et courtier local présents ; **la boucle de service qui souscrit au courtier et appelle l'orchestrateur n'existe pas** |
 
-## Niveau 2 — Complétude fonctionnelle (combler les manques visibles de la vision)
+### Vague C — durcissement (niveau 3)
 
-> Codable maintenant. Modules largement **disjoints** au niveau répertoire.
-
-| # | Item | Périmètre | Dépend de | ADR |
-|---|------|-----------|-----------|-----|
-| 2.1 | **IoT — connecteur DICOM** (§9.4) : dernier protocole santé, même patron que Modbus/LoRaWAN/Sparkplug | `apps/api-iot-hub/.../infrastructure/dicom` | patron connecteur (✅) | 0036 |
-| 2.2 | **IoT — runtime Edge long-running** (§9.5) : souscription MQTT → orchestrateur d'inférence (mosquitto local), boucle de service | `infra/edge/inference` (runtime) | composant Edge (✅ 0030), broker compose (✅) | 0037 |
-| 2.3 | **Industry Packs — profondeur sectorielle** (§5) : KPIs/normes/templates/glossaire pour 3-4 secteurs prioritaires | `libs/industry-packs` (YAML déclaratif) | loader (✅) | — (déclaratif) |
-| 2.4 | **Formation & LMS-light** (§19.3) : parcours par rôle/secteur, quiz, gamification (badges Yellow→Black Belt), simulateurs | `apps/web/.../features/learning` + module engine training | feature learning (✅) | 0038 |
-
-**Indépendance** : 2.1 ∥ 2.2 (tous deux IoT mais répertoires distincts : `api-iot-hub` vs `infra/edge`) ∥ 2.3 (libs) ∥ 2.4 (web+engine training). 4 agents parallèles possibles.
-
----
-
-## Niveau 3 — Durcissement & qualité (prod-readiness, §11/§14)
-
-> Codable maintenant. Touche surtout **CI/infra/tests**, donc indépendant des features → idéal en vague de fond
-> pendant les niveaux 1-2.
-
-| # | Item | Périmètre | Dépend de | ADR |
-|---|------|-----------|-----------|-----|
-| 3.1 | **DAST automatisé** (§14.2) : OWASP ZAP en CI contre la stack éphémère | `.github/workflows`, `infra` | stack compose (✅) | 0039 |
-| 3.2 | **Tests de charge** (§14.3) : k6/Gatling, objectifs p95<300ms, en job CI dédié non-bloquant | `tests/perf`, `.github/workflows` | endpoints (✅) | — |
-| 3.3 | **Chaos engineering** (§14.3) : Litmus/Chaos Mesh, scénarios de base | `infra/k8s/chaos` | Helm (✅) | — |
-| 3.4 | **Couverture tests composants front** (§15) : monter la couverture Karma des features récentes | `apps/web/**/*.spec.ts` | — | — |
-
-**Indépendance** : 3.1/3.2/3.3 (CI/infra, fichiers distincts) ∥ 3.4 (web specs). Parallélisables, faible risque de collision.
+| Item | État | Preuve |
+| --- | --- | --- |
+| Analyse dynamique de sécurité en intégration | **fait** | ADR 0039 ; travail « DAST (OWASP ZAP) » de `ci.yml` |
+| Tests de charge avec budgets | **fait** | ADR 0040 ; `.github/workflows/perf-k6.yml`, appelé par la chaîne |
+| Ingénierie du chaos | **fait** | ADR 0042 ; `.github/workflows/chaos.yml`, `infra/chaos` |
+| Couverture des composants du front | **fait** | 399 fichiers de spécification sous `apps/web/src`, travail « Frontend build & tests » bloquant |
 
 ---
 
-## Niveau 4 — Bloqués hors-code (prérequis à fournir — ce sont les ~5 % finaux)
+## 2. Ce qui a été livré en plus, et qui n'était pas dans la feuille de route
 
-> **Non livrable par des agents sans tricher (stub).** Chaque ligne attend une ressource externe. À traiter
-> quand le prérequis est disponible ; le **code d'accueil est déjà en place** (chemins ONNX/opt-in, profils Fabric/TLS).
+Cinq mois de travail que la feuille précédente n'anticipait pas, parce qu'ils viennent du
+terrain et non du plan. Groupés par ce qu'ils apportent :
 
-| Item | Prérequis bloquant | Code d'accueil déjà prêt ? |
-|------|--------------------|----------------------------|
-| **Vision 5S — modèle YOLOv8 entraîné** | GPU + dataset 5S annoté | ✅ chemin ONNX réel (ADR 0029) |
-| **LLM lourds pleins** (BERT/Whisper/LSTM/Prophet/HDBSCAN) | GPU | ✅ backends opt-in (ADR 0031) |
-| **Ancrage Fabric Phase B** | réseau Hyperledger Fabric réel | ✅ `@Profile("fabric")` + service |
-| **Cluster TimescaleDB de prod** | instance/cluster managé | ✅ migration V2 gardée |
-| **Crypto bc-fips post-quantique** | release upstream BC-FIPS avec PQ | ✅ crypto-agilité en place |
-| **Pentest manuel + vidéos formation** | budget humain / prestataire | — |
+| Famille | Apport | Décisions |
+| --- | --- | --- |
+| Documentation qualité | GED réelle : déduplication par empreinte, signataires désignés, circuit activable | 0094, 0095, 0099 |
+| Maîtrise des procédés | Études de capabilité (X̄–R et X̄–S), Gage R&R, règles de Nelson sur la carte, prévision de sortie de limites | 0096, 0097, 0107, 0110, 0112 |
+| Système de management | Tableau de bord SMI, ajout de norme par le Standards Hub, registre des parties intéressées, registre des risques | 0077, 0090, 0104, 0076 |
+| Changements et produits | MOC par analyse d'impact, produit / PFMEA / plan de surveillance, APQP par projet, rapport 8D | 0087, 0059, 0060, 0063, 0064, 0066 à 0072, 0071 |
+| Isolation et traçabilité | Cloisonnement des clients dans la base, piste d'audit de la plateforme avec ajout seul garanti | 0086, 0109 |
+| Exploitation chez le client | Édition on-premise, licence hors ligne, mode léger sans Kubernetes, paquet signé, copie hors serveur | 0082 à 0085 |
+| Identité et personnes | Annuaire en lecture restreinte, une personne est un utilisateur, remplissage à la première connexion | 0091, 0092, 0093 |
+| Souveraineté de l'IA | Fournisseur épinglé par client, sans repli silencieux | 0102 |
+| Adaptabilité | Mécanisme unique des listes déroulantes du client, natures d'écart appartenant au client | 0111, 0103 |
+| Socle | Passage à Spring Boot 4 pour corriger deux vulnérabilités sans correctif en 6.2.x | 0100 |
+| Commercialisation | Cabinets partenaires, facturation et abonnements, site de présentation | 0106 |
 
 ---
 
-## Séquencement proposé
+## 3. Ce qui reste codable
 
-```
-Vague A (N1) : 1.1+1.2 Standards IA   ∥  1.3+1.4 Dashboards interactifs
-                                   ↓ (intégration + CI verte)
-Vague B (N2) : 2.1 DICOM ∥ 2.2 Edge runtime ∥ 2.3 Packs ∥ 2.4 LMS
-                                   ↓
-Vague C (N3) : 3.1 DAST ∥ 3.2 perf ∥ 3.3 chaos ∥ 3.4 couverture front
-                                   ↓
-   → plafond code ~95 %.  Niveau 4 = au fil des prérequis externes (→ 100 %).
-```
+| # | Item | Pourquoi ce n'est pas fait | Périmètre |
+| --- | --- | --- | --- |
+| C.1 | **Connecteur d'ingestion DICOM** | Le patron existe (Modbus, LoRaWAN, Sparkplug) ; le travail n'a pas été fait. Une valeur d'énumération sans connecteur est une promesse à l'écran | `apps/api-iot-hub/.../infrastructure` |
+| C.2 | **Service Edge en veille longue** | La logique est livrée et testée ; il manque la boucle qui souscrit au courtier local | `infra/edge/inference` |
+| C.3 | **Réunir les deux sources de packs sectoriels** | Les sept manifestes enrichis ne sont pas servis ; le moteur sert quatorze manifestes simples | `libs/industry-packs`, `apps/api-quality-engine` |
+| C.4 | **Description AsyncAPI des événements** | `CLAUDE.md` §19.1 l'annonce, aucun fichier n'existe. Sans urgence tant que le relais Kafka est désactivé ; **bloquant avant d'ouvrir le flux à un tiers** | `docs/`, `apps/api-quality-engine/.../webhooks` |
+| C.5 | **Trancher le sort du service `api-connectors`** | L'ADR 0007 décrit un service qui n'est **pas dans la construction** (module commenté dans `pom.xml`). Les connecteurs livrés sont des paquets du moteur. Il faut soit l'intégrer, soit un ADR de supersession | `pom.xml`, `docs/adr` |
+| C.6 | **Le diagramme du designer de workflow n'est jamais exécuté** | Les circuits réels (GED, MOC, CAPA) ne lisent pas ces diagrammes. Soit on les branche, soit l'écran annonce ce qu'il est | `apps/web/.../workflow-designer`, `apps/api-quality-engine/.../workflow` |
+| C.7 | **Écran de prédiction du risque fournisseur** | L'appel serveur existe et fonctionne ; aucun écran ne l'affiche | `apps/web/.../features/suppliers` |
 
-Gain estimé : Vague A ≈ +3 pts (différenciateurs), Vague B ≈ +3 pts, Vague C ≈ +2 pts → **~95 %**.
-Le solde (~5 %) bascule à 100 % uniquement avec les enablers du Niveau 4.
+---
 
-## Définition de « fait » — RENFORCÉE (s'applique à CHAQUE étape, pas seulement à l'item)
+## 4. Ce qui attend une ressource extérieure
 
-Une étape n'est **pas terminée** — et on **ne passe pas** à la suivante — tant que TOUS ces critères ne sont pas
-réunis et **vérifiés** :
+Inchangé depuis juin, et c'est normal : aucune de ces lignes ne se débloque par du code.
+Le code d'accueil est en place dans les cinq cas.
 
-1. **Code complet et fonctionnel** : zéro stub / TODO / placeholder, tout câblé bout-en-bout.
-2. **Clean / hexagonal architecture** : domain pur (sans framework) / application / infrastructure / presentation ;
-   contrats d'architecture vérifiés (import-linter côté Python, dépendances respectées côté Java).
-3. **OWASP** : `tenant_id` issu du **JWT** (jamais du body, §18.2 #2), `@PreAuthorize`, validation des entrées,
-   pas de PII en clair dans les logs, échappement de sortie.
-4. **Testable unitairement** : chaque unité de logique a ses tests unitaires.
-5. **Golden test** : un test de référence (chemin doré / golden-master) qui fige le comportement attendu de bout
-   en bout de l'étape, **avant de passer à l'étape suivante**.
-6. **Couverture ≥ 98 %** (lignes) sur le code de l'étape — pas 85 %.
-7. **Validation séquentielle** : l'étape est verte (tests + golden + couverture 98 %) **avant** d'entamer la
-   suivante. Pas de dette de test reportée.
-8. CI verte, ADR si décision structurante, Conventional Commits FR, **sans aucune signature Claude**.
+| Item | Prérequis | Code d'accueil |
+| --- | --- | --- |
+| Vision 5S — modèle de production | Carte graphique et jeu d'images 5S annoté | chemin ONNX réel, exercé en test par un modèle jouet (ADR 0029) |
+| Modèles lourds (Prophet, LSTM, HDBSCAN, transformeurs, Whisper) | Carte graphique | backends optionnels à import paresseux ; indisponible rend 422 ou 501, jamais un faux résultat (ADR 0031) |
+| Ancrage phase B | Réseau Hyperledger Fabric joignable | profil `fabric`, service livré, `enabled: false` dans le chart (ADR 0012) |
+| Cluster TimescaleDB | Instance managée | migration gardée, inerte sur PostgreSQL simple |
+| Cryptographie bc-fips post-quantique | Publication amont de BC-FIPS avec les algorithmes post-quantiques | agilité cryptographique en place, CBOM tenu (ADR 0011) |
+| Test d'intrusion manuel, vidéos de formation | Budget et prestataire | — |
 
-> Conséquence pratique : on avance **étape par étape**, chacune auto-prouvée. Un lot parallèle reste possible
-> mais chaque agent applique ce DoD à 98 % + golden test sur SON périmètre avant rendu.
+---
+
+## 5. Définition de « fait »
+
+Inchangée, et elle s'applique à chaque étape, pas seulement à l'item :
+
+1. **Code complet** : zéro ébauche, zéro `TODO`, tout câblé de bout en bout.
+2. **Architecture hexagonale** : domaine sans framework, application sur des ports,
+   infrastructure, présentation.
+3. **OWASP** : client issu du jeton (§18.2 #2), autorisation avant lecture du corps,
+   validation des entrées, aucune donnée personnelle en clair dans les journaux.
+4. **Tests unitaires** sur chaque unité de logique.
+5. **Test de référence** figeant le comportement de bout en bout de l'étape.
+6. **Couverture ≥ 98 %** en lignes sur le code de l'étape — pas 85 %.
+7. **Validation séquentielle** : l'étape est verte avant d'entamer la suivante. Aucune dette
+   de test reportée.
+8. Chaîne d'intégration verte, ADR si la décision est structurante, messages de commit en
+   français suivant les *Conventional Commits*.
+9. **Documentation simultanée** : page du wiki technique **et** page du wiki utilisateur
+   (§18.2 #7). Une fonctionnalité sans ses deux pages n'est pas livrée.

@@ -4,7 +4,42 @@
 > normes, packs, ADR, tests) + relecture de `docs/AUDIT-stub-vs-reel.md`.
 > Référence précédente : audit 2026-06-04 (~60 %).
 
-## Chiffres durs
+## Chiffres durs — relevé du 2026-11-11
+
+Cinq mois après l'audit de juin. Mêmes méthodes de comptage, et la méthode est écrite
+sous le tableau : un chiffre dont on ne sait pas comment il a été obtenu ne se
+vérifie pas.
+
+| Preuve | 2026-06-15 | 2026-11-11 |
+|---|---|---|
+| Paquets métier (`api-quality-engine`) | 68 | **88** |
+| Packs sectoriels servis | 14 | **14** |
+| Normes du Standards Hub | 60 | **60** |
+| Migrations Flyway (moteur) | 86 | **163** (dernier numéro V164) |
+| Migrations Flyway (`api-core`, `api-iot-hub`) | — | **12** et **2** |
+| Décisions d'architecture (ADR) | 21 | **110** (numéros jusqu'à 0112 ; 0004 et 0005 vacants) |
+| Fonctionnalités du front | 47 | **77** |
+| Fichiers Java de production | — | **2 212** |
+| Classes de test Java | — | **718** |
+| Fichiers de spécification du front | 59 | **399** |
+| Fichiers de tests Python | 27 | **55** |
+| Pages du wiki utilisateur | 22 modules | **43 modules, 7 pages de rôles, 14 guides sectoriels** |
+| Pages du wiki technique | — | **6** (`docs/wiki/technique/`) |
+
+**Méthode de comptage.** Paquets métier : sous-répertoires de
+`apps/api-quality-engine/src/main/java/com/openlab/qualitos/quality/`. Packs : fichiers
+de `apps/api-quality-engine/src/main/resources/industry-packs/`. Normes : ordres
+`INSERT INTO standards` des migrations. Migrations : fichiers de
+`src/main/resources/db/migration` — **en excluant `target/`**, qui les recopie et double
+le chiffre. ADR : fichiers `docs/adr/0*.md`. Front : sous-répertoires de
+`apps/web/src/app/features/`, et `*.spec.ts` sous `apps/web/src`.
+
+Pour l'état fonctionnel — ce qui est fait, ce qui reste codable, ce qui attend une
+ressource extérieure — voir [`ROADMAP-vers-100.md`](ROADMAP-vers-100.md), révisé le même
+jour. Pour la frontière entre capacité réelle et capacité maquettée, voir
+[`AUDIT-stub-vs-reel.md`](AUDIT-stub-vs-reel.md).
+
+## Chiffres durs — relevé du 2026-06-15
 
 | Preuve | Valeur |
 |---|---|
