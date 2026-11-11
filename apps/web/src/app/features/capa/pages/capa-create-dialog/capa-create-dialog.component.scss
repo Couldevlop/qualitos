@@ -145,3 +145,16 @@ mat-dialog-actions button[type='submit'] {
 
 /* L'input natif reste dans le DOM (le bouton le déclenche) mais hors du flux. */
 .hidden-file { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+
+/* Registre injoignable : l'indication passe en avertissement, et le bouton de
+   relecture se range sous le champ qu'il concerne. */
+.hint-alerte {
+  color: var(--qos-warn-fg, #92400e);
+}
+
+.retry-registre {
+  margin: -4px 0 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
