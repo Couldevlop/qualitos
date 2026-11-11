@@ -32976,6 +32976,86 @@ India (centro de servicio)</target>
         <source>Retrait impossible.</source>
         <target state="translated">Retiro imposible.</target>
       </trans-unit>
+      <trans-unit id="standards.detail.mock-audit-title" datatype="html">
+        <source>Audit blanc IA</source>
+        <target state="translated">Auditoría simulada con IA</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.mock-audit-intro" datatype="html">
+        <source>Simule l'audit de certification avant le réel : questions ciblées sur les clauses à risque, écarts confrontés aux preuves disponibles et plan de remédiation.</source>
+        <target state="translated">Simula la auditoría de certificación antes de la real: preguntas dirigidas a las cláusulas de riesgo, brechas confrontadas con las pruebas disponibles y plan de remediación.</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.mock-audit-run" datatype="html">
+        <source>Lancer un audit blanc IA</source>
+        <target state="translated">Lanzar una auditoría simulada con IA</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.mock-audit-running" datatype="html">
+        <source>Audit en cours…</source>
+        <target state="translated">Auditoría en curso…</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.mock-audit-empty" datatype="html">
+        <source>Aucun audit blanc IA sur cette norme pour l'instant.</source>
+        <target state="translated">Todavía no hay auditoría simulada con IA en esta norma.</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.mock-audit-major" datatype="html">
+        <source>majeures</source>
+        <target state="translated">mayores</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.mock-audit-minor" datatype="html">
+        <source>mineures</source>
+        <target state="translated">menores</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.mock-audit-no-clause" datatype="html">
+        <source>Cette norme adoptée n'expose aucune clause exploitable : chargez son référentiel avant de lancer un audit blanc IA.</source>
+        <target state="translated">Esta norma adoptada no expone ninguna cláusula utilizable: cargue su referencial antes de lanzar una auditoría simulada con IA.</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.mock-audit-forbidden" datatype="html">
+        <source>Lancer un audit blanc IA relève du pilotage qualité : demandez-le au manager qualité ou à l'auditeur.</source>
+        <target state="translated">Lanzar una auditoría simulada con IA corresponde a la gestión de calidad: solicítelo al responsable de calidad o al auditor.</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.mock-audit-failed" datatype="html">
+        <source>L'audit blanc IA n'a pas pu être lancé. Réessayez dans quelques minutes.</source>
+        <target state="translated">No se pudo iniciar la auditoría simulada con IA. Vuelva a intentarlo en unos minutos.</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.audit-rules-failed" datatype="html">
+        <source>L'analyse d'écarts n'a pas pu être calculée.</source>
+        <target state="translated">No se pudo calcular el análisis de brechas.</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.audit-rules-retry" datatype="html">
+        <source>Relancer l'analyse d'écarts</source>
+        <target state="translated">Recalcular el análisis de brechas</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.kpi-readiness-sub" datatype="html">
+        <source>exigences obligatoires couvertes par une preuve</source>
+        <target state="translated">requisitos obligatorios cubiertos por una prueba</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.kpi-readiness-formula" datatype="html">
+        <source>MUST couvertes ÷ MUST au total × 100. Une exigence est « couverte » dès qu'une preuve lui est liée dans l'onglet Mes preuves — la plateforme ne juge pas la qualité de la preuve.</source>
+        <target state="translated">MUST cubiertos ÷ MUST totales × 100. Un requisito se considera cubierto en cuanto se le vincula una prueba en la pestaña Mis pruebas: la plataforma no juzga la calidad de la prueba.</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.kpi-alignment-sub" datatype="html">
+        <source>exigences couvertes, toutes obligations confondues</source>
+        <target state="translated">requisitos cubiertos, sin distinguir el nivel de obligación</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.kpi-alignment-formula" datatype="html">
+        <source>Exigences couvertes ÷ exigences au total × 100, sur toute la norme. Chaque exigence pèse pareil : ni les sections ni les MUST ne sont pondérés. Les scores par section et par clause suivent la même règle.</source>
+        <target state="translated">Requisitos cubiertos ÷ requisitos totales × 100, en toda la norma. Cada requisito pesa igual: no se ponderan ni las secciones ni los MUST. Las puntuaciones por sección y por cláusula siguen la misma regla.</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.kpi-roadmap-sub" datatype="html">
+        <source>étapes terminées</source>
+        <target state="translated">etapas terminadas</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.kpi-roadmap-formula" datatype="html">
+        <source>Étapes TERMINÉES ÷ étapes applicables × 100. Les étapes écartées sortent du dénominateur — les ignorer ferait plafonner la roadmap sous 100 %. Une étape en cours compte pour zéro.</source>
+        <target state="translated">Etapas TERMINADAS ÷ etapas aplicables × 100. Las etapas descartadas salen del denominador: mantenerlas limitaría la hoja de ruta por debajo del 100 %. Una etapa en curso cuenta cero.</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.kpi-gaps-formula" datatype="html">
+        <source>Toute exigence sans preuve est un écart. Critique : exigence obligatoire dont le risque en cas d'absence est élevé ou critique. Majeur : obligatoire, risque moindre. Mineur : exigence recommandée.</source>
+        <target state="translated">Todo requisito sin prueba es una brecha. Crítica: requisito obligatorio cuyo riesgo en caso de ausencia es alto o crítico. Mayor: obligatorio, riesgo menor. Menor: requisito recomendado.</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.audit-verdict-scale" datatype="html">
+        <source>Barème du verdict : « prêt » demande zéro écart critique et une préparation ≥ 95 % ; « quasi prêt », zéro critique et ≥ 80 % ; « écarts majeurs à corriger », ≥ 50 % ; en dessous, la préparation est jugée insuffisante.</source>
+        <target state="translated">Escala del veredicto: «listo» exige cero brechas críticas y preparación ≥ 95 %; «casi listo», cero críticas y ≥ 80 %; «brechas mayores por corregir», ≥ 50 %; por debajo, la preparación se considera insuficiente.</target>
+      </trans-unit>
       <trans-unit id="standards.list.scope-label" datatype="html">
         <source>Afficher</source>
         <target state="translated">Mostrar</target>

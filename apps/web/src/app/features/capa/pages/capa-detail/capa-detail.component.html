@@ -226,8 +226,18 @@
               <p class="action-unique__titre">{{ a.title }}</p>
               <dl class="action-unique__champs">
                 <div><dt i18n="@@capa.action.action-type">Nature de l'action</dt><dd>{{ actionTypeLabel(a.actionType || 'CORRECTIVE') }}</dd></div>
-                <div><dt i18n="@@capa.detail.single-action-assignee">Responsable</dt><dd>{{ a.assigneeName || '—' }}</dd></div>
-                <div><dt i18n="@@capa.detail.due-date">Échéance</dt><dd>{{ a.dueDate ? (a.dueDate | date) : '—' }}</dd></div>
+                <!-- Le responsable et l'echeance de l'action ne s'affichent que
+                     s'ils s'ecartent du pilote et de l'echeance du dossier, deja
+                     en tete de fiche : a la creation ils en sont copies, et
+                     repeter la meme valeur a deux endroits ne renseigne personne.
+                     Une reaffectation ou un report de l'action les fait diverger :
+                     l'ecart, lui, se lit ici. -->
+                <div *ngIf="a.assigneeId !== c.ownerId">
+                  <dt i18n="@@capa.detail.single-action-assignee">Responsable</dt><dd>{{ a.assigneeName || '—' }}</dd>
+                </div>
+                <div *ngIf="a.dueDate && a.dueDate !== c.dueDate">
+                  <dt i18n="@@capa.detail.due-date">Échéance</dt><dd>{{ a.dueDate | date }}</dd>
+                </div>
                 <div>
                   <dt i18n="@@common.status">Statut</dt>
                   <dd><span [class]="actionBadge(a.status)"

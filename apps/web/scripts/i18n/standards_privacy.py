@@ -400,4 +400,112 @@ TRANSLATIONS = {
     'consents.withdraw.reason-placeholder': ('Demande explicite via formulaire opt-out, courrier postal, etc.', 'Explicit request via opt-out form, postal mail, etc.', 'Solicitud explícita mediante formulario opt-out, correo postal, etc.', 'طلب صريح عبر نموذج إلغاء الاشتراك، البريد العادي، إلخ.', 'オプトアウトフォーム、郵送などによる明示的な要求。', '通过退出表单、信函等的明确请求。'),
     'consents.withdraw.success': ('Consentement retiré.', 'Consent withdrawn.', 'Consentimiento retirado.', 'تم سحب الموافقة.', '同意を撤回しました。', '已撤回同意。'),
     'consents.withdraw.error': ('Retrait impossible.', 'Withdrawal failed.', 'Retiro imposible.', 'تعذّر السحب.', '撤回できません。', '撤回失败。'),
+    # ----- audit blanc IA lance depuis la fiche de la norme (ADR 0033) -----
+    'standards.detail.mock-audit-title': (
+        'Audit blanc IA', 'AI mock audit', 'Auditoría simulada con IA',
+        'تدقيق تجريبي بالذكاء الاصطناعي', 'AI 模擬審査', 'AI 模拟审核'),
+    'standards.detail.mock-audit-intro': (
+        "Simule l'audit de certification avant le réel : questions ciblées sur les clauses à risque, écarts confrontés aux preuves disponibles et plan de remédiation.",
+        'Simulates the certification audit before the real one: questions targeting at-risk clauses, gaps checked against available evidence, and a remediation plan.',
+        'Simula la auditoría de certificación antes de la real: preguntas dirigidas a las cláusulas de riesgo, brechas confrontadas con las pruebas disponibles y plan de remediación.',
+        'يحاكي تدقيق الاعتماد قبل التدقيق الفعلي: أسئلة موجّهة إلى البنود عالية الخطورة، وفجوات تُقارن بالأدلة المتاحة، وخطة معالجة.',
+        '本番前に認証審査を模擬します。リスクの高い条項への質問、利用可能な証拠と照合した不適合、是正計画を提示します。',
+        '在正式审核之前模拟认证审核：针对高风险条款的提问、与现有证据比对的差距，以及整改计划。'),
+    'standards.detail.mock-audit-run': (
+        'Lancer un audit blanc IA', 'Run an AI mock audit', 'Lanzar una auditoría simulada con IA',
+        'بدء تدقيق تجريبي بالذكاء الاصطناعي', 'AI 模擬審査を実行', '运行 AI 模拟审核'),
+    'standards.detail.mock-audit-running': (
+        'Audit en cours…', 'Audit running…', 'Auditoría en curso…', 'التدقيق جارٍ…', '審査中…', '审核进行中…'),
+    'standards.detail.mock-audit-empty': (
+        "Aucun audit blanc IA sur cette norme pour l'instant.",
+        'No AI mock audit on this standard yet.',
+        'Todavía no hay auditoría simulada con IA en esta norma.',
+        'لا يوجد بعد تدقيق تجريبي بالذكاء الاصطناعي على هذه المواصفة.',
+        'この規格の AI 模擬審査はまだありません。',
+        '该标准暂无 AI 模拟审核。'),
+    'standards.detail.mock-audit-major': ('majeures', 'major', 'mayores', 'كبرى', '重大', '严重'),
+    'standards.detail.mock-audit-minor': ('mineures', 'minor', 'menores', 'صغرى', '軽微', '轻微'),
+    'standards.detail.mock-audit-no-clause': (
+        "Cette norme adoptée n'expose aucune clause exploitable : chargez son référentiel avant de lancer un audit blanc IA.",
+        'This adopted standard exposes no usable clause: load its framework before running an AI mock audit.',
+        'Esta norma adoptada no expone ninguna cláusula utilizable: cargue su referencial antes de lanzar una auditoría simulada con IA.',
+        'لا تُظهر هذه المواصفة المعتمدة أي بند قابل للاستخدام: حمّل مرجعها قبل بدء تدقيق تجريبي بالذكاء الاصطناعي.',
+        'この採用規格には利用できる条項がありません。AI 模擬審査の前に規格要求事項を読み込んでください。',
+        '该已采用标准没有可用条款：请先加载其条款再运行 AI 模拟审核。'),
+    'standards.detail.mock-audit-forbidden': (
+        "Lancer un audit blanc IA relève du pilotage qualité : demandez-le au manager qualité ou à l'auditeur.",
+        'Running an AI mock audit belongs to quality management: ask the quality manager or the auditor.',
+        'Lanzar una auditoría simulada con IA corresponde a la gestión de calidad: solicítelo al responsable de calidad o al auditor.',
+        'بدء تدقيق تجريبي بالذكاء الاصطناعي من مهام إدارة الجودة: اطلبه من مدير الجودة أو المدقّق.',
+        'AI 模擬審査の実行は品質マネジメントの権限です。品質マネージャーまたは監査員に依頼してください。',
+        '运行 AI 模拟审核属于质量管理职责：请向质量经理或审核员申请。'),
+    'standards.detail.mock-audit-failed': (
+        "L'audit blanc IA n'a pas pu être lancé. Réessayez dans quelques minutes.",
+        'The AI mock audit could not be started. Try again in a few minutes.',
+        'No se pudo iniciar la auditoría simulada con IA. Vuelva a intentarlo en unos minutos.',
+        'تعذّر بدء التدقيق التجريبي بالذكاء الاصطناعي. أعد المحاولة بعد دقائق.',
+        'AI 模擬審査を開始できませんでした。数分後に再試行してください。',
+        '无法启动 AI 模拟审核。请几分钟后重试。'),
+    'standards.detail.audit-rules-failed': (
+        "L'analyse d'écarts n'a pas pu être calculée.",
+        'The gap analysis could not be computed.',
+        'No se pudo calcular el análisis de brechas.',
+        'تعذّر حساب تحليل الفجوات.',
+        '不適合分析を計算できませんでした。',
+        '无法计算差距分析。'),
+    'standards.detail.audit-rules-retry': (
+        "Relancer l'analyse d'écarts", 'Recompute the gap analysis', 'Recalcular el análisis de brechas',
+        'إعادة حساب تحليل الفجوات', '不適合分析を再計算', '重新计算差距分析'),
+    # ----- definition explicite des quatre indicateurs de la fiche (regle 18.2 #8) -----
+    'standards.detail.kpi-readiness-sub': (
+        'exigences obligatoires couvertes par une preuve',
+        'mandatory requirements covered by evidence',
+        'requisitos obligatorios cubiertos por una prueba',
+        'متطلبات إلزامية مغطاة بدليل',
+        '証拠で裏付けられた必須要求事項',
+        '已有证据覆盖的强制性要求'),
+    'standards.detail.kpi-readiness-formula': (
+        "MUST couvertes ÷ MUST au total × 100. Une exigence est « couverte » dès qu'une preuve lui est liée dans l'onglet Mes preuves — la plateforme ne juge pas la qualité de la preuve.",
+        'Covered MUSTs ÷ total MUSTs × 100. A requirement counts as covered as soon as evidence is linked to it in the My evidence tab — the platform does not judge how good that evidence is.',
+        'MUST cubiertos ÷ MUST totales × 100. Un requisito se considera cubierto en cuanto se le vincula una prueba en la pestaña Mis pruebas: la plataforma no juzga la calidad de la prueba.',
+        'الإلزاميات المغطاة ÷ مجموع الإلزاميات × 100. يُعدّ المتطلب مغطى بمجرد ربط دليل به في علامة «أدلّتي» — ولا تحكم المنصة على جودة الدليل.',
+        '充足済み必須要求 ÷ 必須要求総数 × 100。「証拠」タブで証拠を 1 件紐づけた時点で充足と数えます。証拠の質は判定しません。',
+        '已覆盖强制要求 ÷ 强制要求总数 × 100。只要在「我的证据」页签为某要求关联了证据，即计为已覆盖；平台不评判证据质量。'),
+    'standards.detail.kpi-alignment-sub': (
+        'exigences couvertes, toutes obligations confondues',
+        'requirements covered, every obligation level included',
+        'requisitos cubiertos, sin distinguir el nivel de obligación',
+        'متطلبات مغطاة بجميع مستويات الإلزام',
+        'すべての義務区分を含む充足要求事項',
+        '已覆盖要求（含各类义务级别）'),
+    'standards.detail.kpi-alignment-formula': (
+        'Exigences couvertes ÷ exigences au total × 100, sur toute la norme. Chaque exigence pèse pareil : ni les sections ni les MUST ne sont pondérés. Les scores par section et par clause suivent la même règle.',
+        'Covered requirements ÷ total requirements × 100, across the whole standard. Every requirement weighs the same: neither sections nor MUSTs are weighted. Section and clause scores follow the same rule.',
+        'Requisitos cubiertos ÷ requisitos totales × 100, en toda la norma. Cada requisito pesa igual: no se ponderan ni las secciones ni los MUST. Las puntuaciones por sección y por cláusula siguen la misma regla.',
+        'المتطلبات المغطاة ÷ مجموع المتطلبات × 100 على المواصفة كاملة. لكل متطلب الوزن نفسه: لا ترجيح للأقسام ولا للإلزاميات. وتتبع درجات الأقسام والبنود القاعدة نفسها.',
+        '充足要求事項 ÷ 要求事項総数 × 100（規格全体）。要求事項の重みは一律で、箇条も必須要求も重み付けしません。箇条別・細分別のスコアも同じ規則です。',
+        '已覆盖要求 ÷ 要求总数 × 100（覆盖整部标准）。每条要求权重相同：章节与强制要求均不加权。章节与条款得分遵循同一规则。'),
+    'standards.detail.kpi-roadmap-sub': (
+        'étapes terminées', 'stages completed', 'etapas terminadas', 'مراحل منتهية', '完了した段階', '已完成阶段'),
+    'standards.detail.kpi-roadmap-formula': (
+        "Étapes TERMINÉES ÷ étapes applicables × 100. Les étapes écartées sortent du dénominateur — les ignorer ferait plafonner la roadmap sous 100 %. Une étape en cours compte pour zéro.",
+        'DONE stages ÷ applicable stages × 100. Skipped stages leave the denominator — keeping them would cap the roadmap below 100%. A stage in progress counts as zero.',
+        'Etapas TERMINADAS ÷ etapas aplicables × 100. Las etapas descartadas salen del denominador: mantenerlas limitaría la hoja de ruta por debajo del 100 %. Una etapa en curso cuenta cero.',
+        'المراحل المنتهية ÷ المراحل المنطبقة × 100. تُستبعد المراحل المتجاوزة من المقام، وإلا لظلّ المسار دون 100 %. والمرحلة الجارية تُحسب صفرًا.',
+        '完了段階 ÷ 適用段階 × 100。除外した段階は分母から外します（残すとロードマップが 100 % に届きません）。進行中の段階は 0 と数えます。',
+        '已完成阶段 ÷ 适用阶段 × 100。跳过的阶段不计入分母——否则路线图永远达不到 100%。进行中的阶段计为零。'),
+    'standards.detail.kpi-gaps-formula': (
+        "Toute exigence sans preuve est un écart. Critique : exigence obligatoire dont le risque en cas d'absence est élevé ou critique. Majeur : obligatoire, risque moindre. Mineur : exigence recommandée.",
+        'Any requirement without evidence is a gap. Critical: a mandatory requirement whose risk if missing is high or critical. Major: mandatory, lower risk. Minor: a recommended requirement.',
+        'Todo requisito sin prueba es una brecha. Crítica: requisito obligatorio cuyo riesgo en caso de ausencia es alto o crítico. Mayor: obligatorio, riesgo menor. Menor: requisito recomendado.',
+        'كل متطلب بلا دليل هو فجوة. حرجة: متطلب إلزامي خطر غيابه عالٍ أو حرج. كبرى: إلزامي بخطر أقل. صغرى: متطلب موصى به.',
+        '証拠のない要求事項はすべて不適合です。重大：必須要求で、欠落時のリスクが高いか重大なもの。大：必須だがリスクが低いもの。軽微：推奨要求。',
+        '任何没有证据的要求都是差距。严重：缺失风险为高或严重的强制性要求。重要：强制性但风险较低。轻微：推荐性要求。'),
+    'standards.detail.audit-verdict-scale': (
+        "Barème du verdict : « prêt » demande zéro écart critique et une préparation ≥ 95 % ; « quasi prêt », zéro critique et ≥ 80 % ; « écarts majeurs à corriger », ≥ 50 % ; en dessous, la préparation est jugée insuffisante.",
+        'Verdict scale: "ready" requires zero critical gaps and readiness ≥ 95%; "almost ready", zero critical and ≥ 80%; "major gaps to fix", ≥ 50%; below that, readiness is deemed insufficient.',
+        'Escala del veredicto: «listo» exige cero brechas críticas y preparación ≥ 95 %; «casi listo», cero críticas y ≥ 80 %; «brechas mayores por corregir», ≥ 50 %; por debajo, la preparación se considera insuficiente.',
+        'سلّم الحكم: «جاهز» يتطلب صفر فجوات حرجة وجهوزية ≥ 95 %؛ «شبه جاهز» صفر حرجة و≥ 80 %؛ «فجوات كبرى للتصحيح» ≥ 50 %؛ وما دون ذلك تُعدّ الجهوزية غير كافية.',
+        '判定基準：「準備完了」は重大不適合ゼロかつ準備度 95 % 以上、「ほぼ完了」は重大ゼロかつ 80 % 以上、「要是正（大）」は 50 % 以上、それ未満は準備不足と判定します。',
+        '判定标准：「可审核」需零项严重差距且准备度 ≥ 95%；「接近就绪」需零项严重且 ≥ 80%；「需整改重要差距」为 ≥ 50%；低于此则视为准备不足。'),
 }

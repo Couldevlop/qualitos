@@ -178,9 +178,38 @@ describe('CapaDetailComponent — action unique', () => {
   });
 
   it('ne retombe pas sur un identifiant quand le nom du responsable manque', () => {
-    setup(dossier({ actions: [action({ assigneeId: '9c1f2b7e-0000-4000-8000-000000000000' })] }));
+    setup(dossier({ actions: [action({ assigneeId: 'c0ffee11-0000-4000-8000-000000000000' })] }));
     expect(carte()).toContain('—');
-    expect(hote().textContent).not.toContain('9c1f2b7e');
+    expect(hote().textContent).not.toContain('c0ffee11');
+  });
+
+  // La fiche annonce deja son pilote et son echeance en tete : les repeter dans
+  // la carte de l'action, qui en herite a la creation, n'apprend rien.
+  it("ne repete pas le pilote ni l’echeance du dossier dans la carte", () => {
+    annuaire = [{ accountId: '9c1f2b7e-0000-4000-8000-000000000000',
+                  displayName: 'M. Pilote', email: 'm.pilote@example.test' } as DirectoryUser];
+    setup(dossier({
+      dueDate: '2026-12-01',
+      actions: [action({ assigneeId: '9c1f2b7e-0000-4000-8000-000000000000',
+                         assigneeName: 'M. Pilote', dueDate: '2026-12-01' })]
+    }));
+
+    expect(carte()).not.toContain('Responsable');
+    expect(carte()).not.toContain('Échéance');
+    // Le pilote et l'echeance restent lisibles, une seule fois, en tete de fiche.
+    expect(hote().textContent).toContain('M. Pilote');
+  });
+
+  it("montre le responsable et l’echeance de l’action quand ils s’ecartent du dossier", () => {
+    setup(dossier({
+      dueDate: '2026-12-01',
+      actions: [action({ assigneeId: 'c0ffee11-0000-4000-8000-000000000000',
+                         assigneeName: 'A. Diallo', dueDate: '2027-01-15' })]
+    }));
+
+    expect(carte()).toContain('Responsable');
+    expect(carte()).toContain('A. Diallo');
+    expect(carte()).toContain('Échéance');
   });
 
   // --- un dossier sans action -----------------------------------------------

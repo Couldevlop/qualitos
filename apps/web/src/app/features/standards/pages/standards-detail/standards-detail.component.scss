@@ -39,6 +39,17 @@
   .bad  { color: #c62828; }
 }
 
+/* La definition d'un indicateur, sous son chiffre : un chiffre sans sa formule
+   n'est pas un indicateur (regle 18.2 #8). Hors de .kpi aussi, pour le bareme
+   du verdict d'audit blanc. */
+.kpi-formule {
+  margin: 8px 0 0;
+  font-size: 11px;
+  line-height: 1.45;
+  max-width: 60rem;
+  color: var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.6));
+}
+
 .qos-tabs { margin-top: 12px; }
 .tab-body { padding: 20px 4px; }
 .muted { color: #78909c; font-size: 13px; }
@@ -244,4 +255,50 @@
   &:hover, &:focus-within { opacity: 1; }
 
   .mat-mdc-icon-button { width: 32px; height: 32px; padding: 4px; }
+}
+
+/* Audit blanc IA : la commande en tête de l'onglet, l'historique en dessous.
+   Le rapport lui-même vit dans son écran dédié — il se partage par son URL. */
+.audit-ia {
+  border-bottom: 1px solid var(--qos-border-subtle);
+
+  &__tete {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--qos-space-3);
+
+    h3 {
+      margin: 0 0 var(--qos-space-1);
+      font-size: var(--qos-fs-sm);
+      font-weight: var(--qos-fw-semibold);
+    }
+
+    p { margin: 0; max-width: 48rem; }
+  }
+
+  &__erreur {
+    margin: var(--qos-space-2) 0 0;
+    font-size: var(--qos-fs-sm);
+    color: var(--qos-danger-fg);
+  }
+
+  &__runs {
+    margin: var(--qos-space-2) 0 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: var(--qos-space-1);
+  }
+
+  &__date {
+    font-family: var(--qos-font-mono);
+    margin-right: var(--qos-space-2);
+  }
+
+  &__score {
+    font-weight: var(--qos-fw-semibold);
+    margin-right: var(--qos-space-2);
+  }
 }

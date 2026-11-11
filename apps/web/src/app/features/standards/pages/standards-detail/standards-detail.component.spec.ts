@@ -3,15 +3,18 @@ import { FormsModule } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router, provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
 
 import { AuthService } from '../../../../core/auth/auth.service';
 import { SharedModule } from '../../../../shared/shared.module';
 import { UiModule } from '../../../../shared/ui/ui.module';
+import { StandardsExtrasService } from '../../../standards-extras/standards-extras.service';
+import { MockAuditReport } from '../../../standards-extras/standards-extras.types';
 import { StandardsService } from '../../standards.service';
 import {
-  AdoptionResponse, ClauseDetail, RequirementDetail, SectionDetail, StandardDetail
+  AdoptionResponse, AlignmentReport, AuditBlancReport, ClauseDetail, RequirementDetail,
+  RoadmapSummary, SectionDetail, StandardDetail
 } from '../../standards.types';
 import { StandardsDetailComponent } from './standards-detail.component';
 
@@ -30,9 +33,38 @@ describe('StandardsDetailComponent', () => {
   let svc: jasmine.SpyObj<StandardsService>;
   let dialog: jasmine.SpyObj<MatDialog>;
   let snack: jasmine.SpyObj<MatSnackBar>;
+  let extras: jasmine.SpyObj<StandardsExtrasService>;
+  /** Le vrai Router (les `routerLink` du gabarit en ont besoin), sa navigation espionnée. */
+  let navigate: jasmine.Spy;
+  /** Les rôles du porteur du jeton, réglables avant `ngOnInit`. */
+  let roles: string[] | undefined;
   let el: HTMLElement;
 
   const ADOPTION = { id: 'ad1', standardId: 's1', standardCode: 'PRO-002' } as AdoptionResponse;
+
+  /** Une exécution d'audit blanc IA, réduite à ce que la fiche en lit. */
+  function run(over: Partial<MockAuditReport> = {}): MockAuditReport {
+    return {
+      id: 'r9', adoptionId: 'ad1', standardId: 's1', standardCode: 'ISO-9001',
+      standardName: 'ISO 9001:2015', readiness: 72.4, majorCount: 3, minorCount: 5,
+      observationCount: 1, questionCount: 42, questions: [], gaps: [], remediationPlan: [],
+      aiProvider: 'mistral', createdByUserId: 'u1', createdAt: '2026-11-10T09:30:00Z', ...over
+    } as MockAuditReport;
+  }
+
+  const un = (sel: string) => el.querySelector<HTMLElement>(`[data-test="${sel}"]`);
+
+  /**
+   * Ouvre l'onglet « Audit blanc » (5e du groupe).
+   *
+   * <p>Material ne pose le contenu d'un onglet dans le DOM que lorsqu'il
+   * devient actif : interroger cet onglet sans l'ouvrir ne trouve rien.
+   */
+  function ouvrirAuditBlanc(): void {
+    fixture.detectChanges();
+    component.selectedTab = 4;
+    fixture.detectChanges();
+  }
 
   const REQUIREMENT = {
     id: 'r1', code: '1.1.1', text: 'Le programme est revu chaque année',
@@ -79,6 +111,11 @@ describe('StandardsDetailComponent', () => {
 
     dialog = jasmine.createSpyObj<MatDialog>('MatDialog', ['open']);
     snack = jasmine.createSpyObj<MatSnackBar>('MatSnackBar', ['open']);
+    extras = jasmine.createSpyObj<StandardsExtrasService>(
+      'StandardsExtrasService', ['mockAuditHistory', 'runMockAudit']);
+    extras.mockAuditHistory.and.returnValue(of([]));
+    extras.runMockAudit.and.returnValue(of(run()));
+    roles = undefined;
 
     await TestBed.configureTestingModule({
       declarations: [StandardsDetailComponent],
@@ -89,7 +126,9 @@ describe('StandardsDetailComponent', () => {
         { provide: StandardsService, useValue: svc },
         { provide: MatDialog, useValue: dialog },
         { provide: MatSnackBar, useValue: snack },
-        { provide: AuthService, useValue: { snapshot: () => ({ userId: 'u1' }) } },
+        { provide: AuthService, useValue: { snapshot: () => ({ userId: 'u1', roles }) } },
+        { provide: StandardsExtrasService, useValue: extras },
+        provideRouter([]),
         {
           provide: ActivatedRoute,
           useValue: { snapshot: { paramMap: { get: () => 'ad1' } } }
@@ -97,6 +136,7 @@ describe('StandardsDetailComponent', () => {
       ]
     }).compileComponents();
 
+    navigate = spyOn(TestBed.inject(Router), 'navigate').and.resolveTo(true);
     fixture = TestBed.createComponent(StandardsDetailComponent);
     component = fixture.componentInstance;
     el = fixture.nativeElement as HTMLElement;
@@ -234,6 +274,141 @@ describe('StandardsDetailComponent', () => {
       expect(snack.open.calls.mostRecent().args[0]).toContain(expected);
       // Rien n'a changé côté serveur : inutile de relire la fiche.
       expect(svc.getStandardDetail).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('audit blanc', () => {
+
+    it("lance un audit blanc IA depuis la fiche et ouvre son rapport", () => {
+      ouvrirAuditBlanc();
+      expect(extras.mockAuditHistory).toHaveBeenCalledWith('ad1');
+      expect(un('audit-ia-vide')).not.toBeNull();
+
+      un('lancer-audit-ia')!.click();
+
+      expect(extras.runMockAudit).toHaveBeenCalledWith('ad1');
+      expect(navigate).toHaveBeenCalledWith(['/standards-ims', 'audit-blanc-ia', 'ad1', 'r9']);
+      expect(component.mockAuditRunning).toBeFalse();
+    });
+
+    it('relit les audits blancs deja passes, du plus recent au plus ancien', () => {
+      extras.mockAuditHistory.and.returnValue(of([run(), run({ id: 'r8', readiness: 51.6 })]));
+      ouvrirAuditBlanc();
+
+      expect(un('audit-ia-vide')).toBeNull();
+      const lignes = el.querySelectorAll('[data-test="audit-ia-historique"] li');
+      expect(lignes.length).toBe(2);
+      expect(lignes[0].textContent).toContain('72 %');
+      expect(lignes[1].textContent).toContain('52 %');
+      expect(lignes[0].textContent).toContain('3');
+
+      (lignes[1].querySelector('button') as HTMLElement).click();
+      expect(navigate).toHaveBeenCalledWith(['/standards-ims', 'audit-blanc-ia', 'ad1', 'r8']);
+    });
+
+    [
+      { status: 409, attendu: 'aucune clause exploitable' },
+      { status: 403, attendu: 'pilotage qualité' },
+      // 500 : le message commun de la plateforme prend le dessus sur le repli local.
+      { status: 500, attendu: 'Erreur serveur' }
+    ].forEach(({ status, attendu }) => {
+      it(`dit pourquoi l'audit blanc IA est refusé (${status})`, () => {
+        extras.runMockAudit.and.returnValue(throwError(() => ({ status })));
+        ouvrirAuditBlanc();
+
+        un('lancer-audit-ia')!.click();
+        fixture.detectChanges();
+
+        expect(un('audit-ia-erreur')?.textContent).toContain(attendu);
+        // Rien n'a ete produit : on ne navigue pas vers un rapport inexistant.
+        expect(navigate).not.toHaveBeenCalled();
+        expect(component.mockAuditRunning).toBeFalse();
+      });
+    });
+
+    it("ne propose pas le lancement a qui n'a pas le role, et le serveur reste juge", () => {
+      roles = ['user'];
+      ouvrirAuditBlanc();
+      expect(component.canRunMockAudit).toBeFalse();
+      expect(un('lancer-audit-ia')).toBeNull();
+
+      // Sans role lisible (dev, claims absents) on n'ampute pas l'ecran.
+      roles = undefined;
+      component.ngOnInit();
+      ouvrirAuditBlanc();
+      expect(component.canRunMockAudit).toBeTrue();
+      expect(un('lancer-audit-ia')).not.toBeNull();
+    });
+
+    it("propose de relancer l'analyse d'ecarts quand elle a echoue", () => {
+      ouvrirAuditBlanc();
+      // getAuditBlanc rend 504 par defaut : l'onglet etait muet jusqu'ici.
+      expect(component.auditFailed).toBeTrue();
+      expect(un('audit-regles-echec')).not.toBeNull();
+
+      const rapport: AuditBlancReport = {
+        tenantStandardId: 'ad1', standardId: 's1', standardCode: 'ISO-9001',
+        standardName: 'ISO 9001:2015', generatedAt: '2026-11-10T09:30:00Z',
+        readinessScore: 80, totalRequirements: 12, coveredRequirements: 9,
+        mustTotal: 10, mustCovered: 8, criticalGaps: 0, majorGaps: 1, minorGaps: 1,
+        verdict: 'QUASI PRÊT', findings: []
+      };
+      svc.getAuditBlanc.and.returnValue(of(rapport));
+      un('audit-regles-relancer')!.click();
+      fixture.detectChanges();
+
+      expect(component.auditFailed).toBeFalse();
+      expect(un('audit-regles-echec')).toBeNull();
+      expect(svc.getAuditBlanc).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe('definition des indicateurs (regle 18.2 #8)', () => {
+
+    it('dit la formule de chaque indicateur et montre son numerateur', () => {
+      const align: AlignmentReport = {
+        tenantStandardId: 'ad1', standardId: 's1', standardCode: 'ISO-9001',
+        overallScore: 75, totalRequirements: 12, coveredRequirements: 9,
+        totalMustRequirements: 10, coveredMustRequirements: 8, sections: []
+      };
+      svc.getAlignment.and.returnValue(of(align));
+      svc.getAuditBlanc.and.returnValue(of({
+        tenantStandardId: 'ad1', standardId: 's1', standardCode: 'ISO-9001',
+        standardName: 'ISO 9001:2015', generatedAt: '2026-11-10T09:30:00Z',
+        readinessScore: 80, totalRequirements: 12, coveredRequirements: 9,
+        mustTotal: 10, mustCovered: 8, criticalGaps: 0, majorGaps: 1, minorGaps: 1,
+        verdict: 'QUASI PRÊT', findings: []
+      } as AuditBlancReport));
+      const rm: RoadmapSummary = {
+        tenantStandardId: 'ad1', totalStages: 19, doneStages: 6, inProgressStages: 2,
+        skippedStages: 3, completionPercent: 37.5, stages: []
+      };
+      svc.getRoadmap.and.returnValue(of(rm));
+      fixture.detectChanges();
+
+      // Preparation : les MUST, et seulement eux.
+      expect(un('kpi-preparation')?.textContent).toContain('8/10');
+      expect(un('kpi-preparation')?.textContent).toContain('MUST couvertes ÷ MUST au total');
+      // Alignement : toutes les exigences, sans ponderation.
+      expect(un('kpi-alignement')?.textContent).toContain('9/12');
+      expect(un('kpi-alignement')?.textContent).toContain('Chaque exigence pèse pareil');
+      // Roadmap : les etapes ecartees sortent du denominateur (19 - 3 = 16).
+      expect(un('kpi-roadmap')?.textContent).toContain('6/16');
+      expect(un('kpi-roadmap')?.textContent).toContain('étapes applicables');
+      // Ecarts : la frontiere critique / majeur / mineur est ecrite.
+      expect(un('kpi-ecarts')?.textContent).toContain("risque en cas d'absence est élevé");
+      // Et le bareme du verdict, dans l'onglet audit blanc.
+      component.selectedTab = 4;
+      fixture.detectChanges();
+      expect(un('verdict-bareme')?.textContent).toContain('≥ 95 %');
+    });
+
+    it('ne promet aucun numerateur quand le rapport ne se lit pas', () => {
+      // getAlignment/getAuditBlanc/getRoadmap rendent 504 par defaut.
+      fixture.detectChanges();
+      expect(un('kpi-preparation')?.textContent).not.toContain('/');
+      // La formule, elle, reste dite : elle ne depend pas des donnees.
+      expect(un('kpi-preparation')?.textContent).toContain('MUST au total');
     });
   });
 });

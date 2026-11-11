@@ -16,31 +16,47 @@
 
   <!-- KPI cards -->
   <div class="kpi-row" *ngIf="!loading">
-    <mat-card class="kpi">
+    <!-- Chaque indicateur dit sa formule et montre son numérateur : un chiffre
+         affiché sans sa définition n'est pas un indicateur (règle 18.2 #8). -->
+    <mat-card class="kpi" data-test="kpi-preparation">
       <span class="kpi-label" i18n="@@standards.detail.kpi-readiness">Préparation audit (MUST)</span>
       <span class="kpi-value" [ngClass]="scoreClass(audit?.readinessScore ?? 0)">
         {{ (audit?.readinessScore ?? 0) | number:'1.0-0' }}%
       </span>
       <mat-progress-bar mode="determinate" [value]="audit?.readinessScore ?? 0"></mat-progress-bar>
+      <span class="kpi-sub" *ngIf="audit as ab">{{ ab.mustCovered }}/{{ ab.mustTotal }}
+        <ng-container i18n="@@standards.detail.kpi-readiness-sub">exigences obligatoires couvertes par une preuve</ng-container></span>
+      <p class="kpi-formule" i18n="@@standards.detail.kpi-readiness-formula">MUST couvertes ÷ MUST au total × 100. Une exigence est « couverte » dès
+        qu'une preuve lui est liée dans l'onglet Mes preuves — la plateforme ne juge pas la qualité de la preuve.</p>
     </mat-card>
-    <mat-card class="kpi">
+    <mat-card class="kpi" data-test="kpi-alignement">
       <span class="kpi-label" i18n="@@standards.detail.kpi-alignment">Alignement global</span>
       <span class="kpi-value" [ngClass]="scoreClass(alignment?.overallScore ?? 0)">
         {{ (alignment?.overallScore ?? 0) | number:'1.0-0' }}%
       </span>
       <mat-progress-bar mode="determinate" [value]="alignment?.overallScore ?? 0"></mat-progress-bar>
+      <span class="kpi-sub" *ngIf="alignment as al">{{ al.coveredRequirements }}/{{ al.totalRequirements }}
+        <ng-container i18n="@@standards.detail.kpi-alignment-sub">exigences couvertes, toutes obligations confondues</ng-container></span>
+      <p class="kpi-formule" i18n="@@standards.detail.kpi-alignment-formula">Exigences couvertes ÷ exigences au total × 100, sur toute la norme.
+        Chaque exigence pèse pareil : ni les sections ni les MUST ne sont pondérés. Les scores par section et par clause suivent la même règle.</p>
     </mat-card>
-    <mat-card class="kpi">
+    <mat-card class="kpi" data-test="kpi-roadmap">
       <span class="kpi-label" i18n="@@standards.detail.kpi-roadmap">Roadmap</span>
       <span class="kpi-value" [ngClass]="scoreClass(roadmap?.completionPercent ?? 0)">
         {{ (roadmap?.completionPercent ?? 0) | number:'1.0-0' }}%
       </span>
       <mat-progress-bar mode="determinate" [value]="roadmap?.completionPercent ?? 0"></mat-progress-bar>
+      <span class="kpi-sub" *ngIf="roadmap as rm">{{ rm.doneStages }}/{{ rm.totalStages - rm.skippedStages }}
+        <ng-container i18n="@@standards.detail.kpi-roadmap-sub">étapes terminées</ng-container></span>
+      <p class="kpi-formule" i18n="@@standards.detail.kpi-roadmap-formula">Étapes TERMINÉES ÷ étapes applicables × 100. Les étapes écartées sortent
+        du dénominateur — les ignorer ferait plafonner la roadmap sous 100 %. Une étape en cours compte pour zéro.</p>
     </mat-card>
-    <mat-card class="kpi">
+    <mat-card class="kpi" data-test="kpi-ecarts">
       <span class="kpi-label" i18n="@@standards.detail.kpi-critical-gaps">Écarts critiques</span>
       <span class="kpi-value bad">{{ audit?.criticalGaps ?? 0 }}</span>
       <span class="kpi-sub">{{ audit?.majorGaps ?? 0 }} <span i18n="@@standards.detail.kpi-majors">majeurs</span> · {{ audit?.minorGaps ?? 0 }} <span i18n="@@standards.detail.kpi-minors">mineurs</span></span>
+      <p class="kpi-formule" i18n="@@standards.detail.kpi-gaps-formula">Toute exigence sans preuve est un écart. Critique : exigence obligatoire
+        dont le risque en cas d'absence est élevé ou critique. Majeur : obligatoire, risque moindre. Mineur : exigence recommandée.</p>
     </mat-card>
   </div>
 
@@ -247,11 +263,55 @@
 
     <!-- Onglet Audit blanc -->
     <mat-tab label="Audit blanc" i18n-label="@@standards.detail.tab-audit-blanc">
+      <!-- L'audit blanc IA (ADR 0033) : la capacité existait sans porte depuis
+           ici. Le rapport s'ouvre dans son écran dédié, partageable par URL. -->
+      <div class="tab-body audit-ia" data-test="audit-ia">
+        <div class="audit-ia__tete">
+          <div>
+            <h3 i18n="@@standards.detail.mock-audit-title">Audit blanc IA</h3>
+            <p class="muted" i18n="@@standards.detail.mock-audit-intro">Simule l'audit de certification avant le réel : questions ciblées sur les clauses
+              à risque, écarts confrontés aux preuves disponibles et plan de remédiation.</p>
+          </div>
+          <button mat-flat-button color="primary" type="button" *ngIf="canRunMockAudit"
+                  [disabled]="mockAuditRunning" (click)="runMockAudit()" data-test="lancer-audit-ia">
+            <mat-icon aria-hidden="true">play_arrow</mat-icon>
+            <span *ngIf="!mockAuditRunning" i18n="@@standards.detail.mock-audit-run">Lancer un audit blanc IA</span>
+            <span *ngIf="mockAuditRunning" i18n="@@standards.detail.mock-audit-running">Audit en cours…</span>
+          </button>
+        </div>
+
+        <p class="audit-ia__erreur" *ngIf="mockAuditError" data-test="audit-ia-erreur">{{ mockAuditError }}</p>
+
+        <p class="muted" *ngIf="!mockAuditRuns.length" data-test="audit-ia-vide"
+           i18n="@@standards.detail.mock-audit-empty">Aucun audit blanc IA sur cette norme pour l'instant.</p>
+        <ul class="audit-ia__runs" *ngIf="mockAuditRuns.length" data-test="audit-ia-historique">
+          <li *ngFor="let r of mockAuditRuns">
+            <button mat-button type="button" (click)="openMockAudit(r.id)">
+              <span class="audit-ia__date">{{ r.createdAt | date:'dd/MM/yy HH:mm' }}</span>
+              <span class="audit-ia__score">{{ readinessLabel(r.readiness) }}</span>
+              <span class="muted">{{ r.majorCount }} <ng-container i18n="@@standards.detail.mock-audit-major">majeures</ng-container>,
+                {{ r.minorCount }} <ng-container i18n="@@standards.detail.mock-audit-minor">mineures</ng-container></span>
+            </button>
+          </li>
+        </ul>
+      </div>
+
+      <!-- L'analyse d'écarts par règles : muette jusqu'ici quand elle échouait. -->
+      <div class="tab-body" *ngIf="!audit && auditFailed" data-test="audit-regles-echec">
+        <p class="audit-ia__erreur" i18n="@@standards.detail.audit-rules-failed">L'analyse d'écarts n'a pas pu être calculée.</p>
+        <button mat-stroked-button type="button" (click)="loadAuditBlanc()" data-test="audit-regles-relancer">
+          <mat-icon aria-hidden="true">refresh</mat-icon>
+          <span i18n="@@standards.detail.audit-rules-retry">Relancer l'analyse d'écarts</span>
+        </button>
+      </div>
+
       <div class="tab-body" *ngIf="audit as ab">
         <div class="verdict" [ngClass]="scoreClass(ab.readinessScore)">
           <strong i18n="@@standards.detail.audit-verdict-label">Verdict :</strong> {{ ab.verdict }}
           <span class="verdict-sub"><span i18n="@@standards.detail.audit-must-covered">MUST couvertes :</span> {{ ab.mustCovered }}/{{ ab.mustTotal }}</span>
         </div>
+        <p class="kpi-formule" data-test="verdict-bareme" i18n="@@standards.detail.audit-verdict-scale">Barème du verdict : « prêt » demande zéro écart critique et une préparation
+          ≥ 95 % ; « quasi prêt », zéro critique et ≥ 80 % ; « écarts majeurs à corriger », ≥ 50 % ; en dessous, la préparation est jugée insuffisante.</p>
         <p class="muted">{{ ab.findings.length }} <span i18n="@@standards.detail.audit-gaps-suffix">écart(s) — triés par priorité.</span>
           {{ ab.criticalGaps }} <span i18n="@@standards.detail.audit-critical">critiques,</span> {{ ab.majorGaps }} <span i18n="@@standards.detail.audit-major">majeurs,</span> {{ ab.minorGaps }} <span i18n="@@standards.detail.audit-minor">mineurs.</span></p>
         <p class="empty" *ngIf="ab.findings.length === 0" i18n="@@standards.detail.audit-no-gap">Aucun écart : toutes les exigences sont couvertes 🎉</p>

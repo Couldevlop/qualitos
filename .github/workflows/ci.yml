@@ -658,8 +658,24 @@ jobs:
         # versions exactes livrées, pas contre une résolution recalculée.
         run: npm ci --no-audit --no-fund
 
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
+      - name: Install Playwright browser
+        # Le navigateur vient du CDN Playwright : c'est la seule partie dont le
+        # job ne peut pas se passer, et elle doit faire echouer l'etape.
+        run: npx playwright install chromium
+
+      - name: Install system fonts (best effort)
+        # `--with-deps` a ete scinde volontairement. Les bibliotheques que Chromium
+        # reclame sont deja dans l'image du runner ; ce que cette etape ajoute,
+        # ce sont des POLICES (fonts-*, xfonts-*). Or le miroir apt du runner
+        # tombe par periodes (« Temporary failure resolving
+        # 'azure.archive.ubuntu.com' », apt sort en 100) : le 2026-11-11, une
+        # panne d'une heure a fait echouer la CI de `main` deux fois de suite et
+        # saute le deploiement de preproduction, pour une raison etrangere au
+        # code. Les tests de fumee lisent le DOM et du texte, pas des pixels :
+        # une police de repli ne change pas leur verdict. L'etape reste donc
+        # informative, et c'est « Run smoke tests » qui juge.
+        continue-on-error: true
+        run: npx playwright install-deps chromium
 
       - name: Run smoke tests
         run: npm run e2e

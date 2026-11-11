@@ -1,7 +1,8 @@
 /* ==========================================================================
    QualitOS — site de présentation
-   Deux comportements, pas un de plus : ouvrir le menu sur petit écran, et
-   faire partir le formulaire de contact.
+   Trois comportements, pas un de plus : ouvrir le menu sur petit écran,
+   marquer dans le menu la section qu'on est en train de lire, et faire
+   partir le formulaire de contact.
    ========================================================================== */
 (function () {
   'use strict';
@@ -25,6 +26,76 @@
         bascule.textContent = 'Menu';
       }
     });
+  }
+
+  // ---------- le menu suit le defilement ----------
+  // La section active est celle dont le HAUT est passe sous la ligne de
+  // l'en-tete collante : c'est celle qu'on lit, et c'est exactement ce que
+  // montre l'ecran. Le calcul est direct, sur la position reelle du moment.
+  //
+  // POURQUOI PAS IntersectionObserver. Il a ete essaye d'abord. Il ne parle
+  // que lorsqu'un element CHANGE d'etat : apres un saut d'ancre, les sections
+  // restees hors cadre n'emettent rien, l'etat memorise reste celui d'avant le
+  // saut, et le menu marque la section precedente. Mesure a l'ecran : un clic
+  // sur « Votre metier » laissait « IA » souligne. Un calcul direct n'a pas de
+  // memoire a desynchroniser.
+  //
+  // Le travail est reporte a la trame d'affichage suivante : le navigateur
+  // emet des dizaines d'evenements de defilement par seconde, et mesurer a
+  // chacun ne changerait rien a ce que l'oeil voit.
+  var liens = nav ? nav.querySelectorAll('a[href^="#"]') : [];
+  var reperes = [];
+
+  Array.prototype.forEach.call(liens, function (lien) {
+    var id = lien.getAttribute('href').slice(1);
+    var section = id && document.getElementById(id);
+    if (section) reperes.push({ lien: lien, section: section });
+  });
+
+  if (reperes.length) {
+    var entete = document.querySelector('.entete');
+    var demande = 0;
+
+    var situer = function () {
+      demande = 0;
+      var ligne = (entete ? entete.getBoundingClientRect().height : 0) + 16;
+      var courant = null;
+
+      reperes.forEach(function (repere) {
+        var cadre = repere.section.getBoundingClientRect();
+        // Le haut est passe la ligne, et le bas ne l'a pas encore franchie :
+        // la section occupe le regard. La derniere qui remplit la condition
+        // gagne, ce qui donne la plus avancee quand deux se chevauchent.
+        if (cadre.top <= ligne && cadre.bottom > ligne) courant = repere.lien;
+      });
+
+      // Le bas de page : la derniere section ne peut plus atteindre la ligne,
+      // et sans ce rattrapage le menu s'eteindrait juste quand on arrive au
+      // formulaire de contact.
+      if (!courant && window.innerHeight + window.scrollY >= document.body.scrollHeight - 2) {
+        courant = reperes[reperes.length - 1].lien;
+      }
+
+      Array.prototype.forEach.call(liens, function (lien) {
+        var actif = lien === courant;
+        lien.classList.toggle('nav__lien--actif', actif);
+        // `aria-current` dit aux lecteurs d'ecran ce que la couleur dit a
+        // l'oeil : sans lui, l'information n'existe que pour les voyants.
+        if (actif) lien.setAttribute('aria-current', 'true');
+        else lien.removeAttribute('aria-current');
+      });
+    };
+
+    var planifier = function () {
+      if (!demande) demande = window.requestAnimationFrame(situer);
+    };
+
+    window.addEventListener('scroll', planifier, { passive: true });
+    window.addEventListener('resize', planifier);
+    // Un saut d'ancre ne produit pas toujours d'evenement de defilement quand
+    // la page est deja a la bonne hauteur : on situe aussi au clic.
+    if (nav) nav.addEventListener('click', planifier);
+    situer();
   }
 
   // ---------- formulaire de contact ----------
