@@ -251,4 +251,32 @@ TRANSLATIONS = {
         "L’équipe n’a pas pu être enregistrée.", 'The team could not be saved.',
         'No se pudo guardar el equipo.', 'تعذّر حفظ الفريق.',
         'チームを保存できませんでした。', '无法保存该团队。'),
+    # --- les schémas d'analyse de cause, lus sur la fiche --------------------
+    'nc.detail.cause-analysis': (
+        'Analyse de cause', 'Root cause analysis', 'Análisis de causa',
+        'تحليل السبب', '原因分析', '原因分析'),
+    'nc.detail.cause-open-whys': (
+        "Dérouler l’analyse", 'Work through the analysis', 'Desarrollar el análisis',
+        'متابعة التحليل', '分析を進める', '展开分析'),
+    'nc.detail.cause-open-ishikawa': (
+        'Travailler le diagramme', 'Work on the diagram', 'Trabajar el diagrama',
+        'العمل على المخطط', '図を編集する', '编辑图表'),
+    'nc.detail.cause-whys-empty': (
+        "Aucun pourquoi n’a encore été posé. Déroulez l’analyse pour commencer.",
+        'No “why” has been asked yet. Work through the analysis to begin.',
+        'Todavía no se ha planteado ningún «por qué». Desarrolle el análisis para empezar.',
+        'لم يُطرح أي سؤال «لماذا» بعد. تابع التحليل للبدء.',
+        'まだ「なぜ」が立てられていません。分析を進めて始めてください。',
+        '尚未提出任何「为什么」。展开分析以开始。'),
+    'nc.detail.cause-ishikawa-empty': (
+        "Aucune cause n’a encore été posée sur ce diagramme.",
+        'No cause has been placed on this diagram yet.',
+        'Todavía no se ha colocado ninguna causa en este diagrama.',
+        'لم تُضف أي سبب إلى هذا المخطط بعد.',
+        'この図にはまだ原因が置かれていません。',
+        '此图尚未放入任何原因。'),
+    'nc.detail.capa-action': (
+        'Action corrective en cours', 'Corrective action under way',
+        'Acción correctiva en curso', 'الإجراء التصحيحي الجاري',
+        '進行中の是正処置', '正在进行的纠正措施'),
 }

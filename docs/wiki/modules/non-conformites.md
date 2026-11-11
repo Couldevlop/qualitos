@@ -39,6 +39,40 @@ l'équipe ») : elle n'est donc pas à retaper à la clôture.
 - Être nommé dans une équipe **ne donne aucun droit supplémentaire** : la visibilité des dossiers
   reste celle de votre rôle.
 
+## Ce que la fiche montre sans qu'on en sorte
+
+La fiche d'un écart rassemble ce que le rapport 8D rassemble, mais **pendant** le dossier et non
+à sa clôture. Après les faits et l'équipe, deux cartes :
+
+### Analyse de cause (ce que le 8D appelle D4)
+
+Chaque **chaîne 5 Pourquoi** et chaque **diagramme Ishikawa** rattachés à l'écart s'affichent
+dessinés — la cascade et l'arête de poisson, pas une liste de libellés. C'est la même figure que
+dans l'écran de la méthode : les familles de causes y sont dans l'ordre des M, qui est l'ordre de
+lecture d'un qualiticien.
+
+- Les cartes sont **en lecture**. Pour modifier une cause, suivez le lien vers l'écran du
+  diagramme ou de la chaîne : c'est là qu'est l'outillage d'édition.
+- **Aucune analyse rattachée ?** La carte le dit explicitement. Un blanc se lirait comme un
+  défaut d'affichage ; l'écart sans analyse de cause est une information en soi — et un écart
+  significatif qu'on clôture sans analyse revient.
+
+### Action corrective en cours (D5)
+
+L'action du dossier CAPA lié s'affiche sur place : sa nature (corrective, préventive ou
+d'endiguement), son statut, et le bouton qui la **fait avancer d'un cran** — *Démarrer*, puis
+*Terminer* — sans quitter l'écart.
+
+- Le responsable et l'échéance **de l'action** n'apparaissent que s'ils diffèrent de ceux du
+  dossier : les répéter à l'identique ne renseigne personne.
+- *Voir la CAPA* reste là pour ce que la carte ne montre pas : la **preuve** de l'action, son
+  historique, et le verdict d'efficacité.
+- **Un dossier sans action** — ancien, ou ouvert par un automate — le dit, et propose de définir
+  la sienne. Un dossier CAPA n'a **qu'une** action : il n'y a donc rien à y ajouter ensuite, et
+  sans action il ne pourra pas être clôturé.
+- Si le dossier CAPA ne peut pas être lu (service indisponible), la carte **le dit** et propose de
+  réessayer. Elle ne reste jamais vide : « vide » voudrait dire « aucune action ».
+
 ## L'IA au service des NC
 
 - [Clustering de NC](nc-clusters.md) (`/nc-clusters`) : regroupe automatiquement les NC similaires

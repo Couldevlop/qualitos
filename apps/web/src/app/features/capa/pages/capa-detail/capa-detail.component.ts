@@ -10,7 +10,9 @@ import { safeErrorMessage } from '../../../../core/http/error-message';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../../../shared/ui/confirm-dialog/confirm-dialog.component';
 import { AccountNames } from '../../../../core/directory/directory-names';
 import { DirectoryService } from '../../../../core/directory/directory.service';
-import { capaCriticityLabel, capaOwnerLabel, capaSourceLabel, capaTypeLabel, unnamedOwners } from '../../capa.labels';
+import {
+  actionTypeLabel, capaCriticityLabel, capaOwnerLabel, capaSourceLabel, capaTypeLabel, unnamedOwners
+} from '../../capa.labels';
 import { CapaService } from '../../capa.service';
 import {
   CapaEditDialogComponent,
@@ -33,12 +35,6 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 })
 export class CapaDetailComponent implements OnInit {
 
-  /** Libellés des natures d'action, dans l'ordre du déroulé réel d'un traitement. */
-  readonly actionTypes: { value: CapaActionType; label: string }[] = [
-    { value: 'CONTAINMENT', label: $localize`:@@capa.action-type.containment:Endiguement` },
-    { value: 'CORRECTIVE',  label: $localize`:@@capa.action-type.corrective:Corrective` },
-    { value: 'PREVENTIVE',  label: $localize`:@@capa.action-type.preventive:Préventive` }
-  ];
 
   readonly notFoundLabel = $localize`:@@capa.detail.not-found:Cas introuvable`;
 
@@ -613,7 +609,7 @@ export class CapaDetailComponent implements OnInit {
 
   /** Libellé lisible d'une nature d'action, avec repli sur le code inconnu. */
   actionTypeLabel(type: CapaActionType): string {
-    return this.actionTypes.find(t => t.value === type)?.label ?? type;
+    return actionTypeLabel(type);
   }
 
   /**

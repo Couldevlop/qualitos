@@ -7694,6 +7694,10 @@ Portail clients</source>
         <source>Filtrer par criticité</source>
         <target state="translated">تصفية حسب الأهمية</target>
       </trans-unit>
+      <trans-unit id="capa.action-panel.failed" datatype="html">
+        <source>L’action de la CAPA n’a pas pu être lue.</source>
+        <target state="translated">تعذّرت قراءة إجراء الـ CAPA.</target>
+      </trans-unit>
       <trans-unit id="common.yes" datatype="html">
         <source>Oui</source>
         <target state="translated">نعم</target>
@@ -21513,6 +21517,30 @@ historique 12 mois</source>
       <trans-unit id="nc.detail.team-failed" datatype="html">
         <source>L’équipe n’a pas pu être enregistrée.</source>
         <target state="translated">تعذّر حفظ الفريق.</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.cause-analysis" datatype="html">
+        <source>Analyse de cause</source>
+        <target state="translated">تحليل السبب</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.cause-open-whys" datatype="html">
+        <source>Dérouler l’analyse</source>
+        <target state="translated">متابعة التحليل</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.cause-open-ishikawa" datatype="html">
+        <source>Travailler le diagramme</source>
+        <target state="translated">العمل على المخطط</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.cause-whys-empty" datatype="html">
+        <source>Aucun pourquoi n’a encore été posé. Déroulez l’analyse pour commencer.</source>
+        <target state="translated">لم يُطرح أي سؤال «لماذا» بعد. تابع التحليل للبدء.</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.cause-ishikawa-empty" datatype="html">
+        <source>Aucune cause n’a encore été posée sur ce diagramme.</source>
+        <target state="translated">لم تُضف أي سبب إلى هذا المخطط بعد.</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.capa-action" datatype="html">
+        <source>Action corrective en cours</source>
+        <target state="translated">الإجراء التصحيحي الجاري</target>
       </trans-unit>
       <trans-unit id="nc.8d.title" datatype="html">
         <source>Rapport 8D</source>

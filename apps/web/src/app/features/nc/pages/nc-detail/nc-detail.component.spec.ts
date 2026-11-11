@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
@@ -10,6 +11,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { SharedModule } from '../../../../shared/shared.module';
 import { DirectoryService } from '../../../../core/directory/directory.service';
 import { UserPickerModule } from '../../../../shared/user-picker/user-picker.module';
+import { FiveWhysSharedModule } from '../../../five-whys/five-whys-shared.module';
+import { IshikawaSharedModule } from '../../../ishikawa/ishikawa-shared.module';
 import { UiModule } from '../../../../shared/ui/ui.module';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { ConnectivityService } from '../../../../core/offline/connectivity.service';
@@ -24,6 +27,9 @@ import {
   CapaCreateDialogComponent, CapaCreateDialogData
 } from '../../../capa/pages/capa-create-dialog/capa-create-dialog.component';
 import { AuthzService } from '../../../../core/authz/authz.service';
+import {
+  CapaActionPanelStubComponent, CapaActionPanelStubModule
+} from '../../../capa/components/capa-action-panel/testing/capa-action-panel.stub';
 
 /**
  * Un annuaire muet : ces bancs ne portent pas sur le choix des personnes, et
@@ -109,7 +115,9 @@ describe('NcDetailComponent — section photos', () => {
 
     await TestBed.configureTestingModule({
       declarations: [NcDetailComponent],
-      imports: [SharedModule, UiModule, UserPickerModule, NoopAnimationsModule],
+      imports: [SharedModule, UiModule, UserPickerModule, FiveWhysSharedModule,
+                IshikawaSharedModule, NoopAnimationsModule,
+                CapaActionPanelStubModule],
       providers: [
         { provide: DirectoryService, useValue: ANNUAIRE_MUET },
         // Tous les droits : ces bancs testent l'écran, pas la matrice (ADR 0078).
@@ -470,7 +478,9 @@ describe('NcDetailComponent — workflow et escalade CAPA', () => {
 
     await TestBed.configureTestingModule({
       declarations: [NcDetailComponent],
-      imports: [SharedModule, UiModule, UserPickerModule, NoopAnimationsModule],
+      imports: [SharedModule, UiModule, UserPickerModule, FiveWhysSharedModule,
+                IshikawaSharedModule, NoopAnimationsModule,
+                CapaActionPanelStubModule],
       providers: [
         { provide: DirectoryService, useValue: ANNUAIRE_MUET },
         // Tous les droits : ces bancs testent l'écran, pas la matrice (ADR 0078).
@@ -664,21 +674,45 @@ describe('NcDetailComponent — workflow et escalade CAPA', () => {
     expect(openSpy).not.toHaveBeenCalled();
   });
 
-  it('montre « Créer une CAPA » sans CAPA, « Voir la CAPA » sinon', () => {
+  // Le lien vers le dossier a quitté l'en-tête pour la carte de l'action : on y
+  // va désormais pour ce que l'en-tête ne disait pas, l'avancement.
+  it('montre « Créer une CAPA » sans CAPA, la carte de l’action sinon', () => {
     setup(buildNc({ capaCaseId: undefined }));
     fixture.detectChanges();
     const el = fixture.nativeElement as HTMLElement;
     expect(el.querySelector('[data-test="creer-capa"]')).not.toBeNull();
-    expect(el.querySelector('[data-test="voir-capa"]')).toBeNull();
+    expect(el.querySelector('[data-test="capa-action"]')).toBeNull();
   });
 
   it('montre le lien vers la CAPA, jamais son identifiant brut', () => {
     setup(buildNc({ capaCaseId: '99999999-9999-9999-9999-999999999999' }));
     fixture.detectChanges();
     const el = fixture.nativeElement as HTMLElement;
-    expect(el.querySelector('[data-test="voir-capa"]')).not.toBeNull();
+    expect(el.querySelector('[data-test="capa-action-dossier"]')).not.toBeNull();
     expect(el.querySelector('[data-test="creer-capa"]')).toBeNull();
     expect(el.textContent).not.toContain('99999999-9999');
+  });
+
+  it('confie le dossier au panneau d’action, qui n’a que l’identifiant', () => {
+    setup(buildNc({ capaCaseId: '99999999-9999-9999-9999-999999999999' }));
+    fixture.detectChanges();
+    const panneau = fixture.debugElement
+      .query(By.directive(CapaActionPanelStubComponent)).componentInstance as CapaActionPanelStubComponent;
+    expect(panneau.capaCaseId).toBe('99999999-9999-9999-9999-999999999999');
+  });
+
+  // Faire avancer l'action depuis la fiche change son statut ET celui de l'écart
+  // côté serveur : une fiche qui ne se relit pas afficherait l'état d'avant.
+  it('relit la fiche quand le panneau annonce un changement', () => {
+    setup(buildNc({ capaCaseId: '99999999-9999-9999-9999-999999999999' }));
+    fixture.detectChanges();
+    svc.getNc.calls.reset();
+    const panneau = fixture.debugElement
+      .query(By.directive(CapaActionPanelStubComponent)).componentInstance as CapaActionPanelStubComponent;
+
+    panneau.changed.emit();
+
+    expect(svc.getNc).toHaveBeenCalledTimes(1);
   });
 
   it('ouvre le dialogue de résolution sur la NC courante et recharge après résolution', () => {
@@ -790,7 +824,9 @@ describe('NcDetailComponent — entrée 5 Pourquoi', () => {
     TestBed.resetTestingModule();
     await TestBed.configureTestingModule({
       declarations: [NcDetailComponent],
-      imports: [SharedModule, UiModule, UserPickerModule, NoopAnimationsModule],
+      imports: [SharedModule, UiModule, UserPickerModule, FiveWhysSharedModule,
+                IshikawaSharedModule, NoopAnimationsModule,
+                CapaActionPanelStubModule],
       providers: [
         { provide: DirectoryService, useValue: ANNUAIRE_MUET },
         // Tous les droits : ces bancs testent l'écran, pas la matrice (ADR 0078).
@@ -950,7 +986,9 @@ describe('NcDetailComponent — entrée Ishikawa', () => {
     TestBed.resetTestingModule();
     await TestBed.configureTestingModule({
       declarations: [NcDetailComponent],
-      imports: [SharedModule, UiModule, UserPickerModule, NoopAnimationsModule],
+      imports: [SharedModule, UiModule, UserPickerModule, FiveWhysSharedModule,
+                IshikawaSharedModule, NoopAnimationsModule,
+                CapaActionPanelStubModule],
       providers: [
         { provide: DirectoryService, useValue: ANNUAIRE_MUET },
         // Tous les droits : ces bancs testent l'écran, pas la matrice (ADR 0078).
@@ -1076,7 +1114,9 @@ describe('NcDetailComponent — conversion en cycle ou en projet', () => {
     TestBed.resetTestingModule();
     await TestBed.configureTestingModule({
       declarations: [NcDetailComponent],
-      imports: [SharedModule, UiModule, UserPickerModule, NoopAnimationsModule],
+      imports: [SharedModule, UiModule, UserPickerModule, FiveWhysSharedModule,
+                IshikawaSharedModule, NoopAnimationsModule,
+                CapaActionPanelStubModule],
       providers: [
         { provide: DirectoryService, useValue: ANNUAIRE_MUET },
         { provide: AuthzService, useValue: { can: () => of(true) } },

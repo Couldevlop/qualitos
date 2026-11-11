@@ -5,7 +5,10 @@ import { MatRadioModule } from '@angular/material/radio';
 import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../../shared/shared.module';
+import { CapaActionPanelModule } from '../capa/capa-action-panel.module';
 import { CapaCreateDialogModule } from '../capa/capa-create-dialog.module';
+import { FiveWhysSharedModule } from '../five-whys/five-whys-shared.module';
+import { IshikawaSharedModule } from '../ishikawa/ishikawa-shared.module';
 import { UiModule } from '../../shared/ui/ui.module';
 import { UserPickerModule } from '../../shared/user-picker/user-picker.module';
 import { NcConvertDialogComponent } from './pages/nc-convert-dialog/nc-convert-dialog.component';
@@ -51,8 +54,12 @@ const routes: Routes = [
   // `UserPickerModule` et le calendrier : ouvrir le cycle ou le projet qui
   // traitera un ecart demande une personne choisie dans l'annuaire (jamais un
   // texte libre) et, pour un projet DMAIC seul, une echeance visee.
-  imports: [SharedModule, UiModule, MatRadioModule, CapaCreateDialogModule,
-            UserPickerModule, MatDatepickerModule, MatNativeDateModule,
+  // Les deux figures d'analyse de cause se lisent SUR la fiche de l'ecart : on
+  // importe leurs modules partages, sans routes, et non `IshikawaModule` /
+  // `FiveWhysModule`, qui grefferaient `/ishikawa` et `/five-whys` sous `/nc`.
+  imports: [SharedModule, UiModule, MatRadioModule, CapaCreateDialogModule, CapaActionPanelModule,
+            UserPickerModule, FiveWhysSharedModule, IshikawaSharedModule,
+            MatDatepickerModule, MatNativeDateModule,
             RouterModule.forChild(routes)]
 })
 export class NcModule {}

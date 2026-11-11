@@ -1,0 +1,364 @@
+import { HttpErrorResponse } from '@angular/common/http';
+import { Component } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { of, throwError } from 'rxjs';
+
+import { AuthzService } from '../../../../core/authz/authz.service';
+import { DirectoryService } from '../../../../core/directory/directory.service';
+import { CapaActionPanelModule } from '../../capa-action-panel.module';
+import { CapaService } from '../../capa.service';
+import {
+  CapaActionResponse, CapaActionStatus, CapaCaseResponse, CapaStatus
+} from '../../capa.types';
+import { CapaActionPanelComponent } from './capa-action-panel.component';
+
+function action(overrides: Partial<CapaActionResponse> = {}): CapaActionResponse {
+  return {
+    id: 'act-1',
+    capaId: 'capa-1',
+    title: 'Remplacer le joint du presse-étoupe',
+    status: 'PENDING',
+    actionType: 'CORRECTIVE',
+    assigneeId: 'u-pilote',
+    assigneeName: 'Marie Durand',
+    ...overrides
+  };
+}
+
+function dossier(overrides: Partial<CapaCaseResponse> = {}): CapaCaseResponse {
+  return {
+    id: 'capa-1',
+    tenantId: 't-1',
+    title: 'Fuite au presse-étoupe',
+    type: 'CORRECTIVE',
+    criticity: 'HIGH',
+    status: 'IN_PROGRESS',
+    sourceType: 'NON_CONFORMITY',
+    ownerId: 'u-pilote',
+    ownerName: 'Marie Durand',
+    dueDate: '2026-12-15',
+    createdAt: '2026-11-01T08:00:00Z',
+    updatedAt: '2026-11-01T08:00:00Z',
+    actions: [action()],
+    ...overrides
+  };
+}
+
+@Component({
+  template: `<qos-capa-action-panel [capaCaseId]="id"
+                                    (changed)="changements = changements + 1"></qos-capa-action-panel>`,
+  standalone: false
+})
+class HoteComponent {
+  id = 'capa-1';
+  changements = 0;
+}
+
+/**
+ * L'action du dossier CAPA, lue et avancée hors de la fiche CAPA.
+ *
+ * <p>Deux promesses tiennent ici. <b>Une CAPA EST son action</b> (ADR 0088) :
+ * aucun bouton n'en ajoute une seconde, et un dossier qui n'en a pas propose de
+ * définir la sienne une fois. Et une <b>panne se dit</b> : un panneau vide
+ * passerait pour « aucune action », ce qui est l'information opposée.
+ */
+describe('CapaActionPanelComponent', () => {
+
+  let fixture: ComponentFixture<HoteComponent>;
+  let hote: HoteComponent;
+  let capa: jasmine.SpyObj<CapaService>;
+  let dialog: jasmine.SpyObj<MatDialog>;
+  let snack: jasmine.SpyObj<MatSnackBar>;
+  /** Ce que rend la fenêtre en se refermant : un dossier, ou rien si on abandonne. */
+  let ferme: unknown;
+
+  const racine = (): HTMLElement => fixture.nativeElement as HTMLElement;
+  const un = (sel: string) => racine().querySelector<HTMLElement>(`[data-test="${sel}"]`);
+  const tous = (sel: string) => Array.from(racine().querySelectorAll(`[data-test="${sel}"]`));
+  const panneau = (): CapaActionPanelComponent =>
+    fixture.debugElement.children[0].componentInstance as CapaActionPanelComponent;
+
+  async function setup(
+    opts: { dossier?: CapaCaseResponse; droits?: boolean; panne?: boolean } = {}
+  ): Promise<void> {
+    TestBed.resetTestingModule();
+
+    capa = jasmine.createSpyObj<CapaService>('CapaService', ['getCase', 'updateAction']);
+    capa.getCase.and.returnValue(opts.panne
+      ? throwError(() => new HttpErrorResponse({ status: 503 }))
+      : of(opts.dossier ?? dossier()));
+    capa.updateAction.and.returnValue(of(action({ status: 'IN_PROGRESS' })));
+
+    snack = jasmine.createSpyObj<MatSnackBar>('MatSnackBar', ['open']);
+    ferme = undefined;
+    dialog = jasmine.createSpyObj<MatDialog>('MatDialog', ['open']);
+    dialog.open.and.callFake((() => ({ afterClosed: () => of(ferme) })) as never);
+
+    const annuaire = jasmine.createSpyObj<DirectoryService>('DirectoryService', ['search']);
+    annuaire.search.and.returnValue(
+      of({ content: [], number: 0, size: 20, totalElements: 0, totalPages: 0 }) as never);
+
+    await TestBed.configureTestingModule({
+      declarations: [HoteComponent],
+      imports: [CapaActionPanelModule, NoopAnimationsModule],
+      providers: [
+        { provide: CapaService, useValue: capa },
+        { provide: MatDialog, useValue: dialog },
+        { provide: MatSnackBar, useValue: snack },
+        { provide: DirectoryService, useValue: annuaire },
+        // Tous les droits par défaut : ce banc teste le panneau, pas la matrice (ADR 0078).
+        { provide: AuthzService, useValue: { can: () => of(opts.droits ?? true) } }
+      ]
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(HoteComponent);
+    hote = fixture.componentInstance;
+    fixture.detectChanges();
+  }
+
+  // ---------- lecture ----------
+
+  it('lit le dossier dont on lui donne l’identifiant', async () => {
+    await setup();
+
+    expect(capa.getCase).toHaveBeenCalledWith('capa-1');
+    expect(tous('capa-action-ligne').length).toBe(1);
+    expect(un('capa-action-ligne')!.textContent).toContain('Remplacer le joint');
+  });
+
+  it('ne charge rien sans identifiant', async () => {
+    await setup();
+    capa.getCase.calls.reset();
+
+    hote.id = '';
+    fixture.detectChanges();
+
+    expect(capa.getCase).not.toHaveBeenCalled();
+    expect(tous('capa-action-ligne').length).toBe(0);
+  });
+
+  it('nomme la nature de l’action en clair, jamais son code', async () => {
+    await setup();
+
+    expect(un('capa-action-ligne')!.textContent).toContain('Corrective');
+    expect(un('capa-action-ligne')!.textContent).not.toContain('CORRECTIVE');
+  });
+
+  // Répéter le pilote et l'échéance du dossier ne renseigne personne : à la
+  // décision, l'action les en recopie.
+  it('tait le responsable et l’échéance quand ils sont ceux du dossier', async () => {
+    await setup();
+
+    const texte = un('capa-action-ligne')!.textContent!;
+    expect(texte).not.toContain('Responsable');
+    expect(texte).not.toContain('Échéance');
+  });
+
+  it('montre le responsable et l’échéance dès qu’ils divergent', async () => {
+    await setup({
+      dossier: dossier({
+        actions: [action({ assigneeId: 'u-autre', assigneeName: 'Ali Benali', dueDate: '2026-11-30' })]
+      })
+    });
+
+    const texte = un('capa-action-ligne')!.textContent!;
+    expect(texte).toContain('Responsable');
+    expect(texte).toContain('Ali Benali');
+  });
+
+  it('affiche un tiret plutôt qu’un identifiant quand le nom du porteur manque', async () => {
+    await setup({
+      dossier: dossier({ actions: [action({ assigneeId: 'u-autre', assigneeName: undefined })] })
+    });
+
+    const texte = un('capa-action-ligne')!.textContent!;
+    expect(texte).toContain('—');
+    expect(texte).not.toContain('u-autre');
+  });
+
+  // ---------- faire avancer ----------
+
+  it('fait avancer l’action d’un cran, statut seul', async () => {
+    await setup();
+
+    un('capa-action-avancer')!.click();
+    fixture.detectChanges();
+
+    // Seul le statut part : renvoyer le libellé écraserait une correction faite
+    // entre-temps par quelqu'un d'autre.
+    expect(capa.updateAction).toHaveBeenCalledWith('capa-1', 'act-1', { status: 'IN_PROGRESS' });
+    expect(snack.open).toHaveBeenCalled();
+  });
+
+  it('propose de terminer une action déjà démarrée', async () => {
+    await setup({ dossier: dossier({ actions: [action({ status: 'IN_PROGRESS' })] }) });
+
+    un('capa-action-avancer')!.click();
+
+    expect(capa.updateAction).toHaveBeenCalledWith('capa-1', 'act-1', { status: 'DONE' });
+  });
+
+  it('annonce le changement à l’écran qui l’héberge', async () => {
+    await setup();
+
+    un('capa-action-avancer')!.click();
+
+    expect(hote.changements).toBe(1);
+  });
+
+  it('relit le dossier après avoir avancé', async () => {
+    await setup();
+    capa.getCase.calls.reset();
+
+    un('capa-action-avancer')!.click();
+
+    expect(capa.getCase).toHaveBeenCalledTimes(1);
+  });
+
+  it('dit l’échec d’une mise à jour', async () => {
+    await setup();
+    capa.updateAction.and.returnValue(throwError(() => new HttpErrorResponse({ status: 500 })));
+
+    panneau().advance(action());
+
+    expect(snack.open).toHaveBeenCalled();
+    expect(hote.changements).toBe(0);
+    // Le geste se rejoue : un panneau resté « en vol » après une panne se fige.
+    expect(panneau().acting$.value).toBeFalse();
+  });
+
+  it('n’offre plus de geste sur une action faite', async () => {
+    await setup({ dossier: dossier({ actions: [action({ status: 'DONE' })] }) });
+
+    expect(un('capa-action-avancer')).toBeNull();
+    expect(panneau().nextStatus('DONE')).toBeNull();
+  });
+
+  // Le serveur tient la même garde : proposer le geste serait proposer un refus.
+  it('n’offre aucun geste sur un dossier clos ou rejeté', async () => {
+    for (const status of ['CLOSED', 'REJECTED'] as CapaStatus[]) {
+      await setup({ dossier: dossier({ status }) });
+
+      expect(panneau().canAdvance(action())).withContext(status).toBeFalse();
+      expect((un('capa-action-avancer') as HTMLButtonElement).disabled).withContext(status).toBeTrue();
+    }
+  });
+
+  it('n’offre aucun geste sans le droit de faire avancer', async () => {
+    await setup({ droits: false });
+
+    expect(un('capa-action-avancer')).toBeNull();
+    expect(tous('capa-action-ligne').length).toBe(1);
+  });
+
+  it('ne lance pas deux mises à jour de front', async () => {
+    await setup();
+    panneau().acting$.next(true);
+
+    panneau().advance(action());
+
+    expect(capa.updateAction).not.toHaveBeenCalled();
+  });
+
+  // ---------- l'action manquante ----------
+
+  it('dit qu’un dossier sans action ne pourra pas être clôturé', async () => {
+    await setup({ dossier: dossier({ actions: [] }) });
+
+    expect(un('capa-action-vide')).not.toBeNull();
+    expect(un('capa-action-vide')!.textContent).toContain('clôturé');
+    expect(un('capa-action-definir')).not.toBeNull();
+  });
+
+  it('définit l’action manquante dans la fenêtre de création', async () => {
+    await setup({ dossier: dossier({ actions: [] }) });
+    ferme = { id: 'capa-1' };
+
+    un('capa-action-definir')!.click();
+
+    expect(dialog.open).toHaveBeenCalled();
+    const data = (dialog.open.calls.mostRecent().args[1] as {
+      data: { mode: string; caseId: string; prefill: { title: string } };
+    }).data;
+    expect(data.mode).toBe('define-action');
+    expect(data.caseId).toBe('capa-1');
+    expect(data.prefill.title).toBe('Fuite au presse-étoupe');
+    expect(hote.changements).toBe(1);
+  });
+
+  it('ne définit rien quand la fenêtre est abandonnée', async () => {
+    await setup({ dossier: dossier({ actions: [] }) });
+    capa.getCase.calls.reset();
+    ferme = undefined;
+
+    un('capa-action-definir')!.click();
+
+    expect(hote.changements).toBe(0);
+    expect(capa.getCase).not.toHaveBeenCalled();
+  });
+
+  // Une CAPA EST son action : définir n'est pas ajouter.
+  it('ne propose pas de définir une action quand il y en a déjà une', async () => {
+    await setup();
+
+    expect(un('capa-action-definir')).toBeNull();
+    panneau().defineAction();
+    expect(dialog.open).not.toHaveBeenCalled();
+  });
+
+  it('ne propose pas de définir l’action d’un dossier clos', async () => {
+    await setup({ dossier: dossier({ actions: [], status: 'CLOSED' }) });
+
+    expect((un('capa-action-definir') as HTMLButtonElement).disabled).toBeTrue();
+    panneau().defineAction();
+    expect(dialog.open).not.toHaveBeenCalled();
+  });
+
+  // ---------- la panne ----------
+
+  it('dit la panne au lieu de laisser croire qu’il n’y a pas d’action', async () => {
+    await setup({ panne: true });
+
+    expect(un('capa-action-erreur')).not.toBeNull();
+    expect(un('capa-action-vide')).toBeNull();
+    expect(tous('capa-action-ligne').length).toBe(0);
+  });
+
+  it('se relance après une panne', async () => {
+    await setup({ panne: true });
+    capa.getCase.and.returnValue(of(dossier()));
+
+    un('capa-action-relancer')!.click();
+    fixture.detectChanges();
+
+    expect(un('capa-action-erreur')).toBeNull();
+    expect(tous('capa-action-ligne').length).toBe(1);
+  });
+
+  // ---------- les anciens dossiers ----------
+
+  // Les dossiers d'avant l'ADR 0088 portent plusieurs actions : on les montre
+  // toutes, et on n'en ajoute pas pour autant.
+  it('montre toutes les actions d’un ancien dossier', async () => {
+    await setup({
+      dossier: dossier({
+        actions: [action(), action({ id: 'act-2', title: 'Revoir la gamme de montage' })]
+      })
+    });
+
+    expect(tous('capa-action-ligne').length).toBe(2);
+    expect(un('capa-action-definir')).toBeNull();
+  });
+
+  it('nomme chaque statut en clair', async () => {
+    await setup();
+
+    const libelles = (['PENDING', 'IN_PROGRESS', 'DONE'] as CapaActionStatus[])
+      .map(s => panneau().actionStatusLabel(s));
+    expect(new Set(libelles).size).toBe(3);
+    expect(libelles.every(l => l.length > 0)).toBeTrue();
+  });
+});

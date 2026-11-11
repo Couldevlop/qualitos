@@ -10,6 +10,7 @@ import { deferredView } from '../../../../core/rx/deferred-view';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../../../shared/ui/confirm-dialog/confirm-dialog.component';
 import { FishboneBranchInput } from '../../components/ishikawa-fishbone/ishikawa-fishbone.layout';
+import { BranchView, buildBranchViews, toFishboneBranches } from '../../ishikawa-branches';
 import { IshikawaService } from '../../ishikawa.service';
 import {
   CauseCategory,
@@ -29,18 +30,6 @@ import {
 
 // OWASP A03 — refuse malformed route params client-side.
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-
-interface CauseNode {
-  cause: IshikawaCauseResponse;
-  children: CauseNode[];
-}
-
-interface BranchView {
-  category: CauseCategory;
-  label: string;
-  /** Top-level causes only (no parentId); children nested via tree(). */
-  roots: CauseNode[];
-}
 
 @Component({
   selector: 'qos-ishikawa-detail',
@@ -361,7 +350,7 @@ export class IshikawaDetailComponent implements OnInit {
     if (this.branchCache && this.branchCache.source === d) {
       return this.branchCache.view;
     }
-    const view = this.computeBranches(d);
+    const view = buildBranchViews(d);
     this.branchCache = { source: d, view, bones: toFishboneBranches(view) };
     return view;
   }
@@ -376,63 +365,8 @@ export class IshikawaDetailComponent implements OnInit {
     return this.branchCache!.bones;
   }
 
-  private computeBranches(d: IshikawaDiagramResponse): BranchView[] {
-    const order: { value: CauseCategory; label: string }[] = [
-      { value: 'METHODS',      label: 'Méthodes' },
-      { value: 'MANPOWER',     label: 'Main-d\'œuvre' },
-      { value: 'MACHINES',     label: 'Machines' },
-      { value: 'MATERIALS',    label: 'Matières' },
-      { value: 'MEASUREMENTS', label: 'Mesures' },
-      { value: 'ENVIRONMENT',  label: 'Milieu' }
-    ];
-    if (d.mode === 'SEVEN_M' || d.mode === 'EIGHT_M') {
-      order.push({ value: 'MANAGEMENT', label: 'Management' });
-    }
-    if (d.mode === 'EIGHT_M') {
-      order.push({ value: 'MONEY', label: 'Moyens financiers' });
-    }
-    const byParent = new Map<string, IshikawaCauseResponse[]>();
-    for (const c of d.causes) {
-      const key = c.parentId ?? '__root__';
-      const arr = byParent.get(key);
-      if (arr) arr.push(c); else byParent.set(key, [c]);
-    }
-    const buildNode = (c: IshikawaCauseResponse): CauseNode => ({
-      cause: c,
-      children: (byParent.get(c.id) ?? []).map(buildNode)
-    });
-    return order.map(o => ({
-      category: o.value,
-      label: o.label,
-      roots: (byParent.get('__root__') ?? [])
-        .filter(c => c.category === o.value)
-        .map(buildNode)
-    }));
-  }
-
   statusBadge(status: IshikawaStatus): string {
     return 'badge badge-' + status.toLowerCase();
   }
 
-}
-
-/** Réduit l'arbre de causes à ce que le dessin sait représenter. */
-function toFishboneBranches(view: BranchView[]): FishboneBranchInput[] {
-  return view.map(b => ({
-    key: b.category,
-    label: b.label,
-    causes: b.roots.map(n => ({
-      id: n.cause.id,
-      label: n.cause.label,
-      // Le score suit la cause jusqu'au dessin : depuis le retrait des cartes
-      // de branche, l'arête est le seul endroit où on le lit.
-      score: n.cause.rootCauseScore,
-      descendants: countDescendants(n)
-    }))
-  }));
-}
-
-/** Nombre de sous-causes, tous niveaux confondus — le dessin n'en montre que le compte. */
-function countDescendants(node: CauseNode): number {
-  return node.children.reduce((sum, child) => sum + 1 + countDescendants(child), 0);
 }
