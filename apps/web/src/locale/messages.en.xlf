@@ -32940,6 +32940,86 @@ India (service centre)</target>
         <source>Retrait impossible.</source>
         <target state="translated">Withdrawal failed.</target>
       </trans-unit>
+      <trans-unit id="standards.detail.mock-audit-title" datatype="html">
+        <source>Audit blanc IA</source>
+        <target state="translated">AI mock audit</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.mock-audit-intro" datatype="html">
+        <source>Simule l'audit de certification avant le réel : questions ciblées sur les clauses à risque, écarts confrontés aux preuves disponibles et plan de remédiation.</source>
+        <target state="translated">Simulates the certification audit before the real one: questions targeting at-risk clauses, gaps checked against available evidence, and a remediation plan.</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.mock-audit-run" datatype="html">
+        <source>Lancer un audit blanc IA</source>
+        <target state="translated">Run an AI mock audit</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.mock-audit-running" datatype="html">
+        <source>Audit en cours…</source>
+        <target state="translated">Audit running…</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.mock-audit-empty" datatype="html">
+        <source>Aucun audit blanc IA sur cette norme pour l'instant.</source>
+        <target state="translated">No AI mock audit on this standard yet.</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.mock-audit-major" datatype="html">
+        <source>majeures</source>
+        <target state="translated">major</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.mock-audit-minor" datatype="html">
+        <source>mineures</source>
+        <target state="translated">minor</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.mock-audit-no-clause" datatype="html">
+        <source>Cette norme adoptée n'expose aucune clause exploitable : chargez son référentiel avant de lancer un audit blanc IA.</source>
+        <target state="translated">This adopted standard exposes no usable clause: load its framework before running an AI mock audit.</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.mock-audit-forbidden" datatype="html">
+        <source>Lancer un audit blanc IA relève du pilotage qualité : demandez-le au manager qualité ou à l'auditeur.</source>
+        <target state="translated">Running an AI mock audit belongs to quality management: ask the quality manager or the auditor.</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.mock-audit-failed" datatype="html">
+        <source>L'audit blanc IA n'a pas pu être lancé. Réessayez dans quelques minutes.</source>
+        <target state="translated">The AI mock audit could not be started. Try again in a few minutes.</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.audit-rules-failed" datatype="html">
+        <source>L'analyse d'écarts n'a pas pu être calculée.</source>
+        <target state="translated">The gap analysis could not be computed.</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.audit-rules-retry" datatype="html">
+        <source>Relancer l'analyse d'écarts</source>
+        <target state="translated">Recompute the gap analysis</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.kpi-readiness-sub" datatype="html">
+        <source>exigences obligatoires couvertes par une preuve</source>
+        <target state="translated">mandatory requirements covered by evidence</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.kpi-readiness-formula" datatype="html">
+        <source>MUST couvertes ÷ MUST au total × 100. Une exigence est « couverte » dès qu'une preuve lui est liée dans l'onglet Mes preuves — la plateforme ne juge pas la qualité de la preuve.</source>
+        <target state="translated">Covered MUSTs ÷ total MUSTs × 100. A requirement counts as covered as soon as evidence is linked to it in the My evidence tab — the platform does not judge how good that evidence is.</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.kpi-alignment-sub" datatype="html">
+        <source>exigences couvertes, toutes obligations confondues</source>
+        <target state="translated">requirements covered, every obligation level included</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.kpi-alignment-formula" datatype="html">
+        <source>Exigences couvertes ÷ exigences au total × 100, sur toute la norme. Chaque exigence pèse pareil : ni les sections ni les MUST ne sont pondérés. Les scores par section et par clause suivent la même règle.</source>
+        <target state="translated">Covered requirements ÷ total requirements × 100, across the whole standard. Every requirement weighs the same: neither sections nor MUSTs are weighted. Section and clause scores follow the same rule.</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.kpi-roadmap-sub" datatype="html">
+        <source>étapes terminées</source>
+        <target state="translated">stages completed</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.kpi-roadmap-formula" datatype="html">
+        <source>Étapes TERMINÉES ÷ étapes applicables × 100. Les étapes écartées sortent du dénominateur — les ignorer ferait plafonner la roadmap sous 100 %. Une étape en cours compte pour zéro.</source>
+        <target state="translated">DONE stages ÷ applicable stages × 100. Skipped stages leave the denominator — keeping them would cap the roadmap below 100%. A stage in progress counts as zero.</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.kpi-gaps-formula" datatype="html">
+        <source>Toute exigence sans preuve est un écart. Critique : exigence obligatoire dont le risque en cas d'absence est élevé ou critique. Majeur : obligatoire, risque moindre. Mineur : exigence recommandée.</source>
+        <target state="translated">Any requirement without evidence is a gap. Critical: a mandatory requirement whose risk if missing is high or critical. Major: mandatory, lower risk. Minor: a recommended requirement.</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.audit-verdict-scale" datatype="html">
+        <source>Barème du verdict : « prêt » demande zéro écart critique et une préparation ≥ 95 % ; « quasi prêt », zéro critique et ≥ 80 % ; « écarts majeurs à corriger », ≥ 50 % ; en dessous, la préparation est jugée insuffisante.</source>
+        <target state="translated">Verdict scale: "ready" requires zero critical gaps and readiness ≥ 95%; "almost ready", zero critical and ≥ 80%; "major gaps to fix", ≥ 50%; below that, readiness is deemed insufficient.</target>
+      </trans-unit>
       <trans-unit id="standards.list.scope-label" datatype="html">
         <source>Afficher</source>
         <target state="translated">Show</target>

@@ -1,11 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 
 import { AuthService } from '../../../../core/auth/auth.service';
 import { DirectoryUser } from '../../../../core/directory/directory.types';
+import { safeErrorMessage } from '../../../../core/http/error-message';
+import { StandardsExtrasService } from '../../../standards-extras/standards-extras.service';
+import { MockAuditReport } from '../../../standards-extras/standards-extras.types';
 import {
   TreeNodeDialogComponent, TreeNodeDialogData, TreeNodeResult
 } from '../tree-node-dialog/tree-node-dialog.component';
@@ -17,6 +21,15 @@ import {
   SectionDetail, SectionRequest, StageStatus, StandardDetail, StandardRevision, StoryboardResponse,
   UpdateStageRequest
 } from '../../standards.types';
+
+/**
+ * Les rôles que `MockAuditController` accepte pour lancer un audit blanc IA.
+ * Écrits ici pour ne pas proposer un bouton qu'on sait refusé ; le serveur
+ * reste seul juge.
+ */
+const MOCK_AUDIT_ROLES = [
+  'quality_manager', 'director_quality', 'auditor', 'admin', 'admin_tenant', 'super_admin'
+];
 
 @Component({
   selector: 'qos-standards-detail',
@@ -35,7 +48,16 @@ export class StandardsDetailComponent implements OnInit {
   alignment?: AlignmentReport;
   roadmap?: RoadmapSummary;
   audit?: AuditBlancReport;
+  /** L'analyse d'écarts par règles n'a pas pu être lue : on le dit, on propose de relancer. */
+  auditFailed = false;
   evidence: EvidenceResponse[] = [];
+
+  /** Audit blanc IA (ADR 0033) : exécutions passées de CETTE adoption, la plus récente d'abord. */
+  mockAuditRuns: MockAuditReport[] = [];
+  mockAuditRunning = false;
+  mockAuditError?: string;
+  /** Faute de rôle lisible (dev, claims absents) on n'ampute pas l'écran : le serveur tranche. */
+  canRunMockAudit = true;
 
   dossier?: DossierResponse;
   generatingDossier = false;
@@ -78,12 +100,21 @@ export class StandardsDetailComponent implements OnInit {
     private readonly svc: StandardsService,
     private readonly auth: AuthService,
     private readonly dialog: MatDialog,
-    private readonly snack: MatSnackBar
+    private readonly snack: MatSnackBar,
+    private readonly router: Router,
+    private readonly extras: StandardsExtrasService
   ) {}
 
   ngOnInit(): void {
     this.adoptionId = this.route.snapshot.paramMap.get('id')!;
+    this.canRunMockAudit = this.hasAuditRole();
     this.reloadAll();
+  }
+
+  /** Les rôles habilités à déclencher l'audit blanc IA (miroir de `MockAuditController`). */
+  private hasAuditRole(): boolean {
+    const roles = this.auth.snapshot()?.roles ?? [];
+    return roles.length === 0 || roles.some(r => MOCK_AUDIT_ROLES.includes(r));
   }
 
   private reloadAll(): void {
@@ -129,14 +160,79 @@ export class StandardsDetailComponent implements OnInit {
       next: r => this.roadmap = r,
       error: e => console.warn('[standards-detail] getRoadmap failed', e?.status)
     });
-    this.svc.getAuditBlanc(this.adoptionId).subscribe({
-      next: r => this.audit = r,
-      error: e => console.warn('[standards-detail] getAuditBlanc failed', e?.status)
-    });
+    this.loadAuditBlanc();
+    this.loadMockAuditRuns();
     this.svc.listEvidence(this.adoptionId).subscribe({
       next: r => this.evidence = r,
       error: e => console.warn('[standards-detail] listEvidence failed', e?.status)
     });
+  }
+
+  // ---- Audit blanc ----
+
+  /**
+   * L'analyse d'écarts par règles. Son échec laissait l'onglet VIDE, sans un mot
+   * : on retient le refus pour pouvoir le dire et le relancer.
+   */
+  loadAuditBlanc(): void {
+    this.auditFailed = false;
+    this.svc.getAuditBlanc(this.adoptionId).subscribe({
+      next: r => this.audit = r,
+      error: e => {
+        console.warn('[standards-detail] getAuditBlanc failed', e?.status);
+        this.auditFailed = true;
+      }
+    });
+  }
+
+  /** Les audits blancs IA déjà passés sur cette adoption (relecture, deep link). */
+  private loadMockAuditRuns(): void {
+    this.extras.mockAuditHistory(this.adoptionId).subscribe({
+      next: runs => this.mockAuditRuns = runs,
+      error: e => console.warn('[standards-detail] mockAuditHistory failed', e?.status)
+    });
+  }
+
+  /**
+   * Lance un audit blanc IA sur cette norme adoptée (§8.4 onglet 7, ADR 0033) et
+   * ouvre son rapport.
+   *
+   * <p>La capacité existait, sans porte depuis la fiche de la norme : il fallait
+   * passer par le hub IMS et y re-sélectionner l'adoption qu'on avait sous les
+   * yeux. Le rapport vit dans son écran dédié — un audit blanc se partage par
+   * son URL et se relit plus tard.
+   */
+  runMockAudit(): void {
+    if (this.mockAuditRunning) return;
+    this.mockAuditRunning = true;
+    this.mockAuditError = undefined;
+    this.extras.runMockAudit(this.adoptionId)
+      .pipe(finalize(() => this.mockAuditRunning = false))
+      .subscribe({
+        next: report => this.openMockAudit(report.id),
+        error: err => this.mockAuditError = this.mockAuditErrorMessage(err)
+      });
+  }
+
+  openMockAudit(runId: string): void {
+    this.router.navigate(['/standards-ims', 'audit-blanc-ia', this.adoptionId, runId]);
+  }
+
+  /** Niveau de préparation d'une exécution, en pourcentage entier. */
+  readinessLabel(readiness: number): string {
+    return `${Math.round(readiness)} %`;
+  }
+
+  private mockAuditErrorMessage(err: unknown): string {
+    const status = (err as { status?: number } | null)?.status;
+    if (status === 409) {
+      return $localize`:@@standards.detail.mock-audit-no-clause:Cette norme adoptée n'expose aucune clause exploitable : chargez son référentiel avant de lancer un audit blanc IA.`;
+    }
+    if (status === 403) {
+      return $localize`:@@standards.detail.mock-audit-forbidden:Lancer un audit blanc IA relève du pilotage qualité : demandez-le au manager qualité ou à l'auditeur.`;
+    }
+    return safeErrorMessage(err,
+      $localize`:@@standards.detail.mock-audit-failed:L'audit blanc IA n'a pas pu être lancé. Réessayez dans quelques minutes.`);
   }
 
   /** Ensemble des IDs d'exigences couvertes par au moins une preuve (vue Exigences). */
