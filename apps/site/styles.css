@@ -176,6 +176,12 @@ img { max-width: 100%; height: auto; }
   border-bottom: 2px solid transparent;
 }
 .nav a:hover { border-bottom-color: var(--signal); color: var(--marine); }
+/* La section qu'on lit. Le meme filet que le survol, en plus affirme : le
+   menu repond ainsi a « ou suis-je ? » sans introduire une troisieme couleur. */
+.nav a.nav__lien--actif { border-bottom-color: var(--signal); color: var(--marine); font-weight: 600; }
+/* Le bouton de demande de demo garde son apparence : il appelle une action,
+   il ne situe pas la lecture. */
+.nav a.bouton.nav__lien--actif { border-bottom-color: transparent; }
 
 .nav__bascule {
   display: none;

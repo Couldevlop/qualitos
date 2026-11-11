@@ -659,7 +659,20 @@ jobs:
         run: npm ci --no-audit --no-fund
 
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
+        # Le miroir apt du runner tombe par intermittence (« Temporary failure
+        # resolving 'azure.archive.ubuntu.com' », apt sort en 100) : l'etape
+        # echouait alors pour une panne reseau etrangere au code, et le
+        # deploiement de preproduction etait saute dans la foulee. Trois
+        # tentatives espacees traversent le trou sans masquer un vrai echec,
+        # puisque la derniere decide du sort du job.
+        run: |
+          for essai in 1 2; do
+            if npx playwright install --with-deps chromium; then exit 0; fi
+            echo "::warning::installation Playwright en echec (tentative $essai/3), nouvelle tentative"
+            sudo apt-get update || true
+            sleep 20
+          done
+          npx playwright install --with-deps chromium
 
       - name: Run smoke tests
         run: npm run e2e
