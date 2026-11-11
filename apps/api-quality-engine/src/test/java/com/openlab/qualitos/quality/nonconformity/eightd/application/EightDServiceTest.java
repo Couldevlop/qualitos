@@ -67,7 +67,10 @@ class EightDServiceTest {
         assertThat(vue.ncReference()).isEqualTo("NC-2026-0007");
         assertThat(vue.disciplines()).hasSize(8);
         assertThat(vue.partial()).isTrue();
-        assertThat(vue.missingCodes()).contains("D1", "D3", "D8");
+        assertThat(vue.missingCodes()).contains("D1", "D3");
+        // D8 n'y figure plus : l'ecart est clos et n'a escalade aucune CAPA, donc
+        // la reconnaissance standard de l'equipe est portee au rapport.
+        assertThat(vue.missingCodes()).doesNotContain("D8");
         assertThat(vue.seal()).isNull();
         // La non-conformité est clôturée : le geste d'émission est offert.
         assertThat(vue.issuable()).isTrue();

@@ -40,18 +40,104 @@ class EightDSnapshotAssemblerTest {
     }
 
     @Test
-    void les_trois_disciplines_sans_source_le_disent_quand_rien_n_est_saisi() {
+    void les_disciplines_sans_source_le_disent_quand_rien_n_est_saisi() {
         EightDSnapshot snapshot = assembler.assemble(sourcesMinimales(), null, null, null,
                 "tenant-1", null, null);
 
         assertThat(snapshot.partial()).isTrue();
-        assertThat(snapshot.missingCodes()).contains("D1", "D3", "D8");
-        for (String code : List.of("D1", "D3", "D8")) {
+        assertThat(snapshot.missingCodes()).contains("D1", "D3");
+        for (String code : List.of("D1", "D3")) {
             EightDSnapshot.Section s = section(snapshot, code);
             assertThat(s.sourced()).isFalse();
             assertThat(s.lines()).isEmpty();
             assertThat(s.sourceLabel()).contains("filled in by hand");
         }
+    }
+
+    // ---------- D8 : la reconnaissance de l'equipe ----------
+
+    @Test
+    void d8_porte_la_reconnaissance_standard_des_que_l_ecart_est_solde() {
+        // L'ecart de la fixture est clos et n'a escalade aucune CAPA : rien ne reste
+        // a attendre, la reconnaissance a sa place.
+        EightDSnapshot snapshot = assembler.assemble(sourcesMinimales(), null, null, null,
+                "tenant-1", null, null);
+
+        EightDSnapshot.Section d8 = section(snapshot, "D8");
+        assertThat(d8.sourced()).isTrue();
+        assertThat(d8.lines()).isEqualTo(EightDSnapshotAssembler.RECONNAISSANCE_STANDARD);
+        assertThat(d8.sourceLabel()).isEqualTo(
+                "Standard acknowledgement — the deviation and its corrective actions are closed");
+        assertThat(snapshot.missingCodes()).doesNotContain("D8");
+    }
+
+    @Test
+    void d8_ajoute_la_reconnaissance_standard_apres_le_remerciement_saisi() {
+        EightDSnapshot snapshot = assembler.assemble(sourcesMinimales(), null, null,
+                "Merci a Ada et Grace, qui ont tenu l'astreinte du week-end.",
+                "tenant-1", null, null);
+
+        EightDSnapshot.Section d8 = section(snapshot, "D8");
+        assertThat(d8.sourced()).isTrue();
+        // La saisie passe DEVANT : un remerciement nominatif vaut plus que la
+        // phrase de la plateforme, qui le complete au lieu de le remplacer.
+        assertThat(d8.lines().get(0)).isEqualTo("Merci a Ada et Grace, qui ont tenu l'astreinte du week-end.");
+        assertThat(d8.lines()).containsAll(EightDSnapshotAssembler.RECONNAISSANCE_STANDARD);
+        assertThat(d8.sourceLabel()).isEqualTo(
+                "Filled in by the quality team, completed by the standard acknowledgement");
+    }
+
+    @Test
+    void d8_reste_muet_quand_la_capa_escaladee_court_toujours() {
+        // La prevention reste a finir : feliciter l'equipe daterait le document
+        // d'un optimisme que la suite peut dementir.
+        EightDSources sources = new EightDSources(nc(null), List.of(), List.of(),
+                capa(null), null, List.of());
+
+        EightDSnapshot.Section d8 = section(
+                assembler.assemble(sources, null, null, null, "t", null, null), "D8");
+
+        assertThat(d8.sourced()).isFalse();
+        assertThat(d8.lines()).isEmpty();
+        assertThat(d8.sourceLabel()).contains("filled in by hand");
+    }
+
+    @Test
+    void d8_porte_la_reconnaissance_quand_l_ecart_et_sa_capa_sont_clos() {
+        EightDSources sources = new EightDSources(nc(null), List.of(), List.of(),
+                capa(Instant.parse("2026-09-13T10:00:00Z")), null, List.of());
+
+        EightDSnapshot.Section d8 = section(
+                assembler.assemble(sources, null, null, null, "t", null, null), "D8");
+
+        assertThat(d8.sourced()).isTrue();
+        assertThat(d8.lines()).isEqualTo(EightDSnapshotAssembler.RECONNAISSANCE_STANDARD);
+    }
+
+    @Test
+    void d8_reste_muet_tant_que_l_ecart_n_est_pas_clos() {
+        EightDSources sources = new EightDSources(ncOuverte(), List.of(), List.of(),
+                null, null, List.of());
+
+        EightDSnapshot.Section d8 = section(
+                assembler.assemble(sources, null, null, null, "t", null, null), "D8");
+
+        assertThat(d8.sourced()).isFalse();
+        assertThat(d8.sourceLabel()).contains("filled in by hand");
+    }
+
+    @Test
+    void d8_garde_le_remerciement_saisi_meme_sur_un_ecart_encore_ouvert() {
+        EightDSources sources = new EightDSources(ncOuverte(), List.of(), List.of(),
+                null, null, List.of());
+
+        EightDSnapshot.Section d8 = section(
+                assembler.assemble(sources, null, null, "Bravo a l'equipe d'astreinte.",
+                        "t", null, null), "D8");
+
+        assertThat(d8.sourced()).isTrue();
+        assertThat(d8.lines()).containsExactly("Bravo a l'equipe d'astreinte.");
+        assertThat(d8.sourceLabel()).isEqualTo("Filled in by the quality team");
     }
 
     @Test
@@ -168,17 +254,18 @@ class EightDSnapshotAssemblerTest {
     }
 
     @Test
-    void d7_sans_source_dit_aussi_pourquoi_le_poka_yoke_n_y_figure_pas() {
-        // Taire le Poka-Yoke laisserait croire qu'on l'a cherché sans rien trouver,
-        // alors qu'un dispositif ne se rattache aujourd'hui qu'à un projet DMAIC.
+    void d7_sans_source_dit_ce_qui_manque_et_rien_de_plus() {
         EightDSnapshot.Section d7 = section(
                 assembler.assemble(sourcesMinimales(), null, null, null, "t", null, null), "D7");
 
         assertThat(d7.sourced()).isFalse();
         assertThat(d7.sourceLabel())
                 .contains("No PFMEA failure mode")
-                .contains("control plan")
-                .contains("Poka-Yoke");
+                .contains("control plan");
+        // La phrase qui expliquait pourquoi le Poka-Yoke n'y figurait pas exposait
+        // une limite d'outillage interne dans un document remis au client, là où
+        // il attend un constat de prévention.
+        assertThat(d7.sourceLabel()).doesNotContain("Poka-Yoke").doesNotContain("DMAIC");
     }
 
     @Test
@@ -213,6 +300,21 @@ class EightDSnapshotAssemblerTest {
                 "Flaque d'huile sous la pompe P-12", "PROCESS", "MAJOR", "INTERNAL",
                 NcStatus.CLOSED, DETECTE, CLOTURE, "Atelier 3", "Ada Lovelace", 2,
                 causeRacine, "Joint remplacé, étanchéité contrôlée");
+    }
+
+    /** Le meme ecart, mais encore ouvert : rien n'est solde. */
+    private EightDSources.Nc ncOuverte() {
+        return new EightDSources.Nc("NC-2026-0008", "Fuite au presse-etoupe",
+                "Flaque d'huile sous la pompe P-12", "PROCESS", "MAJOR", "INTERNAL",
+                NcStatus.UNDER_ANALYSIS, DETECTE, null, "Atelier 3", "Ada Lovelace", 0,
+                null, null);
+    }
+
+    /** Une CAPA escaladee, close ou non selon la date passee. */
+    private EightDSources.Capa capa(Instant cloture) {
+        return new EightDSources.Capa("Fuite presse-etoupe", "CORRECTIVE", "HIGH",
+                cloture == null ? "IN_PROGRESS" : "CLOSED",
+                LocalDate.parse("2026-09-30"), cloture, null, null, 0, List.of());
     }
 
     private EightDSnapshot.Section section(EightDSnapshot snapshot, String code) {
