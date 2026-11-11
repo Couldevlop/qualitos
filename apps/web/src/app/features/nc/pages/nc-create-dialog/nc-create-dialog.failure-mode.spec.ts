@@ -7,6 +7,8 @@ import { of, throwError } from 'rxjs';
 
 import { AuthService } from '../../../../core/auth/auth.service';
 import { SharedModule } from '../../../../shared/shared.module';
+import { DirectoryService } from '../../../../core/directory/directory.service';
+import { UserPickerModule } from '../../../../shared/user-picker/user-picker.module';
 import { UiModule } from '../../../../shared/ui/ui.module';
 import { FmeaService } from '../../../fmea/fmea.service';
 import { FmeaItemResponse, FmeaProjectResponse } from '../../../fmea/fmea.types';
@@ -15,6 +17,15 @@ import { ProductResponse } from '../../../products/products.types';
 import { NcService } from '../../nc.service';
 import { NcResponse } from '../../nc.types';
 import { NcCreateDialogComponent } from './nc-create-dialog.component';
+
+/**
+ * Un annuaire muet : ces bancs ne portent pas sur le choix des personnes, et
+ * un sélecteur sans annuaire doit rester inoffensif.
+ */
+const ANNUAIRE_MUET = {
+  search: () => of({ content: [], page: 0, size: 20, totalElements: 0, totalPages: 0 }),
+  getByAccount: () => throwError(() => ({ status: 404 }))
+};
 
 /**
  * Le rattachement d'une non-conformité à son produit et à son mode de défaillance.
@@ -75,8 +86,9 @@ describe('NcCreateDialogComponent — produit et mode de défaillance', () => {
 
     await TestBed.configureTestingModule({
       declarations: [NcCreateDialogComponent],
-      imports: [SharedModule, UiModule, MatRadioModule, NoopAnimationsModule],
+      imports: [SharedModule, UiModule, UserPickerModule, MatRadioModule, NoopAnimationsModule],
       providers: [
+        { provide: DirectoryService, useValue: ANNUAIRE_MUET },
         { provide: ProductsService, useValue: products },
         { provide: FmeaService, useValue: fmea },
         { provide: NcService, useValue: nc },

@@ -11576,6 +11576,42 @@ Business contact details</target>
         <source><x id="COUNT"/> personne(s) proposée(s)</source>
         <target state="translated"><x id="COUNT"/> person(s) suggested</target>
       </trans-unit>
+      <trans-unit id="directory.team.label" datatype="html">
+        <source>Équipe</source>
+        <target state="translated">Team</target>
+      </trans-unit>
+      <trans-unit id="directory.team.placeholder" datatype="html">
+        <source>Rechercher par nom ou adresse</source>
+        <target state="translated">Search by name or e-mail</target>
+      </trans-unit>
+      <trans-unit id="directory.team.empty" datatype="html">
+        <source>Personne n'est encore nommée.</source>
+        <target state="translated">No one has been named yet.</target>
+      </trans-unit>
+      <trans-unit id="directory.team.empty-required" datatype="html">
+        <source>Nommez au moins une personne : la première désignée pilote.</source>
+        <target state="translated">Name at least one person: the first one leads.</target>
+      </trans-unit>
+      <trans-unit id="directory.team.full" datatype="html">
+        <source>Équipe au complet (<x id="MAX"/> personnes). Retirez quelqu'un pour en ajouter une autre.</source>
+        <target state="translated">The team is full (<x id="MAX"/> people). Remove someone to add another.</target>
+      </trans-unit>
+      <trans-unit id="directory.team.role-lead" datatype="html">
+        <source>Pilote</source>
+        <target state="translated">Lead</target>
+      </trans-unit>
+      <trans-unit id="directory.team.role-member" datatype="html">
+        <source>Membre</source>
+        <target state="translated">Member</target>
+      </trans-unit>
+      <trans-unit id="directory.team.remove-one" datatype="html">
+        <source>Retirer <x id="NAME"/> de l'équipe</source>
+        <target state="translated">Remove <x id="NAME"/> from the team</target>
+      </trans-unit>
+      <trans-unit id="directory.team.promote-one" datatype="html">
+        <source>Remonter <x id="NAME"/> d'un rang</source>
+        <target state="translated">Move <x id="NAME"/> up one place</target>
+      </trans-unit>
       <trans-unit id="directory.person.unknown" datatype="html">
         <source>Personne inconnue</source>
         <target state="translated">Unknown person</target>
@@ -21437,6 +21473,46 @@ declared income
       <trans-unit id="nc.reject.error" datatype="html">
         <source>Rejet impossible.</source>
         <target state="translated">Rejection failed.</target>
+      </trans-unit>
+      <trans-unit id="nc.create.section-team" datatype="html">
+        <source>Qui s’en occupe</source>
+        <target state="translated">Who handles it</target>
+      </trans-unit>
+      <trans-unit id="nc.create.team-label" datatype="html">
+        <source>Équipe en charge</source>
+        <target state="translated">Team in charge</target>
+      </trans-unit>
+      <trans-unit id="nc.create.team-hint" datatype="html">
+        <source>Le premier nommé pilote l’écart. Cette équipe est reprise en D1 du rapport 8D.</source>
+        <target state="translated">The first person named leads. This team is carried into D1 of the 8D report.</target>
+      </trans-unit>
+      <trans-unit id="nc.create.blocked-team" datatype="html">
+        <source>Nommez au moins une personne dans l’équipe en charge.</source>
+        <target state="translated">Name at least one person in the team in charge.</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.team" datatype="html">
+        <source>Équipe en charge</source>
+        <target state="translated">Team in charge</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.team-edit" datatype="html">
+        <source>Modifier l’équipe</source>
+        <target state="translated">Change the team</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.team-add" datatype="html">
+        <source>Ajouter une personne</source>
+        <target state="translated">Add a person</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.team-none" datatype="html">
+        <source>Aucune équipe nommée sur cet écart. Le D1 du rapport 8D restera à saisir.</source>
+        <target state="translated">No team has been named on this issue. D1 of the 8D report will have to be filled in by hand.</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.team-saved" datatype="html">
+        <source>Équipe enregistrée.</source>
+        <target state="translated">Team saved.</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.team-failed" datatype="html">
+        <source>L’équipe n’a pas pu être enregistrée.</source>
+        <target state="translated">The team could not be saved.</target>
       </trans-unit>
       <trans-unit id="nc.8d.title" datatype="html">
         <source>Rapport 8D</source>

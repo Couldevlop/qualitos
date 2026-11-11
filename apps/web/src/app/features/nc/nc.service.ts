@@ -148,6 +148,7 @@ export class NcService {
         geoLng: input.geoLng,
         photoUrls: input.photoUrls,
         reporterId: input.reporterId,
+        teamMembers: input.teamMembers,
         createdAt: now,
         updatedAt: now
       };
@@ -447,6 +448,9 @@ export class NcService {
         geoLng: input.geoLng,
         photoUrls: input.photoUrls,
         reporterId: input.reporterId,
+        // L'équipe part telle qu'elle a été nommée hors ligne : la fiche en
+        // attente nomme déjà qui s'en occupe, et la synchronisation l'enregistre.
+        teamMembers: input.teamMembers,
         createdAt: now,
         updatedAt: now,
         pendingSync: true

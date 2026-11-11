@@ -52,6 +52,10 @@ import static org.mockito.Mockito.when;
 class NcConversionTest {
 
     @Mock NonConformityRepository repo;
+
+    /** L'équipe nommée sur la fiche : hors sujet ici, mais le service la lit. */
+
+    @Mock NcTeamMemberRepository teamMembers;
     @Mock CapaService capaService;
     @Mock PdcaService pdcaService;
     @Mock DmaicService dmaicService;

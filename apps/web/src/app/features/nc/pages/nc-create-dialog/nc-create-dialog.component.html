@@ -83,6 +83,20 @@
     </mat-form-field>
   </div>
 
+  <!-- Le D1 du 8D, nomme a l'ouverture : l'equipe qui prend l'ecart en charge.
+       Elle se retapait jusqu'ici dans le rapport, alors que la fiche sait depuis
+       le premier jour qui s'en occupe. Le declarant y est pose d'office en tete. -->
+  <h3 class="qfd-section" i18n="@@nc.create.section-team">Qui s’en occupe</h3>
+
+  <qos-user-team-picker formControlName="teamMembers"
+                        required
+                        [max]="maxTeamMembers"
+                        i18n-label="@@nc.create.team-label"
+                        label="Équipe en charge"
+                        i18n-hint="@@nc.create.team-hint"
+                        hint="Le premier nommé pilote l’écart. Cette équipe est reprise en D1 du rapport 8D."
+                        data-test="nc-team"></qos-user-team-picker>
+
   <h3 class="qfd-section" i18n="@@nc.create.section-where">Où, et sur quoi</h3>
 
   <mat-form-field appearance="outline" class="full">

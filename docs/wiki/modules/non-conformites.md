@@ -12,12 +12,32 @@ possibilité d'y joindre des **photos**.
 
 1. **Ouvrir** `/nc` : la liste des non-conformités et leur statut.
 2. **Déclarer une NC** : décrire l'écart (quoi, où, quand), sa gravité et le périmètre concerné.
+   Vous **nommez l'équipe** qui le prend en charge — au moins une personne, choisie dans l'annuaire.
+   Vous y êtes posé d'office en tête : retirez-vous si vous ne suivez pas l'écart.
 3. **Joindre des photos** pour documenter l'écart.
 4. **Suivre le traitement** : la NC évolue jusqu'à sa résolution.
 5. **Relier à une action** : une NC peut déclencher une [CAPA](capa.md), un cycle
    [PDCA](pdca.md) ou un projet [DMAIC](dmaic.md) selon la gravité.
 6. **Clôturer, et remettre le rapport** : le [rapport 8D](rapport-8d.md) rassemble les huit
-   disciplines attendues par le client, dont cinq sont reprises automatiquement de ce dossier.
+   disciplines attendues par le client, dont six sont reprises automatiquement de ce dossier.
+
+## L'équipe en charge
+
+L'équipe nommée à la déclaration est la **première discipline du rapport 8D** (D1 « Constituer
+l'équipe ») : elle n'est donc pas à retaper à la clôture.
+
+- **L'ordre compte** : le premier nommé est le **pilote** de l'écart. Les flèches de la fiche
+  remontent quelqu'un d'un rang, c'est ainsi qu'on change de pilote.
+- **Douze personnes au plus** : au-delà, ce n'est plus une équipe de résolution mais une liste de
+  diffusion.
+- **Les noms sont figés à la saisie** : un rapport relu trois ans plus tard porte les noms de
+  l'époque, même si la personne a quitté l'organisation.
+- **L'équipe se remanie** tant que l'écart est ouvert (bouton *Modifier l'équipe* sur sa fiche).
+  Sur un écart clos, annulé ou rejeté, elle se lit sans se modifier : c'est l'archive du D1.
+- **Un écart ouvert par la plateforme** — un constat d'audit, un relevé venu d'un connecteur —
+  n'a pas d'équipe : la fiche le dit, et c'est à vous de la nommer en reprenant le dossier.
+- Être nommé dans une équipe **ne donne aucun droit supplémentaire** : la visibilité des dossiers
+  reste celle de votre rôle.
 
 ## L'IA au service des NC
 
@@ -31,5 +51,7 @@ possibilité d'y joindre des **photos**.
   avant d'agir.
 - **Surveillez les récurrences** : une même NC qui revient signale une cause non traitée — vérifiez
   les clusters.
+- **Nommez l'équipe tout de suite** : c'est la première question posée en revue, et la retrouver
+  des semaines plus tard, de mémoire, donne un D1 approximatif.
 - **Renseignez l'endiguement tôt** : le [rapport 8D](rapport-8d.md) le demande (D3), et c'est ce
   qu'un client veut savoir en premier. Il s'oublie dès que la cause est trouvée.

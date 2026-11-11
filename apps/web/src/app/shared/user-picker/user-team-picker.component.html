@@ -1,0 +1,49 @@
+<div class="team">
+  <qos-user-picker *ngIf="!disabled && !full"
+                   [label]="label"
+                   [placeholder]="placeholder"
+                   [required]="required && empty"
+                   [excludeIds]="excluded"
+                   (userSelected)="onPicked($event)"
+                   data-test="team-picker-input"></qos-user-picker>
+
+  <p class="team__full" *ngIf="!disabled && full" data-test="team-full">
+    <span i18n="@@directory.team.full">Équipe au complet ({{ max // i18n(ph="MAX") }} personnes). Retirez quelqu'un pour en ajouter une autre.</span>
+  </p>
+
+  <p class="team__empty" *ngIf="empty" data-test="team-empty">
+    <span *ngIf="required" i18n="@@directory.team.empty-required">Nommez au moins une personne : la première désignée pilote.</span>
+    <span *ngIf="!required" i18n="@@directory.team.empty">Personne n'est encore nommée.</span>
+  </p>
+
+  <ul class="team__list" *ngIf="!empty" [attr.id]="listId" data-test="team-list">
+    <li class="member" *ngFor="let member of members; let i = index; trackBy: trackByAccount"
+        data-test="team-member">
+      <span class="member__avatar" aria-hidden="true">{{ member.displayName.charAt(0) }}</span>
+      <span class="member__text">
+        <span class="member__name">{{ member.displayName }}</span>
+        <span class="member__role member__role--lead" *ngIf="i === 0"
+              i18n="@@directory.team.role-lead" data-test="team-lead">Pilote</span>
+        <span class="member__role" *ngIf="i > 0"
+              i18n="@@directory.team.role-member">Membre</span>
+      </span>
+      <span class="member__actions" *ngIf="!disabled">
+        <button mat-icon-button type="button"
+                *ngIf="i > 0"
+                (click)="promote(i)"
+                [attr.aria-label]="promoteLabel(member)"
+                data-test="team-promote">
+          <mat-icon aria-hidden="true">arrow_upward</mat-icon>
+        </button>
+        <button mat-icon-button type="button"
+                (click)="remove(i)"
+                [attr.aria-label]="removeLabel(member)"
+                data-test="team-remove">
+          <mat-icon aria-hidden="true">close</mat-icon>
+        </button>
+      </span>
+    </li>
+  </ul>
+
+  <p class="team__hint" *ngIf="hint">{{ hint }}</p>
+</div>

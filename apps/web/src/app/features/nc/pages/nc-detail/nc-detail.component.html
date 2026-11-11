@@ -212,6 +212,65 @@
         </mat-card-content>
       </mat-card>
 
+      <!-- L'equipe en charge : le D1 du 8D, lu et remanie ici plutot que retape
+           dans le rapport. Les personnes sont nommees par leur nom, jamais par
+           un identifiant, et le premier nomme pilote. -->
+      <mat-card class="team-card" data-test="equipe">
+        <mat-card-content>
+          <div class="team-head">
+            <span class="info-label" i18n="@@nc.detail.team">Équipe en charge</span>
+            <div class="team-head__actions">
+              <ng-container *qosCan="'nc.process'">
+                <button mat-stroked-button type="button" *ngIf="!teamEditing && canEditTeam(n.status)"
+                        (click)="editTeam(n)" data-test="equipe-modifier">
+                  <mat-icon>group_add</mat-icon>
+                  <span i18n="@@nc.detail.team-edit">Modifier l’équipe</span>
+                </button>
+              </ng-container>
+              <ng-container *ngIf="teamEditing">
+                <button mat-stroked-button type="button" (click)="cancelTeamEdit()"
+                        [disabled]="teamSaving$ | async" data-test="equipe-annuler">
+                  <span i18n="@@common.cancel">Annuler</span>
+                </button>
+                <button mat-flat-button color="primary" type="button" (click)="saveTeam()"
+                        [disabled]="(teamSaving$ | async) || teamDraft.length === 0"
+                        data-test="equipe-enregistrer">
+                  <mat-spinner *ngIf="teamSaving$ | async" diameter="18"></mat-spinner>
+                  <span i18n="@@common.save">Enregistrer</span>
+                </button>
+              </ng-container>
+            </div>
+          </div>
+
+          <qos-user-team-picker *ngIf="teamEditing"
+                                [formControl]="teamDraftControl"
+                                [max]="maxTeamMembers"
+                                required
+                                i18n-label="@@nc.detail.team-add"
+                                label="Ajouter une personne"
+                                data-test="equipe-champ"></qos-user-team-picker>
+
+          <ng-container *ngIf="!teamEditing">
+            <ul class="team-list" *ngIf="n.teamMembers?.length; else equipeVide">
+              <li *ngFor="let membre of n.teamMembers; let i = index" data-test="equipe-membre">
+                <span class="team-name">{{ membre.displayName }}</span>
+                <span class="team-role" *ngIf="i === 0" i18n="@@directory.team.role-lead"
+                      data-test="equipe-pilote">Pilote</span>
+                <span class="team-role" *ngIf="i > 0" i18n="@@directory.team.role-member">Membre</span>
+              </li>
+            </ul>
+            <ng-template #equipeVide>
+              <!-- Les ecarts ouverts par une machine (constat d'audit, connecteur
+                   EHR) et ceux saisis avant cette donnee n'ont pas d'equipe : le
+                   dire, plutot que laisser un blanc qu'on prend pour un bug. -->
+              <p class="team-empty" data-test="equipe-vide" i18n="@@nc.detail.team-none">
+                Aucune équipe nommée sur cet écart. Le D1 du rapport 8D restera à saisir.
+              </p>
+            </ng-template>
+          </ng-container>
+        </mat-card-content>
+      </mat-card>
+
       <mat-card class="analysis-card" *ngIf="n.rootCause || n.resolutionNote">
         <mat-card-content>
           <div class="block" *ngIf="n.rootCause">

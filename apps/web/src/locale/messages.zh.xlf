@@ -11576,6 +11576,42 @@ Coordonnées professionnelles</source>
         <source><x id="COUNT"/> personne(s) proposée(s)</source>
         <target state="translated">建议人员 <x id="COUNT"/> 名</target>
       </trans-unit>
+      <trans-unit id="directory.team.label" datatype="html">
+        <source>Équipe</source>
+        <target state="translated">团队</target>
+      </trans-unit>
+      <trans-unit id="directory.team.placeholder" datatype="html">
+        <source>Rechercher par nom ou adresse</source>
+        <target state="translated">按姓名或邮箱搜索</target>
+      </trans-unit>
+      <trans-unit id="directory.team.empty" datatype="html">
+        <source>Personne n'est encore nommée.</source>
+        <target state="translated">尚未指定任何人。</target>
+      </trans-unit>
+      <trans-unit id="directory.team.empty-required" datatype="html">
+        <source>Nommez au moins une personne : la première désignée pilote.</source>
+        <target state="translated">请至少指定一人：第一位为负责人。</target>
+      </trans-unit>
+      <trans-unit id="directory.team.full" datatype="html">
+        <source>Équipe au complet (<x id="MAX"/> personnes). Retirez quelqu'un pour en ajouter une autre.</source>
+        <target state="translated">团队已满（<x id="MAX"/> 人）。如需添加，请先移除一人。</target>
+      </trans-unit>
+      <trans-unit id="directory.team.role-lead" datatype="html">
+        <source>Pilote</source>
+        <target state="translated">负责人</target>
+      </trans-unit>
+      <trans-unit id="directory.team.role-member" datatype="html">
+        <source>Membre</source>
+        <target state="translated">成员</target>
+      </trans-unit>
+      <trans-unit id="directory.team.remove-one" datatype="html">
+        <source>Retirer <x id="NAME"/> de l'équipe</source>
+        <target state="translated">将 <x id="NAME"/> 移出团队</target>
+      </trans-unit>
+      <trans-unit id="directory.team.promote-one" datatype="html">
+        <source>Remonter <x id="NAME"/> d'un rang</source>
+        <target state="translated">将 <x id="NAME"/> 上移一位</target>
+      </trans-unit>
       <trans-unit id="directory.person.unknown" datatype="html">
         <source>Personne inconnue</source>
         <target state="translated">未知人员</target>
@@ -21437,6 +21473,46 @@ historique 12 mois</source>
       <trans-unit id="nc.reject.error" datatype="html">
         <source>Rejet impossible.</source>
         <target state="translated">无法驳回。</target>
+      </trans-unit>
+      <trans-unit id="nc.create.section-team" datatype="html">
+        <source>Qui s’en occupe</source>
+        <target state="translated">由谁负责</target>
+      </trans-unit>
+      <trans-unit id="nc.create.team-label" datatype="html">
+        <source>Équipe en charge</source>
+        <target state="translated">负责团队</target>
+      </trans-unit>
+      <trans-unit id="nc.create.team-hint" datatype="html">
+        <source>Le premier nommé pilote l’écart. Cette équipe est reprise en D1 du rapport 8D.</source>
+        <target state="translated">第一位被指定者为负责人。该团队将带入 8D 报告的 D1。</target>
+      </trans-unit>
+      <trans-unit id="nc.create.blocked-team" datatype="html">
+        <source>Nommez au moins une personne dans l’équipe en charge.</source>
+        <target state="translated">请在负责团队中至少指定一人。</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.team" datatype="html">
+        <source>Équipe en charge</source>
+        <target state="translated">负责团队</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.team-edit" datatype="html">
+        <source>Modifier l’équipe</source>
+        <target state="translated">修改团队</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.team-add" datatype="html">
+        <source>Ajouter une personne</source>
+        <target state="translated">添加人员</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.team-none" datatype="html">
+        <source>Aucune équipe nommée sur cet écart. Le D1 du rapport 8D restera à saisir.</source>
+        <target state="translated">此偏差尚未指定团队。8D 报告的 D1 仍需手动填写。</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.team-saved" datatype="html">
+        <source>Équipe enregistrée.</source>
+        <target state="translated">团队已保存。</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.team-failed" datatype="html">
+        <source>L’équipe n’a pas pu être enregistrée.</source>
+        <target state="translated">无法保存该团队。</target>
       </trans-unit>
       <trans-unit id="nc.8d.title" datatype="html">
         <source>Rapport 8D</source>

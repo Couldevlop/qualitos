@@ -207,4 +207,48 @@ TRANSLATIONS = {
     'nc.reject.error': (
         'Rejet impossible.', 'Rejection failed.', 'Rechazo imposible.',
         'تعذَّر الرفض.', '却下できませんでした。', '无法驳回。'),
+    # --- l'équipe en charge (D1 du 8D) ---------------------------------------
+    'nc.create.section-team': (
+        "Qui s’en occupe", 'Who handles it', 'Quién se encarga',
+        'من يتولّى الأمر', '担当者', '由谁负责'),
+    'nc.create.team-label': (
+        'Équipe en charge', 'Team in charge', 'Equipo responsable',
+        'الفريق المسؤول', '担当チーム', '负责团队'),
+    'nc.create.team-hint': (
+        "Le premier nommé pilote l’écart. Cette équipe est reprise en D1 du rapport 8D.",
+        'The first person named leads. This team is carried into D1 of the 8D report.',
+        'La primera persona designada es la responsable. Este equipo se recoge en el D1 del informe 8D.',
+        'أول شخص مُسمّى هو القائد. يُنقل هذا الفريق إلى D1 في تقرير 8D.',
+        '最初に指名された人がリーダーです。このチームは 8D 報告書の D1 に引き継がれます。',
+        '第一位被指定者为负责人。该团队将带入 8D 报告的 D1。'),
+    'nc.create.blocked-team': (
+        "Nommez au moins une personne dans l’équipe en charge.",
+        'Name at least one person in the team in charge.',
+        'Designe al menos a una persona en el equipo responsable.',
+        'سمِّ شخصًا واحدًا على الأقل في الفريق المسؤول.',
+        '担当チームに少なくとも 1 名を指名してください。',
+        '请在负责团队中至少指定一人。'),
+    'nc.detail.team': (
+        'Équipe en charge', 'Team in charge', 'Equipo responsable',
+        'الفريق المسؤول', '担当チーム', '负责团队'),
+    'nc.detail.team-edit': (
+        "Modifier l’équipe", 'Change the team', 'Modificar el equipo',
+        'تعديل الفريق', 'チームを変更', '修改团队'),
+    'nc.detail.team-add': (
+        'Ajouter une personne', 'Add a person', 'Añadir a una persona',
+        'إضافة شخص', '担当者を追加', '添加人员'),
+    'nc.detail.team-none': (
+        "Aucune équipe nommée sur cet écart. Le D1 du rapport 8D restera à saisir.",
+        'No team has been named on this issue. D1 of the 8D report will have to be filled in by hand.',
+        'No se ha designado ningún equipo para esta desviación. El D1 del informe 8D deberá rellenarse a mano.',
+        'لم يُسمَّ أي فريق لهذه الحالة. سيبقى D1 في تقرير 8D بحاجة إلى إدخال يدوي.',
+        'この不適合にはチームが指名されていません。8D 報告書の D1 は手入力のままになります。',
+        '此偏差尚未指定团队。8D 报告的 D1 仍需手动填写。'),
+    'nc.detail.team-saved': (
+        'Équipe enregistrée.', 'Team saved.', 'Equipo guardado.',
+        'تم حفظ الفريق.', 'チームを保存しました。', '团队已保存。'),
+    'nc.detail.team-failed': (
+        "L’équipe n’a pas pu être enregistrée.", 'The team could not be saved.',
+        'No se pudo guardar el equipo.', 'تعذّر حفظ الفريق.',
+        'チームを保存できませんでした。', '无法保存该团队。'),
 }

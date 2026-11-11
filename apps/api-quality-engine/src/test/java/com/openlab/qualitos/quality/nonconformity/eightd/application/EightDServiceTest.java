@@ -67,7 +67,10 @@ class EightDServiceTest {
         assertThat(vue.ncReference()).isEqualTo("NC-2026-0007");
         assertThat(vue.disciplines()).hasSize(8);
         assertThat(vue.partial()).isTrue();
-        assertThat(vue.missingCodes()).contains("D1", "D3", "D8");
+        // D1 n'est PAS manquant : la fiche nomme son équipe, et c'est elle qui
+        // remplit la première discipline. Restent D3 et D8, que personne d'autre
+        // ne sait — plus les disciplines sans source dans ce jeu d'essai.
+        assertThat(vue.missingCodes()).contains("D3", "D8").doesNotContain("D1");
         assertThat(vue.seal()).isNull();
         // La non-conformité est clôturée : le geste d'émission est offert.
         assertThat(vue.issuable()).isTrue();
@@ -331,7 +334,8 @@ class EightDServiceTest {
                             List.of(new EightDSources.Action("Remplacer", null, "CORRECTIVE",
                                     "OPEN", null, null, null, 0)))
                     : null;
-            return new EightDSources(nc, List.of(), List.of(), capa, null, List.of());
+            return new EightDSources(nc, List.of("Marie Durand"), List.of(), List.of(),
+                    capa, null, List.of());
         }
     }
 

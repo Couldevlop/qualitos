@@ -1,5 +1,15 @@
+import { TeamMemberRef } from '../../shared/user-picker/user-team-picker.component';
 import { OpenCapaRequest } from '../capa/capa.types';
 import { SpringPage } from '../pdca/pdca.types';
+
+/**
+ * Borne haute d'une équipe (miroir de `NcDto.MAX_TEAM_MEMBERS`) : au-delà d'une
+ * dizaine de personnes, ce n'est plus une équipe de résolution mais une liste de
+ * diffusion, et le D1 du rapport 8D devient illisible.
+ */
+export const NC_MAX_TEAM_MEMBERS = 12;
+
+export type { TeamMemberRef };
 
 export type NcCategory =
   | 'PRODUCT'
@@ -105,6 +115,13 @@ export interface NcResponse {
   closedAt?: string;
   createdAt: string;
   updatedAt: string;
+  /**
+   * L'équipe qui prend l'écart en charge, dans l'ordre où elle a été nommée —
+   * le premier est le pilote. Vide sur les écarts saisis avant cette donnée, et
+   * sur ceux qu'une machine a ouverts (constat d'audit, connecteur EHR) : c'est
+   * à l'humain qui reprend la fiche de nommer l'équipe.
+   */
+  teamMembers?: TeamMemberRef[];
   /** true = saisie hors-ligne, en attente de synchronisation (réponse optimiste). */
   pendingSync?: boolean;
 }
@@ -147,6 +164,12 @@ export interface CreateNcRequest {
   productId?: string;
   /** Mode de défaillance du PFMEA que ce défaut illustre, confirmé par l'utilisateur. */
   fmeaItemId?: string;
+  /**
+   * L'équipe qui prend l'écart en charge (D1 du 8D), au moins une personne, dans
+   * l'ordre de saisie : le premier nommé pilote. Le serveur refuse une liste
+   * vide — nommer l'équipe à l'ouverture évite de la retaper dans le rapport.
+   */
+  teamMembers: TeamMemberRef[];
 }
 
 export interface UpdateNcRequest {
@@ -161,6 +184,11 @@ export interface UpdateNcRequest {
   geoLat?: number;
   geoLng?: number;
   photoUrls?: string;
+  /**
+   * L'équipe en charge, remplacée en bloc. Absente = inchangée ; jamais vide —
+   * on ne retire pas la dernière personne d'un écart ouvert.
+   */
+  teamMembers?: TeamMemberRef[];
 }
 
 export interface ResolveNcRequest {

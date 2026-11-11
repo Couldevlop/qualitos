@@ -16,6 +16,8 @@ import com.openlab.qualitos.quality.ishikawa.IshikawaDiagram;
 import com.openlab.qualitos.quality.ishikawa.IshikawaDiagramRepository;
 import com.openlab.qualitos.quality.nonconformity.NcNotFoundException;
 import com.openlab.qualitos.quality.nonconformity.NcPhotoRepository;
+import com.openlab.qualitos.quality.nonconformity.NcTeamMember;
+import com.openlab.qualitos.quality.nonconformity.NcTeamMemberRepository;
 import com.openlab.qualitos.quality.nonconformity.NcScope;
 import com.openlab.qualitos.quality.nonconformity.NonConformity;
 import com.openlab.qualitos.quality.nonconformity.NonConformityRepository;
@@ -52,6 +54,8 @@ public class EightDSourceAdapter implements EightDSourcePort {
 
     private final NonConformityRepository ncs;
     private final NcPhotoRepository photos;
+    /** L'equipe nommee sur la fiche : la source de D1. */
+    private final NcTeamMemberRepository teamMembers;
     private final IshikawaDiagramRepository ishikawas;
     private final FiveWhysAnalysisRepository fiveWhys;
     private final FiveWhysStepRepository fiveWhysSteps;
@@ -64,6 +68,7 @@ public class EightDSourceAdapter implements EightDSourcePort {
 
     public EightDSourceAdapter(NonConformityRepository ncs,
                                NcPhotoRepository photos,
+                               NcTeamMemberRepository teamMembers,
                                IshikawaDiagramRepository ishikawas,
                                FiveWhysAnalysisRepository fiveWhys,
                                FiveWhysStepRepository fiveWhysSteps,
@@ -74,6 +79,7 @@ public class EightDSourceAdapter implements EightDSourcePort {
                                RecordScope scope) {
         this.ncs = ncs;
         this.photos = photos;
+        this.teamMembers = teamMembers;
         this.ishikawas = ishikawas;
         this.fiveWhys = fiveWhys;
         this.fiveWhysSteps = fiveWhysSteps;
@@ -93,11 +99,24 @@ public class EightDSourceAdapter implements EightDSourcePort {
 
         return new EightDSources(
                 enNc(tenantId, nc),
+                enEquipe(tenantId, ncId),
                 enIshikawas(tenantId, ncId),
                 enFiveWhys(tenantId, ncId),
                 enCapa(tenantId, nc),
                 enFmea(tenantId, nc),
                 enSurveillance(tenantId, nc));
+    }
+
+    /**
+     * L'équipe nommée sur la fiche, dans son ordre de saisie (D1).
+     *
+     * <p>Les NOMS figés à la saisie, et non une relecture de l'annuaire : un
+     * rapport 8D relu trois ans plus tard porte les noms de l'époque.
+     */
+    private List<String> enEquipe(UUID tenantId, UUID ncId) {
+        return teamMembers.findByTenantIdAndNcIdOrderByPositionAsc(tenantId, ncId).stream()
+                .map(NcTeamMember::getDisplayName)
+                .toList();
     }
 
     private EightDSources.Nc enNc(UUID tenantId, NonConformity nc) {

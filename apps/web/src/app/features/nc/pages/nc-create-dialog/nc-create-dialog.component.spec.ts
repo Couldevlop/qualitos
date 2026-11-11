@@ -5,17 +5,28 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatRadioModule } from '@angular/material/radio';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { of, Subject } from 'rxjs';
+import { Subject, of, throwError } from 'rxjs';
 
 import { environment } from '../../../../../environments/environment';
 import { AuthService, AuthUser } from '../../../../core/auth/auth.service';
 import { ConnectivityService } from '../../../../core/offline/connectivity.service';
 import { InMemoryQueueStore, OfflineQueueStore } from '../../../../core/offline/offline-queue.store';
 import { SharedModule } from '../../../../shared/shared.module';
+import { DirectoryService } from '../../../../core/directory/directory.service';
+import { UserPickerModule } from '../../../../shared/user-picker/user-picker.module';
 import { UiModule } from '../../../../shared/ui/ui.module';
 import { ProductsService } from '../../../products/products.service';
 import { NcResponse } from '../../nc.types';
 import { NcCreateDialogComponent } from './nc-create-dialog.component';
+
+/**
+ * Un annuaire muet : ces bancs ne portent pas sur le choix des personnes, et
+ * un sélecteur sans annuaire doit rester inoffensif.
+ */
+const ANNUAIRE_MUET = {
+  search: () => of({ content: [], page: 0, size: 20, totalElements: 0, totalPages: 0 }),
+  getByAccount: () => throwError(() => ({ status: 404 }))
+};
 
 /** Connectivité pilotable (navigator.onLine est read-only). */
 class FakeConnectivity {
@@ -58,8 +69,9 @@ describe('NcCreateDialogComponent', () => {
 
     await TestBed.configureTestingModule({
       declarations: [NcCreateDialogComponent],
-      imports: [SharedModule, UiModule, MatRadioModule, NoopAnimationsModule],
+      imports: [SharedModule, UiModule, UserPickerModule, MatRadioModule, NoopAnimationsModule],
       providers: [
+        { provide: DirectoryService, useValue: ANNUAIRE_MUET },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
         { provide: OfflineQueueStore, useClass: InMemoryQueueStore },

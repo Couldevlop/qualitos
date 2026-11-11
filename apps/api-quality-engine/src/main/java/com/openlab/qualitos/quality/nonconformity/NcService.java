@@ -19,7 +19,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import jakarta.persistence.criteria.Predicate;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,6 +48,8 @@ public class NcService {
     private static final int ENONCE_MAX = 4000;
 
     private final NonConformityRepository repository;
+    /** L'équipe en charge de chaque écart — la première discipline du 8D (D1). */
+    private final NcTeamMemberRepository teamMembers;
     /**
      * Ouverture du dossier CAPA par le module CAPA lui-même (ADR 0088) : le
      * dossier naît avec son action, son journal et ses notifications, comme
@@ -62,11 +69,13 @@ public class NcService {
     /** Le catalogue qui dit si une nature d'écart existe, et sous quelle catégorie. */
     private final NcSubcategoryCatalog subcategories;
 
-    public NcService(NonConformityRepository repository, CapaService capaService,
+    public NcService(NonConformityRepository repository, NcTeamMemberRepository teamMembers,
+                     CapaService capaService,
                      PdcaService pdcaService, DmaicService dmaicService,
                      ApplicationEventPublisher events, RecordScope scope,
                      NcSubcategoryCatalog subcategories) {
         this.repository = repository;
+        this.teamMembers = teamMembers;
         this.capaService = capaService;
         this.pdcaService = pdcaService;
         this.dmaicService = dmaicService;
@@ -105,7 +114,12 @@ public class NcService {
             seulement.ifPresent(moi -> predicates.add(cb.equal(root.get("reporterId"), moi)));
             return cb.and(predicates.toArray(new Predicate[0]));
         };
-        return repository.findAll(spec, pageable).map(this::toResponse);
+        Page<NonConformity> page = repository.findAll(spec, pageable);
+        // Une requête pour toute la page : une par ligne ferait dix allers-retours
+        // pour afficher dix écarts.
+        Map<UUID, List<NcDto.TeamMemberRef>> equipes = equipesDe(tenantId,
+                page.getContent().stream().map(NonConformity::getId).toList());
+        return page.map(nc -> toResponse(nc, equipes.getOrDefault(nc.getId(), List.of())));
     }
 
     @Transactional(readOnly = true)
@@ -156,6 +170,8 @@ public class NcService {
             nc.setReference(generateReference(tenantId));
             try {
                 NonConformity saved = repository.saveAndFlush(nc);
+                // L'équipe après l'écart : la ligne fille a besoin de son identifiant.
+                remplacerEquipe(tenantId, saved.getId(), request.teamMembers());
                 announceCreation(saved);
                 return toResponse(saved);
             } catch (DataIntegrityViolationException ex) {
@@ -206,6 +222,11 @@ public class NcService {
         if (request.geoLat() != null) nc.setGeoLat(request.geoLat());
         if (request.geoLng() != null) nc.setGeoLng(request.geoLng());
         if (request.photoUrls() != null) nc.setPhotoUrls(request.photoUrls());
+        // L'équipe se corrige : quelqu'un part, quelqu'un arrive. Absente de la
+        // requête, elle reste telle quelle — la mise à jour est partielle.
+        if (request.teamMembers() != null) {
+            remplacerEquipe(nc.getTenantId(), nc.getId(), request.teamMembers());
+        }
         return toResponse(repository.save(nc));
     }
 
@@ -445,6 +466,10 @@ public class NcService {
     }
 
     private NcDto.Response toResponse(NonConformity nc) {
+        return toResponse(nc, equipeDe(nc));
+    }
+
+    private NcDto.Response toResponse(NonConformity nc, List<NcDto.TeamMemberRef> equipe) {
         return new NcDto.Response(
                 nc.getId(), nc.getTenantId(), nc.getReference(), nc.getTitle(), nc.getDescription(),
                 nc.getCategory(), nc.getSubcategoryCode(), nc.getSeverity(), nc.getStatus(),
@@ -455,7 +480,61 @@ public class NcService {
                 nc.getRootCause(), nc.getResolutionNote(),
                 nc.getResolvedAt(), nc.getClosedAt(),
                 nc.getRejectionReason(), nc.getRejectedAt(),
-                nc.getCreatedAt(), nc.getUpdatedAt());
+                nc.getCreatedAt(), nc.getUpdatedAt(),
+                equipe);
+    }
+
+    // ---------- L'équipe en charge (D1 du 8D) ----------
+
+    /** L'équipe d'un écart, dans son ordre de saisie. */
+    private List<NcDto.TeamMemberRef> equipeDe(NonConformity nc) {
+        return teamMembers.findByTenantIdAndNcIdOrderByPositionAsc(nc.getTenantId(), nc.getId())
+                .stream()
+                .map(m -> new NcDto.TeamMemberRef(m.getAccountId(), m.getDisplayName()))
+                .toList();
+    }
+
+    /** Les équipes de plusieurs écarts, en une requête, rangées par écart. */
+    private Map<UUID, List<NcDto.TeamMemberRef>> equipesDe(UUID tenantId, List<UUID> ncIds) {
+        if (ncIds.isEmpty()) {
+            return Map.of();
+        }
+        return teamMembers.findByTenantIdAndNcIdInOrderByPositionAsc(tenantId, ncIds).stream()
+                .collect(Collectors.groupingBy(NcTeamMember::getNcId, LinkedHashMap::new,
+                        Collectors.mapping(
+                                m -> new NcDto.TeamMemberRef(m.getAccountId(), m.getDisplayName()),
+                                Collectors.toList())));
+    }
+
+    /**
+     * Écrit l'équipe d'un écart, en remplaçant celle qui s'y trouvait.
+     *
+     * <p>Remplacement complet et non fusion : l'écran envoie la liste telle
+     * qu'elle doit être, et fusionner rendrait impossible de retirer quelqu'un.
+     * L'ordre reçu est conservé — le premier nommé pilote.
+     *
+     * <p>Les doublons d'une même personne sont écartés : la contrainte d'unicité
+     * de la base refuserait la deuxième ligne, et un 400 pour un double-clic dans
+     * un sélecteur n'apprendrait rien à personne.
+     */
+    private void remplacerEquipe(UUID tenantId, UUID ncId, List<NcDto.TeamMemberRef> membres) {
+        teamMembers.deleteByTenantIdAndNcId(tenantId, ncId);
+        teamMembers.flush();
+        Set<String> deja = new LinkedHashSet<>();
+        int rang = 0;
+        for (NcDto.TeamMemberRef membre : membres) {
+            String compte = membre.accountId().strip();
+            if (compte.isEmpty() || !deja.add(compte)) {
+                continue;
+            }
+            NcTeamMember ligne = new NcTeamMember();
+            ligne.setTenantId(tenantId);
+            ligne.setNcId(ncId);
+            ligne.setAccountId(compte);
+            ligne.setDisplayName(membre.displayName().strip());
+            ligne.setPosition(rang++);
+            teamMembers.save(ligne);
+        }
     }
 
     // ---------- Statistiques ----------

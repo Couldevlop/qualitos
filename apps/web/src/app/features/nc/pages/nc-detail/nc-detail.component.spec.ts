@@ -8,6 +8,8 @@ import { BehaviorSubject, Subject, of, throwError } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 
 import { SharedModule } from '../../../../shared/shared.module';
+import { DirectoryService } from '../../../../core/directory/directory.service';
+import { UserPickerModule } from '../../../../shared/user-picker/user-picker.module';
 import { UiModule } from '../../../../shared/ui/ui.module';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { ConnectivityService } from '../../../../core/offline/connectivity.service';
@@ -22,6 +24,15 @@ import {
   CapaCreateDialogComponent, CapaCreateDialogData
 } from '../../../capa/pages/capa-create-dialog/capa-create-dialog.component';
 import { AuthzService } from '../../../../core/authz/authz.service';
+
+/**
+ * Un annuaire muet : ces bancs ne portent pas sur le choix des personnes, et
+ * un sélecteur sans annuaire doit rester inoffensif.
+ */
+const ANNUAIRE_MUET = {
+  search: () => of({ content: [], page: 0, size: 20, totalElements: 0, totalPages: 0 }),
+  getByAccount: () => throwError(() => ({ status: 404 }))
+};
 
 function buildFiveWhys(overrides: Partial<FiveWhysAnalysis> = {}): FiveWhysAnalysis {
   return {
@@ -98,8 +109,9 @@ describe('NcDetailComponent — section photos', () => {
 
     await TestBed.configureTestingModule({
       declarations: [NcDetailComponent],
-      imports: [SharedModule, UiModule, NoopAnimationsModule],
+      imports: [SharedModule, UiModule, UserPickerModule, NoopAnimationsModule],
       providers: [
+        { provide: DirectoryService, useValue: ANNUAIRE_MUET },
         // Tous les droits : ces bancs testent l'écran, pas la matrice (ADR 0078).
         { provide: AuthzService, useValue: { can: () => of(true) } },
         { provide: NcService, useValue: svc },
@@ -458,8 +470,9 @@ describe('NcDetailComponent — workflow et escalade CAPA', () => {
 
     await TestBed.configureTestingModule({
       declarations: [NcDetailComponent],
-      imports: [SharedModule, UiModule, NoopAnimationsModule],
+      imports: [SharedModule, UiModule, UserPickerModule, NoopAnimationsModule],
       providers: [
+        { provide: DirectoryService, useValue: ANNUAIRE_MUET },
         // Tous les droits : ces bancs testent l'écran, pas la matrice (ADR 0078).
         { provide: AuthzService, useValue: { can: () => of(true) } },
         { provide: NcService, useValue: svc },
@@ -777,8 +790,9 @@ describe('NcDetailComponent — entrée 5 Pourquoi', () => {
     TestBed.resetTestingModule();
     await TestBed.configureTestingModule({
       declarations: [NcDetailComponent],
-      imports: [SharedModule, UiModule, NoopAnimationsModule],
+      imports: [SharedModule, UiModule, UserPickerModule, NoopAnimationsModule],
       providers: [
+        { provide: DirectoryService, useValue: ANNUAIRE_MUET },
         // Tous les droits : ces bancs testent l'écran, pas la matrice (ADR 0078).
         { provide: AuthzService, useValue: { can: () => of(true) } },
         { provide: NcService, useValue: svc },
@@ -936,8 +950,9 @@ describe('NcDetailComponent — entrée Ishikawa', () => {
     TestBed.resetTestingModule();
     await TestBed.configureTestingModule({
       declarations: [NcDetailComponent],
-      imports: [SharedModule, UiModule, NoopAnimationsModule],
+      imports: [SharedModule, UiModule, UserPickerModule, NoopAnimationsModule],
       providers: [
+        { provide: DirectoryService, useValue: ANNUAIRE_MUET },
         // Tous les droits : ces bancs testent l'écran, pas la matrice (ADR 0078).
         { provide: AuthzService, useValue: { can: () => of(true) } },
         { provide: NcService, useValue: svc },
@@ -1061,8 +1076,9 @@ describe('NcDetailComponent — conversion en cycle ou en projet', () => {
     TestBed.resetTestingModule();
     await TestBed.configureTestingModule({
       declarations: [NcDetailComponent],
-      imports: [SharedModule, UiModule, NoopAnimationsModule],
+      imports: [SharedModule, UiModule, UserPickerModule, NoopAnimationsModule],
       providers: [
+        { provide: DirectoryService, useValue: ANNUAIRE_MUET },
         { provide: AuthzService, useValue: { can: () => of(true) } },
         { provide: NcService, useValue: svc },
         { provide: ConnectivityService, useValue: new FakeConnectivity() },

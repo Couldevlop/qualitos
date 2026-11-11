@@ -70,6 +70,7 @@ class EightDSnapshotAssemblerTest {
     void d4_agrege_l_ishikawa_les_cinq_pourquoi_et_la_cause_racine_de_la_nc() {
         EightDSources sources = new EightDSources(
                 nc("Joint hors tolérance"),
+                EQUIPE,
                 List.of(new EightDSources.CauseTree("Fuite au presse-étoupe", "ACTIVE", List.of(
                         new EightDSources.Cause("MATERIEL", "Joint usé", "Au-delà de 2000 h", 0.82),
                         new EightDSources.Cause("METHODE", "Pas de plan de remplacement", null, null)))),
@@ -121,7 +122,7 @@ class EightDSnapshotAssemblerTest {
         EightDSources.Action aFaire = new EightDSources.Action(
                 "Former les opérateurs", null, "PREVENTIVE", "IN_PROGRESS", null, null, null, 0);
         EightDSources sources = new EightDSources(
-                nc(null), List.of(), List.of(),
+                nc(null), EQUIPE, List.of(), List.of(),
                 new EightDSources.Capa("Fuite presse-étoupe", "CORRECTIVE", "HIGH", "CLOSED",
                         LocalDate.parse("2026-09-30"), Instant.parse("2026-09-11T10:00:00Z"),
                         Boolean.TRUE, Instant.parse("2026-12-01T10:00:00Z"), 1,
@@ -149,7 +150,7 @@ class EightDSnapshotAssemblerTest {
     @Test
     void d7_agrege_le_pfmea_et_les_plans_de_surveillance() {
         EightDSources sources = new EightDSources(
-                nc(null), List.of(), List.of(), null,
+                nc(null), EQUIPE, List.of(), List.of(), null,
                 new EightDSources.Fmea("Fuite au joint", "Perte de pression", "Usure",
                         "Contrôle visuel hebdomadaire", 160, 40, "MEDIUM",
                         "Plan de remplacement préventif", "Plan déployé en août"),
@@ -185,6 +186,7 @@ class EightDSnapshotAssemblerTest {
     void un_rapport_dont_les_huit_disciplines_sont_servies_n_est_pas_partiel() {
         EightDSources sources = new EightDSources(
                 nc("Cause retenue"),
+                EQUIPE,
                 List.of(new EightDSources.CauseTree("Problème", "ACTIVE", List.of())),
                 List.of(),
                 new EightDSources.Capa("CAPA", "CORRECTIVE", "HIGH", "CLOSED", null, null, null, null, 1,
@@ -205,8 +207,71 @@ class EightDSnapshotAssemblerTest {
     // ---------- fixtures ----------
 
     private EightDSources sourcesMinimales() {
-        return new EightDSources(nc(null), List.of(), List.of(), null, null, List.of());
+        // Aucune equipe : c'est le cas d'un ecart ne d'un constat d'audit ou d'un
+        // import systeme, ou D1 reste a saisir.
+        return new EightDSources(nc(null), List.of(), List.of(), List.of(), null, null, List.of());
     }
+
+    /** Les memes sources, mais avec l'equipe nommee sur la fiche. */
+    private EightDSources sourcesAvecEquipe(List<String> equipe) {
+        return new EightDSources(nc(null), equipe, List.of(), List.of(), null, null, List.of());
+    }
+
+    // ---------- D1 : l'equipe nommee sur la fiche ----------
+
+    // L'equipe se retapait dans le rapport alors que la fiche sait depuis le
+    // premier jour qui prend l'ecart en charge.
+    @Test
+    void d1_part_de_l_equipe_nommee_sur_la_fiche() {
+        EightDSnapshot snapshot = assembler.assemble(sourcesAvecEquipe(EQUIPE), null, null, null,
+                "tenant-1", null, null);
+
+        EightDSnapshot.Section d1 = section(snapshot, "D1");
+        assertThat(d1.sourced()).isTrue();
+        assertThat(d1.lines()).containsExactly(
+                "Champion : Marie Durand", "Member : Ali Benali");
+        assertThat(d1.sourceLabel()).contains("2 member(s)");
+        assertThat(snapshot.missingCodes()).doesNotContain("D1");
+    }
+
+    // Le premier nomme pilote : l'ordre de saisie le porte, un tri le perdrait.
+    @Test
+    void d1_annonce_le_premier_nomme_comme_pilote() {
+        EightDSnapshot snapshot = assembler.assemble(
+                sourcesAvecEquipe(List.of("Ali Benali", "Marie Durand")), null, null, null,
+                "tenant-1", null, null);
+
+        assertThat(section(snapshot, "D1").lines())
+                .containsExactly("Champion : Ali Benali", "Member : Marie Durand");
+    }
+
+    // La saisie libre dit ce que l'annuaire ne sait pas (un renfort exterieur,
+    // le role de chacun) : elle complete les noms, elle ne les remplace pas.
+    @Test
+    void d1_garde_les_noms_et_ajoute_la_saisie_libre_ensuite() {
+        EightDSnapshot snapshot = assembler.assemble(sourcesAvecEquipe(EQUIPE),
+                "Renfort : Jean Petit (fournisseur)", null, null, "tenant-1", null, null);
+
+        assertThat(section(snapshot, "D1").lines()).containsExactly(
+                "Champion : Marie Durand", "Member : Ali Benali",
+                "Renfort : Jean Petit (fournisseur)");
+    }
+
+    // Un ecart ne d'un constat d'audit ou d'un import systeme ne designe
+    // personne : le rapport le DIT au lieu de le taire.
+    @Test
+    void d1_sans_equipe_ni_saisie_dit_qu_il_reste_a_remplir() {
+        EightDSnapshot snapshot = assembler.assemble(sourcesMinimales(), null, null, null,
+                "tenant-1", null, null);
+
+        EightDSnapshot.Section d1 = section(snapshot, "D1");
+        assertThat(d1.sourced()).isFalse();
+        assertThat(d1.lines()).isEmpty();
+        assertThat(d1.sourceLabel()).contains("filled in by hand");
+    }
+
+    /** L'equipe nommee sur la fiche : la source de D1, dans son ordre de saisie. */
+    private static final List<String> EQUIPE = List.of("Marie Durand", "Ali Benali");
 
     private EightDSources.Nc nc(String causeRacine) {
         return new EightDSources.Nc("NC-2026-0007", "Fuite au presse-étoupe",

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -19,7 +20,9 @@ import { FiveWhysAnalysis } from '../../../five-whys/five-whys.types';
 import { IshikawaService } from '../../../ishikawa/ishikawa.service';
 import { IshikawaDiagramResponse } from '../../../ishikawa/ishikawa.types';
 import { NcService } from '../../nc.service';
+import { TeamMemberRef } from '../../../../shared/user-picker/user-team-picker.component';
 import {
+  NC_MAX_TEAM_MEMBERS,
   NcPhoto,
   NcResponse,
   NcSeverity,
@@ -110,6 +113,24 @@ export class NcDetailComponent implements OnInit {
   ishikawa$ = new BehaviorSubject<IshikawaDiagramResponse[]>([]);
   /** true le temps d'ouvrir ou de créer le diagramme (évite le double clic). */
   ishikawaBusy$ = new BehaviorSubject<boolean>(false);
+
+  // --- l'équipe en charge (D1 du 8D) -----------------------------------------
+
+  readonly maxTeamMembers = NC_MAX_TEAM_MEMBERS;
+  /** Vrai quand l'équipe est en cours de remaniement : la liste devient un champ. */
+  teamEditing = false;
+  /**
+   * L'équipe telle qu'elle est en train d'être remaniée.
+   *
+   * <p>Un brouillon, et non la liste de la fiche : abandonner le remaniement doit
+   * rendre l'équipe d'avant, sans recharger la page.
+   */
+  readonly teamDraftControl = new FormControl<TeamMemberRef[]>([], { nonNullable: true });
+  readonly teamSaving$ = new BehaviorSubject<boolean>(false);
+
+  get teamDraft(): TeamMemberRef[] {
+    return this.teamDraftControl.value;
+  }
 
   private ncId = '';
   private readonly reload$ = new BehaviorSubject<void>(undefined);
@@ -684,6 +705,59 @@ export class NcDetailComponent implements OnInit {
     // REJECTED est terminal comme les deux autres : plus rien ne bouge sur un
     // constat écarté, et le serveur refuse toute modification.
     return status === 'CLOSED' || status === 'CANCELLED' || status === 'REJECTED';
+  }
+
+  // --- l'équipe en charge ------------------------------------------------------
+
+  /**
+   * L'équipe se remanie tant que l'écart vit : les gens changent de poste, et
+   * une équipe figée à l'ouverture ne répond plus de rien six mois plus tard.
+   * Sur un écart clos ou écarté, elle est une archive — le serveur refuse de la
+   * modifier, et l'écran ne le propose donc pas.
+   */
+  canEditTeam(status: NcStatus): boolean { return !this.isTerminal(status); }
+
+  editTeam(nc: NcResponse): void {
+    this.teamDraftControl.setValue([...(nc.teamMembers ?? [])]);
+    this.teamEditing = true;
+  }
+
+  cancelTeamEdit(): void {
+    this.teamEditing = false;
+    this.teamDraftControl.setValue([]);
+  }
+
+  /**
+   * Enregistre l'équipe remaniée.
+   *
+   * <p>Jamais vide : le serveur refuse une équipe sans personne, et un écart
+   * dont plus personne ne répond ne se revoit pas. Le bouton est éteint dans ce
+   * cas, et cette garde tient si l'appel vient d'ailleurs.
+   */
+  saveTeam(): void {
+    if (this.teamDraft.length === 0 || this.teamSaving$.value) {
+      return;
+    }
+    this.teamSaving$.next(true);
+    this.svc.updateNc(this.ncId, { teamMembers: this.teamDraft }).pipe(
+      finalize(() => this.teamSaving$.next(false))
+    ).subscribe({
+      next: () => {
+        this.teamEditing = false;
+        this.teamDraftControl.setValue([]);
+        this.snack.open(
+          $localize`:@@nc.detail.team-saved:Équipe enregistrée.`,
+          $localize`:@@common.ok:OK`, { duration: 3000 });
+        this.reload$.next();
+      },
+      error: err => {
+        // eslint-disable-next-line no-console
+        console.warn('[nc-detail] updateNc team failed', err?.status, err?.error?.title);
+        this.snack.open(
+          safeErrorMessage(err, $localize`:@@nc.detail.team-failed:L'équipe n'a pas pu être enregistrée.`),
+          $localize`:@@common.ok:OK`, { duration: 4000 });
+      }
+    });
   }
 
   canStartAnalysis(status: NcStatus): boolean { return status === 'OPEN'; }

@@ -23,6 +23,14 @@ import java.util.Objects;
  */
 public record EightDSources(
         Nc nc,
+        /**
+         * L'équipe nommée sur la fiche, dans son ordre de saisie — la source de
+         * D1. Le premier nommé pilote, par convention d'atelier.
+         *
+         * <p>Vide pour un écart né d'un constat d'audit ou d'un import système :
+         * personne n'a encore été désigné, et le rapport le dit.
+         */
+        List<String> team,
         List<CauseTree> ishikawas,
         List<WhysChain> fiveWhys,
         Capa capa,
@@ -31,6 +39,7 @@ public record EightDSources(
 
     public EightDSources {
         Objects.requireNonNull(nc, "nc");
+        team = List.copyOf(Objects.requireNonNull(team, "team"));
         ishikawas = List.copyOf(Objects.requireNonNull(ishikawas, "ishikawas"));
         fiveWhys = List.copyOf(Objects.requireNonNull(fiveWhys, "fiveWhys"));
         surveillance = List.copyOf(Objects.requireNonNull(surveillance, "surveillance"));

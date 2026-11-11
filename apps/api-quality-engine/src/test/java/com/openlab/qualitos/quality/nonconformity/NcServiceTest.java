@@ -37,6 +37,7 @@ import static org.mockito.Mockito.*;
 class NcServiceTest {
 
     @Mock NonConformityRepository repo;
+    @Mock NcTeamMemberRepository teamMembers;
     @Mock CapaService capaService;
     @Mock com.openlab.qualitos.quality.pdca.PdcaService pdcaService;
     @Mock com.openlab.qualitos.quality.dmaic.DmaicService dmaicService;
@@ -45,6 +46,14 @@ class NcServiceTest {
     @Mock RecordScope scope;
     @Mock com.openlab.qualitos.quality.nonconformity.subcategory.NcSubcategoryCatalog subcategories;
     @InjectMocks NcService service;
+
+    /**
+     * L'équipe nommée à l'ouverture (D1 du 8D) : deux personnes de l'annuaire,
+     * jamais des identifiants techniques saisis à la main.
+     */
+    static final java.util.List<NcDto.TeamMemberRef> EQUIPE = java.util.List.of(
+            new NcDto.TeamMemberRef("kc-marie", "Marie Durand"),
+            new NcDto.TeamMemberRef("kc-ali", "Ali Benali"));
 
     static final UUID TENANT = UUID.randomUUID();
     static final UUID OTHER = UUID.randomUUID();
@@ -130,7 +139,7 @@ class NcServiceTest {
 
         NcDto.Response r = service.create(new NcDto.CreateRequest(
                 "Joint", "détail", NcCategory.PRODUCT, "prd-dim", NcSeverity.MAJOR,
-                Instant.now(), null, null, null, null, REPORTER, null, null, null));
+                Instant.now(), null, null, null, null, REPORTER, null, null, null, EQUIPE));
 
         // Le code enregistré est celui que le catalogue rend, pas celui saisi :
         // la casse se normalise une fois pour toutes.
@@ -144,7 +153,7 @@ class NcServiceTest {
 
         assertThatThrownBy(() -> service.create(new NcDto.CreateRequest(
                 "Joint", "détail", NcCategory.PRODUCT, "PAS-UN-CODE", NcSeverity.MAJOR,
-                Instant.now(), null, null, null, null, REPORTER, null, null, null)))
+                Instant.now(), null, null, null, null, REPORTER, null, null, null, EQUIPE)))
                 .isInstanceOf(NcValidationException.class);
         verify(repo, never()).saveAndFlush(any());
     }
@@ -157,7 +166,7 @@ class NcServiceTest {
         when(repo.save(n)).thenReturn(n);
 
         service.update(n.getId(), new NcDto.UpdateRequest(null, null, null, "", null, null, null, null,
-                null, null, null, null));
+                null, null, null, null, null));
 
         assertThat(n.getSubcategoryCode()).isNull();
         verifyNoInteractions(subcategories);
@@ -174,7 +183,8 @@ class NcServiceTest {
                 .thenThrow(new NcValidationException("belongs to category PRODUCT"));
 
         assertThatThrownBy(() -> service.update(n.getId(), new NcDto.UpdateRequest(
-                null, null, NcCategory.SUPPLIER, null, null, null, null, null, null, null, null, null)))
+                null, null, NcCategory.SUPPLIER, null, null, null, null, null, null, null, null, null,
+                null)))
                 .isInstanceOf(NcValidationException.class);
     }
 
@@ -186,7 +196,7 @@ class NcServiceTest {
         when(repo.save(n)).thenReturn(n);
 
         service.update(n.getId(), new NcDto.UpdateRequest("t2", null, null, null, null, null, null, null,
-                null, null, null, null));
+                null, null, null, null, null));
 
         assertThat(n.getSubcategoryCode()).isEqualTo("PRD-DIM");
         verifyNoInteractions(subcategories);
@@ -255,7 +265,7 @@ class NcServiceTest {
         when(repo.save(n)).thenReturn(n);
         service.update(n.getId(), new NcDto.UpdateRequest(
                 "t2", "d2", NcCategory.SUPPLIER, null, NcSeverity.CRITICAL, "zoneB", 1.0, 2.0, "u1\nu2",
-                NcOrigin.EXTERNAL, null, null));
+                NcOrigin.EXTERNAL, null, null, null));
         assertThat(n.getTitle()).isEqualTo("t2");
         assertThat(n.getCategory()).isEqualTo(NcCategory.SUPPLIER);
         assertThat(n.getSeverity()).isEqualTo(NcSeverity.CRITICAL);
@@ -271,7 +281,7 @@ class NcServiceTest {
         NonConformity n = nc(TENANT, NcStatus.CLOSED);
         when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
         assertThatThrownBy(() -> service.update(n.getId(),
-                new NcDto.UpdateRequest("x", null, null, null, null, null, null, null, null, null, null, null)))
+                new NcDto.UpdateRequest("x", null, null, null, null, null, null, null, null, null, null, null, null)))
                 .isInstanceOf(NcStateException.class);
     }
 
@@ -280,7 +290,7 @@ class NcServiceTest {
         NonConformity n = nc(TENANT, NcStatus.CANCELLED);
         when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
         assertThatThrownBy(() -> service.update(n.getId(),
-                new NcDto.UpdateRequest("x", null, null, null, null, null, null, null, null, null, null, null)))
+                new NcDto.UpdateRequest("x", null, null, null, null, null, null, null, null, null, null, null, null)))
                 .isInstanceOf(NcStateException.class);
     }
 
@@ -492,7 +502,8 @@ class NcServiceTest {
         when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
 
         assertThatThrownBy(() -> service.update(n.getId(), new NcDto.UpdateRequest(
-                "autre titre", null, null, null, null, null, null, null, null, null, null, null)))
+                "autre titre", null, null, null, null, null, null, null, null, null, null, null,
+                null)))
                 .isInstanceOf(NcStateException.class)
                 .hasMessageContaining("REJECTED");
     }
@@ -514,7 +525,8 @@ class NcServiceTest {
     private NcDto.CreateRequest req() {
         return new NcDto.CreateRequest(
                 "Joint torique défectueux", "détail", NcCategory.PRODUCT, null, NcSeverity.MAJOR,
-                Instant.now(), "Atelier 3", 48.85, 2.35, "https://s/p1.jpg", REPORTER, null, null, null);
+                Instant.now(), "Atelier 3", 48.85, 2.35, "https://s/p1.jpg", REPORTER, null, null, null,
+                EQUIPE);
     }
 
     private NonConformity nc(UUID tenant, NcStatus status) {

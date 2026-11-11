@@ -13,7 +13,8 @@ import { FmeaItemResponse } from '../../../fmea/fmea.types';
 import { ProductsService } from '../../../products/products.service';
 import { FailureModeSuggestion, ProductResponse } from '../../../products/products.types';
 import { NcService } from '../../nc.service';
-import { NcCategory, NcOrigin, NcResponse, NcSeverity, NcSubcategory } from '../../nc.types';
+import { TeamMemberRef } from '../../../../shared/user-picker/user-team-picker.component';
+import { NC_MAX_TEAM_MEMBERS, NcCategory, NcOrigin, NcResponse, NcSeverity, NcSubcategory } from '../../nc.types';
 
 /**
  * Ce que la liste appelante transmet au dialogue.
@@ -110,8 +111,19 @@ export class NcCreateDialogComponent implements OnInit {
      */
     subcategoryCode: [''],
     /** '' = pas encore répondu, 'NONE' = aucun mode, sinon l'identifiant de la ligne. */
-    failureMode: ['']
+    failureMode: [''],
+    /**
+     * L'équipe qui prend l'écart en charge — le D1 du 8D, nommé une fois pour
+     * toutes à l'ouverture plutôt que retapé dans le rapport.
+     *
+     * <p>Au moins une personne, comme le serveur l'exige. Le déclarant y est
+     * posé d'office en tête : il est celui qui sait ce qu'il a constaté, et il
+     * peut se retirer s'il ne suit pas l'écart.
+     */
+    teamMembers: [[] as TeamMemberRef[], [Validators.required]]
   });
+
+  readonly maxTeamMembers = NC_MAX_TEAM_MEMBERS;
 
   constructor(
     private readonly fb: FormBuilder,
@@ -151,10 +163,21 @@ export class NcCreateDialogComponent implements OnInit {
     if (this.form.controls.severity.invalid) {
       return $localize`:@@nc.create.blocked-severity:Choisissez la sévérité pour pouvoir déclarer.`;
     }
+    if (this.form.controls.teamMembers.invalid) {
+      return $localize`:@@nc.create.blocked-team:Nommez au moins une personne dans l'équipe en charge.`;
+    }
     return undefined;   // repli générique du gabarit
   }
 
   ngOnInit(): void {
+    // Le déclarant en tête de l'équipe : c'est lui qui a constaté l'écart, et
+    // une équipe pré-remplie se corrige, tandis qu'un champ vide se saute.
+    const moi = this.auth.snapshot();
+    if (moi?.userId) {
+      this.form.patchValue({
+        teamMembers: [{ accountId: moi.userId, displayName: moi.displayName || moi.userId }]
+      });
+    }
     // Le référentiel produit est une aide à la saisie : son indisponibilité ne
     // doit pas empêcher de déclarer un défaut constaté au poste.
     this.productsService.list().pipe(catchError(() => of([] as ProductResponse[])))
@@ -309,7 +332,7 @@ export class NcCreateDialogComponent implements OnInit {
     this.submitting = true;
     const {
       title, category, subcategoryCode, severity, zone, description, geoLat, geoLng,
-      productId, failureMode
+      productId, failureMode, teamMembers
     } = this.form.getRawValue();
     this.nc
       .createNc({
@@ -328,7 +351,8 @@ export class NcCreateDialogComponent implements OnInit {
         productId: productId || undefined,
         fmeaItemId: failureMode && failureMode !== NcCreateDialogComponent.NO_FAILURE_MODE
           ? failureMode
-          : undefined
+          : undefined,
+        teamMembers
       })
       .pipe(
         // La NC d'abord, ses photos ensuite : l'inverse n'existe pas.

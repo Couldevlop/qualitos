@@ -77,7 +77,7 @@
 }
 .state-row.error { color: var(--qos-danger-fg); }
 
-.info-card, .analysis-card, .photos-card { margin-bottom: 16px; }
+.info-card, .analysis-card, .team-card, .photos-card { margin-bottom: 16px; }
 
 .nc-title {
   margin: 0 0 16px;
@@ -112,6 +112,66 @@
   border-radius: 8px;
   font-size: 14px;
   line-height: 1.5;
+}
+
+// L'equipe en charge : une liste courte, lue d'un coup d'oeil, et le titre
+// garde ses boutons sur la meme ligne tant que la largeur le permet.
+.team-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--qos-space-2);
+  margin-bottom: var(--qos-space-2);
+}
+
+.team-head__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--qos-space-2);
+}
+
+.team-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--qos-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: inline-flex;
+    align-items: baseline;
+    gap: var(--qos-space-2);
+    padding: var(--qos-space-1) var(--qos-space-3);
+    border: 1px solid var(--qos-border-subtle);
+    border-radius: var(--qos-radius-pill);
+    background: var(--qos-surface-raised);
+  }
+}
+
+.team-name {
+  color: var(--qos-fg-primary);
+  font-size: var(--qos-fs-sm);
+  font-weight: var(--qos-fw-medium);
+}
+
+.team-role {
+  color: var(--qos-fg-tertiary);
+  font-size: var(--qos-fs-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.team-list li:first-child .team-role {
+  color: var(--qos-accent-fg-soft);
+  font-weight: var(--qos-fw-semibold);
+}
+
+.team-empty {
+  margin: 0;
+  color: var(--qos-fg-secondary);
+  font-size: var(--qos-fs-sm);
 }
 
 .analysis-card .block { margin-bottom: 12px; }

@@ -9,6 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 
 import { IconNoTranslateModule } from '../icon-no-translate/icon-no-translate.module';
 import { UserPickerComponent } from './user-picker.component';
+import { UserTeamPickerComponent } from './user-team-picker.component';
 
 /**
  * Le sélecteur de personne de l'annuaire (ADR 0091), à importer par les modules
@@ -16,14 +17,18 @@ import { UserPickerComponent } from './user-picker.component';
  *
  * <p>Module à part plutôt que dans `SharedModule` : l'autocomplétion Material
  * n'entre ainsi que dans les modules qui s'en servent.
+ *
+ * <p>Il exporte aussi `qos-user-team-picker`, qui désigne PLUSIEURS personnes
+ * (l'équipe d'un écart, les participants d'un cercle) en s'appuyant sur le même
+ * sélecteur.
  */
 @NgModule({
-  declarations: [UserPickerComponent],
+  declarations: [UserPickerComponent, UserTeamPickerComponent],
   imports: [
     CommonModule, ReactiveFormsModule,
     MatAutocompleteModule, MatButtonModule, MatFormFieldModule, MatIconModule, MatInputModule,
     IconNoTranslateModule
   ],
-  exports: [UserPickerComponent]
+  exports: [UserPickerComponent, UserTeamPickerComponent]
 })
 export class UserPickerModule {}
