@@ -7538,6 +7538,38 @@ Portail clients</source>
         <source>Le stockage des pièces jointes est désactivé sur cet environnement : aucune preuve ne peut y être déposée ni relue.</source>
         <target state="translated">本环境的附件存储已停用：无法在此上传或查阅任何证据。</target>
       </trans-unit>
+      <trans-unit id="capa.source.non-conformity-internal" datatype="html">
+        <source>Non-conformité interne</source>
+        <target state="translated">内部不合格</target>
+      </trans-unit>
+      <trans-unit id="capa.create.source-ref-required" datatype="html">
+        <source>Référence source</source>
+        <target state="translated">来源编号</target>
+      </trans-unit>
+      <trans-unit id="capa.create.source-ref-loading" datatype="html">
+        <source>Lecture du registre…</source>
+        <target state="translated">正在读取登记册…</target>
+      </trans-unit>
+      <trans-unit id="capa.create.source-ref-empty" datatype="html">
+        <source>Aucune fiche ouverte dans ce registre : choisissez une autre source.</source>
+        <target state="translated">该登记册中没有未结记录：请选择其他来源。</target>
+      </trans-unit>
+      <trans-unit id="capa.create.source-ref-truncated" datatype="html">
+        <source>Les <x id="SIZE"/> fiches ouvertes les plus récentes.</source>
+        <target state="translated">最近的 <x id="SIZE"/> 条未结记录。</target>
+      </trans-unit>
+      <trans-unit id="capa.create.source-ref-missing" datatype="html">
+        <source>Choisissez la fiche que ce dossier traite.</source>
+        <target state="translated">请选择本案件所处理的记录。</target>
+      </trans-unit>
+      <trans-unit id="capa.create.source-ref-failed" datatype="html">
+        <source>Registre injoignable : saisissez la référence à la main.</source>
+        <target state="translated">无法访问登记册：请手动输入编号。</target>
+      </trans-unit>
+      <trans-unit id="capa.create.source-ref-retry" datatype="html">
+        <source>Relire le registre</source>
+        <target state="translated">重新读取登记册</target>
+      </trans-unit>
       <trans-unit id="capa.open.title" datatype="html">
         <source>Nouvelle CAPA</source>
         <target state="translated">新建 CAPA</target>

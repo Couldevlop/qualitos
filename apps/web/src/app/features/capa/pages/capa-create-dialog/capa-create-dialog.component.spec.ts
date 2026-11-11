@@ -14,6 +14,7 @@ import { UiModule } from '../../../../shared/ui/ui.module';
 import { UserPickerComponent } from '../../../../shared/user-picker/user-picker.component';
 import { CapaCreateDialogModule } from '../../capa-create-dialog.module';
 import { CapaService } from '../../capa.service';
+import { CapaSourceRefService } from '../../source-registry/capa-source-ref.service';
 import { CapaCaseResponse, OpenCapaRequest } from '../../capa.types';
 import {
   CapaCreateDialogComponent, CapaCreateDialogData, CapaOpened, localIsoDate
@@ -61,7 +62,10 @@ describe('CapaCreateDialogComponent — fenêtre unique', () => {
         { provide: AuthService, useValue: { snapshot: () => session } },
         { provide: MatSnackBar, useValue: snack },
         { provide: MatDialogRef, useValue: ref },
-        { provide: MAT_DIALOG_DATA, useValue: data }
+        { provide: MAT_DIALOG_DATA, useValue: data },
+        // Les registres d'où se choisit la référence de la source : neutres
+        // ici, éprouvés dans `capa-create-dialog.source-ref.spec.ts`.
+        { provide: CapaSourceRefService, useValue: { options: () => of([]) } }
       ]
     }).compileComponents();
     fixture = TestBed.createComponent(CapaCreateDialogComponent);
@@ -118,7 +122,10 @@ describe('CapaCreateDialogComponent — fenêtre unique', () => {
     await setup();
     expect(component.sourceLocked).toBeFalse();
     expect(component.sourceTypes.map(s => s.value))
-      .toEqual(['NON_CONFORMITY', 'AUDIT', 'COMPLAINT', 'INTERNAL', 'IOT_ALERT', 'OTHER']);
+      // « Risque » en fait partie : §6.1 traite le risque avant qu'il se
+      // réalise, et n'ouvrir ce chemin que depuis la fiche du registre privait
+      // d'un accès légitime.
+      .toEqual(['NON_CONFORMITY', 'AUDIT', 'COMPLAINT', 'INTERNAL', 'IOT_ALERT', 'RISK', 'OTHER']);
     expect(hote().querySelector('[data-test="capa-source"]')).not.toBeNull();
     expect(hote().querySelector('[data-test="source-verrouillee"]')).toBeNull();
     expect(component.dialogTitle).toBe('Nouvelle CAPA');

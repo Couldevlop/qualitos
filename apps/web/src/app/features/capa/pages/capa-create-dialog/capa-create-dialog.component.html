@@ -91,12 +91,48 @@
       </mat-form-field>
     </div>
 
-    <mat-form-field appearance="outline" class="full" *ngIf="!sourceLocked">
-      <mat-label i18n="@@capa.create.source-ref">Référence source (optionnel)</mat-label>
-      <input matInput formControlName="sourceRef" maxlength="255"
-             i18n-placeholder="@@capa.create.source-ref-placeholder"
-             placeholder="Ex. : NC-2026-018">
-    </mat-form-field>
+    <!-- La référence de la source : CHOISIE au registre dès que la source
+         désigne un objet de la plateforme (non-conformité, audit, réclamation,
+         risque), et obligatoire. Tapée à la main, elle se perdait au premier
+         mot mal recopié, et le dossier devenait orphelin de sa cause. -->
+    <ng-container *ngIf="!sourceLocked">
+      <mat-form-field appearance="outline" class="full" *ngIf="sourceRefIsPicked; else refLibre">
+        <mat-label i18n="@@capa.create.source-ref-required">Référence source</mat-label>
+        <mat-select formControlName="sourceRef" data-test="capa-source-ref"
+                    [compareWith]="sameRef">
+          <mat-option *ngFor="let o of sourceRefOptions" [value]="o.reference">{{ o.label }}</mat-option>
+        </mat-select>
+        <mat-hint *ngIf="loadingSourceRefs" i18n="@@capa.create.source-ref-loading">Lecture du registre…</mat-hint>
+        <mat-hint *ngIf="!loadingSourceRefs && sourceRefOptions?.length === 0"
+                  i18n="@@capa.create.source-ref-empty">Aucune fiche ouverte dans ce registre : choisissez une autre source.</mat-hint>
+        <mat-hint *ngIf="!loadingSourceRefs && sourceRefTruncated"
+                  i18n="@@capa.create.source-ref-truncated">Les {{ pageSize // i18n(ph="SIZE") }} fiches ouvertes les plus récentes.</mat-hint>
+        <mat-error *ngIf="form.controls.sourceRef.hasError('required') || form.controls.sourceRef.hasError('blank')"
+                   i18n="@@capa.create.source-ref-missing">Choisissez la fiche que ce dossier traite.</mat-error>
+      </mat-form-field>
+
+      <ng-template #refLibre>
+        <mat-form-field appearance="outline" class="full">
+          <mat-label *ngIf="sourceRegister" i18n="@@capa.create.source-ref-required">Référence source</mat-label>
+          <mat-label *ngIf="!sourceRegister" i18n="@@capa.create.source-ref">Référence source (optionnel)</mat-label>
+          <input matInput formControlName="sourceRef" maxlength="255" data-test="capa-source-ref"
+                 i18n-placeholder="@@capa.create.source-ref-placeholder"
+                 placeholder="Ex. : NC-2026-018">
+          <!-- Registre muet : on le dit, on laisse taper, et on propose de
+               réessayer. Bloquer l'ouverture d'un dossier parce qu'une liste
+               n'a pas répondu punirait l'utilisateur d'une panne qui n'est pas
+               la sienne. -->
+          <mat-hint *ngIf="sourceRefsFailed" class="hint-alerte" i18n="@@capa.create.source-ref-failed">Registre injoignable : saisissez la référence à la main.</mat-hint>
+          <mat-error *ngIf="form.controls.sourceRef.hasError('required') || form.controls.sourceRef.hasError('blank')"
+                     i18n="@@capa.create.source-ref-missing">Choisissez la fiche que ce dossier traite.</mat-error>
+        </mat-form-field>
+        <button mat-stroked-button type="button" *ngIf="sourceRefsFailed" class="retry-registre"
+                (click)="retrySourceRefs()" data-test="capa-source-ref-retry">
+          <mat-icon>refresh</mat-icon>
+          <span i18n="@@capa.create.source-ref-retry">Relire le registre</span>
+        </button>
+      </ng-template>
+    </ng-container>
 
     <!-- La vérification d'efficacité (ADR 0073) se décide à l'ouverture, d'où
          qu'on vienne : c'est la même décision de clôture partout, et un dossier
