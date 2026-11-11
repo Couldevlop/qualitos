@@ -29922,6 +29922,42 @@ declared income
         <source>Statut du procédé</source>
         <target state="translated">Process status</target>
       </trans-unit>
+      <trans-unit id="spc.chart.nelson-flagged" datatype="html">
+        <source>Sous-groupes signalés par une règle de Nelson sans sortir des limites : <x id="count"/></source>
+        <target state="translated">Subgroups flagged by a Nelson rule while staying inside the limits: <x id="count"/></target>
+      </trans-unit>
+      <trans-unit id="spc.nelson.title" datatype="html">
+        <source>Règles de Nelson — détection automatique</source>
+        <target state="translated">Nelson rules — automatic detection</target>
+      </trans-unit>
+      <trans-unit id="spc.nelson.scope" datatype="html">
+        <source>Analysées sur la carte X̄, contre ses propres limites (X̿ ± A2 × dispersion moyenne).</source>
+        <target state="translated">Run on the X̄ chart, against its own limits (X̿ ± A2 × mean dispersion).</target>
+      </trans-unit>
+      <trans-unit id="spc.nelson.loading" datatype="html">
+        <source>Analyse de la série en cours…</source>
+        <target state="translated">Analysing the series…</target>
+      </trans-unit>
+      <trans-unit id="spc.nelson.failed" datatype="html">
+        <source>La détection est momentanément indisponible : les limites et le Cpk de la carte restent exacts.</source>
+        <target state="translated">Detection is momentarily unavailable: the chart limits and Cpk remain exact.</target>
+      </trans-unit>
+      <trans-unit id="spc.nelson.retry" datatype="html">
+        <source>Relancer la détection</source>
+        <target state="translated">Run detection again</target>
+      </trans-unit>
+      <trans-unit id="spc.nelson.none" datatype="html">
+        <source>Aucune des huit règles ne se déclenche : la série ne montre pas de cause spéciale.</source>
+        <target state="translated">None of the eight rules fires: the series shows no special cause.</target>
+      </trans-unit>
+      <trans-unit id="spc.nelson.subgroups" datatype="html">
+        <source>Sous-groupes</source>
+        <target state="translated">Subgroups</target>
+      </trans-unit>
+      <trans-unit id="spc.nelson.human" datatype="html">
+        <source>L'IA signale, la décision reste humaine : une règle déclenchée s'investigue avant de conclure à une cause spéciale.</source>
+        <target state="translated">The AI flags, the decision stays human: a rule that fires is investigated before concluding a special cause.</target>
+      </trans-unit>
       <trans-unit id="spc.forecast.panel" datatype="html">
         <source>Prévision de dérive</source>
         <target state="translated">Drift forecast</target>

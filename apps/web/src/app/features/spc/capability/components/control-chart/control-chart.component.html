@@ -4,6 +4,14 @@
       <line class="grille" [attr.x1]="g.left" [attr.x2]="g.right" [attr.y1]="t.y" [attr.y2]="t.y"></line>
       <text class="axe" [attr.x]="g.left - 6" [attr.y]="t.y + 3" text-anchor="end">{{ fixed(t.value) }}</text>
     </g>
+    <!-- Les zones ±1σ / ±2σ : ce que mesurent les règles 5 à 8, donc tracées
+         seulement là où ces règles sont appliquées (carte X̄). -->
+    <g *ngIf="showZones">
+      <g *ngFor="let z of g.zones" class="zone" [attr.data-test]="'zone'">
+        <line [attr.x1]="g.left" [attr.x2]="g.right" [attr.y1]="z.y" [attr.y2]="z.y"></line>
+        <text [attr.x]="g.left + 4" [attr.y]="z.y - 3">{{ z.label }}</text>
+      </g>
+    </g>
     <g *ngFor="let l of g.lines" [class.limite]="l.label !== 'CL'" [class.centre]="l.label === 'CL'"
        [attr.data-test]="'ligne-' + l.label">
       <line [attr.x1]="g.left" [attr.x2]="g.right" [attr.y1]="l.y" [attr.y2]="l.y"></line>
@@ -15,13 +23,25 @@
     </g>
     <text class="axe" *ngFor="let x of g.xLabels" [attr.x]="x.x" [attr.y]="g.height - 8" text-anchor="middle">{{ x.label }}</text>
     <polyline class="trace" [attr.points]="g.polyline"></polyline>
-    <circle *ngFor="let p of g.points" class="point" [class.point--hors]="p.out"
-            [attr.cx]="p.x" [attr.cy]="p.y" [attr.r]="p.out ? 4.5 : 3" [attr.data-test]="p.out ? 'point-hors' : 'point'">
-      <title>SG {{ p.index + 1 }} : {{ fixed(p.value) }}</title>
-    </circle>
+    <ng-container *ngFor="let p of g.points">
+      <!-- Le halo d'une règle de Nelson : visible même quand le point reste
+           dans les limites, puisque c'est précisément ce que la règle ajoute. -->
+      <circle *ngIf="p.rules.length" class="halo" [attr.cx]="p.x" [attr.cy]="p.y" r="7.5"
+              [attr.data-test]="'point-regle'"></circle>
+      <circle class="point" [class.point--hors]="p.out" [class.point--regle]="!p.out && p.rules.length"
+              [attr.cx]="p.x" [attr.cy]="p.y" [attr.r]="p.out ? 4.5 : 3"
+              [attr.data-test]="p.out ? 'point-hors' : 'point'">
+        <title>{{ pointTitle(p.index, p.value, p.rules) }}</title>
+      </circle>
+      <text *ngIf="p.rules.length" class="regle" [attr.x]="p.x" [attr.y]="p.y - 11" text-anchor="middle"
+            [attr.data-test]="'etiquette-regle'">{{ rulesLabel(p.rules) }}</text>
+    </ng-container>
   </svg>
   <p class="resume" *ngIf="outCount > 0" data-test="hors-limites">
     {{ outLabel }}
+  </p>
+  <p class="resume resume--regle" *ngIf="flaggedCount > 0" data-test="signales-nelson">
+    {{ flaggedLabel }}
   </p>
 </ng-container>
 <ng-template #vide>

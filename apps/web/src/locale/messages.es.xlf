@@ -29922,6 +29922,42 @@ historial de 12 meses</target>
         <source>Statut du procédé</source>
         <target state="translated">Estado del proceso</target>
       </trans-unit>
+      <trans-unit id="spc.chart.nelson-flagged" datatype="html">
+        <source>Sous-groupes signalés par une règle de Nelson sans sortir des limites : <x id="count"/></source>
+        <target state="translated">Subgrupos señalados por una regla de Nelson sin salir de los límites: <x id="count"/></target>
+      </trans-unit>
+      <trans-unit id="spc.nelson.title" datatype="html">
+        <source>Règles de Nelson — détection automatique</source>
+        <target state="translated">Reglas de Nelson — detección automática</target>
+      </trans-unit>
+      <trans-unit id="spc.nelson.scope" datatype="html">
+        <source>Analysées sur la carte X̄, contre ses propres limites (X̿ ± A2 × dispersion moyenne).</source>
+        <target state="translated">Analizadas en el gráfico X̄, frente a sus propios límites (X̿ ± A2 × dispersión media).</target>
+      </trans-unit>
+      <trans-unit id="spc.nelson.loading" datatype="html">
+        <source>Analyse de la série en cours…</source>
+        <target state="translated">Analizando la serie…</target>
+      </trans-unit>
+      <trans-unit id="spc.nelson.failed" datatype="html">
+        <source>La détection est momentanément indisponible : les limites et le Cpk de la carte restent exacts.</source>
+        <target state="translated">La detección no está disponible momentáneamente: los límites y el Cpk del gráfico siguen siendo exactos.</target>
+      </trans-unit>
+      <trans-unit id="spc.nelson.retry" datatype="html">
+        <source>Relancer la détection</source>
+        <target state="translated">Reiniciar la detección</target>
+      </trans-unit>
+      <trans-unit id="spc.nelson.none" datatype="html">
+        <source>Aucune des huit règles ne se déclenche : la série ne montre pas de cause spéciale.</source>
+        <target state="translated">Ninguna de las ocho reglas se activa: la serie no muestra causa especial.</target>
+      </trans-unit>
+      <trans-unit id="spc.nelson.subgroups" datatype="html">
+        <source>Sous-groupes</source>
+        <target state="translated">Subgrupos</target>
+      </trans-unit>
+      <trans-unit id="spc.nelson.human" datatype="html">
+        <source>L'IA signale, la décision reste humaine : une règle déclenchée s'investigue avant de conclure à une cause spéciale.</source>
+        <target state="translated">La IA señala, la decisión sigue siendo humana: una regla activada se investiga antes de concluir una causa especial.</target>
+      </trans-unit>
       <trans-unit id="spc.forecast.panel" datatype="html">
         <source>Prévision de dérive</source>
         <target state="translated">Previsión de deriva</target>
