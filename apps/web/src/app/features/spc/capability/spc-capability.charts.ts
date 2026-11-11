@@ -6,10 +6,26 @@ import { Measurement } from './spc-capability.types';
  * le navigateur met à l'échelle.
  */
 
-export interface ChartPoint { index: number; value: number; x: number; y: number; out: boolean }
+export interface ChartPoint {
+  index: number;
+  value: number;
+  x: number;
+  y: number;
+  out: boolean;
+  /**
+   * Les règles de Nelson que ce point déclenche, en abrégé (« N2 », « N5 »…).
+   *
+   * <p>Vide quand aucune analyse n'accompagne la carte : la géométrie ne
+   * détecte rien d'elle-même, elle place ce qu'on lui donne.
+   */
+  rules: string[];
+}
 export interface ChartLine { label: 'UCL' | 'CL' | 'LCL'; value: number; y: number }
 export interface SpecLine { label: 'USL' | 'LSL'; value: number; y: number }
 export interface ChartTick { value: number; y: number }
+
+/** Une frontière de zone à ±1σ ou ±2σ : ce que les règles 5 à 8 mesurent. */
+export interface ZoneLine { label: string; value: number; y: number }
 
 export interface ControlChartGeometry {
   width: number;
@@ -21,6 +37,8 @@ export interface ControlChartGeometry {
   lines: ChartLine[];
   /** Les limites de tolérance, tracées sur la carte X̄ comme dans le classeur. */
   specs: SpecLine[];
+  /** Les frontières ±1σ / ±2σ, tracées seulement quand la carte montre les règles. */
+  zones: ZoneLine[];
   ticks: ChartTick[];
   xLabels: { label: number; x: number }[];
 }
@@ -41,11 +59,16 @@ const TICK_GAP = 8;
  * de tolérance, quand on les donne (carte X̄), entrent dans l'échelle. La marge
  * gauche suit la graduation la plus longue écrite avec `digits` décimales :
  * fixe, elle rognait « 12.0620 » en « .0620 ».
+ *
+ * <p>`rules` porte, par indice de sous-groupe, les règles de Nelson déclenchées
+ * sur ce point. La géométrie ne les calcule pas — elles viennent de l'analyse
+ * IA — elle les attache au point pour que le dessin puisse les montrer.
  */
 export function controlChart(values: (number | null)[], ucl: number | null, cl: number | null,
                              lcl: number | null,
                              spec: { usl: number | null; lsl: number | null } = { usl: null, lsl: null },
-                             digits = 2
+                             digits = 2,
+                             rules: ReadonlyMap<number, string[]> = new Map()
 ): ControlChartGeometry | null {
   if (ucl === null || cl === null || lcl === null) return null;
   const pts = values
@@ -76,7 +99,20 @@ export function controlChart(values: (number | null)[], ucl: number | null, cl: 
   const x = (i: number) => colonnes > 1
     ? left + (CW - left - CR) * i / (colonnes - 1)
     : left + (CW - left - CR) / 2;
-  const points = pts.map(p => ({ index: p.i, value: p.v, x: x(p.i), y: y(p.v), out: p.v > ucl || p.v < lcl }));
+  const points = pts.map(p => ({
+    index: p.i, value: p.v, x: x(p.i), y: y(p.v), out: p.v > ucl || p.v < lcl,
+    rules: rules.get(p.i) ?? []
+  }));
+  // σ de la carte, lu sur ses propres limites : UCL − CL vaut 3σ par
+  // construction. Le recalculer depuis les valeurs donnerait des zones qui ne
+  // s'alignent pas sur les limites tracées juste à côté.
+  const sigma = (ucl - cl) / 3;
+  const zones: ZoneLine[] = sigma > 0
+    ? [2, 1, -1, -2].map(k => {
+        const value = cl + k * sigma;
+        return { label: `${k > 0 ? '+' : '−'}${Math.abs(k)}σ`, value, y: y(value) };
+      })
+    : [];
   return {
     width: CW, height: CH, left, right: CW - CR,
     points,
@@ -87,6 +123,7 @@ export function controlChart(values: (number | null)[], ucl: number | null, cl: 
       { label: 'LCL', value: lcl, y: y(lcl) }
     ],
     specs: tolerances.map(t => ({ ...t, y: y(t.value) })),
+    zones,
     ticks,
     xLabels: Array.from({ length: colonnes }, (_, i) => i)
       .filter(i => i % 2 === 0 || i === colonnes - 1)

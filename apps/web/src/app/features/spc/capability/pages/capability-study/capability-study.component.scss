@@ -499,6 +499,91 @@
   }
 }
 
+// ---------- règles de Nelson ----------
+
+.nelson {
+  margin-top: var(--qos-space-4);
+  padding: var(--qos-space-3);
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: var(--qos-radius-md);
+  background: var(--qos-bg-subtle);
+
+  &__tete {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--qos-space-1) var(--qos-space-3);
+
+    h3 {
+      margin: 0;
+      font-size: var(--qos-fs-sm);
+      font-weight: var(--qos-fw-semibold);
+      color: var(--qos-fg-primary);
+    }
+  }
+
+  &__note {
+    margin: var(--qos-space-1) 0 0;
+    font-size: var(--qos-fs-xs);
+    color: var(--qos-fg-tertiary);
+  }
+
+  &__etat {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--qos-space-2);
+    margin: var(--qos-space-2) 0 0;
+    font-size: var(--qos-fs-sm);
+    color: var(--qos-fg-secondary);
+
+    &--ok { color: var(--qos-success-fg); }
+    &--ko { color: var(--qos-warn-fg); }
+  }
+
+  &__liste {
+    margin: var(--qos-space-2) 0 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: var(--qos-space-2);
+
+    li {
+      display: flex;
+      align-items: baseline;
+      gap: var(--qos-space-2);
+    }
+  }
+
+  &__code {
+    flex: none;
+    padding: 0 var(--qos-space-2);
+    border-radius: var(--qos-radius-sm);
+    font-family: var(--qos-font-mono);
+    font-size: var(--qos-fs-xs);
+    font-weight: var(--qos-fw-semibold);
+
+    &.sev-crit { background: var(--qos-danger-bg-soft); color: var(--qos-danger-fg); }
+    &.sev-maj  { background: var(--qos-warn-bg-soft); color: var(--qos-warn-fg); }
+    &.sev-min  { background: var(--qos-accent-bg-soft); color: var(--qos-accent-fg-soft); }
+  }
+
+  &__regle {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--qos-space-1) var(--qos-space-2);
+    font-size: var(--qos-fs-sm);
+    color: var(--qos-fg-primary);
+  }
+
+  &__points {
+    font-family: var(--qos-font-mono);
+    font-size: var(--qos-fs-xs);
+    color: var(--qos-fg-tertiary);
+  }
+}
+
 // ---------- lectures ----------
 
 .lectures {

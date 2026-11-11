@@ -190,6 +190,7 @@
               <h3 id="titre-carte-x" i18n="@@spc.study.xbar-chart">Carte X̄</h3>
               <qos-spc-control-chart [values]="calc.subgroupMeans" [ucl]="calc.meanUcl" [cl]="calc.grandMean"
                                      [lcl]="calc.meanLcl" [usl]="usl" [lsl]="lsl" [label]="xbarLabel" [digits]="digits.mean"
+                                     [rules]="nelsonRules" [showZones]="true"
                                      data-test="carte-x"></qos-spc-control-chart>
             </section>
             <section class="carte-bloc" aria-labelledby="titre-carte-r">
@@ -198,6 +199,46 @@
                                      [lcl]="calc.rangeLcl" [label]="rangeLabel" [digits]="digits.mean" data-test="carte-r"></qos-spc-control-chart>
             </section>
           </div>
+
+          <!-- Les règles de Nelson, détectées par l'IA sur la carte X̄ et
+               posées sur ses points. La carte R en est exclue : les règles de
+               série supposent une loi symétrique autour de la ligne centrale,
+               ce que la distribution d'une étendue n'est pas. -->
+          <section class="nelson" aria-labelledby="titre-nelson" data-test="nelson">
+            <header class="nelson__tete">
+              <h3 id="titre-nelson" i18n="@@spc.nelson.title">Règles de Nelson — détection automatique</h3>
+              <p class="nelson__note" i18n="@@spc.nelson.scope">Analysées sur la carte X̄, contre ses propres limites (X̿ ± A2 × dispersion moyenne).</p>
+            </header>
+
+            <p class="nelson__etat" *ngIf="nelsonLoading" data-test="nelson-encours"
+               i18n="@@spc.nelson.loading">Analyse de la série en cours…</p>
+
+            <p class="nelson__etat nelson__etat--ko" *ngIf="!nelsonLoading && nelsonFailed" data-test="nelson-echec">
+              <span i18n="@@spc.nelson.failed">La détection est momentanément indisponible : les limites et le Cpk de la carte restent exacts.</span>
+              <button mat-stroked-button type="button" (click)="retryNelson()" data-test="nelson-reessayer">
+                <mat-icon>refresh</mat-icon>
+                <span i18n="@@spc.nelson.retry">Relancer la détection</span>
+              </button>
+            </p>
+
+            <p class="nelson__etat nelson__etat--ok" *ngIf="!nelsonLoading && nelsonClean" data-test="nelson-aucune"
+               i18n="@@spc.nelson.none">Aucune des huit règles ne se déclenche : la série ne montre pas de cause spéciale.</p>
+
+            <ul class="nelson__liste" *ngIf="!nelsonLoading && nelsonViolations.length" data-test="nelson-liste">
+              <li *ngFor="let v of nelsonViolations" data-test="nelson-regle">
+                <span class="nelson__code" [ngClass]="violationTone(v)">{{ v.rule }}</span>
+                <span class="nelson__regle">
+                  <strong>{{ violationLabel(v) }}</strong>
+                  <span class="nelson__points">
+                    <ng-container i18n="@@spc.nelson.subgroups">Sous-groupes</ng-container> {{ violationPoints(v) }}
+                  </span>
+                </span>
+              </li>
+            </ul>
+
+            <p class="nelson__note" *ngIf="!nelsonLoading && (nelsonViolations.length || nelsonClean)"
+               i18n="@@spc.nelson.human">L'IA signale, la décision reste humaine : une règle déclenchée s'investigue avant de conclure à une cause spéciale.</p>
+          </section>
         </div>
 
         <!-- Non maîtrisé : le panneau des formules se lit en rouge (demande de la maquette). -->

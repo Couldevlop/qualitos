@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -13,6 +13,8 @@ import { DirectoryUser } from '../../../../../core/directory/directory.types';
 import { SharedModule } from '../../../../../shared/shared.module';
 import { UiModule } from '../../../../../shared/ui/ui.module';
 import { UserPickerModule } from '../../../../../shared/user-picker/user-picker.module';
+import { SpcService } from '../../../spc.service';
+import { SpcAnalyzeResponse } from '../../../spc.types';
 import { ControlChartComponent } from '../../components/control-chart/control-chart.component';
 import { DistributionChartComponent } from '../../components/distribution-chart/distribution-chart.component';
 import { TURNING_EXAMPLE, WORKBOOK_EXAMPLE } from '../../spc-capability.examples';
@@ -31,6 +33,7 @@ describe('CapabilityStudyComponent', () => {
   let fixture: ComponentFixture<CapabilityStudyComponent>;
   let component: CapabilityStudyComponent;
   let service: jasmine.SpyObj<SpcCapabilityService>;
+  let spc: jasmine.SpyObj<SpcService>;
   let snack: jasmine.SpyObj<MatSnackBar>;
   let dialog: jasmine.SpyObj<MatDialog>;
   let confirme: boolean;
@@ -41,12 +44,31 @@ describe('CapabilityStudyComponent', () => {
   const JEAN: DirectoryUser = { id: 'app-u1', accountId: 'u1', displayName: 'Jean Dupont', email: 'jean@acme.test', active: true };
   const TSV = GOLDEN_GRID.map(r => r.join('\t')).join('\r\n');
 
-  async function setup(opts: { id?: string; canManage?: boolean; settings?: 'erreur' } = {}): Promise<void> {
+  /**
+   * Une réponse d'analyse : deux règles, posées sur des rangs de la série
+   * envoyée (0-based), comme le service les renvoie.
+   */
+  const ANALYSE: SpcAnalyzeResponse = {
+    n: 20,
+    outOfControl: true,
+    limits: { centerLine: 499.03, sigma: 2.04, ucl: 505.15, lcl: 492.91, estimated: false },
+    violations: [
+      { rule: 'NELSON_2', title: '9 points du même côté', description: '', pointIndices: [4, 5, 6], severity: 'high' },
+      { rule: 'NELSON_5', title: '2 sur 3 au-delà de 2σ', description: '', pointIndices: [6], severity: 'medium' }
+    ]
+  };
+
+  async function setup(opts: { id?: string; canManage?: boolean; settings?: 'erreur';
+                               nelson?: 'erreur' } = {}): Promise<void> {
     service = jasmine.createSpyObj<SpcCapabilityService>('SpcCapabilityService', ['get', 'create', 'update', 'settings']);
     service.settings.and.returnValue(opts.settings === 'erreur'
       ? throwError(() => ({ status: 500 }))
       : of({ capableThreshold: 1.5, watchThreshold: 1.2, defaults: false }));
     service.get.and.returnValue(of(sheet({ capableThreshold: 2, watchThreshold: 1.5, status: 'WATCH' })));
+    spc = jasmine.createSpyObj<SpcService>('SpcService', ['analyze']);
+    spc.analyze.and.returnValue(opts.nelson === 'erreur'
+      ? throwError(() => ({ status: 503 }))
+      : of(ANALYSE));
     snack = jasmine.createSpyObj<MatSnackBar>('MatSnackBar', ['open']);
     confirme = true;
     dialog = jasmine.createSpyObj<MatDialog>('MatDialog', ['open']);
@@ -60,6 +82,7 @@ describe('CapabilityStudyComponent', () => {
       providers: [
         provideRouter([]),
         { provide: SpcCapabilityService, useValue: service },
+        { provide: SpcService, useValue: spc },
         { provide: MatSnackBar, useValue: snack },
         { provide: MatDialog, useValue: dialog },
         { provide: DirectoryService, useValue: directory },
@@ -524,6 +547,112 @@ describe('CapabilityStudyComponent', () => {
       un('retour')!.click();
       expect(router.navigate).toHaveBeenCalledWith(['/spc', 'cartes']);
     });
+  });
+
+  describe('règles de Nelson (détection IA)', () => {
+
+    it('analyse la carte X̄ sur ses propres limites et pose les règles sur ses points', fakeAsync(async () => {
+      await setup();
+      remplir();
+      expect(spc.analyze).not.toHaveBeenCalled();
+      tick(600);
+      fixture.detectChanges();
+
+      const envoi = spc.analyze.calls.mostRecent().args[0];
+      expect(envoi.values.length).toBe(20);
+      expect(envoi.values[0]).toBeCloseTo(498.6, 6);
+      expect(envoi.center!).toBeCloseTo(GOLDEN.grandMean, 2);
+      // σ lu sur les limites de la carte, jamais estimé par le service.
+      expect(envoi.sigma!).toBeCloseTo((GOLDEN.meanUcl - GOLDEN.grandMean) / 3, 2);
+
+      expect(component.nelsonLoading).toBeFalse();
+      expect(component.nelsonFailed).toBeFalse();
+      expect(component.nelsonRules.get(4)).toEqual(['N2']);
+      expect(component.nelsonRules.get(6)).toEqual(['N2', 'N5']);
+      expect(un('nelson-liste')?.textContent).toContain('9 points du même côté');
+      expect(un('nelson-liste')?.textContent).toContain('5, 6, 7');
+      expect(hote().querySelectorAll('[data-test="nelson-regle"]').length).toBe(2);
+      // Les abrégés arrivent jusqu'au dessin de la carte X̄.
+      expect(un('carte-x')?.querySelectorAll('[data-test="etiquette-regle"]').length).toBe(3);
+      // La carte de dispersion n'est pas jugée par ces règles.
+      expect(un('carte-r')?.querySelector('[data-test="etiquette-regle"]')).toBeNull();
+      expect(un('carte-x')?.querySelectorAll('[data-test="zone"]').length).toBe(4);
+      expect(un('carte-r')?.querySelector('[data-test="zone"]')).toBeNull();
+      expect(un('nelson-aucune')).toBeNull();
+    }));
+
+    it('ne rappelle pas le service quand la saisie ne change pas le tracé', fakeAsync(async () => {
+      await setup();
+      remplir();
+      tick(600);
+      expect(spc.analyze).toHaveBeenCalledTimes(1);
+      component.form.patchValue({ machine: 'M-12' });
+      component.form.patchValue({ specification: '500 ± 25 g' });
+      tick(600);
+      expect(spc.analyze).toHaveBeenCalledTimes(1);
+      // Une mesure modifiée, en revanche, change la série : on réanalyse.
+      component.raw[0][0] = '501';
+      component.form.patchValue({ machine: 'M-13' });
+      tick(600);
+      expect(spc.analyze).toHaveBeenCalledTimes(2);
+    }));
+
+    it('ne demande rien tant que la carte n\'a pas de limites', fakeAsync(async () => {
+      await setup();
+      tick(600);
+      expect(spc.analyze).not.toHaveBeenCalled();
+      expect(component.nelson).toBeNull();
+      expect(component.nelsonRules.size).toBe(0);
+    }));
+
+    it('dit la détection indisponible sans abîmer la carte, et la relance', fakeAsync(async () => {
+      await setup({ nelson: 'erreur' });
+      remplir();
+      tick(600);
+      fixture.detectChanges();
+      expect(component.nelsonFailed).toBeTrue();
+      expect(component.nelsonRules.size).toBe(0);
+      expect(un('nelson-echec')).not.toBeNull();
+      // Le calcul de capabilité, lui, reste exact.
+      expect(component.calc.cpk!).toBeCloseTo(GOLDEN.cpk, 3);
+
+      spc.analyze.and.returnValue(of(ANALYSE));
+      un('nelson-reessayer')!.click();
+      tick(600);
+      fixture.detectChanges();
+      expect(component.nelsonFailed).toBeFalse();
+      expect(un('nelson-echec')).toBeNull();
+      expect(un('nelson-liste')).not.toBeNull();
+    }));
+
+    it('dit qu\'aucune règle ne se déclenche quand la série est propre', fakeAsync(async () => {
+      await setup();
+      spc.analyze.and.returnValue(of({ ...ANALYSE, outOfControl: false, violations: [] }));
+      remplir();
+      tick(600);
+      fixture.detectChanges();
+      expect(component.nelsonClean).toBeTrue();
+      expect(un('nelson-aucune')).not.toBeNull();
+      expect(un('nelson-liste')).toBeNull();
+      expect(un('carte-x')?.querySelector('[data-test="etiquette-regle"]')).toBeNull();
+    }));
+
+    it('abandonne l\'analyse d\'une série que l\'utilisateur vient de modifier', fakeAsync(async () => {
+      await setup();
+      remplir();
+      tick(600);
+      expect(spc.analyze).toHaveBeenCalledTimes(1);
+      // Deux modifications dans la fenêtre d'attente : un seul appel part.
+      component.raw[0][0] = '502';
+      component.form.patchValue({ machine: 'A' });
+      tick(200);
+      component.raw[0][0] = '503';
+      component.form.patchValue({ machine: 'B' });
+      tick(600);
+      expect(spc.analyze).toHaveBeenCalledTimes(2);
+      // 503 au lieu de 504 sur le premier échantillon : la moyenne du SG 01 recule de 0,2.
+      expect(spc.analyze.calls.mostRecent().args[0].values[0]).toBeCloseTo(498.4, 6);
+    }));
   });
 
   it('se consulte sans rien pouvoir modifier sans le droit spc.manage', async () => {
