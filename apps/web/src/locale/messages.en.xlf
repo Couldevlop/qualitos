@@ -30130,6 +30130,54 @@ declared income
         <source>Au moins 4 mesures sont nécessaires pour prévoir une dérive.</source>
         <target state="translated">At least 4 measurements are needed to forecast a drift.</target>
       </trans-unit>
+      <trans-unit id="spc.import.title" datatype="html">
+        <source>Import Excel</source>
+        <target state="translated">Excel import</target>
+      </trans-unit>
+      <trans-unit id="spc.import.download-template" datatype="html">
+        <source>Télécharger le modèle</source>
+        <target state="translated">Download the template</target>
+      </trans-unit>
+      <trans-unit id="spc.import.choose" datatype="html">
+        <source>Importer un classeur</source>
+        <target state="translated">Import a workbook</target>
+      </trans-unit>
+      <trans-unit id="spc.import.reading" datatype="html">
+        <source>Lecture…</source>
+        <target state="translated">Reading…</target>
+      </trans-unit>
+      <trans-unit id="spc.import.hint" datatype="html">
+        <source>Une ligne par pièce, une colonne par sous-groupe. L'en-tête et la colonne des rangs sont ignorés ; rien n'est enregistré avant que vous n'enregistriez l'étude.</source>
+        <target state="translated">One row per part, one column per subgroup. The header row and the rank column are ignored; nothing is saved until you save the study.</target>
+      </trans-unit>
+      <trans-unit id="spc.import.warnings-title" datatype="html">
+        <source>Ce que la lecture a écarté</source>
+        <target state="translated">What the reading discarded</target>
+      </trans-unit>
+      <trans-unit id="spc.import.wrong-extension" datatype="html">
+        <source>Attendu un classeur Excel .xlsx (ni .xls, ni .csv).</source>
+        <target state="translated">An Excel .xlsx workbook is expected (neither .xls nor .csv).</target>
+      </trans-unit>
+      <trans-unit id="spc.import.failed" datatype="html">
+        <source>Le classeur n'a pas pu être lu.</source>
+        <target state="translated">The workbook could not be read.</target>
+      </trans-unit>
+      <trans-unit id="spc.import.template-failed" datatype="html">
+        <source>Le modèle n'a pas pu être téléchargé.</source>
+        <target state="translated">The template could not be downloaded.</target>
+      </trans-unit>
+      <trans-unit id="spc.import.confirm-title" datatype="html">
+        <source>Remplacer les mesures saisies ?</source>
+        <target state="translated">Replace the measurements entered?</target>
+      </trans-unit>
+      <trans-unit id="spc.import.confirm-message" datatype="html">
+        <source>Le classeur remplace toutes les mesures de la grille. L'identification de la pièce et les limites ne changent pas, et rien n'est enregistré tant que vous n'enregistrez pas l'étude.</source>
+        <target state="translated">The workbook replaces every measurement in the grid. The part identification and the limits are unchanged, and nothing is saved until you save the study.</target>
+      </trans-unit>
+      <trans-unit id="spc.import.confirm" datatype="html">
+        <source>Importer le classeur</source>
+        <target state="translated">Import the workbook</target>
+      </trans-unit>
       <trans-unit id="stakeholders.register-risk" datatype="html">
         <source>Inscrire le risque</source>
         <target state="translated">Register the risk</target>

@@ -30130,6 +30130,54 @@ historique 12 mois</source>
         <source>Au moins 4 mesures sont nécessaires pour prévoir une dérive.</source>
         <target state="translated">预测漂移至少需要4个测量值。</target>
       </trans-unit>
+      <trans-unit id="spc.import.title" datatype="html">
+        <source>Import Excel</source>
+        <target state="translated">Excel 导入</target>
+      </trans-unit>
+      <trans-unit id="spc.import.download-template" datatype="html">
+        <source>Télécharger le modèle</source>
+        <target state="translated">下载模板</target>
+      </trans-unit>
+      <trans-unit id="spc.import.choose" datatype="html">
+        <source>Importer un classeur</source>
+        <target state="translated">导入工作簿</target>
+      </trans-unit>
+      <trans-unit id="spc.import.reading" datatype="html">
+        <source>Lecture…</source>
+        <target state="translated">正在读取…</target>
+      </trans-unit>
+      <trans-unit id="spc.import.hint" datatype="html">
+        <source>Une ligne par pièce, une colonne par sous-groupe. L'en-tête et la colonne des rangs sont ignorés ; rien n'est enregistré avant que vous n'enregistriez l'étude.</source>
+        <target state="translated">每个零件一行，每个子组一列。表头行与序号列会被忽略；在您保存研究之前不会保存任何内容。</target>
+      </trans-unit>
+      <trans-unit id="spc.import.warnings-title" datatype="html">
+        <source>Ce que la lecture a écarté</source>
+        <target state="translated">读取时被忽略的内容</target>
+      </trans-unit>
+      <trans-unit id="spc.import.wrong-extension" datatype="html">
+        <source>Attendu un classeur Excel .xlsx (ni .xls, ni .csv).</source>
+        <target state="translated">需要 Excel .xlsx 工作簿（不支持 .xls 或 .csv）。</target>
+      </trans-unit>
+      <trans-unit id="spc.import.failed" datatype="html">
+        <source>Le classeur n'a pas pu être lu.</source>
+        <target state="translated">无法读取该工作簿。</target>
+      </trans-unit>
+      <trans-unit id="spc.import.template-failed" datatype="html">
+        <source>Le modèle n'a pas pu être téléchargé.</source>
+        <target state="translated">无法下载模板。</target>
+      </trans-unit>
+      <trans-unit id="spc.import.confirm-title" datatype="html">
+        <source>Remplacer les mesures saisies ?</source>
+        <target state="translated">要替换已输入的测量值吗？</target>
+      </trans-unit>
+      <trans-unit id="spc.import.confirm-message" datatype="html">
+        <source>Le classeur remplace toutes les mesures de la grille. L'identification de la pièce et les limites ne changent pas, et rien n'est enregistré tant que vous n'enregistrez pas l'étude.</source>
+        <target state="translated">该工作簿将替换网格中的全部测量值。零件标识与规格界限保持不变，在您保存研究之前不会保存任何内容。</target>
+      </trans-unit>
+      <trans-unit id="spc.import.confirm" datatype="html">
+        <source>Importer le classeur</source>
+        <target state="translated">导入工作簿</target>
+      </trans-unit>
       <trans-unit id="stakeholders.register-risk" datatype="html">
         <source>Inscrire le risque</source>
         <target state="translated">登记风险</target>

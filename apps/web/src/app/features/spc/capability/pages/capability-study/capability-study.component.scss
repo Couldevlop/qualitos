@@ -622,3 +622,79 @@
   }
 }
 
+
+// L'import d'un classeur : meme barre que les jeux d'exemple, posee sous la
+// grille, la ou l'on cherche a la remplir.
+.import {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--qos-space-2);
+  margin-top: var(--qos-space-3);
+  padding-top: var(--qos-space-3);
+  border-top: 1px solid var(--qos-border-subtle);
+
+  &__titre {
+    font-size: var(--qos-fs-xs);
+    font-weight: var(--qos-fw-semibold);
+    color: var(--qos-fg-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  // Un champ de fichier nu ne se style pas et son libelle natif n'est pas
+  // traduisible : le bouton le declenche, lui reste hors de vue sans quitter
+  // le document (`display: none` le rendrait inatteignable au clic programme).
+  &__champ {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  &__aide {
+    flex: 1 1 100%;
+    margin: 0;
+  }
+
+  &__erreur {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--qos-space-2);
+    margin: var(--qos-space-3) 0 0;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: rgba(220, 38, 38, 0.08);
+    color: #b91c1c;
+    font-size: var(--qos-fs-sm);
+    line-height: 1.5;
+
+    mat-icon {
+      flex: 0 0 auto;
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  &__avertissements {
+    margin-top: var(--qos-space-3);
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: rgba(217, 119, 6, 0.08);
+    color: #92400e;
+    font-size: var(--qos-fs-sm);
+
+    &-titre {
+      margin: 0 0 4px;
+      font-weight: var(--qos-fw-semibold);
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 1.25rem;
+      line-height: 1.5;
+    }
+  }
+}

@@ -30130,6 +30130,54 @@ historial de 12 meses</target>
         <source>Au moins 4 mesures sont nécessaires pour prévoir une dérive.</source>
         <target state="translated">Se necesitan al menos 4 mediciones para prever una deriva.</target>
       </trans-unit>
+      <trans-unit id="spc.import.title" datatype="html">
+        <source>Import Excel</source>
+        <target state="translated">Importar de Excel</target>
+      </trans-unit>
+      <trans-unit id="spc.import.download-template" datatype="html">
+        <source>Télécharger le modèle</source>
+        <target state="translated">Descargar la plantilla</target>
+      </trans-unit>
+      <trans-unit id="spc.import.choose" datatype="html">
+        <source>Importer un classeur</source>
+        <target state="translated">Importar un libro</target>
+      </trans-unit>
+      <trans-unit id="spc.import.reading" datatype="html">
+        <source>Lecture…</source>
+        <target state="translated">Leyendo…</target>
+      </trans-unit>
+      <trans-unit id="spc.import.hint" datatype="html">
+        <source>Une ligne par pièce, une colonne par sous-groupe. L'en-tête et la colonne des rangs sont ignorés ; rien n'est enregistré avant que vous n'enregistriez l'étude.</source>
+        <target state="translated">Una fila por pieza, una columna por subgrupo. La fila de encabezado y la columna de orden se ignoran; nada se guarda hasta que guarde el estudio.</target>
+      </trans-unit>
+      <trans-unit id="spc.import.warnings-title" datatype="html">
+        <source>Ce que la lecture a écarté</source>
+        <target state="translated">Lo que la lectura descartó</target>
+      </trans-unit>
+      <trans-unit id="spc.import.wrong-extension" datatype="html">
+        <source>Attendu un classeur Excel .xlsx (ni .xls, ni .csv).</source>
+        <target state="translated">Se espera un libro de Excel .xlsx (ni .xls ni .csv).</target>
+      </trans-unit>
+      <trans-unit id="spc.import.failed" datatype="html">
+        <source>Le classeur n'a pas pu être lu.</source>
+        <target state="translated">No se pudo leer el libro.</target>
+      </trans-unit>
+      <trans-unit id="spc.import.template-failed" datatype="html">
+        <source>Le modèle n'a pas pu être téléchargé.</source>
+        <target state="translated">No se pudo descargar la plantilla.</target>
+      </trans-unit>
+      <trans-unit id="spc.import.confirm-title" datatype="html">
+        <source>Remplacer les mesures saisies ?</source>
+        <target state="translated">¿Reemplazar las mediciones introducidas?</target>
+      </trans-unit>
+      <trans-unit id="spc.import.confirm-message" datatype="html">
+        <source>Le classeur remplace toutes les mesures de la grille. L'identification de la pièce et les limites ne changent pas, et rien n'est enregistré tant que vous n'enregistrez pas l'étude.</source>
+        <target state="translated">El libro reemplaza todas las mediciones de la cuadrícula. La identificación de la pieza y los límites no cambian, y nada se guarda hasta que guarde el estudio.</target>
+      </trans-unit>
+      <trans-unit id="spc.import.confirm" datatype="html">
+        <source>Importer le classeur</source>
+        <target state="translated">Importar el libro</target>
+      </trans-unit>
       <trans-unit id="stakeholders.register-risk" datatype="html">
         <source>Inscrire le risque</source>
         <target state="translated">Inscribir el riesgo</target>

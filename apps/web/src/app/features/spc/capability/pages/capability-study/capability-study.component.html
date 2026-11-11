@@ -185,6 +185,52 @@
             <p class="note" i18n="@@spc.study.paste-tip">Astuce : collez un bloc copié depuis Excel dans une cellule pour remplir la grille d'un coup.</p>
           </div>
 
+          <!--
+            L'import d'un classeur.
+
+            Le collage suffit pour vingt colonnes ; au-dela, les mesures d'un
+            poste de controle vivent dans un fichier que personne ne veut ouvrir
+            pour selectionner la bonne plage. Le modele a telecharger ferme
+            l'autre moitie du probleme : sans lui, chacun inventerait sa
+            disposition.
+          -->
+          <div class="import" *ngIf="canManage" data-test="import">
+            <span class="import__titre" i18n="@@spc.import.title">Import Excel</span>
+            <button mat-stroked-button type="button" (click)="downloadTemplate()"
+                    [disabled]="downloadingTemplate" data-test="import-modele">
+              <mat-icon>download</mat-icon>
+              <span i18n="@@spc.import.download-template">Télécharger le modèle</span>
+            </button>
+            <button mat-stroked-button type="button" (click)="fichierClasseur.click()"
+                    [disabled]="importing" data-test="import-choisir">
+              <mat-icon>upload_file</mat-icon>
+              <span *ngIf="!importing" i18n="@@spc.import.choose">Importer un classeur</span>
+              <span *ngIf="importing" i18n="@@spc.import.reading">Lecture…</span>
+            </button>
+            <!-- Le champ reste hors du flux : un champ de fichier nu ne se style
+                 pas, et son libelle natif n'est pas traduisible. -->
+            <input #fichierClasseur type="file" class="import__champ"
+                   accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                   (change)="onWorkbookChosen($event)" tabindex="-1" aria-hidden="true"
+                   data-test="import-champ">
+            <p class="note import__aide" i18n="@@spc.import.hint">Une ligne par pièce, une colonne par sous-groupe. L'en-tête et la colonne des rangs sont ignorés ; rien n'est enregistré avant que vous n'enregistriez l'étude.</p>
+          </div>
+
+          <mat-progress-bar *ngIf="importing" mode="indeterminate" data-test="import-en-cours"></mat-progress-bar>
+
+          <p class="import__erreur" *ngIf="importError" role="alert" data-test="import-erreur">
+            <mat-icon aria-hidden="true">error_outline</mat-icon>
+            <span>{{ importError }}</span>
+          </p>
+
+          <div class="import__avertissements" *ngIf="importWarnings.length" role="status"
+               data-test="import-avertissements">
+            <p class="import__avertissements-titre" i18n="@@spc.import.warnings-title">Ce que la lecture a écarté</p>
+            <ul>
+              <li *ngFor="let a of importWarnings">{{ a }}</li>
+            </ul>
+          </div>
+
           <div class="cartes">
             <section class="carte-bloc" aria-labelledby="titre-carte-x">
               <h3 id="titre-carte-x" i18n="@@spc.study.xbar-chart">Carte X̄</h3>

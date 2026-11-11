@@ -30129,6 +30129,54 @@ historique 12 mois</source>
         <source>Au moins 4 mesures sont nécessaires pour prévoir une dérive.</source>
         <target state="translated">ドリフトの予測には測定値が4件以上必要です。</target>
       </trans-unit>
+      <trans-unit id="spc.import.title" datatype="html">
+        <source>Import Excel</source>
+        <target state="translated">Excel 取り込み</target>
+      </trans-unit>
+      <trans-unit id="spc.import.download-template" datatype="html">
+        <source>Télécharger le modèle</source>
+        <target state="translated">ひな形をダウンロード</target>
+      </trans-unit>
+      <trans-unit id="spc.import.choose" datatype="html">
+        <source>Importer un classeur</source>
+        <target state="translated">ブックを取り込む</target>
+      </trans-unit>
+      <trans-unit id="spc.import.reading" datatype="html">
+        <source>Lecture…</source>
+        <target state="translated">読み込み中…</target>
+      </trans-unit>
+      <trans-unit id="spc.import.hint" datatype="html">
+        <source>Une ligne par pièce, une colonne par sous-groupe. L'en-tête et la colonne des rangs sont ignorés ; rien n'est enregistré avant que vous n'enregistriez l'étude.</source>
+        <target state="translated">1 部品につき 1 行、1 サブグループにつき 1 列。見出し行と順位列は無視されます。研究を保存するまで何も保存されません。</target>
+      </trans-unit>
+      <trans-unit id="spc.import.warnings-title" datatype="html">
+        <source>Ce que la lecture a écarté</source>
+        <target state="translated">取り込みで除外されたもの</target>
+      </trans-unit>
+      <trans-unit id="spc.import.wrong-extension" datatype="html">
+        <source>Attendu un classeur Excel .xlsx (ni .xls, ni .csv).</source>
+        <target state="translated">Excel の .xlsx ブックが必要です（.xls や .csv は不可）。</target>
+      </trans-unit>
+      <trans-unit id="spc.import.failed" datatype="html">
+        <source>Le classeur n'a pas pu être lu.</source>
+        <target state="translated">ブックを読み込めませんでした。</target>
+      </trans-unit>
+      <trans-unit id="spc.import.template-failed" datatype="html">
+        <source>Le modèle n'a pas pu être téléchargé.</source>
+        <target state="translated">ひな形をダウンロードできませんでした。</target>
+      </trans-unit>
+      <trans-unit id="spc.import.confirm-title" datatype="html">
+        <source>Remplacer les mesures saisies ?</source>
+        <target state="translated">入力済みの測定値を置き換えますか？</target>
+      </trans-unit>
+      <trans-unit id="spc.import.confirm-message" datatype="html">
+        <source>Le classeur remplace toutes les mesures de la grille. L'identification de la pièce et les limites ne changent pas, et rien n'est enregistré tant que vous n'enregistrez pas l'étude.</source>
+        <target state="translated">ブックはグリッド内のすべての測定値を置き換えます。部品の識別情報と規格限界は変わらず、研究を保存するまで何も保存されません。</target>
+      </trans-unit>
+      <trans-unit id="spc.import.confirm" datatype="html">
+        <source>Importer le classeur</source>
+        <target state="translated">ブックを取り込む</target>
+      </trans-unit>
       <trans-unit id="stakeholders.register-risk" datatype="html">
         <source>Inscrire le risque</source>
         <target state="translated">リスクを登録</target>

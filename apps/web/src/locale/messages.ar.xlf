@@ -30130,6 +30130,54 @@ historique 12 mois</source>
         <source>Au moins 4 mesures sont nécessaires pour prévoir une dérive.</source>
         <target state="translated">يلزم 4 قياسات على الأقل لتوقّع الانحراف.</target>
       </trans-unit>
+      <trans-unit id="spc.import.title" datatype="html">
+        <source>Import Excel</source>
+        <target state="translated">استيراد من Excel</target>
+      </trans-unit>
+      <trans-unit id="spc.import.download-template" datatype="html">
+        <source>Télécharger le modèle</source>
+        <target state="translated">تنزيل القالب</target>
+      </trans-unit>
+      <trans-unit id="spc.import.choose" datatype="html">
+        <source>Importer un classeur</source>
+        <target state="translated">استيراد مصنّف</target>
+      </trans-unit>
+      <trans-unit id="spc.import.reading" datatype="html">
+        <source>Lecture…</source>
+        <target state="translated">جارٍ القراءة…</target>
+      </trans-unit>
+      <trans-unit id="spc.import.hint" datatype="html">
+        <source>Une ligne par pièce, une colonne par sous-groupe. L'en-tête et la colonne des rangs sont ignorés ; rien n'est enregistré avant que vous n'enregistriez l'étude.</source>
+        <target state="translated">سطر لكل قطعة، وعمود لكل مجموعة فرعية. يُتجاهل سطر العناوين وعمود الترتيب؛ ولا يُحفظ شيء قبل أن تحفظ الدراسة.</target>
+      </trans-unit>
+      <trans-unit id="spc.import.warnings-title" datatype="html">
+        <source>Ce que la lecture a écarté</source>
+        <target state="translated">ما استبعدته القراءة</target>
+      </trans-unit>
+      <trans-unit id="spc.import.wrong-extension" datatype="html">
+        <source>Attendu un classeur Excel .xlsx (ni .xls, ni .csv).</source>
+        <target state="translated">المطلوب مصنّف Excel بصيغة .xlsx (لا .xls ولا .csv).</target>
+      </trans-unit>
+      <trans-unit id="spc.import.failed" datatype="html">
+        <source>Le classeur n'a pas pu être lu.</source>
+        <target state="translated">تعذّر قراءة المصنّف.</target>
+      </trans-unit>
+      <trans-unit id="spc.import.template-failed" datatype="html">
+        <source>Le modèle n'a pas pu être téléchargé.</source>
+        <target state="translated">تعذّر تنزيل القالب.</target>
+      </trans-unit>
+      <trans-unit id="spc.import.confirm-title" datatype="html">
+        <source>Remplacer les mesures saisies ?</source>
+        <target state="translated">استبدال القياسات المُدخلة؟</target>
+      </trans-unit>
+      <trans-unit id="spc.import.confirm-message" datatype="html">
+        <source>Le classeur remplace toutes les mesures de la grille. L'identification de la pièce et les limites ne changent pas, et rien n'est enregistré tant que vous n'enregistrez pas l'étude.</source>
+        <target state="translated">يستبدل المصنّف جميع القياسات في الشبكة. ولا يتغير تعريف القطعة ولا الحدود، ولا يُحفظ شيء قبل أن تحفظ الدراسة.</target>
+      </trans-unit>
+      <trans-unit id="spc.import.confirm" datatype="html">
+        <source>Importer le classeur</source>
+        <target state="translated">استيراد المصنّف</target>
+      </trans-unit>
       <trans-unit id="stakeholders.register-risk" datatype="html">
         <source>Inscrire le risque</source>
         <target state="translated">تسجيل الخطر</target>
