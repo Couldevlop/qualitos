@@ -7538,6 +7538,38 @@ Portail clients</source>
         <source>Le stockage des pièces jointes est désactivé sur cet environnement : aucune preuve ne peut y être déposée ni relue.</source>
         <target state="translated">تخزين المرفقات معطّل في هذه البيئة: لا يمكن إيداع أي دليل ولا الاطّلاع عليه.</target>
       </trans-unit>
+      <trans-unit id="capa.source.non-conformity-internal" datatype="html">
+        <source>Non-conformité interne</source>
+        <target state="translated">عدم مطابقة داخلية</target>
+      </trans-unit>
+      <trans-unit id="capa.create.source-ref-required" datatype="html">
+        <source>Référence source</source>
+        <target state="translated">مرجع المصدر</target>
+      </trans-unit>
+      <trans-unit id="capa.create.source-ref-loading" datatype="html">
+        <source>Lecture du registre…</source>
+        <target state="translated">جارٍ قراءة السجل…</target>
+      </trans-unit>
+      <trans-unit id="capa.create.source-ref-empty" datatype="html">
+        <source>Aucune fiche ouverte dans ce registre : choisissez une autre source.</source>
+        <target state="translated">لا توجد بطاقة مفتوحة في هذا السجل: اختر مصدراً آخر.</target>
+      </trans-unit>
+      <trans-unit id="capa.create.source-ref-truncated" datatype="html">
+        <source>Les <x id="SIZE"/> fiches ouvertes les plus récentes.</source>
+        <target state="translated">أحدث <x id="SIZE"/> بطاقة مفتوحة.</target>
+      </trans-unit>
+      <trans-unit id="capa.create.source-ref-missing" datatype="html">
+        <source>Choisissez la fiche que ce dossier traite.</source>
+        <target state="translated">اختر البطاقة التي يعالجها هذا الملف.</target>
+      </trans-unit>
+      <trans-unit id="capa.create.source-ref-failed" datatype="html">
+        <source>Registre injoignable : saisissez la référence à la main.</source>
+        <target state="translated">السجل غير متاح: أدخل المرجع يدوياً.</target>
+      </trans-unit>
+      <trans-unit id="capa.create.source-ref-retry" datatype="html">
+        <source>Relire le registre</source>
+        <target state="translated">إعادة قراءة السجل</target>
+      </trans-unit>
       <trans-unit id="capa.open.title" datatype="html">
         <source>Nouvelle CAPA</source>
         <target state="translated">إجراء تصحيحي/وقائي جديد</target>
@@ -21921,6 +21953,10 @@ historique 12 mois</source>
       <trans-unit id="nc.detail.dmaic-link-open" datatype="html">
         <source>Ouvrir le projet</source>
         <target state="translated">فتح المشروع</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.define-action-tooltip2" datatype="html">
+        <source>Écrire l'action corrective dans une CAPA</source>
+        <target state="translated">تدوين الإجراء التصحيحي في ملف CAPA</target>
       </trans-unit>
       <trans-unit id="nav.admin-nc" datatype="html">
         <source>Natures de NC</source>

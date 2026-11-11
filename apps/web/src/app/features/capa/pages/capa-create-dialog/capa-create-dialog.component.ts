@@ -1,17 +1,18 @@
-import { Component, Inject, OnInit, Optional } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit, Optional } from '@angular/core';
 import { catalogOptions } from '../../../../core/catalogs/catalog-overrides';
 import { AbstractControl, FormBuilder, ValidationErrors, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Observable, from, of } from 'rxjs';
-import { catchError, concatMap, finalize, map, switchMap, tap, toArray } from 'rxjs/operators';
+import { Observable, Subject, from, of } from 'rxjs';
+import { catchError, concatMap, finalize, map, switchMap, takeUntil, tap, toArray } from 'rxjs/operators';
 
 import { AuthService } from '../../../../core/auth/auth.service';
 import { findExactPerson, personName } from '../../../../core/directory/directory-names';
 import { DirectoryService } from '../../../../core/directory/directory.service';
 import { DirectoryUser } from '../../../../core/directory/directory.types';
 import { safeErrorMessage } from '../../../../core/http/error-message';
-import { CAPA_CRITICITIES, CAPA_SOURCES, capaSourceLabel } from '../../capa.labels';
+import { CAPA_CRITICITIES, CAPA_SOURCES, CapaSourceRegister, capaSourceLabel, capaSourceRegister } from '../../capa.labels';
+import { CapaSourceRefOption, CapaSourceRefService, SOURCE_REF_PAGE_SIZE } from '../../source-registry/capa-source-ref.service';
 import { CapaService } from '../../capa.service';
 import { CapaActionType, CapaCriticity, CapaSourceType, CapaType, OpenCapaRequest } from '../../capa.types';
 
@@ -108,7 +109,7 @@ export interface CapaCreateDialogData {
   styleUrls: ['./capa-create-dialog.component.scss'],
   standalone: false
 })
-export class CapaCreateDialogComponent implements OnInit {
+export class CapaCreateDialogComponent implements OnInit, OnDestroy {
 
   submitting = false;
 
@@ -160,6 +161,26 @@ export class CapaCreateDialogComponent implements OnInit {
    */
   private readonly names = new Map<string, string>();
 
+  /**
+   * Les références proposées pour la source choisie, quand elle en désigne une.
+   * `null` tant que rien n'est chargé — distinct de la liste vide, qui dit que
+   * le registre est bien là mais n'a rien à proposer.
+   */
+  sourceRefOptions: CapaSourceRefOption[] | null = null;
+
+  /** Vrai le temps d'interroger le registre. */
+  loadingSourceRefs = false;
+
+  /**
+   * Le registre n'a pas répondu. On le DIT, et on propose de réessayer : une
+   * liste vide laisserait croire qu'il n'y a rien à choisir, et pousserait à
+   * ouvrir un dossier sans rattachement — exactement ce que ce champ empêche.
+   */
+  sourceRefsFailed = false;
+
+  /** Coupe les chargements en cours quand la fenêtre se ferme. */
+  private readonly destroyed = new Subject<void>();
+
   readonly form = this.fb.nonNullable.group({
     title: ['', [Validators.required, notBlank, Validators.maxLength(255)]],
     description: ['', [Validators.maxLength(4000)]],
@@ -170,6 +191,9 @@ export class CapaCreateDialogComponent implements OnInit {
     assigneeId: ['', [Validators.required]],
     dueDate: ['', [Validators.required, notInPast]],
     sourceType: ['INTERNAL' as CapaSourceType, [Validators.required]],
+    // Obligatoire dès que la source désigne un objet de la plateforme : le
+    // validateur est posé par `applySourceRegister`, pas ici, car il suit la
+    // source choisie.
     sourceRef: ['', [Validators.maxLength(255)]],
     // La vérification d'efficacité (ADR 0073), décidée à l'ouverture : `null`
     // tant que la question n'est pas tranchée — aucune réponse pré-cochée.
@@ -191,6 +215,7 @@ export class CapaCreateDialogComponent implements OnInit {
     private readonly fb: FormBuilder,
     private readonly capa: CapaService,
     private readonly directory: DirectoryService,
+    private readonly sourceRefs: CapaSourceRefService,
     private readonly auth: AuthService,
     private readonly snack: MatSnackBar,
     private readonly dialogRef: MatDialogRef<CapaCreateDialogComponent, CapaOpened>,
@@ -229,6 +254,14 @@ export class CapaCreateDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // La référence de la source : chargée pour la source initiale, puis
+    // rechargée à chaque changement. Branché ICI et non dans le constructeur :
+    // le premier chargement doit pouvoir rendre sa réponse après le premier
+    // rendu sans faire varier `form.invalid` au milieu d'une passe (NG0100).
+    this.applySourceRegister(this.sourceRegister, false);
+    this.form.controls.sourceType.valueChanges
+      .pipe(takeUntil(this.destroyed))
+      .subscribe(type => this.applySourceRegister(capaSourceRegister(type), true));
     // Soi-même par défaut : c'est ce qui se faisait avant, et c'est modifiable.
     const me = this.auth.snapshot();
     if (me?.userId) {
@@ -258,6 +291,102 @@ export class CapaCreateDialogComponent implements OnInit {
         }
       });
     }
+  }
+
+  ngOnDestroy(): void {
+    this.destroyed.next();
+    this.destroyed.complete();
+  }
+
+  // ---------- la référence de la source ----------
+
+  /**
+   * Le registre d'où se tire la référence de la source choisie, ou `undefined`
+   * quand la source ne désigne aucun objet (détection interne, alerte IoT,
+   * « autre ») : là, le texte libre reste la seule réponse honnête.
+   */
+  get sourceRegister(): CapaSourceRegister | undefined {
+    return capaSourceRegister(this.form.controls.sourceType.value);
+  }
+
+  /** Combien de fiches la liste propose au plus — repris dans l'indication. */
+  readonly pageSize = SOURCE_REF_PAGE_SIZE;
+
+  /**
+   * La liste est pleine : il y a vraisemblablement des fiches plus anciennes
+   * qu'elle ne montre pas. Le dire évite de conclure qu'une référence absente
+   * n'existe pas.
+   */
+  get sourceRefTruncated(): boolean {
+    return (this.sourceRefOptions?.length ?? 0) >= SOURCE_REF_PAGE_SIZE;
+  }
+
+  /**
+   * Compare deux références. Déclaré pour que `mat-select` retrouve la valeur
+   * héritée de l'écran d'origine malgré les espaces de recopie.
+   */
+  readonly sameRef = (a: string | null, b: string | null): boolean =>
+    (a ?? '').trim() === (b ?? '').trim();
+
+  /** Vrai quand la référence se CHOISIT au registre au lieu de se taper. */
+  get sourceRefIsPicked(): boolean {
+    return !!this.sourceRegister && !this.sourceRefsFailed;
+  }
+
+  /**
+   * Charge les références du registre et pose — ou retire — l'obligation.
+   *
+   * <p>La valeur déjà saisie est effacée au changement de source : « NC-2026-018 »
+   * conservé sous la source « Risque » désignerait un objet qui n'existe pas
+   * dans le registre interrogé, et le dossier mentirait sur sa cause. Elle est
+   * en revanche CONSERVÉE quand l'écran d'origine l'a fournie, ou quand on
+   * revient sur la même source.
+   */
+  private applySourceRegister(register: CapaSourceRegister | undefined, clearValue: boolean): void {
+    const control = this.form.controls.sourceRef;
+    if (clearValue) {
+      control.setValue('');
+    }
+    this.sourceRefOptions = null;
+    this.sourceRefsFailed = false;
+    this.loadingSourceRefs = false;
+
+    control.setValidators(register
+      ? [Validators.required, notBlank, Validators.maxLength(255)]
+      : [Validators.maxLength(255)]);
+    control.updateValueAndValidity({ emitEvent: false });
+
+    if (!register) {
+      return;
+    }
+    this.loadingSourceRefs = true;
+    this.sourceRefs.options(register).pipe(takeUntil(this.destroyed)).subscribe({
+      next: options => {
+        this.loadingSourceRefs = false;
+        this.sourceRefOptions = options;
+        // Une référence héritée de l'écran d'origine qui ne figure pas dans la
+        // page chargée est AJOUTÉE à la liste plutôt que perdue : la page ne
+        // porte que les plus récentes, et l'objet désigné peut être plus ancien.
+        const herite = control.value?.trim();
+        if (herite && !options.some(o => o.reference === herite)) {
+          this.sourceRefOptions = [{ reference: herite, label: herite }, ...options];
+        }
+      },
+      error: () => {
+        this.loadingSourceRefs = false;
+        this.sourceRefsFailed = true;
+        // Le registre est muet : on retombe sur la saisie libre, toujours
+        // obligatoire. Bloquer l'ouverture du dossier parce qu'une liste n'a pas
+        // répondu punirait l'utilisateur d'une panne qui n'est pas la sienne.
+        control.setValidators([Validators.required, notBlank, Validators.maxLength(255)]);
+        control.updateValueAndValidity({ emitEvent: false });
+      }
+    });
+  }
+
+  /** Nouvel essai après un registre muet. */
+  retrySourceRefs(): void {
+    this.applySourceRegister(this.sourceRegister, false);
   }
 
   /** Le sélecteur rend la personne choisie : son nom part avec son compte. */

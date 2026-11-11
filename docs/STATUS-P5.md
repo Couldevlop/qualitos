@@ -3,6 +3,16 @@
 Branch: `feature/p5-foundations`
 Sprint window: 2026-05-17 (delivered in one sprint by a single agent)
 
+> **Instantané de sprint, conservé tel quel.** Cette page décrit ce qui a été livré
+> pendant la phase P5, à la date ci-dessus, et avec les versions de l'époque. Elle
+> n'est pas tenue à jour : la réécrire effacerait la trace de ce qui a été livré quand.
+>
+> Pour l'état courant : [`ROADMAP-vers-100.md`](ROADMAP-vers-100.md) (ce qui est fait et ce
+> qui reste), [`AUDIT-realisation-2026-06-15.md`](AUDIT-realisation-2026-06-15.md) (les
+> comptes mesurés), [`AUDIT-stub-vs-reel.md`](AUDIT-stub-vs-reel.md) (réel contre maquetté)
+> et l'espace technique du wiki ([`wiki/technique/`](wiki/technique/README.md)), qui porte
+> les versions et les ports en vigueur.
+
 ## What ships in this sprint
 
 ### 1. AI service (`apps/ai-service/`, Python 3.13, FastAPI on port 8085)

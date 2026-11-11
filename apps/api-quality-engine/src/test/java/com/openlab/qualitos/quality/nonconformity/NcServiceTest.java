@@ -406,7 +406,7 @@ class NcServiceTest {
 
     // --- escalateToCapa ---
     @Test
-    void escalate_ouvreLaCapaEtSonAction_parLeModuleCapa_etLie_sansToucherAuStatut() {
+    void escalate_ouvreLaCapaEtSonAction_parLeModuleCapa_lie_etFaitAvancerLEcart() {
         NonConformity n = nc(TENANT, NcStatus.UNDER_ANALYSIS);
         when(repo.findForUpdateByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
         UUID capaId = UUID.randomUUID();
@@ -424,7 +424,44 @@ class NcServiceTest {
         // La source est la NC elle-même : sa référence, jamais un champ du corps.
         verify(capaService).openCase(demande, CapaSourceType.NON_CONFORMITY, n.getReference());
         assertThat(r.capaCaseId()).isEqualTo(capaId);
-        assertThat(n.getStatus()).isEqualTo(NcStatus.UNDER_ANALYSIS); // inchangé
+        // Ouvrir la CAPA, c'est définir l'action : l'écart avance du même geste.
+        // Les deux gestes étaient séparés, et l'écart restait affiché « en analyse »
+        // alors que son action était écrite, datée et assignée.
+        assertThat(n.getStatus()).isEqualTo(NcStatus.ACTION_DEFINED);
+    }
+
+    @Test
+    void escalate_depuisUnEcartAPeineDeclare_neSautePasLAnalyse() {
+        NonConformity n = nc(TENANT, NcStatus.OPEN);
+        when(repo.findForUpdateByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+        when(capaService.openCase(any(), any(), any())).thenReturn(capaOuverte(UUID.randomUUID(), n));
+        when(repo.save(n)).thenReturn(n);
+
+        service.escalateToCapa(n.getId(), openReq());
+
+        // Une CAPA ouverte sur un écart à peine déclaré n'autorise pas à sauter
+        // l'analyse : le dossier se rattache, le cycle de vie ne bouge pas.
+        assertThat(n.getStatus()).isEqualTo(NcStatus.OPEN);
+    }
+
+    @Test
+    void escalate_surUnEcartDejaResolu_neRevientPasEnArriere() {
+        NonConformity n = nc(TENANT, NcStatus.RESOLVED);
+        when(repo.findForUpdateByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+        when(capaService.openCase(any(), any(), any())).thenReturn(capaOuverte(UUID.randomUUID(), n));
+        when(repo.save(n)).thenReturn(n);
+
+        service.escalateToCapa(n.getId(), openReq());
+
+        assertThat(n.getStatus()).isEqualTo(NcStatus.RESOLVED);
+    }
+
+    private static CapaDto.CaseResponse capaOuverte(UUID capaId, NonConformity n) {
+        return new CapaDto.CaseResponse(capaId, TENANT, "t", null, CapaType.CORRECTIVE,
+                CapaCriticity.HIGH, com.openlab.qualitos.quality.capa.CapaStatus.OPEN,
+                CapaSourceType.NON_CONFORMITY, n.getReference(), OWNER, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null,
+                java.util.List.of(), null, java.util.List.of());
     }
 
     @Test

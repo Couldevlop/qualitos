@@ -24,8 +24,9 @@ from recette_socle import (SORTIE, LOGO, VERSION, DATE, ENVIRONNEMENT,
 from recette_cas_a import CAS_A
 from recette_cas_b import CAS_B, SCENARIOS
 from recette_cas_c import CAS_C
+from recette_cas_d import CAS_D
 
-CAS = CAS_A + CAS_B + CAS_C
+CAS = CAS_A + CAS_B + CAS_C + CAS_D
 
 
 def rgb(hexa):

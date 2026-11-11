@@ -7538,6 +7538,38 @@ Portal de clientes</target>
         <source>Le stockage des pièces jointes est désactivé sur cet environnement : aucune preuve ne peut y être déposée ni relue.</source>
         <target state="translated">El almacenamiento de adjuntos está desactivado en este entorno: no se puede añadir ni leer ninguna prueba.</target>
       </trans-unit>
+      <trans-unit id="capa.source.non-conformity-internal" datatype="html">
+        <source>Non-conformité interne</source>
+        <target state="translated">No conformidad interna</target>
+      </trans-unit>
+      <trans-unit id="capa.create.source-ref-required" datatype="html">
+        <source>Référence source</source>
+        <target state="translated">Referencia de origen</target>
+      </trans-unit>
+      <trans-unit id="capa.create.source-ref-loading" datatype="html">
+        <source>Lecture du registre…</source>
+        <target state="translated">Leyendo el registro…</target>
+      </trans-unit>
+      <trans-unit id="capa.create.source-ref-empty" datatype="html">
+        <source>Aucune fiche ouverte dans ce registre : choisissez une autre source.</source>
+        <target state="translated">Ninguna ficha abierta en este registro: elija otro origen.</target>
+      </trans-unit>
+      <trans-unit id="capa.create.source-ref-truncated" datatype="html">
+        <source>Les <x id="SIZE"/> fiches ouvertes les plus récentes.</source>
+        <target state="translated">Las <x id="SIZE"/> fichas abiertas más recientes.</target>
+      </trans-unit>
+      <trans-unit id="capa.create.source-ref-missing" datatype="html">
+        <source>Choisissez la fiche que ce dossier traite.</source>
+        <target state="translated">Elija la ficha que trata este expediente.</target>
+      </trans-unit>
+      <trans-unit id="capa.create.source-ref-failed" datatype="html">
+        <source>Registre injoignable : saisissez la référence à la main.</source>
+        <target state="translated">Registro inaccesible: escriba la referencia a mano.</target>
+      </trans-unit>
+      <trans-unit id="capa.create.source-ref-retry" datatype="html">
+        <source>Relire le registre</source>
+        <target state="translated">Volver a leer el registro</target>
+      </trans-unit>
       <trans-unit id="capa.open.title" datatype="html">
         <source>Nouvelle CAPA</source>
         <target state="translated">Nueva CAPA</target>
@@ -21921,6 +21953,10 @@ historial de 12 meses</target>
       <trans-unit id="nc.detail.dmaic-link-open" datatype="html">
         <source>Ouvrir le projet</source>
         <target state="translated">Abrir el proyecto</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.define-action-tooltip2" datatype="html">
+        <source>Écrire l'action corrective dans une CAPA</source>
+        <target state="translated">Escribir la acción correctiva en un expediente CAPA</target>
       </trans-unit>
       <trans-unit id="nav.admin-nc" datatype="html">
         <source>Natures de NC</source>

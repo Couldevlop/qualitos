@@ -40,6 +40,30 @@ public class EightDSnapshotAssembler {
     private static final String SAISI = "Filled in by the quality team";
 
     /**
+     * La reconnaissance que porte TOUT rapport 8D dont l'écart est soldé.
+     *
+     * <p>D8 n'est pas une politesse : la méthode en fait une étape, parce qu'une
+     * équipe qui a tenu l'endiguement, établi la cause et installé la prévention a
+     * produit un résultat que le document doit nommer. Laissée à la seule saisie
+     * libre, la discipline restait vide sur la plupart des rapports — et un 8D
+     * remis à un client avec un D8 muet se lit comme un dossier abandonné en route.
+     *
+     * <p>En ANGLAIS comme le reste du document, et stockée dans l'instantané :
+     * l'empreinte scellée doit rester vérifiable à l'identique des années plus
+     * tard, ce qu'un texte relu d'une configuration mouvante ne garantirait pas.
+     */
+    static final List<String> RECONNAISSANCE_STANDARD = List.of(
+            "The organisation thanks every member of the team for the work carried out on"
+            + " this deviation: the containment that protected the customer, the analysis"
+            + " that established the cause, and the measures that prevent its return.",
+            "This closure is theirs. The knowledge gained has been added to the"
+            + " organisation's standards so that the next team starts from it.");
+
+    /** Pourquoi la reconnaissance figure au rapport. */
+    private static final String RECONNAISSANCE_AUTO =
+            "Standard acknowledgement — the deviation and its corrective actions are closed";
+
+    /**
      * @param sources      ce que les autres modules savent de l'écart
      * @param team         D1, tel que saisi (peut être nul)
      * @param containment  D3, tel que saisi (peut être nul)
@@ -59,7 +83,7 @@ public class EightDSnapshotAssembler {
                 actionsDecidees(sources.capa()),
                 miseEnOeuvre(sources.capa()),
                 prevention(sources),
-                saisie(EightDDiscipline.D8, recognition));
+                reconnaissance(sources, recognition));
 
         boolean partiel = sections.stream().anyMatch(s -> !s.sourced());
         return new EightDSnapshot(
@@ -111,6 +135,56 @@ public class EightDSnapshotAssembler {
     private EightDSnapshot.Section saisie(EightDDiscipline discipline, String texte) {
         List<String> lignes = lignesDe(texte);
         return section(discipline, !lignes.isEmpty(), lignes.isEmpty() ? A_SAISIR : SAISI, lignes);
+    }
+
+    // ---------- D8 : la reconnaissance de l'équipe ----------
+
+    /**
+     * D8 : ce que l'équipe qualité a écrit, puis — dès que l'écart est soldé — la
+     * reconnaissance standard.
+     *
+     * <p>La saisie libre passe DEVANT : un remerciement nominatif, écrit par le
+     * responsable, vaut plus que la phrase de la plateforme, et la reconnaissance
+     * standard la complète au lieu de la remplacer.
+     *
+     * <p>Tant que l'écart n'est pas soldé, aucune reconnaissance n'est ajoutée :
+     * féliciter une équipe sur un dossier encore ouvert daterait le document d'un
+     * optimisme que la suite peut démentir.
+     */
+    private EightDSnapshot.Section reconnaissance(EightDSources sources, String texte) {
+        List<String> lignes = new ArrayList<>(lignesDe(texte));
+        boolean saisi = !lignes.isEmpty();
+        boolean solde = toutEstSolde(sources);
+        if (solde) {
+            lignes.addAll(RECONNAISSANCE_STANDARD);
+        }
+        String label;
+        if (saisi && solde) {
+            label = SAISI + ", completed by the standard acknowledgement";
+        } else if (saisi) {
+            label = SAISI;
+        } else if (solde) {
+            label = RECONNAISSANCE_AUTO;
+        } else {
+            label = A_SAISIR;
+        }
+        return section(EightDDiscipline.D8, !lignes.isEmpty(), label, lignes);
+    }
+
+    /**
+     * Vrai quand l'écart ET les actions correctives qu'il a engendrées sont clos.
+     *
+     * <p>Une non-conformité close dont la CAPA escaladée court toujours n'est pas
+     * soldée : c'est la prévention qui reste à finir, et c'est précisément ce que le
+     * client lira en D7. Un écart clos sans CAPA l'est, lui : rien n'a été
+     * escaladé, il n'y a rien à attendre.
+     */
+    private boolean toutEstSolde(EightDSources sources) {
+        if (sources.nc().closedAt() == null) {
+            return false;
+        }
+        EightDSources.Capa capa = sources.capa();
+        return capa == null || capa.closedAt() != null;
     }
 
     // ---------- D2 : la non-conformité ----------
@@ -289,12 +363,13 @@ public class EightDSnapshotAssembler {
         boolean servi = !lignes.isEmpty();
         String label = servi
                 ? libelleD7(fmea, sources.surveillance().size())
-                // Dit explicitement ce qui n'existe pas ET pourquoi le Poka-Yoke
-                // n'y figure pas : un dispositif se rattache aujourd'hui à un projet
-                // DMAIC, pas à un écart. Le taire laisserait croire qu'on l'a cherché.
+                // Dit ce qui manque, et rien de plus. La phrase qui expliquait
+                // pourquoi le Poka-Yoke n'y figurait pas — un dispositif se
+                // rattache à un projet DMAIC, pas à un écart — exposait une
+                // limite d'outillage interne dans un document remis au client,
+                // là où il attend un constat de prévention.
                 : "No PFMEA failure mode linked to the deviation, and no control plan on"
-                  + " the product concerned. Poka-Yoke devices attach to a DMAIC project"
-                  + " and not to a non-conformity: they cannot be aggregated here.";
+                  + " the product concerned.";
         return section(EightDDiscipline.D7, servi, label, lignes);
     }
 

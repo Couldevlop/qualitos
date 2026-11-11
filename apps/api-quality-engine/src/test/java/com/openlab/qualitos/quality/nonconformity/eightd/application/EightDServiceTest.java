@@ -68,9 +68,10 @@ class EightDServiceTest {
         assertThat(vue.disciplines()).hasSize(8);
         assertThat(vue.partial()).isTrue();
         // D1 n'est PAS manquant : la fiche nomme son équipe, et c'est elle qui
-        // remplit la première discipline. Restent D3 et D8, que personne d'autre
-        // ne sait — plus les disciplines sans source dans ce jeu d'essai.
-        assertThat(vue.missingCodes()).contains("D3", "D8").doesNotContain("D1");
+        // remplit la première discipline. D8 ne l'est pas non plus : l'écart est
+        // clos sans CAPA escaladée, donc la reconnaissance standard de l'équipe
+        // est portée au rapport. Reste D3, que personne d'autre ne sait.
+        assertThat(vue.missingCodes()).contains("D3").doesNotContain("D1", "D8");
         assertThat(vue.seal()).isNull();
         // La non-conformité est clôturée : le geste d'émission est offert.
         assertThat(vue.issuable()).isTrue();

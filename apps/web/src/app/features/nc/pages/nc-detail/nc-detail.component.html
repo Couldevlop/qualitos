@@ -108,9 +108,12 @@
                 i18n-matTooltip="@@nc.detail.start-analysis-tooltip" matTooltip="Démarrer l'analyse">
           <mat-icon>search</mat-icon> <span i18n="@@nc.detail.start-analysis">Analyser</span>
         </button>
-        <button mat-stroked-button color="primary" (click)="defineAction()" *qosCan="'nc.process'"
+        <!-- Définir l'action, c'est l'écrire : le bouton ouvre la fenêtre de
+             création de CAPA, et le serveur fait avancer l'écart du même geste. -->
+        <button mat-stroked-button color="primary" (click)="defineAction(n)" *qosCan="'nc.process'"
                 [disabled]="(acting$ | async) || !canDefineAction(n.status)"
-                i18n-matTooltip="@@nc.detail.define-action-tooltip" matTooltip="Définir l'action">
+                data-test="definir-action"
+                i18n-matTooltip="@@nc.detail.define-action-tooltip2" matTooltip="Écrire l'action corrective dans une CAPA">
           <mat-icon>checklist</mat-icon> <span i18n="@@nc.detail.define-action">Définir action</span>
         </button>
         <button mat-flat-button color="primary" (click)="openResolve(n)" *qosCan="'nc.process'"

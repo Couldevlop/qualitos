@@ -317,8 +317,20 @@ public class NcService {
      * unique, saisis dans la fenêtre commune, puis pose {@code capa_case_id}.
      *
      * <p>La source n'est pas lue dans le corps : c'est cette NC, par sa
-     * référence. Ne change pas le statut de la NC. Une seconde ouverture est
-     * refusée — une NC a une CAPA, qui porte une action.
+     * référence. Une seconde ouverture est refusée — une NC a une CAPA, qui porte
+     * une action.
+     *
+     * <p><b>Ouvrir la CAPA, c'est définir l'action.</b> Un écart en cours
+     * d'analyse passe donc à {@link NcStatus#ACTION_DEFINED} du même geste. Les
+     * deux étaient séparés : il fallait ouvrir le dossier, puis cliquer
+     * « définir l'action » pour un seul acte réel, et l'écart restait affiché « en
+     * analyse » alors que son action était écrite, datée et assignée. Le franchir
+     * ICI plutôt que depuis l'écran garde l'invariant dans le domaine et le rend
+     * atomique : un second appel ne peut pas arriver entre les deux.
+     *
+     * <p>Seulement depuis {@code UNDER_ANALYSIS} : une CAPA ouverte sur un écart
+     * à peine déclaré n'autorise pas à sauter l'analyse, et un écart déjà résolu
+     * ne revient pas en arrière.
      */
     public NcDto.Response escalateToCapa(UUID id, CapaDto.OpenCaseRequest request) {
         // Sous verrou : un double clic ou deux onglets ne doivent pas ouvrir deux
@@ -330,6 +342,9 @@ public class NcService {
         CapaDto.CaseResponse capa = capaService.openCase(
                 request, CapaSourceType.NON_CONFORMITY, nc.getReference());
         nc.setCapaCaseId(capa.id());
+        if (nc.getStatus() == NcStatus.UNDER_ANALYSIS) {
+            nc.setStatus(NcStatus.ACTION_DEFINED);
+        }
         return toResponse(repository.save(nc));
     }
 
