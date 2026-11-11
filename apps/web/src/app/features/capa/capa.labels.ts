@@ -43,19 +43,43 @@ export function capaCriticityLabel(criticity: CapaCriticity | string | undefined
 }
 
 /**
- * Libellés des sources d'un dossier. La création libre depuis la liste n'en
- * propose qu'une partie (`manual`) : un dossier de risque, de carte de contrôle
- * ou d'anomalie ne s'ouvre que depuis son écran d'origine, qui le rattache.
+ * De quel registre se tire la référence de la source.
+ *
+ * <p>Une CAPA qui dit « Audit » sans dire LEQUEL ne se rattache à rien : la
+ * référence tapée à la main se perd dès qu'elle est mal recopiée, et le dossier
+ * devient orphelin de sa cause. Les sources qui désignent un objet de la
+ * plateforme nomment donc ici le registre où la choisir, et la fenêtre de
+ * création n'accepte plus qu'une référence existante.
+ *
+ * <p>`undefined` pour les sources qui ne désignent aucun objet — une détection
+ * interne, une alerte IoT, « autre » : là, le texte libre est la seule réponse
+ * honnête.
  */
-export const CAPA_SOURCES: ReadonlyArray<{ value: CapaSourceType; label: string; manual: boolean }> = [
-  { value: 'NON_CONFORMITY', label: $localize`:@@capa.source.non-conformity:Non-conformité`, manual: true },
-  { value: 'AUDIT',          label: $localize`:@@capa.source.audit:Audit`, manual: true },
-  { value: 'COMPLAINT',      label: $localize`:@@capa.source.complaint:Réclamation client`, manual: true },
+export type CapaSourceRegister = 'nc' | 'audit' | 'complaint' | 'risk';
+
+/**
+ * Libellés des sources d'un dossier. La création libre depuis la liste n'en
+ * propose qu'une partie (`manual`) : un dossier de carte de contrôle ou
+ * d'anomalie ne s'ouvre que depuis son écran d'origine, qui le rattache.
+ */
+export const CAPA_SOURCES: ReadonlyArray<{
+  value: CapaSourceType; label: string; manual: boolean; register?: CapaSourceRegister;
+}> = [
+  // « Non-conformité » tout court laissait croire que la source couvrait aussi
+  // l'écart remonté par un client. Elle ne couvre que l'écart constaté en
+  // interne : le dire lève l'ambiguïté sans changer le code de l'énumération,
+  // qu'un dossier déjà ouvert porte toujours.
+  { value: 'NON_CONFORMITY', label: $localize`:@@capa.source.non-conformity-internal:Non-conformité interne`, manual: true, register: 'nc' },
+  { value: 'AUDIT',          label: $localize`:@@capa.source.audit:Audit`, manual: true, register: 'audit' },
+  { value: 'COMPLAINT',      label: $localize`:@@capa.source.complaint:Réclamation client`, manual: true, register: 'complaint' },
   { value: 'INTERNAL',       label: $localize`:@@capa.source.internal:Détection interne`, manual: true },
   { value: 'IOT_ALERT',      label: $localize`:@@capa.source.iot-alert:Alerte IoT`, manual: true },
   { value: 'SPC_ALERT',      label: $localize`:@@capa.source.spc-alert:Carte de contrôle`, manual: false },
   { value: 'ANOMALY',        label: $localize`:@@capa.source.anomaly:Anomalie détectée`, manual: false },
-  { value: 'RISK',           label: $localize`:@@capa.source.risk:Risque`, manual: false },
+  // Ouvrable depuis la liste : §6.1 traite le risque AVANT qu'il se réalise, et
+  // obliger à passer par la fiche du registre privait d'un chemin légitime. Le
+  // rattachement reste garanti, mais par la référence — choisie au registre.
+  { value: 'RISK',           label: $localize`:@@capa.source.risk:Risque`, manual: true, register: 'risk' },
   { value: 'OTHER',          label: $localize`:@@capa.source.other:Autre`, manual: true }
 ];
 
@@ -63,6 +87,19 @@ export const CAPA_SOURCES: ReadonlyArray<{ value: CapaSourceType; label: string;
 export function capaSourceLabel(source: CapaSourceType | string | undefined | null): string {
   if (!source) return '—';
   return CAPA_SOURCES.find(s => s.value === source)?.label ?? String(source);
+}
+
+/**
+ * Le registre où choisir la référence de cette source, s'il y en a un.
+ *
+ * <p>C'est la seule question que posent la fenêtre de création et ses tests :
+ * faut-il une référence choisie, ou un texte libre ?
+ */
+export function capaSourceRegister(
+  source: CapaSourceType | string | undefined | null
+): CapaSourceRegister | undefined {
+  if (!source) return undefined;
+  return CAPA_SOURCES.find(s => s.value === source)?.register;
 }
 
 /**
