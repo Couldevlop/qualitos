@@ -512,10 +512,6 @@ describe('NcDetailComponent — workflow et escalade CAPA', () => {
 
   it('route chaque action vers sa transition serveur', () => {
     setup();
-    svc.defineAction.and.returnValue(of(buildNc({ status: 'ACTION_DEFINED' })));
-    component.defineAction();
-    expect(svc.defineAction).toHaveBeenCalledWith(UUID);
-
     svc.close.and.returnValue(of(buildNc({ status: 'CLOSED' })));
     component.close();
     expect(svc.close).toHaveBeenCalledWith(UUID);
@@ -596,6 +592,48 @@ describe('NcDetailComponent — workflow et escalade CAPA', () => {
     // Le dossier part par la route de la NC, qui le rattache.
     expect(svc.escalateToCapa).toHaveBeenCalledWith(UUID, DEMANDE);
     expect(svc.getNc).toHaveBeenCalledTimes(1);
+  });
+
+  // « Définir action » ne faisait que franchir une étape du cycle de vie :
+  // l'écart passait à « action définie » sans qu'aucune action n'existe nulle
+  // part. Définir l'action, c'est l'écrire.
+
+  it("« Définir action » ouvre la fenêtre de création de CAPA, préremplie par l'écart", () => {
+    setup();
+    svc.escalateToCapa.and.returnValue(of(buildNc({ capaCaseId: 'capa-9' })));
+    const openSpy = fenetre(DEMANDE);
+
+    component.defineAction(buildNc({ id: UUID, reference: 'NC-2026-1001', title: 'Bavure',
+      severity: 'MAJOR', status: 'UNDER_ANALYSIS', capaCaseId: undefined }));
+
+    expect(openSpy.calls.mostRecent().args[0]).toBe(CapaCreateDialogComponent);
+    const data = openSpy.calls.mostRecent().args[1]!.data as CapaCreateDialogData;
+    expect(data.source).toEqual({ type: 'NON_CONFORMITY', reference: 'NC-2026-1001' });
+    expect(data.prefill).toEqual(jasmine.objectContaining({ title: 'Bavure', criticity: 'HIGH' }));
+    // C'est la route de la NC qui ouvre le dossier : elle le rattache ET fait
+    // avancer l'écart, d'un seul geste côté serveur.
+    expect(svc.escalateToCapa).toHaveBeenCalledWith(UUID, DEMANDE);
+  });
+
+  it("« Définir action » ne franchit plus l'étape toute seule", () => {
+    setup();
+    svc.escalateToCapa.and.returnValue(of(buildNc({ capaCaseId: 'capa-9' })));
+    fenetre(DEMANDE);
+
+    component.defineAction(buildNc({ id: UUID, status: 'UNDER_ANALYSIS', capaCaseId: undefined }));
+
+    expect(svc.defineAction).not.toHaveBeenCalled();
+  });
+
+  it("« Définir action » mène au dossier quand il existe déjà, sans en ouvrir un second", () => {
+    setup();
+    const openSpy = spyOn(TestBed.inject(MatDialog), 'open');
+
+    component.defineAction(buildNc({ id: UUID, status: 'ACTION_DEFINED', capaCaseId: 'capa-7' }));
+
+    expect(router.navigate).toHaveBeenCalledWith(['/capa', 'capa-7']);
+    expect(openSpy).not.toHaveBeenCalled();
+    expect(svc.escalateToCapa).not.toHaveBeenCalled();
   });
 
   it('propose la criticité selon la gravité de l\'écart', () => {

@@ -21758,6 +21758,10 @@ historique 12 mois</source>
         <source>Ouvrir le projet</source>
         <target state="translated">打开项目</target>
       </trans-unit>
+      <trans-unit id="nc.detail.define-action-tooltip2" datatype="html">
+        <source>Écrire l'action corrective dans une CAPA</source>
+        <target state="translated">在 CAPA 案件中写明纠正措施</target>
+      </trans-unit>
       <trans-unit id="nav.admin-nc" datatype="html">
         <source>Natures de NC</source>
         <target state="translated">不符合性质</target>

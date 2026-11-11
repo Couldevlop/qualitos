@@ -495,8 +495,24 @@ export class NcDetailComponent implements OnInit {
   }
 
   startAnalysis(): void { this.transition('start-analysis'); }
-  defineAction(): void { this.transition('define-action'); }
   close(): void { this.transition('close'); }
+
+  /**
+   * « Définir action » : ouvre la fenêtre de création de CAPA.
+   *
+   * <p>Le bouton ne faisait que franchir une étape du cycle de vie : l'écart
+   * passait à « action définie » sans qu'aucune action n'existe nulle part. Il
+   * fallait ensuite trouver « Créer une CAPA », ailleurs dans l'écran, pour
+   * écrire l'action que le statut prétendait déjà définie.
+   *
+   * <p>Définir l'action, c'est maintenant l'écrire : même fenêtre que « Créer une
+   * CAPA » (ADR 0088), préremplie par l'écart, et le serveur fait avancer l'écart
+   * du même geste. Quand le dossier existe déjà, le bouton y mène : son action
+   * s'y définit, et la rouvrir ici en créerait une seconde.
+   */
+  defineAction(nc: NcResponse): void {
+    this.openCapa(nc);
+  }
 
   cancel(): void {
     this.dialog.open(ConfirmDialogComponent, {
@@ -655,12 +671,17 @@ export class NcDetailComponent implements OnInit {
     return severity === 'CRITICAL' ? 'CRITICAL' : severity === 'MAJOR' ? 'HIGH' : 'LOW';
   }
 
-  private transition(action: 'start-analysis' | 'define-action' | 'close' | 'cancel'): void {
+  /**
+   * Les franchissements qui n'ont rien à saisir.
+   *
+   * <p>« Définir l'action » n'en fait plus partie : c'est l'ouverture de la CAPA
+   * qui fait avancer l'écart, et le serveur tient les deux d'un seul geste.
+   */
+  private transition(action: 'start-analysis' | 'close' | 'cancel'): void {
     if (this.acting$.value) return;
     this.acting$.next(true);
     const call =
       action === 'start-analysis' ? this.svc.startAnalysis(this.ncId)
-      : action === 'define-action' ? this.svc.defineAction(this.ncId)
       : action === 'close' ? this.svc.close(this.ncId)
       : this.svc.cancel(this.ncId);
     call.pipe(finalize(() => this.acting$.next(false))).subscribe({

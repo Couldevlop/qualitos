@@ -21758,6 +21758,10 @@ historial de 12 meses</target>
         <source>Ouvrir le projet</source>
         <target state="translated">Abrir el proyecto</target>
       </trans-unit>
+      <trans-unit id="nc.detail.define-action-tooltip2" datatype="html">
+        <source>Écrire l'action corrective dans une CAPA</source>
+        <target state="translated">Escribir la acción correctiva en un expediente CAPA</target>
+      </trans-unit>
       <trans-unit id="nav.admin-nc" datatype="html">
         <source>Natures de NC</source>
         <target state="translated">Naturalezas de NC</target>
