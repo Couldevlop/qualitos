@@ -13156,10 +13156,6 @@ Coordonnées professionnelles</source>
         <source>La photo n'a pas pu être envoyée.</source>
         <target state="translated">写真を送信できませんでした。</target>
       </trans-unit>
-      <trans-unit id="nav.forecast" datatype="html">
-        <source>Prévision KPI</source>
-        <target state="translated">KPI予測</target>
-      </trans-unit>
       <trans-unit id="forecast.kpi.title" datatype="html">
         <source>Prévision KPI</source>
         <target state="translated">KPI予測</target>
@@ -13347,6 +13343,102 @@ Coordonnées professionnelles</source>
       <trans-unit id="forecast.kpi.role-link-manual-text" datatype="html">
         <source>La prévision n'ouvre rien d'elle-même : ni CAPA, ni cycle PDCA, ni projet DMAIC. Elle éclaire la décision, et c'est depuis le module concerné qu'on l'engage — une projection n'est pas un constat, et elle ne doit pas déclencher d'action au registre.</source>
         <target state="translated">予測はそれ自体では何も起票しません。CAPA も PDCA サイクルも DMAIC プロジェクトも開きません。判断を助けるだけで、着手はそれぞれのモジュールから行います。予測は確認された事実ではなく、台帳に対策を登録する根拠にはなりません。</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.title" datatype="html">
+        <source>Prévision</source>
+        <target state="translated">予測</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.intro" datatype="html">
+        <source>Au rythme des mesures enregistrées, l'indicateur atteindra-t-il sa cible ? Le lissage exponentiel prolonge le niveau et la tendance de la série ; la bande grise dit l'incertitude à 95 %. Une projection n'est pas un constat : elle n'ouvre ni action corrective ni cycle d'amélioration d'elle-même.</source>
+        <target state="translated">記録された測定値のペースでは、この指標は目標に到達するでしょうか。指数平滑により系列の水準とトレンドを延長し、灰色の帯で 95 % の不確実性を示します。予測は確認された事実ではなく、それ自体で是正処置や改善サイクルを起票することはありません。</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.no-target" datatype="html">
+        <source>Cet indicateur n'a pas de valeur cible : renseignez-la pour obtenir une prévision.</source>
+        <target state="translated">この指標には目標値がありません。予測を得るには目標値を設定してください。</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.too-few" datatype="html">
+        <source><x id="count"/> mesure(s) enregistrée(s) : il en faut au moins <x id="min"/> pour projeter une tendance.</source>
+        <target state="translated">登録済みの測定値は <x id="count"/> 件です。トレンドを延長するには <x id="min"/> 件以上必要です。</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.measures-error" datatype="html">
+        <source>Impossible de lire les mesures de cet indicateur.</source>
+        <target state="translated">この指標の測定値を読み取れませんでした。</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.card-probability" datatype="html">
+        <source>Probabilité d'atteinte</source>
+        <target state="translated">目標到達確率</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.card-confidence" datatype="html">
+        <source>Confiance</source>
+        <target state="translated">信頼度</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.card-model" datatype="html">
+        <source>Modèle</source>
+        <target state="translated">モデル</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.points" datatype="html">
+        <source>mesures</source>
+        <target state="translated">件の測定値</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.slope" datatype="html">
+        <source>tendance</source>
+        <target state="translated">トレンド</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.period" datatype="html">
+        <source>période</source>
+        <target state="translated">期</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.dir-at-least" datatype="html">
+        <source>atteindre au moins</source>
+        <target state="translated">少なくとも到達</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.dir-at-most" datatype="html">
+        <source>ne pas dépasser</source>
+        <target state="translated">超えない</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.model-hw" datatype="html">
+        <source>Holt-Winters (saisonnier)</source>
+        <target state="translated">Holt-Winters（季節性）</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.model-holt" datatype="html">
+        <source>Holt (niveau + tendance)</source>
+        <target state="translated">Holt（水準＋トレンド）</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.table-caption" datatype="html">
+        <source>Points projetés</source>
+        <target state="translated">予測点</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.col-step" datatype="html">
+        <source>Horizon</source>
+        <target state="translated">予測期間</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.col-value" datatype="html">
+        <source>Prévision</source>
+        <target state="translated">予測値</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.col-interval" datatype="html">
+        <source>Intervalle 95 %</source>
+        <target state="translated">95 % 区間</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.err-backend" datatype="html">
+        <source>Service de prévision injoignable.</source>
+        <target state="translated">予測サービスに接続できません。</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.err-unprocessable" datatype="html">
+        <source>Série insuffisante pour une prévision fiable.</source>
+        <target state="translated">信頼できる予測に足るデータがありません。</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.err-quota" datatype="html">
+        <source>Débit IA dépassé pour ce client — réessayez plus tard.</source>
+        <target state="translated">このお客様の AI 利用上限を超えました。しばらくしてから再試行してください。</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.err-unavailable" datatype="html">
+        <source>Service de prévision momentanément indisponible.</source>
+        <target state="translated">予測サービスは一時的に利用できません。</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.err-generic" datatype="html">
+        <source>Échec de la prévision (HTTP <x id="status"/>).</source>
+        <target state="translated">予測に失敗しました（HTTP <x id="status"/>）。</target>
       </trans-unit>
       <trans-unit id="nav.admin-documents" datatype="html">
         <source>Documentation</source>

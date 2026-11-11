@@ -217,7 +217,16 @@ describe('MainShellComponent (navigation model)', () => {
     // audits, parce qu'un audit se prepare contre un referentiel.
     // 17 : Listes deroulantes rejoint l'administration (ADR 0111) -- un seul
     // ecran pour les douze listes que le client met dans ses propres mots.
-    expect(labels).toEqual([8, 6, 7, 2, 1, 6, 1, 14, 5, 1, 17]);
+    // Analyses IA retombe a 6 : la prevision KPI quitte la barre laterale. Elle
+    // se lit dans la fiche de l'indicateur, sur ses mesures et sa cible.
+    expect(labels).toEqual([8, 6, 6, 2, 1, 6, 1, 14, 5, 1, 17]);
+  });
+
+  it('ne garde aucune entree de prevision dans la barre laterale', () => {
+    // La projection se lit dans la fiche de l'indicateur : une entree globale
+    // obligeait a rechoisir l'indicateur et a comparer de tete avec sa fiche.
+    const routes = component.sections.flatMap(s => s.items.map(i => i.route));
+    expect(routes).not.toContain('/forecast');
   });
 
   it('le registre des risques a son groupe, juste apres la non-conformite', () => {

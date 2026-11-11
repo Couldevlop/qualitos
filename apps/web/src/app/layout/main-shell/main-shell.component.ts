@@ -152,7 +152,6 @@ export class MainShellComponent implements OnInit, OnDestroy {
       collapsible: true,
       items: [
         { label: $localize`:@@nav.anomaly:Anomalies IA`,          route: '/anomaly',        icon: 'bubble_chart' },
-        { label: $localize`:@@nav.forecast:Prévision KPI`,        route: '/forecast',       icon: 'trending_up' },
         { label: $localize`:@@nav.nc-clusters:Clustering NC`,     route: '/nc-clusters',    icon: 'hub', module: 'capa' },
         { label: $localize`:@@nav.complaints-nlp:Réclamations IA`, route: '/complaints-nlp', icon: 'rate_review', module: 'complaints' },
         { label: $localize`:@@nav.assistant-ia:Assistant IA`,     route: '/nlq',            icon: 'forum' },

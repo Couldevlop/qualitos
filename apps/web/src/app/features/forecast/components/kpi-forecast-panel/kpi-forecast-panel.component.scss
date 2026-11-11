@@ -1,0 +1,124 @@
+:host {
+  display: block;
+}
+
+.intro {
+  margin: 0 0 var(--qos-space-3);
+  font-size: var(--qos-fs-sm);
+  color: var(--qos-fg-secondary);
+  line-height: 1.6;
+  max-width: 80ch;
+}
+
+/* Ce qui empêche la prévision : visible, mais sans dramatiser. */
+.indispo {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--qos-space-2);
+  margin: var(--qos-space-2) 0 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--qos-surface-subtle, rgba(100, 116, 139, 0.08));
+  color: var(--qos-fg-secondary);
+  font-size: var(--qos-fs-sm);
+  line-height: 1.5;
+
+  mat-icon {
+    flex: 0 0 auto;
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}
+
+/*
+ * Le verdict : trois chiffres, lus d'un coup d'oeil. Pas de cartes a ombre --
+ * le panneau en est deja une, et les empiler alourdit la fiche.
+ */
+.verdict {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--qos-space-3);
+  margin-bottom: var(--qos-space-4);
+
+  @media (max-width: 760px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.chiffre {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border-left: 3px solid var(--qos-border-subtle, #e2e8f0);
+  background: var(--qos-surface-subtle, rgba(100, 116, 139, 0.05));
+
+  .valeur {
+    font-size: 1.35rem;
+    font-weight: 650;
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+
+    &.petite {
+      font-size: 0.98rem;
+      font-weight: 600;
+      padding-top: 4px;
+    }
+  }
+
+  .legende {
+    font-size: var(--qos-fs-sm);
+    font-weight: 600;
+    color: var(--qos-fg-secondary);
+  }
+
+  .precision {
+    font-size: 0.78rem;
+    color: var(--qos-fg-tertiary, var(--qos-fg-secondary));
+  }
+
+  &.etat-good    { border-left-color: #059669; .valeur { color: #047857; } }
+  &.etat-warn    { border-left-color: #d97706; .valeur { color: #b45309; } }
+  &.etat-bad     { border-left-color: #dc2626; .valeur { color: #b91c1c; } }
+  &.etat-neutral { border-left-color: var(--qos-border-subtle, #e2e8f0); }
+}
+
+.forecast-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--qos-fs-sm);
+  margin-top: var(--qos-space-4);
+
+  caption {
+    text-align: left;
+    font-weight: 600;
+    color: var(--qos-fg-secondary);
+    padding-bottom: 6px;
+  }
+
+  th {
+    text-align: left;
+    font-weight: 600;
+    color: var(--qos-fg-secondary);
+    border-bottom: 1px solid var(--qos-border-subtle, #e2e8f0);
+    padding: 8px 10px;
+  }
+
+  td {
+    padding: 10px;
+    border-bottom: 1px solid var(--qos-border-subtle, #e2e8f0);
+  }
+
+  .nowrap {
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .val {
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    color: #6d28d9;
+  }
+}

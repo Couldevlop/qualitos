@@ -7,6 +7,8 @@ import { Subscription, of, throwError } from 'rxjs';
 
 import { SharedModule } from '../../../../shared/shared.module';
 import { UiModule } from '../../../../shared/ui/ui.module';
+import { ForecastSharedModule } from '../../../forecast/forecast-shared.module';
+import { ForecastService } from '../../../forecast/forecast.service';
 import { KpisService } from '../../kpis.service';
 import {
   KpiCurrentStatus, KpiResponse, KpiTrend, MeasurementResponse
@@ -59,6 +61,14 @@ describe('KpisDetailComponent', () => {
     }))
   });
 
+  /** Reponse de prevision du double : la fiche n'y teste que l'affichage du panneau. */
+  const forecastResponse = {
+    n: 3, slope: 1.1, intercept: 96, residualSigma: 0.4, r2: 0.9,
+    horizon: 6, target: 98, direction: 'at_least' as const, probability: 0.74,
+    confidence: 'medium', model: 'holt_linear', seasonalPeriod: 0,
+    points: [{ step: 1, value: 97, low: 96, high: 98 }]
+  };
+
   const page = <T>(content: T[]) => ({
     content, totalElements: content.length, totalPages: 1, number: 0, size: content.length
   });
@@ -106,9 +116,13 @@ describe('KpisDetailComponent', () => {
 
     await TestBed.configureTestingModule({
       declarations: [KpisDetailComponent],
-      imports: [SharedModule, UiModule, NoopAnimationsModule],
+      imports: [SharedModule, UiModule, ForecastSharedModule, NoopAnimationsModule],
       providers: [
         { provide: KpisService, useValue: svc },
+        // La fiche porte le panneau de prevision : il lit les mesures par le meme
+        // service, et projette par celui-ci. Sans double, chaque test appellerait
+        // le vrai service HTTP.
+        { provide: ForecastService, useValue: { forecast: () => of(forecastResponse) } },
         { provide: MatDialog, useValue: { open: () => ({ afterClosed: () => of(dialogResult) }) } },
         { provide: MatSnackBar, useValue: snack },
         provideRouter([]),

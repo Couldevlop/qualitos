@@ -1,0 +1,61 @@
+<qos-panel i18n-title="@@forecast.panel.title" title="Prévision" icon="trending_up" class="kpi-forecast">
+
+  <p class="intro" i18n="@@forecast.panel.intro">
+    Au rythme des mesures enregistrées, l'indicateur atteindra-t-il sa cible ? Le lissage
+    exponentiel prolonge le niveau et la tendance de la série ; la bande grise dit
+    l'incertitude à 95 %. Une projection n'est pas un constat : elle n'ouvre ni action
+    corrective ni cycle d'amélioration d'elle-même.
+  </p>
+
+  <mat-progress-bar *ngIf="loading" mode="indeterminate" data-test="forecast-loading"></mat-progress-bar>
+
+  <p class="indispo" *ngIf="unavailable" role="status" data-test="forecast-unavailable">
+    <mat-icon aria-hidden="true">info_outline</mat-icon>
+    <span>{{ unavailable }}</span>
+  </p>
+
+  <ng-container *ngIf="result as r">
+    <div class="verdict">
+      <div class="chiffre" [ngClass]="'etat-' + probabilityState(r.probability)" data-test="forecast-probability">
+        <span class="valeur">{{ probabilityPct(r.probability) }}</span>
+        <span class="legende">
+          <ng-container i18n="@@forecast.panel.card-probability">Probabilité d'atteinte</ng-container>
+        </span>
+        <span class="precision">{{ directionLabel() }} {{ r.target }}{{ kpi?.unit ? ' ' + kpi?.unit : '' }} · H+{{ r.horizon }}</span>
+      </div>
+      <div class="chiffre" [ngClass]="'etat-' + confidenceState(r.confidence)" data-test="forecast-confidence">
+        <span class="valeur">{{ r.confidence }}</span>
+        <span class="legende"><ng-container i18n="@@forecast.panel.card-confidence">Confiance</ng-container></span>
+        <span class="precision">{{ points }} <ng-container i18n="@@forecast.panel.points">mesures</ng-container> · R² {{ r.r2 | number:'1.0-2' }}</span>
+      </div>
+      <div class="chiffre etat-neutral" data-test="forecast-model">
+        <span class="valeur petite">{{ modelLabel(r.model, r.seasonalPeriod) }}</span>
+        <span class="legende"><ng-container i18n="@@forecast.panel.card-model">Modèle</ng-container></span>
+        <span class="precision">
+          <ng-container i18n="@@forecast.panel.slope">tendance</ng-container>
+          {{ r.slope | number:'1.0-3' }} / <ng-container i18n="@@forecast.panel.period">période</ng-container>
+        </span>
+      </div>
+    </div>
+
+    <qos-echart *ngIf="chartOption" [option]="chartOption" [height]="300"></qos-echart>
+
+    <table class="forecast-table" *ngIf="r.points?.length">
+      <caption i18n="@@forecast.panel.table-caption">Points projetés</caption>
+      <thead>
+        <tr>
+          <th i18n="@@forecast.panel.col-step">Horizon</th>
+          <th i18n="@@forecast.panel.col-value">Prévision</th>
+          <th i18n="@@forecast.panel.col-interval">Intervalle 95 %</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let p of r.points">
+          <td class="nowrap">H+{{ p.step }}</td>
+          <td class="val">{{ p.value | number:'1.0-2' }}</td>
+          <td>{{ p.low | number:'1.0-2' }} … {{ p.high | number:'1.0-2' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </ng-container>
+</qos-panel>
