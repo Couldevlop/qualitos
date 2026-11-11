@@ -2,6 +2,16 @@
 
 > Mise à jour : 2026-05-15. Cf. CLAUDE.md §17 (roadmap).
 
+> **Instantané de sprint, conservé tel quel.** Cette page décrit ce qui a été livré
+> pendant la phase P1, à la date ci-dessus, et avec les versions de l'époque. Elle
+> n'est pas tenue à jour : la réécrire effacerait la trace de ce qui a été livré quand.
+>
+> Pour l'état courant : [`ROADMAP-vers-100.md`](ROADMAP-vers-100.md) (ce qui est fait et ce
+> qui reste), [`AUDIT-realisation-2026-06-15.md`](AUDIT-realisation-2026-06-15.md) (les
+> comptes mesurés), [`AUDIT-stub-vs-reel.md`](AUDIT-stub-vs-reel.md) (réel contre maquetté)
+> et l'espace technique du wiki ([`wiki/technique/`](wiki/technique/README.md)), qui porte
+> les versions et les ports en vigueur.
+
 ## ✅ Livré
 
 ### Backend (Java 21 + Spring Boot 3.5)

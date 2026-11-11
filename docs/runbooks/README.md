@@ -1,7 +1,7 @@
 # Runbooks — index
 
-> Douze procédures d'exploitation. Ce fichier existe pour une raison simple :
-> quand on en a besoin, on n'a pas le temps de lire les douze titres pour deviner
+> Quatorze procédures d'exploitation. Ce fichier existe pour une raison simple :
+> quand on en a besoin, on n'a pas le temps de lire les quatorze titres pour deviner
 > lequel s'applique. Chacun est rangé sous la **question à laquelle il répond**.
 
 ## Avant tout : où l'on opère
@@ -52,6 +52,7 @@ navigateur qui sert l'ancien code (voir `PASSATION.md` §6.3, le piège PWA).
 | [`keycloak-spi-ldap.md`](./keycloak-spi-ldap.md) | Brancher l'annuaire d'un client sur Keycloak (Active Directory, OpenLDAP). |
 | [`edge-inference.md`](./edge-inference.md) | Passerelle Edge et modèles embarqués. |
 | [`vision-5s.md`](./vision-5s.md) | Service de vision 5S : modèles, seuils, exploitation. |
+| [`site-qualitos-fr.md`](./site-qualitos-fr.md) | Le site de présentation `qualitos.fr` et son formulaire de contact : zone DNS, déploiement, envoi de courriel. |
 
 ## Modifier sans casser — les garde-fous du code
 

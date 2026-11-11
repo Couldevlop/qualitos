@@ -1,4 +1,4 @@
-# ADR 0026 — Connecteur Sparkplug B + rollups TimescaleDB (IoT Hub)
+# ADR 0027 — Connecteur Sparkplug B + rollups TimescaleDB (IoT Hub)
 
 - **Statut** : Accepté
 - **Date** : 2026-06-16
