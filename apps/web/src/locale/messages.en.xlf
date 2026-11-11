@@ -21758,6 +21758,10 @@ declared income
         <source>Ouvrir le projet</source>
         <target state="translated">Open the project</target>
       </trans-unit>
+      <trans-unit id="nc.detail.define-action-tooltip2" datatype="html">
+        <source>Écrire l'action corrective dans une CAPA</source>
+        <target state="translated">Write the corrective action in a CAPA case</target>
+      </trans-unit>
       <trans-unit id="nav.admin-nc" datatype="html">
         <source>Natures de NC</source>
         <target state="translated">NC natures</target>

@@ -21757,6 +21757,10 @@ historique 12 mois</source>
         <source>Ouvrir le projet</source>
         <target state="translated">プロジェクトを開く</target>
       </trans-unit>
+      <trans-unit id="nc.detail.define-action-tooltip2" datatype="html">
+        <source>Écrire l'action corrective dans une CAPA</source>
+        <target state="translated">是正処置をCAPA案件に記載</target>
+      </trans-unit>
       <trans-unit id="nav.admin-nc" datatype="html">
         <source>Natures de NC</source>
         <target state="translated">NC の性質</target>
