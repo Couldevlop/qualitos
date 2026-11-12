@@ -32182,17 +32182,45 @@ historique 12 mois</source>
         <source>écart(s) — triés par priorité.</source>
         <target state="translated">项差距 — 按优先级排序。</target>
       </trans-unit>
-      <trans-unit id="standards.detail.audit-critical" datatype="html">
-        <source>critiques,</source>
-        <target state="translated">关键、</target>
+      <trans-unit id="standards.detail.kpi-major-ncs" datatype="html">
+        <source>Non-conformités majeures</source>
+        <target state="translated">严重不合格</target>
       </trans-unit>
-      <trans-unit id="standards.detail.audit-major" datatype="html">
-        <source>majeurs,</source>
-        <target state="translated">主要、</target>
+      <trans-unit id="standards.detail.kpi-minor-ncs" datatype="html">
+        <source>mineures</source>
+        <target state="translated">轻微</target>
       </trans-unit>
-      <trans-unit id="standards.detail.audit-minor" datatype="html">
-        <source>mineurs.</source>
-        <target state="translated">次要。</target>
+      <trans-unit id="standards.detail.kpi-observations" datatype="html">
+        <source>observations</source>
+        <target state="translated">观察项</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.kpi-gaps-formula2" datatype="html">
+        <source>Toute exigence sans preuve est un écart, classé comme un auditeur le classerait. Non-conformité majeure : exigence obligatoire absente dont le risque est élevé ou critique — elle met en cause l'aptitude du système et bloque le certificat jusqu'à sa levée. Mineure : obligatoire, risque moindre — un plan d'actions suffit. Observation : exigence seulement recommandée, ce n'est pas une non-conformité.</source>
+        <target state="translated">没有证据的要求即为差距，按审核员的方式分类。严重不合格：缺失的强制性要求且风险高或关键 — 它质疑体系能力，并在关闭前阻止认证。轻微：强制性但风险较低 — 有行动计划即可。观察项：仅为建议性要求，不是不合格。</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.audit-major-nc" datatype="html">
+        <source>non-conformités majeures,</source>
+        <target state="translated">严重不合格、</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.audit-minor-nc" datatype="html">
+        <source>mineures,</source>
+        <target state="translated">轻微、</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.audit-observations" datatype="html">
+        <source>observations.</source>
+        <target state="translated">观察项。</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.finding-major" datatype="html">
+        <source>Non-conformité majeure</source>
+        <target state="translated">严重不合格</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.finding-minor" datatype="html">
+        <source>Non-conformité mineure</source>
+        <target state="translated">轻微不合格</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.finding-observation" datatype="html">
+        <source>Observation</source>
+        <target state="translated">观察项</target>
       </trans-unit>
       <trans-unit id="standards.detail.audit-no-gap" datatype="html">
         <source>Aucun écart : toutes les exigences sont couvertes 🎉</source>

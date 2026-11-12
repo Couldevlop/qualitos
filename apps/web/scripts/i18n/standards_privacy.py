@@ -88,9 +88,40 @@ TRANSLATIONS = {
     'standards.detail.audit-verdict-label': ('Verdict :', 'Verdict:', 'Veredicto:', 'الحكم:', '判定：', '裁定：'),
     'standards.detail.audit-must-covered': ('MUST couvertes :', 'MUST covered:', 'MUST cubiertos:', 'متطلبات MUST المغطاة:', 'MUST充足：', 'MUST 已覆盖：'),
     'standards.detail.audit-gaps-suffix': ('écart(s) — triés par priorité.', 'gap(s) — sorted by priority.', 'brecha(s) — ordenadas por prioridad.', 'فجوة/فجوات — مرتبة حسب الأولوية.', '件のギャップ — 優先度順。', '项差距 — 按优先级排序。'),
-    'standards.detail.audit-critical': ('critiques,', 'critical,', 'críticas,', 'حرجة,', '重大、', '关键、'),
-    'standards.detail.audit-major': ('majeurs,', 'major,', 'mayores,', 'كبيرة,', '重要、', '主要、'),
-    'standards.detail.audit-minor': ('mineurs.', 'minor.', 'menores.', 'صغيرة.', '軽微。', '次要。'),
+    # Les termes de l'ISO/IEC 17021-1 : « critique » n'existe pas dans le
+    # vocabulaire d'un organisme certificateur -- majeure, mineure, observation.
+    'standards.detail.kpi-major-ncs': (
+        'Non-conformités majeures', 'Major nonconformities', 'No conformidades mayores',
+        'حالات عدم مطابقة كبرى', '重大不適合', '严重不合格'),
+    'standards.detail.kpi-minor-ncs': (
+        'mineures', 'minor', 'menores', 'صغرى', '軽微', '轻微'),
+    'standards.detail.kpi-observations': (
+        'observations', 'observations', 'observaciones', 'ملاحظات', '所見', '观察项'),
+    'standards.detail.kpi-gaps-formula2': (
+        "Toute exigence sans preuve est un écart, classé comme un auditeur le classerait. Non-conformité majeure : exigence obligatoire absente dont le risque est élevé ou critique — elle met en cause l'aptitude du système et bloque le certificat jusqu'à sa levée. Mineure : obligatoire, risque moindre — un plan d'actions suffit. Observation : exigence seulement recommandée, ce n'est pas une non-conformité.",
+        "Any requirement without evidence is a gap, classified the way an auditor would classify it. Major nonconformity: a missing mandatory requirement whose risk is high or critical — it questions the system's ability and blocks the certificate until closed. Minor: mandatory, lower risk — an action plan is enough. Observation: a merely recommended requirement, not a nonconformity.",
+        "Todo requisito sin evidencia es una desviación, clasificada como lo haría un auditor. No conformidad mayor: requisito obligatorio ausente cuyo riesgo es alto o crítico — cuestiona la capacidad del sistema y bloquea el certificado hasta su cierre. Menor: obligatorio, riesgo menor — basta un plan de acciones. Observación: requisito solo recomendado, no es una no conformidad.",
+        "كل متطلب بلا دليل هو انحراف، يُصنّف كما يصنّفه المدقق. عدم مطابقة كبرى: متطلب إلزامي غائب مرتفع أو حرج الخطورة — يشكّك في قدرة النظام ويعطّل الشهادة حتى معالجته. صغرى: إلزامي بخطورة أقل — تكفي خطة إجرائية. ملاحطة: متطلب موصى به فقط، وليس عدم مطابقة.",
+        "証拠のない要求事項はすべてギャップであり、審査員と同じように分類されます。重大不適合：リスクが高いまたは重大な必須要求事項の欠如 — システムの能力を疑わせ、解消まで認証を妨げます。軽微：必須だがリスクは低く、対策計画で足ります。所見：推奨のみの要求事項で、不適合ではありません。",
+        "没有证据的要求即为差距，按审核员的方式分类。严重不合格：缺失的强制性要求且风险高或关键 — 它质疑体系能力，并在关闭前阻止认证。轻微：强制性但风险较低 — 有行动计划即可。观察项：仅为建议性要求，不是不合格。"),
+    'standards.detail.audit-major-nc': (
+        'non-conformités majeures,', 'major nonconformities,', 'no conformidades mayores,',
+        'حالات عدم مطابقة كبرى,', '重大不適合、', '严重不合格、'),
+    'standards.detail.audit-minor-nc': (
+        'mineures,', 'minor,', 'menores,',
+        'صغرى,', '軽微、', '轻微、'),
+    'standards.detail.audit-observations': (
+        'observations.', 'observations.', 'observaciones.',
+        'ملاحظات.', '所見。', '观察项。'),
+    'standards.detail.finding-major': (
+        'Non-conformité majeure', 'Major nonconformity', 'No conformidad mayor',
+        'عدم مطابقة كبرى', '重大不適合', '严重不合格'),
+    'standards.detail.finding-minor': (
+        'Non-conformité mineure', 'Minor nonconformity', 'No conformidad menor',
+        'عدم مطابقة صغرى', '軽微不適合', '轻微不合格'),
+    'standards.detail.finding-observation': (
+        'Observation', 'Observation', 'Observación',
+        'ملاحظة', '所見', '观察项'),
     'standards.detail.audit-no-gap': ('Aucun écart : toutes les exigences sont couvertes 🎉', 'No gap: all requirements are covered 🎉', 'Sin brechas: todos los requisitos están cubiertos 🎉', 'لا توجد فجوات: جميع المتطلبات مغطاة 🎉', 'ギャップなし：すべての要求事項が充足されています 🎉', '无差距：所有要求均已覆盖 🎉'),
     'standards.detail.audit-col-requirement': ('Exigence', 'Requirement', 'Requisito', 'المتطلب', '要求事項', '要求'),
     'standards.detail.audit-col-severity': ('Sévérité', 'Severity', 'Severidad', 'الخطورة', '重大度', '严重程度'),

@@ -555,8 +555,14 @@ class StandardsServiceTest {
         assertThat(r.verdict()).contains("NON PRÊT");
     }
 
+    /**
+     * Les trois classes sont celles de l'ISO/IEC 17021-1 : une exigence
+     * obligatoire absente dont le risque est eleve est une non-conformite
+     * MAJEURE -- elle bloque le certificat. « Critique » n'existe pas dans le
+     * vocabulaire d'un organisme certificateur (ADR 0115).
+     */
     @Test
-    void auditBlanc_criticalRiskMustGap_isCriticalSeverityAndTopPriority() {
+    void auditBlanc_highRiskMustGap_isMajorNonconformityAndTopPriority() {
         Standard s = stdWithTree();
         StandardRequirement r1 = s.getSections().get(0).getClauses().get(0).getRequirements().get(0);
         r1.setRiskIfMissing(RiskLevel.CRITICAL);
@@ -567,9 +573,9 @@ class StandardsServiceTest {
 
         StandardsDto.AuditBlancReport r = service.computeAuditBlanc(ts.getId());
 
-        assertThat(r.criticalGaps()).isEqualTo(1);
-        // findings triés par priorité → le critique en tête
-        assertThat(r.findings().get(0).findingSeverity()).isEqualTo("CRITICAL");
+        assertThat(r.majorGaps()).isEqualTo(1);
+        // findings triés par priorité → la majeure en tête
+        assertThat(r.findings().get(0).findingSeverity()).isEqualTo("MAJOR");
         assertThat(r.findings().get(0).remediationPriority()).isEqualTo(1);
         assertThat(r.findings().get(0).remediationAction()).contains(r1.getCode());
     }

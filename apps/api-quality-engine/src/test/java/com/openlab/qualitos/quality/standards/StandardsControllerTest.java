@@ -363,11 +363,11 @@ class StandardsControllerTest {
     void auditBlanc_returns200() throws Exception {
         when(service.computeAuditBlanc(ADO)).thenReturn(new StandardsDto.AuditBlancReport(
                 ADO, STD, "iso-9001", "ISO 9001:2015", Instant.now(),
-                50d, 42, 21, 40, 20, 1, 1, 0, "NON PRÊT — écarts majeurs à corriger", List.of()));
+                50d, 42, 21, 40, 20, 1, 1, 0, "NON PRÊT — non-conformités majeures à lever", List.of()));
         mockMvc.perform(get("/api/v1/standards/adoptions/{id}/audit-blanc", ADO))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.readinessScore").value(50.0))
-                .andExpect(jsonPath("$.criticalGaps").value(1));
+                .andExpect(jsonPath("$.majorGaps").value(1));
     }
 
     @Test @WithMockUser

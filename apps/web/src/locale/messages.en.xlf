@@ -32182,17 +32182,45 @@ declared income
         <source>écart(s) — triés par priorité.</source>
         <target state="translated">gap(s) — sorted by priority.</target>
       </trans-unit>
-      <trans-unit id="standards.detail.audit-critical" datatype="html">
-        <source>critiques,</source>
-        <target state="translated">critical,</target>
+      <trans-unit id="standards.detail.kpi-major-ncs" datatype="html">
+        <source>Non-conformités majeures</source>
+        <target state="translated">Major nonconformities</target>
       </trans-unit>
-      <trans-unit id="standards.detail.audit-major" datatype="html">
-        <source>majeurs,</source>
-        <target state="translated">major,</target>
+      <trans-unit id="standards.detail.kpi-minor-ncs" datatype="html">
+        <source>mineures</source>
+        <target state="translated">minor</target>
       </trans-unit>
-      <trans-unit id="standards.detail.audit-minor" datatype="html">
-        <source>mineurs.</source>
-        <target state="translated">minor.</target>
+      <trans-unit id="standards.detail.kpi-observations" datatype="html">
+        <source>observations</source>
+        <target state="translated">observations</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.kpi-gaps-formula2" datatype="html">
+        <source>Toute exigence sans preuve est un écart, classé comme un auditeur le classerait. Non-conformité majeure : exigence obligatoire absente dont le risque est élevé ou critique — elle met en cause l'aptitude du système et bloque le certificat jusqu'à sa levée. Mineure : obligatoire, risque moindre — un plan d'actions suffit. Observation : exigence seulement recommandée, ce n'est pas une non-conformité.</source>
+        <target state="translated">Any requirement without evidence is a gap, classified the way an auditor would classify it. Major nonconformity: a missing mandatory requirement whose risk is high or critical — it questions the system's ability and blocks the certificate until closed. Minor: mandatory, lower risk — an action plan is enough. Observation: a merely recommended requirement, not a nonconformity.</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.audit-major-nc" datatype="html">
+        <source>non-conformités majeures,</source>
+        <target state="translated">major nonconformities,</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.audit-minor-nc" datatype="html">
+        <source>mineures,</source>
+        <target state="translated">minor,</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.audit-observations" datatype="html">
+        <source>observations.</source>
+        <target state="translated">observations.</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.finding-major" datatype="html">
+        <source>Non-conformité majeure</source>
+        <target state="translated">Major nonconformity</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.finding-minor" datatype="html">
+        <source>Non-conformité mineure</source>
+        <target state="translated">Minor nonconformity</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.finding-observation" datatype="html">
+        <source>Observation</source>
+        <target state="translated">Observation</target>
       </trans-unit>
       <trans-unit id="standards.detail.audit-no-gap" datatype="html">
         <source>Aucun écart : toutes les exigences sont couvertes 🎉</source>

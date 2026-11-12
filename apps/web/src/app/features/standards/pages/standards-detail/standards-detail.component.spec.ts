@@ -350,7 +350,7 @@ describe('StandardsDetailComponent', () => {
         tenantStandardId: 'ad1', standardId: 's1', standardCode: 'ISO-9001',
         standardName: 'ISO 9001:2015', generatedAt: '2026-11-10T09:30:00Z',
         readinessScore: 80, totalRequirements: 12, coveredRequirements: 9,
-        mustTotal: 10, mustCovered: 8, criticalGaps: 0, majorGaps: 1, minorGaps: 1,
+        mustTotal: 10, mustCovered: 8, majorGaps: 0, minorGaps: 1, observations: 1,
         verdict: 'QUASI PRÊT', findings: []
       };
       svc.getAuditBlanc.and.returnValue(of(rapport));
@@ -376,7 +376,7 @@ describe('StandardsDetailComponent', () => {
         tenantStandardId: 'ad1', standardId: 's1', standardCode: 'ISO-9001',
         standardName: 'ISO 9001:2015', generatedAt: '2026-11-10T09:30:00Z',
         readinessScore: 80, totalRequirements: 12, coveredRequirements: 9,
-        mustTotal: 10, mustCovered: 8, criticalGaps: 0, majorGaps: 1, minorGaps: 1,
+        mustTotal: 10, mustCovered: 8, majorGaps: 0, minorGaps: 1, observations: 1,
         verdict: 'QUASI PRÊT', findings: []
       } as AuditBlancReport));
       const rm: RoadmapSummary = {
@@ -395,8 +395,12 @@ describe('StandardsDetailComponent', () => {
       // Roadmap : les etapes ecartees sortent du denominateur (19 - 3 = 16).
       expect(un('kpi-roadmap')?.textContent).toContain('6/16');
       expect(un('kpi-roadmap')?.textContent).toContain('étapes applicables');
-      // Ecarts : la frontiere critique / majeur / mineur est ecrite.
-      expect(un('kpi-ecarts')?.textContent).toContain("risque en cas d'absence est élevé");
+      // Ecarts : la frontiere majeure / mineure / observation est ecrite, avec
+      // les termes de la certification -- pas une echelle inventee.
+      expect(un('kpi-ecarts')?.textContent).toContain('Non-conformités majeures');
+      expect(un('kpi-ecarts')?.textContent).toContain("risque est élevé ou critique");
+      expect(un('kpi-ecarts')?.textContent).toContain('bloque le certificat');
+      expect(un('kpi-ecarts')?.textContent).not.toContain('critiques');
       // Et le bareme du verdict, dans l'onglet audit blanc.
       component.selectedTab = 4;
       fixture.detectChanges();

@@ -32182,17 +32182,45 @@ historique 12 mois</source>
         <source>écart(s) — triés par priorité.</source>
         <target state="translated">فجوة/فجوات — مرتبة حسب الأولوية.</target>
       </trans-unit>
-      <trans-unit id="standards.detail.audit-critical" datatype="html">
-        <source>critiques,</source>
-        <target state="translated">حرجة,</target>
+      <trans-unit id="standards.detail.kpi-major-ncs" datatype="html">
+        <source>Non-conformités majeures</source>
+        <target state="translated">حالات عدم مطابقة كبرى</target>
       </trans-unit>
-      <trans-unit id="standards.detail.audit-major" datatype="html">
-        <source>majeurs,</source>
-        <target state="translated">كبيرة,</target>
+      <trans-unit id="standards.detail.kpi-minor-ncs" datatype="html">
+        <source>mineures</source>
+        <target state="translated">صغرى</target>
       </trans-unit>
-      <trans-unit id="standards.detail.audit-minor" datatype="html">
-        <source>mineurs.</source>
-        <target state="translated">صغيرة.</target>
+      <trans-unit id="standards.detail.kpi-observations" datatype="html">
+        <source>observations</source>
+        <target state="translated">ملاحظات</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.kpi-gaps-formula2" datatype="html">
+        <source>Toute exigence sans preuve est un écart, classé comme un auditeur le classerait. Non-conformité majeure : exigence obligatoire absente dont le risque est élevé ou critique — elle met en cause l'aptitude du système et bloque le certificat jusqu'à sa levée. Mineure : obligatoire, risque moindre — un plan d'actions suffit. Observation : exigence seulement recommandée, ce n'est pas une non-conformité.</source>
+        <target state="translated">كل متطلب بلا دليل هو انحراف، يُصنّف كما يصنّفه المدقق. عدم مطابقة كبرى: متطلب إلزامي غائب مرتفع أو حرج الخطورة — يشكّك في قدرة النظام ويعطّل الشهادة حتى معالجته. صغرى: إلزامي بخطورة أقل — تكفي خطة إجرائية. ملاحطة: متطلب موصى به فقط، وليس عدم مطابقة.</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.audit-major-nc" datatype="html">
+        <source>non-conformités majeures,</source>
+        <target state="translated">حالات عدم مطابقة كبرى,</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.audit-minor-nc" datatype="html">
+        <source>mineures,</source>
+        <target state="translated">صغرى,</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.audit-observations" datatype="html">
+        <source>observations.</source>
+        <target state="translated">ملاحظات.</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.finding-major" datatype="html">
+        <source>Non-conformité majeure</source>
+        <target state="translated">عدم مطابقة كبرى</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.finding-minor" datatype="html">
+        <source>Non-conformité mineure</source>
+        <target state="translated">عدم مطابقة صغرى</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.finding-observation" datatype="html">
+        <source>Observation</source>
+        <target state="translated">ملاحظة</target>
       </trans-unit>
       <trans-unit id="standards.detail.audit-no-gap" datatype="html">
         <source>Aucun écart : toutes les exigences sont couvertes 🎉</source>
