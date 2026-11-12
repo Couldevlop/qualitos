@@ -16,7 +16,11 @@ possibilité d'y joindre des **photos**.
    Vous y êtes posé d'office en tête : retirez-vous si vous ne suivez pas l'écart.
 3. **Joindre des photos** pour documenter l'écart.
 4. **Suivre le traitement** : la NC évolue jusqu'à sa résolution.
-5. **Relier à une action** : une NC peut déclencher une [CAPA](capa.md), un cycle
+5. **Relier à une action** : *Ajouter une CAPA* ouvre le dossier qui traite l'écart (source
+   verrouillée ; le titre et la description partent **vides** — ce sont des phrases à écrire, pas
+   le constat à recopier), puis *Ajouter des actions* ouvre la liste de ses actions sans quitter
+   la fiche. Les deux boutons gardent **le même libellé** avant et après l'ouverture du dossier.
+   Une NC peut déclencher une [CAPA](capa.md), un cycle
    [PDCA](pdca.md) ou un projet [DMAIC](dmaic.md) selon la gravité.
 6. **Clôturer, et remettre le rapport** : le [rapport 8D](rapport-8d.md) rassemble les huit
    disciplines attendues par le client, dont six sont reprises automatiquement de ce dossier.
@@ -57,19 +61,27 @@ lecture d'un qualiticien.
   défaut d'affichage ; l'écart sans analyse de cause est une information en soi — et un écart
   significatif qu'on clôture sans analyse revient.
 
-### Action corrective en cours (D5)
+### Actions correctives en cours (D3, D5, D6)
 
-L'action du dossier CAPA lié s'affiche sur place : sa nature (corrective, préventive ou
-d'endiguement), son statut, et le bouton qui la **fait avancer d'un cran** — *Démarrer*, puis
-*Terminer* — sans quitter l'écart.
+Les actions du dossier CAPA lié s'affichent sur place, **en tableau** : une ligne par action, avec
+sa nature (corrective, préventive ou d'endiguement), son intitulé, son responsable, son échéance,
+son statut, et le bouton qui la **fait avancer d'un cran** — *Démarrer*, puis *Terminer* — sans
+quitter l'écart.
 
-- Le responsable et l'échéance **de l'action** n'apparaissent que s'ils diffèrent de ceux du
-  dossier : les répéter à l'identique ne renseigne personne.
-- *Voir la CAPA* reste là pour ce que la carte ne montre pas : la **preuve** de l'action, son
-  historique, et le verdict d'efficacité.
-- **Un dossier sans action** — ancien, ou ouvert par un automate — le dit, et propose de définir
-  la sienne. Un dossier CAPA n'a **qu'une** action : il n'y a donc rien à y ajouter ensuite, et
-  sans action il ne pourra pas être clôturé.
+- **Un écart se traite en plusieurs gestes**, et le 8D les nomme séparément : endiguer (D3),
+  corriger la cause (D5), prévenir la récidive (D6). Le dossier porte autant d'actions qu'il en
+  faut.
+- **Cliquez une ligne** pour corriger l'action : son intitulé, sa nature, son responsable, son
+  échéance. Sur un dossier terminé, la ligne s'ouvre quand même, **en lecture seule** : relire ce
+  qui a été fait reste légitime après la clôture.
+- Le responsable et l'échéance sont donnés pour **chaque** action, même quand ils sont ceux du
+  dossier : c'est précisément ce qu'on vient comparer d'une ligne à l'autre.
+- Le **pilote du dossier** est le responsable de la *première* action. Les suivantes ne le
+  déplacent pas.
+- Le lien vers le dossier reste là pour ce que le tableau ne montre pas : la **preuve** de chaque
+  action, son historique, et le verdict d'efficacité.
+- **Un dossier sans action** — ancien, ou ouvert par un automate — le dit, et propose d'en ajouter
+  une : sans action, il ne pourra pas être clôturé.
 - Si le dossier CAPA ne peut pas être lu (service indisponible), la carte **le dit** et propose de
   réessayer. Elle ne reste jamais vide : « vide » voudrait dire « aucune action ».
 

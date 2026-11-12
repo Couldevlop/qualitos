@@ -6,6 +6,7 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../../shared/shared.module';
 import { CapaActionPanelModule } from '../capa/capa-action-panel.module';
+import { CapaActionsDialogModule } from '../capa/capa-actions-dialog.module';
 import { CapaCreateDialogModule } from '../capa/capa-create-dialog.module';
 import { FiveWhysSharedModule } from '../five-whys/five-whys-shared.module';
 import { IshikawaSharedModule } from '../ishikawa/ishikawa-shared.module';
@@ -57,7 +58,10 @@ const routes: Routes = [
   // Les deux figures d'analyse de cause se lisent SUR la fiche de l'ecart : on
   // importe leurs modules partages, sans routes, et non `IshikawaModule` /
   // `FiveWhysModule`, qui grefferaient `/ishikawa` et `/five-whys` sous `/nc`.
+  // `CapaActionsDialogModule` : « Ajouter des actions » ouvre la fenetre qui
+  // liste les actions du dossier (ADR 0115) -- le meme tableau que la fiche.
   imports: [SharedModule, UiModule, MatRadioModule, CapaCreateDialogModule, CapaActionPanelModule,
+    CapaActionsDialogModule,
             UserPickerModule, FiveWhysSharedModule, IshikawaSharedModule,
             MatDatepickerModule, MatNativeDateModule,
             RouterModule.forChild(routes)]

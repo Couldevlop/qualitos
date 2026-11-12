@@ -32,6 +32,12 @@ export interface CapaActionResponse {
   id: string;
   capaId: string;
   title: string;
+  /**
+   * Comment on s'y prend : methode, ressources, critere de fin. Le serveur la
+   * rend depuis toujours ; le type ne la declarait pas, et la fenetre d'une
+   * action ne pouvait donc pas la relire -- on la reecrivait a chaque passage.
+   */
+  description?: string;
   status: 'PENDING' | 'IN_PROGRESS' | 'DONE';
   /** Corrective sur toutes les actions antérieures au type : elles ne pouvaient être autre chose. */
   actionType: CapaActionType;

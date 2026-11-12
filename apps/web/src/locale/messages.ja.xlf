@@ -7538,6 +7538,70 @@ Portail clients</source>
         <source>Le stockage des pièces jointes est désactivé sur cet environnement : aucune preuve ne peut y être déposée ni relue.</source>
         <target state="translated">この環境では添付ファイルの保管が無効です。証拠の追加も閲覧もできません。</target>
       </trans-unit>
+      <trans-unit id="capa.actions.add" datatype="html">
+        <source>Ajouter une action</source>
+        <target state="translated">対策を追加</target>
+      </trans-unit>
+      <trans-unit id="capa.actions.caption" datatype="html">
+        <source>Actions de ce dossier CAPA</source>
+        <target state="translated">この CAPA 案件の対策</target>
+      </trans-unit>
+      <trans-unit id="capa.actions.row-hint" datatype="html">
+        <source>Cliquez une ligne pour corriger l'action, son responsable ou son echeance.</source>
+        <target state="translated">行をクリックすると、対策・担当者・期限を修正できます。</target>
+      </trans-unit>
+      <trans-unit id="capa.actions.open-aria" datatype="html">
+        <source>Ouvrir l'action : <x id="titre"/></source>
+        <target state="translated">対策を開く: <x id="titre"/></target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.title-add" datatype="html">
+        <source>Ajouter une action</source>
+        <target state="translated">対策を追加</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.title-edit" datatype="html">
+        <source>Modifier l'action</source>
+        <target state="translated">対策を編集</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.subtitle" datatype="html">
+        <source>Ce qu'on va faire, de quelle nature, qui en repond et pour quand.</source>
+        <target state="translated">何をするか、どの性質か、誰が責任を負い、いつまでか。</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.read-only" datatype="html">
+        <source>Ce dossier est termine : son action se lit, elle ne se modifie plus.</source>
+        <target state="translated">この案件は終了しています。対策は閲覧のみで、変更できません。</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.added" datatype="html">
+        <source>Action ajoutee.</source>
+        <target state="translated">対策を追加しました。</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.saved" datatype="html">
+        <source>Action enregistree.</source>
+        <target state="translated">対策を保存しました。</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.failed" datatype="html">
+        <source>L'action n'a pas pu etre enregistree.</source>
+        <target state="translated">対策を保存できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="capa.actions-dialog.title" datatype="html">
+        <source>Actions correctives</source>
+        <target state="translated">是正対策</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.add-capa" datatype="html">
+        <source>Ajouter une CAPA</source>
+        <target state="translated">CAPA を追加</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.add-capa-tooltip" datatype="html">
+        <source>Le dossier CAPA qui traite cet ecart : l'ouvrir, ou y aller</source>
+        <target state="translated">この不適合を扱う CAPA 案件：開くか、移動する</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.add-actions" datatype="html">
+        <source>Ajouter des actions</source>
+        <target state="translated">対策を追加</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.add-actions-tooltip" datatype="html">
+        <source>Les actions correctives de cet ecart : les lire, en ajouter</source>
+        <target state="translated">この不適合の是正対策：閲覧し、追加する</target>
+      </trans-unit>
       <trans-unit id="capa.source.non-conformity-internal" datatype="html">
         <source>Non-conformité interne</source>
         <target state="translated">内部不適合</target>

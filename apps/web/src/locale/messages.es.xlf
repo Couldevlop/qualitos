@@ -7538,6 +7538,70 @@ Portal de clientes</target>
         <source>Le stockage des pièces jointes est désactivé sur cet environnement : aucune preuve ne peut y être déposée ni relue.</source>
         <target state="translated">El almacenamiento de adjuntos está desactivado en este entorno: no se puede añadir ni leer ninguna prueba.</target>
       </trans-unit>
+      <trans-unit id="capa.actions.add" datatype="html">
+        <source>Ajouter une action</source>
+        <target state="translated">Anadir una accion</target>
+      </trans-unit>
+      <trans-unit id="capa.actions.caption" datatype="html">
+        <source>Actions de ce dossier CAPA</source>
+        <target state="translated">Acciones de este expediente CAPA</target>
+      </trans-unit>
+      <trans-unit id="capa.actions.row-hint" datatype="html">
+        <source>Cliquez une ligne pour corriger l'action, son responsable ou son echeance.</source>
+        <target state="translated">Haga clic en una fila para corregir la accion, su responsable o su plazo.</target>
+      </trans-unit>
+      <trans-unit id="capa.actions.open-aria" datatype="html">
+        <source>Ouvrir l'action : <x id="titre"/></source>
+        <target state="translated">Abrir la accion: <x id="titre"/></target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.title-add" datatype="html">
+        <source>Ajouter une action</source>
+        <target state="translated">Anadir una accion</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.title-edit" datatype="html">
+        <source>Modifier l'action</source>
+        <target state="translated">Modificar la accion</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.subtitle" datatype="html">
+        <source>Ce qu'on va faire, de quelle nature, qui en repond et pour quand.</source>
+        <target state="translated">Lo que se hara, de que naturaleza, quien responde y para cuando.</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.read-only" datatype="html">
+        <source>Ce dossier est termine : son action se lit, elle ne se modifie plus.</source>
+        <target state="translated">Este expediente esta terminado: su accion se lee, ya no se modifica.</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.added" datatype="html">
+        <source>Action ajoutee.</source>
+        <target state="translated">Accion anadida.</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.saved" datatype="html">
+        <source>Action enregistree.</source>
+        <target state="translated">Accion guardada.</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.failed" datatype="html">
+        <source>L'action n'a pas pu etre enregistree.</source>
+        <target state="translated">No se pudo guardar la accion.</target>
+      </trans-unit>
+      <trans-unit id="capa.actions-dialog.title" datatype="html">
+        <source>Actions correctives</source>
+        <target state="translated">Acciones correctivas</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.add-capa" datatype="html">
+        <source>Ajouter une CAPA</source>
+        <target state="translated">Anadir un CAPA</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.add-capa-tooltip" datatype="html">
+        <source>Le dossier CAPA qui traite cet ecart : l'ouvrir, ou y aller</source>
+        <target state="translated">El expediente CAPA que trata esta desviacion: abrirlo o ir a el</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.add-actions" datatype="html">
+        <source>Ajouter des actions</source>
+        <target state="translated">Anadir acciones</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.add-actions-tooltip" datatype="html">
+        <source>Les actions correctives de cet ecart : les lire, en ajouter</source>
+        <target state="translated">Las acciones correctivas de esta desviacion: leerlas, anadir alguna</target>
+      </trans-unit>
       <trans-unit id="capa.source.non-conformity-internal" datatype="html">
         <source>Non-conformité interne</source>
         <target state="translated">No conformidad interna</target>

@@ -33,21 +33,18 @@
           <mat-icon>block</mat-icon> <span i18n="@@nc.detail.reject">Rejeter</span>
         </button>
         </ng-container>
-        <!-- Une NC a une CAPA, qui porte une action (ADR 0088) : la créer ouvre
-             LA fenêtre commune, source verrouillée sur cette NC. Quand elle
-             existe, le bouton l'ouvre au lieu d'en proposer une seconde. -->
-        <!-- Quand la CAPA existe, c'est son panneau, plus bas, qui en porte
-             l'etat et le lien : repeter le lien ici l'eloignerait de ce qu'il
-             ouvre, dans un en-tete deja charge. -->
-        <ng-container *ngIf="!n.capaCaseId">
-          <button mat-stroked-button (click)="openCapa(n)" data-test="creer-capa" *qosCan="'nc.escalate'"
-                  [disabled]="(acting$ | async) || !canEscalate(n.status)"
-                  i18n-matTooltip="@@nc.detail.create-capa-tooltip"
-                  matTooltip="Ouvrir la CAPA qui traite cette non-conformité">
-            <mat-icon>engineering</mat-icon>
-            <span i18n="@@nc.detail.create-capa">Créer une CAPA</span>
-          </button>
-        </ng-container>
+        <!-- UN SEUL libelle : « Ajouter une CAPA ». Le bouton disait « Creer une
+             CAPA », puis « Voir la CAPA » une fois le dossier ouvert : deux mots
+             pour un bouton qui ne change pas de place, et il fallait relire
+             l'ecran pour savoir lequel on allait obtenir. Sans dossier, il
+             l'ouvre -- source verrouillee sur cet ecart ; avec, il y emmene. -->
+        <button mat-stroked-button (click)="openCapa(n)" data-test="creer-capa" *qosCan="'nc.escalate'"
+                [disabled]="(acting$ | async) || (!n.capaCaseId && !canEscalate(n.status))"
+                i18n-matTooltip="@@nc.detail.add-capa-tooltip"
+                matTooltip="Le dossier CAPA qui traite cet écart : l'ouvrir, ou y aller">
+          <mat-icon>engineering</mat-icon>
+          <span i18n="@@nc.detail.add-capa">Ajouter une CAPA</span>
+        </button>
         <!-- La CAPA traite l'écart ; le cycle ou le projet traite ce que l'écart
              révèle (§3.6). La gravité propose la méthode, la fenêtre le dit, et
              la personne qui tient le dossier peut en décider autrement. Quand le
@@ -108,13 +105,18 @@
                 i18n-matTooltip="@@nc.detail.start-analysis-tooltip" matTooltip="Démarrer l'analyse">
           <mat-icon>search</mat-icon> <span i18n="@@nc.detail.start-analysis">Analyser</span>
         </button>
-        <!-- Définir l'action, c'est l'écrire : le bouton ouvre la fenêtre de
-             création de CAPA, et le serveur fait avancer l'écart du même geste. -->
-        <button mat-stroked-button color="primary" (click)="defineAction(n)" *qosCan="'nc.process'"
-                [disabled]="(acting$ | async) || !canDefineAction(n.status)"
+        <!-- UN SEUL libelle, la aussi : « Ajouter des actions ». Sans dossier,
+             le bouton ouvre la CAPA et sa premiere action d'un meme geste ; avec,
+             il ouvre la fenetre qui les liste toutes, ou l'on en ajoute et ou une
+             ligne s'ouvre pour se corriger (ADR 0115). Il n'y a plus ni
+             « definir », ni « voir » : un ecart se traite rarement d'un seul
+             geste, et le bouton ne change pas de nom selon l'avancement. -->
+        <button mat-stroked-button color="primary" (click)="addActions(n)" *qosCan="'nc.process'"
+                [disabled]="(acting$ | async) || !canAddActions(n)"
                 data-test="definir-action"
-                i18n-matTooltip="@@nc.detail.define-action-tooltip2" matTooltip="Écrire l'action corrective dans une CAPA">
-          <mat-icon>checklist</mat-icon> <span i18n="@@nc.detail.define-action">Définir action</span>
+                i18n-matTooltip="@@nc.detail.add-actions-tooltip"
+                matTooltip="Les actions correctives de cet écart : les lire, en ajouter">
+          <mat-icon>checklist</mat-icon> <span i18n="@@nc.detail.add-actions">Ajouter des actions</span>
         </button>
         <button mat-flat-button color="primary" (click)="openResolve(n)" *qosCan="'nc.process'"
                 [disabled]="(acting$ | async) || !canResolve(n.status)"

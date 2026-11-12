@@ -11,8 +11,8 @@ import {
   CapaActionResponse, CapaActionStatus, CapaCaseResponse, CapaStatus
 } from '../../capa.types';
 import {
-  CapaCreateDialogComponent, CapaCreateDialogData, CapaOpened
-} from '../../pages/capa-create-dialog/capa-create-dialog.component';
+  CapaActionDialogComponent, CapaActionDialogData
+} from '../../pages/capa-action-dialog/capa-action-dialog.component';
 
 /** Le pas suivant d'une action : il n'y en a jamais deux. */
 const SUITE: Record<CapaActionStatus, CapaActionStatus | null> = {
@@ -30,10 +30,11 @@ const SUITE: Record<CapaActionStatus, CapaActionStatus | null> = {
  * laisse la faire avancer sans quitter l'écart — c'est aussi ce que le D5 du
  * rapport 8D rassemble.
  *
- * <p><b>Une CAPA EST son action</b> (ADR 0088) : pas de liste à rallonger, pas
- * de bouton d'ajout. Un dossier sans action — ancien, ou ouvert par un automate
- * — propose de définir la sienne, <b>une fois</b>, dans la même fenêtre que la
- * création. Les anciens dossiers à plusieurs actions les montrent toutes.
+ * <p><b>Un dossier porte plusieurs actions</b> (ADR 0115, qui révise l'ADR 0088
+ * sur ce seul point) : on endigue, on corrige la cause, on prévient la récidive,
+ * et le 8D nomme ces étapes séparément (D3, D5, D6). Le tableau les montre
+ * toutes, chacune avec son porteur, son échéance et son avancement ; une ligne
+ * s'ouvre d'un clic pour la corriger, et le bouton d'ajout en ajoute une.
  *
  * <p>Il ne remplace pas le bloc de la fiche CAPA, qui gère en plus la PREUVE de
  * chaque action (dépôt, retrait, aperçu) avec son sélecteur de fichier : y
@@ -130,19 +131,6 @@ export class CapaActionPanelComponent implements OnChanges {
     return 'badge badge-' + status.toLowerCase().replace('_', '-');
   }
 
-  /**
-   * Le responsable et l'échéance de l'action ne s'affichent que s'ils
-   * s'écartent de ceux du dossier : à la décision ils en sont copiés, et répéter
-   * la même valeur à deux endroits ne renseigne personne.
-   */
-  showsAssignee(action: CapaActionResponse): boolean {
-    return !!this.capa && action.assigneeId !== this.capa.ownerId;
-  }
-
-  showsDueDate(action: CapaActionResponse): boolean {
-    return !!action.dueDate && !!this.capa && action.dueDate !== this.capa.dueDate;
-  }
-
   // ---------- avancer ----------
 
   nextStatus(status: CapaActionStatus): CapaActionStatus | null {
@@ -195,36 +183,62 @@ export class CapaActionPanelComponent implements OnChanges {
     });
   }
 
-  // ---------- définir l'action manquante ----------
+  // ---------- ajouter, ouvrir ----------
+
+  /** Libellé lisible par un lecteur d'écran pour la ligne qui s'ouvre. */
+  openLabel(action: CapaActionResponse): string {
+    return $localize`:@@capa.actions.open-aria:Ouvrir l'action : ${action.title}:titre:`;
+  }
 
   /**
-   * Définir l'action d'un dossier qui n'en a pas.
+   * Ajoute une action au dossier.
    *
-   * <p>Une fois, et dans la même fenêtre que la création : c'est le geste prévu
-   * par l'ADR 0088 pour les dossiers anciens ou ouverts par un automate, pas une
-   * porte d'entrée vers une liste d'actions.
+   * <p>Le pilote et l'échéance du dossier sont proposés — c'est le cas le plus
+   * fréquent — et restent modifiables : une action préventive portée par
+   * quelqu'un d'autre, pour plus tard, est exactement ce que la liste permet
+   * désormais d'écrire.
    */
-  defineAction(): void {
-    if (!this.capa || this.actions.length > 0 || this.isTerminal(this.capa.status)) {
+  addAction(): void {
+    if (!this.capa || this.isTerminal(this.capa.status)) {
       return;
     }
-    const data: CapaCreateDialogData = {
-      mode: 'define-action',
+    this.openDialog({
       caseId: this.capa.id,
-      prefill: {
-        title: this.capa.title,
-        description: this.capa.description,
-        type: this.capa.type === 'PREVENTIVE' ? 'PREVENTIVE' : 'CORRECTIVE',
-        dueDate: this.capa.dueDate
-      }
-    };
+      ownerId: this.capa.ownerId,
+      ownerName: this.capa.ownerName,
+      dueDate: this.capa.dueDate
+    });
+  }
+
+  /**
+   * Ouvre une action pour la relire et la corriger.
+   *
+   * <p>Un dossier terminé s'ouvre en lecture seule plutôt que de ne pas
+   * s'ouvrir : relire ce qui a été fait est légitime après la clôture, et une
+   * ligne qui ne réagit pas au clic passe pour une panne.
+   */
+  openAction(action: CapaActionResponse): void {
+    if (!this.capa) {
+      return;
+    }
+    this.openDialog({
+      caseId: this.capa.id,
+      action,
+      ownerId: this.capa.ownerId,
+      ownerName: this.capa.ownerName,
+      dueDate: this.capa.dueDate,
+      readOnly: this.isTerminal(this.capa.status)
+    });
+  }
+
+  private openDialog(data: CapaActionDialogData): void {
     this.dialog
-      .open<CapaCreateDialogComponent, CapaCreateDialogData, CapaOpened>(CapaCreateDialogComponent, {
+      .open<CapaActionDialogComponent, CapaActionDialogData, boolean>(CapaActionDialogComponent, {
         data, autoFocus: 'first-tabbable', restoreFocus: true, panelClass: 'qos-dialog-panel'
       })
       .afterClosed()
-      .subscribe(defined => {
-        if (defined) {
+      .subscribe(saved => {
+        if (saved) {
           this.reload();
           this.changed.emit();
         }

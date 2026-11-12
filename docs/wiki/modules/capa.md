@@ -20,6 +20,20 @@ d'efficacité.
 4. **Suivre** l'avancement jusqu'à la clôture.
 5. **Vérifier l'efficacité** avant de clore définitivement.
 
+## Plusieurs actions par dossier
+
+Un dossier porte **autant d'actions qu'il en faut** : endiguer, corriger la cause, prévenir la
+récidive — ce que le 8D nomme D3, D5 et D6. Elles se lisent en tableau, sur la fiche du dossier
+comme sur la [fiche de l'écart](non-conformites.md).
+
+- *Ajouter une action* ouvre la fenêtre de saisie. Le pilote et l'échéance du dossier y sont
+  **proposés** : c'est le cas le plus fréquent, et on les change si besoin.
+- **Cliquez une ligne** pour corriger l'action. C'est la même fenêtre que pour l'ajout — il n'y a
+  pas deux formulaires à connaître.
+- Le **pilote du dossier** est le responsable de la *première* action ; les suivantes ne le
+  déplacent pas, pour que le dossier ne change pas de main à chaque geste ajouté.
+- Un dossier **clos ou rejeté** n'accepte plus d'action, et ses lignes s'ouvrent en lecture seule.
+
 ## La nature de chaque action : endiguer n'est pas corriger
 
 Chaque action porte une **nature**, à choisir à la saisie et corrigible ensuite
@@ -47,7 +61,8 @@ cliquiez, dans un bandeau au-dessus de la vérification d'efficacité, et le bou
 - **Aucune action enregistrée** — il n'y a rien dont vérifier l'efficacité.
 - **Des actions restent à terminer** (le nombre est indiqué).
 - **Le dossier ne porte que des mesures d'endiguement** — elles arrêtent l'effet sans
-  supprimer la cause. Ajoutez une action corrective ou préventive : **une seule suffit**.
+  supprimer la cause. Ajoutez une action corrective ou préventive : **une seule suffit** pour
+  lever ce blocage, même si le dossier en porte plusieurs.
 - **Des non-conformités liées sont encore ouvertes** (le nombre est indiqué).
 
 Le bouton **« Non efficace »**, lui, reste toujours accessible : constater que les

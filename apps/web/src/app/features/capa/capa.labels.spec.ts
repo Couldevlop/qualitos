@@ -33,9 +33,23 @@ describe('capa.labels', () => {
     expect(CAPA_SOURCES.find(s => s.value === 'RISK')?.manual).toBeTrue();
   });
 
-  it("n'ouvre pas à la main les sources que seul un automate pose", () => {
+  /**
+   * Trois sources ne s'ouvrent pas a la main. Deux viennent d'un automate
+   * (carte de controle, detection d'anomalie). La troisieme -- l'ecart externe
+   * -- se pose a l'escalade depuis la fiche de l'ecart, seule a savoir si
+   * l'ecart vient du dehors : la proposer a la creation libre laisserait
+   * declarer « externe » un dossier rattache a un constat interne.
+   */
+  it("n'ouvre pas à la main les sources qu'un autre écran pose", () => {
     const automates = CAPA_SOURCES.filter(s => !s.manual).map(s => s.value);
-    expect(automates).toEqual(['SPC_ALERT', 'ANOMALY']);
+    expect(automates).toEqual(['EXTERNAL_NON_CONFORMITY', 'SPC_ALERT', 'ANOMALY']);
+  });
+
+  it('nomme « externe » la source d’un écart signalé du dehors', () => {
+    const source = CAPA_SOURCES.find(s => s.value === 'EXTERNAL_NON_CONFORMITY');
+    expect(source?.label).toContain('externe');
+    // Aucun registre : la reference est posee par l'escalade, pas choisie ici.
+    expect(source?.register).toBeUndefined();
   });
 
   it('dit à quel registre se choisit la référence de chaque source', () => {

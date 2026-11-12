@@ -12,6 +12,9 @@
 - **Complète** : ADR 0088 (« une CAPA EST son action »), ADR 0113 (l'équipe sur
   la fiche d'écart) et le rapport 8D. **Aucun des trois n'est révisé** — en
   particulier, rien ici ne rouvre la liste d'actions que l'ADR 0088 a fermée.
+- **Révisé par** : ADR 0115, qui rouvre précisément cette liste — la carte de
+  l'action devient un tableau d'actions, et le responsable comme l'échéance y
+  figurent à chaque ligne, même quand ils répètent ceux du dossier.
 
 ## Contexte
 

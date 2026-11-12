@@ -1,0 +1,72 @@
+<qos-form-dialog
+  [title]="dialogTitle"
+  i18n-subtitle="@@capa.action-dialog.subtitle"
+  subtitle="Ce qu'on va faire, de quelle nature, qui en répond et pour quand."
+  [formGroup]="form"
+  [submitting]="(submitting$ | async) ?? false"
+  [submitDisabled]="form.invalid || !!data.readOnly"
+  i18n-submitLabel="@@common.save"
+  submitLabel="Enregistrer"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
+
+  <!-- Un dossier clos ou rejete ne bouge plus : on le lit, on ne le corrige pas.
+       Le serveur tient la meme garde -- l'ecran ne fait que l'annoncer avant le
+       clic plutot qu'apres. -->
+  <p class="lecture-seule" *ngIf="data.readOnly" role="status" data-test="action-lecture-seule"
+     i18n="@@capa.action-dialog.read-only">
+    Ce dossier est terminé : son action se lit, elle ne se modifie plus.
+  </p>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@capa.open.title-label">Intitulé de l'action</mat-label>
+    <input matInput formControlName="title" maxlength="255" required data-test="action-intitule"
+           i18n-placeholder="@@capa.create.title-placeholder"
+           placeholder="Ex. : Recalibration robot soudure cobot-3">
+    <mat-error *ngIf="form.controls.title.hasError('required')"
+               i18n="@@capa.create.title-required">Le titre est requis.</mat-error>
+    <mat-error *ngIf="form.controls.title.hasError('maxlength')"
+               i18n="@@common.maxlength-255">255 caractères maximum.</mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@common.description-optional">Description (optionnel)</mat-label>
+    <textarea matInput formControlName="description" rows="3" maxlength="4000"
+              data-test="action-description"
+              i18n-placeholder="@@capa.open.description-placeholder"
+              placeholder="Méthode, ressources, critère de fin…"></textarea>
+  </mat-form-field>
+
+  <!-- La nature separe ce qui ARRETE L'EFFET de ce qui SUPPRIME LA CAUSE : sans
+       elle, un dossier ou l'on a trie le lot suspect se lit comme un dossier ou
+       l'on a corrige la machine (ISO 9001 §10.2, 8D D3/D5/D6). -->
+  <div class="nature">
+    <span class="nature__titre" id="capa-action-nature" i18n="@@capa.action.action-type">Nature de l'action</span>
+    <mat-radio-group formControlName="actionType" class="nature__choix"
+                     aria-labelledby="capa-action-nature" data-test="action-nature">
+      <mat-radio-button *ngFor="let n of natures" [value]="n.value">{{ n.label }}</mat-radio-button>
+    </mat-radio-group>
+  </div>
+
+  <div class="row">
+    <qos-user-picker class="col" formControlName="assigneeId" data-test="action-responsable"
+                     i18n-label="@@capa.detail.single-action-assignee" label="Responsable"
+                     (userSelected)="onAssignee($event)"></qos-user-picker>
+
+    <mat-form-field appearance="outline" class="col">
+      <mat-label i18n="@@capa.detail.due-date">Échéance</mat-label>
+      <input matInput formControlName="dueDate" type="date" data-test="action-echeance">
+    </mat-form-field>
+  </div>
+
+  <!-- Le statut ne s'affiche qu'a l'edition : une action qui vient d'etre
+       decidee est « a faire », et proposer autre chose laisserait creer une
+       action deja terminee sans que personne ne l'ait menee. -->
+  <mat-form-field appearance="outline" class="full" *ngIf="editing">
+    <mat-label i18n="@@common.status">Statut</mat-label>
+    <mat-select formControlName="status" data-test="action-statut">
+      <mat-option *ngFor="let s of statuses" [value]="s">{{ statusLabel(s) }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+</qos-form-dialog>

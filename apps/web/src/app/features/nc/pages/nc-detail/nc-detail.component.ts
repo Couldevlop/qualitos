@@ -10,6 +10,9 @@ import { deferredView } from '../../../../core/rx/deferred-view';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import {
+  CapaActionsDialogComponent, CapaActionsDialogData
+} from '../../../capa/pages/capa-actions-dialog/capa-actions-dialog.component';
+import {
   CapaCreateDialogComponent, CapaCreateDialogData, CapaOpened
 } from '../../../capa/pages/capa-create-dialog/capa-create-dialog.component';
 import { CapaCriticity } from '../../../capa/capa.types';
@@ -567,20 +570,40 @@ export class NcDetailComponent implements OnInit {
   close(): void { this.transition('close'); }
 
   /**
-   * « Définir action » : ouvre la fenêtre de création de CAPA.
+   * « Ajouter des actions » : les actions correctives de cet écart.
    *
-   * <p>Le bouton ne faisait que franchir une étape du cycle de vie : l'écart
-   * passait à « action définie » sans qu'aucune action n'existe nulle part. Il
-   * fallait ensuite trouver « Créer une CAPA », ailleurs dans l'écran, pour
+   * <p>Un seul libellé, quel que soit l'avancement. Le bouton disait
+   * « Définir action » et ne faisait que franchir une étape du cycle de vie :
+   * l'écart passait à « action définie » sans qu'aucune action n'existe nulle
+   * part, et il fallait trouver « Créer une CAPA », ailleurs dans l'écran, pour
    * écrire l'action que le statut prétendait déjà définie.
    *
-   * <p>Définir l'action, c'est maintenant l'écrire : même fenêtre que « Créer une
-   * CAPA » (ADR 0088), préremplie par l'écart, et le serveur fait avancer l'écart
-   * du même geste. Quand le dossier existe déjà, le bouton y mène : son action
-   * s'y définit, et la rouvrir ici en créerait une seconde.
+   * <p>Deux chemins derrière le même mot, selon ce qui existe déjà :
+   * <ul>
+   *   <li>pas de dossier : la fenêtre de création ouvre le dossier, et le
+   *       serveur fait avancer l'écart du même geste ;</li>
+   *   <li>un dossier : la fenêtre qui liste ses actions, où l'on en ajoute et où
+   *       une ligne s'ouvre pour se corriger (ADR 0115).</li>
+   * </ul>
    */
-  defineAction(nc: NcResponse): void {
-    this.openCapa(nc);
+  addActions(nc: NcResponse): void {
+    if (this.acting$.value) return;
+    if (!nc.capaCaseId) {
+      this.openCapa(nc);
+      return;
+    }
+    this.dialog.open<CapaActionsDialogComponent, CapaActionsDialogData, boolean>(
+      CapaActionsDialogComponent, {
+        data: { capaCaseId: nc.capaCaseId, reference: nc.reference },
+        autoFocus: 'first-tabbable',
+        restoreFocus: true,
+        panelClass: 'qos-dialog-panel'
+      }
+    ).afterClosed().subscribe(touche => {
+      // La fiche porte le statut de l'écart, qui dépend de celui de l'action
+      // côté serveur : elle se relit dès qu'une action a bougé.
+      if (touche) this.reload();
+    });
   }
 
   cancel(): void {
@@ -646,9 +669,11 @@ export class NcDetailComponent implements OnInit {
     }
     const data: CapaCreateDialogData = {
       source: { type: 'NON_CONFORMITY', reference: nc.reference },
+      // Ni titre ni description preremplis : recopier ceux de l'ecart donnait un
+      // dossier qui redisait le constat au lieu de nommer ce qu'on va faire, et
+      // le champ pre-rempli se validait tel quel. La source, elle, reste
+      // verrouillee : c'est une donnee, pas une phrase a ecrire.
       prefill: {
-        title: nc.title,
-        description: nc.description,
         type: 'CORRECTIVE',
         criticity: NcDetailComponent.criticityOf(nc.severity)
       },
@@ -830,7 +855,15 @@ export class NcDetailComponent implements OnInit {
   }
 
   canStartAnalysis(status: NcStatus): boolean { return status === 'OPEN'; }
-  canDefineAction(status: NcStatus): boolean { return status === 'UNDER_ANALYSIS'; }
+  /**
+   * Ouvrir les actions : possible dès qu'un dossier existe — même terminé, pour
+   * relire ce qui a été fait. Sans dossier, c'est la création qui s'ouvre, donc
+   * la même garde qu'avant : un écart à peine déclaré n'autorise pas à sauter
+   * l'analyse (le serveur refuse hors {@code UNDER_ANALYSIS}).
+   */
+  canAddActions(nc: NcResponse): boolean {
+    return nc.capaCaseId ? true : nc.status === 'UNDER_ANALYSIS';
+  }
   canResolve(status: NcStatus): boolean { return status === 'ACTION_DEFINED'; }
   canClose(status: NcStatus): boolean { return status === 'RESOLVED'; }
   canCancel(status: NcStatus): boolean { return !this.isTerminal(status); }
