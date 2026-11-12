@@ -7630,6 +7630,54 @@ Portal de clientes</target>
         <source>État actuel du dossier, affiché à côté du texte agrégé. Le PDF, lui, ne porte que le texte figé à l'émission.</source>
         <target state="translated">Estado actual del expediente, mostrado junto al texto agregado. El PDF solo contiene el texto congelado en la emision.</target>
       </trans-unit>
+      <trans-unit id="capa.open.missing" datatype="html">
+        <source>À compléter avant d'enregistrer : <x id="champs"/></source>
+        <target state="translated">Por completar antes de guardar: <x id="champs"/></target>
+      </trans-unit>
+      <trans-unit id="capa.open.invalid" datatype="html">
+        <source>La demande est incomplète : vérifiez les champs signalés.</source>
+        <target state="translated">La solicitud está incompleta: revise los campos señalados.</target>
+      </trans-unit>
+      <trans-unit id="capa.open.field-title" datatype="html">
+        <source>Intitulé</source>
+        <target state="translated">Título</target>
+      </trans-unit>
+      <trans-unit id="capa.open.field-type" datatype="html">
+        <source>Nature</source>
+        <target state="translated">Naturaleza</target>
+      </trans-unit>
+      <trans-unit id="capa.open.field-criticity" datatype="html">
+        <source>Criticité</source>
+        <target state="translated">Criticidad</target>
+      </trans-unit>
+      <trans-unit id="capa.open.field-owner" datatype="html">
+        <source>Responsable</source>
+        <target state="translated">Responsable</target>
+      </trans-unit>
+      <trans-unit id="capa.open.field-due" datatype="html">
+        <source>Échéance</source>
+        <target state="translated">Fecha límite</target>
+      </trans-unit>
+      <trans-unit id="capa.open.field-source" datatype="html">
+        <source>Source</source>
+        <target state="translated">Origen</target>
+      </trans-unit>
+      <trans-unit id="capa.open.field-source-ref" datatype="html">
+        <source>Référence de la source</source>
+        <target state="translated">Referencia del origen</target>
+      </trans-unit>
+      <trans-unit id="capa.open.field-verification" datatype="html">
+        <source>Vérification d'efficacité requise</source>
+        <target state="translated">Verificación de eficacia requerida</target>
+      </trans-unit>
+      <trans-unit id="capa.open.field-verifier" datatype="html">
+        <source>Vérificateur</source>
+        <target state="translated">Verificador</target>
+      </trans-unit>
+      <trans-unit id="capa.verification.decision-required" datatype="html">
+        <source>Répondez par « oui » ou « non » : la question doit être tranchée pour ouvrir le dossier.</source>
+        <target state="translated">Responda sí o no: la pregunta debe resolverse para abrir el caso.</target>
+      </trans-unit>
       <trans-unit id="capa.source.non-conformity-internal" datatype="html">
         <source>Non-conformité interne</source>
         <target state="translated">No conformidad interna</target>

@@ -7630,6 +7630,54 @@ Portail clients</source>
         <source>État actuel du dossier, affiché à côté du texte agrégé. Le PDF, lui, ne porte que le texte figé à l'émission.</source>
         <target state="translated">案卷的当前状态，显示在汇总文本旁。PDF 仅包含签发时冻结的文本。</target>
       </trans-unit>
+      <trans-unit id="capa.open.missing" datatype="html">
+        <source>À compléter avant d'enregistrer : <x id="champs"/></source>
+        <target state="translated">保存前需补充：<x id="champs"/></target>
+      </trans-unit>
+      <trans-unit id="capa.open.invalid" datatype="html">
+        <source>La demande est incomplète : vérifiez les champs signalés.</source>
+        <target state="translated">请求不完整：请检查标出的字段。</target>
+      </trans-unit>
+      <trans-unit id="capa.open.field-title" datatype="html">
+        <source>Intitulé</source>
+        <target state="translated">标题</target>
+      </trans-unit>
+      <trans-unit id="capa.open.field-type" datatype="html">
+        <source>Nature</source>
+        <target state="translated">性质</target>
+      </trans-unit>
+      <trans-unit id="capa.open.field-criticity" datatype="html">
+        <source>Criticité</source>
+        <target state="translated">严重度</target>
+      </trans-unit>
+      <trans-unit id="capa.open.field-owner" datatype="html">
+        <source>Responsable</source>
+        <target state="translated">负责人</target>
+      </trans-unit>
+      <trans-unit id="capa.open.field-due" datatype="html">
+        <source>Échéance</source>
+        <target state="translated">到期日</target>
+      </trans-unit>
+      <trans-unit id="capa.open.field-source" datatype="html">
+        <source>Source</source>
+        <target state="translated">来源</target>
+      </trans-unit>
+      <trans-unit id="capa.open.field-source-ref" datatype="html">
+        <source>Référence de la source</source>
+        <target state="translated">来源引用</target>
+      </trans-unit>
+      <trans-unit id="capa.open.field-verification" datatype="html">
+        <source>Vérification d'efficacité requise</source>
+        <target state="translated">是否需要有效性验证</target>
+      </trans-unit>
+      <trans-unit id="capa.open.field-verifier" datatype="html">
+        <source>Vérificateur</source>
+        <target state="translated">验证者</target>
+      </trans-unit>
+      <trans-unit id="capa.verification.decision-required" datatype="html">
+        <source>Répondez par « oui » ou « non » : la question doit être tranchée pour ouvrir le dossier.</source>
+        <target state="translated">请回答“是”或“否”：开立档案前必须作出决定。</target>
+      </trans-unit>
       <trans-unit id="capa.source.non-conformity-internal" datatype="html">
         <source>Non-conformité interne</source>
         <target state="translated">内部不合格</target>

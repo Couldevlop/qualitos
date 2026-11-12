@@ -1,4 +1,4 @@
-import { Component, Inject, OnDestroy, OnInit, Optional } from '@angular/core';
+import { Component, ElementRef, Inject, OnDestroy, OnInit, Optional } from '@angular/core';
 import { catalogOptions } from '../../../../core/catalogs/catalog-overrides';
 import { AbstractControl, FormBuilder, ValidationErrors, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -221,6 +221,7 @@ export class CapaCreateDialogComponent implements OnInit, OnDestroy {
     private readonly auth: AuthService,
     private readonly snack: MatSnackBar,
     private readonly dialogRef: MatDialogRef<CapaCreateDialogComponent, CapaOpened>,
+    private readonly hote: ElementRef<HTMLElement>,
     @Optional() @Inject(MAT_DIALOG_DATA) data: CapaCreateDialogData | null
   ) {
     this.data = data ?? {};
@@ -443,9 +444,81 @@ export class CapaCreateDialogComponent implements OnInit, OnDestroy {
     return hint && this.ownerHintUnmatched ? hint : null;
   }
 
+  /**
+   * Les champs dont l'absence bloque l'enregistrement, nommés comme l'écran les
+   * nomme.
+   *
+   * <p>Cette table existe pour que le refus se LISE. Le nom d'un contrôle
+   * (`assigneeId`) n'est pas un mot de l'utilisateur ; sans traduction, le
+   * message dirait « assigneeId » à un pilote qualité.
+   */
+  private static libelleDu(controle: string): string {
+    switch (controle) {
+      case 'title': return $localize`:@@capa.open.field-title:Intitulé`;
+      case 'type': return $localize`:@@capa.open.field-type:Nature`;
+      case 'criticity': return $localize`:@@capa.open.field-criticity:Criticité`;
+      case 'assigneeId': return $localize`:@@capa.open.field-owner:Responsable`;
+      case 'dueDate': return $localize`:@@capa.open.field-due:Échéance`;
+      case 'sourceType': return $localize`:@@capa.open.field-source:Source`;
+      case 'sourceRef': return $localize`:@@capa.open.field-source-ref:Référence de la source`;
+      case 'verificationRequired':
+        return $localize`:@@capa.open.field-verification:Vérification d'efficacité requise`;
+      case 'verificationAssigneeId':
+        return $localize`:@@capa.open.field-verifier:Vérificateur`;
+      default: return controle;
+    }
+  }
+
+  /**
+   * Le premier élément fautif dans l'ordre de l'écran, pour y emmener.
+   *
+   * <p>On interroge le DOM et non le formulaire : l'ordre des contrôles dans le
+   * groupe n'est pas celui des champs à l'écran, et c'est l'ordre vu qui compte
+   * pour qui cherche ce qui manque. Donner le focus fait aussi défiler la
+   * fenêtre jusqu'à lui — le champ fautif est souvent sous la ligne de pliure.
+   */
+  private premierChampFautif(): HTMLElement | null {
+    const fautif = this.hote.nativeElement.querySelector<HTMLElement>(
+      '.ng-invalid[formControlName], mat-radio-group.ng-invalid');
+    if (!fautif) {
+      return null;
+    }
+    // Un groupe de boutons radio n'est pas focalisable lui-même : c'est son
+    // premier bouton qui reçoit le focus.
+    return fautif.matches('mat-radio-group')
+      ? fautif.querySelector<HTMLElement>('input[type="radio"], button') ?? fautif
+      : fautif;
+  }
+
   submit(): void {
-    if (this.form.invalid || this.submitting) {
+    if (this.submitting) {
+      return;
+    }
+    if (this.form.invalid) {
       this.form.markAllAsTouched();
+      // DIRE CE QUI MANQUE, et ne jamais se contenter de ne rien faire.
+      //
+      // Releve en recette : depuis un ecart, « Creer la CAPA » ne produisait
+      // RIEN -- pas de dossier, pas d'erreur, pas un mot. La question de la
+      // verification d'efficacite est obligatoire a l'ouverture et n'a aucune
+      // reponse pre-cochee ; laissee vide, elle invalidait le formulaire, et ce
+      // retour muet etait le seul retour. Le pilote cliquait, recliquait, et
+      // concluait que l'enregistrement ne marchait pas.
+      //
+      // `markAllAsTouched` ne suffit pas : il revele les erreurs des champs qui
+      // en AFFICHENT une, or un groupe de boutons radio n'en affiche pas, et un
+      // champ situe hors de la zone visible de la fenetre n'est de toute facon
+      // pas regarde. On nomme donc les champs, et l'on emmene au premier.
+      const manquants = Object.entries(this.form.controls)
+        .filter(([, c]) => c.invalid)
+        .map(([nom]) => CapaCreateDialogComponent.libelleDu(nom));
+      this.snack.open(
+        manquants.length
+          ? $localize`:@@capa.open.missing:À compléter avant d'enregistrer : ${manquants.join(', ')}:champs:`
+          : $localize`:@@capa.open.invalid:La demande est incomplète : vérifiez les champs signalés.`,
+        $localize`:@@common.close:Fermer`,
+        { duration: 8000 });
+      this.premierChampFautif()?.focus();
       return;
     }
     const v = this.form.getRawValue();

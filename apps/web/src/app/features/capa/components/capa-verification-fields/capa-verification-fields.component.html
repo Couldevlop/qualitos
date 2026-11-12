@@ -13,6 +13,16 @@
     <mat-radio-button [value]="true" i18n="@@common.yes">Oui</mat-radio-button>
     <mat-radio-button [value]="false" i18n="@@common.no">Non</mat-radio-button>
   </mat-radio-group>
+  <!-- L'erreur du groupe lui-même. Elle manquait : la question était obligatoire
+       à l'ouverture, sans réponse par défaut, et laissée vide elle invalidait le
+       formulaire SANS RIEN AFFICHER. Le bouton « Créer la CAPA » ne produisait
+       alors ni dossier ni message — un écran qui refuse en silence passe pour un
+       écran en panne. -->
+  <p class="aide erreur" *ngIf="mandatory && controls.verificationRequired.touched
+                           && controls.verificationRequired.hasError('required')"
+     data-test="verification-exigee-requis" i18n="@@capa.verification.decision-required">
+    Répondez par « oui » ou « non » : la question doit être tranchée pour ouvrir le dossier.
+  </p>
   <p class="aide" *ngIf="mandatory; else aideFacultative" data-test="verification-obligatoire"
      i18n="@@capa.verification.hint-mandatory">
     Une vérification est-elle exigée sur ce dossier ? Il faut trancher pour
