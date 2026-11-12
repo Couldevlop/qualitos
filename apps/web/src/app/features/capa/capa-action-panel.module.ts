@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 
 import { SharedModule } from '../../shared/shared.module';
 import { UiModule } from '../../shared/ui/ui.module';
-import { CapaCreateDialogModule } from './capa-create-dialog.module';
+import { CapaActionDialogModule } from './capa-action-dialog.module';
 import { CapaActionPanelComponent } from './components/capa-action-panel/capa-action-panel.component';
 
 /**
@@ -15,9 +15,9 @@ import { CapaActionPanelComponent } from './components/capa-action-panel/capa-ac
  */
 @NgModule({
   declarations: [CapaActionPanelComponent],
-  // La fenêtre de création sert aussi à définir l'action d'un dossier qui n'en
-  // a pas (ADR 0088) : c'est la même, jamais une jumelle.
-  imports: [SharedModule, UiModule, CapaCreateDialogModule],
+  // La fenêtre d'une action : la même pour l'ajouter et pour la corriger
+  // (ADR 0115), jamais une jumelle.
+  imports: [SharedModule, UiModule, CapaActionDialogModule],
   exports: [CapaActionPanelComponent]
 })
 export class CapaActionPanelModule {}

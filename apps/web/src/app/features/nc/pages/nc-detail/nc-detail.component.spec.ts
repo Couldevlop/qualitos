@@ -24,9 +24,15 @@ import { NcService } from '../../nc.service';
 import { NcPhoto, NcResponse, NcStatus, VisionAnalysis } from '../../nc.types';
 import { NcDetailComponent } from './nc-detail.component';
 import {
+  CapaActionsDialogComponent
+} from '../../../capa/pages/capa-actions-dialog/capa-actions-dialog.component';
+import {
   CapaCreateDialogComponent, CapaCreateDialogData
 } from '../../../capa/pages/capa-create-dialog/capa-create-dialog.component';
 import { AuthzService } from '../../../../core/authz/authz.service';
+import {
+  NcCauseAnalysisStubModule
+} from '../../components/nc-cause-analysis/testing/nc-cause-analysis.stub';
 import {
   CapaActionPanelStubComponent, CapaActionPanelStubModule
 } from '../../../capa/components/capa-action-panel/testing/capa-action-panel.stub';
@@ -117,7 +123,7 @@ describe('NcDetailComponent — section photos', () => {
       declarations: [NcDetailComponent],
       imports: [SharedModule, UiModule, UserPickerModule, FiveWhysSharedModule,
                 IshikawaSharedModule, NoopAnimationsModule,
-                CapaActionPanelStubModule],
+                CapaActionPanelStubModule, NcCauseAnalysisStubModule],
       providers: [
         { provide: DirectoryService, useValue: ANNUAIRE_MUET },
         // Tous les droits : ces bancs testent l'écran, pas la matrice (ADR 0078).
@@ -480,7 +486,7 @@ describe('NcDetailComponent — workflow et escalade CAPA', () => {
       declarations: [NcDetailComponent],
       imports: [SharedModule, UiModule, UserPickerModule, FiveWhysSharedModule,
                 IshikawaSharedModule, NoopAnimationsModule,
-                CapaActionPanelStubModule],
+                CapaActionPanelStubModule, NcCauseAnalysisStubModule],
       providers: [
         { provide: DirectoryService, useValue: ANNUAIRE_MUET },
         // Tous les droits : ces bancs testent l'écran, pas la matrice (ADR 0078).
@@ -611,7 +617,13 @@ describe('NcDetailComponent — workflow et escalade CAPA', () => {
     expect(openSpy.calls.mostRecent().args[0]).toBe(CapaCreateDialogComponent);
     const data = openSpy.calls.mostRecent().args[1]!.data as CapaCreateDialogData;
     expect(data.source).toEqual({ type: 'NON_CONFORMITY', reference: 'NC-2026-1001' });
-    expect(data.prefill).toEqual(jasmine.objectContaining({ title: 'Bavure', type: 'CORRECTIVE', criticity: 'CRITICAL' }));
+    // Le type et la criticite sont des DONNEES, deduites de l'ecart : les
+    // retaper serait du recopiage. Le titre et la description, non : recopier le
+    // constat donnait un dossier qui redisait le probleme au lieu de nommer ce
+    // qu'on va faire, et le champ pre-rempli se validait tel quel.
+    expect(data.prefill).toEqual(jasmine.objectContaining({ type: 'CORRECTIVE', criticity: 'CRITICAL' }));
+    expect(data.prefill!.title).toBeUndefined();
+    expect(data.prefill!.description).toBeUndefined();
     // Le dossier part par la route de la NC, qui le rattache.
     expect(svc.escalateToCapa).toHaveBeenCalledWith(UUID, DEMANDE);
     expect(svc.getNc).toHaveBeenCalledTimes(1);
@@ -619,44 +631,88 @@ describe('NcDetailComponent — workflow et escalade CAPA', () => {
 
   // « Définir action » ne faisait que franchir une étape du cycle de vie :
   // l'écart passait à « action définie » sans qu'aucune action n'existe nulle
-  // part. Définir l'action, c'est l'écrire.
+  // part. Définir l'action, c'est l'écrire — et il y en a plusieurs (ADR 0115).
 
-  it("« Définir action » ouvre la fenêtre de création de CAPA, préremplie par l'écart", () => {
+  it("« Ajouter des actions » ouvre la fenêtre de création quand il n'y a pas de dossier", () => {
     setup();
     svc.escalateToCapa.and.returnValue(of(buildNc({ capaCaseId: 'capa-9' })));
     const openSpy = fenetre(DEMANDE);
 
-    component.defineAction(buildNc({ id: UUID, reference: 'NC-2026-1001', title: 'Bavure',
+    component.addActions(buildNc({ id: UUID, reference: 'NC-2026-1001', title: 'Bavure',
       severity: 'MAJOR', status: 'UNDER_ANALYSIS', capaCaseId: undefined }));
 
     expect(openSpy.calls.mostRecent().args[0]).toBe(CapaCreateDialogComponent);
     const data = openSpy.calls.mostRecent().args[1]!.data as CapaCreateDialogData;
     expect(data.source).toEqual({ type: 'NON_CONFORMITY', reference: 'NC-2026-1001' });
-    expect(data.prefill).toEqual(jasmine.objectContaining({ title: 'Bavure', criticity: 'HIGH' }));
+    expect(data.prefill).toEqual(jasmine.objectContaining({ criticity: 'HIGH' }));
     // C'est la route de la NC qui ouvre le dossier : elle le rattache ET fait
     // avancer l'écart, d'un seul geste côté serveur.
     expect(svc.escalateToCapa).toHaveBeenCalledWith(UUID, DEMANDE);
   });
 
-  it("« Définir action » ne franchit plus l'étape toute seule", () => {
+  it("« Ajouter des actions » ne franchit plus l'étape toute seule", () => {
     setup();
     svc.escalateToCapa.and.returnValue(of(buildNc({ capaCaseId: 'capa-9' })));
     fenetre(DEMANDE);
 
-    component.defineAction(buildNc({ id: UUID, status: 'UNDER_ANALYSIS', capaCaseId: undefined }));
+    component.addActions(buildNc({ id: UUID, status: 'UNDER_ANALYSIS', capaCaseId: undefined }));
 
     expect(svc.defineAction).not.toHaveBeenCalled();
   });
 
-  it("« Définir action » mène au dossier quand il existe déjà, sans en ouvrir un second", () => {
+  /**
+   * Avec un dossier, le bouton n'y navigue plus : il ouvre la fenêtre qui liste
+   * ses actions, là où l'écart se lit. Quitter la fiche pour ajouter une action
+   * faisait perdre le constat, les photos et la cause de vue.
+   */
+  it("« Ajouter des actions » ouvre la liste des actions du dossier existant", () => {
     setup();
-    const openSpy = spyOn(TestBed.inject(MatDialog), 'open');
+    const openSpy = spyOn(TestBed.inject(MatDialog), 'open')
+      .and.returnValue({ afterClosed: () => of(false) } as never);
 
-    component.defineAction(buildNc({ id: UUID, status: 'ACTION_DEFINED', capaCaseId: 'capa-7' }));
+    component.addActions(buildNc({ id: UUID, reference: 'NC-2026-1001',
+      status: 'ACTION_DEFINED', capaCaseId: 'capa-7' }));
 
-    expect(router.navigate).toHaveBeenCalledWith(['/capa', 'capa-7']);
-    expect(openSpy).not.toHaveBeenCalled();
+    expect(openSpy.calls.mostRecent().args[0]).toBe(CapaActionsDialogComponent);
+    expect(openSpy.calls.mostRecent().args[1]!.data)
+      .toEqual({ capaCaseId: 'capa-7', reference: 'NC-2026-1001' });
+    expect(router.navigate).not.toHaveBeenCalled();
     expect(svc.escalateToCapa).not.toHaveBeenCalled();
+  });
+
+  // Une action qui a bougé change le statut de l'écart côté serveur : la fiche
+  // afficherait l'état d'avant si elle ne se relisait pas.
+  it('relit la fiche quand une action a bougé dans la fenêtre', () => {
+    setup();
+    spyOn(TestBed.inject(MatDialog), 'open')
+      .and.returnValue({ afterClosed: () => of(true) } as never);
+
+    component.addActions(buildNc({ id: UUID, capaCaseId: 'capa-7' }));
+
+    expect(svc.getNc).toHaveBeenCalledTimes(1);
+  });
+
+  it('ne relit pas la fiche quand la fenêtre se ferme sans rien changer', () => {
+    setup();
+    spyOn(TestBed.inject(MatDialog), 'open')
+      .and.returnValue({ afterClosed: () => of(false) } as never);
+
+    component.addActions(buildNc({ id: UUID, capaCaseId: 'capa-7' }));
+
+    expect(svc.getNc).not.toHaveBeenCalled();
+  });
+
+  /**
+   * Un dossier terminé s'ouvre quand même : relire ce qui a été fait est
+   * légitime après la clôture. Sans dossier, c'est la création qui s'ouvrirait,
+   * donc la garde de l'escalade s'applique.
+   */
+  it('ouvre les actions dès qu’un dossier existe, quel que soit l’état de l’écart', () => {
+    setup();
+
+    expect(component.canAddActions(buildNc({ status: 'CLOSED', capaCaseId: 'capa-7' }))).toBeTrue();
+    expect(component.canAddActions(buildNc({ status: 'OPEN', capaCaseId: undefined }))).toBeFalse();
+    expect(component.canAddActions(buildNc({ status: 'UNDER_ANALYSIS', capaCaseId: undefined }))).toBeTrue();
   });
 
   it('propose la criticité selon la gravité de l\'écart', () => {
@@ -714,12 +770,29 @@ describe('NcDetailComponent — workflow et escalade CAPA', () => {
 
   // Le lien vers le dossier a quitté l'en-tête pour la carte de l'action : on y
   // va désormais pour ce que l'en-tête ne disait pas, l'avancement.
-  it('montre « Créer une CAPA » sans CAPA, la carte de l’action sinon', () => {
+  it('n’affiche pas la carte de l’action tant qu’il n’y a pas de dossier', () => {
     setup(buildNc({ capaCaseId: undefined }));
     fixture.detectChanges();
     const el = fixture.nativeElement as HTMLElement;
-    expect(el.querySelector('[data-test="creer-capa"]')).not.toBeNull();
     expect(el.querySelector('[data-test="capa-action"]')).toBeNull();
+  });
+
+  /**
+   * UN SEUL libellé pour le bouton d'en-tête, avec ou sans dossier. Il disait
+   * « Créer une CAPA » puis « Voir la CAPA » : deux mots pour un bouton qui ne
+   * change pas de place, et il fallait relire l'écran pour savoir lequel on
+   * allait obtenir.
+   */
+  it('garde le même bouton « Ajouter une CAPA », avec ou sans dossier', () => {
+    setup(buildNc({ capaCaseId: undefined }));
+    fixture.detectChanges();
+    let el = fixture.nativeElement as HTMLElement;
+    expect(el.querySelector('[data-test="creer-capa"]')!.textContent).toContain('Ajouter une CAPA');
+
+    setup(buildNc({ capaCaseId: '99999999-9999-9999-9999-999999999999' }));
+    fixture.detectChanges();
+    el = fixture.nativeElement as HTMLElement;
+    expect(el.querySelector('[data-test="creer-capa"]')!.textContent).toContain('Ajouter une CAPA');
   });
 
   it('montre le lien vers la CAPA, jamais son identifiant brut', () => {
@@ -727,7 +800,6 @@ describe('NcDetailComponent — workflow et escalade CAPA', () => {
     fixture.detectChanges();
     const el = fixture.nativeElement as HTMLElement;
     expect(el.querySelector('[data-test="capa-action-dossier"]')).not.toBeNull();
-    expect(el.querySelector('[data-test="creer-capa"]')).toBeNull();
     expect(el.textContent).not.toContain('99999999-9999');
   });
 
@@ -779,14 +851,17 @@ describe('NcDetailComponent — workflow et escalade CAPA', () => {
     setup();
     const statuses: NcStatus[] =
       ['OPEN', 'UNDER_ANALYSIS', 'ACTION_DEFINED', 'RESOLVED', 'CLOSED', 'CANCELLED'];
+    // « Ajouter des actions » ne porte plus une transition du workflow : sans
+    // dossier il ouvre la création, et c'est l'escalade qui fait avancer
+    // l'écart. La garde se lit donc sur la fiche entière, pas sur le statut seul.
     const allowed = statuses.map(s => [
-      component.canStartAnalysis(s), component.canDefineAction(s),
+      component.canStartAnalysis(s), component.canAddActions(buildNc({ status: s })),
       component.canResolve(s), component.canClose(s)
     ].filter(Boolean).length);
 
     expect(allowed).toEqual([1, 1, 1, 1, 0, 0]);
     expect(component.canStartAnalysis('OPEN')).toBeTrue();
-    expect(component.canDefineAction('UNDER_ANALYSIS')).toBeTrue();
+    expect(component.canAddActions(buildNc({ status: 'UNDER_ANALYSIS' }))).toBeTrue();
     expect(component.canResolve('ACTION_DEFINED')).toBeTrue();
     expect(component.canClose('RESOLVED')).toBeTrue();
   });
@@ -864,7 +939,7 @@ describe('NcDetailComponent — entrée 5 Pourquoi', () => {
       declarations: [NcDetailComponent],
       imports: [SharedModule, UiModule, UserPickerModule, FiveWhysSharedModule,
                 IshikawaSharedModule, NoopAnimationsModule,
-                CapaActionPanelStubModule],
+                CapaActionPanelStubModule, NcCauseAnalysisStubModule],
       providers: [
         { provide: DirectoryService, useValue: ANNUAIRE_MUET },
         // Tous les droits : ces bancs testent l'écran, pas la matrice (ADR 0078).
@@ -1026,7 +1101,7 @@ describe('NcDetailComponent — entrée Ishikawa', () => {
       declarations: [NcDetailComponent],
       imports: [SharedModule, UiModule, UserPickerModule, FiveWhysSharedModule,
                 IshikawaSharedModule, NoopAnimationsModule,
-                CapaActionPanelStubModule],
+                CapaActionPanelStubModule, NcCauseAnalysisStubModule],
       providers: [
         { provide: DirectoryService, useValue: ANNUAIRE_MUET },
         // Tous les droits : ces bancs testent l'écran, pas la matrice (ADR 0078).
@@ -1154,7 +1229,7 @@ describe('NcDetailComponent — conversion en cycle ou en projet', () => {
       declarations: [NcDetailComponent],
       imports: [SharedModule, UiModule, UserPickerModule, FiveWhysSharedModule,
                 IshikawaSharedModule, NoopAnimationsModule,
-                CapaActionPanelStubModule],
+                CapaActionPanelStubModule, NcCauseAnalysisStubModule],
       providers: [
         { provide: DirectoryService, useValue: ANNUAIRE_MUET },
         { provide: AuthzService, useValue: { can: () => of(true) } },

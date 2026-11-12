@@ -27,7 +27,10 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import org.mockito.ArgumentMatchers;
+
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
@@ -270,6 +273,59 @@ class SupplierServiceTest {
         assertThat(out.supplierName()).isEqualTo("Supplier 1");
         assertThat(out.documentCount()).isZero();
         verify(scoring).recompute(s);
+    }
+
+    /**
+     * L'ecart fournisseur recoit sa REFERENCE : « Sup-NC-{annee}-{suite} ».
+     *
+     * <p>Le registre n'en avait aucune : on citait un ecart par son numero de
+     * lot -- qui designe la marchandise, pas le constat -- ou par la date et le
+     * nom du fournisseur. Deux ecarts du meme lot ne se distinguaient plus.
+     */
+    @Test
+    void addNc_attribueUneReferenceSupNc() {
+        Supplier s = supplier();
+        when(supplierRepo.findById(SUP)).thenReturn(Optional.of(s));
+        when(ncRepo.countByTenantIdAndReferenceStartingWith(eq(TENANT), anyString())).thenReturn(6L);
+        when(ncRepo.existsByTenantIdAndReference(eq(TENANT), anyString())).thenReturn(false);
+        when(ncRepo.save(any())).thenAnswer(inv -> {
+            SupplierNonConformity nc = inv.getArgument(0);
+            nc.setId(CHILD); nc.setCreatedAt(Instant.now()); nc.setUpdatedAt(Instant.now()); return nc;
+        });
+
+        SupplierDto.NonConformityResponse out = service.addNonConformity(SUP,
+                new SupplierDto.CreateNonConformityRequest(
+                        "LOT-42", "Dim hors tolerance",
+                        NonConformitySeverity.MAJOR, LocalDate.parse("2026-05-01"),
+                        "PN-7781-A", 120, true, null));
+
+        // Suite par prefixe : six references deja emises, la septieme suit.
+        assertThat(out.reference()).matches("Sup-NC-\\d{4}-0007");
+        verify(ncRepo).countByTenantIdAndReferenceStartingWith(eq(TENANT),
+                ArgumentMatchers.startsWith("Sup-NC-"));
+    }
+
+    /**
+     * Deux saisies simultanees calculeraient le meme numero : la suite avance
+     * jusqu'a trouver un numero libre, plutot que de laisser l'index unique
+     * refuser l'ecriture sans rien expliquer.
+     */
+    @Test
+    void addNc_referenceDejaPrise_passeALaSuivante() {
+        when(supplierRepo.findById(SUP)).thenReturn(Optional.of(supplier()));
+        when(ncRepo.countByTenantIdAndReferenceStartingWith(eq(TENANT), anyString())).thenReturn(0L);
+        when(ncRepo.existsByTenantIdAndReference(eq(TENANT), anyString()))
+                .thenReturn(true).thenReturn(false);
+        when(ncRepo.save(any())).thenAnswer(inv -> {
+            SupplierNonConformity nc = inv.getArgument(0);
+            nc.setId(CHILD); nc.setCreatedAt(Instant.now()); nc.setUpdatedAt(Instant.now()); return nc;
+        });
+
+        SupplierDto.NonConformityResponse out = service.addNonConformity(SUP,
+                new SupplierDto.CreateNonConformityRequest(null, null, NonConformitySeverity.MINOR,
+                        LocalDate.parse("2026-05-01"), "PN-1", 1, null, null));
+
+        assertThat(out.reference()).endsWith("-0002");
     }
 
     @Test

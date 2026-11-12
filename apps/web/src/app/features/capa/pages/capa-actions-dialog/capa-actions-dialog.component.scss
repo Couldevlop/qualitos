@@ -1,0 +1,21 @@
+:host { display: block; }
+
+.actions-dialog__titre {
+  display: flex;
+  align-items: baseline;
+  gap: var(--qos-space-3);
+}
+
+/* La reference de l'ecart, discrete : elle dit DE QUOI parle la fenetre, sans
+   voler la vedette au titre. */
+.actions-dialog__ref {
+  color: var(--qos-fg-secondary);
+  font-size: var(--qos-fs-sm);
+  font-weight: var(--qos-fw-regular);
+  font-family: var(--qos-font-mono, monospace);
+}
+
+/* Le tableau respire : une fenetre serree sur six colonnes se lit mal. */
+.actions-dialog mat-dialog-content {
+  min-width: min(820px, 80vw);
+}

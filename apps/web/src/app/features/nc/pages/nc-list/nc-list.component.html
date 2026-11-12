@@ -62,7 +62,12 @@
       <mat-select [formControl]="subcategoryFilter" data-test="filtre-nature"
                   panelClass="qos-select-panel--lignes">
         <mat-option [value]="''" i18n="@@common.all">Tous</mat-option>
-        <mat-option *ngFor="let s of subcategoryChoices" [value]="s.code">{{ s.label }}</mat-option>
+        <!-- Rangees sous leur categorie : un groupe porte son nom et le separe
+             du suivant. La liste plate melangeait les familles, et deux natures
+             voisines a l'ecran pouvaient relever de deux categories. -->
+        <mat-optgroup *ngFor="let g of subcategoryGroups" [label]="g.category | ncCategoryLabel">
+          <mat-option *ngFor="let s of g.subcategories" [value]="s.code">{{ s.label }}</mat-option>
+        </mat-optgroup>
       </mat-select>
     </mat-form-field>
   </mat-card>

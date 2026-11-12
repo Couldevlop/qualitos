@@ -6,11 +6,15 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../../shared/shared.module';
 import { CapaActionPanelModule } from '../capa/capa-action-panel.module';
+import { CapaActionsDialogModule } from '../capa/capa-actions-dialog.module';
 import { CapaCreateDialogModule } from '../capa/capa-create-dialog.module';
 import { FiveWhysSharedModule } from '../five-whys/five-whys-shared.module';
 import { IshikawaSharedModule } from '../ishikawa/ishikawa-shared.module';
 import { UiModule } from '../../shared/ui/ui.module';
 import { UserPickerModule } from '../../shared/user-picker/user-picker.module';
+import {
+  NcCauseAnalysisComponent
+} from './components/nc-cause-analysis/nc-cause-analysis.component';
 import { NcConvertDialogComponent } from './pages/nc-convert-dialog/nc-convert-dialog.component';
 import { NcCreateDialogComponent } from './pages/nc-create-dialog/nc-create-dialog.component';
 import { NcDetailComponent } from './pages/nc-detail/nc-detail.component';
@@ -39,6 +43,9 @@ const routes: Routes = [
   declarations: [
     NcListComponent,
     NcDetailComponent,
+    // Les figures d'analyse de cause sont les MEMES sur la fiche de l'ecart et
+    // dans le D4 du rapport 8D : un composant, deux hotes (ADR 0115).
+    NcCauseAnalysisComponent,
     NcConvertDialogComponent,
     NcCreateDialogComponent,
     NcRejectDialogComponent,
@@ -57,7 +64,10 @@ const routes: Routes = [
   // Les deux figures d'analyse de cause se lisent SUR la fiche de l'ecart : on
   // importe leurs modules partages, sans routes, et non `IshikawaModule` /
   // `FiveWhysModule`, qui grefferaient `/ishikawa` et `/five-whys` sous `/nc`.
+  // `CapaActionsDialogModule` : « Ajouter des actions » ouvre la fenetre qui
+  // liste les actions du dossier (ADR 0115) -- le meme tableau que la fiche.
   imports: [SharedModule, UiModule, MatRadioModule, CapaCreateDialogModule, CapaActionPanelModule,
+    CapaActionsDialogModule,
             UserPickerModule, FiveWhysSharedModule, IshikawaSharedModule,
             MatDatepickerModule, MatNativeDateModule,
             RouterModule.forChild(routes)]

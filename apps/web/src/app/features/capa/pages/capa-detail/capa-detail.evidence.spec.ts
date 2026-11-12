@@ -8,6 +8,7 @@ import { of, throwError } from 'rxjs';
 
 import { SharedModule } from '../../../../shared/shared.module';
 import { UiModule } from '../../../../shared/ui/ui.module';
+import { routerEspion } from '../../../../shared/testing/router.stub';
 import { CapaService } from '../../capa.service';
 import { CapaCaseResponse, CapaEvidence, CapaStatus } from '../../capa.types';
 import { CapaDetailComponent } from './capa-detail.component';
@@ -89,7 +90,10 @@ describe('CapaDetailComponent — preuves du dossier', () => {
         { provide: ProductsService, useValue: { revisionRequestsForTrigger: () => of([]) } },
         { provide: MatSnackBar, useValue: snack },
         { provide: MatDialog, useValue: dialog },
-        { provide: Router, useValue: jasmine.createSpyObj('Router', ['navigate']) },
+        // routerLink demande plus que navigate : la directive calcule un href des
+        // qu elle apparait. Un espion a la seule methode navigate faisait tomber
+        // le gabarit des que l ecart d origine s affichait en lien.
+        { provide: Router, useValue: routerEspion() },
         { provide: ActivatedRoute, useValue: { snapshot: { paramMap: convertToParamMap({ id: CASE_ID }) } } }
       ]
     }).compileComponents();

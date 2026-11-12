@@ -73,10 +73,15 @@
                  et non répété à l'identique sur chaque ligne d'action. -->
             <div class="info-item">
               <span class="info-label" i18n="@@capa.detail.source">Source</span>
+              <!-- L'ecart d'origine est un LIEN vers sa fiche. Il s'affichait en
+                   texte : pour relire le constat, le pilote retournait au
+                   registre et recherchait la reference a la main, alors que le
+                   dossier sait exactement de quelle fiche il est ne. -->
               <span class="info-value">
                 {{ sourceLabel(c) }}<span *ngIf="c.sourceRef"> · {{ c.sourceRef }}</span>
-                <span class="nc-cell" *ngIf="c.sourceNonConformity as nc"
-                      [matTooltip]="nc.reference"> · {{ nc.title }}</span>
+                <a class="nc-cell" *ngIf="c.sourceNonConformity as nc"
+                   [routerLink]="['/nc', nc.id]" [matTooltip]="nc.reference"
+                   data-test="capa-source-nc"> · {{ nc.title }}</a>
               </span>
             </div>
             <div class="info-item">

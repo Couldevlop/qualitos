@@ -108,6 +108,27 @@ public class CapaService {
         return toResponse(loadCase(id));
     }
 
+    /**
+     * Le statut d'un dossier, pour un INVARIANT d'un autre registre.
+     *
+     * <p>Le registre des écarts en a besoin : une non-conformité ne se clôt pas
+     * tant que le dossier qui la traite est encore en cours. Il lui faut donc le
+     * statut, et rien d'autre — pas la fiche, qui porte le pilote, les pièces et
+     * l'historique.
+     *
+     * <p>Sans filtre de portée (ADR 0081), à la différence de {@link #findById} :
+     * ici personne ne LIT le dossier, c'est le domaine qui vérifie une règle.
+     * Filtrer ferait dépendre la clôture d'un écart du périmètre de celui qui
+     * clôt — deux personnes obtiendraient deux réponses sur le même fait.
+     *
+     * @return le statut, ou vide si le dossier n'existe plus dans ce client
+     */
+    @Transactional(readOnly = true)
+    public Optional<CapaStatus> statusOf(UUID caseId) {
+        return caseRepository.findByIdAndTenantId(caseId, requireTenantId())
+                .map(CapaCase::getStatus);
+    }
+
     public CapaDto.CaseResponse createCase(CapaDto.CreateCaseRequest request) {
         UUID tenantId = requireTenantId();
         CapaCase c = new CapaCase();
@@ -594,14 +615,14 @@ public class CapaService {
         if (c.getStatus() == CapaStatus.CLOSED || c.getStatus() == CapaStatus.REJECTED) {
             throw new CapaStateException("Cannot add actions to a " + c.getStatus() + " CAPA");
         }
-        // Une CAPA EST son action (ADR 0077 pour les risques, généralisé par
-        // l'ADR 0088) : une seule, décidée à l'ouverture. Un dossier sans action
-        // — ancien, ou ouvert par un automate (SPC, IoT, anomalie) — peut
-        // recevoir la sienne, sans quoi il ne serait jamais clôturable ; pas une
-        // deuxième, quelle que soit sa source.
-        if (!c.getActions().isEmpty()) {
-            throw new CapaStateException("A CAPA carries a single action");
-        }
+        // Plusieurs actions par dossier (ADR 0115, qui revise l'ADR 0088 sur ce
+        // seul point). Un ecart reel se traite rarement d'un seul geste : on
+        // endigue, on corrige la cause, on previent la recidive, et le 8D nomme
+        // ces etapes separement (D3, D5, D6). La regle « une seule action »
+        // obligeait a ouvrir un second dossier sur le meme ecart, ou a tout
+        // ecrire dans un intitule unique : dans les deux cas, l'avancement
+        // n'etait plus mesurable action par action.
+        boolean premiere = c.getActions().isEmpty();
         CapaAction a = new CapaAction();
         a.setCapa(c);
         a.setTitle(requireUsableTitle(request.title()));
@@ -622,9 +643,11 @@ public class CapaService {
         a.setDecidedOn(request.decidedOn() != null ? request.decidedOn() : LocalDate.now());
         a.setDueDate(request.dueDate());
         CapaAction saved = actionRepository.save(a);
-        // Le responsable de l'unique action pilote le dossier : c'est à lui
+        // Le responsable de la PREMIERE action pilote le dossier : c'est a lui
         // qu'on demandera des nouvelles, et il doit pouvoir le voir (ADR 0081).
-        if (request.assigneeId() != null) {
+        // Les suivantes ne le changent pas : la troisieme action d'un dossier
+        // aurait sinon deplace le pilotage vers qui l'execute.
+        if (premiere && request.assigneeId() != null) {
             c.setOwnerId(request.assigneeId());
             c.setOwnerName(saved.getAssigneeName());
             caseRepository.save(c);
@@ -735,13 +758,19 @@ public class CapaService {
     private CapaDto.LinkedNonConformity resolveSourceNc(CapaCase c) {
         var linked = ncRepository.findFirstByTenantIdAndCapaCaseIdOrderByDetectedAtAsc(
                 c.getTenantId(), c.getId());
-        if (linked.isEmpty() && c.getSourceType() == CapaSourceType.NON_CONFORMITY
+        if (linked.isEmpty() && estEcart(c.getSourceType())
                 && c.getSourceRef() != null && !c.getSourceRef().isBlank()) {
             linked = ncRepository.findByTenantIdAndReference(c.getTenantId(), c.getSourceRef().strip());
         }
         return linked
                 .map(nc -> new CapaDto.LinkedNonConformity(nc.getId(), nc.getReference(), nc.getTitle()))
                 .orElse(null);
+    }
+
+    /** Les deux sources qui désignent un écart du registre : interne et externe. */
+    private static boolean estEcart(CapaSourceType source) {
+        return source == CapaSourceType.NON_CONFORMITY
+                || source == CapaSourceType.EXTERNAL_NON_CONFORMITY;
     }
 
     private CapaCase loadCase(UUID id) {

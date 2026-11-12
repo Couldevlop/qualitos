@@ -22,6 +22,21 @@ l'alignement, l'audit blanc, la roadmap et la génération de documents.
   **brouillon généré par IA** pré-rempli à partir du contexte de l'organisation.
 - **Révisions** : suivre les évolutions de la norme.
 
+### Dans quelle langue ?
+
+Le **texte de la norme** (titre, sections, clauses, exigences) est en **anglais** :
+c'est la langue dans laquelle une norme ISO est publiée, celle que l'auditeur cite
+et que le certificat mentionne. Vous lisez donc l'exigence dans les termes exacts
+où elle vous sera opposée, sans retraduction.
+
+Tout le reste reste dans **votre langue** : l'interface, les modèles de documents
+(manuel qualité, politique, procédures), les processus types, les dossiers générés
+et l'assistance IA. Ce que vous produisez est votre document ; seule la norme citée
+est en anglais.
+
+ISO 9001 est la première norme passée en anglais ; les autres suivent par vagues.
+Une norme encore affichée en français n'est pas une anomalie.
+
 ## Parcours pas à pas
 
 1. **Ouvrir** `/standards` et **parcourir le catalogue**.
@@ -29,6 +44,22 @@ l'alignement, l'audit blanc, la roadmap et la génération de documents.
 3. **Rattacher des preuves** aux exigences au fil de l'eau.
 4. **Consulter le score d'alignement** pour repérer les clauses faibles.
 5. **Lancer un audit blanc** pour obtenir la liste des écarts à combler.
+
+### Comment l'audit blanc classe ses écarts
+
+Avec les termes d'un organisme certificateur (ISO/IEC 17021-1, ISO 19011), et non une
+échelle maison — « critique » n'existe pas dans le vocabulaire de la certification, et
+l'annoncer ferait préparer une réponse à un reproche qui ne viendra jamais :
+
+| Classe | Ce qui la déclenche | Ce qu'elle coûte |
+|---|---|---|
+| **Non-conformité majeure** | Exigence **obligatoire** non couverte, dont le risque en cas d'absence est élevé ou critique | Elle met en cause l'aptitude du système à atteindre ses résultats : **le certificat est bloqué** jusqu'à sa levée |
+| **Non-conformité mineure** | Exigence **obligatoire** non couverte, risque moindre | Manquement isolé : le certificat n'est pas bloqué, mais un **plan d'actions** est attendu |
+| **Observation** | Exigence seulement **recommandée** non couverte | Ce n'est pas une non-conformité : une piste d'amélioration |
+
+Le **verdict** suit la même règle : seules les majeures bloquent. « Prêt » demande zéro
+majeure et 95 % des exigences obligatoires couvertes ; « quasi prêt », zéro majeure et
+80 %.
 6. **Suivre la roadmap** étape par étape et mettre à jour l'avancement.
 7. **Générer le dossier de certification** quand vous êtes prêt.
 8. Le moment venu, **enregistrer la certification** obtenue.

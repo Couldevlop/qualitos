@@ -52,11 +52,13 @@
         du dénominateur — les ignorer ferait plafonner la roadmap sous 100 %. Une étape en cours compte pour zéro.</p>
     </mat-card>
     <mat-card class="kpi" data-test="kpi-ecarts">
-      <span class="kpi-label" i18n="@@standards.detail.kpi-critical-gaps">Écarts critiques</span>
-      <span class="kpi-value bad">{{ audit?.criticalGaps ?? 0 }}</span>
-      <span class="kpi-sub">{{ audit?.majorGaps ?? 0 }} <span i18n="@@standards.detail.kpi-majors">majeurs</span> · {{ audit?.minorGaps ?? 0 }} <span i18n="@@standards.detail.kpi-minors">mineurs</span></span>
-      <p class="kpi-formule" i18n="@@standards.detail.kpi-gaps-formula">Toute exigence sans preuve est un écart. Critique : exigence obligatoire
-        dont le risque en cas d'absence est élevé ou critique. Majeur : obligatoire, risque moindre. Mineur : exigence recommandée.</p>
+      <!-- Le chiffre MIS EN AVANT est celui qui bloque le certificat : les
+           non-conformites majeures (ISO/IEC 17021-1). -->
+      <span class="kpi-label" i18n="@@standards.detail.kpi-major-ncs">Non-conformités majeures</span>
+      <span class="kpi-value bad">{{ audit?.majorGaps ?? 0 }}</span>
+      <span class="kpi-sub">{{ audit?.minorGaps ?? 0 }} <span i18n="@@standards.detail.kpi-minor-ncs">mineures</span> · {{ audit?.observations ?? 0 }} <span i18n="@@standards.detail.kpi-observations">observations</span></span>
+      <p class="kpi-formule" i18n="@@standards.detail.kpi-gaps-formula2">Toute exigence sans preuve est un écart, classé comme un auditeur le
+        classerait. Non-conformité majeure : exigence obligatoire absente dont le risque est élevé ou critique — elle met en cause l'aptitude du système et bloque le certificat jusqu'à sa levée. Mineure : obligatoire, risque moindre — un plan d'actions suffit. Observation : exigence seulement recommandée, ce n'est pas une non-conformité.</p>
     </mat-card>
   </div>
 
@@ -310,17 +312,18 @@
           <strong i18n="@@standards.detail.audit-verdict-label">Verdict :</strong> {{ ab.verdict }}
           <span class="verdict-sub"><span i18n="@@standards.detail.audit-must-covered">MUST couvertes :</span> {{ ab.mustCovered }}/{{ ab.mustTotal }}</span>
         </div>
-        <p class="kpi-formule" data-test="verdict-bareme" i18n="@@standards.detail.audit-verdict-scale">Barème du verdict : « prêt » demande zéro écart critique et une préparation
-          ≥ 95 % ; « quasi prêt », zéro critique et ≥ 80 % ; « écarts majeurs à corriger », ≥ 50 % ; en dessous, la préparation est jugée insuffisante.</p>
+        <p class="kpi-formule" data-test="verdict-bareme" i18n="@@standards.detail.audit-verdict-scale">Barème du verdict, aligné sur l'ISO/IEC 17021-1 : seule une non-conformité
+          majeure bloque le certificat. « Prêt » demande zéro majeure et une préparation ≥ 95 % ; « quasi prêt », zéro majeure et ≥ 80 % ; au-delà de 50 %, les majeures restent à lever ; en dessous, la préparation est jugée insuffisante.</p>
         <p class="muted">{{ ab.findings.length }} <span i18n="@@standards.detail.audit-gaps-suffix">écart(s) — triés par priorité.</span>
-          {{ ab.criticalGaps }} <span i18n="@@standards.detail.audit-critical">critiques,</span> {{ ab.majorGaps }} <span i18n="@@standards.detail.audit-major">majeurs,</span> {{ ab.minorGaps }} <span i18n="@@standards.detail.audit-minor">mineurs.</span></p>
+          {{ ab.majorGaps }} <span i18n="@@standards.detail.audit-major-nc">non-conformités majeures,</span> {{ ab.minorGaps }} <span i18n="@@standards.detail.audit-minor-nc">mineures,</span> {{ ab.observations }} <span i18n="@@standards.detail.audit-observations">observations.</span></p>
         <p class="empty" *ngIf="ab.findings.length === 0" i18n="@@standards.detail.audit-no-gap">Aucun écart : toutes les exigences sont couvertes 🎉</p>
         <table class="findings-table" *ngIf="ab.findings.length">
           <thead><tr><th i18n="@@standards.detail.audit-col-requirement">Exigence</th><th i18n="@@standards.detail.audit-col-severity">Sévérité</th><th i18n="@@standards.detail.audit-col-remediation">Action de remédiation</th><th></th></tr></thead>
           <tbody>
             <tr *ngFor="let f of ab.findings">
               <td class="nowrap"><strong>{{ f.requirementCode }}</strong><br><small>§{{ f.sectionCode }}</small></td>
-              <td><span class="sev" [ngClass]="severityClass(f.findingSeverity)">{{ f.findingSeverity }}</span></td>
+              <!-- Le terme de la certification, jamais le code brut du serveur. -->
+              <td><span class="sev" [ngClass]="severityClass(f.findingSeverity)">{{ severityLabel(f.findingSeverity) }}</span></td>
               <td>{{ f.remediationAction }}</td>
               <td class="nowrap">
                 <button mat-stroked-button color="primary" class="cover-btn" (click)="coverRequirement(f.requirementId)">

@@ -55,8 +55,8 @@ public class StoryboardService {
                 + "Avancement roadmap : " + pct(roadmap.completionPercent())
                 + " (" + roadmap.doneStages() + "/" + roadmap.totalStages() + " étapes).\n"
                 + "Verdict audit blanc : " + audit.verdict() + ".\n"
-                + "Écarts : " + audit.criticalGaps() + " critiques, " + audit.majorGaps()
-                + " majeurs, " + audit.minorGaps() + " mineurs"
+                + "Écarts : " + audit.majorGaps() + " non-conformités majeures, "
+                + audit.minorGaps() + " mineures, " + audit.observations() + " observations"
                 + (topGaps.isBlank() ? "" : " ; principaux : " + topGaps) + ".\n"
                 + "Rédige le récit.";
 

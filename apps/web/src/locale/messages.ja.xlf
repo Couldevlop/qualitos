@@ -7538,9 +7538,85 @@ Portail clients</source>
         <source>Le stockage des pièces jointes est désactivé sur cet environnement : aucune preuve ne peut y être déposée ni relue.</source>
         <target state="translated">この環境では添付ファイルの保管が無効です。証拠の追加も閲覧もできません。</target>
       </trans-unit>
+      <trans-unit id="capa.actions.add" datatype="html">
+        <source>Ajouter une action</source>
+        <target state="translated">対策を追加</target>
+      </trans-unit>
+      <trans-unit id="capa.actions.caption" datatype="html">
+        <source>Actions de ce dossier CAPA</source>
+        <target state="translated">この CAPA 案件の対策</target>
+      </trans-unit>
+      <trans-unit id="capa.actions.row-hint" datatype="html">
+        <source>Cliquez une ligne pour corriger l'action, son responsable ou son echeance.</source>
+        <target state="translated">行をクリックすると、対策・担当者・期限を修正できます。</target>
+      </trans-unit>
+      <trans-unit id="capa.actions.open-aria" datatype="html">
+        <source>Ouvrir l'action : <x id="titre"/></source>
+        <target state="translated">対策を開く: <x id="titre"/></target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.title-add" datatype="html">
+        <source>Ajouter une action</source>
+        <target state="translated">対策を追加</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.title-edit" datatype="html">
+        <source>Modifier l'action</source>
+        <target state="translated">対策を編集</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.subtitle" datatype="html">
+        <source>Ce qu'on va faire, de quelle nature, qui en repond et pour quand.</source>
+        <target state="translated">何をするか、どの性質か、誰が責任を負い、いつまでか。</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.read-only" datatype="html">
+        <source>Ce dossier est termine : son action se lit, elle ne se modifie plus.</source>
+        <target state="translated">この案件は終了しています。対策は閲覧のみで、変更できません。</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.added" datatype="html">
+        <source>Action ajoutee.</source>
+        <target state="translated">対策を追加しました。</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.saved" datatype="html">
+        <source>Action enregistree.</source>
+        <target state="translated">対策を保存しました。</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.failed" datatype="html">
+        <source>L'action n'a pas pu etre enregistree.</source>
+        <target state="translated">対策を保存できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="capa.actions-dialog.title" datatype="html">
+        <source>Actions correctives</source>
+        <target state="translated">是正対策</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.add-capa" datatype="html">
+        <source>Ajouter une CAPA</source>
+        <target state="translated">CAPA を追加</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.add-capa-tooltip" datatype="html">
+        <source>Le dossier CAPA qui traite cet ecart : l'ouvrir, ou y aller</source>
+        <target state="translated">この不適合を扱う CAPA 案件：開くか、移動する</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.add-actions" datatype="html">
+        <source>Ajouter des actions</source>
+        <target state="translated">対策を追加</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.add-actions-tooltip" datatype="html">
+        <source>Les actions correctives de cet ecart : les lire, en ajouter</source>
+        <target state="translated">この不適合の是正対策：閲覧し、追加する</target>
+      </trans-unit>
+      <trans-unit id="capa.actions.none-of-nature" datatype="html">
+        <source>Aucune action de cette nature n'a encore été écrite pour cet écart.</source>
+        <target state="translated">この不適合について、この種別の対策はまだ記載されていません。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.live-note" datatype="html">
+        <source>État actuel du dossier, affiché à côté du texte agrégé. Le PDF, lui, ne porte que le texte figé à l'émission.</source>
+        <target state="translated">案件の現在の状態を、集約されたテキストの横に表示しています。PDF には発行時に固定されたテキストのみが記載されます。</target>
+      </trans-unit>
       <trans-unit id="capa.source.non-conformity-internal" datatype="html">
         <source>Non-conformité interne</source>
         <target state="translated">内部不適合</target>
+      </trans-unit>
+      <trans-unit id="capa.source.non-conformity-external" datatype="html">
+        <source>Non-conformité externe (réclamation client)</source>
+        <target state="translated">外部不適合（顧客苦情）</target>
       </trans-unit>
       <trans-unit id="capa.create.source-ref-required" datatype="html">
         <source>Référence source</source>
@@ -21570,8 +21646,8 @@ historique 12 mois</source>
         <target state="translated">この図にはまだ原因が置かれていません。</target>
       </trans-unit>
       <trans-unit id="nc.detail.capa-action" datatype="html">
-        <source>Action corrective en cours</source>
-        <target state="translated">進行中の是正処置</target>
+        <source>Actions correctives</source>
+        <target state="translated">是正対策</target>
       </trans-unit>
       <trans-unit id="nc.8d.title" datatype="html">
         <source>Rapport 8D</source>
@@ -32105,17 +32181,45 @@ historique 12 mois</source>
         <source>écart(s) — triés par priorité.</source>
         <target state="translated">件のギャップ — 優先度順。</target>
       </trans-unit>
-      <trans-unit id="standards.detail.audit-critical" datatype="html">
-        <source>critiques,</source>
-        <target state="translated">重大、</target>
+      <trans-unit id="standards.detail.kpi-major-ncs" datatype="html">
+        <source>Non-conformités majeures</source>
+        <target state="translated">重大不適合</target>
       </trans-unit>
-      <trans-unit id="standards.detail.audit-major" datatype="html">
-        <source>majeurs,</source>
-        <target state="translated">重要、</target>
+      <trans-unit id="standards.detail.kpi-minor-ncs" datatype="html">
+        <source>mineures</source>
+        <target state="translated">軽微</target>
       </trans-unit>
-      <trans-unit id="standards.detail.audit-minor" datatype="html">
-        <source>mineurs.</source>
-        <target state="translated">軽微。</target>
+      <trans-unit id="standards.detail.kpi-observations" datatype="html">
+        <source>observations</source>
+        <target state="translated">所見</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.kpi-gaps-formula2" datatype="html">
+        <source>Toute exigence sans preuve est un écart, classé comme un auditeur le classerait. Non-conformité majeure : exigence obligatoire absente dont le risque est élevé ou critique — elle met en cause l'aptitude du système et bloque le certificat jusqu'à sa levée. Mineure : obligatoire, risque moindre — un plan d'actions suffit. Observation : exigence seulement recommandée, ce n'est pas une non-conformité.</source>
+        <target state="translated">証拠のない要求事項はすべてギャップであり、審査員と同じように分類されます。重大不適合：リスクが高いまたは重大な必須要求事項の欠如 — システムの能力を疑わせ、解消まで認証を妨げます。軽微：必須だがリスクは低く、対策計画で足ります。所見：推奨のみの要求事項で、不適合ではありません。</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.audit-major-nc" datatype="html">
+        <source>non-conformités majeures,</source>
+        <target state="translated">重大不適合、</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.audit-minor-nc" datatype="html">
+        <source>mineures,</source>
+        <target state="translated">軽微、</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.audit-observations" datatype="html">
+        <source>observations.</source>
+        <target state="translated">所見。</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.finding-major" datatype="html">
+        <source>Non-conformité majeure</source>
+        <target state="translated">重大不適合</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.finding-minor" datatype="html">
+        <source>Non-conformité mineure</source>
+        <target state="translated">軽微不適合</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.finding-observation" datatype="html">
+        <source>Observation</source>
+        <target state="translated">所見</target>
       </trans-unit>
       <trans-unit id="standards.detail.audit-no-gap" datatype="html">
         <source>Aucun écart : toutes les exigences sont couvertes 🎉</source>
@@ -34314,6 +34418,10 @@ Inde (centre de service)</source>
       <trans-unit id="suppliers.nc.attach-hint" datatype="html">
         <source>Le 8D et les preuves de CAPA se joignent depuis la liste, une fois la NC enregistrée.</source>
         <target state="translated">8D と CAPA の証拠は、不適合を保存した後に一覧から添付します。</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.col-reference" datatype="html">
+        <source>Référence</source>
+        <target state="translated">参照番号</target>
       </trans-unit>
       <trans-unit id="suppliers.nc.col-part" datatype="html">
         <source>Pièce</source>

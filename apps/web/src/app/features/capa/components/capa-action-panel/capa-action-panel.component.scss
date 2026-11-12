@@ -86,3 +86,79 @@
 .action-panel__faite {
   color: var(--qos-success-fg);
 }
+
+/* --- Le tableau des actions (ADR 0115) ------------------------------------- */
+
+/* Un ecart se traite rarement d'un seul geste : le tableau compare les actions
+   ligne a ligne -- nature, porteur, echeance, avancement. Les colonnes restent
+   donc fixes, meme quand une cellule reprend la valeur du dossier : une cellule
+   vide selon le dossier rendrait la colonne illisible d'une ligne a l'autre. */
+.actions {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--qos-fs-sm);
+
+  th,
+  td {
+    padding: var(--qos-space-2) var(--qos-space-3);
+    text-align: start;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--qos-border);
+  }
+
+  th {
+    color: var(--qos-fg-secondary);
+    font-size: var(--qos-fs-xs);
+    font-weight: var(--qos-fw-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+}
+
+.actions__titre { font-weight: var(--qos-fw-medium); }
+
+.actions__echeance { white-space: nowrap; }
+
+.actions__col-geste { text-align: end; white-space: nowrap; }
+
+/* La ligne est cliquable : elle doit le montrer, et rester atteignable au
+   clavier -- d'ou le focus visible, pas seulement le survol. */
+.actions__ligne {
+  cursor: pointer;
+}
+
+.actions__ligne:hover {
+  background: var(--qos-bg-subtle, rgba(0, 0, 0, 0.03));
+}
+
+.actions__ligne:focus-visible {
+  outline: 2px solid var(--qos-border-focus);
+  outline-offset: -2px;
+}
+
+.action-panel__pied {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--qos-space-3);
+  margin-top: var(--qos-space-3);
+}
+
+.action-panel__aide {
+  margin: 0;
+  color: var(--qos-fg-secondary);
+  font-size: var(--qos-fs-xs);
+}
+
+/* Legende du tableau et entete de la colonne de gestes : necessaires aux
+   lecteurs d'ecran, inutiles a l'oeil. */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

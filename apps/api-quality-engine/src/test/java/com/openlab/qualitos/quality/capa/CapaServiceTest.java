@@ -417,27 +417,58 @@ class CapaServiceTest {
         assertThat(r.status()).isEqualTo(CapaActionStatus.PENDING);
     }
 
+    /**
+     * Un dossier porte PLUSIEURS actions (ADR 0115, qui revise l'ADR 0088 sur
+     * ce seul point), quelle que soit sa source.
+     *
+     * <p>Un ecart reel se traite rarement d'un seul geste : on endigue, on
+     * corrige la cause, on previent la recidive -- et le 8D nomme ces etapes
+     * separement (D3, D5, D6). La regle « une seule action » obligeait a ouvrir
+     * un second dossier sur le meme ecart, ou a tout ecrire dans un intitule
+     * unique : dans les deux cas, l'avancement n'etait plus mesurable action
+     * par action.
+     */
     @Test
-    void addAction_dossierAyantDejaSonAction_refuse_quelleQueSoitSaSource() {
-        // Une CAPA = une action (ADR 0088) : la règle ne vaut plus pour les
-        // seuls risques, elle vaut pour toutes les sources.
+    void addAction_dossierAyantDejaUneAction_enAccepteUneSeconde_quelleQueSoitSaSource() {
+        when(actionRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
         for (CapaSourceType source : CapaSourceType.values()) {
             CapaCase c = capa(TENANT, CapaStatus.OPEN);
             c.setSourceType(source);
             c.getActions().add(new CapaAction());
             when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
-            CapaDto.ActionRequest req = new CapaDto.ActionRequest(
-                    "deuxieme", null, null, null, null, null, null, null);
-            assertThatThrownBy(() -> service.addAction(c.getId(), req))
-                    .as("source %s", source)
-                    .isInstanceOf(CapaStateException.class)
-                    .hasMessageContaining("single action");
+
+            CapaDto.ActionResponse seconde = service.addAction(c.getId(), new CapaDto.ActionRequest(
+                    "Reprendre le reglage de la presse", null, null,
+                    CapaActionType.PREVENTIVE, null, null, null, null));
+
+            assertThat(seconde.title()).as("source %s", source)
+                    .isEqualTo("Reprendre le reglage de la presse");
+            assertThat(seconde.actionType()).isEqualTo(CapaActionType.PREVENTIVE);
         }
-        verify(actionRepo, never()).save(any());
+    }
+
+    /**
+     * Le pilote du dossier est celui de la PREMIERE action. Les suivantes ne le
+     * deplacent pas : la troisieme action aurait sinon transfere le pilotage a
+     * qui l'execute, alors que c'est au pilote qu'on demande des nouvelles.
+     */
+    @Test
+    void addAction_secondeAction_neDeplacePasLePiloteDuDossier() {
+        CapaCase c = capa(TENANT, CapaStatus.OPEN);
+        c.getActions().add(new CapaAction());
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(actionRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        service.addAction(c.getId(), new CapaDto.ActionRequest(
+                "Former l'equipe de nuit", null, null, null, UUID.randomUUID(),
+                "Autre personne", null, null));
+
+        assertThat(c.getOwnerId()).isEqualTo(OWNER);
+        verify(caseRepo, never()).save(any());
     }
 
     @Test
-    void addAction_leResponsableDesigneDevientLePiloteDuDossier() {
+    void addAction_leResponsableDeLaPremiereActionDevientLePiloteDuDossier() {
         CapaCase c = capa(TENANT, CapaStatus.OPEN);
         UUID responsable = UUID.randomUUID();
         when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));

@@ -20,6 +20,8 @@ import { Component, EventEmitter, Input, NgModule, Output } from '@angular/core'
 })
 export class CapaActionPanelStubComponent {
   @Input() capaCaseId = '';
+  /** Les natures montrees : vide = toutes (ADR 0115, D5 et D6 du rapport 8D). */
+  @Input() natures: string[] = [];
   @Output() readonly changed = new EventEmitter<void>();
 }
 

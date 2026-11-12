@@ -203,8 +203,11 @@ test.describe('NC — la fenêtre de création CAPA pose la vérification', () =
     await expect(dialogue.locator('[data-test="verification-qui"]')).toHaveCount(0);
     await expect(dialogue.locator('[data-test="verification-consignes"]')).toHaveCount(0);
 
-    // Tout le reste rempli (intitulé repris de la NC, moi comme responsable) :
-    // seule la question manque, et la création reste impossible.
+    // Tout le reste rempli : seule la question manque, et la création reste
+    // impossible. L'intitulé se SAISIT — depuis l'ADR 0115 la fenêtre ne recopie
+    // plus le titre de l'écart : « Four mal réglé » décrit le constat, pas
+    // l'action à mener, et un dossier qui le reprend se lit comme un doublon.
+    await dialogue.locator('[data-test="capa-intitule"]').fill('Régler le four et le vérifier');
     const demain = new Date(Date.now() + 86_400_000);
     const iso = `${demain.getFullYear()}-${String(demain.getMonth() + 1).padStart(2, '0')}-`
       + `${String(demain.getDate()).padStart(2, '0')}`;

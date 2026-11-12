@@ -275,6 +275,46 @@ describe('NcListComponent — chargement, filtres et pagination', () => {
     requetes.forEach(r => r.flush(page([])));
   });
 
+  /**
+   * Le groupement n'est pas qu'un confort d'affichage : `mat-select` instancie
+   * ses options dès le rendu et `*ngFor` les suit par identité d'objet. Un
+   * getter qui refabriquait ses groupes à chaque appel faisait donc détruire et
+   * recréer toutes les options à chaque passe de détection, chaque création
+   * prévenant le select, qui redemandait une passe : la page des écarts se
+   * figeait, moteur bloqué, sur un écran blanc. Ce banc tient l'IDENTITÉ, qui
+   * est la propriété qui protège de la boucle — pas seulement le contenu.
+   */
+  it('range les natures sous leur catégorie, et rend le même tableau tant que rien ne change', () => {
+    start();
+    http.expectOne(r => r.url === endpoint).flush(page([]));
+    component.subcategories = [
+      { code: 'PRC-DER', category: 'PROCESS', label: 'Dérive de paramètre' },
+      { code: 'PRD-DIM', category: 'PRODUCT', label: 'Cote hors spécification' },
+      { code: 'PRD-ASP', category: 'PRODUCT', label: 'Défaut d’aspect' }
+    ];
+
+    const groupes = component.subcategoryGroups;
+    // L'ordre est celui des catégories de l'écran, pas celui du catalogue ;
+    // une catégorie sans nature ne paraît pas.
+    expect(groupes.map(g => g.category)).toEqual(['PRODUCT', 'PROCESS']);
+    expect(groupes[0].subcategories.map(s => s.code)).toEqual(['PRD-DIM', 'PRD-ASP']);
+
+    expect(component.subcategoryGroups).toBe(groupes);
+
+    // Choisir une catégorie refait le tableau -- et un seul groupe demeure.
+    component.categoryFilter.setValue('PRODUCT');
+    http.match(r => r.url === endpoint).filter(r => !r.cancelled)
+      .forEach(r => r.flush(page([])));
+    const filtres = component.subcategoryGroups;
+    expect(filtres).not.toBe(groupes);
+    expect(filtres.map(g => g.category)).toEqual(['PRODUCT']);
+    expect(component.subcategoryGroups).toBe(filtres);
+
+    // Un catalogue remplacé aussi : c'est l'autre entrée du calcul.
+    component.subcategories = [{ code: 'SEC-EPI', category: 'SAFETY', label: 'EPI manquant' }];
+    expect(component.subcategoryGroups).not.toBe(filtres);
+  });
+
   it("traduit la nature par le catalogue, et montre le code quand elle a été retirée", () => {
     start();
     http.expectOne(r => r.url === endpoint).flush(page([]));

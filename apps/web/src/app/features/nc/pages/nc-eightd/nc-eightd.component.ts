@@ -8,6 +8,11 @@ import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, finalize, shareReplay, switchMap, tap } from 'rxjs/operators';
 
 import { AuthService } from '../../../../core/auth/auth.service';
+import { CapaActionType } from '../../../capa/capa.types';
+import { FiveWhysService } from '../../../five-whys/five-whys.service';
+import { FiveWhysAnalysis } from '../../../five-whys/five-whys.types';
+import { IshikawaService } from '../../../ishikawa/ishikawa.service';
+import { IshikawaDiagramResponse } from '../../../ishikawa/ishikawa.types';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { deferredView } from '../../../../core/rx/deferred-view';
 import {
@@ -25,6 +30,25 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
  * si les deux divergent, l'écran propose un geste que l'API refusera.
  */
 const ROLES_ECRITURE = ['QUALITY_MANAGER', 'DIRECTOR_QUALITY', 'ADMIN_TENANT', 'SUPER_ADMIN'];
+
+/**
+ * Les deux disciplines qui parlent d'actions, et la nature qui leur correspond.
+ *
+ * <p>Le 8D nomme les gestes séparément : le D5 est l'action corrective qui
+ * supprime la cause, le D6 celle qui empêche la récidive. Chaque discipline
+ * reçoit donc le tableau de SA nature, et non le tableau complet répété deux
+ * fois — qui laisserait chercher, sous chaque titre, les lignes concernées.
+ *
+ * <p>Le D3 (sécurisation) n'y figure pas : il se SAISIT, parce qu'un endiguement
+ * est souvent décidé avant qu'aucun dossier CAPA n'existe.
+ */
+const NATURES_PAR_DISCIPLINE: Readonly<Record<string, readonly CapaActionType[]>> = {
+  D5: Object.freeze<CapaActionType[]>(['CORRECTIVE']),
+  D6: Object.freeze<CapaActionType[]>(['PREVENTIVE'])
+};
+
+/** Le tableau vide partagé des disciplines qui ne montrent pas d'actions. */
+const AUCUNE_NATURE: readonly CapaActionType[] = Object.freeze<CapaActionType[]>([]);
 
 /**
  * Le rapport 8D d'une non-conformité.
@@ -71,6 +95,20 @@ export class NcEightDComponent implements OnInit {
   /** Vrai si l'utilisateur peut renseigner et émettre. */
   readonly editable: boolean;
 
+  /**
+   * Ce que le rapport montre VIVANT, à côté du texte agrégé.
+   *
+   * <p>Le 8D disait le D4 et le D5 en lignes de texte : on y lisait la cause
+   * retenue et l'intitulé d'une action, sans voir le raisonnement qui mène à
+   * l'une ni l'avancement de l'autre. Le texte reste ce que le PDF scellera —
+   * il doit être une fonction pure de ce qui est stocké — mais l'écran, lui,
+   * peut montrer les figures et le tableau, et laisser agir sur place.
+   */
+  readonly fiveWhys$ = new BehaviorSubject<FiveWhysAnalysis[]>([]);
+  readonly ishikawa$ = new BehaviorSubject<IshikawaDiagramResponse[]>([]);
+  /** Le dossier CAPA de l'écart, s'il existe : le tableau n'a que son identifiant. */
+  readonly capaCaseId$ = new BehaviorSubject<string | null>(null);
+
   private ncId = '';
   /** `BehaviorSubject` et non `Subject` : la vue s'abonne après le premier tir. */
   private readonly reload$ = new BehaviorSubject<void>(undefined);
@@ -82,6 +120,8 @@ export class NcEightDComponent implements OnInit {
     private readonly router: Router,
     private readonly snack: MatSnackBar,
     private readonly dialog: MatDialog,
+    private readonly fiveWhys: FiveWhysService,
+    private readonly ishikawa: IshikawaService,
     auth: AuthService
   ) {
     this.editable = auth.hasAnyRole(ROLES_ECRITURE);
@@ -110,6 +150,71 @@ export class NcEightDComponent implements OnInit {
       )),
       shareReplay({ bufferSize: 1, refCount: true })
     );
+    this.reload$.next();
+    this.chargerAnalyses();
+    this.chargerDossierCapa();
+  }
+
+  /**
+   * Charge les figures d'analyse de cause (D4).
+   *
+   * <p>Chargement non bloquant, et panne silencieuse : le rapport reste lisible
+   * si l'une des deux méthodes est indisponible — son texte agrégé, lui, est
+   * déjà là.
+   */
+  private chargerAnalyses(): void {
+    this.fiveWhys.listForNc(this.ncId).subscribe({
+      next: chaines => this.fiveWhys$.next(chaines),
+      // eslint-disable-next-line no-console
+      error: err => console.warn('[nc-8d] five-whys listForNc failed', err?.status)
+    });
+    this.ishikawa.listForNc(this.ncId).subscribe({
+      next: diagrammes => this.ishikawa$.next(diagrammes),
+      // eslint-disable-next-line no-console
+      error: err => console.warn('[nc-8d] ishikawa listForNc failed', err?.status)
+    });
+  }
+
+  /** L'identifiant du dossier CAPA, lu sur l'écart : le tableau charge le reste. */
+  private chargerDossierCapa(): void {
+    this.svc.getNc(this.ncId).subscribe({
+      next: nc => this.capaCaseId$.next(nc.capaCaseId ?? null),
+      // eslint-disable-next-line no-console
+      error: err => console.warn('[nc-8d] getNc failed', err?.status)
+    });
+  }
+
+  /** La nature d'action que cette discipline montre, ou null si elle n'en montre pas. */
+  natureDe(code: string): CapaActionType | null {
+    return NATURES_PAR_DISCIPLINE[code]?.[0] ?? null;
+  }
+
+  /**
+   * Les natures à passer au tableau : une seule, celle de la discipline.
+   *
+   * <p>Le tableau renvoyé est TOUJOURS LE MÊME OBJET pour une discipline donnée.
+   * Un `[natures]="naturesDe(code)"` qui fabriquerait un tableau neuf à chaque
+   * appel changerait l'entrée à chaque passe de détection : le panneau relirait
+   * le dossier CAPA par le réseau à chaque passe, et sa réponse déclencherait la
+   * passe suivante — une requête en boucle pour un écran immobile.
+   */
+  naturesDe(code: string): readonly CapaActionType[] {
+    return NATURES_PAR_DISCIPLINE[code] ?? AUCUNE_NATURE;
+  }
+
+  /** Vrai pour la discipline qui porte l'analyse de cause. */
+  estCauseRacine(code: string): boolean {
+    return code === 'D4';
+  }
+
+  /**
+   * Relit le rapport.
+   *
+   * <p>Public : le tableau d'actions, qui en fait avancer une sans quitter le
+   * rapport, annonce ses changements -- et le texte agrégé des disciplines en
+   * dépend. Un rapport émis ne bougera pas pour autant : son contenu est figé.
+   */
+  reload(): void {
     this.reload$.next();
   }
 

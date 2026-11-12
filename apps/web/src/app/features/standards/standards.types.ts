@@ -150,7 +150,13 @@ export interface AuditBlancReport {
   standardName: string; generatedAt: string; readinessScore: number;
   totalRequirements: number; coveredRequirements: number;
   mustTotal: number; mustCovered: number;
-  criticalGaps: number; majorGaps: number; minorGaps: number;
+  /**
+   * Les trois classes de l'ISO/IEC 17021-1. Une non-conformité MAJEURE met en
+   * cause l'aptitude du système à atteindre ses résultats et bloque le
+   * certificat jusqu'à sa levée ; une MINEURE est un manquement isolé, qui
+   * demande un plan d'actions ; une OBSERVATION n'est pas une non-conformité.
+   */
+  majorGaps: number; minorGaps: number; observations: number;
   verdict: string; findings: AuditFinding[];
 }
 

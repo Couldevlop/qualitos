@@ -7538,9 +7538,85 @@ Portail clients</source>
         <source>Le stockage des pièces jointes est désactivé sur cet environnement : aucune preuve ne peut y être déposée ni relue.</source>
         <target state="translated">تخزين المرفقات معطّل في هذه البيئة: لا يمكن إيداع أي دليل ولا الاطّلاع عليه.</target>
       </trans-unit>
+      <trans-unit id="capa.actions.add" datatype="html">
+        <source>Ajouter une action</source>
+        <target state="translated">إضافة إجراء</target>
+      </trans-unit>
+      <trans-unit id="capa.actions.caption" datatype="html">
+        <source>Actions de ce dossier CAPA</source>
+        <target state="translated">إجراءات ملف CAPA هذا</target>
+      </trans-unit>
+      <trans-unit id="capa.actions.row-hint" datatype="html">
+        <source>Cliquez une ligne pour corriger l'action, son responsable ou son echeance.</source>
+        <target state="translated">انقر على سطر لتصحيح الإجراء أو مسؤوله أو تاريخ استحقاقه.</target>
+      </trans-unit>
+      <trans-unit id="capa.actions.open-aria" datatype="html">
+        <source>Ouvrir l'action : <x id="titre"/></source>
+        <target state="translated">فتح الإجراء: <x id="titre"/></target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.title-add" datatype="html">
+        <source>Ajouter une action</source>
+        <target state="translated">إضافة إجراء</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.title-edit" datatype="html">
+        <source>Modifier l'action</source>
+        <target state="translated">تعديل الإجراء</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.subtitle" datatype="html">
+        <source>Ce qu'on va faire, de quelle nature, qui en repond et pour quand.</source>
+        <target state="translated">ما سيُنجَز، وطبيعته، ومن يتحمل مسؤوليته، وبحلول متى.</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.read-only" datatype="html">
+        <source>Ce dossier est termine : son action se lit, elle ne se modifie plus.</source>
+        <target state="translated">هذا الملف منتهٍ: يمكن قراءة إجرائه، لا تعديله.</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.added" datatype="html">
+        <source>Action ajoutee.</source>
+        <target state="translated">تمت إضافة الإجراء.</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.saved" datatype="html">
+        <source>Action enregistree.</source>
+        <target state="translated">تم حفظ الإجراء.</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.failed" datatype="html">
+        <source>L'action n'a pas pu etre enregistree.</source>
+        <target state="translated">لم يتمكن النظام من حفظ الإجراء.</target>
+      </trans-unit>
+      <trans-unit id="capa.actions-dialog.title" datatype="html">
+        <source>Actions correctives</source>
+        <target state="translated">الإجراءات التصحيحية</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.add-capa" datatype="html">
+        <source>Ajouter une CAPA</source>
+        <target state="translated">إضافة CAPA</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.add-capa-tooltip" datatype="html">
+        <source>Le dossier CAPA qui traite cet ecart : l'ouvrir, ou y aller</source>
+        <target state="translated">ملف CAPA الذي يعالج هذا الانحراف: افتحه أو انتقل إليه</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.add-actions" datatype="html">
+        <source>Ajouter des actions</source>
+        <target state="translated">إضافة إجراءات</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.add-actions-tooltip" datatype="html">
+        <source>Les actions correctives de cet ecart : les lire, en ajouter</source>
+        <target state="translated">الإجراءات التصحيحية لهذا الانحراف: اقرأها أو أضف إليها</target>
+      </trans-unit>
+      <trans-unit id="capa.actions.none-of-nature" datatype="html">
+        <source>Aucune action de cette nature n'a encore été écrite pour cet écart.</source>
+        <target state="translated">لم يُكتب بعد أي إجراء من هذا النوع لهذا الانحراف.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.live-note" datatype="html">
+        <source>État actuel du dossier, affiché à côté du texte agrégé. Le PDF, lui, ne porte que le texte figé à l'émission.</source>
+        <target state="translated">الحالة الحالية للملف، معروضة بجانب النص المجمع. أما ملف PDF فلا يحمل سوى النص المجمّد عند الإصدار.</target>
+      </trans-unit>
       <trans-unit id="capa.source.non-conformity-internal" datatype="html">
         <source>Non-conformité interne</source>
         <target state="translated">عدم مطابقة داخلية</target>
+      </trans-unit>
+      <trans-unit id="capa.source.non-conformity-external" datatype="html">
+        <source>Non-conformité externe (réclamation client)</source>
+        <target state="translated">عدم مطابقة خارجية (شكوى عميل)</target>
       </trans-unit>
       <trans-unit id="capa.create.source-ref-required" datatype="html">
         <source>Référence source</source>
@@ -21571,8 +21647,8 @@ historique 12 mois</source>
         <target state="translated">لم تُضف أي سبب إلى هذا المخطط بعد.</target>
       </trans-unit>
       <trans-unit id="nc.detail.capa-action" datatype="html">
-        <source>Action corrective en cours</source>
-        <target state="translated">الإجراء التصحيحي الجاري</target>
+        <source>Actions correctives</source>
+        <target state="translated">الإجراءات التصحيحية</target>
       </trans-unit>
       <trans-unit id="nc.8d.title" datatype="html">
         <source>Rapport 8D</source>
@@ -32106,17 +32182,45 @@ historique 12 mois</source>
         <source>écart(s) — triés par priorité.</source>
         <target state="translated">فجوة/فجوات — مرتبة حسب الأولوية.</target>
       </trans-unit>
-      <trans-unit id="standards.detail.audit-critical" datatype="html">
-        <source>critiques,</source>
-        <target state="translated">حرجة,</target>
+      <trans-unit id="standards.detail.kpi-major-ncs" datatype="html">
+        <source>Non-conformités majeures</source>
+        <target state="translated">حالات عدم مطابقة كبرى</target>
       </trans-unit>
-      <trans-unit id="standards.detail.audit-major" datatype="html">
-        <source>majeurs,</source>
-        <target state="translated">كبيرة,</target>
+      <trans-unit id="standards.detail.kpi-minor-ncs" datatype="html">
+        <source>mineures</source>
+        <target state="translated">صغرى</target>
       </trans-unit>
-      <trans-unit id="standards.detail.audit-minor" datatype="html">
-        <source>mineurs.</source>
-        <target state="translated">صغيرة.</target>
+      <trans-unit id="standards.detail.kpi-observations" datatype="html">
+        <source>observations</source>
+        <target state="translated">ملاحظات</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.kpi-gaps-formula2" datatype="html">
+        <source>Toute exigence sans preuve est un écart, classé comme un auditeur le classerait. Non-conformité majeure : exigence obligatoire absente dont le risque est élevé ou critique — elle met en cause l'aptitude du système et bloque le certificat jusqu'à sa levée. Mineure : obligatoire, risque moindre — un plan d'actions suffit. Observation : exigence seulement recommandée, ce n'est pas une non-conformité.</source>
+        <target state="translated">كل متطلب بلا دليل هو انحراف، يُصنّف كما يصنّفه المدقق. عدم مطابقة كبرى: متطلب إلزامي غائب مرتفع أو حرج الخطورة — يشكّك في قدرة النظام ويعطّل الشهادة حتى معالجته. صغرى: إلزامي بخطورة أقل — تكفي خطة إجرائية. ملاحطة: متطلب موصى به فقط، وليس عدم مطابقة.</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.audit-major-nc" datatype="html">
+        <source>non-conformités majeures,</source>
+        <target state="translated">حالات عدم مطابقة كبرى,</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.audit-minor-nc" datatype="html">
+        <source>mineures,</source>
+        <target state="translated">صغرى,</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.audit-observations" datatype="html">
+        <source>observations.</source>
+        <target state="translated">ملاحظات.</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.finding-major" datatype="html">
+        <source>Non-conformité majeure</source>
+        <target state="translated">عدم مطابقة كبرى</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.finding-minor" datatype="html">
+        <source>Non-conformité mineure</source>
+        <target state="translated">عدم مطابقة صغرى</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.finding-observation" datatype="html">
+        <source>Observation</source>
+        <target state="translated">ملاحظة</target>
       </trans-unit>
       <trans-unit id="standards.detail.audit-no-gap" datatype="html">
         <source>Aucun écart : toutes les exigences sont couvertes 🎉</source>
@@ -34315,6 +34419,10 @@ Inde (centre de service)</source>
       <trans-unit id="suppliers.nc.attach-hint" datatype="html">
         <source>Le 8D et les preuves de CAPA se joignent depuis la liste, une fois la NC enregistrée.</source>
         <target state="translated">يُرفق تقرير 8D وأدلة CAPA من القائمة بعد حفظ عدم المطابقة.</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.col-reference" datatype="html">
+        <source>Référence</source>
+        <target state="translated">المرجع</target>
       </trans-unit>
       <trans-unit id="suppliers.nc.col-part" datatype="html">
         <source>Pièce</source>

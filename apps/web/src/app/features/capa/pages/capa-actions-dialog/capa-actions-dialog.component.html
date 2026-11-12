@@ -1,0 +1,19 @@
+<div class="actions-dialog">
+  <h2 class="actions-dialog__titre" mat-dialog-title>
+    <ng-container i18n="@@capa.actions-dialog.title">Actions correctives</ng-container>
+    <span class="actions-dialog__ref" *ngIf="data.reference">{{ data.reference }}</span>
+  </h2>
+
+  <mat-dialog-content>
+    <!-- Le MEME tableau que la fiche de l'ecart : les droits, l'avancement et la
+         fenetre d'une action y sont deja tenus. -->
+    <qos-capa-action-panel [capaCaseId]="data.capaCaseId"
+                           (changed)="onChanged()"></qos-capa-action-panel>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-stroked-button type="button" (click)="close()" data-test="actions-dialog-fermer">
+      <span i18n="@@common.close">Fermer</span>
+    </button>
+  </mat-dialog-actions>
+</div>

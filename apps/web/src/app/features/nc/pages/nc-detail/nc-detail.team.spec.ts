@@ -17,6 +17,9 @@ import { IshikawaService } from '../../../ishikawa/ishikawa.service';
 import { NcService } from '../../nc.service';
 import { NcResponse, NcStatus, TeamMemberRef } from '../../nc.types';
 import { NcDetailComponent } from './nc-detail.component';
+import {
+  NcCauseAnalysisStubModule
+} from '../../components/nc-cause-analysis/testing/nc-cause-analysis.stub';
 import { CapaActionPanelStubModule } from '../../../capa/components/capa-action-panel/testing/capa-action-panel.stub';
 
 const EQUIPE: TeamMemberRef[] = [
@@ -83,7 +86,7 @@ describe('NcDetailComponent — équipe en charge', () => {
     await TestBed.configureTestingModule({
       declarations: [NcDetailComponent],
       imports: [SharedModule, UiModule, UserPickerModule, NoopAnimationsModule,
-                CapaActionPanelStubModule],
+                CapaActionPanelStubModule, NcCauseAnalysisStubModule],
       providers: [
         { provide: NcService, useValue: svc },
         { provide: MatSnackBar, useValue: snack },

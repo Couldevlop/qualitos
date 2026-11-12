@@ -319,7 +319,7 @@ public class StandardsService {
         }
 
         int total = 0, coveredCount = 0, mustTotal = 0, mustCovered = 0;
-        int critical = 0, major = 0, minor = 0;
+        int major = 0, minor = 0, observations = 0;
         List<StandardsDto.AuditFinding> findings = new ArrayList<>();
 
         for (StandardSection section : std.getSections()) {
@@ -337,9 +337,9 @@ public class StandardsService {
                     // Exigence non couverte → écart (finding).
                     String severity = severityOf(req);
                     switch (severity) {
-                        case "CRITICAL" -> critical++;
                         case "MAJOR" -> major++;
-                        default -> minor++;
+                        case "MINOR" -> minor++;
+                        default -> observations++;
                     }
                     findings.add(new StandardsDto.AuditFinding(
                             req.getId(), section.getCode(), clause.getCode(), req.getCode(),
@@ -357,21 +357,42 @@ public class StandardsService {
         return new StandardsDto.AuditBlancReport(
                 ts.getId(), std.getId(), std.getCode(), std.getFullName(),
                 Instant.now(), readiness, total, coveredCount, mustTotal, mustCovered,
-                critical, major, minor, verdict(readiness, critical), findings);
+                major, minor, observations, verdict(readiness, major), findings);
     }
 
+    /**
+     * Classe un écart dans le vocabulaire de la certification (ISO/IEC 17021-1,
+     * ISO 19011) et non dans une échelle inventée.
+     *
+     * <p>L'audit blanc annonçait des écarts « critiques », « majeurs » et
+     * « mineurs ». Aucun organisme certificateur n'emploie « critique » : un
+     * auditeur classe ses constats en <b>non-conformité majeure</b> (elle met en
+     * cause l'aptitude du système à atteindre ses résultats — exigence
+     * obligatoire absente, processus requis inexistant — et bloque le certificat
+     * jusqu'à sa levée), <b>non-conformité mineure</b> (manquement isolé, qui
+     * n'empêche pas le certificat mais demande un plan d'actions) et
+     * <b>observation</b> (piste d'amélioration, qui n'est pas une
+     * non-conformité). Dire « critique » à un client qui prépare son audit lui
+     * fait préparer une réponse à un reproche qu'il n'entendra jamais.
+     *
+     * <p>La correspondance suit la définition, pas une graduation : une exigence
+     * <b>obligatoire</b> non couverte est une non-conformité — majeure quand le
+     * risque de son absence est élevé, c'est-à-dire systémique, mineure sinon.
+     * Une exigence seulement <b>recommandée</b> ne peut pas être une
+     * non-conformité : c'est une observation.
+     */
     private String severityOf(StandardRequirement req) {
         boolean must = req.getObligation() == ObligationLevel.MUST;
         RiskLevel risk = req.getRiskIfMissing();
-        if (must && (risk == RiskLevel.CRITICAL || risk == RiskLevel.HIGH)) return "CRITICAL";
-        if (must) return "MAJOR";
-        return "MINOR";
+        if (must && (risk == RiskLevel.CRITICAL || risk == RiskLevel.HIGH)) return "MAJOR";
+        if (must) return "MINOR";
+        return "OBSERVATION";
     }
 
     private int priorityOf(String severity) {
         return switch (severity) {
-            case "CRITICAL" -> 1;
-            case "MAJOR" -> 2;
+            case "MAJOR" -> 1;
+            case "MINOR" -> 2;
             default -> 3;
         };
     }
@@ -386,10 +407,17 @@ public class StandardsService {
         return base;
     }
 
-    private String verdict(double readiness, int criticalGaps) {
-        if (criticalGaps == 0 && readiness >= 95d) return "PRÊT POUR L'AUDIT";
-        if (criticalGaps == 0 && readiness >= 80d) return "QUASI PRÊT — écarts mineurs à traiter";
-        if (readiness >= 50d) return "NON PRÊT — écarts majeurs à corriger";
+    /**
+     * Le verdict suit la règle réelle de la certification : une non-conformité
+     * <b>majeure</b> non levée empêche le certificat, des non-conformités
+     * <b>mineures</b> ne l'empêchent pas mais demandent un plan d'actions
+     * (ISO/IEC 17021-1 §9.4.5). D'où un seul critère bloquant, les majeures, et
+     * la préparation des exigences obligatoires pour nuancer.
+     */
+    private String verdict(double readiness, int majorGaps) {
+        if (majorGaps == 0 && readiness >= 95d) return "PRÊT POUR L'AUDIT";
+        if (majorGaps == 0 && readiness >= 80d) return "QUASI PRÊT — non-conformités mineures à traiter";
+        if (readiness >= 50d) return "NON PRÊT — non-conformités majeures à lever";
         return "NON PRÊT — préparation insuffisante";
     }
 

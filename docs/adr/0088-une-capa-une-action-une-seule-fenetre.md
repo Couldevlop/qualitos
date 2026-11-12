@@ -10,6 +10,11 @@
   d'action), ADR 0073 (vérification d'efficacité), ADR 0077 (dossier de risque =
   action unique), ADR 0081 (chacun voit ce qui le concerne)
 
+- **Révisé par** : ADR 0115 sur la décision 1 seule (« une CAPA porte une
+  action ») : un dossier accepte désormais plusieurs actions, montrées en
+  tableau. Tout le reste de cet ADR tient — une seule fenêtre de création,
+  source verrouillée, pilote nommé, endiguement seul non clôturable.
+
 ## Contexte
 
 Trois fenêtres différentes ouvraient une CAPA : la création depuis la liste

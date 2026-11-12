@@ -584,7 +584,25 @@ export class StandardsDetailComponent implements OnInit {
   }
 
   severityClass(sev: string): string {
-    return sev === 'CRITICAL' ? 'sev-crit' : sev === 'MAJOR' ? 'sev-maj' : 'sev-min';
+    return sev === 'MAJOR' ? 'sev-crit' : sev === 'MINOR' ? 'sev-maj' : 'sev-min';
+  }
+
+  /**
+   * Le terme de la certification, en clair.
+   *
+   * <p>Le tableau affichait le code brut du serveur — « CRITICAL », « MAJOR » —
+   * et « critique » n'existe pas dans le vocabulaire d'un organisme
+   * certificateur : un auditeur classe en non-conformité <b>majeure</b>
+   * (bloquante jusqu'à sa levée), <b>mineure</b> (plan d'actions attendu) ou en
+   * <b>observation</b> (piste d'amélioration, pas une non-conformité). Afficher
+   * « critique » faisait préparer une réponse à un reproche qui ne viendra pas.
+   */
+  severityLabel(sev: string): string {
+    return sev === 'MAJOR'
+      ? $localize`:@@standards.detail.finding-major:Non-conformité majeure`
+      : sev === 'MINOR'
+        ? $localize`:@@standards.detail.finding-minor:Non-conformité mineure`
+        : $localize`:@@standards.detail.finding-observation:Observation`;
   }
 
   ncClass(type: string): string {

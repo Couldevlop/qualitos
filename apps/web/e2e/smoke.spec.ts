@@ -13,6 +13,12 @@ const ROUTES: Array<{ path: string; label: string }> = [
   { path: '/ishikawa', label: 'diagrammes Ishikawa' },
   { path: '/fives', label: 'audits 5S' },
   { path: '/capa', label: 'CAPA' },
+  // Les deux registres d'ecarts : la liste est le MEME composant, mais chaque
+  // route lui donne son origine, et c'est au rendu que se voit un ecran qui se
+  // fige. Un getter de gabarit qui refabriquait ses objets a chaque passe de
+  // detection a bloque cette page sans que rien ne la couvre ici.
+  { path: '/nc/interne', label: 'ecarts internes' },
+  { path: '/nc/externe', label: 'reclamations clients' },
   { path: '/standards', label: 'Standards Hub' },
   { path: '/suppliers', label: 'fournisseurs' },
   { path: '/nlq', label: 'NLQ' }

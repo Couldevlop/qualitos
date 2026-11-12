@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router, convertToParamMap, provideRouter } from '@angular/router';
@@ -19,6 +20,9 @@ import { IshikawaService } from '../../../ishikawa/ishikawa.service';
 import { IshikawaCauseResponse, IshikawaDiagramResponse } from '../../../ishikawa/ishikawa.types';
 import { NcService } from '../../nc.service';
 import { NcResponse } from '../../nc.types';
+import {
+  NcCauseAnalysisComponent
+} from '../../components/nc-cause-analysis/nc-cause-analysis.component';
 import { NcDetailComponent } from './nc-detail.component';
 import { CapaActionPanelStubModule } from '../../../capa/components/capa-action-panel/testing/capa-action-panel.stub';
 
@@ -78,6 +82,15 @@ describe('NcDetailComponent — analyse de cause sur la fiche', () => {
   const un = (sel: string) => hote().querySelector<HTMLElement>(`[data-test="${sel}"]`);
   const tous = (sel: string) => Array.from(hote().querySelectorAll<HTMLElement>(`[data-test="${sel}"]`));
 
+  /**
+   * Les figures sont portees par un composant a part : la fiche de l'ecart et le
+   * rapport 8D montrent LES MEMES (ADR 0115), et un trace duplique divergerait.
+   */
+  function figures(): NcCauseAnalysisComponent {
+    return fixture.debugElement
+      .query(By.directive(NcCauseAnalysisComponent)).componentInstance as NcCauseAnalysisComponent;
+  }
+
   function setup(): void {
     fixture = TestBed.createComponent(NcDetailComponent);
     component = fixture.componentInstance;
@@ -100,7 +113,7 @@ describe('NcDetailComponent — analyse de cause sur la fiche', () => {
     annuaire.getByAccount.and.returnValue(throwError(() => ({ status: 404 })));
 
     await TestBed.configureTestingModule({
-      declarations: [NcDetailComponent],
+      declarations: [NcDetailComponent, NcCauseAnalysisComponent],
       imports: [SharedModule, UiModule, UserPickerModule, FiveWhysSharedModule,
                 IshikawaSharedModule, NoopAnimationsModule,
                 CapaActionPanelStubModule],
@@ -182,7 +195,7 @@ describe('NcDetailComponent — analyse de cause sur la fiche', () => {
   it('range les causes dans l’ordre des M, comme l’écran du diagramme', () => {
     ishikawa.listForNc.and.returnValue(of([diagramme([cause('c1', 'Joint usé')])]));
     setup();
-    const branches = component.fishboneBranches(diagramme([cause('c1', 'Joint usé')]));
+    const branches = figures().fishboneBranches(diagramme([cause('c1', 'Joint usé')]));
     expect(branches.map(b => b.key).slice(0, 3)).toEqual(['METHODS', 'MANPOWER', 'MACHINES']);
     expect(branches.find(b => b.key === 'MACHINES')!.causes.length).toBe(1);
   });
@@ -193,14 +206,14 @@ describe('NcDetailComponent — analyse de cause sur la fiche', () => {
     const d = diagramme([cause('c1', 'Joint usé')]);
     ishikawa.listForNc.and.returnValue(of([d]));
     setup();
-    expect(component.fishboneBranches(d)).toBe(component.fishboneBranches(d));
+    expect(figures().fishboneBranches(d)).toBe(figures().fishboneBranches(d));
   });
 
   it('compte les sous-causes que le dessin masque', () => {
     const d = diagramme([cause('c1', 'Joint usé'), cause('c2', 'Au-delà de 2000 h', 'c1')]);
     ishikawa.listForNc.and.returnValue(of([d]));
     setup();
-    const machines = component.fishboneBranches(d).find(b => b.key === 'MACHINES')!;
+    const machines = figures().fishboneBranches(d).find(b => b.key === 'MACHINES')!;
     expect(machines.causes.length).toBe(1);
     expect(machines.causes[0].descendants).toBe(1);
   });
@@ -220,7 +233,7 @@ describe('NcDetailComponent — analyse de cause sur la fiche', () => {
     const router = TestBed.inject(Router);
     const navigue = spyOn(router, 'navigate').and.resolveTo(true);
 
-    component.openCause(d);
+    figures().openCause(d);
 
     expect(navigue).toHaveBeenCalledWith(['/ishikawa', 'ish-1']);
   });

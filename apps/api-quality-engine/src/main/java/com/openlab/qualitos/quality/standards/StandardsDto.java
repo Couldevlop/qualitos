@@ -221,9 +221,15 @@ public final class StandardsDto {
             int coveredRequirements,
             int mustTotal,
             int mustCovered,
-            int criticalGaps,
+            // Les trois classes de l'ISO/IEC 17021-1 : une non-conformite MAJEURE
+            // met en cause l'aptitude du systeme a atteindre ses resultats et
+            // bloque la certification jusqu'a sa levee ; une MINEURE est un
+            // manquement isole, qui demande un plan d'actions ; une OBSERVATION
+            // n'est pas une non-conformite. « Critique » n'existe pas dans le
+            // vocabulaire de la certification.
             int majorGaps,
             int minorGaps,
+            int observations,
             String verdict,
             List<AuditFinding> findings
     ) {}

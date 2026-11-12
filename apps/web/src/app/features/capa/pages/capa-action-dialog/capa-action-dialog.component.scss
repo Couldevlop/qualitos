@@ -1,0 +1,38 @@
+:host { display: block; }
+
+.full { display: block; width: 100%; }
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--qos-space-4);
+}
+
+.row .col { flex: 1 1 220px; min-width: 0; }
+
+/* La nature est une question fermee a trois reponses : les trois cote a cote,
+   pas une liste ou l'on croirait pouvoir en cocher deux. */
+.nature {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: var(--qos-space-3, 12px);
+}
+
+.nature__titre {
+  margin-bottom: var(--qos-space-2, 8px);
+  font-size: var(--qos-fs-sm, 13px);
+  font-weight: var(--qos-fw-semibold);
+  color: var(--qos-fg-secondary);
+}
+
+.nature__choix {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--qos-space-4);
+}
+
+.lecture-seule {
+  margin: 0 0 var(--qos-space-3, 12px);
+  color: var(--qos-fg-secondary);
+  font-size: var(--qos-fs-sm, 13px);
+}

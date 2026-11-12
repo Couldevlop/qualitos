@@ -18,7 +18,7 @@ automatiquement** à partir du travail déjà fait dans les autres modules.
 | **D2 — Description du problème** | La non-conformité : référence, constat, gravité, zone, photos |
 | **D3 — Endiguement immédiat** | À saisir : ce qui a protégé le client pendant l'analyse |
 | **D4 — Cause racine** | Les [Ishikawa](ishikawa.md) et [5 Pourquoi](five-whys.md) rattachés à l'écart, et la cause racine saisie sur la NC. Les mêmes figures se lisent, dessinées, sur la [fiche de l'écart](non-conformites.md) : le rapport ne les découvre pas |
-| **D5 — Actions correctives** | La [CAPA](capa.md) escaladée depuis la NC, et son action. Son statut se lit et s'avance depuis la [fiche de l'écart](non-conformites.md), sans attendre le rapport |
+| **D5 — Actions correctives** | La [CAPA](capa.md) escaladée depuis la NC, et ses actions. Un dossier en porte autant qu'il en faut : leurs statuts se lisent et s'avancent depuis la [fiche de l'écart](non-conformites.md), en tableau, sans attendre le rapport |
 | **D6 — Mise en œuvre et preuves** | Les actions menées à terme et les pièces versées à la CAPA |
 | **D7 — Prévention de la récurrence** | Le mode de défaillance [PFMEA](produit-pfmea-control-plan.md) rattaché et les plans de surveillance du produit |
 | **D8 — Reconnaissance de l'équipe** | À saisir : ce que l'équipe a appris |

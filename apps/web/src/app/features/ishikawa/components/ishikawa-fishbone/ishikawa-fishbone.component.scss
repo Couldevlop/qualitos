@@ -157,8 +157,12 @@
   stroke-width: 1;
 }
 
+/* L'enonce du probleme est ECRIT SUR le fond accentue de la tete : il se lit en
+   blanc et en gras. Il etait rendu avec la couleur de texte « douce » -- un bleu
+   fonce prevu pour un fond clair -- soit du bleu sur du bleu : la seule phrase
+   qui dit DE QUOI parle le diagramme etait la moins lisible de la figure. */
 .fishbone__head-text {
-  fill: var(--qos-accent-fg-soft);
+  fill: var(--qos-accent-fg);
   font-size: var(--qos-fs-base);
-  font-weight: var(--qos-fw-semibold);
+  font-weight: var(--qos-fw-bold);
 }

@@ -130,8 +130,9 @@ public class CertificationDossierService {
          .append(pct(alignment.overallScore())).append("</b></div>");
         b.append("<div class=\"kpi\">Roadmap<b>")
          .append(pct(roadmap.completionPercent())).append("</b></div>");
-        b.append("<div class=\"kpi\">Écarts critiques<b class=\"crit\">")
-         .append(audit.criticalGaps()).append("</b></div>");
+        // Les majeures, et elles seules, bloquent le certificat (ISO/IEC 17021-1).
+        b.append("<div class=\"kpi\">Non-conformités majeures<b class=\"crit\">")
+         .append(audit.majorGaps()).append("</b></div>");
         b.append("<div class=\"kpi\">Preuves liées<b>").append(evidence.size()).append("</b></div>");
         b.append("<p><b>Verdict audit blanc :</b> ").append(esc(audit.verdict())).append("</p>");
 
@@ -166,7 +167,7 @@ public class CertificationDossierService {
             b.append("<table><tr><th>Exigence</th><th>Sévérité</th><th>Action de remédiation</th></tr>");
             for (StandardsDto.AuditFinding f : audit.findings()) {
                 b.append("<tr><td>").append(esc(f.requirementCode())).append("</td><td class=\"")
-                 .append(sevClass(f.findingSeverity())).append("\">").append(esc(f.findingSeverity()))
+                 .append(sevClass(f.findingSeverity())).append("\">").append(esc(sevLabel(f.findingSeverity())))
                  .append("</td><td>").append(esc(f.remediationAction())).append("</td></tr>");
             }
             b.append("</table>");
@@ -207,9 +208,18 @@ public class CertificationDossierService {
 
     private String sevClass(String sev) {
         return switch (sev) {
-            case "CRITICAL" -> "crit";
-            case "MAJOR" -> "maj";
+            case "MAJOR" -> "crit";
+            case "MINOR" -> "maj";
             default -> "min";
+        };
+    }
+
+    /** Le terme de la certification, en clair : le dossier part a un auditeur. */
+    private String sevLabel(String sev) {
+        return switch (sev) {
+            case "MAJOR" -> "Non-conformité majeure";
+            case "MINOR" -> "Non-conformité mineure";
+            default -> "Observation";
         };
     }
 

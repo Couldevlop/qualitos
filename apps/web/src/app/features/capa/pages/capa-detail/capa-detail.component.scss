@@ -179,6 +179,15 @@
   display: inline;
   white-space: normal;
   font-size: inherit;
+  /* C'est un lien : il doit s'annoncer comme tel, sinon personne ne le clique. */
+  color: var(--qos-fg-link);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.info-value .nc-cell:hover,
+.info-value .nc-cell:focus-visible {
+  text-decoration-thickness: 2px;
 }
 
 .nc-cell {

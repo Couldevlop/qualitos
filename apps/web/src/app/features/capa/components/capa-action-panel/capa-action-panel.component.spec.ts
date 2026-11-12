@@ -11,7 +11,7 @@ import { DirectoryService } from '../../../../core/directory/directory.service';
 import { CapaActionPanelModule } from '../../capa-action-panel.module';
 import { CapaService } from '../../capa.service';
 import {
-  CapaActionResponse, CapaActionStatus, CapaCaseResponse, CapaStatus
+  CapaActionResponse, CapaActionStatus, CapaActionType, CapaCaseResponse, CapaStatus
 } from '../../capa.types';
 import { CapaActionPanelComponent } from './capa-action-panel.component';
 
@@ -48,22 +48,24 @@ function dossier(overrides: Partial<CapaCaseResponse> = {}): CapaCaseResponse {
 }
 
 @Component({
-  template: `<qos-capa-action-panel [capaCaseId]="id"
+  template: `<qos-capa-action-panel [capaCaseId]="id" [natures]="natures"
                                     (changed)="changements = changements + 1"></qos-capa-action-panel>`,
   standalone: false
 })
 class HoteComponent {
   id = 'capa-1';
+  /** Vide : toutes les actions. Le rapport 8D, lui, restreint par discipline. */
+  natures: CapaActionType[] = [];
   changements = 0;
 }
 
 /**
  * L'action du dossier CAPA, lue et avancée hors de la fiche CAPA.
  *
- * <p>Deux promesses tiennent ici. <b>Une CAPA EST son action</b> (ADR 0088) :
- * aucun bouton n'en ajoute une seconde, et un dossier qui n'en a pas propose de
- * définir la sienne une fois. Et une <b>panne se dit</b> : un panneau vide
- * passerait pour « aucune action », ce qui est l'information opposée.
+ * <p>Deux promesses tiennent ici. Le dossier porte <b>plusieurs actions</b>
+ * (ADR 0115) : le tableau les montre toutes, une ligne s'ouvre pour se corriger,
+ * et le bouton d'ajout en ajoute une. Et une <b>panne se dit</b> : un panneau
+ * vide passerait pour « aucune action », ce qui est l'information opposée.
  */
 describe('CapaActionPanelComponent', () => {
 
@@ -119,6 +121,78 @@ describe('CapaActionPanelComponent', () => {
     fixture.detectChanges();
   }
 
+  // ---------- le filtre de nature : D3, D5, D6 du rapport 8D ----------
+
+  /**
+   * Le rapport 8D nomme les trois gestes separement : endiguer (D3), corriger la
+   * cause (D5), prevenir la recidive (D6). Chaque discipline recoit donc le
+   * tableau de SA nature ; le tableau complet repete sous trois titres
+   * laisserait chercher, sous chacun, les lignes qui le concernent.
+   */
+  it('ne montre que les actions de la nature demandée', async () => {
+    await setup({
+      dossier: dossier({
+        actions: [
+          action({ id: 'a-c', title: 'Remplacer le joint', actionType: 'CORRECTIVE' }),
+          action({ id: 'a-p', title: 'Former l’équipe de nuit', actionType: 'PREVENTIVE' }),
+          action({ id: 'a-e', title: 'Trier le lot', actionType: 'CONTAINMENT' })
+        ]
+      })
+    });
+
+    hote.natures = ['PREVENTIVE'];
+    fixture.detectChanges();
+
+    const lignes = tous('capa-action-ligne');
+    expect(lignes.length).toBe(1);
+    expect(lignes[0].textContent).toContain('Former l’équipe de nuit');
+  });
+
+  /**
+   * Une action sans nature est corrective — c'est le defaut du serveur. L'exclure
+   * du D5 ferait disparaitre du rapport les actions des anciens dossiers.
+   */
+  it('range l’action sans nature parmi les correctives', async () => {
+    await setup({
+      dossier: dossier({ actions: [action({ actionType: undefined })] })
+    });
+
+    hote.natures = ['CORRECTIVE'];
+    fixture.detectChanges();
+
+    expect(tous('capa-action-ligne').length).toBe(1);
+  });
+
+  /**
+   * Deux absences differentes, et les confondre trompe : un dossier SANS AUCUNE
+   * action ne pourra pas etre cloture ; un tableau restreint a une nature peut
+   * etre vide alors que le dossier avance tres bien.
+   */
+  it('ne crie pas à la clôture impossible quand c’est seulement la nature qui manque', async () => {
+    await setup();
+
+    hote.natures = ['PREVENTIVE'];
+    fixture.detectChanges();
+
+    expect(un('capa-action-vide-nature')).not.toBeNull();
+    expect(un('capa-action-vide')!.textContent).not.toContain('clôturé');
+  });
+
+  /** Le tableau ne montre qu'une nature : l'action qu'on y ajoute est de celle-la. */
+  it('impose la nature du tableau à l’action ajoutée', async () => {
+    await setup({ dossier: dossier({ actions: [] }) });
+    hote.natures = ['PREVENTIVE'];
+    fixture.detectChanges();
+    ferme = true;
+
+    un('capa-action-definir')!.click();
+
+    const data = (dialog.open.calls.mostRecent().args[1] as {
+      data: { actionType?: string };
+    }).data;
+    expect(data.actionType).toBe('PREVENTIVE');
+  });
+
   // ---------- lecture ----------
 
   it('lit le dossier dont on lui donne l’identifiant', async () => {
@@ -147,26 +221,27 @@ describe('CapaActionPanelComponent', () => {
     expect(un('capa-action-ligne')!.textContent).not.toContain('CORRECTIVE');
   });
 
-  // Répéter le pilote et l'échéance du dossier ne renseigne personne : à la
-  // décision, l'action les en recopie.
-  it('tait le responsable et l’échéance quand ils sont ceux du dossier', async () => {
-    await setup();
-
-    const texte = un('capa-action-ligne')!.textContent!;
-    expect(texte).not.toContain('Responsable');
-    expect(texte).not.toContain('Échéance');
-  });
-
-  it('montre le responsable et l’échéance dès qu’ils divergent', async () => {
+  // Le tableau porte des COLONNES : chaque action y dit son porteur et son
+  // echeance, meme quand ils sont ceux du dossier. Une cellule laissee vide
+  // selon la valeur du dossier rendrait la colonne illisible d'une ligne a
+  // l'autre, et c'est precisement ce qu'on vient comparer.
+  it('donne le responsable et l’échéance de chaque action', async () => {
     await setup({
       dossier: dossier({
-        actions: [action({ assigneeId: 'u-autre', assigneeName: 'Ali Benali', dueDate: '2026-11-30' })]
+        actions: [
+          action(),
+          action({ id: 'act-2', title: 'Former l’équipe de nuit', actionType: 'PREVENTIVE',
+                   assigneeId: 'u-autre', assigneeName: 'Ali Benali', dueDate: '2026-11-30' })
+        ]
       })
     });
 
-    const texte = un('capa-action-ligne')!.textContent!;
-    expect(texte).toContain('Responsable');
-    expect(texte).toContain('Ali Benali');
+    const lignes = tous('capa-action-ligne');
+    expect(lignes.length).toBe(2);
+    expect(lignes[0].textContent).toContain('Marie Durand');
+    expect(lignes[1].textContent).toContain('Ali Benali');
+    expect(lignes[1].textContent).toContain('Préventive');
+    expect(un('capa-actions-table')!.textContent).toContain('Responsable');
   });
 
   it('affiche un tiret plutôt qu’un identifiant quand le nom du porteur manque', async () => {
@@ -263,7 +338,7 @@ describe('CapaActionPanelComponent', () => {
     expect(capa.updateAction).not.toHaveBeenCalled();
   });
 
-  // ---------- l'action manquante ----------
+  // ---------- ajouter une action, ouvrir une ligne ----------
 
   it('dit qu’un dossier sans action ne pourra pas être clôturé', async () => {
     await setup({ dossier: dossier({ actions: [] }) });
@@ -273,23 +348,38 @@ describe('CapaActionPanelComponent', () => {
     expect(un('capa-action-definir')).not.toBeNull();
   });
 
-  it('définit l’action manquante dans la fenêtre de création', async () => {
+  /**
+   * Le pilote et l'echeance du dossier sont PROPOSES a l'action nouvelle :
+   * c'est le cas le plus frequent, et les retaper serait du recopiage. La
+   * fenetre ne recoit pas d'action : c'est ce qui en fait un ajout.
+   */
+  it('ajoute une action, en proposant le pilote et l’échéance du dossier', async () => {
     await setup({ dossier: dossier({ actions: [] }) });
-    ferme = { id: 'capa-1' };
+    ferme = true;
 
     un('capa-action-definir')!.click();
 
     expect(dialog.open).toHaveBeenCalled();
     const data = (dialog.open.calls.mostRecent().args[1] as {
-      data: { mode: string; caseId: string; prefill: { title: string } };
+      data: { caseId: string; action?: unknown; ownerId?: string; dueDate?: string };
     }).data;
-    expect(data.mode).toBe('define-action');
     expect(data.caseId).toBe('capa-1');
-    expect(data.prefill.title).toBe('Fuite au presse-étoupe');
+    expect(data.action).toBeUndefined();
+    expect(data.ownerId).toBe('u-pilote');
+    expect(data.dueDate).toBe('2026-12-15');
     expect(hote.changements).toBe(1);
   });
 
-  it('ne définit rien quand la fenêtre est abandonnée', async () => {
+  it('propose d’ajouter une action même quand il y en a déjà une', async () => {
+    await setup();
+
+    expect(un('capa-action-ajouter')).not.toBeNull();
+    (un('capa-action-ajouter') as HTMLButtonElement).click();
+
+    expect(dialog.open).toHaveBeenCalled();
+  });
+
+  it('n’ajoute rien quand la fenêtre est abandonnée', async () => {
     await setup({ dossier: dossier({ actions: [] }) });
     capa.getCase.calls.reset();
     ferme = undefined;
@@ -300,20 +390,57 @@ describe('CapaActionPanelComponent', () => {
     expect(capa.getCase).not.toHaveBeenCalled();
   });
 
-  // Une CAPA EST son action : définir n'est pas ajouter.
-  it('ne propose pas de définir une action quand il y en a déjà une', async () => {
-    await setup();
-
-    expect(un('capa-action-definir')).toBeNull();
-    panneau().defineAction();
-    expect(dialog.open).not.toHaveBeenCalled();
-  });
-
-  it('ne propose pas de définir l’action d’un dossier clos', async () => {
+  it('n’ajoute pas d’action à un dossier clos', async () => {
     await setup({ dossier: dossier({ actions: [], status: 'CLOSED' }) });
 
     expect((un('capa-action-definir') as HTMLButtonElement).disabled).toBeTrue();
-    panneau().defineAction();
+    panneau().addAction();
+    expect(dialog.open).not.toHaveBeenCalled();
+  });
+
+  /**
+   * Une ligne s'ouvre d'un clic : c'est la que l'action se corrige -- un
+   * intitule a reformuler, un porteur parti, une echeance a decaler. Avant, il
+   * fallait rouvrir un dossier pour changer une phrase.
+   */
+  it('ouvre l’action cliquée pour la corriger', async () => {
+    await setup();
+    ferme = true;
+
+    un('capa-action-ligne')!.click();
+
+    const data = (dialog.open.calls.mostRecent().args[1] as {
+      data: { caseId: string; action: { id: string }; readOnly?: boolean };
+    }).data;
+    expect(data.caseId).toBe('capa-1');
+    expect(data.action.id).toBe('act-1');
+    expect(data.readOnly).toBeFalse();
+    expect(hote.changements).toBe(1);
+  });
+
+  /**
+   * Un dossier termine s'ouvre EN LECTURE SEULE plutot que de ne pas s'ouvrir :
+   * relire ce qui a ete fait est legitime apres la cloture, et une ligne qui ne
+   * reagit pas au clic passe pour une panne.
+   */
+  it('ouvre en lecture seule l’action d’un dossier clos', async () => {
+    await setup({ dossier: dossier({ status: 'CLOSED' }) });
+
+    un('capa-action-ligne')!.click();
+
+    const data = (dialog.open.calls.mostRecent().args[1] as {
+      data: { readOnly?: boolean };
+    }).data;
+    expect(data.readOnly).toBeTrue();
+  });
+
+  /** Avancer d'un cran et corriger l'action sont deux gestes : le bouton ne doit pas ouvrir la ligne. */
+  it('ne confond pas l’avancement d’un cran avec l’ouverture de la ligne', async () => {
+    await setup();
+
+    un('capa-action-avancer')!.click();
+
+    expect(capa.updateAction).toHaveBeenCalled();
     expect(dialog.open).not.toHaveBeenCalled();
   });
 

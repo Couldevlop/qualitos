@@ -21,6 +21,8 @@ TRANSLATIONS = {
     'suppliers.nc.attach-hint': ('Le 8D et les preuves de CAPA se joignent depuis la liste, une fois la NC enregistrée.', 'The 8D and CAPA evidence are attached from the list once the NC is saved.', 'El 8D y las evidencias de CAPA se adjuntan desde la lista, una vez guardada la NC.', 'يُرفق تقرير 8D وأدلة CAPA من القائمة بعد حفظ عدم المطابقة.', '8D と CAPA の証拠は、不適合を保存した後に一覧から添付します。', '保存不合格项后，可在列表中附加 8D 和 CAPA 证据。'),
 
     # --- Colonnes et actions des NC ---
+    # La reference de l'ecart fournisseur : Sup-NC-2026-0007 (V166).
+    'suppliers.nc.col-reference': ('Référence', 'Reference', 'Referencia', 'المرجع', '参照番号', '编号'),
     'suppliers.nc.col-part': ('Pièce', 'Part', 'Pieza', 'القطعة', '部品', '零件'),
     'suppliers.nc.col-quantity': ('Qté', 'Qty', 'Cant.', 'الكمية', '数量', '数量'),
     'suppliers.nc.col-eight-d': ('8D', '8D', '8D', '8D', '8D', '8D'),

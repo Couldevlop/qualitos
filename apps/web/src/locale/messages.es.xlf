@@ -7538,9 +7538,85 @@ Portal de clientes</target>
         <source>Le stockage des pièces jointes est désactivé sur cet environnement : aucune preuve ne peut y être déposée ni relue.</source>
         <target state="translated">El almacenamiento de adjuntos está desactivado en este entorno: no se puede añadir ni leer ninguna prueba.</target>
       </trans-unit>
+      <trans-unit id="capa.actions.add" datatype="html">
+        <source>Ajouter une action</source>
+        <target state="translated">Anadir una accion</target>
+      </trans-unit>
+      <trans-unit id="capa.actions.caption" datatype="html">
+        <source>Actions de ce dossier CAPA</source>
+        <target state="translated">Acciones de este expediente CAPA</target>
+      </trans-unit>
+      <trans-unit id="capa.actions.row-hint" datatype="html">
+        <source>Cliquez une ligne pour corriger l'action, son responsable ou son echeance.</source>
+        <target state="translated">Haga clic en una fila para corregir la accion, su responsable o su plazo.</target>
+      </trans-unit>
+      <trans-unit id="capa.actions.open-aria" datatype="html">
+        <source>Ouvrir l'action : <x id="titre"/></source>
+        <target state="translated">Abrir la accion: <x id="titre"/></target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.title-add" datatype="html">
+        <source>Ajouter une action</source>
+        <target state="translated">Anadir una accion</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.title-edit" datatype="html">
+        <source>Modifier l'action</source>
+        <target state="translated">Modificar la accion</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.subtitle" datatype="html">
+        <source>Ce qu'on va faire, de quelle nature, qui en repond et pour quand.</source>
+        <target state="translated">Lo que se hara, de que naturaleza, quien responde y para cuando.</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.read-only" datatype="html">
+        <source>Ce dossier est termine : son action se lit, elle ne se modifie plus.</source>
+        <target state="translated">Este expediente esta terminado: su accion se lee, ya no se modifica.</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.added" datatype="html">
+        <source>Action ajoutee.</source>
+        <target state="translated">Accion anadida.</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.saved" datatype="html">
+        <source>Action enregistree.</source>
+        <target state="translated">Accion guardada.</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.failed" datatype="html">
+        <source>L'action n'a pas pu etre enregistree.</source>
+        <target state="translated">No se pudo guardar la accion.</target>
+      </trans-unit>
+      <trans-unit id="capa.actions-dialog.title" datatype="html">
+        <source>Actions correctives</source>
+        <target state="translated">Acciones correctivas</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.add-capa" datatype="html">
+        <source>Ajouter une CAPA</source>
+        <target state="translated">Anadir un CAPA</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.add-capa-tooltip" datatype="html">
+        <source>Le dossier CAPA qui traite cet ecart : l'ouvrir, ou y aller</source>
+        <target state="translated">El expediente CAPA que trata esta desviacion: abrirlo o ir a el</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.add-actions" datatype="html">
+        <source>Ajouter des actions</source>
+        <target state="translated">Anadir acciones</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.add-actions-tooltip" datatype="html">
+        <source>Les actions correctives de cet ecart : les lire, en ajouter</source>
+        <target state="translated">Las acciones correctivas de esta desviacion: leerlas, anadir alguna</target>
+      </trans-unit>
+      <trans-unit id="capa.actions.none-of-nature" datatype="html">
+        <source>Aucune action de cette nature n'a encore été écrite pour cet écart.</source>
+        <target state="translated">Todavia no se ha escrito ninguna accion de esta naturaleza para esta desviacion.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.live-note" datatype="html">
+        <source>État actuel du dossier, affiché à côté du texte agrégé. Le PDF, lui, ne porte que le texte figé à l'émission.</source>
+        <target state="translated">Estado actual del expediente, mostrado junto al texto agregado. El PDF solo contiene el texto congelado en la emision.</target>
+      </trans-unit>
       <trans-unit id="capa.source.non-conformity-internal" datatype="html">
         <source>Non-conformité interne</source>
         <target state="translated">No conformidad interna</target>
+      </trans-unit>
+      <trans-unit id="capa.source.non-conformity-external" datatype="html">
+        <source>Non-conformité externe (réclamation client)</source>
+        <target state="translated">No conformidad externa (reclamación de cliente)</target>
       </trans-unit>
       <trans-unit id="capa.create.source-ref-required" datatype="html">
         <source>Référence source</source>
@@ -21571,8 +21647,8 @@ historial de 12 meses</target>
         <target state="translated">Todavía no se ha colocado ninguna causa en este diagrama.</target>
       </trans-unit>
       <trans-unit id="nc.detail.capa-action" datatype="html">
-        <source>Action corrective en cours</source>
-        <target state="translated">Acción correctiva en curso</target>
+        <source>Actions correctives</source>
+        <target state="translated">Acciones correctivas</target>
       </trans-unit>
       <trans-unit id="nc.8d.title" datatype="html">
         <source>Rapport 8D</source>
@@ -32106,17 +32182,45 @@ historial de 12 meses</target>
         <source>écart(s) — triés par priorité.</source>
         <target state="translated">brecha(s) — ordenadas por prioridad.</target>
       </trans-unit>
-      <trans-unit id="standards.detail.audit-critical" datatype="html">
-        <source>critiques,</source>
-        <target state="translated">críticas,</target>
+      <trans-unit id="standards.detail.kpi-major-ncs" datatype="html">
+        <source>Non-conformités majeures</source>
+        <target state="translated">No conformidades mayores</target>
       </trans-unit>
-      <trans-unit id="standards.detail.audit-major" datatype="html">
-        <source>majeurs,</source>
-        <target state="translated">mayores,</target>
+      <trans-unit id="standards.detail.kpi-minor-ncs" datatype="html">
+        <source>mineures</source>
+        <target state="translated">menores</target>
       </trans-unit>
-      <trans-unit id="standards.detail.audit-minor" datatype="html">
-        <source>mineurs.</source>
-        <target state="translated">menores.</target>
+      <trans-unit id="standards.detail.kpi-observations" datatype="html">
+        <source>observations</source>
+        <target state="translated">observaciones</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.kpi-gaps-formula2" datatype="html">
+        <source>Toute exigence sans preuve est un écart, classé comme un auditeur le classerait. Non-conformité majeure : exigence obligatoire absente dont le risque est élevé ou critique — elle met en cause l'aptitude du système et bloque le certificat jusqu'à sa levée. Mineure : obligatoire, risque moindre — un plan d'actions suffit. Observation : exigence seulement recommandée, ce n'est pas une non-conformité.</source>
+        <target state="translated">Todo requisito sin evidencia es una desviación, clasificada como lo haría un auditor. No conformidad mayor: requisito obligatorio ausente cuyo riesgo es alto o crítico — cuestiona la capacidad del sistema y bloquea el certificado hasta su cierre. Menor: obligatorio, riesgo menor — basta un plan de acciones. Observación: requisito solo recomendado, no es una no conformidad.</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.audit-major-nc" datatype="html">
+        <source>non-conformités majeures,</source>
+        <target state="translated">no conformidades mayores,</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.audit-minor-nc" datatype="html">
+        <source>mineures,</source>
+        <target state="translated">menores,</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.audit-observations" datatype="html">
+        <source>observations.</source>
+        <target state="translated">observaciones.</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.finding-major" datatype="html">
+        <source>Non-conformité majeure</source>
+        <target state="translated">No conformidad mayor</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.finding-minor" datatype="html">
+        <source>Non-conformité mineure</source>
+        <target state="translated">No conformidad menor</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.finding-observation" datatype="html">
+        <source>Observation</source>
+        <target state="translated">Observación</target>
       </trans-unit>
       <trans-unit id="standards.detail.audit-no-gap" datatype="html">
         <source>Aucun écart : toutes les exigences sont couvertes 🎉</source>
@@ -34315,6 +34419,10 @@ India (centro de servicio)</target>
       <trans-unit id="suppliers.nc.attach-hint" datatype="html">
         <source>Le 8D et les preuves de CAPA se joignent depuis la liste, une fois la NC enregistrée.</source>
         <target state="translated">El 8D y las evidencias de CAPA se adjuntan desde la lista, una vez guardada la NC.</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.col-reference" datatype="html">
+        <source>Référence</source>
+        <target state="translated">Referencia</target>
       </trans-unit>
       <trans-unit id="suppliers.nc.col-part" datatype="html">
         <source>Pièce</source>
