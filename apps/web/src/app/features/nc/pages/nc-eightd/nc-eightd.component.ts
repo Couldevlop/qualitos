@@ -42,10 +42,13 @@ const ROLES_ECRITURE = ['QUALITY_MANAGER', 'DIRECTOR_QUALITY', 'ADMIN_TENANT', '
  * <p>Le D3 (sécurisation) n'y figure pas : il se SAISIT, parce qu'un endiguement
  * est souvent décidé avant qu'aucun dossier CAPA n'existe.
  */
-const NATURES_PAR_DISCIPLINE: Readonly<Record<string, CapaActionType>> = {
-  D5: 'CORRECTIVE',
-  D6: 'PREVENTIVE'
+const NATURES_PAR_DISCIPLINE: Readonly<Record<string, readonly CapaActionType[]>> = {
+  D5: Object.freeze<CapaActionType[]>(['CORRECTIVE']),
+  D6: Object.freeze<CapaActionType[]>(['PREVENTIVE'])
 };
+
+/** Le tableau vide partagé des disciplines qui ne montrent pas d'actions. */
+const AUCUNE_NATURE: readonly CapaActionType[] = Object.freeze<CapaActionType[]>([]);
 
 /**
  * Le rapport 8D d'une non-conformité.
@@ -183,13 +186,20 @@ export class NcEightDComponent implements OnInit {
 
   /** La nature d'action que cette discipline montre, ou null si elle n'en montre pas. */
   natureDe(code: string): CapaActionType | null {
-    return NATURES_PAR_DISCIPLINE[code] ?? null;
+    return NATURES_PAR_DISCIPLINE[code]?.[0] ?? null;
   }
 
-  /** Les natures à passer au tableau : une seule, celle de la discipline. */
-  naturesDe(code: string): CapaActionType[] {
-    const nature = this.natureDe(code);
-    return nature ? [nature] : [];
+  /**
+   * Les natures à passer au tableau : une seule, celle de la discipline.
+   *
+   * <p>Le tableau renvoyé est TOUJOURS LE MÊME OBJET pour une discipline donnée.
+   * Un `[natures]="naturesDe(code)"` qui fabriquerait un tableau neuf à chaque
+   * appel changerait l'entrée à chaque passe de détection : le panneau relirait
+   * le dossier CAPA par le réseau à chaque passe, et sa réponse déclencherait la
+   * passe suivante — une requête en boucle pour un écran immobile.
+   */
+  naturesDe(code: string): readonly CapaActionType[] {
+    return NATURES_PAR_DISCIPLINE[code] ?? AUCUNE_NATURE;
   }
 
   /** Vrai pour la discipline qui porte l'analyse de cause. */

@@ -28,6 +28,12 @@ const MAX_PAGE_SIZE = 100;
 /** Page vide emise quand le chargement echoue : vide la table et remet le compteur a zero. */
 const EMPTY_PAGE = { content: [], totalElements: 0, totalPages: 0, number: 0, size: 0 };
 
+/** Un groupe de natures d'écart, rangé sous sa catégorie, dans le filtre. */
+export interface NcSubcategoryGroup {
+  category: NcCategory;
+  subcategories: NcSubcategory[];
+}
+
 /** Une tuile de dénombrement au-dessus de la liste. */
 export interface NcTile {
   label: string;
@@ -87,12 +93,33 @@ export class NcListComponent implements OnInit {
    * d'arrivée du catalogue : le client peut retirer ou ajouter des natures, pas
    * réordonner les familles. Une catégorie sans nature n'apparaît pas.
    */
-  get subcategoryGroups(): Array<{ category: NcCategory; subcategories: NcSubcategory[] }> {
-    const choix = this.subcategoryChoices;
-    return this.categories
-      .map(category => ({ category, subcategories: choix.filter(s => s.category === category) }))
+  get subcategoryGroups(): NcSubcategoryGroup[] {
+    const catalogue = this.subcategories;
+    const category = this.categoryFilter.value ?? '';
+    // MEMOISATION OBLIGATOIRE, et non une commodite : `mat-select` instancie
+    // ses options des le rendu, et `*ngFor` les suit par IDENTITE d'objet.
+    // Un getter qui fabrique un nouveau groupe a chaque appel fait donc
+    // detruire puis recreer toutes les options a chaque passe de detection ;
+    // chaque creation d'option previent le select, qui demande une nouvelle
+    // passe -- l'ecran se figeait, moteur bloque, sur un ecran blanc (les
+    // natures, elles, sont les memes objets : les lister a plat ne bouclait
+    // pas). On recalcule donc uniquement quand le catalogue ou la categorie
+    // choisie change.
+    if (this.groupesCache && this.groupesPour.catalogue === catalogue
+        && this.groupesPour.category === category) {
+      return this.groupesCache;
+    }
+    const choix = category ? catalogue.filter(s => s.category === category) : catalogue;
+    this.groupesCache = this.categories
+      .map(cat => ({ category: cat, subcategories: choix.filter(s => s.category === cat) }))
       .filter(g => g.subcategories.length > 0);
+    this.groupesPour = { catalogue, category };
+    return this.groupesCache;
   }
+
+  private groupesCache: NcSubcategoryGroup[] | null = null;
+  private groupesPour: { catalogue: NcSubcategory[]; category: NcCategory | '' } =
+    { catalogue: [], category: '' };
 
   /** Le libellé d'une nature ; son code si le client l'a retirée de son catalogue. */
   subcategoryLabel(code: string | undefined): string {

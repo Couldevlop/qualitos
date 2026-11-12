@@ -61,7 +61,10 @@ export class CapaActionPanelComponent implements OnChanges {
    * tableau de SA nature ; un tableau complet répété sous trois titres laisserait
    * chercher, dans chacun, les lignes qui le concernent.
    */
-  @Input() natures: CapaActionType[] = [];
+  // En lecture seule, et pour une raison : l'hôte doit passer un tableau STABLE
+  // (le même objet d'une passe de détection à l'autre), sans quoi `ngOnChanges`
+  // relirait le dossier par le réseau à chaque passe. Le type le dit.
+  @Input() natures: readonly CapaActionType[] = [];
 
   /** Émis après chaque changement enregistré : l'écran appelant peut se relire. */
   @Output() readonly changed = new EventEmitter<void>();

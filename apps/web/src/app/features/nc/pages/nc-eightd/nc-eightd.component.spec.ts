@@ -407,6 +407,24 @@ describe('NcEightDComponent', () => {
     expect(dossiers).toEqual(['capa-9', 'capa-9']);
   });
 
+  /**
+   * L'entree passee au tableau doit etre LE MEME OBJET d'une passe de detection
+   * a l'autre. Un gabarit qui appelle `naturesDe(code)` recevrait sinon un
+   * tableau neuf a chaque passe : Angular y verrait une entree changee, le
+   * panneau relirait le dossier CAPA par le reseau, et sa reponse declencherait
+   * la passe suivante -- une requete en boucle pour un ecran immobile. Le meme
+   * defaut, sur la liste des ecarts, figeait la page entiere.
+   */
+  it('passe toujours le meme tableau de natures a une discipline donnee', async () => {
+    await monter(['QUALITY_MANAGER']);
+
+    expect(component.naturesDe('D5')).toBe(component.naturesDe('D5'));
+    expect(component.naturesDe('D6')).toBe(component.naturesDe('D6'));
+    // Y compris pour les disciplines qui ne montrent pas d'actions.
+    expect(component.naturesDe('D1')).toBe(component.naturesDe('D2'));
+    expect(component.naturesDe('D1')).toEqual([]);
+  });
+
   it('n\u2019affiche aucun tableau d\u2019actions quand l\u2019\u00e9cart n\u2019a pas de dossier CAPA', async () => {
     await monter(['QUALITY_MANAGER'], null);
 
