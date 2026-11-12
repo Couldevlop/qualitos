@@ -11,6 +11,7 @@ import { catchError, debounceTime, map, switchMap } from 'rxjs/operators';
 import { AuthzService } from '../../../../../core/authz/authz.service';
 import { personName } from '../../../../../core/directory/directory-names';
 import { DirectoryUser } from '../../../../../core/directory/directory.types';
+import { filenameFromResponse, saveBlobAs } from '../../../../../core/http/file-download';
 import { safeErrorMessage } from '../../../../../core/http/error-message';
 import {
   ConfirmDialogComponent, ConfirmDialogData
@@ -32,7 +33,7 @@ import {
 import { CapabilityReadings, capabilityReadings } from '../../spc-capability.readings';
 import { SpcCapabilityService } from '../../spc-capability.service';
 import {
-  CalculationView, CapabilityStatus, Measurement, StudyRequest, StudySheet
+  CalculationView, CapabilityStatus, ImportedGrid, Measurement, StudyRequest, StudySheet
 } from '../../spc-capability.types';
 
 const DEFAULT_SUBGROUP_SIZE = 5;
@@ -469,6 +470,116 @@ export class CapabilityStudyComponent implements OnInit {
 
   clearMeasurements(): void {
     this.raw = this.raw.map(row => row.map(() => ''));
+    this.recompute();
+  }
+
+  // ---------- import Excel de la grille ----------
+
+  /** Un classeur est en cours de lecture par le serveur. */
+  importing = false;
+  /** Le modèle est en cours de téléchargement. */
+  downloadingTemplate = false;
+  /** Ce que la lecture a écarté ou corrigé, dit en clair. Jamais un import muet. */
+  importWarnings: string[] = [];
+  /** Pourquoi l'import a échoué. */
+  importError: string | null = null;
+
+  /**
+   * Télécharge le classeur modèle, aux dimensions de l'étude en cours.
+   *
+   * <p>Aux dimensions courantes, et non à des dimensions figées : un modèle de
+   * 5 × 20 renvoyé à qui règle une étude de 3 × 12 se remplit de travers.
+   */
+  downloadTemplate(): void {
+    if (this.downloadingTemplate) return;
+    this.downloadingTemplate = true;
+    this.importError = null;
+    this.service.measurementsTemplate(this.n, this.subgroupCount).subscribe({
+      next: reponse => {
+        this.downloadingTemplate = false;
+        if (!reponse.body) {
+          this.importError = $localize`:@@spc.import.template-failed:Le modèle n'a pas pu être téléchargé.`;
+          return;
+        }
+        saveBlobAs(reponse.body, filenameFromResponse(reponse)
+          ?? `mesures-capabilite-${this.n}x${this.subgroupCount}.xlsx`);
+      },
+      error: () => {
+        this.downloadingTemplate = false;
+        this.importError = $localize`:@@spc.import.template-failed:Le modèle n'a pas pu être téléchargé.`;
+      }
+    });
+  }
+
+  /**
+   * Un classeur a été choisi : on le lit, après confirmation s'il écrase une saisie.
+   *
+   * <p>Le champ de fichier est remis à zéro dans tous les cas, sinon choisir deux
+   * fois le même fichier ne déclenche aucun événement — et l'utilisateur croit
+   * que l'import ne répond plus.
+   */
+  onWorkbookChosen(event: Event): void {
+    const champ = event.target as HTMLInputElement;
+    const fichier = champ.files?.[0] ?? null;
+    champ.value = '';
+    if (!fichier || !this.canManage) return;
+    this.importError = null;
+    this.importWarnings = [];
+    if (!/\.xlsx$/i.test(fichier.name)) {
+      this.importError = $localize`:@@spc.import.wrong-extension:Attendu un classeur Excel .xlsx (ni .xls, ni .csv).`;
+      return;
+    }
+    if (!this.hasMeasurements) {
+      this.readWorkbook(fichier);
+      return;
+    }
+    this.dialog.open<ConfirmDialogComponent, ConfirmDialogData, boolean>(ConfirmDialogComponent, {
+      data: {
+        title: $localize`:@@spc.import.confirm-title:Remplacer les mesures saisies ?`,
+        message: $localize`:@@spc.import.confirm-message:Le classeur remplace toutes les mesures de la grille. L'identification de la pièce et les limites ne changent pas, et rien n'est enregistré tant que vous n'enregistrez pas l'étude.`,
+        confirmLabel: $localize`:@@spc.import.confirm:Importer le classeur`
+      },
+      autoFocus: false,
+      restoreFocus: true
+    }).afterClosed().subscribe(ok => {
+      if (ok) this.readWorkbook(fichier);
+    });
+  }
+
+  private readWorkbook(fichier: File): void {
+    this.importing = true;
+    this.service.importMeasurements(fichier).subscribe({
+      next: grille => {
+        this.importing = false;
+        this.applyImportedGrid(grille);
+      },
+      error: (err: HttpErrorResponse) => {
+        this.importing = false;
+        this.importError = safeErrorMessage(err,
+          $localize`:@@spc.import.failed:Le classeur n'a pas pu être lu.`);
+      }
+    });
+  }
+
+  /**
+   * Pose la grille lue dans la grille de saisie.
+   *
+   * <p>La taille d'échantillon et le nombre de sous-groupes suivent le classeur :
+   * importer douze colonnes sans élargir la grille en cacherait huit. La grille
+   * garde sa hauteur maximale en mémoire, comme à la saisie : réduire la taille
+   * d'échantillon ne doit pas perdre les lignes masquées.
+   */
+  private applyImportedGrid(grille: ImportedGrid): void {
+    const largeur = grille.subgroupCount;
+    this.raw = Array.from({ length: MAX_SUBGROUP_SIZE }, (_, r) =>
+      Array.from({ length: largeur }, (_, c) => grille.rows[r]?.[c] ?? ''));
+    this.subgroupCount = largeur;
+    // La taille d'échantillon n'existe qu'aux paliers tabulés : au-delà, la grille
+    // montrerait des lignes que le calcul ne sait pas pondérer.
+    const lignes = Math.max(MIN_SUBGROUP_SIZE, Math.min(grille.sampleSize, MAX_SUBGROUP_SIZE));
+    this.form.patchValue({ subgroupSize: lignes });
+    this.form.markAsDirty();
+    this.importWarnings = grille.warnings ?? [];
     this.recompute();
   }
 

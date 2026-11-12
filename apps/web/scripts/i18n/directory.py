@@ -55,6 +55,35 @@ TRANSLATIONS = {
     'directory.picker.live-count': (
         '{$COUNT} personne(s) proposée(s)', '{$COUNT} person(s) suggested', '{$COUNT} persona(s) sugerida(s)',
         'الأشخاص المقترحون: {$COUNT}', '候補 {$COUNT} 件', '建议人员 {$COUNT} 名'),
+    'directory.team.label': ("Équipe", 'Team', 'Equipo', 'الفريق', 'チーム', '团队'),
+    'directory.team.placeholder': (
+        'Rechercher par nom ou adresse', 'Search by name or e-mail', 'Buscar por nombre o correo',
+        'البحث بالاسم أو البريد الإلكتروني', '名前またはメールアドレスで検索', '按姓名或邮箱搜索'),
+    'directory.team.empty': (
+        "Personne n'est encore nommée.", 'No one has been named yet.', 'Todavía no se ha designado a nadie.',
+        'لم يُسمَّ أي شخص بعد.', 'まだ誰も指名されていません。', '尚未指定任何人。'),
+    'directory.team.empty-required': (
+        'Nommez au moins une personne : la première désignée pilote.',
+        'Name at least one person: the first one leads.',
+        'Designe al menos a una persona: la primera es la responsable.',
+        'سمِّ شخصًا واحدًا على الأقل: الأول هو قائد الفريق.',
+        '少なくとも 1 名を指名してください。最初の 1 名がリーダーになります。',
+        '请至少指定一人：第一位为负责人。'),
+    'directory.team.full': (
+        "Équipe au complet ({$MAX} personnes). Retirez quelqu'un pour en ajouter une autre.",
+        'The team is full ({$MAX} people). Remove someone to add another.',
+        'El equipo está completo ({$MAX} personas). Quite a alguien para añadir a otra.',
+        'الفريق مكتمل ({$MAX} أشخاص). أزل أحدهم لإضافة شخص آخر.',
+        'チームは定員（{$MAX} 名）です。追加するには誰かを外してください。',
+        '团队已满（{$MAX} 人）。如需添加，请先移除一人。'),
+    'directory.team.role-lead': ('Pilote', 'Lead', 'Responsable', 'القائد', 'リーダー', '负责人'),
+    'directory.team.role-member': ('Membre', 'Member', 'Miembro', 'عضو', 'メンバー', '成员'),
+    'directory.team.remove-one': (
+        "Retirer {$NAME} de l'équipe", 'Remove {$NAME} from the team', 'Quitar a {$NAME} del equipo',
+        'إزالة {$NAME} من الفريق', '{$NAME} をチームから外す', '将 {$NAME} 移出团队'),
+    'directory.team.promote-one': (
+        "Remonter {$NAME} d'un rang", 'Move {$NAME} up one place', 'Subir a {$NAME} un puesto',
+        'ترقية {$NAME} مرتبة واحدة', '{$NAME} を 1 つ上に移動', '将 {$NAME} 上移一位'),
     'directory.person.unknown': (
         'Personne inconnue', 'Unknown person', 'Persona desconocida', 'شخص غير معروف',
         '不明な担当者', '未知人员'),

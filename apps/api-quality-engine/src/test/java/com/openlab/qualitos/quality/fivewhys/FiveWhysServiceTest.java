@@ -26,6 +26,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -274,5 +275,70 @@ class FiveWhysServiceTest {
 
         assertThat(read.steps()).hasSize(1);
         assertThat(read.steps().get(0).answer()).isEqualTo("Premier pourquoi");
+    }
+
+    // ---- la liste rattachée à un écart ---------------------------------------
+
+    /**
+     * La fiche de l'écart dessine la cascade sur place : des analyses rendues
+     * sans leurs étapes y afficheraient des diagrammes vides.
+     */
+    @Test
+    @DisplayName("les analyses d'un écart arrivent avec leur chaîne")
+    void listsTheAnalysesOfAnIssueWithTheirChains() {
+        FiveWhysAnalysis une = analysis();
+        FiveWhysAnalysis deux = analysis();
+        when(analysisRepo.findByNonConformityIdAndTenantIdOrderByCreatedAtDesc(NC, TENANT))
+                .thenReturn(List.of(une, deux));
+        when(stepRepo.findByAnalysisIdInAndTenantIdOrderByAnalysisIdAscPositionAsc(
+                List.of(une.getId(), deux.getId()), TENANT))
+                .thenReturn(List.of(step(une, 1, "Le joint a cédé"),
+                                    step(une, 2, "Il n'a jamais été remplacé"),
+                                    step(deux, 1, "Le relevé manquait")));
+
+        List<FiveWhysDto.AnalysisResponse> lues = service.findByNc(NC);
+
+        assertThat(lues).hasSize(2);
+        // Chaque chaîne va bien à SON analyse, dans l'ordre de la méthode.
+        assertThat(lues.get(0).steps()).extracting(FiveWhysDto.StepResponse::answer)
+                .containsExactly("Le joint a cédé", "Il n'a jamais été remplacé");
+        assertThat(lues.get(1).steps()).extracting(FiveWhysDto.StepResponse::answer)
+                .containsExactly("Le relevé manquait");
+    }
+
+    // Une requête par analyse ferait autant d'allers-retours que d'analyses sur
+    // l'écran le plus consulté du dossier.
+    @Test
+    @DisplayName("les chaînes de toutes les analyses se lisent en une requête")
+    void readsEveryChainInASingleQuery() {
+        FiveWhysAnalysis une = analysis();
+        when(analysisRepo.findByNonConformityIdAndTenantIdOrderByCreatedAtDesc(NC, TENANT))
+                .thenReturn(List.of(une));
+        when(stepRepo.findByAnalysisIdInAndTenantIdOrderByAnalysisIdAscPositionAsc(any(), any()))
+                .thenReturn(List.of());
+
+        service.findByNc(NC);
+
+        verify(stepRepo, never()).findByAnalysisIdAndTenantIdOrderByPositionAsc(any(), any());
+    }
+
+    @Test
+    @DisplayName("un écart sans analyse n'interroge pas les chaînes")
+    void anIssueWithoutAnalysisAsksForNoChain() {
+        when(analysisRepo.findByNonConformityIdAndTenantIdOrderByCreatedAtDesc(NC, TENANT))
+                .thenReturn(List.of());
+
+        assertThat(service.findByNc(NC)).isEmpty();
+        verifyNoInteractions(stepRepo);
+    }
+
+    private FiveWhysStep step(FiveWhysAnalysis a, int rang, String reponse) {
+        FiveWhysStep s = new FiveWhysStep();
+        s.setId(UUID.randomUUID());
+        s.setTenantId(TENANT);
+        s.setAnalysis(a);
+        s.setPosition(rang);
+        s.setAnswer(reponse);
+        return s;
     }
 }

@@ -46,6 +46,10 @@ import static org.mockito.Mockito.when;
 class NcOriginTest {
 
     @Mock NonConformityRepository repo;
+
+    /** L'équipe nommée sur la fiche : hors sujet ici, mais le service la lit. */
+
+    @Mock NcTeamMemberRepository teamMembers;
     @Mock CapaCaseRepository capaRepo;
     @Mock org.springframework.context.ApplicationEventPublisher events;
     /** Sans réglage, Mockito rend Optional.empty() : l'utilisateur voit tout (ADR 0081). */
@@ -61,7 +65,8 @@ class NcOriginTest {
     private NcDto.CreateRequest request(NcOrigin origin) {
         return new NcDto.CreateRequest(
                 "Joint défectueux", "détail", NcCategory.PRODUCT, null, NcSeverity.MAJOR,
-                Instant.now(), "Atelier 3", null, null, null, null, origin, null, null);
+                Instant.now(), "Atelier 3", null, null, null, null, origin, null, null,
+                java.util.List.of(new NcDto.TeamMemberRef("kc-marie", "Marie Durand")));
     }
 
     @Test

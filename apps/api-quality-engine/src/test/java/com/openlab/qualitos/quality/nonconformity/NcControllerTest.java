@@ -66,17 +66,106 @@ class NcControllerTest {
                 .andExpect(jsonPath("$.content[0].status").value("OPEN"));
     }
 
+    /** L'equipe nommee a l'ouverture : D1 du 8D, obligatoire a la creation. */
+    static final java.util.List<NcDto.TeamMemberRef> EQUIPE =
+            java.util.List.of(new NcDto.TeamMemberRef("kc-marie", "Marie Durand"));
+
     @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void create_returns201() throws Exception {
         when(service.create(any())).thenReturn(resp(NcStatus.OPEN));
         NcDto.CreateRequest req = new NcDto.CreateRequest(
                 "t", "Bavure constatee au poste 20", NcCategory.PRODUCT, null, NcSeverity.MAJOR,
-                Instant.now(), null, null, null, null, REPORTER, null, null, null);
+                Instant.now(), null, null, null, null, REPORTER, null, null, null, EQUIPE);
         mockMvc.perform(post("/api/v1/nc").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(om.writeValueAsString(req)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.reference").value("NC-2026-0001"));
+    }
+
+    // L'equipe est le D1 du 8D : un ecart dont personne ne repond ne se revoit
+    // pas, et la discipline se retapait jusqu'ici dans le rapport.
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
+    void create_sansEquipe_returns400() throws Exception {
+        mockMvc.perform(post("/api/v1/nc").with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\":\"t\",\"description\":\"Bavure au poste 20\","
+                                + "\"category\":\"PRODUCT\",\"severity\":\"MAJOR\"}"))
+                .andExpect(status().isBadRequest());
+        verify(service, never()).create(any());
+    }
+
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
+    void create_equipeVide_returns400() throws Exception {
+        mockMvc.perform(post("/api/v1/nc").with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\":\"t\",\"description\":\"Bavure au poste 20\","
+                                + "\"category\":\"PRODUCT\",\"severity\":\"MAJOR\",\"teamMembers\":[]}"))
+                .andExpect(status().isBadRequest());
+        verify(service, never()).create(any());
+    }
+
+    // Une personne nommee par un identifiant technique ou un nom vide ne nomme
+    // personne : le rapport porterait une ligne muette.
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
+    void create_membreSansNom_returns400() throws Exception {
+        mockMvc.perform(post("/api/v1/nc").with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\":\"t\",\"description\":\"Bavure au poste 20\","
+                                + "\"category\":\"PRODUCT\",\"severity\":\"MAJOR\","
+                                + "\"teamMembers\":[{\"accountId\":\"kc-marie\",\"displayName\":\"  \"}]}"))
+                .andExpect(status().isBadRequest());
+        verify(service, never()).create(any());
+    }
+
+    // Au-dela d'une dizaine, ce n'est plus une equipe de resolution mais une
+    // liste de diffusion -- et une requete ne verse pas mille lignes filles.
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
+    void create_equipeTropNombreuse_returns400() throws Exception {
+        StringBuilder membres = new StringBuilder();
+        for (int i = 0; i <= NcDto.MAX_TEAM_MEMBERS; i++) {
+            if (i > 0) {
+                membres.append(',');
+            }
+            membres.append("{\"accountId\":\"kc-").append(i).append("\",\"displayName\":\"P")
+                   .append(i).append("\"}");
+        }
+        mockMvc.perform(post("/api/v1/nc").with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\":\"t\",\"description\":\"Bavure au poste 20\","
+                                + "\"category\":\"PRODUCT\",\"severity\":\"MAJOR\","
+                                + "\"teamMembers\":[" + membres + "]}"))
+                .andExpect(status().isBadRequest());
+        verify(service, never()).create(any());
+    }
+
+    // A la mise a jour, l'absence de la donnee veut dire « equipe inchangee » --
+    // mais une liste FOURNIE ne peut pas etre vide.
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
+    void update_equipeVide_returns400() throws Exception {
+        mockMvc.perform(put("/api/v1/nc/{id}", NC).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"teamMembers\":[]}"))
+                .andExpect(status().isBadRequest());
+        verify(service, never()).update(any(), any());
+    }
+
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
+    void update_equipeRemaniee_returns200() throws Exception {
+        when(service.update(eq(NC), any())).thenReturn(resp(NcStatus.OPEN));
+        mockMvc.perform(put("/api/v1/nc/{id}", NC).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"teamMembers\":[{\"accountId\":\"kc-ali\",\"displayName\":\"Ali Benali\"}]}"))
+                .andExpect(status().isOk());
+    }
+
+    // La fiche rend l'equipe : sans cela, l'ecran ne saurait pas qui s'en occupe.
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
+    void get_renditLEquipe() throws Exception {
+        when(service.findById(NC)).thenReturn(resp(NcStatus.OPEN));
+        mockMvc.perform(get("/api/v1/nc/{id}", NC))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.teamMembers[0].displayName").value("Marie Durand"));
     }
 
     @Test @WithMockUser(roles = "QUALITY_MANAGER")
@@ -346,7 +435,7 @@ class NcControllerTest {
         when(service.create(any())).thenThrow(new MissingTenantContextException());
         NcDto.CreateRequest req = new NcDto.CreateRequest(
                 "t", "Bavure constatee au poste 20", NcCategory.PRODUCT, null, NcSeverity.MAJOR,
-                Instant.now(), null, null, null, null, REPORTER, null, null, null);
+                Instant.now(), null, null, null, null, REPORTER, null, null, null, EQUIPE);
         mockMvc.perform(post("/api/v1/nc").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(om.writeValueAsString(req)))
@@ -400,7 +489,7 @@ class NcControllerTest {
                 NC, TENANT, "NC-2026-0001", "t", null,
                 NcCategory.PRODUCT, null, NcSeverity.MAJOR, s, NcOrigin.INTERNAL, Instant.now(),
                 null, null, null, null, REPORTER, "Ada Lovelace", null, null, null, null, null,
-                null, null, null, null, null, null, Instant.now(), Instant.now());
+                null, null, null, null, null, null, Instant.now(), Instant.now(), EQUIPE);
     }
 
     /**

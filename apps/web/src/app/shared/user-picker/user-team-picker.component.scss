@@ -1,0 +1,95 @@
+// Un champ de formulaire comme les autres, suivi de la liste de ce qu'il a
+// retenu : c'est la liste qui porte l'information, le champ n'est qu'une entrée.
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.team {
+  display: flex;
+  flex-direction: column;
+  gap: var(--qos-space-2);
+  min-width: 0;
+}
+
+.team__empty,
+.team__full,
+.team__hint {
+  margin: 0;
+  color: var(--qos-fg-secondary);
+  font-size: var(--qos-fs-sm);
+}
+
+.team__full {
+  color: var(--qos-warn-fg);
+}
+
+.team__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--qos-space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.member {
+  // Grille plutôt que flex : le nom occupe la colonne élastique et se tronque,
+  // au lieu de pousser les boutons hors du conteneur ou de s'écrire à la verticale.
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--qos-space-3);
+  padding: var(--qos-space-1) var(--qos-space-2);
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: var(--qos-radius-md);
+  background: var(--qos-surface-raised);
+}
+
+.member__avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--qos-radius-pill);
+  background: var(--qos-accent-bg-soft);
+  color: var(--qos-accent-fg-soft);
+  font-size: var(--qos-fs-xs);
+  font-weight: var(--qos-fw-semibold);
+  text-transform: uppercase;
+}
+
+.member__text {
+  display: flex;
+  align-items: baseline;
+  gap: var(--qos-space-2);
+  min-width: 0;
+}
+
+.member__name {
+  min-width: 0;
+  color: var(--qos-fg-primary);
+  font-weight: var(--qos-fw-medium);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.member__role {
+  flex-shrink: 0;
+  color: var(--qos-fg-tertiary);
+  font-size: var(--qos-fs-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.member__role--lead {
+  color: var(--qos-accent-fg-soft);
+  font-weight: var(--qos-fw-semibold);
+}
+
+.member__actions {
+  display: inline-flex;
+  align-items: center;
+}

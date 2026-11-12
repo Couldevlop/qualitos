@@ -5,10 +5,17 @@ import com.openlab.qualitos.quality.authz.web.RequiresPermission;
 import com.openlab.qualitos.quality.config.RequiresModule;
 import com.openlab.qualitos.quality.spc.capability.application.SpcStudyDto;
 import com.openlab.qualitos.quality.spc.capability.application.SpcStudyService;
+import com.openlab.qualitos.quality.spc.capability.domain.SpcValidationException;
+import com.openlab.qualitos.quality.spc.capability.workbook.SpcMeasurementsWorkbook;
+import com.openlab.qualitos.quality.nonconformity.storage.UploadedBinaryGuard;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,9 +26,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -57,6 +68,68 @@ public class SpcStudyController {
     @Operation(summary = "The study register, most recent first, without the measurement grids")
     public List<SpcStudyDto.StudySummary> list() {
         return service.list();
+    }
+
+    /**
+     * Le classeur modèle de la grille de mesures.
+     *
+     * <p>Sans modèle, chacun invente sa disposition et l'import devrait devenir
+     * devin : le fichier porte une ligne par pièce, une colonne par sous-groupe,
+     * et un onglet qui dit quoi en faire. Télécharger est ouvert à tout
+     * authentifié — c'est un formulaire vierge, il ne contient aucune donnée du
+     * client.
+     */
+    @GetMapping(value = "/measurements-template.xlsx", produces = SpcMeasurementsWorkbook.XLSX)
+    @Operation(summary = "The blank measurement grid as an Excel workbook, ready to fill in")
+    public ResponseEntity<byte[]> measurementsTemplate(
+            @RequestParam(name = "sampleSize", defaultValue = "5") int sampleSize,
+            @RequestParam(name = "subgroupCount", defaultValue = "20") int subgroupCount) {
+        byte[] contenu = SpcMeasurementsWorkbook.template(sampleSize, subgroupCount);
+        String nom = "mesures-capabilite-" + sampleSize + "x" + subgroupCount + ".xlsx";
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        ContentDisposition.attachment().filename(nom).build().toString())
+                .contentType(MediaType.parseMediaType(SpcMeasurementsWorkbook.XLSX))
+                .body(contenu);
+    }
+
+    /**
+     * Lit un classeur rempli et rend la grille, sans rien enregistrer.
+     *
+     * <p>L'écran la pose dans sa grille de saisie : l'utilisateur la relit, la
+     * corrige, et c'est lui qui enregistre l'étude. Un import qui créerait
+     * l'étude lui-même empêcherait de voir ce qui a été lu avant de le signer.
+     *
+     * <p><b>Gardes (OWASP).</b> Le type déclaré doit être celui d'un .xlsx, les
+     * premiers octets doivent lui correspondre — un exécutable renommé ne passe
+     * pas — et la taille est bornée avant que POI n'ouvre l'archive. Écrire
+     * demande {@code spc.manage} : l'import remplace la grille de l'écran.
+     */
+    @PostMapping(value = "/measurements-import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @RequiresPermission(Permission.SPC_MANAGE)
+    @Operation(summary = "Read a filled-in Excel workbook and return the measurement grid")
+    public SpcMeasurementsWorkbook.ImportedGrid importMeasurements(
+            @RequestParam("file") MultipartFile fichier) {
+        if (fichier == null || fichier.isEmpty()) {
+            throw new SpcValidationException("file", "Aucun fichier reçu.");
+        }
+        if (fichier.getSize() > SpcMeasurementsWorkbook.MAX_UPLOAD_BYTES) {
+            throw new SpcValidationException("file", "Le fichier dépasse "
+                    + (SpcMeasurementsWorkbook.MAX_UPLOAD_BYTES / (1024 * 1024)) + " Mo.");
+        }
+        byte[] contenu;
+        try {
+            contenu = fichier.getBytes();
+        } catch (IOException e) {
+            throw new UncheckedIOException("Lecture du classeur de mesures versé", e);
+        }
+        String type = UploadedBinaryGuard.normalizeType(fichier.getContentType());
+        if (!SpcMeasurementsWorkbook.XLSX.equals(type)
+                || !UploadedBinaryGuard.magicBytesMatch(type, contenu)) {
+            throw new SpcValidationException("file",
+                    "Attendu un classeur Excel .xlsx (ni .xls, ni .csv, ni autre chose).");
+        }
+        return SpcMeasurementsWorkbook.read(contenu);
     }
 
     @GetMapping("/{id}")

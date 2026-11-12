@@ -1,5 +1,5 @@
 import { catalogLabel, catalogOptions } from '../../core/catalogs/catalog-overrides';
-import { CapaCriticity, CapaSourceType, CapaType } from './capa.types';
+import { CapaActionType, CapaCriticity, CapaSourceType, CapaType } from './capa.types';
 
 /**
  * Libellés des raisons d'ouverture d'un dossier CAPA.
@@ -29,6 +29,28 @@ export function capaTypeOptions(): Array<{ value: CapaType; label: string }> {
 }
 
 /** Libellés des criticités ; la liste et la fiche affichaient « HIGH », « CRITICAL ». */
+/**
+ * Les natures d'action, dans l'ordre du déroulé réel d'un traitement :
+ * on endigue, on corrige, puis on prévient.
+ *
+ * <p>Ici et non dans un composant : la fiche CAPA et le panneau lu depuis la
+ * fiche d'un écart affichent la même nature, et deux listes divergeraient au
+ * premier libellé retouché d'un seul côté.
+ */
+export const CAPA_ACTION_TYPES: ReadonlyArray<{ value: CapaActionType; label: string }> = [
+  { value: 'CONTAINMENT', label: $localize`:@@capa.action-type.containment:Endiguement` },
+  { value: 'CORRECTIVE',  label: $localize`:@@capa.action-type.corrective:Corrective` },
+  { value: 'PREVENTIVE',  label: $localize`:@@capa.action-type.preventive:Préventive` }
+];
+
+/** Libellé lisible d'une nature d'action, avec repli sur le code inconnu. */
+export function actionTypeLabel(type: CapaActionType | string | undefined | null): string {
+  if (!type) {
+    return '';
+  }
+  return CAPA_ACTION_TYPES.find(t => t.value === type)?.label ?? String(type);
+}
+
 export const CAPA_CRITICITIES: ReadonlyArray<{ value: CapaCriticity; label: string }> = [
   { value: 'LOW',      label: $localize`:@@capa.open.criticity-low:Faible` },
   { value: 'MEDIUM',   label: $localize`:@@capa.open.criticity-medium:Moyenne` },

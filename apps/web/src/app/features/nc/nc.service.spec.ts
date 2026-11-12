@@ -9,6 +9,9 @@ import { ConnectivityService } from '../../core/offline/connectivity.service';
 import { InMemoryQueueStore, OfflineQueueStore } from '../../core/offline/offline-queue.store';
 import { NcService } from './nc.service';
 
+/** L'équipe en charge, exigée à l'ouverture d'un écart (D1 du 8D). */
+const EQUIPE = [{ accountId: 'u-pilote', displayName: 'Pilote Qualité' }];
+
 /** Connectivité pilotable (navigator.onLine est read-only). */
 class FakeConnectivity {
   online = true;
@@ -63,7 +66,7 @@ describe('NcService (mock mode)', () => {
   });
 
   it('creates an OPEN non-conformance', (done) => {
-    service.createNc({ title: 'Test NC', category: 'PRODUCT', severity: 'MAJOR' }).subscribe(n => {
+    service.createNc({ title: 'Test NC', category: 'PRODUCT', severity: 'MAJOR', teamMembers: EQUIPE }).subscribe(n => {
       expect(n.status).toBe('OPEN');
       expect(n.title).toBe('Test NC');
       expect(n.reference).toContain('NC-2026-');
@@ -306,7 +309,7 @@ describe('NcService (offline-first, API réelle)', () => {
 
   it('hors-ligne : createNc met en file et répond de façon optimiste', (done) => {
     connectivity.online = false;
-    service.createNc({ title: 'Zone blanche', category: 'PROCESS', severity: 'MINOR' }).subscribe(n => {
+    service.createNc({ title: 'Zone blanche', category: 'PROCESS', severity: 'MINOR', teamMembers: EQUIPE }).subscribe(n => {
       expect(n.pendingSync).toBeTrue();
       expect(n.id.startsWith('offline-')).toBeTrue();
       expect(n.reference).toBe('NC-EN-ATTENTE');
@@ -319,7 +322,7 @@ describe('NcService (offline-first, API réelle)', () => {
 
   it('coupure pendant l’envoi (status 0) : bascule en file au lieu d’échouer', (done) => {
     connectivity.online = true;
-    service.createNc({ title: 'Coupure', category: 'OTHER', severity: 'MAJOR' }).subscribe(n => {
+    service.createNc({ title: 'Coupure', category: 'OTHER', severity: 'MAJOR', teamMembers: EQUIPE }).subscribe(n => {
       expect(n.pendingSync).toBeTrue();
       expect(n.id.startsWith('offline-')).toBeTrue();
       done();
@@ -331,7 +334,7 @@ describe('NcService (offline-first, API réelle)', () => {
 
   it('en ligne : createNc appelle l’API normalement', (done) => {
     connectivity.online = true;
-    service.createNc({ title: 'En ligne', category: 'PRODUCT', severity: 'CRITICAL' }).subscribe(n => {
+    service.createNc({ title: 'En ligne', category: 'PRODUCT', severity: 'CRITICAL', teamMembers: EQUIPE }).subscribe(n => {
       expect(n.id).toBe('srv-1');
       expect(n.pendingSync).toBeUndefined();
       done();
@@ -348,7 +351,7 @@ describe('NcService (offline-first, API réelle)', () => {
 
   it('erreur applicative (400) : ne bascule PAS en file et propage l’erreur', (done) => {
     connectivity.online = true;
-    service.createNc({ title: '', category: 'PRODUCT', severity: 'MAJOR' }).subscribe({
+    service.createNc({ title: '', category: 'PRODUCT', severity: 'MAJOR', teamMembers: EQUIPE }).subscribe({
       next: () => done.fail('ne devrait pas réussir'),
       error: err => {
         expect(err.status).toBe(400);

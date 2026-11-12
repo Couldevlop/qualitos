@@ -7726,6 +7726,10 @@ Portal de clientes</target>
         <source>Filtrer par criticité</source>
         <target state="translated">Filtrar por criticidad</target>
       </trans-unit>
+      <trans-unit id="capa.action-panel.failed" datatype="html">
+        <source>L’action de la CAPA n’a pas pu être lue.</source>
+        <target state="translated">No se pudo leer la acción de la CAPA.</target>
+      </trans-unit>
       <trans-unit id="common.yes" datatype="html">
         <source>Oui</source>
         <target state="translated">Sí</target>
@@ -11608,6 +11612,42 @@ Datos de contacto profesionales</target>
         <source><x id="COUNT"/> personne(s) proposée(s)</source>
         <target state="translated"><x id="COUNT"/> persona(s) sugerida(s)</target>
       </trans-unit>
+      <trans-unit id="directory.team.label" datatype="html">
+        <source>Équipe</source>
+        <target state="translated">Equipo</target>
+      </trans-unit>
+      <trans-unit id="directory.team.placeholder" datatype="html">
+        <source>Rechercher par nom ou adresse</source>
+        <target state="translated">Buscar por nombre o correo</target>
+      </trans-unit>
+      <trans-unit id="directory.team.empty" datatype="html">
+        <source>Personne n'est encore nommée.</source>
+        <target state="translated">Todavía no se ha designado a nadie.</target>
+      </trans-unit>
+      <trans-unit id="directory.team.empty-required" datatype="html">
+        <source>Nommez au moins une personne : la première désignée pilote.</source>
+        <target state="translated">Designe al menos a una persona: la primera es la responsable.</target>
+      </trans-unit>
+      <trans-unit id="directory.team.full" datatype="html">
+        <source>Équipe au complet (<x id="MAX"/> personnes). Retirez quelqu'un pour en ajouter une autre.</source>
+        <target state="translated">El equipo está completo (<x id="MAX"/> personas). Quite a alguien para añadir a otra.</target>
+      </trans-unit>
+      <trans-unit id="directory.team.role-lead" datatype="html">
+        <source>Pilote</source>
+        <target state="translated">Responsable</target>
+      </trans-unit>
+      <trans-unit id="directory.team.role-member" datatype="html">
+        <source>Membre</source>
+        <target state="translated">Miembro</target>
+      </trans-unit>
+      <trans-unit id="directory.team.remove-one" datatype="html">
+        <source>Retirer <x id="NAME"/> de l'équipe</source>
+        <target state="translated">Quitar a <x id="NAME"/> del equipo</target>
+      </trans-unit>
+      <trans-unit id="directory.team.promote-one" datatype="html">
+        <source>Remonter <x id="NAME"/> d'un rang</source>
+        <target state="translated">Subir a <x id="NAME"/> un puesto</target>
+      </trans-unit>
       <trans-unit id="directory.person.unknown" datatype="html">
         <source>Personne inconnue</source>
         <target state="translated">Persona desconocida</target>
@@ -13188,10 +13228,6 @@ Datos de contacto profesionales</target>
         <source>La photo n'a pas pu être envoyée.</source>
         <target state="translated">No se ha podido enviar la foto.</target>
       </trans-unit>
-      <trans-unit id="nav.forecast" datatype="html">
-        <source>Prévision KPI</source>
-        <target state="translated">Previsión de KPI</target>
-      </trans-unit>
       <trans-unit id="forecast.kpi.title" datatype="html">
         <source>Prévision KPI</source>
         <target state="translated">Previsión de KPI</target>
@@ -13379,6 +13415,102 @@ Datos de contacto profesionales</target>
       <trans-unit id="forecast.kpi.role-link-manual-text" datatype="html">
         <source>La prévision n'ouvre rien d'elle-même : ni CAPA, ni cycle PDCA, ni projet DMAIC. Elle éclaire la décision, et c'est depuis le module concerné qu'on l'engage — une projection n'est pas un constat, et elle ne doit pas déclencher d'action au registre.</source>
         <target state="translated">La previsión no abre nada por sí misma: ni CAPA, ni ciclo PDCA, ni proyecto DMAIC. Informa la decisión, y esta se toma desde el módulo correspondiente: una proyección no es un hecho constatado y no debe inscribir una acción en el registro.</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.title" datatype="html">
+        <source>Prévision</source>
+        <target state="translated">Previsión</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.intro" datatype="html">
+        <source>Au rythme des mesures enregistrées, l'indicateur atteindra-t-il sa cible ? Le lissage exponentiel prolonge le niveau et la tendance de la série ; la bande grise dit l'incertitude à 95 %. Une projection n'est pas un constat : elle n'ouvre ni action corrective ni cycle d'amélioration d'elle-même.</source>
+        <target state="translated">¿Al ritmo de las mediciones registradas, el indicador alcanzará su objetivo? El suavizado exponencial prolonga el nivel y la tendencia de la serie; la banda gris indica la incertidumbre al 95 %. Una proyección no es un hecho constatado: no abre por sí misma ninguna acción correctiva ni ciclo de mejora.</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.no-target" datatype="html">
+        <source>Cet indicateur n'a pas de valeur cible : renseignez-la pour obtenir une prévision.</source>
+        <target state="translated">Este indicador no tiene valor objetivo: indíquelo para obtener una previsión.</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.too-few" datatype="html">
+        <source><x id="count"/> mesure(s) enregistrée(s) : il en faut au moins <x id="min"/> pour projeter une tendance.</source>
+        <target state="translated"><x id="count"/> medición(es) registrada(s): se necesitan al menos <x id="min"/> para proyectar una tendencia.</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.measures-error" datatype="html">
+        <source>Impossible de lire les mesures de cet indicateur.</source>
+        <target state="translated">No se pudieron leer las mediciones de este indicador.</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.card-probability" datatype="html">
+        <source>Probabilité d'atteinte</source>
+        <target state="translated">Probabilidad de alcanzar el objetivo</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.card-confidence" datatype="html">
+        <source>Confiance</source>
+        <target state="translated">Confianza</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.card-model" datatype="html">
+        <source>Modèle</source>
+        <target state="translated">Modelo</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.points" datatype="html">
+        <source>mesures</source>
+        <target state="translated">mediciones</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.slope" datatype="html">
+        <source>tendance</source>
+        <target state="translated">tendencia</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.period" datatype="html">
+        <source>période</source>
+        <target state="translated">periodo</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.dir-at-least" datatype="html">
+        <source>atteindre au moins</source>
+        <target state="translated">alcanzar al menos</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.dir-at-most" datatype="html">
+        <source>ne pas dépasser</source>
+        <target state="translated">no superar</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.model-hw" datatype="html">
+        <source>Holt-Winters (saisonnier)</source>
+        <target state="translated">Holt-Winters (estacional)</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.model-holt" datatype="html">
+        <source>Holt (niveau + tendance)</source>
+        <target state="translated">Holt (nivel + tendencia)</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.table-caption" datatype="html">
+        <source>Points projetés</source>
+        <target state="translated">Puntos proyectados</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.col-step" datatype="html">
+        <source>Horizon</source>
+        <target state="translated">Horizonte</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.col-value" datatype="html">
+        <source>Prévision</source>
+        <target state="translated">Previsión</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.col-interval" datatype="html">
+        <source>Intervalle 95 %</source>
+        <target state="translated">Intervalo del 95 %</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.err-backend" datatype="html">
+        <source>Service de prévision injoignable.</source>
+        <target state="translated">Servicio de previsión inaccesible.</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.err-unprocessable" datatype="html">
+        <source>Série insuffisante pour une prévision fiable.</source>
+        <target state="translated">Serie insuficiente para una previsión fiable.</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.err-quota" datatype="html">
+        <source>Débit IA dépassé pour ce client — réessayez plus tard.</source>
+        <target state="translated">Límite de uso de IA superado para este cliente: inténtelo más tarde.</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.err-unavailable" datatype="html">
+        <source>Service de prévision momentanément indisponible.</source>
+        <target state="translated">Servicio de previsión temporalmente no disponible.</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.err-generic" datatype="html">
+        <source>Échec de la prévision (HTTP <x id="status"/>).</source>
+        <target state="translated">Falló la previsión (HTTP <x id="status"/>).</target>
       </trans-unit>
       <trans-unit id="nav.admin-documents" datatype="html">
         <source>Documentation</source>
@@ -21377,6 +21509,70 @@ historial de 12 meses</target>
       <trans-unit id="nc.reject.error" datatype="html">
         <source>Rejet impossible.</source>
         <target state="translated">Rechazo imposible.</target>
+      </trans-unit>
+      <trans-unit id="nc.create.section-team" datatype="html">
+        <source>Qui s’en occupe</source>
+        <target state="translated">Quién se encarga</target>
+      </trans-unit>
+      <trans-unit id="nc.create.team-label" datatype="html">
+        <source>Équipe en charge</source>
+        <target state="translated">Equipo responsable</target>
+      </trans-unit>
+      <trans-unit id="nc.create.team-hint" datatype="html">
+        <source>Le premier nommé pilote l’écart. Cette équipe est reprise en D1 du rapport 8D.</source>
+        <target state="translated">La primera persona designada es la responsable. Este equipo se recoge en el D1 del informe 8D.</target>
+      </trans-unit>
+      <trans-unit id="nc.create.blocked-team" datatype="html">
+        <source>Nommez au moins une personne dans l’équipe en charge.</source>
+        <target state="translated">Designe al menos a una persona en el equipo responsable.</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.team" datatype="html">
+        <source>Équipe en charge</source>
+        <target state="translated">Equipo responsable</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.team-edit" datatype="html">
+        <source>Modifier l’équipe</source>
+        <target state="translated">Modificar el equipo</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.team-add" datatype="html">
+        <source>Ajouter une personne</source>
+        <target state="translated">Añadir a una persona</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.team-none" datatype="html">
+        <source>Aucune équipe nommée sur cet écart. Le D1 du rapport 8D restera à saisir.</source>
+        <target state="translated">No se ha designado ningún equipo para esta desviación. El D1 del informe 8D deberá rellenarse a mano.</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.team-saved" datatype="html">
+        <source>Équipe enregistrée.</source>
+        <target state="translated">Equipo guardado.</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.team-failed" datatype="html">
+        <source>L’équipe n’a pas pu être enregistrée.</source>
+        <target state="translated">No se pudo guardar el equipo.</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.cause-analysis" datatype="html">
+        <source>Analyse de cause</source>
+        <target state="translated">Análisis de causa</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.cause-open-whys" datatype="html">
+        <source>Dérouler l’analyse</source>
+        <target state="translated">Desarrollar el análisis</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.cause-open-ishikawa" datatype="html">
+        <source>Travailler le diagramme</source>
+        <target state="translated">Trabajar el diagrama</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.cause-whys-empty" datatype="html">
+        <source>Aucun pourquoi n’a encore été posé. Déroulez l’analyse pour commencer.</source>
+        <target state="translated">Todavía no se ha planteado ningún «por qué». Desarrolle el análisis para empezar.</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.cause-ishikawa-empty" datatype="html">
+        <source>Aucune cause n’a encore été posée sur ce diagramme.</source>
+        <target state="translated">Todavía no se ha colocado ninguna causa en este diagrama.</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.capa-action" datatype="html">
+        <source>Action corrective en cours</source>
+        <target state="translated">Acción correctiva en curso</target>
       </trans-unit>
       <trans-unit id="nc.8d.title" datatype="html">
         <source>Rapport 8D</source>
@@ -30073,6 +30269,54 @@ historial de 12 meses</target>
       <trans-unit id="spc.forecast.err-min-four" datatype="html">
         <source>Au moins 4 mesures sont nécessaires pour prévoir une dérive.</source>
         <target state="translated">Se necesitan al menos 4 mediciones para prever una deriva.</target>
+      </trans-unit>
+      <trans-unit id="spc.import.title" datatype="html">
+        <source>Import Excel</source>
+        <target state="translated">Importar de Excel</target>
+      </trans-unit>
+      <trans-unit id="spc.import.download-template" datatype="html">
+        <source>Télécharger le modèle</source>
+        <target state="translated">Descargar la plantilla</target>
+      </trans-unit>
+      <trans-unit id="spc.import.choose" datatype="html">
+        <source>Importer un classeur</source>
+        <target state="translated">Importar un libro</target>
+      </trans-unit>
+      <trans-unit id="spc.import.reading" datatype="html">
+        <source>Lecture…</source>
+        <target state="translated">Leyendo…</target>
+      </trans-unit>
+      <trans-unit id="spc.import.hint" datatype="html">
+        <source>Une ligne par pièce, une colonne par sous-groupe. L'en-tête et la colonne des rangs sont ignorés ; rien n'est enregistré avant que vous n'enregistriez l'étude.</source>
+        <target state="translated">Una fila por pieza, una columna por subgrupo. La fila de encabezado y la columna de orden se ignoran; nada se guarda hasta que guarde el estudio.</target>
+      </trans-unit>
+      <trans-unit id="spc.import.warnings-title" datatype="html">
+        <source>Ce que la lecture a écarté</source>
+        <target state="translated">Lo que la lectura descartó</target>
+      </trans-unit>
+      <trans-unit id="spc.import.wrong-extension" datatype="html">
+        <source>Attendu un classeur Excel .xlsx (ni .xls, ni .csv).</source>
+        <target state="translated">Se espera un libro de Excel .xlsx (ni .xls ni .csv).</target>
+      </trans-unit>
+      <trans-unit id="spc.import.failed" datatype="html">
+        <source>Le classeur n'a pas pu être lu.</source>
+        <target state="translated">No se pudo leer el libro.</target>
+      </trans-unit>
+      <trans-unit id="spc.import.template-failed" datatype="html">
+        <source>Le modèle n'a pas pu être téléchargé.</source>
+        <target state="translated">No se pudo descargar la plantilla.</target>
+      </trans-unit>
+      <trans-unit id="spc.import.confirm-title" datatype="html">
+        <source>Remplacer les mesures saisies ?</source>
+        <target state="translated">¿Reemplazar las mediciones introducidas?</target>
+      </trans-unit>
+      <trans-unit id="spc.import.confirm-message" datatype="html">
+        <source>Le classeur remplace toutes les mesures de la grille. L'identification de la pièce et les limites ne changent pas, et rien n'est enregistré tant que vous n'enregistrez pas l'étude.</source>
+        <target state="translated">El libro reemplaza todas las mediciones de la cuadrícula. La identificación de la pieza y los límites no cambian, y nada se guarda hasta que guarde el estudio.</target>
+      </trans-unit>
+      <trans-unit id="spc.import.confirm" datatype="html">
+        <source>Importer le classeur</source>
+        <target state="translated">Importar el libro</target>
       </trans-unit>
       <trans-unit id="stakeholders.register-risk" datatype="html">
         <source>Inscrire le risque</source>

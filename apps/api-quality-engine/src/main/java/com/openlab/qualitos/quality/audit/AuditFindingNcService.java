@@ -10,6 +10,7 @@ import com.openlab.qualitos.quality.nonconformity.NcSeverity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -110,7 +111,14 @@ public class AuditFindingNcService {
                 finding.getPhotoUrl(),
                 null,
                 EXTERNAL_AUDITS.contains(plan.getType()) ? NcOrigin.EXTERNAL : NcOrigin.INTERNAL,
-                null, null));
+                null, null,
+                // Aucune équipe : un écart né d'un constat d'audit n'a pas encore
+                // de personnes désignées pour le traiter. L'obligation de nommer
+                // une équipe pèse sur l'humain qui OUVRE une fiche, pas sur
+                // l'écran qui la déduit d'un constat — inventer des noms ici
+                // mettrait dans le D1 du 8D des gens qui n'ont rien accepté. La
+                // fiche se complète ensuite, et D1 dit « à saisir » entre-temps.
+                List.of()));
 
         finding.setNcId(nc.id());
         findingRepository.save(finding);

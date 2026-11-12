@@ -108,3 +108,18 @@ export interface SpcSettings {
   /** Rien n'a encore été réglé : ce sont les seuils de la plateforme. */
   defaults: boolean;
 }
+
+/**
+ * La grille lue dans un classeur Excel versé (import des mesures).
+ *
+ * <p>Les valeurs restent du TEXTE : elles se posent dans la grille de saisie
+ * telle quelle, et c'est l'enregistrement de l'étude qui convertit et recalcule.
+ * `warnings` dit ce que la lecture a écarté — une cellule de texte, des lignes
+ * en trop — parce qu'un import silencieux laisse croire que tout est passé.
+ */
+export interface ImportedGrid {
+  sampleSize: number;
+  subgroupCount: number;
+  rows: string[][];
+  warnings: string[];
+}

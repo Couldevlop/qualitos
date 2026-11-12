@@ -76,7 +76,7 @@ public class EightDSnapshotAssembler {
                                    String recognition, String tenantLabel,
                                    Instant issuedAt, String issuedByName) {
         List<EightDSnapshot.Section> sections = List.of(
-                saisie(EightDDiscipline.D1, team),
+                equipe(sources.team(), team),
                 probleme(sources.nc()),
                 saisie(EightDDiscipline.D3, containment),
                 causeRacine(sources),
@@ -96,7 +96,41 @@ public class EightDSnapshotAssembler {
                 sections);
     }
 
-    // ---------- D1, D3, D8 : ce que personne d'autre ne sait ----------
+    // ---------- D1 : l'équipe nommée sur la fiche ----------
+
+    /**
+     * D1 part de l'équipe nommée à l'ouverture de la fiche.
+     *
+     * <p>Elle se retapait ici à la main, alors que la fiche sait depuis le
+     * premier jour qui prend l'écart en charge : une discipline qu'on ressaisit
+     * est une discipline qu'on oublie, et un D1 vide se discute mal en revue.
+     *
+     * <p>Le premier nommé est annoncé comme pilote — convention d'atelier, et
+     * c'est l'ordre de saisie qui la porte. La saisie libre vient ENSUITE et ne
+     * remplace pas les noms : elle dit ce que l'annuaire ne sait pas (un renfort
+     * extérieur, le rôle de chacun).
+     *
+     * @param nommes l'équipe de la fiche, dans son ordre de saisie
+     * @param texte  la saisie libre du rapport, le cas échéant
+     */
+    private EightDSnapshot.Section equipe(List<String> nommes, String texte) {
+        List<String> lignes = new ArrayList<>();
+        for (int i = 0; i < nommes.size(); i++) {
+            ajouter(lignes, i == 0 ? "Champion" : "Member", nommes.get(i));
+        }
+        lignes.addAll(lignesDe(texte));
+        // « Renseignée » veut dire « il y a quelque chose à montrer », comme pour
+        // D3 et D8 : une équipe tapée à la main compte, sans quoi un D1 rempli
+        // serait annoncé manquant. Seule l'ORIGINE change le libellé.
+        String origine = nommes.isEmpty()
+                // Aucun nom sur la fiche : l'écart est né d'un constat d'audit ou
+                // d'un import système, et D1 se remplit à la main.
+                ? (lignes.isEmpty() ? A_SAISIR : SAISI)
+                : "Team named on non-conformity " + nommes.size() + " member(s)";
+        return section(EightDDiscipline.D1, !lignes.isEmpty(), origine, lignes);
+    }
+
+    // ---------- D3, D8 : ce que personne d'autre ne sait ----------
 
     private EightDSnapshot.Section saisie(EightDDiscipline discipline, String texte) {
         List<String> lignes = lignesDe(texte);

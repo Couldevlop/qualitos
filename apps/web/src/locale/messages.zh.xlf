@@ -7726,6 +7726,10 @@ Portail clients</source>
         <source>Filtrer par criticité</source>
         <target state="translated">按严重程度筛选</target>
       </trans-unit>
+      <trans-unit id="capa.action-panel.failed" datatype="html">
+        <source>L’action de la CAPA n’a pas pu être lue.</source>
+        <target state="translated">无法读取该 CAPA 的措施。</target>
+      </trans-unit>
       <trans-unit id="common.yes" datatype="html">
         <source>Oui</source>
         <target state="translated">是</target>
@@ -11608,6 +11612,42 @@ Coordonnées professionnelles</source>
         <source><x id="COUNT"/> personne(s) proposée(s)</source>
         <target state="translated">建议人员 <x id="COUNT"/> 名</target>
       </trans-unit>
+      <trans-unit id="directory.team.label" datatype="html">
+        <source>Équipe</source>
+        <target state="translated">团队</target>
+      </trans-unit>
+      <trans-unit id="directory.team.placeholder" datatype="html">
+        <source>Rechercher par nom ou adresse</source>
+        <target state="translated">按姓名或邮箱搜索</target>
+      </trans-unit>
+      <trans-unit id="directory.team.empty" datatype="html">
+        <source>Personne n'est encore nommée.</source>
+        <target state="translated">尚未指定任何人。</target>
+      </trans-unit>
+      <trans-unit id="directory.team.empty-required" datatype="html">
+        <source>Nommez au moins une personne : la première désignée pilote.</source>
+        <target state="translated">请至少指定一人：第一位为负责人。</target>
+      </trans-unit>
+      <trans-unit id="directory.team.full" datatype="html">
+        <source>Équipe au complet (<x id="MAX"/> personnes). Retirez quelqu'un pour en ajouter une autre.</source>
+        <target state="translated">团队已满（<x id="MAX"/> 人）。如需添加，请先移除一人。</target>
+      </trans-unit>
+      <trans-unit id="directory.team.role-lead" datatype="html">
+        <source>Pilote</source>
+        <target state="translated">负责人</target>
+      </trans-unit>
+      <trans-unit id="directory.team.role-member" datatype="html">
+        <source>Membre</source>
+        <target state="translated">成员</target>
+      </trans-unit>
+      <trans-unit id="directory.team.remove-one" datatype="html">
+        <source>Retirer <x id="NAME"/> de l'équipe</source>
+        <target state="translated">将 <x id="NAME"/> 移出团队</target>
+      </trans-unit>
+      <trans-unit id="directory.team.promote-one" datatype="html">
+        <source>Remonter <x id="NAME"/> d'un rang</source>
+        <target state="translated">将 <x id="NAME"/> 上移一位</target>
+      </trans-unit>
       <trans-unit id="directory.person.unknown" datatype="html">
         <source>Personne inconnue</source>
         <target state="translated">未知人员</target>
@@ -13188,10 +13228,6 @@ Coordonnées professionnelles</source>
         <source>La photo n'a pas pu être envoyée.</source>
         <target state="translated">照片发送失败。</target>
       </trans-unit>
-      <trans-unit id="nav.forecast" datatype="html">
-        <source>Prévision KPI</source>
-        <target state="translated">KPI预测</target>
-      </trans-unit>
       <trans-unit id="forecast.kpi.title" datatype="html">
         <source>Prévision KPI</source>
         <target state="translated">KPI预测</target>
@@ -13379,6 +13415,102 @@ Coordonnées professionnelles</source>
       <trans-unit id="forecast.kpi.role-link-manual-text" datatype="html">
         <source>La prévision n'ouvre rien d'elle-même : ni CAPA, ni cycle PDCA, ni projet DMAIC. Elle éclaire la décision, et c'est depuis le module concerné qu'on l'engage — une projection n'est pas un constat, et elle ne doit pas déclencher d'action au registre.</source>
         <target state="translated">预测本身不会开启任何事项：既不开 CAPA，也不开 PDCA 循环或 DMAIC 项目。它只为决策提供依据，而决策要在相应模块中发起——预测不是既成事实，不应据此在登记簿中登记措施。</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.title" datatype="html">
+        <source>Prévision</source>
+        <target state="translated">预测</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.intro" datatype="html">
+        <source>Au rythme des mesures enregistrées, l'indicateur atteindra-t-il sa cible ? Le lissage exponentiel prolonge le niveau et la tendance de la série ; la bande grise dit l'incertitude à 95 %. Une projection n'est pas un constat : elle n'ouvre ni action corrective ni cycle d'amélioration d'elle-même.</source>
+        <target state="translated">按已登记测量值的节奏，该指标能否达到目标？指数平滑会延伸序列的水平与趋势，灰色区间表示 95 % 的不确定性。预测不是既成事实：它本身既不开启纠正措施，也不开启改进循环。</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.no-target" datatype="html">
+        <source>Cet indicateur n'a pas de valeur cible : renseignez-la pour obtenir une prévision.</source>
+        <target state="translated">该指标没有目标值：请先设置目标值以获得预测。</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.too-few" datatype="html">
+        <source><x id="count"/> mesure(s) enregistrée(s) : il en faut au moins <x id="min"/> pour projeter une tendance.</source>
+        <target state="translated">已登记 <x id="count"/> 个测量值：至少需要 <x id="min"/> 个才能延伸趋势。</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.measures-error" datatype="html">
+        <source>Impossible de lire les mesures de cet indicateur.</source>
+        <target state="translated">无法读取该指标的测量值。</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.card-probability" datatype="html">
+        <source>Probabilité d'atteinte</source>
+        <target state="translated">达到目标的概率</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.card-confidence" datatype="html">
+        <source>Confiance</source>
+        <target state="translated">置信度</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.card-model" datatype="html">
+        <source>Modèle</source>
+        <target state="translated">模型</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.points" datatype="html">
+        <source>mesures</source>
+        <target state="translated">个测量值</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.slope" datatype="html">
+        <source>tendance</source>
+        <target state="translated">趋势</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.period" datatype="html">
+        <source>période</source>
+        <target state="translated">期</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.dir-at-least" datatype="html">
+        <source>atteindre au moins</source>
+        <target state="translated">至少达到</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.dir-at-most" datatype="html">
+        <source>ne pas dépasser</source>
+        <target state="translated">不超过</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.model-hw" datatype="html">
+        <source>Holt-Winters (saisonnier)</source>
+        <target state="translated">Holt-Winters（季节性）</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.model-holt" datatype="html">
+        <source>Holt (niveau + tendance)</source>
+        <target state="translated">Holt（水平＋趋势）</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.table-caption" datatype="html">
+        <source>Points projetés</source>
+        <target state="translated">预测点</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.col-step" datatype="html">
+        <source>Horizon</source>
+        <target state="translated">预测期</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.col-value" datatype="html">
+        <source>Prévision</source>
+        <target state="translated">预测值</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.col-interval" datatype="html">
+        <source>Intervalle 95 %</source>
+        <target state="translated">95 % 区间</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.err-backend" datatype="html">
+        <source>Service de prévision injoignable.</source>
+        <target state="translated">无法连接预测服务。</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.err-unprocessable" datatype="html">
+        <source>Série insuffisante pour une prévision fiable.</source>
+        <target state="translated">数据不足，无法给出可靠预测。</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.err-quota" datatype="html">
+        <source>Débit IA dépassé pour ce client — réessayez plus tard.</source>
+        <target state="translated">该客户的 AI 调用速率已超限 — 请稍后重试。</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.err-unavailable" datatype="html">
+        <source>Service de prévision momentanément indisponible.</source>
+        <target state="translated">预测服务暂时不可用。</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.err-generic" datatype="html">
+        <source>Échec de la prévision (HTTP <x id="status"/>).</source>
+        <target state="translated">预测失败（HTTP <x id="status"/>）。</target>
       </trans-unit>
       <trans-unit id="nav.admin-documents" datatype="html">
         <source>Documentation</source>
@@ -21377,6 +21509,70 @@ historique 12 mois</source>
       <trans-unit id="nc.reject.error" datatype="html">
         <source>Rejet impossible.</source>
         <target state="translated">无法驳回。</target>
+      </trans-unit>
+      <trans-unit id="nc.create.section-team" datatype="html">
+        <source>Qui s’en occupe</source>
+        <target state="translated">由谁负责</target>
+      </trans-unit>
+      <trans-unit id="nc.create.team-label" datatype="html">
+        <source>Équipe en charge</source>
+        <target state="translated">负责团队</target>
+      </trans-unit>
+      <trans-unit id="nc.create.team-hint" datatype="html">
+        <source>Le premier nommé pilote l’écart. Cette équipe est reprise en D1 du rapport 8D.</source>
+        <target state="translated">第一位被指定者为负责人。该团队将带入 8D 报告的 D1。</target>
+      </trans-unit>
+      <trans-unit id="nc.create.blocked-team" datatype="html">
+        <source>Nommez au moins une personne dans l’équipe en charge.</source>
+        <target state="translated">请在负责团队中至少指定一人。</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.team" datatype="html">
+        <source>Équipe en charge</source>
+        <target state="translated">负责团队</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.team-edit" datatype="html">
+        <source>Modifier l’équipe</source>
+        <target state="translated">修改团队</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.team-add" datatype="html">
+        <source>Ajouter une personne</source>
+        <target state="translated">添加人员</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.team-none" datatype="html">
+        <source>Aucune équipe nommée sur cet écart. Le D1 du rapport 8D restera à saisir.</source>
+        <target state="translated">此偏差尚未指定团队。8D 报告的 D1 仍需手动填写。</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.team-saved" datatype="html">
+        <source>Équipe enregistrée.</source>
+        <target state="translated">团队已保存。</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.team-failed" datatype="html">
+        <source>L’équipe n’a pas pu être enregistrée.</source>
+        <target state="translated">无法保存该团队。</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.cause-analysis" datatype="html">
+        <source>Analyse de cause</source>
+        <target state="translated">原因分析</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.cause-open-whys" datatype="html">
+        <source>Dérouler l’analyse</source>
+        <target state="translated">展开分析</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.cause-open-ishikawa" datatype="html">
+        <source>Travailler le diagramme</source>
+        <target state="translated">编辑图表</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.cause-whys-empty" datatype="html">
+        <source>Aucun pourquoi n’a encore été posé. Déroulez l’analyse pour commencer.</source>
+        <target state="translated">尚未提出任何「为什么」。展开分析以开始。</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.cause-ishikawa-empty" datatype="html">
+        <source>Aucune cause n’a encore été posée sur ce diagramme.</source>
+        <target state="translated">此图尚未放入任何原因。</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.capa-action" datatype="html">
+        <source>Action corrective en cours</source>
+        <target state="translated">正在进行的纠正措施</target>
       </trans-unit>
       <trans-unit id="nc.8d.title" datatype="html">
         <source>Rapport 8D</source>
@@ -30073,6 +30269,54 @@ historique 12 mois</source>
       <trans-unit id="spc.forecast.err-min-four" datatype="html">
         <source>Au moins 4 mesures sont nécessaires pour prévoir une dérive.</source>
         <target state="translated">预测漂移至少需要4个测量值。</target>
+      </trans-unit>
+      <trans-unit id="spc.import.title" datatype="html">
+        <source>Import Excel</source>
+        <target state="translated">Excel 导入</target>
+      </trans-unit>
+      <trans-unit id="spc.import.download-template" datatype="html">
+        <source>Télécharger le modèle</source>
+        <target state="translated">下载模板</target>
+      </trans-unit>
+      <trans-unit id="spc.import.choose" datatype="html">
+        <source>Importer un classeur</source>
+        <target state="translated">导入工作簿</target>
+      </trans-unit>
+      <trans-unit id="spc.import.reading" datatype="html">
+        <source>Lecture…</source>
+        <target state="translated">正在读取…</target>
+      </trans-unit>
+      <trans-unit id="spc.import.hint" datatype="html">
+        <source>Une ligne par pièce, une colonne par sous-groupe. L'en-tête et la colonne des rangs sont ignorés ; rien n'est enregistré avant que vous n'enregistriez l'étude.</source>
+        <target state="translated">每个零件一行，每个子组一列。表头行与序号列会被忽略；在您保存研究之前不会保存任何内容。</target>
+      </trans-unit>
+      <trans-unit id="spc.import.warnings-title" datatype="html">
+        <source>Ce que la lecture a écarté</source>
+        <target state="translated">读取时被忽略的内容</target>
+      </trans-unit>
+      <trans-unit id="spc.import.wrong-extension" datatype="html">
+        <source>Attendu un classeur Excel .xlsx (ni .xls, ni .csv).</source>
+        <target state="translated">需要 Excel .xlsx 工作簿（不支持 .xls 或 .csv）。</target>
+      </trans-unit>
+      <trans-unit id="spc.import.failed" datatype="html">
+        <source>Le classeur n'a pas pu être lu.</source>
+        <target state="translated">无法读取该工作簿。</target>
+      </trans-unit>
+      <trans-unit id="spc.import.template-failed" datatype="html">
+        <source>Le modèle n'a pas pu être téléchargé.</source>
+        <target state="translated">无法下载模板。</target>
+      </trans-unit>
+      <trans-unit id="spc.import.confirm-title" datatype="html">
+        <source>Remplacer les mesures saisies ?</source>
+        <target state="translated">要替换已输入的测量值吗？</target>
+      </trans-unit>
+      <trans-unit id="spc.import.confirm-message" datatype="html">
+        <source>Le classeur remplace toutes les mesures de la grille. L'identification de la pièce et les limites ne changent pas, et rien n'est enregistré tant que vous n'enregistrez pas l'étude.</source>
+        <target state="translated">该工作簿将替换网格中的全部测量值。零件标识与规格界限保持不变，在您保存研究之前不会保存任何内容。</target>
+      </trans-unit>
+      <trans-unit id="spc.import.confirm" datatype="html">
+        <source>Importer le classeur</source>
+        <target state="translated">导入工作簿</target>
       </trans-unit>
       <trans-unit id="stakeholders.register-risk" datatype="html">
         <source>Inscrire le risque</source>

@@ -10,7 +10,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * Analyse des 5 Pourquoi rattachée à une non-conformité (§3.5).
@@ -53,11 +55,33 @@ public class FiveWhysService {
                 .map(a -> toResponse(a, List.of()));
     }
 
+    /**
+     * Les analyses rattachées à un écart, <b>chaînes comprises</b>.
+     *
+     * <p>La liste générale (`findAll`) rend des analyses sans étapes : elle sert
+     * à choisir laquelle ouvrir. Celle-ci est lue par la FICHE DE L'ÉCART, qui
+     * dessine la cascade sur place — la rendre sans ses étapes y afficherait une
+     * analyse vide, et obligerait l'écran à rappeler le serveur une fois par
+     * analyse. Les étapes de toutes les analyses sont donc lues en une requête.
+     */
     @Transactional(readOnly = true)
     public List<FiveWhysDto.AnalysisResponse> findByNc(UUID ncId) {
         UUID tenantId = requireTenantId();
-        return analysisRepository.findByNonConformityIdAndTenantIdOrderByCreatedAtDesc(ncId, tenantId)
-                .stream().map(a -> toResponse(a, List.of())).toList();
+        List<FiveWhysAnalysis> analyses =
+                analysisRepository.findByNonConformityIdAndTenantIdOrderByCreatedAtDesc(ncId, tenantId);
+        if (analyses.isEmpty()) {
+            return List.of();
+        }
+        Map<UUID, List<FiveWhysStep>> chaines = stepRepository
+                .findByAnalysisIdInAndTenantIdOrderByAnalysisIdAscPositionAsc(
+                        analyses.stream().map(FiveWhysAnalysis::getId).toList(), tenantId)
+                .stream()
+                // `getId()` sur le proxy paresseux ne déclenche aucun chargement :
+                // la clé étrangère est déjà connue.
+                .collect(Collectors.groupingBy(step -> step.getAnalysis().getId()));
+        return analyses.stream()
+                .map(a -> toResponse(a, chaines.getOrDefault(a.getId(), List.of())))
+                .toList();
     }
 
     @Transactional(readOnly = true)

@@ -96,7 +96,7 @@ class RecordScopeIntegrationTest {
 
     UUID declarer(String titre) {
         return dans(() -> ncs.create(new NcDto.CreateRequest(titre, "Constat", NcCategory.PROCESS, null, NcSeverity.MINOR,
-                Instant.now(), null, null, null, null, null, null, null, null))).id();
+                Instant.now(), null, null, null, null, null, null, null, null, java.util.List.of(new NcDto.TeamMemberRef("kc-marie", "Marie Durand"))))).id();
     }
 
     UUID dossier(String titre, UUID pilote) {

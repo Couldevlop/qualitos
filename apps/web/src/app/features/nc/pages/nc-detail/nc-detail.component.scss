@@ -77,7 +77,8 @@
 }
 .state-row.error { color: var(--qos-danger-fg); }
 
-.info-card, .analysis-card, .photos-card { margin-bottom: 16px; }
+.info-card, .analysis-card, .team-card, .cause-card, .capa-action-card,
+.photos-card { margin-bottom: 16px; }
 
 .nc-title {
   margin: 0 0 16px;
@@ -112,6 +113,124 @@
   border-radius: 8px;
   font-size: 14px;
   line-height: 1.5;
+}
+
+// L'action corrective en cours : son titre et le lien vers le dossier sur la
+// meme ligne tant que la largeur le permet.
+.capa-action-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--qos-space-2);
+  margin-bottom: var(--qos-space-2);
+}
+
+// Les schemas d'analyse de cause : chaque bloc porte son titre, son lien vers
+// l'ecran qui le modifie, et sa figure -- qui deborde en largeur sur mobile
+// plutot que de se tasser jusqu'a l'illisible.
+.cause-block {
+  padding-top: var(--qos-space-3);
+
+  & + & {
+    margin-top: var(--qos-space-3);
+    border-top: 1px solid var(--qos-border-subtle);
+  }
+
+  qos-five-whys-cascade,
+  qos-ishikawa-fishbone {
+    display: block;
+    overflow-x: auto;
+  }
+}
+
+.cause-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--qos-space-2);
+
+  h3 {
+    margin: 0;
+    font-size: var(--qos-fs-md);
+    font-weight: var(--qos-fw-semibold);
+  }
+}
+
+.cause-empty {
+  margin: 0;
+  color: var(--qos-fg-secondary);
+  font-size: var(--qos-fs-sm);
+}
+
+.cause-root {
+  margin: var(--qos-space-2) 0 0;
+  font-size: var(--qos-fs-sm);
+
+  span {
+    color: var(--qos-fg-secondary);
+  }
+}
+
+// L'equipe en charge : une liste courte, lue d'un coup d'oeil, et le titre
+// garde ses boutons sur la meme ligne tant que la largeur le permet.
+.team-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--qos-space-2);
+  margin-bottom: var(--qos-space-2);
+}
+
+.team-head__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--qos-space-2);
+}
+
+.team-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--qos-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: inline-flex;
+    align-items: baseline;
+    gap: var(--qos-space-2);
+    padding: var(--qos-space-1) var(--qos-space-3);
+    border: 1px solid var(--qos-border-subtle);
+    border-radius: var(--qos-radius-pill);
+    background: var(--qos-surface-raised);
+  }
+}
+
+.team-name {
+  color: var(--qos-fg-primary);
+  font-size: var(--qos-fs-sm);
+  font-weight: var(--qos-fw-medium);
+}
+
+.team-role {
+  color: var(--qos-fg-tertiary);
+  font-size: var(--qos-fs-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.team-list li:first-child .team-role {
+  color: var(--qos-accent-fg-soft);
+  font-weight: var(--qos-fw-semibold);
+}
+
+.team-empty {
+  margin: 0;
+  color: var(--qos-fg-secondary);
+  font-size: var(--qos-fs-sm);
 }
 
 .analysis-card .block { margin-bottom: 12px; }

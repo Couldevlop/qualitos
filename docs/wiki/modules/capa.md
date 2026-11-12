@@ -54,6 +54,16 @@ Le bouton **« Non efficace »**, lui, reste toujours accessible : constater que
 actions n'ont pas produit leur effet ne clôt rien, et doit pouvoir se consigner à tout
 moment. Le dossier repart alors en traitement.
 
+## Faire avancer l'action depuis l'écart
+
+Quand le dossier vient d'une non-conformité, vous n'avez pas besoin d'ouvrir la fiche CAPA pour
+savoir où en est l'action, ni pour la faire avancer : la
+[fiche de l'écart](non-conformites.md) porte une carte *Action corrective en cours* qui l'affiche
+et propose *Démarrer*, puis *Terminer*.
+
+La fiche CAPA reste l'endroit de tout le reste : la **preuve** versée à l'action, son historique,
+le verdict d'efficacité, et la clôture du dossier.
+
 ## Origines d'une CAPA
 
 Une CAPA peut être ouverte manuellement ou déclenchée par un autre module, par exemple :

@@ -1,19 +1,48 @@
 package com.openlab.qualitos.quality.nonconformity;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 public final class NcDto {
 
+    /**
+     * Borne haute d'une équipe 8D.
+     *
+     * <p>Au-delà d'une dizaine de personnes, ce n'est plus une équipe de
+     * résolution mais une liste de diffusion — et le D1 du rapport devient
+     * illisible. La borne protège aussi l'écriture : une requête ne verse pas
+     * mille lignes filles d'un coup.
+     */
+    public static final int MAX_TEAM_MEMBERS = 12;
+
     private NcDto() {}
+
+    /**
+     * Une personne de l'équipe qui prend l'écart en charge (D1 du 8D).
+     *
+     * <p>Une PERSONNE, choisie dans l'annuaire : l'identifiant de compte (le
+     * {@code sub} du jeton) et le nom tel qu'il s'affichait. Jamais un
+     * identifiant technique saisi à la main, jamais un nom libre — un 8D qui
+     * nomme « JD » ou un UUID ne nomme personne.
+     *
+     * <p>Le nom est figé à la saisie : un rapport relu trois ans plus tard porte
+     * les noms de l'époque, pas ceux d'un annuaire qui a bougé.
+     */
+    public record TeamMemberRef(
+            @NotBlank @Size(max = 255) String accountId,
+            @NotBlank @Size(max = 255) String displayName
+    ) {}
 
     public record CreateRequest(
             @NotBlank @Size(max = 255) String title,
@@ -47,7 +76,21 @@ public final class NcDto {
             /** Interne par défaut : voir {@link NcOrigin#orDefault}. */
             NcOrigin origin,
             UUID productId,
-            UUID fmeaItemId
+            UUID fmeaItemId,
+            /**
+             * L'équipe qui prend l'écart en charge. <b>Obligatoire</b> : c'est la
+             * première discipline du 8D (D1), et elle se retapait à la main dans
+             * le rapport alors que la fiche sait depuis le premier jour qui s'en
+             * occupe. Une discipline qu'on ressaisit est une discipline qu'on
+             * oublie.
+             *
+             * <p>Exigée ICI et pas seulement dans le formulaire : l'API est
+             * publique (§13.1) et la file hors-ligne du mobile rejoue par le même
+             * chemin. L'ordre de saisie est conservé — le premier nommé pilote.
+             */
+            @NotEmpty(message = "teamMembers must not be empty")
+            @Size(max = MAX_TEAM_MEMBERS)
+            List<@Valid TeamMemberRef> teamMembers
     ) {}
 
     public record UpdateRequest(
@@ -81,7 +124,20 @@ public final class NcDto {
             String photoUrls,
             NcOrigin origin,
             UUID productId,
-            UUID fmeaItemId
+            UUID fmeaItemId,
+            /**
+             * L'équipe, remplacée en entier quand elle est fournie. Absente =
+             * inchangée, comme tout le reste de cette requête partielle ; une
+             * liste VIDE est refusée, sans quoi on contournerait l'obligation
+             * posée à la création en vidant l'équipe juste après.
+             */
+            // `@Size(min = 1)` et non `@NotEmpty` : l'absence de la donnée veut
+            // dire « équipe inchangée », et `@NotEmpty` refuserait toute mise à
+            // jour qui ne parle pas de l'équipe. Une liste FOURNIE, en revanche,
+            // ne peut pas être vide — on ne retire pas la dernière personne.
+            @Size(min = 1, max = MAX_TEAM_MEMBERS,
+                  message = "teamMembers must not be empty when provided")
+            List<@Valid TeamMemberRef> teamMembers
     ) {}
 
     /** Démarrage de l'analyse : la cause racine est optionnelle à ce stade. */
@@ -164,7 +220,9 @@ public final class NcDto {
             String rejectionReason,
             Instant rejectedAt,
             Instant createdAt,
-            Instant updatedAt
+            Instant updatedAt,
+            /** L'équipe en charge, dans son ordre de saisie. */
+            List<TeamMemberRef> teamMembers
     ) {}
 
     /**

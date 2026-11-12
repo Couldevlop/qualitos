@@ -1,0 +1,70 @@
+<div class="action-panel">
+  <div class="action-panel__etat" *ngIf="loading$ | async" data-test="capa-action-chargement">
+    <mat-progress-spinner mode="indeterminate" diameter="22"></mat-progress-spinner>
+    <span i18n="@@common.loading">Chargement…</span>
+  </div>
+
+  <!-- Une panne se dit : un panneau vide passerait pour « aucune action ». -->
+  <div class="action-panel__erreur" *ngIf="error" data-test="capa-action-erreur">
+    <mat-icon aria-hidden="true">error_outline</mat-icon>
+    <span>{{ error }}</span>
+    <button mat-stroked-button type="button" (click)="reload()" data-test="capa-action-relancer">
+      <span i18n="@@common.retry">Réessayer</span>
+    </button>
+  </div>
+
+  <ng-container *ngIf="capa as c">
+    <!-- Un dossier sans action ne pourra pas etre cloture : on le dit, et on
+         offre de la definir UNE FOIS, dans la fenetre de creation (ADR 0088). -->
+    <div class="action-panel__vide" *ngIf="actions.length === 0" data-test="capa-action-vide">
+      <p i18n="@@capa.detail.action-missing">L'action de ce dossier n'a pas encore été définie : sans elle, il ne pourra pas être clôturé.</p>
+      <button mat-flat-button color="primary" type="button" *qosCan="'capa.action.manage'"
+              (click)="defineAction()" [disabled]="isTerminal(c.status)"
+              data-test="capa-action-definir">
+        <span i18n="@@capa.detail.single-action-define">Définir l'action</span>
+      </button>
+    </div>
+
+    <div class="action-panel__ligne" *ngFor="let a of actions; trackBy: trackById"
+         data-test="capa-action-ligne">
+      <div class="action-panel__texte">
+        <p class="action-panel__titre">{{ a.title }}</p>
+        <dl class="action-panel__champs">
+          <div>
+            <dt i18n="@@capa.action.action-type">Nature de l'action</dt>
+            <dd>{{ actionTypeLabel(a.actionType) }}</dd>
+          </div>
+          <!-- Responsable et echeance seulement s'ils s'ecartent de ceux du
+               dossier : a la decision ils en sont copies. -->
+          <div *ngIf="showsAssignee(a)">
+            <dt i18n="@@capa.detail.single-action-assignee">Responsable</dt>
+            <dd>{{ a.assigneeName || '—' }}</dd>
+          </div>
+          <div *ngIf="showsDueDate(a)">
+            <dt i18n="@@capa.detail.due-date">Échéance</dt>
+            <dd>{{ a.dueDate | date }}</dd>
+          </div>
+          <div>
+            <dt i18n="@@common.status">Statut</dt>
+            <dd>
+              <span [class]="actionBadge(a.status)"
+                    [matTooltip]="a.completedAt ? (a.completedAt | date:'medium') : ''">{{ actionStatusLabel(a.status) }}</span>
+            </dd>
+          </div>
+        </dl>
+      </div>
+
+      <ng-container *qosCan="'capa.action.update'">
+        <button mat-flat-button color="primary" type="button" *ngIf="nextStatus(a.status)"
+                [disabled]="!canAdvance(a)" (click)="advance(a)"
+                data-test="capa-action-avancer">
+          <mat-icon aria-hidden="true">{{ a.status === 'PENDING' ? 'play_arrow' : 'check' }}</mat-icon>
+          {{ advanceLabel(a.status) }}
+        </button>
+      </ng-container>
+      <mat-icon *ngIf="a.status === 'DONE'" class="action-panel__faite" aria-hidden="true"
+                i18n-matTooltip="@@capa.detail.action-done-tooltip"
+                matTooltip="Action terminée">check_circle</mat-icon>
+    </div>
+  </ng-container>
+</div>

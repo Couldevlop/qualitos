@@ -41,6 +41,10 @@ import static org.mockito.Mockito.when;
 class NcReporterNameTest {
 
     @Mock NonConformityRepository repo;
+
+    /** L'équipe nommée sur la fiche : hors sujet ici, mais le service la lit. */
+
+    @Mock NcTeamMemberRepository teamMembers;
     @Mock CapaCaseRepository capaRepo;
     @Mock ApplicationEventPublisher events;
     /** Sans réglage, Mockito rend Optional.empty() : l'utilisateur voit tout (ADR 0081). */
@@ -82,7 +86,8 @@ class NcReporterNameTest {
     private NcDto.CreateRequest request() {
         return new NcDto.CreateRequest(
                 "Joint torique défectueux", "détail", NcCategory.PRODUCT, null, NcSeverity.MAJOR,
-                Instant.now(), "Atelier 3", 48.85, 2.35, null, BODY_REPORTER, null, null, null);
+                Instant.now(), "Atelier 3", 48.85, 2.35, null, BODY_REPORTER, null, null, null,
+                java.util.List.of(new NcDto.TeamMemberRef("kc-marie", "Marie Durand")));
     }
 
     private NonConformity saved() {

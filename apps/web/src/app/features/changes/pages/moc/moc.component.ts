@@ -1,4 +1,3 @@
-import { HttpResponse } from '@angular/common/http';
 import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
@@ -7,6 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 import { AuthzService } from '../../../../core/authz/authz.service';
+import { filenameFromResponse, saveBlobAs } from '../../../../core/http/file-download';
 import { mocClassificationLabel, mocErrorMessage, mocStatusLabel } from '../../moc.labels';
 import { MocService } from '../../moc.service';
 import { MocDetail, MocStatus, MocSummary } from '../../moc.types';
@@ -205,7 +205,7 @@ export class MocComponent implements OnInit {
           this.snack.open(this.exportFailed, undefined, { duration: 4000 });
           return;
         }
-        this.saveAs(response.body, this.filenameOf(response) ?? 'demandes-de-changement.xlsx');
+        saveBlobAs(response.body, filenameFromResponse(response) ?? 'demandes-de-changement.xlsx');
       },
       error: () => {
         this.exporting = false;
@@ -215,21 +215,6 @@ export class MocComponent implements OnInit {
   }
 
   private readonly exportFailed = $localize`:@@moc.export-failed:L'extraction Excel a échoué.`;
-
-  private filenameOf(response: HttpResponse<Blob>): string | null {
-    const header = response.headers.get('Content-Disposition');
-    const match = header ? /filename\*?=(?:UTF-8'')?"?([^";]+)"?/i.exec(header) : null;
-    return match ? decodeURIComponent(match[1]) : null;
-  }
-
-  private saveAs(blob: Blob, filename: string): void {
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = filename;
-    link.click();
-    URL.revokeObjectURL(url);
-  }
 
   private fail(err: unknown): void {
     this.snack.open(mocErrorMessage(err, $localize`:@@moc.load-failed:La demande n'a pas pu être chargée.`),

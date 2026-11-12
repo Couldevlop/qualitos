@@ -234,7 +234,11 @@ public class EhrConnectorService {
                 // Un import EHR ne connaît ni référence produit ni mode de
                 // défaillance : le rattachement, s'il a lieu, se fera à la main.
                 null,   // productId
-                null);  // fmeaItemId
+                null,   // fmeaItemId
+                // Aucune equipe : un import systeme ne designe personne. Nommer
+                // une equipe est le geste de l'humain qui prend l'ecart en
+                // charge ; D1 du 8D dit « a saisir » jusque-la.
+                java.util.List.of());
         return ncService.create(req).id();
     }
 

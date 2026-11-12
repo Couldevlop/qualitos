@@ -2,8 +2,6 @@
 """Table i18n - prévision KPI (Holt-Winters, §6.5/§12.1). id: (fr, en, es, ar, ja, zh)."""
 
 TRANSLATIONS = {
-    'nav.forecast': ('Prévision KPI', 'KPI forecast', 'Previsión de KPI', 'التنبؤ بمؤشرات الأداء', 'KPI予測', 'KPI预测'),
-
     'forecast.kpi.title': ('Prévision KPI', 'KPI forecast', 'Previsión de KPI', 'التنبؤ بمؤشرات الأداء', 'KPI予測', 'KPI预测'),
     'forecast.kpi.subtitle': ("Projection par lissage exponentiel Holt-Winters (niveau, tendance, saisonnalité) et probabilité d'atteindre la cible.", 'Projection via Holt-Winters exponential smoothing (level, trend, seasonality) and probability of reaching the target.', 'Proyección por suavizado exponencial Holt-Winters (nivel, tendencia, estacionalidad) y probabilidad de alcanzar el objetivo.', 'إسقاط عبر التنعيم الأسي Holt-Winters (المستوى، الاتجاه، الموسمية) واحتمال بلوغ الهدف.', 'Holt-Winters指数平滑（水準・トレンド・季節性）による予測と目標到達確率。', '通过 Holt-Winters 指数平滑（水平、趋势、季节性）进行预测，并计算达到目标的概率。'),
 

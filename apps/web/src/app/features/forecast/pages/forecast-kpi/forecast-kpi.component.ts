@@ -8,6 +8,7 @@ import { catchError, finalize } from 'rxjs/operators';
 import { toSeries } from '../../../../shared/ai-sources/series';
 import { KpisService } from '../../../kpis/kpis.service';
 import { KpiResponse } from '../../../kpis/kpis.types';
+import { buildForecastChart } from '../../forecast-chart';
 import { ForecastService } from '../../forecast.service';
 import { ForecastDirection, ForecastResponse } from '../../forecast.types';
 
@@ -155,7 +156,7 @@ export class ForecastKpiComponent implements OnInit {
     }).subscribe({
       next: res => {
         this.result = res;
-        this.chartOption = this.buildChart(res);
+        this.chartOption = buildForecastChart(this.history, res);
         this.loading = false;
       },
       error: (err: HttpErrorResponse) => {
@@ -188,55 +189,6 @@ export class ForecastKpiComponent implements OnInit {
 
   probabilityState(p: number): 'good' | 'warn' | 'bad' {
     return p >= 0.7 ? 'good' : p >= 0.4 ? 'warn' : 'bad';
-  }
-
-  private buildChart(res: ForecastResponse): EChartsCoreOption {
-    const n = this.history.length;
-    const total = n + res.horizon;
-    const categories = Array.from({ length: total }, (_, i) => `${i + 1}`);
-
-    // Historique : valeurs réelles, puis null sur la zone de prévision.
-    const hist: (number | null)[] = this.history.map(v => v).concat(Array(res.horizon).fill(null));
-    // Prévision : raccordée au dernier point d'historique pour une ligne continue.
-    const fc: (number | null)[] = Array(n - 1).fill(null);
-    fc.push(this.history[n - 1]);
-    // Garde défensive : un contrat partiel (points absents) ne casse pas le rendu.
-    const points = res.points ?? [];
-    points.forEach(p => fc.push(p.value));
-    const low: (number | null)[] = Array(n).fill(null);
-    const high: (number | null)[] = Array(n).fill(null);
-    points.forEach(p => { low.push(p.low); high.push(p.high); });
-
-    return {
-      tooltip: { trigger: 'axis' },
-      legend: { data: ['Historique', 'Prévision', 'IP 95 %'], top: 0 },
-      grid: { left: 48, right: 24, top: 32, bottom: 36 },
-      xAxis: { type: 'category', data: categories, name: 'Période', boundaryGap: false },
-      yAxis: { type: 'value', name: 'Valeur', scale: true },
-      series: [
-        { name: 'Historique', type: 'line', data: hist, symbol: 'circle', symbolSize: 6,
-          lineStyle: { width: 2, color: '#2563EB' }, itemStyle: { color: '#2563EB' } },
-        // Borne basse (transparente) + bande empilée = intervalle de prédiction.
-        { name: 'IP 95 %', type: 'line', data: low, stack: 'pi', symbol: 'none',
-          lineStyle: { opacity: 0 }, areaStyle: { opacity: 0 }, silent: true },
-        { name: 'IP 95 %', type: 'line', data: this.bandDelta(low, high), stack: 'pi',
-          symbol: 'none', lineStyle: { opacity: 0 },
-          areaStyle: { color: 'rgba(37, 99, 235, 0.12)' }, silent: true },
-        { name: 'Prévision', type: 'line', data: fc, symbol: 'circle', symbolSize: 6,
-          lineStyle: { width: 2, type: 'dashed', color: '#7C3AED' }, itemStyle: { color: '#7C3AED' },
-          ...(res.target != null ? { markLine: {
-            symbol: 'none',
-            data: [{ yAxis: res.target, name: 'Cible',
-              lineStyle: { color: '#059669' },
-              label: { formatter: `Cible ${res.target}`, color: '#059669', position: 'end' } }]
-          } } : {}) }
-      ]
-    };
-  }
-
-  /** Épaisseur de bande (high − low) là où l'IP existe, null ailleurs (pour l'empilement). */
-  private bandDelta(low: (number | null)[], high: (number | null)[]): (number | null)[] {
-    return low.map((l, i) => (l == null || high[i] == null) ? null : (high[i] as number) - l);
   }
 
   private messageFor(err: HttpErrorResponse): string {

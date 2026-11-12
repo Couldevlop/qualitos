@@ -9,16 +9,16 @@ Le **8D** (« eight disciplines ») est le format que les clients — l'automobi
 l'IATF 16949 — demandent à la clôture d'un écart. Il raconte, en huit étapes, ce qui s'est passé
 et ce qui fait qu'il ne se reproduira pas.
 
-QualitOS ne vous demande pas de le ressaisir : **cinq disciplines sur huit sont remplies
+QualitOS ne vous demande pas de le ressaisir : **six disciplines sur huit sont remplies
 automatiquement** à partir du travail déjà fait dans les autres modules.
 
 | Discipline | D'où vient le contenu |
 | --- | --- |
-| **D1 — Équipe** | À saisir : seule une personne sait qui a traité l'écart |
+| **D1 — Équipe** | L'[équipe nommée sur la fiche de l'écart](non-conformites.md), dans l'ordre où elle a été désignée : le premier est annoncé pilote (« Champion »), les suivants « Member ». Vous pouvez compléter à la main ce que l'annuaire ne sait pas : un renfort extérieur, le rôle de chacun |
 | **D2 — Description du problème** | La non-conformité : référence, constat, gravité, zone, photos |
 | **D3 — Endiguement immédiat** | À saisir : ce qui a protégé le client pendant l'analyse |
-| **D4 — Cause racine** | Les [Ishikawa](ishikawa.md) et [5 Pourquoi](five-whys.md) rattachés à l'écart, et la cause racine saisie sur la NC |
-| **D5 — Actions correctives** | La [CAPA](capa.md) escaladée depuis la NC, et ses actions |
+| **D4 — Cause racine** | Les [Ishikawa](ishikawa.md) et [5 Pourquoi](five-whys.md) rattachés à l'écart, et la cause racine saisie sur la NC. Les mêmes figures se lisent, dessinées, sur la [fiche de l'écart](non-conformites.md) : le rapport ne les découvre pas |
+| **D5 — Actions correctives** | La [CAPA](capa.md) escaladée depuis la NC, et son action. Son statut se lit et s'avance depuis la [fiche de l'écart](non-conformites.md), sans attendre le rapport |
 | **D6 — Mise en œuvre et preuves** | Les actions menées à terme et les pièces versées à la CAPA |
 | **D7 — Prévention de la récurrence** | Le mode de défaillance [PFMEA](produit-pfmea-control-plan.md) rattaché et les plans de surveillance du produit |
 | **D8 — Reconnaissance de l'équipe** | À saisir : ce que l'équipe a appris |
@@ -27,8 +27,10 @@ automatiquement** à partir du travail déjà fait dans les autres modules.
 
 1. **Ouvrir la fiche de la non-conformité**, puis **Rapport 8D**. L'écran montre les huit
    disciplines, telles qu'elles sont à cet instant.
-2. **Renseigner D1, D3 et D8**, puis **Enregistrer**. Faites-le au fil du traitement : ces trois
-   champs se conservent, et les retrouver à la clôture fait gagner du temps.
+2. **Renseigner D3 et D8**, puis **Enregistrer**. Faites-le au fil du traitement : ces champs se
+   conservent, et les retrouver à la clôture fait gagner du temps. D1 est déjà rempli par l'équipe
+   de la fiche — n'y ajoutez que ce qu'elle ne dit pas (un renfort extérieur, le rôle de chacun) ;
+   votre saisie **vient après** les noms et ne les remplace jamais.
 3. **Clôturer la non-conformité** (depuis sa fiche). Tant qu'elle ne l'est pas, le rapport ne
    s'émet pas — un 8D affirme qu'un problème est réglé.
 4. **Émettre**. Confirmation demandée, et **second facteur d'authentification** exigé : l'émission

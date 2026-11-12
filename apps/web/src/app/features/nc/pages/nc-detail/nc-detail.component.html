@@ -36,7 +36,10 @@
         <!-- Une NC a une CAPA, qui porte une action (ADR 0088) : la créer ouvre
              LA fenêtre commune, source verrouillée sur cette NC. Quand elle
              existe, le bouton l'ouvre au lieu d'en proposer une seconde. -->
-        <ng-container *ngIf="!n.capaCaseId; else voirCapa">
+        <!-- Quand la CAPA existe, c'est son panneau, plus bas, qui en porte
+             l'etat et le lien : repeter le lien ici l'eloignerait de ce qu'il
+             ouvre, dans un en-tete deja charge. -->
+        <ng-container *ngIf="!n.capaCaseId">
           <button mat-stroked-button (click)="openCapa(n)" data-test="creer-capa" *qosCan="'nc.escalate'"
                   [disabled]="(acting$ | async) || !canEscalate(n.status)"
                   i18n-matTooltip="@@nc.detail.create-capa-tooltip"
@@ -45,12 +48,6 @@
             <span i18n="@@nc.detail.create-capa">Créer une CAPA</span>
           </button>
         </ng-container>
-        <ng-template #voirCapa>
-          <a mat-stroked-button [routerLink]="['/capa', n.capaCaseId]" data-test="voir-capa">
-            <mat-icon>engineering</mat-icon>
-            <span i18n="@@nc.detail.open-capa">Voir la CAPA</span>
-          </a>
-        </ng-template>
         <!-- La CAPA traite l'écart ; le cycle ou le projet traite ce que l'écart
              révèle (§3.6). La gravité propose la méthode, la fenêtre le dit, et
              la personne qui tient le dossier peut en décider autrement. Quand le
@@ -215,6 +212,65 @@
         </mat-card-content>
       </mat-card>
 
+      <!-- L'equipe en charge : le D1 du 8D, lu et remanie ici plutot que retape
+           dans le rapport. Les personnes sont nommees par leur nom, jamais par
+           un identifiant, et le premier nomme pilote. -->
+      <mat-card class="team-card" data-test="equipe">
+        <mat-card-content>
+          <div class="team-head">
+            <span class="info-label" i18n="@@nc.detail.team">Équipe en charge</span>
+            <div class="team-head__actions">
+              <ng-container *qosCan="'nc.process'">
+                <button mat-stroked-button type="button" *ngIf="!teamEditing && canEditTeam(n.status)"
+                        (click)="editTeam(n)" data-test="equipe-modifier">
+                  <mat-icon>group_add</mat-icon>
+                  <span i18n="@@nc.detail.team-edit">Modifier l’équipe</span>
+                </button>
+              </ng-container>
+              <ng-container *ngIf="teamEditing">
+                <button mat-stroked-button type="button" (click)="cancelTeamEdit()"
+                        [disabled]="teamSaving$ | async" data-test="equipe-annuler">
+                  <span i18n="@@common.cancel">Annuler</span>
+                </button>
+                <button mat-flat-button color="primary" type="button" (click)="saveTeam()"
+                        [disabled]="(teamSaving$ | async) || teamDraft.length === 0"
+                        data-test="equipe-enregistrer">
+                  <mat-spinner *ngIf="teamSaving$ | async" diameter="18"></mat-spinner>
+                  <span i18n="@@common.save">Enregistrer</span>
+                </button>
+              </ng-container>
+            </div>
+          </div>
+
+          <qos-user-team-picker *ngIf="teamEditing"
+                                [formControl]="teamDraftControl"
+                                [max]="maxTeamMembers"
+                                required
+                                i18n-label="@@nc.detail.team-add"
+                                label="Ajouter une personne"
+                                data-test="equipe-champ"></qos-user-team-picker>
+
+          <ng-container *ngIf="!teamEditing">
+            <ul class="team-list" *ngIf="n.teamMembers?.length; else equipeVide">
+              <li *ngFor="let membre of n.teamMembers; let i = index" data-test="equipe-membre">
+                <span class="team-name">{{ membre.displayName }}</span>
+                <span class="team-role" *ngIf="i === 0" i18n="@@directory.team.role-lead"
+                      data-test="equipe-pilote">Pilote</span>
+                <span class="team-role" *ngIf="i > 0" i18n="@@directory.team.role-member">Membre</span>
+              </li>
+            </ul>
+            <ng-template #equipeVide>
+              <!-- Les ecarts ouverts par une machine (constat d'audit, connecteur
+                   EHR) et ceux saisis avant cette donnee n'ont pas d'equipe : le
+                   dire, plutot que laisser un blanc qu'on prend pour un bug. -->
+              <p class="team-empty" data-test="equipe-vide" i18n="@@nc.detail.team-none">
+                Aucune équipe nommée sur cet écart. Le D1 du rapport 8D restera à saisir.
+              </p>
+            </ng-template>
+          </ng-container>
+        </mat-card-content>
+      </mat-card>
+
       <mat-card class="analysis-card" *ngIf="n.rootCause || n.resolutionNote">
         <mat-card-content>
           <div class="block" *ngIf="n.rootCause">
@@ -225,6 +281,79 @@
             <span class="info-label" i18n="@@nc.detail.resolution-note">Note de résolution</span>
             <p>{{ n.resolutionNote }}</p>
           </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Ou en est le traitement, sans quitter l'ecart : « Voir la CAPA »
+           emmenait dans un autre ecran pour cette seule question, on revenait
+           donc en arriere pour la poser -- et on ne la posait plus. Une CAPA EST
+           son action (ADR 0088) : le panneau la montre et la fait avancer, il
+           n'en ajoute pas. C'est aussi ce que le D5 du rapport 8D rassemble. -->
+      <mat-card class="capa-action-card" *ngIf="n.capaCaseId" data-test="capa-action">
+        <mat-card-content>
+          <div class="capa-action-head">
+            <span class="info-label" i18n="@@nc.detail.capa-action">Action corrective en cours</span>
+            <a mat-stroked-button [routerLink]="['/capa', n.capaCaseId]" data-test="capa-action-dossier">
+              <mat-icon>open_in_new</mat-icon>
+              <span i18n="@@nc.detail.open-capa">Voir la CAPA</span>
+            </a>
+          </div>
+          <qos-capa-action-panel [capaCaseId]="n.capaCaseId"
+                                 (changed)="reload()"></qos-capa-action-panel>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Les schemas d'analyse de cause, LA ou l'ecart se discute. Les boutons
+           de l'en-tete emmenaient les deroule dans un autre ecran ; on ne voyait
+           donc pas, en lisant la fiche, si la cause avait ete cherchee -- ni ce
+           qu'on avait trouve. La fiche MONTRE, les ecrans dedies modifient. -->
+      <mat-card class="cause-card"
+                *ngIf="(ishikawa$ | async)?.length || (fiveWhys$ | async)?.length"
+                data-test="analyse-de-cause">
+        <mat-card-content>
+          <span class="info-label" i18n="@@nc.detail.cause-analysis">Analyse de cause</span>
+
+          <section class="cause-block" *ngFor="let chaine of fiveWhys$ | async"
+                   data-test="cinq-pourquoi-bloc">
+            <header class="cause-head">
+              <h3 i18n="@@nc.detail.five-whys">5 Pourquoi</h3>
+              <a mat-stroked-button [routerLink]="['/five-whys', chaine.id]"
+                 data-test="cinq-pourquoi-ouvrir">
+                <mat-icon>open_in_new</mat-icon>
+                <span i18n="@@nc.detail.cause-open-whys">Dérouler l’analyse</span>
+              </a>
+            </header>
+            <qos-five-whys-cascade [steps]="chaine.steps"
+                                   [rootCause]="chaine.rootCause"></qos-five-whys-cascade>
+            <!-- La chaine encore vide n'est pas une erreur : elle vient d'etre
+                 ouverte, et c'est l'ecran dedie qui la deroule. -->
+            <p class="cause-empty" *ngIf="!chaine.steps?.length"
+               i18n="@@nc.detail.cause-whys-empty">
+              Aucun pourquoi n’a encore été posé. Déroulez l’analyse pour commencer.
+            </p>
+            <p class="cause-root" *ngIf="chaine.rootCause" data-test="cinq-pourquoi-racine">
+              <span i18n="@@nc.detail.root-cause">Cause racine</span> : {{ chaine.rootCause }}
+            </p>
+          </section>
+
+          <section class="cause-block" *ngFor="let diagramme of ishikawa$ | async"
+                   data-test="ishikawa-bloc">
+            <header class="cause-head">
+              <h3 i18n="@@nc.detail.ishikawa">Ishikawa</h3>
+              <a mat-stroked-button [routerLink]="['/ishikawa', diagramme.id]"
+                 data-test="ishikawa-ouvrir">
+                <mat-icon>open_in_new</mat-icon>
+                <span i18n="@@nc.detail.cause-open-ishikawa">Travailler le diagramme</span>
+              </a>
+            </header>
+            <qos-ishikawa-fishbone [problem]="diagramme.problemStatement"
+                                   [branches]="fishboneBranches(diagramme)"
+                                   (causeActivate)="openCause(diagramme)"></qos-ishikawa-fishbone>
+            <p class="cause-empty" *ngIf="!diagramme.causes?.length"
+               i18n="@@nc.detail.cause-ishikawa-empty">
+              Aucune cause n’a encore été posée sur ce diagramme.
+            </p>
+          </section>
         </mat-card-content>
       </mat-card>
 

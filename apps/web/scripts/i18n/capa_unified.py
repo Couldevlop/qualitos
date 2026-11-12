@@ -146,4 +146,8 @@ TRANSLATIONS = {
         '{$audit} / constat {$rank}', '{$audit} / finding {$rank}', '{$audit} / hallazgo {$rank}',
         '{$audit} / الملاحظة {$rank}', '{$audit} / 所見 {$rank}', '{$audit} / 发现项 {$rank}'),
     'capa.list.filter-criticity': ('Filtrer par criticité', 'Filter by criticality', 'Filtrar por criticidad', 'تصفية حسب الأهمية', '重要度で絞り込み', '按严重程度筛选'),
+    'capa.action-panel.failed': (
+        "L’action de la CAPA n’a pas pu être lue.", 'The CAPA action could not be read.',
+        'No se pudo leer la acción de la CAPA.', 'تعذّرت قراءة إجراء الـ CAPA.',
+        'CAPA の処置を読み込めませんでした。', '无法读取该 CAPA 的措施。'),
 }

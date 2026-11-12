@@ -7726,6 +7726,10 @@ Portail clients</source>
         <source>Filtrer par criticité</source>
         <target state="translated">重要度で絞り込み</target>
       </trans-unit>
+      <trans-unit id="capa.action-panel.failed" datatype="html">
+        <source>L’action de la CAPA n’a pas pu être lue.</source>
+        <target state="translated">CAPA の処置を読み込めませんでした。</target>
+      </trans-unit>
       <trans-unit id="common.yes" datatype="html">
         <source>Oui</source>
         <target state="translated">はい</target>
@@ -11608,6 +11612,42 @@ Coordonnées professionnelles</source>
         <source><x id="COUNT"/> personne(s) proposée(s)</source>
         <target state="translated">候補 <x id="COUNT"/> 件</target>
       </trans-unit>
+      <trans-unit id="directory.team.label" datatype="html">
+        <source>Équipe</source>
+        <target state="translated">チーム</target>
+      </trans-unit>
+      <trans-unit id="directory.team.placeholder" datatype="html">
+        <source>Rechercher par nom ou adresse</source>
+        <target state="translated">名前またはメールアドレスで検索</target>
+      </trans-unit>
+      <trans-unit id="directory.team.empty" datatype="html">
+        <source>Personne n'est encore nommée.</source>
+        <target state="translated">まだ誰も指名されていません。</target>
+      </trans-unit>
+      <trans-unit id="directory.team.empty-required" datatype="html">
+        <source>Nommez au moins une personne : la première désignée pilote.</source>
+        <target state="translated">少なくとも 1 名を指名してください。最初の 1 名がリーダーになります。</target>
+      </trans-unit>
+      <trans-unit id="directory.team.full" datatype="html">
+        <source>Équipe au complet (<x id="MAX"/> personnes). Retirez quelqu'un pour en ajouter une autre.</source>
+        <target state="translated">チームは定員（<x id="MAX"/> 名）です。追加するには誰かを外してください。</target>
+      </trans-unit>
+      <trans-unit id="directory.team.role-lead" datatype="html">
+        <source>Pilote</source>
+        <target state="translated">リーダー</target>
+      </trans-unit>
+      <trans-unit id="directory.team.role-member" datatype="html">
+        <source>Membre</source>
+        <target state="translated">メンバー</target>
+      </trans-unit>
+      <trans-unit id="directory.team.remove-one" datatype="html">
+        <source>Retirer <x id="NAME"/> de l'équipe</source>
+        <target state="translated"><x id="NAME"/> をチームから外す</target>
+      </trans-unit>
+      <trans-unit id="directory.team.promote-one" datatype="html">
+        <source>Remonter <x id="NAME"/> d'un rang</source>
+        <target state="translated"><x id="NAME"/> を 1 つ上に移動</target>
+      </trans-unit>
       <trans-unit id="directory.person.unknown" datatype="html">
         <source>Personne inconnue</source>
         <target state="translated">不明な担当者</target>
@@ -13188,10 +13228,6 @@ Coordonnées professionnelles</source>
         <source>La photo n'a pas pu être envoyée.</source>
         <target state="translated">写真を送信できませんでした。</target>
       </trans-unit>
-      <trans-unit id="nav.forecast" datatype="html">
-        <source>Prévision KPI</source>
-        <target state="translated">KPI予測</target>
-      </trans-unit>
       <trans-unit id="forecast.kpi.title" datatype="html">
         <source>Prévision KPI</source>
         <target state="translated">KPI予測</target>
@@ -13379,6 +13415,102 @@ Coordonnées professionnelles</source>
       <trans-unit id="forecast.kpi.role-link-manual-text" datatype="html">
         <source>La prévision n'ouvre rien d'elle-même : ni CAPA, ni cycle PDCA, ni projet DMAIC. Elle éclaire la décision, et c'est depuis le module concerné qu'on l'engage — une projection n'est pas un constat, et elle ne doit pas déclencher d'action au registre.</source>
         <target state="translated">予測はそれ自体では何も起票しません。CAPA も PDCA サイクルも DMAIC プロジェクトも開きません。判断を助けるだけで、着手はそれぞれのモジュールから行います。予測は確認された事実ではなく、台帳に対策を登録する根拠にはなりません。</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.title" datatype="html">
+        <source>Prévision</source>
+        <target state="translated">予測</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.intro" datatype="html">
+        <source>Au rythme des mesures enregistrées, l'indicateur atteindra-t-il sa cible ? Le lissage exponentiel prolonge le niveau et la tendance de la série ; la bande grise dit l'incertitude à 95 %. Une projection n'est pas un constat : elle n'ouvre ni action corrective ni cycle d'amélioration d'elle-même.</source>
+        <target state="translated">記録された測定値のペースでは、この指標は目標に到達するでしょうか。指数平滑により系列の水準とトレンドを延長し、灰色の帯で 95 % の不確実性を示します。予測は確認された事実ではなく、それ自体で是正処置や改善サイクルを起票することはありません。</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.no-target" datatype="html">
+        <source>Cet indicateur n'a pas de valeur cible : renseignez-la pour obtenir une prévision.</source>
+        <target state="translated">この指標には目標値がありません。予測を得るには目標値を設定してください。</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.too-few" datatype="html">
+        <source><x id="count"/> mesure(s) enregistrée(s) : il en faut au moins <x id="min"/> pour projeter une tendance.</source>
+        <target state="translated">登録済みの測定値は <x id="count"/> 件です。トレンドを延長するには <x id="min"/> 件以上必要です。</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.measures-error" datatype="html">
+        <source>Impossible de lire les mesures de cet indicateur.</source>
+        <target state="translated">この指標の測定値を読み取れませんでした。</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.card-probability" datatype="html">
+        <source>Probabilité d'atteinte</source>
+        <target state="translated">目標到達確率</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.card-confidence" datatype="html">
+        <source>Confiance</source>
+        <target state="translated">信頼度</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.card-model" datatype="html">
+        <source>Modèle</source>
+        <target state="translated">モデル</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.points" datatype="html">
+        <source>mesures</source>
+        <target state="translated">件の測定値</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.slope" datatype="html">
+        <source>tendance</source>
+        <target state="translated">トレンド</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.period" datatype="html">
+        <source>période</source>
+        <target state="translated">期</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.dir-at-least" datatype="html">
+        <source>atteindre au moins</source>
+        <target state="translated">少なくとも到達</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.dir-at-most" datatype="html">
+        <source>ne pas dépasser</source>
+        <target state="translated">超えない</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.model-hw" datatype="html">
+        <source>Holt-Winters (saisonnier)</source>
+        <target state="translated">Holt-Winters（季節性）</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.model-holt" datatype="html">
+        <source>Holt (niveau + tendance)</source>
+        <target state="translated">Holt（水準＋トレンド）</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.table-caption" datatype="html">
+        <source>Points projetés</source>
+        <target state="translated">予測点</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.col-step" datatype="html">
+        <source>Horizon</source>
+        <target state="translated">予測期間</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.col-value" datatype="html">
+        <source>Prévision</source>
+        <target state="translated">予測値</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.col-interval" datatype="html">
+        <source>Intervalle 95 %</source>
+        <target state="translated">95 % 区間</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.err-backend" datatype="html">
+        <source>Service de prévision injoignable.</source>
+        <target state="translated">予測サービスに接続できません。</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.err-unprocessable" datatype="html">
+        <source>Série insuffisante pour une prévision fiable.</source>
+        <target state="translated">信頼できる予測に足るデータがありません。</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.err-quota" datatype="html">
+        <source>Débit IA dépassé pour ce client — réessayez plus tard.</source>
+        <target state="translated">このお客様の AI 利用上限を超えました。しばらくしてから再試行してください。</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.err-unavailable" datatype="html">
+        <source>Service de prévision momentanément indisponible.</source>
+        <target state="translated">予測サービスは一時的に利用できません。</target>
+      </trans-unit>
+      <trans-unit id="forecast.panel.err-generic" datatype="html">
+        <source>Échec de la prévision (HTTP <x id="status"/>).</source>
+        <target state="translated">予測に失敗しました（HTTP <x id="status"/>）。</target>
       </trans-unit>
       <trans-unit id="nav.admin-documents" datatype="html">
         <source>Documentation</source>
@@ -21376,6 +21508,70 @@ historique 12 mois</source>
       <trans-unit id="nc.reject.error" datatype="html">
         <source>Rejet impossible.</source>
         <target state="translated">却下できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="nc.create.section-team" datatype="html">
+        <source>Qui s’en occupe</source>
+        <target state="translated">担当者</target>
+      </trans-unit>
+      <trans-unit id="nc.create.team-label" datatype="html">
+        <source>Équipe en charge</source>
+        <target state="translated">担当チーム</target>
+      </trans-unit>
+      <trans-unit id="nc.create.team-hint" datatype="html">
+        <source>Le premier nommé pilote l’écart. Cette équipe est reprise en D1 du rapport 8D.</source>
+        <target state="translated">最初に指名された人がリーダーです。このチームは 8D 報告書の D1 に引き継がれます。</target>
+      </trans-unit>
+      <trans-unit id="nc.create.blocked-team" datatype="html">
+        <source>Nommez au moins une personne dans l’équipe en charge.</source>
+        <target state="translated">担当チームに少なくとも 1 名を指名してください。</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.team" datatype="html">
+        <source>Équipe en charge</source>
+        <target state="translated">担当チーム</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.team-edit" datatype="html">
+        <source>Modifier l’équipe</source>
+        <target state="translated">チームを変更</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.team-add" datatype="html">
+        <source>Ajouter une personne</source>
+        <target state="translated">担当者を追加</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.team-none" datatype="html">
+        <source>Aucune équipe nommée sur cet écart. Le D1 du rapport 8D restera à saisir.</source>
+        <target state="translated">この不適合にはチームが指名されていません。8D 報告書の D1 は手入力のままになります。</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.team-saved" datatype="html">
+        <source>Équipe enregistrée.</source>
+        <target state="translated">チームを保存しました。</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.team-failed" datatype="html">
+        <source>L’équipe n’a pas pu être enregistrée.</source>
+        <target state="translated">チームを保存できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.cause-analysis" datatype="html">
+        <source>Analyse de cause</source>
+        <target state="translated">原因分析</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.cause-open-whys" datatype="html">
+        <source>Dérouler l’analyse</source>
+        <target state="translated">分析を進める</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.cause-open-ishikawa" datatype="html">
+        <source>Travailler le diagramme</source>
+        <target state="translated">図を編集する</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.cause-whys-empty" datatype="html">
+        <source>Aucun pourquoi n’a encore été posé. Déroulez l’analyse pour commencer.</source>
+        <target state="translated">まだ「なぜ」が立てられていません。分析を進めて始めてください。</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.cause-ishikawa-empty" datatype="html">
+        <source>Aucune cause n’a encore été posée sur ce diagramme.</source>
+        <target state="translated">この図にはまだ原因が置かれていません。</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.capa-action" datatype="html">
+        <source>Action corrective en cours</source>
+        <target state="translated">進行中の是正処置</target>
       </trans-unit>
       <trans-unit id="nc.8d.title" datatype="html">
         <source>Rapport 8D</source>
@@ -30072,6 +30268,54 @@ historique 12 mois</source>
       <trans-unit id="spc.forecast.err-min-four" datatype="html">
         <source>Au moins 4 mesures sont nécessaires pour prévoir une dérive.</source>
         <target state="translated">ドリフトの予測には測定値が4件以上必要です。</target>
+      </trans-unit>
+      <trans-unit id="spc.import.title" datatype="html">
+        <source>Import Excel</source>
+        <target state="translated">Excel 取り込み</target>
+      </trans-unit>
+      <trans-unit id="spc.import.download-template" datatype="html">
+        <source>Télécharger le modèle</source>
+        <target state="translated">ひな形をダウンロード</target>
+      </trans-unit>
+      <trans-unit id="spc.import.choose" datatype="html">
+        <source>Importer un classeur</source>
+        <target state="translated">ブックを取り込む</target>
+      </trans-unit>
+      <trans-unit id="spc.import.reading" datatype="html">
+        <source>Lecture…</source>
+        <target state="translated">読み込み中…</target>
+      </trans-unit>
+      <trans-unit id="spc.import.hint" datatype="html">
+        <source>Une ligne par pièce, une colonne par sous-groupe. L'en-tête et la colonne des rangs sont ignorés ; rien n'est enregistré avant que vous n'enregistriez l'étude.</source>
+        <target state="translated">1 部品につき 1 行、1 サブグループにつき 1 列。見出し行と順位列は無視されます。研究を保存するまで何も保存されません。</target>
+      </trans-unit>
+      <trans-unit id="spc.import.warnings-title" datatype="html">
+        <source>Ce que la lecture a écarté</source>
+        <target state="translated">取り込みで除外されたもの</target>
+      </trans-unit>
+      <trans-unit id="spc.import.wrong-extension" datatype="html">
+        <source>Attendu un classeur Excel .xlsx (ni .xls, ni .csv).</source>
+        <target state="translated">Excel の .xlsx ブックが必要です（.xls や .csv は不可）。</target>
+      </trans-unit>
+      <trans-unit id="spc.import.failed" datatype="html">
+        <source>Le classeur n'a pas pu être lu.</source>
+        <target state="translated">ブックを読み込めませんでした。</target>
+      </trans-unit>
+      <trans-unit id="spc.import.template-failed" datatype="html">
+        <source>Le modèle n'a pas pu être téléchargé.</source>
+        <target state="translated">ひな形をダウンロードできませんでした。</target>
+      </trans-unit>
+      <trans-unit id="spc.import.confirm-title" datatype="html">
+        <source>Remplacer les mesures saisies ?</source>
+        <target state="translated">入力済みの測定値を置き換えますか？</target>
+      </trans-unit>
+      <trans-unit id="spc.import.confirm-message" datatype="html">
+        <source>Le classeur remplace toutes les mesures de la grille. L'identification de la pièce et les limites ne changent pas, et rien n'est enregistré tant que vous n'enregistrez pas l'étude.</source>
+        <target state="translated">ブックはグリッド内のすべての測定値を置き換えます。部品の識別情報と規格限界は変わらず、研究を保存するまで何も保存されません。</target>
+      </trans-unit>
+      <trans-unit id="spc.import.confirm" datatype="html">
+        <source>Importer le classeur</source>
+        <target state="translated">ブックを取り込む</target>
       </trans-unit>
       <trans-unit id="stakeholders.register-risk" datatype="html">
         <source>Inscrire le risque</source>
