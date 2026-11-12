@@ -29658,10 +29658,6 @@ declared income
         <source>Saisir et supprimer les études de capabilité SPC</source>
         <target state="translated">Record and delete SPC capability studies</target>
       </trans-unit>
-      <trans-unit id="authz.module.spc" datatype="html">
-        <source>SPC</source>
-        <target state="translated">SPC</target>
-      </trans-unit>
       <trans-unit id="spc.status.capable" datatype="html">
         <source>Maîtrisé</source>
         <target state="translated">Under control</target>

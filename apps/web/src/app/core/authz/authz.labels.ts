@@ -48,7 +48,6 @@ const MODULES: Record<string, string> = {
   document: $localize`:@@authz.module.document:Documents`,
   risk: $localize`:@@authz.module.risk:Risques et opportunités`,
   change: $localize`:@@authz.module.change:Gestion des changements`,
-  spc: $localize`:@@authz.module.spc:SPC`,
   dmaic: $localize`:@@authz.module.dmaic:DMAIC`,
   training: $localize`:@@authz.module.training:Formation`,
   stakeholder: $localize`:@@authz.module.stakeholder:Parties intéressées`,

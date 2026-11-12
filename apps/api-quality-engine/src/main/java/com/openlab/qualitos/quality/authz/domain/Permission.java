@@ -76,8 +76,17 @@ public enum Permission {
     CHANGE_ANALYZE("change.analyze", "change", pilotage()),
 
     // ---------- SPC (ADR 0096) ----------
-    /** Créer, corriger et supprimer une étude de capabilité, cocher son plan d'actions. */
-    SPC_MANAGE("spc.manage", "spc", pilotage()),
+    /**
+     * Créer, corriger et supprimer une étude de capabilité, cocher son plan d'actions.
+     *
+     * <p>Rangée sous {@code dmaic} et non sous un module « spc » : la capabilité
+     * relève du pilotage Six Sigma, c'est ce que déclarent déjà les contrôleurs
+     * ({@code @RequiresModule("dmaic")}) et la barre de navigation. Le catalogue
+     * des modules ne contient AUCUN code {@code spc} — l'écran des droits
+     * groupait donc cette action sous un module inexistant, dont il ne pouvait
+     * nommer ni le libellé ni le périmètre.
+     */
+    SPC_MANAGE("spc.manage", "dmaic", pilotage()),
 
     // ---------- indicateurs (KPI) ----------
     /**

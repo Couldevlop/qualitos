@@ -117,6 +117,10 @@ avant.
    > contrôle n'est le secret de personne. Lui faire **ouvrir un dossier CAPA**, en revanche,
    > demande `capa.create` — le même droit que partout ailleurs. Sans cela, la carte serait
    > une porte de service vers les dossiers que la [fiche CAPA](capa.md) refuse d'ouvrir.
+   >
+   > Et le module **DMAIC** doit être actif : l'ouverture automatique sur signal SPC est ce
+   > qu'il vend. Lui inactif, la case disparaît, mais **la carte reste lisible** — une
+   > décision commerciale ne doit jamais se transformer en perte de conformité.
 3. **Lire le verdict** : état du procédé, ligne centrale, limites de contrôle (± 3 σ) avec la
    valeur de σ, puis la carte et la liste des **8 règles de Nelson** violées — point hors
    limites (> 3σ, sévérité haute), points du même côté, tendance, sciage (alternance),
@@ -150,7 +154,10 @@ ouverte sans que vous l'ayez demandé.
 - **Lire** le registre et les fiches : tout membre de l'organisation.
 - **Créer, réviser, supprimer** une étude et changer son plan d'actions : le droit `spc.manage`,
   réglable par l'administrateur du client dans *Administration › Rôles et droits*.
-- Le module **DMAIC** doit être actif : la capabilité relève du pilotage Six Sigma.
+- **Faire ouvrir une CAPA** par la carte de contrôle ou la prévision : le droit `capa.create`.
+- Le module **DMAIC** doit être actif : la capabilité relève du pilotage Six Sigma. C'est aussi
+  sous ce module que l'écran des rôles range `spc.manage` — il n'existe pas de module « SPC »
+  séparé à souscrire.
 
 Création, révision, plan d'actions, suppression et réglage des seuils sont journalisés avec la
 taille du sous-groupe, Cp, Cpk, le statut et le plan d'actions — **ni mesure, ni nom de
