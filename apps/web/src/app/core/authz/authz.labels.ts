@@ -35,7 +35,10 @@ const PERMISSIONS: Record<string, string> = {
   'change.analyze': $localize`:@@authz.perm.change-analyze:Gérer toutes les demandes de changement`,
   'spc.manage': $localize`:@@authz.perm.spc-manage:Saisir et supprimer les études de capabilité SPC`,
   'dmaic.manage': $localize`:@@authz.perm.dmaic-manage:Remplir la fiche de résolution DMAIC et ses photos`,
-  'training.manage': $localize`:@@authz.perm.training-manage:Tenir la matrice de compétences`
+  'training.manage': $localize`:@@authz.perm.training-manage:Tenir la matrice de compétences`,
+  'stakeholder.manage': $localize`:@@authz.perm.stakeholder-manage:Tenir le registre des parties intéressées`,
+  'kpi.manage': $localize`:@@authz.perm.kpi-manage:Définir les indicateurs, leurs cibles et leurs seuils`,
+  'kpi.measure': $localize`:@@authz.perm.kpi-measure:Consigner un relevé d'indicateur`
 };
 
 const MODULES: Record<string, string> = {
@@ -47,7 +50,9 @@ const MODULES: Record<string, string> = {
   change: $localize`:@@authz.module.change:Gestion des changements`,
   spc: $localize`:@@authz.module.spc:SPC`,
   dmaic: $localize`:@@authz.module.dmaic:DMAIC`,
-  training: $localize`:@@authz.module.training:Formation`
+  training: $localize`:@@authz.module.training:Formation`,
+  stakeholder: $localize`:@@authz.module.stakeholder:Parties intéressées`,
+  kpi: $localize`:@@authz.module.kpi:Indicateurs`
 };
 
 const SYSTEM_ROLES: Record<string, string> = {

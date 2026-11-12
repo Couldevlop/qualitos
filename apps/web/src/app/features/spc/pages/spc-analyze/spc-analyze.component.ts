@@ -1,9 +1,11 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators } from '@angular/forms';
 import type { EChartsCoreOption } from 'echarts/core';
 import { Observable } from 'rxjs';
 
+import { AuthzService } from '../../../../core/authz/authz.service';
 import { SpcService } from '../../spc.service';
 import {
   KpiOption,
@@ -80,7 +82,30 @@ export class SpcAnalyzeComponent implements OnInit {
   private lastLabels?: string[];
   private lastKpi: { id: string; limit: number } | null = null;
 
-  constructor(private readonly fb: FormBuilder, private readonly spc: SpcService) {}
+  /**
+   * Qui peut faire ouvrir un dossier : le serveur tranche (capa.create) ; l'ecran
+   * n'affiche que ce qui servira.
+   *
+   * <p>LIRE la carte ne demande rien -- savoir si un procede est sous controle
+   * n'est le secret de personne. Lui faire OUVRIR un dossier CAPA, si : c'est le
+   * meme droit que sur la fiche CAPA, et la case a cocher ne se propose donc qu'a
+   * qui l'obtiendra.
+   */
+  canOpenCapa = false;
+
+  constructor(private readonly fb: FormBuilder, private readonly spc: SpcService,
+              authz: AuthzService) {
+    authz.can('capa.create').pipe(takeUntilDestroyed()).subscribe(v => {
+      this.canOpenCapa = !!v;
+      if (!v) {
+        // Un formulaire qui garde la case cochee enverrait openCapa=true depuis
+        // un ecran qui ne la montre plus : le serveur refuserait la lecture de
+        // la carte pour une case invisible.
+        this.kpiForm.patchValue({ openCapa: false });
+        this.forecastForm.patchValue({ openCapa: false });
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.spc.listKpis().subscribe({

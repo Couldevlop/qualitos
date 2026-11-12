@@ -1,3 +1,5 @@
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -8,6 +10,7 @@ import { catchError, finalize, map, shareReplay, startWith, switchMap, tap } fro
 
 import { deferredView } from '../../../../core/rx/deferred-view';
 import { safeErrorMessage } from '../../../../core/http/error-message';
+import { AuthzService } from '../../../../core/authz/authz.service';
 import { KpisService } from '../../kpis.service';
 import { KpiDirection, KpiResponse, KpiStatus } from '../../kpis.types';
 import { KpisDialogComponent } from '../kpis-dialog/kpis-dialog.component';
@@ -46,11 +49,17 @@ export class KpisListComponent implements OnInit {
   private readonly refresh$ = new BehaviorSubject<void>(undefined);
   private readonly page$    = new BehaviorSubject<{ index: number; size: number }>({ index: 0, size: 20 });
 
+  /** Qui ecrit : le serveur tranche (kpi.manage) ; l'ecran n'affiche que ce qui servira. */
+  canManage = false;
+
   constructor(
     private readonly svc: KpisService,
     private readonly dialog: MatDialog,
-    private readonly router: Router
-  ) {}
+    private readonly router: Router,
+    authz: AuthzService
+  ) {
+    authz.can('kpi.manage').pipe(takeUntilDestroyed()).subscribe(v => this.canManage = v);
+  }
 
   ngOnInit(): void {
     this.kpis$ = combineLatest([

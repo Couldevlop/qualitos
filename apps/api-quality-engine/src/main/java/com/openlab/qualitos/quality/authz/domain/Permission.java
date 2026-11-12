@@ -79,6 +79,31 @@ public enum Permission {
     /** Créer, corriger et supprimer une étude de capabilité, cocher son plan d'actions. */
     SPC_MANAGE("spc.manage", "spc", pilotage()),
 
+    // ---------- indicateurs (KPI) ----------
+    /**
+     * Définir un indicateur : son intitulé, sa formule, sa CIBLE et ses SEUILS,
+     * son propriétaire, son cycle de vie (activer, rouvrir, archiver, supprimer).
+     *
+     * <p>Un acte de pilotage, et le mot « cible » dit pourquoi : déplacer la
+     * cible d'un indicateur qu'on n'atteint pas le fait passer au vert sans que
+     * rien n'ait changé sur le terrain. C'est la revue de direction qui fixe les
+     * objectifs (ISO 9001 §6.2, §9.3), pas celui que l'indicateur mesure.
+     *
+     * <p>La LECTURE reste ouverte à tout authentifié : chacun doit pouvoir voir
+     * où en est ce sur quoi on le juge.
+     */
+    KPI_MANAGE("kpi.manage", "kpi", pilotage()),
+
+    /**
+     * Consigner un relevé : la valeur mesurée sur une période.
+     *
+     * <p>Ouverte aussi à l'utilisateur, parce qu'un relevé est un FAIT, consigné
+     * par celui qui a mesuré — contrairement à la cible, qui est une décision.
+     * En RETIRER un relève en revanche de {@link #KPI_MANAGE} : effacer un relevé
+     * gênant change la courbe sans laisser de trace à l'écran.
+     */
+    KPI_MEASURE("kpi.measure", "kpi", plus(pilotage(), USER)),
+
     // ---------- DMAIC (ADR 0101) ----------
     /** Remplir la fiche de résolution d'un projet : réponses, causes, plan d'actions, photos. */
     DMAIC_MANAGE("dmaic.manage", "dmaic", pilotage()),

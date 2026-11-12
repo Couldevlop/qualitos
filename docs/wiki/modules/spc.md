@@ -112,6 +112,11 @@ avant.
    mesures), et cochez au besoin « Ouvrir une CAPA si le procédé est hors-contrôle ». La CAPA
    ouverte est **corrective**, de source `SPC_ALERT`, et un lien direct vers le dossier
    s'affiche.
+
+   > **Lire la carte** ne demande aucun droit particulier : savoir si un procédé est sous
+   > contrôle n'est le secret de personne. Lui faire **ouvrir un dossier CAPA**, en revanche,
+   > demande `capa.create` — le même droit que partout ailleurs. Sans cela, la carte serait
+   > une porte de service vers les dossiers que la [fiche CAPA](capa.md) refuse d'ouvrir.
 3. **Lire le verdict** : état du procédé, ligne centrale, limites de contrôle (± 3 σ) avec la
    valeur de σ, puis la carte et la liste des **8 règles de Nelson** violées — point hors
    limites (> 3σ, sévérité haute), points du même côté, tendance, sciage (alternance),

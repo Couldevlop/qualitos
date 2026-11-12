@@ -5,6 +5,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, Observable, forkJoin, of } from 'rxjs';
 import { catchError, shareReplay, switchMap, tap } from 'rxjs/operators';
 
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+
+import { AuthzService } from '../../../../core/authz/authz.service';
 import { deferredView } from '../../../../core/rx/deferred-view';
 import { ConfirmDialogComponent } from '../../../../shared/ui/confirm-dialog/confirm-dialog.component';
 import { safeErrorMessage } from '../../../../core/http/error-message';
@@ -46,13 +49,28 @@ export class KpisDetailComponent implements OnInit {
   private readonly refresh$ = new BehaviorSubject<void>(undefined);
   private kpiId = '';
 
+  /**
+   * Qui ecrit : le serveur tranche (kpi.manage, kpi.measure) ; l'ecran n'affiche
+   * que ce qui servira. Un bouton propose a qui sera refuse est un bouton qui
+   * mentira au clic.
+   *
+   * <p>Deux droits, parce que les deux gestes ne sont pas de meme nature :
+   * deplacer une CIBLE est une decision, consigner un RELEVE est un fait.
+   */
+  canManage = false;
+  canMeasure = false;
+
   constructor(
     private readonly route: ActivatedRoute,
     private readonly router: Router,
     private readonly svc: KpisService,
     private readonly dialog: MatDialog,
-    private readonly snack: MatSnackBar
-  ) {}
+    private readonly snack: MatSnackBar,
+    authz: AuthzService
+  ) {
+    authz.can('kpi.manage').pipe(takeUntilDestroyed()).subscribe(v => this.canManage = v);
+    authz.can('kpi.measure').pipe(takeUntilDestroyed()).subscribe(v => this.canMeasure = v);
+  }
 
   ngOnInit(): void {
     this.kpi$ = this.route.paramMap.pipe(

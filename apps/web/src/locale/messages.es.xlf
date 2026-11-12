@@ -18350,6 +18350,30 @@ historial de 12 meses</target>
         <source>Cible</source>
         <target state="translated">Objetivo</target>
       </trans-unit>
+      <trans-unit id="authz.perm.kpi-manage" datatype="html">
+        <source>Définir les indicateurs, leurs cibles et leurs seuils</source>
+        <target state="translated">Definir los indicadores, sus objetivos y sus umbrales</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.kpi-measure" datatype="html">
+        <source>Consigner un relevé d'indicateur</source>
+        <target state="translated">Registrar una medición de indicador</target>
+      </trans-unit>
+      <trans-unit id="authz.module.kpi" datatype="html">
+        <source>Indicateurs</source>
+        <target state="translated">Indicadores</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.stakeholder-manage" datatype="html">
+        <source>Tenir le registre des parties intéressées</source>
+        <target state="translated">Mantener el registro de las partes interesadas</target>
+      </trans-unit>
+      <trans-unit id="authz.module.stakeholder" datatype="html">
+        <source>Parties intéressées</source>
+        <target state="translated">Partes interesadas</target>
+      </trans-unit>
+      <trans-unit id="kpis.detail.measurements-empty-readonly" datatype="html">
+        <source>Aucune mesure pour l'instant.</source>
+        <target state="translated">Ninguna medición por ahora.</target>
+      </trans-unit>
       <trans-unit id="nav.marketplace" datatype="html">
         <source>Marketplace</source>
         <target state="translated">Marketplace</target>
