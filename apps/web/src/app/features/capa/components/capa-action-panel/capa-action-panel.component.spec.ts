@@ -11,7 +11,7 @@ import { DirectoryService } from '../../../../core/directory/directory.service';
 import { CapaActionPanelModule } from '../../capa-action-panel.module';
 import { CapaService } from '../../capa.service';
 import {
-  CapaActionResponse, CapaActionStatus, CapaActionType, CapaCaseResponse, CapaStatus
+  CapaActionResponse, CapaActionStatus, CapaActionType, CapaCaseResponse, CapaEvidence, CapaStatus
 } from '../../capa.types';
 import { CapaActionPanelComponent } from './capa-action-panel.component';
 
@@ -26,6 +26,29 @@ function action(overrides: Partial<CapaActionResponse> = {}): CapaActionResponse
     assigneeName: 'Marie Durand',
     ...overrides
   };
+}
+
+/** La piece d'une action : celle qui atteste que CE geste a ete fait (ADR 0052). */
+function preuve(overrides: Partial<CapaEvidence> = {}): CapaEvidence {
+  return {
+    id: 'evd-1',
+    capaId: 'capa-1',
+    actionId: 'act-1',
+    contentType: 'application/pdf',
+    sizeBytes: 2048,
+    originalFilename: 'bon-de-travail.pdf',
+    createdAt: '2026-11-02T09:00:00Z',
+    url: 'https://stockage.example/p?sig=abc',
+    ...overrides
+  };
+}
+
+/** Un evenement de selection de fichier, tel que le gabarit en produit un. */
+function fichierChoisi(): Event {
+  const file = new File(['%PDF-1.7'], 'bon-de-travail.pdf', { type: 'application/pdf' });
+  const input = document.createElement('input');
+  Object.defineProperty(input, 'files', { value: [file] });
+  return { target: input } as unknown as Event;
 }
 
 function dossier(overrides: Partial<CapaCaseResponse> = {}): CapaCaseResponse {
@@ -84,15 +107,23 @@ describe('CapaActionPanelComponent', () => {
     fixture.debugElement.children[0].componentInstance as CapaActionPanelComponent;
 
   async function setup(
-    opts: { dossier?: CapaCaseResponse; droits?: boolean; panne?: boolean } = {}
+    opts: {
+      dossier?: CapaCaseResponse; droits?: boolean; panne?: boolean;
+      preuves?: CapaEvidence[];
+    } = {}
   ): Promise<void> {
     TestBed.resetTestingModule();
 
-    capa = jasmine.createSpyObj<CapaService>('CapaService', ['getCase', 'updateAction']);
+    capa = jasmine.createSpyObj<CapaService>('CapaService',
+      ['getCase', 'updateAction',
+       'listActionEvidences', 'uploadActionEvidence', 'deleteActionEvidence']);
     capa.getCase.and.returnValue(opts.panne
       ? throwError(() => new HttpErrorResponse({ status: 503 }))
       : of(opts.dossier ?? dossier()));
     capa.updateAction.and.returnValue(of(action({ status: 'IN_PROGRESS' })));
+    capa.listActionEvidences.and.returnValue(of(opts.preuves ?? []));
+    capa.uploadActionEvidence.and.returnValue(of(preuve()));
+    capa.deleteActionEvidence.and.returnValue(of(void 0));
 
     snack = jasmine.createSpyObj<MatSnackBar>('MatSnackBar', ['open']);
     ferme = undefined;
@@ -487,5 +518,170 @@ describe('CapaActionPanelComponent', () => {
       .map(s => panneau().actionStatusLabel(s));
     expect(new Set(libelles).size).toBe(3);
     expect(libelles.every(l => l.length > 0)).toBeTrue();
+  });
+
+  // ---------- la colonne Preuve (ADR 0052, ADR 0117) ----------
+
+  /**
+   * La piece d'une ACTION atteste que ce geste-la a ete fait. A ne pas
+   * confondre avec les preuves du DOSSIER, restees sur la fiche, qui attestent
+   * que le probleme a cesse (ISO 9001 §10.2) : un dossier peut tres bien avoir
+   * toutes ses actions prouvees et aucune preuve d'efficacite.
+   */
+  it('range la piece sous son action', async () => {
+    await setup({ preuves: [preuve()] });
+
+    const cellule = un('capa-action-preuve');
+    expect(cellule).not.toBeNull();
+    expect(cellule!.textContent).toContain('bon-de-travail.pdf');
+    expect(panneau().preuve('act-1')?.id).toBe('evd-1');
+  });
+
+  it('propose de joindre quand l\'action n\'a pas encore sa piece', async () => {
+    await setup();
+
+    expect(un('capa-action-preuve')!.textContent).toContain('Joindre');
+    expect(panneau().peutJoindre('act-1', 'IN_PROGRESS')).toBeTrue();
+  });
+
+  /**
+   * Le selecteur de fichier est UNIQUE pour tout le tableau : sans memoire de
+   * l'action visee, le fichier choisi atterrirait sur la derniere ligne rendue
+   * plutot que sur celle ou l'on a clique.
+   */
+  it('depose la piece sur l\'action visee, et pas sur une autre', async () => {
+    await setup({
+      dossier: dossier({ actions: [action(), action({ id: 'act-2', title: 'Former l\'equipe' })] })
+    });
+    const input = document.createElement('input');
+    spyOn(input, 'click');
+
+    panneau().choisirFichier(input, 'act-2');
+    panneau().fichierChoisi(fichierChoisi());
+
+    expect(input.click).toHaveBeenCalled();
+    expect(capa.uploadActionEvidence).toHaveBeenCalledWith('capa-1', 'act-2', jasmine.any(File));
+  });
+
+  it('ne tente rien quand aucun fichier n\'est choisi', async () => {
+    await setup();
+    const vide = document.createElement('input');
+    Object.defineProperty(vide, 'files', { value: [] });
+
+    panneau().fichierChoisi({ target: vide } as unknown as Event);
+
+    expect(capa.uploadActionEvidence).not.toHaveBeenCalled();
+  });
+
+  /**
+   * Chaque refus a sa raison : les confondre reviendrait a dire « non » sans
+   * dire quoi corriger.
+   */
+  it('distingue les refus de depot : trop lourd, format, action pourvue, action disparue',
+     async () => {
+    await setup();
+    const vus: string[] = [];
+    snack.open.and.callFake(((message: string) => { vus.push(message); }) as never);
+
+    for (const status of [413, 400, 409, 404]) {
+      capa.uploadActionEvidence.and.returnValue(
+        throwError(() => new HttpErrorResponse({ status })));
+      panneau().choisirFichier(document.createElement('input'), 'act-1');
+      panneau().fichierChoisi(fichierChoisi());
+    }
+
+    expect(vus.length).toBe(4);
+    expect(new Set(vus).size).toBe(4);
+  });
+
+  /**
+   * Stockage coupe sur l'environnement : la colonne le dit en cessant de
+   * proposer un depot voue au refus, plutot que de crier a la panne.
+   */
+  it('annonce le stockage coupe au lieu de proposer un depot voue au refus', async () => {
+    await setup();
+    capa.uploadActionEvidence.and.returnValue(throwError(() =>
+      new HttpErrorResponse({ status: 503, error: { type: 'urn:qualitos:storage-disabled' } })));
+
+    panneau().choisirFichier(document.createElement('input'), 'act-1');
+    panneau().fichierChoisi(fichierChoisi());
+
+    expect(panneau().stockageCoupe).toBeTrue();
+    expect(panneau().peutJoindre('act-1', 'IN_PROGRESS')).toBeFalse();
+  });
+
+  it('retire la piece apres confirmation, et la garde si on se ravise', async () => {
+    await setup({ preuves: [preuve()] });
+
+    ferme = false;
+    panneau().retirerPreuve(action(), preuve());
+    expect(capa.deleteActionEvidence).not.toHaveBeenCalled();
+
+    ferme = true;
+    panneau().retirerPreuve(action(), preuve());
+    expect(capa.deleteActionEvidence).toHaveBeenCalledWith('capa-1', 'act-1', 'evd-1');
+    expect(panneau().preuve('act-1')).toBeUndefined();
+  });
+
+  it('garde la piece quand le retrait echoue, et le dit', async () => {
+    await setup({ preuves: [preuve()] });
+    capa.deleteActionEvidence.and.returnValue(
+      throwError(() => new HttpErrorResponse({ status: 500 })));
+    ferme = true;
+
+    panneau().retirerPreuve(action(), preuve());
+
+    expect(snack.open).toHaveBeenCalled();
+    expect(panneau().preuve('act-1')).toBeDefined();
+  });
+
+  /** Un dossier clos garde ses preuves lisibles, sans laisser y toucher. */
+  it('verrouille la preuve sur un dossier clos, sans la cacher', async () => {
+    await setup({ dossier: dossier({ status: 'CLOSED' }), preuves: [preuve()] });
+
+    expect(un('capa-action-preuve')!.textContent).toContain('bon-de-travail.pdf');
+    expect(panneau().peutJoindre('act-1', 'CLOSED')).toBeFalse();
+  });
+
+  /**
+   * Une icone seule ou un mot isole ne dit pas SUR QUOI il agit : au lecteur
+   * d'ecran, huit lignes rendraient huit boutons « Joindre » indiscernables.
+   */
+  it('nomme l\'action visee dans les libelles d\'accessibilite', async () => {
+    await setup();
+
+    expect(panneau().joindreAria('Remplacer le joint')).toContain('Remplacer le joint');
+    expect(panneau().retirerAria('Remplacer le joint')).toContain('Remplacer le joint');
+  });
+
+  it('donne une icone par famille de document', async () => {
+    await setup();
+    const p = panneau();
+
+    expect(p.iconePreuve('application/pdf')).toBe('picture_as_pdf');
+    expect(p.iconePreuve('image/png')).toBe('image');
+    expect(p.iconePreuve('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'))
+      .toBe('table_chart');
+    expect(p.iconePreuve('application/vnd.openxmlformats-officedocument.wordprocessingml.document'))
+      .toBe('description');
+    expect(p.iconePreuve('application/octet-stream')).toBe('attach_file');
+  });
+
+  /**
+   * Le tableau reste LISIBLE quand les pieces ne se chargent pas : l'avancement
+   * des actions ne depend pas du stockage, et une erreur en travers de l'ecran
+   * empecherait de travailler pour une colonne.
+   */
+  it('reste lisible quand les pieces ne se chargent pas', async () => {
+    await setup();
+    capa.listActionEvidences.and.returnValue(throwError(() =>
+      new HttpErrorResponse({ status: 503, error: { type: 'urn:qualitos:storage-disabled' } })));
+
+    panneau().reload();
+    fixture.detectChanges();
+
+    expect(tous('capa-action-ligne').length).toBe(1);
+    expect(panneau().stockageCoupe).toBeTrue();
+    expect(un('capa-action-erreur')).toBeNull();
   });
 });

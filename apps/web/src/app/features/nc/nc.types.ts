@@ -36,6 +36,18 @@ export interface NcSubcategory {
   label: string;
 }
 
+/**
+ * Les natures d'une même famille, rangées sous elle.
+ *
+ * <p>Rendu en {@code mat-optgroup} par les deux écrans qui font choisir une
+ * nature — le filtre du registre et la fenêtre de création. Soixante natures à
+ * plat ne se parcourent pas : les titres de famille disent où l'on pioche.
+ */
+export interface NcSubcategoryGroup {
+  category: NcCategory;
+  subcategories: NcSubcategory[];
+}
+
 /** Le catalogue en vigueur et son origine. */
 export interface NcSubcategoryCatalogue {
   entries: NcSubcategory[];

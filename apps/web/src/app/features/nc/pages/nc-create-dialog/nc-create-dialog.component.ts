@@ -14,7 +14,10 @@ import { ProductsService } from '../../../products/products.service';
 import { FailureModeSuggestion, ProductResponse } from '../../../products/products.types';
 import { NcService } from '../../nc.service';
 import { TeamMemberRef } from '../../../../shared/user-picker/user-team-picker.component';
-import { NC_MAX_TEAM_MEMBERS, NcCategory, NcOrigin, NcResponse, NcSeverity, NcSubcategory } from '../../nc.types';
+import {
+  NC_MAX_TEAM_MEMBERS, NcCategory, NcOrigin, NcResponse, NcSeverity, NcSubcategory,
+  NcSubcategoryGroup
+} from '../../nc.types';
 
 /**
  * Ce que la liste appelante transmet au dialogue.
@@ -105,11 +108,15 @@ export class NcCreateDialogComponent implements OnInit {
     geoLng: [null as number | null],
     productId: [''],
     /**
-     * La nature fine de l'écart. FACULTATIVE : un écart se saisit sur le terrain,
-     * souvent dans l'urgence, et se classe finement ensuite. L'exiger ferait
-     * choisir au hasard.
+     * La NATURE de l'écart, et par elle sa famille.
+     *
+     * <p>Obligatoire, et c'est un allègement : elle remplaçait un second champ
+     * « Catégorie » qu'il fallait renseigner d'abord pour que celui-ci veuille
+     * bien s'ouvrir. Une question au lieu de deux, et la famille se déduit de
+     * la réponse — un écart ne peut plus arriver classé « Produit » sans qu'on
+     * sache de quel défaut il s'agit.
      */
-    subcategoryCode: [''],
+    subcategoryCode: ['', [Validators.required]],
     /** '' = pas encore répondu, 'NONE' = aucun mode, sinon l'identifiant de la ligne. */
     failureMode: [''],
     /**
@@ -157,8 +164,11 @@ export class NcCreateDialogComponent implements OnInit {
     if (this.form.controls.description.invalid) {
       return $localize`:@@nc.create.blocked-description:Renseignez la description pour pouvoir déclarer.`;
     }
-    if (this.form.controls.category.invalid) {
-      return $localize`:@@nc.create.blocked-category:Choisissez la catégorie pour pouvoir déclarer.`;
+    // La NATURE, et non la famille : celle-ci se déduit de celle-là et n'est
+    // plus un champ. Nommer un champ absent ferait chercher ce qui n'est pas à
+    // l'écran.
+    if (this.form.controls.subcategoryCode.invalid || this.form.controls.category.invalid) {
+      return $localize`:@@nc.create.blocked-nature:Choisissez la nature de l'écart pour pouvoir déclarer.`;
     }
     if (this.form.controls.severity.invalid) {
       return $localize`:@@nc.create.blocked-severity:Choisissez la sévérité pour pouvoir déclarer.`;
@@ -187,60 +197,65 @@ export class NcCreateDialogComponent implements OnInit {
     this.nc.subcategories().pipe(catchError(() => of({ entries: [] as NcSubcategory[], defaults: true })))
       .subscribe(c => {
         this.subcategories = c.entries;
-        // Le catalogue arrive après coup : sans ce rappel, un champ ouvert sur
-        // une catégorie déjà choisie resterait éteint.
-        this.syncSubcategoryState();
       });
-    // L'etat du champ suit la CATEGORIE, pas le clic qui la change : branche sur
-    // l'evenement du gabarit, il restait eteint des que la categorie etait posee
-    // autrement -- par un brouillon rechargé, ou par du code. C'est la valeur qui
-    // commande, l'evenement n'en est qu'une des causes.
-    // (Pas de desabonnement : le formulaire appartient au composant et disparait
-    // avec lui, comme les deux abonnements ci-dessus.)
-    this.form.controls.category.valueChanges.subscribe(() => this.syncSubcategoryState());
-    this.syncSubcategoryState();
   }
 
   /**
-   * Les natures proposées : celles de la catégorie choisie, et aucune avant
-   * qu'elle le soit — soixante natures toutes catégories confondues ne se
-   * parcourent pas.
+   * Les natures, groupées par famille — ce que la liste déroulante rend en
+   * {@code mat-optgroup}.
+   *
+   * <p>Soixante natures à plat ne se parcourent pas : c'est la raison pour
+   * laquelle un champ « Catégorie » les filtrait d'abord. Les titres de famille
+   * font le même travail sans la question préalable, et montrent où l'on
+   * pioche au lieu de le faire déclarer.
+   *
+   * <p>L'ordre des familles est celui du client (ADR 0111) ; une nature dont
+   * la famille n'est plus au catalogue garde la sienne en queue plutôt que de
+   * disparaître de la liste — un écart ne se classe pas moins bien parce
+   * qu'un réglage a changé.
    */
-  get subcategoryChoices(): NcSubcategory[] {
-    const category = this.form.getRawValue().category;
-    return category ? this.subcategories.filter(s => s.category === category) : [];
-  }
-
-  /**
-   * Changer de catégorie efface la nature : une nature de Produit sous une
-   * catégorie Processus serait refusée par le serveur, et l'utilisateur ne
-   * saurait pas pourquoi.
-   */
-  onCategoryChange(): void {
-    if (this.form.getRawValue().subcategoryCode) {
-      this.form.patchValue({ subcategoryCode: '' });
+  get subcategoryGroups(): NcSubcategoryGroup[] {
+    const ordre = [...this.categories];
+    this.subcategories.forEach(s => {
+      if (!ordre.includes(s.category)) {
+        ordre.push(s.category);
+      }
+    });
+    // Memoisation par CONTENU : un getter qui refabrique ses objets a chaque
+    // passe de detection ferait detruire et recreer les options du
+    // `mat-select`, et la page se figerait. Le defaut a deja ete paye sur le
+    // registre des ecarts.
+    const cle = ordre.join('|') + '#' + this.subcategories.map(s => s.code).join(',');
+    if (this.groupesCache && this.groupesCache.cle === cle) {
+      return this.groupesCache.groupes;
     }
-    this.syncSubcategoryState();
+    const groupes = ordre
+      .map(category => ({
+        category,
+        subcategories: this.subcategories.filter(s => s.category === category)
+      }))
+      .filter(g => g.subcategories.length > 0);
+    this.groupesCache = { cle, groupes };
+    return groupes;
   }
 
+  /** Voir {@link subcategoryGroups} : le cache evite de refabriquer les options. */
+  private groupesCache: { cle: string; groupes: NcSubcategoryGroup[] } | null = null;
+
   /**
-   * Le champ de sous-catégorie est PRÉSENT dès l'ouverture, et désactivé tant
-   * qu'aucune catégorie n'est choisie.
+   * La famille se déduit de la nature choisie, et n'est plus demandée.
    *
-   * <p>Il n'apparaissait qu'une fois la catégorie retenue. Personne ne cherche
-   * un champ dont rien n'annonce l'existence : le déclarant laissait la
-   * sous-catégorie vide en croyant qu'il n'y en avait pas pour sa catégorie, et
-   * les NC arrivaient non classées dans le registre.
-   *
-   * <p>L'état passe par le CONTRÔLE, pas par un {@code [disabled]} de gabarit :
-   * sur un formulaire réactif, cette liaison est ignorée et Angular l'avertit.
+   * <p>Le serveur exige la catégorie : elle est posée ici, au moment où la
+   * nature est retenue. Une nature inconnue du catalogue — réglage changé
+   * entre l'ouverture de la fenêtre et la saisie — laisse la catégorie en
+   * place plutôt que de l'effacer : mieux vaut une famille périmée qu'un
+   * formulaire qui refuse de partir sans dire pourquoi.
    */
-  private syncSubcategoryState(): void {
-    const champ = this.form.controls.subcategoryCode;
-    if (this.subcategoryChoices.length) {
-      if (champ.disabled) champ.enable({ emitEvent: false });
-    } else if (champ.enabled) {
-      champ.disable({ emitEvent: false });
+  onSubcategoryChange(): void {
+    const code = this.form.getRawValue().subcategoryCode;
+    const nature = this.subcategories.find(s => s.code === code);
+    if (nature) {
+      this.form.patchValue({ category: nature.category });
     }
   }
 

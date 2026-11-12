@@ -17,7 +17,8 @@ import {
   NcSeverity,
   NcStatistics,
   NcStatus,
-  NcSubcategory
+  NcSubcategory,
+  NcSubcategoryGroup
 } from '../../nc.types';
 import { NcCreateDialogComponent } from '../nc-create-dialog/nc-create-dialog.component';
 import { searchRows } from '../../../../shared/ui/list-search/list-filter';
@@ -25,14 +26,12 @@ import { searchRows } from '../../../../shared/ui/list-search/list-filter';
 const PAGE_SIZE_OPTIONS = [10, 20, 50, 100];
 const MAX_PAGE_SIZE = 100;
 
+// Le type vit dans `nc.types` : la fenetre de creation groupe ses natures de
+// la meme facon, et deux definitions auraient diverge.
+export { NcSubcategoryGroup } from '../../nc.types';
+
 /** Page vide emise quand le chargement echoue : vide la table et remet le compteur a zero. */
 const EMPTY_PAGE = { content: [], totalElements: 0, totalPages: 0, number: 0, size: 0 };
-
-/** Un groupe de natures d'écart, rangé sous sa catégorie, dans le filtre. */
-export interface NcSubcategoryGroup {
-  category: NcCategory;
-  subcategories: NcSubcategory[];
-}
 
 /** Une tuile de dénombrement au-dessus de la liste. */
 export interface NcTile {

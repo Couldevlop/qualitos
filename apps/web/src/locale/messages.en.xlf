@@ -6706,6 +6706,26 @@ Customer portal</target>
         <source>Cette action n'existe plus — recharge la fiche.</source>
         <target state="translated">This action no longer exists — reload the case.</target>
       </trans-unit>
+      <trans-unit id="capa.detail.actions-title" datatype="html">
+        <source>Actions</source>
+        <target state="translated">Actions</target>
+      </trans-unit>
+      <trans-unit id="nc.create.nature" datatype="html">
+        <source>Nature de l'écart</source>
+        <target state="translated">Nature of the finding</target>
+      </trans-unit>
+      <trans-unit id="nc.create.nature-required" datatype="html">
+        <source>Choisissez la nature de l'écart.</source>
+        <target state="translated">Choose the nature of the finding.</target>
+      </trans-unit>
+      <trans-unit id="nc.create.nature-empty" datatype="html">
+        <source>Aucune nature au catalogue : prévenez l'administrateur du compte.</source>
+        <target state="translated">No nature in the catalogue: tell the account administrator.</target>
+      </trans-unit>
+      <trans-unit id="nc.create.blocked-nature" datatype="html">
+        <source>Choisissez la nature de l'écart pour pouvoir déclarer.</source>
+        <target state="translated">Choose the nature of the finding to be able to declare it.</target>
+      </trans-unit>
       <trans-unit id="capa.action-type.containment" datatype="html">
         <source>Endiguement</source>
         <target state="translated">Containment</target>

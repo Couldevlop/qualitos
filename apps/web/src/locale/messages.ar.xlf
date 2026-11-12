@@ -6706,6 +6706,26 @@ Portail clients</source>
         <source>Cette action n'existe plus — recharge la fiche.</source>
         <target state="translated">لم يعد هذا الإجراء موجوداً — أعد تحميل الملف.</target>
       </trans-unit>
+      <trans-unit id="capa.detail.actions-title" datatype="html">
+        <source>Actions</source>
+        <target state="translated">الإجراءات</target>
+      </trans-unit>
+      <trans-unit id="nc.create.nature" datatype="html">
+        <source>Nature de l'écart</source>
+        <target state="translated">طبيعة الانحراف</target>
+      </trans-unit>
+      <trans-unit id="nc.create.nature-required" datatype="html">
+        <source>Choisissez la nature de l'écart.</source>
+        <target state="translated">اختر طبيعة الانحراف.</target>
+      </trans-unit>
+      <trans-unit id="nc.create.nature-empty" datatype="html">
+        <source>Aucune nature au catalogue : prévenez l'administrateur du compte.</source>
+        <target state="translated">لا توجد طبيعة في الكتالوج: أبلغ مسؤول الحساب.</target>
+      </trans-unit>
+      <trans-unit id="nc.create.blocked-nature" datatype="html">
+        <source>Choisissez la nature de l'écart pour pouvoir déclarer.</source>
+        <target state="translated">اختر طبيعة الانحراف لتتمكن من التصريح.</target>
+      </trans-unit>
       <trans-unit id="capa.action-type.containment" datatype="html">
         <source>Endiguement</source>
         <target state="translated">احتواء</target>

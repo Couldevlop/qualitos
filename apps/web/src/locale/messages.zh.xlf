@@ -6706,6 +6706,26 @@ Portail clients</source>
         <source>Cette action n'existe plus — recharge la fiche.</source>
         <target state="translated">该措施已不存在 — 请重新加载档案。</target>
       </trans-unit>
+      <trans-unit id="capa.detail.actions-title" datatype="html">
+        <source>Actions</source>
+        <target state="translated">措施</target>
+      </trans-unit>
+      <trans-unit id="nc.create.nature" datatype="html">
+        <source>Nature de l'écart</source>
+        <target state="translated">偏差性质</target>
+      </trans-unit>
+      <trans-unit id="nc.create.nature-required" datatype="html">
+        <source>Choisissez la nature de l'écart.</source>
+        <target state="translated">请选择偏差性质。</target>
+      </trans-unit>
+      <trans-unit id="nc.create.nature-empty" datatype="html">
+        <source>Aucune nature au catalogue : prévenez l'administrateur du compte.</source>
+        <target state="translated">目录中没有性质：请通知账户管理员。</target>
+      </trans-unit>
+      <trans-unit id="nc.create.blocked-nature" datatype="html">
+        <source>Choisissez la nature de l'écart pour pouvoir déclarer.</source>
+        <target state="translated">请选择偏差性质后才能申报。</target>
+      </trans-unit>
       <trans-unit id="capa.action-type.containment" datatype="html">
         <source>Endiguement</source>
         <target state="translated">围堵措施</target>

@@ -6706,6 +6706,26 @@ Portail clients</source>
         <source>Cette action n'existe plus — recharge la fiche.</source>
         <target state="translated">この対策はもう存在しません。ページを再読み込みしてください。</target>
       </trans-unit>
+      <trans-unit id="capa.detail.actions-title" datatype="html">
+        <source>Actions</source>
+        <target state="translated">対策</target>
+      </trans-unit>
+      <trans-unit id="nc.create.nature" datatype="html">
+        <source>Nature de l'écart</source>
+        <target state="translated">不適合の種類</target>
+      </trans-unit>
+      <trans-unit id="nc.create.nature-required" datatype="html">
+        <source>Choisissez la nature de l'écart.</source>
+        <target state="translated">不適合の種類を選んでください。</target>
+      </trans-unit>
+      <trans-unit id="nc.create.nature-empty" datatype="html">
+        <source>Aucune nature au catalogue : prévenez l'administrateur du compte.</source>
+        <target state="translated">カタログに種類がありません。アカウント管理者に連絡してください。</target>
+      </trans-unit>
+      <trans-unit id="nc.create.blocked-nature" datatype="html">
+        <source>Choisissez la nature de l'écart pour pouvoir déclarer.</source>
+        <target state="translated">申告するには不適合の種類を選んでください。</target>
+      </trans-unit>
       <trans-unit id="capa.action-type.containment" datatype="html">
         <source>Endiguement</source>
         <target state="translated">暫定対策</target>

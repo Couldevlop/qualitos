@@ -1,4 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
+import { Component, Input } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -28,6 +29,12 @@ import { DirectoryService } from '../../../../core/directory/directory.service';
  * et ne jamais laisser croire à un dossier sans preuve quand c'est le stockage
  * qui est coupé.
  */
+/** Le tableau des actions a son propre banc : ici, seule sa PRÉSENCE compte. */
+@Component({ selector: 'qos-capa-action-panel', template: '', standalone: false })
+class PanneauStub {
+  @Input() capaCaseId = '';
+}
+
 describe('CapaDetailComponent — preuves du dossier', () => {
 
   const CASE_ID = '44444444-4444-4444-4444-444444444444';
@@ -78,7 +85,7 @@ describe('CapaDetailComponent — preuves du dossier', () => {
 
     TestBed.resetTestingModule();
     await TestBed.configureTestingModule({
-      declarations: [CapaDetailComponent, CapaRevisionImpactComponent],
+      declarations: [CapaDetailComponent, CapaRevisionImpactComponent, PanneauStub],
       imports: [SharedModule, UiModule, NoopAnimationsModule],
       providers: [
         { provide: CapaService, useValue: capa },

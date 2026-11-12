@@ -79,6 +79,9 @@ describe('NcCreateDialogComponent — équipe en charge', () => {
     component.form.patchValue({
       title: 'Écart de process',
       description: 'Paramètre de four relevé hors plage au poste 12.',
+      // La nature porte la famille, et le serveur l'exige : un constat sans
+      // elle ne part pas.
+      subcategoryCode: 'PRC-DER',
       category: 'PROCESS',
       severity: 'MAJOR'
     });

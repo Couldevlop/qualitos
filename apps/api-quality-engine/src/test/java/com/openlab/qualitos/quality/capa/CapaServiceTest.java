@@ -266,61 +266,148 @@ class CapaServiceTest {
         assertThat(c.getVerificationInstructions()).isEqualTo("Nouvelle consigne.");
     }
 
-    // --- start ---
+    // --- le statut du dossier se deduit de ses actions (ADR 0117) ---
+
+    /**
+     * Commencer la premiere action met le dossier en traitement, sans qu'un
+     * second geste soit demande. C'est le defaut que l'ADR 0117 corrige : le
+     * pilote devait cliquer « Demarrer » pour annoncer un travail dont son
+     * action temoignait deja, et l'oubliait.
+     */
     @Test
-    void start_success() {
+    void commencerUneAction_metLeDossierEnTraitement() {
         CapaCase c = capa(TENANT, CapaStatus.OPEN);
+        CapaAction a = action(c, CapaActionStatus.PENDING);
         when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(actionRepo.findByIdAndCapaId(a.getId(), c.getId())).thenReturn(Optional.of(a));
+        when(actionRepo.save(a)).thenReturn(a);
         when(caseRepo.save(c)).thenReturn(c);
-        service.startCase(c.getId());
+
+        service.updateAction(c.getId(), a.getId(), new CapaDto.ActionRequest(
+                null, null, CapaActionStatus.IN_PROGRESS, null, null, null, null, null));
+
         assertThat(c.getStatus()).isEqualTo(CapaStatus.IN_PROGRESS);
     }
 
+    /** Terminer la DERNIERE action resout le dossier, et l'horodate. */
     @Test
-    void start_notOpen_throws() {
+    void terminerLaDerniereAction_resoutLeDossier() {
         CapaCase c = capa(TENANT, CapaStatus.IN_PROGRESS);
+        action(c, CapaActionStatus.DONE);
+        CapaAction derniere = action(c, CapaActionStatus.IN_PROGRESS);
         when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
-        assertThatThrownBy(() -> service.startCase(c.getId()))
-                .isInstanceOf(CapaStateException.class);
-    }
-
-    // --- resolve ---
-    @Test
-    void resolve_success() {
-        CapaCase c = capa(TENANT, CapaStatus.IN_PROGRESS);
-        CapaAction a = action(c, CapaActionStatus.DONE);
-        c.getActions().add(a);
-        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(actionRepo.findByIdAndCapaId(derniere.getId(), c.getId()))
+                .thenReturn(Optional.of(derniere));
+        when(actionRepo.save(derniere)).thenReturn(derniere);
         when(caseRepo.save(c)).thenReturn(c);
-        service.resolveCase(c.getId());
+
+        service.updateAction(c.getId(), derniere.getId(), new CapaDto.ActionRequest(
+                null, null, CapaActionStatus.DONE, null, null, null, null, null));
+
         assertThat(c.getStatus()).isEqualTo(CapaStatus.RESOLVED);
         assertThat(c.getResolvedAt()).isNotNull();
     }
 
+    /**
+     * Tant qu'UNE action reste a faire, le dossier n'est pas resolu -- c'est le
+     * verrou que l'ancien /resolve opposait, et qu'on garde en le rendant
+     * automatique plutot qu'en le faisant demander.
+     */
     @Test
-    void resolve_actionsNotAllDone_throws() {
+    void uneActionInachevee_empecheLaResolution() {
         CapaCase c = capa(TENANT, CapaStatus.IN_PROGRESS);
-        c.getActions().add(action(c, CapaActionStatus.PENDING));
+        action(c, CapaActionStatus.PENDING);
+        CapaAction autre = action(c, CapaActionStatus.IN_PROGRESS);
         when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
-        assertThatThrownBy(() -> service.resolveCase(c.getId()))
-                .isInstanceOf(CapaStateException.class)
-                .hasMessageContaining("DONE");
+        when(actionRepo.findByIdAndCapaId(autre.getId(), c.getId())).thenReturn(Optional.of(autre));
+        when(actionRepo.save(autre)).thenReturn(autre);
+
+        service.updateAction(c.getId(), autre.getId(), new CapaDto.ActionRequest(
+                null, null, CapaActionStatus.DONE, null, null, null, null, null));
+
+        assertThat(c.getStatus()).isEqualTo(CapaStatus.IN_PROGRESS);
     }
 
+    /**
+     * Rouvrir une action d'un dossier resolu le ramene en traitement, efface
+     * l'horodatage de resolution -- la fiche dirait sinon a la fois « en
+     * cours » et « resolu le... » -- et s'inscrit au journal comme un RETOUR,
+     * jamais comme un echec de verification.
+     */
     @Test
-    void resolve_noActions_throws() {
-        CapaCase c = capa(TENANT, CapaStatus.IN_PROGRESS);
+    void rouvrirUneAction_rameneLeDossierEnTraitement_etLeConsigne() {
+        CapaCase c = capa(TENANT, CapaStatus.RESOLVED);
+        c.setResolvedAt(Instant.now());
+        CapaAction a = action(c, CapaActionStatus.DONE);
         when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
-        assertThatThrownBy(() -> service.resolveCase(c.getId()))
-                .isInstanceOf(CapaStateException.class);
+        when(actionRepo.findByIdAndCapaId(a.getId(), c.getId())).thenReturn(Optional.of(a));
+        when(actionRepo.save(a)).thenReturn(a);
+        when(caseRepo.save(c)).thenReturn(c);
+
+        service.updateAction(c.getId(), a.getId(), new CapaDto.ActionRequest(
+                null, null, CapaActionStatus.IN_PROGRESS, null, null, null, null, null));
+
+        assertThat(c.getStatus()).isEqualTo(CapaStatus.IN_PROGRESS);
+        assertThat(c.getResolvedAt()).isNull();
+        verify(journal).record(c, CapaTransition.REOPENED);
     }
 
+    /**
+     * Un dossier SANS action reste ouvert. « Aucune action inachevee » n'est
+     * pas « le travail est fait » : resoudre les dossiers vides cloturerait
+     * exactement ceux qui attendent qu'on ecrive quoi faire.
+     */
     @Test
-    void resolve_notInProgress_throws() {
+    void dossierSansAction_resteOuvert() {
         CapaCase c = capa(TENANT, CapaStatus.OPEN);
         when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
-        assertThatThrownBy(() -> service.resolveCase(c.getId()))
+        when(actionRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        service.addAction(c.getId(), new CapaDto.ActionRequest(
+                "a faire", null, null, null, null, null, null, null));
+
+        assertThat(c.getStatus()).isEqualTo(CapaStatus.OPEN);
+        // Rien n'a change : le dossier n'est pas reenregistre pour autant.
+        verify(caseRepo, never()).save(any());
+    }
+
+    /**
+     * Ajouter une action a un dossier resolu le ramene en traitement : il reste
+     * quelque chose a faire, et c'est le cas d'une efficacite partielle qu'on
+     * complete (ADR 0108).
+     */
+    @Test
+    void ajouterUneAction_aUnDossierResolu_leRamemeEnTraitement() {
+        CapaCase c = capa(TENANT, CapaStatus.RESOLVED);
+        c.setResolvedAt(Instant.now());
+        action(c, CapaActionStatus.DONE);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(actionRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+        when(caseRepo.save(c)).thenReturn(c);
+
+        service.addAction(c.getId(), new CapaDto.ActionRequest(
+                "complement", null, null, null, null, null, null, null));
+
+        assertThat(c.getStatus()).isEqualTo(CapaStatus.IN_PROGRESS);
+        assertThat(c.getResolvedAt()).isNull();
+    }
+
+    /**
+     * Un dossier CLOS ou REJETE ne bouge plus : la cloture repose sur un
+     * verdict d'efficacite humain (ADR 0108) et l'abandon sur une decision.
+     * Aucune ecriture d'action ne les defait.
+     */
+    @Test
+    void dossierClos_neRepartPasParSesActions() {
+        CapaCase c = capa(TENANT, CapaStatus.CLOSED);
+        CapaAction a = action(c, CapaActionStatus.DONE);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+
+        assertThatThrownBy(() -> service.updateAction(c.getId(), a.getId(),
+                new CapaDto.ActionRequest(null, null, CapaActionStatus.PENDING,
+                        null, null, null, null, null)))
                 .isInstanceOf(CapaStateException.class);
+        assertThat(c.getStatus()).isEqualTo(CapaStatus.CLOSED);
     }
 
     // --- effectiveness ---
@@ -434,7 +521,7 @@ class CapaServiceTest {
         for (CapaSourceType source : CapaSourceType.values()) {
             CapaCase c = capa(TENANT, CapaStatus.OPEN);
             c.setSourceType(source);
-            c.getActions().add(new CapaAction());
+            action(c, CapaActionStatus.PENDING);
             when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
 
             CapaDto.ActionResponse seconde = service.addAction(c.getId(), new CapaDto.ActionRequest(
@@ -455,7 +542,7 @@ class CapaServiceTest {
     @Test
     void addAction_secondeAction_neDeplacePasLePiloteDuDossier() {
         CapaCase c = capa(TENANT, CapaStatus.OPEN);
-        c.getActions().add(new CapaAction());
+        action(c, CapaActionStatus.PENDING);
         when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
         when(actionRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
@@ -897,10 +984,16 @@ class CapaServiceTest {
     @Test
     void demarrage_estConsigne() {
         CapaCase c = capa(TENANT, CapaStatus.OPEN);
+        CapaAction a = action(c, CapaActionStatus.PENDING);
         when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(actionRepo.findByIdAndCapaId(a.getId(), c.getId())).thenReturn(Optional.of(a));
+        when(actionRepo.save(a)).thenReturn(a);
         when(caseRepo.save(any())).thenReturn(c);
 
-        service.startCase(c.getId());
+        // Le demarrage n'est plus demande, il est CONSTATE : commencer la
+        // premiere action est l'acte, et c'est lui qu'on consigne (ADR 0117).
+        service.updateAction(c.getId(), a.getId(), new CapaDto.ActionRequest(
+                null, null, CapaActionStatus.IN_PROGRESS, null, null, null, null, null));
 
         verify(journal).record(c, CapaTransition.STARTED);
     }
@@ -908,11 +1001,14 @@ class CapaServiceTest {
     @Test
     void resolution_estConsignee() {
         CapaCase c = capa(TENANT, CapaStatus.IN_PROGRESS);
-        c.getActions().add(action(c, CapaActionStatus.DONE));
+        CapaAction a = action(c, CapaActionStatus.IN_PROGRESS);
         when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(actionRepo.findByIdAndCapaId(a.getId(), c.getId())).thenReturn(Optional.of(a));
+        when(actionRepo.save(a)).thenReturn(a);
         when(caseRepo.save(any())).thenReturn(c);
 
-        service.resolveCase(c.getId());
+        service.updateAction(c.getId(), a.getId(), new CapaDto.ActionRequest(
+                null, null, CapaActionStatus.DONE, null, null, null, null, null));
 
         verify(journal).record(c, CapaTransition.RESOLVED);
     }
@@ -967,10 +1063,13 @@ class CapaServiceTest {
 
     @Test
     void unRefusNeLaisseAucuneTrace() {
-        CapaCase c = capa(TENANT, CapaStatus.RESOLVED);
+        CapaCase c = capa(TENANT, CapaStatus.CLOSED);
+        CapaAction a = action(c, CapaActionStatus.DONE);
         when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
 
-        assertThatThrownBy(() -> service.startCase(c.getId()))
+        assertThatThrownBy(() -> service.updateAction(c.getId(), a.getId(),
+                new CapaDto.ActionRequest(null, null, CapaActionStatus.PENDING,
+                        null, null, null, null, null)))
                 .isInstanceOf(CapaStateException.class);
 
         // Une transition refusée n'a pas eu lieu : la consigner mentirait.
@@ -1245,6 +1344,11 @@ class CapaServiceTest {
         a.setActionType(type);
         a.setCreatedAt(Instant.now());
         a.setUpdatedAt(Instant.now());
+        // L'action REJOINT la collection du dossier : en base, le contexte de
+        // persistance rend la meme instance des deux cotes, et le statut du
+        // dossier se deduit desormais de cette collection (ADR 0117). Un banc
+        // qui l'oublierait testerait un dossier sans action.
+        c.getActions().add(a);
         return a;
     }
 
@@ -1316,8 +1420,8 @@ class CapaServiceTest {
         // et l'écran, qui annonce l'obstacle, interdisait un geste que l'API
         // accordait quand même.
         CapaCase c = capa(TENANT, CapaStatus.RESOLVED);
-        c.getActions().add(action(c, CapaActionStatus.DONE));
-        c.getActions().add(action(c, CapaActionStatus.PENDING));
+        action(c, CapaActionStatus.DONE);
+        action(c, CapaActionStatus.PENDING);
         when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
 
         assertThatThrownBy(() -> service.verifyEffectiveness(c.getId(),
@@ -1334,7 +1438,7 @@ class CapaServiceTest {
         // Constater l'échec ne clôt rien : l'interdire empêcherait de consigner
         // que les actions n'ont pas produit leur effet.
         CapaCase c = capa(TENANT, CapaStatus.RESOLVED);
-        c.getActions().add(action(c, CapaActionStatus.PENDING));
+        action(c, CapaActionStatus.PENDING);
         when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
         when(caseRepo.save(c)).thenReturn(c);
 
@@ -1349,8 +1453,8 @@ class CapaServiceTest {
         // dès la mesure levée. Clore là-dessus inscrirait au registre le contraire
         // de ce qui s'est passé.
         CapaCase c = capa(TENANT, CapaStatus.RESOLVED);
-        c.getActions().add(action(c, CapaActionStatus.DONE, CapaActionType.CONTAINMENT));
-        c.getActions().add(action(c, CapaActionStatus.DONE, CapaActionType.CONTAINMENT));
+        action(c, CapaActionStatus.DONE, CapaActionType.CONTAINMENT);
+        action(c, CapaActionStatus.DONE, CapaActionType.CONTAINMENT);
         when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
 
         assertThatThrownBy(() -> service.verifyEffectiveness(c.getId(),
@@ -1367,8 +1471,8 @@ class CapaServiceTest {
         // Une seule action qui s'attaque à la cause suffit : le dossier n'a pas
         // QUE contenu, et rien ne justifie d'exiger davantage.
         CapaCase c = capa(TENANT, CapaStatus.RESOLVED);
-        c.getActions().add(action(c, CapaActionStatus.DONE, CapaActionType.CONTAINMENT));
-        c.getActions().add(action(c, CapaActionStatus.DONE, CapaActionType.CORRECTIVE));
+        action(c, CapaActionStatus.DONE, CapaActionType.CONTAINMENT);
+        action(c, CapaActionStatus.DONE, CapaActionType.CORRECTIVE);
         when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
         when(ncRepo.countByTenantIdAndCapaCaseIdAndStatusNotIn(any(), any(), any())).thenReturn(0L);
         when(caseRepo.save(c)).thenReturn(c);
@@ -1383,7 +1487,7 @@ class CapaServiceTest {
         // Déclarer l'action INEFFICACE ne clôt rien : c'est un constat d'échec, et
         // le refuser interdirait de consigner que l'endiguement n'a pas suffi.
         CapaCase c = capa(TENANT, CapaStatus.RESOLVED);
-        c.getActions().add(action(c, CapaActionStatus.DONE, CapaActionType.CONTAINMENT));
+        action(c, CapaActionStatus.DONE, CapaActionType.CONTAINMENT);
         when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
         when(caseRepo.save(c)).thenReturn(c);
 
@@ -1417,9 +1521,9 @@ class CapaServiceTest {
     @Test
     void findById_pendingActions_areCounted() {
         CapaCase c = capa(TENANT, CapaStatus.IN_PROGRESS);
-        c.getActions().add(action(c, CapaActionStatus.DONE));
-        c.getActions().add(action(c, CapaActionStatus.PENDING));
-        c.getActions().add(action(c, CapaActionStatus.IN_PROGRESS));
+        action(c, CapaActionStatus.DONE);
+        action(c, CapaActionStatus.PENDING);
+        action(c, CapaActionStatus.IN_PROGRESS);
         when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
         when(ncRepo.countByTenantIdAndCapaCaseIdAndStatusNotIn(any(), any(), any())).thenReturn(0L);
 
@@ -1430,8 +1534,8 @@ class CapaServiceTest {
     @Test
     void findById_containmentOnly_isAnnouncedBeforeTheClick() {
         CapaCase c = capa(TENANT, CapaStatus.IN_PROGRESS);
-        c.getActions().add(action(c, CapaActionStatus.DONE, CapaActionType.CONTAINMENT));
-        c.getActions().add(action(c, CapaActionStatus.DONE, CapaActionType.CONTAINMENT));
+        action(c, CapaActionStatus.DONE, CapaActionType.CONTAINMENT);
+        action(c, CapaActionStatus.DONE, CapaActionType.CONTAINMENT);
         when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
         when(ncRepo.countByTenantIdAndCapaCaseIdAndStatusNotIn(any(), any(), any())).thenReturn(0L);
 
@@ -1442,7 +1546,7 @@ class CapaServiceTest {
     @Test
     void findById_openNonConformities_areCounted() {
         CapaCase c = capa(TENANT, CapaStatus.RESOLVED);
-        c.getActions().add(action(c, CapaActionStatus.DONE));
+        action(c, CapaActionStatus.DONE);
         when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
         when(ncRepo.countByTenantIdAndCapaCaseIdAndStatusNotIn(any(), any(), any())).thenReturn(3L);
 
@@ -1455,7 +1559,7 @@ class CapaServiceTest {
         // L'écran doit pouvoir tout dire d'un coup : ne montrer que le premier
         // obstacle enverrait l'utilisateur en corriger un pour en découvrir un autre.
         CapaCase c = capa(TENANT, CapaStatus.IN_PROGRESS);
-        c.getActions().add(action(c, CapaActionStatus.PENDING, CapaActionType.CONTAINMENT));
+        action(c, CapaActionStatus.PENDING, CapaActionType.CONTAINMENT);
         when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
         when(ncRepo.countByTenantIdAndCapaCaseIdAndStatusNotIn(any(), any(), any())).thenReturn(1L);
 
@@ -1471,7 +1575,7 @@ class CapaServiceTest {
         // Une liste vide DIT quelque chose : « rien ne s'y oppose ». Un null
         // obligerait l'écran à distinguer « pas calculé » de « pas d'obstacle ».
         CapaCase c = capa(TENANT, CapaStatus.RESOLVED);
-        c.getActions().add(action(c, CapaActionStatus.DONE));
+        action(c, CapaActionStatus.DONE);
         when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
         when(ncRepo.countByTenantIdAndCapaCaseIdAndStatusNotIn(any(), any(), any())).thenReturn(0L);
 
@@ -1534,7 +1638,7 @@ class CapaServiceTest {
     private CapaCase aJuger(String critere) {
         CapaCase c = capa(TENANT, CapaStatus.RESOLVED);
         c.setEffectivenessCriterion(critere);
-        c.getActions().add(action(c, CapaActionStatus.DONE));
+        action(c, CapaActionStatus.DONE);
         when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
         return c;
     }
@@ -1616,7 +1720,7 @@ class CapaServiceTest {
         connecte(UUID.randomUUID(), "A. Diallo");
         CapaCase c = capa(TENANT, CapaStatus.RESOLVED);
         c.setEffectivenessCriterion("Moins de 2 % de rebuts");
-        c.getActions().add(action(c, CapaActionStatus.PENDING));
+        action(c, CapaActionStatus.PENDING);
         when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
         when(caseRepo.save(c)).thenReturn(c);
 
@@ -1630,7 +1734,7 @@ class CapaServiceTest {
         connecte(UUID.randomUUID(), "A. Diallo");
         CapaCase c = capa(TENANT, CapaStatus.RESOLVED);
         c.setEffectivenessCriterion("Moins de 2 % de rebuts");
-        c.getActions().add(action(c, CapaActionStatus.DONE, CapaActionType.CONTAINMENT));
+        action(c, CapaActionStatus.DONE, CapaActionType.CONTAINMENT);
         when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
         when(caseRepo.save(c)).thenReturn(c);
 

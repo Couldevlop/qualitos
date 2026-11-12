@@ -67,13 +67,10 @@ public class CapaController {
         return service.updateCase(id, request);
     }
 
-    @PatchMapping("/cases/{id}/start")
-    @RequiresPermission(Permission.CAPA_EDIT)
-    public CapaDto.CaseResponse start(@PathVariable UUID id) { return service.startCase(id); }
-
-    @PatchMapping("/cases/{id}/resolve")
-    @RequiresPermission(Permission.CAPA_RESOLVE)
-    public CapaDto.CaseResponse resolve(@PathVariable UUID id) { return service.resolveCase(id); }
+    // Plus de /start ni de /resolve : le statut du dossier se déduit de ses
+    // actions (ADR 0117). Les deux verbes ne décidaient rien — /resolve
+    // refusait déjà d'aboutir tant qu'une action restait à faire, et /start ne
+    // faisait qu'annoncer un travail dont la première action témoigne mieux.
 
     @PatchMapping("/cases/{id}/effectiveness")
     @RequiresPermission(Permission.CAPA_VERIFY)

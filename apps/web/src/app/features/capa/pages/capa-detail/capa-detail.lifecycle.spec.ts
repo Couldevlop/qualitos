@@ -1,4 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
+import { Component, Input } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -26,6 +27,12 @@ import { AuthzService } from '../../../../core/authz/authz.service';
  * vérification d'efficacité, la suppression, et le fait qu'un refus serveur ne
  * doit jamais laisser l'écran affirmer que le geste a eu lieu.
  */
+/** Le tableau des actions a son propre banc : ici, seule sa PRÉSENCE compte. */
+@Component({ selector: 'qos-capa-action-panel', template: '', standalone: false })
+class PanneauStub {
+  @Input() capaCaseId = '';
+}
+
 describe('CapaDetailComponent — cycle de vie du dossier', () => {
 
   const CASE_ID = '66666666-6666-6666-6666-666666666666';
@@ -58,7 +65,7 @@ describe('CapaDetailComponent — cycle de vie du dossier', () => {
       ['getCase', 'listEvidences', 'uploadEvidence', 'deleteEvidence',
        'listActionEvidences', 'uploadActionEvidence', 'deleteActionEvidence',
        'updateAction', 'addAction', 'deleteCase',
-       'verifyEffectiveness', 'startCase', 'resolveCase', 'rejectCase']);
+       'verifyEffectiveness', 'rejectCase']);
     capa.listEvidences.and.returnValue(of([]));
     capa.listActionEvidences.and.returnValue(of([]));
     snack = jasmine.createSpyObj<MatSnackBar>('MatSnackBar', ['open']);
@@ -78,7 +85,7 @@ describe('CapaDetailComponent — cycle de vie du dossier', () => {
 
     TestBed.resetTestingModule();
     await TestBed.configureTestingModule({
-      declarations: [CapaDetailComponent, CapaRevisionImpactComponent],
+      declarations: [CapaDetailComponent, CapaRevisionImpactComponent, PanneauStub],
       imports: [SharedModule, UiModule, NoopAnimationsModule],
       providers: [
         { provide: CapaService, useValue: capa },
@@ -132,47 +139,47 @@ describe('CapaDetailComponent — cycle de vie du dossier', () => {
 
   // --- transitions ----------------------------------------------------------
 
-  it('enchaîne démarrage, résolution et rejet sur les bons appels', () => {
+  /**
+   * Il n'en reste qu'une.
+   *
+   * <p>« Démarrer » et « Résoudre » accompagnaient le rejet, et ne décidaient
+   * rien : le serveur refusait déjà de résoudre tant qu'une action restait à
+   * faire. Le statut se déduit désormais des actions (ADR 0117) ; renoncer,
+   * lui, ne se déduit de rien.
+   */
+  it('rejette le dossier sur le bon appel', () => {
     setup('OPEN');
-    capa.startCase.and.returnValue(of(dossier('IN_PROGRESS')));
-    capa.resolveCase.and.returnValue(of(dossier('RESOLVED')));
     capa.rejectCase.and.returnValue(of(dossier('REJECTED')));
 
-    component.start();
-    component.resolve();
     component.reject();
 
-    expect(capa.startCase).toHaveBeenCalledWith(CASE_ID);
-    expect(capa.resolveCase).toHaveBeenCalledWith(CASE_ID);
     expect(capa.rejectCase).toHaveBeenCalledWith(CASE_ID);
     expect(component.acting$.value).toBeFalse();
   });
 
-  it('dit pourquoi une transition a échoué au lieu de rester silencieuse', () => {
+  it('dit pourquoi un rejet a échoué au lieu de rester silencieux', () => {
     setup('OPEN');
-    capa.startCase.and.returnValue(throwError(() => new HttpErrorResponse({ status: 409 })));
+    capa.rejectCase.and.returnValue(throwError(() => new HttpErrorResponse({ status: 409 })));
 
-    component.start();
+    component.reject();
 
     expect(snack.open).toHaveBeenCalled();
     expect(component.acting$.value).toBeFalse();
   });
 
-  it('n\'enchaîne pas deux transitions concurrentes', () => {
+  it('n\'enchaîne pas deux rejets concurrents', () => {
     setup('OPEN');
     component.acting$.next(true);
 
-    component.start();
+    component.reject();
 
-    expect(capa.startCase).not.toHaveBeenCalled();
+    expect(capa.rejectCase).not.toHaveBeenCalled();
   });
 
-  it('borne les transitions au statut qui les autorise', () => {
+  it('borne le rejet au statut qui l\'autorise', () => {
     setup('OPEN');
 
-    expect(component.canStart('OPEN')).toBeTrue();
-    expect(component.canStart('RESOLVED')).toBeFalse();
-    expect(component.canResolve('IN_PROGRESS')).toBeTrue();
+    expect(component.canReject('OPEN')).toBeTrue();
     expect(component.canReject('CLOSED')).toBeFalse();
     expect(component.isTerminal('REJECTED')).toBeTrue();
   });
@@ -274,24 +281,19 @@ describe('CapaDetailComponent — cycle de vie du dossier', () => {
     expect(capa.getCase).toHaveBeenCalled();
   });
 
-  it('recharge la fiche après la définition de l\'action', () => {
+  /**
+   * Définir l'action d'un dossier vide appartient au TABLEAU, qui la propose
+   * lui-même et sait en ajouter d'autres (ADR 0115) ; la fiche se contente de
+   * se relire quand il annonce un changement, puisque son statut en dépend
+   * (ADR 0117).
+   */
+  it('se relit quand le tableau annonce qu\'une action a bougé', () => {
     setup('OPEN');
     capa.getCase.calls.reset();
 
-    component.openDefineAction(dossier('OPEN'));
+    component.reloadCase();
 
-    expect(dialog.open).toHaveBeenCalled();
     expect(capa.getCase).toHaveBeenCalled();
-  });
-
-  it('ne recharge pas quand le dialogue est abandonné', () => {
-    setup('OPEN');
-    dialog.open.and.returnValue({ afterClosed: () => of(undefined) } as never);
-    capa.getCase.calls.reset();
-
-    component.openDefineAction(dossier('OPEN'));
-
-    expect(capa.getCase).not.toHaveBeenCalled();
   });
 
   it('revient à la liste', () => {
@@ -302,26 +304,7 @@ describe('CapaDetailComponent — cycle de vie du dossier', () => {
     expect(router.navigate).toHaveBeenCalledWith(['/capa']);
   });
 
-  // --- avancement d'action --------------------------------------------------
-
-  it('signale l\'échec d\'un avancement d\'action', () => {
-    setup('IN_PROGRESS');
-    capa.updateAction.and.returnValue(throwError(() => new HttpErrorResponse({ status: 409 })));
-
-    component.advanceAction({
-      id: 'a1', capaId: CASE_ID, title: 'x', status: 'PENDING', actionType: 'CORRECTIVE' });
-
-    expect(snack.open).toHaveBeenCalled();
-    expect(component.acting$.value).toBeFalse();
-  });
-
-  it('donne à chaque étape le verbe qui lui revient', () => {
-    setup('IN_PROGRESS');
-
-    expect(component.advanceActionLabel('PENDING')).toBe('Démarrer');
-    expect(component.advanceActionLabel('IN_PROGRESS')).toBe('Terminer');
-    expect(component.nextActionStatus('PENDING')).toBe('IN_PROGRESS');
-  });
+  // L'avancement d'une action se fait dans LE tableau, qui a son propre banc.
 
   // --- pièces du dossier : chemins non couverts ailleurs --------------------
 
@@ -375,7 +358,6 @@ describe('CapaDetailComponent — cycle de vie du dossier', () => {
 
     expect(component.statusBadge('IN_PROGRESS')).toBe('badge badge-in_progress');
     expect(component.criticityBadge('CRITICAL')).toBe('crit crit-critical');
-    expect(component.actionBadge('DONE')).toBe('badge badge-done');
   });
 
   it('compte les preuves du dossier face à leur borne', () => {

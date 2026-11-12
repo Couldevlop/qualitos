@@ -199,26 +199,18 @@ class CapaControllerTest {
                 .andExpect(status().isOk());
     }
 
+    /**
+     * Les deux verbes qui faisaient avancer le dossier a la main ont disparu
+     * (ADR 0117) : son statut se deduit de ses actions. Les garder en les
+     * ignorant laisserait deux routes documentees qui mentent sur ce qu'elles
+     * font ; le banc verifie qu'elles ne repondent plus.
+     */
     @Test @WithMockUser(roles = "QUALITY_MANAGER")
-    void start_success() throws Exception {
-        when(service.startCase(CAPA)).thenReturn(caseResp(CapaStatus.IN_PROGRESS));
+    void start_etResolve_neSontPlusRoutes() throws Exception {
         mockMvc.perform(patch("/api/v1/capa/cases/{id}/start", CAPA).with(csrf()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status").value("IN_PROGRESS"));
-    }
-
-    @Test @WithMockUser(roles = "QUALITY_MANAGER")
-    void start_invalid_returns409() throws Exception {
-        when(service.startCase(CAPA)).thenThrow(new CapaStateException("nope"));
-        mockMvc.perform(patch("/api/v1/capa/cases/{id}/start", CAPA).with(csrf()))
-                .andExpect(status().isConflict());
-    }
-
-    @Test @WithMockUser(roles = "QUALITY_MANAGER")
-    void resolve_success() throws Exception {
-        when(service.resolveCase(CAPA)).thenReturn(caseResp(CapaStatus.RESOLVED));
+                .andExpect(status().isNotFound());
         mockMvc.perform(patch("/api/v1/capa/cases/{id}/resolve", CAPA).with(csrf()))
-                .andExpect(status().isOk());
+                .andExpect(status().isNotFound());
     }
 
     @Test @WithMockUser(roles = "QUALITY_MANAGER")

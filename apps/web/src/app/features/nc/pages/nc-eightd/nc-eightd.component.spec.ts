@@ -392,19 +392,25 @@ describe('NcEightDComponent', () => {
   });
 
   /**
-   * Le D5 et le D6 nomment deux gestes DIFFERENTS : corriger la cause, prevenir
-   * la recidive. Chacun recoit donc le tableau de SA nature -- un tableau complet
-   * repete sous deux titres laisserait chercher, sous chacun, ses lignes.
+   * Le D3, le D5 et le D6 nomment trois gestes DIFFERENTS : proteger le client,
+   * corriger la cause, prevenir la recidive. Chacun recoit donc le tableau de SA
+   * nature -- un tableau complet repete sous trois titres laisserait chercher,
+   * sous chacun, ses lignes.
+   *
+   * <p>Le D3 garde en plus son champ de saisie : un endiguement est souvent
+   * decide avant qu'aucun dossier CAPA n'existe, et ce texte-la est le seul que
+   * le PDF portera. Sans son tableau, une action de nature CONTAINMENT
+   * (ADR 0115) ne s'affichait nulle part dans le rapport.
    */
-  it('donne au D5 les actions correctives, au D6 les pr\u00e9ventives', async () => {
+  it("donne au D3 l'endiguement, au D5 les correctives, au D6 les pr\u00e9ventives", async () => {
     await monter(['QUALITY_MANAGER']);
 
     const tableaux = fixture.debugElement.queryAll(By.directive(CapaActionPanelStubComponent));
-    expect(tableaux.length).toBe(2);
+    expect(tableaux.length).toBe(3);
     const natures = tableaux.map(t => (t.componentInstance as CapaActionPanelStubComponent).natures);
-    expect(natures).toEqual([['CORRECTIVE'], ['PREVENTIVE']]);
+    expect(natures).toEqual([['CONTAINMENT'], ['CORRECTIVE'], ['PREVENTIVE']]);
     const dossiers = tableaux.map(t => (t.componentInstance as CapaActionPanelStubComponent).capaCaseId);
-    expect(dossiers).toEqual(['capa-9', 'capa-9']);
+    expect(dossiers).toEqual(['capa-9', 'capa-9', 'capa-9']);
   });
 
   /**
@@ -418,6 +424,7 @@ describe('NcEightDComponent', () => {
   it('passe toujours le meme tableau de natures a une discipline donnee', async () => {
     await monter(['QUALITY_MANAGER']);
 
+    expect(component.naturesDe('D3')).toBe(component.naturesDe('D3'));
     expect(component.naturesDe('D5')).toBe(component.naturesDe('D5'));
     expect(component.naturesDe('D6')).toBe(component.naturesDe('D6'));
     // Y compris pour les disciplines qui ne montrent pas d'actions.
