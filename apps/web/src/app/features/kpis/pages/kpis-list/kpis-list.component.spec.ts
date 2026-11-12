@@ -10,6 +10,7 @@ import { of, throwError } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import { SharedModule } from '../../../../shared/shared.module';
 import { UiModule } from '../../../../shared/ui/ui.module';
+import { AuthzService } from '../../../../core/authz/authz.service';
 import { KpisService } from '../../kpis.service';
 import { KpiResponse } from '../../kpis.types';
 import { KpisListComponent } from './kpis-list.component';
@@ -26,6 +27,9 @@ describe('KpisListComponent', () => {
       declarations: [KpisListComponent],
       imports: [SharedModule, UiModule, NoopAnimationsModule],
       providers: [
+        // Tous les droits : ces bancs testent l'ecran, pas la matrice (ADR 0078).
+        // Le refus a son propre banc, en bas de fichier.
+        { provide: AuthzService, useValue: { can: () => of(true) } },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
         provideRouter([])
@@ -119,6 +123,9 @@ describe('KpisListComponent (service doublé)', () => {
       declarations: [KpisListComponent],
       imports: [SharedModule, UiModule, NoopAnimationsModule],
       providers: [
+        // Tous les droits : ces bancs testent l'ecran, pas la matrice (ADR 0078).
+        // Le refus a son propre banc, en bas de fichier.
+        { provide: AuthzService, useValue: { can: () => of(true) } },
         { provide: KpisService, useValue: svc },
         { provide: MatDialog, useValue: { open: () => ({ afterClosed: () => of(dialogResult) }) } },
         provideRouter([])

@@ -2,7 +2,7 @@
   <qos-page-header
     title="Catalogue KPI" i18n-title="@@kpis.list.title"
     subtitle="Indicateurs qualité, seuils, fréquences — fiche par KPI avec tendance et mesures." i18n-subtitle="@@kpis.list.subtitle">
-    <button qosActions mat-flat-button color="primary" type="button" (click)="openCreate()">
+    <button qosActions mat-flat-button color="primary" type="button" *ngIf="canManage" (click)="openCreate()">
       <mat-icon>add</mat-icon> <span i18n="@@kpis.list.new">Nouveau KPI</span>
     </button>
   </qos-page-header>
@@ -84,7 +84,7 @@
       <div class="qos-empty__cta empty-actions">
         <button *ngIf="hasFilters" mat-stroked-button type="button" (click)="resetFilters()"
                 i18n="@@common.reset-filters">Réinitialiser les filtres</button>
-        <button mat-flat-button color="primary" type="button" (click)="openCreate()">
+        <button mat-flat-button color="primary" type="button" (click)="openCreate()" *ngIf="canManage">
           <mat-icon>add</mat-icon> <span i18n="@@kpis.list.new">Nouveau KPI</span>
         </button>
       </div>

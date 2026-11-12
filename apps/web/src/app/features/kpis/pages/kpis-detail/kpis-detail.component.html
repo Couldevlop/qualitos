@@ -18,20 +18,20 @@
       </div>
 
       <div class="toolbar">
-        <button mat-stroked-button (click)="openEdit(k)"><mat-icon>edit</mat-icon> <span i18n="@@common.edit">Modifier</span></button>
-        <button mat-flat-button color="primary" (click)="openRecord(k)" [disabled]="k.status === 'ARCHIVED'">
+        <button mat-stroked-button *ngIf="canManage" (click)="openEdit(k)"><mat-icon>edit</mat-icon> <span i18n="@@common.edit">Modifier</span></button>
+        <button mat-flat-button color="primary" *ngIf="canMeasure" (click)="openRecord(k)" [disabled]="k.status === 'ARCHIVED'">
           <mat-icon>add</mat-icon> <span i18n="@@kpis.detail.measure">Mesurer</span>
         </button>
-        <button mat-flat-button color="primary" *ngIf="k.status === 'DRAFT'" (click)="activate(k)">
+        <button mat-flat-button color="primary" *ngIf="canManage && k.status === 'DRAFT'" (click)="activate(k)">
           <mat-icon>play_arrow</mat-icon> <span i18n="@@kpis.detail.activate">Activer</span>
         </button>
-        <button mat-stroked-button *ngIf="k.status === 'ACTIVE'" (click)="reopen(k)">
+        <button mat-stroked-button *ngIf="canManage && k.status === 'ACTIVE'" (click)="reopen(k)">
           <mat-icon>history</mat-icon> <span i18n="@@kpis.detail.reopen">Rouvrir (DRAFT)</span>
         </button>
-        <button mat-stroked-button color="warn" *ngIf="k.status !== 'ARCHIVED'" (click)="archive(k)">
+        <button mat-stroked-button color="warn" *ngIf="canManage && k.status !== 'ARCHIVED'" (click)="archive(k)">
           <mat-icon>inventory_2</mat-icon> <span i18n="@@kpis.detail.archive">Archiver</span>
         </button>
-        <button mat-stroked-button color="warn" (click)="remove(k)">
+        <button mat-stroked-button color="warn" *ngIf="canManage" (click)="remove(k)">
           <mat-icon>delete</mat-icon> <span i18n="@@common.delete">Supprimer</span>
         </button>
       </div>
@@ -118,7 +118,7 @@
           <ng-container matColumnDef="actions">
             <th mat-header-cell *matHeaderCellDef></th>
             <td mat-cell *matCellDef="let m">
-              <button mat-icon-button (click)="removeMeasurement(k, m)" matTooltip="Supprimer" i18n-matTooltip="@@common.delete">
+              <button mat-icon-button *ngIf="canManage" (click)="removeMeasurement(k, m)" matTooltip="Supprimer" i18n-matTooltip="@@common.delete">
                 <mat-icon>delete</mat-icon>
               </button>
             </td>
@@ -127,7 +127,10 @@
           <tr mat-row *matRowDef="let row; columns: measurementColumns"></tr>
         </table>
         <ng-template #emptyM>
-          <p class="dim empty" i18n="@@kpis.detail.measurements-empty">Aucune mesure pour l'instant. Cliquez "Mesurer" pour enregistrer la première.</p>
+          <!-- Dire de cliquer un bouton qu'on n'a pas, c'est envoyer chercher ce
+               qui n'est pas la : l'invite ne s'adresse qu'a qui peut mesurer. -->
+          <p class="dim empty" *ngIf="canMeasure" i18n="@@kpis.detail.measurements-empty">Aucune mesure pour l'instant. Cliquez "Mesurer" pour enregistrer la première.</p>
+          <p class="dim empty" *ngIf="!canMeasure" i18n="@@kpis.detail.measurements-empty-readonly">Aucune mesure pour l'instant.</p>
         </ng-template>
       </mat-card-content>
     </mat-card>

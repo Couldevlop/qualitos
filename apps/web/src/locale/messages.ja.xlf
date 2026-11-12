@@ -18349,6 +18349,30 @@ historique 12 mois</source>
         <source>Cible</source>
         <target state="translated">目標</target>
       </trans-unit>
+      <trans-unit id="authz.perm.kpi-manage" datatype="html">
+        <source>Définir les indicateurs, leurs cibles et leurs seuils</source>
+        <target state="translated">指標・目標値・しきい値を定義する</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.kpi-measure" datatype="html">
+        <source>Consigner un relevé d'indicateur</source>
+        <target state="translated">指標の実測値を記録する</target>
+      </trans-unit>
+      <trans-unit id="authz.module.kpi" datatype="html">
+        <source>Indicateurs</source>
+        <target state="translated">指標</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.stakeholder-manage" datatype="html">
+        <source>Tenir le registre des parties intéressées</source>
+        <target state="translated">利害関係者の登録簿を管理する</target>
+      </trans-unit>
+      <trans-unit id="authz.module.stakeholder" datatype="html">
+        <source>Parties intéressées</source>
+        <target state="translated">利害関係者</target>
+      </trans-unit>
+      <trans-unit id="kpis.detail.measurements-empty-readonly" datatype="html">
+        <source>Aucune mesure pour l'instant.</source>
+        <target state="translated">まだ実測値がありません。</target>
+      </trans-unit>
       <trans-unit id="nav.marketplace" datatype="html">
         <source>Marketplace</source>
         <target state="translated">マーケットプレイス</target>
@@ -29632,10 +29656,6 @@ historique 12 mois</source>
       <trans-unit id="authz.perm.spc-manage" datatype="html">
         <source>Saisir et supprimer les études de capabilité SPC</source>
         <target state="translated">SPC 工程能力調査の登録と削除</target>
-      </trans-unit>
-      <trans-unit id="authz.module.spc" datatype="html">
-        <source>SPC</source>
-        <target state="translated">SPC</target>
       </trans-unit>
       <trans-unit id="spc.status.capable" datatype="html">
         <source>Maîtrisé</source>

@@ -7,6 +7,7 @@ import { of, throwError } from 'rxjs';
 
 import { SharedModule } from '../../../../shared/shared.module';
 import { UiModule } from '../../../../shared/ui/ui.module';
+import { AuthzService } from '../../../../core/authz/authz.service';
 import { SpcService } from '../../spc.service';
 import {
   KpiSpcForecastResponse,
@@ -20,6 +21,9 @@ import { SpcAnalyzeComponent } from './spc-analyze.component';
  * Détection d'anomalies SPC : saisie d'une série ou d'un KPI, verdict, carte et
  * règles de Nelson, et des messages d'erreur qui disent quoi faire.
  */
+/** Le droit d'ouvrir un dossier, que seul le dernier banc retire. */
+let peutOuvrirUneCapa = true;
+
 describe('SpcAnalyzeComponent', () => {
   let fixture: ComponentFixture<SpcAnalyzeComponent>;
   let component: SpcAnalyzeComponent;
@@ -46,7 +50,14 @@ describe('SpcAnalyzeComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [SpcAnalyzeComponent],
       imports: [SharedModule, UiModule, ReactiveFormsModule, NoopAnimationsModule],
-      providers: [provideRouter([]), { provide: SpcService, useValue: spc }]
+      providers: [
+        provideRouter([]),
+        { provide: SpcService, useValue: spc },
+        // Faire OUVRIR une CAPA par la carte demande capa.create : la case a
+        // cocher ne se propose qu'a qui l'obtiendra. Ces bancs testent la carte,
+        // pas la matrice -- le refus a son propre banc, en bas de fichier.
+        { provide: AuthzService, useValue: { can: () => of(peutOuvrirUneCapa) } }
+      ]
     }).compileComponents();
     fixture = TestBed.createComponent(SpcAnalyzeComponent);
     component = fixture.componentInstance;
@@ -395,5 +406,37 @@ describe('SpcAnalyzeComponent', () => {
     expect(component.forecast).toBeNull();
     expect(component.forecastCapaId).toBeNull();
     expect(texte0()).not.toContain('franchira');
+  });
+
+  // ---- la case qui fait ouvrir un dossier CAPA ----
+
+  /**
+   * Lire la carte ne demande rien : savoir si un procede est sous controle n'est
+   * le secret de personne. Lui faire OUVRIR un dossier CAPA, si -- c'est le meme
+   * droit que sur la fiche CAPA, et le serveur le verifie desormais. L'ecran doit
+   * s'aligner : une case cochee par qui n'a pas le droit ferait refuser jusqu'a
+   * l'affichage de la carte.
+   */
+  it('ne propose pas de faire ouvrir une CAPA sans le droit de l en ouvrir une', async () => {
+    peutOuvrirUneCapa = false;
+    try {
+      await setup();
+      const texte = (fixture.nativeElement as HTMLElement).textContent ?? '';
+
+      expect(component.canOpenCapa).toBeFalse();
+      expect(texte).not.toContain('Ouvrir une CAPA');
+      // Et la case ne reste pas cochee en coulisse : le formulaire enverrait
+      // openCapa=true depuis un ecran qui ne la montre plus.
+      expect(component.kpiForm.value.openCapa).toBeFalse();
+      expect(component.forecastForm.value.openCapa).toBeFalse();
+    } finally {
+      peutOuvrirUneCapa = true;
+    }
+  });
+
+  it('la propose a qui peut ouvrir un dossier', async () => {
+    await setup();
+    expect(component.canOpenCapa).toBeTrue();
+    expect((fixture.nativeElement as HTMLElement).textContent).toContain('Ouvrir une CAPA');
   });
 });

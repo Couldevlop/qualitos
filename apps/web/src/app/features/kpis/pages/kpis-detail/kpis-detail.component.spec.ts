@@ -9,6 +9,7 @@ import { SharedModule } from '../../../../shared/shared.module';
 import { UiModule } from '../../../../shared/ui/ui.module';
 import { ForecastSharedModule } from '../../../forecast/forecast-shared.module';
 import { ForecastService } from '../../../forecast/forecast.service';
+import { AuthzService } from '../../../../core/authz/authz.service';
 import { KpisService } from '../../kpis.service';
 import {
   KpiCurrentStatus, KpiResponse, KpiTrend, MeasurementResponse
@@ -118,6 +119,9 @@ describe('KpisDetailComponent', () => {
       declarations: [KpisDetailComponent],
       imports: [SharedModule, UiModule, ForecastSharedModule, NoopAnimationsModule],
       providers: [
+        // Tous les droits : ces bancs testent l'ecran, pas la matrice (ADR 0078).
+        // Le refus a son propre banc, en bas de fichier.
+        { provide: AuthzService, useValue: { can: () => of(true) } },
         { provide: KpisService, useValue: svc },
         // La fiche porte le panneau de prevision : il lit les mesures par le meme
         // service, et projette par celui-ci. Sans double, chaque test appellerait

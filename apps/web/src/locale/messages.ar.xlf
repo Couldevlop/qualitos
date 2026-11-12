@@ -18350,6 +18350,30 @@ historique 12 mois</source>
         <source>Cible</source>
         <target state="translated">الهدف</target>
       </trans-unit>
+      <trans-unit id="authz.perm.kpi-manage" datatype="html">
+        <source>Définir les indicateurs, leurs cibles et leurs seuils</source>
+        <target state="translated">تحديد المؤشرات وأهدافها وحدودها</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.kpi-measure" datatype="html">
+        <source>Consigner un relevé d'indicateur</source>
+        <target state="translated">تسجيل قراءة مؤشر</target>
+      </trans-unit>
+      <trans-unit id="authz.module.kpi" datatype="html">
+        <source>Indicateurs</source>
+        <target state="translated">المؤشرات</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.stakeholder-manage" datatype="html">
+        <source>Tenir le registre des parties intéressées</source>
+        <target state="translated">إدارة سجل الأطراف المعنية</target>
+      </trans-unit>
+      <trans-unit id="authz.module.stakeholder" datatype="html">
+        <source>Parties intéressées</source>
+        <target state="translated">الأطراف المعنية</target>
+      </trans-unit>
+      <trans-unit id="kpis.detail.measurements-empty-readonly" datatype="html">
+        <source>Aucune mesure pour l'instant.</source>
+        <target state="translated">لا توجد قراءة حتى الآن.</target>
+      </trans-unit>
       <trans-unit id="nav.marketplace" datatype="html">
         <source>Marketplace</source>
         <target state="translated">المتجر</target>
@@ -29633,10 +29657,6 @@ historique 12 mois</source>
       <trans-unit id="authz.perm.spc-manage" datatype="html">
         <source>Saisir et supprimer les études de capabilité SPC</source>
         <target state="translated">تسجيل دراسات قدرة SPC وحذفها</target>
-      </trans-unit>
-      <trans-unit id="authz.module.spc" datatype="html">
-        <source>SPC</source>
-        <target state="translated">SPC</target>
       </trans-unit>
       <trans-unit id="spc.status.capable" datatype="html">
         <source>Maîtrisé</source>

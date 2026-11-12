@@ -86,6 +86,32 @@ Deux lectures à garder en tête :
 - **Le sens d'optimisation change tout.** Une même valeur de 4 est bonne pour un taux de
   satisfaction et mauvaise pour un délai : c'est le sens déclaré qui le dit, pas le lecteur.
 
+## Qui a le droit de quoi
+
+La frontière sépare la **décision** du **fait** :
+
+| Geste | Droit | Qui l'a par défaut |
+|---|---|---|
+| Lire le catalogue, une fiche, une tendance, les mesures | — (tout compte authentifié) | tout le monde |
+| Consigner une mesure | `kpi.measure` | pilotage **et utilisateur** |
+| Créer un indicateur, modifier sa **cible** et ses **seuils**, l'activer, le rouvrir, l'archiver, le supprimer, **retirer** une mesure | `kpi.manage` | administration du client, directeur qualité, manager qualité |
+
+Pourquoi deux droits et non un : **déplacer une cible est une décision, consigner un relevé
+est un fait**. Un opérateur doit pouvoir dire ce qu'il a mesuré sans pouvoir déplacer la
+barre qu'on lui fixe — sinon un indicateur qu'on n'atteint pas passe au vert sans que rien
+n'ait changé sur le terrain, et c'est la première chose qu'un auditeur vient regarder
+(ISO 9001 §6.2 et §9.3). Pour la même raison, **retirer** une mesure relève de `kpi.manage`
+et non de `kpi.measure` : effacer un relevé gênant change la courbe sans laisser de trace à
+l'écran.
+
+La lecture, elle, reste ouverte à tous : chacun doit pouvoir voir où en est ce sur quoi on
+le juge. Les boutons que vous n'avez pas le droit d'utiliser **n'apparaissent pas** — ils ne
+sont pas grisés, ils sont absents. Ces droits se règlent ensuite rôle par rôle dans
+[Rôles et droits](../roles/administration-du-client.md) (`/admin/roles`).
+
+> **Ouvrir une CAPA depuis une carte de contrôle** demande `capa.create`, comme partout
+> ailleurs. Lire la carte ne demande rien ; lui faire ouvrir un dossier, si.
+
 ## Bonnes pratiques
 
 - **Écrivez la formule en toutes lettres**, avec son périmètre et sa période de référence.

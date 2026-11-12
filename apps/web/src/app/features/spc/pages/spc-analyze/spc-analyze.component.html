@@ -63,7 +63,8 @@
           <input matInput type="number" formControlName="limit" min="2" max="10000">
         </mat-form-field>
 
-        <mat-checkbox formControlName="openCapa" class="capa-check" i18n="@@spc.analyze.open-capa">
+        <mat-checkbox formControlName="openCapa" class="capa-check" *ngIf="canOpenCapa"
+                      i18n="@@spc.analyze.open-capa">
           Ouvrir une CAPA si le procédé est hors-contrôle
         </mat-checkbox>
 
@@ -130,7 +131,7 @@
                data-test="forecast-horizon">
       </mat-form-field>
 
-      <mat-checkbox formControlName="openCapa" class="capa-check"
+      <mat-checkbox formControlName="openCapa" class="capa-check" *ngIf="canOpenCapa"
                     i18n="@@spc.forecast.open-capa">
         Ouvrir une CAPA préventive si une sortie est annoncée
       </mat-checkbox>

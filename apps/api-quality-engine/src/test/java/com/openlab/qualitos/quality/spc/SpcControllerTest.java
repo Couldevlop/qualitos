@@ -1,6 +1,9 @@
 package com.openlab.qualitos.quality.spc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.openlab.qualitos.quality.authz.domain.Permission;
+import com.openlab.qualitos.quality.tenantmodules.application.ModuleActivationService;
+import com.openlab.qualitos.quality.authz.application.AuthorizationService;
 import com.openlab.qualitos.quality.aigateway.AiGatewayException;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -14,9 +17,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -29,6 +36,10 @@ class SpcControllerTest {
 
     @Autowired MockMvc mockMvc;
     @MockitoBean SpcService spcService;
+    // Le controleur exige le droit d ouvrir une CAPA quand openCapa=true, et que
+    // le module qui la propose soit souscrit.
+    @MockitoBean AuthorizationService droits;
+    @MockitoBean ModuleActivationService modules;
     private final ObjectMapper om = new ObjectMapper();
 
     @Test @WithMockUser
@@ -142,6 +153,10 @@ class SpcControllerTest {
     void forecastKpi_openCapa_passesTheFlagThrough() throws Exception {
         UUID kpi = UUID.randomUUID();
         UUID capa = UUID.randomUUID();
+        // Ouvrir un dossier par ricochet exige le droit de l'ouvrir en face, et
+        // le module qui le propose.
+        when(droits.has(Permission.CAPA_CREATE)).thenReturn(true);
+        when(modules.enabledModuleCodes()).thenReturn(List.of("dmaic"));
         when(spcService.forecastKpi(eq(kpi), eq(10), eq(8), eq(true)))
                 .thenReturn(new SpcDto.KpiForecastResponse(
                         kpi, "OEE", "Rendement", "%", List.of(), List.of(),
@@ -151,6 +166,97 @@ class SpcControllerTest {
                         .param("limit", "10").param("horizon", "8").param("openCapa", "true"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.capaId").value(capa.toString()));
+    }
+
+    // ---- la porte de service par laquelle on ouvrait une CAPA sans y avoir droit ----
+
+    /*
+     * Deux routes acceptent openCapa=true et, si le procede est hors controle ou
+     * annonce sortant, OUVRENT un dossier CAPA (ADR 0016, ADR 0110). Or ouvrir un
+     * dossier demande capa.create partout ailleurs, et ces routes ne demandaient
+     * rien : n'importe quel authentifie ouvrait par ici les dossiers que
+     * CapaController lui refuse.
+     *
+     * Le droit n'est exige que SI l'appelant demande l'ouverture. Fermer les
+     * routes entieres serait plus simple et faux : LIRE la carte n'est le secret
+     * de personne, et c'est l'ecran des indicateurs qui les appelle pour
+     * l'afficher.
+     */
+
+    @Test @WithMockUser(roles = "USER")
+    void sansLeDroitDOuvrirUneCapa_laCarteRefuseDEnOuvrirUne() throws Exception {
+        UUID kpi = UUID.randomUUID();
+        when(droits.has(Permission.CAPA_CREATE)).thenReturn(false);
+
+        mockMvc.perform(post("/api/v1/ai/spc/kpi/" + kpi + "/analyze").with(csrf())
+                        .param("openCapa", "true"))
+                .andExpect(status().isForbidden());
+        mockMvc.perform(post("/api/v1/ai/spc/kpi/" + kpi + "/forecast").with(csrf())
+                        .param("openCapa", "true"))
+                .andExpect(status().isForbidden());
+
+        // Et le refus arrive AVANT l'analyse : on ne paie pas un appel d'inference
+        // pour un geste qu'on va refuser.
+        verify(spcService, never()).analyzeKpi(any(), anyInt(), anyBoolean());
+        verify(spcService, never()).forecastKpi(any(), anyInt(), any(), anyBoolean());
+    }
+
+    /**
+     * La frontiere commerciale, posee la ou il y a quelque chose a vendre.
+     *
+     * <p>Aucun @RequiresModule sur la classe : il fermerait la LECTURE, puisque
+     * les quatre routes sont des POST et que l'intercepteur n'exempte que les GET.
+     * Le module est donc verifie sur la seule branche qui fait grossir le dossier
+     * du client.
+     */
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
+    void sansLeModule_lOuvertureEstRefusee_memeAvecLeDroit() throws Exception {
+        UUID kpi = UUID.randomUUID();
+        when(droits.has(Permission.CAPA_CREATE)).thenReturn(true);
+        when(modules.enabledModuleCodes()).thenReturn(List.of("capa", "pdca"));
+
+        mockMvc.perform(post("/api/v1/ai/spc/kpi/" + kpi + "/analyze").with(csrf())
+                        .param("openCapa", "true"))
+                .andExpect(status().isForbidden());
+
+        verify(spcService, never()).analyzeKpi(any(), anyInt(), anyBoolean());
+    }
+
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
+    void sansLeModule_laCarteSeLitQuandMeme() throws Exception {
+        // Le client qui resilie garde ses preuves lisibles : une decision
+        // commerciale ne doit pas se transformer en perte de conformite.
+        UUID kpi = UUID.randomUUID();
+        when(modules.enabledModuleCodes()).thenReturn(List.of("capa"));
+
+        mockMvc.perform(post("/api/v1/ai/spc/kpi/" + kpi + "/analyze").with(csrf()))
+                .andExpect(status().isOk());
+
+        verify(spcService).analyzeKpi(kpi, 30, false);
+    }
+
+    @Test @WithMockUser(roles = "USER")
+    void sansCeDroit_laCarteSeLitQuandMeme() throws Exception {
+        UUID kpi = UUID.randomUUID();
+        when(droits.has(Permission.CAPA_CREATE)).thenReturn(false);
+
+        mockMvc.perform(post("/api/v1/ai/spc/kpi/" + kpi + "/analyze").with(csrf()))
+                .andExpect(status().isOk());
+
+        verify(spcService).analyzeKpi(kpi, 30, false);
+    }
+
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
+    void avecLeDroit_lOuvertureEstTransmise() throws Exception {
+        UUID kpi = UUID.randomUUID();
+        when(droits.has(Permission.CAPA_CREATE)).thenReturn(true);
+        when(modules.enabledModuleCodes()).thenReturn(List.of("dmaic"));
+
+        mockMvc.perform(post("/api/v1/ai/spc/kpi/" + kpi + "/analyze").with(csrf())
+                        .param("openCapa", "true"))
+                .andExpect(status().isOk());
+
+        verify(spcService).analyzeKpi(kpi, 30, true);
     }
 
     private static SpcDto.ForecastResponse prevision(boolean sortie, Integer etape, String cote) {

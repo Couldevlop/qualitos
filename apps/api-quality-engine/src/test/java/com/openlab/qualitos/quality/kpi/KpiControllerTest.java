@@ -27,6 +27,15 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import org.junit.jupiter.api.Tag;
 
+/**
+ * Les routes des indicateurs.
+ *
+ * <p>Les bancs d'ECRITURE portent un role de pilotage : definir un indicateur,
+ * c'est fixer sa cible et ses seuils, et cela demande {@code kpi.manage}
+ * (ADR 0078). Deposer un RELEVE, non -- c'est un fait consigne par celui qui a
+ * mesure, et le banc le verifie sous un simple utilisateur. Le refus, lui, a son
+ * banc dedie : {@code KpiAuthorizationTest}.
+ */
 @Tag("web")
 @WebMvcTest(controllers = KpiController.class)
 class KpiControllerTest {
@@ -56,7 +65,7 @@ class KpiControllerTest {
                 .andExpect(status().isOk());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void create_201() throws Exception {
         when(service.create(any())).thenReturn(kpiResp());
         KpiDto.CreateKpiRequest req = new KpiDto.CreateKpiRequest(
@@ -70,7 +79,7 @@ class KpiControllerTest {
                 .andExpect(status().isCreated());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void create_invalidCode_400() throws Exception {
         String body = "{\"code\":\"BAD-CODE\",\"name\":\"n\",\"direction\":\"HIGHER_IS_BETTER\","
                 + "\"createdBy\":\"" + USER + "\"}";
@@ -79,7 +88,7 @@ class KpiControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void create_missingDirection_400() throws Exception {
         String body = "{\"code\":\"k\",\"name\":\"n\",\"createdBy\":\"" + USER + "\"}";
         mockMvc.perform(post("/api/v1/kpis").with(csrf())
@@ -94,7 +103,7 @@ class KpiControllerTest {
                 .andExpect(status().isNotFound());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void update_200() throws Exception {
         when(service.update(any(), any())).thenReturn(kpiResp());
         mockMvc.perform(patch("/api/v1/kpis/{id}", KPI).with(csrf())
@@ -103,35 +112,35 @@ class KpiControllerTest {
                 .andExpect(status().isOk());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void delete_204() throws Exception {
         mockMvc.perform(delete("/api/v1/kpis/{id}", KPI).with(csrf()))
                 .andExpect(status().isNoContent());
         verify(service).delete(KPI);
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void activate_invalidState_409() throws Exception {
         when(service.activate(KPI)).thenThrow(new KpiStateException("archived"));
         mockMvc.perform(post("/api/v1/kpis/{id}/activate", KPI).with(csrf()))
                 .andExpect(status().isConflict());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void activate_200() throws Exception {
         when(service.activate(KPI)).thenReturn(kpiResp());
         mockMvc.perform(post("/api/v1/kpis/{id}/activate", KPI).with(csrf()))
                 .andExpect(status().isOk());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void reopen_200() throws Exception {
         when(service.reopen(KPI)).thenReturn(kpiResp());
         mockMvc.perform(post("/api/v1/kpis/{id}/reopen", KPI).with(csrf()))
                 .andExpect(status().isOk());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void archive_200() throws Exception {
         when(service.archive(KPI)).thenReturn(kpiResp());
         mockMvc.perform(post("/api/v1/kpis/{id}/archive", KPI).with(csrf()))
@@ -207,14 +216,14 @@ class KpiControllerTest {
                 .andExpect(status().isOk());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void deleteMeasurement_204() throws Exception {
         mockMvc.perform(delete("/api/v1/kpis/{id}/measurements/{mid}", KPI, MEAS).with(csrf()))
                 .andExpect(status().isNoContent());
         verify(service).deleteMeasurement(KPI, MEAS);
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void deleteMeasurement_notFound_404() throws Exception {
         doThrow(new KpiMeasurementNotFoundException(MEAS))
                 .when(service).deleteMeasurement(KPI, MEAS);

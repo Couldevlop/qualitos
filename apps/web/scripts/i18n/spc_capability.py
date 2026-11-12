@@ -595,7 +595,6 @@ TRANSLATIONS = {
         'تسجيل دراسات قدرة SPC وحذفها',
         'SPC 工程能力調査の登録と削除',
         '录入和删除 SPC 能力研究'),
-    'authz.module.spc': ('SPC', 'SPC', 'SPC', 'SPC', 'SPC', 'SPC'),
 
     # ----- verdicts -----
     'spc.status.capable': ('Maîtrisé', 'Under control', 'Bajo control', 'تحت السيطرة', '管理状態', '受控'),

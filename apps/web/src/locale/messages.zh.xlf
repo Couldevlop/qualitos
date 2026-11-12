@@ -18350,6 +18350,30 @@ historique 12 mois</source>
         <source>Cible</source>
         <target state="translated">目标</target>
       </trans-unit>
+      <trans-unit id="authz.perm.kpi-manage" datatype="html">
+        <source>Définir les indicateurs, leurs cibles et leurs seuils</source>
+        <target state="translated">定义指标及其目标值和阈值</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.kpi-measure" datatype="html">
+        <source>Consigner un relevé d'indicateur</source>
+        <target state="translated">记录指标实测值</target>
+      </trans-unit>
+      <trans-unit id="authz.module.kpi" datatype="html">
+        <source>Indicateurs</source>
+        <target state="translated">指标</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.stakeholder-manage" datatype="html">
+        <source>Tenir le registre des parties intéressées</source>
+        <target state="translated">维护相关方登记册</target>
+      </trans-unit>
+      <trans-unit id="authz.module.stakeholder" datatype="html">
+        <source>Parties intéressées</source>
+        <target state="translated">相关方</target>
+      </trans-unit>
+      <trans-unit id="kpis.detail.measurements-empty-readonly" datatype="html">
+        <source>Aucune mesure pour l'instant.</source>
+        <target state="translated">暂无实测值。</target>
+      </trans-unit>
       <trans-unit id="nav.marketplace" datatype="html">
         <source>Marketplace</source>
         <target state="translated">应用市场</target>
@@ -29633,10 +29657,6 @@ historique 12 mois</source>
       <trans-unit id="authz.perm.spc-manage" datatype="html">
         <source>Saisir et supprimer les études de capabilité SPC</source>
         <target state="translated">录入和删除 SPC 能力研究</target>
-      </trans-unit>
-      <trans-unit id="authz.module.spc" datatype="html">
-        <source>SPC</source>
-        <target state="translated">SPC</target>
       </trans-unit>
       <trans-unit id="spc.status.capable" datatype="html">
         <source>Maîtrisé</source>
