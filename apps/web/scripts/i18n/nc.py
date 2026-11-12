@@ -275,8 +275,10 @@ TRANSLATIONS = {
         'لم تُضف أي سبب إلى هذا المخطط بعد.',
         'この図にはまだ原因が置かれていません。',
         '此图尚未放入任何原因。'),
+    # Au pluriel depuis l'ADR 0115 : un dossier porte plusieurs actions, et le 8D
+    # les nomme separement (D3 endiguement, D5 corrective, D6 prevention).
     'nc.detail.capa-action': (
-        'Action corrective en cours', 'Corrective action under way',
-        'Acción correctiva en curso', 'الإجراء التصحيحي الجاري',
-        '進行中の是正処置', '正在进行的纠正措施'),
+        'Actions correctives', 'Corrective actions',
+        'Acciones correctivas', 'الإجراءات التصحيحية',
+        '是正対策', '纠正措施'),
 }

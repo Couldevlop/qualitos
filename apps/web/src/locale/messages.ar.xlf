@@ -7602,6 +7602,14 @@ Portail clients</source>
         <source>Les actions correctives de cet ecart : les lire, en ajouter</source>
         <target state="translated">الإجراءات التصحيحية لهذا الانحراف: اقرأها أو أضف إليها</target>
       </trans-unit>
+      <trans-unit id="capa.actions.none-of-nature" datatype="html">
+        <source>Aucune action de cette nature n'a encore été écrite pour cet écart.</source>
+        <target state="translated">لم يُكتب بعد أي إجراء من هذا النوع لهذا الانحراف.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.live-note" datatype="html">
+        <source>État actuel du dossier, affiché à côté du texte agrégé. Le PDF, lui, ne porte que le texte figé à l'émission.</source>
+        <target state="translated">الحالة الحالية للملف، معروضة بجانب النص المجمع. أما ملف PDF فلا يحمل سوى النص المجمّد عند الإصدار.</target>
+      </trans-unit>
       <trans-unit id="capa.source.non-conformity-internal" datatype="html">
         <source>Non-conformité interne</source>
         <target state="translated">عدم مطابقة داخلية</target>
@@ -21639,8 +21647,8 @@ historique 12 mois</source>
         <target state="translated">لم تُضف أي سبب إلى هذا المخطط بعد.</target>
       </trans-unit>
       <trans-unit id="nc.detail.capa-action" datatype="html">
-        <source>Action corrective en cours</source>
-        <target state="translated">الإجراء التصحيحي الجاري</target>
+        <source>Actions correctives</source>
+        <target state="translated">الإجراءات التصحيحية</target>
       </trans-unit>
       <trans-unit id="nc.8d.title" datatype="html">
         <source>Rapport 8D</source>

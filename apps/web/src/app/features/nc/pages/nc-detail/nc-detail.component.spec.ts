@@ -31,6 +31,9 @@ import {
 } from '../../../capa/pages/capa-create-dialog/capa-create-dialog.component';
 import { AuthzService } from '../../../../core/authz/authz.service';
 import {
+  NcCauseAnalysisStubModule
+} from '../../components/nc-cause-analysis/testing/nc-cause-analysis.stub';
+import {
   CapaActionPanelStubComponent, CapaActionPanelStubModule
 } from '../../../capa/components/capa-action-panel/testing/capa-action-panel.stub';
 
@@ -120,7 +123,7 @@ describe('NcDetailComponent — section photos', () => {
       declarations: [NcDetailComponent],
       imports: [SharedModule, UiModule, UserPickerModule, FiveWhysSharedModule,
                 IshikawaSharedModule, NoopAnimationsModule,
-                CapaActionPanelStubModule],
+                CapaActionPanelStubModule, NcCauseAnalysisStubModule],
       providers: [
         { provide: DirectoryService, useValue: ANNUAIRE_MUET },
         // Tous les droits : ces bancs testent l'écran, pas la matrice (ADR 0078).
@@ -483,7 +486,7 @@ describe('NcDetailComponent — workflow et escalade CAPA', () => {
       declarations: [NcDetailComponent],
       imports: [SharedModule, UiModule, UserPickerModule, FiveWhysSharedModule,
                 IshikawaSharedModule, NoopAnimationsModule,
-                CapaActionPanelStubModule],
+                CapaActionPanelStubModule, NcCauseAnalysisStubModule],
       providers: [
         { provide: DirectoryService, useValue: ANNUAIRE_MUET },
         // Tous les droits : ces bancs testent l'écran, pas la matrice (ADR 0078).
@@ -936,7 +939,7 @@ describe('NcDetailComponent — entrée 5 Pourquoi', () => {
       declarations: [NcDetailComponent],
       imports: [SharedModule, UiModule, UserPickerModule, FiveWhysSharedModule,
                 IshikawaSharedModule, NoopAnimationsModule,
-                CapaActionPanelStubModule],
+                CapaActionPanelStubModule, NcCauseAnalysisStubModule],
       providers: [
         { provide: DirectoryService, useValue: ANNUAIRE_MUET },
         // Tous les droits : ces bancs testent l'écran, pas la matrice (ADR 0078).
@@ -1098,7 +1101,7 @@ describe('NcDetailComponent — entrée Ishikawa', () => {
       declarations: [NcDetailComponent],
       imports: [SharedModule, UiModule, UserPickerModule, FiveWhysSharedModule,
                 IshikawaSharedModule, NoopAnimationsModule,
-                CapaActionPanelStubModule],
+                CapaActionPanelStubModule, NcCauseAnalysisStubModule],
       providers: [
         { provide: DirectoryService, useValue: ANNUAIRE_MUET },
         // Tous les droits : ces bancs testent l'écran, pas la matrice (ADR 0078).
@@ -1226,7 +1229,7 @@ describe('NcDetailComponent — conversion en cycle ou en projet', () => {
       declarations: [NcDetailComponent],
       imports: [SharedModule, UiModule, UserPickerModule, FiveWhysSharedModule,
                 IshikawaSharedModule, NoopAnimationsModule,
-                CapaActionPanelStubModule],
+                CapaActionPanelStubModule, NcCauseAnalysisStubModule],
       providers: [
         { provide: DirectoryService, useValue: ANNUAIRE_MUET },
         { provide: AuthzService, useValue: { can: () => of(true) } },

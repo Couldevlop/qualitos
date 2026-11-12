@@ -12,6 +12,9 @@ import { FiveWhysSharedModule } from '../five-whys/five-whys-shared.module';
 import { IshikawaSharedModule } from '../ishikawa/ishikawa-shared.module';
 import { UiModule } from '../../shared/ui/ui.module';
 import { UserPickerModule } from '../../shared/user-picker/user-picker.module';
+import {
+  NcCauseAnalysisComponent
+} from './components/nc-cause-analysis/nc-cause-analysis.component';
 import { NcConvertDialogComponent } from './pages/nc-convert-dialog/nc-convert-dialog.component';
 import { NcCreateDialogComponent } from './pages/nc-create-dialog/nc-create-dialog.component';
 import { NcDetailComponent } from './pages/nc-detail/nc-detail.component';
@@ -40,6 +43,9 @@ const routes: Routes = [
   declarations: [
     NcListComponent,
     NcDetailComponent,
+    // Les figures d'analyse de cause sont les MEMES sur la fiche de l'ecart et
+    // dans le D4 du rapport 8D : un composant, deux hotes (ADR 0115).
+    NcCauseAnalysisComponent,
     NcConvertDialogComponent,
     NcCreateDialogComponent,
     NcRejectDialogComponent,

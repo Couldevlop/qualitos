@@ -1,0 +1,47 @@
+:host { display: block; }
+
+.cause-block {
+  padding-top: var(--qos-space-3);
+
+  & + & {
+    margin-top: var(--qos-space-3);
+    border-top: 1px solid var(--qos-border-subtle);
+  }
+
+  // Les deux figures sont larges : elles defilent horizontalement plutot que
+  // d'etre comprimees, un trace comprime n'etant plus lisible.
+  qos-five-whys-cascade,
+  qos-ishikawa-fishbone {
+    display: block;
+    overflow-x: auto;
+  }
+}
+
+.cause-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--qos-space-2);
+
+  h3 {
+    margin: 0;
+    font-size: var(--qos-fs-md);
+    font-weight: var(--qos-fw-semibold);
+  }
+}
+
+.cause-empty {
+  margin: 0;
+  color: var(--qos-fg-secondary);
+  font-size: var(--qos-fs-sm);
+}
+
+.cause-root {
+  margin: var(--qos-space-2) 0 0;
+  font-size: var(--qos-fs-sm);
+
+  span {
+    color: var(--qos-fg-secondary);
+  }
+}

@@ -7602,6 +7602,14 @@ Customer portal</target>
         <source>Les actions correctives de cet ecart : les lire, en ajouter</source>
         <target state="translated">The corrective actions of this nonconformity: read them, add some</target>
       </trans-unit>
+      <trans-unit id="capa.actions.none-of-nature" datatype="html">
+        <source>Aucune action de cette nature n'a encore été écrite pour cet écart.</source>
+        <target state="translated">No action of this nature has been written for this nonconformity yet.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.live-note" datatype="html">
+        <source>État actuel du dossier, affiché à côté du texte agrégé. Le PDF, lui, ne porte que le texte figé à l'émission.</source>
+        <target state="translated">Current state of the case, shown next to the aggregated text. The PDF carries only the text frozen at issuance.</target>
+      </trans-unit>
       <trans-unit id="capa.source.non-conformity-internal" datatype="html">
         <source>Non-conformité interne</source>
         <target state="translated">Internal non-conformity</target>
@@ -21639,8 +21647,8 @@ declared income
         <target state="translated">No cause has been placed on this diagram yet.</target>
       </trans-unit>
       <trans-unit id="nc.detail.capa-action" datatype="html">
-        <source>Action corrective en cours</source>
-        <target state="translated">Corrective action under way</target>
+        <source>Actions correctives</source>
+        <target state="translated">Corrective actions</target>
       </trans-unit>
       <trans-unit id="nc.8d.title" datatype="html">
         <source>Rapport 8D</source>

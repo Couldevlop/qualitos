@@ -10,7 +10,19 @@ import { AuthService } from '../../../../core/auth/auth.service';
 import { SharedModule } from '../../../../shared/shared.module';
 import { UiModule } from '../../../../shared/ui/ui.module';
 import { NcService } from '../../nc.service';
-import { EightDDiscipline, EightDReport } from '../../nc.types';
+import { EightDDiscipline, EightDReport, NcResponse } from '../../nc.types';
+import { By } from '@angular/platform-browser';
+
+import {
+  CapaActionPanelStubComponent, CapaActionPanelStubModule
+} from '../../../capa/components/capa-action-panel/testing/capa-action-panel.stub';
+import { FiveWhysService } from '../../../five-whys/five-whys.service';
+import { FiveWhysAnalysis } from '../../../five-whys/five-whys.types';
+import { IshikawaService } from '../../../ishikawa/ishikawa.service';
+import { IshikawaDiagramResponse } from '../../../ishikawa/ishikawa.types';
+import {
+  NcCauseAnalysisStubComponent, NcCauseAnalysisStubModule
+} from '../../components/nc-cause-analysis/testing/nc-cause-analysis.stub';
 import { NcEightDComponent } from './nc-eightd.component';
 
 /**
@@ -28,6 +40,8 @@ describe('NcEightDComponent', () => {
   let snack: jasmine.SpyObj<MatSnackBar>;
   let fixture: ComponentFixture<NcEightDComponent>;
   let component: NcEightDComponent;
+  let fiveWhys: jasmine.SpyObj<FiveWhysService>;
+  let ishikawa: jasmine.SpyObj<IshikawaService>;
 
   const NC_ID = 'nc-1';
 
@@ -69,9 +83,39 @@ describe('NcEightDComponent', () => {
     };
   }
 
-  async function monter(roles: string[]): Promise<void> {
+  /** Une chaine 5 Pourquoi rattachee a l'ecart. */
+  function chaine(): FiveWhysAnalysis {
+    return {
+      id: 'fw-1', ncId: NC_ID, ncReference: 'NC-2026-0007',
+      problem: 'Fuite au presse-étoupe', rootCause: 'Pas de plan préventif',
+      steps: [{ id: 's1', position: 1, answer: 'Le joint a cédé', createdAt: '', updatedAt: '' }],
+      createdAt: '', updatedAt: ''
+    } as FiveWhysAnalysis;
+  }
+
+  /** Un diagramme d'Ishikawa rattache a l'ecart. */
+  function diagramme(): IshikawaDiagramResponse {
+    return {
+      id: 'ish-1', tenantId: 't', problemStatement: 'Fuite au presse-étoupe',
+      mode: 'SIX_M', status: 'DRAFT', ownerId: 'u1', ncId: NC_ID,
+      createdAt: '', updatedAt: '', causes: []
+    } as IshikawaDiagramResponse;
+  }
+
+  async function monter(roles: string[], capaCaseId: string | null = 'capa-9'): Promise<void> {
     svc = jasmine.createSpyObj<NcService>('NcService',
-      ['getEightDReport', 'saveEightDReport', 'issueEightDReport', 'downloadEightDPdf']);
+      ['getEightDReport', 'saveEightDReport', 'issueEightDReport', 'downloadEightDPdf', 'getNc']);
+    const ecart: NcResponse = {
+      id: NC_ID, reference: 'NC-2026-0007', title: 'Fuite au presse-étoupe',
+      category: 'PROCESS', severity: 'MAJOR', status: 'ACTION_DEFINED', origin: 'INTERNAL',
+      detectedAt: '', createdAt: '', updatedAt: ''
+    };
+    if (capaCaseId) { ecart.capaCaseId = capaCaseId; }
+    svc.getNc.and.returnValue(of(ecart));
+    fiveWhys = jasmine.createSpyObj<FiveWhysService>('FiveWhysService', ['listForNc']);
+    fiveWhys.listForNc.and.returnValue(of([]));
+    ishikawa = jasmine.createSpyObj<IshikawaService>('IshikawaService', ['listForNc']);
+    ishikawa.listForNc.and.returnValue(of([]));
     router = jasmine.createSpyObj<Router>('Router', ['navigate']);
     dialog = jasmine.createSpyObj<MatDialog>('MatDialog', ['open']);
     snack = jasmine.createSpyObj<MatSnackBar>('MatSnackBar', ['open']);
@@ -79,9 +123,12 @@ describe('NcEightDComponent', () => {
 
     await TestBed.resetTestingModule().configureTestingModule({
       declarations: [NcEightDComponent],
-      imports: [SharedModule, UiModule, NoopAnimationsModule],
+      imports: [SharedModule, UiModule, NoopAnimationsModule,
+                CapaActionPanelStubModule, NcCauseAnalysisStubModule],
       providers: [
         { provide: NcService, useValue: svc },
+        { provide: FiveWhysService, useValue: fiveWhys },
+        { provide: IshikawaService, useValue: ishikawa },
         { provide: Router, useValue: router },
         { provide: MatDialog, useValue: dialog },
         { provide: MatSnackBar, useValue: snack },
@@ -314,6 +361,83 @@ describe('NcEightDComponent', () => {
     expect(snack.open).toHaveBeenCalled();
   });
 
+  // ---------- les blocs vivants : D4, D5, D6 (ADR 0115) ----------
+
+  /**
+   * Le 8D disait le D4 en lignes de texte : on y lisait la cause retenue sans
+   * voir le raisonnement qui y mene, alors que c'est le raisonnement qu'un
+   * auditeur vient regarder.
+   */
+  it('dessine l\u2019analyse de cause sous le D4, et nulle part ailleurs', async () => {
+    await monter(['QUALITY_MANAGER']);
+    fiveWhys.listForNc.and.returnValue(of([chaine()]));
+    ishikawa.listForNc.and.returnValue(of([diagramme()]));
+    component.ngOnInit();
+    fixture.detectChanges();
+
+    const figures = fixture.debugElement.queryAll(By.directive(NcCauseAnalysisStubComponent));
+    expect(figures.length).toBe(1);
+    const instance = figures[0].componentInstance as NcCauseAnalysisStubComponent;
+    expect(instance.fiveWhys.length).toBe(1);
+    expect(instance.ishikawa.length).toBe(1);
+    expect(fixture.nativeElement.querySelector('[data-test="8d-analyse-de-cause"]')).not.toBeNull();
+  });
+
+  // Une carte vide se lirait comme une panne : sans analyse rattachee, le bloc
+  // n'apparait pas -- le texte agrege de la discipline, lui, dit deja ce qu'il sait.
+  it('n\u2019ouvre aucun bloc d\u2019analyse quand l\u2019\u00e9cart n\u2019en porte aucune', async () => {
+    await monter(['QUALITY_MANAGER']);
+
+    expect(fixture.debugElement.queryAll(By.directive(NcCauseAnalysisStubComponent)).length).toBe(0);
+  });
+
+  /**
+   * Le D5 et le D6 nomment deux gestes DIFFERENTS : corriger la cause, prevenir
+   * la recidive. Chacun recoit donc le tableau de SA nature -- un tableau complet
+   * repete sous deux titres laisserait chercher, sous chacun, ses lignes.
+   */
+  it('donne au D5 les actions correctives, au D6 les pr\u00e9ventives', async () => {
+    await monter(['QUALITY_MANAGER']);
+
+    const tableaux = fixture.debugElement.queryAll(By.directive(CapaActionPanelStubComponent));
+    expect(tableaux.length).toBe(2);
+    const natures = tableaux.map(t => (t.componentInstance as CapaActionPanelStubComponent).natures);
+    expect(natures).toEqual([['CORRECTIVE'], ['PREVENTIVE']]);
+    const dossiers = tableaux.map(t => (t.componentInstance as CapaActionPanelStubComponent).capaCaseId);
+    expect(dossiers).toEqual(['capa-9', 'capa-9']);
+  });
+
+  it('n\u2019affiche aucun tableau d\u2019actions quand l\u2019\u00e9cart n\u2019a pas de dossier CAPA', async () => {
+    await monter(['QUALITY_MANAGER'], null);
+
+    expect(fixture.debugElement.queryAll(By.directive(CapaActionPanelStubComponent)).length).toBe(0);
+  });
+
+  // Faire avancer une action change le texte agrege des disciplines : un rapport
+  // qui ne se relit pas afficherait l'etat d'avant.
+  it('relit le rapport quand une action a boug\u00e9 dans un tableau', async () => {
+    await monter(['QUALITY_MANAGER']);
+    svc.getEightDReport.calls.reset();
+
+    const tableau = fixture.debugElement
+      .query(By.directive(CapaActionPanelStubComponent)).componentInstance as CapaActionPanelStubComponent;
+    tableau.changed.emit();
+
+    expect(svc.getEightDReport).toHaveBeenCalledTimes(1);
+  });
+
+  // Une panne d'un service d'analyse ne doit pas emporter le rapport : son texte
+  // agrege est deja la, et c'est lui qui sera scelle.
+  it('reste lisible quand une analyse de cause est indisponible', async () => {
+    await monter(['QUALITY_MANAGER']);
+    fiveWhys.listForNc.and.returnValue(throwError(() => ({ status: 503 })));
+    ishikawa.listForNc.and.returnValue(throwError(() => ({ status: 503 })));
+    component.ngOnInit();
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelectorAll('[data-test="discipline"]').length).toBe(8);
+  });
+
   // ---------- garde d'identifiant ----------
 
   it('refuse un identifiant malformé avant tout appel', async () => {
@@ -324,9 +448,12 @@ describe('NcEightDComponent', () => {
 
     await TestBed.resetTestingModule().configureTestingModule({
       declarations: [NcEightDComponent],
-      imports: [SharedModule, UiModule, NoopAnimationsModule],
+      imports: [SharedModule, UiModule, NoopAnimationsModule,
+                CapaActionPanelStubModule, NcCauseAnalysisStubModule],
       providers: [
         { provide: NcService, useValue: svc },
+        { provide: FiveWhysService, useValue: { listForNc: () => of([]) } },
+        { provide: IshikawaService, useValue: { listForNc: () => of([]) } },
         { provide: Router, useValue: router },
         { provide: MatDialog, useValue: jasmine.createSpyObj<MatDialog>('MatDialog', ['open']) },
         { provide: MatSnackBar, useValue: snack },

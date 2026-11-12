@@ -7602,6 +7602,14 @@ Portail clients</source>
         <source>Les actions correctives de cet ecart : les lire, en ajouter</source>
         <target state="translated">この不適合の是正対策：閲覧し、追加する</target>
       </trans-unit>
+      <trans-unit id="capa.actions.none-of-nature" datatype="html">
+        <source>Aucune action de cette nature n'a encore été écrite pour cet écart.</source>
+        <target state="translated">この不適合について、この種別の対策はまだ記載されていません。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.live-note" datatype="html">
+        <source>État actuel du dossier, affiché à côté du texte agrégé. Le PDF, lui, ne porte que le texte figé à l'émission.</source>
+        <target state="translated">案件の現在の状態を、集約されたテキストの横に表示しています。PDF には発行時に固定されたテキストのみが記載されます。</target>
+      </trans-unit>
       <trans-unit id="capa.source.non-conformity-internal" datatype="html">
         <source>Non-conformité interne</source>
         <target state="translated">内部不適合</target>
@@ -21638,8 +21646,8 @@ historique 12 mois</source>
         <target state="translated">この図にはまだ原因が置かれていません。</target>
       </trans-unit>
       <trans-unit id="nc.detail.capa-action" datatype="html">
-        <source>Action corrective en cours</source>
-        <target state="translated">進行中の是正処置</target>
+        <source>Actions correctives</source>
+        <target state="translated">是正対策</target>
       </trans-unit>
       <trans-unit id="nc.8d.title" datatype="html">
         <source>Rapport 8D</source>

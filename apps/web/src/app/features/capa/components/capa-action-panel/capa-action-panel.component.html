@@ -17,7 +17,12 @@
     <!-- Un dossier sans action ne pourra pas etre cloture : on le dit, et on
          offre d'en ajouter une. -->
     <div class="action-panel__vide" *ngIf="actions.length === 0" data-test="capa-action-vide">
-      <p i18n="@@capa.detail.action-missing">L'action de ce dossier n'a pas encore été définie : sans elle, il ne pourra pas être clôturé.</p>
+      <!-- Deux absences differentes, et les confondre trompe : un dossier SANS
+           AUCUNE action ne pourra pas etre cloture ; un tableau restreint a une
+           nature peut etre vide alors que le dossier avance tres bien. -->
+      <p *ngIf="natures.length === 0" i18n="@@capa.detail.action-missing">L'action de ce dossier n'a pas encore été définie : sans elle, il ne pourra pas être clôturé.</p>
+      <p *ngIf="natures.length > 0" data-test="capa-action-vide-nature"
+         i18n="@@capa.actions.none-of-nature">Aucune action de cette nature n'a encore été écrite pour cet écart.</p>
       <button mat-flat-button color="primary" type="button" *qosCan="'capa.action.manage'"
               (click)="addAction()" [disabled]="isTerminal(c.status)"
               data-test="capa-action-definir">

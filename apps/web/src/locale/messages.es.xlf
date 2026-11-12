@@ -7602,6 +7602,14 @@ Portal de clientes</target>
         <source>Les actions correctives de cet ecart : les lire, en ajouter</source>
         <target state="translated">Las acciones correctivas de esta desviacion: leerlas, anadir alguna</target>
       </trans-unit>
+      <trans-unit id="capa.actions.none-of-nature" datatype="html">
+        <source>Aucune action de cette nature n'a encore été écrite pour cet écart.</source>
+        <target state="translated">Todavia no se ha escrito ninguna accion de esta naturaleza para esta desviacion.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.live-note" datatype="html">
+        <source>État actuel du dossier, affiché à côté du texte agrégé. Le PDF, lui, ne porte que le texte figé à l'émission.</source>
+        <target state="translated">Estado actual del expediente, mostrado junto al texto agregado. El PDF solo contiene el texto congelado en la emision.</target>
+      </trans-unit>
       <trans-unit id="capa.source.non-conformity-internal" datatype="html">
         <source>Non-conformité interne</source>
         <target state="translated">No conformidad interna</target>
@@ -21639,8 +21647,8 @@ historial de 12 meses</target>
         <target state="translated">Todavía no se ha colocado ninguna causa en este diagrama.</target>
       </trans-unit>
       <trans-unit id="nc.detail.capa-action" datatype="html">
-        <source>Action corrective en cours</source>
-        <target state="translated">Acción correctiva en curso</target>
+        <source>Actions correctives</source>
+        <target state="translated">Acciones correctivas</target>
       </trans-unit>
       <trans-unit id="nc.8d.title" datatype="html">
         <source>Rapport 8D</source>

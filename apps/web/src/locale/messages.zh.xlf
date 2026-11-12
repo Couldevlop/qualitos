@@ -7602,6 +7602,14 @@ Portail clients</source>
         <source>Les actions correctives de cet ecart : les lire, en ajouter</source>
         <target state="translated">此不合格的纠正措施：查看或添加</target>
       </trans-unit>
+      <trans-unit id="capa.actions.none-of-nature" datatype="html">
+        <source>Aucune action de cette nature n'a encore été écrite pour cet écart.</source>
+        <target state="translated">尚未为此不合格编写此类措施。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.live-note" datatype="html">
+        <source>État actuel du dossier, affiché à côté du texte agrégé. Le PDF, lui, ne porte que le texte figé à l'émission.</source>
+        <target state="translated">案卷的当前状态，显示在汇总文本旁。PDF 仅包含签发时冻结的文本。</target>
+      </trans-unit>
       <trans-unit id="capa.source.non-conformity-internal" datatype="html">
         <source>Non-conformité interne</source>
         <target state="translated">内部不合格</target>
@@ -21639,8 +21647,8 @@ historique 12 mois</source>
         <target state="translated">此图尚未放入任何原因。</target>
       </trans-unit>
       <trans-unit id="nc.detail.capa-action" datatype="html">
-        <source>Action corrective en cours</source>
-        <target state="translated">正在进行的纠正措施</target>
+        <source>Actions correctives</source>
+        <target state="translated">纠正措施</target>
       </trans-unit>
       <trans-unit id="nc.8d.title" datatype="html">
         <source>Rapport 8D</source>

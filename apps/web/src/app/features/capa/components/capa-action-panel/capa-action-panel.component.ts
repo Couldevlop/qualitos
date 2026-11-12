@@ -8,7 +8,7 @@ import { safeErrorMessage } from '../../../../core/http/error-message';
 import { actionTypeLabel } from '../../capa.labels';
 import { CapaService } from '../../capa.service';
 import {
-  CapaActionResponse, CapaActionStatus, CapaCaseResponse, CapaStatus
+  CapaActionResponse, CapaActionStatus, CapaActionType, CapaCaseResponse, CapaStatus
 } from '../../capa.types';
 import {
   CapaActionDialogComponent, CapaActionDialogData
@@ -52,6 +52,16 @@ export class CapaActionPanelComponent implements OnChanges {
 
   /** Le dossier à lire. Le panneau le charge lui-même : l'appelant n'a que l'identifiant. */
   @Input() capaCaseId = '';
+
+  /**
+   * Les natures à montrer. Vide — le défaut — montre toutes les actions.
+   *
+   * <p>Le rapport 8D nomme les trois gestes séparément : endiguer (D3), corriger
+   * la cause (D5), prévenir la récidive (D6). Chaque discipline reçoit donc le
+   * tableau de SA nature ; un tableau complet répété sous trois titres laisserait
+   * chercher, dans chacun, les lignes qui le concernent.
+   */
+  @Input() natures: CapaActionType[] = [];
 
   /** Émis après chaque changement enregistré : l'écran appelant peut se relire. */
   @Output() readonly changed = new EventEmitter<void>();
@@ -103,7 +113,13 @@ export class CapaActionPanelComponent implements OnChanges {
   // ---------- lecture ----------
 
   get actions(): CapaActionResponse[] {
-    return this.capa?.actions ?? [];
+    const toutes = this.capa?.actions ?? [];
+    if (this.natures.length === 0) {
+      return toutes;
+    }
+    // Une action sans nature est corrective : c'est le défaut du serveur, et
+    // l'exclure du D5 ferait disparaître les anciennes actions du rapport.
+    return toutes.filter(a => this.natures.includes(a.actionType || 'CORRECTIVE'));
   }
 
   trackById(_: number, action: CapaActionResponse): string {
@@ -206,7 +222,9 @@ export class CapaActionPanelComponent implements OnChanges {
       caseId: this.capa.id,
       ownerId: this.capa.ownerId,
       ownerName: this.capa.ownerName,
-      dueDate: this.capa.dueDate
+      dueDate: this.capa.dueDate,
+      // Tableau restreint à une nature : l'action ajoutée là est de cette nature.
+      actionType: this.natures.length === 1 ? this.natures[0] : undefined
     });
   }
 

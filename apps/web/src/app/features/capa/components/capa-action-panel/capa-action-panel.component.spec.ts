@@ -11,7 +11,7 @@ import { DirectoryService } from '../../../../core/directory/directory.service';
 import { CapaActionPanelModule } from '../../capa-action-panel.module';
 import { CapaService } from '../../capa.service';
 import {
-  CapaActionResponse, CapaActionStatus, CapaCaseResponse, CapaStatus
+  CapaActionResponse, CapaActionStatus, CapaActionType, CapaCaseResponse, CapaStatus
 } from '../../capa.types';
 import { CapaActionPanelComponent } from './capa-action-panel.component';
 
@@ -48,12 +48,14 @@ function dossier(overrides: Partial<CapaCaseResponse> = {}): CapaCaseResponse {
 }
 
 @Component({
-  template: `<qos-capa-action-panel [capaCaseId]="id"
+  template: `<qos-capa-action-panel [capaCaseId]="id" [natures]="natures"
                                     (changed)="changements = changements + 1"></qos-capa-action-panel>`,
   standalone: false
 })
 class HoteComponent {
   id = 'capa-1';
+  /** Vide : toutes les actions. Le rapport 8D, lui, restreint par discipline. */
+  natures: CapaActionType[] = [];
   changements = 0;
 }
 
@@ -118,6 +120,78 @@ describe('CapaActionPanelComponent', () => {
     hote = fixture.componentInstance;
     fixture.detectChanges();
   }
+
+  // ---------- le filtre de nature : D3, D5, D6 du rapport 8D ----------
+
+  /**
+   * Le rapport 8D nomme les trois gestes separement : endiguer (D3), corriger la
+   * cause (D5), prevenir la recidive (D6). Chaque discipline recoit donc le
+   * tableau de SA nature ; le tableau complet repete sous trois titres
+   * laisserait chercher, sous chacun, les lignes qui le concernent.
+   */
+  it('ne montre que les actions de la nature demandée', async () => {
+    await setup({
+      dossier: dossier({
+        actions: [
+          action({ id: 'a-c', title: 'Remplacer le joint', actionType: 'CORRECTIVE' }),
+          action({ id: 'a-p', title: 'Former l’équipe de nuit', actionType: 'PREVENTIVE' }),
+          action({ id: 'a-e', title: 'Trier le lot', actionType: 'CONTAINMENT' })
+        ]
+      })
+    });
+
+    hote.natures = ['PREVENTIVE'];
+    fixture.detectChanges();
+
+    const lignes = tous('capa-action-ligne');
+    expect(lignes.length).toBe(1);
+    expect(lignes[0].textContent).toContain('Former l’équipe de nuit');
+  });
+
+  /**
+   * Une action sans nature est corrective — c'est le defaut du serveur. L'exclure
+   * du D5 ferait disparaitre du rapport les actions des anciens dossiers.
+   */
+  it('range l’action sans nature parmi les correctives', async () => {
+    await setup({
+      dossier: dossier({ actions: [action({ actionType: undefined })] })
+    });
+
+    hote.natures = ['CORRECTIVE'];
+    fixture.detectChanges();
+
+    expect(tous('capa-action-ligne').length).toBe(1);
+  });
+
+  /**
+   * Deux absences differentes, et les confondre trompe : un dossier SANS AUCUNE
+   * action ne pourra pas etre cloture ; un tableau restreint a une nature peut
+   * etre vide alors que le dossier avance tres bien.
+   */
+  it('ne crie pas à la clôture impossible quand c’est seulement la nature qui manque', async () => {
+    await setup();
+
+    hote.natures = ['PREVENTIVE'];
+    fixture.detectChanges();
+
+    expect(un('capa-action-vide-nature')).not.toBeNull();
+    expect(un('capa-action-vide')!.textContent).not.toContain('clôturé');
+  });
+
+  /** Le tableau ne montre qu'une nature : l'action qu'on y ajoute est de celle-la. */
+  it('impose la nature du tableau à l’action ajoutée', async () => {
+    await setup({ dossier: dossier({ actions: [] }) });
+    hote.natures = ['PREVENTIVE'];
+    fixture.detectChanges();
+    ferme = true;
+
+    un('capa-action-definir')!.click();
+
+    const data = (dialog.open.calls.mostRecent().args[1] as {
+      data: { actionType?: string };
+    }).data;
+    expect(data.actionType).toBe('PREVENTIVE');
+  });
 
   // ---------- lecture ----------
 

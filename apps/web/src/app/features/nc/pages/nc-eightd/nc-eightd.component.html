@@ -123,6 +123,29 @@
           <!-- Jamais un bloc vide : l'absence de contenu est dite. -->
           <p class="vide" *ngIf="discipline.lines.length === 0" data-test="discipline-vide"
              i18n="@@nc.8d.discipline-empty">Non renseigné.</p>
+
+          <!-- D4 : le RAISONNEMENT, pas seulement sa conclusion. Les lignes
+               ci-dessus disent la cause retenue ; les figures montrent comment on
+               y est arrive -- ce qu'un auditeur vient regarder (ADR 0115). -->
+          <ng-container *ngIf="estCauseRacine(discipline.code)">
+            <div class="vivant" *ngIf="((fiveWhys$ | async)?.length || (ishikawa$ | async)?.length)"
+                 data-test="8d-analyse-de-cause">
+              <p class="vivant-note" i18n="@@nc.8d.live-note">État actuel du dossier, affiché à côté du texte agrégé. Le PDF, lui, ne porte que le texte figé à l'émission.</p>
+              <qos-nc-cause-analysis [fiveWhys]="(fiveWhys$ | async) ?? []"
+                                     [ishikawa]="(ishikawa$ | async) ?? []"></qos-nc-cause-analysis>
+            </div>
+          </ng-container>
+
+          <!-- D5 et D6 : le tableau des actions de LEUR nature, ou on les lit,
+               on les avance et on en ajoute sans quitter le rapport. -->
+          <ng-container *ngIf="natureDe(discipline.code) as nature">
+            <div class="vivant" *ngIf="capaCaseId$ | async as capaCaseId"
+                 [attr.data-test]="'8d-actions-' + discipline.code">
+              <p class="vivant-note" i18n="@@nc.8d.live-note">État actuel du dossier, affiché à côté du texte agrégé. Le PDF, lui, ne porte que le texte figé à l'émission.</p>
+              <qos-capa-action-panel [capaCaseId]="capaCaseId" [natures]="naturesDe(discipline.code)"
+                                     (changed)="reload()"></qos-capa-action-panel>
+            </div>
+          </ng-container>
         </mat-card-content>
       </mat-card>
 

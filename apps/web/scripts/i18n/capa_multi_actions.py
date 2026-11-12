@@ -88,4 +88,22 @@ TRANSLATIONS = {
         'الإجراءات التصحيحية لهذا الانحراف: اقرأها أو أضف إليها',
         'この不適合の是正対策：閲覧し、追加する',
         '此不合格的纠正措施：查看或添加'),
+
+    # --- un tableau restreint a une nature (D5, D6 du rapport 8D) -----------
+    'capa.actions.none-of-nature': (
+        "Aucune action de cette nature n'a encore été écrite pour cet écart.",
+        'No action of this nature has been written for this nonconformity yet.',
+        'Todavia no se ha escrito ninguna accion de esta naturaleza para esta desviacion.',
+        'لم يُكتب بعد أي إجراء من هذا النوع لهذا الانحراف.',
+        'この不適合について、この種別の対策はまだ記載されていません。',
+        '尚未为此不合格编写此类措施。'),
+
+    # --- le rapport 8D montre aussi l'etat vivant du dossier ----------------
+    'nc.8d.live-note': (
+        "État actuel du dossier, affiché à côté du texte agrégé. Le PDF, lui, ne porte que le texte figé à l'émission.",
+        'Current state of the case, shown next to the aggregated text. The PDF carries only the text frozen at issuance.',
+        'Estado actual del expediente, mostrado junto al texto agregado. El PDF solo contiene el texto congelado en la emision.',
+        'الحالة الحالية للملف، معروضة بجانب النص المجمع. أما ملف PDF فلا يحمل سوى النص المجمّد عند الإصدار.',
+        '案件の現在の状態を、集約されたテキストの横に表示しています。PDF には発行時に固定されたテキストのみが記載されます。',
+        '案卷的当前状态，显示在汇总文本旁。PDF 仅包含签发时冻结的文本。'),
 }

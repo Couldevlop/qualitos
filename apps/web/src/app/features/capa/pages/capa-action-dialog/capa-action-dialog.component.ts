@@ -25,6 +25,14 @@ export interface CapaActionDialogData {
   dueDate?: string;
   /** Vrai quand le dossier est clos ou rejeté : tout est en lecture seule. */
   readOnly?: boolean;
+  /**
+   * La nature proposée à une action nouvelle, quand l'écran appelant la connaît.
+   *
+   * <p>C'est le cas du rapport 8D : le D6 ne parle que de prévention, et
+   * proposer « corrective » dans la fenêtre qu'il ouvre obligerait à corriger un
+   * champ dont la réponse était déjà écrite au-dessus du bouton.
+   */
+  actionType?: CapaActionType;
 }
 
 /** Les trois statuts, dans l'ordre du déroulé réel. */
@@ -92,7 +100,10 @@ export class CapaActionDialogComponent {
       this.assigneeName = data.ownerName ?? null;
       this.form.patchValue({
         assigneeId: data.ownerId ?? '',
-        dueDate: data.dueDate ?? ''
+        dueDate: data.dueDate ?? '',
+        // L'écran appelant impose parfois la nature (le D6 du 8D ne parle que de
+        // prévention) ; sinon, « corrective », de loin le cas le plus fréquent.
+        actionType: data.actionType ?? 'CORRECTIVE'
       });
     }
     if (data.readOnly) {

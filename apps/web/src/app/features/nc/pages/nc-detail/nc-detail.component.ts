@@ -20,8 +20,6 @@ import { ConnectivityService } from '../../../../core/offline/connectivity.servi
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../../../shared/ui/confirm-dialog/confirm-dialog.component';
 import { FiveWhysService } from '../../../five-whys/five-whys.service';
 import { FiveWhysAnalysis } from '../../../five-whys/five-whys.types';
-import { FishboneBranchInput } from '../../../ishikawa/components/ishikawa-fishbone/ishikawa-fishbone.layout';
-import { buildBranchViews, toFishboneBranches } from '../../../ishikawa/ishikawa-branches';
 import { IshikawaService } from '../../../ishikawa/ishikawa.service';
 import { IshikawaDiagramResponse } from '../../../ishikawa/ishikawa.types';
 import { NcService } from '../../nc.service';
@@ -128,41 +126,6 @@ export class NcDetailComponent implements OnInit {
    */
   reload(): void {
     this.reload$.next();
-  }
-
-  // --- les schémas d'analyse de cause, lus sur place --------------------------
-
-  /**
-   * Les branches dessinables d'un diagramme, mémorisées par RÉFÉRENCE.
-   *
-   * <p>Le gabarit appelle la méthode à chaque cycle de détection, et le tracé
-   * (repli de texte compris) se recalcule à chaque appel : sans mémoire, taper
-   * une lettre ailleurs dans la fiche redessinerait l'arête. Le cache tombe de
-   * lui-même au rechargement, qui ramène d'autres objets.
-   */
-  private readonly branchesCache = new WeakMap<IshikawaDiagramResponse, FishboneBranchInput[]>();
-
-  /** Les branches à dessiner pour ce diagramme, dans l'ordre des M. */
-  fishboneBranches(diagram: IshikawaDiagramResponse): FishboneBranchInput[] {
-    const deja = this.branchesCache.get(diagram);
-    if (deja) {
-      return deja;
-    }
-    const branches = toFishboneBranches(buildBranchViews(diagram));
-    this.branchesCache.set(diagram, branches);
-    return branches;
-  }
-
-  /**
-   * Un clic sur une cause du dessin ouvre le diagramme complet.
-   *
-   * <p>La fiche MONTRE l'analyse, elle ne la modifie pas : ajouter une
-   * sous-cause demande l'arbre entier, le plan d'actions et les suggestions IA
-   * — c'est l'écran du diagramme. Emmener là-bas vaut mieux qu'une figure
-   * cliquable qui ne répondrait pas.
-   */
-  openCause(diagram: IshikawaDiagramResponse): void {
-    this.router.navigate(['/ishikawa', diagram.id]);
   }
 
   // --- l'équipe en charge (D1 du 8D) -----------------------------------------
