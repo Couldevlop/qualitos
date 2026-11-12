@@ -11,7 +11,11 @@ export type CapaCriticity = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
 export type CapaStatus = 'OPEN' | 'IN_PROGRESS' | 'RESOLVED' | 'CLOSED' | 'REJECTED';
 // RISK : dossier ouvert depuis une fiche du registre des risques (sourceRef = R-xxx).
 // SPC_ALERT et ANOMALY : dossiers ouverts par un automate (carte de contrôle, détection d'anomalie).
-export type CapaSourceType = 'NON_CONFORMITY' | 'AUDIT' | 'COMPLAINT' | 'INTERNAL' | 'IOT_ALERT'
+// EXTERNAL_NON_CONFORMITY : ecart signale du dehors et instruit dans le registre
+// des ecarts (« NC externe »). Distinct de COMPLAINT, qui designe le registre des
+// reclamations : la reference pointe un ecart, pas une reclamation.
+export type CapaSourceType = 'NON_CONFORMITY' | 'EXTERNAL_NON_CONFORMITY' | 'AUDIT'
+  | 'COMPLAINT' | 'INTERNAL' | 'IOT_ALERT'
   | 'SPC_ALERT' | 'ANOMALY' | 'RISK' | 'OTHER';
 
 /**

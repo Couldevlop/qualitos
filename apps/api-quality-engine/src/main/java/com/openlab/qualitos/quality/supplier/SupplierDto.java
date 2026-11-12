@@ -136,6 +136,8 @@ public final class SupplierDto {
             UUID supplierId,
             String supplierCode,
             String supplierName,
+            /** {@code Sup-NC-2026-0007} ; {@code null} sur les écarts antérieurs à la colonne. */
+            String reference,
             String lotReference,
             String description,
             NonConformitySeverity severity,

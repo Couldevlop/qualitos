@@ -2,6 +2,7 @@ package com.openlab.qualitos.quality.supplier;
 
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.common.TenantContext;
+import com.openlab.qualitos.quality.nonconformity.NcReferencePrefix;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -212,6 +213,7 @@ public class SupplierService {
         NonConformityStatus status = req.status() == null ? NonConformityStatus.OPEN : req.status();
         nc.setStatus(status);
         if (status == NonConformityStatus.RESOLVED) nc.setResolvedOn(LocalDate.now(clock));
+        nc.setReference(generateNcReference(s.getTenantId()));
         SupplierNonConformity saved = ncRepo.save(nc);
         scoringService.recompute(s);
         return toResponse(saved, s, 0);
@@ -396,12 +398,38 @@ public class SupplierService {
                 a.getCreatedAt());
     }
 
+    /**
+     * {@code Sup-NC-{année}-{séquence par client}}, avec garde anti-collision.
+     *
+     * <p>Le préfixe dit le registre : un numéro cité hors de l'écran — courriel
+     * au fournisseur, pièce d'un dossier 8D, ligne de tableur — se rattache au
+     * bon registre sans qu'on ait à ouvrir la fiche. Les trois registres
+     * d'écarts se citent dans les mêmes réunions, et leurs préfixes doivent
+     * rester distincts ({@code NcReferencePrefix}).
+     *
+     * <p>La suite compte les références déjà émises sous ce préfixe pour ce
+     * client, puis avance jusqu'à trouver un numéro libre : deux saisies
+     * simultanées calculeraient sinon le même, et l'index unique
+     * {@code (tenant_id, reference)} en refuserait une sans rien expliquer.
+     */
+    private String generateNcReference(UUID tenantId) {
+        String prefix = NcReferencePrefix.SUPPLIER + LocalDate.now(clock).getYear() + "-";
+        long next = ncRepo.countByTenantIdAndReferenceStartingWith(tenantId, prefix) + 1;
+        String reference;
+        do {
+            reference = prefix + String.format("%04d", next);
+            next++;
+        } while (ncRepo.existsByTenantIdAndReference(tenantId, reference));
+        return reference;
+    }
+
     private SupplierDto.NonConformityResponse toResponse(SupplierNonConformity nc, Supplier owner,
                                                          long documentCount) {
         return new SupplierDto.NonConformityResponse(
                 nc.getId(), nc.getTenantId(), nc.getSupplierId(),
                 owner == null ? null : owner.getCode(),
                 owner == null ? null : owner.getName(),
+                nc.getReference(),
                 nc.getLotReference(), nc.getDescription(),
                 nc.getSeverity(), nc.getStatus(),
                 nc.getDetectedOn(), nc.getResolvedOn(), nc.getResolution(),

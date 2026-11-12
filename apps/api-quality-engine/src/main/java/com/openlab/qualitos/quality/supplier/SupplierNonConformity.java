@@ -31,6 +31,17 @@ public class SupplierNonConformity {
     @Column(name = "supplier_id", nullable = false)
     private UUID supplierId;
 
+    /**
+     * Référence de l'écart, {@code Sup-NC-{année}-{séquence}} (V166).
+     *
+     * <p>Le registre fournisseurs n'en avait aucune : on citait un écart par son
+     * numéro de lot — qui désigne la marchandise, pas le constat — ou par la date
+     * et le nom du fournisseur. Les écarts antérieurs à cette colonne n'en ont
+     * pas, et l'écran affiche alors « — » plutôt qu'une référence inventée.
+     */
+    @Column(name = "reference", length = 32)
+    private String reference;
+
     @Column(name = "lot_reference", length = 100)
     private String lotReference;
 
@@ -93,6 +104,9 @@ public class SupplierNonConformity {
     public void setTenantId(UUID tenantId) { this.tenantId = tenantId; }
     public UUID getSupplierId() { return supplierId; }
     public void setSupplierId(UUID supplierId) { this.supplierId = supplierId; }
+    public String getReference() { return reference; }
+    public void setReference(String reference) { this.reference = reference; }
+
     public String getLotReference() { return lotReference; }
     public void setLotReference(String lotReference) { this.lotReference = lotReference; }
     public String getDescription() { return description; }

@@ -13,6 +13,15 @@ TRANSLATIONS = {
     'capa.source.non-conformity-internal': (
         'Non-conformité interne', 'Internal non-conformity', 'No conformidad interna',
         'عدم مطابقة داخلية', '内部不適合', '内部不合格'),
+    # Ouverte depuis une « NC externe » : le dossier affichait « interne » sur
+    # l'ecran meme qui sert a repondre au client.
+    'capa.source.non-conformity-external': (
+        'Non-conformité externe (réclamation client)',
+        'External non-conformity (customer complaint)',
+        'No conformidad externa (reclamación de cliente)',
+        'عدم مطابقة خارجية (شكوى عميل)',
+        '外部不適合（顧客苦情）',
+        '外部不合格（客户投诉）'),
 
     # --- la reference, choisie au registre ----------------------------------
     'capa.create.source-ref-required': (

@@ -4,6 +4,7 @@ import com.openlab.qualitos.quality.authz.application.RecordScope;
 import com.openlab.qualitos.quality.capa.CapaDto;
 import com.openlab.qualitos.quality.capa.CapaService;
 import com.openlab.qualitos.quality.capa.CapaSourceType;
+import com.openlab.qualitos.quality.capa.CapaStatus;
 import com.openlab.qualitos.quality.common.CurrentUser;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.common.TenantContext;
@@ -167,7 +168,7 @@ public class NcService {
         // au-delà on laisse remonter → 409 via le GlobalExceptionHandler.
         DataIntegrityViolationException last = null;
         for (int attempt = 0; attempt < REFERENCE_RETRY_ATTEMPTS; attempt++) {
-            nc.setReference(generateReference(tenantId));
+            nc.setReference(generateReference(tenantId, nc.getOrigin()));
             try {
                 NonConformity saved = repository.saveAndFlush(nc);
                 // L'équipe après l'écart : la ligne fille a besoin de son identifiant.
@@ -264,10 +265,31 @@ public class NcService {
         return toResponse(repository.save(nc));
     }
 
+    /**
+     * Clôt l'écart — à condition que ce qui le traite soit terminé.
+     *
+     * <p>Un écart clos dit « plus rien à faire ici ». Le clore pendant que son
+     * dossier CAPA est encore ouvert mentait sur deux tableaux : l'écart
+     * disparaissait des listes de travail alors que son action restait à mener,
+     * et le dossier continuait à vivre sans que personne ne vienne plus le
+     * relire. Les indicateurs comptaient un écart traité et une action en
+     * retard, pour un seul et même sujet.
+     *
+     * <p>Un dossier {@code REJECTED} ne bloque pas : il a été instruit puis
+     * écarté, c'est une fin. Un dossier disparu du client ne bloque pas non
+     * plus — on ne retient pas un écart pour un dossier qui n'existe plus.
+     */
     public NcDto.Response close(UUID id) {
         NonConformity nc = load(id);
         if (nc.getStatus() != NcStatus.RESOLVED) {
             throw new NcStateException("Only RESOLVED non-conformities can be closed");
+        }
+        if (nc.getCapaCaseId() != null) {
+            CapaStatus capa = capaService.statusOf(nc.getCapaCaseId()).orElse(null);
+            if (capa != null && capa != CapaStatus.CLOSED && capa != CapaStatus.REJECTED) {
+                throw new NcStateException(
+                        "Non-conformity cannot be closed while its CAPA case is still " + capa);
+            }
         }
         nc.setStatus(NcStatus.CLOSED);
         nc.setClosedAt(Instant.now());
@@ -339,13 +361,23 @@ public class NcService {
         if (nc.getCapaCaseId() != null) {
             throw new NcStateException("Non-conformity already escalated to CAPA " + nc.getCapaCaseId());
         }
+        // La source DIT L'ORIGINE de l'écart : un dossier né d'une réclamation
+        // client s'affichait « Non-conformité interne », sur l'écran même qui
+        // sert à répondre à ce client.
         CapaDto.CaseResponse capa = capaService.openCase(
-                request, CapaSourceType.NON_CONFORMITY, nc.getReference());
+                request, sourceTypeDe(nc.getOrigin()), nc.getReference());
         nc.setCapaCaseId(capa.id());
         if (nc.getStatus() == NcStatus.UNDER_ANALYSIS) {
             nc.setStatus(NcStatus.ACTION_DEFINED);
         }
         return toResponse(repository.save(nc));
+    }
+
+    /** Interne ou externe : la source du dossier reprend l'origine de l'écart. */
+    private static CapaSourceType sourceTypeDe(NcOrigin origin) {
+        return NcOrigin.orDefault(origin) == NcOrigin.EXTERNAL
+                ? CapaSourceType.EXTERNAL_NON_CONFORMITY
+                : CapaSourceType.NON_CONFORMITY;
     }
 
     /**
@@ -444,9 +476,25 @@ public class NcService {
 
     // --- helpers ---
 
-    /** NC-{année}-{séquence par tenant}, avec garde anti-collision. */
-    private String generateReference(UUID tenantId) {
-        String prefix = "NC-" + Instant.now().atZone(ZoneOffset.UTC).getYear() + "-";
+    /**
+     * {@code Int-NC-{année}-{séquence}} ou {@code Ext-NC-{année}-{séquence}},
+     * avec garde anti-collision.
+     *
+     * <p>La référence DIT L'ORIGINE. Toutes les fiches portaient {@code NC-2026-0017},
+     * qu'il s'agisse d'un constat d'autocontrôle ou d'une réclamation client : le
+     * numéro cité dans un courriel, une réunion ou un rapport d'audit ne disait
+     * pas de quel registre il venait, et deux écarts de nature très différente se
+     * suivaient dans la même suite. Les réclamations clients commencent par
+     * {@code Ext-}, les constats internes par {@code Int-}, et les écarts
+     * fournisseurs par {@code Sup-} dans leur propre registre.
+     *
+     * <p>Une suite par préfixe : {@code Int-NC-2026-0001} et {@code Ext-NC-2026-0001}
+     * coexistent, chacune comptant ses propres fiches. Les fiches antérieures
+     * gardent leur référence {@code NC-…} — une référence déjà citée ailleurs ne
+     * se réécrit pas.
+     */
+    private String generateReference(UUID tenantId, NcOrigin origin) {
+        String prefix = NcReferencePrefix.of(origin) + Instant.now().atZone(ZoneOffset.UTC).getYear() + "-";
         long next = repository.countByTenantIdAndReferenceStartingWith(tenantId, prefix) + 1;
         String reference;
         do {

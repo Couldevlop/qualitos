@@ -108,6 +108,27 @@ public class CapaService {
         return toResponse(loadCase(id));
     }
 
+    /**
+     * Le statut d'un dossier, pour un INVARIANT d'un autre registre.
+     *
+     * <p>Le registre des écarts en a besoin : une non-conformité ne se clôt pas
+     * tant que le dossier qui la traite est encore en cours. Il lui faut donc le
+     * statut, et rien d'autre — pas la fiche, qui porte le pilote, les pièces et
+     * l'historique.
+     *
+     * <p>Sans filtre de portée (ADR 0081), à la différence de {@link #findById} :
+     * ici personne ne LIT le dossier, c'est le domaine qui vérifie une règle.
+     * Filtrer ferait dépendre la clôture d'un écart du périmètre de celui qui
+     * clôt — deux personnes obtiendraient deux réponses sur le même fait.
+     *
+     * @return le statut, ou vide si le dossier n'existe plus dans ce client
+     */
+    @Transactional(readOnly = true)
+    public Optional<CapaStatus> statusOf(UUID caseId) {
+        return caseRepository.findByIdAndTenantId(caseId, requireTenantId())
+                .map(CapaCase::getStatus);
+    }
+
     public CapaDto.CaseResponse createCase(CapaDto.CreateCaseRequest request) {
         UUID tenantId = requireTenantId();
         CapaCase c = new CapaCase();
@@ -735,13 +756,19 @@ public class CapaService {
     private CapaDto.LinkedNonConformity resolveSourceNc(CapaCase c) {
         var linked = ncRepository.findFirstByTenantIdAndCapaCaseIdOrderByDetectedAtAsc(
                 c.getTenantId(), c.getId());
-        if (linked.isEmpty() && c.getSourceType() == CapaSourceType.NON_CONFORMITY
+        if (linked.isEmpty() && estEcart(c.getSourceType())
                 && c.getSourceRef() != null && !c.getSourceRef().isBlank()) {
             linked = ncRepository.findByTenantIdAndReference(c.getTenantId(), c.getSourceRef().strip());
         }
         return linked
                 .map(nc -> new CapaDto.LinkedNonConformity(nc.getId(), nc.getReference(), nc.getTitle()))
                 .orElse(null);
+    }
+
+    /** Les deux sources qui désignent un écart du registre : interne et externe. */
+    private static boolean estEcart(CapaSourceType source) {
+        return source == CapaSourceType.NON_CONFORMITY
+                || source == CapaSourceType.EXTERNAL_NON_CONFORMITY;
     }
 
     private CapaCase loadCase(UUID id) {

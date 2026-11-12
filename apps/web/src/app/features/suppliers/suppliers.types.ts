@@ -84,6 +84,11 @@ export interface NonConformityResponse {
   /** Le fournisseur de la NC — renseigné pour la liste transverse des NC. */
   supplierCode?: string;
   supplierName?: string;
+  /**
+   * Référence de l'écart, « Sup-NC-2026-0007 ». Absente des écarts saisis avant
+   * qu'elle existe : l'écran affiche alors « — » plutôt qu'un numéro inventé.
+   */
+  reference?: string;
   lotReference?: string;
   description?: string;
   severity: NonConformitySeverity;

@@ -74,6 +74,26 @@ export class NcListComponent implements OnInit {
     return category ? this.subcategories.filter(s => s.category === category) : this.subcategories;
   }
 
+  /**
+   * Les mêmes natures, RANGÉES SOUS LEUR CATÉGORIE.
+   *
+   * <p>Sans catégorie choisie, le filtre déroulait la soixantaine de natures
+   * d'une seule coulée : « Étalonnage périmé » et « Procédure obsolète » s'y
+   * suivaient sans que rien ne dise qu'elles relèvent de deux familles. Les
+   * grouper rend la catégorie lisible au moment du choix — c'est elle qui donne
+   * son sens à la nature.
+   *
+   * <p>L'ordre des catégories est celui de {@link categories}, et non l'ordre
+   * d'arrivée du catalogue : le client peut retirer ou ajouter des natures, pas
+   * réordonner les familles. Une catégorie sans nature n'apparaît pas.
+   */
+  get subcategoryGroups(): Array<{ category: NcCategory; subcategories: NcSubcategory[] }> {
+    const choix = this.subcategoryChoices;
+    return this.categories
+      .map(category => ({ category, subcategories: choix.filter(s => s.category === category) }))
+      .filter(g => g.subcategories.length > 0);
+  }
+
   /** Le libellé d'une nature ; son code si le client l'a retirée de son catalogue. */
   subcategoryLabel(code: string | undefined): string {
     if (!code) return '—';

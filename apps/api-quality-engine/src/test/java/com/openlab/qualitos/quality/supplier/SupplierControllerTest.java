@@ -318,7 +318,7 @@ class SupplierControllerTest {
 
     private SupplierDto.NonConformityResponse ncResp() {
         return new SupplierDto.NonConformityResponse(
-                CHILD, TENANT, SUP, "acme", "Acme", "LOT-1", "issue",
+                CHILD, TENANT, SUP, "acme", "Acme", "Sup-NC-2026-0001", "LOT-1", "issue",
                 NonConformitySeverity.MAJOR, NonConformityStatus.OPEN,
                 LocalDate.parse("2026-05-01"), null, null,
                 "PN-1", 12, true, false, 0L,

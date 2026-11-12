@@ -7542,6 +7542,10 @@ Portal de clientes</target>
         <source>Non-conformité interne</source>
         <target state="translated">No conformidad interna</target>
       </trans-unit>
+      <trans-unit id="capa.source.non-conformity-external" datatype="html">
+        <source>Non-conformité externe (réclamation client)</source>
+        <target state="translated">No conformidad externa (reclamación de cliente)</target>
+      </trans-unit>
       <trans-unit id="capa.create.source-ref-required" datatype="html">
         <source>Référence source</source>
         <target state="translated">Referencia de origen</target>
@@ -34315,6 +34319,10 @@ India (centro de servicio)</target>
       <trans-unit id="suppliers.nc.attach-hint" datatype="html">
         <source>Le 8D et les preuves de CAPA se joignent depuis la liste, une fois la NC enregistrée.</source>
         <target state="translated">El 8D y las evidencias de CAPA se adjuntan desde la lista, una vez guardada la NC.</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.col-reference" datatype="html">
+        <source>Référence</source>
+        <target state="translated">Referencia</target>
       </trans-unit>
       <trans-unit id="suppliers.nc.col-part" datatype="html">
         <source>Pièce</source>

@@ -21,5 +21,11 @@ public interface SupplierNonConformityRepository extends JpaRepository<SupplierN
     long countBySupplierIdAndSeverityAndStatus(
             UUID supplierId, NonConformitySeverity severity, NonConformityStatus status);
 
+    /** Combien d'écarts ce client a déjà référencés sous ce préfixe (Sup-NC-2026-). */
+    long countByTenantIdAndReferenceStartingWith(UUID tenantId, String prefix);
+
+    /** Garde anti-collision : deux saisies simultanées calculeraient le même numéro. */
+    boolean existsByTenantIdAndReference(UUID tenantId, String reference);
+
     void deleteBySupplierId(UUID supplierId);
 }

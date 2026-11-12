@@ -76,7 +76,7 @@ class NcServiceTest {
         verify(repo).saveAndFlush(cap.capture());
         assertThat(cap.getValue().getStatus()).isEqualTo(NcStatus.OPEN);
         assertThat(cap.getValue().getTenantId()).isEqualTo(TENANT);
-        assertThat(r.reference()).matches("NC-\\d{4}-0003");
+        assertThat(r.reference()).matches("Int-NC-\\d{4}-0003");
         assertThat(r.reference()).endsWith("0003"); // count(2) + 1
     }
 
@@ -371,6 +371,92 @@ class NcServiceTest {
         assertThat(n.getClosedAt()).isNotNull();
     }
 
+    /**
+     * La reference porte l'origine : « Ext-NC- » pour une reclamation client.
+     *
+     * <p>Toutes les fiches portaient « NC-2026-0017 », qu'il s'agisse d'un
+     * constat d'autocontrole ou d'une reclamation : le numero cite dans un
+     * courriel ne disait pas de quel registre il venait.
+     */
+    @Test
+    void create_ecartSignaleDuDehors_prefixeLaReferenceEnExterne() {
+        when(repo.countByTenantIdAndReferenceStartingWith(eq(TENANT), anyString())).thenReturn(0L);
+        when(repo.existsByTenantIdAndReference(eq(TENANT), anyString())).thenReturn(false);
+        when(repo.saveAndFlush(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        NcDto.Response r = service.create(reqExterne());
+
+        assertThat(r.reference()).matches("Ext-NC-\\d{4}-0001");
+        // Le comptage porte sur le prefixe de CETTE origine : les deux suites
+        // sont independantes, et l'une ne doit pas decaler l'autre.
+        verify(repo).countByTenantIdAndReferenceStartingWith(eq(TENANT),
+                ArgumentMatchers.startsWith("Ext-NC-"));
+    }
+
+    /**
+     * Un ecart clos dit « plus rien a faire ici ». Le clore pendant que son
+     * dossier CAPA est ouvert le faisait disparaitre des listes de travail
+     * alors que son action restait a mener, et les indicateurs comptaient un
+     * ecart traite et une action en retard pour le meme sujet.
+     */
+    @Test
+    void close_tantQueLaCapaEstOuverte_refuse() {
+        NonConformity n = nc(TENANT, NcStatus.RESOLVED);
+        UUID capaId = UUID.randomUUID();
+        n.setCapaCaseId(capaId);
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+        when(capaService.statusOf(capaId))
+                .thenReturn(Optional.of(com.openlab.qualitos.quality.capa.CapaStatus.IN_PROGRESS));
+
+        assertThatThrownBy(() -> service.close(n.getId()))
+                .isInstanceOf(NcStateException.class)
+                .hasMessageContaining("IN_PROGRESS");
+        assertThat(n.getStatus()).isEqualTo(NcStatus.RESOLVED);
+        verify(repo, never()).save(any());
+    }
+
+    @Test
+    void close_capaClose_laisseCloturer() {
+        NonConformity n = nc(TENANT, NcStatus.RESOLVED);
+        UUID capaId = UUID.randomUUID();
+        n.setCapaCaseId(capaId);
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+        when(capaService.statusOf(capaId))
+                .thenReturn(Optional.of(com.openlab.qualitos.quality.capa.CapaStatus.CLOSED));
+        when(repo.save(n)).thenReturn(n);
+
+        service.close(n.getId());
+
+        assertThat(n.getStatus()).isEqualTo(NcStatus.CLOSED);
+    }
+
+    /**
+     * Un dossier instruit puis ECARTE est une fin : il ne retient pas l'ecart.
+     * Un dossier disparu du client non plus -- on ne garde pas un ecart ouvert
+     * pour un dossier qui n'existe plus.
+     */
+    @Test
+    void close_capaRejeteeOuDisparue_laisseCloturer() {
+        NonConformity rejetee = nc(TENANT, NcStatus.RESOLVED);
+        UUID capaRejetee = UUID.randomUUID();
+        rejetee.setCapaCaseId(capaRejetee);
+        when(repo.findByIdAndTenantId(rejetee.getId(), TENANT)).thenReturn(Optional.of(rejetee));
+        when(capaService.statusOf(capaRejetee))
+                .thenReturn(Optional.of(com.openlab.qualitos.quality.capa.CapaStatus.REJECTED));
+        when(repo.save(rejetee)).thenReturn(rejetee);
+        service.close(rejetee.getId());
+        assertThat(rejetee.getStatus()).isEqualTo(NcStatus.CLOSED);
+
+        NonConformity orpheline = nc(TENANT, NcStatus.RESOLVED);
+        UUID disparue = UUID.randomUUID();
+        orpheline.setCapaCaseId(disparue);
+        when(repo.findByIdAndTenantId(orpheline.getId(), TENANT)).thenReturn(Optional.of(orpheline));
+        when(capaService.statusOf(disparue)).thenReturn(Optional.empty());
+        when(repo.save(orpheline)).thenReturn(orpheline);
+        service.close(orpheline.getId());
+        assertThat(orpheline.getStatus()).isEqualTo(NcStatus.CLOSED);
+    }
+
     @Test
     void close_wrongState_throws() {
         NonConformity n = nc(TENANT, NcStatus.ACTION_DEFINED);
@@ -428,6 +514,32 @@ class NcServiceTest {
         // Les deux gestes étaient séparés, et l'écart restait affiché « en analyse »
         // alors que son action était écrite, datée et assignée.
         assertThat(n.getStatus()).isEqualTo(NcStatus.ACTION_DEFINED);
+    }
+
+    /**
+     * La source du dossier REPREND L'ORIGINE de l'ecart. Un dossier ne d'une
+     * reclamation client s'affichait « Non-conformite interne », sur l'ecran
+     * meme qui sert a repondre a ce client.
+     */
+    @Test
+    void escalate_depuisUnEcartExterne_ouvreUnDossierDeSourceExterne() {
+        NonConformity n = nc(TENANT, NcStatus.UNDER_ANALYSIS);
+        n.setOrigin(NcOrigin.EXTERNAL);
+        when(repo.findForUpdateByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+        CapaDto.OpenCaseRequest demande = openReq();
+        CapaDto.CaseResponse ouvert = new CapaDto.CaseResponse(UUID.randomUUID(), TENANT, "t", null,
+                CapaType.CORRECTIVE, CapaCriticity.HIGH,
+                com.openlab.qualitos.quality.capa.CapaStatus.OPEN,
+                CapaSourceType.EXTERNAL_NON_CONFORMITY, n.getReference(), OWNER, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null, null,
+                java.util.List.of(), null, java.util.List.of());
+        when(capaService.openCase(demande, CapaSourceType.EXTERNAL_NON_CONFORMITY, n.getReference()))
+                .thenReturn(ouvert);
+        when(repo.save(n)).thenReturn(n);
+
+        service.escalateToCapa(n.getId(), demande);
+
+        verify(capaService).openCase(demande, CapaSourceType.EXTERNAL_NON_CONFORMITY, n.getReference());
     }
 
     @Test
@@ -563,6 +675,14 @@ class NcServiceTest {
         return new NcDto.CreateRequest(
                 "Joint torique défectueux", "détail", NcCategory.PRODUCT, null, NcSeverity.MAJOR,
                 Instant.now(), "Atelier 3", 48.85, 2.35, "https://s/p1.jpg", REPORTER, null, null, null,
+                EQUIPE);
+    }
+
+    /** La meme requete, mais signalee du dehors : une reclamation client. */
+    private NcDto.CreateRequest reqExterne() {
+        return new NcDto.CreateRequest(
+                "Colis livre endommage", "detail", NcCategory.PRODUCT, null, NcSeverity.MAJOR,
+                Instant.now(), "Expedition", null, null, null, REPORTER, NcOrigin.EXTERNAL, null, null,
                 EQUIPE);
     }
 

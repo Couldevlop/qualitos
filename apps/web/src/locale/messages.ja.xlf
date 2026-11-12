@@ -7542,6 +7542,10 @@ Portail clients</source>
         <source>Non-conformité interne</source>
         <target state="translated">内部不適合</target>
       </trans-unit>
+      <trans-unit id="capa.source.non-conformity-external" datatype="html">
+        <source>Non-conformité externe (réclamation client)</source>
+        <target state="translated">外部不適合（顧客苦情）</target>
+      </trans-unit>
       <trans-unit id="capa.create.source-ref-required" datatype="html">
         <source>Référence source</source>
         <target state="translated">出所の参照番号</target>
@@ -34314,6 +34318,10 @@ Inde (centre de service)</source>
       <trans-unit id="suppliers.nc.attach-hint" datatype="html">
         <source>Le 8D et les preuves de CAPA se joignent depuis la liste, une fois la NC enregistrée.</source>
         <target state="translated">8D と CAPA の証拠は、不適合を保存した後に一覧から添付します。</target>
+      </trans-unit>
+      <trans-unit id="suppliers.nc.col-reference" datatype="html">
+        <source>Référence</source>
+        <target state="translated">参照番号</target>
       </trans-unit>
       <trans-unit id="suppliers.nc.col-part" datatype="html">
         <source>Pièce</source>

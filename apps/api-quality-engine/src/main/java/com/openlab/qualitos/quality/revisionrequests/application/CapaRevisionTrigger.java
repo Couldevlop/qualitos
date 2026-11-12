@@ -54,7 +54,14 @@ public class CapaRevisionTrigger implements RevisionTrigger<CapaTransitionEvent>
         if (event.transition() != CapaTransition.CLOSED) return List.of();
 
         Map<String, Object> payload = event.payload();
-        if (!"NON_CONFORMITY".equals(text(payload.get("sourceType")))) return List.of();
+        // Les DEUX sources qui designent un ecart du registre : le constat
+        // interne et la reclamation client instruite en « NC externe ». La
+        // seconde manquait, et la revision du PFMEA n'etait jamais proposee
+        // pour un defaut remonte par un client -- le cas ou elle importe le plus.
+        String source = text(payload.get("sourceType"));
+        if (!"NON_CONFORMITY".equals(source) && !"EXTERNAL_NON_CONFORMITY".equals(source)) {
+            return List.of();
+        }
 
         String reference = text(payload.get("sourceRef"));
         if (reference == null) return List.of();

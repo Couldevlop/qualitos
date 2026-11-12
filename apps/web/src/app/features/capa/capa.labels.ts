@@ -92,6 +92,11 @@ export const CAPA_SOURCES: ReadonlyArray<{
   // interne : le dire lève l'ambiguïté sans changer le code de l'énumération,
   // qu'un dossier déjà ouvert porte toujours.
   { value: 'NON_CONFORMITY', label: $localize`:@@capa.source.non-conformity-internal:Non-conformité interne`, manual: true, register: 'nc' },
+  // Ouverte depuis une « NC externe » : le dossier affichait « Non-conformité
+  // interne » sur l'écran même qui sert à répondre au client. Pas proposée à la
+  // création libre : c'est l'escalade depuis la fiche de l'écart qui la pose,
+  // et elle seule sait si l'écart vient du dehors.
+  { value: 'EXTERNAL_NON_CONFORMITY', label: $localize`:@@capa.source.non-conformity-external:Non-conformité externe (réclamation client)`, manual: false },
   { value: 'AUDIT',          label: $localize`:@@capa.source.audit:Audit`, manual: true, register: 'audit' },
   { value: 'COMPLAINT',      label: $localize`:@@capa.source.complaint:Réclamation client`, manual: true, register: 'complaint' },
   { value: 'INTERNAL',       label: $localize`:@@capa.source.internal:Détection interne`, manual: true },

@@ -87,7 +87,8 @@ export class SupplierNcListComponent implements OnInit, OnDestroy {
   ) {}
 
   get columns(): string[] {
-    const cols = ['detectedOn'];
+    // La reference d'abord : c'est par elle qu'un ecart se cite hors de l'ecran.
+    const cols = ['reference', 'detectedOn'];
     if (!this.scopedSupplierId) cols.push('supplier');
     return cols.concat(['part', 'quantity', 'definition', 'severity', 'status',
       'eightDRequested', 'eightDReceived', 'documents', 'report']);
