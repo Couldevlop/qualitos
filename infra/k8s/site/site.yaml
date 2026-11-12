@@ -117,6 +117,15 @@ spec:
           env:
             - { name: SMTP_PORT, value: "587" }
             - { name: SMTP_TLS_IMPLICITE, value: "0" }
+            # Le plafond du service entier, toutes adresses confondues (ADR
+            # 0118). La borne par adresse arrete celui qui insiste ; elle ne
+            # voit pas un reseau reparti sur mille adresses, chacune restant
+            # sous sa limite. Soixante par heure est tres haut devant le trafic
+            # reel -- quelques demandes par jour : ce plafond ne se voit jamais
+            # en exploitation normale, et il borne le pire. Pose ici, et non
+            # laisse a sa valeur par defaut, pour qu'on puisse le resserrer
+            # sans reconstruire l'image.
+            - { name: CONTACT_DEBIT_GLOBAL_MAX, value: "60" }
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true

@@ -45,3 +45,37 @@ class Debit:
                 return False
             passages.append(maintenant)
             return True
+
+
+class DebitGlobal:
+    """Un plafond pour le service entier, toutes adresses confondues.
+
+    La borne par adresse arrête celui qui insiste ; elle n'arrête pas un réseau
+    qui se répartit sur mille adresses, chacune restant sous la limite. Chaque
+    message passé coûte alors un envoi SMTP et une lecture humaine.
+
+    Ce plafond-là dit ce que la boîte aux lettres accepte en une heure, point.
+    Il est volontairement haut devant le trafic réel — quelques demandes par
+    jour : il ne se voit jamais en exploitation normale, et il borne le pire.
+    Quand il se déclenche, c'est que quelque chose d'anormal se passe, et la
+    bonne réponse est de ne pas inonder la boîte en attendant qu'on le constate.
+    """
+
+    def __init__(self, maximum: int, periode_s: float, horloge=time.monotonic) -> None:
+        if maximum < 1:
+            raise ValueError("maximum doit valoir au moins 1")
+        self._maximum = maximum
+        self._periode = periode_s
+        self._horloge = horloge
+        self._passages: deque[float] = deque()
+        self._verrou = threading.Lock()
+
+    def accepte(self) -> bool:
+        maintenant = self._horloge()
+        with self._verrou:
+            while self._passages and maintenant - self._passages[0] >= self._periode:
+                self._passages.popleft()
+            if len(self._passages) >= self._maximum:
+                return False
+            self._passages.append(maintenant)
+            return True
