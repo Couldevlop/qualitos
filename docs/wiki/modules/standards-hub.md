@@ -22,6 +22,21 @@ l'alignement, l'audit blanc, la roadmap et la génération de documents.
   **brouillon généré par IA** pré-rempli à partir du contexte de l'organisation.
 - **Révisions** : suivre les évolutions de la norme.
 
+### Dans quelle langue ?
+
+Le **texte de la norme** (titre, sections, clauses, exigences) est en **anglais** :
+c'est la langue dans laquelle une norme ISO est publiée, celle que l'auditeur cite
+et que le certificat mentionne. Vous lisez donc l'exigence dans les termes exacts
+où elle vous sera opposée, sans retraduction.
+
+Tout le reste reste dans **votre langue** : l'interface, les modèles de documents
+(manuel qualité, politique, procédures), les processus types, les dossiers générés
+et l'assistance IA. Ce que vous produisez est votre document ; seule la norme citée
+est en anglais.
+
+ISO 9001 est la première norme passée en anglais ; les autres suivent par vagues.
+Une norme encore affichée en français n'est pas une anomalie.
+
 ## Parcours pas à pas
 
 1. **Ouvrir** `/standards` et **parcourir le catalogue**.
