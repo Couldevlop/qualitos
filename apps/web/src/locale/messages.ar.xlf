@@ -7663,8 +7663,8 @@ Portail clients</source>
         <target state="translated">حفظ الإجراء</target>
       </trans-unit>
       <trans-unit id="capa.open.subtitle" datatype="html">
-        <source>Une CAPA porte une action : ce qu'on va faire, qui en répond et pour quand. On la fait avancer jusqu'à la vérification d'efficacité.</source>
-        <target state="translated">يتضمن كل إجراء تصحيحي/وقائي إجراءً واحدًا: ما الذي سيُنفَّذ، ومن المسؤول، وبحلول متى. ويُتابَع حتى التحقق من الفعالية.</target>
+        <source>Cette fenêtre ouvre le dossier avec sa première action : ce qu'on va faire, qui en répond et pour quand. Le dossier en portera d'autres s'il le faut, jusqu'à la vérification d'efficacité.</source>
+        <target state="translated">تفتح هذه النافذة الملف بإجراءه الأول: ما الذي سيُنفَّذ، ومن المسؤول، وبحلول متى. وقد يحمل الملف إجراءات أخرى، حتى التحقق من الفعالية.</target>
       </trans-unit>
       <trans-unit id="capa.open.title-label" datatype="html">
         <source>Intitulé de l'action</source>

@@ -7663,8 +7663,8 @@ Portal de clientes</target>
         <target state="translated">Guardar la acción</target>
       </trans-unit>
       <trans-unit id="capa.open.subtitle" datatype="html">
-        <source>Une CAPA porte une action : ce qu'on va faire, qui en répond et pour quand. On la fait avancer jusqu'à la vérification d'efficacité.</source>
-        <target state="translated">Una CAPA lleva una acción: qué se hará, quién responde y para cuándo. Se avanza hasta la verificación de eficacia.</target>
+        <source>Cette fenêtre ouvre le dossier avec sa première action : ce qu'on va faire, qui en répond et pour quand. Le dossier en portera d'autres s'il le faut, jusqu'à la vérification d'efficacité.</source>
+        <target state="translated">Esta ventana abre el expediente con su primera acción: qué se hará, quién responde y para cuándo. El expediente podrá llevar otras, hasta la verificación de eficacia.</target>
       </trans-unit>
       <trans-unit id="capa.open.title-label" datatype="html">
         <source>Intitulé de l'action</source>

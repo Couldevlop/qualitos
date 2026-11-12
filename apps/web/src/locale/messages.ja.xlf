@@ -7663,8 +7663,8 @@ Portail clients</source>
         <target state="translated">対策を保存</target>
       </trans-unit>
       <trans-unit id="capa.open.subtitle" datatype="html">
-        <source>Une CAPA porte une action : ce qu'on va faire, qui en répond et pour quand. On la fait avancer jusqu'à la vérification d'efficacité.</source>
-        <target state="translated">CAPAは1つの対策を持ちます。何を行い、誰が責任を持ち、いつまでに行うか。有効性確認まで進めます。</target>
+        <source>Cette fenêtre ouvre le dossier avec sa première action : ce qu'on va faire, qui en répond et pour quand. Le dossier en portera d'autres s'il le faut, jusqu'à la vérification d'efficacité.</source>
+        <target state="translated">このウィンドウは最初の対策とともに案件を開きます。何を行い、誰が責任を持ち、いつまでに行うか。案件は必要に応じて他の対策も持ち、有効性確認まで進みます。</target>
       </trans-unit>
       <trans-unit id="capa.open.title-label" datatype="html">
         <source>Intitulé de l'action</source>

@@ -7663,8 +7663,8 @@ Portail clients</source>
         <target state="translated">保存措施</target>
       </trans-unit>
       <trans-unit id="capa.open.subtitle" datatype="html">
-        <source>Une CAPA porte une action : ce qu'on va faire, qui en répond et pour quand. On la fait avancer jusqu'à la vérification d'efficacité.</source>
-        <target state="translated">一个 CAPA 对应一项措施：做什么、由谁负责、何时完成。持续推进直至有效性验证。</target>
+        <source>Cette fenêtre ouvre le dossier avec sa première action : ce qu'on va faire, qui en répond et pour quand. Le dossier en portera d'autres s'il le faut, jusqu'à la vérification d'efficacité.</source>
+        <target state="translated">此窗口以首项措施打开档案：做什么、由谁负责、何时完成。档案可再承载其他措施，直至有效性验证。</target>
       </trans-unit>
       <trans-unit id="capa.open.title-label" datatype="html">
         <source>Intitulé de l'action</source>
