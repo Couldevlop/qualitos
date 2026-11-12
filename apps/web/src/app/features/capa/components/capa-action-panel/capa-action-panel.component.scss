@@ -162,3 +162,55 @@
   white-space: nowrap;
   border: 0;
 }
+
+/*
+ * La colonne Preuve.
+ *
+ * Elle porte la piece qui atteste que CE geste a ete fait (ADR 0052), reprise
+ * du pave vertical de la fiche CAPA que le tableau remplace (ADR 0117). Le nom
+ * de fichier est tronque plutot qu'elargir la colonne : un rapport
+ * d'intervention s'appelle rarement court, et une colonne qui s'etire repousse
+ * le geste d'avancement hors de l'ecran.
+ */
+.action-panel__fichier {
+  display: none;
+}
+
+.actions__preuve {
+  max-width: 14rem;
+
+  &--occupee {
+    opacity: 0.55;
+    pointer-events: none;
+  }
+}
+
+.actions__piece {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  max-width: 11rem;
+  vertical-align: middle;
+  color: var(--qos-fg-primary);
+
+  mat-icon {
+    flex: 0 0 auto;
+    font-size: 1.125rem;
+    width: 1.125rem;
+    height: 1.125rem;
+  }
+}
+
+.actions__piece-nom {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.actions__piece-retrait {
+  vertical-align: middle;
+}
+
+.actions__vide {
+  color: var(--qos-fg-tertiary, #94a3b8);
+}

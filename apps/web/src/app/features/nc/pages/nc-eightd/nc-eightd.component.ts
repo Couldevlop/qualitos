@@ -32,17 +32,22 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 const ROLES_ECRITURE = ['QUALITY_MANAGER', 'DIRECTOR_QUALITY', 'ADMIN_TENANT', 'SUPER_ADMIN'];
 
 /**
- * Les deux disciplines qui parlent d'actions, et la nature qui leur correspond.
+ * Les trois disciplines qui parlent d'actions, et la nature qui leur correspond.
  *
- * <p>Le 8D nomme les gestes séparément : le D5 est l'action corrective qui
- * supprime la cause, le D6 celle qui empêche la récidive. Chaque discipline
- * reçoit donc le tableau de SA nature, et non le tableau complet répété deux
- * fois — qui laisserait chercher, sous chaque titre, les lignes concernées.
+ * <p>Le 8D nomme les gestes séparément : le D3 est l'endiguement qui protège le
+ * client, le D5 l'action corrective qui supprime la cause, le D6 celle qui
+ * empêche la récidive. Chaque discipline reçoit donc le tableau de SA nature, et
+ * non le tableau complet répété trois fois — qui laisserait chercher, sous
+ * chaque titre, les lignes concernées.
  *
- * <p>Le D3 (sécurisation) n'y figure pas : il se SAISIT, parce qu'un endiguement
- * est souvent décidé avant qu'aucun dossier CAPA n'existe.
+ * <p>Le D3 garde en plus son champ de saisie : un endiguement est souvent décidé
+ * avant qu'aucun dossier CAPA n'existe, et ce texte-là est le seul à figurer
+ * dans le PDF. Le tableau montre les actions d'endiguement que le dossier porte
+ * vraiment ; sans lui, une action de nature CONTAINMENT (ADR 0115) ne
+ * s'affichait nulle part dans le rapport.
  */
 const NATURES_PAR_DISCIPLINE: Readonly<Record<string, readonly CapaActionType[]>> = {
+  D3: Object.freeze<CapaActionType[]>(['CONTAINMENT']),
   D5: Object.freeze<CapaActionType[]>(['CORRECTIVE']),
   D6: Object.freeze<CapaActionType[]>(['PREVENTIVE'])
 };

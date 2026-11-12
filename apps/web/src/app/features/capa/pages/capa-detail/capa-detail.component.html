@@ -27,16 +27,14 @@
                 i18n-matTooltip="@@capa.detail.reject-tooltip" matTooltip="Rejeter le cas">
           <mat-icon>block</mat-icon> <span i18n="@@capa.detail.reject">Rejeter</span>
         </button>
-        <button mat-stroked-button color="primary" (click)="start()" *qosCan="'capa.edit'"
-                [disabled]="(acting$ | async) || !canStart(c.status)"
-                i18n-matTooltip="@@capa.detail.start-tooltip" matTooltip="Démarrer le traitement">
-          <mat-icon>play_arrow</mat-icon> <span i18n="@@capa.detail.start">Démarrer</span>
-        </button>
-        <button mat-flat-button color="primary" (click)="resolve()" *qosCan="'capa.resolve'"
-                [disabled]="(acting$ | async) || !canResolve(c.status)"
-                i18n-matTooltip="@@capa.detail.resolve-tooltip" matTooltip="Marquer résolu">
-          <mat-icon>check</mat-icon> <span i18n="@@capa.detail.resolve">Résoudre</span>
-        </button>
+        <!-- Ni « Démarrer » ni « Résoudre » : le statut du dossier se déduit de
+             ses actions (ADR 0117). Les deux boutons ne décidaient rien, le
+             serveur refusant déjà la résolution tant qu'une action restait à
+             faire — on demandait à un humain de recopier une conclusion déjà
+             tirée, et le pilote qui finissait sa dernière action voyait son
+             dossier rester « en cours ». Restent les deux décisions qui, elles,
+             ne se déduisent de rien : renoncer, et juger l'efficacité.
+        -->
       </div>
     </ng-container>
   </header>
@@ -60,10 +58,6 @@
             <div class="info-item">
               <span class="info-label" i18n="@@common.status">Statut</span>
               <span [class]="statusBadge(c.status)">{{ c.status | statusLabel }}</span>
-            </div>
-            <div class="info-item">
-              <span class="info-label" i18n="@@common.type">Type</span>
-              <span class="info-value">{{ caseTypeLabel(c.type) }}</span>
             </div>
             <div class="info-item">
               <span class="info-label" i18n="@@capa.detail.criticity">Criticité</span>
@@ -193,114 +187,26 @@
         </mat-card-content>
       </mat-card>
 
-      <!-- Une CAPA EST son action (ADR 0088) : décidée à l'ouverture — nature,
-           responsable, échéance —, on la fait avancer ici. Ni liste, ni ajout,
-           ni suggestion. Un dossier sans action (ancien, ou ouvert par un
-           automate) propose de définir la sienne, une fois, dans la même
-           fenêtre que la création. Les anciens dossiers à plusieurs actions les
-           montrent toutes, dans le même style, sans permettre d'en ajouter. -->
-      <mat-card class="action-unique" data-test="action-unique">
+      <!--
+        LES ACTIONS, en tableau (ADR 0117).
+
+        Le pavé qui dépliait chaque action sur six lignes a disparu : il
+        répétait la nature, l'échéance et le statut déjà lus en tête de fiche.
+        Chaque fait n'est plus écrit qu'à un endroit — l'en-tête porte ce qui
+        appartient au dossier, le tableau ce qui varie d'une ligne à l'autre,
+        preuve d'action comprise.
+
+        Le même composant que la fiche d'un écart et que le rapport 8D : trois
+        écrans qui montreraient les actions différemment finiraient par ne plus
+        les montrer pareil.
+      -->
+      <mat-card class="actions-card" data-test="actions-card">
         <mat-card-header>
-          <mat-card-title>
-            <ng-container *ngIf="c.actions.length <= 1; else plusieursActions"
-                          i18n="@@capa.detail.single-action">Action</ng-container>
-            <ng-template #plusieursActions>
-              <span i18n="@@capa.detail.legacy-actions">Actions ({{ c.actions.length }})</span>
-            </ng-template>
-          </mat-card-title>
+          <mat-card-title i18n="@@capa.detail.actions-title">Actions</mat-card-title>
         </mat-card-header>
         <mat-card-content>
-          <div class="action-unique__vide" *ngIf="c.actions.length === 0" data-test="action-unique-vide">
-            <p i18n="@@capa.detail.action-missing">L'action de ce dossier n'a pas encore été définie : sans elle, il ne pourra pas être clôturé.</p>
-            <button mat-flat-button color="primary" type="button" *qosCan="'capa.action.manage'"
-                    (click)="openDefineAction(c)" [disabled]="isTerminal(c.status)"
-                    data-test="definir-action">
-              <span i18n="@@capa.detail.single-action-define">Définir l'action</span>
-            </button>
-          </div>
-
-          <!-- Un sélecteur de fichier UNIQUE : l'action visée est mémorisée au clic. -->
-          <input type="file" class="hidden-file" #actionEvidenceInput
-                 accept="application/pdf,image/jpeg,image/png,image/webp,image/heic,.docx,.xlsx"
-                 (change)="onActionEvidenceSelected($event)"
-                 aria-hidden="true" tabindex="-1">
-
-          <div class="action-unique__ligne" *ngFor="let a of c.actions; trackBy: trackActionById"
-               data-test="action-ligne">
-            <div class="action-unique__texte">
-              <p class="action-unique__titre">{{ a.title }}</p>
-              <dl class="action-unique__champs">
-                <div><dt i18n="@@capa.action.action-type">Nature de l'action</dt><dd>{{ actionTypeLabel(a.actionType || 'CORRECTIVE') }}</dd></div>
-                <!-- Le responsable et l'echeance de l'action ne s'affichent que
-                     s'ils s'ecartent du pilote et de l'echeance du dossier, deja
-                     en tete de fiche : a la creation ils en sont copies, et
-                     repeter la meme valeur a deux endroits ne renseigne personne.
-                     Une reaffectation ou un report de l'action les fait diverger :
-                     l'ecart, lui, se lit ici. -->
-                <div *ngIf="a.assigneeId !== c.ownerId">
-                  <dt i18n="@@capa.detail.single-action-assignee">Responsable</dt><dd>{{ a.assigneeName || '—' }}</dd>
-                </div>
-                <div *ngIf="a.dueDate && a.dueDate !== c.dueDate">
-                  <dt i18n="@@capa.detail.due-date">Échéance</dt><dd>{{ a.dueDate | date }}</dd>
-                </div>
-                <div>
-                  <dt i18n="@@common.status">Statut</dt>
-                  <dd><span [class]="actionBadge(a.status)"
-                            [matTooltip]="a.completedAt ? (a.completedAt | date:'medium') : ''">{{ actionStatusLabel(a.status) }}</span></dd>
-                </div>
-                <!-- La preuve de l'action (ADR 0052) : une pièce, qui atteste qu'elle a été menée. -->
-                <div [class.evidence-busy]="(busyEvidenceActionId$ | async) === a.id" data-test="action-preuve">
-                  <dt i18n="@@capa.detail.col-evidence">Preuve</dt>
-                  <dd>
-                    <ng-container *ngIf="actionEvidence(a.id) as e; else noActionEvidence">
-                      <a class="action-evidence" *ngIf="e.url; else noActionLink"
-                         [href]="e.url" target="_blank" rel="noopener noreferrer"
-                         [matTooltip]="e.originalFilename || e.id">
-                        <mat-icon aria-hidden="true">{{ evidenceIcon(e.contentType) }}</mat-icon>
-                        <span class="action-evidence__name">{{ e.originalFilename || e.id }}</span>
-                      </a>
-                      <ng-template #noActionLink>
-                        <span class="action-evidence">
-                          <mat-icon aria-hidden="true">{{ evidenceIcon(e.contentType) }}</mat-icon>
-                          <span class="action-evidence__name">{{ e.originalFilename || e.id }}</span>
-                        </span>
-                      </ng-template>
-                      <button mat-icon-button color="warn" type="button" class="evidence-remove"
-                              *ngIf="!isTerminal(c.status)"
-                              [disabled]="(busyEvidenceActionId$ | async) === a.id"
-                              (click)="removeActionEvidence(a.id, e)"
-                              i18n-matTooltip="@@capa.action-evidence.remove-tooltip"
-                              matTooltip="Retirer la preuve de cette action"
-                              [attr.aria-label]="removeEvidenceAria(a.title)">
-                        <mat-icon>close</mat-icon>
-                      </button>
-                    </ng-container>
-                    <ng-template #noActionEvidence>
-                      <button mat-stroked-button type="button" class="attach-btn"
-                              *ngIf="canAttachActionEvidence(a.id, c.status); else noEvidenceMark"
-                              (click)="triggerActionEvidencePicker(actionEvidenceInput, a.id)"
-                              [attr.aria-label]="attachEvidenceAria(a.title)">
-                        <mat-icon aria-hidden="true">attach_file</mat-icon>
-                        <span i18n="@@capa.action-evidence.attach">Joindre</span>
-                      </button>
-                      <ng-template #noEvidenceMark><span class="muted">—</span></ng-template>
-                    </ng-template>
-                  </dd>
-                </div>
-              </dl>
-            </div>
-            <ng-container *qosCan="'capa.action.update'">
-              <button mat-flat-button color="primary" type="button" *ngIf="nextActionStatus(a.status)"
-                      [disabled]="!canAdvanceAction(a, c.status)" (click)="advanceAction(a)"
-                      data-test="avancer-action">
-                <mat-icon aria-hidden="true">{{ a.status === 'PENDING' ? 'play_arrow' : 'check' }}</mat-icon>
-                {{ advanceActionLabel(a.status) }}
-              </button>
-            </ng-container>
-            <mat-icon *ngIf="a.status === 'DONE'" class="action-done" aria-hidden="true"
-                      i18n-matTooltip="@@capa.detail.action-done-tooltip"
-                      matTooltip="Action terminée">check_circle</mat-icon>
-          </div>
+          <qos-capa-action-panel [capaCaseId]="c.id"
+                                 (changed)="reloadCase()"></qos-capa-action-panel>
         </mat-card-content>
       </mat-card>
 

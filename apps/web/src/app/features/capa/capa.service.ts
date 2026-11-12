@@ -383,13 +383,9 @@ export class CapaService {
     return store;
   }
 
-  startCase(id: string): Observable<CapaCaseResponse> {
-    return this.transition(id, 'IN_PROGRESS', 'start');
-  }
-
-  resolveCase(id: string): Observable<CapaCaseResponse> {
-    return this.transition(id, 'RESOLVED', 'resolve');
-  }
+  // Ni `startCase` ni `resolveCase` : le statut du dossier se déduit de ses
+  // actions (ADR 0117), et les routes serveur ont disparu avec les deux
+  // boutons qui ne décidaient rien.
 
   rejectCase(id: string): Observable<CapaCaseResponse> {
     return this.transition(id, 'REJECTED', 'reject');
@@ -487,8 +483,9 @@ export class CapaService {
         sourceType: 'INTERNAL',
         ownerId: 'demo-user',
         // RESOLVED avec une action faite : état réellement atteignable côté
-        // serveur (`resolveCase` exige au moins une action, toutes DONE), et
-        // seul cas de la démonstration où le bouton de clôture s'allume.
+        // serveur, où le statut se déduit des actions et où toutes sont faites
+        // (ADR 0117) ; seul cas de la démonstration où le bouton de clôture
+        // s'allume.
         resolvedAt: now, createdAt: now, updatedAt: now,
         actions: [
           {

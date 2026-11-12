@@ -45,31 +45,33 @@
   <h3 class="qfd-section" i18n="@@nc.create.section-qualification">Qualification</h3>
 
   <div class="qos-field-row">
-    <mat-form-field appearance="outline">
-      <mat-label i18n="@@nc.create.category">Catégorie</mat-label>
-      <mat-select formControlName="category" required (selectionChange)="onCategoryChange()">
-        <mat-option *ngFor="let c of categories" [value]="c">{{ c | ncCategoryLabel }}</mat-option>
-      </mat-select>
-      <mat-error *ngIf="form.controls.category.hasError('required')"
-                 i18n="@@nc.create.category-required">Choisissez une catégorie.</mat-error>
-    </mat-form-field>
+    <!--
+      LA NATURE de l'ecart, et par elle sa famille.
 
-    <!-- La NATURE de l'écart, sous sa catégorie. Facultative, et proposée
-         seulement une fois la catégorie choisie : soixante natures toutes
-         catégories confondues ne se parcourent pas. -->
-    <!-- Toujours PRESENT, desactive tant qu'aucune categorie n'est choisie.
-         Il n'apparaissait qu'une fois la categorie retenue : personne ne
-         cherche un champ dont rien n'annonce l'existence, et le declarant
-         laissait la sous-categorie vide en croyant qu'il n'y en avait pas. -->
-    <mat-form-field appearance="outline" subscriptSizing="dynamic">
-      <mat-label i18n="@@nc.create.subcategory">Sous-catégorie</mat-label>
-      <mat-select formControlName="subcategoryCode" data-test="nc-nature"
-                  panelClass="qos-select-panel--lignes">
-        <mat-option value="" i18n="@@nc.create.subcategory-none">— À classer —</mat-option>
-        <mat-option *ngFor="let s of subcategoryChoices" [value]="s.code">{{ s.label }}</mat-option>
+      Deux champs se succedaient ici : une « Categorie » a renseigner d'abord,
+      puis une « Sous-categorie » qui restait eteinte tant qu'on ne l'avait pas
+      fait. La categorie ne servait qu'a reduire la liste -- soixante natures a
+      plat ne se parcourent pas -- et les titres de famille rendent ce service
+      sans la question prealable : on voit d'ou vient ce qu'on choisit, au lieu
+      de le declarer avant de choisir.
+
+      Les groupes sont memoises cote composant : un getter qui refabriquerait
+      ses objets a chaque passe de detection ferait detruire et recreer les
+      options, et la page se figerait.
+    -->
+    <mat-form-field appearance="outline" class="nc-create__nature" subscriptSizing="dynamic">
+      <mat-label i18n="@@nc.create.nature">Nature de l'écart</mat-label>
+      <mat-select formControlName="subcategoryCode" required data-test="nc-nature"
+                  panelClass="qos-select-panel--lignes"
+                  (selectionChange)="onSubcategoryChange()">
+        <mat-optgroup *ngFor="let g of subcategoryGroups" [label]="g.category | ncCategoryLabel">
+          <mat-option *ngFor="let s of g.subcategories" [value]="s.code">{{ s.label }}</mat-option>
+        </mat-optgroup>
       </mat-select>
-      <mat-hint *ngIf="!subcategoryChoices.length" i18n="@@nc.create.subcategory-hint">
-        Choisissez d’abord une catégorie.
+      <mat-error *ngIf="form.controls.subcategoryCode.hasError('required')"
+                 i18n="@@nc.create.nature-required">Choisissez la nature de l'écart.</mat-error>
+      <mat-hint *ngIf="!subcategoryGroups.length" i18n="@@nc.create.nature-empty">
+        Aucune nature au catalogue : prévenez l'administrateur du compte.
       </mat-hint>
     </mat-form-field>
 

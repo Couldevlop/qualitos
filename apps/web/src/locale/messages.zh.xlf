@@ -6706,6 +6706,26 @@ Portail clients</source>
         <source>Cette action n'existe plus — recharge la fiche.</source>
         <target state="translated">该措施已不存在 — 请重新加载档案。</target>
       </trans-unit>
+      <trans-unit id="capa.detail.actions-title" datatype="html">
+        <source>Actions</source>
+        <target state="translated">措施</target>
+      </trans-unit>
+      <trans-unit id="nc.create.nature" datatype="html">
+        <source>Nature de l'écart</source>
+        <target state="translated">偏差性质</target>
+      </trans-unit>
+      <trans-unit id="nc.create.nature-required" datatype="html">
+        <source>Choisissez la nature de l'écart.</source>
+        <target state="translated">请选择偏差性质。</target>
+      </trans-unit>
+      <trans-unit id="nc.create.nature-empty" datatype="html">
+        <source>Aucune nature au catalogue : prévenez l'administrateur du compte.</source>
+        <target state="translated">目录中没有性质：请通知账户管理员。</target>
+      </trans-unit>
+      <trans-unit id="nc.create.blocked-nature" datatype="html">
+        <source>Choisissez la nature de l'écart pour pouvoir déclarer.</source>
+        <target state="translated">请选择偏差性质后才能申报。</target>
+      </trans-unit>
       <trans-unit id="capa.action-type.containment" datatype="html">
         <source>Endiguement</source>
         <target state="translated">围堵措施</target>
@@ -7663,8 +7683,8 @@ Portail clients</source>
         <target state="translated">保存措施</target>
       </trans-unit>
       <trans-unit id="capa.open.subtitle" datatype="html">
-        <source>Une CAPA porte une action : ce qu'on va faire, qui en répond et pour quand. On la fait avancer jusqu'à la vérification d'efficacité.</source>
-        <target state="translated">一个 CAPA 对应一项措施：做什么、由谁负责、何时完成。持续推进直至有效性验证。</target>
+        <source>Cette fenêtre ouvre le dossier avec sa première action : ce qu'on va faire, qui en répond et pour quand. Le dossier en portera d'autres s'il le faut, jusqu'à la vérification d'efficacité.</source>
+        <target state="translated">此窗口以首项措施打开档案：做什么、由谁负责、何时完成。档案可再承载其他措施，直至有效性验证。</target>
       </trans-unit>
       <trans-unit id="capa.open.title-label" datatype="html">
         <source>Intitulé de l'action</source>

@@ -641,10 +641,29 @@ img { max-width: 100%; height: auto; }
   gap: 0.4rem 1.6rem;
   padding-bottom: 1.5rem;
   margin-bottom: 1.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+  border-bottom: 1px solid var(--filet);
 }
-.pied__plan a { color: #cddaee; text-decoration: none; font-size: var(--t-s); padding-block: 0.3rem; }
-.pied__plan a:hover { color: #fff; text-decoration: underline; }
+
+/*
+ * Le pied est sur PAPIER, pas sur marine.
+ *
+ * Ses liens avaient garde les couleurs d'un pied sombre : bleu tres pale au
+ * repos, blanc au survol -- donc effaces au moment precis ou l'on vise, et le
+ * filet separateur, blanc lui aussi, n'existait pas. Ils reprennent ici l'encre
+ * du document, et le survol FONCE au lieu d'eclaircir.
+ */
+.pied__plan a {
+  color: var(--encre-douce);
+  text-decoration: none;
+  font-size: var(--t-s);
+  padding-block: 0.3rem;
+  transition: color 140ms ease;
+}
+.pied__plan a:hover,
+.pied__plan a:focus-visible {
+  color: var(--marine);
+  text-decoration: underline;
+}
 
 .pied__barre p { margin: 0; }
 .pied__barre { display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: center; justify-content: space-between; }

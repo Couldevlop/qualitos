@@ -11,19 +11,14 @@ import { ConfirmDialogComponent, ConfirmDialogData } from '../../../../shared/ui
 import { AccountNames } from '../../../../core/directory/directory-names';
 import { DirectoryService } from '../../../../core/directory/directory.service';
 import {
-  actionTypeLabel, capaCriticityLabel, capaOwnerLabel, capaSourceLabel, capaTypeLabel, unnamedOwners
+  capaCriticityLabel, capaOwnerLabel, capaSourceLabel, unnamedOwners
 } from '../../capa.labels';
 import { CapaService } from '../../capa.service';
 import {
   CapaEditDialogComponent,
   CapaEditDialogData
 } from '../capa-edit-dialog/capa-edit-dialog.component';
-import { CapaActionResponse, CapaActionStatus, CapaActionType, CapaCaseResponse, CapaCriticity, CapaEvidence, CapaStatus, ClosureBlocker } from '../../capa.types';
-import {
-  CapaCreateDialogComponent,
-  CapaCreateDialogData,
-  CapaOpened
-} from '../capa-create-dialog/capa-create-dialog.component';
+import { CapaCaseResponse, CapaCriticity, CapaEvidence, CapaStatus, ClosureBlocker } from '../../capa.types';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -105,8 +100,9 @@ export class CapaDetailComponent implements OnInit {
       shareReplay({ bufferSize: 1, refCount: true })
     );
     this.reload$.next();
+    // Seules les preuves DU DOSSIER se chargent ici. Celles des actions sont
+    // lues par le tableau, qui les montre et les gere (ADR 0117).
     this.loadEvidences();
-    this.loadActionEvidences();
   }
 
   /** Le nom du pilote, jamais son identifiant (ADR 0088). */
@@ -252,117 +248,6 @@ export class CapaDetailComponent implements OnInit {
     return e?.status === 503 && typeof type === 'string' && type.includes('storage-disabled');
   }
 
-  // --- preuves rattachées à une action (§4.2, ADR 0052) ------------------------
-
-  /**
-   * Chargement non bloquant, comme les preuves du dossier : le tableau reste
-   * lisible même si le stockage est coupé — la colonne « Preuve » affiche alors
-   * son état plutôt qu'une erreur en travers de la fiche.
-   */
-  loadActionEvidences(): void {
-    this.capa.listActionEvidences(this.caseId).subscribe({
-      next: list => {
-        const byAction = new Map<string, CapaEvidence>();
-        // Le serveur garantit une pièce par action ; on prend malgré tout la
-        // dernière si deux arrivaient, plutôt que d'afficher une cellule vide.
-        list.forEach(e => { if (e.actionId) byAction.set(e.actionId, e); });
-        this.actionEvidences$.next(byAction);
-        // Le drapeau « stockage coupé » n'est PAS remis à faux ici : les deux
-        // listes partagent le même stockage, et cet appel-ci peut aboutir
-        // pendant que l'autre a déjà diagnostiqué la coupure. L'effacer
-        // reviendrait à contredire un diagnostic posé une milliseconde plus tôt.
-      },
-      error: err => {
-        // eslint-disable-next-line no-console
-        console.warn('[capa-detail] listActionEvidences failed', err?.status, err?.error?.type);
-        if (this.isStorageDisabled(err)) { this.evidenceStorageDisabled$.next(true); }
-      }
-    });
-  }
-
-  /** Pièce de cette action, ou undefined — c'est ce que la cellule affiche. */
-  actionEvidence(actionId: string): CapaEvidence | undefined {
-    return this.actionEvidences$.value.get(actionId);
-  }
-
-  /** Le dépôt suit le verrou du dossier : plus rien ne bouge une fois clos ou rejeté. */
-  canAttachActionEvidence(actionId: string, caseStatus: CapaStatus): boolean {
-    return !this.isTerminal(caseStatus)
-        && !this.evidenceStorageDisabled$.value
-        && !this.actionEvidence(actionId)
-        && this.busyEvidenceActionId$.value !== actionId;
-  }
-
-  triggerActionEvidencePicker(input: HTMLInputElement, actionId: string): void {
-    if (this.busyEvidenceActionId$.value) return;
-    // L'input est partagé par toutes les lignes : sans mémoriser l'action visée,
-    // le fichier choisi atterrirait sur la dernière ligne rendue.
-    this.pendingEvidenceActionId = actionId;
-    input.click();
-  }
-
-  onActionEvidenceSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const file = input.files && input.files[0];
-    input.value = '';
-    const actionId = this.pendingEvidenceActionId;
-    this.pendingEvidenceActionId = null;
-    if (!file || !actionId) return;
-
-    this.busyEvidenceActionId$.next(actionId);
-    this.capa.uploadActionEvidence(this.caseId, actionId, file)
-      .pipe(finalize(() => this.busyEvidenceActionId$.next(null)))
-      .subscribe({
-        next: evidence => {
-          const next = new Map(this.actionEvidences$.value);
-          next.set(actionId, evidence);
-          this.actionEvidences$.next(next);
-          this.snack.open(
-            $localize`:@@capa.action-evidence.added:Preuve jointe à l'action.`,
-            $localize`:@@common.ok:OK`, { duration: 2000 });
-        },
-        error: err => {
-          // eslint-disable-next-line no-console
-          console.warn('[capa-detail] uploadActionEvidence failed', err?.status, err?.error?.type);
-          if (this.isStorageDisabled(err)) { this.evidenceStorageDisabled$.next(true); return; }
-          this.snack.open(this.evidenceRefusal(err), $localize`:@@common.ok:OK`, { duration: 5000 });
-        }
-      });
-  }
-
-  removeActionEvidence(actionId: string, evidence: CapaEvidence): void {
-    if (this.busyEvidenceActionId$.value) return;
-    this.dialog.open(ConfirmDialogComponent, {
-      data: <ConfirmDialogData>{
-        title: $localize`:@@capa.action-evidence.remove-title:Retirer la preuve de cette action ?`,
-        message: $localize`:@@capa.action-evidence.remove-message:La pièce sera définitivement retirée. Une action déclarée faite sans preuve s'affirme faite sans le démontrer : ce retrait est traçable.`,
-        confirmLabel: $localize`:@@common.delete:Supprimer`,
-        destructive: true
-      },
-      autoFocus: false,
-      restoreFocus: true
-    }).afterClosed().subscribe(confirmed => {
-      if (!confirmed) return;
-      this.busyEvidenceActionId$.next(actionId);
-      this.capa.deleteActionEvidence(this.caseId, actionId, evidence.id)
-        .pipe(finalize(() => this.busyEvidenceActionId$.next(null)))
-        .subscribe({
-          next: () => {
-            const next = new Map(this.actionEvidences$.value);
-            next.delete(actionId);
-            this.actionEvidences$.next(next);
-          },
-          error: err => {
-            // eslint-disable-next-line no-console
-            console.warn('[capa-detail] deleteActionEvidence failed', err?.status, err?.error?.type);
-            this.snack.open(
-              safeErrorMessage(err, $localize`:@@capa.evidence.remove-error:Échec du retrait de la preuve.`),
-              $localize`:@@common.ok:OK`, { duration: 4000 });
-          }
-        });
-    });
-  }
-
   /**
    * Traduction des refus de téléversement, partagée par les deux niveaux.
    * Chaque refus a sa raison : les confondre reviendrait à dire « non » sans
@@ -382,32 +267,16 @@ export class CapaDetailComponent implements OnInit {
       : safeErrorMessage(err, $localize`:@@capa.evidence.error:Échec de l'ajout de la preuve.`);
   }
 
-  /** Action visée par le sélecteur de fichier partagé entre toutes les lignes. */
-  private pendingEvidenceActionId: string | null = null;
-
   /**
-   * Libellés d'accessibilité des boutons de preuve d'action.
+   * Relit le dossier après qu'une action a bougé dans le tableau.
    *
-   * Une icône seule ou un mot isolé (« Joindre », « × ») ne dit pas SUR QUOI il
-   * agit : au lecteur d'écran, huit lignes rendent huit boutons « Joindre »
-   * indiscernables. Le libellé de l'action est donc repris dans l'étiquette —
-   * et traduit, parce qu'un lecteur d'écran arabe ou japonais lit ce texte.
+   * <p>Le statut du dossier se déduit de ses actions (ADR 0117) : terminer la
+   * dernière le résout, et l'en-tête doit le dire tout de suite. Sans cette
+   * relecture, la fiche afficherait « en cours » au-dessus d'un tableau dont
+   * toutes les lignes sont faites.
    */
-  attachEvidenceAria(title: string): string {
-    return $localize`:@@capa.action-evidence.attach-aria:Joindre une preuve à l'action : ${title}:title:`;
-  }
-
-  removeEvidenceAria(title: string): string {
-    return $localize`:@@capa.action-evidence.remove-aria:Retirer la preuve de l'action : ${title}:title:`;
-  }
-
-  /** Libellé traduit d'un statut d'action. */
-  actionStatusLabel(s: CapaActionStatus): string {
-    return s === 'PENDING'
-      ? $localize`:@@capa.action-status.pending:À faire`
-      : s === 'IN_PROGRESS'
-        ? $localize`:@@capa.action-status.in-progress:En cours`
-        : $localize`:@@capa.action-status.done:Faite`;
+  reloadCase(): void {
+    this.reload$.next();
   }
 
   goBack(): void {
@@ -455,98 +324,7 @@ export class CapaDetailComponent implements OnInit {
     });
   }
 
-  /**
-   * Définit l'action d'un dossier qui n'en a pas — ancien, ou ouvert par un
-   * automate (carte de contrôle, IoT, anomalie). LA fenêtre de création, en
-   * mode réduit : un quatrième formulaire divergerait (ADR 0088). Le
-   * responsable choisi devient le pilote du dossier.
-   */
-  openDefineAction(c: CapaCaseResponse): void {
-    const data: CapaCreateDialogData = {
-      mode: 'define-action',
-      caseId: this.caseId,
-      prefill: {
-        title: c.title,
-        description: c.description,
-        type: c.type === 'PREVENTIVE' ? 'PREVENTIVE' : 'CORRECTIVE',
-        dueDate: c.dueDate
-      }
-    };
-    this.dialog
-      .open<CapaCreateDialogComponent, CapaCreateDialogData, CapaOpened>(CapaCreateDialogComponent, {
-        data,
-        autoFocus: 'first-tabbable',
-        restoreFocus: true,
-        panelClass: 'qos-dialog-panel'
-      })
-      .afterClosed()
-      .subscribe(defined => {
-        if (defined) this.reload$.next();
-      });
-  }
-
-  // ---- Avancement du statut des actions (ANO-011, §4.2 / ISO 9001 §10.2) ----
-
-  private static readonly ACTION_FLOW: Record<CapaActionStatus, CapaActionStatus | null> = {
-    PENDING: 'IN_PROGRESS',
-    IN_PROGRESS: 'DONE',
-    DONE: null
-  };
-
-  /** Statut suivant d'une action (null si déjà DONE). */
-  nextActionStatus(s: CapaActionStatus): CapaActionStatus | null {
-    return CapaDetailComponent.ACTION_FLOW[s];
-  }
-
-  trackActionById(_i: number, a: CapaActionResponse): string {
-    return a.id;
-  }
-
-  /** Une action est avançable si elle n'est pas DONE et que la CAPA n'est pas terminale. */
-  canAdvanceAction(a: CapaActionResponse, caseStatus: CapaStatus): boolean {
-    return a.status !== 'DONE' && !this.isTerminal(caseStatus) && !this.acting$.value;
-  }
-
-  /** Libellé du bouton selon le prochain statut. */
-  advanceActionLabel(s: CapaActionStatus): string {
-    return s === 'PENDING'
-      ? $localize`:@@capa.detail.action-start:Démarrer`
-      : $localize`:@@capa.detail.action-complete:Terminer`;
-  }
-
-  /**
-   * Fait avancer une action vers son statut suivant.
-   *
-   * Seul le statut part : renvoyer le libellé le réécrirait à l'identique et
-   * écraserait au passage une correction faite entre-temps par quelqu'un
-   * d'autre. Le backend accepte le PATCH partiel.
-   */
-  advanceAction(a: CapaActionResponse): void {
-    const next = this.nextActionStatus(a.status);
-    if (!next || this.acting$.value) {
-      return;
-    }
-    this.acting$.next(true);
-    this.capa.updateAction(this.caseId, a.id, { status: next })
-      .pipe(finalize(() => this.acting$.next(false)))
-      .subscribe({
-        next: () => {
-          this.snack.open($localize`:@@capa.detail.action-advanced:Action mise à jour.`, $localize`:@@common.ok:OK`, { duration: 2000 });
-          this.reload$.next();
-        },
-        error: err => {
-          // eslint-disable-next-line no-console
-          console.warn('[capa-detail] advanceAction failed', err?.status, err?.error?.title);
-          this.snack.open(
-            safeErrorMessage(err, $localize`:@@capa.detail.action-advance-error:Mise à jour de l'action impossible.`),
-            $localize`:@@common.close:Fermer`, { duration: 4000 });
-        }
-      });
-  }
-
-  start(): void { this.transition('start'); }
-  resolve(): void { this.transition('resolve'); }
-  reject(): void { this.transition('reject'); }
+  reject(): void { this.rejeter(); }
 
   /**
    * ISO 9001 §10.2 — once a CAPA is RESOLVED, the auditor must verify that
@@ -602,16 +380,6 @@ export class CapaDetailComponent implements OnInit {
     return s === 'RESOLVED';
   }
 
-  /** Libellé lisible du type de DOSSIER (endiguement / corrective / préventive). */
-  caseTypeLabel(type: string): string {
-    return capaTypeLabel(type);
-  }
-
-  /** Libellé lisible d'une nature d'action, avec repli sur le code inconnu. */
-  actionTypeLabel(type: CapaActionType): string {
-    return actionTypeLabel(type);
-  }
-
   /**
    * Phrase du motif, construite ICI et non reçue du serveur : elle doit se dire
    * dans la langue de l'utilisateur, et un message serveur ne se traduit pas.
@@ -654,36 +422,38 @@ export class CapaDetailComponent implements OnInit {
       : '';
   }
 
-  private transition(action: 'start' | 'resolve' | 'reject'): void {
+  /**
+   * L'abandon du dossier — la seule transition qui reste un geste.
+   *
+   * <p>« Démarrer » et « Résoudre » l'accompagnaient, et ne décidaient rien : le
+   * serveur refusait déjà de résoudre tant qu'une action restait à faire, si
+   * bien qu'on demandait à un humain de recopier une conclusion déjà tirée.
+   * Le statut du dossier se déduit maintenant de ses actions (ADR 0117) ;
+   * renoncer, lui, ne se déduit de rien.
+   */
+  private rejeter(): void {
     if (this.acting$.value) return;
     this.acting$.next(true);
-    const call =
-      action === 'start' ? this.capa.startCase(this.caseId)
-      : action === 'resolve' ? this.capa.resolveCase(this.caseId)
-      : this.capa.rejectCase(this.caseId);
-    call.pipe(finalize(() => this.acting$.next(false))).subscribe({
-      next: () => {
-        const msg = action === 'start'
-          ? $localize`:@@capa.detail.case-started:Cas démarré.`
-          : action === 'resolve'
-            ? $localize`:@@capa.detail.case-resolved:Cas résolu.`
-            : $localize`:@@capa.detail.case-rejected:Cas rejeté.`;
-        this.snack.open(msg, $localize`:@@common.ok:OK`, { duration: 2000 });
-        this.reload$.next();
-      },
-      error: err => {
-        // eslint-disable-next-line no-console
-        console.warn('[capa-detail] transition failed', action, err?.status, err?.error?.title);
-        this.snack.open(
-          safeErrorMessage(err, $localize`:@@capa.detail.transition-error:Erreur lors de la transition.`),
-          $localize`:@@common.ok:OK`, { duration: 4000 }
-        );
-      }
-    });
+    this.capa.rejectCase(this.caseId)
+      .pipe(finalize(() => this.acting$.next(false)))
+      .subscribe({
+        next: () => {
+          this.snack.open(
+            $localize`:@@capa.detail.case-rejected:Cas rejeté.`,
+            $localize`:@@common.ok:OK`, { duration: 2000 });
+          this.reload$.next();
+        },
+        error: err => {
+          // eslint-disable-next-line no-console
+          console.warn('[capa-detail] reject failed', err?.status, err?.error?.title);
+          this.snack.open(
+            safeErrorMessage(err, $localize`:@@capa.detail.transition-error:Erreur lors de la transition.`),
+            $localize`:@@common.ok:OK`, { duration: 4000 }
+          );
+        }
+      });
   }
 
-  canStart(s: CapaStatus): boolean { return s === 'OPEN'; }
-  canResolve(s: CapaStatus): boolean { return s === 'IN_PROGRESS'; }
   canReject(s: CapaStatus): boolean { return s === 'OPEN' || s === 'IN_PROGRESS'; }
   isTerminal(s: CapaStatus): boolean { return s === 'CLOSED' || s === 'REJECTED'; }
 
@@ -696,5 +466,4 @@ export class CapaDetailComponent implements OnInit {
   statusBadge(s: CapaStatus): string { return 'badge badge-' + s.toLowerCase(); }
   criticityBadge(c: CapaCriticity): string { return 'crit crit-' + c.toLowerCase(); }
   readonly criticityLabel = capaCriticityLabel;
-  actionBadge(s: 'PENDING' | 'IN_PROGRESS' | 'DONE'): string { return 'badge badge-' + s.toLowerCase(); }
 }

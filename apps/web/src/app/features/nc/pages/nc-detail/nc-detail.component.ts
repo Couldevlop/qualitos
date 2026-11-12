@@ -619,10 +619,12 @@ export class NcDetailComponent implements OnInit {
   /**
    * Ouvre LA fenêtre de création CAPA, source verrouillée sur cette NC (ADR 0088).
    *
-   * <p>Une NC a une CAPA, qui porte une action : intitulé, nature, responsable
-   * et échéance se saisissent une fois, et le serveur crée le dossier, son
-   * action et le lien en une écriture. Si la NC a déjà sa CAPA, on l'ouvre au
-   * lieu d'en proposer une seconde.
+   * <p>Un écart a UN dossier CAPA, et ce dossier porte autant d'actions qu'il
+   * en faut (ADR 0115). Cette fenêtre ne pose que la première : intitulé,
+   * nature, responsable et échéance se saisissent une fois, et le serveur crée
+   * le dossier, son action et le lien en une écriture. Les suivantes s'ajoutent
+   * par « Ajouter des actions ». Si l'écart a déjà sa CAPA, on l'ouvre au lieu
+   * d'en proposer une seconde.
    */
   openCapa(nc: NcResponse): void {
     if (this.acting$.value) return;

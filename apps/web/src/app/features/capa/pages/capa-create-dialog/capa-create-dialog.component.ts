@@ -98,8 +98,10 @@ export interface CapaCreateDialogData {
 /**
  * LA fenêtre de création d'une CAPA, d'où qu'on l'ouvre (ADR 0088).
  *
- * Une CAPA porte une action : intitulé, nature, responsable et échéance sont à
- * la fois ceux du dossier et de son action, saisis une fois. Le responsable se
+ * Elle ouvre le dossier avec sa PREMIÈRE action : intitulé, nature, responsable
+ * et échéance sont à la fois ceux du dossier et de cette action, saisis une
+ * fois. Le dossier en portera d'autres ensuite, ajoutées depuis son tableau
+ * (ADR 0115) ; cette fenêtre-ci ne sert qu'à l'ouvrir. Le responsable se
  * choisit dans l'annuaire du client en lecture restreinte (ADR 0091), ouvert à
  * tout membre, et devient le pilote du dossier. Par défaut : soi-même.
  */

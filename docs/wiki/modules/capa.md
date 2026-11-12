@@ -34,6 +34,28 @@ comme sur la [fiche de l'écart](non-conformites.md).
   déplacent pas, pour que le dossier ne change pas de main à chaque geste ajouté.
 - Un dossier **clos ou rejeté** n'accepte plus d'action, et ses lignes s'ouvrent en lecture seule.
 
+## Le statut du dossier se lit dans ses actions
+
+Vous ne faites **pas** avancer le dossier lui-même : vous faites avancer ses actions, et son
+statut suit tout seul.
+
+| Les actions du dossier | Le statut du dossier |
+|---|---|
+| aucune, ou toutes *à faire* | **Ouvert** |
+| au moins une *en cours* | **En cours** |
+| toutes *faites* | **Résolu** — la vérification d'efficacité s'ouvre |
+
+C'est pourquoi la fiche ne porte plus de boutons *Démarrer* ni *Résoudre* : ils ne décidaient
+rien. Le serveur refusait déjà de résoudre un dossier dont une action restait à faire, et un
+dossier marqué « en cours » dont aucune action n'avait bougé ne disait rien de vrai.
+
+Si vous rouvrez une action d'un dossier résolu — parce qu'elle était annoncée faite trop tôt —
+le dossier repasse **en cours**, et l'événement est consigné dans son historique.
+
+Restent sur la fiche les deux décisions qui, elles, ne se déduisent d'aucun avancement :
+**rejeter** le dossier (on renonce à le traiter) et **juger son efficacité** (les actions ont-elles
+produit leur effet). Un dossier **clos** ou **rejeté** ne bouge plus, quoi qu'on fasse à ses actions.
+
 ## La nature de chaque action : endiguer n'est pas corriger
 
 Chaque action porte une **nature**, à choisir à la saisie et corrigible ensuite

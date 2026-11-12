@@ -22,13 +22,15 @@ TRANSLATIONS = {
     'capa.open.define-submit': (
         "Enregistrer l'action", 'Save the action', 'Guardar la acción',
         'حفظ الإجراء', '対策を保存', '保存措施'),
+    # Depuis l'ADR 0115 un dossier porte PLUSIEURS actions : annoncer
+    # « une action » faisait ouvrir un second dossier pour la deuxieme.
     'capa.open.subtitle': (
-        "Une CAPA porte une action : ce qu'on va faire, qui en répond et pour quand. On la fait avancer jusqu'à la vérification d'efficacité.",
-        'A CAPA carries one action: what will be done, who is accountable and by when. It is followed through to the effectiveness check.',
-        'Una CAPA lleva una acción: qué se hará, quién responde y para cuándo. Se avanza hasta la verificación de eficacia.',
-        'يتضمن كل إجراء تصحيحي/وقائي إجراءً واحدًا: ما الذي سيُنفَّذ، ومن المسؤول، وبحلول متى. ويُتابَع حتى التحقق من الفعالية.',
-        'CAPAは1つの対策を持ちます。何を行い、誰が責任を持ち、いつまでに行うか。有効性確認まで進めます。',
-        '一个 CAPA 对应一项措施：做什么、由谁负责、何时完成。持续推进直至有效性验证。'),
+        "Cette fenêtre ouvre le dossier avec sa première action : ce qu'on va faire, qui en répond et pour quand. Le dossier en portera d'autres s'il le faut, jusqu'à la vérification d'efficacité.",
+        "This window opens the case with its first action: what will be done, who is accountable and by when. The case may carry further actions, through to the effectiveness check.",
+        "Esta ventana abre el expediente con su primera acción: qué se hará, quién responde y para cuándo. El expediente podrá llevar otras, hasta la verificación de eficacia.",
+        'تفتح هذه النافذة الملف بإجراءه الأول: ما الذي سيُنفَّذ، ومن المسؤول، وبحلول متى. وقد يحمل الملف إجراءات أخرى، حتى التحقق من الفعالية.',
+        'このウィンドウは最初の対策とともに案件を開きます。何を行い、誰が責任を持ち、いつまでに行うか。案件は必要に応じて他の対策も持ち、有効性確認まで進みます。',
+        '此窗口以首项措施打开档案：做什么、由谁负责、何时完成。档案可再承载其他措施，直至有效性验证。'),
     'capa.open.title-label': (
         "Intitulé de l'action", 'Action title', 'Título de la acción',
         'عنوان الإجراء', '対策の件名', '措施名称'),

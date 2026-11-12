@@ -372,32 +372,77 @@ public class CapaService {
         return valeur != null && !valeur.isBlank();
     }
 
-    public CapaDto.CaseResponse startCase(UUID id) {
-        CapaCase c = loadCase(id);
-        if (c.getStatus() != CapaStatus.OPEN) {
-            throw new CapaStateException("Only OPEN CAPA can be started");
+    /**
+     * Le statut du dossier est le REFLET de ses actions, jamais une seconde
+     * machine à états conduite à la main (ADR 0117, qui révise l'ADR 0088 et
+     * prolonge l'ADR 0115).
+     *
+     * <p>Le dossier portait son propre cycle, avancé par deux boutons
+     * « Démarrer » et « Résoudre ». Or ce service refusait déjà de résoudre
+     * tant qu'une action restait à faire : les deux boutons ne décidaient rien,
+     * ils recopiaient à la main ce que les actions disaient déjà. Le pilote qui
+     * terminait sa dernière action voyait son dossier rester « en cours », et
+     * le mot « Statut » s'écrivait deux fois sur la fiche pour deux réalités
+     * qu'on finissait par confondre.
+     *
+     * <p>On fait donc avancer les ACTIONS, et le dossier suit :
+     * <ul>
+     *   <li>aucune action, ou toutes encore à faire → {@code OPEN} ;</li>
+     *   <li>au moins une commencée → {@code IN_PROGRESS} ;</li>
+     *   <li>toutes réalisées → {@code RESOLVED}.</li>
+     * </ul>
+     *
+     * <p>{@code CLOSED} et {@code REJECTED} restent hors d'atteinte : ce sont
+     * les deux seules décisions humaines qui subsistent — le verdict
+     * d'efficacité (ADR 0108) et l'abandon du dossier. Un dossier clos ne
+     * redeviendrait pas « en cours » parce qu'on rouvre une de ses actions.
+     */
+    private void refleterAvancement(CapaCase c) {
+        CapaStatus actuel = c.getStatus();
+        if (actuel == CapaStatus.CLOSED || actuel == CapaStatus.REJECTED) {
+            return;
         }
-        c.setStatus(CapaStatus.IN_PROGRESS);
+        CapaStatus deduit = deduireStatut(c.getActions());
+        if (deduit == actuel) {
+            return;
+        }
+        c.setStatus(deduit);
+        // L'horodatage de résolution suit le statut. Sans cette remise à null,
+        // un dossier reparti en traitement afficherait une date de résolution :
+        // la fiche dirait à la fois « en cours » et « résolu le 12 mars ».
+        c.setResolvedAt(deduit == CapaStatus.RESOLVED ? Instant.now() : null);
         CapaCase saved = caseRepository.save(c);
-        journal.record(saved, CapaTransition.STARTED);
-        return toResponse(saved);
+        journal.record(saved, transitionVers(deduit, actuel));
     }
 
-    public CapaDto.CaseResponse resolveCase(UUID id) {
-        CapaCase c = loadCase(id);
-        if (c.getStatus() != CapaStatus.IN_PROGRESS) {
-            throw new CapaStateException("Only IN_PROGRESS CAPA can be resolved");
+    /**
+     * L'état que les actions dictent, sans tenir compte de celui du dossier.
+     *
+     * <p>Un dossier SANS action reste {@code OPEN} : il n'a rien commencé, et le
+     * dire « résolu » parce qu'aucune action n'est inachevée clôturerait les
+     * dossiers vides — exactement ceux qui attendent qu'on écrive quoi faire.
+     */
+    private static CapaStatus deduireStatut(java.util.Collection<CapaAction> actions) {
+        if (actions == null || actions.isEmpty()) {
+            return CapaStatus.OPEN;
         }
-        boolean allDone = !c.getActions().isEmpty()
-                && c.getActions().stream().allMatch(a -> a.getStatus() == CapaActionStatus.DONE);
-        if (!allDone) {
-            throw new CapaStateException("All actions must be DONE before resolution");
+        if (actions.stream().allMatch(a -> a.getStatus() == CapaActionStatus.DONE)) {
+            return CapaStatus.RESOLVED;
         }
-        c.setStatus(CapaStatus.RESOLVED);
-        c.setResolvedAt(Instant.now());
-        CapaCase saved = caseRepository.save(c);
-        journal.record(saved, CapaTransition.RESOLVED);
-        return toResponse(saved);
+        boolean entame = actions.stream().anyMatch(a -> a.getStatus() != CapaActionStatus.PENDING);
+        return entame ? CapaStatus.IN_PROGRESS : CapaStatus.OPEN;
+    }
+
+    /**
+     * Ce qu'on inscrit au journal : avancer et revenir en arrière ne se lisent
+     * pas de la même façon pour un auditeur.
+     */
+    private static CapaTransition transitionVers(CapaStatus deduit, CapaStatus actuel) {
+        if (deduit == CapaStatus.RESOLVED) {
+            return CapaTransition.RESOLVED;
+        }
+        boolean recul = actuel == CapaStatus.RESOLVED || deduit == CapaStatus.OPEN;
+        return recul ? CapaTransition.REOPENED : CapaTransition.STARTED;
     }
 
     /**
@@ -652,6 +697,10 @@ public class CapaService {
             c.setOwnerName(saved.getAssigneeName());
             caseRepository.save(c);
         }
+        // L'action neuve compte dans l'avancement du dossier : l'ajouter à un
+        // dossier résolu le ramène en traitement, puisqu'il reste à faire.
+        c.getActions().add(saved);
+        refleterAvancement(c);
         return toActionResponse(saved);
     }
 
@@ -682,7 +731,9 @@ public class CapaService {
                 a.setCompletedAt(null);
             }
         }
-        return toActionResponse(actionRepository.save(a));
+        CapaAction enregistree = actionRepository.save(a);
+        refleterAvancement(c);
+        return toActionResponse(enregistree);
     }
 
     public void deleteAction(UUID capaId, UUID actionId) {

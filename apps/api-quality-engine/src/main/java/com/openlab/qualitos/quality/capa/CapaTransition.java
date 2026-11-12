@@ -48,6 +48,19 @@ public enum CapaTransition {
      */
     EFFECTIVENESS_PARTIAL("capa.case.effectiveness-partial", EventType.CAPA_EFFECTIVENESS_VERIFIED,
             "Efficacité partielle : une action complémentaire est attendue sur le dossier CAPA"),
+    /**
+     * Le dossier REPART en traitement parce que ses actions l'y ramènent : une
+     * action ajoutée à un dossier résolu, ou une action réalisée qu'on rouvre.
+     *
+     * <p>Distincte de {@code EFFECTIVENESS_REJECTED} et de
+     * {@code EFFECTIVENESS_PARTIAL}, qui disent la même chose du dossier mais
+     * pour une tout autre raison : là, une vérification a conclu que l'effet
+     * n'était pas au rendez-vous. Ici, personne n'a rien vérifié — le travail
+     * n'est simplement plus fini. Les confondre au journal ferait lire à
+     * l'auditeur un échec d'efficacité là où il n'y a qu'une action de plus.
+     */
+    REOPENED("capa.case.reopened", null,
+            "Dossier CAPA revenu en traitement : une action reste à réaliser"),
     REJECTED("capa.case.rejected", null,
             "Dossier CAPA rejeté"),
     DELETED("capa.case.deleted", null,

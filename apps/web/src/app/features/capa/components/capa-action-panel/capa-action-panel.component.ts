@@ -5,10 +5,13 @@ import { BehaviorSubject } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 
 import { safeErrorMessage } from '../../../../core/http/error-message';
+import {
+  ConfirmDialogComponent, ConfirmDialogData
+} from '../../../../shared/ui/confirm-dialog/confirm-dialog.component';
 import { actionTypeLabel } from '../../capa.labels';
 import { CapaService } from '../../capa.service';
 import {
-  CapaActionResponse, CapaActionStatus, CapaActionType, CapaCaseResponse, CapaStatus
+  CapaActionResponse, CapaActionStatus, CapaActionType, CapaCaseResponse, CapaEvidence, CapaStatus
 } from '../../capa.types';
 import {
   CapaActionDialogComponent, CapaActionDialogData
@@ -36,10 +39,18 @@ const SUITE: Record<CapaActionStatus, CapaActionStatus | null> = {
  * toutes, chacune avec son porteur, son échéance et son avancement ; une ligne
  * s'ouvre d'un clic pour la corriger, et le bouton d'ajout en ajoute une.
  *
- * <p>Il ne remplace pas le bloc de la fiche CAPA, qui gère en plus la PREUVE de
- * chaque action (dépôt, retrait, aperçu) avec son sélecteur de fichier : y
- * attacher une pièce depuis la fiche de l'écart serait une autre décision, et
- * un panneau qui ferait les deux ne serait lisible dans aucun des deux écrans.
+ * <p><b>Il porte aussi la PREUVE de chaque action</b> (ADR 0052), en colonne du
+ * tableau : la pièce qui atteste que ce geste-là a été fait. Elle vivait dans
+ * un pavé vertical de la fiche CAPA, qui dépliait chaque action sur six lignes
+ * en répétant la nature, l'échéance et le statut déjà lus en tête de fiche ;
+ * ce pavé a disparu au profit de ce tableau (ADR 0117), qui devait donc
+ * reprendre ce qu'il savait faire de plus.
+ *
+ * <p>À ne pas confondre avec les preuves du DOSSIER, restées sur la fiche :
+ * une pièce par action dit <i>« ce geste a été fait »</i>, jusqu'à dix pièces
+ * de dossier disent <i>« le problème a cessé »</i> (ISO 9001 §10.2). Un dossier
+ * peut très bien avoir toutes ses actions prouvées et aucune preuve
+ * d'efficacité — c'est même le cas trois mois avant sa clôture.
  */
 @Component({
   selector: 'qos-capa-action-panel',
@@ -75,6 +86,19 @@ export class CapaActionPanelComponent implements OnChanges {
   /** Ce qui empêche de lire le dossier, dit plutôt que laissé en blanc. */
   error: string | null = null;
 
+  /** La pièce de chaque action, indexée par identifiant d'action. */
+  private preuves = new Map<string, CapaEvidence>();
+  /** L'action dont la pièce part ou s'en va : sa cellule l'annonce. */
+  preuveEnCours: string | null = null;
+  /** Stockage coupé sur l'environnement : la colonne le dit, sans crier à la panne. */
+  stockageCoupe = false;
+  /**
+   * Action visée par le sélecteur de fichier, unique et partagé par toutes les
+   * lignes. Sans cette mémoire, le fichier choisi atterrirait sur la dernière
+   * ligne rendue plutôt que sur celle où l'on a cliqué.
+   */
+  private actionVisee: string | null = null;
+
   constructor(
     private readonly capaService: CapaService,
     private readonly dialog: MatDialog,
@@ -101,6 +125,7 @@ export class CapaActionPanelComponent implements OnChanges {
       next: capa => {
         this.capa = capa;
         this.cdr.markForCheck();
+        this.chargerPreuves();
       },
       error: err => {
         // eslint-disable-next-line no-console
@@ -148,6 +173,191 @@ export class CapaActionPanelComponent implements OnChanges {
 
   actionBadge(status: CapaActionStatus): string {
     return 'badge badge-' + status.toLowerCase().replace('_', '-');
+  }
+
+  // ---------- preuve d'action (ADR 0052) ----------
+
+  /**
+   * Chargement NON bloquant : le tableau reste lisible même si le stockage est
+   * coupé, et c'est la colonne qui dit son état plutôt qu'une erreur en travers
+   * de l'écran. Le dossier, lui, se lit sans ses pièces.
+   */
+  private chargerPreuves(): void {
+    if (!this.capaCaseId) {
+      return;
+    }
+    this.capaService.listActionEvidences(this.capaCaseId).subscribe({
+      next: liste => {
+        const par = new Map<string, CapaEvidence>();
+        // Le serveur garantit une pièce par action ; on garde malgré tout la
+        // dernière si deux arrivaient, plutôt que d'afficher une case vide.
+        liste.forEach(e => { if (e.actionId) { par.set(e.actionId, e); } });
+        this.preuves = par;
+        this.cdr.markForCheck();
+      },
+      error: err => {
+        // eslint-disable-next-line no-console
+        console.warn('[capa-action-panel] listActionEvidences failed', err?.status, err?.error?.type);
+        if (this.stockageEstCoupe(err)) {
+          this.stockageCoupe = true;
+          this.cdr.markForCheck();
+        }
+      }
+    });
+  }
+
+  /** La pièce de cette action, ou {@code undefined} — c'est ce que la case montre. */
+  preuve(actionId: string): CapaEvidence | undefined {
+    return this.preuves.get(actionId);
+  }
+
+  /** Le dépôt suit le verrou du dossier : plus rien ne bouge une fois clos ou rejeté. */
+  peutJoindre(actionId: string, statutDossier: CapaStatus): boolean {
+    return !this.isTerminal(statutDossier)
+      && !this.stockageCoupe
+      && !this.preuve(actionId)
+      && this.preuveEnCours !== actionId;
+  }
+
+  /** Icône par famille de document : on reconnaît un PDF d'un tableur d'un coup d'œil. */
+  iconePreuve(contentType: string): string {
+    if (contentType === 'application/pdf') return 'picture_as_pdf';
+    if (contentType.startsWith('image/')) return 'image';
+    if (contentType.includes('spreadsheet')) return 'table_chart';
+    if (contentType.includes('wordprocessing')) return 'description';
+    return 'attach_file';
+  }
+
+  /**
+   * Libellés d'accessibilité des boutons de preuve.
+   *
+   * <p>Une icône seule ou un mot isolé (« Joindre », « × ») ne dit pas SUR QUOI
+   * il agit : au lecteur d'écran, huit lignes rendent huit boutons « Joindre »
+   * indiscernables. L'intitulé de l'action est donc repris dans l'étiquette —
+   * et traduit, parce qu'un lecteur d'écran arabe ou japonais lit ce texte.
+   */
+  joindreAria(titre: string): string {
+    return $localize`:@@capa.action-evidence.attach-aria:Joindre une preuve à l'action : ${titre}:title:`;
+  }
+
+  retirerAria(titre: string): string {
+    return $localize`:@@capa.action-evidence.remove-aria:Retirer la preuve de l'action : ${titre}:title:`;
+  }
+
+  /** Ouvre le sélecteur de fichier en retenant l'action visée. */
+  choisirFichier(input: HTMLInputElement, actionId: string): void {
+    if (this.preuveEnCours) {
+      return;
+    }
+    this.actionVisee = actionId;
+    input.click();
+  }
+
+  fichierChoisi(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const fichier = input.files && input.files[0];
+    // Vidé tout de suite : rechoisir le MÊME fichier après un refus ne
+    // déclencherait sinon aucun événement, et l'écran paraîtrait bloqué.
+    input.value = '';
+    const actionId = this.actionVisee;
+    this.actionVisee = null;
+    if (!fichier || !actionId || !this.capa) {
+      return;
+    }
+    this.preuveEnCours = actionId;
+    this.cdr.markForCheck();
+    this.capaService.uploadActionEvidence(this.capa.id, actionId, fichier).pipe(
+      finalize(() => { this.preuveEnCours = null; this.cdr.markForCheck(); })
+    ).subscribe({
+      next: piece => {
+        this.preuves = new Map(this.preuves).set(actionId, piece);
+        this.cdr.markForCheck();
+        this.snack.open(
+          $localize`:@@capa.action-evidence.added:Preuve jointe à l'action.`,
+          $localize`:@@common.ok:OK`, { duration: 2000 });
+      },
+      error: err => {
+        // eslint-disable-next-line no-console
+        console.warn('[capa-action-panel] uploadActionEvidence failed', err?.status, err?.error?.type);
+        if (this.stockageEstCoupe(err)) {
+          this.stockageCoupe = true;
+          this.cdr.markForCheck();
+          return;
+        }
+        this.snack.open(this.refusDePreuve(err), $localize`:@@common.ok:OK`, { duration: 5000 });
+      }
+    });
+  }
+
+  retirerPreuve(action: CapaActionResponse, piece: CapaEvidence): void {
+    if (this.preuveEnCours || !this.capa) {
+      return;
+    }
+    const dossier = this.capa.id;
+    this.dialog.open<ConfirmDialogComponent, ConfirmDialogData, boolean>(ConfirmDialogComponent, {
+      data: {
+        title: $localize`:@@capa.action-evidence.remove-title:Retirer la preuve de cette action ?`,
+        message: $localize`:@@capa.action-evidence.remove-message:La pièce sera définitivement retirée. Une action déclarée faite sans preuve s'affirme faite sans le démontrer : ce retrait est traçable.`,
+        confirmLabel: $localize`:@@common.delete:Supprimer`,
+        destructive: true
+      },
+      autoFocus: false,
+      restoreFocus: true
+    }).afterClosed().subscribe(confirme => {
+      if (!confirme) {
+        return;
+      }
+      this.preuveEnCours = action.id;
+      this.cdr.markForCheck();
+      this.capaService.deleteActionEvidence(dossier, action.id, piece.id).pipe(
+        finalize(() => { this.preuveEnCours = null; this.cdr.markForCheck(); })
+      ).subscribe({
+        next: () => {
+          const reste = new Map(this.preuves);
+          reste.delete(action.id);
+          this.preuves = reste;
+          this.cdr.markForCheck();
+        },
+        error: err => {
+          // eslint-disable-next-line no-console
+          console.warn('[capa-action-panel] deleteActionEvidence failed', err?.status, err?.error?.type);
+          this.snack.open(
+            safeErrorMessage(
+              err, $localize`:@@capa.evidence.remove-error:Échec du retrait de la preuve.`),
+            $localize`:@@common.ok:OK`, { duration: 4000 });
+        }
+      });
+    });
+  }
+
+  /**
+   * 503 + ProblemDetail de type {@code storage-disabled} : le stockage est
+   * coupé sur cet environnement. Un message dédié, plutôt qu'une erreur brute
+   * qui ferait chercher un bug là où il y a une option éteinte.
+   */
+  private stockageEstCoupe(err: unknown): boolean {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const e = err as any;
+    const type = e?.error?.type;
+    return e?.status === 503 && typeof type === 'string' && type.includes('storage-disabled');
+  }
+
+  /**
+   * Traduction des refus de téléversement. Chaque refus a sa raison : les
+   * confondre reviendrait à dire « non » sans dire quoi corriger.
+   */
+  private refusDePreuve(err: unknown): string {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const e = err as any;
+    return e?.status === 413
+      ? $localize`:@@capa.evidence.too-large:Pièce trop lourde — 10 Mo au maximum.`
+      : e?.status === 400
+      ? $localize`:@@capa.evidence.rejected:Format refusé — PDF, image, Word ou Excel, et le contenu doit correspondre au format annoncé.`
+      : e?.status === 409
+      ? $localize`:@@capa.action-evidence.limit:Cette action porte déjà sa preuve, ou le dossier est clôturé.`
+      : e?.status === 404
+      ? $localize`:@@capa.action-evidence.gone:Cette action n'existe plus — recharge la fiche.`
+      : safeErrorMessage(err, $localize`:@@capa.evidence.error:Échec de l'ajout de la preuve.`);
   }
 
   // ---------- avancer ----------

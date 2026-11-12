@@ -1,3 +1,4 @@
+import { Component, Input } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -46,6 +47,12 @@ function routerDouble(): Router {
  * devait instruire lui-même ce qu'il lui restait à faire. Ces tests portent sur
  * la promesse inverse — l'écran énonce l'obstacle avant qu'on s'y heurte.
  */
+/** Le tableau des actions a son propre banc : ici, seule sa PRÉSENCE compte. */
+@Component({ selector: 'qos-capa-action-panel', template: '', standalone: false })
+class PanneauStub {
+  @Input() capaCaseId = '';
+}
+
 describe('CapaDetailComponent — motifs de blocage de la clôture', () => {
 
   const CASE_ID = '77777777-7777-7777-7777-777777777777';
@@ -85,13 +92,13 @@ describe('CapaDetailComponent — motifs de blocage de la clôture', () => {
       ['getCase', 'listEvidences', 'uploadEvidence', 'deleteEvidence',
        'listActionEvidences', 'uploadActionEvidence', 'deleteActionEvidence',
        'updateAction', 'addAction', 'deleteCase',
-       'verifyEffectiveness', 'startCase', 'resolveCase', 'rejectCase']);
+       'verifyEffectiveness', 'rejectCase']);
     capa.listEvidences.and.returnValue(of([]));
     capa.listActionEvidences.and.returnValue(of([]));
 
     TestBed.resetTestingModule();
     await TestBed.configureTestingModule({
-      declarations: [CapaDetailComponent, CapaRevisionImpactComponent],
+      declarations: [CapaDetailComponent, CapaRevisionImpactComponent, PanneauStub],
       imports: [SharedModule, UiModule, NoopAnimationsModule],
       providers: [
         { provide: CapaService, useValue: capa },
@@ -210,19 +217,6 @@ describe('CapaDetailComponent — motifs de blocage de la clôture', () => {
     expect(component.closureTooltip(dossier([]))).toBe('');
   });
 
-  // --- nature des actions ---------------------------------------------------
-
-  it('affiche la nature de l\'action, endiguement compris', () => {
-    setup([]);
-
-    const carte = (fixture.nativeElement as HTMLElement).querySelector('[data-test="action-unique"]');
-    expect(carte).not.toBeNull();
-    expect(carte!.textContent).toContain('Endiguement');
-  });
-
-  it('retombe sur le code brut pour une nature inconnue', () => {
-    setup([]);
-
-    expect(component.actionTypeLabel('AUTRE' as never)).toBe('AUTRE');
-  });
+  // La nature des actions se lit dans LE tableau, qui a son propre banc : la
+  // fiche ne déplie plus ses actions elle-même (ADR 0117).
 });

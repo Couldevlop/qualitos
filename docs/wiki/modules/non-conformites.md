@@ -12,6 +12,10 @@ possibilité d'y joindre des **photos**.
 
 1. **Ouvrir** `/nc` : la liste des non-conformités et leur statut.
 2. **Déclarer une NC** : décrire l'écart (quoi, où, quand), sa gravité et le périmètre concerné.
+   Vous choisissez sa **nature** dans une liste unique, où les natures sont rangées sous leur
+   famille (produit, processus, documentaire…) : la famille se déduit de la nature retenue, il n'y
+   a donc qu'une question à répondre au lieu de deux enchaînées. La nature est **obligatoire** —
+   c'est elle qui regroupera cet écart avec ses semblables.
    Vous **nommez l'équipe** qui le prend en charge — au moins une personne, choisie dans l'annuaire.
    Vous y êtes posé d'office en tête : retirez-vous si vous ne suivez pas l'écart.
 3. **Joindre des photos** pour documenter l'écart.
@@ -78,8 +82,13 @@ quitter l'écart.
   dossier : c'est précisément ce qu'on vient comparer d'une ligne à l'autre.
 - Le **pilote du dossier** est le responsable de la *première* action. Les suivantes ne le
   déplacent pas.
-- Le lien vers le dossier reste là pour ce que le tableau ne montre pas : la **preuve** de chaque
-  action, son historique, et le verdict d'efficacité.
+- Une colonne **Preuve** porte la pièce qui atteste que *ce geste-là* a été fait : un bon de
+  travail, une photo d'après, un procès-verbal. Une pièce par action, déposée et retirée sur
+  place. À ne pas confondre avec les **preuves du dossier**, restées sur la fiche CAPA, qui
+  attestent que le problème a cessé : un dossier peut très bien avoir toutes ses actions prouvées
+  et aucune preuve d'efficacité.
+- Le lien vers le dossier reste là pour ce que le tableau ne montre pas : l'historique du dossier
+  et le verdict d'efficacité.
 - **Un dossier sans action** — ancien, ou ouvert par un automate — le dit, et propose d'en ajouter
   une : sans action, il ne pourra pas être clôturé.
 - Si le dossier CAPA ne peut pas être lu (service indisponible), la carte **le dit** et propose de

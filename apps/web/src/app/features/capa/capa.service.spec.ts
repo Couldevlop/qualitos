@@ -129,13 +129,6 @@ describe('CapaService (mock mode)', () => {
     });
   });
 
-  it('startCase transitions to IN_PROGRESS', (done) => {
-    service.startCase('capa-2').subscribe(c => {
-      expect(c.status).toBe('IN_PROGRESS');
-      done();
-    });
-  });
-
   it('ne modifie que les champs fournis lors d\'une mise à jour partielle', (done) => {
     service.updateCase('capa-1', { criticity: 'LOW', sourceRef: 'NC-2026-999' }).subscribe(c => {
       expect(c.criticity).toBe('LOW');
@@ -183,14 +176,6 @@ describe('CapaService (mock mode)', () => {
     });
   });
 
-  it('resolveCase horodate la résolution', (done) => {
-    service.resolveCase('capa-2').subscribe(c => {
-      expect(c.status).toBe('RESOLVED');
-      expect(c.resolvedAt).toBeTruthy();
-      done();
-    });
-  });
-
   it('rejectCase passe en REJECTED sans horodater de résolution', (done) => {
     service.rejectCase('capa-2').subscribe(c => {
       expect(c.status).toBe('REJECTED');
@@ -200,7 +185,7 @@ describe('CapaService (mock mode)', () => {
   });
 
   it('une transition sur un identifiant inconnu ne corrompt aucun cas', (done) => {
-    service.startCase('inexistant').subscribe(c => {
+    service.rejectCase('inexistant').subscribe(c => {
       expect(c.id).toBe('capa-1');
       // Le cas de repli garde son statut : rien n'a été écrit à tort.
       expect(c.status).toBe('IN_PROGRESS');
@@ -209,13 +194,13 @@ describe('CapaService (mock mode)', () => {
   });
 
   it('verifyEffectiveness négatif conserve le cas en l\'état sans le clôturer', (done) => {
-    service.resolveCase('capa-2').subscribe(() => {
-      service.verifyEffectiveness('capa-2', false).subscribe(c => {
-        expect(c.effectivenessVerified).toBeFalse();
-        expect(c.status).toBe('RESOLVED');
-        expect(c.closedAt).toBeUndefined();
-        done();
-      });
+    // `capa-3` est le dossier RESOLVED du jeu de démonstration : son statut ne
+    // s'obtient plus par un appel, il suit ses actions (ADR 0117).
+    service.verifyEffectiveness('capa-3', false).subscribe(c => {
+      expect(c.effectivenessVerified).toBeFalse();
+      expect(c.status).toBe('RESOLVED');
+      expect(c.closedAt).toBeUndefined();
+      done();
     });
   });
 
@@ -383,37 +368,29 @@ describe('CapaService (API réelle)', () => {
     req.flush(aCase({ effectivenessVerified: false }));
   });
 
-  it('démarre un cas via le segment /start en PATCH', (done) => {
-    service.startCase('c1').subscribe(c => {
-      expect(c.status).toBe('IN_PROGRESS');
-      done();
-    });
-    const req = http.expectOne(`${base}/c1/start`);
-    expect(req.request.method).toBe('PATCH');
-    expect(req.request.body).toEqual({});
-    req.flush(aCase({ status: 'IN_PROGRESS' }));
-  });
-
-  it('résout et rejette via des segments distincts', () => {
+  /**
+   * Le service ne SAIT plus démarrer ni résoudre : le statut du dossier se
+   * déduit de ses actions, et les deux routes ont disparu du serveur avec les
+   * boutons qui ne décidaient rien (ADR 0117). Un banc qui les appellerait ne
+   * compilerait pas ; celui-ci garde la seule transition qui reste un geste.
+   */
+  it('rejette via son propre segment, seule transition encore demandée', () => {
     const seen: string[] = [];
-    service.resolveCase('c1').subscribe(c => seen.push(c.status));
-    http.expectOne(`${base}/c1/resolve`).flush(aCase({ status: 'RESOLVED' }));
-
     service.rejectCase('c1').subscribe(c => seen.push(c.status));
     http.expectOne(`${base}/c1/reject`).flush(aCase({ status: 'REJECTED' }));
 
-    expect(seen).toEqual(['RESOLVED', 'REJECTED']);
+    expect(seen).toEqual(['REJECTED']);
   });
 
   it('propage un 409 sur une transition interdite au lieu de l\'ignorer', (done) => {
-    service.resolveCase('c1').subscribe({
+    service.rejectCase('c1').subscribe({
       next: () => fail('une transition refusée ne doit pas produire de valeur'),
       error: err => {
         expect(err.status).toBe(409);
         done();
       }
     });
-    http.expectOne(`${base}/c1/resolve`)
+    http.expectOne(`${base}/c1/reject`)
       .flush({ title: 'illegal state' }, { status: 409, statusText: 'Conflict' });
   });
 });

@@ -101,16 +101,21 @@ describe('NcCreateDialogComponent', () => {
   });
 
   it('laisse catégorie et sévérité vides : une criticité pré-remplie serait validée sans être lue', () => {
+    // La famille n'est plus saisie : elle se deduit de la nature (ADR 0117
+    // n'y est pour rien -- c'est le meme principe, applique a la saisie).
     expect(component.form.controls.category.value).toBeNull();
+    expect(component.form.controls.subcategoryCode.value).toBe('');
     expect(component.form.controls.severity.value).toBeNull();
     expect(component.categories.length).toBe(7);
     expect(component.severities).toEqual(['MINOR', 'MAJOR', 'CRITICAL']);
   });
 
-  it('exige la catégorie et la sévérité, et dit laquelle manque', () => {
+  it('exige la nature et la sévérité, et dit laquelle manque', () => {
     component.form.patchValue({ title: 'NC', description: 'Constat.' });
-    expect(component.blockedReason).toContain('catégorie');
-    component.form.patchValue({ category: 'PROCESS' });
+    // La NATURE, pas la famille : celle-ci se déduit de celle-là et n'est plus
+    // un champ. Nommer un champ absent ferait chercher ce qui n'est pas à l'écran.
+    expect(component.blockedReason).toContain('nature');
+    component.form.patchValue({ subcategoryCode: 'NAT-1', category: 'PROCESS' });
     expect(component.blockedReason).toContain('sévérité');
 
     component.submit();
@@ -145,7 +150,7 @@ describe('NcCreateDialogComponent', () => {
     component.form.controls.title.setValue('x'.repeat(256));
     expect(component.form.controls.title.hasError('maxlength')).toBeTrue();
 
-    component.form.patchValue({ category: 'PROCESS', severity: 'MAJOR', title: 'OK', description: 'Constat valide.' });
+    component.form.patchValue({ subcategoryCode: 'NAT-1', category: 'PROCESS', severity: 'MAJOR', title: 'OK', description: 'Constat valide.' });
     component.form.controls.zone.setValue('z'.repeat(256));
     expect(component.form.controls.zone.hasError('maxlength')).toBeTrue();
     component.submit();
@@ -153,7 +158,7 @@ describe('NcCreateDialogComponent', () => {
   });
 
   it('nettoie les champs optionnels vides plutôt que d\'envoyer des chaînes blanches', () => {
-    component.form.patchValue({ category: 'PROCESS', severity: 'MAJOR',
+    component.form.patchValue({ subcategoryCode: 'NAT-1', category: 'PROCESS', severity: 'MAJOR',
       title: '  Étiquetage lot manquant  ', zone: '   ',
       description: '  Sachet sorti de ligne sans étiquette de lot.  '
     });
@@ -189,7 +194,7 @@ describe('NcCreateDialogComponent', () => {
     pick(photo('a.jpg'), photo('b.png', 'image/png'));
     expect(component.photos.length).toBe(2);
 
-    component.form.patchValue({ category: 'PRODUCT', severity: 'MINOR', title: 'NC', description: 'Constat photographié.' });
+    component.form.patchValue({ subcategoryCode: 'NAT-1', category: 'PRODUCT', severity: 'MINOR', title: 'NC', description: 'Constat photographié.' });
     component.submit();
 
     const req = http.expectOne(endpoint);
@@ -209,7 +214,7 @@ describe('NcCreateDialogComponent', () => {
   it("garde la NC déclarée quand une photo échoue, et invite à la rejoindre depuis la fiche", () => {
     const snackSpy = spyOn(TestBed.inject(MatSnackBar), 'open');
     pick(photo('a.jpg'));
-    component.form.patchValue({ category: 'PRODUCT', severity: 'MINOR', title: 'NC', description: 'Constat.' });
+    component.form.patchValue({ subcategoryCode: 'NAT-1', category: 'PRODUCT', severity: 'MINOR', title: 'NC', description: 'Constat.' });
     component.submit();
 
     http.expectOne(endpoint).flush(created);
@@ -246,18 +251,18 @@ describe('NcCreateDialogComponent', () => {
     expect(hote.querySelector('[data-test="nc-photo-ajouter"]')).not.toBeNull();
   });
 
-  it('annonce la sous-catégorie AVANT qu’une catégorie soit choisie', () => {
-    // Le champ n'apparaissait qu'une fois la catégorie retenue. Personne ne
-    // cherche un champ dont rien n'annonce l'existence : le déclarant laissait
-    // la sous-catégorie vide en croyant qu'il n'y en avait pas pour sa
-    // catégorie. Il est désormais présent, désactivé, et dit quoi faire.
+  it('ouvre la liste des natures dès l’ouverture de la fenêtre', () => {
+    // Le champ attendait jadis qu'une « Catégorie » soit choisie pour s'allumer,
+    // et le déclarant laissait la nature vide en croyant qu'il n'y en avait pas
+    // pour sa famille. La famille se déduit maintenant de la nature : il n'y a
+    // plus qu'une question, et elle est posable tout de suite.
     fixture.detectChanges();
     const hote = fixture.nativeElement as HTMLElement;
 
     const champ = hote.querySelector('[data-test="nc-nature"]');
     expect(champ).withContext('présent dès l’ouverture').not.toBeNull();
-    expect(champ!.getAttribute('aria-disabled')).toBe('true');
-    expect(hote.textContent).toContain('Choisissez d’abord une catégorie.');
+    expect(champ!.getAttribute('aria-disabled')).not.toBe('true');
+    expect(component.form.controls.subcategoryCode.enabled).toBeTrue();
   });
 
   it("plafonne à dix photos et permet d'en retirer une", () => {
@@ -275,7 +280,7 @@ describe('NcCreateDialogComponent', () => {
 
   it('reste utilisable sans session : la NC part sans déclarant plutôt que d\'être bloquée', () => {
     currentUser = null;
-    component.form.patchValue({ category: 'PROCESS', severity: 'MAJOR', title: 'NC anonyme', description: 'Constat sans session.' });
+    component.form.patchValue({ subcategoryCode: 'NAT-1', category: 'PROCESS', severity: 'MAJOR', title: 'NC anonyme', description: 'Constat sans session.' });
     component.submit();
 
     const req = http.expectOne(endpoint);
@@ -287,7 +292,7 @@ describe('NcCreateDialogComponent', () => {
   it('hors-ligne : annonce la mise en file au lieu d\'une création confirmée', async () => {
     connectivity.online = false;
     const snackSpy = spyOn(TestBed.inject(MatSnackBar), 'open');
-    component.form.patchValue({ category: 'PROCESS',
+    component.form.patchValue({ subcategoryCode: 'NAT-1', category: 'PROCESS',
       title: 'Zone blanche', severity: 'CRITICAL', description: 'Constat hors couverture réseau.'
     });
     component.submit();
@@ -306,7 +311,7 @@ describe('NcCreateDialogComponent', () => {
     connectivity.online = false;
     const snackSpy = spyOn(TestBed.inject(MatSnackBar), 'open');
     pick(photo('a.jpg'));
-    component.form.patchValue({ category: 'PROCESS', severity: 'MAJOR', title: 'Zone blanche', description: 'Constat.' });
+    component.form.patchValue({ subcategoryCode: 'NAT-1', category: 'PROCESS', severity: 'MAJOR', title: 'Zone blanche', description: 'Constat.' });
     component.submit();
     await new Promise<void>(resolve => setTimeout(resolve, 0));
 
@@ -316,7 +321,7 @@ describe('NcCreateDialogComponent', () => {
   });
 
   it('ignore un second envoi tant que le premier est en vol (anti double-déclaration)', () => {
-    component.form.patchValue({ category: 'PROCESS', severity: 'MAJOR', title: 'NC', description: 'Constat en double clic.' });
+    component.form.patchValue({ subcategoryCode: 'NAT-1', category: 'PROCESS', severity: 'MAJOR', title: 'NC', description: 'Constat en double clic.' });
     component.submit();
     component.submit();
 
@@ -326,7 +331,7 @@ describe('NcCreateDialogComponent', () => {
 
   it('garde le dialogue ouvert quand le serveur refuse la saisie (400)', () => {
     const snackSpy = spyOn(TestBed.inject(MatSnackBar), 'open');
-    component.form.patchValue({ category: 'PROCESS', severity: 'MAJOR', title: 'NC', description: 'Constat refusé par le serveur.' });
+    component.form.patchValue({ subcategoryCode: 'NAT-1', category: 'PROCESS', severity: 'MAJOR', title: 'NC', description: 'Constat refusé par le serveur.' });
     component.submit();
     http.expectOne(endpoint).flush(
       { title: 'ConstraintViolation: nc.title' }, { status: 400, statusText: 'Bad Request' });
@@ -391,7 +396,7 @@ describe('NcCreateDialogComponent', () => {
   });
 
   it('retire la position posée sur la fiche', () => {
-    component.form.patchValue({ category: 'PROCESS', severity: 'MAJOR', geoLat: 48.1, geoLng: 2.2 });
+    component.form.patchValue({ subcategoryCode: 'NAT-1', category: 'PROCESS', severity: 'MAJOR', geoLat: 48.1, geoLng: 2.2 });
     component.clearLocation();
     expect(component.form.controls.geoLat.value).toBeNull();
     expect(component.form.controls.geoLng.value).toBeNull();
@@ -400,7 +405,7 @@ describe('NcCreateDialogComponent', () => {
   it("laisse le serveur trancher l’origine quand la liste n’en impose aucune", () => {
     // Entrée historique `/nc`, qui montre les deux origines : aucune n'est
     // impliquée par l'écran, et le serveur applique son défaut.
-    component.form.patchValue({ category: 'PROCESS', severity: 'MAJOR', title: 'NC', description: 'Constat sans origine imposée.' });
+    component.form.patchValue({ subcategoryCode: 'NAT-1', category: 'PROCESS', severity: 'MAJOR', title: 'NC', description: 'Constat sans origine imposée.' });
     component.submit();
 
     const req = http.expectOne(endpoint);
@@ -409,7 +414,7 @@ describe('NcCreateDialogComponent', () => {
   });
 
   it('joint la position au corps de la déclaration quand elle est renseignée', () => {
-    component.form.patchValue({ category: 'PROCESS', severity: 'MAJOR',
+    component.form.patchValue({ subcategoryCode: 'NAT-1', category: 'PROCESS', severity: 'MAJOR',
       title: 'NC géolocalisée', description: 'Constat relevé sur zone.',
       geoLat: 48.856612, geoLng: 2.35222
     });
