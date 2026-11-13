@@ -48,7 +48,11 @@
 
     <mat-form-field appearance="outline" class="filter-field">
       <mat-label i18n="@@nc.list.filter-category">Filtrer par catégorie</mat-label>
-      <mat-select [formControl]="categoryFilter">
+      <!-- Un filet entre les options, comme sur la liste des natures : des
+           libelles de longueurs voisines se lisent sinon comme un bloc de
+           texte, et l'oeil ne sait plus ou commence la ligne qu'il vise. -->
+      <mat-select [formControl]="categoryFilter" data-test="filtre-categorie"
+                  panelClass="qos-select-panel--lignes">
         <mat-option [value]="''" i18n="@@common.all">Tous</mat-option>
         <mat-option *ngFor="let c of categories" [value]="c">{{ c | ncCategoryLabel }}</mat-option>
       </mat-select>
@@ -62,12 +66,20 @@
       <mat-select [formControl]="subcategoryFilter" data-test="filtre-nature"
                   panelClass="qos-select-panel--lignes">
         <mat-option [value]="''" i18n="@@common.all">Tous</mat-option>
-        <!-- Rangees sous leur categorie : un groupe porte son nom et le separe
-             du suivant. La liste plate melangeait les familles, et deux natures
-             voisines a l'ecran pouvaient relever de deux categories. -->
-        <mat-optgroup *ngFor="let g of subcategoryGroups" [label]="g.category | ncCategoryLabel">
-          <mat-option *ngFor="let s of g.subcategories" [value]="s.code">{{ s.label }}</mat-option>
-        </mat-optgroup>
+        <!-- SANS categorie choisie : rangees sous la leur, parce que la liste
+             plate melangeait les familles et que deux natures voisines a
+             l'ecran pouvaient relever de deux categories. -->
+        <ng-container *ngIf="!categoryFilter.value">
+          <mat-optgroup *ngFor="let g of subcategoryGroups" [label]="g.category | ncCategoryLabel">
+            <mat-option *ngFor="let s of g.subcategories" [value]="s.code">{{ s.label }}</mat-option>
+          </mat-optgroup>
+        </ng-container>
+        <!-- AVEC une categorie choisie : a plat. Il ne reste qu'une famille, et
+             son titre redirait ce que le champ d'a cote affiche deja -- un
+             intitule de groupe unique coute une ligne et n'apprend rien. -->
+        <ng-container *ngIf="categoryFilter.value">
+          <mat-option *ngFor="let s of subcategoryChoices" [value]="s.code">{{ s.label }}</mat-option>
+        </ng-container>
       </mat-select>
     </mat-form-field>
   </mat-card>

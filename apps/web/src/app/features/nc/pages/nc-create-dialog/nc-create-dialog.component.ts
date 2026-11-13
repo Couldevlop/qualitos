@@ -108,13 +108,15 @@ export class NcCreateDialogComponent implements OnInit {
     geoLng: [null as number | null],
     productId: [''],
     /**
-     * La NATURE de l'écart, et par elle sa famille.
+     * La NATURE de l'écart, choisie dans sa famille.
      *
-     * <p>Obligatoire, et c'est un allègement : elle remplaçait un second champ
-     * « Catégorie » qu'il fallait renseigner d'abord pour que celui-ci veuille
-     * bien s'ouvrir. Une question au lieu de deux, et la famille se déduit de
-     * la réponse — un écart ne peut plus arriver classé « Produit » sans qu'on
-     * sache de quel défaut il s'agit.
+     * <p>Deux champs et non un : la famille se choisit d'abord, et la nature
+     * ne propose alors que ce qui en relève. La liste unique groupée par
+     * familles a été essayée — une question au lieu de deux — puis écartée en
+     * recette : soixante lignes groupées se parcourent toujours sur plusieurs
+     * écrans de défilement, et les titres de famille se lisent mal au milieu
+     * des options. Le filtre préalable ramène la liste à ce qu'on embrasse
+     * d'un regard, ce qu'aucun groupement ne fait.
      */
     subcategoryCode: ['', [Validators.required]],
     /** '' = pas encore répondu, 'NONE' = aucun mode, sinon l'identifiant de la ligne. */
@@ -201,62 +203,61 @@ export class NcCreateDialogComponent implements OnInit {
   }
 
   /**
-   * Les natures, groupées par famille — ce que la liste déroulante rend en
-   * {@code mat-optgroup}.
+   * Les familles qui ont au moins une nature au catalogue.
    *
-   * <p>Soixante natures à plat ne se parcourent pas : c'est la raison pour
-   * laquelle un champ « Catégorie » les filtrait d'abord. Les titres de famille
-   * font le même travail sans la question préalable, et montrent où l'on
-   * pioche au lieu de le faire déclarer.
-   *
-   * <p>L'ordre des familles est celui du client (ADR 0111) ; une nature dont
-   * la famille n'est plus au catalogue garde la sienne en queue plutôt que de
-   * disparaître de la liste — un écart ne se classe pas moins bien parce
-   * qu'un réglage a changé.
+   * <p>Une famille vide ouvrirait une liste vide : l'offrir au choix, c'est
+   * promettre une question dont la réponse n'existe pas. L'ordre est celui du
+   * client (ADR 0111), et une nature dont la famille n'est plus au catalogue
+   * garde la sienne en queue plutôt que de disparaître — un écart ne se
+   * classe pas moins bien parce qu'un réglage a changé.
    */
-  get subcategoryGroups(): NcSubcategoryGroup[] {
+  get categoryChoices(): string[] {
     const ordre = [...this.categories];
     this.subcategories.forEach(s => {
       if (!ordre.includes(s.category)) {
         ordre.push(s.category);
       }
     });
-    // Memoisation par CONTENU : un getter qui refabrique ses objets a chaque
-    // passe de detection ferait detruire et recreer les options du
-    // `mat-select`, et la page se figerait. Le defaut a deja ete paye sur le
-    // registre des ecarts.
     const cle = ordre.join('|') + '#' + this.subcategories.map(s => s.code).join(',');
-    if (this.groupesCache && this.groupesCache.cle === cle) {
-      return this.groupesCache.groupes;
+    if (this.famillesCache && this.famillesCache.cle === cle) {
+      return this.famillesCache.familles;
     }
-    const groupes = ordre
-      .map(category => ({
-        category,
-        subcategories: this.subcategories.filter(s => s.category === category)
-      }))
-      .filter(g => g.subcategories.length > 0);
-    this.groupesCache = { cle, groupes };
-    return groupes;
+    const familles = ordre.filter(c => this.subcategories.some(s => s.category === c));
+    this.famillesCache = { cle, familles };
+    return familles;
   }
 
-  /** Voir {@link subcategoryGroups} : le cache evite de refabriquer les options. */
-  private groupesCache: { cle: string; groupes: NcSubcategoryGroup[] } | null = null;
+  /**
+   * Les natures de la famille choisie, et elles seules.
+   *
+   * <p>Mémoisé par CONTENU, comme les familles : un getter qui refabriquerait
+   * ses objets à chaque passe de détection ferait détruire et recréer les
+   * options du {@code mat-select}, et la page se figerait. Le défaut a déjà
+   * été payé sur le registre des écarts.
+   */
+  get subcategoryChoices(): NcSubcategory[] {
+    const famille = this.form.getRawValue().category;
+    const cle = famille + '#' + this.subcategories.map(s => s.code).join(',');
+    if (this.naturesCache && this.naturesCache.cle === cle) {
+      return this.naturesCache.natures;
+    }
+    const natures = famille ? this.subcategories.filter(s => s.category === famille) : [];
+    this.naturesCache = { cle, natures };
+    return natures;
+  }
+
+  private famillesCache: { cle: string; familles: string[] } | null = null;
+  private naturesCache: { cle: string; natures: NcSubcategory[] } | null = null;
 
   /**
-   * La famille se déduit de la nature choisie, et n'est plus demandée.
+   * Changer de famille efface la nature retenue.
    *
-   * <p>Le serveur exige la catégorie : elle est posée ici, au moment où la
-   * nature est retenue. Une nature inconnue du catalogue — réglage changé
-   * entre l'ouverture de la fenêtre et la saisie — laisse la catégorie en
-   * place plutôt que de l'effacer : mieux vaut une famille périmée qu'un
-   * formulaire qui refuse de partir sans dire pourquoi.
+   * <p>Sans cela, le formulaire garderait une nature absente de la nouvelle
+   * liste : l'écran afficherait une famille et partirait avec la nature d'une
+   * autre, sans que personne ne puisse le voir.
    */
-  onSubcategoryChange(): void {
-    const code = this.form.getRawValue().subcategoryCode;
-    const nature = this.subcategories.find(s => s.code === code);
-    if (nature) {
-      this.form.patchValue({ category: nature.category });
-    }
+  onCategoryChange(): void {
+    this.form.patchValue({ subcategoryCode: '' });
   }
 
   /**

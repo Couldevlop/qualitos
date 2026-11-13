@@ -401,14 +401,21 @@ describe('NcEightDComponent', () => {
    * decide avant qu'aucun dossier CAPA n'existe, et ce texte-la est le seul que
    * le PDF portera. Sans son tableau, une action de nature CONTAINMENT
    * (ADR 0115) ne s'affichait nulle part dans le rapport.
+   *
+   * <p>Le D5, lui, en nomme TROIS : c'est la discipline ou l'on vient lire ce
+   * qui a ete decide, et son titre le dit (« defined containment, corrective
+   * and preventive actions »). Restreint aux correctives, il laissait dehors
+   * l'endiguement et la prevention saisis depuis l'ecart -- on les avait
+   * ecrits, ils etaient dans le dossier, et le rapport ne les montrait pas.
    */
-  it("donne au D3 l'endiguement, au D5 les correctives, au D6 les pr\u00e9ventives", async () => {
+  it("donne au D3 l'endiguement, au D5 les trois natures, au D6 les pr\u00e9ventives", async () => {
     await monter(['QUALITY_MANAGER']);
 
     const tableaux = fixture.debugElement.queryAll(By.directive(CapaActionPanelStubComponent));
     expect(tableaux.length).toBe(3);
     const natures = tableaux.map(t => (t.componentInstance as CapaActionPanelStubComponent).natures);
-    expect(natures).toEqual([['CONTAINMENT'], ['CORRECTIVE'], ['PREVENTIVE']]);
+    expect(natures).toEqual([
+      ['CONTAINMENT'], ['CONTAINMENT', 'CORRECTIVE', 'PREVENTIVE'], ['PREVENTIVE']]);
     const dossiers = tableaux.map(t => (t.componentInstance as CapaActionPanelStubComponent).capaCaseId);
     expect(dossiers).toEqual(['capa-9', 'capa-9', 'capa-9']);
   });
@@ -421,6 +428,48 @@ describe('NcEightDComponent', () => {
    * la passe suivante -- une requete en boucle pour un ecran immobile. Le meme
    * defaut, sur la liste des ecarts, figeait la page entiere.
    */
+  /**
+   * Le D5 listait le dossier (« CAPA : ... », son type, sa criticite, son
+   * echeance) puis une ligne de phrase par action, JUSTE AU-DESSUS du tableau
+   * qui montre ces memes actions avec leur porteur, leur avancement et leur
+   * preuve -- et qu'on peut, lui, faire avancer. Deux lectures du meme fait,
+   * dont une inerte.
+   *
+   * <p>Le texte reste dans le document emis : le PDF n'a pas de tableau, et
+   * c'est ce texte-la qui est fige, signe et ancre a l'emission. On ne le
+   * retire donc que de l'ecran.
+   */
+  it('ne redit pas, sous le D5, le texte que le tableau montre', async () => {
+    await monter(['QUALITY_MANAGER']);
+    svc.getEightDReport.and.returnValue(of(rapport({
+      disciplines: [
+        { ...discipline('D2', true, false), lines: ['Constat au presse-etoupe'] },
+        { ...discipline('D5', true, false), lines: ['CAPA: Reprise du presse-etoupe'] }
+      ]
+    })));
+    component.reload();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    // Le D2 garde son texte : lui n'a pas de tableau pour le dire.
+    expect(hote().textContent).toContain('Constat au presse-etoupe');
+    // Le D5 ne le rend plus -- ni son texte, ni le « Non renseigne. » qui
+    // prendrait sa place quand le dossier ne porte encore aucune action.
+    expect(hote().textContent).not.toContain('CAPA: Reprise du presse-etoupe');
+    expect(component.texteRemplaceParLeTableau('D5')).toBe(true);
+    expect(component.texteRemplaceParLeTableau('D2')).toBe(false);
+  });
+
+  /** Les disciplines qui portent un tableau sont exactement D3, D5 et D6. */
+  it('ne montre un tableau d\u2019actions que sous D3, D5 et D6', async () => {
+    await monter(['QUALITY_MANAGER']);
+
+    ['D3', 'D5', 'D6'].forEach(code => expect(component.montreLesActions(code)).toBe(true));
+    ['D1', 'D2', 'D4', 'D7', 'D8'].forEach(
+      code => expect(component.montreLesActions(code)).toBe(false));
+  });
+
   it('passe toujours le meme tableau de natures a une discipline donnee', async () => {
     await monter(['QUALITY_MANAGER']);
 

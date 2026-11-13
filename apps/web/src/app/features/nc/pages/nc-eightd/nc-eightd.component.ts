@@ -48,7 +48,11 @@ const ROLES_ECRITURE = ['QUALITY_MANAGER', 'DIRECTOR_QUALITY', 'ADMIN_TENANT', '
  */
 const NATURES_PAR_DISCIPLINE: Readonly<Record<string, readonly CapaActionType[]>> = {
   D3: Object.freeze<CapaActionType[]>(['CONTAINMENT']),
-  D5: Object.freeze<CapaActionType[]>(['CORRECTIVE']),
+  // Le D5 nomme les TROIS natures. Restreint a « corrective », il laissait
+  // dehors l'action d'endiguement et l'action preventive ajoutees depuis
+  // l'ecart : on les avait saisies, elles existaient dans le dossier, et la
+  // discipline ou l'on vient lire ce qui a ete decide ne les montrait pas.
+  D5: Object.freeze<CapaActionType[]>(['CONTAINMENT', 'CORRECTIVE', 'PREVENTIVE']),
   D6: Object.freeze<CapaActionType[]>(['PREVENTIVE'])
 };
 
@@ -114,7 +118,8 @@ export class NcEightDComponent implements OnInit {
   /** Le dossier CAPA de l'écart, s'il existe : le tableau n'a que son identifiant. */
   readonly capaCaseId$ = new BehaviorSubject<string | null>(null);
 
-  private ncId = '';
+  /** Lu par le gabarit : la discipline sans dossier CAPA renvoie vers l'ecart. */
+  ncId = '';
   /** `BehaviorSubject` et non `Subject` : la vue s'abonne après le premier tir. */
   private readonly reload$ = new BehaviorSubject<void>(undefined);
 
@@ -205,6 +210,26 @@ export class NcEightDComponent implements OnInit {
    */
   naturesDe(code: string): readonly CapaActionType[] {
     return NATURES_PAR_DISCIPLINE[code] ?? AUCUNE_NATURE;
+  }
+
+  /** Vrai pour les disciplines qui portent un tableau d'actions. */
+  montreLesActions(code: string): boolean {
+    return this.naturesDe(code).length > 0;
+  }
+
+  /**
+   * Vrai quand le tableau d'actions tient lieu du texte agrégé, à l'écran.
+   *
+   * <p>Le D5 listait le dossier puis une ligne de phrase par action, juste
+   * au-dessus du tableau qui montre ces mêmes actions — avec leur porteur, leur
+   * avancement, leur preuve, et de quoi les faire avancer. Deux lectures du même
+   * fait, dont une inerte.
+   *
+   * <p>Le document émis, lui, garde ce texte : le PDF n'a pas de tableau, et
+   * c'est ce texte-là qui est figé, signé et ancré à l'émission.
+   */
+  texteRemplaceParLeTableau(code: string): boolean {
+    return code === 'D5';
   }
 
   /** Vrai pour la discipline qui porte l'analyse de cause. */

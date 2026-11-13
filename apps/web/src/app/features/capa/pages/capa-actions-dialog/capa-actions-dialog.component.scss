@@ -15,7 +15,66 @@
   font-family: var(--qos-font-mono, monospace);
 }
 
-/* Le tableau respire : une fenetre serree sur six colonnes se lit mal. */
+/* Le tableau respire : une fenetre serree sur cinq colonnes se lit mal. */
 .actions-dialog mat-dialog-content {
-  min-width: min(820px, 80vw);
+  min-width: min(760px, 80vw);
+}
+
+.actions-dialog__aide,
+.actions-dialog__attente {
+  margin: 0 0 var(--qos-space-3);
+  color: var(--qos-fg-secondary);
+  font-size: var(--qos-fs-sm);
+}
+
+.actions-dialog__erreur {
+  margin: 0 0 var(--qos-space-3);
+  color: var(--qos-danger-fg, var(--qos-danger));
+  font-size: var(--qos-fs-sm);
+}
+
+/* --- Le tableau des actions ouvertes ---------------------------------------
+   Memes colonnes et meme densite que le tableau de la fiche : la fenetre et la
+   fiche parlent des memes actions, et deux mises en page differentes pour les
+   memes lignes obligeraient a relire les entetes a chaque passage. */
+.actions {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--qos-fs-sm);
+
+  th,
+  td {
+    padding: var(--qos-space-2) var(--qos-space-3);
+    text-align: start;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--qos-border);
+  }
+
+  th {
+    color: var(--qos-fg-secondary);
+    font-size: var(--qos-fs-xs);
+    font-weight: var(--qos-fw-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+}
+
+.actions__titre { font-weight: var(--qos-fw-medium); }
+
+.actions__echeance { white-space: nowrap; }
+
+/* La ligne mene au dossier : elle doit le montrer, et rester atteignable au
+   clavier -- d'ou le focus visible, pas seulement le survol. */
+.actions__ligne {
+  cursor: pointer;
+}
+
+.actions__ligne:hover {
+  background: var(--qos-bg-subtle, rgba(0, 0, 0, 0.03));
+}
+
+.actions__ligne:focus-visible {
+  outline: 2px solid var(--qos-border-focus);
+  outline-offset: -2px;
 }

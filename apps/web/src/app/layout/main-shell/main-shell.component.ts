@@ -231,7 +231,11 @@ export class MainShellComponent implements OnInit, OnDestroy {
         // modele de document et la feuille de route de certification. Le ranger
         // avec les referentiels l'eloignait du geste qui l'appelle.
         { label: $localize`:@@nav.standards-hub:Standards Hub`,     route: '/standards',      icon: 'workspace_premium', module: 'standards' },
-        { label: $localize`:@@nav.audits-planning:Planning audits`, route: '/audits/planning', icon: 'event_available', module: 'audit' },
+        // « Planning audits » retire du menu : la programmation se fait depuis
+        // le registre des audits, ou l'on voit en meme temps ce qui est deja
+        // planifie. Deux portes pour un seul geste, et la seconde arrivait sur
+        // un ecran qui ne montrait pas le reste. La route subsiste pour les
+        // liens deja partages.
         { label: $localize`:@@nav.standards-ims:Co-couverture IMS`, route: '/standards-ims',  icon: 'grid_view', module: 'standards' },
         { label: $localize`:@@nav.doc-gen-ia:Génération doc IA`,    route: '/standards-doc-gen', icon: 'auto_awesome', module: 'standards' },
         { label: $localize`:@@nav.produits:Produits`,               route: '/products',  icon: 'inventory_2', module: 'product' },

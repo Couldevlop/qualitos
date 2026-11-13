@@ -46,32 +46,52 @@
 
   <div class="qos-field-row">
     <!--
-      LA NATURE de l'ecart, et par elle sa famille.
+      Deux champs en cascade : la famille, puis les natures de cette famille.
 
-      Deux champs se succedaient ici : une « Categorie » a renseigner d'abord,
-      puis une « Sous-categorie » qui restait eteinte tant qu'on ne l'avait pas
-      fait. La categorie ne servait qu'a reduire la liste -- soixante natures a
-      plat ne se parcourent pas -- et les titres de famille rendent ce service
-      sans la question prealable : on voit d'ou vient ce qu'on choisit, au lieu
-      de le declarer avant de choisir.
+      La liste unique groupee par familles a ete essayee -- une question au lieu
+      de deux -- puis ecartee en recette : soixante lignes groupees se
+      parcourent toujours sur plusieurs ecrans de defilement, et les titres de
+      famille se lisent mal au milieu des options. Le filtre prealable ramene la
+      liste a ce qu'on embrasse d'un regard.
 
-      Les groupes sont memoises cote composant : un getter qui refabriquerait
-      ses objets a chaque passe de detection ferait detruire et recreer les
-      options, et la page se figerait.
+      `qos-select-panel--lignes` sur les DEUX listes : un filet entre les
+      options. Sans lui, des libelles de longueurs voisines se lisent comme un
+      bloc de texte, et l'oeil ne sait plus ou commence la ligne qu'il vise.
+
+      Les choix sont memoises cote composant : un getter qui refabriquerait ses
+      objets a chaque passe de detection ferait detruire et recreer les options,
+      et la page se figerait.
     -->
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label i18n="@@nc.create.category">Catégorie</mat-label>
+      <mat-select formControlName="category" required data-test="nc-categorie"
+                  panelClass="qos-select-panel--lignes"
+                  (selectionChange)="onCategoryChange()">
+        <mat-option *ngFor="let c of categoryChoices" [value]="c">{{ c | ncCategoryLabel }}</mat-option>
+      </mat-select>
+      <mat-error *ngIf="form.controls.category.hasError('required')"
+                 i18n="@@nc.create.category-required">Choisissez une catégorie.</mat-error>
+      <mat-hint *ngIf="!categoryChoices.length" i18n="@@nc.create.nature-empty">
+        Aucune nature au catalogue : prévenez l'administrateur du compte.
+      </mat-hint>
+    </mat-form-field>
+
     <mat-form-field appearance="outline" class="nc-create__nature" subscriptSizing="dynamic">
       <mat-label i18n="@@nc.create.nature">Nature de l'écart</mat-label>
+      <!-- PAS de [disabled] : sur un controle de formulaire reactif, l'attribut
+           declenche l'avertissement d'Angular et, surtout, un controle desactive
+           n'est plus valide -- `required` cesserait de jouer et le garde qui
+           bloque l'envoi laisserait passer un ecart sans nature. La liste est
+           vide tant que la famille n'est pas choisie, et l'indication sous le
+           champ dit quoi faire. -->
       <mat-select formControlName="subcategoryCode" required data-test="nc-nature"
-                  panelClass="qos-select-panel--lignes"
-                  (selectionChange)="onSubcategoryChange()">
-        <mat-optgroup *ngFor="let g of subcategoryGroups" [label]="g.category | ncCategoryLabel">
-          <mat-option *ngFor="let s of g.subcategories" [value]="s.code">{{ s.label }}</mat-option>
-        </mat-optgroup>
+                  panelClass="qos-select-panel--lignes">
+        <mat-option *ngFor="let s of subcategoryChoices" [value]="s.code">{{ s.label }}</mat-option>
       </mat-select>
       <mat-error *ngIf="form.controls.subcategoryCode.hasError('required')"
                  i18n="@@nc.create.nature-required">Choisissez la nature de l'écart.</mat-error>
-      <mat-hint *ngIf="!subcategoryGroups.length" i18n="@@nc.create.nature-empty">
-        Aucune nature au catalogue : prévenez l'administrateur du compte.
+      <mat-hint *ngIf="!form.getRawValue().category" i18n="@@nc.create.nature-pick-category">
+        Choisissez d'abord la catégorie.
       </mat-hint>
     </mat-form-field>
 

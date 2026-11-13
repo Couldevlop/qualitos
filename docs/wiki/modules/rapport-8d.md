@@ -18,7 +18,7 @@ automatiquement** à partir du travail déjà fait dans les autres modules.
 | **D2 — Description du problème** | La non-conformité : référence, constat, gravité, zone, photos |
 | **D3 — Endiguement immédiat** | À saisir : ce qui a protégé le client pendant l'analyse. S'y ajoute, à côté du texte, le tableau des actions **d'endiguement** du dossier CAPA, où on les lit, on les avance et on en ajoute sans quitter le rapport |
 | **D4 — Cause racine** | Les [Ishikawa](ishikawa.md) et [5 Pourquoi](five-whys.md) rattachés à l'écart, et la cause racine saisie sur la NC. Les mêmes figures se lisent, dessinées, sur la [fiche de l'écart](non-conformites.md) : le rapport ne les découvre pas |
-| **D5 — Actions correctives** | La [CAPA](capa.md) escaladée depuis la NC, et ses actions. Un dossier en porte autant qu'il en faut : leurs statuts se lisent et s'avancent depuis la [fiche de l'écart](non-conformites.md), en tableau, sans attendre le rapport |
+| **D5 — Actions décidées** (*Defined containment, corrective and preventive actions*) | La [CAPA](capa.md) escaladée depuis la NC, et ses actions **des trois natures** — endiguer, corriger, prévenir. C'est la discipline où l'on vient lire ce qui a été décidé : restreinte aux correctives, elle laissait dehors l'endiguement et la prévention écrits dans le dossier. Le tableau s'y lit et s'y avance ; à l'écran il remplace le texte agrégé, que le PDF garde |
 | **D6 — Mise en œuvre et preuves** | Les actions menées à terme et les pièces versées à la CAPA |
 | **D7 — Prévention de la récurrence** | Le mode de défaillance [PFMEA](produit-pfmea-control-plan.md) rattaché et les plans de surveillance du produit |
 | **D8 — Reconnaissance de l'équipe** | À saisir : ce que l'équipe a appris |

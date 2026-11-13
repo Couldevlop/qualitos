@@ -2,16 +2,17 @@ import { NgModule } from '@angular/core';
 
 import { SharedModule } from '../../shared/shared.module';
 import { UiModule } from '../../shared/ui/ui.module';
-import { CapaActionPanelModule } from './capa-action-panel.module';
 import { CapaActionsDialogComponent } from './pages/capa-actions-dialog/capa-actions-dialog.component';
 
 /**
- * La fenêtre qui liste les actions d'un dossier, ouverte depuis un écran qui
- * n'est pas la fiche CAPA — aujourd'hui la fiche d'un écart.
+ * La fenêtre qui liste ce qui reste OUVERT sur un écart, ouverte depuis un écran
+ * qui n'est pas la fiche CAPA — aujourd'hui la fiche d'un écart.
  *
- * <p>Elle n'embarque aucun tableau à elle : elle réutilise
- * {@code qos-capa-action-panel}, qui tient déjà les droits, l'avancement et la
- * fenêtre d'une action.
+ * <p>Elle portait le tableau complet ({@code qos-capa-action-panel}) ; la fiche
+ * de l'écart le porte désormais elle-même, et deux fois le même tableau sur le
+ * même écran — dont un dans une fenêtre qui recouvre l'autre — faisait ajouter
+ * une action par-dessus le tableau qui l'aurait montrée. Elle n'a donc plus
+ * besoin du module du tableau.
  *
  * <p>Module à part et non {@code CapaModule} : celui-ci porte ses routes via
  * {@code RouterModule.forChild}, et l'importer ailleurs grefferait les écrans
@@ -19,7 +20,7 @@ import { CapaActionsDialogComponent } from './pages/capa-actions-dialog/capa-act
  */
 @NgModule({
   declarations: [CapaActionsDialogComponent],
-  imports: [SharedModule, UiModule, CapaActionPanelModule],
+  imports: [SharedModule, UiModule],
   exports: [CapaActionsDialogComponent]
 })
 export class CapaActionsDialogModule {}

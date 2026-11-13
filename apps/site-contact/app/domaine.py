@@ -10,6 +10,8 @@ import re
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 
+from .soupcon import SaisieIrrecevable, examine
+
 # Bornes de longueur. Elles ne protègent pas d'un attaquant — un formulaire
 # public n'est pas un périmètre de confiance — mais elles bornent ce qui entre
 # en mémoire et ce qui part dans un courriel.
@@ -67,6 +69,9 @@ class Demande:
     secteur: str = ""
     besoin: str = ""
     recue_le: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    # Ce dont il faut se méfier avant de cliquer : voir `soupcon.py`. Le doute
+    # n'écarte pas la demande, il accompagne le message.
+    soupcons: tuple[str, ...] = ()
 
     @staticmethod
     def depuis(brut: dict[str, object]) -> "Demande":
@@ -89,13 +94,25 @@ class Demande:
         if not _ADRESSE.match(valeurs["courriel"]):
             raise DemandeInvalide("courriel", "adresse non reconnaissable")
 
-        return Demande(**valeurs)
+        # Ce qui ne peut pas être la saisie d'un prospect est refusé ici ; le
+        # reste est seulement noté. Les deux verdicts viennent du même endroit
+        # pour qu'on ne puisse pas en oublier un.
+        try:
+            soupcons = examine(valeurs)
+        except SaisieIrrecevable as refus:
+            raise DemandeInvalide(refus.champ, refus.raison) from None
+
+        return Demande(**valeurs, soupcons=soupcons)
 
     # --- mise en forme du message -------------------------------------------
 
     def sujet(self) -> str:
         qui = self.organisation or self.nom
-        return f"Demande de démonstration QualitOS — {qui}"
+        sujet = f"Demande de démonstration QualitOS — {qui}"
+        # Le soupçon se lit AVANT d'ouvrir, dans la liste des messages. Écrit
+        # seulement dans le corps, il serait lu après le lien qu'il vise à
+        # signaler — trop tard pour servir à quoi que ce soit.
+        return f"[à vérifier] {sujet}" if self.soupcons else sujet
 
     def corps(self) -> str:
         """Texte brut, volontairement.
@@ -115,4 +132,13 @@ class Demande:
         bloc = "\n".join(f"{intitule} : {valeur}" for intitule, valeur in lignes if valeur)
         besoin = f"\n\nCe qu'il ou elle cherche à régler :\n{self.besoin}" if self.besoin else ""
         horodatage = self.recue_le.strftime("%d/%m/%Y à %H:%M UTC")
-        return f"{bloc}{besoin}\n\n—\nReçue le {horodatage} depuis qualitos.fr."
+        # L'avertissement est explicite et dit quoi faire, parce qu'il sera lu
+        # par quelqu'un qui s'apprête à répondre à un prospect : « méfiance »
+        # sans consigne ne change aucun comportement.
+        alerte = ""
+        if self.soupcons:
+            motifs = "\n".join(f"- {m}" for m in self.soupcons)
+            alerte = ("\n\n⚠ À vérifier avant de répondre :\n" + motifs
+                      + "\nN'ouvrez aucun lien de ce message. Une demande de démonstration"
+                        " n'a aucune raison d'en contenir.")
+        return f"{bloc}{besoin}{alerte}\n\n—\nReçue le {horodatage} depuis qualitos.fr."

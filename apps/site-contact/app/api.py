@@ -16,8 +16,9 @@ from fastapi import APIRouter, FastAPI, Request, Response, status
 from fastapi.responses import JSONResponse
 
 from .courriel import EnvoiImpossible, Expediteur, ExpediteurSmtp, ReglagesSmtp
-from .debit import Debit
+from .debit import Debit, DebitGlobal
 from .domaine import Demande, DemandeInvalide
+from .jeton import JetonRefuse, Jetons
 
 journal = logging.getLogger("site-contact")
 
@@ -26,6 +27,13 @@ journal = logging.getLogger("site-contact")
 # sortie internet, sans faire du formulaire un relais ouvert.
 DEBIT_MAX = int(os.environ.get("CONTACT_DEBIT_MAX", "5"))
 DEBIT_PERIODE_S = float(os.environ.get("CONTACT_DEBIT_PERIODE_S", "3600"))
+
+# Le plafond du service entier, toutes adresses confondues. La borne par adresse
+# arrête celui qui insiste ; elle n'arrête pas un réseau réparti sur mille
+# adresses, chacune restant sous sa limite. Soixante par heure est très haut
+# devant le trafic réel — quelques demandes par jour : ce plafond ne se voit
+# jamais en exploitation normale, et il borne le pire.
+DEBIT_GLOBAL_MAX = int(os.environ.get("CONTACT_DEBIT_GLOBAL_MAX", "60"))
 
 # Au-delà, on ne lit même pas le corps. Le champ le plus long est borné à
 # 4 000 caractères ; 32 ko laissent toute la marge utile.
@@ -61,10 +69,13 @@ def adresse_appelante(requete: Request) -> str:
     return requete.client.host if requete.client else "inconnue"
 
 
-def construis(expediteur: Expediteur | None = None, debit: Debit | None = None) -> FastAPI:
+def construis(expediteur: Expediteur | None = None, debit: Debit | None = None,
+               global_: DebitGlobal | None = None, jetons: Jetons | None = None) -> FastAPI:
     """Assemble l'application. L'injection sert d'abord aux tests."""
     envoi = expediteur if expediteur is not None else ExpediteurSmtp(ReglagesSmtp.depuis_environnement())
     compteur = debit if debit is not None else Debit(DEBIT_MAX, DEBIT_PERIODE_S)
+    plafond = global_ if global_ is not None else DebitGlobal(DEBIT_GLOBAL_MAX, DEBIT_PERIODE_S)
+    sceau = jetons if jetons is not None else Jetons()
 
     app = FastAPI(title="QualitOS — formulaire de contact", docs_url=None, redoc_url=None, openapi_url=None)
     routes = APIRouter()
@@ -73,12 +84,36 @@ def construis(expediteur: Expediteur | None = None, debit: Debit | None = None) 
     def vitalite() -> dict[str, str]:
         return {"etat": "ok"}
 
+    @routes.get("/api/contact/jeton")
+    def jeton() -> dict[str, str]:
+        """Le jeton que le formulaire demande en s'affichant.
+
+        Il porte l'instant de son émission, signé : la soumission peut être
+        datee sans que le service mémorise quoi que ce soit entre les deux
+        appels. Voir `jeton.py` pour la raison d'être — le temps est la seule
+        chose qu'un automate ne peut pas imiter sans y perdre son intérêt.
+
+        Cette route n'est pas comptée dans la limite de débit : elle n'envoie
+        rien et ne coûte rien. La compter ferait tomber le visiteur qui recharge
+        la page trois fois avant de se décider.
+        """
+        return {"jeton": sceau.emets()}
+
     @routes.post("/api/contact")
     async def recevoir(requete: Request) -> Response:
         if not compteur.accepte(adresse_appelante(requete)):
             return JSONResponse(
                 {"message": "Trop de demandes depuis cette connexion. Réessayez dans une heure, "
                             "ou écrivez directement à contact@qualitos.fr."},
+                status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            )
+        if not plafond.accepte():
+            # Le plafond du service. Le visiteur n'y est pour rien et reçoit la
+            # même porte de sortie : une adresse à laquelle écrire.
+            journal.warning("plafond global atteint : demande refusée")
+            return JSONResponse(
+                {"message": "Le formulaire reçoit trop de demandes en ce moment. "
+                            "Écrivez directement à contact@qualitos.fr."},
                 status_code=status.HTTP_429_TOO_MANY_REQUESTS,
             )
 
@@ -104,6 +139,22 @@ def construis(expediteur: Expediteur | None = None, debit: Debit | None = None) 
             journal.info("demande ignorée : piège à robots rempli")
             return JSONResponse({"message": "Demande reçue."}, status_code=status.HTTP_202_ACCEPTED)
 
+        # Le jeton, et avec lui le temps de remplissage. Le piège à robots
+        # attrape l'automate qui remplit tout ce qu'il trouve ; il ne voit pas
+        # celui qui a été réglé sur ce formulaire-ci, champ par champ. Ici, on
+        # répond en revanche FRANCHEMENT : contrairement au piège, un refus
+        # légitime existe — l'onglet resté ouvert depuis la veille — et le
+        # visiteur doit savoir qu'il lui suffit de recharger.
+        try:
+            sceau.verifie(str(donnees.get("jeton", "") or ""))
+        except JetonRefuse as refus:
+            journal.info("demande refusée : %s", refus.raison)
+            return JSONResponse(
+                {"message": f"Demande non acceptée ({refus.raison}). Rechargez la page et "
+                            "réessayez, ou écrivez à contact@qualitos.fr."},
+                status_code=status.HTTP_400_BAD_REQUEST,
+            )
+
         try:
             demande = Demande.depuis(donnees)
         except DemandeInvalide as refus:
@@ -124,8 +175,13 @@ def construis(expediteur: Expediteur | None = None, debit: Debit | None = None) 
             )
 
         # Rien du contenu n'est journalisé : ce sont les coordonnées d'un tiers
-        # (§22-9). On note qu'une demande est passée, pas qui l'a envoyée.
-        journal.info("demande transmise")
+        # (§22-9). On note qu'une demande est passée, pas qui l'a envoyée. Le
+        # NOMBRE de soupçons est un compte, pas un contenu : il dit si le filtre
+        # travaille sans révéler ce qu'on a reçu.
+        if demande.soupcons:
+            journal.info("demande transmise, %d point(s) à vérifier", len(demande.soupcons))
+        else:
+            journal.info("demande transmise")
         return JSONResponse({"message": "Demande reçue."}, status_code=status.HTTP_202_ACCEPTED)
 
     app.include_router(routes)

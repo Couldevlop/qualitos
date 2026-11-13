@@ -2,7 +2,7 @@
 
 import pytest
 
-from app.debit import Debit
+from app.debit import Debit, DebitGlobal
 
 
 class Horloge:
@@ -52,3 +52,34 @@ def test_une_adresse_inactive_est_oubliee():
     # Chaque adresse rappelée purge la sienne ; celles qu'on ne revoit pas
     # restent jusqu'au prochain passage, mais ne s'accumulent plus vides.
     assert all(passages for passages in debit._par_adresse.values())
+
+
+# --- le plafond du service entier -------------------------------------------
+
+
+def test_le_plafond_global_ignore_les_adresses():
+    """Il compte des demandes, pas des appelants : c'est tout son objet.
+
+    La borne par adresse arrête celui qui insiste ; elle ne voit pas un réseau
+    réparti sur mille adresses, chacune restant sous sa limite.
+    """
+    horloge = Horloge()
+    plafond = DebitGlobal(2, 60, horloge)
+    assert [plafond.accepte() for _ in range(3)] == [True, True, False]
+
+
+def test_le_plafond_global_se_rouvre_quand_la_fenetre_glisse():
+    horloge = Horloge()
+    plafond = DebitGlobal(1, 60, horloge)
+    assert plafond.accepte() is True
+    horloge.t = 59.9
+    assert plafond.accepte() is False
+    horloge.t = 60.0
+    assert plafond.accepte() is True
+
+
+def test_un_plafond_nul_est_refuse_a_la_construction():
+    # Un plafond de zéro ne borne pas, il ferme : si quelqu'un veut fermer le
+    # formulaire, il retire la route, il ne règle pas un compteur à zéro.
+    with pytest.raises(ValueError):
+        DebitGlobal(0, 60)

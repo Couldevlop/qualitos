@@ -466,6 +466,77 @@ describe('CapaCreateDialogComponent — fenêtre unique', () => {
 
   // --- la vérification d'efficacité, décidée à l'ouverture (ADR 0073) --------
 
+  /**
+   * Le refus silencieux, relevé en recette : depuis un écart, « Créer la CAPA »
+   * ne produisait ni dossier ni message.
+   *
+   * <p>La question de la vérification est obligatoire à l'ouverture et n'a aucune
+   * réponse pré-cochée. Laissée vide, elle invalidait le formulaire, et le seul
+   * retour était l'absence de retour : un écran qui refuse sans rien dire passe
+   * pour un écran en panne, et le pilote conclut que l'enregistrement ne marche
+   * pas.
+   */
+  describe('le refus se lit', () => {
+
+    it('nomme les champs manquants au lieu de ne rien faire', async () => {
+      await setup();
+      component.form.patchValue({ title: 'Recalibrer la sonde', dueDate: DEMAIN });
+      choisir(ANNUAIRE[0]);
+
+      // Tout est là SAUF la réponse à la question de vérification.
+      expect(component.form.invalid).withContext('prémisse du banc').toBeTrue();
+
+      component.submit();
+      fixture.detectChanges();
+
+      expect(capa.openCase).not.toHaveBeenCalled();
+      expect(snack.open).toHaveBeenCalled();
+      const message = snack.open.calls.mostRecent().args[0] as string;
+      expect(message).toContain('Vérification');
+      // Le nom du contrôle n'est pas un mot de l'utilisateur.
+      expect(message).not.toContain('verificationRequired');
+    });
+
+    it('affiche l’erreur sur la question elle-même', async () => {
+      await setup();
+      component.form.patchValue({ title: 'Recalibrer la sonde', dueDate: DEMAIN });
+      choisir(ANNUAIRE[0]);
+
+      expect(hote().querySelector('[data-test="verification-exigee-requis"]'))
+        .withContext('rien avant la tentative').toBeNull();
+
+      component.submit();
+      fixture.detectChanges();
+
+      // Un groupe de boutons radio n'affiche pas d'erreur tout seul : sans ce
+      // paragraphe, `markAllAsTouched` ne révèle rien du tout.
+      expect(hote().querySelector('[data-test="verification-exigee-requis"]')).not.toBeNull();
+    });
+
+    it('emmène au premier champ fautif', async () => {
+      await setup();
+      // Rien de rempli : l'intitulé est le premier champ de l'écran.
+      component.submit();
+      fixture.detectChanges();
+
+      const actif = document.activeElement as HTMLElement | null;
+      expect(actif).not.toBeNull();
+      expect(actif!.getAttribute('formControlName')).toBe('title');
+    });
+
+    it('laisse passer dès que la question est tranchée', async () => {
+      await setup();
+      capa.openCase.and.returnValue(of(ouvert()));
+      remplir();
+      choisir(ANNUAIRE[0]);
+      fixture.detectChanges();
+
+      component.submit();
+
+      expect(capa.openCase).toHaveBeenCalled();
+    });
+  });
+
   describe('vérification d\'efficacité', () => {
     const CONTROLE: DirectoryUser = {
       id: 'i-ctrl', accountId: 'kc-controle', displayName: 'Claire Contrôle', email: 'controle@client.test', active: true

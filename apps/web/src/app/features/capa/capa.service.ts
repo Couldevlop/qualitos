@@ -1,6 +1,6 @@
-import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, of, throwError } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { delay } from 'rxjs/operators';
 
 import { environment } from '../../../environments/environment';
@@ -175,19 +175,23 @@ export class CapaService {
   }
 
   /**
-   * Définit l'action unique d'un dossier qui n'en a pas encore — ancien, ou
-   * ouvert par un automate (ADR 0088). Le serveur refuse une seconde action
-   * (409) ; le responsable désigné devient le pilote du dossier.
+   * Ajoute une action au dossier — il en porte plusieurs (ADR 0115, qui révise
+   * l'ADR 0088 sur ce seul point) : on endigue, on corrige la cause, on prévient
+   * la récidive, et le 8D nomme ces étapes séparément.
+   *
+   * <p>Le responsable de la PREMIÈRE action devient le pilote du dossier ; les
+   * suivantes ne le changent pas. Le serveur refuse l'ajout sur un dossier clos
+   * ou rejeté.
    */
   addAction(caseId: string, input: CreateCapaActionRequest): Observable<CapaActionResponse> {
     if (environment.useMockApi) {
       const c = this.mockStore.find(x => x.id === caseId);
-      if (c && c.actions.length > 0) {
-        return throwError(() => new HttpErrorResponse({
-          status: 409, statusText: 'Conflict',
-          error: { title: 'Invalid CAPA State', detail: 'A CAPA carries a single action' }
-        }));
-      }
+      // La doublure refusait la DEUXIEME action (409, « A CAPA carries a single
+      // action ») : c'etait la regle de l'ADR 0088, que l'ADR 0115 a revisee sur
+      // ce seul point. Le serveur accepte depuis plusieurs actions par dossier
+      // -- on endigue, on corrige la cause, on previent la recidive -- et la
+      // doublure qui refuse ce que la production accepte fait echouer la
+      // demonstration la ou le produit fonctionne.
       const action: CapaActionResponse = {
         id: 'act-' + Math.random().toString(36).slice(2, 9),
         capaId: caseId,
@@ -204,8 +208,13 @@ export class CapaService {
         dueDate: input.dueDate
       };
       if (c) {
+        const premiere = c.actions.length === 0;
         c.actions = [...c.actions, action];
-        if (input.assigneeId) {
+        // Seul le responsable de la PREMIERE action pilote le dossier, comme
+        // cote serveur (ADR 0081) : la doublure le deplacait a chaque ajout, et
+        // la troisieme action d'un dossier aurait donc deplace le pilotage vers
+        // qui l'execute.
+        if (premiere && input.assigneeId) {
           c.ownerId = input.assigneeId;
           c.ownerName = input.assigneeName;
         }

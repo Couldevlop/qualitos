@@ -126,6 +126,31 @@
   }
 
   /**
+   * Le jeton demande des l'affichage du formulaire.
+   *
+   * Il porte l'instant de son emission, signe par le service : la soumission
+   * est ainsi datee, et un envoi arrive en moins de trois secondes apres le
+   * chargement de la page est refuse. Le piege a robots attrape l'automate qui
+   * remplit tout ce qu'il trouve ; il ne voit pas celui qui a ete regle sur ce
+   * formulaire-ci, champ par champ. Le temps, lui, personne ne le simule sans
+   * perdre l'interet economique de l'operation.
+   *
+   * Demande ICI et non au moment du clic : demande au clic, l'ecart mesure
+   * serait toujours nul, et la protection ne protegerait de rien.
+   */
+  var jeton = '';
+  (function demandeJeton() {
+    var endpoint = form.getAttribute('data-endpoint');
+    if (!endpoint || !window.fetch) return;
+    fetch(endpoint + '/jeton', { headers: { Accept: 'application/json' } })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (corps) { if (corps && corps.jeton) jeton = corps.jeton; })
+      // Un echec ici ne doit RIEN casser : la soumission partira sans jeton, le
+      // service la refusera en le disant, et le repli par messagerie reste la.
+      .catch(function () { /* sans jeton */ });
+  })();
+
+  /**
    * Il n'y a pas encore de serveur pour recevoir ces demandes.
    *
    * Plutôt qu'un bouton qui ne fait rien — ou pire, qui affiche « merci » sans
@@ -178,7 +203,7 @@
     fetch(endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(v)
+      body: JSON.stringify(Object.assign({}, v, { jeton: jeton }))
     })
       .then(function (r) {
         return r.json().catch(function () { return {}; })

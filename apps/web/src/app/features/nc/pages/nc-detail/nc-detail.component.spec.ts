@@ -703,16 +703,23 @@ describe('NcDetailComponent — workflow et escalade CAPA', () => {
   });
 
   /**
-   * Un dossier terminé s'ouvre quand même : relire ce qui a été fait est
-   * légitime après la clôture. Sans dossier, c'est la création qui s'ouvrirait,
-   * donc la garde de l'escalade s'applique.
+   * Un dossier terminé s'ouvre quand même : relire ce qui reste ouvert est
+   * légitime après la clôture. Sans dossier, c'est la création qui s'ouvre, et
+   * la garde est celle du serveur : il ouvre le dossier quel que soit le statut
+   * et ne fait avancer l'écart que s'il était en analyse. Le bouton a un temps
+   * exigé « en analyse » — garde héritée de l'ancien « Définir action », qui
+   * franchissait une étape du cycle de vie — et elle empêchait d'ouvrir une
+   * CAPA sur un écart tout juste signalé.
    */
   it('ouvre les actions dès qu’un dossier existe, quel que soit l’état de l’écart', () => {
     setup();
 
     expect(component.canAddActions(buildNc({ status: 'CLOSED', capaCaseId: 'capa-7' }))).toBeTrue();
-    expect(component.canAddActions(buildNc({ status: 'OPEN', capaCaseId: undefined }))).toBeFalse();
+    expect(component.canAddActions(buildNc({ status: 'OPEN', capaCaseId: undefined }))).toBeTrue();
     expect(component.canAddActions(buildNc({ status: 'UNDER_ANALYSIS', capaCaseId: undefined }))).toBeTrue();
+    // Termine et sans dossier : il n'y a plus rien a ouvrir.
+    expect(component.canAddActions(buildNc({ status: 'CLOSED', capaCaseId: undefined }))).toBeFalse();
+    expect(component.canAddActions(buildNc({ status: 'CANCELLED', capaCaseId: undefined }))).toBeFalse();
   });
 
   it('propose la criticité selon la gravité de l\'écart', () => {
@@ -778,21 +785,27 @@ describe('NcDetailComponent — workflow et escalade CAPA', () => {
   });
 
   /**
-   * UN SEUL libellé pour le bouton d'en-tête, avec ou sans dossier. Il disait
-   * « Créer une CAPA » puis « Voir la CAPA » : deux mots pour un bouton qui ne
-   * change pas de place, et il fallait relire l'écran pour savoir lequel on
-   * allait obtenir.
+   * UN SEUL bouton d'actions dans l'en-tête. Ils étaient deux, côte à côte,
+   * pour le même geste : « Ajouter des actions » et « Ajouter une CAPA »
+   * ouvraient la même fenêtre de création sans dossier, et avec un dossier l'un
+   * listait ses actions quand l'autre y naviguait.
+   *
+   * <p>Son libellé suit l'état, parce que les deux états ne promettent pas la
+   * même chose : sans dossier il n'y a rien à lire, et la première action
+   * s'écrit avec le dossier qui la portera ; avec, on vient voir ce qui reste.
    */
-  it('garde le même bouton « Ajouter une CAPA », avec ou sans dossier', () => {
+  it('ne garde qu\u2019un bouton d\u2019actions, dont le libellé suit l\u2019état', () => {
     setup(buildNc({ capaCaseId: undefined }));
     fixture.detectChanges();
     let el = fixture.nativeElement as HTMLElement;
-    expect(el.querySelector('[data-test="creer-capa"]')!.textContent).toContain('Ajouter une CAPA');
+    expect(el.querySelector('[data-test="definir-action"]')).toBeNull();
+    expect(el.querySelector('[data-test="creer-capa"]')!.textContent).toContain('Nouvelle action');
 
     setup(buildNc({ capaCaseId: '99999999-9999-9999-9999-999999999999' }));
     fixture.detectChanges();
     el = fixture.nativeElement as HTMLElement;
-    expect(el.querySelector('[data-test="creer-capa"]')!.textContent).toContain('Ajouter une CAPA');
+    expect(el.querySelector('[data-test="definir-action"]')).toBeNull();
+    expect(el.querySelector('[data-test="creer-capa"]')!.textContent).toContain('Voir les actions');
   });
 
   it('montre le lien vers la CAPA, jamais son identifiant brut', () => {
@@ -847,21 +860,25 @@ describe('NcDetailComponent — workflow et escalade CAPA', () => {
     expect(svc.getNc).not.toHaveBeenCalled();
   });
 
+  /**
+   * Les TRANSITIONS du workflow restent exclusives : un état, un pas suivant.
+   * Le bouton d'actions, lui, n'est pas une transition — il ouvre un dossier ou
+   * liste ce qui reste — et il est donc offert sur les quatre états vivants.
+   */
   it('n\'autorise qu\'une seule transition par état du workflow', () => {
     setup();
     const statuses: NcStatus[] =
       ['OPEN', 'UNDER_ANALYSIS', 'ACTION_DEFINED', 'RESOLVED', 'CLOSED', 'CANCELLED'];
-    // « Ajouter des actions » ne porte plus une transition du workflow : sans
-    // dossier il ouvre la création, et c'est l'escalade qui fait avancer
-    // l'écart. La garde se lit donc sur la fiche entière, pas sur le statut seul.
-    const allowed = statuses.map(s => [
-      component.canStartAnalysis(s), component.canAddActions(buildNc({ status: s })),
-      component.canResolve(s), component.canClose(s)
+    const transitions = statuses.map(s => [
+      component.canStartAnalysis(s), component.canResolve(s), component.canClose(s)
     ].filter(Boolean).length);
+    expect(transitions).toEqual([1, 0, 1, 1, 0, 0]);
 
-    expect(allowed).toEqual([1, 1, 1, 1, 0, 0]);
+    // Le bouton d'actions suit la garde du serveur : tant que l'écart vit.
+    const actions = statuses.map(s => component.canAddActions(buildNc({ status: s })));
+    expect(actions).toEqual([true, true, true, true, false, false]);
+
     expect(component.canStartAnalysis('OPEN')).toBeTrue();
-    expect(component.canAddActions(buildNc({ status: 'UNDER_ANALYSIS' }))).toBeTrue();
     expect(component.canResolve('ACTION_DEFINED')).toBeTrue();
     expect(component.canClose('RESOLVED')).toBeTrue();
   });

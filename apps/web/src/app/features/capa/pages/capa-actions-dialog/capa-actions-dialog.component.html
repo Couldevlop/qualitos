@@ -1,19 +1,78 @@
 <div class="actions-dialog">
   <h2 class="actions-dialog__titre" mat-dialog-title>
-    <ng-container i18n="@@capa.actions-dialog.title">Actions correctives</ng-container>
+    <ng-container i18n="@@capa.actions-dialog.open-title">Actions ouvertes</ng-container>
     <span class="actions-dialog__ref" *ngIf="data.reference">{{ data.reference }}</span>
   </h2>
 
   <mat-dialog-content>
-    <!-- Le MEME tableau que la fiche de l'ecart : les droits, l'avancement et la
-         fenetre d'une action y sont deja tenus. -->
-    <qos-capa-action-panel [capaCaseId]="data.capaCaseId"
-                           (changed)="onChanged()"></qos-capa-action-panel>
+    <!-- Ce qui RESTE a faire, et rien d'autre : le tableau complet, avec les
+         actions faites, leurs preuves et de quoi les faire avancer, est en bas
+         de la fiche de l'ecart. Cette fenetre repond a la seule question que ce
+         tableau ne pose pas, et chaque ligne mene la ou l'action se traite. -->
+    <p class="actions-dialog__aide" i18n="@@capa.actions-dialog.hint">
+      Ce qui reste à faire sur cet écart. Une ligne ouvre le dossier CAPA qui la
+      porte, où l'action s'écrit, s'avance et se prouve.
+    </p>
+
+    <!-- UN SEUL etat, indivisible : l'attente, les actions, ou la panne. Trois
+         liaisons independantes se contrediraient le temps d'une passe. -->
+    <ng-container *ngIf="etat$ | async as etat">
+      <!-- Une panne se dit : une fenetre vide passerait pour « rien a faire »,
+           c'est-a-dire le contraire de ce qu'on sait. -->
+      <p class="actions-dialog__erreur" *ngIf="etat.erreur"
+         data-test="actions-dialog-erreur">{{ etat.erreur }}</p>
+
+      <p class="actions-dialog__attente" *ngIf="etat.chargement"
+         i18n="@@common.loading">Chargement…</p>
+
+      <table class="actions" *ngIf="etat.ouvertes.length > 0" data-test="actions-ouvertes">
+        <caption class="sr-only" i18n="@@capa.actions-dialog.caption">Actions ouvertes de cet écart</caption>
+        <thead>
+          <tr>
+            <th scope="col" i18n="@@capa.open.title-label">Intitulé de l'action</th>
+            <th scope="col" i18n="@@capa.action.action-type">Nature de l'action</th>
+            <th scope="col" i18n="@@capa.detail.single-action-assignee">Responsable</th>
+            <th scope="col" i18n="@@capa.detail.due-date">Échéance</th>
+            <th scope="col" i18n="@@common.status">Statut</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- La ligne entiere mene au dossier : cliquer sur une cellule et ne
+               rien obtenir fait croire a une panne, et une ligne cliquable doit
+               l'etre au clavier comme a la souris. -->
+          <tr *ngFor="let action of etat.ouvertes; trackBy: trackById" class="actions__ligne"
+              role="button" tabindex="0" [attr.aria-label]="openLabel(action)"
+              (click)="open()" (keydown.enter)="open()" (keydown.space)="open()"
+              data-test="action-ouverte">
+            <td class="actions__titre">{{ action.title }}</td>
+            <td>{{ actionTypeLabel(action.actionType) }}</td>
+            <td>{{ action.assigneeName || '—' }}</td>
+            <td class="actions__echeance">{{ action.dueDate ? (action.dueDate | date:'shortDate') : '—' }}</td>
+            <td><span [class]="badge(action.status)">{{ actionStatusLabel(action.status) }}</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Aucune action ouverte n'est pas une panne : ou tout est fait, ou rien
+           n'a encore ete ecrit. On le dit, et le pied de fenetre offre la porte
+           du dossier. -->
+      <p class="actions-dialog__attente"
+         *ngIf="!etat.chargement && !etat.erreur && etat.ouvertes.length === 0"
+         data-test="actions-ouvertes-vide" i18n="@@capa.actions-dialog.none">
+        Aucune action ouverte sur cet écart. Les actions terminées se lisent en
+        bas de la fiche, dans le tableau des actions correctives.
+      </p>
+    </ng-container>
   </mat-dialog-content>
 
   <mat-dialog-actions align="end">
     <button mat-stroked-button type="button" (click)="close()" data-test="actions-dialog-fermer">
       <span i18n="@@common.close">Fermer</span>
+    </button>
+    <button mat-flat-button color="primary" type="button" (click)="open()"
+            data-test="actions-dialog-dossier">
+      <mat-icon aria-hidden="true">open_in_new</mat-icon>
+      <span i18n="@@capa.actions-dialog.go-to-case">Ouvrir le dossier</span>
     </button>
   </mat-dialog-actions>
 </div>

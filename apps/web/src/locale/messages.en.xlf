@@ -7602,21 +7602,41 @@ Customer portal</target>
         <source>L'action n'a pas pu etre enregistree.</source>
         <target state="translated">The action could not be saved.</target>
       </trans-unit>
-      <trans-unit id="capa.actions-dialog.title" datatype="html">
-        <source>Actions correctives</source>
-        <target state="translated">Corrective actions</target>
+      <trans-unit id="capa.actions-dialog.open-title" datatype="html">
+        <source>Actions ouvertes</source>
+        <target state="translated">Open actions</target>
       </trans-unit>
-      <trans-unit id="nc.detail.add-capa" datatype="html">
-        <source>Ajouter une CAPA</source>
-        <target state="translated">Add a CAPA</target>
+      <trans-unit id="capa.actions-dialog.hint" datatype="html">
+        <source>Ce qui reste a faire sur cet ecart. Une ligne ouvre le dossier CAPA qui la porte, ou l'action s'ecrit, s'avance et se prouve.</source>
+        <target state="translated">What remains to be done on this nonconformity. A row opens the CAPA case that carries it, where the action is written, advanced and proven.</target>
       </trans-unit>
-      <trans-unit id="nc.detail.add-capa-tooltip" datatype="html">
-        <source>Le dossier CAPA qui traite cet ecart : l'ouvrir, ou y aller</source>
-        <target state="translated">The CAPA case that handles this nonconformity: open it, or go to it</target>
+      <trans-unit id="capa.actions-dialog.caption" datatype="html">
+        <source>Actions ouvertes de cet ecart</source>
+        <target state="translated">Open actions of this nonconformity</target>
       </trans-unit>
-      <trans-unit id="nc.detail.add-actions" datatype="html">
-        <source>Ajouter des actions</source>
-        <target state="translated">Add actions</target>
+      <trans-unit id="capa.actions-dialog.none" datatype="html">
+        <source>Aucune action ouverte sur cet ecart. Les actions terminees se lisent en bas de la fiche, dans le tableau des actions correctives.</source>
+        <target state="translated">No open action on this nonconformity. Completed actions are listed at the bottom of the record, in the corrective actions table.</target>
+      </trans-unit>
+      <trans-unit id="capa.actions-dialog.go-to-case" datatype="html">
+        <source>Ouvrir le dossier</source>
+        <target state="translated">Open the case</target>
+      </trans-unit>
+      <trans-unit id="capa.actions-dialog.open-aria" datatype="html">
+        <source>Ouvrir le dossier CAPA qui porte l'action : <x id="titre"/></source>
+        <target state="translated">Open the CAPA case that carries the action: <x id="titre"/></target>
+      </trans-unit>
+      <trans-unit id="capa.actions-dialog.failed" datatype="html">
+        <source>Les actions du dossier n'ont pas pu etre lues.</source>
+        <target state="translated">The actions of the case could not be read.</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.new-action" datatype="html">
+        <source>Nouvelle action</source>
+        <target state="translated">New action</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.view-actions" datatype="html">
+        <source>Voir les actions</source>
+        <target state="translated">View actions</target>
       </trans-unit>
       <trans-unit id="nc.detail.add-actions-tooltip" datatype="html">
         <source>Les actions correctives de cet ecart : les lire, en ajouter</source>
@@ -7629,6 +7649,54 @@ Customer portal</target>
       <trans-unit id="nc.8d.live-note" datatype="html">
         <source>État actuel du dossier, affiché à côté du texte agrégé. Le PDF, lui, ne porte que le texte figé à l'émission.</source>
         <target state="translated">Current state of the case, shown next to the aggregated text. The PDF carries only the text frozen at issuance.</target>
+      </trans-unit>
+      <trans-unit id="capa.open.missing" datatype="html">
+        <source>À compléter avant d'enregistrer : <x id="champs"/></source>
+        <target state="translated">To complete before saving: <x id="champs"/></target>
+      </trans-unit>
+      <trans-unit id="capa.open.invalid" datatype="html">
+        <source>La demande est incomplète : vérifiez les champs signalés.</source>
+        <target state="translated">The request is incomplete: check the highlighted fields.</target>
+      </trans-unit>
+      <trans-unit id="capa.open.field-title" datatype="html">
+        <source>Intitulé</source>
+        <target state="translated">Title</target>
+      </trans-unit>
+      <trans-unit id="capa.open.field-type" datatype="html">
+        <source>Nature</source>
+        <target state="translated">Nature</target>
+      </trans-unit>
+      <trans-unit id="capa.open.field-criticity" datatype="html">
+        <source>Criticité</source>
+        <target state="translated">Criticality</target>
+      </trans-unit>
+      <trans-unit id="capa.open.field-owner" datatype="html">
+        <source>Responsable</source>
+        <target state="translated">Owner</target>
+      </trans-unit>
+      <trans-unit id="capa.open.field-due" datatype="html">
+        <source>Échéance</source>
+        <target state="translated">Due date</target>
+      </trans-unit>
+      <trans-unit id="capa.open.field-source" datatype="html">
+        <source>Source</source>
+        <target state="translated">Source</target>
+      </trans-unit>
+      <trans-unit id="capa.open.field-source-ref" datatype="html">
+        <source>Référence de la source</source>
+        <target state="translated">Source reference</target>
+      </trans-unit>
+      <trans-unit id="capa.open.field-verification" datatype="html">
+        <source>Vérification d'efficacité requise</source>
+        <target state="translated">Effectiveness verification required</target>
+      </trans-unit>
+      <trans-unit id="capa.open.field-verifier" datatype="html">
+        <source>Vérificateur</source>
+        <target state="translated">Verifier</target>
+      </trans-unit>
+      <trans-unit id="capa.verification.decision-required" datatype="html">
+        <source>Répondez par « oui » ou « non » : la question doit être tranchée pour ouvrir le dossier.</source>
+        <target state="translated">Answer yes or no: the question must be settled to open the case.</target>
       </trans-unit>
       <trans-unit id="capa.source.non-conformity-internal" datatype="html">
         <source>Non-conformité interne</source>
@@ -21833,6 +21901,22 @@ declared income
       <trans-unit id="nc.detail.eightd-tooltip" datatype="html">
         <source>Les huit disciplines, agrégées depuis ce dossier</source>
         <target state="translated">The eight disciplines, aggregated from this case</target>
+      </trans-unit>
+      <trans-unit id="nc.create.nature-pick-category" datatype="html">
+        <source>Choisissez d'abord la catégorie.</source>
+        <target state="translated">Choose the category first.</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.capa-action-empty" datatype="html">
+        <source>Aucun dossier CAPA sur cet écart. Ouvrez-en un : les actions correctives et préventives se liront et s'avanceront ici même, et rempliront les D5 et D6 du rapport 8D.</source>
+        <target state="translated">No CAPA case on this deviation. Open one: corrective and preventive actions will be read and advanced right here, and will fill in D5 and D6 of the 8D report.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.actions-empty" datatype="html">
+        <source>Les actions de cette discipline se liront et s'avanceront ici dès qu'un dossier CAPA sera ouvert sur l'écart.</source>
+        <target state="translated">The actions of this discipline will be read and advanced here as soon as a CAPA case is opened on the deviation.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.go-to-nc" datatype="html">
+        <source>Ouvrir la fiche de l'écart</source>
+        <target state="translated">Open the deviation record</target>
       </trans-unit>
       <trans-unit id="nav.nc-clusters" datatype="html">
         <source>Clustering NC</source>
