@@ -24,6 +24,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.mockito.ArgumentMatchers;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -394,67 +395,68 @@ class NcServiceTest {
     }
 
     /**
-     * Un ecart clos dit « plus rien a faire ici ». Le clore pendant que son
-     * dossier CAPA est ouvert le faisait disparaitre des listes de travail
-     * alors que son action restait a mener, et les indicateurs comptaient un
-     * ecart traite et une action en retard pour le meme sujet.
+     * Un ecart clos dit « plus rien a faire ici ». Le clore pendant qu un
+     * dossier CAPA est encore en travail le faisait disparaitre des listes de
+     * travail alors que son action restait a mener, et les indicateurs
+     * comptaient un ecart traite et une action en retard pour le meme sujet.
      */
     @Test
-    void close_tantQueLaCapaEstOuverte_refuse() {
+    void close_tantQuUnDossierResteEnTravail_refuse() {
         NonConformity n = nc(TENANT, NcStatus.RESOLVED);
         UUID capaId = UUID.randomUUID();
         n.setCapaCaseId(capaId);
         when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
-        when(capaService.statusOf(capaId))
-                .thenReturn(Optional.of(com.openlab.qualitos.quality.capa.CapaStatus.IN_PROGRESS));
+        when(capaService.unsettledCasesFor(capaId, n.getReference()))
+                .thenReturn(List.of("Remplacer le roulement de broche"));
 
         assertThatThrownBy(() -> service.close(n.getId()))
                 .isInstanceOf(NcStateException.class)
-                .hasMessageContaining("IN_PROGRESS");
+                // Le refus NOMME ce qui reste : sans le titre, il faut aller
+                // chercher dans le registre ce que l on vient de nous refuser.
+                .hasMessageContaining("Remplacer le roulement de broche");
         assertThat(n.getStatus()).isEqualTo(NcStatus.RESOLVED);
         verify(repo, never()).save(any());
     }
 
+    /**
+     * LA REGLE REGARDE TOUS LES DOSSIERS, pas seulement celui de l escalade.
+     * Un dossier ouvert depuis le registre des CAPA en citant la reference de
+     * l ecart ne laisse aucune trace dans {@code capaCaseId} : c est par la
+     * reference qu on le retrouve, et c est donc la reference qui doit partir
+     * avec la question.
+     */
     @Test
-    void close_capaClose_laisseCloturer() {
+    void close_interrogeAussiLesDossiersLiesParLaReference() {
+        NonConformity sansEscalade = nc(TENANT, NcStatus.RESOLVED);
+        when(repo.findByIdAndTenantId(sansEscalade.getId(), TENANT))
+                .thenReturn(Optional.of(sansEscalade));
+        when(capaService.unsettledCasesFor(null, "NC-2026-0001"))
+                .thenReturn(List.of("Auditer le fournisseur"));
+
+        assertThatThrownBy(() -> service.close(sansEscalade.getId()))
+                .isInstanceOf(NcStateException.class)
+                .hasMessageContaining("Auditer le fournisseur");
+
+        verify(capaService).unsettledCasesFor(null, "NC-2026-0001");
+    }
+
+    /**
+     * Rien en travail : clos, ecarte, ou disparu du client. Un dossier instruit
+     * puis ECARTE est une fin, et on ne garde pas un ecart ouvert pour un
+     * dossier qui n existe plus -- les deux cas rendent la meme liste vide.
+     */
+    @Test
+    void close_plusAucunDossierEnTravail_laisseCloturer() {
         NonConformity n = nc(TENANT, NcStatus.RESOLVED);
         UUID capaId = UUID.randomUUID();
         n.setCapaCaseId(capaId);
         when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
-        when(capaService.statusOf(capaId))
-                .thenReturn(Optional.of(com.openlab.qualitos.quality.capa.CapaStatus.CLOSED));
+        when(capaService.unsettledCasesFor(capaId, n.getReference())).thenReturn(List.of());
         when(repo.save(n)).thenReturn(n);
 
         service.close(n.getId());
 
         assertThat(n.getStatus()).isEqualTo(NcStatus.CLOSED);
-    }
-
-    /**
-     * Un dossier instruit puis ECARTE est une fin : il ne retient pas l'ecart.
-     * Un dossier disparu du client non plus -- on ne garde pas un ecart ouvert
-     * pour un dossier qui n'existe plus.
-     */
-    @Test
-    void close_capaRejeteeOuDisparue_laisseCloturer() {
-        NonConformity rejetee = nc(TENANT, NcStatus.RESOLVED);
-        UUID capaRejetee = UUID.randomUUID();
-        rejetee.setCapaCaseId(capaRejetee);
-        when(repo.findByIdAndTenantId(rejetee.getId(), TENANT)).thenReturn(Optional.of(rejetee));
-        when(capaService.statusOf(capaRejetee))
-                .thenReturn(Optional.of(com.openlab.qualitos.quality.capa.CapaStatus.REJECTED));
-        when(repo.save(rejetee)).thenReturn(rejetee);
-        service.close(rejetee.getId());
-        assertThat(rejetee.getStatus()).isEqualTo(NcStatus.CLOSED);
-
-        NonConformity orpheline = nc(TENANT, NcStatus.RESOLVED);
-        UUID disparue = UUID.randomUUID();
-        orpheline.setCapaCaseId(disparue);
-        when(repo.findByIdAndTenantId(orpheline.getId(), TENANT)).thenReturn(Optional.of(orpheline));
-        when(capaService.statusOf(disparue)).thenReturn(Optional.empty());
-        when(repo.save(orpheline)).thenReturn(orpheline);
-        service.close(orpheline.getId());
-        assertThat(orpheline.getStatus()).isEqualTo(NcStatus.CLOSED);
     }
 
     @Test

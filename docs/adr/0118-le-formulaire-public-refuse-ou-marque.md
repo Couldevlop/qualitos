@@ -43,7 +43,11 @@ répondre à deux questions vérifiables.
 **Refuser** ce qui ne peut pas être la saisie d'un prospect :
 
 - un lien dans `nom`, `fonction`, `organisation`, `telephone` ou `secteur` ;
-- du balisage HTML ou BBCode dans n'importe quel champ ;
+- du balisage HTML ou BBCode dans n'importe quel champ — une balise **fermante**
+  (`</a>`), une balise ouvrante d'au moins deux lettres (`<script>`), ou une
+  balise portant un attribut (`<a href=…`). Le motif exclut volontairement
+  `a<b>c` : une comparaison écrite en toutes lettres n'est pas du balisage, et
+  ce contrôle-ci **refuse** ;
 - trois liens ou plus dans le texte libre ;
 - un texte libre qui, lien retiré, ne contient plus dix caractères de prose.
 
@@ -76,11 +80,26 @@ déjà distribués, et la page ouverte au mauvais moment reçoit un refus explic
 qui lui dit de recharger. Cela suppose **un seul exemplaire du service** —
 exactement l'hypothèse que fait déjà le compteur de débit.
 
-Contrairement au piège à robots, ce refus est **franc**. Le piège fait semblant
-d'accepter, parce qu'un piège rempli ne peut venir que d'un automate et que lui
-dire qu'il a été repéré ne lui apprendrait qu'à mieux se cacher. Un jeton
-manquant a en revanche des causes légitimes — l'onglet resté ouvert, le script
-qui n'a pas chargé — et le visiteur doit savoir qu'il suffit de recharger.
+Ce `replicas: 1` est donc une **exigence de correction, pas un choix de
+capacité**, et le manifeste le dit à l'endroit où quelqu'un changerait ce
+nombre : à deux exemplaires, environ un visiteur sur deux verrait « jeton non
+reconnu », et les deux plafonds de débit doubleraient sans que rien ne le
+signale. Monter en exemplaires suppose d'abord de sortir le secret et les
+compteurs du processus.
+
+Contrairement au piège à robots, ce refus est **franc, mais pas bavard**. Le
+piège fait semblant d'accepter, parce qu'un piège rempli ne peut venir que d'un
+automate et que lui dire qu'il a été repéré ne lui apprendrait qu'à mieux se
+cacher. Un jeton manquant ou périmé a en revanche des causes légitimes —
+l'onglet resté ouvert, le script qui n'a pas chargé — et le visiteur doit savoir
+qu'il suffit de recharger : cette raison-là est **répondue**.
+
+Le refus « soumis trop vite » ne l'est pas. Aucun être humain ne le déclenche,
+et le nommer apprendrait à l'automate exactement quoi corriger : attendre trois
+secondes. Le visiteur reçoit un refus sans motif et une invitation à réessayer ;
+la raison précise reste dans le journal, pour celui qui exploite le service.
+C'est la règle générale : **on répond une raison quand elle dit au visiteur quoi
+faire, on la journalise quand elle ne sert qu'à l'attaquant.**
 
 La route qui délivre le jeton **n'est pas comptée** dans la limite de débit :
 elle n'envoie rien, et la compter ferait tomber le visiteur qui recharge trois
@@ -93,6 +112,14 @@ réparti sur mille adresses, chacune restant sous sa limite. Un plafond global �
 soixante demandes par heure par défaut — dit ce que la boîte aux lettres
 accepte, toutes adresses confondues. Il est très haut devant le trafic réel :
 il ne se voit jamais en exploitation normale, et il borne le pire.
+
+**Il se compte juste avant l'envoi, et non à l'entrée de la route.** Placé en
+tête, il se consommait sur des requêtes qui n'envoyaient rien — corps illisible,
+piège rempli, jeton absent. Douze adresses et soixante requêtes de rebut,
+chacune restant sous la borne par adresse, suffisaient alors à fermer le
+formulaire pour tout le monde pendant une heure : la protection devenait le
+moyen le moins cher de faire taire le service. Un plafond qui dit ce que la
+**boîte** accepte doit compter des **courriels**, pas des requêtes HTTP.
 
 ## Ce qui a été écarté, et pourquoi
 

@@ -157,6 +157,15 @@ jobs:
           # compte : l'invitation d'un membre rend un compte sans client.
           python3 infra/keycloak/user_profile.py --check infra/keycloak/realm-export.json
 
+      - name: Guide de revue — la page se reconstruit depuis son Markdown
+        run: |
+          # docs/revue-manuelle.html n'est pas versionnée (règle .gitignore :
+          # ce qui se versionne s'écrit en Markdown). Elle s'engendre donc à la
+          # demande — et ce qui s'engendre à la demande doit encore s'engendrer.
+          # Une tournure du guide que la conversion ne sait pas lire s'apprend
+          # ici, pas devant la personne qui relit.
+          python3 scripts/revue-manuelle-html.py
+
       - name: Mode léger — parité avec le chart, compose valide
         run: |
           # Le rendu on-premise de l'étape précédente sert de référence (ADR 0084).

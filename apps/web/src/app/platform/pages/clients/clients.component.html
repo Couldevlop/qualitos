@@ -268,27 +268,33 @@
         <span class="client__nom">{{ c.name }}</span>
         <span class="client__slug">{{ c.slug }}</span>
       </span>
-      <span class="client__offre">{{ c.plan }}</span>
-      <span class="client__etat" *ngIf="!c.active" i18n="@@admin.clients.inactive">Désactivé</span>
-      <span class="client__date">{{ c.createdAt | date: 'mediumDate' }}</span>
+      <!-- Les reperes et les gestes sur une SECONDE ligne. Sur la premiere, le
+           nom partageait la largeur d'une carte de 20 rem avec deux boutons a
+           libelle : il ne lui restait que quelques pixels, et le texte tombait
+           a la verticale, une lettre par ligne. -->
+      <span class="client__bas">
+        <span class="client__offre">{{ c.plan }}</span>
+        <span class="client__etat" *ngIf="!c.active" i18n="@@admin.clients.inactive">Désactivé</span>
+        <span class="client__date">{{ c.createdAt | date: 'mediumDate' }}</span>
 
-      <!-- Ce qu'on peut faire d'un client apres sa creation. Pas de suppression :
-           ses dossiers sont des preuves d'audit, et un bouton qui les emporterait
-           ferait disparaitre ce qu'une autorite peut venir demander. Suspendre
-           coupe l'acces et conserve tout. -->
-      <span class="client__actions">
-        <button mat-stroked-button type="button" (click)="corriger(c)" [disabled]="busyId === c.id"
-                [attr.data-test]="'corriger-' + c.slug">
-          <mat-icon aria-hidden="true">edit</mat-icon>
-          <span i18n="@@platform.clients.edit">Corriger</span>
-        </button>
-        <button mat-stroked-button type="button" (click)="basculer(c)" [disabled]="busyId === c.id"
-                [color]="c.active ? 'warn' : 'primary'"
-                [attr.data-test]="'basculer-' + c.slug">
-          <mat-icon aria-hidden="true">{{ c.active ? 'block' : 'play_arrow' }}</mat-icon>
-          <span *ngIf="c.active" i18n="@@platform.clients.suspend">Suspendre</span>
-          <span *ngIf="!c.active" i18n="@@platform.clients.resume">Réactiver</span>
-        </button>
+        <!-- Ce qu'on peut faire d'un client apres sa creation. Pas de suppression :
+             ses dossiers sont des preuves d'audit, et un bouton qui les emporterait
+             ferait disparaitre ce qu'une autorite peut venir demander. Suspendre
+             coupe l'acces et conserve tout. -->
+        <span class="client__actions">
+          <button mat-stroked-button type="button" (click)="corriger(c)" [disabled]="busyId === c.id"
+                  [attr.data-test]="'corriger-' + c.slug">
+            <mat-icon aria-hidden="true">edit</mat-icon>
+            <span i18n="@@platform.clients.edit">Corriger</span>
+          </button>
+          <button mat-stroked-button type="button" (click)="basculer(c)" [disabled]="busyId === c.id"
+                  [color]="c.active ? 'warn' : 'primary'"
+                  [attr.data-test]="'basculer-' + c.slug">
+            <mat-icon aria-hidden="true">{{ c.active ? 'block' : 'play_arrow' }}</mat-icon>
+            <span *ngIf="c.active" i18n="@@platform.clients.suspend">Suspendre</span>
+            <span *ngIf="!c.active" i18n="@@platform.clients.resume">Réactiver</span>
+          </button>
+        </span>
       </span>
     </li>
     <li class="clients__vide" *ngIf="!clients.length" i18n="@@admin.clients.empty">Aucun client pour l'instant : créez le premier.</li>

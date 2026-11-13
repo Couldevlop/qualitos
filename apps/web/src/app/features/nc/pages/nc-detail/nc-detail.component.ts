@@ -561,7 +561,12 @@ export class NcDetailComponent implements OnInit {
         data: { capaCaseId: nc.capaCaseId, reference: nc.reference },
         autoFocus: 'first-tabbable',
         restoreFocus: true,
-        panelClass: 'qos-dialog-panel'
+        // Large, parce que la fenêtre porte un tableau de cinq colonnes. La
+        // largeur se décide ICI, par la classe du panneau, et nulle part
+        // ailleurs : la feuille du dialogue réclamait de son côté 760 px de
+        // contenu dans un panneau qui en fait 680, et la surface, qui masque ce
+        // qui déborde, coupait net les phrases et la dernière colonne.
+        panelClass: ['qos-dialog-panel', 'qos-dialog-panel--wide']
       }
     ).afterClosed().subscribe(touche => {
       // La fiche porte le statut de l'écart, qui dépend de celui de l'action
@@ -830,12 +835,6 @@ export class NcDetailComponent implements OnInit {
   }
 
   canStartAnalysis(status: NcStatus): boolean { return status === 'OPEN'; }
-  /**
-   * Ouvrir les actions : possible dès qu'un dossier existe — même terminé, pour
-   * relire ce qui a été fait. Sans dossier, c'est la création qui s'ouvre, donc
-   * la même garde qu'avant : un écart à peine déclaré n'autorise pas à sauter
-   * l'analyse (le serveur refuse hors {@code UNDER_ANALYSIS}).
-   */
   /**
    * Le bouton d'actions de l'en-tête.
    *

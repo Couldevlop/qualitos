@@ -45,11 +45,20 @@ PEREMPTION_S = 7200.0
 
 
 class JetonRefuse(ValueError):
-    """Le jeton manque, ne se vérifie pas, ou vient d'arriver."""
+    """Le jeton manque, ne se vérifie pas, ou vient d'arriver.
 
-    def __init__(self, raison: str) -> None:
+    `rechargeable` dit si la raison peut être RÉPONDUE au visiteur. Un jeton
+    périmé ou non reconnu se règle en rechargeant la page : le taire laisserait
+    une personne sincère devant un refus muet. Un formulaire soumis trop vite ne
+    se règle pas — aucun être humain ne le déclenche — et le nommer apprendrait
+    à l'automate exactement quoi corriger. La raison reste journalisée dans les
+    deux cas : c'est la réponse qui change, pas la trace.
+    """
+
+    def __init__(self, raison: str, rechargeable: bool = True) -> None:
         super().__init__(raison)
         self.raison = raison
+        self.rechargeable = rechargeable
 
 
 class Jetons:
@@ -90,7 +99,7 @@ class Jetons:
 
         age = self._horloge() - emis_le
         if age < DELAI_MINIMAL_S:
-            raise JetonRefuse("formulaire soumis trop vite")
+            raise JetonRefuse("formulaire soumis trop vite", rechargeable=False)
         if age > PEREMPTION_S:
             raise JetonRefuse("jeton périmé — rechargez la page")
 

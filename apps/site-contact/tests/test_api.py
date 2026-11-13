@@ -1,5 +1,7 @@
 """La route publique, de bout en bout, sans relais SMTP."""
 
+import logging
+
 import pytest
 from fastapi.testclient import TestClient
 
@@ -196,12 +198,22 @@ def test_une_demande_sans_jeton_est_refusee_en_le_disant(client, espion):
     assert espion.envoyees == []
 
 
-def test_une_demande_soumise_instantanement_est_refusee(client, espion):
+def test_une_demande_soumise_instantanement_est_refusee(client, espion, caplog):
+    """Refusée, mais SANS dire pourquoi — et la raison reste dans le journal.
+
+    Aucun être humain ne soumet un formulaire de six champs en moins de trois
+    secondes : ce refus ne vise qu'un automate, et lui répondre « trop vite »
+    lui apprendrait exactement quoi corriger. La raison doit donc rester
+    lisible par celui qui exploite le service, et par lui seul.
+    """
     jeton = client.get("/api/contact/jeton").json()["jeton"]
     # Aucune avance d'horloge : la soumission suit l'affichage d'un seul souffle.
-    reponse = client.post("/api/contact", json={**DEMANDE, "jeton": jeton})
+    with caplog.at_level(logging.INFO, logger="site-contact"):
+        reponse = client.post("/api/contact", json={**DEMANDE, "jeton": jeton})
     assert reponse.status_code == 400
-    assert "trop vite" in reponse.json()["message"]
+    assert "trop vite" not in reponse.json()["message"]
+    assert "Réessayez" in reponse.json()["message"]
+    assert "trop vite" in caplog.text
     assert espion.envoyees == []
 
 
@@ -284,3 +296,34 @@ def test_le_plafond_global_tient_quand_les_adresses_changent(espion, jetons, hor
     ]
     assert codes == [202, 202, 429]
     assert len(espion.envoyees) == 2
+
+
+def test_le_rebut_ne_consomme_pas_le_plafond_global(espion, jetons, horloge):
+    """Ce qui n'envoie aucun courriel ne doit rien coûter à la boîte aux lettres.
+
+    Le plafond dit ce que la BOÎTE accepte en une heure. Compté à l'entrée, il
+    se consommait sur des requêtes qui n'envoyaient rien — corps illisible,
+    piège rempli, jeton absent — et quelques dizaines de requêtes de rebut
+    réparties sur assez d'adresses fermaient le formulaire pour tout le monde
+    pendant une heure : la protection devenait le moyen le moins cher de faire
+    taire le service.
+    """
+    client = TestClient(construis(expediteur=espion, debit=Debit(50, 3600),
+                                  global_=DebitGlobal(2, 3600), jetons=jetons))
+    jeton = client.get("/api/contact/jeton").json()["jeton"]
+    horloge.avance(DELAI_MINIMAL_S + 1)
+
+    # Trois refus, chacun prononcé avant tout envoi.
+    assert client.post("/api/contact", content=b"{ pas du json").status_code == 400
+    assert client.post("/api/contact",
+                       json={**DEMANDE, "jeton": jeton, "piege": "robot"}).status_code == 202
+    assert client.post("/api/contact", json=DEMANDE).status_code == 400
+    assert espion.envoyees == []
+
+    # Le plafond est intact : les deux demandes que la boîte accepte passent.
+    for _ in range(2):
+        assert client.post("/api/contact",
+                           json={**DEMANDE, "jeton": jeton}).status_code == 202
+    assert len(espion.envoyees) == 2
+    # Et la troisième le trouve plein, comme il se doit.
+    assert client.post("/api/contact", json={**DEMANDE, "jeton": jeton}).status_code == 429

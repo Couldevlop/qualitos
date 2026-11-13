@@ -113,6 +113,18 @@ def test_le_balisage_est_refuse_dans_n_importe_quel_champ():
     assert refus.value.champ == "nom"
 
 
+@pytest.mark.parametrize("texte", [
+    # Une comparaison écrite en toutes lettres : une seule lettre entre les
+    # chevrons, aucun attribut, rien de fermé. L'ancien motif y voyait « <b> »
+    # et refusait la demande.
+    "Nos lots sont conformes si a<b>c sur toute la serie.",
+    "Le delai tient si j<n>0 dans le plan de surveillance.",
+])
+def test_une_comparaison_n_est_pas_du_balisage(texte):
+    """Ce contrôle REFUSE : un faux positif écarte un client en silence."""
+    assert examine(saisie(besoin=texte)) == ()
+
+
 def test_une_apostrophe_ou_un_chevron_de_citation_ne_sont_pas_du_balisage():
     # « < 30 jours » et « l'audit » doivent passer : un filtre qui refuse le
     # français ordinaire se fait désactiver au bout d'une semaine.

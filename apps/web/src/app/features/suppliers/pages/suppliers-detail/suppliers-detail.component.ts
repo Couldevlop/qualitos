@@ -42,7 +42,7 @@ const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12
 export class SuppliersDetailComponent implements OnInit {
 
   readonly auditColumns = ['auditedOn', 'score', 'critical', 'major', 'minor', 'findingsSummary'];
-  readonly ncColumns    = ['detectedOn', 'partNumber', 'partQuantity', 'severity', 'status', 'eightD', 'description', 'ncActions'];
+  readonly ncColumns    = ['reference', 'detectedOn', 'partNumber', 'partQuantity', 'severity', 'status', 'eightD', 'description', 'ncActions'];
   readonly certColumns  = ['standardCode', 'reference', 'issuedOn', 'expiresOn', 'actions'];
 
   supplier$!: Observable<SupplierResponse | null>;

@@ -488,7 +488,10 @@
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+  // 26 rem et non 20 : une carte porte un nom d'organisation, une offre, une
+  // date et deux boutons a libelle. En dessous, tout se comprime et plus rien
+  // ne se lit — mieux vaut moins de colonnes et des cartes lisibles.
+  grid-template-columns: repeat(auto-fill, minmax(26rem, 1fr));
   gap: var(--qos-space-3);
 
   &__vide {
@@ -499,10 +502,16 @@
   }
 }
 
+/* DEUX LIGNES, et non une seule. En une ligne, le nom se partageait la largeur
+   d'une carte de 20 rem avec deux boutons a libelle, un badge d'offre et une
+   date : il ne lui restait que quelques pixels, et le texte tombait a la
+   verticale, une lettre par ligne. L'identite tient la premiere ligne, les
+   reperes et les gestes la seconde. */
 .client {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
   align-items: center;
-  gap: var(--qos-space-3);
+  gap: var(--qos-space-2) var(--qos-space-3);
   padding: var(--qos-space-4);
   border-radius: var(--qos-radius-lg);
   background: var(--qos-bg-elevated);
@@ -513,6 +522,7 @@
   }
 
   &__monogramme {
+    grid-row: 1 / span 2;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -563,25 +573,28 @@
     color: var(--qos-danger-fg);
   }
 
-  /* Les gestes restent a droite de la ligne, groupes : ils agissent sur CE
-     client, et la distance visuelle avec le nom est ce qui evite de cliquer
-     sur la mauvaise ligne. Sur ecran etroit ils passent sous le texte. */
+  /* La seconde ligne : les reperes a gauche, les gestes a droite, et de quoi
+     passer a la ligne quand la carte est etroite plutot que de comprimer. */
+  &__bas {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--qos-space-2);
+  }
+
+  &__offre,
+  &__etat,
+  &__date {
+    white-space: nowrap;
+  }
+
+  /* Les gestes poussent a droite de leur ligne : ils agissent sur CE client, et
+     la distance visuelle avec le nom est ce qui evite de cliquer sur la
+     mauvaise carte. */
   &__actions {
     display: flex;
     flex-shrink: 0;
     gap: var(--qos-space-2);
-    margin-left: var(--qos-space-3);
-  }
-}
-
-@media (max-width: 720px) {
-  .client {
-    flex-wrap: wrap;
-
-    &__actions {
-      width: 100%;
-      margin-left: 0;
-      justify-content: flex-end;
-    }
+    margin-left: auto;
   }
 }

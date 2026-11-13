@@ -62,6 +62,17 @@ export class ClientsService {
    * (`/api/v1/branding`) : celle-là lit le client DANS le jeton, et à la
    * création aucun membre du client n'a encore de jeton.
    */
+  /**
+   * L'identité déjà posée sur un client, pour la rouvrir et la corriger.
+   *
+   * <p>Un formulaire de correction qui s'ouvre vide n'est pas une correction :
+   * c'est une ressaisie, et le premier enregistrement efface ce que l'éditeur
+   * n'a pas retapé. La fenêtre part donc de l'existant.
+   */
+  identity(tenantId: string): Observable<TenantIdentityResponse> {
+    return this.http.get<TenantIdentityResponse>(`${this.endpoint}/${tenantId}/identity`);
+  }
+
   saveIdentity(tenantId: string, input: TenantIdentityRequest): Observable<TenantIdentityResponse> {
     return this.http.put<TenantIdentityResponse>(`${this.endpoint}/${tenantId}/identity`, input);
   }
@@ -71,5 +82,16 @@ export class ClientsService {
     const corps = new FormData();
     corps.append('file', file, file.name);
     return this.http.post<void>(`${this.endpoint}/${tenantId}/identity/logo`, corps);
+  }
+
+  /**
+   * Retire le logo d'un client : il revient à celui du thème.
+   *
+   * <p>Distinct d'un envoi de logo vide, qui serait refusé : un client peut
+   * décider de ne plus en avoir, et jusqu'ici un logo posé une fois ne pouvait
+   * plus que se remplacer.
+   */
+  deleteLogo(tenantId: string): Observable<void> {
+    return this.http.delete<void>(`${this.endpoint}/${tenantId}/identity/logo`);
   }
 }

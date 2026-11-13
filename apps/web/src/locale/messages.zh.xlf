@@ -7734,6 +7734,30 @@ Portail clients</source>
         <source>Relire le registre</source>
         <target state="translated">重新读取登记册</target>
       </trans-unit>
+      <trans-unit id="capa.detail.progress-title" datatype="html">
+        <source>Avancement</source>
+        <target state="translated">进展</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.progress-hint" datatype="html">
+        <source>Le statut du dossier se déduit de ce travail : le démarrer le met en cours, le terminer le résout.</source>
+        <target state="translated">案卷状态由此项工作推导：开始则进行中，完成则已解决。</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.progress-none" datatype="html">
+        <source>Ce dossier ne porte aucun travail : il a été ouvert avant que l'ouverture d'une CAPA crée le sien. Il restera ouvert tant qu'aucune action ne lui est rattachée depuis la fiche de l'écart d'origine.</source>
+        <target state="translated">本案卷没有任何工作：它在"开立 CAPA 即创建其措施"之前开立。在从原始偏差页面为其附加措施之前，它将一直处于开立状态。</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.progress-many" datatype="html">
+        <source>Ce dossier porte <x id="INTERPOLATION"/> travaux, ajoutés depuis la fiche de l'écart. Ils s'y lisent et s'y avancent, là où ils ont été décidés.</source>
+        <target state="translated">本案卷承载 <x id="INTERPOLATION"/> 项工作，自偏差页面添加。它们在决定之处——该页面——阅读和推进。</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.progress-open-nc" datatype="html">
+        <source>Ouvrir la fiche de l'écart</source>
+        <target state="translated">打开偏差页面</target>
+      </trans-unit>
+      <trans-unit id="pfmea.items-count" datatype="html">
+        <source>Lignes d'analyse (<x id="INTERPOLATION"/>)</source>
+        <target state="translated">分析行（<x id="INTERPOLATION"/>）</target>
+      </trans-unit>
       <trans-unit id="capa.open.title" datatype="html">
         <source>Nouvelle CAPA</source>
         <target state="translated">新建 CAPA</target>
@@ -8209,6 +8233,18 @@ Portail clients</source>
       <trans-unit id="documents.reject.failed" datatype="html">
         <source>Refus impossible.</source>
         <target state="translated">驳回失败。</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.logo-present" datatype="html">
+        <source>Un logo est déjà en place.</source>
+        <target state="translated">已设置标识。</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.logo-drop" datatype="html">
+        <source>Le retirer</source>
+        <target state="translated">移除</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.logo-dropped" datatype="html">
+        <source>Le logo sera retiré à l'enregistrement.</source>
+        <target state="translated">保存时将移除该标识。</target>
       </trans-unit>
       <trans-unit id="admin.clients.step-identity" datatype="html">
         <source>Identité</source>

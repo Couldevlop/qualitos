@@ -64,7 +64,24 @@ _LIEN = re.compile(
 # Balisage. Un prospect écrit en français, pas en HTML ni en BBCode. Ces formes
 # ne viennent que d'un automate qui publie le même texte sur mille formulaires
 # sans savoir lequel rend du HTML.
-_BALISE = re.compile(r"</?[a-z][a-z0-9]*[\s/>]|\[/?(?:url|link|a|img|b)[\]=]", re.IGNORECASE)
+#
+# Le motif a été resserré : écrit « </?[a-z][a-z0-9]*[\s/>] », il reconnaissait
+# « <b> » dans « si a<b>c », c'est-à-dire une comparaison écrite en toutes
+# lettres. Or ce contrôle REFUSE, et le refus d'un formulaire de prospection
+# écarte un client sans que personne ne l'apprenne jamais. Trois formes, aucune
+# qu'une phrase française produise par accident :
+#   - une balise FERMANTE, « </a> » : personne ne ferme une comparaison ;
+#   - une balise ouvrante d'au moins DEUX lettres, « <br> », « <script> » ;
+#   - une balise ouvrante portant un ATTRIBUT, « <a href=… », même à une lettre.
+# « a<b>c » n'entre dans aucune : une seule lettre, aucun attribut, rien de
+# fermé. « <b>offre</b> » entre par la première, et reste refusé.
+_BALISE = re.compile(
+    r"</[a-z][a-z0-9]{0,14}\s*>"
+    r"|<[a-z][a-z0-9]{1,14}(?:\s[^<>]{0,200})?/?>"
+    r"|<[a-z][a-z0-9]{0,14}\s+[a-z-]+\s*="
+    r"|\[/?(?:url|link|a|img|b)[\]=]",
+    re.IGNORECASE,
+)
 
 # Les champs où un lien n'a AUCUN usage légitime. On n'y refuse pas par excès de
 # prudence : un nom, une fonction, un secteur ou un numéro de téléphone qui

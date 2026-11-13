@@ -146,6 +146,11 @@ répare doit avoir un titulaire qui n'est pas absorbé par le métier.
   blanc**. C'est le seul moyen de savoir qu'elle marche.
 - Chacun ouvre **sa** zone et écrit, en une page, ce qu'il en a compris. Ce
   document sert de contrôle : ce qui n'est pas écrit n'est pas compris.
+- **Tous** : [`REVUE-MANUELLE.md`](./REVUE-MANUELLE.md), §1.2 et §5.5 — les
+  classes de défaut que la chaîne d'intégration ne voit pas, et celles qui sont
+  déjà arrivées ici. Puis l'exercice qui ancre : **relire une PR déjà fusionnée**
+  avec la fiche du §7, et comparer ses constats à la revue d'origine. Une revue
+  s'apprend sur du code dont on connaît déjà la fin.
 
 ### Semaine 2 à 4 — livrer pour de vrai
 
@@ -240,6 +245,10 @@ Critères mesurables, à évaluer ensemble aux dates dites.
 - [ ] Un **retour arrière** a été exécuté au moins une fois, à blanc ou en réel.
 - [ ] L'équipe a **rédigé un ADR** pour une décision qui lui appartient.
 - [ ] Les tests e2e couvrent l'APQP **et** le 8D.
+- [ ] Chaque personne a **relu la PR d'une autre zone** que la sienne et y a
+      trouvé au moins un constat avec son scénario (`REVUE-MANUELLE.md` §6). Une
+      équipe où chacun ne relit que son propre domaine n'a pas de revue, elle a
+      des tampons.
 
 ### J+90 — la passation est finie
 

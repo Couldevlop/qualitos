@@ -25,33 +25,35 @@
       <p class="actions-dialog__attente" *ngIf="etat.chargement"
          i18n="@@common.loading">Chargement…</p>
 
-      <table class="actions" *ngIf="etat.ouvertes.length > 0" data-test="actions-ouvertes">
-        <caption class="sr-only" i18n="@@capa.actions-dialog.caption">Actions ouvertes de cet écart</caption>
-        <thead>
-          <tr>
-            <th scope="col" i18n="@@capa.open.title-label">Intitulé de l'action</th>
-            <th scope="col" i18n="@@capa.action.action-type">Nature de l'action</th>
-            <th scope="col" i18n="@@capa.detail.single-action-assignee">Responsable</th>
-            <th scope="col" i18n="@@capa.detail.due-date">Échéance</th>
-            <th scope="col" i18n="@@common.status">Statut</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- La ligne entiere mene au dossier : cliquer sur une cellule et ne
-               rien obtenir fait croire a une panne, et une ligne cliquable doit
-               l'etre au clavier comme a la souris. -->
-          <tr *ngFor="let action of etat.ouvertes; trackBy: trackById" class="actions__ligne"
-              role="button" tabindex="0" [attr.aria-label]="openLabel(action)"
-              (click)="open()" (keydown.enter)="open()" (keydown.space)="open()"
-              data-test="action-ouverte">
-            <td class="actions__titre">{{ action.title }}</td>
-            <td>{{ actionTypeLabel(action.actionType) }}</td>
-            <td>{{ action.assigneeName || '—' }}</td>
-            <td class="actions__echeance">{{ action.dueDate ? (action.dueDate | date:'shortDate') : '—' }}</td>
-            <td><span [class]="badge(action.status)">{{ actionStatusLabel(action.status) }}</span></td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="actions-dialog__tableau" *ngIf="etat.ouvertes.length > 0">
+        <table class="actions" data-test="actions-ouvertes">
+          <caption class="sr-only" i18n="@@capa.actions-dialog.caption">Actions ouvertes de cet écart</caption>
+          <thead>
+            <tr>
+              <th scope="col" i18n="@@capa.open.title-label">Intitulé de l'action</th>
+              <th scope="col" i18n="@@capa.action.action-type">Nature de l'action</th>
+              <th scope="col" i18n="@@capa.detail.single-action-assignee">Responsable</th>
+              <th scope="col" i18n="@@capa.detail.due-date">Échéance</th>
+              <th scope="col" i18n="@@common.status">Statut</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- La ligne entiere mene au dossier : cliquer sur une cellule et ne
+                 rien obtenir fait croire a une panne, et une ligne cliquable doit
+                 l'etre au clavier comme a la souris. -->
+            <tr *ngFor="let action of etat.ouvertes; trackBy: trackById" class="actions__ligne"
+                role="button" tabindex="0" [attr.aria-label]="openLabel(action)"
+                (click)="open()" (keydown.enter)="open()" (keydown.space)="open()"
+                data-test="action-ouverte">
+              <td class="actions__titre">{{ action.title }}</td>
+              <td>{{ actionTypeLabel(action.actionType) }}</td>
+              <td>{{ action.assigneeName || '—' }}</td>
+              <td class="actions__echeance">{{ action.dueDate ? (action.dueDate | date:'shortDate') : '—' }}</td>
+              <td><span [class]="badge(action.status)">{{ actionStatusLabel(action.status) }}</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
       <!-- Aucune action ouverte n'est pas une panne : ou tout est fait, ou rien
            n'a encore ete ecrit. On le dit, et le pied de fenetre offre la porte

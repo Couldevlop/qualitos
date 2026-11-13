@@ -4,7 +4,6 @@ import com.openlab.qualitos.quality.authz.application.RecordScope;
 import com.openlab.qualitos.quality.capa.CapaDto;
 import com.openlab.qualitos.quality.capa.CapaService;
 import com.openlab.qualitos.quality.capa.CapaSourceType;
-import com.openlab.qualitos.quality.capa.CapaStatus;
 import com.openlab.qualitos.quality.common.CurrentUser;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.common.TenantContext;
@@ -284,12 +283,21 @@ public class NcService {
         if (nc.getStatus() != NcStatus.RESOLVED) {
             throw new NcStateException("Only RESOLVED non-conformities can be closed");
         }
-        if (nc.getCapaCaseId() != null) {
-            CapaStatus capa = capaService.statusOf(nc.getCapaCaseId()).orElse(null);
-            if (capa != null && capa != CapaStatus.CLOSED && capa != CapaStatus.REJECTED) {
-                throw new NcStateException(
-                        "Non-conformity cannot be closed while its CAPA case is still " + capa);
-            }
+        // TOUS les dossiers CAPA de l'écart, et pas seulement celui de
+        // l'escalade. La règle ne regardait que `capaCaseId` : un dossier ouvert
+        // depuis le registre des CAPA en citant la référence de l'écart restait
+        // invisible, et on refermait le constat au-dessus d'un traitement encore
+        // en cours — le registre déclarait le problème réglé pendant que le
+        // dossier, lui, disait le contraire (ISO 9001 §10.2).
+        //
+        // Le refus NOMME les dossiers en travail : « il reste des CAPA » envoie
+        // chercher, « il reste : Remplacer le roulement » dit quoi faire.
+        List<String> enTravail = capaService.unsettledCasesFor(
+                nc.getCapaCaseId(), nc.getReference());
+        if (!enTravail.isEmpty()) {
+            throw new NcStateException(
+                    "Non-conformity cannot be closed while " + enTravail.size()
+                    + " CAPA case(s) remain open: " + String.join(", ", enTravail));
         }
         nc.setStatus(NcStatus.CLOSED);
         nc.setClosedAt(Instant.now());

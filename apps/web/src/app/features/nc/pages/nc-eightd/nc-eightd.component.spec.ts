@@ -439,12 +439,18 @@ describe('NcEightDComponent', () => {
    * c'est ce texte-la qui est fige, signe et ancre a l'emission. On ne le
    * retire donc que de l'ecran.
    */
-  it('ne redit pas, sous le D5, le texte que le tableau montre', async () => {
+  it('ne redit pas, sous le D5, les lignes d’action que le tableau montre', async () => {
     await monter(['QUALITY_MANAGER']);
     svc.getEightDReport.and.returnValue(of(rapport({
       disciplines: [
         { ...discipline('D2', true, false), lines: ['Constat au presse-etoupe'] },
-        { ...discipline('D5', true, false), lines: ['CAPA: Reprise du presse-etoupe'] }
+        {
+          ...discipline('D5', true, false),
+          lines: [
+            'CAPA: Reprise du presse-etoupe',
+            'Action [CORRECTIVE] Changer le joint — IN_PROGRESS'
+          ]
+        }
       ]
     })));
     component.reload();
@@ -454,9 +460,13 @@ describe('NcEightDComponent', () => {
 
     // Le D2 garde son texte : lui n'a pas de tableau pour le dire.
     expect(hote().textContent).toContain('Constat au presse-etoupe');
-    // Le D5 ne le rend plus -- ni son texte, ni le « Non renseigne. » qui
-    // prendrait sa place quand le dossier ne porte encore aucune action.
-    expect(hote().textContent).not.toContain('CAPA: Reprise du presse-etoupe');
+    // Le D5 ne rend plus la ligne d'ACTION : le tableau, juste en dessous, la
+    // montre avec son porteur, son avancement et sa preuve.
+    expect(hote().textContent).not.toContain('Action [CORRECTIVE] Changer le joint');
+    // Mais il garde ce qui decrit le DOSSIER : le tableau n'en porte rien, et
+    // masquer le bloc entier faisait disparaitre l'intitule, le type, la
+    // criticite, le statut et l'echeance de la CAPA.
+    expect(hote().textContent).toContain('CAPA: Reprise du presse-etoupe');
     expect(component.texteRemplaceParLeTableau('D5')).toBe(true);
     expect(component.texteRemplaceParLeTableau('D2')).toBe(false);
   });
@@ -485,6 +495,75 @@ describe('NcEightDComponent', () => {
     await monter(['QUALITY_MANAGER'], null);
 
     expect(fixture.debugElement.queryAll(By.directive(CapaActionPanelStubComponent)).length).toBe(0);
+  });
+
+  // Le rapport et l'ecart se chargent par deux requetes distinctes, et le
+  // rapport arrive le premier. Parti de `null`, l'ecran affirmait \u00ab aucun
+  // dossier CAPA \u00bb le temps que la seconde reponde -- et pour toujours si elle
+  // echouait, l'erreur n'etant qu'une trace de console.
+  it('ne dit pas qu\u2019il n\u2019y a pas de dossier CAPA tant que l\u2019\u00e9cart n\u2019a pas r\u00e9pondu', async () => {
+    const vides = () => fixture.debugElement
+      .queryAll(By.css('[data-test^="8d-actions-vide-"]')).length;
+    await monter(['QUALITY_MANAGER'], null);
+
+    // L'ecart a repondu \u00ab pas de dossier \u00bb : la discipline le dit, avec la
+    // porte pour y aller.
+    expect(vides()).toBeGreaterThan(0);
+
+    // On revient a \u00ab on ne sait pas encore \u00bb : elle doit se taire.
+    component.capaCaseId$.next(undefined);
+    fixture.detectChanges();
+    expect(vides()).toBe(0);
+  });
+
+  // Le tableau vivant ne remplace QUE les lignes d'action. Les premieres lignes
+  // du D5 decrivent le dossier -- intitule, type, criticite, statut, echeance --
+  // et le tableau n'en porte aucune : masquer le bloc entier les perdait.
+  it('garde les lignes de dossier du D5 et retire les lignes d\u2019action', async () => {
+    await monter(['QUALITY_MANAGER']);
+
+    const d5: EightDDiscipline = {
+      code: 'D5', title: 'D5', sourced: true, sourceLabel: '', editable: false,
+      lines: [
+        'CAPA: Reprendre le presse-\u00e9toupe',
+        'Type: CORRECTIVE',
+        'Criticality: MAJOR',
+        'Action [CONTAINMENT] Bloquer le lot \u2014 DONE \u2014 Claire Martin',
+        '    Tri a 100 % avant expedition',
+        'Action [CORRECTIVE] Changer le joint \u2014 IN_PROGRESS'
+      ]
+    };
+
+    expect(component.lignesVisibles(d5)).toEqual([
+      'CAPA: Reprendre le presse-\u00e9toupe',
+      'Type: CORRECTIVE',
+      'Criticality: MAJOR'
+    ]);
+  });
+
+  it('garde toutes les lignes d\u2019une discipline que le tableau ne redit pas', async () => {
+    await monter(['QUALITY_MANAGER']);
+
+    // Le D6 porte des dates d'achevement et des comptes de preuves : rien que
+    // le tableau des actions preventives ne montre.
+    const d6: EightDDiscipline = {
+      code: 'D6', title: 'D6', sourced: true, sourceLabel: '', editable: false,
+      lines: ['Changer le joint \u2014 completed on 02/11/2026 \u2014 2 evidence item(s)']
+    };
+
+    expect(component.lignesVisibles(d6)).toEqual(d6.lines);
+  });
+
+  // Sans aucune ligne d'action, il n'y a rien a retirer : le D5 garde tout.
+  it('garde tout le D5 quand le dossier ne porte encore aucune action', async () => {
+    await monter(['QUALITY_MANAGER']);
+
+    const d5: EightDDiscipline = {
+      code: 'D5', title: 'D5', sourced: false, sourceLabel: '', editable: false,
+      lines: ['CAPA: Reprendre le presse-\u00e9toupe', 'Status: OPEN']
+    };
+
+    expect(component.lignesVisibles(d5)).toEqual(d5.lines);
   });
 
   // Faire avancer une action change le texte agrege des disciplines : un rapport

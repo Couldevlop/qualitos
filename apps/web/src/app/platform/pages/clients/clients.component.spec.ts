@@ -49,6 +49,9 @@ describe('ClientsComponent', () => {
     themeCode: 'AIRY_LIGHT', logoAvailable: false
   };
 
+  /** La meme identite, du cote requete : sans `logoAvailable`, qui ne s'ecrit pas. */
+  const { logoAvailable: _ignore, ...IDENTITE_REQUETE } = IDENTITE;
+
   const mod = (o: Partial<ModuleCatalogEntry>): ModuleCatalogEntry => ({
     code: 'x', name: 'X', category: 'methodes', minimumTier: 'STANDARD', dependencies: [], coreModule: false, ...o
   });
@@ -61,8 +64,12 @@ describe('ClientsComponent', () => {
 
   async function setup(listFails = false): Promise<void> {
     service = jasmine.createSpyObj<ClientsService>('ClientsService',
-      ['list', 'onboard', 'saveIdentity', 'saveLogo', 'update', 'suspend']);
+      ['list', 'onboard', 'identity', 'saveIdentity', 'saveLogo', 'deleteLogo', 'update', 'suspend']);
     service.saveIdentity.and.returnValue(of(IDENTITE));
+    // La correction lit l'identite AVANT d'ouvrir la fenetre : sans elle, le
+    // formulaire s'ouvrirait vide et le premier enregistrement effacerait tout.
+    service.identity.and.returnValue(of(IDENTITE));
+    service.deleteLogo.and.returnValue(of(void 0));
     service.saveLogo.and.returnValue(of(void 0));
     service.list.and.returnValue(listFails ? throwError(() => new Error('503'))
       : of({ content: [ACME], totalElements: 1, totalPages: 1, number: 0, size: 100 }));
@@ -388,7 +395,7 @@ describe('ClientsComponent', () => {
     beforeEach(async () => setup());
 
     it('corrige le nom et l’offre, et met la ligne à jour sans recharger la liste', () => {
-      fenetreRend({ name: 'ACME Industries', plan: 'PRO' });
+      fenetreRend({ tenant: { name: 'ACME Industries', plan: 'PRO' }, identity: null, logo: undefined });
       service.update.and.returnValue(of({ ...ACME, name: 'ACME Industries', plan: 'PRO' }));
       service.list.calls.reset();
 
@@ -398,6 +405,38 @@ describe('ClientsComponent', () => {
       expect(component.clients[0].name).toBe('ACME Industries');
       expect(component.clients[0].plan).toBe('PRO');
       expect(service.list).not.toHaveBeenCalled();
+      // Rien d'autre n'a bouge : on n'ecrit pas l'identite ni le logo pour rien.
+      expect(service.saveIdentity).not.toHaveBeenCalled();
+      expect(service.saveLogo).not.toHaveBeenCalled();
+      expect(service.deleteLogo).not.toHaveBeenCalled();
+    });
+
+    it('enregistre l’identité corrigée et le logo retiré, chacun par sa route', () => {
+      fenetreRend({
+        tenant: null,
+        identity: { ...IDENTITE_REQUETE, city: 'Villeurbanne' },
+        logo: null
+      });
+
+      component.corriger(ACME);
+
+      expect(service.update).not.toHaveBeenCalled();
+      expect(service.saveIdentity).toHaveBeenCalledWith('t1',
+        jasmine.objectContaining({ city: 'Villeurbanne' }));
+      expect(service.deleteLogo).toHaveBeenCalledWith('t1');
+      expect(service.saveLogo).not.toHaveBeenCalled();
+    });
+
+    it('ouvre quand même la correction si l’identité ne se lit pas', () => {
+      // Mieux vaut corriger le nom que ne rien pouvoir corriger du tout.
+      service.identity.and.returnValue(throwError(() => new Error('503')));
+      fenetreRend(undefined);
+
+      component.corriger(ACME);
+
+      expect(dialog.open).toHaveBeenCalled();
+      const donnees = dialog.open.calls.mostRecent().args[1]!.data as any;
+      expect(donnees.identity).toBeNull();
     });
 
     it('n’écrit rien quand la fenêtre de correction est refermée', () => {
@@ -409,7 +448,7 @@ describe('ClientsComponent', () => {
     });
 
     it('dit pourquoi une correction n’est pas passée', () => {
-      fenetreRend({ name: 'ACME Industries', plan: 'PRO' });
+      fenetreRend({ tenant: { name: 'ACME Industries', plan: 'PRO' }, identity: null, logo: undefined });
       service.update.and.returnValue(throwError(() => new Error('409')));
 
       component.corriger(ACME);

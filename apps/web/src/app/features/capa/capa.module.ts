@@ -4,7 +4,6 @@ import { MatRadioModule } from '@angular/material/radio';
 import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../../shared/shared.module';
-import { CapaActionPanelModule } from './capa-action-panel.module';
 import { CapaCreateDialogModule } from './capa-create-dialog.module';
 import { CapaVerificationFieldsModule } from './capa-verification-fields.module';
 import { UiModule } from '../../shared/ui/ui.module';
@@ -54,11 +53,13 @@ const routes: Routes = [
   // UserPickerModule : le vérificateur se choisit dans l'annuaire (ADR 0091).
   // `CapaVerificationFieldsModule` : le bloc de vérification, partagé avec la
   // fenêtre d'ouverture.
-  // `CapaActionPanelModule` : LE tableau des actions, le même que la fiche
-  // d'un écart et que le rapport 8D montrent (ADR 0117). La fiche CAPA dépliait
-  // les siennes dans un pavé à part, qui répétait son en-tête.
+  // Plus de `CapaActionPanelModule` ici : la fiche CAPA ne montre plus de
+  // tableau d'actions. Une CAPA EST une action (ADR 0088), et une liste
+  // d'actions à l'intérieur d'une action n'a pas d'objet. Le tableau reste là
+  // où il en a un : la fiche d'un écart, qui peut porter plusieurs CAPA, et le
+  // rapport 8D.
   imports: [SharedModule, UiModule, UserPickerModule, MatButtonToggleModule, MatRadioModule,
-            CapaCreateDialogModule, CapaVerificationFieldsModule, CapaActionPanelModule,
+            CapaCreateDialogModule, CapaVerificationFieldsModule,
             RouterModule.forChild(routes)]
 })
 export class CapaModule {}

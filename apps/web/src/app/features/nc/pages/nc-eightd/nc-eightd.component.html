@@ -116,16 +116,21 @@
           </h3>
           <p class="source" [class.manquante]="!discipline.sourced">{{ discipline.sourceLabel }}</p>
 
-          <!-- Le texte agrege, SAUF la ou le tableau dit la meme chose en mieux.
-               Le D5 listait le dossier (« CAPA : ... », son type, sa criticite,
-               son echeance) puis une ligne de phrase par action, juste au-dessus
-               du tableau qui montre ces memes actions avec leur porteur, leur
-               avancement et leur preuve -- et qu'on peut, lui, faire avancer. On
-               lisait donc deux fois la meme chose, dont une inerte. Le texte
-               reste dans le document emis : le PDF n'a pas de tableau. -->
-          <ul class="lignes" *ngIf="discipline.lines.length > 0 && !texteRemplaceParLeTableau(discipline.code)">
-            <li *ngFor="let ligne of discipline.lines">{{ ligne }}</li>
-          </ul>
+          <!-- Le texte agrege, SAUF les lignes que le tableau dit en mieux. Le
+               D5 listait une ligne de phrase par action, juste au-dessus du
+               tableau qui montre ces memes actions avec leur porteur, leur
+               avancement et leur preuve -- et qu'on peut, lui, faire avancer :
+               deux lectures du meme fait, dont une inerte. Seules CES
+               lignes-la disparaissent. Celles qui decrivent le dossier --
+               intitule, type, criticite, statut, echeance -- restent, parce
+               que le tableau n'en porte aucune. Le document emis, lui, garde
+               tout : le PDF n'a pas de tableau.
+               Un seul appel a `lignesVisibles`, dont le resultat est nomme. -->
+          <ng-container *ngIf="lignesVisibles(discipline) as lignes">
+            <ul class="lignes" *ngIf="lignes.length > 0">
+              <li *ngFor="let ligne of lignes">{{ ligne }}</li>
+            </ul>
+          </ng-container>
 
           <!-- Jamais un bloc vide : l'absence de contenu est dite. La discipline
                dont le tableau tient lieu de texte ne la dit pas : le tableau,
@@ -162,7 +167,12 @@
             <!-- SANS dossier, la discipline restait muette sous son texte
                  agrege : on ne savait pas si le tableau n'existait pas ou s'il
                  etait vide. Il tient a une seule chose, et on le dit, avec la
-                 porte pour y aller. -->
+                 porte pour y aller.
+                 `=== null` et non une simple negation : `undefined` veut dire
+                 « l'ecart n'a pas encore repondu », et ce bloc affirmerait
+                 alors qu'aucun dossier n'existe -- le temps d'une requete, ou
+                 pour de bon si elle echoue. Tant qu'on ne sait pas, on se
+                 tait. -->
             <div class="vivant" *ngIf="(capaCaseId$ | async) === null"
                  [attr.data-test]="'8d-actions-vide-' + discipline.code">
               <p class="vivant-note" i18n="@@nc.8d.actions-empty">
