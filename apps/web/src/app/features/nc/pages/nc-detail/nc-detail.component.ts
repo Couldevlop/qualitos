@@ -836,8 +836,22 @@ export class NcDetailComponent implements OnInit {
    * la même garde qu'avant : un écart à peine déclaré n'autorise pas à sauter
    * l'analyse (le serveur refuse hors {@code UNDER_ANALYSIS}).
    */
+  /**
+   * Le bouton d'actions de l'en-tête.
+   *
+   * <p>Avec un dossier, toujours : relire ce qui reste ouvert est légitime à
+   * tout moment, clôture comprise. Sans dossier, dès que l'écart n'est pas
+   * terminé — exactement la garde du serveur, qui ouvre le dossier quel que
+   * soit le statut et ne fait avancer l'écart que s'il était en analyse
+   * (`NcService.escalateToCapa`).
+   *
+   * <p>Il a un temps exigé « en analyse » : c'était la garde de l'ancien
+   * bouton « Définir action », qui franchissait une étape du cycle de vie. Ce
+   * bouton-là n'existe plus, et la garde qu'il portait empêchait d'ouvrir une
+   * CAPA sur un écart tout juste signalé — ce que le serveur accepte.
+   */
   canAddActions(nc: NcResponse): boolean {
-    return nc.capaCaseId ? true : nc.status === 'UNDER_ANALYSIS';
+    return nc.capaCaseId ? true : !this.isTerminal(nc.status);
   }
   canResolve(status: NcStatus): boolean { return status === 'ACTION_DEFINED'; }
   canClose(status: NcStatus): boolean { return status === 'RESOLVED'; }
