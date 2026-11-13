@@ -84,6 +84,9 @@ code { font-family: 'IBM Plex Mono','Fira Code',monospace; font-size: 12px; }
 .num { text-align: right; font-variant-numeric: tabular-nums; }
 .definition { max-width: 320px; }
 .row-actions { white-space: nowrap; text-align: right; }
+// Une référence ne se coupe pas : « Sup-NC-2026- / 0007 » sur deux lignes se
+// recopie mal, et c'est pour être recopiée qu'elle existe.
+.nowrap { white-space: nowrap; }
 
 .eightd {
   display: inline-block;
