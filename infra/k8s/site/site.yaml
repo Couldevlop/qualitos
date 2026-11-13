@@ -75,6 +75,13 @@ metadata:
   namespace: qualitos-site
   labels: { app: site-contact }
 spec:
+  # UN SEUL exemplaire, et c'est une exigence de CORRECTION, pas un choix de
+  # capacite (ADR 0118). Le secret qui signe les jetons est tire au demarrage et
+  # ne quitte jamais la memoire du processus ; les deux compteurs de debit -- par
+  # adresse et pour le service entier -- sont eux aussi en memoire. Passer a deux
+  # exemplaires ferait refuser « jeton non reconnu » a environ un visiteur sur
+  # deux, et doublerait silencieusement les deux plafonds. Avant d'augmenter ce
+  # nombre, il faut sortir le secret et les compteurs du processus.
   replicas: 1
   selector:
     matchLabels: { app: site-contact }

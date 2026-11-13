@@ -831,12 +831,6 @@ export class NcDetailComponent implements OnInit {
 
   canStartAnalysis(status: NcStatus): boolean { return status === 'OPEN'; }
   /**
-   * Ouvrir les actions : possible dès qu'un dossier existe — même terminé, pour
-   * relire ce qui a été fait. Sans dossier, c'est la création qui s'ouvre, donc
-   * la même garde qu'avant : un écart à peine déclaré n'autorise pas à sauter
-   * l'analyse (le serveur refuse hors {@code UNDER_ANALYSIS}).
-   */
-  /**
    * Le bouton d'actions de l'en-tête.
    *
    * <p>Avec un dossier, toujours : relire ce qui reste ouvert est légitime à

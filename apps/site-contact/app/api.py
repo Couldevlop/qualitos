@@ -107,15 +107,6 @@ def construis(expediteur: Expediteur | None = None, debit: Debit | None = None,
                             "ou écrivez directement à contact@qualitos.fr."},
                 status_code=status.HTTP_429_TOO_MANY_REQUESTS,
             )
-        if not plafond.accepte():
-            # Le plafond du service. Le visiteur n'y est pour rien et reçoit la
-            # même porte de sortie : une adresse à laquelle écrire.
-            journal.warning("plafond global atteint : demande refusée")
-            return JSONResponse(
-                {"message": "Le formulaire reçoit trop de demandes en ce moment. "
-                            "Écrivez directement à contact@qualitos.fr."},
-                status_code=status.HTTP_429_TOO_MANY_REQUESTS,
-            )
 
         brut = await requete.body()
         if len(brut) > TAILLE_MAX_OCTETS:
@@ -148,10 +139,21 @@ def construis(expediteur: Expediteur | None = None, debit: Debit | None = None,
         try:
             sceau.verifie(str(donnees.get("jeton", "") or ""))
         except JetonRefuse as refus:
+            # La raison précise est JOURNALISÉE, pas répondue — sauf quand elle
+            # apprend au visiteur ce qu'il doit faire. « Jeton périmé » mérite
+            # d'être dit : l'onglet est resté ouvert, il suffit de recharger, et
+            # le taire laisserait une personne sincère devant un refus muet.
+            # « Soumis trop vite » ne mérite pas de l'être : aucun être humain
+            # ne le déclenche, et le nommer dit à l'automate exactement quoi
+            # corriger — attendre trois secondes.
             journal.info("demande refusée : %s", refus.raison)
+            message = (f"Demande non acceptée ({refus.raison}). Rechargez la page et "
+                       "réessayez, ou écrivez à contact@qualitos.fr."
+                       if refus.rechargeable else
+                       "Demande non acceptée. Réessayez dans un instant, "
+                       "ou écrivez à contact@qualitos.fr.")
             return JSONResponse(
-                {"message": f"Demande non acceptée ({refus.raison}). Rechargez la page et "
-                            "réessayez, ou écrivez à contact@qualitos.fr."},
+                {"message": message},
                 status_code=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -161,6 +163,24 @@ def construis(expediteur: Expediteur | None = None, debit: Debit | None = None,
             return JSONResponse(
                 {"champ": refus.champ, "message": f"Champ « {refus.champ} » : {refus.raison}."},
                 status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            )
+
+        # Le plafond du service, compté ICI et non à l'entrée : il dit ce que la
+        # BOÎTE AUX LETTRES accepte en une heure, et seule une demande arrivée
+        # jusqu'ici lui coûtera quelque chose. Placé en tête, il se consommait
+        # sur des requêtes qui n'envoyaient rien — corps malformé, piège rempli,
+        # jeton absent : douze adresses et soixante requêtes de rebut, chacune
+        # sous la borne par adresse, fermaient le formulaire pour tout le monde
+        # pendant une heure. Une protection devenue le moyen le moins cher de
+        # faire taire le service.
+        if not plafond.accepte():
+            # Le visiteur n'y est pour rien et reçoit la même porte de sortie :
+            # une adresse à laquelle écrire.
+            journal.warning("plafond global atteint : demande refusée")
+            return JSONResponse(
+                {"message": "Le formulaire reçoit trop de demandes en ce moment. "
+                            "Écrivez directement à contact@qualitos.fr."},
+                status_code=status.HTTP_429_TOO_MANY_REQUESTS,
             )
 
         try:

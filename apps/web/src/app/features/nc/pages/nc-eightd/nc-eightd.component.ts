@@ -20,10 +20,19 @@ import {
   ConfirmDialogData
 } from '../../../../shared/ui/confirm-dialog/confirm-dialog.component';
 import { NcService } from '../../nc.service';
-import { EightDReport } from '../../nc.types';
+import { EightDDiscipline, EightDReport } from '../../nc.types';
 
 /** OWASP A03 — un identifiant malformé est refusé côté écran, avant tout appel. */
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/**
+ * Le préfixe que l'assembleur du rapport écrit devant chaque ligne d'action.
+ *
+ * <p>Il marque la frontière entre ce qui décrit le DOSSIER — intitulé, type,
+ * criticité, statut, échéance — et ce que le tableau vivant montre déjà. Voir
+ * {@link NcEightDComponent#lignesVisibles} pour le couplage que cela crée.
+ */
+const PREFIXE_ACTION = 'Action [';
 
 /**
  * Qui peut renseigner et émettre. Miroir exact de la liste posée côté serveur :
@@ -115,8 +124,19 @@ export class NcEightDComponent implements OnInit {
    */
   readonly fiveWhys$ = new BehaviorSubject<FiveWhysAnalysis[]>([]);
   readonly ishikawa$ = new BehaviorSubject<IshikawaDiagramResponse[]>([]);
-  /** Le dossier CAPA de l'écart, s'il existe : le tableau n'a que son identifiant. */
-  readonly capaCaseId$ = new BehaviorSubject<string | null>(null);
+  /**
+   * Le dossier CAPA de l'écart, s'il existe : le tableau n'a que son identifiant.
+   *
+   * <p>TROIS états, et non deux. {@code undefined} veut dire « on ne sait pas
+   * encore » — le rapport et l'écart se chargent par deux requêtes distinctes,
+   * et le rapport arrive le premier. Parti de {@code null}, le gabarit
+   * affirmait « aucun dossier CAPA sur cet écart » le temps que la seconde
+   * réponde, dans les trois disciplines qui portent un tableau ; et si cette
+   * requête échouait — l'erreur n'est qu'une trace de console — l'affirmation
+   * fausse restait à l'écran pour de bon. On ne dit plus rien tant qu'on ne
+   * sait pas.
+   */
+  readonly capaCaseId$ = new BehaviorSubject<string | null | undefined>(undefined);
 
   /** Lu par le gabarit : la discipline sans dossier CAPA renvoie vers l'ecart. */
   ncId = '';
@@ -189,6 +209,10 @@ export class NcEightDComponent implements OnInit {
   private chargerDossierCapa(): void {
     this.svc.getNc(this.ncId).subscribe({
       next: nc => this.capaCaseId$.next(nc.capaCaseId ?? null),
+      // On laisse `undefined` : l'écart n'a pas répondu, donc on ne SAIT pas
+      // s'il porte un dossier. Écrire `null` ici reviendrait à affirmer qu'il
+      // n'en a pas — l'écran dirait à l'auditeur qu'aucune action n'est
+      // décidée alors qu'on a seulement échoué à le lire.
       // eslint-disable-next-line no-console
       error: err => console.warn('[nc-8d] getNc failed', err?.status)
     });
@@ -218,18 +242,43 @@ export class NcEightDComponent implements OnInit {
   }
 
   /**
-   * Vrai quand le tableau d'actions tient lieu du texte agrégé, à l'écran.
+   * Vrai quand le tableau d'actions tient lieu des LIGNES D'ACTION, à l'écran.
    *
-   * <p>Le D5 listait le dossier puis une ligne de phrase par action, juste
-   * au-dessus du tableau qui montre ces mêmes actions — avec leur porteur, leur
-   * avancement, leur preuve, et de quoi les faire avancer. Deux lectures du même
-   * fait, dont une inerte.
+   * <p>Le D5 listait une ligne de phrase par action, juste au-dessus du tableau
+   * qui montre ces mêmes actions — avec leur porteur, leur avancement, leur
+   * preuve, et de quoi les faire avancer. Deux lectures du même fait, dont une
+   * inerte.
    *
    * <p>Le document émis, lui, garde ce texte : le PDF n'a pas de tableau, et
    * c'est ce texte-là qui est figé, signé et ancré à l'émission.
    */
   texteRemplaceParLeTableau(code: string): boolean {
     return code === 'D5';
+  }
+
+  /**
+   * Les lignes du texte agrégé qui restent à lire à l'écran.
+   *
+   * <p>Le tableau ne remplace que les lignes d'ACTION. Les premières lignes du
+   * D5 décrivent le DOSSIER — son intitulé, son type, sa criticité, son statut,
+   * son échéance — et le tableau n'en porte aucune. Masquer le bloc entier les
+   * faisait disparaître de l'écran : on avait retiré, avec le doublon, cinq
+   * lignes qui ne doublaient rien.
+   *
+   * <p>Le repère est le préfixe que l'assembleur écrit devant chaque action.
+   * C'est un couplage de forme entre un service Java et un gabarit, et il est
+   * assumé faute de mieux : porter la coupure dans l'instantané demanderait un
+   * champ de plus dans le contrat, sa conversion et sa migration, pour un
+   * découpage qui n'intéresse que l'affichage. Le banc d'essai qui le vérifie
+   * est là pour que le jour où l'assembleur change de forme, c'est lui qui le
+   * dise, et non un utilisateur.
+   */
+  lignesVisibles(discipline: EightDDiscipline): string[] {
+    if (!this.texteRemplaceParLeTableau(discipline.code)) {
+      return discipline.lines;
+    }
+    const premiere = discipline.lines.findIndex(l => l.startsWith(PREFIXE_ACTION));
+    return premiere < 0 ? discipline.lines : discipline.lines.slice(0, premiere);
   }
 
   /** Vrai pour la discipline qui porte l'analyse de cause. */
