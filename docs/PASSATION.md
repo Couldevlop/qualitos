@@ -25,9 +25,16 @@ rangé pour y répondre — cette table est la porte d'entrée, à lire en premi
 | 1 | **Lancer** — la plateforme tourne sur votre poste | `README.md` § Démarrage rapide, puis §6.1 ici | Une commande Docker, 15 services |
 | 2 | **Comprendre** — ouvrir n'importe quel fichier et savoir ce qu'il fait | **§2 à §5** — c'est le cœur de ce document | Six motifs expliquent la quasi-totalité du code |
 | 3 | **Modifier sans casser** — changer quelque chose et le savoir | **§6** (lancer les suites, les pièges) et **§8** (les invariants) | Tests + CI + 8 règles non négociables |
+| 3bis | **Relire** — contrôler une modification à la main, la sienne ou celle d'un autre | [`REVUE-MANUELLE.md`](./REVUE-MANUELLE.md) | Grilles SOLID / architecture / OWASP + le catalogue de ce qui a déjà cassé |
 | 4 | **Livrer** — une modification arrive en ligne | **§7** | Branche → PR → CI → fusion → le cluster tire |
 | 5 | **Exploiter** — voir ce qui tourne, et pourquoi | **§7.3** et `docs/runbooks/README.md` | Douze runbooks, indexés |
 | 6 | **Réparer** — revenir en arrière, restaurer | `docs/runbooks/README.md` § Réparer | Retour arrière + sauvegardes, vérifiées |
+
+Ce document explique **comment le code est fait** ;
+[`REVUE-MANUELLE.md`](./REVUE-MANUELLE.md) explique **comment on le relit** —
+décoder un nom, lire une classe en dix minutes, et les grilles de contrôle avec
+le catalogue des défauts déjà rencontrés ici. Les deux se lisent dans cet ordre :
+celui-ci d'abord.
 
 **Si vous ne lisez qu'une chose**, lisez le **§2** : il donne les six motifs qui
 rendent les 1 700 fichiers Java lisibles sans les ouvrir un par un. Le reste se
