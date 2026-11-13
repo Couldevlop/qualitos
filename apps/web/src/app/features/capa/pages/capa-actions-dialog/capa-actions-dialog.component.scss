@@ -15,9 +15,23 @@
   font-family: var(--qos-font-mono, monospace);
 }
 
-/* Le tableau respire : une fenetre serree sur cinq colonnes se lit mal. */
-.actions-dialog mat-dialog-content {
-  min-width: min(760px, 80vw);
+/* LA LARGEUR NE SE DECIDE PAS ICI. Elle se decide a l'ouverture, par la classe
+   du panneau (`qos-dialog-panel--wide`), parce que c'est le panneau qui porte
+   la contrainte reelle : `.qos-dialog-panel` fixe `width: min(680px, 94vw)` et
+   sa surface masque ce qui deborde.
+
+   Cette feuille reclamait un `min-width: min(760px, 80vw)` sur le contenu pour
+   « faire respirer » le tableau. Elle ne gagnait pas : elle poussait un contenu
+   de 760 px dans un cadre de 680, et la surface coupait net -- les phrases
+   d'aide perdaient leur fin de ligne et la derniere colonne du tableau
+   disparaissait. Deux endroits decidaient d'une meme largeur ; un seul le fait
+   desormais, celui qui en a les moyens. */
+
+/* Cinq colonnes restent cinq colonnes : sur un ecran etroit, ou en plein ecran
+   mobile, le tableau DEFILE au lieu d'etre rogne. C'est le filet qui manquait :
+   sans lui, retrecir la fenetre reproduirait exactement le defaut corrige. */
+.actions-dialog__tableau {
+  overflow-x: auto;
 }
 
 .actions-dialog__aide,
