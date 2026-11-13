@@ -533,7 +533,8 @@ export class NcDetailComponent implements OnInit {
   close(): void { this.transition('close'); }
 
   /**
-   * « Ajouter des actions » : les actions correctives de cet écart.
+   * Le bouton d'actions de l'en-tête : « Nouvelle action », ou
+   * « Voir les actions » dès qu'un dossier existe.
    *
    * <p>Un seul libellé, quel que soit l'avancement. Le bouton disait
    * « Définir action » et ne faisait que franchir une étape du cycle de vie :
@@ -623,8 +624,8 @@ export class NcDetailComponent implements OnInit {
    * en faut (ADR 0115). Cette fenêtre ne pose que la première : intitulé,
    * nature, responsable et échéance se saisissent une fois, et le serveur crée
    * le dossier, son action et le lien en une écriture. Les suivantes s'ajoutent
-   * par « Ajouter des actions ». Si l'écart a déjà sa CAPA, on l'ouvre au lieu
-   * d'en proposer une seconde.
+   * dans le tableau des actions de la fiche. Si l'écart a déjà sa CAPA, on
+   * l'ouvre au lieu d'en proposer une seconde.
    */
   openCapa(nc: NcResponse): void {
     if (this.acting$.value) return;
@@ -633,7 +634,16 @@ export class NcDetailComponent implements OnInit {
       return;
     }
     const data: CapaCreateDialogData = {
-      source: { type: 'NON_CONFORMITY', reference: nc.reference },
+      // La source SUIT L'ORIGINE DE L'ECART, comme le serveur la derivera
+      // (NcService.escalateToCapa). Elle etait ecrite « NON_CONFORMITY » en
+      // dur : la fenetre annoncait donc « Non-conformite interne » avant de
+      // creer un dossier marque « externe » des que l'ecart venait d'une
+      // reclamation. Le champ est verrouille, et un champ verrouille qui
+      // affiche autre chose que ce qui sera ecrit est pire qu'un champ absent.
+      source: {
+        type: nc.origin === 'EXTERNAL' ? 'EXTERNAL_NON_CONFORMITY' : 'NON_CONFORMITY',
+        reference: nc.reference
+      },
       // Ni titre ni description preremplis : recopier ceux de l'ecart donnait un
       // dossier qui redisait le constat au lieu de nommer ce qu'on va faire, et
       // le champ pre-rempli se validait tel quel. La source, elle, reste

@@ -64,8 +64,9 @@ const routes: Routes = [
   // Les deux figures d'analyse de cause se lisent SUR la fiche de l'ecart : on
   // importe leurs modules partages, sans routes, et non `IshikawaModule` /
   // `FiveWhysModule`, qui grefferaient `/ishikawa` et `/five-whys` sous `/nc`.
-  // `CapaActionsDialogModule` : « Ajouter des actions » ouvre la fenetre qui
-  // liste les actions du dossier (ADR 0115) -- le meme tableau que la fiche.
+  // `CapaActionsDialogModule` : « Voir les actions » ouvre la fenetre qui
+  // liste ce qui reste OUVERT sur l'ecart ; le tableau complet, lui, est sur
+  // la fiche meme (ADR 0115).
   imports: [SharedModule, UiModule, MatRadioModule, CapaCreateDialogModule, CapaActionPanelModule,
     CapaActionsDialogModule,
             UserPickerModule, FiveWhysSharedModule, IshikawaSharedModule,

@@ -33,10 +33,26 @@ public class ClosedCapaAdapter implements ClosedCapaPort {
         this.nonConformities = nonConformities;
     }
 
+    /**
+     * Les dossiers clos QUI ATTENDENT UN VERDICT.
+     *
+     * <p>Un dossier dont on a decide a l'ouverture qu'aucune verification
+     * n'etait exigee n'a rien a faire ici : il est clos, point. Il figurait
+     * pourtant dans le registre, en attente d'une evaluation que personne ne
+     * prononcerait jamais -- ce qui gonflait le retard apparent avec des
+     * dossiers deliberement sortis du perimetre, et noyait ceux qui attendent
+     * vraiment.
+     *
+     * <p>Seul {@code FALSE} exclut. {@code null} veut dire « pas encore
+     * tranche », et ne pas avoir repondu n'est pas avoir repondu non : ces
+     * dossiers-la restent visibles, parce que c'est precisement le registre qui
+     * fait apparaitre la question oubliee.
+     */
     @Override
     public List<ClosedCapa> findClosed(UUID tenantId) {
         return capaCases.findByTenantIdAndStatusOrderByClosedAtDesc(tenantId, CapaStatus.CLOSED)
                 .stream()
+                .filter(capa -> !Boolean.FALSE.equals(capa.getVerificationRequired()))
                 .map(capa -> toPort(tenantId, capa))
                 .toList();
     }

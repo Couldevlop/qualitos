@@ -221,29 +221,29 @@ describe('NcCreateDialogComponent — produit et mode de défaillance', () => {
     tick();
     fixture.detectChanges();
 
-    // Soixante natures a plat ne se parcourent pas : elles sont GROUPEES par
-    // famille, et c'est ce qui a permis de supprimer le champ « Categorie » --
-    // il ne servait qu'a reduire la liste, au prix d'une question posee avant
-    // celle qui compte. Le champ est ouvert des l'ouverture de la fenetre.
-    const champ = fixture.nativeElement.querySelector('[data-test="nc-nature"]');
-    expect(champ).not.toBeNull();
-    expect(component.form.controls.subcategoryCode.enabled).toBe(true);
+    // DEUX champs : la famille, puis les natures de cette famille. La liste
+    // unique groupee a ete essayee puis ecartee en recette -- soixante lignes
+    // groupees se parcourent toujours sur plusieurs ecrans de defilement.
+    expect(fixture.nativeElement.querySelector('[data-test="nc-categorie"]')).not.toBeNull();
+    expect(fixture.nativeElement.querySelector('[data-test="nc-nature"]')).not.toBeNull();
 
-    // Les deux familles sont la, chacune avec ses natures : rien n'est cache
-    // derriere une question prealable.
-    expect(component.subcategoryGroups.map(g => g.category)).toEqual(['PRODUCT', 'PROCESS']);
-    expect(component.subcategoryGroups[0].subcategories.map(x => x.code)).toEqual(['PRD-DIM']);
-    expect(component.subcategoryGroups[1].subcategories.map(x => x.code)).toEqual(['PRC-DER']);
+    // Les deux familles sont offertes au choix...
+    expect(component.categoryChoices).toEqual(['PRODUCT', 'PROCESS']);
+
+    // ...et la liste des natures ne s'emplit qu'une fois la famille retenue.
+    expect(component.subcategoryChoices).toEqual([]);
+    component.form.patchValue({ category: 'PROCESS' });
+    expect(component.subcategoryChoices.map(x => x.code)).toEqual(['PRC-DER']);
+    component.form.patchValue({ category: 'PRODUCT' });
+    expect(component.subcategoryChoices.map(x => x.code)).toEqual(['PRD-DIM']);
   }));
 
   /**
-   * Le groupe rendu doit etre LE MEME OBJET d'une passe de detection a
-   * l'autre : `mat-select` instancie ses options au rendu et `*ngFor` les suit
-   * par identite. Un getter qui refabrique ses objets les fait detruire et
-   * recreer a chaque passe -- la page se fige, moteur JS bloque. Le defaut a
-   * deja ete paye sur le registre des ecarts.
+   * Changer de famille efface la nature retenue : sinon l'ecran afficherait une
+   * famille et partirait avec la nature d'une autre, sans que personne ne
+   * puisse le voir.
    */
-  it('rend toujours les memes groupes tant que le catalogue ne bouge pas', fakeAsync(() => {
+  it('efface la nature quand la famille change', fakeAsync(() => {
     nc.subcategories.and.returnValue(of({
       entries: [
         { code: 'PRD-DIM', category: 'PRODUCT', label: 'Cote' },
@@ -254,45 +254,51 @@ describe('NcCreateDialogComponent — produit et mode de défaillance', () => {
     fixture.detectChanges();
     tick();
 
-    expect(component.subcategoryGroups).toBe(component.subcategoryGroups);
-    expect(component.subcategoryGroups.length).toBe(2);
+    component.form.patchValue({ category: 'PRODUCT', subcategoryCode: 'PRD-DIM' });
+    component.form.patchValue({ category: 'PROCESS' });
+    component.onCategoryChange();
+
+    expect(component.form.getRawValue().subcategoryCode).toBe('');
   }));
 
   /**
-   * La famille n'est plus demandee : elle se DEDUIT de la nature retenue. Le
-   * serveur l'exige, et un ecart ne peut plus arriver classe « Produit » sans
-   * qu'on sache de quel defaut il s'agit.
+   * Une famille sans aucune nature au catalogue n'est pas offerte : l'offrir au
+   * choix, c'est promettre une question dont la reponse n'existe pas.
    */
-  it('deduit la famille de la nature choisie', fakeAsync(() => {
-    nc.subcategories.and.returnValue(of({
-      entries: [{ code: 'PRC-DER', category: 'PROCESS', label: 'Derive' }], defaults: true
-    }));
-    fixture.detectChanges();
-    tick();
-
-    component.form.patchValue({ subcategoryCode: 'PRC-DER' });
-    component.onSubcategoryChange();
-
-    expect(component.form.getRawValue().category).toBe('PROCESS');
-  }));
-
-  /**
-   * Une nature absente du catalogue -- reglage change entre l'ouverture de la
-   * fenetre et la saisie -- laisse la famille en place plutot que de l'effacer :
-   * mieux vaut une famille perimee qu'un formulaire qui refuse de partir sans
-   * dire pourquoi.
-   */
-  it("garde la famille en place quand la nature est inconnue du catalogue", fakeAsync(() => {
+  it('n\u2019offre pas une famille vide', fakeAsync(() => {
     nc.subcategories.and.returnValue(of({
       entries: [{ code: 'PRD-DIM', category: 'PRODUCT', label: 'Cote' }], defaults: true
     }));
     fixture.detectChanges();
     tick();
-    component.form.patchValue({ category: 'PRODUCT', subcategoryCode: 'INCONNUE' });
 
-    component.onSubcategoryChange();
+    expect(component.categoryChoices).toEqual(['PRODUCT']);
+  }));
 
-    expect(component.form.getRawValue().category).toBe('PRODUCT');
+  /**
+   * Les choix rendus doivent etre LE MEME OBJET d'une passe de detection a
+   * l'autre : `mat-select` instancie ses options au rendu et `*ngFor` les suit
+   * par identite. Un getter qui refabrique ses objets les fait detruire et
+   * recreer a chaque passe -- la page se fige, moteur JS bloque. Le defaut a
+   * deja ete paye sur le registre des ecarts.
+   */
+  it('rend toujours les memes choix tant que rien ne bouge', fakeAsync(() => {
+    nc.subcategories.and.returnValue(of({
+      entries: [
+        { code: 'PRD-DIM', category: 'PRODUCT', label: 'Cote' },
+        { code: 'PRC-DER', category: 'PROCESS', label: 'Derive' }
+      ],
+      defaults: true
+    }));
+    fixture.detectChanges();
+    tick();
+
+    expect(component.categoryChoices).toBe(component.categoryChoices);
+    expect(component.categoryChoices.length).toBe(2);
+
+    component.form.patchValue({ category: 'PRODUCT' });
+    expect(component.subcategoryChoices).toBe(component.subcategoryChoices);
+    expect(component.subcategoryChoices.length).toBe(1);
   }));
 
   it("envoie la nature choisie, et rien quand elle est laissée à classer", fakeAsync(() => {
@@ -329,7 +335,8 @@ describe('NcCreateDialogComponent — produit et mode de défaillance', () => {
     tick();
 
     expect(component.subcategories).toEqual([]);
-    expect(component.subcategoryGroups).toEqual([]);
+    expect(component.categoryChoices).toEqual([]);
+    expect(component.subcategoryChoices).toEqual([]);
   }));
 
   it('reste utilisable quand le référentiel produit est indisponible', fakeAsync(() => {

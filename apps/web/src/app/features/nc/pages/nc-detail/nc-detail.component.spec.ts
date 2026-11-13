@@ -778,21 +778,27 @@ describe('NcDetailComponent — workflow et escalade CAPA', () => {
   });
 
   /**
-   * UN SEUL libellé pour le bouton d'en-tête, avec ou sans dossier. Il disait
-   * « Créer une CAPA » puis « Voir la CAPA » : deux mots pour un bouton qui ne
-   * change pas de place, et il fallait relire l'écran pour savoir lequel on
-   * allait obtenir.
+   * UN SEUL bouton d'actions dans l'en-tête. Ils étaient deux, côte à côte,
+   * pour le même geste : « Ajouter des actions » et « Ajouter une CAPA »
+   * ouvraient la même fenêtre de création sans dossier, et avec un dossier l'un
+   * listait ses actions quand l'autre y naviguait.
+   *
+   * <p>Son libellé suit l'état, parce que les deux états ne promettent pas la
+   * même chose : sans dossier il n'y a rien à lire, et la première action
+   * s'écrit avec le dossier qui la portera ; avec, on vient voir ce qui reste.
    */
-  it('garde le même bouton « Ajouter une CAPA », avec ou sans dossier', () => {
+  it('ne garde qu\u2019un bouton d\u2019actions, dont le libellé suit l\u2019état', () => {
     setup(buildNc({ capaCaseId: undefined }));
     fixture.detectChanges();
     let el = fixture.nativeElement as HTMLElement;
-    expect(el.querySelector('[data-test="creer-capa"]')!.textContent).toContain('Ajouter une CAPA');
+    expect(el.querySelector('[data-test="definir-action"]')).toBeNull();
+    expect(el.querySelector('[data-test="creer-capa"]')!.textContent).toContain('Nouvelle action');
 
     setup(buildNc({ capaCaseId: '99999999-9999-9999-9999-999999999999' }));
     fixture.detectChanges();
     el = fixture.nativeElement as HTMLElement;
-    expect(el.querySelector('[data-test="creer-capa"]')!.textContent).toContain('Ajouter une CAPA');
+    expect(el.querySelector('[data-test="definir-action"]')).toBeNull();
+    expect(el.querySelector('[data-test="creer-capa"]')!.textContent).toContain('Voir les actions');
   });
 
   it('montre le lien vers la CAPA, jamais son identifiant brut', () => {

@@ -33,17 +33,23 @@
           <mat-icon>block</mat-icon> <span i18n="@@nc.detail.reject">Rejeter</span>
         </button>
         </ng-container>
-        <!-- UN SEUL libelle : « Ajouter une CAPA ». Le bouton disait « Creer une
-             CAPA », puis « Voir la CAPA » une fois le dossier ouvert : deux mots
-             pour un bouton qui ne change pas de place, et il fallait relire
-             l'ecran pour savoir lequel on allait obtenir. Sans dossier, il
-             l'ouvre -- source verrouillee sur cet ecart ; avec, il y emmene. -->
-        <button mat-stroked-button (click)="openCapa(n)" data-test="creer-capa" *qosCan="'nc.escalate'"
-                [disabled]="(acting$ | async) || (!n.capaCaseId && !canEscalate(n.status))"
-                i18n-matTooltip="@@nc.detail.add-capa-tooltip"
-                matTooltip="Le dossier CAPA qui traite cet écart : l'ouvrir, ou y aller">
-          <mat-icon>engineering</mat-icon>
-          <span i18n="@@nc.detail.add-capa">Ajouter une CAPA</span>
+        <!-- UN SEUL bouton d'actions dans l'en-tete. Ils etaient deux, cote a
+             cote, pour le meme geste : « Ajouter des actions » et « Ajouter une
+             CAPA » ouvraient la meme fenetre de creation sans dossier, et avec
+             un dossier l'un listait ses actions quand l'autre y naviguait. Le
+             tableau de la fiche, plus bas, ajoute et fait avancer les actions ;
+             l'en-tete, lui, repond a une seule question -- qu'est-ce qui reste
+             ouvert sur cet ecart, et ou cela se traite.
+             Le libelle suit donc l'etat : sans dossier il n'y a rien a lire, et
+             la premiere action s'ecrit avec le dossier qui la portera. -->
+        <button mat-stroked-button color="primary" (click)="addActions(n)"
+                data-test="creer-capa" *qosCan="['nc.process', 'nc.escalate']"
+                [disabled]="(acting$ | async) || !canAddActions(n)"
+                i18n-matTooltip="@@nc.detail.add-actions-tooltip"
+                matTooltip="Les actions correctives de cet écart : les lire, en ajouter">
+          <mat-icon>checklist</mat-icon>
+          <span *ngIf="!n.capaCaseId" i18n="@@nc.detail.new-action">Nouvelle action</span>
+          <span *ngIf="n.capaCaseId" i18n="@@nc.detail.view-actions">Voir les actions</span>
         </button>
         <!-- La CAPA traite l'écart ; le cycle ou le projet traite ce que l'écart
              révèle (§3.6). La gravité propose la méthode, la fenêtre le dit, et
@@ -104,19 +110,6 @@
                 [disabled]="(acting$ | async) || !canStartAnalysis(n.status)"
                 i18n-matTooltip="@@nc.detail.start-analysis-tooltip" matTooltip="Démarrer l'analyse">
           <mat-icon>search</mat-icon> <span i18n="@@nc.detail.start-analysis">Analyser</span>
-        </button>
-        <!-- UN SEUL libelle, la aussi : « Ajouter des actions ». Sans dossier,
-             le bouton ouvre la CAPA et sa premiere action d'un meme geste ; avec,
-             il ouvre la fenetre qui les liste toutes, ou l'on en ajoute et ou une
-             ligne s'ouvre pour se corriger (ADR 0115). Il n'y a plus ni
-             « definir », ni « voir » : un ecart se traite rarement d'un seul
-             geste, et le bouton ne change pas de nom selon l'avancement. -->
-        <button mat-stroked-button color="primary" (click)="addActions(n)" *qosCan="'nc.process'"
-                [disabled]="(acting$ | async) || !canAddActions(n)"
-                data-test="definir-action"
-                i18n-matTooltip="@@nc.detail.add-actions-tooltip"
-                matTooltip="Les actions correctives de cet écart : les lire, en ajouter">
-          <mat-icon>checklist</mat-icon> <span i18n="@@nc.detail.add-actions">Ajouter des actions</span>
         </button>
         <button mat-flat-button color="primary" (click)="openResolve(n)" *qosCan="'nc.process'"
                 [disabled]="(acting$ | async) || !canResolve(n.status)"
@@ -286,6 +279,21 @@
         </mat-card-content>
       </mat-card>
 
+      <!-- Les schemas d'analyse de cause, LA ou l'ecart se discute. Les boutons
+           de l'en-tete emmenaient les deroule dans un autre ecran ; on ne voyait
+           donc pas, en lisant la fiche, si la cause avait ete cherchee -- ni ce
+           qu'on avait trouve. La fiche MONTRE, les ecrans dedies modifient. -->
+      <mat-card class="cause-card"
+                *ngIf="(ishikawa$ | async)?.length || (fiveWhys$ | async)?.length"
+                data-test="analyse-de-cause">
+        <mat-card-content>
+          <span class="info-label" i18n="@@nc.detail.cause-analysis">Analyse de cause</span>
+
+          <qos-nc-cause-analysis [fiveWhys]="(fiveWhys$ | async) ?? []"
+                                 [ishikawa]="(ishikawa$ | async) ?? []"></qos-nc-cause-analysis>
+        </mat-card-content>
+      </mat-card>
+
       <!-- Ou en est le traitement, sans quitter l'ecart : « Voir la CAPA »
            emmenait dans un autre ecran pour cette seule question, on revenait
            donc en arriere pour la poser -- et on ne la posait plus. Un dossier
@@ -306,18 +314,28 @@
         </mat-card-content>
       </mat-card>
 
-      <!-- Les schemas d'analyse de cause, LA ou l'ecart se discute. Les boutons
-           de l'en-tete emmenaient les deroule dans un autre ecran ; on ne voyait
-           donc pas, en lisant la fiche, si la cause avait ete cherchee -- ni ce
-           qu'on avait trouve. La fiche MONTRE, les ecrans dedies modifient. -->
-      <mat-card class="cause-card"
-                *ngIf="(ishikawa$ | async)?.length || (fiveWhys$ | async)?.length"
-                data-test="analyse-de-cause">
+      <!-- SANS dossier, la carte disparaissait entierement : rien ne disait que
+           le tableau des actions existe, ni comment l'obtenir. On cherchait donc
+           une fonction absente de l'ecran, alors qu'un seul geste la fait
+           apparaitre. La carte reste, et porte l'invite. -->
+      <mat-card class="capa-action-card" *ngIf="!n.capaCaseId && !isTerminal(n.status)"
+                data-test="capa-action-vide">
         <mat-card-content>
-          <span class="info-label" i18n="@@nc.detail.cause-analysis">Analyse de cause</span>
-
-          <qos-nc-cause-analysis [fiveWhys]="(fiveWhys$ | async) ?? []"
-                                 [ishikawa]="(ishikawa$ | async) ?? []"></qos-nc-cause-analysis>
+          <div class="capa-action-head">
+            <span class="info-label" i18n="@@nc.detail.capa-action">Actions correctives</span>
+            <!-- Le MEME libelle que l'en-tete, pour le meme geste : deux mots
+                 pour une seule action laissaient croire a deux resultats. -->
+            <button mat-stroked-button (click)="addActions(n)" data-test="capa-action-ouvrir"
+                    *qosCan="'nc.escalate'" [disabled]="(acting$ | async)">
+              <mat-icon>checklist</mat-icon>
+              <span i18n="@@nc.detail.new-action">Nouvelle action</span>
+            </button>
+          </div>
+          <p class="dim" i18n="@@nc.detail.capa-action-empty">
+            Aucun dossier CAPA sur cet ecart. Ouvrez-en un : les actions
+            correctives et preventives se liront et s'avanceront ici meme, et
+            rempliront les D5 et D6 du rapport 8D.
+          </p>
         </mat-card-content>
       </mat-card>
 

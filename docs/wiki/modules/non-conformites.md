@@ -20,11 +20,12 @@ possibilité d'y joindre des **photos**.
    Vous y êtes posé d'office en tête : retirez-vous si vous ne suivez pas l'écart.
 3. **Joindre des photos** pour documenter l'écart.
 4. **Suivre le traitement** : la NC évolue jusqu'à sa résolution.
-5. **Relier à une action** : *Ajouter une CAPA* ouvre le dossier qui traite l'écart (source
-   verrouillée ; le titre et la description partent **vides** — ce sont des phrases à écrire, pas
-   le constat à recopier), puis *Ajouter des actions* ouvre la liste de ses actions sans quitter
-   la fiche. Les deux boutons gardent **le même libellé** avant et après l'ouverture du dossier.
-   Une NC peut déclencher une [CAPA](capa.md), un cycle
+5. **Relier à une action** : *Nouvelle action* ouvre le dossier CAPA qui traite l'écart et sa
+   première action (source verrouillée ; le titre et la description partent **vides** — ce sont
+   des phrases à écrire, pas le constat à recopier). Une fois le dossier ouvert, le même bouton
+   devient *Voir les actions* et liste **ce qui reste à faire** ; une ligne mène au dossier.
+   Les actions suivantes s'ajoutent, s'avancent et se prouvent dans le **tableau des actions**
+   de la fiche, sous l'analyse de cause. Une NC peut déclencher une [CAPA](capa.md), un cycle
    [PDCA](pdca.md) ou un projet [DMAIC](dmaic.md) selon la gravité.
 6. **Clôturer, et remettre le rapport** : le [rapport 8D](rapport-8d.md) rassemble les huit
    disciplines attendues par le client, dont six sont reprises automatiquement de ce dossier.

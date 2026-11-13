@@ -116,12 +116,22 @@
           </h3>
           <p class="source" [class.manquante]="!discipline.sourced">{{ discipline.sourceLabel }}</p>
 
-          <ul class="lignes" *ngIf="discipline.lines.length > 0">
+          <!-- Le texte agrege, SAUF la ou le tableau dit la meme chose en mieux.
+               Le D5 listait le dossier (« CAPA : ... », son type, sa criticite,
+               son echeance) puis une ligne de phrase par action, juste au-dessus
+               du tableau qui montre ces memes actions avec leur porteur, leur
+               avancement et leur preuve -- et qu'on peut, lui, faire avancer. On
+               lisait donc deux fois la meme chose, dont une inerte. Le texte
+               reste dans le document emis : le PDF n'a pas de tableau. -->
+          <ul class="lignes" *ngIf="discipline.lines.length > 0 && !texteRemplaceParLeTableau(discipline.code)">
             <li *ngFor="let ligne of discipline.lines">{{ ligne }}</li>
           </ul>
 
-          <!-- Jamais un bloc vide : l'absence de contenu est dite. -->
-          <p class="vide" *ngIf="discipline.lines.length === 0" data-test="discipline-vide"
+          <!-- Jamais un bloc vide : l'absence de contenu est dite. La discipline
+               dont le tableau tient lieu de texte ne la dit pas : le tableau,
+               juste en dessous, porte deja son propre etat. -->
+          <p class="vide" *ngIf="discipline.lines.length === 0 && !texteRemplaceParLeTableau(discipline.code)"
+             data-test="discipline-vide"
              i18n="@@nc.8d.discipline-empty">Non renseigné.</p>
 
           <!-- D4 : le RAISONNEMENT, pas seulement sa conclusion. Les lignes
@@ -136,14 +146,37 @@
             </div>
           </ng-container>
 
-          <!-- D5 et D6 : le tableau des actions de LEUR nature, ou on les lit,
-               on les avance et on en ajoute sans quitter le rapport. -->
-          <ng-container *ngIf="natureDe(discipline.code) as nature">
+          <!-- D3, D5 et D6 : le tableau des actions de LEUR nature, ou on les
+               lit, on les avance et on en ajoute sans quitter le rapport. Le D5
+               en nomme trois -- endiguer, corriger, prevenir -- parce qu'une
+               action ajoutee sous une autre nature que « corrective » n'y
+               paraissait pas, et que c'est la discipline ou l'on vient lire ce
+               qui a ete decide. -->
+          <ng-container *ngIf="montreLesActions(discipline.code)">
             <div class="vivant" *ngIf="capaCaseId$ | async as capaCaseId"
                  [attr.data-test]="'8d-actions-' + discipline.code">
               <p class="vivant-note" i18n="@@nc.8d.live-note">État actuel du dossier, affiché à côté du texte agrégé. Le PDF, lui, ne porte que le texte figé à l'émission.</p>
               <qos-capa-action-panel [capaCaseId]="capaCaseId" [natures]="naturesDe(discipline.code)"
                                      (changed)="reload()"></qos-capa-action-panel>
+            </div>
+            <!-- SANS dossier, la discipline restait muette sous son texte
+                 agrege : on ne savait pas si le tableau n'existait pas ou s'il
+                 etait vide. Il tient a une seule chose, et on le dit, avec la
+                 porte pour y aller. -->
+            <div class="vivant" *ngIf="(capaCaseId$ | async) === null"
+                 [attr.data-test]="'8d-actions-vide-' + discipline.code">
+              <p class="vivant-note" i18n="@@nc.8d.actions-empty">
+                Les actions de cette discipline se liront et s'avanceront ici dès
+                qu'un dossier CAPA sera ouvert sur l'écart.
+              </p>
+              <!-- `retour()` et non un `routerLink` : l'en-tete du rapport
+                   emmene deja a la fiche par ce chemin, et deux facons de
+                   nommer la meme destination finissent par diverger. -->
+              <button mat-stroked-button type="button" (click)="retour()"
+                      data-test="8d-vers-ecart">
+                <mat-icon>open_in_new</mat-icon>
+                <span i18n="@@nc.8d.go-to-nc">Ouvrir la fiche de l'écart</span>
+              </button>
             </div>
           </ng-container>
         </mat-card-content>

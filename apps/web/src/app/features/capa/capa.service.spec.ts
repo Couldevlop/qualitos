@@ -101,13 +101,42 @@ describe('CapaService (mock mode)', () => {
     });
   });
 
-  it('refuse une seconde action, comme le serveur (409)', (done) => {
-    service.addAction('capa-1', { title: 'Encore une' }).subscribe({
-      next: () => fail('une CAPA porte une seule action'),
-      error: err => {
-        expect(err.status).toBe(409);
-        done();
-      }
+  /**
+   * La doublure refusait la DEUXIEME action (409) : c'etait la regle de
+   * l'ADR 0088, que l'ADR 0115 a revisee sur ce seul point. Un ecart se traite
+   * rarement d'un seul geste -- on endigue, on corrige la cause, on previent la
+   * recidive -- et une doublure qui refuse ce que la production accepte fait
+   * echouer la demonstration la ou le produit fonctionne.
+   */
+  it('accepte une seconde action sur un dossier qui en porte deja une', (done) => {
+    service.addAction('capa-1', { title: 'Encore une', actionType: 'PREVENTIVE' }).subscribe({
+      next: ajoutee => {
+        expect(ajoutee.actionType).toBe('PREVENTIVE');
+        service.getCase('capa-1').subscribe(c => {
+          expect(c.actions.length).toBeGreaterThan(1);
+          expect(c.actions.map(x => x.title)).toContain('Encore une');
+          done();
+        });
+      },
+      error: () => fail('un dossier porte plusieurs actions (ADR 0115)')
+    });
+  });
+
+  /**
+   * Le pilote du dossier ne bouge PAS a la deuxieme action : seul le
+   * responsable de la premiere pilote (ADR 0081). Sans cette garde, la
+   * troisieme action d'un dossier deplacerait le pilotage vers qui l'execute.
+   */
+  it('ne deplace pas le pilote du dossier sur une action suivante', (done) => {
+    service.getCase('capa-1').subscribe(avant => {
+      const pilote = avant.ownerId;
+      service.addAction('capa-1', { title: 'Une autre', assigneeId: 'u-42', assigneeName: 'Zoe' })
+        .subscribe(() => {
+          service.getCase('capa-1').subscribe(apres => {
+            expect(apres.ownerId).toBe(pilote);
+            done();
+          });
+        });
     });
   });
 

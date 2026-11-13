@@ -62,25 +62,69 @@ TRANSLATIONS = {
         'No se pudo guardar la accion.', 'لم يتمكن النظام من حفظ الإجراء.',
         '対策を保存できませんでした。', '无法保存该措施。'),
 
-    # --- la fenetre qui liste les actions, ouverte depuis la fiche d'ecart ---
-    'capa.actions-dialog.title': (
-        'Actions correctives', 'Corrective actions', 'Acciones correctivas',
-        'الإجراءات التصحيحية', '是正対策', '纠正措施'),
+    # --- la fenetre de ce qui reste OUVERT, ouverte depuis la fiche d'ecart --
+    # Elle portait le tableau complet, que la fiche porte desormais elle-meme :
+    # son titre ne dit donc plus « Actions correctives » mais ce qu'elle montre.
+    'capa.actions-dialog.open-title': (
+        'Actions ouvertes', 'Open actions', 'Acciones abiertas',
+        'الإجراءات المفتوحة', '未完了の対策', '未完成措施'),
+    'capa.actions-dialog.hint': (
+        "Ce qui reste a faire sur cet ecart. Une ligne ouvre le dossier CAPA "
+        "qui la porte, ou l'action s'ecrit, s'avance et se prouve.",
+        'What remains to be done on this nonconformity. A row opens the CAPA '
+        'case that carries it, where the action is written, advanced and proven.',
+        'Lo que queda por hacer en esta desviacion. Una fila abre el expediente '
+        'CAPA que la contiene, donde la accion se escribe, avanza y se prueba.',
+        'ما تبقى من عمل على هذا الانحراف. يفتح السطر ملف CAPA الذي يحمله، حيث '
+        'يُكتب الإجراء ويُتابع ويُثبت.',
+        'この不適合に残っている作業です。行を開くと、その対策を持つ CAPA 案件'
+        'に移動し、そこで対策を記述・進行・証明できます。',
+        '此不合格尚待完成的工作。点击某行可打开承载该措施的 CAPA 案卷，'
+        '在那里编写、推进并证明该措施。'),
+    'capa.actions-dialog.caption': (
+        "Actions ouvertes de cet ecart", 'Open actions of this nonconformity',
+        'Acciones abiertas de esta desviacion', 'الإجراءات المفتوحة لهذا الانحراف',
+        'この不適合の未完了の対策', '此不合格的未完成措施'),
+    'capa.actions-dialog.none': (
+        "Aucune action ouverte sur cet ecart. Les actions terminees se lisent "
+        "en bas de la fiche, dans le tableau des actions correctives.",
+        'No open action on this nonconformity. Completed actions are listed at '
+        'the bottom of the record, in the corrective actions table.',
+        'Ninguna accion abierta en esta desviacion. Las acciones terminadas se '
+        'leen al final de la ficha, en la tabla de acciones correctivas.',
+        'لا توجد إجراءات مفتوحة على هذا الانحراف. تُقرأ الإجراءات المنتهية في '
+        'أسفل البطاقة، في جدول الإجراءات التصحيحية.',
+        'この不適合に未完了の対策はありません。完了した対策は、記録の下部に'
+        'ある是正対策の表で確認できます。',
+        '此不合格没有未完成的措施。已完成的措施见记录下方的纠正措施表。'),
+    'capa.actions-dialog.go-to-case': (
+        'Ouvrir le dossier', 'Open the case', 'Abrir el expediente',
+        'فتح الملف', '案件を開く', '打开案卷'),
+    'capa.actions-dialog.open-aria': (
+        "Ouvrir le dossier CAPA qui porte l'action : {$titre}",
+        'Open the CAPA case that carries the action: {$titre}',
+        'Abrir el expediente CAPA que contiene la accion: {$titre}',
+        'فتح ملف CAPA الذي يحمل الإجراء: {$titre}',
+        '対策を持つ CAPA 案件を開く：{$titre}',
+        '打开承载该措施的 CAPA 案卷：{$titre}'),
+    'capa.actions-dialog.failed': (
+        "Les actions du dossier n'ont pas pu etre lues.",
+        'The actions of the case could not be read.',
+        'No se pudieron leer las acciones del expediente.',
+        'لم يتمكن النظام من قراءة إجراءات الملف.',
+        '案件の対策を読み取れませんでした。', '无法读取案卷的措施。'),
 
-    # --- les deux boutons de l'en-tete d'une fiche d'ecart -------------------
-    'nc.detail.add-capa': (
-        'Ajouter une CAPA', 'Add a CAPA', 'Anadir un CAPA',
-        'إضافة CAPA', 'CAPA を追加', '添加 CAPA'),
-    'nc.detail.add-capa-tooltip': (
-        "Le dossier CAPA qui traite cet ecart : l'ouvrir, ou y aller",
-        'The CAPA case that handles this nonconformity: open it, or go to it',
-        'El expediente CAPA que trata esta desviacion: abrirlo o ir a el',
-        'ملف CAPA الذي يعالج هذا الانحراف: افتحه أو انتقل إليه',
-        'この不適合を扱う CAPA 案件：開くか、移動する',
-        '处理此不合格的 CAPA 案卷：打开或前往'),
-    'nc.detail.add-actions': (
-        'Ajouter des actions', 'Add actions', 'Anadir acciones',
-        'إضافة إجراءات', '対策を追加', '添加措施'),
+    # --- le bouton d'actions de l'en-tete d'une fiche d'ecart ---------------
+    # Ils etaient DEUX pour le meme geste (« Ajouter des actions » et « Ajouter
+    # une CAPA ») ; il n'en reste qu'un, et son libelle suit l'etat : sans
+    # dossier il n'y a rien a lire, et la premiere action s'ecrit avec le
+    # dossier qui la portera.
+    'nc.detail.new-action': (
+        'Nouvelle action', 'New action', 'Nueva accion',
+        'إجراء جديد', '新しい対策', '新建措施'),
+    'nc.detail.view-actions': (
+        'Voir les actions', 'View actions', 'Ver las acciones',
+        'عرض الإجراءات', '対策を見る', '查看措施'),
     'nc.detail.add-actions-tooltip': (
         "Les actions correctives de cet ecart : les lire, en ajouter",
         'The corrective actions of this nonconformity: read them, add some',

@@ -28,8 +28,16 @@ public enum EightDDiscipline {
     /** La cause racine. Sources : Ishikawa, 5 pourquoi, cause racine de la NC. */
     D4("D4", "Root cause", false),
 
-    /** Les actions correctives décidées. Source : la CAPA escaladée. */
-    D5("D5", "Chosen corrective actions", false),
+    /**
+     * Les actions décidées, des trois natures. Source : la CAPA escaladée.
+     *
+     * <p>Le titre les nomme toutes — endiguer, corriger, prévenir. Il disait
+     * « corrective actions » seules, et la discipline où l'on vient lire ce qui
+     * a été décidé passait donc sous silence l'endiguement décidé dans le
+     * dossier et la prévention qui en découle : trois natures existent dans la
+     * CAPA, et c'est ici qu'on les lit ensemble.
+     */
+    D5("D5", "Defined containment, corrective and preventive actions", false),
 
     /** Leur mise en œuvre et ses preuves. Source : la CAPA escaladée. */
     D6("D6", "Implementation and evidence", false),

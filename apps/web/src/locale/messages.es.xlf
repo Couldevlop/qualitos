@@ -7602,21 +7602,41 @@ Portal de clientes</target>
         <source>L'action n'a pas pu etre enregistree.</source>
         <target state="translated">No se pudo guardar la accion.</target>
       </trans-unit>
-      <trans-unit id="capa.actions-dialog.title" datatype="html">
-        <source>Actions correctives</source>
-        <target state="translated">Acciones correctivas</target>
+      <trans-unit id="capa.actions-dialog.open-title" datatype="html">
+        <source>Actions ouvertes</source>
+        <target state="translated">Acciones abiertas</target>
       </trans-unit>
-      <trans-unit id="nc.detail.add-capa" datatype="html">
-        <source>Ajouter une CAPA</source>
-        <target state="translated">Anadir un CAPA</target>
+      <trans-unit id="capa.actions-dialog.hint" datatype="html">
+        <source>Ce qui reste a faire sur cet ecart. Une ligne ouvre le dossier CAPA qui la porte, ou l'action s'ecrit, s'avance et se prouve.</source>
+        <target state="translated">Lo que queda por hacer en esta desviacion. Una fila abre el expediente CAPA que la contiene, donde la accion se escribe, avanza y se prueba.</target>
       </trans-unit>
-      <trans-unit id="nc.detail.add-capa-tooltip" datatype="html">
-        <source>Le dossier CAPA qui traite cet ecart : l'ouvrir, ou y aller</source>
-        <target state="translated">El expediente CAPA que trata esta desviacion: abrirlo o ir a el</target>
+      <trans-unit id="capa.actions-dialog.caption" datatype="html">
+        <source>Actions ouvertes de cet ecart</source>
+        <target state="translated">Acciones abiertas de esta desviacion</target>
       </trans-unit>
-      <trans-unit id="nc.detail.add-actions" datatype="html">
-        <source>Ajouter des actions</source>
-        <target state="translated">Anadir acciones</target>
+      <trans-unit id="capa.actions-dialog.none" datatype="html">
+        <source>Aucune action ouverte sur cet ecart. Les actions terminees se lisent en bas de la fiche, dans le tableau des actions correctives.</source>
+        <target state="translated">Ninguna accion abierta en esta desviacion. Las acciones terminadas se leen al final de la ficha, en la tabla de acciones correctivas.</target>
+      </trans-unit>
+      <trans-unit id="capa.actions-dialog.go-to-case" datatype="html">
+        <source>Ouvrir le dossier</source>
+        <target state="translated">Abrir el expediente</target>
+      </trans-unit>
+      <trans-unit id="capa.actions-dialog.open-aria" datatype="html">
+        <source>Ouvrir le dossier CAPA qui porte l'action : <x id="titre"/></source>
+        <target state="translated">Abrir el expediente CAPA que contiene la accion: <x id="titre"/></target>
+      </trans-unit>
+      <trans-unit id="capa.actions-dialog.failed" datatype="html">
+        <source>Les actions du dossier n'ont pas pu etre lues.</source>
+        <target state="translated">No se pudieron leer las acciones del expediente.</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.new-action" datatype="html">
+        <source>Nouvelle action</source>
+        <target state="translated">Nueva accion</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.view-actions" datatype="html">
+        <source>Voir les actions</source>
+        <target state="translated">Ver las acciones</target>
       </trans-unit>
       <trans-unit id="nc.detail.add-actions-tooltip" datatype="html">
         <source>Les actions correctives de cet ecart : les lire, en ajouter</source>
@@ -21881,6 +21901,22 @@ historial de 12 meses</target>
       <trans-unit id="nc.detail.eightd-tooltip" datatype="html">
         <source>Les huit disciplines, agrégées depuis ce dossier</source>
         <target state="translated">Las ocho disciplinas, agregadas de este expediente</target>
+      </trans-unit>
+      <trans-unit id="nc.create.nature-pick-category" datatype="html">
+        <source>Choisissez d'abord la catégorie.</source>
+        <target state="translated">Elija primero la categoría.</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.capa-action-empty" datatype="html">
+        <source>Aucun dossier CAPA sur cet écart. Ouvrez-en un : les actions correctives et préventives se liront et s'avanceront ici même, et rempliront les D5 et D6 du rapport 8D.</source>
+        <target state="translated">Ningún expediente CAPA en esta desviación. Abra uno: las acciones correctivas y preventivas se leerán y avanzarán aquí mismo, y completarán D5 y D6 del informe 8D.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.actions-empty" datatype="html">
+        <source>Les actions de cette discipline se liront et s'avanceront ici dès qu'un dossier CAPA sera ouvert sur l'écart.</source>
+        <target state="translated">Las acciones de esta disciplina se leerán y avanzarán aquí en cuanto se abra un expediente CAPA en la desviación.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.go-to-nc" datatype="html">
+        <source>Ouvrir la fiche de l'écart</source>
+        <target state="translated">Abrir la ficha de la desviación</target>
       </trans-unit>
       <trans-unit id="nav.nc-clusters" datatype="html">
         <source>Clustering NC</source>

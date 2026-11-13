@@ -9,6 +9,7 @@ import com.openlab.qualitos.quality.capa.CapaCriticity;
 import com.openlab.qualitos.quality.capa.CapaSourceType;
 import com.openlab.qualitos.quality.capa.CapaStatus;
 import com.openlab.qualitos.quality.capa.CapaType;
+import com.openlab.qualitos.quality.capa.effectiveness.application.ClosedCapaPort;
 import com.openlab.qualitos.quality.capa.effectiveness.application.EvaluationCasePort;
 import com.openlab.qualitos.quality.capa.effectiveness.domain.EffectivenessReview;
 import com.openlab.qualitos.quality.capa.effectiveness.domain.EffectivenessVerdict;
@@ -395,6 +396,66 @@ class EffectivenessInfrastructureTest {
     }
 
     // -------------------------------------------------------------- outillage
+
+    // ------------------------------------------------- les dossiers clos (taux)
+
+    /**
+     * Un dossier dont on a decide, a l'ouverture, qu'aucune verification
+     * n'etait exigee n'a rien a faire dans le registre d'efficacite : il est
+     * clos, point. Il y figurait pourtant, en attente d'une evaluation que
+     * personne ne prononcerait jamais -- ce qui gonflait le retard apparent de
+     * dossiers deliberement sortis du perimetre, et noyait ceux qui attendent
+     * vraiment.
+     */
+    @Test
+    void unDossierClosSansVerificationExigeeNEstPasDansLeRegistre() {
+        UUID tenant = UUID.randomUUID();
+        CapaCase exige = dossier(tenant, CapaStatus.CLOSED, "CAPA-EXI");
+        exige.setVerificationRequired(true);
+        cases.save(exige);
+        CapaCase dispense = dossier(tenant, CapaStatus.CLOSED, "CAPA-DIS");
+        dispense.setVerificationRequired(false);
+        cases.save(dispense);
+
+        assertThat(closedPort().findClosed(tenant))
+                .extracting(ClosedCapaPort.ClosedCapa::title)
+                .containsExactly("Dossier CAPA-EXI");
+    }
+
+    /**
+     * Seul {@code FALSE} exclut. {@code null} veut dire « pas encore tranche »,
+     * et ne pas avoir repondu n'est pas avoir repondu non : ces dossiers-la
+     * restent visibles, parce que c'est precisement le registre qui fait
+     * apparaitre la question oubliee.
+     */
+    @Test
+    void unDossierClosDontLaQuestionNaPasEteTrancheeResteVisible() {
+        UUID tenant = UUID.randomUUID();
+        CapaCase indecis = dossier(tenant, CapaStatus.CLOSED, "CAPA-NUL");
+        indecis.setVerificationRequired(null);
+        cases.save(indecis);
+
+        assertThat(closedPort().findClosed(tenant))
+                .extracting(ClosedCapaPort.ClosedCapa::title)
+                .containsExactly("Dossier CAPA-NUL");
+    }
+
+    /** Un dossier qui n'est pas CLOS n'est pas un dossier clos. */
+    @Test
+    void seulsLesDossiersClosEntrentDansLeRegistre() {
+        UUID tenant = UUID.randomUUID();
+        cases.save(dossier(tenant, CapaStatus.CLOSED, "CAPA-CLOS"));
+        cases.save(dossier(tenant, CapaStatus.RESOLVED, "CAPA-RES"));
+        cases.save(dossier(tenant, CapaStatus.REJECTED, "CAPA-REJ"));
+
+        assertThat(closedPort().findClosed(tenant))
+                .extracting(ClosedCapaPort.ClosedCapa::title)
+                .containsExactly("Dossier CAPA-CLOS");
+    }
+
+    private ClosedCapaAdapter closedPort() {
+        return new ClosedCapaAdapter(cases, nonConformities);
+    }
 
     private EvaluationCaseAdapter port() {
         return new EvaluationCaseAdapter(cases, nonConformities);

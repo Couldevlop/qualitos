@@ -7602,21 +7602,41 @@ Portail clients</source>
         <source>L'action n'a pas pu etre enregistree.</source>
         <target state="translated">لم يتمكن النظام من حفظ الإجراء.</target>
       </trans-unit>
-      <trans-unit id="capa.actions-dialog.title" datatype="html">
-        <source>Actions correctives</source>
-        <target state="translated">الإجراءات التصحيحية</target>
+      <trans-unit id="capa.actions-dialog.open-title" datatype="html">
+        <source>Actions ouvertes</source>
+        <target state="translated">الإجراءات المفتوحة</target>
       </trans-unit>
-      <trans-unit id="nc.detail.add-capa" datatype="html">
-        <source>Ajouter une CAPA</source>
-        <target state="translated">إضافة CAPA</target>
+      <trans-unit id="capa.actions-dialog.hint" datatype="html">
+        <source>Ce qui reste a faire sur cet ecart. Une ligne ouvre le dossier CAPA qui la porte, ou l'action s'ecrit, s'avance et se prouve.</source>
+        <target state="translated">ما تبقى من عمل على هذا الانحراف. يفتح السطر ملف CAPA الذي يحمله، حيث يُكتب الإجراء ويُتابع ويُثبت.</target>
       </trans-unit>
-      <trans-unit id="nc.detail.add-capa-tooltip" datatype="html">
-        <source>Le dossier CAPA qui traite cet ecart : l'ouvrir, ou y aller</source>
-        <target state="translated">ملف CAPA الذي يعالج هذا الانحراف: افتحه أو انتقل إليه</target>
+      <trans-unit id="capa.actions-dialog.caption" datatype="html">
+        <source>Actions ouvertes de cet ecart</source>
+        <target state="translated">الإجراءات المفتوحة لهذا الانحراف</target>
       </trans-unit>
-      <trans-unit id="nc.detail.add-actions" datatype="html">
-        <source>Ajouter des actions</source>
-        <target state="translated">إضافة إجراءات</target>
+      <trans-unit id="capa.actions-dialog.none" datatype="html">
+        <source>Aucune action ouverte sur cet ecart. Les actions terminees se lisent en bas de la fiche, dans le tableau des actions correctives.</source>
+        <target state="translated">لا توجد إجراءات مفتوحة على هذا الانحراف. تُقرأ الإجراءات المنتهية في أسفل البطاقة، في جدول الإجراءات التصحيحية.</target>
+      </trans-unit>
+      <trans-unit id="capa.actions-dialog.go-to-case" datatype="html">
+        <source>Ouvrir le dossier</source>
+        <target state="translated">فتح الملف</target>
+      </trans-unit>
+      <trans-unit id="capa.actions-dialog.open-aria" datatype="html">
+        <source>Ouvrir le dossier CAPA qui porte l'action : <x id="titre"/></source>
+        <target state="translated">فتح ملف CAPA الذي يحمل الإجراء: <x id="titre"/></target>
+      </trans-unit>
+      <trans-unit id="capa.actions-dialog.failed" datatype="html">
+        <source>Les actions du dossier n'ont pas pu etre lues.</source>
+        <target state="translated">لم يتمكن النظام من قراءة إجراءات الملف.</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.new-action" datatype="html">
+        <source>Nouvelle action</source>
+        <target state="translated">إجراء جديد</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.view-actions" datatype="html">
+        <source>Voir les actions</source>
+        <target state="translated">عرض الإجراءات</target>
       </trans-unit>
       <trans-unit id="nc.detail.add-actions-tooltip" datatype="html">
         <source>Les actions correctives de cet ecart : les lire, en ajouter</source>
@@ -21881,6 +21901,22 @@ historique 12 mois</source>
       <trans-unit id="nc.detail.eightd-tooltip" datatype="html">
         <source>Les huit disciplines, agrégées depuis ce dossier</source>
         <target state="translated">المراحل الثماني، مُجمَّعة من هذا الملف</target>
+      </trans-unit>
+      <trans-unit id="nc.create.nature-pick-category" datatype="html">
+        <source>Choisissez d'abord la catégorie.</source>
+        <target state="translated">اختر الفئة أولاً.</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.capa-action-empty" datatype="html">
+        <source>Aucun dossier CAPA sur cet écart. Ouvrez-en un : les actions correctives et préventives se liront et s'avanceront ici même, et rempliront les D5 et D6 du rapport 8D.</source>
+        <target state="translated">لا يوجد ملف إجراءات تصحيحية ووقائية لهذا الانحراف. افتح ملفاً: ستُقرأ الإجراءات التصحيحية والوقائية وتُتابع هنا، وستُكمل D5 و D6 من تقرير 8D.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.actions-empty" datatype="html">
+        <source>Les actions de cette discipline se liront et s'avanceront ici dès qu'un dossier CAPA sera ouvert sur l'écart.</source>
+        <target state="translated">ستُقرأ إجراءات هذا البند وتُتابع هنا بمجرد فتح ملف إجراءات تصحيحية ووقائية للانحراف.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.go-to-nc" datatype="html">
+        <source>Ouvrir la fiche de l'écart</source>
+        <target state="translated">فتح بطاقة الانحراف</target>
       </trans-unit>
       <trans-unit id="nav.nc-clusters" datatype="html">
         <source>Clustering NC</source>

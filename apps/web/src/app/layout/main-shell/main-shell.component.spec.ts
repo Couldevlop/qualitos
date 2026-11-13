@@ -219,7 +219,10 @@ describe('MainShellComponent (navigation model)', () => {
     // ecran pour les douze listes que le client met dans ses propres mots.
     // Analyses IA retombe a 6 : la prevision KPI quitte la barre laterale. Elle
     // se lit dans la fiche de l'indicateur, sur ses mesures et sa cible.
-    expect(labels).toEqual([8, 6, 6, 2, 1, 6, 1, 14, 5, 1, 17]);
+    // Operations retombe a 13 : « Planning audits » quitte le menu. La
+    // programmation se fait depuis le registre des audits, ou l'on voit en
+    // meme temps ce qui est deja planifie.
+    expect(labels).toEqual([8, 6, 6, 2, 1, 6, 1, 13, 5, 1, 17]);
   });
 
   it('ne garde aucune entree de prevision dans la barre laterale', () => {
