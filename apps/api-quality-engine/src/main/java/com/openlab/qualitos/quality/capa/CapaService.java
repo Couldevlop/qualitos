@@ -17,7 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -78,6 +80,15 @@ public class CapaService {
     private static final List<NcStatus> NC_SETTLED_STATUSES =
             List.of(NcStatus.RESOLVED, NcStatus.CLOSED, NcStatus.CANCELLED);
 
+    /**
+     * Statuts où un dossier CAPA ne demande plus rien : clos, ou écarté.
+     * Tout le reste — ouvert, en cours, résolu — est du travail en attente.
+     * Résolu EN FAIT PARTIE du travail en attente : il reste à juger de
+     * l'efficacité, et c'est ce jugement qui clôt (ADR 0108).
+     */
+    private static final List<CapaStatus> CAPA_SETTLED_STATUSES =
+            List.of(CapaStatus.CLOSED, CapaStatus.REJECTED);
+
     @Transactional(readOnly = true)
     public Page<CapaDto.CaseResponse> findAll(CapaStatus status, Pageable pageable) {
         return findAll(status, null, pageable);
@@ -127,6 +138,55 @@ public class CapaService {
     public Optional<CapaStatus> statusOf(UUID caseId) {
         return caseRepository.findByIdAndTenantId(caseId, requireTenantId())
                 .map(CapaCase::getStatus);
+    }
+
+    /**
+     * Les dossiers CAPA encore en travail qui traitent cet écart.
+     *
+     * <p>Un écart n'a pas UN dossier, il en a autant qu'on en a ouvert sur lui :
+     * celui de l'escalade, qui laisse sa trace dans {@code capaCaseId}, et ceux
+     * qu'on crée depuis le registre des CAPA en citant la référence de l'écart
+     * comme origine. Les seconds étaient invisibles au moment de clore, et on
+     * refermait l'écart au-dessus d'un traitement en cours.
+     *
+     * <p>Les deux natures d'origine sont interrogées : un constat interne et une
+     * réclamation client portent la même référence d'écart, pas le même type.
+     *
+     * <p>Sans filtre de portée (ADR 0081), pour la même raison que
+     * {@link #statusOf} : c'est une règle du domaine, pas une lecture. Si elle
+     * dépendait du périmètre de celui qui clôt, deux personnes obtiendraient
+     * deux réponses sur le même fait.
+     *
+     * @param escaladeId  le dossier né de l'escalade, s'il y en a un
+     * @param ncReference la référence de l'écart, telle qu'elle s'affiche
+     * @return les titres des dossiers qui ne sont ni clos ni écartés, sans
+     *         doublon et dans l'ordre d'ouverture
+     */
+    @Transactional(readOnly = true)
+    public List<String> unsettledCasesFor(UUID escaladeId, String ncReference) {
+        UUID tenantId = requireTenantId();
+        Map<UUID, String> enTravail = new LinkedHashMap<>();
+
+        if (escaladeId != null) {
+            caseRepository.findByIdAndTenantId(escaladeId, tenantId)
+                    .filter(c -> !CAPA_SETTLED_STATUSES.contains(c.getStatus()))
+                    .ifPresent(c -> enTravail.put(c.getId(), c.getTitle()));
+        }
+
+        if (ncReference != null && !ncReference.isBlank()) {
+            String reference = ncReference.strip();
+            for (CapaSourceType origine : List.of(CapaSourceType.NON_CONFORMITY,
+                                                  CapaSourceType.EXTERNAL_NON_CONFORMITY)) {
+                caseRepository
+                        .findByTenantIdAndSourceTypeAndSourceRefOrderByCreatedAtAsc(
+                                tenantId, origine, reference)
+                        .stream()
+                        .filter(c -> !CAPA_SETTLED_STATUSES.contains(c.getStatus()))
+                        .forEach(c -> enTravail.put(c.getId(), c.getTitle()));
+            }
+        }
+
+        return List.copyOf(enTravail.values());
     }
 
     public CapaDto.CaseResponse createCase(CapaDto.CreateCaseRequest request) {

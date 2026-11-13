@@ -25,6 +25,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -1919,5 +1920,82 @@ class CapaServiceTest {
 
         assertThat(c.getEffectivenessCriterion()).isEqualTo("Moins de 2 % de rebuts");
         verify(reviews, never()).findByCase(any(), any());
+    }
+
+    // --- les dossiers qui retiennent un ecart ---
+
+    /**
+     * TOUS les dossiers de l ecart, pas seulement celui de l escalade.
+     *
+     * <p>Un dossier ouvert depuis le registre des CAPA en citant la reference
+     * de l ecart ne laisse aucune trace dans {@code capaCaseId}. C est par la
+     * reference qu on le retrouve, et il retient la cloture de l ecart au meme
+     * titre que celui de l escalade.
+     */
+    @Test
+    void unsettledCasesFor_reunitLEscaladeEtLesDossiersLiesParLaReference() {
+        CapaCase escalade = capa(TENANT, CapaStatus.IN_PROGRESS);
+        escalade.setTitle("Remplacer le roulement");
+        CapaCase parReference = capa(TENANT, CapaStatus.RESOLVED);
+        parReference.setTitle("Auditer le fournisseur");
+
+        when(caseRepo.findByIdAndTenantId(escalade.getId(), TENANT))
+                .thenReturn(Optional.of(escalade));
+        when(caseRepo.findByTenantIdAndSourceTypeAndSourceRefOrderByCreatedAtAsc(
+                TENANT, CapaSourceType.NON_CONFORMITY, "NC-2026-0001"))
+                .thenReturn(List.of(parReference));
+        when(caseRepo.findByTenantIdAndSourceTypeAndSourceRefOrderByCreatedAtAsc(
+                TENANT, CapaSourceType.EXTERNAL_NON_CONFORMITY, "NC-2026-0001"))
+                .thenReturn(List.of());
+
+        assertThat(service.unsettledCasesFor(escalade.getId(), "NC-2026-0001"))
+                // RESOLVED en fait partie : il reste a juger de l efficacite,
+                // et c est ce jugement qui clot (ADR 0108).
+                .containsExactly("Remplacer le roulement", "Auditer le fournisseur");
+    }
+
+    /**
+     * Le dossier de l escalade est souvent AUSSI lie par sa reference : il ne
+     * doit etre compte qu une fois, sans quoi le refus annonce deux travaux
+     * la ou il n y en a qu un.
+     */
+    @Test
+    void unsettledCasesFor_neCompteQuUneFoisLeMemeDossier() {
+        CapaCase unique = capa(TENANT, CapaStatus.OPEN);
+        unique.setTitle("Revoir le mode operatoire");
+
+        when(caseRepo.findByIdAndTenantId(unique.getId(), TENANT))
+                .thenReturn(Optional.of(unique));
+        when(caseRepo.findByTenantIdAndSourceTypeAndSourceRefOrderByCreatedAtAsc(
+                eq(TENANT), any(), eq("NC-2026-0001")))
+                .thenReturn(List.of(unique));
+
+        assertThat(service.unsettledCasesFor(unique.getId(), "NC-2026-0001"))
+                .containsExactly("Revoir le mode operatoire");
+    }
+
+    /** Clos ou ecarte : le dossier ne retient plus rien. */
+    @Test
+    void unsettledCasesFor_ignoreLesDossiersClosOuEcartes() {
+        CapaCase clos = capa(TENANT, CapaStatus.CLOSED);
+        CapaCase ecarte = capa(TENANT, CapaStatus.REJECTED);
+
+        when(caseRepo.findByIdAndTenantId(clos.getId(), TENANT)).thenReturn(Optional.of(clos));
+        when(caseRepo.findByTenantIdAndSourceTypeAndSourceRefOrderByCreatedAtAsc(
+                eq(TENANT), any(), eq("NC-2026-0001")))
+                .thenReturn(List.of(ecarte));
+
+        assertThat(service.unsettledCasesFor(clos.getId(), "NC-2026-0001")).isEmpty();
+    }
+
+    /**
+     * Un ecart sans escalade et sans reference lisible ne retient rien : la
+     * question ne doit pas partir en base pour rien, ni lever quoi que ce soit.
+     */
+    @Test
+    void unsettledCasesFor_sansEscaladeNiReference_neRetientRien() {
+        assertThat(service.unsettledCasesFor(null, "  ")).isEmpty();
+        verify(caseRepo, never()).findByTenantIdAndSourceTypeAndSourceRefOrderByCreatedAtAsc(
+                any(), any(), any());
     }
 }
