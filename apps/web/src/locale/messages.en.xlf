@@ -8234,6 +8234,18 @@ Customer portal</target>
         <source>Refus impossible.</source>
         <target state="translated">Rejection failed.</target>
       </trans-unit>
+      <trans-unit id="platform.clients.logo-present" datatype="html">
+        <source>Un logo est déjà en place.</source>
+        <target state="translated">A logo is already in place.</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.logo-drop" datatype="html">
+        <source>Le retirer</source>
+        <target state="translated">Remove it</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.logo-dropped" datatype="html">
+        <source>Le logo sera retiré à l'enregistrement.</source>
+        <target state="translated">The logo will be removed when you save.</target>
+      </trans-unit>
       <trans-unit id="admin.clients.step-identity" datatype="html">
         <source>Identité</source>
         <target state="translated">Identity</target>

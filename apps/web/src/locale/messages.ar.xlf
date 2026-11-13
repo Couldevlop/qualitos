@@ -8234,6 +8234,18 @@ Portail clients</source>
         <source>Refus impossible.</source>
         <target state="translated">تعذّر الرفض.</target>
       </trans-unit>
+      <trans-unit id="platform.clients.logo-present" datatype="html">
+        <source>Un logo est déjà en place.</source>
+        <target state="translated">يوجد شعار بالفعل.</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.logo-drop" datatype="html">
+        <source>Le retirer</source>
+        <target state="translated">إزالته</target>
+      </trans-unit>
+      <trans-unit id="platform.clients.logo-dropped" datatype="html">
+        <source>Le logo sera retiré à l'enregistrement.</source>
+        <target state="translated">سيُزال الشعار عند الحفظ.</target>
+      </trans-unit>
       <trans-unit id="admin.clients.step-identity" datatype="html">
         <source>Identité</source>
         <target state="translated">الهوية</target>

@@ -9,6 +9,9 @@
   (submitted)="submit()"
   (cancelled)="cancel()">
 
+  <!-- ===== L'entreprise ===== -->
+  <h3 class="bloc" i18n="@@admin.clients.step-company">Entreprise</h3>
+
   <mat-form-field appearance="outline" class="full">
     <mat-label i18n="@@admin.clients.name">Nom de l'organisation</mat-label>
     <input matInput formControlName="name" required maxlength="255" data-test="client-edit-nom">
@@ -33,5 +36,140 @@
     <code>{{ client.slug }}</code>
     <span class="repere__note" i18n="@@platform.clients.slug-frozen">ne change plus</span>
   </p>
+
+  <!-- ===== Son identité ===== -->
+  <h3 class="bloc" i18n="@@admin.clients.step-identity">Identité</h3>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@admin.clients.slogan">Signature</mat-label>
+    <input matInput formControlName="slogan" maxlength="160" data-test="client-edit-slogan">
+    <mat-hint i18n="@@admin.clients.slogan-hint">Une ligne, sous le nom.</mat-hint>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label i18n="@@admin.clients.legal-name">Raison sociale</mat-label>
+    <input matInput formControlName="legalName" maxlength="255" data-test="client-edit-raison">
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label i18n="@@admin.clients.legal-form">Forme juridique</mat-label>
+    <input matInput formControlName="legalForm" maxlength="64">
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label i18n="@@admin.clients.registration">Numéro d'immatriculation</mat-label>
+    <input matInput formControlName="registrationNumber" maxlength="64">
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label i18n="@@admin.clients.vat">Numéro de TVA</mat-label>
+    <input matInput formControlName="vatNumber" maxlength="32">
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@admin.clients.address">Adresse</mat-label>
+    <input matInput formControlName="addressLine1" maxlength="255">
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label i18n="@@admin.clients.postal-code">Code postal</mat-label>
+    <input matInput formControlName="postalCode" maxlength="16">
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label i18n="@@admin.clients.city">Ville</mat-label>
+    <input matInput formControlName="city" maxlength="128">
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label i18n="@@admin.clients.country">Pays (ISO, 2 lettres)</mat-label>
+    <input matInput formControlName="countryCode" maxlength="2" data-test="client-edit-pays">
+    <mat-error *ngIf="form.controls.countryCode.invalid"
+               i18n="@@admin.clients.country-invalid">Deux lettres, par exemple FR.</mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label i18n="@@admin.clients.contact-email">Contact — e-mail</mat-label>
+    <input matInput type="email" formControlName="contactEmail" maxlength="254">
+    <mat-error *ngIf="form.controls.contactEmail.invalid"
+               i18n="@@admin.team.invite-email-invalid">Une adresse e-mail valide est attendue.</mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label i18n="@@admin.clients.contact-phone">Contact — téléphone</mat-label>
+    <input matInput formControlName="contactPhone" maxlength="32">
+  </mat-form-field>
+
+  <!-- ===== Sa marque ===== -->
+  <h3 class="bloc" i18n="@@admin.clients.brand">Marque</h3>
+
+  <div class="couleurs full">
+    <label class="couleur">
+      <span class="couleur__nom" i18n="@@admin.clients.primary-color">Couleur principale</span>
+      <span class="couleur__pastille">
+        <input type="color" formControlName="primaryColor" data-test="client-edit-couleur-1">
+      </span>
+      <!-- Tant que rien n'est choisi, le champ natif affiche du NOIR : sans ce
+           mot, l'ecran laisse croire que le noir a ete retenu. -->
+      <code class="couleur__code" *ngIf="form.controls.primaryColor.value as hex; else couleur1Defaut">{{ hex }}</code>
+      <ng-template #couleur1Defaut>
+        <span class="couleur__code couleur__code--defaut"
+              i18n="@@admin.clients.color-default">Celle du thème</span>
+      </ng-template>
+    </label>
+    <label class="couleur">
+      <span class="couleur__nom" i18n="@@admin.clients.secondary-color">Couleur secondaire</span>
+      <span class="couleur__pastille">
+        <input type="color" formControlName="secondaryColor">
+      </span>
+      <code class="couleur__code" *ngIf="form.controls.secondaryColor.value as hex; else couleur2Defaut">{{ hex }}</code>
+      <ng-template #couleur2Defaut>
+        <span class="couleur__code couleur__code--defaut"
+              i18n="@@admin.clients.color-default">Celle du thème</span>
+      </ng-template>
+    </label>
+    <p class="couleurs__note" i18n="@@admin.clients.color-note">Une couleur illisible sur le fond du thème est refusée par le serveur : le contraste prime sur la charte.</p>
+  </div>
+
+  <div class="logo full">
+    <label class="logo__choix">
+      <mat-icon aria-hidden="true">add_photo_alternate</mat-icon>
+      <span i18n="@@admin.clients.logo">Logo</span>
+      <!-- Le champ natif reste dans l'arbre, il n'est que masque a l'oeil :
+           c'est lui qui porte le clavier, le focus et le lecteur d'ecran. -->
+      <input type="file" accept="image/png,image/jpeg,image/webp" (change)="pickLogo($event)"
+             data-test="client-edit-logo">
+    </label>
+    <p class="logo__nom" *ngIf="logoName" data-test="client-edit-logo-nom">
+      {{ logoName }}
+      <button mat-icon-button type="button" (click)="clearLogo()"
+              i18n-aria-label="@@admin.clients.logo-remove" aria-label="Retirer le logo">
+        <mat-icon>close</mat-icon>
+      </button>
+    </p>
+    <!-- Le logo deja en place : on dit qu'il existe, et on offre de le retirer.
+         Sans ce geste, un logo pose une fois ne pouvait plus que se remplacer. -->
+    <p class="logo__present" *ngIf="logoDejaLa && !logoName && !logoRetire">
+      <span i18n="@@platform.clients.logo-present">Un logo est déjà en place.</span>
+      <button mat-button type="button" (click)="retirerLogo()" data-test="client-edit-logo-retirer"
+              i18n="@@platform.clients.logo-drop">Le retirer</button>
+    </p>
+    <p class="logo__present" *ngIf="logoRetire" data-test="client-edit-logo-retire">
+      <span i18n="@@platform.clients.logo-dropped">Le logo sera retiré à l'enregistrement.</span>
+      <button mat-button type="button" (click)="annulerRetrait()"
+              i18n="@@common.cancel">Annuler</button>
+    </p>
+    <p class="logo__erreur" *ngIf="logoError" role="alert" data-test="client-edit-logo-erreur">{{ logoError }}</p>
+    <p class="logo__aide" i18n="@@admin.clients.logo-hint">PNG, JPEG ou WebP, 512 Ko au plus.</p>
+  </div>
+
+  <!-- ===== Son thème ===== -->
+  <h3 class="bloc" i18n="@@admin.clients.theme">Thème</h3>
+  <div class="themes full">
+    <label class="theme" *ngFor="let t of themes" [class.theme--on]="form.controls.themeCode.value === t">
+      <input type="radio" formControlName="themeCode" [value]="t" [attr.data-test]="'client-edit-theme-' + t">
+      <span>{{ themeLabel(t) }}</span>
+    </label>
+  </div>
 
 </qos-form-dialog>

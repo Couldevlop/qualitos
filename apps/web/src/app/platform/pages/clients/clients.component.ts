@@ -3,17 +3,18 @@ import { MatDialog } from '@angular/material/dialog';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable, of } from 'rxjs';
-import { catchError, finalize, map, switchMap } from 'rxjs/operators';
+import { catchError, finalize, map, switchMap, tap } from 'rxjs/operators';
 
 import { safeErrorMessage } from '../../../core/http/error-message';
 import {
-  ModuleCatalogEntry, OnboardResponse, TenantIdentityRequest, TenantPlan, TenantSummary, TenantTheme
+  ModuleCatalogEntry, OnboardResponse, TenantIdentityRequest, TenantIdentityResponse, TenantPlan,
+  TenantSummary, TenantTheme
 } from '../../../features/admin/admin.types';
 import { ConfirmDialogComponent } from '../../../shared/ui/confirm-dialog/confirm-dialog.component';
 import { ClientsService } from '../../clients.service';
 import { TenantModulesService } from '../../../features/admin/tenant-modules.service';
 import {
-  ClientEditDialogComponent, ClientEditResult
+  ClientEditData, ClientEditDialogComponent, ClientEditResult
 } from '../client-edit-dialog/client-edit-dialog.component';
 
 /** Les étapes de l'assistant, dans l'ordre : c'est une vraie séquence. */
@@ -142,23 +143,69 @@ export class ClientsComponent implements OnInit {
    * demandait une ecriture en base. Les deux passent maintenant par une route
    * que le serveur journalise.
    */
+  /**
+   * Ouvre la correction d'un client — TOUT ce qui a servi à le créer.
+   *
+   * <p>L'identité est chargée AVANT d'ouvrir : un formulaire de correction qui
+   * s'ouvrirait vide effacerait, au premier enregistrement, tout ce que
+   * l'éditeur n'aurait pas retapé. Si cette lecture échoue, la fenêtre s'ouvre
+   * quand même, sur l'entreprise seule, et le dit — mieux vaut corriger le nom
+   * que ne rien pouvoir corriger du tout.
+   */
   corriger(client: TenantSummary): void {
-    this.dialog.open<ClientEditDialogComponent, TenantSummary, ClientEditResult>(
-      ClientEditDialogComponent, { data: client, panelClass: 'qos-dialog-panel', autoFocus: 'first-tabbable' }
+    this.busyId = client.id;
+    this.service.identity(client.id).pipe(
+      catchError(() => of(null)),
+      finalize(() => this.busyId = null)
+    ).subscribe(identity => this.ouvrirCorrection(client, identity));
+  }
+
+  private ouvrirCorrection(client: TenantSummary, identity: TenantIdentityResponse | null): void {
+    this.dialog.open<ClientEditDialogComponent, ClientEditData, ClientEditResult>(
+      ClientEditDialogComponent,
+      { data: { client, identity }, panelClass: ['qos-dialog-panel', 'qos-dialog-panel--wide'],
+        autoFocus: 'first-tabbable' }
     ).afterClosed().subscribe(correction => {
       if (!correction) return;
-      this.busyId = client.id;
-      this.service.update(client.id, correction)
-        .pipe(finalize(() => this.busyId = null))
-        .subscribe({
-          next: maj => {
-            this.remplacer(maj);
-            this.snack.open($localize`:@@platform.clients.saved:Client mis à jour.`, undefined, { duration: 4000 });
-          },
-          error: err => this.snack.open(
-            safeErrorMessage(err, $localize`:@@platform.clients.save-failed:La correction n'a pas pu être enregistrée.`),
-            undefined, { duration: 6000 })
-        });
+      this.enregistrerCorrection(client, correction);
+    });
+  }
+
+  /**
+   * Les trois écritures d'une correction : l'entreprise, son identité, son
+   * logo. Elles partent par trois routes, et dans cet ordre — le nom d'abord,
+   * parce que c'est lui qu'on relit dans la liste juste après.
+   *
+   * <p>Chacune n'est envoyée que si elle a bougé : une écriture sans
+   * changement serait un acte de plus dans la piste d'audit, pour rien.
+   */
+  private enregistrerCorrection(client: TenantSummary, c: ClientEditResult): void {
+    this.busyId = client.id;
+
+    // Typees `unknown` : les trois ecritures rendent trois choses
+    // differentes, et aucune ne sert ici -- seule compte leur reussite.
+    const entreprise$: Observable<unknown> = c.tenant
+      ? this.service.update(client.id, c.tenant).pipe(tap(maj => this.remplacer(maj)))
+      : of(null);
+
+    const identite$: Observable<unknown> = c.identity
+      ? this.service.saveIdentity(client.id, c.identity)
+      : of(null);
+
+    const logo$: Observable<unknown> = c.logo === undefined
+      ? of(null)
+      : (c.logo ? this.service.saveLogo(client.id, c.logo) : this.service.deleteLogo(client.id));
+
+    entreprise$.pipe(
+      switchMap(() => identite$),
+      switchMap(() => logo$),
+      finalize(() => this.busyId = null)
+    ).subscribe({
+      next: () => this.snack.open(
+        $localize`:@@platform.clients.saved:Client mis à jour.`, undefined, { duration: 4000 }),
+      error: (err: unknown) => this.snack.open(
+        safeErrorMessage(err, $localize`:@@platform.clients.save-failed:La correction n'a pas pu être enregistrée.`),
+        undefined, { duration: 6000 })
     });
   }
 

@@ -19,3 +19,124 @@
 }
 
 .full { width: 100%; }
+
+/* Les intertitres : la fenêtre porte quatre sujets (l'entreprise, son
+   identité, sa marque, son thème) et sans eux les vingt champs se lisent comme
+   une seule liste où l'on ne sait plus ce qu'on corrige. */
+.bloc {
+  grid-column: 1 / -1;
+  margin: var(--qos-space-4) 0 0;
+  font-size: var(--qos-fs-sm, 0.875rem);
+  font-weight: var(--qos-fw-semibold, 600);
+  color: var(--qos-fg-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+
+  &:first-of-type { margin-top: 0; }
+}
+
+.couleurs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--qos-space-5);
+
+  &__note {
+    flex-basis: 100%;
+    margin: 0;
+    font-size: 0.75rem;
+    color: var(--qos-fg-tertiary);
+  }
+}
+
+.couleur {
+  display: flex;
+  align-items: center;
+  gap: var(--qos-space-2);
+  font-size: 0.875rem;
+
+  &__nom { color: var(--qos-fg-secondary); }
+
+  &__pastille input[type='color'] {
+    width: 2.25rem;
+    height: 2.25rem;
+    padding: 0;
+    border: 1px solid var(--qos-border-subtle);
+    border-radius: var(--qos-radius-md);
+    background: none;
+    cursor: pointer;
+  }
+
+  /* Le code hexadécimal en clair : un aplat de couleur ne se recopie pas dans
+     une charte graphique, un code si. */
+  &__code {
+    font-family: var(--qos-font-mono, monospace);
+    font-size: 0.75rem;
+    color: var(--qos-fg-tertiary);
+
+    &--defaut { font-family: inherit; font-style: italic; }
+  }
+}
+
+.logo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--qos-space-2);
+
+  &__choix {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--qos-space-2);
+    align-self: flex-start;
+    padding: var(--qos-space-2) var(--qos-space-3);
+    border: 1px dashed var(--qos-border-default, var(--qos-border-subtle));
+    border-radius: var(--qos-radius-md);
+    cursor: pointer;
+
+    /* Masqué à l'œil, pas retiré de l'arbre : c'est lui qui porte le clavier,
+       le focus et le lecteur d'écran. */
+    input[type='file'] {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      pointer-events: none;
+    }
+  }
+
+  &__nom,
+  &__present {
+    display: flex;
+    align-items: center;
+    gap: var(--qos-space-2);
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--qos-fg-secondary);
+  }
+
+  &__erreur { margin: 0; font-size: 0.875rem; color: var(--qos-danger-fg); }
+  &__aide { margin: 0; font-size: 0.75rem; color: var(--qos-fg-tertiary); }
+}
+
+.themes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--qos-space-2);
+}
+
+.theme {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--qos-space-2);
+  padding: var(--qos-space-2) var(--qos-space-3);
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: var(--qos-radius-pill, 999px);
+  font-size: 0.875rem;
+  cursor: pointer;
+
+  &--on {
+    border-color: var(--qos-accent-fg-soft);
+    background: var(--qos-accent-bg-soft);
+    color: var(--qos-accent-fg-soft);
+  }
+}
