@@ -7,8 +7,8 @@ import { UserPickerModule } from '../../shared/user-picker/user-picker.module';
 import { FmeaCreateDialogComponent } from './pages/fmea-create-dialog/fmea-create-dialog.component';
 import { FmeaDetailComponent } from './pages/fmea-detail/fmea-detail.component';
 import { FmeaEditDialogComponent } from './pages/fmea-edit-dialog/fmea-edit-dialog.component';
-import { FmeaItemDialogComponent } from './pages/fmea-item-dialog/fmea-item-dialog.component';
 import { FmeaListComponent } from './pages/fmea-list/fmea-list.component';
+import { FmeaItemModule } from './fmea-item.module';
 import { FmeaReferenceModule } from './fmea-reference.module';
 
 const routes: Routes = [
@@ -21,9 +21,9 @@ const routes: Routes = [
     FmeaListComponent,
     FmeaDetailComponent,
     FmeaCreateDialogComponent,
-    FmeaEditDialogComponent,
-    FmeaItemDialogComponent
+    FmeaEditDialogComponent
   ],
-  imports: [SharedModule, UiModule, UserPickerModule, FmeaReferenceModule, RouterModule.forChild(routes)]
+  imports: [SharedModule, UiModule, UserPickerModule, FmeaItemModule, FmeaReferenceModule,
+            RouterModule.forChild(routes)]
 })
 export class FmeaModule {}

@@ -13,7 +13,37 @@
   margin-bottom: var(--qos-space-4);
 }
 
-.pfmea-table { width: 100%; }
+/* Le titre du tableau et le bouton d'ajout sur la même ligne, aux deux bouts :
+   la même disposition que l'en-tête de la carte « Items FMEA » du module FMEA,
+   pour que les deux écrans se reconnaissent. */
+.items-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--qos-space-3);
+  margin-bottom: var(--qos-space-3);
+
+  h3 {
+    margin: 0;
+    font-size: var(--qos-text-base);
+    font-weight: 600;
+  }
+}
+
+/* Onze colonnes : sans largeur minimale, le navigateur comprime les libellés
+   au point de les rendre illisibles plutôt que de laisser défiler dans
+   `.qos-scroll-x`, qui est pourtant là pour ça. */
+.pfmea-table {
+  width: 100%;
+  min-width: 1100px;
+}
+
+/* Les boutons d'une ligne restent sur UNE ligne : repliés, ils doublent la
+   hauteur de la rangée et décalent la lecture des colonnes voisines. */
+.row-actions {
+  white-space: nowrap;
+  text-align: right;
+}
 
 .flagged { background: var(--qos-bg-subtle); }
 
