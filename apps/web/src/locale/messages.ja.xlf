@@ -7734,6 +7734,30 @@ Portail clients</source>
         <source>Relire le registre</source>
         <target state="translated">台帳を読み直す</target>
       </trans-unit>
+      <trans-unit id="capa.detail.progress-title" datatype="html">
+        <source>Avancement</source>
+        <target state="translated">進捗</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.progress-hint" datatype="html">
+        <source>Le statut du dossier se déduit de ce travail : le démarrer le met en cours, le terminer le résout.</source>
+        <target state="translated">案件のステータスはこの作業から決まります。開始すれば進行中に、完了すれば解決になります。</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.progress-none" datatype="html">
+        <source>Ce dossier ne porte aucun travail : il a été ouvert avant que l'ouverture d'une CAPA crée le sien. Il restera ouvert tant qu'aucune action ne lui est rattachée depuis la fiche de l'écart d'origine.</source>
+        <target state="translated">この案件には作業がありません。CAPA の開設が自らの対策を作るようになる前に開かれたためです。元の不適合のページから対策が結び付けられるまで、開いたままになります。</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.progress-many" datatype="html">
+        <source>Ce dossier porte <x id="INTERPOLATION"/> travaux, ajoutés depuis la fiche de l'écart. Ils s'y lisent et s'y avancent, là où ils ont été décidés.</source>
+        <target state="translated">この案件は、不適合のページから追加された <x id="INTERPOLATION"/> 件の作業を持ちます。決定された場所、すなわちそのページで読み、進めます。</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.progress-open-nc" datatype="html">
+        <source>Ouvrir la fiche de l'écart</source>
+        <target state="translated">不適合のページを開く</target>
+      </trans-unit>
+      <trans-unit id="pfmea.items-count" datatype="html">
+        <source>Lignes d'analyse (<x id="INTERPOLATION"/>)</source>
+        <target state="translated">分析行（<x id="INTERPOLATION"/>）</target>
+      </trans-unit>
       <trans-unit id="capa.open.title" datatype="html">
         <source>Nouvelle CAPA</source>
         <target state="translated">新規CAPA</target>

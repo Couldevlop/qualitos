@@ -7734,6 +7734,30 @@ Customer portal</target>
         <source>Relire le registre</source>
         <target state="translated">Read the register again</target>
       </trans-unit>
+      <trans-unit id="capa.detail.progress-title" datatype="html">
+        <source>Avancement</source>
+        <target state="translated">Progress</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.progress-hint" datatype="html">
+        <source>Le statut du dossier se déduit de ce travail : le démarrer le met en cours, le terminer le résout.</source>
+        <target state="translated">The case status follows this work: starting it moves the case to in progress, completing it resolves the case.</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.progress-none" datatype="html">
+        <source>Ce dossier ne porte aucun travail : il a été ouvert avant que l'ouverture d'une CAPA crée le sien. Il restera ouvert tant qu'aucune action ne lui est rattachée depuis la fiche de l'écart d'origine.</source>
+        <target state="translated">This case carries no work: it was opened before opening a CAPA created its own action. It will stay open until an action is attached to it from the originating finding.</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.progress-many" datatype="html">
+        <source>Ce dossier porte <x id="INTERPOLATION"/> travaux, ajoutés depuis la fiche de l'écart. Ils s'y lisent et s'y avancent, là où ils ont été décidés.</source>
+        <target state="translated">This case carries <x id="INTERPOLATION"/> pieces of work, added from the finding. They are read and advanced there, where they were decided.</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.progress-open-nc" datatype="html">
+        <source>Ouvrir la fiche de l'écart</source>
+        <target state="translated">Open the finding</target>
+      </trans-unit>
+      <trans-unit id="pfmea.items-count" datatype="html">
+        <source>Lignes d'analyse (<x id="INTERPOLATION"/>)</source>
+        <target state="translated">Analysis rows (<x id="INTERPOLATION"/>)</target>
+      </trans-unit>
       <trans-unit id="capa.open.title" datatype="html">
         <source>Nouvelle CAPA</source>
         <target state="translated">New CAPA</target>
