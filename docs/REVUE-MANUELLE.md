@@ -12,6 +12,14 @@
 > **méthode de lecture et la grille de contrôle** : ce qu'on regarde, dans quel
 > ordre, avec quelles commandes, et ce qui a déjà cassé ici.
 >
+> **Pendant une revue, ouvrez plutôt la page.** `python
+> scripts/revue-manuelle-html.py` écrit `docs/revue-manuelle.html` : le même
+> texte, avec la recherche (touche `/`), le repli des sections et des
+> cases qui tiennent votre avancement d'un bout à l'autre de la relecture. Elle
+> est **engendrée depuis ce fichier**, et pas versionnée : on corrige ici, la
+> page se refait. Les cases cochées restent dans votre navigateur — une revue
+> en cours est un brouillon, pas un livrable.
+>
 > Mesures de ce document : **2026-11-13**, sur `5db707f`. Les chiffres se
 > remesurent (`bash scripts/passation-chiffres.sh`) ; les **méthodes**, non.
 
