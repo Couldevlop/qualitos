@@ -20,7 +20,15 @@ import {
 import { ProductsService } from '../../../products/products.service';
 import { AuthzService } from '../../../../core/authz/authz.service';
 
-/** Le tableau des actions a son propre banc : ici, seule sa PRÉSENCE compte. */
+/**
+ * Le tableau des actions, déclaré ICI alors que la fiche ne l'emploie plus.
+ *
+ * <p>C'est volontaire, et c'est ce qui donne sa valeur au banc « ne montre
+ * aucun tableau d'actions » : le sélecteur est connu du module de test, donc
+ * s'il réapparaissait dans le gabarit il serait rendu, et le banc tomberait.
+ * Sans cette déclaration, l'absence constatée ne prouverait rien — un composant
+ * inconnu ne se rend pas davantage.
+ */
 @Component({ selector: 'qos-capa-action-panel', template: '', standalone: false })
 class PanneauStub {
   @Input() capaCaseId = '';
@@ -114,11 +122,9 @@ describe('CapaDetailComponent — la fiche', () => {
 
   // --- un seul workflow : celui des actions (ADR 0117) ----------------------
 
-  it('ne propose plus de démarrer ni de résoudre le dossier à la main', () => {
+  it('ne propose pas de résoudre le dossier à la main : son statut se déduit', () => {
     setup(dossier({ status: 'OPEN' }));
-    const texte = hote().textContent ?? '';
-    expect(texte).not.toContain('Démarrer');
-    expect(texte).not.toContain('Résoudre');
+    expect(hote().textContent ?? '').not.toContain('Résoudre');
   });
 
   it('garde les deux décisions qui ne se déduisent de rien', () => {
@@ -133,27 +139,76 @@ describe('CapaDetailComponent — la fiche', () => {
     expect(hote().querySelector('.effectiveness-actions')).not.toBeNull();
   });
 
-  it('confie les actions au tableau, et ne les déplie plus lui-même', () => {
+  // --- une CAPA est une action : pas de liste d'actions dedans ---------------
+
+  it('ne montre AUCUN tableau d’actions : une CAPA est elle-même une action', () => {
     setup(dossier({ actions: [action(), action({ id: 'a2', actionType: 'PREVENTIVE' })] }));
-    expect(hote().querySelector('qos-capa-action-panel')).not.toBeNull();
-    // Le pavé vertical a disparu : il répétait l'en-tête ligne par ligne.
+    // Ni le tableau, ni le pavé vertical qui l'avait précédé. L'un répétait
+    // l'en-tête ligne par ligne, l'autre répétait l'en-tête en une ligne.
+    expect(hote().querySelector('qos-capa-action-panel')).toBeNull();
     expect(hote().querySelector('[data-test="action-unique"]')).toBeNull();
+    expect(hote().querySelector('[data-test="actions-card"]')).toBeNull();
   });
 
-  it('passe au tableau le dossier affiché, et le relit quand une action bouge', () => {
-    setup();
-    const panneau = fixture.debugElement.query(
-      (n) => n.name === 'qos-capa-action-panel').componentInstance as PanneauStub;
-    expect(panneau.capaCaseId).toBe(CASE_ID);
+  it('fait avancer le travail du dossier, puisque son statut s’en déduit', () => {
+    setup(dossier({ status: 'OPEN', actions: [action({ status: 'PENDING' })] }));
+    capa.updateAction.and.returnValue(of(action({ status: 'IN_PROGRESS' })));
 
+    const bouton: HTMLButtonElement =
+      hote().querySelector('[data-test="avancement-avancer"]')!;
+    expect(bouton.textContent).toContain('Démarrer');
+    bouton.click();
+
+    expect(capa.updateAction).toHaveBeenCalledWith(CASE_ID, ACTION_ID, { status: 'IN_PROGRESS' });
+  });
+
+  it('propose de terminer ce qui est en cours, et plus rien de ce qui est fait', () => {
+    setup(dossier({ actions: [action({ status: 'IN_PROGRESS' })] }));
+    expect(hote().querySelector('[data-test="avancement-avancer"]')!.textContent)
+      .toContain('Terminer');
+
+    setup(dossier({ status: 'RESOLVED', actions: [action({ status: 'DONE' })] }));
+    expect(hote().querySelector('[data-test="avancement-avancer"]')).toBeNull();
+  });
+
+  it('ne fait plus rien avancer sur un dossier clos ou rejeté', () => {
+    setup(dossier({ status: 'CLOSED', actions: [action({ status: 'PENDING' })] }));
+    const bouton = hote().querySelector('[data-test="avancement-avancer"]') as HTMLButtonElement;
+    expect(bouton.disabled).toBeTrue();
+  });
+
+  it('relit le dossier après avoir avancé : le statut affiché change avec lui', () => {
+    setup(dossier({ status: 'OPEN', actions: [action({ status: 'PENDING' })] }));
+    capa.updateAction.and.returnValue(of(action({ status: 'IN_PROGRESS' })));
     capa.getCase.calls.reset();
-    capa.getCase.and.returnValue(of(dossier({ status: 'RESOLVED' })));
-    fixture.componentInstance.reloadCase();
-    fixture.detectChanges();
+    capa.getCase.and.returnValue(of(dossier({ status: 'IN_PROGRESS' })));
 
-    // Terminer la dernière action résout le dossier : sans cette relecture,
-    // l'en-tête dirait « en cours » au-dessus d'un tableau tout fait.
+    (hote().querySelector('[data-test="avancement-avancer"]') as HTMLButtonElement).click();
+
+    // Sans cette relecture, l'en-tête dirait « ouvert » au-dessus d'un travail
+    // qu'on vient de démarrer.
     expect(capa.getCase).toHaveBeenCalled();
+  });
+
+  it('dit qu’un dossier sans travail restera ouvert, au lieu de laisser chercher', () => {
+    setup(dossier({ status: 'OPEN', actions: [] }));
+    expect(hote().querySelector('[data-test="avancement-sans-action"]')).not.toBeNull();
+    expect(hote().querySelector('[data-test="avancement-avancer"]')).toBeNull();
+  });
+
+  it('dit COMBIEN de travaux porte un dossier qui en porte plusieurs, sans les lister', () => {
+    setup(dossier({
+      sourceNonConformity: { id: 'nc-1', reference: 'NC-2026-0004', title: 'Étiquetage' },
+      actions: [action(), action({ id: 'a2' }), action({ id: 'a3' })]
+    }));
+
+    const texte = hote().querySelector('[data-test="avancement-plusieurs"]')?.textContent ?? '';
+    expect(texte).toContain('3');
+    // Aucun intitulé d'action : les énumérer remettrait la liste qu'on retire.
+    expect(hote().textContent).not.toContain('Réviser le plan de contrôle réception');
+    // Et la porte vers l'endroit où elles se traitent.
+    expect(hote().querySelector('[data-test="avancement-vers-ecart"]')).not.toBeNull();
+    expect(hote().querySelector('[data-test="avancement-avancer"]')).toBeNull();
   });
 
   it('n’écrit plus le type du dossier, qui redisait la nature des actions', () => {

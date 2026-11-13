@@ -18,7 +18,10 @@ import {
   CapaEditDialogComponent,
   CapaEditDialogData
 } from '../capa-edit-dialog/capa-edit-dialog.component';
-import { CapaCaseResponse, CapaCriticity, CapaEvidence, CapaStatus, ClosureBlocker } from '../../capa.types';
+import {
+  CapaActionResponse, CapaActionStatus, CapaCaseResponse, CapaCriticity,
+  CapaEvidence, CapaStatus, ClosureBlocker
+} from '../../capa.types';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -55,12 +58,6 @@ export class CapaDetailComponent implements OnInit {
   evidenceStorageDisabled$ = new BehaviorSubject<boolean>(false);
   /** Identifiant de la pièce en cours de retrait (désactive sa ligne). */
   removingEvidenceId$ = new BehaviorSubject<string | null>(null);
-
-  // --- preuves d'ACTION (§4.2, ADR 0052) ---------------------------------------
-  /** Une action ne porte qu'UNE pièce : la cellule montre un document, pas une liste. */
-  readonly actionEvidences$ = new BehaviorSubject<Map<string, CapaEvidence>>(new Map());
-  /** Action dont la pièce est en cours de dépôt ou de retrait (verrouille sa cellule). */
-  readonly busyEvidenceActionId$ = new BehaviorSubject<string | null>(null);
 
   private caseId = '';
   private readonly reload$ = new BehaviorSubject<void>(undefined);
@@ -277,6 +274,96 @@ export class CapaDetailComponent implements OnInit {
    */
   reloadCase(): void {
     this.reload$.next();
+  }
+
+  // ---------------------------------------------------------------------------
+  // L'AVANCEMENT DU DOSSIER — et non une liste d'actions.
+  //
+  // Une CAPA EST une action : elle s'ouvre avec la sienne, dont l'intitulé, la
+  // nature, le responsable et l'échéance sont ceux du dossier (ADR 0088). La
+  // fiche montrait pourtant un tableau d'actions dont l'unique ligne répétait
+  // mot pour mot l'en-tête au-dessus d'elle : une liste d'actions à l'intérieur
+  // d'une action.
+  //
+  // Le tableau est parti. Ce qu'il portait d'irremplaçable — faire avancer le
+  // travail, puisque le statut du dossier s'en déduit (ADR 0117) — est ici, sur
+  // le dossier lui-même. Sans quoi un dossier ouvert hors d'un écart resterait
+  // ouvert pour toujours : plus rien n'aurait pu faire avancer son action.
+  // ---------------------------------------------------------------------------
+
+  /**
+   * L'action du dossier, quand il en porte exactement une.
+   *
+   * <p>{@code null} dans les deux autres cas, qui ne sont pas la même chose et
+   * que la fiche distingue : aucune action (un dossier ouvert par l'ancien
+   * point d'entrée, antérieur à la règle « une CAPA naît avec son action ») et
+   * plusieurs (des actions ajoutées depuis la fiche d'un écart, ADR 0115).
+   * Dans aucun des deux la fiche ne peut parler de « l'action » au singulier.
+   */
+  uniqueAction(c: CapaCaseResponse): CapaActionResponse | null {
+    return c.actions?.length === 1 ? c.actions[0] : null;
+  }
+
+  /** Combien d'actions le dossier porte — pour le dire sans les énumérer. */
+  actionCount(c: CapaCaseResponse): number {
+    return c.actions?.length ?? 0;
+  }
+
+  canAdvance(c: CapaCaseResponse): boolean {
+    const action = this.uniqueAction(c);
+    return !!action && action.status !== 'DONE'
+      && !this.isTerminal(c.status) && !this.acting$.value;
+  }
+
+  advanceLabel(c: CapaCaseResponse): string {
+    return this.uniqueAction(c)?.status === 'PENDING'
+      ? $localize`:@@capa.detail.action-start:Démarrer`
+      : $localize`:@@capa.detail.action-complete:Terminer`;
+  }
+
+  actionStatusLabel(status: CapaActionStatus): string {
+    return status === 'PENDING'
+      ? $localize`:@@capa.action-status.pending:À faire`
+      : status === 'IN_PROGRESS'
+        ? $localize`:@@capa.action-status.in-progress:En cours`
+        : $localize`:@@capa.action-status.done:Faite`;
+  }
+
+  actionBadge(status: CapaActionStatus): string {
+    return 'badge badge-' + status.toLowerCase().replace('_', '-');
+  }
+
+  /**
+   * Fait avancer le travail du dossier d'un cran : à faire → en cours → faite.
+   *
+   * <p>Seul le statut part. Renvoyer l'intitulé le réécrirait à l'identique et
+   * écraserait une correction faite entre-temps par quelqu'un d'autre.
+   */
+  advance(c: CapaCaseResponse): void {
+    const action = this.uniqueAction(c);
+    if (!action || !this.canAdvance(c)) {
+      return;
+    }
+    const suivant: CapaActionStatus = action.status === 'PENDING' ? 'IN_PROGRESS' : 'DONE';
+    this.acting$.next(true);
+    this.capa.updateAction(c.id, action.id, { status: suivant }).pipe(
+      finalize(() => this.acting$.next(false))
+    ).subscribe({
+      next: () => {
+        this.snack.open($localize`:@@capa.detail.action-advanced:Action mise à jour.`,
+          $localize`:@@common.ok:OK`, { duration: 2000 });
+        this.reloadCase();
+      },
+      error: err => {
+        // eslint-disable-next-line no-console
+        console.warn('[capa-detail] advance failed',
+          (err as { status?: number })?.status);
+        this.snack.open(
+          safeErrorMessage(err,
+            $localize`:@@capa.detail.action-advance-error:Mise à jour de l'action impossible.`),
+          $localize`:@@common.close:Fermer`, { duration: 4000 });
+      }
+    });
   }
 
   goBack(): void {
