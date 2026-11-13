@@ -26,10 +26,9 @@ un second passage crée un second jeu au lieu d'échouer sur des doublons.
 """
 import argparse
 import json
+import os
 import sys
 import time
-import urllib.error
-import urllib.request
 import unicodedata
 import uuid
 from datetime import date, datetime, timedelta, timezone
@@ -49,78 +48,11 @@ def jour(decalage_jours=0):
     return (date.today() + timedelta(days=decalage_jours)).isoformat()
 
 
-class Client:
-    """Appelle l'API et tient le compte de ce qui passe et de ce qui casse."""
-
-    def __init__(self, api, jeton, langue):
-        self.api = api.rstrip('/')
-        self.jeton = jeton
-        self.langue = langue
-        self.reussites = []
-        self.echecs = []
-        self.sujet = self._sujet()
-
-    def _sujet(self):
-        """Le sub du jeton : plusieurs API attendent un identifiant d'acteur."""
-        charge = self.jeton.split('.')[1]
-        charge += '=' * (-len(charge) % 4)
-        import base64
-        return json.loads(base64.urlsafe_b64decode(charge))['sub']
-
-    def poste(self, chemin, corps, quoi):
-        return self._appelle('POST', chemin, corps, quoi)
-
-    def patche(self, chemin, corps, quoi):
-        """Plusieurs transitions d'etat sont des PATCH, et non des POST."""
-        return self._appelle('PATCH', chemin, corps, quoi)
-
-    def met(self, chemin, corps, quoi):
-        """Remplacer une valeur entiere est un PUT : la reponse a une question l'est."""
-        return self._appelle('PUT', chemin, corps, quoi)
-
-    def lit(self, chemin, quoi):
-        """Une lecture, pour retrouver les objets auxquels on va se rattacher.
-
-        Un rattachement se fait vers un objet QUI EXISTE : fabriquer un
-        identifiant produirait un lien qui ne mene nulle part, et c'est
-        precisement ce qu'on veut eprouver.
-        """
-        return self._appelle('GET', chemin, None, quoi)
-
-    def _appelle(self, methode, chemin, corps, quoi):
-        requete = urllib.request.Request(
-            self.api + chemin,
-            data=None if corps is None else json.dumps(corps).encode('utf8'),
-            method=methode,
-            headers={
-                'Authorization': 'Bearer ' + self.jeton,
-                'Content-Type': 'application/json',
-                'Accept-Language': self.langue,
-            })
-        try:
-            with urllib.request.urlopen(requete, timeout=60) as reponse:
-                contenu = reponse.read().decode('utf8')
-                self.reussites.append((quoi, reponse.status))
-                print('  OK   %-46s %s' % (quoi, reponse.status))
-                return json.loads(contenu) if contenu else {}
-        except urllib.error.HTTPError as erreur:
-            detail = erreur.read().decode('utf8', 'replace')[:200]
-            self.echecs.append((quoi, erreur.code, detail))
-            print('  ECHEC %-45s %s  %s' % (quoi, erreur.code, detail))
-            return None
-        except Exception as erreur:                     # noqa: BLE001
-            self.echecs.append((quoi, 0, str(erreur)[:200]))
-            print('  ECHEC %-45s  %s' % (quoi, erreur))
-            return None
-
-
-def jeton(keycloak, realm, client_id, utilisateur, secret):
-    corps = ('grant_type=password&client_id=%s&username=%s&password=%s'
-             % (client_id, utilisateur, secret)).encode('utf8')
-    url = '%s/realms/%s/protocol/openid-connect/token' % (keycloak.rstrip('/'), realm)
-    with urllib.request.urlopen(urllib.request.Request(url, data=corps), timeout=30) as r:
-        return json.load(r)['access_token']
-
+# Le client HTTP et l'obtention du jeton vivent dans `qualitos_api` : ce
+# script et `lot-nc.py` appellent la meme API, et un client recopie aurait
+# fini par diverger -- un en-tete corrige d'un cote, pas de l'autre.
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from qualitos_api import Client, jeton   # noqa: E402
 
 # ---------------------------------------------------------------------------
 # Les jeux de données, module par module. Chaque bloc est autonome : un module
@@ -219,6 +151,16 @@ def audits_5s(c):
         }, 'audit 5S « %s » (%d)' % (zone[:24], score))
 
 
+def equipe(c):
+    """L'equipe qui prend un ecart en charge (D1 du 8D) : obligatoire.
+
+    <p>Une PERSONNE, jamais un texte libre (ADR 0092). Ici, le porteur du jeton
+    se nomme lui-meme : ces donnees de demonstration ne connaissent qu'un
+    compte, et un nom invente ne designerait personne.
+    """
+    return [{'accountId': c.sujet, 'displayName': c.nom}]
+
+
 def non_conformites(c):
     print('\nNon-conformites, analyses et CAPA')
     interne = c.poste('/api/v1/nc', {
@@ -226,6 +168,7 @@ def non_conformites(c):
         'description': 'Constat au controle final : jeu radial de 0,12 mm pour 0,05 mm admis.',
         'category': 'PRODUCT', 'severity': 'MAJOR', 'origin': 'INTERNAL',
         'detectedAt': maintenant(-2), 'zone': 'Controle final',
+        'teamMembers': equipe(c),
     }, 'NC interne')
 
     externe = c.poste('/api/v1/nc', {
@@ -233,6 +176,7 @@ def non_conformites(c):
         'description': 'Le client signale un sifflement au-dela de 80 bar sur trois pompes du lot L-2291.',
         'category': 'PRODUCT', 'severity': 'CRITICAL', 'origin': 'EXTERNAL',
         'detectedAt': maintenant(-1),
+        'teamMembers': equipe(c),
     }, 'NC externe (reclamation)')
 
     ecartee = c.poste('/api/v1/nc', {
@@ -240,6 +184,7 @@ def non_conformites(c):
         'description': 'Rayure de 3 cm signalee a la reception du lot L-2288.',
         'category': 'PRODUCT', 'severity': 'MINOR', 'origin': 'EXTERNAL',
         'detectedAt': maintenant(-6),
+        'teamMembers': equipe(c),
     }, 'NC externe a rejeter')
 
     if ecartee:
@@ -252,7 +197,7 @@ def non_conformites(c):
         c.poste('/api/v1/nc/%s/start-analysis' % interne['id'],
                 {'rootCause': 'Usure du roulement de broche'}, 'NC : passage en analyse')
         c.poste('/api/v1/five-whys', {'ncId': interne['id'],
-                                      'problemStatement': 'Jeu radial hors tolerance'},
+                                      'problem': 'Jeu radial hors tolerance'},
                 'analyse 5 Pourquoi')
 
     c.poste('/api/v1/capa/cases', {
@@ -451,7 +396,7 @@ def changements(c):
     c.poste('/api/v1/changes', {
         'code': 'CHG-%s' % SUFFIXE,
         'title': 'Passage au joint torique FKM sur la pompe HP-40',
-        'type': 'PROCESS', 'requesterUserId': c.sujet,
+        'type': 'PERMANENT', 'requesterUserId': c.sujet,
         'description': 'Le NBR ne tient pas la temperature en service continu.',
     }, 'demande de changement')
 
@@ -470,8 +415,9 @@ def iot(c):
     print('\nParc IoT')
     c.poste('/api/v1/iot/devices', {
         'code': 'IOT-%s' % SUFFIXE, 'name': 'Sonde de temperature — bac de trempe',
-        'deviceType': 'SENSOR_TEMPERATURE', 'protocol': 'MQTT',
-        'createdBy': c.sujet, 'location': 'Traitement thermique',
+        'type': 'SENSOR_TEMPERATURE', 'protocol': 'MQTT',
+        'site': 'Site principal', 'area': 'Traitement thermique',
+        'workCenter': 'Bac de trempe', 'equipment': 'Sonde T-04',
     }, 'equipement IoT')
 
 
