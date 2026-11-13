@@ -46,7 +46,9 @@
 
   <div class="qos-field-row">
     <!--
-      Deux champs en cascade : la famille, puis les natures de cette famille.
+      Deux champs en cascade : la famille ici, puis les natures de cette famille
+      sur la ligne d'apres -- en pleine largeur, parce que ce sont elles qui
+      portent les libelles longs (voir le commentaire qui la precede).
 
       La liste unique groupee par familles a ete essayee -- une question au lieu
       de deux -- puis ecartee en recette : soixante lignes groupees se
@@ -76,25 +78,6 @@
       </mat-hint>
     </mat-form-field>
 
-    <mat-form-field appearance="outline" class="nc-create__nature" subscriptSizing="dynamic">
-      <mat-label i18n="@@nc.create.nature">Nature de l'écart</mat-label>
-      <!-- PAS de [disabled] : sur un controle de formulaire reactif, l'attribut
-           declenche l'avertissement d'Angular et, surtout, un controle desactive
-           n'est plus valide -- `required` cesserait de jouer et le garde qui
-           bloque l'envoi laisserait passer un ecart sans nature. La liste est
-           vide tant que la famille n'est pas choisie, et l'indication sous le
-           champ dit quoi faire. -->
-      <mat-select formControlName="subcategoryCode" required data-test="nc-nature"
-                  panelClass="qos-select-panel--lignes">
-        <mat-option *ngFor="let s of subcategoryChoices" [value]="s.code">{{ s.label }}</mat-option>
-      </mat-select>
-      <mat-error *ngIf="form.controls.subcategoryCode.hasError('required')"
-                 i18n="@@nc.create.nature-required">Choisissez la nature de l'écart.</mat-error>
-      <mat-hint *ngIf="!form.getRawValue().category" i18n="@@nc.create.nature-pick-category">
-        Choisissez d'abord la catégorie.
-      </mat-hint>
-    </mat-form-field>
-
     <mat-form-field appearance="outline">
       <mat-label i18n="@@nc.create.severity">Sévérité</mat-label>
       <mat-select formControlName="severity" required>
@@ -104,6 +87,40 @@
                  i18n="@@nc.create.severity-required">Choisissez une sévérité.</mat-error>
     </mat-form-field>
   </div>
+
+  <!--
+    LA NATURE SUR SA PROPRE LIGNE, et pleine largeur.
+
+    Elle partageait une ligne avec la categorie et la severite, chacune au
+    tiers : la liste deroulante prend la largeur de son champ, et un tiers de
+    dialogue repliait des libelles comme « Derive de parametre ou sortie des
+    limites de controle » sur trois lignes. Cinq options occupaient l'ecran, et
+    il fallait comparer des pavés pour distinguer deux natures voisines.
+
+    C'est le champ de ce formulaire qui porte les libelles les plus longs -- il
+    y en a une soixantaine au catalogue -- et c'est celui qui decidait d'un
+    tiers de largeur comme les deux listes a cinq mots. La largeur suit
+    desormais ce qu'on y lit.
+  -->
+  <mat-form-field appearance="outline" class="full nc-create__nature"
+                  subscriptSizing="dynamic">
+    <mat-label i18n="@@nc.create.nature">Nature de l'écart</mat-label>
+    <!-- PAS de [disabled] : sur un controle de formulaire reactif, l'attribut
+         declenche l'avertissement d'Angular et, surtout, un controle desactive
+         n'est plus valide -- `required` cesserait de jouer et le garde qui
+         bloque l'envoi laisserait passer un ecart sans nature. La liste est
+         vide tant que la famille n'est pas choisie, et l'indication sous le
+         champ dit quoi faire. -->
+    <mat-select formControlName="subcategoryCode" required data-test="nc-nature"
+                panelClass="qos-select-panel--lignes">
+      <mat-option *ngFor="let s of subcategoryChoices" [value]="s.code">{{ s.label }}</mat-option>
+    </mat-select>
+    <mat-error *ngIf="form.controls.subcategoryCode.hasError('required')"
+               i18n="@@nc.create.nature-required">Choisissez la nature de l'écart.</mat-error>
+    <mat-hint *ngIf="!form.getRawValue().category" i18n="@@nc.create.nature-pick-category">
+      Choisissez d'abord la catégorie.
+    </mat-hint>
+  </mat-form-field>
 
   <!-- Le D1 du 8D, nomme a l'ouverture : l'equipe qui prend l'ecart en charge.
        Elle se retapait jusqu'ici dans le rapport, alors que la fiche sait depuis
