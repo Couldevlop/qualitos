@@ -157,10 +157,16 @@ describe('NcDetailComponent — analyse de cause sur la fiche', () => {
     expect(hote().querySelector('qos-five-whys-cascade')!.textContent).toContain('Le joint a cédé');
   });
 
-  it('affiche la cause racine conclue', () => {
+  // La cause racine se lit DANS le schema, dans sa derniere case, et nulle part
+  // ailleurs. Elle etait redite en dessous, en une ligne de texte : le meme fait
+  // deux fois, et l'oeil quittait le dessin ou se lit le raisonnement.
+  it('affiche la cause racine conclue dans le schema, et pas sous lui', () => {
     fiveWhys.listForNc.and.returnValue(of([chaine({ rootCause: 'Absence de plan préventif' })]));
     setup();
-    expect(un('cinq-pourquoi-racine')!.textContent).toContain('Absence de plan préventif');
+
+    expect(hote().querySelector('qos-five-whys-cascade')!.textContent)
+      .toContain('Absence de plan préventif');
+    expect(un('cinq-pourquoi-racine')).toBeNull();
   });
 
   // Une analyse qui vient d'être ouverte n'a pas d'étape : ce n'est pas une
@@ -169,7 +175,6 @@ describe('NcDetailComponent — analyse de cause sur la fiche', () => {
     fiveWhys.listForNc.and.returnValue(of([chaine({ steps: [] })]));
     setup();
     expect(hote().textContent).toContain('Aucun pourquoi');
-    expect(un('cinq-pourquoi-racine')).toBeNull();
   });
 
   it('emmène dérouler l’analyse dans son écran', () => {
