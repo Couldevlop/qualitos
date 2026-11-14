@@ -1,6 +1,7 @@
 package com.openlab.qualitos.quality.rls;
 
 import com.openlab.qualitos.quality.common.TenantContext;
+import com.openlab.qualitos.quality.common.TenantScope;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -124,6 +125,41 @@ class RlsPostgresTest {
                 assertThat(update(c, "UPDATE rls_banc SET valeur = 'vole' WHERE valeur = 'b'")).isZero();
                 assertThat(update(c, "DELETE FROM rls_banc WHERE valeur = 'b'")).isZero();
             }
+        }
+    }
+
+    /**
+     * Le cas de l'éditeur : agir CHEZ un autre client que le sien.
+     *
+     * <p>Vécu : depuis l'activation de l'isolation, ouvrir un module pour un
+     * client désigné répondait 500 — {@code new row violates row-level security
+     * policy} — parce que la connexion annonçait le client du super
+     * administrateur pendant qu'on écrivait la ligne d'un autre. Plus aucun
+     * module ne pouvait être ouvert à un client existant, ni par l'éditeur, ni
+     * par la voie commerciale d'api-core.
+     */
+    @Test
+    void lEditeurEcritChezLeClientDesigneEtRetrouveLeSienEnsuite() throws SQLException {
+        try (SingleConnectionDataSource pool = appPool()) {
+            TenantAwareDataSource ds = new TenantAwareDataSource(pool);
+            TenantContext.setTenantId(A.toString());
+
+            TenantScope.runAs(B, () -> {
+                try (Connection c = ds.getConnection()) {
+                    exec(c, "INSERT INTO rls_banc (tenant_id, valeur) VALUES ('" + B + "', 'ouvert par l editeur')");
+                } catch (SQLException e) {
+                    throw new IllegalStateException(e);
+                }
+            });
+
+            // Le contexte de l'appelant est rendu : la suite de la requête — journal,
+            // réponse, filtres — reste protégée par la politique.
+            assertThat(TenantContext.getTenantId()).isEqualTo(A.toString());
+            assertThat(values(ds)).containsExactlyInAnyOrder("a", "partage");
+            TenantContext.setTenantId(B.toString());
+            assertThat(values(ds)).contains("ouvert par l editeur");
+        } finally {
+            exec(owner, "DELETE FROM rls_banc WHERE valeur = 'ouvert par l editeur'");
         }
     }
 

@@ -1,5 +1,6 @@
 package com.openlab.qualitos.quality.tenantmodules.application;
 
+import com.openlab.qualitos.quality.common.TenantScope;
 import com.openlab.qualitos.quality.tenantmodules.domain.ActivationStatus;
 import com.openlab.qualitos.quality.tenantmodules.domain.BillingTier;
 import com.openlab.qualitos.quality.tenantmodules.domain.ModuleActivation;
@@ -25,6 +26,13 @@ import java.util.UUID;
  *  - garde-fous core (un module core ne peut être DISABLED qu'avec confirmation forte côté API)
  *  - publication d'événements sur chaque mutation
  *  - expiration en masse (scheduler-callable)
+ *
+ * <p><b>Les méthodes {@code *For(tenantId, …)} s'exécutent DANS le client
+ * désigné</b> ({@link TenantScope}) : l'éditeur agit chez un autre que lui, et
+ * depuis l'isolation par la base (ADR 0086) PostgreSQL refuse une écriture dont
+ * le {@code tenant_id} ne correspond pas au client annoncé par la connexion.
+ * Le passage est posé ici, et non dans le contrôleur, pour qu'il tienne quel
+ * que soit l'appelant — la garantie appartient à l'opération, pas à la route.
  */
 public class ModuleActivationService {
 
@@ -223,6 +231,11 @@ public class ModuleActivationService {
      */
     public ModuleActivationDto.ActivationView activateFor(UUID tenantId, String moduleCode,
                                                           Instant expiresAt) {
+        return TenantScope.callAs(tenantId, () -> doActivateFor(tenantId, moduleCode, expiresAt));
+    }
+
+    private ModuleActivationDto.ActivationView doActivateFor(UUID tenantId, String moduleCode,
+                                                             Instant expiresAt) {
         ModuleCatalogEntry entry = ModuleCatalog.require(moduleCode);
         Instant now = Instant.now(clock);
         Optional<ModuleActivation> open = repo.findOpenByTenantIdAndCode(tenantId, moduleCode);
@@ -267,6 +280,10 @@ public class ModuleActivationService {
      * client perd l'ecriture sur un module qu'il paie toujours.
      */
     public void deactivateFor(UUID tenantId, String moduleCode) {
+        TenantScope.runAs(tenantId, () -> doDeactivateFor(tenantId, moduleCode));
+    }
+
+    private void doDeactivateFor(UUID tenantId, String moduleCode) {
         ModuleCatalogEntry entry = ModuleCatalog.require(moduleCode);
         if (entry.coreModule()) {
             throw new ModuleActivationStateException(
@@ -285,8 +302,8 @@ public class ModuleActivationService {
 
     /** Les activations d'un client designe — « quel module pour quel client ». */
     public List<ModuleActivationDto.ActivationView> listFor(UUID tenantId) {
-        return repo.findAllByTenantId(tenantId).stream()
-                .map(ModuleActivationDto.ActivationView::of).toList();
+        return TenantScope.callAs(tenantId, () -> repo.findAllByTenantId(tenantId).stream()
+                .map(ModuleActivationDto.ActivationView::of).toList());
     }
 
     // ----- Queries -----
