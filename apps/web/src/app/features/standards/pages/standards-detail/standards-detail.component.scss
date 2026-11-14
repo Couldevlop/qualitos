@@ -85,9 +85,29 @@
 .ob-MUST { background: #ffebee; color: #c62828; }
 .ob-SHOULD { background: #fff3e0; color: #ef6c00; }
 .ob-MAY { background: #f1f8e9; color: #558b2f; }
-.risk { font-size: 10px; margin-left: 6px; padding: 2px 6px; border-radius: 8px; background: #eceff1; color: #607d8b; }
-.risk-CRITICAL { background: #b71c1c; color: #fff; }
-.risk-HIGH { background: #ef6c00; color: #fff; }
+/* Ordre de passage dans le programme d'audit, et non gravité d'un constat :
+   l'étiquette reste dans les gris: un rouge d'alarme disait le contraire du
+   libellé, et c'est le rouge que l'œil retenait (ADR 0120). */
+.risk { font-size: 10px; margin-left: 6px; padding: 2px 6px; border-radius: 8px; background: #eceff1; color: #607d8b; white-space: nowrap; }
+.risk-CRITICAL, .risk-HIGH { background: #cfd8dc; color: #37474f; font-weight: 600; }
+
+/* La définition des trois degrés, au-dessus du tableau des écarts. */
+.degres {
+  margin: 12px 0 0;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+
+  > div {
+    padding: 10px 12px;
+    border: 1px solid #eceff1;
+    border-radius: 8px;
+    background: #fafafa;
+  }
+
+  dt { font-size: 12px; font-weight: 700; color: #37474f; margin-bottom: 4px; }
+  dd { margin: 0; font-size: 12px; line-height: 1.45; color: #607d8b; }
+}
 
 /* Roadmap */
 .roadmap-table tr.done td { background: #f9fdf9; }

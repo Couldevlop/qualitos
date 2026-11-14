@@ -7647,8 +7647,8 @@ Portail clients</source>
         <target state="translated">尚未为此不合格编写此类措施。</target>
       </trans-unit>
       <trans-unit id="nc.8d.live-note" datatype="html">
-        <source>État actuel du dossier, affiché à côté du texte agrégé. Le PDF, lui, ne porte que le texte figé à l'émission.</source>
-        <target state="translated">案卷的当前状态，显示在汇总文本旁。PDF 仅包含签发时冻结的文本。</target>
+        <source>État actuel du dossier. Le PDF émis, lui, ne porte que le texte figé à l'émission.</source>
+        <target state="translated">案卷的当前状态。已签发的 PDF 仅包含签发时冻结的文本。</target>
       </trans-unit>
       <trans-unit id="capa.open.missing" datatype="html">
         <source>À compléter avant d'enregistrer : <x id="champs"/></source>
@@ -33728,10 +33728,6 @@ Inde (centre de service)</source>
         <source>Obligation</source>
         <target state="translated">强制程度</target>
       </trans-unit>
-      <trans-unit id="standards.tree.risk" datatype="html">
-        <source>Risque si absente</source>
-        <target state="translated">缺失时的风险</target>
-      </trans-unit>
       <trans-unit id="standards.tree.evidence" datatype="html">
         <source>Preuve attendue (optionnelle)</source>
         <target state="translated">预期证据（可选）</target>
@@ -35571,6 +35567,90 @@ Inde (centre de service)</source>
       <trans-unit id="workflow.editor.canvas-error" datatype="html">
         <source>Impossible de charger l'éditeur de diagramme.</source>
         <target state="translated">无法加载图编辑器。</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.obligation-must" datatype="html">
+        <source>Exigée</source>
+        <target state="translated">要求</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.obligation-should" datatype="html">
+        <source>Recommandée</source>
+        <target state="translated">建议</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.obligation-may" datatype="html">
+        <source>Facultative</source>
+        <target state="translated">可选</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.obligation-must-hint" datatype="html">
+        <source>La norme dit « doit » : son manquement est une non-conformité.</source>
+        <target state="translated">标准使用“应”：未满足即不合格。</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.obligation-should-hint" datatype="html">
+        <source>La norme dit « devrait » : son manquement n'est pas une non-conformité, mais une observation.</source>
+        <target state="translated">标准使用“宜”：未满足不是不合格，而是观察项。</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.obligation-may-hint" datatype="html">
+        <source>La norme dit « peut » : la disposition est permise, jamais exigible.</source>
+        <target state="translated">标准使用“可”：该安排是允许的，从不是必须的。</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.audit-priority-high" datatype="html">
+        <source>À vérifier en premier</source>
+        <target state="translated">优先核查</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.audit-priority-medium" datatype="html">
+        <source>À vérifier</source>
+        <target state="translated">核查</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.audit-priority-low" datatype="html">
+        <source>À vérifier en dernier</source>
+        <target state="translated">最后核查</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.audit-priority-hint" datatype="html">
+        <source>Ordre de passage dans le programme d'audit (ISO 19011, 6.3). Ce n'est pas la gravité d'un constat : celle-ci se décide sur la preuve trouvée.</source>
+        <target state="translated">审核方案中的核查顺序（ISO 19011，6.3）。这不是发现的严重程度：严重程度由所找到的证据决定。</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.degree-major-def" datatype="html">
+        <source>La disposition demandée est absente : aucune preuve dans toute la clause. L'aptitude du système à atteindre ses résultats est en cause, et le certificat reste bloqué jusqu'à sa levée (ISO/IEC 17021-1, 3.12).</source>
+        <target state="translated">所要求的安排缺失：整个条款没有任何证据。体系达成预期结果的能力受到质疑，证书在关闭前保持冻结（ISO/IEC 17021-1，3.12）。</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.degree-minor-def" datatype="html">
+        <source>La disposition existe mais n'est pas tenue partout : la clause est démontrée en partie. Manquement isolé, qui n'empêche pas le certificat et demande un plan d'actions (3.13).</source>
+        <target state="translated">安排存在但未处处落实：条款仅部分有证据。属孤立的失误，不阻碍证书，但需行动计划（3.13）。</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.degree-observation-def" datatype="html">
+        <source>Ce que la norme recommande, et non ce qu'elle exige. Ce n'est pas une non-conformité : une piste d'amélioration, qui ne se répond pas à l'auditeur (ISO 19011).</source>
+        <target state="translated">标准所建议的，而非所要求的。这不是不合格：是改进机会，无需向审核员答复（ISO 19011）。</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.obligation-must" datatype="html">
+        <source>Exigée — la norme dit « doit »</source>
+        <target state="translated">要求 — 标准使用“应”</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.obligation-should" datatype="html">
+        <source>Recommandée — la norme dit « devrait »</source>
+        <target state="translated">建议 — 标准使用“宜”</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.obligation-may" datatype="html">
+        <source>Facultative — la norme dit « peut »</source>
+        <target state="translated">可选 — 标准使用“可”</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.priority-high" datatype="html">
+        <source>À vérifier en premier</source>
+        <target state="translated">优先核查</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.priority-medium" datatype="html">
+        <source>À vérifier</source>
+        <target state="translated">核查</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.priority-low" datatype="html">
+        <source>À vérifier en dernier</source>
+        <target state="translated">最后核查</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.audit-priority" datatype="html">
+        <source>Ordre de vérification en audit</source>
+        <target state="translated">审核核查顺序</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.audit-priority-hint" datatype="html">
+        <source>Par quoi commencer le programme d'audit (ISO 19011, 6.3). Ne gradue pas les constats : la gravité se décide sur la preuve trouvée.</source>
+        <target state="translated">审核方案从何处开始（ISO 19011，6.3）。不对发现分级：严重程度由所找到的证据决定。</target>
       </trans-unit>
     </body>
   </file>

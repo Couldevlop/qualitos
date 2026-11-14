@@ -86,7 +86,12 @@ public class CertificationBlancService {
         List<String> s2Watch = new ArrayList<>();
 
         for (StandardsDto.AuditFinding f : audit.findings()) {
-            String type = ncType(f.obligation(), f.riskIfMissing());
+            // Le classement vient de l’analyse d’écarts, qui l’a déjà établi selon
+            // ISO/IEC 17021-1 (voir FindingGrade). Le reclasser ici, sur d’autres
+            // critères, faisait dire à la même plateforme deux choses du même écart :
+            // l’onglet d’audit blanc annonçait une mineure, le rapport de
+            // certification à blanc une majeure.
+            String type = f.findingSeverity();
             boolean stage1 = STAGE1_SECTIONS.contains(f.sectionCode());
             switch (type) {
                 case "MAJOR" -> {
@@ -191,16 +196,6 @@ public class CertificationBlancService {
                 stage1, stage2, major, minor, observations,
                 decision, decisionLabel, ncs, certificate,
                 sha256, anchorTxRef, envelope.encode());
-    }
-
-    // ===== classification ISO/IEC 17021-1 =====
-
-    /** MUST + risque élevé → NC majeure ; MUST → NC mineure ; SHOULD/MAY → observation. */
-    private String ncType(ObligationLevel obligation, RiskLevel risk) {
-        if (obligation == ObligationLevel.MUST) {
-            return (risk == RiskLevel.HIGH || risk == RiskLevel.CRITICAL) ? "MAJOR" : "MINOR";
-        }
-        return "OBSERVATION";
     }
 
     private int rank(String type) {

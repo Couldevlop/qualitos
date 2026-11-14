@@ -251,12 +251,31 @@ describe('NcDetailComponent — analyse de cause sur la fiche', () => {
 
   // ---------- les deux ensemble ----------
 
-  it('montre les deux analyses côte à côte quand l’écart en porte deux', () => {
+  /**
+   * Deux outils distincts, deux cases, et un ordre qui est celui de la méthode.
+   *
+   * <p>Le 8D de Ford les place tous deux en D4 — il n'y a pas de discipline
+   * propre à l'un ou à l'autre — mais ils n'y font pas le même travail :
+   * l'Ishikawa ouvre l'éventail des causes possibles, les 5 Pourquoi creusent
+   * une branche jusqu'à la cause racine et la vérifient. Les montrer dans
+   * l'ordre inverse donnait à lire la conclusion avant l'enquête.
+   */
+  it('montre les deux analyses dans leur case, l’Ishikawa puis les 5 Pourquoi', () => {
     fiveWhys.listForNc.and.returnValue(of([chaine()]));
     ishikawa.listForNc.and.returnValue(of([diagramme([cause('c1', 'Joint usé')])]));
     setup();
     expect(tous('cinq-pourquoi-bloc').length).toBe(1);
     expect(tous('ishikawa-bloc').length).toBe(1);
+
+    const cases = Array.from(
+      hote().querySelectorAll<HTMLElement>('[data-test="ishikawa-bloc"], [data-test="cinq-pourquoi-bloc"]'));
+    expect(cases.map(c => c.getAttribute('data-test')))
+      .toEqual(['ishikawa-bloc', 'cinq-pourquoi-bloc']);
+    // Chaque case porte son titre, et sa figure : rien d'autre à lire.
+    expect(cases[0].querySelector('h3')!.textContent).toContain('Ishikawa');
+    expect(cases[0].querySelector('qos-ishikawa-fishbone')).not.toBeNull();
+    expect(cases[1].querySelector('h3')!.textContent).toContain('5 Pourquoi');
+    expect(cases[1].querySelector('qos-five-whys-cascade')).not.toBeNull();
   });
 
   // L'indisponibilité d'un service d'analyse ne doit pas emporter la fiche.

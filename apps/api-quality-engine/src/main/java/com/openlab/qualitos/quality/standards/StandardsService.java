@@ -324,6 +324,11 @@ public class StandardsService {
 
         for (StandardSection section : std.getSections()) {
             for (StandardClause clause : section.getClauses()) {
+                // L’état de preuve de la CLAUSE, calculé avant ses exigences : c’est
+                // lui qui sépare l’absence de disposition du manquement isolé
+                // (ISO/IEC 17021-1, 3.12 et 3.13 — voir FindingGrade).
+                boolean clauseHasEvidence = clause.getRequirements().stream()
+                        .anyMatch(r -> covered.contains(r.getId()));
                 for (StandardRequirement req : clause.getRequirements()) {
                     total++;
                     boolean isCovered = covered.contains(req.getId());
@@ -335,17 +340,17 @@ public class StandardsService {
                         continue;
                     }
                     // Exigence non couverte → écart (finding).
-                    String severity = severityOf(req);
-                    switch (severity) {
-                        case "MAJOR" -> major++;
-                        case "MINOR" -> minor++;
-                        default -> observations++;
+                    FindingGrade grade = FindingGrade.of(req.getObligation(), clauseHasEvidence);
+                    switch (grade) {
+                        case MAJOR -> major++;
+                        case MINOR -> minor++;
+                        case OBSERVATION -> observations++;
                     }
                     findings.add(new StandardsDto.AuditFinding(
                             req.getId(), section.getCode(), clause.getCode(), req.getCode(),
                             req.getText(), req.getObligation(), req.getRiskIfMissing(),
-                            severity, req.getEvidenceTypes(),
-                            remediationFor(req), priorityOf(severity)));
+                            grade.name(), req.getEvidenceTypes(),
+                            remediationFor(req), grade.remediationPriority()));
                 }
             }
         }
@@ -358,43 +363,6 @@ public class StandardsService {
                 ts.getId(), std.getId(), std.getCode(), std.getFullName(),
                 Instant.now(), readiness, total, coveredCount, mustTotal, mustCovered,
                 major, minor, observations, verdict(readiness, major), findings);
-    }
-
-    /**
-     * Classe un écart dans le vocabulaire de la certification (ISO/IEC 17021-1,
-     * ISO 19011) et non dans une échelle inventée.
-     *
-     * <p>L'audit blanc annonçait des écarts « critiques », « majeurs » et
-     * « mineurs ». Aucun organisme certificateur n'emploie « critique » : un
-     * auditeur classe ses constats en <b>non-conformité majeure</b> (elle met en
-     * cause l'aptitude du système à atteindre ses résultats — exigence
-     * obligatoire absente, processus requis inexistant — et bloque le certificat
-     * jusqu'à sa levée), <b>non-conformité mineure</b> (manquement isolé, qui
-     * n'empêche pas le certificat mais demande un plan d'actions) et
-     * <b>observation</b> (piste d'amélioration, qui n'est pas une
-     * non-conformité). Dire « critique » à un client qui prépare son audit lui
-     * fait préparer une réponse à un reproche qu'il n'entendra jamais.
-     *
-     * <p>La correspondance suit la définition, pas une graduation : une exigence
-     * <b>obligatoire</b> non couverte est une non-conformité — majeure quand le
-     * risque de son absence est élevé, c'est-à-dire systémique, mineure sinon.
-     * Une exigence seulement <b>recommandée</b> ne peut pas être une
-     * non-conformité : c'est une observation.
-     */
-    private String severityOf(StandardRequirement req) {
-        boolean must = req.getObligation() == ObligationLevel.MUST;
-        RiskLevel risk = req.getRiskIfMissing();
-        if (must && (risk == RiskLevel.CRITICAL || risk == RiskLevel.HIGH)) return "MAJOR";
-        if (must) return "MINOR";
-        return "OBSERVATION";
-    }
-
-    private int priorityOf(String severity) {
-        return switch (severity) {
-            case "MAJOR" -> 1;
-            case "MINOR" -> 2;
-            default -> 3;
-        };
     }
 
     private String remediationFor(StandardRequirement req) {

@@ -556,16 +556,19 @@ class StandardsServiceTest {
     }
 
     /**
-     * Les trois classes sont celles de l'ISO/IEC 17021-1 : une exigence
-     * obligatoire absente dont le risque est eleve est une non-conformite
-     * MAJEURE -- elle bloque le certificat. « Critique » n'existe pas dans le
-     * vocabulaire d'un organisme certificateur (ADR 0115).
+     * Les deux degrés sont ceux de l'ISO/IEC 17021-1, et c'est l'état des preuves
+     * de la clause qui les sépare, non un risque étiqueté d'avance sur
+     * l'exigence. Une clause obligatoire dont aucune exigence n'est démontrée :
+     * la disposition est absente, l'aptitude du système est en cause (3.12) —
+     * non-conformité MAJEURE, qui bloque le certificat. « Critique » n'existe
+     * pas dans le vocabulaire d'un organisme certificateur (ADR 0115, 0120).
      */
     @Test
-    void auditBlanc_highRiskMustGap_isMajorNonconformityAndTopPriority() {
+    void auditBlanc_clauseSansAucunePreuve_donneDesNonConformitesMajeures() {
         Standard s = stdWithTree();
         StandardRequirement r1 = s.getSections().get(0).getClauses().get(0).getRequirements().get(0);
-        r1.setRiskIfMissing(RiskLevel.CRITICAL);
+        // Le risque le plus faible du catalogue : il ne doit rien changer au degré.
+        r1.setRiskIfMissing(RiskLevel.LOW);
         TenantStandard ts = adoption(AdoptionStatus.IN_PROGRESS);
         ts.setStandard(s);
         when(tenantStandardRepo.findByIdAndTenantId(ts.getId(), TENANT)).thenReturn(Optional.of(ts));
@@ -573,11 +576,43 @@ class StandardsServiceTest {
 
         StandardsDto.AuditBlancReport r = service.computeAuditBlanc(ts.getId());
 
-        assertThat(r.majorGaps()).isEqualTo(1);
-        // findings triés par priorité → la majeure en tête
-        assertThat(r.findings().get(0).findingSeverity()).isEqualTo("MAJOR");
+        assertThat(r.majorGaps()).isEqualTo(2);
+        assertThat(r.minorGaps()).isZero();
+        assertThat(r.findings()).allSatisfy(f ->
+                assertThat(f.findingSeverity()).isEqualTo("MAJOR"));
         assertThat(r.findings().get(0).remediationPriority()).isEqualTo(1);
-        assertThat(r.findings().get(0).remediationAction()).contains(r1.getCode());
+        assertThat(r.findings()).anySatisfy(f ->
+                assertThat(f.remediationAction()).contains(r1.getCode()));
+    }
+
+    /**
+     * La même clause, une preuve posée sur l'une de ses exigences : la
+     * disposition existe et n'est pas tenue partout. Le manquement restant est
+     * isolé — non-conformité MINEURE (ISO/IEC 17021-1, 3.13), et le certificat
+     * n'est plus bloqué. Même exigence, même risque étiqueté, autre degré :
+     * c'est la preuve trouvée qui tranche.
+     */
+    @Test
+    void auditBlanc_clausePartiellementDemontree_donneUneNonConformiteMineure() {
+        Standard s = stdWithTree();
+        StandardClause clause = s.getSections().get(0).getClauses().get(0);
+        StandardRequirement r1 = clause.getRequirements().get(0);
+        StandardRequirement r2 = clause.getRequirements().get(1);
+        r2.setRiskIfMissing(RiskLevel.CRITICAL);
+        TenantStandard ts = adoption(AdoptionStatus.IN_PROGRESS);
+        ts.setStandard(s);
+        when(tenantStandardRepo.findByIdAndTenantId(ts.getId(), TENANT)).thenReturn(Optional.of(ts));
+        when(evidenceRepo.findByTenantStandardId(ts.getId())).thenReturn(List.of(evidence(ts, r1)));
+
+        StandardsDto.AuditBlancReport r = service.computeAuditBlanc(ts.getId());
+
+        assertThat(r.majorGaps()).isZero();
+        assertThat(r.minorGaps()).isEqualTo(1);
+        assertThat(r.findings()).singleElement().satisfies(f -> {
+            assertThat(f.requirementCode()).isEqualTo(r2.getCode());
+            assertThat(f.findingSeverity()).isEqualTo("MINOR");
+            assertThat(f.remediationPriority()).isEqualTo(2);
+        });
     }
 
     @Test
@@ -738,6 +773,19 @@ class StandardsServiceTest {
         ts.setCreatedAt(Instant.now());
         ts.setUpdatedAt(Instant.now());
         return ts;
+    }
+
+    /** Une preuve posée sur une exigence PRÉCISE de l'arbre chargé. */
+    private RequirementEvidence evidence(TenantStandard ts, StandardRequirement requirement) {
+        RequirementEvidence ev = new RequirementEvidence();
+        ev.setId(UUID.randomUUID());
+        ev.setTenantId(TENANT);
+        ev.setTenantStandard(ts);
+        ev.setRequirement(requirement);
+        ev.setEvidenceType(EvidenceType.DOCUMENT);
+        ev.setLinkedBy(USER);
+        ev.setLinkedAt(Instant.now());
+        return ev;
     }
 
     private RequirementEvidence evidence(TenantStandard ts) {
