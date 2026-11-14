@@ -460,15 +460,13 @@ describe('NcEightDComponent', () => {
 
     // Le D2 garde son texte : lui n'a pas de tableau pour le dire.
     expect(hote().textContent).toContain('Constat au presse-etoupe');
-    // Le D5 ne rend plus la ligne d'ACTION : le tableau, juste en dessous, la
-    // montre avec son porteur, son avancement et sa preuve.
+    // Le D5 ne rend plus AUCUNE de ses lignes : le tableau, juste en dessous,
+    // porte le dossier et ses actions, avec leur porteur, leur avancement et
+    // leur preuve -- et lui, on peut l'actionner.
     expect(hote().textContent).not.toContain('Action [CORRECTIVE] Changer le joint');
-    // Mais il garde ce qui decrit le DOSSIER : le tableau n'en porte rien, et
-    // masquer le bloc entier faisait disparaitre l'intitule, le type, la
-    // criticite, le statut et l'echeance de la CAPA.
-    expect(hote().textContent).toContain('CAPA: Reprise du presse-etoupe');
-    expect(component.texteRemplaceParLeTableau('D5')).toBe(true);
-    expect(component.texteRemplaceParLeTableau('D2')).toBe(false);
+    expect(hote().textContent).not.toContain('CAPA: Reprise du presse-etoupe');
+    expect(component.montreAuLieuDeDire('D5')).toBe(true);
+    expect(component.montreAuLieuDeDire('D2')).toBe(false);
   });
 
   /** Les disciplines qui portent un tableau sont exactement D3, D5 et D6. */
@@ -516,10 +514,10 @@ describe('NcEightDComponent', () => {
     expect(vides()).toBe(0);
   });
 
-  // Le tableau vivant ne remplace QUE les lignes d'action. Les premieres lignes
-  // du D5 decrivent le dossier -- intitule, type, criticite, statut, echeance --
-  // et le tableau n'en porte aucune : masquer le bloc entier les perdait.
-  it('garde les lignes de dossier du D5 et retire les lignes d\u2019action', async () => {
+  // Le D5 ne garde rien a l'ecran : le tableau porte le dossier ET ses
+  // actions, et c'est lui qu'on manoeuvre. Le PDF, lui, recoit toujours le
+  // texte entier -- il n'a ni tableau ni schema.
+  it('retire tout le texte du D5, que le tableau porte en mieux', async () => {
     await monter(['QUALITY_MANAGER']);
 
     const d5: EightDDiscipline = {
@@ -528,17 +526,13 @@ describe('NcEightDComponent', () => {
         'CAPA: Reprendre le presse-\u00e9toupe',
         'Type: CORRECTIVE',
         'Criticality: MAJOR',
-        'Action [CONTAINMENT] Bloquer le lot \u2014 DONE \u2014 Claire Martin',
+        'Action [CONTAINMENT] Bloquer le lot \u2014 DONE',
         '    Tri a 100 % avant expedition',
         'Action [CORRECTIVE] Changer le joint \u2014 IN_PROGRESS'
       ]
     };
 
-    expect(component.lignesVisibles(d5)).toEqual([
-      'CAPA: Reprendre le presse-\u00e9toupe',
-      'Type: CORRECTIVE',
-      'Criticality: MAJOR'
-    ]);
+    expect(component.lignesVisibles(d5)).toEqual([]);
   });
 
   it('garde toutes les lignes d\u2019une discipline que le tableau ne redit pas', async () => {
@@ -554,16 +548,41 @@ describe('NcEightDComponent', () => {
     expect(component.lignesVisibles(d6)).toEqual(d6.lines);
   });
 
-  // Sans aucune ligne d'action, il n'y a rien a retirer : le D5 garde tout.
-  it('garde tout le D5 quand le dossier ne porte encore aucune action', async () => {
+  // Le D4 est l'autre cas, et il est conditionnel : il ne se tait que s'il a
+  // un schema a montrer. Sans 5 pourquoi ni Ishikawa, sa ligne de texte est
+  // la seule chose qu'on sache de la cause racine, et la masquer laisserait
+  // la discipline muette sur la question meme qu'elle pose.
+  it('garde le texte du D4 tant qu\u2019aucun schema de cause n\u2019est charge', async () => {
     await monter(['QUALITY_MANAGER']);
 
-    const d5: EightDDiscipline = {
-      code: 'D5', title: 'D5', sourced: false, sourceLabel: '', editable: false,
-      lines: ['CAPA: Reprendre le presse-\u00e9toupe', 'Status: OPEN']
+    const d4: EightDDiscipline = {
+      code: 'D4', title: 'D4', sourced: true, sourceLabel: '', editable: false,
+      lines: ['Root cause recorded on the non-conformity : Usure du roulement']
     };
 
-    expect(component.lignesVisibles(d5)).toEqual(d5.lines);
+    component.fiveWhys$.next([]);
+    component.ishikawa$.next([]);
+
+    expect(component.montreAuLieuDeDire('D4')).toBe(false);
+    expect(component.lignesVisibles(d4)).toEqual(d4.lines);
+  });
+
+  it('retire le texte du D4 des qu\u2019un schema de cause est la', async () => {
+    await monter(['QUALITY_MANAGER']);
+
+    const d4: EightDDiscipline = {
+      code: 'D4', title: 'D4', sourced: true, sourceLabel: '', editable: false,
+      lines: ['Root cause recorded on the non-conformity : Usure du roulement']
+    };
+
+    component.fiveWhys$.next([{
+      id: '5e2b7c90-1111-4aaa-9bbb-0123456789ab',
+      problemStatement: 'Jeu radial hors tolerance',
+      steps: [], rootCause: 'Usure du roulement'
+    } as never]);
+
+    expect(component.montreAuLieuDeDire('D4')).toBe(true);
+    expect(component.lignesVisibles(d4)).toEqual([]);
   });
 
   // Faire avancer une action change le texte agrege des disciplines : un rapport

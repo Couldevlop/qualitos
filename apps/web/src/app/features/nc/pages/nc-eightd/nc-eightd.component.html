@@ -116,15 +116,15 @@
           </h3>
           <p class="source" [class.manquante]="!discipline.sourced">{{ discipline.sourceLabel }}</p>
 
-          <!-- Le texte agrege, SAUF les lignes que le tableau dit en mieux. Le
-               D5 listait une ligne de phrase par action, juste au-dessus du
-               tableau qui montre ces memes actions avec leur porteur, leur
-               avancement et leur preuve -- et qu'on peut, lui, faire avancer :
-               deux lectures du meme fait, dont une inerte. Seules CES
-               lignes-la disparaissent. Celles qui decrivent le dossier --
-               intitule, type, criticite, statut, echeance -- restent, parce
-               que le tableau n'en porte aucune. Le document emis, lui, garde
-               tout : le PDF n'a pas de tableau.
+          <!-- Le texte agrege, SAUF la ou une figure le dit en mieux. Le D5
+               enumerait le dossier et ses actions juste au-dessus du tableau
+               qui porte ces memes actions -- nature, porteur, echeance,
+               avancement, preuve -- et qui, lui, se manoeuvre ; le D4
+               annoncait la cause retenue juste au-dessus du schema qui montre
+               comment on y arrive et qui la porte deja dans sa derniere case.
+               Deux lectures du meme fait, dont une inerte, et c'est l'inerte
+               qui venait en premier. Le document emis, lui, garde tout : le
+               PDF n'a ni tableau ni schema.
                Un seul appel a `lignesVisibles`, dont le resultat est nomme. -->
           <ng-container *ngIf="lignesVisibles(discipline) as lignes">
             <ul class="lignes" *ngIf="lignes.length > 0">
@@ -133,15 +133,15 @@
           </ng-container>
 
           <!-- Jamais un bloc vide : l'absence de contenu est dite. La discipline
-               dont le tableau tient lieu de texte ne la dit pas : le tableau,
-               juste en dessous, porte deja son propre etat. -->
-          <p class="vide" *ngIf="discipline.lines.length === 0 && !texteRemplaceParLeTableau(discipline.code)"
+               dont une figure tient lieu de texte ne la dit pas : le tableau ou
+               le schema, juste en dessous, porte deja son propre etat. -->
+          <p class="vide" *ngIf="discipline.lines.length === 0 && !montreAuLieuDeDire(discipline.code)"
              data-test="discipline-vide"
              i18n="@@nc.8d.discipline-empty">Non renseigné.</p>
 
-          <!-- D4 : le RAISONNEMENT, pas seulement sa conclusion. Les lignes
-               ci-dessus disent la cause retenue ; les figures montrent comment on
-               y est arrive -- ce qu'un auditeur vient regarder (ADR 0115). -->
+          <!-- D4 : le RAISONNEMENT, et non sa seule conclusion. C'est ce qu'un
+               auditeur vient regarder (ADR 0115), et c'est pourquoi le schema
+               remplace ici la ligne de texte au lieu de la suivre. -->
           <ng-container *ngIf="estCauseRacine(discipline.code)">
             <div class="vivant" *ngIf="((fiveWhys$ | async)?.length || (ishikawa$ | async)?.length)"
                  data-test="8d-analyse-de-cause">

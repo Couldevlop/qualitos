@@ -16,9 +16,6 @@
      i18n="@@nc.detail.cause-whys-empty">
     Aucun pourquoi n’a encore été posé. Déroulez l’analyse pour commencer.
   </p>
-  <p class="cause-root" *ngIf="chaine.rootCause" data-test="cinq-pourquoi-racine">
-    <span i18n="@@nc.detail.root-cause">Cause racine</span> : {{ chaine.rootCause }}
-  </p>
 </section>
 
 <section class="cause-block" *ngFor="let diagramme of ishikawa; trackBy: trackByDiagramme"

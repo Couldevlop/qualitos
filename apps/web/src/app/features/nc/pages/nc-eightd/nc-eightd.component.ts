@@ -26,15 +26,6 @@ import { EightDDiscipline, EightDReport } from '../../nc.types';
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 /**
- * Le préfixe que l'assembleur du rapport écrit devant chaque ligne d'action.
- *
- * <p>Il marque la frontière entre ce qui décrit le DOSSIER — intitulé, type,
- * criticité, statut, échéance — et ce que le tableau vivant montre déjà. Voir
- * {@link NcEightDComponent#lignesVisibles} pour le couplage que cela crée.
- */
-const PREFIXE_ACTION = 'Action [';
-
-/**
  * Qui peut renseigner et émettre. Miroir exact de la liste posée côté serveur :
  * si les deux divergent, l'écran propose un geste que l'API refusera.
  */
@@ -242,43 +233,57 @@ export class NcEightDComponent implements OnInit {
   }
 
   /**
-   * Vrai quand le tableau d'actions tient lieu des LIGNES D'ACTION, à l'écran.
+   * Vrai quand ce qui est MONTRÉ tient lieu, à l'écran, du texte agrégé.
    *
-   * <p>Le D5 listait une ligne de phrase par action, juste au-dessus du tableau
-   * qui montre ces mêmes actions — avec leur porteur, leur avancement, leur
-   * preuve, et de quoi les faire avancer. Deux lectures du même fait, dont une
-   * inerte.
+   * <p>Deux disciplines sont dans ce cas, et pour la même raison : on y lisait
+   * deux fois le même fait, dont une inerte.
    *
-   * <p>Le document émis, lui, garde ce texte : le PDF n'a pas de tableau, et
-   * c'est ce texte-là qui est figé, signé et ancré à l'émission.
+   * <p>Le D5 énumérait le dossier et ses actions en lignes de phrase, juste
+   * au-dessus du tableau qui porte ces mêmes actions — avec leur nature, leur
+   * porteur, leur échéance, leur avancement, leur preuve — et qui, lui, se
+   * manœuvre. Le D4 annonçait la cause retenue en une ligne, juste au-dessus
+   * du schéma qui montre comment on y est arrivé et qui la porte déjà dans sa
+   * dernière case. Dans les deux cas le texte ne disait rien de plus, et il
+   * passait en premier.
+   *
+   * <p>Le D4 ne se tait que s'il a quelque chose à montrer. Sans schéma de
+   * cause — ni 5 pourquoi, ni Ishikawa — sa ligne de texte est la seule chose
+   * qu'on sache de la cause racine, et la masquer laisserait la discipline
+   * muette sur la question même qu'elle pose.
+   *
+   * <p>Le document émis, lui, garde tout ce texte : le PDF n'a ni tableau ni
+   * schéma, et c'est ce texte-là qui est figé, signé et ancré à l'émission.
    */
-  texteRemplaceParLeTableau(code: string): boolean {
-    return code === 'D5';
+  montreAuLieuDeDire(code: string): boolean {
+    if (code === 'D5') {
+      return true;
+    }
+    return this.estCauseRacine(code) && this.aUneFigureDeCause();
+  }
+
+  /**
+   * Vrai si au moins une figure d'analyse de cause est chargée.
+   *
+   * <p>Lecture synchrone de l'état des deux flux, et non un troisième flux
+   * dérivé : le gabarit appelle cette méthode pendant la détection de
+   * changement, où un `| async` de plus rouvrirait un abonnement par
+   * discipline rendue. Les deux sources sont des `BehaviorSubject` — leur
+   * valeur courante est toujours définie, même avant la première réponse.
+   */
+  aUneFigureDeCause(): boolean {
+    return this.fiveWhys$.value.length > 0 || this.ishikawa$.value.length > 0;
   }
 
   /**
    * Les lignes du texte agrégé qui restent à lire à l'écran.
    *
-   * <p>Le tableau ne remplace que les lignes d'ACTION. Les premières lignes du
-   * D5 décrivent le DOSSIER — son intitulé, son type, sa criticité, son statut,
-   * son échéance — et le tableau n'en porte aucune. Masquer le bloc entier les
-   * faisait disparaître de l'écran : on avait retiré, avec le doublon, cinq
-   * lignes qui ne doublaient rien.
-   *
-   * <p>Le repère est le préfixe que l'assembleur écrit devant chaque action.
-   * C'est un couplage de forme entre un service Java et un gabarit, et il est
-   * assumé faute de mieux : porter la coupure dans l'instantané demanderait un
-   * champ de plus dans le contrat, sa conversion et sa migration, pour un
-   * découpage qui n'intéresse que l'affichage. Le banc d'essai qui le vérifie
-   * est là pour que le jour où l'assembleur change de forme, c'est lui qui le
-   * dise, et non un utilisateur.
+   * <p>Tout ou rien, par discipline. Une coupure au milieu du texte
+   * demanderait de reconnaître, dans une chaîne, ce que l'assembleur a écrit —
+   * un couplage de forme entre un service Java et un gabarit, qui se casse en
+   * silence le jour où la phrase change.
    */
   lignesVisibles(discipline: EightDDiscipline): string[] {
-    if (!this.texteRemplaceParLeTableau(discipline.code)) {
-      return discipline.lines;
-    }
-    const premiere = discipline.lines.findIndex(l => l.startsWith(PREFIXE_ACTION));
-    return premiere < 0 ? discipline.lines : discipline.lines.slice(0, premiere);
+    return this.montreAuLieuDeDire(discipline.code) ? [] : discipline.lines;
   }
 
   /** Vrai pour la discipline qui porte l'analyse de cause. */
