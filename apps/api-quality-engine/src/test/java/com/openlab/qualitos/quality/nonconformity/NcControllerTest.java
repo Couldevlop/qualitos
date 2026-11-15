@@ -489,7 +489,8 @@ class NcControllerTest {
                 NC, TENANT, "NC-2026-0001", "t", null,
                 NcCategory.PRODUCT, null, NcSeverity.MAJOR, s, NcOrigin.INTERNAL, Instant.now(),
                 null, null, null, null, REPORTER, "Ada Lovelace", null, null, null, null, null,
-                null, null, null, null, null, null, Instant.now(), Instant.now(), EQUIPE);
+                null, null, null, null, null, null, Instant.now(), Instant.now(), EQUIPE,
+                java.util.List.of());
     }
 
     /**

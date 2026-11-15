@@ -22026,6 +22026,34 @@ historial de 12 meses</target>
         <source>Les huit disciplines, agrégées depuis ce dossier</source>
         <target state="translated">Las ocho disciplinas, agregadas de este expediente</target>
       </trans-unit>
+      <trans-unit id="nc.detail.blockers-resolve" datatype="html">
+        <source>Cet écart ne peut pas encore être résolu</source>
+        <target state="translated">Esta no conformidad aún no puede resolverse</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.blockers-close" datatype="html">
+        <source>Cet écart ne peut pas encore être clôturé</source>
+        <target state="translated">Esta no conformidad aún no puede cerrarse</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.actions-one" datatype="html">
+        <source>1 dossier CAPA porte encore des actions à mener. Terminez ses actions pour pouvoir résoudre cet écart.</source>
+        <target state="translated">1 expediente CAPA todavía tiene acciones por realizar. Complete sus acciones para resolver esta no conformidad.</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.actions-many" datatype="html">
+        <source><x id="count"/> dossiers CAPA portent encore des actions à mener. Terminez leurs actions pour pouvoir résoudre cet écart.</source>
+        <target state="translated"><x id="count"/> expedientes CAPA todavía tienen acciones por realizar. Complete sus acciones para resolver esta no conformidad.</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.cases-one" datatype="html">
+        <source>1 dossier CAPA n'est pas clôturé. Clôturez-le — après vérification de son efficacité — pour pouvoir clôturer cet écart.</source>
+        <target state="translated">1 expediente CAPA no está cerrado. Ciérrelo —tras verificar su eficacia— para cerrar esta no conformidad.</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.cases-many" datatype="html">
+        <source><x id="count"/> dossiers CAPA ne sont pas clôturés. Clôturez-les — après vérification de leur efficacité — pour pouvoir clôturer cet écart.</source>
+        <target state="translated"><x id="count"/> expedientes CAPA no están cerrados. Ciérrelos —tras verificar su eficacia— para cerrar esta no conformidad.</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.unknown" datatype="html">
+        <source>Un prérequis n'est pas satisfait sur cet écart.</source>
+        <target state="translated">No se cumple un requisito previo en esta no conformidad.</target>
+      </trans-unit>
       <trans-unit id="nc.create.nature-pick-category" datatype="html">
         <source>Choisissez d'abord la catégorie.</source>
         <target state="translated">Elija primero la categoría.</target>

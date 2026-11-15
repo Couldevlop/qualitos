@@ -27,6 +27,7 @@ import { TeamMemberRef } from '../../../../shared/user-picker/user-team-picker.c
 import {
   NC_MAX_TEAM_MEMBERS,
   NcPhoto,
+  NcBlocker,
   NcResponse,
   NcSeverity,
   NcStatus,
@@ -854,6 +855,64 @@ export class NcDetailComponent implements OnInit {
   }
   canResolve(status: NcStatus): boolean { return status === 'ACTION_DEFINED'; }
   canClose(status: NcStatus): boolean { return status === 'RESOLVED'; }
+
+  /**
+   * Le motif, rédigé à partir de son code.
+   *
+   * <p>Le refus existait déjà, et il était juste ; il n'arrivait qu'APRÈS le
+   * clic, en anglais, construit par le service. L'utilisateur voyait un bouton
+   * éteint sans savoir quoi faire pour l'allumer. La phrase dit donc le geste
+   * qui débloque, pas seulement l'état.
+   */
+  blockerLabel(b: NcBlocker): string {
+    switch (b.code) {
+      case 'CAPA_ACTIONS_TO_CARRY_OUT':
+        return b.count === 1
+          ? $localize`:@@nc.blocker.actions-one:1 dossier CAPA porte encore des actions à mener. Terminez ses actions pour pouvoir résoudre cet écart.`
+          : $localize`:@@nc.blocker.actions-many:${b.count}:count: dossiers CAPA portent encore des actions à mener. Terminez leurs actions pour pouvoir résoudre cet écart.`;
+      case 'CAPA_CASES_UNSETTLED':
+        return b.count === 1
+          ? $localize`:@@nc.blocker.cases-one:1 dossier CAPA n'est pas clôturé. Clôturez-le — après vérification de son efficacité — pour pouvoir clôturer cet écart.`
+          : $localize`:@@nc.blocker.cases-many:${b.count}:count: dossiers CAPA ne sont pas clôturés. Clôturez-les — après vérification de leur efficacité — pour pouvoir clôturer cet écart.`;
+      default:
+        // Code inconnu (serveur plus récent que l'écran) : mieux vaut une phrase
+        // générique qu'un bouton éteint sans explication.
+        return $localize`:@@nc.blocker.unknown:Un prérequis n'est pas satisfait sur cet écart.`;
+    }
+  }
+
+  /** Le titre du bloc dépend de l'étape : résoudre ou clôturer. */
+  blockersTitle(n: NcResponse): string {
+    return n.status === 'RESOLVED'
+      ? $localize`:@@nc.detail.blockers-close:Cet écart ne peut pas encore être clôturé`
+      : $localize`:@@nc.detail.blockers-resolve:Cet écart ne peut pas encore être résolu`;
+  }
+
+  /**
+   * Vrai dès qu'un motif subsiste — c'est ce qui éteint le bouton.
+   *
+   * <p>Le serveur reste l'autorité : il refuse de toute façon. Éteindre ici
+   * évite seulement de proposer un geste qu'on sait repoussé.
+   */
+  blocked(n: NcResponse): boolean {
+    return (n.blockers?.length ?? 0) > 0;
+  }
+
+  /**
+   * Les motifs en une phrase, pour l'infobulle du bouton éteint.
+   *
+   * <p>Un bouton désactivé ne reçoit pas le survol sur tous les navigateurs ;
+   * c'est pourquoi l'encart reste la source, et l'infobulle le rappel.
+   */
+  blockersHint(n: NcResponse): string {
+    return (n.blockers ?? []).map(b => this.blockerLabel(b)).join(' ');
+  }
+
+  /** Infobulles nominales, déplacées dans le composant : le gabarit choisit
+   *  désormais entre elles et les motifs, et une liaison ne peut pas porter
+   *  d'attribut `i18n-matTooltip`. */
+  readonly resolveTooltip = $localize`:@@nc.detail.resolve-tooltip:Résoudre la NC`;
+  readonly closeTooltip = $localize`:@@nc.detail.close-tooltip:Clôturer la NC`;
   canCancel(status: NcStatus): boolean { return !this.isTerminal(status); }
 
   /**

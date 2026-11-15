@@ -222,8 +222,25 @@ public final class NcDto {
             Instant createdAt,
             Instant updatedAt,
             /** L'équipe en charge, dans son ordre de saisie. */
-            List<TeamMemberRef> teamMembers
+            List<TeamMemberRef> teamMembers,
+            /**
+             * Ce qui s'oppose à l'avancement de cet écart, pour que l'écran le dise
+             * AVANT le clic. Vide sur les lignes d'une liste : le motif se lit sur
+             * la fiche, et le calculer par ligne coûterait des requêtes pour une
+             * information qu'on n'y affiche pas.
+             */
+            List<Blocker> blockers
     ) {}
+
+    /**
+     * Un motif de blocage et son décompte.
+     *
+     * <p>Le décompte est ce qui permet à l'écran d'écrire « 2 dossiers » plutôt
+     * que « des dossiers » : une phrase au singulier pour un seul obstacle se
+     * lit mieux, et c'est le genre de détail qui fait croire ou non que le
+     * logiciel a compris la situation.
+     */
+    public record Blocker(NcBlockerCode code, long count) {}
 
     /**
      * Dénombrements affichés en tuiles au-dessus d'une liste de NC.

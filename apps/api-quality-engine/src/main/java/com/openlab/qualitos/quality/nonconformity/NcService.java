@@ -551,10 +551,45 @@ public class NcService {
     }
 
     private NcDto.Response toResponse(NonConformity nc) {
-        return toResponse(nc, equipeDe(nc));
+        return toResponse(nc, equipeDe(nc), blocages(nc));
     }
 
     private NcDto.Response toResponse(NonConformity nc, List<NcDto.TeamMemberRef> equipe) {
+        // Une ligne de liste ne montre pas les motifs : les calculer coûterait
+        // deux requêtes par ligne pour une information qu'on n'y lit pas.
+        return toResponse(nc, equipe, List.of());
+    }
+
+    /**
+     * Ce qui s'oppose à l'avancement de cet écart, à l'étape où il est.
+     *
+     * <p>Seule l'étape COURANTE est instruite. Lister les obstacles d'une étape
+     * qu'on n'a pas atteinte reviendrait à reprocher à l'utilisateur de ne pas
+     * avoir fait ce qu'on ne lui propose pas encore, et chaque motif coûte des
+     * requêtes.
+     *
+     * <p>Un écart terminé ne renvoie rien : plus rien ne s'y oppose, et afficher
+     * des obstacles sur une fiche close donnerait à croire qu'il faut encore
+     * agir.
+     */
+    private List<NcDto.Blocker> blocages(NonConformity nc) {
+        if (nc.getStatus() == NcStatus.ACTION_DEFINED) {
+            long aFaire = capaService.unexecutedCasesFor(
+                    nc.getCapaCaseId(), nc.getReference()).size();
+            return aFaire == 0 ? List.of()
+                    : List.of(new NcDto.Blocker(NcBlockerCode.CAPA_ACTIONS_TO_CARRY_OUT, aFaire));
+        }
+        if (nc.getStatus() == NcStatus.RESOLVED) {
+            long enTravail = capaService.unsettledCasesFor(
+                    nc.getCapaCaseId(), nc.getReference()).size();
+            return enTravail == 0 ? List.of()
+                    : List.of(new NcDto.Blocker(NcBlockerCode.CAPA_CASES_UNSETTLED, enTravail));
+        }
+        return List.of();
+    }
+
+    private NcDto.Response toResponse(NonConformity nc, List<NcDto.TeamMemberRef> equipe,
+                                      List<NcDto.Blocker> blocages) {
         return new NcDto.Response(
                 nc.getId(), nc.getTenantId(), nc.getReference(), nc.getTitle(), nc.getDescription(),
                 nc.getCategory(), nc.getSubcategoryCode(), nc.getSeverity(), nc.getStatus(),
@@ -566,7 +601,7 @@ public class NcService {
                 nc.getResolvedAt(), nc.getClosedAt(),
                 nc.getRejectionReason(), nc.getRejectedAt(),
                 nc.getCreatedAt(), nc.getUpdatedAt(),
-                equipe);
+                equipe, blocages);
     }
 
     // ---------- L'équipe en charge (D1 du 8D) ----------

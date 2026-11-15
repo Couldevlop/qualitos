@@ -29,6 +29,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.EnumMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
@@ -213,7 +214,7 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
                 sanitize(section.sourceLabel()));
         page.y -= 14;
 
-        if (section.lines().isEmpty()) {
+        if (rienAMontrer(section)) {
             page = place(doc, page, 16f);
             texte(page.flux, regular, 9.5f, ALERT, MARGIN + 10, page.y, "Not filled in.");
             page.y -= 14;
@@ -226,8 +227,201 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
                 page.y -= 12.5f;
             }
         }
+        for (EightDSnapshot.Figure figure : section.figures()) {
+            page = figure(doc, page, bold, regular, figure);
+        }
         page.y -= 8;
         return page;
+    }
+
+    /**
+     * Une section vide de texte MAIS porteuse d'une figure n'est pas vide.
+     *
+     * <p>Sans cette question, le D4 d'un ecart dont la cause s'est cherchee en
+     * Ishikawa sans etre recopiee sur la fiche aurait affiche « Not filled in. »
+     * au-dessus de son propre trace.
+     */
+    private static boolean rienAMontrer(EightDSnapshot.Section section) {
+        return section.lines().isEmpty() && section.figures().isEmpty();
+    }
+
+    // ---------- les figures ----------
+
+    /**
+     * Trace une figure, ou la remplace par une phrase si elle n'a aucun noeud.
+     *
+     * <p>Un diagramme ouvert puis laisse vide existe : il vaut mieux dire qu'il
+     * est vide que dessiner une epine nue, qu'on prendrait pour un defaut de
+     * rendu.
+     */
+    private Page figure(PDDocument doc, Page page, PDType1Font bold, PDType1Font regular,
+                        EightDSnapshot.Figure figure) throws IOException {
+        String titre = figure.kind() == EightDSnapshot.FigureKind.FISHBONE
+                ? "Ishikawa - " + texteOuVide(figure.caption())
+                : "5 whys - " + texteOuVide(figure.caption());
+        page = place(doc, page, 22f);
+        page.y -= 6;
+        texte(page.flux, bold, 9.5f, INDIGO, MARGIN + 10, page.y, titre);
+        page.y -= 12;
+
+        if (figure.nodes().isEmpty()) {
+            page = place(doc, page, 14f);
+            texte(page.flux, regular, 9f, ALERT, MARGIN + 18, page.y, "Opened, but left empty.");
+            page.y -= 12;
+            return page;
+        }
+        return figure.kind() == EightDSnapshot.FigureKind.FISHBONE
+                ? arete(doc, page, bold, regular, figure)
+                : echelle(doc, page, bold, regular, figure);
+    }
+
+    /**
+     * La descente des 5 pourquoi : une echelle de cadres, du symptome vers le bas.
+     *
+     * <p>Chaque reponse est un cadre, relie au suivant par un segment : c'est la
+     * descente elle-meme qui porte le sens, et une liste a puces ne la montre
+     * pas. Le dernier cadre, quand c'est la cause racine conclue, recoit un
+     * filet indigo a gauche -- une descente conclue et une descente interrompue
+     * ne se lisent pas pareil.
+     *
+     * <p>Un cadre ne se coupe JAMAIS entre deux pages : on passe a la page
+     * suivante avec lui. Un « pourquoi » a cheval sur une coupure perdrait son
+     * rang, qui est tout ce qui le relie a la question precedente.
+     */
+    private Page echelle(PDDocument doc, Page page, PDType1Font bold, PDType1Font regular,
+                         EightDSnapshot.Figure figure) throws IOException {
+        float x = MARGIN + 18;
+        float largeur = CONTENT_W - 36;
+        boolean premier = true;
+        for (EightDSnapshot.Node noeud : figure.nodes()) {
+            List<String> morceaux = couperA(noeud.label(), 92);
+            float hauteur = 12f + 11f * morceaux.size();
+            page = place(doc, page, hauteur + 14f);
+            if (!premier) {
+                // Le segment de liaison, trace APRES un eventuel saut de page :
+                // sinon il pendrait au bas de la page precedente, sous rien.
+                ligne(page.flux, MUTED, x + 16, page.y + 10, x + 16, page.y + 2, 0.8f);
+            }
+            boolean racine = "ROOT".equals(noeud.group());
+            rect(page.flux, PANEL, x, page.y - hauteur + 10, largeur, hauteur);
+            rect(page.flux, racine ? INDIGO : MUTED, x, page.y - hauteur + 10, 2.5f, hauteur);
+            String rang = racine ? "Root cause" : "Why " + noeud.depth();
+            texte(page.flux, bold, 8f, racine ? INDIGO : MUTED, x + 8, page.y + 1, rang);
+            float ligneY = page.y + 1;
+            for (String morceau : morceaux) {
+                texte(page.flux, regular, 9f, INK, x + 68, ligneY, morceau);
+                ligneY -= 11f;
+            }
+            page.y -= hauteur + 4f;
+            premier = false;
+        }
+        return page;
+    }
+
+    /**
+     * L'arete de poisson : une epine horizontale, des branches par categorie.
+     *
+     * <p>Les branches alternent au-dessus et au-dessous de l'epine, comme le
+     * diagramme se dessine au tableau ; l'enonce ferme l'epine a droite, dans la
+     * tete du poisson. La hauteur est CALCULEE sur le cote le plus charge : une
+     * hauteur fixe ferait se chevaucher les causes des qu'une branche en porte
+     * plus de trois.
+     *
+     * <p>Les libelles sont coupes court -- une etiquette de branche doit se lire
+     * d'un coup d'oeil, et l'etiquette complete reste sur la fiche de l'ecart.
+     */
+    private Page arete(PDDocument doc, Page page, PDType1Font bold, PDType1Font regular,
+                       EightDSnapshot.Figure figure) throws IOException {
+        Map<String, List<String>> parBranche = new LinkedHashMap<>();
+        for (EightDSnapshot.Node noeud : figure.nodes()) {
+            parBranche.computeIfAbsent(texteOuVide(noeud.group()), k -> new ArrayList<>())
+                    .add(noeud.label());
+        }
+
+        // Le cote le plus charge commande la hauteur : les branches paires vont
+        // en haut, les impaires en bas.
+        int hautMax = 0;
+        int basMax = 0;
+        int indice = 0;
+        for (List<String> causes : parBranche.values()) {
+            if (indice % 2 == 0) {
+                hautMax = Math.max(hautMax, causes.size());
+            } else {
+                basMax = Math.max(basMax, causes.size());
+            }
+            indice++;
+        }
+        float demiHaut = 26f + 10f * hautMax;
+        float demiBas = 26f + 10f * basMax;
+        float hauteur = demiHaut + demiBas;
+        page = place(doc, page, hauteur + 12f);
+
+        float gauche = MARGIN + 18;
+        float teteLargeur = 108f;
+        float droite = MARGIN + CONTENT_W - teteLargeur - 8;
+        float epine = page.y - demiHaut;
+
+        ligne(page.flux, INK, gauche, epine, droite, epine, 1.2f);
+        // La tete : l'enonce du probleme, la ou l'epine aboutit.
+        rect(page.flux, PANEL, droite, epine - 16, teteLargeur, 32);
+        rect(page.flux, INDIGO, droite, epine - 16, 2.5f, 32);
+        float ligneTete = epine + 6;
+        for (String morceau : couperA(figure.caption(), 22)) {
+            if (ligneTete < epine - 14) {
+                break;
+            }
+            texte(page.flux, regular, 7.5f, INK, droite + 7, ligneTete, morceau);
+            ligneTete -= 9f;
+        }
+
+        int nb = parBranche.size();
+        float pas = (droite - gauche - 24f) / Math.max(1, nb);
+        indice = 0;
+        for (Map.Entry<String, List<String>> branche : parBranche.entrySet()) {
+            boolean haut = indice % 2 == 0;
+            float pied = gauche + 12f + pas * indice + pas * 0.5f;
+            float pointe = pied - 26f;
+            float sommet = haut ? epine + demiHaut - 14f : epine - demiBas + 14f;
+            ligne(page.flux, MUTED, pied, epine, pointe, sommet, 0.9f);
+            texte(page.flux, bold, 7.5f, INDIGO, pointe - 4, haut ? sommet + 4 : sommet - 9,
+                    branche.getKey());
+            float causeY = haut ? sommet - 6f : sommet + 12f;
+            for (String cause : branche.getValue()) {
+                texte(page.flux, regular, 7f, INK, pointe + 2, causeY,
+                        couperA(cause, 26).get(0));
+                causeY += haut ? -9f : 9f;
+            }
+            indice++;
+        }
+        page.y -= hauteur + 6f;
+        return page;
+    }
+
+    /** Coupe sur les mots a une largeur donnee ; au moins un morceau, jamais nul. */
+    private List<String> couperA(String valeur, int largeur) {
+        String reste = valeur == null ? "" : valeur.strip();
+        List<String> morceaux = new ArrayList<>();
+        if (reste.isEmpty()) {
+            morceaux.add("");
+            return morceaux;
+        }
+        while (!reste.isEmpty()) {
+            if (reste.length() <= largeur) {
+                morceaux.add(reste);
+                break;
+            }
+            int coupe = reste.lastIndexOf(' ', largeur);
+            if (coupe <= 0) {
+                coupe = largeur;
+            }
+            morceaux.add(reste.substring(0, coupe).stripTrailing());
+            reste = reste.substring(coupe).stripLeading();
+        }
+        return morceaux;
+    }
+
+    private static String texteOuVide(String s) {
+        return s == null ? "" : s;
     }
 
     /**
