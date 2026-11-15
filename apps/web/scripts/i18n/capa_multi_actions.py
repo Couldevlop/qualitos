@@ -144,10 +144,11 @@ TRANSLATIONS = {
 
     # --- le rapport 8D montre aussi l'etat vivant du dossier ----------------
     'nc.8d.live-note': (
-        "État actuel du dossier, affiché à côté du texte agrégé. Le PDF, lui, ne porte que le texte figé à l'émission.",
-        'Current state of the case, shown next to the aggregated text. The PDF carries only the text frozen at issuance.',
-        'Estado actual del expediente, mostrado junto al texto agregado. El PDF solo contiene el texto congelado en la emision.',
-        'الحالة الحالية للملف، معروضة بجانب النص المجمع. أما ملف PDF فلا يحمل سوى النص المجمّد عند الإصدار.',
-        '案件の現在の状態を、集約されたテキストの横に表示しています。PDF には発行時に固定されたテキストのみが記載されます。',
-        '案卷的当前状态，显示在汇总文本旁。PDF 仅包含签发时冻结的文本。'),
+        "État actuel du dossier. Le PDF émis, lui, ne porte que le texte figé à l'émission.",
+        'Current state of the case. The issued PDF carries only the text frozen at issuance.',
+        'Estado actual del expediente. El PDF emitido solo contiene el texto congelado en la emision.',
+        'الحالة الحالية للملف. أما ملف PDF المُصدر فلا يحمل سوى النص المجمّد عند الإصدار.',
+        '案件の現在の状態です。発行された PDF には発行時に固定されたテキストのみが記載されます。',
+        '案卷的当前状态。已签发的 PDF 仅包含签发时冻结的文本。',
+    ),
 }
