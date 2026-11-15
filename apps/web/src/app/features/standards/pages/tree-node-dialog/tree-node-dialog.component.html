@@ -53,16 +53,17 @@
       <mat-form-field appearance="outline" class="col">
         <mat-label i18n="@@standards.tree.obligation">Obligation</mat-label>
         <mat-select formControlName="obligation">
-          <mat-option *ngFor="let o of obligations" [value]="o">{{ o }}</mat-option>
+          <mat-option *ngFor="let o of obligations" [value]="o">{{ obligationLabel(o) }}</mat-option>
         </mat-select>
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="col">
-        <mat-label i18n="@@standards.tree.risk">Risque si absente</mat-label>
+        <mat-label i18n="@@standards.tree.audit-priority">Ordre de vérification en audit</mat-label>
         <mat-select formControlName="riskIfMissing">
           <mat-option value="" i18n="@@common.none">—</mat-option>
-          <mat-option *ngFor="let r of risks" [value]="r">{{ r }}</mat-option>
+          <mat-option *ngFor="let r of risks" [value]="r">{{ priorityLabel(r) }}</mat-option>
         </mat-select>
+        <mat-hint i18n="@@standards.tree.audit-priority-hint">Par quoi commencer le programme d'audit (ISO 19011, 6.3). Ne gradue pas les constats : la gravité se décide sur la preuve trouvée.</mat-hint>
       </mat-form-field>
     </div>
 

@@ -97,20 +97,43 @@ class MockAuditClauseTest {
                 .isGreaterThan(clause(ObligationLevel.MUST, RiskLevel.HIGH, 4, 4).riskScore());
     }
 
+    /**
+     * Les deux degrés de l'ISO/IEC 17021-1, et ce qui les sépare : la preuve
+     * trouvée dans la clause, non le risque étiqueté d'avance sur elle.
+     */
     @Test
-    void criticality_grid() {
-        assertThat(clause(ObligationLevel.MUST, RiskLevel.HIGH, 2, 0).criticality())
-                .isEqualTo(MockAuditCriticality.MAJOR);
-        assertThat(clause(ObligationLevel.MUST, RiskLevel.CRITICAL, 2, 1).criticality())
-                .isEqualTo(MockAuditCriticality.MAJOR);
-        assertThat(clause(ObligationLevel.MUST, RiskLevel.MEDIUM, 2, 0).criticality())
-                .isEqualTo(MockAuditCriticality.MINOR);
+    void criticality_suitLesDefinitionsDu17021() {
+        // Clause obligatoire sans aucune preuve : la disposition est absente.
         assertThat(clause(ObligationLevel.MUST, RiskLevel.LOW, 2, 0).criticality())
+                .isEqualTo(MockAuditCriticality.MAJOR);
+        // Clause obligatoire démontrée en partie : manquement isolé.
+        assertThat(clause(ObligationLevel.MUST, RiskLevel.CRITICAL, 2, 1).criticality())
                 .isEqualTo(MockAuditCriticality.MINOR);
+        // Recommandation : jamais une non-conformité.
         assertThat(clause(ObligationLevel.SHOULD, RiskLevel.CRITICAL, 2, 0).criticality())
                 .isEqualTo(MockAuditCriticality.OBSERVATION);
+        assertThat(clause(ObligationLevel.MAY, RiskLevel.CRITICAL, 2, 0).criticality())
+                .isEqualTo(MockAuditCriticality.OBSERVATION);
+        // Clause couverte : rien à reprocher.
         assertThat(clause(ObligationLevel.MUST, RiskLevel.CRITICAL, 2, 2).criticality())
                 .isEqualTo(MockAuditCriticality.OBSERVATION);
+    }
+
+    /**
+     * Le risque étiqueté sur la clause ne gradue plus rien : à état de preuve
+     * égal, les quatre niveaux rendent le même constat. C'est la régression que
+     * ce banc garde — une clause à risque faible, sans preuve, est majeure.
+     */
+    @Test
+    void criticality_ignoreLeNiveauDeRisque() {
+        for (RiskLevel r : RiskLevel.values()) {
+            assertThat(clause(ObligationLevel.MUST, r, 3, 0).criticality())
+                    .as("sans preuve, risque %s", r)
+                    .isEqualTo(MockAuditCriticality.MAJOR);
+            assertThat(clause(ObligationLevel.MUST, r, 3, 2).criticality())
+                    .as("preuve partielle, risque %s", r)
+                    .isEqualTo(MockAuditCriticality.MINOR);
+        }
     }
 
     @Test

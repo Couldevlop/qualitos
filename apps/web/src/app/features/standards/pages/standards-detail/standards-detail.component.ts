@@ -605,6 +605,61 @@ export class StandardsDetailComponent implements OnInit {
         : $localize`:@@standards.detail.finding-observation:Observation`;
   }
 
+  /**
+   * Le verbe de la norme, en clair.
+   *
+   * <p>La ligne d'exigence affichait « MUST », « SHOULD », « MAY » — des codes
+   * d'énumération, non traduits, posés à cóté du texte d'une clause ISO. Or ce
+   * verbe n'est pas une étiquette interne : les Directives ISO/IEC, Partie 2,
+   * lui donnent un sens opposable — « doit » énonce une exigence, « devrait »
+   * une recommandation, « peut » une permission. C'est lui qui décide si un
+   * manquement peut être une non-conformité ; il mérite d'être lisible.
+   */
+  obligationVerbLabel(ob: string | undefined | null): string {
+    if (ob === 'MUST') return $localize`:@@standards.detail.obligation-must:Exigée`;
+    if (ob === 'SHOULD') return $localize`:@@standards.detail.obligation-should:Recommandée`;
+    if (ob === 'MAY') return $localize`:@@standards.detail.obligation-may:Facultative`;
+    return ob ? String(ob) : '—';
+  }
+
+  /** Ce que le verbe engage, au survol de l'étiquette. */
+  obligationVerbHint(ob: string | undefined | null): string {
+    if (ob === 'MUST') {
+      return $localize`:@@standards.detail.obligation-must-hint:La norme dit « doit » : son manquement est une non-conformité.`;
+    }
+    if (ob === 'SHOULD') {
+      return $localize`:@@standards.detail.obligation-should-hint:La norme dit « devrait » : son manquement n'est pas une non-conformité, mais une observation.`;
+    }
+    return $localize`:@@standards.detail.obligation-may-hint:La norme dit « peut » : la disposition est permise, jamais exigible.`;
+  }
+
+  /**
+   * Le niveau de risque de l'exigence, dit pour ce qu'il est : un ordre de
+   * passage dans le programme d'audit, pas une gravité de constat.
+   *
+   * <p>La ligne affichait « CRITICAL » en rouge, contre le texte d'une clause ISO
+   * — et aucune norme ne publie cette échelle à quatre niveaux. Le client lisait
+   * donc, sur une clause, un mot que son auditeur n'emploiera pas et un degré
+   * qu'il ne retiendra pas : la gravité d'un constat se décide sur la preuve
+   * trouvée (ISO/IEC 17021-1, 3.12 et 3.13), jamais d'avance sur la clause. Ce
+   * qui reste légitime, et que l'étiquette dit maintenant, c'est l'approche par
+   * les risques du programme d'audit (ISO 19011, 6.3) : par quoi commencer.
+   */
+  auditPriorityLabel(risk: string | undefined | null): string {
+    if (risk === 'CRITICAL' || risk === 'HIGH') {
+      return $localize`:@@standards.detail.audit-priority-high:À vérifier en premier`;
+    }
+    if (risk === 'MEDIUM') {
+      return $localize`:@@standards.detail.audit-priority-medium:À vérifier`;
+    }
+    return $localize`:@@standards.detail.audit-priority-low:À vérifier en dernier`;
+  }
+
+  /** Pourquoi cette étiquette n'est pas une gravité, au survol. */
+  get auditPriorityHint(): string {
+    return $localize`:@@standards.detail.audit-priority-hint:Ordre de passage dans le programme d'audit (ISO 19011, 6.3). Ce n'est pas la gravité d'un constat : celle-ci se décide sur la preuve trouvée.`;
+  }
+
   ncClass(type: string): string {
     return type === 'MAJOR' ? 'sev-crit' : type === 'MINOR' ? 'sev-maj' : 'sev-min';
   }

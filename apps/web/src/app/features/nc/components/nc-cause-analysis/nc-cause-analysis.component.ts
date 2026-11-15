@@ -9,8 +9,16 @@ import { buildBranchViews, toFishboneBranches } from '../../../ishikawa/ishikawa
 import { IshikawaDiagramResponse } from '../../../ishikawa/ishikawa.types';
 
 /**
- * L'analyse de cause d'un écart, <b>dessinée</b> : les chaînes 5 Pourquoi en
- * cascade, les diagrammes d'Ishikawa en arête de poisson.
+ * L'analyse de cause d'un écart, <b>dessinée</b> : les diagrammes d'Ishikawa en
+ * arête de poisson, puis les chaînes 5 Pourquoi en cascade.
+ *
+ * <p>Deux outils, deux cases, un seul D. Ils n'ont pas de discipline propre dans
+ * le 8D : la méthode de Ford place en D4 la recherche <i>et</i> la vérification
+ * de la cause racine, et les deux outils y travaillent. Ils n'y font pourtant
+ * pas la même chose, d'où l'ordre — l'Ishikawa ouvre l'éventail des causes
+ * possibles, les 5 Pourquoi creusent une branche jusqu'à la cause racine et la
+ * vérifient. Chacun garde sa case, son titre et sa figure ; la figure dit tout
+ * ce qu'une phrase redirait, et la phrase a été retirée.
  *
  * <p>Composant d'affichage pur, sans appel réseau : l'écran appelant fournit ce
  * qu'il a chargé. Deux écrans le montrent — la fiche de l'écart (ADR 0114) et le

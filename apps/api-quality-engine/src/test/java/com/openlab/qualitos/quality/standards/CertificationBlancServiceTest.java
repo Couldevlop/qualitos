@@ -82,9 +82,9 @@ class CertificationBlancServiceTest {
 
     @Test
     void onlyMinorNc_isCertifiableUnderReserve() {
-        // Documentation OK ; un MUST risque MOYEN non couvert en §8 → NC mineure.
+        // Documentation OK ; en §8, une clause démontrée en partie → NC mineure.
         stubAlignment(fullSections());
-        stubAudit(List.of(finding("8", "8.2", "8.2.1", ObligationLevel.MUST, RiskLevel.MEDIUM)));
+        stubAudit(List.of(finding("8", "8.2", "8.2.1", ObligationLevel.MUST, FindingGrade.MINOR)));
 
         var r = service.simulate(ADOPTION);
 
@@ -101,9 +101,9 @@ class CertificationBlancServiceTest {
 
     @Test
     void majorNcOnSite_isNotCertifiable_noCertificate() {
-        // Documentation OK ; un MUST risque ÉLEVÉ non couvert en §8 → NC majeure terrain.
+        // Documentation OK ; en §8, une clause sans aucune preuve → NC majeure terrain.
         stubAlignment(fullSections());
-        stubAudit(List.of(finding("8", "8.7", "8.7", ObligationLevel.MUST, RiskLevel.CRITICAL)));
+        stubAudit(List.of(finding("8", "8.7", "8.7", ObligationLevel.MUST, FindingGrade.MAJOR)));
 
         var r = service.simulate(ADOPTION);
 
@@ -190,13 +190,17 @@ class CertificationBlancServiceTest {
                 total == 0 ? 0 : covered * 100d / total, total, covered, List.of());
     }
 
+    /**
+     * Un écart tel que l'analyse d'écarts le rend : <b>déjà classé</b>. La
+     * certification à blanc ne reclasse plus (ADR 0120) — elle compte, répartit
+     * par étape et décide. L'aide fabriquait ici sa propre sévérité, et pouvait
+     * produire un « CRITICAL » qu'aucun certificateur n'écrit.
+     */
     private StandardsDto.AuditFinding finding(String section, String clause, String req,
-                                              ObligationLevel obligation, RiskLevel risk) {
-        String severity = obligation == ObligationLevel.MUST
-                && (risk == RiskLevel.HIGH || risk == RiskLevel.CRITICAL) ? "CRITICAL"
-                : (obligation == ObligationLevel.MUST ? "MAJOR" : "MINOR");
+                                              ObligationLevel obligation, FindingGrade grade) {
         return new StandardsDto.AuditFinding(
                 UUID.randomUUID(), section, clause, req, "Exigence " + req,
-                obligation, risk, severity, "Procédure", "Couvrir " + req, 1);
+                obligation, null, grade.name(), "Procédure", "Couvrir " + req,
+                grade.remediationPriority());
     }
 }

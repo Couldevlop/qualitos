@@ -363,6 +363,67 @@ describe('StandardsDetailComponent', () => {
     });
   });
 
+  /**
+   * Les mots d'un certificateur, et leurs critères (ADR 0120).
+   *
+   * <p>La fiche posait des codes bruts contre le texte d'une clause ISO :
+   * « MUST » sur l'exigence, « CRITICAL » en rouge à cóté. Le premier n'est
+   * traduit dans aucune langue ; le second n'existe dans aucune norme, et
+   * l'œil en retenait une gravité que la plateforme n'avait pas constatée.
+   */
+  describe('les degrés, dans les mots de la norme', () => {
+
+    it("dit le verbe de la norme au lieu du code de l'énumération", () => {
+      fixture.detectChanges();
+
+      const badge = un('req-obligation');
+      expect(badge!.textContent!.trim()).toBe('Exigée');
+      expect(badge!.textContent).not.toContain('MUST');
+      expect(badge!.getAttribute('title')).toContain('doit');
+    });
+
+    it("nomme l'ordre de vérification en audit, et non une gravité « critique »", () => {
+      svc.getStandardDetail.and.returnValue(of(detail({
+        sections: [{ ...SECTION, clauses: [{ ...CLAUSE, requirements: [
+          { ...REQUIREMENT, riskIfMissing: 'CRITICAL' } as RequirementDetail
+        ] }] }] as SectionDetail[]
+      })));
+      fixture.detectChanges();
+
+      const badge = un('req-audit-priority');
+      expect(badge!.textContent!.trim()).toBe('À vérifier en premier');
+      expect(badge!.textContent).not.toContain('CRITICAL');
+      // Et l'étiquette dit elle-même ce qu'elle n'est pas.
+      expect(badge!.getAttribute('title')).toContain('ISO 19011');
+      expect(badge!.getAttribute('title')).toContain("gravité d'un constat");
+    });
+
+    it('définit les trois degrés là où le tableau des écarts les emploie', () => {
+      svc.getAuditBlanc.and.returnValue(of({
+        tenantStandardId: 'ad1', standardId: 's1', standardCode: 'ISO-9001',
+        standardName: 'ISO 9001', generatedAt: '2026-11-14T08:00:00Z',
+        readinessScore: 40, totalRequirements: 2, coveredRequirements: 0,
+        mustTotal: 2, mustCovered: 0, majorGaps: 1, minorGaps: 0, observations: 0,
+        verdict: 'NON PRÊT', findings: [{
+          requirementId: 'r1', sectionCode: '1', clauseCode: '1.1',
+          requirementCode: '1.1.1', requirementText: 'Le programme est revu',
+          obligation: 'MUST', findingSeverity: 'MAJOR',
+          remediationAction: 'Couvrir 1.1.1', remediationPriority: 1
+        }]
+      } as unknown as AuditBlancReport));
+      ouvrirAuditBlanc();
+
+      const legende = un('degres-definition')!.textContent!;
+      // Le critère, pas seulement le mot : c'est ce qu'un client prépare.
+      expect(legende).toContain('aucune preuve dans toute la clause');
+      expect(legende).toContain('ISO/IEC 17021-1, 3.12');
+      expect(legende).toContain("démontrée en partie");
+      expect(legende).toContain("n'est pas une non-conformité");
+      // Et jamais le quatrième degré inexistant.
+      expect(legende).not.toContain('critique');
+    });
+  });
+
   describe('definition des indicateurs (regle 18.2 #8)', () => {
 
     it('dit la formule de chaque indicateur et montre son numerateur', () => {

@@ -44,6 +44,41 @@ export class TreeNodeDialogComponent {
   readonly obligations: ObligationLevel[] = ['MUST', 'SHOULD', 'MAY'];
   readonly risks: RiskLevel[] = ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'];
 
+  /**
+   * Le verbe de la norme, en mots (Directives ISO/IEC, Partie 2).
+   *
+   * <p>Le sélecteur proposait « MUST », « SHOULD », « MAY » : l'éditeur du
+   * catalogue choisissait un code sans lire ce qu'il engage, alors que ce choix
+   * décide si un manquement à cette exigence sera une non-conformité.
+   */
+  obligationLabel(ob: ObligationLevel): string {
+    if (ob === 'MUST') {
+      return $localize`:@@standards.tree.obligation-must:Exigée — la norme dit « doit »`;
+    }
+    if (ob === 'SHOULD') {
+      return $localize`:@@standards.tree.obligation-should:Recommandée — la norme dit « devrait »`;
+    }
+    return $localize`:@@standards.tree.obligation-may:Facultative — la norme dit « peut »`;
+  }
+
+  /**
+   * L'ordre de passage dans le programme d'audit (ISO 19011, 6.3).
+   *
+   * <p>Le champ s'appelait « Risque si absente » et proposait quatre codes, dont
+   * « CRITICAL ». Il ne gradue plus aucun constat (ADR 0120) : la gravité se
+   * décide sur la preuve trouvée. Ce qu'il dit, et qu'il dit maintenant, c'est
+   * par quelles clauses commencer.
+   */
+  priorityLabel(risk: RiskLevel): string {
+    if (risk === 'CRITICAL' || risk === 'HIGH') {
+      return $localize`:@@standards.tree.priority-high:À vérifier en premier`;
+    }
+    if (risk === 'MEDIUM') {
+      return $localize`:@@standards.tree.priority-medium:À vérifier`;
+    }
+    return $localize`:@@standards.tree.priority-low:À vérifier en dernier`;
+  }
+
   readonly form = this.fb.nonNullable.group({
     code: ['', [Validators.required, Validators.maxLength(CODE_MAX[this.data.level])]],
     title: [''],

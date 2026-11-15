@@ -154,9 +154,6 @@ TRANSLATIONS = {
         '要求事項の本文は必須です。', '要求正文为必填项。'),
     'standards.tree.obligation': (
         'Obligation', 'Obligation', 'Obligación', 'الإلزام', '義務レベル', '强制程度'),
-    'standards.tree.risk': (
-        'Risque si absente', 'Risk if missing', 'Riesgo si falta',
-        'الخطر عند غيابه', '欠如した場合のリスク', '缺失时的风险'),
     'standards.tree.evidence': (
         'Preuve attendue (optionnelle)', 'Expected evidence (optional)',
         'Evidencia esperada (opcional)', 'الدليل المتوقع (اختياري)',

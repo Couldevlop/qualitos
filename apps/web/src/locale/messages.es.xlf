@@ -7647,8 +7647,8 @@ Portal de clientes</target>
         <target state="translated">Todavia no se ha escrito ninguna accion de esta naturaleza para esta desviacion.</target>
       </trans-unit>
       <trans-unit id="nc.8d.live-note" datatype="html">
-        <source>État actuel du dossier, affiché à côté du texte agrégé. Le PDF, lui, ne porte que le texte figé à l'émission.</source>
-        <target state="translated">Estado actual del expediente, mostrado junto al texto agregado. El PDF solo contiene el texto congelado en la emision.</target>
+        <source>État actuel du dossier. Le PDF émis, lui, ne porte que le texte figé à l'émission.</source>
+        <target state="translated">Estado actual del expediente. El PDF emitido solo contiene el texto congelado en la emision.</target>
       </trans-unit>
       <trans-unit id="capa.open.missing" datatype="html">
         <source>À compléter avant d'enregistrer : <x id="champs"/></source>
@@ -14339,6 +14339,90 @@ Datos de contacto profesionales</target>
       <trans-unit id="documents.create.file-required" datatype="html">
         <source>Un document se crée avec son fichier : joignez-le.</source>
         <target state="translated">Un documento se crea con su archivo: adjúntelo.</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.obligation-must" datatype="html">
+        <source>Exigée</source>
+        <target state="translated">Exigida</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.obligation-should" datatype="html">
+        <source>Recommandée</source>
+        <target state="translated">Recomendada</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.obligation-may" datatype="html">
+        <source>Facultative</source>
+        <target state="translated">Facultativa</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.obligation-must-hint" datatype="html">
+        <source>La norme dit « doit » : son manquement est une non-conformité.</source>
+        <target state="translated">La norma dice «debe»: su incumplimiento es una no conformidad.</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.obligation-should-hint" datatype="html">
+        <source>La norme dit « devrait » : son manquement n'est pas une non-conformité, mais une observation.</source>
+        <target state="translated">La norma dice «debería»: su incumplimiento no es una no conformidad, sino una observación.</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.obligation-may-hint" datatype="html">
+        <source>La norme dit « peut » : la disposition est permise, jamais exigible.</source>
+        <target state="translated">La norma dice «puede»: la disposición está permitida, nunca es exigible.</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.audit-priority-high" datatype="html">
+        <source>À vérifier en premier</source>
+        <target state="translated">Verificar primero</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.audit-priority-medium" datatype="html">
+        <source>À vérifier</source>
+        <target state="translated">Verificar</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.audit-priority-low" datatype="html">
+        <source>À vérifier en dernier</source>
+        <target state="translated">Verificar al final</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.audit-priority-hint" datatype="html">
+        <source>Ordre de passage dans le programme d'audit (ISO 19011, 6.3). Ce n'est pas la gravité d'un constat : celle-ci se décide sur la preuve trouvée.</source>
+        <target state="translated">Orden de paso en el programa de auditoría (ISO 19011, 6.3). No es la gravedad de un hallazgo: esa se decide sobre la evidencia encontrada.</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.degree-major-def" datatype="html">
+        <source>La disposition demandée est absente : aucune preuve dans toute la clause. L'aptitude du système à atteindre ses résultats est en cause, et le certificat reste bloqué jusqu'à sa levée (ISO/IEC 17021-1, 3.12).</source>
+        <target state="translated">La disposición exigida está ausente: ninguna evidencia en toda la cláusula. La capacidad del sistema para alcanzar sus resultados queda en cuestión y el certificado sigue bloqueado hasta su cierre (ISO/IEC 17021-1, 3.12).</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.degree-minor-def" datatype="html">
+        <source>La disposition existe mais n'est pas tenue partout : la clause est démontrée en partie. Manquement isolé, qui n'empêche pas le certificat et demande un plan d'actions (3.13).</source>
+        <target state="translated">La disposición existe pero no se mantiene en todas partes: la cláusula está evidenciada en parte. Incumplimiento aislado, que no impide el certificado y exige un plan de acciones (3.13).</target>
+      </trans-unit>
+      <trans-unit id="standards.detail.degree-observation-def" datatype="html">
+        <source>Ce que la norme recommande, et non ce qu'elle exige. Ce n'est pas une non-conformité : une piste d'amélioration, qui ne se répond pas à l'auditeur (ISO 19011).</source>
+        <target state="translated">Lo que la norma recomienda, no lo que exige. No es una no conformidad: una oportunidad de mejora, que no se responde al auditor (ISO 19011).</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.obligation-must" datatype="html">
+        <source>Exigée — la norme dit « doit »</source>
+        <target state="translated">Exigida — la norma dice «debe»</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.obligation-should" datatype="html">
+        <source>Recommandée — la norme dit « devrait »</source>
+        <target state="translated">Recomendada — la norma dice «debería»</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.obligation-may" datatype="html">
+        <source>Facultative — la norme dit « peut »</source>
+        <target state="translated">Facultativa — la norma dice «puede»</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.priority-high" datatype="html">
+        <source>À vérifier en premier</source>
+        <target state="translated">Verificar primero</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.priority-medium" datatype="html">
+        <source>À vérifier</source>
+        <target state="translated">Verificar</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.priority-low" datatype="html">
+        <source>À vérifier en dernier</source>
+        <target state="translated">Verificar al final</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.audit-priority" datatype="html">
+        <source>Ordre de vérification en audit</source>
+        <target state="translated">Orden de verificación en auditoría</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.audit-priority-hint" datatype="html">
+        <source>Par quoi commencer le programme d'audit (ISO 19011, 6.3). Ne gradue pas les constats : la gravité se décide sur la preuve trouvée.</source>
+        <target state="translated">Por dónde empezar el programa de auditoría (ISO 19011, 6.3). No gradúa los hallazgos: la gravedad se decide sobre la evidencia encontrada.</target>
       </trans-unit>
       <trans-unit id="dpia.create.hint" datatype="html">
         <source>L'Art. 35 RGPD impose une DPIA pour les traitements présentant un</source>
@@ -33727,10 +33811,6 @@ India (centro de servicio)</target>
       <trans-unit id="standards.tree.obligation" datatype="html">
         <source>Obligation</source>
         <target state="translated">Obligación</target>
-      </trans-unit>
-      <trans-unit id="standards.tree.risk" datatype="html">
-        <source>Risque si absente</source>
-        <target state="translated">Riesgo si falta</target>
       </trans-unit>
       <trans-unit id="standards.tree.evidence" datatype="html">
         <source>Preuve attendue (optionnelle)</source>
