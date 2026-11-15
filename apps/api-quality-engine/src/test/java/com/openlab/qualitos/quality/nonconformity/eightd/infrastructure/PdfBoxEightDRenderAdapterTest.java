@@ -231,6 +231,29 @@ class PdfBoxEightDRenderAdapterTest {
         assertThat(texteDe(pdf)).contains("Why 30");
     }
 
+    /**
+     * UNE CAUSE LONGUE SE REPLIE, elle ne se TRONQUE pas.
+     *
+     * <p>Le premier trace coupait a 26 caracteres : « Joint use au-dela de sa
+     * duree de vie » sortait « Joint use au-dela de sa », ampute en plein mot et
+     * sans rien qui le signale -- un lecteur du rapport ne pouvait pas savoir
+     * qu'il manquait la moitie de la cause. Le repli se mesure desormais a la
+     * police, donc le DERNIER mot doit se retrouver dans le PDF.
+     */
+    @Test
+    void une_cause_longue_se_replie_au_lieu_d_etre_tronquee() throws IOException {
+        EightDSnapshot.Figure figure = new EightDSnapshot.Figure(
+                EightDSnapshot.FigureKind.FISHBONE, "Fuite", List.of(
+                        new EightDSnapshot.Node("MATERIEL",
+                                "Joint use au-dela de sa duree de vie nominale", 1)));
+
+        String texte = texteDe(renderer.render(avecFigure(figure), URL));
+
+        assertThat(texte).contains("Joint use");
+        assertThat(texte).as("le dernier mot de la cause ne doit pas disparaitre")
+                .contains("nominale");
+    }
+
     // ---------- fixtures ----------
 
     /** Un instantane complet dont le D4 porte la figure donnee, et aucune ligne. */

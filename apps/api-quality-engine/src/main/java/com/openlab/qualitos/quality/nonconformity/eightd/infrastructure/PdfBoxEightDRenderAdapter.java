@@ -338,63 +338,125 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
                     .add(noeud.label());
         }
 
-        // Le cote le plus charge commande la hauteur : les branches paires vont
-        // en haut, les impaires en bas.
+        float gauche = MARGIN + 18;
+        float teteLargeur = 108f;
+        // La tete est HORS de la zone des branches, pas superposee a elle : une
+        // branche qui finissait sous le cadre de l'enonce le rendait illisible.
+        float droite = MARGIN + CONTENT_W - teteLargeur - 14;
+
+        int nb = parBranche.size();
+        // La zone des branches s'arrete AVANT la tete : la colonne de texte de
+        // la derniere branche doit tenir en entier, sinon elle passe sous
+        // l'enonce du probleme.
+        float pas = (droite - gauche - 24f) / Math.max(1, nb);
+        // La largeur d'ECRITURE d'une colonne, en points : c'est elle qui decide
+        // du repli. Compter en caracteres coupait « Joint use au-dela de sa
+        // duree de vie » en plein mot, sans meme le signaler. La colonne s'arrete
+        // avant la pointe de la branche SUIVANTE.
+        float colonne = Math.max(38f, pas - 23f);
+
+        // Chaque branche porte ses causes REPLIEES sur sa colonne. La hauteur se
+        // calcule donc sur le nombre de LIGNES, pas de causes : sinon deux
+        // causes longues se chevauchaient des que l'une tenait sur deux lignes.
+        Map<String, List<String>> lignesParBranche = new LinkedHashMap<>();
         int hautMax = 0;
         int basMax = 0;
         int indice = 0;
-        for (List<String> causes : parBranche.values()) {
+        for (Map.Entry<String, List<String>> branche : parBranche.entrySet()) {
+            List<String> lignes = new ArrayList<>();
+            for (String cause : branche.getValue()) {
+                lignes.addAll(replier(cause, regular, 7f, colonne));
+            }
+            lignesParBranche.put(branche.getKey(), lignes);
             if (indice % 2 == 0) {
-                hautMax = Math.max(hautMax, causes.size());
+                hautMax = Math.max(hautMax, lignes.size());
             } else {
-                basMax = Math.max(basMax, causes.size());
+                basMax = Math.max(basMax, lignes.size());
             }
             indice++;
         }
-        float demiHaut = 26f + 10f * hautMax;
-        float demiBas = 26f + 10f * basMax;
+        float demiHaut = 30f + 9f * hautMax;
+        float demiBas = 30f + 9f * basMax;
         float hauteur = demiHaut + demiBas;
         page = place(doc, page, hauteur + 12f);
 
-        float gauche = MARGIN + 18;
-        float teteLargeur = 108f;
-        float droite = MARGIN + CONTENT_W - teteLargeur - 8;
         float epine = page.y - demiHaut;
-
         ligne(page.flux, INK, gauche, epine, droite, epine, 1.2f);
-        // La tete : l'enonce du probleme, la ou l'epine aboutit.
-        rect(page.flux, PANEL, droite, epine - 16, teteLargeur, 32);
-        rect(page.flux, INDIGO, droite, epine - 16, 2.5f, 32);
-        float ligneTete = epine + 6;
-        for (String morceau : couperA(figure.caption(), 22)) {
-            if (ligneTete < epine - 14) {
-                break;
-            }
+
+        // La tete : l'enonce du probleme, la ou l'epine aboutit. Sa hauteur suit
+        // le nombre de lignes repliees, pour ne pas tronquer l'enonce.
+        List<String> enonce = replier(figure.caption(), regular, 7.5f, teteLargeur - 14f);
+        float teteHauteur = Math.max(28f, 6f + 9f * enonce.size());
+        rect(page.flux, PANEL, droite, epine - teteHauteur / 2, teteLargeur, teteHauteur);
+        rect(page.flux, INDIGO, droite, epine - teteHauteur / 2, 2.5f, teteHauteur);
+        float ligneTete = epine + teteHauteur / 2 - 10f;
+        for (String morceau : enonce) {
             texte(page.flux, regular, 7.5f, INK, droite + 7, ligneTete, morceau);
             ligneTete -= 9f;
         }
 
-        int nb = parBranche.size();
-        float pas = (droite - gauche - 24f) / Math.max(1, nb);
         indice = 0;
-        for (Map.Entry<String, List<String>> branche : parBranche.entrySet()) {
+        for (Map.Entry<String, List<String>> branche : lignesParBranche.entrySet()) {
             boolean haut = indice % 2 == 0;
-            float pied = gauche + 12f + pas * indice + pas * 0.5f;
-            float pointe = pied - 26f;
-            float sommet = haut ? epine + demiHaut - 14f : epine - demiBas + 14f;
+            float pied = gauche + 24f + pas * indice;
+            float pointe = pied - 20f;
+            float sommet = haut ? epine + demiHaut - 12f : epine - demiBas + 12f;
             ligne(page.flux, MUTED, pied, epine, pointe, sommet, 0.9f);
-            texte(page.flux, bold, 7.5f, INDIGO, pointe - 4, haut ? sommet + 4 : sommet - 9,
+            // Le nom de la categorie se pose a la POINTE, au bout de sa branche.
+            texte(page.flux, bold, 7.5f, INDIGO, pointe, haut ? sommet + 4 : sommet - 9,
                     branche.getKey());
-            float causeY = haut ? sommet - 6f : sommet + 12f;
-            for (String cause : branche.getValue()) {
-                texte(page.flux, regular, 7f, INK, pointe + 2, causeY,
-                        couperA(cause, 26).get(0));
-                causeY += haut ? -9f : 9f;
+            // Les causes s'ecrivent a DROITE du pied, donc entierement hors du
+            // trait oblique : ecrites a la pointe, elles etaient barrees par leur
+            // propre branche. Et elles se lisent toujours de HAUT en BAS, des
+            // deux cotes de l'epine -- en bas, les empiler vers le haut faisait
+            // lire la derniere ligne en premier.
+            float causeY = haut ? sommet - 9f : epine - 12f;
+            for (String ligne : branche.getValue()) {
+                texte(page.flux, regular, 7f, INK, pied + 3f, causeY, ligne);
+                causeY -= 9f;
             }
             indice++;
         }
         page.y -= hauteur + 6f;
         return page;
+    }
+
+    /**
+     * Replie un libelle sur une largeur donnee EN POINTS, mesuree a la police.
+     *
+     * <p>Compter en caracteres coupait les libelles en plein mot et sans le
+     * dire : la colonne d'une branche d'arete est etroite, et c'est la police
+     * qui decide ce qui y tient. Un mot plus large que la colonne est laisse
+     * entier et depassera -- le tronquer perdrait l'information sans avertir.
+     */
+    private List<String> replier(String valeur, PDType1Font font, float taille, float largeur)
+            throws IOException {
+        List<String> lignes = new ArrayList<>();
+        String reste = valeur == null ? "" : valeur.strip();
+        if (reste.isEmpty()) {
+            lignes.add("");
+            return lignes;
+        }
+        StringBuilder courante = new StringBuilder();
+        for (String mot : reste.split("\s+")) {
+            String essai = courante.isEmpty() ? mot : courante + " " + mot;
+            if (!courante.isEmpty() && largeurDe(essai, font, taille) > largeur) {
+                lignes.add(courante.toString());
+                courante = new StringBuilder(mot);
+            } else {
+                courante.setLength(0);
+                courante.append(essai);
+            }
+        }
+        if (!courante.isEmpty()) {
+            lignes.add(courante.toString());
+        }
+        return lignes;
+    }
+
+    /** La largeur du texte REELLEMENT ecrit, c'est-a-dire apres degradation. */
+    private float largeurDe(String s, PDType1Font font, float taille) throws IOException {
+        return font.getStringWidth(sanitize(s)) / 1000f * taille;
     }
 
     /** Coupe sur les mots a une largeur donnee ; au moins un morceau, jamais nul. */

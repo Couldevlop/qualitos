@@ -102,9 +102,10 @@ relit sans elles, et rend exactement les mêmes octets qu'au jour de son sceau.
 - ✅ Le bouton éteint s'explique, et la phrase dit quoi faire.
 - ✅ Le 8D envoyé au client montre l'arête et la descente, pas une liste.
 - ✅ Les rapports déjà scellés restent vérifiables au bit près.
-- ⚠ Les figures du PDF coupent les étiquettes longues (26 caractères par cause) :
-  une étiquette de branche doit se lire d'un coup d'œil, et le texte complet
-  reste sur la fiche de l'écart.
+- ⚠ Les étiquettes longues des branches se **replient** sur la largeur de leur
+  colonne, mesurée à la police — elles ne sont pas tronquées. Un mot plus large
+  que la colonne entière dépassera plutôt que d'être coupé : perdre la moitié
+  d'une cause sans le dire est pire qu'un débord visible.
 - ⚠ Les sous-causes ne sont pas hiérarchisées dans l'arête : la source les livre
   à plat, et inventer une hiérarchie absente dessinerait un diagramme que
   personne n'a construit.
