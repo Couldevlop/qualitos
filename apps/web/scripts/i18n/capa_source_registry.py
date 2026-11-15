@@ -23,6 +23,16 @@ TRANSLATIONS = {
         '外部不適合（顧客苦情）',
         '外部不合格（客户投诉）'),
 
+    # La liste ne propose que « interne » : le serveur lit l'origine SUR L'ECART
+    # cite, faute de quoi le champ annoncerait autre chose que ce qui sera ecrit.
+    'capa.create.source-nc-derivee': (
+        "Interne ou externe : lue sur l’écart choisi.",
+        'Internal or external: read from the selected non-conformity.',
+        'Interna o externa: se lee en la no conformidad elegida.',
+        'داخلية أو خارجية: تُقرأ من عدم المطابقة المختارة.',
+        '内部か外部か：選んだ不適合から読み取ります。',
+        '内部或外部：取自所选的不合格。'),
+
     # --- la reference, choisie au registre ----------------------------------
     'capa.create.source-ref-required': (
         'Référence source', 'Source reference', 'Referencia de origen',

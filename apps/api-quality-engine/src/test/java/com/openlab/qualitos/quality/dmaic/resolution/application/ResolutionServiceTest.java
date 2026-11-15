@@ -53,6 +53,7 @@ class ResolutionServiceTest {
     static final byte[] PNG = {(byte) 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 1, 2};
 
     FakeSheets sheets;
+    FakeProjects projets;
     FakeSettings settings;
     FakePhotos photos;
     FakeStorage storage;
@@ -74,9 +75,7 @@ class ResolutionServiceTest {
             @Override public UUID requireTenantId() { return tenantCourant; }
             @Override public UUID requireActorId() { return ACTEUR; }
         };
-        ResolutionPorts.Projects projects = (t, p) -> t.equals(TENANT) && p.equals(PROJET)
-                ? Optional.of(new ResolutionPorts.ProjectHeader(PROJET, "Fissures carter", "Carters fissurés"))
-                : Optional.empty();
+        projets = new FakeProjects();
         ResolutionPorts.Ishikawas ishikawas = (t, id) -> t.equals(TENANT) && id.equals(ISHIKAWA);
         ResolutionPorts.Audit audit = new ResolutionPorts.Audit() {
             @Override public void sheetSaved(ResolutionSheet s, UUID a) { journal.add("saved"); }
@@ -85,7 +84,7 @@ class ResolutionServiceTest {
             @Override public void photoAdded(SheetPhoto p, UUID a) { journal.add("photo+" + p.slot()); }
             @Override public void photoRemoved(SheetPhoto p, UUID a) { journal.add("photo-" + p.slot()); }
         };
-        service = new ResolutionService(context, projects, sheets, settings, photos, storage, ishikawas, audit,
+        service = new ResolutionService(context, projets, sheets, settings, photos, storage, ishikawas, audit,
                 r -> {
                     rendu[0] = r;
                     return new byte[]{'%', 'P', 'D', 'F'};
@@ -327,6 +326,35 @@ class ResolutionServiceTest {
 
     // ---------- ports en mémoire ----------
 
+    /**
+     * Le projet, en memoire : il se lit dans son tenant, et la cloture
+     * automatique s’y inscrit comme en base — seul un projet encore ACTIVE
+     * se clot, et une seule fois.
+     */
+    static final class FakeProjects implements ResolutionPorts.Projects {
+        boolean actif = true;
+        int clotures;
+        Instant cloturerLe;
+
+        @Override
+        public Optional<ResolutionPorts.ProjectHeader> find(UUID tenantId, UUID projectId) {
+            return tenantId.equals(TENANT) && projectId.equals(PROJET)
+                    ? Optional.of(new ResolutionPorts.ProjectHeader(PROJET, "Fissures carter", "Carters fissurés"))
+                    : Optional.empty();
+        }
+
+        @Override
+        public boolean completeIfSettled(UUID tenantId, UUID projectId, Instant now) {
+            if (!actif) {
+                return false;
+            }
+            actif = false;
+            clotures++;
+            cloturerLe = now;
+            return true;
+        }
+    }
+
     static final class FakeSheets implements ResolutionPorts.Sheets {
         final Map<UUID, ResolutionSheet> store = new HashMap<>();
 
@@ -516,6 +544,49 @@ class ResolutionServiceTest {
 
         assertThat(service.completionBlockers(PROJET)).singleElement()
                 .asString().hasSizeLessThan(120).endsWith("… »");
+    }
+
+    // ---------- clôture automatique ----------
+
+    @Test
+    void uneFicheQuiNeRetientPlusRienClotLeProjetSansRevenirSurLaCharte() {
+        // La condition est celle du passage manuel : questionnaire complet et
+        // actions a 100 %. Remplie, elle clot le projet a l’enregistrement.
+        ResolutionContent c = avecActions(toutesLesReponses(),
+                new ActionLine(null, "Changer l’outil", null, ActionStatus.CLOSED, null, null, 100, null));
+
+        service.save(PROJET, c);
+
+        assertThat(projets.clotures).isEqualTo(1);
+        assertThat(projets.cloturerLe).isEqualTo(NOW);
+    }
+
+    @Test
+    void uneFicheIncompleteNeClotRien() {
+        service.save(PROJET, vide());
+
+        assertThat(projets.clotures).isZero();
+    }
+
+    @Test
+    void uneActionInacheveeNeClotRien() {
+        ResolutionContent c = avecActions(toutesLesReponses(),
+                new ActionLine(null, "Changer l’outil", null, ActionStatus.OPEN, null, null, 60, null));
+
+        service.save(PROJET, c);
+
+        assertThat(projets.clotures).isZero();
+    }
+
+    @Test
+    void unProjetDejaClosNEstPasRefermeAChaqueEnregistrement() {
+        ResolutionContent c = avecActions(toutesLesReponses(),
+                new ActionLine(null, "Changer l’outil", null, ActionStatus.CLOSED, null, null, 100, null));
+
+        service.save(PROJET, c);
+        service.save(PROJET, c);
+
+        assertThat(projets.clotures).isEqualTo(1);
     }
 
     /** Toutes les réponses du questionnaire de la plateforme, pour ne tester que les actions. */

@@ -353,6 +353,64 @@ class NcServiceTest {
         assertThat(n.getResolvedAt()).isNotNull();
     }
 
+    /**
+     * Resoudre, c est dire « ce qui devait etre fait l a ete ». Un dossier
+     * encore en cours dit l inverse sur la fiche voisine : l ecart passait
+     * « resolu » au-dessus d actions non executees.
+     */
+    @Test
+    void resolve_tantQuUnDossierALesActionsAMener_refuse() {
+        NonConformity n = nc(TENANT, NcStatus.ACTION_DEFINED);
+        UUID capaId = UUID.randomUUID();
+        n.setCapaCaseId(capaId);
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+        when(capaService.unexecutedCasesFor(capaId, n.getReference()))
+                .thenReturn(List.of("Remplacer le roulement de broche"));
+
+        assertThatThrownBy(() -> service.resolve(n.getId(), new NcDto.ResolveRequest("fait")))
+                .isInstanceOf(NcStateException.class)
+                // Le refus NOMME le dossier : sinon il faut aller le chercher.
+                .hasMessageContaining("Remplacer le roulement de broche");
+        assertThat(n.getStatus()).isEqualTo(NcStatus.ACTION_DEFINED);
+        verify(repo, never()).save(any());
+    }
+
+    /**
+     * La question part AVEC LA REFERENCE, et pas seulement avec le lien de
+     * l escalade : un dossier ouvert depuis la liste CAPA en citant l ecart
+     * retient la resolution au meme titre.
+     */
+    @Test
+    void resolve_interrogeAussiLesDossiersLiesParLaReference() {
+        NonConformity n = nc(TENANT, NcStatus.ACTION_DEFINED);
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+        when(capaService.unexecutedCasesFor(null, n.getReference()))
+                .thenReturn(List.of("Auditer le fournisseur"));
+
+        assertThatThrownBy(() -> service.resolve(n.getId(), new NcDto.ResolveRequest("fait")))
+                .isInstanceOf(NcStateException.class);
+        verify(capaService).unexecutedCasesFor(null, n.getReference());
+    }
+
+    /**
+     * Un dossier RESOLU ne retient pas la resolution de l ecart : ses actions
+     * sont executees, il reste a juger de leur efficacite, et c est la CLOTURE
+     * qui attend ce jugement (ADR 0108).
+     */
+    @Test
+    void resolve_dossierResolu_laisseResoudre() {
+        NonConformity n = nc(TENANT, NcStatus.ACTION_DEFINED);
+        UUID capaId = UUID.randomUUID();
+        n.setCapaCaseId(capaId);
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+        when(repo.save(n)).thenReturn(n);
+        when(capaService.unexecutedCasesFor(capaId, n.getReference())).thenReturn(List.of());
+
+        service.resolve(n.getId(), new NcDto.ResolveRequest("fait"));
+
+        assertThat(n.getStatus()).isEqualTo(NcStatus.RESOLVED);
+    }
+
     @Test
     void resolve_wrongState_throws() {
         NonConformity n = nc(TENANT, NcStatus.UNDER_ANALYSIS);

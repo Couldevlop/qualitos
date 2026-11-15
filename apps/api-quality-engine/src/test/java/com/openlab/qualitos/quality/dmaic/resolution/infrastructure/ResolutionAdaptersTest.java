@@ -3,8 +3,10 @@ package com.openlab.qualitos.quality.dmaic.resolution.infrastructure;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openlab.qualitos.quality.common.TenantContext;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
+import com.openlab.qualitos.quality.dmaic.DmaicPhase;
 import com.openlab.qualitos.quality.dmaic.DmaicProject;
 import com.openlab.qualitos.quality.dmaic.DmaicProjectRepository;
+import com.openlab.qualitos.quality.dmaic.DmaicStatus;
 import com.openlab.qualitos.quality.dmaic.resolution.application.ResolutionPorts;
 import com.openlab.qualitos.quality.dmaic.resolution.domain.ActionLine;
 import com.openlab.qualitos.quality.dmaic.resolution.domain.ActionStatus;
@@ -182,6 +184,28 @@ class ResolutionAdaptersTest {
     SheetPhoto photo(int slot, String key) {
         return new SheetPhoto(null, tenant, projet, slot, key, "image/png", 42, null, UUID.randomUUID(),
                 Instant.now().truncatedTo(ChronoUnit.MILLIS));
+    }
+
+    @Test
+    void laClotureAutomatiqueNeToucheQuUnProjetActifEtDeSonTenant() {
+        ResolutionAdapters.Projects projects = new ResolutionAdapters.Projects(projectJpa);
+        Instant maintenant = Instant.parse("2026-10-24T09:00:00Z");
+
+        // Un autre tenant ne clot pas le projet d’autrui.
+        assertThat(projects.completeIfSettled(UUID.randomUUID(), projet, maintenant)).isFalse();
+
+        // Actif : la cloture s’inscrit, et la phase passe a CONTROL — un projet
+        // clos en phase « Mesurer » se lirait comme un abandon.
+        assertThat(projects.completeIfSettled(tenant, projet, maintenant)).isTrue();
+        DmaicProject clos = projectJpa.findByIdAndTenantId(projet, tenant).orElseThrow();
+        assertThat(clos.getStatus()).isEqualTo(DmaicStatus.COMPLETED);
+        assertThat(clos.getPhase()).isEqualTo(DmaicPhase.CONTROL);
+        assertThat(clos.getCompletedAt()).isEqualTo(maintenant);
+
+        // Deja clos : rien ne bouge, et la date du premier passage est gardee.
+        assertThat(projects.completeIfSettled(tenant, projet, maintenant.plusSeconds(60))).isFalse();
+        assertThat(projectJpa.findByIdAndTenantId(projet, tenant).orElseThrow().getCompletedAt())
+                .isEqualTo(maintenant);
     }
 
     @Test

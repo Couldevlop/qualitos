@@ -7,6 +7,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import com.openlab.qualitos.quality.nonconformity.NcOrigin;
+import com.openlab.qualitos.quality.nonconformity.NonConformity;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 import org.mockito.InjectMocks;
@@ -1997,5 +1999,173 @@ class CapaServiceTest {
         assertThat(service.unsettledCasesFor(null, "  ")).isEmpty();
         verify(caseRepo, never()).findByTenantIdAndSourceTypeAndSourceRefOrderByCreatedAtAsc(
                 any(), any(), any());
+    }
+
+    // --- le dossier ouvert depuis la liste rejoint son ecart (V170) ---
+
+    /**
+     * Un dossier qui cite la reference d un ecart EXTERNE est marque externe,
+     * quelle que soit la source demandee.
+     *
+     * <p>La liste CAPA ne propose qu une source d ecart, « Non-conformite
+     * interne » : un dossier ouvert depuis la pour une reclamation client
+     * s affichait donc « interne » sur l ecran qui sert a repondre a ce client.
+     * L origine est deja ecrite sur l ecart ; on la lit au lieu de la demander.
+     */
+    @Test
+    void openCase_citantUnEcartExterne_prendLaSourceDeLEcart() {
+        NonConformity ecart = ecart("Ext-NC-2026-0004", NcOrigin.EXTERNAL);
+        stubEcart(ecart);
+        when(caseRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        CapaDto.CaseResponse r = service.openCase(
+                openReq(CapaType.CORRECTIVE, LocalDate.now().plusDays(10), "Pilote"),
+                CapaSourceType.NON_CONFORMITY, " Ext-NC-2026-0004 ");
+
+        assertThat(r.sourceType()).isEqualTo(CapaSourceType.EXTERNAL_NON_CONFORMITY);
+    }
+
+    /** Et l inverse : citer un ecart interne ramene la source a « interne ». */
+    @Test
+    void openCase_citantUnEcartInterne_prendLaSourceDeLEcart() {
+        NonConformity ecart = ecart("Int-NC-2026-0007", NcOrigin.INTERNAL);
+        stubEcart(ecart);
+        when(caseRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        CapaDto.CaseResponse r = service.openCase(
+                openReq(CapaType.CORRECTIVE, LocalDate.now().plusDays(10), "Pilote"),
+                CapaSourceType.EXTERNAL_NON_CONFORMITY, "Int-NC-2026-0007");
+
+        assertThat(r.sourceType()).isEqualTo(CapaSourceType.NON_CONFORMITY);
+    }
+
+    /**
+     * Le lien est POSE sur l ecart : sans lui, la fiche de l ecart n affichait
+     * pas le tableau d actions du dossier, le rapport 8D ne le voyait pas, et
+     * la cloture de l ecart ne l attendait pas.
+     */
+    @Test
+    void openCase_citantUnEcartSansDossier_poseLeLienSurLEcart() {
+        NonConformity ecart = ecart("Int-NC-2026-0007", NcOrigin.INTERNAL);
+        stubEcart(ecart);
+        UUID dossierId = UUID.randomUUID();
+        when(caseRepo.save(any())).thenAnswer(inv -> {
+            CapaCase c = inv.getArgument(0);
+            c.setId(dossierId);
+            return c;
+        });
+
+        service.openCase(openReq(CapaType.CORRECTIVE, LocalDate.now().plusDays(10), "Pilote"),
+                CapaSourceType.NON_CONFORMITY, "Int-NC-2026-0007");
+
+        assertThat(ecart.getCapaCaseId()).isEqualTo(dossierId);
+        verify(ncRepo).save(ecart);
+    }
+
+    /**
+     * Un ecart qui a DEJA son dossier garde le sien : un ecart a un dossier
+     * (ADR 0088), et remplacer le lien ferait disparaitre de la fiche le
+     * tableau d actions du premier. Le second reste rattache par la reference,
+     * donc la cloture l attend quand meme.
+     */
+    @Test
+    void openCase_citantUnEcartDejaRattache_neRemplacePasLeLien() {
+        NonConformity ecart = ecart("Int-NC-2026-0007", NcOrigin.INTERNAL);
+        UUID premier = UUID.randomUUID();
+        ecart.setCapaCaseId(premier);
+        stubEcart(ecart);
+        when(caseRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        service.openCase(openReq(CapaType.CORRECTIVE, LocalDate.now().plusDays(10), "Pilote"),
+                CapaSourceType.NON_CONFORMITY, "Int-NC-2026-0007");
+
+        assertThat(ecart.getCapaCaseId()).isEqualTo(premier);
+        verify(ncRepo, never()).save(any());
+    }
+
+    /**
+     * Une source qui ne designe pas le registre des ecarts ne declenche aucune
+     * lecture : un dossier d audit qui cite « AUD-2026-Q2 » n a pas a chercher
+     * un ecart de ce nom.
+     */
+    @Test
+    void openCase_sourceQuiNEstPasUnEcart_neChercheAucunEcart() {
+        when(caseRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        service.openCase(openReq(CapaType.CORRECTIVE, LocalDate.now().plusDays(10), "Pilote"),
+                CapaSourceType.AUDIT, "AUD-2026-Q2");
+
+        verify(ncRepo, never()).findByTenantIdAndReference(any(), any());
+    }
+
+    /** Une reference qui ne designe aucun ecart laisse le dossier tel quel. */
+    @Test
+    void openCase_referenceInconnue_laisseLaSourceDemandee() {
+        when(ncRepo.findByTenantIdAndReference(TENANT, "Int-NC-9999")).thenReturn(Optional.empty());
+        when(caseRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        CapaDto.CaseResponse r = service.openCase(
+                openReq(CapaType.CORRECTIVE, LocalDate.now().plusDays(10), "Pilote"),
+                CapaSourceType.NON_CONFORMITY, "Int-NC-9999");
+
+        assertThat(r.sourceType()).isEqualTo(CapaSourceType.NON_CONFORMITY);
+        verify(ncRepo, never()).save(any());
+    }
+
+    // --- les dossiers dont les actions restent a mener ---
+
+    /**
+     * Resoudre un ecart demande que les actions soient EXECUTEES ; juger de leur
+     * efficacite vient apres, et c est la cloture qui l attend (ADR 0108). Un
+     * dossier resolu ne retient donc pas la resolution, un dossier en cours si.
+     */
+    @Test
+    void unexecutedCasesFor_neRetientQueOpenEtInProgress() {
+        CapaCase enCours = capa(TENANT, CapaStatus.IN_PROGRESS);
+        enCours.setTitle("Remplacer le roulement");
+        CapaCase resolu = capa(TENANT, CapaStatus.RESOLVED);
+        resolu.setTitle("Auditer le fournisseur");
+        CapaCase ouvert = capa(TENANT, CapaStatus.OPEN);
+        ouvert.setTitle("Revoir le mode operatoire");
+
+        when(caseRepo.findByIdAndTenantId(enCours.getId(), TENANT))
+                .thenReturn(Optional.of(enCours));
+        when(caseRepo.findByTenantIdAndSourceTypeAndSourceRefOrderByCreatedAtAsc(
+                eq(TENANT), any(), eq("Int-NC-2026-0007")))
+                .thenReturn(List.of(resolu, ouvert));
+
+        assertThat(service.unexecutedCasesFor(enCours.getId(), "Int-NC-2026-0007"))
+                .containsExactly("Remplacer le roulement", "Revoir le mode operatoire");
+    }
+
+    /** Clos ou ecarte : plus rien a executer. */
+    @Test
+    void unexecutedCasesFor_ignoreLesDossiersClosOuEcartes() {
+        CapaCase clos = capa(TENANT, CapaStatus.CLOSED);
+        CapaCase ecarte = capa(TENANT, CapaStatus.REJECTED);
+
+        when(caseRepo.findByIdAndTenantId(clos.getId(), TENANT)).thenReturn(Optional.of(clos));
+        when(caseRepo.findByTenantIdAndSourceTypeAndSourceRefOrderByCreatedAtAsc(
+                eq(TENANT), any(), eq("Int-NC-2026-0007")))
+                .thenReturn(List.of(ecarte));
+
+        assertThat(service.unexecutedCasesFor(clos.getId(), "Int-NC-2026-0007")).isEmpty();
+    }
+
+    /** L ecart sous verrou d ecriture, et sa reference lue sans ses espaces. */
+    private void stubEcart(NonConformity ecart) {
+        when(ncRepo.findByTenantIdAndReference(TENANT, ecart.getReference()))
+                .thenReturn(Optional.of(ecart));
+        when(ncRepo.findForUpdateByIdAndTenantId(ecart.getId(), TENANT))
+                .thenReturn(Optional.of(ecart));
+    }
+
+    private static NonConformity ecart(String reference, NcOrigin origine) {
+        NonConformity nc = new NonConformity();
+        nc.setId(UUID.randomUUID());
+        nc.setTenantId(TENANT);
+        nc.setReference(reference);
+        nc.setOrigin(origine);
+        return nc;
     }
 }

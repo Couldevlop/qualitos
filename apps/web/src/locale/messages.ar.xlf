@@ -7706,6 +7706,10 @@ Portail clients</source>
         <source>Non-conformité externe (réclamation client)</source>
         <target state="translated">عدم مطابقة خارجية (شكوى عميل)</target>
       </trans-unit>
+      <trans-unit id="capa.create.source-nc-derivee" datatype="html">
+        <source>Interne ou externe : lue sur l’écart choisi.</source>
+        <target state="translated">داخلية أو خارجية: تُقرأ من عدم المطابقة المختارة.</target>
+      </trans-unit>
       <trans-unit id="capa.create.source-ref-required" datatype="html">
         <source>Référence source</source>
         <target state="translated">مرجع المصدر</target>

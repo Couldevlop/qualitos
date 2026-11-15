@@ -114,6 +114,16 @@ public class ResolutionService {
         sheet.revise(saisie, settings, now);
         ResolutionSheet saved = sheets.save(sheet);
         audit.sheetSaved(saved, actor);
+        // CLÔTURE AUTOMATIQUE : dès que la fiche ne retient plus rien —
+        // questionnaire complet, actions toutes à 100 % —, le projet est clos
+        // sans qu'il faille revenir sur la charte cliquer « avancer ». La
+        // condition est exactement celle qu'un passage manuel devait déjà
+        // franchir (`completionBlockers`) : rien ne se clôt plus tôt
+        // qu'avant, c'est la main de trop qui disparaît. Le projet mis en
+        // attente ou annulé n'est pas touché.
+        if (completionBlockers(settings, saved.getContent()).isEmpty()) {
+            projects.completeIfSettled(tenant, projectId, now);
+        }
         return view(project, saved, true, settings, tenant);
     }
 
