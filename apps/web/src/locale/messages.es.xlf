@@ -7706,6 +7706,10 @@ Portal de clientes</target>
         <source>Non-conformité externe (réclamation client)</source>
         <target state="translated">No conformidad externa (reclamación de cliente)</target>
       </trans-unit>
+      <trans-unit id="capa.create.source-nc-derivee" datatype="html">
+        <source>Interne ou externe : lue sur l’écart choisi.</source>
+        <target state="translated">Interna o externa: se lee en la no conformidad elegida.</target>
+      </trans-unit>
       <trans-unit id="capa.create.source-ref-required" datatype="html">
         <source>Référence source</source>
         <target state="translated">Referencia de origen</target>

@@ -6,7 +6,9 @@ import com.openlab.qualitos.quality.capa.effectiveness.domain.EffectivenessRevie
 import com.openlab.qualitos.quality.capa.effectiveness.domain.EffectivenessVerdict;
 import com.openlab.qualitos.quality.common.CurrentUser;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
+import com.openlab.qualitos.quality.nonconformity.NcOrigin;
 import com.openlab.qualitos.quality.nonconformity.NcStatus;
+import com.openlab.qualitos.quality.nonconformity.NonConformity;
 import com.openlab.qualitos.quality.nonconformity.NonConformityRepository;
 import com.openlab.qualitos.quality.common.TenantContext;
 import org.springframework.data.domain.Page;
@@ -164,13 +166,50 @@ public class CapaService {
      */
     @Transactional(readOnly = true)
     public List<String> unsettledCasesFor(UUID escaladeId, String ncReference) {
+        return casesFor(escaladeId, ncReference,
+                statut -> !CAPA_SETTLED_STATUSES.contains(statut));
+    }
+
+    /**
+     * Les dossiers de l'écart dont les actions ne sont pas encore exécutées :
+     * ceux qui restent {@code OPEN} ou {@code IN_PROGRESS}.
+     *
+     * <p>C'est la condition pour <b>résoudre</b> l'écart, plus souple que celle
+     * de la clôture. Résoudre, c'est dire « ce qui devait être fait l'a été » ;
+     * clore, c'est dire « et ça a marché ». Un dossier {@code RESOLVED} a donc
+     * sa place sous un écart résolu — ses actions sont exécutées, il reste à
+     * juger de leur efficacité (ADR 0108) — mais pas sous un écart clos.
+     *
+     * <p>Sans cette garde, un écart passait « résolu » pendant que son dossier
+     * affichait « en cours » : la fiche de l'écart disait le travail fait,
+     * celle du dossier disait le contraire, et les deux étaient lues par les
+     * mêmes personnes.
+     */
+    @Transactional(readOnly = true)
+    public List<String> unexecutedCasesFor(UUID escaladeId, String ncReference) {
+        return casesFor(escaladeId, ncReference,
+                statut -> statut == CapaStatus.OPEN || statut == CapaStatus.IN_PROGRESS);
+    }
+
+    /**
+     * Les dossiers d'un écart dont le statut remplit la condition, sans doublon
+     * et dans l'ordre d'ouverture, nommés par leur titre.
+     *
+     * <p>Deux chemins de rattachement, et il faut les deux : le lien posé à
+     * l'escalade ({@code escaladeId}) et la référence de l'écart citée par un
+     * dossier ouvert depuis la liste. Les deux natures d'origine sont
+     * interrogées — un constat interne et une réclamation client portent la même
+     * référence d'écart, pas le même type de source.
+     */
+    private List<String> casesFor(UUID escaladeId, String ncReference,
+                                  java.util.function.Predicate<CapaStatus> retenu) {
         UUID tenantId = requireTenantId();
-        Map<UUID, String> enTravail = new LinkedHashMap<>();
+        Map<UUID, String> retenus = new LinkedHashMap<>();
 
         if (escaladeId != null) {
             caseRepository.findByIdAndTenantId(escaladeId, tenantId)
-                    .filter(c -> !CAPA_SETTLED_STATUSES.contains(c.getStatus()))
-                    .ifPresent(c -> enTravail.put(c.getId(), c.getTitle()));
+                    .filter(c -> retenu.test(c.getStatus()))
+                    .ifPresent(c -> retenus.put(c.getId(), c.getTitle()));
         }
 
         if (ncReference != null && !ncReference.isBlank()) {
@@ -181,12 +220,12 @@ public class CapaService {
                         .findByTenantIdAndSourceTypeAndSourceRefOrderByCreatedAtAsc(
                                 tenantId, origine, reference)
                         .stream()
-                        .filter(c -> !CAPA_SETTLED_STATUSES.contains(c.getStatus()))
-                        .forEach(c -> enTravail.put(c.getId(), c.getTitle()));
+                        .filter(c -> retenu.test(c.getStatus()))
+                        .forEach(c -> retenus.put(c.getId(), c.getTitle()));
             }
         }
 
-        return List.copyOf(enTravail.values());
+        return List.copyOf(retenus.values());
     }
 
     public CapaDto.CaseResponse createCase(CapaDto.CreateCaseRequest request) {
@@ -259,6 +298,14 @@ public class CapaService {
         if (sourceType == null) {
             throw new CapaValidationException("The CAPA source is required");
         }
+        // L'ECART CITE, s'il existe : c'est lui qui dit la source et qui porte le
+        // lien. Un dossier ouvert depuis la liste en tapant « Ext-NC-2026-0004 »
+        // s'affichait « Non-conformite interne » — la liste ne propose que
+        // celle-la — et restait orphelin : la fiche de l'ecart n'y menait pas,
+        // son rapport 8D ne le voyait pas, et sa cloture ne l'attendait pas.
+        // Deriver plutot que demander : l'origine est deja ecrite sur l'ecart.
+        NonConformity ecart = ecartCite(sourceType, sourceRef);
+        CapaSourceType source = ecart == null ? sourceType : sourceDe(ecart);
         String titre = requireUsableTitle(request.title());
         String description = nettoyer(request.description());
         String pilote = normalizeName(request.ownerName());
@@ -269,7 +316,7 @@ public class CapaService {
         c.setDescription(description);
         c.setType(request.type());
         c.setCriticity(request.criticity());
-        c.setSourceType(sourceType);
+        c.setSourceType(source);
         c.setSourceRef(nettoyer(sourceRef));
         c.setOwnerId(request.ownerId());
         c.setOwnerName(pilote);
@@ -306,7 +353,53 @@ public class CapaService {
 
         CapaCase saved = caseRepository.save(c);
         journal.record(saved, CapaTransition.OPENED);
+        rattacher(ecart, saved);
         return toResponse(saved);
+    }
+
+    /**
+     * L'ecart du registre que ce dossier cite, sous verrou d'ecriture.
+     *
+     * <p>{@code null} des que la source ne designe pas un ecart, que la
+     * reference est vide, ou qu'aucun ecart ne la porte : une reference tapee
+     * peut ne designer personne, et ce n'est pas une erreur — le dossier existe
+     * alors seul, avec sa reference pour memoire.
+     *
+     * <p>Le verrou serialise deux ouvertures simultanees qui citeraient le meme
+     * ecart : sans lui, chacune lirait un lien vide et la seconde ecraserait le
+     * premier rattachement.
+     */
+    private NonConformity ecartCite(CapaSourceType sourceType, String sourceRef) {
+        if (!estEcart(sourceType) || sourceRef == null || sourceRef.isBlank()) {
+            return null;
+        }
+        UUID tenantId = requireTenantId();
+        return ncRepository.findByTenantIdAndReference(tenantId, sourceRef.strip())
+                .flatMap(nc -> ncRepository.findForUpdateByIdAndTenantId(nc.getId(), tenantId))
+                .orElse(null);
+    }
+
+    /** La source d'un dossier ne a sur un ecart : son origine, jamais un choix. */
+    private static CapaSourceType sourceDe(NonConformity ecart) {
+        return NcOrigin.orDefault(ecart.getOrigin()) == NcOrigin.EXTERNAL
+                ? CapaSourceType.EXTERNAL_NON_CONFORMITY
+                : CapaSourceType.NON_CONFORMITY;
+    }
+
+    /**
+     * Pose sur l'ecart le lien vers son dossier, s'il n'en a pas deja un.
+     *
+     * <p>Un ecart a UN dossier (ADR 0088) : le premier ouvert reste le sien, et
+     * un second ouvert depuis la liste ne le remplace pas — il garde sa
+     * reference, donc la cloture de l'ecart l'attend quand meme
+     * ({@link #unsettledCasesFor}). Remplacer le lien ferait disparaitre de la
+     * fiche le tableau d'actions du premier.
+     */
+    private void rattacher(NonConformity ecart, CapaCase dossier) {
+        if (ecart != null && ecart.getCapaCaseId() == null) {
+            ecart.setCapaCaseId(dossier.getId());
+            ncRepository.save(ecart);
+        }
     }
 
     public CapaDto.CaseResponse updateCase(UUID id, CapaDto.UpdateCaseRequest request) {

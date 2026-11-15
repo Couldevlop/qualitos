@@ -252,6 +252,27 @@ describe('CapaCreateDialogComponent — la référence de la source', () => {
     expect(component.sourceRefIsPicked).toBeTrue();
   });
 
+  // ---------- la source d'un écart se lit sur l'écart ----------
+
+  // La liste ne propose que « Non-conformité interne » : un dossier ouvert ici
+  // pour une réclamation client s'affichait « interne » sur l'écran même qui sert
+  // à répondre à ce client. Le serveur dérive désormais l'origine DE L'ÉCART
+  // cité ; l'indice le dit, faute de quoi le champ annoncerait autre chose que
+  // ce qui sera écrit.
+  it('annonce que l’origine interne ou externe se lit sur l’écart choisi', async () => {
+    await setup();
+    choisirSource('NON_CONFORMITY', NCS);
+
+    expect(hote().querySelector('[data-test="capa-source-derivee"]')).not.toBeNull();
+  });
+
+  it('ne l’annonce pas pour une source qui ne désigne pas un écart', async () => {
+    await setup();
+    choisirSource('RISK', RISQUES);
+
+    expect(hote().querySelector('[data-test="capa-source-derivee"]')).toBeNull();
+  });
+
   // ---------- rien ne fuit après la fermeture ----------
 
   it('ne garde aucun abonnement ouvert après la fermeture de la fenêtre', async () => {

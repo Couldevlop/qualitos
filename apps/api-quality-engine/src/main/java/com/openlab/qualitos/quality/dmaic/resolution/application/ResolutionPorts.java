@@ -65,6 +65,24 @@ public final class ResolutionPorts {
     /** Le projet DMAIC auquel la fiche se rattache, lu dans SON tenant. */
     public interface Projects {
         Optional<ProjectHeader> find(UUID tenantId, UUID projectId);
+
+        /**
+         * Clôt le projet parce que sa fiche ne retient plus rien : questionnaire
+         * complet et actions à 100 %.
+         *
+         * <p>Le JUGEMENT reste à la fiche — elle seule sait ce qui manque — et
+         * l'écriture au projet. C'est pourquoi cette méthode ne vérifie rien :
+         * elle ne touche qu'un projet ACTIVE, et le laisse tel quel sinon (un
+         * projet suspendu, annulé ou déjà clos n'a pas à bouger dans le dos de
+         * celui qui l'a mis dans cet état).
+         *
+         * <p>La phase est portée à {@code CONTROL} : un questionnaire entier
+         * rempli signifie que toutes les phases le sont, et un projet clos en
+         * phase « Mesurer » se lirait comme un abandon.
+         *
+         * @return vrai si le projet vient d'être clos
+         */
+        boolean completeIfSettled(UUID tenantId, UUID projectId, java.time.Instant now);
     }
 
     /** Ce que la fiche reprend du projet : son titre et son énoncé du problème. */

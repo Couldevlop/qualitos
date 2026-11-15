@@ -7706,6 +7706,10 @@ Portail clients</source>
         <source>Non-conformité externe (réclamation client)</source>
         <target state="translated">外部不適合（顧客苦情）</target>
       </trans-unit>
+      <trans-unit id="capa.create.source-nc-derivee" datatype="html">
+        <source>Interne ou externe : lue sur l’écart choisi.</source>
+        <target state="translated">内部か外部か：選んだ不適合から読み取ります。</target>
+      </trans-unit>
       <trans-unit id="capa.create.source-ref-required" datatype="html">
         <source>Référence source</source>
         <target state="translated">出所の参照番号</target>

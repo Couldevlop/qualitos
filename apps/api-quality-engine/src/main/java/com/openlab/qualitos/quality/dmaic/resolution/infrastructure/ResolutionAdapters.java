@@ -6,7 +6,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openlab.qualitos.quality.common.CurrentUser;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.common.TenantContext;
+import com.openlab.qualitos.quality.dmaic.DmaicPhase;
 import com.openlab.qualitos.quality.dmaic.DmaicProjectRepository;
+import com.openlab.qualitos.quality.dmaic.DmaicStatus;
 import com.openlab.qualitos.quality.dmaic.resolution.application.ResolutionPorts;
 import com.openlab.qualitos.quality.dmaic.resolution.domain.FailureType;
 import com.openlab.qualitos.quality.dmaic.resolution.domain.ResolutionContent;
@@ -281,6 +283,20 @@ final class ResolutionAdapters {
         public Optional<ResolutionPorts.ProjectHeader> find(UUID tenantId, UUID projectId) {
             return projects.findByIdAndTenantId(projectId, tenantId)
                     .map(p -> new ResolutionPorts.ProjectHeader(p.getId(), p.getTitle(), p.getProblemStatement()));
+        }
+
+        @Override
+        public boolean completeIfSettled(UUID tenantId, UUID projectId, java.time.Instant now) {
+            return projects.findByIdAndTenantId(projectId, tenantId)
+                    .filter(p -> p.getStatus() == DmaicStatus.ACTIVE)
+                    .map(p -> {
+                        p.setPhase(DmaicPhase.CONTROL);
+                        p.setStatus(DmaicStatus.COMPLETED);
+                        p.setCompletedAt(now);
+                        projects.save(p);
+                        return true;
+                    })
+                    .orElse(false);
         }
     }
 

@@ -7706,6 +7706,10 @@ Portail clients</source>
         <source>Non-conformité externe (réclamation client)</source>
         <target state="translated">外部不合格（客户投诉）</target>
       </trans-unit>
+      <trans-unit id="capa.create.source-nc-derivee" datatype="html">
+        <source>Interne ou externe : lue sur l’écart choisi.</source>
+        <target state="translated">内部或外部：取自所选的不合格。</target>
+      </trans-unit>
       <trans-unit id="capa.create.source-ref-required" datatype="html">
         <source>Référence source</source>
         <target state="translated">来源编号</target>

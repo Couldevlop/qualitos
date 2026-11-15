@@ -258,6 +258,20 @@ public class NcService {
         if (nc.getStatus() != NcStatus.ACTION_DEFINED) {
             throw new NcStateException("Only ACTION_DEFINED non-conformities can be resolved");
         }
+        // Résoudre, c'est dire « ce qui devait être fait l'a été ». Un dossier
+        // encore OPEN ou IN_PROGRESS dit l'inverse sur la même page : l'écart
+        // passait « résolu » au-dessus d'actions non exécutées, et les deux
+        // fiches se contredisaient. Un dossier RESOLVED ne bloque pas — ses
+        // actions sont faites, il reste à juger de leur efficacité, et c'est la
+        // CLÔTURE de l'écart qui attend ce jugement.
+        List<String> aFaire = capaService.unexecutedCasesFor(
+                nc.getCapaCaseId(), nc.getReference());
+        if (!aFaire.isEmpty()) {
+            throw new NcStateException(
+                    "Non-conformity cannot be resolved while " + aFaire.size()
+                    + " CAPA case(s) still have actions to carry out: "
+                    + String.join(", ", aFaire));
+        }
         nc.setStatus(NcStatus.RESOLVED);
         nc.setResolutionNote(request.resolutionNote());
         nc.setResolvedAt(Instant.now());
