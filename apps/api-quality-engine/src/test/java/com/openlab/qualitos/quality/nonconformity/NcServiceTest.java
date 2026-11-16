@@ -4,6 +4,7 @@ import com.openlab.qualitos.quality.authz.application.RecordScope;
 import com.openlab.qualitos.quality.capa.CapaCriticity;
 import com.openlab.qualitos.quality.capa.CapaDto;
 import com.openlab.qualitos.quality.capa.CapaService;
+import com.openlab.qualitos.quality.capa.CapaStatus;
 import com.openlab.qualitos.quality.capa.CapaSourceType;
 import com.openlab.qualitos.quality.capa.CapaType;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
@@ -502,6 +503,70 @@ class NcServiceTest {
         assertThat(page.getContent()).singleElement()
                 .satisfies(r -> assertThat(r.blockers()).isEmpty());
         verify(capaService, never()).unexecutedCasesFor(any(), any());
+    }
+
+    /**
+     * L INVARIANT DE CETTE DECISION. Un ecart peut porter PLUSIEURS dossiers :
+     * le premier ouvert depuis sa fiche, et un second ouvert depuis la liste en
+     * citant sa reference, qui ne remplace pas le lien du premier (ADR 0121).
+     *
+     * <p>La fiche n en montrait qu UN. Les actions du second retenaient donc la
+     * cloture de l ecart sans apparaitre nulle part : l utilisateur lisait
+     * « 2 dossiers non regles » au-dessus d un tableau qui n en montrait qu un.
+     */
+    @Test
+    void fiche_porteTousLesDossiersDeLEcart() {
+        NonConformity n = nc(TENANT, NcStatus.OPEN);
+        UUID premier = UUID.randomUUID();
+        UUID second = UUID.randomUUID();
+        n.setCapaCaseId(premier);
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+        when(capaService.casesOf(premier, n.getReference())).thenReturn(List.of(
+                new CapaDto.CaseRef(premier, "Dossier de la fiche", CapaStatus.IN_PROGRESS),
+                new CapaDto.CaseRef(second, "Dossier ouvert depuis la liste", CapaStatus.OPEN)));
+
+        List<NcDto.CapaCaseRef> dossiers = service.findById(n.getId()).capaCases();
+
+        assertThat(dossiers).hasSize(2);
+        assertThat(dossiers.get(0).title()).isEqualTo("Dossier de la fiche");
+        assertThat(dossiers.get(1).id()).isEqualTo(second);
+        // Le STATUT voyage avec le titre : sans lui l ecran devrait relire
+        // chaque dossier pour ecrire l en-tete de son tableau d actions.
+        assertThat(dossiers.get(1).status()).isEqualTo("OPEN");
+    }
+
+    /**
+     * Un ecart a peine declare n a ni lien ni reference : rien a chercher, et
+     * la requete serait vide par construction.
+     */
+    @Test
+    void fiche_sansLienNiReference_nInterrogePasLesDossiers() {
+        NonConformity n = nc(TENANT, NcStatus.OPEN);
+        n.setCapaCaseId(null);
+        n.setReference(null);
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+
+        assertThat(service.findById(n.getId()).capaCases()).isEmpty();
+        verify(capaService, never()).casesOf(any(), any());
+    }
+
+    /**
+     * Une LIGNE DE LISTE ne porte pas les dossiers : comme les motifs, les
+     * chercher couterait des requetes par ligne pour ce qu on n y affiche pas.
+     */
+    @Test
+    void liste_neCherchePasLesDossiers() {
+        NonConformity n = nc(TENANT, NcStatus.ACTION_DEFINED);
+        n.setCapaCaseId(UUID.randomUUID());
+        when(repo.findAll(ArgumentMatchers.<Specification<NonConformity>>any(), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of(n)));
+
+        Page<NcDto.Response> page = service.findAll(null, null, null, null, null, null,
+                PageRequest.of(0, 20));
+
+        assertThat(page.getContent()).singleElement()
+                .satisfies(r -> assertThat(r.capaCases()).isEmpty());
+        verify(capaService, never()).casesOf(any(), any());
     }
 
     @Test

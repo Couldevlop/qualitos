@@ -146,6 +146,12 @@ public final class CapaDto {
      * @param target    la cible. Facultative : le critère peut déjà la dire en
      *                  toutes lettres.
      */
+    /**
+     * Un dossier réduit à ce qui le NOMME : de quoi l'afficher sans aller le
+     * relire. Sert aux écrans qui listent les dossiers d'un écart.
+     */
+    public record CaseRef(UUID id, String title, CapaStatus status) {}
+
     public record EffectivenessRequest(
             @Deprecated Boolean effective,
             EffectivenessVerdict verdict,

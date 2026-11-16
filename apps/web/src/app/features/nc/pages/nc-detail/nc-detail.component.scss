@@ -616,3 +616,26 @@
 
   li + li { margin-top: 4px; }
 }
+
+/* Un ecart peut porter PLUSIEURS dossiers CAPA : chacun a son tableau, et il
+   faut VOIR ou l'un finit et l'autre commence. Sans separation, deux tableaux
+   se lisaient comme un seul, dont les lignes du bas semblaient appartenir au
+   dossier du haut. */
+.capa-dossier + .capa-dossier {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--qos-border, rgba(0, 0, 0, 0.08));
+}
+
+.capa-dossier-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.capa-dossier-titre {
+  font-weight: 600;
+  font-size: 0.95rem;
+}

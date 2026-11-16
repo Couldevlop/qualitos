@@ -92,7 +92,7 @@ class EightDSnapshotAssemblerTest {
         // La prevention reste a finir : feliciter l'equipe daterait le document
         // d'un optimisme que la suite peut dementir.
         EightDSources sources = new EightDSources(nc(null), List.of(), List.of(), List.of(),
-                capa(null), null, List.of());
+                List.of(capa(null)), null, List.of());
 
         EightDSnapshot.Section d8 = section(
                 assembler.assemble(sources, null, null, null, "t", null, null), "D8");
@@ -105,7 +105,7 @@ class EightDSnapshotAssemblerTest {
     @Test
     void d8_porte_la_reconnaissance_quand_l_ecart_et_sa_capa_sont_clos() {
         EightDSources sources = new EightDSources(nc(null), List.of(), List.of(), List.of(),
-                capa(Instant.parse("2026-09-13T10:00:00Z")), null, List.of());
+                List.of(capa(Instant.parse("2026-09-13T10:00:00Z"))), null, List.of());
 
         EightDSnapshot.Section d8 = section(
                 assembler.assemble(sources, null, null, null, "t", null, null), "D8");
@@ -117,7 +117,7 @@ class EightDSnapshotAssemblerTest {
     @Test
     void d8_reste_muet_tant_que_l_ecart_n_est_pas_clos() {
         EightDSources sources = new EightDSources(ncOuverte(), List.of(), List.of(), List.of(),
-                null, null, List.of());
+                List.of(), null, List.of());
 
         EightDSnapshot.Section d8 = section(
                 assembler.assemble(sources, null, null, null, "t", null, null), "D8");
@@ -129,7 +129,7 @@ class EightDSnapshotAssemblerTest {
     @Test
     void d8_garde_le_remerciement_saisi_meme_sur_un_ecart_encore_ouvert() {
         EightDSources sources = new EightDSources(ncOuverte(), List.of(), List.of(), List.of(),
-                null, null, List.of());
+                List.of(), null, List.of());
 
         EightDSnapshot.Section d8 = section(
                 assembler.assemble(sources, null, null, "Bravo a l'equipe d'astreinte.",
@@ -162,7 +162,7 @@ class EightDSnapshotAssemblerTest {
                         new EightDSources.Cause("METHODE", "Pas de plan de remplacement", null, null)))),
                 List.of(new EightDSources.WhysChain("Fuite constatée", "Absence de plan préventif",
                         List.of("Le joint a cédé", "Il n'a jamais été remplacé"))),
-                null, null, List.of());
+                List.of(), null, List.of());
 
         EightDSnapshot.Section d4 = section(
                 assembler.assemble(sources, null, null, null, "t", null, null), "D4");
@@ -211,7 +211,7 @@ class EightDSnapshotAssemblerTest {
                 nc("Joint hors tolérance"), EQUIPE, List.of(),
                 List.of(new EightDSources.WhysChain("Fuite constatée", null,
                         List.of("Le joint a cédé"))),
-                null, null, List.of());
+                List.of(), null, List.of());
 
         EightDSnapshot.Section d4 = section(
                 assembler.assemble(sources, null, null, null, "t", null, null), "D4");
@@ -231,7 +231,7 @@ class EightDSnapshotAssemblerTest {
         EightDSources sources = new EightDSources(
                 nc(null), EQUIPE,
                 List.of(new EightDSources.CauseTree("Fuite au presse-étoupe", "DRAFT", List.of())),
-                List.of(), null, null, List.of());
+                List.of(), List.of(), null, List.of());
 
         EightDSnapshot.Section d4 = section(
                 assembler.assemble(sources, null, null, null, "t", null, null), "D4");
@@ -273,10 +273,10 @@ class EightDSnapshotAssemblerTest {
                 "Former les opérateurs", null, "PREVENTIVE", "IN_PROGRESS", null, null, null, 0);
         EightDSources sources = new EightDSources(
                 nc(null), EQUIPE, List.of(), List.of(),
-                new EightDSources.Capa("Fuite presse-étoupe", "CORRECTIVE", "HIGH", "CLOSED",
+                List.of(new EightDSources.Capa("Fuite presse-étoupe", "CORRECTIVE", "HIGH", "CLOSED",
                         LocalDate.parse("2026-09-30"), Instant.parse("2026-09-11T10:00:00Z"),
                         Boolean.TRUE, Instant.parse("2026-12-01T10:00:00Z"), 1,
-                        List.of(faite, aFaire)),
+                        List.of(faite, aFaire))),
                 null, List.of());
 
         EightDSnapshot snapshot = assembler.assemble(sources, null, null, null, "t", null, null);
@@ -300,7 +300,7 @@ class EightDSnapshotAssemblerTest {
     @Test
     void d7_agrege_le_pfmea_et_les_plans_de_surveillance() {
         EightDSources sources = new EightDSources(
-                nc(null), EQUIPE, List.of(), List.of(), null,
+                nc(null), EQUIPE, List.of(), List.of(), List.of(),
                 new EightDSources.Fmea("Fuite au joint", "Perte de pression", "Usure",
                         "Contrôle visuel hebdomadaire", 160, 40, "MEDIUM",
                         "Plan de remplacement préventif", "Plan déployé en août"),
@@ -340,9 +340,9 @@ class EightDSnapshotAssemblerTest {
                 EQUIPE,
                 List.of(new EightDSources.CauseTree("Problème", "ACTIVE", List.of())),
                 List.of(),
-                new EightDSources.Capa("CAPA", "CORRECTIVE", "HIGH", "CLOSED", null, null, null, null, 1,
+                List.of(new EightDSources.Capa("CAPA", "CORRECTIVE", "HIGH", "CLOSED", null, null, null, null, 1,
                         List.of(new EightDSources.Action("Action", null, "CORRECTIVE", "DONE", null,
-                                null, Instant.parse("2026-09-09T09:00:00Z"), 1))),
+                                null, Instant.parse("2026-09-09T09:00:00Z"), 1)))),
                 new EightDSources.Fmea("Mode", null, null, null, 100, null, null, null, null),
                 List.of());
 
@@ -355,17 +355,94 @@ class EightDSnapshotAssemblerTest {
         assertThat(snapshot.issuedByName()).isEqualTo("Ada Lovelace");
     }
 
+    /**
+     * L'INVARIANT DE CETTE D\u00c9CISION. Un \u00e9cart peut porter PLUSIEURS dossiers,
+     * et la cl\u00f4ture de l'\u00e9cart les attend TOUS (ADR 0121). Le D5 n'en lisait
+     * qu'un : les actions du second retenaient donc la cl\u00f4ture sans figurer
+     * dans le document remis au client, qui contredisait alors le refus.
+     */
+    @Test
+    void d5_montre_les_actions_de_TOUS_les_dossiers_de_l_ecart() {
+        EightDSources sources = new EightDSources(
+                nc(null), EQUIPE, List.of(), List.of(),
+                List.of(dossier("Dossier de la fiche", "Remplacer le joint"),
+                        dossier("Dossier ouvert depuis la liste", "Revoir la gamme")),
+                null, List.of());
+
+        EightDSnapshot.Section d5 = section(
+                assembler.assemble(sources, null, null, null, "t", null, null), "D5");
+
+        assertThat(d5.sourced()).isTrue();
+        assertThat(d5.lines()).anyMatch(l -> l.contains("Remplacer le joint"));
+        assertThat(d5.lines()).anyMatch(l -> l.contains("Revoir la gamme"));
+        // Le COMPTE, pas le singulier : « Escalated CAPA » mentait d\u00e8s qu'un
+        // second dossier citait la r\u00e9f\u00e9rence, et rien ne le disait au lecteur.
+        assertThat(d5.sourceLabel()).contains("2 CAPA cases").contains("2 action(s) decided");
+    }
+
+    /**
+     * Deux dossiers colles se lisaient comme UN SEUL : leurs champs « Type »,
+     * « Status » et « Due date » s'enchainaient, et le rapport devenait faux a
+     * la lecture sans qu'aucune ligne ne soit fausse.
+     */
+    @Test
+    void d5_separe_deux_dossiers_par_une_ligne_vide() {
+        EightDSources sources = new EightDSources(
+                nc(null), EQUIPE, List.of(), List.of(),
+                List.of(dossier("Premier", "A faire"), dossier("Second", "A faire aussi")),
+                null, List.of());
+
+        EightDSnapshot.Section d5 = section(
+                assembler.assemble(sources, null, null, null, "t", null, null), "D5");
+
+        assertThat(d5.lines()).contains("");
+        assertThat(d5.lines().indexOf("")).isGreaterThan(0);
+    }
+
+    /**
+     * Un \u00e9cart clos dont le SECOND dossier court encore n'est pas sold\u00e9 : D7 et
+     * D8 le disent. Ne regarder que le dossier de la fiche faisait d\u00e9clarer
+     * sold\u00e9 un \u00e9cart dont la pr\u00e9vention restait \u00e0 finir.
+     */
+    @Test
+    void un_second_dossier_encore_ouvert_empeche_de_declarer_l_ecart_solde() {
+        EightDSources.Capa clos = new EightDSources.Capa("Clos", "CORRECTIVE", "HIGH", "CLOSED",
+                null, Instant.parse("2026-09-20T10:00:00Z"), Boolean.TRUE,
+                Instant.parse("2026-10-01T10:00:00Z"), 0, List.of());
+        EightDSources.Capa courant = dossier("Encore ouvert", "A faire");
+
+        EightDSnapshot avecLesDeux = assembler.assemble(
+                new EightDSources(nc(null), EQUIPE, List.of(), List.of(),
+                        List.of(clos, courant), null, List.of()),
+                null, null, null, "t", null, null);
+        EightDSnapshot avecLeClosSeul = assembler.assemble(
+                new EightDSources(nc(null), EQUIPE, List.of(), List.of(),
+                        List.of(clos), null, List.of()),
+                null, null, null, "t", null, null);
+
+        assertThat(section(avecLesDeux, "D8").lines())
+                .as("un dossier qui court interdit de dire l'\u00e9cart sold\u00e9")
+                .isNotEqualTo(section(avecLeClosSeul, "D8").lines());
+    }
+
+    /** Un dossier de l'ecart, avec une action a mener. */
+    private static EightDSources.Capa dossier(String titre, String action) {
+        return new EightDSources.Capa(titre, "CORRECTIVE", "HIGH", "OPEN", null, null, null, null, 0,
+                List.of(new EightDSources.Action(action, null, "CORRECTIVE", "PENDING",
+                        "Ada Lovelace", null, null, 0)));
+    }
+
     // ---------- fixtures ----------
 
     private EightDSources sourcesMinimales() {
         // Aucune equipe : c'est le cas d'un ecart ne d'un constat d'audit ou d'un
         // import systeme, ou D1 reste a saisir.
-        return new EightDSources(nc(null), List.of(), List.of(), List.of(), null, null, List.of());
+        return new EightDSources(nc(null), List.of(), List.of(), List.of(), List.of(), null, List.of());
     }
 
     /** Les memes sources, mais avec l'equipe nommee sur la fiche. */
     private EightDSources sourcesAvecEquipe(List<String> equipe) {
-        return new EightDSources(nc(null), equipe, List.of(), List.of(), null, null, List.of());
+        return new EightDSources(nc(null), equipe, List.of(), List.of(), List.of(), null, List.of());
     }
 
     // ---------- D1 : l'equipe nommee sur la fiche ----------

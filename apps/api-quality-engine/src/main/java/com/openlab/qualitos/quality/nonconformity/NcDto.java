@@ -229,8 +229,27 @@ public final class NcDto {
              * la fiche, et le calculer par ligne coûterait des requêtes pour une
              * information qu'on n'y affiche pas.
              */
-            List<Blocker> blockers
+            List<Blocker> blockers,
+            /**
+             * TOUS les dossiers CAPA qui traitent cet écart, du plus ancien au
+             * plus récent — {@link #capaCaseId} n'en désigne que le premier.
+             *
+             * <p>Un second dossier ouvert depuis la liste en citant la référence
+             * de l'écart ne remplace pas ce lien (ADR 0121) : ses actions
+             * retenaient donc la clôture de l'écart sans apparaître nulle part
+             * sur sa fiche. Vide sur les lignes d'une liste, comme les motifs.
+             */
+            List<CapaCaseRef> capaCases
     ) {}
+
+    /**
+     * Un dossier CAPA de l'écart, réduit à ce que la fiche en montre.
+     *
+     * <p>Le titre et le statut VOYAGENT avec l'identifiant : sans eux, l'écran
+     * devrait interroger chaque dossier pour écrire l'en-tête de son tableau
+     * d'actions, et afficherait un identifiant en attendant.
+     */
+    public record CapaCaseRef(UUID id, String title, String status) {}
 
     /**
      * Un motif de blocage et son décompte.

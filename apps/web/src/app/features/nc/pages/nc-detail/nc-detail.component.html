@@ -320,17 +320,44 @@
            porte PLUSIEURS actions (ADR 0115) : le tableau les montre toutes, les
            fait avancer, et en ajoute. C'est ce que les D3, D5 et D6 du rapport
            8D nomment separement. -->
-      <mat-card class="capa-action-card" *ngIf="n.capaCaseId" data-test="capa-action">
+      <!-- UN TABLEAU PAR DOSSIER. L'ecart peut en porter PLUSIEURS : le
+           premier ouvert depuis la fiche, et un second ouvert depuis la liste
+           en citant sa reference. Sa cloture les attend TOUS, mais la fiche
+           n'en montrait qu'un : on lisait « 2 dossiers non regles » au-dessus
+           d'un tableau qui n'en montrait qu'un, et les actions du second
+           n'existaient nulle part a l'ecran. -->
+      <mat-card class="capa-action-card" *ngIf="dossiers(n).length" data-test="capa-action">
         <mat-card-content>
           <div class="capa-action-head">
             <span class="info-label" i18n="@@nc.detail.capa-action">Actions correctives</span>
-            <a mat-stroked-button [routerLink]="['/capa', n.capaCaseId]" data-test="capa-action-dossier">
-              <mat-icon>open_in_new</mat-icon>
-              <span i18n="@@nc.detail.open-capa">Voir la CAPA</span>
-            </a>
+            <!-- Le compte N'APPARAIT QUE s'il y a de quoi compter : « 1 dossier »
+                 sur le cas ordinaire serait du bruit. -->
+            <span class="dim" *ngIf="dossiers(n).length > 1" data-test="capa-action-compte">
+              {{ compteDesDossiers(n) }}
+            </span>
           </div>
-          <qos-capa-action-panel [capaCaseId]="n.capaCaseId"
-                                 (changed)="reload()"></qos-capa-action-panel>
+
+          <div class="capa-dossier" *ngFor="let d of dossiers(n)"
+               [attr.data-test]="'capa-dossier-' + d.id">
+            <div class="capa-dossier-head" *ngIf="dossiers(n).length > 1">
+              <span class="capa-dossier-titre">{{ d.title }}</span>
+              <a mat-stroked-button [routerLink]="['/capa', d.id]"
+                 data-test="capa-action-dossier">
+                <mat-icon>open_in_new</mat-icon>
+                <span i18n="@@nc.detail.open-capa">Voir la CAPA</span>
+              </a>
+            </div>
+            <div class="capa-action-head" *ngIf="dossiers(n).length === 1">
+              <span></span>
+              <a mat-stroked-button [routerLink]="['/capa', d.id]"
+                 data-test="capa-action-dossier">
+                <mat-icon>open_in_new</mat-icon>
+                <span i18n="@@nc.detail.open-capa">Voir la CAPA</span>
+              </a>
+            </div>
+            <qos-capa-action-panel [capaCaseId]="d.id"
+                                   (changed)="reload()"></qos-capa-action-panel>
+          </div>
         </mat-card-content>
       </mat-card>
 
@@ -338,7 +365,7 @@
            le tableau des actions existe, ni comment l'obtenir. On cherchait donc
            une fonction absente de l'ecran, alors qu'un seul geste la fait
            apparaitre. La carte reste, et porte l'invite. -->
-      <mat-card class="capa-action-card" *ngIf="!n.capaCaseId && !isTerminal(n.status)"
+      <mat-card class="capa-action-card" *ngIf="!dossiers(n).length && !isTerminal(n.status)"
                 data-test="capa-action-vide">
         <mat-card-content>
           <div class="capa-action-head">

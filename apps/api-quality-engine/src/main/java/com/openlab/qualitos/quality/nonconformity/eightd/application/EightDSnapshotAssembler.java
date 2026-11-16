@@ -80,8 +80,8 @@ public class EightDSnapshotAssembler {
                 probleme(sources.nc()),
                 saisie(EightDDiscipline.D3, containment),
                 causeRacine(sources),
-                actionsDecidees(sources.capa()),
-                miseEnOeuvre(sources.capa()),
+                actionsDecidees(sources.capas()),
+                miseEnOeuvre(sources.capas()),
                 prevention(sources),
                 reconnaissance(sources, recognition));
 
@@ -183,8 +183,10 @@ public class EightDSnapshotAssembler {
         if (sources.nc().closedAt() == null) {
             return false;
         }
-        EightDSources.Capa capa = sources.capa();
-        return capa == null || capa.closedAt() != null;
+        // TOUS les dossiers, pas seulement celui que la fiche porte en lien :
+        // un écart dont le second dossier court encore n'est pas soldé, et
+        // c'est ce que le client lira en D7.
+        return sources.capas().stream().allMatch(c -> c.closedAt() != null);
     }
 
     // ---------- D2 : la non-conformité ----------
@@ -304,62 +306,103 @@ public class EightDSnapshotAssembler {
 
     // ---------- D5 : les actions décidées ----------
 
-    private EightDSnapshot.Section actionsDecidees(EightDSources.Capa capa) {
-        if (capa == null) {
+    private EightDSnapshot.Section actionsDecidees(List<EightDSources.Capa> capas) {
+        if (capas.isEmpty()) {
             return section(EightDDiscipline.D5, false, sansCapa(), List.of());
         }
         List<String> lignes = new ArrayList<>();
-        ajouter(lignes, "CAPA", capa.title());
-        ajouter(lignes, "Type", capa.type());
-        ajouter(lignes, "Criticality", capa.criticity());
-        ajouter(lignes, "Status", capa.status());
-        ajouter(lignes, "Due date", jour(capa.dueDate()));
-        for (EightDSources.Action action : capa.actions()) {
-            lignes.add("Action [" + texteOu(action.actionType(), "?") + "] "
-                    + texteOu(action.title(), "(no title)")
-                    + " — " + texteOu(action.status(), "?")
-                    + (action.assigneeName() == null ? "" : " — " + action.assigneeName())
-                    + (action.dueDate() == null ? "" : " \u2014 due " + jour(action.dueDate())));
-            if (action.description() != null && !action.description().isBlank()) {
-                lignes.add("    " + action.description().trim());
+        int decidees = 0;
+        for (EightDSources.Capa capa : capas) {
+            // Une ligne vide S\u00c9PARE deux dossiers : coll\u00e9s, leurs champs
+            // \u00ab Type \u00bb, \u00ab Status \u00bb et \u00ab Due date \u00bb se lisaient comme ceux
+            // d'un seul, et le rapport devenait faux \u00e0 la lecture.
+            if (!lignes.isEmpty()) {
+                lignes.add("");
             }
+            ajouter(lignes, "CAPA", capa.title());
+            ajouter(lignes, "Type", capa.type());
+            ajouter(lignes, "Criticality", capa.criticity());
+            ajouter(lignes, "Status", capa.status());
+            ajouter(lignes, "Due date", jour(capa.dueDate()));
+            for (EightDSources.Action action : capa.actions()) {
+                lignes.add("Action [" + texteOu(action.actionType(), "?") + "] "
+                        + texteOu(action.title(), "(no title)")
+                        + " — " + texteOu(action.status(), "?")
+                        + (action.assigneeName() == null ? "" : " — " + action.assigneeName())
+                        + (action.dueDate() == null ? "" : " \u2014 due " + jour(action.dueDate())));
+                if (action.description() != null && !action.description().isBlank()) {
+                    lignes.add("    " + action.description().trim());
+                }
+            }
+            decidees += capa.actions().size();
         }
-        boolean servi = !capa.actions().isEmpty();
-        String label = servi
-                ? "Escalated CAPA \u2014 " + capa.actions().size() + " action(s) decided"
-                : "The escalated CAPA carries no action yet";
+        boolean servi = decidees > 0;
+        String label = libelleCapas(capas) + (servi
+                ? " \u2014 " + decidees + " action(s) decided"
+                : " \u2014 no action decided yet");
         return section(EightDDiscipline.D5, servi, label, lignes);
+    }
+
+    /**
+     * \u00ab Escalated CAPA \u00bb, ou le COMPTE quand l'\u00e9cart en porte plusieurs.
+     *
+     * <p>Le singulier mentait d\u00e8s qu'un second dossier citait la r\u00e9f\u00e9rence de
+     * l'\u00e9cart, et le lecteur du rapport n'avait aucun moyen de le savoir.
+     */
+    private String libelleCapas(List<EightDSources.Capa> capas) {
+        return capas.size() == 1
+                ? "Escalated CAPA"
+                : capas.size() + " CAPA cases on this non-conformity";
     }
 
     // ---------- D6 : la mise en œuvre et ses preuves ----------
 
-    private EightDSnapshot.Section miseEnOeuvre(EightDSources.Capa capa) {
-        if (capa == null) {
+    private EightDSnapshot.Section miseEnOeuvre(List<EightDSources.Capa> capas) {
+        if (capas.isEmpty()) {
             return section(EightDDiscipline.D6, false, sansCapa(), List.of());
         }
         List<String> lignes = new ArrayList<>();
         long menees = 0;
-        long preuves = capa.caseEvidenceCount();
-        for (EightDSources.Action action : capa.actions()) {
-            preuves += action.evidenceCount();
-            if (action.completedAt() == null) {
+        long preuves = 0;
+        for (EightDSources.Capa capa : capas) {
+            List<String> duDossier = new ArrayList<>();
+            preuves += capa.caseEvidenceCount();
+            for (EightDSources.Action action : capa.actions()) {
+                preuves += action.evidenceCount();
+                if (action.completedAt() == null) {
+                    continue;
+                }
+                menees++;
+                duDossier.add(texteOu(action.title(), "(no title)")
+                        + " \u2014 completed on " + horodatage(action.completedAt())
+                        + " — " + action.evidenceCount() + " evidence item(s)");
+            }
+            if (capa.caseEvidenceCount() > 0) {
+                duDossier.add("Evidence filed on the CAPA case: " + capa.caseEvidenceCount());
+            }
+            ajouter(duDossier, "CAPA closed on", horodatage(capa.closedAt()));
+            if (Boolean.TRUE.equals(capa.effectivenessVerified())) {
+                duDossier.add("Effectiveness verified on "
+                        + horodatage(capa.effectivenessVerifiedAt()));
+            }
+            // Un dossier dont RIEN n'a encore \u00e9t\u00e9 men\u00e9 n'\u00e9crit pas son titre :
+            // un intitul\u00e9 seul, sous une discipline de mise en \u0153uvre, se lit
+            // comme un travail fait.
+            if (duDossier.isEmpty()) {
                 continue;
             }
-            menees++;
-            lignes.add(texteOu(action.title(), "(no title)")
-                    + " \u2014 completed on " + horodatage(action.completedAt())
-                    + " — " + action.evidenceCount() + " evidence item(s)");
-        }
-        if (capa.caseEvidenceCount() > 0) {
-            lignes.add("Evidence filed on the CAPA case: " + capa.caseEvidenceCount());
-        }
-        ajouter(lignes, "CAPA closed on", horodatage(capa.closedAt()));
-        if (Boolean.TRUE.equals(capa.effectivenessVerified())) {
-            lignes.add("Effectiveness verified on " + horodatage(capa.effectivenessVerifiedAt()));
+            if (!lignes.isEmpty()) {
+                lignes.add("");
+            }
+            if (capas.size() > 1) {
+                lignes.add(texteOu(capa.title(), "(no title)") + " :");
+            }
+            lignes.addAll(duDossier);
         }
         boolean servi = menees > 0 || preuves > 0;
         String label = servi
-                ? "Escalated CAPA \u2014 " + menees + " action(s) completed, " + preuves + " evidence item(s)"
+                ? libelleCapas(capas) + " \u2014 " + menees + " action(s) completed, "
+                  + preuves + " evidence item(s)"
                 : "No completed action and no evidence filed on the escalated CAPA";
         return section(EightDDiscipline.D6, servi, label, lignes);
     }

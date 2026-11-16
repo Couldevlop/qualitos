@@ -46,6 +46,7 @@ class NcReporterNameTest {
 
     @Mock NcTeamMemberRepository teamMembers;
     @Mock CapaCaseRepository capaRepo;
+    @Mock com.openlab.qualitos.quality.capa.CapaService capaService;
     @Mock ApplicationEventPublisher events;
     /** Sans réglage, Mockito rend Optional.empty() : l'utilisateur voit tout (ADR 0081). */
     @Mock RecordScope scope;

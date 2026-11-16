@@ -22314,6 +22314,10 @@ historial de 12 meses</target>
         <source>Écrire l'action corrective dans une CAPA</source>
         <target state="translated">Escribir la acción correctiva en un expediente CAPA</target>
       </trans-unit>
+      <trans-unit id="nc.detail.capa-cases-count" datatype="html">
+        <source><x id="count"/> dossiers CAPA traitent cet écart</source>
+        <target state="translated"><x id="count"/> expedientes CAPA tratan esta no conformidad</target>
+      </trans-unit>
       <trans-unit id="nav.admin-nc" datatype="html">
         <source>Natures de NC</source>
         <target state="translated">Naturalezas de NC</target>
