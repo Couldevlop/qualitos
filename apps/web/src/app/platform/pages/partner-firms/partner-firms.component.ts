@@ -135,7 +135,20 @@ export class PartnerFirmsComponent implements OnInit {
       name: this.draft.name.trim(),
       registrationNumber: this.draft.registrationNumber.trim() || null,
       contactEmail: this.draft.contactEmail.trim() || null,
-      contactPhone: this.draft.contactPhone.trim() || null
+      contactPhone: this.draft.contactPhone.trim() || null,
+      // LA CREATION RESTE COURTE. Les mentions legales et l'adresse se
+      // completent dans la fiche, qui est faite pour cela : les demander ici
+      // ferait d'un formulaire de douze champs le passage oblige pour declarer
+      // un cabinet, alors qu'au moment ou on le declare on a souvent le nom et
+      // le contact, pas encore le numero de TVA.
+      legalName: null,
+      legalForm: null,
+      vatNumber: null,
+      addressLine1: null,
+      addressLine2: null,
+      postalCode: null,
+      city: null,
+      countryCode: null
     }).subscribe({
       next: cabinet => {
         this.firms = [cabinet, ...this.firms];
@@ -145,6 +158,36 @@ export class PartnerFirmsComponent implements OnInit {
       error: (err: unknown) => this.echec(err,
         $localize`:@@platform.firms.create-failed:Le cabinet n’a pas pu être créé.`)
     });
+  }
+
+  /**
+   * Vrai quand la fiche porte autre chose que son nom d'usage.
+   *
+   * <p>Le contact compte : un cabinet joignable est deja moins anonyme qu'un
+   * nom seul. C'est l'ABSENCE TOTALE qui merite d'etre signalee, pas le
+   * formulaire incomplet -- reclamer les douze champs ferait du rouge la
+   * couleur normale de l'ecran.
+   */
+  aUneIdentite(cabinet: PartnerFirm): boolean {
+    return !!(cabinet.legalName || cabinet.legalForm || cabinet.registrationNumber
+      || cabinet.vatNumber || cabinet.addressLine1 || cabinet.addressLine2
+      || cabinet.postalCode || cabinet.city || cabinet.countryCode
+      || cabinet.contactEmail || cabinet.contactPhone);
+  }
+
+  /**
+   * L'adresse sur une ligne, ou null si rien n'en est su.
+   *
+   * <p>On assemble ici plutot que dans le gabarit : une suite de `*ngIf`
+   * imbriques y produisait des virgules orphelines des qu'un morceau manquait,
+   * et une adresse qui commence par une virgule se lit comme une erreur
+   * d'affichage.
+   */
+  adresseDe(cabinet: PartnerFirm): string | null {
+    const ville = [cabinet.postalCode, cabinet.city].filter(Boolean).join(' ');
+    const morceaux = [cabinet.addressLine1, cabinet.addressLine2, ville, cabinet.countryCode]
+      .filter((m): m is string => !!m && m.trim().length > 0);
+    return morceaux.length ? morceaux.join(', ') : null;
   }
 
   // ---------- corriger la fiche ----------

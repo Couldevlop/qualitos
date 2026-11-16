@@ -23113,6 +23113,94 @@ historique 12 mois</source>
         <source>Aucun cabinet partenaire n’est déclaré. Un cabinet regroupe des consultants externes à qui vos clients peuvent ouvrir un accès daté.</source>
         <target state="translated">提携事務所は未登録です。事務所は外部コンサルタントをまとめる単位で、クライアントは期限付きのアクセスを開けます。</target>
       </trans-unit>
+      <trans-unit id="platform.firms.block-firm" datatype="html">
+        <source>Cabinet</source>
+        <target state="translated">事務所</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.name-hint" datatype="html">
+        <source>Le nom d’usage, celui qui s’affiche dans les écrans.</source>
+        <target state="translated">画面に表示される通称です。</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.slug-frozen" datatype="html">
+        <source>ne change plus</source>
+        <target state="translated">以後変更されません</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.block-legal" datatype="html">
+        <source>Mentions légales</source>
+        <target state="translated">法定情報</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.legal-hint" datatype="html">
+        <source>Ce bloc est ce qui désigne le cabinet sur un accord d’engagement — la pièce que le client conserve et qu’un auditeur peut demander.</source>
+        <target state="translated">このブロックは、契約合意書で事務所を特定する情報です。クライアントが保管し、監査員が提示を求めることがあります。</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.legal-name" datatype="html">
+        <source>Dénomination sociale</source>
+        <target state="translated">商号</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.legal-name-hint" datatype="html">
+        <source>Si elle diffère du nom d’usage.</source>
+        <target state="translated">通称と異なる場合に入力します。</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.legal-form" datatype="html">
+        <source>Forme juridique</source>
+        <target state="translated">法人格</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.vat" datatype="html">
+        <source>Numéro de TVA</source>
+        <target state="translated">付加価値税番号</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.vat-hint" datatype="html">
+        <source>Non vérifié par la plateforme.</source>
+        <target state="translated">プラットフォームでは検証していません。</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.block-address" datatype="html">
+        <source>Adresse</source>
+        <target state="translated">住所</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.address" datatype="html">
+        <source>Adresse</source>
+        <target state="translated">住所</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.address1" datatype="html">
+        <source>Adresse</source>
+        <target state="translated">住所</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.address2" datatype="html">
+        <source>Complément d’adresse</source>
+        <target state="translated">住所（建物名など）</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.postal-code" datatype="html">
+        <source>Code postal</source>
+        <target state="translated">郵便番号</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.city" datatype="html">
+        <source>Ville</source>
+        <target state="translated">市区町村</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.country" datatype="html">
+        <source>Pays</source>
+        <target state="translated">国</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.country-hint" datatype="html">
+        <source>Deux lettres, par exemple FR.</source>
+        <target state="translated">2 文字で入力します（例：FR）。</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.country-invalid" datatype="html">
+        <source>Deux lettres attendues (ISO 3166-1), par exemple FR.</source>
+        <target state="translated">2 文字で入力してください（ISO 3166-1）。例：FR。</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.block-contact" datatype="html">
+        <source>Contact</source>
+        <target state="translated">連絡先</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.identity" datatype="html">
+        <source>Identité</source>
+        <target state="translated">識別情報</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.identity-empty" datatype="html">
+        <source>Rien de renseigné. Un accord d’engagement désignerait ce cabinet par son seul nom d’usage — complétez la fiche pour qu’il nomme quelqu’un de vérifiable.</source>
+        <target state="translated">未入力です。このままでは契約合意書が通称のみで事務所を特定することになります。検証可能な情報になるよう記入してください。</target>
+      </trans-unit>
       <trans-unit id="pdca.detail.col-evidence" datatype="html">
         <source>Preuve</source>
         <target state="translated">証拠</target>

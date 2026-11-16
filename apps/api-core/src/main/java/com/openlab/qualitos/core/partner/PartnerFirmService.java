@@ -63,7 +63,15 @@ public class PartnerFirmService {
         PartnerFirm firm = firms.save(PartnerFirm.builder()
                 .slug(request.slug())
                 .name(request.name())
+                .legalName(blankToNull(request.legalName()))
+                .legalForm(blankToNull(request.legalForm()))
                 .registrationNumber(blankToNull(request.registrationNumber()))
+                .vatNumber(blankToNull(request.vatNumber()))
+                .addressLine1(blankToNull(request.addressLine1()))
+                .addressLine2(blankToNull(request.addressLine2()))
+                .postalCode(blankToNull(request.postalCode()))
+                .city(blankToNull(request.city()))
+                .countryCode(paysOuNull(request.countryCode()))
                 .contactEmail(blankToNull(request.contactEmail()))
                 .contactPhone(blankToNull(request.contactPhone()))
                 .active(true)
@@ -95,7 +103,15 @@ public class PartnerFirmService {
         String avant = firm.getName() + " (" + firm.getSlug() + ")";
         firm.setSlug(request.slug());
         firm.setName(request.name());
+        firm.setLegalName(blankToNull(request.legalName()));
+        firm.setLegalForm(blankToNull(request.legalForm()));
         firm.setRegistrationNumber(blankToNull(request.registrationNumber()));
+        firm.setVatNumber(blankToNull(request.vatNumber()));
+        firm.setAddressLine1(blankToNull(request.addressLine1()));
+        firm.setAddressLine2(blankToNull(request.addressLine2()));
+        firm.setPostalCode(blankToNull(request.postalCode()));
+        firm.setCity(blankToNull(request.city()));
+        firm.setCountryCode(paysOuNull(request.countryCode()));
         firm.setContactEmail(blankToNull(request.contactEmail()));
         firm.setContactPhone(blankToNull(request.contactPhone()));
         log.info("partner.firm.updated firm_id={}", firmId);
@@ -266,6 +282,21 @@ public class PartnerFirmService {
 
     private LocalDate today() {
         return LocalDate.now(clock);
+    }
+
+    /**
+     * Le code pays, mis en majuscules, ou {@code null} s'il est vide.
+     *
+     * <p>On NORMALISE au lieu de refuser : « fr » est un code pays juste, ecrit
+     * en minuscules. Le rejeter apprendrait a l'utilisateur une regle de forme
+     * qui ne sert qu'a la machine -- alors que la mettre en majuscules ne perd
+     * aucune information. Ce qui n'est pas deux lettres, en revanche, est
+     * refuse par la validation du DTO et par la contrainte en base : la
+     * normalisation ne sert pas a rattraper une valeur fausse.
+     */
+    private static String paysOuNull(String valeur) {
+        String net = blankToNull(valeur);
+        return net == null ? null : net.toUpperCase(java.util.Locale.ROOT);
     }
 
     private static String blankToNull(String value) {

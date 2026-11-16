@@ -75,7 +75,9 @@ class PartnerFirmServiceTest {
     }
 
     private static PartnerDto.FirmRequest demande(String slug) {
-        return new PartnerDto.FirmRequest(slug, "QualiConseil", "812 345 678",
+        return new PartnerDto.FirmRequest(slug, "QualiConseil",
+                "QualiConseil & Associes SARL", "SARL", "812 345 678", "FR32812345678",
+                "12 rue de la Qualite", null, "75011", "Paris", "FR",
                 "contact@qualiconseil.fr", "+33 1 23 45 67 89");
     }
 
@@ -104,11 +106,84 @@ class PartnerFirmServiceTest {
         // Une chaîne vide en base se lit « renseigné à vide », ce qui n'est pas
         // la même chose que « pas renseigné » sur une mention légale.
         PartnerDto.FirmResponse rendu = service.create(
-                new PartnerDto.FirmRequest("cab", "Cabinet", "  ", "", null));
+                new PartnerDto.FirmRequest("cab", "Cabinet", "  ", "  ", "  ", "  ",
+                        "  ", "  ", "  ", "  ", "", "", null));
 
         assertThat(rendu.registrationNumber()).isNull();
         assertThat(rendu.contactEmail()).isNull();
         assertThat(rendu.contactPhone()).isNull();
+        // Les champs d'identite ajoutes suivent la meme regle : une mention
+        // legale « renseignee a vide » sur un accord d'engagement se lirait
+        // comme une mention, alors qu'elle n'en est pas une.
+        assertThat(rendu.legalName()).isNull();
+        assertThat(rendu.legalForm()).isNull();
+        assertThat(rendu.vatNumber()).isNull();
+        assertThat(rendu.addressLine1()).isNull();
+        assertThat(rendu.addressLine2()).isNull();
+        assertThat(rendu.postalCode()).isNull();
+        assertThat(rendu.city()).isNull();
+        assertThat(rendu.countryCode()).isNull();
+    }
+
+    /**
+     * LE CODE PAYS EST NORMALISE, PAS REFUSE.
+     *
+     * <p>« fr » est un code pays juste, ecrit en minuscules. Le rejeter
+     * apprendrait a l'utilisateur une regle de forme qui ne sert qu'a la
+     * machine, alors que la mise en majuscules ne perd aucune information.
+     *
+     * <p>Et il FAUT le normaliser ici : la contrainte en base (V13) n'accepte
+     * que les majuscules. Sans cette passe, une saisie parfaitement valide
+     * serait refusee par la base avec une erreur que personne ne sait lire.
+     */
+    @Test
+    void le_code_pays_est_mis_en_majuscules_avant_d_etre_enregistre() {
+        PartnerDto.FirmResponse rendu = service.create(
+                new PartnerDto.FirmRequest("cab", "Cabinet", null, null, null, null,
+                        null, null, null, null, "fr", null, null));
+
+        assertThat(rendu.countryCode()).isEqualTo("FR");
+    }
+
+    /**
+     * L'identite complete fait l'aller-retour. Un cabinet figure sur un accord
+     * d'engagement, c'est-a-dire sur une piece que le client conserve et qu'un
+     * auditeur peut demander : « Cabinet Durand » sans forme juridique, sans
+     * adresse et sans numero de TVA ne designe personne de verifiable.
+     */
+    @Test
+    void l_identite_legale_et_postale_est_enregistree_puis_rendue() {
+        PartnerDto.FirmResponse rendu = service.create(demande("qualiconseil"));
+
+        assertThat(rendu.legalName()).isEqualTo("QualiConseil & Associes SARL");
+        assertThat(rendu.legalForm()).isEqualTo("SARL");
+        assertThat(rendu.vatNumber()).isEqualTo("FR32812345678");
+        assertThat(rendu.addressLine1()).isEqualTo("12 rue de la Qualite");
+        assertThat(rendu.postalCode()).isEqualTo("75011");
+        assertThat(rendu.city()).isEqualTo("Paris");
+        assertThat(rendu.countryCode()).isEqualTo("FR");
+    }
+
+    /** Et une modification la met a jour, sans oublier de champ. */
+    @Test
+    void modifier_un_cabinet_met_a_jour_toute_son_identite() {
+        PartnerFirm existant = PartnerFirm.builder()
+                .id(UUID.randomUUID()).slug("qualiconseil").name("Ancien nom").active(true)
+                .build();
+        when(firms.findById(existant.getId())).thenReturn(Optional.of(existant));
+        when(firms.save(any(PartnerFirm.class))).thenAnswer(i -> i.getArgument(0));
+
+        PartnerDto.FirmResponse rendu =
+                service.update(existant.getId(), demande("qualiconseil"));
+
+        assertThat(rendu.legalName()).isEqualTo("QualiConseil & Associes SARL");
+        assertThat(rendu.legalForm()).isEqualTo("SARL");
+        assertThat(rendu.vatNumber()).isEqualTo("FR32812345678");
+        assertThat(rendu.addressLine1()).isEqualTo("12 rue de la Qualite");
+        assertThat(rendu.addressLine2()).isNull();
+        assertThat(rendu.postalCode()).isEqualTo("75011");
+        assertThat(rendu.city()).isEqualTo("Paris");
+        assertThat(rendu.countryCode()).isEqualTo("FR");
     }
 
     @Test

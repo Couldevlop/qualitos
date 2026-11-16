@@ -23,7 +23,17 @@ export interface PartnerFirm {
   id: string;
   slug: string;
   name: string;
+  /** La raison sociale complète, quand elle diffère du nom d'usage. */
+  legalName: string | null;
+  legalForm: string | null;
   registrationNumber: string | null;
+  vatNumber: string | null;
+  addressLine1: string | null;
+  addressLine2: string | null;
+  postalCode: string | null;
+  city: string | null;
+  /** ISO 3166-1 alpha-2, en majuscules. */
+  countryCode: string | null;
   contactEmail: string | null;
   contactPhone: string | null;
   active: boolean;
@@ -38,7 +48,17 @@ export interface PartnerFirm {
 export interface PartnerFirmRequest {
   slug: string;
   name: string;
+  /** La raison sociale complète, quand elle diffère du nom d'usage. */
+  legalName: string | null;
+  legalForm: string | null;
   registrationNumber: string | null;
+  vatNumber: string | null;
+  addressLine1: string | null;
+  addressLine2: string | null;
+  postalCode: string | null;
+  city: string | null;
+  /** ISO 3166-1 alpha-2, en majuscules. */
+  countryCode: string | null;
   contactEmail: string | null;
   contactPhone: string | null;
 }

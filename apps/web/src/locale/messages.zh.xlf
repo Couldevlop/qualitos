@@ -23114,6 +23114,94 @@ historique 12 mois</source>
         <source>Aucun cabinet partenaire n’est déclaré. Un cabinet regroupe des consultants externes à qui vos clients peuvent ouvrir un accès daté.</source>
         <target state="translated">尚未登记合作事务所。事务所汇集外部顾问，您的客户可为其开放带期限的访问。</target>
       </trans-unit>
+      <trans-unit id="platform.firms.block-firm" datatype="html">
+        <source>Cabinet</source>
+        <target state="translated">事务所</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.name-hint" datatype="html">
+        <source>Le nom d’usage, celui qui s’affiche dans les écrans.</source>
+        <target state="translated">通用名称，即界面上显示的名称。</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.slug-frozen" datatype="html">
+        <source>ne change plus</source>
+        <target state="translated">不再更改</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.block-legal" datatype="html">
+        <source>Mentions légales</source>
+        <target state="translated">法定信息</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.legal-hint" datatype="html">
+        <source>Ce bloc est ce qui désigne le cabinet sur un accord d’engagement — la pièce que le client conserve et qu’un auditeur peut demander.</source>
+        <target state="translated">此栏用于在委托协议中指明事务所——客户留存、审核员可索取的凭据。</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.legal-name" datatype="html">
+        <source>Dénomination sociale</source>
+        <target state="translated">法定名称</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.legal-name-hint" datatype="html">
+        <source>Si elle diffère du nom d’usage.</source>
+        <target state="translated">如与通用名称不同则填写。</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.legal-form" datatype="html">
+        <source>Forme juridique</source>
+        <target state="translated">法律形式</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.vat" datatype="html">
+        <source>Numéro de TVA</source>
+        <target state="translated">增值税号</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.vat-hint" datatype="html">
+        <source>Non vérifié par la plateforme.</source>
+        <target state="translated">平台不对其进行核验。</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.block-address" datatype="html">
+        <source>Adresse</source>
+        <target state="translated">地址</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.address" datatype="html">
+        <source>Adresse</source>
+        <target state="translated">地址</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.address1" datatype="html">
+        <source>Adresse</source>
+        <target state="translated">地址</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.address2" datatype="html">
+        <source>Complément d’adresse</source>
+        <target state="translated">地址第二行</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.postal-code" datatype="html">
+        <source>Code postal</source>
+        <target state="translated">邮政编码</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.city" datatype="html">
+        <source>Ville</source>
+        <target state="translated">城市</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.country" datatype="html">
+        <source>Pays</source>
+        <target state="translated">国家/地区</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.country-hint" datatype="html">
+        <source>Deux lettres, par exemple FR.</source>
+        <target state="translated">两位字母，例如 FR。</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.country-invalid" datatype="html">
+        <source>Deux lettres attendues (ISO 3166-1), par exemple FR.</source>
+        <target state="translated">需填写两位字母（ISO 3166-1），例如 FR。</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.block-contact" datatype="html">
+        <source>Contact</source>
+        <target state="translated">联系方式</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.identity" datatype="html">
+        <source>Identité</source>
+        <target state="translated">身份信息</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.identity-empty" datatype="html">
+        <source>Rien de renseigné. Un accord d’engagement désignerait ce cabinet par son seul nom d’usage — complétez la fiche pour qu’il nomme quelqu’un de vérifiable.</source>
+        <target state="translated">尚未填写。委托协议将仅以通用名称指明该事务所——请补全档案，使其指向可核验的主体。</target>
+      </trans-unit>
       <trans-unit id="pdca.detail.col-evidence" datatype="html">
         <source>Preuve</source>
         <target state="translated">证据</target>

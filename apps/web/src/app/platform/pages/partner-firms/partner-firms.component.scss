@@ -253,3 +253,29 @@
     margin-left: 0;
   }
 }
+
+/* L'identité : des couples intitulé/valeur, pas un tableau. Deux colonnes
+   suffisent, et la valeur doit pouvoir se sélectionner d'un bloc — on recopie
+   un numéro de TVA bien plus souvent qu'on ne le lit. */
+.identite {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--qos-space-1) var(--qos-space-4);
+  margin: 0;
+
+  dt {
+    color: var(--qos-fg-secondary);
+    font-size: 0.8125rem;
+  }
+
+  dd {
+    margin: 0;
+    color: var(--qos-fg-primary);
+  }
+
+  &__vide {
+    margin: 0;
+    color: var(--qos-fg-secondary);
+    font-size: 0.8125rem;
+  }
+}

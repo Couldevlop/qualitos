@@ -25,7 +25,22 @@ public final class PartnerDto {
                     message = "identifiant attendu en minuscules, chiffres et tirets")
             String slug,
             @NotBlank @Size(max = 255) String name,
+            @Size(max = 255) String legalName,
+            @Size(max = 64) String legalForm,
             @Size(max = 64) String registrationNumber,
+            @Size(max = 32) String vatNumber,
+            @Size(max = 255) String addressLine1,
+            @Size(max = 255) String addressLine2,
+            @Size(max = 16) String postalCode,
+            @Size(max = 128) String city,
+            // DEUX LETTRES, la casse est indifferente. Le service met en
+            // majuscules avant d'enregistrer : « fr » est un code pays juste,
+            // ecrit en minuscules, et le refuser apprendrait a l'utilisateur
+            // une regle de forme qui ne sert qu'a la machine. Ce qui n'est pas
+            // deux lettres reste refuse -- normaliser n'est pas rattraper.
+            @Pattern(regexp = "^[A-Za-z]{2}$|^$",
+                    message = "code pays attendu sur deux lettres (ISO 3166-1)")
+            String countryCode,
             @Email @Size(max = 254) String contactEmail,
             @Size(max = 32) String contactPhone
     ) {}
@@ -34,7 +49,15 @@ public final class PartnerDto {
             UUID id,
             String slug,
             String name,
+            String legalName,
+            String legalForm,
             String registrationNumber,
+            String vatNumber,
+            String addressLine1,
+            String addressLine2,
+            String postalCode,
+            String city,
+            String countryCode,
             String contactEmail,
             String contactPhone,
             boolean active,
@@ -44,7 +67,10 @@ public final class PartnerDto {
     ) {
         static FirmResponse from(PartnerFirm firm, long consultants, long granted) {
             return new FirmResponse(firm.getId(), firm.getSlug(), firm.getName(),
-                    firm.getRegistrationNumber(), firm.getContactEmail(), firm.getContactPhone(),
+                    firm.getLegalName(), firm.getLegalForm(), firm.getRegistrationNumber(),
+                    firm.getVatNumber(), firm.getAddressLine1(), firm.getAddressLine2(),
+                    firm.getPostalCode(), firm.getCity(), firm.getCountryCode(),
+                    firm.getContactEmail(), firm.getContactPhone(),
                     firm.isActive(), consultants, granted, firm.getCreatedAt());
         }
     }
