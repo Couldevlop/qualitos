@@ -187,6 +187,30 @@ class KeycloakIdentityProviderTest {
         server.verify();
     }
 
+    /**
+     * LA FERMETURE DES SESSIONS PART BIEN, ET DIT QUAND ELLE ECHOUE.
+     *
+     * <p>C'est l'appel qui separe « desactiver » de « revoquer » : sans lui, le
+     * jeton deja dans le navigateur reste valable jusqu'a son echeance. Un
+     * echec silencieux ici laisserait un administrateur croire un acces coupe
+     * alors qu'il court encore.
+     */
+    @Test
+    void laFermetureDesSessionsPasseParLogoutEtRemonteSonEchec() {
+        jeton();
+        server.expect(requestTo(ADMIN + "/users/kc-1/logout")).andExpect(method(HttpMethod.POST))
+                .andRespond(withSuccess());
+        server.expect(requestTo(ADMIN + "/users/kc-2/logout")).andExpect(method(HttpMethod.POST))
+                .andRespond(withStatus(HttpStatus.INTERNAL_SERVER_ERROR));
+
+        provider.logout("kc-1");
+        assertThatThrownBy(() -> provider.logout("kc-2"))
+                .isInstanceOf(IdentityProviderException.class)
+                .hasMessageContaining("la fermeture des sessions");
+
+        server.verify();
+    }
+
     @Test
     void sansSecretRienNePartEtLeJetonSeRecycleJusquASonExpiration() {
         KeycloakIdentityProvider sansSecret = new KeycloakIdentityProvider(

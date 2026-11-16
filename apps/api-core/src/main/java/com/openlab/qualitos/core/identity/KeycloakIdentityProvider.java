@@ -175,6 +175,18 @@ public class KeycloakIdentityProvider implements IdentityProvider {
     }
 
     @Override
+    public void logout(String accountId) {
+        // POST /users/{id}/logout : Keycloak ferme les sessions et invalide les
+        // jetons de rafraichissement. Les jetons d'acces deja emis restent
+        // techniquement valides jusqu'a leur echeance (15 min, cf. §11.1 A07) --
+        // c'est la borne que la plateforme accepte, et la session, elle, ne se
+        // renouvelle plus.
+        call(() -> http.post().uri(admin("/users/" + accountId + "/logout"))
+                .headers(h -> h.setBearerAuth(bearer()))
+                .retrieve().toBodilessEntity(), "la fermeture des sessions");
+    }
+
+    @Override
     public Optional<UUID> tenantOf(String accountId) {
         JsonNode compte;
         try {
