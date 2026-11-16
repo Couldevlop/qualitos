@@ -155,6 +155,48 @@ describe('ProductsListComponent', () => {
     expect(router.navigate).toHaveBeenCalledWith(['/products', 'p-1']);
   }));
 
+  /**
+   * LE CLIC RÉEL SUR LA LIGNE, pas l'appel de la méthode.
+   *
+   * <p>Le banc voisin appelle `component.open(...)` : il prouve que la méthode
+   * navigue, jamais que quelque chose l'appelle. Un `(click)` disparu du
+   * gabarit, une ligne recouverte, un `mat-row` qui n'émet plus — rien de tout
+   * cela ne le ferait rougir, et c'est pourtant tout ce que l'utilisateur
+   * touche pour ouvrir une fiche.
+   */
+  it('ouvre la fiche quand on clique la ligne elle-même', fakeAsync(() => {
+    service.list.and.returnValue(of([product()]));
+    service.revisionRequests.and.returnValue(of([]));
+    fixture.detectChanges();
+    tick();
+    fixture.detectChanges();
+
+    const ligne: HTMLElement = fixture.nativeElement.querySelector('tr.product-row');
+    expect(ligne).withContext('la ligne du produit doit être rendue').toBeTruthy();
+    ligne.click();
+
+    expect(router.navigate).toHaveBeenCalledWith(['/products', 'p-1']);
+  }));
+
+  /**
+   * ET LA MÊME CHOSE AU CLAVIER. La ligne porte `tabindex` et `keyup.enter`
+   * pour que la liste s'ouvre sans souris ; les déclarer ne prouve pas
+   * qu'elles marchent, et une liste qui ne s'ouvre qu'à la souris ferme la
+   * fonctionnalité à qui navigue au clavier ou au lecteur d'écran.
+   */
+  it('ouvre la fiche à la touche Entrée, sans souris', fakeAsync(() => {
+    service.list.and.returnValue(of([product()]));
+    service.revisionRequests.and.returnValue(of([]));
+    fixture.detectChanges();
+    tick();
+    fixture.detectChanges();
+
+    const ligne: HTMLElement = fixture.nativeElement.querySelector('tr.product-row');
+    ligne.dispatchEvent(new KeyboardEvent('keyup', { key: 'Enter', bubbles: true }));
+
+    expect(router.navigate).toHaveBeenCalledWith(['/products', 'p-1']);
+  }));
+
   it('ne recharge rien quand la création est abandonnée', fakeAsync(() => {
     service.list.and.returnValue(of([product()]));
     service.revisionRequests.and.returnValue(of([]));
