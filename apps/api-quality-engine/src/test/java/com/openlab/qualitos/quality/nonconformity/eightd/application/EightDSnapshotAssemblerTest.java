@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -284,8 +285,21 @@ class EightDSnapshotAssemblerTest {
         EightDSnapshot.Section d5 = section(snapshot, "D5");
         assertThat(d5.sourced()).isTrue();
         assertThat(d5.sourceLabel()).contains("2 action(s) decided");
-        assertThat(d5.lines()).anyMatch(l -> l.contains("[PREVENTIVE] Former les opérateurs"));
-        assertThat(d5.lines()).anyMatch(l -> l.contains("due 10/09/2026"));
+        // Les actions sont en COLONNES, pas en phrases : c'est ce que l'écran
+        // montre, et le document émis doit se présenter comme l'écran.
+        assertThat(d5.lines()).isEmpty();
+        assertThat(d5.tables()).hasSize(1);
+        EightDSnapshot.Table decidees = d5.tables().get(0);
+        assertThat(decidees.caption()).isEqualTo("Fuite presse-étoupe");
+        assertThat(decidees.columns())
+                .containsExactly("Kind", "Action", "Owner", "Due date", "Status", "Evidence");
+        assertThat(decidees.rows()).hasSize(2);
+        assertThat(decidees.rows().get(0).cells()).containsExactly(
+                "CORRECTIVE", "Remplacer le joint", "Grace", "10/09/2026", "DONE", "2");
+        // Ce qu'on ne SAIT pas s'écrit « - » : une cellule vide se lirait comme
+        // une valeur qu'on aurait omise.
+        assertThat(decidees.rows().get(1).cells()).containsExactly(
+                "PREVENTIVE", "Former les opérateurs", "-", "-", "IN_PROGRESS", "-");
 
         EightDSnapshot.Section d6 = section(snapshot, "D6");
         assertThat(d6.sourced()).isTrue();
@@ -293,8 +307,17 @@ class EightDSnapshotAssemblerTest {
         assertThat(d6.lines()).anyMatch(l -> l.contains("Remplacer le joint")
                 && l.contains("09/09/2026 09:00 UTC"));
         assertThat(d6.lines()).anyMatch(l -> l.contains("Effectiveness verified"));
-        // Une action encore en cours n'a pas sa place dans D6 : elle n'est pas mise en œuvre.
+        // Une action encore en cours n'a pas sa place dans le RÉCIT du D6 : elle
+        // n'est pas mise en œuvre.
         assertThat(d6.lines()).noneMatch(l -> l.contains("Former les opérateurs"));
+        // Elle a en revanche sa place dans son TABLEAU, qui donne l'état de
+        // chaque action préventive à la date d'émission -- y compris celles qui
+        // restent à faire. Les taire laisserait croire la prévention terminée.
+        assertThat(d6.tables()).hasSize(1);
+        assertThat(d6.tables().get(0).rows()).hasSize(1);
+        assertThat(d6.tables().get(0).rows().get(0).cells())
+                .containsExactly("PREVENTIVE", "Former les opérateurs", "-", "-",
+                        "IN_PROGRESS", "-");
     }
 
     @Test
@@ -373,8 +396,13 @@ class EightDSnapshotAssemblerTest {
                 assembler.assemble(sources, null, null, null, "t", null, null), "D5");
 
         assertThat(d5.sourced()).isTrue();
-        assertThat(d5.lines()).anyMatch(l -> l.contains("Remplacer le joint"));
-        assertThat(d5.lines()).anyMatch(l -> l.contains("Revoir la gamme"));
+        // UN TABLEAU PAR DOSSIER, chacun nommé : les actions du second dossier
+        // retenaient la clôture sans figurer dans le document remis au client.
+        assertThat(d5.tables()).hasSize(2);
+        assertThat(d5.tables()).extracting(EightDSnapshot.Table::caption)
+                .containsExactly("Dossier de la fiche", "Dossier ouvert depuis la liste");
+        assertThat(d5.tables().get(0).rows().get(0).cells()).contains("Remplacer le joint");
+        assertThat(d5.tables().get(1).rows().get(0).cells()).contains("Revoir la gamme");
         // Le COMPTE, pas le singulier : « Escalated CAPA » mentait d\u00e8s qu'un
         // second dossier citait la r\u00e9f\u00e9rence, et rien ne le disait au lecteur.
         assertThat(d5.sourceLabel()).contains("2 CAPA cases").contains("2 action(s) decided");
@@ -384,9 +412,13 @@ class EightDSnapshotAssemblerTest {
      * Deux dossiers colles se lisaient comme UN SEUL : leurs champs « Type »,
      * « Status » et « Due date » s'enchainaient, et le rapport devenait faux a
      * la lecture sans qu'aucune ligne ne soit fausse.
+     *
+     * <p>Le tableau resout cela par construction -- un tableau par dossier,
+     * portant son titre -- la ou la ligne vide demandait au lecteur de
+     * remarquer un blanc. On verifie donc la SEPARATION, pas le moyen.
      */
     @Test
-    void d5_separe_deux_dossiers_par_une_ligne_vide() {
+    void d5_ne_confond_pas_deux_dossiers() {
         EightDSources sources = new EightDSources(
                 nc(null), EQUIPE, List.of(), List.of(),
                 List.of(dossier("Premier", "A faire"), dossier("Second", "A faire aussi")),
@@ -395,8 +427,12 @@ class EightDSnapshotAssemblerTest {
         EightDSnapshot.Section d5 = section(
                 assembler.assemble(sources, null, null, null, "t", null, null), "D5");
 
-        assertThat(d5.lines()).contains("");
-        assertThat(d5.lines().indexOf("")).isGreaterThan(0);
+        assertThat(d5.tables()).hasSize(2);
+        assertThat(d5.tables()).extracting(EightDSnapshot.Table::caption)
+                .containsExactly("Premier", "Second");
+        // Et l'action de chacun reste chez lui.
+        assertThat(d5.tables().get(0).rows().get(0).cells()).contains("A faire");
+        assertThat(d5.tables().get(1).rows().get(0).cells()).contains("A faire aussi");
     }
 
     /**
@@ -426,6 +462,92 @@ class EightDSnapshotAssemblerTest {
     }
 
     /** Un dossier de l'ecart, avec une action a mener. */
+
+    /**
+     * CHAQUE DISCIPLINE NE MONTRE QUE LES ACTIONS DE SA NATURE, exactement comme
+     * l'ecran : le D3 endigue, le D6 previent, le D5 nomme les trois.
+     *
+     * <p>Melanger les natures ferait lire, sous « actions immediates
+     * d'endiguement », une action preventive a echeance dans six mois -- et
+     * c'est le document que l'auditeur ou le client lit pour savoir ce qui a
+     * ete fait TOUT DE SUITE.
+     */
+    @Test
+    void d3_n_affiche_que_l_endiguement_et_d6_que_la_prevention() {
+        EightDSources.Action endiguer = new EightDSources.Action(
+                "Isoler le lot", null, "CONTAINMENT", "DONE", "Ada", null, null, 0);
+        EightDSources.Action corriger = new EightDSources.Action(
+                "Remplacer le joint", null, "CORRECTIVE", "DONE", "Grace", null, null, 0);
+        EightDSources.Action prevenir = new EightDSources.Action(
+                "Revoir la gamme", null, "PREVENTIVE", "TODO", "Alan", null, null, 0);
+        EightDSources sources = new EightDSources(
+                nc(null), EQUIPE, List.of(), List.of(),
+                List.of(new EightDSources.Capa("Dossier A", "CORRECTIVE", "HIGH", "OPEN",
+                        null, null, null, null, 0, List.of(endiguer, corriger, prevenir))),
+                null, List.of());
+
+        EightDSnapshot snapshot = assembler.assemble(sources, null, null, null, "t", null, null);
+
+        assertThat(cellulesDe(snapshot, "D3")).containsExactly("Isoler le lot");
+        assertThat(cellulesDe(snapshot, "D6")).containsExactly("Revoir la gamme");
+        assertThat(cellulesDe(snapshot, "D5"))
+                .containsExactly("Isoler le lot", "Remplacer le joint", "Revoir la gamme");
+    }
+
+    /**
+     * Un dossier sans action de la nature de la discipline N'ECRIT PAS de
+     * tableau vide : un en-tete de colonnes sous un titre de dossier se lit
+     * comme un dossier qu'on aurait ouvert sans rien y mettre.
+     */
+    @Test
+    void une_discipline_sans_action_de_sa_nature_n_ecrit_pas_de_tableau_vide() {
+        EightDSources sources = new EightDSources(
+                nc(null), EQUIPE, List.of(), List.of(),
+                List.of(dossier("Dossier A", "Remplacer le joint")), null, List.of());
+
+        EightDSnapshot snapshot = assembler.assemble(sources, null, null, null, "t", null, null);
+
+        // Le dossier n'a qu'une action CORRECTIVE : le D5 la montre, le D3 et le
+        // D6 n'ont rien a tabuler.
+        assertThat(section(snapshot, "D5").tables()).hasSize(1);
+        assertThat(section(snapshot, "D3").tables()).isEmpty();
+        assertThat(section(snapshot, "D6").tables()).isEmpty();
+    }
+
+    /**
+     * Le libelle de source du D3 N'ATTRIBUE PAS A L'EQUIPE QUALITE un tableau
+     * qu'elle n'a pas ecrit : le texte vient d'elle, les actions du dossier
+     * CAPA. Les confondre ferait signer a quelqu'un une phrase qui n'est pas
+     * la sienne, dans un document scelle.
+     */
+    @Test
+    void d3_ne_dit_pas_saisi_par_l_equipe_quand_seul_le_tableau_est_servi() {
+        EightDSources.Action endiguer = new EightDSources.Action(
+                "Isoler le lot", null, "CONTAINMENT", "DONE", "Ada", null, null, 0);
+        EightDSources sources = new EightDSources(
+                nc(null), EQUIPE, List.of(), List.of(),
+                List.of(new EightDSources.Capa("Dossier A", "CORRECTIVE", "HIGH", "OPEN",
+                        null, null, null, null, 0, List.of(endiguer))),
+                null, List.of());
+
+        EightDSnapshot.Section d3 = section(
+                assembler.assemble(sources, null, null, null, "t", null, null), "D3");
+
+        assertThat(d3.sourced()).isTrue();
+        assertThat(d3.sourceLabel()).doesNotContain("quality team").contains("CAPA");
+    }
+
+    /** Les intitules d'action tabules sous une discipline, dans l'ordre. */
+    private List<String> cellulesDe(EightDSnapshot snapshot, String code) {
+        List<String> intitules = new ArrayList<>();
+        for (EightDSnapshot.Table tableau : section(snapshot, code).tables()) {
+            for (EightDSnapshot.Row rang : tableau.rows()) {
+                intitules.add(rang.cells().get(1));
+            }
+        }
+        return intitules;
+    }
+
     private static EightDSources.Capa dossier(String titre, String action) {
         return new EightDSources.Capa(titre, "CORRECTIVE", "HIGH", "OPEN", null, null, null, null, 0,
                 List.of(new EightDSources.Action(action, null, "CORRECTIVE", "PENDING",

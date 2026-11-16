@@ -31,6 +31,7 @@ import java.util.Calendar;
 import java.util.EnumMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
@@ -244,6 +245,9 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
         for (EightDSnapshot.Figure figure : section.figures()) {
             page = figure(doc, page, bold, regular, figure);
         }
+        for (EightDSnapshot.Table actions : section.tables()) {
+            page = tableau(doc, page, bold, regular, actions);
+        }
         page.y -= 8;
         return page;
     }
@@ -256,7 +260,135 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
      * au-dessus de son propre trace.
      */
     private static boolean rienAMontrer(EightDSnapshot.Section section) {
-        return section.lines().isEmpty() && section.figures().isEmpty();
+        return section.lines().isEmpty() && section.figures().isEmpty()
+                && section.tables().isEmpty();
+    }
+
+
+    // ---------- les tableaux ----------
+
+    /**
+     * Les parts de largeur des colonnes d'actions, dans l'ordre de l'ecran.
+     *
+     * <p>L'intitule prend le tiers : c'est le seul champ de phrase, les cinq
+     * autres sont des mots ou des dates. Donner a tous la meme largeur
+     * repliait l'intitule sur quatre lignes a cote de colonnes aux trois
+     * quarts vides.
+     *
+     * <p>Les parts sont calees sur les valeurs les plus LONGUES qui existent,
+     * pas sur les plus courantes : « CONTAINMENT » et « IN_PROGRESS » sont des
+     * valeurs d'enumeration, elles reviennent telles quelles et, trop serrees,
+     * venaient toucher la colonne suivante -- deux valeurs qui se touchent se
+     * lisent comme une seule.
+     */
+    private static final float[] PARTS_COLONNES = {0.15f, 0.32f, 0.15f, 0.12f, 0.16f, 0.10f};
+
+    /** La hauteur d'une ligne de tableau, par ligne de texte repliee. */
+    private static final float LIGNE_CELLULE = 11f;
+
+    /**
+     * Trace un tableau : un en-tete, puis une ligne par action.
+     *
+     * <p>L'ecran presente les actions decidees en colonnes, et le document emis
+     * doit se presenter comme l'ecran. Les memes donnees en phrases -- « Action
+     * [CORRECTIVE] Remplacer le joint - DONE - due 12/09 » -- ne se comparent
+     * pas d'une ligne a l'autre, et c'est pourtant ce qu'on vient faire dans
+     * ces disciplines : voir d'un coup d'oeil ce qui reste ouvert, ce qui est
+     * en retard, ce qui n'est pas prouve.
+     *
+     * <p>UNE LIGNE NE SE COUPE PAS en deux pages, et l'EN-TETE SE REPETE sur la
+     * page suivante : une colonne de valeurs sans son intitule ne se lit plus,
+     * et pire, elle se lit de travers.
+     */
+    private Page tableau(PDDocument doc, Page page, PDType1Font bold, PDType1Font regular,
+                         EightDSnapshot.Table tableau) throws IOException {
+        float[] largeurs = largeursDe(tableau.columns().size());
+        // Le titre et l'en-tete tiennent ensemble, avec au moins une ligne :
+        // un dossier annonce en bas de page dont le tableau commence a la
+        // suivante se lirait comme un dossier vide.
+        page = place(doc, page, 18f + LIGNE_CELLULE + 2 * LIGNE_CELLULE);
+        page.y -= 4;
+        texte(page.flux, bold, 9.5f, INDIGO, MARGIN + 10, page.y,
+                "Actions - " + texteOuVide(tableau.caption()));
+        page.y -= 13;
+        page = enTete(page, bold, tableau.columns(), largeurs);
+
+        boolean alterne = false;
+        for (EightDSnapshot.Row rang : tableau.rows()) {
+            List<List<String>> cellules = new ArrayList<>();
+            int hautes = 1;
+            for (int i = 0; i < rang.cells().size(); i++) {
+                List<String> repliee = replier(
+                        rang.cells().get(i), regular, 8f, largeurs[i] - 8f);
+                cellules.add(repliee);
+                hautes = Math.max(hautes, repliee.size());
+            }
+            float hauteur = hautes * LIGNE_CELLULE + 4f;
+            Page avant = page;
+            page = place(doc, page, hauteur);
+            if (page != avant) {
+                // Nouvelle page : l'en-tete se repete, sinon les colonnes
+                // perdent leur intitule et se lisent de travers.
+                page.y -= 4;
+                page = enTete(page, bold, tableau.columns(), largeurs);
+                alterne = false;
+            }
+            if (alterne) {
+                rect(page.flux, PANEL, MARGIN + 10, page.y - hauteur + 9.5f,
+                        CONTENT_W - 20, hauteur);
+            }
+            alterne = !alterne;
+            float x = MARGIN + 14;
+            for (int i = 0; i < cellules.size(); i++) {
+                float yc = page.y;
+                for (String morceau : cellules.get(i)) {
+                    texte(page.flux, regular, 8f, INK, x, yc, morceau);
+                    yc -= LIGNE_CELLULE;
+                }
+                x += largeurs[i];
+            }
+            page.y -= hauteur;
+        }
+        ligne(page.flux, MUTED, MARGIN + 10, page.y + 6f,
+                WIDTH - MARGIN - 10, page.y + 6f, 0.5f);
+        page.y -= 6;
+        return page;
+    }
+
+    /** L'en-tete des colonnes, souligne. */
+    private Page enTete(Page page, PDType1Font bold, List<String> colonnes, float[] largeurs)
+            throws IOException {
+        float x = MARGIN + 14;
+        for (int i = 0; i < colonnes.size(); i++) {
+            texte(page.flux, bold, 7.5f, MUTED, x, page.y, colonnes.get(i).toUpperCase(Locale.ROOT));
+            x += largeurs[i];
+        }
+        page.y -= 4;
+        ligne(page.flux, MUTED, MARGIN + 10, page.y, WIDTH - MARGIN - 10, page.y, 0.5f);
+        page.y -= 11;
+        return page;
+    }
+
+    /**
+     * Les largeurs en points, pour {@code n} colonnes.
+     *
+     * <p>Les parts connues servent telles quelles ; au-dela, les colonnes se
+     * partagent la largeur a egalite -- un tableau d'une autre forme se rendra
+     * sobrement plutot que de deborder de la page.
+     */
+    private static float[] largeursDe(int n) {
+        float utile = CONTENT_W - 24f;
+        float[] largeurs = new float[n];
+        if (n == PARTS_COLONNES.length) {
+            for (int i = 0; i < n; i++) {
+                largeurs[i] = utile * PARTS_COLONNES[i];
+            }
+            return largeurs;
+        }
+        for (int i = 0; i < n; i++) {
+            largeurs[i] = utile / n;
+        }
+        return largeurs;
     }
 
     // ---------- les figures ----------

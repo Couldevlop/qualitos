@@ -78,7 +78,7 @@ public class EightDSnapshotAssembler {
         List<EightDSnapshot.Section> sections = List.of(
                 equipe(sources.team(), team),
                 probleme(sources.nc()),
-                saisie(EightDDiscipline.D3, containment),
+                securisation(containment, sources.capas()),
                 causeRacine(sources),
                 actionsDecidees(sources.capas()),
                 miseEnOeuvre(sources.capas()),
@@ -131,6 +131,36 @@ public class EightDSnapshotAssembler {
     }
 
     // ---------- D3, D8 : ce que personne d'autre ne sait ----------
+
+    /**
+     * D3 : ce que le responsable a ecrit, ET les actions d'endiguement du dossier.
+     *
+     * <p>Les deux, parce qu'ils ne disent pas la meme chose : le texte raconte
+     * ce qu'on a fait pour arreter l'hemorragie, le tableau porte les gestes
+     * tracables -- qui, pour quand, fait ou non, prouve ou non. C'est aussi ce
+     * que l'ecran montre sous cette discipline.
+     */
+    private EightDSnapshot.Section securisation(String texte, List<EightDSources.Capa> capas) {
+        List<String> lignes = lignesDe(texte);
+        List<EightDSnapshot.Table> tableaux = tableauxDesActions(capas, NATURES_D3);
+        // La provenance n'est pas la meme des deux cotes, et le libelle de source
+        // ne doit pas mentir : le texte vient de l'equipe qualite, les actions du
+        // dossier CAPA. Dire « rempli par l'equipe qualite » d'un D3 ou seul le
+        // tableau est servi attribuerait a quelqu'un une phrase qu'il n'a pas
+        // ecrite.
+        String label;
+        if (!lignes.isEmpty()) {
+            label = tableaux.isEmpty() ? SAISI : SAISI + " — " + libelleCapas(capas);
+        } else if (!tableaux.isEmpty()) {
+            label = libelleCapas(capas);
+        } else {
+            label = A_SAISIR;
+        }
+        boolean servi = !lignes.isEmpty() || !tableaux.isEmpty();
+        return new EightDSnapshot.Section(
+                EightDDiscipline.D3.code(), EightDDiscipline.D3.titre(), servi,
+                label, lignes, List.of(), tableaux);
+    }
 
     private EightDSnapshot.Section saisie(EightDDiscipline discipline, String texte) {
         List<String> lignes = lignesDe(texte);
@@ -310,37 +340,74 @@ public class EightDSnapshotAssembler {
         if (capas.isEmpty()) {
             return section(EightDDiscipline.D5, false, sansCapa(), List.of());
         }
-        List<String> lignes = new ArrayList<>();
+        // LE TABLEAU REMPLACE L'ENUMERATION, comme a l'ecran. Le D5 enumerait
+        // ses actions en phrases -- « Action [CORRECTIVE] Remplacer le joint —
+        // DONE — due 12/09 » --, c'est-a-dire les colonnes d'un tableau
+        // aplaties dans une ligne de texte. On ne compare plus rien d'une
+        // action a l'autre, et c'est pourtant ce qu'on vient faire dans cette
+        // discipline. Les memes donnees, mises en colonnes, se lisent d'un
+        // coup d'oeil.
+        List<EightDSnapshot.Table> tableaux = tableauxDesActions(capas, NATURES_D5);
         int decidees = 0;
-        for (EightDSources.Capa capa : capas) {
-            // Une ligne vide S\u00c9PARE deux dossiers : coll\u00e9s, leurs champs
-            // \u00ab Type \u00bb, \u00ab Status \u00bb et \u00ab Due date \u00bb se lisaient comme ceux
-            // d'un seul, et le rapport devenait faux \u00e0 la lecture.
-            if (!lignes.isEmpty()) {
-                lignes.add("");
-            }
-            ajouter(lignes, "CAPA", capa.title());
-            ajouter(lignes, "Type", capa.type());
-            ajouter(lignes, "Criticality", capa.criticity());
-            ajouter(lignes, "Status", capa.status());
-            ajouter(lignes, "Due date", jour(capa.dueDate()));
-            for (EightDSources.Action action : capa.actions()) {
-                lignes.add("Action [" + texteOu(action.actionType(), "?") + "] "
-                        + texteOu(action.title(), "(no title)")
-                        + " — " + texteOu(action.status(), "?")
-                        + (action.assigneeName() == null ? "" : " — " + action.assigneeName())
-                        + (action.dueDate() == null ? "" : " \u2014 due " + jour(action.dueDate())));
-                if (action.description() != null && !action.description().isBlank()) {
-                    lignes.add("    " + action.description().trim());
-                }
-            }
-            decidees += capa.actions().size();
+        for (EightDSnapshot.Table tableau : tableaux) {
+            decidees += tableau.rows().size();
         }
         boolean servi = decidees > 0;
         String label = libelleCapas(capas) + (servi
                 ? " \u2014 " + decidees + " action(s) decided"
                 : " \u2014 no action decided yet");
-        return section(EightDDiscipline.D5, servi, label, lignes);
+        return new EightDSnapshot.Section(EightDDiscipline.D5.code(), EightDDiscipline.D5.titre(),
+                servi, label, List.of(), List.of(), tableaux);
+    }
+
+    /**
+     * Les natures d'action que chaque discipline montre, EXACTEMENT comme
+     * l'ecran ({@code NATURES_PAR_DISCIPLINE}, cote web).
+     *
+     * <p>Le document emis doit se presenter comme l'ecran : une action lue sous
+     * le D3 et absente du D3 imprime ferait douter du document -- et c'est lui
+     * qui part chez le client.
+     */
+    private static final List<String> NATURES_D3 = List.of("CONTAINMENT");
+    private static final List<String> NATURES_D5 =
+            List.of("CONTAINMENT", "CORRECTIVE", "PREVENTIVE");
+    private static final List<String> NATURES_D6 = List.of("PREVENTIVE");
+
+    /** Les colonnes, dans l'ordre de l'ecran, moins celle des gestes. */
+    private static final List<String> COLONNES_ACTIONS =
+            List.of("Kind", "Action", "Owner", "Due date", "Status", "Evidence");
+
+    /**
+     * Un tableau par dossier, limite aux natures de la discipline.
+     *
+     * <p>Un dossier dont aucune action n'est de cette nature n'ecrit pas de
+     * tableau vide : un en-tete de colonnes sous un titre de dossier se lit
+     * comme un dossier qu'on aurait ouvert sans rien y mettre.
+     */
+    private List<EightDSnapshot.Table> tableauxDesActions(List<EightDSources.Capa> capas,
+                                                          List<String> natures) {
+        List<EightDSnapshot.Table> tableaux = new ArrayList<>();
+        for (EightDSources.Capa capa : capas) {
+            List<EightDSnapshot.Row> lignes = new ArrayList<>();
+            for (EightDSources.Action action : capa.actions()) {
+                if (!natures.contains(texteOu(action.actionType(), "?"))) {
+                    continue;
+                }
+                lignes.add(new EightDSnapshot.Row(List.of(
+                        texteOu(action.actionType(), "?"),
+                        texteOu(action.title(), "(no title)"),
+                        texteOu(action.assigneeName(), "-"),
+                        action.dueDate() == null ? "-" : jour(action.dueDate()),
+                        texteOu(action.status(), "?"),
+                        action.evidenceCount() == 0
+                                ? "-" : String.valueOf(action.evidenceCount()))));
+            }
+            if (!lignes.isEmpty()) {
+                tableaux.add(new EightDSnapshot.Table(
+                        texteOu(capa.title(), "(no title)"), COLONNES_ACTIONS, lignes));
+            }
+        }
+        return tableaux;
     }
 
     /**
@@ -404,7 +471,13 @@ public class EightDSnapshotAssembler {
                 ? libelleCapas(capas) + " \u2014 " + menees + " action(s) completed, "
                   + preuves + " evidence item(s)"
                 : "No completed action and no evidence filed on the escalated CAPA";
-        return section(EightDDiscipline.D6, servi, label, lignes);
+        // Les actions PREVENTIVES en colonnes, comme a l'ecran : le texte
+        // ci-dessus raconte ce qui a ete mene et prouve, le tableau donne
+        // l'etat de chaque geste a la date d'emission.
+        List<EightDSnapshot.Table> tableaux = tableauxDesActions(capas, NATURES_D6);
+        return new EightDSnapshot.Section(
+                EightDDiscipline.D6.code(), EightDDiscipline.D6.titre(),
+                servi || !tableaux.isEmpty(), label, lignes, List.of(), tableaux);
     }
 
     private String sansCapa() {

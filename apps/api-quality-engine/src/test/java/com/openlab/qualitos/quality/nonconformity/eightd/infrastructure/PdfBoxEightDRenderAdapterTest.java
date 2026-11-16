@@ -359,6 +359,100 @@ class PdfBoxEightDRenderAdapterTest {
         }
     }
 
+
+    // ---------- les tableaux d'actions ----------
+
+    /**
+     * LE DOCUMENT EMIS SE PRESENTE COMME L'ECRAN. L'ecran montre les actions
+     * decidees en colonnes -- nature, intitule, porteur, echeance, avancement,
+     * preuve ; le PDF les enumerait en phrases. Les memes donnees, mais plus
+     * comparables d'une ligne a l'autre, alors que c'est tout ce qu'on vient
+     * faire dans ces disciplines : voir ce qui reste ouvert, ce qui est en
+     * retard, ce qui n'est pas prouve.
+     */
+    @Test
+    void le_tableau_des_actions_sort_entier_dans_le_pdf() throws IOException {
+        byte[] pdf = renderer.render(avecTableau(tableauDeDemo()), URL);
+
+        String texte = texteDe(pdf);
+        assertThat(texte).contains("Actions - Dossier A");
+        // Les en-tetes, en capitales comme a l'ecran.
+        assertThat(texte).contains("KIND").contains("ACTION").contains("OWNER")
+                .contains("DUE DATE").contains("STATUS").contains("EVIDENCE");
+        // Et chaque cellule de chaque ligne, sans exception : une action du
+        // dossier absente du document emis ferait douter de tout le document.
+        assertThat(texte).contains("CONTAINMENT").contains("Isoler le lot")
+                .contains("Ada Lovelace").contains("14/09/2026").contains("DONE");
+        assertThat(texte).contains("PREVENTIVE").contains("Ajouter le controle")
+                .contains("Alan Turing").contains("30/10/2026").contains("TODO");
+    }
+
+    /**
+     * UN RAPPORT EMIS AVANT LES TABLEAUX se relit exactement comme il a ete
+     * scelle. Son instantane ne porte pas de tableau -- {@code null} a la
+     * relecture --, et son empreinte doit continuer de tomber juste : c'est
+     * elle qui fait du document une preuve.
+     */
+    @Test
+    void un_rapport_scelle_avant_les_tableaux_rend_les_memes_octets_qu_avant()
+            throws IOException {
+        List<EightDSnapshot.Section> sansTableau = new ArrayList<>();
+        List<EightDSnapshot.Section> tableauxVides = new ArrayList<>();
+        for (EightDDiscipline discipline : EightDDiscipline.values()) {
+            List<String> lignes = List.of("Contenu de " + discipline.code());
+            sansTableau.add(new EightDSnapshot.Section(
+                    discipline.code(), discipline.titre(), true, "Source", lignes));
+            tableauxVides.add(new EightDSnapshot.Section(
+                    discipline.code(), discipline.titre(), true, "Source", lignes,
+                    List.of(), null));
+        }
+
+        assertThat(renderer.render(snapshotDe(tableauxVides), URL))
+                .isEqualTo(renderer.render(snapshotDe(sansTableau), URL));
+    }
+
+    /**
+     * UNE LIGNE NE SE COUPE PAS, ET L'EN-TETE SE REPETE.
+     *
+     * <p>Une cellule dont la premiere moitie est en bas d'une page et la
+     * seconde en haut de la suivante ne se lit plus. Pire : une colonne de
+     * valeurs qui reprend sans son intitule se lit DE TRAVERS -- on prend une
+     * echeance pour une date de cloture.
+     *
+     * <p>On fait varier la longueur du contenu qui precede, pour que la
+     * coupure tombe a un endroit different a chaque tour.
+     */
+    @Test
+    void un_tableau_qui_traverse_une_page_repete_son_en_tete() throws IOException {
+        List<EightDSnapshot.Row> rangs = new ArrayList<>();
+        for (int i = 1; i <= 40; i++) {
+            rangs.add(new EightDSnapshot.Row(List.of("CORRECTIVE",
+                    "Action numero " + i + " : un intitule assez long pour se replier",
+                    "Ada Lovelace", "14/09/2026", "TODO", "-")));
+        }
+        EightDSnapshot.Table longue = new EightDSnapshot.Table(
+                "Dossier A", COLONNES, rangs);
+
+        byte[] pdf = renderer.render(avecTableau(longue), URL);
+
+        assertThat(compteDesOccurrences(texteDe(pdf), "DUE DATE"))
+                .as("l'en-tete se repete sur chaque page que le tableau occupe")
+                .isGreaterThan(1);
+        // Et aucune ligne n'a disparu dans la coupure.
+        String texte = texteDe(pdf);
+        for (int i = 1; i <= 40; i++) {
+            assertThat(texte).contains("Action numero " + i + " :");
+        }
+    }
+
+    /** Deux rendus du meme instantane tabule donnent les memes octets. */
+    @Test
+    void deux_rendus_d_un_tableau_donnent_les_memes_octets() throws IOException {
+        EightDSnapshot snapshot = avecTableau(tableauDeDemo());
+
+        assertThat(renderer.render(snapshot, URL)).isEqualTo(renderer.render(snapshot, URL));
+    }
+
     // ---------- fixtures ----------
 
     /** Un instantane complet dont le D4 porte la figure donnee, et aucune ligne. */
@@ -491,6 +585,49 @@ class PdfBoxEightDRenderAdapterTest {
         }
         return new EightDSnapshot("NC-2026-0007", "Fuite au presse-etoupe", "tenant-demo",
                 "13/09/2026 10:00 UTC", "Ada Lovelace", false, sections);
+    }
+
+
+    /** Les colonnes du tableau d'actions, dans l'ordre de l'ecran. */
+    private static final List<String> COLONNES =
+            List.of("Kind", "Action", "Owner", "Due date", "Status", "Evidence");
+
+    private EightDSnapshot.Table tableauDeDemo() {
+        return new EightDSnapshot.Table("Dossier A - fuite presse-etoupe", COLONNES, List.of(
+                new EightDSnapshot.Row(List.of("CONTAINMENT",
+                        "Isoler le lot 2026-114 et bloquer l'expedition",
+                        "Ada Lovelace", "14/09/2026", "DONE", "2")),
+                new EightDSnapshot.Row(List.of("PREVENTIVE",
+                        "Ajouter le controle d'etancheite a la gamme",
+                        "Alan Turing", "30/10/2026", "TODO", "-"))));
+    }
+
+    /** Un instantane dont le D5 porte ce tableau, et rien d'autre. */
+    private EightDSnapshot avecTableau(EightDSnapshot.Table tableau) {
+        List<EightDSnapshot.Section> sections = new ArrayList<>();
+        for (EightDDiscipline discipline : EightDDiscipline.values()) {
+            boolean d5 = discipline == EightDDiscipline.D5;
+            sections.add(new EightDSnapshot.Section(
+                    discipline.code(), discipline.titre(), true, "Source",
+                    d5 ? List.of() : List.of("Contenu de " + discipline.code()),
+                    List.of(), d5 ? List.of(tableau) : List.of()));
+        }
+        return snapshotDe(sections);
+    }
+
+    private EightDSnapshot snapshotDe(List<EightDSnapshot.Section> sections) {
+        return new EightDSnapshot("NC-2026-0008", "Fuite au presse-etoupe", "tenant-demo",
+                "13/09/2026 10:00 UTC", "Ada Lovelace", false, sections);
+    }
+
+    private static int compteDesOccurrences(String texte, String motif) {
+        int n = 0;
+        int i = texte.indexOf(motif);
+        while (i >= 0) {
+            n++;
+            i = texte.indexOf(motif, i + motif.length());
+        }
+        return n;
     }
 
     private String texteDe(byte[] pdf) throws IOException {

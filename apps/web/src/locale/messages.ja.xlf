@@ -7658,6 +7658,10 @@ Portail clients</source>
         <source>Aucune action de cette nature n'a encore été écrite pour cet écart.</source>
         <target state="translated">この不適合について、この種別の対策はまだ記載されていません。</target>
       </trans-unit>
+      <trans-unit id="nc.8d.live-note-table" datatype="html">
+        <source>État actuel du dossier. Le PDF émis porte ce tableau, figé à l'émission.</source>
+        <target state="translated">案件の現在の状態です。発行された PDF には、発行時点で固定されたこの表が含まれます。</target>
+      </trans-unit>
       <trans-unit id="nc.8d.live-note-figures" datatype="html">
         <source>État actuel du dossier. Le PDF émis porte ces schémas, figés à l'émission.</source>
         <target state="translated">案件の現在の状態です。発行された PDF には、発行時点で固定されたこれらの図が含まれます。</target>

@@ -164,7 +164,11 @@
           <ng-container *ngIf="montreLesActions(discipline.code)">
             <div class="vivant" *ngIf="capaCaseId$ | async as capaCaseId"
                  [attr.data-test]="'8d-actions-' + discipline.code">
-              <p class="vivant-note" i18n="@@nc.8d.live-note">État actuel du dossier. Le PDF émis, lui, ne porte que le texte figé à l'émission.</p>
+              <!-- Ce tableau se manoeuvre ; celui du PDF est arrete. La note
+                   disait « le PDF ne porte que le texte » : c'etait vrai, le
+                   document emis porte desormais le meme tableau, fige a
+                   l'emission (ADR 0124). -->
+              <p class="vivant-note" i18n="@@nc.8d.live-note-table">État actuel du dossier. Le PDF émis porte ce tableau, figé à l'émission.</p>
               <qos-capa-action-panel [capaCaseId]="capaCaseId" [natures]="naturesDe(discipline.code)"
                                      (changed)="reload()"></qos-capa-action-panel>
             </div>
