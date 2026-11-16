@@ -23114,6 +23114,94 @@ historial de 12 meses</target>
         <source>Aucun cabinet partenaire n’est déclaré. Un cabinet regroupe des consultants externes à qui vos clients peuvent ouvrir un accès daté.</source>
         <target state="translated">No hay ningún despacho asociado declarado. Un despacho agrupa consultores externos a los que sus clientes pueden abrir un acceso con fecha.</target>
       </trans-unit>
+      <trans-unit id="platform.firms.block-firm" datatype="html">
+        <source>Cabinet</source>
+        <target state="translated">Despacho</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.name-hint" datatype="html">
+        <source>Le nom d’usage, celui qui s’affiche dans les écrans.</source>
+        <target state="translated">El nombre comercial, el que aparece en las pantallas.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.slug-frozen" datatype="html">
+        <source>ne change plus</source>
+        <target state="translated">ya no cambia</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.block-legal" datatype="html">
+        <source>Mentions légales</source>
+        <target state="translated">Datos legales</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.legal-hint" datatype="html">
+        <source>Ce bloc est ce qui désigne le cabinet sur un accord d’engagement — la pièce que le client conserve et qu’un auditeur peut demander.</source>
+        <target state="translated">Este bloque es lo que identifica al despacho en un acuerdo de colaboración: el documento que el cliente conserva y que un auditor puede solicitar.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.legal-name" datatype="html">
+        <source>Dénomination sociale</source>
+        <target state="translated">Denominación social</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.legal-name-hint" datatype="html">
+        <source>Si elle diffère du nom d’usage.</source>
+        <target state="translated">Si difiere del nombre comercial.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.legal-form" datatype="html">
+        <source>Forme juridique</source>
+        <target state="translated">Forma jurídica</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.vat" datatype="html">
+        <source>Numéro de TVA</source>
+        <target state="translated">Número de IVA</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.vat-hint" datatype="html">
+        <source>Non vérifié par la plateforme.</source>
+        <target state="translated">No verificado por la plataforma.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.block-address" datatype="html">
+        <source>Adresse</source>
+        <target state="translated">Dirección</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.address" datatype="html">
+        <source>Adresse</source>
+        <target state="translated">Dirección</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.address1" datatype="html">
+        <source>Adresse</source>
+        <target state="translated">Dirección</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.address2" datatype="html">
+        <source>Complément d’adresse</source>
+        <target state="translated">Dirección (línea 2)</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.postal-code" datatype="html">
+        <source>Code postal</source>
+        <target state="translated">Código postal</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.city" datatype="html">
+        <source>Ville</source>
+        <target state="translated">Ciudad</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.country" datatype="html">
+        <source>Pays</source>
+        <target state="translated">País</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.country-hint" datatype="html">
+        <source>Deux lettres, par exemple FR.</source>
+        <target state="translated">Dos letras, por ejemplo FR.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.country-invalid" datatype="html">
+        <source>Deux lettres attendues (ISO 3166-1), par exemple FR.</source>
+        <target state="translated">Se esperan dos letras (ISO 3166-1), por ejemplo FR.</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.block-contact" datatype="html">
+        <source>Contact</source>
+        <target state="translated">Contacto</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.identity" datatype="html">
+        <source>Identité</source>
+        <target state="translated">Identidad</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.identity-empty" datatype="html">
+        <source>Rien de renseigné. Un accord d’engagement désignerait ce cabinet par son seul nom d’usage — complétez la fiche pour qu’il nomme quelqu’un de vérifiable.</source>
+        <target state="translated">Sin datos. Un acuerdo de colaboración identificaría a este despacho solo por su nombre comercial: complete la ficha para que identifique a alguien verificable.</target>
+      </trans-unit>
       <trans-unit id="pdca.detail.col-evidence" datatype="html">
         <source>Preuve</source>
         <target state="translated">Prueba</target>

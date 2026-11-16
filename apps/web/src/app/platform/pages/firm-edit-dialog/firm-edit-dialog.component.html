@@ -9,11 +9,42 @@
   (submitted)="submit()"
   (cancelled)="cancel()">
 
+  <!-- ===== Le cabinet ===== -->
+  <h3 class="bloc" i18n="@@platform.firms.block-firm">Cabinet</h3>
+
   <mat-form-field appearance="outline" class="full">
     <mat-label i18n="@@platform.firms.name">Raison sociale</mat-label>
     <input matInput formControlName="name" required maxlength="255" data-test="cabinet-edit-nom">
+    <mat-hint i18n="@@platform.firms.name-hint">Le nom d’usage, celui qui s’affiche dans les écrans.</mat-hint>
     <mat-error *ngIf="form.controls.name.hasError('required')"
                i18n="@@rr.form.required">Champ obligatoire.</mat-error>
+  </mat-form-field>
+
+  <!-- Le repere nomme le cabinet dans les accords deja signes par des clients :
+       le corriger ferait mentir ces accords. Montre, jamais modifiable. -->
+  <p class="repere" data-test="cabinet-edit-repere">
+    <span i18n="@@platform.firms.slug">Identifiant</span>
+    <code>{{ firm.slug }}</code>
+    <span class="repere__note" i18n="@@platform.firms.slug-frozen">ne change plus</span>
+  </p>
+
+  <!-- ===== Ce qui le designe sur un accord ===== -->
+  <h3 class="bloc" i18n="@@platform.firms.block-legal">Mentions légales</h3>
+
+  <p class="aide" i18n="@@platform.firms.legal-hint">
+    Ce bloc est ce qui désigne le cabinet sur un accord d’engagement — la pièce
+    que le client conserve et qu’un auditeur peut demander.
+  </p>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@platform.firms.legal-name">Dénomination sociale</mat-label>
+    <input matInput formControlName="legalName" maxlength="255" data-test="cabinet-edit-denomination">
+    <mat-hint i18n="@@platform.firms.legal-name-hint">Si elle diffère du nom d’usage.</mat-hint>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@platform.firms.legal-form">Forme juridique</mat-label>
+    <input matInput formControlName="legalForm" maxlength="64" data-test="cabinet-edit-forme">
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
@@ -21,6 +52,48 @@
     <input matInput formControlName="registrationNumber" maxlength="64"
            data-test="cabinet-edit-immatriculation">
   </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@platform.firms.vat">Numéro de TVA</mat-label>
+    <input matInput formControlName="vatNumber" maxlength="32" data-test="cabinet-edit-tva">
+    <!-- La plateforme ne verifie pas ce numero aupres d'un service officiel :
+         le dire evite qu'on prenne son acceptation pour une validation. -->
+    <mat-hint i18n="@@platform.firms.vat-hint">Non vérifié par la plateforme.</mat-hint>
+  </mat-form-field>
+
+  <!-- ===== Ou le joindre ===== -->
+  <h3 class="bloc" i18n="@@platform.firms.block-address">Adresse</h3>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@platform.firms.address1">Adresse</mat-label>
+    <input matInput formControlName="addressLine1" maxlength="255" data-test="cabinet-edit-adresse1">
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@platform.firms.address2">Complément d’adresse</mat-label>
+    <input matInput formControlName="addressLine2" maxlength="255" data-test="cabinet-edit-adresse2">
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label i18n="@@platform.firms.postal-code">Code postal</mat-label>
+    <input matInput formControlName="postalCode" maxlength="16" data-test="cabinet-edit-code-postal">
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label i18n="@@platform.firms.city">Ville</mat-label>
+    <input matInput formControlName="city" maxlength="128" data-test="cabinet-edit-ville">
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label i18n="@@platform.firms.country">Pays</mat-label>
+    <input matInput formControlName="countryCode" maxlength="2" data-test="cabinet-edit-pays">
+    <mat-hint i18n="@@platform.firms.country-hint">Deux lettres, par exemple FR.</mat-hint>
+    <mat-error *ngIf="form.controls.countryCode.hasError('pattern')"
+               i18n="@@platform.firms.country-invalid">Deux lettres attendues (ISO 3166-1), par exemple FR.</mat-error>
+  </mat-form-field>
+
+  <!-- ===== Qui repond ===== -->
+  <h3 class="bloc" i18n="@@platform.firms.block-contact">Contact</h3>
 
   <mat-form-field appearance="outline" class="full">
     <mat-label i18n="@@platform.firms.contact-email">Courriel de contact</mat-label>
@@ -34,13 +107,5 @@
     <mat-label i18n="@@platform.firms.contact-phone">Téléphone</mat-label>
     <input matInput formControlName="contactPhone" maxlength="32" data-test="cabinet-edit-telephone">
   </mat-form-field>
-
-  <!-- Le repere nomme le cabinet dans les accords deja signes par des clients :
-       le corriger ferait mentir ces accords. Montre, jamais modifiable. -->
-  <p class="repere" data-test="cabinet-edit-repere">
-    <span i18n="@@platform.firms.slug">Repère</span>
-    <code>{{ firm.slug }}</code>
-    <span class="repere__note" i18n="@@platform.clients.slug-frozen">ne change plus</span>
-  </p>
 
 </qos-form-dialog>

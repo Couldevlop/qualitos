@@ -45,7 +45,9 @@ describe('FirmEditDialogComponent', () => {
 
   it('part de la fiche réelle du cabinet', () => {
     expect(component.form.getRawValue()).toEqual({
-      name: 'QualiConseil', registrationNumber: '123 456 789',
+      name: 'QualiConseil', legalName: '', legalForm: '',
+      registrationNumber: '123 456 789', vatNumber: '',
+      addressLine1: '', addressLine2: '', postalCode: '', city: '', countryCode: '',
       contactEmail: 'contact@qualiconseil.fr', contactPhone: '+33 1 02 03 04 05'
     });
   });
@@ -87,5 +89,59 @@ describe('FirmEditDialogComponent', () => {
     component.cancel();
 
     expect(dialogRef.close).toHaveBeenCalledWith();
+  });
+
+  /**
+   * L'identite complete repart vers le serveur. Elle designe le cabinet sur un
+   * accord d'engagement : un champ saisi puis perdu a l'envoi ferait croire a
+   * une fiche remplie alors que l'accord continuerait de ne nommer qu'un nom
+   * d'usage.
+   */
+  it('renvoie toute l’identité saisie', () => {
+    component.form.patchValue({
+      legalName: 'QualiConseil & Associés SARL', legalForm: 'SARL',
+      vatNumber: 'FR32812345678', addressLine1: '12 rue de la Qualité',
+      postalCode: '75011', city: 'Paris', countryCode: 'fr'
+    });
+
+    component.submit();
+
+    const envoye = dialogRef.close.calls.mostRecent().args[0];
+    expect(envoye.legalName).toBe('QualiConseil & Associés SARL');
+    expect(envoye.legalForm).toBe('SARL');
+    expect(envoye.vatNumber).toBe('FR32812345678');
+    expect(envoye.addressLine1).toBe('12 rue de la Qualité');
+    expect(envoye.postalCode).toBe('75011');
+    expect(envoye.city).toBe('Paris');
+    // « fr » est un code pays juste, ecrit en minuscules : on le normalise
+    // plutot que de le refuser.
+    expect(envoye.countryCode).toBe('FR');
+  });
+
+  /** Un champ vide part en `null` : « renseigné à vide » n'est pas une mention. */
+  it('envoie null, et non une chaîne vide, pour ce qui n’est pas renseigné', () => {
+    component.form.patchValue({ legalName: '  ', vatNumber: '', countryCode: '' });
+
+    component.submit();
+
+    const envoye = dialogRef.close.calls.mostRecent().args[0];
+    expect(envoye.legalName).toBeNull();
+    expect(envoye.vatNumber).toBeNull();
+    expect(envoye.countryCode).toBeNull();
+  });
+
+  /**
+   * UN CODE PAYS QUI N'EN EST PAS UN BLOQUE L'ENVOI. La contrainte existe en
+   * base (V13) : laisser partir « France » ferait echouer l'enregistrement
+   * avec une erreur de base que personne ne sait lire, apres que la fenetre
+   * s'est fermee en donnant l'impression que c'etait pris.
+   */
+  it('refuse un pays qui n’est pas deux lettres, sans fermer la fenêtre', () => {
+    component.form.patchValue({ countryCode: 'France' });
+
+    component.submit();
+
+    expect(component.form.controls.countryCode.valid).toBeFalse();
+    expect(dialogRef.close).not.toHaveBeenCalled();
   });
 });

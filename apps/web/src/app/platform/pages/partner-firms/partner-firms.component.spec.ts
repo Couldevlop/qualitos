@@ -36,6 +36,8 @@ describe('PartnerFirmsComponent', () => {
 
   const cabinet = (over: Partial<PartnerFirm> = {}): PartnerFirm => ({
     id: 'f-1', slug: 'qualiconseil', name: 'QualiConseil',
+    legalName: null, legalForm: null, vatNumber: null, addressLine1: null,
+      addressLine2: null, postalCode: null, city: null, countryCode: null,
     registrationNumber: '812 345 678', contactEmail: 'contact@qualiconseil.fr',
     contactPhone: null, active: true, consultantCount: 2, grantedCount: 1,
     createdAt: '2026-10-01T09:00:00Z', ...over
@@ -179,7 +181,11 @@ describe('PartnerFirmsComponent', () => {
 
     expect(partner.createFirm).toHaveBeenCalledWith({
       slug: 'audit-plus', name: 'Audit Plus',
-      registrationNumber: null, contactEmail: null, contactPhone: null
+      registrationNumber: null, contactEmail: null, contactPhone: null,
+      // La creation reste courte : les mentions legales et l'adresse se
+      // completent dans la fiche, qui est faite pour cela.
+      legalName: null, legalForm: null, vatNumber: null, addressLine1: null,
+      addressLine2: null, postalCode: null, city: null, countryCode: null,
     });
     expect(component.firms[0].id).toBe('f-2');
     expect(component.creating).toBeFalse();
@@ -360,7 +366,11 @@ describe('PartnerFirmsComponent', () => {
 
     const fiche_corrigee = {
       slug: 'qualiconseil', name: 'QualiConseil & Associés',
-      registrationNumber: '812 345 678', contactEmail: 'direction@qualiconseil.fr',
+      legalName: 'QualiConseil & Associés SARL', legalForm: 'SARL',
+      registrationNumber: '812 345 678', vatNumber: 'FR32812345678',
+      addressLine1: '12 rue de la Qualité', addressLine2: null,
+      postalCode: '75011', city: 'Paris', countryCode: 'FR',
+      contactEmail: 'direction@qualiconseil.fr',
       contactPhone: null
     };
 
@@ -399,6 +409,54 @@ describe('PartnerFirmsComponent', () => {
 
     it('offre le geste sur chaque ligne', () => {
       expect(noeud('corriger-f-1')).not.toBeNull();
+    });
+  });
+
+  describe('l’identité du cabinet se lit', () => {
+
+    /**
+     * L'adresse s'assemble en SAUTANT ce qui manque. Une suite de conditions
+     * dans le gabarit produisait des virgules orphelines des qu'un morceau
+     * manquait, et une adresse qui commence par une virgule se lit comme une
+     * erreur d'affichage.
+     */
+    it('assemble l’adresse sans virgule orpheline', () => {
+      expect(component.adresseDe(cabinet({
+        addressLine1: '12 rue de la Qualité', addressLine2: null,
+        postalCode: '75011', city: 'Paris', countryCode: 'FR'
+      }))).toBe('12 rue de la Qualité, 75011 Paris, FR');
+
+      // Rien que la ville : pas de virgule en tete, pas de virgule en queue.
+      expect(component.adresseDe(cabinet({
+        addressLine1: null, addressLine2: null,
+        postalCode: null, city: 'Paris', countryCode: null
+      }))).toBe('Paris');
+    });
+
+    /** Aucune adresse connue ne rend pas une chaîne vide, mais rien du tout. */
+    it('ne rend aucune adresse quand rien n’en est su', () => {
+      expect(component.adresseDe(cabinet({
+        addressLine1: null, addressLine2: null,
+        postalCode: null, city: null, countryCode: null
+      }))).toBeNull();
+    });
+
+    /**
+     * C'est l'ABSENCE TOTALE qui se signale, pas le formulaire incomplet :
+     * reclamer les douze champs ferait du rouge la couleur normale de l'ecran.
+     */
+    it('dit qu’une fiche est vide, mais se tait dès qu’un contact est connu', () => {
+      expect(component.aUneIdentite(cabinet({
+        legalName: null, legalForm: null, registrationNumber: null, vatNumber: null,
+        addressLine1: null, addressLine2: null, postalCode: null, city: null,
+        countryCode: null, contactEmail: null, contactPhone: null
+      }))).toBeFalse();
+
+      expect(component.aUneIdentite(cabinet({
+        legalName: null, legalForm: null, registrationNumber: null, vatNumber: null,
+        addressLine1: null, addressLine2: null, postalCode: null, city: null,
+        countryCode: null, contactEmail: 'contact@qualiconseil.fr', contactPhone: null
+      }))).toBeTrue();
     });
   });
 });

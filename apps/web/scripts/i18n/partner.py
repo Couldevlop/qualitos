@@ -417,4 +417,105 @@ TRANSLATIONS = {
         'لا يوجد أي مكتب شريك مسجّل. يجمع المكتب مستشارين خارجيين يمكن لعملائك فتح وصول مؤقّت لهم.',
         '提携事務所は未登録です。事務所は外部コンサルタントをまとめる単位で、クライアントは期限付きのアクセスを開けます。',
         '尚未登记合作事务所。事务所汇集外部顾问，您的客户可为其开放带期限的访问。'),
+    # ---------- l'identite d'un cabinet (mentions legales, adresse) ----------
+    'platform.firms.block-firm': (
+        'Cabinet',
+        'Firm', 'Despacho', 'المكتب', '事務所', '事务所'),
+    'platform.firms.name-hint': (
+        "Le nom d’usage, celui qui s’affiche dans les écrans.",
+        'The trading name, the one shown on screen.',
+        'El nombre comercial, el que aparece en las pantallas.',
+        'الاسم التجاري، وهو ما يظهر في الشاشات.',
+        '画面に表示される通称です。',
+        '通用名称，即界面上显示的名称。'),
+    'platform.firms.slug-frozen': (
+        'ne change plus',
+        'never changes', 'ya no cambia', 'لا يتغيّر بعد الآن', '以後変更されません', '不再更改'),
+    'platform.firms.block-legal': (
+        'Mentions légales',
+        'Legal details', 'Datos legales', 'البيانات القانونية', '法定情報', '法定信息'),
+    'platform.firms.legal-hint': (
+        "Ce bloc est ce qui désigne le cabinet sur un accord d’engagement — la pièce que le "
+        "client conserve et qu’un auditeur peut demander.",
+        'This block is what names the firm on an engagement agreement -- the record the client '
+        'keeps and an auditor may ask for.',
+        'Este bloque es lo que identifica al despacho en un acuerdo de colaboración: el '
+        'documento que el cliente conserva y que un auditor puede solicitar.',
+        'هذه الحقول هي ما يحدّد المكتب في اتفاق التعاون، وهو المستند الذي يحتفظ به العميل وقد يطلبه المدقّق.',
+        'このブロックは、契約合意書で事務所を特定する情報です。クライアントが保管し、監査員が提示を求めることがあります。',
+        '此栏用于在委托协议中指明事务所——客户留存、审核员可索取的凭据。'),
+    'platform.firms.legal-name': (
+        'Dénomination sociale',
+        'Legal name', 'Denominación social', 'الاسم القانوني', '商号', '法定名称'),
+    'platform.firms.legal-name-hint': (
+        "Si elle diffère du nom d’usage.",
+        'If it differs from the trading name.',
+        'Si difiere del nombre comercial.',
+        'إذا اختلف عن الاسم التجاري.',
+        '通称と異なる場合に入力します。',
+        '如与通用名称不同则填写。'),
+    'platform.firms.legal-form': (
+        'Forme juridique',
+        'Legal form', 'Forma jurídica', 'الشكل القانوني', '法人格', '法律形式'),
+    'platform.firms.vat': (
+        'Numéro de TVA',
+        'VAT number', 'Número de IVA', 'رقم ضريبة القيمة المضافة', '付加価値税番号', '增值税号'),
+    'platform.firms.vat-hint': (
+        'Non vérifié par la plateforme.',
+        'Not verified by the platform.',
+        'No verificado por la plataforma.',
+        'غير مُتحقَّق منه من قبل المنصّة.',
+        'プラットフォームでは検証していません。',
+        '平台不对其进行核验。'),
+    'platform.firms.block-address': (
+        'Adresse',
+        'Address', 'Dirección', 'العنوان', '住所', '地址'),
+    'platform.firms.address': (
+        'Adresse',
+        'Address', 'Dirección', 'العنوان', '住所', '地址'),
+    'platform.firms.address1': (
+        'Adresse',
+        'Address', 'Dirección', 'العنوان', '住所', '地址'),
+    'platform.firms.address2': (
+        'Complément d’adresse',
+        'Address line 2', 'Dirección (línea 2)', 'تتمّة العنوان', '住所（建物名など）', '地址第二行'),
+    'platform.firms.postal-code': (
+        'Code postal',
+        'Postal code', 'Código postal', 'الرمز البريدي', '郵便番号', '邮政编码'),
+    'platform.firms.city': (
+        'Ville',
+        'City', 'Ciudad', 'المدينة', '市区町村', '城市'),
+    'platform.firms.country': (
+        'Pays',
+        'Country', 'País', 'البلد', '国', '国家/地区'),
+    'platform.firms.country-hint': (
+        'Deux lettres, par exemple FR.',
+        'Two letters, for example FR.',
+        'Dos letras, por ejemplo FR.',
+        'حرفان، مثل FR.',
+        '2 文字で入力します（例：FR）。',
+        '两位字母，例如 FR。'),
+    'platform.firms.country-invalid': (
+        'Deux lettres attendues (ISO 3166-1), par exemple FR.',
+        'Two letters expected (ISO 3166-1), for example FR.',
+        'Se esperan dos letras (ISO 3166-1), por ejemplo FR.',
+        'يُتوقَّع حرفان (ISO 3166-1)، مثل FR.',
+        '2 文字で入力してください（ISO 3166-1）。例：FR。',
+        '需填写两位字母（ISO 3166-1），例如 FR。'),
+    'platform.firms.block-contact': (
+        'Contact',
+        'Contact', 'Contacto', 'جهة الاتصال', '連絡先', '联系方式'),
+    'platform.firms.identity': (
+        'Identité',
+        'Identity', 'Identidad', 'الهوية', '識別情報', '身份信息'),
+    'platform.firms.identity-empty': (
+        "Rien de renseigné. Un accord d’engagement désignerait ce cabinet par son seul nom "
+        "d’usage — complétez la fiche pour qu’il nomme quelqu’un de vérifiable.",
+        'Nothing filled in. An engagement agreement would name this firm by its trading name '
+        'alone -- complete the record so it names someone verifiable.',
+        'Sin datos. Un acuerdo de colaboración identificaría a este despacho solo por su nombre '
+        'comercial: complete la ficha para que identifique a alguien verificable.',
+        'لا توجد بيانات. سيحدّد اتفاق التعاون هذا المكتب باسمه التجاري وحده — أكمل البطاقة ليحدّد جهة يمكن التحقّق منها.',
+        '未入力です。このままでは契約合意書が通称のみで事務所を特定することになります。検証可能な情報になるよう記入してください。',
+        '尚未填写。委托协议将仅以通用名称指明该事务所——请补全档案，使其指向可核验的主体。'),
 }

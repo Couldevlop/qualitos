@@ -63,9 +63,65 @@ public class PartnerFirm {
     @Column(name = "name", nullable = false)
     private String name;
 
+    /**
+     * La raison sociale complete, quand elle differe du nom d'usage.
+     *
+     * <p>« Durand & Associes SARL » sur l'accord d'engagement, « Cabinet
+     * Durand » dans les ecrans. Un accord qui ne designe que le nom d'usage ne
+     * designe personne d'opposable.
+     */
+    @Size(max = 255)
+    @Column(name = "legal_name")
+    private String legalName;
+
+    @Size(max = 64)
+    @Column(name = "legal_form", length = 64)
+    private String legalForm;
+
     @Size(max = 64)
     @Column(name = "registration_number", length = 64)
     private String registrationNumber;
+
+    /**
+     * Le numero de TVA intracommunautaire.
+     *
+     * <p>Sa forme n'est pas contrainte ici : elle varie d'un pays a l'autre, et
+     * une expression reguliere qui se voudrait universelle refuserait des
+     * numeros valides -- un refus faux coute plus cher qu'une saisie libre, le
+     * numero n'ouvrant aucun droit dans la plateforme.
+     */
+    @Size(max = 32)
+    @Column(name = "vat_number", length = 32)
+    private String vatNumber;
+
+    @Size(max = 255)
+    @Column(name = "address_line1")
+    private String addressLine1;
+
+    @Size(max = 255)
+    @Column(name = "address_line2")
+    private String addressLine2;
+
+    @Size(max = 16)
+    @Column(name = "postal_code", length = 16)
+    private String postalCode;
+
+    @Size(max = 128)
+    @Column(name = "city", length = 128)
+    private String city;
+
+    /**
+     * Le pays, en ISO 3166-1 alpha-2 majuscule.
+     *
+     * <p>La meme contrainte est posee en base (V13) : une ecriture qui
+     * passerait a cote de l'application -- reprise de donnees, correctif en
+     * base -- ne doit pas pouvoir semer un code que les ecrans ne savent pas
+     * rendre.
+     */
+    @Pattern(regexp = "^[A-Z]{2}$",
+            message = "code pays attendu sur deux lettres majuscules (ISO 3166-1)")
+    @Column(name = "country_code", length = 2)
+    private String countryCode;
 
     @Email
     @Size(max = 254)

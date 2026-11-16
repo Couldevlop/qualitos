@@ -112,6 +112,54 @@
       <div class="detail" *ngIf="openFirmId === f.id" data-test="detail">
         <mat-progress-bar *ngIf="detailLoading" mode="indeterminate"></mat-progress-bar>
 
+        <!-- IDENTITE. Saisissable sans etre lisible, elle n'aurait servi a
+             rien : c'est ce bloc qui designe le cabinet sur un accord, et
+             c'est ici qu'on verifie qu'il est en etat de le faire. -->
+        <section class="detail__bloc" aria-labelledby="cab-identite">
+          <h3 class="detail__titre" id="cab-identite"
+              i18n="@@platform.firms.identity">Identité</h3>
+
+          <dl class="identite" *ngIf="aUneIdentite(f); else identiteVide">
+            <ng-container *ngIf="f.legalName">
+              <dt i18n="@@platform.firms.legal-name">Dénomination sociale</dt>
+              <dd data-test="identite-denomination">{{ f.legalName }}</dd>
+            </ng-container>
+            <ng-container *ngIf="f.legalForm">
+              <dt i18n="@@platform.firms.legal-form">Forme juridique</dt>
+              <dd>{{ f.legalForm }}</dd>
+            </ng-container>
+            <ng-container *ngIf="f.registrationNumber">
+              <dt i18n="@@platform.firms.registration">Numéro d’immatriculation</dt>
+              <dd>{{ f.registrationNumber }}</dd>
+            </ng-container>
+            <ng-container *ngIf="f.vatNumber">
+              <dt i18n="@@platform.firms.vat">Numéro de TVA</dt>
+              <dd>{{ f.vatNumber }}</dd>
+            </ng-container>
+            <ng-container *ngIf="adresseDe(f) as adresse">
+              <dt i18n="@@platform.firms.address">Adresse</dt>
+              <dd data-test="identite-adresse">{{ adresse }}</dd>
+            </ng-container>
+            <ng-container *ngIf="f.contactEmail">
+              <dt i18n="@@platform.firms.contact-email">Courriel de contact</dt>
+              <dd>{{ f.contactEmail }}</dd>
+            </ng-container>
+            <ng-container *ngIf="f.contactPhone">
+              <dt i18n="@@platform.firms.contact-phone">Téléphone</dt>
+              <dd>{{ f.contactPhone }}</dd>
+            </ng-container>
+          </dl>
+
+          <ng-template #identiteVide>
+            <p class="identite__vide" data-test="identite-vide"
+               i18n="@@platform.firms.identity-empty">
+              Rien de renseigné. Un accord d’engagement désignerait ce cabinet
+              par son seul nom d’usage — complétez la fiche pour qu’il nomme
+              quelqu’un de vérifiable.
+            </p>
+          </ng-template>
+        </section>
+
         <!-- Consultants -->
         <section class="detail__bloc" aria-labelledby="cab-consultants">
           <h3 class="detail__titre" id="cab-consultants"

@@ -51,7 +51,11 @@ describe('PartnerService', () => {
   it('crée et modifie un cabinet', () => {
     const corps = {
       slug: 'qualiconseil', name: 'QualiConseil',
-      registrationNumber: null, contactEmail: null, contactPhone: null
+      legalName: 'QualiConseil & Associés SARL', legalForm: 'SARL',
+      registrationNumber: null, vatNumber: 'FR32812345678',
+      addressLine1: '12 rue de la Qualité', addressLine2: null,
+      postalCode: '75011', city: 'Paris', countryCode: 'FR',
+      contactEmail: null, contactPhone: null
     };
 
     service.createFirm(corps).subscribe();

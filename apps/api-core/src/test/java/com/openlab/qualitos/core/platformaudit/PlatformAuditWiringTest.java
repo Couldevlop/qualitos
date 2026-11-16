@@ -271,7 +271,8 @@ class PlatformAuditWiringTest {
             when(cabinets.existsBySlug("cabinet-qualite")).thenReturn(false);
 
             cote_editeur.create(new PartnerDto.FirmRequest("cabinet-qualite",
-                    "Cabinet Qualite", null, null, null));
+                    "Cabinet Qualite", null, null, null, null, null, null, null, null,
+                    null, null, null));
 
             verify(auditTrail).record(eq(PlatformAuditAction.PARTNER_FIRM_CREATED),
                     eq("partner_firm"), eq(CABINET), eq(null),

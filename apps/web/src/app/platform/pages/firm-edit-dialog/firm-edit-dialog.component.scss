@@ -19,3 +19,27 @@
 }
 
 .full { width: 100%; }
+
+/* Les intertitres : la fenêtre porte quatre sujets (le cabinet, ses mentions
+   légales, son adresse, son contact) et sans eux les douze champs se lisent
+   comme une seule liste où l'on ne sait plus ce qu'on corrige. */
+.bloc {
+  grid-column: 1 / -1;
+  margin: var(--qos-space-4) 0 0;
+  font-size: var(--qos-fs-sm, 0.875rem);
+  font-weight: var(--qos-fw-semibold, 600);
+  color: var(--qos-fg-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+
+  &:first-of-type { margin-top: 0; }
+}
+
+/* Ce que le bloc sert à : le dire une fois, au-dessus, plutôt que de le
+   répéter en indication sous chaque champ. */
+.aide {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--qos-fg-secondary);
+  font-size: 0.8125rem;
+}
