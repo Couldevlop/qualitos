@@ -359,3 +359,25 @@
     }
   }
 }
+
+/* La verification d'efficacite REPORTEE : une attente, pas un refus. Le ton est
+   donc neutre -- ni l'alerte rouge d'un blocage, ni l'appel a l'action du bloc
+   d'efficacite lui-meme. */
+.effectiveness-pending {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 14px 0 0;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: var(--qos-bg-subtle);
+  color: var(--qos-fg-muted);
+  border: 1px solid var(--qos-border-subtle);
+  font-size: 0.9rem;
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+}

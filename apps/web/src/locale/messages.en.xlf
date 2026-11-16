@@ -7494,6 +7494,18 @@ Customer portal</target>
         <source>Évaluer contre le critère, avec un verdict nuancé</source>
         <target state="translated">Evaluate against the criterion, with a three-way verdict</target>
       </trans-unit>
+      <trans-unit id="capa.detail.effectiveness-pending-one" datatype="html">
+        <source>La vérification d'efficacité sera proposée quand la dernière action aura été terminée.</source>
+        <target state="translated">The effectiveness check will be offered once the last action has been completed.</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.effectiveness-pending-many" datatype="html">
+        <source>La vérification d'efficacité sera proposée quand les <x id="count"/> actions restantes auront été terminées.</source>
+        <target state="translated">The effectiveness check will be offered once the <x id="count"/> remaining actions have been completed.</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.effectiveness-pending-none" datatype="html">
+        <source>La vérification d'efficacité sera proposée une fois le dossier résolu.</source>
+        <target state="translated">The effectiveness check will be offered once the case is resolved.</target>
+      </trans-unit>
       <trans-unit id="capa.evidence.title" datatype="html">
         <source>Preuves</source>
         <target state="translated">Evidence</target>

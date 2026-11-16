@@ -146,6 +146,18 @@
             </ul>
           </div>
 
+          <!-- LE BLOC D'EFFICACITE DISPARAISSAIT SANS UN MOT. Ajouter une
+               action a un dossier resolu le ramene en traitement (c'est juste :
+               il reste du travail), et la question d'efficacite, visible
+               l'instant d'avant, s'effacait de l'ecran. On croyait a une perte
+               de fonction, alors qu'elle est seulement REPORTEE -- et cette
+               phrase dit a quelle condition elle revient. -->
+          <div class="effectiveness-pending" *ngIf="effectivenessPending(c)"
+               data-test="efficacite-reportee" role="status">
+            <mat-icon aria-hidden="true">schedule</mat-icon>
+            <span>{{ effectivenessPendingLabel(c) }}</span>
+          </div>
+
           <div class="effectiveness-block" *ngIf="canVerifyEffectiveness(c.status)">
             <p class="effectiveness-prompt">
               <mat-icon>fact_check</mat-icon>
