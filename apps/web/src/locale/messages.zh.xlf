@@ -7658,6 +7658,14 @@ Portail clients</source>
         <source>Aucune action de cette nature n'a encore été écrite pour cet écart.</source>
         <target state="translated">尚未为此不合格编写此类措施。</target>
       </trans-unit>
+      <trans-unit id="nc.8d.live-note-table" datatype="html">
+        <source>État actuel du dossier. Le PDF émis porte ce tableau, figé à l'émission.</source>
+        <target state="translated">档案的当前状态。签发的 PDF 包含此表格，在签发时已固化。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.live-note-figures" datatype="html">
+        <source>État actuel du dossier. Le PDF émis porte ces schémas, figés à l'émission.</source>
+        <target state="translated">档案的当前状态。签发的 PDF 包含这些图示，在签发时已固化。</target>
+      </trans-unit>
       <trans-unit id="nc.8d.live-note" datatype="html">
         <source>État actuel du dossier. Le PDF émis, lui, ne porte que le texte figé à l'émission.</source>
         <target state="translated">案卷的当前状态。已签发的 PDF 仅包含签发时冻结的文本。</target>

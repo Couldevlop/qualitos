@@ -31,6 +31,7 @@ import java.util.Calendar;
 import java.util.EnumMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
@@ -75,6 +76,20 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
     /** Hauteur réservée au pied d'intégrité de la DERNIÈRE page. */
     private static final float FOOTER_H = 150f;
 
+    /**
+     * Marge basse d'une page de CONTENU.
+     *
+     * <p>À ne pas confondre avec {@link #FOOTER_H}. Le pied d'intégrité ne
+     * s'écrit que sur la dernière page ; réserver sa hauteur sur toutes
+     * amputait chaque page d'un tiers, et poussait à la page suivante ce qui
+     * tenait largement — on a vu ainsi la cause racine d'une descente atterrir
+     * seule en haut d'une page, détachée du raisonnement dont elle conclut.
+     */
+    private static final float BOTTOM_GUTTER = 30f;
+
+    /** Largeur de la tête du poisson : l'énoncé y tient, hors des branches. */
+    private static final float TETE_W = 108f;
+
     /** Largeur en caractères d'une ligne de corps, à 9,5 pt sur la laisse utile. */
     private static final int WRAP = 104;
 
@@ -108,7 +123,7 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
                 page = discipline(doc, page, bold, regular, section);
             }
 
-            piedIntegrite(doc, page, bold, regular, mono, snapshot, verifyUrl);
+            page = piedIntegrite(doc, page, bold, regular, mono, snapshot, verifyUrl);
             page.flux.close();
 
             ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -230,6 +245,9 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
         for (EightDSnapshot.Figure figure : section.figures()) {
             page = figure(doc, page, bold, regular, figure);
         }
+        for (EightDSnapshot.Table actions : section.tables()) {
+            page = tableau(doc, page, bold, regular, actions);
+        }
         page.y -= 8;
         return page;
     }
@@ -242,7 +260,135 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
      * au-dessus de son propre trace.
      */
     private static boolean rienAMontrer(EightDSnapshot.Section section) {
-        return section.lines().isEmpty() && section.figures().isEmpty();
+        return section.lines().isEmpty() && section.figures().isEmpty()
+                && section.tables().isEmpty();
+    }
+
+
+    // ---------- les tableaux ----------
+
+    /**
+     * Les parts de largeur des colonnes d'actions, dans l'ordre de l'ecran.
+     *
+     * <p>L'intitule prend le tiers : c'est le seul champ de phrase, les cinq
+     * autres sont des mots ou des dates. Donner a tous la meme largeur
+     * repliait l'intitule sur quatre lignes a cote de colonnes aux trois
+     * quarts vides.
+     *
+     * <p>Les parts sont calees sur les valeurs les plus LONGUES qui existent,
+     * pas sur les plus courantes : « CONTAINMENT » et « IN_PROGRESS » sont des
+     * valeurs d'enumeration, elles reviennent telles quelles et, trop serrees,
+     * venaient toucher la colonne suivante -- deux valeurs qui se touchent se
+     * lisent comme une seule.
+     */
+    private static final float[] PARTS_COLONNES = {0.15f, 0.32f, 0.15f, 0.12f, 0.16f, 0.10f};
+
+    /** La hauteur d'une ligne de tableau, par ligne de texte repliee. */
+    private static final float LIGNE_CELLULE = 11f;
+
+    /**
+     * Trace un tableau : un en-tete, puis une ligne par action.
+     *
+     * <p>L'ecran presente les actions decidees en colonnes, et le document emis
+     * doit se presenter comme l'ecran. Les memes donnees en phrases -- « Action
+     * [CORRECTIVE] Remplacer le joint - DONE - due 12/09 » -- ne se comparent
+     * pas d'une ligne a l'autre, et c'est pourtant ce qu'on vient faire dans
+     * ces disciplines : voir d'un coup d'oeil ce qui reste ouvert, ce qui est
+     * en retard, ce qui n'est pas prouve.
+     *
+     * <p>UNE LIGNE NE SE COUPE PAS en deux pages, et l'EN-TETE SE REPETE sur la
+     * page suivante : une colonne de valeurs sans son intitule ne se lit plus,
+     * et pire, elle se lit de travers.
+     */
+    private Page tableau(PDDocument doc, Page page, PDType1Font bold, PDType1Font regular,
+                         EightDSnapshot.Table tableau) throws IOException {
+        float[] largeurs = largeursDe(tableau.columns().size());
+        // Le titre et l'en-tete tiennent ensemble, avec au moins une ligne :
+        // un dossier annonce en bas de page dont le tableau commence a la
+        // suivante se lirait comme un dossier vide.
+        page = place(doc, page, 18f + LIGNE_CELLULE + 2 * LIGNE_CELLULE);
+        page.y -= 4;
+        texte(page.flux, bold, 9.5f, INDIGO, MARGIN + 10, page.y,
+                "Actions - " + texteOuVide(tableau.caption()));
+        page.y -= 13;
+        page = enTete(page, bold, tableau.columns(), largeurs);
+
+        boolean alterne = false;
+        for (EightDSnapshot.Row rang : tableau.rows()) {
+            List<List<String>> cellules = new ArrayList<>();
+            int hautes = 1;
+            for (int i = 0; i < rang.cells().size(); i++) {
+                List<String> repliee = replier(
+                        rang.cells().get(i), regular, 8f, largeurs[i] - 8f);
+                cellules.add(repliee);
+                hautes = Math.max(hautes, repliee.size());
+            }
+            float hauteur = hautes * LIGNE_CELLULE + 4f;
+            Page avant = page;
+            page = place(doc, page, hauteur);
+            if (page != avant) {
+                // Nouvelle page : l'en-tete se repete, sinon les colonnes
+                // perdent leur intitule et se lisent de travers.
+                page.y -= 4;
+                page = enTete(page, bold, tableau.columns(), largeurs);
+                alterne = false;
+            }
+            if (alterne) {
+                rect(page.flux, PANEL, MARGIN + 10, page.y - hauteur + 9.5f,
+                        CONTENT_W - 20, hauteur);
+            }
+            alterne = !alterne;
+            float x = MARGIN + 14;
+            for (int i = 0; i < cellules.size(); i++) {
+                float yc = page.y;
+                for (String morceau : cellules.get(i)) {
+                    texte(page.flux, regular, 8f, INK, x, yc, morceau);
+                    yc -= LIGNE_CELLULE;
+                }
+                x += largeurs[i];
+            }
+            page.y -= hauteur;
+        }
+        ligne(page.flux, MUTED, MARGIN + 10, page.y + 6f,
+                WIDTH - MARGIN - 10, page.y + 6f, 0.5f);
+        page.y -= 6;
+        return page;
+    }
+
+    /** L'en-tete des colonnes, souligne. */
+    private Page enTete(Page page, PDType1Font bold, List<String> colonnes, float[] largeurs)
+            throws IOException {
+        float x = MARGIN + 14;
+        for (int i = 0; i < colonnes.size(); i++) {
+            texte(page.flux, bold, 7.5f, MUTED, x, page.y, colonnes.get(i).toUpperCase(Locale.ROOT));
+            x += largeurs[i];
+        }
+        page.y -= 4;
+        ligne(page.flux, MUTED, MARGIN + 10, page.y, WIDTH - MARGIN - 10, page.y, 0.5f);
+        page.y -= 11;
+        return page;
+    }
+
+    /**
+     * Les largeurs en points, pour {@code n} colonnes.
+     *
+     * <p>Les parts connues servent telles quelles ; au-dela, les colonnes se
+     * partagent la largeur a egalite -- un tableau d'une autre forme se rendra
+     * sobrement plutot que de deborder de la page.
+     */
+    private static float[] largeursDe(int n) {
+        float utile = CONTENT_W - 24f;
+        float[] largeurs = new float[n];
+        if (n == PARTS_COLONNES.length) {
+            for (int i = 0; i < n; i++) {
+                largeurs[i] = utile * PARTS_COLONNES[i];
+            }
+            return largeurs;
+        }
+        for (int i = 0; i < n; i++) {
+            largeurs[i] = utile / n;
+        }
+        return largeurs;
     }
 
     // ---------- les figures ----------
@@ -259,7 +405,15 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
         String titre = figure.kind() == EightDSnapshot.FigureKind.FISHBONE
                 ? "Ishikawa - " + texteOuVide(figure.caption())
                 : "5 whys - " + texteOuVide(figure.caption());
-        page = place(doc, page, 22f);
+        // UNE FIGURE NE SE COUPE PAS. Elle vaut par sa forme : une arête dont
+        // la moitié des branches passe à la page suivante, ou une descente
+        // séparée de sa conclusion, ne montrent plus ce qu'un schéma sert à
+        // montrer. On la place donc d'un bloc, titre compris — sauf si elle est
+        // plus haute qu'une page entière, auquel cas aucune place ne suffirait
+        // et il vaut mieux la commencer ici que gâcher une page pour rien.
+        float corps = hauteurDuCorps(figure, regular);
+        float utile = HEIGHT - 2 * MARGIN - BOTTOM_GUTTER;
+        page = place(doc, page, Math.min(28f + corps, utile));
         page.y -= 6;
         texte(page.flux, bold, 9.5f, INDIGO, MARGIN + 10, page.y, titre);
         page.y -= 12;
@@ -273,6 +427,28 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
         return figure.kind() == EightDSnapshot.FigureKind.FISHBONE
                 ? arete(doc, page, bold, regular, figure)
                 : echelle(doc, page, bold, regular, figure);
+    }
+
+    /**
+     * La hauteur qu'une figure occupera, mesuree avant d'etre tracee.
+     *
+     * <p>C'est elle qui permet de tenir la figure d'un bloc. Elle se calcule
+     * avec les memes mesures que le trace -- police comprise -- pour qu'un
+     * repli de plus ne fasse pas deborder ce qu'on avait annonce tenir.
+     */
+    private float hauteurDuCorps(EightDSnapshot.Figure figure, PDType1Font regular)
+            throws IOException {
+        if (figure.nodes().isEmpty()) {
+            return 26f;
+        }
+        if (figure.kind() == EightDSnapshot.FigureKind.FISHBONE) {
+            return disposerArete(figure, regular).hauteur() + 18f;
+        }
+        float total = 0f;
+        for (EightDSnapshot.Node noeud : figure.nodes()) {
+            total += 16f + 11f * couperA(noeud.label(), 92).size();
+        }
+        return total;
     }
 
     /**
@@ -293,10 +469,21 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
         float x = MARGIN + 18;
         float largeur = CONTENT_W - 36;
         boolean premier = true;
-        for (EightDSnapshot.Node noeud : figure.nodes()) {
+        List<EightDSnapshot.Node> noeuds = figure.nodes();
+        for (int i = 0; i < noeuds.size(); i++) {
+            EightDSnapshot.Node noeud = noeuds.get(i);
             List<String> morceaux = couperA(noeud.label(), 92);
             float hauteur = 12f + 11f * morceaux.size();
-            page = place(doc, page, hauteur + 14f);
+            float besoin = hauteur + 14f;
+            // LA CAUSE RACINE N'EST JAMAIS SEULE EN HAUT D'UNE PAGE. Elle est la
+            // conclusion de la descente : detachee de la marche qui la precede,
+            // elle n'est plus qu'une affirmation sans son raisonnement -- et
+            // c'est justement elle qu'un auditeur vient lire. On exige donc la
+            // place des DEUX derniers cadres au moment de poser l'avant-dernier.
+            if (i + 1 < noeuds.size() && "ROOT".equals(noeuds.get(i + 1).group())) {
+                besoin += 16f + 11f * couperA(noeuds.get(i + 1).label(), 92).size();
+            }
+            page = place(doc, page, besoin);
             if (!premier) {
                 // Le segment de liaison, trace APRES un eventuel saut de page :
                 // sinon il pendrait au bas de la page precedente, sous rien.
@@ -332,6 +519,74 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
      */
     private Page arete(PDDocument doc, Page page, PDType1Font bold, PDType1Font regular,
                        EightDSnapshot.Figure figure) throws IOException {
+        Arete plan = disposerArete(figure, regular);
+        Map<String, List<String>> lignesParBranche = plan.lignesParBranche();
+        float gauche = plan.gauche();
+        float droite = plan.droite();
+        float pas = plan.pas();
+        float demiHaut = plan.demiHaut();
+        float demiBas = plan.demiBas();
+        float hauteur = plan.hauteur();
+        float teteLargeur = TETE_W;
+        page = place(doc, page, hauteur + 12f);
+
+        float epine = page.y - demiHaut;
+        ligne(page.flux, INK, gauche, epine, droite, epine, 1.2f);
+
+        // La tete : l'enonce du probleme, la ou l'epine aboutit. Sa hauteur suit
+        // le nombre de lignes repliees, pour ne pas tronquer l'enonce.
+        List<String> enonce = replier(figure.caption(), regular, 7.5f, teteLargeur - 14f);
+        float teteHauteur = Math.max(28f, 6f + 9f * enonce.size());
+        rect(page.flux, PANEL, droite, epine - teteHauteur / 2, teteLargeur, teteHauteur);
+        rect(page.flux, INDIGO, droite, epine - teteHauteur / 2, 2.5f, teteHauteur);
+        float ligneTete = epine + teteHauteur / 2 - 10f;
+        for (String morceau : enonce) {
+            texte(page.flux, regular, 7.5f, INK, droite + 7, ligneTete, morceau);
+            ligneTete -= 9f;
+        }
+
+        int indice = 0;
+        for (Map.Entry<String, List<String>> branche : lignesParBranche.entrySet()) {
+            boolean haut = indice % 2 == 0;
+            float pied = gauche + 24f + pas * indice;
+            float pointe = pied - 20f;
+            float sommet = haut ? epine + demiHaut - 12f : epine - demiBas + 12f;
+            ligne(page.flux, MUTED, pied, epine, pointe, sommet, 0.9f);
+            // Le nom de la categorie se pose a la POINTE, au bout de sa branche.
+            texte(page.flux, bold, 7.5f, INDIGO, pointe, haut ? sommet + 4 : sommet - 9,
+                    branche.getKey());
+            // Les causes s'ecrivent a DROITE du pied, donc entierement hors du
+            // trait oblique : ecrites a la pointe, elles etaient barrees par leur
+            // propre branche. Et elles se lisent toujours de HAUT en BAS, des
+            // deux cotes de l'epine -- en bas, les empiler vers le haut faisait
+            // lire la derniere ligne en premier.
+            float causeY = haut ? sommet - 9f : epine - 12f;
+            for (String ligne : branche.getValue()) {
+                texte(page.flux, regular, 7f, INK, pied + 3f, causeY, ligne);
+                causeY -= 9f;
+            }
+            indice++;
+        }
+        page.y -= hauteur + 6f;
+        return page;
+    }
+
+    /** La geometrie d'une arete, calculee AVANT d'etre tracee, donc mesurable. */
+    private record Arete(Map<String, List<String>> lignesParBranche, float gauche, float droite,
+                         float pas, float demiHaut, float demiBas) {
+        float hauteur() {
+            return demiHaut + demiBas;
+        }
+    }
+
+    /**
+     * Dispose les branches d'une arete sans rien tracer.
+     *
+     * <p>Separer le calcul du trace n'est pas une coquetterie : c'est ce qui
+     * permet de savoir si la figure tient sur la page AVANT de l'y commencer.
+     */
+    private Arete disposerArete(EightDSnapshot.Figure figure, PDType1Font regular)
+            throws IOException {
         Map<String, List<String>> parBranche = new LinkedHashMap<>();
         for (EightDSnapshot.Node noeud : figure.nodes()) {
             parBranche.computeIfAbsent(texteOuVide(noeud.group()), k -> new ArrayList<>())
@@ -339,10 +594,9 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
         }
 
         float gauche = MARGIN + 18;
-        float teteLargeur = 108f;
         // La tete est HORS de la zone des branches, pas superposee a elle : une
         // branche qui finissait sous le cadre de l'enonce le rendait illisible.
-        float droite = MARGIN + CONTENT_W - teteLargeur - 14;
+        float droite = MARGIN + CONTENT_W - TETE_W - 14;
 
         int nb = parBranche.size();
         // La zone des branches s'arrete AVANT la tete : la colonne de texte de
@@ -375,50 +629,8 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
             }
             indice++;
         }
-        float demiHaut = 30f + 9f * hautMax;
-        float demiBas = 30f + 9f * basMax;
-        float hauteur = demiHaut + demiBas;
-        page = place(doc, page, hauteur + 12f);
-
-        float epine = page.y - demiHaut;
-        ligne(page.flux, INK, gauche, epine, droite, epine, 1.2f);
-
-        // La tete : l'enonce du probleme, la ou l'epine aboutit. Sa hauteur suit
-        // le nombre de lignes repliees, pour ne pas tronquer l'enonce.
-        List<String> enonce = replier(figure.caption(), regular, 7.5f, teteLargeur - 14f);
-        float teteHauteur = Math.max(28f, 6f + 9f * enonce.size());
-        rect(page.flux, PANEL, droite, epine - teteHauteur / 2, teteLargeur, teteHauteur);
-        rect(page.flux, INDIGO, droite, epine - teteHauteur / 2, 2.5f, teteHauteur);
-        float ligneTete = epine + teteHauteur / 2 - 10f;
-        for (String morceau : enonce) {
-            texte(page.flux, regular, 7.5f, INK, droite + 7, ligneTete, morceau);
-            ligneTete -= 9f;
-        }
-
-        indice = 0;
-        for (Map.Entry<String, List<String>> branche : lignesParBranche.entrySet()) {
-            boolean haut = indice % 2 == 0;
-            float pied = gauche + 24f + pas * indice;
-            float pointe = pied - 20f;
-            float sommet = haut ? epine + demiHaut - 12f : epine - demiBas + 12f;
-            ligne(page.flux, MUTED, pied, epine, pointe, sommet, 0.9f);
-            // Le nom de la categorie se pose a la POINTE, au bout de sa branche.
-            texte(page.flux, bold, 7.5f, INDIGO, pointe, haut ? sommet + 4 : sommet - 9,
-                    branche.getKey());
-            // Les causes s'ecrivent a DROITE du pied, donc entierement hors du
-            // trait oblique : ecrites a la pointe, elles etaient barrees par leur
-            // propre branche. Et elles se lisent toujours de HAUT en BAS, des
-            // deux cotes de l'epine -- en bas, les empiler vers le haut faisait
-            // lire la derniere ligne en premier.
-            float causeY = haut ? sommet - 9f : epine - 12f;
-            for (String ligne : branche.getValue()) {
-                texte(page.flux, regular, 7f, INK, pied + 3f, causeY, ligne);
-                causeY -= 9f;
-            }
-            indice++;
-        }
-        page.y -= hauteur + 6f;
-        return page;
+        return new Arete(lignesParBranche, gauche, droite, pas,
+                30f + 9f * hautMax, 30f + 9f * basMax);
     }
 
     /**
@@ -491,16 +703,24 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
      * au besoin. La dernière page réserve en plus la hauteur du pied d'intégrité.
      */
     private Page place(PDDocument doc, Page page, float besoin) throws IOException {
-        if (page.y - besoin >= MARGIN + FOOTER_H) {
+        if (page.y - besoin >= MARGIN + BOTTOM_GUTTER) {
             return page;
         }
         page.flux.close();
         return nouvellePage(doc);
     }
 
-    private void piedIntegrite(PDDocument doc, Page page, PDType1Font bold, PDType1Font regular,
+    private Page piedIntegrite(PDDocument doc, Page page, PDType1Font bold, PDType1Font regular,
                                PDType1Font mono, EightDSnapshot snapshot, String verifyUrl)
             throws IOException {
+        // Le pied s'écrit au BAS de la dernière page, à une hauteur fixe. Le
+        // contenu, lui, descend désormais jusqu'à la marge : s'il atteint cette
+        // bande, le pied prend une page à lui. L'écrire par-dessus le texte
+        // rendrait illisibles à la fois la preuve et ce qu'elle atteste.
+        if (page.y < MARGIN + FOOTER_H + 12f) {
+            page.flux.close();
+            page = nouvellePage(doc);
+        }
         PDPageContentStream c = page.flux;
         float haut = MARGIN + FOOTER_H;
         ligne(c, MUTED, MARGIN, haut, WIDTH - MARGIN, haut, 0.5f);
@@ -525,6 +745,7 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
         float taille = 110f;
         PDImageXObject qr = qrCode(doc, verifyUrl, taille);
         c.drawImage(qr, WIDTH - MARGIN - taille, MARGIN + 12, taille, taille);
+        return page;
     }
 
     // ---- dessin de bas niveau ----

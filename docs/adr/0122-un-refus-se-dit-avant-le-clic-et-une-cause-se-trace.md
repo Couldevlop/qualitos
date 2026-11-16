@@ -114,6 +114,37 @@ relit sans elles, et rend exactement les mêmes octets qu'au jour de son sceau.
   émis dont l'Ishikawa a été supprimé depuis montrera donc ses figures dans le
   PDF scellé, et pas à l'écran. Dette assumée, consignée ici.
 
+### Reprise du 16 novembre 2026 — une figure ne se coupe pas
+
+Le premier aperçu rendu montrait les deux tracés, et c'est à l'œil qu'est apparu
+ce qu'aucun banc ne disait : **la cause racine atterrissait seule en haut de la
+page suivante**, détachée de la descente dont elle est la conclusion — alors
+qu'il restait un tiers de page libre.
+
+La cause n'était pas dans le tracé mais dans la pagination. `FOOTER_H` (150 pt),
+la hauteur du pied d'intégrité, était réservée sur **toutes** les pages alors que
+ce pied ne s'écrit que sur la **dernière**. Chaque page perdait donc un tiers de
+sa hauteur, et la coupure tombait bien avant le bas.
+
+Trois décisions en découlent :
+
+- **Les pages de contenu n'ont qu'une marge basse** (`BOTTOM_GUTTER`, 30 pt). Le
+  pied, lui, prend une page à lui quand le contenu descend jusqu'à sa bande :
+  l'écrire par-dessus rendrait illisibles à la fois la preuve et ce qu'elle
+  atteste.
+- **Une figure ne se coupe pas.** Elle vaut par sa forme ; une arête dont la
+  moitié des branches passe à la page suivante ne montre plus rien. Sa hauteur
+  est donc **mesurée avant d'être tracée** (d'où la séparation entre disposer et
+  dessiner), et elle est posée d'un bloc — sauf si elle est plus haute qu'une
+  page entière, auquel cas aucune place ne suffirait.
+- **La cause racine n'est jamais seule.** Même pour une descente trop longue pour
+  une page, les deux derniers barreaux se posent ensemble : une conclusion sans
+  la marche qui la précède n'est plus qu'une affirmation.
+
+L'écran portait aussi, sous les figures du D4, une note devenue fausse — « le PDF
+émis ne porte que le texte » —, vraie le jour où elle a été écrite et qui
+dissuadait d'ouvrir le document pour y chercher ce qui s'y trouve.
+
 ## Tests d'invariant
 
 - `NcServiceTest` : la fiche porte le motif de SON étape, avec son décompte ;
@@ -128,6 +159,13 @@ relit sans elles, et rend exactement les mêmes octets qu'au jour de son sceau.
   texte du PDF ; une figure vide le dit ; **deux rendus donnent les mêmes
   octets** ; et surtout, **un instantané sans figure rend les mêmes octets
   qu'avant la décision**.
+- Pagination (reprise du 16 novembre) : la descente et sa cause racine restent
+  sur la même page, et l'arête tient d'un bloc — vérifiés pour **treize
+  positions de coupure différentes**, parce que le défaut ne se voyait qu'à
+  certaines. Une descente trop longue pour une page garde ses deux derniers
+  barreaux ensemble. Et sur la page du pied, **aucun texte de contenu ne passe
+  sous le filet** : la vérification lit les ordonnées réelles, un chevauchement
+  n'apparaissant pas à la lecture à plat du PDF.
 
 ## Références
 

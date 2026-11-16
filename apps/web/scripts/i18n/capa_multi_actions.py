@@ -143,6 +143,20 @@ TRANSLATIONS = {
         '尚未为此不合格编写此类措施。'),
 
     # --- le rapport 8D montre aussi l'etat vivant du dossier ----------------
+    'nc.8d.live-note-table': (
+        "État actuel du dossier. Le PDF émis porte ce tableau, figé à l'émission.",
+        'Current state of the case. The issued PDF carries this table, frozen at issuance.',
+        'Estado actual del expediente. El PDF emitido incluye esta tabla, congelada en la emisión.',
+        'الحالة الحالية للملف. يتضمّن ملف PDF الصادر هذا الجدول، مجمَّدًا وقت الإصدار.',
+        '案件の現在の状態です。発行された PDF には、発行時点で固定されたこの表が含まれます。',
+        '档案的当前状态。签发的 PDF 包含此表格，在签发时已固化。'),
+    'nc.8d.live-note-figures': (
+        "État actuel du dossier. Le PDF émis porte ces schémas, figés à l'émission.",
+        'Current state of the case. The issued PDF carries these diagrams, frozen at issuance.',
+        'Estado actual del expediente. El PDF emitido incluye estos esquemas, congelados en la emisión.',
+        'الحالة الحالية للملف. يتضمّن ملف PDF الصادر هذه المخططات، مجمَّدة وقت الإصدار.',
+        '案件の現在の状態です。発行された PDF には、発行時点で固定されたこれらの図が含まれます。',
+        '档案的当前状态。签发的 PDF 包含这些图示，在签发时已固化。'),
     'nc.8d.live-note': (
         "État actuel du dossier. Le PDF émis, lui, ne porte que le texte figé à l'émission.",
         'Current state of the case. The issued PDF carries only the text frozen at issuance.',

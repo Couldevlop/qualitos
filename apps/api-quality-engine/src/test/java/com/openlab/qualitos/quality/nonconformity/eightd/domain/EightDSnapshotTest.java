@@ -46,6 +46,48 @@ class EightDSnapshotTest {
         assertThat(snapshot.sections()).hasSize(8);
     }
 
+
+    /**
+     * UNE LIGNE PLUS COURTE QUE SES COLONNES EST REFUSEE.
+     *
+     * <p>Rendue telle quelle, elle decalerait silencieusement les valeurs d'une
+     * colonne : le porteur passerait sous « echeance », l'avancement sous
+     * « statut de preuve ». Le document serait signe, ancre, et faux -- et rien
+     * dans sa chaine de confiance ne le dirait, puisque l'empreinte couvrirait
+     * fidelement une donnee deja fausse.
+     */
+    @Test
+    void un_tableau_refuse_une_ligne_qui_n_a_pas_le_compte_de_cellules() {
+        List<String> colonnes = List.of("Kind", "Action", "Owner");
+        List<EightDSnapshot.Row> rangs =
+                List.of(new EightDSnapshot.Row(List.of("CORRECTIVE", "Remplacer le joint")));
+
+        assertThatThrownBy(() -> new EightDSnapshot.Table("Dossier A", colonnes, rangs))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("2 cellules pour 3 colonnes");
+    }
+
+    /** Un tableau sans colonne ne se rend pas : il n'y a rien a aligner. */
+    @Test
+    void un_tableau_sans_colonne_est_refuse() {
+        assertThatThrownBy(() -> new EightDSnapshot.Table("Dossier A", List.of(), List.of()))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    /**
+     * Une section relue d'un rapport emis AVANT les tableaux porte {@code null}
+     * et se relit comme une section sans tableau -- son empreinte continue de
+     * tomber juste.
+     */
+    @Test
+    void une_section_relue_sans_tableau_se_lit_comme_une_section_vide_de_tableau() {
+        EightDSnapshot.Section section = new EightDSnapshot.Section(
+                "D5", "Actions", true, "source", List.of("x"), null, null);
+
+        assertThat(section.tables()).isEmpty();
+        assertThat(section.figures()).isEmpty();
+    }
+
     private List<EightDSnapshot.Section> sections(boolean complet) {
         List<EightDSnapshot.Section> sections = new ArrayList<>();
         for (EightDDiscipline discipline : EightDDiscipline.values()) {

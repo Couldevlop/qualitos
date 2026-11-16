@@ -75,7 +75,21 @@ public record EightDSnapshot(
              * il se relit alors exactement comme il a été scellé, sans figure, et
              * son empreinte continue de tomber juste.
              */
-            List<Figure> figures) {
+            List<Figure> figures,
+            /**
+             * Les tableaux de la discipline — les actions décidées, telles que
+             * l'écran les présente : une ligne par action, avec sa nature, son
+             * porteur, son échéance, son avancement et sa preuve.
+             *
+             * <p>Des DONNÉES, pour la même raison que les figures : le rendu
+             * reste une fonction pure de ce qu'on stocke, donc l'empreinte
+             * scellée reste vérifiable. Une image de tableau ferait dépendre
+             * cette empreinte d'un moteur de rendu.
+             *
+             * <p>{@code null} à la relecture d'un rapport émis AVANT les
+             * tableaux : il se relit alors exactement comme il a été scellé.
+             */
+            List<Table> tables) {
 
         public Section {
             code = requireText(code, "code");
@@ -83,12 +97,61 @@ public record EightDSnapshot(
             sourceLabel = requireText(sourceLabel, "sourceLabel");
             lines = List.copyOf(Objects.requireNonNull(lines, "lines"));
             figures = figures == null ? List.of() : List.copyOf(figures);
+            tables = tables == null ? List.of() : List.copyOf(tables);
         }
 
-        /** Une discipline sans figure — le cas des sept autres. */
+        /** Une discipline qui ne porte que du texte — le cas de quatre d'entre elles. */
         public Section(String code, String title, boolean sourced, String sourceLabel,
                        List<String> lines) {
-            this(code, title, sourced, sourceLabel, lines, List.of());
+            this(code, title, sourced, sourceLabel, lines, List.of(), List.of());
+        }
+
+        /** Une discipline qui trace mais ne tabule pas — le D4. */
+        public Section(String code, String title, boolean sourced, String sourceLabel,
+                       List<String> lines, List<Figure> figures) {
+            this(code, title, sourced, sourceLabel, lines, figures, List.of());
+        }
+    }
+
+    /**
+     * Un tableau, décrit par ses colonnes et ses lignes plutôt que dessiné.
+     *
+     * <p>C'est la forme sous laquelle l'écran présente les actions décidées, et
+     * le document émis doit se présenter comme l'écran : une énumération en
+     * phrases ne se lit pas en revue, et surtout elle ne se compare pas d'une
+     * ligne à l'autre — ce qu'un tableau fait d'un coup d'œil.
+     *
+     * @param caption le dossier CAPA dont ces actions relèvent ; un tableau sans
+     *                titre ne se rattache à rien quand l'écart en porte plusieurs
+     * @param columns les en-têtes, dans l'ordre
+     * @param rows    les lignes, dans l'ordre ; chacune a autant de cellules que
+     *                de colonnes — une ligne plus courte décalerait silencieusement
+     *                les valeurs d'une colonne, et un rapport signé affirmerait
+     *                alors quelque chose que personne n'a écrit
+     */
+    public record Table(String caption, List<String> columns, List<Row> rows) {
+
+        public Table {
+            columns = List.copyOf(Objects.requireNonNull(columns, "columns"));
+            if (columns.isEmpty()) {
+                throw new IllegalArgumentException("un tableau sans colonne ne se rend pas");
+            }
+            rows = List.copyOf(Objects.requireNonNull(rows, "rows"));
+            for (Row row : rows) {
+                if (row.cells().size() != columns.size()) {
+                    throw new IllegalArgumentException(
+                            "ligne de " + row.cells().size() + " cellules pour "
+                            + columns.size() + " colonnes");
+                }
+            }
+        }
+    }
+
+    /** Une ligne de tableau : ses cellules, dans l'ordre des colonnes. */
+    public record Row(List<String> cells) {
+
+        public Row {
+            cells = List.copyOf(Objects.requireNonNull(cells, "cells"));
         }
     }
 

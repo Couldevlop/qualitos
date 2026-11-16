@@ -7658,6 +7658,14 @@ Portail clients</source>
         <source>Aucune action de cette nature n'a encore été écrite pour cet écart.</source>
         <target state="translated">لم يُكتب بعد أي إجراء من هذا النوع لهذا الانحراف.</target>
       </trans-unit>
+      <trans-unit id="nc.8d.live-note-table" datatype="html">
+        <source>État actuel du dossier. Le PDF émis porte ce tableau, figé à l'émission.</source>
+        <target state="translated">الحالة الحالية للملف. يتضمّن ملف PDF الصادر هذا الجدول، مجمَّدًا وقت الإصدار.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.live-note-figures" datatype="html">
+        <source>État actuel du dossier. Le PDF émis porte ces schémas, figés à l'émission.</source>
+        <target state="translated">الحالة الحالية للملف. يتضمّن ملف PDF الصادر هذه المخططات، مجمَّدة وقت الإصدار.</target>
+      </trans-unit>
       <trans-unit id="nc.8d.live-note" datatype="html">
         <source>État actuel du dossier. Le PDF émis, lui, ne porte que le texte figé à l'émission.</source>
         <target state="translated">الحالة الحالية للملف. أما ملف PDF المُصدر فلا يحمل سوى النص المجمّد عند الإصدار.</target>
