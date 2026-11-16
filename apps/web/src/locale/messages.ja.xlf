@@ -7494,6 +7494,18 @@ Portail clients</source>
         <source>Évaluer contre le critère, avec un verdict nuancé</source>
         <target state="translated">基準に対して評価する（三段階の判定）</target>
       </trans-unit>
+      <trans-unit id="capa.detail.effectiveness-pending-one" datatype="html">
+        <source>La vérification d'efficacité sera proposée quand la dernière action aura été terminée.</source>
+        <target state="translated">最後の対策が完了した時点で、有効性の確認が可能になります。</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.effectiveness-pending-many" datatype="html">
+        <source>La vérification d'efficacité sera proposée quand les <x id="count"/> actions restantes auront été terminées.</source>
+        <target state="translated">残り <x id="count"/> 件の対策が完了した時点で、有効性の確認が可能になります。</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.effectiveness-pending-none" datatype="html">
+        <source>La vérification d'efficacité sera proposée une fois le dossier résolu.</source>
+        <target state="translated">案件が解決された時点で、有効性の確認が可能になります。</target>
+      </trans-unit>
       <trans-unit id="capa.evidence.title" datatype="html">
         <source>Preuves</source>
         <target state="translated">証拠</target>

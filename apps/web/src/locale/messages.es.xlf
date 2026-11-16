@@ -7494,6 +7494,18 @@ Portal de clientes</target>
         <source>Évaluer contre le critère, avec un verdict nuancé</source>
         <target state="translated">Evaluar frente al criterio, con un veredicto matizado</target>
       </trans-unit>
+      <trans-unit id="capa.detail.effectiveness-pending-one" datatype="html">
+        <source>La vérification d'efficacité sera proposée quand la dernière action aura été terminée.</source>
+        <target state="translated">La verificación de eficacia se propondrá cuando se haya terminado la última acción.</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.effectiveness-pending-many" datatype="html">
+        <source>La vérification d'efficacité sera proposée quand les <x id="count"/> actions restantes auront été terminées.</source>
+        <target state="translated">La verificación de eficacia se propondrá cuando se hayan terminado las <x id="count"/> acciones restantes.</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.effectiveness-pending-none" datatype="html">
+        <source>La vérification d'efficacité sera proposée une fois le dossier résolu.</source>
+        <target state="translated">La verificación de eficacia se propondrá una vez resuelto el expediente.</target>
+      </trans-unit>
       <trans-unit id="capa.evidence.title" datatype="html">
         <source>Preuves</source>
         <target state="translated">Pruebas</target>

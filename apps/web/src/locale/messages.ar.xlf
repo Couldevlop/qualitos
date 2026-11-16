@@ -7494,6 +7494,18 @@ Portail clients</source>
         <source>Évaluer contre le critère, avec un verdict nuancé</source>
         <target state="translated">التقييم في مواجهة المعيار، بحكم متدرّج</target>
       </trans-unit>
+      <trans-unit id="capa.detail.effectiveness-pending-one" datatype="html">
+        <source>La vérification d'efficacité sera proposée quand la dernière action aura été terminée.</source>
+        <target state="translated">سيُتاح التحقق من الفعالية بعد إتمام الإجراء الأخير.</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.effectiveness-pending-many" datatype="html">
+        <source>La vérification d'efficacité sera proposée quand les <x id="count"/> actions restantes auront été terminées.</source>
+        <target state="translated">سيُتاح التحقق من الفعالية بعد إتمام الإجراءات المتبقية وعددها <x id="count"/>.</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.effectiveness-pending-none" datatype="html">
+        <source>La vérification d'efficacité sera proposée une fois le dossier résolu.</source>
+        <target state="translated">سيُتاح التحقق من الفعالية بعد تسوية الملف.</target>
+      </trans-unit>
       <trans-unit id="capa.evidence.title" datatype="html">
         <source>Preuves</source>
         <target state="translated">الأدلة</target>

@@ -175,6 +175,14 @@ public class EightDSourceAdapter implements EightDSourcePort {
      *
      * <p>Les deux natures de source sont interrogées : un constat interne et une
      * réclamation client portent la même référence d'écart, pas le même type.
+     *
+     * <p><b>Pas de portée CAPA ici, et c'est délibéré.</b> Le droit de lire ce
+     * rapport se décide sur l'ÉCART, en amont ({@code NcScope} — un écart hors
+     * de portée est « introuvable » et rien n'est collecté). Filtrer ensuite les
+     * dossiers lecteur par lecteur donnerait DEUX rapports différents pour le
+     * même écart : l'instantané est signé et son empreinte ancrée, un contenu
+     * qui dépend de qui le demande ne se vérifie plus. Un 8D est le document
+     * de l'écart, pas la vue personnelle de celui qui l'imprime.
      */
     private List<EightDSources.Capa> enCapas(UUID tenantId, NonConformity nc) {
         Map<UUID, CapaCase> dossiers = new LinkedHashMap<>();

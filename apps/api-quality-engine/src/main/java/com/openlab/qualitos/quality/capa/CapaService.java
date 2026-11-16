@@ -219,7 +219,19 @@ public class CapaService {
      */
     @Transactional(readOnly = true)
     public List<CapaDto.CaseRef> casesOf(UUID escaladeId, String ncReference) {
+        // SOUS PORT\u00c9E (ADR 0081), parce que ceci NOMME les dossiers. Sans
+        // \u00ab voir tous les dossiers \u00bb, on ne voit que ceux qui vous concernent :
+        // rendre ici le titre d'un dossier hors de port\u00e9e le divulguerait par un
+        // chemin d\u00e9tourn\u00e9 -- la fiche d'un \u00e9cart -- alors que sa propre fiche le
+        // refuse.
+        //
+        // C'est la DIFF\u00c9RENCE avec {@link #casesFor} : un invariant doit compter
+        // TOUS les dossiers, y compris ceux qu'on ne voit pas, sinon la cl\u00f4ture
+        // d\u00e9pendrait de qui regarde. C'est pr\u00e9cis\u00e9ment pourquoi un motif de
+        // blocage porte un D\u00c9COMPTE et jamais un titre.
+        Optional<UUID> seulement = CapaScope.restriction(scope);
         return dossiersDe(escaladeId, ncReference).stream()
+                .filter(c -> CapaScope.sees(seulement, c))
                 .map(c -> new CapaDto.CaseRef(c.getId(), c.getTitle(), c.getStatus()))
                 .toList();
     }

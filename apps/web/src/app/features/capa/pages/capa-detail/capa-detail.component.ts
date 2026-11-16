@@ -468,6 +468,37 @@ export class CapaDetailComponent implements OnInit {
   }
 
   /**
+   * Vrai quand la vérification d'efficacité est ATTENDUE mais pas encore
+   * possible : le dossier travaille toujours.
+   *
+   * <p>Ajouter une action à un dossier résolu le ramène en traitement — c'est
+   * juste, il reste du travail — et la question d'efficacité, visible
+   * l'instant d'avant, disparaît de l'écran. Rien ne disait qu'elle était
+   * seulement reportée, et on croyait à une fonction perdue.
+   *
+   * <p>Ne s'affiche que si une vérification est effectivement attendue : un
+   * critère posé à l'ouverture, ou la décision explicite de vérifier. Annoncer
+   * une étape dont personne n'a décidé serait inventer une exigence.
+   */
+  effectivenessPending(c: CapaCaseResponse): boolean {
+    const attendue = !!c.effectivenessCriterion || c.verificationRequired === true;
+    const enCours = c.status === 'OPEN' || c.status === 'IN_PROGRESS';
+    return attendue && enCours && c.effectivenessVerified == null;
+  }
+
+  /** La phrase, avec le NOMBRE d'actions qui restent — la condition du retour. */
+  effectivenessPendingLabel(c: CapaCaseResponse): string {
+    const reste = (c.actions ?? []).filter(a => a.status !== 'DONE').length;
+    if (reste === 1) {
+      return $localize`:@@capa.detail.effectiveness-pending-one:La vérification d'efficacité sera proposée quand la dernière action aura été terminée.`;
+    }
+    if (reste > 1) {
+      return $localize`:@@capa.detail.effectiveness-pending-many:La vérification d'efficacité sera proposée quand les ${reste}:count: actions restantes auront été terminées.`;
+    }
+    return $localize`:@@capa.detail.effectiveness-pending-none:La vérification d'efficacité sera proposée une fois le dossier résolu.`;
+  }
+
+  /**
    * Phrase du motif, construite ICI et non reçue du serveur : elle doit se dire
    * dans la langue de l'utilisateur, et un message serveur ne se traduit pas.
    */
