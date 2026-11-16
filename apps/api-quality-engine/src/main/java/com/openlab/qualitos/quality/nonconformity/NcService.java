@@ -551,13 +551,36 @@ public class NcService {
     }
 
     private NcDto.Response toResponse(NonConformity nc) {
-        return toResponse(nc, equipeDe(nc), blocages(nc));
+        return toResponse(nc, equipeDe(nc), blocages(nc), dossiersDe(nc));
     }
 
     private NcDto.Response toResponse(NonConformity nc, List<NcDto.TeamMemberRef> equipe) {
-        // Une ligne de liste ne montre pas les motifs : les calculer coûterait
-        // deux requêtes par ligne pour une information qu'on n'y lit pas.
-        return toResponse(nc, equipe, List.of());
+        // Une ligne de liste ne montre ni les motifs ni les dossiers : les
+        // calculer coûterait des requêtes par ligne pour une information qu'on
+        // n'y lit pas.
+        return toResponse(nc, equipe, List.of(), List.of());
+    }
+
+    /**
+     * Les dossiers CAPA qui traitent cet écart, du plus ancien au plus récent.
+     *
+     * <p>TOUS, pas seulement celui que porte {@code capa_case_id} : un second
+     * dossier ouvert depuis la liste en citant la référence de l'écart ne
+     * remplace pas ce lien (ADR 0121), et ses actions retenaient donc la
+     * clôture sans apparaître nulle part sur la fiche. La fiche montre
+     * désormais le même ensemble que celui dont dépend le refus.
+     *
+     * <p>Rien à chercher sans référence ni lien : un écart à peine déclaré n'a
+     * pas de dossier, et la requête serait vide par construction.
+     */
+    private List<NcDto.CapaCaseRef> dossiersDe(NonConformity nc) {
+        if (nc.getCapaCaseId() == null && nc.getReference() == null) {
+            return List.of();
+        }
+        return capaService.casesOf(nc.getCapaCaseId(), nc.getReference()).stream()
+                .map(c -> new NcDto.CapaCaseRef(c.id(), c.title(),
+                        c.status() == null ? null : c.status().name()))
+                .toList();
     }
 
     /**
@@ -589,7 +612,8 @@ public class NcService {
     }
 
     private NcDto.Response toResponse(NonConformity nc, List<NcDto.TeamMemberRef> equipe,
-                                      List<NcDto.Blocker> blocages) {
+                                      List<NcDto.Blocker> blocages,
+                                      List<NcDto.CapaCaseRef> dossiers) {
         return new NcDto.Response(
                 nc.getId(), nc.getTenantId(), nc.getReference(), nc.getTitle(), nc.getDescription(),
                 nc.getCategory(), nc.getSubcategoryCode(), nc.getSeverity(), nc.getStatus(),
@@ -601,7 +625,7 @@ public class NcService {
                 nc.getResolvedAt(), nc.getClosedAt(),
                 nc.getRejectionReason(), nc.getRejectedAt(),
                 nc.getCreatedAt(), nc.getUpdatedAt(),
-                equipe, blocages);
+                equipe, blocages, dossiers);
     }
 
     // ---------- L'équipe en charge (D1 du 8D) ----------

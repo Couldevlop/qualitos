@@ -7494,6 +7494,18 @@ Portail clients</source>
         <source>Évaluer contre le critère, avec un verdict nuancé</source>
         <target state="translated">التقييم في مواجهة المعيار، بحكم متدرّج</target>
       </trans-unit>
+      <trans-unit id="capa.detail.effectiveness-pending-one" datatype="html">
+        <source>La vérification d'efficacité sera proposée quand la dernière action aura été terminée.</source>
+        <target state="translated">سيُتاح التحقق من الفعالية بعد إتمام الإجراء الأخير.</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.effectiveness-pending-many" datatype="html">
+        <source>La vérification d'efficacité sera proposée quand les <x id="count"/> actions restantes auront été terminées.</source>
+        <target state="translated">سيُتاح التحقق من الفعالية بعد إتمام الإجراءات المتبقية وعددها <x id="count"/>.</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.effectiveness-pending-none" datatype="html">
+        <source>La vérification d'efficacité sera proposée une fois le dossier résolu.</source>
+        <target state="translated">سيُتاح التحقق من الفعالية بعد تسوية الملف.</target>
+      </trans-unit>
       <trans-unit id="capa.evidence.title" datatype="html">
         <source>Preuves</source>
         <target state="translated">الأدلة</target>
@@ -22313,6 +22325,10 @@ historique 12 mois</source>
       <trans-unit id="nc.detail.define-action-tooltip2" datatype="html">
         <source>Écrire l'action corrective dans une CAPA</source>
         <target state="translated">تدوين الإجراء التصحيحي في ملف CAPA</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.capa-cases-count" datatype="html">
+        <source><x id="count"/> dossiers CAPA traitent cet écart</source>
+        <target state="translated"><x id="count"/> من ملفات CAPA تعالج عدم المطابقة هذا</target>
       </trans-unit>
       <trans-unit id="nav.admin-nc" datatype="html">
         <source>Natures de NC</source>

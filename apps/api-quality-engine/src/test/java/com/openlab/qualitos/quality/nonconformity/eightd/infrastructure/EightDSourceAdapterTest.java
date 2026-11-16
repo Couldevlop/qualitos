@@ -4,6 +4,7 @@ import com.openlab.qualitos.quality.capa.CapaAction;
 import com.openlab.qualitos.quality.capa.CapaActionStatus;
 import com.openlab.qualitos.quality.capa.CapaActionType;
 import com.openlab.qualitos.quality.capa.CapaCase;
+import com.openlab.qualitos.quality.capa.CapaSourceType;
 import com.openlab.qualitos.quality.capa.CapaCaseRepository;
 import com.openlab.qualitos.quality.capa.CapaCriticity;
 import com.openlab.qualitos.quality.capa.CapaEvidenceRepository;
@@ -140,10 +141,14 @@ class EightDSourceAdapterTest {
 
         EightDSources sources = adapter.collect(TENANT, NC);
 
-        assertThat(sources.capa()).isNull();
+        assertThat(sources.capas()).isEmpty();
         assertThat(sources.fmea()).isNull();
         assertThat(sources.surveillance()).isEmpty();
-        verifyNoInteractions(capas, fmeaItems, plans);
+        // Le PFMEA et les plans se cherchent par un identifiant que l'\u00e9cart ne
+        // porte pas : rien \u00e0 demander. Les dossiers, eux, se cherchent aussi par
+        // la R\u00c9F\u00c9RENCE de l'\u00e9cart -- c'est le prix de les voir TOUS, et la
+        // cl\u00f4ture paie d\u00e9j\u00e0 ce prix.
+        verifyNoInteractions(fmeaItems, plans);
     }
 
     @Test
@@ -157,11 +162,54 @@ class EightDSourceAdapterTest {
 
         EightDSources sources = adapter.collect(TENANT, NC);
 
-        assertThat(sources.capa()).isNotNull();
-        assertThat(sources.capa().caseEvidenceCount()).isEqualTo(3L);
-        assertThat(sources.capa().actions()).hasSize(1);
-        assertThat(sources.capa().actions().get(0).evidenceCount()).isEqualTo(1L);
-        assertThat(sources.capa().actions().get(0).actionType()).isEqualTo("CORRECTIVE");
+        assertThat(sources.capas()).hasSize(1);
+        assertThat(sources.capas().get(0).caseEvidenceCount()).isEqualTo(3L);
+        assertThat(sources.capas().get(0).actions()).hasSize(1);
+        assertThat(sources.capas().get(0).actions().get(0).evidenceCount()).isEqualTo(1L);
+        assertThat(sources.capas().get(0).actions().get(0).actionType()).isEqualTo("CORRECTIVE");
+    }
+
+    /**
+     * L'INVARIANT DE CETTE D\u00c9CISION. Un \u00e9cart peut porter PLUSIEURS dossiers :
+     * le premier ouvert depuis sa fiche, et un second ouvert depuis la liste en
+     * citant sa r\u00e9f\u00e9rence, qui ne remplace pas le lien du premier (ADR 0121).
+     *
+     * <p>La cl\u00f4ture de l'\u00e9cart attend les deux ; le rapport n'en lisait qu'un.
+     * Les actions du second retenaient donc la cl\u00f4ture sans appara\u00eetre nulle
+     * part -- ni sur la fiche, ni dans le document remis au client.
+     */
+    @Test
+    void les_dossiers_ouverts_depuis_la_liste_remontent_avec_celui_de_la_fiche() {
+        NonConformity nc = nc();
+        nc.setCapaCaseId(CAPA);
+        CapaCase second = capa();
+        second.setId(UUID.randomUUID());
+        second.setTitle("Dossier ouvert depuis la liste");
+        when(ncs.findByIdAndTenantId(NC, TENANT)).thenReturn(Optional.of(nc));
+        when(capas.findByIdAndTenantId(CAPA, TENANT)).thenReturn(Optional.of(capa()));
+        when(capas.findByTenantIdAndSourceTypeAndSourceRefOrderByCreatedAtAsc(
+                TENANT, CapaSourceType.NON_CONFORMITY, nc.getReference()))
+                .thenReturn(List.of(second));
+
+        EightDSources sources = adapter.collect(TENANT, NC);
+
+        assertThat(sources.capas()).hasSize(2);
+        assertThat(sources.capas().get(1).title()).isEqualTo("Dossier ouvert depuis la liste");
+    }
+
+    /** Le dossier de la fiche ne compte qu'UNE fois, meme s'il cite aussi la reference. */
+    @Test
+    void un_dossier_atteint_par_les_deux_chemins_ne_figure_qu_une_fois() {
+        NonConformity nc = nc();
+        nc.setCapaCaseId(CAPA);
+        CapaCase lui = capa();
+        when(ncs.findByIdAndTenantId(NC, TENANT)).thenReturn(Optional.of(nc));
+        when(capas.findByIdAndTenantId(CAPA, TENANT)).thenReturn(Optional.of(lui));
+        when(capas.findByTenantIdAndSourceTypeAndSourceRefOrderByCreatedAtAsc(
+                TENANT, CapaSourceType.NON_CONFORMITY, nc.getReference()))
+                .thenReturn(List.of(lui));
+
+        assertThat(adapter.collect(TENANT, NC).capas()).hasSize(1);
     }
 
     @Test
@@ -172,7 +220,7 @@ class EightDSourceAdapterTest {
         when(ncs.findByIdAndTenantId(NC, TENANT)).thenReturn(Optional.of(nc));
         when(capas.findByIdAndTenantId(CAPA, TENANT)).thenReturn(Optional.empty());
 
-        assertThat(adapter.collect(TENANT, NC).capa()).isNull();
+        assertThat(adapter.collect(TENANT, NC).capas()).isEmpty();
     }
 
     @Test

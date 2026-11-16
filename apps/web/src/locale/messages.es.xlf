@@ -7494,6 +7494,18 @@ Portal de clientes</target>
         <source>Évaluer contre le critère, avec un verdict nuancé</source>
         <target state="translated">Evaluar frente al criterio, con un veredicto matizado</target>
       </trans-unit>
+      <trans-unit id="capa.detail.effectiveness-pending-one" datatype="html">
+        <source>La vérification d'efficacité sera proposée quand la dernière action aura été terminée.</source>
+        <target state="translated">La verificación de eficacia se propondrá cuando se haya terminado la última acción.</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.effectiveness-pending-many" datatype="html">
+        <source>La vérification d'efficacité sera proposée quand les <x id="count"/> actions restantes auront été terminées.</source>
+        <target state="translated">La verificación de eficacia se propondrá cuando se hayan terminado las <x id="count"/> acciones restantes.</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.effectiveness-pending-none" datatype="html">
+        <source>La vérification d'efficacité sera proposée une fois le dossier résolu.</source>
+        <target state="translated">La verificación de eficacia se propondrá una vez resuelto el expediente.</target>
+      </trans-unit>
       <trans-unit id="capa.evidence.title" datatype="html">
         <source>Preuves</source>
         <target state="translated">Pruebas</target>
@@ -22313,6 +22325,10 @@ historial de 12 meses</target>
       <trans-unit id="nc.detail.define-action-tooltip2" datatype="html">
         <source>Écrire l'action corrective dans une CAPA</source>
         <target state="translated">Escribir la acción correctiva en un expediente CAPA</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.capa-cases-count" datatype="html">
+        <source><x id="count"/> dossiers CAPA traitent cet écart</source>
+        <target state="translated"><x id="count"/> expedientes CAPA tratan esta no conformidad</target>
       </trans-unit>
       <trans-unit id="nav.admin-nc" datatype="html">
         <source>Natures de NC</source>

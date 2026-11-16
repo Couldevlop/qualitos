@@ -329,14 +329,14 @@ class EightDServiceTest {
                     status == NcStatus.CLOSED ? Instant.parse("2026-09-12T16:00:00Z") : null,
                     "Atelier 3", "Ada Lovelace", 1,
                     enrichi ? "Joint usé" : null, null);
-            EightDSources.Capa capa = enrichi
-                    ? new EightDSources.Capa("CAPA", "CORRECTIVE", "HIGH", "OPEN", null, null,
+            List<EightDSources.Capa> capas = enrichi
+                    ? List.of(new EightDSources.Capa("CAPA", "CORRECTIVE", "HIGH", "OPEN", null, null,
                             null, null, 0,
                             List.of(new EightDSources.Action("Remplacer", null, "CORRECTIVE",
-                                    "OPEN", null, null, null, 0)))
-                    : null;
+                                    "OPEN", null, null, null, 0))))
+                    : List.of();
             return new EightDSources(nc, List.of("Marie Durand"), List.of(), List.of(),
-                    capa, null, List.of());
+                    capas, null, List.of());
         }
     }
 

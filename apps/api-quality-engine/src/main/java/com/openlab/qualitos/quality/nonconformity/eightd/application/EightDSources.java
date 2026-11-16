@@ -33,7 +33,18 @@ public record EightDSources(
         List<String> team,
         List<CauseTree> ishikawas,
         List<WhysChain> fiveWhys,
-        Capa capa,
+        /**
+         * TOUS les dossiers CAPA qui traitent cet écart, du plus ancien au plus
+         * récent — pas seulement celui que la fiche porte en lien.
+         *
+         * <p>Un écart peut en avoir plusieurs : le premier est ouvert depuis sa
+         * fiche, et un second ouvert depuis la liste en citant sa référence ne
+         * remplace pas ce lien (ADR 0121). La résolution et la clôture de
+         * l'écart les attendent tous ; n'en lire qu'un ici faisait disparaître
+         * du rapport remis au client les actions réellement menées sur l'écart,
+         * et le rapport contredisait la garde qui bloquait sa clôture.
+         */
+        List<Capa> capas,
         Fmea fmea,
         List<Surveillance> surveillance) {
 
@@ -42,6 +53,7 @@ public record EightDSources(
         team = List.copyOf(Objects.requireNonNull(team, "team"));
         ishikawas = List.copyOf(Objects.requireNonNull(ishikawas, "ishikawas"));
         fiveWhys = List.copyOf(Objects.requireNonNull(fiveWhys, "fiveWhys"));
+        capas = List.copyOf(Objects.requireNonNull(capas, "capas"));
         surveillance = List.copyOf(Objects.requireNonNull(surveillance, "surveillance"));
     }
 

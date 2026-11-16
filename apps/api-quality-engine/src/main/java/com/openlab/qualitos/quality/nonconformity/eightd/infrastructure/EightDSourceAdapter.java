@@ -5,6 +5,7 @@ import com.openlab.qualitos.quality.capa.CapaAction;
 import com.openlab.qualitos.quality.capa.CapaCase;
 import com.openlab.qualitos.quality.capa.CapaCaseRepository;
 import com.openlab.qualitos.quality.capa.CapaEvidenceRepository;
+import com.openlab.qualitos.quality.capa.CapaSourceType;
 import com.openlab.qualitos.quality.controlplan.domain.ControlPlan;
 import com.openlab.qualitos.quality.controlplan.domain.ControlPlanRepository;
 import com.openlab.qualitos.quality.fivewhys.FiveWhysAnalysis;
@@ -29,7 +30,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -102,7 +105,7 @@ public class EightDSourceAdapter implements EightDSourcePort {
                 enEquipe(tenantId, ncId),
                 enIshikawas(tenantId, ncId),
                 enFiveWhys(tenantId, ncId),
-                enCapa(tenantId, nc),
+                enCapas(tenantId, nc),
                 enFmea(tenantId, nc),
                 enSurveillance(tenantId, nc));
     }
@@ -159,16 +162,53 @@ public class EightDSourceAdapter implements EightDSourcePort {
         return chaines;
     }
 
-    private EightDSources.Capa enCapa(UUID tenantId, NonConformity nc) {
-        if (nc.getCapaCaseId() == null) {
-            return null;
+    /**
+     * TOUS les dossiers qui traitent cet écart, du plus ancien au plus récent.
+     *
+     * <p>Deux chemins mènent à un dossier, et il faut les deux : le lien porté
+     * par la fiche ({@code capa_case_id}, posé par le premier dossier ouvert
+     * depuis l'écart) et la RÉFÉRENCE citée en source par les dossiers ouverts
+     * depuis la liste — un second dossier ne remplace pas le lien du premier
+     * (ADR 0121). C'est exactement l'ensemble que la clôture de l'écart attend.
+     * N'en lire qu'un faisait disparaître du rapport remis au client des actions
+     * réellement menées, et le D5 contredisait alors le refus de clôture.
+     *
+     * <p>Les deux natures de source sont interrogées : un constat interne et une
+     * réclamation client portent la même référence d'écart, pas le même type.
+     *
+     * <p><b>Pas de portée CAPA ici, et c'est délibéré.</b> Le droit de lire ce
+     * rapport se décide sur l'ÉCART, en amont ({@code NcScope} — un écart hors
+     * de portée est « introuvable » et rien n'est collecté). Filtrer ensuite les
+     * dossiers lecteur par lecteur donnerait DEUX rapports différents pour le
+     * même écart : l'instantané est signé et son empreinte ancrée, un contenu
+     * qui dépend de qui le demande ne se vérifie plus. Un 8D est le document
+     * de l'écart, pas la vue personnelle de celui qui l'imprime.
+     */
+    private List<EightDSources.Capa> enCapas(UUID tenantId, NonConformity nc) {
+        Map<UUID, CapaCase> dossiers = new LinkedHashMap<>();
+        if (nc.getCapaCaseId() != null) {
+            // Lien rompu (dossier supprimé) : traité comme une absence, pas comme
+            // une erreur — le rapport doit rester émissible, et il le dira.
+            capas.findByIdAndTenantId(nc.getCapaCaseId(), tenantId)
+                    .ifPresent(c -> dossiers.put(c.getId(), c));
         }
-        CapaCase capa = capas.findByIdAndTenantId(nc.getCapaCaseId(), tenantId).orElse(null);
-        if (capa == null) {
-            // Lien rompu (CAPA supprimée) : on le traite comme une absence de source
-            // plutôt qu'en erreur — le rapport doit rester émissible, et il le dira.
-            return null;
+        if (nc.getReference() != null && !nc.getReference().isBlank()) {
+            for (CapaSourceType origine : List.of(CapaSourceType.NON_CONFORMITY,
+                                                  CapaSourceType.EXTERNAL_NON_CONFORMITY)) {
+                for (CapaCase c : capas.findByTenantIdAndSourceTypeAndSourceRefOrderByCreatedAtAsc(
+                        tenantId, origine, nc.getReference().strip())) {
+                    dossiers.putIfAbsent(c.getId(), c);
+                }
+            }
         }
+        List<EightDSources.Capa> sources = new ArrayList<>();
+        for (CapaCase capa : dossiers.values()) {
+            sources.add(enCapa(tenantId, capa));
+        }
+        return sources;
+    }
+
+    private EightDSources.Capa enCapa(UUID tenantId, CapaCase capa) {
         List<EightDSources.Action> actions = new ArrayList<>();
         for (CapaAction action : capa.getActions()) {
             actions.add(new EightDSources.Action(

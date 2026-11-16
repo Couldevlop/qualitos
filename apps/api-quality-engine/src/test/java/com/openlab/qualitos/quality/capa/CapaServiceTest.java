@@ -1976,6 +1976,57 @@ class CapaServiceTest {
                 .containsExactly("Revoir le mode operatoire");
     }
 
+    /**
+     * casesOf NOMME les dossiers : la portee s y applique donc (ADR 0081).
+     *
+     * <p>Sans la permission de voir tous les dossiers, on ne voit que ceux qui
+     * vous concernent. Rendre ici le titre d un dossier hors de portee le
+     * divulguerait par un chemin detourne -- la fiche d un ecart -- alors que
+     * sa propre fiche le refuse.
+     */
+    @Test
+    void casesOf_neNommePasUnDossierHorsDePortee() {
+        UUID moi = UUID.randomUUID();
+        CapaCase lemien = capa(TENANT, CapaStatus.OPEN);
+        lemien.setTitle("Le mien");
+        lemien.setOwnerId(moi);
+        CapaCase dUnAutre = capa(TENANT, CapaStatus.OPEN);
+        dUnAutre.setTitle("Celui d un autre");
+        dUnAutre.setOwnerId(UUID.randomUUID());
+
+        when(scope.restrictTo(
+                com.openlab.qualitos.quality.authz.domain.Permission.CAPA_VIEW_ALL))
+                .thenReturn(Optional.of(moi));
+        when(caseRepo.findByIdAndTenantId(lemien.getId(), TENANT))
+                .thenReturn(Optional.of(lemien));
+        when(caseRepo.findByTenantIdAndSourceTypeAndSourceRefOrderByCreatedAtAsc(
+                eq(TENANT), any(), eq("NC-2026-0001")))
+                .thenReturn(List.of(lemien, dUnAutre));
+
+        assertThat(service.casesOf(lemien.getId(), "NC-2026-0001"))
+                .extracting(CapaDto.CaseRef::title)
+                .containsExactly("Le mien");
+    }
+
+    /**
+     * L invariant, lui, COMPTE TOUT. Un refus de cloture qui dependrait de qui
+     * regarde ne serait plus un invariant : l ecart se cloturerait pour l un et
+     * pas pour l autre. C est precisement pourquoi un motif de blocage porte un
+     * DECOMPTE et jamais un titre.
+     */
+    @Test
+    void unsettledCasesFor_compteAussiLesDossiersHorsDePortee() {
+        CapaCase dUnAutre = capa(TENANT, CapaStatus.IN_PROGRESS);
+        dUnAutre.setTitle("Celui d un autre");
+        dUnAutre.setOwnerId(UUID.randomUUID());
+
+        when(caseRepo.findByTenantIdAndSourceTypeAndSourceRefOrderByCreatedAtAsc(
+                eq(TENANT), any(), eq("NC-2026-0001")))
+                .thenReturn(List.of(dUnAutre));
+
+        assertThat(service.unsettledCasesFor(null, "NC-2026-0001")).hasSize(1);
+    }
+
     /** Clos ou ecarte : le dossier ne retient plus rien. */
     @Test
     void unsettledCasesFor_ignoreLesDossiersClosOuEcartes() {

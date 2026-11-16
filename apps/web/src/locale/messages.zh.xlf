@@ -7494,6 +7494,18 @@ Portail clients</source>
         <source>Évaluer contre le critère, avec un verdict nuancé</source>
         <target state="translated">按标准评价（三档判定）</target>
       </trans-unit>
+      <trans-unit id="capa.detail.effectiveness-pending-one" datatype="html">
+        <source>La vérification d'efficacité sera proposée quand la dernière action aura été terminée.</source>
+        <target state="translated">待最后一项措施完成后，将提供有效性验证。</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.effectiveness-pending-many" datatype="html">
+        <source>La vérification d'efficacité sera proposée quand les <x id="count"/> actions restantes auront été terminées.</source>
+        <target state="translated">待剩余 <x id="count"/> 项措施完成后，将提供有效性验证。</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.effectiveness-pending-none" datatype="html">
+        <source>La vérification d'efficacité sera proposée une fois le dossier résolu.</source>
+        <target state="translated">待档案解决后，将提供有效性验证。</target>
+      </trans-unit>
       <trans-unit id="capa.evidence.title" datatype="html">
         <source>Preuves</source>
         <target state="translated">证据</target>
@@ -22313,6 +22325,10 @@ historique 12 mois</source>
       <trans-unit id="nc.detail.define-action-tooltip2" datatype="html">
         <source>Écrire l'action corrective dans une CAPA</source>
         <target state="translated">在 CAPA 案件中写明纠正措施</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.capa-cases-count" datatype="html">
+        <source><x id="count"/> dossiers CAPA traitent cet écart</source>
+        <target state="translated">有 <x id="count"/> 份 CAPA 档案在处理该不合格项</target>
       </trans-unit>
       <trans-unit id="nav.admin-nc" datatype="html">
         <source>Natures de NC</source>
