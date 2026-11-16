@@ -123,8 +123,8 @@
                annoncait la cause retenue juste au-dessus du schema qui montre
                comment on y arrive et qui la porte deja dans sa derniere case.
                Deux lectures du meme fait, dont une inerte, et c'est l'inerte
-               qui venait en premier. Le document emis, lui, garde tout : le
-               PDF n'a ni tableau ni schema.
+               qui venait en premier. Le document emis, lui, garde tout : il
+               trace les schemas du D4 (ADR 0122), mais n'a pas de tableau.
                Un seul appel a `lignesVisibles`, dont le resultat est nomme. -->
           <ng-container *ngIf="lignesVisibles(discipline) as lignes">
             <ul class="lignes" *ngIf="lignes.length > 0">
@@ -145,7 +145,11 @@
           <ng-container *ngIf="estCauseRacine(discipline.code)">
             <div class="vivant" *ngIf="((fiveWhys$ | async)?.length || (ishikawa$ | async)?.length)"
                  data-test="8d-analyse-de-cause">
-              <p class="vivant-note" i18n="@@nc.8d.live-note">État actuel du dossier. Le PDF émis, lui, ne porte que le texte figé à l'émission.</p>
+              <!-- La note du D4 disait « le PDF ne porte que le texte », et c'etait
+                   vrai quand elle a ete ecrite. Le document emis trace desormais
+                   l'arete et la descente (ADR 0122) : laisser cette phrase
+                   dissuadait d'ouvrir le PDF pour y chercher ce qui s'y trouve. -->
+              <p class="vivant-note" i18n="@@nc.8d.live-note-figures">État actuel du dossier. Le PDF émis porte ces schémas, figés à l'émission.</p>
               <qos-nc-cause-analysis [fiveWhys]="(fiveWhys$ | async) ?? []"
                                      [ishikawa]="(ishikawa$ | async) ?? []"></qos-nc-cause-analysis>
             </div>

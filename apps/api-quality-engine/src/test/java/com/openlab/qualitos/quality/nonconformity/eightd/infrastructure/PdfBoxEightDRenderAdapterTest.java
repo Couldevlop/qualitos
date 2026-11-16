@@ -4,7 +4,9 @@ import com.openlab.qualitos.quality.nonconformity.eightd.domain.EightDDiscipline
 import com.openlab.qualitos.quality.nonconformity.eightd.domain.EightDSnapshot;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.text.PDFTextStripper;
+import org.apache.pdfbox.text.TextPosition;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -254,6 +256,109 @@ class PdfBoxEightDRenderAdapterTest {
                 .contains("nominale");
     }
 
+
+    // ---------- une figure ne se coupe pas, le pied n'ecrase pas le contenu ----
+
+    /**
+     * UNE DESCENTE NE SE SEPARE PAS DE SA CONCLUSION.
+     *
+     * <p>Le pied d'integrite voyait sa hauteur reservee sur TOUTES les pages
+     * alors qu'il ne s'ecrit que sur la derniere : chaque page perdait un tiers
+     * de sa hauteur, et l'echelle des pourquoi se coupait bien avant le bas. On
+     * a vu ainsi la cause racine atterrir seule en haut de la page suivante,
+     * detachee du raisonnement dont elle est la conclusion -- c'est-a-dire
+     * exactement ce qu'un auditeur vient lire.
+     *
+     * <p>On fait varier la longueur du contenu qui precede : la coupure tombe
+     * ailleurs a chaque tour, et l'invariant doit tenir partout.
+     */
+    @Test
+    void une_descente_et_sa_cause_racine_restent_sur_la_meme_page() throws IOException {
+        for (int n = 0; n <= 24; n += 2) {
+            byte[] pdf = renderer.render(avecRemplissage(echelleDeDemo(), n), URL);
+            // Le LIBELLE du noeud, pas l'etiquette « Root cause » : celle-ci est
+            // aussi le titre du D4, qui peut se trouver sur une autre page.
+            int page = pageQuiPorte(pdf, "Le joint a cede");
+            assertThat(pageQuiPorte(pdf, "Absence de plan preventif"))
+                    .as("avec %s lignes avant, la cause racine doit rester avec sa descente", n)
+                    .isEqualTo(page);
+        }
+    }
+
+    /**
+     * Et l'arete non plus : une epine dont la moitie des branches passe a la
+     * page suivante ne montre plus rien. Les deux categories doivent se lire
+     * ensemble, quel que soit l'endroit ou tombe la coupure.
+     */
+    @Test
+    void une_arete_ne_se_coupe_pas_entre_deux_pages() throws IOException {
+        for (int n = 0; n <= 24; n += 2) {
+            byte[] pdf = renderer.render(avecRemplissage(areteDeDemo(), n), URL);
+            assertThat(pageQuiPorte(pdf, "METHODE"))
+                    .as("avec %s lignes avant, l'arete doit tenir d'un bloc", n)
+                    .isEqualTo(pageQuiPorte(pdf, "MATERIEL"));
+        }
+    }
+
+    /**
+     * MEME TROP LONGUE POUR UNE PAGE, une descente ne laisse pas sa cause
+     * racine seule : les deux derniers barreaux se posent ensemble. Une
+     * conclusion sans la marche qui la precede n'est plus qu'une affirmation.
+     */
+    @Test
+    void une_descente_trop_longue_ne_laisse_pas_sa_cause_racine_seule() throws IOException {
+        List<EightDSnapshot.Node> noeuds = new ArrayList<>();
+        for (int i = 1; i <= 40; i++) {
+            noeuds.add(new EightDSnapshot.Node("WHY",
+                    "Reponse numero " + i + " : une explication assez longue pour que le repli"
+                    + " de ligne entre en jeu et que la pagination soit exercee.", i));
+        }
+        noeuds.add(new EightDSnapshot.Node("ROOT", "La gamme ignore ce composant", 41));
+        EightDSnapshot.Figure longue = new EightDSnapshot.Figure(
+                EightDSnapshot.FigureKind.WHY_CHAIN, "Fuite", noeuds);
+
+        byte[] pdf = renderer.render(avecFigure(longue), URL);
+
+        assertThat(pageQuiPorte(pdf, "Reponse numero 40"))
+                .as("la cause racine ne doit pas ouvrir une page a elle seule")
+                .isEqualTo(pageQuiPorte(pdf, "La gamme ignore ce composant"));
+    }
+
+    /**
+     * LE PIED D'INTEGRITE N'ECRIT JAMAIS PAR-DESSUS LE CONTENU.
+     *
+     * <p>C'est la contrepartie de la correction precedente : le contenu descend
+     * desormais jusqu'a la marge basse, la ou il s'arretait un tiers de page
+     * plus haut. Le pied, lui, s'ecrit a hauteur fixe au bas de la DERNIERE
+     * page. S'ils se rencontrent, le document perd a la fois la preuve et ce
+     * qu'elle atteste -- il prend donc une page a lui.
+     *
+     * <p>On mesure les ordonnees reelles du texte : c'est le seul moyen de voir
+     * un chevauchement, qu'une lecture a plat du PDF ne montrerait pas (les
+     * deux textes s'extraient, superposes ou non).
+     *
+     * <p>Seule la page du pied est jugee. Ailleurs, le contenu a desormais le
+     * droit de descendre jusqu'a la marge : c'est tout l'objet de la
+     * correction, et le lui reprocher reviendrait a refaire le defaut.
+     */
+    @Test
+    void le_pied_d_integrite_n_ecrit_jamais_par_dessus_le_contenu() throws IOException {
+        for (int n = 1; n <= 40; n += 3) {
+            List<String> lignes = new ArrayList<>();
+            for (int i = 1; i <= n; i++) {
+                lignes.add("Ligne de contenu numero " + i + " : assez longue pour que le repli"
+                        + " entre en jeu et que la coupure tombe a un endroit different.");
+            }
+            byte[] pdf = renderer.render(new EightDSnapshot(
+                    "NC-2026-0009", "Fuite", "tenant", "01/01/2026 00:00 UTC", "Ada", false,
+                    sections(lignes)), URL);
+
+            assertThat(contenuSousLeFilet(pdf))
+                    .as("avec %s lignes, aucun contenu ne doit passer sous le filet du pied", n)
+                    .isEmpty();
+        }
+    }
+
     // ---------- fixtures ----------
 
     /** Un instantane complet dont le D4 porte la figure donnee, et aucune ligne. */
@@ -309,6 +414,83 @@ class PdfBoxEightDRenderAdapterTest {
                     discipline == EightDDiscipline.D5 ? lignesDeLaPremiere : List.of("ok")));
         }
         return sections;
+    }
+
+
+    /** Le numero de la page (1-based) ou ce texte apparait ; -1 s'il est absent. */
+    private int pageQuiPorte(byte[] pdf, String recherche) throws IOException {
+        try (PDDocument doc = Loader.loadPDF(pdf)) {
+            for (int p = 1; p <= doc.getNumberOfPages(); p++) {
+                PDFTextStripper s = new PDFTextStripper();
+                s.setStartPage(p);
+                s.setEndPage(p);
+                if (s.getText(doc).contains(recherche)) {
+                    return p;
+                }
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Les textes qui passent SOUS le filet du pied d'integrite, le pied lui-meme
+     * excepte. Vide, donc, quand rien ne se chevauche.
+     */
+    private List<String> contenuSousLeFilet(byte[] pdf) throws IOException {
+        // Les memes valeurs que le rendu : marge 48, bandeau du pied 150.
+        float filet = PDRectangle.A4.getHeight() - (48f + 150f);
+        List<String> fautifs = new ArrayList<>();
+        try (PDDocument doc = Loader.loadPDF(pdf)) {
+            int pageDuPied = pageQuiPorte(pdf, "Integrity & verification");
+            PDFTextStripper releve = new PDFTextStripper() {
+                @Override
+                protected void writeString(String texte, List<TextPosition> positions) {
+                    if (getCurrentPageNo() != pageDuPied) {
+                        return;
+                    }
+                    for (TextPosition p : positions) {
+                        // getYDirAdj compte depuis le HAUT de la page.
+                        if (p.getYDirAdj() > filet && !duPied(texte)) {
+                            fautifs.add(texte.trim());
+                            return;
+                        }
+                    }
+                }
+            };
+            releve.getText(doc);
+        }
+        return fautifs;
+    }
+
+    /** Ce que le pied d'integrite ecrit lui-meme, et qui a donc le droit d'y etre. */
+    private static boolean duPied(String texte) {
+        String s = texte.trim();
+        return s.startsWith("Integrity & verification")
+                || s.startsWith("Ce rapport est signe")
+                || s.startsWith("Its content is frozen")
+                || s.startsWith("Issued by:")
+                || s.startsWith("Scannez le QR code")
+                || s.startsWith("Tenant:");
+    }
+
+    /** Un instantane dont le D4 porte la figure, precede de {@code n} lignes de D3. */
+    private EightDSnapshot avecRemplissage(EightDSnapshot.Figure figure, int n) {
+        List<String> bourrage = new ArrayList<>();
+        for (int i = 1; i <= n; i++) {
+            bourrage.add("Ligne de remplissage " + i + " : assez longue pour que le repli de"
+                    + " ligne entre en jeu et deplace la coupure de page.");
+        }
+        List<EightDSnapshot.Section> sections = new ArrayList<>();
+        for (EightDDiscipline discipline : EightDDiscipline.values()) {
+            boolean d4 = discipline == EightDDiscipline.D4;
+            boolean d3 = discipline == EightDDiscipline.D3;
+            sections.add(new EightDSnapshot.Section(
+                    discipline.code(), discipline.titre(), true, "Source",
+                    d4 ? List.of() : (d3 ? bourrage : List.of("Contenu de " + discipline.code())),
+                    d4 ? List.of(figure) : List.of()));
+        }
+        return new EightDSnapshot("NC-2026-0007", "Fuite au presse-etoupe", "tenant-demo",
+                "13/09/2026 10:00 UTC", "Ada Lovelace", false, sections);
     }
 
     private String texteDe(byte[] pdf) throws IOException {
