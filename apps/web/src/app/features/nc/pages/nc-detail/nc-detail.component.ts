@@ -33,7 +33,8 @@ import {
   NcStatus,
   NcSubcategory,
   VisionAnalysis,
-  VisionScore
+  VisionScore,
+  NcCapaCaseRef,
 } from '../../nc.types';
 import {
   NcConvertChoice,
@@ -879,6 +880,36 @@ export class NcDetailComponent implements OnInit {
         // générique qu'un bouton éteint sans explication.
         return $localize`:@@nc.blocker.unknown:Un prérequis n'est pas satisfait sur cet écart.`;
     }
+  }
+
+  /**
+   * TOUS les dossiers CAPA de l'écart, du plus ancien au plus récent.
+   *
+   * <p>La fiche n'en montrait qu'UN — celui que porte `capaCaseId`. Un second
+   * dossier ouvert depuis la liste en citant la référence de l'écart ne
+   * remplace pas ce lien : ses actions retenaient donc la clôture de l'écart
+   * sans apparaître nulle part, et on lisait « 2 dossiers non réglés » au-dessus
+   * d'un tableau qui n'en montrait qu'un.
+   *
+   * <p>Repli sur `capaCaseId` quand le serveur ne renvoie pas encore la liste :
+   * l'écran continue d'afficher le dossier qu'il connaît plutôt que rien.
+   */
+  dossiers(n: NcResponse): NcCapaCaseRef[] {
+    if (n.capaCases?.length) {
+      return n.capaCases;
+    }
+    return n.capaCaseId ? [{ id: n.capaCaseId }] : [];
+  }
+
+  /**
+   * « 2 dossiers sur cet écart » — écrit SEULEMENT quand il y en a plusieurs.
+   *
+   * <p>Annoncer « 1 dossier » sur le cas ordinaire serait du bruit ; c'est la
+   * pluralité qui est inattendue, et c'est elle qu'il faut dire.
+   */
+  compteDesDossiers(n: NcResponse): string {
+    const nb = this.dossiers(n).length;
+    return $localize`:@@nc.detail.capa-cases-count:${nb}:count: dossiers CAPA traitent cet écart`;
   }
 
   /** Le titre du bloc dépend de l'étape : résoudre ou clôturer. */

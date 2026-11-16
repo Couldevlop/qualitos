@@ -22314,6 +22314,10 @@ historique 12 mois</source>
         <source>Écrire l'action corrective dans une CAPA</source>
         <target state="translated">تدوين الإجراء التصحيحي في ملف CAPA</target>
       </trans-unit>
+      <trans-unit id="nc.detail.capa-cases-count" datatype="html">
+        <source><x id="count"/> dossiers CAPA traitent cet écart</source>
+        <target state="translated"><x id="count"/> من ملفات CAPA تعالج عدم المطابقة هذا</target>
+      </trans-unit>
       <trans-unit id="nav.admin-nc" datatype="html">
         <source>Natures de NC</source>
         <target state="translated">أنواع حالات عدم المطابقة</target>

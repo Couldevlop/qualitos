@@ -22313,6 +22313,10 @@ historique 12 mois</source>
         <source>Écrire l'action corrective dans une CAPA</source>
         <target state="translated">是正処置をCAPA案件に記載</target>
       </trans-unit>
+      <trans-unit id="nc.detail.capa-cases-count" datatype="html">
+        <source><x id="count"/> dossiers CAPA traitent cet écart</source>
+        <target state="translated">この不適合は <x id="count"/> 件の CAPA 案件で処理されています</target>
+      </trans-unit>
       <trans-unit id="nav.admin-nc" datatype="html">
         <source>Natures de NC</source>
         <target state="translated">NC の性質</target>

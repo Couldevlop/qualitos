@@ -203,25 +203,54 @@ public class CapaService {
      */
     private List<String> casesFor(UUID escaladeId, String ncReference,
                                   java.util.function.Predicate<CapaStatus> retenu) {
+        return dossiersDe(escaladeId, ncReference).stream()
+                .filter(c -> retenu.test(c.getStatus()))
+                .map(CapaCase::getTitle)
+                .toList();
+    }
+
+    /**
+     * TOUS les dossiers de l'\u00e9cart, nomm\u00e9s, du plus ancien au plus r\u00e9cent.
+     *
+     * <p>C'est le m\u00eame ensemble que celui dont d\u00e9pend la cl\u00f4ture de l'\u00e9cart.
+     * La fiche de l'\u00e9cart n'en montrait qu'UN \u2014 celui que porte son lien \u2014 :
+     * les actions d'un second dossier retenaient donc sa cl\u00f4ture sans appara\u00eetre
+     * nulle part, ni sur la fiche, ni dans le rapport 8D remis au client.
+     */
+    @Transactional(readOnly = true)
+    public List<CapaDto.CaseRef> casesOf(UUID escaladeId, String ncReference) {
+        return dossiersDe(escaladeId, ncReference).stream()
+                .map(c -> new CapaDto.CaseRef(c.getId(), c.getTitle(), c.getStatus()))
+                .toList();
+    }
+
+    /**
+     * Les dossiers que l'\u00e9cart a engendr\u00e9s, d\u00e9doublonn\u00e9s et ordonn\u00e9s.
+     *
+     * <p>Deux chemins y m\u00e8nent, et il faut les deux : le lien port\u00e9 par la
+     * fiche, et la R\u00c9F\u00c9RENCE cit\u00e9e en source par les dossiers ouverts depuis la
+     * liste. Les deux natures d'origine sont interrog\u00e9es \u2014 un constat interne
+     * et une r\u00e9clamation client portent la m\u00eame r\u00e9f\u00e9rence d'\u00e9cart, pas le m\u00eame
+     * type de source.
+     */
+    private List<CapaCase> dossiersDe(UUID escaladeId, String ncReference) {
         UUID tenantId = requireTenantId();
-        Map<UUID, String> retenus = new LinkedHashMap<>();
+        Map<UUID, CapaCase> retenus = new LinkedHashMap<>();
 
         if (escaladeId != null) {
             caseRepository.findByIdAndTenantId(escaladeId, tenantId)
-                    .filter(c -> retenu.test(c.getStatus()))
-                    .ifPresent(c -> retenus.put(c.getId(), c.getTitle()));
+                    .ifPresent(c -> retenus.put(c.getId(), c));
         }
 
         if (ncReference != null && !ncReference.isBlank()) {
             String reference = ncReference.strip();
             for (CapaSourceType origine : List.of(CapaSourceType.NON_CONFORMITY,
                                                   CapaSourceType.EXTERNAL_NON_CONFORMITY)) {
-                caseRepository
+                for (CapaCase c : caseRepository
                         .findByTenantIdAndSourceTypeAndSourceRefOrderByCreatedAtAsc(
-                                tenantId, origine, reference)
-                        .stream()
-                        .filter(c -> retenu.test(c.getStatus()))
-                        .forEach(c -> retenus.put(c.getId(), c.getTitle()));
+                                tenantId, origine, reference)) {
+                    retenus.putIfAbsent(c.getId(), c);
+                }
             }
         }
 

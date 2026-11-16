@@ -139,8 +139,30 @@ export interface NcResponse {
    * Absent sur les lignes d'une liste : le motif se lit sur la fiche.
    */
   blockers?: NcBlocker[];
+  /**
+   * TOUS les dossiers CAPA qui traitent cet écart, du plus ancien au plus
+   * récent — `capaCaseId` n'en désigne que le premier.
+   *
+   * <p>Un second dossier ouvert depuis la liste en citant la référence de
+   * l'écart ne remplace pas ce lien : ses actions retenaient donc la clôture
+   * sans apparaître nulle part sur la fiche. Absent sur les lignes d'une liste.
+   */
+  capaCases?: NcCapaCaseRef[];
   /** true = saisie hors-ligne, en attente de synchronisation (réponse optimiste). */
   pendingSync?: boolean;
+}
+
+/**
+ * Un dossier CAPA de l'écart, réduit à ce que la fiche en montre.
+ *
+ * <p>Le titre et le statut viennent AVEC l'identifiant : sans eux, l'écran
+ * devrait interroger chaque dossier pour écrire l'en-tête de son tableau
+ * d'actions, et afficherait un identifiant en attendant.
+ */
+export interface NcCapaCaseRef {
+  id: string;
+  title?: string;
+  status?: string;
 }
 
 /** Les motifs que le serveur énumère ; l'écran les rédige. */
