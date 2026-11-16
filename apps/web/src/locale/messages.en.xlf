@@ -7658,6 +7658,10 @@ Customer portal</target>
         <source>Aucune action de cette nature n'a encore été écrite pour cet écart.</source>
         <target state="translated">No action of this nature has been written for this nonconformity yet.</target>
       </trans-unit>
+      <trans-unit id="nc.8d.live-note-figures" datatype="html">
+        <source>État actuel du dossier. Le PDF émis porte ces schémas, figés à l'émission.</source>
+        <target state="translated">Current state of the case. The issued PDF carries these diagrams, frozen at issuance.</target>
+      </trans-unit>
       <trans-unit id="nc.8d.live-note" datatype="html">
         <source>État actuel du dossier. Le PDF émis, lui, ne porte que le texte figé à l'émission.</source>
         <target state="translated">Current state of the case. The issued PDF carries only the text frozen at issuance.</target>

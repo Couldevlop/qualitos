@@ -7658,6 +7658,10 @@ Portal de clientes</target>
         <source>Aucune action de cette nature n'a encore été écrite pour cet écart.</source>
         <target state="translated">Todavia no se ha escrito ninguna accion de esta naturaleza para esta desviacion.</target>
       </trans-unit>
+      <trans-unit id="nc.8d.live-note-figures" datatype="html">
+        <source>État actuel du dossier. Le PDF émis porte ces schémas, figés à l'émission.</source>
+        <target state="translated">Estado actual del expediente. El PDF emitido incluye estos esquemas, congelados en la emisión.</target>
+      </trans-unit>
       <trans-unit id="nc.8d.live-note" datatype="html">
         <source>État actuel du dossier. Le PDF émis, lui, ne porte que le texte figé à l'émission.</source>
         <target state="translated">Estado actual del expediente. El PDF emitido solo contiene el texto congelado en la emision.</target>
