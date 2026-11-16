@@ -22026,6 +22026,34 @@ historique 12 mois</source>
         <source>Les huit disciplines, agrégées depuis ce dossier</source>
         <target state="translated">المراحل الثماني، مُجمَّعة من هذا الملف</target>
       </trans-unit>
+      <trans-unit id="nc.detail.blockers-resolve" datatype="html">
+        <source>Cet écart ne peut pas encore être résolu</source>
+        <target state="translated">لا يمكن حل عدم المطابقة هذا بعد</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.blockers-close" datatype="html">
+        <source>Cet écart ne peut pas encore être clôturé</source>
+        <target state="translated">لا يمكن إغلاق عدم المطابقة هذا بعد</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.actions-one" datatype="html">
+        <source>1 dossier CAPA porte encore des actions à mener. Terminez ses actions pour pouvoir résoudre cet écart.</source>
+        <target state="translated">لا يزال ملف CAPA واحد يحتوي على إجراءات لم تُنفَّذ. أكمل إجراءاته لتتمكن من حل عدم المطابقة هذا.</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.actions-many" datatype="html">
+        <source><x id="count"/> dossiers CAPA portent encore des actions à mener. Terminez leurs actions pour pouvoir résoudre cet écart.</source>
+        <target state="translated">لا تزال <x id="count"/> من ملفات CAPA تحتوي على إجراءات لم تُنفَّذ. أكمل إجراءاتها لتتمكن من حل عدم المطابقة هذا.</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.cases-one" datatype="html">
+        <source>1 dossier CAPA n'est pas clôturé. Clôturez-le — après vérification de son efficacité — pour pouvoir clôturer cet écart.</source>
+        <target state="translated">هناك ملف CAPA واحد غير مغلق. أغلقه — بعد التحقق من فعاليته — لتتمكن من إغلاق عدم المطابقة هذا.</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.cases-many" datatype="html">
+        <source><x id="count"/> dossiers CAPA ne sont pas clôturés. Clôturez-les — après vérification de leur efficacité — pour pouvoir clôturer cet écart.</source>
+        <target state="translated">هناك <x id="count"/> من ملفات CAPA غير مغلقة. أغلقها — بعد التحقق من فعاليتها — لتتمكن من إغلاق عدم المطابقة هذا.</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.unknown" datatype="html">
+        <source>Un prérequis n'est pas satisfait sur cet écart.</source>
+        <target state="translated">هناك شرط مسبق غير مستوفى على عدم المطابقة هذا.</target>
+      </trans-unit>
       <trans-unit id="nc.create.nature-pick-category" datatype="html">
         <source>Choisissez d'abord la catégorie.</source>
         <target state="translated">اختر الفئة أولاً.</target>

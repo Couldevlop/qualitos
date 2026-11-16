@@ -134,8 +134,28 @@ export interface NcResponse {
    * à l'humain qui reprend la fiche de nommer l'équipe.
    */
   teamMembers?: TeamMemberRef[];
+  /**
+   * Ce qui s'oppose à l'avancement de l'écart, pour le dire AVANT le clic.
+   * Absent sur les lignes d'une liste : le motif se lit sur la fiche.
+   */
+  blockers?: NcBlocker[];
   /** true = saisie hors-ligne, en attente de synchronisation (réponse optimiste). */
   pendingSync?: boolean;
+}
+
+/** Les motifs que le serveur énumère ; l'écran les rédige. */
+export type NcBlockerCode = 'CAPA_ACTIONS_TO_CARRY_OUT' | 'CAPA_CASES_UNSETTLED';
+
+/**
+ * Un motif de blocage et son décompte.
+ *
+ * <p>Le code est ouvert à la lecture (`string`) : un serveur plus récent que
+ * l'écran peut en renvoyer un que celui-ci ne connaît pas, et mieux vaut une
+ * phrase générique qu'un bouton actif dont on ignore pourquoi il échouera.
+ */
+export interface NcBlocker {
+  code: NcBlockerCode | string;
+  count: number;
 }
 
 export type NcPage = SpringPage<NcResponse>;

@@ -22026,6 +22026,34 @@ declared income
         <source>Les huit disciplines, agrégées depuis ce dossier</source>
         <target state="translated">The eight disciplines, aggregated from this case</target>
       </trans-unit>
+      <trans-unit id="nc.detail.blockers-resolve" datatype="html">
+        <source>Cet écart ne peut pas encore être résolu</source>
+        <target state="translated">This non-conformity cannot be resolved yet</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.blockers-close" datatype="html">
+        <source>Cet écart ne peut pas encore être clôturé</source>
+        <target state="translated">This non-conformity cannot be closed yet</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.actions-one" datatype="html">
+        <source>1 dossier CAPA porte encore des actions à mener. Terminez ses actions pour pouvoir résoudre cet écart.</source>
+        <target state="translated">1 CAPA case still has actions to carry out. Complete its actions to resolve this non-conformity.</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.actions-many" datatype="html">
+        <source><x id="count"/> dossiers CAPA portent encore des actions à mener. Terminez leurs actions pour pouvoir résoudre cet écart.</source>
+        <target state="translated"><x id="count"/> CAPA cases still have actions to carry out. Complete their actions to resolve this non-conformity.</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.cases-one" datatype="html">
+        <source>1 dossier CAPA n'est pas clôturé. Clôturez-le — après vérification de son efficacité — pour pouvoir clôturer cet écart.</source>
+        <target state="translated">1 CAPA case is not closed. Close it — once its effectiveness is verified — to close this non-conformity.</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.cases-many" datatype="html">
+        <source><x id="count"/> dossiers CAPA ne sont pas clôturés. Clôturez-les — après vérification de leur efficacité — pour pouvoir clôturer cet écart.</source>
+        <target state="translated"><x id="count"/> CAPA cases are not closed. Close them — once their effectiveness is verified — to close this non-conformity.</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.unknown" datatype="html">
+        <source>Un prérequis n'est pas satisfait sur cet écart.</source>
+        <target state="translated">A prerequisite is not met on this non-conformity.</target>
+      </trans-unit>
       <trans-unit id="nc.create.nature-pick-category" datatype="html">
         <source>Choisissez d'abord la catégorie.</source>
         <target state="translated">Choose the category first.</target>

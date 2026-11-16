@@ -22025,6 +22025,34 @@ historique 12 mois</source>
         <source>Les huit disciplines, agrégées depuis ce dossier</source>
         <target state="translated">8 つの規律を、この案件から集約して表示</target>
       </trans-unit>
+      <trans-unit id="nc.detail.blockers-resolve" datatype="html">
+        <source>Cet écart ne peut pas encore être résolu</source>
+        <target state="translated">この不適合はまだ解決できません</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.blockers-close" datatype="html">
+        <source>Cet écart ne peut pas encore être clôturé</source>
+        <target state="translated">この不適合はまだ閉じられません</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.actions-one" datatype="html">
+        <source>1 dossier CAPA porte encore des actions à mener. Terminez ses actions pour pouvoir résoudre cet écart.</source>
+        <target state="translated">CAPA 案件が 1 件、未実施の処置を残しています。その処置を完了すると、この不適合を解決できます。</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.actions-many" datatype="html">
+        <source><x id="count"/> dossiers CAPA portent encore des actions à mener. Terminez leurs actions pour pouvoir résoudre cet écart.</source>
+        <target state="translated">CAPA 案件が <x id="count"/> 件、未実施の処置を残しています。それらの処置を完了すると、この不適合を解決できます。</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.cases-one" datatype="html">
+        <source>1 dossier CAPA n'est pas clôturé. Clôturez-le — après vérification de son efficacité — pour pouvoir clôturer cet écart.</source>
+        <target state="translated">CAPA 案件が 1 件、未完了です。有効性を確認のうえ完了させると、この不適合を閉じられます。</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.cases-many" datatype="html">
+        <source><x id="count"/> dossiers CAPA ne sont pas clôturés. Clôturez-les — après vérification de leur efficacité — pour pouvoir clôturer cet écart.</source>
+        <target state="translated">CAPA 案件が <x id="count"/> 件、未完了です。有効性を確認のうえ完了させると、この不適合を閉じられます。</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.unknown" datatype="html">
+        <source>Un prérequis n'est pas satisfait sur cet écart.</source>
+        <target state="translated">この不適合では前提条件が満たされていません。</target>
+      </trans-unit>
       <trans-unit id="nc.create.nature-pick-category" datatype="html">
         <source>Choisissez d'abord la catégorie.</source>
         <target state="translated">まずカテゴリーを選択してください。</target>

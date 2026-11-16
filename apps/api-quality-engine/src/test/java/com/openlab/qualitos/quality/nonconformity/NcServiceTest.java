@@ -411,6 +411,99 @@ class NcServiceTest {
         assertThat(n.getStatus()).isEqualTo(NcStatus.RESOLVED);
     }
 
+    // ---------- les motifs de blocage, DITS avant le clic ----------
+
+    /**
+     * Le refus arrivait apres le clic, en anglais, construit par le service :
+     * l utilisateur decouvrait l obstacle en croyant en avoir fini. La fiche
+     * porte desormais le motif et son decompte, que l ecran redige.
+     */
+    @Test
+    void fiche_aLEtapeDeLaResolution_porteLeMotifDesActionsAMener() {
+        NonConformity n = nc(TENANT, NcStatus.ACTION_DEFINED);
+        UUID capaId = UUID.randomUUID();
+        n.setCapaCaseId(capaId);
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+        when(capaService.unexecutedCasesFor(capaId, n.getReference()))
+                .thenReturn(List.of("Remplacer le roulement", "Auditer le fournisseur"));
+
+        NcDto.Response fiche = service.findById(n.getId());
+
+        assertThat(fiche.blockers()).containsExactly(
+                new NcDto.Blocker(NcBlockerCode.CAPA_ACTIONS_TO_CARRY_OUT, 2));
+    }
+
+    /**
+     * A l etape de la cloture, c est l autre motif : un dossier RESOLU ne
+     * retient pas la resolution, mais la cloture attend son verdict
+     * d efficacite (ADR 0108).
+     */
+    @Test
+    void fiche_aLEtapeDeLaCloture_porteLeMotifDesDossiersNonRegles() {
+        NonConformity n = nc(TENANT, NcStatus.RESOLVED);
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+        when(capaService.unsettledCasesFor(null, n.getReference()))
+                .thenReturn(List.of("Remplacer le roulement"));
+
+        NcDto.Response fiche = service.findById(n.getId());
+
+        assertThat(fiche.blockers()).containsExactly(
+                new NcDto.Blocker(NcBlockerCode.CAPA_CASES_UNSETTLED, 1));
+    }
+
+    /** Rien ne s oppose : aucun motif, et le bouton reste allume. */
+    @Test
+    void fiche_sansObstacle_neporteAucunMotif() {
+        NonConformity n = nc(TENANT, NcStatus.ACTION_DEFINED);
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+        when(capaService.unexecutedCasesFor(null, n.getReference())).thenReturn(List.of());
+
+        assertThat(service.findById(n.getId()).blockers()).isEmpty();
+    }
+
+    /**
+     * Seule l etape COURANTE est instruite : reprocher a l etape suivante ce
+     * qu on ne propose pas encore serait incomprehensible, et chaque motif
+     * coute des requetes.
+     */
+    @Test
+    void fiche_avantLEtapeDeLaResolution_nInterrogePasLesDossiers() {
+        NonConformity n = nc(TENANT, NcStatus.UNDER_ANALYSIS);
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+
+        assertThat(service.findById(n.getId()).blockers()).isEmpty();
+        verify(capaService, never()).unexecutedCasesFor(any(), any());
+        verify(capaService, never()).unsettledCasesFor(any(), any());
+    }
+
+    /** Un ecart clos ne porte pas de motif : il n y a plus rien a faire. */
+    @Test
+    void fiche_dUnEcartClos_neporteAucunMotif() {
+        NonConformity n = nc(TENANT, NcStatus.CLOSED);
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+
+        assertThat(service.findById(n.getId()).blockers()).isEmpty();
+        verify(capaService, never()).unsettledCasesFor(any(), any());
+    }
+
+    /**
+     * Une LIGNE DE LISTE ne porte pas de motif : les calculer couterait deux
+     * requetes par ligne pour une information qu on n y affiche pas.
+     */
+    @Test
+    void liste_neCalculePasLesMotifs() {
+        NonConformity n = nc(TENANT, NcStatus.ACTION_DEFINED);
+        when(repo.findAll(ArgumentMatchers.<Specification<NonConformity>>any(), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of(n)));
+
+        Page<NcDto.Response> page = service.findAll(null, null, null, null, null, null,
+                PageRequest.of(0, 20));
+
+        assertThat(page.getContent()).singleElement()
+                .satisfies(r -> assertThat(r.blockers()).isEmpty());
+        verify(capaService, never()).unexecutedCasesFor(any(), any());
+    }
+
     @Test
     void resolve_wrongState_throws() {
         NonConformity n = nc(TENANT, NcStatus.UNDER_ANALYSIS);

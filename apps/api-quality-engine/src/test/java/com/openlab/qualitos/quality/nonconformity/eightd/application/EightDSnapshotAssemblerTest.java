@@ -172,10 +172,74 @@ class EightDSnapshotAssemblerTest {
                 .contains("1 Ishikawa")
                 .contains("1 5-whys analysis(es)")
                 .contains("root cause of the non-conformity");
-        assertThat(d4.lines()).anyMatch(l -> l.contains("Joint usé") && l.contains("0,82")
-                || l.contains("Joint usé") && l.contains("0.82"));
-        assertThat(d4.lines()).anyMatch(l -> l.startsWith("    Why 1 : Le joint a cédé"));
-        assertThat(d4.lines()).anyMatch(l -> l.contains("Root cause: Absence de plan préventif"));
+
+        // LE TRACE REMPLACE L'ENUMERATION. Les causes s'ecrivaient ligne a
+        // ligne (« MATERIEL : Joint use », « Why 1 : ... ») : un 8D se lit en
+        // revue, et cette liste ne montrait ni les branches ni la descente.
+        // Seule la cause racine PORTEE PAR LA FICHE reste en texte -- aucune
+        // figure ne la dit.
+        assertThat(d4.lines()).containsExactly(
+                "Root cause recorded on the non-conformity : Joint hors tolérance");
+        assertThat(d4.figures()).hasSize(2);
+
+        EightDSnapshot.Figure arete = d4.figures().get(0);
+        assertThat(arete.kind()).isEqualTo(EightDSnapshot.FigureKind.FISHBONE);
+        assertThat(arete.caption()).isEqualTo("Fuite au presse-étoupe");
+        assertThat(arete.nodes()).containsExactly(
+                new EightDSnapshot.Node("MATERIEL", "Joint usé", 1),
+                new EightDSnapshot.Node("METHODE", "Pas de plan de remplacement", 1));
+
+        EightDSnapshot.Figure echelle = d4.figures().get(1);
+        assertThat(echelle.kind()).isEqualTo(EightDSnapshot.FigureKind.WHY_CHAIN);
+        assertThat(echelle.caption()).isEqualTo("Fuite constatée");
+        // Le rang EST l'ordre de la descente ; la cause racine la ferme, sous
+        // son propre groupe, pour que le trace la distingue.
+        assertThat(echelle.nodes()).containsExactly(
+                new EightDSnapshot.Node("WHY", "Le joint a cédé", 1),
+                new EightDSnapshot.Node("WHY", "Il n'a jamais été remplacé", 2),
+                new EightDSnapshot.Node("ROOT", "Absence de plan préventif", 3));
+    }
+
+    /**
+     * Une descente interrompue et une descente conclue ne se lisent pas pareil :
+     * sans conclusion, l'echelle n'a pas de noeud ROOT, et le trace ne doit pas
+     * en inventer un.
+     */
+    @Test
+    void d4_une_descente_sans_conclusion_ne_porte_pas_de_cause_racine() {
+        EightDSources sources = new EightDSources(
+                nc("Joint hors tolérance"), EQUIPE, List.of(),
+                List.of(new EightDSources.WhysChain("Fuite constatée", null,
+                        List.of("Le joint a cédé"))),
+                null, null, List.of());
+
+        EightDSnapshot.Section d4 = section(
+                assembler.assemble(sources, null, null, null, "t", null, null), "D4");
+
+        assertThat(d4.figures()).singleElement()
+                .satisfies(f -> assertThat(f.nodes())
+                        .containsExactly(new EightDSnapshot.Node("WHY", "Le joint a cédé", 1)));
+    }
+
+    /**
+     * Un Ishikawa ouvert puis laisse vide EXISTE. La figure est alors sans
+     * noeud -- et la discipline reste servie : on a cherche la cause, et le
+     * rapport doit le dire plutot que d'afficher « rien a montrer ».
+     */
+    @Test
+    void d4_un_ishikawa_vide_donne_une_figure_sans_noeud_mais_servie() {
+        EightDSources sources = new EightDSources(
+                nc(null), EQUIPE,
+                List.of(new EightDSources.CauseTree("Fuite au presse-étoupe", "DRAFT", List.of())),
+                List.of(), null, null, List.of());
+
+        EightDSnapshot.Section d4 = section(
+                assembler.assemble(sources, null, null, null, "t", null, null), "D4");
+
+        assertThat(d4.sourced()).isTrue();
+        assertThat(d4.lines()).isEmpty();
+        assertThat(d4.figures()).singleElement()
+                .satisfies(f -> assertThat(f.nodes()).isEmpty());
     }
 
     @Test

@@ -22026,6 +22026,34 @@ historique 12 mois</source>
         <source>Les huit disciplines, agrégées depuis ce dossier</source>
         <target state="translated">从本案卷汇总的八个步骤</target>
       </trans-unit>
+      <trans-unit id="nc.detail.blockers-resolve" datatype="html">
+        <source>Cet écart ne peut pas encore être résolu</source>
+        <target state="translated">该不合格项尚不能解决</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.blockers-close" datatype="html">
+        <source>Cet écart ne peut pas encore être clôturé</source>
+        <target state="translated">该不合格项尚不能关闭</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.actions-one" datatype="html">
+        <source>1 dossier CAPA porte encore des actions à mener. Terminez ses actions pour pouvoir résoudre cet écart.</source>
+        <target state="translated">仍有 1 份 CAPA 档案存在未完成的措施。完成其措施后方可解决该不合格项。</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.actions-many" datatype="html">
+        <source><x id="count"/> dossiers CAPA portent encore des actions à mener. Terminez leurs actions pour pouvoir résoudre cet écart.</source>
+        <target state="translated">仍有 <x id="count"/> 份 CAPA 档案存在未完成的措施。完成其措施后方可解决该不合格项。</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.cases-one" datatype="html">
+        <source>1 dossier CAPA n'est pas clôturé. Clôturez-le — après vérification de son efficacité — pour pouvoir clôturer cet écart.</source>
+        <target state="translated">有 1 份 CAPA 档案尚未关闭。在核实其有效性后关闭它，方可关闭该不合格项。</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.cases-many" datatype="html">
+        <source><x id="count"/> dossiers CAPA ne sont pas clôturés. Clôturez-les — après vérification de leur efficacité — pour pouvoir clôturer cet écart.</source>
+        <target state="translated">有 <x id="count"/> 份 CAPA 档案尚未关闭。在核实其有效性后关闭它们，方可关闭该不合格项。</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.unknown" datatype="html">
+        <source>Un prérequis n'est pas satisfait sur cet écart.</source>
+        <target state="translated">该不合格项的某项前提条件未满足。</target>
+      </trans-unit>
       <trans-unit id="nc.create.nature-pick-category" datatype="html">
         <source>Choisissez d'abord la catégorie.</source>
         <target state="translated">请先选择类别。</target>

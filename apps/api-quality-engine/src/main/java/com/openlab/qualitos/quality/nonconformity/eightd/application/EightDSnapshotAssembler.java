@@ -218,42 +218,74 @@ public class EightDSnapshotAssembler {
         List<String> lignes = new ArrayList<>();
         ajouter(lignes, "Root cause recorded on the non-conformity", sources.nc().rootCause());
 
+        // LES FIGURES DISENT, LE TEXTE NE REDIT PLUS. L'arête et la descente
+        // étaient énumérées ligne à ligne : « MACHINES : jeu au palier »,
+        // « Why 3 : … ». Un 8D se lit en revue, souvent debout, et cette
+        // énumération ne montrait ni les branches ni la descente — c'est-à-dire
+        // exactement ce que ces deux outils servent à voir. Le tracé remplace
+        // donc le texte, il ne s'y ajoute pas : répéter l'un sous l'autre
+        // doublerait la page sans rien apprendre.
+        List<EightDSnapshot.Figure> figures = new ArrayList<>();
         for (EightDSources.CauseTree arbre : sources.ishikawas()) {
-            lignes.add("Ishikawa \u2014 " + texteOu(arbre.problemStatement(), "(no statement)")
-                    + " [" + texteOu(arbre.status(), "?") + "]");
-            for (EightDSources.Cause cause : arbre.causes()) {
-                StringBuilder ligne = new StringBuilder("    ")
-                        .append(texteOu(cause.category(), "?")).append(" : ")
-                        .append(texteOu(cause.label(), "(no label)"));
-                if (cause.description() != null && !cause.description().isBlank()) {
-                    ligne.append(" — ").append(cause.description().trim());
-                }
-                if (cause.rootCauseScore() != null) {
-                    ligne.append(" (root-cause score ")
-                            .append(String.format(java.util.Locale.ROOT, "%.2f", cause.rootCauseScore()))
-                            .append(')');
-                }
-                lignes.add(ligne.toString());
-            }
+            figures.add(areteDePoisson(arbre));
         }
-
         for (EightDSources.WhysChain chaine : sources.fiveWhys()) {
-            lignes.add("5 whys \u2014 " + texteOu(chaine.problem(), "(no statement)"));
-            int rang = 1;
-            for (String reponse : chaine.answers()) {
-                lignes.add("    Why " + rang++ + " : " + texteOu(reponse, "(no answer)"));
-            }
-            if (chaine.rootCause() != null && !chaine.rootCause().isBlank()) {
-                lignes.add("    Root cause: " + chaine.rootCause().trim());
-            }
+            figures.add(descenteDesPourquoi(chaine));
         }
 
-        boolean servi = !lignes.isEmpty();
+        boolean servi = !lignes.isEmpty() || !figures.isEmpty();
         String label = servi
                 ? libelleD4(sources)
                 : "No Ishikawa and no 5-whys analysis linked to this deviation, and no"
                   + " root cause recorded on the non-conformity";
-        return section(EightDDiscipline.D4, servi, label, lignes);
+        return new EightDSnapshot.Section(EightDDiscipline.D4.code(), EightDDiscipline.D4.titre(),
+                servi, label, lignes, figures);
+    }
+
+    /**
+     * L'arête de poisson d'un Ishikawa : une épine, des branches par catégorie.
+     *
+     * <p>Les causes gardent l'ordre du diagramme, et leur catégorie porte la
+     * branche. Le niveau vaut 1 : l'arborescence des sous-causes n'est pas lue
+     * ici — la source les livre à plat, et inventer une hiérarchie absente
+     * dessinerait un diagramme que personne n'a construit.
+     *
+     * <p>La description et le score de cause racine ne passent PAS dans la
+     * figure : une étiquette de branche doit se lire d'un coup d'œil. Ils
+     * restent sur la fiche de l'écart, où on va les chercher.
+     */
+    private EightDSnapshot.Figure areteDePoisson(EightDSources.CauseTree arbre) {
+        List<EightDSnapshot.Node> noeuds = new ArrayList<>();
+        for (EightDSources.Cause cause : arbre.causes()) {
+            noeuds.add(new EightDSnapshot.Node(
+                    texteOu(cause.category(), "?"),
+                    texteOu(cause.label(), "(no label)"),
+                    1));
+        }
+        return new EightDSnapshot.Figure(EightDSnapshot.FigureKind.FISHBONE,
+                texteOu(arbre.problemStatement(), "(no statement)"), noeuds);
+    }
+
+    /**
+     * La descente des 5 pourquoi : une échelle, du symptôme à la cause racine.
+     *
+     * <p>Le rang EST l'ordre : c'est lui qui fait la descente, et une réponse
+     * sortie de son rang ne veut plus rien dire. La cause racine conclue ferme
+     * l'échelle sous son propre groupe, pour que le tracé la distingue — une
+     * descente qui s'arrête sans conclusion et une descente conclue ne se
+     * lisent pas pareil.
+     */
+    private EightDSnapshot.Figure descenteDesPourquoi(EightDSources.WhysChain chaine) {
+        List<EightDSnapshot.Node> noeuds = new ArrayList<>();
+        int rang = 1;
+        for (String reponse : chaine.answers()) {
+            noeuds.add(new EightDSnapshot.Node("WHY", texteOu(reponse, "(no answer)"), rang++));
+        }
+        if (chaine.rootCause() != null && !chaine.rootCause().isBlank()) {
+            noeuds.add(new EightDSnapshot.Node("ROOT", chaine.rootCause().trim(), rang));
+        }
+        return new EightDSnapshot.Figure(EightDSnapshot.FigureKind.WHY_CHAIN,
+                texteOu(chaine.problem(), "(no statement)"), noeuds);
     }
 
     private String libelleD4(EightDSources sources) {

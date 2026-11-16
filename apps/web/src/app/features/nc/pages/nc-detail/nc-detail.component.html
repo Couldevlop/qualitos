@@ -111,14 +111,19 @@
                 i18n-matTooltip="@@nc.detail.start-analysis-tooltip" matTooltip="Démarrer l'analyse">
           <mat-icon>search</mat-icon> <span i18n="@@nc.detail.start-analysis">Analyser</span>
         </button>
+        <!-- Un bouton que le serveur refusera est éteint ICI, et le bloc de
+             motifs plus bas dit pourquoi. L'infobulle le redit au survol, pour
+             qui n'a pas fait le lien entre le bouton gris et l'encart. -->
         <button mat-flat-button color="primary" (click)="openResolve(n)" *qosCan="'nc.process'"
-                [disabled]="(acting$ | async) || !canResolve(n.status)"
-                i18n-matTooltip="@@nc.detail.resolve-tooltip" matTooltip="Résoudre la NC">
+                [disabled]="(acting$ | async) || !canResolve(n.status) || blocked(n)"
+                [matTooltip]="blocked(n) ? blockersHint(n) : resolveTooltip"
+                data-test="nc-resolve">
           <mat-icon>task_alt</mat-icon> <span i18n="@@nc.detail.resolve">Résoudre</span>
         </button>
         <button mat-flat-button color="primary" (click)="close()" *qosCan="'nc.close'"
-                [disabled]="(acting$ | async) || !canClose(n.status)"
-                i18n-matTooltip="@@nc.detail.close-tooltip" matTooltip="Clôturer la NC">
+                [disabled]="(acting$ | async) || !canClose(n.status) || blocked(n)"
+                [matTooltip]="blocked(n) ? blockersHint(n) : closeTooltip"
+                data-test="nc-close">
           <mat-icon>lock</mat-icon> <span i18n="@@nc.detail.close">Clôturer</span>
         </button>
       </div>
@@ -141,6 +146,21 @@
       <mat-card class="info-card">
         <mat-card-content>
           <h2 class="nc-title">{{ n.title }}</h2>
+
+          <!-- Ce qui s'oppose à l'avancement, DIT avant le clic. Auparavant le
+               refus n'arrivait qu'après, sous la forme d'un message serveur en
+               anglais, et le bouton éteint ne disait rien de ce qu'il fallait
+               faire. Chaque phrase nomme donc le geste qui débloque. -->
+          <div class="blockers-block" *ngIf="n.blockers?.length" role="status"
+               data-test="nc-blockers">
+            <p class="blockers-title">
+              <mat-icon aria-hidden="true">block</mat-icon>
+              <strong>{{ blockersTitle(n) }}</strong>
+            </p>
+            <ul class="blockers-list">
+              <li *ngFor="let b of n.blockers">{{ blockerLabel(b) }}</li>
+            </ul>
+          </div>
           <div class="info-grid">
             <div class="info-item">
               <span class="info-label" i18n="@@common.status">Statut</span>

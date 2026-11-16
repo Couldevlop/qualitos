@@ -580,3 +580,39 @@
 
   &.good .mat-icon { color: var(--qos-success-fg); opacity: 1; }
 }
+
+// Ce qui s'oppose à l'avancement de l'écart. Même traitement que sur la fiche
+// d'un dossier CAPA : un encart qui se lit sans être criard, et dont le filet
+// gauche suffit à dire « attention » sans peindre la carte en rouge.
+.blockers-block {
+  margin: var(--qos-space-3) 0;
+  padding: var(--qos-space-3);
+  background: var(--qos-danger-bg-soft);
+  border-left: 4px solid var(--qos-danger-fg);
+  border-radius: 8px;
+}
+
+.blockers-title {
+  margin: 0 0 8px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 14px;
+  color: var(--qos-danger-fg);
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.blockers-list {
+  margin: 0;
+  padding-left: 28px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--qos-fg-primary);
+
+  li + li { margin-top: 4px; }
+}
