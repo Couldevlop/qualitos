@@ -158,6 +158,9 @@ public class UserService {
             }
             identity.setEnabled(user.getKeycloakId(), request.active());
             user.setActive(request.active());
+            if (!request.active()) {
+                revoquerLesSessions(user);
+            }
         }
 
         AppUser saved = userRepository.save(user);
@@ -172,7 +175,34 @@ public class UserService {
         identity.setEnabled(user.getKeycloakId(), false);
         user.setActive(false);
         userRepository.save(user);
+        revoquerLesSessions(user);
         log.info("User deactivated: id={}", id);
+    }
+
+    /**
+     * Ferme les sessions ouvertes du compte qu'on vient de fermer.
+     *
+     * <p>DESACTIVER N'EST PAS REVOQUER. Sans cet appel, le fournisseur
+     * d'identite refuse de delivrer de NOUVEAUX jetons, mais celui que la
+     * personne a deja dans son navigateur reste valable jusqu'a son echeance :
+     * elle continue de lire, d'ecrire et de signer pendant tout ce temps, avec
+     * un compte que l'administrateur croit ferme. Or on desactive justement les
+     * jours ou l'on ne peut pas attendre.
+     *
+     * <p>L'ECHEC NE DEFAIT PAS LA DESACTIVATION. Le compte est deja ferme en
+     * base et chez le fournisseur ; relever l'exception annulerait la
+     * transaction et rouvrirait un acces qu'on voulait couper -- on aurait
+     * echoue a faire PLUS, et on finirait par faire MOINS. On le journalise en
+     * erreur, ce qui laisse une trace a reprendre, la session expirant de
+     * toute facon d'elle-meme.
+     */
+    private void revoquerLesSessions(AppUser user) {
+        try {
+            identity.logout(user.getKeycloakId());
+        } catch (RuntimeException e) {
+            log.error("user.sessions.revocation-failed user_id={} reason={}",
+                    user.getId(), e.getMessage());
+        }
     }
 
     private AppUser memberOfTenant(UUID id) {

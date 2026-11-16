@@ -25,6 +25,25 @@ public interface IdentityProvider {
 
     void setEnabled(String accountId, boolean enabled);
 
+    /**
+     * Ferme TOUTES les sessions ouvertes de ce compte, sur-le-champ.
+     *
+     * <p>Desactiver un compte ne suffit pas a en retirer l'acces. Le fournisseur
+     * d'identite refuse alors de delivrer de NOUVEAUX jetons, mais celui qu'une
+     * personne a deja dans son navigateur reste valable jusqu'a son echeance :
+     * elle continue de lire, d'ecrire et de signer pendant tout ce temps, avec
+     * un compte qu'un administrateur croit ferme.
+     *
+     * <p>C'est precisement l'ecart entre DESACTIVER et REVOQUER. Une revocation
+     * qui laisse courir la session en cours n'est pas une revocation -- et on
+     * la declenche justement les jours ou l'on ne peut pas attendre : un depart
+     * conflictuel, un compte soupconne d'etre compromis.
+     *
+     * <p>L'operation est IDEMPOTENTE : fermer les sessions d'un compte qui n'en
+     * a aucune reussit sans rien faire.
+     */
+    void logout(String accountId);
+
     /** Le client auquel le compte est rattaché, s'il existe. */
     Optional<UUID> tenantOf(String accountId);
 

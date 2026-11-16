@@ -269,6 +269,11 @@ class UserServiceTest {
 
             assertThat(result.active()).isFalse();
             verify(identity).setEnabled("kc-user-abc", false);
+            // DESACTIVER N'EST PAS REVOQUER : sans cette fermeture, le jeton
+            // deja dans le navigateur reste valable jusqu'a son echeance, et la
+            // personne continue de lire, d'ecrire et de signer avec un compte
+            // que l'administrateur croit ferme.
+            verify(identity).logout("kc-user-abc");
         }
 
         @Test
@@ -297,6 +302,32 @@ class UserServiceTest {
             given(userRepository.findById(USER_ID)).willReturn(Optional.of(sampleUser));
             given(userRepository.save(any(AppUser.class))).willAnswer(inv -> inv.getArgument(0));
 
+            userService.deactivate(USER_ID);
+
+            ArgumentCaptor<AppUser> captor = ArgumentCaptor.forClass(AppUser.class);
+            verify(userRepository).save(captor.capture());
+            assertThat(captor.getValue().isActive()).isFalse();
+            verify(identity).setEnabled("kc-user-abc", false);
+            // Le MEME invariant sur le chemin que l'ecran emprunte : la console
+            // retire l'acces par une modification, pas par la desactivation
+            // dediee. Couvrir l'un sans l'autre laissait la moitie du produit
+            // sans revocation.
+            verify(identity).logout("kc-user-abc");
+        }
+
+        @Test
+        @DisplayName("La fermeture des sessions qui echoue ne rouvre pas l'acces")
+        void laRevocationQuiEchoueNeDefaitPasLaDesactivation() {
+            given(userRepository.findById(USER_ID)).willReturn(Optional.of(sampleUser));
+            given(userRepository.save(any(AppUser.class))).willAnswer(inv -> inv.getArgument(0));
+            // Le fournisseur d'identite ne repond pas sur la fermeture.
+            willThrow(new IllegalStateException("keycloak injoignable"))
+                    .given(identity).logout("kc-user-abc");
+
+            // On ne releve pas : le compte est deja ferme en base et chez le
+            // fournisseur. Relever annulerait la transaction et ROUVRIRAIT un
+            // acces qu'on voulait couper -- on aurait echoue a faire plus, et
+            // on finirait par faire moins.
             userService.deactivate(USER_ID);
 
             ArgumentCaptor<AppUser> captor = ArgumentCaptor.forClass(AppUser.class);
