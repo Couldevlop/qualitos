@@ -10146,6 +10146,22 @@ Portail clients</source>
         <source>Conformité</source>
         <target state="translated">合规</target>
       </trans-unit>
+      <trans-unit id="nc.cause.root-cause-failed" datatype="html">
+        <source>La conclusion n’a pas été enregistrée. Réessayez.</source>
+        <target state="translated">结论未保存，请重试。</target>
+      </trans-unit>
+      <trans-unit id="capa.list.filter-owner" datatype="html">
+        <source>Filtrer par pilote</source>
+        <target state="translated">按负责人筛选</target>
+      </trans-unit>
+      <trans-unit id="capa.list.filter-owner-placeholder" datatype="html">
+        <source>Toutes les personnes</source>
+        <target state="translated">所有人员</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.no-capa" datatype="html">
+        <source>Aucune action n'est encore inscrite sur cet écart. Ajoutez au moins une action pour pouvoir le résoudre.</source>
+        <target state="translated">该不合格项尚未登记任何措施。请至少添加一项措施才能解决。</target>
+      </trans-unit>
       <trans-unit id="capa.type.containment" datatype="html">
         <source>Endiguement</source>
         <target state="translated">围堵</target>
@@ -18585,6 +18601,182 @@ historique 12 mois</source>
       <trans-unit id="kpis.detail.measurements-empty-readonly" datatype="html">
         <source>Aucune mesure pour l'instant.</source>
         <target state="translated">暂无实测值。</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.title" datatype="html">
+        <source>Messagerie</source>
+        <target state="translated">邮件发送</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.subtitle" datatype="html">
+        <source>L'adresse d'où partent les courriels de votre organisation.</source>
+        <target state="translated">您的组织发送邮件所用的地址。</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.load-failed" datatype="html">
+        <source>La messagerie n'a pas pu être chargée.</source>
+        <target state="translated">无法加载邮件设置。</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.using-platform" datatype="html">
+        <source>Vos courriels partent aujourd'hui de l'adresse de la plateforme. Elle n'est pas la vôtre : vos destinataires ne la reconnaissent pas, et elle ne passe pas vos règles SPF/DKIM.</source>
+        <target state="translated">目前您的邮件由平台地址发出。该地址并非您的地址：收件人无法识别，也不符合您的 SPF/DKIM 规则。</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.using-own" datatype="html">
+        <source>Vos courriels partent de <x id="INTERPOLATION"/>.</source>
+        <target state="translated">您的邮件由 <x id="INTERPOLATION"/> 发出。</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.verified" datatype="html">
+        <source>Vérifiée le <x id="INTERPOLATION"/></source>
+        <target state="translated">已于 <x id="INTERPOLATION"/> 验证</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.not-verified" datatype="html">
+        <source>Jamais éprouvée par un envoi d'essai</source>
+        <target state="translated">尚未通过测试邮件验证</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.sender" datatype="html">
+        <source>Expéditeur</source>
+        <target state="translated">发件人</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.sender-help" datatype="html">
+        <source>Ce que vos destinataires liront. L'adresse de réponse peut différer de l'expéditeur : on émet souvent depuis une adresse de service et l'on veut les réponses dans une boîte partagée.</source>
+        <target state="translated">收件人将看到的信息。回复地址可以与发件人不同：通常由服务地址发出，而回复进入共享邮箱。</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.from-address" datatype="html">
+        <source>Adresse d'expédition</source>
+        <target state="translated">发件地址</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.from-name" datatype="html">
+        <source>Nom affiché</source>
+        <target state="translated">显示名称</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.reply-to" datatype="html">
+        <source>Adresse de réponse</source>
+        <target state="translated">回复地址</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.server" datatype="html">
+        <source>Serveur sortant</source>
+        <target state="translated">发送服务器</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.server-help" datatype="html">
+        <source>STARTTLS ouvre en clair puis chiffre (port 587) ; TLS chiffre dès la connexion (port 465). Ce ne sont pas deux façons de dire la même chose, et les confondre donne une connexion qui expire sans message utile.</source>
+        <target state="translated">STARTTLS 先以明文连接再加密（端口 587）；TLS 自连接起即加密（端口 465）。两者并非同一回事，混淆会导致连接超时且没有有用的提示。</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.host" datatype="html">
+        <source>Serveur</source>
+        <target state="translated">服务器</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.port" datatype="html">
+        <source>Port</source>
+        <target state="translated">端口</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.security" datatype="html">
+        <source>Protection</source>
+        <target state="translated">加密方式</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.security-none" datatype="html">
+        <source>Aucune</source>
+        <target state="translated">无</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.no-tls-warning" datatype="html">
+        <source>Sans protection, votre mot de passe circule en clair sur le réseau. À réserver à un relais interne.</source>
+        <target state="translated">未加密时，您的密码将以明文在网络中传输。请仅用于内部中继。</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.account" datatype="html">
+        <source>Compte</source>
+        <target state="translated">账户</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.account-help" datatype="html">
+        <source>Facultatif : un relais interne reconnaît parfois ses clients à leur adresse IP. Le mot de passe est chiffré et ne vous sera jamais réaffiché — laisser le champ vide ne l'efface pas.</source>
+        <target state="translated">可选：内部中继有时按 IP 地址识别客户端。密码经过加密且绝不会再次显示——留空并不会将其删除。</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.username" datatype="html">
+        <source>Identifiant</source>
+        <target state="translated">用户名</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.password" datatype="html">
+        <source>Mot de passe</source>
+        <target state="translated">密码</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.password-replace" datatype="html">
+        <source>Nouveau mot de passe</source>
+        <target state="translated">新密码</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.password-kept" datatype="html">
+        <source>Un mot de passe est enregistré. Laissez vide pour le conserver.</source>
+        <target state="translated">已保存密码。留空即保留原密码。</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.clear-password" datatype="html">
+        <source>Effacer le mot de passe</source>
+        <target state="translated">清除密码</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.password-cleared" datatype="html">
+        <source>Mot de passe effacé.</source>
+        <target state="translated">密码已清除。</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.activation" datatype="html">
+        <source>Mise en service</source>
+        <target state="translated">启用</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.activation-help" datatype="html">
+        <source>Tant que la messagerie n'est pas activée, vos courriels continuent de partir de l'adresse de la plateforme. Éprouvez-la d'abord : enregistrer un réglage n'est pas l'avoir vérifié.</source>
+        <target state="translated">在启用之前，您的邮件仍由平台地址发出。请先行验证：保存设置并不等于已验证。</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.enable" datatype="html">
+        <source>Envoyer les courriels depuis cette messagerie</source>
+        <target state="translated">使用此邮箱发送邮件</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.saved" datatype="html">
+        <source>Messagerie enregistrée.</source>
+        <target state="translated">邮件设置已保存。</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.save-failed" datatype="html">
+        <source>La messagerie n'a pas pu être enregistrée.</source>
+        <target state="translated">无法保存邮件设置。</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.remove" datatype="html">
+        <source>Retirer la messagerie</source>
+        <target state="translated">移除此邮箱</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.removed" datatype="html">
+        <source>Messagerie retirée. Les courriels repartent de l'adresse de la plateforme.</source>
+        <target state="translated">邮箱已移除。邮件将重新由平台地址发出。</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.remove-failed" datatype="html">
+        <source>La messagerie n'a pas pu être retirée.</source>
+        <target state="translated">无法移除此邮箱。</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.test" datatype="html">
+        <source>Envoi d'essai</source>
+        <target state="translated">测试邮件</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.test-help" datatype="html">
+        <source>Un message réel part vers l'adresse indiquée. C'est le seul moyen de savoir que le serveur accepte votre compte et votre adresse d'expédition : le refus de l'expéditeur est le cas le plus fréquent.</source>
+        <target state="translated">将向指定地址发送一封真实邮件。这是确认服务器同时接受您的账户和发件地址的唯一方式：发件人被拒是最常见的情况。</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.test-recipient" datatype="html">
+        <source>Destinataire de l'essai</source>
+        <target state="translated">测试收件人</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.send-test" datatype="html">
+        <source>Envoyer l'essai</source>
+        <target state="translated">发送测试</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.test-ok" datatype="html">
+        <source>Courriel d'essai envoyé. La messagerie est vérifiée.</source>
+        <target state="translated">测试邮件已发送。该邮箱已验证。</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.test-failed" datatype="html">
+        <source>L'essai n'a pas pu être lancé.</source>
+        <target state="translated">无法启动测试。</target>
+      </trans-unit>
+      <trans-unit id="nav.admin-mail" datatype="html">
+        <source>Messagerie</source>
+        <target state="translated">邮件发送</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.mail" datatype="html">
+        <source>Messagerie</source>
+        <target state="translated">邮件</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.mail-title" datatype="html">
+        <source>Messagerie de <x id="INTERPOLATION"/></source>
+        <target state="translated"><x id="INTERPOLATION"/> 的邮件发送</target>
       </trans-unit>
       <trans-unit id="nav.marketplace" datatype="html">
         <source>Marketplace</source>

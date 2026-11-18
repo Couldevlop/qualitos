@@ -1,0 +1,14 @@
+<h2 mat-dialog-title>
+  <ng-container i18n="@@platform.firms.mail-title">Messagerie de {{ data.firmName }}</ng-container>
+</h2>
+
+<mat-dialog-content>
+  <!-- L'écran se charge lui-même et s'enregistre lui-même : la fenêtre ne fait
+       que le cadrer. -->
+  <qos-mail-settings [firmId]="data.firmId"></qos-mail-settings>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="fermer()" data-test="fermer"
+          i18n="@@common.close">Fermer</button>
+</mat-dialog-actions>

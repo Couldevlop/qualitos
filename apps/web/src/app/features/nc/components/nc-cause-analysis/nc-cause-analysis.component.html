@@ -42,4 +42,35 @@
      i18n="@@nc.detail.cause-whys-empty">
     Aucun pourquoi n’a encore été posé. Déroulez l’analyse pour commencer.
   </p>
+
+  <!-- La cause racine se conclut ICI des le troisieme pourquoi, et plus
+       seulement sur l'ecran dedie : on vient de lire la descente, c'est le
+       moment d'ecrire ce qu'elle demontre. Meme regle que l'ecran dedie et que
+       le serveur, lue au meme endroit. -->
+  <div class="root-cause" *ngIf="chaine.steps?.length" [attr.data-test]="'cause-racine-' + chaine.id">
+    <p class="cause-empty" *ngIf="!peutConclure(chaine)"
+       data-test="cause-racine-verrouillee"
+       i18n="@@fivewhys.root-cause-locked">
+      Conclure avant trois pourquoi, c'est nommer un symptôme. Poursuivez la chaîne.
+    </p>
+
+    <ng-container *ngIf="peutConclure(chaine)">
+      <mat-form-field appearance="outline" class="root-cause__field" subscriptSizing="dynamic">
+        <mat-label i18n="@@fivewhys.root-cause-label">Cause racine identifiée</mat-label>
+        <textarea matInput rows="2" [value]="brouillon(chaine)"
+                  data-test="cause-racine-champ"
+                  (input)="saisir(chaine, $any($event.target).value)"></textarea>
+      </mat-form-field>
+      <button mat-flat-button color="primary" type="button"
+              data-test="cause-racine-conclure"
+              [disabled]="!conclusionPrete(chaine)" (click)="conclure(chaine)">
+        <mat-icon aria-hidden="true">check</mat-icon>
+        <span i18n="@@fivewhys.conclude">Conclure</span>
+      </button>
+      <p class="cause-empty" *ngIf="echec === chaine.id" data-test="cause-racine-echec"
+         i18n="@@nc.cause.root-cause-failed">
+        La conclusion n’a pas été enregistrée. Réessayez.
+      </p>
+    </ng-container>
+  </div>
 </section>

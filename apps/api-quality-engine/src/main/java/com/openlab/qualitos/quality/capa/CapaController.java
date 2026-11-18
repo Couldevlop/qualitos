@@ -21,12 +21,19 @@ public class CapaController {
         this.service = service;
     }
 
+    /**
+     * Le registre, filtré par statut, criticité et pilote.
+     *
+     * <p>Le pilote arrive par son compte ({@code sub}), jamais par son nom : deux
+     * personnes peuvent porter le même, et un nom se réécrit.
+     */
     @GetMapping("/cases")
     public Page<CapaDto.CaseResponse> list(
             @RequestParam(required = false) CapaStatus status,
             @RequestParam(required = false) CapaCriticity criticity,
+            @RequestParam(required = false) UUID ownerId,
             @PageableDefault(size = 20) Pageable pageable) {
-        return criticity == null ? service.findAll(status, pageable) : service.findAll(status, criticity, pageable);
+        return service.findAll(status, criticity, ownerId, pageable);
     }
 
     @PostMapping("/cases")

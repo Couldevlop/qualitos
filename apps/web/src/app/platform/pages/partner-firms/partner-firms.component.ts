@@ -13,6 +13,9 @@ import { ClientsService } from '../../clients.service';
 import {
   FirmEditDialogComponent, FirmEditResult
 } from '../firm-edit-dialog/firm-edit-dialog.component';
+import {
+  FirmMailDialogComponent, FirmMailDialogData
+} from '../firm-mail-dialog/firm-mail-dialog.component';
 
 /** Le brouillon d'un cabinet. Le repère (`slug`) ne se corrige plus ensuite. */
 export interface FirmDraft {
@@ -200,6 +203,30 @@ export class PartnerFirmsComponent implements OnInit {
    * fois. Le serveur acceptait déjà la correction et la consigne dans la piste
    * d'audit de la plateforme ; il n'y manquait que le chemin pour la faire.
    */
+  /**
+   * Regle la messagerie du cabinet (ADR 0127).
+   *
+   * <p>Un cabinet qui ecrit a ses clients depuis l'adresse de la plateforme se
+   * presente sous une identite qui n'est pas la sienne. Cet acces est ici, dans
+   * la console de l'editeur, parce qu'un cabinet n'a pas d'administrateur dans
+   * QualitOS -- ses consultants travaillent chez les clients qui les ont
+   * acceptes, avec le role que ces clients leur ont donne.
+   *
+   * <p>La fenetre ne rend rien : l'ecran qu'elle heberge s'enregistre lui-meme,
+   * et la fiche du cabinet n'en depend pas.
+   */
+  messagerie(cabinet: PartnerFirm): void {
+    this.dialog.open<FirmMailDialogComponent, FirmMailDialogData, void>(
+      FirmMailDialogComponent,
+      {
+        data: { firmId: cabinet.id, firmName: cabinet.name },
+        panelClass: 'qos-dialog-panel',
+        autoFocus: 'first-tabbable',
+        width: '46rem'
+      }
+    );
+  }
+
   corriger(cabinet: PartnerFirm): void {
     this.dialog.open<FirmEditDialogComponent, PartnerFirm, FirmEditResult>(
       FirmEditDialogComponent,

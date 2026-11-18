@@ -222,7 +222,10 @@ describe('MainShellComponent (navigation model)', () => {
     // Operations retombe a 13 : « Planning audits » quitte le menu. La
     // programmation se fait depuis le registre des audits, ou l'on voit en
     // meme temps ce qui est deja planifie.
-    expect(labels).toEqual([8, 6, 6, 2, 1, 6, 1, 13, 5, 1, 17]);
+    // 18 : Messagerie rejoint l'administration (ADR 0127) -- chaque client
+    // regle son propre serveur sortant, pour que ses relances partent de son
+    // adresse et passent ses regles SPF/DKIM.
+    expect(labels).toEqual([8, 6, 6, 2, 1, 6, 1, 13, 5, 1, 18]);
   });
 
   it('ne garde aucune entree de prevision dans la barre laterale', () => {

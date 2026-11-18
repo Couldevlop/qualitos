@@ -88,12 +88,10 @@
         <mat-select formControlName="sourceType" data-test="capa-source">
           <mat-option *ngFor="let s of sourceTypes" [value]="s.value">{{ s.label }}</mat-option>
         </mat-select>
-        <!-- La liste ne propose que « Non-conformite interne » : un dossier
-             ouvert ici pour une reclamation client s affichait donc « interne »
-             sur l ecran qui sert a repondre a ce client. Le serveur lit
-             desormais l origine SUR L ECART cite ; l indice le dit, faute de
-             quoi le champ annoncerait autre chose que ce qui sera ecrit. -->
-        <mat-hint *ngIf="sourceRegister === 'nc'" data-test="capa-source-derivee"
+        <!-- Le serveur lit l origine SUR L ECART cite, et non sur la source
+             demandee ici : l indice le dit, faute de quoi le champ annoncerait
+             autre chose que ce qui sera ecrit. -->
+        <mat-hint *ngIf="citeUnEcart" data-test="capa-source-derivee"
                   i18n="@@capa.create.source-nc-derivee">Interne ou externe : lue sur l’écart choisi.</mat-hint>
       </mat-form-field>
     </div>

@@ -2,7 +2,6 @@ import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 
 import { AuditsService } from '../../audits/audits.service';
-import { ComplaintsService } from '../../complaints/complaints.service';
 import { NcService } from '../../nc/nc.service';
 import { RiskRegisterService } from '../../risk-register/risk-register.service';
 import { CapaSourceRefService, SOURCE_REF_PAGE_SIZE } from './capa-source-ref.service';
@@ -16,19 +15,16 @@ describe('CapaSourceRefService', () => {
 
   let nc: jasmine.SpyObj<NcService>;
   let audits: jasmine.SpyObj<AuditsService>;
-  let complaints: jasmine.SpyObj<ComplaintsService>;
   let risks: jasmine.SpyObj<RiskRegisterService>;
   let service: CapaSourceRefService;
 
   beforeEach(() => {
     nc = jasmine.createSpyObj<NcService>('NcService', ['listNcs']);
     audits = jasmine.createSpyObj<AuditsService>('AuditsService', ['listPlans']);
-    complaints = jasmine.createSpyObj<ComplaintsService>('ComplaintsService', ['list']);
     risks = jasmine.createSpyObj<RiskRegisterService>('RiskRegisterService', ['risks']);
 
     nc.listNcs.and.returnValue(of(page([])));
     audits.listPlans.and.returnValue(of(page([])));
-    complaints.list.and.returnValue(of(page([])));
     risks.risks.and.returnValue(of([]));
 
     TestBed.configureTestingModule({
@@ -36,25 +32,24 @@ describe('CapaSourceRefService', () => {
         CapaSourceRefService,
         { provide: NcService, useValue: nc },
         { provide: AuditsService, useValue: audits },
-        { provide: ComplaintsService, useValue: complaints },
         { provide: RiskRegisterService, useValue: risks }
       ]
     });
     service = TestBed.inject(CapaSourceRefService);
   });
 
-  // ---------- non-conformités ----------
+  // ---------- non-conformités internes ----------
 
-  it('lit les non-conformités et rend « référence — titre »', () => {
+  it('lit les non-conformités internes et rend « référence — titre »', () => {
     nc.listNcs.and.returnValue(of(page([
       { reference: 'NC-2026-018', title: 'Fuite au joint de la pompe', status: 'OPEN' }
     ])));
     let rendu: any[] = [];
-    service.options('nc').subscribe(o => (rendu = o));
+    service.options('nc-internal').subscribe(o => (rendu = o));
     expect(rendu).toEqual([
       { reference: 'NC-2026-018', label: 'NC-2026-018 — Fuite au joint de la pompe' }
     ]);
-    expect(nc.listNcs).toHaveBeenCalledWith(0, SOURCE_REF_PAGE_SIZE);
+    expect(nc.listNcs).toHaveBeenCalledWith(0, SOURCE_REF_PAGE_SIZE, { origin: 'INTERNAL' });
   });
 
   // Rattacher une CAPA à un écart clos, annulé ou écarté après instruction la
@@ -70,8 +65,36 @@ describe('CapaSourceRefService', () => {
       { reference: 'NC-7', title: 'Rejetée', status: 'REJECTED' }
     ])));
     let rendu: any[] = [];
-    service.options('nc').subscribe(o => (rendu = o));
+    service.options('nc-internal').subscribe(o => (rendu = o));
     expect(rendu.map(o => o.reference)).toEqual(['NC-1', 'NC-2', 'NC-3', 'NC-4']);
+  });
+
+  // ---------- non-conformités externes ----------
+
+  /**
+   * Une réclamation client se constate comme un écart EXTERNE : c'est cet
+   * écart que la CAPA cite, et c'est lui qui porte l'enquête, le 8D et la
+   * clôture. Proposer la réclamation elle-même ouvrait un dossier qui
+   * n'apparaissait sur aucune fiche d'écart.
+   */
+  it('lit les écarts externes quand la source est la réclamation client', () => {
+    nc.listNcs.and.returnValue(of(page([
+      { reference: 'NC-2026-040', title: 'Colis livré endommagé', status: 'OPEN' }
+    ])));
+    let rendu: any[] = [];
+    service.options('nc-external').subscribe(o => (rendu = o));
+    expect(rendu).toEqual([
+      { reference: 'NC-2026-040', label: 'NC-2026-040 — Colis livré endommagé' }
+    ]);
+    expect(nc.listNcs).toHaveBeenCalledWith(0, SOURCE_REF_PAGE_SIZE, { origin: 'EXTERNAL' });
+  });
+
+  // Les deux registres d'écarts ne se mélangent pas : une plainte client ne
+  // doit pas proposer un écart constaté en interne, ni l'inverse.
+  it("ne demande l'origine qu'une fois, et la bonne", () => {
+    service.options('nc-external').subscribe();
+    expect(nc.listNcs).toHaveBeenCalledTimes(1);
+    expect(nc.listNcs).toHaveBeenCalledWith(0, SOURCE_REF_PAGE_SIZE, { origin: 'EXTERNAL' });
   });
 
   // ---------- audits ----------
@@ -86,33 +109,6 @@ describe('CapaSourceRefService', () => {
     let rendu: any[] = [];
     service.options('audit').subscribe(o => (rendu = o));
     expect(rendu.map(o => o.reference)).toEqual(['AUD-1', 'AUD-2', 'AUD-3']);
-  });
-
-  // ---------- réclamations ----------
-
-  it('lit les réclamations par leur code et leur objet', () => {
-    complaints.list.and.returnValue(of(page([
-      { id: '1', code: 'REC-2026-003', subject: 'Colis livré endommagé', status: 'RECEIVED' }
-    ])));
-    let rendu: any[] = [];
-    service.options('complaint').subscribe(o => (rendu = o));
-    expect(rendu).toEqual([
-      { reference: 'REC-2026-003', label: 'REC-2026-003 — Colis livré endommagé' }
-    ]);
-  });
-
-  // Une réclamation rouverte est précisément celle sur laquelle une action de
-  // fond a manqué : l'écarter serait le contraire du but.
-  it('écarte les réclamations fermées et rejetées, garde les rouvertes', () => {
-    complaints.list.and.returnValue(of(page([
-      { id: '1', code: 'REC-1', subject: 'Reçue', status: 'RECEIVED' },
-      { id: '2', code: 'REC-2', subject: 'Rouverte', status: 'REOPENED' },
-      { id: '3', code: 'REC-3', subject: 'Fermée', status: 'CLOSED' },
-      { id: '4', code: 'REC-4', subject: 'Rejetée', status: 'REJECTED' }
-    ])));
-    let rendu: any[] = [];
-    service.options('complaint').subscribe(o => (rendu = o));
-    expect(rendu.map(o => o.reference)).toEqual(['REC-1', 'REC-2']);
   });
 
   // ---------- risques ----------
@@ -136,7 +132,7 @@ describe('CapaSourceRefService', () => {
       { reference: 'NC-2026-019', title: '   ', status: 'OPEN' }
     ])));
     let rendu: any[] = [];
-    service.options('nc').subscribe(o => (rendu = o));
+    service.options('nc-internal').subscribe(o => (rendu = o));
     expect(rendu[0].label).toBe('NC-2026-019');
   });
 

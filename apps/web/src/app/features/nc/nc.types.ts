@@ -166,7 +166,7 @@ export interface NcCapaCaseRef {
 }
 
 /** Les motifs que le serveur énumère ; l'écran les rédige. */
-export type NcBlockerCode = 'CAPA_ACTIONS_TO_CARRY_OUT' | 'CAPA_CASES_UNSETTLED';
+export type NcBlockerCode = 'CAPA_ACTIONS_TO_CARRY_OUT' | 'CAPA_CASES_UNSETTLED' | 'NO_CAPA_CASE';
 
 /**
  * Un motif de blocage et son décompte.

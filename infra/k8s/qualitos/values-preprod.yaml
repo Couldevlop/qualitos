@@ -137,7 +137,11 @@ services:
       # l'adresse INTERNE — le WAF de l'ingress refuse ses écritures.
       IDENTITY_KEYCLOAK_URL: http://keycloak.qualitos-preprod.svc.cluster.local:8080/auth
     # KEYCLOAK_PROVISIONER_SECRET, lu dans Keycloak par deploy.sh.
-    extraSecretRefs: [qualitos-api-core-identity]
+    # qualitos-api-core-secrets : QUALITOS_SECRET_KEY, la cle des secrets
+    # relisibles (ADR 0127). Engendree UNE FOIS par deploy.sh et jamais
+    # regeneree : une cle neuve rendrait indechiffrables les mots de passe
+    # SMTP deja enregistres.
+    extraSecretRefs: [qualitos-api-core-identity, qualitos-api-core-secrets]
   api-quality-engine:
     replicas: 1
     env:

@@ -95,7 +95,7 @@ class CapaServiceTest {
     @Test
     void findAll_byCriticity_filtersInTheDatabase() {
         Pageable p = PageRequest.of(0, 10);
-        when(caseRepo.search(TENANT, CapaStatus.OPEN, CapaCriticity.CRITICAL, p))
+        when(caseRepo.search(TENANT, CapaStatus.OPEN, CapaCriticity.CRITICAL, null, p))
                 .thenReturn(new PageImpl<>(List.of(capa(TENANT, CapaStatus.OPEN))));
         assertThat(service.findAll(CapaStatus.OPEN, CapaCriticity.CRITICAL, p).getContent()).hasSize(1);
         verify(caseRepo, never()).findByTenantIdAndStatus(any(), any(), any());
@@ -2107,6 +2107,35 @@ class CapaServiceTest {
                 CapaSourceType.NON_CONFORMITY, " Ext-NC-2026-0004 ");
 
         assertThat(r.sourceType()).isEqualTo(CapaSourceType.EXTERNAL_NON_CONFORMITY);
+    }
+
+    /**
+     * Une source « reclamation client » qui cite un ecart le REJOINT, comme
+     * les deux sources d ecart.
+     *
+     * <p>Une plainte client se constate comme un ecart externe, et c est cet
+     * ecart que le dossier cite. La source ne comptait pas comme un ecart : le
+     * lien n etait pas pose, le dossier n apparaissait sur aucune fiche, ne
+     * retenait aucune cloture et manquait au 8D.
+     */
+    @Test
+    void openCase_sourceReclamation_citantUnEcart_leRejoint() {
+        NonConformity ecart = ecart("Ext-NC-2026-0040", NcOrigin.EXTERNAL);
+        stubEcart(ecart);
+        UUID dossierId = UUID.randomUUID();
+        when(caseRepo.save(any())).thenAnswer(inv -> {
+            CapaCase c = inv.getArgument(0);
+            c.setId(dossierId);
+            return c;
+        });
+
+        CapaDto.CaseResponse r = service.openCase(
+                openReq(CapaType.CORRECTIVE, LocalDate.now().plusDays(10), "Pilote"),
+                CapaSourceType.COMPLAINT, "Ext-NC-2026-0040");
+
+        assertThat(r.sourceType()).isEqualTo(CapaSourceType.EXTERNAL_NON_CONFORMITY);
+        assertThat(ecart.getCapaCaseId()).isEqualTo(dossierId);
+        verify(ncRepo).save(ecart);
     }
 
     /** Et l inverse : citer un ecart interne ramene la source a « interne ». */

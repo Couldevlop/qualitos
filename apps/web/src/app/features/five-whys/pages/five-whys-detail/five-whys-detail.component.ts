@@ -3,7 +3,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { FiveWhysService } from '../../five-whys.service';
-import { FiveWhysAnalysis } from '../../five-whys.types';
+import { FiveWhysAnalysis, MIN_WHYS_BEFORE_ROOT_CAUSE } from '../../five-whys.types';
 
 /**
  * Déroulé d'une analyse des 5 Pourquoi.
@@ -25,7 +25,7 @@ export class FiveWhysDetailComponent implements OnInit {
   /** Borne haute de la chaîne, alignée sur la règle du serveur. */
   readonly maxWhys = 7;
   /** En deçà, la « cause racine » est encore un symptôme. */
-  readonly minWhysBeforeRootCause = 3;
+  readonly minWhysBeforeRootCause = MIN_WHYS_BEFORE_ROOT_CAUSE;
 
   analysis: FiveWhysAnalysis | null = null;
   loading = false;

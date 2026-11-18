@@ -151,37 +151,39 @@
                    dissuadait d'ouvrir le PDF pour y chercher ce qui s'y trouve. -->
               <p class="vivant-note" i18n="@@nc.8d.live-note-figures">État actuel du dossier. Le PDF émis porte ces schémas, figés à l'émission.</p>
               <qos-nc-cause-analysis [fiveWhys]="(fiveWhys$ | async) ?? []"
-                                     [ishikawa]="(ishikawa$ | async) ?? []"></qos-nc-cause-analysis>
+                                     [ishikawa]="(ishikawa$ | async) ?? []"
+                                     (rootCauseConcluded)="reload()"></qos-nc-cause-analysis>
             </div>
           </ng-container>
 
           <!-- D3, D5 et D6 : le tableau des actions de LEUR nature, ou on les
-               lit, on les avance et on en ajoute sans quitter le rapport. Le D5
-               en nomme trois -- endiguer, corriger, prevenir -- parce qu'une
-               action ajoutee sous une autre nature que « corrective » n'y
-               paraissait pas, et que c'est la discipline ou l'on vient lire ce
-               qui a ete decide. -->
+               lit, on les avance et on en ajoute sans quitter le rapport. Un
+               tableau par dossier CAPA de l'ecart : le rapport n'en montrait
+               qu'un -- celui que porte le lien de la fiche -- et les actions
+               d'un dossier ouvert depuis la liste CAPA n'y paraissaient pas,
+               alors que le document emis les porte. -->
           <ng-container *ngIf="montreLesActions(discipline.code)">
-            <div class="vivant" *ngIf="capaCaseId$ | async as capaCaseId"
+            <div class="vivant" *ngIf="(capaCaseIds$ | async)?.length"
                  [attr.data-test]="'8d-actions-' + discipline.code">
               <!-- Ce tableau se manoeuvre ; celui du PDF est arrete. La note
                    disait « le PDF ne porte que le texte » : c'etait vrai, le
                    document emis porte desormais le meme tableau, fige a
                    l'emission (ADR 0124). -->
               <p class="vivant-note" i18n="@@nc.8d.live-note-table">État actuel du dossier. Le PDF émis porte ce tableau, figé à l'émission.</p>
-              <qos-capa-action-panel [capaCaseId]="capaCaseId" [natures]="naturesDe(discipline.code)"
+              <qos-capa-action-panel *ngFor="let dossier of (capaCaseIds$ | async)"
+                                     [capaCaseId]="dossier" [natures]="naturesDe(discipline.code)"
                                      (changed)="reload()"></qos-capa-action-panel>
             </div>
             <!-- SANS dossier, la discipline restait muette sous son texte
                  agrege : on ne savait pas si le tableau n'existait pas ou s'il
                  etait vide. Il tient a une seule chose, et on le dit, avec la
                  porte pour y aller.
-                 `=== null` et non une simple negation : `undefined` veut dire
-                 « l'ecart n'a pas encore repondu », et ce bloc affirmerait
+                 `?.length === 0` et non une simple negation : `undefined` veut
+                 dire « l'ecart n'a pas encore repondu », et ce bloc affirmerait
                  alors qu'aucun dossier n'existe -- le temps d'une requete, ou
                  pour de bon si elle echoue. Tant qu'on ne sait pas, on se
                  tait. -->
-            <div class="vivant" *ngIf="(capaCaseId$ | async) === null"
+            <div class="vivant" *ngIf="(capaCaseIds$ | async)?.length === 0"
                  [attr.data-test]="'8d-actions-vide-' + discipline.code">
               <p class="vivant-note" i18n="@@nc.8d.actions-empty">
                 Les actions de cette discipline se liront et s'avanceront ici dès

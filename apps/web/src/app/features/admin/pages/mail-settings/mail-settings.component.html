@@ -1,0 +1,149 @@
+<div class="qos-page">
+  <qos-page-header
+    title="Messagerie" i18n-title="@@mail.settings.title"
+    subtitle="L'adresse d'où partent les courriels de votre organisation."
+    i18n-subtitle="@@mail.settings.subtitle">
+  </qos-page-header>
+
+  <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+
+  <p class="echec" *ngIf="failed" role="alert">
+    <span i18n="@@mail.settings.load-failed">La messagerie n'a pas pu être chargée.</span>
+    <button mat-button type="button" (click)="charger()" i18n="@@common.retry">Réessayer</button>
+  </p>
+
+  <ng-container *ngIf="!failed && !loading">
+
+    <!-- L'etat COURANT d'abord : d'ou partent les courriels en ce moment. Sans
+         cette phrase, un formulaire rempli mais non active se lirait comme une
+         messagerie en service. -->
+    <p class="portee" *ngIf="!configured || !enabled" data-test="etat-plateforme">
+      <mat-icon class="portee__icone">info</mat-icon>
+      <ng-container i18n="@@mail.settings.using-platform">Vos courriels partent aujourd'hui de l'adresse de la plateforme. Elle n'est pas la vôtre : vos destinataires ne la reconnaissent pas, et elle ne passe pas vos règles SPF/DKIM.</ng-container>
+    </p>
+    <p class="portee portee--active" *ngIf="configured && enabled" data-test="etat-propre">
+      <mat-icon class="portee__icone">mark_email_read</mat-icon>
+      <ng-container i18n="@@mail.settings.using-own">Vos courriels partent de {{ fromAddress }}.</ng-container>
+      <span class="verifiee" *ngIf="verifiedAt" data-test="verifiee">
+        <mat-icon>verified</mat-icon>
+        <ng-container i18n="@@mail.settings.verified">Vérifiée le {{ verifiedAt | date:'short' }}</ng-container>
+      </span>
+      <span class="non-verifiee" *ngIf="!verifiedAt" data-test="non-verifiee">
+        <mat-icon>help</mat-icon>
+        <ng-container i18n="@@mail.settings.not-verified">Jamais éprouvée par un envoi d'essai</ng-container>
+      </span>
+    </p>
+
+    <section class="bloc" aria-labelledby="mail-expediteur">
+      <h2 class="bloc__titre" id="mail-expediteur" i18n="@@mail.settings.sender">Expéditeur</h2>
+      <p class="bloc__aide" i18n="@@mail.settings.sender-help">Ce que vos destinataires liront. L'adresse de réponse peut différer de l'expéditeur : on émet souvent depuis une adresse de service et l'on veut les réponses dans une boîte partagée.</p>
+      <div class="champs">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label i18n="@@mail.settings.from-address">Adresse d'expédition</mat-label>
+          <input matInput type="email" [(ngModel)]="fromAddress" required data-test="from-address">
+        </mat-form-field>
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label i18n="@@mail.settings.from-name">Nom affiché</mat-label>
+          <input matInput [(ngModel)]="fromName" data-test="from-name">
+        </mat-form-field>
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label i18n="@@mail.settings.reply-to">Adresse de réponse</mat-label>
+          <input matInput type="email" [(ngModel)]="replyTo" data-test="reply-to">
+        </mat-form-field>
+      </div>
+    </section>
+
+    <section class="bloc" aria-labelledby="mail-serveur">
+      <h2 class="bloc__titre" id="mail-serveur" i18n="@@mail.settings.server">Serveur sortant</h2>
+      <p class="bloc__aide" i18n="@@mail.settings.server-help">STARTTLS ouvre en clair puis chiffre (port 587) ; TLS chiffre dès la connexion (port 465). Ce ne sont pas deux façons de dire la même chose, et les confondre donne une connexion qui expire sans message utile.</p>
+      <div class="champs">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label i18n="@@mail.settings.host">Serveur</mat-label>
+          <input matInput [(ngModel)]="host" required placeholder="smtp.exemple.fr" data-test="host">
+        </mat-form-field>
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="champ--court">
+          <mat-label i18n="@@mail.settings.port">Port</mat-label>
+          <input matInput type="number" min="1" max="65535" [(ngModel)]="port" required data-test="port">
+        </mat-form-field>
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label i18n="@@mail.settings.security">Protection</mat-label>
+          <mat-select [value]="security" (valueChange)="protectionChoisie($event)" data-test="security">
+            <mat-option value="STARTTLS">STARTTLS</mat-option>
+            <mat-option value="TLS">TLS</mat-option>
+            <mat-option value="NONE" i18n="@@mail.settings.security-none">Aucune</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <p class="avertissement" *ngIf="security === 'NONE'" role="alert" data-test="avertissement-clair">
+        <mat-icon>warning</mat-icon>
+        <ng-container i18n="@@mail.settings.no-tls-warning">Sans protection, votre mot de passe circule en clair sur le réseau. À réserver à un relais interne.</ng-container>
+      </p>
+    </section>
+
+    <section class="bloc" aria-labelledby="mail-compte">
+      <h2 class="bloc__titre" id="mail-compte" i18n="@@mail.settings.account">Compte</h2>
+      <p class="bloc__aide" i18n="@@mail.settings.account-help">Facultatif : un relais interne reconnaît parfois ses clients à leur adresse IP. Le mot de passe est chiffré et ne vous sera jamais réaffiché — laisser le champ vide ne l'efface pas.</p>
+      <div class="champs">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label i18n="@@mail.settings.username">Identifiant</mat-label>
+          <input matInput [(ngModel)]="username" autocomplete="off" data-test="username">
+        </mat-form-field>
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label *ngIf="!hasPassword" i18n="@@mail.settings.password">Mot de passe</mat-label>
+          <mat-label *ngIf="hasPassword" i18n="@@mail.settings.password-replace">Nouveau mot de passe</mat-label>
+          <input matInput type="password" [(ngModel)]="password" autocomplete="new-password" data-test="password">
+          <mat-hint *ngIf="hasPassword" i18n="@@mail.settings.password-kept">Un mot de passe est enregistré. Laissez vide pour le conserver.</mat-hint>
+        </mat-form-field>
+        <button mat-stroked-button type="button" *ngIf="hasPassword"
+                [disabled]="saving" (click)="effacerLeMotDePasse()" data-test="effacer-mdp">
+          <mat-icon>key_off</mat-icon>
+          <span i18n="@@mail.settings.clear-password">Effacer le mot de passe</span>
+        </button>
+      </div>
+    </section>
+
+    <section class="bloc" aria-labelledby="mail-mise-en-service">
+      <h2 class="bloc__titre" id="mail-mise-en-service" i18n="@@mail.settings.activation">Mise en service</h2>
+      <p class="bloc__aide" i18n="@@mail.settings.activation-help">Tant que la messagerie n'est pas activée, vos courriels continuent de partir de l'adresse de la plateforme. Éprouvez-la d'abord : enregistrer un réglage n'est pas l'avoir vérifié.</p>
+      <mat-checkbox [(ngModel)]="enabled" data-test="enabled">
+        <span i18n="@@mail.settings.enable">Envoyer les courriels depuis cette messagerie</span>
+      </mat-checkbox>
+    </section>
+
+    <div class="actions">
+      <button mat-flat-button color="primary" type="button"
+              [disabled]="!complet || saving" (click)="enregistrer()" data-test="enregistrer">
+        <mat-icon>save</mat-icon>
+        <span i18n="@@common.save">Enregistrer</span>
+      </button>
+      <button mat-stroked-button type="button" *ngIf="configured"
+              [disabled]="removing" (click)="retirer()" data-test="retirer">
+        <mat-icon>delete_outline</mat-icon>
+        <span i18n="@@mail.settings.remove">Retirer la messagerie</span>
+      </button>
+    </div>
+
+    <section class="bloc bloc--essai" aria-labelledby="mail-essai" *ngIf="configured">
+      <h2 class="bloc__titre" id="mail-essai" i18n="@@mail.settings.test">Envoi d'essai</h2>
+      <p class="bloc__aide" i18n="@@mail.settings.test-help">Un message réel part vers l'adresse indiquée. C'est le seul moyen de savoir que le serveur accepte votre compte et votre adresse d'expédition : le refus de l'expéditeur est le cas le plus fréquent.</p>
+      <div class="champs">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label i18n="@@mail.settings.test-recipient">Destinataire de l'essai</mat-label>
+          <input matInput type="email" [(ngModel)]="testRecipient" data-test="test-recipient">
+        </mat-form-field>
+        <button mat-stroked-button type="button"
+                [disabled]="testing" (click)="eprouver()" data-test="eprouver">
+          <mat-icon>send</mat-icon>
+          <span i18n="@@mail.settings.send-test">Envoyer l'essai</span>
+        </button>
+      </div>
+      <mat-progress-bar *ngIf="testing" mode="indeterminate"></mat-progress-bar>
+      <!-- Le motif RESTE affiche : c'est le texte sur lequel on corrige son
+           reglage, et une notification fugace l'emporterait avant qu'on l'ait lu. -->
+      <p class="motif-echec" *ngIf="testFailure" role="alert" data-test="motif-echec">
+        <mat-icon>error_outline</mat-icon>
+        <span class="motif-echec__texte">{{ testFailure }}</span>
+      </p>
+    </section>
+  </ng-container>
+</div>

@@ -3,8 +3,8 @@ import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { AuditsService } from '../../audits/audits.service';
-import { ComplaintsService } from '../../complaints/complaints.service';
 import { NcService } from '../../nc/nc.service';
+import { NcOrigin } from '../../nc/nc.types';
 import { RiskRegisterService } from '../../risk-register/risk-register.service';
 import { CapaSourceRegister } from '../capa.labels';
 
@@ -48,7 +48,6 @@ export class CapaSourceRefService {
   constructor(
     private readonly nc: NcService,
     private readonly audits: AuditsService,
-    private readonly complaints: ComplaintsService,
     private readonly risks: RiskRegisterService
   ) {}
 
@@ -67,21 +66,15 @@ export class CapaSourceRefService {
    */
   options(register: CapaSourceRegister): Observable<CapaSourceRefOption[]> {
     switch (register) {
-      case 'nc':
-        return this.nc.listNcs(0, SOURCE_REF_PAGE_SIZE).pipe(
-          map(page => page.content
-            .filter(n => !NC_TERMINEES.includes(n.status))
-            .map(n => option(n.reference, n.title))));
+      case 'nc-internal':
+        return this.ecarts('INTERNAL');
+      case 'nc-external':
+        return this.ecarts('EXTERNAL');
       case 'audit':
         return this.audits.listPlans(0, SOURCE_REF_PAGE_SIZE).pipe(
           map(page => page.content
             .filter(a => a.status !== 'CANCELLED')
             .map(a => option(a.reference, a.title))));
-      case 'complaint':
-        return this.complaints.list(0, SOURCE_REF_PAGE_SIZE).pipe(
-          map(page => page.content
-            .filter(c => !RECLAMATIONS_TERMINEES.includes(c.status))
-            .map(c => option(c.code, c.subject))));
       case 'risk':
         return this.risks.risks().pipe(
           map(risks => risks
@@ -93,6 +86,20 @@ export class CapaSourceRefService {
         // que l'oubli se voie au banc plutôt qu'en production.
         return of([]);
     }
+  }
+
+  /**
+   * Les écarts encore vivants de cette origine, les plus récents d'abord.
+   *
+   * <p>L'origine est filtrée EN BASE et non après coup : la page ne porte que
+   * les deux cents fiches les plus récentes, et trier ensuite en mémoire aurait
+   * rendu une liste vide dès que les écarts d'une origine sont minoritaires.
+   */
+  private ecarts(origin: NcOrigin): Observable<CapaSourceRefOption[]> {
+    return this.nc.listNcs(0, SOURCE_REF_PAGE_SIZE, { origin }).pipe(
+      map(page => page.content
+        .filter(n => !NC_TERMINEES.includes(n.status))
+        .map(n => option(n.reference, n.title))));
   }
 }
 
@@ -106,14 +113,6 @@ export class CapaSourceRefService {
  * fond se décide.
  */
 const NC_TERMINEES: ReadonlyArray<string> = ['CLOSED', 'CANCELLED', 'REJECTED'];
-
-/**
- * Les statuts terminaux d'une réclamation : fermée, ou écartée hors périmètre.
- *
- * <p>`REOPENED` n'en fait pas partie : une réclamation rouverte est précisément
- * celle sur laquelle une action de fond manquait.
- */
-const RECLAMATIONS_TERMINEES: ReadonlyArray<string> = ['CLOSED', 'REJECTED'];
 
 /** « AUD-2026-0003 — Audit interne du laboratoire ». */
 function option(reference: string, intitule: string | undefined | null): CapaSourceRefOption {

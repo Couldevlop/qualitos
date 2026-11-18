@@ -264,6 +264,14 @@ public class NcService {
         // fiches se contredisaient. Un dossier RESOLVED ne bloque pas — ses
         // actions sont faites, il reste à juger de leur efficacité, et c'est la
         // CLÔTURE de l'écart qui attend ce jugement.
+        // Un écart sans aucune action décidée n'est pas « résolu » : il est
+        // abandonné. Le registre le déclarait traité sans qu'une seule action
+        // soit inscrite nulle part — ni sur la fiche, ni dans le rapport remis
+        // au client, ni dans les indicateurs (ISO 9001 §10.2).
+        if (sansDossier(nc)) {
+            throw new NcStateException(
+                    "Non-conformity cannot be resolved without a single CAPA case: add at least one action");
+        }
         List<String> aFaire = capaService.unexecutedCasesFor(
                 nc.getCapaCaseId(), nc.getReference());
         if (!aFaire.isEmpty()) {
@@ -615,6 +623,9 @@ public class NcService {
      */
     private List<NcDto.Blocker> blocages(NonConformity nc) {
         if (nc.getStatus() == NcStatus.ACTION_DEFINED) {
+            if (sansDossier(nc)) {
+                return List.of(new NcDto.Blocker(NcBlockerCode.NO_CAPA_CASE, 0));
+            }
             long aFaire = capaService.unexecutedCasesFor(
                     nc.getCapaCaseId(), nc.getReference()).size();
             return aFaire == 0 ? List.of()
@@ -627,6 +638,25 @@ public class NcService {
                     : List.of(new NcDto.Blocker(NcBlockerCode.CAPA_CASES_UNSETTLED, enTravail));
         }
         return List.of();
+    }
+
+    /**
+     * Aucun dossier CAPA ne traite cet écart ?
+     *
+     * <p>Lu par les deux chemins qui en dépendent — le motif annoncé avant le
+     * clic, et le refus du clic — pour qu'ils ne puissent pas répondre
+     * différemment à la même question.
+     *
+     * <p>Question posée HORS PORTÉE ({@code hasAnyCaseFor}, et non
+     * {@code casesOf}) : c'est un invariant, et il doit compter les dossiers
+     * qu'on ne voit pas. Sous portée, un lecteur restreint à ses propres
+     * dossiers (ADR 0081) se serait vu refuser la résolution, et annoncer
+     * qu'aucune action n'est inscrite, là où un responsable qualité en voyait
+     * trois. La réponse ne sort qu'en booléen : aucun titre, aucun identifiant
+     * de dossier hors de portée ne transite par ce chemin.
+     */
+    private boolean sansDossier(NonConformity nc) {
+        return !capaService.hasAnyCaseFor(nc.getCapaCaseId(), nc.getReference());
     }
 
     private NcDto.Response toResponse(NonConformity nc, List<NcDto.TeamMemberRef> equipe,
