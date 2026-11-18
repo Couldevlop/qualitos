@@ -192,6 +192,50 @@ public class CapaService {
     }
 
     /**
+     * Parmi les dossiers qui retiennent la RESOLUTION de l'ecart, les seuls que
+     * ce lecteur a le droit de nommer.
+     *
+     * <p>Le pendant SOUS PORTEE de {@link #unexecutedCasesFor}, et la raison
+     * d'etre des deux : le DECOMPTE doit porter sur tous les dossiers -- sinon
+     * la resolution dependrait de qui regarde -- mais les NOMS, non. Un refus
+     * qui enumerait les titres hors portee les divulguait par un message
+     * d'erreur, alors que la fiche du dossier les refuse a ce meme lecteur
+     * (ADR 0081).
+     */
+    @Transactional(readOnly = true)
+    public List<String> unexecutedCaseNamesInScopeFor(UUID escaladeId, String ncReference) {
+        return casesInScopeFor(escaladeId, ncReference,
+                statut -> statut == CapaStatus.OPEN || statut == CapaStatus.IN_PROGRESS);
+    }
+
+    /**
+     * Parmi les dossiers qui retiennent la CLOTURE de l'ecart, les seuls que ce
+     * lecteur a le droit de nommer. Le pendant sous portee de
+     * {@link #unsettledCasesFor}.
+     */
+    @Transactional(readOnly = true)
+    public List<String> unsettledCaseNamesInScopeFor(UUID escaladeId, String ncReference) {
+        return casesInScopeFor(escaladeId, ncReference,
+                statut -> !CAPA_SETTLED_STATUSES.contains(statut));
+    }
+
+    /**
+     * Comme {@link #casesFor}, mais en ne nommant que ce que ce lecteur voit.
+     *
+     * <p>Rend une liste VIDE pour un lecteur qui ne voit aucun des dossiers en
+     * cause : le refus se contente alors de son decompte, qui lui est juste.
+     */
+    private List<String> casesInScopeFor(UUID escaladeId, String ncReference,
+                                         java.util.function.Predicate<CapaStatus> retenu) {
+        Optional<UUID> seulement = CapaScope.restriction(scope);
+        return dossiersDe(escaladeId, ncReference).stream()
+                .filter(c -> retenu.test(c.getStatus()))
+                .filter(c -> CapaScope.sees(seulement, c))
+                .map(CapaCase::getTitle)
+                .toList();
+    }
+
+    /**
      * Les dossiers d'un écart dont le statut remplit la condition, sans doublon
      * et dans l'ordre d'ouverture, nommés par leur titre.
      *

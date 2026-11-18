@@ -269,8 +269,9 @@ public class NcService {
         if (!aFaire.isEmpty()) {
             throw new NcStateException(
                     "Non-conformity cannot be resolved while " + aFaire.size()
-                    + " CAPA case(s) still have actions to carry out: "
-                    + String.join(", ", aFaire));
+                    + " CAPA case(s) still have actions to carry out"
+                    + nommes(capaService.unexecutedCaseNamesInScopeFor(
+                            nc.getCapaCaseId(), nc.getReference())));
         }
         nc.setStatus(NcStatus.RESOLVED);
         nc.setResolutionNote(request.resolutionNote());
@@ -311,7 +312,9 @@ public class NcService {
         if (!enTravail.isEmpty()) {
             throw new NcStateException(
                     "Non-conformity cannot be closed while " + enTravail.size()
-                    + " CAPA case(s) remain open: " + String.join(", ", enTravail));
+                    + " CAPA case(s) remain open"
+                    + nommes(capaService.unsettledCaseNamesInScopeFor(
+                            nc.getCapaCaseId(), nc.getReference())));
         }
         nc.setStatus(NcStatus.CLOSED);
         nc.setClosedAt(Instant.now());
@@ -548,6 +551,21 @@ public class NcService {
             throw new MissingTenantContextException();
         }
         return UUID.fromString(TenantContext.getTenantId());
+    }
+
+    /**
+     * La queue d'un refus : « : Remplacer le joint, Auditer le fournisseur »,
+     * ou RIEN quand il n'y a aucun nom a donner.
+     *
+     * <p>Le DECOMPTE du refus porte sur tous les dossiers en cause, portee
+     * comprise -- un invariant ne depend pas de qui regarde. Les NOMS, eux,
+     * sont ceux que ce lecteur a le droit de voir : enumerer les autres les
+     * divulguait par un message d'erreur, alors que leur propre fiche les
+     * refuse au meme lecteur (ADR 0081). Un lecteur qui n'en voit aucun lit
+     * donc le decompte seul, qui lui reste juste.
+     */
+    private static String nommes(List<String> titres) {
+        return titres.isEmpty() ? "" : ": " + String.join(", ", titres);
     }
 
     private NcDto.Response toResponse(NonConformity nc) {
