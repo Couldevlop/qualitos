@@ -7,7 +7,6 @@ import com.openlab.qualitos.quality.ims.domain.model.CoverageMatrix;
 import com.openlab.qualitos.quality.ims.domain.port.ClauseMappingRepository;
 import com.openlab.qualitos.quality.ims.domain.port.TenantStandardCodesProvider;
 import com.openlab.qualitos.quality.ims.domain.service.CoverageMatrixDomainService;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -20,7 +19,6 @@ import java.util.Objects;
  *
  * Multi-tenancy : tenant_id provient EXCLUSIVEMENT du JWT (TenantContext).
  */
-@Service
 public class GetCoverageMatrixUseCase {
 
     private final ClauseMappingRepository mappingRepo;

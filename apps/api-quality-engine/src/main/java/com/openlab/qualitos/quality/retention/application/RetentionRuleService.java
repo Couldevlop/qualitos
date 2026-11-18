@@ -28,7 +28,6 @@ public class RetentionRuleService {
     private final RetentionRuleEventPublisher events;
     private final Clock clock;
 
-    @org.springframework.beans.factory.annotation.Autowired
     public RetentionRuleService(RetentionRuleRepository repo,
                                 TenantProvider tenantProvider, Clock clock) {
         this(repo, tenantProvider, new RetentionRuleEventPublisher.NoOp(), clock);
