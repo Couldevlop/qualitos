@@ -27,6 +27,14 @@
         <mat-option *ngFor="let c of criticities" [value]="c">{{ criticityLabel(c) }}</mat-option>
       </mat-select>
     </mat-form-field>
+    <!-- Le pilote se CHOISIT dans l'annuaire : un champ de texte libre aurait
+         fait chercher l'orthographe exacte d'un nom, et rendu une liste vide
+         pour une lettre de trop. -->
+    <qos-user-picker class="owner-filter" [formControl]="ownerFilter"
+                     data-test="filtre-pilote"
+                     i18n-label="@@capa.list.filter-owner" label="Filtrer par pilote"
+                     i18n-placeholder="@@capa.list.filter-owner-placeholder"
+                     placeholder="Toutes les personnes"></qos-user-picker>
   </mat-card>
 
   <div class="state-row" *ngIf="loading$ | async">
@@ -61,6 +69,14 @@
       <ng-container matColumnDef="owner">
         <th mat-header-cell *matHeaderCellDef i18n="@@capa.list.col-owner">Pilote</th>
         <td mat-cell *matCellDef="let c" data-test="capa-pilote">{{ ownerLabel(c) }}</td>
+      </ng-container>
+      <!-- Depuis quand ce dossier est ouvert : c'est ce qu'on lit a cote de son
+           echeance pour savoir s'il traine. -->
+      <ng-container matColumnDef="createdAt">
+        <th mat-header-cell *matHeaderCellDef i18n="@@common.created-at">Créé le</th>
+        <td mat-cell *matCellDef="let c" data-test="capa-cree-le">
+          {{ c.createdAt ? (c.createdAt | date) : '—' }}
+        </td>
       </ng-container>
       <ng-container matColumnDef="dueDate">
         <th mat-header-cell *matHeaderCellDef i18n="@@capa.list.col-due-date">Échéance</th>

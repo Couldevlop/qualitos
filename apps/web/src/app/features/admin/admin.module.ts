@@ -15,6 +15,8 @@ import { CircuitsComponent } from './pages/circuits/circuits.component';
 import { LicenseComponent } from './pages/license/license.component';
 import { MocSettingsComponent } from './pages/moc-settings/moc-settings.component';
 import { DocumentSettingsComponent } from './pages/document-settings/document-settings.component';
+import { MailSettingsModule } from './mail/mail-settings.module';
+import { MailSettingsComponent } from './pages/mail-settings/mail-settings.component';
 import { SpcSettingsComponent } from './pages/spc-settings/spc-settings.component';
 import { AiPolicyComponent } from './pages/ai-policy/ai-policy.component';
 import { DmaicSettingsComponent } from './pages/dmaic-settings/dmaic-settings.component';
@@ -53,6 +55,9 @@ const routes: Routes = [
   // Les listes déroulantes de l'application, dans les mots du client (ADR 0111).
   { path: 'listes', component: CatalogsComponent },
   // Le fournisseur des appels LLM du tenant, et sa souveraineté (ADR 0102).
+  // La messagerie de l'organisation (ADR 0127) : l'adresse d'ou partent ses
+  // courriels. Sans reglage, ils partent de celle de la plateforme.
+  { path: 'messagerie', component: MailSettingsComponent },
   { path: 'ia', component: AiPolicyComponent },
   // Les cabinets partenaires et leurs accès (ADR 0106). L'écran est ICI, chez le
   // client, et non dans la console de l'éditeur : l'éditeur propose un cabinet,
@@ -94,7 +99,7 @@ const routes: Routes = [
     MocSettingsComponent, DocumentSettingsComponent, SpcSettingsComponent, DmaicSettingsComponent, CompetencyWorkshopsComponent,
     AiPolicyComponent, NcSettingsComponent, PartnerAccessComponent, CatalogsComponent],
   // UserPickerModule : les titulaires des rôles MOC se choisissent dans l'annuaire (ADR 0091).
-  imports: [SharedModule, UiModule, FormsModule, DragDropModule, MatMenuModule,
+  imports: [SharedModule, UiModule, FormsModule, DragDropModule, MatMenuModule, MailSettingsModule,
     UserPickerModule, PersonNameModule, CredentialRevealModule, RouterModule.forChild(routes)]
 })
 export class AdminModule {}

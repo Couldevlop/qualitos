@@ -50,5 +50,18 @@ public enum NcBlockerCode {
      * parce que l'écart, lui, est parfaitement clôturable — par quelqu'un
      * d'autre.
      */
-    SECOND_LOOK_REQUIRED
+    SECOND_LOOK_REQUIRED,
+
+    /**
+     * Aucun dossier CAPA ne traite l'écart. Décompte = 0, toujours.
+     *
+     * <p>Empêche de RÉSOUDRE : résoudre, c'est dire « ce qui devait être fait
+     * l'a été », et rien n'a été décidé. L'écart passait « résolu » sans qu'une
+     * seule action soit inscrite, et le registre déclarait traité un constat
+     * dont il ne restait aucune trace de traitement (ISO 9001 §10.2).
+     *
+     * <p>Le bouton était éteint sans un mot dans ce cas comme dans les autres :
+     * c'est le motif qui dit le geste — ajouter une action.
+     */
+    NO_CAPA_CASE
 }

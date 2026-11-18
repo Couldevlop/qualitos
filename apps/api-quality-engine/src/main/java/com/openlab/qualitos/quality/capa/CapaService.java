@@ -93,21 +93,38 @@ public class CapaService {
 
     @Transactional(readOnly = true)
     public Page<CapaDto.CaseResponse> findAll(CapaStatus status, Pageable pageable) {
-        return findAll(status, null, pageable);
+        return findAll(status, null, null, pageable);
     }
 
-    /** Le registre filtré par statut et par criticité, en base : la pagination reste juste. */
+    /** Le registre filtré par statut et par criticité, sans filtre de pilote. */
     @Transactional(readOnly = true)
-    public Page<CapaDto.CaseResponse> findAll(CapaStatus status, CapaCriticity criticity, Pageable pageable) {
+    public Page<CapaDto.CaseResponse> findAll(CapaStatus status, CapaCriticity criticity,
+                                              Pageable pageable) {
+        return findAll(status, criticity, null, pageable);
+    }
+
+    /**
+     * Le registre filtré par statut, criticité et pilote, en base : la
+     * pagination reste juste.
+     *
+     * <p>Le pilote est un filtre comme les autres, et non une portée : il
+     * restreint ce qu'on REGARDE, dans ce qu'on a déjà le droit de voir
+     * (ADR 0081). Un lecteur restreint à ses propres dossiers qui filtre sur
+     * quelqu'un d'autre obtient donc une liste vide, et c'est juste.
+     */
+    @Transactional(readOnly = true)
+    public Page<CapaDto.CaseResponse> findAll(CapaStatus status, CapaCriticity criticity,
+                                              UUID ownerId, Pageable pageable) {
         UUID tenantId = requireTenantId();
         Optional<UUID> seulement = CapaScope.restriction(scope);
         if (seulement.isPresent()) {
-            return caseRepository.findConcerning(tenantId, status, criticity, seulement.get(), pageable)
+            return caseRepository
+                    .findConcerning(tenantId, status, criticity, ownerId, seulement.get(), pageable)
                     .map(c -> toResponse(c, false));
         }
         Page<CapaCase> page;
-        if (criticity != null) {
-            page = caseRepository.search(tenantId, status, criticity, pageable);
+        if (criticity != null || ownerId != null) {
+            page = caseRepository.search(tenantId, status, criticity, ownerId, pageable);
         } else {
             page = status != null
                     ? caseRepository.findByTenantIdAndStatus(tenantId, status, pageable)
@@ -192,6 +209,50 @@ public class CapaService {
     }
 
     /**
+     * Parmi les dossiers qui retiennent la RESOLUTION de l'ecart, les seuls que
+     * ce lecteur a le droit de nommer.
+     *
+     * <p>Le pendant SOUS PORTEE de {@link #unexecutedCasesFor}, et la raison
+     * d'etre des deux : le DECOMPTE doit porter sur tous les dossiers -- sinon
+     * la resolution dependrait de qui regarde -- mais les NOMS, non. Un refus
+     * qui enumerait les titres hors portee les divulguait par un message
+     * d'erreur, alors que la fiche du dossier les refuse a ce meme lecteur
+     * (ADR 0081).
+     */
+    @Transactional(readOnly = true)
+    public List<String> unexecutedCaseNamesInScopeFor(UUID escaladeId, String ncReference) {
+        return casesInScopeFor(escaladeId, ncReference,
+                statut -> statut == CapaStatus.OPEN || statut == CapaStatus.IN_PROGRESS);
+    }
+
+    /**
+     * Parmi les dossiers qui retiennent la CLOTURE de l'ecart, les seuls que ce
+     * lecteur a le droit de nommer. Le pendant sous portee de
+     * {@link #unsettledCasesFor}.
+     */
+    @Transactional(readOnly = true)
+    public List<String> unsettledCaseNamesInScopeFor(UUID escaladeId, String ncReference) {
+        return casesInScopeFor(escaladeId, ncReference,
+                statut -> !CAPA_SETTLED_STATUSES.contains(statut));
+    }
+
+    /**
+     * Comme {@link #casesFor}, mais en ne nommant que ce que ce lecteur voit.
+     *
+     * <p>Rend une liste VIDE pour un lecteur qui ne voit aucun des dossiers en
+     * cause : le refus se contente alors de son decompte, qui lui est juste.
+     */
+    private List<String> casesInScopeFor(UUID escaladeId, String ncReference,
+                                         java.util.function.Predicate<CapaStatus> retenu) {
+        Optional<UUID> seulement = CapaScope.restriction(scope);
+        return dossiersDe(escaladeId, ncReference).stream()
+                .filter(c -> retenu.test(c.getStatus()))
+                .filter(c -> CapaScope.sees(seulement, c))
+                .map(CapaCase::getTitle)
+                .toList();
+    }
+
+    /**
      * Les dossiers d'un écart dont le statut remplit la condition, sans doublon
      * et dans l'ordre d'ouverture, nommés par leur titre.
      *
@@ -245,6 +306,25 @@ public class CapaService {
      * et une r\u00e9clamation client portent la m\u00eame r\u00e9f\u00e9rence d'\u00e9cart, pas le m\u00eame
      * type de source.
      */
+    /**
+     * Un dossier au moins traite-t-il cet ecart ? HORS PORTEE, expres.
+     *
+     * <p>C'est un INVARIANT, pas un affichage : il compte TOUS les dossiers, y
+     * compris ceux que le lecteur ne voit pas. {@link #casesOf} filtre par
+     * portee parce qu'il NOMME les dossiers ; s'en servir ici aurait fait
+     * dependre la resolution d'un ecart de qui regarde -- un lecteur restreint
+     * a ses propres dossiers (ADR 0081) se serait vu refuser la resolution, et
+     * annoncer qu'aucune action n'est inscrite, la ou un responsable qualite en
+     * voyait trois.
+     *
+     * <p>Ne rend donc qu'un booleen : ni titre, ni identifiant. Meme regle que
+     * {@link #unexecutedCasesFor}, dont le resultat ne sort qu'en decompte.
+     */
+    @Transactional(readOnly = true)
+    public boolean hasAnyCaseFor(UUID escaladeId, String ncReference) {
+        return !dossiersDe(escaladeId, ncReference).isEmpty();
+    }
+
     private List<CapaCase> dossiersDe(UUID escaladeId, String ncReference) {
         UUID tenantId = requireTenantId();
         Map<UUID, CapaCase> retenus = new LinkedHashMap<>();
@@ -411,7 +491,7 @@ public class CapaService {
      * premier rattachement.
      */
     private NonConformity ecartCite(CapaSourceType sourceType, String sourceRef) {
-        if (!estEcart(sourceType) || sourceRef == null || sourceRef.isBlank()) {
+        if (!citeUnEcart(sourceType) || sourceRef == null || sourceRef.isBlank()) {
             return null;
         }
         UUID tenantId = requireTenantId();
@@ -1016,6 +1096,24 @@ public class CapaService {
     private static boolean estEcart(CapaSourceType source) {
         return source == CapaSourceType.NON_CONFORMITY
                 || source == CapaSourceType.EXTERNAL_NON_CONFORMITY;
+    }
+
+    /**
+     * Les sources dont la référence peut NOMMER un écart du registre.
+     *
+     * <p>{@code COMPLAINT} s'y ajoute : la fenêtre de création fait choisir, pour
+     * « réclamation client », un écart EXTERNE encore ouvert — c'est là que les
+     * réclamations sont instruites, le registre des réclamations n'ayant aucun
+     * écran de saisie. Sans cela le dossier restait orphelin : la fiche de
+     * l'écart n'y menait pas, son rapport 8D ne le voyait pas, et sa clôture ne
+     * l'attendait pas.
+     *
+     * <p>Plus large que {@link #estEcart}, qui dit ce qu'un dossier EST une fois
+     * sa source arrêtée : une référence qui ne désigne aucun écart laisse la
+     * source telle qu'elle a été choisie.
+     */
+    private static boolean citeUnEcart(CapaSourceType source) {
+        return estEcart(source) || source == CapaSourceType.COMPLAINT;
     }
 
     private CapaCase loadCase(UUID id) {

@@ -95,9 +95,29 @@ quatre-vingt-huit paquets de ce genre. Les principaux, par famille :
 | Gouvernance réglementaire | `gdpr`, `ropa`, `consent`, `dpia`, `retention`, `aiact`, `aiconformity`, `aiincidents`, `nis2measures`, `cyberincidents`, `breach` |
 | Socle transverse | `authz`, `settings`, `config`, `tenantmodules`, `auditlog`, `notifications`, `webhooks`, `apikeys`, `ratelimit`, `rls`, `crypto`, `blockchain`, `aigateway`, `airouting`, `edition`, `industry`, `marketplace` |
 
-Chaque module suit la même découpe hexagonale — `domain` sans framework, `application`
-sur des ports, `infrastructure` pour les adaptateurs, `web` pour les contrôleurs — et
-celle-ci est une exigence permanente du projet, pas une préférence de style.
+La découpe hexagonale — `domain` sans framework, `application` sur des ports,
+`infrastructure` pour les adaptateurs, `web` pour les contrôleurs — est une **exigence
+permanente du projet**, pas une préférence de style. Mais elle n'est pas encore un fait
+accompli, et ce document disait le contraire : au relevé du 2026-11-18, **41 modules la
+suivent et 47 sont plats**, l'entité JPA y portant les règles. La ligne de partage est
+chronologique — les modules écrits tôt sont plats, ce qui place le cœur du produit (les cinq
+méthodes, les écarts, les CAPA, le Standards Hub) dans le camp plat, et les modules
+exemplaires à la périphérie.
+
+Ce qui est tenu, depuis l'[ADR 0128](../../adr/0128-l-architecture-tient-par-le-build-et-non-par-la-memoire.md),
+c'est qu'un module **neuf** ne peut plus entrer dans le camp plat sans que le `build` le dise :
+quatre règles ArchUnit portent sur `..domain..` et `..application..` en général, et non plus sur
+une liste de modules. Les deux seules dérogations sont nommées dans la règle, avec leur raison.
+
+L'état mesuré, le graphe des dépendances, les cycles restants et l'ordre dans lequel prendre la
+suite sont dans [l'état des lieux](../../architecture/etat-des-lieux.md), qui se recalcule par
+`python scripts/arch/releve.py`.
+
+**Les refus HTTP appartiennent au module qui les lève.** Chaque module porte son
+`@RestControllerAdvice`, ordonné devant le filet `Exception` du socle ; `common` ne garde que
+ce qui ne vient d'aucun module et ne dépend d'aucun d'eux. La forme d'un refus — statut,
+fragment d'URL sous `https://qualitos.io/errors/`, titre, horodatage — est écrite une seule
+fois, dans `common/ProblemDetails`.
 
 L'`ai-service` suit la même discipline en Python (ADR 0008) : `domain/` sans import de
 framework, ports abstraits (`AIProvider`, `VectorStore`, `PiiFilter`),
@@ -131,3 +151,4 @@ renommage. Elle est lisible là où elle est juste :
 | [0086](../../adr/0086-isoler-les-clients-dans-la-base.md) | L'isolation est aussi dans la base, pas seulement dans le code |
 | [0092](../../adr/0092-une-personne-est-un-utilisateur-de-l-annuaire.md) | Une personne est un utilisateur de l'annuaire, jamais un texte libre |
 | [0100](../../adr/0100-passage-a-spring-boot-4.md) | Spring Boot 4, Jackson 2 conservé par configuration explicite |
+| [0128](../../adr/0128-l-architecture-tient-par-le-build-et-non-par-la-memoire.md) | Le socle ne dépend d'aucun module ; chaque module dit ses propres refus HTTP ; les règles d'architecture sont universelles, pas une liste blanche |

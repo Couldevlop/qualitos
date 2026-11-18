@@ -523,6 +523,31 @@ kubectl -n "$NS" create secret generic qualitos-api-core-identity \
   --dry-run=client -o yaml | kubectl apply -f - >/dev/null
 echo "  secret qualitos-api-core-identity : à jour"
 
+# -----------------------------------------------------------------------------
+# Cle des secrets RELISIBLES (ADR 0127) : les mots de passe SMTP des messageries.
+#
+# ELLE SE CREE UNE FOIS, ET NE SE REGENERE JAMAIS. C'est la propriete qui
+# compte ici : une cle neuve rendrait INDECHIFFRABLES tous les mots de passe
+# deja enregistres, et les messageries de tous les clients cesseraient
+# d'emettre -- sans erreur a l'enregistrement, puisque rien n'est reecrit. On
+# lit donc le secret existant, et on n'ecrit que s'il n'y en a pas.
+#
+# Elle est dans un secret A PART de celui des comptes de service : ce dernier
+# est reapplique a chaque deploiement depuis Keycloak, et y loger une valeur
+# engendree ici la ferait disparaitre au deploiement suivant.
+#
+# La valeur n'est JAMAIS journalisee, ni en clair ni tronquee.
+# -----------------------------------------------------------------------------
+if kubectl -n "$NS" get secret qualitos-api-core-secrets >/dev/null 2>&1; then
+  echo "  cle des secrets relisibles : conservee (jamais regeneree)"
+else
+  SECRET_KEY="$(head -c 32 /dev/urandom | base64 | tr -d '
+')"
+  kubectl -n "$NS" create secret generic qualitos-api-core-secrets     --from-literal=QUALITOS_SECRET_KEY="$SECRET_KEY" >/dev/null
+  unset SECRET_KEY
+  echo "  cle des secrets relisibles : engendree (32 octets)"
+fi
+
 if [ -n "$AI_SECRET" ]; then
   echo "  secret du client IA : récupéré depuis Keycloak"
 else

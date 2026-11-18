@@ -202,6 +202,8 @@ export interface NcCapaCaseRef {
 export type NcBlockerCode =
   | 'CAPA_ACTIONS_TO_CARRY_OUT'
   | 'CAPA_CASES_UNSETTLED'
+  /** Aucun dossier CAPA ne traite l'écart : il n'y a rien à déclarer résolu. */
+  | 'NO_CAPA_CASE'
   /**
    * Le SEUL motif qui dépende de qui lit la fiche : la personne qui a
    * résolu cet écart ne peut pas le clôturer. Le même écart n'en porte

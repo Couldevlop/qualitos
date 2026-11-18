@@ -369,8 +369,7 @@ public class EightDSnapshotAssembler {
      * qui part chez le client.
      */
     private static final List<String> NATURES_D3 = List.of("CONTAINMENT");
-    private static final List<String> NATURES_D5 =
-            List.of("CONTAINMENT", "CORRECTIVE", "PREVENTIVE");
+    private static final List<String> NATURES_D5 = List.of("CORRECTIVE", "PREVENTIVE");
     private static final List<String> NATURES_D6 = List.of("PREVENTIVE");
 
     /** Les colonnes, dans l'ordre de l'ecran, moins celle des gestes. */

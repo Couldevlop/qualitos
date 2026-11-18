@@ -83,6 +83,10 @@ class NcSecondRegardTest {
     void resolve_traceQuiAResolu() {
         NonConformity n = ecart(NcStatus.ACTION_DEFINED);
         enregistre(n);
+        // Un ecart sans aucun dossier CAPA ne se resout pas : ce refus a son
+        // propre banc. Ici on mesure la TRACE de qui resout, et sans ce dossier
+        // le banc mesurerait un invariant qui n est pas le sien.
+        when(capaService.hasAnyCaseFor(null, n.getReference())).thenReturn(true);
         connecte(MARIE, "Marie Durand");
 
         service.resolve(n.getId(), new NcDto.ResolveRequest("remplacé"));

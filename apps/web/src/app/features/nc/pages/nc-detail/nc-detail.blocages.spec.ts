@@ -135,6 +135,21 @@ describe('NcDetailComponent — ce qui bloque l’avancement', () => {
     expect(texte('nc-blockers')).toContain('1 dossier CAPA porte');
   });
 
+  /**
+   * Un ecart qu'AUCUNE action ne traite dit le geste qui manque.
+   *
+   * <p>Le bouton etait eteint sans un mot : l'ecart annoncait « action
+   * definie » et il n'y en avait pas une seule. La phrase nomme ce qu'il faut
+   * faire -- ajouter une action -- au lieu de laisser chercher.
+   */
+  it('dit d’ajouter au moins une action quand aucune CAPA ne traite l’écart', () => {
+    setup('ACTION_DEFINED', [{ code: 'NO_CAPA_CASE', count: 0 }]);
+
+    expect(un('nc-blockers')).not.toBeNull();
+    expect(texte('nc-blockers')).toContain('au moins une action');
+    expect(bouton('nc-resolve').disabled).toBeTrue();
+  });
+
   // ---------- le bouton suit la phrase ----------
 
   it('éteint le bouton que le serveur refuserait', () => {

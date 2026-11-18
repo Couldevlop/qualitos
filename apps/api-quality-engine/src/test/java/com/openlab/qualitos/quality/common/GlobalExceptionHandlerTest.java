@@ -1,9 +1,5 @@
 package com.openlab.qualitos.quality.common;
 
-import com.openlab.qualitos.quality.fivewhys.FiveWhysNotFoundException;
-import com.openlab.qualitos.quality.fivewhys.FiveWhysStateException;
-import com.openlab.qualitos.quality.notifications.domain.NotificationNotFoundException;
-import com.openlab.qualitos.quality.standards.RoadmapStageNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -17,6 +13,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class GlobalExceptionHandlerTest {
 
+    // Ce banc ne mesure plus que les refus de la PLATEFORME. Les refus de module
+    // sont mesures a cote de leur propre conseil, depuis que le socle ne les porte
+    // plus (ADR 0128) : un banc place ici reintroduirait la dependance que le
+    // decoupage a supprimee.
+
     private final GlobalExceptionHandler handler = new GlobalExceptionHandler();
 
     @Test
@@ -27,20 +28,6 @@ class GlobalExceptionHandlerTest {
         assertThat(pd.getDetail()).isEqualTo("Resource not found");
         // ne divulgue pas le chemin demandé
         assertThat(pd.getDetail()).doesNotContain("does-not-exist");
-    }
-
-    /**
-     * Une panne du stockage objet — bucket absent, identifiants refusés, service
-     * injoignable — tombait dans l'attrape-tout et sortait en « erreur interne ».
-     * Ce diagnostic désigne l'application alors que la coupure est ailleurs, et
-     * c'est exactement ce qui s'est produit au premier déploiement réel.
-     */
-    @Test
-    void nlqUntranslatable_mapsTo422_notBadGateway() {
-        ProblemDetail pd = handler.handleNlqUntranslatable(
-                new com.openlab.qualitos.quality.aigateway.NlqUntranslatableException("Question non traduisible en requête sûre", null));
-        assertThat(pd.getStatus()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY.value());
-        assertThat(pd.getType().toString()).endsWith("/nlq-untranslatable");
     }
 
     @Test
@@ -55,14 +42,6 @@ class GlobalExceptionHandlerTest {
         assertThat(pd.getType().toString()).endsWith("/storage-unavailable");
         // Le détail nomme des ressources internes : il reste au journal.
         assertThat(pd.getDetail()).doesNotContain("qualitos-evidence");
-    }
-
-    @Test
-    void roadmapStageNotFound_mapsTo404() {
-        ProblemDetail pd = handler.handleRoadmapStageNotFound(
-                new RoadmapStageNotFoundException(UUID.randomUUID()));
-        assertThat(pd.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
-        assertThat(pd.getTitle()).contains("Roadmap Stage");
     }
 
     @Test
@@ -111,30 +90,4 @@ class GlobalExceptionHandlerTest {
         assertThat(reponse.getHeaders().getAllow()).isEmpty();
     }
 
-    @Test
-    void fiveWhysNotFound_mapsTo404() {
-        ProblemDetail pd = handler.handleFiveWhysNotFound(
-                new FiveWhysNotFoundException(UUID.randomUUID()));
-        assertThat(pd.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
-        assertThat(pd.getTitle()).isEqualTo("Five Whys Analysis Not Found");
-    }
-
-    @Test
-    void fiveWhysRuleBroken_mapsTo409_andSaysWhy() {
-        // Une règle de méthode refusée n'est pas une panne : le client doit lire un
-        // conflit d'état, et la raison, pour la corriger sans deviner.
-        ProblemDetail pd = handler.handleFiveWhysState(
-                new FiveWhysStateException("Conclure avant 3 pourquoi, c'est nommer un symptôme"));
-        assertThat(pd.getStatus()).isEqualTo(HttpStatus.CONFLICT.value());
-        assertThat(pd.getTitle()).isEqualTo("Invalid Five Whys State");
-        assertThat(pd.getDetail()).contains("symptôme");
-    }
-
-    @Test
-    void notificationNotFound_mapsTo404() {
-        ProblemDetail pd = handler.handleNotificationNotFound(
-                new NotificationNotFoundException(UUID.randomUUID()));
-        assertThat(pd.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
-        assertThat(pd.getTitle()).isEqualTo("Notification Not Found");
-    }
 }

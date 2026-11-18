@@ -1282,6 +1282,9 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
         return b.count === 1
           ? $localize`:@@nc.blocker.cases-one:1 dossier CAPA n'est pas clôturé. Clôturez-le — après vérification de son efficacité — pour pouvoir clôturer cet écart.`
           : $localize`:@@nc.blocker.cases-many:${b.count}:count: dossiers CAPA ne sont pas clôturés. Clôturez-les — après vérification de leur efficacité — pour pouvoir clôturer cet écart.`;
+      case 'NO_CAPA_CASE':
+        return $localize`:@@nc.blocker.no-capa:Aucune action n'est encore inscrite sur cet écart. Ajoutez au moins une action pour pouvoir le résoudre.`;
+
       case 'SECOND_LOOK_REQUIRED':
         // La phrase dit le GESTE qui débloque, et surtout que l'écart n'est pas
         // en défaut : c'est la personne qui ne peut pas le clôturer, pas l'écart

@@ -10146,6 +10146,22 @@ Customer portal</target>
         <source>Conformité</source>
         <target state="translated">Compliance</target>
       </trans-unit>
+      <trans-unit id="nc.cause.root-cause-failed" datatype="html">
+        <source>La conclusion n’a pas été enregistrée. Réessayez.</source>
+        <target state="translated">The conclusion was not saved. Try again.</target>
+      </trans-unit>
+      <trans-unit id="capa.list.filter-owner" datatype="html">
+        <source>Filtrer par pilote</source>
+        <target state="translated">Filter by owner</target>
+      </trans-unit>
+      <trans-unit id="capa.list.filter-owner-placeholder" datatype="html">
+        <source>Toutes les personnes</source>
+        <target state="translated">Everyone</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.no-capa" datatype="html">
+        <source>Aucune action n'est encore inscrite sur cet écart. Ajoutez au moins une action pour pouvoir le résoudre.</source>
+        <target state="translated">No action is recorded on this non-conformity yet. Add at least one action before resolving it.</target>
+      </trans-unit>
       <trans-unit id="capa.type.containment" datatype="html">
         <source>Endiguement</source>
         <target state="translated">Containment</target>
@@ -18585,6 +18601,182 @@ declared income
       <trans-unit id="kpis.detail.measurements-empty-readonly" datatype="html">
         <source>Aucune mesure pour l'instant.</source>
         <target state="translated">No reading yet.</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.title" datatype="html">
+        <source>Messagerie</source>
+        <target state="translated">Email delivery</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.subtitle" datatype="html">
+        <source>L'adresse d'où partent les courriels de votre organisation.</source>
+        <target state="translated">The address your organisation sends email from.</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.load-failed" datatype="html">
+        <source>La messagerie n'a pas pu être chargée.</source>
+        <target state="translated">Email settings could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.using-platform" datatype="html">
+        <source>Vos courriels partent aujourd'hui de l'adresse de la plateforme. Elle n'est pas la vôtre : vos destinataires ne la reconnaissent pas, et elle ne passe pas vos règles SPF/DKIM.</source>
+        <target state="translated">Your email currently goes out from the platform's address. It is not yours: your recipients will not recognise it, and it does not satisfy your SPF/DKIM rules.</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.using-own" datatype="html">
+        <source>Vos courriels partent de <x id="INTERPOLATION"/>.</source>
+        <target state="translated">Your email goes out from <x id="INTERPOLATION"/>.</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.verified" datatype="html">
+        <source>Vérifiée le <x id="INTERPOLATION"/></source>
+        <target state="translated">Verified on <x id="INTERPOLATION"/></target>
+      </trans-unit>
+      <trans-unit id="mail.settings.not-verified" datatype="html">
+        <source>Jamais éprouvée par un envoi d'essai</source>
+        <target state="translated">Never proven by a test message</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.sender" datatype="html">
+        <source>Expéditeur</source>
+        <target state="translated">Sender</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.sender-help" datatype="html">
+        <source>Ce que vos destinataires liront. L'adresse de réponse peut différer de l'expéditeur : on émet souvent depuis une adresse de service et l'on veut les réponses dans une boîte partagée.</source>
+        <target state="translated">What your recipients will read. The reply-to address may differ from the sender: mail often goes out from a service address while replies belong in a shared mailbox.</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.from-address" datatype="html">
+        <source>Adresse d'expédition</source>
+        <target state="translated">From address</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.from-name" datatype="html">
+        <source>Nom affiché</source>
+        <target state="translated">Display name</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.reply-to" datatype="html">
+        <source>Adresse de réponse</source>
+        <target state="translated">Reply-to address</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.server" datatype="html">
+        <source>Serveur sortant</source>
+        <target state="translated">Outgoing server</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.server-help" datatype="html">
+        <source>STARTTLS ouvre en clair puis chiffre (port 587) ; TLS chiffre dès la connexion (port 465). Ce ne sont pas deux façons de dire la même chose, et les confondre donne une connexion qui expire sans message utile.</source>
+        <target state="translated">STARTTLS opens in the clear then encrypts (port 587); TLS encrypts from the first byte (port 465). These are not two ways of saying the same thing, and mixing them up gives a connection that times out with no useful message.</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.host" datatype="html">
+        <source>Serveur</source>
+        <target state="translated">Server</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.port" datatype="html">
+        <source>Port</source>
+        <target state="translated">Port</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.security" datatype="html">
+        <source>Protection</source>
+        <target state="translated">Encryption</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.security-none" datatype="html">
+        <source>Aucune</source>
+        <target state="translated">None</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.no-tls-warning" datatype="html">
+        <source>Sans protection, votre mot de passe circule en clair sur le réseau. À réserver à un relais interne.</source>
+        <target state="translated">With no encryption your password travels in the clear over the network. Reserve this for an internal relay.</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.account" datatype="html">
+        <source>Compte</source>
+        <target state="translated">Account</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.account-help" datatype="html">
+        <source>Facultatif : un relais interne reconnaît parfois ses clients à leur adresse IP. Le mot de passe est chiffré et ne vous sera jamais réaffiché — laisser le champ vide ne l'efface pas.</source>
+        <target state="translated">Optional: an internal relay sometimes recognises its clients by IP address. The password is encrypted and will never be shown back to you — leaving the field empty does not erase it.</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.username" datatype="html">
+        <source>Identifiant</source>
+        <target state="translated">Username</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.password" datatype="html">
+        <source>Mot de passe</source>
+        <target state="translated">Password</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.password-replace" datatype="html">
+        <source>Nouveau mot de passe</source>
+        <target state="translated">New password</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.password-kept" datatype="html">
+        <source>Un mot de passe est enregistré. Laissez vide pour le conserver.</source>
+        <target state="translated">A password is stored. Leave empty to keep it.</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.clear-password" datatype="html">
+        <source>Effacer le mot de passe</source>
+        <target state="translated">Clear the password</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.password-cleared" datatype="html">
+        <source>Mot de passe effacé.</source>
+        <target state="translated">Password cleared.</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.activation" datatype="html">
+        <source>Mise en service</source>
+        <target state="translated">Going live</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.activation-help" datatype="html">
+        <source>Tant que la messagerie n'est pas activée, vos courriels continuent de partir de l'adresse de la plateforme. Éprouvez-la d'abord : enregistrer un réglage n'est pas l'avoir vérifié.</source>
+        <target state="translated">Until this mailbox is switched on, your email keeps going out from the platform's address. Prove it first: saving a setting is not having verified it.</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.enable" datatype="html">
+        <source>Envoyer les courriels depuis cette messagerie</source>
+        <target state="translated">Send email from this mailbox</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.saved" datatype="html">
+        <source>Messagerie enregistrée.</source>
+        <target state="translated">Email settings saved.</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.save-failed" datatype="html">
+        <source>La messagerie n'a pas pu être enregistrée.</source>
+        <target state="translated">Email settings could not be saved.</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.remove" datatype="html">
+        <source>Retirer la messagerie</source>
+        <target state="translated">Remove this mailbox</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.removed" datatype="html">
+        <source>Messagerie retirée. Les courriels repartent de l'adresse de la plateforme.</source>
+        <target state="translated">Mailbox removed. Email goes out from the platform's address again.</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.remove-failed" datatype="html">
+        <source>La messagerie n'a pas pu être retirée.</source>
+        <target state="translated">The mailbox could not be removed.</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.test" datatype="html">
+        <source>Envoi d'essai</source>
+        <target state="translated">Test message</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.test-help" datatype="html">
+        <source>Un message réel part vers l'adresse indiquée. C'est le seul moyen de savoir que le serveur accepte votre compte et votre adresse d'expédition : le refus de l'expéditeur est le cas le plus fréquent.</source>
+        <target state="translated">A real message goes to the address given. It is the only way to know that the server accepts both your account and your from address: a rejected sender is the most common case.</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.test-recipient" datatype="html">
+        <source>Destinataire de l'essai</source>
+        <target state="translated">Test recipient</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.send-test" datatype="html">
+        <source>Envoyer l'essai</source>
+        <target state="translated">Send the test</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.test-ok" datatype="html">
+        <source>Courriel d'essai envoyé. La messagerie est vérifiée.</source>
+        <target state="translated">Test message sent. The mailbox is verified.</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.test-failed" datatype="html">
+        <source>L'essai n'a pas pu être lancé.</source>
+        <target state="translated">The test could not be started.</target>
+      </trans-unit>
+      <trans-unit id="nav.admin-mail" datatype="html">
+        <source>Messagerie</source>
+        <target state="translated">Email delivery</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.mail" datatype="html">
+        <source>Messagerie</source>
+        <target state="translated">Email</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.mail-title" datatype="html">
+        <source>Messagerie de <x id="INTERPOLATION"/></source>
+        <target state="translated">Email delivery for <x id="INTERPOLATION"/></target>
       </trans-unit>
       <trans-unit id="nav.marketplace" datatype="html">
         <source>Marketplace</source>
