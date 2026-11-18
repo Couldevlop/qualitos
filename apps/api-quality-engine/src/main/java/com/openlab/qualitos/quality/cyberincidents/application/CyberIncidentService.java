@@ -22,7 +22,6 @@ public class CyberIncidentService {
     private final CyberIncidentEventPublisher events;
     private final Clock clock;
 
-    @org.springframework.beans.factory.annotation.Autowired
     public CyberIncidentService(CyberIncidentRepository repo,
                                 TenantProvider tenantProvider, Clock clock) {
         this(repo, tenantProvider, new CyberIncidentEventPublisher.NoOp(), clock);

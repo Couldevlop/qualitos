@@ -45,7 +45,6 @@ public class ModuleActivationService {
     /** La licence on-premise, ou {@link ModuleLicense#NONE} en SaaS (ADR 0082). */
     private final ModuleLicense license;
 
-    @org.springframework.beans.factory.annotation.Autowired
     public ModuleActivationService(ModuleActivationRepository repo,
                                    TenantProvider tenantProvider,
                                    TenantTierProvider tierProvider,
