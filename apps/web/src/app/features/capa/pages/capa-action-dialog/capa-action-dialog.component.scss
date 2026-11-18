@@ -36,3 +36,41 @@
   color: var(--qos-fg-secondary);
   font-size: var(--qos-fs-sm, 13px);
 }
+
+/* UNE ÉCHÉANCE AVANT LE DÉBUT : dite en rouge, et non refusée. La couleur ne
+   porte pas seule l'information -- la phrase sous le champ la dit aussi, pour
+   qui ne distingue pas le rouge et pour un lecteur d'écran. */
+.echeance--avant-debut {
+  color: var(--qos-danger, #a62b2b);
+}
+
+.echeance-alerte {
+  margin: calc(var(--qos-space-1, 4px) * -1) 0 var(--qos-space-3, 12px);
+  color: var(--qos-danger, #a62b2b);
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+/* LA DEMANDE D'EFFICACITÉ, détachée du reste du formulaire : elle ne décrit pas
+   l'action, elle dit comment on la jugera. */
+.efficacite--rappel {
+  margin: 0 0 var(--qos-space-3, 12px);
+  padding: var(--qos-space-3, 12px);
+  border-left: 3px solid var(--qos-accent, #0f5c55);
+  background: var(--qos-surface-2, #f4f7f6);
+  border-radius: 0 var(--qos-radius-sm, 6px) var(--qos-radius-sm, 6px) 0;
+}
+
+.efficacite__titre {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--qos-muted, #5a6a66);
+}
+
+.efficacite__texte {
+  margin: var(--qos-space-1, 4px) 0 0;
+  white-space: pre-wrap;
+}

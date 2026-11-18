@@ -111,7 +111,19 @@ public class AuditFindingNcService {
                 finding.getPhotoUrl(),
                 null,
                 EXTERNAL_AUDITS.contains(plan.getType()) ? NcOrigin.EXTERNAL : NcOrigin.INTERNAL,
-                null, null,
+                null,   // productId
+                // Ni client ni lot : un constat d'audit porte sur le systeme de
+                // management, pas sur une livraison. Les deux se saisissent a la
+                // main si l'instruction les fait apparaitre.
+                null,   // customerName
+                null,   // batchNumber
+                // Aucun valideur designe : la cloture reviendra aux roles de
+                // pilotage. Designer quelqu un est une decision humaine, et un
+                // import ne connait pas qui, dans l organisation, doit porter le
+                // second regard sur cet ecart.
+                null,   // validatorId
+                null,   // validatorName
+                null,   // fmeaItemId
                 // Aucune équipe : un écart né d'un constat d'audit n'a pas encore
                 // de personnes désignées pour le traiter. L'obligation de nommer
                 // une équipe pèse sur l'humain qui OUVRE une fiche, pas sur

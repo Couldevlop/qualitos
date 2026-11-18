@@ -214,3 +214,11 @@
 .actions__vide {
   color: var(--qos-fg-tertiary, #94a3b8);
 }
+
+/* Une échéance antérieure à la date de début : signalée là où elle se lit. La
+   couleur ne porte pas seule l'information -- le titre de la cellule et une
+   mention masquée la disent en mots. */
+.actions__echeance--avant-debut {
+  color: var(--qos-danger, #a62b2b);
+  font-weight: 600;
+}

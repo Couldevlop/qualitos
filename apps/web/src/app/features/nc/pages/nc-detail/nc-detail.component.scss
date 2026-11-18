@@ -77,8 +77,8 @@
 }
 .state-row.error { color: var(--qos-danger-fg); }
 
-.info-card, .analysis-card, .team-card, .cause-card, .capa-action-card,
-.photos-card { margin-bottom: 16px; }
+/* Les cartes Material ont cede la place aux huit sections de disciplines : la
+   marge se porte desormais sur `section.card`, plus bas. */
 
 .nc-title {
   margin: 0 0 16px;
@@ -233,9 +233,9 @@
   font-size: var(--qos-fs-sm);
 }
 
-.analysis-card .block { margin-bottom: 12px; }
-.analysis-card .block:last-child { margin-bottom: 0; }
-.analysis-card p { margin: 4px 0 0; font-size: 14px; line-height: 1.5; }
+.block { margin-bottom: 12px; }
+.block:last-child { margin-bottom: 0; }
+.block p { margin: 4px 0 0; font-size: 14px; line-height: 1.5; }
 
 /* --- Photos ---------------------------------------------------------------- */
 
@@ -386,7 +386,8 @@
 
 /* --- Analyse Vision 5S (IA) ------------------------------------------------ */
 
-.vision-card { margin-bottom: 16px; }
+/* Le bloc d analyse visuelle vit maintenant DANS le D2 : il lit une photo du
+   constat, et appartient donc a la description du probleme. */
 
 .vision-header {
   display: flex;
@@ -638,4 +639,265 @@
 .capa-dossier-titre {
   font-weight: 600;
   font-size: 0.95rem;
+}
+
+
+/* ======================================================================
+   LE TRAITEMENT 8D : sommaire a gauche, huit disciplines a droite.
+
+   Les memes elements etaient presentes en cartes sans ordre : on y lisait
+   l equipe, les photos, les actions, sans voir ce qui restait a faire ni dans
+   quel ordre. La trame dit ou l on en est.
+   ====================================================================== */
+
+.nc-8d .layout {
+  display: grid;
+  grid-template-columns: 196px minmax(0, 1fr);
+  gap: 28px;
+  align-items: start;
+}
+
+/* --- Le sommaire des huit disciplines --- */
+
+nav.steps {
+  position: sticky;
+  /* Sous l en-tete de page, qui est lui-meme collant. */
+  top: 88px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+}
+
+nav.steps button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 10px;
+  border: 0;
+  border-radius: var(--qos-radius-md);
+  background: transparent;
+  color: var(--qos-fg-secondary);
+  font: inherit;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+}
+
+nav.steps button:hover { background: var(--qos-bg-hover); }
+
+nav.steps button b {
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  border: 1.5px solid var(--qos-border);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* FAIT, et non « valide » : le marqueur dit ce qui porte quelque chose, il
+   n autorise ni n interdit rien -- aucune discipline n est obligatoire. */
+nav.steps button.done b {
+  background: var(--qos-accent-bg);
+  color: var(--qos-accent-fg);
+  border-color: var(--qos-accent-bg);
+}
+
+nav.steps button.on {
+  background: var(--qos-accent-bg-soft);
+  color: var(--qos-fg-primary);
+}
+
+/* --- Les disciplines --- */
+
+.disciplines { min-width: 0; }
+
+section.card {
+  background: var(--qos-bg-surface);
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: var(--qos-radius-lg);
+  padding: 22px;
+  margin-bottom: 18px;
+  /* L ancre du sommaire s arrete sous l en-tete collant plutot que dessous. */
+  scroll-margin-top: 96px;
+}
+
+section.card > h2 {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 4px;
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+section.card > h2 .n {
+  background: var(--qos-accent-bg);
+  color: var(--qos-accent-fg);
+  border-radius: var(--qos-radius-sm);
+  padding: 2px 9px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 14px;
+}
+
+section.card > .sub {
+  margin: 0 0 18px;
+  color: var(--qos-fg-secondary);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* --- Le bandeau d etat --- */
+
+.bandeau {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 16px;
+  padding: 10px 14px;
+  border-left: 4px solid var(--qos-accent-bg);
+  border-radius: 0 var(--qos-radius-md) var(--qos-radius-md) 0;
+  background: var(--qos-accent-bg-soft);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.bandeau mat-icon {
+  flex: none;
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  color: var(--qos-fg-secondary);
+}
+
+/* --- Les rangees d outils et d options --- */
+
+.tools,
+.options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.tools { margin-bottom: 16px; }
+.options { margin: 16px 0 0; }
+
+.option-link {
+  color: var(--qos-fg-link);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* --- Les champs saisissables du D2 et du D8 --- */
+
+.grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 16px;
+}
+
+.contexte { margin-top: 18px; }
+.full { width: 100%; }
+
+.form-foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.form-foot mat-spinner { margin-right: 8px; }
+
+/* --- Les en-tetes de bloc interne (photos, vision) --- */
+
+.block-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.photos-block,
+.vision-block {
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid var(--qos-border-subtle);
+}
+
+/* --- L invite, quand aucun dossier CAPA ne porte encore d actions --- */
+
+.invite {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.invite p { margin: 0; flex: 1 1 280px; }
+
+.renvoi {
+  margin: 0 0 16px;
+  padding: 10px 12px;
+  border-radius: var(--qos-radius-md);
+  background: var(--qos-bg-subtle);
+  color: var(--qos-fg-secondary);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* --- Ecrans etroits : le sommaire passe en bandeau horizontal --- */
+
+@media (max-width: 900px) {
+  .nc-8d .layout {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  nav.steps {
+    position: sticky;
+    top: 72px;
+    z-index: 5;
+    flex-direction: row;
+    overflow-x: auto;
+    gap: 4px;
+    padding: 6px 0;
+    background: var(--qos-bg-app);
+  }
+
+  nav.steps button { flex: none; padding: 4px 8px; }
+  /* Le libelle tombe, le code reste : « D3 » suffit a se reperer, et huit
+     libelles cote a cote ne tiennent pas sur un telephone. */
+  nav.steps button span { display: none; }
+
+  .grid2 { grid-template-columns: 1fr; }
+  section.card { padding: 18px 16px; scroll-margin-top: 128px; }
+}
+
+/* Le valideur de la cloture, sous l equipe du D1 : c est une question
+   d organisation, pas de constat -- et le D1 est la discipline des personnes. */
+
+.valideur {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--qos-border-subtle);
+}
+
+.valideur qos-user-picker { display: block; }
+
+.valideur-lecture {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 18px 0 0;
+  padding-top: 16px;
+  border-top: 1px solid var(--qos-border-subtle);
 }

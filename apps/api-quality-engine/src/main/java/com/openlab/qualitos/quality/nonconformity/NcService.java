@@ -1,6 +1,8 @@
 package com.openlab.qualitos.quality.nonconformity;
 
+import com.openlab.qualitos.quality.authz.application.AuthorizationService;
 import com.openlab.qualitos.quality.authz.application.RecordScope;
+import com.openlab.qualitos.quality.authz.domain.Permission;
 import com.openlab.qualitos.quality.capa.CapaDto;
 import com.openlab.qualitos.quality.capa.CapaService;
 import com.openlab.qualitos.quality.capa.CapaSourceType;
@@ -25,11 +27,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.time.ZoneOffset;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
@@ -69,11 +73,20 @@ public class NcService {
     /** Le catalogue qui dit si une nature d'écart existe, et sous quelle catégorie. */
     private final NcSubcategoryCatalog subcategories;
 
+    /**
+     * Le droit, tel que le client l a regle (ADR 0078).
+     *
+     * <p>Ici et non au point d entree : la cloture s ouvre a la personne
+     * DESIGNEE sur cet ecart, et l intercepteur decide avant d avoir lu quel
+     * ecart est vise -- il ne peut donc pas connaitre cette designation.
+     */
+    private final AuthorizationService authz;
+
     public NcService(NonConformityRepository repository, NcTeamMemberRepository teamMembers,
                      CapaService capaService,
                      PdcaService pdcaService, DmaicService dmaicService,
                      ApplicationEventPublisher events, RecordScope scope,
-                     NcSubcategoryCatalog subcategories) {
+                     NcSubcategoryCatalog subcategories, AuthorizationService authz) {
         this.repository = repository;
         this.teamMembers = teamMembers;
         this.capaService = capaService;
@@ -82,6 +95,7 @@ public class NcService {
         this.events = events;
         this.scope = scope;
         this.subcategories = subcategories;
+        this.authz = authz;
     }
 
     /**
@@ -130,6 +144,17 @@ public class NcService {
     /** Nombre de tentatives sur collision de référence concurrente (BUG #4). */
     private static final int REFERENCE_RETRY_ATTEMPTS = 3;
 
+    /**
+     * Les quatre états dans lesquels un écart est REFERMÉ, et donc les seuls
+     * depuis lesquels il se rouvre.
+     *
+     * <p>Énumérés une fois : la liste a déjà été recopiée dans l'écran et dans le
+     * service, et deux copies d'une même règle finissent par ne plus dire la même
+     * chose.
+     */
+    private static final Set<NcStatus> EST_REFERME = Set.of(
+            NcStatus.RESOLVED, NcStatus.CLOSED, NcStatus.CANCELLED, NcStatus.REJECTED);
+
     public NcDto.Response create(NcDto.CreateRequest request) {
         UUID tenantId = requireTenantId();
         // H2 (OWASP A01) : le rapporteur est dérivé du JWT (sub), jamais d'un champ de
@@ -159,6 +184,13 @@ public class NcService {
         // attribuable même quand le compte disparaît de l'annuaire.
         nc.setReporterName(CurrentUser.displayName().orElse(null));
         nc.setProductId(request.productId());
+        nc.setCustomerName(vide(request.customerName()));
+        if (request.validatorId() != null) {
+            exigerLeDroitDeDesigner(null);
+        }
+        nc.setValidatorId(request.validatorId());
+        nc.setValidatorName(vide(request.validatorName()));
+        nc.setBatchNumber(vide(request.batchNumber()));
         nc.setFmeaItemId(request.fmeaItemId());
 
         // BUG #4 — Race sur la génération de référence : deux créations concurrentes
@@ -222,6 +254,26 @@ public class NcService {
         if (request.geoLat() != null) nc.setGeoLat(request.geoLat());
         if (request.geoLng() != null) nc.setGeoLng(request.geoLng());
         if (request.photoUrls() != null) nc.setPhotoUrls(request.photoUrls());
+        // Vide EFFACE, absent n'y touche pas : une réclamation saisie au mauvais
+        // client, ou rattachée au mauvais lot, doit pouvoir perdre la valeur
+        // qu'on lui avait mise -- pas seulement la remplacer par une autre
+        // fausse.
+        // Le valideur désigné : fourni, il est réécrit en entier (identifiant et
+        // nom ensemble) ; absent, il reste ce qu'il était. Un nom VIDE le
+        // retire, comme partout ailleurs dans cette requête partielle — sans
+        // quoi une désignation posée par erreur ne pourrait plus être défaite.
+        boolean designationTouchee = request.validatorName() != null || request.validatorId() != null;
+        if (designationTouchee && !Objects.equals(request.validatorId(), nc.getValidatorId())) {
+            exigerLeDroitDeDesigner(nc);
+        }
+        if (request.validatorName() != null) {
+            nc.setValidatorId(request.validatorId());
+            nc.setValidatorName(vide(request.validatorName()));
+        } else if (request.validatorId() != null) {
+            nc.setValidatorId(request.validatorId());
+        }
+        if (request.customerName() != null) nc.setCustomerName(vide(request.customerName()));
+        if (request.batchNumber() != null) nc.setBatchNumber(vide(request.batchNumber()));
         // L'équipe se corrige : quelqu'un part, quelqu'un arrive. Absente de la
         // requête, elle reste telle quelle — la mise à jour est partielle.
         if (request.teamMembers() != null) {
@@ -284,6 +336,11 @@ public class NcService {
         nc.setStatus(NcStatus.RESOLVED);
         nc.setResolutionNote(request.resolutionNote());
         nc.setResolvedAt(Instant.now());
+        // QUI résout : sans cette trace, la règle du second regard n'a pas de
+        // prise, et la clôture ne pourrait pas distinguer l'auteur de la
+        // résolution de celui qui la valide.
+        nc.setResolvedById(CurrentUser.userId().orElse(null));
+        nc.setResolvedByName(CurrentUser.displayName().orElse(null));
         return toResponse(repository.save(nc));
     }
 
@@ -303,6 +360,7 @@ public class NcService {
      */
     public NcDto.Response close(UUID id) {
         NonConformity nc = load(id);
+        exigerUnSecondRegard(nc);
         if (nc.getStatus() != NcStatus.RESOLVED) {
             throw new NcStateException("Only RESOLVED non-conformities can be closed");
         }
@@ -326,7 +384,102 @@ public class NcService {
         }
         nc.setStatus(NcStatus.CLOSED);
         nc.setClosedAt(Instant.now());
+        // La trace du second regard lui-même : c'est elle qu'un auditeur vient
+        // lire, et sans elle la règle serait appliquée sans être démontrable.
+        nc.setClosedById(CurrentUser.userId().orElse(null));
+        nc.setClosedByName(CurrentUser.displayName().orElse(null));
         return toResponse(repository.save(nc));
+    }
+
+    /**
+     * DÉSIGNER UN VALIDEUR EST UN ACTE DE GOUVERNANCE, pas une donnée de fiche.
+     *
+     * <p>La désignation <b>accorde</b> le droit de clore cet écart à quelqu'un
+     * qui ne l'a pas. Laissée libre, elle se retournait contre la règle qu'elle
+     * sert, de deux façons :
+     *
+     * <ol>
+     *   <li><b>On ne donne pas un pouvoir qu'on n'a pas.</b> Déclarer un écart
+     *       est ouvert à tout utilisateur ({@code nc.create} comprend
+     *       {@code USER} et {@code AUDITOR}) : sans cette garde, n'importe qui
+     *       se désignait valideur de l'écart qu'il déclare, et gagnait sur lui
+     *       un droit que le catalogue réserve au pilotage. Désigner exige donc
+     *       {@code nc.close} — le droit même qu'on transmet.</li>
+     *   <li><b>On ne choisit pas celui qui nous relit.</b> Après la résolution,
+     *       la personne qui l'a écrite ne peut plus toucher à la désignation :
+     *       elle y nommerait un complaisant, et le second regard deviendrait un
+     *       tampon qu'elle aurait choisi elle-même. Les autres détenteurs du
+     *       droit, eux, peuvent encore désigner — c'est précisément ce qui
+     *       débloque un écart résolu dont le valideur a quitté
+     *       l'organisation.</li>
+     * </ol>
+     *
+     * <p>Se désigner soi-même n'est PAS refusé : qui a {@code nc.close} détient
+     * déjà ce droit sur tous les écarts, et la séparation de
+     * {@link #exigerUnSecondRegard} l'arrête de toute façon s'il a résolu
+     * celui-ci. Le refuser interdirait un geste sans effet.
+     *
+     * @param nc l'écart visé, ou {@code null} à la déclaration — il n'a pas
+     *           encore d'histoire, seule la première règle s'applique.
+     */
+    private void exigerLeDroitDeDesigner(NonConformity nc) {
+        if (!authz.has(Permission.NC_CLOSE)) {
+            throw new AccessDeniedException("Access denied");
+        }
+        if (nc == null || nc.getResolvedById() == null) {
+            return;
+        }
+        if (nc.getResolvedById().equals(CurrentUser.userId().orElse(null))) {
+            throw new NcStateException(
+                    "You resolved this non-conformity: you cannot choose who reviews"
+                    + " your own work. Another holder of the closing right can"
+                    + " designate a validator.");
+        }
+    }
+
+    /**
+     * LE SECOND REGARD : qui peut clore cet écart, et qui ne peut pas.
+     *
+     * <p>Deux questions, et deux refus différents.
+     *
+     * <p><b>Le droit d'abord.</b> Clore appartient aux rôles de pilotage, et à
+     * la personne <b>désignée</b> sur cet écart — même si elle n'a aucun rôle
+     * qualité. Sans cette seconde voie, une organisation qui ne compte qu'un
+     * responsable qualité ne pourrait plus rien clore dès lors qu'on exige deux
+     * personnes : c'est lui qui résout, et lui seul qui a le droit de clore. La
+     * désignation ouvre donc la porte à un regard venu d'ailleurs — un chef
+     * d'atelier, un pilote de processus, un confrère d'un autre service. Le
+     * refus est un 403 muet : on n'explique pas le modèle de droits à qui n'en
+     * a pas.
+     *
+     * <p><b>La séparation ensuite.</b> Personne ne valide son propre travail,
+     * quel que soit son rôle. La personne qui a écrit la résolution ne peut pas
+     * la clôturer : le registre déclarerait l'écart traité ET vérifié sans
+     * qu'aucun contrôle indépendant n'ait eu lieu (ISO 9001 §10.2). Ce refus,
+     * lui, s'explique — la personne sait très bien qu'elle a résolu l'écart, et
+     * ce qu'elle doit savoir c'est que quelqu'un d'autre doit prendre le relais.
+     *
+     * <p><b>Les écarts d'avant la règle</b> n'ont pas de {@code resolvedById} :
+     * ils se closent sans obstacle. L'alternative — les bloquer tous faute de
+     * trace — punirait l'organisation pour une donnée que le logiciel ne
+     * collectait pas encore.
+     *
+     * <p>Vérifié ICI et non au point d'entrée : la désignation est portée par
+     * l'écart, et l'intercepteur de permissions tranche avant de savoir lequel
+     * est visé.
+     */
+    private void exigerUnSecondRegard(NonConformity nc) {
+        UUID moi = CurrentUser.userId().orElse(null);
+        boolean designe = nc.getValidatorId() != null && nc.getValidatorId().equals(moi);
+        if (!designe && !authz.has(Permission.NC_CLOSE)) {
+            throw new AccessDeniedException("Access denied");
+        }
+        if (moi != null && moi.equals(nc.getResolvedById())) {
+            throw new NcStateException(
+                    "A second pair of eyes is required: the person who resolved this"
+                    + " non-conformity cannot close it. Ask a quality manager, or the"
+                    + " designated validator, to review the resolution.");
+        }
     }
 
     public NcDto.Response cancel(UUID id) {
@@ -364,6 +517,47 @@ public class NcService {
         nc.setStatus(NcStatus.REJECTED);
         nc.setRejectionReason(request.reason().trim());
         nc.setRejectedAt(Instant.now());
+        return toResponse(repository.save(nc));
+    }
+
+    /**
+     * REPREND un écart refermé, et dit pourquoi.
+     *
+     * <p>Un écart revient : la récidive se constate après la clôture, le client
+     * relance, un constat avait été écarté à tort. Sans cette reprise, il fallait
+     * ouvrir un second écart -- qui perdait l'analyse de cause, les actions déjà
+     * menées et l'équipe du premier, et comptait deux fois le même problème dans
+     * les indicateurs.
+     *
+     * <p>Depuis les QUATRE états refermés : {@code RESOLVED}, {@code CLOSED},
+     * {@code CANCELLED}, {@code REJECTED}. Un écart déjà en cours ne se rouvre
+     * pas -- il n'est pas fermé. Le refus est ici et non dans l'écran seul :
+     * l'API est publique (§13.1).
+     *
+     * <p>Retour à {@code OPEN}, le début de l'instruction. Pas à
+     * {@code ACTION_DEFINED} : un écart qui revient est un écart dont la cause
+     * racine ou l'action a manqué, et reprendre à l'étape d'après ferait sauter
+     * précisément l'étape qui a failli.
+     *
+     * <p>RIEN n'est remis à zéro : ni {@code resolvedAt}, ni {@code closedAt}, ni
+     * {@code rejectedAt}, ni les notes qui les accompagnent. Ce sont des faits
+     * datés, et la réponse que le client a lue ne se réécrit pas. Le statut, lui,
+     * dit où en est l'écart aujourd'hui, et {@code reopenedAt} est le fait le
+     * plus récent -- c'est celui que le bandeau de la fiche montre.
+     */
+    public NcDto.Response reopen(UUID id, NcDto.ReopenRequest request) {
+        NonConformity nc = load(id);
+        if (!EST_REFERME.contains(nc.getStatus())) {
+            throw new NcStateException(
+                    "Only a RESOLVED, CLOSED, CANCELLED or REJECTED non-conformity can be"
+                    + " reopened: this one is " + nc.getStatus());
+        }
+        nc.setStatus(NcStatus.OPEN);
+        // Motif facultatif : la date de reprise, elle, est posée dans tous les
+        // cas. C'est le FAIT qui compte pour le taux de récidive ; son
+        // explication est un plus, pas une condition.
+        nc.setReopenReason(vide(request.reason()));
+        nc.setReopenedAt(Instant.now());
         return toResponse(repository.save(nc));
     }
 
@@ -499,6 +693,23 @@ public class NcService {
     }
 
     /** Les intitulés sont bornés en base ; un titre d'écart long ne doit pas faire échouer la conversion. */
+    /**
+     * Une valeur de texte telle qu'on la RANGE : vidée de ses blancs, et nulle
+     * quand il ne reste rien.
+     *
+     * <p>« Enregistré, mais vide » et « jamais renseigné » doivent se lire
+     * pareil. Sans cela, un champ qu'on a ouvert puis laissé en blanc rendait une
+     * chaîne vide, que l'écran affichait comme une valeur -- un nom de client
+     * invisible mais présent, qu'aucun filtre ne retrouvait.
+     */
+    private static String vide(String valeur) {
+        if (valeur == null) {
+            return null;
+        }
+        String net = valeur.trim();
+        return net.isEmpty() ? null : net;
+    }
+
     private static String tronque(String valeur, int max) {
         if (valeur == null) {
             return null;
@@ -632,10 +843,21 @@ public class NcService {
                     : List.of(new NcDto.Blocker(NcBlockerCode.CAPA_ACTIONS_TO_CARRY_OUT, aFaire));
         }
         if (nc.getStatus() == NcStatus.RESOLVED) {
+            List<NcDto.Blocker> motifs = new ArrayList<>();
             long enTravail = capaService.unsettledCasesFor(
                     nc.getCapaCaseId(), nc.getReference()).size();
-            return enTravail == 0 ? List.of()
-                    : List.of(new NcDto.Blocker(NcBlockerCode.CAPA_CASES_UNSETTLED, enTravail));
+            if (enTravail > 0) {
+                motifs.add(new NcDto.Blocker(NcBlockerCode.CAPA_CASES_UNSETTLED, enTravail));
+            }
+            // Le SEUL motif qui dépende de qui lit la fiche : l'écart est
+            // clôturable, mais pas par la personne qui l'a résolu. Dit ici, le
+            // bouton s'éteint avec son explication ; dit seulement au clic, on
+            // découvrait le refus en croyant en avoir fini.
+            UUID moi = CurrentUser.userId().orElse(null);
+            if (moi != null && moi.equals(nc.getResolvedById())) {
+                motifs.add(new NcDto.Blocker(NcBlockerCode.SECOND_LOOK_REQUIRED, 1));
+            }
+            return List.copyOf(motifs);
         }
         return List.of();
     }
@@ -667,11 +889,16 @@ public class NcService {
                 nc.getCategory(), nc.getSubcategoryCode(), nc.getSeverity(), nc.getStatus(),
                 nc.getOrigin(), nc.getDetectedAt(),
                 nc.getZone(), nc.getGeoLat(), nc.getGeoLng(), nc.getPhotoUrls(),
-                nc.getReporterId(), nc.getReporterName(), nc.getProductId(), nc.getFmeaItemId(),
+                nc.getReporterId(), nc.getReporterName(), nc.getProductId(),
+                nc.getCustomerName(), nc.getBatchNumber(), nc.getFmeaItemId(),
                 nc.getCapaCaseId(), nc.getPdcaCycleId(), nc.getDmaicProjectId(),
                 nc.getRootCause(), nc.getResolutionNote(),
                 nc.getResolvedAt(), nc.getClosedAt(),
                 nc.getRejectionReason(), nc.getRejectedAt(),
+                nc.getReopenedAt(), nc.getReopenReason(),
+                nc.getResolvedById(), nc.getResolvedByName(),
+                nc.getClosedById(), nc.getClosedByName(),
+                nc.getValidatorId(), nc.getValidatorName(),
                 nc.getCreatedAt(), nc.getUpdatedAt(),
                 equipe, blocages, dossiers);
     }

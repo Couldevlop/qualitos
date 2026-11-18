@@ -109,6 +109,13 @@ export interface NcResponse {
   /** Produit concerné. Absent pour une NC de service ou administrative. */
   productId?: string;
   /**
+   * Le client qui réclame, par le nom qu'il s'est donné. Absent sur un constat
+   * interne — et sur les écarts saisis avant que la fiche sache le porter.
+   */
+  customerName?: string;
+  /** Le lot incriminé, tel qu'il est marqué sur la pièce ou l'emballage. */
+  batchNumber?: string;
+  /**
    * Mode de défaillance du PFMEA que ce défaut illustre. Son absence est une
    * information en soi : un défaut que l'analyse n'avait pas prévu.
    */
@@ -125,6 +132,32 @@ export interface NcResponse {
   rejectedAt?: string;
   resolvedAt?: string;
   closedAt?: string;
+  /**
+   * Quand l'écart a été REPRIS après avoir été refermé, s'il l'a été.
+   *
+   * <p>Ce qui l'avait refermé reste renseigné à côté : le bandeau de la fiche
+   * montre le fait le plus récent, et l'historique ne perd rien.
+   */
+  reopenedAt?: string;
+  /** Pourquoi il a été repris : récidive, relance du client, refus à tort. */
+  reopenReason?: string;
+  /**
+   * LE SECOND REGARD, en trois temps : qui a résolu, qui valide, qui a clos.
+   *
+   * <p>C'est ce qu'un auditeur vient lire — la preuve que la résolution et sa
+   * validation ne portent pas la même signature (ISO 9001 §10.2). Les écarts
+   * d'avant la règle n'ont pas ces noms, et la fiche n'en invente pas.
+   */
+  resolvedById?: string;
+  resolvedByName?: string;
+  closedById?: string;
+  closedByName?: string;
+  /**
+   * La personne désignée pour porter ce second regard sur CET écart. Sans elle,
+   * la clôture revient aux rôles de pilotage.
+   */
+  validatorId?: string;
+  validatorName?: string;
   createdAt: string;
   updatedAt: string;
   /**
@@ -166,7 +199,17 @@ export interface NcCapaCaseRef {
 }
 
 /** Les motifs que le serveur énumère ; l'écran les rédige. */
-export type NcBlockerCode = 'CAPA_ACTIONS_TO_CARRY_OUT' | 'CAPA_CASES_UNSETTLED' | 'NO_CAPA_CASE';
+export type NcBlockerCode =
+  | 'CAPA_ACTIONS_TO_CARRY_OUT'
+  | 'CAPA_CASES_UNSETTLED'
+  /** Aucun dossier CAPA ne traite l'écart : il n'y a rien à déclarer résolu. */
+  | 'NO_CAPA_CASE'
+  /**
+   * Le SEUL motif qui dépende de qui lit la fiche : la personne qui a
+   * résolu cet écart ne peut pas le clôturer. Le même écart n'en porte
+   * aucun pour quelqu'un d'autre.
+   */
+  | 'SECOND_LOOK_REQUIRED';
 
 /**
  * Un motif de blocage et son décompte.
@@ -216,6 +259,16 @@ export interface CreateNcRequest {
   origin?: NcOrigin;
   /** Produit concerné, s'il y en a un. */
   productId?: string;
+  /** Le client qui réclame. Facultatif : un constat interne n'en a pas. */
+  customerName?: string;
+  /** Le lot incriminé. Facultatif. */
+  batchNumber?: string;
+  /**
+   * Le valideur désigné pour la clôture, choisi dans l'annuaire. Facultatif :
+   * sans lui, clore revient aux rôles de pilotage.
+   */
+  validatorId?: string;
+  validatorName?: string;
   /** Mode de défaillance du PFMEA que ce défaut illustre, confirmé par l'utilisateur. */
   fmeaItemId?: string;
   /**
@@ -238,6 +291,16 @@ export interface UpdateNcRequest {
   geoLat?: number;
   geoLng?: number;
   photoUrls?: string;
+  /** Chaîne vide = effacer le nom du client ; absent = inchangé. */
+  customerName?: string;
+  /** Chaîne vide = effacer le numéro de lot ; absent = inchangé. */
+  batchNumber?: string;
+  /**
+   * Le valideur désigné. Fourni, il est réécrit en entier ; un nom VIDE le
+   * retire — sans quoi une désignation posée par erreur serait définitive.
+   */
+  validatorId?: string;
+  validatorName?: string;
   /**
    * L'équipe en charge, remplacée en bloc. Absente = inchangée ; jamais vide —
    * on ne retire pas la dernière personne d'un écart ouvert.
@@ -252,6 +315,16 @@ export interface ResolveNcRequest {
 /** Le rejet d'une réclamation externe : le motif est obligatoire. */
 export interface RejectNcRequest {
   reason: string;
+}
+
+/**
+ * La reprise d'un écart refermé, et pourquoi — si on veut le dire.
+ *
+ * <p>Le motif est FACULTATIF : rien n'est obligatoire dans l'écran de
+ * traitement, et un écart qui revient doit pouvoir être repris tout de suite.
+ */
+export interface ReopenNcRequest {
+  reason?: string;
 }
 
 // --- Analyse Vision 5S par IA (§3.2 / §1.4) ----------------------------------

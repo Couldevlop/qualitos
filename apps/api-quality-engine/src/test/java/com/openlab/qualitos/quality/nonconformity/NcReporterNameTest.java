@@ -87,7 +87,7 @@ class NcReporterNameTest {
     private NcDto.CreateRequest request() {
         return new NcDto.CreateRequest(
                 "Joint torique défectueux", "détail", NcCategory.PRODUCT, null, NcSeverity.MAJOR,
-                Instant.now(), "Atelier 3", 48.85, 2.35, null, BODY_REPORTER, null, null, null,
+                Instant.now(), "Atelier 3", 48.85, 2.35, null, BODY_REPORTER, null, null, null, null, null, null, null,
                 java.util.List.of(new NcDto.TeamMemberRef("kc-marie", "Marie Durand")));
     }
 

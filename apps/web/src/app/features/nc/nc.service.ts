@@ -21,6 +21,7 @@ import {
   NcStatistics,
   NcStatus,
   RejectNcRequest,
+  ReopenNcRequest,
   ResolveNcRequest,
   SaveEightDRequest,
   NcSubcategory,
@@ -240,6 +241,18 @@ export class NcService {
     return this.transition(id, 'REJECTED', 'reject', input);
   }
 
+  /**
+   * REPREND un écart refermé : retour à l'instruction, depuis son début.
+   *
+   * <p>Vers {@code OPEN} et non {@code ACTION_DEFINED} : un écart qui revient
+   * est un écart dont la cause racine ou l'action a manqué, et reprendre à
+   * l'étape d'après ferait sauter celle qui a failli. Le serveur tient la même
+   * règle, et n'autorise la reprise que depuis les quatre états refermés.
+   */
+  reopen(id: string, input: ReopenNcRequest = {}): Observable<NcResponse> {
+    return this.transition(id, 'OPEN', 'reopen', input);
+  }
+
   escalateToCapa(id: string, input: EscalateCapaNcRequest): Observable<NcResponse> {
     if (environment.useMockApi) {
       const n = this.mockStore.find(x => x.id === id);
@@ -401,7 +414,7 @@ export class NcService {
   private transition(
     id: string,
     targetStatus: NcStatus,
-    pathSegment: 'start-analysis' | 'define-action' | 'cancel' | 'reject',
+    pathSegment: 'start-analysis' | 'define-action' | 'cancel' | 'reject' | 'reopen',
     body: unknown
   ): Observable<NcResponse> {
     if (environment.useMockApi) {
@@ -409,6 +422,14 @@ export class NcService {
       if (n) {
         n.status = targetStatus;
         n.updatedAt = new Date().toISOString();
+        if (targetStatus === 'OPEN') {
+          // La REPRISE, en maquette comme en vrai : la date est posée dans tous
+          // les cas, le motif seulement s'il a été écrit. Et rien de ce qui
+          // avait refermé l'écart n'est effacé -- ce sont des faits datés.
+          const corps = body as { reason?: string } | undefined;
+          n.reopenedAt = n.updatedAt;
+          n.reopenReason = corps?.reason?.trim() || undefined;
+        }
         if (targetStatus === 'REJECTED') {
           // Le motif doit apparaître même en maquette : un rejet sans raison
           // afficherait à l'écran ce que le serveur n'accepte pas.

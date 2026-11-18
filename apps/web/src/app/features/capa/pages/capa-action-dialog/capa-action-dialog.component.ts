@@ -2,8 +2,8 @@ import { Component, Inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { BehaviorSubject } from 'rxjs';
-import { finalize } from 'rxjs/operators';
+import { BehaviorSubject, defer } from 'rxjs';
+import { concatMap, finalize } from 'rxjs/operators';
 
 import { DirectoryUser } from '../../../../core/directory/directory.types';
 import { personName } from '../../../../core/directory/directory-names';
@@ -33,7 +33,25 @@ export interface CapaActionDialogData {
    * champ dont la réponse était déjà écrite au-dessus du bouton.
    */
   actionType?: CapaActionType;
+  /**
+   * Les personnes déjà sur le dossier (l'équipe du D1), proposées EN TÊTE du
+   * sélecteur de responsable : c'est presque toujours l'une d'elles qui prend
+   * l'action, et la rechercher dans l'annuaire entier fait ressaisir ce que
+   * l'écart sait déjà.
+   */
+  team?: readonly { accountId: string }[];
+  /**
+   * Le critère d'efficacité DU DOSSIER, tel qu'il est aujourd'hui.
+   *
+   * <p>Absent, la fenêtre le demande ; présent, elle le rappelle. L'ADR 0108
+   * veut ce critère POSÉ À L'AVANCE, et l'avance, c'est ici : au moment où l'on
+   * écrit l'action corrective. Le demander à la vérification laisserait juger
+   * de l'efficacité en choisissant après coup la mesure qui arrange.
+   */
+  effectivenessCriterion?: string;
 }
+
+
 
 /** Les trois statuts, dans l'ordre du déroulé réel. */
 const STATUTS: ReadonlyArray<CapaActionStatus> = ['PENDING', 'IN_PROGRESS', 'DONE'];
@@ -72,8 +90,10 @@ export class CapaActionDialogComponent {
     description: [''],
     actionType: ['CORRECTIVE' as CapaActionType, [Validators.required]],
     assigneeId: [''],
+    decidedOn: [''],
     dueDate: [''],
-    status: ['PENDING' as CapaActionStatus]
+    status: ['PENDING' as CapaActionStatus],
+    effectivenessCriterion: ['', [Validators.maxLength(2000)]]
   });
 
   constructor(
@@ -91,6 +111,7 @@ export class CapaActionDialogComponent {
         description: a.description ?? '',
         actionType: a.actionType || 'CORRECTIVE',
         assigneeId: a.assigneeId ?? '',
+        decidedOn: a.decidedOn ?? '',
         dueDate: a.dueDate ?? '',
         status: a.status
       });
@@ -113,6 +134,45 @@ export class CapaActionDialogComponent {
 
   get editing(): boolean {
     return !!this.data.action;
+  }
+
+  /**
+   * Vrai quand l'échéance saisie précède la date de début.
+   *
+   * <p>Un calcul et NON un validateur du formulaire : la règle SIGNALE, elle ne
+   * bloque pas. C'est presque toujours une faute de frappe sur l'une des deux
+   * dates, et refuser l'enregistrement ferait perdre le reste de la saisie pour
+   * un chiffre -- alors que la personne est la seule à savoir laquelle des deux
+   * dates est la bonne.
+   *
+   * <p>Comparaison de chaînes : les deux champs sont des jours au format ISO,
+   * où l'ordre alphabétique EST l'ordre chronologique. Passer par `new Date()`
+   * ferait entrer le fuseau du navigateur dans une comparaison de jours.
+   */
+  get echeanceAvantDebut(): boolean {
+    const { decidedOn, dueDate } = this.form.getRawValue();
+    return !!decidedOn && !!dueDate && dueDate < decidedOn;
+  }
+
+  /** Le critère déjà posé sur le dossier, s'il y en a un. */
+  get critereDejaPose(): string {
+    return (this.data.effectivenessCriterion ?? '').trim();
+  }
+
+  /**
+   * Vrai quand la fenêtre doit DEMANDER le critère d'efficacité.
+   *
+   * <p>Seulement à l'ajout d'une action CORRECTIVE, et seulement quand le
+   * dossier n'en a pas : une action de confinement ne prétend pas supprimer la
+   * cause, donc rien n'est à mesurer sur elle (ISO 9001 §10.2) ; et redemander
+   * un critère déjà posé serait l'occasion de le réécrire pour qu'il colle au
+   * résultat obtenu, ce que l'ADR 0108 veut précisément empêcher.
+   */
+  get demandeCritere(): boolean {
+    return !this.editing
+      && !this.data.readOnly
+      && this.form.controls.actionType.value === 'CORRECTIVE'
+      && this.critereDejaPose === '';
   }
 
   get dialogTitle(): string {
@@ -145,12 +205,25 @@ export class CapaActionDialogComponent {
       actionType: v.actionType,
       assigneeId: v.assigneeId || undefined,
       assigneeName: v.assigneeId ? (this.assigneeName ?? undefined) : undefined,
+      decidedOn: v.decidedOn || undefined,
       dueDate: v.dueDate || undefined
     };
     this.submitting$.next(true);
-    const envoi = this.editing
+    const critere = this.demandeCritere ? v.effectivenessCriterion.trim() : '';
+    // `defer` et non l'appel direct : appeler le service CONSTRUIT déjà sa
+    // requête. Sans ce report, l'action partait avant le critère, et l'ordre
+    // ci-dessous ne décrivait que l'intention.
+    const action$ = defer(() => this.editing
       ? this.capa.updateAction(this.data.caseId, this.data.action!.id, { ...corps, status: v.status })
-      : this.capa.addAction(this.data.caseId, corps);
+      : this.capa.addAction(this.data.caseId, corps));
+    // LE CRITÈRE D'ABORD, l'action ensuite. L'ADR 0108 le veut posé à l'avance :
+    // si l'écriture du critère échoue, rien n'a été créé et la personne retente
+    // avec son formulaire intact. Dans l'autre ordre, une panne laisserait une
+    // action corrective sans la mesure qui dira un jour si elle a marché.
+    const envoi = critere
+      ? this.capa.updateCase(this.data.caseId, { effectivenessCriterion: critere })
+          .pipe(concatMap(() => action$))
+      : action$;
     envoi.pipe(finalize(() => this.submitting$.next(false))).subscribe({
       next: () => {
         this.snack.open(

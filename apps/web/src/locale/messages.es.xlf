@@ -22238,6 +22238,46 @@ historial de 12 meses</target>
         <source>Les huit disciplines, agrégées depuis ce dossier</source>
         <target state="translated">Las ocho disciplinas, agregadas de este expediente</target>
       </trans-unit>
+      <trans-unit id="nc.detail.received" datatype="html">
+        <source>Date de réception</source>
+        <target state="translated">Fecha de recepción</target>
+      </trans-unit>
+      <trans-unit id="capa.action.decided-on" datatype="html">
+        <source>Date de début</source>
+        <target state="translated">Fecha de inicio</target>
+      </trans-unit>
+      <trans-unit id="capa.actions.due-before-start" datatype="html">
+        <source>échéance antérieure à la date de début</source>
+        <target state="translated">fecha límite anterior a la fecha de inicio</target>
+      </trans-unit>
+      <trans-unit id="capa.actions.due-before-start-title" datatype="html">
+        <source>L'échéance précède la date de début.</source>
+        <target state="translated">La fecha límite es anterior a la fecha de inicio.</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.due-before-start" datatype="html">
+        <source>L'échéance précède la date de début : vérifiez l'une des deux dates.</source>
+        <target state="translated">La fecha límite es anterior a la fecha de inicio: compruebe una de las dos fechas.</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.suggested" datatype="html">
+        <source>Déjà sur ce dossier</source>
+        <target state="translated">Ya en este expediente</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.team-suggested" datatype="html">
+        <source>Équipe de l'écart</source>
+        <target state="translated">Equipo de la no conformidad</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.criterion-placeholder" datatype="html">
+        <source>À quoi verra-t-on que la cause a disparu ? Ex. : aucun rebut sur ce défaut pendant 3 mois</source>
+        <target state="translated">¿Cómo sabremos que la causa ha desaparecido? Ej.: ningún rechazo por este defecto durante 3 meses</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.criterion-hint" datatype="html">
+        <source>Posé maintenant, il servira à juger l'efficacité de cette action ; il ne se réécrit plus ensuite.</source>
+        <target state="translated">Definido ahora, servirá para juzgar la eficacia de esta acción; después ya no se puede reescribir.</target>
+      </trans-unit>
+      <trans-unit id="common.maxlength-2000" datatype="html">
+        <source>2000 caractères maximum.</source>
+        <target state="translated">2000 caracteres como máximo.</target>
+      </trans-unit>
       <trans-unit id="nc.detail.blockers-resolve" datatype="html">
         <source>Cet écart ne peut pas encore être résolu</source>
         <target state="translated">Esta no conformidad aún no puede resolverse</target>
@@ -22693,6 +22733,270 @@ historial de 12 meses</target>
       <trans-unit id="dmaic.res.missing-marked" datatype="html">
         <source>champ(s) à renseigner, signalés en rouge ci-dessous.</source>
         <target state="translated">campo(s) a rellenar, señalados en rojo más abajo.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.treatment-eyebrow" datatype="html">
+        <source>Traitement 8D · Équipe · Problème · Causes · Actions · Preuves</source>
+        <target state="translated">Tratamiento 8D · Equipo · Problema · Causas · Acciones · Pruebas</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.nav-label" datatype="html">
+        <source>Les huit disciplines</source>
+        <target state="translated">Las ocho disciplinas</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d1-short" datatype="html">
+        <source>Équipe</source>
+        <target state="translated">Equipo</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d1-title" datatype="html">
+        <source>Constituer l’équipe</source>
+        <target state="translated">Constituir el equipo</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d1-sub" datatype="html">
+        <source>Les personnes qui traiteront cet écart. Le premier nommé pilote.</source>
+        <target state="translated">Las personas que tratarán esta no conformidad. La primera designada la pilota.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d2-short" datatype="html">
+        <source>Problème</source>
+        <target state="translated">Problema</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d2-title" datatype="html">
+        <source>Décrire le problème</source>
+        <target state="translated">Describir el problema</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d2-sub" datatype="html">
+        <source>Quoi, où, quand, combien : restez factuel.</source>
+        <target state="translated">Qué, dónde, cuándo, cuántos: limítese a los hechos.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d3-short" datatype="html">
+        <source>Confinement</source>
+        <target state="translated">Contención</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d3-title" datatype="html">
+        <source>Actions de confinement</source>
+        <target state="translated">Acciones de contención</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d3-sub" datatype="html">
+        <source>Ce qui protège le client dès maintenant, avant la cause racine.</source>
+        <target state="translated">Lo que protege al cliente ahora mismo, antes de la causa raíz.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d3-no-case" datatype="html">
+        <source>Aucun dossier CAPA n’existe encore sur cet écart : les actions de confinement s’écriront ici dès qu’il y en aura un, au D5.</source>
+        <target state="translated">Esta no conformidad aún no tiene expediente CAPA: las acciones de contención se escribirán aquí en cuanto haya uno, en el D5.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d4-short" datatype="html">
+        <source>Causes</source>
+        <target state="translated">Causas</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d4-title" datatype="html">
+        <source>Analyse des causes</source>
+        <target state="translated">Análisis de las causas</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d4-sub" datatype="html">
+        <source>Identifiez la cause racine avec les outils de votre choix.</source>
+        <target state="translated">Identifique la causa raíz con las herramientas que prefiera.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d5-short" datatype="html">
+        <source>Correctives</source>
+        <target state="translated">Correctivas</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d5-title" datatype="html">
+        <source>Actions correctives</source>
+        <target state="translated">Acciones correctivas</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d5-sub" datatype="html">
+        <source>Ce qui supprime la cause racine.</source>
+        <target state="translated">Lo que elimina la causa raíz.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d6-short" datatype="html">
+        <source>Preuves</source>
+        <target state="translated">Pruebas</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d6-title" datatype="html">
+        <source>Preuves des actions correctives</source>
+        <target state="translated">Pruebas de las acciones correctivas</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d6-sub" datatype="html">
+        <source>Photos, mesures, rapports de contrôle qui démontrent l’efficacité.</source>
+        <target state="translated">Fotos, mediciones e informes de control que demuestran la eficacia.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d6-evidence-hint" datatype="html">
+        <source>Chaque action porte sa propre pièce, dans la colonne « Preuve » des tableaux D3, D5 et D7 : une pièce détachée de son action ne démontre rien.</source>
+        <target state="translated">Cada acción lleva su propio documento, en la columna «Prueba» de las tablas D3, D5 y D7: un documento separado de su acción no demuestra nada.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d6-verdict" datatype="html">
+        <source>Juger l’efficacité</source>
+        <target state="translated">Juzgar la eficacia</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d7-short" datatype="html">
+        <source>Préventives</source>
+        <target state="translated">Preventivas</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d7-title" datatype="html">
+        <source>Actions préventives</source>
+        <target state="translated">Acciones preventivas</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d7-sub" datatype="html">
+        <source>Ce qui évite que le problème revienne ailleurs.</source>
+        <target state="translated">Lo que evita que el problema reaparezca en otro sitio.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d7-no-case" datatype="html">
+        <source>Aucun dossier CAPA n’existe encore sur cet écart : les actions préventives s’écriront ici dès qu’il y en aura un, au D5.</source>
+        <target state="translated">Esta no conformidad aún no tiene expediente CAPA: las acciones preventivas se escribirán aquí en cuanto haya uno, en el D5.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d8-short" datatype="html">
+        <source>Remerciements</source>
+        <target state="translated">Agradecimientos</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d8-title" datatype="html">
+        <source>Remercier l’équipe</source>
+        <target state="translated">Agradecer al equipo</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d8-sub" datatype="html">
+        <source>Reconnaissez le travail accompli. Ce mot part dans le rapport 8D.</source>
+        <target state="translated">Reconozca el trabajo realizado. Estas palabras van en el informe 8D.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d8-label" datatype="html">
+        <source>Message à l’équipe</source>
+        <target state="translated">Mensaje para el equipo</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d8-placeholder" datatype="html">
+        <source>Merci à toute l’équipe pour…</source>
+        <target state="translated">Gracias a todo el equipo por…</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d8-none" datatype="html">
+        <source>Aucun mot de clôture n’a été écrit.</source>
+        <target state="translated">No se ha escrito ninguna palabra de cierre.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d8-saved" datatype="html">
+        <source>Remerciements enregistrés dans le rapport 8D.</source>
+        <target state="translated">Agradecimientos guardados en el informe 8D.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d8-error" datatype="html">
+        <source>Les remerciements n'ont pas pu être enregistrés.</source>
+        <target state="translated">No se han podido guardar los agradecimientos.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.no-case" datatype="html">
+        <source>Aucun dossier CAPA sur cet écart. Ouvrez-en un : les actions de confinement, correctives et préventives s’écriront et s’avanceront ici même, chacune sous sa discipline.</source>
+        <target state="translated">Ningún expediente CAPA en esta no conformidad. Abra uno: las acciones de contención, correctivas y preventivas se escribirán y avanzarán aquí mismo, cada una en su disciplina.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.customer" datatype="html">
+        <source>Client</source>
+        <target state="translated">Cliente</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.customer-placeholder" datatype="html">
+        <source>Nom du client qui réclame</source>
+        <target state="translated">Nombre del cliente que reclama</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.batch" datatype="html">
+        <source>N° de lot</source>
+        <target state="translated">N.º de lote</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.batch-placeholder" datatype="html">
+        <source>Ex. L2611-08</source>
+        <target state="translated">Ej. L2611-08</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.context-saved" datatype="html">
+        <source>Description enregistrée.</source>
+        <target state="translated">Descripción guardada.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.context-error" datatype="html">
+        <source>La description n'a pas pu être enregistrée.</source>
+        <target state="translated">No se ha podido guardar la descripción.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.banner-reopened" datatype="html">
+        <source>Écart repris le</source>
+        <target state="translated">No conformidad reabierta el</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.banner-closed" datatype="html">
+        <source>Clôturé le</source>
+        <target state="translated">Cerrada el</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.banner-closed-by" datatype="html">
+        <source>par <x id="name"/></source>
+        <target state="translated">por <x id="name"/></target>
+      </trans-unit>
+      <trans-unit id="nc.8d.banner-rejected" datatype="html">
+        <source>Écarté le</source>
+        <target state="translated">Rechazada el</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.banner-resolved" datatype="html">
+        <source>Résolu le</source>
+        <target state="translated">Resuelta el</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.banner-cancelled" datatype="html">
+        <source>Écart annulé.</source>
+        <target state="translated">No conformidad anulada.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.reopen" datatype="html">
+        <source>Rouvrir</source>
+        <target state="translated">Reabrir</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.reopen-tooltip" datatype="html">
+        <source>Reprendre l'instruction : récidive, relance du client, constat écarté à tort</source>
+        <target state="translated">Reanudar la instrucción: reincidencia, insistencia del cliente, hallazgo rechazado por error</target>
+      </trans-unit>
+      <trans-unit id="nc.reopen.title" datatype="html">
+        <source>Reprendre cet écart</source>
+        <target state="translated">Reabrir esta no conformidad</target>
+      </trans-unit>
+      <trans-unit id="nc.reopen.hint" datatype="html">
+        <source>L'instruction reprendra à son début, et tout ce qui a déjà été fait reste attaché à</source>
+        <target state="translated">La instrucción se reanudará desde el principio, y todo lo ya hecho sigue adjunto a</target>
+      </trans-unit>
+      <trans-unit id="nc.reopen.hint-end" datatype="html">
+        <source> : équipe, analyse de cause, actions et preuves. Ce qui l'avait refermé n'est pas effacé.</source>
+        <target state="translated">: equipo, análisis de causas, acciones y pruebas. Lo que la había cerrado no se borra.</target>
+      </trans-unit>
+      <trans-unit id="nc.reopen.reason-label" datatype="html">
+        <source>Motif de la reprise (facultatif)</source>
+        <target state="translated">Motivo de la reapertura (opcional)</target>
+      </trans-unit>
+      <trans-unit id="nc.reopen.reason-placeholder" datatype="html">
+        <source>Récidive constatée sur le lot suivant, relance du client, constat écarté à tort…</source>
+        <target state="translated">Reincidencia en el lote siguiente, insistencia del cliente, hallazgo rechazado por error…</target>
+      </trans-unit>
+      <trans-unit id="nc.reopen.reason-hint" datatype="html">
+        <source>Sans motif, la reprise reste possible — mais rien n'expliquera ce retour en arrière.</source>
+        <target state="translated">Sin motivo, la reapertura sigue siendo posible, pero nada explicará ese paso atrás.</target>
+      </trans-unit>
+      <trans-unit id="nc.reopen.submit" datatype="html">
+        <source>Reprendre</source>
+        <target state="translated">Reanudar</target>
+      </trans-unit>
+      <trans-unit id="nc.reopen.success" datatype="html">
+        <source>Écart repris : l'instruction reprend à son début.</source>
+        <target state="translated">No conformidad reabierta: la instrucción se reanuda desde el principio.</target>
+      </trans-unit>
+      <trans-unit id="nc.reopen.error" datatype="html">
+        <source>Reprise impossible.</source>
+        <target state="translated">Reapertura imposible.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.validator" datatype="html">
+        <source>Valideur de la clôture (second regard)</source>
+        <target state="translated">Validador del cierre (segunda mirada)</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.validator-hint" datatype="html">
+        <source>Facultatif. Cette personne pourra clôturer cet écart même sans rôle qualité — et jamais s’il l’a résolu elle-même.</source>
+        <target state="translated">Opcional. Esta persona podrá cerrar esta no conformidad incluso sin rol de calidad, y nunca si la resolvió ella misma.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.validator-saved" datatype="html">
+        <source>Valideur enregistré.</source>
+        <target state="translated">Validador guardado.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.validator-failed" datatype="html">
+        <source>Le valideur n'a pas pu être enregistré.</source>
+        <target state="translated">No se ha podido guardar el validador.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.resolved-by" datatype="html">
+        <source>Résolu par</source>
+        <target state="translated">Resuelta por</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.closed-by" datatype="html">
+        <source>Clôturé par</source>
+        <target state="translated">Cerrada por</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.second-look" datatype="html">
+        <source>Vous avez résolu cet écart : sa clôture demande un second regard. Un responsable qualité, ou le valideur désigné, doit la porter.</source>
+        <target state="translated">Usted resolvió esta no conformidad: su cierre exige una segunda mirada. Debe hacerlo un responsable de calidad o el validador designado.</target>
       </trans-unit>
       <trans-unit id="nav.nlq-explore" datatype="html">
         <source>Exploration NLQ</source>

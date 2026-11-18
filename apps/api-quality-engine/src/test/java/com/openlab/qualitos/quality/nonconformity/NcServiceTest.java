@@ -47,7 +47,20 @@ class NcServiceTest {
     /** Sans réglage, Mockito rend Optional.empty() : l'utilisateur voit tout (ADR 0081). */
     @Mock RecordScope scope;
     @Mock com.openlab.qualitos.quality.nonconformity.subcategory.NcSubcategoryCatalog subcategories;
+    @Mock com.openlab.qualitos.quality.authz.application.AuthorizationService authz;
     @InjectMocks NcService service;
+
+    /**
+     * Le droit de clore, accorde par defaut dans ces bancs.
+     *
+     * <p>Sans cela chaque banc de cloture mesurerait le DROIT au lieu de la
+     * regle qu il vise. Le second regard et le refus d autorisation ont leurs
+     * propres bancs, qui disent explicitement ce qu ils supposent.
+     */
+    private void jePeuxClore() {
+        org.mockito.Mockito.when(authz.has(
+                com.openlab.qualitos.quality.authz.domain.Permission.NC_CLOSE)).thenReturn(true);
+    }
 
     /**
      * L'équipe nommée à l'ouverture (D1 du 8D) : deux personnes de l'annuaire,
@@ -141,7 +154,7 @@ class NcServiceTest {
 
         NcDto.Response r = service.create(new NcDto.CreateRequest(
                 "Joint", "détail", NcCategory.PRODUCT, "prd-dim", NcSeverity.MAJOR,
-                Instant.now(), null, null, null, null, REPORTER, null, null, null, EQUIPE));
+                Instant.now(), null, null, null, null, REPORTER, null, null, null, null, null, null, null, EQUIPE));
 
         // Le code enregistré est celui que le catalogue rend, pas celui saisi :
         // la casse se normalise une fois pour toutes.
@@ -155,7 +168,7 @@ class NcServiceTest {
 
         assertThatThrownBy(() -> service.create(new NcDto.CreateRequest(
                 "Joint", "détail", NcCategory.PRODUCT, "PAS-UN-CODE", NcSeverity.MAJOR,
-                Instant.now(), null, null, null, null, REPORTER, null, null, null, EQUIPE)))
+                Instant.now(), null, null, null, null, REPORTER, null, null, null, null, null, null, null, EQUIPE)))
                 .isInstanceOf(NcValidationException.class);
         verify(repo, never()).saveAndFlush(any());
     }
@@ -168,7 +181,7 @@ class NcServiceTest {
         when(repo.save(n)).thenReturn(n);
 
         service.update(n.getId(), new NcDto.UpdateRequest(null, null, null, "", null, null, null, null,
-                null, null, null, null, null));
+                null, null, null, null, null, null, null, null, null));
 
         assertThat(n.getSubcategoryCode()).isNull();
         verifyNoInteractions(subcategories);
@@ -185,7 +198,7 @@ class NcServiceTest {
                 .thenThrow(new NcValidationException("belongs to category PRODUCT"));
 
         assertThatThrownBy(() -> service.update(n.getId(), new NcDto.UpdateRequest(
-                null, null, NcCategory.SUPPLIER, null, null, null, null, null, null, null, null, null,
+                null, null, NcCategory.SUPPLIER, null, null, null, null, null, null, null, null, null, null, null, null, null,
                 null)))
                 .isInstanceOf(NcValidationException.class);
     }
@@ -198,7 +211,7 @@ class NcServiceTest {
         when(repo.save(n)).thenReturn(n);
 
         service.update(n.getId(), new NcDto.UpdateRequest("t2", null, null, null, null, null, null, null,
-                null, null, null, null, null));
+                null, null, null, null, null, null, null, null, null));
 
         assertThat(n.getSubcategoryCode()).isEqualTo("PRD-DIM");
         verifyNoInteractions(subcategories);
@@ -267,7 +280,7 @@ class NcServiceTest {
         when(repo.save(n)).thenReturn(n);
         service.update(n.getId(), new NcDto.UpdateRequest(
                 "t2", "d2", NcCategory.SUPPLIER, null, NcSeverity.CRITICAL, "zoneB", 1.0, 2.0, "u1\nu2",
-                NcOrigin.EXTERNAL, null, null, null));
+                NcOrigin.EXTERNAL, null, null, null, null, null, null, null));
         assertThat(n.getTitle()).isEqualTo("t2");
         assertThat(n.getCategory()).isEqualTo(NcCategory.SUPPLIER);
         assertThat(n.getSeverity()).isEqualTo(NcSeverity.CRITICAL);
@@ -283,7 +296,7 @@ class NcServiceTest {
         NonConformity n = nc(TENANT, NcStatus.CLOSED);
         when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
         assertThatThrownBy(() -> service.update(n.getId(),
-                new NcDto.UpdateRequest("x", null, null, null, null, null, null, null, null, null, null, null, null)))
+                new NcDto.UpdateRequest("x", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null)))
                 .isInstanceOf(NcStateException.class);
     }
 
@@ -292,7 +305,7 @@ class NcServiceTest {
         NonConformity n = nc(TENANT, NcStatus.CANCELLED);
         when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
         assertThatThrownBy(() -> service.update(n.getId(),
-                new NcDto.UpdateRequest("x", null, null, null, null, null, null, null, null, null, null, null, null)))
+                new NcDto.UpdateRequest("x", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null)))
                 .isInstanceOf(NcStateException.class);
     }
 
@@ -649,6 +662,7 @@ class NcServiceTest {
     // --- close ---
     @Test
     void close_success() {
+        jePeuxClore();
         NonConformity n = nc(TENANT, NcStatus.RESOLVED);
         when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
         when(repo.save(n)).thenReturn(n);
@@ -687,6 +701,7 @@ class NcServiceTest {
      */
     @Test
     void close_tantQuUnDossierResteEnTravail_refuse() {
+        jePeuxClore();
         NonConformity n = nc(TENANT, NcStatus.RESOLVED);
         UUID capaId = UUID.randomUUID();
         n.setCapaCaseId(capaId);
@@ -716,6 +731,10 @@ class NcServiceTest {
      */
     @Test
     void close_dossiersHorsPortee_donneLeDecompteSansLesNommer() {
+        // Ce banc mesure ce que le refus DIT, pas qui a le droit de clore : sans
+        // cet armement il buterait sur le second regard et ne verrait jamais le
+        // decompte qu il vient verifier.
+        jePeuxClore();
         NonConformity n = nc(TENANT, NcStatus.RESOLVED);
         when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
         // Deux dossiers retiennent la cloture...
@@ -765,6 +784,7 @@ class NcServiceTest {
      */
     @Test
     void close_interrogeAussiLesDossiersLiesParLaReference() {
+        jePeuxClore();
         NonConformity sansEscalade = nc(TENANT, NcStatus.RESOLVED);
         when(repo.findByIdAndTenantId(sansEscalade.getId(), TENANT))
                 .thenReturn(Optional.of(sansEscalade));
@@ -787,6 +807,7 @@ class NcServiceTest {
      */
     @Test
     void close_plusAucunDossierEnTravail_laisseCloturer() {
+        jePeuxClore();
         NonConformity n = nc(TENANT, NcStatus.RESOLVED);
         UUID capaId = UUID.randomUUID();
         n.setCapaCaseId(capaId);
@@ -801,6 +822,10 @@ class NcServiceTest {
 
     @Test
     void close_wrongState_throws() {
+        // Le DROIT se verifie avant l etat : refuser « seul un ecart resolu se
+        // clot » a qui n a pas le droit de clore renseignerait un etranger sur
+        // l etat du dossier.
+        jePeuxClore();
         NonConformity n = nc(TENANT, NcStatus.ACTION_DEFINED);
         when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
         assertThatThrownBy(() -> service.close(n.getId())).isInstanceOf(NcStateException.class);
@@ -993,7 +1018,7 @@ class NcServiceTest {
         when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
 
         assertThatThrownBy(() -> service.update(n.getId(), new NcDto.UpdateRequest(
-                "autre titre", null, null, null, null, null, null, null, null, null, null, null,
+                "autre titre", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
                 null)))
                 .isInstanceOf(NcStateException.class)
                 .hasMessageContaining("REJECTED");
@@ -1016,7 +1041,7 @@ class NcServiceTest {
     private NcDto.CreateRequest req() {
         return new NcDto.CreateRequest(
                 "Joint torique défectueux", "détail", NcCategory.PRODUCT, null, NcSeverity.MAJOR,
-                Instant.now(), "Atelier 3", 48.85, 2.35, "https://s/p1.jpg", REPORTER, null, null, null,
+                Instant.now(), "Atelier 3", 48.85, 2.35, "https://s/p1.jpg", REPORTER, null, null, null, null, null, null, null,
                 EQUIPE);
     }
 
@@ -1024,8 +1049,190 @@ class NcServiceTest {
     private NcDto.CreateRequest reqExterne() {
         return new NcDto.CreateRequest(
                 "Colis livre endommage", "detail", NcCategory.PRODUCT, null, NcSeverity.MAJOR,
-                Instant.now(), "Expedition", null, null, null, REPORTER, NcOrigin.EXTERNAL, null, null,
+                Instant.now(), "Expedition", null, null, null, REPORTER, NcOrigin.EXTERNAL, null, null, null, null, null, null,
                 EQUIPE);
+    }
+
+    // ====================== Le client et le lot (D2 du 8D) ==================
+
+    /**
+     * Le client qui reclame et le lot incrimine se RANGENT, au lieu de finir
+     * noyes dans la description.
+     *
+     * <p>Ecrits en texte libre dans l enonce, ils ne ressortaient ni en filtre,
+     * ni en indicateur, ni dans le rapport remis au client : la question « quels
+     * ecarts sur le lot L2611-08 ? » n avait pas de reponse.
+     */
+    @Test
+    void create_rangeLeClientEtLeLot() {
+        when(repo.countByTenantIdAndReferenceStartingWith(eq(TENANT), anyString())).thenReturn(0L);
+        when(repo.existsByTenantIdAndReference(eq(TENANT), anyString())).thenReturn(false);
+        when(repo.saveAndFlush(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        NcDto.Response r = service.create(new NcDto.CreateRequest(
+                "Joint", "detail", NcCategory.PRODUCT, null, NcSeverity.MAJOR,
+                Instant.now(), null, null, null, null, REPORTER, null, null,
+                "Acme Industrie", "L2611-08", null, null, null, EQUIPE));
+
+        assertThat(r.customerName()).isEqualTo("Acme Industrie");
+        assertThat(r.batchNumber()).isEqualTo("L2611-08");
+    }
+
+    /**
+     * Un champ OUVERT PUIS LAISSE EN BLANC n est pas une valeur.
+     *
+     * <p>Sans ce nettoyage, la fiche portait un nom de client invisible mais
+     * present : il s affichait comme une valeur vide, et aucun filtre
+     * « client renseigne » ne le retrouvait.
+     */
+    @Test
+    void create_clientEnBlanc_neRangeRien() {
+        when(repo.countByTenantIdAndReferenceStartingWith(eq(TENANT), anyString())).thenReturn(0L);
+        when(repo.existsByTenantIdAndReference(eq(TENANT), anyString())).thenReturn(false);
+        when(repo.saveAndFlush(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        NcDto.Response r = service.create(new NcDto.CreateRequest(
+                "Joint", "detail", NcCategory.PRODUCT, null, NcSeverity.MAJOR,
+                Instant.now(), null, null, null, null, REPORTER, null, null,
+                "   ", "\t", null, null, null, EQUIPE));
+
+        assertThat(r.customerName()).isNull();
+        assertThat(r.batchNumber()).isNull();
+    }
+
+    /**
+     * La chaine VIDE efface, l absence n y touche pas.
+     *
+     * <p>Une reclamation saisie au mauvais client doit pouvoir PERDRE ce nom, et
+     * pas seulement le remplacer par un autre : sans quoi la seule sortie serait
+     * d ecrire un faux nom par-dessus.
+     */
+    @Test
+    void update_clientVide_effaceLeNom_absent_nyTouchePas() {
+        NonConformity n = nc(TENANT, NcStatus.OPEN);
+        n.setCustomerName("Acme Industrie");
+        n.setBatchNumber("L2611-08");
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+        when(repo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        // Le lot n est pas dans la requete : il reste.
+        service.update(n.getId(), new NcDto.UpdateRequest(
+                null, null, null, null, null, null, null, null, null, null, null,
+                "", null, null, null, null, null));
+
+        assertThat(n.getCustomerName()).isNull();
+        assertThat(n.getBatchNumber()).isEqualTo("L2611-08");
+    }
+
+    // ====================== La reprise d un ecart refermé ====================
+
+    /**
+     * Un ecart REVIENT : recidive constatee apres la cloture, client qui relance.
+     *
+     * <p>Sans cette reprise, il fallait ouvrir un SECOND ecart -- qui perdait
+     * l analyse de cause, les actions deja menees et l equipe du premier, et
+     * comptait deux fois le meme probleme dans les indicateurs.
+     */
+    @Test
+    void reopen_depuisClos_rouvreLInstruction() {
+        NonConformity n = nc(TENANT, NcStatus.CLOSED);
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+        when(repo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        NcDto.Response r = service.reopen(n.getId(),
+                new NcDto.ReopenRequest("Le defaut est reapparu sur le lot suivant"));
+
+        // OPEN, et non ACTION_DEFINED : ce qui a manque, c est justement la cause
+        // racine ou l action. Reprendre a l etape d apres sauterait l etape qui a
+        // failli.
+        assertThat(r.status()).isEqualTo(NcStatus.OPEN);
+        assertThat(r.reopenedAt()).isNotNull();
+        assertThat(r.reopenReason()).isEqualTo("Le defaut est reapparu sur le lot suivant");
+    }
+
+    /**
+     * La reprise N EFFACE PAS ce qui avait referme l ecart.
+     *
+     * <p>{@code closedAt}, {@code resolvedAt} et leurs notes sont des faits
+     * dates : la reponse que le client a lue ne se reecrit pas. Le statut, lui,
+     * dit ou en est l ecart aujourd hui.
+     */
+    @Test
+    void reopen_nEffacePasCeQuiAvaitReferme() {
+        NonConformity n = nc(TENANT, NcStatus.CLOSED);
+        Instant resolu = Instant.parse("2026-03-01T10:00:00Z");
+        Instant clos = Instant.parse("2026-03-15T10:00:00Z");
+        n.setResolvedAt(resolu);
+        n.setClosedAt(clos);
+        n.setResolutionNote("Joint remplace, controle fait");
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+        when(repo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        NcDto.Response r = service.reopen(n.getId(), new NcDto.ReopenRequest("Recidive"));
+
+        assertThat(r.resolvedAt()).isEqualTo(resolu);
+        assertThat(r.closedAt()).isEqualTo(clos);
+        assertThat(r.resolutionNote()).isEqualTo("Joint remplace, controle fait");
+    }
+
+    /** Les quatre etats refermes se rouvrent, et eux seuls. */
+    @Test
+    void reopen_lesQuatreEtatsRefermes() {
+        for (NcStatus referme : List.of(
+                NcStatus.RESOLVED, NcStatus.CLOSED, NcStatus.CANCELLED, NcStatus.REJECTED)) {
+            NonConformity n = nc(TENANT, referme);
+            when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+            when(repo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+            assertThat(service.reopen(n.getId(), new NcDto.ReopenRequest("reprise")).status())
+                    .as("depuis %s", referme)
+                    .isEqualTo(NcStatus.OPEN);
+        }
+    }
+
+    /**
+     * Un ecart EN COURS ne se rouvre pas : il n est pas ferme.
+     *
+     * <p>La garde est ICI et pas seulement dans l ecran : l API est publique
+     * (§13.1), et un appel direct remettrait sinon a OPEN un ecart en pleine
+     * analyse, en perdant l etape franchie.
+     */
+    @Test
+    void reopen_surUnEcartEnCours_refuse() {
+        for (NcStatus enCours : List.of(
+                NcStatus.OPEN, NcStatus.UNDER_ANALYSIS, NcStatus.ACTION_DEFINED)) {
+            NonConformity n = nc(TENANT, enCours);
+            when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+
+            assertThatThrownBy(() ->
+                    service.reopen(n.getId(), new NcDto.ReopenRequest("reprise")))
+                    .as("depuis %s", enCours)
+                    .isInstanceOf(NcStateException.class)
+                    .hasMessageContaining("can be");
+            assertThat(n.getStatus()).isEqualTo(enCours);
+        }
+    }
+
+    /**
+     * SANS MOTIF, la reprise passe quand meme.
+     *
+     * <p>Rien n est obligatoire dans l ecran de traitement. Le motif a son prix
+     * -- sans lui, la fiche montre un retour en arriere que personne ne sait
+     * expliquer -- mais l exiger bloquerait le geste, et un ecart qui revient
+     * doit pouvoir etre repris tout de suite. La DATE, elle, est posee dans tous
+     * les cas : c est le fait que compte le taux de recidive.
+     */
+    @Test
+    void reopen_sansMotif_passeQuandMeme() {
+        NonConformity n = nc(TENANT, NcStatus.RESOLVED);
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+        when(repo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        NcDto.Response r = service.reopen(n.getId(), new NcDto.ReopenRequest("  "));
+
+        assertThat(r.status()).isEqualTo(NcStatus.OPEN);
+        assertThat(r.reopenedAt()).isNotNull();
+        assertThat(r.reopenReason()).isNull();
     }
 
     private NonConformity nc(UUID tenant, NcStatus status) {

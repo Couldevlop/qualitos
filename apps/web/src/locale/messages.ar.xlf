@@ -22238,6 +22238,46 @@ historique 12 mois</source>
         <source>Les huit disciplines, agrégées depuis ce dossier</source>
         <target state="translated">المراحل الثماني، مُجمَّعة من هذا الملف</target>
       </trans-unit>
+      <trans-unit id="nc.detail.received" datatype="html">
+        <source>Date de réception</source>
+        <target state="translated">تاريخ الاستلام</target>
+      </trans-unit>
+      <trans-unit id="capa.action.decided-on" datatype="html">
+        <source>Date de début</source>
+        <target state="translated">تاريخ البدء</target>
+      </trans-unit>
+      <trans-unit id="capa.actions.due-before-start" datatype="html">
+        <source>échéance antérieure à la date de début</source>
+        <target state="translated">الموعد النهائي قبل تاريخ البدء</target>
+      </trans-unit>
+      <trans-unit id="capa.actions.due-before-start-title" datatype="html">
+        <source>L'échéance précède la date de début.</source>
+        <target state="translated">الموعد النهائي يسبق تاريخ البدء.</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.due-before-start" datatype="html">
+        <source>L'échéance précède la date de début : vérifiez l'une des deux dates.</source>
+        <target state="translated">الموعد النهائي يسبق تاريخ البدء: تحقق من إحدى التاريخين.</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.suggested" datatype="html">
+        <source>Déjà sur ce dossier</source>
+        <target state="translated">موجود بالفعل في هذا الملف</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.team-suggested" datatype="html">
+        <source>Équipe de l'écart</source>
+        <target state="translated">فريق عدم المطابقة</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.criterion-placeholder" datatype="html">
+        <source>À quoi verra-t-on que la cause a disparu ? Ex. : aucun rebut sur ce défaut pendant 3 mois</source>
+        <target state="translated">كيف سنعرف أن السبب قد اختفى؟ مثال: لا مرفوضات لهذا العيب خلال ٣ أشهر</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.criterion-hint" datatype="html">
+        <source>Posé maintenant, il servira à juger l'efficacité de cette action ; il ne se réécrit plus ensuite.</source>
+        <target state="translated">يُحدَّد الآن ليُستخدم في الحكم على فعالية هذا الإجراء، ولا يُعاد كتابته بعد ذلك.</target>
+      </trans-unit>
+      <trans-unit id="common.maxlength-2000" datatype="html">
+        <source>2000 caractères maximum.</source>
+        <target state="translated">٢٠٠٠ حرف كحد أقصى.</target>
+      </trans-unit>
       <trans-unit id="nc.detail.blockers-resolve" datatype="html">
         <source>Cet écart ne peut pas encore être résolu</source>
         <target state="translated">لا يمكن حل عدم المطابقة هذا بعد</target>
@@ -22693,6 +22733,270 @@ historique 12 mois</source>
       <trans-unit id="dmaic.res.missing-marked" datatype="html">
         <source>champ(s) à renseigner, signalés en rouge ci-dessous.</source>
         <target state="translated">حقل/حقول يجب تعبئتها، مُعلَّمة بالأحمر أدناه.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.treatment-eyebrow" datatype="html">
+        <source>Traitement 8D · Équipe · Problème · Causes · Actions · Preuves</source>
+        <target state="translated">معالجة 8D · الفريق · المشكلة · الأسباب · الإجراءات · الأدلة</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.nav-label" datatype="html">
+        <source>Les huit disciplines</source>
+        <target state="translated">الانضباطات الثمانية</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d1-short" datatype="html">
+        <source>Équipe</source>
+        <target state="translated">الفريق</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d1-title" datatype="html">
+        <source>Constituer l’équipe</source>
+        <target state="translated">تشكيل الفريق</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d1-sub" datatype="html">
+        <source>Les personnes qui traiteront cet écart. Le premier nommé pilote.</source>
+        <target state="translated">الأشخاص الذين سيعالجون عدم المطابقة هذا. أول من يُسمّى يقود العمل.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d2-short" datatype="html">
+        <source>Problème</source>
+        <target state="translated">المشكلة</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d2-title" datatype="html">
+        <source>Décrire le problème</source>
+        <target state="translated">وصف المشكلة</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d2-sub" datatype="html">
+        <source>Quoi, où, quand, combien : restez factuel.</source>
+        <target state="translated">ماذا، وأين، ومتى، وكم: التزم بالوقائع.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d3-short" datatype="html">
+        <source>Confinement</source>
+        <target state="translated">الاحتواء</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d3-title" datatype="html">
+        <source>Actions de confinement</source>
+        <target state="translated">إجراءات الاحتواء</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d3-sub" datatype="html">
+        <source>Ce qui protège le client dès maintenant, avant la cause racine.</source>
+        <target state="translated">ما يحمي العميل الآن، قبل معرفة السبب الجذري.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d3-no-case" datatype="html">
+        <source>Aucun dossier CAPA n’existe encore sur cet écart : les actions de confinement s’écriront ici dès qu’il y en aura un, au D5.</source>
+        <target state="translated">لا يوجد بعد ملف CAPA لعدم المطابقة هذا: ستُكتب إجراءات الاحتواء هنا بمجرد إنشاء ملف، في D5.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d4-short" datatype="html">
+        <source>Causes</source>
+        <target state="translated">الأسباب</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d4-title" datatype="html">
+        <source>Analyse des causes</source>
+        <target state="translated">تحليل الأسباب</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d4-sub" datatype="html">
+        <source>Identifiez la cause racine avec les outils de votre choix.</source>
+        <target state="translated">حدِّد السبب الجذري بالأدوات التي تختارها.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d5-short" datatype="html">
+        <source>Correctives</source>
+        <target state="translated">تصحيحية</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d5-title" datatype="html">
+        <source>Actions correctives</source>
+        <target state="translated">الإجراءات التصحيحية</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d5-sub" datatype="html">
+        <source>Ce qui supprime la cause racine.</source>
+        <target state="translated">ما يُزيل السبب الجذري.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d6-short" datatype="html">
+        <source>Preuves</source>
+        <target state="translated">الأدلة</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d6-title" datatype="html">
+        <source>Preuves des actions correctives</source>
+        <target state="translated">أدلة الإجراءات التصحيحية</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d6-sub" datatype="html">
+        <source>Photos, mesures, rapports de contrôle qui démontrent l’efficacité.</source>
+        <target state="translated">صور وقياسات وتقارير فحص تُثبت الفعالية.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d6-evidence-hint" datatype="html">
+        <source>Chaque action porte sa propre pièce, dans la colonne « Preuve » des tableaux D3, D5 et D7 : une pièce détachée de son action ne démontre rien.</source>
+        <target state="translated">كل إجراء يحمل مُستنده في عمود «الدليل» من جداول D3 و D5 و D7: مستند منفصل عن إجراءه لا يُثبت شيئًا.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d6-verdict" datatype="html">
+        <source>Juger l’efficacité</source>
+        <target state="translated">الحكم على الفعالية</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d7-short" datatype="html">
+        <source>Préventives</source>
+        <target state="translated">وقائية</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d7-title" datatype="html">
+        <source>Actions préventives</source>
+        <target state="translated">الإجراءات الوقائية</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d7-sub" datatype="html">
+        <source>Ce qui évite que le problème revienne ailleurs.</source>
+        <target state="translated">ما يمنع عودة المشكلة في مكان آخر.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d7-no-case" datatype="html">
+        <source>Aucun dossier CAPA n’existe encore sur cet écart : les actions préventives s’écriront ici dès qu’il y en aura un, au D5.</source>
+        <target state="translated">لا يوجد بعد ملف CAPA لعدم المطابقة هذا: ستُكتب الإجراءات الوقائية هنا بمجرد إنشاء ملف، في D5.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d8-short" datatype="html">
+        <source>Remerciements</source>
+        <target state="translated">الشكر</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d8-title" datatype="html">
+        <source>Remercier l’équipe</source>
+        <target state="translated">شكر الفريق</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d8-sub" datatype="html">
+        <source>Reconnaissez le travail accompli. Ce mot part dans le rapport 8D.</source>
+        <target state="translated">اعترف بالعمل المُنجز. هذه الكلمات تُرسل في تقرير 8D.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d8-label" datatype="html">
+        <source>Message à l’équipe</source>
+        <target state="translated">رسالة إلى الفريق</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d8-placeholder" datatype="html">
+        <source>Merci à toute l’équipe pour…</source>
+        <target state="translated">شكرًا لكل الفريق على…</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d8-none" datatype="html">
+        <source>Aucun mot de clôture n’a été écrit.</source>
+        <target state="translated">لم تُكتب أي كلمة ختامية.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d8-saved" datatype="html">
+        <source>Remerciements enregistrés dans le rapport 8D.</source>
+        <target state="translated">تم حفظ الشكر في تقرير 8D.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d8-error" datatype="html">
+        <source>Les remerciements n'ont pas pu être enregistrés.</source>
+        <target state="translated">لم يتم حفظ الشكر.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.no-case" datatype="html">
+        <source>Aucun dossier CAPA sur cet écart. Ouvrez-en un : les actions de confinement, correctives et préventives s’écriront et s’avanceront ici même, chacune sous sa discipline.</source>
+        <target state="translated">لا يوجد ملف CAPA لعدم المطابقة هذا. افتح ملفًا: ستُكتب إجراءات الاحتواء والتصحيح والوقاية وتتقدّم هنا نفسه، كل منها تحت انضباطه.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.customer" datatype="html">
+        <source>Client</source>
+        <target state="translated">العميل</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.customer-placeholder" datatype="html">
+        <source>Nom du client qui réclame</source>
+        <target state="translated">اسم العميل المُطالِب</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.batch" datatype="html">
+        <source>N° de lot</source>
+        <target state="translated">رقم الدفعة</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.batch-placeholder" datatype="html">
+        <source>Ex. L2611-08</source>
+        <target state="translated">مثال: L2611-08</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.context-saved" datatype="html">
+        <source>Description enregistrée.</source>
+        <target state="translated">تم حفظ الوصف.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.context-error" datatype="html">
+        <source>La description n'a pas pu être enregistrée.</source>
+        <target state="translated">لم يتم حفظ الوصف.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.banner-reopened" datatype="html">
+        <source>Écart repris le</source>
+        <target state="translated">أُعيد فتح عدم المطابقة في</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.banner-closed" datatype="html">
+        <source>Clôturé le</source>
+        <target state="translated">أُغلق في</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.banner-closed-by" datatype="html">
+        <source>par <x id="name"/></source>
+        <target state="translated">بواسطة <x id="name"/></target>
+      </trans-unit>
+      <trans-unit id="nc.8d.banner-rejected" datatype="html">
+        <source>Écarté le</source>
+        <target state="translated">رُفض في</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.banner-resolved" datatype="html">
+        <source>Résolu le</source>
+        <target state="translated">حُلّ في</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.banner-cancelled" datatype="html">
+        <source>Écart annulé.</source>
+        <target state="translated">أُلغي عدم المطابقة.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.reopen" datatype="html">
+        <source>Rouvrir</source>
+        <target state="translated">إعادة الفتح</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.reopen-tooltip" datatype="html">
+        <source>Reprendre l'instruction : récidive, relance du client, constat écarté à tort</source>
+        <target state="translated">استئناف التحقيق: تكرار، أو متابعة من العميل، أو ملاحظة رُفضت خطأً</target>
+      </trans-unit>
+      <trans-unit id="nc.reopen.title" datatype="html">
+        <source>Reprendre cet écart</source>
+        <target state="translated">إعادة فتح عدم المطابقة هذا</target>
+      </trans-unit>
+      <trans-unit id="nc.reopen.hint" datatype="html">
+        <source>L'instruction reprendra à son début, et tout ce qui a déjà été fait reste attaché à</source>
+        <target state="translated">سيبدأ التحقيق من جديد، ويبقى كل ما تم إنجازه مرتبطًا بـ</target>
+      </trans-unit>
+      <trans-unit id="nc.reopen.hint-end" datatype="html">
+        <source> : équipe, analyse de cause, actions et preuves. Ce qui l'avait refermé n'est pas effacé.</source>
+        <target state="translated">: الفريق، وتحليل الأسباب، والإجراءات، والأدلة. وما أغلقه لا يُمحى.</target>
+      </trans-unit>
+      <trans-unit id="nc.reopen.reason-label" datatype="html">
+        <source>Motif de la reprise (facultatif)</source>
+        <target state="translated">سبب إعادة الفتح (اختياري)</target>
+      </trans-unit>
+      <trans-unit id="nc.reopen.reason-placeholder" datatype="html">
+        <source>Récidive constatée sur le lot suivant, relance du client, constat écarté à tort…</source>
+        <target state="translated">تكرار في الدفعة التالية، أو متابعة من العميل، أو ملاحظة رُفضت خطأً…</target>
+      </trans-unit>
+      <trans-unit id="nc.reopen.reason-hint" datatype="html">
+        <source>Sans motif, la reprise reste possible — mais rien n'expliquera ce retour en arrière.</source>
+        <target state="translated">بدون سبب، تبقى إعادة الفتح ممكنة — لكن لن يُفسّر شيء هذه العودة.</target>
+      </trans-unit>
+      <trans-unit id="nc.reopen.submit" datatype="html">
+        <source>Reprendre</source>
+        <target state="translated">استئناف</target>
+      </trans-unit>
+      <trans-unit id="nc.reopen.success" datatype="html">
+        <source>Écart repris : l'instruction reprend à son début.</source>
+        <target state="translated">أُعيد فتح عدم المطابقة: يبدأ التحقيق من جديد.</target>
+      </trans-unit>
+      <trans-unit id="nc.reopen.error" datatype="html">
+        <source>Reprise impossible.</source>
+        <target state="translated">إعادة الفتح غير ممكنة.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.validator" datatype="html">
+        <source>Valideur de la clôture (second regard)</source>
+        <target state="translated">مُصادِق الإغلاق (المراجعة الثانية)</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.validator-hint" datatype="html">
+        <source>Facultatif. Cette personne pourra clôturer cet écart même sans rôle qualité — et jamais s’il l’a résolu elle-même.</source>
+        <target state="translated">اختياري. يمكن لهذا الشخص إغلاق عدم المطابقة هذا حتى بدون دور في الجودة — ولا يمكنه ذلك أبدًا إن كان هو من حلّه.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.validator-saved" datatype="html">
+        <source>Valideur enregistré.</source>
+        <target state="translated">تم حفظ المُصادِق.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.validator-failed" datatype="html">
+        <source>Le valideur n'a pas pu être enregistré.</source>
+        <target state="translated">لم يتم حفظ المُصادِق.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.resolved-by" datatype="html">
+        <source>Résolu par</source>
+        <target state="translated">حلّه</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.closed-by" datatype="html">
+        <source>Clôturé par</source>
+        <target state="translated">أغلقه</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.second-look" datatype="html">
+        <source>Vous avez résolu cet écart : sa clôture demande un second regard. Un responsable qualité, ou le valideur désigné, doit la porter.</source>
+        <target state="translated">أنت من حلّ عدم المطابقة هذا: إغلاقه يتطلب مراجعة ثانية. يجب أن يتولاها مسؤول جودة أو المُصادِق المُعيَّن.</target>
       </trans-unit>
       <trans-unit id="nav.nlq-explore" datatype="html">
         <source>Exploration NLQ</source>

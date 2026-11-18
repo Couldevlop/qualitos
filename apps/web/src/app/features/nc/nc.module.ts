@@ -21,6 +21,7 @@ import { NcDetailComponent } from './pages/nc-detail/nc-detail.component';
 import { NcEightDComponent } from './pages/nc-eightd/nc-eightd.component';
 import { NcListComponent } from './pages/nc-list/nc-list.component';
 import { NcRejectDialogComponent } from './pages/nc-reject-dialog/nc-reject-dialog.component';
+import { NcReopenDialogComponent } from './pages/nc-reopen-dialog/nc-reopen-dialog.component';
 import { NcResolveDialogComponent } from './pages/nc-resolve-dialog/nc-resolve-dialog.component';
 
 // Deux entrées de navigation, un seul écran : l'origine est portée par la ROUTE
@@ -49,6 +50,7 @@ const routes: Routes = [
     NcConvertDialogComponent,
     NcCreateDialogComponent,
     NcRejectDialogComponent,
+    NcReopenDialogComponent,
     NcResolveDialogComponent,
     NcEightDComponent
   ],

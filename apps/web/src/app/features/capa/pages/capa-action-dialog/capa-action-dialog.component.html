@@ -49,14 +49,64 @@
   </div>
 
   <div class="row">
+    <!-- L'ÉQUIPE DU DOSSIER EN TÊTE du sélecteur : l'action revient presque
+         toujours à quelqu'un qui est déjà dessus, et l'annuaire entier reste
+         dessous pour les autres cas. -->
     <qos-user-picker class="col" formControlName="assigneeId" data-test="action-responsable"
                      i18n-label="@@capa.detail.single-action-assignee" label="Responsable"
+                     [suggestions]="data.team ?? []"
+                     i18n-suggestionsLabel="@@capa.action-dialog.team-suggested"
+                     suggestionsLabel="Équipe de l'écart"
                      (userSelected)="onAssignee($event)"></qos-user-picker>
 
     <mat-form-field appearance="outline" class="col">
-      <mat-label i18n="@@capa.detail.due-date">Échéance</mat-label>
-      <input matInput formControlName="dueDate" type="date" data-test="action-echeance">
+      <mat-label i18n="@@capa.action.decided-on">Date de début</mat-label>
+      <input matInput formControlName="decidedOn" type="date" data-test="action-debut">
     </mat-form-field>
+  </div>
+
+  <div class="row">
+    <mat-form-field appearance="outline" class="col">
+      <mat-label i18n="@@capa.detail.due-date">Échéance</mat-label>
+      <input matInput formControlName="dueDate" type="date" data-test="action-echeance"
+             [class.echeance--avant-debut]="echeanceAvantDebut">
+    </mat-form-field>
+  </div>
+
+  <!-- Une échéance avant le début se SIGNALE sans bloquer l'enregistrement :
+       c'est presque toujours une faute de frappe sur l'une des deux dates, et
+       refuser la saisie ferait perdre le reste du formulaire pour un chiffre. -->
+  <p class="echeance-alerte" role="status" data-test="action-echeance-avant-debut"
+     *ngIf="echeanceAvantDebut"
+     i18n="@@capa.action-dialog.due-before-start">
+    L'échéance précède la date de début : vérifiez l'une des deux dates.
+  </p>
+
+  <!-- LA DEMANDE D'ÉVALUATION D'EFFICACITÉ, posée là où l'action s'écrit.
+       Une action corrective prétend supprimer la cause : il faut dire dès
+       maintenant à quoi l'on verra qu'elle l'a supprimée, sans quoi la
+       vérification choisira après coup la mesure qui arrange (ADR 0108). -->
+  <div class="efficacite" *ngIf="demandeCritere" data-test="action-efficacite-demande">
+    <mat-form-field appearance="outline" class="full">
+      <mat-label i18n="@@capa.criterion.label">Critère d'efficacité</mat-label>
+      <textarea matInput formControlName="effectivenessCriterion" rows="2" maxlength="2000"
+                data-test="action-critere-efficacite"
+                i18n-placeholder="@@capa.action-dialog.criterion-placeholder"
+                placeholder="À quoi verra-t-on que la cause a disparu ? Ex. : aucun rebut sur ce défaut pendant 3 mois"></textarea>
+      <mat-hint i18n="@@capa.action-dialog.criterion-hint">
+        Posé maintenant, il servira à juger l'efficacité de cette action ; il ne se réécrit plus ensuite.
+      </mat-hint>
+      <mat-error *ngIf="form.controls.effectivenessCriterion.hasError('maxlength')"
+                 i18n="@@common.maxlength-2000">2000 caractères maximum.</mat-error>
+    </mat-form-field>
+  </div>
+
+  <!-- LE CRITÈRE DÉJÀ POSÉ se rappelle, en lecture : on écrit mieux une action
+       corrective quand on a sous les yeux la mesure qui la jugera. -->
+  <div class="efficacite efficacite--rappel" *ngIf="!demandeCritere && critereDejaPose"
+       data-test="action-efficacite-rappel">
+    <span class="efficacite__titre" i18n="@@capa.criterion.label">Critère d'efficacité</span>
+    <p class="efficacite__texte">{{ critereDejaPose }}</p>
   </div>
 
   <!-- Le statut ne s'affiche qu'a l'edition : une action qui vient d'etre

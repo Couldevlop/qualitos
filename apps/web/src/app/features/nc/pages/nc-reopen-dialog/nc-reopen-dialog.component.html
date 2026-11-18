@@ -1,0 +1,29 @@
+<qos-form-dialog
+  i18n-title="@@nc.reopen.title"
+  title="Reprendre cet écart"
+  [formGroup]="form"
+  [submitting]="submitting"
+  [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@nc.reopen.submit"
+  submitLabel="Reprendre"
+  submitIcon="restart_alt"
+  submitColor="primary"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
+
+  <p class="hint">
+    <span i18n="@@nc.reopen.hint">L'instruction reprendra à son début, et tout ce qui a déjà été fait reste attaché à</span>
+    <span class="ref">{{ data.reference }}</span><span i18n="@@nc.reopen.hint-end"> : équipe, analyse de cause, actions et preuves. Ce qui l'avait refermé n'est pas effacé.</span>
+  </p>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@nc.reopen.reason-label">Motif de la reprise (facultatif)</mat-label>
+    <textarea matInput formControlName="reason" rows="4" maxlength="2000"
+              i18n-placeholder="@@nc.reopen.reason-placeholder"
+              placeholder="Récidive constatée sur le lot suivant, relance du client, constat écarté à tort…"></textarea>
+    <mat-hint i18n="@@nc.reopen.reason-hint">
+      Sans motif, la reprise reste possible — mais rien n'expliquera ce retour en arrière.
+    </mat-hint>
+  </mat-form-field>
+
+</qos-form-dialog>

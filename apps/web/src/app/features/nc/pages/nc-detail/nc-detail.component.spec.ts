@@ -114,9 +114,13 @@ describe('NcDetailComponent — section photos', () => {
 
   beforeEach(async () => {
     svc = jasmine.createSpyObj<NcService>('NcService', [
+      'getEightDReport', 
       'getNc', 'listPhotos', 'uploadPhoto', 'deletePhoto', 'analyzePhotoVision', 'subcategories'
     ]);
     svc.subcategories.and.returnValue(of({ entries: [], defaults: true }));
+    // Le D8 lit le rapport 8D pour n'en tirer que les remerciements : un
+    // rapport vide suffit ici, la discipline n'est pas le sujet de ces bancs.
+    svc.getEightDReport.and.returnValue(of({} as any));
     connectivity = new FakeConnectivity();
 
     await TestBed.configureTestingModule({
@@ -271,7 +275,7 @@ describe('NcDetailComponent — section photos', () => {
   it('affiche l’invite initiale tant qu’aucune analyse n’a tourné', () => {
     setup(buildNc(), []);
     const el: HTMLElement = fixture.nativeElement;
-    expect(el.querySelector('.vision-card')).toBeTruthy();
+    expect(el.querySelector('.vision-block')).toBeTruthy();
     expect(el.querySelector('.vision-scores')).toBeNull();
   });
 
@@ -476,10 +480,14 @@ describe('NcDetailComponent — workflow et escalade CAPA', () => {
     routeId = UUID;
     currentUser = { userId: 'u1' };
     svc = jasmine.createSpyObj<NcService>('NcService', [
+      'getEightDReport', 
       'getNc', 'listPhotos', 'startAnalysis', 'defineAction', 'close', 'cancel',
       'escalateToCapa', 'uploadPhoto', 'deletePhoto', 'analyzePhotoVision', 'subcategories'
     ]);
     svc.subcategories.and.returnValue(of({ entries: [], defaults: true }));
+    // Le D8 lit le rapport 8D pour n'en tirer que les remerciements : un
+    // rapport vide suffit ici, la discipline n'est pas le sujet de ces bancs.
+    svc.getEightDReport.and.returnValue(of({} as any));
     svc.listPhotos.and.returnValue(of([]));
 
     await TestBed.configureTestingModule({
@@ -777,11 +785,16 @@ describe('NcDetailComponent — workflow et escalade CAPA', () => {
 
   // Le lien vers le dossier a quitté l'en-tête pour la carte de l'action : on y
   // va désormais pour ce que l'en-tête ne disait pas, l'avancement.
-  it('n’affiche pas la carte de l’action tant qu’il n’y a pas de dossier', () => {
+  // La DISCIPLINE D5 existe toujours -- c'est une etape du traitement 8D. Ce
+  // qui change, c'est son contenu : sans dossier, l'invite a en ouvrir un, et
+  // aucun tableau d'actions.
+  it('garde la discipline D5 et n’y met aucun tableau tant qu’il n’y a pas de dossier', () => {
     setup(buildNc({ capaCaseId: undefined }));
     fixture.detectChanges();
     const el = fixture.nativeElement as HTMLElement;
-    expect(el.querySelector('[data-test="capa-action"]')).toBeNull();
+    expect(el.querySelector('[data-test="capa-action"]')).not.toBeNull();
+    expect(el.querySelector('qos-capa-action-panel')).toBeNull();
+    expect(el.querySelector('[data-test="capa-action-vide"]')).not.toBeNull();
   });
 
   /**
@@ -947,9 +960,13 @@ describe('NcDetailComponent — entrée 5 Pourquoi', () => {
   async function configure(existing: FiveWhysAnalysis[]): Promise<void> {
     fiveWhys = fiveWhysSpy(existing);
     ishikawa = ishikawaSpy();
-    svc = jasmine.createSpyObj<NcService>('NcService', ['getNc', 'listPhotos', 'subcategories']);
+    svc = jasmine.createSpyObj<NcService>('NcService', [
+      'getEightDReport', 'getNc', 'listPhotos', 'subcategories']);
     svc.listPhotos.and.returnValue(of([]));
     svc.subcategories.and.returnValue(of({ entries: [], defaults: true }));
+    // Le D8 lit le rapport 8D pour n'en tirer que les remerciements : un
+    // rapport vide suffit ici, la discipline n'est pas le sujet de ces bancs.
+    svc.getEightDReport.and.returnValue(of({} as any));
 
     TestBed.resetTestingModule();
     await TestBed.configureTestingModule({
@@ -1109,9 +1126,13 @@ describe('NcDetailComponent — entrée Ishikawa', () => {
 
   async function configure(existing: IshikawaDiagramResponse[]): Promise<void> {
     ishikawa = ishikawaSpy(existing);
-    svc = jasmine.createSpyObj<NcService>('NcService', ['getNc', 'listPhotos', 'subcategories']);
+    svc = jasmine.createSpyObj<NcService>('NcService', [
+      'getEightDReport', 'getNc', 'listPhotos', 'subcategories']);
     svc.listPhotos.and.returnValue(of([]));
     svc.subcategories.and.returnValue(of({ entries: [], defaults: true }));
+    // Le D8 lit le rapport 8D pour n'en tirer que les remerciements : un
+    // rapport vide suffit ici, la discipline n'est pas le sujet de ces bancs.
+    svc.getEightDReport.and.returnValue(of({} as any));
 
     TestBed.resetTestingModule();
     await TestBed.configureTestingModule({
@@ -1237,8 +1258,11 @@ describe('NcDetailComponent — conversion en cycle ou en projet', () => {
 
   beforeEach(async () => {
     svc = jasmine.createSpyObj<NcService>('NcService',
-      ['getNc', 'listPhotos', 'subcategories', 'convert']);
+      ['getEightDReport', 'getNc', 'listPhotos', 'subcategories', 'convert']);
     svc.subcategories.and.returnValue(of({ entries: [], defaults: true }));
+    // Le D8 lit le rapport 8D pour n'en tirer que les remerciements : un
+    // rapport vide suffit ici, la discipline n'est pas le sujet de ces bancs.
+    svc.getEightDReport.and.returnValue(of({} as any));
     svc.listPhotos.and.returnValue(of([]));
 
     TestBed.resetTestingModule();

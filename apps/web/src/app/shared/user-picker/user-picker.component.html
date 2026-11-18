@@ -35,10 +35,25 @@
     <mat-option *ngIf="state === 'error'" disabled class="picker__status picker__status--error" data-test="user-picker-error">
       <span i18n="@@directory.picker.error">Annuaire indisponible pour le moment. Réessayez dans un instant.</span>
     </mat-option>
-    <mat-option *ngIf="state === 'ready' && options.length === 0" disabled class="picker__status" data-test="user-picker-empty">
+    <mat-option *ngIf="state === 'ready' && options.length === 0 && suggestionsVisibles.length === 0"
+                disabled class="picker__status" data-test="user-picker-empty">
       <span i18n="@@directory.picker.empty">Aucune personne ne correspond.</span>
     </mat-option>
     <ng-container *ngIf="state === 'ready'">
+      <!-- EN TÊTE, les personnes déjà sur le dossier : c'est presque toujours
+           l'une d'elles qu'on désigne, et l'annuaire entier reste dessous. -->
+      <mat-optgroup *ngIf="suggestionsVisibles.length" [label]="suggestionsLabel">
+        <mat-option *ngFor="let user of suggestionsVisibles; trackBy: trackById"
+                    [value]="user" data-test="user-picker-suggested">
+          <span class="option">
+            <span class="option__avatar" aria-hidden="true">{{ user.displayName.charAt(0) }}</span>
+            <span class="option__text">
+              <span class="option__name">{{ user.displayName }}</span>
+              <span class="option__email" *ngIf="user.email !== user.displayName">{{ user.email }}</span>
+            </span>
+          </span>
+        </mat-option>
+      </mat-optgroup>
       <mat-option *ngFor="let user of options; trackBy: trackById" [value]="user" data-test="user-picker-option">
         <span class="option">
           <span class="option__avatar" aria-hidden="true">{{ user.displayName.charAt(0) }}</span>

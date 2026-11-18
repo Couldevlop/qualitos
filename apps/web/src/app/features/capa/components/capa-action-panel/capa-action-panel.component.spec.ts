@@ -71,7 +71,7 @@ function dossier(overrides: Partial<CapaCaseResponse> = {}): CapaCaseResponse {
 }
 
 @Component({
-  template: `<qos-capa-action-panel [capaCaseId]="id" [natures]="natures"
+  template: `<qos-capa-action-panel [capaCaseId]="id" [natures]="natures" [team]="equipe"
                                     (changed)="changements = changements + 1"></qos-capa-action-panel>`,
   standalone: false
 })
@@ -79,6 +79,8 @@ class HoteComponent {
   id = 'capa-1';
   /** Vide : toutes les actions. Le rapport 8D, lui, restreint par discipline. */
   natures: CapaActionType[] = [];
+  /** L'équipe du D1 de l'écart, quand l'écran appelant en a une. */
+  equipe: { accountId: string }[] = [];
   changements = 0;
 }
 
@@ -683,5 +685,92 @@ describe('CapaActionPanelComponent', () => {
     expect(tous('capa-action-ligne').length).toBe(1);
     expect(panneau().stockageCoupe).toBeTrue();
     expect(un('capa-action-erreur')).toBeNull();
+  });
+
+  /**
+   * LA DATE DE DÉBUT ET L'ÉCHÉANCE, et leur ordre.
+   *
+   * <p>Le tableau montrait l'échéance seule. Une action dont l'échéance précède
+   * son début est presque toujours une faute de frappe, et elle fausse tous les
+   * décomptes de retard sans que rien ne l'annonce.
+   */
+  describe('la date de début et l’ordre des deux dates', () => {
+
+    it('montre la date de début de chaque action', async () => {
+      await setup({
+        dossier: dossier({ actions: [action({ decidedOn: '2026-11-02', dueDate: '2026-12-01' })] })
+      });
+      expect(un('capa-actions-table')!.textContent).toContain('Nov');
+      expect(panneau().echeanceAvantDebut(
+        action({ decidedOn: '2026-11-02', dueDate: '2026-12-01' }))).toBeFalse();
+    });
+
+    it('signale une échéance antérieure à la date de début, en mots et pas seulement en couleur',
+      async () => {
+        await setup({
+          dossier: dossier({ actions: [action({ decidedOn: '2026-12-01', dueDate: '2026-11-02' })] })
+        });
+        const cellule = un('capa-actions-table')!
+          .querySelector('.actions__echeance') as HTMLElement;
+        expect(cellule.classList).toContain('actions__echeance--avant-debut');
+        // La couleur ne peut pas porter seule l'information.
+        expect(cellule.getAttribute('title')).toBeTruthy();
+        expect(cellule.textContent).toContain('antérieure');
+      });
+
+    it('compare les jours sans passer par le fuseau du navigateur', async () => {
+      await setup({ dossier: dossier({ actions: [action()] }) });
+      // Deux dates ÉGALES ne sont pas en désordre. Une comparaison via
+      // `new Date()` pourrait les ordonner selon le fuseau.
+      expect(panneau().echeanceAvantDebut(
+        action({ decidedOn: '2026-11-02', dueDate: '2026-11-02' }))).toBeFalse();
+      expect(panneau().echeanceAvantDebut(action({ decidedOn: '2026-11-02' }))).toBeFalse();
+      expect(panneau().echeanceAvantDebut(action({ dueDate: '2026-11-02' }))).toBeFalse();
+    });
+  });
+
+  /**
+   * L'ÉQUIPE DE L'ÉCART, proposée au choix du responsable d'une action.
+   *
+   * <p>Le panneau ne la cherche pas : il sert aussi la fiche d'un dossier CAPA
+   * ouvert sans écart, où il n'y a pas d'équipe 8D.
+   */
+  describe('l’équipe transmise à la fenêtre', () => {
+
+    const equipeDeLaFenetre = (): readonly { accountId: string }[] | undefined =>
+      (dialog.open.calls.mostRecent().args[1] as {
+        data: { team?: readonly { accountId: string }[] };
+      }).data.team;
+
+    it('transmet l’équipe et le critère du dossier quand on ajoute une action', async () => {
+      await setup({
+        dossier: dossier({ actions: [], effectivenessCriterion: 'Aucun rebut pendant 3 mois' })
+      });
+      hote.equipe = [{ accountId: 'u-alice' }, { accountId: 'u-bob' }];
+      fixture.detectChanges();
+
+      un('capa-action-definir')!.click();
+
+      expect(equipeDeLaFenetre()).toEqual([{ accountId: 'u-alice' }, { accountId: 'u-bob' }]);
+      expect((dialog.open.calls.mostRecent().args[1] as {
+        data: { effectivenessCriterion?: string };
+      }).data.effectivenessCriterion).toBe('Aucun rebut pendant 3 mois');
+    });
+
+    it('la transmet aussi quand on corrige une action existante', async () => {
+      await setup({ dossier: dossier({ actions: [action()] }) });
+      hote.equipe = [{ accountId: 'u-alice' }];
+      fixture.detectChanges();
+
+      (un('capa-action-ligne') as HTMLElement).click();
+
+      expect(equipeDeLaFenetre()).toEqual([{ accountId: 'u-alice' }]);
+    });
+
+    it('ne transmet rien quand l’écran appelant n’a pas d’équipe', async () => {
+      await setup({ dossier: dossier({ actions: [] }) });
+      un('capa-action-definir')!.click();
+      expect(equipeDeLaFenetre()).toEqual([]);
+    });
   });
 });

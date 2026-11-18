@@ -77,8 +77,31 @@ export class CapaActionPanelComponent implements OnChanges {
   // relirait le dossier par le réseau à chaque passe. Le type le dit.
   @Input() natures: readonly CapaActionType[] = [];
 
+  /**
+   * Les personnes déjà sur l'écart (l'équipe du D1), proposées en tête du
+   * sélecteur de responsable quand on ajoute ou corrige une action.
+   *
+   * <p>Le panneau ne les cherche pas lui-même : il sert aussi la fiche d'un
+   * dossier CAPA ouvert sans écart, où il n'y a pas d'équipe 8D. L'écran qui en
+   * a une la donne, les autres n'en donnent pas.
+   */
+  @Input() team: readonly { accountId: string }[] = [];
+
   /** Émis après chaque changement enregistré : l'écran appelant peut se relire. */
   @Output() readonly changed = new EventEmitter<void>();
+
+  /**
+   * Combien de lignes ce panneau MONTRE, émis à chaque lecture du dossier.
+   *
+   * <p>Pour l'hôte qui résume l'avancement sans refaire la requête : le sommaire
+   * des huit disciplines coche « endiguer » et « prévenir » d'après le nombre
+   * d'actions de CETTE nature, et seul le panneau le connaît -- la fiche de
+   * l'écart sait quels dossiers existent, pas ce qu'ils portent.
+   *
+   * <p>Zéro est une valeur : « lu, et il n'y en a aucune » n'est pas « pas encore
+   * lu », et le sommaire ne doit pas cocher la seconde.
+   */
+  @Output() readonly counted = new EventEmitter<number>();
 
   capa: CapaCaseResponse | null = null;
   readonly loading$ = new BehaviorSubject<boolean>(false);
@@ -125,12 +148,18 @@ export class CapaActionPanelComponent implements OnChanges {
       next: capa => {
         this.capa = capa;
         this.cdr.markForCheck();
+        // Après coup : le décompte porte sur ce que le panneau MONTRE, donc sur
+        // le dossier déjà posé et la nature déjà filtrée.
+        this.counted.emit(this.actions.length);
         this.chargerPreuves();
       },
       error: err => {
         // eslint-disable-next-line no-console
         console.warn('[capa-action-panel] getCase failed', err?.status, err?.error?.title);
         this.capa = null;
+        // En panne, le panneau ne montre RIEN : l'hôte ne doit pas garder le
+        // décompte d'avant, qui lui ferait cocher une discipline illisible.
+        this.counted.emit(0);
         this.error = safeErrorMessage(
           err, $localize`:@@capa.action-panel.failed:L'action de la CAPA n'a pas pu être lue.`);
         this.cdr.markForCheck();
@@ -436,6 +465,8 @@ export class CapaActionPanelComponent implements OnChanges {
       ownerId: this.capa.ownerId,
       ownerName: this.capa.ownerName,
       dueDate: this.capa.dueDate,
+      team: this.team,
+      effectivenessCriterion: this.capa.effectivenessCriterion,
       // Tableau restreint à une nature : l'action ajoutée là est de cette nature.
       actionType: this.natures.length === 1 ? this.natures[0] : undefined
     });
@@ -458,8 +489,27 @@ export class CapaActionPanelComponent implements OnChanges {
       ownerId: this.capa.ownerId,
       ownerName: this.capa.ownerName,
       dueDate: this.capa.dueDate,
+      team: this.team,
+      effectivenessCriterion: this.capa.effectivenessCriterion,
       readOnly: this.isTerminal(this.capa.status)
     });
+  }
+
+  /** Le titre et la mention lue par les lecteurs d'écran, écrits une seule fois. */
+  readonly titreEcheanceAvantDebut =
+    $localize`:@@capa.actions.due-before-start-title:L'échéance précède la date de début.`;
+
+  /**
+   * Vrai quand l'échéance de cette action précède sa date de début.
+   *
+   * <p>Comparaison de chaînes et non de dates : les deux champs sont des jours
+   * au format ISO (`2026-11-18`), où l'ordre alphabétique EST l'ordre
+   * chronologique. Passer par `new Date()` ferait entrer le fuseau du
+   * navigateur dans une comparaison de jours, et deux dates égales pourraient
+   * s'ordonner.
+   */
+  echeanceAvantDebut(action: CapaActionResponse): boolean {
+    return !!action.decidedOn && !!action.dueDate && action.dueDate < action.decidedOn;
   }
 
   private openDialog(data: CapaActionDialogData): void {

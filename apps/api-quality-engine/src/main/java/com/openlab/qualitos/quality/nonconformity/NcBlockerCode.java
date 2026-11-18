@@ -37,6 +37,22 @@ public enum NcBlockerCode {
     CAPA_CASES_UNSETTLED,
 
     /**
+     * La personne qui regarde est celle qui a RÉSOLU cet écart. Décompte = 1.
+     *
+     * <p>Empêche de CLORE : clore, c'est valider que la résolution tient, et
+     * personne ne valide son propre travail. Jusqu'ici la même personne pouvait
+     * écrire la résolution puis la clôturer dans la minute ; le registre
+     * déclarait l'écart traité et vérifié, sans qu'aucun contrôle indépendant
+     * n'ait eu lieu (ISO 9001 §10.2).
+     *
+     * <p>Ce motif est le seul qui dépende de QUI LIT la fiche. Les autres
+     * valent pour tout le monde ; celui-ci ne paraît qu'à la personne concernée,
+     * parce que l'écart, lui, est parfaitement clôturable — par quelqu'un
+     * d'autre.
+     */
+    SECOND_LOOK_REQUIRED,
+
+    /**
      * Aucun dossier CAPA ne traite l'écart. Décompte = 0, toujours.
      *
      * <p>Empêche de RÉSOUDRE : résoudre, c'est dire « ce qui devait être fait

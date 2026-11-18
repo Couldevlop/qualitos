@@ -75,7 +75,7 @@ class NcControllerTest {
         when(service.create(any())).thenReturn(resp(NcStatus.OPEN));
         NcDto.CreateRequest req = new NcDto.CreateRequest(
                 "t", "Bavure constatee au poste 20", NcCategory.PRODUCT, null, NcSeverity.MAJOR,
-                Instant.now(), null, null, null, null, REPORTER, null, null, null, EQUIPE);
+                Instant.now(), null, null, null, null, REPORTER, null, null, null, null, null, null, null, EQUIPE);
         mockMvc.perform(post("/api/v1/nc").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(om.writeValueAsString(req)))
@@ -343,6 +343,33 @@ class NcControllerTest {
                 .andExpect(jsonPath("$.status").value("CLOSED"));
     }
 
+    /**
+     * La clôture n'est plus gardée par le point d'entrée : le droit se décide
+     * dans le service, qui seul sait si l'appelant est le valideur DÉSIGNÉ sur
+     * cet écart. Un appelant sans aucun droit atteint donc la méthode — et
+     * repart avec le 403 que le service lève.
+     *
+     * <p>C'est l'invariant à surveiller : si ce banc se mettait à rendre 200,
+     * le contrôle aurait disparu des deux côtés à la fois.
+     */
+    @Test @WithMockUser(roles = "USER")
+    void close_sansDroit_rendLeRefusDuService() throws Exception {
+        when(service.close(NC)).thenThrow(
+                new org.springframework.security.access.AccessDeniedException("Access denied"));
+        mockMvc.perform(post("/api/v1/nc/{id}/close", NC).with(csrf()))
+                .andExpect(status().isForbidden());
+    }
+
+    /** Le second regard refusé : un 409 qui dit quoi faire, pas un 403 muet. */
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
+    void close_parLAuteurDeLaResolution_rend409() throws Exception {
+        when(service.close(NC)).thenThrow(new NcStateException(
+                "A second pair of eyes is required: the person who resolved this"
+                + " non-conformity cannot close it."));
+        mockMvc.perform(post("/api/v1/nc/{id}/close", NC).with(csrf()))
+                .andExpect(status().isConflict());
+    }
+
     @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void cancel_success() throws Exception {
         when(service.cancel(NC)).thenReturn(resp(NcStatus.CANCELLED));
@@ -435,7 +462,7 @@ class NcControllerTest {
         when(service.create(any())).thenThrow(new MissingTenantContextException());
         NcDto.CreateRequest req = new NcDto.CreateRequest(
                 "t", "Bavure constatee au poste 20", NcCategory.PRODUCT, null, NcSeverity.MAJOR,
-                Instant.now(), null, null, null, null, REPORTER, null, null, null, EQUIPE);
+                Instant.now(), null, null, null, null, REPORTER, null, null, null, null, null, null, null, EQUIPE);
         mockMvc.perform(post("/api/v1/nc").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(om.writeValueAsString(req)))
@@ -483,13 +510,75 @@ class NcControllerTest {
                 .andExpect(status().isConflict());
     }
 
+    // --- la reprise d un ecart refermé ---
+
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
+    void reopen_passesTheReasonToTheService() throws Exception {
+        when(service.reopen(eq(NC), any())).thenReturn(resp(NcStatus.OPEN));
+
+        mockMvc.perform(post("/api/v1/nc/" + NC + "/reopen")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"reason\":\"Le defaut est reapparu.\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("OPEN"));
+    }
+
+    /**
+     * SANS motif, la reprise passe : rien n est obligatoire dans l ecran de
+     * traitement. C est la difference avec le rejet, dont le motif est la phrase
+     * que le client vient lire.
+     */
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
+    void reopen_withoutReason_isAccepted() throws Exception {
+        when(service.reopen(eq(NC), any())).thenReturn(resp(NcStatus.OPEN));
+
+        mockMvc.perform(post("/api/v1/nc/" + NC + "/reopen")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{}"))
+                .andExpect(status().isOk());
+
+        verify(service).reopen(eq(NC), any());
+    }
+
+    /**
+     * Rouvrir demande l autorite de CLORE, pas celle d instruire.
+     *
+     * <p>Defaire un acte demande au moins ce qui permettait de le poser : sans
+     * cela, un utilisateur qui ne peut pas clore un ecart pourrait annuler la
+     * cloture d un autre.
+     */
+    @Test @WithMockUser(roles = "USER")
+    void reopen_withoutTheAuthorityToClose_isForbidden() throws Exception {
+        mockMvc.perform(post("/api/v1/nc/" + NC + "/reopen")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"reason\":\"recidive\"}"))
+                .andExpect(status().isForbidden());
+
+        verify(service, never()).reopen(any(), any());
+    }
+
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
+    void reopen_onAnOngoingFinding_rendersTheServiceRefusal() throws Exception {
+        when(service.reopen(eq(NC), any())).thenThrow(new NcStateException(
+                "Only a RESOLVED, CLOSED, CANCELLED or REJECTED non-conformity can be reopened"));
+
+        mockMvc.perform(post("/api/v1/nc/" + NC + "/reopen")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"reason\":\"recidive\"}"))
+                .andExpect(status().isConflict());
+    }
+
     // helper
     private NcDto.Response resp(NcStatus s) {
         return new NcDto.Response(
                 NC, TENANT, "NC-2026-0001", "t", null,
                 NcCategory.PRODUCT, null, NcSeverity.MAJOR, s, NcOrigin.INTERNAL, Instant.now(),
-                null, null, null, null, REPORTER, "Ada Lovelace", null, null, null, null, null,
-                null, null, null, null, null, null, Instant.now(), Instant.now(), EQUIPE,
+                null, null, null, null, REPORTER, "Ada Lovelace", null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null, null, null, null, null, Instant.now(), Instant.now(), EQUIPE,
                 java.util.List.of(), java.util.List.of());
     }
 
