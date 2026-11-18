@@ -368,6 +368,8 @@ class NcServiceTest {
         when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
         when(capaService.unexecutedCasesFor(capaId, n.getReference()))
                 .thenReturn(List.of("Remplacer le roulement de broche"));
+        when(capaService.unexecutedCaseNamesInScopeFor(capaId, n.getReference()))
+                .thenReturn(List.of("Remplacer le roulement de broche"));
         when(capaService.hasAnyCaseFor(any(), any())).thenReturn(true);
 
         assertThatThrownBy(() -> service.resolve(n.getId(), new NcDto.ResolveRequest("fait")))
@@ -691,6 +693,8 @@ class NcServiceTest {
         when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
         when(capaService.unsettledCasesFor(capaId, n.getReference()))
                 .thenReturn(List.of("Remplacer le roulement de broche"));
+        when(capaService.unsettledCaseNamesInScopeFor(capaId, n.getReference()))
+                .thenReturn(List.of("Remplacer le roulement de broche"));
 
         assertThatThrownBy(() -> service.close(n.getId()))
                 .isInstanceOf(NcStateException.class)
@@ -699,6 +703,57 @@ class NcServiceTest {
                 .hasMessageContaining("Remplacer le roulement de broche");
         assertThat(n.getStatus()).isEqualTo(NcStatus.RESOLVED);
         verify(repo, never()).save(any());
+    }
+
+    /**
+     * LE DECOMPTE est complet, LES NOMS sont ceux qu on a le droit de voir.
+     *
+     * <p>Le refus enumerait les titres rendus par la question hors portee : un
+     * lecteur restreint a ses propres dossiers (ADR 0081) lisait donc, dans un
+     * message d erreur, le titre de dossiers que leur propre fiche lui refuse.
+     * Il garde son decompte -- l invariant ne depend pas de qui regarde -- et
+     * perd les noms.
+     */
+    @Test
+    void close_dossiersHorsPortee_donneLeDecompteSansLesNommer() {
+        NonConformity n = nc(TENANT, NcStatus.RESOLVED);
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+        // Deux dossiers retiennent la cloture...
+        when(capaService.unsettledCasesFor(null, n.getReference()))
+                .thenReturn(List.of("Remplacer le roulement", "Auditer le fournisseur"));
+        // ... et ce lecteur n en voit aucun.
+        when(capaService.unsettledCaseNamesInScopeFor(null, n.getReference()))
+                .thenReturn(List.of());
+
+        assertThatThrownBy(() -> service.close(n.getId()))
+                .isInstanceOf(NcStateException.class)
+                .hasMessageContaining("2 CAPA case(s)")
+                .hasMessageNotContaining("Remplacer le roulement")
+                .hasMessageNotContaining("Auditer le fournisseur")
+                // Ni le deux-points orphelin que laisserait une liste vide.
+                .hasMessageNotContaining("remain open:");
+        assertThat(n.getStatus()).isEqualTo(NcStatus.RESOLVED);
+    }
+
+    /** Et le meme refus, a l etape de la resolution. */
+    @Test
+    void resolve_dossiersHorsPortee_donneLeDecompteSansLesNommer() {
+        NonConformity n = nc(TENANT, NcStatus.ACTION_DEFINED);
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+        when(capaService.unexecutedCasesFor(null, n.getReference()))
+                .thenReturn(List.of("Remplacer le roulement"));
+        when(capaService.unexecutedCaseNamesInScopeFor(null, n.getReference()))
+                .thenReturn(List.of());
+        // Un dossier EXISTE -- il est seulement hors de portee. Sans ce reglage,
+        // c est le refus « aucun dossier » qui partirait, et le banc mesurerait
+        // un invariant qui n est pas le sien.
+        when(capaService.hasAnyCaseFor(any(), any())).thenReturn(true);
+
+        assertThatThrownBy(() -> service.resolve(n.getId(), new NcDto.ResolveRequest("fait")))
+                .isInstanceOf(NcStateException.class)
+                .hasMessageContaining("1 CAPA case(s)")
+                .hasMessageNotContaining("Remplacer le roulement")
+                .hasMessageNotContaining("carry out:");
     }
 
     /**
@@ -714,6 +769,8 @@ class NcServiceTest {
         when(repo.findByIdAndTenantId(sansEscalade.getId(), TENANT))
                 .thenReturn(Optional.of(sansEscalade));
         when(capaService.unsettledCasesFor(null, "NC-2026-0001"))
+                .thenReturn(List.of("Auditer le fournisseur"));
+        when(capaService.unsettledCaseNamesInScopeFor(null, "NC-2026-0001"))
                 .thenReturn(List.of("Auditer le fournisseur"));
 
         assertThatThrownBy(() -> service.close(sansEscalade.getId()))

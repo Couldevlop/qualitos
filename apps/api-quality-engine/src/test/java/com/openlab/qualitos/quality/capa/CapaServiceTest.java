@@ -2009,6 +2009,39 @@ class CapaServiceTest {
     }
 
     /**
+     * Les NOMS que porte un refus suivent la meme portee que casesOf.
+     *
+     * <p>Le refus de resolution enumerait les titres rendus par la question
+     * hors portee : un lecteur restreint a ses propres dossiers lisait, dans un
+     * message d erreur, le titre d un dossier que sa propre fiche lui refuse.
+     * Le decompte, lui, reste complet -- il est ailleurs.
+     */
+    @Test
+    void namesInScope_neNommentPasUnDossierHorsDePortee() {
+        UUID moi = UUID.randomUUID();
+        CapaCase lemien = capa(TENANT, CapaStatus.OPEN);
+        lemien.setTitle("Le mien");
+        lemien.setOwnerId(moi);
+        CapaCase dUnAutre = capa(TENANT, CapaStatus.IN_PROGRESS);
+        dUnAutre.setTitle("Celui d un autre");
+        dUnAutre.setOwnerId(UUID.randomUUID());
+
+        when(scope.restrictTo(
+                com.openlab.qualitos.quality.authz.domain.Permission.CAPA_VIEW_ALL))
+                .thenReturn(Optional.of(moi));
+        when(caseRepo.findByTenantIdAndSourceTypeAndSourceRefOrderByCreatedAtAsc(
+                eq(TENANT), any(), eq("NC-2026-0001")))
+                .thenReturn(List.of(lemien, dUnAutre));
+
+        assertThat(service.unexecutedCaseNamesInScopeFor(null, "NC-2026-0001"))
+                .containsExactly("Le mien");
+        assertThat(service.unsettledCaseNamesInScopeFor(null, "NC-2026-0001"))
+                .containsExactly("Le mien");
+        // Et le decompte, lui, les voit tous les deux.
+        assertThat(service.unexecutedCasesFor(null, "NC-2026-0001")).hasSize(2);
+    }
+
+    /**
      * L invariant, lui, COMPTE TOUT. Un refus de cloture qui dependrait de qui
      * regarde ne serait plus un invariant : l ecart se cloturerait pour l un et
      * pas pour l autre. C est precisement pourquoi un motif de blocage porte un
