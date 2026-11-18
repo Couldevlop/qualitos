@@ -33,7 +33,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @ConditionalOnProperty(prefix = "qualitos.mail", name = "enabled", havingValue = "true")
-public class SmtpInvoiceMailer implements InvoiceMailPort {
+public class SmtpInvoiceMailer implements PlatformInvoiceMailPort {
 
     private final JavaMailSender sender;
     private final String from;

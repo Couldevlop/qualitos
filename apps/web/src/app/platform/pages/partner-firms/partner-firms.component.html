@@ -101,6 +101,12 @@
           <span i18n="@@platform.firms.edit">Corriger</span>
         </button>
 
+        <button mat-stroked-button type="button" (click)="messagerie(f)" [disabled]="busy"
+                [attr.data-test]="'messagerie-' + f.id">
+          <mat-icon aria-hidden="true">alternate_email</mat-icon>
+          <span i18n="@@platform.firms.mail">Messagerie</span>
+        </button>
+
         <button mat-stroked-button type="button" (click)="basculer(f)" [disabled]="busy"
                 [color]="f.active ? 'warn' : undefined" [attr.data-test]="'basculer-' + f.id">
           <span *ngIf="f.active" i18n="@@platform.firms.deactivate-action">Désactiver</span>

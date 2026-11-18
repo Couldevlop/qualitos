@@ -137,6 +137,13 @@ qualitos:
   # droits de gestion des utilisateurs du realm seulement. URL INTERNE au cluster :
   # le WAF de l'ingress refuse les écritures de l'API d'administration Keycloak.
   # Sans secret, créer ou modifier un compte répond 502 — jamais de compte fantôme.
+  # Clé des secrets RELISIBLES (mots de passe SMTP des messageries, ADR 0127).
+  # 32 octets en base64. Vient de l'environnement, JAMAIS du dépôt (§18.2.3) :
+  # chiffrer ne protège une base volée que tant que la clé n'est pas volée avec.
+  # Distincte des autres secrets de déploiement, pour qu'une rotation reste
+  # une rotation et pas un incident (§11.1 A02).
+  secret:
+    key: ${QUALITOS_SECRET_KEY:}
   identity:
     # Adresse INTERNE quand KEYCLOAK_URL est publique (préprod) : IDENTITY_KEYCLOAK_URL.
     base-url: ${IDENTITY_KEYCLOAK_URL:${KEYCLOAK_URL:http://localhost:8080}}

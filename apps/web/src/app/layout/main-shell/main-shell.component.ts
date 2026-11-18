@@ -323,6 +323,14 @@ export class MainShellComponent implements OnInit, OnDestroy {
           roles: ADMIN_ROLES
         },
         {
+          // La messagerie de l'organisation (ADR 0127) : l'adresse d'ou partent
+          // ses courriels. Sans reglage, ils partent de celle de la plateforme.
+          label: $localize`:@@nav.admin-mail:Messagerie`,
+          route: '/admin/messagerie',
+          icon: 'alternate_email',
+          roles: ADMIN_ROLES
+        },
+        {
           // Les seuils de Cpk (ADR 0096) : maîtrisé, à surveiller.
           label: $localize`:@@nav.admin-spc:Paramètres SPC`,
           route: '/admin/spc',

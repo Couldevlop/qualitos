@@ -10,6 +10,8 @@ import { UiModule } from '../shared/ui/ui.module';
 import { ClientEditDialogComponent } from './pages/client-edit-dialog/client-edit-dialog.component';
 import { ClientsComponent } from './pages/clients/clients.component';
 import { FirmEditDialogComponent } from './pages/firm-edit-dialog/firm-edit-dialog.component';
+import { MailSettingsModule } from '../features/admin/mail/mail-settings.module';
+import { FirmMailDialogComponent } from './pages/firm-mail-dialog/firm-mail-dialog.component';
 import { PartnerFirmsComponent } from './pages/partner-firms/partner-firms.component';
 import { PlatformAuditComponent } from './pages/platform-audit/platform-audit.component';
 import { PlatformModulesComponent } from './pages/platform-modules/platform-modules.component';
@@ -69,11 +71,14 @@ const routes: Routes = [
 @NgModule({
   declarations: [PlatformShellComponent, ClientsComponent, ClientEditDialogComponent,
     PlatformModulesComponent, PartnerFirmsComponent, FirmEditDialogComponent,
+    FirmMailDialogComponent,
     PlatformAuditComponent],
   // PersonNameModule : la piste d'audit garde l'identifiant de compte de
   // l'auteur d'un acte (un nom change, un acte consigné ne doit pas changer
   // avec lui) et l'écran le résout dans l'annuaire pour l'afficher.
   imports: [SharedModule, UiModule, FormsModule, MatMenuModule, CredentialRevealModule,
+    // L'ecran de messagerie, partage avec la console du client (ADR 0127).
+    MailSettingsModule,
     PersonNameModule, RouterModule.forChild(routes)]
 })
 export class PlatformModule {}

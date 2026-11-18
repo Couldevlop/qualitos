@@ -40,7 +40,11 @@ services:
       IDENTITY_KEYCLOAK_URL: http://keycloak:8080/auth
       QUALITOS_EDITION: onprem
       QUALITOS_LICENSE_FILE: /etc/qualitos/license/license.lic
-    extraSecretRefs: [qualitos-api-core-identity]
+    # qualitos-api-core-secrets : QUALITOS_SECRET_KEY, la cle des secrets
+    # relisibles (ADR 0127). Engendree UNE FOIS par deploy.sh et jamais
+    # regeneree : une cle neuve rendrait indechiffrables les mots de passe
+    # SMTP deja enregistres.
+    extraSecretRefs: [qualitos-api-core-identity, qualitos-api-core-secrets]
     extraSecretMounts:
       - secret: qualitos-license
         mountPath: /etc/qualitos/license
