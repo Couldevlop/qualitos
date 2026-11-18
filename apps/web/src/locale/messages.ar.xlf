@@ -10146,6 +10146,22 @@ Portail clients</source>
         <source>Conformité</source>
         <target state="translated">الامتثال</target>
       </trans-unit>
+      <trans-unit id="nc.cause.root-cause-failed" datatype="html">
+        <source>La conclusion n’a pas été enregistrée. Réessayez.</source>
+        <target state="translated">لم يتم حفظ الخلاصة. أعد المحاولة.</target>
+      </trans-unit>
+      <trans-unit id="capa.list.filter-owner" datatype="html">
+        <source>Filtrer par pilote</source>
+        <target state="translated">تصفية حسب المسؤول</target>
+      </trans-unit>
+      <trans-unit id="capa.list.filter-owner-placeholder" datatype="html">
+        <source>Toutes les personnes</source>
+        <target state="translated">كل الأشخاص</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.no-capa" datatype="html">
+        <source>Aucune action n'est encore inscrite sur cet écart. Ajoutez au moins une action pour pouvoir le résoudre.</source>
+        <target state="translated">لا يوجد أي إجراء مسجَّل على عدم المطابقة هذا بعد. أضف إجراءً واحدًا على الأقل حتى تتمكن من معالجته.</target>
+      </trans-unit>
       <trans-unit id="capa.type.containment" datatype="html">
         <source>Endiguement</source>
         <target state="translated">احتواء</target>

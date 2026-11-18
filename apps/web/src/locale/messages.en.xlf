@@ -10146,6 +10146,22 @@ Customer portal</target>
         <source>Conformité</source>
         <target state="translated">Compliance</target>
       </trans-unit>
+      <trans-unit id="nc.cause.root-cause-failed" datatype="html">
+        <source>La conclusion n’a pas été enregistrée. Réessayez.</source>
+        <target state="translated">The conclusion was not saved. Try again.</target>
+      </trans-unit>
+      <trans-unit id="capa.list.filter-owner" datatype="html">
+        <source>Filtrer par pilote</source>
+        <target state="translated">Filter by owner</target>
+      </trans-unit>
+      <trans-unit id="capa.list.filter-owner-placeholder" datatype="html">
+        <source>Toutes les personnes</source>
+        <target state="translated">Everyone</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.no-capa" datatype="html">
+        <source>Aucune action n'est encore inscrite sur cet écart. Ajoutez au moins une action pour pouvoir le résoudre.</source>
+        <target state="translated">No action is recorded on this non-conformity yet. Add at least one action before resolving it.</target>
+      </trans-unit>
       <trans-unit id="capa.type.containment" datatype="html">
         <source>Endiguement</source>
         <target state="translated">Containment</target>

@@ -29,15 +29,14 @@ public enum EightDDiscipline {
     D4("D4", "Root cause", false),
 
     /**
-     * Les actions décidées, des trois natures. Source : la CAPA escaladée.
+     * Les CAPA définies — correctives et préventives. Source : la CAPA escaladée.
      *
-     * <p>Le titre les nomme toutes — endiguer, corriger, prévenir. Il disait
-     * « corrective actions » seules, et la discipline où l'on vient lire ce qui
-     * a été décidé passait donc sous silence l'endiguement décidé dans le
-     * dossier et la prévention qui en découle : trois natures existent dans la
-     * CAPA, et c'est ici qu'on les lit ensemble.
+     * <p>L'endiguement n'y figure pas : il a sa propre discipline, le D3, juste
+     * au-dessus. Montré sous les deux, le même geste s'y lisait deux fois, et
+     * deux tableaux portant les mêmes lignes laissaient croire à deux décisions
+     * distinctes.
      */
-    D5("D5", "Defined containment, corrective and preventive actions", false),
+    D5("D5", "Defined CAPA", false),
 
     /** Leur mise en œuvre et ses preuves. Source : la CAPA escaladée. */
     D6("D6", "Implementation and evidence", false),

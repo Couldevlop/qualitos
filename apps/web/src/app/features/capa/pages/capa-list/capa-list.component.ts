@@ -31,7 +31,8 @@ const EMPTY_PAGE = { content: [], totalElements: 0, totalPages: 0, number: 0, si
 })
 export class CapaListComponent implements OnInit {
 
-  readonly displayedColumns = ['title', 'type', 'criticity', 'status', 'owner', 'dueDate'];
+  readonly displayedColumns =
+    ['title', 'type', 'criticity', 'status', 'owner', 'createdAt', 'dueDate'];
 
   /** Le nom du pilote des dossiers anciens qui ne l'ont pas recopié, lu dans l'annuaire (ADR 0091). */
   private readonly names = new AccountNames(this.directory);
@@ -39,6 +40,14 @@ export class CapaListComponent implements OnInit {
   readonly statuses: CapaStatus[] = ['OPEN', 'IN_PROGRESS', 'RESOLVED', 'CLOSED', 'REJECTED'];
   readonly criticityFilter = new FormControl<CapaCriticity | ''>('');
   readonly criticities: CapaCriticity[] = ['CRITICAL', 'HIGH', 'MEDIUM', 'LOW'];
+
+  /**
+   * Le pilote dont on veut les dossiers, par son COMPTE — jamais par son nom
+   * (ADR 0088) : deux personnes peuvent porter le même, et un nom se réécrit.
+   * Le filtre part au serveur, qui pagine : filtrer la page rendue n'aurait
+   * montré que les dossiers de cette personne présents sur la page courante.
+   */
+  readonly ownerFilter = new FormControl<string | null>(null);
 
   readonly pageSizeOptions = PAGE_SIZE_OPTIONS;
   pageIndex = 0;
@@ -68,12 +77,14 @@ export class CapaListComponent implements OnInit {
     this.cases$ = combineLatest([
       this.statusFilter.valueChanges.pipe(startWith(this.statusFilter.value)),
       this.criticityFilter.valueChanges.pipe(startWith(this.criticityFilter.value)),
+      this.ownerFilter.valueChanges.pipe(startWith(this.ownerFilter.value)),
       this.page$,
       this.refresh$
     ]).pipe(
       tap(() => { this.errorState$.next(null); this.loadingState$.next(true); }),
-      switchMap(([status, criticity, p]) =>
-        this.svc.listCases(p.index, p.size, status || undefined, criticity || undefined).pipe(
+      switchMap(([status, criticity, owner, p]) =>
+        this.svc.listCases(p.index, p.size, status || undefined, criticity || undefined,
+                           owner || undefined).pipe(
           catchError(err => {
             // eslint-disable-next-line no-console
             console.warn('[capa-list] listCases failed', err?.status, err?.error?.title);

@@ -1,4 +1,15 @@
 /**
+ * Nombre de pourquoi exigés avant de conclure une cause racine.
+ *
+ * <p>Écrit ici et non dans un écran : la règle vaut partout où la cause racine
+ * se conclut — l'écran dédié, et les figures d'analyse de cause de la fiche
+ * d'écart comme du D4 du rapport 8D. Deux copies auraient divergé au premier
+ * ajustement, et l'une des deux aurait fait découvrir la règle par un refus du
+ * serveur, qui applique la même ({@code MIN_WHYS_BEFORE_ROOT_CAUSE}).
+ */
+export const MIN_WHYS_BEFORE_ROOT_CAUSE = 3;
+
+/**
  * Analyse des 5 Pourquoi rattachée à une non-conformité (§3.5).
  *
  * Cinq n'est pas un dogme mais un ordre de grandeur : le modèle porte une SUITE

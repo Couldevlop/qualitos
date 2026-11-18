@@ -34,5 +34,18 @@ public enum NcBlockerCode {
      * le verdict d'efficacité du dossier (ADR 0108). Un dossier {@code RESOLVED}
      * compte donc ici, alors qu'il ne s'oppose pas à la résolution.
      */
-    CAPA_CASES_UNSETTLED
+    CAPA_CASES_UNSETTLED,
+
+    /**
+     * Aucun dossier CAPA ne traite l'écart. Décompte = 0, toujours.
+     *
+     * <p>Empêche de RÉSOUDRE : résoudre, c'est dire « ce qui devait être fait
+     * l'a été », et rien n'a été décidé. L'écart passait « résolu » sans qu'une
+     * seule action soit inscrite, et le registre déclarait traité un constat
+     * dont il ne restait aucune trace de traitement (ISO 9001 §10.2).
+     *
+     * <p>Le bouton était éteint sans un mot dans ce cas comme dans les autres :
+     * c'est le motif qui dit le geste — ajouter une action.
+     */
+    NO_CAPA_CASE
 }

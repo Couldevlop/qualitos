@@ -465,7 +465,9 @@ class EightDSnapshotAssemblerTest {
 
     /**
      * CHAQUE DISCIPLINE NE MONTRE QUE LES ACTIONS DE SA NATURE, exactement comme
-     * l'ecran : le D3 endigue, le D6 previent, le D5 nomme les trois.
+     * l'ecran : le D3 endigue, le D6 previent, le D5 montre les CAPA definies
+     * -- correctives et preventives, et plus l'endiguement, deja porte par le
+     * tableau du D3 juste au-dessus.
      *
      * <p>Melanger les natures ferait lire, sous « actions immediates
      * d'endiguement », une action preventive a echeance dans six mois -- et
@@ -491,7 +493,7 @@ class EightDSnapshotAssemblerTest {
         assertThat(cellulesDe(snapshot, "D3")).containsExactly("Isoler le lot");
         assertThat(cellulesDe(snapshot, "D6")).containsExactly("Revoir la gamme");
         assertThat(cellulesDe(snapshot, "D5"))
-                .containsExactly("Isoler le lot", "Remplacer le joint", "Revoir la gamme");
+                .containsExactly("Remplacer le joint", "Revoir la gamme");
     }
 
     /**

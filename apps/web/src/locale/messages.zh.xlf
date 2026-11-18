@@ -10146,6 +10146,22 @@ Portail clients</source>
         <source>Conformité</source>
         <target state="translated">合规</target>
       </trans-unit>
+      <trans-unit id="nc.cause.root-cause-failed" datatype="html">
+        <source>La conclusion n’a pas été enregistrée. Réessayez.</source>
+        <target state="translated">结论未保存，请重试。</target>
+      </trans-unit>
+      <trans-unit id="capa.list.filter-owner" datatype="html">
+        <source>Filtrer par pilote</source>
+        <target state="translated">按负责人筛选</target>
+      </trans-unit>
+      <trans-unit id="capa.list.filter-owner-placeholder" datatype="html">
+        <source>Toutes les personnes</source>
+        <target state="translated">所有人员</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.no-capa" datatype="html">
+        <source>Aucune action n'est encore inscrite sur cet écart. Ajoutez au moins une action pour pouvoir le résoudre.</source>
+        <target state="translated">该不合格项尚未登记任何措施。请至少添加一项措施才能解决。</target>
+      </trans-unit>
       <trans-unit id="capa.type.containment" datatype="html">
         <source>Endiguement</source>
         <target state="translated">围堵</target>

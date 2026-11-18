@@ -20,7 +20,7 @@ import {
   ConfirmDialogData
 } from '../../../../shared/ui/confirm-dialog/confirm-dialog.component';
 import { NcService } from '../../nc.service';
-import { EightDDiscipline, EightDReport } from '../../nc.types';
+import { EightDDiscipline, EightDReport, NcResponse } from '../../nc.types';
 
 /** OWASP A03 — un identifiant malformé est refusé côté écran, avant tout appel. */
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -48,13 +48,26 @@ const ROLES_ECRITURE = ['QUALITY_MANAGER', 'DIRECTOR_QUALITY', 'ADMIN_TENANT', '
  */
 const NATURES_PAR_DISCIPLINE: Readonly<Record<string, readonly CapaActionType[]>> = {
   D3: Object.freeze<CapaActionType[]>(['CONTAINMENT']),
-  // Le D5 nomme les TROIS natures. Restreint a « corrective », il laissait
-  // dehors l'action d'endiguement et l'action preventive ajoutees depuis
-  // l'ecart : on les avait saisies, elles existaient dans le dossier, et la
-  // discipline ou l'on vient lire ce qui a ete decide ne les montrait pas.
-  D5: Object.freeze<CapaActionType[]>(['CONTAINMENT', 'CORRECTIVE', 'PREVENTIVE']),
+  // Le D5 montre ce qui a ete DECIDE pour supprimer la cause et empecher la
+  // recidive. L'endiguement n'y figure pas : il a sa discipline, le D3, et les
+  // memes lignes repetees sous deux titres laissaient croire a deux gestes.
+  D5: Object.freeze<CapaActionType[]>(['CORRECTIVE', 'PREVENTIVE']),
   D6: Object.freeze<CapaActionType[]>(['PREVENTIVE'])
 };
+
+/**
+ * Les dossiers CAPA que traite cet écart, du plus ancien au plus récent.
+ *
+ * <p>Repli sur {@code capaCaseId} quand le serveur ne renvoie pas encore la
+ * liste : l'écran montre alors le dossier qu'il connaît plutôt que rien. Même
+ * lecture que la fiche de l'écart, qui a corrigé le même défaut avant lui.
+ */
+function dossiersDe(nc: NcResponse): readonly string[] {
+  if (nc.capaCases?.length) {
+    return nc.capaCases.map(c => c.id);
+  }
+  return nc.capaCaseId ? [nc.capaCaseId] : [];
+}
 
 /** Le tableau vide partagé des disciplines qui ne montrent pas d'actions. */
 const AUCUNE_NATURE: readonly CapaActionType[] = Object.freeze<CapaActionType[]>([]);
@@ -120,14 +133,13 @@ export class NcEightDComponent implements OnInit {
    *
    * <p>TROIS états, et non deux. {@code undefined} veut dire « on ne sait pas
    * encore » — le rapport et l'écart se chargent par deux requêtes distinctes,
-   * et le rapport arrive le premier. Parti de {@code null}, le gabarit
+   * et le rapport arrive le premier. Parti d'une liste vide, le gabarit
    * affirmait « aucun dossier CAPA sur cet écart » le temps que la seconde
-   * réponde, dans les trois disciplines qui portent un tableau ; et si cette
-   * requête échouait — l'erreur n'est qu'une trace de console — l'affirmation
-   * fausse restait à l'écran pour de bon. On ne dit plus rien tant qu'on ne
-   * sait pas.
+   * réponde, dans les disciplines qui portent un tableau ; et si cette requête
+   * échouait — l'erreur n'est qu'une trace de console — l'affirmation fausse
+   * restait à l'écran pour de bon. On ne dit plus rien tant qu'on ne sait pas.
    */
-  readonly capaCaseId$ = new BehaviorSubject<string | null | undefined>(undefined);
+  readonly capaCaseIds$ = new BehaviorSubject<readonly string[] | undefined>(undefined);
 
   /** Lu par le gabarit : la discipline sans dossier CAPA renvoie vers l'ecart. */
   ncId = '';
@@ -196,13 +208,22 @@ export class NcEightDComponent implements OnInit {
     });
   }
 
-  /** L'identifiant du dossier CAPA, lu sur l'écart : le tableau charge le reste. */
+  /**
+   * Les identifiants des dossiers CAPA de l'écart : les tableaux chargent le reste.
+   *
+   * <p>TOUS, et non le seul que porte {@code capaCaseId}. Un second dossier
+   * ouvert depuis la liste CAPA en citant la référence de l'écart ne remplace
+   * pas ce lien (ADR 0121) : ses actions n'apparaissaient donc nulle part dans
+   * le rapport, alors que le document émis, lui, les porte — et que la clôture
+   * de l'écart les attend. L'écran et le PDF lisaient deux ensembles différents
+   * pour le même écart.
+   */
   private chargerDossierCapa(): void {
     this.svc.getNc(this.ncId).subscribe({
-      next: nc => this.capaCaseId$.next(nc.capaCaseId ?? null),
+      next: nc => this.capaCaseIds$.next(dossiersDe(nc)),
       // On laisse `undefined` : l'écart n'a pas répondu, donc on ne SAIT pas
-      // s'il porte un dossier. Écrire `null` ici reviendrait à affirmer qu'il
-      // n'en a pas — l'écran dirait à l'auditeur qu'aucune action n'est
+      // s'il porte un dossier. Écrire une liste vide reviendrait à affirmer
+      // qu'il n'en a pas — l'écran dirait à l'auditeur qu'aucune action n'est
       // décidée alors qu'on a seulement échoué à le lire.
       // eslint-disable-next-line no-console
       error: err => console.warn('[nc-8d] getNc failed', err?.status)

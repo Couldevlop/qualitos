@@ -30,23 +30,34 @@ public interface CapaCaseRepository extends JpaRepository<CapaCase, UUID> {
             where c.tenantId = :tenantId
               and (:status is null or c.status = :status)
               and (:criticity is null or c.criticity = :criticity)
+              and (:ownerId is null or c.ownerId = :ownerId)
               and (c.ownerId = :user
                    or c.verificationAssigneeId = :user
                    or exists (select a.id from CapaAction a where a.capa = c and a.assigneeId = :user))
             """)
     Page<CapaCase> findConcerning(@Param("tenantId") UUID tenantId, @Param("status") CapaStatus status,
                                   @Param("criticity") CapaCriticity criticity,
+                                  @Param("ownerId") UUID ownerId,
                                   @Param("user") UUID user, Pageable pageable);
 
-    /** La liste du registre, filtrée en base par statut et criticité ; un filtre nul ne filtre pas. */
+    /**
+     * La liste du registre, filtrée en base par statut, criticité et pilote ; un
+     * filtre nul ne filtre pas.
+     *
+     * <p>Le pilote est filtré EN BASE et non sur la page rendue : filtrer après
+     * coup n'aurait retenu que les dossiers de cette personne présents sur la
+     * page courante, et le compteur aurait annoncé le total de tous les autres.
+     */
     @Query("""
             select c from CapaCase c
             where c.tenantId = :tenantId
               and (:status is null or c.status = :status)
               and (:criticity is null or c.criticity = :criticity)
+              and (:ownerId is null or c.ownerId = :ownerId)
             """)
     Page<CapaCase> search(@Param("tenantId") UUID tenantId, @Param("status") CapaStatus status,
-                          @Param("criticity") CapaCriticity criticity, Pageable pageable);
+                          @Param("criticity") CapaCriticity criticity,
+                          @Param("ownerId") UUID ownerId, Pageable pageable);
 
     /**
      * Les dossiers clos d'un tenant, du plus récent au plus ancien.
