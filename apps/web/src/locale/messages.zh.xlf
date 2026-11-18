@@ -22238,6 +22238,46 @@ historique 12 mois</source>
         <source>Les huit disciplines, agrégées depuis ce dossier</source>
         <target state="translated">从本案卷汇总的八个步骤</target>
       </trans-unit>
+      <trans-unit id="nc.detail.received" datatype="html">
+        <source>Date de réception</source>
+        <target state="translated">接收日期</target>
+      </trans-unit>
+      <trans-unit id="capa.action.decided-on" datatype="html">
+        <source>Date de début</source>
+        <target state="translated">开始日期</target>
+      </trans-unit>
+      <trans-unit id="capa.actions.due-before-start" datatype="html">
+        <source>échéance antérieure à la date de début</source>
+        <target state="translated">截止日期早于开始日期</target>
+      </trans-unit>
+      <trans-unit id="capa.actions.due-before-start-title" datatype="html">
+        <source>L'échéance précède la date de début.</source>
+        <target state="translated">截止日期早于开始日期。</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.due-before-start" datatype="html">
+        <source>L'échéance précède la date de début : vérifiez l'une des deux dates.</source>
+        <target state="translated">截止日期早于开始日期：请核对其中一个日期。</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.suggested" datatype="html">
+        <source>Déjà sur ce dossier</source>
+        <target state="translated">已参与此记录</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.team-suggested" datatype="html">
+        <source>Équipe de l'écart</source>
+        <target state="translated">不合格项团队</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.criterion-placeholder" datatype="html">
+        <source>À quoi verra-t-on que la cause a disparu ? Ex. : aucun rebut sur ce défaut pendant 3 mois</source>
+        <target state="translated">如何确认原因已消除？例如：该缺陷连续 3 个月无废品</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.criterion-hint" datatype="html">
+        <source>Posé maintenant, il servira à juger l'efficacité de cette action ; il ne se réécrit plus ensuite.</source>
+        <target state="translated">现在设定，用于日后判断该措施的有效性；此后不可更改。</target>
+      </trans-unit>
+      <trans-unit id="common.maxlength-2000" datatype="html">
+        <source>2000 caractères maximum.</source>
+        <target state="translated">最多 2000 个字符。</target>
+      </trans-unit>
       <trans-unit id="nc.detail.blockers-resolve" datatype="html">
         <source>Cet écart ne peut pas encore être résolu</source>
         <target state="translated">该不合格项尚不能解决</target>

@@ -22237,6 +22237,46 @@ historique 12 mois</source>
         <source>Les huit disciplines, agrégées depuis ce dossier</source>
         <target state="translated">8 つの規律を、この案件から集約して表示</target>
       </trans-unit>
+      <trans-unit id="nc.detail.received" datatype="html">
+        <source>Date de réception</source>
+        <target state="translated">受領日</target>
+      </trans-unit>
+      <trans-unit id="capa.action.decided-on" datatype="html">
+        <source>Date de début</source>
+        <target state="translated">開始日</target>
+      </trans-unit>
+      <trans-unit id="capa.actions.due-before-start" datatype="html">
+        <source>échéance antérieure à la date de début</source>
+        <target state="translated">期限が開始日より前です</target>
+      </trans-unit>
+      <trans-unit id="capa.actions.due-before-start-title" datatype="html">
+        <source>L'échéance précède la date de début.</source>
+        <target state="translated">期限が開始日より前になっています。</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.due-before-start" datatype="html">
+        <source>L'échéance précède la date de début : vérifiez l'une des deux dates.</source>
+        <target state="translated">期限が開始日より前です。いずれかの日付を確認してください。</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.suggested" datatype="html">
+        <source>Déjà sur ce dossier</source>
+        <target state="translated">この案件の担当者</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.team-suggested" datatype="html">
+        <source>Équipe de l'écart</source>
+        <target state="translated">不適合の対応チーム</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.criterion-placeholder" datatype="html">
+        <source>À quoi verra-t-on que la cause a disparu ? Ex. : aucun rebut sur ce défaut pendant 3 mois</source>
+        <target state="translated">原因が消えたことをどう確認しますか。例：この不良による廃棄が3か月間ゼロ</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.criterion-hint" datatype="html">
+        <source>Posé maintenant, il servira à juger l'efficacité de cette action ; il ne se réécrit plus ensuite.</source>
+        <target state="translated">今ここで定めた基準でこの処置の有効性を判断します。後から書き換えることはできません。</target>
+      </trans-unit>
+      <trans-unit id="common.maxlength-2000" datatype="html">
+        <source>2000 caractères maximum.</source>
+        <target state="translated">最大2000文字です。</target>
+      </trans-unit>
       <trans-unit id="nc.detail.blockers-resolve" datatype="html">
         <source>Cet écart ne peut pas encore être résolu</source>
         <target state="translated">この不適合はまだ解決できません</target>

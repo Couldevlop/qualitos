@@ -88,7 +88,7 @@
        vérification choisira après coup la mesure qui arrange (ADR 0108). -->
   <div class="efficacite" *ngIf="demandeCritere" data-test="action-efficacite-demande">
     <mat-form-field appearance="outline" class="full">
-      <mat-label i18n="@@capa.create.effectiveness-criterion">Critère d'efficacité</mat-label>
+      <mat-label i18n="@@capa.criterion.label">Critère d'efficacité</mat-label>
       <textarea matInput formControlName="effectivenessCriterion" rows="2" maxlength="2000"
                 data-test="action-critere-efficacite"
                 i18n-placeholder="@@capa.action-dialog.criterion-placeholder"
@@ -105,7 +105,7 @@
        corrective quand on a sous les yeux la mesure qui la jugera. -->
   <div class="efficacite efficacite--rappel" *ngIf="!demandeCritere && critereDejaPose"
        data-test="action-efficacite-rappel">
-    <span class="efficacite__titre" i18n="@@capa.create.effectiveness-criterion">Critère d'efficacité</span>
+    <span class="efficacite__titre" i18n="@@capa.criterion.label">Critère d'efficacité</span>
     <p class="efficacite__texte">{{ critereDejaPose }}</p>
   </div>
 

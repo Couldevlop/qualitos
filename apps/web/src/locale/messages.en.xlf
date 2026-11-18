@@ -22238,6 +22238,46 @@ declared income
         <source>Les huit disciplines, agrégées depuis ce dossier</source>
         <target state="translated">The eight disciplines, aggregated from this case</target>
       </trans-unit>
+      <trans-unit id="nc.detail.received" datatype="html">
+        <source>Date de réception</source>
+        <target state="translated">Date received</target>
+      </trans-unit>
+      <trans-unit id="capa.action.decided-on" datatype="html">
+        <source>Date de début</source>
+        <target state="translated">Start date</target>
+      </trans-unit>
+      <trans-unit id="capa.actions.due-before-start" datatype="html">
+        <source>échéance antérieure à la date de début</source>
+        <target state="translated">due date before the start date</target>
+      </trans-unit>
+      <trans-unit id="capa.actions.due-before-start-title" datatype="html">
+        <source>L'échéance précède la date de début.</source>
+        <target state="translated">The due date precedes the start date.</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.due-before-start" datatype="html">
+        <source>L'échéance précède la date de début : vérifiez l'une des deux dates.</source>
+        <target state="translated">The due date precedes the start date: check one of the two dates.</target>
+      </trans-unit>
+      <trans-unit id="directory.picker.suggested" datatype="html">
+        <source>Déjà sur ce dossier</source>
+        <target state="translated">Already on this record</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.team-suggested" datatype="html">
+        <source>Équipe de l'écart</source>
+        <target state="translated">Non-conformity team</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.criterion-placeholder" datatype="html">
+        <source>À quoi verra-t-on que la cause a disparu ? Ex. : aucun rebut sur ce défaut pendant 3 mois</source>
+        <target state="translated">How will we know the cause is gone? E.g. no scrap for this defect for 3 months</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.criterion-hint" datatype="html">
+        <source>Posé maintenant, il servira à juger l'efficacité de cette action ; il ne se réécrit plus ensuite.</source>
+        <target state="translated">Set now, it will be used to judge this action’s effectiveness; it cannot be rewritten afterwards.</target>
+      </trans-unit>
+      <trans-unit id="common.maxlength-2000" datatype="html">
+        <source>2000 caractères maximum.</source>
+        <target state="translated">2000 characters maximum.</target>
+      </trans-unit>
       <trans-unit id="nc.detail.blockers-resolve" datatype="html">
         <source>Cet écart ne peut pas encore être résolu</source>
         <target state="translated">This non-conformity cannot be resolved yet</target>
