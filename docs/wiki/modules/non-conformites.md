@@ -24,14 +24,11 @@ possibilité d'y joindre des **photos**.
    première action (source verrouillée ; le titre et la description partent **vides** — ce sont
    des phrases à écrire, pas le constat à recopier). Une fois le dossier ouvert, le même bouton
    devient *Voir les actions* et liste **ce qui reste à faire** ; une ligne mène au dossier.
-   Les actions suivantes s'ajoutent, s'avancent et se prouvent dans les **tableaux d'actions** de
-   la fiche, chacun sous sa discipline — endiguement (D3), corrective (D5), préventive (D7). Une
-   NC peut déclencher une [CAPA](capa.md), un cycle [PDCA](pdca.md) ou un projet
-   [DMAIC](dmaic.md) selon la gravité.
-6. **Clôturer** — par quelqu'un **d'autre** que celui qui a résolu l'écart : voir
-   « Le second regard sur la clôture » plus bas.
-7. **Remettre le rapport** : le [rapport 8D](rapport-8d.md) rassemble les huit disciplines
-   attendues par le client, reprises de ce dossier.
+   Les actions suivantes s'ajoutent, s'avancent et se prouvent dans le **tableau des actions**
+   de la fiche, sous l'analyse de cause. Une NC peut déclencher une [CAPA](capa.md), un cycle
+   [PDCA](pdca.md) ou un projet [DMAIC](dmaic.md) selon la gravité.
+6. **Clôturer, et remettre le rapport** : le [rapport 8D](rapport-8d.md) rassemble les huit
+   disciplines attendues par le client, dont six sont reprises automatiquement de ce dossier.
 
 ## L'équipe en charge
 
@@ -51,164 +48,52 @@ l'équipe ») : elle n'est donc pas à retaper à la clôture.
 - Être nommé dans une équipe **ne donne aucun droit supplémentaire** : la visibilité des dossiers
   reste celle de votre rôle.
 
-## La fiche : le traitement en huit disciplines
+## Ce que la fiche montre sans qu'on en sorte
 
-La fiche d'un écart suit **l'ordre des huit disciplines du 8D**, c'est-à-dire exactement la trame
-du [rapport 8D](rapport-8d.md) que le client recevra. Un sommaire, à gauche, marque les
-disciplines qui portent déjà quelque chose et vous emmène sur celle que vous choisissez.
+La fiche d'un écart rassemble ce que le rapport 8D rassemble, mais **pendant** le dossier et non
+à sa clôture. Après les faits et l'équipe, deux cartes :
 
-> **Rien n'y est obligatoire.** Une discipline vide se dit plutôt que de disparaître — son absence
-> se lirait comme un écran incomplet — mais aucune ne barre la suivante. Un écart mineur n'a pas
-> d'action d'endiguement à décrire, et l'exiger ferait inventer une ligne pour passer. Le sommaire
-> marque ce qui est **fait** ; il n'autorise ni n'interdit rien.
-
-### D1 — Constituer l'équipe
-
-L'équipe nommée à la déclaration (voir ci-dessus), et le **valideur de la clôture** — voir
-« Le second regard » plus bas.
-
-### D2 — Décrire le problème
-
-Les faits : gravité, nature, la date, la zone, la position. S'y ajoutent deux champs que
-toute réclamation porte, et qui s'écrivaient jusqu'ici dans la description :
-
-- **Client** — celui qui réclame, par le nom qu'il s'est donné. Un constat interne n'en a pas.
-- **N° de lot** — tel qu'il est marqué sur la pièce ou l'emballage.
-
-Les deux sont facultatifs. Renseignés, ils deviennent filtrables, comptables, et paraissent en
-tête du rapport remis au client.
-
-**La date porte deux noms, pour une seule valeur**, selon l'origine de l'écart :
-
-| Origine | Libellé |
-|---|---|
-| **Externe** — un client, une autorité, un organisme | **Date de réception** |
-| **Interne** — l'organisation a vu le problème elle-même | **Détectée le** |
-
-Ce n'est pas le même fait. Un constat interne se *détecte* ; une réclamation se *reçoit*. Dire
-« détectée » d'une réclamation laisserait croire que l'organisation a vu le problème d'elle-même,
-alors que c'est le client qui l'a signalé — et c'est la date de réception qui fait courir le
-délai de réponse qu'on lui doit.
-
-Y vivent aussi les **photos du constat** — elles décrivent le problème — et l'**analyse visuelle
-par IA**, qui lit l'une d'elles.
-
-En **option**, non comme une étape : ouvrir le cycle [PDCA](pdca.md) ou le projet
-[DMAIC](dmaic.md) qui traitera ce que l'écart *révèle*, inscrire un risque au registre, ou éditer
-le rapport 8D. Ce que l'écart révèle peut mériter un cycle : c'est une décision, pas un passage
-obligé.
-
-### D3, D5, D7 — Les trois natures d'actions
-
-Le tableau des actions du dossier CAPA paraît **trois fois**, chacune filtrée sur la nature de sa
-discipline :
-
-| Discipline | Nature | Ce qu'elle répond |
-|---|---|---|
-| **D3** | Endiguement | Ce qui protège le client **dès maintenant**, avant la cause racine |
-| **D5** | Corrective | Ce qui **supprime** la cause racine |
-| **D7** | Préventive | Ce qui évite que le problème **revienne ailleurs** |
-
-Une ligne par action, avec son intitulé, son responsable, sa **date de début**, son échéance, son
-statut, le bouton qui la **fait avancer d'un cran** — *Démarrer*, puis *Terminer* — et une colonne
-**Preuve** portant la pièce qui atteste que *ce geste-là* a été fait.
-
-**Une échéance antérieure à la date de début s'affiche en rouge**, et la cellule le dit en mots.
-C'est presque toujours une faute de frappe sur l'une des deux dates, et elle fausse tous les
-décomptes de retard. Rien n'est bloqué pour autant : vous êtes seul à savoir laquelle des deux
-dates est la bonne.
-
-- **Cliquez une ligne** pour corriger l'action. Sur un dossier terminé, elle s'ouvre quand même,
-  **en lecture seule** : relire ce qui a été fait reste légitime après la clôture.
-- Le **pilote du dossier** est le responsable de la *première* action. Les suivantes ne le
-  déplacent pas.
-- Le choix du responsable **propose d'abord l'équipe du D1**, sous le titre *Équipe de l'écart*,
-  et l'annuaire entier reste dessous. L'action revient presque toujours à quelqu'un qui est déjà
-  sur l'écart ; mais elle peut revenir à quelqu'un du dehors, donc rien n'est restreint.
-- **À l'ajout d'une action corrective**, la fenêtre demande le **critère d'efficacité** du
-  dossier s'il n'en a pas encore : *à quoi verra-t-on que la cause a disparu ?* Il est écrit
-  **avant** l'action, et ne se réécrit plus ensuite — jugé après coup, on choisirait la mesure qui
-  arrange. Déjà posé, il se **rappelle en lecture** dans la fenêtre : on écrit mieux une action
-  quand on a sous les yeux la mesure qui la jugera. Une action d'endiguement ne le demande pas :
-  elle ne prétend pas supprimer la cause.
-- **Un écart peut porter plusieurs dossiers CAPA** ; chacun a son tableau, nommé.
-- **Aucun dossier ?** L'invite à en ouvrir un paraît **une seule fois**, au D5. Trois boutons
-  identiques empilés sous trois titres feraient croire à trois dossiers à ouvrir.
-- Si le dossier ne peut pas être lu (service indisponible), le tableau **le dit** et propose de
-  réessayer. Il ne reste jamais vide : « vide » voudrait dire « aucune action ».
-
-### D4 — Analyse des causes
+### Analyse de cause (ce que le 8D appelle D4)
 
 Chaque **chaîne 5 Pourquoi** et chaque **diagramme Ishikawa** rattachés à l'écart s'affichent
 dessinés — la cascade et l'arête de poisson, pas une liste de libellés. C'est la même figure que
 dans l'écran de la méthode : les familles de causes y sont dans l'ordre des M, qui est l'ordre de
 lecture d'un qualiticien.
 
-- Les figures sont **en lecture**. Pour modifier une cause, suivez le lien vers l'écran du
+- Les cartes sont **en lecture**. Pour modifier une cause, suivez le lien vers l'écran du
   diagramme ou de la chaîne : c'est là qu'est l'outillage d'édition.
-- **Aucune analyse rattachée ?** La discipline reste, vide. Un écart significatif qu'on clôture
-  sans analyse de cause revient.
+- **Aucune analyse rattachée ?** La carte le dit explicitement. Un blanc se lirait comme un
+  défaut d'affichage ; l'écart sans analyse de cause est une information en soi — et un écart
+  significatif qu'on clôture sans analyse revient.
 
-### D6 — Preuves des actions correctives
+### Actions correctives en cours (D3, D5, D6)
 
-Les preuves se joignent **action par action**, dans la colonne *Preuve* des trois tableaux : une
-pièce détachée de son action ne démontre rien. Le D6 porte le jugement d'ensemble — la note de
-résolution — et renvoie au dossier pour le **verdict d'efficacité**, qui se prononce avec son
-critère annoncé d'avance.
+Les actions du dossier CAPA lié s'affichent sur place, **en tableau** : une ligne par action, avec
+sa nature (corrective, préventive ou d'endiguement), son intitulé, son responsable, son échéance,
+son statut, et le bouton qui la **fait avancer d'un cran** — *Démarrer*, puis *Terminer* — sans
+quitter l'écart.
 
-À ne pas confondre : un dossier peut très bien avoir toutes ses actions prouvées et aucune preuve
-d'efficacité.
-
-### D8 — Remercier l'équipe
-
-Le mot de clôture, qui part dans le rapport 8D. Facultatif, comme tout le reste.
-
-## Reprendre un écart refermé
-
-Un écart revient : la récidive se constate après la clôture, le client relance, un constat avait
-été écarté à tort. Le bouton **Rouvrir** le ramène en instruction, sur un écart résolu, clos,
-annulé ou rejeté.
-
-- **Rien n'est effacé** : l'équipe, l'analyse de cause, les actions, les preuves et ce qui l'avait
-  refermé restent attachés. Le bandeau de la fiche montre le fait le plus récent.
-- **Le motif est facultatif.** Sans lui la reprise passe quand même — mais rien n'expliquera ce
-  retour en arrière six mois plus tard.
-- Sans cette reprise, il fallait ouvrir un **second** écart, qui perdait tout le travail du premier
-  et comptait deux fois le même problème dans les indicateurs.
-- Demande le droit de **clôturer** : défaire un acte suppose l'autorité de le poser.
-
-## Le second regard sur la clôture
-
-Clôturer un écart, c'est déclarer « plus rien à faire ici » — donc **valider** que la résolution
-tient. Deux règles en découlent.
-
-**Personne ne valide son propre travail.** La personne qui a écrit la résolution ne peut pas
-clôturer l'écart. Le bouton est éteint pour elle, avec son explication, et la fiche précise que
-l'écart n'est pas en défaut : c'est la personne qui ne peut pas le porter, pas l'écart qui résiste.
-La règle est celle que l'ISO 9001 §10.2 attend de la vérification de l'efficacité.
-
-**Quelqu'un d'autre qu'un responsable qualité peut clôturer.** Au D1, vous pouvez désigner un
-**valideur de la clôture**, choisi dans l'annuaire. Cette personne pourra clôturer **cet** écart
-même sans rôle qualité — et jamais s'il l'a résolu elle-même. La désignation ne lui donne aucun
-droit sur les autres écarts.
-
-> **Pourquoi cette désignation ?** Une organisation qui ne compte qu'un responsable qualité ne
-> pourrait plus rien clôturer : c'est lui qui résout, et lui seul qui aurait le droit de clore.
-> La désignation ouvre ce regard à un chef d'atelier, un pilote de processus, un confrère d'un
-> autre service.
-
-**Désigner demande le droit de clôturer** — on ne donne pas un pouvoir qu'on n'a pas. Si vous
-déclarez un écart sans ce droit, le champ du valideur vous est refusé : demandez la désignation à
-qui détient ce droit.
-
-**Et une fois l'écart résolu, celui qui l'a résolu ne peut plus changer le valideur** : il y
-nommerait quelqu'un de complaisant, et le second regard deviendrait un tampon qu'il aurait choisi
-lui-même. Un autre détenteur du droit, lui, peut encore le faire — c'est ce qui débloque un écart
-dont le valideur a quitté l'organisation.
-
-La fiche d'un écart clos porte les **deux signatures** — *Résolu par*, *Clôturé par* — au D6.
-C'est ce qu'un auditeur vient lire. Les écarts déclarés avant cette règle n'ont pas ces noms, et
-la fiche n'en invente pas.
+- **Un écart se traite en plusieurs gestes**, et le 8D les nomme séparément : endiguer (D3),
+  corriger la cause (D5), prévenir la récidive (D6). Le dossier porte autant d'actions qu'il en
+  faut.
+- **Cliquez une ligne** pour corriger l'action : son intitulé, sa nature, son responsable, son
+  échéance. Sur un dossier terminé, la ligne s'ouvre quand même, **en lecture seule** : relire ce
+  qui a été fait reste légitime après la clôture.
+- Le responsable et l'échéance sont donnés pour **chaque** action, même quand ils sont ceux du
+  dossier : c'est précisément ce qu'on vient comparer d'une ligne à l'autre.
+- Le **pilote du dossier** est le responsable de la *première* action. Les suivantes ne le
+  déplacent pas.
+- Une colonne **Preuve** porte la pièce qui atteste que *ce geste-là* a été fait : un bon de
+  travail, une photo d'après, un procès-verbal. Une pièce par action, déposée et retirée sur
+  place. À ne pas confondre avec les **preuves du dossier**, restées sur la fiche CAPA, qui
+  attestent que le problème a cessé : un dossier peut très bien avoir toutes ses actions prouvées
+  et aucune preuve d'efficacité.
+- Le lien vers le dossier reste là pour ce que le tableau ne montre pas : l'historique du dossier
+  et le verdict d'efficacité.
+- **Un dossier sans action** — ancien, ou ouvert par un automate — le dit, et propose d'en ajouter
+  une : sans action, il ne pourra pas être clôturé.
+- Si le dossier CAPA ne peut pas être lu (service indisponible), la carte **le dit** et propose de
+  réessayer. Elle ne reste jamais vide : « vide » voudrait dire « aucune action ».
 
 ## L'IA au service des NC
 
