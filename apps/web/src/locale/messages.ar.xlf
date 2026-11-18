@@ -18586,6 +18586,182 @@ historique 12 mois</source>
         <source>Aucune mesure pour l'instant.</source>
         <target state="translated">لا توجد قراءة حتى الآن.</target>
       </trans-unit>
+      <trans-unit id="mail.settings.title" datatype="html">
+        <source>Messagerie</source>
+        <target state="translated">البريد الصادر</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.subtitle" datatype="html">
+        <source>L'adresse d'où partent les courriels de votre organisation.</source>
+        <target state="translated">العنوان الذي ترسل منه مؤسستك رسائل البريد.</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.load-failed" datatype="html">
+        <source>La messagerie n'a pas pu être chargée.</source>
+        <target state="translated">تعذّر تحميل إعدادات البريد.</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.using-platform" datatype="html">
+        <source>Vos courriels partent aujourd'hui de l'adresse de la plateforme. Elle n'est pas la vôtre : vos destinataires ne la reconnaissent pas, et elle ne passe pas vos règles SPF/DKIM.</source>
+        <target state="translated">تُرسل رسائلك حاليًا من عنوان المنصّة. وهو ليس عنوانك: لن يتعرّف عليه المستلمون، ولا يستوفي قواعد SPF/DKIM الخاصة بك.</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.using-own" datatype="html">
+        <source>Vos courriels partent de <x id="INTERPOLATION"/>.</source>
+        <target state="translated">تُرسل رسائلك من <x id="INTERPOLATION"/>.</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.verified" datatype="html">
+        <source>Vérifiée le <x id="INTERPOLATION"/></source>
+        <target state="translated">تم التحقّق في <x id="INTERPOLATION"/></target>
+      </trans-unit>
+      <trans-unit id="mail.settings.not-verified" datatype="html">
+        <source>Jamais éprouvée par un envoi d'essai</source>
+        <target state="translated">لم يتم إثباتها برسالة اختبار</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.sender" datatype="html">
+        <source>Expéditeur</source>
+        <target state="translated">المُرسل</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.sender-help" datatype="html">
+        <source>Ce que vos destinataires liront. L'adresse de réponse peut différer de l'expéditeur : on émet souvent depuis une adresse de service et l'on veut les réponses dans une boîte partagée.</source>
+        <target state="translated">ما سيقرأه المستلمون. قد يختلف عنوان الرد عن المُرسل: يُرسل البريد عادةً من عنوان خدمة، بينما تُستقبل الردود في صندوق مشترك.</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.from-address" datatype="html">
+        <source>Adresse d'expédition</source>
+        <target state="translated">عنوان الإرسال</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.from-name" datatype="html">
+        <source>Nom affiché</source>
+        <target state="translated">الاسم المعروض</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.reply-to" datatype="html">
+        <source>Adresse de réponse</source>
+        <target state="translated">عنوان الرد</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.server" datatype="html">
+        <source>Serveur sortant</source>
+        <target state="translated">الخادم الصادر</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.server-help" datatype="html">
+        <source>STARTTLS ouvre en clair puis chiffre (port 587) ; TLS chiffre dès la connexion (port 465). Ce ne sont pas deux façons de dire la même chose, et les confondre donne une connexion qui expire sans message utile.</source>
+        <target state="translated">يبدأ STARTTLS بالاتصال غير المشفّر ثم يشفّره (المنفذ 587)، أما TLS فيشفّر من بداية الاتصال (المنفذ 465). ليسا طريقتين للتعبير عن الشيء نفسه، والخلط بينهما ينتج اتصالًا ينتهي دون رسالة مفيدة.</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.host" datatype="html">
+        <source>Serveur</source>
+        <target state="translated">الخادم</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.port" datatype="html">
+        <source>Port</source>
+        <target state="translated">المنفذ</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.security" datatype="html">
+        <source>Protection</source>
+        <target state="translated">الحماية</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.security-none" datatype="html">
+        <source>Aucune</source>
+        <target state="translated">بدون</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.no-tls-warning" datatype="html">
+        <source>Sans protection, votre mot de passe circule en clair sur le réseau. À réserver à un relais interne.</source>
+        <target state="translated">بدون حماية، تنتقل كلمة المرور بنص واضح عبر الشبكة. اقصر ذلك على مُرحّل داخلي.</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.account" datatype="html">
+        <source>Compte</source>
+        <target state="translated">الحساب</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.account-help" datatype="html">
+        <source>Facultatif : un relais interne reconnaît parfois ses clients à leur adresse IP. Le mot de passe est chiffré et ne vous sera jamais réaffiché — laisser le champ vide ne l'efface pas.</source>
+        <target state="translated">اختياري: قد يتعرّف المُرحّل الداخلي على عملائه بعنوان IP. تُشفَّر كلمة المرور ولن تُعرض عليك مرة أخرى — وترك الحقل فارغًا لا يمحوها.</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.username" datatype="html">
+        <source>Identifiant</source>
+        <target state="translated">المُعرّف</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.password" datatype="html">
+        <source>Mot de passe</source>
+        <target state="translated">كلمة المرور</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.password-replace" datatype="html">
+        <source>Nouveau mot de passe</source>
+        <target state="translated">كلمة مرور جديدة</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.password-kept" datatype="html">
+        <source>Un mot de passe est enregistré. Laissez vide pour le conserver.</source>
+        <target state="translated">توجد كلمة مرور محفوظة. اتركه فارغًا للإبقاء عليها.</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.clear-password" datatype="html">
+        <source>Effacer le mot de passe</source>
+        <target state="translated">محو كلمة المرور</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.password-cleared" datatype="html">
+        <source>Mot de passe effacé.</source>
+        <target state="translated">تم محو كلمة المرور.</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.activation" datatype="html">
+        <source>Mise en service</source>
+        <target state="translated">التشغيل</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.activation-help" datatype="html">
+        <source>Tant que la messagerie n'est pas activée, vos courriels continuent de partir de l'adresse de la plateforme. Éprouvez-la d'abord : enregistrer un réglage n'est pas l'avoir vérifié.</source>
+        <target state="translated">ما لم يتم تشغيل هذا البريد، ستظل رسائلك تُرسل من عنوان المنصّة. أثبِت صحّته أولًا: فحفظ الإعداد ليس تحقّقًا منه.</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.enable" datatype="html">
+        <source>Envoyer les courriels depuis cette messagerie</source>
+        <target state="translated">إرسال الرسائل من هذا البريد</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.saved" datatype="html">
+        <source>Messagerie enregistrée.</source>
+        <target state="translated">تم حفظ إعدادات البريد.</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.save-failed" datatype="html">
+        <source>La messagerie n'a pas pu être enregistrée.</source>
+        <target state="translated">تعذّر حفظ إعدادات البريد.</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.remove" datatype="html">
+        <source>Retirer la messagerie</source>
+        <target state="translated">إزالة هذا البريد</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.removed" datatype="html">
+        <source>Messagerie retirée. Les courriels repartent de l'adresse de la plateforme.</source>
+        <target state="translated">تمت إزالة البريد. ستُرسل الرسائل من عنوان المنصّة مرة أخرى.</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.remove-failed" datatype="html">
+        <source>La messagerie n'a pas pu être retirée.</source>
+        <target state="translated">تعذّرت إزالة البريد.</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.test" datatype="html">
+        <source>Envoi d'essai</source>
+        <target state="translated">رسالة اختبار</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.test-help" datatype="html">
+        <source>Un message réel part vers l'adresse indiquée. C'est le seul moyen de savoir que le serveur accepte votre compte et votre adresse d'expédition : le refus de l'expéditeur est le cas le plus fréquent.</source>
+        <target state="translated">تُرسل رسالة حقيقية إلى العنوان المحدّد. وهي الطريقة الوحيدة لمعرفة أنّ الخادم يقبل حسابك وعنوان الإرسال معًا: ورفض المُرسل هو الحالة الأكثر شيوعًا.</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.test-recipient" datatype="html">
+        <source>Destinataire de l'essai</source>
+        <target state="translated">مستلم الاختبار</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.send-test" datatype="html">
+        <source>Envoyer l'essai</source>
+        <target state="translated">إرسال الاختبار</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.test-ok" datatype="html">
+        <source>Courriel d'essai envoyé. La messagerie est vérifiée.</source>
+        <target state="translated">تم إرسال رسالة الاختبار. تم التحقّق من البريد.</target>
+      </trans-unit>
+      <trans-unit id="mail.settings.test-failed" datatype="html">
+        <source>L'essai n'a pas pu être lancé.</source>
+        <target state="translated">تعذّر بدء الاختبار.</target>
+      </trans-unit>
+      <trans-unit id="nav.admin-mail" datatype="html">
+        <source>Messagerie</source>
+        <target state="translated">البريد الصادر</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.mail" datatype="html">
+        <source>Messagerie</source>
+        <target state="translated">البريد</target>
+      </trans-unit>
+      <trans-unit id="platform.firms.mail-title" datatype="html">
+        <source>Messagerie de <x id="INTERPOLATION"/></source>
+        <target state="translated">بريد <x id="INTERPOLATION"/></target>
+      </trans-unit>
       <trans-unit id="nav.marketplace" datatype="html">
         <source>Marketplace</source>
         <target state="translated">المتجر</target>

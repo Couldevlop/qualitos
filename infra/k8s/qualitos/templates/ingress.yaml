@@ -74,6 +74,22 @@ spec:
           # marque. Sans cette regle, le SPA chargeait son theme depuis le
           # moteur qualite, qui ne connait pas le chemin : la page restait aux
           # couleurs par defaut sans qu'aucune erreur ne soit visible.
+          # Messagerie du client (ADR 0127) : api-core. Sans cette regle, le
+          # client regle sa messagerie dans un ecran qui appelle un chemin que
+          # l'ingress n'a jamais eu -- ses courriels continueraient de partir de
+          # l'adresse de la plateforme, et rien ne le dirait.
+          # La messagerie d'un CABINET passe par /api/v1/partner-firms, deja route.
+          - path: /api/v1/mail-settings
+            pathType: Prefix
+            backend:
+              service:
+                name: api-core
+                port: { name: http }
+          # Piste d'audit de la PLATEFORME : les actes de l'éditeur sur les
+          # dossiers clients. Elle vit dans api-core parce que c'est api-core qui
+          # exécute ces actes (clients, modules, tarifs, cabinets). Ne pas
+          # confondre avec /api/v1/audit, la piste de CHAQUE client, qui reste au
+          # moteur qualité par la règle fourre-tout.
           - path: /api/v1/branding
             pathType: Prefix
             backend:

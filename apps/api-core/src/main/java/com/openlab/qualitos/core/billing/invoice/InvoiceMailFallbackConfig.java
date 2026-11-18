@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Configuration;
 public class InvoiceMailFallbackConfig {
 
     @Bean
-    public InvoiceMailPort disabledInvoiceMailer() {
+    public PlatformInvoiceMailPort disabledInvoiceMailer() {
         return (to, subject, body, pdf) -> {
             throw new IllegalStateException(
                     "Envoi de facture impossible : qualitos.mail.enabled n'est pas actif sur "

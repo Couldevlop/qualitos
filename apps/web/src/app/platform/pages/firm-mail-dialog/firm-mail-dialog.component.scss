@@ -1,0 +1,23 @@
+// La fenêtre ne fait que cadrer l'écran de messagerie.
+//
+// Cet écran est conçu pour une page : ses blocs sont bornés à 48rem et il porte
+// son propre en-tête de page. Dans une fenêtre, l'en-tête ferait doublon avec le
+// titre de la fenêtre, et la borne de largeur laisserait une marge morte à
+// droite. On corrige les deux ici, et non dans l'écran : c'est la fenêtre qui
+// est le cas particulier.
+
+qos-mail-settings {
+  display: block;
+
+  // L'en-tête de page : le titre de la fenêtre le dit déjà.
+  ::ng-deep qos-page-header {
+    display: none;
+  }
+
+  // Les blocs occupent la largeur offerte, plutôt que de s'arrêter à 48rem.
+  ::ng-deep .bloc,
+  ::ng-deep .portee,
+  ::ng-deep .actions {
+    max-width: none;
+  }
+}
