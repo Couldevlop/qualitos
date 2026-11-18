@@ -262,6 +262,25 @@ public class CapaService {
      * et une r\u00e9clamation client portent la m\u00eame r\u00e9f\u00e9rence d'\u00e9cart, pas le m\u00eame
      * type de source.
      */
+    /**
+     * Un dossier au moins traite-t-il cet ecart ? HORS PORTEE, expres.
+     *
+     * <p>C'est un INVARIANT, pas un affichage : il compte TOUS les dossiers, y
+     * compris ceux que le lecteur ne voit pas. {@link #casesOf} filtre par
+     * portee parce qu'il NOMME les dossiers ; s'en servir ici aurait fait
+     * dependre la resolution d'un ecart de qui regarde -- un lecteur restreint
+     * a ses propres dossiers (ADR 0081) se serait vu refuser la resolution, et
+     * annoncer qu'aucune action n'est inscrite, la ou un responsable qualite en
+     * voyait trois.
+     *
+     * <p>Ne rend donc qu'un booleen : ni titre, ni identifiant. Meme regle que
+     * {@link #unexecutedCasesFor}, dont le resultat ne sort qu'en decompte.
+     */
+    @Transactional(readOnly = true)
+    public boolean hasAnyCaseFor(UUID escaladeId, String ncReference) {
+        return !dossiersDe(escaladeId, ncReference).isEmpty();
+    }
+
     private List<CapaCase> dossiersDe(UUID escaladeId, String ncReference) {
         UUID tenantId = requireTenantId();
         Map<UUID, CapaCase> retenus = new LinkedHashMap<>();

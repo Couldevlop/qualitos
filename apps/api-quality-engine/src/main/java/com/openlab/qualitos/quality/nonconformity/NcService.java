@@ -628,9 +628,17 @@ public class NcService {
      * <p>Lu par les deux chemins qui en dépendent — le motif annoncé avant le
      * clic, et le refus du clic — pour qu'ils ne puissent pas répondre
      * différemment à la même question.
+     *
+     * <p>Question posée HORS PORTÉE ({@code hasAnyCaseFor}, et non
+     * {@code casesOf}) : c'est un invariant, et il doit compter les dossiers
+     * qu'on ne voit pas. Sous portée, un lecteur restreint à ses propres
+     * dossiers (ADR 0081) se serait vu refuser la résolution, et annoncer
+     * qu'aucune action n'est inscrite, là où un responsable qualité en voyait
+     * trois. La réponse ne sort qu'en booléen : aucun titre, aucun identifiant
+     * de dossier hors de portée ne transite par ce chemin.
      */
     private boolean sansDossier(NonConformity nc) {
-        return dossiersDe(nc).isEmpty();
+        return !capaService.hasAnyCaseFor(nc.getCapaCaseId(), nc.getReference());
     }
 
     private NcDto.Response toResponse(NonConformity nc, List<NcDto.TeamMemberRef> equipe,
