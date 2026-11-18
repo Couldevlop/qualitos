@@ -14,11 +14,14 @@ import { UserPickerModule } from './user-picker.module';
   standalone: false,
   template: `
     <qos-user-picker [formControl]="ctrl" label="Responsable" hint="Celui qui porte l'action"
-                     [excludeIds]="exclude" (userSelected)="picked.push($event)"></qos-user-picker>`
+                     [excludeIds]="exclude" [suggestions]="suggestions"
+                     suggestionsLabel="Équipe de l'écart"
+                     (userSelected)="picked.push($event)"></qos-user-picker>`
 })
 class HostComponent {
   ctrl = new FormControl<string | null>(null);
   exclude: string[] = [];
+  suggestions: { accountId: string }[] = [];
   picked: (DirectoryUser | null)[] = [];
 }
 
@@ -63,6 +66,8 @@ describe('UserPickerComponent', () => {
   const panel = (): HTMLElement => overlay.getContainerElement();
   const options = (): HTMLElement[] =>
     Array.from(panel().querySelectorAll<HTMLElement>('[data-test="user-picker-option"]'));
+  const enTete = (): HTMLElement[] =>
+    Array.from(panel().querySelectorAll<HTMLElement>('[data-test="user-picker-suggested"]'));
 
   /** Le déclencheur d'autocomplétion écrit le texte affiché en microtâche. */
   async function settle(): Promise<void> {
@@ -295,4 +300,64 @@ describe('UserPickerComponent', () => {
     expect(directory.search).toHaveBeenCalledWith('', 20);
     flush();
   }));
+
+  describe('les personnes déjà sur le dossier, proposées en tête', () => {
+
+    it('les montre avant l’annuaire, et les relit dans l’annuaire plutôt que de croire le nom reçu',
+      fakeAsync(() => {
+        // Le nom donné par l'écran appelant est FAUX exprès : ce qui s'affiche
+        // doit venir de l'annuaire, sinon un nom périmé survivrait à un
+        // changement d'identité.
+        host.suggestions = [{ accountId: ALICE.accountId }];
+        fixture.detectChanges();
+        type('');
+        expect(directory.getByAccount).toHaveBeenCalledWith(ALICE.accountId);
+        expect(enTete().length).toBe(1);
+        expect(enTete()[0].textContent).toContain('Alice Durand');
+        // et elle ne figure PAS deux fois : l'annuaire la renvoyait aussi.
+        expect(options().some(o => o.textContent?.includes('Alice Durand'))).toBeFalse();
+        flush();
+      }));
+
+    it('écarte en silence un compte que l’annuaire ne connaît plus', fakeAsync(() => {
+      // Une personne partie de l'organisation ne doit pas être proposée pour
+      // prendre une action en charge, et un message d'erreur n'a rien à faire
+      // dans une liste de noms.
+      host.suggestions = [{ accountId: 'ffffffff-9999-4999-8999-999999999999' }];
+      fixture.detectChanges();
+      type('');
+      expect(enTete().length).toBe(0);
+      expect(panel().querySelector('[data-test="user-picker-error"]')).toBeNull();
+      flush();
+    }));
+
+    it('restreint aussi les propositions en tête à ce qui est frappé', fakeAsync(() => {
+      host.suggestions = [{ accountId: ALICE.accountId }];
+      fixture.detectChanges();
+      directory.search.and.returnValue(of(page([])));
+      type('zzz');
+      expect(enTete().length).toBe(0);
+      flush();
+    }));
+
+    it('n’annonce pas « aucune personne » tant qu’il reste une proposition en tête',
+      fakeAsync(() => {
+        host.suggestions = [{ accountId: ALICE.accountId }];
+        fixture.detectChanges();
+        directory.search.and.returnValue(of(page([])));
+        type('Alice');
+        expect(enTete().length).toBe(1);
+        expect(panel().querySelector('[data-test="user-picker-empty"]')).toBeNull();
+        flush();
+      }));
+
+    it('ne propose pas en tête une personne qu’on demande d’exclure', fakeAsync(() => {
+      host.suggestions = [{ accountId: ALICE.accountId }];
+      host.exclude = [ALICE.accountId];
+      fixture.detectChanges();
+      type('');
+      expect(enTete().length).toBe(0);
+      flush();
+    }));
+  });
 });

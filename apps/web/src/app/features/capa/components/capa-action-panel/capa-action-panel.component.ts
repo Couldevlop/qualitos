@@ -77,6 +77,16 @@ export class CapaActionPanelComponent implements OnChanges {
   // relirait le dossier par le réseau à chaque passe. Le type le dit.
   @Input() natures: readonly CapaActionType[] = [];
 
+  /**
+   * Les personnes déjà sur l'écart (l'équipe du D1), proposées en tête du
+   * sélecteur de responsable quand on ajoute ou corrige une action.
+   *
+   * <p>Le panneau ne les cherche pas lui-même : il sert aussi la fiche d'un
+   * dossier CAPA ouvert sans écart, où il n'y a pas d'équipe 8D. L'écran qui en
+   * a une la donne, les autres n'en donnent pas.
+   */
+  @Input() team: readonly { accountId: string }[] = [];
+
   /** Émis après chaque changement enregistré : l'écran appelant peut se relire. */
   @Output() readonly changed = new EventEmitter<void>();
 
@@ -455,6 +465,8 @@ export class CapaActionPanelComponent implements OnChanges {
       ownerId: this.capa.ownerId,
       ownerName: this.capa.ownerName,
       dueDate: this.capa.dueDate,
+      team: this.team,
+      effectivenessCriterion: this.capa.effectivenessCriterion,
       // Tableau restreint à une nature : l'action ajoutée là est de cette nature.
       actionType: this.natures.length === 1 ? this.natures[0] : undefined
     });
@@ -477,8 +489,27 @@ export class CapaActionPanelComponent implements OnChanges {
       ownerId: this.capa.ownerId,
       ownerName: this.capa.ownerName,
       dueDate: this.capa.dueDate,
+      team: this.team,
+      effectivenessCriterion: this.capa.effectivenessCriterion,
       readOnly: this.isTerminal(this.capa.status)
     });
+  }
+
+  /** Le titre et la mention lue par les lecteurs d'écran, écrits une seule fois. */
+  readonly titreEcheanceAvantDebut =
+    $localize`:@@capa.actions.due-before-start-title:L'échéance précède la date de début.`;
+
+  /**
+   * Vrai quand l'échéance de cette action précède sa date de début.
+   *
+   * <p>Comparaison de chaînes et non de dates : les deux champs sont des jours
+   * au format ISO (`2026-11-18`), où l'ordre alphabétique EST l'ordre
+   * chronologique. Passer par `new Date()` ferait entrer le fuseau du
+   * navigateur dans une comparaison de jours, et deux dates égales pourraient
+   * s'ordonner.
+   */
+  echeanceAvantDebut(action: CapaActionResponse): boolean {
+    return !!action.decidedOn && !!action.dueDate && action.dueDate < action.decidedOn;
   }
 
   private openDialog(data: CapaActionDialogData): void {

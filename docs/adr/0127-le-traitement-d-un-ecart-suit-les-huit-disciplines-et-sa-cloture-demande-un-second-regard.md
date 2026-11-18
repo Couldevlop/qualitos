@@ -176,6 +176,63 @@ Ils n'ont pas de `resolved_by_id` et se closent sans obstacle. Les bloquer tous
 faute de trace reviendrait à reprocher à l'organisation une donnée que le
 logiciel ne collectait pas encore.
 
+## Complément — les corrections demandées sur la fiche (`docs/NC`)
+
+Un modèle d'écran et huit consignes fournis par le client (`docs/NC`) ont été
+confrontés au livré. Trois étaient déjà satisfaites, et pour une raison qui vaut
+d'être notée : la référence `Ext-NC-` existait déjà (le préfixe dit le registre
+et l'origine), les actions écrites dans les disciplines SONT celles du dossier
+CAPA — donc déjà dans « la grande liste » — et l'enregistrement en PDF existe,
+mieux que demandé : l'export du rapport 8D est signé et ancré.
+
+Les cinq autres amènent quatre décisions.
+
+**La date de D2 porte deux noms pour une seule valeur**, selon l'origine : *Date
+de réception* quand l'écart vient du dehors, *Détectée le* sinon. La consigne
+demandait le remplacement pur et simple ; appliqué sans condition, il aurait
+menti sur un constat interne, que l'organisation détecte bel et bien
+elle-même. Ce n'est pas le même fait, et c'est la date de réception qui fait
+courir le délai de réponse dû au client.
+
+**Le choix du responsable propose l'équipe du D1 en tête**, pas à la place de
+l'annuaire. On désigne presque toujours quelqu'un de l'équipe déjà constituée,
+et le chercher dans plusieurs centaines de noms fait ressaisir ce que l'écart
+sait déjà ; mais une action peut revenir à quelqu'un du dehors, et restreindre la
+liste empêcherait de l'écrire. Les noms sont **relus dans l'annuaire** et non
+repris de l'écran appelant : un nom transmis serait périmé pour qui a changé
+d'identité, et ne dirait pas qu'une personne a quitté l'organisation. Un compte
+que l'annuaire ne connaît plus est écarté en silence — une personne partie ne
+doit pas être proposée, et un message d'erreur n'a rien à faire dans une liste de
+noms.
+
+**La date de début paraît au tableau, et l'ordre des deux dates se signale sans
+bloquer.** Le serveur portait `decidedOn` depuis toujours ; seule l'échéance se
+lisait. Une échéance antérieure au début est presque toujours une faute de
+frappe, et elle fausse tous les décomptes de retard. Elle s'affiche donc en
+rouge — et en mots, car la couleur ne peut pas porter seule l'information. Mais
+elle **n'empêche pas d'enregistrer** : la personne est seule à savoir laquelle
+des deux dates est la bonne, et refuser la saisie ferait perdre le reste du
+formulaire pour un chiffre.
+
+**La demande d'évaluation d'efficacité est posée là où l'action corrective
+s'écrit**, et non à la vérification. C'est le lieu que l'ADR 0108 appelait
+« à l'avance » sans le nommer : demandé au moment de vérifier, le critère
+laisserait choisir après coup la mesure qui arrange. Il n'est demandé que pour
+une action CORRECTIVE — une action d'endiguement ne prétend pas supprimer la
+cause, donc rien n'est à mesurer sur elle — et seulement quand le dossier n'en a
+pas : redemander un critère déjà posé serait l'occasion de le réécrire pour qu'il
+colle au résultat obtenu. Déjà posé, il se rappelle en lecture. Il est écrit
+**avant** l'action : si son écriture échoue, rien n'a été créé et la personne
+retente avec son formulaire intact ; dans l'autre ordre, une panne laisserait une
+action corrective sans la mesure qui dira un jour si elle a marché.
+
+> Deux défauts ont été trouvés par les bancs et non par la relecture, et ils
+> méritent d'être retenus. Appeler un service **construit déjà sa requête** :
+> l'action partait avant le critère, et l'ordre écrit dans le code ne décrivait
+> que l'intention — `defer` le rend vrai. Et une règle posée comme validateur de
+> formulaire **bloque** l'enregistrement : pour signaler sans bloquer, il faut un
+> calcul, pas un validateur.
+
 ## Conséquences
 
 - La fiche répond à « qu'est-ce qui reste à faire ? », et elle le fait avec la
@@ -199,6 +256,14 @@ logiciel ne collectait pas encore.
   détient ce droit.
 - ⚠ La clôture n'étant plus gardée par le point d'entrée, toute évolution de
   `NcService.close` doit préserver le refus en tête de méthode.
+- Le critère d'efficacité d'un dossier peut désormais s'écrire depuis la fenêtre
+  d'une action, et non plus seulement à l'ouverture du dossier. Deux chemins pour
+  un même champ : le second n'écrit que lorsque le champ est VIDE, et c'est ce
+  qui les empêche de se contredire.
+- ⚠ La doublure de banc du panneau d'actions doit suivre ses entrées. Elle
+  expose exactement les mêmes, sciemment : plus permissive, elle laisserait
+  passer un branchement sur un attribut inexistant — ce qu'elle a d'ailleurs
+  attrapé ici.
 
 ## Alternatives écartées
 

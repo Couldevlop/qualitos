@@ -22,6 +22,8 @@ export class CapaActionPanelStubComponent {
   @Input() capaCaseId = '';
   /** Les natures montrees : vide = toutes (ADR 0115, D5 et D6 du rapport 8D). */
   @Input() natures: string[] = [];
+  /** L'equipe de l'ecart, proposee en tete du selecteur de responsable. */
+  @Input() team: readonly { accountId: string }[] = [];
   @Output() readonly changed = new EventEmitter<void>();
 }
 

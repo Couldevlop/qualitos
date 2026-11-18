@@ -69,7 +69,7 @@ L'équipe nommée à la déclaration (voir ci-dessus), et le **valideur de la cl
 
 ### D2 — Décrire le problème
 
-Les faits : gravité, nature, date de détection, zone, position. S'y ajoutent deux champs que
+Les faits : gravité, nature, la date, la zone, la position. S'y ajoutent deux champs que
 toute réclamation porte, et qui s'écrivaient jusqu'ici dans la description :
 
 - **Client** — celui qui réclame, par le nom qu'il s'est donné. Un constat interne n'en a pas.
@@ -77,6 +77,18 @@ toute réclamation porte, et qui s'écrivaient jusqu'ici dans la description :
 
 Les deux sont facultatifs. Renseignés, ils deviennent filtrables, comptables, et paraissent en
 tête du rapport remis au client.
+
+**La date porte deux noms, pour une seule valeur**, selon l'origine de l'écart :
+
+| Origine | Libellé |
+|---|---|
+| **Externe** — un client, une autorité, un organisme | **Date de réception** |
+| **Interne** — l'organisation a vu le problème elle-même | **Détectée le** |
+
+Ce n'est pas le même fait. Un constat interne se *détecte* ; une réclamation se *reçoit*. Dire
+« détectée » d'une réclamation laisserait croire que l'organisation a vu le problème d'elle-même,
+alors que c'est le client qui l'a signalé — et c'est la date de réception qui fait courir le
+délai de réponse qu'on lui doit.
 
 Y vivent aussi les **photos du constat** — elles décrivent le problème — et l'**analyse visuelle
 par IA**, qui lit l'une d'elles.
@@ -97,14 +109,28 @@ discipline :
 | **D5** | Corrective | Ce qui **supprime** la cause racine |
 | **D7** | Préventive | Ce qui évite que le problème **revienne ailleurs** |
 
-Une ligne par action, avec son intitulé, son responsable, son échéance, son statut, le bouton qui
-la **fait avancer d'un cran** — *Démarrer*, puis *Terminer* — et une colonne **Preuve** portant la
-pièce qui atteste que *ce geste-là* a été fait.
+Une ligne par action, avec son intitulé, son responsable, sa **date de début**, son échéance, son
+statut, le bouton qui la **fait avancer d'un cran** — *Démarrer*, puis *Terminer* — et une colonne
+**Preuve** portant la pièce qui atteste que *ce geste-là* a été fait.
+
+**Une échéance antérieure à la date de début s'affiche en rouge**, et la cellule le dit en mots.
+C'est presque toujours une faute de frappe sur l'une des deux dates, et elle fausse tous les
+décomptes de retard. Rien n'est bloqué pour autant : vous êtes seul à savoir laquelle des deux
+dates est la bonne.
 
 - **Cliquez une ligne** pour corriger l'action. Sur un dossier terminé, elle s'ouvre quand même,
   **en lecture seule** : relire ce qui a été fait reste légitime après la clôture.
 - Le **pilote du dossier** est le responsable de la *première* action. Les suivantes ne le
   déplacent pas.
+- Le choix du responsable **propose d'abord l'équipe du D1**, sous le titre *Équipe de l'écart*,
+  et l'annuaire entier reste dessous. L'action revient presque toujours à quelqu'un qui est déjà
+  sur l'écart ; mais elle peut revenir à quelqu'un du dehors, donc rien n'est restreint.
+- **À l'ajout d'une action corrective**, la fenêtre demande le **critère d'efficacité** du
+  dossier s'il n'en a pas encore : *à quoi verra-t-on que la cause a disparu ?* Il est écrit
+  **avant** l'action, et ne se réécrit plus ensuite — jugé après coup, on choisirait la mesure qui
+  arrange. Déjà posé, il se **rappelle en lecture** dans la fenêtre : on écrit mieux une action
+  quand on a sous les yeux la mesure qui la jugera. Une action d'endiguement ne le demande pas :
+  elle ne prétend pas supprimer la cause.
 - **Un écart peut porter plusieurs dossiers CAPA** ; chacun a son tableau, nommé.
 - **Aucun dossier ?** L'invite à en ouvrir un paraît **une seule fois**, au D5. Trois boutons
   identiques empilés sous trois titres feraient croire à trois dossiers à ouvrir.

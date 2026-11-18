@@ -257,8 +257,20 @@
                   <small class="dim" *ngIf="n.subcategoryCode" data-test="nature">{{ subcategoryLabel(n.subcategoryCode) }}</small>
                 </span>
               </div>
+              <!-- LA MÊME DATE, DEUX MOTS, parce que ce n'est pas le même fait :
+                   un constat interne se DÉTECTE, une réclamation se REÇOIT. Dire
+                   « détectée » d'une réclamation client laisserait croire que
+                   l'organisation a vu le problème elle-même, alors que c'est le
+                   client qui l'a signalé -- et c'est la date de réception qui
+                   fait courir le délai de réponse qu'on lui doit. -->
               <div class="info-item">
-                <span class="info-label" i18n="@@nc.detail.detected">Détectée le</span>
+                <span class="info-label" *ngIf="n.origin === 'EXTERNAL'; else libelleDetection"
+                      data-test="date-libelle-reception"
+                      i18n="@@nc.detail.received">Date de réception</span>
+                <ng-template #libelleDetection>
+                  <span class="info-label" data-test="date-libelle-detection"
+                        i18n="@@nc.detail.detected">Détectée le</span>
+                </ng-template>
                 <span class="info-value">{{ n.detectedAt | date:'medium' }}</span>
               </div>
               <div class="info-item" *ngIf="n.zone">
@@ -554,7 +566,7 @@
                 <div class="capa-dossier-head" *ngIf="dossiers(n).length > 1">
                   <span class="capa-dossier-titre">{{ d.title }}</span>
                 </div>
-                <qos-capa-action-panel [capaCaseId]="d.id" [natures]="naturesD3"
+                <qos-capa-action-panel [capaCaseId]="d.id" [team]="n.teamMembers ?? []" [natures]="naturesD3"
                                        (counted)="compter('D3', $event)"
                                        (changed)="reload()"></qos-capa-action-panel>
               </div>
@@ -632,7 +644,7 @@
                     <span i18n="@@nc.detail.open-capa">Voir la CAPA</span>
                   </a>
                 </div>
-                <qos-capa-action-panel [capaCaseId]="d.id" [natures]="naturesD5"
+                <qos-capa-action-panel [capaCaseId]="d.id" [team]="n.teamMembers ?? []" [natures]="naturesD5"
                                        (counted)="compter('D5', $event)"
                                        (changed)="reload()"></qos-capa-action-panel>
               </div>
@@ -721,7 +733,7 @@
                 <div class="capa-dossier-head" *ngIf="dossiers(n).length > 1">
                   <span class="capa-dossier-titre">{{ d.title }}</span>
                 </div>
-                <qos-capa-action-panel [capaCaseId]="d.id" [natures]="naturesD7"
+                <qos-capa-action-panel [capaCaseId]="d.id" [team]="n.teamMembers ?? []" [natures]="naturesD7"
                                        (counted)="compter('D7', $event)"
                                        (changed)="reload()"></qos-capa-action-panel>
               </div>

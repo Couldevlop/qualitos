@@ -360,4 +360,35 @@ describe('NcDetailComponent — le traitement 8D', () => {
     expect(un('valideur-lecture')!.textContent).toContain('Ali Benali');
     expect(texte()).not.toContain('7f1b2c3d');
   });
+
+  /**
+   * LA MÊME DATE, DEUX MOTS, parce que ce n'est pas le même fait : un constat
+   * interne se DÉTECTE, une réclamation client se REÇOIT. Dire « détectée »
+   * d'une réclamation laisserait croire que l'organisation a vu le problème
+   * elle-même, alors que c'est le client qui l'a signalé — et c'est la date de
+   * réception qui fait courir le délai de réponse qu'on lui doit.
+   */
+  describe('le libellé de la date, en D2', () => {
+
+    it('dit « date de réception » sur une réclamation venue du dehors', () => {
+      setup(ecart({ origin: 'EXTERNAL' }));
+      expect(un('date-libelle-reception')).not.toBeNull();
+      expect(un('date-libelle-detection')).toBeNull();
+    });
+
+    it('dit « détectée le » sur un constat de l’organisation elle-même', () => {
+      setup(ecart({ origin: 'INTERNAL' }));
+      expect(un('date-libelle-detection')).not.toBeNull();
+      expect(un('date-libelle-reception')).toBeNull();
+    });
+
+    it('montre la date dans les deux cas : seul le mot change', () => {
+      setup(ecart({ origin: 'INTERNAL', detectedAt: '2026-11-15T00:00:00Z' }));
+      const avec = texte();
+      setup(ecart({ origin: 'EXTERNAL', detectedAt: '2026-11-15T00:00:00Z' }));
+      expect(avec).toContain('2026');
+      expect(texte()).toContain('2026');
+    });
+  });
+
 });

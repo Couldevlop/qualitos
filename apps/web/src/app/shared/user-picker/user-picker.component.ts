@@ -4,8 +4,10 @@ import {
   Component,
   EventEmitter,
   Input,
+  OnChanges,
   OnDestroy,
   OnInit,
+  SimpleChanges,
   Output,
   ViewChild,
   booleanAttribute,
@@ -13,7 +15,7 @@ import {
 } from '@angular/core';
 import { ControlValueAccessor, FormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MatAutocompleteSelectedEvent, MatAutocompleteTrigger } from '@angular/material/autocomplete';
-import { Observable, Subject, Subscription, of } from 'rxjs';
+import { Observable, Subject, Subscription, forkJoin, of } from 'rxjs';
 import { catchError, debounceTime, distinctUntilChanged, filter, map, switchMap, takeUntil, tap } from 'rxjs/operators';
 
 import { DirectoryService } from '../../core/directory/directory.service';
@@ -55,7 +57,7 @@ let nextId = 0;
   providers: [{ provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => UserPickerComponent), multi: true }],
   standalone: false
 })
-export class UserPickerComponent implements ControlValueAccessor, OnInit, OnDestroy {
+export class UserPickerComponent implements ControlValueAccessor, OnInit, OnChanges, OnDestroy {
 
   /** Libellé du champ (« Responsable », « Auditeur principal »…). */
   @Input() label = $localize`:@@directory.picker.label:Personne`;
@@ -67,6 +69,27 @@ export class UserPickerComponent implements ControlValueAccessor, OnInit, OnDest
   @Input() excludeIds: readonly string[] = [];
   /** Nombre de propositions affichées (borné à 50 par le serveur). */
   @Input() pageSize = 20;
+
+  /**
+   * Personnes à proposer EN TÊTE de la liste : l'équipe qui traite l'écart,
+   * les participants d'un cercle. Donner `accountId` suffit.
+   *
+   * <p>Pourquoi en tête plutôt que seules : on désigne presque toujours
+   * quelqu'un de l'équipe déjà constituée, et le chercher dans un annuaire de
+   * plusieurs centaines de noms fait ressaisir ce que l'écran sait déjà. Mais
+   * « presque toujours » n'est pas « toujours » -- une action peut revenir à
+   * quelqu'un du dehors de l'équipe, et restreindre la liste empêcherait de
+   * l'écrire. Les deux sont donc proposés, dans cet ordre.
+   *
+   * <p>Les noms ne sont PAS repris de ce qu'on nous donne : chaque compte est
+   * relu dans l'annuaire. Afficher le nom transmis par l'écran appelant
+   * montrerait un nom périmé pour qui a changé d'identité, et ne dirait pas
+   * qu'une personne a quitté l'organisation.
+   */
+  @Input() suggestions: readonly { accountId: string }[] = [];
+
+  /** Titre du groupe des propositions en tête (« Équipe de l'écart »…). */
+  @Input() suggestionsLabel = $localize`:@@directory.picker.suggested:Déjà sur ce dossier`;
 
   /** La personne choisie, ou `null` quand le champ est vidé. */
   @Output() readonly userSelected = new EventEmitter<DirectoryUser | null>();
@@ -89,9 +112,15 @@ export class UserPickerComponent implements ControlValueAccessor, OnInit, OnDest
 
   private onChange: (value: string | null) => void = () => undefined;
   private onTouched: () => void = () => undefined;
+  /** Les propositions en tête, telles que l'annuaire les donne. */
+  suggested: DirectoryUser[] = [];
+  /** Le terme en cours, pour restreindre aussi les propositions en tête. */
+  private terme = '';
+
   private readonly terms$ = new Subject<string>();
   private readonly destroy$ = new Subject<void>();
   private resolveSub?: Subscription;
+  private suggestSub?: Subscription;
 
   constructor(private readonly directory: DirectoryService, private readonly cdr: ChangeDetectorRef) {}
 
@@ -103,6 +132,7 @@ export class UserPickerComponent implements ControlValueAccessor, OnInit, OnDest
 
     this.terms$.pipe(
       map(term => term.trim()),
+      tap(term => { this.terme = term.toLocaleLowerCase(); }),
       debounceTime(USER_PICKER_DEBOUNCE_MS),
       distinctUntilChanged(),
       tap(() => this.setState('loading')),
@@ -111,7 +141,14 @@ export class UserPickerComponent implements ControlValueAccessor, OnInit, OnDest
     ).subscribe(page => this.showResults(page));
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['suggestions']) {
+      this.resolveSuggestions();
+    }
+  }
+
   ngOnDestroy(): void {
+    this.suggestSub?.unsubscribe();
     this.resolveSub?.unsubscribe();
     this.destroy$.next();
     this.destroy$.complete();
@@ -230,6 +267,46 @@ export class UserPickerComponent implements ControlValueAccessor, OnInit, OnDest
     this.cdr.markForCheck();
   }
 
+  /**
+   * Relit dans l'annuaire les comptes qu'on nous propose de mettre en tête.
+   *
+   * <p>Un compte introuvable est SILENCIEUSEMENT ÉCARTÉ, et c'est voulu : une
+   * personne partie de l'organisation ne doit pas être proposée pour prendre
+   * une action en charge, et dire « cette personne n'existe plus » dans une
+   * liste de propositions mettrait un message d'erreur là où l'on cherche
+   * simplement un nom.
+   */
+  private resolveSuggestions(): void {
+    this.suggestSub?.unsubscribe();
+    const comptes = [...new Set(this.suggestions.map(s => s.accountId).filter(Boolean))];
+    if (comptes.length === 0) {
+      this.suggested = [];
+      this.cdr.markForCheck();
+      return;
+    }
+    this.suggestSub = forkJoin(
+      comptes.map(id => this.directory.getByAccount(id).pipe(catchError(() => of(null))))
+    ).subscribe(personnes => {
+      this.suggested = personnes.filter((u): u is DirectoryUser => u !== null);
+      this.cdr.markForCheck();
+    });
+  }
+
+  /**
+   * Les propositions à montrer : celles qui correspondent à ce qui est frappé,
+   * sans celles qu'on nous demande d'exclure. Celles que l'annuaire renvoie
+   * déjà sont retirées de la liste principale, et non d'ici : on ne veut pas
+   * d'un nom qui figure deux fois, et la place qui compte est celle du haut.
+   */
+  get suggestionsVisibles(): DirectoryUser[] {
+    const exclus = new Set(this.excludeIds);
+    return this.suggested.filter(u =>
+      !exclus.has(u.accountId)
+      && (this.terme === ''
+          || u.displayName.toLocaleLowerCase().includes(this.terme)
+          || u.email.toLocaleLowerCase().includes(this.terme)));
+  }
+
   private lookup(term: string): Observable<DirectoryPage | null> {
     return this.directory.search(term, this.pageSize).pipe(catchError(() => of(null)));
   }
@@ -243,9 +320,12 @@ export class UserPickerComponent implements ControlValueAccessor, OnInit, OnDest
       return;
     }
     const excluded = new Set(this.excludeIds);
-    this.options = page.content.filter(u => !excluded.has(u.accountId));
+    // Les personnes mises en tête sortent de la liste principale : un même nom
+    // proposé deux fois ferait douter qu'il s'agisse de la même personne.
+    const enTete = new Set(this.suggestionsVisibles.map(u => u.accountId));
+    this.options = page.content.filter(u => !excluded.has(u.accountId) && !enTete.has(u.accountId));
     this.hiddenCount = Math.max(0, page.totalElements - page.content.length);
-    const count = this.options.length;
+    const count = this.options.length + this.suggestionsVisibles.length;
     this.liveMessage = count === 0
       ? $localize`:@@directory.picker.live-none:Aucune personne trouvée`
       : $localize`:@@directory.picker.live-count:${count}:COUNT: personne(s) proposée(s)`;
