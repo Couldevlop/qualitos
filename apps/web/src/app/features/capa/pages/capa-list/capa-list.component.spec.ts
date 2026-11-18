@@ -16,6 +16,7 @@ import { CapaListComponent } from './capa-list.component';
 import { AuthzService } from '../../../../core/authz/authz.service';
 import { DirectoryService } from '../../../../core/directory/directory.service';
 import { CapaService } from '../../capa.service';
+import { UserPickerModule } from '../../../../shared/user-picker/user-picker.module';
 
 /**
  * L'annuaire en lecture restreinte (ADR 0091) : le seul compte connu est
@@ -39,7 +40,9 @@ describe('CapaListComponent', () => {
     environment.useMockApi = true;
     await TestBed.configureTestingModule({
       declarations: [CapaListComponent],
-      imports: [SharedModule, UiModule, NoopAnimationsModule],
+      // UserPickerModule : le filtre de pilote choisit la personne dans
+      // l'annuaire, et sans lui le champ n'a aucun accesseur de valeur.
+      imports: [SharedModule, UiModule, UserPickerModule, NoopAnimationsModule],
       providers: [
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
@@ -65,7 +68,8 @@ describe('CapaListComponent', () => {
   });
 
   it('declares the expected displayed columns', () => {
-    expect(component.displayedColumns).toEqual(['title', 'type', 'criticity', 'status', 'owner', 'dueDate']);
+    expect(component.displayedColumns).toEqual(
+      ['title', 'type', 'criticity', 'status', 'owner', 'createdAt', 'dueDate']);
   });
 
   it('nomme le pilote, jamais par son identifiant (ADR 0088) ; l\'annuaire nomme les anciens dossiers', async () => {
@@ -98,9 +102,27 @@ describe('CapaListComponent', () => {
     const sub = component.cases$.subscribe();
     component.statusFilter.setValue('OPEN');
     component.criticityFilter.setValue('HIGH');
-    expect(list.calls.mostRecent().args.slice(2)).toEqual(['OPEN', 'HIGH']);
+    expect(list.calls.mostRecent().args.slice(2)).toEqual(['OPEN', 'HIGH', undefined]);
     component.criticityFilter.setValue('');
-    expect(list.calls.mostRecent().args.slice(2)).toEqual(['OPEN', undefined]);
+    expect(list.calls.mostRecent().args.slice(2)).toEqual(['OPEN', undefined, undefined]);
+    sub.unsubscribe();
+  });
+
+  /**
+   * Le pilote part AU SERVEUR, qui pagine : filtrer la page rendue n'aurait
+   * montre que les dossiers de cette personne presents sur la page courante,
+   * et le compteur aurait annonce le total de tous les autres.
+   */
+  it('filtre la liste par pilote, cote serveur', async () => {
+    const list = spyOn(TestBed.inject(CapaService), 'listCases').and.returnValue(of({
+      content: [], totalElements: 0, totalPages: 0, number: 0, size: 20
+    }));
+    fixture.detectChanges();
+    const sub = component.cases$.subscribe();
+    component.ownerFilter.setValue('kc-1');
+    expect(list.calls.mostRecent().args.slice(2)).toEqual([undefined, undefined, 'kc-1']);
+    component.ownerFilter.setValue(null);
+    expect(list.calls.mostRecent().args.slice(2)).toEqual([undefined, undefined, undefined]);
     sub.unsubscribe();
   });
 
@@ -162,7 +184,9 @@ describe('CapaListComponent (chargement API)', () => {
     environment.useMockApi = false;
     await TestBed.configureTestingModule({
       declarations: [CapaListComponent],
-      imports: [SharedModule, UiModule, NoopAnimationsModule],
+      // UserPickerModule : le filtre de pilote choisit la personne dans
+      // l'annuaire, et sans lui le champ n'a aucun accesseur de valeur.
+      imports: [SharedModule, UiModule, UserPickerModule, NoopAnimationsModule],
       providers: [
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
@@ -292,7 +316,9 @@ describe('CapaListComponent — création ouverte par un lien', () => {
     dialog.open.and.returnValue({ afterClosed: () => of(undefined) } as MatDialogRef<unknown>);
     await TestBed.resetTestingModule().configureTestingModule({
       declarations: [CapaListComponent],
-      imports: [SharedModule, UiModule, NoopAnimationsModule],
+      // UserPickerModule : le filtre de pilote choisit la personne dans
+      // l'annuaire, et sans lui le champ n'a aucun accesseur de valeur.
+      imports: [SharedModule, UiModule, UserPickerModule, NoopAnimationsModule],
       providers: [
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
@@ -323,7 +349,9 @@ describe('CapaListComponent — création ouverte par un lien', () => {
     const dialog = jasmine.createSpyObj<MatDialog>('MatDialog', ['open']);
     await TestBed.resetTestingModule().configureTestingModule({
       declarations: [CapaListComponent],
-      imports: [SharedModule, UiModule, NoopAnimationsModule],
+      // UserPickerModule : le filtre de pilote choisit la personne dans
+      // l'annuaire, et sans lui le champ n'a aucun accesseur de valeur.
+      imports: [SharedModule, UiModule, UserPickerModule, NoopAnimationsModule],
       providers: [
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),

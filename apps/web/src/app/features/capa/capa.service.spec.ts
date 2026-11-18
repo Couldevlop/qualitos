@@ -311,6 +311,17 @@ describe('CapaService (API réelle)', () => {
     req.flush({ content: [], totalElements: 0, totalPages: 0, number: 0, size: 50 });
   });
 
+  // Le pilote part par son COMPTE : c'est ce que le registre filtre, et la
+  // seule facon de distinguer deux personnes qui portent le meme nom.
+  it('transmet le filtre de pilote au serveur, et rien sans filtre', () => {
+    service.listCases(0, 50, undefined, undefined, 'kc-7').subscribe();
+    const req = http.expectOne(r => r.url === base);
+    expect(req.request.params.get('ownerId')).toBe('kc-7');
+    expect(req.request.params.has('status')).toBeFalse();
+    expect(req.request.params.has('criticity')).toBeFalse();
+    req.flush({ content: [], totalElements: 0, totalPages: 0, number: 0, size: 50 });
+  });
+
   it('lit un cas par son identifiant', (done) => {
     service.getCase('c1').subscribe(c => {
       expect(c.id).toBe('c1');

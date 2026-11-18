@@ -312,6 +312,18 @@ export class CapaCreateDialogComponent implements OnInit, OnDestroy {
     return capaSourceRegister(this.form.controls.sourceType.value);
   }
 
+  /**
+   * La source désigne-t-elle un écart ?
+   *
+   * <p>Les deux registres d'écarts — interne, et externe pour une réclamation
+   * client — mènent au même endroit : le serveur lit l'origine SUR L'ÉCART
+   * cité, et l'indice du champ le dit.
+   */
+  get citeUnEcart(): boolean {
+    const registre = this.sourceRegister;
+    return registre === 'nc-internal' || registre === 'nc-external';
+  }
+
   /** Combien de fiches la liste propose au plus — repris dans l'indication. */
   readonly pageSize = SOURCE_REF_PAGE_SIZE;
 

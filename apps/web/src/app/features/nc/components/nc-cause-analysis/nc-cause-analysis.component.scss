@@ -37,3 +37,21 @@
   font-size: var(--qos-fs-sm);
 }
 
+// La conclusion de la chaine : le champ large, le bouton a sa suite. Alignes en
+// bas, pour que le bouton suive la ligne de saisie et non le haut du champ.
+.root-cause {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--qos-space-2);
+  margin-top: var(--qos-space-2);
+
+  &__field {
+    flex: 1 1 22rem;
+  }
+
+  // Le motif de refus prend la ligne entiere : lu sous le champ, pas a cote.
+  .cause-empty {
+    flex-basis: 100%;
+  }
+}

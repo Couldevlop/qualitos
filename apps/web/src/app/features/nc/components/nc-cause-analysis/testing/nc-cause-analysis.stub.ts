@@ -1,4 +1,4 @@
-import { Component, Input, NgModule } from '@angular/core';
+import { Component, EventEmitter, Input, NgModule, Output } from '@angular/core';
 
 import { FiveWhysAnalysis } from '../../../../five-whys/five-whys.types';
 import { IshikawaDiagramResponse } from '../../../../ishikawa/ishikawa.types';
@@ -23,6 +23,7 @@ import { IshikawaDiagramResponse } from '../../../../ishikawa/ishikawa.types';
 export class NcCauseAnalysisStubComponent {
   @Input() fiveWhys: FiveWhysAnalysis[] = [];
   @Input() ishikawa: IshikawaDiagramResponse[] = [];
+  @Output() readonly rootCauseConcluded = new EventEmitter<FiveWhysAnalysis>();
 }
 
 @NgModule({

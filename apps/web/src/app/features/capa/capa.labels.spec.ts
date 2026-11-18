@@ -53,10 +53,22 @@ describe('capa.labels', () => {
   });
 
   it('dit à quel registre se choisit la référence de chaque source', () => {
-    expect(capaSourceRegister('NON_CONFORMITY')).toBe('nc');
+    expect(capaSourceRegister('NON_CONFORMITY')).toBe('nc-internal');
     expect(capaSourceRegister('AUDIT')).toBe('audit');
-    expect(capaSourceRegister('COMPLAINT')).toBe('complaint');
     expect(capaSourceRegister('RISK')).toBe('risk');
+  });
+
+  /**
+   * Une plainte client se constate comme un ecart EXTERNE, et c'est cet ecart
+   * que le dossier cite : le registre de la source « reclamation client » est
+   * donc celui des ecarts externes, pas celui des reclamations.
+   *
+   * <p>La reference choisie etait celle d'une reclamation (REC-...) : le
+   * dossier n'apparaissait sur aucune fiche d'ecart, ne retenait aucune
+   * cloture et manquait au 8D.
+   */
+  it("renvoie la reclamation client au registre des ecarts externes", () => {
+    expect(capaSourceRegister('COMPLAINT')).toBe('nc-external');
   });
 
   // Une détection interne ne désigne aucun objet : le texte libre est la seule

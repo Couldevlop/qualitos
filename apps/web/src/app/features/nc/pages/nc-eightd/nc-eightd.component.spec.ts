@@ -102,7 +102,8 @@ describe('NcEightDComponent', () => {
     } as IshikawaDiagramResponse;
   }
 
-  async function monter(roles: string[], capaCaseId: string | null = 'capa-9'): Promise<void> {
+  async function monter(roles: string[], capaCaseId: string | null = 'capa-9',
+                        capaCases?: { id: string; title: string; status: string }[]): Promise<void> {
     svc = jasmine.createSpyObj<NcService>('NcService',
       ['getEightDReport', 'saveEightDReport', 'issueEightDReport', 'downloadEightDPdf', 'getNc']);
     const ecart: NcResponse = {
@@ -111,6 +112,7 @@ describe('NcEightDComponent', () => {
       detectedAt: '', createdAt: '', updatedAt: ''
     };
     if (capaCaseId) { ecart.capaCaseId = capaCaseId; }
+    if (capaCases) { ecart.capaCases = capaCases as NcResponse['capaCases']; }
     svc.getNc.and.returnValue(of(ecart));
     fiveWhys = jasmine.createSpyObj<FiveWhysService>('FiveWhysService', ['listForNc']);
     fiveWhys.listForNc.and.returnValue(of([]));
@@ -402,22 +404,43 @@ describe('NcEightDComponent', () => {
    * le PDF portera. Sans son tableau, une action de nature CONTAINMENT
    * (ADR 0115) ne s'affichait nulle part dans le rapport.
    *
-   * <p>Le D5, lui, en nomme TROIS : c'est la discipline ou l'on vient lire ce
-   * qui a ete decide, et son titre le dit (« defined containment, corrective
-   * and preventive actions »). Restreint aux correctives, il laissait dehors
-   * l'endiguement et la prevention saisis depuis l'ecart -- on les avait
-   * ecrits, ils etaient dans le dossier, et le rapport ne les montrait pas.
+   * <p>Le D5 montre les CAPA definies -- correctives et preventives -- et plus
+   * l'endiguement : celui-ci est deja le tableau du D3, juste au-dessus, et
+   * ses lignes repetees sous le D5 laissaient croire a deux decisions
+   * distinctes la ou il n'y en avait qu'une.
    */
-  it("donne au D3 l'endiguement, au D5 les trois natures, au D6 les pr\u00e9ventives", async () => {
+  it("donne au D3 l'endiguement, au D5 les CAPA d\u00e9finies, au D6 les pr\u00e9ventives", async () => {
     await monter(['QUALITY_MANAGER']);
 
     const tableaux = fixture.debugElement.queryAll(By.directive(CapaActionPanelStubComponent));
     expect(tableaux.length).toBe(3);
     const natures = tableaux.map(t => (t.componentInstance as CapaActionPanelStubComponent).natures);
     expect(natures).toEqual([
-      ['CONTAINMENT'], ['CONTAINMENT', 'CORRECTIVE', 'PREVENTIVE'], ['PREVENTIVE']]);
+      ['CONTAINMENT'], ['CORRECTIVE', 'PREVENTIVE'], ['PREVENTIVE']]);
     const dossiers = tableaux.map(t => (t.componentInstance as CapaActionPanelStubComponent).capaCaseId);
     expect(dossiers).toEqual(['capa-9', 'capa-9', 'capa-9']);
+  });
+
+  /**
+   * Le rapport montre TOUS les dossiers de l'ecart, pas seulement celui de
+   * l'escalade.
+   *
+   * <p>Un dossier ouvert depuis le registre CAPA en citant la reference de
+   * l'ecart y est bel et bien rattache -- il retenait meme sa cloture -- mais
+   * l'ecran ne lisait que `capaCaseId`, le premier : ses actions
+   * n'apparaissaient nulle part dans le 8D.
+   */
+  it('montre les actions de TOUS les dossiers rattaches, pas seulement du premier', async () => {
+    await monter(['QUALITY_MANAGER'], 'capa-9', [
+      { id: 'capa-9', title: 'Dossier de l\u2019escalade', status: 'IN_PROGRESS' },
+      { id: 'capa-12', title: 'Dossier ouvert depuis le registre', status: 'OPEN' }
+    ]);
+
+    const tableaux = fixture.debugElement.queryAll(By.directive(CapaActionPanelStubComponent));
+    const dossiers = tableaux.map(t => (t.componentInstance as CapaActionPanelStubComponent).capaCaseId);
+    // Trois disciplines portent un tableau, chacune pour les deux dossiers.
+    expect(dossiers).toEqual([
+      'capa-9', 'capa-12', 'capa-9', 'capa-12', 'capa-9', 'capa-12']);
   });
 
   /**
@@ -509,7 +532,7 @@ describe('NcEightDComponent', () => {
     expect(vides()).toBeGreaterThan(0);
 
     // On revient a \u00ab on ne sait pas encore \u00bb : elle doit se taire.
-    component.capaCaseId$.next(undefined);
+    component.capaCaseIds$.next(undefined);
     fixture.detectChanges();
     expect(vides()).toBe(0);
   });

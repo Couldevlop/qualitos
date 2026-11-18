@@ -24,6 +24,7 @@ import org.mockito.ArgumentCaptor;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -52,7 +53,7 @@ class CapaControllerTest {
 
     @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void list_returns200() throws Exception {
-        when(service.findAll(any(), any(Pageable.class)))
+        when(service.findAll(any(), any(), any(), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of(caseResp(CapaStatus.OPEN))));
         mockMvc.perform(get("/api/v1/capa/cases"))
                 .andExpect(status().isOk())
@@ -130,7 +131,7 @@ class CapaControllerTest {
 
     @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void list_withFilter() throws Exception {
-        when(service.findAll(eq(CapaStatus.CLOSED), any(Pageable.class)))
+        when(service.findAll(eq(CapaStatus.CLOSED), isNull(), isNull(), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of(caseResp(CapaStatus.CLOSED))));
         mockMvc.perform(get("/api/v1/capa/cases").param("status", "CLOSED"))
                 .andExpect(status().isOk())
@@ -139,12 +140,24 @@ class CapaControllerTest {
 
     @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void list_withCriticityFilter() throws Exception {
-        when(service.findAll(eq(CapaStatus.CLOSED), eq(CapaCriticity.HIGH), any(Pageable.class)))
+        when(service.findAll(eq(CapaStatus.CLOSED), eq(CapaCriticity.HIGH), isNull(),
+                             any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of(caseResp(CapaStatus.CLOSED))));
         mockMvc.perform(get("/api/v1/capa/cases").param("status", "CLOSED").param("criticity", "HIGH"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].status").value("CLOSED"));
-        verify(service, never()).findAll(any(), any(Pageable.class));
+    }
+
+    // Le pilote arrive par son COMPTE : c'est ce que le registre filtre, et
+    // c'est la seule facon de distinguer deux personnes qui portent le meme nom.
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
+    void list_filtreParPilote_passeLeCompteAuService() throws Exception {
+        UUID pilote = UUID.randomUUID();
+        when(service.findAll(isNull(), isNull(), eq(pilote), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of(caseResp(CapaStatus.OPEN))));
+        mockMvc.perform(get("/api/v1/capa/cases").param("ownerId", pilote.toString()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].id").value(CAPA.toString()));
     }
 
     @Test @WithMockUser(roles = "QUALITY_MANAGER")

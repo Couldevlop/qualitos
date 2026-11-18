@@ -77,7 +77,7 @@ export function capaCriticityLabel(criticity: CapaCriticity | string | undefined
  * interne, une alerte IoT, « autre » : là, le texte libre est la seule réponse
  * honnête.
  */
-export type CapaSourceRegister = 'nc' | 'audit' | 'complaint' | 'risk';
+export type CapaSourceRegister = 'nc-internal' | 'nc-external' | 'audit' | 'risk';
 
 /**
  * Libellés des sources d'un dossier. La création libre depuis la liste n'en
@@ -91,14 +91,14 @@ export const CAPA_SOURCES: ReadonlyArray<{
   // l'écart remonté par un client. Elle ne couvre que l'écart constaté en
   // interne : le dire lève l'ambiguïté sans changer le code de l'énumération,
   // qu'un dossier déjà ouvert porte toujours.
-  { value: 'NON_CONFORMITY', label: $localize`:@@capa.source.non-conformity-internal:Non-conformité interne`, manual: true, register: 'nc' },
+  { value: 'NON_CONFORMITY', label: $localize`:@@capa.source.non-conformity-internal:Non-conformité interne`, manual: true, register: 'nc-internal' },
   // Ouverte depuis une « NC externe » : le dossier affichait « Non-conformité
   // interne » sur l'écran même qui sert à répondre au client. Pas proposée à la
   // création libre : c'est l'escalade depuis la fiche de l'écart qui la pose,
   // et elle seule sait si l'écart vient du dehors.
   { value: 'EXTERNAL_NON_CONFORMITY', label: $localize`:@@capa.source.non-conformity-external:Non-conformité externe (réclamation client)`, manual: false },
   { value: 'AUDIT',          label: $localize`:@@capa.source.audit:Audit`, manual: true, register: 'audit' },
-  { value: 'COMPLAINT',      label: $localize`:@@capa.source.complaint:Réclamation client`, manual: true, register: 'complaint' },
+  { value: 'COMPLAINT',      label: $localize`:@@capa.source.complaint:Réclamation client`, manual: true, register: 'nc-external' },
   { value: 'INTERNAL',       label: $localize`:@@capa.source.internal:Détection interne`, manual: true },
   { value: 'IOT_ALERT',      label: $localize`:@@capa.source.iot-alert:Alerte IoT`, manual: true },
   { value: 'SPC_ALERT',      label: $localize`:@@capa.source.spc-alert:Carte de contrôle`, manual: false },

@@ -10146,6 +10146,22 @@ Portail clients</source>
         <source>Conformité</source>
         <target state="translated">コンプライアンス</target>
       </trans-unit>
+      <trans-unit id="nc.cause.root-cause-failed" datatype="html">
+        <source>La conclusion n’a pas été enregistrée. Réessayez.</source>
+        <target state="translated">結論を保存できませんでした。もう一度お試しください。</target>
+      </trans-unit>
+      <trans-unit id="capa.list.filter-owner" datatype="html">
+        <source>Filtrer par pilote</source>
+        <target state="translated">担当者で絞り込む</target>
+      </trans-unit>
+      <trans-unit id="capa.list.filter-owner-placeholder" datatype="html">
+        <source>Toutes les personnes</source>
+        <target state="translated">すべての担当者</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.no-capa" datatype="html">
+        <source>Aucune action n'est encore inscrite sur cet écart. Ajoutez au moins une action pour pouvoir le résoudre.</source>
+        <target state="translated">この不適合にはまだ処置が登録されていません。解決するには少なくとも一つの処置を追加してください。</target>
+      </trans-unit>
       <trans-unit id="capa.type.containment" datatype="html">
         <source>Endiguement</source>
         <target state="translated">暫定対応</target>

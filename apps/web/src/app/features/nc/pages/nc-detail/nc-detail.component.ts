@@ -267,8 +267,14 @@ export class NcDetailComponent implements OnInit {
 
   // --- 5 Pourquoi -------------------------------------------------------------
 
-  /** Chargement non bloquant : la fiche reste utilisable si l'appel échoue. */
-  private loadFiveWhys(): void {
+  /**
+   * Relit les chaînes 5 Pourquoi de l'écart. Chargement non bloquant : la fiche
+   * reste utilisable si l'appel échoue.
+   *
+   * <p>Publique : les figures d'analyse de cause concluent une cause racine sans
+   * quitter la fiche, et annoncent le changement.
+   */
+  loadFiveWhys(): void {
     this.fiveWhys.listForNc(this.ncId).subscribe({
       next: analyses => this.fiveWhys$.next(analyses),
       error: err => {
@@ -875,6 +881,8 @@ export class NcDetailComponent implements OnInit {
         return b.count === 1
           ? $localize`:@@nc.blocker.cases-one:1 dossier CAPA n'est pas clôturé. Clôturez-le — après vérification de son efficacité — pour pouvoir clôturer cet écart.`
           : $localize`:@@nc.blocker.cases-many:${b.count}:count: dossiers CAPA ne sont pas clôturés. Clôturez-les — après vérification de leur efficacité — pour pouvoir clôturer cet écart.`;
+      case 'NO_CAPA_CASE':
+        return $localize`:@@nc.blocker.no-capa:Aucune action n'est encore inscrite sur cet écart. Ajoutez au moins une action pour pouvoir le résoudre.`;
       default:
         // Code inconnu (serveur plus récent que l'écran) : mieux vaut une phrase
         // générique qu'un bouton éteint sans explication.

@@ -310,7 +310,8 @@
           <span class="info-label" i18n="@@nc.detail.cause-analysis">Analyse de cause</span>
 
           <qos-nc-cause-analysis [fiveWhys]="(fiveWhys$ | async) ?? []"
-                                 [ishikawa]="(ishikawa$ | async) ?? []"></qos-nc-cause-analysis>
+                                 [ishikawa]="(ishikawa$ | async) ?? []"
+                                 (rootCauseConcluded)="loadFiveWhys()"></qos-nc-cause-analysis>
         </mat-card-content>
       </mat-card>
 

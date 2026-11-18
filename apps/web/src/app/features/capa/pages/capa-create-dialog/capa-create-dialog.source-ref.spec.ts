@@ -95,7 +95,7 @@ describe('CapaCreateDialogComponent — la référence de la source', () => {
   it('charge les non-conformités ouvertes quand la source est la non-conformité interne', async () => {
     await setup();
     choisirSource('NON_CONFORMITY', NCS);
-    expect(registres.options).toHaveBeenCalledWith('nc');
+    expect(registres.options).toHaveBeenCalledWith('nc-internal');
     expect(component.sourceRefOptions).toEqual(NCS);
     expect(component.sourceRefIsPicked).toBeTrue();
   });
@@ -107,10 +107,14 @@ describe('CapaCreateDialogComponent — la référence de la source', () => {
     expect(component.sourceRefOptions).toEqual(RISQUES);
   });
 
-  it('charge les réclamations ouvertes quand la source est la réclamation client', async () => {
+  // Une plainte client se constate comme un ecart EXTERNE : c'est cet ecart
+  // que le dossier cite, et lui seul porte l'enquete, le 8D et la cloture.
+  // Citer la reclamation (REC-...) ouvrait un dossier qui n'apparaissait sur
+  // aucune fiche d'ecart.
+  it('charge les écarts externes ouverts quand la source est la réclamation client', async () => {
     await setup();
-    choisirSource('COMPLAINT', [{ reference: 'REC-3', label: 'REC-3 — Colis endommagé' }]);
-    expect(registres.options).toHaveBeenCalledWith('complaint');
+    choisirSource('COMPLAINT', [{ reference: 'NC-40', label: 'NC-40 — Colis endommagé' }]);
+    expect(registres.options).toHaveBeenCalledWith('nc-external');
   });
 
   it('charge les audits quand la source est un audit', async () => {

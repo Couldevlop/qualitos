@@ -46,13 +46,15 @@ export class CapaService {
 
   constructor(private readonly http: HttpClient) {}
 
-  listCases(page = 0, size = 50, status?: CapaStatus, criticity?: CapaCriticity): Observable<CapaPage> {
+  listCases(page = 0, size = 50, status?: CapaStatus, criticity?: CapaCriticity,
+            ownerId?: string): Observable<CapaPage> {
     if (environment.useMockApi) {
-      return of(this.mockPage(status, criticity)).pipe(delay(150));
+      return of(this.mockPage(status, criticity, ownerId)).pipe(delay(150));
     }
     let params = new HttpParams().set('page', page).set('size', size);
     if (status) params = params.set('status', status);
     if (criticity) params = params.set('criticity', criticity);
+    if (ownerId) params = params.set('ownerId', ownerId);
     return this.http.get<CapaPage>(this.endpoint, { params });
   }
 
@@ -418,8 +420,11 @@ export class CapaService {
     return this.http.patch<CapaCaseResponse>(`${this.endpoint}/${id}/${pathSegment}`, {});
   }
 
-  private mockPage(status?: CapaStatus, criticity?: CapaCriticity): CapaPage {
-    const filtered = this.mockStore.filter(c => (!status || c.status === status) && (!criticity || c.criticity === criticity));
+  private mockPage(status?: CapaStatus, criticity?: CapaCriticity, ownerId?: string): CapaPage {
+    const filtered = this.mockStore.filter(c =>
+      (!status || c.status === status)
+      && (!criticity || c.criticity === criticity)
+      && (!ownerId || c.ownerId === ownerId));
     return {
       content: filtered, totalElements: filtered.length, totalPages: 1,
       number: 0, size: filtered.length
