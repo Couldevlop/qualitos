@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import {
+  AfterViewInit, Component, ElementRef, OnDestroy, OnInit, QueryList, ViewChildren
+} from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -15,7 +17,8 @@ import {
 import {
   CapaCreateDialogComponent, CapaCreateDialogData, CapaOpened
 } from '../../../capa/pages/capa-create-dialog/capa-create-dialog.component';
-import { CapaCriticity } from '../../../capa/capa.types';
+import { CapaActionType, CapaCriticity } from '../../../capa/capa.types';
+import { DirectoryUser } from '../../../../core/directory/directory.types';
 import { ConnectivityService } from '../../../../core/offline/connectivity.service';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../../../shared/ui/confirm-dialog/confirm-dialog.component';
 import { FiveWhysService } from '../../../five-whys/five-whys.service';
@@ -46,9 +49,20 @@ import {
   NcRejectDialogData
 } from '../nc-reject-dialog/nc-reject-dialog.component';
 import {
+  NcReopenDialogComponent,
+  NcReopenDialogData
+} from '../nc-reopen-dialog/nc-reopen-dialog.component';
+import {
   NcResolveDialogComponent,
   NcResolveDialogData
 } from '../nc-resolve-dialog/nc-resolve-dialog.component';
+
+/**
+ * Les huit disciplines, par leur code. Un type ferme plutot qu une chaine :
+ * le sommaire, les ancres du document et les decomptes se designent par le
+ * meme vocabulaire, et une faute de frappe ne passe pas.
+ */
+export type EtapeCode = 'D1' | 'D2' | 'D3' | 'D4' | 'D5' | 'D6' | 'D7' | 'D8';
 
 // OWASP A03 — refuse malformed UUIDs client-side. Demo mock ids ("nc-1"…)
 // are also accepted so the page stays usable with useMockApi=true.
@@ -60,7 +74,7 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
   styleUrls: ['./nc-detail.component.scss'],
   standalone: false
 })
-export class NcDetailComponent implements OnInit {
+export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
 
   nc$!: Observable<NcResponse | null>;
   private readonly loadingState$ = new BehaviorSubject<boolean>(false);
@@ -118,6 +132,314 @@ export class NcDetailComponent implements OnInit {
   ishikawa$ = new BehaviorSubject<IshikawaDiagramResponse[]>([]);
   /** true le temps d'ouvrir ou de créer le diagramme (évite le double clic). */
   ishikawaBusy$ = new BehaviorSubject<boolean>(false);
+
+  // ================= Les huit disciplines, en sommaire ======================
+
+  /**
+   * Les huit etapes du traitement, dans leur ordre.
+   *
+   * <p>L ecran suit la trame 8D de bout en bout : constituer l equipe, decrire,
+   * endiguer, chercher la cause, corriger, prouver, prevenir, remercier. La
+   * fiche presentait les memes elements en cartes sans ordre -- on y lisait
+   * l equipe, les photos et les actions, sans voir ce qui restait a faire ni
+   * dans quel ordre. Le sommaire repond a « ou en est-on ».
+   *
+   * <p>RIEN N Y EST OBLIGATOIRE : une etape vide n empeche pas la suivante. Le
+   * marqueur dit ce qui est fait, il n interdit pas d avancer -- un ecart
+   * mineur n a pas de confinement a decrire, et l exiger ferait inventer une
+   * ligne pour passer.
+   */
+  readonly etapes: ReadonlyArray<{ code: EtapeCode; libelle: string }> = [
+    { code: 'D1', libelle: $localize`:@@nc.8d.d1-short:Équipe` },
+    { code: 'D2', libelle: $localize`:@@nc.8d.d2-short:Problème` },
+    { code: 'D3', libelle: $localize`:@@nc.8d.d3-short:Confinement` },
+    { code: 'D4', libelle: $localize`:@@nc.8d.d4-short:Causes` },
+    { code: 'D5', libelle: $localize`:@@nc.8d.d5-short:Correctives` },
+    { code: 'D6', libelle: $localize`:@@nc.8d.d6-short:Preuves` },
+    { code: 'D7', libelle: $localize`:@@nc.8d.d7-short:Préventives` },
+    { code: 'D8', libelle: $localize`:@@nc.8d.d8-short:Remerciements` }
+  ];
+
+  /**
+   * Les natures d actions de chaque discipline, en tableaux FIGES.
+   *
+   * <p>Des constantes du composant et non des litteraux de gabarit : le panneau
+   * d actions compare la reference de son entree pour savoir s il doit relire le
+   * dossier, et un `[natures]="['CONTAINMENT']"` ecrit dans le gabarit
+   * fabriquerait un tableau neuf a chaque passe de detection -- donc une requete
+   * reseau par passe.
+   */
+  readonly naturesD3: readonly CapaActionType[] = ['CONTAINMENT'];
+  readonly naturesD5: readonly CapaActionType[] = ['CORRECTIVE'];
+  readonly naturesD7: readonly CapaActionType[] = ['PREVENTIVE'];
+
+  /** L etape sous les yeux, suivie au defilement : le sommaire la souligne. */
+  etapeActive: EtapeCode | null = null;
+
+  @ViewChildren('etape') private sections?: QueryList<ElementRef<HTMLElement>>;
+  private observateur?: IntersectionObserver;
+
+  /**
+   * Combien d actions chaque discipline d actions montre.
+   *
+   * <p>Rempli par les panneaux eux-memes (leur sortie `counted`) : la fiche sait
+   * quels dossiers CAPA existent, pas ce qu ils portent. Sans ce retour, le
+   * sommaire cochait « endiguer » des qu un dossier existait, meme s il ne
+   * portait que des actions correctives.
+   */
+  private readonly comptesParEtape = new Map<EtapeCode, number>();
+
+  /** Un panneau a fini de lire : le sommaire peut dire vrai pour sa discipline. */
+  compter(code: EtapeCode, combien: number): void {
+    this.comptesParEtape.set(code, combien);
+  }
+
+  /** Amene l etape sous les yeux. Le sommaire est une aide, pas un filtre. */
+  allerA(code: EtapeCode): void {
+    const cible = this.sections?.find(s => s.nativeElement.id === code);
+    cible?.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  /**
+   * Cette etape porte-t-elle quelque chose ?
+   *
+   * <p>Un marqueur de LECTURE : il dit ce qui est renseigne, il ne conditionne
+   * rien. Chaque reponse vient de ce que l ecran sait deja -- aucune requete
+   * n est faite pour dessiner un sommaire.
+   */
+  etapeFaite(code: EtapeCode, n: NcResponse): boolean {
+    switch (code) {
+      case 'D1': return (n.teamMembers?.length ?? 0) > 0;
+      case 'D2': return !!(n.description || n.customerName || n.batchNumber || n.productId);
+      case 'D3': return (this.comptesParEtape.get('D3') ?? 0) > 0;
+      case 'D4': return !!n.rootCause
+        || this.ishikawa$.value.length > 0
+        || this.fiveWhys$.value.length > 0;
+      case 'D5': return (this.comptesParEtape.get('D5') ?? 0) > 0;
+      // Les photos du CONSTAT appartiennent au D2 : elles décrivent le
+      // problème et ne démontrent rien de l'efficacité des actions. Les
+      // preuves du D6 se joignent action par action, et la note de
+      // résolution porte le jugement d'ensemble.
+      case 'D6': return !!n.resolutionNote;
+      case 'D7': return (this.comptesParEtape.get('D7') ?? 0) > 0;
+      case 'D8': return !!this.remerciementEnregistre;
+    }
+  }
+
+  ngAfterViewInit(): void {
+    // Hors navigateur (bancs, rendu serveur), le sommaire reste utilisable : il
+    // perd seulement le soulignement de l etape sous les yeux.
+    if (typeof IntersectionObserver === 'undefined' || !this.sections) {
+      return;
+    }
+    this.observateur = new IntersectionObserver(entrees => {
+      const vue = entrees.find(e => e.isIntersecting);
+      if (vue) {
+        this.etapeActive = vue.target.id as EtapeCode;
+      }
+    // La fenetre de visee est volontairement etroite et haute : sans elle, deux
+    // sections se declarent visibles en meme temps et le soulignement saute.
+    }, { rootMargin: '-30% 0px -60% 0px' });
+    this.sections.forEach(s => this.observateur?.observe(s.nativeElement));
+  }
+
+  ngOnDestroy(): void {
+    this.observateur?.disconnect();
+  }
+
+  // ===================== Le bandeau d etat de l ecart =======================
+
+  /**
+   * Ce qui est arrive a l ecart, en une phrase, par son fait le PLUS RECENT.
+   *
+   * <p>Ces dates etaient six lignes d une grille d informations, lues apres le
+   * reste : on ne voyait pas, en ouvrant la fiche, qu un ecart clos avait ete
+   * repris. L ordre est celui de l histoire a l envers -- une reprise passe
+   * devant la cloture qu elle defait.
+   */
+  bandeau(n: NcResponse): string | null {
+    if (n.reopenedAt) {
+      return this.phrase(
+        $localize`:@@nc.8d.banner-reopened:Écart repris le`, n.reopenedAt, n.reopenReason);
+    }
+    if (n.closedAt) {
+      // Le bandeau NOMME qui a clos quand on le sait : c'est la moitié visible
+      // du second regard, et la question que pose tout auditeur devant une
+      // fiche close. Les écarts d'avant la règle n'ont pas ce nom.
+      return this.phrase(
+        $localize`:@@nc.8d.banner-closed:Clôturé le`, n.closedAt,
+        n.closedByName
+          ? $localize`:@@nc.8d.banner-closed-by:par ${n.closedByName}:name:`
+          : null);
+    }
+    if (n.rejectedAt) {
+      return this.phrase(
+        $localize`:@@nc.8d.banner-rejected:Écarté le`, n.rejectedAt, n.rejectionReason);
+    }
+    if (n.resolvedAt) {
+      return this.phrase(
+        $localize`:@@nc.8d.banner-resolved:Résolu le`, n.resolvedAt, n.resolutionNote);
+    }
+    if (n.status === 'CANCELLED') {
+      return $localize`:@@nc.8d.banner-cancelled:Écart annulé.`;
+    }
+    return null;
+  }
+
+  /** « Clôturé le 12/03/2026 : joint remplacé ». Le motif ne vient que s il existe. */
+  private phrase(quoi: string, quand: string, motif: string | null | undefined): string {
+    const date = new Date(quand).toLocaleDateString();
+    const net = motif?.trim();
+    return net ? `${quoi} ${date} : ${net}` : `${quoi} ${date}`;
+  }
+
+  // ======================== La reprise d un ecart ===========================
+
+  /**
+   * Un ecart REFERME se reprend : recidive constatee, client qui relance,
+   * constat ecarte a tort.
+   *
+   * <p>Sans elle, il fallait ouvrir un SECOND ecart -- qui perdait l analyse de
+   * cause, les actions deja menees et l equipe du premier, et comptait deux fois
+   * le meme probleme. Le motif est demande, jamais exige : l ecart doit pouvoir
+   * etre repris tout de suite, on ecrira pourquoi ensuite.
+   */
+  canReopen(status: NcStatus): boolean {
+    return status === 'RESOLVED' || this.isTerminal(status);
+  }
+
+  reopen(n: NcResponse): void {
+    if (this.acting$.value) return;
+    this.dialog.open<NcReopenDialogComponent, NcReopenDialogData, NcResponse | undefined>(
+      NcReopenDialogComponent, {
+        data: { ncId: n.id, reference: n.reference, status: n.status },
+        autoFocus: 'first-tabbable',
+        restoreFocus: true,
+        panelClass: 'qos-dialog-panel'
+      }
+    ).afterClosed().subscribe(reprise => {
+      // La fenetre a fait l'appel, comme celle du rejet : l'ecart repris revient
+      // ici, et la fiche se relit. Fermee sans confirmer, elle ne rend rien.
+      if (reprise) this.reload$.next();
+    });
+  }
+
+  // ============== Le D2 : ce que la fiche ne savait pas porter ==============
+
+  /**
+   * Le client qui reclame et le lot incrimine, saisis ICI.
+   *
+   * <p>Ils s ecrivaient dans la description, en texte libre, d ou ils ne
+   * ressortaient ni en filtre, ni en indicateur, ni dans le rapport remis au
+   * client : la question « quels ecarts sur le lot L2611-08 ? » n avait pas de
+   * reponse. Facultatifs tous les deux -- un constat interne n a pas de client,
+   * et un ecart de service n a pas de lot.
+   */
+  readonly contexteForm = new FormGroup({
+    customerName: new FormControl<string>('', { nonNullable: true }),
+    batchNumber: new FormControl<string>('', { nonNullable: true })
+  });
+  readonly contexteSaving$ = new BehaviorSubject<boolean>(false);
+  /** Vrai des que le formulaire du D2 differe de la fiche : le bouton apparait. */
+  contexteModifie = false;
+
+  /**
+   * Recopie la fiche dans le formulaire, sans la marquer modifiee.
+   *
+   * <p>Appele a chaque relecture. Le garde-fou `contexteModifie` evite d ecraser
+   * une saisie en cours par une relecture declenchee ailleurs dans l ecran --
+   * un panneau d actions qui s annonce, par exemple.
+   */
+  private rempliContexte(n: NcResponse): void {
+    if (this.contexteModifie) return;
+    this.contexteForm.setValue({
+      customerName: n.customerName ?? '',
+      batchNumber: n.batchNumber ?? ''
+    }, { emitEvent: false });
+  }
+
+  enregistrerContexte(): void {
+    if (this.contexteSaving$.value) return;
+    const valeurs = this.contexteForm.getRawValue();
+    this.contexteSaving$.next(true);
+    // Les chaines VIDES partent telles quelles : c est ainsi qu on EFFACE un
+    // nom de client saisi par erreur. Le serveur distingue « vide » (effacer)
+    // de « absent » (inchange).
+    this.svc.updateNc(this.ncId, {
+      customerName: valeurs.customerName.trim(),
+      batchNumber: valeurs.batchNumber.trim()
+    }).pipe(finalize(() => this.contexteSaving$.next(false)))
+      .subscribe({
+        next: () => {
+          this.contexteModifie = false;
+          this.snack.open(
+            $localize`:@@nc.8d.context-saved:Description enregistrée.`,
+            $localize`:@@common.ok:OK`, { duration: 2000 });
+          this.reload$.next();
+        },
+        error: err => {
+          // eslint-disable-next-line no-console
+          console.warn('[nc-detail] context save failed', err?.status, err?.error?.title);
+          this.snack.open(
+            safeErrorMessage(err,
+              $localize`:@@nc.8d.context-error:La description n'a pas pu être enregistrée.`),
+            $localize`:@@common.ok:OK`, { duration: 4000 });
+        }
+      });
+  }
+
+  // ===================== Le D8 : remercier l equipe ========================
+
+  /**
+   * Le mot de la fin, range dans le rapport 8D (sa discipline D8).
+   *
+   * <p>Il n a pas de place sur l ecart : c est une donnee du RAPPORT, aux cotes
+   * du D1 et du D3 saisis. On le tapait donc dans l ecran du rapport, apres
+   * avoir quitte l ecart -- et on ne le tapait pas. Facultatif, comme tout ici.
+   */
+  readonly remerciementControl = new FormControl<string>('', { nonNullable: true });
+  readonly remerciementSaving$ = new BehaviorSubject<boolean>(false);
+  /** Ce qui est DEJA enregistre, pour que le sommaire coche sans se tromper. */
+  remerciementEnregistre = '';
+  remerciementModifie = false;
+
+  /** Lit le rapport pour en tirer le seul D8 ; son echec ne casse pas l ecran. */
+  private chargerRemerciement(): void {
+    this.svc.getEightDReport(this.ncId).pipe(
+      catchError(() => of(null))
+    ).subscribe(rapport => {
+      if (!rapport) return;
+      this.remerciementEnregistre = rapport.recognition ?? '';
+      if (!this.remerciementModifie) {
+        this.remerciementControl.setValue(this.remerciementEnregistre, { emitEvent: false });
+      }
+    });
+  }
+
+  enregistrerRemerciement(): void {
+    if (this.remerciementSaving$.value) return;
+    const texte = this.remerciementControl.value.trim();
+    this.remerciementSaving$.next(true);
+    this.svc.saveEightDReport(this.ncId, { recognition: texte })
+      .pipe(finalize(() => this.remerciementSaving$.next(false)))
+      .subscribe({
+        next: rapport => {
+          this.remerciementEnregistre = rapport.recognition ?? '';
+          this.remerciementModifie = false;
+          this.snack.open(
+            $localize`:@@nc.8d.d8-saved:Remerciements enregistrés dans le rapport 8D.`,
+            $localize`:@@common.ok:OK`, { duration: 2500 });
+        },
+        error: err => {
+          // eslint-disable-next-line no-console
+          console.warn('[nc-detail] D8 save failed', err?.status, err?.error?.title);
+          this.snack.open(
+            safeErrorMessage(err,
+              $localize`:@@nc.8d.d8-error:Les remerciements n'ont pas pu être enregistrés.`),
+            $localize`:@@common.ok:OK`, { duration: 4000 });
+        }
+      });
+  }
 
   /**
    * Relit la fiche.
@@ -197,12 +519,23 @@ export class NcDetailComponent implements OnInit {
         }),
         finalize(() => this.loadingState$.next(false))
       )),
+      // Recopie la fiche dans les champs saisissables du D2 a chaque relecture.
+      // DANS le flux et non dans un abonnement a part : un second abonnement
+      // declencherait une seconde requete (`refCount: true`), et les deux
+      // lectures pourraient se croiser.
+      tap(n => {
+      if (n) {
+        this.rempliContexte(n);
+        this.remplitValideur(n);
+      }
+    }),
       shareReplay({ bufferSize: 1, refCount: true })
     );
     this.reload$.next();
     this.loadPhotos();
     this.loadFiveWhys();
     this.loadIshikawa();
+    this.chargerRemerciement();
   }
 
   // --- Ishikawa ---------------------------------------------------------------
@@ -267,8 +600,14 @@ export class NcDetailComponent implements OnInit {
 
   // --- 5 Pourquoi -------------------------------------------------------------
 
-  /** Chargement non bloquant : la fiche reste utilisable si l'appel échoue. */
-  private loadFiveWhys(): void {
+  /**
+   * Chargement non bloquant : la fiche reste utilisable si l'appel échoue.
+   *
+   * <p>Public, parce que le D4 le rappelle : conclure une cause racine depuis la
+   * cascade des 5 Pourquoi change ce que la figure doit montrer, et la discipline
+   * se relit sans recharger l'écart entier.
+   */
+  loadFiveWhys(): void {
     this.fiveWhys.listForNc(this.ncId).subscribe({
       next: analyses => this.fiveWhys$.next(analyses),
       error: err => {
@@ -793,7 +1132,75 @@ export class NcDetailComponent implements OnInit {
    */
   canEditTeam(status: NcStatus): boolean { return !this.isTerminal(status); }
 
-  editTeam(nc: NcResponse): void {
+  // ===================== Le valideur de la cloture =========================
+
+  /**
+   * LA PERSONNE DÉSIGNÉE pour porter le second regard sur cet écart.
+   *
+   * <p>Facultative — et c'est pour cela qu'elle existe. Sans elle, clore
+   * revient aux rôles de pilotage, ce qui suffit à une organisation qui en
+   * compte plusieurs. Une petite structure, elle, n'a qu'un responsable
+   * qualité : c'est lui qui résout, et il serait alors le seul à pouvoir clore
+   * ce qu'il vient de résoudre. La désignation ouvre ce regard à quelqu'un
+   * d'autre — un chef d'atelier, un pilote de processus, un confrère d'un autre
+   * service — sans lui donner le moindre droit sur les autres écarts.
+   *
+   * <p>Choisie dans l'ANNUAIRE, jamais tapée : l'identifiant doit être le
+   * compte de connexion, sans quoi le serveur ne reconnaîtra pas la personne au
+   * moment où elle clôture.
+   */
+  readonly valideurControl = new FormControl<string | null>(null);
+  readonly valideurSaving$ = new BehaviorSubject<boolean>(false);
+  private valideurNom: string | null = null;
+  valideurModifie = false;
+
+  /** Le nom retenu avec l identifiant : la fiche montre un nom, jamais un UUID. */
+  valideurChoisi(choix: DirectoryUser | null): void {
+    this.valideurNom = choix?.displayName ?? null;
+    this.valideurModifie = true;
+  }
+
+  enregistrerValideur(): void {
+    if (this.valideurSaving$.value) {
+      return;
+    }
+    const id = this.valideurControl.value;
+    this.valideurSaving$.next(true);
+    this.svc.updateNc(this.ncId, {
+      validatorId: id ?? undefined,
+      // Le NOM porte la décision : vide, il retire la désignation. Le serveur
+      // suit le nom pour distinguer « retirer » de « ne pas y toucher », un
+      // record ne sachant pas dire « absent ».
+      validatorName: id ? (this.valideurNom ?? '') : ''
+    }).pipe(
+      finalize(() => this.valideurSaving$.next(false))
+    ).subscribe({
+      next: () => {
+        this.valideurModifie = false;
+        this.snack.open(
+          $localize`:@@nc.8d.validator-saved:Valideur enregistré.`,
+          $localize`:@@common.ok:OK`, { duration: 3000 });
+        this.reload$.next();
+      },
+      error: err => {
+        this.snack.open(
+          safeErrorMessage(err,
+            $localize`:@@nc.8d.validator-failed:Le valideur n'a pas pu être enregistré.`),
+          $localize`:@@common.ok:OK`, { duration: 4000 });
+      }
+    });
+  }
+
+  /** Repose le champ sur ce que porte la fiche, sauf si on est en train d y ecrire. */
+  private remplitValideur(n: NcResponse): void {
+    if (this.valideurModifie) {
+      return;
+    }
+    this.valideurNom = n.validatorName ?? null;
+    this.valideurControl.setValue(n.validatorId ?? null, { emitEvent: false });
+  }
+
+    editTeam(nc: NcResponse): void {
     this.teamDraftControl.setValue([...(nc.teamMembers ?? [])]);
     this.teamEditing = true;
   }
@@ -875,6 +1282,11 @@ export class NcDetailComponent implements OnInit {
         return b.count === 1
           ? $localize`:@@nc.blocker.cases-one:1 dossier CAPA n'est pas clôturé. Clôturez-le — après vérification de son efficacité — pour pouvoir clôturer cet écart.`
           : $localize`:@@nc.blocker.cases-many:${b.count}:count: dossiers CAPA ne sont pas clôturés. Clôturez-les — après vérification de leur efficacité — pour pouvoir clôturer cet écart.`;
+      case 'SECOND_LOOK_REQUIRED':
+        // La phrase dit le GESTE qui débloque, et surtout que l'écart n'est pas
+        // en défaut : c'est la personne qui ne peut pas le clôturer, pas l'écart
+        // qui résiste. Sans cette nuance, on cherche ce qu'il reste à corriger.
+        return $localize`:@@nc.blocker.second-look:Vous avez résolu cet écart : sa clôture demande un second regard. Un responsable qualité, ou le valideur désigné, doit la porter.`;
       default:
         // Code inconnu (serveur plus récent que l'écran) : mieux vaut une phrase
         // générique qu'un bouton éteint sans explication.

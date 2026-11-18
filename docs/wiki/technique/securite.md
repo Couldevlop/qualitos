@@ -15,6 +15,8 @@ désactivée par défaut protège autant qu'une absence tant que personne ne l'a
 | Validation du jeton OIDC par la clé publique du realm | `application.yml` de chaque service, `jwk-set-uri` |
 | Client lu du jeton, jamais du corps | `TenantJwtFilter`, `TenantContext` — ADR 0001, §18.2 point 2 |
 | Autorisation décidée avant la lecture du corps | ADR 0065 |
+| **Une** exception à la règle ci-dessus : la clôture d'un écart. Le droit dépend d'une personne désignée **sur cet enregistrement**, que l'intercepteur ne peut pas connaître — il tranche avant d'avoir lu lequel est visé. Le contrôle n'est pas levé, il est déplacé en tête de `NcService.close` | ADR 0127 |
+| Séparation des tâches : qui résout un écart ne le clôture pas | ADR 0127 — `NcService.exigerUnSecondRegard`, colonnes `resolved_by_id` / `closed_by_id` |
 | Matrice de rôles de `CLAUDE.md` §16 | ADR 0020 |
 | Droits réglés **par client, action par action** | ADR 0078, écran `/admin/roles` |
 | Portée de lecture : chacun voit ce qui le concerne, ou tout le registre | ADR 0081 |

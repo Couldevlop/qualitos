@@ -76,6 +76,25 @@ public final class NcDto {
             /** Interne par défaut : voir {@link NcOrigin#orDefault}. */
             NcOrigin origin,
             UUID productId,
+            /**
+             * Le client qui réclame, par le nom qu'il s'est donné. Facultatif :
+             * un constat interne n'a pas de client.
+             */
+            @Size(max = 255) String customerName,
+            /** Le lot incriminé, tel qu'il est marqué sur la pièce. Facultatif. */
+            @Size(max = 100) String batchNumber,
+            /**
+             * La personne DÉSIGNÉE pour le second regard sur la clôture.
+             *
+             * <p>Facultative, et choisie dans l'annuaire — jamais un texte
+             * libre. Sans elle, clore revient aux rôles de pilotage, ce qui
+             * suffit à une organisation qui en compte plusieurs. La désigner
+             * confie ce regard à quelqu'un qui n'a pas le rôle : un chef
+             * d'atelier, un pilote de processus, un confrère d'un autre service.
+             */
+            UUID validatorId,
+            /** Son nom, copié pour que la fiche reste lisible dans dix ans. */
+            @Size(max = 255) String validatorName,
             UUID fmeaItemId,
             /**
              * L'équipe qui prend l'écart en charge. <b>Obligatoire</b> : c'est la
@@ -124,6 +143,21 @@ public final class NcDto {
             String photoUrls,
             NcOrigin origin,
             UUID productId,
+            /**
+             * Absent = inchangé, comme tout le reste de cette requête partielle.
+             * La chaîne VIDE efface le nom : une réclamation réattribuée, ou
+             * saisie au mauvais client, doit pouvoir perdre celui qu'on lui avait
+             * mis.
+             */
+            @Size(max = 255) String customerName,
+            /** Même règle que {@link #customerName} : vide efface, absent n'y touche pas. */
+            @Size(max = 100) String batchNumber,
+            /**
+             * Le valideur désigné, modifiable tant que l'écart n'est pas clos.
+             * Absent = inchangé ; l'identifiant nul le retire.
+             */
+            UUID validatorId,
+            @Size(max = 255) String validatorName,
             UUID fmeaItemId,
             /**
              * L'équipe, remplacée en entier quand elle est fournie. Absente =
@@ -162,6 +196,18 @@ public final class NcDto {
      */
     public record RejectRequest(
             @NotBlank @Size(max = 2000) String reason) {}
+
+    /**
+     * La reprise d'un écart refermé, et pourquoi — si on veut le dire.
+     *
+     * <p>Le motif est FACULTATIF. Il a son prix : sans lui, la fiche montre un
+     * retour en arrière que personne ne sait expliquer six mois plus tard. Mais
+     * l'exiger bloquerait le geste même, et un écart qui revient doit pouvoir
+     * être repris tout de suite -- on écrira pourquoi ensuite. L'écran invite à
+     * le renseigner, il ne le réclame pas.
+     */
+    public record ReopenRequest(
+            @Size(max = 2000) String reason) {}
 
     /**
      * Ouvrir, depuis cet écart, le cycle ou le projet qui le traitera (§3.6).
@@ -206,6 +252,10 @@ public final class NcDto {
             /** Nom du signalant, figé à la création (dérivé du JWT, jamais du body). */
             String reporterName,
             UUID productId,
+            /** Le client qui réclame ; nul sur un constat interne. */
+            String customerName,
+            /** Le lot incriminé ; nul quand l'écart ne porte pas sur un lot. */
+            String batchNumber,
             UUID fmeaItemId,
             UUID capaCaseId,
             /** Le cycle PDCA ouvert depuis cet écart, s'il l'a été (§3.6). */
@@ -219,6 +269,30 @@ public final class NcDto {
             /** Pourquoi la réclamation a été écartée — ce que le client vient lire. */
             String rejectionReason,
             Instant rejectedAt,
+            /**
+             * Quand l'écart a été REPRIS après avoir été refermé, s'il l'a été.
+             *
+             * <p>Ce qui l'avait refermé reste renseigné à côté : le bandeau de la
+             * fiche montre le fait le plus récent, et l'historique ne perd rien.
+             */
+            Instant reopenedAt,
+            /** Pourquoi il a été repris : récidive, relance du client, refus à tort. */
+            String reopenReason,
+            /**
+             * Le SECOND REGARD, en trois temps : qui a résolu, qui valide, qui
+             * a clos.
+             *
+             * <p>C'est ce que l'auditeur vient lire — la preuve que la
+             * résolution et sa validation n'ont pas la même signature (ISO 9001
+             * §10.2). Les écarts d'avant la règle n'ont pas ces noms, et la
+             * fiche n'en invente pas.
+             */
+            UUID resolvedById,
+            String resolvedByName,
+            UUID closedById,
+            String closedByName,
+            UUID validatorId,
+            String validatorName,
             Instant createdAt,
             Instant updatedAt,
             /** L'équipe en charge, dans son ordre de saisie. */

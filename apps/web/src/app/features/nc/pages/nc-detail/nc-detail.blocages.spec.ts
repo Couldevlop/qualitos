@@ -68,9 +68,13 @@ describe('NcDetailComponent — ce qui bloque l’avancement', () => {
   }
 
   beforeEach(async () => {
-    svc = jasmine.createSpyObj<NcService>('NcService', ['getNc', 'listPhotos', 'subcategories']);
+    svc = jasmine.createSpyObj<NcService>('NcService', [
+      'getEightDReport', 'getNc', 'listPhotos', 'subcategories']);
     svc.listPhotos.and.returnValue(of([]));
     svc.subcategories.and.returnValue(of({ entries: [], defaults: true }));
+    // Le D8 lit le rapport 8D pour n'en tirer que les remerciements : un
+    // rapport vide suffit ici, la discipline n'est pas le sujet de ces bancs.
+    svc.getEightDReport.and.returnValue(of({} as any));
     const ishikawa = jasmine.createSpyObj<IshikawaService>('IshikawaService', ['listForNc', 'createDiagram']);
     ishikawa.listForNc.and.returnValue(of([]));
     const fiveWhys = jasmine.createSpyObj<FiveWhysService>('FiveWhysService', ['listForNc', 'create']);

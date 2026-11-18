@@ -68,9 +68,13 @@ describe('NcDetailComponent — les dossiers CAPA de l’écart', () => {
   }
 
   beforeEach(async () => {
-    svc = jasmine.createSpyObj<NcService>('NcService', ['getNc', 'listPhotos', 'subcategories']);
+    svc = jasmine.createSpyObj<NcService>('NcService', [
+      'getEightDReport', 'getNc', 'listPhotos', 'subcategories']);
     svc.listPhotos.and.returnValue(of([]));
     svc.subcategories.and.returnValue(of({ entries: [], defaults: true }));
+    // Le D8 lit le rapport 8D pour n'en tirer que les remerciements : un
+    // rapport vide suffit ici, la discipline n'est pas le sujet de ces bancs.
+    svc.getEightDReport.and.returnValue(of({} as any));
     const ishikawa = jasmine.createSpyObj<IshikawaService>('IshikawaService',
       ['listForNc', 'createDiagram']);
     ishikawa.listForNc.and.returnValue(of([]));
@@ -159,8 +163,12 @@ describe('NcDetailComponent — les dossiers CAPA de l’écart', () => {
   it('invite à ouvrir un dossier quand l’écart n’en a aucun', () => {
     setup(ecart([], undefined));
 
-    expect(un('capa-action')).toBeNull();
+    // La discipline reste ; c'est son contenu qui change.
+    expect(un('capa-action')).not.toBeNull();
     expect(un('capa-action-vide')).not.toBeNull();
+    // Et UNE SEULE invite, malgre trois disciplines d'actions : trois invites
+    // identiques empilees feraient croire a trois dossiers a ouvrir.
+    expect(tous('capa-action-ouvrir').length).toBe(1);
   });
 
   // ---------- la liste des dossiers, telle que le composant la calcule ----

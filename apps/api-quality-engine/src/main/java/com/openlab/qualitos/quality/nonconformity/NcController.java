@@ -74,8 +74,20 @@ public class NcController {
         return service.resolve(id, request);
     }
 
+    /**
+     * Clôt l'écart, sous le SECOND REGARD.
+     *
+     * <p>Seul point d'entrée du module sans {@code @RequiresPermission}, et
+     * c'est volontaire : le droit de clore ne se déduit pas du seul jeton. Il
+     * appartient aux rôles de pilotage <b>et</b> à la personne désignée sur CET
+     * écart — que l'intercepteur ne peut pas connaître, puisqu'il tranche avant
+     * d'avoir lu quel écart est visé.
+     *
+     * <p>Le contrôle n'est donc pas levé, il est déplacé : {@code
+     * NcService.close} refuse par un 403 avant toute autre vérification. Un
+     * appelant sans droit ni désignation n'obtient rien de plus qu'ici.
+     */
     @PostMapping("/{id}/close")
-    @RequiresPermission(Permission.NC_CLOSE)
     public NcDto.Response close(@PathVariable UUID id) {
         return service.close(id);
     }
@@ -97,6 +109,21 @@ public class NcController {
     public NcDto.Response reject(@PathVariable UUID id,
                                  @Valid @RequestBody NcDto.RejectRequest request) {
         return service.reject(id, request);
+    }
+
+    /**
+     * REPREND un écart refermé, motif à l'appui.
+     *
+     * <p>Sous {@link Permission#NC_CLOSE}, et non sous {@code NC_PROCESS} :
+     * rouvrir défait une clôture, et défaire un acte demande au moins l'autorité
+     * qui permettait de le poser. Sans cela, un utilisateur qui ne peut pas clore
+     * un écart pourrait annuler la clôture d'un autre.
+     */
+    @PostMapping("/{id}/reopen")
+    @RequiresPermission(Permission.NC_CLOSE)
+    public NcDto.Response reopen(@PathVariable UUID id,
+                                 @Valid @RequestBody NcDto.ReopenRequest request) {
+        return service.reopen(id, request);
     }
 
     /**

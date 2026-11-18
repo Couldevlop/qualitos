@@ -66,7 +66,7 @@ class NcOriginTest {
     private NcDto.CreateRequest request(NcOrigin origin) {
         return new NcDto.CreateRequest(
                 "Joint défectueux", "détail", NcCategory.PRODUCT, null, NcSeverity.MAJOR,
-                Instant.now(), "Atelier 3", null, null, null, null, origin, null, null,
+                Instant.now(), "Atelier 3", null, null, null, null, origin, null, null, null, null, null, null,
                 java.util.List.of(new NcDto.TeamMemberRef("kc-marie", "Marie Durand")));
     }
 

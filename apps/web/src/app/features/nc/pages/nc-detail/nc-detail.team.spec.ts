@@ -67,9 +67,13 @@ describe('NcDetailComponent — équipe en charge', () => {
 
   beforeEach(async () => {
     svc = jasmine.createSpyObj<NcService>('NcService', [
+      'getEightDReport', 
       'getNc', 'listPhotos', 'updateNc', 'subcategories'
     ]);
     svc.subcategories.and.returnValue(of({ entries: [], defaults: true }));
+    // Le D8 lit le rapport 8D pour n'en tirer que les remerciements : un
+    // rapport vide suffit ici, la discipline n'est pas le sujet de ces bancs.
+    svc.getEightDReport.and.returnValue(of({} as any));
     svc.listPhotos.and.returnValue(of([]));
     svc.updateNc.and.callFake((_id, input) => of(ecart({ teamMembers: input.teamMembers })));
     snack = jasmine.createSpyObj<MatSnackBar>('MatSnackBar', ['open']);

@@ -22501,6 +22501,270 @@ historique 12 mois</source>
         <source>champ(s) à renseigner, signalés en rouge ci-dessous.</source>
         <target state="translated">件の未入力項目があり、以下で赤く示されています。</target>
       </trans-unit>
+      <trans-unit id="nc.8d.treatment-eyebrow" datatype="html">
+        <source>Traitement 8D · Équipe · Problème · Causes · Actions · Preuves</source>
+        <target state="translated">8D 処理 · チーム · 問題 · 原因 · 対策 · 証拠</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.nav-label" datatype="html">
+        <source>Les huit disciplines</source>
+        <target state="translated">8 つのディシプリン</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d1-short" datatype="html">
+        <source>Équipe</source>
+        <target state="translated">チーム</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d1-title" datatype="html">
+        <source>Constituer l’équipe</source>
+        <target state="translated">チームを編成する</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d1-sub" datatype="html">
+        <source>Les personnes qui traiteront cet écart. Le premier nommé pilote.</source>
+        <target state="translated">この不適合を担当する人。最初に挙げた人がリーダーになります。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d2-short" datatype="html">
+        <source>Problème</source>
+        <target state="translated">問題</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d2-title" datatype="html">
+        <source>Décrire le problème</source>
+        <target state="translated">問題を記述する</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d2-sub" datatype="html">
+        <source>Quoi, où, quand, combien : restez factuel.</source>
+        <target state="translated">何が、どこで、いつ、いくつ ― 事実に徹してください。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d3-short" datatype="html">
+        <source>Confinement</source>
+        <target state="translated">封じ込め</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d3-title" datatype="html">
+        <source>Actions de confinement</source>
+        <target state="translated">封じ込め対策</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d3-sub" datatype="html">
+        <source>Ce qui protège le client dès maintenant, avant la cause racine.</source>
+        <target state="translated">根本原因の前に、いま顧客を守るもの。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d3-no-case" datatype="html">
+        <source>Aucun dossier CAPA n’existe encore sur cet écart : les actions de confinement s’écriront ici dès qu’il y en aura un, au D5.</source>
+        <target state="translated">この不適合にはまだ CAPA 案件がありません。D5 で案件を開くと、封じ込め対策をここに書けます。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d4-short" datatype="html">
+        <source>Causes</source>
+        <target state="translated">原因</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d4-title" datatype="html">
+        <source>Analyse des causes</source>
+        <target state="translated">原因の分析</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d4-sub" datatype="html">
+        <source>Identifiez la cause racine avec les outils de votre choix.</source>
+        <target state="translated">好みの手法で根本原因を特定してください。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d5-short" datatype="html">
+        <source>Correctives</source>
+        <target state="translated">是正</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d5-title" datatype="html">
+        <source>Actions correctives</source>
+        <target state="translated">是正処置</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d5-sub" datatype="html">
+        <source>Ce qui supprime la cause racine.</source>
+        <target state="translated">根本原因を取り除くもの。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d6-short" datatype="html">
+        <source>Preuves</source>
+        <target state="translated">証拠</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d6-title" datatype="html">
+        <source>Preuves des actions correctives</source>
+        <target state="translated">是正処置の証拠</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d6-sub" datatype="html">
+        <source>Photos, mesures, rapports de contrôle qui démontrent l’efficacité.</source>
+        <target state="translated">有効性を示す写真・測定値・検査報告。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d6-evidence-hint" datatype="html">
+        <source>Chaque action porte sa propre pièce, dans la colonne « Preuve » des tableaux D3, D5 et D7 : une pièce détachée de son action ne démontre rien.</source>
+        <target state="translated">証拠は対策ごとに、D3・D5・D7 の表の「証拠」欄に添付します。対策から切り離された資料は何も証明しません。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d6-verdict" datatype="html">
+        <source>Juger l’efficacité</source>
+        <target state="translated">有効性を判定する</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d7-short" datatype="html">
+        <source>Préventives</source>
+        <target state="translated">予防</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d7-title" datatype="html">
+        <source>Actions préventives</source>
+        <target state="translated">予防処置</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d7-sub" datatype="html">
+        <source>Ce qui évite que le problème revienne ailleurs.</source>
+        <target state="translated">同じ問題が別の場所で起きないようにするもの。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d7-no-case" datatype="html">
+        <source>Aucun dossier CAPA n’existe encore sur cet écart : les actions préventives s’écriront ici dès qu’il y en aura un, au D5.</source>
+        <target state="translated">この不適合にはまだ CAPA 案件がありません。D5 で案件を開くと、予防処置をここに書けます。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d8-short" datatype="html">
+        <source>Remerciements</source>
+        <target state="translated">謝辞</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d8-title" datatype="html">
+        <source>Remercier l’équipe</source>
+        <target state="translated">チームに感謝する</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d8-sub" datatype="html">
+        <source>Reconnaissez le travail accompli. Ce mot part dans le rapport 8D.</source>
+        <target state="translated">成し遂げた仕事をねぎらってください。この言葉は 8D 報告書に入ります。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d8-label" datatype="html">
+        <source>Message à l’équipe</source>
+        <target state="translated">チームへのメッセージ</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d8-placeholder" datatype="html">
+        <source>Merci à toute l’équipe pour…</source>
+        <target state="translated">チームの皆さん、…ありがとう</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d8-none" datatype="html">
+        <source>Aucun mot de clôture n’a été écrit.</source>
+        <target state="translated">締めの言葉は書かれていません。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d8-saved" datatype="html">
+        <source>Remerciements enregistrés dans le rapport 8D.</source>
+        <target state="translated">謝辞を 8D 報告書に保存しました。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d8-error" datatype="html">
+        <source>Les remerciements n'ont pas pu être enregistrés.</source>
+        <target state="translated">謝辞を保存できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.no-case" datatype="html">
+        <source>Aucun dossier CAPA sur cet écart. Ouvrez-en un : les actions de confinement, correctives et préventives s’écriront et s’avanceront ici même, chacune sous sa discipline.</source>
+        <target state="translated">この不適合に CAPA 案件はありません。案件を開けば、封じ込め・是正・予防の各対策をここで書き、進められます。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.customer" datatype="html">
+        <source>Client</source>
+        <target state="translated">顧客</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.customer-placeholder" datatype="html">
+        <source>Nom du client qui réclame</source>
+        <target state="translated">申し立てた顧客の名前</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.batch" datatype="html">
+        <source>N° de lot</source>
+        <target state="translated">ロット番号</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.batch-placeholder" datatype="html">
+        <source>Ex. L2611-08</source>
+        <target state="translated">例: L2611-08</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.context-saved" datatype="html">
+        <source>Description enregistrée.</source>
+        <target state="translated">記述を保存しました。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.context-error" datatype="html">
+        <source>La description n'a pas pu être enregistrée.</source>
+        <target state="translated">記述を保存できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.banner-reopened" datatype="html">
+        <source>Écart repris le</source>
+        <target state="translated">不適合の再開日:</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.banner-closed" datatype="html">
+        <source>Clôturé le</source>
+        <target state="translated">完了日:</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.banner-closed-by" datatype="html">
+        <source>par <x id="name"/></source>
+        <target state="translated">担当: <x id="name"/></target>
+      </trans-unit>
+      <trans-unit id="nc.8d.banner-rejected" datatype="html">
+        <source>Écarté le</source>
+        <target state="translated">却下日:</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.banner-resolved" datatype="html">
+        <source>Résolu le</source>
+        <target state="translated">解決日:</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.banner-cancelled" datatype="html">
+        <source>Écart annulé.</source>
+        <target state="translated">不適合は取り消されました。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.reopen" datatype="html">
+        <source>Rouvrir</source>
+        <target state="translated">再開</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.reopen-tooltip" datatype="html">
+        <source>Reprendre l'instruction : récidive, relance du client, constat écarté à tort</source>
+        <target state="translated">調査を再開する: 再発、顧客からの再連絡、誤って却下した所見</target>
+      </trans-unit>
+      <trans-unit id="nc.reopen.title" datatype="html">
+        <source>Reprendre cet écart</source>
+        <target state="translated">この不適合を再開する</target>
+      </trans-unit>
+      <trans-unit id="nc.reopen.hint" datatype="html">
+        <source>L'instruction reprendra à son début, et tout ce qui a déjà été fait reste attaché à</source>
+        <target state="translated">調査は最初からやり直しますが、これまでの内容はすべて残ります:</target>
+      </trans-unit>
+      <trans-unit id="nc.reopen.hint-end" datatype="html">
+        <source> : équipe, analyse de cause, actions et preuves. Ce qui l'avait refermé n'est pas effacé.</source>
+        <target state="translated"> ― チーム、原因分析、対策、証拠。閉じた記録も消えません。</target>
+      </trans-unit>
+      <trans-unit id="nc.reopen.reason-label" datatype="html">
+        <source>Motif de la reprise (facultatif)</source>
+        <target state="translated">再開の理由（任意）</target>
+      </trans-unit>
+      <trans-unit id="nc.reopen.reason-placeholder" datatype="html">
+        <source>Récidive constatée sur le lot suivant, relance du client, constat écarté à tort…</source>
+        <target state="translated">次ロットでの再発、顧客からの再連絡、誤って却下した所見…</target>
+      </trans-unit>
+      <trans-unit id="nc.reopen.reason-hint" datatype="html">
+        <source>Sans motif, la reprise reste possible — mais rien n'expliquera ce retour en arrière.</source>
+        <target state="translated">理由がなくても再開はできますが、この後戻りを説明するものは残りません。</target>
+      </trans-unit>
+      <trans-unit id="nc.reopen.submit" datatype="html">
+        <source>Reprendre</source>
+        <target state="translated">再開する</target>
+      </trans-unit>
+      <trans-unit id="nc.reopen.success" datatype="html">
+        <source>Écart repris : l'instruction reprend à son début.</source>
+        <target state="translated">不適合を再開しました。調査をやり直します。</target>
+      </trans-unit>
+      <trans-unit id="nc.reopen.error" datatype="html">
+        <source>Reprise impossible.</source>
+        <target state="translated">再開できません。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.validator" datatype="html">
+        <source>Valideur de la clôture (second regard)</source>
+        <target state="translated">完了の承認者（second pair of eyes）</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.validator-hint" datatype="html">
+        <source>Facultatif. Cette personne pourra clôturer cet écart même sans rôle qualité — et jamais s’il l’a résolu elle-même.</source>
+        <target state="translated">任意。この人は品質の役割がなくてもこの不適合を完了できます。ただし自分で解決した場合はできません。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.validator-saved" datatype="html">
+        <source>Valideur enregistré.</source>
+        <target state="translated">承認者を保存しました。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.validator-failed" datatype="html">
+        <source>Le valideur n'a pas pu être enregistré.</source>
+        <target state="translated">承認者を保存できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.resolved-by" datatype="html">
+        <source>Résolu par</source>
+        <target state="translated">解決者</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.closed-by" datatype="html">
+        <source>Clôturé par</source>
+        <target state="translated">完了者</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.second-look" datatype="html">
+        <source>Vous avez résolu cet écart : sa clôture demande un second regard. Un responsable qualité, ou le valideur désigné, doit la porter.</source>
+        <target state="translated">この不適合はあなたが解決しました。完了には別の人の確認が必要です。品質責任者または指名された承認者が行ってください。</target>
+      </trans-unit>
       <trans-unit id="nav.nlq-explore" datatype="html">
         <source>Exploration NLQ</source>
         <target state="translated">NLQ探索</target>

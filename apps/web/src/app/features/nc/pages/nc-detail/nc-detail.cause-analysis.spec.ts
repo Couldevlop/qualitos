@@ -100,10 +100,14 @@ describe('NcDetailComponent — analyse de cause sur la fiche', () => {
   }
 
   beforeEach(async () => {
-    svc = jasmine.createSpyObj<NcService>('NcService', ['getNc', 'listPhotos', 'subcategories']);
+    svc = jasmine.createSpyObj<NcService>('NcService', [
+      'getEightDReport', 'getNc', 'listPhotos', 'subcategories']);
     svc.getNc.and.returnValue(of(ecart()));
     svc.listPhotos.and.returnValue(of([]));
     svc.subcategories.and.returnValue(of({ entries: [], defaults: true }));
+    // Le D8 lit le rapport 8D pour n'en tirer que les remerciements : un
+    // rapport vide suffit ici, la discipline n'est pas le sujet de ces bancs.
+    svc.getEightDReport.and.returnValue(of({} as any));
     ishikawa = jasmine.createSpyObj<IshikawaService>('IshikawaService', ['listForNc', 'createDiagram']);
     ishikawa.listForNc.and.returnValue(of([]));
     fiveWhys = jasmine.createSpyObj<FiveWhysService>('FiveWhysService', ['listForNc', 'create']);
@@ -139,9 +143,14 @@ describe('NcDetailComponent — analyse de cause sur la fiche', () => {
 
   // Une carte vide sur un écart dont la cause n'a pas encore été cherchée
   // n'apprendrait rien : les boutons de l'en-tête sont là pour commencer.
-  it('ne montre aucune carte quand aucune analyse n’existe', () => {
+  // La DISCIPLINE existe toujours -- c'est le D4 du traitement 8D, et une
+  // discipline vide se dit plutot que de disparaitre. Ce sont les FIGURES qui
+  // s'absentent : sans analyse, il n'y a rien a dessiner.
+  it('garde la discipline et ne dessine aucune figure quand aucune analyse n’existe', () => {
     setup();
-    expect(un('analyse-de-cause')).toBeNull();
+    expect(un('analyse-de-cause')).not.toBeNull();
+    expect(tous('cinq-pourquoi-bloc').length).toBe(0);
+    expect(tous('ishikawa-bloc').length).toBe(0);
   });
 
   // ---------- les 5 Pourquoi ----------
@@ -283,7 +292,10 @@ describe('NcDetailComponent — analyse de cause sur la fiche', () => {
     fiveWhys.listForNc.and.returnValue(throwError(() => ({ status: 503 })));
     ishikawa.listForNc.and.returnValue(throwError(() => ({ status: 503 })));
     setup();
-    expect(un('analyse-de-cause')).toBeNull();
+    // La discipline reste en place, vide : son absence ferait croire a un ecran
+    // casse, alors que seules les analyses n'ont pas pu etre lues.
+    expect(un('analyse-de-cause')).not.toBeNull();
+    expect(tous('cinq-pourquoi-bloc').length).toBe(0);
     expect(hote().textContent).toContain('NC-2026-1001');
   });
 });

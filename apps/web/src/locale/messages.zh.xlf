@@ -22502,6 +22502,270 @@ historique 12 mois</source>
         <source>champ(s) à renseigner, signalés en rouge ci-dessous.</source>
         <target state="translated">处待填写字段，已在下方以红色标出。</target>
       </trans-unit>
+      <trans-unit id="nc.8d.treatment-eyebrow" datatype="html">
+        <source>Traitement 8D · Équipe · Problème · Causes · Actions · Preuves</source>
+        <target state="translated">8D 处理 · 团队 · 问题 · 原因 · 措施 · 证据</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.nav-label" datatype="html">
+        <source>Les huit disciplines</source>
+        <target state="translated">八个步骤</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d1-short" datatype="html">
+        <source>Équipe</source>
+        <target state="translated">团队</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d1-title" datatype="html">
+        <source>Constituer l’équipe</source>
+        <target state="translated">组建团队</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d1-sub" datatype="html">
+        <source>Les personnes qui traiteront cet écart. Le premier nommé pilote.</source>
+        <target state="translated">将处理该不合格项的人员。第一位即为负责人。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d2-short" datatype="html">
+        <source>Problème</source>
+        <target state="translated">问题</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d2-title" datatype="html">
+        <source>Décrire le problème</source>
+        <target state="translated">描述问题</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d2-sub" datatype="html">
+        <source>Quoi, où, quand, combien : restez factuel.</source>
+        <target state="translated">什么、何处、何时、多少：只写事实。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d3-short" datatype="html">
+        <source>Confinement</source>
+        <target state="translated">围堵</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d3-title" datatype="html">
+        <source>Actions de confinement</source>
+        <target state="translated">围堵措施</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d3-sub" datatype="html">
+        <source>Ce qui protège le client dès maintenant, avant la cause racine.</source>
+        <target state="translated">在查明根本原因之前，先保护客户的措施。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d3-no-case" datatype="html">
+        <source>Aucun dossier CAPA n’existe encore sur cet écart : les actions de confinement s’écriront ici dès qu’il y en aura un, au D5.</source>
+        <target state="translated">该不合格项尚无 CAPA 档案：在 D5 开立档案后，围堵措施即可写在此处。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d4-short" datatype="html">
+        <source>Causes</source>
+        <target state="translated">原因</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d4-title" datatype="html">
+        <source>Analyse des causes</source>
+        <target state="translated">原因分析</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d4-sub" datatype="html">
+        <source>Identifiez la cause racine avec les outils de votre choix.</source>
+        <target state="translated">用您选择的工具找出根本原因。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d5-short" datatype="html">
+        <source>Correctives</source>
+        <target state="translated">纠正</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d5-title" datatype="html">
+        <source>Actions correctives</source>
+        <target state="translated">纠正措施</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d5-sub" datatype="html">
+        <source>Ce qui supprime la cause racine.</source>
+        <target state="translated">消除根本原因的措施。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d6-short" datatype="html">
+        <source>Preuves</source>
+        <target state="translated">证据</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d6-title" datatype="html">
+        <source>Preuves des actions correctives</source>
+        <target state="translated">纠正措施的证据</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d6-sub" datatype="html">
+        <source>Photos, mesures, rapports de contrôle qui démontrent l’efficacité.</source>
+        <target state="translated">证明有效性的照片、测量值和检验报告。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d6-evidence-hint" datatype="html">
+        <source>Chaque action porte sa propre pièce, dans la colonne « Preuve » des tableaux D3, D5 et D7 : une pièce détachée de son action ne démontre rien.</source>
+        <target state="translated">每项措施在 D3、D5、D7 表格的“证据”列各自附件：脱离措施的文件什么也证明不了。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d6-verdict" datatype="html">
+        <source>Juger l’efficacité</source>
+        <target state="translated">判定有效性</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d7-short" datatype="html">
+        <source>Préventives</source>
+        <target state="translated">预防</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d7-title" datatype="html">
+        <source>Actions préventives</source>
+        <target state="translated">预防措施</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d7-sub" datatype="html">
+        <source>Ce qui évite que le problème revienne ailleurs.</source>
+        <target state="translated">防止问题在别处重现的措施。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d7-no-case" datatype="html">
+        <source>Aucun dossier CAPA n’existe encore sur cet écart : les actions préventives s’écriront ici dès qu’il y en aura un, au D5.</source>
+        <target state="translated">该不合格项尚无 CAPA 档案：在 D5 开立档案后，预防措施即可写在此处。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d8-short" datatype="html">
+        <source>Remerciements</source>
+        <target state="translated">致谢</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d8-title" datatype="html">
+        <source>Remercier l’équipe</source>
+        <target state="translated">感谢团队</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d8-sub" datatype="html">
+        <source>Reconnaissez le travail accompli. Ce mot part dans le rapport 8D.</source>
+        <target state="translated">肯定已完成的工作。这段话会写入 8D 报告。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d8-label" datatype="html">
+        <source>Message à l’équipe</source>
+        <target state="translated">致团队的话</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d8-placeholder" datatype="html">
+        <source>Merci à toute l’équipe pour…</source>
+        <target state="translated">感谢全体团队……</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d8-none" datatype="html">
+        <source>Aucun mot de clôture n’a été écrit.</source>
+        <target state="translated">没有写结语。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d8-saved" datatype="html">
+        <source>Remerciements enregistrés dans le rapport 8D.</source>
+        <target state="translated">致谢已保存到 8D 报告。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d8-error" datatype="html">
+        <source>Les remerciements n'ont pas pu être enregistrés.</source>
+        <target state="translated">致谢未能保存。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.no-case" datatype="html">
+        <source>Aucun dossier CAPA sur cet écart. Ouvrez-en un : les actions de confinement, correctives et préventives s’écriront et s’avanceront ici même, chacune sous sa discipline.</source>
+        <target state="translated">该不合格项没有 CAPA 档案。开立一份：围堵、纠正和预防措施都在此处书写和推进，各归其步骤。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.customer" datatype="html">
+        <source>Client</source>
+        <target state="translated">客户</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.customer-placeholder" datatype="html">
+        <source>Nom du client qui réclame</source>
+        <target state="translated">提出投诉的客户名称</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.batch" datatype="html">
+        <source>N° de lot</source>
+        <target state="translated">批号</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.batch-placeholder" datatype="html">
+        <source>Ex. L2611-08</source>
+        <target state="translated">例：L2611-08</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.context-saved" datatype="html">
+        <source>Description enregistrée.</source>
+        <target state="translated">描述已保存。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.context-error" datatype="html">
+        <source>La description n'a pas pu être enregistrée.</source>
+        <target state="translated">描述未能保存。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.banner-reopened" datatype="html">
+        <source>Écart repris le</source>
+        <target state="translated">不合格项重启于</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.banner-closed" datatype="html">
+        <source>Clôturé le</source>
+        <target state="translated">关闭于</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.banner-closed-by" datatype="html">
+        <source>par <x id="name"/></source>
+        <target state="translated">由 <x id="name"/></target>
+      </trans-unit>
+      <trans-unit id="nc.8d.banner-rejected" datatype="html">
+        <source>Écarté le</source>
+        <target state="translated">驳回于</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.banner-resolved" datatype="html">
+        <source>Résolu le</source>
+        <target state="translated">解决于</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.banner-cancelled" datatype="html">
+        <source>Écart annulé.</source>
+        <target state="translated">不合格项已取消。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.reopen" datatype="html">
+        <source>Rouvrir</source>
+        <target state="translated">重启</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.reopen-tooltip" datatype="html">
+        <source>Reprendre l'instruction : récidive, relance du client, constat écarté à tort</source>
+        <target state="translated">恢复调查：问题重现、客户再次反馈、误被驳回的发现</target>
+      </trans-unit>
+      <trans-unit id="nc.reopen.title" datatype="html">
+        <source>Reprendre cet écart</source>
+        <target state="translated">重启该不合格项</target>
+      </trans-unit>
+      <trans-unit id="nc.reopen.hint" datatype="html">
+        <source>L'instruction reprendra à son début, et tout ce qui a déjà été fait reste attaché à</source>
+        <target state="translated">调查将从头开始，而已完成的一切仍附在</target>
+      </trans-unit>
+      <trans-unit id="nc.reopen.hint-end" datatype="html">
+        <source> : équipe, analyse de cause, actions et preuves. Ce qui l'avait refermé n'est pas effacé.</source>
+        <target state="translated">：团队、原因分析、措施和证据。此前关闭的记录不会被清除。</target>
+      </trans-unit>
+      <trans-unit id="nc.reopen.reason-label" datatype="html">
+        <source>Motif de la reprise (facultatif)</source>
+        <target state="translated">重启原因（可选）</target>
+      </trans-unit>
+      <trans-unit id="nc.reopen.reason-placeholder" datatype="html">
+        <source>Récidive constatée sur le lot suivant, relance du client, constat écarté à tort…</source>
+        <target state="translated">下一批次重现、客户再次反馈、误被驳回的发现……</target>
+      </trans-unit>
+      <trans-unit id="nc.reopen.reason-hint" datatype="html">
+        <source>Sans motif, la reprise reste possible — mais rien n'expliquera ce retour en arrière.</source>
+        <target state="translated">不填原因仍可重启，但没有任何记录能解释这次回退。</target>
+      </trans-unit>
+      <trans-unit id="nc.reopen.submit" datatype="html">
+        <source>Reprendre</source>
+        <target state="translated">重启</target>
+      </trans-unit>
+      <trans-unit id="nc.reopen.success" datatype="html">
+        <source>Écart repris : l'instruction reprend à son début.</source>
+        <target state="translated">不合格项已重启：调查从头开始。</target>
+      </trans-unit>
+      <trans-unit id="nc.reopen.error" datatype="html">
+        <source>Reprise impossible.</source>
+        <target state="translated">无法重启。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.validator" datatype="html">
+        <source>Valideur de la clôture (second regard)</source>
+        <target state="translated">关闭审核人（第二双眼睛）</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.validator-hint" datatype="html">
+        <source>Facultatif. Cette personne pourra clôturer cet écart même sans rôle qualité — et jamais s’il l’a résolu elle-même.</source>
+        <target state="translated">可选。此人即使没有质量角色也可关闭该不合格项；若由其本人解决，则不可。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.validator-saved" datatype="html">
+        <source>Valideur enregistré.</source>
+        <target state="translated">审核人已保存。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.validator-failed" datatype="html">
+        <source>Le valideur n'a pas pu être enregistré.</source>
+        <target state="translated">审核人未能保存。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.resolved-by" datatype="html">
+        <source>Résolu par</source>
+        <target state="translated">解决人</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.closed-by" datatype="html">
+        <source>Clôturé par</source>
+        <target state="translated">关闭人</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.second-look" datatype="html">
+        <source>Vous avez résolu cet écart : sa clôture demande un second regard. Un responsable qualité, ou le valideur désigné, doit la porter.</source>
+        <target state="translated">该不合格项由您解决：关闭需要第二双眼睛。应由质量负责人或指定审核人完成。</target>
+      </trans-unit>
       <trans-unit id="nav.nlq-explore" datatype="html">
         <source>Exploration NLQ</source>
         <target state="translated">NLQ 探索</target>

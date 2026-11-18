@@ -80,6 +80,19 @@ export class CapaActionPanelComponent implements OnChanges {
   /** Émis après chaque changement enregistré : l'écran appelant peut se relire. */
   @Output() readonly changed = new EventEmitter<void>();
 
+  /**
+   * Combien de lignes ce panneau MONTRE, émis à chaque lecture du dossier.
+   *
+   * <p>Pour l'hôte qui résume l'avancement sans refaire la requête : le sommaire
+   * des huit disciplines coche « endiguer » et « prévenir » d'après le nombre
+   * d'actions de CETTE nature, et seul le panneau le connaît -- la fiche de
+   * l'écart sait quels dossiers existent, pas ce qu'ils portent.
+   *
+   * <p>Zéro est une valeur : « lu, et il n'y en a aucune » n'est pas « pas encore
+   * lu », et le sommaire ne doit pas cocher la seconde.
+   */
+  @Output() readonly counted = new EventEmitter<number>();
+
   capa: CapaCaseResponse | null = null;
   readonly loading$ = new BehaviorSubject<boolean>(false);
   readonly acting$ = new BehaviorSubject<boolean>(false);
@@ -125,12 +138,18 @@ export class CapaActionPanelComponent implements OnChanges {
       next: capa => {
         this.capa = capa;
         this.cdr.markForCheck();
+        // Après coup : le décompte porte sur ce que le panneau MONTRE, donc sur
+        // le dossier déjà posé et la nature déjà filtrée.
+        this.counted.emit(this.actions.length);
         this.chargerPreuves();
       },
       error: err => {
         // eslint-disable-next-line no-console
         console.warn('[capa-action-panel] getCase failed', err?.status, err?.error?.title);
         this.capa = null;
+        // En panne, le panneau ne montre RIEN : l'hôte ne doit pas garder le
+        // décompte d'avant, qui lui ferait cocher une discipline illisible.
+        this.counted.emit(0);
         this.error = safeErrorMessage(
           err, $localize`:@@capa.action-panel.failed:L'action de la CAPA n'a pas pu être lue.`);
         this.cdr.markForCheck();

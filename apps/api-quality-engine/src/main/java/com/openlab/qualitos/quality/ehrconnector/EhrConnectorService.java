@@ -234,6 +234,17 @@ public class EhrConnectorService {
                 // Un import EHR ne connaît ni référence produit ni mode de
                 // défaillance : le rattachement, s'il a lieu, se fera à la main.
                 null,   // productId
+                // Ni client ni lot : un signal du dossier patient ne porte pas
+                // sur une livraison, et le nom du patient ne doit surtout pas
+                // entrer ici (RGPD §11.3).
+                null,   // customerName
+                null,   // batchNumber
+                // Aucun valideur designe : la cloture reviendra aux roles de
+                // pilotage. Designer quelqu un est une decision humaine, et un
+                // import ne connait pas qui, dans l organisation, doit porter le
+                // second regard sur cet ecart.
+                null,   // validatorId
+                null,   // validatorName
                 null,   // fmeaItemId
                 // Aucune equipe : un import systeme ne designe personne. Nommer
                 // une equipe est le geste de l'humain qui prend l'ecart en
