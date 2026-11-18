@@ -18,7 +18,7 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
  * nommant un paquet precis, et sur les 54 paquets {@code domain} du moteur, 11
  * seulement etaient couverts. Un module qui oubliait d'ajouter ses deux regles
  * n'etait jamais verifie -- l'invariant tenait par la memoire des developpeurs, pas
- * par le {@code build} (ADR 0128).
+ * par le {@code build}.
  *
  * <p>Les regles de la seconde section restent nommees, parce qu'elles sont PLUS
  * STRICTES que la regle universelle : elles interdisent en plus un outil precis
@@ -145,7 +145,7 @@ class HexagonalArchitectureTest {
      * fichier : {@code GlobalExceptionHandler} importait l'exception de chaque module
      * pour savoir quel statut HTTP lui repondre. Soixante-six des soixante-douze cycles
      * entre modules du moteur n'existaient que par la, et tout module neuf devait
-     * MODIFIER un fichier partage pour que ses refus sortent correctement (ADR 0128).
+     * MODIFIER un fichier partage pour que ses refus sortent correctement.
      *
      * <p>C'est la regle la plus facile a casser sans y penser : il suffit d'ajouter un
      * gestionnaire « pour aller plus vite ». D'ou cette garde.

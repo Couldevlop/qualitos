@@ -10,8 +10,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Ces deux bancs vivaient dans {@code GlobalExceptionHandlerTest}. Ils ont suivi
- * leurs gestionnaires quand le socle a cessé de porter les refus des modules
- * (ADR 0128) : un banc qui mesure le refus des 5 pourquoi appartient aux 5 pourquoi.
+ * leurs gestionnaires quand le socle a cessé de porter les refus des modules :
+ * un banc qui mesure le refus des 5 pourquoi appartient aux 5 pourquoi.
  */
 class FiveWhysExceptionHandlerTest {
 

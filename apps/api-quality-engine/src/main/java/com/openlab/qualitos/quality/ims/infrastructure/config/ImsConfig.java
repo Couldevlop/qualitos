@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
  * {@link GetCoverageMatrixUseCase} l'est devenu : il portait un {@code @Service},
  * seule raison pour laquelle la couche applicative de ce module nommait encore
  * Spring. Un cas d'usage déclaré ici se construit dans un banc d'un seul
- * {@code new}, sans contexte (ADR 0128).
+ * {@code new}, sans contexte.
  */
 @Configuration
 public class ImsConfig {
