@@ -47,6 +47,11 @@ describe('MailSettingsComponent', () => {
     lecture: MailSettings | 'erreur' = ABSENTE,
     firmId: string | null = null
   ): Promise<void> {
+    // Un meme banc peut comparer deux etats de l'ecran (reglee / absente) :
+    // sans cette remise a zero, le second montage se heurterait au module de
+    // test deja instancie.
+    TestBed.resetTestingModule();
+
     service = jasmine.createSpyObj<MailSettingsService>('MailSettingsService', [
       'lire', 'enregistrer', 'eprouver', 'retirer',
       'lireCabinet', 'enregistrerCabinet', 'eprouverCabinet', 'retirerCabinet'
