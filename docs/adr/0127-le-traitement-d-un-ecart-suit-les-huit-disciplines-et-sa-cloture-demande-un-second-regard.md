@@ -135,6 +135,31 @@ valide. Les deux premières sont la **preuve** du contrôle ; sans elles la règ
 serait appliquée sans être démontrable, et c'est la démonstration qu'un auditeur
 vient chercher.
 
+#### Désigner est un acte de gouvernance, pas une donnée de fiche
+
+La désignation **accorde** le droit de clore à quelqu'un qui ne l'a pas. Laissée
+libre, elle se retournait contre la règle qu'elle sert, de deux façons.
+
+**On ne donne pas un pouvoir qu'on n'a pas.** Déclarer un écart est ouvert à tout
+utilisateur (`nc.create` comprend `USER` et `AUDITOR`) : n'importe qui pouvait se
+désigner valideur de l'écart qu'il déclare, et gagner sur lui un droit que le
+catalogue réserve au pilotage — il suffisait d'attendre qu'un responsable le
+résolve pour le clôturer soi-même. Désigner exige donc `nc.close`, c'est-à-dire
+le droit même qu'on transmet.
+
+**On ne choisit pas celui qui nous relit.** Après la résolution, la personne qui
+l'a écrite ne peut plus toucher à la désignation : elle y nommerait un
+complaisant, et le second regard deviendrait un tampon qu'elle aurait choisi
+elle-même. Les **autres** détenteurs du droit peuvent encore désigner — c'est ce
+qui débloque un écart résolu dont le valideur a quitté l'organisation.
+
+Se désigner soi-même n'est **pas** refusé : qui détient `nc.close` a déjà ce droit
+sur tous les écarts, et la séparation l'arrête de toute façon s'il a résolu
+celui-ci. Le refuser interdirait un geste sans effet.
+
+Une modification qui ne touche pas à la désignation ne réclame rien : corriger la
+zone d'un écart résolu reste le geste de qui l'instruit.
+
 #### La permission quitte le point d'entrée
 
 `POST /nc/{id}/close` est le seul point d'entrée du module sans
@@ -169,6 +194,9 @@ logiciel ne collectait pas encore.
 - ⚠ Le motif de reprise étant facultatif, une fiche peut porter un retour en
   arrière inexpliqué. Arbitrage assumé : mieux vaut une reprise immédiate sans
   phrase qu'un écart qu'on n'ose pas reprendre.
+- ⚠ Désigner un valideur demande le droit de clore. Un utilisateur qui déclare
+  un écart ne peut donc pas y nommer son valideur : il faut le demander à qui
+  détient ce droit.
 - ⚠ La clôture n'étant plus gardée par le point d'entrée, toute évolution de
   `NcService.close` doit préserver le refus en tête de méthode.
 
@@ -186,6 +214,17 @@ logiciel ne collectait pas encore.
   bloquant pour qui n'en compte qu'un.
 - **Vérifier la clôture dans l'intercepteur.** Impossible : il décide sans
   connaître l'écart visé, donc sans connaître son valideur désigné.
+- **Interdire la désignation de soi-même.** Sans effet pour qui détient déjà
+  `nc.close`, et la séparation l'arrête de toute façon s'il a résolu l'écart :
+  ce serait interdire un geste qui ne change rien.
+- **Geler la désignation dès la résolution.** Aurait bloqué un écart résolu dont
+  le valideur a quitté l'organisation. La règle porte donc sur la **personne**
+  qui a résolu, pas sur l'état de l'écart.
+- **Résoudre l'identifiant du valideur dans l'annuaire et en reprendre le nom.**
+  Aucune autre fonction de la plateforme ne le fait — pilote de dossier,
+  responsable d'action, équipe d'un écart rangent tous le compte que le
+  sélecteur a fourni. L'ajouter ici seul serait incohérent ; c'est un chantier
+  transverse, pas une pièce de celui-ci.
 - **Un 403 pour le refus de second regard.** Sémantiquement défendable, mais le
   handler le rend muet — et la personne a besoin de savoir qu'il faut faire
   porter la clôture par quelqu'un d'autre, non qu'elle manque de droits.

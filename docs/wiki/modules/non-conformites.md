@@ -171,6 +171,15 @@ droit sur les autres écarts.
 > La désignation ouvre ce regard à un chef d'atelier, un pilote de processus, un confrère d'un
 > autre service.
 
+**Désigner demande le droit de clôturer** — on ne donne pas un pouvoir qu'on n'a pas. Si vous
+déclarez un écart sans ce droit, le champ du valideur vous est refusé : demandez la désignation à
+qui détient ce droit.
+
+**Et une fois l'écart résolu, celui qui l'a résolu ne peut plus changer le valideur** : il y
+nommerait quelqu'un de complaisant, et le second regard deviendrait un tampon qu'il aurait choisi
+lui-même. Un autre détenteur du droit, lui, peut encore le faire — c'est ce qui débloque un écart
+dont le valideur a quitté l'organisation.
+
 La fiche d'un écart clos porte les **deux signatures** — *Résolu par*, *Clôturé par* — au D6.
 C'est ce qu'un auditeur vient lire. Les écarts déclarés avant cette règle n'ont pas ces noms, et
 la fiche n'en invente pas.

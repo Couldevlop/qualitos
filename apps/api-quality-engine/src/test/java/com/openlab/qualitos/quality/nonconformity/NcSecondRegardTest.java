@@ -278,6 +278,7 @@ class NcSecondRegardTest {
     /** Le valideur se désigne à l'ouverture, depuis l'annuaire. */
     @Test
     void create_rangeLeValideurDesigne() {
+        jePuisClore();
         when(repo.saveAndFlush(org.mockito.ArgumentMatchers.any(NonConformity.class)))
                 .thenAnswer(i -> i.getArgument(0));
         connecte(MARIE, "Marie Durand");
@@ -292,7 +293,128 @@ class NcSecondRegardTest {
         assertThat(cree.validatorName()).isEqualTo("Ali Benali");
     }
 
+    // ---------- designer est un acte de gouvernance ----------
+
+    /**
+     * ON NE DONNE PAS UN POUVOIR QU'ON N'A PAS.
+     *
+     * <p>Declarer un ecart est ouvert a tout utilisateur. Sans cette garde,
+     * n'importe qui se designait valideur de l'ecart qu'il declare, et gagnait
+     * sur lui un droit que le catalogue reserve au pilotage : il suffisait
+     * d'attendre qu'un responsable le resolve pour le cloturer soi-meme.
+     */
+    @Test
+    void create_sansLeDroitDeClore_refuseLaDesignation() {
+        when(authz.has(Permission.NC_CLOSE)).thenReturn(false);
+        connecte(ALI, "Ali Benali");
+
+        assertThatThrownBy(() -> service.create(declaration(ALI, "Ali Benali")))
+                .isInstanceOf(AccessDeniedException.class);
+    }
+
+    /** Sans designation, la declaration reste ouverte a tous : rien n'y change. */
+    @Test
+    void create_sansDesignation_resteOuverteATous() {
+        when(repo.saveAndFlush(org.mockito.ArgumentMatchers.any(NonConformity.class)))
+                .thenAnswer(i -> i.getArgument(0));
+        connecte(ALI, "Ali Benali");
+
+        assertThat(service.create(declaration(null, null)).validatorId()).isNull();
+        // Le droit de clore n'a meme pas ete demande.
+        org.mockito.Mockito.verify(authz, org.mockito.Mockito.never())
+                .has(Permission.NC_CLOSE);
+    }
+
+    @Test
+    void update_sansLeDroitDeClore_refuseLaDesignation() {
+        NonConformity n = ecart(NcStatus.OPEN);
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+        when(authz.has(Permission.NC_CLOSE)).thenReturn(false);
+        connecte(ALI, "Ali Benali");
+
+        assertThatThrownBy(() -> service.update(n.getId(), modificationValideur(ALI, "Ali Benali")))
+                .isInstanceOf(AccessDeniedException.class);
+        assertThat(n.getValidatorId()).isNull();
+    }
+
+    /**
+     * ON NE CHOISIT PAS CELUI QUI NOUS RELIT.
+     *
+     * <p>Apres la resolution, celui qui l'a ecrite y nommerait un complaisant,
+     * et le second regard deviendrait un tampon qu'il aurait choisi lui-meme.
+     */
+    @Test
+    void update_parLAuteurDeLaResolution_refuseDeChangerLaDesignation() {
+        NonConformity n = ecart(NcStatus.RESOLVED);
+        n.setResolvedById(MARIE);
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+        jePuisClore();
+        connecte(MARIE, "Marie Durand");
+
+        assertThatThrownBy(() -> service.update(n.getId(), modificationValideur(ALI, "Ali Benali")))
+                .isInstanceOf(NcStateException.class)
+                .hasMessageContaining("cannot choose who reviews");
+        assertThat(n.getValidatorId()).isNull();
+    }
+
+    /**
+     * Mais un AUTRE detenteur du droit peut encore designer : c'est ce qui
+     * debloque un ecart resolu dont le valideur a quitte l'organisation.
+     */
+    @Test
+    void update_parQuelquUnDAutre_designeEncoreApresLaResolution() {
+        NonConformity n = ecart(NcStatus.RESOLVED);
+        n.setResolvedById(MARIE);
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+        lenient().when(repo.save(n)).thenReturn(n);
+        jePuisClore();
+        connecte(ALI, "Ali Benali");
+
+        service.update(n.getId(), modificationValideur(ALI, "Ali Benali"));
+
+        assertThat(n.getValidatorId()).isEqualTo(ALI);
+    }
+
+    /**
+     * Une modification qui NE TOUCHE PAS la designation ne reclame pas le droit
+     * de clore : corriger la zone d'un ecart resolu reste le geste de qui
+     * l'instruit.
+     */
+    @Test
+    void update_quiNeToucheRienALaDesignation_neReclameAucunDroitDeClore() {
+        NonConformity n = ecart(NcStatus.RESOLVED);
+        n.setResolvedById(MARIE);
+        n.setValidatorId(ALI);
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+        lenient().when(repo.save(n)).thenReturn(n);
+        connecte(MARIE, "Marie Durand");
+
+        // La zone est en 6e position ; la designation en 14e et 15e, intouchee.
+        service.update(n.getId(), new NcDto.UpdateRequest(
+                null, null, null, null, null, "Atelier 7", null, null, null, null,
+                null, null, null, null, null, null, null));
+
+        assertThat(n.getZone()).isEqualTo("Atelier 7");
+        assertThat(n.getValidatorId()).isEqualTo(ALI);
+        org.mockito.Mockito.verify(authz, org.mockito.Mockito.never())
+                .has(Permission.NC_CLOSE);
+    }
+
     // ---------- outils ----------
+
+    private NcDto.CreateRequest declaration(UUID valideur, String nomValideur) {
+        return new NcDto.CreateRequest(
+                "Joint défectueux", "détail", NcCategory.PRODUCT, null, NcSeverity.MAJOR,
+                Instant.now(), null, null, null, null, null, NcOrigin.INTERNAL, null,
+                null, null, valideur, nomValideur, null,
+                List.of(new NcDto.TeamMemberRef(MARIE.toString(), "Marie Durand")));
+    }
+
+    private NcDto.UpdateRequest modificationValideur(UUID valideur, String nomValideur) {
+        return new NcDto.UpdateRequest(
+                null, null, null, null, null, null, null, null, null, null,
+                null, null, null, valideur, nomValideur, null, null);
+    }
 
     private void jePuisClore() {
         lenient().when(authz.has(Permission.NC_CLOSE)).thenReturn(true);

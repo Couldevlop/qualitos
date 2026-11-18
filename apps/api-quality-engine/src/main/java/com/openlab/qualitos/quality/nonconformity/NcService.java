@@ -33,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.time.ZoneOffset;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
@@ -184,6 +185,9 @@ public class NcService {
         nc.setReporterName(CurrentUser.displayName().orElse(null));
         nc.setProductId(request.productId());
         nc.setCustomerName(vide(request.customerName()));
+        if (request.validatorId() != null) {
+            exigerLeDroitDeDesigner(null);
+        }
         nc.setValidatorId(request.validatorId());
         nc.setValidatorName(vide(request.validatorName()));
         nc.setBatchNumber(vide(request.batchNumber()));
@@ -258,6 +262,10 @@ public class NcService {
         // nom ensemble) ; absent, il reste ce qu'il était. Un nom VIDE le
         // retire, comme partout ailleurs dans cette requête partielle — sans
         // quoi une désignation posée par erreur ne pourrait plus être défaite.
+        boolean designationTouchee = request.validatorName() != null || request.validatorId() != null;
+        if (designationTouchee && !Objects.equals(request.validatorId(), nc.getValidatorId())) {
+            exigerLeDroitDeDesigner(nc);
+        }
         if (request.validatorName() != null) {
             nc.setValidatorId(request.validatorId());
             nc.setValidatorName(vide(request.validatorName()));
@@ -370,6 +378,52 @@ public class NcService {
         nc.setClosedById(CurrentUser.userId().orElse(null));
         nc.setClosedByName(CurrentUser.displayName().orElse(null));
         return toResponse(repository.save(nc));
+    }
+
+    /**
+     * DÉSIGNER UN VALIDEUR EST UN ACTE DE GOUVERNANCE, pas une donnée de fiche.
+     *
+     * <p>La désignation <b>accorde</b> le droit de clore cet écart à quelqu'un
+     * qui ne l'a pas. Laissée libre, elle se retournait contre la règle qu'elle
+     * sert, de deux façons :
+     *
+     * <ol>
+     *   <li><b>On ne donne pas un pouvoir qu'on n'a pas.</b> Déclarer un écart
+     *       est ouvert à tout utilisateur ({@code nc.create} comprend
+     *       {@code USER} et {@code AUDITOR}) : sans cette garde, n'importe qui
+     *       se désignait valideur de l'écart qu'il déclare, et gagnait sur lui
+     *       un droit que le catalogue réserve au pilotage. Désigner exige donc
+     *       {@code nc.close} — le droit même qu'on transmet.</li>
+     *   <li><b>On ne choisit pas celui qui nous relit.</b> Après la résolution,
+     *       la personne qui l'a écrite ne peut plus toucher à la désignation :
+     *       elle y nommerait un complaisant, et le second regard deviendrait un
+     *       tampon qu'elle aurait choisi elle-même. Les autres détenteurs du
+     *       droit, eux, peuvent encore désigner — c'est précisément ce qui
+     *       débloque un écart résolu dont le valideur a quitté
+     *       l'organisation.</li>
+     * </ol>
+     *
+     * <p>Se désigner soi-même n'est PAS refusé : qui a {@code nc.close} détient
+     * déjà ce droit sur tous les écarts, et la séparation de
+     * {@link #exigerUnSecondRegard} l'arrête de toute façon s'il a résolu
+     * celui-ci. Le refuser interdirait un geste sans effet.
+     *
+     * @param nc l'écart visé, ou {@code null} à la déclaration — il n'a pas
+     *           encore d'histoire, seule la première règle s'applique.
+     */
+    private void exigerLeDroitDeDesigner(NonConformity nc) {
+        if (!authz.has(Permission.NC_CLOSE)) {
+            throw new AccessDeniedException("Access denied");
+        }
+        if (nc == null || nc.getResolvedById() == null) {
+            return;
+        }
+        if (nc.getResolvedById().equals(CurrentUser.userId().orElse(null))) {
+            throw new NcStateException(
+                    "You resolved this non-conformity: you cannot choose who reviews"
+                    + " your own work. Another holder of the closing right can"
+                    + " designate a validator.");
+        }
     }
 
     /**
