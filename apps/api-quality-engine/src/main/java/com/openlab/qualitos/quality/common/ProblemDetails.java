@@ -20,7 +20,7 @@ import java.time.Instant;
  * passent que le FRAGMENT qui identifie l'erreur, jamais l'URL entière.
  *
  * <p>Cette classe appartient au socle, et c'est le bon sens de dépendance : les
- * modules la connaissent, elle ne connaît aucun module (ADR 0128).
+ * modules la connaissent, elle ne connaît aucun module.
  */
 public final class ProblemDetails {
 

@@ -8,7 +8,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Ce banc vivait dans {@code GlobalExceptionHandlerTest}. Il a suivi son gestionnaire
- * quand le socle a cessé de porter les refus des modules (ADR 0128).
+ * quand le socle a cessé de porter les refus des modules.
  */
 class AiGatewayExceptionHandlerTest {
 

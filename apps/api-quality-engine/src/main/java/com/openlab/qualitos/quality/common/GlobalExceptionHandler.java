@@ -35,7 +35,7 @@ import org.springframework.core.annotation.Order;
  * <p>Ce fichier portait 225 gestionnaires et importait 205 classes d exception : le
  * socle dependait de soixante-six modules metier, alors que soixante-dix-huit modules
  * dependent de lui. Chaque module dit maintenant ses propres refus, dans son propre
- * conseil (ADR 0128).
+ * conseil.
  *
  * <p>Ce qui reste ici ne vient d aucun module : le client absent du jeton, le second
  * facteur exige, le module desactive, la licence en lecture seule, les refus que Spring

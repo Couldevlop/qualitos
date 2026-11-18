@@ -15,7 +15,7 @@ class GlobalExceptionHandlerTest {
 
     // Ce banc ne mesure plus que les refus de la PLATEFORME. Les refus de module
     // sont mesures a cote de leur propre conseil, depuis que le socle ne les porte
-    // plus (ADR 0128) : un banc place ici reintroduirait la dependance que le
+    // plus : un banc place ici reintroduirait la dependance que le
     // decoupage a supprimee.
 
     private final GlobalExceptionHandler handler = new GlobalExceptionHandler();
