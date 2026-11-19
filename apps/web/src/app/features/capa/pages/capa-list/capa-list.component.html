@@ -55,7 +55,7 @@
       </ng-container>
       <ng-container matColumnDef="type">
         <th mat-header-cell *matHeaderCellDef i18n="@@common.type">Type</th>
-        <td mat-cell *matCellDef="let c">{{ caseTypeLabel(c.type) }}</td>
+        <td mat-cell *matCellDef="let c" data-test="capa-list-natures">{{ caseTypeLabel(c) }}</td>
       </ng-container>
       <ng-container matColumnDef="criticity">
         <th mat-header-cell *matHeaderCellDef i18n="@@capa.list.col-criticity">Criticité</th>

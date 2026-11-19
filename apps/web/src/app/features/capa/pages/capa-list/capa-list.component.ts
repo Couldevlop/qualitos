@@ -10,9 +10,9 @@ import { deferredView } from '../../../../core/rx/deferred-view';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { AccountNames } from '../../../../core/directory/directory-names';
 import { DirectoryService } from '../../../../core/directory/directory.service';
-import { capaCriticityLabel, capaOwnerLabel, capaSourceLabel, capaTypeLabel, unnamedOwners } from '../../capa.labels';
+import { actionTypeLabel, capaCriticityLabel, capaOwnerLabel, capaSourceLabel, capaTypeLabel, unnamedOwners } from '../../capa.labels';
 import { CapaService } from '../../capa.service';
-import { CapaCaseResponse, CapaCriticity, CapaPage, CapaStatus } from '../../capa.types';
+import { CapaActionType, CapaCaseResponse, CapaCriticity, CapaPage, CapaStatus } from '../../capa.types';
 import {
   CapaCreateDialogComponent, CapaCreateDialogData, CapaCreatePrefill, CapaOpened
 } from '../capa-create-dialog/capa-create-dialog.component';
@@ -22,6 +22,13 @@ const MAX_PAGE_SIZE = 100;
 
 /** Page vide emise quand le chargement echoue : vide la table et remet le compteur a zero. */
 const EMPTY_PAGE = { content: [], totalElements: 0, totalPages: 0, number: 0, size: 0 };
+
+/**
+ * L'ordre dans lequel les natures se lisent : celui du traitement d'un écart —
+ * on endigue d'abord, on corrige la cause, on prévient la récidive. Trier par
+ * ordre alphabétique mettrait « Corrective » devant « Endiguement ».
+ */
+const ORDRE_DES_NATURES: readonly CapaActionType[] = ['CONTAINMENT', 'CORRECTIVE', 'PREVENTIVE'];
 
 @Component({
   selector: 'qos-capa-list',
@@ -162,7 +169,25 @@ export class CapaListComponent implements OnInit {
   ownerLabel(c: CapaCaseResponse): string { return capaOwnerLabel(c, id => this.names.get(id)); }
 
   /** Libellé lisible du type de dossier ; la colonne affichait l'énumération brute. */
-  caseTypeLabel(type: string): string { return capaTypeLabel(type); }
+  /**
+   * Les natures réellement présentes dans le dossier, et non son type déclaré.
+   *
+   * <p>Un dossier est typé à son ouverture — presque toujours « Corrective ».
+   * Y ajouter ensuite un endiguement ou une action préventive ne changeait rien
+   * à cette colonne : le registre affichait « Corrective » devant un dossier qui
+   * contenait un endiguement, et rien ne disait qu'il était là.
+   *
+   * <p>On lit donc les actions, dans l'ordre du traitement — on endigue, on
+   * corrige, on prévient — et le type déclaré ne sert plus que de repli, pour
+   * un dossier qui n'a pas encore d'action.
+   */
+  caseTypeLabel(c: CapaCaseResponse): string {
+    const presentes = ORDRE_DES_NATURES.filter(
+      nature => (c.actions ?? []).some(a => (a.actionType ?? 'CORRECTIVE') === nature));
+    return presentes.length
+      ? presentes.map(actionTypeLabel).join(' · ')
+      : capaTypeLabel(c.type);
+  }
   criticityBadge(c: CapaCriticity): string { return 'crit crit-' + c.toLowerCase(); }
   readonly criticityLabel = capaCriticityLabel;
   readonly sourceLabel = capaSourceLabel;
