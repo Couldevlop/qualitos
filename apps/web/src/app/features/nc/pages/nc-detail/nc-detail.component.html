@@ -365,9 +365,11 @@
                      constate pas un fait qui n'a pas eu lieu. -->
                 <mat-form-field appearance="outline" data-test="date-constat">
                   <mat-label *ngIf="n.origin === 'EXTERNAL'; else libelleSaisieDetection"
+                             data-test="date-libelle-reception"
                              i18n="@@nc.detail.received">Date de réception</mat-label>
                   <ng-template #libelleSaisieDetection>
-                    <mat-label i18n="@@nc.detail.detected">Détectée le</mat-label>
+                    <mat-label data-test="date-libelle-detection"
+                               i18n="@@nc.detail.detected">Détectée le</mat-label>
                   </ng-template>
                   <input matInput [matDatepicker]="constat" [max]="aujourdhui"
                          formControlName="detectedOn" data-test="date-constat-champ"
