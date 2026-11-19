@@ -6,6 +6,7 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../../shared/shared.module';
 import { CapaActionPanelModule } from '../capa/capa-action-panel.module';
+import { CapaEvidencePanelModule } from '../capa/capa-evidence-panel.module';
 import { CapaActionsDialogModule } from '../capa/capa-actions-dialog.module';
 import { CapaCreateDialogModule } from '../capa/capa-create-dialog.module';
 import { FiveWhysSharedModule } from '../five-whys/five-whys-shared.module';
@@ -70,6 +71,7 @@ const routes: Routes = [
   // liste ce qui reste OUVERT sur l'ecart ; le tableau complet, lui, est sur
   // la fiche meme (ADR 0115).
   imports: [SharedModule, UiModule, MatRadioModule, CapaCreateDialogModule, CapaActionPanelModule,
+            CapaEvidencePanelModule,
     CapaActionsDialogModule,
             UserPickerModule, FiveWhysSharedModule, IshikawaSharedModule,
             MatDatepickerModule, MatNativeDateModule,

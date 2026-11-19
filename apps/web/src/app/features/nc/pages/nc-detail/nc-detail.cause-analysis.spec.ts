@@ -17,6 +17,7 @@ import { FiveWhysService } from '../../../five-whys/five-whys.service';
 import { FiveWhysAnalysis } from '../../../five-whys/five-whys.types';
 import { IshikawaSharedModule } from '../../../ishikawa/ishikawa-shared.module';
 import { IshikawaService } from '../../../ishikawa/ishikawa.service';
+import { CapaService } from '../../../capa/capa.service';
 import { IshikawaCauseResponse, IshikawaDiagramResponse } from '../../../ishikawa/ishikawa.types';
 import { NcService } from '../../nc.service';
 import { NcResponse } from '../../nc.types';
@@ -25,6 +26,7 @@ import {
 } from '../../components/nc-cause-analysis/nc-cause-analysis.component';
 import { NcDetailComponent } from './nc-detail.component';
 import { CapaActionPanelStubModule } from '../../../capa/components/capa-action-panel/testing/capa-action-panel.stub';
+import { CapaEvidencePanelStubModule } from '../../../capa/components/capa-evidence-panel/testing/capa-evidence-panel.stub';
 
 function ecart(): NcResponse {
   return {
@@ -120,11 +122,12 @@ describe('NcDetailComponent — analyse de cause sur la fiche', () => {
       declarations: [NcDetailComponent, NcCauseAnalysisComponent],
       imports: [SharedModule, UiModule, UserPickerModule, FiveWhysSharedModule,
                 IshikawaSharedModule, NoopAnimationsModule,
-                CapaActionPanelStubModule],
+                CapaActionPanelStubModule, CapaEvidencePanelStubModule],
       providers: [
         provideRouter([]),
         { provide: NcService, useValue: svc },
         { provide: IshikawaService, useValue: ishikawa },
+        { provide: CapaService, useValue: { updateCase: () => of({}) } },
         { provide: FiveWhysService, useValue: fiveWhys },
         { provide: DirectoryService, useValue: annuaire },
         { provide: MatSnackBar, useValue: jasmine.createSpyObj('MatSnackBar', ['open']) },

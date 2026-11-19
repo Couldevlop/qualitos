@@ -16,6 +16,7 @@ import { FiveWhysSharedModule } from '../../../five-whys/five-whys-shared.module
 import { FiveWhysService } from '../../../five-whys/five-whys.service';
 import { IshikawaSharedModule } from '../../../ishikawa/ishikawa-shared.module';
 import { IshikawaService } from '../../../ishikawa/ishikawa.service';
+import { CapaService } from '../../../capa/capa.service';
 import { NcService } from '../../nc.service';
 import { NcResponse, NcStatus } from '../../nc.types';
 import {
@@ -25,6 +26,7 @@ import { NcDetailComponent } from './nc-detail.component';
 import {
   CapaActionPanelStubModule
 } from '../../../capa/components/capa-action-panel/testing/capa-action-panel.stub';
+import { CapaEvidencePanelStubModule } from '../../../capa/components/capa-evidence-panel/testing/capa-evidence-panel.stub';
 
 /**
  * LE TRAITEMENT D'UN ÉCART, dans l'ordre des huit disciplines.
@@ -97,11 +99,12 @@ describe('NcDetailComponent — le traitement 8D', () => {
     await TestBed.configureTestingModule({
       declarations: [NcDetailComponent, NcCauseAnalysisComponent],
       imports: [SharedModule, UiModule, UserPickerModule, FiveWhysSharedModule,
-                IshikawaSharedModule, NoopAnimationsModule, CapaActionPanelStubModule],
+                IshikawaSharedModule, NoopAnimationsModule, CapaActionPanelStubModule, CapaEvidencePanelStubModule],
       providers: [
         provideRouter([]),
         { provide: NcService, useValue: svc },
         { provide: IshikawaService, useValue: ishikawa },
+        { provide: CapaService, useValue: { updateCase: () => of({}) } },
         { provide: FiveWhysService, useValue: fiveWhys },
         { provide: DirectoryService, useValue: annuaire },
         { provide: MatDialog, useValue: dialog },

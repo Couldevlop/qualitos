@@ -15,6 +15,7 @@ import { FiveWhysSharedModule } from '../../../five-whys/five-whys-shared.module
 import { FiveWhysService } from '../../../five-whys/five-whys.service';
 import { IshikawaSharedModule } from '../../../ishikawa/ishikawa-shared.module';
 import { IshikawaService } from '../../../ishikawa/ishikawa.service';
+import { CapaService } from '../../../capa/capa.service';
 import { NcService } from '../../nc.service';
 import { NcBlocker, NcResponse, NcStatus } from '../../nc.types';
 import {
@@ -22,6 +23,7 @@ import {
 } from '../../components/nc-cause-analysis/nc-cause-analysis.component';
 import { NcDetailComponent } from './nc-detail.component';
 import { CapaActionPanelStubModule } from '../../../capa/components/capa-action-panel/testing/capa-action-panel.stub';
+import { CapaEvidencePanelStubModule } from '../../../capa/components/capa-evidence-panel/testing/capa-evidence-panel.stub';
 
 /**
  * Ce qui s'oppose à l'avancement de l'écart, DIT avant le clic.
@@ -86,11 +88,12 @@ describe('NcDetailComponent — ce qui bloque l’avancement', () => {
     await TestBed.configureTestingModule({
       declarations: [NcDetailComponent, NcCauseAnalysisComponent],
       imports: [SharedModule, UiModule, UserPickerModule, FiveWhysSharedModule,
-                IshikawaSharedModule, NoopAnimationsModule, CapaActionPanelStubModule],
+                IshikawaSharedModule, NoopAnimationsModule, CapaActionPanelStubModule, CapaEvidencePanelStubModule],
       providers: [
         provideRouter([]),
         { provide: NcService, useValue: svc },
         { provide: IshikawaService, useValue: ishikawa },
+        { provide: CapaService, useValue: { updateCase: () => of({}) } },
         { provide: FiveWhysService, useValue: fiveWhys },
         { provide: DirectoryService, useValue: annuaire },
         { provide: MatSnackBar, useValue: jasmine.createSpyObj('MatSnackBar', ['open']) },

@@ -385,7 +385,7 @@ class CapaControllerTest {
                 CAPA, TENANT, "t", null, CapaType.CORRECTIVE, CapaCriticity.HIGH, CapaStatus.OPEN,
                 CapaSourceType.NON_CONFORMITY, "NC-2026-0018", OWNER, "a.diallo@client.test", null, null,
                 null, null, null, null,
-                null, null,
+                null, null, null,
                 null, null, null, null,
                 Instant.now(), Instant.now(), List.of(),
                 new CapaDto.LinkedNonConformity(NC, "NC-2026-0018", "Étiquetage lot 4471 illisible"), List.of()));
@@ -428,7 +428,7 @@ class CapaControllerTest {
                 CAPA, TENANT, "t", null, CapaType.CORRECTIVE, CapaCriticity.HIGH, s,
                 CapaSourceType.NON_CONFORMITY, null, OWNER, null, null, null,
                 null, null, null, null,
-                null, null,
+                null, null, null,
                 null, null, null, null,
                 Instant.now(), Instant.now(), List.of(), null, List.of());
     }

@@ -323,7 +323,15 @@ public final class NcDto {
      * devrait interroger chaque dossier pour écrire l'en-tête de son tableau
      * d'actions, et afficherait un identifiant en attendant.
      */
-    public record CapaCaseRef(UUID id, String title, String status) {}
+    /**
+     * Un dossier CAPA de l'écart, réduit à ce que la fiche en montre.
+     *
+     * <p>Le commentaire d'efficacité en fait partie depuis que les preuves se
+     * déposent au D6 : il s'écrit juste sous elles, et aller le chercher par un
+     * second appel ferait clignoter un champ déjà affiché.
+     */
+    public record CapaCaseRef(UUID id, String title, String status,
+                              String effectivenessComment) {}
 
     /**
      * Un motif de blocage et son décompte.

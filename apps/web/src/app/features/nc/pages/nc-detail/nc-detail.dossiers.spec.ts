@@ -15,6 +15,7 @@ import { FiveWhysSharedModule } from '../../../five-whys/five-whys-shared.module
 import { FiveWhysService } from '../../../five-whys/five-whys.service';
 import { IshikawaSharedModule } from '../../../ishikawa/ishikawa-shared.module';
 import { IshikawaService } from '../../../ishikawa/ishikawa.service';
+import { CapaService } from '../../../capa/capa.service';
 import { NcService } from '../../nc.service';
 import { NcCapaCaseRef, NcResponse } from '../../nc.types';
 import {
@@ -22,6 +23,7 @@ import {
 } from '../../components/nc-cause-analysis/nc-cause-analysis.component';
 import { NcDetailComponent } from './nc-detail.component';
 import { CapaActionPanelStubModule } from '../../../capa/components/capa-action-panel/testing/capa-action-panel.stub';
+import { CapaEvidencePanelStubModule } from '../../../capa/components/capa-evidence-panel/testing/capa-evidence-panel.stub';
 
 /**
  * UN TABLEAU PAR DOSSIER.
@@ -38,6 +40,7 @@ describe('NcDetailComponent — les dossiers CAPA de l’écart', () => {
   let fixture: ComponentFixture<NcDetailComponent>;
   let component: NcDetailComponent;
   let svc: jasmine.SpyObj<NcService>;
+  let capa: jasmine.SpyObj<CapaService>;
 
   function ecart(capaCases?: NcCapaCaseRef[], capaCaseId?: string): NcResponse {
     return {
@@ -70,6 +73,8 @@ describe('NcDetailComponent — les dossiers CAPA de l’écart', () => {
   beforeEach(async () => {
     svc = jasmine.createSpyObj<NcService>('NcService', [
       'getEightDReport', 'getNc', 'listPhotos', 'subcategories']);
+    capa = jasmine.createSpyObj<CapaService>('CapaService', ['updateCase']);
+    capa.updateCase.and.returnValue(of({}) as never);
     svc.listPhotos.and.returnValue(of([]));
     svc.subcategories.and.returnValue(of({ entries: [], defaults: true }));
     // Le D8 lit le rapport 8D pour n'en tirer que les remerciements : un
@@ -90,11 +95,12 @@ describe('NcDetailComponent — les dossiers CAPA de l’écart', () => {
     await TestBed.configureTestingModule({
       declarations: [NcDetailComponent, NcCauseAnalysisComponent],
       imports: [SharedModule, UiModule, UserPickerModule, FiveWhysSharedModule,
-                IshikawaSharedModule, NoopAnimationsModule, CapaActionPanelStubModule],
+                IshikawaSharedModule, NoopAnimationsModule, CapaActionPanelStubModule, CapaEvidencePanelStubModule],
       providers: [
         provideRouter([]),
         { provide: NcService, useValue: svc },
         { provide: IshikawaService, useValue: ishikawa },
+        { provide: CapaService, useValue: capa },
         { provide: FiveWhysService, useValue: fiveWhys },
         { provide: DirectoryService, useValue: annuaire },
         { provide: MatSnackBar, useValue: jasmine.createSpyObj('MatSnackBar', ['open']) },
@@ -181,5 +187,35 @@ describe('NcDetailComponent — les dossiers CAPA de l’écart', () => {
     expect(component.dossiers(ecart([
       { id: 'capa-9', title: 'Celui du serveur', status: 'OPEN' }
     ], 'capa-1')).map(d => d.id)).toEqual(['capa-9']);
+  });
+  // ---------- la note d'efficacite, au D6, a cote des preuves du dossier ----
+
+  it('enregistre la note du D6 en quittant le champ, et sur le bon dossier', () => {
+    setup(ecart([{ id: 'capa-1', title: 'Dossier', status: 'IN_PROGRESS' }], 'capa-1'));
+    const d = component.dossiers(ecart([
+      { id: 'capa-1', title: 'Dossier', status: 'IN_PROGRESS' }], 'capa-1'))[0];
+
+    component.saisirCommentaire(d, 'Zero retour client sur deux trimestres');
+    expect(capa.updateCase)
+      .withContext("la saisie n'enregistre rien : une requete par touche serait absurde")
+      .not.toHaveBeenCalled();
+
+    component.enregistrerCommentaire(d);
+    expect(capa.updateCase).toHaveBeenCalledWith('capa-1',
+      { effectivenessComment: 'Zero retour client sur deux trimestres' });
+  });
+
+  it("n'enregistre rien quand la note n'a pas change", () => {
+    // Quitter le champ sans rien ecrire ne doit pas ecrire sur le dossier.
+    setup(ecart([{ id: 'capa-1', title: 'Dossier', status: 'IN_PROGRESS',
+                   effectivenessComment: 'Deja note' }], 'capa-1'));
+    const d = component.dossiers(ecart([
+      { id: 'capa-1', title: 'Dossier', status: 'IN_PROGRESS',
+        effectivenessComment: 'Deja note' }], 'capa-1'))[0];
+
+    component.saisirCommentaire(d, 'Deja note');
+    component.enregistrerCommentaire(d);
+
+    expect(capa.updateCase).not.toHaveBeenCalled();
   });
 });

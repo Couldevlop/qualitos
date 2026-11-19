@@ -78,6 +78,17 @@ export class CapaActionPanelComponent implements OnChanges {
   @Input() natures: readonly CapaActionType[] = [];
 
   /**
+   * Montre ou non la colonne « Preuve », la pièce de CHAQUE action (ADR 0052).
+   *
+   * <p>Vraie par défaut : la fiche CAPA et le D3 du traitement 8D attestent
+   * ainsi que tel geste a bien été fait. Le D5 et le D7 la mettent à faux, non
+   * par économie d'écran, mais parce que ce qu'ils ont à démontrer n'est pas
+   * « l'action a été faite » : c'est « le problème a cessé », et cela se prouve
+   * au D6, sur le dossier, où le modèle de traitement 8D l'attend.
+   */
+  @Input() colonnePreuve = true;
+
+  /**
    * Les personnes déjà sur l'écart (l'équipe du D1), proposées en tête du
    * sélecteur de responsable quand on ajoute ou corrige une action.
    *
@@ -467,6 +478,7 @@ export class CapaActionPanelComponent implements OnChanges {
       dueDate: this.capa.dueDate,
       team: this.team,
       effectivenessCriterion: this.capa.effectivenessCriterion,
+      verificationRequired: this.capa.verificationRequired,
       // Tableau restreint à une nature : l'action ajoutée là est de cette nature.
       actionType: this.natures.length === 1 ? this.natures[0] : undefined
     });
@@ -491,6 +503,7 @@ export class CapaActionPanelComponent implements OnChanges {
       dueDate: this.capa.dueDate,
       team: this.team,
       effectivenessCriterion: this.capa.effectivenessCriterion,
+      verificationRequired: this.capa.verificationRequired,
       readOnly: this.isTerminal(this.capa.status)
     });
   }

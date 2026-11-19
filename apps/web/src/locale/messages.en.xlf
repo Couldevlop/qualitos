@@ -22278,6 +22278,46 @@ declared income
         <source>2000 caractères maximum.</source>
         <target state="translated">2000 characters maximum.</target>
       </trans-unit>
+      <trans-unit id="nc.8d.d6-no-case" datatype="html">
+        <source>Aucun dossier n'est encore ouvert sur cet écart : les preuves s'attachent au dossier, il faut donc commencer par en ouvrir un.</source>
+        <target state="translated">No case is open on this non-conformity yet. Evidence is attached to the case, so start by opening one.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d6-comment" datatype="html">
+        <source>Commentaire sur l'efficacité</source>
+        <target state="translated">Comment on effectiveness</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d6-comment-placeholder" datatype="html">
+        <source>Résultats de vérification, période de suivi…</source>
+        <target state="translated">Verification results, follow-up period…</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d6-comment-hint" datatype="html">
+        <source>Facultatif. Enregistré en quittant le champ.</source>
+        <target state="translated">Optional. Saved when you leave the field.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d6-comment-failed" datatype="html">
+        <source>Le commentaire n'a pas été enregistré. Réessayez en quittant le champ.</source>
+        <target state="translated">The comment was not saved. Try again when you leave the field.</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.none" datatype="html">
+        <source>Aucune preuve jointe. Un dossier clos sans preuve s'affirme efficace sans le démontrer.</source>
+        <target state="translated">No evidence attached. A case closed without evidence claims to be effective without showing it.</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.load-error" datatype="html">
+        <source>Les preuves n'ont pas pu être lues.</source>
+        <target state="translated">The evidence could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.remove-failed" datatype="html">
+        <source>La preuve n'a pas été retirée.</source>
+        <target state="translated">The evidence was not removed.</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.full" datatype="html">
+        <source>Dix preuves, c'est la limite : retirez-en une pour en joindre une autre.</source>
+        <target state="translated">Ten pieces of evidence is the limit: remove one to attach another.</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.remove-aria" datatype="html">
+        <source>Retirer la preuve <x id="nom"/></source>
+        <target state="translated">Remove evidence <x id="nom"/></target>
+      </trans-unit>
       <trans-unit id="nc.detail.blockers-resolve" datatype="html">
         <source>Cet écart ne peut pas encore être résolu</source>
         <target state="translated">This non-conformity cannot be resolved yet</target>

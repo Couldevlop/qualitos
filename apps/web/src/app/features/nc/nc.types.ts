@@ -196,6 +196,8 @@ export interface NcCapaCaseRef {
   id: string;
   title?: string;
   status?: string;
+  /** La note libre tenue à côté des preuves du dossier (D6) ; absente tant qu'on n'en a pas écrit. */
+  effectivenessComment?: string;
 }
 
 /** Les motifs que le serveur énumère ; l'écran les rédige. */

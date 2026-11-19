@@ -135,7 +135,7 @@ class CapaServiceTest {
         LocalDate due = LocalDate.now().plusDays(10);
         CapaDto.UpdateCaseRequest req = new CapaDto.UpdateCaseRequest(
                 "t2", "d2", CapaCriticity.CRITICAL, "ref2", rc, due,
-                null, null, null, null, null);
+                null, null, null, null, null, null);
         service.updateCase(c.getId(), req);
         assertThat(c.getTitle()).isEqualTo("t2");
         assertThat(c.getCriticity()).isEqualTo(CapaCriticity.CRITICAL);
@@ -149,7 +149,7 @@ class CapaServiceTest {
         when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
         assertThatThrownBy(() -> service.updateCase(c.getId(),
                 new CapaDto.UpdateCaseRequest("x", null, null, null, null, null,
-                        null, null, null, null, null)))
+                        null, null, null, null, null, null)))
                 .isInstanceOf(CapaStateException.class);
     }
 
@@ -159,7 +159,7 @@ class CapaServiceTest {
         when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
         assertThatThrownBy(() -> service.updateCase(c.getId(),
                 new CapaDto.UpdateCaseRequest("x", null, null, null, null, null,
-                        null, null, null, null, null)))
+                        null, null, null, null, null, null)))
                 .isInstanceOf(CapaStateException.class);
     }
 
@@ -169,7 +169,7 @@ class CapaServiceTest {
     private CapaDto.UpdateCaseRequest verification(Boolean exigee, UUID qui,
                                                    String nom, String consignes) {
         return new CapaDto.UpdateCaseRequest(null, null, null, null, null, null,
-                exigee, qui, nom, consignes, null);
+                exigee, qui, nom, consignes, null, null);
     }
 
     @Test
@@ -249,7 +249,7 @@ class CapaServiceTest {
 
         // La mise a jour est PARTIELLE : ne rien dire n'est pas dire « non ».
         service.updateCase(c.getId(), new CapaDto.UpdateCaseRequest(
-                "nouveau titre", null, null, null, null, null, null, null, null, null, null));
+                "nouveau titre", null, null, null, null, null, null, null, null, null, null, null));
 
         assertThat(c.getTitle()).isEqualTo("nouveau titre");
         assertThat(c.getVerificationRequired()).isTrue();
@@ -1864,6 +1864,50 @@ class CapaServiceTest {
     }
 
     @Test
+    void laNoteDEfficaciteSEnregistreEtSeRelitSurLaFiche() {
+        CapaCase c = capa(TENANT, CapaStatus.IN_PROGRESS);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(caseRepo.save(any())).thenAnswer(i -> i.getArgument(0));
+
+        service.updateCase(c.getId(), new CapaDto.UpdateCaseRequest(null, null, null, null, null, null,
+                null, null, null, null, null, "Zero retour client sur deux trimestres"));
+
+        assertThat(c.getEffectivenessComment()).isEqualTo("Zero retour client sur deux trimestres");
+        assertThat(service.findById(c.getId()).effectivenessComment())
+                .isEqualTo("Zero retour client sur deux trimestres");
+    }
+
+    @Test
+    void laNoteDEfficaciteNEstNiLeCritereNiLeVerdict() {
+        // Le critere dit ce qu'on mesurera, le verdict est rendu et signe ; la
+        // note est libre. Ecrire la note ne doit toucher ni l'un ni l'autre.
+        CapaCase c = capa(TENANT, CapaStatus.IN_PROGRESS);
+        c.setEffectivenessCriterion("Moins de 2 % de rebuts");
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(caseRepo.save(any())).thenAnswer(i -> i.getArgument(0));
+
+        service.updateCase(c.getId(), new CapaDto.UpdateCaseRequest(null, null, null, null, null, null,
+                null, null, null, null, null, "Suivi sur trois mois, aucun ecart"));
+
+        assertThat(c.getEffectivenessCriterion()).isEqualTo("Moins de 2 % de rebuts");
+        assertThat(c.getEffectivenessComment()).isEqualTo("Suivi sur trois mois, aucun ecart");
+    }
+
+    @Test
+    void laNoteDEfficaciteNeSEcritPlusSurUnDossierClos() {
+        // Un dossier clos ne se recrit pas : sa note non plus.
+        CapaCase c = capa(TENANT, CapaStatus.CLOSED);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+
+        assertThatThrownBy(() -> service.updateCase(c.getId(),
+                new CapaDto.UpdateCaseRequest(null, null, null, null, null, null,
+                        null, null, null, null, null, "tentative apres cloture")))
+                .isInstanceOf(CapaStateException.class);
+
+        assertThat(c.getEffectivenessComment()).isNull();
+    }
+
+    @Test
     void laListePagineeNeVaPasChercherLeDernierVerdictParLigne() {
         // Une requete par ligne pour une information que la liste n'affiche pas.
         CapaCase c = capa(TENANT, CapaStatus.IN_PROGRESS);
@@ -1882,7 +1926,7 @@ class CapaServiceTest {
         when(reviews.findByCase(TENANT, c.getId())).thenReturn(List.of());
 
         service.updateCase(c.getId(), new CapaDto.UpdateCaseRequest(null, null, null, null, null,
-                null, null, null, null, null, "  Moins de 2 % de rebuts sur 3 mois  "));
+                null, null, null, null, null, "  Moins de 2 % de rebuts sur 3 mois  ", null));
 
         assertThat(c.getEffectivenessCriterion()).isEqualTo("Moins de 2 % de rebuts sur 3 mois");
     }
@@ -1901,7 +1945,7 @@ class CapaServiceTest {
 
         assertThatThrownBy(() -> service.updateCase(c.getId(),
                 new CapaDto.UpdateCaseRequest(null, null, null, null, null, null,
-                        null, null, null, null, "un critere tout autre")))
+                        null, null, null, null, "un critere tout autre", null)))
                 .isInstanceOf(CapaStateException.class)
                 .hasMessageContaining("already been evaluated");
 
@@ -1918,7 +1962,7 @@ class CapaServiceTest {
         when(caseRepo.save(c)).thenReturn(c);
 
         service.updateCase(c.getId(), new CapaDto.UpdateCaseRequest(null, null, null, null, null,
-                null, null, null, null, null, "Moins de 2 % de rebuts"));
+                null, null, null, null, null, "Moins de 2 % de rebuts", null));
 
         assertThat(c.getEffectivenessCriterion()).isEqualTo("Moins de 2 % de rebuts");
         verify(reviews, never()).findByCase(any(), any());

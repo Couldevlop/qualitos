@@ -21,6 +21,7 @@ import { FiveWhysAnalysis } from '../../../five-whys/five-whys.types';
 import { IshikawaService } from '../../../ishikawa/ishikawa.service';
 import { IshikawaDiagramResponse } from '../../../ishikawa/ishikawa.types';
 import { NcService } from '../../nc.service';
+import { CapaService } from '../../../capa/capa.service';
 import { NcPhoto, NcResponse, NcStatus, VisionAnalysis } from '../../nc.types';
 import { NcDetailComponent } from './nc-detail.component';
 import {
@@ -36,6 +37,7 @@ import {
 import {
   CapaActionPanelStubComponent, CapaActionPanelStubModule
 } from '../../../capa/components/capa-action-panel/testing/capa-action-panel.stub';
+import { CapaEvidencePanelStubModule } from '../../../capa/components/capa-evidence-panel/testing/capa-evidence-panel.stub';
 
 /**
  * Un annuaire muet : ces bancs ne portent pas sur le choix des personnes, et
@@ -127,7 +129,7 @@ describe('NcDetailComponent — section photos', () => {
       declarations: [NcDetailComponent],
       imports: [SharedModule, UiModule, UserPickerModule, FiveWhysSharedModule,
                 IshikawaSharedModule, NoopAnimationsModule,
-                CapaActionPanelStubModule, NcCauseAnalysisStubModule],
+                CapaActionPanelStubModule, CapaEvidencePanelStubModule, NcCauseAnalysisStubModule],
       providers: [
         { provide: DirectoryService, useValue: ANNUAIRE_MUET },
         // Tous les droits : ces bancs testent l'écran, pas la matrice (ADR 0078).
@@ -137,6 +139,7 @@ describe('NcDetailComponent — section photos', () => {
         { provide: AuthService, useValue: { snapshot: () => ({ userId: 'u1' }) } },
         { provide: FiveWhysService, useValue: fiveWhysSpy() },
         { provide: IshikawaService, useValue: ishikawaSpy() },
+        { provide: CapaService, useValue: { updateCase: () => of({}) } },
         {
           provide: ActivatedRoute,
           useValue: { snapshot: { paramMap: convertToParamMap({ id: 'nc-1' }) } }
@@ -494,7 +497,7 @@ describe('NcDetailComponent — workflow et escalade CAPA', () => {
       declarations: [NcDetailComponent],
       imports: [SharedModule, UiModule, UserPickerModule, FiveWhysSharedModule,
                 IshikawaSharedModule, NoopAnimationsModule,
-                CapaActionPanelStubModule, NcCauseAnalysisStubModule],
+                CapaActionPanelStubModule, CapaEvidencePanelStubModule, NcCauseAnalysisStubModule],
       providers: [
         { provide: DirectoryService, useValue: ANNUAIRE_MUET },
         // Tous les droits : ces bancs testent l'écran, pas la matrice (ADR 0078).
@@ -504,6 +507,7 @@ describe('NcDetailComponent — workflow et escalade CAPA', () => {
         { provide: AuthService, useValue: { snapshot: () => currentUser } },
         { provide: FiveWhysService, useValue: fiveWhysSpy() },
         { provide: IshikawaService, useValue: ishikawaSpy() },
+        { provide: CapaService, useValue: { updateCase: () => of({}) } },
         { provide: ActivatedRoute, useValue: { snapshot: { paramMap: { get: () => routeId } } } }
       ]
     }).compileComponents();
@@ -973,7 +977,7 @@ describe('NcDetailComponent — entrée 5 Pourquoi', () => {
       declarations: [NcDetailComponent],
       imports: [SharedModule, UiModule, UserPickerModule, FiveWhysSharedModule,
                 IshikawaSharedModule, NoopAnimationsModule,
-                CapaActionPanelStubModule, NcCauseAnalysisStubModule],
+                CapaActionPanelStubModule, CapaEvidencePanelStubModule, NcCauseAnalysisStubModule],
       providers: [
         { provide: DirectoryService, useValue: ANNUAIRE_MUET },
         // Tous les droits : ces bancs testent l'écran, pas la matrice (ADR 0078).
@@ -983,6 +987,7 @@ describe('NcDetailComponent — entrée 5 Pourquoi', () => {
         { provide: AuthService, useValue: { snapshot: () => ({ userId: 'u1' }) } },
         { provide: FiveWhysService, useValue: fiveWhys },
         { provide: IshikawaService, useValue: ishikawa },
+        { provide: CapaService, useValue: { updateCase: () => of({}) } },
         { provide: ActivatedRoute, useValue: { snapshot: { paramMap: convertToParamMap({ id: UUID }) } } }
       ]
     }).compileComponents();
@@ -1139,7 +1144,7 @@ describe('NcDetailComponent — entrée Ishikawa', () => {
       declarations: [NcDetailComponent],
       imports: [SharedModule, UiModule, UserPickerModule, FiveWhysSharedModule,
                 IshikawaSharedModule, NoopAnimationsModule,
-                CapaActionPanelStubModule, NcCauseAnalysisStubModule],
+                CapaActionPanelStubModule, CapaEvidencePanelStubModule, NcCauseAnalysisStubModule],
       providers: [
         { provide: DirectoryService, useValue: ANNUAIRE_MUET },
         // Tous les droits : ces bancs testent l'écran, pas la matrice (ADR 0078).
@@ -1149,6 +1154,7 @@ describe('NcDetailComponent — entrée Ishikawa', () => {
         { provide: AuthService, useValue: { snapshot: () => ({ userId: 'u1' }) } },
         { provide: FiveWhysService, useValue: fiveWhysSpy() },
         { provide: IshikawaService, useValue: ishikawa },
+        { provide: CapaService, useValue: { updateCase: () => of({}) } },
         { provide: ActivatedRoute, useValue: { snapshot: { paramMap: convertToParamMap({ id: UUID }) } } }
       ]
     }).compileComponents();
@@ -1270,7 +1276,7 @@ describe('NcDetailComponent — conversion en cycle ou en projet', () => {
       declarations: [NcDetailComponent],
       imports: [SharedModule, UiModule, UserPickerModule, FiveWhysSharedModule,
                 IshikawaSharedModule, NoopAnimationsModule,
-                CapaActionPanelStubModule, NcCauseAnalysisStubModule],
+                CapaActionPanelStubModule, CapaEvidencePanelStubModule, NcCauseAnalysisStubModule],
       providers: [
         { provide: DirectoryService, useValue: ANNUAIRE_MUET },
         { provide: AuthzService, useValue: { can: () => of(true) } },
@@ -1279,6 +1285,7 @@ describe('NcDetailComponent — conversion en cycle ou en projet', () => {
         { provide: AuthService, useValue: { snapshot: () => ({ userId: 'u1' }) } },
         { provide: FiveWhysService, useValue: fiveWhysSpy() },
         { provide: IshikawaService, useValue: ishikawaSpy() },
+        { provide: CapaService, useValue: { updateCase: () => of({}) } },
         { provide: ActivatedRoute, useValue: { snapshot: { paramMap: { get: () => UUID } } } }
       ]
     }).compileComponents();
