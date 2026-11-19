@@ -180,7 +180,7 @@ class NcServiceTest {
         when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
         when(repo.save(n)).thenReturn(n);
 
-        service.update(n.getId(), new NcDto.UpdateRequest(null, null, null, "", null, null, null, null,
+        service.update(n.getId(), new NcDto.UpdateRequest(null, null, null, "", null, null, null, null, null,
                 null, null, null, null, null, null, null, null, null, null));
 
         assertThat(n.getSubcategoryCode()).isNull();
@@ -198,7 +198,7 @@ class NcServiceTest {
                 .thenThrow(new NcValidationException("belongs to category PRODUCT"));
 
         assertThatThrownBy(() -> service.update(n.getId(), new NcDto.UpdateRequest(
-                null, null, NcCategory.SUPPLIER, null, null, null, null, null, null, null, null, null, null, null, null, null,
+                null, null, NcCategory.SUPPLIER, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
                 null, null)))
                 .isInstanceOf(NcValidationException.class);
     }
@@ -210,7 +210,7 @@ class NcServiceTest {
         when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
         when(repo.save(n)).thenReturn(n);
 
-        service.update(n.getId(), new NcDto.UpdateRequest("t2", null, null, null, null, null, null, null,
+        service.update(n.getId(), new NcDto.UpdateRequest("t2", null, null, null, null, null, null, null, null,
                 null, null, null, null, null, null, null, null, null, null));
 
         assertThat(n.getSubcategoryCode()).isEqualTo("PRD-DIM");
@@ -279,7 +279,7 @@ class NcServiceTest {
         when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
         when(repo.save(n)).thenReturn(n);
         service.update(n.getId(), new NcDto.UpdateRequest(
-                "t2", "d2", NcCategory.SUPPLIER, null, NcSeverity.CRITICAL, "zoneB", 1.0, 2.0, "u1\nu2",
+                "t2", "d2", NcCategory.SUPPLIER, null, NcSeverity.CRITICAL, null, "zoneB", 1.0, 2.0, "u1\nu2",
                 NcOrigin.EXTERNAL, null, null, null, null, null, null, null, null));
         assertThat(n.getTitle()).isEqualTo("t2");
         assertThat(n.getCategory()).isEqualTo(NcCategory.SUPPLIER);
@@ -296,7 +296,7 @@ class NcServiceTest {
         NonConformity n = nc(TENANT, NcStatus.CLOSED);
         when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
         assertThatThrownBy(() -> service.update(n.getId(),
-                new NcDto.UpdateRequest("x", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null)))
+                new NcDto.UpdateRequest("x", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null)))
                 .isInstanceOf(NcStateException.class);
     }
 
@@ -305,7 +305,7 @@ class NcServiceTest {
         NonConformity n = nc(TENANT, NcStatus.CANCELLED);
         when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
         assertThatThrownBy(() -> service.update(n.getId(),
-                new NcDto.UpdateRequest("x", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null)))
+                new NcDto.UpdateRequest("x", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null)))
                 .isInstanceOf(NcStateException.class);
     }
 
@@ -336,6 +336,77 @@ class NcServiceTest {
         when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
         assertThatThrownBy(() -> service.startAnalysis(n.getId(),
                 new NcDto.StartAnalysisRequest(null))).isInstanceOf(NcStateException.class);
+    }
+
+    /**
+     * L'ECART QUI N'AVAIT PLUS DE SUITE.
+     *
+     * <p>Le confinement du D3 s'ecrit avant la recherche de cause : on ouvre le
+     * dossier CAPA sur un ecart a peine declare pour proteger le client tout de
+     * suite. L'ecart restait OPEN, passait UNDER_ANALYSIS au premier clic sur
+     * « Analyser » -- et n'en sortait plus jamais, puisque l'ouverture du
+     * dossier est le seul chemin vers ACTION_DEFINED et qu'un second dossier
+     * est refuse. « Resoudre » restait eteint a vie, sans un mot.
+     */
+    @Test
+    void analyser_un_ecart_qui_porte_deja_son_dossier_definit_l_action() {
+        NonConformity n = nc(TENANT, NcStatus.OPEN);
+        n.setCapaCaseId(UUID.randomUUID());
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+        when(repo.save(n)).thenReturn(n);
+
+        service.startAnalysis(n.getId(), new NcDto.StartAnalysisRequest("cause racine X"));
+
+        assertThat(n.getStatus()).isEqualTo(NcStatus.ACTION_DEFINED);
+        assertThat(n.getRootCause()).isEqualTo("cause racine X");
+    }
+
+    /** Sans dossier, rien ne change : l'analyse s'ouvre seule. */
+    @Test
+    void analyser_un_ecart_sans_dossier_ouvre_l_analyse_seule() {
+        NonConformity n = nc(TENANT, NcStatus.OPEN);
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+        when(repo.save(n)).thenReturn(n);
+
+        service.startAnalysis(n.getId(), null);
+
+        assertThat(n.getStatus()).isEqualTo(NcStatus.UNDER_ANALYSIS);
+    }
+
+    /**
+     * LA DATE DU CONSTAT SE CORRIGE.
+     *
+     * <p>Une reclamation recue lundi et enregistree jeudi portait jeudi, sans
+     * recours : c'est pourtant cette date qui fait courir le delai de reponse
+     * du par le client, et qui range l'ecart dans le bon mois.
+     */
+    @Test
+    void la_date_du_constat_se_corrige() {
+        NonConformity n = nc(TENANT, NcStatus.OPEN);
+        Instant lundi = Instant.parse("2026-11-16T09:00:00Z");
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+        when(repo.save(n)).thenReturn(n);
+
+        service.update(n.getId(), new NcDto.UpdateRequest(
+                null, null, null, null, null, lundi, null, null, null, null, null,
+                null, null, null, null, null, null, null, null));
+
+        assertThat(n.getDetectedAt()).isEqualTo(lundi);
+    }
+
+    /** Absente, elle ne touche a rien : la mise a jour reste partielle. */
+    @Test
+    void la_date_du_constat_absente_ne_touche_a_rien() {
+        NonConformity n = nc(TENANT, NcStatus.OPEN);
+        Instant avant = n.getDetectedAt();
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+        when(repo.save(n)).thenReturn(n);
+
+        service.update(n.getId(), new NcDto.UpdateRequest(
+                "titre corrige", null, null, null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null));
+
+        assertThat(n.getDetectedAt()).isEqualTo(avant);
     }
 
     // --- defineAction ---
@@ -1018,7 +1089,7 @@ class NcServiceTest {
         when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
 
         assertThatThrownBy(() -> service.update(n.getId(), new NcDto.UpdateRequest(
-                "autre titre", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+                "autre titre", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
                 null, null)))
                 .isInstanceOf(NcStateException.class)
                 .hasMessageContaining("REJECTED");
@@ -1117,7 +1188,7 @@ class NcServiceTest {
 
         // Le lot n est pas dans la requete : il reste.
         service.update(n.getId(), new NcDto.UpdateRequest(
-                null, null, null, null, null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null, null, null,
                 "", null, null, null, null, null, null));
 
         assertThat(n.getCustomerName()).isNull();
@@ -1142,7 +1213,7 @@ class NcServiceTest {
         when(repo.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
         NcDto.Response r = service.update(n.getId(), new NcDto.UpdateRequest(
-                null, null, null, null, null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null, null, null,
                 null, null, null, null, null, null,
                 "Piste fournisseur ecartee : lot conforme au controle d entree"));
 
@@ -1162,7 +1233,7 @@ class NcServiceTest {
         when(repo.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
         service.update(n.getId(), new NcDto.UpdateRequest(
-                null, null, null, null, null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null, null, null,
                 null, null, null, null, null, null, "   "));
 
         assertThat(n.getCauseAnalysisComment()).isNull();
@@ -1177,7 +1248,7 @@ class NcServiceTest {
         when(repo.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
         service.update(n.getId(), new NcDto.UpdateRequest(
-                "autre titre", null, null, null, null, null, null, null, null, null,
+                "autre titre", null, null, null, null, null, null, null, null, null, null,
                 null, null, null, null, null, null, null, null));
 
         assertThat(n.getCauseAnalysisComment()).isEqualTo("Deja note");

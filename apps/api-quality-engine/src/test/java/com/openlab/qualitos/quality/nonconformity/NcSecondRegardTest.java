@@ -395,7 +395,7 @@ class NcSecondRegardTest {
 
         // La zone est en 6e position ; la designation en 14e et 15e, intouchee.
         service.update(n.getId(), new NcDto.UpdateRequest(
-                null, null, null, null, null, "Atelier 7", null, null, null, null,
+                null, null, null, null, null, null, "Atelier 7", null, null, null, null,
                 null, null, null, null, null, null, null, null));
 
         assertThat(n.getZone()).isEqualTo("Atelier 7");
@@ -416,7 +416,7 @@ class NcSecondRegardTest {
 
     private NcDto.UpdateRequest modificationValideur(UUID valideur, String nomValideur) {
         return new NcDto.UpdateRequest(
-                null, null, null, null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null, null,
                 null, null, null, valideur, nomValideur, null, null, null);
     }
 

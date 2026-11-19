@@ -245,6 +245,27 @@ class NcControllerTest {
         mockMvc.perform(get("/api/v1/nc/{id}", NC)).andExpect(status().isNotFound());
     }
 
+    // On ne constate pas un fait a venir : la date du constat est bornee a
+    // aujourd'hui. Sans cette borne, un ecart « detecte » l'an prochain
+    // disparaissait de tous les comptages du mois en cours.
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
+    void update_dateDeConstatDansLeFutur_returns400() throws Exception {
+        mockMvc.perform(put("/api/v1/nc/{id}", NC).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"detectedAt\":\"2099-01-01T00:00:00Z\"}"))
+                .andExpect(status().isBadRequest());
+        verify(service, never()).update(any(), any());
+    }
+
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
+    void update_dateDeConstatCorrigee_returns200() throws Exception {
+        when(service.update(eq(NC), any())).thenReturn(resp(NcStatus.OPEN));
+        mockMvc.perform(put("/api/v1/nc/{id}", NC).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"detectedAt\":\"2026-11-16T09:00:00Z\"}"))
+                .andExpect(status().isOk());
+    }
+
     @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void update_success() throws Exception {
         when(service.update(eq(NC), any())).thenReturn(resp(NcStatus.OPEN));

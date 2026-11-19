@@ -250,6 +250,10 @@ public class NcService {
             nc.setSubcategoryCode(subcategories.resolve(nc.getSubcategoryCode(), nc.getCategory()));
         }
         if (request.severity() != null) nc.setSeverity(request.severity());
+        // La date du constat se corrige, elle ne s'efface pas : l'entité en
+        // exige une, et un écart sans date de détection ne se range dans aucun
+        // mois.
+        if (request.detectedAt() != null) nc.setDetectedAt(request.detectedAt());
         if (request.zone() != null) nc.setZone(request.zone());
         if (request.geoLat() != null) nc.setGeoLat(request.geoLat());
         if (request.geoLng() != null) nc.setGeoLng(request.geoLng());
@@ -290,12 +294,33 @@ public class NcService {
 
     // --- workflow ---
 
+    /**
+     * Ouvre l'analyse d'un écart (D4).
+     *
+     * <p><b>Un dossier déjà ouvert fait franchir les deux pas à la fois.</b> Le
+     * confinement du D3 s'écrit AVANT la recherche de cause -- c'est l'ordre de
+     * la méthode, et l'écran le permet : on ouvre le dossier CAPA sur un écart
+     * à peine déclaré pour protéger le client tout de suite. L'écart restait
+     * alors {@code OPEN}, puis passait {@code UNDER_ANALYSIS} — et n'en
+     * sortait plus jamais : {@link #escalateToCapa} est le seul chemin vers
+     * {@link NcStatus#ACTION_DEFINED}, et il refuse un second dossier. Le
+     * bouton « Résoudre » restait éteint à vie, sans un mot, puisque les
+     * motifs ne s'instruisent qu'à partir de cette étape.
+     *
+     * <p>L'invariant ne bouge pas, il s'applique dans l'autre sens : « ouvrir
+     * la CAPA, c'est définir l'action ». Si l'action était déjà écrite quand
+     * l'analyse s'ouvre, les deux faits sont vrais au même instant, et l'écart
+     * est à {@code ACTION_DEFINED}. Sans dossier, rien ne change : l'analyse
+     * s'ouvre seule, comme avant.
+     */
     public NcDto.Response startAnalysis(UUID id, NcDto.StartAnalysisRequest request) {
         NonConformity nc = load(id);
         if (nc.getStatus() != NcStatus.OPEN) {
             throw new NcStateException("Only OPEN non-conformities can move to analysis");
         }
-        nc.setStatus(NcStatus.UNDER_ANALYSIS);
+        nc.setStatus(nc.getCapaCaseId() == null
+                ? NcStatus.UNDER_ANALYSIS
+                : NcStatus.ACTION_DEFINED);
         if (request != null && request.rootCause() != null) {
             nc.setRootCause(request.rootCause());
         }

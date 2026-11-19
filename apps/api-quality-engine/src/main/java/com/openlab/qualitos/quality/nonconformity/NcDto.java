@@ -6,6 +6,7 @@ import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
@@ -137,6 +138,21 @@ public final class NcDto {
              */
             @Size(max = 30) String subcategoryCode,
             NcSeverity severity,
+            /**
+             * Quand le fait a eu lieu : détecté en interne, reçu du client
+             * dehors. Il se saisit à la déclaration, et il se CORRIGE ici.
+             *
+             * <p>Une réclamation reçue lundi et enregistrée jeudi portait jeudi,
+             * sans recours : c'est pourtant cette date qui fait courir le délai
+             * de réponse qu'on doit au client, et qui range l'écart dans le bon
+             * mois des indicateurs.
+             *
+             * <p>{@code @PastOrPresent} : on ne constate pas un fait à venir.
+             * Absent = inchangé, comme tout le reste de cette requête partielle
+             * -- et la date, elle, ne s'efface pas : l'entité la veut toujours.
+             */
+            @PastOrPresent(message = "detectedAt must not be in the future")
+            Instant detectedAt,
             @Size(max = 255) String zone,
             @DecimalMin("-90.0") @DecimalMax("90.0") Double geoLat,
             @DecimalMin("-180.0") @DecimalMax("180.0") Double geoLng,
