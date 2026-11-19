@@ -5,6 +5,7 @@ import { SharedModule } from '../../shared/shared.module';
 import { UiModule } from '../../shared/ui/ui.module';
 import { UserPickerModule } from '../../shared/user-picker/user-picker.module';
 import { CapaActionDialogComponent } from './pages/capa-action-dialog/capa-action-dialog.component';
+import { CapaVerificationFieldsModule } from './capa-verification-fields.module';
 
 /**
  * LA fenêtre d'une action CAPA, seule, pour que chaque écran l'ouvre : le
@@ -22,7 +23,11 @@ import { CapaActionDialogComponent } from './pages/capa-action-dialog/capa-actio
   // est une question fermée à trois réponses (endiguement, corrective,
   // préventive). UserPickerModule : le responsable se choisit dans l'annuaire
   // (ADR 0091), jamais par son identifiant.
-  imports: [SharedModule, UiModule, UserPickerModule, MatRadioModule],
+  // CapaVerificationFieldsModule : la question « vérification exigée ? », le
+  // MÊME bloc qu'à l'ouverture d'un dossier (ADR 0073) -- deux formulations de
+  // la même décision divergeraient à la première retouche.
+  imports: [SharedModule, UiModule, UserPickerModule, MatRadioModule,
+            CapaVerificationFieldsModule],
   exports: [CapaActionDialogComponent]
 })
 export class CapaActionDialogModule {}

@@ -14,6 +14,7 @@ import { UiModule } from '../../../../shared/ui/ui.module';
 import { UserPickerModule } from '../../../../shared/user-picker/user-picker.module';
 import { FiveWhysService } from '../../../five-whys/five-whys.service';
 import { IshikawaService } from '../../../ishikawa/ishikawa.service';
+import { CapaService } from '../../../capa/capa.service';
 import { NcService } from '../../nc.service';
 import { NcResponse, NcStatus, TeamMemberRef } from '../../nc.types';
 import { NcDetailComponent } from './nc-detail.component';
@@ -21,6 +22,7 @@ import {
   NcCauseAnalysisStubModule
 } from '../../components/nc-cause-analysis/testing/nc-cause-analysis.stub';
 import { CapaActionPanelStubModule } from '../../../capa/components/capa-action-panel/testing/capa-action-panel.stub';
+import { CapaEvidencePanelStubModule } from '../../../capa/components/capa-evidence-panel/testing/capa-evidence-panel.stub';
 
 const EQUIPE: TeamMemberRef[] = [
   { accountId: 'u-alice', displayName: 'Alice Martin' },
@@ -90,7 +92,7 @@ describe('NcDetailComponent — équipe en charge', () => {
     await TestBed.configureTestingModule({
       declarations: [NcDetailComponent],
       imports: [SharedModule, UiModule, UserPickerModule, NoopAnimationsModule,
-                CapaActionPanelStubModule, NcCauseAnalysisStubModule],
+                CapaActionPanelStubModule, CapaEvidencePanelStubModule, NcCauseAnalysisStubModule],
       providers: [
         { provide: NcService, useValue: svc },
         { provide: MatSnackBar, useValue: snack },
@@ -106,6 +108,7 @@ describe('NcDetailComponent — équipe en charge', () => {
           provide: IshikawaService,
           useValue: jasmine.createSpyObj<IshikawaService>('IshikawaService', { listForNc: of([]) })
         },
+        { provide: CapaService, useValue: { updateCase: () => of({}) } },
         {
           provide: ActivatedRoute,
           useValue: { snapshot: { paramMap: convertToParamMap({ id: 'nc-1' }) } }

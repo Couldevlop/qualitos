@@ -100,6 +100,19 @@ public class CapaCase {
     private String effectivenessCriterion;
 
     /**
+     * Le commentaire d'efficacité : la note libre qui accompagne les preuves du
+     * dossier — « vérifié sur trois cycles, aucun rebut entre le 2 et le 20 ».
+     *
+     * <p>Trois textes voisins cohabitent sur un dossier, et les confondre coûte
+     * cher : {@code effectivenessCriterion} dit ce qu'on MESURERA et se pose à
+     * l'ouverture ; le commentaire d'une évaluation porte un JUGEMENT rendu,
+     * signé par son auteur ; celui-ci n'est ni l'un ni l'autre. Il court à côté
+     * des pièces, avant tout verdict, et personne n'est tenu de le remplir.
+     */
+    @Column(name = "effectiveness_comment", columnDefinition = "TEXT")
+    private String effectivenessComment;
+
+    /**
      * Une vérification d'efficacité est-elle EXIGÉE sur ce dossier ?
      *
      * <p>À distinguer de {@code effectivenessVerified}, qui dit si elle a eu

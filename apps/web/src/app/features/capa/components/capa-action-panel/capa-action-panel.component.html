@@ -50,7 +50,7 @@
           <th scope="col" i18n="@@capa.action.decided-on">Date de début</th>
           <th scope="col" i18n="@@capa.detail.due-date">Échéance</th>
           <th scope="col" i18n="@@common.status">Statut</th>
-          <th scope="col" i18n="@@capa.detail.col-evidence">Preuve</th>
+          <th scope="col" *ngIf="colonnePreuve" i18n="@@capa.detail.col-evidence">Preuve</th>
           <th scope="col" class="actions__col-geste"><span class="sr-only" i18n="@@common.actions">Actions</span></th>
         </tr>
       </thead>
@@ -83,7 +83,8 @@
                du dossier, restees sur la fiche, qui attestent que le probleme
                a cesse. Le clic ne doit pas ouvrir la ligne : joindre une piece
                et corriger l'action sont deux gestes. -->
-          <td class="actions__preuve" [class.actions__preuve--occupee]="preuveEnCours === a.id"
+          <td class="actions__preuve" *ngIf="colonnePreuve"
+              [class.actions__preuve--occupee]="preuveEnCours === a.id"
               (click)="$event.stopPropagation()" data-test="capa-action-preuve">
             <ng-container *ngIf="preuve(a.id) as piece; else sansPreuve">
               <a class="actions__piece" *ngIf="piece.url; else pieceSansLien"

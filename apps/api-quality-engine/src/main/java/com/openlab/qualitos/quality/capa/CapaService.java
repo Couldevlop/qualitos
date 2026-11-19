@@ -293,7 +293,8 @@ public class CapaService {
         Optional<UUID> seulement = CapaScope.restriction(scope);
         return dossiersDe(escaladeId, ncReference).stream()
                 .filter(c -> CapaScope.sees(seulement, c))
-                .map(c -> new CapaDto.CaseRef(c.getId(), c.getTitle(), c.getStatus()))
+                .map(c -> new CapaDto.CaseRef(c.getId(), c.getTitle(), c.getStatus(),
+                        c.getEffectivenessComment()))
                 .toList();
     }
 
@@ -536,6 +537,12 @@ public class CapaService {
         if (request.dueDate() != null) c.setDueDate(request.dueDate());
         if (request.effectivenessCriterion() != null) {
             appliquerCritere(c, request.effectivenessCriterion());
+        }
+        // Le commentaire n'a pas la garde du critere : il ne fonde aucun verdict,
+        // donc le reecrire ne retire son appui a personne. La seule borne est
+        // celle de la methode -- un dossier clos ne bouge plus.
+        if (request.effectivenessComment() != null) {
+            c.setEffectivenessComment(nettoyer(request.effectivenessComment()));
         }
         appliquerVerification(c, request.verificationRequired(), request.verificationAssigneeId(),
                 request.verificationAssigneeName(), request.verificationInstructions());
@@ -1153,7 +1160,8 @@ public class CapaService {
                 c.getRootCauseId(), c.getDueDate(),
                 c.getResolvedAt(), c.getClosedAt(),
                 c.getEffectivenessVerified(), c.getEffectivenessVerifiedAt(),
-                c.getEffectivenessCriterion(), detailed ? lastVerdict(c) : null,
+                c.getEffectivenessCriterion(), c.getEffectivenessComment(),
+                detailed ? lastVerdict(c) : null,
                 c.getVerificationRequired(), c.getVerificationAssigneeId(),
                 c.getVerificationAssigneeName(), c.getVerificationInstructions(),
                 c.getCreatedAt(), c.getUpdatedAt(),

@@ -205,6 +205,71 @@ describe('CapaActionDialogComponent', () => {
     });
   });
 
+  describe('la question « vérifiera-t-on l’efficacité ? »', () => {
+
+    it('la pose quand le dossier ne l’a pas tranchée, comme à l’ouverture d’un dossier', async () => {
+      await setup();
+      expect(composant.demandeVerification).toBeTrue();
+      expect(un('action-verification-demande')).not.toBeNull();
+    });
+
+    it('ne la repose pas quand le dossier a déjà répondu oui', async () => {
+      // Deux réponses contradictoires sur un même dossier, c'est une décision
+      // qu'on ne sait plus lire.
+      await setup({ verificationRequired: true });
+      expect(composant.demandeVerification).toBeFalse();
+      expect(un('action-verification-demande')).toBeNull();
+    });
+
+    it('ne la repose pas davantage quand le dossier a répondu non', async () => {
+      // Non est une réponse, pas une absence de réponse.
+      await setup({ verificationRequired: false });
+      expect(composant.demandeVerification).toBeFalse();
+      expect(un('action-verification-demande')).toBeNull();
+    });
+
+    it('ne la pose pas quand on CORRIGE une action : le dossier est déjà lancé', async () => {
+      await setup({ action: action() });
+      expect(composant.demandeVerification).toBeFalse();
+    });
+
+    it('ne la pose pas sur un dossier en lecture seule', async () => {
+      await setup({ readOnly: true });
+      expect(composant.demandeVerification).toBeFalse();
+    });
+
+    it('écrit la réponse sur le dossier AVANT l’action, en une seule mise à jour avec le critère',
+      async () => {
+        await setup();
+        composant.form.patchValue({
+          title: 'Recalibrer le cobot',
+          effectivenessCriterion: 'Aucun rebut sur ce défaut pendant 3 mois',
+          verificationRequired: true
+        });
+
+        composant.submit();
+
+        expect(ordre).toEqual(['updateCase', 'addAction']);
+        // Une seule requête : deux mises à jour de suite laisseraient le dossier
+        // à moitié décidé si la seconde échouait.
+        expect(capa.updateCase).toHaveBeenCalledTimes(1);
+        const envoye = capa.updateCase.calls.mostRecent().args[1];
+        expect(envoye.effectivenessCriterion).toBe('Aucun rebut sur ce défaut pendant 3 mois');
+        expect(envoye.verificationRequired).toBeTrue();
+      });
+
+    it('n’écrit rien sur le dossier quand on ne répond ni au critère ni à la question',
+      async () => {
+        await setup();
+        composant.form.patchValue({ title: 'Recalibrer le cobot' });
+
+        composant.submit();
+
+        expect(capa.updateCase).not.toHaveBeenCalled();
+        expect(ordre).toEqual(['addAction']);
+      });
+  });
+
   describe('l’équipe de l’écart, proposée en tête du sélecteur', () => {
 
     it('passe l’équipe reçue au sélecteur de responsable', async () => {

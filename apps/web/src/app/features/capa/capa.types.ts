@@ -259,6 +259,8 @@ export interface CapaEvidence {
 }
 
 export interface UpdateCapaCaseRequest {
+  /** La note libre tenue à côté des preuves ; absente = on n'y touche pas. */
+  effectivenessComment?: string;
   title?: string;
   description?: string;
   criticity?: CapaCriticity;

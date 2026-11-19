@@ -1,0 +1,39 @@
+.preuves-dossier {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.preuves-dossier__aide,
+.preuves-dossier__vide,
+.preuves-dossier__verrou {
+  margin: 0;
+  color: var(--qos-text-muted, rgba(0, 0, 0, .6));
+  font-size: .875rem;
+}
+
+.preuves-dossier__erreur { margin: 0; color: var(--qos-danger-fg, #b3261e); font-size: .875rem; }
+.preuves-dossier__coupe  { margin: 0; color: var(--qos-text-muted, rgba(0, 0, 0, .6)); font-size: .875rem; }
+
+.preuves-dossier__etat { display: flex; align-items: center; gap: 8px; font-size: .875rem; }
+
+.preuves-dossier__liste { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+
+.piece {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  border: 1px solid var(--qos-border, rgba(0, 0, 0, .12));
+  border-radius: 8px;
+}
+
+.piece__icone { flex: 0 0 auto; }
+.piece__nom   { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.piece__poids { flex: 0 0 auto; font-variant-numeric: tabular-nums; color: var(--qos-text-muted, rgba(0, 0, 0, .6)); font-size: .8125rem; }
+
+// Le sélecteur de fichier est piloté au clic du bouton : il ne doit pas occuper
+// de place ni recevoir le focus, sans pour autant être retiré de l'arbre.
+.preuves-dossier__selecteur { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+
+.preuves-dossier > button { align-self: flex-start; }

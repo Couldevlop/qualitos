@@ -645,6 +645,7 @@
                   </a>
                 </div>
                 <qos-capa-action-panel [capaCaseId]="d.id" [team]="n.teamMembers ?? []" [natures]="naturesD5"
+                                       [colonnePreuve]="false"
                                        (counted)="compter('D5', $event)"
                                        (changed)="reload()"></qos-capa-action-panel>
               </div>
@@ -678,15 +679,46 @@
               Photos, mesures, rapports de contrôle qui démontrent l’efficacité.
             </p>
 
-            <!-- Les preuves se joignent ACTION PAR ACTION, dans la colonne
-                 « Preuve » des tableaux ci-dessus : une pièce qui ne dit pas
-                 quelle action elle démontre ne prouve rien. Le D6 dit donc où
-                 elles vivent, et porte le jugement d'ensemble. -->
-            <p class="renvoi" i18n="@@nc.8d.d6-evidence-hint">
-              Chaque action porte sa propre pièce, dans la colonne « Preuve » des
-              tableaux D3, D5 et D7 : une pièce détachée de son action ne
-              démontre rien.
-            </p>
+            <!-- LES PREUVES DU DOSSIER. Elles ne remplacent pas les pieces
+                 des actions : une piece d'action atteste que CE geste-la a ete
+                 fait, et reste au D3, sur sa ligne. Ici on depose ce qui
+                 demontre que le PROBLEME a cesse -- releve, photo, procedure
+                 signee (ISO 9001 §10.2). Le D5 et le D7 n'ont plus de colonne
+                 de pieces : ce qu'ils avaient a prouver se prouve ici. -->
+            <ng-container *ngIf="dossiers(n).length; else sansDossierD6">
+              <div class="capa-dossier" *ngFor="let d of dossiers(n)">
+                <div class="capa-dossier-head" *ngIf="dossiers(n).length > 1">
+                  <span class="capa-dossier-titre">{{ d.title }}</span>
+                </div>
+                <qos-capa-evidence-panel [capaCaseId]="d.id" [statut]="$any(d.status)"
+                                         data-test="preuves-dossier"></qos-capa-evidence-panel>
+
+                <!-- LE COMMENTAIRE, facultatif : ce que les pieces ne disent pas
+                     d'elles-memes -- la periode observee, ce qu'on a mesure, ce
+                     qui reste a confirmer. Il n'est ni le critere (pose a
+                     l'ouverture, il dit ce qu'on MESURERA) ni le verdict (rendu
+                     et signe) : c'est la note qui court a cote des pieces. Il
+                     appartient au DOSSIER, donc il vit dans sa boucle. -->
+                <mat-form-field appearance="outline" class="full" subscriptSizing="dynamic"
+                                data-test="commentaire-efficacite">
+                  <mat-label i18n="@@nc.8d.d6-comment">Commentaire sur l’efficacité</mat-label>
+                  <textarea matInput rows="2" maxlength="4000"
+                            [value]="commentaireEfficacite(d)"
+                            data-test="commentaire-efficacite-champ"
+                            i18n-placeholder="@@nc.8d.d6-comment-placeholder"
+                            placeholder="Résultats de vérification, période de suivi…"
+                            (input)="saisirCommentaire(d, $any($event.target).value)"
+                            (blur)="enregistrerCommentaire(d)"></textarea>
+                  <mat-hint i18n="@@nc.8d.d6-comment-hint">Facultatif. Enregistré en quittant le champ.</mat-hint>
+                </mat-form-field>
+              </div>
+            </ng-container>
+            <ng-template #sansDossierD6>
+              <p class="renvoi" i18n="@@nc.8d.d6-no-case">
+                Aucun dossier n'est encore ouvert sur cet écart : les preuves
+                s'attachent au dossier, il faut donc commencer par en ouvrir un.
+              </p>
+            </ng-template>
 
             <div class="block" *ngIf="n.resolutionNote">
               <span class="info-label" i18n="@@nc.detail.resolution-note">Note de résolution</span>
@@ -709,16 +741,6 @@
               </div>
             </div>
 
-            <!-- Le verdict d'efficacité se prononce sur le DOSSIER, avec son
-                 critère annoncé d'avance (ADR 0108) : c'est là qu'il se juge, et
-                 le renvoi y emmène plutôt que de dupliquer le formulaire. -->
-            <div class="options" *ngIf="dossiers(n).length">
-              <a mat-stroked-button *ngFor="let d of dossiers(n)" [routerLink]="['/capa', d.id]"
-                 data-test="verdict-efficacite">
-                <mat-icon>verified</mat-icon>
-                <span i18n="@@nc.8d.d6-verdict">Juger l’efficacité</span>
-              </a>
-            </div>
           </section>
 
           <!-- ================= D7 — Actions préventives =================== -->
@@ -734,6 +756,7 @@
                   <span class="capa-dossier-titre">{{ d.title }}</span>
                 </div>
                 <qos-capa-action-panel [capaCaseId]="d.id" [team]="n.teamMembers ?? []" [natures]="naturesD7"
+                                       [colonnePreuve]="false"
                                        (counted)="compter('D7', $event)"
                                        (changed)="reload()"></qos-capa-action-panel>
               </div>

@@ -1,5 +1,5 @@
 import {
-  AfterViewInit, Component, ElementRef, OnDestroy, OnInit, QueryList, ViewChildren
+  AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, QueryList, ViewChildren
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -18,6 +18,7 @@ import {
   CapaCreateDialogComponent, CapaCreateDialogData, CapaOpened
 } from '../../../capa/pages/capa-create-dialog/capa-create-dialog.component';
 import { CapaActionType, CapaCriticity } from '../../../capa/capa.types';
+import { CapaService } from '../../../capa/capa.service';
 import { DirectoryUser } from '../../../../core/directory/directory.types';
 import { ConnectivityService } from '../../../../core/offline/connectivity.service';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../../../shared/ui/confirm-dialog/confirm-dialog.component';
@@ -173,6 +174,7 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly naturesD5: readonly CapaActionType[] = ['CORRECTIVE'];
   readonly naturesD7: readonly CapaActionType[] = ['PREVENTIVE'];
 
+
   /** L etape sous les yeux, suivie au defilement : le sommaire la souligne. */
   etapeActive: EtapeCode | null = null;
 
@@ -188,6 +190,14 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
    * portait que des actions correctives.
    */
   private readonly comptesParEtape = new Map<EtapeCode, number>();
+
+  /**
+   * Le commentaire d'efficacité en cours de frappe, par dossier.
+   *
+   * <p>Il n'existe que tant qu'il diffère de l'enregistré : une entrée restée
+   * là après un échec réseau est justement ce qui évite de réécrire la note.
+   */
+  private readonly brouillonsCommentaire = new Map<string, string>();
 
   /** Un panneau a fini de lire : le sommaire peut dire vrai pour sa discipline. */
   compter(code: EtapeCode, combien: number): void {
@@ -485,7 +495,9 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
     private readonly dialog: MatDialog,
     private readonly connectivity: ConnectivityService,
     private readonly fiveWhys: FiveWhysService,
-    private readonly ishikawa: IshikawaService
+    private readonly ishikawa: IshikawaService,
+    private readonly capaService: CapaService,
+    private readonly cdr: ChangeDetectorRef
   ) {}
 
   /** Le catalogue des natures, pour traduire le code porté par la NC. */
@@ -1309,6 +1321,46 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
    * <p>Repli sur `capaCaseId` quand le serveur ne renvoie pas encore la liste :
    * l'écran continue d'afficher le dossier qu'il connaît plutôt que rien.
    */
+  /**
+   * Le commentaire d'efficacité d'un dossier : son brouillon s'il a été touché,
+   * sinon ce que le serveur en sait.
+   */
+  commentaireEfficacite(d: NcCapaCaseRef): string {
+    return this.brouillonsCommentaire.get(d.id) ?? d.effectivenessComment ?? '';
+  }
+
+  saisirCommentaire(d: NcCapaCaseRef, texte: string): void {
+    this.brouillonsCommentaire.set(d.id, texte);
+  }
+
+  /**
+   * Enregistre au départ du champ, et seulement si le texte a changé.
+   *
+   * <p>Enregistrer à chaque frappe ferait une requête par lettre ; attendre un
+   * bouton ferait perdre la note à qui ferme la fiche. Le départ du champ est le
+   * moment où l'on a fini d'écrire, et c'est le seul qui ne demande rien.
+   */
+  enregistrerCommentaire(d: NcCapaCaseRef): void {
+    const texte = this.brouillonsCommentaire.get(d.id);
+    if (texte === undefined || texte === (d.effectivenessComment ?? '')) {
+      return;
+    }
+    this.capaService.updateCase(d.id, { effectivenessComment: texte }).subscribe({
+      next: () => {
+        d.effectivenessComment = texte;
+        this.brouillonsCommentaire.delete(d.id);
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        // Le brouillon RESTE : perdre la note sur un échec réseau la ferait
+        // réécrire de mémoire, et personne ne réécrit deux fois la même.
+        this.snack.open(
+          $localize`:@@nc.8d.d6-comment-failed:Le commentaire n'a pas été enregistré. Réessayez en quittant le champ.`,
+          $localize`:@@common.ok:OK`, { duration: 5000 });
+      }
+    });
+  }
+
   dossiers(n: NcResponse): NcCapaCaseRef[] {
     if (n.capaCases?.length) {
       return n.capaCases;

@@ -816,7 +816,8 @@ public class NcService {
         }
         return capaService.casesOf(nc.getCapaCaseId(), nc.getReference()).stream()
                 .map(c -> new NcDto.CapaCaseRef(c.id(), c.title(),
-                        c.status() == null ? null : c.status().name()))
+                        c.status() == null ? null : c.status().name(),
+                        c.effectivenessComment()))
                 .toList();
     }
 

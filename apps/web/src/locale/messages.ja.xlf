@@ -22277,6 +22277,46 @@ historique 12 mois</source>
         <source>2000 caractères maximum.</source>
         <target state="translated">最大2000文字です。</target>
       </trans-unit>
+      <trans-unit id="nc.8d.d6-no-case" datatype="html">
+        <source>Aucun dossier n'est encore ouvert sur cet écart : les preuves s'attachent au dossier, il faut donc commencer par en ouvrir un.</source>
+        <target state="translated">この不適合にはまだ案件がありません。証拠は案件に添付するため、まず案件を一つ開いてください。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d6-comment" datatype="html">
+        <source>Commentaire sur l'efficacité</source>
+        <target state="translated">有効性に関するコメント</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d6-comment-placeholder" datatype="html">
+        <source>Résultats de vérification, période de suivi…</source>
+        <target state="translated">検証結果、追跡期間など…</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d6-comment-hint" datatype="html">
+        <source>Facultatif. Enregistré en quittant le champ.</source>
+        <target state="translated">任意です。フィールドを離れると保存されます。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d6-comment-failed" datatype="html">
+        <source>Le commentaire n'a pas été enregistré. Réessayez en quittant le champ.</source>
+        <target state="translated">コメントを保存できませんでした。フィールドを離れるときに再試行してください。</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.none" datatype="html">
+        <source>Aucune preuve jointe. Un dossier clos sans preuve s'affirme efficace sans le démontrer.</source>
+        <target state="translated">証拠が添付されていません。証拠のないまま閉じた案件は、有効性を示さずに主張することになります。</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.load-error" datatype="html">
+        <source>Les preuves n'ont pas pu être lues.</source>
+        <target state="translated">証拠を読み込めませんでした。</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.remove-failed" datatype="html">
+        <source>La preuve n'a pas été retirée.</source>
+        <target state="translated">証拠を削除できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.full" datatype="html">
+        <source>Dix preuves, c'est la limite : retirez-en une pour en joindre une autre.</source>
+        <target state="translated">証拠は10件までです。別の証拠を添付するには、一つ削除してください。</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.remove-aria" datatype="html">
+        <source>Retirer la preuve <x id="nom"/></source>
+        <target state="translated">証拠 <x id="nom"/> を削除</target>
+      </trans-unit>
       <trans-unit id="nc.detail.blockers-resolve" datatype="html">
         <source>Cet écart ne peut pas encore être résolu</source>
         <target state="translated">この不適合はまだ解決できません</target>

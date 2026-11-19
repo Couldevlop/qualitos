@@ -57,6 +57,41 @@ describe('CapaListComponent', () => {
 
   afterEach(() => { environment.useMockApi = prevMock; });
 
+  describe('la colonne des natures', () => {
+
+    /** Un dossier porteur des natures voulues, le reste au plus simple. */
+    function dossier(natures: readonly string[], type = 'CORRECTIVE'): never {
+      return <never>{
+        id: 'c-1', reference: 'CAPA-1', title: 'Palettes sans etiquette',
+        type, status: 'IN_PROGRESS', criticity: 'MAJOR',
+        actions: natures.map((n, i) => ({ id: 'a-' + i, actionType: n }))
+      };
+    }
+
+    it('affiche les natures REELLEMENT presentes, pas le type declare du dossier', () => {
+      // Un endiguement ajoute depuis le traitement d'un ecart se rangeait sous
+      // « Corrective », parce que la colonne lisait le type du DOSSIER.
+      expect(component.caseTypeLabel(dossier(['CONTAINMENT', 'CORRECTIVE'])))
+        .toBe('Endiguement · Corrective');
+    });
+
+    it('garde l’ordre du traitement, quel que soit l’ordre des actions', () => {
+      // On endigue, on corrige, on previent : l'ordre dit le raisonnement.
+      expect(component.caseTypeLabel(dossier(['PREVENTIVE', 'CONTAINMENT'])))
+        .toBe('Endiguement · Préventive');
+    });
+
+    it('ne repete pas une nature portee par plusieurs actions', () => {
+      expect(component.caseTypeLabel(dossier(['CORRECTIVE', 'CORRECTIVE'])))
+        .toBe('Corrective');
+    });
+
+    it('se replie sur le type declare tant que le dossier n’a aucune action', () => {
+      // Sans action, il n'y a rien a lire : la colonne ne doit pas se vider.
+      expect(component.caseTypeLabel(dossier([], 'PREVENTIVE'))).toBe('Préventive');
+    });
+  });
+
   it('renders the page title', () => {
     fixture.detectChanges();
     const el: HTMLElement = fixture.nativeElement;

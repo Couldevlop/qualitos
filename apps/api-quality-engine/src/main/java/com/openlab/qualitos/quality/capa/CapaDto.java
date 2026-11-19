@@ -118,7 +118,9 @@ public final class CapaDto {
             @Size(max = 255) String verificationAssigneeName,
             @Size(max = 4000) String verificationInstructions,
             /** Le critère d'efficacité (ADR 0108) ; null ne touche pas à l'existant. */
-            @Size(max = 2000) String effectivenessCriterion
+            @Size(max = 2000) String effectivenessCriterion,
+            /** La note libre qui accompagne les preuves ; null ne touche pas à l'existant. */
+            @Size(max = 4000) String effectivenessComment
     ) {}
 
     /**
@@ -150,7 +152,8 @@ public final class CapaDto {
      * Un dossier réduit à ce qui le NOMME : de quoi l'afficher sans aller le
      * relire. Sert aux écrans qui listent les dossiers d'un écart.
      */
-    public record CaseRef(UUID id, String title, CapaStatus status) {}
+    public record CaseRef(UUID id, String title, CapaStatus status,
+                          String effectivenessComment) {}
 
     public record EffectivenessRequest(
             @Deprecated Boolean effective,
@@ -218,6 +221,9 @@ public final class CapaDto {
             // rendu. Nuls ensemble sur un dossier jamais évalué ; le critère seul
             // sur un dossier qui attend son jugement.
             String effectivenessCriterion,
+            // La note libre tenue a cote des preuves. Ni le critere, ni le
+            // verdict : ce que l'equipe a constate en chemin.
+            String effectivenessComment,
             EffectivenessVerdict effectivenessVerdict,
             // L'EXIGENCE de vérification, à distinguer du constat qu'elle a eu
             // lieu. `null` = la question n'a pas été tranchée sur ce dossier.

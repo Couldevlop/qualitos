@@ -24,6 +24,7 @@ export class CapaActionPanelStubComponent {
   @Input() natures: string[] = [];
   /** L'equipe de l'ecart, proposee en tete du selecteur de responsable. */
   @Input() team: readonly { accountId: string }[] = [];
+  @Input() colonnePreuve = true;
   @Output() readonly changed = new EventEmitter<void>();
 }
 
