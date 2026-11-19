@@ -22318,6 +22318,34 @@ historique 12 mois</source>
         <source>Retirer la preuve <x id="nom"/></source>
         <target state="translated">移除证据 <x id="nom"/></target>
       </trans-unit>
+      <trans-unit id="nc.8d.product" datatype="html">
+        <source>Produit / référence</source>
+        <target state="translated">产品／编号</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d4-comment" datatype="html">
+        <source>Commentaires</source>
+        <target state="translated">说明</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d4-comment-placeholder" datatype="html">
+        <source>Observations, hypothèses écartées, cause racine retenue…</source>
+        <target state="translated">观察、已排除的假设、采纳的根本原因……</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d4-comment-hint" datatype="html">
+        <source>Facultatif. Enregistré en quittant le champ.</source>
+        <target state="translated">可选。离开输入框时保存。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d4-comment-failed" datatype="html">
+        <source>Le commentaire n'a pas été enregistré. Réessayez en quittant le champ.</source>
+        <target state="translated">说明未保存，请在离开输入框时重试。</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.no-right-resolve" datatype="html">
+        <source>Vous n'avez pas le droit de résoudre un écart. Demandez à un responsable qualité de porter ce geste.</source>
+        <target state="translated">您没有解决不合格项的权限，请让质量负责人执行该操作。</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.no-right-close" datatype="html">
+        <source>Vous n'avez pas le droit de clôturer un écart. Demandez à un responsable qualité de porter ce geste.</source>
+        <target state="translated">您没有关闭不合格项的权限，请让质量负责人执行该操作。</target>
+      </trans-unit>
       <trans-unit id="nc.detail.blockers-resolve" datatype="html">
         <source>Cet écart ne peut pas encore être résolu</source>
         <target state="translated">该不合格项尚不能解决</target>

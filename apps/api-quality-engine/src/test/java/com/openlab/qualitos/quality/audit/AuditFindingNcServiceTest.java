@@ -237,7 +237,7 @@ class AuditFindingNcServiceTest {
         return new NcDto.Response(id, TENANT, reference, "t", "d", NcCategory.DOCUMENTATION,
                 null, NcSeverity.MAJOR, NcStatus.OPEN, NcOrigin.INTERNAL, RELEVE, null, null, null,
                 null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-                RELEVE, RELEVE, java.util.List.of(), java.util.List.of(), java.util.List.of());
+                RELEVE, RELEVE, java.util.List.of(), java.util.List.of(), java.util.List.of(), null);
     }
 
     private static AuditPlan plan(AuditStatus status, String reference, AuditType type) {

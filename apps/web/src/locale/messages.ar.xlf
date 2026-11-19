@@ -22318,6 +22318,34 @@ historique 12 mois</source>
         <source>Retirer la preuve <x id="nom"/></source>
         <target state="translated">إزالة الدليل <x id="nom"/></target>
       </trans-unit>
+      <trans-unit id="nc.8d.product" datatype="html">
+        <source>Produit / référence</source>
+        <target state="translated">المنتج / المرجع</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d4-comment" datatype="html">
+        <source>Commentaires</source>
+        <target state="translated">تعليقات</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d4-comment-placeholder" datatype="html">
+        <source>Observations, hypothèses écartées, cause racine retenue…</source>
+        <target state="translated">ملاحظات، فرضيات مستبعدة، السبب الجذري المعتمد…</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d4-comment-hint" datatype="html">
+        <source>Facultatif. Enregistré en quittant le champ.</source>
+        <target state="translated">اختياري. يُحفظ عند مغادرة الحقل.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d4-comment-failed" datatype="html">
+        <source>Le commentaire n'a pas été enregistré. Réessayez en quittant le champ.</source>
+        <target state="translated">لم يتم حفظ التعليق. أعد المحاولة عند مغادرة الحقل.</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.no-right-resolve" datatype="html">
+        <source>Vous n'avez pas le droit de résoudre un écart. Demandez à un responsable qualité de porter ce geste.</source>
+        <target state="translated">ليست لديك صلاحية حل حالة عدم مطابقة. اطلب من مسؤول الجودة القيام بذلك.</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.no-right-close" datatype="html">
+        <source>Vous n'avez pas le droit de clôturer un écart. Demandez à un responsable qualité de porter ce geste.</source>
+        <target state="translated">ليست لديك صلاحية إغلاق حالة عدم مطابقة. اطلب من مسؤول الجودة القيام بذلك.</target>
+      </trans-unit>
       <trans-unit id="nc.detail.blockers-resolve" datatype="html">
         <source>Cet écart ne peut pas encore être résolu</source>
         <target state="translated">لا يمكن حل عدم المطابقة هذا بعد</target>

@@ -273,6 +273,12 @@ public class NcService {
             nc.setValidatorId(request.validatorId());
         }
         if (request.customerName() != null) nc.setCustomerName(vide(request.customerName()));
+        // Le commentaire du D4 : vide EFFACE, comme le reste de cette requête
+        // partielle. Une note d'analyse écrite par erreur doit pouvoir être
+        // retirée, et non seulement remplacée par un espace.
+        if (request.causeAnalysisComment() != null) {
+            nc.setCauseAnalysisComment(vide(request.causeAnalysisComment()));
+        }
         if (request.batchNumber() != null) nc.setBatchNumber(vide(request.batchNumber()));
         // L'équipe se corrige : quelqu'un part, quelqu'un arrive. Absente de la
         // requête, elle reste telle quelle — la mise à jour est partielle.
@@ -901,7 +907,7 @@ public class NcService {
                 nc.getClosedById(), nc.getClosedByName(),
                 nc.getValidatorId(), nc.getValidatorName(),
                 nc.getCreatedAt(), nc.getUpdatedAt(),
-                equipe, blocages, dossiers);
+                equipe, blocages, dossiers, nc.getCauseAnalysisComment());
     }
 
     // ---------- L'équipe en charge (D1 du 8D) ----------

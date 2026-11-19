@@ -22,6 +22,7 @@ import { IshikawaService } from '../../../ishikawa/ishikawa.service';
 import { IshikawaDiagramResponse } from '../../../ishikawa/ishikawa.types';
 import { NcService } from '../../nc.service';
 import { CapaService } from '../../../capa/capa.service';
+import { ProductsService } from '../../../products/products.service';
 import { NcPhoto, NcResponse, NcStatus, VisionAnalysis } from '../../nc.types';
 import { NcDetailComponent } from './nc-detail.component';
 import {
@@ -140,6 +141,7 @@ describe('NcDetailComponent — section photos', () => {
         { provide: FiveWhysService, useValue: fiveWhysSpy() },
         { provide: IshikawaService, useValue: ishikawaSpy() },
         { provide: CapaService, useValue: { updateCase: () => of({}) } },
+        { provide: ProductsService, useValue: { list: () => of([]) } },
         {
           provide: ActivatedRoute,
           useValue: { snapshot: { paramMap: convertToParamMap({ id: 'nc-1' }) } }
@@ -508,6 +510,7 @@ describe('NcDetailComponent — workflow et escalade CAPA', () => {
         { provide: FiveWhysService, useValue: fiveWhysSpy() },
         { provide: IshikawaService, useValue: ishikawaSpy() },
         { provide: CapaService, useValue: { updateCase: () => of({}) } },
+        { provide: ProductsService, useValue: { list: () => of([]) } },
         { provide: ActivatedRoute, useValue: { snapshot: { paramMap: { get: () => routeId } } } }
       ]
     }).compileComponents();
@@ -988,6 +991,7 @@ describe('NcDetailComponent — entrée 5 Pourquoi', () => {
         { provide: FiveWhysService, useValue: fiveWhys },
         { provide: IshikawaService, useValue: ishikawa },
         { provide: CapaService, useValue: { updateCase: () => of({}) } },
+        { provide: ProductsService, useValue: { list: () => of([]) } },
         { provide: ActivatedRoute, useValue: { snapshot: { paramMap: convertToParamMap({ id: UUID }) } } }
       ]
     }).compileComponents();
@@ -1155,6 +1159,7 @@ describe('NcDetailComponent — entrée Ishikawa', () => {
         { provide: FiveWhysService, useValue: fiveWhysSpy() },
         { provide: IshikawaService, useValue: ishikawa },
         { provide: CapaService, useValue: { updateCase: () => of({}) } },
+        { provide: ProductsService, useValue: { list: () => of([]) } },
         { provide: ActivatedRoute, useValue: { snapshot: { paramMap: convertToParamMap({ id: UUID }) } } }
       ]
     }).compileComponents();
@@ -1286,6 +1291,7 @@ describe('NcDetailComponent — conversion en cycle ou en projet', () => {
         { provide: FiveWhysService, useValue: fiveWhysSpy() },
         { provide: IshikawaService, useValue: ishikawaSpy() },
         { provide: CapaService, useValue: { updateCase: () => of({}) } },
+        { provide: ProductsService, useValue: { list: () => of([]) } },
         { provide: ActivatedRoute, useValue: { snapshot: { paramMap: { get: () => UUID } } } }
       ]
     }).compileComponents();

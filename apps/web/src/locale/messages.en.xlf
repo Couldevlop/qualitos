@@ -22318,6 +22318,34 @@ declared income
         <source>Retirer la preuve <x id="nom"/></source>
         <target state="translated">Remove evidence <x id="nom"/></target>
       </trans-unit>
+      <trans-unit id="nc.8d.product" datatype="html">
+        <source>Produit / référence</source>
+        <target state="translated">Product / reference</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d4-comment" datatype="html">
+        <source>Commentaires</source>
+        <target state="translated">Comments</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d4-comment-placeholder" datatype="html">
+        <source>Observations, hypothèses écartées, cause racine retenue…</source>
+        <target state="translated">Observations, discarded hypotheses, root cause retained…</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d4-comment-hint" datatype="html">
+        <source>Facultatif. Enregistré en quittant le champ.</source>
+        <target state="translated">Optional. Saved when you leave the field.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d4-comment-failed" datatype="html">
+        <source>Le commentaire n'a pas été enregistré. Réessayez en quittant le champ.</source>
+        <target state="translated">The comment was not saved. Try again when you leave the field.</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.no-right-resolve" datatype="html">
+        <source>Vous n'avez pas le droit de résoudre un écart. Demandez à un responsable qualité de porter ce geste.</source>
+        <target state="translated">You are not allowed to resolve a non-conformity. Ask a quality manager to carry out this step.</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.no-right-close" datatype="html">
+        <source>Vous n'avez pas le droit de clôturer un écart. Demandez à un responsable qualité de porter ce geste.</source>
+        <target state="translated">You are not allowed to close a non-conformity. Ask a quality manager to carry out this step.</target>
+      </trans-unit>
       <trans-unit id="nc.detail.blockers-resolve" datatype="html">
         <source>Cet écart ne peut pas encore être résolu</source>
         <target state="translated">This non-conformity cannot be resolved yet</target>

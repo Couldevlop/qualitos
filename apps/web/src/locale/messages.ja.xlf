@@ -22317,6 +22317,34 @@ historique 12 mois</source>
         <source>Retirer la preuve <x id="nom"/></source>
         <target state="translated">証拠 <x id="nom"/> を削除</target>
       </trans-unit>
+      <trans-unit id="nc.8d.product" datatype="html">
+        <source>Produit / référence</source>
+        <target state="translated">製品／品番</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d4-comment" datatype="html">
+        <source>Commentaires</source>
+        <target state="translated">コメント</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d4-comment-placeholder" datatype="html">
+        <source>Observations, hypothèses écartées, cause racine retenue…</source>
+        <target state="translated">観察、除外した仮説、採用した根本原因など…</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d4-comment-hint" datatype="html">
+        <source>Facultatif. Enregistré en quittant le champ.</source>
+        <target state="translated">任意です。フィールドを離れると保存されます。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d4-comment-failed" datatype="html">
+        <source>Le commentaire n'a pas été enregistré. Réessayez en quittant le champ.</source>
+        <target state="translated">コメントを保存できませんでした。フィールドを離れるときに再試行してください。</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.no-right-resolve" datatype="html">
+        <source>Vous n'avez pas le droit de résoudre un écart. Demandez à un responsable qualité de porter ce geste.</source>
+        <target state="translated">不適合を解決する権限がありません。品質責任者に依頼してください。</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.no-right-close" datatype="html">
+        <source>Vous n'avez pas le droit de clôturer un écart. Demandez à un responsable qualité de porter ce geste.</source>
+        <target state="translated">不適合を閉じる権限がありません。品質責任者に依頼してください。</target>
+      </trans-unit>
       <trans-unit id="nc.detail.blockers-resolve" datatype="html">
         <source>Cet écart ne peut pas encore être résolu</source>
         <target state="translated">この不適合はまだ解決できません</target>

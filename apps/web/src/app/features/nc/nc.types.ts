@@ -126,6 +126,14 @@ export interface NcResponse {
   /** Le projet DMAIC ouvert depuis cet ecart, s'il l'a ete. */
   dmaicProjectId?: string;
   rootCause?: string;
+  /**
+   * Le commentaire libre de l'analyse des causes (D4).
+   *
+   * <p>Ce qui ne tient ni dans un diagramme, ni dans une chaîne de pourquoi :
+   * les observations, et les hypothèses écartées avec la raison de leur
+   * abandon. Ne remplace pas `rootCause`, qui est la conclusion publiée.
+   */
+  causeAnalysisComment?: string;
   resolutionNote?: string;
   /** Pourquoi la réclamation a été écartée. */
   rejectionReason?: string;
@@ -297,6 +305,10 @@ export interface UpdateNcRequest {
   customerName?: string;
   /** Chaîne vide = effacer le numéro de lot ; absent = inchangé. */
   batchNumber?: string;
+  /** Le produit incriminé, choisi dans le référentiel. Absent = inchangé. */
+  productId?: string;
+  /** Chaîne vide = effacer le commentaire du D4 ; absent = inchangé. */
+  causeAnalysisComment?: string;
   /**
    * Le valideur désigné. Fourni, il est réécrit en entier ; un nom VIDE le
    * retire — sans quoi une désignation posée par erreur serait définitive.

@@ -15,6 +15,7 @@ import { UserPickerModule } from '../../../../shared/user-picker/user-picker.mod
 import { FiveWhysService } from '../../../five-whys/five-whys.service';
 import { IshikawaService } from '../../../ishikawa/ishikawa.service';
 import { CapaService } from '../../../capa/capa.service';
+import { ProductsService } from '../../../products/products.service';
 import { NcService } from '../../nc.service';
 import { NcResponse, NcStatus, TeamMemberRef } from '../../nc.types';
 import { NcDetailComponent } from './nc-detail.component';
@@ -109,6 +110,7 @@ describe('NcDetailComponent — équipe en charge', () => {
           useValue: jasmine.createSpyObj<IshikawaService>('IshikawaService', { listForNc: of([]) })
         },
         { provide: CapaService, useValue: { updateCase: () => of({}) } },
+        { provide: ProductsService, useValue: { list: () => of([]) } },
         {
           provide: ActivatedRoute,
           useValue: { snapshot: { paramMap: convertToParamMap({ id: 'nc-1' }) } }

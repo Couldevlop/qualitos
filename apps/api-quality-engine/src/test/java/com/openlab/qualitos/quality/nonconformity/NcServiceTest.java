@@ -181,7 +181,7 @@ class NcServiceTest {
         when(repo.save(n)).thenReturn(n);
 
         service.update(n.getId(), new NcDto.UpdateRequest(null, null, null, "", null, null, null, null,
-                null, null, null, null, null, null, null, null, null));
+                null, null, null, null, null, null, null, null, null, null));
 
         assertThat(n.getSubcategoryCode()).isNull();
         verifyNoInteractions(subcategories);
@@ -199,7 +199,7 @@ class NcServiceTest {
 
         assertThatThrownBy(() -> service.update(n.getId(), new NcDto.UpdateRequest(
                 null, null, NcCategory.SUPPLIER, null, null, null, null, null, null, null, null, null, null, null, null, null,
-                null)))
+                null, null)))
                 .isInstanceOf(NcValidationException.class);
     }
 
@@ -211,7 +211,7 @@ class NcServiceTest {
         when(repo.save(n)).thenReturn(n);
 
         service.update(n.getId(), new NcDto.UpdateRequest("t2", null, null, null, null, null, null, null,
-                null, null, null, null, null, null, null, null, null));
+                null, null, null, null, null, null, null, null, null, null));
 
         assertThat(n.getSubcategoryCode()).isEqualTo("PRD-DIM");
         verifyNoInteractions(subcategories);
@@ -280,7 +280,7 @@ class NcServiceTest {
         when(repo.save(n)).thenReturn(n);
         service.update(n.getId(), new NcDto.UpdateRequest(
                 "t2", "d2", NcCategory.SUPPLIER, null, NcSeverity.CRITICAL, "zoneB", 1.0, 2.0, "u1\nu2",
-                NcOrigin.EXTERNAL, null, null, null, null, null, null, null));
+                NcOrigin.EXTERNAL, null, null, null, null, null, null, null, null));
         assertThat(n.getTitle()).isEqualTo("t2");
         assertThat(n.getCategory()).isEqualTo(NcCategory.SUPPLIER);
         assertThat(n.getSeverity()).isEqualTo(NcSeverity.CRITICAL);
@@ -296,7 +296,7 @@ class NcServiceTest {
         NonConformity n = nc(TENANT, NcStatus.CLOSED);
         when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
         assertThatThrownBy(() -> service.update(n.getId(),
-                new NcDto.UpdateRequest("x", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null)))
+                new NcDto.UpdateRequest("x", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null)))
                 .isInstanceOf(NcStateException.class);
     }
 
@@ -305,7 +305,7 @@ class NcServiceTest {
         NonConformity n = nc(TENANT, NcStatus.CANCELLED);
         when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
         assertThatThrownBy(() -> service.update(n.getId(),
-                new NcDto.UpdateRequest("x", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null)))
+                new NcDto.UpdateRequest("x", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null)))
                 .isInstanceOf(NcStateException.class);
     }
 
@@ -1019,7 +1019,7 @@ class NcServiceTest {
 
         assertThatThrownBy(() -> service.update(n.getId(), new NcDto.UpdateRequest(
                 "autre titre", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-                null)))
+                null, null)))
                 .isInstanceOf(NcStateException.class)
                 .hasMessageContaining("REJECTED");
     }
@@ -1118,10 +1118,69 @@ class NcServiceTest {
         // Le lot n est pas dans la requete : il reste.
         service.update(n.getId(), new NcDto.UpdateRequest(
                 null, null, null, null, null, null, null, null, null, null, null,
-                "", null, null, null, null, null));
+                "", null, null, null, null, null, null));
 
         assertThat(n.getCustomerName()).isNull();
         assertThat(n.getBatchNumber()).isEqualTo("L2611-08");
+    }
+
+    // ============ Le commentaire de l analyse des causes (D4) ===============
+
+    /**
+     * Le commentaire du D4 s ecrit, et il ne touche pas a la cause racine.
+     *
+     * <p>Ce sont deux choses : la cause racine est la CONCLUSION, publiee par le
+     * rapport 8D ; le commentaire est le raisonnement autour -- l hypothese
+     * ecartee, et pourquoi. Il s ecrivait dans la description de l ecart, d ou
+     * plus personne ne le rapprochait de l analyse.
+     */
+    @Test
+    void update_commentaireDAnalyse_sEcritSansToucherALaCauseRacine() {
+        NonConformity n = nc(TENANT, NcStatus.UNDER_ANALYSIS);
+        n.setRootCause("Joint monte a l envers");
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+        when(repo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        NcDto.Response r = service.update(n.getId(), new NcDto.UpdateRequest(
+                null, null, null, null, null, null, null, null, null, null, null,
+                null, null, null, null, null, null,
+                "Piste fournisseur ecartee : lot conforme au controle d entree"));
+
+        assertThat(n.getCauseAnalysisComment())
+                .isEqualTo("Piste fournisseur ecartee : lot conforme au controle d entree");
+        assertThat(r.causeAnalysisComment())
+                .isEqualTo("Piste fournisseur ecartee : lot conforme au controle d entree");
+        assertThat(n.getRootCause()).isEqualTo("Joint monte a l envers");
+    }
+
+    /** La chaine VIDE efface : une note ecrite par erreur doit pouvoir partir. */
+    @Test
+    void update_commentaireDAnalyseVide_efface() {
+        NonConformity n = nc(TENANT, NcStatus.UNDER_ANALYSIS);
+        n.setCauseAnalysisComment("A retirer");
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+        when(repo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        service.update(n.getId(), new NcDto.UpdateRequest(
+                null, null, null, null, null, null, null, null, null, null, null,
+                null, null, null, null, null, null, "   "));
+
+        assertThat(n.getCauseAnalysisComment()).isNull();
+    }
+
+    /** Absent de la requete : le commentaire reste ce qu il etait. */
+    @Test
+    void update_commentaireDAnalyseAbsent_resteEnPlace() {
+        NonConformity n = nc(TENANT, NcStatus.UNDER_ANALYSIS);
+        n.setCauseAnalysisComment("Deja note");
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+        when(repo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        service.update(n.getId(), new NcDto.UpdateRequest(
+                "autre titre", null, null, null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null));
+
+        assertThat(n.getCauseAnalysisComment()).isEqualTo("Deja note");
     }
 
     // ====================== La reprise d un ecart refermé ====================

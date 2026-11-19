@@ -178,3 +178,14 @@
   color: var(--qos-fg-secondary);
   font-size: var(--qos-fs-sm);
 }
+
+// La note du D4 : du texte suivi, sous les schemas. Son etiquette la distingue
+// du raisonnement dessine juste au-dessus.
+.note-analyse {
+  margin-top: var(--qos-space-3);
+
+  p {
+    margin: 2px 0 0;
+    white-space: pre-line;
+  }
+}
