@@ -10,7 +10,7 @@ import { personName } from '../../../../core/directory/directory-names';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { CAPA_ACTION_TYPES } from '../../capa.labels';
 import { CapaService } from '../../capa.service';
-import { CapaActionResponse, CapaActionStatus, CapaActionType } from '../../capa.types';
+import { CapaActionResponse, CapaActionStatus, CapaActionType, UpdateCapaCaseRequest } from '../../capa.types';
 
 /** Ce qu'il faut pour ouvrir la fenêtre : le dossier, et l'action quand on la relit. */
 export interface CapaActionDialogData {
@@ -49,6 +49,12 @@ export interface CapaActionDialogData {
    * de l'efficacité en choisissant après coup la mesure qui arrange.
    */
   effectivenessCriterion?: string;
+  /**
+   * L'EXIGENCE de vérification d'efficacité du dossier, telle qu'elle est
+   * aujourd'hui (ADR 0073). {@code null} = la question n'a pas été tranchée,
+   * et la fenêtre la pose ; une fois tranchée, elle ne se repose pas.
+   */
+  verificationRequired?: boolean | null;
 }
 
 
@@ -93,7 +99,10 @@ export class CapaActionDialogComponent {
     decidedOn: [''],
     dueDate: [''],
     status: ['PENDING' as CapaActionStatus],
-    effectivenessCriterion: ['', [Validators.maxLength(2000)]]
+    effectivenessCriterion: ['', [Validators.maxLength(2000)]],
+    verificationRequired: [null as boolean | null],
+    verificationAssigneeId: [null as string | null],
+    verificationInstructions: ['', [Validators.maxLength(4000)]]
   });
 
   constructor(
@@ -175,6 +184,52 @@ export class CapaActionDialogComponent {
       && this.critereDejaPose === '';
   }
 
+  /**
+   * Vrai quand la fenêtre doit POSER la question de la vérification d'efficacité.
+   *
+   * <p>Même règle que le critère : on ne la pose que tant que le dossier ne l'a
+   * pas tranchée. La reposer à chaque action laisserait la dernière saisie
+   * décider pour tout le dossier, alors que la décision lui appartient en entier
+   * (ADR 0073). Elle n'est pas restreinte aux actions correctives : un dossier
+   * ouvert par un endiguement doit pouvoir trancher aussi.
+   */
+  get demandeVerification(): boolean {
+    const tranchee = this.data.verificationRequired !== null
+      && this.data.verificationRequired !== undefined;
+    return !this.editing && !this.data.readOnly && !tranchee;
+  }
+
+  /** Le nom du vérificateur choisi, recopié de l'annuaire pour partir avec la décision. */
+  verifierName?: string;
+
+  onVerifier(user: DirectoryUser | null): void {
+    this.verifierName = user ? personName(user) : undefined;
+  }
+
+  /**
+   * La décision de vérification telle qu'elle part : le vérificateur, son nom et
+   * les consignes seulement si elle est exigée — le serveur refuse de désigner
+   * quelqu'un pour une vérification qui ne l'est pas.
+   */
+  private decisionDeVerification(v: {
+    verificationRequired: boolean | null;
+    verificationAssigneeId: string | null;
+    verificationInstructions: string;
+  }): UpdateCapaCaseRequest {
+    if (v.verificationRequired === null) {
+      return {};
+    }
+    if (!v.verificationRequired) {
+      return { verificationRequired: false };
+    }
+    return {
+      verificationRequired: true,
+      verificationAssigneeId: v.verificationAssigneeId ?? undefined,
+      verificationAssigneeName: v.verificationAssigneeId ? this.verifierName : undefined,
+      verificationInstructions: v.verificationInstructions.trim() || undefined
+    };
+  }
+
   get dialogTitle(): string {
     return this.editing
       ? $localize`:@@capa.action-dialog.title-edit:Modifier l'action`
@@ -220,9 +275,14 @@ export class CapaActionDialogComponent {
     // si l'écriture du critère échoue, rien n'a été créé et la personne retente
     // avec son formulaire intact. Dans l'autre ordre, une panne laisserait une
     // action corrective sans la mesure qui dira un jour si elle a marché.
-    const envoi = critere
-      ? this.capa.updateCase(this.data.caseId, { effectivenessCriterion: critere })
-          .pipe(concatMap(() => action$))
+    // Le critere et la decision de verification sont deux champs DU DOSSIER :
+    // une seule ecriture, pour qu'une panne ne laisse pas l'un pose sans l'autre.
+    const majDossier: UpdateCapaCaseRequest = {
+      ...(critere ? { effectivenessCriterion: critere } : {}),
+      ...(this.demandeVerification ? this.decisionDeVerification(v) : {})
+    };
+    const envoi = Object.keys(majDossier).length
+      ? this.capa.updateCase(this.data.caseId, majDossier).pipe(concatMap(() => action$))
       : action$;
     envoi.pipe(finalize(() => this.submitting$.next(false))).subscribe({
       next: () => {

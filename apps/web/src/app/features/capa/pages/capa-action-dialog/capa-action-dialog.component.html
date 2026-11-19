@@ -109,6 +109,16 @@
     <p class="efficacite__texte">{{ critereDejaPose }}</p>
   </div>
 
+  <!-- LA VÉRIFICATION D'EFFICACITÉ : exigée sur ce dossier, oui ou non ?
+       Même question qu'à l'ouverture d'un dossier (ADR 0073), et au même
+       endroit qu'elle : la décision appartient au DOSSIER, pas à l'action, donc
+       elle ne se pose que tant qu'elle n'a pas été tranchée. La reposer à
+       chaque ajout laisserait la dernière action décider pour tout le reste. -->
+  <qos-capa-verification-fields *ngIf="demandeVerification"
+                                [group]="form"
+                                data-test="action-verification-demande"
+                                (verifierSelected)="onVerifier($event)"></qos-capa-verification-fields>
+
   <!-- Le statut ne s'affiche qu'a l'edition : une action qui vient d'etre
        decidee est « a faire », et proposer autre chose laisserait creer une
        action deja terminee sans que personne ne l'ait menee. -->
