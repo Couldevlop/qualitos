@@ -20,7 +20,7 @@ import {
   ConfirmDialogData
 } from '../../../../shared/ui/confirm-dialog/confirm-dialog.component';
 import { NcService } from '../../nc.service';
-import { EightDDiscipline, EightDReport, NcResponse } from '../../nc.types';
+import { EightDDiscipline, EightDReport, NcCapaCaseRef, NcResponse } from '../../nc.types';
 
 /** OWASP A03 — un identifiant malformé est refusé côté écran, avant tout appel. */
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -52,7 +52,12 @@ const NATURES_PAR_DISCIPLINE: Readonly<Record<string, readonly CapaActionType[]>
   // recidive. L'endiguement n'y figure pas : il a sa discipline, le D3, et les
   // memes lignes repetees sous deux titres laissaient croire a deux gestes.
   D5: Object.freeze<CapaActionType[]>(['CORRECTIVE', 'PREVENTIVE']),
-  D6: Object.freeze<CapaActionType[]>(['PREVENTIVE'])
+  // LE D6 N'EST PAS UNE DISCIPLINE D'ACTIONS : c'est celle de la PREUVE --
+  // releve, photo, procedure signee qui demontrent que le probleme a cesse
+  // (ISO 9001 10.2). Il portait le tableau des actions preventives, qui est
+  // le D7 : on ajoutait donc une action de prevention sous le titre
+  // « Implementation and evidence », et rien n'y deposait une preuve.
+  D7: Object.freeze<CapaActionType[]>(['PREVENTIVE'])
 };
 
 /**
@@ -62,11 +67,12 @@ const NATURES_PAR_DISCIPLINE: Readonly<Record<string, readonly CapaActionType[]>
  * liste : l'écran montre alors le dossier qu'il connaît plutôt que rien. Même
  * lecture que la fiche de l'écart, qui a corrigé le même défaut avant lui.
  */
-function dossiersDe(nc: NcResponse): readonly string[] {
+function dossiersDe(nc: NcResponse): readonly NcCapaCaseRef[] {
   if (nc.capaCases?.length) {
-    return nc.capaCases.map(c => c.id);
+    return nc.capaCases;
   }
-  return nc.capaCaseId ? [nc.capaCaseId] : [];
+  // Repli sans statut : le dossier connu, a defaut de savoir s'il est clos.
+  return nc.capaCaseId ? [{ id: nc.capaCaseId }] : [];
 }
 
 /** Le tableau vide partagé des disciplines qui ne montrent pas d'actions. */
@@ -139,7 +145,7 @@ export class NcEightDComponent implements OnInit {
    * échouait — l'erreur n'est qu'une trace de console — l'affirmation fausse
    * restait à l'écran pour de bon. On ne dit plus rien tant qu'on ne sait pas.
    */
-  readonly capaCaseIds$ = new BehaviorSubject<readonly string[] | undefined>(undefined);
+  readonly capaCaseIds$ = new BehaviorSubject<readonly NcCapaCaseRef[] | undefined>(undefined);
 
   /** Lu par le gabarit : la discipline sans dossier CAPA renvoie vers l'ecart. */
   ncId = '';
@@ -266,6 +272,18 @@ export class NcEightDComponent implements OnInit {
   /** Vrai pour les disciplines qui portent un tableau d'actions. */
   montreLesActions(code: string): boolean {
     return this.naturesDe(code).length > 0;
+  }
+
+  /**
+   * Vrai pour la discipline qui porte les PREUVES du dossier.
+   *
+   * <p>Une seule, le D6. Les pieces des actions, elles, restent sur leur ligne
+   * au D3 : une piece d'action atteste que CE geste-la a ete fait, une preuve
+   * du dossier demontre que le probleme a cesse. La fiche de l'ecart fait deja
+   * cette difference ; le rapport ne la faisait pas, et ne deposait rien.
+   */
+  montreLesPreuves(code: string): boolean {
+    return code === 'D6';
   }
 
   /**
