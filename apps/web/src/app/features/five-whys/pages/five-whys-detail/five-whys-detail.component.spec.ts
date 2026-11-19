@@ -116,6 +116,35 @@ describe('FiveWhysDetailComponent', () => {
       .querySelector('.root-cause__field')).not.toBeNull();
   });
 
+  /**
+   * LE MOMENT EXACT : la conclusion s'ouvre en AJOUTANT le troisième pourquoi,
+   * sans rechargement, et sans qu'un quatrième soit demandé.
+   *
+   * <p>Les deux bancs ci-dessus partent d'une chaîne déjà longue de trois ; ils
+   * ne disent donc rien de la transition elle-même, qui est précisément ce que
+   * l'on vit à l'écran. Si le champ n'apparaissait qu'au quatrième, c'est ici
+   * que cela se verrait.
+   */
+  it('ouvre la conclusion à l\'instant où le troisième pourquoi est ajouté', () => {
+    setup(analysis([step(1), step(2)]));
+    service.addStep.and.returnValue(of(step(3)));
+
+    expect(component.canConcludeRootCause).toBeFalse();
+
+    component.newAnswer = 'Parce que la butée a bouge';
+    component.addWhy();
+    fixture.detectChanges();
+
+    expect(component.depth)
+      .withContext('trois pourquoi posés, pas deux')
+      .toBe(3);
+    expect(component.canConcludeRootCause)
+      .withContext('la cause racine se conclut au TROISIÈME pourquoi, pas au quatrième')
+      .toBeTrue();
+    expect((fixture.nativeElement as HTMLElement)
+      .querySelector('.root-cause__field')).not.toBeNull();
+  });
+
   it('refuse de conclure tant que la chaîne est trop courte, même appelé de force', () => {
     setup(analysis([step(1), step(2)]));
     component.rootCauseDraft = 'Un symptôme déguisé';
