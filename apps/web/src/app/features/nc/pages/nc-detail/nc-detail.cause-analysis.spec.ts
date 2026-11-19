@@ -18,6 +18,7 @@ import { FiveWhysAnalysis } from '../../../five-whys/five-whys.types';
 import { IshikawaSharedModule } from '../../../ishikawa/ishikawa-shared.module';
 import { IshikawaService } from '../../../ishikawa/ishikawa.service';
 import { CapaService } from '../../../capa/capa.service';
+import { ProductsService } from '../../../products/products.service';
 import { IshikawaCauseResponse, IshikawaDiagramResponse } from '../../../ishikawa/ishikawa.types';
 import { NcService } from '../../nc.service';
 import { NcResponse } from '../../nc.types';
@@ -128,6 +129,7 @@ describe('NcDetailComponent — analyse de cause sur la fiche', () => {
         { provide: NcService, useValue: svc },
         { provide: IshikawaService, useValue: ishikawa },
         { provide: CapaService, useValue: { updateCase: () => of({}) } },
+        { provide: ProductsService, useValue: { list: () => of([]) } },
         { provide: FiveWhysService, useValue: fiveWhys },
         { provide: DirectoryService, useValue: annuaire },
         { provide: MatSnackBar, useValue: jasmine.createSpyObj('MatSnackBar', ['open']) },

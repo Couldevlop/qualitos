@@ -151,6 +151,22 @@ public class NonConformity {
     @Column(name = "root_cause", columnDefinition = "TEXT")
     private String rootCause;
 
+    /**
+     * Le commentaire libre de l'analyse des causes (D4 du traitement 8D).
+     *
+     * <p>Ce qui ne tient ni dans un diagramme, ni dans une chaîne de pourquoi,
+     * ni dans la cause retenue : les observations, et les hypothèses écartées
+     * avec la raison de leur abandon. C'est ce qu'un auditeur demande quand il
+     * conteste la cause racine, et cela s'écrivait dans la description de
+     * l'écart, où plus personne ne le rapprochait de l'analyse.
+     *
+     * <p>Ne remplace pas {@link #rootCause}, qui est la CONCLUSION publiée par
+     * le rapport 8D : un dossier qui n'aurait que le commentaire n'aurait pas
+     * conclu.
+     */
+    @Column(name = "cause_analysis_comment", columnDefinition = "TEXT")
+    private String causeAnalysisComment;
+
     @Column(name = "resolution_note", columnDefinition = "TEXT")
     private String resolutionNote;
 

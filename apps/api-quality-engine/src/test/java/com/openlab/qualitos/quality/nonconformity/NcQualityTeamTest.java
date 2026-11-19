@@ -141,7 +141,7 @@ class NcQualityTeamTest {
         when(repo.save(n)).thenReturn(n);
 
         service.update(n.getId(), new NcDto.UpdateRequest("Nouveau titre", null, null, null, null,
-                null, null, null, null, null, null, null, null, null, null, null, null));
+                null, null, null, null, null, null, null, null, null, null, null, null, null));
 
         verify(teamMembers, never()).deleteByTenantIdAndNcId(any(), any());
         verify(teamMembers, never()).save(any());
@@ -229,7 +229,7 @@ class NcQualityTeamTest {
 
     private NcDto.UpdateRequest majEquipe(List<NcDto.TeamMemberRef> equipe) {
         return new NcDto.UpdateRequest(null, null, null, null, null, null, null, null, null, null,
-                null, null, null, null, null, null, equipe);
+                null, null, null, null, null, null, equipe, null);
     }
 
     private NonConformity ecart() {

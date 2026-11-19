@@ -618,6 +618,21 @@
   li + li { margin-top: 4px; }
 }
 
+/* Les dossiers a ouvrir, sur leur propre ligne : glisses a la suite de la
+   phrase, ils se lisaient comme la fin de celle-ci. */
+.blockers-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--qos-space-2);
+  margin-top: 2px;
+
+  a {
+    color: var(--qos-danger-fg);
+    font-weight: 600;
+    text-decoration: underline;
+  }
+}
+
 /* Un ecart peut porter PLUSIEURS dossiers CAPA : chacun a son tableau, et il
    faut VOIR ou l'un finit et l'autre commence. Sans separation, deux tableaux
    se lisaient comme un seul, dont les lignes du bas semblaient appartenir au

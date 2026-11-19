@@ -22318,6 +22318,34 @@ historial de 12 meses</target>
         <source>Retirer la preuve <x id="nom"/></source>
         <target state="translated">Retirar la prueba <x id="nom"/></target>
       </trans-unit>
+      <trans-unit id="nc.8d.product" datatype="html">
+        <source>Produit / référence</source>
+        <target state="translated">Producto / referencia</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d4-comment" datatype="html">
+        <source>Commentaires</source>
+        <target state="translated">Comentarios</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d4-comment-placeholder" datatype="html">
+        <source>Observations, hypothèses écartées, cause racine retenue…</source>
+        <target state="translated">Observaciones, hipótesis descartadas, causa raíz retenida…</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d4-comment-hint" datatype="html">
+        <source>Facultatif. Enregistré en quittant le champ.</source>
+        <target state="translated">Opcional. Se guarda al salir del campo.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.d4-comment-failed" datatype="html">
+        <source>Le commentaire n'a pas été enregistré. Réessayez en quittant le champ.</source>
+        <target state="translated">El comentario no se ha guardado. Inténtelo de nuevo al salir del campo.</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.no-right-resolve" datatype="html">
+        <source>Vous n'avez pas le droit de résoudre un écart. Demandez à un responsable qualité de porter ce geste.</source>
+        <target state="translated">No tiene permiso para resolver una no conformidad. Pida a un responsable de calidad que lo haga.</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.no-right-close" datatype="html">
+        <source>Vous n'avez pas le droit de clôturer un écart. Demandez à un responsable qualité de porter ce geste.</source>
+        <target state="translated">No tiene permiso para cerrar una no conformidad. Pida a un responsable de calidad que lo haga.</target>
+      </trans-unit>
       <trans-unit id="nc.detail.blockers-resolve" datatype="html">
         <source>Cet écart ne peut pas encore être résolu</source>
         <target state="translated">Esta no conformidad aún no puede resolverse</target>

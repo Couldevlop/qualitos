@@ -579,7 +579,7 @@ class NcControllerTest {
                 NcCategory.PRODUCT, null, NcSeverity.MAJOR, s, NcOrigin.INTERNAL, Instant.now(),
                 null, null, null, null, REPORTER, "Ada Lovelace", null, null, null, null, null, null, null,
                 null, null, null, null, null, null, null, null, null, null, null, null, null, null, Instant.now(), Instant.now(), EQUIPE,
-                java.util.List.of(), java.util.List.of());
+                java.util.List.of(), java.util.List.of(), null);
     }
 
     /**

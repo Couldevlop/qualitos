@@ -5,11 +5,12 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, of, Subject, Subscription } from 'rxjs';
 import { catchError, finalize, map, shareReplay, switchMap, tap } from 'rxjs/operators';
 
 import { deferredView } from '../../../../core/rx/deferred-view';
 import { AuthService } from '../../../../core/auth/auth.service';
+import { AuthzService } from '../../../../core/authz/authz.service';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import {
   CapaActionsDialogComponent, CapaActionsDialogData
@@ -26,6 +27,8 @@ import { FiveWhysService } from '../../../five-whys/five-whys.service';
 import { FiveWhysAnalysis } from '../../../five-whys/five-whys.types';
 import { IshikawaService } from '../../../ishikawa/ishikawa.service';
 import { IshikawaDiagramResponse } from '../../../ishikawa/ishikawa.types';
+import { ProductsService } from '../../../products/products.service';
+import { ProductResponse } from '../../../products/products.types';
 import { NcService } from '../../nc.service';
 import { TeamMemberRef } from '../../../../shared/user-picker/user-team-picker.component';
 import {
@@ -68,6 +71,18 @@ export type EtapeCode = 'D1' | 'D2' | 'D3' | 'D4' | 'D5' | 'D6' | 'D7' | 'D8';
 // OWASP A03 — refuse malformed UUIDs client-side. Demo mock ids ("nc-1"…)
 // are also accepted so the page stays usable with useMockApi=true.
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/**
+ * Un motif qui retient l'ecart, redige, avec les dossiers ou aller le lever.
+ *
+ * <p>`dossiers` est vide pour les motifs qui ne designent pas de dossier --
+ * celui du second regard, celui du droit manquant.
+ */
+export interface MotifDeBlocage {
+  code: string;
+  phrase: string;
+  dossiers: NcCapaCaseRef[];
+}
 
 @Component({
   selector: 'qos-nc-detail',
@@ -255,7 +270,22 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.observateur?.disconnect();
+    this.abonnements.forEach(a => a.unsubscribe());
   }
+
+  /**
+   * Ce que CE lecteur a le droit de faire, lu une fois.
+   *
+   * <p>Jusqu'ici, un lecteur sans le droit de clore ne voyait tout simplement
+   * pas le bouton : rien ne distinguait « il n'y a plus rien a faire » de
+   * « ce geste ne vous appartient pas ». Le bandeau le dit, et c'est la seule
+   * raison pour laquelle l'ecran lit les droits lui-meme.
+   *
+   * <p>`lus` separe « pas encore charge » de « refuse » : annoncer un droit
+   * manquant avant d'avoir lu la reponse accuserait a tort.
+   */
+  private droits = { lus: false, resoudre: false, clore: false };
+  private readonly abonnements: Subscription[] = [];
 
   // ===================== Le bandeau d etat de l ecart =======================
 
@@ -347,8 +377,30 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
    */
   readonly contexteForm = new FormGroup({
     customerName: new FormControl<string>('', { nonNullable: true }),
-    batchNumber: new FormControl<string>('', { nonNullable: true })
+    batchNumber: new FormControl<string>('', { nonNullable: true }),
+    /**
+     * Le produit incrimine, CHOISI dans le referentiel et non retape.
+     *
+     * <p>Le modele de traitement 8D en fait une donnee du D2, aux cotes du
+     * client et du lot. La fiche portait l'identifiant depuis toujours et ne
+     * l'affichait pas : on ne savait pas, en lisant un ecart, sur quel produit
+     * il portait -- et le rapport remis au client ne le disait pas non plus.
+     *
+     * <p>Une reference saisie a la main (« PRD-4821 ») n'aurait rattache l'ecart
+     * a rien : ni au PFMEA du produit, ni a son plan de surveillance, ni aux
+     * autres ecarts qu'il a connus.
+     */
+    productId: new FormControl<string>('', { nonNullable: true })
   });
+
+  /**
+   * Le referentiel produit, pour NOMMER celui de l'ecart.
+   *
+   * <p>Charge une fois, sans bloquer : un lecteur qui n'a pas le droit de lire
+   * le referentiel voit la fiche entiere, simplement sans le champ -- un
+   * identifiant technique a la place du nom n'apprendrait rien a personne.
+   */
+  readonly produits$ = new BehaviorSubject<ProductResponse[]>([]);
   readonly contexteSaving$ = new BehaviorSubject<boolean>(false);
   /** Vrai des que le formulaire du D2 differe de la fiche : le bouton apparait. */
   contexteModifie = false;
@@ -364,8 +416,25 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.contexteModifie) return;
     this.contexteForm.setValue({
       customerName: n.customerName ?? '',
-      batchNumber: n.batchNumber ?? ''
+      batchNumber: n.batchNumber ?? '',
+      productId: n.productId ?? ''
     }, { emitEvent: false });
+  }
+
+  /** Le produit de l'ecart, nomme par le referentiel ; vide s'il n'y en a pas. */
+  produitLibelle(n: NcResponse): string {
+    const trouve = this.produits$.value.find(p => p.id === n.productId);
+    return trouve ? trouve.code + ' — ' + trouve.designation : '';
+  }
+
+  /** Le referentiel, pour la liste deroulante du D2. */
+  private chargerProduits(): void {
+    this.produits.list()
+      .pipe(catchError(() => of([] as ProductResponse[])))
+      .subscribe(liste => {
+        this.produits$.next(liste);
+        this.cdr.markForCheck();
+      });
   }
 
   enregistrerContexte(): void {
@@ -375,9 +444,13 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
     // Les chaines VIDES partent telles quelles : c est ainsi qu on EFFACE un
     // nom de client saisi par erreur. Le serveur distingue « vide » (effacer)
     // de « absent » (inchange).
+    // Le produit ne part QUE s'il est choisi : le serveur lit l'identifiant nul
+    // comme « inchange », et non comme « retire le produit ». Envoyer une
+    // valeur vide n'effacerait donc rien, et echouerait a la lecture de l'UUID.
     this.svc.updateNc(this.ncId, {
       customerName: valeurs.customerName.trim(),
-      batchNumber: valeurs.batchNumber.trim()
+      batchNumber: valeurs.batchNumber.trim(),
+      ...(valeurs.productId ? { productId: valeurs.productId } : {})
     }).pipe(finalize(() => this.contexteSaving$.next(false)))
       .subscribe({
         next: () => {
@@ -396,6 +469,55 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
             $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
+  }
+
+  // ============ Le D4 : le commentaire de l analyse des causes =============
+
+  /**
+   * Le brouillon du commentaire du D4, tant qu il n est pas enregistre.
+   *
+   * <p>Null quand rien n a ete saisi depuis la derniere lecture : le champ lit
+   * alors la fiche. Un brouillon refuse par le serveur RESTE -- perdre une
+   * explication d analyse parce que le reseau a cede serait le pire moment.
+   */
+  private brouillonCause: string | null = null;
+
+  /** Ce qui s affiche dans le champ : le brouillon s il y en a un, sinon la fiche. */
+  commentaireCause(n: NcResponse): string {
+    return this.brouillonCause ?? n.causeAnalysisComment ?? '';
+  }
+
+  saisirCommentaireCause(texte: string): void {
+    this.brouillonCause = texte;
+  }
+
+  /**
+   * Enregistre le commentaire du D4 en quittant le champ.
+   *
+   * <p>Pas de bouton : le champ est facultatif, et un bouton « Enregistrer »
+   * sous une note libre se lit comme une etape de plus dans une discipline qui
+   * n en demande pas. Rien ne part tant que le texte n a pas change -- quitter
+   * un champ qu on n a pas touche ne doit pas ecrire sur l ecart.
+   */
+  enregistrerCommentaireCause(n: NcResponse): void {
+    const texte = this.brouillonCause;
+    if (texte === null || texte === (n.causeAnalysisComment ?? '')) {
+      return;
+    }
+    this.svc.updateNc(this.ncId, { causeAnalysisComment: texte }).subscribe({
+      next: () => {
+        n.causeAnalysisComment = texte;
+        this.brouillonCause = null;
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        // Le brouillon RESTE : il contient peut-etre la seule trace du
+        // raisonnement, et le champ doit pouvoir etre quitte a nouveau.
+        this.snack.open(
+          $localize`:@@nc.8d.d4-comment-failed:Le commentaire n'a pas été enregistré. Réessayez en quittant le champ.`,
+          $localize`:@@common.ok:OK`, { duration: 4000 });
+      }
+    });
   }
 
   // ===================== Le D8 : remercier l equipe ========================
@@ -497,6 +619,8 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
     private readonly fiveWhys: FiveWhysService,
     private readonly ishikawa: IshikawaService,
     private readonly capaService: CapaService,
+    private readonly produits: ProductsService,
+    private readonly authz: AuthzService,
     private readonly cdr: ChangeDetectorRef
   ) {}
 
@@ -548,6 +672,25 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
     this.loadFiveWhys();
     this.loadIshikawa();
     this.chargerRemerciement();
+    this.lireLesDroits();
+    this.chargerProduits();
+  }
+
+  /**
+   * Les deux droits dont le bandeau parle, et eux seuls.
+   *
+   * <p>Les deux reponses sont attendues ENSEMBLE : traitees separement, la
+   * premiere arrivee ferait passer `lus` a vrai, et le bandeau aurait annonce
+   * un droit manquant que la seconde reponse accordait.
+   */
+  private lireLesDroits(): void {
+    this.abonnements.push(
+      combineLatest([this.authz.can('nc.process'), this.authz.can('nc.close')])
+        .subscribe(([resoudre, clore]) => {
+          this.droits = { lus: true, resoudre, clore };
+          this.cdr.markForCheck();
+        })
+    );
   }
 
   // --- Ishikawa ---------------------------------------------------------------
@@ -1380,6 +1523,80 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   /** Le titre du bloc dépend de l'étape : résoudre ou clôturer. */
+  /**
+   * Ce qui retient l'ecart, PRET A LIRE : la phrase, et ou aller.
+   *
+   * <p>Le bandeau enoncait les motifs et s'arretait la. « 2 dossiers CAPA ne
+   * sont pas clotures » laissait chercher lesquels dans un registre qui en
+   * compte des centaines ; le geste nomme sans son chemin est un travail rendu
+   * a l'utilisateur.
+   *
+   * <p>Les dossiers nommes sont ceux que la fiche porte deja -- donc ceux que
+   * CE lecteur a le droit de voir (ADR 0081). Le DECOMPTE, lui, vient du
+   * serveur et compte tous les dossiers, y compris ceux qu'on ne voit pas :
+   * c'est un invariant, il ne depend pas de qui regarde. Les deux chiffres
+   * peuvent donc differer, et c'est voulu -- on ne divulgue pas le titre d'un
+   * dossier hors de portee par la fiche d'un ecart.
+   */
+  motifsDeBlocage(n: NcResponse): MotifDeBlocage[] {
+    const motifs: MotifDeBlocage[] = (n.blockers ?? []).map(b => ({
+      code: String(b.code),
+      phrase: this.blockerLabel(b),
+      dossiers: this.dossiersDuMotif(b, n)
+    }));
+    const droit = this.motifDeDroit(n);
+    return droit ? [...motifs, droit] : motifs;
+  }
+
+  /** Les dossiers que CE motif-la designe ; aucun pour les autres motifs. */
+  private dossiersDuMotif(b: NcBlocker, n: NcResponse): NcCapaCaseRef[] {
+    if (b.code === 'CAPA_ACTIONS_TO_CARRY_OUT') {
+      return this.dossiers(n).filter(d => d.status === 'OPEN' || d.status === 'IN_PROGRESS');
+    }
+    if (b.code === 'CAPA_CASES_UNSETTLED') {
+      return this.dossiers(n).filter(d => d.status !== 'CLOSED' && d.status !== 'REJECTED');
+    }
+    return [];
+  }
+
+  /**
+   * Le motif qui ne vient pas du serveur : le droit qui manque A CE LECTEUR.
+   *
+   * <p>Le serveur n'a pas a l'enumerer -- il repondrait 403, et il ne sait pas
+   * quel geste la personne allait tenter. L'ecran, lui, le sait : l'ecart est a
+   * l'etape ou l'on resout, ou a celle ou l'on clot, et le bouton de ce geste
+   * est absent parce que le droit manque. Sans cette ligne, la fiche se lisait
+   * comme s'il n'y avait plus rien a faire.
+   *
+   * <p>Un seul motif a la fois : c'est le geste du moment qui compte, pas la
+   * liste de tous ceux qu'on ne pourra pas faire plus tard.
+   */
+  private motifDeDroit(n: NcResponse): MotifDeBlocage | null {
+    if (!this.droits.lus) {
+      return null;
+    }
+    if (this.canResolve(n.status) && !this.droits.resoudre) {
+      return {
+        code: 'RIGHT_MISSING',
+        phrase: $localize`:@@nc.blocker.no-right-resolve:Vous n'avez pas le droit de résoudre un écart. Demandez à un responsable qualité de porter ce geste.`,
+        dossiers: []
+      };
+    }
+    if (this.canClose(n.status) && !this.droits.clore) {
+      return {
+        code: 'RIGHT_MISSING',
+        phrase: $localize`:@@nc.blocker.no-right-close:Vous n'avez pas le droit de clôturer un écart. Demandez à un responsable qualité de porter ce geste.`,
+        dossiers: []
+      };
+    }
+    return null;
+  }
+
+  /** Le motif lui-meme sert de cle : deux motifs du meme code ne coexistent pas. */
+  trackByMotif(_: number, motif: MotifDeBlocage): string {
+    return motif.code;
+  }
+
   blockersTitle(n: NcResponse): string {
     return n.status === 'RESOLVED'
       ? $localize`:@@nc.detail.blockers-close:Cet écart ne peut pas encore être clôturé`

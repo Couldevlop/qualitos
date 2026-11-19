@@ -16,6 +16,7 @@ import { FiveWhysService } from '../../../five-whys/five-whys.service';
 import { IshikawaSharedModule } from '../../../ishikawa/ishikawa-shared.module';
 import { IshikawaService } from '../../../ishikawa/ishikawa.service';
 import { CapaService } from '../../../capa/capa.service';
+import { ProductsService } from '../../../products/products.service';
 import { NcService } from '../../nc.service';
 import { NcBlocker, NcResponse, NcStatus } from '../../nc.types';
 import {
@@ -94,6 +95,7 @@ describe('NcDetailComponent — ce qui bloque l’avancement', () => {
         { provide: NcService, useValue: svc },
         { provide: IshikawaService, useValue: ishikawa },
         { provide: CapaService, useValue: { updateCase: () => of({}) } },
+        { provide: ProductsService, useValue: { list: () => of([]) } },
         { provide: FiveWhysService, useValue: fiveWhys },
         { provide: DirectoryService, useValue: annuaire },
         { provide: MatSnackBar, useValue: jasmine.createSpyObj('MatSnackBar', ['open']) },

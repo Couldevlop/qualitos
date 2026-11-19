@@ -171,7 +171,19 @@ public final class NcDto {
             // ne peut pas être vide — on ne retire pas la dernière personne.
             @Size(min = 1, max = MAX_TEAM_MEMBERS,
                   message = "teamMembers must not be empty when provided")
-            List<@Valid TeamMemberRef> teamMembers
+            List<@Valid TeamMemberRef> teamMembers,
+            /**
+             * Le commentaire libre de l'analyse des causes (D4).
+             *
+             * <p>Même règle que {@link #customerName} : absent n'y touche pas, la
+             * chaîne VIDE efface — on doit pouvoir retirer une note écrite par
+             * erreur sans avoir à la remplacer par un espace.
+             *
+             * <p>Borné à 4 000 caractères : c'est une note d'analyse, pas une
+             * pièce jointe. La colonne est en TEXT pour ne rien tronquer de ce
+             * qui est déjà écrit.
+             */
+            @Size(max = 4000) String causeAnalysisComment
     ) {}
 
     /** Démarrage de l'analyse : la cause racine est optionnelle à ce stade. */
@@ -313,7 +325,9 @@ public final class NcDto {
              * retenaient donc la clôture de l'écart sans apparaître nulle part
              * sur sa fiche. Vide sur les lignes d'une liste, comme les motifs.
              */
-            List<CapaCaseRef> capaCases
+            List<CapaCaseRef> capaCases,
+            /** Le commentaire libre de l'analyse des causes (D4) ; nul tant qu'on n'en a pas écrit. */
+            String causeAnalysisComment
     ) {}
 
     /**

@@ -114,19 +114,35 @@
         <span>{{ histoire }}</span>
       </p>
 
-      <!-- Ce qui s'oppose à l'avancement, DIT avant le clic. Auparavant le refus
-           n'arrivait qu'après, sous la forme d'un message serveur en anglais, et
-           le bouton éteint ne disait rien de ce qu'il fallait faire. -->
-      <div class="blockers-block" *ngIf="n.blockers?.length" role="status"
-           data-test="nc-blockers">
-        <p class="blockers-title">
-          <mat-icon aria-hidden="true">block</mat-icon>
-          <strong>{{ blockersTitle(n) }}</strong>
-        </p>
-        <ul class="blockers-list">
-          <li *ngFor="let b of n.blockers">{{ blockerLabel(b) }}</li>
-        </ul>
-      </div>
+      <!-- Ce qui s'oppose à l'avancement, DIT avant le clic, et OÙ le lever.
+           Auparavant le refus n'arrivait qu'après, sous la forme d'un message
+           serveur en anglais, et le bouton éteint ne disait rien de ce qu'il
+           fallait faire. Puis il l'a dit, mais sans chemin : « 2 dossiers CAPA
+           ne sont pas clôturés » laissait chercher lesquels. Les liens sont ici,
+           et la dernière ligne dit le cas où ce n'est pas l'écart qui résiste,
+           mais le droit qui manque à celui qui lit. -->
+      <ng-container *ngIf="motifsDeBlocage(n) as motifs">
+        <div class="blockers-block" *ngIf="motifs.length" role="status"
+             data-test="nc-blockers">
+          <p class="blockers-title">
+            <mat-icon aria-hidden="true">block</mat-icon>
+            <strong>{{ blockersTitle(n) }}</strong>
+          </p>
+          <ul class="blockers-list">
+            <li *ngFor="let m of motifs; trackBy: trackByMotif"
+                [attr.data-test]="'nc-blocker-' + m.code">
+              <span>{{ m.phrase }}</span>
+              <!-- OU ALLER : le motif nomme le geste, le lien y mene. Ne sont
+                   nommes que les dossiers que ce lecteur voit (ADR 0081) ; le
+                   decompte de la phrase, lui, les compte tous. -->
+              <span class="blockers-links" *ngIf="m.dossiers.length">
+                <a *ngFor="let d of m.dossiers" [routerLink]="['/capa', d.id]"
+                   [attr.data-test]="'nc-blocker-lien-' + d.id">{{ d.title }}</a>
+              </span>
+            </li>
+          </ul>
+        </div>
+      </ng-container>
 
       <div class="layout">
 
@@ -305,6 +321,25 @@
                          i18n-placeholder="@@nc.8d.batch-placeholder"
                          placeholder="Ex. L2611-08" />
                 </mat-form-field>
+                <!-- LE PRODUIT, CHOISI et non retape : une reference saisie a la
+                     main ne rattacherait l'ecart a rien -- ni au PFMEA du
+                     produit, ni a son plan de surveillance. La liste ne parait
+                     que si le referentiel a pu etre lu ; sans elle, un
+                     identifiant technique n'apprendrait rien. -->
+                <mat-form-field appearance="outline" *ngIf="(produits$ | async)?.length"
+                                data-test="produit">
+                  <mat-label i18n="@@nc.8d.product">Produit / référence</mat-label>
+                  <mat-select formControlName="productId" (selectionChange)="contexteModifie = true"
+                              data-test="produit-choix">
+                    <!-- Le choix vide n'est offert QUE tant qu'aucun produit n'est
+                         retenu : il sert de place reservee, et le serveur lit
+                         l'identifiant nul comme « inchange », pas comme « retire ». -->
+                    <mat-option value="" *ngIf="!n.productId" i18n="@@common.none">—</mat-option>
+                    <mat-option *ngFor="let p of produits$ | async" [value]="p.id">
+                      {{ p.code }} — {{ p.designation }}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
               </div>
               <div class="form-foot" *ngIf="contexteModifie">
                 <button mat-flat-button color="primary" type="submit"
@@ -315,7 +350,7 @@
               </div>
             </form>
             <ng-template #contexteLecture>
-              <div class="info-grid" *ngIf="n.customerName || n.batchNumber">
+              <div class="info-grid" *ngIf="n.customerName || n.batchNumber || produitLibelle(n)">
                 <div class="info-item" *ngIf="n.customerName">
                   <span class="info-label" i18n="@@nc.8d.customer">Client</span>
                   <span class="info-value" data-test="client-lecture">{{ n.customerName }}</span>
@@ -323,6 +358,10 @@
                 <div class="info-item" *ngIf="n.batchNumber">
                   <span class="info-label" i18n="@@nc.8d.batch">N° de lot</span>
                   <span class="info-value" data-test="lot-lecture">{{ n.batchNumber }}</span>
+                </div>
+                <div class="info-item" *ngIf="produitLibelle(n) as produit">
+                  <span class="info-label" i18n="@@nc.8d.product">Produit / référence</span>
+                  <span class="info-value" data-test="produit-lecture">{{ produit }}</span>
                 </div>
               </div>
             </ng-template>
@@ -619,6 +658,33 @@
               <span class="info-label" i18n="@@nc.detail.root-cause">Cause racine</span>
               <p data-test="cause-racine">{{ n.rootCause }}</p>
             </div>
+
+            <!-- CE QUI NE TIENT DANS AUCUN OUTIL : la piste suivie puis
+                 abandonnee, et pourquoi. Le modele de traitement 8D place ce
+                 champ sous les outils du D4 ; il manquait, et cela s'ecrivait
+                 dans la description de l'ecart, ou plus personne ne le
+                 rapprochait de l'analyse. Facultatif, enregistre en quittant le
+                 champ -- un bouton sous une note libre se lirait comme une
+                 etape de plus. -->
+            <mat-form-field appearance="outline" class="full" subscriptSizing="dynamic"
+                            *ngIf="!isTerminal(n.status); else commentaireCauseLecture"
+                            data-test="commentaire-cause">
+              <mat-label i18n="@@nc.8d.d4-comment">Commentaires</mat-label>
+              <textarea matInput rows="3" maxlength="4000"
+                        [value]="commentaireCause(n)"
+                        data-test="commentaire-cause-champ"
+                        i18n-placeholder="@@nc.8d.d4-comment-placeholder"
+                        placeholder="Observations, hypothèses écartées, cause racine retenue…"
+                        (input)="saisirCommentaireCause($any($event.target).value)"
+                        (blur)="enregistrerCommentaireCause(n)"></textarea>
+              <mat-hint i18n="@@nc.8d.d4-comment-hint">Facultatif. Enregistré en quittant le champ.</mat-hint>
+            </mat-form-field>
+            <ng-template #commentaireCauseLecture>
+              <div class="block" *ngIf="n.causeAnalysisComment">
+                <span class="info-label" i18n="@@nc.8d.d4-comment">Commentaires</span>
+                <p data-test="commentaire-cause-lecture">{{ n.causeAnalysisComment }}</p>
+              </div>
+            </ng-template>
           </section>
 
           <!-- ================= D5 — Actions correctives =================== -->
