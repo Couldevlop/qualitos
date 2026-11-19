@@ -31,6 +31,14 @@ function configure(connectivity: FakeConnectivity): void {
   });
 }
 
+/**
+ * « Ni le PFMEA, ni le plan de surveillance » : la réponse des bancs qui ne
+ * mesurent pas cette règle-là (ADR 0128). Ce n'est pas un vide — c'est une
+ * décision, et c'est bien celle qu'ils veulent : rien ne doit retenir leur
+ * clôture.
+ */
+const SANS_IMPACT = { pfmeaImpacted: false, controlPlanImpacted: false };
+
 describe('NcService (mock mode)', () => {
   let service: NcService;
   let prevMock: boolean;
@@ -150,7 +158,7 @@ describe('NcService (mock mode)', () => {
   });
 
   it('close horodate la clôture, cancel marque l\'abandon', async () => {
-    const closed = await firstValueFrom(service.close('nc-1'));
+    const closed = await firstValueFrom(service.close('nc-1', SANS_IMPACT));
     expect(closed.status).toBe('CLOSED');
     expect(closed.closedAt).toBeTruthy();
 
@@ -218,7 +226,7 @@ describe('NcService (mock mode)', () => {
 
   it('ne clôt aucune NC quand la cible est inconnue', (done) => {
     statuses(before => {
-      service.close('nc-inexistante').subscribe(() => {
+      service.close('nc-inexistante', SANS_IMPACT).subscribe(() => {
         statuses(after => {
           expect(after).toEqual(before);
           done();
@@ -454,11 +462,15 @@ describe('NcService (offline-first, API réelle)', () => {
     });
   });
 
-  it('close et cancel postent sur leurs sous-ressources avec un corps vide', (done) => {
-    service.close('a1').subscribe();
+  it('close porte les deux décisions, cancel poste un corps vide', (done) => {
+    service.close('a1', SANS_IMPACT).subscribe();
     const closeReq = httpMock.expectOne(`${endpoint}/a1/close`);
     expect(closeReq.request.method).toBe('POST');
-    expect(closeReq.request.body).toEqual({});
+    // CE QUE L'ÉCART A ENSEIGNÉ À L'ANALYSE DE RISQUE voyage avec la clôture
+    // (ADR 0128). Un corps vide laisserait le serveur clore sans que personne
+    // ne se soit prononcé, et le PFMEA resterait muet sur un défaut survenu.
+    expect(closeReq.request.body).toEqual(
+      { pfmeaImpacted: false, controlPlanImpacted: false });
     closeReq.flush({
       id: 'a1', reference: 'NC-2026-1', title: 't', category: 'PROCESS',
       severity: 'MAJOR', status: 'CLOSED', detectedAt: '', createdAt: '', updatedAt: ''
@@ -485,7 +497,7 @@ describe('NcService (offline-first, API réelle)', () => {
 
   it('une transition hors-ligne échoue au lieu d\'être mise en file (workflow online-only)', (done) => {
     connectivity.online = false;
-    service.close('a1').subscribe({
+    service.close('a1', SANS_IMPACT).subscribe({
       next: () => done.fail('ne devrait pas réussir hors-ligne'),
       error: err => { expect(err.status).toBe(0); done(); }
     });

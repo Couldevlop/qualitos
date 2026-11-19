@@ -7662,6 +7662,14 @@ Portail clients</source>
         <source>État actuel du dossier. Le PDF émis porte ce tableau, figé à l'émission.</source>
         <target state="translated">الحالة الحالية للملف. يتضمّن ملف PDF الصادر هذا الجدول، مجمَّدًا وقت الإصدار.</target>
       </trans-unit>
+      <trans-unit id="nc.8d.live-note-evidence" datatype="html">
+        <source>État actuel du dossier. Le PDF émis en porte le compte, figé à l'émission.</source>
+        <target state="translated">الحالة الحالية للملف. يتضمّن ملف PDF الصادر عددها، مجمَّدًا وقت الإصدار.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.evidence-empty" datatype="html">
+        <source>Les preuves se déposeront ici dès qu'un dossier CAPA sera ouvert sur l'écart : elles s'attachent au dossier.</source>
+        <target state="translated">ستُرفَق الأدلة هنا بمجرد فتح ملف إجراء تصحيحي على الانحراف؛ فهي تابعة للملف.</target>
+      </trans-unit>
       <trans-unit id="nc.8d.live-note-figures" datatype="html">
         <source>État actuel du dossier. Le PDF émis porte ces schémas, figés à l'émission.</source>
         <target state="translated">الحالة الحالية للملف. يتضمّن ملف PDF الصادر هذه المخططات، مجمَّدة وقت الإصدار.</target>
@@ -22393,6 +22401,50 @@ historique 12 mois</source>
       <trans-unit id="nc.8d.go-to-nc" datatype="html">
         <source>Ouvrir la fiche de l'écart</source>
         <target state="translated">فتح بطاقة الانحراف</target>
+      </trans-unit>
+      <trans-unit id="nc.close.title" datatype="html">
+        <source>Clôturer l'écart</source>
+        <target state="translated">إغلاق الانحراف</target>
+      </trans-unit>
+      <trans-unit id="nc.close.intro" datatype="html">
+        <source>L'écart <x id="START_TAG_STRONG"/><x id="INTERPOLATION"/><x id="CLOSE_TAG_STRONG"/> va être clos. Avant cela, deux questions : ce qu'il a enseigné à l'analyse de risque du produit.</source>
+        <target state="translated">الانحراف <x id="START_TAG_STRONG"/><x id="INTERPOLATION"/><x id="CLOSE_TAG_STRONG"/> على وشك الإغلاق. وقبل ذلك سؤالان: ما الذي أفاده لتحليل مخاطر المنتج.</target>
+      </trans-unit>
+      <trans-unit id="nc.close.pfmea-legend" datatype="html">
+        <source>Le PFMEA du produit a-t-il été impacté ?</source>
+        <target state="translated">هل تأثّر تحليل أنماط الإخفاق للمنتج؟</target>
+      </trans-unit>
+      <trans-unit id="nc.close.control-plan-legend" datatype="html">
+        <source>Le plan de surveillance a-t-il été impacté ?</source>
+        <target state="translated">هل تأثّرت خطة المراقبة؟</target>
+      </trans-unit>
+      <trans-unit id="nc.close.pfmea-required" datatype="html">
+        <source>Répondez par « oui » ou « non » : la question doit être tranchée pour clore.</source>
+        <target state="translated">أجب بنعم أو لا: يجب حسم السؤال قبل الإغلاق.</target>
+      </trans-unit>
+      <trans-unit id="nc.close.control-plan-required" datatype="html">
+        <source>Répondez par « oui » ou « non » : la question doit être tranchée pour clore.</source>
+        <target state="translated">أجب بنعم أو لا: يجب حسم السؤال قبل الإغلاق.</target>
+      </trans-unit>
+      <trans-unit id="nc.close.requires-revision" datatype="html">
+        <source>La révision du document désigné devient exigible : l'écart ne se clôra définitivement qu'une fois cette révision acceptée.</source>
+        <target state="translated">تصبح مراجعة المستند المذكور إلزامية: لن يُغلق الانحراف نهائيًا إلا بعد قبول تلك المراجعة.</target>
+      </trans-unit>
+      <trans-unit id="nc.close.hint" datatype="html">
+        <source>Répondre « non » est une décision, qui se lit : elle atteste qu'on a examiné l'analyse de risque et jugé qu'elle n'était pas en cause.</source>
+        <target state="translated">الإجابة بـ «لا» قرار يُقرأ: فهي تُثبت أن تحليل المخاطر قد فُحص ورُئي أنه غير معنيّ.</target>
+      </trans-unit>
+      <trans-unit id="nc.close.confirm" datatype="html">
+        <source>Clôturer</source>
+        <target state="translated">إغلاق</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.pfmea-revision" datatype="html">
+        <source>Cet écart a été déclaré impactant le PFMEA du produit. Acceptez la révision du PFMEA qui le concerne pour pouvoir le clôturer — ou corrigez la réponse si le PFMEA n'était pas en cause.</source>
+        <target state="translated">أُعلن أن هذا الانحراف يؤثّر على تحليل أنماط الإخفاق للمنتج. اقبل مراجعة التحليل الخاصة به لتتمكّن من إغلاقه، أو صحّح الإجابة إذا لم يكن التحليل معنيًّا.</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.control-plan-revision" datatype="html">
+        <source>Cet écart a été déclaré impactant le plan de surveillance. Acceptez la révision du plan qui le concerne pour pouvoir le clôturer — ou corrigez la réponse si le plan n'était pas en cause.</source>
+        <target state="translated">أُعلن أن هذا الانحراف يؤثّر على خطة المراقبة. اقبل مراجعة الخطة الخاصة به لتتمكّن من إغلاقه، أو صحّح الإجابة إذا لم تكن الخطة معنيّة.</target>
       </trans-unit>
       <trans-unit id="nav.nc-clusters" datatype="html">
         <source>Clustering NC</source>

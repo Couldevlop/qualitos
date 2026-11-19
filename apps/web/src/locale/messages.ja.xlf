@@ -7662,6 +7662,14 @@ Portail clients</source>
         <source>État actuel du dossier. Le PDF émis porte ce tableau, figé à l'émission.</source>
         <target state="translated">案件の現在の状態です。発行された PDF には、発行時点で固定されたこの表が含まれます。</target>
       </trans-unit>
+      <trans-unit id="nc.8d.live-note-evidence" datatype="html">
+        <source>État actuel du dossier. Le PDF émis en porte le compte, figé à l'émission.</source>
+        <target state="translated">案件の現在の状態です。発行された PDF には、発行時点で固定された件数が記載されます。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.evidence-empty" datatype="html">
+        <source>Les preuves se déposeront ici dès qu'un dossier CAPA sera ouvert sur l'écart : elles s'attachent au dossier.</source>
+        <target state="translated">不適合に CAPA 案件が開かれ次第、証拠はここに添付されます。証拠は案件に属します。</target>
+      </trans-unit>
       <trans-unit id="nc.8d.live-note-figures" datatype="html">
         <source>État actuel du dossier. Le PDF émis porte ces schémas, figés à l'émission.</source>
         <target state="translated">案件の現在の状態です。発行された PDF には、発行時点で固定されたこれらの図が含まれます。</target>
@@ -22392,6 +22400,50 @@ historique 12 mois</source>
       <trans-unit id="nc.8d.go-to-nc" datatype="html">
         <source>Ouvrir la fiche de l'écart</source>
         <target state="translated">逸脱の記録を開く</target>
+      </trans-unit>
+      <trans-unit id="nc.close.title" datatype="html">
+        <source>Clôturer l'écart</source>
+        <target state="translated">不適合をクローズする</target>
+      </trans-unit>
+      <trans-unit id="nc.close.intro" datatype="html">
+        <source>L'écart <x id="START_TAG_STRONG"/><x id="INTERPOLATION"/><x id="CLOSE_TAG_STRONG"/> va être clos. Avant cela, deux questions : ce qu'il a enseigné à l'analyse de risque du produit.</source>
+        <target state="translated">不適合 <x id="START_TAG_STRONG"/><x id="INTERPOLATION"/><x id="CLOSE_TAG_STRONG"/> をクローズします。その前に二つの質問です。製品のリスク分析に対して何を教えたか。</target>
+      </trans-unit>
+      <trans-unit id="nc.close.pfmea-legend" datatype="html">
+        <source>Le PFMEA du produit a-t-il été impacté ?</source>
+        <target state="translated">製品の PFMEA に影響がありましたか。</target>
+      </trans-unit>
+      <trans-unit id="nc.close.control-plan-legend" datatype="html">
+        <source>Le plan de surveillance a-t-il été impacté ?</source>
+        <target state="translated">コントロールプランに影響がありましたか。</target>
+      </trans-unit>
+      <trans-unit id="nc.close.pfmea-required" datatype="html">
+        <source>Répondez par « oui » ou « non » : la question doit être tranchée pour clore.</source>
+        <target state="translated">「はい」か「いいえ」で答えてください。クローズするにはこの問いを決める必要があります。</target>
+      </trans-unit>
+      <trans-unit id="nc.close.control-plan-required" datatype="html">
+        <source>Répondez par « oui » ou « non » : la question doit être tranchée pour clore.</source>
+        <target state="translated">「はい」か「いいえ」で答えてください。クローズするにはこの問いを決める必要があります。</target>
+      </trans-unit>
+      <trans-unit id="nc.close.requires-revision" datatype="html">
+        <source>La révision du document désigné devient exigible : l'écart ne se clôra définitivement qu'une fois cette révision acceptée.</source>
+        <target state="translated">指定した文書の改訂が必須になります。その改訂が承認されるまで、不適合は最終的にクローズされません。</target>
+      </trans-unit>
+      <trans-unit id="nc.close.hint" datatype="html">
+        <source>Répondre « non » est une décision, qui se lit : elle atteste qu'on a examiné l'analyse de risque et jugé qu'elle n'était pas en cause.</source>
+        <target state="translated">「いいえ」も一つの決定であり、そう読まれます。リスク分析を確認し、該当しないと判断したことの記録です。</target>
+      </trans-unit>
+      <trans-unit id="nc.close.confirm" datatype="html">
+        <source>Clôturer</source>
+        <target state="translated">クローズ</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.pfmea-revision" datatype="html">
+        <source>Cet écart a été déclaré impactant le PFMEA du produit. Acceptez la révision du PFMEA qui le concerne pour pouvoir le clôturer — ou corrigez la réponse si le PFMEA n'était pas en cause.</source>
+        <target state="translated">この不適合は製品の PFMEA に影響するものとして申告されました。クローズするには、該当する PFMEA の改訂を承認してください。PFMEA が該当しない場合は回答を修正してください。</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.control-plan-revision" datatype="html">
+        <source>Cet écart a été déclaré impactant le plan de surveillance. Acceptez la révision du plan qui le concerne pour pouvoir le clôturer — ou corrigez la réponse si le plan n'était pas en cause.</source>
+        <target state="translated">この不適合はコントロールプランに影響するものとして申告されました。クローズするには、該当するプランの改訂を承認してください。プランが該当しない場合は回答を修正してください。</target>
       </trans-unit>
       <trans-unit id="nav.nc-clusters" datatype="html">
         <source>Clustering NC</source>

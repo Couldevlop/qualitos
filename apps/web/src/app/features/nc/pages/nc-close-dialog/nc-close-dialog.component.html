@@ -1,0 +1,69 @@
+<h2 mat-dialog-title i18n="@@nc.close.title">Clôturer l'écart</h2>
+
+<mat-dialog-content class="qos-dialog-panel">
+  <p class="intro" i18n="@@nc.close.intro">
+    L'écart <strong>{{ data.reference }}</strong> va être clos. Avant cela, deux
+    questions : ce qu'il a enseigné à l'analyse de risque du produit.
+  </p>
+
+  <form [formGroup]="form" novalidate>
+
+    <!-- LE PFMEA. Un défaut survenu pour de bon et une analyse de risque qui
+         l'ignore encore se contredisent sur la même page ; l'IATF 16949 en fait
+         une exigence. La question n'était pas posée, et l'écart se refermait
+         sans que personne n'ait eu à se prononcer. -->
+    <fieldset class="question">
+      <legend i18n="@@nc.close.pfmea-legend">Le PFMEA du produit a-t-il été impacté ?</legend>
+      <mat-radio-group formControlName="pfmeaImpacted" data-test="nc-close-pfmea">
+        <mat-radio-button [value]="true" i18n="@@common.yes">Oui</mat-radio-button>
+        <mat-radio-button [value]="false" i18n="@@common.no">Non</mat-radio-button>
+      </mat-radio-group>
+      <p class="aide erreur" *ngIf="form.controls.pfmeaImpacted.touched
+                                   && form.controls.pfmeaImpacted.hasError('required')"
+         data-test="nc-close-pfmea-requis" i18n="@@nc.close.pfmea-required">
+        Répondez par « oui » ou « non » : la question doit être tranchée pour clore.
+      </p>
+    </fieldset>
+
+    <!-- LE PLAN DE SURVEILLANCE. Deux questions plutôt qu'une : les deux
+         documents se révisent séparément, par des gestes distincts, et une
+         réponse unique laisserait chercher lequel des deux est en cause. -->
+    <fieldset class="question">
+      <legend i18n="@@nc.close.control-plan-legend">
+        Le plan de surveillance a-t-il été impacté ?
+      </legend>
+      <mat-radio-group formControlName="controlPlanImpacted" data-test="nc-close-control-plan">
+        <mat-radio-button [value]="true" i18n="@@common.yes">Oui</mat-radio-button>
+        <mat-radio-button [value]="false" i18n="@@common.no">Non</mat-radio-button>
+      </mat-radio-group>
+      <p class="aide erreur" *ngIf="form.controls.controlPlanImpacted.touched
+                                   && form.controls.controlPlanImpacted.hasError('required')"
+         data-test="nc-close-control-plan-requis" i18n="@@nc.close.control-plan-required">
+        Répondez par « oui » ou « non » : la question doit être tranchée pour clore.
+      </p>
+    </fieldset>
+
+    <!-- Ce que le « oui » engage, dit AVANT le clic : découvrir au refus qu'une
+         révision est exigée fait passer une règle pour une panne. -->
+    <p class="aide consequence" *ngIf="exigeUneRevision(); else aideSansImpact"
+       data-test="nc-close-consequence" i18n="@@nc.close.requires-revision">
+      La révision du document désigné devient exigible : l'écart ne se clôra
+      définitivement qu'une fois cette révision acceptée.
+    </p>
+    <ng-template #aideSansImpact>
+      <p class="aide" i18n="@@nc.close.hint">
+        Répondre « non » est une décision, qui se lit : elle atteste qu'on a
+        examiné l'analyse de risque et jugé qu'elle n'était pas en cause.
+      </p>
+    </ng-template>
+
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="annuler()"
+          data-test="nc-close-annuler" i18n="@@common.cancel">Annuler</button>
+  <button mat-flat-button color="primary" type="button" (click)="valider()"
+          [disabled]="form.invalid" data-test="nc-close-valider"
+          i18n="@@nc.close.confirm">Clôturer</button>
+</mat-dialog-actions>

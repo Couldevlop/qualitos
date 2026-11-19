@@ -157,6 +157,50 @@ describe('NcDetailComponent — ce qui bloque l’avancement', () => {
     expect(bouton('nc-resolve').disabled).toBeTrue();
   });
 
+  // ---------- ce que l'écart enseigne à l'analyse de risque ----------
+
+  /**
+   * LE PFMEA QUI ATTEND SA RÉVISION DIT LE GESTE QUI LE LÈVE.
+   *
+   * <p>Un défaut survenu pour de bon et une analyse de risque qui l'ignore
+   * encore se contredisent sur la même page ; l'IATF 16949 en fait une
+   * exigence. La phrase nomme le document ET l'issue : accepter la révision,
+   * ou corriger la réponse si le PFMEA n'était pas en cause. Sans la seconde
+   * moitié, une réponse donnée à tort passerait pour une impasse.
+   */
+  it('dit quoi faire quand le PFMEA attend sa révision', () => {
+    setup('RESOLVED', [{ code: 'PFMEA_REVISION_REQUIRED', count: 1 }]);
+
+    expect(un('nc-blockers')).not.toBeNull();
+    expect(texte('nc-blockers')).toContain('PFMEA');
+    expect(texte('nc-blockers')).toContain('Acceptez');
+    expect(texte('nc-blockers')).toContain('corrigez la réponse');
+    expect(bouton('nc-close').disabled).toBeTrue();
+  });
+
+  /** Le plan de surveillance porte son propre motif : les deux se révisent à part. */
+  it('dit quoi faire quand le plan de surveillance attend sa révision', () => {
+    setup('RESOLVED', [{ code: 'CONTROL_PLAN_REVISION_REQUIRED', count: 1 }]);
+
+    expect(texte('nc-blockers')).toContain('plan de surveillance');
+    expect(texte('nc-blockers')).toContain('Acceptez');
+    expect(bouton('nc-close').disabled).toBeTrue();
+  });
+
+  /**
+   * Les deux motifs ensemble restent DEUX phrases : fondues en une, elles
+   * laisseraient chercher lequel des deux documents retient la clôture.
+   */
+  it('énonce les deux motifs quand les deux documents attendent', () => {
+    setup('RESOLVED', [
+      { code: 'PFMEA_REVISION_REQUIRED', count: 1 },
+      { code: 'CONTROL_PLAN_REVISION_REQUIRED', count: 1 }
+    ]);
+
+    expect(texte('nc-blockers')).toContain('PFMEA');
+    expect(texte('nc-blockers')).toContain('plan de surveillance');
+  });
+
   // ---------- le bouton suit la phrase ----------
 
   it('éteint le bouton que le serveur refuserait', () => {

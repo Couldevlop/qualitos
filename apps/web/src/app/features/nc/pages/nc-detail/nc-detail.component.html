@@ -83,7 +83,7 @@
                 data-test="nc-resolve">
           <mat-icon>task_alt</mat-icon> <span i18n="@@nc.detail.resolve">Résoudre</span>
         </button>
-        <button mat-flat-button color="primary" (click)="close()" *qosCan="'nc.close'"
+        <button mat-flat-button color="primary" (click)="close(n)" *qosCan="'nc.close'"
                 [disabled]="(acting$ | async) || !canClose(n.status) || blocked(n)"
                 [matTooltip]="blocked(n) ? blockersHint(n) : closeTooltip"
                 data-test="nc-close">

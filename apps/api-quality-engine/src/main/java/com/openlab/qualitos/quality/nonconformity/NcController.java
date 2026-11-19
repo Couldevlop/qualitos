@@ -88,8 +88,9 @@ public class NcController {
      * appelant sans droit ni désignation n'obtient rien de plus qu'ici.
      */
     @PostMapping("/{id}/close")
-    public NcDto.Response close(@PathVariable UUID id) {
-        return service.close(id);
+    public NcDto.Response close(@PathVariable UUID id,
+                                @Valid @RequestBody NcDto.CloseRequest request) {
+        return service.close(id, request);
     }
 
     @PostMapping("/{id}/cancel")

@@ -63,5 +63,28 @@ public enum NcBlockerCode {
      * <p>Le bouton était éteint sans un mot dans ce cas comme dans les autres :
      * c'est le motif qui dit le geste — ajouter une action.
      */
-    NO_CAPA_CASE
+    NO_CAPA_CASE,
+
+    /**
+     * L'écart a été déclaré impactant le PFMEA, et aucune révision du PFMEA
+     * n'a encore été actée pour lui. Décompte = 1.
+     *
+     * <p>Empêche de CLORE : clore, c'est dire « la leçon est tirée ». Un défaut
+     * survenu pour de bon et une analyse de risque qui l'ignore encore se
+     * contredisent sur la même page, et l'IATF 16949 en fait une exigence —
+     * toute non-conformité se répercute sur la PFMEA. Le motif ne naît pas
+     * d'une règle que l'écran devine : il naît de la RÉPONSE donnée à la
+     * question, et disparaît dès que la révision est acceptée ou que la réponse
+     * change.
+     */
+    PFMEA_REVISION_REQUIRED,
+
+    /**
+     * Même chose pour le plan de surveillance. Décompte = 1.
+     *
+     * <p>Deux motifs plutôt qu'un : les deux documents se révisent séparément,
+     * par des gestes distincts, et un motif unique laisserait chercher lequel
+     * des deux retient la clôture.
+     */
+    CONTROL_PLAN_REVISION_REQUIRED
 }

@@ -57,7 +57,8 @@ class NcCreatedEventPublicationTest {
                 mock(com.openlab.qualitos.quality.dmaic.DmaicService.class),
                 events, viewAll -> Optional.empty(),
                 mock(com.openlab.qualitos.quality.nonconformity.subcategory.NcSubcategoryCatalog.class),
-                mock(com.openlab.qualitos.quality.authz.application.AuthorizationService.class));
+                mock(com.openlab.qualitos.quality.authz.application.AuthorizationService.class),
+                mock(NcRiskRevisionsPort.class));
         TenantContext.setTenantId(CONTEXT_TENANT.toString());
     }
 

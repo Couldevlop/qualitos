@@ -11,7 +11,7 @@ import { catchError, finalize, map, shareReplay, switchMap, tap } from 'rxjs/ope
 import { deferredView } from '../../../../core/rx/deferred-view';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { AuthzService } from '../../../../core/authz/authz.service';
-import { safeErrorMessage } from '../../../../core/http/error-message';
+import { gateReasons, safeErrorMessage } from '../../../../core/http/error-message';
 import {
   CapaActionsDialogComponent, CapaActionsDialogData
 } from '../../../capa/pages/capa-actions-dialog/capa-actions-dialog.component';
@@ -23,6 +23,9 @@ import { CapaService } from '../../../capa/capa.service';
 import { DirectoryUser } from '../../../../core/directory/directory.types';
 import { ConnectivityService } from '../../../../core/offline/connectivity.service';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../../../shared/ui/confirm-dialog/confirm-dialog.component';
+import {
+  NcCloseDialogComponent, NcCloseDialogData, NcCloseDialogResult
+} from '../nc-close-dialog/nc-close-dialog.component';
 import { FiveWhysService } from '../../../five-whys/five-whys.service';
 import { FiveWhysAnalysis } from '../../../five-whys/five-whys.types';
 import { IshikawaService } from '../../../ishikawa/ishikawa.service';
@@ -32,6 +35,7 @@ import { ProductResponse } from '../../../products/products.types';
 import { NcService } from '../../nc.service';
 import { TeamMemberRef } from '../../../../shared/user-picker/user-team-picker.component';
 import {
+  CloseNcRequest,
   NC_MAX_TEAM_MEMBERS,
   NcPhoto,
   NcBlocker,
@@ -1104,7 +1108,33 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   startAnalysis(): void { this.transition('start-analysis'); }
-  close(): void { this.transition('close'); }
+
+  /**
+   * CLORE UN ÉCART, C'EST AUSSI DIRE CE QU'IL A ENSEIGNÉ.
+   *
+   * <p>Une fenêtre et non un franchissement muet : l'écart apprend quelque
+   * chose sur l'analyse des risques du produit — un mode de défaillance que le
+   * PFMEA n'avait pas prévu, un contrôle que le plan de surveillance ne
+   * portait pas — et l'IATF 16949 en fait une exigence. La clôture ne demandait
+   * rien, et le PFMEA restait muet sur un défaut survenu pour de bon.
+   *
+   * <p>Les réponses déjà données sont repassées à la fenêtre : une clôture
+   * retenue par le verrou qu'elles ont posé n'a pas à les redemander.
+   */
+  close(nc: NcResponse): void {
+    if (this.acting$.value) return;
+    this.dialog.open(NcCloseDialogComponent, {
+      width: '560px',
+      autoFocus: 'first-tabbable',
+      data: {
+        reference: nc.reference,
+        pfmeaImpacted: nc.pfmeaImpacted,
+        controlPlanImpacted: nc.controlPlanImpacted
+      } as NcCloseDialogData
+    }).afterClosed().subscribe((reponse: NcCloseDialogResult | undefined) => {
+      if (reponse) this.transition('close', reponse);
+    });
+  }
 
   /**
    * Le bouton d'actions de l'en-tête : « Nouvelle action », ou
@@ -1325,12 +1355,14 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
    * <p>« Définir l'action » n'en fait plus partie : c'est l'ouverture de la CAPA
    * qui fait avancer l'écart, et le serveur tient les deux d'un seul geste.
    */
-  private transition(action: 'start-analysis' | 'close' | 'cancel'): void {
+  private transition(action: 'start-analysis' | 'close' | 'cancel',
+                     cloture?: CloseNcRequest): void {
     if (this.acting$.value) return;
     this.acting$.next(true);
     const call =
       action === 'start-analysis' ? this.svc.startAnalysis(this.ncId)
-      : action === 'close' ? this.svc.close(this.ncId)
+      : action === 'close' ? this.svc.close(
+          this.ncId, cloture ?? { pfmeaImpacted: false, controlPlanImpacted: false })
       : this.svc.cancel(this.ncId);
     call.pipe(finalize(() => this.acting$.next(false))).subscribe({
       next: () => {
@@ -1342,9 +1374,21 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
       error: err => {
         // eslint-disable-next-line no-console
         console.warn('[nc-detail] transition failed', action, err?.status, err?.error?.title);
+        // Les motifs que le serveur ÉNUMÈRE, s'il en donne : « le PFMEA attend
+        // sa révision » dit quoi faire, là où un 409 nu se traduisait par
+        // « rechargez la page » — un conseil faux, puisque recharger ne révise
+        // rien. La fiche relue porte ensuite le même motif dans son bandeau.
+        const motifs = gateReasons(err);
         this.snack.open(
-          safeErrorMessage(err, $localize`:@@nc.detail.transition-error:Erreur lors de la transition.`),
-          $localize`:@@common.ok:OK`, { duration: 4000 });
+          motifs.length
+            ? motifs.join(' ')
+            : safeErrorMessage(err, $localize`:@@nc.detail.transition-error:Erreur lors de la transition.`),
+          // Plus long quand il y a plusieurs motifs a lire : une phrase
+          // generique se saisit d'un coup d'oeil, une liste non.
+          $localize`:@@common.ok:OK`, { duration: motifs.length ? 6000 : 4000 });
+        // La fiche relue porte le meme motif dans son bandeau : sans cela le
+        // bouton resterait allume au-dessus d'un verrou qu'on vient d'annoncer.
+        if (motifs.length) this.reload$.next();
       }
     });
   }
@@ -1517,6 +1561,15 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
           : $localize`:@@nc.blocker.cases-many:${b.count}:count: dossiers CAPA ne sont pas clôturés. Clôturez-les — après vérification de leur efficacité — pour pouvoir clôturer cet écart.`;
       case 'NO_CAPA_CASE':
         return $localize`:@@nc.blocker.no-capa:Aucune action n'est encore inscrite sur cet écart. Ajoutez au moins une action pour pouvoir le résoudre.`;
+
+      case 'PFMEA_REVISION_REQUIRED':
+        // La phrase dit le GESTE : accepter la revision proposee sur le PFMEA.
+        // Dire « le PFMEA attend sa revision » sans dire ou l'acter laisse
+        // chercher dans un autre module ce qu'on vient de nous refuser.
+        return $localize`:@@nc.blocker.pfmea-revision:Cet écart a été déclaré impactant le PFMEA du produit. Acceptez la révision du PFMEA qui le concerne pour pouvoir le clôturer — ou corrigez la réponse si le PFMEA n'était pas en cause.`;
+
+      case 'CONTROL_PLAN_REVISION_REQUIRED':
+        return $localize`:@@nc.blocker.control-plan-revision:Cet écart a été déclaré impactant le plan de surveillance. Acceptez la révision du plan qui le concerne pour pouvoir le clôturer — ou corrigez la réponse si le plan n'était pas en cause.`;
 
       case 'SECOND_LOOK_REQUIRED':
         // La phrase dit le GESTE qui débloque, et surtout que l'écart n'est pas

@@ -166,6 +166,16 @@ export interface NcResponse {
    */
   validatorId?: string;
   validatorName?: string;
+  /**
+   * CE QUI A ETE TRANCHE DE L'ANALYSE DE RISQUE, a la cloture.
+   *
+   * <p>`undefined` veut dire que la question n'a pas encore ete posee ;
+   * `false` qu'elle l'a ete, et qu'on a juge que non. La premiere ne prouve
+   * rien, la seconde est une decision -- et c'est elle que l'auditeur vient
+   * lire quand le PFMEA n'a pas bouge.
+   */
+  pfmeaImpacted?: boolean;
+  controlPlanImpacted?: boolean;
   createdAt: string;
   updatedAt: string;
   /**
@@ -208,6 +218,22 @@ export interface NcCapaCaseRef {
   effectivenessComment?: string;
 }
 
+/**
+ * CE QUE LA CLOTURE TRANCHE DE L'ANALYSE DE RISQUE.
+ *
+ * <p>Deux reponses obligatoires : l'ecart a-t-il impacte le PFMEA du produit,
+ * et son plan de surveillance ? Un ecart traite enseigne quelque chose sur
+ * l'analyse des risques, et l'IATF 16949 en fait une exigence -- toute
+ * non-conformite se repercute sur la PFMEA et le plan de surveillance.
+ *
+ * <p>Les deux champs sont requis : un booleen absent vaudrait « non » en
+ * silence, et l'ecart se refermerait sur une decision que personne n'a prise.
+ */
+export interface CloseNcRequest {
+  pfmeaImpacted: boolean;
+  controlPlanImpacted: boolean;
+}
+
 /** Les motifs que le serveur énumère ; l'écran les rédige. */
 export type NcBlockerCode =
   | 'CAPA_ACTIONS_TO_CARRY_OUT'
@@ -219,7 +245,18 @@ export type NcBlockerCode =
    * résolu cet écart ne peut pas le clôturer. Le même écart n'en porte
    * aucun pour quelqu'un d'autre.
    */
-  | 'SECOND_LOOK_REQUIRED';
+  | 'SECOND_LOOK_REQUIRED'
+  /**
+   * L'ecart a ete declare impactant le PFMEA du produit, et aucune revision du
+   * PFMEA n'a encore ete actee pour lui.
+   *
+   * <p>Ne nait pas d'une regle que l'ecran devine : nait de la REPONSE donnee a
+   * la question posee a la cloture, et disparait des que la revision est
+   * acceptee -- ou que la reponse change.
+   */
+  | 'PFMEA_REVISION_REQUIRED'
+  /** Meme chose pour le plan de surveillance : les deux documents se revisent a part. */
+  | 'CONTROL_PLAN_REVISION_REQUIRED';
 
 /**
  * Un motif de blocage et son décompte.

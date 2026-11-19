@@ -222,6 +222,26 @@ public class NonConformity {
     private String closedByName;
 
     /**
+     * L ECART A-T-IL IMPACTE L ANALYSE DE RISQUE DU PRODUIT ?
+     *
+     * <p>Deux questions tranchees a la cloture : le PFMEA, et le plan de
+     * surveillance. Un ecart traite enseigne quelque chose sur l analyse des
+     * risques -- un mode de defaillance qu elle n avait pas prevu, un controle
+     * qu elle ne portait pas -- et l IATF 16949 en fait une exigence : toute
+     * non-conformite se repercute sur la PFMEA et le plan de surveillance.
+     *
+     * <p>NULL N EST PAS FALSE. NULL veut dire que la question n a pas encore
+     * ete posee ; FALSE veut dire qu elle l a ete, et qu on a juge que non. La
+     * premiere ne prouve rien, la seconde est une decision datee et imputable
+     * -- et c est elle que l auditeur vient lire.
+     */
+    @Column(name = "pfmea_impacted")
+    private Boolean pfmeaImpacted;
+
+    @Column(name = "control_plan_impacted")
+    private Boolean controlPlanImpacted;
+
+    /**
      * La personne DESIGNEE pour porter le second regard sur cet ecart.
      *
      * <p>Facultative. Sans elle, le second regard revient aux roles de pilotage

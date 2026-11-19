@@ -213,6 +213,27 @@ public final class NcDto {
     ) {}
 
     /**
+     * LA CLÔTURE DÉFINITIVE, ET CE QU'ELLE TRANCHE DE L'ANALYSE DE RISQUE.
+     *
+     * <p>Deux questions, et il faut y répondre : l'écart a-t-il impacté le
+     * PFMEA du produit, et son plan de surveillance ? Un écart traité enseigne
+     * quelque chose sur l'analyse des risques — un mode de défaillance qu'elle
+     * n'avait pas prévu, un contrôle qu'elle ne portait pas — et l'IATF 16949
+     * en fait une exigence : toute non-conformité se répercute sur la PFMEA et
+     * le plan de surveillance.
+     *
+     * <p>{@code @NotNull} et non un booléen primitif : un {@code boolean}
+     * absent du corps vaudrait {@code false} en silence, et l'écart se
+     * refermerait sur une décision que personne n'a prise. La réponse est
+     * exigée ; une fois donnée, elle est datée et imputable — c'est elle que
+     * l'auditeur vient lire, y compris quand elle est « non ».
+     */
+    public record CloseRequest(
+            @NotNull(message = "pfmeaImpacted is required") Boolean pfmeaImpacted,
+            @NotNull(message = "controlPlanImpacted is required") Boolean controlPlanImpacted
+    ) {}
+
+    /**
      * Escalade vers une CAPA. La NC ne porte pas toujours de responsable ;
      * la CAPA exige un owner (cf. CapaCase.ownerId NOT NULL) → fourni ici.
      */
@@ -321,6 +342,16 @@ public final class NcDto {
             String closedByName,
             UUID validatorId,
             String validatorName,
+            /**
+             * CE QUI A ÉTÉ TRANCHÉ DE L'ANALYSE DE RISQUE, à la clôture.
+             *
+             * <p>{@code null} veut dire que la question n'a pas encore été
+             * posée ; {@code false} qu'elle l'a été, et qu'on a jugé que non.
+             * La première ne prouve rien, la seconde est une décision — et la
+             * fiche n'en invente pas sur les écarts d'avant la règle.
+             */
+            Boolean pfmeaImpacted,
+            Boolean controlPlanImpacted,
             Instant createdAt,
             Instant updatedAt,
             /** L'équipe en charge, dans son ordre de saisie. */

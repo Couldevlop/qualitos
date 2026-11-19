@@ -38,6 +38,14 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class NcServiceTest {
 
+    /**
+     * « Ni le PFMEA, ni le plan de surveillance » : la réponse des bancs qui ne
+     * mesurent pas cette régle-là. Ce n'est pas un vide -- c'est une décision,
+     * et c'est bien celle qu'ils veulent : rien ne doit retenir leur clôture.
+     */
+    private static final NcDto.CloseRequest SANS_IMPACT =
+            new NcDto.CloseRequest(false, false);
+
     @Mock NonConformityRepository repo;
     @Mock NcTeamMemberRepository teamMembers;
     @Mock CapaService capaService;
@@ -48,6 +56,11 @@ class NcServiceTest {
     @Mock RecordScope scope;
     @Mock com.openlab.qualitos.quality.nonconformity.subcategory.NcSubcategoryCatalog subcategories;
     @Mock com.openlab.qualitos.quality.authz.application.AuthorizationService authz;
+    /**
+     * Sans réglage, Mockito rend {@code false} : aucune révision actée. C'est
+     * l'état qui compte, puisque c'est lui qui fait naître le verrou.
+     */
+    @Mock NcRiskRevisionsPort riskRevisions;
     @InjectMocks NcService service;
 
     /**
@@ -737,7 +750,7 @@ class NcServiceTest {
         NonConformity n = nc(TENANT, NcStatus.RESOLVED);
         when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
         when(repo.save(n)).thenReturn(n);
-        service.close(n.getId());
+        service.close(n.getId(), SANS_IMPACT);
         assertThat(n.getStatus()).isEqualTo(NcStatus.CLOSED);
         assertThat(n.getClosedAt()).isNotNull();
     }
@@ -782,13 +795,156 @@ class NcServiceTest {
         when(capaService.unsettledCaseNamesInScopeFor(capaId, n.getReference()))
                 .thenReturn(List.of("Remplacer le roulement de broche"));
 
-        assertThatThrownBy(() -> service.close(n.getId()))
+        assertThatThrownBy(() -> service.close(n.getId(), SANS_IMPACT))
                 .isInstanceOf(NcStateException.class)
                 // Le refus NOMME ce qui reste : sans le titre, il faut aller
                 // chercher dans le registre ce que l on vient de nous refuser.
                 .hasMessageContaining("Remplacer le roulement de broche");
         assertThat(n.getStatus()).isEqualTo(NcStatus.RESOLVED);
         verify(repo, never()).save(any());
+    }
+
+    // ---------- ce que l'écart enseigne à l'analyse de risque ----------
+
+    /**
+     * UN ÉCART QUI A IMPACTÉ LE PFMEA NE SE CLÔT PAS AVANT SA RÉVISION.
+     *
+     * <p>Un défaut survenu pour de bon et une analyse de risque qui l'ignore
+     * encore se contredisent sur la même page. L'IATF 16949 en fait une
+     * exigence : toute non-conformité se répercute sur la PFMEA et le plan de
+     * surveillance. Jusqu'ici personne n'avait à se prononcer, et l'écart se
+     * refermait sur la question sans l'avoir posée.
+     *
+     * <p>Le refus NOMME le document : « il manque une révision » envoie
+     * chercher, « le PFMEA attend la sienne » dit quoi faire.
+     */
+    @Test
+    void close_pfmeaImpacteSansRevision_refuseEtLeDit() {
+        jePeuxClore();
+        NonConformity n = nc(TENANT, NcStatus.RESOLVED);
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+
+        assertThatThrownBy(() -> service.close(n.getId(),
+                new NcDto.CloseRequest(true, false)))
+                .isInstanceOf(NcGateException.class)
+                .satisfies(ex -> assertThat(((NcGateException) ex).reasons())
+                        .singleElement().asString().contains("PFMEA"));
+        assertThat(n.getStatus()).isEqualTo(NcStatus.RESOLVED);
+    }
+
+    /** Le plan de surveillance a son propre verrou : les deux documents se révisent à part. */
+    @Test
+    void close_planDeSurveillanceImpacteSansRevision_refuseEtLeDit() {
+        jePeuxClore();
+        NonConformity n = nc(TENANT, NcStatus.RESOLVED);
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+
+        assertThatThrownBy(() -> service.close(n.getId(),
+                new NcDto.CloseRequest(false, true)))
+                .isInstanceOf(NcGateException.class)
+                .satisfies(ex -> assertThat(((NcGateException) ex).reasons())
+                        .singleElement().asString().contains("plan de surveillance"));
+    }
+
+    /** Les deux impactés, les deux motifs : un seul laisserait chercher lequel retient. */
+    @Test
+    void close_lesDeuxImpactes_donneLesDeuxMotifs() {
+        jePeuxClore();
+        NonConformity n = nc(TENANT, NcStatus.RESOLVED);
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+
+        assertThatThrownBy(() -> service.close(n.getId(),
+                new NcDto.CloseRequest(true, true)))
+                .isInstanceOf(NcGateException.class)
+                .satisfies(ex -> assertThat(((NcGateException) ex).reasons()).hasSize(2));
+    }
+
+    /** La révision actée lève le verrou : c'est la leçon tirée, et elle l'est. */
+    @Test
+    void close_pfmeaImpacteEtRevise_passe() {
+        jePeuxClore();
+        NonConformity n = nc(TENANT, NcStatus.RESOLVED);
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+        when(repo.save(any())).thenAnswer(i -> i.getArgument(0));
+        when(riskRevisions.pfmeaRevisedFor(TENANT, n.getId())).thenReturn(true);
+
+        service.close(n.getId(), new NcDto.CloseRequest(true, false));
+
+        assertThat(n.getStatus()).isEqualTo(NcStatus.CLOSED);
+        assertThat(n.getPfmeaImpacted()).isTrue();
+    }
+
+    /**
+     * « NON » EST UNE DÉCISION, et elle s'écrit.
+     *
+     * <p>Elle ne retient rien -- on a jugé que l'analyse de risque n'était pas
+     * en cause -- mais elle est datée et imputable, et c'est elle que
+     * l'auditeur vient lire quand le PFMEA n'a pas bougé. {@code null}, lui,
+     * ne prouve rien : il dit que la question n'a pas été posée.
+     */
+    @Test
+    void close_sansImpact_inscritLaDecisionEtPasse() {
+        jePeuxClore();
+        NonConformity n = nc(TENANT, NcStatus.RESOLVED);
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+        when(repo.save(any())).thenAnswer(i -> i.getArgument(0));
+
+        service.close(n.getId(), SANS_IMPACT);
+
+        assertThat(n.getStatus()).isEqualTo(NcStatus.CLOSED);
+        assertThat(n.getPfmeaImpacted()).isFalse();
+        assertThat(n.getControlPlanImpacted()).isFalse();
+    }
+
+    /**
+     * LA RÉPONSE SURVIT AU REFUS DE SON PROPRE VERROU : un second essai n'a
+     * pas à la redonner, et la fiche montre déjà ce qui a été tranché.
+     */
+    @Test
+    void close_refuseParLeRisque_inscritQuandMemeLaReponse() {
+        jePeuxClore();
+        NonConformity n = nc(TENANT, NcStatus.RESOLVED);
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+
+        assertThatThrownBy(() -> service.close(n.getId(),
+                new NcDto.CloseRequest(true, false)))
+                .isInstanceOf(NcGateException.class);
+
+        verify(repo).save(n);
+        assertThat(n.getPfmeaImpacted()).isTrue();
+    }
+
+    /**
+     * LE MOTIF S'ANNONCE AVANT LE CLIC, pour que le bouton ne s'éteigne pas
+     * sans un mot. C'est la même règle, lue par l'autre chemin : si les deux
+     * divergeaient, l'écran proposerait un geste que le serveur refuse.
+     */
+    @Test
+    void fiche_dUnEcartResoluImpactant_annonceLeMotif() {
+        NonConformity n = nc(TENANT, NcStatus.RESOLVED);
+        n.setPfmeaImpacted(true);
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+
+        assertThat(service.findById(n.getId()).blockers())
+                .extracting(NcDto.Blocker::code)
+                .contains(NcBlockerCode.PFMEA_REVISION_REQUIRED);
+    }
+
+    /**
+     * LA QUESTION NON POSÉE NE REPROCHE RIEN. {@code null} n'est pas
+     * {@code false} : c'est la clôture elle-même qui pose la question, et un
+     * motif affiché avant qu'on ait demandé reprocherait de n'avoir pas fait
+     * ce qu'on ne propose pas encore.
+     */
+    @Test
+    void fiche_sansReponse_nAnnonceAucunMotifDeRisque() {
+        NonConformity n = nc(TENANT, NcStatus.RESOLVED);
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+
+        assertThat(service.findById(n.getId()).blockers())
+                .extracting(NcDto.Blocker::code)
+                .doesNotContain(NcBlockerCode.PFMEA_REVISION_REQUIRED,
+                        NcBlockerCode.CONTROL_PLAN_REVISION_REQUIRED);
     }
 
     /**
@@ -815,7 +971,7 @@ class NcServiceTest {
         when(capaService.unsettledCaseNamesInScopeFor(null, n.getReference()))
                 .thenReturn(List.of());
 
-        assertThatThrownBy(() -> service.close(n.getId()))
+        assertThatThrownBy(() -> service.close(n.getId(), SANS_IMPACT))
                 .isInstanceOf(NcStateException.class)
                 .hasMessageContaining("2 CAPA case(s)")
                 .hasMessageNotContaining("Remplacer le roulement")
@@ -864,7 +1020,7 @@ class NcServiceTest {
         when(capaService.unsettledCaseNamesInScopeFor(null, "NC-2026-0001"))
                 .thenReturn(List.of("Auditer le fournisseur"));
 
-        assertThatThrownBy(() -> service.close(sansEscalade.getId()))
+        assertThatThrownBy(() -> service.close(sansEscalade.getId(), SANS_IMPACT))
                 .isInstanceOf(NcStateException.class)
                 .hasMessageContaining("Auditer le fournisseur");
 
@@ -886,7 +1042,7 @@ class NcServiceTest {
         when(capaService.unsettledCasesFor(capaId, n.getReference())).thenReturn(List.of());
         when(repo.save(n)).thenReturn(n);
 
-        service.close(n.getId());
+        service.close(n.getId(), SANS_IMPACT);
 
         assertThat(n.getStatus()).isEqualTo(NcStatus.CLOSED);
     }
@@ -899,7 +1055,7 @@ class NcServiceTest {
         jePeuxClore();
         NonConformity n = nc(TENANT, NcStatus.ACTION_DEFINED);
         when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
-        assertThatThrownBy(() -> service.close(n.getId())).isInstanceOf(NcStateException.class);
+        assertThatThrownBy(() -> service.close(n.getId(), SANS_IMPACT)).isInstanceOf(NcStateException.class);
     }
 
     // --- cancel ---

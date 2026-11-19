@@ -7662,6 +7662,14 @@ Customer portal</target>
         <source>État actuel du dossier. Le PDF émis porte ce tableau, figé à l'émission.</source>
         <target state="translated">Current state of the case. The issued PDF carries this table, frozen at issuance.</target>
       </trans-unit>
+      <trans-unit id="nc.8d.live-note-evidence" datatype="html">
+        <source>État actuel du dossier. Le PDF émis en porte le compte, figé à l'émission.</source>
+        <target state="translated">Current state of the case. The issued PDF carries their count, frozen at issuance.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.evidence-empty" datatype="html">
+        <source>Les preuves se déposeront ici dès qu'un dossier CAPA sera ouvert sur l'écart : elles s'attachent au dossier.</source>
+        <target state="translated">Evidence will be attached here as soon as a CAPA case is opened on the non-conformity: it belongs to the case.</target>
+      </trans-unit>
       <trans-unit id="nc.8d.live-note-figures" datatype="html">
         <source>État actuel du dossier. Le PDF émis porte ces schémas, figés à l'émission.</source>
         <target state="translated">Current state of the case. The issued PDF carries these diagrams, frozen at issuance.</target>
@@ -22393,6 +22401,50 @@ declared income
       <trans-unit id="nc.8d.go-to-nc" datatype="html">
         <source>Ouvrir la fiche de l'écart</source>
         <target state="translated">Open the deviation record</target>
+      </trans-unit>
+      <trans-unit id="nc.close.title" datatype="html">
+        <source>Clôturer l'écart</source>
+        <target state="translated">Close the non-conformity</target>
+      </trans-unit>
+      <trans-unit id="nc.close.intro" datatype="html">
+        <source>L'écart <x id="START_TAG_STRONG"/><x id="INTERPOLATION"/><x id="CLOSE_TAG_STRONG"/> va être clos. Avant cela, deux questions : ce qu'il a enseigné à l'analyse de risque du produit.</source>
+        <target state="translated">Non-conformity <x id="START_TAG_STRONG"/><x id="INTERPOLATION"/><x id="CLOSE_TAG_STRONG"/> is about to be closed. First, two questions: what it taught the product's risk analysis.</target>
+      </trans-unit>
+      <trans-unit id="nc.close.pfmea-legend" datatype="html">
+        <source>Le PFMEA du produit a-t-il été impacté ?</source>
+        <target state="translated">Was the product's PFMEA affected?</target>
+      </trans-unit>
+      <trans-unit id="nc.close.control-plan-legend" datatype="html">
+        <source>Le plan de surveillance a-t-il été impacté ?</source>
+        <target state="translated">Was the control plan affected?</target>
+      </trans-unit>
+      <trans-unit id="nc.close.pfmea-required" datatype="html">
+        <source>Répondez par « oui » ou « non » : la question doit être tranchée pour clore.</source>
+        <target state="translated">Answer yes or no: the question must be settled before closing.</target>
+      </trans-unit>
+      <trans-unit id="nc.close.control-plan-required" datatype="html">
+        <source>Répondez par « oui » ou « non » : la question doit être tranchée pour clore.</source>
+        <target state="translated">Answer yes or no: the question must be settled before closing.</target>
+      </trans-unit>
+      <trans-unit id="nc.close.requires-revision" datatype="html">
+        <source>La révision du document désigné devient exigible : l'écart ne se clôra définitivement qu'une fois cette révision acceptée.</source>
+        <target state="translated">Revising the named document becomes mandatory: the non-conformity will only close for good once that revision is accepted.</target>
+      </trans-unit>
+      <trans-unit id="nc.close.hint" datatype="html">
+        <source>Répondre « non » est une décision, qui se lit : elle atteste qu'on a examiné l'analyse de risque et jugé qu'elle n'était pas en cause.</source>
+        <target state="translated">Answering no is a decision, and it reads as one: it records that the risk analysis was reviewed and judged not to be involved.</target>
+      </trans-unit>
+      <trans-unit id="nc.close.confirm" datatype="html">
+        <source>Clôturer</source>
+        <target state="translated">Close</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.pfmea-revision" datatype="html">
+        <source>Cet écart a été déclaré impactant le PFMEA du produit. Acceptez la révision du PFMEA qui le concerne pour pouvoir le clôturer — ou corrigez la réponse si le PFMEA n'était pas en cause.</source>
+        <target state="translated">This non-conformity was declared as affecting the product's PFMEA. Accept the PFMEA revision raised for it before closing it — or correct the answer if the PFMEA was not involved.</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.control-plan-revision" datatype="html">
+        <source>Cet écart a été déclaré impactant le plan de surveillance. Acceptez la révision du plan qui le concerne pour pouvoir le clôturer — ou corrigez la réponse si le plan n'était pas en cause.</source>
+        <target state="translated">This non-conformity was declared as affecting the control plan. Accept the control plan revision raised for it before closing it — or correct the answer if the plan was not involved.</target>
       </trans-unit>
       <trans-unit id="nav.nc-clusters" datatype="html">
         <source>Clustering NC</source>
