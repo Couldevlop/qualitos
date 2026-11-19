@@ -105,15 +105,23 @@
             </div>
             <!-- L'EXIGENCE de verification, distincte du constat qu'elle a eu lieu.
                  Affichee meme quand la reponse est « non » : dire non est une
-                 decision, et c'est la premiere question d'un auditeur. -->
+                 decision, et c'est la premiere question d'un auditeur.
+
+                 « Vérification CONFIÉE », et non « vérification d'efficacité » :
+                 ce champ dit qu'une personne a ete DESIGNEE pour verifier, ce
+                 qui est un choix pris a l'ouverture. Le verdict d'efficacite,
+                 lui, est du par TOUT dossier avant sa cloture (ISO 9001 10.2,
+                 ADR 0108). Sous le meme nom, l'en-tete annoncait « Non exigee »
+                 au-dessus d'un bandeau qui reclamait « Vérification
+                 d'efficacite requise », sur le meme ecran. -->
             <div class="info-item" *ngIf="c.verificationRequired != null"
                  data-test="verification-exigee">
-              <span class="info-label" i18n="@@capa.verification.title">Vérification d'efficacité</span>
+              <span class="info-label" i18n="@@capa.verification.assigned">Vérification confiée</span>
               <span [class]="c.verificationRequired ? 'badge badge-open' : 'badge'">
                 <ng-container *ngIf="c.verificationRequired; else pasDeVerification"
-                              i18n="@@capa.verification.required">Exigée</ng-container>
+                              i18n="@@common.yes">Oui</ng-container>
                 <ng-template #pasDeVerification>
-                  <span i18n="@@capa.verification.not-required">Non exigée</span>
+                  <span i18n="@@common.no">Non</span>
                 </ng-template>
               </span>
             </div>

@@ -7950,6 +7950,10 @@ Portail clients</source>
         <source>Non</source>
         <target state="translated">لا</target>
       </trans-unit>
+      <trans-unit id="capa.verification.assigned" datatype="html">
+        <source>Vérification confiée</source>
+        <target state="translated">التحقق المُسنَد</target>
+      </trans-unit>
       <trans-unit id="capa.verification.title" datatype="html">
         <source>Vérification d'efficacité</source>
         <target state="translated">التحقق من الفعالية</target>
@@ -23037,6 +23041,22 @@ historique 12 mois</source>
       <trans-unit id="nc.reopen.error" datatype="html">
         <source>Reprise impossible.</source>
         <target state="translated">إعادة الفتح غير ممكنة.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.problem" datatype="html">
+        <source>Description du problème</source>
+        <target state="translated">وصف المشكلة</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.problem-placeholder" datatype="html">
+        <source>Décrivez l'écart constaté, la quantité concernée, le lieu et le moment de la détection</source>
+        <target state="translated">صف الانحراف الملاحظ والكمية المعنية ومكان الاكتشاف ووقته</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.problem-required" datatype="html">
+        <source>Le constat ne peut pas rester vide.</source>
+        <target state="translated">لا يمكن ترك الملاحظة فارغة.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.validator-own-work" datatype="html">
+        <source>Vous avez résolu cet écart : vous ne pouvez pas choisir qui relit votre travail. Un autre détenteur du droit de clôture désignera le valideur.</source>
+        <target state="translated">أنت من حلّ عدم المطابقة هذا، لذا لا يمكنك اختيار من يراجع عملك. سيعيّن المصادقَ شخصٌ آخر يملك حقّ الإغلاق.</target>
       </trans-unit>
       <trans-unit id="nc.8d.validator" datatype="html">
         <source>Valideur de la clôture (second regard)</source>

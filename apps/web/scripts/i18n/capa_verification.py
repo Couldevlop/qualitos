@@ -14,6 +14,13 @@ TRANSLATIONS = {
     'common.yes': ('Oui', 'Yes', 'Sí', 'نعم', 'はい', '是'),
     'common.no': ('Non', 'No', 'No', 'لا', 'いいえ', '否'),
 
+    'capa.verification.assigned': (
+        "Vérification confiée",
+        'Verification assigned',
+        'Verificación asignada',
+        'التحقق المُسنَد',
+        '検証の担当',
+        '已指定验证人'),
     'capa.verification.title': (
         "Vérification d'efficacité", 'Effectiveness verification',
         'Verificación de la eficacia', 'التحقق من الفعالية',
