@@ -390,8 +390,38 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
      * a rien : ni au PFMEA du produit, ni a son plan de surveillance, ni aux
      * autres ecarts qu'il a connus.
      */
-    productId: new FormControl<string>('', { nonNullable: true })
+    productId: new FormControl<string>('', { nonNullable: true }),
+    /**
+     * Le constat lui-meme, corrigeable.
+     *
+     * <p>Il etait fige a la declaration : une faute de frappe, une quantite
+     * fausse ou un detail manquant le restaient pour toujours, sur la piece
+     * meme que le client lit. Le serveur l'acceptait deja ; aucun ecran ne
+     * l'offrait.
+     *
+     * <p>Pas de validateur fixe : il est POSE A LA LECTURE de la fiche, et
+     * seulement si le constat en porte un (voir {@link rempliContexte}). C'est
+     * la regle du serveur a la lettre -- on ne peut pas EFFACER une description
+     * deja ecrite, ce qui contournerait l'obligation posee a la creation, mais
+     * un ecart ancien qui n'en a jamais eu ne doit pas pour autant bloquer
+     * l'enregistrement du client ou du lot.
+     */
+    description: new FormControl<string>('', { nonNullable: true }),
+    /**
+     * La date du fait -- detecte en interne, recu du client dehors.
+     *
+     * <p>Une Date et non un Instant : le selecteur Material travaille au jour.
+     * L'heure du constat, elle, est PRESERVEE a l'enregistrement (voir
+     * {@link enregistrerContexte}) -- corriger un jour ne doit pas deplacer
+     * silencieusement l'heure a minuit.
+     */
+    detectedOn: new FormControl<Date | null>(null)
   });
+
+  /** Pas de constat a venir : la borne haute du selecteur de date. */
+  readonly aujourdhui = new Date();
+  /** L'instant du constat tel que la fiche le porte, pour en garder l'heure. */
+  private heureDuConstat: string | null = null;
 
   /**
    * Le referentiel produit, pour NOMMER celui de l'ecart.
@@ -413,12 +443,56 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
    * un panneau d actions qui s annonce, par exemple.
    */
   private rempliContexte(n: NcResponse): void {
+    // L'heure du constat, retenue meme quand le formulaire ne la montre pas :
+    // le selecteur travaille au jour, et corriger le jour ne doit pas deplacer
+    // l'heure a minuit.
+    this.heureDuConstat = n.detectedAt ?? null;
     if (this.contexteModifie) return;
     this.contexteForm.setValue({
       customerName: n.customerName ?? '',
       batchNumber: n.batchNumber ?? '',
-      productId: n.productId ?? ''
+      productId: n.productId ?? '',
+      description: n.description ?? '',
+      detectedOn: n.detectedAt ? new Date(n.detectedAt) : null
     }, { emitEvent: false });
+    this.exigeLeConstat(!!(n.description ?? '').trim());
+  }
+
+  /**
+   * Le constat devient obligatoire des lors qu'il existe.
+   *
+   * <p>Un champ blanc ne dit pas la meme chose selon la fiche : sur un ecart
+   * qui porte un constat, le vider l'EFFACERAIT -- ce que le serveur refuse ;
+   * sur un ecart ancien qui n'en a jamais eu, il veut dire « je n'y touche
+   * pas ». Le validateur suit donc la fiche, et non le formulaire.
+   *
+   * <p>Pas `Validators.required` : il tient une chaine d'espaces pour une
+   * valeur, et c'est precisement ce que le serveur rejette.
+   */
+  private exigeLeConstat(exige: boolean): void {
+    const champ = this.contexteForm.controls.description;
+    champ.setValidators(exige
+      ? [c => (String(c.value ?? '').trim() ? null : { required: true })]
+      : []);
+    champ.updateValueAndValidity({ emitEvent: false });
+  }
+
+  /**
+   * Le jour choisi, a l'heure du constat d'origine.
+   *
+   * <p>Le selecteur rend minuit. Garder l'heure deja enregistree evite de
+   * deplacer le fait de plusieurs heures parce qu'on a corrige le jour -- et
+   * sur un ecart detecte a 23 h, ce deplacement changeait la date elle-meme
+   * dans un autre fuseau.
+   */
+  private auJour(jour: Date): string {
+    const source = this.heureDuConstat ? new Date(this.heureDuConstat) : null;
+    const corrige = new Date(jour.getTime());
+    if (source) {
+      corrige.setHours(source.getHours(), source.getMinutes(),
+                       source.getSeconds(), source.getMilliseconds());
+    }
+    return corrige.toISOString();
   }
 
   /** Le produit de l'ecart, nomme par le referentiel ; vide s'il n'y en a pas. */
@@ -450,7 +524,11 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
     this.svc.updateNc(this.ncId, {
       customerName: valeurs.customerName.trim(),
       batchNumber: valeurs.batchNumber.trim(),
-      ...(valeurs.productId ? { productId: valeurs.productId } : {})
+      ...(valeurs.productId ? { productId: valeurs.productId } : {}),
+      // Le constat ne part que s'il dit quelque chose : le serveur refuse une
+      // description blanche, et le formulaire l'interdit deja.
+      ...(valeurs.description.trim() ? { description: valeurs.description.trim() } : {}),
+      ...(valeurs.detectedOn ? { detectedAt: this.auJour(valeurs.detectedOn) } : {})
     }).pipe(finalize(() => this.contexteSaving$.next(false)))
       .subscribe({
         next: () => {
@@ -1590,6 +1668,19 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
       };
     }
     return null;
+  }
+
+  /**
+   * Est-ce MOI qui ai resolu cet ecart ?
+   *
+   * <p>Lu du motif que le serveur a deja calcule, et non d'une comparaison
+   * d'identifiants refaite ici : `SECOND_LOOK_REQUIRED` est le seul motif qui
+   * depende de QUI LIT la fiche, et il ne parait qu'a cette personne-la. Deux
+   * lectures de la meme regle finiraient par diverger ; celle-ci n'en a
+   * qu'une.
+   */
+  jeSuisLeResolveur(n: NcResponse): boolean {
+    return (n.blockers ?? []).some(b => String(b.code) === 'SECOND_LOOK_REQUIRED');
   }
 
   /** Le motif lui-meme sert de cle : deux motifs du meme code ne coexistent pas. */

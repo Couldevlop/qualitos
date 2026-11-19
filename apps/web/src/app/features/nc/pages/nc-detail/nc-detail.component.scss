@@ -819,6 +819,9 @@ section.card > .sub {
 }
 
 .contexte { margin-top: 18px; }
+
+/* Le constat prend toute la largeur : c'est un texte, pas une etiquette. */
+.contexte .constat { width: 100%; }
 .full { width: 100%; }
 
 .form-foot {
@@ -907,6 +910,16 @@ section.card > .sub {
 }
 
 .valideur qos-user-picker { display: block; }
+
+/* Pourquoi le champ n'est pas la : une phrase, au meme endroit que lui. */
+.valideur-interdit {
+  margin: 18px 0 0;
+  padding-top: 16px;
+  border-top: 1px solid var(--qos-border-subtle);
+  color: var(--qos-text-muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
 
 .valideur-lecture {
   display: flex;

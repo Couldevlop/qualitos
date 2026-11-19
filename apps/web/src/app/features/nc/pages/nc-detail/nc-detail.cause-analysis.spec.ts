@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router, convertToParamMap, provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
@@ -122,7 +124,7 @@ describe('NcDetailComponent — analyse de cause sur la fiche', () => {
     await TestBed.configureTestingModule({
       declarations: [NcDetailComponent, NcCauseAnalysisComponent],
       imports: [SharedModule, UiModule, UserPickerModule, FiveWhysSharedModule,
-                IshikawaSharedModule, NoopAnimationsModule,
+                IshikawaSharedModule, NoopAnimationsModule, MatDatepickerModule, MatNativeDateModule,
                 CapaActionPanelStubModule, CapaEvidencePanelStubModule],
       providers: [
         provideRouter([]),

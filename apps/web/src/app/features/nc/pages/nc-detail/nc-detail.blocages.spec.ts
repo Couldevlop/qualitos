@@ -1,5 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
@@ -89,7 +91,7 @@ describe('NcDetailComponent — ce qui bloque l’avancement', () => {
     await TestBed.configureTestingModule({
       declarations: [NcDetailComponent, NcCauseAnalysisComponent],
       imports: [SharedModule, UiModule, UserPickerModule, FiveWhysSharedModule,
-                IshikawaSharedModule, NoopAnimationsModule, CapaActionPanelStubModule, CapaEvidencePanelStubModule],
+                IshikawaSharedModule, NoopAnimationsModule, MatDatepickerModule, MatNativeDateModule, CapaActionPanelStubModule, CapaEvidencePanelStubModule],
       providers: [
         provideRouter([]),
         { provide: NcService, useValue: svc },

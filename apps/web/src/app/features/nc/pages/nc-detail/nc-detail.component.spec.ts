@@ -1,5 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
@@ -129,7 +131,7 @@ describe('NcDetailComponent — section photos', () => {
     await TestBed.configureTestingModule({
       declarations: [NcDetailComponent],
       imports: [SharedModule, UiModule, UserPickerModule, FiveWhysSharedModule,
-                IshikawaSharedModule, NoopAnimationsModule,
+                IshikawaSharedModule, NoopAnimationsModule, MatDatepickerModule, MatNativeDateModule,
                 CapaActionPanelStubModule, CapaEvidencePanelStubModule, NcCauseAnalysisStubModule],
       providers: [
         { provide: DirectoryService, useValue: ANNUAIRE_MUET },
@@ -498,7 +500,7 @@ describe('NcDetailComponent — workflow et escalade CAPA', () => {
     await TestBed.configureTestingModule({
       declarations: [NcDetailComponent],
       imports: [SharedModule, UiModule, UserPickerModule, FiveWhysSharedModule,
-                IshikawaSharedModule, NoopAnimationsModule,
+                IshikawaSharedModule, NoopAnimationsModule, MatDatepickerModule, MatNativeDateModule,
                 CapaActionPanelStubModule, CapaEvidencePanelStubModule, NcCauseAnalysisStubModule],
       providers: [
         { provide: DirectoryService, useValue: ANNUAIRE_MUET },
@@ -979,7 +981,7 @@ describe('NcDetailComponent — entrée 5 Pourquoi', () => {
     await TestBed.configureTestingModule({
       declarations: [NcDetailComponent],
       imports: [SharedModule, UiModule, UserPickerModule, FiveWhysSharedModule,
-                IshikawaSharedModule, NoopAnimationsModule,
+                IshikawaSharedModule, NoopAnimationsModule, MatDatepickerModule, MatNativeDateModule,
                 CapaActionPanelStubModule, CapaEvidencePanelStubModule, NcCauseAnalysisStubModule],
       providers: [
         { provide: DirectoryService, useValue: ANNUAIRE_MUET },
@@ -1147,7 +1149,7 @@ describe('NcDetailComponent — entrée Ishikawa', () => {
     await TestBed.configureTestingModule({
       declarations: [NcDetailComponent],
       imports: [SharedModule, UiModule, UserPickerModule, FiveWhysSharedModule,
-                IshikawaSharedModule, NoopAnimationsModule,
+                IshikawaSharedModule, NoopAnimationsModule, MatDatepickerModule, MatNativeDateModule,
                 CapaActionPanelStubModule, CapaEvidencePanelStubModule, NcCauseAnalysisStubModule],
       providers: [
         { provide: DirectoryService, useValue: ANNUAIRE_MUET },
@@ -1280,7 +1282,7 @@ describe('NcDetailComponent — conversion en cycle ou en projet', () => {
     await TestBed.configureTestingModule({
       declarations: [NcDetailComponent],
       imports: [SharedModule, UiModule, UserPickerModule, FiveWhysSharedModule,
-                IshikawaSharedModule, NoopAnimationsModule,
+                IshikawaSharedModule, NoopAnimationsModule, MatDatepickerModule, MatNativeDateModule,
                 CapaActionPanelStubModule, CapaEvidencePanelStubModule, NcCauseAnalysisStubModule],
       providers: [
         { provide: DirectoryService, useValue: ANNUAIRE_MUET },

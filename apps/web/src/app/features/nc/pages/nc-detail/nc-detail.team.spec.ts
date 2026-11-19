@@ -1,6 +1,8 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { of, throwError } from 'rxjs';
@@ -92,7 +94,7 @@ describe('NcDetailComponent — équipe en charge', () => {
 
     await TestBed.configureTestingModule({
       declarations: [NcDetailComponent],
-      imports: [SharedModule, UiModule, UserPickerModule, NoopAnimationsModule,
+      imports: [SharedModule, UiModule, UserPickerModule, NoopAnimationsModule, MatDatepickerModule, MatNativeDateModule,
                 CapaActionPanelStubModule, CapaEvidencePanelStubModule, NcCauseAnalysisStubModule],
       providers: [
         { provide: NcService, useValue: svc },

@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
@@ -100,7 +102,7 @@ describe('NcDetailComponent — le traitement 8D', () => {
     await TestBed.configureTestingModule({
       declarations: [NcDetailComponent, NcCauseAnalysisComponent],
       imports: [SharedModule, UiModule, UserPickerModule, FiveWhysSharedModule,
-                IshikawaSharedModule, NoopAnimationsModule, CapaActionPanelStubModule, CapaEvidencePanelStubModule],
+                IshikawaSharedModule, NoopAnimationsModule, MatDatepickerModule, MatNativeDateModule, CapaActionPanelStubModule, CapaEvidencePanelStubModule],
       providers: [
         provideRouter([]),
         { provide: NcService, useValue: svc },

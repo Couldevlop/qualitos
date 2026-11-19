@@ -292,6 +292,14 @@ export interface CreateNcRequest {
 export interface UpdateNcRequest {
   title?: string;
   description?: string;
+  /**
+   * La date du constat, corrigée. Absente = inchangée ; jamais à venir.
+   *
+   * <p>Elle était figée à l'instant de la saisie : une réclamation reçue lundi
+   * et enregistrée jeudi portait jeudi, alors que c'est elle qui fait courir
+   * le délai de réponse dû au client.
+   */
+  detectedAt?: string;
   origin?: NcOrigin;
   category?: NcCategory;
   /** La nature fine. Chaîne vide = effacer le classement fin ; absente = inchangée. */
