@@ -81,7 +81,23 @@ public record EightDSources(
              * C'est ce qu'un lecteur du rapport vient chercher quand la cause
              * retenue le surprend.
              */
-            String causeAnalysisComment) {
+            String causeAnalysisComment,
+            /**
+             * Le client qui reclame, le lot incrimine, le produit vise.
+             *
+             * <p>Ils s'ecrivent sur la fiche depuis qu'on a cesse de les noyer
+             * dans la description, mais le rapport -- la piece que le client
+             * recoit -- ne les portait pas. Un 8D de reclamation qui ne nomme
+             * ni le client, ni le lot, ni le produit oblige son lecteur a
+             * revenir chercher dans l'outil ce que le document aurait du dire.
+             *
+             * <p>Le produit arrive DEJA REDIGE (« code -- designation ») :
+             * l'assembleur ne lit pas de referentiel, c'est l'adaptateur qui
+             * connait les chemins de liaison.
+             */
+            String customerName,
+            String batchNumber,
+            String productLabel) {
     }
 
     /** Un Ishikawa parti de cette non-conformité, et ses causes. */

@@ -232,6 +232,13 @@ public class EightDSnapshotAssembler {
         ajouter(lignes, "Detected on", horodatage(nc.detectedAt()));
         ajouter(lignes, "Closed on", horodatage(nc.closedAt()));
         ajouter(lignes, "Area", nc.zone());
+        // Le client, le lot, le produit : ce que le destinataire du rapport
+        // cherche en premier, et qui vit sur la fiche depuis qu'on a cesse de
+        // l'ecrire dans la description. Absents, ils ne laissent pas de ligne
+        // vide -- un 8D interne n'a pas de client.
+        ajouter(lignes, "Customer", nc.customerName());
+        ajouter(lignes, "Product", nc.productLabel());
+        ajouter(lignes, "Batch", nc.batchNumber());
         ajouter(lignes, "Reported by", nc.reporterName());
         // Le NOMBRE de photos, et non les images : un 8D se relit des années plus
         // tard, et un PDF qui embarquerait les clichés terrain pèserait des dizaines

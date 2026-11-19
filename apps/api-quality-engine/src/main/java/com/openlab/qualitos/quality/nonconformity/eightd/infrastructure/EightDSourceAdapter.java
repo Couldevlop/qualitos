@@ -24,6 +24,7 @@ import com.openlab.qualitos.quality.nonconformity.NonConformity;
 import com.openlab.qualitos.quality.nonconformity.NonConformityRepository;
 import com.openlab.qualitos.quality.nonconformity.eightd.application.EightDSourcePort;
 import com.openlab.qualitos.quality.nonconformity.eightd.application.EightDSources;
+import com.openlab.qualitos.quality.product.domain.ProductLookup;
 import com.openlab.qualitos.quality.risk.FmeaItem;
 import com.openlab.qualitos.quality.risk.FmeaItemRepository;
 import org.springframework.stereotype.Component;
@@ -66,6 +67,14 @@ public class EightDSourceAdapter implements EightDSourcePort {
     private final CapaEvidenceRepository capaEvidences;
     private final FmeaItemRepository fmeaItems;
     private final ControlPlanRepository controlPlans;
+    /**
+     * Le produit visé, pour l'écrire au D2 par son code et sa désignation.
+     *
+     * <p>{@link ProductLookup} et non le dépôt complet : ce rapport lit, il
+     * n'écrit ni ne supprime de produit, et hériter du droit de le faire
+     * laisserait croire à un futur lecteur que c'est permis ici.
+     */
+    private final ProductLookup produits;
     /** Le 8D d'une NC hors de portée n'existe pas (ADR 0081). */
     private final RecordScope scope;
 
@@ -79,6 +88,7 @@ public class EightDSourceAdapter implements EightDSourcePort {
                                CapaEvidenceRepository capaEvidences,
                                FmeaItemRepository fmeaItems,
                                ControlPlanRepository controlPlans,
+                               ProductLookup produits,
                                RecordScope scope) {
         this.ncs = ncs;
         this.photos = photos;
@@ -90,6 +100,7 @@ public class EightDSourceAdapter implements EightDSourcePort {
         this.capaEvidences = capaEvidences;
         this.fmeaItems = fmeaItems;
         this.controlPlans = controlPlans;
+        this.produits = produits;
         this.scope = scope;
     }
 
@@ -130,7 +141,24 @@ public class EightDSourceAdapter implements EightDSourcePort {
                 nc.getStatus(), nc.getDetectedAt(), nc.getClosedAt(),
                 nc.getZone(), nc.getReporterName(), nbPhotos,
                 nc.getRootCause(), nc.getResolutionNote(),
-                nc.getCauseAnalysisComment());
+                nc.getCauseAnalysisComment(),
+                nc.getCustomerName(), nc.getBatchNumber(), libelleProduit(nc.getProductId()));
+    }
+
+    /**
+     * Le produit visé, écrit comme la fiche l'écrit : « code — désignation ».
+     *
+     * <p>Un identifiant ne dit rien au lecteur du rapport, et un produit effacé
+     * du référentiel depuis ne laisse pas de ligne : mieux vaut taire le produit
+     * que montrer un UUID.
+     */
+    private String libelleProduit(UUID productId) {
+        if (productId == null) {
+            return null;
+        }
+        return produits.findById(productId)
+                .map(p -> p.getCode() + " — " + p.getDesignation())
+                .orElse(null);
     }
 
     private List<EightDSources.CauseTree> enIshikawas(UUID tenantId, UUID ncId) {
