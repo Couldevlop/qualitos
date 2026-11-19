@@ -26,6 +26,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
+import org.mockito.ArgumentMatchers;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -2018,6 +2019,52 @@ class CapaServiceTest {
 
         assertThat(service.unsettledCasesFor(unique.getId(), "NC-2026-0001"))
                 .containsExactly("Revoir le mode operatoire");
+    }
+
+    /**
+     * LE DOSSIER OUVERT DEPUIS LE REGISTRE CAPA EST RETROUVE.
+     *
+     * <p>Trois valeurs pour deux choses : {@code EXTERNAL_NON_CONFORMITY} et
+     * {@code COMPLAINT} nomment le meme registre -- celui des ecarts signales
+     * du dehors -- et seule la seconde est proposee a la creation manuelle. Un
+     * dossier ouvert depuis le registre CAPA citait donc la bonne reference
+     * sous une source que la fiche de l'ecart ne regardait pas : il restait
+     * invisible au D3, au D5, au D7 et dans le rapport 8D, alors que ses
+     * actions retenaient la cloture.
+     */
+    @Test
+    void casesOf_retrouve_un_dossier_ouvert_sous_la_source_reclamation() {
+        CapaCase manuel = capa(TENANT, CapaStatus.OPEN);
+        manuel.setTitle("Dossier ouvert depuis le registre");
+        manuel.setSourceType(CapaSourceType.COMPLAINT);
+        manuel.setSourceRef("Ext-NC-2026-0011");
+
+        when(caseRepo.findByTenantIdAndSourceTypeAndSourceRefOrderByCreatedAtAsc(
+                TENANT, CapaSourceType.COMPLAINT, "Ext-NC-2026-0011"))
+                .thenReturn(List.of(manuel));
+        when(caseRepo.findByTenantIdAndSourceTypeAndSourceRefOrderByCreatedAtAsc(
+                eq(TENANT),
+                ArgumentMatchers.argThat(t -> t != CapaSourceType.COMPLAINT),
+                eq("Ext-NC-2026-0011")))
+                .thenReturn(List.of());
+
+        assertThat(service.casesOf(null, "Ext-NC-2026-0011"))
+                .extracting(CapaDto.CaseRef::title)
+                .containsExactly("Dossier ouvert depuis le registre");
+    }
+
+    /**
+     * La REFERENCE reste la condition : une reclamation du registre des
+     * reclamations ne porte pas la reference d'un ecart, et n'entre donc pas
+     * par cette porte, meme avec la meme source.
+     */
+    @Test
+    void casesOf_ne_ramasse_pas_un_dossier_d_une_autre_reference() {
+        when(caseRepo.findByTenantIdAndSourceTypeAndSourceRefOrderByCreatedAtAsc(
+                eq(TENANT), any(), eq("Ext-NC-2026-0011")))
+                .thenReturn(List.of());
+
+        assertThat(service.casesOf(null, "Ext-NC-2026-0011")).isEmpty();
     }
 
     /**
