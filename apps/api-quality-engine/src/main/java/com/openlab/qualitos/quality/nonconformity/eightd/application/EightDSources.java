@@ -72,7 +72,16 @@ public record EightDSources(
             String reporterName,
             int photoCount,
             String rootCause,
-            String resolutionNote) {
+            String resolutionNote,
+            /**
+             * La note libre de l'analyse des causes (D4 de la fiche).
+             *
+             * <p>Distincte de {@link #rootCause}, qui est la conclusion : la note
+             * porte le raisonnement autour -- l'hypothese ecartee, et pourquoi.
+             * C'est ce qu'un lecteur du rapport vient chercher quand la cause
+             * retenue le surprend.
+             */
+            String causeAnalysisComment) {
     }
 
     /** Un Ishikawa parti de cette non-conformité, et ses causes. */

@@ -249,6 +249,12 @@ public class EightDSnapshotAssembler {
     private EightDSnapshot.Section causeRacine(EightDSources sources) {
         List<String> lignes = new ArrayList<>();
         ajouter(lignes, "Root cause recorded on the non-conformity", sources.nc().rootCause());
+        // La conclusion d'abord, le raisonnement ensuite : la note du D4 porte
+        // l'hypothese ecartee et la raison de son abandon. Sans elle, le rapport
+        // affirmait une cause sans montrer ce qui avait ete essaye avant --
+        // c'est-a-dire ce qu'un auditeur demande des qu'il la conteste.
+        ajouter(lignes, "Analysis notes recorded on the non-conformity",
+                sources.nc().causeAnalysisComment());
 
         // LES FIGURES DISENT, LE TEXTE NE REDIT PLUS. L'arête et la descente
         // étaient énumérées ligne à ligne : « MACHINES : jeu au palier »,
@@ -269,7 +275,7 @@ public class EightDSnapshotAssembler {
         String label = servi
                 ? libelleD4(sources)
                 : "No Ishikawa and no 5-whys analysis linked to this deviation, and no"
-                  + " root cause recorded on the non-conformity";
+                  + " root cause or analysis notes recorded on the non-conformity";
         return new EightDSnapshot.Section(EightDDiscipline.D4.code(), EightDDiscipline.D4.titre(),
                 servi, label, lignes, figures);
     }
@@ -330,6 +336,10 @@ public class EightDSnapshotAssembler {
         }
         if (sources.nc().rootCause() != null && !sources.nc().rootCause().isBlank()) {
             parts.add("root cause of the non-conformity");
+        }
+        if (sources.nc().causeAnalysisComment() != null
+                && !sources.nc().causeAnalysisComment().isBlank()) {
+            parts.add("analysis notes of the non-conformity");
         }
         return "Aggregated from: " + String.join(", ", parts);
     }

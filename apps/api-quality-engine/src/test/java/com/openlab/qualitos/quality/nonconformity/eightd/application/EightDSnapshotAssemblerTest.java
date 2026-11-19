@@ -243,6 +243,52 @@ class EightDSnapshotAssemblerTest {
                 .satisfies(f -> assertThat(f.nodes()).isEmpty());
     }
 
+    /**
+     * LA CONCLUSION, PUIS LE RAISONNEMENT. La note du D4 porte l'hypothese
+     * ecartee et la raison de son abandon ; sans elle, le rapport affirmait une
+     * cause sans montrer ce qui avait ete essaye avant -- c'est-a-dire ce qu'un
+     * auditeur demande des qu'il la conteste.
+     *
+     * <p>L'ordre compte : la cause retenue se lit d'abord, la note ensuite.
+     */
+    @Test
+    void d4_porte_la_note_d_analyse_apres_la_cause_racine() {
+        EightDSources sources = new EightDSources(
+                nc("Joint hors tolérance",
+                   "Piste fournisseur écartée : lot conforme au contrôle d'entrée"),
+                EQUIPE, List.of(), List.of(), List.of(), null, List.of());
+
+        EightDSnapshot.Section d4 = section(
+                assembler.assemble(sources, null, null, null, "t", null, null), "D4");
+
+        assertThat(d4.sourced()).isTrue();
+        assertThat(d4.lines()).containsExactly(
+                "Root cause recorded on the non-conformity : Joint hors tolérance",
+                "Analysis notes recorded on the non-conformity :"
+                        + " Piste fournisseur écartée : lot conforme au contrôle d'entrée");
+        assertThat(d4.sourceLabel()).contains("analysis notes of the non-conformity");
+    }
+
+    /**
+     * La note SEULE sert la discipline : on a cherche la cause et consigne ce
+     * qu'on a ecarte, meme sans outil ouvert ni conclusion ecrite. Afficher
+     * « rien a montrer » au-dessus d'un raisonnement deja ecrit le perdrait.
+     */
+    @Test
+    void d4_servi_par_la_seule_note_d_analyse() {
+        EightDSources sources = new EightDSources(
+                nc(null, "Deux hypotheses ecartees, outillage et matiere"),
+                EQUIPE, List.of(), List.of(), List.of(), null, List.of());
+
+        EightDSnapshot.Section d4 = section(
+                assembler.assemble(sources, null, null, null, "t", null, null), "D4");
+
+        assertThat(d4.sourced()).isTrue();
+        assertThat(d4.lines()).singleElement()
+                .asString().contains("Analysis notes");
+        assertThat(d4.figures()).isEmpty();
+    }
+
     @Test
     void d4_sans_aucune_analyse_explique_ce_qui_manque() {
         EightDSnapshot.Section d4 = section(
@@ -252,7 +298,8 @@ class EightDSnapshotAssemblerTest {
         assertThat(d4.sourceLabel())
                 .contains("No Ishikawa")
                 .contains("5-whys")
-                .contains("root cause");
+                .contains("root cause")
+                .contains("analysis notes");
     }
 
     @Test
@@ -626,10 +673,14 @@ class EightDSnapshotAssemblerTest {
     private static final List<String> EQUIPE = List.of("Marie Durand", "Ali Benali");
 
     private EightDSources.Nc nc(String causeRacine) {
+        return nc(causeRacine, null);
+    }
+
+    private EightDSources.Nc nc(String causeRacine, String noteDAnalyse) {
         return new EightDSources.Nc("NC-2026-0007", "Fuite au presse-étoupe",
                 "Flaque d'huile sous la pompe P-12", "PROCESS", "MAJOR", "INTERNAL",
                 NcStatus.CLOSED, DETECTE, CLOTURE, "Atelier 3", "Ada Lovelace", 2,
-                causeRacine, "Joint remplacé, étanchéité contrôlée");
+                causeRacine, "Joint remplacé, étanchéité contrôlée", noteDAnalyse);
     }
 
     /** Le meme ecart, mais encore ouvert : rien n'est solde. */
@@ -637,7 +688,7 @@ class EightDSnapshotAssemblerTest {
         return new EightDSources.Nc("NC-2026-0008", "Fuite au presse-etoupe",
                 "Flaque d'huile sous la pompe P-12", "PROCESS", "MAJOR", "INTERNAL",
                 NcStatus.UNDER_ANALYSIS, DETECTE, null, "Atelier 3", "Ada Lovelace", 0,
-                null, null);
+                null, null, null);
     }
 
     /** Une CAPA escaladee, close ou non selon la date passee. */

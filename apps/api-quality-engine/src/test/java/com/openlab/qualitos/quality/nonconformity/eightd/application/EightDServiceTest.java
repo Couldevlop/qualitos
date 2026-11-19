@@ -328,7 +328,7 @@ class EightDServiceTest {
                     Instant.parse("2026-09-01T08:30:00Z"),
                     status == NcStatus.CLOSED ? Instant.parse("2026-09-12T16:00:00Z") : null,
                     "Atelier 3", "Ada Lovelace", 1,
-                    enrichi ? "Joint usé" : null, null);
+                    enrichi ? "Joint usé" : null, null, null);
             List<EightDSources.Capa> capas = enrichi
                     ? List.of(new EightDSources.Capa("CAPA", "CORRECTIVE", "HIGH", "OPEN", null, null,
                             null, null, 0,

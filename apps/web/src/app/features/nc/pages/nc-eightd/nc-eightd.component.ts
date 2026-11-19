@@ -220,7 +220,10 @@ export class NcEightDComponent implements OnInit {
    */
   private chargerDossierCapa(): void {
     this.svc.getNc(this.ncId).subscribe({
-      next: nc => this.capaCaseIds$.next(dossiersDe(nc)),
+      next: nc => {
+        this.capaCaseIds$.next(dossiersDe(nc));
+        this.noteDAnalyse$.next(nc.causeAnalysisComment ?? null);
+      },
       // On laisse `undefined` : l'écart n'a pas répondu, donc on ne SAIT pas
       // s'il porte un dossier. Écrire une liste vide reviendrait à affirmer
       // qu'il n'en a pas — l'écran dirait à l'auditeur qu'aucune action n'est
@@ -229,6 +232,18 @@ export class NcEightDComponent implements OnInit {
       error: err => console.warn('[nc-8d] getNc failed', err?.status)
     });
   }
+
+  /**
+   * La note libre de l'analyse des causes, telle qu'elle est AUJOURD'HUI.
+   *
+   * <p>Elle est dans le texte agrégé, donc dans le document émis. Mais l'écran
+   * masque tout le texte du D4 dès qu'une figure est chargée — parce que la
+   * figure redit la cause retenue —, et la note, elle, n'est dite par aucune
+   * figure : masquée avec le reste, elle n'aurait plus paru nulle part à
+   * l'écran tout en figurant dans le PDF. Elle se lit donc à côté des schémas,
+   * au même titre qu'eux : l'état actuel du dossier.
+   */
+  readonly noteDAnalyse$ = new BehaviorSubject<string | null>(null);
 
   /** La nature d'action que cette discipline montre, ou null si elle n'en montre pas. */
   natureDe(code: string): CapaActionType | null {

@@ -129,7 +129,8 @@ public class EightDSourceAdapter implements EightDSourcePort {
                 nom(nc.getCategory()), nom(nc.getSeverity()), nom(nc.getOrigin()),
                 nc.getStatus(), nc.getDetectedAt(), nc.getClosedAt(),
                 nc.getZone(), nc.getReporterName(), nbPhotos,
-                nc.getRootCause(), nc.getResolutionNote());
+                nc.getRootCause(), nc.getResolutionNote(),
+                nc.getCauseAnalysisComment());
     }
 
     private List<EightDSources.CauseTree> enIshikawas(UUID tenantId, UUID ncId) {

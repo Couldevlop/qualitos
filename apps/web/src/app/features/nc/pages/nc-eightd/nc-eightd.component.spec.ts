@@ -385,6 +385,44 @@ describe('NcEightDComponent', () => {
     expect(fixture.nativeElement.querySelector('[data-test="8d-analyse-de-cause"]')).not.toBeNull();
   });
 
+  /**
+   * LA NOTE DU D4 SE LIT AUSSI A L'ECRAN.
+   *
+   * <p>Elle est dans le texte agrege, donc dans le document emis. Mais l'ecran
+   * masque TOUT le texte du D4 des qu'une figure est chargee -- parce que la
+   * figure redit la cause retenue -- et la note, elle, n'est dite par aucune
+   * figure. Masquee avec le reste, elle aurait figure dans le PDF et nulle part
+   * a l'ecran : c'est exactement le genre d'ecart silencieux entre les deux
+   * lectures du meme dossier que ce rapport existe pour eviter.
+   */
+  it('montre la note du D4 à côté des schémas', async () => {
+    await monter(['QUALITY_MANAGER']);
+    svc.getNc.and.returnValue(of({
+      id: NC_ID, reference: 'NC-2026-0007', title: 'Fuite au presse-étoupe',
+      category: 'PROCESS', severity: 'MAJOR', status: 'ACTION_DEFINED', origin: 'INTERNAL',
+      detectedAt: '', createdAt: '', updatedAt: '',
+      causeAnalysisComment: 'Piste fournisseur écartée : lot conforme au contrôle'
+    } as NcResponse));
+    fiveWhys.listForNc.and.returnValue(of([chaine()]));
+    component.ngOnInit();
+    fixture.detectChanges();
+
+    const note = fixture.nativeElement.querySelector('[data-test="8d-note-analyse"]');
+    expect(note).not.toBeNull();
+    expect(note.textContent).toContain('Piste fournisseur');
+  });
+
+  // Sans note, pas de bloc : une étiquette « Commentaires » au-dessus du vide
+  // se lirait comme une panne de chargement.
+  it('n’ouvre pas le bloc de la note quand l’écart n’en porte pas', async () => {
+    await monter(['QUALITY_MANAGER']);
+    fiveWhys.listForNc.and.returnValue(of([chaine()]));
+    component.ngOnInit();
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('[data-test="8d-note-analyse"]')).toBeNull();
+  });
+
   // Une carte vide se lirait comme une panne : sans analyse rattachee, le bloc
   // n'apparait pas -- le texte agrege de la discipline, lui, dit deja ce qu'il sait.
   it('n\u2019ouvre aucun bloc d\u2019analyse quand l\u2019\u00e9cart n\u2019en porte aucune', async () => {
