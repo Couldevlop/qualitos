@@ -1,0 +1,57 @@
+.intro {
+  margin: 0 0 var(--qos-space-4, 16px);
+  color: var(--qos-fg-secondary, #6b7280);
+  font-size: var(--qos-fs-sm, 13px);
+  line-height: 1.5;
+}
+
+/* Chaque question est un bloc à part, séparé par un filet : les deux documents
+   se révisent séparément, et les coller laisserait lire une seule question à
+   deux lignes. Le `fieldset` porte la relation entre la légende et les deux
+   boutons — c'est elle qu'un lecteur d'écran annonce. */
+.question {
+  margin: 0 0 var(--qos-space-4, 16px);
+  padding: 0 0 var(--qos-space-3, 12px);
+  border: 0;
+  border-bottom: 1px solid var(--qos-border, rgba(0, 0, 0, 0.12));
+
+  &:last-of-type {
+    border-bottom: 0;
+  }
+
+  legend {
+    padding: 0;
+    margin-bottom: var(--qos-space-2, 8px);
+    font-size: var(--qos-fs-md);
+    font-weight: 600;
+    color: var(--qos-fg, inherit);
+  }
+}
+
+/* Les deux réponses côte à côte : elles sont exclusives, et les empiler
+   laissait croire à une liste où l'on pourrait cocher les deux. */
+mat-radio-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--qos-space-4);
+}
+
+.aide {
+  margin: var(--qos-space-2, 8px) 0 0;
+  color: var(--qos-fg-secondary, #6b7280);
+  font-size: var(--qos-fs-sm, 13px);
+  line-height: 1.5;
+}
+
+.aide.erreur {
+  color: var(--qos-danger, #b3261e);
+}
+
+/* La conséquence d'un « oui » se distingue de l'aide ordinaire : elle annonce
+   un verrou, pas un conseil. */
+.aide.consequence {
+  padding: var(--qos-space-3, 12px);
+  border-radius: var(--qos-radius-sm, 4px);
+  background: var(--qos-surface-alt, rgba(0, 0, 0, 0.04));
+  color: var(--qos-fg, inherit);
+}

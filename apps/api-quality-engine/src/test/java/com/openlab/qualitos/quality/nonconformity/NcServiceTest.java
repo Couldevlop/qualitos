@@ -38,6 +38,14 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class NcServiceTest {
 
+    /**
+     * « Ni le PFMEA, ni le plan de surveillance » : la réponse des bancs qui ne
+     * mesurent pas cette régle-là. Ce n'est pas un vide -- c'est une décision,
+     * et c'est bien celle qu'ils veulent : rien ne doit retenir leur clôture.
+     */
+    private static final NcDto.CloseRequest SANS_IMPACT =
+            new NcDto.CloseRequest(false, false);
+
     @Mock NonConformityRepository repo;
     @Mock NcTeamMemberRepository teamMembers;
     @Mock CapaService capaService;
@@ -48,6 +56,11 @@ class NcServiceTest {
     @Mock RecordScope scope;
     @Mock com.openlab.qualitos.quality.nonconformity.subcategory.NcSubcategoryCatalog subcategories;
     @Mock com.openlab.qualitos.quality.authz.application.AuthorizationService authz;
+    /**
+     * Sans réglage, Mockito rend {@code false} : aucune révision actée. C'est
+     * l'état qui compte, puisque c'est lui qui fait naître le verrou.
+     */
+    @Mock NcRiskRevisionsPort riskRevisions;
     @InjectMocks NcService service;
 
     /**
@@ -180,7 +193,7 @@ class NcServiceTest {
         when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
         when(repo.save(n)).thenReturn(n);
 
-        service.update(n.getId(), new NcDto.UpdateRequest(null, null, null, "", null, null, null, null,
+        service.update(n.getId(), new NcDto.UpdateRequest(null, null, null, "", null, null, null, null, null,
                 null, null, null, null, null, null, null, null, null, null));
 
         assertThat(n.getSubcategoryCode()).isNull();
@@ -198,7 +211,7 @@ class NcServiceTest {
                 .thenThrow(new NcValidationException("belongs to category PRODUCT"));
 
         assertThatThrownBy(() -> service.update(n.getId(), new NcDto.UpdateRequest(
-                null, null, NcCategory.SUPPLIER, null, null, null, null, null, null, null, null, null, null, null, null, null,
+                null, null, NcCategory.SUPPLIER, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
                 null, null)))
                 .isInstanceOf(NcValidationException.class);
     }
@@ -210,7 +223,7 @@ class NcServiceTest {
         when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
         when(repo.save(n)).thenReturn(n);
 
-        service.update(n.getId(), new NcDto.UpdateRequest("t2", null, null, null, null, null, null, null,
+        service.update(n.getId(), new NcDto.UpdateRequest("t2", null, null, null, null, null, null, null, null,
                 null, null, null, null, null, null, null, null, null, null));
 
         assertThat(n.getSubcategoryCode()).isEqualTo("PRD-DIM");
@@ -279,7 +292,7 @@ class NcServiceTest {
         when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
         when(repo.save(n)).thenReturn(n);
         service.update(n.getId(), new NcDto.UpdateRequest(
-                "t2", "d2", NcCategory.SUPPLIER, null, NcSeverity.CRITICAL, "zoneB", 1.0, 2.0, "u1\nu2",
+                "t2", "d2", NcCategory.SUPPLIER, null, NcSeverity.CRITICAL, null, "zoneB", 1.0, 2.0, "u1\nu2",
                 NcOrigin.EXTERNAL, null, null, null, null, null, null, null, null));
         assertThat(n.getTitle()).isEqualTo("t2");
         assertThat(n.getCategory()).isEqualTo(NcCategory.SUPPLIER);
@@ -296,7 +309,7 @@ class NcServiceTest {
         NonConformity n = nc(TENANT, NcStatus.CLOSED);
         when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
         assertThatThrownBy(() -> service.update(n.getId(),
-                new NcDto.UpdateRequest("x", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null)))
+                new NcDto.UpdateRequest("x", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null)))
                 .isInstanceOf(NcStateException.class);
     }
 
@@ -305,7 +318,7 @@ class NcServiceTest {
         NonConformity n = nc(TENANT, NcStatus.CANCELLED);
         when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
         assertThatThrownBy(() -> service.update(n.getId(),
-                new NcDto.UpdateRequest("x", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null)))
+                new NcDto.UpdateRequest("x", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null)))
                 .isInstanceOf(NcStateException.class);
     }
 
@@ -336,6 +349,77 @@ class NcServiceTest {
         when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
         assertThatThrownBy(() -> service.startAnalysis(n.getId(),
                 new NcDto.StartAnalysisRequest(null))).isInstanceOf(NcStateException.class);
+    }
+
+    /**
+     * L'ECART QUI N'AVAIT PLUS DE SUITE.
+     *
+     * <p>Le confinement du D3 s'ecrit avant la recherche de cause : on ouvre le
+     * dossier CAPA sur un ecart a peine declare pour proteger le client tout de
+     * suite. L'ecart restait OPEN, passait UNDER_ANALYSIS au premier clic sur
+     * « Analyser » -- et n'en sortait plus jamais, puisque l'ouverture du
+     * dossier est le seul chemin vers ACTION_DEFINED et qu'un second dossier
+     * est refuse. « Resoudre » restait eteint a vie, sans un mot.
+     */
+    @Test
+    void analyser_un_ecart_qui_porte_deja_son_dossier_definit_l_action() {
+        NonConformity n = nc(TENANT, NcStatus.OPEN);
+        n.setCapaCaseId(UUID.randomUUID());
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+        when(repo.save(n)).thenReturn(n);
+
+        service.startAnalysis(n.getId(), new NcDto.StartAnalysisRequest("cause racine X"));
+
+        assertThat(n.getStatus()).isEqualTo(NcStatus.ACTION_DEFINED);
+        assertThat(n.getRootCause()).isEqualTo("cause racine X");
+    }
+
+    /** Sans dossier, rien ne change : l'analyse s'ouvre seule. */
+    @Test
+    void analyser_un_ecart_sans_dossier_ouvre_l_analyse_seule() {
+        NonConformity n = nc(TENANT, NcStatus.OPEN);
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+        when(repo.save(n)).thenReturn(n);
+
+        service.startAnalysis(n.getId(), null);
+
+        assertThat(n.getStatus()).isEqualTo(NcStatus.UNDER_ANALYSIS);
+    }
+
+    /**
+     * LA DATE DU CONSTAT SE CORRIGE.
+     *
+     * <p>Une reclamation recue lundi et enregistree jeudi portait jeudi, sans
+     * recours : c'est pourtant cette date qui fait courir le delai de reponse
+     * du par le client, et qui range l'ecart dans le bon mois.
+     */
+    @Test
+    void la_date_du_constat_se_corrige() {
+        NonConformity n = nc(TENANT, NcStatus.OPEN);
+        Instant lundi = Instant.parse("2026-11-16T09:00:00Z");
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+        when(repo.save(n)).thenReturn(n);
+
+        service.update(n.getId(), new NcDto.UpdateRequest(
+                null, null, null, null, null, lundi, null, null, null, null, null,
+                null, null, null, null, null, null, null, null));
+
+        assertThat(n.getDetectedAt()).isEqualTo(lundi);
+    }
+
+    /** Absente, elle ne touche a rien : la mise a jour reste partielle. */
+    @Test
+    void la_date_du_constat_absente_ne_touche_a_rien() {
+        NonConformity n = nc(TENANT, NcStatus.OPEN);
+        Instant avant = n.getDetectedAt();
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+        when(repo.save(n)).thenReturn(n);
+
+        service.update(n.getId(), new NcDto.UpdateRequest(
+                "titre corrige", null, null, null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null));
+
+        assertThat(n.getDetectedAt()).isEqualTo(avant);
     }
 
     // --- defineAction ---
@@ -666,7 +750,7 @@ class NcServiceTest {
         NonConformity n = nc(TENANT, NcStatus.RESOLVED);
         when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
         when(repo.save(n)).thenReturn(n);
-        service.close(n.getId());
+        service.close(n.getId(), SANS_IMPACT);
         assertThat(n.getStatus()).isEqualTo(NcStatus.CLOSED);
         assertThat(n.getClosedAt()).isNotNull();
     }
@@ -711,13 +795,156 @@ class NcServiceTest {
         when(capaService.unsettledCaseNamesInScopeFor(capaId, n.getReference()))
                 .thenReturn(List.of("Remplacer le roulement de broche"));
 
-        assertThatThrownBy(() -> service.close(n.getId()))
+        assertThatThrownBy(() -> service.close(n.getId(), SANS_IMPACT))
                 .isInstanceOf(NcStateException.class)
                 // Le refus NOMME ce qui reste : sans le titre, il faut aller
                 // chercher dans le registre ce que l on vient de nous refuser.
                 .hasMessageContaining("Remplacer le roulement de broche");
         assertThat(n.getStatus()).isEqualTo(NcStatus.RESOLVED);
         verify(repo, never()).save(any());
+    }
+
+    // ---------- ce que l'écart enseigne à l'analyse de risque ----------
+
+    /**
+     * UN ÉCART QUI A IMPACTÉ LE PFMEA NE SE CLÔT PAS AVANT SA RÉVISION.
+     *
+     * <p>Un défaut survenu pour de bon et une analyse de risque qui l'ignore
+     * encore se contredisent sur la même page. L'IATF 16949 en fait une
+     * exigence : toute non-conformité se répercute sur la PFMEA et le plan de
+     * surveillance. Jusqu'ici personne n'avait à se prononcer, et l'écart se
+     * refermait sur la question sans l'avoir posée.
+     *
+     * <p>Le refus NOMME le document : « il manque une révision » envoie
+     * chercher, « le PFMEA attend la sienne » dit quoi faire.
+     */
+    @Test
+    void close_pfmeaImpacteSansRevision_refuseEtLeDit() {
+        jePeuxClore();
+        NonConformity n = nc(TENANT, NcStatus.RESOLVED);
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+
+        assertThatThrownBy(() -> service.close(n.getId(),
+                new NcDto.CloseRequest(true, false)))
+                .isInstanceOf(NcGateException.class)
+                .satisfies(ex -> assertThat(((NcGateException) ex).reasons())
+                        .singleElement().asString().contains("PFMEA"));
+        assertThat(n.getStatus()).isEqualTo(NcStatus.RESOLVED);
+    }
+
+    /** Le plan de surveillance a son propre verrou : les deux documents se révisent à part. */
+    @Test
+    void close_planDeSurveillanceImpacteSansRevision_refuseEtLeDit() {
+        jePeuxClore();
+        NonConformity n = nc(TENANT, NcStatus.RESOLVED);
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+
+        assertThatThrownBy(() -> service.close(n.getId(),
+                new NcDto.CloseRequest(false, true)))
+                .isInstanceOf(NcGateException.class)
+                .satisfies(ex -> assertThat(((NcGateException) ex).reasons())
+                        .singleElement().asString().contains("plan de surveillance"));
+    }
+
+    /** Les deux impactés, les deux motifs : un seul laisserait chercher lequel retient. */
+    @Test
+    void close_lesDeuxImpactes_donneLesDeuxMotifs() {
+        jePeuxClore();
+        NonConformity n = nc(TENANT, NcStatus.RESOLVED);
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+
+        assertThatThrownBy(() -> service.close(n.getId(),
+                new NcDto.CloseRequest(true, true)))
+                .isInstanceOf(NcGateException.class)
+                .satisfies(ex -> assertThat(((NcGateException) ex).reasons()).hasSize(2));
+    }
+
+    /** La révision actée lève le verrou : c'est la leçon tirée, et elle l'est. */
+    @Test
+    void close_pfmeaImpacteEtRevise_passe() {
+        jePeuxClore();
+        NonConformity n = nc(TENANT, NcStatus.RESOLVED);
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+        when(repo.save(any())).thenAnswer(i -> i.getArgument(0));
+        when(riskRevisions.pfmeaRevisedFor(TENANT, n.getId())).thenReturn(true);
+
+        service.close(n.getId(), new NcDto.CloseRequest(true, false));
+
+        assertThat(n.getStatus()).isEqualTo(NcStatus.CLOSED);
+        assertThat(n.getPfmeaImpacted()).isTrue();
+    }
+
+    /**
+     * « NON » EST UNE DÉCISION, et elle s'écrit.
+     *
+     * <p>Elle ne retient rien -- on a jugé que l'analyse de risque n'était pas
+     * en cause -- mais elle est datée et imputable, et c'est elle que
+     * l'auditeur vient lire quand le PFMEA n'a pas bougé. {@code null}, lui,
+     * ne prouve rien : il dit que la question n'a pas été posée.
+     */
+    @Test
+    void close_sansImpact_inscritLaDecisionEtPasse() {
+        jePeuxClore();
+        NonConformity n = nc(TENANT, NcStatus.RESOLVED);
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+        when(repo.save(any())).thenAnswer(i -> i.getArgument(0));
+
+        service.close(n.getId(), SANS_IMPACT);
+
+        assertThat(n.getStatus()).isEqualTo(NcStatus.CLOSED);
+        assertThat(n.getPfmeaImpacted()).isFalse();
+        assertThat(n.getControlPlanImpacted()).isFalse();
+    }
+
+    /**
+     * LA RÉPONSE SURVIT AU REFUS DE SON PROPRE VERROU : un second essai n'a
+     * pas à la redonner, et la fiche montre déjà ce qui a été tranché.
+     */
+    @Test
+    void close_refuseParLeRisque_inscritQuandMemeLaReponse() {
+        jePeuxClore();
+        NonConformity n = nc(TENANT, NcStatus.RESOLVED);
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+
+        assertThatThrownBy(() -> service.close(n.getId(),
+                new NcDto.CloseRequest(true, false)))
+                .isInstanceOf(NcGateException.class);
+
+        verify(repo).save(n);
+        assertThat(n.getPfmeaImpacted()).isTrue();
+    }
+
+    /**
+     * LE MOTIF S'ANNONCE AVANT LE CLIC, pour que le bouton ne s'éteigne pas
+     * sans un mot. C'est la même règle, lue par l'autre chemin : si les deux
+     * divergeaient, l'écran proposerait un geste que le serveur refuse.
+     */
+    @Test
+    void fiche_dUnEcartResoluImpactant_annonceLeMotif() {
+        NonConformity n = nc(TENANT, NcStatus.RESOLVED);
+        n.setPfmeaImpacted(true);
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+
+        assertThat(service.findById(n.getId()).blockers())
+                .extracting(NcDto.Blocker::code)
+                .contains(NcBlockerCode.PFMEA_REVISION_REQUIRED);
+    }
+
+    /**
+     * LA QUESTION NON POSÉE NE REPROCHE RIEN. {@code null} n'est pas
+     * {@code false} : c'est la clôture elle-même qui pose la question, et un
+     * motif affiché avant qu'on ait demandé reprocherait de n'avoir pas fait
+     * ce qu'on ne propose pas encore.
+     */
+    @Test
+    void fiche_sansReponse_nAnnonceAucunMotifDeRisque() {
+        NonConformity n = nc(TENANT, NcStatus.RESOLVED);
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+
+        assertThat(service.findById(n.getId()).blockers())
+                .extracting(NcDto.Blocker::code)
+                .doesNotContain(NcBlockerCode.PFMEA_REVISION_REQUIRED,
+                        NcBlockerCode.CONTROL_PLAN_REVISION_REQUIRED);
     }
 
     /**
@@ -744,7 +971,7 @@ class NcServiceTest {
         when(capaService.unsettledCaseNamesInScopeFor(null, n.getReference()))
                 .thenReturn(List.of());
 
-        assertThatThrownBy(() -> service.close(n.getId()))
+        assertThatThrownBy(() -> service.close(n.getId(), SANS_IMPACT))
                 .isInstanceOf(NcStateException.class)
                 .hasMessageContaining("2 CAPA case(s)")
                 .hasMessageNotContaining("Remplacer le roulement")
@@ -793,7 +1020,7 @@ class NcServiceTest {
         when(capaService.unsettledCaseNamesInScopeFor(null, "NC-2026-0001"))
                 .thenReturn(List.of("Auditer le fournisseur"));
 
-        assertThatThrownBy(() -> service.close(sansEscalade.getId()))
+        assertThatThrownBy(() -> service.close(sansEscalade.getId(), SANS_IMPACT))
                 .isInstanceOf(NcStateException.class)
                 .hasMessageContaining("Auditer le fournisseur");
 
@@ -815,7 +1042,7 @@ class NcServiceTest {
         when(capaService.unsettledCasesFor(capaId, n.getReference())).thenReturn(List.of());
         when(repo.save(n)).thenReturn(n);
 
-        service.close(n.getId());
+        service.close(n.getId(), SANS_IMPACT);
 
         assertThat(n.getStatus()).isEqualTo(NcStatus.CLOSED);
     }
@@ -828,7 +1055,7 @@ class NcServiceTest {
         jePeuxClore();
         NonConformity n = nc(TENANT, NcStatus.ACTION_DEFINED);
         when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
-        assertThatThrownBy(() -> service.close(n.getId())).isInstanceOf(NcStateException.class);
+        assertThatThrownBy(() -> service.close(n.getId(), SANS_IMPACT)).isInstanceOf(NcStateException.class);
     }
 
     // --- cancel ---
@@ -1018,7 +1245,7 @@ class NcServiceTest {
         when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
 
         assertThatThrownBy(() -> service.update(n.getId(), new NcDto.UpdateRequest(
-                "autre titre", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+                "autre titre", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
                 null, null)))
                 .isInstanceOf(NcStateException.class)
                 .hasMessageContaining("REJECTED");
@@ -1117,7 +1344,7 @@ class NcServiceTest {
 
         // Le lot n est pas dans la requete : il reste.
         service.update(n.getId(), new NcDto.UpdateRequest(
-                null, null, null, null, null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null, null, null,
                 "", null, null, null, null, null, null));
 
         assertThat(n.getCustomerName()).isNull();
@@ -1142,7 +1369,7 @@ class NcServiceTest {
         when(repo.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
         NcDto.Response r = service.update(n.getId(), new NcDto.UpdateRequest(
-                null, null, null, null, null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null, null, null,
                 null, null, null, null, null, null,
                 "Piste fournisseur ecartee : lot conforme au controle d entree"));
 
@@ -1162,7 +1389,7 @@ class NcServiceTest {
         when(repo.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
         service.update(n.getId(), new NcDto.UpdateRequest(
-                null, null, null, null, null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null, null, null,
                 null, null, null, null, null, null, "   "));
 
         assertThat(n.getCauseAnalysisComment()).isNull();
@@ -1177,7 +1404,7 @@ class NcServiceTest {
         when(repo.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
         service.update(n.getId(), new NcDto.UpdateRequest(
-                "autre titre", null, null, null, null, null, null, null, null, null,
+                "autre titre", null, null, null, null, null, null, null, null, null, null,
                 null, null, null, null, null, null, null, null));
 
         assertThat(n.getCauseAnalysisComment()).isEqualTo("Deja note");

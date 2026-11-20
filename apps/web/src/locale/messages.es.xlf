@@ -7662,6 +7662,14 @@ Portal de clientes</target>
         <source>État actuel du dossier. Le PDF émis porte ce tableau, figé à l'émission.</source>
         <target state="translated">Estado actual del expediente. El PDF emitido incluye esta tabla, congelada en la emisión.</target>
       </trans-unit>
+      <trans-unit id="nc.8d.live-note-evidence" datatype="html">
+        <source>État actuel du dossier. Le PDF émis en porte le compte, figé à l'émission.</source>
+        <target state="translated">Estado actual del expediente. El PDF emitido incluye su recuento, congelado en la emisión.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.evidence-empty" datatype="html">
+        <source>Les preuves se déposeront ici dès qu'un dossier CAPA sera ouvert sur l'écart : elles s'attachent au dossier.</source>
+        <target state="translated">Las pruebas se adjuntarán aquí en cuanto se abra un expediente CAPA sobre la desviación: pertenecen al expediente.</target>
+      </trans-unit>
       <trans-unit id="nc.8d.live-note-figures" datatype="html">
         <source>État actuel du dossier. Le PDF émis porte ces schémas, figés à l'émission.</source>
         <target state="translated">Estado actual del expediente. El PDF emitido incluye estos esquemas, congelados en la emisión.</target>
@@ -7949,6 +7957,10 @@ Portal de clientes</target>
       <trans-unit id="common.no" datatype="html">
         <source>Non</source>
         <target state="translated">No</target>
+      </trans-unit>
+      <trans-unit id="capa.verification.assigned" datatype="html">
+        <source>Vérification confiée</source>
+        <target state="translated">Verificación asignada</target>
       </trans-unit>
       <trans-unit id="capa.verification.title" datatype="html">
         <source>Vérification d'efficacité</source>
@@ -21743,8 +21755,8 @@ historial de 12 meses</target>
         <target state="translated">Nota de resolución</target>
       </trans-unit>
       <trans-unit id="nc.detail.photos" datatype="html">
-        <source>Photos</source>
-        <target state="translated">Fotos</target>
+        <source>Pièces jointes</source>
+        <target state="translated">Archivos adjuntos</target>
       </trans-unit>
       <trans-unit id="nc.detail.start-analysis" datatype="html">
         <source>Analyser</source>
@@ -21799,16 +21811,16 @@ historial de 12 meses</target>
         <target state="translated">Error durante la transición.</target>
       </trans-unit>
       <trans-unit id="nc.photos.add" datatype="html">
-        <source>Ajouter une photo</source>
-        <target state="translated">Añadir una foto</target>
+        <source>Ajouter une pièce</source>
+        <target state="translated">Añadir un archivo</target>
       </trans-unit>
       <trans-unit id="nc.photos.empty" datatype="html">
-        <source>Aucune photo. Ajoutez une vue terrain depuis la caméra ou la galerie.</source>
-        <target state="translated">Sin fotos. Añade una vista de campo desde la cámara o la galería.</target>
+        <source>Aucune pièce jointe. Ajoutez une photo du terrain, ou le document qui constate le problème.</source>
+        <target state="translated">Sin archivos adjuntos. Añade una foto de campo o el documento que constata el problema.</target>
       </trans-unit>
       <trans-unit id="nc.photos.delete-tooltip" datatype="html">
-        <source>Supprimer la photo</source>
-        <target state="translated">Eliminar la foto</target>
+        <source>Supprimer la pièce jointe</source>
+        <target state="translated">Eliminar el archivo adjunto</target>
       </trans-unit>
       <trans-unit id="nc.photos.delete-confirm-title" datatype="html">
         <source>Supprimer cette photo ?</source>
@@ -22389,6 +22401,50 @@ historial de 12 meses</target>
       <trans-unit id="nc.8d.go-to-nc" datatype="html">
         <source>Ouvrir la fiche de l'écart</source>
         <target state="translated">Abrir la ficha de la desviación</target>
+      </trans-unit>
+      <trans-unit id="nc.close.title" datatype="html">
+        <source>Clôturer l'écart</source>
+        <target state="translated">Cerrar la desviación</target>
+      </trans-unit>
+      <trans-unit id="nc.close.intro" datatype="html">
+        <source>L'écart <x id="START_TAG_STRONG"/><x id="INTERPOLATION"/><x id="CLOSE_TAG_STRONG"/> va être clos. Avant cela, deux questions : ce qu'il a enseigné à l'analyse de risque du produit.</source>
+        <target state="translated">La desviación <x id="START_TAG_STRONG"/><x id="INTERPOLATION"/><x id="CLOSE_TAG_STRONG"/> va a cerrarse. Antes, dos preguntas: qué ha enseñado al análisis de riesgos del producto.</target>
+      </trans-unit>
+      <trans-unit id="nc.close.pfmea-legend" datatype="html">
+        <source>Le PFMEA du produit a-t-il été impacté ?</source>
+        <target state="translated">¿Se ha visto afectado el PFMEA del producto?</target>
+      </trans-unit>
+      <trans-unit id="nc.close.control-plan-legend" datatype="html">
+        <source>Le plan de surveillance a-t-il été impacté ?</source>
+        <target state="translated">¿Se ha visto afectado el plan de control?</target>
+      </trans-unit>
+      <trans-unit id="nc.close.pfmea-required" datatype="html">
+        <source>Répondez par « oui » ou « non » : la question doit être tranchée pour clore.</source>
+        <target state="translated">Responda sí o no: la pregunta debe resolverse para poder cerrar.</target>
+      </trans-unit>
+      <trans-unit id="nc.close.control-plan-required" datatype="html">
+        <source>Répondez par « oui » ou « non » : la question doit être tranchée pour clore.</source>
+        <target state="translated">Responda sí o no: la pregunta debe resolverse para poder cerrar.</target>
+      </trans-unit>
+      <trans-unit id="nc.close.requires-revision" datatype="html">
+        <source>La révision du document désigné devient exigible : l'écart ne se clôra définitivement qu'une fois cette révision acceptée.</source>
+        <target state="translated">La revisión del documento indicado pasa a ser obligatoria: la desviación solo se cerrará definitivamente cuando se acepte esa revisión.</target>
+      </trans-unit>
+      <trans-unit id="nc.close.hint" datatype="html">
+        <source>Répondre « non » est une décision, qui se lit : elle atteste qu'on a examiné l'analyse de risque et jugé qu'elle n'était pas en cause.</source>
+        <target state="translated">Responder no es una decisión, y se lee como tal: acredita que se ha examinado el análisis de riesgos y se ha juzgado que no estaba implicado.</target>
+      </trans-unit>
+      <trans-unit id="nc.close.confirm" datatype="html">
+        <source>Clôturer</source>
+        <target state="translated">Cerrar</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.pfmea-revision" datatype="html">
+        <source>Cet écart a été déclaré impactant le PFMEA du produit. Acceptez la révision du PFMEA qui le concerne pour pouvoir le clôturer — ou corrigez la réponse si le PFMEA n'était pas en cause.</source>
+        <target state="translated">Esta desviación se declaró con impacto en el PFMEA del producto. Acepte la revisión del PFMEA correspondiente para poder cerrarla, o corrija la respuesta si el PFMEA no estaba implicado.</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.control-plan-revision" datatype="html">
+        <source>Cet écart a été déclaré impactant le plan de surveillance. Acceptez la révision du plan qui le concerne pour pouvoir le clôturer — ou corrigez la réponse si le plan n'était pas en cause.</source>
+        <target state="translated">Esta desviación se declaró con impacto en el plan de control. Acepte la revisión del plan correspondiente para poder cerrarla, o corrija la respuesta si el plan no estaba implicado.</target>
       </trans-unit>
       <trans-unit id="nav.nc-clusters" datatype="html">
         <source>Clustering NC</source>
@@ -23037,6 +23093,22 @@ historial de 12 meses</target>
       <trans-unit id="nc.reopen.error" datatype="html">
         <source>Reprise impossible.</source>
         <target state="translated">Reapertura imposible.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.problem" datatype="html">
+        <source>Description du problème</source>
+        <target state="translated">Descripción del problema</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.problem-placeholder" datatype="html">
+        <source>Décrivez l'écart constaté, la quantité concernée, le lieu et le moment de la détection</source>
+        <target state="translated">Describa la desviación observada, la cantidad afectada, el lugar y el momento de la detección</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.problem-required" datatype="html">
+        <source>Le constat ne peut pas rester vide.</source>
+        <target state="translated">La constatación no puede quedar vacía.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.validator-own-work" datatype="html">
+        <source>Vous avez résolu cet écart : vous ne pouvez pas choisir qui relit votre travail. Un autre détenteur du droit de clôture désignera le valideur.</source>
+        <target state="translated">Usted resolvió esta no conformidad: no puede elegir quién revisa su propio trabajo. Otro titular del derecho de cierre designará al validador.</target>
       </trans-unit>
       <trans-unit id="nc.8d.validator" datatype="html">
         <source>Valideur de la clôture (second regard)</source>

@@ -1,5 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
@@ -24,7 +26,7 @@ import { NcService } from '../../nc.service';
 import { CapaService } from '../../../capa/capa.service';
 import { ProductsService } from '../../../products/products.service';
 import { NcPhoto, NcResponse, NcStatus, VisionAnalysis } from '../../nc.types';
-import { NcDetailComponent } from './nc-detail.component';
+import { NcDetailComponent, TYPES_DE_PIECE_ACCEPTES } from './nc-detail.component';
 import {
   CapaActionsDialogComponent
 } from '../../../capa/pages/capa-actions-dialog/capa-actions-dialog.component';
@@ -129,7 +131,7 @@ describe('NcDetailComponent — section photos', () => {
     await TestBed.configureTestingModule({
       declarations: [NcDetailComponent],
       imports: [SharedModule, UiModule, UserPickerModule, FiveWhysSharedModule,
-                IshikawaSharedModule, NoopAnimationsModule,
+                IshikawaSharedModule, NoopAnimationsModule, MatDatepickerModule, MatNativeDateModule,
                 CapaActionPanelStubModule, CapaEvidencePanelStubModule, NcCauseAnalysisStubModule],
       providers: [
         { provide: DirectoryService, useValue: ANNUAIRE_MUET },
@@ -481,6 +483,19 @@ describe('NcDetailComponent — workflow et escalade CAPA', () => {
       .and.returnValue({ afterClosed: () => of(answer) } as never);
   }
 
+  /**
+   * La fenêtre de clôture répond les deux décisions qu'on lui dicte.
+   *
+   * <p>`undefined` = on renonce. La fenêtre a son propre banc : ici on ne
+   * mesure que le BRANCHEMENT — la fiche l'ouvre-t-elle, et passe-t-elle sa
+   * réponse au serveur ?
+   */
+  function clotureRepond(reponse: { pfmeaImpacted: boolean; controlPlanImpacted: boolean }
+                         | undefined): jasmine.Spy {
+    return spyOn(TestBed.inject(MatDialog), 'open')
+      .and.returnValue({ afterClosed: () => of(reponse) } as never);
+  }
+
   beforeEach(async () => {
     routeId = UUID;
     currentUser = { userId: 'u1' };
@@ -498,7 +513,7 @@ describe('NcDetailComponent — workflow et escalade CAPA', () => {
     await TestBed.configureTestingModule({
       declarations: [NcDetailComponent],
       imports: [SharedModule, UiModule, UserPickerModule, FiveWhysSharedModule,
-                IshikawaSharedModule, NoopAnimationsModule,
+                IshikawaSharedModule, NoopAnimationsModule, MatDatepickerModule, MatNativeDateModule,
                 CapaActionPanelStubModule, CapaEvidencePanelStubModule, NcCauseAnalysisStubModule],
       providers: [
         { provide: DirectoryService, useValue: ANNUAIRE_MUET },
@@ -556,9 +571,86 @@ describe('NcDetailComponent — workflow et escalade CAPA', () => {
 
   it('route chaque action vers sa transition serveur', () => {
     setup();
+    clotureRepond({ pfmeaImpacted: false, controlPlanImpacted: false });
     svc.close.and.returnValue(of(buildNc({ status: 'CLOSED' })));
-    component.close();
-    expect(svc.close).toHaveBeenCalledWith(UUID);
+    component.close(buildNc({ status: 'RESOLVED' }));
+    expect(svc.close).toHaveBeenCalledWith(
+      UUID, { pfmeaImpacted: false, controlPlanImpacted: false });
+  });
+
+  /**
+   * CLORE PASSE PAR LA QUESTION, et la réponse voyage jusqu'au serveur.
+   *
+   * <p>Un écart traité enseigne quelque chose à l'analyse des risques du
+   * produit, et l'IATF 16949 en fait une exigence. La clôture ne demandait
+   * rien : l'écart se refermait sans que personne n'ait eu à se prononcer, et
+   * le PFMEA restait muet sur un défaut survenu pour de bon.
+   */
+  it('porte au serveur ce que la fenêtre a tranché', () => {
+    setup();
+    clotureRepond({ pfmeaImpacted: true, controlPlanImpacted: false });
+    svc.close.and.returnValue(of(buildNc({ status: 'CLOSED' })));
+
+    component.close(buildNc({ status: 'RESOLVED' }));
+
+    expect(svc.close).toHaveBeenCalledWith(
+      UUID, { pfmeaImpacted: true, controlPlanImpacted: false });
+  });
+
+  /** Renoncer à la fenêtre ne clôt rien : on n'a rien tranché. */
+  it('ne clôt rien si l’on renonce à la question', () => {
+    setup();
+    clotureRepond(undefined);
+
+    component.close(buildNc({ status: 'RESOLVED' }));
+
+    expect(svc.close).not.toHaveBeenCalled();
+  });
+
+  /**
+   * LES RÉPONSES DÉJÀ DONNÉES SONT REPASSÉES À LA FENÊTRE : une clôture retenue
+   * par le verrou qu'elles ont posé n'a pas à les redemander.
+   */
+  it('repasse à la fenêtre ce que la fiche porte déjà', () => {
+    setup();
+    const ouvre = clotureRepond(undefined);
+
+    component.close(buildNc({
+      status: 'RESOLVED', pfmeaImpacted: true, controlPlanImpacted: false
+    }));
+
+    expect(ouvre.calls.mostRecent().args[1]).toEqual(jasmine.objectContaining({
+      data: jasmine.objectContaining({ pfmeaImpacted: true, controlPlanImpacted: false })
+    }));
+  });
+
+  /**
+   * UN REFUS QUI S'EXPLIQUE SE LIT, et la fiche se relit derrière.
+   *
+   * <p>Le serveur énumère ses motifs : « le PFMEA attend sa révision » dit quoi
+   * faire, là où un 409 nu se traduisait par « rechargez la page » — un conseil
+   * faux, puisque recharger ne révise rien. La fiche relue porte ensuite le même
+   * motif dans son bandeau, sans quoi le bouton resterait allumé au-dessus d'un
+   * verrou qu'on vient d'annoncer.
+   */
+  it('affiche les motifs que le serveur énumère, et relit la fiche', () => {
+    setup();
+    const snackSpy = spyOn(TestBed.inject(MatSnackBar), 'open');
+    clotureRepond({ pfmeaImpacted: true, controlPlanImpacted: false });
+    svc.close.and.returnValue(throwError(() => new HttpErrorResponse({
+      status: 409,
+      error: {
+        detail: 'IllegalStateException: risk analysis not revised',
+        userMessage: 'La clôture attend la révision de 1 document(s).',
+        reasons: ['Le PFMEA du produit attend sa révision pour cet écart.']
+      }
+    })));
+
+    component.close(buildNc({ status: 'RESOLVED' }));
+
+    expect(snackSpy).toHaveBeenCalledWith(
+      'Le PFMEA du produit attend sa révision pour cet écart.', 'OK', { duration: 6000 });
+    expect(svc.getNc).toHaveBeenCalled();
   });
 
   it('ignore une seconde transition tant que la première est en vol', () => {
@@ -579,7 +671,8 @@ describe('NcDetailComponent — workflow et escalade CAPA', () => {
       status: 409, error: { detail: 'IllegalStateException: NC not RESOLVED' }
     })));
 
-    component.close();
+    clotureRepond({ pfmeaImpacted: false, controlPlanImpacted: false });
+    component.close(buildNc({ status: 'RESOLVED' }));
 
     expect(snackSpy).toHaveBeenCalledWith(
       'État incompatible — rechargez la page.', 'OK', { duration: 4000 });
@@ -979,7 +1072,7 @@ describe('NcDetailComponent — entrée 5 Pourquoi', () => {
     await TestBed.configureTestingModule({
       declarations: [NcDetailComponent],
       imports: [SharedModule, UiModule, UserPickerModule, FiveWhysSharedModule,
-                IshikawaSharedModule, NoopAnimationsModule,
+                IshikawaSharedModule, NoopAnimationsModule, MatDatepickerModule, MatNativeDateModule,
                 CapaActionPanelStubModule, CapaEvidencePanelStubModule, NcCauseAnalysisStubModule],
       providers: [
         { provide: DirectoryService, useValue: ANNUAIRE_MUET },
@@ -1147,7 +1240,7 @@ describe('NcDetailComponent — entrée Ishikawa', () => {
     await TestBed.configureTestingModule({
       declarations: [NcDetailComponent],
       imports: [SharedModule, UiModule, UserPickerModule, FiveWhysSharedModule,
-                IshikawaSharedModule, NoopAnimationsModule,
+                IshikawaSharedModule, NoopAnimationsModule, MatDatepickerModule, MatNativeDateModule,
                 CapaActionPanelStubModule, CapaEvidencePanelStubModule, NcCauseAnalysisStubModule],
       providers: [
         { provide: DirectoryService, useValue: ANNUAIRE_MUET },
@@ -1280,7 +1373,7 @@ describe('NcDetailComponent — conversion en cycle ou en projet', () => {
     await TestBed.configureTestingModule({
       declarations: [NcDetailComponent],
       imports: [SharedModule, UiModule, UserPickerModule, FiveWhysSharedModule,
-                IshikawaSharedModule, NoopAnimationsModule,
+                IshikawaSharedModule, NoopAnimationsModule, MatDatepickerModule, MatNativeDateModule,
                 CapaActionPanelStubModule, CapaEvidencePanelStubModule, NcCauseAnalysisStubModule],
       providers: [
         { provide: DirectoryService, useValue: ANNUAIRE_MUET },
@@ -1390,5 +1483,36 @@ describe('NcDetailComponent — conversion en cycle ou en projet', () => {
       .querySelector('[data-test="lien-pdca"]')).not.toBeNull();
     expect((fixture.nativeElement as HTMLElement)
       .querySelector('[data-test="lien-dmaic"]')).toBeNull();
+  });
+});
+
+/**
+ * LES PIÈCES DU CONSTAT. Le champ n'acceptait que des images : la lettre de
+ * réclamation du client, le rapport de laboratoire, le bon de livraison
+ * n'avaient aucune place sur la fiche. Et une pièce qui n'est pas une image
+ * rendue dans une balise `img` ne donne qu'une vignette cassée.
+ */
+describe('NcDetailComponent — les pièces du constat', () => {
+
+  it('accepte les documents autant que les images', () => {
+    ['application/pdf', 'image/jpeg', 'image/png', '.docx', '.xlsx']
+      .forEach(t => expect(TYPES_DE_PIECE_ACCEPTES)
+        .withContext(t + ' refusé au dépôt').toContain(t));
+  });
+
+  it('distingue une image d’un document, et nomme le document par son icône', () => {
+    const c = NcDetailComponent.prototype;
+
+    expect(c.estUneImage({ contentType: 'image/png' } as never)).toBeTrue();
+    expect(c.estUneImage({ contentType: 'application/pdf' } as never)).toBeFalse();
+    expect(c.estUneImage({} as never)).toBeFalse();
+
+    expect(c.iconeDuType('application/pdf')).toBe('picture_as_pdf');
+    expect(c.iconeDuType(
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')).toBe('table_chart');
+    expect(c.iconeDuType(
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'))
+      .toBe('description');
+    expect(c.iconeDuType(undefined)).toBe('insert_drive_file');
   });
 });

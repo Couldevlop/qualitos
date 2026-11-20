@@ -91,7 +91,7 @@ TRANSLATIONS = {
     'nc.detail.capa-link': ('CAPA liée', 'Linked CAPA', 'CAPA vinculada', 'CAPA المرتبطة', '関連CAPA', '关联 CAPA'),
     'nc.detail.root-cause': ('Cause racine', 'Root cause', 'Causa raíz', 'السبب الجذري', '根本原因', '根本原因'),
     'nc.detail.resolution-note': ('Note de résolution', 'Resolution note', 'Nota de resolución', 'ملاحظة الحل', '解決ノート', '解决说明'),
-    'nc.detail.photos': ('Photos', 'Photos', 'Fotos', 'الصور', '写真', '照片'),
+    'nc.detail.photos': ('Pièces jointes', 'Attachments', 'Archivos adjuntos', 'المرفقات', '添付ファイル', '附件'),
     'nc.detail.start-analysis': ('Analyser', 'Analyze', 'Analizar', 'تحليل', '分析', '分析'),
     'nc.detail.start-analysis-tooltip': ("Démarrer l'analyse", 'Start analysis', 'Iniciar el análisis', 'بدء التحليل', '分析を開始', '开始分析'),
     'nc.detail.define-action': ('Définir action', 'Define action', 'Definir acción', 'تحديد الإجراء', 'アクションを定義', '定义措施'),
@@ -107,9 +107,9 @@ TRANSLATIONS = {
     'nc.detail.transition-error': ('Erreur lors de la transition.', 'Error during the transition.', 'Error durante la transición.', 'خطأ أثناء الانتقال.', '遷移中にエラーが発生しました。', '状态转换时出错。'),
 
     # --- photos (upload binaire) ---------------------------------------------
-    'nc.photos.add': ('Ajouter une photo', 'Add a photo', 'Añadir una foto', 'إضافة صورة', '写真を追加', '添加照片'),
-    'nc.photos.empty': ('Aucune photo. Ajoutez une vue terrain depuis la caméra ou la galerie.', 'No photos. Add a field view from the camera or gallery.', 'Sin fotos. Añade una vista de campo desde la cámara o la galería.', 'لا توجد صور. أضف لقطة ميدانية من الكاميرا أو المعرض.', '写真がありません。カメラまたはギャラリーから現場の画像を追加してください。', '暂无照片。请从相机或图库添加现场视图。'),
-    'nc.photos.delete-tooltip': ('Supprimer la photo', 'Delete the photo', 'Eliminar la foto', 'حذف الصورة', '写真を削除', '删除照片'),
+    'nc.photos.add': ('Ajouter une pièce', 'Add an attachment', 'Añadir un archivo', 'إضافة مرفق', '添付ファイルを追加', '添加附件'),
+    'nc.photos.empty': ('Aucune pièce jointe. Ajoutez une photo du terrain, ou le document qui constate le problème.', 'No attachments. Add a field photo, or the document that records the problem.', 'Sin archivos adjuntos. Añade una foto de campo o el documento que constata el problema.', 'لا توجد مرفقات. أضف صورة ميدانية أو المستند المُثبِت للمشكلة.', '添付ファイルがありません。現場の写真、または問題を記録した文書を追加してください。', '暂无附件。请添加现场照片或记录问题的文件。'),
+    'nc.photos.delete-tooltip': ('Supprimer la pièce jointe', 'Delete the attachment', 'Eliminar el archivo adjunto', 'حذف المرفق', '添付ファイルを削除', '删除附件'),
     'nc.photos.delete-confirm-title': ('Supprimer cette photo ?', 'Delete this photo?', '¿Eliminar esta foto?', 'حذف هذه الصورة؟', 'この写真を削除しますか？', '删除此照片？'),
     'nc.photos.delete-confirm-message': ('La photo sera définitivement supprimée du stockage. Cette action est irréversible.', 'The photo will be permanently deleted from storage. This action cannot be undone.', 'La foto se eliminará permanentemente del almacenamiento. Esta acción es irreversible.', 'سيتم حذف الصورة نهائيًا من التخزين. لا يمكن التراجع عن هذا الإجراء.', '写真はストレージから完全に削除されます。この操作は取り消せません。', '照片将从存储中永久删除。此操作不可撤销。'),
     'nc.photos.delete-success': ('Photo supprimée.', 'Photo deleted.', 'Foto eliminada.', 'تم حذف الصورة.', '写真を削除しました。', '已删除照片。'),

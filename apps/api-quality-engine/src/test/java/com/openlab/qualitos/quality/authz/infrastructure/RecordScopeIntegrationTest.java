@@ -117,7 +117,7 @@ class RecordScopeIntegrationTest {
         assertThat(dans(() -> ncs.findById(sienne)).id()).isEqualTo(sienne);
         // Ce qu'on ne voit pas n'existe pas : ni lecture ni action.
         assertThatThrownBy(() -> dans(() -> ncs.findById(autre))).isInstanceOf(NcNotFoundException.class);
-        assertThatThrownBy(() -> dans(() -> ncs.close(autre))).isInstanceOf(NcNotFoundException.class);
+        assertThatThrownBy(() -> dans(() -> ncs.close(autre, new NcDto.CloseRequest(false, false)))).isInstanceOf(NcNotFoundException.class);
         // Les tuiles comptent le même périmètre que le tableau.
         assertThat(dans(() -> ncs.statistics(null)).total()).isEqualTo(1);
 

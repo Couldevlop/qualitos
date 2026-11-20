@@ -33,6 +33,16 @@ public class RevisionRequestsBeanConfiguration {
         return new CapaRevisionTrigger(ncLookup, capaActions, pfmea, clock);
     }
 
+    /**
+     * Branche la question que la non-conformite pose au registre : « cet ecart
+     * a-t-il deja fait reviser le PFMEA, ou le plan de surveillance ? »
+     */
+    @Bean
+    public com.openlab.qualitos.quality.nonconformity.NcRiskRevisionsPort ncRiskRevisionsPort(
+            RevisionRequestRepository repo) {
+        return new NcRiskRevisionsAdapter(repo);
+    }
+
     @Bean
     public RevisionApplier revisionApplier(PfmeaPort pfmea, ControlPlanDraftPort controlPlans) {
         return new RevisionApplier(pfmea, controlPlans);

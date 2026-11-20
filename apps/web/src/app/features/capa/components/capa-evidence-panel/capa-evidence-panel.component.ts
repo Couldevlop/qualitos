@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { BehaviorSubject } from 'rxjs';
@@ -37,6 +37,19 @@ export class CapaEvidencePanelComponent implements OnChanges {
   /** Le statut du dossier : clos, ses preuves se relisent mais ne changent plus. */
   @Input() statut: CapaStatus | undefined;
 
+  /**
+   * Combien de pièces ce panneau porte, dès qu'il a fini de lire.
+   *
+   * <p>Même convention que le panneau d'actions, et pour la même raison : le
+   * sommaire des huit disciplines coche « preuves » d'après ce nombre, et seul
+   * le panneau le connaît — la fiche de l'écart sait quels dossiers existent,
+   * pas ce qu'ils portent.
+   *
+   * <p>Zéro est une valeur : « lu, et il n'y en a aucune » n'est pas « pas
+   * encore lu », et le sommaire ne doit pas cocher la seconde.
+   */
+  @Output() readonly counted = new EventEmitter<number>();
+
   readonly pieces$ = new BehaviorSubject<CapaEvidence[]>([]);
   readonly chargement$ = new BehaviorSubject<boolean>(false);
   readonly envoi$ = new BehaviorSubject<boolean>(false);
@@ -69,7 +82,9 @@ export class CapaEvidencePanelComponent implements OnChanges {
       next: pieces => {
         // Les pièces d'ACTION ne sont pas celles du dossier : elles portent une
         // action visée, et elles se lisent dans le tableau du D3.
-        this.pieces$.next(pieces.filter(p => !p.actionId));
+        const duDossier = pieces.filter(p => !p.actionId);
+        this.pieces$.next(duDossier);
+        this.counted.emit(duDossier.length);
         this.cdr.markForCheck();
       },
       error: err => {
@@ -79,6 +94,10 @@ export class CapaEvidencePanelComponent implements OnChanges {
           this.erreur = safeErrorMessage(err,
             $localize`:@@capa.evidence.load-error:Les preuves n'ont pas pu être lues.`);
         }
+        // Lu, meme en echec : le sommaire ne doit pas rester en attente d'un
+        // nombre qui ne viendra plus. Zero dit « rien a montrer ici », ce qui
+        // est exactement ce qu'on sait.
+        this.counted.emit(0);
         this.cdr.markForCheck();
       }
     });
@@ -120,6 +139,7 @@ export class CapaEvidencePanelComponent implements OnChanges {
     ).subscribe({
       next: piece => {
         this.pieces$.next([...this.pieces$.value, piece]);
+        this.counted.emit(this.pieces$.value.length);
         this.snack.open($localize`:@@capa.evidence.added:Preuve jointe au dossier.`,
           $localize`:@@common.ok:OK`, { duration: 2000 });
         this.cdr.markForCheck();
@@ -158,6 +178,7 @@ export class CapaEvidencePanelComponent implements OnChanges {
       ).subscribe({
         next: () => {
           this.pieces$.next(this.pieces$.value.filter(p => p.id !== piece.id));
+          this.counted.emit(this.pieces$.value.length);
           this.cdr.markForCheck();
         },
         error: err => this.snack.open(

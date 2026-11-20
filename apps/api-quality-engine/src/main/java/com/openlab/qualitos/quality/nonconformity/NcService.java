@@ -82,11 +82,18 @@ public class NcService {
      */
     private final AuthorizationService authz;
 
+    /**
+     * Le registre des révisions de l'analyse de risque, vu à travers son port :
+     * cet écart a-t-il déjà fait réviser le PFMEA, ou le plan de surveillance ?
+     */
+    private final NcRiskRevisionsPort riskRevisions;
+
     public NcService(NonConformityRepository repository, NcTeamMemberRepository teamMembers,
                      CapaService capaService,
                      PdcaService pdcaService, DmaicService dmaicService,
                      ApplicationEventPublisher events, RecordScope scope,
-                     NcSubcategoryCatalog subcategories, AuthorizationService authz) {
+                     NcSubcategoryCatalog subcategories, AuthorizationService authz,
+                     NcRiskRevisionsPort riskRevisions) {
         this.repository = repository;
         this.teamMembers = teamMembers;
         this.capaService = capaService;
@@ -96,6 +103,7 @@ public class NcService {
         this.scope = scope;
         this.subcategories = subcategories;
         this.authz = authz;
+        this.riskRevisions = riskRevisions;
     }
 
     /**
@@ -250,6 +258,10 @@ public class NcService {
             nc.setSubcategoryCode(subcategories.resolve(nc.getSubcategoryCode(), nc.getCategory()));
         }
         if (request.severity() != null) nc.setSeverity(request.severity());
+        // La date du constat se corrige, elle ne s'efface pas : l'entité en
+        // exige une, et un écart sans date de détection ne se range dans aucun
+        // mois.
+        if (request.detectedAt() != null) nc.setDetectedAt(request.detectedAt());
         if (request.zone() != null) nc.setZone(request.zone());
         if (request.geoLat() != null) nc.setGeoLat(request.geoLat());
         if (request.geoLng() != null) nc.setGeoLng(request.geoLng());
@@ -290,12 +302,33 @@ public class NcService {
 
     // --- workflow ---
 
+    /**
+     * Ouvre l'analyse d'un écart (D4).
+     *
+     * <p><b>Un dossier déjà ouvert fait franchir les deux pas à la fois.</b> Le
+     * confinement du D3 s'écrit AVANT la recherche de cause -- c'est l'ordre de
+     * la méthode, et l'écran le permet : on ouvre le dossier CAPA sur un écart
+     * à peine déclaré pour protéger le client tout de suite. L'écart restait
+     * alors {@code OPEN}, puis passait {@code UNDER_ANALYSIS} — et n'en
+     * sortait plus jamais : {@link #escalateToCapa} est le seul chemin vers
+     * {@link NcStatus#ACTION_DEFINED}, et il refuse un second dossier. Le
+     * bouton « Résoudre » restait éteint à vie, sans un mot, puisque les
+     * motifs ne s'instruisent qu'à partir de cette étape.
+     *
+     * <p>L'invariant ne bouge pas, il s'applique dans l'autre sens : « ouvrir
+     * la CAPA, c'est définir l'action ». Si l'action était déjà écrite quand
+     * l'analyse s'ouvre, les deux faits sont vrais au même instant, et l'écart
+     * est à {@code ACTION_DEFINED}. Sans dossier, rien ne change : l'analyse
+     * s'ouvre seule, comme avant.
+     */
     public NcDto.Response startAnalysis(UUID id, NcDto.StartAnalysisRequest request) {
         NonConformity nc = load(id);
         if (nc.getStatus() != NcStatus.OPEN) {
             throw new NcStateException("Only OPEN non-conformities can move to analysis");
         }
-        nc.setStatus(NcStatus.UNDER_ANALYSIS);
+        nc.setStatus(nc.getCapaCaseId() == null
+                ? NcStatus.UNDER_ANALYSIS
+                : NcStatus.ACTION_DEFINED);
         if (request != null && request.rootCause() != null) {
             nc.setRootCause(request.rootCause());
         }
@@ -364,7 +397,7 @@ public class NcService {
      * écarté, c'est une fin. Un dossier disparu du client ne bloque pas non
      * plus — on ne retient pas un écart pour un dossier qui n'existe plus.
      */
-    public NcDto.Response close(UUID id) {
+    public NcDto.Response close(UUID id, NcDto.CloseRequest request) {
         NonConformity nc = load(id);
         exigerUnSecondRegard(nc);
         if (nc.getStatus() != NcStatus.RESOLVED) {
@@ -387,6 +420,30 @@ public class NcService {
                     + " CAPA case(s) remain open"
                     + nommes(capaService.unsettledCaseNamesInScopeFor(
                             nc.getCapaCaseId(), nc.getReference())));
+        }
+        // CE QUE L'ÉCART ENSEIGNE À L'ANALYSE DE RISQUE, tranché ici.
+        //
+        // APRÉS les obstacles qui préexistent, et non avant : un dossier CAPA
+        // encore en travail retient la clôture pour une autre raison, et
+        // inscrire sur la fiche une décision que ce refus-là vient d'annuler
+        // la daterait d'un geste qui n'a pas eu lieu.
+        //
+        // La réponse est en revanche enregistrée avant d'étre opposée à son
+        // propre verrou : un second essai n'a pas à la redonner, et « non » est
+        // une décision comme « oui » -- datée, imputable, et c'est elle que
+        // l'auditeur vient lire quand le PFMEA n'a pas bougé.
+        nc.setPfmeaImpacted(request.pfmeaImpacted());
+        nc.setControlPlanImpacted(request.controlPlanImpacted());
+        List<String> risque = retientLaCloture(nc);
+        if (!risque.isEmpty()) {
+            repository.save(nc);
+            // Un refus LISIBLE, et qui nomme le document : « il manque une
+            // révision » envoie chercher, « le PFMEA attend la sienne » dit quoi
+            // faire. Un 409 nu se traduisait à l'écran par « rechargez la page »,
+            // un conseil faux -- recharger ne révise rien.
+            throw new NcGateException(
+                    "La clôture attend la révision de " + risque.size()
+                    + " document(s) d'analyse de risque.", risque);
         }
         nc.setStatus(NcStatus.CLOSED);
         nc.setClosedAt(Instant.now());
@@ -864,9 +921,56 @@ public class NcService {
             if (moi != null && moi.equals(nc.getResolvedById())) {
                 motifs.add(new NcDto.Blocker(NcBlockerCode.SECOND_LOOK_REQUIRED, 1));
             }
+            motifs.addAll(blocagesDeRisque(nc));
             return List.copyOf(motifs);
         }
         return List.of();
+    }
+
+    /**
+     * CE QUE L'ANALYSE DE RISQUE RETIENT ENCORE.
+     *
+     * <p>Un écart déclaré impactant le PFMEA ou le plan de surveillance ne se
+     * clôt pas tant que la révision correspondante n'est pas actée : un défaut
+     * survenu pour de bon et une analyse de risque qui l'ignore encore se
+     * contredisent sur la même page (IATF 16949 — toute non-conformité se
+     * répercute sur la PFMEA et le plan de surveillance).
+     *
+     * <p>Le motif ne naît pas d'une règle que l'écran devine : il naît de la
+     * RÉPONSE donnée à la question. {@code null} — la question n'a pas
+     * encore été posée — ne bloque rien : c'est la clôture elle-même qui la
+     * pose, et un motif affiché avant qu'on ait demandé reprocherait de
+     * n'avoir pas fait ce qu'on ne propose pas encore.
+     *
+     * <p>Ce n'est pas une impasse : une réponse se corrige. Un produit sans
+     * PFMEA n'a pas de révision à acter, et la sortie est de répondre
+     * « non » — ce qui est vrai — pas de forcer la clôture.
+     *
+     * <p>LU PAR LES DEUX CHEMINS qui en dépendent — le motif annoncé avant
+     * le clic, et le refus au clic — pour que l'écran et le serveur ne
+     * puissent pas diverger.
+     */
+    /** Le méme verrou, rédigé : un motif se compte, un refus se lit. */
+    private List<String> retientLaCloture(NonConformity nc) {
+        return blocagesDeRisque(nc).stream()
+                .map(b -> b.code() == NcBlockerCode.PFMEA_REVISION_REQUIRED
+                        ? "Le PFMEA du produit attend sa révision pour cet écart."
+                        : "Le plan de surveillance attend sa révision pour cet écart.")
+                .toList();
+    }
+
+    private List<NcDto.Blocker> blocagesDeRisque(NonConformity nc) {
+        UUID tenant = nc.getTenantId();
+        List<NcDto.Blocker> motifs = new ArrayList<>();
+        if (Boolean.TRUE.equals(nc.getPfmeaImpacted())
+                && !riskRevisions.pfmeaRevisedFor(tenant, nc.getId())) {
+            motifs.add(new NcDto.Blocker(NcBlockerCode.PFMEA_REVISION_REQUIRED, 1));
+        }
+        if (Boolean.TRUE.equals(nc.getControlPlanImpacted())
+                && !riskRevisions.controlPlanRevisedFor(tenant, nc.getId())) {
+            motifs.add(new NcDto.Blocker(NcBlockerCode.CONTROL_PLAN_REVISION_REQUIRED, 1));
+        }
+        return List.copyOf(motifs);
     }
 
     /**
@@ -906,6 +1010,7 @@ public class NcService {
                 nc.getResolvedById(), nc.getResolvedByName(),
                 nc.getClosedById(), nc.getClosedByName(),
                 nc.getValidatorId(), nc.getValidatorName(),
+                nc.getPfmeaImpacted(), nc.getControlPlanImpacted(),
                 nc.getCreatedAt(), nc.getUpdatedAt(),
                 equipe, blocages, dossiers, nc.getCauseAnalysisComment());
     }

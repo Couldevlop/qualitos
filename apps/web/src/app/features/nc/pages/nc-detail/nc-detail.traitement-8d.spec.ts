@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
@@ -100,7 +102,7 @@ describe('NcDetailComponent — le traitement 8D', () => {
     await TestBed.configureTestingModule({
       declarations: [NcDetailComponent, NcCauseAnalysisComponent],
       imports: [SharedModule, UiModule, UserPickerModule, FiveWhysSharedModule,
-                IshikawaSharedModule, NoopAnimationsModule, CapaActionPanelStubModule, CapaEvidencePanelStubModule],
+                IshikawaSharedModule, NoopAnimationsModule, MatDatepickerModule, MatNativeDateModule, CapaActionPanelStubModule, CapaEvidencePanelStubModule],
       providers: [
         provideRouter([]),
         { provide: NcService, useValue: svc },
@@ -165,6 +167,44 @@ describe('NcDetailComponent — le traitement 8D', () => {
     expect(un('etape-D1')!.classList.contains('done')).toBeTrue();
     expect(un('etape-D4')!.classList.contains('done')).toBeTrue();
     expect(un('etape-D3')!.classList.contains('done')).toBeFalse();
+  });
+
+  /**
+   * LE D6 COCHAIT SUR LA NOTE DE RÉSOLUTION, qui s'écrit à l'étape
+   * « Résoudre » et non dans cette carte. On déposait donc une preuve, on
+   * écrivait le commentaire d'efficacité, et la discipline restait grise : le
+   * sommaire affirmait qu'il restait à faire ce qui venait d'être fait.
+   */
+  it('marque le D6 dès qu’une pièce est déposée sur le dossier', () => {
+    setup(ecart({ capaCases: [{ id: 'capa-1', status: 'IN_PROGRESS' }] }));
+
+    expect(un('etape-D6')!.classList.contains('done'))
+      .withContext('le D6 ne devrait rien porter avant qu’une pièce soit lue')
+      .toBeFalse();
+
+    component.compter('D6', 2);
+    fixture.detectChanges();
+
+    expect(un('etape-D6')!.classList.contains('done')).toBeTrue();
+  });
+
+  it('marque le D6 sur le seul commentaire d’efficacité', () => {
+    setup(ecart({
+      capaCases: [{ id: 'capa-1', status: 'IN_PROGRESS',
+                    effectivenessComment: 'Aucun retour client sur deux mois.' }]
+    }));
+
+    expect(un('etape-D6')!.classList.contains('done')).toBeTrue();
+  });
+
+  it('ne marque pas le D6 quand le dossier est lu et ne porte rien', () => {
+    setup(ecart({ capaCases: [{ id: 'capa-1', status: 'IN_PROGRESS' }] }));
+
+    // Zéro est une valeur : « lu, et il n'y en a aucune » n'est pas « fait ».
+    component.compter('D6', 0);
+    fixture.detectChanges();
+
+    expect(un('etape-D6')!.classList.contains('done')).toBeFalse();
   });
 
   it('emmène sur la discipline qu’on choisit dans le sommaire', () => {

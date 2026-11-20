@@ -47,6 +47,14 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class NcSecondRegardTest {
 
+    /**
+     * « Ni le PFMEA, ni le plan de surveillance » : la réponse des bancs qui ne
+     * mesurent pas cette régle-là. Ce n'est pas un vide -- c'est une décision,
+     * et c'est bien celle qu'ils veulent : rien ne doit retenir leur clôture.
+     */
+    private static final NcDto.CloseRequest SANS_IMPACT =
+            new NcDto.CloseRequest(false, false);
+
     private static final UUID TENANT = UUID.randomUUID();
     private static final UUID MARIE = UUID.randomUUID();
     private static final UUID ALI = UUID.randomUUID();
@@ -104,7 +112,7 @@ class NcSecondRegardTest {
         jePuisClore();
         connecte(ALI, "Ali Benali");
 
-        service.close(n.getId());
+        service.close(n.getId(), SANS_IMPACT);
 
         assertThat(n.getStatus()).isEqualTo(NcStatus.CLOSED);
         assertThat(n.getClosedById()).isEqualTo(ALI);
@@ -122,7 +130,7 @@ class NcSecondRegardTest {
         jePuisClore();
         connecte(MARIE, "Marie Durand");
 
-        assertThatThrownBy(() -> service.close(n.getId()))
+        assertThatThrownBy(() -> service.close(n.getId(), SANS_IMPACT))
                 .isInstanceOf(NcStateException.class)
                 // Le refus DIT quoi faire. « Accès refusé » laisserait croire à
                 // un défaut de droits, alors que l'écart est parfaitement
@@ -141,7 +149,7 @@ class NcSecondRegardTest {
         jePuisClore();
         connecte(ALI, "Ali Benali");
 
-        service.close(n.getId());
+        service.close(n.getId(), SANS_IMPACT);
 
         assertThat(n.getStatus()).isEqualTo(NcStatus.CLOSED);
     }
@@ -162,7 +170,7 @@ class NcSecondRegardTest {
         enregistre(n);
         connecte(MARIE, "Marie Durand");
 
-        assertThatThrownBy(() -> service.close(n.getId()))
+        assertThatThrownBy(() -> service.close(n.getId(), SANS_IMPACT))
                 .isInstanceOf(NcStateException.class)
                 .hasMessageContaining("second pair of eyes");
     }
@@ -179,7 +187,7 @@ class NcSecondRegardTest {
         jePuisClore();
         connecte(MARIE, "Marie Durand");
 
-        service.close(n.getId());
+        service.close(n.getId(), SANS_IMPACT);
 
         assertThat(n.getStatus()).isEqualTo(NcStatus.CLOSED);
     }
@@ -197,7 +205,7 @@ class NcSecondRegardTest {
         when(authz.has(Permission.NC_CLOSE)).thenReturn(false);
         connecte(ALI, "Ali Benali");
 
-        assertThatThrownBy(() -> service.close(n.getId()))
+        assertThatThrownBy(() -> service.close(n.getId(), SANS_IMPACT))
                 .isInstanceOf(AccessDeniedException.class);
         assertThat(n.getStatus()).isEqualTo(NcStatus.RESOLVED);
     }
@@ -220,7 +228,7 @@ class NcSecondRegardTest {
         lenient().when(authz.has(Permission.NC_CLOSE)).thenReturn(false);
         connecte(ALI, "Ali Benali");
 
-        service.close(n.getId());
+        service.close(n.getId(), SANS_IMPACT);
 
         assertThat(n.getStatus()).isEqualTo(NcStatus.CLOSED);
     }
@@ -234,7 +242,7 @@ class NcSecondRegardTest {
         when(authz.has(Permission.NC_CLOSE)).thenReturn(false);
         connecte(ALI, "Ali Benali");
 
-        assertThatThrownBy(() -> service.close(n.getId()))
+        assertThatThrownBy(() -> service.close(n.getId(), SANS_IMPACT))
                 .isInstanceOf(AccessDeniedException.class);
     }
 
@@ -395,7 +403,7 @@ class NcSecondRegardTest {
 
         // La zone est en 6e position ; la designation en 14e et 15e, intouchee.
         service.update(n.getId(), new NcDto.UpdateRequest(
-                null, null, null, null, null, "Atelier 7", null, null, null, null,
+                null, null, null, null, null, null, "Atelier 7", null, null, null, null,
                 null, null, null, null, null, null, null, null));
 
         assertThat(n.getZone()).isEqualTo("Atelier 7");
@@ -416,7 +424,7 @@ class NcSecondRegardTest {
 
     private NcDto.UpdateRequest modificationValideur(UUID valideur, String nomValideur) {
         return new NcDto.UpdateRequest(
-                null, null, null, null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null, null,
                 null, null, null, valideur, nomValideur, null, null, null);
     }
 

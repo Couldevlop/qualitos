@@ -7,6 +7,7 @@ import { environment } from '../../../environments/environment';
 import { ConnectivityService } from '../../core/offline/connectivity.service';
 import { OfflineQueueService } from '../../core/offline/offline-queue.service';
 import {
+  CloseNcRequest,
   ConvertNcRequest,
   CreateNcRequest,
   EightDDiscipline,
@@ -212,7 +213,7 @@ export class NcService {
     return this.http.post<NcResponse>(`${this.endpoint}/${id}/resolve`, input);
   }
 
-  close(id: string): Observable<NcResponse> {
+  close(id: string, input: CloseNcRequest): Observable<NcResponse> {
     if (environment.useMockApi) {
       const n = this.mockStore.find(x => x.id === id);
       const now = new Date().toISOString();
@@ -220,11 +221,13 @@ export class NcService {
         n.status = 'CLOSED';
         n.closedAt = now;
         n.updatedAt = now;
+        n.pfmeaImpacted = input.pfmeaImpacted;
+        n.controlPlanImpacted = input.controlPlanImpacted;
         return of(n).pipe(delay(120));
       }
       return of(this.mockStore[0]).pipe(delay(120));
     }
-    return this.http.post<NcResponse>(`${this.endpoint}/${id}/close`, {});
+    return this.http.post<NcResponse>(`${this.endpoint}/${id}/close`, input);
   }
 
   cancel(id: string): Observable<NcResponse> {

@@ -16,6 +16,9 @@ import { By } from '@angular/platform-browser';
 import {
   CapaActionPanelStubComponent, CapaActionPanelStubModule
 } from '../../../capa/components/capa-action-panel/testing/capa-action-panel.stub';
+import {
+  CapaEvidencePanelStubComponent, CapaEvidencePanelStubModule
+} from '../../../capa/components/capa-evidence-panel/testing/capa-evidence-panel.stub';
 import { FiveWhysService } from '../../../five-whys/five-whys.service';
 import { FiveWhysAnalysis } from '../../../five-whys/five-whys.types';
 import { IshikawaService } from '../../../ishikawa/ishikawa.service';
@@ -126,7 +129,7 @@ describe('NcEightDComponent', () => {
     await TestBed.resetTestingModule().configureTestingModule({
       declarations: [NcEightDComponent],
       imports: [SharedModule, UiModule, NoopAnimationsModule,
-                CapaActionPanelStubModule, NcCauseAnalysisStubModule],
+                CapaActionPanelStubModule, CapaEvidencePanelStubModule, NcCauseAnalysisStubModule],
       providers: [
         { provide: NcService, useValue: svc },
         { provide: FiveWhysService, useValue: fiveWhys },
@@ -447,7 +450,7 @@ describe('NcEightDComponent', () => {
    * ses lignes repetees sous le D5 laissaient croire a deux decisions
    * distinctes la ou il n'y en avait qu'une.
    */
-  it("donne au D3 l'endiguement, au D5 les CAPA d\u00e9finies, au D6 les pr\u00e9ventives", async () => {
+  it("donne au D3 l'endiguement, au D5 les CAPA d\u00e9finies, au D7 les pr\u00e9ventives", async () => {
     await monter(['QUALITY_MANAGER']);
 
     const tableaux = fixture.debugElement.queryAll(By.directive(CapaActionPanelStubComponent));
@@ -457,6 +460,48 @@ describe('NcEightDComponent', () => {
       ['CONTAINMENT'], ['CORRECTIVE', 'PREVENTIVE'], ['PREVENTIVE']]);
     const dossiers = tableaux.map(t => (t.componentInstance as CapaActionPanelStubComponent).capaCaseId);
     expect(dossiers).toEqual(['capa-9', 'capa-9', 'capa-9']);
+  });
+
+  /**
+   * LE D6 DEPOSE UNE PREUVE, IL N'AJOUTE PAS UNE ACTION.
+   *
+   * <p>« Implementation and evidence » portait le tableau des actions
+   * preventives -- qui est le D7 -- et rien n'y deposait la piece qui demontre
+   * que le probleme a cesse (ISO 9001 10.2). La fiche de l'ecart faisait deja
+   * cette difference ; le rapport ne la faisait pas.
+   *
+   * <p>Le statut du dossier est passe avec lui : clos, ses preuves se relisent
+   * mais ne changent plus. Sans lui, le rapport offrirait un depot que le
+   * serveur refusera.
+   */
+  it('donne au D6 le d\u00e9p\u00f4t des preuves, et non un tableau d\u2019actions', async () => {
+    await monter(['QUALITY_MANAGER'], 'capa-9', [
+      { id: 'capa-9', title: 'Dossier de l\u2019escalade', status: 'IN_PROGRESS' }
+    ]);
+
+    expect(fixture.nativeElement.querySelector('[data-test="8d-preuves"]')).not.toBeNull();
+    const panneaux = fixture.debugElement.queryAll(By.directive(CapaEvidencePanelStubComponent));
+    expect(panneaux.length).toBe(1);
+    const panneau = panneaux[0].componentInstance as CapaEvidencePanelStubComponent;
+    expect(panneau.capaCaseId).toBe('capa-9');
+    expect(panneau.statut).toBe('IN_PROGRESS');
+
+    expect(component.montreLesPreuves('D6')).toBe(true);
+    ['D1', 'D2', 'D3', 'D4', 'D5', 'D7', 'D8'].forEach(
+      code => expect(component.montreLesPreuves(code)).toBe(false));
+  });
+
+  /**
+   * Sans dossier, on dit a quelle condition le depot s'ouvrira : une etiquette
+   * « Preuves » au-dessus du vide se lirait comme une panne de chargement.
+   */
+  it('dit o\u00f9 iront les preuves quand l\u2019\u00e9cart n\u2019a pas de dossier', async () => {
+    await monter(['QUALITY_MANAGER'], null);
+
+    expect(fixture.nativeElement.querySelector('[data-test="8d-preuves"]')).toBeNull();
+    expect(fixture.nativeElement.querySelector('[data-test="8d-preuves-vide"]')).not.toBeNull();
+    expect(fixture.debugElement.queryAll(
+      By.directive(CapaEvidencePanelStubComponent)).length).toBe(0);
   });
 
   /**
@@ -530,12 +575,12 @@ describe('NcEightDComponent', () => {
     expect(component.montreAuLieuDeDire('D2')).toBe(false);
   });
 
-  /** Les disciplines qui portent un tableau sont exactement D3, D5 et D6. */
-  it('ne montre un tableau d\u2019actions que sous D3, D5 et D6', async () => {
+  /** Les disciplines qui portent un tableau sont exactement D3, D5 et D7. */
+  it('ne montre un tableau d\u2019actions que sous D3, D5 et D7', async () => {
     await monter(['QUALITY_MANAGER']);
 
-    ['D3', 'D5', 'D6'].forEach(code => expect(component.montreLesActions(code)).toBe(true));
-    ['D1', 'D2', 'D4', 'D7', 'D8'].forEach(
+    ['D3', 'D5', 'D7'].forEach(code => expect(component.montreLesActions(code)).toBe(true));
+    ['D1', 'D2', 'D4', 'D6', 'D8'].forEach(
       code => expect(component.montreLesActions(code)).toBe(false));
   });
 
@@ -544,7 +589,7 @@ describe('NcEightDComponent', () => {
 
     expect(component.naturesDe('D3')).toBe(component.naturesDe('D3'));
     expect(component.naturesDe('D5')).toBe(component.naturesDe('D5'));
-    expect(component.naturesDe('D6')).toBe(component.naturesDe('D6'));
+    expect(component.naturesDe('D7')).toBe(component.naturesDe('D7'));
     // Y compris pour les disciplines qui ne montrent pas d'actions.
     expect(component.naturesDe('D1')).toBe(component.naturesDe('D2'));
     expect(component.naturesDe('D1')).toEqual([]);

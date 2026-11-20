@@ -1,5 +1,6 @@
 package com.openlab.qualitos.quality.nonconformity;
 
+import com.openlab.qualitos.quality.nonconformity.storage.UploadedBinaryGuard;
 import com.openlab.qualitos.quality.authz.application.RecordScope;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.common.TenantContext;
@@ -32,12 +33,30 @@ public class NcPhotoService {
     /** TTL des URLs pré-signées de lecture. */
     static final Duration PRESIGN_TTL = Duration.ofMinutes(15);
 
-    /** Whitelist content-type → extension (OWASP : extension déduite du type, pas du nom). */
-    static final Map<String, String> ALLOWED_TYPES = Map.of(
-            "image/jpeg", "jpg",
-            "image/png", "png",
-            "image/webp", "webp",
-            "image/heic", "heic"
+    /**
+     * Whitelist content-type → extension (OWASP : extension déduite du type, pas du nom).
+     *
+     * <p>DES DOCUMENTS AUTANT QUE DES PHOTOS. Ce qui décrit un problème n'est pas
+     * toujours une image : la lettre de réclamation du client, le rapport de
+     * laboratoire, le bon de livraison, le relevé de contrôle. Seules les images
+     * étaient admises, et ces pièces-là n'avaient aucune place sur la fiche — on
+     * les rangeait parmi les preuves d'efficacité du D6, qui disent autre chose :
+     * que le remède a tenu, pas que le problème a existé.
+     *
+     * <p>La même liste que les preuves d'un dossier CAPA, aux mêmes extensions
+     * près : deux listes voisines mais différentes laisseraient un fichier passer
+     * d'un écran et pas de l'autre, sans qu'on sache lequel a raison.
+     */
+    static final Map<String, String> ALLOWED_TYPES = Map.ofEntries(
+            Map.entry("image/jpeg", "jpg"),
+            Map.entry("image/png", "png"),
+            Map.entry("image/webp", "webp"),
+            Map.entry("image/heic", "heic"),
+            Map.entry("application/pdf", "pdf"),
+            Map.entry("application/vnd.openxmlformats-officedocument"
+                    + ".wordprocessingml.document", "docx"),
+            Map.entry("application/vnd.openxmlformats-officedocument"
+                    + ".spreadsheetml.sheet", "xlsx")
     );
 
     private final NcPhotoRepository photoRepository;
@@ -70,8 +89,8 @@ public class NcPhotoService {
         if (content.length > MAX_SIZE_BYTES) {
             throw new NcPhotoTooLargeException(content.length, MAX_SIZE_BYTES);
         }
-        String normalizedType = contentType == null ? "" : contentType.toLowerCase().trim();
-        String ext = ALLOWED_TYPES.get(normalizedType);
+        String normalizedType = UploadedBinaryGuard.normalizeType(contentType);
+        String ext = UploadedBinaryGuard.extensionOf(ALLOWED_TYPES, normalizedType);
         if (ext == null) {
             throw new NcPhotoValidationException("Unsupported content type: " + contentType
                     + " (allowed: " + ALLOWED_TYPES.keySet() + ")");
@@ -80,7 +99,12 @@ public class NcPhotoService {
         // M1 — Le content-type déclaré est falsifiable : on vérifie la SIGNATURE binaire
         // (magic bytes) et on exige qu'elle corresponde au type annoncé. Un .exe renommé
         // en .png (ou un content-type menteur) est rejeté en 400.
-        if (!magicBytesMatch(normalizedType, content)) {
+        //
+        // LE GARDE PARTAGÉ, et non plus une copie locale : il porte déjà les
+        // signatures du PDF et des formats OOXML, et c'est toujours la copie
+        // oubliée qui laisse passer l'exécutable renommé. C'est le repli que son
+        // propre commentaire annonçait.
+        if (!UploadedBinaryGuard.magicBytesMatch(normalizedType, content)) {
             throw new NcPhotoValidationException(
                     "File content does not match the declared type '" + normalizedType + "'");
         }
@@ -105,6 +129,13 @@ public class NcPhotoService {
 
         storage.put(key, normalizedType, content);
         return toResponse(saved);
+    }
+
+    private UUID requireTenantId() {
+        if (!TenantContext.hasTenant()) {
+            throw new MissingTenantContextException();
+        }
+        return UUID.fromString(TenantContext.getTenantId());
     }
 
     @Transactional(readOnly = true)
@@ -147,52 +178,6 @@ public class NcPhotoService {
         }
         return storage;
     }
-
-    private UUID requireTenantId() {
-        if (!TenantContext.hasTenant()) {
-            throw new MissingTenantContextException();
-        }
-        return UUID.fromString(TenantContext.getTenantId());
-    }
-
-    /**
-     * M1 — Vérifie que les premiers octets ("magic bytes") correspondent au content-type
-     * déclaré. Sniff manuel, aucune dépendance externe.
-     *
-     * <ul>
-     *   <li>JPEG : {@code FF D8 FF}</li>
-     *   <li>PNG  : {@code 89 50 4E 47 0D 0A 1A 0A}</li>
-     *   <li>WEBP : {@code 'RIFF' .... 'WEBP'} (octets 0-3 = RIFF, 8-11 = WEBP)</li>
-     *   <li>HEIC : boîte {@code ftyp} à l'offset 4 (octets 4-7 = 'ftyp')</li>
-     * </ul>
-     */
-    static boolean magicBytesMatch(String normalizedType, byte[] c) {
-        return switch (normalizedType) {
-            case "image/jpeg" -> startsWith(c, 0xFF, 0xD8, 0xFF);
-            case "image/png" -> startsWith(c, 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A);
-            case "image/webp" -> c.length >= 12
-                    && startsWith(c, 0x52, 0x49, 0x46, 0x46) // "RIFF"
-                    && c[8] == 'W' && c[9] == 'E' && c[10] == 'B' && c[11] == 'P';
-            // HEIC : 'ftyp' à l'offset 4 ; la marque (heic/heix/mif1/…) suit, on reste
-            // permissif sur la sous-marque mais on exige la boîte ftyp.
-            case "image/heic" -> c.length >= 8
-                    && c[4] == 'f' && c[5] == 't' && c[6] == 'y' && c[7] == 'p';
-            default -> false; // type non whitelisté : déjà rejeté en amont
-        };
-    }
-
-    private static boolean startsWith(byte[] c, int... prefix) {
-        if (c.length < prefix.length) {
-            return false;
-        }
-        for (int i = 0; i < prefix.length; i++) {
-            if ((c[i] & 0xFF) != (prefix[i] & 0xFF)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     /** Garde le nom d'origine à titre informatif uniquement, neutralisé (jamais réutilisé dans la clé). */
     private static String sanitizeFilename(String name) {
         if (name == null || name.isBlank()) {

@@ -165,6 +165,29 @@
             </div>
           </ng-container>
 
+          <!-- D6 : LA PREUVE, et non une action de plus. Cette discipline
+               portait le tableau des actions preventives -- qui est le D7 :
+               on ajoutait donc une action de prevention sous le titre
+               « Implementation and evidence », et rien n'y deposait la piece
+               qui demontre que le probleme a cesse (ISO 9001 10.2). La fiche
+               de l'ecart faisait deja cette difference. -->
+          <ng-container *ngIf="montreLesPreuves(discipline.code)">
+            <div class="vivant" *ngIf="(capaCaseIds$ | async)?.length"
+                 data-test="8d-preuves">
+              <p class="vivant-note" i18n="@@nc.8d.live-note-evidence">État actuel du dossier. Le PDF émis en porte le compte, figé à l'émission.</p>
+              <qos-capa-evidence-panel *ngFor="let dossier of (capaCaseIds$ | async)"
+                                       [capaCaseId]="dossier.id"
+                                       [statut]="$any(dossier.status)"></qos-capa-evidence-panel>
+            </div>
+            <div class="vivant" *ngIf="(capaCaseIds$ | async)?.length === 0"
+                 data-test="8d-preuves-vide">
+              <p class="vivant-note" i18n="@@nc.8d.evidence-empty">
+                Les preuves se déposeront ici dès qu'un dossier CAPA sera ouvert
+                sur l'écart : elles s'attachent au dossier.
+              </p>
+            </div>
+          </ng-container>
+
           <!-- D3, D5 et D6 : le tableau des actions de LEUR nature, ou on les
                lit, on les avance et on en ajoute sans quitter le rapport. Un
                tableau par dossier CAPA de l'ecart : le rapport n'en montrait
@@ -180,7 +203,7 @@
                    l'emission (ADR 0124). -->
               <p class="vivant-note" i18n="@@nc.8d.live-note-table">État actuel du dossier. Le PDF émis porte ce tableau, figé à l'émission.</p>
               <qos-capa-action-panel *ngFor="let dossier of (capaCaseIds$ | async)"
-                                     [capaCaseId]="dossier" [natures]="naturesDe(discipline.code)"
+                                     [capaCaseId]="dossier.id" [natures]="naturesDe(discipline.code)"
                                      (changed)="reload()"></qos-capa-action-panel>
             </div>
             <!-- SANS dossier, la discipline restait muette sous son texte

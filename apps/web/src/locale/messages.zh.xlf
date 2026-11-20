@@ -7662,6 +7662,14 @@ Portail clients</source>
         <source>État actuel du dossier. Le PDF émis porte ce tableau, figé à l'émission.</source>
         <target state="translated">档案的当前状态。签发的 PDF 包含此表格，在签发时已固化。</target>
       </trans-unit>
+      <trans-unit id="nc.8d.live-note-evidence" datatype="html">
+        <source>État actuel du dossier. Le PDF émis en porte le compte, figé à l'émission.</source>
+        <target state="translated">档案的当前状态。签发的 PDF 包含其数量，在签发时已固化。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.evidence-empty" datatype="html">
+        <source>Les preuves se déposeront ici dès qu'un dossier CAPA sera ouvert sur l'écart : elles s'attachent au dossier.</source>
+        <target state="translated">一旦为该不合格开启 CAPA 档案，证据就可在此处附件：它们属于档案。</target>
+      </trans-unit>
       <trans-unit id="nc.8d.live-note-figures" datatype="html">
         <source>État actuel du dossier. Le PDF émis porte ces schémas, figés à l'émission.</source>
         <target state="translated">档案的当前状态。签发的 PDF 包含这些图示，在签发时已固化。</target>
@@ -7949,6 +7957,10 @@ Portail clients</source>
       <trans-unit id="common.no" datatype="html">
         <source>Non</source>
         <target state="translated">否</target>
+      </trans-unit>
+      <trans-unit id="capa.verification.assigned" datatype="html">
+        <source>Vérification confiée</source>
+        <target state="translated">已指定验证人</target>
       </trans-unit>
       <trans-unit id="capa.verification.title" datatype="html">
         <source>Vérification d'efficacité</source>
@@ -21743,8 +21755,8 @@ historique 12 mois</source>
         <target state="translated">解决说明</target>
       </trans-unit>
       <trans-unit id="nc.detail.photos" datatype="html">
-        <source>Photos</source>
-        <target state="translated">照片</target>
+        <source>Pièces jointes</source>
+        <target state="translated">附件</target>
       </trans-unit>
       <trans-unit id="nc.detail.start-analysis" datatype="html">
         <source>Analyser</source>
@@ -21799,16 +21811,16 @@ historique 12 mois</source>
         <target state="translated">状态转换时出错。</target>
       </trans-unit>
       <trans-unit id="nc.photos.add" datatype="html">
-        <source>Ajouter une photo</source>
-        <target state="translated">添加照片</target>
+        <source>Ajouter une pièce</source>
+        <target state="translated">添加附件</target>
       </trans-unit>
       <trans-unit id="nc.photos.empty" datatype="html">
-        <source>Aucune photo. Ajoutez une vue terrain depuis la caméra ou la galerie.</source>
-        <target state="translated">暂无照片。请从相机或图库添加现场视图。</target>
+        <source>Aucune pièce jointe. Ajoutez une photo du terrain, ou le document qui constate le problème.</source>
+        <target state="translated">暂无附件。请添加现场照片或记录问题的文件。</target>
       </trans-unit>
       <trans-unit id="nc.photos.delete-tooltip" datatype="html">
-        <source>Supprimer la photo</source>
-        <target state="translated">删除照片</target>
+        <source>Supprimer la pièce jointe</source>
+        <target state="translated">删除附件</target>
       </trans-unit>
       <trans-unit id="nc.photos.delete-confirm-title" datatype="html">
         <source>Supprimer cette photo ?</source>
@@ -22389,6 +22401,50 @@ historique 12 mois</source>
       <trans-unit id="nc.8d.go-to-nc" datatype="html">
         <source>Ouvrir la fiche de l'écart</source>
         <target state="translated">打开偏差记录</target>
+      </trans-unit>
+      <trans-unit id="nc.close.title" datatype="html">
+        <source>Clôturer l'écart</source>
+        <target state="translated">关闭不合格</target>
+      </trans-unit>
+      <trans-unit id="nc.close.intro" datatype="html">
+        <source>L'écart <x id="START_TAG_STRONG"/><x id="INTERPOLATION"/><x id="CLOSE_TAG_STRONG"/> va être clos. Avant cela, deux questions : ce qu'il a enseigné à l'analyse de risque du produit.</source>
+        <target state="translated">不合格 <x id="START_TAG_STRONG"/><x id="INTERPOLATION"/><x id="CLOSE_TAG_STRONG"/> 即将关闭。在此之前有两个问题：它对产品风险分析的启示。</target>
+      </trans-unit>
+      <trans-unit id="nc.close.pfmea-legend" datatype="html">
+        <source>Le PFMEA du produit a-t-il été impacté ?</source>
+        <target state="translated">产品的 PFMEA 是否受到影响？</target>
+      </trans-unit>
+      <trans-unit id="nc.close.control-plan-legend" datatype="html">
+        <source>Le plan de surveillance a-t-il été impacté ?</source>
+        <target state="translated">控制计划是否受到影响？</target>
+      </trans-unit>
+      <trans-unit id="nc.close.pfmea-required" datatype="html">
+        <source>Répondez par « oui » ou « non » : la question doit être tranchée pour clore.</source>
+        <target state="translated">请回答“是”或“否”：关闭前必须对该问题作出决定。</target>
+      </trans-unit>
+      <trans-unit id="nc.close.control-plan-required" datatype="html">
+        <source>Répondez par « oui » ou « non » : la question doit être tranchée pour clore.</source>
+        <target state="translated">请回答“是”或“否”：关闭前必须对该问题作出决定。</target>
+      </trans-unit>
+      <trans-unit id="nc.close.requires-revision" datatype="html">
+        <source>La révision du document désigné devient exigible : l'écart ne se clôra définitivement qu'une fois cette révision acceptée.</source>
+        <target state="translated">指定文件的修订成为必须：只有该修订被接受后，不合格才会最终关闭。</target>
+      </trans-unit>
+      <trans-unit id="nc.close.hint" datatype="html">
+        <source>Répondre « non » est une décision, qui se lit : elle atteste qu'on a examiné l'analyse de risque et jugé qu'elle n'était pas en cause.</source>
+        <target state="translated">回答“否”也是一项决定，并会被如此解读：它证明已审查风险分析并判定其与此无关。</target>
+      </trans-unit>
+      <trans-unit id="nc.close.confirm" datatype="html">
+        <source>Clôturer</source>
+        <target state="translated">关闭</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.pfmea-revision" datatype="html">
+        <source>Cet écart a été déclaré impactant le PFMEA du produit. Acceptez la révision du PFMEA qui le concerne pour pouvoir le clôturer — ou corrigez la réponse si le PFMEA n'était pas en cause.</source>
+        <target state="translated">该不合格已被申报为影响产品的 PFMEA。请接受为其提出的 PFMEA 修订后再关闭，若 PFMEA 并不涉及，请更正答案。</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.control-plan-revision" datatype="html">
+        <source>Cet écart a été déclaré impactant le plan de surveillance. Acceptez la révision du plan qui le concerne pour pouvoir le clôturer — ou corrigez la réponse si le plan n'était pas en cause.</source>
+        <target state="translated">该不合格已被申报为影响控制计划。请接受为其提出的计划修订后再关闭，若该计划并不涉及，请更正答案。</target>
       </trans-unit>
       <trans-unit id="nav.nc-clusters" datatype="html">
         <source>Clustering NC</source>
@@ -23037,6 +23093,22 @@ historique 12 mois</source>
       <trans-unit id="nc.reopen.error" datatype="html">
         <source>Reprise impossible.</source>
         <target state="translated">无法重启。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.problem" datatype="html">
+        <source>Description du problème</source>
+        <target state="translated">问题描述</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.problem-placeholder" datatype="html">
+        <source>Décrivez l'écart constaté, la quantité concernée, le lieu et le moment de la détection</source>
+        <target state="translated">请描述所发现的偏差、涉及数量、发现的地点和时间</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.problem-required" datatype="html">
+        <source>Le constat ne peut pas rester vide.</source>
+        <target state="translated">发现内容不能为空。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.validator-own-work" datatype="html">
+        <source>Vous avez résolu cet écart : vous ne pouvez pas choisir qui relit votre travail. Un autre détenteur du droit de clôture désignera le valideur.</source>
+        <target state="translated">这个偏差是您解决的：您不能选择谁来复核自己的工作。由其他拥有关闭权限的人指定审核人。</target>
       </trans-unit>
       <trans-unit id="nc.8d.validator" datatype="html">
         <source>Valideur de la clôture (second regard)</source>

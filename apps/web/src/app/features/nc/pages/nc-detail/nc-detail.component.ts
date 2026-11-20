@@ -11,7 +11,7 @@ import { catchError, finalize, map, shareReplay, switchMap, tap } from 'rxjs/ope
 import { deferredView } from '../../../../core/rx/deferred-view';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { AuthzService } from '../../../../core/authz/authz.service';
-import { safeErrorMessage } from '../../../../core/http/error-message';
+import { gateReasons, safeErrorMessage } from '../../../../core/http/error-message';
 import {
   CapaActionsDialogComponent, CapaActionsDialogData
 } from '../../../capa/pages/capa-actions-dialog/capa-actions-dialog.component';
@@ -23,6 +23,9 @@ import { CapaService } from '../../../capa/capa.service';
 import { DirectoryUser } from '../../../../core/directory/directory.types';
 import { ConnectivityService } from '../../../../core/offline/connectivity.service';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../../../shared/ui/confirm-dialog/confirm-dialog.component';
+import {
+  NcCloseDialogComponent, NcCloseDialogData, NcCloseDialogResult
+} from '../nc-close-dialog/nc-close-dialog.component';
 import { FiveWhysService } from '../../../five-whys/five-whys.service';
 import { FiveWhysAnalysis } from '../../../five-whys/five-whys.types';
 import { IshikawaService } from '../../../ishikawa/ishikawa.service';
@@ -32,6 +35,7 @@ import { ProductResponse } from '../../../products/products.types';
 import { NcService } from '../../nc.service';
 import { TeamMemberRef } from '../../../../shared/user-picker/user-team-picker.component';
 import {
+  CloseNcRequest,
   NC_MAX_TEAM_MEMBERS,
   NcPhoto,
   NcBlocker,
@@ -66,6 +70,17 @@ import {
  * le sommaire, les ancres du document et les decomptes se designent par le
  * meme vocabulaire, et une faute de frappe ne passe pas.
  */
+/**
+ * Ce que le champ de depot du constat accepte, et que le serveur verifie a la
+ * signature binaire.
+ *
+ * <p>La meme liste que les preuves d'un dossier : deux listes voisines mais
+ * differentes laisseraient un fichier passer d'un ecran et pas de l'autre, sans
+ * qu'on sache lequel a raison.
+ */
+export const TYPES_DE_PIECE_ACCEPTES =
+  'application/pdf,image/jpeg,image/png,image/webp,image/heic,.docx,.xlsx';
+
 export type EtapeCode = 'D1' | 'D2' | 'D3' | 'D4' | 'D5' | 'D6' | 'D7' | 'D8';
 
 // OWASP A03 — refuse malformed UUIDs client-side. Demo mock ids ("nc-1"…)
@@ -214,6 +229,36 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
    */
   private readonly brouillonsCommentaire = new Map<string, string>();
 
+  /**
+   * Ce que le champ de depot accepte, et que le serveur verifie a la signature.
+   *
+   * <p>La meme liste que les preuves d'un dossier : deux listes voisines mais
+   * differentes laisseraient un fichier passer d'un ecran et pas de l'autre,
+   * sans qu'on sache lequel a raison. Elle est declaree ici et non dans le
+   * gabarit pour que le banc puisse l'affirmer.
+   */
+  readonly typesAcceptes = TYPES_DE_PIECE_ACCEPTES;
+
+  /** Une image se montre ; tout le reste se nomme. */
+  estUneImage(piece: NcPhoto): boolean {
+    return (piece.contentType ?? '').toLowerCase().startsWith('image/');
+  }
+
+  /** L'icone qui dit de quel document il s'agit, sans l'ouvrir. */
+  iconeDuType(contentType: string | undefined): string {
+    const type = (contentType ?? '').toLowerCase();
+    if (type === 'application/pdf') {
+      return 'picture_as_pdf';
+    }
+    if (type.includes('spreadsheetml')) {
+      return 'table_chart';
+    }
+    if (type.includes('wordprocessingml')) {
+      return 'description';
+    }
+    return 'insert_drive_file';
+  }
+
   /** Un panneau a fini de lire : le sommaire peut dire vrai pour sa discipline. */
   compter(code: EtapeCode, combien: number): void {
     this.comptesParEtape.set(code, combien);
@@ -241,11 +286,19 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
         || this.ishikawa$.value.length > 0
         || this.fiveWhys$.value.length > 0;
       case 'D5': return (this.comptesParEtape.get('D5') ?? 0) > 0;
-      // Les photos du CONSTAT appartiennent au D2 : elles décrivent le
-      // problème et ne démontrent rien de l'efficacité des actions. Les
-      // preuves du D6 se joignent action par action, et la note de
-      // résolution porte le jugement d'ensemble.
-      case 'D6': return !!n.resolutionNote;
+      // LE D6 COCHE SUR CE QU'IL MONTRE. Il ne regardait que la note de
+      // résolution -- qui s'écrit à l'étape « Résoudre », et pas ici. On
+      // déposait donc une preuve, on écrivait le commentaire d'efficacité, et
+      // la discipline restait grise : le sommaire affirmait qu'il restait à
+      // faire ce qui venait d'être fait.
+      //
+      // Les trois signes que cette carte porte, et aucun autre : une pièce
+      // déposée sur le dossier, le commentaire d'efficacité, la note de
+      // résolution quand elle existe. Les photos du CONSTAT, elles, restent au
+      // D2 : elles décrivent le problème et ne démontrent rien de l'efficacité.
+      case 'D6': return (this.comptesParEtape.get('D6') ?? 0) > 0
+        || this.dossiers(n).some(d => !!this.commentaireEfficacite(d).trim())
+        || !!n.resolutionNote;
       case 'D7': return (this.comptesParEtape.get('D7') ?? 0) > 0;
       case 'D8': return !!this.remerciementEnregistre;
     }
@@ -390,8 +443,38 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
      * a rien : ni au PFMEA du produit, ni a son plan de surveillance, ni aux
      * autres ecarts qu'il a connus.
      */
-    productId: new FormControl<string>('', { nonNullable: true })
+    productId: new FormControl<string>('', { nonNullable: true }),
+    /**
+     * Le constat lui-meme, corrigeable.
+     *
+     * <p>Il etait fige a la declaration : une faute de frappe, une quantite
+     * fausse ou un detail manquant le restaient pour toujours, sur la piece
+     * meme que le client lit. Le serveur l'acceptait deja ; aucun ecran ne
+     * l'offrait.
+     *
+     * <p>Pas de validateur fixe : il est POSE A LA LECTURE de la fiche, et
+     * seulement si le constat en porte un (voir {@link rempliContexte}). C'est
+     * la regle du serveur a la lettre -- on ne peut pas EFFACER une description
+     * deja ecrite, ce qui contournerait l'obligation posee a la creation, mais
+     * un ecart ancien qui n'en a jamais eu ne doit pas pour autant bloquer
+     * l'enregistrement du client ou du lot.
+     */
+    description: new FormControl<string>('', { nonNullable: true }),
+    /**
+     * La date du fait -- detecte en interne, recu du client dehors.
+     *
+     * <p>Une Date et non un Instant : le selecteur Material travaille au jour.
+     * L'heure du constat, elle, est PRESERVEE a l'enregistrement (voir
+     * {@link enregistrerContexte}) -- corriger un jour ne doit pas deplacer
+     * silencieusement l'heure a minuit.
+     */
+    detectedOn: new FormControl<Date | null>(null)
   });
+
+  /** Pas de constat a venir : la borne haute du selecteur de date. */
+  readonly aujourdhui = new Date();
+  /** L'instant du constat tel que la fiche le porte, pour en garder l'heure. */
+  private heureDuConstat: string | null = null;
 
   /**
    * Le referentiel produit, pour NOMMER celui de l'ecart.
@@ -413,12 +496,56 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
    * un panneau d actions qui s annonce, par exemple.
    */
   private rempliContexte(n: NcResponse): void {
+    // L'heure du constat, retenue meme quand le formulaire ne la montre pas :
+    // le selecteur travaille au jour, et corriger le jour ne doit pas deplacer
+    // l'heure a minuit.
+    this.heureDuConstat = n.detectedAt ?? null;
     if (this.contexteModifie) return;
     this.contexteForm.setValue({
       customerName: n.customerName ?? '',
       batchNumber: n.batchNumber ?? '',
-      productId: n.productId ?? ''
+      productId: n.productId ?? '',
+      description: n.description ?? '',
+      detectedOn: n.detectedAt ? new Date(n.detectedAt) : null
     }, { emitEvent: false });
+    this.exigeLeConstat(!!(n.description ?? '').trim());
+  }
+
+  /**
+   * Le constat devient obligatoire des lors qu'il existe.
+   *
+   * <p>Un champ blanc ne dit pas la meme chose selon la fiche : sur un ecart
+   * qui porte un constat, le vider l'EFFACERAIT -- ce que le serveur refuse ;
+   * sur un ecart ancien qui n'en a jamais eu, il veut dire « je n'y touche
+   * pas ». Le validateur suit donc la fiche, et non le formulaire.
+   *
+   * <p>Pas `Validators.required` : il tient une chaine d'espaces pour une
+   * valeur, et c'est precisement ce que le serveur rejette.
+   */
+  private exigeLeConstat(exige: boolean): void {
+    const champ = this.contexteForm.controls.description;
+    champ.setValidators(exige
+      ? [c => (String(c.value ?? '').trim() ? null : { required: true })]
+      : []);
+    champ.updateValueAndValidity({ emitEvent: false });
+  }
+
+  /**
+   * Le jour choisi, a l'heure du constat d'origine.
+   *
+   * <p>Le selecteur rend minuit. Garder l'heure deja enregistree evite de
+   * deplacer le fait de plusieurs heures parce qu'on a corrige le jour -- et
+   * sur un ecart detecte a 23 h, ce deplacement changeait la date elle-meme
+   * dans un autre fuseau.
+   */
+  private auJour(jour: Date): string {
+    const source = this.heureDuConstat ? new Date(this.heureDuConstat) : null;
+    const corrige = new Date(jour.getTime());
+    if (source) {
+      corrige.setHours(source.getHours(), source.getMinutes(),
+                       source.getSeconds(), source.getMilliseconds());
+    }
+    return corrige.toISOString();
   }
 
   /** Le produit de l'ecart, nomme par le referentiel ; vide s'il n'y en a pas. */
@@ -450,7 +577,11 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
     this.svc.updateNc(this.ncId, {
       customerName: valeurs.customerName.trim(),
       batchNumber: valeurs.batchNumber.trim(),
-      ...(valeurs.productId ? { productId: valeurs.productId } : {})
+      ...(valeurs.productId ? { productId: valeurs.productId } : {}),
+      // Le constat ne part que s'il dit quelque chose : le serveur refuse une
+      // description blanche, et le formulaire l'interdit deja.
+      ...(valeurs.description.trim() ? { description: valeurs.description.trim() } : {}),
+      ...(valeurs.detectedOn ? { detectedAt: this.auJour(valeurs.detectedOn) } : {})
     }).pipe(finalize(() => this.contexteSaving$.next(false)))
       .subscribe({
         next: () => {
@@ -1026,7 +1157,33 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   startAnalysis(): void { this.transition('start-analysis'); }
-  close(): void { this.transition('close'); }
+
+  /**
+   * CLORE UN ÉCART, C'EST AUSSI DIRE CE QU'IL A ENSEIGNÉ.
+   *
+   * <p>Une fenêtre et non un franchissement muet : l'écart apprend quelque
+   * chose sur l'analyse des risques du produit — un mode de défaillance que le
+   * PFMEA n'avait pas prévu, un contrôle que le plan de surveillance ne
+   * portait pas — et l'IATF 16949 en fait une exigence. La clôture ne demandait
+   * rien, et le PFMEA restait muet sur un défaut survenu pour de bon.
+   *
+   * <p>Les réponses déjà données sont repassées à la fenêtre : une clôture
+   * retenue par le verrou qu'elles ont posé n'a pas à les redemander.
+   */
+  close(nc: NcResponse): void {
+    if (this.acting$.value) return;
+    this.dialog.open(NcCloseDialogComponent, {
+      width: '560px',
+      autoFocus: 'first-tabbable',
+      data: {
+        reference: nc.reference,
+        pfmeaImpacted: nc.pfmeaImpacted,
+        controlPlanImpacted: nc.controlPlanImpacted
+      } as NcCloseDialogData
+    }).afterClosed().subscribe((reponse: NcCloseDialogResult | undefined) => {
+      if (reponse) this.transition('close', reponse);
+    });
+  }
 
   /**
    * Le bouton d'actions de l'en-tête : « Nouvelle action », ou
@@ -1247,12 +1404,14 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
    * <p>« Définir l'action » n'en fait plus partie : c'est l'ouverture de la CAPA
    * qui fait avancer l'écart, et le serveur tient les deux d'un seul geste.
    */
-  private transition(action: 'start-analysis' | 'close' | 'cancel'): void {
+  private transition(action: 'start-analysis' | 'close' | 'cancel',
+                     cloture?: CloseNcRequest): void {
     if (this.acting$.value) return;
     this.acting$.next(true);
     const call =
       action === 'start-analysis' ? this.svc.startAnalysis(this.ncId)
-      : action === 'close' ? this.svc.close(this.ncId)
+      : action === 'close' ? this.svc.close(
+          this.ncId, cloture ?? { pfmeaImpacted: false, controlPlanImpacted: false })
       : this.svc.cancel(this.ncId);
     call.pipe(finalize(() => this.acting$.next(false))).subscribe({
       next: () => {
@@ -1264,9 +1423,21 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
       error: err => {
         // eslint-disable-next-line no-console
         console.warn('[nc-detail] transition failed', action, err?.status, err?.error?.title);
+        // Les motifs que le serveur ÉNUMÈRE, s'il en donne : « le PFMEA attend
+        // sa révision » dit quoi faire, là où un 409 nu se traduisait par
+        // « rechargez la page » — un conseil faux, puisque recharger ne révise
+        // rien. La fiche relue porte ensuite le même motif dans son bandeau.
+        const motifs = gateReasons(err);
         this.snack.open(
-          safeErrorMessage(err, $localize`:@@nc.detail.transition-error:Erreur lors de la transition.`),
-          $localize`:@@common.ok:OK`, { duration: 4000 });
+          motifs.length
+            ? motifs.join(' ')
+            : safeErrorMessage(err, $localize`:@@nc.detail.transition-error:Erreur lors de la transition.`),
+          // Plus long quand il y a plusieurs motifs a lire : une phrase
+          // generique se saisit d'un coup d'oeil, une liste non.
+          $localize`:@@common.ok:OK`, { duration: motifs.length ? 6000 : 4000 });
+        // La fiche relue porte le meme motif dans son bandeau : sans cela le
+        // bouton resterait allume au-dessus d'un verrou qu'on vient d'annoncer.
+        if (motifs.length) this.reload$.next();
       }
     });
   }
@@ -1440,6 +1611,15 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
       case 'NO_CAPA_CASE':
         return $localize`:@@nc.blocker.no-capa:Aucune action n'est encore inscrite sur cet écart. Ajoutez au moins une action pour pouvoir le résoudre.`;
 
+      case 'PFMEA_REVISION_REQUIRED':
+        // La phrase dit le GESTE : accepter la revision proposee sur le PFMEA.
+        // Dire « le PFMEA attend sa revision » sans dire ou l'acter laisse
+        // chercher dans un autre module ce qu'on vient de nous refuser.
+        return $localize`:@@nc.blocker.pfmea-revision:Cet écart a été déclaré impactant le PFMEA du produit. Acceptez la révision du PFMEA qui le concerne pour pouvoir le clôturer — ou corrigez la réponse si le PFMEA n'était pas en cause.`;
+
+      case 'CONTROL_PLAN_REVISION_REQUIRED':
+        return $localize`:@@nc.blocker.control-plan-revision:Cet écart a été déclaré impactant le plan de surveillance. Acceptez la révision du plan qui le concerne pour pouvoir le clôturer — ou corrigez la réponse si le plan n'était pas en cause.`;
+
       case 'SECOND_LOOK_REQUIRED':
         // La phrase dit le GESTE qui débloque, et surtout que l'écart n'est pas
         // en défaut : c'est la personne qui ne peut pas le clôturer, pas l'écart
@@ -1590,6 +1770,19 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
       };
     }
     return null;
+  }
+
+  /**
+   * Est-ce MOI qui ai resolu cet ecart ?
+   *
+   * <p>Lu du motif que le serveur a deja calcule, et non d'une comparaison
+   * d'identifiants refaite ici : `SECOND_LOOK_REQUIRED` est le seul motif qui
+   * depende de QUI LIT la fiche, et il ne parait qu'a cette personne-la. Deux
+   * lectures de la meme regle finiraient par diverger ; celle-ci n'en a
+   * qu'une.
+   */
+  jeSuisLeResolveur(n: NcResponse): boolean {
+    return (n.blockers ?? []).some(b => String(b.code) === 'SECOND_LOOK_REQUIRED');
   }
 
   /** Le motif lui-meme sert de cle : deux motifs du meme code ne coexistent pas. */

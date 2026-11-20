@@ -40,6 +40,41 @@ class EightDSnapshotAssemblerTest {
         assertThat(d2.lines()).contains("Closed on : 12/09/2026 16:00 UTC");
     }
 
+    /**
+     * LE RAPPORT NOMME LE CLIENT, LE PRODUIT ET LE LOT.
+     *
+     * <p>Ils s'ecrivent sur la fiche depuis qu'on a cesse de les noyer dans la
+     * description, mais le rapport -- la piece que le client recoit -- ne les
+     * portait pas. Un 8D de reclamation qui ne nomme ni le client, ni le lot,
+     * ni le produit oblige son lecteur a revenir chercher dans l'outil ce que
+     * le document aurait du dire.
+     */
+    @Test
+    void d2_nomme_le_client_le_produit_et_le_lot() {
+        EightDSources sources = new EightDSources(
+                nc(null, null, "Pompes Atlantique", "L-2411", "CAR-400 — Carter de pompe"),
+                List.of(), List.of(), List.of(), List.of(), null, List.of());
+
+        EightDSnapshot snapshot = assembler.assemble(sources, null, null, null,
+                "tenant-1", null, null);
+
+        EightDSnapshot.Section d2 = section(snapshot, "D2");
+        assertThat(d2.lines()).contains("Customer : Pompes Atlantique");
+        assertThat(d2.lines()).contains("Product : CAR-400 — Carter de pompe");
+        assertThat(d2.lines()).contains("Batch : L-2411");
+    }
+
+    /** Un constat interne n'a pas de client : pas de ligne vide pour autant. */
+    @Test
+    void d2_ne_laisse_pas_de_ligne_vide_quand_l_ecart_est_interne() {
+        EightDSnapshot snapshot = assembler.assemble(sourcesMinimales(), null, null, null,
+                "tenant-1", null, null);
+
+        EightDSnapshot.Section d2 = section(snapshot, "D2");
+        assertThat(d2.lines()).noneMatch(l -> l.startsWith("Customer")
+                || l.startsWith("Product") || l.startsWith("Batch"));
+    }
+
     @Test
     void les_disciplines_sans_source_le_disent_quand_rien_n_est_saisi() {
         EightDSnapshot snapshot = assembler.assemble(sourcesMinimales(), null, null, null,
@@ -677,10 +712,17 @@ class EightDSnapshotAssemblerTest {
     }
 
     private EightDSources.Nc nc(String causeRacine, String noteDAnalyse) {
+        return nc(causeRacine, noteDAnalyse, null, null, null);
+    }
+
+    /** Le meme ecart, avec ce qui designe le client, le produit et le lot. */
+    private EightDSources.Nc nc(String causeRacine, String noteDAnalyse,
+                                String client, String lot, String produit) {
         return new EightDSources.Nc("NC-2026-0007", "Fuite au presse-étoupe",
                 "Flaque d'huile sous la pompe P-12", "PROCESS", "MAJOR", "INTERNAL",
                 NcStatus.CLOSED, DETECTE, CLOTURE, "Atelier 3", "Ada Lovelace", 2,
-                causeRacine, "Joint remplacé, étanchéité contrôlée", noteDAnalyse);
+                causeRacine, "Joint remplacé, étanchéité contrôlée", noteDAnalyse,
+                client, lot, produit);
     }
 
     /** Le meme ecart, mais encore ouvert : rien n'est solde. */
@@ -688,7 +730,7 @@ class EightDSnapshotAssemblerTest {
         return new EightDSources.Nc("NC-2026-0008", "Fuite au presse-etoupe",
                 "Flaque d'huile sous la pompe P-12", "PROCESS", "MAJOR", "INTERNAL",
                 NcStatus.UNDER_ANALYSIS, DETECTE, null, "Atelier 3", "Ada Lovelace", 0,
-                null, null, null);
+                null, null, null, null, null, null);
     }
 
     /** Une CAPA escaladee, close ou non selon la date passee. */

@@ -43,6 +43,30 @@ public class NcExceptionHandler {
                 "non-conformity-not-found", "Non-Conformity Not Found");
     }
 
+    /**
+     * Un refus de cloture que l'utilisateur doit pouvoir LIRE.
+     *
+     * <p>{@code userMessage} et {@code reasons} sont le canal DECLARE des
+     * messages destines a l'utilisateur. L'ecran n'affiche jamais le {@code
+     * detail} d'un ProblemDetail quelconque -- il pourrait porter un nom de
+     * classe, une contrainte JPA ou une trace. Il affiche ces deux proprietes,
+     * et seulement elles, parce que leur contenu est redige pour etre lu.
+     *
+     * <p>Declare avant {@link #handleNcState} : Spring choisit le gestionnaire
+     * du type le plus specifique, mais l'ordre de lecture doit montrer que
+     * celui-ci prime, sans quoi la sous-classe paraitrait sans effet.
+     */
+    @ExceptionHandler(NcGateException.class)
+    public ProblemDetail handleNcGate(NcGateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/non-conformity-gate"));
+        problem.setTitle("Non-Conformity Gate Not Passed");
+        problem.setProperty("userMessage", ex.getMessage());
+        problem.setProperty("reasons", ex.reasons());
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
     @ExceptionHandler(NcStateException.class)
     public ProblemDetail handleNcState(NcStateException ex) {
         return ProblemDetails.of(HttpStatus.CONFLICT, ex.getMessage(),

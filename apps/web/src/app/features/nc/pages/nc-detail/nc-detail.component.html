@@ -83,7 +83,7 @@
                 data-test="nc-resolve">
           <mat-icon>task_alt</mat-icon> <span i18n="@@nc.detail.resolve">Résoudre</span>
         </button>
-        <button mat-flat-button color="primary" (click)="close()" *qosCan="'nc.close'"
+        <button mat-flat-button color="primary" (click)="close(n)" *qosCan="'nc.close'"
                 [disabled]="(acting$ | async) || !canClose(n.status) || blocked(n)"
                 [matTooltip]="blocked(n) ? blockersHint(n) : closeTooltip"
                 data-test="nc-close">
@@ -227,7 +227,8 @@
                  structure n'a qu'un responsable qualité : c'est lui qui résout,
                  et il serait le seul à pouvoir clore ce qu'il vient de
                  résoudre. Facultatif, comme tout le reste de cet écran. -->
-            <div class="valideur" *ngIf="!isTerminal(n.status); else valideurLecture">
+            <div class="valideur"
+                 *ngIf="!isTerminal(n.status) && !jeSuisLeResolveur(n); else valideurLecture">
               <qos-user-picker [formControl]="valideurControl"
                                (userSelected)="valideurChoisi($event)"
                                i18n-label="@@nc.8d.validator"
@@ -248,6 +249,18 @@
               <p class="valideur-lecture" *ngIf="n.validatorName" data-test="valideur-lecture">
                 <span class="info-label" i18n="@@nc.8d.validator">Valideur de la clôture (second regard)</span>
                 <span class="info-value">{{ n.validatorName }}</span>
+              </p>
+              <!-- LE CHAMP ÉTAIT OFFERT À QUI NE POUVAIT PAS S'EN SERVIR. La
+                   personne qui a résolu l'écart ne choisit pas qui la relit :
+                   elle y nommerait un complaisant, et le second regard
+                   deviendrait un tampon qu'elle aurait choisi elle-même. Le
+                   serveur le refusait déjà -- mais après le clic, et par un
+                   message générique qui conseillait de recharger la page. -->
+              <p class="valideur-interdit" *ngIf="jeSuisLeResolveur(n)"
+                 data-test="valideur-interdit" i18n="@@nc.8d.validator-own-work">
+                Vous avez résolu cet écart : vous ne pouvez pas choisir qui relit
+                votre travail. Un autre détenteur du droit de clôture désignera
+                le valideur.
               </p>
             </ng-template>
           </section>
@@ -279,7 +292,11 @@
                    l'organisation a vu le problème elle-même, alors que c'est le
                    client qui l'a signalé -- et c'est la date de réception qui
                    fait courir le délai de réponse qu'on lui doit. -->
-              <div class="info-item">
+              <!-- Lue ici tant qu'elle ne se saisit plus : sur une fiche
+                   vivante, la date du constat a son propre champ dans le
+                   formulaire juste en dessous, et la montrer deux fois ferait
+                   douter de celle qui compte. -->
+              <div class="info-item" *ngIf="isTerminal(n.status)">
                 <span class="info-label" *ngIf="n.origin === 'EXTERNAL'; else libelleDetection"
                       data-test="date-libelle-reception"
                       i18n="@@nc.detail.received">Date de réception</span>
@@ -340,10 +357,43 @@
                     </mat-option>
                   </mat-select>
                 </mat-form-field>
+                <!-- LA DATE DU FAIT, CORRIGEABLE. Elle était posée à l'instant
+                     de la saisie, sans recours : une réclamation reçue lundi et
+                     enregistrée jeudi portait jeudi. C'est pourtant elle qui fait
+                     courir le délai de réponse dû au client, et qui range l'écart
+                     dans le bon mois des indicateurs. Pas de date à venir : on ne
+                     constate pas un fait qui n'a pas eu lieu. -->
+                <mat-form-field appearance="outline" data-test="date-constat">
+                  <mat-label *ngIf="n.origin === 'EXTERNAL'; else libelleSaisieDetection"
+                             data-test="date-libelle-reception"
+                             i18n="@@nc.detail.received">Date de réception</mat-label>
+                  <ng-template #libelleSaisieDetection>
+                    <mat-label data-test="date-libelle-detection"
+                               i18n="@@nc.detail.detected">Détectée le</mat-label>
+                  </ng-template>
+                  <input matInput [matDatepicker]="constat" [max]="aujourdhui"
+                         formControlName="detectedOn" data-test="date-constat-champ"
+                         (dateChange)="contexteModifie = true" />
+                  <mat-datepicker-toggle matIconSuffix [for]="constat"></mat-datepicker-toggle>
+                  <mat-datepicker #constat></mat-datepicker>
+                </mat-form-field>
               </div>
+              <!-- LE CONSTAT LUI-MÊME, en pleine largeur : il se corrige et se
+                   complète. Il ne s'efface pas -- un écart sans constat ne dit
+                   plus rien de ce qui s'est passé, et le serveur le refuse. -->
+              <mat-form-field appearance="outline" class="constat">
+                <mat-label i18n="@@nc.8d.problem">Description du problème</mat-label>
+                <textarea matInput formControlName="description" rows="4"
+                          data-test="constat" (input)="contexteModifie = true"
+                          i18n-placeholder="@@nc.8d.problem-placeholder"
+                          placeholder="Décrivez l'écart constaté, la quantité concernée, le lieu et le moment de la détection"></textarea>
+                <mat-error *ngIf="contexteForm.controls.description.hasError('required')"
+                           i18n="@@nc.8d.problem-required">Le constat ne peut pas rester vide.</mat-error>
+              </mat-form-field>
               <div class="form-foot" *ngIf="contexteModifie">
                 <button mat-flat-button color="primary" type="submit"
-                        [disabled]="contexteSaving$ | async" data-test="contexte-enregistrer">
+                        [disabled]="(contexteSaving$ | async) || contexteForm.invalid"
+                        data-test="contexte-enregistrer">
                   <mat-spinner *ngIf="contexteSaving$ | async" diameter="18"></mat-spinner>
                   <span i18n="@@common.save">Enregistrer</span>
                 </button>
@@ -366,7 +416,10 @@
               </div>
             </ng-template>
 
-            <p class="description" *ngIf="n.description">{{ n.description }}</p>
+            <!-- Le constat en lecture seule : seulement quand la fiche ne
+                 l'offre plus à la saisie -- close, annulée ou rejetée. Ailleurs,
+                 il se lit dans son propre champ, au-dessus. -->
+            <p class="description" *ngIf="isTerminal(n.status) && n.description">{{ n.description }}</p>
 
             <!-- EN OPTION, pas comme une étape : ce que l'écart RÉVÈLE peut
                  mériter un cycle ou un projet, et c'est une décision, pas un
@@ -419,7 +472,7 @@
                  d'écran où personne ne les rapprochait de l'énoncé. -->
             <div class="photos-block">
               <div class="block-head">
-                <span class="info-label" i18n="@@nc.detail.photos">Photos</span>
+                <span class="info-label" i18n="@@nc.detail.photos">Pièces jointes</span>
                 <ng-container *ngIf="canAddPhoto(n.status)">
                   <button mat-stroked-button type="button" *qosCan="'nc.photo'"
                           class="add-photo-btn"
@@ -428,11 +481,19 @@
                           [matTooltip]="(online$ | async) ? null : photosOfflineTooltip"
                           matTooltipPosition="above">
                     <mat-spinner *ngIf="uploading$ | async; else addIcon" diameter="18"></mat-spinner>
-                    <ng-template #addIcon><mat-icon>add_a_photo</mat-icon></ng-template>
-                    <span i18n="@@nc.photos.add">Ajouter une photo</span>
+                    <ng-template #addIcon><mat-icon>attach_file</mat-icon></ng-template>
+                    <span i18n="@@nc.photos.add">Ajouter une pièce</span>
                   </button>
-                  <input #fileInput type="file" accept="image/*" capture="environment"
-                         class="visually-hidden" (change)="onFileSelected($event)"
+                  <!-- DES DOCUMENTS AUTANT QUE DES PHOTOS. Ce qui decrit un
+                       probleme n'est pas toujours une image : la lettre de
+                       reclamation du client, le rapport de laboratoire, le bon de
+                       livraison. La meme liste que les preuves d'un dossier, et
+                       celle que le serveur verifie a la signature binaire.
+                       `capture` est tombe : il forcait l'appareil photo, et
+                       privait du choix d'un fichier deja sur le telephone. -->
+                  <input #fileInput type="file" class="visually-hidden"
+                         [attr.accept]="typesAcceptes"
+                         (change)="onFileSelected($event)"
                          aria-hidden="true" tabindex="-1" />
                 </ng-container>
               </div>
@@ -451,16 +512,27 @@
 
                 <ng-container *ngIf="(photos$ | async) as photos">
                   <div class="photo-grid" *ngIf="photos.length > 0">
-                    <figure class="photo-thumb" *ngFor="let p of photos">
+                    <figure class="photo-thumb" *ngFor="let p of photos"
+                            [class.photo-thumb--doc]="!estUneImage(p)">
                       <a [href]="p.url" target="_blank" rel="noopener noreferrer"
                          [attr.aria-label]="p.originalFilename">
-                        <img [src]="p.url" [alt]="p.originalFilename" loading="lazy" />
+                        <!-- UN DOCUMENT N'EST PAS UNE IMAGE. Le rendre dans une
+                             balise `img` ne donnait qu'une vignette cassee : une
+                             tuile nommee dit ce qu'on ouvre. -->
+                        <img *ngIf="estUneImage(p); else tuileDocument"
+                             [src]="p.url" [alt]="p.originalFilename" loading="lazy" />
+                        <ng-template #tuileDocument>
+                          <span class="doc-tuile" data-test="piece-document">
+                            <mat-icon>{{ iconeDuType(p.contentType) }}</mat-icon>
+                            <span class="doc-nom">{{ p.originalFilename }}</span>
+                          </span>
+                        </ng-template>
                       </a>
                       <button mat-icon-button class="delete-thumb" type="button" *qosCan="'nc.edit'"
                               (click)="deletePhoto(p)"
                               [disabled]="(deletingId$ | async) === p.id"
                               i18n-matTooltip="@@nc.photos.delete-tooltip"
-                              matTooltip="Supprimer la photo">
+                              matTooltip="Supprimer la pièce jointe">
                         <mat-spinner *ngIf="(deletingId$ | async) === p.id; else delIcon" diameter="18"></mat-spinner>
                         <ng-template #delIcon><mat-icon>delete</mat-icon></ng-template>
                       </button>
@@ -469,8 +541,8 @@
 
                   <div class="photos-empty"
                        *ngIf="photos.length === 0 && !(photosLoading$ | async)">
-                    <mat-icon>photo_library</mat-icon>
-                    <p i18n="@@nc.photos.empty">Aucune photo. Ajoutez une vue terrain depuis la caméra ou la galerie.</p>
+                    <mat-icon>attach_file</mat-icon>
+                    <p i18n="@@nc.photos.empty">Aucune pièce jointe. Ajoutez une photo du terrain, ou le document qui constate le problème.</p>
                   </div>
                 </ng-container>
 
@@ -757,6 +829,7 @@
                   <span class="capa-dossier-titre">{{ d.title }}</span>
                 </div>
                 <qos-capa-evidence-panel [capaCaseId]="d.id" [statut]="$any(d.status)"
+                                         (counted)="compter('D6', $event)"
                                          data-test="preuves-dossier"></qos-capa-evidence-panel>
 
                 <!-- LE COMMENTAIRE, facultatif : ce que les pieces ne disent pas

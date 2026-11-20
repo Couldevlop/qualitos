@@ -11,6 +11,7 @@ import com.openlab.qualitos.quality.capa.CapaEvidenceRepository;
 import com.openlab.qualitos.quality.capa.CapaStatus;
 import com.openlab.qualitos.quality.capa.CapaType;
 import com.openlab.qualitos.quality.controlplan.domain.ControlPlanRepository;
+import com.openlab.qualitos.quality.product.domain.ProductLookup;
 import com.openlab.qualitos.quality.fivewhys.FiveWhysAnalysis;
 import com.openlab.qualitos.quality.fivewhys.FiveWhysAnalysisRepository;
 import com.openlab.qualitos.quality.fivewhys.FiveWhysStep;
@@ -73,6 +74,8 @@ class EightDSourceAdapterTest {
     private CapaEvidenceRepository preuves;
     private FmeaItemRepository fmeaItems;
     private ControlPlanRepository plans;
+    /** Le referentiel produit, pour nommer le produit vise au D2. */
+    private ProductLookup produits;
     private EightDSourceAdapter adapter;
 
     @BeforeEach
@@ -87,8 +90,9 @@ class EightDSourceAdapterTest {
         fmeaItems = mock(FmeaItemRepository.class);
         equipes = mock(NcTeamMemberRepository.class);
         plans = mock(ControlPlanRepository.class);
+        produits = mock(ProductLookup.class);
         adapter = new EightDSourceAdapter(ncs, photos, equipes, ishikawas, fiveWhys, etapes,
-                capas, preuves, fmeaItems, plans, viewAll -> Optional.empty());
+                capas, preuves, fmeaItems, plans, produits, viewAll -> Optional.empty());
 
         when(photos.findByTenantIdAndNcIdOrderByCreatedAtAsc(any(), any())).thenReturn(List.of());
         when(equipes.findByTenantIdAndNcIdOrderByPositionAsc(any(), any())).thenReturn(List.of());
@@ -101,7 +105,8 @@ class EightDSourceAdapterTest {
     void le_8d_d_une_nc_hors_de_portee_est_introuvable() {
         // ADR 0081 : sans « voir toutes les NC », celle d'un autre déclarant n'existe pas.
         adapter = new EightDSourceAdapter(ncs, photos, equipes, ishikawas, fiveWhys, etapes,
-                capas, preuves, fmeaItems, plans, viewAll -> Optional.of(UUID.randomUUID()));
+                capas, preuves, fmeaItems, plans, produits,
+                viewAll -> Optional.of(UUID.randomUUID()));
         when(ncs.findByIdAndTenantId(NC, TENANT)).thenReturn(Optional.of(nc()));
 
         assertThatThrownBy(() -> adapter.collect(TENANT, NC)).isInstanceOf(NcNotFoundException.class);

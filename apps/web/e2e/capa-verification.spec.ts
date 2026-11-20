@@ -152,7 +152,11 @@ test.describe('CAPA — vérification d\'efficacité', () => {
     // sans décision ne doit rien annoncer du tout (§ « NULL n'est pas false »).
     const ligne = page.locator('[data-test="verification-exigee"]');
     await expect(ligne).toBeVisible({ timeout: 10_000 });
-    await expect(ligne).toContainText(/Non exig[ée]e/);
+    // « Vérification confiée : Non » -- ce champ dit qu'une personne a été
+    // désignée pour vérifier, et non que l'efficacité n'est pas à juger : le
+    // verdict reste dû par tout dossier avant sa clôture (ADR 0108).
+    await expect(ligne).toContainText(/Vérification confiée/);
+    await expect(ligne).toContainText(/Non/);
   });
 });
 

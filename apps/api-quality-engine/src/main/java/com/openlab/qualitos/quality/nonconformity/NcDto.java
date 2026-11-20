@@ -6,6 +6,7 @@ import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
@@ -137,6 +138,21 @@ public final class NcDto {
              */
             @Size(max = 30) String subcategoryCode,
             NcSeverity severity,
+            /**
+             * Quand le fait a eu lieu : détecté en interne, reçu du client
+             * dehors. Il se saisit à la déclaration, et il se CORRIGE ici.
+             *
+             * <p>Une réclamation reçue lundi et enregistrée jeudi portait jeudi,
+             * sans recours : c'est pourtant cette date qui fait courir le délai
+             * de réponse qu'on doit au client, et qui range l'écart dans le bon
+             * mois des indicateurs.
+             *
+             * <p>{@code @PastOrPresent} : on ne constate pas un fait à venir.
+             * Absent = inchangé, comme tout le reste de cette requête partielle
+             * -- et la date, elle, ne s'efface pas : l'entité la veut toujours.
+             */
+            @PastOrPresent(message = "detectedAt must not be in the future")
+            Instant detectedAt,
             @Size(max = 255) String zone,
             @DecimalMin("-90.0") @DecimalMax("90.0") Double geoLat,
             @DecimalMin("-180.0") @DecimalMax("180.0") Double geoLng,
@@ -194,6 +210,27 @@ public final class NcDto {
     /** Clôture de la résolution : la note de résolution est requise. */
     public record ResolveRequest(
             @NotBlank String resolutionNote
+    ) {}
+
+    /**
+     * LA CLÔTURE DÉFINITIVE, ET CE QU'ELLE TRANCHE DE L'ANALYSE DE RISQUE.
+     *
+     * <p>Deux questions, et il faut y répondre : l'écart a-t-il impacté le
+     * PFMEA du produit, et son plan de surveillance ? Un écart traité enseigne
+     * quelque chose sur l'analyse des risques — un mode de défaillance qu'elle
+     * n'avait pas prévu, un contrôle qu'elle ne portait pas — et l'IATF 16949
+     * en fait une exigence : toute non-conformité se répercute sur la PFMEA et
+     * le plan de surveillance.
+     *
+     * <p>{@code @NotNull} et non un booléen primitif : un {@code boolean}
+     * absent du corps vaudrait {@code false} en silence, et l'écart se
+     * refermerait sur une décision que personne n'a prise. La réponse est
+     * exigée ; une fois donnée, elle est datée et imputable — c'est elle que
+     * l'auditeur vient lire, y compris quand elle est « non ».
+     */
+    public record CloseRequest(
+            @NotNull(message = "pfmeaImpacted is required") Boolean pfmeaImpacted,
+            @NotNull(message = "controlPlanImpacted is required") Boolean controlPlanImpacted
     ) {}
 
     /**
@@ -305,6 +342,16 @@ public final class NcDto {
             String closedByName,
             UUID validatorId,
             String validatorName,
+            /**
+             * CE QUI A ÉTÉ TRANCHÉ DE L'ANALYSE DE RISQUE, à la clôture.
+             *
+             * <p>{@code null} veut dire que la question n'a pas encore été
+             * posée ; {@code false} qu'elle l'a été, et qu'on a jugé que non.
+             * La première ne prouve rien, la seconde est une décision — et la
+             * fiche n'en invente pas sur les écarts d'avant la règle.
+             */
+            Boolean pfmeaImpacted,
+            Boolean controlPlanImpacted,
             Instant createdAt,
             Instant updatedAt,
             /** L'équipe en charge, dans son ordre de saisie. */

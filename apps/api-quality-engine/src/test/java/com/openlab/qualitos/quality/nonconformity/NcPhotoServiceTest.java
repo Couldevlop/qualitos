@@ -41,6 +41,14 @@ class NcPhotoServiceTest {
     private static final byte[] PNG = {
             (byte) 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x01};
     private static final byte[] JPEG = {(byte) 0xFF, (byte) 0xD8, (byte) 0xFF, (byte) 0xE0, 0x00, 0x10};
+    /** %PDF- : la signature que le garde partagé exige d'un PDF. */
+    private static final byte[] PDF = {0x25, 0x50, 0x44, 0x46, 0x2D, 0x31, 0x2E, 0x37};
+    /** PK\x03\x04 : une archive ZIP, donc un docx ou un xlsx. */
+    private static final byte[] ZIP = {0x50, 0x4B, 0x03, 0x04, 0x14, 0x00};
+    private static final String DOCX =
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+    private static final String XLSX =
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
     @BeforeEach
     void setup() {
@@ -166,7 +174,48 @@ class NcPhotoServiceTest {
     void upload_rejectsUnsupportedContentType_400() {
         when(storageProvider.getIfAvailable()).thenReturn(storage);
         when(ncRepo.findByIdAndTenantId(NC_ID, TENANT)).thenReturn(Optional.of(nc(TENANT, NcStatus.OPEN)));
-        assertThatThrownBy(() -> service.upload(NC_ID, "application/pdf", "x.pdf", PNG))
+        // Un type hors liste blanche. Ce banc visait le PDF, qui est désormais
+        // admis : il viserait sinon une règle qui n'existe plus.
+        assertThatThrownBy(() -> service.upload(NC_ID, "application/zip", "x.zip", ZIP))
+                .isInstanceOf(NcPhotoValidationException.class);
+        verifyNoInteractions(photoRepo);
+        assertThat(storage.size()).isZero();
+    }
+
+    // --- documents du constat ---
+    @Test
+    void upload_accepteUnPdf_carUnConstatNEstPasToujoursUneImage() {
+        when(storageProvider.getIfAvailable()).thenReturn(storage);
+        when(ncRepo.findByIdAndTenantId(NC_ID, TENANT)).thenReturn(Optional.of(nc(TENANT, NcStatus.OPEN)));
+        when(photoRepo.save(any())).thenAnswer(i -> i.getArgument(0));
+
+        NcPhotoDto.Response r = service.upload(NC_ID, "application/pdf", "reclamation.pdf", PDF);
+
+        // L'extension vient du type validé, jamais du nom de fichier (OWASP).
+        assertThat(r.objectKey()).endsWith(".pdf");
+        assertThat(r.contentType()).isEqualTo("application/pdf");
+        assertThat(storage.size()).isEqualTo(1);
+    }
+
+    @Test
+    void upload_accepteUnDocxEtUnXlsx() {
+        when(storageProvider.getIfAvailable()).thenReturn(storage);
+        when(ncRepo.findByIdAndTenantId(NC_ID, TENANT)).thenReturn(Optional.of(nc(TENANT, NcStatus.OPEN)));
+        when(photoRepo.save(any())).thenAnswer(i -> i.getArgument(0));
+
+        assertThat(service.upload(NC_ID, DOCX, "rapport.docx", ZIP).objectKey()).endsWith(".docx");
+        assertThat(service.upload(NC_ID, XLSX, "releve.xlsx", ZIP).objectKey()).endsWith(".xlsx");
+    }
+
+    @Test
+    void upload_refuseUnBinaireQuiSePretendPdf() {
+        when(storageProvider.getIfAvailable()).thenReturn(storage);
+        when(ncRepo.findByIdAndTenantId(NC_ID, TENANT)).thenReturn(Optional.of(nc(TENANT, NcStatus.OPEN)));
+
+        // Le type déclaré est falsifiable : la signature ne l'est pas. Ouvrir la
+        // liste aux documents n'ouvre pas la porte à l'exécutable renommé.
+        assertThatThrownBy(() -> service.upload(NC_ID, "application/pdf", "virus.pdf",
+                new byte[] {0x4D, 0x5A, (byte) 0x90, 0x00}))
                 .isInstanceOf(NcPhotoValidationException.class);
         verifyNoInteractions(photoRepo);
         assertThat(storage.size()).isZero();

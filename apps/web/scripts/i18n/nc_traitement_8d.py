@@ -394,6 +394,45 @@ TRANSLATIONS = {
 
     # ---------- le second regard sur la cloture ----------
 
+    'nc.8d.problem': (
+        "Description du problème",
+        'Problem description',
+        'Descripción del problema',
+        'وصف المشكلة',
+        '問題の説明',
+        '问题描述'),
+    'nc.8d.problem-placeholder': (
+        "Décrivez l'écart constaté, la quantité concernée, le lieu et le moment"
+        " de la détection",
+        'Describe the finding, the quantity involved, where and when it was'
+        ' detected',
+        'Describa la desviación observada, la cantidad afectada, el lugar y el'
+        ' momento de la detección',
+        'صف الانحراف الملاحظ والكمية المعنية ومكان الاكتشاف ووقته',
+        '検出した不適合、対象数量、検出の場所と時刻を記載してください',
+        '请描述所发现的偏差、涉及数量、发现的地点和时间'),
+    'nc.8d.problem-required': (
+        "Le constat ne peut pas rester vide.",
+        'The finding cannot be left empty.',
+        'La constatación no puede quedar vacía.',
+        'لا يمكن ترك الملاحظة فارغة.',
+        '所見を空欄のままにはできません。',
+        '发现内容不能为空。'),
+    'nc.8d.validator-own-work': (
+        "Vous avez résolu cet écart : vous ne pouvez pas choisir qui relit votre"
+        " travail. Un autre détenteur du droit de clôture désignera le valideur.",
+        'You resolved this non-conformity: you cannot choose who reviews your'
+        ' own work. Another holder of the closing right will designate the'
+        ' validator.',
+        'Usted resolvió esta no conformidad: no puede elegir quién revisa su'
+        ' propio trabajo. Otro titular del derecho de cierre designará al'
+        ' validador.',
+        'أنت من حلّ عدم المطابقة هذا، لذا لا يمكنك اختيار من يراجع عملك.'
+        ' سيعيّن المصادقَ شخصٌ آخر يملك حقّ الإغلاق.',
+        'この不適合を解決したのはあなたです。自分の作業を誰が検証するかを選ぶことはできません。'
+        '完了権限を持つ他の人が承認者を指名します。',
+        '这个偏差是您解决的：您不能选择谁来复核自己的工作。'
+        '由其他拥有关闭权限的人指定审核人。'),
     'nc.8d.validator': (
         "Valideur de la clôture (second regard)",
         'Closure validator (second pair of eyes)',

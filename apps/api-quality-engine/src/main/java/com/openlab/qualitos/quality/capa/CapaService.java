@@ -326,6 +326,27 @@ public class CapaService {
         return !dossiersDe(escaladeId, ncReference).isEmpty();
     }
 
+    /**
+     * Les sources qui DESIGNENT UN ECART, et qu'il faut donc toutes regarder
+     * pour retrouver les dossiers d'une non-conformite.
+     *
+     * <p>Trois valeurs pour deux choses. {@code EXTERNAL_NON_CONFORMITY} et
+     * {@code COMPLAINT} nomment le meme registre -- celui des ecarts signales
+     * du dehors -- et seule la seconde est proposee a la creation manuelle. Un
+     * dossier ouvert depuis le registre CAPA portait donc une source que la
+     * fiche de l'ecart ne regardait pas : il citait la bonne reference, et
+     * restait pourtant invisible au D3, au D5, au D7 et dans le rapport 8D,
+     * alors que ses actions retenaient la cloture.
+     *
+     * <p>Elargir ICI plutot que renommer l'enumeration : la reference reste la
+     * condition, et une reclamation du registre des reclamations ne porte pas
+     * la reference d'un ecart -- elle ne peut donc pas entrer par cette porte.
+     */
+    private static final List<CapaSourceType> SOURCES_D_UN_ECART = List.of(
+            CapaSourceType.NON_CONFORMITY,
+            CapaSourceType.EXTERNAL_NON_CONFORMITY,
+            CapaSourceType.COMPLAINT);
+
     private List<CapaCase> dossiersDe(UUID escaladeId, String ncReference) {
         UUID tenantId = requireTenantId();
         Map<UUID, CapaCase> retenus = new LinkedHashMap<>();
@@ -337,8 +358,7 @@ public class CapaService {
 
         if (ncReference != null && !ncReference.isBlank()) {
             String reference = ncReference.strip();
-            for (CapaSourceType origine : List.of(CapaSourceType.NON_CONFORMITY,
-                                                  CapaSourceType.EXTERNAL_NON_CONFORMITY)) {
+            for (CapaSourceType origine : SOURCES_D_UN_ECART) {
                 for (CapaCase c : caseRepository
                         .findByTenantIdAndSourceTypeAndSourceRefOrderByCreatedAtAsc(
                                 tenantId, origine, reference)) {
