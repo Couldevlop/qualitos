@@ -81,6 +81,17 @@
   flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
+  // LE BLOC CONTENEUR DE CE QUI DEFILE ICI. Sans `relative`, aucun ancetre de
+  // la page n'est positionne : un enfant en `position: absolute` s'ancre alors
+  // au document et echappe au decoupage de ce conteneur. Les elements reserves
+  // aux lecteurs d'ecran (`.sr-only`, `.visually-hidden`, le selecteur de
+  // fichier cache) sont exactement cela -- invisibles, mais poses a 3 700 px du
+  // haut d'une fiche longue. Le document gagnait leur profondeur : un SECOND
+  // ascenseur apparaissait, celui-la deplacait toute l'application et ne
+  // decouvrait qu'une zone blanche, l'ecran restant colle en haut. Les ancrer
+  // ici les remet dans ce qui defile, et ils cessent d'exister pour la mise en
+  // page du document.
+  position: relative;
   background: var(--qos-bg-app);
   // Le défilement s'arrête au bord du contenu au lieu d'entraîner la page
   // entière, et le mouvement reste continu au doigt sur mobile.
