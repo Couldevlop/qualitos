@@ -21755,8 +21755,8 @@ historique 12 mois</source>
         <target state="translated">ملاحظة الحل</target>
       </trans-unit>
       <trans-unit id="nc.detail.photos" datatype="html">
-        <source>Photos</source>
-        <target state="translated">الصور</target>
+        <source>Pièces jointes</source>
+        <target state="translated">المرفقات</target>
       </trans-unit>
       <trans-unit id="nc.detail.start-analysis" datatype="html">
         <source>Analyser</source>
@@ -21811,16 +21811,16 @@ historique 12 mois</source>
         <target state="translated">خطأ أثناء الانتقال.</target>
       </trans-unit>
       <trans-unit id="nc.photos.add" datatype="html">
-        <source>Ajouter une photo</source>
-        <target state="translated">إضافة صورة</target>
+        <source>Ajouter une pièce</source>
+        <target state="translated">إضافة مرفق</target>
       </trans-unit>
       <trans-unit id="nc.photos.empty" datatype="html">
-        <source>Aucune photo. Ajoutez une vue terrain depuis la caméra ou la galerie.</source>
-        <target state="translated">لا توجد صور. أضف لقطة ميدانية من الكاميرا أو المعرض.</target>
+        <source>Aucune pièce jointe. Ajoutez une photo du terrain, ou le document qui constate le problème.</source>
+        <target state="translated">لا توجد مرفقات. أضف صورة ميدانية أو المستند المُثبِت للمشكلة.</target>
       </trans-unit>
       <trans-unit id="nc.photos.delete-tooltip" datatype="html">
-        <source>Supprimer la photo</source>
-        <target state="translated">حذف الصورة</target>
+        <source>Supprimer la pièce jointe</source>
+        <target state="translated">حذف المرفق</target>
       </trans-unit>
       <trans-unit id="nc.photos.delete-confirm-title" datatype="html">
         <source>Supprimer cette photo ?</source>

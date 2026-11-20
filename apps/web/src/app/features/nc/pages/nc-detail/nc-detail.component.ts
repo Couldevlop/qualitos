@@ -70,6 +70,17 @@ import {
  * le sommaire, les ancres du document et les decomptes se designent par le
  * meme vocabulaire, et une faute de frappe ne passe pas.
  */
+/**
+ * Ce que le champ de depot du constat accepte, et que le serveur verifie a la
+ * signature binaire.
+ *
+ * <p>La meme liste que les preuves d'un dossier : deux listes voisines mais
+ * differentes laisseraient un fichier passer d'un ecran et pas de l'autre, sans
+ * qu'on sache lequel a raison.
+ */
+export const TYPES_DE_PIECE_ACCEPTES =
+  'application/pdf,image/jpeg,image/png,image/webp,image/heic,.docx,.xlsx';
+
 export type EtapeCode = 'D1' | 'D2' | 'D3' | 'D4' | 'D5' | 'D6' | 'D7' | 'D8';
 
 // OWASP A03 — refuse malformed UUIDs client-side. Demo mock ids ("nc-1"…)
@@ -218,6 +229,36 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
    */
   private readonly brouillonsCommentaire = new Map<string, string>();
 
+  /**
+   * Ce que le champ de depot accepte, et que le serveur verifie a la signature.
+   *
+   * <p>La meme liste que les preuves d'un dossier : deux listes voisines mais
+   * differentes laisseraient un fichier passer d'un ecran et pas de l'autre,
+   * sans qu'on sache lequel a raison. Elle est declaree ici et non dans le
+   * gabarit pour que le banc puisse l'affirmer.
+   */
+  readonly typesAcceptes = TYPES_DE_PIECE_ACCEPTES;
+
+  /** Une image se montre ; tout le reste se nomme. */
+  estUneImage(piece: NcPhoto): boolean {
+    return (piece.contentType ?? '').toLowerCase().startsWith('image/');
+  }
+
+  /** L'icone qui dit de quel document il s'agit, sans l'ouvrir. */
+  iconeDuType(contentType: string | undefined): string {
+    const type = (contentType ?? '').toLowerCase();
+    if (type === 'application/pdf') {
+      return 'picture_as_pdf';
+    }
+    if (type.includes('spreadsheetml')) {
+      return 'table_chart';
+    }
+    if (type.includes('wordprocessingml')) {
+      return 'description';
+    }
+    return 'insert_drive_file';
+  }
+
   /** Un panneau a fini de lire : le sommaire peut dire vrai pour sa discipline. */
   compter(code: EtapeCode, combien: number): void {
     this.comptesParEtape.set(code, combien);
@@ -245,11 +286,19 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
         || this.ishikawa$.value.length > 0
         || this.fiveWhys$.value.length > 0;
       case 'D5': return (this.comptesParEtape.get('D5') ?? 0) > 0;
-      // Les photos du CONSTAT appartiennent au D2 : elles décrivent le
-      // problème et ne démontrent rien de l'efficacité des actions. Les
-      // preuves du D6 se joignent action par action, et la note de
-      // résolution porte le jugement d'ensemble.
-      case 'D6': return !!n.resolutionNote;
+      // LE D6 COCHE SUR CE QU'IL MONTRE. Il ne regardait que la note de
+      // résolution -- qui s'écrit à l'étape « Résoudre », et pas ici. On
+      // déposait donc une preuve, on écrivait le commentaire d'efficacité, et
+      // la discipline restait grise : le sommaire affirmait qu'il restait à
+      // faire ce qui venait d'être fait.
+      //
+      // Les trois signes que cette carte porte, et aucun autre : une pièce
+      // déposée sur le dossier, le commentaire d'efficacité, la note de
+      // résolution quand elle existe. Les photos du CONSTAT, elles, restent au
+      // D2 : elles décrivent le problème et ne démontrent rien de l'efficacité.
+      case 'D6': return (this.comptesParEtape.get('D6') ?? 0) > 0
+        || this.dossiers(n).some(d => !!this.commentaireEfficacite(d).trim())
+        || !!n.resolutionNote;
       case 'D7': return (this.comptesParEtape.get('D7') ?? 0) > 0;
       case 'D8': return !!this.remerciementEnregistre;
     }

@@ -472,7 +472,7 @@
                  d'écran où personne ne les rapprochait de l'énoncé. -->
             <div class="photos-block">
               <div class="block-head">
-                <span class="info-label" i18n="@@nc.detail.photos">Photos</span>
+                <span class="info-label" i18n="@@nc.detail.photos">Pièces jointes</span>
                 <ng-container *ngIf="canAddPhoto(n.status)">
                   <button mat-stroked-button type="button" *qosCan="'nc.photo'"
                           class="add-photo-btn"
@@ -481,11 +481,19 @@
                           [matTooltip]="(online$ | async) ? null : photosOfflineTooltip"
                           matTooltipPosition="above">
                     <mat-spinner *ngIf="uploading$ | async; else addIcon" diameter="18"></mat-spinner>
-                    <ng-template #addIcon><mat-icon>add_a_photo</mat-icon></ng-template>
-                    <span i18n="@@nc.photos.add">Ajouter une photo</span>
+                    <ng-template #addIcon><mat-icon>attach_file</mat-icon></ng-template>
+                    <span i18n="@@nc.photos.add">Ajouter une pièce</span>
                   </button>
-                  <input #fileInput type="file" accept="image/*" capture="environment"
-                         class="visually-hidden" (change)="onFileSelected($event)"
+                  <!-- DES DOCUMENTS AUTANT QUE DES PHOTOS. Ce qui decrit un
+                       probleme n'est pas toujours une image : la lettre de
+                       reclamation du client, le rapport de laboratoire, le bon de
+                       livraison. La meme liste que les preuves d'un dossier, et
+                       celle que le serveur verifie a la signature binaire.
+                       `capture` est tombe : il forcait l'appareil photo, et
+                       privait du choix d'un fichier deja sur le telephone. -->
+                  <input #fileInput type="file" class="visually-hidden"
+                         [attr.accept]="typesAcceptes"
+                         (change)="onFileSelected($event)"
                          aria-hidden="true" tabindex="-1" />
                 </ng-container>
               </div>
@@ -504,16 +512,27 @@
 
                 <ng-container *ngIf="(photos$ | async) as photos">
                   <div class="photo-grid" *ngIf="photos.length > 0">
-                    <figure class="photo-thumb" *ngFor="let p of photos">
+                    <figure class="photo-thumb" *ngFor="let p of photos"
+                            [class.photo-thumb--doc]="!estUneImage(p)">
                       <a [href]="p.url" target="_blank" rel="noopener noreferrer"
                          [attr.aria-label]="p.originalFilename">
-                        <img [src]="p.url" [alt]="p.originalFilename" loading="lazy" />
+                        <!-- UN DOCUMENT N'EST PAS UNE IMAGE. Le rendre dans une
+                             balise `img` ne donnait qu'une vignette cassee : une
+                             tuile nommee dit ce qu'on ouvre. -->
+                        <img *ngIf="estUneImage(p); else tuileDocument"
+                             [src]="p.url" [alt]="p.originalFilename" loading="lazy" />
+                        <ng-template #tuileDocument>
+                          <span class="doc-tuile" data-test="piece-document">
+                            <mat-icon>{{ iconeDuType(p.contentType) }}</mat-icon>
+                            <span class="doc-nom">{{ p.originalFilename }}</span>
+                          </span>
+                        </ng-template>
                       </a>
                       <button mat-icon-button class="delete-thumb" type="button" *qosCan="'nc.edit'"
                               (click)="deletePhoto(p)"
                               [disabled]="(deletingId$ | async) === p.id"
                               i18n-matTooltip="@@nc.photos.delete-tooltip"
-                              matTooltip="Supprimer la photo">
+                              matTooltip="Supprimer la pièce jointe">
                         <mat-spinner *ngIf="(deletingId$ | async) === p.id; else delIcon" diameter="18"></mat-spinner>
                         <ng-template #delIcon><mat-icon>delete</mat-icon></ng-template>
                       </button>
@@ -522,8 +541,8 @@
 
                   <div class="photos-empty"
                        *ngIf="photos.length === 0 && !(photosLoading$ | async)">
-                    <mat-icon>photo_library</mat-icon>
-                    <p i18n="@@nc.photos.empty">Aucune photo. Ajoutez une vue terrain depuis la caméra ou la galerie.</p>
+                    <mat-icon>attach_file</mat-icon>
+                    <p i18n="@@nc.photos.empty">Aucune pièce jointe. Ajoutez une photo du terrain, ou le document qui constate le problème.</p>
                   </div>
                 </ng-container>
 
@@ -810,6 +829,7 @@
                   <span class="capa-dossier-titre">{{ d.title }}</span>
                 </div>
                 <qos-capa-evidence-panel [capaCaseId]="d.id" [statut]="$any(d.status)"
+                                         (counted)="compter('D6', $event)"
                                          data-test="preuves-dossier"></qos-capa-evidence-panel>
 
                 <!-- LE COMMENTAIRE, facultatif : ce que les pieces ne disent pas

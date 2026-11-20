@@ -26,7 +26,7 @@ import { NcService } from '../../nc.service';
 import { CapaService } from '../../../capa/capa.service';
 import { ProductsService } from '../../../products/products.service';
 import { NcPhoto, NcResponse, NcStatus, VisionAnalysis } from '../../nc.types';
-import { NcDetailComponent } from './nc-detail.component';
+import { NcDetailComponent, TYPES_DE_PIECE_ACCEPTES } from './nc-detail.component';
 import {
   CapaActionsDialogComponent
 } from '../../../capa/pages/capa-actions-dialog/capa-actions-dialog.component';
@@ -1483,5 +1483,36 @@ describe('NcDetailComponent — conversion en cycle ou en projet', () => {
       .querySelector('[data-test="lien-pdca"]')).not.toBeNull();
     expect((fixture.nativeElement as HTMLElement)
       .querySelector('[data-test="lien-dmaic"]')).toBeNull();
+  });
+});
+
+/**
+ * LES PIÈCES DU CONSTAT. Le champ n'acceptait que des images : la lettre de
+ * réclamation du client, le rapport de laboratoire, le bon de livraison
+ * n'avaient aucune place sur la fiche. Et une pièce qui n'est pas une image
+ * rendue dans une balise `img` ne donne qu'une vignette cassée.
+ */
+describe('NcDetailComponent — les pièces du constat', () => {
+
+  it('accepte les documents autant que les images', () => {
+    ['application/pdf', 'image/jpeg', 'image/png', '.docx', '.xlsx']
+      .forEach(t => expect(TYPES_DE_PIECE_ACCEPTES)
+        .withContext(t + ' refusé au dépôt').toContain(t));
+  });
+
+  it('distingue une image d’un document, et nomme le document par son icône', () => {
+    const c = NcDetailComponent.prototype;
+
+    expect(c.estUneImage({ contentType: 'image/png' } as never)).toBeTrue();
+    expect(c.estUneImage({ contentType: 'application/pdf' } as never)).toBeFalse();
+    expect(c.estUneImage({} as never)).toBeFalse();
+
+    expect(c.iconeDuType('application/pdf')).toBe('picture_as_pdf');
+    expect(c.iconeDuType(
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')).toBe('table_chart');
+    expect(c.iconeDuType(
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'))
+      .toBe('description');
+    expect(c.iconeDuType(undefined)).toBe('insert_drive_file');
   });
 });

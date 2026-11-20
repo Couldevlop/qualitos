@@ -21755,8 +21755,8 @@ historique 12 mois</source>
         <target state="translated">解决说明</target>
       </trans-unit>
       <trans-unit id="nc.detail.photos" datatype="html">
-        <source>Photos</source>
-        <target state="translated">照片</target>
+        <source>Pièces jointes</source>
+        <target state="translated">附件</target>
       </trans-unit>
       <trans-unit id="nc.detail.start-analysis" datatype="html">
         <source>Analyser</source>
@@ -21811,16 +21811,16 @@ historique 12 mois</source>
         <target state="translated">状态转换时出错。</target>
       </trans-unit>
       <trans-unit id="nc.photos.add" datatype="html">
-        <source>Ajouter une photo</source>
-        <target state="translated">添加照片</target>
+        <source>Ajouter une pièce</source>
+        <target state="translated">添加附件</target>
       </trans-unit>
       <trans-unit id="nc.photos.empty" datatype="html">
-        <source>Aucune photo. Ajoutez une vue terrain depuis la caméra ou la galerie.</source>
-        <target state="translated">暂无照片。请从相机或图库添加现场视图。</target>
+        <source>Aucune pièce jointe. Ajoutez une photo du terrain, ou le document qui constate le problème.</source>
+        <target state="translated">暂无附件。请添加现场照片或记录问题的文件。</target>
       </trans-unit>
       <trans-unit id="nc.photos.delete-tooltip" datatype="html">
-        <source>Supprimer la photo</source>
-        <target state="translated">删除照片</target>
+        <source>Supprimer la pièce jointe</source>
+        <target state="translated">删除附件</target>
       </trans-unit>
       <trans-unit id="nc.photos.delete-confirm-title" datatype="html">
         <source>Supprimer cette photo ?</source>

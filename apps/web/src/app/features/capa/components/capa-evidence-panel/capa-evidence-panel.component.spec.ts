@@ -142,6 +142,51 @@ describe('CapaEvidencePanelComponent', () => {
     expect(composant.retirerAria(piece('e-1', 'releve-mars.pdf'))).toContain('releve-mars.pdf');
   });
 
+  /**
+   * LE PANNEAU DIT COMBIEN IL PORTE. Le sommaire des huit disciplines coche
+   * « preuves » d'apres ce nombre, et seul le panneau le connait : la fiche de
+   * l'ecart sait quels dossiers existent, pas ce qu'ils portent.
+   */
+  it('annonce son compte une fois la lecture finie, zero compris', () => {
+    capa.listEvidences.and.returnValue(of([piece('e-1'), piece('e-2', 'photo.jpg', 'a-9')]));
+    monter();
+    const vus: number[] = [];
+    composant.counted.subscribe(n => vus.push(n));
+
+    // Seules les pieces DU DOSSIER comptent : celle qui vise une action se lit
+    // sur sa ligne, au D3.
+    composant.ngOnChanges({ capaCaseId: { currentValue: 'c-1' } } as never);
+    expect(vus).toEqual([1]);
+
+    capa.listEvidences.and.returnValue(of([]));
+    composant.ngOnChanges({ capaCaseId: { currentValue: 'c-1' } } as never);
+    expect(vus).toEqual([1, 0]);
+  });
+
+  it('annonce son compte meme quand la lecture echoue', () => {
+    capa.listEvidences.and.returnValue(throwError(() => ({ status: 500 })));
+    monter();
+    const vus: number[] = [];
+    composant.counted.subscribe(n => vus.push(n));
+
+    // Le sommaire ne doit pas rester en attente d'un nombre qui ne viendra plus.
+    composant.ngOnChanges({ capaCaseId: { currentValue: 'c-1' } } as never);
+    expect(vus).toEqual([0]);
+  });
+
+  it('redit son compte quand une piece entre ou sort', () => {
+    capa.listEvidences.and.returnValue(of([piece('e-1')]));
+    monter();
+    const vus: number[] = [];
+    composant.counted.subscribe(n => vus.push(n));
+
+    capa.deleteEvidence.and.returnValue(of(undefined));
+    dialog.open.and.returnValue({ afterClosed: () => of(true) } as never);
+    composant.retirer(piece('e-1'));
+
+    expect(vus).toEqual([0]);
+  });
+
   it('dit le poids en unites lisibles', () => {
     monter();
     expect(composant.poids(2048)).toBe('2 Ko');

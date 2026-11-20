@@ -21755,8 +21755,8 @@ historial de 12 meses</target>
         <target state="translated">Nota de resolución</target>
       </trans-unit>
       <trans-unit id="nc.detail.photos" datatype="html">
-        <source>Photos</source>
-        <target state="translated">Fotos</target>
+        <source>Pièces jointes</source>
+        <target state="translated">Archivos adjuntos</target>
       </trans-unit>
       <trans-unit id="nc.detail.start-analysis" datatype="html">
         <source>Analyser</source>
@@ -21811,16 +21811,16 @@ historial de 12 meses</target>
         <target state="translated">Error durante la transición.</target>
       </trans-unit>
       <trans-unit id="nc.photos.add" datatype="html">
-        <source>Ajouter une photo</source>
-        <target state="translated">Añadir una foto</target>
+        <source>Ajouter une pièce</source>
+        <target state="translated">Añadir un archivo</target>
       </trans-unit>
       <trans-unit id="nc.photos.empty" datatype="html">
-        <source>Aucune photo. Ajoutez une vue terrain depuis la caméra ou la galerie.</source>
-        <target state="translated">Sin fotos. Añade una vista de campo desde la cámara o la galería.</target>
+        <source>Aucune pièce jointe. Ajoutez une photo du terrain, ou le document qui constate le problème.</source>
+        <target state="translated">Sin archivos adjuntos. Añade una foto de campo o el documento que constata el problema.</target>
       </trans-unit>
       <trans-unit id="nc.photos.delete-tooltip" datatype="html">
-        <source>Supprimer la photo</source>
-        <target state="translated">Eliminar la foto</target>
+        <source>Supprimer la pièce jointe</source>
+        <target state="translated">Eliminar el archivo adjunto</target>
       </trans-unit>
       <trans-unit id="nc.photos.delete-confirm-title" datatype="html">
         <source>Supprimer cette photo ?</source>

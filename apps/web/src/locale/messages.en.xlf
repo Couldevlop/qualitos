@@ -21755,8 +21755,8 @@ declared income
         <target state="translated">Resolution note</target>
       </trans-unit>
       <trans-unit id="nc.detail.photos" datatype="html">
-        <source>Photos</source>
-        <target state="translated">Photos</target>
+        <source>Pièces jointes</source>
+        <target state="translated">Attachments</target>
       </trans-unit>
       <trans-unit id="nc.detail.start-analysis" datatype="html">
         <source>Analyser</source>
@@ -21811,16 +21811,16 @@ declared income
         <target state="translated">Error during the transition.</target>
       </trans-unit>
       <trans-unit id="nc.photos.add" datatype="html">
-        <source>Ajouter une photo</source>
-        <target state="translated">Add a photo</target>
+        <source>Ajouter une pièce</source>
+        <target state="translated">Add an attachment</target>
       </trans-unit>
       <trans-unit id="nc.photos.empty" datatype="html">
-        <source>Aucune photo. Ajoutez une vue terrain depuis la caméra ou la galerie.</source>
-        <target state="translated">No photos. Add a field view from the camera or gallery.</target>
+        <source>Aucune pièce jointe. Ajoutez une photo du terrain, ou le document qui constate le problème.</source>
+        <target state="translated">No attachments. Add a field photo, or the document that records the problem.</target>
       </trans-unit>
       <trans-unit id="nc.photos.delete-tooltip" datatype="html">
-        <source>Supprimer la photo</source>
-        <target state="translated">Delete the photo</target>
+        <source>Supprimer la pièce jointe</source>
+        <target state="translated">Delete the attachment</target>
       </trans-unit>
       <trans-unit id="nc.photos.delete-confirm-title" datatype="html">
         <source>Supprimer cette photo ?</source>
