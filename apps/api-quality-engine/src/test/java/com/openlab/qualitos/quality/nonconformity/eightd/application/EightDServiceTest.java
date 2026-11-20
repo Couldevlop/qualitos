@@ -178,7 +178,7 @@ class EightDServiceTest {
         assertThat(vue.disciplines().stream()
                 .filter(d -> d.code().equals("D5"))
                 .findFirst().orElseThrow().sourceLabel())
-                .contains("No CAPA");
+                .contains("Aucun dossier CAPA");
     }
 
     // ---------- PDF ----------

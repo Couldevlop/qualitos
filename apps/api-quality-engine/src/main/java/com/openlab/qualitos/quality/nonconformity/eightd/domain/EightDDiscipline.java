@@ -17,16 +17,16 @@ package com.openlab.qualitos.quality.nonconformity.eightd.domain;
 public enum EightDDiscipline {
 
     /** L'équipe qui a traité l'écart. Aucune source : se saisit. */
-    D1("D1", "Team", true),
+    D1("D1", "Équipe", true),
 
     /** Le problème tel qu'il a été constaté. Source : la non-conformité. */
-    D2("D2", "Problem description", false),
+    D2("D2", "Description du problème", false),
 
     /** Ce qui a protégé le client en attendant la cause. Aucune source : se saisit. */
-    D3("D3", "Immediate containment actions", true),
+    D3("D3", "Actions immédiates d'endiguement", true),
 
     /** La cause racine. Sources : Ishikawa, 5 pourquoi, cause racine de la NC. */
-    D4("D4", "Root cause", false),
+    D4("D4", "Cause racine", false),
 
     /**
      * Les CAPA définies — correctives et préventives. Source : la CAPA escaladée.
@@ -36,16 +36,16 @@ public enum EightDDiscipline {
      * deux tableaux portant les mêmes lignes laissaient croire à deux décisions
      * distinctes.
      */
-    D5("D5", "Defined CAPA", false),
+    D5("D5", "CAPA définies", false),
 
     /** Leur mise en œuvre et ses preuves. Source : la CAPA escaladée. */
-    D6("D6", "Implementation and evidence", false),
+    D6("D6", "Mise en oeuvre et preuves", false),
 
     /** Ce qui empêche le retour de l'écart. Sources : PFMEA, plan de surveillance. */
-    D7("D7", "Recurrence prevention", false),
+    D7("D7", "Prévention de la récidive", false),
 
     /** La reconnaissance de l'équipe. Aucune source : se saisit. */
-    D8("D8", "Team recognition", true);
+    D8("D8", "Reconnaissance de l'équipe", true);
 
     private final String code;
     private final String titre;
@@ -64,9 +64,12 @@ public enum EightDDiscipline {
     /**
      * Le titre tel qu'il paraît dans le document émis.
      *
-     * <p>En ANGLAIS, et non dans la langue de l'interface : le 8D est remis à un
-     * client, la pratique est anglophone, et un document opposable ne change pas
-     * de langue selon qui l'affiche. L'interface autour reste traduite.
+     * <p>En FRANÇAIS, et fixé ICI plutôt que dans la langue du lecteur : un
+     * document opposable ne change pas de mots selon qui l'affiche, et son
+     * empreinte est calculée sur le texte qu'il portait le jour de l'émission.
+     * Le jour où un client anglophone en demandera un, la réponse est de figer
+     * la langue À L'ÉMISSION et de la stocker avec l'instantané (ADR 0071),
+     * jamais de traduire à la lecture.
      */
     public String titre() {
         return titre;

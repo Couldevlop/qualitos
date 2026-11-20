@@ -22694,6 +22694,38 @@ historique 12 mois</source>
         <source><x id="count"/> dossiers CAPA traitent cet écart</source>
         <target state="translated">有 <x id="count"/> 份 CAPA 档案在处理该不合格项</target>
       </trans-unit>
+      <trans-unit id="nc.detail.resolve-needs-analysis-title" datatype="html">
+        <source>Analysez l'écart d'abord</source>
+        <target state="translated">请先分析该不合格</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.resolve-needs-analysis" datatype="html">
+        <source>Cet écart n'est pas encore instruit. Lancez « Analyser », puis inscrivez au moins une action : c'est l'ouverture du dossier d'actions qui porte l'écart à l'étape où il se résout.</source>
+        <target state="translated">该不合格尚未立案。请先执行「分析」，再登记至少一项措施：打开措施台账才能使其进入可解决的阶段。</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.resolve-needs-action-title" datatype="html">
+        <source>Inscrivez une action d'abord</source>
+        <target state="translated">请先登记一项措施</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.resolve-needs-action" datatype="html">
+        <source>Aucune action n'est encore inscrite sur cet écart. « Nouvelle action » ouvre son dossier et le porte à l'étape où il se résout.</source>
+        <target state="translated">该不合格尚未登记任何措施。「新建措施」将打开其台账并使其进入可解决的阶段。</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.resolve-hint-analysis" datatype="html">
+        <source>Cet écart n'est pas encore instruit : commencez par « Analyser ».</source>
+        <target state="translated">该不合格尚未立案：请从「分析」开始。</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.resolve-hint-action" datatype="html">
+        <source>Aucune action n'est encore inscrite : commencez par « Nouvelle action ».</source>
+        <target state="translated">尚未登记任何措施：请从「新建措施」开始。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.export-needs-closure-title" datatype="html">
+        <source>Clôturez l'écart d'abord</source>
+        <target state="translated">请先关闭该不合格</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.export-needs-closure" datatype="html">
+        <source>Le PDF n'existe qu'une fois le rapport émis, et le rapport ne s'émet qu'une fois l'écart clos : c'est la clôture qui arrête le contenu. Clôturez l'écart sur sa fiche, puis revenez émettre ce rapport.</source>
+        <target state="translated">PDF 仅在报告签发后存在，而报告只能在不合格关闭后签发：关闭才会固定内容。请在不合格单上关闭该不合格，然后回来签发本报告。</target>
+      </trans-unit>
       <trans-unit id="nav.admin-nc" datatype="html">
         <source>Natures de NC</source>
         <target state="translated">不符合性质</target>

@@ -66,8 +66,54 @@ class PdfBoxEightDRenderAdapterTest {
 
         assertThat(texte).doesNotContain("PARTIAL REPORT");
         assertThat(texte).contains("NC-2026-0007");
-        assertThat(texte).contains("D4 - Root cause");
+        assertThat(texte).contains("D4 - Cause racine");
         assertThat(texte).contains("Integrity & verification");
+    }
+
+    /**
+     * LE DOCUMENT PARLE LA LANGUE DE SON INSTANTANE, et le document neuf parle
+     * francais : le rapport sortait « 8D Report », « Issued on », « Not filled
+     * in. » sous une interface francaise, et c'est lui qui part chez le client.
+     */
+    @Test
+    void un_instantane_en_francais_rend_un_document_francais() throws IOException {
+        String texte = texteDe(renderer.render(enFrancais(snapshot(false)), URL));
+
+        assertThat(texte).contains("Rapport 8D");
+        assertThat(texte).contains("Non-conformite NC-2026-0007");
+        assertThat(texte).contains("Emis le");
+        assertThat(texte).contains("Non renseignee.");
+        assertThat(texte).contains("RAPPORT PARTIEL - disciplines sans contenu :");
+        assertThat(texte).contains("Integrite et verification");
+        assertThat(texte).doesNotContain("8D Report");
+        assertThat(texte).doesNotContain("Issued on");
+        assertThat(texte).doesNotContain("Not filled in.");
+    }
+
+    /**
+     * L'INVARIANT QUI PROTEGE LES RAPPORTS DEJA EMIS. Leur instantane a ete
+     * scelle avant que le document parle francais, et son empreinte porte sur
+     * les octets du PDF : relu aujourd'hui, il doit rendre les mots d'alors,
+     * sinon l'empreinte ne retombe plus juste et le telechargement casse en
+     * silence.
+     */
+    @Test
+    void un_rapport_scelle_avant_le_francais_garde_ses_mots() throws IOException {
+        EightDSnapshot sansLangue = snapshot(true);
+
+        String texte = texteDe(renderer.render(sansLangue, URL));
+
+        assertThat(sansLangue.langue()).isNull();
+        assertThat(texte).contains("8D Report");
+        assertThat(texte).contains("Issued on");
+        assertThat(texte).doesNotContain("Rapport 8D");
+    }
+
+    /** Le meme instantane, avec la langue du document neuf. */
+    private EightDSnapshot enFrancais(EightDSnapshot snapshot) {
+        return new EightDSnapshot(snapshot.ncReference(), snapshot.ncTitle(),
+                snapshot.tenantLabel(), snapshot.issuedAtText(), snapshot.issuedByName(),
+                snapshot.partial(), snapshot.sections(), "fr");
     }
 
     @Test

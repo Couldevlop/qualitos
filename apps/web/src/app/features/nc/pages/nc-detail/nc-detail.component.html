@@ -78,8 +78,9 @@
              motifs dit pourquoi. L'infobulle le redit au survol, pour qui n'a
              pas fait le lien entre le bouton gris et l'encart. -->
         <button mat-flat-button color="primary" (click)="openResolve(n)" *qosCan="'nc.process'"
-                [disabled]="(acting$ | async) || !canResolve(n.status) || blocked(n)"
-                [matTooltip]="blocked(n) ? blockersHint(n) : resolveTooltip"
+                [disabled]="(acting$ | async) || blocked(n)
+                            || (!canResolve(n.status) && !avantResolution(n.status))"
+                [matTooltip]="resolveHint(n)"
                 data-test="nc-resolve">
           <mat-icon>task_alt</mat-icon> <span i18n="@@nc.detail.resolve">Résoudre</span>
         </button>

@@ -32,7 +32,31 @@ public record EightDSnapshot(
         String issuedAtText,
         String issuedByName,
         boolean partial,
-        List<Section> sections) {
+        List<Section> sections,
+        /**
+         * La langue du document, figée à l'émission — {@code "fr"} aujourd'hui.
+         *
+         * <p>{@code null} à la relecture d'un rapport scellé AVANT que le
+         * document parle français. L'empreinte scellée porte sur les octets du
+         * PDF : si le rendu changeait de mots sous un instantané déjà scellé,
+         * l'empreinte ne retomberait plus juste et le téléchargement casserait
+         * en silence. Le rapport se relit donc exactement comme il a été émis,
+         * et seul un rapport neuf parle la nouvelle langue.
+         */
+        String langue) {
+
+    /**
+     * Un instantané sans langue : celle d'avant, pour relire l'existant.
+     *
+     * <p>Jackson relit les rapports déjà scellés par ce chemin — leur JSON n'a
+     * pas de champ {@code langue} —, et les bancs d'essai antérieurs aussi.
+     */
+    public EightDSnapshot(String ncReference, String ncTitle, String tenantLabel,
+                          String issuedAtText, String issuedByName, boolean partial,
+                          List<Section> sections) {
+        this(ncReference, ncTitle, tenantLabel, issuedAtText, issuedByName, partial,
+                sections, null);
+    }
 
     public EightDSnapshot {
         ncReference = requireText(ncReference, "ncReference");

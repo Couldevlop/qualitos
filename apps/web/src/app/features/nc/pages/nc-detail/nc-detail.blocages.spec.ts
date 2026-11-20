@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -74,7 +75,8 @@ describe('NcDetailComponent — ce qui bloque l’avancement', () => {
 
   beforeEach(async () => {
     svc = jasmine.createSpyObj<NcService>('NcService', [
-      'getEightDReport', 'getNc', 'listPhotos', 'subcategories']);
+      'getEightDReport', 'getNc', 'listPhotos', 'subcategories', 'startAnalysis']);
+    svc.startAnalysis.and.returnValue(of(ecart('UNDER_ANALYSIS', [])));
     svc.listPhotos.and.returnValue(of([]));
     svc.subcategories.and.returnValue(of({ entries: [], defaults: true }));
     // Le D8 lit le rapport 8D pour n'en tirer que les remerciements : un
@@ -241,5 +243,67 @@ describe('NcDetailComponent — ce qui bloque l’avancement', () => {
 
     expect(component.blockersHint(ecart('ACTION_DEFINED',
       [{ code: 'CAPA_ACTIONS_TO_CARRY_OUT', count: 2 }]))).toContain('Terminez');
+  });
+  // ---------- avant l'etape de resolution : le bouton PARLE ----------
+
+  /**
+   * Le serveur n'enumere volontairement aucun motif tant que l'etape n'est pas
+   * atteinte -- il ne reproche pas ce qu'il ne propose pas encore. Le bandeau
+   * restait donc vide, et le bouton gris et muet : on ne savait pas quoi faire
+   * pour l'allumer. Il reste cliquable, et il nomme l'etape qui manque.
+   */
+  it('explique l’analyse qui manque, et propose de la lancer', () => {
+    setup('OPEN', []);
+    const dialog = TestBed.inject(MatDialog);
+    let donnees: { title: string; message: string } | undefined;
+    spyOn(dialog, 'open').and.callFake((_c: unknown, config?: { data?: unknown }) => {
+      donnees = config?.data as { title: string; message: string };
+      return { afterClosed: () => of(true) } as never;
+    });
+
+    expect(bouton('nc-resolve').disabled).toBeFalse();
+    bouton('nc-resolve').click();
+
+    expect(donnees?.title).toContain('Analysez');
+    expect(donnees?.message).toContain('Analyser');
+    // Et le geste qui debloque PART : la fenetre ne fait pas que constater.
+    expect(svc.startAnalysis).toHaveBeenCalledWith('nc-1');
+  });
+
+  /**
+   * A l'etape suivante, ce n'est plus l'analyse qui manque mais l'action :
+   * c'est l'ouverture du dossier d'actions qui porte l'ecart a l'etape ou il
+   * se resout, et c'est donc elle que la phrase nomme.
+   */
+  it('explique l’action qui manque quand l’écart est déjà instruit', () => {
+    setup('UNDER_ANALYSIS', []);
+    const dialog = TestBed.inject(MatDialog);
+    let donnees: { title: string; message: string } | undefined;
+    spyOn(dialog, 'open').and.callFake((_c: unknown, config?: { data?: unknown }) => {
+      donnees = config?.data as { title: string; message: string };
+      return { afterClosed: () => of(false) } as never;
+    });
+
+    expect(bouton('nc-resolve').disabled).toBeFalse();
+    bouton('nc-resolve').click();
+
+    expect(donnees?.title).toContain('action');
+    expect(donnees?.message).toContain('Nouvelle action');
+    expect(svc.startAnalysis).not.toHaveBeenCalled();
+  });
+
+  /** Au-dela, le geste n'a plus de sens : le bouton s'eteint pour de bon. */
+  it('éteint « Résoudre » sur un écart déjà clos', () => {
+    setup('CLOSED', []);
+
+    expect(bouton('nc-resolve').disabled).toBeTrue();
+  });
+
+  /** L'infobulle dit l'etape, et non le seul intitule du bouton. */
+  it('porte l’étape qui manque dans l’infobulle', () => {
+    setup('OPEN', []);
+
+    expect(component.resolveHint(ecart('OPEN', []))).toContain('Analyser');
+    expect(component.resolveHint(ecart('UNDER_ANALYSIS', []))).toContain('Nouvelle action');
   });
 });

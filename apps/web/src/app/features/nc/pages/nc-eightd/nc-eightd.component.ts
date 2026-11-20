@@ -432,11 +432,30 @@ export class NcEightDComponent implements OnInit {
    * la même chose. Plutôt que de masquer le bouton — ce qui laisse croire que
    * l'export n'existe pas —, on l'affiche toujours et on explique ce qu'il
    * manque, en proposant le geste qui débloque.
+   *
+   * <p>ET QUAND MÊME L'ÉMISSION EST REFUSÉE, on le dit au lieu de la proposer.
+   * Un rapport n'est émissible qu'une fois l'écart clos : sur un écart encore
+   * ouvert, le bouton proposait « Émettre », l'appel partait, le serveur le
+   * repoussait, et l'écran restait en brouillon sans un mot. Le geste qui
+   * débloque n'est pas ici, il est sur la fiche — on y conduit.
    */
   exporter(rapport: EightDReport): void {
     if (this.acting$.value) { return; }
     if (rapport.status === 'ISSUED') {
       this.telecharger();
+      return;
+    }
+    if (!rapport.issuable) {
+      this.dialog.open(ConfirmDialogComponent, {
+        data: {
+          title: $localize`:@@nc.8d.export-needs-closure-title:Clôturez l'écart d'abord`,
+          message: $localize`:@@nc.8d.export-needs-closure:Le PDF n'existe qu'une fois le rapport émis, et le rapport ne s'émet qu'une fois l'écart clos : c'est la clôture qui arrête le contenu. Clôturez l'écart sur sa fiche, puis revenez émettre ce rapport.`,
+          confirmLabel: $localize`:@@nc.8d.go-to-nc:Ouvrir la fiche de l'écart`
+        } as ConfirmDialogData,
+        panelClass: 'qos-dialog-panel', autoFocus: false, restoreFocus: true
+      }).afterClosed().subscribe(ok => {
+        if (ok) { this.retour(); }
+      });
       return;
     }
     const donnees: ConfirmDialogData = {

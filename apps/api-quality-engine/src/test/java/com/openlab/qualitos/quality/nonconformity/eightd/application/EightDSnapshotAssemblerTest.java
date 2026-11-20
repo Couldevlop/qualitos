@@ -31,13 +31,13 @@ class EightDSnapshotAssemblerTest {
 
         EightDSnapshot.Section d2 = section(snapshot, "D2");
         assertThat(d2.sourced()).isTrue();
-        assertThat(d2.sourceLabel()).isEqualTo("Non-conformity NC-2026-0007");
-        assertThat(d2.lines()).contains("Reference : NC-2026-0007");
-        assertThat(d2.lines()).contains("Severity : MAJOR");
+        assertThat(d2.sourceLabel()).isEqualTo("Non-conformité NC-2026-0007");
+        assertThat(d2.lines()).contains("Référence : NC-2026-0007");
+        assertThat(d2.lines()).contains("Gravité : Majeure");
         // La date est du TEXTE dans l'instantané : c'est ce qui rend le rendu, donc
         // l'empreinte, recalculables à l'identique des années plus tard.
-        assertThat(d2.lines()).contains("Detected on : 01/09/2026 08:30 UTC");
-        assertThat(d2.lines()).contains("Closed on : 12/09/2026 16:00 UTC");
+        assertThat(d2.lines()).contains("Détecté le : 01/09/2026 08:30 UTC");
+        assertThat(d2.lines()).contains("Clos le : 12/09/2026 16:00 UTC");
     }
 
     /**
@@ -59,9 +59,9 @@ class EightDSnapshotAssemblerTest {
                 "tenant-1", null, null);
 
         EightDSnapshot.Section d2 = section(snapshot, "D2");
-        assertThat(d2.lines()).contains("Customer : Pompes Atlantique");
-        assertThat(d2.lines()).contains("Product : CAR-400 — Carter de pompe");
-        assertThat(d2.lines()).contains("Batch : L-2411");
+        assertThat(d2.lines()).contains("Client : Pompes Atlantique");
+        assertThat(d2.lines()).contains("Produit : CAR-400 — Carter de pompe");
+        assertThat(d2.lines()).contains("Lot : L-2411");
     }
 
     /** Un constat interne n'a pas de client : pas de ligne vide pour autant. */
@@ -71,8 +71,8 @@ class EightDSnapshotAssemblerTest {
                 "tenant-1", null, null);
 
         EightDSnapshot.Section d2 = section(snapshot, "D2");
-        assertThat(d2.lines()).noneMatch(l -> l.startsWith("Customer")
-                || l.startsWith("Product") || l.startsWith("Batch"));
+        assertThat(d2.lines()).noneMatch(l -> l.startsWith("Client")
+                || l.startsWith("Produit") || l.startsWith("Lot"));
     }
 
     @Test
@@ -86,7 +86,7 @@ class EightDSnapshotAssemblerTest {
             EightDSnapshot.Section s = section(snapshot, code);
             assertThat(s.sourced()).isFalse();
             assertThat(s.lines()).isEmpty();
-            assertThat(s.sourceLabel()).contains("filled in by hand");
+            assertThat(s.sourceLabel()).contains("se renseigne à la main");
         }
     }
 
@@ -103,7 +103,7 @@ class EightDSnapshotAssemblerTest {
         assertThat(d8.sourced()).isTrue();
         assertThat(d8.lines()).isEqualTo(EightDSnapshotAssembler.RECONNAISSANCE_STANDARD);
         assertThat(d8.sourceLabel()).isEqualTo(
-                "Standard acknowledgement — the deviation and its corrective actions are closed");
+                "Reconnaissance standard — l'écart et ses actions correctives sont clos");
         assertThat(snapshot.missingCodes()).doesNotContain("D8");
     }
 
@@ -120,7 +120,8 @@ class EightDSnapshotAssemblerTest {
         assertThat(d8.lines().get(0)).isEqualTo("Merci a Ada et Grace, qui ont tenu l'astreinte du week-end.");
         assertThat(d8.lines()).containsAll(EightDSnapshotAssembler.RECONNAISSANCE_STANDARD);
         assertThat(d8.sourceLabel()).isEqualTo(
-                "Filled in by the quality team, completed by the standard acknowledgement");
+                "Renseignée par l'équipe qualité, complétée par la reconnaissance"
+                + " standard");
     }
 
     @Test
@@ -135,7 +136,7 @@ class EightDSnapshotAssemblerTest {
 
         assertThat(d8.sourced()).isFalse();
         assertThat(d8.lines()).isEmpty();
-        assertThat(d8.sourceLabel()).contains("filled in by hand");
+        assertThat(d8.sourceLabel()).contains("se renseigne à la main");
     }
 
     @Test
@@ -159,7 +160,7 @@ class EightDSnapshotAssemblerTest {
                 assembler.assemble(sources, null, null, null, "t", null, null), "D8");
 
         assertThat(d8.sourced()).isFalse();
-        assertThat(d8.sourceLabel()).contains("filled in by hand");
+        assertThat(d8.sourceLabel()).contains("se renseigne à la main");
     }
 
     @Test
@@ -173,7 +174,7 @@ class EightDSnapshotAssemblerTest {
 
         assertThat(d8.sourced()).isTrue();
         assertThat(d8.lines()).containsExactly("Bravo a l'equipe d'astreinte.");
-        assertThat(d8.sourceLabel()).isEqualTo("Filled in by the quality team");
+        assertThat(d8.sourceLabel()).isEqualTo("Renseignée par l'équipe qualité");
     }
 
     @Test
@@ -206,8 +207,8 @@ class EightDSnapshotAssemblerTest {
         assertThat(d4.sourced()).isTrue();
         assertThat(d4.sourceLabel())
                 .contains("1 Ishikawa")
-                .contains("1 5-whys analysis(es)")
-                .contains("root cause of the non-conformity");
+                .contains("1 analyse(s) 5 pourquoi")
+                .contains("cause racine de la non-conformité");
 
         // LE TRACE REMPLACE L'ENUMERATION. Les causes s'ecrivaient ligne a
         // ligne (« MATERIEL : Joint use », « Why 1 : ... ») : un 8D se lit en
@@ -215,7 +216,7 @@ class EightDSnapshotAssemblerTest {
         // Seule la cause racine PORTEE PAR LA FICHE reste en texte -- aucune
         // figure ne la dit.
         assertThat(d4.lines()).containsExactly(
-                "Root cause recorded on the non-conformity : Joint hors tolérance");
+                "Cause racine consignée sur la non-conformité : Joint hors tolérance");
         assertThat(d4.figures()).hasSize(2);
 
         EightDSnapshot.Figure arete = d4.figures().get(0);
@@ -298,10 +299,10 @@ class EightDSnapshotAssemblerTest {
 
         assertThat(d4.sourced()).isTrue();
         assertThat(d4.lines()).containsExactly(
-                "Root cause recorded on the non-conformity : Joint hors tolérance",
-                "Analysis notes recorded on the non-conformity :"
+                "Cause racine consignée sur la non-conformité : Joint hors tolérance",
+                "Notes d'analyse consignées sur la non-conformité :"
                         + " Piste fournisseur écartée : lot conforme au contrôle d'entrée");
-        assertThat(d4.sourceLabel()).contains("analysis notes of the non-conformity");
+        assertThat(d4.sourceLabel()).contains("notes d'analyse de la non-conformité");
     }
 
     /**
@@ -320,7 +321,7 @@ class EightDSnapshotAssemblerTest {
 
         assertThat(d4.sourced()).isTrue();
         assertThat(d4.lines()).singleElement()
-                .asString().contains("Analysis notes");
+                .asString().contains("Notes d'analyse");
         assertThat(d4.figures()).isEmpty();
     }
 
@@ -331,10 +332,10 @@ class EightDSnapshotAssemblerTest {
 
         assertThat(d4.sourced()).isFalse();
         assertThat(d4.sourceLabel())
-                .contains("No Ishikawa")
-                .contains("5-whys")
-                .contains("root cause")
-                .contains("analysis notes");
+                .contains("Aucun Ishikawa")
+                .contains("5 pourquoi")
+                .contains("cause racine")
+                .contains("note d'analyse");
     }
 
     @Test
@@ -342,8 +343,8 @@ class EightDSnapshotAssemblerTest {
         EightDSnapshot snapshot = assembler.assemble(sourcesMinimales(), null, null, null,
                 "t", null, null);
 
-        assertThat(section(snapshot, "D5").sourceLabel()).contains("No CAPA");
-        assertThat(section(snapshot, "D6").sourceLabel()).contains("No CAPA");
+        assertThat(section(snapshot, "D5").sourceLabel()).contains("Aucun dossier CAPA");
+        assertThat(section(snapshot, "D6").sourceLabel()).contains("Aucun dossier CAPA");
         assertThat(section(snapshot, "D5").sourced()).isFalse();
     }
 
@@ -366,7 +367,7 @@ class EightDSnapshotAssemblerTest {
 
         EightDSnapshot.Section d5 = section(snapshot, "D5");
         assertThat(d5.sourced()).isTrue();
-        assertThat(d5.sourceLabel()).contains("2 action(s) decided");
+        assertThat(d5.sourceLabel()).contains("2 action(s) décidée(s)");
         // Les actions sont en COLONNES, pas en phrases : c'est ce que l'écran
         // montre, et le document émis doit se présenter comme l'écran.
         assertThat(d5.lines()).isEmpty();
@@ -374,32 +375,41 @@ class EightDSnapshotAssemblerTest {
         EightDSnapshot.Table decidees = d5.tables().get(0);
         assertThat(decidees.caption()).isEqualTo("Fuite presse-étoupe");
         assertThat(decidees.columns())
-                .containsExactly("Kind", "Action", "Owner", "Due date", "Status", "Evidence");
+                .containsExactly("Nature", "Action", "Responsable", "Échéance", "État",
+                        "Preuves");
         assertThat(decidees.rows()).hasSize(2);
         assertThat(decidees.rows().get(0).cells()).containsExactly(
-                "CORRECTIVE", "Remplacer le joint", "Grace", "10/09/2026", "DONE", "2");
+                "Corrective", "Remplacer le joint", "Grace", "10/09/2026", "Faite", "2");
         // Ce qu'on ne SAIT pas s'écrit « - » : une cellule vide se lirait comme
         // une valeur qu'on aurait omise.
         assertThat(decidees.rows().get(1).cells()).containsExactly(
-                "PREVENTIVE", "Former les opérateurs", "-", "-", "IN_PROGRESS", "-");
+                "Préventive", "Former les opérateurs", "-", "-", "En cours", "-");
 
         EightDSnapshot.Section d6 = section(snapshot, "D6");
         assertThat(d6.sourced()).isTrue();
-        assertThat(d6.sourceLabel()).contains("1 action(s) completed").contains("3 evidence item(s)");
+        assertThat(d6.sourceLabel()).contains("1 action(s) menée(s)").contains("3 preuve(s)");
         assertThat(d6.lines()).anyMatch(l -> l.contains("Remplacer le joint")
                 && l.contains("09/09/2026 09:00 UTC"));
-        assertThat(d6.lines()).anyMatch(l -> l.contains("Effectiveness verified"));
+        assertThat(d6.lines()).anyMatch(l -> l.contains("Efficacité vérifiée"));
         // Une action encore en cours n'a pas sa place dans le RÉCIT du D6 : elle
         // n'est pas mise en œuvre.
         assertThat(d6.lines()).noneMatch(l -> l.contains("Former les opérateurs"));
-        // Elle a en revanche sa place dans son TABLEAU, qui donne l'état de
-        // chaque action préventive à la date d'émission -- y compris celles qui
+        // ET AUCUN TABLEAU : le D6 portait celui des actions préventives, qui
+        // est le D7. Le client lisait la prévention sous « mise en oeuvre et
+        // preuves », et le D7 se déclarait sans contenu juste en dessous.
+        assertThat(d6.tables()).isEmpty();
+
+        // Elle a sa place dans le TABLEAU DU D7, qui donne l'état de chaque
+        // action préventive à la date d'émission -- y compris celles qui
         // restent à faire. Les taire laisserait croire la prévention terminée.
-        assertThat(d6.tables()).hasSize(1);
-        assertThat(d6.tables().get(0).rows()).hasSize(1);
-        assertThat(d6.tables().get(0).rows().get(0).cells())
-                .containsExactly("PREVENTIVE", "Former les opérateurs", "-", "-",
-                        "IN_PROGRESS", "-");
+        EightDSnapshot.Section d7 = section(snapshot, "D7");
+        assertThat(d7.sourced()).isTrue();
+        assertThat(d7.tables()).hasSize(1);
+        assertThat(d7.tables().get(0).rows()).hasSize(1);
+        assertThat(d7.tables().get(0).rows().get(0).cells())
+                .containsExactly("Préventive", "Former les opérateurs", "-", "-",
+                        "En cours", "-");
+        assertThat(d7.sourceLabel()).contains("1 action(s) préventive(s)");
     }
 
     @Test
@@ -416,11 +426,11 @@ class EightDSnapshotAssemblerTest {
                 assembler.assemble(sources, null, null, null, "t", null, null), "D7");
 
         assertThat(d7.sourced()).isTrue();
-        assertThat(d7.sourceLabel()).contains("PFMEA failure mode")
-                .contains("1 control plan(s)");
-        assertThat(d7.lines()).anyMatch(l -> l.contains("RPN: 160 → 40 after actions"));
-        assertThat(d7.lines()).anyMatch(l -> l.contains("CP-4471") && l.contains("rev. 3")
-                && l.contains("12 line(s)") && l.contains("sealed"));
+        assertThat(d7.sourceLabel()).contains("mode de défaillance AMDEC")
+                .contains("1 plan(s) de surveillance");
+        assertThat(d7.lines()).anyMatch(l -> l.contains("IPR : 160 → 40 après actions"));
+        assertThat(d7.lines()).anyMatch(l -> l.contains("CP-4471") && l.contains("rév. 3")
+                && l.contains("12 ligne(s)") && l.contains("scellé"));
     }
 
     @Test
@@ -430,8 +440,9 @@ class EightDSnapshotAssemblerTest {
 
         assertThat(d7.sourced()).isFalse();
         assertThat(d7.sourceLabel())
-                .contains("No PFMEA failure mode")
-                .contains("control plan");
+                .contains("Aucune action préventive")
+                .contains("aucun mode de défaillance AMDEC")
+                .contains("aucun plan de surveillance");
         // La phrase qui expliquait pourquoi le Poka-Yoke n'y figurait pas exposait
         // une limite d'outillage interne dans un document remis au client, là où
         // il attend un constat de prévention.
@@ -487,7 +498,8 @@ class EightDSnapshotAssemblerTest {
         assertThat(d5.tables().get(1).rows().get(0).cells()).contains("Revoir la gamme");
         // Le COMPTE, pas le singulier : « Escalated CAPA » mentait d\u00e8s qu'un
         // second dossier citait la r\u00e9f\u00e9rence, et rien ne le disait au lecteur.
-        assertThat(d5.sourceLabel()).contains("2 CAPA cases").contains("2 action(s) decided");
+        assertThat(d5.sourceLabel()).contains("2 dossiers CAPA")
+                .contains("2 action(s) décidée(s)");
     }
 
     /**
@@ -547,7 +559,7 @@ class EightDSnapshotAssemblerTest {
 
     /**
      * CHAQUE DISCIPLINE NE MONTRE QUE LES ACTIONS DE SA NATURE, exactement comme
-     * l'ecran : le D3 endigue, le D6 previent, le D5 montre les CAPA definies
+     * l'ecran : le D3 endigue, le D7 previent, le D5 montre les CAPA definies
      * -- correctives et preventives, et plus l'endiguement, deja porte par le
      * tableau du D3 juste au-dessus.
      *
@@ -557,7 +569,7 @@ class EightDSnapshotAssemblerTest {
      * ete fait TOUT DE SUITE.
      */
     @Test
-    void d3_n_affiche_que_l_endiguement_et_d6_que_la_prevention() {
+    void d3_n_affiche_que_l_endiguement_et_d7_que_la_prevention() {
         EightDSources.Action endiguer = new EightDSources.Action(
                 "Isoler le lot", null, "CONTAINMENT", "DONE", "Ada", null, null, 0);
         EightDSources.Action corriger = new EightDSources.Action(
@@ -573,7 +585,8 @@ class EightDSnapshotAssemblerTest {
         EightDSnapshot snapshot = assembler.assemble(sources, null, null, null, "t", null, null);
 
         assertThat(cellulesDe(snapshot, "D3")).containsExactly("Isoler le lot");
-        assertThat(cellulesDe(snapshot, "D6")).containsExactly("Revoir la gamme");
+        assertThat(cellulesDe(snapshot, "D7")).containsExactly("Revoir la gamme");
+        assertThat(section(snapshot, "D6").tables()).isEmpty();
         assertThat(cellulesDe(snapshot, "D5"))
                 .containsExactly("Remplacer le joint", "Revoir la gamme");
     }
@@ -592,10 +605,10 @@ class EightDSnapshotAssemblerTest {
         EightDSnapshot snapshot = assembler.assemble(sources, null, null, null, "t", null, null);
 
         // Le dossier n'a qu'une action CORRECTIVE : le D5 la montre, le D3 et le
-        // D6 n'ont rien a tabuler.
+        // D7 n'ont rien a tabuler.
         assertThat(section(snapshot, "D5").tables()).hasSize(1);
         assertThat(section(snapshot, "D3").tables()).isEmpty();
-        assertThat(section(snapshot, "D6").tables()).isEmpty();
+        assertThat(section(snapshot, "D7").tables()).isEmpty();
     }
 
     /**
@@ -618,7 +631,7 @@ class EightDSnapshotAssemblerTest {
                 assembler.assemble(sources, null, null, null, "t", null, null), "D3");
 
         assertThat(d3.sourced()).isTrue();
-        assertThat(d3.sourceLabel()).doesNotContain("quality team").contains("CAPA");
+        assertThat(d3.sourceLabel()).doesNotContain("équipe qualité").contains("CAPA");
     }
 
     /** Les intitules d'action tabules sous une discipline, dans l'ordre. */
@@ -663,8 +676,8 @@ class EightDSnapshotAssemblerTest {
         EightDSnapshot.Section d1 = section(snapshot, "D1");
         assertThat(d1.sourced()).isTrue();
         assertThat(d1.lines()).containsExactly(
-                "Champion : Marie Durand", "Member : Ali Benali");
-        assertThat(d1.sourceLabel()).contains("2 member(s)");
+                "Pilote : Marie Durand", "Membre : Ali Benali");
+        assertThat(d1.sourceLabel()).contains("2 membre(s)");
         assertThat(snapshot.missingCodes()).doesNotContain("D1");
     }
 
@@ -676,7 +689,7 @@ class EightDSnapshotAssemblerTest {
                 "tenant-1", null, null);
 
         assertThat(section(snapshot, "D1").lines())
-                .containsExactly("Champion : Ali Benali", "Member : Marie Durand");
+                .containsExactly("Pilote : Ali Benali", "Membre : Marie Durand");
     }
 
     // La saisie libre dit ce que l'annuaire ne sait pas (un renfort exterieur,
@@ -687,7 +700,7 @@ class EightDSnapshotAssemblerTest {
                 "Renfort : Jean Petit (fournisseur)", null, null, "tenant-1", null, null);
 
         assertThat(section(snapshot, "D1").lines()).containsExactly(
-                "Champion : Marie Durand", "Member : Ali Benali",
+                "Pilote : Marie Durand", "Membre : Ali Benali",
                 "Renfort : Jean Petit (fournisseur)");
     }
 
@@ -701,7 +714,20 @@ class EightDSnapshotAssemblerTest {
         EightDSnapshot.Section d1 = section(snapshot, "D1");
         assertThat(d1.sourced()).isFalse();
         assertThat(d1.lines()).isEmpty();
-        assertThat(d1.sourceLabel()).contains("filled in by hand");
+        assertThat(d1.sourceLabel()).contains("se renseigne à la main");
+    }
+
+    /**
+     * L'instantane neuf PORTE SA LANGUE : c'est elle que le rendu PDF lit pour
+     * choisir ses propres mots, et la stocker avec l'instantane est ce qui
+     * permet a un rapport deja emis de se relire a l'octet pres.
+     */
+    @Test
+    void l_instantane_neuf_porte_la_langue_du_document() {
+        EightDSnapshot snapshot = assembler.assemble(sourcesMinimales(), null, null, null,
+                "tenant-1", null, null);
+
+        assertThat(snapshot.langue()).isEqualTo("fr");
     }
 
     /** L'equipe nommee sur la fiche : la source de D1, dans son ordre de saisie. */
