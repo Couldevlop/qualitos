@@ -53,5 +53,21 @@ public enum ClosureBlockerCode {
      * <p>Une action dont le dernier verdict est PARTIEL ou INEFFICACE compte
      * aussi : elle a été regardée, et ce qu'on a vu ne permet pas de clore.
      */
-    ACTION_VERIFICATIONS_PENDING
+    ACTION_VERIFICATIONS_PENDING,
+
+    /**
+     * Le dossier vient d'un écart sur objectif qualité, et le KPI n'est pas
+     * encore revenu sous la cible pour la durée exigée (décompte = le nombre de
+     * périodes qu'il RESTE à tenir).
+     *
+     * <p>Pour ce type de dossier, l'efficacité n'est pas une appréciation : elle
+     * EST le retour du KPI sous la cible sur la durée que l'objectif s'est
+     * donnée, et l'objectif ne repasse « atteint » qu'à ce moment. Le critère
+     * est verrouillé à l'ouverture, pas saisi — sans quoi on pourrait clore sur
+     * un critère plus facile que celui qu'on s'était donné (ADR 0133).
+     *
+     * <p>Le décompte dit ce qu'il RESTE, et non ce qui est acquis : c'est ce que
+     * le vérificateur a besoin de savoir pour arrêter de réessayer.
+     */
+    OBJECTIVE_RECOVERY_PENDING
 }

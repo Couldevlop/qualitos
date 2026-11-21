@@ -32,5 +32,22 @@ public enum CapaSourceType {
      * qui permet à la fiche de retrouver les actions qui la traitent.
      */
     RISK,
+    /**
+     * Écart sur un OBJECTIF QUALITÉ (ISO 9001 §6.2) : le KPI réel s'est écarté de
+     * la cible que l'organisme s'était fixée, assez longtemps pour que la règle
+     * de l'objectif propose un dossier. {@code sourceRef} porte la référence de
+     * l'objectif ({@code objective:<id>:<niveau>:<période>}), et c'est ce couple
+     * qui permet à la revue de retrouver le dossier qui traite l'écart.
+     *
+     * <p>Distinguée de {@link #SPC_ALERT} et {@link #IOT_ALERT}, qui annoncent
+     * une dérive de PROCÉDÉ constatée par une règle statistique ou un capteur :
+     * ici l'écart se mesure contre un ENGAGEMENT pris devant la direction, et
+     * c'est la revue de direction (§9.3) qui vient le lire.
+     *
+     * <p>Un dossier né de cette source exige TOUJOURS la vérification de son
+     * efficacité, et son critère est verrouillé : le retour du KPI sous la cible
+     * sur la durée que l'objectif s'est donnée. Voir l'ADR 0133.
+     */
+    QUALITY_OBJECTIVE,
     OTHER
 }
