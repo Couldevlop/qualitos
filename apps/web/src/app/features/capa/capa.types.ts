@@ -59,6 +59,29 @@ export interface CapaActionResponse {
   decidedOn?: string;
   dueDate?: string;
   completedAt?: string;
+  /**
+   * CE QU'ON ATTEND DE CETTE ACTION, et comment on le vérifiera (ADR 0131).
+   *
+   * Absents sur les actions antérieures aux colonnes : `verificationRequired`
+   * nul veut dire « la question n'a pas été tranchée pour cette action », ce
+   * qui n'est pas « non ». Le dossier garde les siens, qui gouvernent sa
+   * clôture.
+   */
+  effectivenessCriterion?: string;
+  verificationRequired?: boolean | null;
+  verificationAssigneeId?: string;
+  verificationAssigneeName?: string;
+  verificationInstructions?: string;
+  /**
+   * CE QUI A ETE CONSTATE sur cette action, s'il l'a ete (ADR 0132).
+   *
+   * Le dernier verdict de son historique, et quand. Absents = l'action n'a
+   * jamais ete jugee, ce qui RETIENT la cloture du dossier des lors qu'elle
+   * avait promis une verification.
+   */
+  verificationVerdict?: EffectivenessVerdict;
+  verifiedAt?: string;
+  verifiedByName?: string;
 }
 
 /** Écart d'origine du dossier, réduit à ce qu'un tableau doit en montrer. */
@@ -150,7 +173,8 @@ export type ClosureBlockerCode =
   | 'NO_ACTION'
   | 'ACTIONS_NOT_DONE'
   | 'CONTAINMENT_ONLY'
-  | 'OPEN_NON_CONFORMITIES';
+  | 'OPEN_NON_CONFORMITIES'
+  | 'ACTION_VERIFICATIONS_PENDING';
 
 export type CapaPage = SpringPage<CapaCaseResponse>;
 
@@ -213,6 +237,19 @@ export interface CreateCapaActionRequest {
   /** Jour de la décision ; déduit du jour de l'enregistrement s'il est omis. */
   decidedOn?: string;
   dueDate?: string;
+  /**
+   * CE QU'ON ATTEND DE CETTE ACTION, et comment on le vérifiera (ADR 0131).
+   *
+   * Le dossier porte les siens, posés à l'ouverture ; ceux-ci disent ce qu'on
+   * attend de cette action-là. Refusés sur un endiguement, qui ne promet aucun
+   * effet. Le critère se verrouille dès qu'il est posé (ADR 0108).
+   */
+  effectivenessCriterion?: string;
+  /** `null` = la question n'a pas été tranchée pour cette action. */
+  verificationRequired?: boolean | null;
+  verificationAssigneeId?: string;
+  verificationAssigneeName?: string;
+  verificationInstructions?: string;
 }
 
 /**

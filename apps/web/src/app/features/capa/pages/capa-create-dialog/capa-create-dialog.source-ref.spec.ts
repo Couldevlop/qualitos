@@ -79,15 +79,31 @@ describe('CapaCreateDialogComponent — la référence de la source', () => {
 
   // ---------- la source par défaut ne désigne rien ----------
 
+  /**
+   * « Détection interne » était la source par défaut, et n'adosse le dossier à
+   * AUCUN registre : la référence s'y tapait à la main. Un dossier ouvert ainsi
+   * en citant « Int-NC-2026-0046 » restait orphelin -- la fiche de l'écart le
+   * cherche par source ET référence --, et ses actions ne paraissaient dans
+   * aucune discipline de son 8D.
+   *
+   * <p>Elle n'est plus proposée, et le défaut est « Autre » : un défaut adossé
+   * à un registre rendrait la référence obligatoire à chaque ouverture, y
+   * compris pour un dossier qui ne traite ni écart, ni constat, ni risque.
+   */
   it('laisse la référence libre et facultative quand la source ne désigne aucun objet', async () => {
     await setup();
-    expect(component.form.controls.sourceType.value).toBe('INTERNAL');
+    expect(component.form.controls.sourceType.value).toBe('OTHER');
     expect(component.sourceRegister).toBeUndefined();
     expect(component.sourceRefIsPicked).toBeFalse();
     expect(component.form.controls.sourceRef.valid).toBeTrue();
     expect(registres.options).not.toHaveBeenCalled();
     // Un champ de saisie, pas une liste.
     expect(hote().querySelector('input[data-test="capa-source-ref"]')).not.toBeNull();
+  });
+
+  it('ne propose plus « Détection interne », qui n’adosse le dossier à rien', async () => {
+    await setup();
+    expect(component.sourceTypes.map(t => t.value)).not.toContain('INTERNAL');
   });
 
   // ---------- chaque source charge SON registre ----------
@@ -137,7 +153,7 @@ describe('CapaCreateDialogComponent — la référence de la source', () => {
     await setup();
     choisirSource('NON_CONFORMITY', NCS);
     expect(component.form.controls.sourceRef.valid).toBeFalse();
-    choisirSource('INTERNAL', []);
+    choisirSource('OTHER', []);
     expect(component.form.controls.sourceRef.valid).toBeTrue();
     expect(component.sourceRefIsPicked).toBeFalse();
   });

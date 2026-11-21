@@ -87,6 +87,23 @@ public class CapaController {
         return service.verifyEffectiveness(id, request);
     }
 
+    /**
+     * Le jugement porte sur UNE action du dossier (ADR 0132).
+     *
+     * <p>Meme permission que le jugement du dossier : c'est le meme geste, a
+     * l'echelle ou la promesse de verification a ete faite. Un droit distinct
+     * laisserait verifier le dossier sans pouvoir verifier ses actions, alors
+     * que le premier depend desormais des secondes.
+     */
+    @PatchMapping("/cases/{id}/actions/{actionId}/effectiveness")
+    @RequiresPermission(Permission.CAPA_VERIFY)
+    public CapaDto.ActionResponse verifyActionEffectiveness(
+            @PathVariable UUID id,
+            @PathVariable UUID actionId,
+            @Valid @RequestBody CapaDto.EffectivenessRequest request) {
+        return service.verifyActionEffectiveness(id, actionId, request);
+    }
+
     @PatchMapping("/cases/{id}/reject")
     @RequiresPermission(Permission.CAPA_REJECT)
     public CapaDto.CaseResponse reject(@PathVariable UUID id) { return service.rejectCase(id); }

@@ -99,7 +99,13 @@ export const CAPA_SOURCES: ReadonlyArray<{
   { value: 'EXTERNAL_NON_CONFORMITY', label: $localize`:@@capa.source.non-conformity-external:Non-conformité externe (réclamation client)`, manual: false },
   { value: 'AUDIT',          label: $localize`:@@capa.source.audit:Audit`, manual: true, register: 'audit' },
   { value: 'COMPLAINT',      label: $localize`:@@capa.source.complaint:Réclamation client`, manual: true, register: 'nc-external' },
-  { value: 'INTERNAL',       label: $localize`:@@capa.source.internal:Détection interne`, manual: true },
+  // PLUS PROPOSÉE À LA CRÉATION. « Détection interne » n'adosse le dossier à
+  // AUCUN registre : la référence s'y tapait à la main, et un dossier ouvert
+  // ainsi en citant « Int-NC-2026-0046 » restait orphelin — la fiche de l'écart
+  // ne le trouvait pas (elle cherche par source ET référence), son rapport 8D
+  // ne le voyait pas, et ses actions ne paraissaient dans aucune discipline.
+  // Le libellé reste : les dossiers déjà ouverts sous cette source le portent.
+  { value: 'INTERNAL',       label: $localize`:@@capa.source.internal:Détection interne`, manual: false },
   { value: 'IOT_ALERT',      label: $localize`:@@capa.source.iot-alert:Alerte IoT`, manual: true },
   { value: 'SPC_ALERT',      label: $localize`:@@capa.source.spc-alert:Carte de contrôle`, manual: false },
   { value: 'ANOMALY',        label: $localize`:@@capa.source.anomaly:Anomalie détectée`, manual: false },

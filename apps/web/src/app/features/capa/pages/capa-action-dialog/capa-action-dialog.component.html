@@ -82,10 +82,38 @@
     L'échéance précède la date de début : vérifiez l'une des deux dates.
   </p>
 
-  <!-- LA DEMANDE D'ÉVALUATION D'EFFICACITÉ, posée là où l'action s'écrit.
-       Une action corrective prétend supprimer la cause : il faut dire dès
-       maintenant à quoi l'on verra qu'elle l'a supprimée, sans quoi la
-       vérification choisira après coup la mesure qui arrange (ADR 0108). -->
+  <!-- CE QUI EST DÉJÀ ATTENDU, en lecture et AVANT la question posée pour
+       cette action : on écrit mieux une action corrective ou préventive quand
+       on a sous les yeux la mesure que le dossier attend déjà, et savoir que
+       l'effet SERA vérifié change la façon de l'écrire. Le dossier garde les
+       siens (ADR 0073, 0108), chaque action porte les siens (ADR 0131) : les
+       deux coexistent, et les montrer ensemble est ce qui permet d'écrire la
+       seconde en connaissance de la première. À l'édition, c'est ce que CETTE
+       action a répondu qui se rappelle. Rien sous un endiguement : il ne promet
+       aucun effet. -->
+  <div class="efficacite efficacite--rappel" *ngIf="rappelDEfficacite"
+       data-test="action-efficacite-rappel">
+    <span class="efficacite__titre" i18n="@@capa.action-dialog.effectiveness-recall">Déjà attendu sur ce dossier</span>
+    <p class="efficacite__texte" *ngIf="rappelDuCritere">{{ critereRappele }}</p>
+    <p class="efficacite__texte" *ngIf="verificationDejaTranchee === true"
+       data-test="action-verification-rappel-oui"
+       i18n="@@capa.action-dialog.verification-required-yes">
+      L'efficacité sera vérifiée avant la clôture.
+    </p>
+    <p class="efficacite__texte" *ngIf="verificationDejaTranchee === false"
+       data-test="action-verification-rappel-non"
+       i18n="@@capa.action-dialog.verification-required-no">
+      Jugé sans vérification d'efficacité.
+    </p>
+  </div>
+
+  <!-- LA DEMANDE D'ÉVALUATION D'EFFICACITÉ DE CETTE ACTION, posée là où
+       l'action s'écrit, et posée pour CHACUNE (ADR 0131). Une action corrective
+       ou préventive prétend supprimer une cause : il faut dire dès maintenant
+       à quoi l'on verra qu'elle l'a supprimée, sans quoi la vérification
+       choisira après coup la mesure qui arrange (ADR 0108). Elle ne se posait
+       qu'une fois par dossier : la deuxième action et les suivantes
+       s'écrivaient sans qu'on sache jamais si leur effet serait vérifié. -->
   <div class="efficacite" *ngIf="demandeCritere" data-test="action-efficacite-demande">
     <mat-form-field appearance="outline" class="full">
       <mat-label i18n="@@capa.criterion.label">Critère d'efficacité</mat-label>
@@ -101,19 +129,12 @@
     </mat-form-field>
   </div>
 
-  <!-- LE CRITÈRE DÉJÀ POSÉ se rappelle, en lecture : on écrit mieux une action
-       corrective quand on a sous les yeux la mesure qui la jugera. -->
-  <div class="efficacite efficacite--rappel" *ngIf="!demandeCritere && critereDejaPose"
-       data-test="action-efficacite-rappel">
-    <span class="efficacite__titre" i18n="@@capa.criterion.label">Critère d'efficacité</span>
-    <p class="efficacite__texte">{{ critereDejaPose }}</p>
-  </div>
-
-  <!-- LA VÉRIFICATION D'EFFICACITÉ : exigée sur ce dossier, oui ou non ?
-       Même question qu'à l'ouverture d'un dossier (ADR 0073), et au même
-       endroit qu'elle : la décision appartient au DOSSIER, pas à l'action, donc
-       elle ne se pose que tant qu'elle n'a pas été tranchée. La reposer à
-       chaque ajout laisserait la dernière action décider pour tout le reste. -->
+  <!-- LA VÉRIFICATION D'EFFICACITÉ : l'effet de CETTE action sera-t-il
+       vérifié, et par qui ? Même question qu'à l'ouverture d'un dossier
+       (ADR 0073), posée désormais pour chaque action (ADR 0131) : deux actions
+       d'un même dossier ne se vérifient pas forcément par la même personne, et
+       une réponse unique à l'ouverture laissait les suivantes sans la leur. La
+       décision du dossier, elle, reste la sienne et gouverne sa clôture. -->
   <qos-capa-verification-fields *ngIf="demandeVerification"
                                 [group]="form"
                                 data-test="action-verification-demande"

@@ -3,6 +3,9 @@ import { NgModule } from '@angular/core';
 import { SharedModule } from '../../shared/shared.module';
 import { UiModule } from '../../shared/ui/ui.module';
 import { CapaActionDialogModule } from './capa-action-dialog.module';
+import {
+  CapaActionVerificationDialogModule
+} from './capa-action-verification-dialog.module';
 import { CapaActionPanelComponent } from './components/capa-action-panel/capa-action-panel.component';
 
 /**
@@ -17,7 +20,11 @@ import { CapaActionPanelComponent } from './components/capa-action-panel/capa-ac
   declarations: [CapaActionPanelComponent],
   // La fenêtre d'une action : la même pour l'ajouter et pour la corriger
   // (ADR 0115), jamais une jumelle.
-  imports: [SharedModule, UiModule, CapaActionDialogModule],
+  // `CapaActionVerificationDialogModule` : juger l'efficacite d'une action se
+  // fait depuis sa ligne, la ou on vient de la terminer -- et non sur un ecran
+  // separe qu'il faudrait penser a visiter (ADR 0132).
+  imports: [SharedModule, UiModule, CapaActionDialogModule,
+            CapaActionVerificationDialogModule],
   exports: [CapaActionPanelComponent]
 })
 export class CapaActionPanelModule {}

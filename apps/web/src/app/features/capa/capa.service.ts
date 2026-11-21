@@ -590,6 +590,33 @@ export class CapaService {
   }
 
   /**
+   * Rend un verdict d'efficacité sur UNE ACTION du dossier (ADR 0132).
+   *
+   * Chaque action porte sa propre exigence de vérification (ADR 0131), et le
+   * dossier ne se clôture pas tant qu'une action qui en a promis une ne l'a pas
+   * obtenue. Le jugement s'ajoute à l'historique : il n'écrase pas le
+   * précédent, et la suite des verdicts est ce qu'un auditeur lit.
+   */
+  verifyActionEffectiveness(
+    capaId: string,
+    actionId: string,
+    input: RecordEffectivenessRequest
+  ): Observable<CapaActionResponse> {
+    if (environment.useMockApi) {
+      const c = this.mockStore.find(x => x.id === capaId) ?? this.mockStore[0];
+      const a = (c.actions ?? []).find(x => x.id === actionId);
+      const now = new Date().toISOString();
+      if (a) {
+        a.verificationVerdict = input.verdict;
+        a.verifiedAt = now;
+      }
+      return of(a ?? ({ id: actionId } as CapaActionResponse)).pipe(delay(140));
+    }
+    return this.http.patch<CapaActionResponse>(
+      `${this.endpoint}/${capaId}/actions/${actionId}/effectiveness`, input);
+  }
+
+  /**
    * Un plan de travail de démonstration qui montre les cinq étapes.
    *
    * Les quatre chiffres sont calculés depuis les lignes, et non écrits à la

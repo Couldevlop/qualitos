@@ -6654,6 +6654,30 @@ Customer portal</target>
         <source>Réformé</source>
         <target state="translated">Retired</target>
       </trans-unit>
+      <trans-unit id="capa.actions.add-containment" datatype="html">
+        <source>Ajouter une action de confinement</source>
+        <target state="translated">Add a containment action</target>
+      </trans-unit>
+      <trans-unit id="capa.actions.add-corrective" datatype="html">
+        <source>Ajouter une action corrective</source>
+        <target state="translated">Add a corrective action</target>
+      </trans-unit>
+      <trans-unit id="capa.actions.add-preventive" datatype="html">
+        <source>Ajouter une action preventive</source>
+        <target state="translated">Add a preventive action</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.effectiveness-recall" datatype="html">
+        <source>Deja attendu sur ce dossier</source>
+        <target state="translated">Already expected on this case</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.verification-required-yes" datatype="html">
+        <source>L'efficacite sera verifiee avant la cloture.</source>
+        <target state="translated">Effectiveness will be verified before closure.</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.verification-required-no" datatype="html">
+        <source>Juge sans verification d'efficacite.</source>
+        <target state="translated">Judged without effectiveness verification.</target>
+      </trans-unit>
       <trans-unit id="capa.detail.col-evidence" datatype="html">
         <source>Preuve</source>
         <target state="translated">Evidence</target>
@@ -7997,6 +8021,62 @@ Customer portal</target>
       <trans-unit id="capa.verification.instructions-placeholder" datatype="html">
         <source>Ce qu'il faut vérifier, et comment : échantillon, délai, critère d'acceptation…</source>
         <target state="translated">What to verify, and how: sample, lead time, acceptance criterion…</target>
+      </trans-unit>
+      <trans-unit id="capa.actions.verify" datatype="html">
+        <source>Verifier l'efficacite</source>
+        <target state="translated">Verify effectiveness</target>
+      </trans-unit>
+      <trans-unit id="capa.actions.verified" datatype="html">
+        <source>Efficacite verifiee</source>
+        <target state="translated">Effectiveness verified</target>
+      </trans-unit>
+      <trans-unit id="capa.action-verification.title" datatype="html">
+        <source>Verifier l'efficacite de l'action</source>
+        <target state="translated">Verify the action's effectiveness</target>
+      </trans-unit>
+      <trans-unit id="capa.action-verification.subtitle" datatype="html">
+        <source>Ce qui a ete constate, confronte au critere pose quand l'action a ete decidee.</source>
+        <target state="translated">What was observed, set against the criterion defined when the action was decided.</target>
+      </trans-unit>
+      <trans-unit id="capa.action-verification.submit" datatype="html">
+        <source>Enregistrer le verdict</source>
+        <target state="translated">Save the verdict</target>
+      </trans-unit>
+      <trans-unit id="capa.action-verification.saved" datatype="html">
+        <source>Verification enregistree.</source>
+        <target state="translated">Verification saved.</target>
+      </trans-unit>
+      <trans-unit id="capa.action-verification.failed" datatype="html">
+        <source>La verification n'a pas pu etre enregistree.</source>
+        <target state="translated">The verification could not be saved.</target>
+      </trans-unit>
+      <trans-unit id="capa.action-verification.observed-required" datatype="html">
+        <source>Le releve constate est obligatoire.</source>
+        <target state="translated">The observed reading is required.</target>
+      </trans-unit>
+      <trans-unit id="capa.action-verification.no-criterion" datatype="html">
+        <source>Aucun critere d'efficacite n'a ete pose sur cette action ni sur son dossier : il n'y a rien a quoi confronter le releve. Reprenez l'action pour y inscrire sa mesure.</source>
+        <target state="translated">No effectiveness criterion was set on this action or on its case: there is nothing to set the reading against. Edit the action to record its measure.</target>
+      </trans-unit>
+      <trans-unit id="capa.action-verification.outcome-effective" datatype="html">
+        <source>Cette action ne retiendra plus la cloture du dossier.</source>
+        <target state="translated">This action will no longer hold back the closure of the case.</target>
+      </trans-unit>
+      <trans-unit id="capa.action-verification.outcome-partial" datatype="html">
+        <source>L'effet est insuffisant : l'action continuera de retenir la cloture, le temps qu'une action complementaire soit decidee.</source>
+        <target state="translated">The effect falls short: the action will keep holding back closure until a complementary action is decided.</target>
+      </trans-unit>
+      <trans-unit id="capa.action-verification.outcome-ineffective" datatype="html">
+        <source>L'action n'a pas produit son effet : elle continuera de retenir la cloture, et la cause est a reprendre.</source>
+        <target state="translated">The action did not produce its effect: it will keep holding back closure, and the cause must be revisited.</target>
+      </trans-unit>
+      <trans-unit id="capa.blocker.action-verification-one" datatype="html">
+        <source>1 action attend la verification d'efficacite qu'elle a promise.</source>
+        <target state="translated">1 action is awaiting the effectiveness verification it promised.</target>
+      </trans-unit>
+      <trans-unit id="capa.blocker.action-verification-many" datatype="html">
+        <source><x id="count"/> actions attendent la verification d'efficacite qu'elles ont promise.</source>
+        <target state="translated"><x id="count"/> actions are awaiting the effectiveness verification they promised.</target>
       </trans-unit>
       <trans-unit id="nav.admin-circuits" datatype="html">
         <source>Circuits de validation</source>
@@ -22935,8 +23015,8 @@ declared income
         <target state="translated">What protects the customer right now, before the root cause is known.</target>
       </trans-unit>
       <trans-unit id="nc.8d.d3-no-case" datatype="html">
-        <source>Aucun dossier CAPA n’existe encore sur cet écart : les actions de confinement s’écriront ici dès qu’il y en aura un, au D5.</source>
-        <target state="translated">No CAPA case exists on this non-conformity yet: containment actions will be written here as soon as one is opened, in D5.</target>
+        <source>Aucun dossier CAPA n’existe encore sur cet écart. La première action de confinement l’ouvrira : les suivantes s’ajouteront dans ce tableau.</source>
+        <target state="translated">No CAPA case exists on this non-conformity yet. The first containment action will open one; the next ones will be added to this table.</target>
       </trans-unit>
       <trans-unit id="nc.8d.d4-short" datatype="html">
         <source>Causes</source>
@@ -22995,8 +23075,8 @@ declared income
         <target state="translated">What keeps the problem from coming back elsewhere.</target>
       </trans-unit>
       <trans-unit id="nc.8d.d7-no-case" datatype="html">
-        <source>Aucun dossier CAPA n’existe encore sur cet écart : les actions préventives s’écriront ici dès qu’il y en aura un, au D5.</source>
-        <target state="translated">No CAPA case exists on this non-conformity yet: preventive actions will be written here as soon as one is opened, in D5.</target>
+        <source>Aucun dossier CAPA n’existe encore sur cet écart. La première action préventive l’ouvrira : les suivantes s’ajouteront dans ce tableau.</source>
+        <target state="translated">No CAPA case exists on this non-conformity yet. The first preventive action will open one; the next ones will be added to this table.</target>
       </trans-unit>
       <trans-unit id="nc.8d.d8-short" datatype="html">
         <source>Remerciements</source>

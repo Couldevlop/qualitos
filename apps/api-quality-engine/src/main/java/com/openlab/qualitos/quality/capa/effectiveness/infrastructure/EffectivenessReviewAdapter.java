@@ -30,7 +30,8 @@ public class EffectivenessReviewAdapter implements EffectivenessReviewPort {
     @Override
     public void save(EffectivenessReview review) {
         repository.save(new EffectivenessReviewJpaEntity(
-                review.id(), review.tenantId(), review.capaCaseId(), review.verdict(),
+                review.id(), review.tenantId(), review.capaCaseId(), review.capaActionId(),
+                review.verdict(),
                 review.criterion(), review.baseline(), review.target(), review.observed(),
                 review.comment(), review.reviewerId(), review.reviewerName(),
                 review.reviewedAt()));
@@ -62,6 +63,23 @@ public class EffectivenessReviewAdapter implements EffectivenessReviewPort {
     }
 
     @Override
+    public Map<UUID, EffectivenessReview> findLastPerActionOfCase(UUID tenantId, UUID capaCaseId) {
+        Map<UUID, EffectivenessReview> last = new LinkedHashMap<>();
+        for (EffectivenessReviewJpaEntity e : repository.findLastPerActionOfCase(tenantId, capaCaseId)) {
+            last.put(e.getCapaActionId(), toDomain(e));
+        }
+        return last;
+    }
+
+    @Override
+    public List<EffectivenessReview> findByAction(UUID tenantId, UUID capaActionId) {
+        return repository.findByTenantIdAndCapaActionIdOrderByReviewedAtDesc(tenantId, capaActionId)
+                .stream()
+                .map(EffectivenessReviewAdapter::toDomain)
+                .toList();
+    }
+
+    @Override
     public Map<UUID, Integer> countPerCase(UUID tenantId) {
         Map<UUID, Integer> counts = new LinkedHashMap<>();
         for (Object[] row : repository.countPerCase(tenantId)) {
@@ -78,6 +96,13 @@ public class EffectivenessReviewAdapter implements EffectivenessReviewPort {
      * règle n'existe : un auditeur verrait un trou là où il y a une trace.
      */
     private static EffectivenessReview toDomain(EffectivenessReviewJpaEntity e) {
+        if (e.getCapaActionId() != null) {
+            return EffectivenessReview.rehydrateForAction(e.getId(), e.getTenantId(),
+                    e.getCapaCaseId(), e.getCapaActionId(),
+                    e.getVerdict(), e.getCriterion(), e.getBaseline(), e.getTarget(),
+                    e.getObserved(), e.getComment(), e.getReviewerId(), e.getReviewerName(),
+                    e.getReviewedAt());
+        }
         return EffectivenessReview.rehydrate(e.getId(), e.getTenantId(), e.getCapaCaseId(),
                 e.getVerdict(), e.getCriterion(), e.getBaseline(), e.getTarget(),
                 e.getObserved(), e.getComment(), e.getReviewerId(), e.getReviewerName(),

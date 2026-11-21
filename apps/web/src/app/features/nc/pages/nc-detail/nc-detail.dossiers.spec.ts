@@ -133,15 +133,28 @@ describe('NcDetailComponent — les dossiers CAPA de l’écart', () => {
     expect(un('capa-dossier-capa-2')).not.toBeNull();
   });
 
-  it('nomme chaque dossier quand il y en a plusieurs', () => {
+  /**
+   * L'INTITULE DU DOSSIER NE COIFFE PLUS LES TABLEAUX D'ACTIONS.
+   *
+   * <p>Il s'ecrivait au-dessus de chacun des trois : le nom de la premiere
+   * action du dossier -- « Action containment 1 » -- se lisait donc comme un
+   * titre de section, juste au-dessus d'un tableau qui le reprend sur sa
+   * premiere ligne. Deux fois la meme chose, dont une qui ressemblait a
+   * l'intitule de la discipline.
+   */
+  it('ne coiffe plus les tableaux d’actions de l’intitulé du dossier', () => {
     setup(ecart([
       { id: 'capa-1', title: 'Remplacer le joint', status: 'OPEN' },
       { id: 'capa-2', title: 'Revoir la gamme', status: 'OPEN' }
     ], 'capa-1'));
 
-    const texte = (fixture.nativeElement as HTMLElement).textContent ?? '';
-    expect(texte).toContain('Remplacer le joint');
-    expect(texte).toContain('Revoir la gamme');
+    ['confinement', 'capa-action', 'preventives'].forEach(discipline => {
+      const section = un(discipline);
+      expect(section).withContext(discipline + ' est rendue').not.toBeNull();
+      expect(section!.querySelectorAll('.capa-dossier-titre').length)
+        .withContext('aucun intitulé de dossier au-dessus du tableau de ' + discipline)
+        .toBe(0);
+    });
   });
 
   /**
@@ -170,15 +183,33 @@ describe('NcDetailComponent — les dossiers CAPA de l’écart', () => {
     expect(un('capa-dossier-capa-1')).not.toBeNull();
   });
 
-  it('invite à ouvrir un dossier quand l’écart n’en a aucun', () => {
+  /**
+   * CHAQUE DISCIPLINE OUVRE LE DOSSIER AVEC SA PROPRE NATURE.
+   *
+   * <p>Le D3 et le D7 renvoyaient au D5 : on y descendait, on cliquait
+   * « Nouvelle action », et la fenetre reposait la nature en trois choix avec
+   * « Corrective » pre-cochee. L'action de confinement qu'on venait d'ecrire
+   * naissait donc corrective -- le registre CAPA l'affichait sous ce faux
+   * type, et le D3 restait vide puisqu'il ne montre que l'endiguement.
+   */
+  it('ouvre le dossier depuis chaque discipline, avec la nature de celle-ci', () => {
     setup(ecart([], undefined));
 
     // La discipline reste ; c'est son contenu qui change.
     expect(un('capa-action')).not.toBeNull();
     expect(un('capa-action-vide')).not.toBeNull();
-    // Et UNE SEULE invite, malgre trois disciplines d'actions : trois invites
-    // identiques empilees feraient croire a trois dossiers a ouvrir.
-    expect(tous('capa-action-ouvrir').length).toBe(1);
+    expect(un('d3-ajouter-confinement')).not.toBeNull();
+    expect(un('capa-action-ouvrir')).not.toBeNull();
+    expect(un('d7-ajouter-preventive')).not.toBeNull();
+
+    const ouvre = spyOn(component, 'openCapa');
+    un('d3-ajouter-confinement')!.click();
+    un('capa-action-ouvrir')!.click();
+    un('d7-ajouter-preventive')!.click();
+
+    expect(ouvre.calls.allArgs().map(args => args[1]))
+      .withContext('la nature vient de la discipline, pas d’un champ à corriger')
+      .toEqual(['CONTAINMENT', 'CORRECTIVE', 'PREVENTIVE']);
   });
 
   // ---------- la liste des dossiers, telle que le composant la calcule ----

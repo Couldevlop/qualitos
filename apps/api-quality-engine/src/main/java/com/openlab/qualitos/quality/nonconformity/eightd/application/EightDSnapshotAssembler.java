@@ -403,7 +403,12 @@ public class EightDSnapshotAssembler {
      * qui part chez le client.
      */
     private static final List<String> NATURES_D3 = List.of("CONTAINMENT");
-    private static final List<String> NATURES_D5 = List.of("CORRECTIVE", "PREVENTIVE");
+    // CORRECTIVE SEULE. La prevention etait ici en plus du D7 : chaque action
+    // preventive se lisait donc deux fois dans le meme rapport, sous deux
+    // disciplines, comme si l'ecart avait ete traite deux fois. Le D5 supprime
+    // la cause de l'ecart SURVENU ; le D7 previent celui qui ne l'est pas
+    // encore (8D, ISO 9001 10.2). L'ecran a corrige le meme defaut.
+    private static final List<String> NATURES_D5 = List.of("CORRECTIVE");
     private static final List<String> NATURES_D7 = List.of("PREVENTIVE");
 
     /** Les colonnes, dans l'ordre de l'ecran, moins celle des gestes. */

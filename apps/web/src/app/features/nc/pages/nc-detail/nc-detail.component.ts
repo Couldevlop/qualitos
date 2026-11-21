@@ -1336,8 +1336,13 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
    * le dossier, son action et le lien en une écriture. Les suivantes s'ajoutent
    * dans le tableau des actions de la fiche. Si l'écart a déjà sa CAPA, on
    * l'ouvre au lieu d'en proposer une seconde.
+   *
+   * @param nature la nature IMPOSÉE à cette première action, quand la
+   *        discipline qui ouvre la fenêtre la connaît (D3, D5, D7). Absente,
+   *        les trois natures restent proposées — c'est le cas du bouton
+   *        d'ouverture générique.
    */
-  openCapa(nc: NcResponse): void {
+  openCapa(nc: NcResponse, nature?: CapaActionType): void {
     if (this.acting$.value) return;
     if (nc.capaCaseId) {
       this.router.navigate(['/capa', nc.capaCaseId]);
@@ -1359,9 +1364,15 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
       // le champ pre-rempli se validait tel quel. La source, elle, reste
       // verrouillee : c'est une donnee, pas une phrase a ecrire.
       prefill: {
-        type: 'CORRECTIVE',
+        // La nature de la DISCIPLINE d'où l'on vient, et non « corrective » en
+        // dur : la première action de confinement d'un écart, écrite depuis le
+        // D3, naissait corrective — le registre CAPA l'affichait sous ce faux
+        // type, et le D3 restait vide puisqu'il ne montre que l'endiguement.
+        type: nature ?? 'CORRECTIVE',
         criticity: NcDetailComponent.criticityOf(nc.severity)
       },
+      // Imposée, pas proposée : la discipline a déjà répondu à la question.
+      lockType: !!nature,
       open: request => this.svc.escalateToCapa(nc.id, request).pipe(
         map(updated => {
           if (!updated.capaCaseId) {

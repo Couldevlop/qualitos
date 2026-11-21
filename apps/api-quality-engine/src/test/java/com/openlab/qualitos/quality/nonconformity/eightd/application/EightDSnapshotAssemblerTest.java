@@ -367,7 +367,8 @@ class EightDSnapshotAssemblerTest {
 
         EightDSnapshot.Section d5 = section(snapshot, "D5");
         assertThat(d5.sourced()).isTrue();
-        assertThat(d5.sourceLabel()).contains("2 action(s) décidée(s)");
+        // UNE SEULE : la preventive est au D7, et nulle part ailleurs.
+        assertThat(d5.sourceLabel()).contains("1 action(s) décidée(s)");
         // Les actions sont en COLONNES, pas en phrases : c'est ce que l'écran
         // montre, et le document émis doit se présenter comme l'écran.
         assertThat(d5.lines()).isEmpty();
@@ -377,13 +378,16 @@ class EightDSnapshotAssemblerTest {
         assertThat(decidees.columns())
                 .containsExactly("Nature", "Action", "Responsable", "Échéance", "État",
                         "Preuves");
-        assertThat(decidees.rows()).hasSize(2);
+        assertThat(decidees.rows()).hasSize(1);
         assertThat(decidees.rows().get(0).cells()).containsExactly(
                 "Corrective", "Remplacer le joint", "Grace", "10/09/2026", "Faite", "2");
-        // Ce qu'on ne SAIT pas s'écrit « - » : une cellule vide se lirait comme
-        // une valeur qu'on aurait omise.
-        assertThat(decidees.rows().get(1).cells()).containsExactly(
-                "Préventive", "Former les opérateurs", "-", "-", "En cours", "-");
+
+        // LA PREVENTIVE N'EST PLUS ICI : elle figurait au D5 **en plus** du D7,
+        // de sorte que chaque action preventive se lisait deux fois dans le
+        // meme rapport, sous deux disciplines, comme si l'ecart avait ete
+        // traite deux fois. Son tableau, le seul, est verifie au D7 plus bas.
+        assertThat(decidees.rows().get(0).cells())
+                .doesNotContain("Former les opérateurs");
 
         EightDSnapshot.Section d6 = section(snapshot, "D6");
         assertThat(d6.sourced()).isTrue();
@@ -587,8 +591,9 @@ class EightDSnapshotAssemblerTest {
         assertThat(cellulesDe(snapshot, "D3")).containsExactly("Isoler le lot");
         assertThat(cellulesDe(snapshot, "D7")).containsExactly("Revoir la gamme");
         assertThat(section(snapshot, "D6").tables()).isEmpty();
-        assertThat(cellulesDe(snapshot, "D5"))
-                .containsExactly("Remplacer le joint", "Revoir la gamme");
+        // Et le D5 ne reprend NI l'un NI l'autre : il ne montre que ce qui
+        // supprime la cause de l'ecart survenu.
+        assertThat(cellulesDe(snapshot, "D5")).containsExactly("Remplacer le joint");
     }
 
     /**

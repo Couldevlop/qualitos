@@ -37,5 +37,21 @@ public enum ClosureBlockerCode {
      * Des non-conformités rattachées au dossier sont encore ouvertes
      * (décompte = leur nombre).
      */
-    OPEN_NON_CONFORMITIES
+    OPEN_NON_CONFORMITIES,
+
+    /**
+     * Des actions ont promis que leur effet serait vérifié, et ne l'ont pas
+     * encore été (décompte = leur nombre).
+     *
+     * <p>Chaque action porte sa propre exigence de vérification (ADR 0131). Une
+     * action « faite » dit seulement que le geste a eu lieu ; elle ne dit pas
+     * qu'il a produit son effet. Clore le dossier sans ces vérifications
+     * reviendrait à inscrire au registre que la cause est traitée sur la foi
+     * d'une promesse que personne n'est allé contrôler — et c'est précisément
+     * ce contrôle qu'un auditeur vient chercher (ADR 0132).
+     *
+     * <p>Une action dont le dernier verdict est PARTIEL ou INEFFICACE compte
+     * aussi : elle a été regardée, et ce qu'on a vu ne permet pas de clore.
+     */
+    ACTION_VERIFICATIONS_PENDING
 }

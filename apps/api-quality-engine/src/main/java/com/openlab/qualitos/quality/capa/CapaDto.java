@@ -189,7 +189,16 @@ public final class CapaDto {
             UUID assigneeId,
             @Size(max = 255) String assigneeName,
             LocalDate decidedOn,
-            LocalDate dueDate
+            LocalDate dueDate,
+            // L'ÉVALUATION D'EFFICACITÉ DE CETTE ACTION (ADR 0131). Le dossier
+            // garde les siennes, qui gouvernent sa clôture ; celles-ci disent ce
+            // qu'on attend de cette action-là. Absentes au PATCH = « ne touche
+            // pas », comme le reste du record.
+            String effectivenessCriterion,
+            Boolean verificationRequired,
+            UUID verificationAssigneeId,
+            @Size(max = 255) String verificationAssigneeName,
+            String verificationInstructions
     ) {}
 
     public record CaseResponse(
@@ -282,6 +291,21 @@ public final class CapaDto {
             LocalDate decidedOn,
             LocalDate dueDate,
             Instant completedAt,
+            // L'évaluation d'efficacité de cette action (ADR 0131).
+            // {@code verificationRequired} nul = la question n'a pas été
+            // tranchée POUR CETTE ACTION, ce qui n'est pas « non ».
+            String effectivenessCriterion,
+            Boolean verificationRequired,
+            UUID verificationAssigneeId,
+            String verificationAssigneeName,
+            String verificationInstructions,
+            // CE QUI A ETE CONSTATE sur cette action, s'il l'a ete (ADR 0132).
+            // Le dernier verdict de son historique, et quand. Nuls = l'action
+            // n'a jamais ete jugee, ce qui RETIENT la cloture du dossier des
+            // lors qu'elle avait promis une verification.
+            EffectivenessVerdict verificationVerdict,
+            Instant verifiedAt,
+            String verifiedByName,
             Instant createdAt,
             Instant updatedAt
     ) {}

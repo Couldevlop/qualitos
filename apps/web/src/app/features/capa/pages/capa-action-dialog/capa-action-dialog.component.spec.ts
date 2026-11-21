@@ -142,133 +142,215 @@ describe('CapaActionDialogComponent', () => {
     });
   });
 
-  describe('la demande d’évaluation d’efficacité (ADR 0108)', () => {
+  describe('l’évaluation d’efficacité, demandée POUR CHAQUE action (ADR 0131)', () => {
 
-    it('la demande à l’ajout d’une action corrective, quand le dossier n’a pas de critère', async () => {
+    it('la demande à l’ajout d’une action corrective', async () => {
       await setup();
       expect(composant.demandeCritere).toBeTrue();
       expect(un('action-efficacite-demande')).not.toBeNull();
     });
 
-    it('écrit le critère AVANT l’action : l’avance est le sens même de la règle', async () => {
+    /**
+     * Elle se demandait une fois par DOSSIER : la deuxième action et les
+     * suivantes s'écrivaient donc sans qu'on sache jamais si leur effet serait
+     * vérifié. Deux actions d'un même dossier ne se mesurent pas à la même
+     * chose — « recalibrer la presse » et « former les opérateurs de nuit » —
+     * et ne se vérifient pas forcément par la même personne.
+     */
+    it('la demande même quand le dossier a déjà posé son critère, et le rappelle à côté',
+      async () => {
+        await setup({ effectivenessCriterion: 'Aucun rebut pendant 3 mois' });
+
+        expect(composant.demandeCritere).toBeTrue();
+        expect(un('action-efficacite-demande')).not.toBeNull();
+        // Les deux coexistent : on écrit mieux la seconde en voyant la première.
+        expect(un('action-efficacite-rappel')!.textContent).toContain('Aucun rebut pendant 3 mois');
+      });
+
+    it('l’envoie AVEC l’action, en une seule écriture, et non sur le dossier', async () => {
       await setup();
       composant.form.patchValue({
         title: 'Recalibrer le cobot',
-        effectivenessCriterion: 'Aucun rebut sur ce défaut pendant 3 mois'
+        effectivenessCriterion: 'Aucun rebut sur ce défaut pendant 3 mois',
+        verificationRequired: true,
+        verificationAssigneeId: 'kc-amina'
       });
 
       composant.submit();
 
-      expect(ordre).toEqual(['updateCase', 'addAction']);
-      expect(capa.updateCase.calls.mostRecent().args[1].effectivenessCriterion)
-        .toBe('Aucun rebut sur ce défaut pendant 3 mois');
+      // Une seule requête : deux écritures de suite laisseraient le critère
+      // posé sans l'action qu'il mesure.
+      expect(ordre).toEqual(['addAction']);
+      expect(capa.updateCase).not.toHaveBeenCalled();
+      const corps = capa.addAction.calls.mostRecent().args[1];
+      expect(corps.effectivenessCriterion).toBe('Aucun rebut sur ce défaut pendant 3 mois');
+      expect(corps.verificationRequired).toBeTrue();
+      expect(corps.verificationAssigneeId).toBe('kc-amina');
     });
 
-    it('n’écrit aucun critère quand on n’en a pas saisi', async () => {
+    it('n’emporte aucune clé quand on ne répond ni au critère ni à la question', async () => {
       await setup();
       composant.form.patchValue({ title: 'Recalibrer le cobot' });
 
       composant.submit();
 
       expect(capa.updateCase).not.toHaveBeenCalled();
-      expect(ordre).toEqual(['addAction']);
+      const corps = capa.addAction.calls.mostRecent().args[1];
+      expect('effectivenessCriterion' in corps).toBeFalse();
+      expect('verificationRequired' in corps).toBeFalse();
     });
 
-    it('ne redemande pas un critère déjà posé : il se rappelle, en lecture', async () => {
-      // Le redemander serait l'occasion de le réécrire pour qu'il colle au
-      // résultat obtenu, ce que l'ADR 0108 veut précisément empêcher.
-      await setup({ effectivenessCriterion: 'Aucun rebut pendant 3 mois' });
-
-      expect(composant.demandeCritere).toBeFalse();
-      expect(un('action-efficacite-demande')).toBeNull();
-      expect(un('action-efficacite-rappel')!.textContent).toContain('Aucun rebut pendant 3 mois');
-    });
-
-    it('ne le demande pas pour une action de confinement : elle ne prétend pas supprimer la cause',
+    it('ne demande rien pour une action de confinement : elle ne prétend pas supprimer la cause',
       async () => {
         await setup();
         composant.form.patchValue({ actionType: 'CONTAINMENT' });
         fixture.detectChanges();
 
         expect(composant.demandeCritere).toBeFalse();
+        expect(composant.demandeVerification).toBeFalse();
         expect(un('action-efficacite-demande')).toBeNull();
+        expect(un('action-verification-demande')).toBeNull();
       });
 
-    it('ne le demande pas quand on CORRIGE une action : le dossier est déjà lancé', async () => {
-      await setup({ action: action() });
-      expect(composant.demandeCritere).toBeFalse();
-    });
+    it('ne demande rien quand on CORRIGE une action : son critère est posé, et verrouillé',
+      async () => {
+        await setup({ action: action() });
+        expect(composant.demandeCritere).toBeFalse();
+        expect(composant.demandeVerification).toBeFalse();
+      });
 
-    it('ne le demande pas sur un dossier en lecture seule', async () => {
+    it('ne demande rien sur un dossier en lecture seule', async () => {
       await setup({ readOnly: true });
       expect(composant.demandeCritere).toBeFalse();
+      expect(composant.demandeVerification).toBeFalse();
     });
   });
 
   describe('la question « vérifiera-t-on l’efficacité ? »', () => {
 
-    it('la pose quand le dossier ne l’a pas tranchée, comme à l’ouverture d’un dossier', async () => {
+    it('la pose à chaque action corrective ou préventive', async () => {
       await setup();
       expect(composant.demandeVerification).toBeTrue();
       expect(un('action-verification-demande')).not.toBeNull();
     });
 
-    it('ne la repose pas quand le dossier a déjà répondu oui', async () => {
-      // Deux réponses contradictoires sur un même dossier, c'est une décision
-      // qu'on ne sait plus lire.
+    /**
+     * Elle ne se reposait pas quand le dossier avait tranché — c'est-à-dire
+     * presque toujours, la réponse étant donnée à l'ouverture. On écrivait donc
+     * toutes les actions suivantes sans la question, et la plateforme paraissait
+     * ne la poser nulle part.
+     */
+    it('la pose même quand le dossier a déjà répondu oui, et le rappelle', async () => {
       await setup({ verificationRequired: true });
-      expect(composant.demandeVerification).toBeFalse();
-      expect(un('action-verification-demande')).toBeNull();
+
+      expect(composant.demandeVerification).toBeTrue();
+      expect(un('action-verification-demande')).not.toBeNull();
+      expect(un('action-verification-rappel-oui')).not.toBeNull();
     });
 
-    it('ne la repose pas davantage quand le dossier a répondu non', async () => {
-      // Non est une réponse, pas une absence de réponse.
+    it('la pose même quand le dossier a répondu non, et le rappelle', async () => {
       await setup({ verificationRequired: false });
-      expect(composant.demandeVerification).toBeFalse();
-      expect(un('action-verification-demande')).toBeNull();
+
+      expect(composant.demandeVerification).toBeTrue();
+      expect(un('action-verification-rappel-non')).not.toBeNull();
     });
 
-    it('ne la pose pas quand on CORRIGE une action : le dossier est déjà lancé', async () => {
-      await setup({ action: action() });
-      expect(composant.demandeVerification).toBeFalse();
-    });
-
-    it('ne la pose pas sur un dossier en lecture seule', async () => {
-      await setup({ readOnly: true });
-      expect(composant.demandeVerification).toBeFalse();
-    });
-
-    it('écrit la réponse sur le dossier AVANT l’action, en une seule mise à jour avec le critère',
-      async () => {
-        await setup();
-        composant.form.patchValue({
-          title: 'Recalibrer le cobot',
-          effectivenessCriterion: 'Aucun rebut sur ce défaut pendant 3 mois',
-          verificationRequired: true
-        });
-
-        composant.submit();
-
-        expect(ordre).toEqual(['updateCase', 'addAction']);
-        // Une seule requête : deux mises à jour de suite laisseraient le dossier
-        // à moitié décidé si la seconde échouait.
-        expect(capa.updateCase).toHaveBeenCalledTimes(1);
-        const envoye = capa.updateCase.calls.mostRecent().args[1];
-        expect(envoye.effectivenessCriterion).toBe('Aucun rebut sur ce défaut pendant 3 mois');
-        expect(envoye.verificationRequired).toBeTrue();
+    it('rappelle ce que CETTE action a répondu quand on la relit', async () => {
+      await setup({
+        action: { ...action(), effectivenessCriterion: 'Zero recidive sur 6 mois',
+                  verificationRequired: true },
+        // Le dossier dit autre chose : c'est l'action qu'on relit qui compte.
+        effectivenessCriterion: 'Aucun rebut pendant 3 mois',
+        verificationRequired: false
       });
 
-    it('n’écrit rien sur le dossier quand on ne répond ni au critère ni à la question',
-      async () => {
-        await setup();
-        composant.form.patchValue({ title: 'Recalibrer le cobot' });
-
-        composant.submit();
-
-        expect(capa.updateCase).not.toHaveBeenCalled();
-        expect(ordre).toEqual(['addAction']);
-      });
+      expect(composant.critereRappele).toBe('Zero recidive sur 6 mois');
+      expect(composant.verificationDejaTranchee).toBeTrue();
+    });
   });
+
+  // --- une nature par discipline -------------------------------------------
+
+  describe('la nature de l’action, imposée par la discipline qui l’ouvre', () => {
+
+    /**
+     * Le D3 endigue, le D5 corrige, le D7 prévient : la question était reposée
+     * en trois choix sous un titre qui portait déjà la réponse. Un clic de trop,
+     * et surtout une action classée sous la discipline voisine dès que la main
+     * dérapait.
+     */
+    it('n’offre que la nature reçue, cochée, à l’ajout', async () => {
+      await setup({ actionType: 'CONTAINMENT' });
+
+      expect(composant.natures.map(n => n.value)).toEqual(['CONTAINMENT']);
+      expect(composant.form.controls.actionType.value).toBe('CONTAINMENT');
+      expect(un('action-nature')!.querySelectorAll('mat-radio-button').length).toBe(1);
+    });
+
+    it('propose les trois quand aucune n’est imposée', async () => {
+      await setup();
+      expect(composant.natures.map(n => n.value))
+        .toEqual(['CONTAINMENT', 'CORRECTIVE', 'PREVENTIVE']);
+    });
+
+    /** On relit alors une action écrite : corriger sa nature est légitime. */
+    it('propose les trois à l’édition, même si la discipline en impose une', async () => {
+      await setup({ action: action(), actionType: 'PREVENTIVE' });
+      expect(composant.natures.length).toBe(3);
+    });
+  });
+
+  // --- l'efficacité suit la nature, pas la seule « corrective » -------------
+
+  describe('l’évaluation d’efficacité d’une action préventive', () => {
+
+    /**
+     * « Plus aucune récidive sur les trois autres lignes pendant six mois » est
+     * un critère d'efficacité au même titre qu'un autre. La prévention était
+     * exclue de la demande : le D7 n'en demandait donc aucun.
+     */
+    it('demande le critère à l’ajout d’une action préventive', async () => {
+      await setup({ actionType: 'PREVENTIVE' });
+
+      expect(composant.demandeCritere).toBeTrue();
+      expect(un('action-efficacite-demande')).not.toBeNull();
+      expect(composant.demandeVerification).toBeTrue();
+      expect(un('action-verification-demande')).not.toBeNull();
+    });
+
+    it('ne pose pas la question de la vérification à un endiguement', async () => {
+      await setup({ actionType: 'CONTAINMENT' });
+
+      expect(composant.demandeCritere).toBeFalse();
+      expect(composant.demandeVerification).toBeFalse();
+      expect(un('action-efficacite-demande')).toBeNull();
+      expect(un('action-verification-demande')).toBeNull();
+      expect(un('action-efficacite-rappel')).toBeNull();
+    });
+
+    /**
+     * La décision appartient au dossier et ne se repose pas (ADR 0073) ; la
+     * TAIRE laissait écrire une action corrective sans savoir si son effet
+     * serait vérifié, et donnait à croire que la plateforme ne le demandait
+     * nulle part.
+     */
+    it('rappelle la vérification déjà tranchée, en lecture', async () => {
+      await setup({ actionType: 'CORRECTIVE', verificationRequired: true,
+                    effectivenessCriterion: 'Aucun rebut pendant 3 mois' });
+
+      expect(composant.verificationDejaTranchee).toBeTrue();
+      expect(un('action-verification-rappel-oui')).not.toBeNull();
+      expect(un('action-efficacite-rappel')!.textContent).toContain('Aucun rebut pendant 3 mois');
+    });
+
+    it('rappelle aussi le refus de vérification', async () => {
+      await setup({ actionType: 'CORRECTIVE', verificationRequired: false });
+
+      expect(composant.verificationDejaTranchee).toBeFalse();
+      expect(un('action-verification-rappel-non')).not.toBeNull();
+    });
+  });
+
 
   describe('l’équipe de l’écart, proposée en tête du sélecteur', () => {
 

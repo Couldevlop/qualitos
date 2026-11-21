@@ -518,6 +518,14 @@ export class CapaDetailComponent implements OnInit {
         return b.count === 1
           ? $localize`:@@capa.blocker.nc-one:1 non-conformité liée est encore ouverte.`
           : $localize`:@@capa.blocker.nc-many:${b.count}:count: non-conformités liées sont encore ouvertes.`;
+      // Une action « faite » dit que le geste a eu lieu, pas qu'il a produit
+      // son effet : toutes les actions doivent être CLOSES avant le dossier, et
+      // une action qui a promis une vérification ne l'est que vérifiée
+      // (ADR 0132).
+      case 'ACTION_VERIFICATIONS_PENDING':
+        return b.count === 1
+          ? $localize`:@@capa.blocker.action-verification-one:1 action attend la vérification d'efficacité qu'elle a promise.`
+          : $localize`:@@capa.blocker.action-verification-many:${b.count}:count: actions attendent la vérification d'efficacité qu'elles ont promise.`;
       default:
         // Code inconnu (serveur plus récent que l'écran) : mieux vaut une phrase
         // générique qu'un bouton actif dont on ignore pourquoi il échouera.

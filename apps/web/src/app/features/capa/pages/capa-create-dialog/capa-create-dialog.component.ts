@@ -88,6 +88,15 @@ export interface CapaCreateDialogData {
   /** La criticité découle de l'écran d'origine (cotation d'un risque) : affichée, non modifiable. */
   lockCriticity?: boolean;
   /**
+   * La nature de `prefill.type` est IMPOSÉE : seule elle est proposée, cochée.
+   *
+   * <p>Pour les disciplines du traitement 8D, qui ne parlent chacune que d'une
+   * nature (D3 endigue, D5 corrige, D7 prévient). Sans cela, le bouton d'une
+   * discipline ouvrait les trois choix avec « Corrective » pré-cochée, et la
+   * première action de confinement d'un écart naissait corrective.
+   */
+  lockType?: boolean;
+  /**
    * Comment l'écran d'origine ouvre le dossier — sa propre route serveur, qui
    * fixe la source et garde le lien (NC, constat, risque). Absent : la route
    * de création libre du module CAPA.
@@ -192,7 +201,18 @@ export class CapaCreateDialogComponent implements OnInit, OnDestroy {
     // le sélecteur de l'annuaire ; son nom est recopié à l'envoi.
     assigneeId: ['', [Validators.required]],
     dueDate: ['', [Validators.required, notInPast]],
-    sourceType: ['INTERNAL' as CapaSourceType, [Validators.required]],
+    // « AUTRE » par défaut, et non plus « détection interne » : cette dernière
+    // n'est plus proposée, faute d'adosser le dossier à un registre, et le
+    // défaut devait donc changer — un `mat-select` dont la valeur n'est dans
+    // aucune de ses options s'affiche vide, et le champ paraît non renseigné
+    // alors qu'il porte une valeur.
+    //
+    // « Autre » et non « l'écart » : un défaut adossé à un registre rendrait la
+    // référence OBLIGATOIRE à chaque ouverture, y compris pour un dossier qui ne
+    // traite ni écart, ni constat, ni risque. C'est exactement ce que
+    // « détection interne » permettait, et c'est légitime ; ce qui ne l'était
+    // pas, c'est de l'offrir à qui venait citer un écart.
+    sourceType: ['OTHER' as CapaSourceType, [Validators.required]],
     // Obligatoire dès que la source désigne un objet de la plateforme : le
     // validateur est posé par `applySourceRegister`, pas ici, car il suit la
     // source choisie.
@@ -250,10 +270,34 @@ export class CapaCreateDialogComponent implements OnInit, OnDestroy {
     // l'action » ne la pose pas : le dossier existe, sa décision se règle dans
     // « Modifier » — deux endroits pour la même décision, le dernier gagnerait
     // en silence.
-    if (!this.isDefineAction) {
-      this.form.controls.verificationRequired.addValidators(Validators.required);
-      this.form.controls.verificationRequired.updateValueAndValidity({ emitEvent: false });
+    //
+    // PAS POUR UN ENDIGUEMENT : la question ne lui est pas posée (voir
+    // `demandeEfficacite`), et un validateur posé sur une question qu'on
+    // n'affiche pas rendrait le formulaire invalide sans rien montrer — le
+    // bouton refuserait d'enregistrer en silence.
+    this.appliquerExigenceDeVerification();
+  }
+
+  /**
+   * Pose ou retire l'obligation de trancher la vérification, selon la nature.
+   *
+   * <p>Appelée à la construction, puis à chaque changement de nature. Hors de
+   * tout rendu dans les deux cas : la seconde vient d'un clic, et basculer
+   * `form.invalid` au milieu d'une passe de détection est précisément ce qui a
+   * produit quatre NG0100 sur ce bloc.
+   */
+  private appliquerExigenceDeVerification(): void {
+    const exigence = this.form.controls.verificationRequired;
+    if (this.demandeEfficacite) {
+      exigence.addValidators(Validators.required);
+    } else {
+      exigence.removeValidators(Validators.required);
+      // La réponse déjà donnée est effacée : passée à l'endiguement, la
+      // question n'est plus affichée, et laisser un « oui » partirait vers le
+      // serveur sans que personne ne l'ait vu à l'écran.
+      exigence.setValue(null, { emitEvent: false });
     }
+    exigence.updateValueAndValidity({ emitEvent: false });
   }
 
   ngOnInit(): void {
@@ -265,6 +309,11 @@ export class CapaCreateDialogComponent implements OnInit, OnDestroy {
     this.form.controls.sourceType.valueChanges
       .pipe(takeUntil(this.destroyed))
       .subscribe(type => this.applySourceRegister(capaSourceRegister(type), true));
+    // La nature décide si l'efficacité se demande : passer à l'endiguement
+    // retire la question et son obligation, en revenir les repose.
+    this.form.controls.type.valueChanges
+      .pipe(takeUntil(this.destroyed))
+      .subscribe(() => this.appliquerExigenceDeVerification());
     // Soi-même par défaut : c'est ce qui se faisait avant, et c'est modifiable.
     const me = this.auth.snapshot();
     if (me?.userId) {
@@ -425,6 +474,43 @@ export class CapaCreateDialogComponent implements OnInit, OnDestroy {
     return this.form.controls.type.value === 'CONTAINMENT';
   }
 
+  /**
+   * Les natures proposées : toutes, ou LA SEULE que l'écran appelant impose.
+   *
+   * <p>Une discipline du traitement 8D ne parle que d'une nature — le D3
+   * endigue, le D5 corrige, le D7 prévient. Son bouton ouvrait pourtant cette
+   * fenêtre avec les trois choix et « Corrective » pré-cochée : la première
+   * action de confinement d'un écart, écrite depuis le D3, naissait donc
+   * corrective, et le registre CAPA l'affichait sous ce faux type. La nature
+   * n'est pas une question quand la réponse est écrite au-dessus du bouton.
+   */
+  get naturesProposees(): ReadonlyArray<{ value: CapaNature; label: string }> {
+    const imposee = this.data.lockType ? this.data.prefill?.type : undefined;
+    if (!imposee) {
+      return this.natures;
+    }
+    return this.natures.filter(n => n.value === imposee);
+  }
+
+  /** Vrai quand la nature est imposée : le choix est montré, non proposé. */
+  get natureImposee(): boolean {
+    return !!this.data.lockType && !!this.data.prefill?.type;
+  }
+
+  /**
+   * Vrai quand l'ouverture doit poser la question de l'EFFICACITÉ — critère
+   * (ADR 0108) et exigence de vérification (ADR 0073).
+   *
+   * <p>Jamais pour un endiguement : une mesure qui contient l'effet ne prétend
+   * pas supprimer la cause, il n'y a donc rien à mesurer sur elle (ISO 9001
+   * §10.2). Lui demander un critère d'efficacité revenait à faire promettre un
+   * résultat à un geste qui n'en poursuit pas, et la question se reposera au
+   * premier correctif — celui-là, justement, qui le promet.
+   */
+  get demandeEfficacite(): boolean {
+    return !this.isDefineAction && !this.isContainment;
+  }
+
   get dialogTitle(): string {
     return this.isDefineAction
       ? $localize`:@@capa.open.define-title:Définir l'action`
@@ -548,7 +634,10 @@ export class CapaCreateDialogComponent implements OnInit, OnDestroy {
       ownerName: this.names.get(v.assigneeId),
       dueDate: v.dueDate
     };
-    if (!this.isDefineAction) {
+    // L'efficacité ne part que si elle a été demandée : un endiguement n'a ni
+    // critère ni décision de vérification, et les champs du formulaire gardent
+    // leur valeur par défaut.
+    if (this.demandeEfficacite) {
       Object.assign(request, this.verificationDecision(v));
       // La clé n'apparaît que si le critère est saisi. Poser
       // `effectivenessCriterion: undefined` enverrait un champ vide au serveur

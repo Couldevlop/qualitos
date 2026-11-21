@@ -48,10 +48,14 @@ const ROLES_ECRITURE = ['QUALITY_MANAGER', 'DIRECTOR_QUALITY', 'ADMIN_TENANT', '
  */
 const NATURES_PAR_DISCIPLINE: Readonly<Record<string, readonly CapaActionType[]>> = {
   D3: Object.freeze<CapaActionType[]>(['CONTAINMENT']),
-  // Le D5 montre ce qui a ete DECIDE pour supprimer la cause et empecher la
-  // recidive. L'endiguement n'y figure pas : il a sa discipline, le D3, et les
-  // memes lignes repetees sous deux titres laissaient croire a deux gestes.
-  D5: Object.freeze<CapaActionType[]>(['CORRECTIVE', 'PREVENTIVE']),
+  // Le D5 montre ce qui SUPPRIME LA CAUSE de l'ecart survenu, et rien d'autre.
+  // L'endiguement n'y figure pas -- il a sa discipline, le D3 -- et la
+  // prevention non plus : elle a la sienne, le D7. Elle y figurait, et chaque
+  // action preventive se lisait donc DEUX FOIS, au D5 et au D7, comme si
+  // l'ecart avait ete traite deux fois. La fiche de l'ecart, elle, faisait
+  // deja cette separation : l'ecran et le rapport ne montraient pas le meme
+  // dossier.
+  D5: Object.freeze<CapaActionType[]>(['CORRECTIVE']),
   // LE D6 N'EST PAS UNE DISCIPLINE D'ACTIONS : c'est celle de la PREUVE --
   // releve, photo, procedure signee qui demontrent que le probleme a cesse
   // (ISO 9001 10.2). Il portait le tableau des actions preventives, qui est

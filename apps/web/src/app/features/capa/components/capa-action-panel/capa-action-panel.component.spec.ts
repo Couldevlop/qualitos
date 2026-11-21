@@ -226,6 +226,35 @@ describe('CapaActionPanelComponent', () => {
     expect(data.actionType).toBe('PREVENTIVE');
   });
 
+  /**
+   * LE BOUTON DIT CE QU'IL AJOUTE.
+   *
+   * <p>« Ajouter une action » sous le tableau du confinement, puis le meme mot
+   * sous celui des correctives et sous celui des preventives : trois boutons
+   * identiques pour trois gestes differents, et rien, avant le clic, ne disait
+   * lequel on allait ecrire.
+   */
+  it('nomme la nature dans le bouton d’ajout quand le tableau n’en montre qu’une', async () => {
+    await setup({ dossier: dossier({ actions: [] }) });
+
+    hote.natures = ['CONTAINMENT'];
+    fixture.detectChanges();
+    expect(un('capa-action-definir')!.textContent).toContain('confinement');
+
+    hote.natures = ['CORRECTIVE'];
+    fixture.detectChanges();
+    expect(un('capa-action-definir')!.textContent).toContain('corrective');
+
+    hote.natures = ['PREVENTIVE'];
+    fixture.detectChanges();
+    expect(un('capa-action-definir')!.textContent).toContain('préventive');
+
+    // Le tableau complet, lui, n'a aucune nature à nommer.
+    hote.natures = [];
+    fixture.detectChanges();
+    expect(un('capa-action-definir')!.textContent).toContain('Ajouter une action');
+  });
+
   // ---------- lecture ----------
 
   it('lit le dossier dont on lui donne l’identifiant', async () => {
@@ -694,6 +723,104 @@ describe('CapaActionPanelComponent', () => {
    * son début est presque toujours une faute de frappe, et elle fausse tous les
    * décomptes de retard sans que rien ne l'annonce.
    */
+
+  // ---------- la verification promise action par action (ADR 0132) ----------
+
+  /**
+   * Une action « faite » dit que le geste a eu lieu ; elle ne dit pas qu'il a
+   * produit son effet. Celle qui a PROMIS une verification (ADR 0131) n'est
+   * close que verifiee, et le dossier ne se cloture pas avant : c'est ici,
+   * sur la ligne meme ou l'on vient de la terminer, que la promesse se solde.
+   */
+  describe('juger l’efficacite d’une action', () => {
+
+    const promise = (p: Partial<CapaActionResponse> = {}) => action({
+      status: 'DONE', verificationRequired: true,
+      effectivenessCriterion: 'Aucun rebut pendant 3 mois', ...p
+    });
+
+    it('propose de verifier une action faite qui a promis une verification', async () => {
+      await setup({ dossier: dossier({ actions: [promise()] }) });
+
+      expect(panneau().attendVerification(promise())).toBeTrue();
+      expect(un('capa-action-verifier')).not.toBeNull();
+    });
+
+    it('ne le propose pas quand rien n’a ete promis : le statut « faite » suffit', async () => {
+      await setup({ dossier: dossier({ actions: [action({ status: 'DONE' })] }) });
+
+      expect(panneau().attendVerification(action({ status: 'DONE' }))).toBeFalse();
+      expect(un('capa-action-verifier')).toBeNull();
+    });
+
+    it('ne le propose pas avant que le geste ait eu lieu', async () => {
+      const pas_faite = promise({ status: 'IN_PROGRESS' });
+      await setup({ dossier: dossier({ actions: [pas_faite] }) });
+
+      expect(panneau().attendVerification(pas_faite)).toBeFalse();
+      expect(un('capa-action-verifier')).toBeNull();
+    });
+
+    /**
+     * Un verdict PARTIEL ou INEFFICACE ne leve pas l'obstacle : l'action a ete
+     * regardee, et ce qu'on a vu ne permet pas de clore. C'est exactement ce
+     * que le serveur refuse a la cloture.
+     */
+    it('continue de le proposer apres un verdict insuffisant', async () => {
+      const partielle = promise({ verificationVerdict: 'PARTIAL' });
+      await setup({ dossier: dossier({ actions: [partielle] }) });
+
+      expect(panneau().attendVerification(partielle)).toBeTrue();
+      expect(panneau().efficaciteConstatee(partielle)).toBeFalse();
+      expect(un('capa-action-verifier')).not.toBeNull();
+    });
+
+    it('affiche l’efficacite constatee, avec qui a juge et quand', async () => {
+      const jugee = promise({
+        verificationVerdict: 'EFFECTIVE',
+        verifiedAt: '2026-11-20T10:00:00Z',
+        verifiedByName: 'Amina Dridi'
+      });
+      await setup({ dossier: dossier({ actions: [jugee] }) });
+
+      expect(panneau().efficaciteConstatee(jugee)).toBeTrue();
+      expect(un('capa-action-verifiee')).not.toBeNull();
+      expect(un('capa-action-verifier')).toBeNull();
+      // Un jugement sans auteur ne vaut rien devant un auditeur.
+      expect(panneau().verdictTooltip(jugee)).toContain('Amina Dridi');
+      expect(panneau().verdictTooltip(jugee)).toContain('2026-11-20');
+    });
+
+    it('ouvre la fenetre avec l’action ET le critere du dossier', async () => {
+      const sans_critere = promise({ effectivenessCriterion: undefined });
+      await setup({
+        dossier: dossier({
+          actions: [sans_critere],
+          effectivenessCriterion: 'Zero retard sur 620 expeditions'
+        })
+      });
+
+      panneau().verifier(sans_critere);
+
+      const donnees = (dialog.open.calls.mostRecent().args[1] as { data: Record<string, unknown> }).data;
+      expect(donnees['caseId']).toBe('capa-1');
+      expect(donnees['action']).toBe(sans_critere);
+      // Les actions anterieures aux colonnes n'ont pas le leur : la fenetre
+      // doit pouvoir dire a quoi elle confronte le releve.
+      expect(donnees['caseCriterion']).toBe('Zero retard sur 620 expeditions');
+    });
+
+    it('recharge le tableau quand un verdict a ete enregistre', async () => {
+      await setup({ dossier: dossier({ actions: [promise()] }) });
+      capa.getCase.calls.reset();
+      ferme = true;
+
+      panneau().verifier(promise());
+
+      expect(capa.getCase).toHaveBeenCalled();
+    });
+  });
+
   describe('la date de début et l’ordre des deux dates', () => {
 
     it('montre la date de début de chaque action', async () => {

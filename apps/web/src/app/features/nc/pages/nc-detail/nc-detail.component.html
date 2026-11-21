@@ -675,19 +675,32 @@
 
             <ng-container *ngIf="dossiers(n).length; else sansDossierD3">
               <div class="capa-dossier" *ngFor="let d of dossiers(n)">
-                <div class="capa-dossier-head" *ngIf="dossiers(n).length > 1">
-                  <span class="capa-dossier-titre">{{ d.title }}</span>
-                </div>
                 <qos-capa-action-panel [capaCaseId]="d.id" [team]="n.teamMembers ?? []" [natures]="naturesD3"
                                        (counted)="compter('D3', $event)"
                                        (changed)="reload()"></qos-capa-action-panel>
               </div>
             </ng-container>
             <ng-template #sansDossierD3>
-              <!-- PAS de second bouton d'ouverture : il y en a un seul, au D5.
-                   Trois invites identiques empilees sous trois titres feraient
-                   croire a trois dossiers a ouvrir. -->
-              <p class="dim" data-test="sans-dossier-d3" i18n="@@nc.8d.d3-no-case">Aucun dossier CAPA n’existe encore sur cet écart : les actions de confinement s’écriront ici dès qu’il y en aura un, au D5.</p>
+              <!-- SON PROPRE BOUTON, et la nature qu'il écrit dans son nom.
+                   Cette discipline renvoyait au D5 pour ouvrir le dossier : on
+                   y descendait, on cliquait « Nouvelle action », et la fenêtre
+                   proposait trois natures avec « Corrective » pré-cochée --
+                   l'action de confinement qu'on venait d'écrire naissait donc
+                   corrective, et ce D3 restait vide. La nature est désormais
+                   imposée par la discipline d'où l'on part. -->
+              <div class="invite" data-test="sans-dossier-d3">
+                <p class="dim" i18n="@@nc.8d.d3-no-case">
+                  Aucun dossier CAPA n’existe encore sur cet écart. La première
+                  action de confinement l’ouvrira : les suivantes s’ajouteront
+                  dans ce tableau.
+                </p>
+                <button mat-stroked-button color="primary" (click)="openCapa(n, 'CONTAINMENT')"
+                        data-test="d3-ajouter-confinement" *qosCan="'nc.escalate'"
+                        [disabled]="(acting$ | async) || !canAddActions(n)">
+                  <mat-icon>add</mat-icon>
+                  <span i18n="@@capa.actions.add-containment">Ajouter une action de confinement</span>
+                </button>
+              </div>
             </ng-template>
           </section>
 
@@ -775,8 +788,13 @@
               </p>
               <div class="capa-dossier" *ngFor="let d of dossiers(n)"
                    [attr.data-test]="'capa-dossier-' + d.id">
+                <!-- LE LIEN SEUL. L'intitule du dossier s'ecrivait ici, au-dessus
+                     de chacun des trois tableaux : le nom de la premiere action
+                     -- « Action containment 1 » -- se lisait donc comme un titre
+                     de section, juste au-dessus d'un tableau qui le reprend sur
+                     sa premiere ligne. Deux fois la meme chose, dont une qui
+                     ressemblait a l'intitule de la discipline. -->
                 <div class="capa-dossier-head">
-                  <span class="capa-dossier-titre" *ngIf="dossiers(n).length > 1">{{ d.title }}</span>
                   <a mat-stroked-button [routerLink]="['/capa', d.id]"
                      data-test="capa-action-dossier">
                     <mat-icon>open_in_new</mat-icon>
@@ -801,11 +819,11 @@
                   confinement, correctives et préventives s’écriront et
                   s’avanceront ici même, chacune sous sa discipline.
                 </p>
-                <button mat-stroked-button color="primary" (click)="addActions(n)"
+                <button mat-stroked-button color="primary" (click)="openCapa(n, 'CORRECTIVE')"
                         data-test="capa-action-ouvrir" *qosCan="'nc.escalate'"
                         [disabled]="(acting$ | async) || !canAddActions(n)">
-                  <mat-icon>checklist</mat-icon>
-                  <span i18n="@@nc.detail.new-action">Nouvelle action</span>
+                  <mat-icon>add</mat-icon>
+                  <span i18n="@@capa.actions.add-corrective">Ajouter une action corrective</span>
                 </button>
               </div>
             </ng-template>
@@ -892,9 +910,6 @@
 
             <ng-container *ngIf="dossiers(n).length; else sansDossierD7">
               <div class="capa-dossier" *ngFor="let d of dossiers(n)">
-                <div class="capa-dossier-head" *ngIf="dossiers(n).length > 1">
-                  <span class="capa-dossier-titre">{{ d.title }}</span>
-                </div>
                 <qos-capa-action-panel [capaCaseId]="d.id" [team]="n.teamMembers ?? []" [natures]="naturesD7"
                                        [colonnePreuve]="false"
                                        (counted)="compter('D7', $event)"
@@ -902,10 +917,21 @@
               </div>
             </ng-container>
             <ng-template #sansDossierD7>
-              <!-- PAS de second bouton d'ouverture : il y en a un seul, au D5.
-                   Trois invites identiques empilees sous trois titres feraient
-                   croire a trois dossiers a ouvrir. -->
-              <p class="dim" data-test="sans-dossier-d7" i18n="@@nc.8d.d7-no-case">Aucun dossier CAPA n’existe encore sur cet écart : les actions préventives s’écriront ici dès qu’il y en aura un, au D5.</p>
+              <!-- Son propre bouton, pour la même raison qu'au D3 : la nature
+                   vient de la discipline, pas d'un champ à corriger. -->
+              <div class="invite" data-test="sans-dossier-d7">
+                <p class="dim" i18n="@@nc.8d.d7-no-case">
+                  Aucun dossier CAPA n’existe encore sur cet écart. La première
+                  action préventive l’ouvrira : les suivantes s’ajouteront dans
+                  ce tableau.
+                </p>
+                <button mat-stroked-button color="primary" (click)="openCapa(n, 'PREVENTIVE')"
+                        data-test="d7-ajouter-preventive" *qosCan="'nc.escalate'"
+                        [disabled]="(acting$ | async) || !canAddActions(n)">
+                  <mat-icon>add</mat-icon>
+                  <span i18n="@@capa.actions.add-preventive">Ajouter une action préventive</span>
+                </button>
+              </div>
             </ng-template>
           </section>
 

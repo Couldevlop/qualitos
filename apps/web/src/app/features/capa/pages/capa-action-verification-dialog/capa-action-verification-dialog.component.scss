@@ -1,0 +1,104 @@
+:host { display: block; }
+
+.full { display: block; width: 100%; }
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--qos-space-4);
+}
+
+.row .col { flex: 1 1 200px; min-width: 0; }
+
+/* L'action jugée, en tête : on arrive ici depuis un tableau de plusieurs
+   lignes, et un jugement s'ajoute à l'historique sans s'effacer. */
+.action-jugee {
+  margin: 0 0 var(--qos-space-3);
+  font-weight: 600;
+  color: var(--qos-fg-primary);
+}
+
+/* Le critère, en lecture : il a été posé à l'écriture de l'action et ne se
+   rouvre pas ici. Le cadre dit « ceci se lit », là où un champ dirait
+   « ceci se remplit ». */
+.critere {
+  display: flex;
+  flex-direction: column;
+  gap: var(--qos-space-1);
+  margin-bottom: var(--qos-space-4);
+  padding: var(--qos-space-3);
+  border-left: 3px solid var(--qos-border-subtle);
+  background: var(--qos-bg-subtle);
+  border-radius: var(--qos-radius-sm);
+}
+
+.critere__titre {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--qos-fg-muted);
+}
+
+.critere__texte {
+  margin: 0;
+  color: var(--qos-fg-primary);
+}
+
+.sans-critere {
+  margin: 0 0 var(--qos-space-4);
+  padding: var(--qos-space-3);
+  border-radius: var(--qos-radius-sm);
+  background: var(--qos-warning-bg);
+  color: var(--qos-warning-fg);
+  font-size: 0.875rem;
+}
+
+/* Les trois verdicts, côte à côte et dans les mêmes tons que le plan de travail
+   des évaluations : une couleur qui dirait « efficace » ici et autre chose
+   là-bas se lirait comme deux verdicts différents. */
+.choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--qos-space-2);
+  margin: var(--qos-space-2) 0;
+}
+
+.choice {
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  padding: var(--qos-space-2) var(--qos-space-3);
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: var(--qos-radius-sm);
+  background: var(--qos-bg-surface);
+  color: var(--qos-fg-primary);
+
+  &:focus-visible {
+    outline: 2px solid var(--qos-accent-fg);
+    outline-offset: 2px;
+  }
+
+  /* Choisi : le liseré épais porte l'information en plus de la couleur, pour
+     qui ne la distingue pas. */
+  &.on {
+    border-width: 2px;
+    font-weight: 600;
+  }
+
+  &.on.tone-ok { border-color: var(--qos-success-fg); }
+  &.on.tone-warn { border-color: var(--qos-warning-fg); }
+  &.on.tone-bad { border-color: var(--qos-danger-fg); }
+}
+
+.outcome {
+  margin: var(--qos-space-2) 0 var(--qos-space-4);
+  padding: var(--qos-space-2) var(--qos-space-3);
+  border-radius: var(--qos-radius-sm);
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.tone-ok { background: var(--qos-success-bg); color: var(--qos-success-fg); }
+.tone-warn { background: var(--qos-warning-bg); color: var(--qos-warning-fg); }
+.tone-bad { background: var(--qos-danger-bg); color: var(--qos-danger-fg); }

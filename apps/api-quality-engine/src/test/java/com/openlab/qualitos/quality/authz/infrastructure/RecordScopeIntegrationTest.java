@@ -135,7 +135,7 @@ class RecordScopeIntegrationTest {
         UUID pilote = dossier("Piloté par Marie", marie);
         UUID avecAction = dossier("Une action pour Marie", paul);
         dans(() -> capas.addAction(avecAction, new CapaDto.ActionRequest("Remplacer le joint", null, null, null,
-                marie, "Marie", null, null)));
+                marie, "Marie", null, null, null, null, null, null, null)));
 
         connecte(marie, "USER");
         assertThat(dans(() -> capas.findAll(null, PageRequest.of(0, 50))).getContent())
