@@ -23,6 +23,7 @@ import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -51,6 +52,9 @@ public class QualityObjectiveService {
 
     /** Au-delà, une revue ne lit plus : vingt-quatre périodes couvrent deux ans de mensuel. */
     private static final int MAX_PERIODS = 24;
+
+    /** Les dates du dossier sont écrites en français : le corps est de la prose. */
+    private static final DateTimeFormatter JOUR = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     private final QualityObjectiveRepository objectives;
     private final QualityObjectiveProposalRepository proposals;
@@ -648,8 +652,15 @@ public class QualityObjectiveService {
                 RoundingMode.HALF_UP).toPlainString();
     }
 
+    /**
+     * Le jour, écrit comme le lit un francophone : « 01/10/2026 ».
+     *
+     * <p>Le corps du dossier est de la prose française ; une date ISO au
+     * milieu d'une phrase se lit mal et n'est pas la forme employée par les
+     * autres rapports de la plateforme.
+     */
     private static String jour(Instant t) {
-        return t == null ? "—" : t.atZone(ZoneOffset.UTC).toLocalDate().toString();
+        return t == null ? "—" : JOUR.format(t.atZone(ZoneOffset.UTC).toLocalDate());
     }
 
     private static String blankToNull(String s) {
