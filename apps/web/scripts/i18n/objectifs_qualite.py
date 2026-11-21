@@ -158,6 +158,16 @@ TRANSLATIONS = {
         "Vérification d'efficacité — obligatoire", 'Effectiveness verification — mandatory',
         'Verificación de eficacia — obligatoria', 'التحقّق من الفعالية — إلزامي',
         '有効性の検証 — 必須', '有效性验证 — 必填'),
+    'objectives.panel.links': (
+        'Liens générés', 'Generated links', 'Enlaces generados',
+        'الروابط المُنشأة', '生成されたリンク', '生成的关联'),
+    'objectives.panel.links-list': (
+        'NC clients du mois · Réclamations · PFMEA · Control plan · Revue de direction 9.3',
+        'Customer NCs of the month · Complaints · PFMEA · Control plan · Management review 9.3',
+        'NC de clientes del mes · Reclamaciones · PFMEA · Plan de control · Revisión por la dirección 9.3',
+        'حالات عدم المطابقة لدى العملاء هذا الشهر · الشكاوى · PFMEA · خطة التحكّم · مراجعة الإدارة 9.3',
+        '当月の顧客不適合 · 苦情 · PFMEA · コントロールプラン · マネジメントレビュー 9.3',
+        '本月客户不合格 · 投诉 · PFMEA · 控制计划 · 管理评审 9.3'),
     'objectives.panel.accept': (
         'Accepter et enregistrer la CAPA', 'Accept and record the CAPA',
         'Aceptar y registrar la CAPA', 'قبول وتسجيل إجراء CAPA',

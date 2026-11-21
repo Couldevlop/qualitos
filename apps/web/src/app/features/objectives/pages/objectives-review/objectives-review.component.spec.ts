@@ -328,6 +328,35 @@ describe('ObjectivesReviewComponent — la revue des objectifs (ADR 0133)', () =
       .toContain('NC client');
   });
 
+  /**
+   * La ligne « Liens générés » de la maquette annotée. Elle nomme ce que le
+   * dossier rapproche, et le panneau la porte en texte, comme la maquette.
+   */
+  it('porte la ligne « Liens générés » de la maquette', async () => {
+    await build();
+    const liens = (fixture.nativeElement as HTMLElement)
+      .querySelector('[data-test="objectifs-liens"]');
+    expect(liens).not.toBeNull();
+    expect(liens?.textContent).toContain('Liens générés');
+    expect(liens?.textContent).toContain('NC clients du mois');
+    expect(liens?.textContent).toContain('Réclamations');
+    expect(liens?.textContent).toContain('PFMEA');
+    expect(liens?.textContent).toContain('Control plan');
+    expect(liens?.textContent).toContain('Revue de direction 9.3');
+  });
+
+  /**
+   * Elle est hors du garde de `canManage` : c'est un renseignement, pas un
+   * geste. Un auditeur en lecture seule doit voir ce que le dossier rapproche,
+   * alors que les trois boutons de décision, eux, restent réservés.
+   */
+  it('montre les liens à qui ne peut pas décider, mais pas les boutons', async () => {
+    await build(revue(), false);
+    const html = fixture.nativeElement as HTMLElement;
+    expect(html.querySelector('[data-test="objectifs-liens"]')).not.toBeNull();
+    expect(html.querySelector('[data-test="objectifs-accepter"]')).toBeNull();
+  });
+
   it('annonce le vide plutôt que de laisser un tableau nu', async () => {
     await build(revue({ objectives: [], pendingProposals: [], counters:
       { tracked: 0, onTarget: 0, warning: 0, critical: 0 } }));

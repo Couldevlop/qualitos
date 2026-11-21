@@ -23597,6 +23597,14 @@ historique 12 mois</source>
         <source>Vérification d'efficacité — obligatoire</source>
         <target state="translated">有効性の検証 — 必須</target>
       </trans-unit>
+      <trans-unit id="objectives.panel.links" datatype="html">
+        <source>Liens générés</source>
+        <target state="translated">生成されたリンク</target>
+      </trans-unit>
+      <trans-unit id="objectives.panel.links-list" datatype="html">
+        <source>NC clients du mois · Réclamations · PFMEA · Control plan · Revue de direction 9.3</source>
+        <target state="translated">当月の顧客不適合 · 苦情 · PFMEA · コントロールプラン · マネジメントレビュー 9.3</target>
+      </trans-unit>
       <trans-unit id="objectives.panel.accept" datatype="html">
         <source>Accepter et enregistrer la CAPA</source>
         <target state="translated">承認して CAPA を登録</target>
