@@ -22438,6 +22438,26 @@ historique 12 mois</source>
         <source>Vous n'avez pas le droit de clôturer un écart. Demandez à un responsable qualité de porter ce geste.</source>
         <target state="translated">您没有关闭不合格项的权限，请让质量负责人执行该操作。</target>
       </trans-unit>
+      <trans-unit id="nc.blocker.action-to-do" datatype="html">
+        <source>à mener</source>
+        <target state="translated">待执行</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.action-to-verify" datatype="html">
+        <source>faite, son efficacité reste à vérifier</source>
+        <target state="translated">已执行，有效性尚待验证</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.actions-count-one" datatype="html">
+        <source>1 action le retient</source>
+        <target state="translated">1 项措施仍未完成</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.actions-count-many" datatype="html">
+        <source><x id="count"/> actions le retiennent</source>
+        <target state="translated"><x id="count"/> 项措施仍未完成</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.action-pending" datatype="html">
+        <source>en attente</source>
+        <target state="translated">待处理</target>
+      </trans-unit>
       <trans-unit id="nc.detail.blockers-resolve" datatype="html">
         <source>Cet écart ne peut pas encore être résolu</source>
         <target state="translated">该不合格项尚不能解决</target>
@@ -23153,10 +23173,6 @@ historique 12 mois</source>
       <trans-unit id="nc.8d.banner-rejected" datatype="html">
         <source>Écarté le</source>
         <target state="translated">驳回于</target>
-      </trans-unit>
-      <trans-unit id="nc.8d.banner-resolved" datatype="html">
-        <source>Résolu le</source>
-        <target state="translated">解决于</target>
       </trans-unit>
       <trans-unit id="nc.8d.banner-cancelled" datatype="html">
         <source>Écart annulé.</source>

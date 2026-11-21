@@ -27,4 +27,25 @@ TRANSLATIONS = {
         'ليست لديك صلاحية إغلاق حالة عدم مطابقة. اطلب من مسؤول الجودة القيام بذلك.',
         '不適合を閉じる権限がありません。品質責任者に依頼してください。',
         '您没有关闭不合格项的权限，请让质量负责人执行该操作。'),
+
+    # --- ce qu'on attend d'une action nommee sous son dossier --------------
+    'nc.blocker.action-to-do': (
+        "à mener", 'to carry out', 'por ejecutar', 'قيد التنفيذ',
+        '未実施', '待执行'),
+    'nc.blocker.action-to-verify': (
+        "faite, son efficacité reste à vérifier",
+        'done, its effectiveness still has to be verified',
+        'realizada, falta verificar su eficacia',
+        'منفّذ، ولم يتم التحقق من فعاليته بعد',
+        '実施済み、有効性の検証が未了',
+        '已执行，有效性尚待验证'),
+    'nc.blocker.actions-count-one': (
+        "1 action le retient", '1 action is holding it', '1 acción lo retiene',
+        'إجراء واحد يحجزه', '1 件の処置が保留しています', '1 项措施仍未完成'),
+    'nc.blocker.actions-count-many': (
+        "{$count} actions le retiennent", '{$count} actions are holding it',
+        '{$count} acciones lo retienen', '{$count} إجراءات تحجزه',
+        '{$count} 件の処置が保留しています', '{$count} 项措施仍未完成'),
+    'nc.blocker.action-pending': (
+        "en attente", 'pending', 'pendiente', 'قيد الانتظار', '保留中', '待处理'),
 }

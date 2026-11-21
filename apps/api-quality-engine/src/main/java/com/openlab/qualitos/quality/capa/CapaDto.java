@@ -153,7 +153,33 @@ public final class CapaDto {
      * relire. Sert aux écrans qui listent les dossiers d'un écart.
      */
     public record CaseRef(UUID id, String title, CapaStatus status,
-                          String effectivenessComment) {}
+                          String effectivenessComment,
+                          List<BlockingAction> blockingActions) {}
+
+    /**
+     * Une action qui RETIENT la cloture de son dossier, et ce qu'elle attend.
+     *
+     * <p>Le motif de blocage d'un ecart nommait le dossier et s'arretait la.
+     * Un dossier porte dix actions ; savoir qu'il n'est pas clos ne dit pas
+     * laquelle on attend, et la personne devait ouvrir le dossier pour
+     * instruire elle-meme ce que le serveur savait deja.
+     *
+     * <p>Deux attentes, et deux seulement, parce que ce sont les deux memes que
+     * la cloture du dossier oppose : le geste n'a pas eu lieu
+     * ({@link ClosureBlockerCode#ACTIONS_NOT_DONE}), ou il a eu lieu sans que
+     * son effet soit verifie ({@link ClosureBlockerCode#ACTION_VERIFICATIONS_PENDING},
+     * ADR 0132). Une action faite et verifiee ne parait pas : elle ne retient
+     * plus rien.
+     */
+    public record BlockingAction(UUID id, String title, BlockingReason reason) {}
+
+    /** Ce qu'une action qui bloque attend encore. */
+    public enum BlockingReason {
+        /** Le geste n'a pas eu lieu : l'action n'est pas {@code DONE}. */
+        TO_DO,
+        /** Le geste a eu lieu, son effet n'est pas verifie (ADR 0132). */
+        TO_VERIFY
+    }
 
     public record EffectivenessRequest(
             @Deprecated Boolean effective,

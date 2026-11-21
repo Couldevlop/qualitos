@@ -216,6 +216,28 @@ export interface NcCapaCaseRef {
   status?: string;
   /** La note libre tenue à côté des preuves du dossier (D6) ; absente tant qu'on n'en a pas écrit. */
   effectivenessComment?: string;
+  /**
+   * Les actions de ce dossier qui RETIENNENT la clôture, chacune avec ce
+   * qu'elle attend.
+   *
+   * <p>Le motif de blocage nommait le dossier ; un dossier porte autant
+   * d'actions qu'on veut, et il fallait l'ouvrir pour trouver laquelle on
+   * attendait. Vide dès que le dossier est réglé.
+   */
+  blockingActions?: NcBlockingAction[];
+}
+
+/**
+ * Une action qui retient la clôture, et la raison pour laquelle elle la
+ * retient.
+ *
+ * <p>Deux raisons, les deux mêmes que la clôture du dossier oppose : le geste
+ * n'a pas eu lieu, ou il a eu lieu sans que son effet soit vérifié (ADR 0132).
+ */
+export interface NcBlockingAction {
+  id: string;
+  title: string;
+  reason: 'TO_DO' | 'TO_VERIFY' | string;
 }
 
 /**

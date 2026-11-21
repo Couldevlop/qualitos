@@ -202,6 +202,128 @@ describe('NcDetailComponent — le bandeau de ce qui manque', () => {
     expect(un('nc-blocker-lien-capa-1')).not.toBeNull();
   });
 
+  // ---------- les actions qui retiennent, nommées une à une ---------------
+
+  /**
+   * NOMMER LE DOSSIER NE SUFFIT PAS : il porte autant d'actions qu'on veut, et
+   * savoir qu'il n'est pas clos ne dit pas laquelle on attend. Il fallait
+   * l'ouvrir pour instruire soi-même ce que le serveur savait déjà.
+   */
+  it('nomme chaque action qui retient la clôture, et ce qu’elle attend', async () => {
+    await monter();
+    afficher(ecart('RESOLVED', [{ code: 'CAPA_CASES_UNSETTLED', count: 1 }], [
+      {
+        id: 'capa-1', title: 'Le dossier', status: 'RESOLVED', blockingActions: [
+          { id: 'act-1', title: 'Reprendre les 12 vannes', reason: 'TO_DO' },
+          { id: 'act-2', title: 'Imprimer la plaque depuis l’ERP', reason: 'TO_VERIFY' }
+        ]
+      }
+    ]));
+
+    const aFaire = un('nc-blocker-action-act-1');
+    expect(aFaire)
+      .withContext('sans la liste, il faut ouvrir le dossier pour savoir quoi faire')
+      .not.toBeNull();
+    expect(aFaire?.textContent).toContain('Reprendre les 12 vannes');
+    expect(aFaire?.parentElement?.textContent).toContain('à mener');
+
+    const aVerifier = un('nc-blocker-action-act-2');
+    expect(aVerifier?.textContent).toContain('Imprimer la plaque depuis l’ERP');
+    expect(aVerifier?.parentElement?.textContent)
+      .withContext('faite ne veut pas dire vérifiée (ADR 0132)')
+      .toContain('vérifier');
+    // LE DÉCOMPTE du motif compte les DOSSIERS ; celui-ci compte le travail
+    // qui reste dedans, et c'est lui qu'on vient lire.
+    expect(texte('nc-blocker-compte-capa-1')).toContain('2 actions');
+  });
+
+  // « 1 actions » est une faute que personne ne pardonne à un logiciel de
+  // qualité : le singulier a sa propre phrase.
+  it('écrit le décompte au singulier quand une seule action retient', async () => {
+    await monter();
+    afficher(ecart('RESOLVED', [{ code: 'CAPA_CASES_UNSETTLED', count: 1 }], [
+      {
+        id: 'capa-1', title: 'Le dossier', status: 'OPEN',
+        blockingActions: [{ id: 'act-1', title: 'Une action', reason: 'TO_DO' }]
+      }
+    ]));
+
+    expect(texte('nc-blocker-compte-capa-1')).toContain('1 action le retient');
+  });
+
+  /**
+   * LE LIEN MÈNE À L'ACTION, et non à son dossier : elle se traite dans le
+   * tableau de sa discipline, plus bas sur cette même fiche — et la fiche du
+   * dossier renvoie d'ailleurs ici (ADR 0115). Nommer l'action sans y conduire
+   * laisserait chercher dans trois tableaux laquelle est celle-là.
+   */
+  it('conduit à la ligne de l’action, et lui donne le focus', async () => {
+    await monter();
+    afficher(ecart('RESOLVED', [{ code: 'CAPA_CASES_UNSETTLED', count: 1 }], [
+      {
+        id: 'capa-1', title: 'Le dossier', status: 'OPEN',
+        blockingActions: [{ id: 'act-1', title: 'Une action', reason: 'TO_DO' }]
+      }
+    ]));
+
+    // La ligne que le panneau d'actions dessine pour cette action-là.
+    const ligne = document.createElement('div');
+    ligne.id = 'capa-action-act-1';
+    ligne.tabIndex = 0;
+    const defilement = jasmine.createSpy('scrollIntoView');
+    ligne.scrollIntoView = defilement;
+    (fixture.nativeElement as HTMLElement).appendChild(ligne);
+
+    un('nc-blocker-action-act-1')!.click();
+
+    expect(defilement).toHaveBeenCalled();
+    expect(document.activeElement)
+      .withContext('le clavier reprend là où l’œil s’arrête')
+      .toBe(ligne);
+  });
+
+  // Un panneau d'actions qui charge encore n'a pas dessiné sa ligne : on ne
+  // saute pas n'importe où plutôt que de sauter juste.
+  it('ne fait rien quand la ligne de l’action n’est pas encore dessinée', async () => {
+    await monter();
+    afficher(ecart('RESOLVED', [{ code: 'CAPA_CASES_UNSETTLED', count: 1 }], [
+      {
+        id: 'capa-1', title: 'Le dossier', status: 'OPEN',
+        blockingActions: [{ id: 'act-1', title: 'Une action', reason: 'TO_DO' }]
+      }
+    ]));
+
+    expect(() => un('nc-blocker-action-act-1')!.click()).not.toThrow();
+  });
+
+  // Un dossier sans action bloquante n'en affiche aucune : la liste ne s'ouvre
+  // pas pour rester vide.
+  it('n’affiche aucune action quand le dossier n’en retient aucune', async () => {
+    await monter();
+    afficher(ecart('RESOLVED', [{ code: 'CAPA_CASES_UNSETTLED', count: 1 }], [
+      { id: 'capa-1', title: 'Le dossier', status: 'RESOLVED', blockingActions: [] }
+    ]));
+
+    expect(un('nc-blocker-lien-capa-1')).not.toBeNull();
+    expect((fixture.nativeElement as HTMLElement)
+      .querySelector('.blockers-actions')).toBeNull();
+  });
+
+  // Un code d'attente que cet écran ne connaît pas — serveur plus récent — rend
+  // une phrase générique plutôt qu'un libellé vide.
+  it('écrit une attente générique pour un motif qu’il ne connaît pas', async () => {
+    await monter();
+    afficher(ecart('RESOLVED', [{ code: 'CAPA_CASES_UNSETTLED', count: 1 }], [
+      {
+        id: 'capa-1', title: 'Le dossier', status: 'OPEN',
+        blockingActions: [{ id: 'act-9', title: 'Une action', reason: 'TO_SIGN' }]
+      }
+    ]));
+
+    expect(un('nc-blocker-action-act-9')?.parentElement?.textContent)
+      .toContain('en attente');
+  });
+
   // ---------- le droit qui manque à celui qui lit -------------------------
 
   it('dit que le droit de clôturer manque, plutôt que de taire le bouton', async () => {

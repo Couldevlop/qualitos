@@ -22438,6 +22438,26 @@ historial de 12 meses</target>
         <source>Vous n'avez pas le droit de clôturer un écart. Demandez à un responsable qualité de porter ce geste.</source>
         <target state="translated">No tiene permiso para cerrar una no conformidad. Pida a un responsable de calidad que lo haga.</target>
       </trans-unit>
+      <trans-unit id="nc.blocker.action-to-do" datatype="html">
+        <source>à mener</source>
+        <target state="translated">por ejecutar</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.action-to-verify" datatype="html">
+        <source>faite, son efficacité reste à vérifier</source>
+        <target state="translated">realizada, falta verificar su eficacia</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.actions-count-one" datatype="html">
+        <source>1 action le retient</source>
+        <target state="translated">1 acción lo retiene</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.actions-count-many" datatype="html">
+        <source><x id="count"/> actions le retiennent</source>
+        <target state="translated"><x id="count"/> acciones lo retienen</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.action-pending" datatype="html">
+        <source>en attente</source>
+        <target state="translated">pendiente</target>
+      </trans-unit>
       <trans-unit id="nc.detail.blockers-resolve" datatype="html">
         <source>Cet écart ne peut pas encore être résolu</source>
         <target state="translated">Esta no conformidad aún no puede resolverse</target>
@@ -23153,10 +23173,6 @@ historial de 12 meses</target>
       <trans-unit id="nc.8d.banner-rejected" datatype="html">
         <source>Écarté le</source>
         <target state="translated">Rechazada el</target>
-      </trans-unit>
-      <trans-unit id="nc.8d.banner-resolved" datatype="html">
-        <source>Résolu le</source>
-        <target state="translated">Resuelta el</target>
       </trans-unit>
       <trans-unit id="nc.8d.banner-cancelled" datatype="html">
         <source>Écart annulé.</source>
