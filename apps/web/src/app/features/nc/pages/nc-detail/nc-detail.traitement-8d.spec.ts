@@ -293,6 +293,24 @@ describe('NcDetailComponent — le traitement 8D', () => {
     expect(un('bandeau')).toBeNull();
   });
 
+  /**
+   * UN ÉCART RÉSOLU N'EN PORTE PAS. La note de résolution se lit au D6, sous
+   * les preuves qu'elle commente et avec le nom de qui l'a écrite ; répétée en
+   * tête de fiche, elle poussait sous la ligne de flottaison le bandeau qui dit
+   * ce qui RESTE à faire — le seul des deux qui appelle un geste.
+   */
+  it('ne redit pas la note de résolution en tête de fiche', () => {
+    setup(ecart({
+      status: 'RESOLVED', resolvedAt: '2026-11-21T00:00:00Z',
+      resolutionNote: 'Confinement fait, plaque imprimée depuis la commande.'
+    }));
+
+    expect(un('bandeau')).toBeNull();
+    expect(un('note-resolution')!.textContent)
+      .withContext('elle n’est pas perdue : elle se lit là où elle a un sens')
+      .toContain('Confinement fait');
+  });
+
   // ---------- la reprise ----------
 
   it('propose la reprise sur un écart refermé, et sur lui seul', () => {

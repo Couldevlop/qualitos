@@ -305,8 +305,6 @@ TRANSLATIONS = {
         "par {$name}", 'by {$name}', 'por {$name}', 'بواسطة {$name}', '担当: {$name}', '由 {$name}'),
     'nc.8d.banner-rejected': (
         "Écarté le", 'Dismissed on', 'Rechazada el', 'رُفض في', '却下日:', '驳回于'),
-    'nc.8d.banner-resolved': (
-        "Résolu le", 'Resolved on', 'Resuelta el', 'حُلّ في', '解決日:', '解决于'),
     'nc.8d.banner-cancelled': (
         "Écart annulé.",
         'Non-conformity cancelled.',

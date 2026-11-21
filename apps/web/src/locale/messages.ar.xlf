@@ -22438,6 +22438,26 @@ historique 12 mois</source>
         <source>Vous n'avez pas le droit de clôturer un écart. Demandez à un responsable qualité de porter ce geste.</source>
         <target state="translated">ليست لديك صلاحية إغلاق حالة عدم مطابقة. اطلب من مسؤول الجودة القيام بذلك.</target>
       </trans-unit>
+      <trans-unit id="nc.blocker.action-to-do" datatype="html">
+        <source>à mener</source>
+        <target state="translated">قيد التنفيذ</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.action-to-verify" datatype="html">
+        <source>faite, son efficacité reste à vérifier</source>
+        <target state="translated">منفّذ، ولم يتم التحقق من فعاليته بعد</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.actions-count-one" datatype="html">
+        <source>1 action le retient</source>
+        <target state="translated">إجراء واحد يحجزه</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.actions-count-many" datatype="html">
+        <source><x id="count"/> actions le retiennent</source>
+        <target state="translated"><x id="count"/> إجراءات تحجزه</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.action-pending" datatype="html">
+        <source>en attente</source>
+        <target state="translated">قيد الانتظار</target>
+      </trans-unit>
       <trans-unit id="nc.detail.blockers-resolve" datatype="html">
         <source>Cet écart ne peut pas encore être résolu</source>
         <target state="translated">لا يمكن حل عدم المطابقة هذا بعد</target>
@@ -23153,10 +23173,6 @@ historique 12 mois</source>
       <trans-unit id="nc.8d.banner-rejected" datatype="html">
         <source>Écarté le</source>
         <target state="translated">رُفض في</target>
-      </trans-unit>
-      <trans-unit id="nc.8d.banner-resolved" datatype="html">
-        <source>Résolu le</source>
-        <target state="translated">حُلّ في</target>
       </trans-unit>
       <trans-unit id="nc.8d.banner-cancelled" datatype="html">
         <source>Écart annulé.</source>

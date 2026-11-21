@@ -620,16 +620,66 @@
 
 /* Les dossiers a ouvrir, sur leur propre ligne : glisses a la suite de la
    phrase, ils se lisaient comme la fin de celle-ci. */
-.blockers-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--qos-space-2);
-  margin-top: 2px;
+.blockers-cases {
+  list-style: none;
+  margin: 2px 0 0;
+  padding: 0;
 
-  a {
+  > li + li {
+    margin-top: var(--qos-space-2);
+  }
+
+  > li > a {
     color: var(--qos-danger-fg);
     font-weight: 600;
     text-decoration: underline;
+  }
+}
+
+/* Les actions qui retiennent le dossier, DECALEES sous son nom : au meme
+   retrait, on ne verrait plus laquelle appartient a quel dossier. L'attente
+   est en retrait de graisse, parce qu'elle qualifie le titre, elle ne le
+   concurrence pas. */
+.blockers-actions {
+  list-style: disc;
+  margin: 2px 0 0;
+  padding-left: var(--qos-space-5);
+
+  li {
+    color: var(--qos-text-muted);
+  }
+}
+
+/* Combien d'actions retiennent ce dossier : le decompte du motif compte les
+   dossiers, celui-ci compte le travail. */
+.blockers-cases__compte {
+  display: block;
+  color: var(--qos-text-muted);
+  font-size: var(--qos-text-sm);
+}
+
+/* UN LIEN, et pas un bouton : il mene a l'action, il n'en declenche aucune.
+   Un <button> parce que la cible est sur cette meme page -- un href rechargerait
+   la fiche -- mais il se lit et se survole comme le lien qu'il est. */
+.blockers-action__lien {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--qos-danger-fg);
+  font: inherit;
+  text-align: left;
+  text-decoration: underline;
+  cursor: pointer;
+
+  &:hover,
+  &:focus-visible {
+    text-decoration-thickness: 2px;
+  }
+}
+
+.blockers-action__attente {
+  &::before {
+    content: ' — ';
   }
 }
 

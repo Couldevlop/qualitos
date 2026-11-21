@@ -135,11 +135,34 @@
               <span>{{ m.phrase }}</span>
               <!-- OU ALLER : le motif nomme le geste, le lien y mene. Ne sont
                    nommes que les dossiers que ce lecteur voit (ADR 0081) ; le
-                   decompte de la phrase, lui, les compte tous. -->
-              <span class="blockers-links" *ngIf="m.dossiers.length">
-                <a *ngFor="let d of m.dossiers" [routerLink]="['/capa', d.id]"
-                   [attr.data-test]="'nc-blocker-lien-' + d.id">{{ d.title }}</a>
-              </span>
+                   decompte de la phrase, lui, les compte tous.
+
+                   Et SOUS chaque dossier, les actions qui le retiennent : le
+                   dossier nomme ne disait pas laquelle on attendait, et il
+                   fallait l'ouvrir pour le savoir. -->
+              <ul class="blockers-cases" *ngIf="m.dossiers.length">
+                <li *ngFor="let d of m.dossiers">
+                  <a [routerLink]="['/capa', d.id]"
+                     [attr.data-test]="'nc-blocker-lien-' + d.id">{{ d.title }}</a>
+                  <ng-container *ngIf="d.blockingActions?.length">
+                    <span class="blockers-cases__compte"
+                          [attr.data-test]="'nc-blocker-compte-' + d.id">
+                      {{ compteDesActionsQuiBloquent(d) }}
+                    </span>
+                    <ul class="blockers-actions">
+                      <li *ngFor="let a of d.blockingActions">
+                        <!-- LE LIEN MENE A L'ACTION, et non a son dossier : elle
+                             se traite dans le tableau de sa discipline, plus bas
+                             sur cette meme fiche. -->
+                        <button type="button" class="blockers-action__lien"
+                                [attr.data-test]="'nc-blocker-action-' + a.id"
+                                (click)="allerALAction(a)">{{ a.title }}</button>
+                        <span class="blockers-action__attente">{{ attenteDeLAction(a) }}</span>
+                      </li>
+                    </ul>
+                  </ng-container>
+                </li>
+              </ul>
             </li>
           </ul>
         </div>

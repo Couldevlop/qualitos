@@ -45,6 +45,7 @@ import {
   NcSubcategory,
   VisionAnalysis,
   VisionScore,
+  NcBlockingAction,
   NcCapaCaseRef,
 } from '../../nc.types';
 import {
@@ -350,6 +351,12 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
    * repris. L ordre est celui de l histoire a l envers -- une reprise passe
    * devant la cloture qu elle defait.
    */
+  /**
+   * UN ECART RESOLU N'EN PORTE PAS : la note de resolution se lit au D6, sous
+   * les preuves qu'elle commente, avec le nom de qui l'a ecrite. Repetee en
+   * tete de fiche, elle poussait sous la ligne de flottaison le bandeau qui
+   * dit ce qui RESTE a faire -- le seul des deux qui appelle un geste.
+   */
   bandeau(n: NcResponse): string | null {
     if (n.reopenedAt) {
       return this.phrase(
@@ -368,10 +375,6 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
     if (n.rejectedAt) {
       return this.phrase(
         $localize`:@@nc.8d.banner-rejected:Écarté le`, n.rejectedAt, n.rejectionReason);
-    }
-    if (n.resolvedAt) {
-      return this.phrase(
-        $localize`:@@nc.8d.banner-resolved:Résolu le`, n.resolvedAt, n.resolutionNote);
     }
     if (n.status === 'CANCELLED') {
       return $localize`:@@nc.8d.banner-cancelled:Écart annulé.`;
@@ -752,7 +755,10 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
     private readonly capaService: CapaService,
     private readonly produits: ProductsService,
     private readonly authz: AuthzService,
-    private readonly cdr: ChangeDetectorRef
+    private readonly cdr: ChangeDetectorRef,
+    // La fiche elle-meme : le bandeau de blocage y cherche la ligne de
+    // l'action qu'il nomme, sans passer par le document global.
+    private readonly hote: ElementRef<HTMLElement>
   ) {}
 
   /** Le catalogue des natures, pour traduire le code porté par la NC. */
@@ -1873,6 +1879,63 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
    */
   jeSuisLeResolveur(n: NcResponse): boolean {
     return (n.blockers ?? []).some(b => String(b.code) === 'SECOND_LOOK_REQUIRED');
+  }
+
+  /**
+   * COMBIEN d'actions retiennent ce dossier.
+   *
+   * <p>Le decompte du motif compte les DOSSIERS ; celui-ci compte ce qu'il
+   * reste a faire dedans, qui est le travail reel. Un dossier peut n'en
+   * retenir qu'une comme en retenir dix, et les deux se lisaient pareil.
+   *
+   * <p>Deux phrases plutot qu'un pluriel calcule : « 1 actions » est une faute
+   * que personne ne pardonne a un logiciel de qualite.
+   */
+  compteDesActionsQuiBloquent(dossier: NcCapaCaseRef): string {
+    const nb = dossier.blockingActions?.length ?? 0;
+    return nb === 1
+      ? $localize`:@@nc.blocker.actions-count-one:1 action le retient`
+      : $localize`:@@nc.blocker.actions-count-many:${nb}:count: actions le retiennent`;
+  }
+
+  /**
+   * MENER A L'ACTION, et pas seulement a son dossier.
+   *
+   * <p>L'action nommee dans le bandeau se traite dans le tableau de sa
+   * discipline, plus bas sur cette meme fiche -- c'est la qu'elle a ete
+   * decidee, et la fiche du dossier renvoie d'ailleurs ici (ADR 0115). Le lien
+   * y amene donc et POSE LE FOCUS sur sa ligne : le clavier reprend la ou l'oeil
+   * s'arrete, et une ligne de tableau s'ouvre avec Entree.
+   *
+   * <p>La ligne peut ne pas encore etre dessinee -- un panneau d'actions qui
+   * charge encore. On ne fait alors rien plutot que de sauter n'importe ou.
+   */
+  allerALAction(action: NcBlockingAction): void {
+    const ligne = (this.hote.nativeElement as HTMLElement)
+      .querySelector<HTMLElement>('#capa-action-' + action.id);
+    if (!ligne) {
+      return;
+    }
+    ligne.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    ligne.focus({ preventScroll: true });
+  }
+
+  /**
+   * CE QU'ON ATTEND de cette action-la, en toutes lettres.
+   *
+   * <p>Le serveur rend un code et jamais une phrase : il ne connait pas la
+   * langue du lecteur, et un code se traduit, se teste et survit a une
+   * reformulation. Un code inconnu -- serveur plus recent que l'ecran -- rend
+   * une phrase generique plutot qu'un libelle vide.
+   */
+  attenteDeLAction(action: NcBlockingAction): string {
+    if (action.reason === 'TO_DO') {
+      return $localize`:@@nc.blocker.action-to-do:à mener`;
+    }
+    if (action.reason === 'TO_VERIFY') {
+      return $localize`:@@nc.blocker.action-to-verify:faite, son efficacité reste à vérifier`;
+    }
+    return $localize`:@@nc.blocker.action-pending:en attente`;
   }
 
   /** Le motif lui-meme sert de cle : deux motifs du meme code ne coexistent pas. */

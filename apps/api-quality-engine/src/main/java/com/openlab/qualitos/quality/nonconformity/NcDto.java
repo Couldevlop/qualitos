@@ -392,7 +392,22 @@ public final class NcDto {
      * second appel ferait clignoter un champ déjà affiché.
      */
     public record CapaCaseRef(UUID id, String title, String status,
-                              String effectivenessComment) {}
+                              String effectivenessComment,
+                              List<BlockingAction> blockingActions) {}
+
+    /**
+     * Une action de ce dossier qui retient la cloture de l'ecart.
+     *
+     * <p>Le motif de blocage nommait le dossier, et le dossier porte autant
+     * d'actions qu'on veut : la fiche disait qu'il restait quelque chose a
+     * faire sans dire quoi. L'action voyage donc avec son dossier, et le motif
+     * se lit sans ouvrir un second ecran.
+     *
+     * <p>Le motif ({@code TO_DO} / {@code TO_VERIFY}) est un CODE et non une
+     * phrase, pour les memes raisons que les motifs de blocage : il se traduit,
+     * il se teste.
+     */
+    public record BlockingAction(UUID id, String title, String reason) {}
 
     /**
      * Un motif de blocage et son décompte.

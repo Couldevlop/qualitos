@@ -55,7 +55,11 @@
         </tr>
       </thead>
       <tbody>
+        <!-- L'ANCRE porte l'identifiant de l'action : le bandeau de blocage de
+             la fiche d'un ecart nomme les actions qui retiennent la cloture, et
+             son lien doit conduire a CETTE ligne-la, pas au tableau. -->
         <tr *ngFor="let a of actions; trackBy: trackById" class="actions__ligne"
+            [attr.id]="'capa-action-' + a.id"
             data-test="capa-action-ligne" tabindex="0" role="button"
             [attr.aria-label]="openLabel(a)"
             (click)="openAction(a)" (keydown.enter)="openAction(a)" (keydown.space)="openAction(a)">

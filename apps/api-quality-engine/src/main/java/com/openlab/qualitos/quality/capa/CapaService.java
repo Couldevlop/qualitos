@@ -23,6 +23,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 import java.util.UUID;
 
 @Service
@@ -301,7 +302,7 @@ public class CapaService {
         return dossiersDe(escaladeId, ncReference).stream()
                 .filter(c -> CapaScope.sees(seulement, c))
                 .map(c -> new CapaDto.CaseRef(c.getId(), c.getTitle(), c.getStatus(),
-                        c.getEffectivenessComment()))
+                        c.getEffectivenessComment(), actionsQuiBloquent(c)))
                 .toList();
     }
 
@@ -1334,6 +1335,46 @@ public class CapaService {
     }
 
     /**
+     * Les actions de ce dossier qui RETIENNENT sa cloture, chacune avec ce
+     * qu'elle attend.
+     *
+     * <p>Le decompte d'un motif de blocage dit combien de dossiers resistent ;
+     * il ne dit pas ce qu'il faut aller faire. Un dossier porte dix actions, et
+     * la personne devait les ouvrir une a une pour trouver celle qu'on attend
+     * -- un travail d'instruction rendu a l'utilisateur alors que le serveur
+     * tient deja la reponse.
+     *
+     * <p>Les DEUX MEMES regles que {@link #closureBlockers}, lues ici action par
+     * action au lieu d'etre comptees : pas {@code DONE}, ou faite sans que son
+     * effet soit verifie (ADR 0132). Deux lectures de la meme regle finiraient
+     * par diverger ; celles-ci partagent leurs predicats.
+     *
+     * <p>Un dossier REGLE -- clos ou ecarte -- ne retient plus rien : la liste
+     * est vide sans interroger les jugements d'efficacite.
+     */
+    private List<CapaDto.BlockingAction> actionsQuiBloquent(CapaCase c) {
+        if (CAPA_SETTLED_STATUSES.contains(c.getStatus())) {
+            return List.of();
+        }
+        List<CapaAction> actions = c.getActions();
+        if (actions.isEmpty()) {
+            return List.of();
+        }
+        List<CapaAction> aFaire = actions.stream()
+                .filter(a -> a.getStatus() != CapaActionStatus.DONE)
+                .toList();
+        List<CapaAction> aVerifier = actionsNonVerifiees(c, actions).stream()
+                .filter(a -> a.getStatus() == CapaActionStatus.DONE)
+                .toList();
+        return Stream.concat(
+                        aFaire.stream().map(a -> new CapaDto.BlockingAction(
+                                a.getId(), a.getTitle(), CapaDto.BlockingReason.TO_DO)),
+                        aVerifier.stream().map(a -> new CapaDto.BlockingAction(
+                                a.getId(), a.getTitle(), CapaDto.BlockingReason.TO_VERIFY)))
+                .toList();
+    }
+
+    /**
      * Les actions qui ont PROMIS une verification et ne l'ont pas obtenue.
      *
      * <p>Trois cas comptent comme non verifiees : jamais jugee, jugee PARTIEL,
@@ -1345,11 +1386,20 @@ public class CapaService {
      * suffit, et c'est la l'objet du code ACTIONS_NOT_DONE.
      */
     private long verificationsDActionEnAttente(CapaCase c) {
-        List<CapaAction> promises = c.getActions().stream()
+        return actionsNonVerifiees(c, c.getActions()).size();
+    }
+
+    /**
+     * Les memes, NOMMEES : la liste dont {@link #verificationsDActionEnAttente}
+     * ne rend que la taille, et dont {@link #actionsQuiBloquent} a besoin pour
+     * dire laquelle on attend.
+     */
+    private List<CapaAction> actionsNonVerifiees(CapaCase c, List<CapaAction> actions) {
+        List<CapaAction> promises = actions.stream()
                 .filter(a -> Boolean.TRUE.equals(a.getVerificationRequired()))
                 .toList();
         if (promises.isEmpty()) {
-            return 0;
+            return List.of();
         }
         Map<UUID, EffectivenessReview> jugements =
                 effectivenessReviews.findLastPerActionOfCase(c.getTenantId(), c.getId());
@@ -1358,7 +1408,7 @@ public class CapaService {
                     EffectivenessReview dernier = jugements.get(a.getId());
                     return dernier == null || !dernier.verdict().closesCase();
                 })
-                .count();
+                .toList();
     }
 
     /**

@@ -22438,6 +22438,26 @@ declared income
         <source>Vous n'avez pas le droit de clôturer un écart. Demandez à un responsable qualité de porter ce geste.</source>
         <target state="translated">You are not allowed to close a non-conformity. Ask a quality manager to carry out this step.</target>
       </trans-unit>
+      <trans-unit id="nc.blocker.action-to-do" datatype="html">
+        <source>à mener</source>
+        <target state="translated">to carry out</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.action-to-verify" datatype="html">
+        <source>faite, son efficacité reste à vérifier</source>
+        <target state="translated">done, its effectiveness still has to be verified</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.actions-count-one" datatype="html">
+        <source>1 action le retient</source>
+        <target state="translated">1 action is holding it</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.actions-count-many" datatype="html">
+        <source><x id="count"/> actions le retiennent</source>
+        <target state="translated"><x id="count"/> actions are holding it</target>
+      </trans-unit>
+      <trans-unit id="nc.blocker.action-pending" datatype="html">
+        <source>en attente</source>
+        <target state="translated">pending</target>
+      </trans-unit>
       <trans-unit id="nc.detail.blockers-resolve" datatype="html">
         <source>Cet écart ne peut pas encore être résolu</source>
         <target state="translated">This non-conformity cannot be resolved yet</target>
@@ -23153,10 +23173,6 @@ declared income
       <trans-unit id="nc.8d.banner-rejected" datatype="html">
         <source>Écarté le</source>
         <target state="translated">Dismissed on</target>
-      </trans-unit>
-      <trans-unit id="nc.8d.banner-resolved" datatype="html">
-        <source>Résolu le</source>
-        <target state="translated">Resolved on</target>
       </trans-unit>
       <trans-unit id="nc.8d.banner-cancelled" datatype="html">
         <source>Écart annulé.</source>

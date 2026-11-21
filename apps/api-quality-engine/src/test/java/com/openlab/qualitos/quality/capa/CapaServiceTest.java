@@ -30,6 +30,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.InstanceOfAssertFactories.list;
 import org.mockito.ArgumentMatchers;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -2144,6 +2145,67 @@ class CapaServiceTest {
                 .thenReturn(List.of());
 
         assertThat(service.casesOf(null, "Ext-NC-2026-0011")).isEmpty();
+    }
+
+    /**
+     * CE QUI RETIENT LE DOSSIER, ACTION PAR ACTION.
+     *
+     * <p>Le motif de blocage d un ecart nommait le dossier et s arretait la.
+     * Un dossier porte dix actions ; savoir qu il n est pas clos ne dit pas
+     * laquelle on attend, et la personne devait les ouvrir une a une pour
+     * trouver celle qui resiste.
+     *
+     * <p>Les deux memes regles que la cloture : pas DONE, ou faite sans que son
+     * effet soit verifie (ADR 0132). Une action faite ET verifiee ne parait
+     * pas -- elle ne retient plus rien.
+     */
+    @Test
+    void casesOf_nommeLesActionsQuiRetiennentLeDossier() {
+        CapaCase c = capa(TENANT, CapaStatus.IN_PROGRESS);
+        c.setSourceRef("NC-2026-0001");
+        CapaAction aFaire = action(c, CapaActionStatus.IN_PROGRESS);
+        aFaire.setTitle("Reprendre les 12 vannes");
+        CapaAction aVerifier = actionPromise(c);
+        aVerifier.setTitle("Imprimer la plaque depuis l ERP");
+        CapaAction reglee = actionPromise(c);
+        reglee.setTitle("Mettre a jour l instruction");
+
+        when(caseRepo.findByTenantIdAndSourceTypeAndSourceRefOrderByCreatedAtAsc(
+                eq(TENANT), any(), eq("NC-2026-0001")))
+                .thenReturn(List.of(c));
+        when(reviews.findLastPerActionOfCase(TENANT, c.getId()))
+                .thenReturn(Map.of(reglee.getId(),
+                        jugement(c, reglee, EffectivenessVerdict.EFFECTIVE)));
+
+        assertThat(service.casesOf(null, "NC-2026-0001"))
+                .singleElement()
+                .extracting(CapaDto.CaseRef::blockingActions, list(CapaDto.BlockingAction.class))
+                .extracting(CapaDto.BlockingAction::title, CapaDto.BlockingAction::reason)
+                .containsExactlyInAnyOrder(
+                        tuple("Reprendre les 12 vannes", CapaDto.BlockingReason.TO_DO),
+                        tuple("Imprimer la plaque depuis l ERP",
+                                CapaDto.BlockingReason.TO_VERIFY));
+    }
+
+    /**
+     * Un dossier REGLE ne retient plus rien, et on ne va pas lire ses
+     * jugements d efficacite pour l apprendre.
+     */
+    @Test
+    void casesOf_neNommeAucuneActionSurUnDossierClos() {
+        CapaCase c = capa(TENANT, CapaStatus.CLOSED);
+        c.setSourceRef("NC-2026-0001");
+        action(c, CapaActionStatus.PENDING);
+
+        when(caseRepo.findByTenantIdAndSourceTypeAndSourceRefOrderByCreatedAtAsc(
+                eq(TENANT), any(), eq("NC-2026-0001")))
+                .thenReturn(List.of(c));
+
+        assertThat(service.casesOf(null, "NC-2026-0001"))
+                .singleElement()
+                .extracting(CapaDto.CaseRef::blockingActions, list(CapaDto.BlockingAction.class))
+                .isEmpty();
+        verify(reviews, never()).findLastPerActionOfCase(any(), any());
     }
 
     /**

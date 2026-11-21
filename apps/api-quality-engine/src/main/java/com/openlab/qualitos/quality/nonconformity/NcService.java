@@ -880,7 +880,11 @@ public class NcService {
         return capaService.casesOf(nc.getCapaCaseId(), nc.getReference()).stream()
                 .map(c -> new NcDto.CapaCaseRef(c.id(), c.title(),
                         c.status() == null ? null : c.status().name(),
-                        c.effectivenessComment()))
+                        c.effectivenessComment(),
+                        c.blockingActions().stream()
+                                .map(a -> new NcDto.BlockingAction(
+                                        a.id(), a.title(), a.reason().name()))
+                                .toList()))
                 .toList();
     }
 
