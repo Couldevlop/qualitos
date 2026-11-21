@@ -23598,6 +23598,14 @@ historique 12 mois</source>
         <source>Vérification d'efficacité — obligatoire</source>
         <target state="translated">التحقّق من الفعالية — إلزامي</target>
       </trans-unit>
+      <trans-unit id="objectives.panel.links" datatype="html">
+        <source>Liens générés</source>
+        <target state="translated">الروابط المُنشأة</target>
+      </trans-unit>
+      <trans-unit id="objectives.panel.links-list" datatype="html">
+        <source>NC clients du mois · Réclamations · PFMEA · Control plan · Revue de direction 9.3</source>
+        <target state="translated">حالات عدم المطابقة لدى العملاء هذا الشهر · الشكاوى · PFMEA · خطة التحكّم · مراجعة الإدارة 9.3</target>
+      </trans-unit>
       <trans-unit id="objectives.panel.accept" datatype="html">
         <source>Accepter et enregistrer la CAPA</source>
         <target state="translated">قبول وتسجيل إجراء CAPA</target>

@@ -23598,6 +23598,14 @@ historique 12 mois</source>
         <source>Vérification d'efficacité — obligatoire</source>
         <target state="translated">有效性验证 — 必填</target>
       </trans-unit>
+      <trans-unit id="objectives.panel.links" datatype="html">
+        <source>Liens générés</source>
+        <target state="translated">生成的关联</target>
+      </trans-unit>
+      <trans-unit id="objectives.panel.links-list" datatype="html">
+        <source>NC clients du mois · Réclamations · PFMEA · Control plan · Revue de direction 9.3</source>
+        <target state="translated">本月客户不合格 · 投诉 · PFMEA · 控制计划 · 管理评审 9.3</target>
+      </trans-unit>
       <trans-unit id="objectives.panel.accept" datatype="html">
         <source>Accepter et enregistrer la CAPA</source>
         <target state="translated">接受并登记 CAPA</target>

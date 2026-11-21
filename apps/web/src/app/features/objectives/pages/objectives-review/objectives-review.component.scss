@@ -204,6 +204,20 @@
     color: var(--qos-accent-fg-soft);
   }
 
+  // « Liens générés » : un sous-titre discret et sa liste, comme la maquette.
+  // Subordonné au critère verrouillé juste au-dessus, qui garde son encadré.
+  &__liens {
+    font-size: 13px;
+
+    p {
+      margin: 4px 0 0;
+      line-height: 1.5;
+      color: var(--qos-text-muted);
+    }
+  }
+
+  &__liens-label { font-weight: 600; }
+
   &__actions {
     display: flex;
     flex-direction: column;

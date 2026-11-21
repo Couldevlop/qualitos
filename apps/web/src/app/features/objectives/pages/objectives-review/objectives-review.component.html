@@ -153,6 +153,17 @@
           <p>{{ p.effectivenessCriterion }}</p>
         </div>
 
+        <!-- « Liens générés » : la ligne de la maquette annotée, en texte comme
+             chez elle. Elle nomme ce que le dossier rapproche. À ce jour,
+             accepter la proposition ne pose que la référence vers l'objectif
+             (`CapaSourceType.QUALITY_OBJECTIVE`) : l'impact AMDEC et plan de
+             surveillance se déclare à la CLÔTURE (ADR 0128), et la revue de
+             direction n'est pas un module de la plateforme. -->
+        <div class="panneau__liens" data-test="objectifs-liens">
+          <span class="panneau__liens-label" i18n="@@objectives.panel.links">Liens générés</span>
+          <p i18n="@@objectives.panel.links-list">NC clients du mois · Réclamations · PFMEA · Control plan · Revue de direction 9.3</p>
+        </div>
+
         <div class="panneau__actions" *ngIf="canManage">
           <button mat-flat-button color="primary" type="button" [disabled]="deciding"
                   (click)="accept(p)" data-test="objectifs-accepter">

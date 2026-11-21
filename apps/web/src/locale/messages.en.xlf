@@ -23598,6 +23598,14 @@ declared income
         <source>Vérification d'efficacité — obligatoire</source>
         <target state="translated">Effectiveness verification — mandatory</target>
       </trans-unit>
+      <trans-unit id="objectives.panel.links" datatype="html">
+        <source>Liens générés</source>
+        <target state="translated">Generated links</target>
+      </trans-unit>
+      <trans-unit id="objectives.panel.links-list" datatype="html">
+        <source>NC clients du mois · Réclamations · PFMEA · Control plan · Revue de direction 9.3</source>
+        <target state="translated">Customer NCs of the month · Complaints · PFMEA · Control plan · Management review 9.3</target>
+      </trans-unit>
       <trans-unit id="objectives.panel.accept" datatype="html">
         <source>Accepter et enregistrer la CAPA</source>
         <target state="translated">Accept and record the CAPA</target>
