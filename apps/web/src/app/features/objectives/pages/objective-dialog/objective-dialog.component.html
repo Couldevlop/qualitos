@@ -1,0 +1,161 @@
+<qos-form-dialog
+  [title]="dialogTitle"
+  i18n-subtitle="@@objectives.dialog.subtitle"
+  subtitle="Un objectif engage : il dit ce qu'on attend d'un indicateur, et ce qu'on fera quand l'attente n'est pas tenue (ISO 9001 §6.2)."
+  [formGroup]="form"
+  [submitting]="submitting"
+  [submitDisabled]="form.invalid || thresholdsOutOfOrder"
+  [blockedReason]="blockedReason"
+  i18n-submitLabel="@@objectives.dialog.submit"
+  submitLabel="Enregistrer l'objectif"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
+
+  <!-- 1. L'objectif : ce qu'on vise, dans quel processus, au titre de quelle clause. -->
+  <h3 class="section" i18n="@@objectives.section.objective">1. Objectif</h3>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@objectives.field.title">Intitulé</mat-label>
+    <input matInput formControlName="title" maxlength="250" required data-test="objectif-intitule"
+           i18n-placeholder="@@objectives.field.title-placeholder"
+           placeholder="Ex. : Taux de NC client">
+    <mat-error *ngIf="form.controls.title.hasError('required')"
+               i18n="@@objectives.field.title-required">L'intitulé est requis.</mat-error>
+  </mat-form-field>
+
+  <div class="ligne">
+    <mat-form-field appearance="outline" class="col">
+      <mat-label i18n="@@objectives.field.process">Processus</mat-label>
+      <mat-select formControlName="processId" data-test="objectif-processus">
+        <mat-option value="" i18n="@@objectives.field.process-none">Aucun</mat-option>
+        <mat-option *ngFor="let p of processes" [value]="p.id">{{ p.name }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="col">
+      <mat-label i18n="@@objectives.field.iso-clause">Clause ISO 9001</mat-label>
+      <input matInput formControlName="isoClause" maxlength="40" data-test="objectif-clause"
+             placeholder="6.2">
+    </mat-form-field>
+  </div>
+
+  <!-- 2. Le KPI réel à comparer. L'unité et le sens d'amélioration VIENNENT DE
+       LUI : les écrire ici les ferait mentir dès le deuxième objectif. -->
+  <h3 class="section" i18n="@@objectives.section.kpi">2. KPI réel à comparer</h3>
+
+  <div class="ligne">
+    <mat-form-field appearance="outline" class="col col--large">
+      <mat-label i18n="@@objectives.field.kpi">Source de données</mat-label>
+      <mat-select formControlName="kpiId" required data-test="objectif-kpi">
+        <mat-option *ngFor="let k of kpis" [value]="k.id">
+          {{ k.name }} <span class="code">({{ k.code }})</span>
+        </mat-option>
+      </mat-select>
+      <mat-hint *ngIf="editing" i18n="@@objectives.field.kpi-locked">Le KPI d'un objectif ne change
+        pas : son historique cesserait d'être comparable.</mat-hint>
+      <mat-error *ngIf="form.controls.kpiId.hasError('required')"
+                 i18n="@@objectives.field.kpi-required">Un objectif se mesure contre un KPI du
+        catalogue.</mat-error>
+    </mat-form-field>
+
+    <!-- Le sens est AFFICHÉ, pas saisi : il appartient au KPI. -->
+    <div class="herite col" data-test="objectif-sens">
+      <span class="herite__label" i18n="@@objectives.field.direction">Sens d'amélioration</span>
+      <strong class="herite__valeur">{{ directionLabel }}</strong>
+      <span class="herite__note" i18n="@@objectives.field.direction-note">repris du KPI</span>
+    </div>
+  </div>
+
+  <!-- Pas d'unité en dur sur ces trois champs : elle change d'un KPI à l'autre,
+       et c'est le suffixe qui la dit, repris de l'indicateur choisi. -->
+  <div class="ligne">
+    <mat-form-field appearance="outline" class="col">
+      <mat-label i18n="@@objectives.field.target">Cible</mat-label>
+      <input matInput formControlName="targetValue" type="number" step="any" required
+             data-test="objectif-cible">
+      <span matTextSuffix *ngIf="unit">{{ unit }}</span>
+      <mat-error *ngIf="form.controls.targetValue.hasError('required')"
+                 i18n="@@objectives.field.target-required">La cible est requise.</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="col">
+      <mat-label i18n="@@objectives.field.warning">Seuil d'alerte</mat-label>
+      <input matInput formControlName="thresholdWarning" type="number" step="any" required
+             data-test="objectif-seuil-alerte">
+      <span matTextSuffix *ngIf="unit">{{ unit }}</span>
+      <mat-error *ngIf="form.controls.thresholdWarning.hasError('required')"
+                 i18n="@@objectives.field.warning-required">Le seuil d'alerte est requis.</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="col">
+      <mat-label i18n="@@objectives.field.critical">Seuil critique</mat-label>
+      <input matInput formControlName="thresholdCritical" type="number" step="any" required
+             data-test="objectif-seuil-critique">
+      <span matTextSuffix *ngIf="unit">{{ unit }}</span>
+      <mat-error *ngIf="form.controls.thresholdCritical.hasError('required')"
+                 i18n="@@objectives.field.critical-required">Le seuil critique est requis.</mat-error>
+    </mat-form-field>
+  </div>
+
+  <mat-form-field appearance="outline" class="col">
+    <mat-label i18n="@@objectives.field.period">Période</mat-label>
+    <mat-select formControlName="periodMonths" required data-test="objectif-periode">
+      <mat-option *ngFor="let p of periodes" [value]="p.months">{{ p.label }}</mat-option>
+    </mat-select>
+    <mat-hint i18n="@@objectives.field.period-hint">L'unité dans laquelle se comptent les
+      dépassements consécutifs.</mat-hint>
+  </mat-form-field>
+
+  <!-- 3. La règle de déclenchement. Les deux niveaux PROPOSENT : c'est le pilote
+       qui décide d'ouvrir le dossier (CLAUDE.md §12, ISO 9001 §10.2). -->
+  <h3 class="section" i18n="@@objectives.section.rule">3. Règle de déclenchement CAPA</h3>
+
+  <div class="regle regle--alerte" data-test="objectif-regle-alerte">
+    <span class="regle__niveau" i18n="@@objectives.rule.warning">Alerte</span>
+    <span i18n="@@objectives.rule.warning-before">Si le KPI dépasse le seuil d'alerte</span>
+    <mat-form-field appearance="outline" class="regle__nombre">
+      <input matInput formControlName="warningPeriods" type="number" min="1" required
+             i18n-aria-label="@@objectives.rule.periods-aria" aria-label="Nombre de périodes"
+             data-test="objectif-periodes-alerte">
+    </mat-form-field>
+    <span i18n="@@objectives.rule.warning-after">périodes consécutives → une CAPA est
+      <strong>proposée</strong> au pilote.</span>
+  </div>
+
+  <div class="regle regle--critique" data-test="objectif-regle-critique">
+    <span class="regle__niveau" i18n="@@objectives.rule.critical">Critique</span>
+    <span i18n="@@objectives.rule.critical-before">Si le KPI dépasse le seuil critique sur</span>
+    <mat-form-field appearance="outline" class="regle__nombre">
+      <input matInput formControlName="criticalPeriods" type="number" min="1" required
+             i18n-aria-label="@@objectives.rule.periods-aria" aria-label="Nombre de périodes"
+             data-test="objectif-periodes-critique">
+    </mat-form-field>
+    <span i18n="@@objectives.rule.critical-after">période → la CAPA est
+      <strong>proposée automatiquement</strong>.</span>
+  </div>
+
+  <div class="ligne">
+    <qos-user-picker class="col" formControlName="capaOwnerId" required
+                     data-test="objectif-pilote"
+                     i18n-label="@@objectives.field.capa-owner" label="Responsable de la CAPA"
+                     (userSelected)="onCapaOwner($event)"></qos-user-picker>
+
+    <mat-form-field appearance="outline" class="col">
+      <mat-label i18n="@@objectives.field.due-days">Délai d'analyse de cause racine</mat-label>
+      <input matInput formControlName="rootCauseDueDays" type="number" min="1" required
+             data-test="objectif-delai-cause">
+      <span matTextSuffix i18n="@@objectives.field.working-days">jours ouvrés</span>
+    </mat-form-field>
+  </div>
+
+  <!-- Le retour à « atteint » n'est pas un détail d'affichage : c'est aussi le
+       critère d'efficacité de la CAPA que cet objectif fera ouvrir. -->
+  <mat-form-field appearance="outline" class="col">
+    <mat-label i18n="@@objectives.field.recovery">Retour à « atteint » après</mat-label>
+    <input matInput formControlName="recoveryPeriods" type="number" min="1" required
+           data-test="objectif-periodes-retour">
+    <span matTextSuffix i18n="@@objectives.field.periods-suffix">période(s) sous la cible</span>
+    <mat-hint i18n="@@objectives.field.recovery-hint">C'est aussi le critère d'efficacité de la CAPA :
+      elle ne se clôt qu'au retour durable du KPI sous la cible.</mat-hint>
+  </mat-form-field>
+</qos-form-dialog>

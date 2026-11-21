@@ -126,6 +126,9 @@ export class MainShellComponent implements OnInit, OnDestroy {
         { label: $localize`:@@nav.mes-dashboards:Mes dashboards`,   route: '/dashboard-builder', icon: 'dashboard_customize' },
         { label: $localize`:@@nav.tv-mode:Mode TV / Salle qualité`, route: '/tv',                icon: 'tv' },
         { label: $localize`:@@nav.indicateurs-kpi:Indicateurs (KPI)`, route: '/kpis',            icon: 'monitoring', module: 'kpi' },
+        // Juste après les KPI, parce qu'un objectif ne se lit pas sans eux :
+        // il dit ce qu'on attend d'un indicateur du catalogue. Même module.
+        { label: $localize`:@@nav.objectifs-qualite:Objectifs qualité`, route: '/objectifs',     icon: 'flag', module: 'kpi' },
         // Pas d'attribut `module` : le coût de la qualité n'a pas encore d'entrée
         // au catalogue des modules activables. Lecture ouverte à tous, saisie
         // réservée au pilotage qualité -- c'est le serveur qui tranche.

@@ -1,0 +1,214 @@
+.chargement { margin-bottom: 12px; }
+
+.echec {
+  margin: 0 0 16px;
+  color: var(--qos-danger-fg);
+}
+
+// Les quatre tuiles de la maquette. La teinte ne s'allume que s'il y a quelque
+// chose à voir : quatre tuiles colorées en permanence ne hiérarchisent rien.
+.tuiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin: 0 0 24px;
+  padding: 0;
+  list-style: none;
+}
+
+.tuile {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px 18px;
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: 8px;
+  background: var(--qos-surface-raised);
+
+  &__valeur {
+    font-size: 28px;
+    font-weight: 600;
+    line-height: 1.1;
+  }
+
+  &__libelle {
+    font-size: 13px;
+    color: var(--qos-text-muted);
+  }
+
+  &--atteint .tuile__valeur { color: var(--qos-success-fg); }
+  &--alerte  .tuile__valeur { color: var(--qos-warn-fg); }
+  &--critique .tuile__valeur { color: var(--qos-danger-fg); }
+}
+
+// Le tableau à gauche, la CAPA préremplie à droite : on lit la ligne et on
+// décide sans quitter l'écran. Le panneau passe sous le tableau quand la
+// largeur ne permet plus les deux.
+.revue {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 24px;
+  align-items: start;
+
+  @media (max-width: 1200px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.tableau {
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: 8px;
+  background: var(--qos-surface-raised);
+  overflow: hidden;
+
+  &__entete {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--qos-text-muted);
+    border-bottom: 1px solid var(--qos-border-subtle);
+  }
+}
+
+// Une seule grille pour l'en-tête et les lignes : les colonnes restent alignées.
+.tableau__entete,
+.ligne {
+  display: grid;
+  grid-template-columns: minmax(0, 2.4fr) 90px 90px 80px 190px minmax(0, 1.4fr) 88px;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 16px;
+
+  @media (max-width: 900px) {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 6px;
+  }
+}
+
+.ligne {
+  border-bottom: 1px solid var(--qos-border-subtle);
+
+  &:last-of-type { border-bottom: none; }
+
+  &--choisie { background: var(--qos-accent-bg-soft); }
+
+  &__meta {
+    display: block;
+    margin-top: 2px;
+    font-size: 12px;
+    color: var(--qos-text-muted);
+  }
+
+  // Pourquoi l'objectif reste alerte alors que le KPI est revenu sous la cible.
+  &__retenu {
+    display: block;
+    margin-top: 4px;
+    font-size: 11px;
+    line-height: 1.4;
+    color: var(--qos-text-muted);
+  }
+}
+
+.c-objectif { min-width: 0; }
+
+.c-nombre {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+
+  &--fort { font-weight: 600; }
+}
+
+// La colonne CAPA est un bouton : elle ouvre le panneau. Désactivée, elle
+// redevient du texte — il n'y a rien à ouvrir.
+.c-capa--lien {
+  border: none;
+  background: none;
+  padding: 0;
+  font: inherit;
+  text-align: left;
+  color: var(--qos-accent-fg);
+  cursor: pointer;
+
+  &:disabled {
+    color: var(--qos-text-muted);
+    cursor: default;
+  }
+}
+
+.c-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.vide {
+  margin: 0;
+  padding: 32px 16px;
+  text-align: center;
+  color: var(--qos-text-muted);
+}
+
+.panneau {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: 8px;
+  background: var(--qos-surface-raised);
+  position: sticky;
+  top: 16px;
+
+  @media (max-width: 1200px) { position: static; }
+
+  &__titre {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  &__faits {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 6px 12px;
+    margin: 0;
+    font-size: 13px;
+
+    dt { color: var(--qos-text-muted); }
+    dd { margin: 0; }
+  }
+
+  &__corps {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--qos-text-muted);
+    white-space: pre-line;
+  }
+
+  // Le critère verrouillé : encadré, pour qu'on voie qu'il n'est pas à écrire.
+  &__critere {
+    padding: 12px;
+    border-radius: 6px;
+    background: var(--qos-accent-bg-soft);
+    font-size: 13px;
+
+    p { margin: 6px 0 0; line-height: 1.5; }
+  }
+
+  &__critere-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--qos-accent-fg);
+  }
+
+  &__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+.filtre { width: 170px; }

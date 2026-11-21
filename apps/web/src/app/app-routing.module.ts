@@ -254,6 +254,11 @@ const routes: Routes = [
         loadChildren: () => import('./features/kpis/kpis.module').then(m => m.KpisModule)
       },
       {
+        path: 'objectifs',
+        loadChildren: () => import('./features/objectives/objectives.module')
+          .then(m => m.ObjectivesModule)
+      },
+      {
         path: 'nlq',
         loadChildren: () => import('./features/nlq/nlq.module').then(m => m.NlqModule)
       },

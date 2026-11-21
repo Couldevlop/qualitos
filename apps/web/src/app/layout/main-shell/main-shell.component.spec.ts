@@ -225,7 +225,10 @@ describe('MainShellComponent (navigation model)', () => {
     // 18 : Messagerie rejoint l'administration (ADR 0127) -- chaque client
     // regle son propre serveur sortant, pour que ses relances partent de son
     // adresse et passent ses regles SPF/DKIM.
-    expect(labels).toEqual([8, 6, 6, 2, 1, 6, 1, 13, 5, 1, 18]);
+    // Pilotage passe a 9 : + Objectifs qualite (ADR 0133), la revue des
+    // objectifs face aux KPI reels -- la ou l'on pilote, pas dans le catalogue
+    // d'indicateurs qui ne porte que leur definition.
+    expect(labels).toEqual([9, 6, 6, 2, 1, 6, 1, 13, 5, 1, 18]);
   });
 
   it('ne garde aucune entree de prevision dans la barre laterale', () => {

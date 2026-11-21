@@ -38,7 +38,8 @@ const PERMISSIONS: Record<string, string> = {
   'training.manage': $localize`:@@authz.perm.training-manage:Tenir la matrice de compétences`,
   'stakeholder.manage': $localize`:@@authz.perm.stakeholder-manage:Tenir le registre des parties intéressées`,
   'kpi.manage': $localize`:@@authz.perm.kpi-manage:Définir les indicateurs, leurs cibles et leurs seuils`,
-  'kpi.measure': $localize`:@@authz.perm.kpi-measure:Consigner un relevé d'indicateur`
+  'kpi.measure': $localize`:@@authz.perm.kpi-measure:Consigner un relevé d'indicateur`,
+  'objective.manage': $localize`:@@authz.perm.objective-manage:Définir les objectifs qualité et trancher les CAPA qu'ils proposent`
 };
 
 const MODULES: Record<string, string> = {
