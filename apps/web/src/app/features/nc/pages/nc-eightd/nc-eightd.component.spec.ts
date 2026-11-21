@@ -479,19 +479,21 @@ describe('NcEightDComponent', () => {
    * le PDF portera. Sans son tableau, une action de nature CONTAINMENT
    * (ADR 0115) ne s'affichait nulle part dans le rapport.
    *
-   * <p>Le D5 montre les CAPA definies -- correctives et preventives -- et plus
-   * l'endiguement : celui-ci est deja le tableau du D3, juste au-dessus, et
-   * ses lignes repetees sous le D5 laissaient croire a deux decisions
-   * distinctes la ou il n'y en avait qu'une.
+   * <p>Le D5 ne montre QUE les correctives. Ni l'endiguement -- il est deja le
+   * tableau du D3, juste au-dessus --, ni la prevention : elle est celui du D7.
+   * Elle y figurait, et chaque action preventive se lisait donc DEUX FOIS dans
+   * le meme rapport, sous deux disciplines, comme si l'ecart avait ete traite
+   * deux fois. La fiche de l'ecart faisait deja cette separation : l'ecran et
+   * le rapport ne montraient pas le meme dossier.
    */
-  it("donne au D3 l'endiguement, au D5 les CAPA d\u00e9finies, au D7 les pr\u00e9ventives", async () => {
+  it("donne au D3 l'endiguement, au D5 les correctives, au D7 les pr\u00e9ventives", async () => {
     await monter(['QUALITY_MANAGER']);
 
     const tableaux = fixture.debugElement.queryAll(By.directive(CapaActionPanelStubComponent));
     expect(tableaux.length).toBe(3);
     const natures = tableaux.map(t => (t.componentInstance as CapaActionPanelStubComponent).natures);
     expect(natures).toEqual([
-      ['CONTAINMENT'], ['CORRECTIVE', 'PREVENTIVE'], ['PREVENTIVE']]);
+      ['CONTAINMENT'], ['CORRECTIVE'], ['PREVENTIVE']]);
     const dossiers = tableaux.map(t => (t.componentInstance as CapaActionPanelStubComponent).capaCaseId);
     expect(dossiers).toEqual(['capa-9', 'capa-9', 'capa-9']);
   });

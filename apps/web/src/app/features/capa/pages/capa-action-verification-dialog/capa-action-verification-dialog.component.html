@@ -1,0 +1,95 @@
+<qos-form-dialog
+  i18n-title="@@capa.action-verification.title"
+  title="Vérifier l'efficacité de l'action"
+  i18n-subtitle="@@capa.action-verification.subtitle"
+  subtitle="Ce qui a été constaté, confronté au critère posé quand l'action a été décidée."
+  [formGroup]="form"
+  [submitting]="(submitting$ | async) ?? false"
+  [submitDisabled]="!complete"
+  i18n-submitLabel="@@capa.action-verification.submit"
+  submitLabel="Enregistrer le verdict"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
+
+  <!-- L'ACTION JUGÉE, rappelée : on arrive ici depuis un tableau de plusieurs
+       lignes, et juger la mauvaise ne se rattrape pas — un jugement s'ajoute à
+       l'historique, il ne s'efface pas (ADR 0108). -->
+  <p class="action-jugee" data-test="action-verif-intitule">{{ data.action.title }}</p>
+
+  <!-- LE CRITÈRE, en lecture seule. Il a été posé à l'écriture de l'action
+       (ADR 0131) ; le rouvrir ici reviendrait à choisir la cible après avoir vu
+       le résultat, ce que l'ADR 0108 veut précisément empêcher. -->
+  <div class="critere" *ngIf="!sansCritere" data-test="action-verif-critere">
+    <span class="critere__titre" i18n="@@capa.evaluation.criterion">Critère posé à l'ouverture</span>
+    <p class="critere__texte">{{ critere }}</p>
+  </div>
+
+  <!-- Aucun critère, ni sur l'action ni sur le dossier : le cas des actions
+       antérieures à la colonne. Le serveur refuse ; on le dit avant le clic. -->
+  <p class="sans-critere" *ngIf="sansCritere" role="status" data-test="action-verif-sans-critere"
+     i18n="@@capa.action-verification.no-criterion">
+    Aucun critère d'efficacité n'a été posé sur cette action ni sur son dossier : il n'y a rien
+    à quoi confronter le relevé. Reprenez l'action pour y inscrire sa mesure.
+  </p>
+
+  <div class="row">
+    <mat-form-field appearance="outline" class="col">
+      <mat-label i18n="@@capa.evaluation.baseline">Avant</mat-label>
+      <input matInput formControlName="baseline" maxlength="120" data-test="action-verif-avant">
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="col">
+      <mat-label i18n="@@capa.evaluation.target">Cible</mat-label>
+      <input matInput formControlName="target" maxlength="120" data-test="action-verif-cible">
+    </mat-form-field>
+  </div>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@capa.evaluation.observed">Constaté</mat-label>
+    <input matInput formControlName="observed" maxlength="120" required
+           data-test="action-verif-constate">
+    <mat-hint i18n="@@capa.evaluation.observed-hint">Obligatoire : le verdict repose sur une mesure</mat-hint>
+    <mat-error *ngIf="form.controls.observed.hasError('required')"
+               i18n="@@capa.action-verification.observed-required">Le relevé constaté est obligatoire.</mat-error>
+  </mat-form-field>
+
+  <!-- Trois boutons plutôt qu'une liste déroulante : les trois réponses
+       possibles se lisent d'un coup, et leur couleur dit laquelle lève
+       l'obstacle à la clôture. -->
+  <div class="choices" role="group" data-test="action-verif-verdicts"
+       aria-label="Verdict d'efficacité" i18n-aria-label="@@capa.evaluation.verdict-aria">
+    <button type="button" *ngFor="let v of verdicts"
+            class="choice" [ngClass]="verdictClass(v)"
+            [attr.aria-pressed]="verdict === v"
+            [class.on]="verdict === v"
+            (click)="choose(v)">
+      <ng-container [ngSwitch]="v">
+        <span *ngSwitchCase="'EFFECTIVE'" i18n="@@capa.evaluation.verdict-effective">Efficace</span>
+        <span *ngSwitchCase="'PARTIAL'" i18n="@@capa.evaluation.verdict-partial">Partiellement</span>
+        <span *ngSwitchDefault i18n="@@capa.evaluation.verdict-ineffective">Inefficace</span>
+      </ng-container>
+    </button>
+  </div>
+
+  <!-- Ce que le verdict choisi va déclencher, dit avant de l'enregistrer. -->
+  <p class="outcome" *ngIf="verdict" [ngClass]="verdictClass(verdict)" data-test="action-verif-suite">
+    <ng-container [ngSwitch]="verdict">
+      <span *ngSwitchCase="'EFFECTIVE'" i18n="@@capa.action-verification.outcome-effective">
+        Cette action ne retiendra plus la clôture du dossier.
+      </span>
+      <span *ngSwitchCase="'PARTIAL'" i18n="@@capa.action-verification.outcome-partial">
+        L'effet est insuffisant : l'action continuera de retenir la clôture, le temps qu'une
+        action complémentaire soit décidée.
+      </span>
+      <span *ngSwitchDefault i18n="@@capa.action-verification.outcome-ineffective">
+        L'action n'a pas produit son effet : elle continuera de retenir la clôture, et la cause
+        est à reprendre.
+      </span>
+    </ng-container>
+  </p>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@capa.evaluation.comment">Commentaire</mat-label>
+    <textarea matInput formControlName="comment" rows="3" maxlength="4000"
+              data-test="action-verif-commentaire"></textarea>
+  </mat-form-field>
+</qos-form-dialog>

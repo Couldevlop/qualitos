@@ -118,6 +118,81 @@ describe('CapaCreateDialogComponent — fenêtre unique', () => {
     expect(component.criticities.every(c => !!c.label)).toBeTrue();
   });
 
+  // --- la nature imposée par la discipline qui ouvre la fenêtre ------------
+
+  /**
+   * LE D3 N'A PAS À REPOSER LA QUESTION DE LA NATURE.
+   *
+   * <p>Une discipline du traitement 8D ne parle que de la sienne. Son bouton
+   * ouvrait pourtant cette fenêtre avec les trois choix et « Corrective »
+   * pré-cochée : la première action de confinement d'un écart naissait donc
+   * corrective, le registre CAPA l'affichait sous ce faux type, et le D3
+   * restait vide puisqu'il ne montre que l'endiguement.
+   */
+  it('n’offre que la nature imposée, cochée, quand l’écran appelant la fixe', async () => {
+    await setup({ prefill: { type: 'CONTAINMENT' }, lockType: true });
+
+    expect(component.naturesProposees.map(n => n.value)).toEqual(['CONTAINMENT']);
+    expect(component.natureImposee).toBeTrue();
+    expect(component.form.controls.type.value).toBe('CONTAINMENT');
+    expect(hote().querySelectorAll('[data-test="capa-nature"] mat-radio-button').length).toBe(1);
+  });
+
+  it('laisse les trois natures quand aucune n’est imposée', async () => {
+    await setup({ prefill: { type: 'PREVENTIVE' } });
+
+    expect(component.naturesProposees.map(n => n.value))
+      .toEqual(['CONTAINMENT', 'CORRECTIVE', 'PREVENTIVE']);
+    expect(component.natureImposee).toBeFalse();
+    expect(component.form.controls.type.value).toBe('PREVENTIVE');
+  });
+
+  // --- l'efficacité ne se demande pas à un endiguement ---------------------
+
+  /**
+   * Un endiguement contient l'effet ; il ne prétend pas supprimer la cause, et
+   * il n'y a donc rien à mesurer sur lui (ISO 9001 §10.2). Lui demander un
+   * critère d'efficacité et une décision de vérification faisait promettre un
+   * résultat à un geste qui n'en poursuit pas -- et le validateur obligatoire
+   * de la question aurait bloqué l'enregistrement sans rien montrer.
+   */
+  it('ne demande ni critère ni vérification pour un endiguement, et n’en envoie aucun', async () => {
+    await setup({ prefill: { type: 'CONTAINMENT' }, lockType: true });
+
+    expect(component.demandeEfficacite).toBeFalse();
+    expect(hote().querySelector('[data-test="capa-critere-efficacite"]')).toBeNull();
+    expect(hote().querySelector('[data-test="bloc-verification"]')).toBeNull();
+    expect(component.form.controls.verificationRequired.hasError('required')).toBeFalse();
+
+    capa.openCase.and.returnValue(of(ouvert()));
+    choisir(AMINA);
+    component.form.patchValue({ title: 'Trier le lot suspect', dueDate: DEMAIN });
+    expect(component.form.valid)
+      .withContext('rien ne doit bloquer l’enregistrement en silence')
+      .toBeTrue();
+    component.submit();
+
+    const envoye = capa.openCase.calls.mostRecent().args[0] as OpenCapaRequest;
+    expect(envoye.actionType).toBe('CONTAINMENT');
+    // Le DOSSIER reste correctif : un dossier de pur endiguement ne se
+    // clôturerait jamais, et le serveur le refuse comme type de dossier.
+    expect(envoye.type).toBe('CORRECTIVE');
+    expect(envoye.verificationRequired).toBeUndefined();
+    expect(envoye.effectivenessCriterion).toBeUndefined();
+  });
+
+  it('repose la question dès qu’on revient à une nature qui promet un effet', async () => {
+    await setup();
+    component.form.controls.type.setValue('CONTAINMENT');
+    fixture.detectChanges();
+    expect(component.form.controls.verificationRequired.hasError('required')).toBeFalse();
+
+    component.form.controls.type.setValue('PREVENTIVE');
+    fixture.detectChanges();
+    expect(component.demandeEfficacite).toBeTrue();
+    expect(component.form.controls.verificationRequired.hasError('required')).toBeTrue();
+  });
+
   it('en création libre, la source se choisit parmi celles qu\'on peut saisir à la main', async () => {
     await setup();
     expect(component.sourceLocked).toBeFalse();
@@ -125,7 +200,11 @@ describe('CapaCreateDialogComponent — fenêtre unique', () => {
       // « Risque » en fait partie : §6.1 traite le risque avant qu'il se
       // réalise, et n'ouvrir ce chemin que depuis la fiche du registre privait
       // d'un accès légitime.
-      .toEqual(['NON_CONFORMITY', 'AUDIT', 'COMPLAINT', 'INTERNAL', 'IOT_ALERT', 'RISK', 'OTHER']);
+      // « Détection interne » n'y est plus : elle n'adosse le dossier à aucun
+      // registre, la référence s'y tapait à la main, et un dossier ouvert ainsi
+      // en citant un écart restait orphelin -- ses actions ne paraissaient dans
+      // aucune discipline du 8D de cet écart.
+      .toEqual(['NON_CONFORMITY', 'AUDIT', 'COMPLAINT', 'IOT_ALERT', 'RISK', 'OTHER']);
     expect(hote().querySelector('[data-test="capa-source"]')).not.toBeNull();
     expect(hote().querySelector('[data-test="source-verrouillee"]')).toBeNull();
     expect(component.dialogTitle).toBe('Nouvelle CAPA');

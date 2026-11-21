@@ -42,9 +42,12 @@
        dossier de pur endiguement ne se clôturerait jamais. -->
   <div class="nature">
     <span class="nature__titre" id="capa-open-nature" i18n="@@capa.open.nature">Nature</span>
+    <!-- UNE SEULE nature quand l'écran appelant l'impose — une discipline du
+         traitement 8D ne parle que de la sienne. Elle reste montrée, cochée :
+         ce qu'on écrit doit se lire sur la fenêtre où on l'écrit. -->
     <mat-radio-group formControlName="type" class="nature__choix" aria-labelledby="capa-open-nature"
                      data-test="capa-nature">
-      <mat-radio-button *ngFor="let n of natures" [value]="n.value">{{ n.label }}</mat-radio-button>
+      <mat-radio-button *ngFor="let n of naturesProposees" [value]="n.value">{{ n.label }}</mat-radio-button>
     </mat-radio-group>
     <p class="nature__aide" *ngIf="isContainment" data-test="capa-endiguement-aide"
        i18n="@@capa.open.containment-hint">Mesure immédiate : elle contient l'effet. Le dossier reste
@@ -149,7 +152,13 @@
     d'évaluation refuse de juger sans lui, et le poser le jour du jugement
     revient à choisir la cible en voyant le tir.
   -->
-  <mat-form-field appearance="outline" class="full" *ngIf="!isDefineAction">
+  <!--
+    NI L'UN NI L'AUTRE POUR UN ENDIGUEMENT : il contient l'effet, il ne prétend
+    pas supprimer la cause — il n'y a donc rien à mesurer sur lui, et la
+    question se reposera au premier correctif, qui le promet (ISO 9001 §10.2).
+  -->
+  <mat-form-field appearance="outline" class="full" *ngIf="demandeEfficacite"
+                  data-test="capa-critere-efficacite">
     <mat-label i18n="@@capa.criterion.label">Critère d'efficacité</mat-label>
     <textarea matInput formControlName="effectivenessCriterion" rows="2" maxlength="2000"></textarea>
     <mat-hint i18n="@@capa.criterion.hint">
@@ -157,7 +166,9 @@
     </mat-hint>
   </mat-form-field>
 
-    <qos-capa-verification-fields [group]="form" [mandatory]="true"
+    <qos-capa-verification-fields *ngIf="demandeEfficacite"
+                                  [group]="form" [mandatory]="true"
+                                  data-test="capa-verification-demande"
                                   (verifierSelected)="onVerifier($event)"></qos-capa-verification-fields>
 
     <!-- Les pièces sont retenues ici et déposées une fois le dossier créé : ce qui

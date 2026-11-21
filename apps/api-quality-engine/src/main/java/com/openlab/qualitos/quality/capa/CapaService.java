@@ -489,6 +489,22 @@ public class CapaService {
         a.setAssigneeName(pilote);
         a.setDecidedOn(LocalDate.now());
         a.setDueDate(request.dueDate());
+        // CE QU'ON ATTEND DE CETTE PREMIÈRE ACTION, recopié de ce qui vient
+        // d'être posé sur le dossier (ADR 0131). La question n'a été posée
+        // qu'une fois, en écrivant cette action-là : la porter aussi sur elle
+        // évite qu'elle soit la seule du dossier à ne rien dire de son effet,
+        // alors qu'elle est précisément celle devant laquelle on a répondu.
+        //
+        // Rien sous un endiguement : il ne promet aucun effet, et le dossier
+        // qu'il ouvre ne se clôture de toute façon pas sans correctif
+        // (CONTAINMENT_ONLY). La question se reposera à l'écriture de celui-là.
+        if (a.getActionType() != CapaActionType.CONTAINMENT) {
+            a.setEffectivenessCriterion(c.getEffectivenessCriterion());
+            a.setVerificationRequired(c.getVerificationRequired());
+            a.setVerificationAssigneeId(c.getVerificationAssigneeId());
+            a.setVerificationAssigneeName(c.getVerificationAssigneeName());
+            a.setVerificationInstructions(c.getVerificationInstructions());
+        }
         // L'action part avec le dossier (cascade) : une seule écriture, donc
         // jamais l'un sans l'autre.
         c.getActions().add(a);
@@ -811,6 +827,16 @@ public class CapaService {
                 throw new CapaStateException(stillOpen + " linked non-conformity(ies) are still open: "
                         + "close them before closing this CAPA");
             }
+            // TOUTES LES ACTIONS DOIVENT ETRE CLOSES, et une action qui a promis
+            // une verification n'est close que verifiee (ADR 0132). Le refus est
+            // ici et pas seulement dans la liste d'obstacles : une liste qui
+            // n'engage pas le serveur ne vaut rien, et l'ecran interdirait un
+            // geste que l'API accorderait.
+            long aVerifier = verificationsDActionEnAttente(c);
+            if (aVerifier > 0) {
+                throw new CapaStateException(aVerifier + " action(s) promised an effectiveness "
+                        + "verification that has not concluded: verify them before closing this CAPA");
+            }
         }
 
         Instant now = Instant.now();
@@ -988,6 +1014,7 @@ public class CapaService {
         // ne se corrigerait jamais, parce qu'elle mentirait sans le dire.
         a.setDecidedOn(request.decidedOn() != null ? request.decidedOn() : LocalDate.now());
         a.setDueDate(request.dueDate());
+        appliquerEfficaciteDeLAction(a, request);
         CapaAction saved = actionRepository.save(a);
         // Le responsable de la PREMIERE action pilote le dossier : c'est a lui
         // qu'on demandera des nouvelles, et il doit pouvoir le voir (ADR 0081).
@@ -1024,6 +1051,7 @@ public class CapaService {
         if (request.decidedOn() != null) a.setDecidedOn(request.decidedOn());
         if (request.dueDate() != null) a.setDueDate(request.dueDate());
         if (request.actionType() != null) a.setActionType(request.actionType());
+        appliquerEfficaciteDeLAction(a, request);
         if (request.status() != null) {
             a.setStatus(request.status());
             if (request.status() == CapaActionStatus.DONE && a.getCompletedAt() == null) {
@@ -1035,6 +1063,75 @@ public class CapaService {
         CapaAction enregistree = actionRepository.save(a);
         refleterAvancement(c);
         return toActionResponse(enregistree);
+    }
+
+    /**
+     * JUGER L'EFFICACITE D'UNE ACTION (ADR 0132).
+     *
+     * <p>Meme geste que sur le dossier, a l'echelle ou la promesse a ete faite :
+     * chaque action porte sa propre exigence de verification (ADR 0131), et le
+     * dossier ne se cloture pas tant qu'une action promise verifiee ne l'a pas
+     * ete.
+     *
+     * <p>Quatre refus :
+     * <ul>
+     *   <li>une action qui n'a RIEN PROMIS ne se juge pas : il n'y a pas de
+     *       critere auquel la comparer, et juger sans critere annonce revient a
+     *       choisir le critere en regardant le resultat (ADR 0108) ;</li>
+     *   <li>une action PAS ENCORE FAITE ne se juge pas : on mesurerait l'effet
+     *       d'un geste qui n'a pas eu lieu ;</li>
+     *   <li>un dossier CLOS ou REJETE ne recoit plus de jugement : ce qui est
+     *       clos l'a ete sur l'etat d'alors ;</li>
+     *   <li>le critere est OBLIGATOIRE -- celui de l'action, a defaut celui du
+     *       dossier pour les actions anterieures a la colonne (V177).</li>
+     * </ul>
+     *
+     * <p>Le jugement s'AJOUTE a l'historique, il n'ecrase rien : une action
+     * jugee insuffisante, reprise, puis jugee efficace laisse les trois lignes,
+     * et c'est cette suite qu'un auditeur lit.
+     */
+    public CapaDto.ActionResponse verifyActionEffectiveness(
+            UUID capaId, UUID actionId, CapaDto.EffectivenessRequest request) {
+
+        CapaCase c = loadCase(capaId);
+        if (c.getStatus() == CapaStatus.CLOSED || c.getStatus() == CapaStatus.REJECTED) {
+            throw new CapaStateException(
+                    "Cannot verify actions on a " + c.getStatus() + " CAPA");
+        }
+        CapaAction a = actionRepository.findByIdAndCapaId(actionId, capaId)
+                .orElseThrow(() -> new CapaActionNotFoundException(actionId));
+
+        if (!Boolean.TRUE.equals(a.getVerificationRequired())) {
+            throw new CapaValidationException(
+                    "This action did not require an effectiveness verification: "
+                            + "nothing was promised, and there is no criterion to judge it against");
+        }
+        if (a.getStatus() != CapaActionStatus.DONE) {
+            throw new CapaStateException(
+                    "This action is not DONE yet: complete it before judging its effect");
+        }
+
+        EffectivenessVerdict verdict = resolveVerdict(request);
+        String critere = a.getEffectivenessCriterion() != null
+                ? a.getEffectivenessCriterion()
+                : c.getEffectivenessCriterion();
+        if (!nonVide(critere)) {
+            throw new CapaValidationException(
+                    "No effectiveness criterion was set on this action or its case: "
+                            + "set one before judging it");
+        }
+
+        Instant now = Instant.now();
+        EffectivenessReview review = EffectivenessReview.recordForAction(
+                UUID.randomUUID(), c.getTenantId(), c.getId(), a.getId(), verdict,
+                critere, request.baseline(), request.target(), observedOf(request),
+                request.comment(),
+                CurrentUser.userId().orElse(null),
+                CurrentUser.displayName().orElse(null),
+                now);
+        effectivenessReviews.save(review);
+        journal.record(c, CapaTransition.UPDATED);
+        return toActionResponse(a, review);
     }
 
     public void deleteAction(UUID capaId, UUID actionId) {
@@ -1185,9 +1282,56 @@ public class CapaService {
                 c.getVerificationRequired(), c.getVerificationAssigneeId(),
                 c.getVerificationAssigneeName(), c.getVerificationInstructions(),
                 c.getCreatedAt(), c.getUpdatedAt(),
-                c.getActions().stream().map(this::toActionResponse).toList(),
+                toActionResponses(c),
                 detailed ? resolveSourceNc(c) : null,
                 detailed ? closureBlockers(c) : null);
+    }
+
+    /**
+     * Les actions du dossier, chacune avec son dernier verdict, en UNE requete
+     * d'historique pour tout le dossier (ADR 0132).
+     *
+     * <p>Un dossier de huit actions se projetterait sinon en huit requetes, et
+     * la fiche d'un ecart en affiche trois dossiers.
+     */
+    private List<CapaDto.ActionResponse> toActionResponses(CapaCase c) {
+        List<CapaAction> actions = c.getActions();
+        if (actions.isEmpty()) {
+            return List.of();
+        }
+        Map<UUID, EffectivenessReview> jugements =
+                effectivenessReviews.findLastPerActionOfCase(c.getTenantId(), c.getId());
+        return actions.stream()
+                .map(a -> toActionResponse(a, jugements.get(a.getId())))
+                .toList();
+    }
+
+    /**
+     * Les actions qui ont PROMIS une verification et ne l'ont pas obtenue.
+     *
+     * <p>Trois cas comptent comme non verifiees : jamais jugee, jugee PARTIEL,
+     * jugee INEFFICACE. Les deux derniers ont ete regardes, et ce qu'on a vu ne
+     * permet pas de clore -- c'est exactement ce que le verdict du dossier dit
+     * deja de lui-meme (ADR 0108).
+     *
+     * <p>Une action qui n'a rien promis n'est pas comptee : son statut DONE
+     * suffit, et c'est la l'objet du code ACTIONS_NOT_DONE.
+     */
+    private long verificationsDActionEnAttente(CapaCase c) {
+        List<CapaAction> promises = c.getActions().stream()
+                .filter(a -> Boolean.TRUE.equals(a.getVerificationRequired()))
+                .toList();
+        if (promises.isEmpty()) {
+            return 0;
+        }
+        Map<UUID, EffectivenessReview> jugements =
+                effectivenessReviews.findLastPerActionOfCase(c.getTenantId(), c.getId());
+        return promises.stream()
+                .filter(a -> {
+                    EffectivenessReview dernier = jugements.get(a.getId());
+                    return dernier == null || !dernier.verdict().closesCase();
+                })
+                .count();
     }
 
     /**
@@ -1205,12 +1349,125 @@ public class CapaService {
                 .orElse(null);
     }
 
+    /**
+     * L'évaluation d'efficacité D'UNE ACTION : son critère, et la décision de
+     * vérifier son effet (ADR 0131).
+     *
+     * <p><b>Pourquoi sur l'action.</b> Le dossier porte les siennes, posées à
+     * l'ouverture, et les garde : ce sont elles qui gouvernent sa clôture
+     * (ADR 0073) et son verdict (ADR 0108). Mais un dossier porte plusieurs
+     * actions de natures différentes (ADR 0115), et « recalibrer la presse » ne
+     * se mesure pas à la même chose que « former les opérateurs de nuit ». La
+     * question n'étant posée qu'une fois, les actions suivantes s'écrivaient
+     * sans qu'on sache jamais si leur effet serait vérifié.
+     *
+     * <p>Trois refus, les mêmes que sur le dossier :
+     * <ul>
+     *   <li>un ENDIGUEMENT ne promet aucun effet et n'a donc rien à mesurer
+     *       (ISO 9001 §10.2) : critère et vérification y sont refusés, au lieu
+     *       d'être acceptés puis ignorés ;</li>
+     *   <li>désigner un vérificateur ou écrire des consignes suppose que la
+     *       vérification est EXIGÉE ;</li>
+     *   <li>une vérification exigée doit être confiée à quelqu'un — sans nom,
+     *       elle n'aurait lieu que si quelqu'un y pense.</li>
+     * </ul>
+     *
+     * <p>Le critère, lui, se VERROUILLE dès qu'il est posé : le réécrire plus
+     * tard, c'est déplacer la cible entre deux mesures (ADR 0108). Le même
+     * texte réécrit à l'identique passe, lui : un PATCH qui renvoie le champ
+     * inchangé ne change rien et n'a pas à être refusé.
+     */
+    private void appliquerEfficaciteDeLAction(CapaAction a, CapaDto.ActionRequest request) {
+        boolean endiguement = a.getActionType() == CapaActionType.CONTAINMENT;
+
+        if (endiguement
+                && (nonVide(request.effectivenessCriterion())
+                    || Boolean.TRUE.equals(request.verificationRequired())
+                    || request.verificationAssigneeId() != null
+                    || nonVide(request.verificationInstructions()))) {
+            throw new CapaValidationException(
+                    "A containment action has no effect to measure: "
+                            + "no effectiveness criterion, no verification");
+        }
+
+        String critere = nettoyer(request.effectivenessCriterion());
+        if (critere != null) {
+            String pose = a.getEffectivenessCriterion();
+            if (pose != null && !pose.equals(critere)) {
+                throw new CapaValidationException(
+                        "The effectiveness criterion of an action cannot be rewritten");
+            }
+            a.setEffectivenessCriterion(critere);
+        }
+
+        if (Boolean.FALSE.equals(request.verificationRequired())) {
+            a.setVerificationRequired(false);
+            a.setVerificationAssigneeId(null);
+            a.setVerificationAssigneeName(null);
+            a.setVerificationInstructions(null);
+            return;
+        }
+
+        boolean exigeeApres = Boolean.TRUE.equals(request.verificationRequired())
+                || (request.verificationRequired() == null
+                    && Boolean.TRUE.equals(a.getVerificationRequired()));
+
+        if (!exigeeApres
+                && (request.verificationAssigneeId() != null
+                    || nonVide(request.verificationInstructions()))) {
+            throw new CapaValidationException(
+                    "A verifier or verification instructions require verificationRequired=true");
+        }
+
+        if (Boolean.TRUE.equals(request.verificationRequired())) {
+            a.setVerificationRequired(true);
+        }
+        if (request.verificationAssigneeId() != null) {
+            a.setVerificationAssigneeId(request.verificationAssigneeId());
+        }
+        if (request.verificationAssigneeName() != null) {
+            a.setVerificationAssigneeName(nettoyer(request.verificationAssigneeName()));
+        }
+        if (request.verificationInstructions() != null) {
+            a.setVerificationInstructions(nettoyer(request.verificationInstructions()));
+        }
+
+        if (exigeeApres && a.getVerificationAssigneeId() == null) {
+            throw new CapaValidationException(
+                    "A required verification must be assigned to someone");
+        }
+    }
+
     private CapaDto.ActionResponse toActionResponse(CapaAction a) {
+        // Sans l'historique sous la main, on le lit pour cette seule action :
+        // c'est le cas d'un ajout ou d'une mise a jour, ou l'appelant rend UNE
+        // action et non un dossier entier.
+        return toActionResponse(a, derniereEvaluationDe(a));
+    }
+
+    /**
+     * @param jugement la derniere evaluation de cette action, ou {@code null}
+     *        si elle n'a jamais ete jugee. Passe en argument, et non relu ici :
+     *        un dossier de huit actions se projetterait en huit requetes.
+     */
+    private CapaDto.ActionResponse toActionResponse(CapaAction a, EffectivenessReview jugement) {
         return new CapaDto.ActionResponse(
                 a.getId(), a.getCapa().getId(), a.getTitle(), a.getDescription(),
                 a.getStatus(), a.getActionType(), a.getAssigneeId(), a.getAssigneeName(),
                 a.getDecidedOn(), a.getDueDate(), a.getCompletedAt(),
+                a.getEffectivenessCriterion(), a.getVerificationRequired(),
+                a.getVerificationAssigneeId(), a.getVerificationAssigneeName(),
+                a.getVerificationInstructions(),
+                jugement == null ? null : jugement.verdict(),
+                jugement == null ? null : jugement.reviewedAt(),
+                jugement == null ? null : jugement.reviewerName(),
                 a.getCreatedAt(), a.getUpdatedAt());
+    }
+
+    /** La derniere evaluation d'UNE action, pour la rendre seule. */
+    private EffectivenessReview derniereEvaluationDe(CapaAction a) {
+        return effectivenessReviews.findByAction(a.getCapa().getTenantId(), a.getId())
+                .stream().findFirst().orElse(null);
     }
 
     /**
@@ -1249,6 +1506,15 @@ public class CapaService {
         if (stillOpen > 0) {
             blockers.add(new CapaDto.ClosureBlocker(
                     ClosureBlockerCode.OPEN_NON_CONFORMITIES, stillOpen));
+        }
+        // Les verifications promises action par action (ADR 0132). Une action
+        // « faite » dit que le geste a eu lieu, pas qu'il a produit son effet :
+        // clore sans cela inscrirait au registre une cause traitee sur la foi
+        // d'une promesse que personne n'est alle controler.
+        long aVerifier = verificationsDActionEnAttente(c);
+        if (aVerifier > 0) {
+            blockers.add(new CapaDto.ClosureBlocker(
+                    ClosureBlockerCode.ACTION_VERIFICATIONS_PENDING, aVerifier));
         }
         return List.copyOf(blockers);
     }

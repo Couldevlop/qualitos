@@ -42,7 +42,12 @@ describe('capa.labels', () => {
    */
   it("n'ouvre pas à la main les sources qu'un autre écran pose", () => {
     const automates = CAPA_SOURCES.filter(s => !s.manual).map(s => s.value);
-    expect(automates).toEqual(['EXTERNAL_NON_CONFORMITY', 'SPC_ALERT', 'ANOMALY']);
+    // « Détection interne » les rejoint : elle n'adosse le dossier à aucun
+    // registre, de sorte qu'un dossier ouvert sous cette source en citant un
+    // écart restait orphelin de lui. Son libellé reste, pour les dossiers
+    // déjà ouverts qui la portent.
+    expect(automates).toEqual(
+      ['EXTERNAL_NON_CONFORMITY', 'INTERNAL', 'SPC_ALERT', 'ANOMALY']);
   });
 
   it('nomme « externe » la source d’un écart signalé du dehors', () => {

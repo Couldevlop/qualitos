@@ -19,8 +19,12 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import com.openlab.qualitos.quality.capa.effectiveness.domain.EffectivenessReview;
+import com.openlab.qualitos.quality.capa.effectiveness.domain.EffectivenessVerdict;
+
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.Map;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -288,7 +292,7 @@ class CapaServiceTest {
         when(caseRepo.save(c)).thenReturn(c);
 
         service.updateAction(c.getId(), a.getId(), new CapaDto.ActionRequest(
-                null, null, CapaActionStatus.IN_PROGRESS, null, null, null, null, null));
+                null, null, CapaActionStatus.IN_PROGRESS, null, null, null, null, null, null, null, null, null, null));
 
         assertThat(c.getStatus()).isEqualTo(CapaStatus.IN_PROGRESS);
     }
@@ -306,7 +310,7 @@ class CapaServiceTest {
         when(caseRepo.save(c)).thenReturn(c);
 
         service.updateAction(c.getId(), derniere.getId(), new CapaDto.ActionRequest(
-                null, null, CapaActionStatus.DONE, null, null, null, null, null));
+                null, null, CapaActionStatus.DONE, null, null, null, null, null, null, null, null, null, null));
 
         assertThat(c.getStatus()).isEqualTo(CapaStatus.RESOLVED);
         assertThat(c.getResolvedAt()).isNotNull();
@@ -327,7 +331,7 @@ class CapaServiceTest {
         when(actionRepo.save(autre)).thenReturn(autre);
 
         service.updateAction(c.getId(), autre.getId(), new CapaDto.ActionRequest(
-                null, null, CapaActionStatus.DONE, null, null, null, null, null));
+                null, null, CapaActionStatus.DONE, null, null, null, null, null, null, null, null, null, null));
 
         assertThat(c.getStatus()).isEqualTo(CapaStatus.IN_PROGRESS);
     }
@@ -349,7 +353,7 @@ class CapaServiceTest {
         when(caseRepo.save(c)).thenReturn(c);
 
         service.updateAction(c.getId(), a.getId(), new CapaDto.ActionRequest(
-                null, null, CapaActionStatus.IN_PROGRESS, null, null, null, null, null));
+                null, null, CapaActionStatus.IN_PROGRESS, null, null, null, null, null, null, null, null, null, null));
 
         assertThat(c.getStatus()).isEqualTo(CapaStatus.IN_PROGRESS);
         assertThat(c.getResolvedAt()).isNull();
@@ -368,7 +372,7 @@ class CapaServiceTest {
         when(actionRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
         service.addAction(c.getId(), new CapaDto.ActionRequest(
-                "a faire", null, null, null, null, null, null, null));
+                "a faire", null, null, null, null, null, null, null, null, null, null, null, null));
 
         assertThat(c.getStatus()).isEqualTo(CapaStatus.OPEN);
         // Rien n'a change : le dossier n'est pas reenregistre pour autant.
@@ -390,7 +394,7 @@ class CapaServiceTest {
         when(caseRepo.save(c)).thenReturn(c);
 
         service.addAction(c.getId(), new CapaDto.ActionRequest(
-                "complement", null, null, null, null, null, null, null));
+                "complement", null, null, null, null, null, null, null, null, null, null, null, null));
 
         assertThat(c.getStatus()).isEqualTo(CapaStatus.IN_PROGRESS);
         assertThat(c.getResolvedAt()).isNull();
@@ -409,7 +413,7 @@ class CapaServiceTest {
 
         assertThatThrownBy(() -> service.updateAction(c.getId(), a.getId(),
                 new CapaDto.ActionRequest(null, null, CapaActionStatus.PENDING,
-                        null, null, null, null, null)))
+                        null, null, null, null, null, null, null, null, null, null)))
                 .isInstanceOf(CapaStateException.class);
         assertThat(c.getStatus()).isEqualTo(CapaStatus.CLOSED);
     }
@@ -503,7 +507,7 @@ class CapaServiceTest {
             return a;
         });
         CapaDto.ActionRequest req = new CapaDto.ActionRequest(
-                "fix", "desc", null, null, UUID.randomUUID(), null, null, LocalDate.now().plusDays(5));
+                "fix", "desc", null, null, UUID.randomUUID(), null, null, LocalDate.now().plusDays(5), null, null, null, null, null);
         CapaDto.ActionResponse r = service.addAction(c.getId(), req);
         assertThat(r.status()).isEqualTo(CapaActionStatus.PENDING);
     }
@@ -530,7 +534,7 @@ class CapaServiceTest {
 
             CapaDto.ActionResponse seconde = service.addAction(c.getId(), new CapaDto.ActionRequest(
                     "Reprendre le reglage de la presse", null, null,
-                    CapaActionType.PREVENTIVE, null, null, null, null));
+                    CapaActionType.PREVENTIVE, null, null, null, null, null, null, null, null, null));
 
             assertThat(seconde.title()).as("source %s", source)
                     .isEqualTo("Reprendre le reglage de la presse");
@@ -552,7 +556,7 @@ class CapaServiceTest {
 
         service.addAction(c.getId(), new CapaDto.ActionRequest(
                 "Former l'equipe de nuit", null, null, null, UUID.randomUUID(),
-                "Autre personne", null, null));
+                "Autre personne", null, null, null, null, null, null, null));
 
         assertThat(c.getOwnerId()).isEqualTo(OWNER);
         verify(caseRepo, never()).save(any());
@@ -566,7 +570,7 @@ class CapaServiceTest {
         when(actionRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
         service.addAction(c.getId(), new CapaDto.ActionRequest(
-                "Définir le plan", null, null, null, responsable, "  a.diallo@client.test  ", null, null));
+                "Définir le plan", null, null, null, responsable, "  a.diallo@client.test  ", null, null, null, null, null, null, null));
 
         assertThat(c.getOwnerId()).isEqualTo(responsable);
         assertThat(c.getOwnerName()).isEqualTo("a.diallo@client.test");
@@ -580,7 +584,7 @@ class CapaServiceTest {
         when(actionRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
         service.addAction(c.getId(), new CapaDto.ActionRequest(
-                "Définir le plan", null, null, null, null, "Nom libre", null, null));
+                "Définir le plan", null, null, null, null, "Nom libre", null, null, null, null, null, null, null));
 
         assertThat(c.getOwnerId()).isEqualTo(OWNER);
         verify(caseRepo, never()).save(any());
@@ -783,7 +787,7 @@ class CapaServiceTest {
         when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
         when(actionRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
         CapaDto.ActionRequest req = new CapaDto.ActionRequest(
-                "unique", null, null, null, null, null, null, null);
+                "unique", null, null, null, null, null, null, null, null, null, null, null, null);
         assertThat(service.addAction(c.getId(), req).title()).isEqualTo("unique");
     }
 
@@ -793,7 +797,7 @@ class CapaServiceTest {
         when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
         when(actionRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
         CapaDto.ActionRequest req = new CapaDto.ActionRequest(
-                "fix", null, CapaActionStatus.IN_PROGRESS, null, null, null, null, null);
+                "fix", null, CapaActionStatus.IN_PROGRESS, null, null, null, null, null, null, null, null, null, null);
         CapaDto.ActionResponse r = service.addAction(c.getId(), req);
         assertThat(r.status()).isEqualTo(CapaActionStatus.IN_PROGRESS);
     }
@@ -803,7 +807,7 @@ class CapaServiceTest {
         CapaCase c = capa(TENANT, CapaStatus.CLOSED);
         when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
         assertThatThrownBy(() -> service.addAction(c.getId(),
-                new CapaDto.ActionRequest("x", null, null, null, null, null, null, null)))
+                new CapaDto.ActionRequest("x", null, null, null, null, null, null, null, null, null, null, null, null)))
                 .isInstanceOf(CapaStateException.class);
     }
 
@@ -817,7 +821,7 @@ class CapaServiceTest {
         when(actionRepo.save(a)).thenReturn(a);
 
         service.updateAction(c.getId(), a.getId(),
-                new CapaDto.ActionRequest("t", null, CapaActionStatus.DONE, null, null, null, null, null));
+                new CapaDto.ActionRequest("t", null, CapaActionStatus.DONE, null, null, null, null, null, null, null, null, null, null));
 
         assertThat(a.getStatus()).isEqualTo(CapaActionStatus.DONE);
         assertThat(a.getCompletedAt()).isNotNull();
@@ -833,7 +837,7 @@ class CapaServiceTest {
         when(actionRepo.save(a)).thenReturn(a);
 
         service.updateAction(c.getId(), a.getId(),
-                new CapaDto.ActionRequest(null, null, CapaActionStatus.IN_PROGRESS, null, null, null, null, null));
+                new CapaDto.ActionRequest(null, null, CapaActionStatus.IN_PROGRESS, null, null, null, null, null, null, null, null, null, null));
 
         assertThat(a.getStatus()).isEqualTo(CapaActionStatus.IN_PROGRESS);
         assertThat(a.getCompletedAt()).isNull();
@@ -850,7 +854,7 @@ class CapaServiceTest {
         UUID assignee = UUID.randomUUID();
         LocalDate due = LocalDate.now().plusDays(3);
         service.updateAction(c.getId(), a.getId(),
-                new CapaDto.ActionRequest("nt", "nd", null, null, assignee, null, null, due));
+                new CapaDto.ActionRequest("nt", "nd", null, null, assignee, null, null, due, null, null, null, null, null));
         assertThat(a.getTitle()).isEqualTo("nt");
         assertThat(a.getDescription()).isEqualTo("nd");
         assertThat(a.getAssigneeId()).isEqualTo(assignee);
@@ -864,7 +868,7 @@ class CapaServiceTest {
         when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
         when(actionRepo.findByIdAndCapaId(actionId, c.getId())).thenReturn(Optional.empty());
         assertThatThrownBy(() -> service.updateAction(c.getId(), actionId,
-                new CapaDto.ActionRequest("x", null, null, null, null, null, null, null)))
+                new CapaDto.ActionRequest("x", null, null, null, null, null, null, null, null, null, null, null, null)))
                 .isInstanceOf(CapaActionNotFoundException.class);
     }
 
@@ -873,7 +877,7 @@ class CapaServiceTest {
         CapaCase c = capa(TENANT, CapaStatus.CLOSED);
         when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
         assertThatThrownBy(() -> service.updateAction(c.getId(), UUID.randomUUID(),
-                new CapaDto.ActionRequest("x", null, null, null, null, null, null, null)))
+                new CapaDto.ActionRequest("x", null, null, null, null, null, null, null, null, null, null, null, null)))
                 .isInstanceOf(CapaStateException.class);
     }
 
@@ -997,7 +1001,7 @@ class CapaServiceTest {
         // Le demarrage n'est plus demande, il est CONSTATE : commencer la
         // premiere action est l'acte, et c'est lui qu'on consigne (ADR 0117).
         service.updateAction(c.getId(), a.getId(), new CapaDto.ActionRequest(
-                null, null, CapaActionStatus.IN_PROGRESS, null, null, null, null, null));
+                null, null, CapaActionStatus.IN_PROGRESS, null, null, null, null, null, null, null, null, null, null));
 
         verify(journal).record(c, CapaTransition.STARTED);
     }
@@ -1012,7 +1016,7 @@ class CapaServiceTest {
         when(caseRepo.save(any())).thenReturn(c);
 
         service.updateAction(c.getId(), a.getId(), new CapaDto.ActionRequest(
-                null, null, CapaActionStatus.DONE, null, null, null, null, null));
+                null, null, CapaActionStatus.DONE, null, null, null, null, null, null, null, null, null, null));
 
         verify(journal).record(c, CapaTransition.RESOLVED);
     }
@@ -1073,7 +1077,7 @@ class CapaServiceTest {
 
         assertThatThrownBy(() -> service.updateAction(c.getId(), a.getId(),
                 new CapaDto.ActionRequest(null, null, CapaActionStatus.PENDING,
-                        null, null, null, null, null)))
+                        null, null, null, null, null, null, null, null, null, null)))
                 .isInstanceOf(CapaStateException.class);
 
         // Une transition refusée n'a pas eu lieu : la consigner mentirait.
@@ -1094,7 +1098,7 @@ class CapaServiceTest {
         LocalDate comite = LocalDate.of(2026, 3, 12);
 
         CapaDto.ActionResponse r = service.addAction(c.getId(), new CapaDto.ActionRequest(
-                "Réviser le plan de contrôle", null, null, null, null, "Amina Dridi", comite, null));
+                "Réviser le plan de contrôle", null, null, null, null, "Amina Dridi", comite, null, null, null, null, null, null));
 
         // Une action décidée en comité le 12 mars et saisie plus tard porte le
         // 12 mars : c'est toute la raison d'être de la colonne.
@@ -1109,7 +1113,7 @@ class CapaServiceTest {
         when(actionRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
         CapaDto.ActionResponse r = service.addAction(c.getId(),
-                new CapaDto.ActionRequest("x", null, null, null, null, null, null, null));
+                new CapaDto.ActionRequest("x", null, null, null, null, null, null, null, null, null, null, null, null));
 
         // Déduction EXPLICITE au jour de l'enregistrement, et corrigeable ensuite.
         // Le champ existe indépendamment de createdAt : l'entité l'a reçu avant
@@ -1125,7 +1129,7 @@ class CapaServiceTest {
         when(actionRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
         CapaDto.ActionResponse r = service.addAction(c.getId(),
-                new CapaDto.ActionRequest("x", null, null, null, null, "   ", null, null));
+                new CapaDto.ActionRequest("x", null, null, null, null, "   ", null, null, null, null, null, null, null));
 
         // Sinon la colonne « Responsable » serait vide sans le « — » qui dit
         // qu'elle l'est : l'écran n'aurait plus qu'une seule chose à tester.
@@ -1138,7 +1142,7 @@ class CapaServiceTest {
         when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
 
         assertThatThrownBy(() -> service.addAction(c.getId(),
-                new CapaDto.ActionRequest("   ", null, null, null, null, null, null, null)))
+                new CapaDto.ActionRequest("   ", null, null, null, null, null, null, null, null, null, null, null, null)))
                 .isInstanceOf(CapaValidationException.class);
         verify(actionRepo, never()).save(any());
     }
@@ -1149,7 +1153,7 @@ class CapaServiceTest {
         when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
 
         assertThatThrownBy(() -> service.addAction(c.getId(),
-                new CapaDto.ActionRequest("x".repeat(256), null, null, null, null, null, null, null)))
+                new CapaDto.ActionRequest("x".repeat(256), null, null, null, null, null, null, null, null, null, null, null, null)))
                 .isInstanceOf(CapaValidationException.class)
                 .hasMessageContaining("255");
         // Tronquer serait pire : l'utilisateur croirait avoir enregistré ce
@@ -1167,7 +1171,7 @@ class CapaServiceTest {
 
         CapaDto.ActionResponse r = service.updateAction(c.getId(), a.getId(),
                 new CapaDto.ActionRequest("  Libellé corrigé  ", null,
-                        CapaActionStatus.IN_PROGRESS, null, null, null, null, null));
+                        CapaActionStatus.IN_PROGRESS, null, null, null, null, null, null, null, null, null, null));
 
         // Les espaces de bordure d'un champ de tableau viennent du copier-coller,
         // pas de l'intention : les garder ferait diverger deux libellés identiques.
@@ -1183,7 +1187,7 @@ class CapaServiceTest {
         when(actionRepo.findByIdAndCapaId(a.getId(), c.getId())).thenReturn(Optional.of(a));
 
         assertThatThrownBy(() -> service.updateAction(c.getId(), a.getId(),
-                new CapaDto.ActionRequest(" ", null, null, null, null, null, null, null)))
+                new CapaDto.ActionRequest(" ", null, null, null, null, null, null, null, null, null, null, null, null)))
                 .isInstanceOf(CapaValidationException.class);
 
         // Le PATCH n'est pas validé par Jakarta (un champ absent doit rester
@@ -1204,7 +1208,7 @@ class CapaServiceTest {
         when(actionRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
         service.updateAction(c.getId(), a.getId(), new CapaDto.ActionRequest(
-                null, null, CapaActionStatus.DONE, null, null, null, null, null));
+                null, null, CapaActionStatus.DONE, null, null, null, null, null, null, null, null, null, null));
 
         assertThat(a.getAssigneeName()).isEqualTo("Amina Dridi");
         assertThat(a.getDecidedOn()).isEqualTo(LocalDate.of(2026, 3, 12));
@@ -1369,7 +1373,7 @@ class CapaServiceTest {
         when(actionRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
         CapaDto.ActionResponse r = service.addAction(c.getId(),
-                new CapaDto.ActionRequest("tri du lot", null, null, null, null, null, null, null));
+                new CapaDto.ActionRequest("tri du lot", null, null, null, null, null, null, null, null, null, null, null, null));
 
         assertThat(r.actionType()).isEqualTo(CapaActionType.CORRECTIVE);
     }
@@ -1382,7 +1386,7 @@ class CapaServiceTest {
 
         CapaDto.ActionResponse r = service.addAction(c.getId(), new CapaDto.ActionRequest(
                 "tri du lot suspect", null, null, CapaActionType.CONTAINMENT,
-                null, null, null, null));
+                null, null, null, null, null, null, null, null, null));
 
         assertThat(r.actionType()).isEqualTo(CapaActionType.CONTAINMENT);
     }
@@ -1398,7 +1402,7 @@ class CapaServiceTest {
         when(actionRepo.save(a)).thenReturn(a);
 
         service.updateAction(c.getId(), a.getId(), new CapaDto.ActionRequest(
-                null, null, null, null, null, null, null, LocalDate.now().plusDays(3)));
+                null, null, null, null, null, null, null, LocalDate.now().plusDays(3), null, null, null, null, null));
 
         assertThat(a.getActionType()).isEqualTo(CapaActionType.CONTAINMENT);
     }
@@ -1412,7 +1416,7 @@ class CapaServiceTest {
         when(actionRepo.save(a)).thenReturn(a);
 
         service.updateAction(c.getId(), a.getId(), new CapaDto.ActionRequest(
-                null, null, null, CapaActionType.PREVENTIVE, null, null, null, null));
+                null, null, null, CapaActionType.PREVENTIVE, null, null, null, null, null, null, null, null, null));
 
         assertThat(a.getActionType()).isEqualTo(CapaActionType.PREVENTIVE);
     }
@@ -2371,5 +2375,379 @@ class CapaServiceTest {
         nc.setReference(reference);
         nc.setOrigin(origine);
         return nc;
+    }
+
+    // --- l'evaluation d'efficacite DE CHAQUE ACTION (ADR 0131) ------------------
+    //
+    // Le critere et la decision de verification etaient ceux du DOSSIER, poses
+    // une seule fois a l'ouverture : la deuxieme action et les suivantes
+    // s'ecrivaient donc sans qu'on sache jamais si leur effet serait verifie.
+    // Les deux coexistent desormais -- le dossier garde les siens, qui
+    // gouvernent sa cloture, chaque action porte les siens.
+
+    @Test
+    void addAction_porteSonProprePritereEtSaPropreVerification() {
+        CapaCase c = capa(TENANT, CapaStatus.OPEN);
+        c.setEffectivenessCriterion("Aucun rebut pendant 3 mois");
+        action(c, CapaActionStatus.DONE);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(actionRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+        UUID verificateur = UUID.randomUUID();
+
+        CapaDto.ActionResponse r = service.addAction(c.getId(), new CapaDto.ActionRequest(
+                "Former les operateurs de nuit", null, null, CapaActionType.PREVENTIVE,
+                null, null, null, null,
+                "  Zero recidive sur 6 mois  ", true, verificateur, "  A. Diallo  ",
+                "  Relire les releves de la ligne 3  "));
+
+        assertThat(r.effectivenessCriterion()).isEqualTo("Zero recidive sur 6 mois");
+        assertThat(r.verificationRequired()).isTrue();
+        assertThat(r.verificationAssigneeId()).isEqualTo(verificateur);
+        assertThat(r.verificationAssigneeName()).isEqualTo("A. Diallo");
+        assertThat(r.verificationInstructions()).isEqualTo("Relire les releves de la ligne 3");
+        // Le dossier garde le sien, intact : l'action ne decide pas pour lui.
+        assertThat(c.getEffectivenessCriterion()).isEqualTo("Aucun rebut pendant 3 mois");
+    }
+
+    /**
+     * Un endiguement arrete l'effet, il ne pretend pas supprimer la cause
+     * (ISO 9001 10.2) : il n'y a rien a mesurer sur lui. Accepter un critere
+     * puis l'ignorer laisserait croire qu'une mesure a ete promise.
+     */
+    @Test
+    void addAction_refuseUnCritereOuUneVerificationSurUnEndiguement() {
+        CapaCase c = capa(TENANT, CapaStatus.OPEN);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+
+        assertThatThrownBy(() -> service.addAction(c.getId(), new CapaDto.ActionRequest(
+                "Bloquer le lot", null, null, CapaActionType.CONTAINMENT, null, null, null, null,
+                "Aucun rebut", null, null, null, null)))
+                .isInstanceOf(CapaValidationException.class)
+                .hasMessageContaining("containment");
+
+        assertThatThrownBy(() -> service.addAction(c.getId(), new CapaDto.ActionRequest(
+                "Bloquer le lot", null, null, CapaActionType.CONTAINMENT, null, null, null, null,
+                null, true, UUID.randomUUID(), null, null)))
+                .isInstanceOf(CapaValidationException.class)
+                .hasMessageContaining("containment");
+    }
+
+    @Test
+    void addAction_refuseUneVerificationExigeeSansVerificateur() {
+        CapaCase c = capa(TENANT, CapaStatus.OPEN);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+
+        assertThatThrownBy(() -> service.addAction(c.getId(), new CapaDto.ActionRequest(
+                "Recalibrer la presse", null, null, CapaActionType.CORRECTIVE, null, null, null, null,
+                null, true, null, null, null)))
+                .isInstanceOf(CapaValidationException.class)
+                .hasMessageContaining("assigned");
+    }
+
+    /**
+     * Designer un verificateur sans repondre a la question n est pas une
+     * decision : la verification n aurait lieu que si quelqu un y pense. Meme
+     * garde que sur le dossier.
+     */
+    @Test
+    void addAction_refuseUnVerificateurSansReponseALaQuestion() {
+        CapaCase c = capa(TENANT, CapaStatus.OPEN);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+
+        assertThatThrownBy(() -> service.addAction(c.getId(), new CapaDto.ActionRequest(
+                "Recalibrer la presse", null, null, CapaActionType.CORRECTIVE, null, null, null, null,
+                null, null, UUID.randomUUID(), null, null)))
+                .isInstanceOf(CapaValidationException.class)
+                .hasMessageContaining("verificationRequired=true");
+    }
+
+    /**
+     * Un « non » EFFACE le verificateur et les consignes, au lieu d etre
+     * refuse : c est exactement ce que fait la meme decision sur le dossier, et
+     * deux regles divergentes sur la meme question se liraient comme un bogue.
+     */
+    @Test
+    void addAction_uneVerificationRefusee_effaceLeVerificateur() {
+        CapaCase c = capa(TENANT, CapaStatus.OPEN);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(actionRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        CapaDto.ActionResponse r = service.addAction(c.getId(), new CapaDto.ActionRequest(
+                "Recalibrer la presse", null, null, CapaActionType.CORRECTIVE, null, null, null, null,
+                null, false, UUID.randomUUID(), "A. Diallo", "Relire les releves"));
+
+        assertThat(r.verificationRequired()).isFalse();
+        assertThat(r.verificationAssigneeId()).isNull();
+        assertThat(r.verificationAssigneeName()).isNull();
+        assertThat(r.verificationInstructions()).isNull();
+    }
+
+    /**
+     * Le critere d'une action se VERROUILLE des qu'il est pose : le reecrire
+     * plus tard, c'est deplacer la cible entre deux mesures (ADR 0108). Le meme
+     * texte renvoye a l'identique passe, lui : un PATCH qui n'y touche pas n'a
+     * pas a etre refuse.
+     */
+    @Test
+    void updateAction_refuseDeReecrireLeCritereDUneAction_maisAccepteLeMemeTexte() {
+        CapaCase c = capa(TENANT, CapaStatus.OPEN);
+        CapaAction a = action(c, CapaActionStatus.PENDING);
+        a.setEffectivenessCriterion("Zero recidive sur 6 mois");
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(actionRepo.findByIdAndCapaId(a.getId(), c.getId())).thenReturn(Optional.of(a));
+        when(actionRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        assertThatThrownBy(() -> service.updateAction(c.getId(), a.getId(), new CapaDto.ActionRequest(
+                null, null, null, null, null, null, null, null,
+                "Un seul rebut tolere", null, null, null, null)))
+                .isInstanceOf(CapaValidationException.class)
+                .hasMessageContaining("cannot be rewritten");
+
+        CapaDto.ActionResponse r = service.updateAction(c.getId(), a.getId(),
+                new CapaDto.ActionRequest(null, null, null, null, null, null, null, null,
+                        "  Zero recidive sur 6 mois  ", null, null, null, null));
+        assertThat(r.effectivenessCriterion()).isEqualTo("Zero recidive sur 6 mois");
+    }
+
+    /**
+     * La premiere action recopie ce qui vient d'etre pose sur le dossier : la
+     * question n'a ete posee qu'une fois, en ecrivant cette action-la, et elle
+     * serait sinon la seule du dossier a ne rien dire de son effet.
+     */
+    @Test
+    void openCase_recopieLEfficaciteDuDossierSurSaPremiereAction() {
+        when(caseRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+        UUID pilote = UUID.randomUUID();
+        UUID verificateur = UUID.randomUUID();
+
+        service.openCase(new CapaDto.OpenCaseRequest(
+                "Recalibrer la sonde", null, CapaType.CORRECTIVE, CapaActionType.CORRECTIVE,
+                CapaCriticity.HIGH, CapaSourceType.OTHER, null, pilote, "A. Diallo",
+                LocalDate.now().plusDays(10), true, verificateur, "B. Nour", "Relire les releves",
+                "Aucun rebut pendant 3 mois"), CapaSourceType.OTHER, null);
+
+        ArgumentCaptor<CapaCase> saved = ArgumentCaptor.forClass(CapaCase.class);
+        verify(caseRepo).save(saved.capture());
+        CapaAction premiere = saved.getValue().getActions().iterator().next();
+        assertThat(premiere.getEffectivenessCriterion()).isEqualTo("Aucun rebut pendant 3 mois");
+        assertThat(premiere.getVerificationRequired()).isTrue();
+        assertThat(premiere.getVerificationAssigneeId()).isEqualTo(verificateur);
+        assertThat(premiere.getVerificationAssigneeName()).isEqualTo("B. Nour");
+        assertThat(premiere.getVerificationInstructions()).isEqualTo("Relire les releves");
+    }
+
+    /** Rien sous un endiguement : il ne promet aucun effet. */
+    @Test
+    void openCase_neRecopieRienSurUnPremierEndiguement() {
+        when(caseRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+        UUID pilote = UUID.randomUUID();
+        UUID verificateur = UUID.randomUUID();
+
+        service.openCase(new CapaDto.OpenCaseRequest(
+                "Bloquer le lot", null, CapaType.CORRECTIVE, CapaActionType.CONTAINMENT,
+                CapaCriticity.HIGH, CapaSourceType.OTHER, null, pilote, "A. Diallo",
+                LocalDate.now().plusDays(10), true, verificateur, "B. Nour", null,
+                "Aucun rebut pendant 3 mois"), CapaSourceType.OTHER, null);
+
+        ArgumentCaptor<CapaCase> saved = ArgumentCaptor.forClass(CapaCase.class);
+        verify(caseRepo).save(saved.capture());
+        CapaAction premiere = saved.getValue().getActions().iterator().next();
+        assertThat(premiere.getActionType()).isEqualTo(CapaActionType.CONTAINMENT);
+        assertThat(premiere.getEffectivenessCriterion()).isNull();
+        assertThat(premiere.getVerificationRequired()).isNull();
+        // Le DOSSIER, lui, garde la decision prise a son ouverture.
+        assertThat(saved.getValue().getVerificationRequired()).isTrue();
+        assertThat(saved.getValue().getEffectivenessCriterion()).isEqualTo("Aucun rebut pendant 3 mois");
+    }
+
+    // --- TOUTES LES ACTIONS CLOSES AVANT LE DOSSIER (ADR 0132) -----------------
+    //
+    // Une action « faite » dit que le geste a eu lieu ; elle ne dit pas qu'il a
+    // produit son effet. Une action qui a PROMIS une verification (ADR 0131)
+    // n'est donc close que verifiee, et le dossier ne se cloture pas avant.
+
+    /** L'action qui a promis une verification, et qui est faite. */
+    private CapaAction actionPromise(CapaCase c) {
+        CapaAction a = action(c, CapaActionStatus.DONE);
+        a.setVerificationRequired(true);
+        a.setVerificationAssigneeId(UUID.randomUUID());
+        a.setEffectivenessCriterion("Aucun rebut pendant 3 mois");
+        return a;
+    }
+
+    private EffectivenessReview jugement(CapaCase c, CapaAction a, EffectivenessVerdict verdict) {
+        return EffectivenessReview.recordForAction(UUID.randomUUID(), c.getTenantId(), c.getId(),
+                a.getId(), verdict, "Aucun rebut pendant 3 mois", null, null,
+                "0 rebut sur 3 mois", null, null, null, Instant.now());
+    }
+
+    @Test
+    void verifyActionEffectiveness_enregistreLeJugementAvecLeCritereDeLAction() {
+        CapaCase c = capa(TENANT, CapaStatus.OPEN);
+        CapaAction a = actionPromise(c);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(actionRepo.findByIdAndCapaId(a.getId(), c.getId())).thenReturn(Optional.of(a));
+
+        CapaDto.ActionResponse r = service.verifyActionEffectiveness(c.getId(), a.getId(),
+                new CapaDto.EffectivenessRequest(null, EffectivenessVerdict.EFFECTIVE,
+                        "4,2 %", "< 1 %", "0 rebut sur 3 mois", "Verifie sur trois cycles"));
+
+        ArgumentCaptor<EffectivenessReview> ecrit = ArgumentCaptor.forClass(EffectivenessReview.class);
+        verify(reviews).save(ecrit.capture());
+        assertThat(ecrit.getValue().capaActionId()).isEqualTo(a.getId());
+        assertThat(ecrit.getValue().capaCaseId()).isEqualTo(c.getId());
+        assertThat(ecrit.getValue().criterion()).isEqualTo("Aucun rebut pendant 3 mois");
+        assertThat(ecrit.getValue().observed()).isEqualTo("0 rebut sur 3 mois");
+        assertThat(r.verificationVerdict()).isEqualTo(EffectivenessVerdict.EFFECTIVE);
+        assertThat(r.verifiedAt()).isNotNull();
+    }
+
+    /**
+     * Rien n'a ete promis sur cette action : il n'y a pas de critere auquel
+     * confronter un releve, et juger sans critere annonce revient a choisir le
+     * critere en regardant le resultat (ADR 0108).
+     */
+    @Test
+    void verifyActionEffectiveness_refuseUneActionQuiNARienPromis() {
+        CapaCase c = capa(TENANT, CapaStatus.OPEN);
+        CapaAction a = action(c, CapaActionStatus.DONE);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(actionRepo.findByIdAndCapaId(a.getId(), c.getId())).thenReturn(Optional.of(a));
+
+        assertThatThrownBy(() -> service.verifyActionEffectiveness(c.getId(), a.getId(),
+                new CapaDto.EffectivenessRequest(null, EffectivenessVerdict.EFFECTIVE,
+                        null, null, "0 rebut", null)))
+                .isInstanceOf(CapaValidationException.class)
+                .hasMessageContaining("did not require");
+        verify(reviews, never()).save(any());
+    }
+
+    /** On mesurerait l'effet d'un geste qui n'a pas eu lieu. */
+    @Test
+    void verifyActionEffectiveness_refuseUneActionPasEncoreFaite() {
+        CapaCase c = capa(TENANT, CapaStatus.OPEN);
+        CapaAction a = actionPromise(c);
+        a.setStatus(CapaActionStatus.IN_PROGRESS);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(actionRepo.findByIdAndCapaId(a.getId(), c.getId())).thenReturn(Optional.of(a));
+
+        assertThatThrownBy(() -> service.verifyActionEffectiveness(c.getId(), a.getId(),
+                new CapaDto.EffectivenessRequest(null, EffectivenessVerdict.EFFECTIVE,
+                        null, null, "0 rebut", null)))
+                .isInstanceOf(CapaStateException.class)
+                .hasMessageContaining("not DONE");
+    }
+
+    @Test
+    void verifyActionEffectiveness_refuseSansAucunCritere_niSurLActionNiSurLeDossier() {
+        CapaCase c = capa(TENANT, CapaStatus.OPEN);
+        CapaAction a = actionPromise(c);
+        a.setEffectivenessCriterion(null);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(actionRepo.findByIdAndCapaId(a.getId(), c.getId())).thenReturn(Optional.of(a));
+
+        assertThatThrownBy(() -> service.verifyActionEffectiveness(c.getId(), a.getId(),
+                new CapaDto.EffectivenessRequest(null, EffectivenessVerdict.EFFECTIVE,
+                        null, null, "0 rebut", null)))
+                .isInstanceOf(CapaValidationException.class)
+                .hasMessageContaining("No effectiveness criterion");
+    }
+
+    /** A defaut du sien, le critere du DOSSIER : le cas des actions anterieures. */
+    @Test
+    void verifyActionEffectiveness_retombeSurLeCritereDuDossier() {
+        CapaCase c = capa(TENANT, CapaStatus.OPEN);
+        c.setEffectivenessCriterion("Zero retard sur 620 expeditions");
+        CapaAction a = actionPromise(c);
+        a.setEffectivenessCriterion(null);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(actionRepo.findByIdAndCapaId(a.getId(), c.getId())).thenReturn(Optional.of(a));
+
+        service.verifyActionEffectiveness(c.getId(), a.getId(),
+                new CapaDto.EffectivenessRequest(null, EffectivenessVerdict.PARTIAL,
+                        null, null, "3 retards", null));
+
+        ArgumentCaptor<EffectivenessReview> ecrit = ArgumentCaptor.forClass(EffectivenessReview.class);
+        verify(reviews).save(ecrit.capture());
+        assertThat(ecrit.getValue().criterion()).isEqualTo("Zero retard sur 620 expeditions");
+    }
+
+    /**
+     * LE REFUS DE CLOTURE. Le dossier ne se cloture pas tant qu'une action qui
+     * a promis une verification ne l'a pas obtenue -- et un verdict PARTIEL ne
+     * la leve pas : l'action a ete regardee, et ce qu'on a vu ne permet pas de
+     * clore.
+     */
+    @Test
+    void verifyEffectiveness_refuseDeCloreTantQuUneActionPromiseNEstPasVerifiee() {
+        CapaCase c = capa(TENANT, CapaStatus.RESOLVED);
+        CapaAction a = actionPromise(c);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+
+        // Jamais jugee.
+        assertThatThrownBy(() -> service.verifyEffectiveness(
+                c.getId(), new CapaDto.EffectivenessRequest(true)))
+                .isInstanceOf(CapaStateException.class)
+                .hasMessageContaining("promised an effectiveness verification");
+
+        // Jugee insuffisante : l'obstacle demeure.
+        when(reviews.findLastPerActionOfCase(TENANT, c.getId()))
+                .thenReturn(Map.of(a.getId(), jugement(c, a, EffectivenessVerdict.PARTIAL)));
+        assertThatThrownBy(() -> service.verifyEffectiveness(
+                c.getId(), new CapaDto.EffectivenessRequest(true)))
+                .isInstanceOf(CapaStateException.class)
+                .hasMessageContaining("promised an effectiveness verification");
+    }
+
+    @Test
+    void verifyEffectiveness_cloreDesQueChaqueActionPromiseEstJugeeEfficace() {
+        CapaCase c = capa(TENANT, CapaStatus.RESOLVED);
+        c.setEffectivenessCriterion("Aucun rebut pendant 3 mois");
+        CapaAction a = actionPromise(c);
+        action(c, CapaActionStatus.DONE, CapaActionType.PREVENTIVE);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(caseRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+        when(reviews.findLastPerActionOfCase(TENANT, c.getId()))
+                .thenReturn(Map.of(a.getId(), jugement(c, a, EffectivenessVerdict.EFFECTIVE)));
+
+        CapaDto.CaseResponse r = service.verifyEffectiveness(c.getId(),
+                new CapaDto.EffectivenessRequest(null, EffectivenessVerdict.EFFECTIVE,
+                        null, null, "0 rebut sur 3 mois", null));
+
+        assertThat(r.status()).isEqualTo(CapaStatus.CLOSED);
+    }
+
+    /**
+     * La fiche ANNONCE l'obstacle, et le serveur le tient : une liste qui
+     * n'engage pas le serveur ne vaut rien, et un ecran qui n'annonce pas ce
+     * que l'API refusera ne vaut pas mieux.
+     */
+    @Test
+    void closureBlockers_annonceLesVerificationsDActionEnAttente() {
+        CapaCase c = capa(TENANT, CapaStatus.RESOLVED);
+        actionPromise(c);
+        actionPromise(c);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+
+        CapaDto.CaseResponse r = service.findById(c.getId());
+
+        assertThat(r.closureBlockers())
+                .extracting(CapaDto.ClosureBlocker::code, CapaDto.ClosureBlocker::count)
+                .contains(tuple(ClosureBlockerCode.ACTION_VERIFICATIONS_PENDING, 2L));
+    }
+
+    /** Une action qui n'a RIEN promis n'entre pas dans le decompte. */
+    @Test
+    void closureBlockers_ignoreLesActionsQuiNOntRienPromis() {
+        CapaCase c = capa(TENANT, CapaStatus.RESOLVED);
+        action(c, CapaActionStatus.DONE);
+        action(c, CapaActionStatus.DONE, CapaActionType.PREVENTIVE);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+
+        CapaDto.CaseResponse r = service.findById(c.getId());
+
+        assertThat(r.closureBlockers())
+                .extracting(CapaDto.ClosureBlocker::code)
+                .doesNotContain(ClosureBlockerCode.ACTION_VERIFICATIONS_PENDING);
     }
 }

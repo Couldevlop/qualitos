@@ -36,6 +36,18 @@ public final class EffectivenessReview {
     private final UUID id;
     private final UUID tenantId;
     private final UUID capaCaseId;
+    /**
+     * L'ACTION jugee, ou {@code null} quand le jugement porte sur le dossier
+     * entier.
+     *
+     * <p>Chaque action porte sa propre exigence de verification (ADR 0131), et
+     * un dossier ne se cloture plus tant qu'une action promise verifiee ne l'a
+     * pas ete (ADR 0132). Le jugement d'une action vit donc dans le meme
+     * historique que celui du dossier : meme immutabilite, meme suite de
+     * verdicts lisible, meme critere recopie. Deux tables auraient divergees a
+     * la premiere colonne ajoutee d'un seul cote.
+     */
+    private final UUID capaActionId;
     private final EffectivenessVerdict verdict;
     private final String criterion;
     private final String baseline;
@@ -46,7 +58,7 @@ public final class EffectivenessReview {
     private final String reviewerName;
     private final Instant reviewedAt;
 
-    private EffectivenessReview(UUID id, UUID tenantId, UUID capaCaseId,
+    private EffectivenessReview(UUID id, UUID tenantId, UUID capaCaseId, UUID capaActionId,
                                 EffectivenessVerdict verdict, String criterion,
                                 String baseline, String target, String observed,
                                 String comment, UUID reviewerId, String reviewerName,
@@ -54,6 +66,7 @@ public final class EffectivenessReview {
         this.id = id;
         this.tenantId = tenantId;
         this.capaCaseId = capaCaseId;
+        this.capaActionId = capaActionId;
         this.verdict = verdict;
         this.criterion = criterion;
         this.baseline = baseline;
@@ -97,7 +110,7 @@ public final class EffectivenessReview {
         String obs = required(observed, MAX_READING,
                 "Le relevé constaté est obligatoire : on juge sur une mesure, ou on ne juge pas");
 
-        return new EffectivenessReview(id, tenantId, capaCaseId, verdict, crit,
+        return new EffectivenessReview(id, tenantId, capaCaseId, null, verdict, crit,
                 optional(baseline, MAX_READING, "baseline"),
                 optional(target, MAX_READING, "target"),
                 obs,
@@ -105,6 +118,33 @@ public final class EffectivenessReview {
                 reviewerId,
                 optional(reviewerName, MAX_REVIEWER_NAME, "reviewerName"),
                 reviewedAt);
+    }
+
+    /**
+     * Enregistre le jugement porte sur UNE ACTION du dossier.
+     *
+     * <p>Memes regles que pour le dossier -- un critere annonce, un releve
+     * constate -- parce que c'est la meme exigence : juger sans critere, c'est
+     * choisir le critere en regardant le resultat. Le critere recopie est celui
+     * de l'ACTION (ADR 0131) ; a defaut, celui du dossier, pour les actions
+     * anterieures a la colonne.
+     *
+     * @param capaActionId l'action jugee ; obligatoire ici, c'est ce qui
+     *                     distingue ce jugement de celui du dossier
+     */
+    public static EffectivenessReview recordForAction(UUID id, UUID tenantId, UUID capaCaseId,
+                                                      UUID capaActionId,
+                                                      EffectivenessVerdict verdict, String criterion,
+                                                      String baseline, String target, String observed,
+                                                      String comment, UUID reviewerId, String reviewerName,
+                                                      Instant reviewedAt) {
+        Objects.requireNonNull(capaActionId, "capaActionId");
+        EffectivenessReview duDossier = record(id, tenantId, capaCaseId, verdict, criterion,
+                baseline, target, observed, comment, reviewerId, reviewerName, reviewedAt);
+        return new EffectivenessReview(duDossier.id, duDossier.tenantId, duDossier.capaCaseId,
+                capaActionId, duDossier.verdict, duDossier.criterion, duDossier.baseline,
+                duDossier.target, duDossier.observed, duDossier.comment, duDossier.reviewerId,
+                duDossier.reviewerName, duDossier.reviewedAt);
     }
 
     /**
@@ -121,7 +161,24 @@ public final class EffectivenessReview {
                                                 String baseline, String target, String observed,
                                                 String comment, UUID reviewerId, String reviewerName,
                                                 Instant reviewedAt) {
-        return new EffectivenessReview(id, tenantId, capaCaseId, verdict, criterion,
+        return new EffectivenessReview(id, tenantId, capaCaseId, null, verdict, criterion,
+                baseline, target, observed, comment, reviewerId, reviewerName, reviewedAt);
+    }
+
+    /**
+     * Reconstitue le jugement d'une action, sans rejouer les regles de saisie.
+     *
+     * <p>{@code capaActionId} nul rendrait un jugement de DOSSIER : l'appelant
+     * qui relit une ligne porteuse d'une action doit passer par ici, et celui
+     * qui relit une ligne sans action par {@link #rehydrate}.
+     */
+    public static EffectivenessReview rehydrateForAction(UUID id, UUID tenantId, UUID capaCaseId,
+                                                         UUID capaActionId,
+                                                         EffectivenessVerdict verdict, String criterion,
+                                                         String baseline, String target, String observed,
+                                                         String comment, UUID reviewerId, String reviewerName,
+                                                         Instant reviewedAt) {
+        return new EffectivenessReview(id, tenantId, capaCaseId, capaActionId, verdict, criterion,
                 baseline, target, observed, comment, reviewerId, reviewerName, reviewedAt);
     }
 
@@ -164,6 +221,11 @@ public final class EffectivenessReview {
 
     public UUID capaCaseId() {
         return capaCaseId;
+    }
+
+    /** L'action jugee, ou {@code null} quand le jugement porte sur le dossier. */
+    public UUID capaActionId() {
+        return capaActionId;
     }
 
     public EffectivenessVerdict verdict() {

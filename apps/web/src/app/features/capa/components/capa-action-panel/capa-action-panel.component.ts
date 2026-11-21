@@ -16,6 +16,9 @@ import {
 import {
   CapaActionDialogComponent, CapaActionDialogData
 } from '../../pages/capa-action-dialog/capa-action-dialog.component';
+import {
+  CapaActionVerificationDialogComponent, CapaActionVerificationDialogData
+} from '../../pages/capa-action-verification-dialog/capa-action-verification-dialog.component';
 
 /** Le pas suivant d'une action : il n'y en a jamais deux. */
 const SUITE: Record<CapaActionStatus, CapaActionStatus | null> = {
@@ -192,6 +195,31 @@ export class CapaActionPanelComponent implements OnChanges {
 
   trackById(_: number, action: CapaActionResponse): string {
     return action.id;
+  }
+
+  /**
+   * Le libellé du bouton d'ajout : il NOMME la nature quand le tableau n'en
+   * montre qu'une.
+   *
+   * <p>« Ajouter une action » sous le tableau des actions de confinement, puis
+   * le même mot sous celui des correctives et sous celui des préventives :
+   * trois boutons identiques pour trois gestes différents, et rien, avant le
+   * clic, ne disait lequel on allait écrire. Le bouton dit désormais ce qu'il
+   * ajoute — c'est aussi ce que la fenêtre qu'il ouvre a maintenant de cochée,
+   * sans autre choix.
+   */
+  get libelleAjout(): string {
+    if (this.natures.length !== 1) {
+      return $localize`:@@capa.actions.add:Ajouter une action`;
+    }
+    switch (this.natures[0]) {
+      case 'CONTAINMENT':
+        return $localize`:@@capa.actions.add-containment:Ajouter une action de confinement`;
+      case 'PREVENTIVE':
+        return $localize`:@@capa.actions.add-preventive:Ajouter une action préventive`;
+      default:
+        return $localize`:@@capa.actions.add-corrective:Ajouter une action corrective`;
+    }
   }
 
   /** Un dossier clos ou rejeté ne bouge plus : le serveur tient la même garde. */
@@ -398,6 +426,77 @@ export class CapaActionPanelComponent implements OnChanges {
       : e?.status === 404
       ? $localize`:@@capa.action-evidence.gone:Cette action n'existe plus — recharge la fiche.`
       : safeErrorMessage(err, $localize`:@@capa.evidence.error:Échec de l'ajout de la preuve.`);
+  }
+
+  // ---------- verifier l'efficacite d'une action (ADR 0132) ----------
+
+  /**
+   * Cette action attend-elle encore la verification qu'elle a PROMISE ?
+   *
+   * <p>Trois conditions : elle a promis une verification
+   * ({@code verificationRequired}), le geste a eu lieu ({@code DONE}), et son
+   * dernier verdict ne leve pas l'obstacle. Un verdict PARTIEL ou INEFFICACE
+   * compte donc comme en attente : l'action a ete regardee, et ce qu'on a vu ne
+   * permet pas de clore.
+   *
+   * <p>C'est exactement ce que le serveur refuse a la cloture : une liste
+   * d'obstacles qui n'engage pas le serveur ne vaut rien, et l'inverse --
+   * l'ecran qui n'annonce pas ce que l'API refusera -- ne vaut pas mieux.
+   */
+  attendVerification(action: CapaActionResponse): boolean {
+    return Boolean(action.verificationRequired)
+      && action.status === 'DONE'
+      && action.verificationVerdict !== 'EFFECTIVE';
+  }
+
+  /** Vrai quand l'effet de cette action a ete constate, et juge suffisant. */
+  efficaciteConstatee(action: CapaActionResponse): boolean {
+    return action.verificationVerdict === 'EFFECTIVE';
+  }
+
+  /**
+   * Infobulle de l'efficacite constatee : qui a juge, et quand.
+   *
+   * <p>Un nom et une date, parce qu'un jugement sans auteur ne vaut rien devant
+   * un auditeur. Le nom est celui FIGE au moment du jugement (ADR 0052) : un
+   * compte desactive ne doit pas transformer la trace en inconnu.
+   */
+  verdictTooltip(action: CapaActionResponse): string {
+    const quand = action.verifiedAt ?? '';
+    const qui = action.verifiedByName ?? '';
+    return [qui, quand].filter(x => x).join(' \u2014 ');
+  }
+
+  /**
+   * Ouvre la fenetre de jugement de CETTE action.
+   *
+   * <p>Le critere du dossier part avec : les actions anterieures aux colonnes
+   * de la V177 n'ont pas le leur, et la fenetre doit pouvoir dire a quoi elle
+   * confronte le releve -- ou dire qu'il n'y a rien, plutot que de laisser
+   * decouvrir le refus apres le clic.
+   */
+  verifier(action: CapaActionResponse): void {
+    if (!this.capa || this.acting$.value) {
+      return;
+    }
+    const donnees: CapaActionVerificationDialogData = {
+      caseId: this.capa.id,
+      action,
+      caseCriterion: this.capa.effectivenessCriterion
+    };
+    this.dialog
+      .open<CapaActionVerificationDialogComponent, CapaActionVerificationDialogData, boolean>(
+        CapaActionVerificationDialogComponent, {
+          data: donnees, autoFocus: 'first-tabbable', restoreFocus: true,
+          panelClass: 'qos-dialog-panel'
+        })
+      .afterClosed()
+      .subscribe(enregistre => {
+      if (enregistre) {
+        this.reload();
+        this.changed.emit();
+      }
+    });
   }
 
   // ---------- avancer ----------

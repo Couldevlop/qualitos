@@ -6654,6 +6654,30 @@ Portail clients</source>
         <source>Réformé</source>
         <target state="translated">廃棄済み</target>
       </trans-unit>
+      <trans-unit id="capa.actions.add-containment" datatype="html">
+        <source>Ajouter une action de confinement</source>
+        <target state="translated">封じ込め対策を追加</target>
+      </trans-unit>
+      <trans-unit id="capa.actions.add-corrective" datatype="html">
+        <source>Ajouter une action corrective</source>
+        <target state="translated">是正処置を追加</target>
+      </trans-unit>
+      <trans-unit id="capa.actions.add-preventive" datatype="html">
+        <source>Ajouter une action preventive</source>
+        <target state="translated">予防処置を追加</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.effectiveness-recall" datatype="html">
+        <source>Deja attendu sur ce dossier</source>
+        <target state="translated">この案件ですでに求められていること</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.verification-required-yes" datatype="html">
+        <source>L'efficacite sera verifiee avant la cloture.</source>
+        <target state="translated">有効性は終結前に検証されます。</target>
+      </trans-unit>
+      <trans-unit id="capa.action-dialog.verification-required-no" datatype="html">
+        <source>Juge sans verification d'efficacite.</source>
+        <target state="translated">有効性検証なしと判断されました。</target>
+      </trans-unit>
       <trans-unit id="capa.detail.col-evidence" datatype="html">
         <source>Preuve</source>
         <target state="translated">証拠</target>
@@ -7997,6 +8021,62 @@ Portail clients</source>
       <trans-unit id="capa.verification.instructions-placeholder" datatype="html">
         <source>Ce qu'il faut vérifier, et comment : échantillon, délai, critère d'acceptation…</source>
         <target state="translated">何を、どう検証するか：サンプル、期限、合否基準など</target>
+      </trans-unit>
+      <trans-unit id="capa.actions.verify" datatype="html">
+        <source>Verifier l'efficacite</source>
+        <target state="translated">有効性を検証</target>
+      </trans-unit>
+      <trans-unit id="capa.actions.verified" datatype="html">
+        <source>Efficacite verifiee</source>
+        <target state="translated">有効性を検証済み</target>
+      </trans-unit>
+      <trans-unit id="capa.action-verification.title" datatype="html">
+        <source>Verifier l'efficacite de l'action</source>
+        <target state="translated">アクションの有効性を検証</target>
+      </trans-unit>
+      <trans-unit id="capa.action-verification.subtitle" datatype="html">
+        <source>Ce qui a ete constate, confronte au critere pose quand l'action a ete decidee.</source>
+        <target state="translated">アクションを決定した際に定めた基準と照らし合わせた実測値。</target>
+      </trans-unit>
+      <trans-unit id="capa.action-verification.submit" datatype="html">
+        <source>Enregistrer le verdict</source>
+        <target state="translated">判定を保存</target>
+      </trans-unit>
+      <trans-unit id="capa.action-verification.saved" datatype="html">
+        <source>Verification enregistree.</source>
+        <target state="translated">検証を保存しました。</target>
+      </trans-unit>
+      <trans-unit id="capa.action-verification.failed" datatype="html">
+        <source>La verification n'a pas pu etre enregistree.</source>
+        <target state="translated">検証を保存できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="capa.action-verification.observed-required" datatype="html">
+        <source>Le releve constate est obligatoire.</source>
+        <target state="translated">実測値は必須です。</target>
+      </trans-unit>
+      <trans-unit id="capa.action-verification.no-criterion" datatype="html">
+        <source>Aucun critere d'efficacite n'a ete pose sur cette action ni sur son dossier : il n'y a rien a quoi confronter le releve. Reprenez l'action pour y inscrire sa mesure.</source>
+        <target state="translated">このアクションにもその案件にも有効性基準が設定されていません。実測値を照合する対象がありません。アクションを編集して測定基準を記録してください。</target>
+      </trans-unit>
+      <trans-unit id="capa.action-verification.outcome-effective" datatype="html">
+        <source>Cette action ne retiendra plus la cloture du dossier.</source>
+        <target state="translated">このアクションは案件の終結を妨げなくなります。</target>
+      </trans-unit>
+      <trans-unit id="capa.action-verification.outcome-partial" datatype="html">
+        <source>L'effet est insuffisant : l'action continuera de retenir la cloture, le temps qu'une action complementaire soit decidee.</source>
+        <target state="translated">効果が不十分です。補完的なアクションが決まるまで、このアクションは終結を妨げ続けます。</target>
+      </trans-unit>
+      <trans-unit id="capa.action-verification.outcome-ineffective" datatype="html">
+        <source>L'action n'a pas produit son effet : elle continuera de retenir la cloture, et la cause est a reprendre.</source>
+        <target state="translated">アクションは効果を生みませんでした。終結を妨げ続け、原因の再検討が必要です。</target>
+      </trans-unit>
+      <trans-unit id="capa.blocker.action-verification-one" datatype="html">
+        <source>1 action attend la verification d'efficacite qu'elle a promise.</source>
+        <target state="translated">1 件のアクションが、約束した有効性の検証を待っています。</target>
+      </trans-unit>
+      <trans-unit id="capa.blocker.action-verification-many" datatype="html">
+        <source><x id="count"/> actions attendent la verification d'efficacite qu'elles ont promise.</source>
+        <target state="translated"><x id="count"/> 件のアクションが、約束した有効性の検証を待っています。</target>
       </trans-unit>
       <trans-unit id="nav.admin-circuits" datatype="html">
         <source>Circuits de validation</source>
@@ -22934,8 +23014,8 @@ historique 12 mois</source>
         <target state="translated">根本原因の前に、いま顧客を守るもの。</target>
       </trans-unit>
       <trans-unit id="nc.8d.d3-no-case" datatype="html">
-        <source>Aucun dossier CAPA n’existe encore sur cet écart : les actions de confinement s’écriront ici dès qu’il y en aura un, au D5.</source>
-        <target state="translated">この不適合にはまだ CAPA 案件がありません。D5 で案件を開くと、封じ込め対策をここに書けます。</target>
+        <source>Aucun dossier CAPA n’existe encore sur cet écart. La première action de confinement l’ouvrira : les suivantes s’ajouteront dans ce tableau.</source>
+        <target state="translated">この不適合にはまだ CAPA 案件がありません。最初の封じ込め対策が案件を開き、以降の対策はこの表に追加されます。</target>
       </trans-unit>
       <trans-unit id="nc.8d.d4-short" datatype="html">
         <source>Causes</source>
@@ -22994,8 +23074,8 @@ historique 12 mois</source>
         <target state="translated">同じ問題が別の場所で起きないようにするもの。</target>
       </trans-unit>
       <trans-unit id="nc.8d.d7-no-case" datatype="html">
-        <source>Aucun dossier CAPA n’existe encore sur cet écart : les actions préventives s’écriront ici dès qu’il y en aura un, au D5.</source>
-        <target state="translated">この不適合にはまだ CAPA 案件がありません。D5 で案件を開くと、予防処置をここに書けます。</target>
+        <source>Aucun dossier CAPA n’existe encore sur cet écart. La première action préventive l’ouvrira : les suivantes s’ajouteront dans ce tableau.</source>
+        <target state="translated">この不適合にはまだ CAPA 案件がありません。最初の予防処置が案件を開き、以降の対策はこの表に追加されます。</target>
       </trans-unit>
       <trans-unit id="nc.8d.d8-short" datatype="html">
         <source>Remerciements</source>

@@ -27,7 +27,7 @@
               (click)="addAction()" [disabled]="isTerminal(c.status)"
               data-test="capa-action-definir">
         <mat-icon aria-hidden="true">add</mat-icon>
-        <span i18n="@@capa.actions.add">Ajouter une action</span>
+        <span>{{ libelleAjout }}</span>
       </button>
     </div>
 
@@ -131,7 +131,30 @@
                 {{ advanceLabel(a.status) }}
               </button>
             </ng-container>
-            <mat-icon *ngIf="a.status === 'DONE'" class="action-panel__faite" aria-hidden="true"
+            <!-- L'ACTION A PROMIS UNE VERIFICATION, et le geste a eu lieu :
+                 c'est ici qu'on la solde, sur la ligne meme ou l'on vient de
+                 terminer l'action. Un ecran separe se visiterait si l'on y
+                 pensait, et le dossier attendrait indefiniment (ADR 0132). -->
+            <ng-container *qosCan="'capa.verify'">
+              <button mat-stroked-button color="primary" type="button"
+                      *ngIf="attendVerification(a) && !isTerminal(c.status)"
+                      [disabled]="(acting$ | async) ?? false"
+                      (click)="verifier(a); $event.stopPropagation()"
+                      data-test="capa-action-verifier">
+                <mat-icon aria-hidden="true">fact_check</mat-icon>
+                <span i18n="@@capa.actions.verify">Vérifier l'efficacité</span>
+              </button>
+            </ng-container>
+            <!-- L'efficacite CONSTATEE : qui a juge et quand, en infobulle --
+                 un jugement sans auteur ne vaut rien devant un auditeur. -->
+            <span class="action-panel__verifiee" *ngIf="efficaciteConstatee(a)"
+                  data-test="capa-action-verifiee"
+                  [matTooltip]="verdictTooltip(a)">
+              <mat-icon aria-hidden="true">verified</mat-icon>
+              <span i18n="@@capa.actions.verified">Efficacité vérifiée</span>
+            </span>
+            <mat-icon *ngIf="a.status === 'DONE' && !attendVerification(a) && !efficaciteConstatee(a)"
+                      class="action-panel__faite" aria-hidden="true"
                       i18n-matTooltip="@@capa.detail.action-done-tooltip"
                       matTooltip="Action terminée">check_circle</mat-icon>
           </td>
@@ -144,7 +167,7 @@
               (click)="addAction()" [disabled]="isTerminal(c.status)"
               data-test="capa-action-ajouter">
         <mat-icon aria-hidden="true">add</mat-icon>
-        <span i18n="@@capa.actions.add">Ajouter une action</span>
+        <span>{{ libelleAjout }}</span>
       </button>
       <p class="action-panel__aide" *ngIf="!isTerminal(c.status)" i18n="@@capa.actions.row-hint">
         Cliquez une ligne pour corriger l'action, son responsable ou son échéance.

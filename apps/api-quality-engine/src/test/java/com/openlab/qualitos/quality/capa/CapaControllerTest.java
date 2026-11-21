@@ -320,7 +320,7 @@ class CapaControllerTest {
     @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void addAction_success() throws Exception {
         when(service.addAction(eq(CAPA), any())).thenReturn(actionResp());
-        CapaDto.ActionRequest req = new CapaDto.ActionRequest("a", null, null, null, null, null, null, null);
+        CapaDto.ActionRequest req = new CapaDto.ActionRequest("a", null, null, null, null, null, null, null, null, null, null, null, null);
         mockMvc.perform(post("/api/v1/capa/cases/{id}/actions", CAPA).with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(om.writeValueAsString(req)))
@@ -436,6 +436,9 @@ class CapaControllerTest {
     private CapaDto.ActionResponse actionResp() {
         return new CapaDto.ActionResponse(
                 ACTION, CAPA, "a", null, CapaActionStatus.PENDING, CapaActionType.CORRECTIVE,
-                null, null, null, null, null, Instant.now(), Instant.now());
+                null, null, null, null, null,
+                null, null, null, null, null,
+                null, null, null,
+                Instant.now(), Instant.now());
     }
 }

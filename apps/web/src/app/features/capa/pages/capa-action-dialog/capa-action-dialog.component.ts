@@ -2,15 +2,15 @@ import { Component, Inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { BehaviorSubject, defer } from 'rxjs';
-import { concatMap, finalize } from 'rxjs/operators';
+import { BehaviorSubject } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 
 import { DirectoryUser } from '../../../../core/directory/directory.types';
 import { personName } from '../../../../core/directory/directory-names';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { CAPA_ACTION_TYPES } from '../../capa.labels';
 import { CapaService } from '../../capa.service';
-import { CapaActionResponse, CapaActionStatus, CapaActionType, UpdateCapaCaseRequest } from '../../capa.types';
+import { CapaActionResponse, CapaActionStatus, CapaActionType, CreateCapaActionRequest } from '../../capa.types';
 
 /** Ce qu'il faut pour ouvrir la fenêtre : le dossier, et l'action quand on la relit. */
 export interface CapaActionDialogData {
@@ -84,7 +84,22 @@ const STATUTS: ReadonlyArray<CapaActionStatus> = ['PENDING', 'IN_PROGRESS', 'DON
 })
 export class CapaActionDialogComponent {
 
-  readonly natures = CAPA_ACTION_TYPES;
+  /**
+   * Les natures proposées : toutes, ou LA SEULE que l'écran appelant impose.
+   *
+   * <p>Une discipline du traitement 8D ne parle que d'une nature — le D3
+   * endigue, le D5 corrige, le D7 prévient —, et la question était pourtant
+   * reposée en trois choix sous un titre qui portait déjà la réponse. Un clic
+   * de trop, et surtout une action classée sous la discipline voisine dès que
+   * la main dérapait.
+   *
+   * <p>À l'édition, les trois restent : on relit alors une action existante, et
+   * corriger une nature mal choisie est précisément ce qu'on vient faire.
+   */
+  get natures(): ReadonlyArray<{ value: CapaActionType; label: string }> {
+    const imposee = this.editing ? undefined : this.data.actionType;
+    return imposee ? CAPA_ACTION_TYPES.filter(n => n.value === imposee) : CAPA_ACTION_TYPES;
+  }
   readonly statuses = STATUTS;
   readonly submitting$ = new BehaviorSubject<boolean>(false);
 
@@ -171,17 +186,27 @@ export class CapaActionDialogComponent {
   /**
    * Vrai quand la fenêtre doit DEMANDER le critère d'efficacité.
    *
-   * <p>Seulement à l'ajout d'une action CORRECTIVE, et seulement quand le
-   * dossier n'en a pas : une action de confinement ne prétend pas supprimer la
-   * cause, donc rien n'est à mesurer sur elle (ISO 9001 §10.2) ; et redemander
-   * un critère déjà posé serait l'occasion de le réécrire pour qu'il colle au
-   * résultat obtenu, ce que l'ADR 0108 veut précisément empêcher.
+   * <p>À l'ajout d'une action qui PRÉTEND SUPPRIMER LA CAUSE — corrective ou
+   * préventive —, et seulement quand le dossier n'a pas encore de critère. Une
+   * action de confinement ne le prétend pas, donc rien n'est à mesurer sur elle
+   * (ISO 9001 §10.2) ; et redemander un critère déjà posé serait l'occasion de
+   * le réécrire pour qu'il colle au résultat obtenu, ce que l'ADR 0108 veut
+   * précisément empêcher — il se RAPPELLE alors, en lecture, juste en dessous.
+   *
+   * <p>La préventive était exclue, et c'était une erreur : « plus aucune
+   * récidive sur les trois autres lignes pendant six mois » est un critère
+   * d'efficacité au même titre qu'un autre, et le D7 n'en demandait aucun.
    */
   get demandeCritere(): boolean {
-    return !this.editing
-      && !this.data.readOnly
-      && this.form.controls.actionType.value === 'CORRECTIVE'
-      && this.critereDejaPose === '';
+    return !this.editing && !this.data.readOnly && this.mesureUnEffet;
+  }
+
+  /**
+   * Vrai quand la nature de l'action prétend supprimer la cause — et qu'il y a
+   * donc un effet à mesurer. L'endiguement en est seul exclu.
+   */
+  get mesureUnEffet(): boolean {
+    return this.form.controls.actionType.value !== 'CONTAINMENT';
   }
 
   /**
@@ -190,13 +215,62 @@ export class CapaActionDialogComponent {
    * <p>Même règle que le critère : on ne la pose que tant que le dossier ne l'a
    * pas tranchée. La reposer à chaque action laisserait la dernière saisie
    * décider pour tout le dossier, alors que la décision lui appartient en entier
-   * (ADR 0073). Elle n'est pas restreinte aux actions correctives : un dossier
-   * ouvert par un endiguement doit pouvoir trancher aussi.
+   * (ADR 0073).
+   *
+   * <p>Pas sur un endiguement : le dossier ouvert par la seule mesure
+   * d'endiguement ne se clôturera pas sans action corrective (le serveur le
+   * refuse, motif {@code CONTAINMENT_ONLY}), et c'est à l'écriture de celle-ci
+   * que la question se pose, devant quelqu'un qui promet un effet.
    */
   get demandeVerification(): boolean {
-    const tranchee = this.data.verificationRequired !== null
-      && this.data.verificationRequired !== undefined;
-    return !this.editing && !this.data.readOnly && !tranchee;
+    return !this.editing && !this.data.readOnly && this.mesureUnEffet;
+  }
+
+  /**
+   * La vérification d'efficacité DÉJÀ tranchée sur le dossier, à rappeler.
+   *
+   * <p>Quand elle l'a été — presque toujours à l'ouverture (ADR 0073) —, la
+   * question ne se repose pas. Mais ne RIEN dire laissait écrire une action
+   * corrective sans savoir si son effet serait vérifié, et donnait à croire que
+   * la plateforme ne le demandait nulle part. On le dit, en lecture.
+   */
+  get verificationDejaTranchee(): boolean | null {
+    const propre = this.data.action?.verificationRequired;
+    const v = this.editing && propre !== null && propre !== undefined
+      ? propre
+      : this.data.verificationRequired;
+    return v === null || v === undefined ? null : v;
+  }
+
+  /**
+   * Le critère à RAPPELER : celui de l'action qu'on relit, sinon celui du
+   * dossier.
+   *
+   * <p>À l'édition, c'est la mesure de CETTE action qui intéresse ; à l'ajout,
+   * c'est ce que le dossier attend déjà, affiché à côté de la question posée
+   * pour la nouvelle — les deux coexistent (ADR 0131), et les montrer ensemble
+   * est ce qui permet d'écrire la seconde en connaissance de la première.
+   */
+  get critereRappele(): string {
+    const propre = (this.data.action?.effectivenessCriterion ?? '').trim();
+    return this.editing ? (propre || this.critereDejaPose) : this.critereDejaPose;
+  }
+
+  /** Le critère déjà posé se RAPPELLE, en plus de celui qu'on demande. */
+  get rappelDuCritere(): boolean {
+    return this.critereRappele !== '';
+  }
+
+  /**
+   * Vrai quand il y a quelque chose à RAPPELER de l'évaluation d'efficacité.
+   *
+   * <p>Le critère déjà posé, la décision déjà prise, ou les deux : chacun des
+   * deux peut être réglé sans l'autre, et l'un se rappelle pendant que l'autre
+   * se demande. Rien sous un endiguement : il ne promet aucun effet.
+   */
+  get rappelDEfficacite(): boolean {
+    return this.mesureUnEffet
+      && (this.rappelDuCritere || this.verificationDejaTranchee !== null);
   }
 
   /** Le nom du vérificateur choisi, recopié de l'annuaire pour partir avec la décision. */
@@ -215,7 +289,7 @@ export class CapaActionDialogComponent {
     verificationRequired: boolean | null;
     verificationAssigneeId: string | null;
     verificationInstructions: string;
-  }): UpdateCapaCaseRequest {
+  }): Partial<CreateCapaActionRequest> {
     if (v.verificationRequired === null) {
       return {};
     }
@@ -264,26 +338,20 @@ export class CapaActionDialogComponent {
       dueDate: v.dueDate || undefined
     };
     this.submitting$.next(true);
+    // L'ÉVALUATION D'EFFICACITÉ PART AVEC L'ACTION, dans la même écriture
+    // (ADR 0131). Elle partait avant sur le DOSSIER, en deux appels enchaînés :
+    // la question ne se posait donc qu'une fois, et la deuxième action d'un
+    // dossier s'écrivait sans qu'on sache si son effet serait vérifié. Une
+    // seule écriture ferme aussi la fenêtre où une panne laissait le critère
+    // posé sans l'action qu'il mesure.
     const critere = this.demandeCritere ? v.effectivenessCriterion.trim() : '';
-    // `defer` et non l'appel direct : appeler le service CONSTRUIT déjà sa
-    // requête. Sans ce report, l'action partait avant le critère, et l'ordre
-    // ci-dessous ne décrivait que l'intention.
-    const action$ = defer(() => this.editing
-      ? this.capa.updateAction(this.data.caseId, this.data.action!.id, { ...corps, status: v.status })
-      : this.capa.addAction(this.data.caseId, corps));
-    // LE CRITÈRE D'ABORD, l'action ensuite. L'ADR 0108 le veut posé à l'avance :
-    // si l'écriture du critère échoue, rien n'a été créé et la personne retente
-    // avec son formulaire intact. Dans l'autre ordre, une panne laisserait une
-    // action corrective sans la mesure qui dira un jour si elle a marché.
-    // Le critere et la decision de verification sont deux champs DU DOSSIER :
-    // une seule ecriture, pour qu'une panne ne laisse pas l'un pose sans l'autre.
-    const majDossier: UpdateCapaCaseRequest = {
+    const efficacite = {
       ...(critere ? { effectivenessCriterion: critere } : {}),
       ...(this.demandeVerification ? this.decisionDeVerification(v) : {})
     };
-    const envoi = Object.keys(majDossier).length
-      ? this.capa.updateCase(this.data.caseId, majDossier).pipe(concatMap(() => action$))
-      : action$;
+    const envoi = this.editing
+      ? this.capa.updateAction(this.data.caseId, this.data.action!.id, { ...corps, status: v.status })
+      : this.capa.addAction(this.data.caseId, { ...corps, ...efficacite });
     envoi.pipe(finalize(() => this.submitting$.next(false))).subscribe({
       next: () => {
         this.snack.open(

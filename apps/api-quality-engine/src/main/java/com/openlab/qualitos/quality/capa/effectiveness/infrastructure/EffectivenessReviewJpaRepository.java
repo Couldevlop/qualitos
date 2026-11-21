@@ -55,4 +55,37 @@ interface EffectivenessReviewJpaRepository extends JpaRepository<EffectivenessRe
             group by r.capaCaseId
             """)
     List<Object[]> countPerCase(@Param("tenantId") UUID tenantId);
+
+    /** L'historique d'une action, du plus recent au plus ancien. */
+    List<EffectivenessReviewJpaEntity> findByTenantIdAndCapaActionIdOrderByReviewedAtDesc(
+            UUID tenantId, UUID capaActionId);
+
+    /**
+     * La DERNIERE evaluation de chaque ACTION d'un dossier, en une requete.
+     *
+     * <p>Meme forme que {@link #findLastPerCase} -- « celle dont aucune autre de
+     * la meme action n'est posterieure » -- et pour la meme raison : du JPQL
+     * portable, qui s'execute tel quel sur la base des tests comme sur
+     * PostgreSQL. Une fonction de fenetrage ferait passer les tests sur du SQL
+     * qui n'est pas celui de la production.
+     *
+     * <p>Le filtre sur {@code capaActionId is not null} ecarte les evaluations
+     * du DOSSIER : elles vivent dans la meme table, et les laisser entrer ferait
+     * croire a une action jugee la ou le dossier l'a ete.
+     */
+    @Query("""
+            select r from EffectivenessReviewJpaEntity r
+            where r.tenantId = :tenantId
+              and r.capaCaseId = :capaCaseId
+              and r.capaActionId is not null
+              and not exists (
+                select o.id from EffectivenessReviewJpaEntity o
+                where o.tenantId = r.tenantId
+                  and o.capaActionId = r.capaActionId
+                  and (o.reviewedAt > r.reviewedAt
+                       or (o.reviewedAt = r.reviewedAt and o.id > r.id))
+              )
+            """)
+    List<EffectivenessReviewJpaEntity> findLastPerActionOfCase(
+            @Param("tenantId") UUID tenantId, @Param("capaCaseId") UUID capaCaseId);
 }

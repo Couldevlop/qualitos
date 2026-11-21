@@ -82,17 +82,19 @@ TRANSLATIONS = {
         'ما يحمي العميل الآن، قبل معرفة السبب الجذري.',
         '根本原因の前に、いま顧客を守るもの。',
         '在查明根本原因之前，先保护客户的措施。'),
+    # La premiere action de confinement OUVRE le dossier : la discipline ne
+    # renvoie plus au D5, ou la nature se reposait en trois choix.
     'nc.8d.d3-no-case': (
-        "Aucun dossier CAPA n’existe encore sur cet écart : les actions de"
-        " confinement s’écriront ici dès qu’il y en aura un, au D5.",
-        'No CAPA case exists on this non-conformity yet: containment actions will'
-        ' be written here as soon as one is opened, in D5.',
-        'Esta no conformidad aún no tiene expediente CAPA: las acciones de'
-        ' contención se escribirán aquí en cuanto haya uno, en el D5.',
-        'لا يوجد بعد ملف CAPA لعدم المطابقة هذا: ستُكتب إجراءات الاحتواء هنا بمجرد'
-        ' إنشاء ملف، في D5.',
-        'この不適合にはまだ CAPA 案件がありません。D5 で案件を開くと、封じ込め対策をここに書けます。',
-        '该不合格项尚无 CAPA 档案：在 D5 开立档案后，围堵措施即可写在此处。'),
+        "Aucun dossier CAPA n’existe encore sur cet écart. La première action de"
+        " confinement l’ouvrira : les suivantes s’ajouteront dans ce tableau.",
+        'No CAPA case exists on this non-conformity yet. The first containment'
+        ' action will open one; the next ones will be added to this table.',
+        'Esta no conformidad aún no tiene expediente CAPA. La primera acción de'
+        ' contención lo abrirá: las siguientes se añadirán a esta tabla.',
+        'لا يوجد بعد ملف CAPA لعدم المطابقة هذا. أول إجراء احتواء'
+        ' سيفتح ملفًا؛ وتُضاف الإجراءات التالية إلى هذا الجدول.',
+        'この不適合にはまだ CAPA 案件がありません。最初の封じ込め対策が案件を開き、以降の対策はこの表に追加されます。',
+        '该不合格项尚无 CAPA 档案。首条围堵措施将开立档案，其后的措施将添加到本表。'),
 
     'nc.8d.d4-short': ("Causes", 'Causes', 'Causas', 'الأسباب', '原因', '原因'),
     'nc.8d.d4-title': (
@@ -178,16 +180,16 @@ TRANSLATIONS = {
         '同じ問題が別の場所で起きないようにするもの。',
         '防止问题在别处重现的措施。'),
     'nc.8d.d7-no-case': (
-        "Aucun dossier CAPA n’existe encore sur cet écart : les actions"
-        " préventives s’écriront ici dès qu’il y en aura un, au D5.",
-        'No CAPA case exists on this non-conformity yet: preventive actions will'
-        ' be written here as soon as one is opened, in D5.',
-        'Esta no conformidad aún no tiene expediente CAPA: las acciones'
-        ' preventivas se escribirán aquí en cuanto haya uno, en el D5.',
-        'لا يوجد بعد ملف CAPA لعدم المطابقة هذا: ستُكتب الإجراءات الوقائية هنا بمجرد'
-        ' إنشاء ملف، في D5.',
-        'この不適合にはまだ CAPA 案件がありません。D5 で案件を開くと、予防処置をここに書けます。',
-        '该不合格项尚无 CAPA 档案：在 D5 开立档案后，预防措施即可写在此处。'),
+        "Aucun dossier CAPA n’existe encore sur cet écart. La première action"
+        " préventive l’ouvrira : les suivantes s’ajouteront dans ce tableau.",
+        'No CAPA case exists on this non-conformity yet. The first preventive'
+        ' action will open one; the next ones will be added to this table.',
+        'Esta no conformidad aún no tiene expediente CAPA. La primera acción'
+        ' preventiva lo abrirá: las siguientes se añadirán a esta tabla.',
+        'لا يوجد بعد ملف CAPA لعدم المطابقة هذا. أول إجراء وقائي'
+        ' سيفتح ملفًا؛ وتُضاف الإجراءات التالية إلى هذا الجدول.',
+        'この不適合にはまだ CAPA 案件がありません。最初の予防処置が案件を開き、以降の対策はこの表に追加されます。',
+        '该不合格项尚无 CAPA 档案。首条预防措施将开立档案，其后的措施将添加到本表。'),
 
     'nc.8d.d8-short': ("Remerciements", 'Recognition', 'Agradecimientos', 'الشكر', '謝辞', '致谢'),
     'nc.8d.d8-title': (

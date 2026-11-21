@@ -87,6 +87,25 @@
   color: var(--qos-success-fg);
 }
 
+/* L'EFFICACITE CONSTATEE sur une action (ADR 0132). Un mot et non une seule
+   icone : « verifiee » et « faite » se distinguent, et deux pastilles vertes
+   cote a cote ne diraient pas laquelle dit quoi. */
+.action-panel__verifiee {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--qos-space-1, 4px);
+  white-space: nowrap;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--qos-success-fg);
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}
+
 /* --- Le tableau des actions (ADR 0115) ------------------------------------- */
 
 /* Un ecart se traite rarement d'un seul geste : le tableau compare les actions

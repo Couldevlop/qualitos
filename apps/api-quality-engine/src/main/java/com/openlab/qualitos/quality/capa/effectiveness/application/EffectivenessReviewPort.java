@@ -48,4 +48,21 @@ public interface EffectivenessReviewPort {
      * compter les éléments.
      */
     Map<UUID, Integer> countPerCase(UUID tenantId);
+
+    /**
+     * La DERNIERE evaluation de chaque action d'un dossier, indexee par action.
+     *
+     * <p>Une seule requete pour tout le dossier, et non une par action : la
+     * cloture doit savoir, pour chacune des actions qui ont promis une
+     * verification, si elle a eu lieu (ADR 0132). Une question par action
+     * transformerait un clic en autant d'allers-retours en base.
+     *
+     * <p>Les actions jamais evaluees sont ABSENTES de la carte plutot que
+     * presentes a {@code null} : l'appelant distingue ainsi « pas encore jugee »
+     * de « jugee », sans avoir a traiter deux representations de l'absence.
+     */
+    Map<UUID, EffectivenessReview> findLastPerActionOfCase(UUID tenantId, UUID capaCaseId);
+
+    /** L'historique d'une action, du plus recent au plus ancien. */
+    List<EffectivenessReview> findByAction(UUID tenantId, UUID capaActionId);
 }

@@ -37,6 +37,10 @@ public class EffectivenessReviewJpaEntity {
     @Column(name = "capa_case_id", nullable = false, updatable = false)
     private UUID capaCaseId;
 
+    /** L'action jugee ; nulle quand le jugement porte sur le dossier (ADR 0132). */
+    @Column(name = "capa_action_id", updatable = false)
+    private UUID capaActionId;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "verdict", nullable = false, length = 20, updatable = false)
     private EffectivenessVerdict verdict;
@@ -69,7 +73,7 @@ public class EffectivenessReviewJpaEntity {
     protected EffectivenessReviewJpaEntity() {
     }
 
-    EffectivenessReviewJpaEntity(UUID id, UUID tenantId, UUID capaCaseId,
+    EffectivenessReviewJpaEntity(UUID id, UUID tenantId, UUID capaCaseId, UUID capaActionId,
                                  EffectivenessVerdict verdict, String criterion,
                                  String baseline, String target, String observed,
                                  String comment, UUID reviewerId, String reviewerName,
@@ -77,6 +81,7 @@ public class EffectivenessReviewJpaEntity {
         this.id = id;
         this.tenantId = tenantId;
         this.capaCaseId = capaCaseId;
+        this.capaActionId = capaActionId;
         this.verdict = verdict;
         this.criterion = criterion;
         this.baseline = baseline;
@@ -94,6 +99,10 @@ public class EffectivenessReviewJpaEntity {
 
     UUID getTenantId() {
         return tenantId;
+    }
+
+    UUID getCapaActionId() {
+        return capaActionId;
     }
 
     UUID getCapaCaseId() {
