@@ -23562,8 +23562,8 @@ historique 12 mois</source>
         <target state="translated">提案済み · 責任者の承認待ち</target>
       </trans-unit>
       <trans-unit id="objectives.capa.proposed-periods" datatype="html">
-        <source>Proposée · <x id="INTERPOLATION"/> périodes consécutives</source>
-        <target state="translated">提案済み · 連続 <x id="INTERPOLATION"/> 期間</target>
+        <source>Proposée · <x id="count"/> périodes consécutives</source>
+        <target state="translated">提案済み · 連続 <x id="count"/> 期間</target>
       </trans-unit>
       <trans-unit id="objectives.capa.open" datatype="html">
         <source>CAPA en cours · retour sous la cible attendu</source>
@@ -23574,8 +23574,8 @@ historique 12 mois</source>
         <target state="translated">なし</target>
       </trans-unit>
       <trans-unit id="objectives.recovery.remaining" datatype="html">
-        <source><x id="INTERPOLATION"/> période(s) sous la cible sur <x id="INTERPOLATION_1"/> — il en reste <x id="INTERPOLATION_2"/></source>
-        <target state="translated">目標値内の期間は <x id="INTERPOLATION_1"/> 期間中 <x id="INTERPOLATION"/> 期間 — あと <x id="INTERPOLATION_2"/> 期間</target>
+        <source><x id="tenues"/> période(s) sous la cible sur <x id="exigees"/> — il en reste <x id="reste"/></source>
+        <target state="translated">目標値内の期間は <x id="exigees"/> 期間中 <x id="tenues"/> 期間 — あと <x id="reste"/> 期間</target>
       </trans-unit>
       <trans-unit id="objectives.panel.title" datatype="html">
         <source>CAPA préremplie</source>
@@ -23622,8 +23622,8 @@ historique 12 mois</source>
         <target state="translated">理由とともに提案を却下しました。</target>
       </trans-unit>
       <trans-unit id="objectives.evaluated.some" datatype="html">
-        <source><x id="INTERPOLATION"/> CAPA proposée(s) à trancher.</source>
-        <target state="translated">判断待ちの CAPA 提案が <x id="INTERPOLATION"/> 件あります。</target>
+        <source><x id="count"/> CAPA proposée(s) à trancher.</source>
+        <target state="translated">判断待ちの CAPA 提案が <x id="count"/> 件あります。</target>
       </trans-unit>
       <trans-unit id="objectives.evaluated.none" datatype="html">
         <source>Aucun écart n'atteint la règle de déclenchement.</source>
@@ -23638,8 +23638,8 @@ historique 12 mois</source>
         <target state="translated">この目標を追跡から外しますか？</target>
       </trans-unit>
       <trans-unit id="objectives.archive.message" datatype="html">
-        <source>« <x id="INTERPOLATION"/> » ne comptera plus dans la revue. Il est conservé, avec les CAPA qu'il a fait ouvrir : rien n'est effacé.</source>
-        <target state="translated">「<x id="INTERPOLATION"/>」はレビューの集計から外れます。開いた CAPA とともに保存され、何も削除されません。</target>
+        <source>« <x id="titre"/> » ne comptera plus dans la revue. Il est conservé, avec les CAPA qu'il a fait ouvrir : rien n'est effacé.</source>
+        <target state="translated">「<x id="titre"/>」はレビューの集計から外れます。開いた CAPA とともに保存され、何も削除されません。</target>
       </trans-unit>
       <trans-unit id="objectives.archive.confirm" datatype="html">
         <source>Retirer du suivi</source>

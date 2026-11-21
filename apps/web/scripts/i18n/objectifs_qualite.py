@@ -116,12 +116,12 @@ TRANSLATIONS = {
         'Propuesta · a validar por el responsable', 'مقترحة · بانتظار موافقة المسؤول',
         '提案済み · 責任者の承認待ち', '已提议 · 待负责人确认'),
     'objectives.capa.proposed-periods': (
-        'Proposée · {$INTERPOLATION} périodes consécutives',
-        'Proposed · {$INTERPOLATION} consecutive periods',
-        'Propuesta · {$INTERPOLATION} periodos consecutivos',
-        'مقترحة · {$INTERPOLATION} فترات متتالية',
-        '提案済み · 連続 {$INTERPOLATION} 期間',
-        '已提议 · 连续 {$INTERPOLATION} 个期间'),
+        'Proposée · {$count} périodes consécutives',
+        'Proposed · {$count} consecutive periods',
+        'Propuesta · {$count} periodos consecutivos',
+        'مقترحة · {$count} فترات متتالية',
+        '提案済み · 連続 {$count} 期間',
+        '已提议 · 连续 {$count} 个期间'),
     'objectives.capa.open': (
         'CAPA en cours · retour sous la cible attendu',
         'CAPA in progress · awaiting return to target',
@@ -131,16 +131,16 @@ TRANSLATIONS = {
         'CAPA 进行中 · 等待回到目标值'),
     'objectives.capa.none': ('Aucune', 'None', 'Ninguna', 'لا شيء', 'なし', '无'),
     'objectives.recovery.remaining': (
-        '{$INTERPOLATION} période(s) sous la cible sur {$INTERPOLATION_1} — il en reste '
-        '{$INTERPOLATION_2}',
-        '{$INTERPOLATION} period(s) on target out of {$INTERPOLATION_1} — '
-        '{$INTERPOLATION_2} to go',
-        '{$INTERPOLATION} periodo(s) en la meta de {$INTERPOLATION_1} — faltan '
-        '{$INTERPOLATION_2}',
-        '{$INTERPOLATION} من {$INTERPOLATION_1} فترة ضمن المستهدف — تبقّى {$INTERPOLATION_2}',
-        '目標値内の期間は {$INTERPOLATION_1} 期間中 {$INTERPOLATION} 期間 — あと '
-        '{$INTERPOLATION_2} 期間',
-        '{$INTERPOLATION_1} 个期间中已有 {$INTERPOLATION} 个达标 — 还差 {$INTERPOLATION_2} 个'),
+        '{$tenues} période(s) sous la cible sur {$exigees} — il en reste '
+        '{$reste}',
+        '{$tenues} period(s) on target out of {$exigees} — '
+        '{$reste} to go',
+        '{$tenues} periodo(s) en la meta de {$exigees} — faltan '
+        '{$reste}',
+        '{$tenues} من {$exigees} فترة ضمن المستهدف — تبقّى {$reste}',
+        '目標値内の期間は {$exigees} 期間中 {$tenues} 期間 — あと '
+        '{$reste} 期間',
+        '{$exigees} 个期间中已有 {$tenues} 个达标 — 还差 {$reste} 个'),
 
     # --- panneau de la CAPA préremplie -------------------------------------
     'objectives.panel.title': (
@@ -181,12 +181,12 @@ TRANSLATIONS = {
         'Propuesta rechazada, con su motivo.', 'رُفض الاقتراح مع بيان سببه.',
         '理由とともに提案を却下しました。', '已拒绝该提议，并记录理由。'),
     'objectives.evaluated.some': (
-        '{$INTERPOLATION} CAPA proposée(s) à trancher.',
-        '{$INTERPOLATION} CAPA(s) proposed, awaiting a decision.',
-        '{$INTERPOLATION} CAPA propuesta(s) pendientes de decisión.',
-        '{$INTERPOLATION} إجراء CAPA مقترح بانتظار القرار.',
-        '判断待ちの CAPA 提案が {$INTERPOLATION} 件あります。',
-        '有 {$INTERPOLATION} 项 CAPA 提议待裁定。'),
+        '{$count} CAPA proposée(s) à trancher.',
+        '{$count} CAPA(s) proposed, awaiting a decision.',
+        '{$count} CAPA propuesta(s) pendientes de decisión.',
+        '{$count} إجراء CAPA مقترح بانتظار القرار.',
+        '判断待ちの CAPA 提案が {$count} 件あります。',
+        '有 {$count} 项 CAPA 提议待裁定。'),
     'objectives.evaluated.none': (
         "Aucun écart n'atteint la règle de déclenchement.",
         'No deviation reaches the trigger rule.',
@@ -204,16 +204,16 @@ TRANSLATIONS = {
         '¿Retirar este objetivo del seguimiento?', 'إزالة هذا الهدف من المتابعة؟',
         'この目標を追跡から外しますか？', '将该目标移出跟踪？'),
     'objectives.archive.message': (
-        '« {$INTERPOLATION} » ne comptera plus dans la revue. Il est conservé, avec les CAPA '
+        '« {$titre} » ne comptera plus dans la revue. Il est conservé, avec les CAPA '
         "qu'il a fait ouvrir : rien n'est effacé.",
-        '“{$INTERPOLATION}” will no longer count in the review. It is kept, along with the '
+        '“{$titre}” will no longer count in the review. It is kept, along with the '
         'CAPAs it opened: nothing is deleted.',
-        '«{$INTERPOLATION}» ya no contará en la revisión. Se conserva, junto con las CAPA que '
+        '«{$titre}» ya no contará en la revisión. Se conserva, junto con las CAPA que '
         'abrió: nada se borra.',
-        '«{$INTERPOLATION}» لن يُحتسب في المراجعة. يُحفَظ مع إجراءات CAPA التي فتحها: لا شيء يُمحى.',
-        '「{$INTERPOLATION}」はレビューの集計から外れます。開いた CAPA とともに保存され、'
+        '«{$titre}» لن يُحتسب في المراجعة. يُحفَظ مع إجراءات CAPA التي فتحها: لا شيء يُمحى.',
+        '「{$titre}」はレビューの集計から外れます。開いた CAPA とともに保存され、'
         '何も削除されません。',
-        '“{$INTERPOLATION}”将不再计入评审。它与其开立的 CAPA 一并保留，不会删除任何内容。'),
+        '“{$titre}”将不再计入评审。它与其开立的 CAPA 一并保留，不会删除任何内容。'),
     'objectives.archive.confirm': (
         'Retirer du suivi', 'Remove from tracking', 'Retirar del seguimiento',
         'إزالة من المتابعة', '追跡から外す', '移出跟踪'),

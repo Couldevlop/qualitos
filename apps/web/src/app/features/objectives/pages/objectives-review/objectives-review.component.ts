@@ -169,7 +169,7 @@ export class ObjectivesReviewComponent implements OnInit {
     const p = this.proposalFor(o);
     if (p) {
       return p.breachPeriods > 1
-        ? $localize`:@@objectives.capa.proposed-periods:Proposée · ${p.breachPeriods} périodes consécutives`
+        ? $localize`:@@objectives.capa.proposed-periods:Proposée · ${p.breachPeriods}:count: périodes consécutives`
         : $localize`:@@objectives.capa.proposed:Proposée · à valider par le pilote`;
     }
     if (o.assessment.heldByOpenCapa) {
@@ -181,7 +181,7 @@ export class ObjectivesReviewComponent implements OnInit {
   /** Ce qu'il reste à tenir avant que l'objectif puisse repasser « atteint ». */
   recoveryLabel(o: QualityObjective): string {
     const reste = Math.max(0, o.recoveryPeriods - o.assessment.onTargetPeriods);
-    return $localize`:@@objectives.recovery.remaining:${o.assessment.onTargetPeriods} période(s) sous la cible sur ${o.recoveryPeriods} — il en reste ${reste}`;
+    return $localize`:@@objectives.recovery.remaining:${o.assessment.onTargetPeriods}:tenues: période(s) sous la cible sur ${o.recoveryPeriods}:exigees: — il en reste ${reste}:reste:`;
   }
 
   select(proposal: ObjectiveProposal | undefined): void {
@@ -219,7 +219,7 @@ export class ObjectivesReviewComponent implements OnInit {
     this.svc.evaluateAll().pipe(finalize(() => (this.deciding = false))).subscribe({
       next: nees => {
         this.snack.open(nees.length
-          ? $localize`:@@objectives.evaluated.some:${nees.length} CAPA proposée(s) à trancher.`
+          ? $localize`:@@objectives.evaluated.some:${nees.length}:count: CAPA proposée(s) à trancher.`
           : $localize`:@@objectives.evaluated.none:Aucun écart n'atteint la règle de déclenchement.`,
           undefined, { duration: 5000 });
         this.load();
@@ -311,7 +311,7 @@ export class ObjectivesReviewComponent implements OnInit {
       panelClass: 'qos-dialog-panel',
       data: {
         title: $localize`:@@objectives.archive.title:Retirer cet objectif du suivi ?`,
-        message: $localize`:@@objectives.archive.message:« ${o.title} » ne comptera plus dans la revue. Il est conservé, avec les CAPA qu'il a fait ouvrir : rien n'est effacé.`,
+        message: $localize`:@@objectives.archive.message:« ${o.title}:titre: » ne comptera plus dans la revue. Il est conservé, avec les CAPA qu'il a fait ouvrir : rien n'est effacé.`,
         confirmLabel: $localize`:@@objectives.archive.confirm:Retirer du suivi`
       }
     }).afterClosed().subscribe(ok => {
