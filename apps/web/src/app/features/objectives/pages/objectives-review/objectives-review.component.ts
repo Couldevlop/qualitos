@@ -113,6 +113,18 @@ export class ObjectivesReviewComponent implements OnInit {
     return objectiveStatusTone(o.assessment.status);
   }
 
+  /**
+   * L'écart que cite le panneau, avec son unité : « 2 % », jamais « 2 ».
+   *
+   * <p>L'unité n'est pas portée par la proposition — elle appartient au KPI de
+   * l'objectif, qu'on retrouve par son identifiant. Sans elle, le fait affiché
+   * contredit la description du dossier, qui écrit bien l'unité.
+   */
+  proposalObservedLabel(p: ObjectiveProposal): string {
+    const unite = this.review?.objectives.find(o => o.id === p.objectiveId)?.kpiUnit;
+    return `${p.observedValue}${unite ? ' ' + unite : ''}`;
+  }
+
   /** La proposition en attente d'un objectif, s'il y en a une. */
   proposalFor(o: QualityObjective): ObjectiveProposal | undefined {
     return this.review?.pendingProposals.find(p => p.objectiveId === o.id);

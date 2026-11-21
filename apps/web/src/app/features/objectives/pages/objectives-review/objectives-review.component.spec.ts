@@ -168,6 +168,21 @@ describe('ObjectivesReviewComponent — la revue des objectifs (ADR 0133)', () =
   });
 
   /**
+   * Le fait du panneau doit porter l'unité comme la porte la description du
+   * dossier. « 900 » seul, quand la description dit « 900 ppm », se lit comme
+   * deux chiffres différents.
+   */
+  it('cite l\'écart du panneau avec l\'unité du KPI de l\'objectif', async () => {
+    await build();
+    expect(component.proposalObservedLabel(proposition())).toBe('900 ppm');
+  });
+
+  it('n\'invente pas d\'unité dans le panneau quand le KPI n\'en a pas', async () => {
+    await build(revue({ objectives: [objectif({ kpiUnit: null })] }));
+    expect(component.proposalObservedLabel(proposition())).toBe('900');
+  });
+
+  /**
    * Un objectif retenu par une CAPA ouverte doit DIRE ce qu'il attend. Sans
    * cela, l'utilisateur voit un KPI revenu sous la cible et un statut en alerte,
    * et conclut à un défaut d'affichage.

@@ -412,7 +412,8 @@ class QualityObjectiveServiceTest {
                     .contains("cible 500 ppm")
                     .contains("900 ppm")
                     .contains("Production")
-                    .contains("5 jours ouvrés");
+                    .contains("5 jours ouvrés")
+                    .contains("du 01/10/2026 au 01/11/2026");
         }
 
         @Test
