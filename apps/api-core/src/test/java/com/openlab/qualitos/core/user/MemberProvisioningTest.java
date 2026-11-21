@@ -11,6 +11,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.mockito.ArgumentCaptor;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -39,6 +40,23 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
+/**
+ * Exécutée SEULE, et c'est nécessaire : deux de ces bancs lisent le journal de
+ * {@link MemberProvisioning} par un appender posé sur le logger global.
+ *
+ * <p>Les classes de test tournent en parallèle (voir {@code junit.jupiter.execution
+ * .parallel.mode.classes.default} dans le POM) et ce module en compte trois qui
+ * démarrent un contexte Spring. Démarrer un contexte réinitialise le système de
+ * journalisation, et {@code LoggerContext.reset()} détache TOUS les appenders de
+ * TOUS les loggers — y compris celui que {@code setUp} vient de poser. Le banc
+ * ne voyait alors aucun événement et échouait sur un journal vide, sans rapport
+ * avec ce qu'il vérifie.
+ *
+ * <p>Le verrou est ici plutôt que sur les classes Spring parce que c'est ce banc
+ * qui dépend d'un état global, et non elles : une classe qui démarre un contexte
+ * a le droit de configurer la journalisation.
+ */
+@Isolated
 @DisplayName("MemberProvisioning — l'annuaire se remplit à la première connexion (ADR 0093)")
 class MemberProvisioningTest {
 
