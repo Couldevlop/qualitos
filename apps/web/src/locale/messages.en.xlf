@@ -22694,6 +22694,38 @@ declared income
         <source><x id="count"/> dossiers CAPA traitent cet écart</source>
         <target state="translated"><x id="count"/> CAPA cases address this non-conformity</target>
       </trans-unit>
+      <trans-unit id="nc.detail.resolve-needs-analysis-title" datatype="html">
+        <source>Analysez l'écart d'abord</source>
+        <target state="translated">Analyse the deviation first</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.resolve-needs-analysis" datatype="html">
+        <source>Cet écart n'est pas encore instruit. Lancez « Analyser », puis inscrivez au moins une action : c'est l'ouverture du dossier d'actions qui porte l'écart à l'étape où il se résout.</source>
+        <target state="translated">This deviation has not been investigated yet. Start "Analyse", then record at least one action: opening the action case is what brings the deviation to the stage where it can be resolved.</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.resolve-needs-action-title" datatype="html">
+        <source>Inscrivez une action d'abord</source>
+        <target state="translated">Record an action first</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.resolve-needs-action" datatype="html">
+        <source>Aucune action n'est encore inscrite sur cet écart. « Nouvelle action » ouvre son dossier et le porte à l'étape où il se résout.</source>
+        <target state="translated">No action has been recorded on this deviation yet. "New action" opens its case and brings it to the stage where it can be resolved.</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.resolve-hint-analysis" datatype="html">
+        <source>Cet écart n'est pas encore instruit : commencez par « Analyser ».</source>
+        <target state="translated">This deviation has not been investigated yet: start with "Analyse".</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.resolve-hint-action" datatype="html">
+        <source>Aucune action n'est encore inscrite : commencez par « Nouvelle action ».</source>
+        <target state="translated">No action has been recorded yet: start with "New action".</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.export-needs-closure-title" datatype="html">
+        <source>Clôturez l'écart d'abord</source>
+        <target state="translated">Close the deviation first</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.export-needs-closure" datatype="html">
+        <source>Le PDF n'existe qu'une fois le rapport émis, et le rapport ne s'émet qu'une fois l'écart clos : c'est la clôture qui arrête le contenu. Clôturez l'écart sur sa fiche, puis revenez émettre ce rapport.</source>
+        <target state="translated">The PDF exists only once the report is issued, and the report can only be issued once the deviation is closed: closure is what freezes the content. Close the deviation on its record, then come back to issue this report.</target>
+      </trans-unit>
       <trans-unit id="nav.admin-nc" datatype="html">
         <source>Natures de NC</source>
         <target state="translated">NC natures</target>

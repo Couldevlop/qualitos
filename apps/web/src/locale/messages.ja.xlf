@@ -22693,6 +22693,38 @@ historique 12 mois</source>
         <source><x id="count"/> dossiers CAPA traitent cet écart</source>
         <target state="translated">この不適合は <x id="count"/> 件の CAPA 案件で処理されています</target>
       </trans-unit>
+      <trans-unit id="nc.detail.resolve-needs-analysis-title" datatype="html">
+        <source>Analysez l'écart d'abord</source>
+        <target state="translated">まず不適合を分析してください</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.resolve-needs-analysis" datatype="html">
+        <source>Cet écart n'est pas encore instruit. Lancez « Analyser », puis inscrivez au moins une action : c'est l'ouverture du dossier d'actions qui porte l'écart à l'étape où il se résout.</source>
+        <target state="translated">この不適合はまだ調査されていません。「分析」を実行し、少なくとも一つの対策を登録してください。対策台帳を開くことで、解決できる段階に進みます。</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.resolve-needs-action-title" datatype="html">
+        <source>Inscrivez une action d'abord</source>
+        <target state="translated">まず対策を登録してください</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.resolve-needs-action" datatype="html">
+        <source>Aucune action n'est encore inscrite sur cet écart. « Nouvelle action » ouvre son dossier et le porte à l'étape où il se résout.</source>
+        <target state="translated">この不適合にはまだ対策が登録されていません。「新しい対策」が台帳を開き、解決できる段階に進めます。</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.resolve-hint-analysis" datatype="html">
+        <source>Cet écart n'est pas encore instruit : commencez par « Analyser ».</source>
+        <target state="translated">この不適合はまだ調査されていません。まず「分析」から始めてください。</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.resolve-hint-action" datatype="html">
+        <source>Aucune action n'est encore inscrite : commencez par « Nouvelle action ».</source>
+        <target state="translated">まだ対策が登録されていません。まず「新しい対策」から始めてください。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.export-needs-closure-title" datatype="html">
+        <source>Clôturez l'écart d'abord</source>
+        <target state="translated">まず不適合を完了してください</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.export-needs-closure" datatype="html">
+        <source>Le PDF n'existe qu'une fois le rapport émis, et le rapport ne s'émet qu'une fois l'écart clos : c'est la clôture qui arrête le contenu. Clôturez l'écart sur sa fiche, puis revenez émettre ce rapport.</source>
+        <target state="translated">PDF は報告書を発行した後にのみ存在し、報告書は不適合を完了した後にのみ発行できます。完了が内容を確定させます。不適合を票上で完了させ、その後この報告書を発行してください。</target>
+      </trans-unit>
       <trans-unit id="nav.admin-nc" datatype="html">
         <source>Natures de NC</source>
         <target state="translated">NC の性質</target>

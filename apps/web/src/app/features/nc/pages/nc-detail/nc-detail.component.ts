@@ -1264,7 +1264,24 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
       });
   }
 
+  /**
+   * Résoudre, ou DIRE CE QUI MANQUE pour pouvoir le faire.
+   *
+   * <p>Aux deux premières étapes, le bouton était éteint et muet : le serveur
+   * n'énumère volontairement aucun motif tant que l'étape n'est pas atteinte —
+   * il ne reproche pas ce qu'il ne propose pas encore —, et le bandeau restait
+   * donc vide. On voyait un bouton gris sans savoir quoi faire pour l'allumer.
+   *
+   * <p>Il reste donc cliquable, et il explique l'étape qui manque en proposant
+   * le geste qui y mène — le même parti que l'export du rapport 8D. Le serveur
+   * garde l'autorité : il refuserait de toute façon une résolution prématurée.
+   */
   openResolve(n: NcResponse): void {
+    if (this.acting$.value) return;
+    if (!this.canResolve(n.status)) {
+      this.expliquerEtapeAvantResolution(n);
+      return;
+    }
     const data: NcResolveDialogData = { ncId: n.id, reference: n.reference };
     this.dialog
       .open(NcResolveDialogComponent, {
@@ -1273,6 +1290,41 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
       })
       .afterClosed()
       .subscribe(resolved => { if (resolved) this.reload$.next(); });
+  }
+
+  /**
+   * L'étape qui manque avant de pouvoir résoudre, et le geste qui y mène.
+   *
+   * <p>Deux étapes seulement, parce qu'il n'y en a pas d'autre avant la
+   * résolution : l'écart n'est pas instruit, ou il l'est sans qu'aucune action
+   * n'y soit inscrite. C'est l'OUVERTURE DU DOSSIER D'ACTIONS qui porte l'écart
+   * à l'étape où il se résout — le serveur tient les deux d'un seul geste —,
+   * et c'est donc elle que la phrase nomme, pas un franchissement d'état que
+   * l'écran ne propose nulle part.
+   */
+  private expliquerEtapeAvantResolution(n: NcResponse): void {
+    const instruire = n.status === 'OPEN';
+    const data: ConfirmDialogData = {
+      title: instruire
+        ? $localize`:@@nc.detail.resolve-needs-analysis-title:Analysez l'écart d'abord`
+        : $localize`:@@nc.detail.resolve-needs-action-title:Inscrivez une action d'abord`,
+      message: instruire
+        ? $localize`:@@nc.detail.resolve-needs-analysis:Cet écart n'est pas encore instruit. Lancez « Analyser », puis inscrivez au moins une action : c'est l'ouverture du dossier d'actions qui porte l'écart à l'étape où il se résout.`
+        : $localize`:@@nc.detail.resolve-needs-action:Aucune action n'est encore inscrite sur cet écart. « Nouvelle action » ouvre son dossier et le porte à l'étape où il se résout.`,
+      confirmLabel: instruire
+        ? $localize`:@@nc.detail.start-analysis:Analyser`
+        : $localize`:@@nc.detail.new-action:Nouvelle action`
+    };
+    this.dialog.open(ConfirmDialogComponent, {
+      data, panelClass: 'qos-dialog-panel', autoFocus: false, restoreFocus: true
+    }).afterClosed().subscribe(ok => {
+      if (!ok) return;
+      if (instruire) {
+        this.startAnalysis();
+      } else {
+        this.addActions(n);
+      }
+    });
   }
 
   /**
@@ -1588,6 +1640,33 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
     return nc.capaCaseId ? true : !this.isTerminal(nc.status);
   }
   canResolve(status: NcStatus): boolean { return status === 'ACTION_DEFINED'; }
+
+  /**
+   * Les étapes d'où l'on va ENCORE vers la résolution.
+   *
+   * <p>Le bouton y reste cliquable pour dire ce qui manque. Au-delà — écart
+   * résolu, clos, annulé, rejeté — il n'y a plus rien à expliquer : le geste
+   * n'a plus de sens, et le bouton s'éteint pour de bon.
+   */
+  avantResolution(status: NcStatus): boolean {
+    return status === 'OPEN' || status === 'UNDER_ANALYSIS';
+  }
+
+  /**
+   * Ce que dit le survol du bouton « Résoudre » : les motifs, l'étape, ou rien
+   * de plus que son intitulé.
+   */
+  resolveHint(n: NcResponse): string {
+    if (this.blocked(n)) {
+      return this.blockersHint(n);
+    }
+    if (this.avantResolution(n.status)) {
+      return n.status === 'OPEN'
+        ? $localize`:@@nc.detail.resolve-hint-analysis:Cet écart n'est pas encore instruit : commencez par « Analyser ».`
+        : $localize`:@@nc.detail.resolve-hint-action:Aucune action n'est encore inscrite : commencez par « Nouvelle action ».`;
+    }
+    return this.resolveTooltip;
+  }
   canClose(status: NcStatus): boolean { return status === 'RESOLVED'; }
 
   /**

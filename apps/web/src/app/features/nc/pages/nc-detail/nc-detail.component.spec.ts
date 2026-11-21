@@ -956,7 +956,10 @@ describe('NcDetailComponent — workflow et escalade CAPA', () => {
     const openSpy = spyOn(TestBed.inject(MatDialog), 'open')
       .and.returnValue({ afterClosed: () => of(buildNc({ status: 'RESOLVED' })) } as never);
 
-    component.openResolve(buildNc({ id: UUID, reference: 'NC-2026-1001' }));
+    // A l'etape ou l'on resout : avant elle, le bouton explique l'etape qui
+    // manque au lieu d'ouvrir la fenetre de resolution.
+    component.openResolve(buildNc({
+      id: UUID, reference: 'NC-2026-1001', status: 'ACTION_DEFINED' }));
 
     expect(openSpy.calls.mostRecent().args[1]?.data)
       .toEqual({ ncId: UUID, reference: 'NC-2026-1001' });
@@ -968,7 +971,7 @@ describe('NcDetailComponent — workflow et escalade CAPA', () => {
     spyOn(TestBed.inject(MatDialog), 'open')
       .and.returnValue({ afterClosed: () => of(undefined) } as never);
 
-    component.openResolve(buildNc());
+    component.openResolve(buildNc({ status: 'ACTION_DEFINED' }));
 
     expect(svc.getNc).not.toHaveBeenCalled();
   });

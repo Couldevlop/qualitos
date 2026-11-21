@@ -251,6 +251,40 @@ describe('NcEightDComponent', () => {
     expect(donnees.message).toContain('partiel');
   });
 
+  /**
+   * LE PDF N'EXISTE PAS AVANT LA CLOTURE, et l'ecran le dit au lieu de
+   * proposer une emission que le serveur repousse. « Exporter » ouvrait la
+   * fenetre « Emettre avant d'exporter ? », l'appel partait, le serveur
+   * refusait, et l'ecran restait en brouillon sans un mot.
+   */
+  it('dit de clôturer l’écart quand le rapport n’est pas encore émissible', async () => {
+    await monter(['QUALITY_MANAGER']);
+    dialog.open.and.returnValue({ afterClosed: () => of(true) } as MatDialogRef<unknown>);
+
+    component.exporter(rapport({ issuable: false }));
+
+    const donnees = dialog.open.calls.mostRecent().args[1]?.data as {
+      title: string; message: string;
+    };
+    expect(donnees.title).toContain('Clôturez');
+    expect(donnees.message).toContain('clos');
+    // Ni emission, ni telechargement : il n'y a rien a emettre ni a telecharger.
+    expect(svc.issueEightDReport).not.toHaveBeenCalled();
+    expect(svc.downloadEightDPdf).not.toHaveBeenCalled();
+    // Et la fiche de l'ecart s'ouvre : c'est la que la cloture se porte.
+    expect(router.navigate).toHaveBeenCalled();
+  });
+
+  it('propose l’émission quand l’écart est clos et le rapport émissible', async () => {
+    await monter(['QUALITY_MANAGER']);
+    dialog.open.and.returnValue({ afterClosed: () => of(false) } as MatDialogRef<unknown>);
+
+    component.exporter(rapport({ issuable: true }));
+
+    const donnees = dialog.open.calls.mostRecent().args[1]?.data as { title: string };
+    expect(donnees.title).toContain('Émettre');
+  });
+
   it('affiche le sceau et propose le PDF quand le rapport est émis', async () => {
     await monter(['QUALITY_MANAGER']);
     svc.getEightDReport.and.returnValue(of(rapport({

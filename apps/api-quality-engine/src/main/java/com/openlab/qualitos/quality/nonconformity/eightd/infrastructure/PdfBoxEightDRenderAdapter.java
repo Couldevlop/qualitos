@@ -113,17 +113,18 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
             PDType1Font bold = new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD);
             PDType1Font mono = new PDType1Font(Standard14Fonts.FontName.COURIER);
 
-            figerMetadonnees(doc, snapshot);
+            boolean fr = parleFrancais(snapshot);
+            figerMetadonnees(doc, snapshot, fr);
 
             Page page = nouvellePage(doc);
-            page.y = entete(page.flux, bold, regular, snapshot, page.y);
-            page.y = encadreNc(page.flux, bold, regular, snapshot, page.y);
+            page.y = entete(page.flux, bold, regular, snapshot, page.y, fr);
+            page.y = encadreNc(page.flux, bold, regular, snapshot, page.y, fr);
 
             for (EightDSnapshot.Section section : snapshot.sections()) {
-                page = discipline(doc, page, bold, regular, section);
+                page = discipline(doc, page, bold, regular, section, fr);
             }
 
-            page = piedIntegrite(doc, page, bold, regular, mono, snapshot, verifyUrl);
+            page = piedIntegrite(doc, page, bold, regular, mono, snapshot, verifyUrl, fr);
             page.flux.close();
 
             ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -151,8 +152,9 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
         return new Page(new PDPageContentStream(doc, page), HEIGHT - MARGIN);
     }
 
-    private void figerMetadonnees(PDDocument doc, EightDSnapshot snapshot) {
-        doc.getDocumentInformation().setTitle("8D Report " + sanitize(snapshot.ncReference()));
+    private void figerMetadonnees(PDDocument doc, EightDSnapshot snapshot, boolean fr) {
+        doc.getDocumentInformation().setTitle(
+                mot(fr, "Rapport 8D ", "8D Report ") + sanitize(snapshot.ncReference()));
         doc.getDocumentInformation().setSubject(sanitize(snapshot.ncTitle()));
         doc.getDocumentInformation().setProducer("QualitOS");
         doc.getDocumentInformation().setCreator("QualitOS");
@@ -181,23 +183,26 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
     }
 
     private float entete(PDPageContentStream c, PDType1Font bold, PDType1Font regular,
-                         EightDSnapshot snapshot, float y) throws IOException {
-        texte(c, bold, 22, INDIGO, MARGIN, y, "8D Report");
+                         EightDSnapshot snapshot, float y, boolean fr) throws IOException {
+        texte(c, bold, 22, INDIGO, MARGIN, y, mot(fr, "Rapport 8D", "8D Report"));
         texte(c, regular, 11, MUTED, MARGIN + 120, y,
                 sanitize(snapshot.ncReference()));
         y -= 8;
         ligne(c, INDIGO, MARGIN, y, WIDTH - MARGIN, y, 2f);
         y -= 18;
-        texte(c, regular, 10, MUTED, MARGIN, y,
+        texte(c, regular, 10, MUTED, MARGIN, y, mot(fr,
+                "Résolution de problème en huit disciplines - QualitOS"
+                + " (signé ML-DSA + ancré blockchain)",
                 "Eight-discipline problem solving - QualitOS"
-                + " (ML-DSA signed + blockchain anchored)");
+                + " (ML-DSA signed + blockchain anchored)"));
         y -= 16;
         if (snapshot.partial()) {
             // Dit en tête, pas en note de bas de page : un lecteur doit savoir avant
             // de lire que le document est incomplet, et lesquelles de ses parties
             // n'ont pas de contenu.
             texte(c, bold, 10, ALERT, MARGIN, y,
-                    "PARTIAL REPORT - disciplines with no content: "
+                    mot(fr, "RAPPORT PARTIEL - disciplines sans contenu : ",
+                        "PARTIAL REPORT - disciplines with no content: ")
                     + String.join(", ", snapshot.missingCodes()));
             y -= 16;
         }
@@ -205,20 +210,23 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
     }
 
     private float encadreNc(PDPageContentStream c, PDType1Font bold, PDType1Font regular,
-                            EightDSnapshot snapshot, float y) throws IOException {
+                            EightDSnapshot snapshot, float y, boolean fr) throws IOException {
         float hauteur = 62f;
         rect(c, PANEL, MARGIN, y - hauteur, CONTENT_W, hauteur);
         float x = MARGIN + 14;
         float ligne = y - 18;
-        cle(c, bold, regular, x, ligne, "Non-conformity", snapshot.ncReference());
-        cle(c, bold, regular, x, ligne - 18, "Title", snapshot.ncTitle());
-        cle(c, bold, regular, x, ligne - 36, "Issued on",
-                snapshot.issuedAtText() == null ? "(draft)" : snapshot.issuedAtText());
+        cle(c, bold, regular, x, ligne, mot(fr, "Non-conformité", "Non-conformity"),
+                snapshot.ncReference());
+        cle(c, bold, regular, x, ligne - 18, mot(fr, "Intitulé", "Title"),
+                snapshot.ncTitle());
+        cle(c, bold, regular, x, ligne - 36, mot(fr, "Émis le", "Issued on"),
+                snapshot.issuedAtText() == null
+                        ? mot(fr, "(brouillon)", "(draft)") : snapshot.issuedAtText());
         return y - hauteur - 22;
     }
 
     private Page discipline(PDDocument doc, Page page, PDType1Font bold, PDType1Font regular,
-                            EightDSnapshot.Section section) throws IOException {
+                            EightDSnapshot.Section section, boolean fr) throws IOException {
         page = place(doc, page, 46f);
         texte(page.flux, bold, 13, INDIGO, MARGIN, page.y,
                 section.code() + " - " + sanitize(section.title()));
@@ -231,7 +239,8 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
 
         if (rienAMontrer(section)) {
             page = place(doc, page, 16f);
-            texte(page.flux, regular, 9.5f, ALERT, MARGIN + 10, page.y, "Not filled in.");
+            texte(page.flux, regular, 9.5f, ALERT, MARGIN + 10, page.y,
+                    mot(fr, "Non renseignée.", "Not filled in."));
             page.y -= 14;
             return page;
         }
@@ -243,7 +252,7 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
             }
         }
         for (EightDSnapshot.Figure figure : section.figures()) {
-            page = figure(doc, page, bold, regular, figure);
+            page = figure(doc, page, bold, regular, figure, fr);
         }
         for (EightDSnapshot.Table actions : section.tables()) {
             page = tableau(doc, page, bold, regular, actions);
@@ -401,10 +410,10 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
      * rendu.
      */
     private Page figure(PDDocument doc, Page page, PDType1Font bold, PDType1Font regular,
-                        EightDSnapshot.Figure figure) throws IOException {
+                        EightDSnapshot.Figure figure, boolean fr) throws IOException {
         String titre = figure.kind() == EightDSnapshot.FigureKind.FISHBONE
                 ? "Ishikawa - " + texteOuVide(figure.caption())
-                : "5 whys - " + texteOuVide(figure.caption());
+                : mot(fr, "5 pourquoi - ", "5 whys - ") + texteOuVide(figure.caption());
         // UNE FIGURE NE SE COUPE PAS. Elle vaut par sa forme : une arête dont
         // la moitié des branches passe à la page suivante, ou une descente
         // séparée de sa conclusion, ne montrent plus ce qu'un schéma sert à
@@ -420,13 +429,14 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
 
         if (figure.nodes().isEmpty()) {
             page = place(doc, page, 14f);
-            texte(page.flux, regular, 9f, ALERT, MARGIN + 18, page.y, "Opened, but left empty.");
+            texte(page.flux, regular, 9f, ALERT, MARGIN + 18, page.y,
+                    mot(fr, "Ouverte, mais laissée vide.", "Opened, but left empty."));
             page.y -= 12;
             return page;
         }
         return figure.kind() == EightDSnapshot.FigureKind.FISHBONE
                 ? arete(doc, page, bold, regular, figure)
-                : echelle(doc, page, bold, regular, figure);
+                : echelle(doc, page, bold, regular, figure, fr);
     }
 
     /**
@@ -465,7 +475,7 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
      * rang, qui est tout ce qui le relie a la question precedente.
      */
     private Page echelle(PDDocument doc, Page page, PDType1Font bold, PDType1Font regular,
-                         EightDSnapshot.Figure figure) throws IOException {
+                         EightDSnapshot.Figure figure, boolean fr) throws IOException {
         float x = MARGIN + 18;
         float largeur = CONTENT_W - 36;
         boolean premier = true;
@@ -492,7 +502,9 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
             boolean racine = "ROOT".equals(noeud.group());
             rect(page.flux, PANEL, x, page.y - hauteur + 10, largeur, hauteur);
             rect(page.flux, racine ? INDIGO : MUTED, x, page.y - hauteur + 10, 2.5f, hauteur);
-            String rang = racine ? "Root cause" : "Why " + noeud.depth();
+            String rang = racine
+                    ? mot(fr, "Cause racine", "Root cause")
+                    : mot(fr, "Pourquoi ", "Why ") + noeud.depth();
             texte(page.flux, bold, 8f, racine ? INDIGO : MUTED, x + 8, page.y + 1, rang);
             float ligneY = page.y + 1;
             for (String morceau : morceaux) {
@@ -711,8 +723,8 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
     }
 
     private Page piedIntegrite(PDDocument doc, Page page, PDType1Font bold, PDType1Font regular,
-                               PDType1Font mono, EightDSnapshot snapshot, String verifyUrl)
-            throws IOException {
+                               PDType1Font mono, EightDSnapshot snapshot, String verifyUrl,
+                               boolean fr) throws IOException {
         // Le pied s'écrit au BAS de la dernière page, à une hauteur fixe. Le
         // contenu, lui, descend désormais jusqu'à la marge : s'il atteint cette
         // bande, le pied prend une page à lui. L'écrire par-dessus le texte
@@ -725,16 +737,20 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
         float haut = MARGIN + FOOTER_H;
         ligne(c, MUTED, MARGIN, haut, WIDTH - MARGIN, haut, 0.5f);
         float y = haut - 18;
-        texte(c, bold, 12, INDIGO, MARGIN, y, "Integrity & verification");
+        texte(c, bold, 12, INDIGO, MARGIN, y,
+                mot(fr, "Intégrité et vérification", "Integrity & verification"));
         y -= 15;
         texte(c, regular, 9, INK, MARGIN, y,
                 "Ce rapport est signe (Ed25519 + ML-DSA-65) et son empreinte est ancree.");
         y -= 13;
         texte(c, regular, 9, INK, MARGIN, y,
-                "Its content is frozen: it says what it said on the day it was issued.");
+                mot(fr, "Son contenu est figé : il dit ce qu'il disait le jour de son"
+                        + " émission.",
+                    "Its content is frozen: it says what it said on the day it was issued."));
         y -= 13;
         if (snapshot.issuedByName() != null) {
-            texte(c, regular, 9, MUTED, MARGIN, y, "Issued by: " + sanitize(snapshot.issuedByName()));
+            texte(c, regular, 9, MUTED, MARGIN, y, mot(fr, "Émis par : ", "Issued by: ")
+                    + sanitize(snapshot.issuedByName()));
         }
         texte(c, regular, 8, MUTED, MARGIN, MARGIN + 30,
                 "Scannez le QR code pour verifier l'authenticite de ce document sur QualitOS.");
@@ -832,6 +848,23 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
         } catch (Exception e) {
             throw new IllegalStateException("generation du QR code impossible", e);
         }
+    }
+
+    /**
+     * Le document parle-t-il français ?
+     *
+     * <p>C'est l'INSTANTANÉ qui le dit, jamais la langue du lecteur : l'empreinte
+     * scellée porte sur les octets du PDF, et un rapport déjà émis doit se
+     * relire à l'octet près. Un instantané scellé avant que le document parle
+     * français n'a pas de langue : il garde ses mots d'alors.
+     */
+    private static boolean parleFrancais(EightDSnapshot snapshot) {
+        return "fr".equals(snapshot.langue());
+    }
+
+    /** Le mot du document : celui de la langue figee a l'emission. */
+    private static String mot(boolean fr, String francais, String anglais) {
+        return fr ? francais : anglais;
     }
 
     /** Ramène au jeu WinAnsi des polices standard, en dégradant les accents. */
