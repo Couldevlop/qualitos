@@ -80,11 +80,11 @@ class PdfBoxEightDRenderAdapterTest {
         String texte = texteDe(renderer.render(enFrancais(snapshot(false)), URL));
 
         assertThat(texte).contains("Rapport 8D");
-        assertThat(texte).contains("Non-conformite NC-2026-0007");
-        assertThat(texte).contains("Emis le");
-        assertThat(texte).contains("Non renseignee.");
+        assertThat(texte).contains("Non-conformité NC-2026-0007");
+        assertThat(texte).contains("Émis le");
+        assertThat(texte).contains("Non renseignée.");
         assertThat(texte).contains("RAPPORT PARTIEL - disciplines sans contenu :");
-        assertThat(texte).contains("Integrite et verification");
+        assertThat(texte).contains("Intégrité et vérification");
         assertThat(texte).doesNotContain("8D Report");
         assertThat(texte).doesNotContain("Issued on");
         assertThat(texte).doesNotContain("Not filled in.");
@@ -107,6 +107,42 @@ class PdfBoxEightDRenderAdapterTest {
         assertThat(texte).contains("8D Report");
         assertThat(texte).contains("Issued on");
         assertThat(texte).doesNotContain("Rapport 8D");
+    }
+
+    /**
+     * LES ACCENTS DU RAPPORT SORTENT. Le rendu les degradait, en invoquant
+     * l'impuissance des polices standard -- qui est fausse : elles sont en
+     * WinAnsiEncoding, qui porte tout le francais. Un 8D part chez le client,
+     * et « Ecart constate » au lieu d'« Écart constaté » abime une preuve.
+     */
+    @Test
+    void les_accents_du_contenu_sortent_tels_quels() throws IOException {
+        String texte = texteDe(renderer.render(snapshotDe(sections(List.of(
+                "Écart constaté : réclamation d'un client — cédille ç, ligature œuvre",
+                "Prévention : contrôle à 100 %, où l'opérateur vise l'arête"))), URL));
+
+        assertThat(texte).contains("Écart constaté : réclamation d'un client");
+        assertThat(texte).contains("cédille ç, ligature œuvre");
+        assertThat(texte).contains("Prévention : contrôle à 100 %");
+        assertThat(texte).contains("où l'opérateur vise l'arête");
+    }
+
+    /**
+     * CE QUE LES POLICES NE SAVENT PAS ECRIRE NE FAIT PAS ECHOUER L'EMISSION.
+     * PDFBox leve une exception sur un caractere hors du jeu de la police ; la
+     * remettre au visage de l'utilisateur ferait perdre le document pour un
+     * signe. On perd le signe, on garde la preuve.
+     */
+    @Test
+    void un_caractere_hors_du_jeu_des_polices_est_remplace_sans_casser_le_rendu()
+            throws IOException {
+        byte[] pdf = renderer.render(snapshotDe(sections(List.of(
+                "Cible ≤ 500 ppm, tendance → baisse, repere 中"))), URL);
+
+        String texte = texteDe(pdf);
+        assertThat(pdf).isNotEmpty();
+        assertThat(texte).contains("Cible ? 500 ppm, tendance ? baisse, repere ?");
+        assertThat(texte).doesNotContain("≤");
     }
 
     /** Le meme instantane, avec la langue du document neuf. */
@@ -159,11 +195,11 @@ class PdfBoxEightDRenderAdapterTest {
     void l_arete_de_poisson_porte_son_enonce_et_ses_branches() throws IOException {
         String texte = texteDe(renderer.render(avecFigure(areteDeDemo()), URL));
 
-        // Le rendu ramene au jeu WinAnsi des polices standard : accents degrades.
-        assertThat(texte).contains("Ishikawa - Fuite au presse-etoupe");
+        // Les polices standard portent le francais : les accents de la source sortent
+        assertThat(texte).contains("Ishikawa - Fuite au presse-étoupe");
         assertThat(texte).contains("MATERIEL");
         assertThat(texte).contains("METHODE");
-        assertThat(texte).contains("Joint use");
+        assertThat(texte).contains("Joint usé");
         assertThat(texte).contains("Pas de plan");
     }
 
@@ -175,11 +211,11 @@ class PdfBoxEightDRenderAdapterTest {
     void la_descente_des_pourquoi_numerote_ses_rangs_et_nomme_la_cause_racine() throws IOException {
         String texte = texteDe(renderer.render(avecFigure(echelleDeDemo()), URL));
 
-        assertThat(texte).contains("5 whys - Fuite constatee");
+        assertThat(texte).contains("5 whys - Fuite constatée");
         assertThat(texte).contains("Why 1");
         assertThat(texte).contains("Why 2");
         assertThat(texte).contains("Root cause");
-        assertThat(texte).contains("Absence de plan preventif");
+        assertThat(texte).contains("Absence de plan préventif");
     }
 
     /**
@@ -324,8 +360,8 @@ class PdfBoxEightDRenderAdapterTest {
             byte[] pdf = renderer.render(avecRemplissage(echelleDeDemo(), n), URL);
             // Le LIBELLE du noeud, pas l'etiquette « Root cause » : celle-ci est
             // aussi le titre du D4, qui peut se trouver sur une autre page.
-            int page = pageQuiPorte(pdf, "Le joint a cede");
-            assertThat(pageQuiPorte(pdf, "Absence de plan preventif"))
+            int page = pageQuiPorte(pdf, "Le joint a cédé");
+            assertThat(pageQuiPorte(pdf, "Absence de plan préventif"))
                     .as("avec %s lignes avant, la cause racine doit rester avec sa descente", n)
                     .isEqualTo(page);
         }

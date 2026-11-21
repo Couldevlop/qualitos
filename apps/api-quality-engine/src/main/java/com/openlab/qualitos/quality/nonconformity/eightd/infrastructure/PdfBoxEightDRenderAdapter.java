@@ -23,10 +23,13 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.Calendar;
 import java.util.EnumMap;
 import java.util.LinkedHashMap;
@@ -54,9 +57,10 @@ import java.util.TimeZone;
  *       sur la machine.</li>
  * </ul>
  *
- * <p>Le texte est ramené au jeu WinAnsi : les polices standard ne savent pas
- * encoder un caractère arbitraire, et un glyphe exotique ferait échouer le rendu
- * au lieu de dégrader l'accent.
+ * <p>Le texte est ramené à ce que ces polices savent encoder — voir
+ * {@link #sanitize(String)}. Elles couvrent tout le français ; seul ce qui sort
+ * de leur jeu est remplacé, faute de quoi un glyphe exotique ferait échouer le
+ * rendu au lieu d'abîmer un mot.
  */
 @Component
 public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
@@ -72,6 +76,9 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
     private static final float WIDTH = PDRectangle.A4.getWidth();
     private static final float HEIGHT = PDRectangle.A4.getHeight();
     private static final float CONTENT_W = WIDTH - 2 * MARGIN;
+
+    /** Ce que les polices du document savent ecrire ; voir {@link #sanitize(String)}. */
+    private static final BitSet ENCODABLE = encodableParLesPolices();
 
     /** Hauteur réservée au pied d'intégrité de la DERNIÈRE page. */
     private static final float FOOTER_H = 150f;
@@ -867,7 +874,25 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
         return fr ? francais : anglais;
     }
 
-    /** Ramène au jeu WinAnsi des polices standard, en dégradant les accents. */
+    /**
+     * Ramène le texte à ce que les polices standard savent encoder.
+     *
+     * <p>Ce qui passe tel quel : tout le français. Les trois polices employées
+     * sont en WinAnsiEncoding, qui porte les accents, la cédille, la ligature
+     * « œ », l'apostrophe typographique et le tiret cadratin. Les dégrader
+     * revenait à abîmer un rapport remis au client pour un risque qui n'existait
+     * pas.
+     *
+     * <p>Ce qui est remplacé par {@code ?} : ce qui sort de ce jeu — « ≤ »,
+     * « → », un idéogramme — et les caractères de commande. PDFBox refuse
+     * d'écrire un caractère que la police ne sait pas encoder, et cette
+     * exception ferait échouer le rendu : perdre un signe vaut mieux que perdre
+     * le document.
+     *
+     * <p>Le jeu accepté est relevé sur les polices elles-mêmes, une fois pour
+     * toutes : des 219 caractères de windows-1252 à partir de l'espace, les
+     * trois acceptent tout sauf U+007F.
+     */
     private static String sanitize(String s) {
         if (s == null) {
             return "";
@@ -875,27 +900,26 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
         StringBuilder b = new StringBuilder(s.length());
         for (int i = 0; i < s.length(); i++) {
             char ch = s.charAt(i);
-            if (ch >= 32 && ch < 127) {
-                b.append(ch);
-            } else {
-                switch (ch) {
-                    case 'é', 'è', 'ê', 'ë' -> b.append('e');
-                    case 'à', 'â', 'ä' -> b.append('a');
-                    case 'î', 'ï' -> b.append('i');
-                    case 'ô', 'ö' -> b.append('o');
-                    case 'û', 'ü', 'ù' -> b.append('u');
-                    case 'ç' -> b.append('c');
-                    case 'É', 'È', 'Ê' -> b.append('E');
-                    case 'À', 'Â' -> b.append('A');
-                    case 'Ç' -> b.append('C');
-                    case '’', '‘' -> b.append('\'');
-                    case '–', '—' -> b.append('-');
-                    case '…' -> b.append("...");
-                    case ' ' -> b.append(' ');
-                    default -> b.append('?');
-                }
-            }
+            b.append(ENCODABLE.get(ch) ? ch : '?');
         }
         return b.toString();
+    }
+
+    /**
+     * Les caractères que les polices standard du document savent écrire.
+     *
+     * <p>Calculé, et non écrit à la main : une table de deux cents entrées
+     * tenue à la main se trompe, et elle se tromperait en silence — le rendu
+     * échouerait sur un caractère oublié, à l'émission d'un rapport.
+     */
+    private static BitSet encodableParLesPolices() {
+        CharsetEncoder winAnsi = Charset.forName("windows-1252").newEncoder();
+        BitSet jeu = new BitSet(Character.MAX_VALUE + 1);
+        for (int c = ' '; c <= Character.MAX_VALUE; c++) {
+            if (c != 0x7F && winAnsi.canEncode((char) c)) {
+                jeu.set(c);
+            }
+        }
+        return jeu;
     }
 }
