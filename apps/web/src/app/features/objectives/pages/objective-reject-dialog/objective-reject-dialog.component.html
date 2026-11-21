@@ -1,0 +1,32 @@
+<qos-form-dialog
+  i18n-title="@@objectives.reject.title"
+  title="Rejeter la CAPA proposée"
+  i18n-subtitle="@@objectives.reject.subtitle"
+  subtitle="L'écart reste écrit. Le motif dit pourquoi il ne donne pas lieu à un dossier — c'est la question qu'un auditeur posera."
+  [formGroup]="form"
+  [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@objectives.reject.submit"
+  submitLabel="Rejeter avec ce motif"
+  submitColor="warn"
+  submitIcon="block"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
+
+  <!-- Ce qu'on écarte, rappelé ici : écrire un motif de mémoire ferait juger un
+       écart qu'on ne relit plus. -->
+  <div class="ecarte" data-test="rejet-rappel">
+    <strong>{{ data.proposal.title }}</strong>
+    <span class="ecarte__critere">{{ data.proposal.effectivenessCriterion }}</span>
+  </div>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@objectives.reject.reason">Motif du rejet</mat-label>
+    <textarea matInput formControlName="reason" rows="4" maxlength="4000" required
+              data-test="rejet-motif"
+              i18n-placeholder="@@objectives.reject.reason-placeholder"
+              placeholder="Ex. : écart dû à l'arrêt planifié de la ligne 2, déjà traité par la CAPA-2026-0031."></textarea>
+    <mat-error *ngIf="form.controls.reason.hasError('required')"
+               i18n="@@objectives.reject.reason-required">Le motif est obligatoire : sans lui, un
+      écart écarté ne se distingue pas d'un écart que personne n'a regardé.</mat-error>
+  </mat-form-field>
+</qos-form-dialog>

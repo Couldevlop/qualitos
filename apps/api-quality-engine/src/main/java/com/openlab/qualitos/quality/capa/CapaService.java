@@ -59,13 +59,19 @@ public class CapaService {
      * finiraient par en changer différemment.
      */
     private final EffectivenessReviewPort effectivenessReviews;
+    /**
+     * Ce que vaut le retour sous la cible, pour un dossier né d'un écart
+     * d'objectif qualité. Interrogé avant tout verdict qui clôt (ADR 0133).
+     */
+    private final ObjectiveRecoveryPort objectiveRecovery;
 
     public CapaService(CapaCaseRepository caseRepository, CapaActionRepository actionRepository,
                        CapaLifecycleJournal journal,
                        NonConformityRepository ncRepository,
                        CapaEvidenceRepository evidenceRepository,
                        RecordScope scope,
-                       EffectivenessReviewPort effectivenessReviews) {
+                       EffectivenessReviewPort effectivenessReviews,
+                       ObjectiveRecoveryPort objectiveRecovery) {
         this.caseRepository = caseRepository;
         this.actionRepository = actionRepository;
         this.journal = journal;
@@ -73,6 +79,7 @@ public class CapaService {
         this.evidenceRepository = evidenceRepository;
         this.scope = scope;
         this.effectivenessReviews = effectivenessReviews;
+        this.objectiveRecovery = objectiveRecovery;
     }
 
     /**
@@ -837,6 +844,26 @@ public class CapaService {
                 throw new CapaStateException(aVerifier + " action(s) promised an effectiveness "
                         + "verification that has not concluded: verify them before closing this CAPA");
             }
+            // UN ECART D'OBJECTIF NE SE REFERME PAS SUR UNE DECLARATION.
+            //
+            // Pour un dossier ne d'un objectif qualite, l'efficacite EST le
+            // retour du KPI sous la cible sur la duree que l'objectif s'est
+            // donnee -- pas l'avis de qui a mene les actions. Le critere a ete
+            // verrouille a l'ouverture ; ici on verifie qu'il est satisfait.
+            //
+            // Le refus est mesure, pas declaratif : il cite les periodes
+            // constatees et celles qu'il faut, pour que le verificateur sache
+            // combien de temps il lui reste a attendre plutot que de reessayer.
+            // Voir l'ADR 0133.
+            objectiveRecovery.forCase(c.getTenantId(), c.getId())
+                    .filter(r -> !r.achieved())
+                    .ifPresent(r -> {
+                        throw new CapaStateException(
+                                "This CAPA comes from a quality objective: its effectiveness is "
+                                + "the KPI returning to target for " + r.requiredPeriods()
+                                + " consecutive period(s), and " + r.onTargetPeriods()
+                                + " have been observed. Criterion: " + r.criterion());
+                    });
         }
 
         Instant now = Instant.now();
@@ -1516,6 +1543,18 @@ public class CapaService {
             blockers.add(new CapaDto.ClosureBlocker(
                     ClosureBlockerCode.ACTION_VERIFICATIONS_PENDING, aVerifier));
         }
+        // Le retour du KPI sous la cible, pour un dossier ne d'un ecart
+        // d'objectif qualite (ADR 0133). ANNONCE ici et TENU dans
+        // verifyEffectiveness : une liste qui n'engage pas le serveur ne vaut
+        // rien, et un refus que l'ecran n'a pas annonce surprend au clic.
+        //
+        // Le decompte est le nombre de periodes qu'il RESTE a tenir : c'est ce
+        // que le verificateur a besoin de savoir, et non le nombre deja acquis.
+        objectiveRecovery.forCase(c.getTenantId(), c.getId())
+                .filter(r -> !r.achieved())
+                .ifPresent(r -> blockers.add(new CapaDto.ClosureBlocker(
+                        ClosureBlockerCode.OBJECTIVE_RECOVERY_PENDING,
+                        Math.max(0, r.requiredPeriods() - r.onTargetPeriods()))));
         return List.copyOf(blockers);
     }
 

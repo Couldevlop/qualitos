@@ -23398,6 +23398,458 @@ declared income
         <source>Page précédente</source>
         <target state="translated">Previous page</target>
       </trans-unit>
+      <trans-unit id="nav.objectifs-qualite" datatype="html">
+        <source>Objectifs qualité</source>
+        <target state="translated">Quality objectives</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.objective-manage" datatype="html">
+        <source>Définir les objectifs qualité et trancher les CAPA qu'ils proposent</source>
+        <target state="translated">Define quality objectives and decide on the CAPAs they propose</target>
+      </trans-unit>
+      <trans-unit id="objectives.review.title" datatype="html">
+        <source>Objectifs vs KPI réels</source>
+        <target state="translated">Objectives vs actual KPIs</target>
+      </trans-unit>
+      <trans-unit id="objectives.review.subtitle" datatype="html">
+        <source>Ce que l'organisme s'est engagé à tenir, face à ce que les indicateurs mesurent (ISO 9001 §6.2).</source>
+        <target state="translated">What the organization committed to, against what the indicators measure (ISO 9001 §6.2).</target>
+      </trans-unit>
+      <trans-unit id="objectives.review.crumb" datatype="html">
+        <source>Revue</source>
+        <target state="translated">Review</target>
+      </trans-unit>
+      <trans-unit id="objectives.new" datatype="html">
+        <source>Nouvel objectif qualité</source>
+        <target state="translated">New quality objective</target>
+      </trans-unit>
+      <trans-unit id="objectives.evaluate-all" datatype="html">
+        <source>Confronter aux mesures</source>
+        <target state="translated">Compare with measurements</target>
+      </trans-unit>
+      <trans-unit id="objectives.load-failed" datatype="html">
+        <source>La revue n'a pas pu être chargée.</source>
+        <target state="translated">The review could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="objectives.empty" datatype="html">
+        <source>Aucun objectif qualité n'est suivi. L'ISO 9001 §6.2 en demande pour les processus qui comptent.</source>
+        <target state="translated">No quality objective is being tracked. ISO 9001 §6.2 requires them for the processes that matter.</target>
+      </trans-unit>
+      <trans-unit id="objectives.filter.as-of" datatype="html">
+        <source>Période</source>
+        <target state="translated">Period</target>
+      </trans-unit>
+      <trans-unit id="objectives.filter.as-of-hint" datatype="html">
+        <source>Vide = état courant</source>
+        <target state="translated">Empty = current state</target>
+      </trans-unit>
+      <trans-unit id="objectives.filter.process" datatype="html">
+        <source>Processus</source>
+        <target state="translated">Process</target>
+      </trans-unit>
+      <trans-unit id="objectives.filter.process-all" datatype="html">
+        <source>Tous</source>
+        <target state="translated">All</target>
+      </trans-unit>
+      <trans-unit id="objectives.tile.tracked" datatype="html">
+        <source>Objectifs suivis</source>
+        <target state="translated">Objectives tracked</target>
+      </trans-unit>
+      <trans-unit id="objectives.tile.on-target" datatype="html">
+        <source>Atteints</source>
+        <target state="translated">On target</target>
+      </trans-unit>
+      <trans-unit id="objectives.tile.warning" datatype="html">
+        <source>En alerte</source>
+        <target state="translated">Warning</target>
+      </trans-unit>
+      <trans-unit id="objectives.tile.critical" datatype="html">
+        <source>Critiques</source>
+        <target state="translated">Critical</target>
+      </trans-unit>
+      <trans-unit id="objectives.column.objective" datatype="html">
+        <source>Objectif</source>
+        <target state="translated">Objective</target>
+      </trans-unit>
+      <trans-unit id="objectives.column.target" datatype="html">
+        <source>Cible</source>
+        <target state="translated">Target</target>
+      </trans-unit>
+      <trans-unit id="objectives.column.actual" datatype="html">
+        <source>Réel</source>
+        <target state="translated">Actual</target>
+      </trans-unit>
+      <trans-unit id="objectives.column.deviation" datatype="html">
+        <source>Écart</source>
+        <target state="translated">Deviation</target>
+      </trans-unit>
+      <trans-unit id="objectives.column.status" datatype="html">
+        <source>Statut</source>
+        <target state="translated">Status</target>
+      </trans-unit>
+      <trans-unit id="objectives.column.capa" datatype="html">
+        <source>CAPA</source>
+        <target state="translated">CAPA</target>
+      </trans-unit>
+      <trans-unit id="objectives.status.not-evaluated" datatype="html">
+        <source>Non mesuré</source>
+        <target state="translated">Not measured</target>
+      </trans-unit>
+      <trans-unit id="objectives.status.on-target" datatype="html">
+        <source>Atteint</source>
+        <target state="translated">On target</target>
+      </trans-unit>
+      <trans-unit id="objectives.status.warning" datatype="html">
+        <source>Alerte</source>
+        <target state="translated">Warning</target>
+      </trans-unit>
+      <trans-unit id="objectives.status.critical" datatype="html">
+        <source>Critique</source>
+        <target state="translated">Critical</target>
+      </trans-unit>
+      <trans-unit id="objectives.level.warning" datatype="html">
+        <source>Alerte</source>
+        <target state="translated">Warning</target>
+      </trans-unit>
+      <trans-unit id="objectives.level.critical" datatype="html">
+        <source>Critique</source>
+        <target state="translated">Critical</target>
+      </trans-unit>
+      <trans-unit id="objectives.proposal.pending" datatype="html">
+        <source>À trancher</source>
+        <target state="translated">To decide</target>
+      </trans-unit>
+      <trans-unit id="objectives.proposal.accepted" datatype="html">
+        <source>Acceptée</source>
+        <target state="translated">Accepted</target>
+      </trans-unit>
+      <trans-unit id="objectives.proposal.rejected" datatype="html">
+        <source>Rejetée</source>
+        <target state="translated">Rejected</target>
+      </trans-unit>
+      <trans-unit id="objectives.period.1" datatype="html">
+        <source>1 mois</source>
+        <target state="translated">1 month</target>
+      </trans-unit>
+      <trans-unit id="objectives.period.3" datatype="html">
+        <source>3 mois</source>
+        <target state="translated">3 months</target>
+      </trans-unit>
+      <trans-unit id="objectives.period.6" datatype="html">
+        <source>6 mois</source>
+        <target state="translated">6 months</target>
+      </trans-unit>
+      <trans-unit id="objectives.period.12" datatype="html">
+        <source>12 mois</source>
+        <target state="translated">12 months</target>
+      </trans-unit>
+      <trans-unit id="objectives.capa.proposed" datatype="html">
+        <source>Proposée · à valider par le pilote</source>
+        <target state="translated">Proposed · owner to confirm</target>
+      </trans-unit>
+      <trans-unit id="objectives.capa.proposed-periods" datatype="html">
+        <source>Proposée · <x id="INTERPOLATION"/> périodes consécutives</source>
+        <target state="translated">Proposed · <x id="INTERPOLATION"/> consecutive periods</target>
+      </trans-unit>
+      <trans-unit id="objectives.capa.open" datatype="html">
+        <source>CAPA en cours · retour sous la cible attendu</source>
+        <target state="translated">CAPA in progress · awaiting return to target</target>
+      </trans-unit>
+      <trans-unit id="objectives.capa.none" datatype="html">
+        <source>Aucune</source>
+        <target state="translated">None</target>
+      </trans-unit>
+      <trans-unit id="objectives.recovery.remaining" datatype="html">
+        <source><x id="INTERPOLATION"/> période(s) sous la cible sur <x id="INTERPOLATION_1"/> — il en reste <x id="INTERPOLATION_2"/></source>
+        <target state="translated"><x id="INTERPOLATION"/> period(s) on target out of <x id="INTERPOLATION_1"/> — <x id="INTERPOLATION_2"/> to go</target>
+      </trans-unit>
+      <trans-unit id="objectives.panel.title" datatype="html">
+        <source>CAPA préremplie</source>
+        <target state="translated">Pre-filled CAPA</target>
+      </trans-unit>
+      <trans-unit id="objectives.panel.objective" datatype="html">
+        <source>Objectif</source>
+        <target state="translated">Objective</target>
+      </trans-unit>
+      <trans-unit id="objectives.panel.observed" datatype="html">
+        <source>Écart constaté</source>
+        <target state="translated">Observed value</target>
+      </trans-unit>
+      <trans-unit id="objectives.panel.periods" datatype="html">
+        <source>Périodes consécutives</source>
+        <target state="translated">Consecutive periods</target>
+      </trans-unit>
+      <trans-unit id="objectives.panel.criterion" datatype="html">
+        <source>Vérification d'efficacité — obligatoire</source>
+        <target state="translated">Effectiveness verification — mandatory</target>
+      </trans-unit>
+      <trans-unit id="objectives.panel.accept" datatype="html">
+        <source>Accepter et enregistrer la CAPA</source>
+        <target state="translated">Accept and record the CAPA</target>
+      </trans-unit>
+      <trans-unit id="objectives.panel.add-action" datatype="html">
+        <source>Accepter et ajouter une action</source>
+        <target state="translated">Accept and add an action</target>
+      </trans-unit>
+      <trans-unit id="objectives.panel.reject" datatype="html">
+        <source>Rejeter avec justification</source>
+        <target state="translated">Reject with justification</target>
+      </trans-unit>
+      <trans-unit id="objectives.accepted" datatype="html">
+        <source>CAPA enregistrée.</source>
+        <target state="translated">CAPA recorded.</target>
+      </trans-unit>
+      <trans-unit id="objectives.open-capa" datatype="html">
+        <source>Ouvrir</source>
+        <target state="translated">Open</target>
+      </trans-unit>
+      <trans-unit id="objectives.rejected" datatype="html">
+        <source>Proposition rejetée, avec son motif.</source>
+        <target state="translated">Proposal rejected, with its reason.</target>
+      </trans-unit>
+      <trans-unit id="objectives.evaluated.some" datatype="html">
+        <source><x id="INTERPOLATION"/> CAPA proposée(s) à trancher.</source>
+        <target state="translated"><x id="INTERPOLATION"/> CAPA(s) proposed, awaiting a decision.</target>
+      </trans-unit>
+      <trans-unit id="objectives.evaluated.none" datatype="html">
+        <source>Aucun écart n'atteint la règle de déclenchement.</source>
+        <target state="translated">No deviation reaches the trigger rule.</target>
+      </trans-unit>
+      <trans-unit id="objectives.archive.aria" datatype="html">
+        <source>Retirer du suivi</source>
+        <target state="translated">Remove from tracking</target>
+      </trans-unit>
+      <trans-unit id="objectives.archive.title" datatype="html">
+        <source>Retirer cet objectif du suivi ?</source>
+        <target state="translated">Remove this objective from tracking?</target>
+      </trans-unit>
+      <trans-unit id="objectives.archive.message" datatype="html">
+        <source>« <x id="INTERPOLATION"/> » ne comptera plus dans la revue. Il est conservé, avec les CAPA qu'il a fait ouvrir : rien n'est effacé.</source>
+        <target state="translated">“<x id="INTERPOLATION"/>” will no longer count in the review. It is kept, along with the CAPAs it opened: nothing is deleted.</target>
+      </trans-unit>
+      <trans-unit id="objectives.archive.confirm" datatype="html">
+        <source>Retirer du suivi</source>
+        <target state="translated">Remove from tracking</target>
+      </trans-unit>
+      <trans-unit id="objectives.dialog.title" datatype="html">
+        <source>Nouvel objectif qualité</source>
+        <target state="translated">New quality objective</target>
+      </trans-unit>
+      <trans-unit id="objectives.dialog.edit-title" datatype="html">
+        <source>Modifier l'objectif qualité</source>
+        <target state="translated">Edit the quality objective</target>
+      </trans-unit>
+      <trans-unit id="objectives.dialog.subtitle" datatype="html">
+        <source>Un objectif engage : il dit ce qu'on attend d'un indicateur, et ce qu'on fera quand l'attente n'est pas tenue (ISO 9001 §6.2).</source>
+        <target state="translated">An objective commits: it states what is expected of an indicator, and what will be done when the expectation is not met (ISO 9001 §6.2).</target>
+      </trans-unit>
+      <trans-unit id="objectives.dialog.submit" datatype="html">
+        <source>Enregistrer l'objectif</source>
+        <target state="translated">Save the objective</target>
+      </trans-unit>
+      <trans-unit id="objectives.section.objective" datatype="html">
+        <source>1. Objectif</source>
+        <target state="translated">1. Objective</target>
+      </trans-unit>
+      <trans-unit id="objectives.section.kpi" datatype="html">
+        <source>2. KPI réel à comparer</source>
+        <target state="translated">2. Actual KPI to compare</target>
+      </trans-unit>
+      <trans-unit id="objectives.section.rule" datatype="html">
+        <source>3. Règle de déclenchement CAPA</source>
+        <target state="translated">3. CAPA trigger rule</target>
+      </trans-unit>
+      <trans-unit id="objectives.field.title" datatype="html">
+        <source>Intitulé</source>
+        <target state="translated">Title</target>
+      </trans-unit>
+      <trans-unit id="objectives.field.title-placeholder" datatype="html">
+        <source>Ex. : Taux de NC client</source>
+        <target state="translated">E.g. Customer NC rate</target>
+      </trans-unit>
+      <trans-unit id="objectives.field.title-required" datatype="html">
+        <source>L'intitulé est requis.</source>
+        <target state="translated">The title is required.</target>
+      </trans-unit>
+      <trans-unit id="objectives.field.process" datatype="html">
+        <source>Processus</source>
+        <target state="translated">Process</target>
+      </trans-unit>
+      <trans-unit id="objectives.field.process-none" datatype="html">
+        <source>Aucun</source>
+        <target state="translated">None</target>
+      </trans-unit>
+      <trans-unit id="objectives.field.iso-clause" datatype="html">
+        <source>Clause ISO 9001</source>
+        <target state="translated">ISO 9001 clause</target>
+      </trans-unit>
+      <trans-unit id="objectives.field.kpi" datatype="html">
+        <source>Source de données</source>
+        <target state="translated">Data source</target>
+      </trans-unit>
+      <trans-unit id="objectives.field.kpi-locked" datatype="html">
+        <source>Le KPI d'un objectif ne change pas : son historique cesserait d'être comparable.</source>
+        <target state="translated">An objective's KPI does not change: its history would stop being comparable.</target>
+      </trans-unit>
+      <trans-unit id="objectives.field.kpi-required" datatype="html">
+        <source>Un objectif se mesure contre un KPI du catalogue.</source>
+        <target state="translated">An objective is measured against a KPI from the catalogue.</target>
+      </trans-unit>
+      <trans-unit id="objectives.field.direction" datatype="html">
+        <source>Sens d'amélioration</source>
+        <target state="translated">Improvement direction</target>
+      </trans-unit>
+      <trans-unit id="objectives.field.direction-note" datatype="html">
+        <source>repris du KPI</source>
+        <target state="translated">taken from the KPI</target>
+      </trans-unit>
+      <trans-unit id="objectives.direction.lower" datatype="html">
+        <source>Diminuer</source>
+        <target state="translated">Decrease</target>
+      </trans-unit>
+      <trans-unit id="objectives.direction.higher" datatype="html">
+        <source>Augmenter</source>
+        <target state="translated">Increase</target>
+      </trans-unit>
+      <trans-unit id="objectives.direction.unknown" datatype="html">
+        <source>Choisissez un KPI</source>
+        <target state="translated">Choose a KPI</target>
+      </trans-unit>
+      <trans-unit id="objectives.field.target" datatype="html">
+        <source>Cible</source>
+        <target state="translated">Target</target>
+      </trans-unit>
+      <trans-unit id="objectives.field.target-required" datatype="html">
+        <source>La cible est requise.</source>
+        <target state="translated">The target is required.</target>
+      </trans-unit>
+      <trans-unit id="objectives.field.warning" datatype="html">
+        <source>Seuil d'alerte</source>
+        <target state="translated">Warning threshold</target>
+      </trans-unit>
+      <trans-unit id="objectives.field.warning-required" datatype="html">
+        <source>Le seuil d'alerte est requis.</source>
+        <target state="translated">The warning threshold is required.</target>
+      </trans-unit>
+      <trans-unit id="objectives.field.critical" datatype="html">
+        <source>Seuil critique</source>
+        <target state="translated">Critical threshold</target>
+      </trans-unit>
+      <trans-unit id="objectives.field.critical-required" datatype="html">
+        <source>Le seuil critique est requis.</source>
+        <target state="translated">The critical threshold is required.</target>
+      </trans-unit>
+      <trans-unit id="objectives.thresholds.order-lower" datatype="html">
+        <source>Sur un KPI qu'on cherche à diminuer, la cible doit être inférieure ou égale au seuil d'alerte, lui-même inférieur ou égal au seuil critique.</source>
+        <target state="translated">On a KPI to be decreased, the target must be at or below the warning threshold, which must be at or below the critical threshold.</target>
+      </trans-unit>
+      <trans-unit id="objectives.thresholds.order-higher" datatype="html">
+        <source>Sur un KPI qu'on cherche à augmenter, la cible doit être supérieure ou égale au seuil d'alerte, lui-même supérieur ou égal au seuil critique.</source>
+        <target state="translated">On a KPI to be increased, the target must be at or above the warning threshold, which must be at or above the critical threshold.</target>
+      </trans-unit>
+      <trans-unit id="objectives.field.period" datatype="html">
+        <source>Période</source>
+        <target state="translated">Period</target>
+      </trans-unit>
+      <trans-unit id="objectives.field.period-hint" datatype="html">
+        <source>L'unité dans laquelle se comptent les dépassements consécutifs.</source>
+        <target state="translated">The unit in which consecutive breaches are counted.</target>
+      </trans-unit>
+      <trans-unit id="objectives.rule.warning" datatype="html">
+        <source>Alerte</source>
+        <target state="translated">Warning</target>
+      </trans-unit>
+      <trans-unit id="objectives.rule.warning-before" datatype="html">
+        <source>Si le KPI dépasse le seuil d'alerte</source>
+        <target state="translated">If the KPI breaches the warning threshold</target>
+      </trans-unit>
+      <trans-unit id="objectives.rule.warning-after" datatype="html">
+        <source>périodes consécutives → une CAPA est &lt;strong&gt;proposée&lt;/strong&gt; au pilote.</source>
+        <target state="translated">consecutive periods → a CAPA is &lt;strong&gt;proposed&lt;/strong&gt; to the owner.</target>
+      </trans-unit>
+      <trans-unit id="objectives.rule.critical" datatype="html">
+        <source>Critique</source>
+        <target state="translated">Critical</target>
+      </trans-unit>
+      <trans-unit id="objectives.rule.critical-before" datatype="html">
+        <source>Si le KPI dépasse le seuil critique sur</source>
+        <target state="translated">If the KPI breaches the critical threshold over</target>
+      </trans-unit>
+      <trans-unit id="objectives.rule.critical-after" datatype="html">
+        <source>période → la CAPA est &lt;strong&gt;proposée automatiquement&lt;/strong&gt;.</source>
+        <target state="translated">period → the CAPA is &lt;strong&gt;proposed automatically&lt;/strong&gt;.</target>
+      </trans-unit>
+      <trans-unit id="objectives.rule.periods-aria" datatype="html">
+        <source>Nombre de périodes</source>
+        <target state="translated">Number of periods</target>
+      </trans-unit>
+      <trans-unit id="objectives.field.capa-owner" datatype="html">
+        <source>Responsable de la CAPA</source>
+        <target state="translated">CAPA owner</target>
+      </trans-unit>
+      <trans-unit id="objectives.field.due-days" datatype="html">
+        <source>Délai d'analyse de cause racine</source>
+        <target state="translated">Root-cause analysis deadline</target>
+      </trans-unit>
+      <trans-unit id="objectives.field.working-days" datatype="html">
+        <source>jours ouvrés</source>
+        <target state="translated">working days</target>
+      </trans-unit>
+      <trans-unit id="objectives.field.recovery" datatype="html">
+        <source>Retour à « atteint » après</source>
+        <target state="translated">Back to “on target” after</target>
+      </trans-unit>
+      <trans-unit id="objectives.field.periods-suffix" datatype="html">
+        <source>période(s) sous la cible</source>
+        <target state="translated">period(s) on target</target>
+      </trans-unit>
+      <trans-unit id="objectives.field.recovery-hint" datatype="html">
+        <source>C'est aussi le critère d'efficacité de la CAPA : elle ne se clôt qu'au retour durable du KPI sous la cible.</source>
+        <target state="translated">This is also the CAPA's effectiveness criterion: it only closes once the KPI is durably back on target.</target>
+      </trans-unit>
+      <trans-unit id="objectives.reject.title" datatype="html">
+        <source>Rejeter la CAPA proposée</source>
+        <target state="translated">Reject the proposed CAPA</target>
+      </trans-unit>
+      <trans-unit id="objectives.reject.subtitle" datatype="html">
+        <source>L'écart reste écrit. Le motif dit pourquoi il ne donne pas lieu à un dossier — c'est la question qu'un auditeur posera.</source>
+        <target state="translated">The deviation stays on record. The reason says why it does not open a case — that is the question an auditor will ask.</target>
+      </trans-unit>
+      <trans-unit id="objectives.reject.submit" datatype="html">
+        <source>Rejeter avec ce motif</source>
+        <target state="translated">Reject with this reason</target>
+      </trans-unit>
+      <trans-unit id="objectives.reject.reason" datatype="html">
+        <source>Motif du rejet</source>
+        <target state="translated">Reason for rejection</target>
+      </trans-unit>
+      <trans-unit id="objectives.reject.reason-placeholder" datatype="html">
+        <source>Ex. : écart dû à l'arrêt planifié de la ligne 2, déjà traité par la CAPA-2026-0031.</source>
+        <target state="translated">E.g. deviation caused by the planned shutdown of line 2, already handled by CAPA-2026-0031.</target>
+      </trans-unit>
+      <trans-unit id="objectives.reject.reason-required" datatype="html">
+        <source>Le motif est obligatoire : sans lui, un écart écarté ne se distingue pas d'un écart que personne n'a regardé.</source>
+        <target state="translated">The reason is mandatory: without it, a dismissed deviation is indistinguishable from one nobody looked at.</target>
+      </trans-unit>
+      <trans-unit id="objectives.error.save" datatype="html">
+        <source>L'objectif n'a pas pu être enregistré.</source>
+        <target state="translated">The objective could not be saved.</target>
+      </trans-unit>
+      <trans-unit id="objectives.error.evaluate" datatype="html">
+        <source>La confrontation aux mesures n'a pas abouti.</source>
+        <target state="translated">The comparison against the measurements did not complete.</target>
+      </trans-unit>
+      <trans-unit id="objectives.error.accept" datatype="html">
+        <source>La CAPA n'a pas pu être enregistrée.</source>
+        <target state="translated">The CAPA could not be saved.</target>
+      </trans-unit>
+      <trans-unit id="objectives.error.reject" datatype="html">
+        <source>Le rejet n'a pas pu être enregistré.</source>
+        <target state="translated">The rejection could not be saved.</target>
+      </trans-unit>
+      <trans-unit id="objectives.error.archive" datatype="html">
+        <source>Le retrait du suivi n'a pas abouti.</source>
+        <target state="translated">Removing the objective from tracking failed.</target>
+      </trans-unit>
       <trans-unit id="offline.queue.title" datatype="html">
         <source>File d'attente offline</source>
         <target state="translated">Offline queue</target>

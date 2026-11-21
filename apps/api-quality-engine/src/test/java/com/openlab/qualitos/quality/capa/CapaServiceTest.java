@@ -47,6 +47,7 @@ class CapaServiceTest {
     @Mock RecordScope scope;
     /** L'historique des évaluations d'efficacité (ADR 0108). */
     @Mock com.openlab.qualitos.quality.capa.effectiveness.application.EffectivenessReviewPort reviews;
+    @Mock ObjectiveRecoveryPort objectiveRecovery;
     @InjectMocks CapaService service;
 
     static final UUID TENANT = UUID.randomUUID();
@@ -1659,6 +1660,80 @@ class CapaServiceTest {
         ArgumentCaptor<com.openlab.qualitos.quality.capa.effectiveness.domain.EffectivenessReview> captor = ArgumentCaptor.forClass(com.openlab.qualitos.quality.capa.effectiveness.domain.EffectivenessReview.class);
         verify(reviews).save(captor.capture());
         return captor.getValue();
+    }
+
+    // ---------- un ecart d'objectif qualite ne se referme pas sur une declaration (ADR 0133) ----------
+
+    /** Le retour sous la cible, tel que le module des objectifs le rapporte. */
+    private void retourSousLaCible(boolean constate, int tenues, int exigees) {
+        when(objectiveRecovery.forCase(any(), any())).thenReturn(Optional.of(
+                new ObjectiveRecoveryPort.Recovery(constate, tenues, exigees,
+                        "Le KPI revient a ou sous 500 ppm pendant 2 periode(s).")));
+    }
+
+    @Test
+    void unDossierNeDUnObjectif_neSeClotPasAvantLeRetourDuKpiSousLaCible() {
+        // Pour ce type de dossier, l'efficacite n'est pas une appreciation : elle
+        // EST le retour du KPI sous la cible sur la duree definie. Le refus cite
+        // les periodes tenues et celles qu'il faut, pour que le verificateur
+        // sache combien de temps attendre plutot que de reessayer.
+        CapaCase c = aJuger("Moins de 500 ppm sur 2 mois");
+        when(ncRepo.countByTenantIdAndCapaCaseIdAndStatusNotIn(any(), any(), any())).thenReturn(0L);
+        retourSousLaCible(false, 1, 2);
+
+        assertThatThrownBy(() -> service.verifyEffectiveness(c.getId(),
+                verdict(com.openlab.qualitos.quality.capa.effectiveness.domain.EffectivenessVerdict.EFFECTIVE, "480 ppm")))
+                .isInstanceOf(CapaStateException.class)
+                .hasMessageContaining("quality objective")
+                .hasMessageContaining("2 consecutive period(s)")
+                .hasMessageContaining("1 have been observed")
+                .hasMessageContaining("500 ppm");
+        assertThat(c.getStatus()).isEqualTo(CapaStatus.RESOLVED);
+        verify(reviews, never()).save(any());
+    }
+
+    @Test
+    void leRetourConstate_laissePasserLeVerdictQuiClot() {
+        CapaCase c = aJuger("Moins de 500 ppm sur 2 mois");
+        when(ncRepo.countByTenantIdAndCapaCaseIdAndStatusNotIn(any(), any(), any())).thenReturn(0L);
+        when(caseRepo.save(c)).thenReturn(c);
+        retourSousLaCible(true, 2, 2);
+
+        service.verifyEffectiveness(c.getId(),
+                verdict(com.openlab.qualitos.quality.capa.effectiveness.domain.EffectivenessVerdict.EFFECTIVE, "470 ppm"));
+
+        assertThat(c.getStatus()).isEqualTo(CapaStatus.CLOSED);
+    }
+
+    @Test
+    void leVerrouNeVautQuePourUnVerdictQuiClot() {
+        // Constater l'echec ne ferme rien : l'interdire empecherait d'ecrire que
+        // les actions n'ont pas produit leur effet, et c'est ce constat dont la
+        // boucle d'amelioration a besoin pour repartir.
+        CapaCase c = aJuger("Moins de 500 ppm sur 2 mois");
+        when(caseRepo.save(c)).thenReturn(c);
+        retourSousLaCible(false, 0, 2);
+
+        service.verifyEffectiveness(c.getId(),
+                verdict(com.openlab.qualitos.quality.capa.effectiveness.domain.EffectivenessVerdict.INEFFECTIVE, "900 ppm"));
+
+        assertThat(c.getStatus()).isEqualTo(CapaStatus.IN_PROGRESS);
+        verify(reviews).save(any());
+    }
+
+    @Test
+    void unDossierOrdinaire_nEstPasConcerneParCeVerrou() {
+        // Vide ne veut pas dire « pas encore revenu » : sans cette distinction,
+        // tout dossier ordinaire deviendrait impossible a clore.
+        CapaCase c = aJuger("Moins de 2 % de rebuts sur 3 mois");
+        when(ncRepo.countByTenantIdAndCapaCaseIdAndStatusNotIn(any(), any(), any())).thenReturn(0L);
+        when(caseRepo.save(c)).thenReturn(c);
+        when(objectiveRecovery.forCase(any(), any())).thenReturn(Optional.empty());
+
+        service.verifyEffectiveness(c.getId(),
+                verdict(com.openlab.qualitos.quality.capa.effectiveness.domain.EffectivenessVerdict.EFFECTIVE, "1,1 %"));
+
+        assertThat(c.getStatus()).isEqualTo(CapaStatus.CLOSED);
     }
 
     @Test

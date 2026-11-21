@@ -113,6 +113,25 @@ public enum Permission {
      */
     KPI_MEASURE("kpi.measure", "kpi", plus(pilotage(), USER)),
 
+    /**
+     * Définir un objectif qualité, et trancher la CAPA qu'un écart propose
+     * (ISO 9001 §6.2, ADR 0133).
+     *
+     * <p>Rattachée au module {@code kpi} : un objectif n'existe que contre un KPI
+     * du catalogue, et un client qui n'a pas activé les indicateurs n'a rien à
+     * quoi comparer un objectif.
+     *
+     * <p>Réservée au pilotage, pour la même raison que {@link #KPI_MANAGE} :
+     * fixer une cible est une décision, et déplacer la cible d'un objectif qu'on
+     * n'atteint pas le fait passer au vert sans que rien n'ait changé sur le
+     * terrain. ACCEPTER ou REJETER une proposition en relève aussi — c'est
+     * l'arbitrage du pilote, et le rejet doit porter un nom.
+     *
+     * <p>La LECTURE reste ouverte à tout authentifié : la revue des objectifs est
+     * ce qu'une organisation montre à ses équipes.
+     */
+    OBJECTIVE_MANAGE("objective.manage", "kpi", pilotage()),
+
     // ---------- DMAIC (ADR 0101) ----------
     /** Remplir la fiche de résolution d'un projet : réponses, causes, plan d'actions, photos. */
     DMAIC_MANAGE("dmaic.manage", "dmaic", pilotage()),

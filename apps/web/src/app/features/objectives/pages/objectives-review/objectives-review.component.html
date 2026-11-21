@@ -1,0 +1,178 @@
+<div class="qos-page">
+  <qos-page-header
+    [breadcrumbs]="breadcrumbs"
+    title="Objectifs vs KPI réels" i18n-title="@@objectives.review.title"
+    subtitle="Ce que l'organisme s'est engagé à tenir, face à ce que les indicateurs mesurent (ISO 9001 §6.2)."
+    i18n-subtitle="@@objectives.review.subtitle">
+    <ng-container qosActions>
+      <button mat-stroked-button type="button" *ngIf="canManage" [disabled]="deciding"
+              (click)="evaluateAll()" data-test="objectifs-evaluer">
+        <mat-icon>rule</mat-icon>
+        <span i18n="@@objectives.evaluate-all">Confronter aux mesures</span>
+      </button>
+      <button mat-flat-button color="primary" type="button" *ngIf="canManage"
+              (click)="create()" data-test="objectifs-nouveau">
+        <mat-icon>flag</mat-icon>
+        <span i18n="@@objectives.new">Nouvel objectif qualité</span>
+      </button>
+    </ng-container>
+
+    <ng-container qosMeta>
+      <!-- Les deux filtres de la maquette : la période observée et le processus. -->
+      <mat-form-field appearance="outline" class="filtre">
+        <mat-label i18n="@@objectives.filter.as-of">Période</mat-label>
+        <input matInput type="date" [(ngModel)]="asOf" (ngModelChange)="load()"
+               data-test="objectifs-filtre-periode">
+        <mat-hint i18n="@@objectives.filter.as-of-hint">Vide = état courant</mat-hint>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filtre">
+        <mat-label i18n="@@objectives.filter.process">Processus</mat-label>
+        <mat-select [(ngModel)]="processId" (ngModelChange)="load()"
+                    data-test="objectifs-filtre-processus">
+          <mat-option value="" i18n="@@objectives.filter.process-all">Tous</mat-option>
+          <mat-option *ngFor="let p of processes" [value]="p.id">{{ p.name }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </ng-container>
+  </qos-page-header>
+
+  <div class="chargement" *ngIf="loading" data-test="objectifs-chargement">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  </div>
+
+  <p class="echec" *ngIf="failed" role="alert" data-test="objectifs-echec"
+     i18n="@@objectives.load-failed">La revue n'a pas pu être chargée.</p>
+
+  <ng-container *ngIf="review as r">
+    <!-- Les quatre tuiles : ce qu'une revue de direction regarde d'abord. -->
+    <ul class="tuiles" data-test="objectifs-tuiles">
+      <li class="tuile">
+        <span class="tuile__valeur">{{ r.counters.tracked }}</span>
+        <span class="tuile__libelle" i18n="@@objectives.tile.tracked">Objectifs suivis</span>
+      </li>
+      <li class="tuile tuile--atteint">
+        <span class="tuile__valeur">{{ r.counters.onTarget }}</span>
+        <span class="tuile__libelle" i18n="@@objectives.tile.on-target">Atteints</span>
+      </li>
+      <li class="tuile" [class.tuile--alerte]="r.counters.warning > 0">
+        <span class="tuile__valeur">{{ r.counters.warning }}</span>
+        <span class="tuile__libelle" i18n="@@objectives.tile.warning">En alerte</span>
+      </li>
+      <li class="tuile" [class.tuile--critique]="r.counters.critical > 0">
+        <span class="tuile__valeur">{{ r.counters.critical }}</span>
+        <span class="tuile__libelle" i18n="@@objectives.tile.critical">Critiques</span>
+      </li>
+    </ul>
+
+    <div class="revue">
+      <!-- Le tableau : un objectif par ligne, sa cible, son réel, son écart. -->
+      <section class="tableau" data-test="objectifs-tableau">
+        <header class="tableau__entete">
+          <span class="c-objectif" i18n="@@objectives.column.objective">Objectif</span>
+          <span class="c-nombre" i18n="@@objectives.column.target">Cible</span>
+          <span class="c-nombre" i18n="@@objectives.column.actual">Réel</span>
+          <span class="c-nombre" i18n="@@objectives.column.deviation">Écart</span>
+          <span class="c-statut" i18n="@@objectives.column.status">Statut</span>
+          <span class="c-capa" i18n="@@objectives.column.capa">CAPA</span>
+          <span class="c-actions"><span class="sr-only" i18n="@@common.actions">Actions</span></span>
+        </header>
+
+        <article class="ligne" *ngFor="let o of r.objectives" [attr.data-test]="'objectif-' + o.id"
+                 [class.ligne--choisie]="selected && selected.objectiveId === o.id">
+          <div class="c-objectif">
+            <strong>{{ o.title }}</strong>
+            <span class="ligne__meta">
+              {{ o.kpiName }}
+              <ng-container *ngIf="o.processName"> · {{ o.processName }}</ng-container>
+              <ng-container *ngIf="o.isoClause"> · §{{ o.isoClause }}</ng-container>
+              · {{ period(o.periodMonths) }}
+            </span>
+          </div>
+          <span class="c-nombre">{{ targetLabel(o) }}</span>
+          <span class="c-nombre c-nombre--fort">{{ observedLabel(o) }}</span>
+          <span class="c-nombre" [title]="deviationTitle(o)">{{ deviationLabel(o) }}</span>
+          <span class="c-statut">
+            <qos-status-pill [label]="statusLabel(o.assessment.status)" [tone]="tone(o)">
+            </qos-status-pill>
+            <!-- Pourquoi l'objectif ne repasse pas « atteint » : dit sur la ligne,
+                 pas laissé à deviner. -->
+            <span class="ligne__retenu" *ngIf="o.assessment.heldByOpenCapa"
+                  [attr.data-test]="'objectif-retenu-' + o.id">
+              {{ recoveryLabel(o) }}
+            </span>
+          </span>
+          <button type="button" class="c-capa c-capa--lien" (click)="select(proposalFor(o))"
+                  [disabled]="!proposalFor(o)" [attr.data-test]="'objectif-capa-' + o.id">
+            {{ capaLabel(o) }}
+          </button>
+          <span class="c-actions">
+            <button mat-icon-button type="button" *ngIf="canManage" (click)="edit(o)"
+                    i18n-aria-label="@@common.edit" aria-label="Modifier"
+                    [attr.data-test]="'objectif-modifier-' + o.id">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button type="button" *ngIf="canManage" (click)="archive(o)"
+                    i18n-aria-label="@@objectives.archive.aria" aria-label="Retirer du suivi"
+                    [attr.data-test]="'objectif-archiver-' + o.id">
+              <mat-icon>archive</mat-icon>
+            </button>
+          </span>
+        </article>
+
+        <p class="vide" *ngIf="!r.objectives.length && !loading" data-test="objectifs-vide"
+           i18n="@@objectives.empty">Aucun objectif qualité n'est suivi. L'ISO 9001 §6.2 en demande
+          pour les processus qui comptent.</p>
+      </section>
+
+      <!-- La CAPA préremplie : rédigée par la règle, tranchée par le pilote. -->
+      <aside class="panneau" *ngIf="selected as p" data-test="objectifs-panneau">
+        <h2 class="panneau__titre" i18n="@@objectives.panel.title">CAPA préremplie</h2>
+
+        <qos-status-pill [label]="levelLabel(p.level)"
+                         [tone]="p.level === 'CRITICAL' ? 'danger' : 'warn'">
+        </qos-status-pill>
+
+        <dl class="panneau__faits">
+          <dt i18n="@@objectives.panel.objective">Objectif</dt>
+          <dd>{{ p.objectiveTitle }}</dd>
+          <dt i18n="@@objectives.panel.observed">Écart constaté</dt>
+          <dd>{{ p.observedValue }}</dd>
+          <dt i18n="@@objectives.panel.periods">Périodes consécutives</dt>
+          <dd>{{ p.breachPeriods }}</dd>
+        </dl>
+
+        <p class="panneau__corps">{{ p.description }}</p>
+
+        <!-- Le critère est VERROUILLÉ : pour un écart d'objectif, l'efficacité
+             est le retour du KPI sous la cible, pas une appréciation. -->
+        <div class="panneau__critere" data-test="objectifs-critere">
+          <span class="panneau__critere-label" i18n="@@objectives.panel.criterion">
+            Vérification d'efficacité — obligatoire
+          </span>
+          <p>{{ p.effectivenessCriterion }}</p>
+        </div>
+
+        <div class="panneau__actions" *ngIf="canManage">
+          <button mat-flat-button color="primary" type="button" [disabled]="deciding"
+                  (click)="accept(p)" data-test="objectifs-accepter">
+            <mat-icon>check</mat-icon>
+            <span i18n="@@objectives.panel.accept">Accepter et enregistrer la CAPA</span>
+          </button>
+          <!-- La CAPA proposée ne convient pas tout à fait : on l'enregistre et on
+               va lui ajouter l'action qui manque, plutôt que de la rejeter en
+               bloc. Rejeter laisserait l'écart sans traitement. -->
+          <button mat-stroked-button type="button" [disabled]="deciding"
+                  (click)="acceptAndAddAction(p)" data-test="objectifs-ajouter-action">
+            <mat-icon>playlist_add</mat-icon>
+            <span i18n="@@objectives.panel.add-action">Accepter et ajouter une action</span>
+          </button>
+          <button mat-stroked-button type="button" [disabled]="deciding" (click)="reject(p)"
+                  data-test="objectifs-rejeter">
+            <span i18n="@@objectives.panel.reject">Rejeter avec justification</span>
+          </button>
+        </div>
+      </aside>
+    </div>
+  </ng-container>
+</div>
