@@ -23563,8 +23563,8 @@ historique 12 mois</source>
         <target state="translated">مقترحة · بانتظار موافقة المسؤول</target>
       </trans-unit>
       <trans-unit id="objectives.capa.proposed-periods" datatype="html">
-        <source>Proposée · <x id="INTERPOLATION"/> périodes consécutives</source>
-        <target state="translated">مقترحة · <x id="INTERPOLATION"/> فترات متتالية</target>
+        <source>Proposée · <x id="count"/> périodes consécutives</source>
+        <target state="translated">مقترحة · <x id="count"/> فترات متتالية</target>
       </trans-unit>
       <trans-unit id="objectives.capa.open" datatype="html">
         <source>CAPA en cours · retour sous la cible attendu</source>
@@ -23575,8 +23575,8 @@ historique 12 mois</source>
         <target state="translated">لا شيء</target>
       </trans-unit>
       <trans-unit id="objectives.recovery.remaining" datatype="html">
-        <source><x id="INTERPOLATION"/> période(s) sous la cible sur <x id="INTERPOLATION_1"/> — il en reste <x id="INTERPOLATION_2"/></source>
-        <target state="translated"><x id="INTERPOLATION"/> من <x id="INTERPOLATION_1"/> فترة ضمن المستهدف — تبقّى <x id="INTERPOLATION_2"/></target>
+        <source><x id="tenues"/> période(s) sous la cible sur <x id="exigees"/> — il en reste <x id="reste"/></source>
+        <target state="translated"><x id="tenues"/> من <x id="exigees"/> فترة ضمن المستهدف — تبقّى <x id="reste"/></target>
       </trans-unit>
       <trans-unit id="objectives.panel.title" datatype="html">
         <source>CAPA préremplie</source>
@@ -23623,8 +23623,8 @@ historique 12 mois</source>
         <target state="translated">رُفض الاقتراح مع بيان سببه.</target>
       </trans-unit>
       <trans-unit id="objectives.evaluated.some" datatype="html">
-        <source><x id="INTERPOLATION"/> CAPA proposée(s) à trancher.</source>
-        <target state="translated"><x id="INTERPOLATION"/> إجراء CAPA مقترح بانتظار القرار.</target>
+        <source><x id="count"/> CAPA proposée(s) à trancher.</source>
+        <target state="translated"><x id="count"/> إجراء CAPA مقترح بانتظار القرار.</target>
       </trans-unit>
       <trans-unit id="objectives.evaluated.none" datatype="html">
         <source>Aucun écart n'atteint la règle de déclenchement.</source>
@@ -23639,8 +23639,8 @@ historique 12 mois</source>
         <target state="translated">إزالة هذا الهدف من المتابعة؟</target>
       </trans-unit>
       <trans-unit id="objectives.archive.message" datatype="html">
-        <source>« <x id="INTERPOLATION"/> » ne comptera plus dans la revue. Il est conservé, avec les CAPA qu'il a fait ouvrir : rien n'est effacé.</source>
-        <target state="translated">«<x id="INTERPOLATION"/>» لن يُحتسب في المراجعة. يُحفَظ مع إجراءات CAPA التي فتحها: لا شيء يُمحى.</target>
+        <source>« <x id="titre"/> » ne comptera plus dans la revue. Il est conservé, avec les CAPA qu'il a fait ouvrir : rien n'est effacé.</source>
+        <target state="translated">«<x id="titre"/>» لن يُحتسب في المراجعة. يُحفَظ مع إجراءات CAPA التي فتحها: لا شيء يُمحى.</target>
       </trans-unit>
       <trans-unit id="objectives.archive.confirm" datatype="html">
         <source>Retirer du suivi</source>

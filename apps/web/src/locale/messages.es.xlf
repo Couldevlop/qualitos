@@ -23563,8 +23563,8 @@ historial de 12 meses</target>
         <target state="translated">Propuesta · a validar por el responsable</target>
       </trans-unit>
       <trans-unit id="objectives.capa.proposed-periods" datatype="html">
-        <source>Proposée · <x id="INTERPOLATION"/> périodes consécutives</source>
-        <target state="translated">Propuesta · <x id="INTERPOLATION"/> periodos consecutivos</target>
+        <source>Proposée · <x id="count"/> périodes consécutives</source>
+        <target state="translated">Propuesta · <x id="count"/> periodos consecutivos</target>
       </trans-unit>
       <trans-unit id="objectives.capa.open" datatype="html">
         <source>CAPA en cours · retour sous la cible attendu</source>
@@ -23575,8 +23575,8 @@ historial de 12 meses</target>
         <target state="translated">Ninguna</target>
       </trans-unit>
       <trans-unit id="objectives.recovery.remaining" datatype="html">
-        <source><x id="INTERPOLATION"/> période(s) sous la cible sur <x id="INTERPOLATION_1"/> — il en reste <x id="INTERPOLATION_2"/></source>
-        <target state="translated"><x id="INTERPOLATION"/> periodo(s) en la meta de <x id="INTERPOLATION_1"/> — faltan <x id="INTERPOLATION_2"/></target>
+        <source><x id="tenues"/> période(s) sous la cible sur <x id="exigees"/> — il en reste <x id="reste"/></source>
+        <target state="translated"><x id="tenues"/> periodo(s) en la meta de <x id="exigees"/> — faltan <x id="reste"/></target>
       </trans-unit>
       <trans-unit id="objectives.panel.title" datatype="html">
         <source>CAPA préremplie</source>
@@ -23623,8 +23623,8 @@ historial de 12 meses</target>
         <target state="translated">Propuesta rechazada, con su motivo.</target>
       </trans-unit>
       <trans-unit id="objectives.evaluated.some" datatype="html">
-        <source><x id="INTERPOLATION"/> CAPA proposée(s) à trancher.</source>
-        <target state="translated"><x id="INTERPOLATION"/> CAPA propuesta(s) pendientes de decisión.</target>
+        <source><x id="count"/> CAPA proposée(s) à trancher.</source>
+        <target state="translated"><x id="count"/> CAPA propuesta(s) pendientes de decisión.</target>
       </trans-unit>
       <trans-unit id="objectives.evaluated.none" datatype="html">
         <source>Aucun écart n'atteint la règle de déclenchement.</source>
@@ -23639,8 +23639,8 @@ historial de 12 meses</target>
         <target state="translated">¿Retirar este objetivo del seguimiento?</target>
       </trans-unit>
       <trans-unit id="objectives.archive.message" datatype="html">
-        <source>« <x id="INTERPOLATION"/> » ne comptera plus dans la revue. Il est conservé, avec les CAPA qu'il a fait ouvrir : rien n'est effacé.</source>
-        <target state="translated">«<x id="INTERPOLATION"/>» ya no contará en la revisión. Se conserva, junto con las CAPA que abrió: nada se borra.</target>
+        <source>« <x id="titre"/> » ne comptera plus dans la revue. Il est conservé, avec les CAPA qu'il a fait ouvrir : rien n'est effacé.</source>
+        <target state="translated">«<x id="titre"/>» ya no contará en la revisión. Se conserva, junto con las CAPA que abrió: nada se borra.</target>
       </trans-unit>
       <trans-unit id="objectives.archive.confirm" datatype="html">
         <source>Retirer du suivi</source>
