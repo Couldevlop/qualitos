@@ -246,7 +246,7 @@ class NcServiceTest {
         when(repo.findAll(ArgumentMatchers.<Specification<NonConformity>>any(), eq(p)))
                 .thenReturn(new PageImpl<>(java.util.List.of(nc(TENANT, NcStatus.OPEN))));
 
-        Page<NcDto.Response> r = service.findAll(null, null, null, null, null, null, p);
+        Page<NcDto.Response> r = service.findAll(null, null, null, null, null, null, null, p);
 
         assertThat(r.getContent()).hasSize(1);
         assertThat(r.getContent().get(0).status()).isEqualTo(NcStatus.OPEN);
@@ -258,7 +258,7 @@ class NcServiceTest {
         TenantContext.clear();
         Pageable p = PageRequest.of(0, 10);
 
-        assertThatThrownBy(() -> service.findAll(null, null, null, null, null, null, p))
+        assertThatThrownBy(() -> service.findAll(null, null, null, null, null, null, null, p))
                 .isInstanceOf(MissingTenantContextException.class);
         verifyNoInteractions(repo);
     }
@@ -528,8 +528,7 @@ class NcServiceTest {
         UUID capaId = UUID.randomUUID();
         n.setCapaCaseId(capaId);
         when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
-        when(capaService.unexecutedCasesFor(capaId, n.getReference()))
-                .thenReturn(List.of("Remplacer le roulement", "Auditer le fournisseur"));
+        when(capaService.unexecutedActionCountFor(capaId, n.getReference())).thenReturn(2);
         when(capaService.hasAnyCaseFor(any(), any())).thenReturn(true);
 
         NcDto.Response fiche = service.findById(n.getId());
@@ -594,7 +593,7 @@ class NcServiceTest {
         when(capaService.casesOf(any(), any())).thenReturn(List.of());
         // ... mais il en existe, et leurs actions sont faites.
         when(capaService.hasAnyCaseFor(any(), any())).thenReturn(true);
-        when(capaService.unexecutedCasesFor(any(), any())).thenReturn(List.of());
+        when(capaService.unexecutedActionCountFor(any(), any())).thenReturn(0);
 
         assertThat(service.findById(n.getId()).blockers()).isEmpty();
     }
@@ -622,7 +621,7 @@ class NcServiceTest {
     void fiche_sansObstacle_neporteAucunMotif() {
         NonConformity n = nc(TENANT, NcStatus.ACTION_DEFINED);
         when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
-        when(capaService.unexecutedCasesFor(null, n.getReference())).thenReturn(List.of());
+        when(capaService.unexecutedActionCountFor(null, n.getReference())).thenReturn(0);
         when(capaService.hasAnyCaseFor(any(), any())).thenReturn(true);
 
         assertThat(service.findById(n.getId()).blockers()).isEmpty();
@@ -663,7 +662,7 @@ class NcServiceTest {
         when(repo.findAll(ArgumentMatchers.<Specification<NonConformity>>any(), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of(n)));
 
-        Page<NcDto.Response> page = service.findAll(null, null, null, null, null, null,
+        Page<NcDto.Response> page = service.findAll(null, null, null, null, null, null, null,
                 PageRequest.of(0, 20));
 
         assertThat(page.getContent()).singleElement()
@@ -729,7 +728,7 @@ class NcServiceTest {
         when(repo.findAll(ArgumentMatchers.<Specification<NonConformity>>any(), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of(n)));
 
-        Page<NcDto.Response> page = service.findAll(null, null, null, null, null, null,
+        Page<NcDto.Response> page = service.findAll(null, null, null, null, null, null, null,
                 PageRequest.of(0, 20));
 
         assertThat(page.getContent()).singleElement()

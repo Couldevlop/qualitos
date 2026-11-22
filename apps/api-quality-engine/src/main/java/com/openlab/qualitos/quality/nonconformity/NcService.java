@@ -140,10 +140,10 @@ public class NcService {
             // parle. En base, et non sur la page reçue : filtrer après coup ne
             // trouvait que ce qui était déjà affiché.
             if (recherche != null && !recherche.isBlank()) {
-                String motif = "%" + recherche.strip().toLowerCase(Locale.ROOT) + "%";
+                String motif = "%" + echapperJoker(recherche.strip().toLowerCase(Locale.ROOT)) + "%";
                 predicates.add(cb.or(
-                        cb.like(cb.lower(root.get("reference")), motif),
-                        cb.like(cb.lower(root.get("title")), motif)));
+                        cb.like(cb.lower(root.get("reference")), motif, '\\'),
+                        cb.like(cb.lower(root.get("title")), motif, '\\')));
             }
             return cb.and(predicates.toArray(new Predicate[0]));
         };
@@ -153,6 +153,18 @@ public class NcService {
         Map<UUID, List<NcDto.TeamMemberRef>> equipes = equipesDe(tenantId,
                 page.getContent().stream().map(NonConformity::getId).toList());
         return page.map(nc -> toResponse(nc, equipes.getOrDefault(nc.getId(), List.of())));
+    }
+
+    /**
+     * Un « % » ou un « _ » tapé par l'utilisateur se cherche tel quel.
+     *
+     * <p>Sans cela ils jouent le joker de {@code like} : un « % » seul rendrait
+     * TOUS les écarts sous couvert d'une recherche, et une suite de jokers ferait
+     * travailler la base bien au-delà de ce que le texte laisse croire. Même
+     * convention que la GED ({@code DocumentSpecifications.escapeLike}).
+     */
+    private static String echapperJoker(String s) {
+        return s.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_");
     }
 
     @Transactional(readOnly = true)

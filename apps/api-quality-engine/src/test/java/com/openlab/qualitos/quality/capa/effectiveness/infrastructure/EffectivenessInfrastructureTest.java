@@ -217,6 +217,36 @@ class EffectivenessInfrastructureTest {
         assertThat(port().findInScope(tenant, Optional.empty()).get(0).dueAt()).isNull();
     }
 
+    /**
+     * LE PLAN NE JUGE QUE CE DONT LA VÉRIFICATION A ÉTÉ DEMANDÉE (ADR 0073, 0088).
+     *
+     * <p>Il juge l'EFFET d'une action : sans cette décision, il n'y a rien à
+     * juger, et la ligne ne faisait qu'allonger une liste de travaux à ne pas
+     * faire. {@code null} n'est pas un oui : c'est la question laissée ouverte,
+     * et elle ne vaut pas décision.
+     */
+    @Test
+    void seulsLesDossiersAVerifierEntrentDansLePlan() {
+        UUID tenant = UUID.randomUUID();
+        CapaCase demande = dossier(tenant, CapaStatus.RESOLVED, "CAPA-OUI");
+        action(demande, CapaActionStatus.DONE, CapaActionType.CORRECTIVE);
+        cases.save(demande);
+
+        CapaCase refuse = dossier(tenant, CapaStatus.RESOLVED, "CAPA-NON");
+        refuse.setVerificationRequired(false);
+        action(refuse, CapaActionStatus.DONE, CapaActionType.CORRECTIVE);
+        cases.save(refuse);
+
+        CapaCase sansReponse = dossier(tenant, CapaStatus.RESOLVED, "CAPA-VIDE");
+        sansReponse.setVerificationRequired(null);
+        action(sansReponse, CapaActionStatus.DONE, CapaActionType.CORRECTIVE);
+        cases.save(sansReponse);
+
+        assertThat(port().findInScope(tenant, Optional.empty()))
+                .extracting(EvaluationCasePort.EvaluationCase::reference)
+                .containsExactly("CAPA-OUI");
+    }
+
     @Test
     void unDossierRejeteEstHorsPerimetre() {
         // Un dossier REJETÉ n'a jamais été instruit : il n'y a rien dont juger
@@ -485,6 +515,10 @@ class EffectivenessInfrastructureTest {
         c.setSourceType(CapaSourceType.NON_CONFORMITY);
         c.setSourceRef(ref);
         c.setOwnerId(UUID.randomUUID());
+        // La vérification est DEMANDÉE : sans elle le dossier n'entre pas dans le
+        // plan de travail, et ces bancs-là portent sur autre chose. La règle a
+        // ses propres bancs, plus bas.
+        c.setVerificationRequired(true);
         return c;
     }
 

@@ -113,7 +113,7 @@ class NcOriginTest {
         when(repo.findAll(any(Specification.class), eq(page)))
                 .thenReturn(new PageImpl<>(List.of(externe)));
 
-        var result = service.findAll(null, null, null, null, NcOrigin.EXTERNAL, null, page);
+        var result = service.findAll(null, null, null, null, NcOrigin.EXTERNAL, null, null, page);
 
         assertThat(result.getContent()).hasSize(1);
         assertThat(result.getContent().get(0).origin()).isEqualTo(NcOrigin.EXTERNAL);
@@ -126,7 +126,7 @@ class NcOriginTest {
         when(repo.findAll(any(Specification.class), eq(page)))
                 .thenReturn(new PageImpl<>(List.of()));
 
-        service.findAll(null, null, null, null, null, null, page);
+        service.findAll(null, null, null, null, null, null, null, page);
 
         // Le filtre est bâti dans tous les cas : c'est la spécification qui décide
         // d'ignorer un critère nul, et non une cascade de branches par combinaison.

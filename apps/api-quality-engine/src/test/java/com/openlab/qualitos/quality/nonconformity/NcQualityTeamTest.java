@@ -189,7 +189,7 @@ class NcQualityTeamTest {
                 .thenReturn(List.of(membre(un.getId(), "kc-marie", "Marie Durand", 0),
                                     membre(deux.getId(), "kc-ali", "Ali Benali", 0)));
 
-        Page<NcDto.Response> rendu = service.findAll(null, null, null, null, null, null, page);
+        Page<NcDto.Response> rendu = service.findAll(null, null, null, null, null, null, null, page);
 
         verify(teamMembers, times(1)).findByTenantIdAndNcIdInOrderByPositionAsc(eq(TENANT), any());
         verify(teamMembers, never()).findByTenantIdAndNcIdOrderByPositionAsc(any(), any());
@@ -203,7 +203,7 @@ class NcQualityTeamTest {
         when(repo.findAll(any(Specification.class), eq(page)))
                 .thenReturn(new PageImpl<>(List.of(), page, 0));
 
-        service.findAll(null, null, null, null, null, null, page);
+        service.findAll(null, null, null, null, null, null, null, page);
 
         verify(teamMembers, never()).findByTenantIdAndNcIdInOrderByPositionAsc(any(), any());
     }
