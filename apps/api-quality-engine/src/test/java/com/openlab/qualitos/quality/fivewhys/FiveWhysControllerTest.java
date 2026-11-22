@@ -321,7 +321,7 @@ class FiveWhysControllerTest {
     @WithMockUser
     void setRootCause_tooEarlyInTheChain_returns409() throws Exception {
         when(service.setRootCause(eq(ANALYSIS_ID), any())).thenThrow(new FiveWhysStateException(
-                "Conclure avant 3 pourquoi, c'est nommer un symptôme"));
+                "Conclure avant 2 pourquoi, c'est nommer un symptôme"));
 
         mockMvc.perform(put("/api/v1/five-whys/{id}/root-cause", ANALYSIS_ID)
                         .with(csrf())
@@ -354,6 +354,22 @@ class FiveWhysControllerTest {
     }
 
     // --- fixtures ---------------------------------------------------------------
+
+    // --- DELETE /five-whys/{id}/root-cause --------------------------------------
+
+    /**
+     * Renvoie l'analyse, et non 204 : l'écran qui vient de déconclure doit
+     * réafficher l'état exact, et un corps vide l'obligerait à relire derrière.
+     */
+    @Test
+    @WithMockUser
+    void clearRootCause_returnsTheAnalysisWithoutIt() throws Exception {
+        when(service.clearRootCause(ANALYSIS_ID)).thenReturn(analysis(null));
+
+        mockMvc.perform(delete("/api/v1/five-whys/{id}/root-cause", ANALYSIS_ID).with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.rootCause").doesNotExist());
+    }
 
     private static FiveWhysDto.AnalysisResponse analysis(String rootCause) {
         return new FiveWhysDto.AnalysisResponse(

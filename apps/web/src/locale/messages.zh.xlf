@@ -13365,8 +13365,12 @@ Coordonnées professionnelles</source>
         <target state="translated">已识别的根本原因</target>
       </trans-unit>
       <trans-unit id="fivewhys.root-cause-locked" datatype="html">
-        <source>Conclure avant trois pourquoi, c'est nommer un symptôme. Poursuivez la chaîne.</source>
-        <target state="translated">不足三问就下结论，只是给症状命名。请继续追问。</target>
+        <source>Conclure avant deux pourquoi, c'est nommer un symptôme. Poursuivez la chaîne.</source>
+        <target state="translated">不足两问就下结论，只是给症状命名。请继续追问。</target>
+      </trans-unit>
+      <trans-unit id="fivewhys.root-cause-clear" datatype="html">
+        <source>Retirer la cause racine</source>
+        <target state="translated">移除根本原因</target>
       </trans-unit>
       <trans-unit id="fivewhys.conclude" datatype="html">
         <source>Conclure</source>

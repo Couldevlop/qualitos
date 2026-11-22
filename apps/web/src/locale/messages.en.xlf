@@ -13365,8 +13365,12 @@ Business contact details</target>
         <target state="translated">Identified root cause</target>
       </trans-unit>
       <trans-unit id="fivewhys.root-cause-locked" datatype="html">
-        <source>Conclure avant trois pourquoi, c'est nommer un symptôme. Poursuivez la chaîne.</source>
-        <target state="translated">Concluding before three whys names a symptom. Keep going.</target>
+        <source>Conclure avant deux pourquoi, c'est nommer un symptôme. Poursuivez la chaîne.</source>
+        <target state="translated">Concluding before two whys names a symptom. Keep going.</target>
+      </trans-unit>
+      <trans-unit id="fivewhys.root-cause-clear" datatype="html">
+        <source>Retirer la cause racine</source>
+        <target state="translated">Remove the root cause</target>
       </trans-unit>
       <trans-unit id="fivewhys.conclude" datatype="html">
         <source>Conclure</source>

@@ -60,6 +60,16 @@ export class FiveWhysService {
     return this.http.put<FiveWhysAnalysis>(`${this.endpoint}/${id}/root-cause`, { rootCause });
   }
 
+  /**
+   * Retire la conclusion, pour reprendre la remontée, et renvoie l'analyse.
+   *
+   * <p>Et non un `setRootCause('')` : le serveur exige un texte, et accepter le
+   * vide ferait effacer la conclusion par une requête mal remplie.
+   */
+  clearRootCause(id: string): Observable<FiveWhysAnalysis> {
+    return this.http.delete<FiveWhysAnalysis>(`${this.endpoint}/${id}/root-cause`);
+  }
+
   delete(id: string): Observable<void> {
     return this.http.delete<void>(`${this.endpoint}/${id}`);
   }

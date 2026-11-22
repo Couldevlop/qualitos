@@ -73,7 +73,7 @@ describe('FiveWhysDetailComponent', () => {
 
   beforeEach(() => {
     service = jasmine.createSpyObj<FiveWhysService>('FiveWhysService',
-      ['get', 'addStep', 'updateStep', 'deleteStep', 'setRootCause']);
+      ['get', 'addStep', 'updateStep', 'deleteStep', 'setRootCause', 'clearRootCause']);
     router = jasmine.createSpyObj<Router>('Router', ['navigate']);
     snack = jasmine.createSpyObj<MatSnackBar>('MatSnackBar', ['open']);
   });
@@ -96,10 +96,10 @@ describe('FiveWhysDetailComponent', () => {
     expect(component.loading).toBeFalse();
   });
 
-  // --- règle : pas de conclusion avant le 3e pourquoi ---------------------------
+  // --- règle : pas de conclusion avant le 2e pourquoi ---------------------------
 
-  it('verrouille la conclusion sous trois pourquoi, EN DISANT pourquoi', () => {
-    setup(analysis([step(1), step(2)]));
+  it('verrouille la conclusion sous deux pourquoi, EN DISANT pourquoi', () => {
+    setup(analysis([step(1)]));
 
     expect(component.canConcludeRootCause).toBeFalse();
     expect(texte()).toContain('symptôme');
@@ -108,8 +108,8 @@ describe('FiveWhysDetailComponent', () => {
       .querySelector('.root-cause__field')).toBeNull();
   });
 
-  it('ouvre la conclusion dès le troisième pourquoi', () => {
-    setup(analysis([step(1), step(2), step(3)]));
+  it('ouvre la conclusion dès le deuxième pourquoi', () => {
+    setup(analysis([step(1), step(2)]));
 
     expect(component.canConcludeRootCause).toBeTrue();
     expect((fixture.nativeElement as HTMLElement)
@@ -117,17 +117,17 @@ describe('FiveWhysDetailComponent', () => {
   });
 
   /**
-   * LE MOMENT EXACT : la conclusion s'ouvre en AJOUTANT le troisième pourquoi,
-   * sans rechargement, et sans qu'un quatrième soit demandé.
+   * LE MOMENT EXACT : la conclusion s'ouvre en AJOUTANT le deuxième pourquoi,
+   * sans rechargement, et sans qu'un troisième soit demandé.
    *
-   * <p>Les deux bancs ci-dessus partent d'une chaîne déjà longue de trois ; ils
+   * <p>Les deux bancs ci-dessus partent d'une chaîne déjà longue de deux ; ils
    * ne disent donc rien de la transition elle-même, qui est précisément ce que
-   * l'on vit à l'écran. Si le champ n'apparaissait qu'au quatrième, c'est ici
+   * l'on vit à l'écran. Si le champ n'apparaissait qu'au troisième, c'est ici
    * que cela se verrait.
    */
-  it('ouvre la conclusion à l\'instant où le troisième pourquoi est ajouté', () => {
-    setup(analysis([step(1), step(2)]));
-    service.addStep.and.returnValue(of(step(3)));
+  it('ouvre la conclusion à l\'instant où le deuxième pourquoi est ajouté', () => {
+    setup(analysis([step(1)]));
+    service.addStep.and.returnValue(of(step(2)));
 
     expect(component.canConcludeRootCause).toBeFalse();
 
@@ -136,10 +136,10 @@ describe('FiveWhysDetailComponent', () => {
     fixture.detectChanges();
 
     expect(component.depth)
-      .withContext('trois pourquoi posés, pas deux')
-      .toBe(3);
+      .withContext('deux pourquoi posés, pas un')
+      .toBe(2);
     expect(component.canConcludeRootCause)
-      .withContext('la cause racine se conclut au TROISIÈME pourquoi, pas au quatrième')
+      .withContext('la cause racine se conclut au DEUXIÈME pourquoi, pas au troisième')
       .toBeTrue();
     expect((fixture.nativeElement as HTMLElement)
       .querySelector('.root-cause__field')).not.toBeNull();
@@ -152,6 +152,37 @@ describe('FiveWhysDetailComponent', () => {
     component.concludeRootCause();
 
     expect(service.setRootCause).not.toHaveBeenCalled();
+  });
+
+  /**
+   * LA CONCLUSION SE RETIRE, ET LA CHAINE RESTE. Conclue trop tot, l'analyse
+   * n'avait aucun moyen de se deconclure -- le serveur exige un texte -- et la
+   * seule issue etait de la supprimer et de la ressaisir, ce qui emportait les
+   * pourquoi deja ecrits.
+   */
+  it('retire la cause racine sans toucher aux pourquoi', () => {
+    setup(analysis([step(1), step(2)], 'Conclu trop tôt'));
+    service.clearRootCause.and.returnValue(of(analysis([step(1), step(2)])));
+
+    component.retirerCauseRacine();
+    fixture.detectChanges();
+
+    expect(service.clearRootCause).toHaveBeenCalledWith('a-1');
+    expect(component.analysis?.rootCause).toBeFalsy();
+    expect(component.rootCauseDraft).toBe('');
+    expect(component.depth).toBe(2);
+    expect((fixture.nativeElement as HTMLElement)
+      .querySelector('[data-test="cause-racine-retirer"]')).toBeNull();
+  });
+
+  /** Rien a retirer tant que rien n'est conclu : le bouton ne s'affiche pas. */
+  it('ne propose pas de retirer une conclusion absente', () => {
+    setup(analysis([step(1), step(2)]));
+
+    expect((fixture.nativeElement as HTMLElement)
+      .querySelector('[data-test="cause-racine-retirer"]')).toBeNull();
+    component.retirerCauseRacine();
+    expect(service.clearRootCause).not.toHaveBeenCalled();
   });
 
   it('garde la réponse du serveur après conclusion plutôt que son propre état', () => {

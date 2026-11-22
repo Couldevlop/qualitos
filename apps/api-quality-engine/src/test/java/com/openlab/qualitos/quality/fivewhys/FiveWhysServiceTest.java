@@ -233,13 +233,13 @@ class FiveWhysServiceTest {
     // ---- cause racine -----------------------------------------------------------
 
     @Test
-    @DisplayName("la cause racine ne se conclut pas avant trois pourquoi")
+    @DisplayName("la cause racine ne se conclut pas dès le premier pourquoi")
     void refusesARootCauseTooEarly() {
-        // Conclure au deuxième pourquoi, c'est nommer un symptôme. La méthode
-        // n'a d'intérêt que si l'on est allé au-delà de la première explication.
+        // Conclure sur la première explication, c'est nommer le symptôme qu'on
+        // vient d'énoncer : la méthode n'a d'intérêt qu'au-delà.
         FiveWhysAnalysis a = analysis();
         when(analysisRepo.findByIdAndTenantId(a.getId(), TENANT)).thenReturn(Optional.of(a));
-        when(stepRepo.countByAnalysisIdAndTenantId(a.getId(), TENANT)).thenReturn(2L);
+        when(stepRepo.countByAnalysisIdAndTenantId(a.getId(), TENANT)).thenReturn(1L);
 
         assertThatThrownBy(() -> service.setRootCause(a.getId(),
                 new FiveWhysDto.RootCauseRequest("Procédure d'étiquetage non appliquée")))
@@ -247,17 +247,44 @@ class FiveWhysServiceTest {
     }
 
     @Test
-    @DisplayName("la cause racine se conclut à partir de trois pourquoi")
+    @DisplayName("la cause racine se conclut à partir de deux pourquoi")
     void acceptsARootCause() {
+        // DEUX, et non trois : le seuil n'a pas à forcer un maillon que l'analyse
+        // n'a pas, sous peine de faire paraphraser le précédent pour débloquer le
+        // bouton.
         FiveWhysAnalysis a = analysis();
         when(analysisRepo.findByIdAndTenantId(a.getId(), TENANT)).thenReturn(Optional.of(a));
-        when(stepRepo.countByAnalysisIdAndTenantId(a.getId(), TENANT)).thenReturn(3L);
+        when(stepRepo.countByAnalysisIdAndTenantId(a.getId(), TENANT)).thenReturn(2L);
         when(analysisRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
         service.setRootCause(a.getId(),
                 new FiveWhysDto.RootCauseRequest("Procédure d'étiquetage non appliquée"));
 
         assertThat(a.getRootCause()).isEqualTo("Procédure d'étiquetage non appliquée");
+    }
+
+    @Test
+    @DisplayName("la conclusion se retire, et la chaîne reste")
+    void clearsTheRootCause() {
+        // Conclue trop tôt, l'analyse n'avait aucun moyen de se déconclure :
+        // setRootCause exige un texte. Il fallait supprimer l'analyse et la
+        // ressaisir, ce qui emportait les pourquoi déjà écrits.
+        FiveWhysAnalysis a = analysis();
+        a.setRootCause("Conclu trop tôt");
+        FiveWhysStep s1 = new FiveWhysStep();
+        s1.setId(UUID.randomUUID()); s1.setTenantId(TENANT); s1.setAnalysis(a);
+        s1.setPosition(1); s1.setAnswer("Premier pourquoi");
+        when(analysisRepo.findByIdAndTenantId(a.getId(), TENANT)).thenReturn(Optional.of(a));
+        when(stepRepo.findByAnalysisIdAndTenantIdOrderByPositionAsc(a.getId(), TENANT))
+                .thenReturn(List.of(s1));
+        when(analysisRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        FiveWhysDto.AnalysisResponse reponse = service.clearRootCause(a.getId());
+
+        assertThat(a.getRootCause()).isNull();
+        assertThat(reponse.rootCause()).isNull();
+        assertThat(reponse.steps()).hasSize(1);
+        verify(stepRepo, never()).delete(any());
     }
 
     @Test

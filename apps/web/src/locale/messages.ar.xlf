@@ -13365,8 +13365,12 @@ Coordonnées professionnelles</source>
         <target state="translated">السبب الجذري المُحدَّد</target>
       </trans-unit>
       <trans-unit id="fivewhys.root-cause-locked" datatype="html">
-        <source>Conclure avant trois pourquoi, c'est nommer un symptôme. Poursuivez la chaîne.</source>
-        <target state="translated">الاستنتاج قبل ثلاثة أسباب هو تسمية عَرَض. واصل السلسلة.</target>
+        <source>Conclure avant deux pourquoi, c'est nommer un symptôme. Poursuivez la chaîne.</source>
+        <target state="translated">الاستنتاج قبل سببين هو تسمية عَرَض. واصل السلسلة.</target>
+      </trans-unit>
+      <trans-unit id="fivewhys.root-cause-clear" datatype="html">
+        <source>Retirer la cause racine</source>
+        <target state="translated">إزالة السبب الجذري</target>
       </trans-unit>
       <trans-unit id="fivewhys.conclude" datatype="html">
         <source>Conclure</source>

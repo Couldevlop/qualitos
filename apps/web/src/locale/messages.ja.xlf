@@ -13365,8 +13365,12 @@ Coordonnées professionnelles</source>
         <target state="translated">特定した根本原因</target>
       </trans-unit>
       <trans-unit id="fivewhys.root-cause-locked" datatype="html">
-        <source>Conclure avant trois pourquoi, c'est nommer un symptôme. Poursuivez la chaîne.</source>
-        <target state="translated">3つ未満で結論づけるのは症状に名前を付けるだけです。連鎖を続けてください。</target>
+        <source>Conclure avant deux pourquoi, c'est nommer un symptôme. Poursuivez la chaîne.</source>
+        <target state="translated">2つ未満で結論づけるのは症状に名前を付けるだけです。連鎖を続けてください。</target>
+      </trans-unit>
+      <trans-unit id="fivewhys.root-cause-clear" datatype="html">
+        <source>Retirer la cause racine</source>
+        <target state="translated">根本原因を取り消す</target>
       </trans-unit>
       <trans-unit id="fivewhys.conclude" datatype="html">
         <source>Conclure</source>

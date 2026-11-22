@@ -13365,8 +13365,12 @@ Datos de contacto profesionales</target>
         <target state="translated">Causa raíz identificada</target>
       </trans-unit>
       <trans-unit id="fivewhys.root-cause-locked" datatype="html">
-        <source>Conclure avant trois pourquoi, c'est nommer un symptôme. Poursuivez la chaîne.</source>
-        <target state="translated">Concluir antes de tres porqués es nombrar un síntoma. Continúe la cadena.</target>
+        <source>Conclure avant deux pourquoi, c'est nommer un symptôme. Poursuivez la chaîne.</source>
+        <target state="translated">Concluir antes de dos porqués es nombrar un síntoma. Continúe la cadena.</target>
+      </trans-unit>
+      <trans-unit id="fivewhys.root-cause-clear" datatype="html">
+        <source>Retirer la cause racine</source>
+        <target state="translated">Quitar la causa raíz</target>
       </trans-unit>
       <trans-unit id="fivewhys.conclude" datatype="html">
         <source>Conclure</source>
