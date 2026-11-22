@@ -101,9 +101,20 @@ export class KpisListComponent implements OnInit {
       panelClass: 'qos-dialog-panel'
     });
     ref.afterClosed().subscribe(k => {
-      if (k) {
-        this.pageIndex = 0;
-        this.page$.next({ index: 0, size: this.pageSize });
+      if (!k) {
+        return;
+      }
+      this.pageIndex = 0;
+      this.page$.next({ index: 0, size: this.pageSize });
+      // Un KPI naît en brouillon, et le catalogue est filtré sur « Actif »
+      // d'office : laissé tel quel, le KPI qu'on vient d'écrire est absent de la
+      // liste d'où on l'a créé, sans qu'aucun message ne le dise. On aligne le
+      // filtre sur le statut rendu par le serveur, et non sur un « brouillon »
+      // supposé : le contrôle change à l'écran, et dit donc pourquoi la liste
+      // a changé avec lui.
+      if (k.status && this.statusFilter.value && this.statusFilter.value !== k.status) {
+        this.statusFilter.setValue(k.status);  // `valueChanges` recharge déjà
+      } else {
         this.refresh$.next();
       }
     });

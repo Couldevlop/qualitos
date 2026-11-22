@@ -141,12 +141,25 @@ export class ObjectivesReviewComponent implements OnInit {
     return `${comparateur} ${o.targetValue}${o.kpiUnit ? ' ' + o.kpiUnit : ''}`;
   }
 
+  /**
+   * Le réel, arrondi au centième.
+   *
+   * <p>C'est une moyenne calculée sur la période : elle arrive brute du serveur
+   * avec toutes ses décimales, et un « 92.6333333333333 % » déborde de sa
+   * colonne, entre une cible et un écart tous deux lisibles.
+   *
+   * <p>Deux décimales et non une comme l'écart : à une seule, un réel de 97,96
+   * s'écrirait « 98 » face à une cible « ≥ 98 », et la ligne contredirait son
+   * propre statut. L'arrondi est d'affichage seul — le serveur garde la valeur
+   * exacte, dont découlent l'écart et le statut.
+   */
   observedLabel(o: QualityObjective): string {
     const v = o.assessment.observedValue;
     if (v == null) {
       return '—';
     }
-    return `${v}${o.kpiUnit ? ' ' + o.kpiUnit : ''}`;
+    const arrondi = Math.round(v * 100) / 100;
+    return `${arrondi}${o.kpiUnit ? ' ' + o.kpiUnit : ''}`;
   }
 
   /**
