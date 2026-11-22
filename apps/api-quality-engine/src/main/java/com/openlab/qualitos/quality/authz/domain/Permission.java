@@ -58,10 +58,10 @@ public enum Permission {
      * voyait le compteur et la liste de ses validations, puis se faisait refuser
      * le dossier qu'il doit signer.
      */
-    DEROGATION_VIEW("derogation.view", "derogation", tous()),
-    DEROGATION_VIEW_ALL("derogation.view.all", "derogation", tous()),
-    DEROGATION_CREATE("derogation.create", "derogation", plus(pilotage(), USER)),
-    DEROGATION_EDIT("derogation.edit", "derogation", plus(pilotage(), USER)),
+    DEROGATION_VIEW("derogation.view", "derogation", interne()),
+    DEROGATION_VIEW_ALL("derogation.view.all", "derogation", interne()),
+    DEROGATION_CREATE("derogation.create", "derogation", pilotage()),
+    DEROGATION_EDIT("derogation.edit", "derogation", pilotage()),
     /**
      * Demander la validation du manager, et la retirer.
      *
@@ -69,8 +69,7 @@ public enum Permission {
      * retire, et le domaine vérifie en plus qu’il est bien l’initiateur de CE
      * dossier.
      */
-    DEROGATION_REQUEST_APPROVAL("derogation.request-approval", "derogation",
-            plus(pilotage(), USER)),
+    DEROGATION_REQUEST_APPROVAL("derogation.request.approval", "derogation", pilotage()),
     /**
      * Signer, et renvoyer pour correction.
      *
@@ -81,27 +80,32 @@ public enum Permission {
      * n’est pas le manager, ni un autre manager, que le dossier refuse. Le
      * dossier serait bloqué sans issue.
      */
-    DEROGATION_APPROVE("derogation.approve", "derogation", tous()),
+    DEROGATION_APPROVE("derogation.approve", "derogation", interne()),
     /** Rouvrir un dossier signé, ce qui annule la signature. */
-    DEROGATION_REOPEN("derogation.reopen", "derogation", plus(pilotage(), USER)),
+    DEROGATION_REOPEN("derogation.reopen", "derogation", pilotage()),
     /**
      * Envoyer la demande au client : le seul geste qui sort de l’organisation.
      *
-     * <p>À l’<b>initiateur</b>, donc au même ensemble que
-     * {@code derogation.create} : « l’initiateur peut envoyer la demande au
-     * client ». La restreindre au pilotage créait un cul-de-sac — un dossier
-     * ouvert par un utilisateur devenait inenvoyable par quiconque, l’agrégat
-     * n’acceptant que son initiateur et le droit lui étant refusé. C’est
-     * exactement le piège évité sur {@code derogation.approve}.
+     * <p>Au pilotage, et au <b>même ensemble que tous les gestes de
+     * l’initiateur</b> : l’agrégat n’accepte que l’initiateur, donc ouvrir et
+     * envoyer doivent aller ensemble — sinon un dossier ouvert par un rôle plus
+     * large serait inenvoyable par quiconque, ni par lui faute de droit, ni par
+     * le pilotage que l’agrégat refuse. C’est le piège évité sur
+     * {@code derogation.approve}, et un banc le vérifie sur l’énumération
+     * elle-même, parce qu’il ne lève ni à la compilation ni aux tests de
+     * domaine.
      *
-     * <p>{@code api-core} pose la même liste au point d’envoi : les deux côtés
-     * doivent dire la même chose. Que ce geste fasse partir un courriel depuis
-     * l’adresse de l’organisation reste la raison pour laquelle le contrôle est
-     * au point d’envoi, et non dans l’omission du chemin dans l’ingress.
+     * <p>Le pilotage, et non tout utilisateur, parce que la maquette ne nomme
+     * que deux rôles — « Responsable qualité fournisseur (demandeur) » et
+     * « Manager qualité (signataire) » — et que ce geste fait partir un
+     * courriel depuis l’adresse de l’organisation. {@code api-core} pose la même
+     * liste au point d’envoi : les deux côtés doivent dire la même chose, et le
+     * contrôle est là plutôt que dans l’omission du chemin dans l’ingress, qui
+     * n’en est pas un.
      */
-    DEROGATION_SEND("derogation.send", "derogation", plus(pilotage(), USER)),
+    DEROGATION_SEND("derogation.send", "derogation", pilotage()),
     /** Porter la décision du client au dossier. */
-    DEROGATION_DECIDE("derogation.decide", "derogation", plus(pilotage(), USER)),
+    DEROGATION_DECIDE("derogation.decide", "derogation", pilotage()),
 
     // ---------- non-conformités ----------
     /** Sans elle, on ne voit que les non-conformités qu'on a déclarées (ADR 0081). */
@@ -252,6 +256,25 @@ public enum Permission {
      */
     private static EnumSet<SystemRole> tous() {
         return EnumSet.complementOf(EnumSet.of(SUPER_ADMIN));
+    }
+
+    /**
+     * Tous les rôles du client SAUF l'auditeur tiers.
+     *
+     * <p>{@link #tous()} l'inclut, et c'est voulu pour les registres internes :
+     * un auditeur de cabinet doit pouvoir constater. Mais une dérogation est une
+     * correspondance avec un <b>client</b> : le registre porte les noms des
+     * clients et les écarts négociés avec eux, et un cabinet qui travaille aussi
+     * pour le concurrent n'a pas à les lire. Lui accorder la signature serait
+     * plus grave encore — un tiers pourrait approuver un dossier s'il en était
+     * désigné manager.
+     *
+     * <p>Son accès reste possible dossier par dossier, si le client l'y désigne
+     * ou lui accorde explicitement le droit : c'est le propre d'un défaut
+     * d'octroi, qui se règle dans la console.
+     */
+    private static EnumSet<SystemRole> interne() {
+        return EnumSet.complementOf(EnumSet.of(SUPER_ADMIN, SystemRole.EXTERNAL_AUDITOR));
     }
 
     private static EnumSet<SystemRole> plus(EnumSet<SystemRole> base, SystemRole... autres) {

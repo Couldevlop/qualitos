@@ -80,7 +80,7 @@ class DerogationPermissionsTest {
         assertThat(Permission.DEROGATION_CREATE.code()).isEqualTo("derogation.create");
         assertThat(Permission.DEROGATION_EDIT.code()).isEqualTo("derogation.edit");
         assertThat(Permission.DEROGATION_REQUEST_APPROVAL.code())
-                .isEqualTo("derogation.request-approval");
+                .isEqualTo("derogation.request.approval");
         assertThat(Permission.DEROGATION_APPROVE.code()).isEqualTo("derogation.approve");
         assertThat(Permission.DEROGATION_REOPEN.code()).isEqualTo("derogation.reopen");
         assertThat(Permission.DEROGATION_SEND.code()).isEqualTo("derogation.send");

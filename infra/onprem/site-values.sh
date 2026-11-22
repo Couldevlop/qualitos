@@ -91,6 +91,10 @@ services:
   api-quality-engine:
     env:
       STORAGE_S3_PUBLIC_ENDPOINT: "$ORIGIN"
+      # Les liens des courriels et des notifications. L'adresse publique est
+      # propre au site : elle ne peut pas vivre dans les valeurs fixes, et la
+      # deduire d'un en-tete de requete serait une redirection ouverte.
+      WEB_BASE_URL: "$ORIGIN"
   ai-service:
     env:
       KEYCLOAK_ISSUER: "$ISSUER"

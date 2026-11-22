@@ -119,20 +119,20 @@ public class DerogationMailController {
      * dossier de dérogation signé existe derrière, puisque ce dossier vit dans
      * une autre base.
      *
-     * <p>La liste est celle de {@code derogation.send} dans le moteur, et pas une
-     * liste plus étroite : le dossier n'est envoyable que par son initiateur, et
-     * refuser ici un rôle que le moteur accorde rendrait inenvoyable tout dossier
-     * ouvert par ce rôle. Les deux côtés doivent dire la même chose.
+     * <p>C'est exactement la liste de {@code derogation.send} dans le moteur, ni
+     * plus large ni plus étroite. Plus étroite, elle rendrait inenvoyable un
+     * dossier que le moteur a laissé ouvrir — l'agrégat n'accepte que
+     * l'initiateur. Plus large, elle ouvrirait à tout utilisateur le droit
+     * d'écrire à un tiers sous l'identité de son organisation.
      *
-     * <p>Reste donc qu'un membre du client peut faire partir un courriel depuis
-     * l'adresse de son organisation. C'est le prix du geste lui-même : ce qui est
-     * contrôlé ici, c'est le destinataire unique, le corps en texte brut, la
-     * pièce jointe vérifiée PDF, et le refus net quand la messagerie du client
-     * n'est pas configurée.
+     * <p>Ce qui est contrôlé ici : un destinataire unique et vérifié, le corps en
+     * texte brut, la pièce jointe vérifiée PDF sur ses octets et bornée, la copie
+     * cachée tirée du jeton, et le refus net quand la messagerie du client n'est
+     * pas configurée.
      */
     private static final String ROLES_CORRESPONDANCE_CLIENT =
             "hasAnyRole('ADMIN','ADMIN_TENANT','QUALITY_DIRECTOR','DIRECTOR_QUALITY',"
-                    + "'QUALITY_MANAGER','USER','SUPER_ADMIN')";
+                    + "'QUALITY_MANAGER','SUPER_ADMIN')";
 
     @PostMapping("/derogation")
     @PreAuthorize(ROLES_CORRESPONDANCE_CLIENT)
