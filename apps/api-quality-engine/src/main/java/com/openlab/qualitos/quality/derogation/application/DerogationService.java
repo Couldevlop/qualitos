@@ -320,12 +320,17 @@ public class DerogationService {
         return reference;
     }
 
-    private Identification identification(DerogationDto.SaveCommand c) {
-        LocalDate demande = c.requestDate() != null
-                ? c.requestDate() : LocalDate.now(clock.withZone(ZoneOffset.UTC));
+    /**
+     * La fiche telle que la saisie la décrit, sans rien y ajouter.
+     *
+     * <p>La date de demande absente n'est PAS complétée ici : c'est l'agrégat qui
+     * la garantit, parce qu'un second appelant contournerait un repli posé dans
+     * ce service (§18.3 #1), et que la colonne est {@code NOT NULL}.
+     */
+    private static Identification identification(DerogationDto.SaveCommand c) {
         return new Identification(c.customerName(), c.customerQualityContact(),
                 c.customerOrderNo(), c.partReference(), c.partIndex(), c.batchNumber(),
-                c.quantity(), demande);
+                c.quantity(), c.requestDate());
     }
 
     private static Nature nature(DerogationDto.SaveCommand c) {

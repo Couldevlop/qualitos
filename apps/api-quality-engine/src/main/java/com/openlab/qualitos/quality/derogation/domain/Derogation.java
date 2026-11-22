@@ -3,6 +3,7 @@ package com.openlab.qualitos.quality.derogation.domain;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -89,7 +90,7 @@ public final class Derogation {
                                     String createdByName, Identification identification,
                                     Instant now) {
         return new Derogation(null, tenantId, reference, DerogationStatus.DRAFT,
-                identification, Nature.parDefaut(), null, Analysis.vide(),
+                dateeAuPlusTard(identification, now), Nature.parDefaut(), null, Analysis.vide(),
                 ManagerApproval.aucune(), CustomerDispatch.aucun(), CustomerAnswer.enAttente(),
                 createdBy, createdByName, now, now, 0L);
     }
@@ -126,7 +127,7 @@ public final class Derogation {
                      Instant now) {
         exigerModifiable();
         exigerInitiateur(acteur, "Seul l'initiateur du dossier peut le modifier.");
-        this.identification = identification;
+        this.identification = dateeAuPlusTard(identification, now);
         this.nature = nature;
         this.justification = Texte.net(justification);
         this.analysis = analysis;
@@ -289,6 +290,31 @@ public final class Derogation {
      * Les champs qui manquent pour demander la signature, dans l'ordre du message
      * de la maquette. Six, pas plus : c'est la liste qu'elle affiche.
      */
+    /**
+     * Une fiche porte TOUJOURS une date de demande.
+     *
+     * <p>Cette valeur par défaut vivait dans le service, et c'est précisément ce
+     * que la §18.3 #1 interdit : un second appelant de l'agrégat la contournait,
+     * et la base l'apprenait brutalement — la colonne est {@code NOT NULL}, et le
+     * défaut ne s'est vu que sur un vrai PostgreSQL, H2 étant construit depuis
+     * les entités dans le profil de test.
+     *
+     * <p>Elle n'est pas pour autant un champ obligatoire au sens de la §1.5 : le
+     * formulaire la propose pré-remplie, et ce n'est pas à l'utilisateur de la
+     * fournir pour pouvoir enregistrer un brouillon. L'horloge entre par
+     * paramètre, le domaine ne lisant jamais {@code Instant.now()} (§18.3 #2).
+     */
+    private static Identification dateeAuPlusTard(Identification ident, Instant now) {
+        LocalDate aujourdhui = LocalDate.ofInstant(now, ZoneOffset.UTC);
+        if (ident == null) {
+            return new Identification(null, null, null, null, null, null, null, aujourdhui);
+        }
+        return ident.requestDate() != null ? ident
+                : new Identification(ident.customerName(), ident.customerQualityContact(),
+                        ident.customerOrderNo(), ident.partReference(), ident.partIndex(),
+                        ident.batchNumber(), ident.quantity(), aujourdhui);
+    }
+
     public List<String> missingFields() {
         if (identification == null) {
             return List.of(CHAMP_CLIENT, CHAMP_PIECE, CHAMP_QUANTITE,

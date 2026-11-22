@@ -105,26 +105,33 @@ class DerogationsOnPostgresTest {
         String[] etats = {"DRAFT", "PENDING_INTERNAL", "TO_AMEND", "QUALITY_APPROVED",
                 "PENDING_CUSTOMER", "ACCEPTED", "REFUSED"};
         for (int i = 0; i < etats.length; i++) {
-            inserer(UUID.randomUUID(), "DER-2026-01" + i, etats[i], "ACME", "P-1", "12");
+            inserer(UUID.randomUUID(), "DER-2026-10" + i, etats[i], "ACME", "P-1", "12");
         }
-        assertThat(compter("SELECT count(*) FROM derogations WHERE status <> 'DRAFT'"))
-                .isEqualTo(etats.length - 1);
+        // Borne au prefixe DE CE BANC : la base est partagee entre les bancs de
+        // la classe, et compter tout le registre melangerait les cas.
+        assertThat(compter("SELECT count(*) FROM derogations"
+                + " WHERE reference LIKE 'DER-2026-10%'")).isEqualTo(etats.length);
     }
 
     @Test
     void unEtatInventeEstRefuse() {
+        // « SIGNING » tient dans VARCHAR(20) : sans cela, c'est la LONGUEUR qui
+        // refuserait, et le CHECK ne serait jamais eprouve.
         assertThatThrownBy(() -> inserer(UUID.randomUUID(), "DER-2026-0200",
-                "EN_COURS_DE_SIGNATURE", "ACME", "P-1", "12"))
+                "SIGNING", "ACME", "P-1", "12"))
                 .isInstanceOf(SQLException.class)
                 .hasMessageContaining("ck_derogations_status");
     }
 
     @Test
     void lesQuatreDecisionsDuClientSontAccepteesEtPasUneCinquieme() throws SQLException {
-        for (String decision : new String[]{"PENDING", "ACCEPTED",
-                "ACCEPTED_WITH_CONDITIONS", "REFUSED"}) {
+        String[] decisions = {"PENDING", "ACCEPTED", "ACCEPTED_WITH_CONDITIONS", "REFUSED"};
+        for (int i = 0; i < decisions.length; i++) {
+            String decision = decisions[i];
             UUID id = UUID.randomUUID();
-            inserer(id, "DER-2026-03" + decision.charAt(0), "ACCEPTED", "ACME", "P-1", "12");
+            // Numerote, et non initiale : ACCEPTED et ACCEPTED_WITH_CONDITIONS
+            // partagent la leur, et la reference est unique par client.
+            inserer(id, "DER-2026-030" + i, "ACCEPTED", "ACME", "P-1", "12");
             try (PreparedStatement ps = connection.prepareStatement(
                     "UPDATE derogations SET customer_decision = ? WHERE id = ?")) {
                 ps.setString(1, decision);
@@ -176,9 +183,10 @@ class DerogationsOnPostgresTest {
         // sienne, et deux organisations n'ont pas a se gener.
         UUID autre = UUID.randomUUID();
         try (PreparedStatement ps = connection.prepareStatement("""
-                INSERT INTO derogations (id, tenant_id, reference, status, created_by_user_id,
-                                         created_by_name, created_at, updated_at)
-                VALUES (?, ?, ?, 'DRAFT', ?, 'Autre', now(), now())""")) {
+                INSERT INTO derogations (id, tenant_id, reference, status, request_date,
+                                         created_by_user_id, created_by_name,
+                                         created_at, updated_at)
+                VALUES (?, ?, ?, 'DRAFT', DATE '2026-11-22', ?, 'Autre', now(), now())""")) {
             ps.setObject(1, UUID.randomUUID());
             ps.setObject(2, autre);
             ps.setString(3, "DER-2026-0500");
@@ -260,9 +268,11 @@ class DerogationsOnPostgresTest {
                                 String piece, String quantite) throws SQLException {
         try (PreparedStatement ps = connection.prepareStatement("""
                 INSERT INTO derogations (id, tenant_id, reference, status, customer_name,
-                                         part_reference, quantity, created_by_user_id,
-                                         created_by_name, created_at, updated_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'Paul Girard', now(), now())""")) {
+                                         part_reference, quantity, request_date,
+                                         created_by_user_id, created_by_name,
+                                         created_at, updated_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, DATE '2026-11-22', ?, 'Paul Girard',
+                        now(), now())""")) {
             ps.setObject(1, id);
             ps.setObject(2, CLIENT);
             ps.setString(3, reference);

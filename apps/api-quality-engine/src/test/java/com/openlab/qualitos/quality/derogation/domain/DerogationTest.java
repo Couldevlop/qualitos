@@ -80,6 +80,40 @@ class DerogationTest {
     // ---- les six champs obligatoires ----------------------------------------
 
     @Test
+    void uneFichePorteTOUJOURSUneDateDeDemande() {
+        // La colonne est NOT NULL, et ce repli vivait dans le SERVICE : un second
+        // appelant de l'agregat le contournait, et la base l'apprenait
+        // brutalement. H2 ne pouvait pas le voir, etant construit depuis les
+        // entites ; un vrai PostgreSQL l'a dit.
+        Derogation neuf = Derogation.create(CLIENT, "DER-2026-0009", DEMANDEUR, "Paul",
+                new Identification(null, null, null, null, null, null, null, null), T0);
+        assertThat(neuf.getIdentification().requestDate())
+                .isEqualTo(LocalDate.of(2026, 11, 22));
+
+        // Et une modification qui l'effacerait la repose.
+        neuf.edit(DEMANDEUR, new Identification("ACME", null, null, "P-1", null, null,
+                BigDecimal.ONE, null), Nature.parDefaut(), List.of(), "ok",
+                analyseComplete(), T0);
+        assertThat(neuf.getIdentification().requestDate())
+                .isEqualTo(LocalDate.of(2026, 11, 22));
+        // Une date saisie, elle, est respectee.
+        neuf.edit(DEMANDEUR, identificationComplete(), Nature.parDefaut(), List.of(),
+                "ok", analyseComplete(), T0);
+        assertThat(neuf.getIdentification().requestDate())
+                .isEqualTo(LocalDate.of(2026, 11, 22));
+    }
+
+    @Test
+    void uneIdentificationAbsenteNeFaitPasEchouerLOuverture() {
+        Derogation neuf = Derogation.create(CLIENT, "DER-2026-0010", DEMANDEUR, "Paul",
+                null, T0);
+        assertThat(neuf.getIdentification()).isNotNull();
+        assertThat(neuf.getIdentification().requestDate())
+                .isEqualTo(LocalDate.of(2026, 11, 22));
+        assertThat(neuf.getIdentification().customerName()).isNull();
+    }
+
+    @Test
     void lesSixChampsManquantsSortentDansLOrdreDeLaMaquette() {
         Derogation d = brouillonVide();
         assertThat(d.missingFields()).containsExactly(
