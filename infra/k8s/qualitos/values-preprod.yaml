@@ -147,6 +147,8 @@ services:
     env:
       DB_URL: jdbc:postgresql://postgres.qualitos-preprod.svc.cluster.local:5432/qualitos_quality
       AI_SERVICE_URL: http://ai-service.qualitos-preprod.svc.cluster.local:8085
+      CORE_BASE_URL: http://api-core.qualitos-preprod.svc.cluster.local:8080
+      WEB_BASE_URL: https://preprod.qualitos.openlabconsulting.com
       # Mode bearer OBLIGATOIRE : l'ai-service valide reellement les jetons ici,
       # et rejette X-Dev-Claims. Sans ce reglage, toutes les fonctions d'IA
       # repondent 502 — c'est la panne constatee au premier deploiement.

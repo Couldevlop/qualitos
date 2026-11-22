@@ -7,7 +7,7 @@ import com.openlab.qualitos.quality.derogation.domain.DerogationForbiddenExcepti
 import com.openlab.qualitos.quality.derogation.domain.DerogationNotFoundException;
 import com.openlab.qualitos.quality.derogation.domain.DerogationStateException;
 import com.openlab.qualitos.quality.derogation.domain.DerogationValidationException;
-import com.openlab.qualitos.quality.derogation.infrastructure.CoreDirectoryAdapter;
+import com.openlab.qualitos.quality.derogation.application.DirectoryUnavailableException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -88,8 +88,8 @@ public class DerogationExceptionHandler {
                 "derogation-mail-failed", "Derogation Mail Not Sent");
     }
 
-    @ExceptionHandler(CoreDirectoryAdapter.DirectoryUnavailableException.class)
-    public ProblemDetail annuaire(CoreDirectoryAdapter.DirectoryUnavailableException ex) {
+    @ExceptionHandler(DirectoryUnavailableException.class)
+    public ProblemDetail annuaire(DirectoryUnavailableException ex) {
         return ProblemDetails.of(HttpStatus.BAD_GATEWAY, ex.getMessage(),
                 "derogation-directory-unavailable", "Directory Unavailable");
     }

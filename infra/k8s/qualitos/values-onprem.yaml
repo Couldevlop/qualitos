@@ -54,6 +54,8 @@ services:
     env:
       DB_URL: jdbc:postgresql://postgres:5432/qualitos_quality
       AI_SERVICE_URL: http://ai-service:8085
+      CORE_BASE_URL: http://api-core:8080
+      WEB_BASE_URL: ${WEB_BASE_URL}
       QUALITOS_EDITION: onprem
       QUALITOS_LICENSE_FILE: /etc/qualitos/license/license.lic
       AI_AUTH_MODE: bearer

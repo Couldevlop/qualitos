@@ -50,6 +50,15 @@ public enum Permission {
      * (ADR 0081). Une dérogation nomme un client et une tolérance qu’on a
      * manquée : c’est une information plus sensible qu’un écart interne.
      */
+    /**
+     * Lire le registre et une fiche.
+     *
+     * <p>Distincte de {@code derogation.create} : les lectures s'appuyaient sur
+     * le droit de CREER, si bien qu'un manager designe qui n'est qu'auditeur
+     * voyait le compteur et la liste de ses validations, puis se faisait refuser
+     * le dossier qu'il doit signer.
+     */
+    DEROGATION_VIEW("derogation.view", "derogation", tous()),
     DEROGATION_VIEW_ALL("derogation.view.all", "derogation", tous()),
     DEROGATION_CREATE("derogation.create", "derogation", plus(pilotage(), USER)),
     DEROGATION_EDIT("derogation.edit", "derogation", plus(pilotage(), USER)),
@@ -78,14 +87,19 @@ public enum Permission {
     /**
      * Envoyer la demande au client : le seul geste qui sort de l’organisation.
      *
-     * <p>Au <b>pilotage seul</b>, et non à tout utilisateur. Ce geste fait partir
-     * un courriel depuis l’adresse de l’organisation, pièce jointe comprise :
-     * c’est de la correspondance client, que les pièces attribuent au
-     * « Responsable qualité fournisseur ». {@code api-core} pose la même garde au
-     * point d’envoi — les deux côtés doivent dire la même chose, sinon le plus
-     * permissif ne sert qu’à produire des refus incompréhensibles.
+     * <p>À l’<b>initiateur</b>, donc au même ensemble que
+     * {@code derogation.create} : « l’initiateur peut envoyer la demande au
+     * client ». La restreindre au pilotage créait un cul-de-sac — un dossier
+     * ouvert par un utilisateur devenait inenvoyable par quiconque, l’agrégat
+     * n’acceptant que son initiateur et le droit lui étant refusé. C’est
+     * exactement le piège évité sur {@code derogation.approve}.
+     *
+     * <p>{@code api-core} pose la même liste au point d’envoi : les deux côtés
+     * doivent dire la même chose. Que ce geste fasse partir un courriel depuis
+     * l’adresse de l’organisation reste la raison pour laquelle le contrôle est
+     * au point d’envoi, et non dans l’omission du chemin dans l’ingress.
      */
-    DEROGATION_SEND("derogation.send", "derogation", pilotage()),
+    DEROGATION_SEND("derogation.send", "derogation", plus(pilotage(), USER)),
     /** Porter la décision du client au dossier. */
     DEROGATION_DECIDE("derogation.decide", "derogation", plus(pilotage(), USER)),
 

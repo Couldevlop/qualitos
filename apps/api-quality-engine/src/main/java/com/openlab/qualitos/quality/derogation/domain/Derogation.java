@@ -204,12 +204,24 @@ public final class Derogation {
      * « Rouvrir (annule la signature) » : la fiche redevient un brouillon, et la
      * signature disparaît.
      *
-     * <p>Le bouton est visible de tous dans la maquette, et aucun droit ne lui est
-     * attribué : aucune garde d'acteur n'est donc posée ici. Mais un dossier déjà
-     * parti au client ne se rouvre <b>pas</b> — le client détient un document
-     * signé, et le rouvrir le démentirait sans qu'il en sache rien.
+     * <p><b>À l'initiateur ou à son manager qualité</b>, et à eux seuls. La
+     * maquette montre le bouton à tous, mais la visibilité d'un bouton n'est pas
+     * une décision de droits : c'est le seul geste du dossier qui <i>détruise</i>
+     * quelque chose — la signature d'un manager — et le laisser ouvert
+     * permettrait à n'importe quel utilisateur du client d'effacer la signature
+     * d'un dossier d'une autre équipe. La garde de visibilité ne protège rien
+     * ici : {@code derogation.view.all} est accordée à tous les rôles par défaut,
+     * comme pour les CAPA et les écarts.
+     *
+     * <p>Un dossier déjà parti au client ne se rouvre <b>pas</b> — le client
+     * détient un document signé, et le rouvrir le démentirait sans qu'il en sache
+     * rien.
      */
-    public void reopen(Instant now) {
+    public void reopen(UUID acteur, Instant now) {
+        if (!isInitiator(acteur) && !isDesignatedManager(acteur)) {
+            throw new DerogationForbiddenException(
+                    "Seuls l'initiateur du dossier et son manager qualité peuvent le rouvrir.");
+        }
         if (status != DerogationStatus.QUALITY_APPROVED) {
             throw new DerogationStateException(dispatch.estParti()
                     ? "Ce dossier est parti au client : il ne peut plus être rouvert."

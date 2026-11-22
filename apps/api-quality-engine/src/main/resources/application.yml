@@ -254,6 +254,23 @@ qualitos:
       initial-delay-ms: ${AUDIT_REMINDER_INITIAL_DELAY_MS:120000}
       fixed-delay-ms: ${AUDIT_REMINDER_FIXED_DELAY_MS:3600000}
 
+  # Le noyau (api-core), que le moteur interroge pour l'annuaire des comptes et
+  # pour l'envoi d'un courriel depuis la messagerie du client : ces deux-la vivent
+  # dans api-core, base `qualitos`, hors de portee du moteur. Le jeton de
+  # l'appelant est propage, aucun jeton de service n'est forge.
+  # SANS CETTE CLE le moteur echoue FERME : designer un manager sur une
+  # derogation demande son nom a l'annuaire, et la demande de validation serait
+  # refusee partout.
+  core:
+    base-url: ${CORE_BASE_URL:http://localhost:8080}
+
+  # L'adresse publique de l'interface, pour les liens des courriels et des
+  # notifications. Jamais lue dans un en-tete de requete : un lien construit sur
+  # `Host` ou `X-Forwarded-Host` se detourne, et celui-ci part par courriel a un
+  # manager qui le suivra sans le relire.
+  web:
+    base-url: ${WEB_BASE_URL:http://localhost:4200}
+
   ai:
     base-url: ${AI_SERVICE_URL:http://localhost:8085}
     # Timeouts du client HTTP vers ai-service (ms). Le read-timeout DOIT rester

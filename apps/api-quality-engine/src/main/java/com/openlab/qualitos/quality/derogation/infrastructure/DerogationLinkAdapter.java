@@ -27,6 +27,11 @@ public class DerogationLinkAdapter implements DerogationLinkBuilder {
 
     @Override
     public String linkTo(UUID derogationId) {
-        return baseUrl + "/derogations/" + derogationId;
+        return baseUrl + pathTo(derogationId);
+    }
+
+    @Override
+    public String pathTo(UUID derogationId) {
+        return "/derogations/" + derogationId;
     }
 }

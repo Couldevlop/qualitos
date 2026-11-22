@@ -59,7 +59,7 @@ public class DerogationController {
 
     @GetMapping
     @Transactional(readOnly = true)
-    @RequiresPermission(Permission.DEROGATION_CREATE)
+    @RequiresPermission(Permission.DEROGATION_VIEW)
     @Operation(summary = "The concession register, filtered by owner, part, customer and status")
     public DerogationDto.PageView<DerogationDto.RowView> list(
             @RequestParam(required = false) UUID owner,
@@ -94,7 +94,7 @@ public class DerogationController {
 
     @GetMapping("/{id}")
     @Transactional(readOnly = true)
-    @RequiresPermission(Permission.DEROGATION_CREATE)
+    @RequiresPermission(Permission.DEROGATION_VIEW)
     @Operation(summary = "One concession; 404 when out of reach")
     public DerogationDto.View get(@PathVariable UUID id) {
         return service.get(id, voitTout());
@@ -108,7 +108,7 @@ public class DerogationController {
      */
     @GetMapping("/{id}/pdf")
     @Transactional(readOnly = true)
-    @RequiresPermission(Permission.DEROGATION_CREATE)
+    @RequiresPermission(Permission.DEROGATION_VIEW)
     @Operation(summary = "The concession as a PDF, in the language frozen on the dossier")
     public ResponseEntity<byte[]> pdf(@PathVariable UUID id) {
         byte[] document = service.renderPdf(id, voitTout());

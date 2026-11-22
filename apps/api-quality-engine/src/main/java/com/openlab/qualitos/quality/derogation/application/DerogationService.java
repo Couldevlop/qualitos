@@ -246,7 +246,7 @@ public class DerogationService {
      */
     public DerogationDto.View reopen(UUID id, boolean voitTout) {
         Derogation d = exigerVisible(charger(id), id, voitTout);
-        d.reopen(clock.instant());
+        d.reopen(actors.requireAccountId(), clock.instant());
         Derogation enregistre = repository.save(d);
         audit.record(enregistre, DerogationAuditPort.Action.REOPENED);
         return DerogationDto.View.of(enregistre);

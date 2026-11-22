@@ -65,7 +65,7 @@ public class DerogationNotificationAdapter implements DerogationNotificationPort
     private void poser(UUID destinataire, NotificationType type, String titre,
                        String corps, Derogation d) {
         notifications.create(new NotificationDto.CreateCommand(
-                destinataire.toString(), type, titre, corps, links.linkTo(d.getId())));
+                destinataire.toString(), type, titre, corps, links.pathTo(d.getId())));
     }
 
     /** Le corps nomme la pièce : sans elle, dix alertes se ressemblent. */

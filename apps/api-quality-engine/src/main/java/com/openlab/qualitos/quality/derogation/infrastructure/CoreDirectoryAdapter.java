@@ -1,6 +1,7 @@
 package com.openlab.qualitos.quality.derogation.infrastructure;
 
 import com.openlab.qualitos.quality.derogation.application.DirectoryPort;
+import com.openlab.qualitos.quality.derogation.application.DirectoryUnavailableException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -67,14 +68,6 @@ public class CoreDirectoryAdapter implements DirectoryPort {
             throw new DirectoryUnavailableException(
                     "L'annuaire du client est momentanément injoignable :"
                             + " réessayez dans un instant.", e);
-        }
-    }
-
-    /** L'annuaire ne répond pas — ce n'est pas un compte absent. */
-    public static class DirectoryUnavailableException extends RuntimeException {
-
-        public DirectoryUnavailableException(String message, Throwable cause) {
-            super(message, cause);
         }
     }
 }

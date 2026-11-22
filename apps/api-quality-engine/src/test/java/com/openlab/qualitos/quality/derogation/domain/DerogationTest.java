@@ -210,7 +210,7 @@ class DerogationTest {
     @Test
     void rouvrirEffaceLaSignatureEtRendLeBrouillon() {
         Derogation d = signe();
-        d.reopen(T0);
+        d.reopen(DEMANDEUR, T0);
         assertThat(d.getStatus()).isEqualTo(DerogationStatus.DRAFT);
         assertThat(d.getApproval().estSignee()).isFalse();
         assertThat(d.getApproval().signaturePng()).isNull();
@@ -222,15 +222,35 @@ class DerogationTest {
     @Test
     void unDossierPartiAuClientNeSeRouvrePlus() {
         Derogation d = partiAuClient();
-        assertThatThrownBy(() -> d.reopen(T0))
+        assertThatThrownBy(() -> d.reopen(DEMANDEUR, T0))
                 .isInstanceOf(DerogationStateException.class)
                 .hasMessageContaining("parti au client");
     }
 
     @Test
+    void unTiersNeRouvrePasUnDossierSigne() {
+        // C'est le seul geste qui DETRUIT quelque chose -- la signature d'un
+        // manager. La maquette montre le bouton a tous, mais la visibilite d'un
+        // bouton n'est pas une decision de droits.
+        Derogation d = signe();
+        assertThatThrownBy(() -> d.reopen(TIERS, T0))
+                .isInstanceOf(DerogationForbiddenException.class)
+                .hasMessageContaining("manager qualité");
+        assertThat(d.getStatus()).isEqualTo(DerogationStatus.QUALITY_APPROVED);
+        assertThat(d.getApproval().estSignee()).isTrue();
+    }
+
+    @Test
+    void leManagerQuiASigneRouvreAussi() {
+        Derogation d = signe();
+        d.reopen(MANAGER, T0);
+        assertThat(d.getStatus()).isEqualTo(DerogationStatus.DRAFT);
+    }
+
+    @Test
     void onNeRouvrePasUnBrouillon() {
         Derogation d = brouillonComplet();
-        assertThatThrownBy(() -> d.reopen(T0))
+        assertThatThrownBy(() -> d.reopen(DEMANDEUR, T0))
                 .isInstanceOf(DerogationStateException.class)
                 .hasMessageContaining("approuvé par la qualité");
     }
