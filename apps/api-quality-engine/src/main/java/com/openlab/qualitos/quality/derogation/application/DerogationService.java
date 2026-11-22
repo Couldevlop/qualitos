@@ -9,6 +9,7 @@ import com.openlab.qualitos.quality.derogation.domain.DerogationQuery;
 import com.openlab.qualitos.quality.derogation.domain.DerogationRepository;
 import com.openlab.qualitos.quality.derogation.domain.Identification;
 import com.openlab.qualitos.quality.derogation.domain.Nature;
+import com.openlab.qualitos.quality.derogation.domain.DerogationValidationException;
 import com.openlab.qualitos.quality.derogation.domain.SignatureTrace;
 
 import java.time.Clock;
@@ -190,8 +191,15 @@ public class DerogationService {
                                               DerogationDto.RequestApprovalCommand commande) {
         Derogation d = charger(id);
         UUID manager = commande.managerAccountId();
-        d.requestApproval(actors.requireAccountId(), manager,
-                directory.displayNameOf(manager).orElse(null), clock.instant());
+        // Un compte que l'annuaire du client ne connait pas laisserait un dossier
+        // que PERSONNE ne peut signer : l'agregat n'accepte que le manager
+        // designe, et ce compte-la n'existe pas pour se presenter. On refuse
+        // maintenant, pendant que l'initiateur a la main.
+        String nom = directory.displayNameOf(manager).orElseThrow(() ->
+                new DerogationValidationException(
+                        "Ce compte ne figure pas dans l'annuaire du client :"
+                                + " choisissez un manager existant."));
+        d.requestApproval(actors.requireAccountId(), manager, nom, clock.instant());
         Derogation enregistre = repository.save(d);
         audit.record(enregistre, DerogationAuditPort.Action.APPROVAL_REQUESTED);
         notifications.approvalRequested(enregistre);

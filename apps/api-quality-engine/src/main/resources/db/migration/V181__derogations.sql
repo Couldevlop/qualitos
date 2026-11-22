@@ -44,16 +44,21 @@ CREATE TABLE derogations (
     -- ---- Section 1 de la maquette : identification -----------------------
     -- Le client est un texte libre : la plateforme n'a pas de registre de
     -- clients, et le modele des reclamations fait de meme.
-    customer_name           VARCHAR(200) NOT NULL,
+    -- NULLABLE, et c'est voulu : la maquette enregistre un brouillon
+    -- "autant de fois qu'il veut", et le controle des six champs obligatoires
+    -- n'intervient qu'a la DEMANDE DE SIGNATURE. Les rendre obligatoires ici
+    -- interdirait d'enregistrer un brouillon a peine commence -- le cas le plus
+    -- courant de tous.
+    customer_name           VARCHAR(200),
     customer_quality_contact VARCHAR(200),
     customer_order_no       VARCHAR(100),
     -- « Ref. piece / designation ». C'est ce champ que la colonne « produit »
     -- du registre affiche et que son filtre interroge : aucun lien vers le
     -- referentiel produit n'a ete demande.
-    part_reference          VARCHAR(200) NOT NULL,
+    part_reference          VARCHAR(200),
     part_index              VARCHAR(40),
     batch_number            VARCHAR(100),
-    quantity                NUMERIC(18, 3) NOT NULL,
+    quantity                NUMERIC(18, 3),
     request_date            DATE         NOT NULL,
 
     -- ---- Section 2 : nature de la demande --------------------------------

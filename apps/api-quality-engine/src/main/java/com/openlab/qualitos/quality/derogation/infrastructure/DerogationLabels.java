@@ -72,9 +72,7 @@ final class DerogationLabels {
             Map.entry("decisionDate", "Date de la décision"),
             Map.entry("empty", "Non renseigné"),
             Map.entry("noLine", "Aucun écart saisi"),
-            Map.entry("notSigned", "Non signé"),
-            Map.entry("footer", "Document non scellé — la pièce opposable est"
-                    + " l'exemplaire signé retourné par le client."));
+            Map.entry("notSigned", "Non signé"));
 
     private static final Map<String, String> EN = Map.ofEntries(
             Map.entry("title", "Customer concession request"),
@@ -116,9 +114,7 @@ final class DerogationLabels {
             Map.entry("decisionDate", "Decision date"),
             Map.entry("empty", "Not provided"),
             Map.entry("noLine", "No deviation recorded"),
-            Map.entry("notSigned", "Not signed"),
-            Map.entry("footer", "Unsealed document - the binding copy is"
-                    + " the signed original returned by the customer."));
+            Map.entry("notSigned", "Not signed"));
 
     /**
      * Le libellé d'une clé.

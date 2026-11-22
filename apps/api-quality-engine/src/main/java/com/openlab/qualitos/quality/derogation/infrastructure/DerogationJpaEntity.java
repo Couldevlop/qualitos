@@ -45,7 +45,7 @@ public class DerogationJpaEntity {
     @Column(nullable = false, length = 20)
     private String status;
 
-    @Column(name = "customer_name", nullable = false, length = 200)
+    @Column(name = "customer_name", length = 200)
     private String customerName;
 
     @Column(name = "customer_quality_contact", length = 200)
@@ -54,7 +54,7 @@ public class DerogationJpaEntity {
     @Column(name = "customer_order_no", length = 100)
     private String customerOrderNo;
 
-    @Column(name = "part_reference", nullable = false, length = 200)
+    @Column(name = "part_reference", length = 200)
     private String partReference;
 
     @Column(name = "part_index", length = 40)
@@ -63,7 +63,7 @@ public class DerogationJpaEntity {
     @Column(name = "batch_number", length = 100)
     private String batchNumber;
 
-    @Column(nullable = false, precision = 18, scale = 3)
+    @Column(precision = 18, scale = 3)
     private BigDecimal quantity;
 
     @Column(name = "request_date", nullable = false)

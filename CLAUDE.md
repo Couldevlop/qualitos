@@ -343,7 +343,7 @@ La dépendance va **vers l’intérieur** : `web` → `application` → `domain`
 6. **Le DTO web est distinct du DTO d’application** dès que la représentation exposée diverge du besoin interne.
 7. **Les tests suivent les couches** : le domaine se teste en JUnit nu (aucun contexte Spring), l’application avec des ports simulés, l’infrastructure sur base réelle, le web en `@WebMvcTest`. Couverture **98 %** sur toute fonctionnalité neuve.
 
-Modules de référence : `controlplan`, `costofquality`, `circuit`, `authz`. Les paquets plats (`capa`, `nc`, `audit`, `apqp`, `fives`, `ishikawa`, `dmaic`, `docs`, `objective`…) sont **antérieurs à cette règle** : ils se replient au fil des chantiers qui les touchent, et ne servent jamais de gabarit.
+Modules de référence : `controlplan`, `costofquality`, `circuit`, `authz`. Les paquets plats (`capa`, `nc`, `audit`, `apqp`, `fives`, `ishikawa`, `dmaic`, `docs`, `objective`…) sont **antérieurs à cette règle** : ils sont à replier — chantier décidé, un module par lot — et ne servent jamais de gabarit entre-temps.
 
 ---
 
@@ -403,7 +403,7 @@ Quand tu génères du code ou de la documentation pour ce projet, **respecte ces
 
 15. **Périmètre tenu** : la règle 18.2 #11 s'applique à toi en premier. Tu livres ce qui a été demandé ; tout le reste — fonctionnalité, commentaire, renommage, nettoyage — passe par une validation explicite avant d'être écrit.
 
-16. **Architecture avant gabarit.** La règle 18.2 #12 et la §18.3 s’appliquent à toi en premier, et elles passent AVANT le voisinage : avant d’écrire le premier fichier d’un module backend, tu poses `domain/`, `application/`, `infrastructure/`, `web/`. Tu ne déduis jamais l’architecture du module le plus proche ou le plus récent — la moitié du moteur est en paquet plat et constitue une dette, pas une convention. Si un chantier t’amène dans un paquet plat, tu le signales ; tu ne t’y conformes pas.
+16. **Architecture avant gabarit.** La règle 18.2 #12 et la §18.3 s’appliquent à toi en premier, et elles passent AVANT le voisinage : avant d’écrire le premier fichier d’un module backend, tu poses `domain/`, `application/`, `infrastructure/`, `web/`. Tu ne déduis jamais l’architecture du module le plus proche ou le plus récent — la moitié du moteur est en paquet plat et constitue une dette, pas une convention. Si un chantier t’amène dans un paquet plat, tu le replies ou tu le signales selon ce qui a été arbitré ; tu ne t’y conformes jamais.
 
 ---
 

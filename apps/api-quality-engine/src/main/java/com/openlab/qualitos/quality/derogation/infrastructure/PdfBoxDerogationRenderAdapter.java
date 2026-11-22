@@ -64,6 +64,10 @@ public class PdfBoxDerogationRenderAdapter implements DerogationPdfPort {
     private static final int WRAP = 104;
     /** Caractères d'une valeur de paire étiquette/valeur sur sa demi-largeur. */
     private static final int PAIR_MAX = 44;
+    /** Caractères d'une colonne de spécification du tableau d'écarts. */
+    private static final int COL_SPEC = 44;
+    /** Caractères de la colonne de quantité, étroite par nature. */
+    private static final int COL_QTY = 14;
 
     /** La signature est affichée à taille lisible, sans déformer son rapport. */
     private static final float SIGN_MAX_W = 180f;
@@ -184,6 +188,14 @@ public class PdfBoxDerogationRenderAdapter implements DerogationPdfPort {
                         ? null : DATE.format(d.getAnswer().decidedOn()), l);
     }
 
+    /**
+     * La pagination, et rien d'autre.
+     *
+     * <p>Le document reprend « les six sections dans leur ordre, et rien
+     * d'autre » : aucune mention ajoutée au bas des pages. La pagination n'est
+     * pas une mention — sans elle, un document de trois pages reçu par courriel
+     * ne se vérifie pas.
+     */
     private void piedsDePage(PDDocument document, DerogationLabels l) throws IOException {
         int total = document.getNumberOfPages();
         for (int i = 0; i < total; i++) {
@@ -191,11 +203,6 @@ public class PdfBoxDerogationRenderAdapter implements DerogationPdfPort {
             try (PDPageContentStream flux = new PDPageContentStream(document, page,
                     PDPageContentStream.AppendMode.APPEND, true, true)) {
                 flux.setNonStrokingColor(MUTED[0], MUTED[1], MUTED[2]);
-                flux.beginText();
-                flux.setFont(regular, 7.5f);
-                flux.newLineAtOffset(MARGIN, MARGIN - 10f);
-                flux.showText(reduire(l.t("footer")));
-                flux.endText();
                 String pagination = (i + 1) + " / " + total;
                 flux.beginText();
                 flux.setFont(regular, 7.5f);
@@ -282,19 +289,36 @@ public class PdfBoxDerogationRenderAdapter implements DerogationPdfPort {
             y -= 24f;
         }
 
-        /** Deux étiquettes et leurs valeurs, côte à côte. */
+        /**
+         * Deux étiquettes et leurs valeurs, côte à côte.
+         *
+         * <p>La hauteur consommée est celle de la PLUS HAUTE des deux cellules :
+         * une valeur repliée sur trois lignes pousse la paire suivante d'autant,
+         * sinon elles se chevaucheraient.
+         */
         void paire(String g, String vg, String dte, String vd, DerogationLabels l)
                 throws IOException {
-            place(ROW);
             float demi = CONTENT_W / 2f;
+            int hautG = replier(vg == null ? l.t("empty") : vg, PAIR_MAX).size();
+            int hautD = dte == null ? 1 : replier(vd == null ? l.t("empty") : vd, PAIR_MAX).size();
+            int lignes = Math.max(hautG, hautD);
+            place(ROW + (lignes - 1) * 10f);
             cellule(MARGIN, g, vg, l);
             if (dte != null) {
                 cellule(MARGIN + demi, dte, vd, l);
             }
-            y -= ROW;
+            y -= ROW + (lignes - 1) * 10f;
         }
 
-        private void cellule(float x, String etiquette, String valeur, DerogationLabels l)
+        /**
+         * Une cellule, et le nombre de lignes qu'elle a prises.
+         *
+         * <p>Elle REPLIE sa valeur au lieu de la couper. Une reference piece ou
+         * une note de pieces jointes font jusqu'a cinq cents caracteres, et les
+         * trancher a quarante-quatre changerait, sur un document qui part au
+         * client, l'information meme qu'il doit lire.
+         */
+        private int cellule(float x, String etiquette, String valeur, DerogationLabels l)
                 throws IOException {
             flux.setNonStrokingColor(MUTED[0], MUTED[1], MUTED[2]);
             flux.beginText();
@@ -303,11 +327,17 @@ public class PdfBoxDerogationRenderAdapter implements DerogationPdfPort {
             flux.showText(reduire(etiquette));
             flux.endText();
             flux.setNonStrokingColor(INK[0], INK[1], INK[2]);
-            flux.beginText();
-            flux.setFont(regular, 9f);
-            flux.newLineAtOffset(x, y - 14f);
-            flux.showText(reduire(tronquer(valeur == null ? l.t("empty") : valeur, PAIR_MAX)));
-            flux.endText();
+            List<String> lignes = replier(valeur == null ? l.t("empty") : valeur, PAIR_MAX);
+            float ligne = y - 14f;
+            for (String texte : lignes) {
+                flux.beginText();
+                flux.setFont(regular, 9f);
+                flux.newLineAtOffset(x, ligne);
+                flux.showText(reduire(texte));
+                flux.endText();
+                ligne -= 10f;
+            }
+            return lignes.size();
         }
 
         /** Une étiquette et son paragraphe, replié sur la largeur utile. */
@@ -366,23 +396,38 @@ public class PdfBoxDerogationRenderAdapter implements DerogationPdfPort {
             filet();
         }
 
+        /**
+         * Une ligne d'écart.
+         *
+         * <p>Les trois colonnes se replient : c'est ici que se lisent la
+         * spécification attendue et la valeur réelle, le cœur de ce que le client
+         * doit juger. Les couper serait couper une cote.
+         */
         void ligneTableau(String a, String b, String c, DerogationLabels l) throws IOException {
-            place(ROW);
             String tiret = "—";
-            colonne(MARGIN, a == null ? tiret : a, 46);
-            colonne(MARGIN + CONTENT_W * 0.40f, b == null ? tiret : b, 46);
-            colonne(MARGIN + CONTENT_W * 0.80f, c == null ? tiret : c, 14);
-            y -= ROW;
+            List<String> cg = replier(a == null ? tiret : a, COL_SPEC);
+            List<String> cm = replier(b == null ? tiret : b, COL_SPEC);
+            List<String> cd = replier(c == null ? tiret : c, COL_QTY);
+            int lignes = Math.max(cg.size(), Math.max(cm.size(), cd.size()));
+            place(ROW + (lignes - 1) * 10f);
+            colonne(MARGIN, cg);
+            colonne(MARGIN + CONTENT_W * 0.40f, cm);
+            colonne(MARGIN + CONTENT_W * 0.80f, cd);
+            y -= ROW + (lignes - 1) * 10f;
             filet();
         }
 
-        private void colonne(float x, String valeur, int max) throws IOException {
+        private void colonne(float x, List<String> lignes) throws IOException {
             flux.setNonStrokingColor(INK[0], INK[1], INK[2]);
-            flux.beginText();
-            flux.setFont(regular, 9f);
-            flux.newLineAtOffset(x, y - 10f);
-            flux.showText(reduire(tronquer(valeur, max)));
-            flux.endText();
+            float ligne = y - 10f;
+            for (String texte : lignes) {
+                flux.beginText();
+                flux.setFont(regular, 9f);
+                flux.newLineAtOffset(x, ligne);
+                flux.showText(reduire(texte));
+                flux.endText();
+                ligne -= 10f;
+            }
         }
 
         private void filet() throws IOException {
@@ -423,14 +468,6 @@ public class PdfBoxDerogationRenderAdapter implements DerogationPdfPort {
 
     private static String nombre(java.math.BigDecimal v) {
         return v == null ? null : v.stripTrailingZeros().toPlainString();
-    }
-
-    private static String tronquer(String s, int max) {
-        if (s == null) {
-            return "";
-        }
-        String net = s.replace('\n', ' ').replace('\r', ' ').strip();
-        return net.length() <= max ? net : net.substring(0, max - 1) + "…";
     }
 
     /** Replie un paragraphe, en gardant les sauts de ligne saisis. */
