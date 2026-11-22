@@ -153,6 +153,20 @@ describe('ObjectivesReviewComponent — la revue des objectifs (ADR 0133)', () =
     expect(component.deviationLabel(o)).toBe('—');
   });
 
+  it('arrondit le réel au centième, sans étaler la moyenne du serveur', async () => {
+    await build();
+    const o = objectif({
+      assessment: { ...objectif().assessment, observedValue: 92.63333333333333 }
+    });
+    expect(component.observedLabel(o)).toBe('92.63 ppm');
+  });
+
+  it('n\'ajoute pas de décimales à un réel qui n\'en a pas', async () => {
+    await build();
+    expect(component.observedLabel(objectif())).toBe('900 ppm');
+    expect(component.observedLabel(objectif({ kpiUnit: null }))).toBe('900');
+  });
+
   it('signe l\'écart et l\'arrondit au dixième', async () => {
     await build();
     expect(component.deviationLabel(objectif())).toBe('+80 %');
