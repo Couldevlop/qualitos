@@ -414,6 +414,30 @@ describe('NcListComponent — chargement, filtres et pagination', () => {
     http.expectOne(r => r.url === endpoint).flush(page([]));
   });
 
+  /**
+   * CHERCHER REPART DE LA PREMIERE PAGE. La recherche part au serveur et porte
+   * sur TOUS les ecarts, non sur la page affichee : rester a la page 4 en
+   * changeant de texte afficherait la quatrieme page d'un resultat qui n'en a
+   * peut-etre qu'une -- une liste vide sur une recherche qui a trouve.
+   */
+  it('cherche sur tout le registre, et repart de la premiere page', fakeAsync(() => {
+    start();
+    http.expectOne(r => r.url === endpoint).flush(page([]));
+    component.onPage({ pageIndex: 3, pageSize: 20, length: 100 } as PageEvent);
+    http.expectOne(r => r.url === endpoint).flush(page([]));
+    expect(component.pageIndex).toBe(3);
+
+    component.search.setValue('presse-etoupe');
+    tick(300);                 // le temps d'attente avant l'envoi
+
+    expect(component.pageIndex).toBe(0);
+    const req = http.expectOne(r => r.url === endpoint);
+    expect(req.request.params.get('q')).toBe('presse-etoupe');
+    expect(req.request.params.get('page')).toBe('0');
+    req.flush(page([nc({ id: 'trouve' })]));
+    expect(emitted[emitted.length - 1][0].id).toBe('trouve');
+  }));
+
   it('après création, revient à la première page et recharge la liste', () => {
     start();
     http.expectOne(r => r.url === endpoint).flush(page([]));

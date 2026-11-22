@@ -4,7 +4,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { of, throwError } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 
 import { AuthzService } from '../../../../core/authz/authz.service';
 import { DirectoryService } from '../../../../core/directory/directory.service';
@@ -12,7 +12,7 @@ import { CapaActionPanelModule } from '../../capa-action-panel.module';
 import { CapaService } from '../../capa.service';
 import {
   CapaActionResponse, CapaActionStatus, CapaActionType, CapaCaseResponse, CapaEvidence,
-  CapaSourceType, CapaStatus
+  CapaSourceType, CapaStatus, OpenCapaRequest
 } from '../../capa.types';
 import { CapaActionPanelComponent } from './capa-action-panel.component';
 
@@ -122,8 +122,9 @@ describe('CapaActionPanelComponent', () => {
     TestBed.resetTestingModule();
 
     capa = jasmine.createSpyObj<CapaService>('CapaService',
-      ['getCase', 'updateAction',
+      ['getCase', 'openCase', 'updateAction',
        'listActionEvidences', 'uploadActionEvidence', 'deleteActionEvidence']);
+    capa.openCase.and.returnValue(of(dossier({ id: 'capa-neuve' })));
     capa.getCase.and.returnValue(opts.panne
       ? throwError(() => new HttpErrorResponse({ status: 503 }))
       : of(opts.dossier ?? dossier()));
@@ -234,6 +235,38 @@ describe('CapaActionPanelComponent', () => {
     }).data;
     expect(data.prefill?.type).toBe('PREVENTIVE');
     expect(data.lockType).toBeTrue();
+  });
+
+  /**
+   * LE PANNEAU PORTE L'OUVERTURE, et ne la laisse pas a la fenetre : c'est lui
+   * qui sait par quelle route le dossier se cree en citant l'ecart. La fenetre
+   * recoit donc un `open`, qu'elle appellera quand le formulaire sera rempli --
+   * sans lui, elle retomberait sur la creation libre du module CAPA et le
+   * dossier naitrait sans son ecart (ADR 0121, 0135).
+   */
+  it('confie a la fenetre la route qui ouvre la CAPA, et en rend l\u2019identifiant',
+     async () => {
+    await setup({ dossier: dossier({ actions: [] }) });
+    hote.natures = ['CONTAINMENT'];
+    fixture.detectChanges();
+    ferme = true;
+
+    un('capa-action-definir')!.click();
+
+    const data = (dialog.open.calls.mostRecent().args[1] as {
+      data: { open?: (r: OpenCapaRequest) => Observable<{ capaId: string }> };
+    }).data;
+    expect(data.open).toBeDefined();
+
+    let rendu: { capaId: string } | undefined;
+    data.open!({ title: 'Isoler le lot' } as OpenCapaRequest)
+      .subscribe(o => (rendu = o));
+
+    expect(capa.openCase).toHaveBeenCalledWith(
+      jasmine.objectContaining({ title: 'Isoler le lot' }));
+    // L'identifiant du dossier ouvert, et lui seul : la fenetre n'a que faire
+    // du reste de la reponse.
+    expect(rendu).toEqual({ capaId: 'capa-neuve' });
   });
 
   /**
@@ -549,7 +582,10 @@ describe('CapaActionPanelComponent', () => {
     hote.ajoutAutorise = false;
     fixture.detectChanges();
 
-    expect(un('capa-action-definir')).toBeNull();
+    // ETEINT, et non retire : c'est ce que le panneau faisait deja du verrou de
+    // cloture du dossier. Le bouton disparu, l'ecran ne dirait plus qu'on PEUT
+    // decider des actions ici -- il se lirait comme un tableau en lecture seule.
+    expect((un('capa-action-definir') as HTMLButtonElement).disabled).toBeTrue();
     panneau().addAction();
     expect(dialog.open).not.toHaveBeenCalled();
   });
@@ -559,12 +595,12 @@ describe('CapaActionPanelComponent', () => {
    * traite, et en ouvrir une sans savoir lequel donnerait un dossier orphelin,
    * que ni la fiche de l'ecart ni son rapport 8D ne verraient.
    */
-  it('retire le bouton d’ajout quand aucun écart n’est cité', async () => {
+  it('éteint le bouton d’ajout quand aucun écart n’est cité', async () => {
     await setup({ dossier: dossier({ actions: [] }) });
     hote.source = undefined;
     fixture.detectChanges();
 
-    expect(un('capa-action-definir')).toBeNull();
+    expect((un('capa-action-definir') as HTMLButtonElement).disabled).toBeTrue();
     panneau().addAction();
     expect(dialog.open).not.toHaveBeenCalled();
   });
@@ -970,6 +1006,10 @@ describe('CapaActionPanelComponent', () => {
    *
    * <p>Le panneau ne la cherche pas : il sert aussi la fiche d'un dossier CAPA
    * ouvert sans écart, où il n'y a pas d'équipe 8D.
+   *
+   * <p>Sur la CORRECTION d'une action, seule porte de ce panneau vers le choix
+   * d'un responsable : depuis l'ADR 0135, ajouter ouvre une CAPA NOUVELLE, et
+   * sa fenêtre de création lit l'annuaire pour elle-même.
    */
   describe('l’équipe transmise à la fenêtre', () => {
 
@@ -978,14 +1018,15 @@ describe('CapaActionPanelComponent', () => {
         data: { team?: readonly { accountId: string }[] };
       }).data.team;
 
-    it('transmet l’équipe et le critère du dossier quand on ajoute une action', async () => {
+    it('transmet l’équipe et le critère quand on corrige une action', async () => {
       await setup({
-        dossier: dossier({ actions: [], effectivenessCriterion: 'Aucun rebut pendant 3 mois' })
+        dossier: dossier({ actions: [action()],
+                           effectivenessCriterion: 'Aucun rebut pendant 3 mois' })
       });
       hote.equipe = [{ accountId: 'u-alice' }, { accountId: 'u-bob' }];
       fixture.detectChanges();
 
-      un('capa-action-definir')!.click();
+      (un('capa-action-ligne') as HTMLElement).click();
 
       expect(equipeDeLaFenetre()).toEqual([{ accountId: 'u-alice' }, { accountId: 'u-bob' }]);
       expect((dialog.open.calls.mostRecent().args[1] as {
@@ -993,19 +1034,9 @@ describe('CapaActionPanelComponent', () => {
       }).data.effectivenessCriterion).toBe('Aucun rebut pendant 3 mois');
     });
 
-    it('la transmet aussi quand on corrige une action existante', async () => {
-      await setup({ dossier: dossier({ actions: [action()] }) });
-      hote.equipe = [{ accountId: 'u-alice' }];
-      fixture.detectChanges();
-
-      (un('capa-action-ligne') as HTMLElement).click();
-
-      expect(equipeDeLaFenetre()).toEqual([{ accountId: 'u-alice' }]);
-    });
-
     it('ne transmet rien quand l’écran appelant n’a pas d’équipe', async () => {
-      await setup({ dossier: dossier({ actions: [] }) });
-      un('capa-action-definir')!.click();
+      await setup({ dossier: dossier({ actions: [action()] }) });
+      (un('capa-action-ligne') as HTMLElement).click();
       expect(equipeDeLaFenetre()).toEqual([]);
     });
   });

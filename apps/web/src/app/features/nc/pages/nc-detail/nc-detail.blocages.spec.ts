@@ -120,9 +120,11 @@ describe('NcDetailComponent — ce qui bloque l’avancement', () => {
     setup('ACTION_DEFINED', [{ code: 'CAPA_ACTIONS_TO_CARRY_OUT', count: 2 }]);
 
     expect(un('nc-blockers')).not.toBeNull();
-    // Le décompte, et le geste : « terminez leurs actions ».
-    expect(texte('nc-blockers')).toContain('2');
-    expect(texte('nc-blockers')).toContain('Terminez');
+    // Le decompte porte sur les ACTIONS, et le geste les nomme : la phrase est
+    // celle que le client a dictee -- « xx actions are still open, please close
+    // them before resolving the NC ».
+    expect(texte('nc-blockers')).toContain('2 actions sont encore ouvertes');
+    expect(texte('nc-blockers')).toContain('terminez-les');
     // Le titre nomme l'étape où l'on est.
     expect(texte('nc-blockers')).toContain('résolu');
   });
@@ -141,7 +143,10 @@ describe('NcDetailComponent — ce qui bloque l’avancement', () => {
   it('écrit la phrase au singulier pour un seul dossier', () => {
     setup('ACTION_DEFINED', [{ code: 'CAPA_ACTIONS_TO_CARRY_OUT', count: 1 }]);
 
-    expect(texte('nc-blockers')).toContain('1 dossier CAPA porte');
+    // Une seule action ouverte : la phrase s'accorde, et compte des ACTIONS --
+    // le dossier n'est plus ce qu'on denombre ici.
+    expect(texte('nc-blockers')).toContain('1 action est encore ouverte');
+    expect(texte('nc-blockers')).toContain('terminez-la');
   });
 
   /**
@@ -242,7 +247,7 @@ describe('NcDetailComponent — ce qui bloque l’avancement', () => {
     setup('ACTION_DEFINED', [{ code: 'CAPA_ACTIONS_TO_CARRY_OUT', count: 2 }]);
 
     expect(component.blockersHint(ecart('ACTION_DEFINED',
-      [{ code: 'CAPA_ACTIONS_TO_CARRY_OUT', count: 2 }]))).toContain('Terminez');
+      [{ code: 'CAPA_ACTIONS_TO_CARRY_OUT', count: 2 }]))).toContain('terminez-les');
   });
   // ---------- avant l'etape de resolution : le bouton PARLE ----------
 

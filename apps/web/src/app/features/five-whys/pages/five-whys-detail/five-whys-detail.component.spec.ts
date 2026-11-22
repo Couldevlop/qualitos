@@ -146,7 +146,9 @@ describe('FiveWhysDetailComponent', () => {
   });
 
   it('refuse de conclure tant que la chaîne est trop courte, même appelé de force', () => {
-    setup(analysis([step(1), step(2)]));
+    // UN seul pourquoi : depuis que la cause racine se conclut au DEUXIEME,
+    // une chaine de deux n'est plus trop courte -- elle conclut.
+    setup(analysis([step(1)]));
     component.rootCauseDraft = 'Un symptôme déguisé';
 
     component.concludeRootCause();

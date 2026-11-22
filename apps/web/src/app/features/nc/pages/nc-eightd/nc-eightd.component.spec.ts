@@ -106,12 +106,13 @@ describe('NcEightDComponent', () => {
   }
 
   async function monter(roles: string[], capaCaseId: string | null = 'capa-9',
-                        capaCases?: { id: string; title: string; status: string }[]): Promise<void> {
+                        capaCases?: { id: string; title: string; status: string }[],
+                        statut: NcResponse['status'] = 'ACTION_DEFINED'): Promise<void> {
     svc = jasmine.createSpyObj<NcService>('NcService',
       ['getEightDReport', 'saveEightDReport', 'issueEightDReport', 'downloadEightDPdf', 'getNc']);
     const ecart: NcResponse = {
       id: NC_ID, reference: 'NC-2026-0007', title: 'Fuite au presse-étoupe',
-      category: 'PROCESS', severity: 'MAJOR', status: 'ACTION_DEFINED', origin: 'INTERNAL',
+      category: 'PROCESS', severity: 'MAJOR', status: statut, origin: 'INTERNAL',
       detectedAt: '', createdAt: '', updatedAt: ''
     };
     if (capaCaseId) { ecart.capaCaseId = capaCaseId; }
@@ -549,6 +550,33 @@ describe('NcEightDComponent', () => {
    * l'ecran ne lisait que `capaCaseId`, le premier : ses actions
    * n'apparaissaient nulle part dans le 8D.
    */
+  /**
+   * Un ecart termine n'attend plus d'action : le rapport laisse relire ses
+   * disciplines, mais aucune n'ouvre plus de CAPA. Le droit d'ecrire ne
+   * suffisait pas a le dire -- il porte sur le ROLE, pas sur l'etat de
+   * l'ecart -- et une action decidee apres la cloture l'aurait ensuite
+   * bloquee. Meme critere que la fiche de l'ecart.
+   */
+  it('ferme l’ajout d’une CAPA quand l’écart est terminé', async () => {
+    await monter(['QUALITY_MANAGER'], 'capa-9', undefined, 'CLOSED');
+
+    expect(component.ajoutAutorise).toBeFalse();
+    const tableaux = fixture.debugElement.queryAll(By.directive(CapaActionPanelStubComponent));
+    expect(tableaux.length).toBeGreaterThan(0);
+    tableaux.forEach(t =>
+      expect((t.componentInstance as CapaActionPanelStubComponent).ajoutAutorise).toBeFalse());
+  });
+
+  /** Sur un ecart vivant, la discipline ouvre une CAPA de plus. */
+  it('laisse une discipline ouvrir une CAPA sur un écart vivant', async () => {
+    await monter(['QUALITY_MANAGER'], 'capa-9', undefined, 'ACTION_DEFINED');
+
+    expect(component.ajoutAutorise).toBeTrue();
+    const tableaux = fixture.debugElement.queryAll(By.directive(CapaActionPanelStubComponent));
+    tableaux.forEach(t =>
+      expect((t.componentInstance as CapaActionPanelStubComponent).ajoutAutorise).toBeTrue());
+  });
+
   it('montre les actions de TOUS les dossiers rattaches, pas seulement du premier', async () => {
     await monter(['QUALITY_MANAGER'], 'capa-9', [
       { id: 'capa-9', title: 'Dossier de l\u2019escalade', status: 'IN_PROGRESS' },
